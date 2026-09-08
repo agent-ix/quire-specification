@@ -5,7 +5,7 @@
     "identity": "agent-a-fs03",
     "version": "1-draft",
     "path": "../state-semantics.md",
-    "digest": "sha256:46d2b7a8304ecda1032deba8d58d74fc895bc86d2d68c2e20448464588d5af61"
+    "digest": "sha256:d9eb316752ac45d7984b355a054cd279ef9749164a92c7f61fbf621fe280588b"
   },
   "baseProfile": {
     "identity": "state-finite",

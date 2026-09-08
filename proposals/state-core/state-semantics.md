@@ -22,7 +22,9 @@ paths. F contains observation-qualified presence and numeric range facts.
 
 `D; A; G; F |- e : T ! defined` means e has type T and every potentially
 evaluated subexpression is defined under those hypotheses. This judgment is
-required for a Boolean clause root. Parsing alone establishes none of D, A, G
+conditional on runtime inputs satisfying the declared validation contract; a
+linker does not possess or inspect a runtime population. The judgment is required
+for a Boolean clause root. Parsing alone establishes none of D, A, G
 or F. Unknown declarations, conflicting exports, unavailable model bindings or
 unadmitted features cannot be discharged using runtime samples.
 
@@ -108,11 +110,13 @@ The core rules are:
 ```text
 e : Option(T)                         => present(e) : Bool
 e : Option(T), present(key(e)) in F    => value(e) : T
-r : Ref(T), validated target in S     => deref(r) : object access to T
+r : Ref(T), T admitted by D           => deref(r) : object access to T
 ```
 
 `value(e)` without its presence proof is `undefined_expression`. `deref` is
-defined only after snapshot closure and type/universe checks; an absent optional
+evaluated only after runtime snapshot closure and type/universe checks; linking
+records those input requirements without asserting that an object exists in an
+as-yet-unsupplied population. An absent optional
 reference is not a reference and must first be guarded/unwrapped. Equal object
 fields cannot establish either identity equality or optional presence.
 
