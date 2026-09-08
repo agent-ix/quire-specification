@@ -1,0 +1,101 @@
+{
+  "fixtureVersion": "agent-a-closure-composition/1-draft",
+  "rootPackage": "example/config",
+  "manifest": {
+    "refVersion": "ix.artifact-ref/2-draft",
+    "kind": "model-manifest",
+    "authority": "agent-a-review-fixtures",
+    "identity": "example/config/manifest",
+    "revision": {
+      "namespace": "package-semver",
+      "value": "1.0.0"
+    },
+    "digest": "sha256:c6a7cf85d5df9734370652600a66f68065556adff2fc3ebb88c59523538e021b",
+    "wire": {
+      "identity": "filament.package-manifest",
+      "version": "1.0.0"
+    }
+  },
+  "lock": {
+    "refVersion": "ix.artifact-ref/2-draft",
+    "kind": "model-lock",
+    "authority": "agent-a-review-fixtures",
+    "identity": "example/config/lock",
+    "revision": {
+      "namespace": "package-semver",
+      "value": "1.0.0"
+    },
+    "digest": "sha256:eca8b12393398f65d45b4fb0474dde1b93505982531ea823671aa4a70bc0bfc5",
+    "wire": {
+      "identity": "filament.package-lock",
+      "version": "1.0.0"
+    }
+  },
+  "compiledIr": {
+    "refVersion": "ix.artifact-ref/2-draft",
+    "kind": "model-package",
+    "authority": "agent-a-review-fixtures",
+    "identity": "example/config",
+    "revision": {
+      "namespace": "package-semver",
+      "value": "1.0.0"
+    },
+    "digest": "sha256:7396d20d580b71c406607c71bff36ecdbe471aef3328945a5ee9d8a78933b2f7",
+    "wire": {
+      "identity": "filament.semantic-ir",
+      "version": "1.1.0"
+    }
+  },
+  "sourceArtifacts": [
+    {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "source",
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/source/typespec",
+      "revision": {
+        "namespace": "package-semver",
+        "value": "1.0.0"
+      },
+      "digest": "sha256:d67652123f3b6c3e500511187316651348c8b0034984e9bfd0764fdc3d98dd83",
+      "wire": {
+        "identity": "typespec.source",
+        "version": "1.15.0"
+      }
+    }
+  ],
+  "establishedFingerprint": "sha256:15cfc24354a3b0009e021cf83905a603689032250c016cc8e469c3f927a233aa",
+  "establishedCanonicalization": {
+    "algorithm": "RFC8785-JCS-with-identity-sorted-sets-v1",
+    "digest": "sha256",
+    "included": [
+      "schema-bytes",
+      "manifest",
+      "mappings",
+      "profiles",
+      "resolved-packages",
+      "compiler-contract-version"
+    ],
+    "excluded": [
+      "object-order",
+      "set-order",
+      "source-path",
+      "working-directory",
+      "timestamp",
+      "hostname",
+      "locale"
+    ]
+  },
+  "packages": [
+    {
+      "identity": "example/config",
+      "version": "1.0.0",
+      "contentDigest": "sha256:53b3b5fcb4734527996431df883653be2d4b2318827fe2d119856e1f81729312",
+      "sourceIdentity": "ix://example/config/source/typespec",
+      "dependencies": []
+    }
+  ],
+  "nativeQualification": {
+    "state": "unavailable",
+    "reason": "typed-model-adapter-not-supplied"
+  }
+}

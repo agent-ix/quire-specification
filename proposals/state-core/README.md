@@ -1,8 +1,10 @@
 # Native state core: proposed interface packet
 
 Status: **proposed, private review, not an accepted standard or implementation**.
-No public license is applied by this packet. All examples are newly authored
-synthetic data; no application specification or third-party grammar is copied.
+Standard-wide prose/reusable-artifact terms remain unsettled. Mirrored native
+implementation fixtures retain the grants in their rights records. All examples
+are newly authored synthetic data; no application specification or third-party
+grammar is copied.
 
 Read [the profile](profile.md), [the shared boundary](boundary.md), and the
 [fixture expectations](fixtures/README.md) together. These files are intended

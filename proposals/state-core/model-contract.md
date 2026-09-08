@@ -1,6 +1,6 @@
 # Shared model and artifact references — FS02 review amendment
 
-Status: proposed interface contract, `agent-a-fs02/1-draft`. This amendment
+Status: proposed interface contract, `agent-a-fs02/2-draft`. This amendment
 resolves A's proposed field meanings for B/C review. It does not register a wire
 schema, complete FS02/FS03/FS05, or supply the missing #36/#54 implementation.
 Private artifact terms remain as recorded in LICENSE-DECISION.md.
@@ -35,8 +35,8 @@ This is the proposed shared seam, not an imposed replacement for B's plan/result
 
 | Field | Meaning |
 |---|---|
-| `refVersion` | Exact shared-reference wire identifier/version; proposed `ix.artifact-ref/1-draft`. Unknown versions refuse. |
-| `kind` | Explicit artifact kind; source, model-package, linked-package, executable-projection, property, binding, snapshot, invocation, generated-artifact or run-artifact. No implicit conversion between kinds. |
+| `refVersion` | Exact shared-reference wire identifier/version; proposed `ix.artifact-ref/2-draft`. Unknown versions refuse. |
+| `kind` | Explicit artifact kind; source, model-package, linked-package, executable-projection, property, binding, snapshot, invocation, generated-artifact, run-artifact, environment, model-manifest, model-lock or dependency-closure. No implicit conversion between kinds. |
 | `authority` | Explicit issuer namespace accepted by the consumer's declared authority map. A matching URI host or repository name does not confer this authority. |
 | `identity` | Stable identity within that authority and artifact kind. Exact Unicode scalar sequence; no case folding or Unicode normalization. |
 | `revision` | `{namespace, value}` with nonempty opaque strings. Numeric domain revisions remain explicit values in their own namespace. |
@@ -171,7 +171,7 @@ controls for each refusal row. Current parser/source and fixture-digest checks
 are useful inputs, not substitutes for those tests. FS03 inference/evaluation and
 FS05 canonicalization/migration vectors remain separate owned requirements.
 
-Inspected sources: Filament local `65ea7fa`, including
+Inspected current sources: Filament `3b75e01`, including
 `docs/semantic-data-system/contracts-v1.md`,
 `schema/semantic/v1/package-manifest.schema.json`, `package-lock.schema.json`,
 `src/compiler/packages/lock.mjs`, `crates/semantic-ir/src/lib.rs` and
@@ -183,3 +183,43 @@ Concrete serialized expectations are in [reference-cases.json](fixtures/referenc
 an actual digest-bound source/profile pair, feature-set reorder equivalence and
 one-axis refusal controls. These vectors do not yet represent independent
 consumer execution.
+
+
+## Current kernel package qualification
+
+At Filament `3b75e01`, `packages/semantic-kernel/bundle.json` declares generation
+of a semantic-core schema kernel, with publication gate not taken. Its provenance
+says `published: false`; the checked-in generated TypeScript package and schema
+index do not establish the planned Rust/Python targets or a domain type environment.
+`losses.json` explicitly records `DefaultDecl.value` narrowed from any JSON value
+to an object and required-but-possibly-empty `OperationDecl.params` collapsed to
+optional presence. These losses must remain visible and cannot qualify lossless
+native model binding. This package is not #36's domain extraction or #54's typed
+model adapter. The TypeSpec frontend, manifest/lock logic, shared schemas and Rust
+semantic-IR reader are unchanged between the earlier inspected `65ea7fa` and
+`3b75e01`; A's new producer reproduction uses the actual current pinned checkout.
+
+C's independent review accepted the corrected operation reference baseline at
+`693e5c4`. The broader production reference seam remains in review. B's existing
+provisional reader must explicitly adopt the new wrapper version and structured
+revision and compare requiredFeatures as a duplicate-free set. A does not change
+B's reader or silently treat its older exact-array comparison as agreement.
+
+
+The role amendment is `agent-a-fs02/2-draft` / `ix.artifact-ref/2-draft` because
+its closed artifact-kind set now admits environment, model-manifest, model-lock
+and dependency-closure. The earlier `reference-cases.json` remains byte-stable
+at 1-draft. New `role-compositions.json` demonstrates the complete role graph;
+`reference-migrations.json` explicitly relates common-kind records and refuses
+implicit conversion. B must select the new version deliberately. New kinds
+have no representation in the earlier closed set.
+
+The composition packet includes an actually generated TypeSpec model, manifest
+and lock from Filament 3b75e01. Fresh and selected-lock builds produce identical
+IR bytes; a stale lock refuses with no output/repair. The model is still an
+unqualified input to #54. Existing operation fixtures retain their original
+synthetic declaration IDs, which differ from the producer's actual field and
+operation IDs; no slash/hyphen normalization or silent adoption is permitted.
+Property compositions retain authored identity plus exact source regions and
+positive numeric IR revision mappings. Run/native-output/environment examples
+illustrate reference placement without defining B's portable runner/result schema.

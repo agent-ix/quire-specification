@@ -100,3 +100,20 @@ points to the actual private candidate `../profile.md` digest; it claims no
 canonical semantic identity or bound model. Positive/adverse mutations are
 review expectations for B/C's independent consumers. The older operation/source
 wrapper versions are preserved; no implicit version conversion is performed.
+
+`role-compositions.json` extends the shared-reference review with property-to-
+source-region, actual model/manifest/lock/closure, snapshot/invocation/frame,
+and run/environment/native-artifact compositions. Its ArtifactRef version is
+2-draft, explicitly admitting the four new artifact kinds. The older 1-draft
+reference cases retain their bytes; `reference-migrations.json` makes conversion
+conditional on an accepted mapping. Neither version is registered production wire.
+
+The mirrored model files were produced by the existing Filament TypeSpec frontend
+at 3b75e01, not hand-written as compiled IR. The native artifact is actual CLI
+parse output. The run receipt has a unique observed run identity. Environment
+and portable-result structure remain B-owned and unqualified; model/source/frame
+linking remains unavailable. Old synthetic operation/field IDs differ from the
+new producer IDs and cannot be silently adopted. See compositions/model/RIGHTS.md.
+The mirrored native source/output grants are in compositions/RIGHTS.md. The CLI
+source revision remains the exact opaque `fixture:1` label under an explicit
+CLI-label namespace; it is not silently converted into a numeric IR revision.
