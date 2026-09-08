@@ -154,3 +154,30 @@ The packet checks establish fixture integrity and precise expectations only.
 
 Reproducible fixture checks are in the fixture README. No claim is made that
 the source parsed, linked, evaluated or produced the expected diagnostic cases.
+
+## Operation-source fixture follow-up
+
+The next review pass found that the original concrete subject covered only a
+current-state invariant. Added two operation subjects (`CanAttemptUpdate` pre
+and `VersionUnchanged` post), exact whole-clause and expression digests/spans,
+one original semantic-core OperationDecl example, and seven invocation cases.
+The existing current subject now also carries its clause-region digest/span.
+
+The cases distinguish an allowed change that violates the postcondition from a
+forbidden frame change, mismatched invocation, missing pre observation, deleted
+post context and incorrect creation inventory. Three separately identified
+synthetic frame bindings prevent a test caller from implicitly redefining one
+operation's accepted frame. They remain proposed binding inputs, not linked
+model authority or live runtime capability.
+
+Checks run on this revision: nine fixture file checksums; three source subjects
+and six region digest/span/coordinate checks; two FieldDecl and one OperationDecl
+examples against existing semantic-core schemas; seven invocation references
+against their three declared frame bindings; six local Markdown links; and
+`git diff --check`. No parser/linker/evaluator was executed.
+
+Live PR/FS01/FS02/E01/E04/CO01 inspection still showed no owner profile/license
+decision or B boundary response when this follow-up began. A generic goal
+continuation is not that decision. This pass made concrete fixture progress;
+LC01–LC05 and the full assignment remain uncompleted and dependent gates stay
+open. C's confirmed-in-principle ownership split is preserved.

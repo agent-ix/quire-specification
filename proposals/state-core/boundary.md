@@ -101,7 +101,8 @@ related declaration loci, and the original obligation identity. Proposed codes:
 `unknown_required_feature`, `missing_import`, `ambiguous_declaration`,
 `stale_dependency`, `foreign_reference`, `ill_typed`, `unbounded_domain`,
 `undefined_expression`, `invalid_source_map`, `duplicate_object`,
-`dangling_reference`, `wrong_snapshot`, `incomplete_population`,
+`dangling_reference`, `wrong_snapshot`, `frame_violation`,
+`population_delta_mismatch`, `incomplete_population`,
 `unavailable_observation`, `resource_exhausted` and `cancelled`.
 
 Invalid syntax/input and unsupported capability refuse a requested operation;
@@ -110,3 +111,17 @@ produces a logical counterexample. Healthy/violating values exist only after
 input validation and completed evaluation. This is the language producer's
 semantic boundary; shared execution/truth/activation/participation/adequacy
 envelopes are supplied by the verification owner.
+
+Operation fixtures bind an identified frame contract separately from the actual
+pre/post populations. A caller cannot permit its own extra changes by replacing
+the frame at run time. The selected frame identity is a derivation/input binding
+for evidence freshness; changing it cannot reuse a previous result silently.
+
+Validate known structural, identity and invocation errors before predicate
+evaluation. If a required observation is unavailable, report incompleteness
+without comparing unknown object deltas or fabricating frame violations. For
+complete snapshots, verify reference closure and creation/deletion inventories,
+then the selected frame and context availability. Evaluate the predicate only
+after these checks succeed. If several known defects exist, retain deterministic
+diagnostics ordered by phase, source locus and code; no defect yields a Boolean
+result. The mutation cases isolate individual defects where practical.

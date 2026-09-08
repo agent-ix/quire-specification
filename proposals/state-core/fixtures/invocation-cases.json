@@ -1,0 +1,413 @@
+{
+  "status": "manually-authored-expectations-not-evaluator-output",
+  "readiness": "model-and-operation-binding-unavailable",
+  "cases": [
+    {
+      "id": "healthy-unchanged-version",
+      "subject": {
+        "package": "example/config",
+        "requirement": "OP-001",
+        "revision": 1,
+        "clause": "VersionUnchanged"
+      },
+      "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
+      "invocation": "attempt-1",
+      "self": "version-1",
+      "parameters": {},
+      "result": true,
+      "pre": {
+        "id": "snapshot-pre",
+        "universe": "example/config-history",
+        "observation": "pre",
+        "invocation": "attempt-1",
+        "complete": true,
+        "objects": [
+          {
+            "id": "version-1",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 4,
+              "parent": null
+            }
+          }
+        ]
+      },
+      "post": {
+        "id": "snapshot-post",
+        "universe": "example/config-history",
+        "observation": "post",
+        "invocation": "attempt-1",
+        "complete": true,
+        "objects": [
+          {
+            "id": "version-1",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 4,
+              "parent": null
+            }
+          }
+        ]
+      },
+      "created": [],
+      "deleted": [],
+      "expected": {
+        "execution": "completed",
+        "value": true
+      },
+      "frameBinding": "ix://example/config/binding/allow-version-write"
+    },
+    {
+      "id": "violating-changed-version",
+      "subject": {
+        "package": "example/config",
+        "requirement": "OP-001",
+        "revision": 1,
+        "clause": "VersionUnchanged"
+      },
+      "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
+      "invocation": "attempt-1",
+      "self": "version-1",
+      "parameters": {},
+      "result": true,
+      "pre": {
+        "id": "snapshot-pre",
+        "universe": "example/config-history",
+        "observation": "pre",
+        "invocation": "attempt-1",
+        "complete": true,
+        "objects": [
+          {
+            "id": "version-1",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 4,
+              "parent": null
+            }
+          }
+        ]
+      },
+      "post": {
+        "id": "snapshot-post",
+        "universe": "example/config-history",
+        "observation": "post",
+        "invocation": "attempt-1",
+        "complete": true,
+        "objects": [
+          {
+            "id": "version-1",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 5,
+              "parent": null
+            }
+          }
+        ]
+      },
+      "created": [],
+      "deleted": [],
+      "expected": {
+        "execution": "completed",
+        "value": false
+      },
+      "frameBinding": "ix://example/config/binding/allow-version-write"
+    },
+    {
+      "id": "wrong-invocation",
+      "subject": {
+        "package": "example/config",
+        "requirement": "OP-001",
+        "revision": 1,
+        "clause": "VersionUnchanged"
+      },
+      "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
+      "invocation": "attempt-1",
+      "self": "version-1",
+      "parameters": {},
+      "result": true,
+      "pre": {
+        "id": "snapshot-pre",
+        "universe": "example/config-history",
+        "observation": "pre",
+        "invocation": "attempt-1",
+        "complete": true,
+        "objects": [
+          {
+            "id": "version-1",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 4,
+              "parent": null
+            }
+          }
+        ]
+      },
+      "post": {
+        "id": "snapshot-post",
+        "universe": "example/config-history",
+        "observation": "post",
+        "invocation": "attempt-2",
+        "complete": true,
+        "objects": [
+          {
+            "id": "version-1",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 4,
+              "parent": null
+            }
+          }
+        ]
+      },
+      "created": [],
+      "deleted": [],
+      "expected": {
+        "execution": "refused",
+        "diagnostic": "wrong_snapshot",
+        "logicalValue": "absent"
+      },
+      "frameBinding": "ix://example/config/binding/allow-version-write"
+    },
+    {
+      "id": "missing-pre-observation",
+      "subject": {
+        "package": "example/config",
+        "requirement": "OP-001",
+        "revision": 1,
+        "clause": "VersionUnchanged"
+      },
+      "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
+      "invocation": "attempt-1",
+      "self": "version-1",
+      "parameters": {},
+      "result": true,
+      "pre": {
+        "availability": "unavailable",
+        "reason": "pre-snapshot-not-captured"
+      },
+      "post": {
+        "id": "snapshot-post",
+        "universe": "example/config-history",
+        "observation": "post",
+        "invocation": "attempt-1",
+        "complete": true,
+        "objects": [
+          {
+            "id": "version-1",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 4,
+              "parent": null
+            }
+          }
+        ]
+      },
+      "created": [],
+      "deleted": [],
+      "expected": {
+        "execution": "incomplete",
+        "diagnostic": "unavailable_observation",
+        "logicalValue": "absent"
+      },
+      "frameBinding": "ix://example/config/binding/allow-version-write"
+    },
+    {
+      "id": "forbidden-frame-change",
+      "subject": {
+        "package": "example/config",
+        "requirement": "OP-001",
+        "revision": 1,
+        "clause": "VersionUnchanged"
+      },
+      "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
+      "invocation": "attempt-1",
+      "self": "version-1",
+      "parameters": {},
+      "result": true,
+      "pre": {
+        "id": "snapshot-pre",
+        "universe": "example/config-history",
+        "observation": "pre",
+        "invocation": "attempt-1",
+        "complete": true,
+        "objects": [
+          {
+            "id": "version-1",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 4,
+              "parent": null
+            }
+          }
+        ]
+      },
+      "post": {
+        "id": "snapshot-post",
+        "universe": "example/config-history",
+        "observation": "post",
+        "invocation": "attempt-1",
+        "complete": true,
+        "objects": [
+          {
+            "id": "version-1",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 5,
+              "parent": null
+            }
+          }
+        ]
+      },
+      "created": [],
+      "deleted": [],
+      "expected": {
+        "execution": "refused",
+        "diagnostic": "frame_violation",
+        "logicalValue": "absent"
+      },
+      "frameBinding": "ix://example/config/binding/preserve-all"
+    },
+    {
+      "id": "deleted-self-post-context",
+      "subject": {
+        "package": "example/config",
+        "requirement": "OP-001",
+        "revision": 1,
+        "clause": "VersionUnchanged"
+      },
+      "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
+      "invocation": "attempt-1",
+      "self": "version-1",
+      "parameters": {},
+      "result": true,
+      "pre": {
+        "id": "snapshot-pre",
+        "universe": "example/config-history",
+        "observation": "pre",
+        "invocation": "attempt-1",
+        "complete": true,
+        "objects": [
+          {
+            "id": "version-1",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 4,
+              "parent": null
+            }
+          }
+        ]
+      },
+      "post": {
+        "id": "snapshot-post",
+        "universe": "example/config-history",
+        "observation": "post",
+        "invocation": "attempt-1",
+        "complete": true,
+        "objects": []
+      },
+      "created": [],
+      "deleted": [
+        "version-1"
+      ],
+      "expected": {
+        "execution": "refused",
+        "diagnostic": "wrong_snapshot",
+        "logicalValue": "absent"
+      },
+      "frameBinding": "ix://example/config/binding/allow-self-deletion"
+    },
+    {
+      "id": "incorrect-creation-inventory",
+      "subject": {
+        "package": "example/config",
+        "requirement": "OP-001",
+        "revision": 1,
+        "clause": "VersionUnchanged"
+      },
+      "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
+      "invocation": "attempt-1",
+      "self": "version-1",
+      "parameters": {},
+      "result": true,
+      "pre": {
+        "id": "snapshot-pre",
+        "universe": "example/config-history",
+        "observation": "pre",
+        "invocation": "attempt-1",
+        "complete": true,
+        "objects": [
+          {
+            "id": "version-1",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 4,
+              "parent": null
+            }
+          }
+        ]
+      },
+      "post": {
+        "id": "snapshot-post",
+        "universe": "example/config-history",
+        "observation": "post",
+        "invocation": "attempt-1",
+        "complete": true,
+        "objects": [
+          {
+            "id": "version-1",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 4,
+              "parent": null
+            }
+          }
+        ]
+      },
+      "created": [
+        "invented"
+      ],
+      "deleted": [],
+      "expected": {
+        "execution": "refused",
+        "diagnostic": "population_delta_mismatch",
+        "logicalValue": "absent"
+      },
+      "frameBinding": "ix://example/config/binding/allow-version-write"
+    }
+  ],
+  "frameBindings": [
+    {
+      "identity": "ix://example/config/binding/allow-version-write",
+      "state": "proposed-not-linked",
+      "frame": {
+        "allowedChangedFields": [
+          "ix://example/config/field/ConfigVersion/versionNumber"
+        ],
+        "allowedCreatedTypes": [],
+        "allowedDeletedTypes": []
+      }
+    },
+    {
+      "identity": "ix://example/config/binding/preserve-all",
+      "state": "proposed-not-linked",
+      "frame": {
+        "allowedChangedFields": [],
+        "allowedCreatedTypes": [],
+        "allowedDeletedTypes": []
+      }
+    },
+    {
+      "identity": "ix://example/config/binding/allow-self-deletion",
+      "state": "proposed-not-linked",
+      "frame": {
+        "allowedChangedFields": [
+          "ix://example/config/field/ConfigVersion/versionNumber"
+        ],
+        "allowedCreatedTypes": [],
+        "allowedDeletedTypes": [
+          "ix://example/config/type/ConfigVersion"
+        ]
+      }
+    }
+  ]
+}

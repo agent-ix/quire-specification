@@ -14,6 +14,19 @@ values bind the source and model-expectation file bytes; the expression span
 selects the original body bytes after a non-ASCII comment. It carries no
 method/plan/result envelope and no fabricated linked/projection digest.
 
+`operation-subjects.json` supplies pre/post subjects for `version-update.native`,
+including exact clause and expression digests/spans and a stable operation ID.
+`invocation-cases.json` pairs those subjects with immutable snapshots, invocation
+identities, creation/deletion inventories and proposed frame bindings. A changed
+version number is permitted by the frame so its adverse case actually violates
+the postcondition; it cannot be accidentally refused by an earlier frame check.
+The wrong-invocation, missing-pre, forbidden-frame and deleted-object controls
+have distinct expected failures. Operation/model linking remains unavailable.
+The invocation fixture declares separate named frame expectations; cases select
+one by identity. A runtime caller is not authorized to redefine an accepted
+operation frame. These alternate synthetic bindings still require their own
+model/operation review and differ in evidence identity.
+
 `state-cases.json` supplies original synthetic input/expected-value cases for
 the eventual evaluator. The healthy and violating expectations are manually
 specified, independent of any evaluator. These inputs do not bypass the unresolved
@@ -46,6 +59,13 @@ assert 'linkedPackageDigest' not in s and 'projectionDigest' not in s
 print('fixture digests and source span verified; no compiler executed')
 PY
 ```
+
+The same source checks apply to each `subjects` entry in
+`operation-subjects.json`. Each source also supplies `clauseSpan`/`clauseDigest`
+and `expressionSpan`/`expressionDigest`; both digests cover their exact original
+byte ranges. The clause region starts at its introducer and ends after its
+closing brace, excluding the trailing line ending. The expression region
+excludes surrounding indentation and line endings.
 
 The checksum command verifies this file set only. It does not validate language
 syntax, imported model semantics, canonical identity, logical outcomes or the

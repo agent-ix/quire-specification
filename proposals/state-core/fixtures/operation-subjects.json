@@ -1,0 +1,159 @@
+{
+  "status": "proposed-review-fixtures",
+  "subjects": [
+    {
+      "status": "proposed-review-fixture",
+      "fixtureVersion": "agent-a-source-subject/0-draft",
+      "authored": {
+        "package": "example/config",
+        "requirement": "OP-001",
+        "revision": 1,
+        "clause": "CanAttemptUpdate"
+      },
+      "language": {
+        "tag": "ix:native",
+        "edition": "0-draft"
+      },
+      "profile": {
+        "identity": "state-finite",
+        "version": "0-draft",
+        "requiredFeatures": [
+          "bounded-integer",
+          "operation-snapshots"
+        ]
+      },
+      "source": {
+        "identity": "ix://example/config/source/version-update",
+        "revision": {
+          "namespace": "synthetic-source-revision",
+          "value": "1"
+        },
+        "irRevisionMapping": {
+          "document": "VersionUpdate",
+          "revision": 1
+        },
+        "path": "version-update.native",
+        "digest": "sha256:3863a233230fd289a39031c067094850598639bae2824e735aac0bda9d24134f",
+        "spanConvention": "utf8-half-open-scalar-column/0-draft",
+        "expressionSpan": {
+          "startByte": 273,
+          "startLine": 6,
+          "startColumn": 3,
+          "endByte": 298,
+          "endLine": 6,
+          "endColumn": 28
+        },
+        "expectedExpression": "self.versionNumber < 1000",
+        "clauseSpan": {
+          "startByte": 213,
+          "startLine": 5,
+          "startColumn": 1,
+          "endByte": 300,
+          "endLine": 7,
+          "endColumn": 2
+        },
+        "clauseDigest": "sha256:7210ab57144769193b9b144341803b8d20421e59902d66ba9a4d34ce887cc4c1",
+        "expressionDigest": "sha256:83283e38806a0570a68ede2f5cb542bd492887f105fa9e8e97f97e87f2cbf397"
+      },
+      "anchor": {
+        "kind": "precondition",
+        "observation": "pre",
+        "contextType": "ix://example/config/type/ConfigVersion",
+        "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate"
+      },
+      "modelBinding": {
+        "state": "unavailable",
+        "reason": "reviewed-compiled-model-package-required",
+        "package": "example/config",
+        "version": "1.0.0"
+      },
+      "reviewArtifacts": [
+        {
+          "path": "version-update.native",
+          "digest": "sha256:3863a233230fd289a39031c067094850598639bae2824e735aac0bda9d24134f"
+        },
+        {
+          "path": "model-expectations.json",
+          "digest": "sha256:afd880e08634cd2d9f52cfb55c34a53f66c6df162da0c8d166046143bf7e9c96"
+        }
+      ]
+    },
+    {
+      "status": "proposed-review-fixture",
+      "fixtureVersion": "agent-a-source-subject/0-draft",
+      "authored": {
+        "package": "example/config",
+        "requirement": "OP-001",
+        "revision": 1,
+        "clause": "VersionUnchanged"
+      },
+      "language": {
+        "tag": "ix:native",
+        "edition": "0-draft"
+      },
+      "profile": {
+        "identity": "state-finite",
+        "version": "0-draft",
+        "requiredFeatures": [
+          "bounded-integer",
+          "operation-snapshots"
+        ]
+      },
+      "source": {
+        "identity": "ix://example/config/source/version-update",
+        "revision": {
+          "namespace": "synthetic-source-revision",
+          "value": "1"
+        },
+        "irRevisionMapping": {
+          "document": "VersionUpdate",
+          "revision": 1
+        },
+        "path": "version-update.native",
+        "digest": "sha256:3863a233230fd289a39031c067094850598639bae2824e735aac0bda9d24134f",
+        "spanConvention": "utf8-half-open-scalar-column/0-draft",
+        "expressionSpan": {
+          "startByte": 362,
+          "startLine": 9,
+          "startColumn": 3,
+          "endByte": 406,
+          "endLine": 9,
+          "endColumn": 47
+        },
+        "expectedExpression": "self.versionNumber = pre(self.versionNumber)",
+        "clauseSpan": {
+          "startByte": 301,
+          "startLine": 8,
+          "startColumn": 1,
+          "endByte": 408,
+          "endLine": 10,
+          "endColumn": 2
+        },
+        "clauseDigest": "sha256:c7621f4d1a0c7b938bf1cbc94d6959f1a77f0c2cc582981164626bd09b53b564",
+        "expressionDigest": "sha256:cbd1e0c7477a186c6277d1eff580993ec558efefcd84179de734247578965269"
+      },
+      "anchor": {
+        "kind": "postcondition",
+        "observation": "post",
+        "contextType": "ix://example/config/type/ConfigVersion",
+        "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate"
+      },
+      "modelBinding": {
+        "state": "unavailable",
+        "reason": "reviewed-compiled-model-package-required",
+        "package": "example/config",
+        "version": "1.0.0"
+      },
+      "reviewArtifacts": [
+        {
+          "path": "version-update.native",
+          "digest": "sha256:3863a233230fd289a39031c067094850598639bae2824e735aac0bda9d24134f"
+        },
+        {
+          "path": "model-expectations.json",
+          "digest": "sha256:afd880e08634cd2d9f52cfb55c34a53f66c6df162da0c8d166046143bf7e9c96"
+        }
+      ]
+    }
+  ]
+}
