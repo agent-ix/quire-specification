@@ -1,0 +1,148 @@
+{
+  "fixtureVersion": "agent-a-reference-cases/1-draft",
+  "status": "proposed-serialized-interface-expectations-not-production-reader-output",
+  "readiness": "model-binding-unavailable",
+  "sourceLocator": "parent-order.native",
+  "profileDefinitionLocator": "../profile.md",
+  "base": {
+    "artifact": {
+      "refVersion": "ix.artifact-ref/1-draft",
+      "kind": "source",
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/source/parent-order",
+      "revision": {
+        "namespace": "synthetic-source-revision",
+        "value": "1"
+      },
+      "digest": "sha256:6030625958c37eec713ba1b38dde5778d1b6a8d7713d8ceca1efd8942c68fc9c",
+      "wire": {
+        "identity": "ix.native.source",
+        "version": "0-draft"
+      }
+    },
+    "language": {
+      "identity": "ix:native",
+      "edition": "0-draft"
+    },
+    "semanticProfile": {
+      "identity": "state-finite",
+      "version": "0-draft",
+      "definitionDigest": "sha256:8bc68a3c7e46d26c7191dfbb662d4d63070af9fedc9ce985fb1885f7efe29429"
+    },
+    "requiredFeatures": [
+      "bounded-integer",
+      "guarded-implication",
+      "optional-reference"
+    ],
+    "canonicalIdentity": null
+  },
+  "cases": [
+    {
+      "id": "same-exact-reference",
+      "mutation": null,
+      "expected": "same_semantic_ref"
+    },
+    {
+      "id": "feature-set-reordered",
+      "mutation": {
+        "path": "requiredFeatures",
+        "value": [
+          "optional-reference",
+          "guarded-implication",
+          "bounded-integer"
+        ]
+      },
+      "expected": "same_semantic_ref"
+    },
+    {
+      "id": "unknown-reference-version",
+      "mutation": {
+        "path": "artifact.refVersion",
+        "value": "ix.artifact-ref/999"
+      },
+      "expected": "unsupported_version"
+    },
+    {
+      "id": "unknown-wire-version",
+      "mutation": {
+        "path": "artifact.wire.version",
+        "value": "999"
+      },
+      "expected": "unsupported_version"
+    },
+    {
+      "id": "unknown-semantic-profile",
+      "mutation": {
+        "path": "semanticProfile.version",
+        "value": "999"
+      },
+      "expected": "unsupported_version"
+    },
+    {
+      "id": "unknown-required-feature",
+      "mutation": {
+        "path": "requiredFeatures",
+        "value": [
+          "bounded-integer",
+          "guarded-implication",
+          "optional-reference",
+          "unbounded-recursion"
+        ]
+      },
+      "expected": "unknown_required_feature"
+    },
+    {
+      "id": "foreign-authority",
+      "mutation": {
+        "path": "artifact.authority",
+        "value": "unconfigured-authority"
+      },
+      "expected": "foreign_reference"
+    },
+    {
+      "id": "changed-source-revision",
+      "mutation": {
+        "path": "artifact.revision.value",
+        "value": "2"
+      },
+      "expected": "identity_mismatch"
+    },
+    {
+      "id": "wrong-artifact-kind",
+      "mutation": {
+        "path": "artifact.kind",
+        "value": "snapshot"
+      },
+      "expected": "identity_mismatch"
+    },
+    {
+      "id": "altered-byte-digest",
+      "mutation": {
+        "path": "artifact.digest",
+        "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "expected": "digest_mismatch"
+    },
+    {
+      "id": "duplicate-required-feature",
+      "mutation": {
+        "path": "requiredFeatures",
+        "value": [
+          "bounded-integer",
+          "bounded-integer",
+          "guarded-implication",
+          "optional-reference"
+        ]
+      },
+      "expected": "duplicate_identity"
+    },
+    {
+      "id": "changed-language-edition",
+      "mutation": {
+        "path": "language.edition",
+        "value": "future"
+      },
+      "expected": "unsupported_version"
+    }
+  ]
+}

@@ -93,3 +93,10 @@ not identity. Reusing an authority/identity/revision with changed content must
 refuse even if the new transport digest is internally correct. These are review
 profiles, not registered production wire contracts. Model/operation binding
 remains unavailable. The source-subject fixture version stays unchanged.
+
+`reference-cases.json` supplies the FS02 amendment's separate ArtifactRef and
+SemanticRef around the existing exact source fixture. Its semantic profile
+points to the actual private candidate `../profile.md` digest; it claims no
+canonical semantic identity or bound model. Positive/adverse mutations are
+review expectations for B/C's independent consumers. The older operation/source
+wrapper versions are preserved; no implicit version conversion is performed.
