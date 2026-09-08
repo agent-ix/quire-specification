@@ -1,0 +1,158 @@
+{
+  "status": "proposed-mutation-expectations-not-observed-diagnostics",
+  "note": "Source edits other than stale-source require refreshed source digests before the intended parser/typechecker phase. Model mutations require actual linked input fixtures when that contract is available.",
+  "cases": [
+    {
+      "id": "unknown-language-profile",
+      "artifact": "subject.json",
+      "mutation": "set profile.version to 999",
+      "expectedDiagnostic": "unknown_profile",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "unknown-wire",
+      "artifact": "subject.json",
+      "mutation": "set fixtureVersion to unsupported/999",
+      "expectedDiagnostic": "unknown_wire",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "unknown-feature",
+      "artifact": "subject.json",
+      "mutation": "append arbitrary-required-feature to profile.requiredFeatures",
+      "expectedDiagnostic": "unknown_required_feature",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "stale-source",
+      "artifact": "parent-order.native",
+      "mutation": "change the final comparison < to <= without changing source.digest",
+      "expectedDiagnostic": "stale_dependency",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "bad-byte-span",
+      "artifact": "subject.json",
+      "mutation": "set source.expressionSpan.startByte to 1 byte beyond EOF",
+      "expectedDiagnostic": "invalid_source_map",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "split-unicode",
+      "artifact": "subject.json",
+      "mutation": "set source.expressionSpan.startByte to the continuation byte of é",
+      "expectedDiagnostic": "invalid_source_map",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "line-byte-mismatch",
+      "artifact": "subject.json",
+      "mutation": "increment source.expressionSpan.startLine without changing bytes",
+      "expectedDiagnostic": "invalid_source_map",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "missing-model",
+      "artifact": "subject.json",
+      "mutation": "request linking with current unavailable modelBinding",
+      "expectedDiagnostic": "missing_import",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "foreign-import",
+      "artifact": "model-expectations.json",
+      "mutation": "set parent target to ix://foreign/config/type/Hidden without declared import",
+      "expectedDiagnostic": "foreign_reference",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "ambiguous-export",
+      "artifact": "model-expectations.json",
+      "mutation": "supply two exported type identities under ConfigVersion",
+      "expectedDiagnostic": "ambiguous_declaration",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "unbounded-integer",
+      "artifact": "model-expectations.json",
+      "mutation": "remove versionNumber max constraint",
+      "expectedDiagnostic": "unbounded_domain",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "unsupported-collect",
+      "artifact": "parent-order.native",
+      "mutation": "replace expression with collect(self.children)",
+      "expectedDiagnostic": "unsupported_construct",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "malformed-expression",
+      "artifact": "parent-order.native",
+      "mutation": "remove the final closing brace",
+      "expectedDiagnostic": "invalid_syntax",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "undefined-option",
+      "artifact": "parent-order.native",
+      "mutation": "remove the present guard while retaining value(self.parent)",
+      "expectedDiagnostic": "undefined_expression",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "wrong-invocation",
+      "artifact": "future operation snapshot",
+      "mutation": "supply pre and post under different invocation IDs",
+      "expectedDiagnostic": "wrong_snapshot",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "deleted-object",
+      "artifact": "future operation snapshot",
+      "mutation": "dereference a removed object in post",
+      "expectedDiagnostic": "dangling_reference",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "exhausted-evaluation",
+      "artifact": "future evaluator request",
+      "mutation": "provide zero node fuel for a nonempty expression",
+      "expectedDiagnostic": "resource_exhausted",
+      "expectedLogicalValue": "absent"
+    },
+    {
+      "id": "unavailable-observation",
+      "artifact": "future snapshot",
+      "mutation": "mark a required field unavailable",
+      "expectedDiagnostic": "unavailable_observation",
+      "expectedLogicalValue": "absent"
+    }
+  ],
+  "independentArithmeticExpectations": [
+    {
+      "expression": "-7 div 3",
+      "value": -2
+    },
+    {
+      "expression": "-7 rem 3",
+      "value": -1
+    },
+    {
+      "expression": "7 rem -3",
+      "value": 1
+    }
+  ],
+  "deferredCollectionExpectation": {
+    "input": [
+      1,
+      1
+    ],
+    "requestedOperation": "collect identity",
+    "resultMultiplicityIfLaterAdmitted": [
+      1,
+      1
+    ],
+    "currentDiagnostic": "unsupported_construct"
+  }
+}

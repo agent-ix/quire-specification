@@ -22,3 +22,11 @@ No duplicate evidence store, hidden normative dependency, or unqualified backend
 - [Private formalization board](https://github.com/orgs/agent-ix/projects/20)
 
 Read [license decision](LICENSE-DECISION.md) before adding code or normative artifacts. Publication requires a fresh review; do not flip private history public.
+
+## Proposed state-core packet
+
+[Native state-core proposal](proposals/state-core/README.md) contains draft
+grammar, identity/snapshot boundaries and serialized fixture expectations.
+[Agent A's review record](reviews/agent-a-fs01.md) records inspected evidence,
+owner decisions and remaining implementation gates. These are review artifacts,
+not an accepted profile or a working compiler.
