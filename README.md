@@ -33,4 +33,13 @@ exact skills, validation results and outstanding review work.
 grammar, identity/snapshot boundaries and serialized fixture expectations.
 [Agent A's review record](reviews/agent-a-fs01.md) records inspected evidence,
 owner decisions and remaining implementation gates. These are review artifacts,
-not an accepted profile or a working compiler.
+not a released standard or a working compiler.
+
+The owner adopted the FS02/FS03/FS05 proposal at e897f81 as the target for
+internal LC02 implementation on 2026-09-08. The
+[decision record](docs/internal-implementation-adoption.md) preserves its exact
+scope and the independent integration/publication gates.
+
+## Implementation language — owner directive
+
+Executable implementation, including production and qualification tools/tests, is Rust. New TypeScript choices require explicit owner approval; surface all other executable languages. Quoin remains in its current implementation for now: contain its spread through versioned structured interfaces, do not rewrite it wholesale. Filament changes are excluded. See AGENTS.md and the language gate on the owning issue. Normative prose/schema need not be executable Rust.
