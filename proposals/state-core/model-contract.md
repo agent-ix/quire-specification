@@ -56,8 +56,10 @@ This is the proposed shared seam, not an imposed replacement for B's plan/result
   domain's established canonicalizer. It never substitutes for `artifact.digest`.
 
 A semantic subject requires its profile; null does not mean “latest” or “default”.
-Feature omission means the empty declared feature set, not permission to ignore
-features encountered in the content. Unknown required features refuse.
+The selected closed FS05 candidate requires `requiredFeatures` explicitly;
+`[]` means the empty declared feature set. An omitted member refuses. This
+resolves the earlier draft's ambiguous omission wording without changing the
+existing fixture payloads. Unknown required features refuse.
 Profile definition digests bind locally available approved definitions; a
 consumer does not fetch definitions or trust arbitrary executable code implicitly.
 No canonical identity is invented for the current syntax-only parser.
