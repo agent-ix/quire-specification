@@ -24,12 +24,22 @@ or integration acceptance. Owner adoption is not a claim that those tasks ran.
 Compiler Plan-002 already resolved its native readiness findings and landed in
 language PR7 at 2be73504edff1224d6396da15edca3775905d37b.
 
-Current shared IR remains decc99a430a0894de489102dbab04e83d1fb804f. Its #54
-typed-model adapter and identity-bearing reference qualification are not yet
-supplied. Agent A owns native resolution/typechecking; C coordinates the
-existing model/extraction/backend adapters under their delivery owners. No
-second authoritative model environment or executable binder is authorized by
-this decision.
+At the initial adoption checkpoint, IR was decc99a and a new #54 typed-model
+adapter was believed to be required. **That prerequisite is superseded** by
+accepted IR ADR-0054, merged in PR61 at
+690bde7f2dc58662cf9ff0595c2c0e3b17107c6f with #54 closed on 2026-09-08.
+Filament owns archetype schemas and datatype generation, not formal semantics.
+A proceeds with native resolution/typechecking/lowering over the existing
+FR-013 DeclarationEnvironment, FR-019 Rust API and FR-023 executable binder.
+A concrete archetype projection is specified by its modeling-language owner
+only for a proof case that needs it. Object/reference and finite-bound gaps
+remain explicit case-specific work, not a universal reader prerequisite.
+
+The original FS02/FS03/FS05 bytes and judgments remain pinned historical inputs.
+Read ADR-0054 as the subsequent ownership correction; a structural artifact or
+generated Rust layout does not establish the required formal correspondence.
+Compiler FR-005 and IT-005 carry the corrected native boundary. No duplicate
+archetype authority or executable binder is authorized.
 
 Standard document/reusable-artifact terms and public promotion remain deferred.
 New compiler implementation retains AGPL-3.0-only, preserving existing grants.
