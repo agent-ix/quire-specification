@@ -45,11 +45,12 @@ changed, and these runs are not recorded as error-free validation.
 
 ## Review and contract status
 
-`/spec-review` is requested. Its required user selection of base, all, or a subset
-of analyses remains pending. No formal `SpecReview` document, completed review,
-human acceptance, formal TC coverage or test matrix is claimed by this record.
-The older files under `reviews/` are freeform historical records, not completed
-Quoin specification reviews.
+The owner selected base plus all seven Quoin analyses. The eight formal
+SpecReview artifacts are linked from [the base review](../spec/reviews/base.md).
+Reviews were performed on the pinned revision recorded in each artifact and
+remain conditional on their findings. Human acceptance, TC coverage and a test
+matrix are not implied. The optional gap-analysis semantic comparison was
+declined and was not run.
 
 Further dependent implementation waits for specification review and the required
 shared-contract acceptance. The initial profile bytes and existing fixture
@@ -71,11 +72,20 @@ FR-to-story relationships now use the catalog's `traces_to` verb. The installed
 catalog describes `implements` as interface/contract fulfillment, explicitly
 excluding requirement lineage. The requirements themselves retain their IDs.
 
-The common SpecReview authoring pack has been fetched once in preparation for
-the pending review selection. Its installed process manifest has SHA-256
+The common SpecReview authoring pack has been fetched once for the selected review set. Its installed process manifest has SHA-256
 `d08ce71c02ce871fed4c7fb5cea1af1feb5a0b1004f8458fd26deecc2aa7b720`.
 The archetype duplication is within that file: ADR/Plan/Review/SpecReview/Standard
 appear in both `archetypes` and `artifact_types`; no module-search environment
 override was present. `quire schema --module <process-module> SpecReview` still
 returns the required frontmatter schema and Summary/Findings assertions. This
 inspection does not establish an error-free registry or complete a review.
+
+## Review validation checkpoint
+
+The eight analysis reports were validated with the explicit repository scope.
+All 36 spec/review documents were grammar-clean. Quire still emitted the
+six installed-registry errors described above despite exit 0. Report bodies
+have the required Summary and nonempty Findings tables. No catalog files were
+changed. Raw coverage/advisor output and tool/module provenance are retained in
+spec/reviews/data; numeric-threshold advice is distinguished from reviewer
+method recommendations.
