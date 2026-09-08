@@ -3,7 +3,7 @@
   "subjects": [
     {
       "status": "proposed-review-fixture",
-      "fixtureVersion": "agent-a-source-subject/0-draft",
+      "fixtureVersion": "agent-a-source-subject/1-draft",
       "authored": {
         "package": "example/config",
         "requirement": "OP-001",
@@ -80,7 +80,7 @@
     },
     {
       "status": "proposed-review-fixture",
-      "fixtureVersion": "agent-a-source-subject/0-draft",
+      "fixtureVersion": "agent-a-source-subject/1-draft",
       "authored": {
         "package": "example/config",
         "requirement": "OP-001",

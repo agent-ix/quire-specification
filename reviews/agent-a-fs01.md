@@ -170,6 +170,11 @@ synthetic frame bindings prevent a test caller from implicitly redefining one
 operation's accepted frame. They remain proposed binding inputs, not linked
 model authority or live runtime capability.
 
+The expanded source fixture is versioned `agent-a-source-subject/1-draft` so
+strict consumers cannot mistake its new members for the prior `0-draft` shape.
+Source/profile editions are unchanged and old fixture bytes remain at their
+original commit. Shared production wire/profile freeze still requires B/C review.
+
 Checks run on this revision: nine fixture file checksums; three source subjects
 and six region digest/span/coordinate checks; two FieldDecl and one OperationDecl
 examples against existing semantic-core schemas; seven invocation references

@@ -67,6 +67,13 @@ byte ranges. The clause region starts at its introducer and ends after its
 closing brace, excluding the trailing line ending. The expression region
 excludes surrounding indentation and line endings.
 
+The expanded source subject uses fixture version `agent-a-source-subject/1-draft`.
+It adds clause-region and expression digests/spans to the earlier `0-draft`
+fixture. A consumer must explicitly support this version; neither version is
+frozen or registered. Source-language edition and semantic profile remain
+unchanged. Old fixture bytes and their identities stay associated with their
+original revision rather than being rewritten as current evidence.
+
 The checksum command verifies this file set only. It does not validate language
 syntax, imported model semantics, canonical identity, logical outcomes or the
 claimed diagnostic behavior. Full compiler integration acceptance still needs real producer,
