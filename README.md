@@ -25,6 +25,10 @@ Read [license decision](LICENSE-DECISION.md) before adding code or normative art
 
 ## Proposed state-core packet
 
+The [requirements index](spec/spec.md) covers FS01/FS02/FS03/FS05 through discrete
+Quoin catalog artifacts. [Authoring status](docs/spec-workflow.md) records the
+exact skills, validation results and outstanding review work.
+
 [Native state-core proposal](proposals/state-core/README.md) contains draft
 grammar, identity/snapshot boundaries and serialized fixture expectations.
 [Agent A's review record](reviews/agent-a-fs01.md) records inspected evidence,
