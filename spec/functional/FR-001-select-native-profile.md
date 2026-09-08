@@ -4,7 +4,7 @@ title: "Select an explicit native language profile"
 type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-001"
-    type: implements
+    type: traces_to
 ---
 # FR-001: Select an explicit native language profile
 

@@ -4,7 +4,7 @@ title: "Resolve domain declarations through one authority"
 type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-002"
-    type: implements
+    type: traces_to
 ---
 # FR-002: Resolve domain declarations through one authority
 

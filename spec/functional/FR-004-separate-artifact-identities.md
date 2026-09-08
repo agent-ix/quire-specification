@@ -4,7 +4,7 @@ title: "Preserve independent artifact identities"
 type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-002"
-    type: implements
+    type: traces_to
 ---
 # FR-004: Preserve independent artifact identities
 

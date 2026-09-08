@@ -4,7 +4,7 @@ title: "Evaluate finite parent reachability"
 type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-003"
-    type: implements
+    type: traces_to
 ---
 # FR-010: Evaluate finite parent reachability
 

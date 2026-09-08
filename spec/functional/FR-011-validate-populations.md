@@ -4,7 +4,7 @@ title: "Validate complete immutable runtime populations"
 type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-003"
-    type: implements
+    type: traces_to
 ---
 # FR-011: Validate complete immutable runtime populations
 

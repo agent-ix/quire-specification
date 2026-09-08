@@ -4,7 +4,7 @@ title: "Compare objects by declared identity"
 type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-003"
-    type: implements
+    type: traces_to
 ---
 # FR-009: Compare objects by declared identity
 

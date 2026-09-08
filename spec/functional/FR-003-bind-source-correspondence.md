@@ -4,7 +4,7 @@ title: "Bind clause locations to exact source bytes"
 type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-002"
-    type: implements
+    type: traces_to
 ---
 # FR-003: Bind clause locations to exact source bytes
 

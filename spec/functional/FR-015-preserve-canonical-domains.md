@@ -4,7 +4,7 @@ title: "Preserve established canonical identity domains"
 type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-004"
-    type: implements
+    type: traces_to
 ---
 # FR-015: Preserve established canonical identity domains
 

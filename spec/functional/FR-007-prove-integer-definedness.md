@@ -4,7 +4,7 @@ title: "Prove bounded integer operations"
 type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-003"
-    type: implements
+    type: traces_to
 ---
 # FR-007: Prove bounded integer operations
 

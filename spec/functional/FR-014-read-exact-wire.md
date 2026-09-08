@@ -4,7 +4,7 @@ title: "Read the selected closed interchange version"
 type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-004"
-    type: implements
+    type: traces_to
 ---
 # FR-014: Read the selected closed interchange version
 

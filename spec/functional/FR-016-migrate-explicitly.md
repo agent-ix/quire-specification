@@ -4,7 +4,7 @@ title: "Require explicit immutable reference migration"
 type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-004"
-    type: implements
+    type: traces_to
 ---
 # FR-016: Require explicit immutable reference migration
 

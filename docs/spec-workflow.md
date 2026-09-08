@@ -56,3 +56,26 @@ shared-contract acceptance. The initial profile bytes and existing fixture
 identities remain unchanged. The FS05 wire schema is a draft structural contract;
 its presence does not supply a producer/consumer implementation or qualify B/C's
 existing interfaces.
+
+## Authoring remediation from consumer feedback
+
+Agent C's FS03 feedback on `e15b429` identified missing precondition/parameter and
+activation expectations. FR-012 now includes pre versus post examples for an
+immutable invocation parameter. FR-006 contains explicit false/true antecedent
+and interrupted consequent-entry expectations, including serialized semantic
+event tuples. These remain draft requirements and authored expectations. The
+historical 51-case JSON packet and its rule/profile digests are unchanged;
+accepted event/source/profile bindings and an independent reader are still needed.
+
+FR-to-story relationships now use the catalog's `traces_to` verb. The installed
+catalog describes `implements` as interface/contract fulfillment, explicitly
+excluding requirement lineage. The requirements themselves retain their IDs.
+
+The common SpecReview authoring pack has been fetched once in preparation for
+the pending review selection. Its installed process manifest has SHA-256
+`d08ce71c02ce871fed4c7fb5cea1af1feb5a0b1004f8458fd26deecc2aa7b720`.
+The archetype duplication is within that file: ADR/Plan/Review/SpecReview/Standard
+appear in both `archetypes` and `artifact_types`; no module-search environment
+override was present. `quire schema --module <process-module> SpecReview` still
+returns the required frontmatter schema and Summary/Findings assertions. This
+inspection does not establish an error-free registry or complete a review.

@@ -4,7 +4,7 @@ title: "Require snapshot-qualified optional definedness"
 type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-003"
-    type: implements
+    type: traces_to
 ---
 # FR-005: Require snapshot-qualified optional definedness
 

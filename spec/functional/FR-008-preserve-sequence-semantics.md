@@ -4,7 +4,7 @@ title: "Preserve bounded sequence order and multiplicity"
 type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-003"
-    type: implements
+    type: traces_to
 ---
 # FR-008: Preserve bounded sequence order and multiplicity
 

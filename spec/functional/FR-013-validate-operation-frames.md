@@ -4,7 +4,7 @@ title: "Enforce authored operation frames"
 type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-003"
-    type: implements
+    type: traces_to
 ---
 # FR-013: Enforce authored operation frames
 
