@@ -29,3 +29,8 @@ candidate remains a draft until semantic and artifact reviews are complete.
 The [FS02 shared model/reference amendment](model-contract.md) defines the proposed
 byte/semantic reference split, exact native import digest meaning, and existing
 model adapter responsibilities for B/C review. It does not freeze interchange.
+
+The [FS03 typing/evaluation draft](state-semantics.md) makes guard, snapshot,
+arithmetic, collection and resource judgments explicit. Its proposed refinements
+remain under separate review; they do not change the earlier profile file or
+make its old digest cover new rules.

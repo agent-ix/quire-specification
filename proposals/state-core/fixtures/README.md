@@ -117,3 +117,23 @@ new producer IDs and cannot be silently adopted. See compositions/model/RIGHTS.m
 The mirrored native source/output grants are in compositions/RIGHTS.md. The CLI
 source revision remains the exact opaque `fixture:1` label under an explicit
 CLI-label namespace; it is not silently converted into a numeric IR revision.
+
+`typing-cases.json` contains 51 independently authored FS03 judgment examples
+under explicit abstract type/input hypotheses. They cover guarded definedness,
+snapshot capture, numeric bounds and units, negative division/remainder, sequence
+order/duplicates, identity/cycles, validation failures and work exhaustion. They
+bind the proposed rule document by its exact digest. They are not compiled model
+wire, a complete runtime population, typechecker/evaluator output, or accepted
+extensions of the earlier profile. The native parser can check their expression
+syntax separately; it cannot establish their expected typing or logical results.
+
+Reproduce the syntax check from the language implementation checkout after
+`cargo build --locked --target-dir target`:
+
+```sh
+python3 tools/check_rule_syntax.py /path/to/specification/proposals/state-core
+```
+
+Observed on this packet: 50 expressions parsed, and the collect case refused as
+unsupported. These observations concern grammar only; all 51 typing/evaluation
+judgments remain authored expectations under the stated hypotheses.
