@@ -1,0 +1,18 @@
+{
+  "fixtureVersion": "agent-a-frame-binding/1-draft",
+  "identity": "ix://example/config/binding/allow-self-deletion",
+  "state": "proposed-not-linked",
+  "frame": {
+    "allowedChangedFields": [
+      "ix://example/config/field/ConfigVersion/versionNumber"
+    ],
+    "allowedCreatedTypes": [],
+    "allowedDeletedTypes": [
+      "ix://example/config/type/ConfigVersion"
+    ]
+  },
+  "revision": {
+    "namespace": "agent-a-review-fixture",
+    "value": "1"
+  }
+}

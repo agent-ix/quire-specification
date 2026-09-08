@@ -23,7 +23,7 @@ the postcondition; it cannot be accidentally refused by an earlier frame check.
 The wrong-invocation, missing-pre, forbidden-frame and deleted-object controls
 have distinct expected failures. Operation/model linking remains unavailable.
 The invocation fixture declares separate named frame expectations; cases select
-one by identity. A runtime caller is not authorized to redefine an accepted
+one by exact artifact reference. A runtime caller is not authorized to redefine an accepted
 operation frame. These alternate synthetic bindings still require their own
 model/operation review and differ in evidence identity.
 
@@ -78,3 +78,18 @@ The checksum command verifies this file set only. It does not validate language
 syntax, imported model semantics, canonical identity, logical outcomes or the
 claimed diagnostic behavior. Full compiler integration acceptance still needs real producer,
 parser, linker, evaluator, generated backend and clean-consumer execution.
+
+Operation fixtures now use `agent-a-invocation-cases/1-draft`. Each case selects
+one exact invocation file. That file binds case-scoped immutable pre/post
+observation files and one frame file using `artifactRef` with authority, identity,
+revision namespace/value, SHA-256 of exact file bytes, and explicit fixture profile.
+Expected outcomes remain outside invocation bytes. Changes to any selected frame
+or snapshot digest therefore change the invocation artifact bytes and digest.
+No fixture contains a claimed evaluator result/evidence identity.
+
+Snapshots, frames and invocation inputs each have one authoritative payload file;
+there is no second inline copy to synchronize. Paths locate local bytes and are
+not identity. Reusing an authority/identity/revision with changed content must
+refuse even if the new transport digest is internally correct. These are review
+profiles, not registered production wire contracts. Model/operation binding
+remains unavailable. The source-subject fixture version stays unchanged.

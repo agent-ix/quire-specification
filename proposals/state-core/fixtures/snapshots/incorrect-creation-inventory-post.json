@@ -1,0 +1,22 @@
+{
+  "fixtureVersion": "agent-a-snapshot/1-draft",
+  "id": "ix://example/config/snapshot/incorrect-creation-inventory/post",
+  "universe": "example/config-history",
+  "observation": "post",
+  "invocation": "ix://example/config/invocation/incorrect-creation-inventory",
+  "complete": true,
+  "objects": [
+    {
+      "id": "version-1",
+      "type": "ix://example/config/type/ConfigVersion",
+      "fields": {
+        "versionNumber": 4,
+        "parent": null
+      }
+    }
+  ],
+  "revision": {
+    "namespace": "agent-a-review-fixture",
+    "value": "1"
+  }
+}

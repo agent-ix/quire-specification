@@ -60,6 +60,16 @@ Key source facts are inspection evidence, not newly run compiler tests:
 
 ## Decisions requested after review
 
+**Owner disposition, 2026-09-07:** in the task conversation the owner approved
+the first implementation profile and `AGPL-3.0-only` for new compiler code,
+then delegated implementation order: “yes ok lets go AGPL I leave the
+implementation order up to you!” A-D1 is approved as the LC01 implementation
+target and A-D3's implementation license is settled. Standard document/artifact
+terms remain deferred as explicitly explained before the response. Public
+promotion stays on hold. This approval does not claim FS02/FS03/FS05 completion
+or silently mutate the existing public ADR. Subsequent private issue records
+carry this disposition for B/C.
+
 | ID | Concrete proposal | Decision owner and gate |
 |---|---|---|
 | A-D1 | Review `proposals/state-core/profile.md` as the native first-profile direction, including explicit finite references, short-circuit implication, `if`/`let`, integer rules and deferred extensions. Experimental tag `ix:native`; defer public branding to release | Program/standard owner; FS01 acceptance, LC01 admitted grammar |
@@ -186,3 +196,19 @@ decision or B boundary response when this follow-up began. A generic goal
 continuation is not that decision. This pass made concrete fixture progress;
 LC01–LC05 and the full assignment remain uncompleted and dependent gates stay
 open. C's confirmed-in-principle ownership split is preserved.
+
+### Architecture review / operation identity correction
+
+Following the owner's request to review the compiler architecture, LC01 now uses
+a declarative Logos lexer, JSON string decoding from serde_json, compact original
+byte spans, indexed source coordinates, explicit grouping and a token-preserving
+formatter. The compiler review records remaining linker/evidence boundaries.
+
+C's concrete operation fixture identity findings are corrected: 7 case-scoped
+invocations bind 13 exact snapshot files and 3 exact proposed frame files. Each
+reference includes authority, identity, revision namespace/value, byte digest
+and fixture profile; each payload exists once. SHA256SUMS covers the full set.
+The producer audit in the language workspace verified 23 artifact files and six
+negative controls for stale bytes and same-identity changed content. This is
+observed fixture validation, not execution of the seven logical expectations.
+Model/operation linking remains unavailable, and C's independent review is pending.

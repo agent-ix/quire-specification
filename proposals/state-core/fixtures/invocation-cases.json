@@ -1,413 +1,215 @@
 {
+  "fixtureVersion": "agent-a-invocation-cases/1-draft",
   "status": "manually-authored-expectations-not-evaluator-output",
   "readiness": "model-and-operation-binding-unavailable",
   "cases": [
     {
       "id": "healthy-unchanged-version",
-      "subject": {
-        "package": "example/config",
-        "requirement": "OP-001",
-        "revision": 1,
-        "clause": "VersionUnchanged"
+      "input": {
+        "path": "invocations/healthy-unchanged-version.json",
+        "artifactRef": {
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/invocation/healthy-unchanged-version",
+          "revision": {
+            "namespace": "agent-a-review-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:84ef5f4ab9f384d09d50de3a357c2f066cad68a02080c38e3725b9ace213946e",
+          "profile": "agent-a-invocation/1-draft"
+        }
       },
-      "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
-      "invocation": "attempt-1",
-      "self": "version-1",
-      "parameters": {},
-      "result": true,
-      "pre": {
-        "id": "snapshot-pre",
-        "universe": "example/config-history",
-        "observation": "pre",
-        "invocation": "attempt-1",
-        "complete": true,
-        "objects": [
-          {
-            "id": "version-1",
-            "type": "ix://example/config/type/ConfigVersion",
-            "fields": {
-              "versionNumber": 4,
-              "parent": null
-            }
-          }
-        ]
-      },
-      "post": {
-        "id": "snapshot-post",
-        "universe": "example/config-history",
-        "observation": "post",
-        "invocation": "attempt-1",
-        "complete": true,
-        "objects": [
-          {
-            "id": "version-1",
-            "type": "ix://example/config/type/ConfigVersion",
-            "fields": {
-              "versionNumber": 4,
-              "parent": null
-            }
-          }
-        ]
-      },
-      "created": [],
-      "deleted": [],
       "expected": {
         "execution": "completed",
         "value": true
-      },
-      "frameBinding": "ix://example/config/binding/allow-version-write"
+      }
     },
     {
       "id": "violating-changed-version",
-      "subject": {
-        "package": "example/config",
-        "requirement": "OP-001",
-        "revision": 1,
-        "clause": "VersionUnchanged"
+      "input": {
+        "path": "invocations/violating-changed-version.json",
+        "artifactRef": {
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/invocation/violating-changed-version",
+          "revision": {
+            "namespace": "agent-a-review-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:cf649870f9bf4f3ac3c1ed362af7ddeb817208fcfed2ef07d678feeba49cc08d",
+          "profile": "agent-a-invocation/1-draft"
+        }
       },
-      "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
-      "invocation": "attempt-1",
-      "self": "version-1",
-      "parameters": {},
-      "result": true,
-      "pre": {
-        "id": "snapshot-pre",
-        "universe": "example/config-history",
-        "observation": "pre",
-        "invocation": "attempt-1",
-        "complete": true,
-        "objects": [
-          {
-            "id": "version-1",
-            "type": "ix://example/config/type/ConfigVersion",
-            "fields": {
-              "versionNumber": 4,
-              "parent": null
-            }
-          }
-        ]
-      },
-      "post": {
-        "id": "snapshot-post",
-        "universe": "example/config-history",
-        "observation": "post",
-        "invocation": "attempt-1",
-        "complete": true,
-        "objects": [
-          {
-            "id": "version-1",
-            "type": "ix://example/config/type/ConfigVersion",
-            "fields": {
-              "versionNumber": 5,
-              "parent": null
-            }
-          }
-        ]
-      },
-      "created": [],
-      "deleted": [],
       "expected": {
         "execution": "completed",
         "value": false
-      },
-      "frameBinding": "ix://example/config/binding/allow-version-write"
+      }
     },
     {
       "id": "wrong-invocation",
-      "subject": {
-        "package": "example/config",
-        "requirement": "OP-001",
-        "revision": 1,
-        "clause": "VersionUnchanged"
+      "input": {
+        "path": "invocations/wrong-invocation.json",
+        "artifactRef": {
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/invocation/wrong-invocation",
+          "revision": {
+            "namespace": "agent-a-review-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:f2eacf0d8842c62ec98515accd60256eda425b2b68258f6d48e41c7ed17b35cb",
+          "profile": "agent-a-invocation/1-draft"
+        }
       },
-      "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
-      "invocation": "attempt-1",
-      "self": "version-1",
-      "parameters": {},
-      "result": true,
-      "pre": {
-        "id": "snapshot-pre",
-        "universe": "example/config-history",
-        "observation": "pre",
-        "invocation": "attempt-1",
-        "complete": true,
-        "objects": [
-          {
-            "id": "version-1",
-            "type": "ix://example/config/type/ConfigVersion",
-            "fields": {
-              "versionNumber": 4,
-              "parent": null
-            }
-          }
-        ]
-      },
-      "post": {
-        "id": "snapshot-post",
-        "universe": "example/config-history",
-        "observation": "post",
-        "invocation": "attempt-2",
-        "complete": true,
-        "objects": [
-          {
-            "id": "version-1",
-            "type": "ix://example/config/type/ConfigVersion",
-            "fields": {
-              "versionNumber": 4,
-              "parent": null
-            }
-          }
-        ]
-      },
-      "created": [],
-      "deleted": [],
       "expected": {
         "execution": "refused",
         "diagnostic": "wrong_snapshot",
         "logicalValue": "absent"
-      },
-      "frameBinding": "ix://example/config/binding/allow-version-write"
+      }
     },
     {
       "id": "missing-pre-observation",
-      "subject": {
-        "package": "example/config",
-        "requirement": "OP-001",
-        "revision": 1,
-        "clause": "VersionUnchanged"
+      "input": {
+        "path": "invocations/missing-pre-observation.json",
+        "artifactRef": {
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/invocation/missing-pre-observation",
+          "revision": {
+            "namespace": "agent-a-review-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:2f2fd16bc1a2d6b563b06bd0a0cc85fe6267b7344f7e7cc0296bd22123e26779",
+          "profile": "agent-a-invocation/1-draft"
+        }
       },
-      "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
-      "invocation": "attempt-1",
-      "self": "version-1",
-      "parameters": {},
-      "result": true,
-      "pre": {
-        "availability": "unavailable",
-        "reason": "pre-snapshot-not-captured"
-      },
-      "post": {
-        "id": "snapshot-post",
-        "universe": "example/config-history",
-        "observation": "post",
-        "invocation": "attempt-1",
-        "complete": true,
-        "objects": [
-          {
-            "id": "version-1",
-            "type": "ix://example/config/type/ConfigVersion",
-            "fields": {
-              "versionNumber": 4,
-              "parent": null
-            }
-          }
-        ]
-      },
-      "created": [],
-      "deleted": [],
       "expected": {
         "execution": "incomplete",
         "diagnostic": "unavailable_observation",
         "logicalValue": "absent"
-      },
-      "frameBinding": "ix://example/config/binding/allow-version-write"
+      }
     },
     {
       "id": "forbidden-frame-change",
-      "subject": {
-        "package": "example/config",
-        "requirement": "OP-001",
-        "revision": 1,
-        "clause": "VersionUnchanged"
+      "input": {
+        "path": "invocations/forbidden-frame-change.json",
+        "artifactRef": {
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/invocation/forbidden-frame-change",
+          "revision": {
+            "namespace": "agent-a-review-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:e03844f33d82e05305132efc633a132c787007360bd0fbdfeab8a500ac39136f",
+          "profile": "agent-a-invocation/1-draft"
+        }
       },
-      "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
-      "invocation": "attempt-1",
-      "self": "version-1",
-      "parameters": {},
-      "result": true,
-      "pre": {
-        "id": "snapshot-pre",
-        "universe": "example/config-history",
-        "observation": "pre",
-        "invocation": "attempt-1",
-        "complete": true,
-        "objects": [
-          {
-            "id": "version-1",
-            "type": "ix://example/config/type/ConfigVersion",
-            "fields": {
-              "versionNumber": 4,
-              "parent": null
-            }
-          }
-        ]
-      },
-      "post": {
-        "id": "snapshot-post",
-        "universe": "example/config-history",
-        "observation": "post",
-        "invocation": "attempt-1",
-        "complete": true,
-        "objects": [
-          {
-            "id": "version-1",
-            "type": "ix://example/config/type/ConfigVersion",
-            "fields": {
-              "versionNumber": 5,
-              "parent": null
-            }
-          }
-        ]
-      },
-      "created": [],
-      "deleted": [],
       "expected": {
         "execution": "refused",
         "diagnostic": "frame_violation",
         "logicalValue": "absent"
-      },
-      "frameBinding": "ix://example/config/binding/preserve-all"
+      }
     },
     {
       "id": "deleted-self-post-context",
-      "subject": {
-        "package": "example/config",
-        "requirement": "OP-001",
-        "revision": 1,
-        "clause": "VersionUnchanged"
+      "input": {
+        "path": "invocations/deleted-self-post-context.json",
+        "artifactRef": {
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/invocation/deleted-self-post-context",
+          "revision": {
+            "namespace": "agent-a-review-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:eaf509e5e44de22f688035d926a2fca000d599175136012df7f434e9bdfc89b0",
+          "profile": "agent-a-invocation/1-draft"
+        }
       },
-      "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
-      "invocation": "attempt-1",
-      "self": "version-1",
-      "parameters": {},
-      "result": true,
-      "pre": {
-        "id": "snapshot-pre",
-        "universe": "example/config-history",
-        "observation": "pre",
-        "invocation": "attempt-1",
-        "complete": true,
-        "objects": [
-          {
-            "id": "version-1",
-            "type": "ix://example/config/type/ConfigVersion",
-            "fields": {
-              "versionNumber": 4,
-              "parent": null
-            }
-          }
-        ]
-      },
-      "post": {
-        "id": "snapshot-post",
-        "universe": "example/config-history",
-        "observation": "post",
-        "invocation": "attempt-1",
-        "complete": true,
-        "objects": []
-      },
-      "created": [],
-      "deleted": [
-        "version-1"
-      ],
       "expected": {
         "execution": "refused",
         "diagnostic": "wrong_snapshot",
         "logicalValue": "absent"
-      },
-      "frameBinding": "ix://example/config/binding/allow-self-deletion"
+      }
     },
     {
       "id": "incorrect-creation-inventory",
-      "subject": {
-        "package": "example/config",
-        "requirement": "OP-001",
-        "revision": 1,
-        "clause": "VersionUnchanged"
+      "input": {
+        "path": "invocations/incorrect-creation-inventory.json",
+        "artifactRef": {
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/invocation/incorrect-creation-inventory",
+          "revision": {
+            "namespace": "agent-a-review-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:c5f78d8a60a7dd961fb8914bac8422f06bdb5569020ab963e0010e4c09441ae3",
+          "profile": "agent-a-invocation/1-draft"
+        }
       },
-      "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
-      "invocation": "attempt-1",
-      "self": "version-1",
-      "parameters": {},
-      "result": true,
-      "pre": {
-        "id": "snapshot-pre",
-        "universe": "example/config-history",
-        "observation": "pre",
-        "invocation": "attempt-1",
-        "complete": true,
-        "objects": [
-          {
-            "id": "version-1",
-            "type": "ix://example/config/type/ConfigVersion",
-            "fields": {
-              "versionNumber": 4,
-              "parent": null
-            }
-          }
-        ]
-      },
-      "post": {
-        "id": "snapshot-post",
-        "universe": "example/config-history",
-        "observation": "post",
-        "invocation": "attempt-1",
-        "complete": true,
-        "objects": [
-          {
-            "id": "version-1",
-            "type": "ix://example/config/type/ConfigVersion",
-            "fields": {
-              "versionNumber": 4,
-              "parent": null
-            }
-          }
-        ]
-      },
-      "created": [
-        "invented"
-      ],
-      "deleted": [],
       "expected": {
         "execution": "refused",
         "diagnostic": "population_delta_mismatch",
         "logicalValue": "absent"
-      },
-      "frameBinding": "ix://example/config/binding/allow-version-write"
+      }
     }
   ],
   "frameBindings": [
     {
-      "identity": "ix://example/config/binding/allow-version-write",
-      "state": "proposed-not-linked",
-      "frame": {
-        "allowedChangedFields": [
-          "ix://example/config/field/ConfigVersion/versionNumber"
-        ],
-        "allowedCreatedTypes": [],
-        "allowedDeletedTypes": []
+      "path": "frames/allow-version-write.json",
+      "artifactRef": {
+        "authority": "agent-a-review-fixtures",
+        "identity": "ix://example/config/binding/allow-version-write",
+        "revision": {
+          "namespace": "agent-a-review-fixture",
+          "value": "1"
+        },
+        "digest": "sha256:1cd09cc97401840b31ef9e99db0b5aee6e969d493c9070c99f297f1055003e9b",
+        "profile": "agent-a-frame-binding/1-draft"
       }
     },
     {
-      "identity": "ix://example/config/binding/preserve-all",
-      "state": "proposed-not-linked",
-      "frame": {
-        "allowedChangedFields": [],
-        "allowedCreatedTypes": [],
-        "allowedDeletedTypes": []
+      "path": "frames/preserve-all.json",
+      "artifactRef": {
+        "authority": "agent-a-review-fixtures",
+        "identity": "ix://example/config/binding/preserve-all",
+        "revision": {
+          "namespace": "agent-a-review-fixture",
+          "value": "1"
+        },
+        "digest": "sha256:f33006e2ae5defbf05aa3249fe7afdda790c29ab15b4f39bede0125f81745d5d",
+        "profile": "agent-a-frame-binding/1-draft"
       }
     },
     {
-      "identity": "ix://example/config/binding/allow-self-deletion",
-      "state": "proposed-not-linked",
-      "frame": {
-        "allowedChangedFields": [
-          "ix://example/config/field/ConfigVersion/versionNumber"
-        ],
-        "allowedCreatedTypes": [],
-        "allowedDeletedTypes": [
-          "ix://example/config/type/ConfigVersion"
-        ]
+      "path": "frames/allow-self-deletion.json",
+      "artifactRef": {
+        "authority": "agent-a-review-fixtures",
+        "identity": "ix://example/config/binding/allow-self-deletion",
+        "revision": {
+          "namespace": "agent-a-review-fixture",
+          "value": "1"
+        },
+        "digest": "sha256:2b1202a38bf90bc0d718723a83ca34ee69e6c7cd22ba117398685558c8401ed9",
+        "profile": "agent-a-frame-binding/1-draft"
       }
+    }
+  ],
+  "identityAdverseControls": [
+    {
+      "id": "snapshot-content-reused",
+      "mutation": "Change a snapshot field, keep authority/identity/revision, recompute its file digest",
+      "expected": "refuse_identity_content_conflict"
+    },
+    {
+      "id": "frame-content-reused",
+      "mutation": "Change allowedChangedFields, keep authority/identity/revision, recompute its file digest",
+      "expected": "refuse_identity_content_conflict"
+    },
+    {
+      "id": "invocation-content-reused",
+      "mutation": "Change result or a referenced frame digest, keep invocation authority/identity/revision, recompute file digest",
+      "expected": "refuse_identity_content_conflict"
+    },
+    {
+      "id": "stale-frame-digest",
+      "mutation": "Change frame bytes without updating the selected artifact reference",
+      "expected": "refuse_digest_mismatch"
     }
   ]
 }

@@ -1,0 +1,13 @@
+{
+  "fixtureVersion": "agent-a-snapshot/1-draft",
+  "id": "ix://example/config/snapshot/deleted-self-post-context/post",
+  "universe": "example/config-history",
+  "observation": "post",
+  "invocation": "ix://example/config/invocation/deleted-self-post-context",
+  "complete": true,
+  "objects": [],
+  "revision": {
+    "namespace": "agent-a-review-fixture",
+    "value": "1"
+  }
+}

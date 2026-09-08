@@ -125,3 +125,27 @@ then the selected frame and context availability. Evaluate the predicate only
 after these checks succeed. If several known defects exist, retain deterministic
 diagnostics ordered by phase, source locus and code; no defect yields a Boolean
 result. The mutation cases isolate individual defects where practical.
+
+## Byte-bound operation review artifacts
+
+The amended operation fixture uses a local reference wrapper with `path` and
+`artifactRef`. The artifact reference has exactly the common dimensions under
+review with the verification owner: `authority`, `identity`, `revision`, `digest`
+and `profile`. Here `revision` has explicit namespace/value strings; `profile`
+identifies the fixture encoding, independently of the language semantic profile.
+`digest` binds exact named file bytes. The path only locates those bytes.
+
+Each invocation binds one immutable pre/post observation per available role and
+one exact frame contract. Populations and frame data live once in separate files;
+expected outcomes live outside invocation inputs. Case-scoped invocation and
+observation IDs remove accidental identity reuse across independent examples.
+An authority/identity/revision already bound to one profile/digest cannot accept
+changed content under that same reference, even with a recomputed transport digest.
+Changing a selected frame or population reference changes the invocation bytes
+and digest, so downstream evidence must bind the new exact invocation artifact.
+
+These are concrete `1-draft` review fixtures, not a registered FS05 schema or an
+accepted generic artifact resolver. Model/operation binding is still unavailable.
+The producer audit tests byte integrity and identity conflict refusal separately
+from the manually expected predicate/frame/observation outcomes. Independent
+consumer qualification remains C's work; the portable result envelope remains B's.
