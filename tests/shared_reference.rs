@@ -42,7 +42,7 @@ fn intake(bytes: &[u8]) -> Result<Value, IntakeFailure> {
             Value::Object(fields) => {
                 pending.extend(fields.values().map(|item| (item, depth + 1)));
             }
-            _ => {}
+            Value::Null | Value::Bool(_) | Value::Number(_) | Value::String(_) => {}
         }
     }
     Ok(value)
