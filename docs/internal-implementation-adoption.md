@@ -48,3 +48,17 @@ The broader FS and LC02 issues stay open until their actual acceptance evidence
 exists.
 
 The decision is also recorded on PR8, language#3 and private CO01 research#54.
+
+## Subsequent verification-consumer amendment
+
+B's conditional PR8 review identified an unrepresentable JCS canonical domain
+and missing exact artifact roles. The separate
+[2-draft amendment](../proposals/shared-reference-2-draft/README.md), specified
+at 9244dcc and reviewed through SR-009–016 at f446a64, addresses those findings.
+It selects envelope 2-draft and artifact 3-draft instead of altering the adopted
+state-core schema. Original state-core bytes remain unchanged.
+
+The new Rust tests qualify schema structure and actual B canonicalizer parity.
+B's explicit consumer adoption, strict intake/role matching and actual report
+qualification remain independent work. Neither this amendment nor a PR merge
+turns synthetic fixture data into evaluator results or a human disposition.

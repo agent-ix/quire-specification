@@ -1,6 +1,8 @@
 # quire-specification
 
-Private bootstrap, 2026-09-07. Repository shell and specification work only; no implemented or released capability is claimed.
+Private specification and qualification repository. The Rust tests qualify
+authored interchange shapes and existing canonicalizer correspondence; no native
+compiler, strict shared reader or released standard is implemented here.
 
 ## Charter
 
@@ -40,6 +42,28 @@ internal LC02 implementation on 2026-09-08. The
 [decision record](docs/internal-implementation-adoption.md) preserves its exact
 scope and the independent integration/publication gates.
 
-## Implementation language — owner directive
+## Verification reference amendment and local checks
+
+[The versioned amendment](proposals/shared-reference-2-draft/README.md) adds B's
+six artifact roles and selected JCS canonical identity without changing the
+adopted state-core packet. [Fixture notes](proposals/shared-reference-2-draft/fixtures/README.md)
+state which observations are qualified and which require B's strict reader.
+
+Run these commands from this repository, using the pinned Rust 1.98.1 toolchain:
+
+```sh
+cargo test --locked --target-dir target
+cargo fmt --all -- --check
+cargo clippy --offline --locked --target-dir target --all-targets --all-features -- -D warnings
+quire validate --scope . 'spec/**/*.md' 'plan/**/*.md' 'reviews/**/*.md' --summary
+```
+
+The first Cargo run may fetch the exact private B dependency; subsequent runs
+can add --offline. All tests must execute locally; no hosted workflow exists.
+The test-only crate has no production API. [Dependency rights](docs/qualification-dependencies.md)
+record its grants and exact selected sources. TC completion and independent
+consumer adoption remain separate from the five producer qualification tests.
+
+## Required language
 
 Executable implementation, including production and qualification tools/tests, is Rust. New TypeScript choices require explicit owner approval; surface all other executable languages. Quoin remains in its current implementation for now: contain its spread through versioned structured interfaces, do not rewrite it wholesale. Filament changes are excluded. See AGENTS.md and the language gate on the owning issue. Normative prose/schema need not be executable Rust.

@@ -2,7 +2,7 @@
 id: Task-001
 title: "Qualify schema and JCS vectors in Rust"
 type: Task
-status: in_progress
+status: done
 track: A
 priority: P1
 relationships:
@@ -28,10 +28,15 @@ through actual Rust dependencies. Completion covers IT-003-SC-01/02/04 only.
 
 ## Subtasks
 
-- [ ] Preserve independently authored canonical byte expectations.
-- [ ] Validate the closed schema and one-axis shape mutations.
-- [ ] Run B's pinned JCS API with distinct raw-byte and semantic identities.
-- [ ] Record bounds, failures, dependency grants and local Rust gates.
+- [x] Preserve independently authored canonical byte expectations.
+- [x] Validate the closed schema and one-axis shape mutations.
+- [x] Run B's pinned JCS API with distinct raw-byte and semantic identities.
+- [x] Record bounds, failures, dependency grants and local Rust gates.
+
+Observed: five local tests pass, formatting and strict all-target/all-feature
+Clippy pass on Rust 1.98.1. The adopted state-core tree has zero diff from e897f81.
+Raw duplicate detection is a recorded existing B reader gap; no strict intake
+or semantic matching qualification is claimed. IT-003-SC-03 remains planned.
 
 ## Deliverables
 

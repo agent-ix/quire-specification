@@ -1,5 +1,24 @@
 # Quoin specification workflow status
 
+## Current PR8 verification amendment — 2026-09-08
+
+B's exact JCS-domain and six-role findings are addressed by FR-017/018,
+IT-003, TC-001–004 and TM-001 at 9244dcc. The actual QUOIN specify,
+spec-matrix and retained base plus all seven analyses are recorded in
+[SR-009–016](../spec/reviews/verification-reference/base.md), committed at
+f446a64 before Rust qualification implementation. Plan-001 scopes that
+implementation and the private handoff. The latest amended spec/review tree
+has 52 grammar-clean documents; the six existing registry duplicates remain.
+
+The five Rust qualification tests use B's pinned real canonicalizer and a Rust
+schema validator. They establish producer structure and JCS parity only;
+TM-001 and independent IT-003-SC-03 remain planned. The accepted internal
+baseline and subsequent IR #54 closure are recorded in
+[the adoption record](internal-implementation-adoption.md). Historical findings
+below describe their original revisions and do not reinstate a reader blocker.
+
+## Historical initial review
+
 Recorded 2026-09-07. The [requirements index](../spec/spec.md) contains 28 draft
 artifacts: one master, one StR, four US, sixteen FR, four NFR and two IT.
 These specify FS01/FS02/FS03/FS05. The detailed state-core proposals supply design

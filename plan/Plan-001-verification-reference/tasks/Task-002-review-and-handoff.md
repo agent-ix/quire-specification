@@ -2,7 +2,7 @@
 id: Task-002
 title: "Review and deliver the exact PR8 unblock"
 type: Task
-status: not_started
+status: in_progress
 track: A
 priority: P1
 relationships:
