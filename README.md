@@ -55,7 +55,7 @@ Run these commands from this repository, using the pinned Rust 1.98.1 toolchain:
 cargo test --locked --target-dir target
 cargo fmt --all -- --check
 cargo clippy --offline --locked --target-dir target --all-targets --all-features -- -D warnings
-quire validate --scope . 'spec/**/*.md' 'plan/**/*.md' 'reviews/**/*.md' --summary
+quire validate --scope . 'spec/**/*.md' 'plan/**/*.md' 'reviews/2026-*.md' --summary
 ```
 
 The first Cargo run may fetch the exact private B dependency; subsequent runs
@@ -63,6 +63,10 @@ can add --offline. All tests must execute locally; no hosted workflow exists.
 The test-only crate has no production API. [Dependency rights](docs/qualification-dependencies.md)
 record its grants and exact selected sources. TC completion and independent
 consumer adoption remain separate from the five producer qualification tests.
+
+The dated review glob selects the typed SpecReview artifacts. The two historical
+agent-a review notes predate the artifact workflow and have no type frontmatter;
+an unrestricted reviews glob reports those two existing structural errors.
 
 ## Required language
 
