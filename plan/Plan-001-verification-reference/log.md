@@ -15,3 +15,6 @@ description: "Actual lifecycle of the verification reference amendment."
   strict Clippy pass; all six exact role byte references validate. Existing B
   duplicate-key intake is explicitly left to its tracked strict-reader task.
   Task-002 entered review and private handoff.
+- 2026-09-08: Pushed 56c2df7, marked specification PR8 ready for review and
+  responded directly to B's findings with the exact contract/vector pin.
+  The PR remains open; no independent B adoption or merge is claimed.
