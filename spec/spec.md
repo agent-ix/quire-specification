@@ -40,6 +40,12 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-016
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-017
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-018
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-003
+    type: contains
   - target: ix://agent-ix/quire-specification/US-001
     type: contains
   - target: ix://agent-ix/quire-specification/US-002
@@ -155,7 +161,12 @@ The user requested /specify and /spec-review for all work. Existing implementati
 
 ## 14. Lifecycle Status
 
-Draft. The admitted implementation target and new-code AGPL choice were approved in the task conversation. FS02/FS03/FS05 acceptance, independent consumer adoption, and the existing #36/#54 delivery chain remain open. Code/test presence does not change that status.
+The owner adopted e897f81 for internal implementation. Accepted IR ADR-0054
+(PR61, 690bde7) subsequently removed the universal Filament reader prerequisite;
+#54 is closed. Generic native compilation can use the existing IR API.
+Independent consumer qualification and full FS02/FS03/FS05 acceptance remain
+open. FR-017/018 define the versioned amendment resolving B's representational
+findings; its tests do not claim B's consumer implementation or adoption.
 
 ## 15. Governance Notes
 
@@ -185,6 +196,8 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-014](functional/FR-014-read-exact-wire.md) | FR | Draft |
 | [FR-015](functional/FR-015-preserve-canonical-domains.md) | FR | Draft |
 | [FR-016](functional/FR-016-migrate-explicitly.md) | FR | Draft |
+| [FR-017](functional/FR-017-select-verification-artifact-roles.md) | FR | Amendment |
+| [FR-018](functional/FR-018-select-verification-jcs-domain.md) | FR | Amendment |
 | [US-001](usecase/US-001-understand-native-meaning.md) | US | Draft |
 | [US-002](usecase/US-002-exchange-exact-subjects.md) | US | Draft |
 | [US-003](usecase/US-003-assess-finite-state.md) | US | Draft |
@@ -196,3 +209,4 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [NFR-004](non-functional/NFR-004-retain-review-and-rights.md) | NFR | Draft |
 | [IT-001](integration/IT-001-legacy-canonical-reader.md) | IT | Draft |
 | [IT-002](integration/IT-002-independent-reference-consumer.md) | IT | Draft |
+| [IT-003](integration/IT-003-verification-reference-amendment.md) | IT | Planned |
