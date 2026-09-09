@@ -1,0 +1,77 @@
+{
+  "status": "proposed-review-fixture",
+  "fixtureVersion": "agent-a-source-subject/1-draft",
+  "authored": {
+    "package": "example/config",
+    "requirement": "INV-001",
+    "revision": 1,
+    "clause": "ParentPrecedes"
+  },
+  "language": {
+    "tag": "ix:native",
+    "edition": "0-draft"
+  },
+  "profile": {
+    "identity": "state-finite",
+    "version": "0-draft",
+    "requiredFeatures": [
+      "bounded-integer",
+      "optional-reference",
+      "guarded-implication"
+    ]
+  },
+  "source": {
+    "identity": "ix://example/config/source/parent-order",
+    "revision": {
+      "namespace": "synthetic-source-revision",
+      "value": "1"
+    },
+    "irRevisionMapping": {
+      "document": "ParentOrder",
+      "revision": 1
+    },
+    "path": "parent-order.native",
+    "digest": "sha256:6030625958c37eec713ba1b38dde5778d1b6a8d7713d8ceca1efd8942c68fc9c",
+    "spanConvention": "utf8-half-open-scalar-column/0-draft",
+    "expressionSpan": {
+      "startByte": 284,
+      "startLine": 6,
+      "startColumn": 3,
+      "endByte": 373,
+      "endLine": 6,
+      "endColumn": 92
+    },
+    "expectedExpression": "present(self.parent) implies deref(value(self.parent)).versionNumber < self.versionNumber",
+    "clauseSpan": {
+      "startByte": 224,
+      "startLine": 5,
+      "startColumn": 1,
+      "endByte": 375,
+      "endLine": 7,
+      "endColumn": 2
+    },
+    "clauseDigest": "sha256:a618c6964a05947d0fd871778e7f45eee2cd8127d3c1ec214e23fb5bdccba04c",
+    "expressionDigest": "sha256:ebcf1bdbce5746d74e77b7c1da5b7dbfbb236b6b6a1a12dd90543cce0d195e8a"
+  },
+  "anchor": {
+    "kind": "invariant",
+    "observation": "current",
+    "contextType": "ix://example/config/type/ConfigVersion"
+  },
+  "modelBinding": {
+    "state": "unavailable",
+    "reason": "reviewed-compiled-model-package-required",
+    "package": "example/config",
+    "version": "1.0.0"
+  },
+  "reviewArtifacts": [
+    {
+      "path": "parent-order.native",
+      "digest": "sha256:6030625958c37eec713ba1b38dde5778d1b6a8d7713d8ceca1efd8942c68fc9c"
+    },
+    {
+      "path": "model-expectations.json",
+      "digest": "sha256:afd880e08634cd2d9f52cfb55c34a53f66c6df162da0c8d166046143bf7e9c96"
+    }
+  ]
+}

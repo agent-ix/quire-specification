@@ -1,0 +1,45 @@
+{
+  "status": "proposed-mapping-expectations-not-a-model-package",
+  "existingInputContract": "semantic-ir/1.1.0",
+  "package": {"identity": "example/config", "version": "1.0.0"},
+  "typeIdentity": "ix://example/config/type/ConfigVersion",
+  "declarations": [
+    {
+      "fieldIdentity": "ix://example/config/field/ConfigVersion/versionNumber",
+      "semanticCoreFieldDecl": {
+        "name": "versionNumber",
+        "type": {"target": "Integer", "multiplicity": {"lower": 1, "upper": 1}},
+        "constraints": [{"keyword": "min", "value": 0}, {"keyword": "max", "value": 1000}]
+      }
+    },
+    {
+      "fieldIdentity": "ix://example/config/field/ConfigVersion/parent",
+      "semanticCoreFieldDecl": {
+        "name": "parent",
+        "type": {"target": "ix://example/config/type/ConfigVersion", "multiplicity": {"lower": 0, "upper": 1}},
+        "nullable": false
+      },
+      "mappingDecision": "identity-bearing optional reference, not inline recursive value containment"
+    }
+  ],
+  "operations": [
+    {
+      "operationIdentity": "ix://example/config/operation/ConfigVersion/attemptUpdate",
+      "semanticCoreOperationDecl": {
+        "name": "attemptUpdate",
+        "params": [],
+        "returns": {"target": "Boolean", "multiplicity": {"lower": 1, "upper": 1}},
+        "pre": [{"language": "ix:native", "clauseId": "CanAttemptUpdate"}],
+        "post": [{"language": "ix:native", "clauseId": "VersionUnchanged"}]
+      },
+      "frameExpectation": {
+        "allowedChangedFields": ["ix://example/config/field/ConfigVersion/versionNumber"],
+        "allowedCreatedTypes": [],
+        "allowedDeletedTypes": []
+      },
+      "mappingDecision": "Frame/effect correspondence is a proposed execution binding, not an existing semantic-core OperationDecl member."
+    }
+  ],
+  "populationPolicy": {"universe": "example/config-history", "maximumObjects": 1000, "referenceClosure": "required"},
+  "notes": "Fresh synthetic limits. A reviewed semantic-core-to-IR model producer and typed-model adapter must supply the real package. These expectations are not a second model wire contract."
+}

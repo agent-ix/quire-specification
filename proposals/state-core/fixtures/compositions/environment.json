@@ -1,0 +1,9 @@
+{
+  "fixtureVersion": "agent-a-environment-example/1-draft",
+  "status": "proposed-scope-example-not-portable-runner-schema",
+  "scope": "local-native-syntax-fixture",
+  "network": "not-requested",
+  "faultInjection": "not-requested",
+  "models": "not-bound",
+  "meaningOwner": "verification-owner-reviewed-environment-contract"
+}

@@ -1,0 +1,801 @@
+{
+  "semanticRefs": {
+    "property-current": {
+      "artifact": {
+        "refVersion": "ix.artifact-ref/2-draft",
+        "kind": "property",
+        "authority": "agent-a-review-fixtures",
+        "identity": "ix://example/config/property/ParentPrecedes",
+        "revision": {
+          "namespace": "agent-a-role-fixture",
+          "value": "1"
+        },
+        "digest": "sha256:59f44b8bb828f23413f3b76cf453b13a5b5eb6ffec38569210d326757c764662",
+        "wire": {
+          "identity": "agent-a-property-locus",
+          "version": "1-draft"
+        }
+      },
+      "language": {
+        "identity": "ix:native",
+        "edition": "0-draft"
+      },
+      "semanticProfile": {
+        "identity": "state-finite",
+        "version": "0-draft",
+        "definitionDigest": "sha256:8bc68a3c7e46d26c7191dfbb662d4d63070af9fedc9ce985fb1885f7efe29429"
+      },
+      "requiredFeatures": [
+        "bounded-integer",
+        "guarded-implication",
+        "optional-reference"
+      ],
+      "canonicalIdentity": null
+    },
+    "property-post": {
+      "artifact": {
+        "refVersion": "ix.artifact-ref/2-draft",
+        "kind": "property",
+        "authority": "agent-a-review-fixtures",
+        "identity": "ix://example/config/property/VersionUnchanged",
+        "revision": {
+          "namespace": "agent-a-role-fixture",
+          "value": "1"
+        },
+        "digest": "sha256:3eb6285269118e579e893eea53bacca96c32cb5e727cec8f89a89d9715e4aafa",
+        "wire": {
+          "identity": "agent-a-property-locus",
+          "version": "1-draft"
+        }
+      },
+      "language": {
+        "identity": "ix:native",
+        "edition": "0-draft"
+      },
+      "semanticProfile": {
+        "identity": "state-finite",
+        "version": "0-draft",
+        "definitionDigest": "sha256:8bc68a3c7e46d26c7191dfbb662d4d63070af9fedc9ce985fb1885f7efe29429"
+      },
+      "requiredFeatures": [
+        "bounded-integer",
+        "operation-snapshots"
+      ],
+      "canonicalIdentity": null
+    }
+  },
+  "fixtureVersion": "agent-a-role-compositions/1-draft",
+  "status": "proposed-shared-reference-compositions",
+  "referenceContract": "agent-a-fs02/2-draft",
+  "artifactLocators": {
+    "current-source": "parent-order.native",
+    "operation-source": "version-update.native",
+    "property-current": "compositions/property-current.json",
+    "property-post": "compositions/property-post.json",
+    "model": "compositions/model/semantic-ir.json",
+    "manifest": "compositions/model/package-manifest.json",
+    "lock": "compositions/model/package-lock.json",
+    "model-source": "compositions/model/types/main.tsp",
+    "closure": "compositions/closure.json",
+    "invocation": "invocations/healthy-unchanged-version.json",
+    "pre": "snapshots/healthy-unchanged-version-pre.json",
+    "post": "snapshots/healthy-unchanged-version-post.json",
+    "frame": "frames/allow-version-write.json",
+    "environment": "compositions/environment.json",
+    "native-source": "compositions/native-source.native",
+    "native-output": "compositions/native-output.json",
+    "run": "compositions/run.json"
+  },
+  "artifactRefs": {
+    "current-source": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "source",
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/source/parent-order",
+      "revision": {
+        "namespace": "synthetic-source-revision",
+        "value": "1"
+      },
+      "digest": "sha256:6030625958c37eec713ba1b38dde5778d1b6a8d7713d8ceca1efd8942c68fc9c",
+      "wire": {
+        "identity": "ix.native.source",
+        "version": "0-draft"
+      }
+    },
+    "operation-source": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "source",
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/source/version-update",
+      "revision": {
+        "namespace": "synthetic-source-revision",
+        "value": "1"
+      },
+      "digest": "sha256:3863a233230fd289a39031c067094850598639bae2824e735aac0bda9d24134f",
+      "wire": {
+        "identity": "ix.native.source",
+        "version": "0-draft"
+      }
+    },
+    "property-current": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "property",
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/property/ParentPrecedes",
+      "revision": {
+        "namespace": "agent-a-role-fixture",
+        "value": "1"
+      },
+      "digest": "sha256:59f44b8bb828f23413f3b76cf453b13a5b5eb6ffec38569210d326757c764662",
+      "wire": {
+        "identity": "agent-a-property-locus",
+        "version": "1-draft"
+      }
+    },
+    "property-post": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "property",
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/property/VersionUnchanged",
+      "revision": {
+        "namespace": "agent-a-role-fixture",
+        "value": "1"
+      },
+      "digest": "sha256:3eb6285269118e579e893eea53bacca96c32cb5e727cec8f89a89d9715e4aafa",
+      "wire": {
+        "identity": "agent-a-property-locus",
+        "version": "1-draft"
+      }
+    },
+    "model": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "model-package",
+      "authority": "agent-a-review-fixtures",
+      "identity": "example/config",
+      "revision": {
+        "namespace": "package-semver",
+        "value": "1.0.0"
+      },
+      "digest": "sha256:7396d20d580b71c406607c71bff36ecdbe471aef3328945a5ee9d8a78933b2f7",
+      "wire": {
+        "identity": "filament.semantic-ir",
+        "version": "1.1.0"
+      }
+    },
+    "manifest": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "model-manifest",
+      "authority": "agent-a-review-fixtures",
+      "identity": "example/config/manifest",
+      "revision": {
+        "namespace": "package-semver",
+        "value": "1.0.0"
+      },
+      "digest": "sha256:c6a7cf85d5df9734370652600a66f68065556adff2fc3ebb88c59523538e021b",
+      "wire": {
+        "identity": "filament.package-manifest",
+        "version": "1.0.0"
+      }
+    },
+    "lock": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "model-lock",
+      "authority": "agent-a-review-fixtures",
+      "identity": "example/config/lock",
+      "revision": {
+        "namespace": "package-semver",
+        "value": "1.0.0"
+      },
+      "digest": "sha256:eca8b12393398f65d45b4fb0474dde1b93505982531ea823671aa4a70bc0bfc5",
+      "wire": {
+        "identity": "filament.package-lock",
+        "version": "1.0.0"
+      }
+    },
+    "model-source": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "source",
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/source/typespec",
+      "revision": {
+        "namespace": "package-semver",
+        "value": "1.0.0"
+      },
+      "digest": "sha256:d67652123f3b6c3e500511187316651348c8b0034984e9bfd0764fdc3d98dd83",
+      "wire": {
+        "identity": "typespec.source",
+        "version": "1.15.0"
+      }
+    },
+    "closure": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "dependency-closure",
+      "authority": "agent-a-review-fixtures",
+      "identity": "example/config/closure",
+      "revision": {
+        "namespace": "agent-a-role-fixture",
+        "value": "1"
+      },
+      "digest": "sha256:c65dc1ed01b6667a574b3ec3eb24df9658c7115d37138bc29f874071965646ad",
+      "wire": {
+        "identity": "agent-a-closure-composition",
+        "version": "1-draft"
+      }
+    },
+    "invocation": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "invocation",
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/invocation/healthy-unchanged-version",
+      "revision": {
+        "namespace": "agent-a-review-fixture",
+        "value": "1"
+      },
+      "digest": "sha256:84ef5f4ab9f384d09d50de3a357c2f066cad68a02080c38e3725b9ace213946e",
+      "wire": {
+        "identity": "agent-a-invocation",
+        "version": "1-draft"
+      }
+    },
+    "pre": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "snapshot",
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/snapshot/healthy-unchanged-version/pre",
+      "revision": {
+        "namespace": "agent-a-review-fixture",
+        "value": "1"
+      },
+      "digest": "sha256:09a57105736a807d4ea8302af6edc02b48a7d02db20ae0047c922e346766cc4a",
+      "wire": {
+        "identity": "agent-a-snapshot",
+        "version": "1-draft"
+      }
+    },
+    "post": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "snapshot",
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/snapshot/healthy-unchanged-version/post",
+      "revision": {
+        "namespace": "agent-a-review-fixture",
+        "value": "1"
+      },
+      "digest": "sha256:5cbe77e23f0853573fa23bc507ebfb591ac2a31fabc171de70d32240a32780cc",
+      "wire": {
+        "identity": "agent-a-snapshot",
+        "version": "1-draft"
+      }
+    },
+    "frame": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "binding",
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/binding/allow-version-write",
+      "revision": {
+        "namespace": "agent-a-review-fixture",
+        "value": "1"
+      },
+      "digest": "sha256:1cd09cc97401840b31ef9e99db0b5aee6e969d493c9070c99f297f1055003e9b",
+      "wire": {
+        "identity": "agent-a-frame-binding",
+        "version": "1-draft"
+      }
+    },
+    "environment": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "environment",
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/environment/local-syntax",
+      "revision": {
+        "namespace": "agent-a-role-fixture",
+        "value": "1"
+      },
+      "digest": "sha256:fcf9eea982c1d9be0aa6cd74b9233c869551a799174236efc510f861aa8f5d32",
+      "wire": {
+        "identity": "agent-a-environment-example",
+        "version": "1-draft"
+      }
+    },
+    "native-source": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "source",
+      "authority": "agent-a-review-fixtures",
+      "identity": "test:parent",
+      "revision": {
+        "namespace": "quire-spec.cli-source-label",
+        "value": "fixture:1"
+      },
+      "digest": "sha256:bb7a187662ee136b70c27a82204ecd41b446dcac56fbc183d32bc94b8ff28018",
+      "wire": {
+        "identity": "ix.native.source",
+        "version": "0-draft"
+      }
+    },
+    "native-output": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "generated-artifact",
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/native-artifact/syntax-1",
+      "revision": {
+        "namespace": "agent-a-role-fixture",
+        "value": "1"
+      },
+      "digest": "sha256:72ced96853fea13a53dadb3210ebff6171861232df7527d11b9619d5ebdf9f8e",
+      "wire": {
+        "identity": "quire-spec.cli-parse",
+        "version": "unregistered-draft"
+      }
+    },
+    "run": {
+      "refVersion": "ix.artifact-ref/2-draft",
+      "kind": "run-artifact",
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/run/b0818cd3-73c2-4631-a3f0-1a66c94340c1",
+      "revision": {
+        "namespace": "agent-a-role-fixture",
+        "value": "1"
+      },
+      "digest": "sha256:5fce1218c01dc512c927111a3c9b1565adbde968def3dc255cd5d3d47f1cc474",
+      "wire": {
+        "identity": "agent-a-run-reference-example",
+        "version": "1-draft"
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "authored-property-region",
+      "roles": {
+        "property": {
+          "artifact": {
+            "refVersion": "ix.artifact-ref/2-draft",
+            "kind": "property",
+            "authority": "agent-a-review-fixtures",
+            "identity": "ix://example/config/property/ParentPrecedes",
+            "revision": {
+              "namespace": "agent-a-role-fixture",
+              "value": "1"
+            },
+            "digest": "sha256:59f44b8bb828f23413f3b76cf453b13a5b5eb6ffec38569210d326757c764662",
+            "wire": {
+              "identity": "agent-a-property-locus",
+              "version": "1-draft"
+            }
+          },
+          "language": {
+            "identity": "ix:native",
+            "edition": "0-draft"
+          },
+          "semanticProfile": {
+            "identity": "state-finite",
+            "version": "0-draft",
+            "definitionDigest": "sha256:8bc68a3c7e46d26c7191dfbb662d4d63070af9fedc9ce985fb1885f7efe29429"
+          },
+          "requiredFeatures": [
+            "bounded-integer",
+            "guarded-implication",
+            "optional-reference"
+          ],
+          "canonicalIdentity": null
+        },
+        "source": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "source",
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/source/parent-order",
+          "revision": {
+            "namespace": "synthetic-source-revision",
+            "value": "1"
+          },
+          "digest": "sha256:6030625958c37eec713ba1b38dde5778d1b6a8d7713d8ceca1efd8942c68fc9c",
+          "wire": {
+            "identity": "ix.native.source",
+            "version": "0-draft"
+          }
+        }
+      },
+      "expected": "exact-byte-and-region-bindings-model-unavailable"
+    },
+    {
+      "id": "operation-property-region",
+      "roles": {
+        "property": {
+          "artifact": {
+            "refVersion": "ix.artifact-ref/2-draft",
+            "kind": "property",
+            "authority": "agent-a-review-fixtures",
+            "identity": "ix://example/config/property/VersionUnchanged",
+            "revision": {
+              "namespace": "agent-a-role-fixture",
+              "value": "1"
+            },
+            "digest": "sha256:3eb6285269118e579e893eea53bacca96c32cb5e727cec8f89a89d9715e4aafa",
+            "wire": {
+              "identity": "agent-a-property-locus",
+              "version": "1-draft"
+            }
+          },
+          "language": {
+            "identity": "ix:native",
+            "edition": "0-draft"
+          },
+          "semanticProfile": {
+            "identity": "state-finite",
+            "version": "0-draft",
+            "definitionDigest": "sha256:8bc68a3c7e46d26c7191dfbb662d4d63070af9fedc9ce985fb1885f7efe29429"
+          },
+          "requiredFeatures": [
+            "bounded-integer",
+            "operation-snapshots"
+          ],
+          "canonicalIdentity": null
+        },
+        "source": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "source",
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/source/version-update",
+          "revision": {
+            "namespace": "synthetic-source-revision",
+            "value": "1"
+          },
+          "digest": "sha256:3863a233230fd289a39031c067094850598639bae2824e735aac0bda9d24134f",
+          "wire": {
+            "identity": "ix.native.source",
+            "version": "0-draft"
+          }
+        }
+      },
+      "expected": "exact-byte-and-region-bindings-model-unavailable"
+    },
+    {
+      "id": "actual-model-manifest-lock-closure",
+      "roles": {
+        "model": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "model-package",
+          "authority": "agent-a-review-fixtures",
+          "identity": "example/config",
+          "revision": {
+            "namespace": "package-semver",
+            "value": "1.0.0"
+          },
+          "digest": "sha256:7396d20d580b71c406607c71bff36ecdbe471aef3328945a5ee9d8a78933b2f7",
+          "wire": {
+            "identity": "filament.semantic-ir",
+            "version": "1.1.0"
+          }
+        },
+        "manifest": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "model-manifest",
+          "authority": "agent-a-review-fixtures",
+          "identity": "example/config/manifest",
+          "revision": {
+            "namespace": "package-semver",
+            "value": "1.0.0"
+          },
+          "digest": "sha256:c6a7cf85d5df9734370652600a66f68065556adff2fc3ebb88c59523538e021b",
+          "wire": {
+            "identity": "filament.package-manifest",
+            "version": "1.0.0"
+          }
+        },
+        "lock": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "model-lock",
+          "authority": "agent-a-review-fixtures",
+          "identity": "example/config/lock",
+          "revision": {
+            "namespace": "package-semver",
+            "value": "1.0.0"
+          },
+          "digest": "sha256:eca8b12393398f65d45b4fb0474dde1b93505982531ea823671aa4a70bc0bfc5",
+          "wire": {
+            "identity": "filament.package-lock",
+            "version": "1.0.0"
+          }
+        },
+        "closure": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "dependency-closure",
+          "authority": "agent-a-review-fixtures",
+          "identity": "example/config/closure",
+          "revision": {
+            "namespace": "agent-a-role-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:c65dc1ed01b6667a574b3ec3eb24df9658c7115d37138bc29f874071965646ad",
+          "wire": {
+            "identity": "agent-a-closure-composition",
+            "version": "1-draft"
+          }
+        },
+        "model-source": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "source",
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/source/typespec",
+          "revision": {
+            "namespace": "package-semver",
+            "value": "1.0.0"
+          },
+          "digest": "sha256:d67652123f3b6c3e500511187316651348c8b0034984e9bfd0764fdc3d98dd83",
+          "wire": {
+            "identity": "typespec.source",
+            "version": "1.15.0"
+          }
+        }
+      },
+      "expected": "reproduced-producer-bytes-native-typed-model-binding-unavailable"
+    },
+    {
+      "id": "immutable-operation-inputs",
+      "roles": {
+        "invocation": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "invocation",
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/invocation/healthy-unchanged-version",
+          "revision": {
+            "namespace": "agent-a-review-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:84ef5f4ab9f384d09d50de3a357c2f066cad68a02080c38e3725b9ace213946e",
+          "wire": {
+            "identity": "agent-a-invocation",
+            "version": "1-draft"
+          }
+        },
+        "pre": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "snapshot",
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/snapshot/healthy-unchanged-version/pre",
+          "revision": {
+            "namespace": "agent-a-review-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:09a57105736a807d4ea8302af6edc02b48a7d02db20ae0047c922e346766cc4a",
+          "wire": {
+            "identity": "agent-a-snapshot",
+            "version": "1-draft"
+          }
+        },
+        "post": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "snapshot",
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/snapshot/healthy-unchanged-version/post",
+          "revision": {
+            "namespace": "agent-a-review-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:5cbe77e23f0853573fa23bc507ebfb591ac2a31fabc171de70d32240a32780cc",
+          "wire": {
+            "identity": "agent-a-snapshot",
+            "version": "1-draft"
+          }
+        },
+        "frame": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "binding",
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/binding/allow-version-write",
+          "revision": {
+            "namespace": "agent-a-review-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:1cd09cc97401840b31ef9e99db0b5aee6e969d493c9070c99f297f1055003e9b",
+          "wire": {
+            "identity": "agent-a-frame-binding",
+            "version": "1-draft"
+          }
+        }
+      },
+      "expected": "accepted-draft-operation-identity-baseline-not-evaluator-output"
+    },
+    {
+      "id": "run-environment-native-artifact",
+      "roles": {
+        "run": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "run-artifact",
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/run/b0818cd3-73c2-4631-a3f0-1a66c94340c1",
+          "revision": {
+            "namespace": "agent-a-role-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:5fce1218c01dc512c927111a3c9b1565adbde968def3dc255cd5d3d47f1cc474",
+          "wire": {
+            "identity": "agent-a-run-reference-example",
+            "version": "1-draft"
+          }
+        },
+        "environment": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "environment",
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/environment/local-syntax",
+          "revision": {
+            "namespace": "agent-a-role-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:fcf9eea982c1d9be0aa6cd74b9233c869551a799174236efc510f861aa8f5d32",
+          "wire": {
+            "identity": "agent-a-environment-example",
+            "version": "1-draft"
+          }
+        },
+        "native-output": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "generated-artifact",
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/native-artifact/syntax-1",
+          "revision": {
+            "namespace": "agent-a-role-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:72ced96853fea13a53dadb3210ebff6171861232df7527d11b9619d5ebdf9f8e",
+          "wire": {
+            "identity": "quire-spec.cli-parse",
+            "version": "unregistered-draft"
+          }
+        },
+        "native-source": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "source",
+          "authority": "agent-a-review-fixtures",
+          "identity": "test:parent",
+          "revision": {
+            "namespace": "quire-spec.cli-source-label",
+            "value": "fixture:1"
+          },
+          "digest": "sha256:bb7a187662ee136b70c27a82204ecd41b446dcac56fbc183d32bc94b8ff28018",
+          "wire": {
+            "identity": "ix.native.source",
+            "version": "0-draft"
+          }
+        }
+      },
+      "expected": "observed-syntax-output-only-environment-schema-provisional"
+    },
+    {
+      "id": "do-not-adopt-old-declaration-ids",
+      "roles": {
+        "model": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "model-package",
+          "authority": "agent-a-review-fixtures",
+          "identity": "example/config",
+          "revision": {
+            "namespace": "package-semver",
+            "value": "1.0.0"
+          },
+          "digest": "sha256:7396d20d580b71c406607c71bff36ecdbe471aef3328945a5ee9d8a78933b2f7",
+          "wire": {
+            "identity": "filament.semantic-ir",
+            "version": "1.1.0"
+          }
+        },
+        "invocation": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "invocation",
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/invocation/healthy-unchanged-version",
+          "revision": {
+            "namespace": "agent-a-review-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:84ef5f4ab9f384d09d50de3a357c2f066cad68a02080c38e3725b9ace213946e",
+          "wire": {
+            "identity": "agent-a-invocation",
+            "version": "1-draft"
+          }
+        },
+        "frame": {
+          "refVersion": "ix.artifact-ref/2-draft",
+          "kind": "binding",
+          "authority": "agent-a-review-fixtures",
+          "identity": "ix://example/config/binding/allow-version-write",
+          "revision": {
+            "namespace": "agent-a-review-fixture",
+            "value": "1"
+          },
+          "digest": "sha256:1cd09cc97401840b31ef9e99db0b5aee6e969d493c9070c99f297f1055003e9b",
+          "wire": {
+            "identity": "agent-a-frame-binding",
+            "version": "1-draft"
+          }
+        }
+      },
+      "expected": "native-binding-unavailable-explicit-declaration-adoption-required",
+      "differences": {
+        "oldOperation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
+        "producedOperation": "ix://example/config/operation/ConfigVersion-attemptUpdate",
+        "oldFrameField": "ix://example/config/field/ConfigVersion/versionNumber",
+        "producedField": "ix://example/config/field/ConfigVersion-versionNumber"
+      }
+    }
+  ],
+  "adverseControls": [
+    {
+      "id": "changed-model-bytes",
+      "artifactKey": "model",
+      "mutation": "change payload bytes but keep selected reference",
+      "expected": "digest_mismatch"
+    },
+    {
+      "id": "changed-manifest-bytes",
+      "artifactKey": "manifest",
+      "mutation": "change payload bytes but keep selected reference",
+      "expected": "digest_mismatch"
+    },
+    {
+      "id": "changed-lock-bytes",
+      "artifactKey": "lock",
+      "mutation": "change payload bytes but keep selected reference",
+      "expected": "digest_mismatch"
+    },
+    {
+      "id": "changed-closure-bytes",
+      "artifactKey": "closure",
+      "mutation": "change payload bytes but keep selected reference",
+      "expected": "digest_mismatch"
+    },
+    {
+      "id": "changed-frame-bytes",
+      "artifactKey": "frame",
+      "mutation": "change payload bytes but keep selected reference",
+      "expected": "digest_mismatch"
+    },
+    {
+      "id": "changed-pre-bytes",
+      "artifactKey": "pre",
+      "mutation": "change payload bytes but keep selected reference",
+      "expected": "digest_mismatch"
+    },
+    {
+      "id": "changed-post-bytes",
+      "artifactKey": "post",
+      "mutation": "change payload bytes but keep selected reference",
+      "expected": "digest_mismatch"
+    },
+    {
+      "id": "changed-invocation-bytes",
+      "artifactKey": "invocation",
+      "mutation": "change payload bytes but keep selected reference",
+      "expected": "digest_mismatch"
+    },
+    {
+      "id": "changed-environment-bytes",
+      "artifactKey": "environment",
+      "mutation": "change payload bytes but keep selected reference",
+      "expected": "digest_mismatch"
+    },
+    {
+      "id": "changed-native-output-bytes",
+      "artifactKey": "native-output",
+      "mutation": "change payload bytes but keep selected reference",
+      "expected": "digest_mismatch"
+    },
+    {
+      "id": "changed-run-bytes",
+      "artifactKey": "run",
+      "mutation": "change payload bytes but keep selected reference",
+      "expected": "digest_mismatch"
+    },
+    {
+      "id": "different-kind-same-label",
+      "mutation": "replace environment kind with run-artifact",
+      "expected": "identity_mismatch"
+    },
+    {
+      "id": "changed-source-region",
+      "mutation": "move expressionSpan by one byte while retaining its digest and coordinate claims",
+      "expected": "invalid_source_map"
+    }
+  ]
+}

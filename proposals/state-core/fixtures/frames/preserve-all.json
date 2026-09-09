@@ -1,0 +1,14 @@
+{
+  "fixtureVersion": "agent-a-frame-binding/1-draft",
+  "identity": "ix://example/config/binding/preserve-all",
+  "state": "proposed-not-linked",
+  "frame": {
+    "allowedChangedFields": [],
+    "allowedCreatedTypes": [],
+    "allowedDeletedTypes": []
+  },
+  "revision": {
+    "namespace": "agent-a-review-fixture",
+    "value": "1"
+  }
+}

@@ -1,0 +1,41 @@
+---
+id: Task-002
+title: "Review and deliver the exact PR8 unblock"
+type: Task
+status: in_progress
+track: A
+priority: P1
+relationships:
+  - target: ix://agent-ix/quire-specification/Task-001
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-017
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-018
+    type: references
+  - target: ix://agent-ix/quire-specification/TC-003
+    type: verifies
+---
+# Task-002: Review and handoff
+
+## Scope
+
+Review the actual qualification changes, publish the private exact schema/vector
+pin to B and resolve PR8 readiness without requiring the complete compiler.
+
+## Subtasks
+
+- [x] Run actual code-review/rust-review and record remaining implementation gaps.
+- [x] Validate all changed artifacts and retain actual command outcomes.
+- [x] Push the exact revision and respond to B's concrete findings on PR8.
+- [ ] Make the PR reviewable and land it when its actual prerequisites permit.
+
+PR8 was marked ready for review at 56c2df7, with the direct B handoff at
+https://github.com/agent-ix/quire-specification/pull/8#issuecomment-5594213437.
+It is open and mergeable; B's independent review/adoption of the amended packet
+has not been recorded. This task does not wait for B's entire consumer to be
+implemented, and does not mark that consumer acceptance complete.
+
+## Deliverables
+
+Review artifact, accurate PR description and exact private handoff. B owns its
+subsequent adoption and IT-003-SC-03; no outcome is invented on its behalf.

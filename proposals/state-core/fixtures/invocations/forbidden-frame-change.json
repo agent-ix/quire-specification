@@ -1,0 +1,59 @@
+{
+  "fixtureVersion": "agent-a-invocation/1-draft",
+  "subject": {
+    "package": "example/config",
+    "requirement": "OP-001",
+    "revision": 1,
+    "clause": "VersionUnchanged"
+  },
+  "operation": "ix://example/config/operation/ConfigVersion/attemptUpdate",
+  "invocation": "ix://example/config/invocation/forbidden-frame-change",
+  "self": "version-1",
+  "parameters": {},
+  "result": true,
+  "pre": {
+    "path": "snapshots/forbidden-frame-change-pre.json",
+    "artifactRef": {
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/snapshot/forbidden-frame-change/pre",
+      "revision": {
+        "namespace": "agent-a-review-fixture",
+        "value": "1"
+      },
+      "digest": "sha256:f210e2bd49b06ecb8819370495787e1c2c40abcb259ce2018e610a347679694b",
+      "profile": "agent-a-snapshot/1-draft"
+    }
+  },
+  "post": {
+    "path": "snapshots/forbidden-frame-change-post.json",
+    "artifactRef": {
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/snapshot/forbidden-frame-change/post",
+      "revision": {
+        "namespace": "agent-a-review-fixture",
+        "value": "1"
+      },
+      "digest": "sha256:574b176a89c7d4ef958604ad4dbc1153644a13b3f3fd803e520136564c5679b1",
+      "profile": "agent-a-snapshot/1-draft"
+    }
+  },
+  "created": [],
+  "deleted": [],
+  "frameBinding": {
+    "path": "frames/preserve-all.json",
+    "artifactRef": {
+      "authority": "agent-a-review-fixtures",
+      "identity": "ix://example/config/binding/preserve-all",
+      "revision": {
+        "namespace": "agent-a-review-fixture",
+        "value": "1"
+      },
+      "digest": "sha256:f33006e2ae5defbf05aa3249fe7afdda790c29ab15b4f39bede0125f81745d5d",
+      "profile": "agent-a-frame-binding/1-draft"
+    }
+  },
+  "revision": {
+    "namespace": "agent-a-review-fixture",
+    "value": "1"
+  }
+}

@@ -1,0 +1,1106 @@
+{
+  "fixtureVersion": "agent-a-typing-cases/1-draft",
+  "status": "manually-authored-judgments-not-typechecker-or-evaluator-output",
+  "ruleContract": {
+    "identity": "agent-a-fs03",
+    "version": "1-draft",
+    "path": "../state-semantics.md",
+    "digest": "sha256:d9eb316752ac45d7984b355a054cd279ef9749164a92c7f61fbf621fe280588b"
+  },
+  "baseProfile": {
+    "identity": "state-finite",
+    "version": "0-draft",
+    "definitionDigest": "sha256:8bc68a3c7e46d26c7191dfbb662d4d63070af9fedc9ce985fb1885f7efe29429",
+    "refinementsAccepted": false
+  },
+  "modelBinding": {
+    "state": "unavailable",
+    "environmentStatus": "abstract-judgment-hypotheses-not-compiled-model-wire",
+    "importAlias": "M",
+    "types": {
+      "Version": {
+        "identity": "ix://example/rule-tests/type/Version",
+        "kind": "integer",
+        "min": "0",
+        "max": "1000",
+        "unit": "dimensionless"
+      },
+      "Signed": {
+        "identity": "ix://example/rule-tests/type/Signed",
+        "kind": "integer",
+        "min": "-10",
+        "max": "10",
+        "unit": "dimensionless"
+      },
+      "Count": {
+        "identity": "ix://example/rule-tests/type/Count",
+        "kind": "integer",
+        "min": "0",
+        "max": "3",
+        "unit": "dimensionless"
+      },
+      "Wide": {
+        "identity": "ix://example/rule-tests/type/Wide",
+        "kind": "integer",
+        "min": "-9223372036854775808",
+        "max": "9223372036854775807",
+        "unit": "dimensionless"
+      },
+      "Distance": {
+        "identity": "ix://example/rule-tests/type/Distance",
+        "kind": "integer",
+        "min": "0",
+        "max": "1000",
+        "unit": "metre"
+      },
+      "Duration": {
+        "identity": "ix://example/rule-tests/type/Duration",
+        "kind": "integer",
+        "min": "0",
+        "max": "1000",
+        "unit": "second"
+      },
+      "Bool": {
+        "kind": "profile-boolean"
+      },
+      "Node": {
+        "identity": "ix://example/rule-tests/type/Node",
+        "kind": "identity-bearing-object",
+        "fields": {
+          "n": "Version",
+          "signed": "Signed",
+          "den": "Signed",
+          "wide": "Wide",
+          "count": "Count",
+          "distance": "Distance",
+          "duration": "Duration",
+          "parent": {
+            "kind": "Option",
+            "element": {
+              "kind": "Ref",
+              "target": "Node"
+            }
+          },
+          "peer": {
+            "kind": "Ref",
+            "target": "Node"
+          },
+          "items": {
+            "kind": "Seq",
+            "element": "Version",
+            "maxLength": 3,
+            "ordered": true,
+            "unique": false
+          }
+        },
+        "operations": {
+          "step": {
+            "parameters": [],
+            "result": "Bool"
+          }
+        }
+      }
+    }
+  },
+  "hypothesisConvention": {
+    "numericBounds": "decimal strings for exact mathematical integers; not a model input codec",
+    "fieldIds": "each field resolves to a distinct stable declaration under the given Node type; spellings here abbreviate those hypotheses only",
+    "defaultInputs": "Assume complete, immutable, well-typed snapshots, in-bounds values, all declared fields, and correctly bound context/operation/frame/closure unless a case says otherwise. Concrete scalar/graph values relevant to the judgment are given per case.",
+    "objectIds": "self and other are distinct objects of Node in one universe; unspecified parent links are absent",
+    "postCases": "pre/post are distinct observations of the same invocation/universe with an accepted frame permitting stated field differences, unless explicitly mutated",
+    "optionEncoding": "case tags describe hypothesis values, not a registered snapshot wire; absent and present-nullable differ",
+    "defaultBudget": "sufficient expression/graph/validation budget and no cancellation unless stated",
+    "phaseOrder": "a refused typing judgment prevents evaluation; known input errors refuse and unavailable inputs are incomplete before predicate execution",
+    "noObservedSemantics": "expected judgments follow proposed FS03 rules under hypotheses; current native linking/evaluation are unavailable"
+  },
+  "accountingVersion": "native-ref-cost/1-draft",
+  "cases": [
+    {
+      "id": "absent-parent-implication",
+      "expression": "present(self.parent) implies deref(value(self.parent)).n < self.n",
+      "anchor": "current",
+      "hypotheses": {
+        "self.parent": {
+          "case": "absent"
+        }
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "present-parent-violation",
+      "expression": "present(self.parent) implies deref(value(self.parent)).n < self.n",
+      "anchor": "current",
+      "hypotheses": {
+        "self.n": 2,
+        "self.parent": {
+          "case": "present",
+          "target": "other"
+        },
+        "other.n": 3
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": false
+        }
+      }
+    },
+    {
+      "id": "unguarded-unwrap",
+      "expression": "deref(value(self.parent)).n < self.n",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "undefined_expression",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "or-false-facts",
+      "expression": "not present(self.parent) or deref(value(self.parent)).n < self.n",
+      "anchor": "current",
+      "hypotheses": {
+        "self.parent": {
+          "case": "absent"
+        }
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "right-guard-cannot-protect-left",
+      "expression": "deref(value(self.parent)).n < self.n and present(self.parent)",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "undefined_expression",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "alternative-join-does-not-union-facts",
+      "expression": "(present(self.parent) or true) implies deref(value(self.parent)).n < self.n",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "undefined_expression",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "conditional-guard",
+      "expression": "if present(self.parent) then deref(value(self.parent)).n < self.n else true",
+      "anchor": "current",
+      "hypotheses": {
+        "self.parent": {
+          "case": "absent"
+        }
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "branch-type-mismatch",
+      "expression": "if true then self.n else true",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "ill_typed",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "immutable-option-alias",
+      "expression": "let p = self.parent in present(p) implies deref(value(p)).n < self.n",
+      "anchor": "current",
+      "hypotheses": {
+        "self.parent": {
+          "case": "absent"
+        }
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "nested-shadowing",
+      "expression": "let x = true in let x = false in x",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "ill_typed",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "unreachable-unknown-name",
+      "expression": "true or missing",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "ill_typed",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "unreachable-unwrap",
+      "expression": "false and deref(value(self.parent)).n < self.n",
+      "anchor": "current",
+      "hypotheses": {
+        "self.parent": {
+          "case": "absent"
+        }
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": false
+        }
+      }
+    },
+    {
+      "id": "unproved-overflow",
+      "expression": "self.n + 1 <= 1000",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "undefined_expression",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "guarded-addition",
+      "expression": "self.n < 1000 implies self.n + 1 <= 1000",
+      "anchor": "current",
+      "hypotheses": {
+        "self.n": 999
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "mismatched-units",
+      "expression": "self.distance + self.duration = self.distance",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "ill_typed",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "unit-division-not-admitted",
+      "expression": "self.distance div self.distance = self.distance",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "ill_typed",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "ambiguous-literals",
+      "expression": "1 + 2 = 3",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "ill_typed",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "negative-division",
+      "expression": "self.signed = -7 div 3",
+      "anchor": "current",
+      "hypotheses": {
+        "self.signed": -2
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "negative-remainder",
+      "expression": "self.signed = -7 rem 3",
+      "anchor": "current",
+      "hypotheses": {
+        "self.signed": -1
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "possible-zero-divisor",
+      "expression": "self.signed div self.den = self.signed",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "undefined_expression",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "nonzero-guard",
+      "expression": "self.den != 0 implies self.signed div self.den >= self.signed",
+      "anchor": "current",
+      "hypotheses": {
+        "self.signed": -7,
+        "self.den": 3
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "minimum-divided-by-minus-one",
+      "expression": "self.wide div -1 = self.wide",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "undefined_expression",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "size-preserves-duplicates",
+      "expression": "size(self.items) = self.count",
+      "anchor": "current",
+      "hypotheses": {
+        "self.items": [
+          1,
+          1
+        ],
+        "self.count": 2
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "size-needs-context",
+      "expression": "size(self.items) = 2",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "ill_typed",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "empty-forall",
+      "expression": "forall(x in self.items : x < self.n)",
+      "anchor": "current",
+      "hypotheses": {
+        "self.items": []
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "empty-exists",
+      "expression": "exists(x in self.items : x < self.n)",
+      "anchor": "current",
+      "hypotheses": {
+        "self.items": []
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": false
+        }
+      }
+    },
+    {
+      "id": "exists-ordered-short-circuit",
+      "expression": "exists(x in self.items : x = 1)",
+      "anchor": "current",
+      "hypotheses": {
+        "self.items": [
+          1,
+          2
+        ],
+        "predicateOccurrencesVisited": [
+          0
+        ]
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "missing-sequence",
+      "expression": "forall(x in self.items : x < self.n)",
+      "anchor": "current",
+      "hypotheses": {
+        "self.items": {
+          "case": "unavailable"
+        }
+      },
+      "inputValidation": "incomplete",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "diagnostic": "unavailable_observation",
+        "evaluation": {
+          "state": "incomplete-under-hypotheses",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "collect-duplicate-output-refused",
+      "expression": "collect(self.items)",
+      "anchor": "current",
+      "hypotheses": {
+        "self.items": [
+          1,
+          1
+        ]
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "unsupported",
+        "typing": "not-typed-unsupported-syntax",
+        "diagnostic": "unsupported_construct",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "equal-fields-distinct-objects",
+      "expression": "self = deref(self.peer)",
+      "anchor": "current",
+      "hypotheses": {
+        "self.peer": {
+          "target": "other"
+        },
+        "self.n": 2,
+        "other.n": 2,
+        "distinctObjectIdentities": [
+          "self",
+          "other"
+        ]
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": false
+        }
+      }
+    },
+    {
+      "id": "one-edge-self-cycle",
+      "expression": "reaches(self, self, parent)",
+      "anchor": "current",
+      "hypotheses": {
+        "self.parent": {
+          "case": "present",
+          "target": "self"
+        }
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "two-edge-cycle",
+      "expression": "reaches(self, self, parent)",
+      "anchor": "current",
+      "hypotheses": {
+        "self.parent": {
+          "case": "present",
+          "target": "other"
+        },
+        "other.parent": {
+          "case": "present",
+          "target": "self"
+        }
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "zero-edge-is-not-reachability",
+      "expression": "reaches(self, self, parent)",
+      "anchor": "current",
+      "hypotheses": {
+        "self.parent": {
+          "case": "absent"
+        }
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": false
+        }
+      }
+    },
+    {
+      "id": "skipped-dangling-reference",
+      "expression": "true",
+      "anchor": "current",
+      "hypotheses": {
+        "self.parent": {
+          "case": "present",
+          "target": "missing"
+        },
+        "populationComplete": true
+      },
+      "inputValidation": "refused",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "diagnostic": "dangling_reference",
+        "evaluation": {
+          "state": "refused-under-hypotheses",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "incomplete-universe",
+      "expression": "true",
+      "anchor": "current",
+      "hypotheses": {
+        "populationComplete": false
+      },
+      "inputValidation": "incomplete",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "diagnostic": "incomplete_population",
+        "evaluation": {
+          "state": "incomplete-under-hypotheses",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "nullable-is-not-absence",
+      "expression": "true",
+      "anchor": "current",
+      "hypotheses": {
+        "self.parent": {
+          "case": "present-nullable"
+        }
+      },
+      "inputValidation": "refused",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "diagnostic": "ill_typed",
+        "evaluation": {
+          "state": "refused-under-hypotheses",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "pre-guard-cannot-protect-post",
+      "expression": "present(pre(self.parent)) implies deref(value(self.parent)).n < self.n",
+      "anchor": "post",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "undefined_expression",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "same-pre-value-guard",
+      "expression": "present(pre(self.parent)) implies deref(value(pre(self.parent))).n < pre(self.n)",
+      "anchor": "post",
+      "hypotheses": {
+        "pre.self.parent": {
+          "case": "present",
+          "target": "other"
+        },
+        "pre.self.n": 2,
+        "pre.other.n": 1,
+        "post.self.parent": {
+          "case": "absent"
+        }
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "captured-post-value-not-retagged",
+      "expression": "let p = self.parent in present(pre(self.parent)) implies deref(value(p)).n < self.n",
+      "anchor": "post",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "undefined_expression",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "pre-preserves-captured-alias",
+      "expression": "let p = self.parent in present(p) implies deref(value(pre(p))).n < self.n",
+      "anchor": "post",
+      "hypotheses": {
+        "post.self.parent": {
+          "case": "present",
+          "target": "other"
+        },
+        "post.other.n": 1,
+        "post.self.n": 2,
+        "pre.self.parent": {
+          "case": "absent"
+        }
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      }
+    },
+    {
+      "id": "result-outside-post",
+      "expression": "result",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "wrong_snapshot",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "pre-outside-post",
+      "expression": "pre(self.n) = self.n",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "refused",
+        "diagnostic": "wrong_snapshot",
+        "evaluation": {
+          "state": "not-started",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "boolean-operation-result",
+      "expression": "result",
+      "anchor": "post",
+      "hypotheses": {
+        "result": false
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": false
+        }
+      }
+    },
+    {
+      "id": "wrong-invocation",
+      "expression": "pre(self.n) = self.n",
+      "anchor": "post",
+      "hypotheses": {
+        "preInvocation": "first",
+        "postInvocation": "second"
+      },
+      "inputValidation": "refused",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "diagnostic": "wrong_snapshot",
+        "evaluation": {
+          "state": "refused-under-hypotheses",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "missing-pre-observation",
+      "expression": "pre(self.n) = self.n",
+      "anchor": "post",
+      "hypotheses": {
+        "pre": {
+          "case": "unavailable"
+        }
+      },
+      "inputValidation": "incomplete",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "diagnostic": "unavailable_observation",
+        "evaluation": {
+          "state": "incomplete-under-hypotheses",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "deleted-post-self",
+      "expression": "pre(self.n) = pre(self.n)",
+      "anchor": "post",
+      "hypotheses": {
+        "postSelf": "deleted",
+        "framePermitsDeletion": true
+      },
+      "inputValidation": "refused",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "diagnostic": "wrong_snapshot",
+        "evaluation": {
+          "state": "refused-under-hypotheses",
+          "logicalValue": "absent"
+        }
+      }
+    },
+    {
+      "id": "zero-expression-budget",
+      "expression": "true",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "diagnostic": "resource_exhausted",
+        "evaluation": {
+          "state": "incomplete-under-hypotheses",
+          "logicalValue": "absent"
+        }
+      },
+      "budget": {
+        "expressionSteps": 0,
+        "graphExpansions": 10
+      }
+    },
+    {
+      "id": "let-initializer-once",
+      "expression": "let x = true in x and x",
+      "anchor": "current",
+      "hypotheses": {
+        "expectedConsumedExpressionSteps": 5
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "evaluation": {
+          "state": "completed-under-hypotheses",
+          "value": true
+        }
+      },
+      "budget": {
+        "expressionSteps": 5,
+        "graphExpansions": 0
+      }
+    },
+    {
+      "id": "let-exhausted-before-second-read",
+      "expression": "let x = true in x and x",
+      "anchor": "current",
+      "hypotheses": {},
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "diagnostic": "resource_exhausted",
+        "evaluation": {
+          "state": "incomplete-under-hypotheses",
+          "logicalValue": "absent"
+        }
+      },
+      "budget": {
+        "expressionSteps": 4,
+        "graphExpansions": 0
+      }
+    },
+    {
+      "id": "graph-budget-is-not-depth-bound",
+      "expression": "reaches(self, self, parent)",
+      "anchor": "current",
+      "hypotheses": {
+        "self.parent": {
+          "case": "present",
+          "target": "self"
+        }
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "diagnostic": "resource_exhausted",
+        "evaluation": {
+          "state": "incomplete-under-hypotheses",
+          "logicalValue": "absent"
+        }
+      },
+      "budget": {
+        "expressionSteps": 10,
+        "graphExpansions": 0
+      }
+    },
+    {
+      "id": "cancelled-expression",
+      "expression": "true",
+      "anchor": "current",
+      "hypotheses": {
+        "cancelledBeforeExpression": true
+      },
+      "inputValidation": "valid-under-hypotheses",
+      "expected": {
+        "syntax": "parsed",
+        "typing": "accepted-under-hypotheses",
+        "type": "Bool",
+        "diagnostic": "cancelled",
+        "evaluation": {
+          "state": "incomplete-under-hypotheses",
+          "logicalValue": "absent"
+        }
+      }
+    }
+  ]
+}
