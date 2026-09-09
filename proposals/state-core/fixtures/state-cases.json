@@ -1,0 +1,282 @@
+{
+  "status": "manually-authored-expectations-not-evaluator-output",
+  "cases": [
+    {
+      "id": "healthy-parent-order",
+      "snapshot": {
+        "universe": "example/config-history",
+        "observation": "current",
+        "complete": true,
+        "objects": [
+          {
+            "id": "root",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 1,
+              "parent": null
+            }
+          },
+          {
+            "id": "child",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 2,
+              "parent": {
+                "type": "ix://example/config/type/ConfigVersion",
+                "object": "root"
+              }
+            }
+          }
+        ]
+      },
+      "expected": {
+        "execution": "completed",
+        "value": true
+      },
+      "self": "child"
+    },
+    {
+      "id": "violating-parent-order",
+      "snapshot": {
+        "universe": "example/config-history",
+        "observation": "current",
+        "complete": true,
+        "objects": [
+          {
+            "id": "root",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 3,
+              "parent": null
+            }
+          },
+          {
+            "id": "child",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 2,
+              "parent": {
+                "type": "ix://example/config/type/ConfigVersion",
+                "object": "root"
+              }
+            }
+          }
+        ]
+      },
+      "expected": {
+        "execution": "completed",
+        "value": false
+      },
+      "self": "child"
+    },
+    {
+      "id": "absent-parent-guard",
+      "snapshot": {
+        "universe": "example/config-history",
+        "observation": "current",
+        "complete": true,
+        "objects": [
+          {
+            "id": "root",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 1,
+              "parent": null
+            }
+          }
+        ]
+      },
+      "expected": {
+        "execution": "completed",
+        "value": true
+      },
+      "self": "root"
+    },
+    {
+      "id": "equal-valued-distinct-identities",
+      "snapshot": {
+        "universe": "example/config-history",
+        "observation": "current",
+        "complete": true,
+        "objects": [
+          {
+            "id": "left",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 2,
+              "parent": null
+            }
+          },
+          {
+            "id": "right",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 2,
+              "parent": null
+            }
+          }
+        ]
+      },
+      "expected": {
+        "execution": "completed",
+        "value": false
+      },
+      "primitive": "identity-equality",
+      "operands": [
+        "left",
+        "right"
+      ]
+    },
+    {
+      "id": "cycle-reachability",
+      "snapshot": {
+        "universe": "example/config-history",
+        "observation": "current",
+        "complete": true,
+        "objects": [
+          {
+            "id": "left",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 1,
+              "parent": {
+                "type": "ix://example/config/type/ConfigVersion",
+                "object": "right"
+              }
+            }
+          },
+          {
+            "id": "right",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 2,
+              "parent": {
+                "type": "ix://example/config/type/ConfigVersion",
+                "object": "left"
+              }
+            }
+          }
+        ]
+      },
+      "expected": {
+        "execution": "completed",
+        "value": true
+      },
+      "expression": "reaches(self, self, parent)",
+      "self": "left"
+    },
+    {
+      "id": "self-loop",
+      "snapshot": {
+        "universe": "example/config-history",
+        "observation": "current",
+        "complete": true,
+        "objects": [
+          {
+            "id": "self",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 1,
+              "parent": {
+                "type": "ix://example/config/type/ConfigVersion",
+                "object": "self"
+              }
+            }
+          }
+        ]
+      },
+      "expected": {
+        "execution": "completed",
+        "value": true
+      },
+      "expression": "reaches(self, self, parent)",
+      "self": "self"
+    },
+    {
+      "id": "dangling-parent",
+      "snapshot": {
+        "universe": "example/config-history",
+        "observation": "current",
+        "complete": true,
+        "objects": [
+          {
+            "id": "child",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 2,
+              "parent": {
+                "type": "ix://example/config/type/ConfigVersion",
+                "object": "missing"
+              }
+            }
+          }
+        ]
+      },
+      "expected": {
+        "execution": "refused",
+        "diagnostic": "dangling_reference",
+        "logicalValue": "absent"
+      },
+      "self": "child"
+    },
+    {
+      "id": "duplicate-object",
+      "snapshot": {
+        "universe": "example/config-history",
+        "observation": "current",
+        "complete": true,
+        "objects": [
+          {
+            "id": "same",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 1,
+              "parent": null
+            }
+          },
+          {
+            "id": "same",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 2,
+              "parent": null
+            }
+          }
+        ]
+      },
+      "expected": {
+        "execution": "refused",
+        "diagnostic": "duplicate_object",
+        "logicalValue": "absent"
+      },
+      "self": "child"
+    },
+    {
+      "id": "incomplete-population",
+      "snapshot": {
+        "universe": "example/config-history",
+        "observation": "current",
+        "complete": false,
+        "objects": [
+          {
+            "id": "child",
+            "type": "ix://example/config/type/ConfigVersion",
+            "fields": {
+              "versionNumber": 2,
+              "parent": {
+                "type": "ix://example/config/type/ConfigVersion",
+                "object": "missing"
+              }
+            }
+          }
+        ]
+      },
+      "expected": {
+        "execution": "incomplete",
+        "diagnostic": "incomplete_population",
+        "logicalValue": "absent"
+      },
+      "self": "child"
+    }
+  ]
+}

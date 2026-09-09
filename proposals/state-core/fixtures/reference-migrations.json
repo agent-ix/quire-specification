@@ -1,0 +1,58 @@
+{
+  "fixtureVersion": "agent-a-reference-migrations/1-draft",
+  "status": "proposed-mapping-not-automatically-accepted-equivalence",
+  "mapping": {
+    "identity": "agent-a-artifact-ref-1-to-2",
+    "version": "0-draft"
+  },
+  "oldReference": {
+    "refVersion": "ix.artifact-ref/1-draft",
+    "kind": "source",
+    "authority": "agent-a-review-fixtures",
+    "identity": "ix://example/config/source/parent-order",
+    "revision": {
+      "namespace": "synthetic-source-revision",
+      "value": "1"
+    },
+    "digest": "sha256:6030625958c37eec713ba1b38dde5778d1b6a8d7713d8ceca1efd8942c68fc9c",
+    "wire": {
+      "identity": "ix.native.source",
+      "version": "0-draft"
+    }
+  },
+  "newReference": {
+    "refVersion": "ix.artifact-ref/2-draft",
+    "kind": "source",
+    "authority": "agent-a-review-fixtures",
+    "identity": "ix://example/config/source/parent-order",
+    "revision": {
+      "namespace": "synthetic-source-revision",
+      "value": "1"
+    },
+    "digest": "sha256:6030625958c37eec713ba1b38dde5778d1b6a8d7713d8ceca1efd8942c68fc9c",
+    "wire": {
+      "identity": "ix.native.source",
+      "version": "0-draft"
+    }
+  },
+  "preservedFields": [
+    "kind",
+    "authority",
+    "identity",
+    "revision",
+    "digest",
+    "wire"
+  ],
+  "changedFields": [
+    "refVersion"
+  ],
+  "withoutAcceptedMapping": "unsupported_version",
+  "withExplicitlyAcceptedMapping": "same-underlying-byte-artifact-for-common-kinds",
+  "unrepresentableOldKinds": [
+    "environment",
+    "model-manifest",
+    "model-lock",
+    "dependency-closure"
+  ],
+  "historicalEvidence": "retains-original-reference-version-bytes-and-identity"
+}

@@ -8,7 +8,11 @@ Read README.md, LICENSE-DECISION.md and the owning issue before editing. This is
 - Record dependency licenses and copied/generated artifact provenance. Do not infer licensing from process or repository boundaries.
 - Keep private research, traces and issue links out of public releases. No public posting, visibility change, or source relicensing without explicit approval.
 - Use isolated worktrees for concurrent code sessions; preserve unrelated edits.
-- There is no compiler build/test command yet. Add and document real checks with the first implementation; do not fabricate successful tests.
+- Owner directive: checks run locally until stable. This repository has no hosted workflows; any future workflow must be manual-dispatch only (`workflow_dispatch`). Do not add automatic triggers or dispatch a run without explicit direction.
+- This repository has a qualification-only Rust test crate. Run the actual local
+  commands in README.md. The native compiler remains in quire-spec-language.
+  Preserve the distinction between schema/JCS producer checks and B's complete
+  strict-reader/report qualification; the former does not discharge the latter.
 
 <!-- required-language-policy:start -->
 ## Required implementation language and containment
