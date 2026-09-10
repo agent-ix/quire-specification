@@ -8,11 +8,23 @@ relationships:
 ---
 ## Description
 
-When delivering an observation assessment to an executable or exported consumer, the consumer adapter SHALL retain the requested subject, capability, source/binding revision, per-obligation disposition, completeness reasons, and mapping-loss classification.
+When delivering an observation assessment to an executable or exported consumer,
+the consumer adapter SHALL retain the requested subject, capability, immutable
+source/binding/progress/definition/profile identity-revision-digest selections,
+assessment execution, subject-progress/closure, truth, settlement basis, exact
+decision support, per-obligation disposition, completeness reasons, and
+mapping-loss classification.
 
 ## Behavior
 
-The adapter SHALL classify each mapped obligation as preserved, conditional, unrepresented, or refused; incomplete, pending, and refused outcomes are not Boolean success. It SHALL consume A-owned interchange identities and B-owned result semantics; codegen and export mappings do not become clause authorities.
+The adapter SHALL classify each mapped obligation as preserved, conditional,
+unrepresented, or refused; incomplete, pending, and refused outcomes are not
+Boolean success. It SHALL consume A-owned interchange identities and B-owned
+result semantics; codegen and export mappings do not become clause authorities.
+It SHALL preserve a late contradiction's prior-result identity and linked
+superseding/invalidating result without rewriting historical bytes. It SHALL
+refuse definition/profile identity, revision, or digest drift rather than emit a
+mapping under a current default.
 
 ## Acceptance Criteria
 
@@ -22,6 +34,7 @@ The adapter SHALL classify each mapped obligation as preserved, conditional, unr
 | FR-116-AC-2 | An unsupported or lossy mapping is visible as conditional, unrepresented, or refused. | Test (TC-146) |
 | FR-116-AC-3 | A consumer cannot convert pending, incomplete, or refused into a passed Boolean result. | Test (TC-146) |
 | FR-116-AC-4 | Parsing, serializing, or accepting emitted target text does not alter a mapping outcome or establish semantic preservation. | Test (TC-146) |
+| FR-116-AC-5 | Consumer delivery preserves assessment execution, subject-progress/closure, truth, settlement basis, exact decision support, immutable definition/profile dependencies, and late-result supersession without Boolean or historical-byte promotion. | Test (TC-146) |
 
 ## Dependencies
 

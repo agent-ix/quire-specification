@@ -12,8 +12,18 @@ Planned OB03 result/adequacy controls. No executable test or completed coverage 
 
 ## Test Procedure
 
-Compare healthy, violating, untriggered, missing-data, and unsupported traces. Drop trigger telemetry, mis-correlate a response, and pair a confirmed injected fault with independently observed mitigation.
+Compare healthy, violating, untriggered, missing-data, and unsupported traces;
+include a decisive-witness satisfied truth and decisive-counterexample violated
+truth while the subject remains open. Drop trigger telemetry, mis-correlate a
+response, mutate assessment execution, subject progress/closure, settlement
+basis, decision support, and each selected definition/profile identity, revision,
+and digest. Pair a confirmed injected fault with independently observed
+mitigation, then introduce a late contradiction to retained decision support.
 
 ## Expected Results
 
-All dispositions remain distinct; dropped/mis-correlated inputs cannot improve adequacy; fault/mitigation lineage retains property, binding, source, and run identities.
+All dimensions remain independently readable; dropped/mis-correlated inputs cannot
+improve adequacy; fault/mitigation lineage retains property, binding, source, and
+run identities. Open-subject settled truth retains its exact decisive basis and
+support. Definition drift refuses, and a late contradiction preserves earlier
+bytes while producing only a linked superseding or invalidating result.
