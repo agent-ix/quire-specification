@@ -32,14 +32,16 @@ its accounting version and effective limits before accepting work.
 
 | Metric | Target | Threshold | Method |
 | --- | --- | --- | --- |
-| Completed affected results after an insufficient limit | 0 | 0 | TC-048 budget-boundary controls |
-| Required inputs or live work silently dropped to report success | 0 | 0 | TC-048 adverse input/work controls |
-| Allocations/expansions beyond the declared admission/work charge | 0 | 0 | TC-048 instrumented resource controls |
+| Completed affected results after an insufficient limit | 0 | 0 | Test |
+| Required inputs or live work silently dropped to report success | 0 | 0 | Test |
+| Allocations/expansions beyond the declared admission/work charge | 0 | 0 | Test |
 
 ## Verification
 
 [TC-048](../test-cases/TC-048-bound-composed-processing.md) plans zero, sufficient,
 exact-boundary and one-below-sufficient controls for every implemented boundary.
+Its budget, adverse-input and instrumented allocation controls respectively
+measure the three metrics above; the Method cells use the catalog's Test class.
 The domain includes nested sequences whose individual maxima are valid but
 aggregate work is large, acyclic predicate fan-out, reducible rational inputs,
 and long/cyclic graphs. A prior phase may fail first and must retain that actual
