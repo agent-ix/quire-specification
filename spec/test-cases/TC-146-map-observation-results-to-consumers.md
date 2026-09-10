@@ -8,8 +8,9 @@ relationships:
 ---
 ## Description
 
-Planned consumer reconciliation controls for FR-116-AC-1 through FR-116-AC-4.
-No executable test or completed coverage is claimed.
+Planned consumer reconciliation controls for every acceptance criterion in
+[FR-116](../functional/FR-116-map-observation-results-to-consumers.md). No
+executable test or completed coverage is claimed.
 
 ## Test Procedure
 

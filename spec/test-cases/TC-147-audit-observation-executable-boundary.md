@@ -8,8 +8,9 @@ relationships:
 ---
 ## Description
 
-Planned static control for NFR-052. No observation implementation is yet
-claimed; this control becomes applicable before any first-party observation
+Planned static control for
+[NFR-052](../non-functional/NFR-052-contain-observation-executables.md). No
+observation implementation is yet claimed; this control becomes applicable before any first-party observation
 binding, replay, incremental assessment, output adapter, fixture audit, or
 qualification executable is admitted.
 
@@ -27,4 +28,3 @@ Every owned first-party executable path is Rust 1.98.1. Java, JVM, Maven,
 Eclipse, Electron, and foreign monitoring runtime references are refused for
 the selected path. Foreign output text and non-executable fixture data remain
 distinguished from executable dependencies. No hosted workflow is dispatched.
-
