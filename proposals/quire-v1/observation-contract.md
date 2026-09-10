@@ -10,11 +10,14 @@ history, and closure meaning; B owns obligations and result dispositions.
 ## Contract selections
 
 Every assessment input selects immutable identities for the native linked package,
-the observation binding contract, each observation source/schema, and the applied
-binding. A compatible field shape, signal name, trace ID, endpoint, or adapter
-version does not substitute for any selected identity. A change to binding meaning
-requires a new linked subject; changing admitted records or declared resource
-limits changes assessment input identity, not static meaning.
+the observation binding-contract definition and revision, each observation
+source/schema, and the applied binding. A compatible field shape, signal name,
+trace ID, endpoint, or adapter version does not substitute for any selected
+identity. Changing the selected binding-contract definition or revision, including
+any change to its binding meaning, requires a newly linked subject. Changing only
+the concrete mapping, admitted records, or declared resource limits under the
+same selected definition and revision changes assessment-input identity, not
+static meaning.
 
 ## Observation binding
 
@@ -27,7 +30,7 @@ roles. Each binding retains all of the following semantic values:
 
 | Value | Required meaning |
 | --- | --- |
-| Binding identity | Exact binding contract identity, binding revision, and source location of the authored role. |
+| Binding identity | Exact binding-contract definition identity and revision, applied binding identity, and source location of the authored role. |
 | Source selection | Observation source identity, schema identity/revision, declared producer, and internal/external visibility. |
 | Subject mapping | Exact D/B-owned workflow, participant, relationship, population, delivery, attempt, or effect handle selected by the role; no textual lookup fallback. |
 | Signal and value mapping | Declared signal identity, typed value declaration, unit, missing-value policy, and required/optional status. |
