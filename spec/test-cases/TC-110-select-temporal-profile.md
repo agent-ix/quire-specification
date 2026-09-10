@@ -26,4 +26,3 @@ The three valid subjects remain distinct. Each unknown, stale, missing,
 conflicting or multiply selected dimension refuses at the native clause without
 evaluation. Backend availability never changes selection, and historical
 profile bytes/results remain unchanged.
-

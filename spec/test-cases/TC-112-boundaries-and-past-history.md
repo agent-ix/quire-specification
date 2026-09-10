@@ -28,4 +28,3 @@ False-extension makes `always[0,1] p` false while complete finite-window
 quantification makes it true. Past operators match their independent mirror
 oracles only with complete history/origin. The cutoff case reports missing
 history and every mutation that converts it to a Boolean is detected.
-

@@ -28,4 +28,3 @@ Each clock selection retains a distinct subject/result. The valid sample bridge
 agrees on truth and retains epoch/period/unit. Missing samples, changed periods,
 implicit conversions and unsupported equal-time ordering refuse. Equal TL
 formula bytes alone never erase a clock mismatch.
-
