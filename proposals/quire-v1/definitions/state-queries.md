@@ -1,13 +1,13 @@
 # Native predicate and sequence-query definition
 
-Profile identity: `quire.state.queries/v1`; revision: `1-draft.1`.
+Profile identity: `quire.state.queries/v1`; revision: `1-draft.2`.
 Language: `ix:native` / `1-draft`. **Proposed, not adopted or implemented.**
 
 ## Required definition
 
 | Identity | Revision | Definition artifact | Exact byte digest |
 | --- | --- | --- | --- |
-| `quire.state.core/v1` | `1-draft.1` | [State core](state-core.md) | `sha256:cd1d930761833a554369845d0bf6112ba20fb8280cf0fbf9e7d9954a337fbbc8` |
+| `quire.state.core/v1` | `1-draft.2` | [State core](state-core.md) | `sha256:6480cc1459438b7fd28719acf99885bf854af7d201b57cd262ad7e0dc966242d` |
 
 ## Explicit extension
 

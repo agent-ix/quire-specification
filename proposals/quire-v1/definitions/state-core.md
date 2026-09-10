@@ -1,6 +1,6 @@
 # Native finite state core definition
 
-Profile identity: `quire.state.core/v1`; revision: `1-draft.1`.
+Profile identity: `quire.state.core/v1`; revision: `1-draft.2`.
 Language: `ix:native` / `1-draft`. **Proposed, not adopted or implemented.**
 
 ## Required definition
@@ -14,7 +14,7 @@ Language: `ix:native` / `1-draft`. **Proposed, not adopted or implemented.**
 This profile admits invariant, operation precondition and postcondition
 declarations. Shared expressions admit Boolean, contextually typed bounded
 integer, explicit rational, text and enum literals; resolved value/parameter
-reads; acyclic record paths; grouping, indexing, `let`, `if`; `not`, `and`,
+reads; acyclic record paths; grouping, `let`, `if`; `not`, `and`,
 `or`, `implies`; admitted scalar equality/order; numeric negate, `+`, `-`,
 `*` and rational `/`; `present`, guarded `value`, `size`, `contains`,
 `forall`, `exists`; and invocation-bound `pre(expr)` in postconditions.
@@ -30,6 +30,7 @@ preserving with authored maxima at most 10,000 per wrapper.
 Whole-record/sequence/option equality, reference/object identity and navigation,
 `reaches`, named predicate declarations/calls, `filter`, `map`, `count`
 and `sum` require other definitions and are refused by this profile.
+No sequence indexing or slicing production is selected by the shared grammar.
 Integer slash/div/rem/mod, float, implicit conversion, silent widening,
 recursive value containment, ambient lookup, reflection and I/O are refused.
 Rational division uses the same named dimensionless rational type, exact

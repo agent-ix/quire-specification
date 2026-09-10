@@ -133,8 +133,11 @@ dependency digests. They retain rational division with nonzero/range proofs,
 correcting its accidental blanket refusal in the earlier composed draft.
 The catalog now also supplies E's three temporal roots, their common facet and
 the finite-global protocol candidates. Temporal rules retain `697ffd0`; protocol
-revision `1-draft.2` selects the corrected result rules at `15beef7`, preserving
-the earlier candidate unchanged. F's binding/progress candidates are indexed;
+revision `1-draft.3` retains the corrected result rules at `15beef7` and consumes
+the state/temporal `1-draft.2` dependency closure. That closure removes an
+unsupported indexing claim from the core catalog without changing the grammar
+or temporal rules. Earlier candidate bytes remain at their pinned revisions.
+F's binding/progress candidates are indexed;
 their exact dependency closure and D's producer contribution remain outstanding.
 The complete baseline remains proposed and unreviewed.
 
