@@ -7,6 +7,18 @@ relationships:
     type: traces_to
   - target: ix://agent-ix/quire-specification/FR-020
     type: exercises
+  - target: ix://agent-ix/quire-specification/FR-030
+    type: exercises
+  - target: ix://agent-ix/quire-specification/FR-031
+    type: exercises
+  - target: ix://agent-ix/quire-specification/FR-032
+    type: exercises
+  - target: ix://agent-ix/quire-specification/FR-033
+    type: exercises
+  - target: ix://agent-ix/quire-specification/FR-034
+    type: exercises
+  - target: ix://agent-ix/quire-specification/FR-035
+    type: exercises
 ---
 ## Story
 
@@ -33,6 +45,12 @@ amount and its deadline.
 
 Given an incomplete observation stream or an unobserved branch, the author sees
 what is unknown without that result becoming a pass or proof of local realizability.
+
+### US-005-EX-3
+
+Given concurrent orders, split shipments and related payment/refund effects,
+the author can state obligations over the declared relationships and a finite
+population/window. Unknown membership cannot establish aggregate success.
 
 ## Dependencies (Contextual)
 
