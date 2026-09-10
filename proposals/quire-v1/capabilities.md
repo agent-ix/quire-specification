@@ -1,6 +1,6 @@
 # Quire v1 capability decisions and inspected foundations
 
-Proposed design baseline, 2026-09-09. Owning issue:
+Owner-approved roadmap scope, 2026-09-10; detailed semantic specifications remain proposed. Owning issue:
 [standard #10](https://github.com/agent-ix/quire-specification/issues/10).
 This is the language design matrix requested by the owner. The cross-stream
 [functional ledger #9](https://github.com/agent-ix/quire-specification/issues/9)
@@ -48,7 +48,7 @@ new Cargo tests or integration qualification were run for this inventory.
 | V1-004 | Total typed Boolean predicates; local bindings, explicit units and guarded optional access | V1 | ADOPT, STATE; A | Existing state language; define reuse as typed leaves in temporal/protocol nodes. |
 | V1-005 | Distinct parse/type/admission/lowering/execution/observation failures with typed context and located source | V1 | STATE, RULE; A/B/C | Partial existing codes; cross-profile catalog and stage behavior missing. |
 | V1-006 | Requested backend capability checked separately from language admission; preserve other supported clause assessments | V1 | ARCH §8; A/B | State lowering currently bounded; no generic composed request/result contract. |
-| V1-007 | Acyclic named predicate/function libraries | Later | ARCH, ADOPT; A / FS01 | Reuse through linked typed predicates is required internally; user-defined calls are outside the selected v1 source subset. |
+| V1-007 | Acyclic named typed Boolean predicates, reused across families | V1 | Owner-approved 2026-09-10; A / FS03 and compiler #36 | Explicit extension beyond the initial source subset; general pure functions remain research #65. |
 | V1-008 | General recursion, reflection, I/O or execution of user code during clause evaluation | Refuse | RULE; A | No implicit escape hatch around total/bounded semantics. |
 
 ## State and modeling semantics
@@ -94,7 +94,7 @@ new Cargo tests or integration qualification were run for this inventory.
 | V1-035 | Failed, timed-out, retried and untriggered compensation kept distinct, including duplicate business effects | V1 | PROTO, ARCH; A/B | Must have independent adverse cases and source-bound evidence. |
 | V1-036 | Global replay and conformance of supplied finite traces to the selected bounded protocol | V1 | PROTO; A native integration, PT02 implementation | No qualified protocol engine is established by the inspected sources. |
 | V1-037 | Sound local projection, realizability, assume-guarantee composition and implementation refinement | Later | PT02, ARCH §8; protocol/analysis owners | Separate requested claims with explicit premises. A monitorable but unprojectable protocol remains usable for v1 replay. |
-| V1-038 | Dynamic role spawning, unbounded queues/loops, arbitrary cross-instance properties and distributed consensus semantics | Later | OWN, PROTO; A / #12 | Bounded per-instance choreography is v1; these expansions require later profiles. |
+| V1-038 | Dynamic role spawning, unbounded queues/loops and unrestricted historical/population queries | Later | Owner-approved 2026-09-10; research #67 | Related-instance choreography and selected finite snapshot/window obligations are v1 under V1-049/050; general consensus/strategy claims remain separately scoped. |
 | V1-039 | Executing business actions or compensation from the specification evaluator | Refuse | ARCH, RULE; A | V1 observes/checks recorded actions; it is not a workflow orchestrator with external side effects. |
 
 ## Composition, evidence and mappings
@@ -110,6 +110,19 @@ new Cargo tests or integration qualification were run for this inventory.
 | V1-046 | Reproducible exact profile/dependency manifests and explicit migration from historical definitions | V1 | ADOPT, RULE; A/B/C | Old IDs and evidence must never be relabeled as v1. |
 | V1-047 | Executable reference evaluation, reproducible finite replay and incremental monitoring of admitted temporal/protocol obligations | V1 | ARCH, TIME, technical brief; A / FS04 and #12, observation/TL owners | A monitor consumes bound observations and progress; deployment integration and external monitor qualification remain separately scoped. |
 | V1-048 | Qualification-oriented conformance vectors and exact implementation/binding/tool provenance for executable specifications | V1 | ARCH §§10–12, evaluation plan; A/B and QA01 | Language conformance, monitor correctness and qualification of a consuming system are distinct claims. |
+
+## Ecosystem scope and language evolution
+
+| ID | Capability and selected boundary | Decision | Evidence / owner | Existing foundation or gap |
+| --- | --- | --- | --- | --- |
+| V1-049 | Explicit related workflow instances across internal/external systems: order, shipment, payment attempt and refund relationships | V1 | Owner-approved 2026-09-10; FS02, standard #12, PT01, OB01, IN01 | Not established by a single correlation key. Compiler #39 consumes the shared contracts. |
+| V1-050 | Selected population obligations over declared finite snapshots or event-time windows, including reservation/refund aggregates | V1 | Owner-approved 2026-09-10; FS03/04, OB01/02, PT01 | Requires membership, completeness, clock/closure and resource semantics; missing members cannot establish success. |
+| V1-051 | Edition/profile/wire evolution, typed family extension boundaries, feature discovery and explicit migration | V1 | Owner-approved 2026-09-10; FS01/FS05 | Existing identity foundation must be extended and tested with new operator/declaration/family scenarios. |
+
+One ecosystem roadmap remains under research #36. Standard #13 and compiler
+#35–39 supply its language foundation; research #65–67 acknowledge later expansions.
+Protocol #3/#47/#48, observation #44–46, integration #49/#50 and QA01 #51 retain
+their existing ownership. New tickets do not establish implemented coverage.
 
 ## Scope audit and long-term architecture
 
@@ -135,7 +148,7 @@ not claims of equivalence to those languages or promises to implement them in fu
 | --- | --- | --- |
 | OCL-like Boolean, value and contract expressions | Core v1: guards, state assertions, captured amounts and operation conditions depend on them. | One reusable typed predicate layer, with definedness separate from temporal truth and observation availability. |
 | Collection queries and transformations | V1 needs more than quantifiers: specify size, membership, count, ordered filtering/mapping and exact bounded sum for aggregate and participant obligations. These are new work, not implied by existing `forall`/`exists`. | Distinguish container kind, element type, occurrence order, multiplicity and output bounds; later collection kinds cannot be aliases for sequences. |
-| Tuples, derived values and named query definitions | Fixed typed records and local bindings in v1; reusable user-defined queries remain a subsequent source feature. | Stable declaration/call identities and a future effect/termination contract. Do not make every predicate an untyped string. |
+| Tuples, derived values and named query definitions | Fixed typed records, local bindings and acyclic named Boolean predicates in v1; general user-defined functions remain subsequent source work. | Stable declaration/call identities and a future effect/termination contract. Do not make every predicate an untyped string. |
 | Type conformance, specialization, subsetting and redefinition | Explicitly resolved model declarations in v1; richer inherited or redefined declarations need a producer-owned normalization/correspondence contract before use. | Preserve original versus effective declaration identity; refuse ambiguity instead of copying a flattened type with lost provenance. This is a shared-model task, not a reason to fork the type system. |
 | Associations, references and containment | Explicit finite graph facet proposed for v1; recursive value containment remains separate. | Keep object identity, links, containment and universe closure distinct; model navigation does not become ambient lookup. |
 | Parts, ports, interfaces, connections and allocations | V1 consumes typed participant/channel/payload/component references needed by choreography. Broader systems-model authoring remains in the model producer. | Maintain role, component, endpoint, channel, build and deployment identities independently; reference producer capabilities instead of embedding a SysML metamodel in the clause parser. |
@@ -155,8 +168,9 @@ dependencies and a useful independently assessable result.
 
 ## Design consequences and retained decisions
 
-The normative specification must cover all V1 rows together before implementation
-tasking is finalized. V1-017 is a deliberate proposal to admit a separately named
+The normative specification must cover all V1 rows together before dependent
+implementation. The owner-approved ticket plan is recorded in the existing ecosystem
+roadmap; detailed task acceptance consumes the reviewed baseline. V1-017 is a deliberate proposal to admit a separately named
 graph facet in the wider language; it is not a claim that the previous ruling
 already admitted object equality or closure. The original minimum-only
 `ConfigVersion` remains an explicit design gate under V1-011. Neither removing
