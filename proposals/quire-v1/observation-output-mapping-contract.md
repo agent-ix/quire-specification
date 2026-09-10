@@ -15,15 +15,20 @@ the input retains:
 | Value | Required meaning |
 | --- | --- |
 | Subject and request | Exact linked-package/static subject, runtime assessment-input identity, requested capability, and selected observation binding/progress/closure identities. |
-| Source correspondence | Native clause, source revision/digest/span, declaration/anchor/capture identities, selected model and profile identities. |
-| Result facts | Independent B-owned execution, truth, activation, participation, completeness, adequacy, assumptions, and provenance facts; no summary may erase another fact. |
+| Source correspondence | Native clause, source revision/digest/span, declaration/anchor/capture identities, and every selected definition/profile identity, revision, and digest. |
+| Result facts | Independent B-owned assessment execution, subject-progress/closure, truth, settlement basis, exact decision support, activation, participation, completeness, adequacy, claim strength, assumptions, and provenance facts; no summary may erase another fact. |
+| Historical supersession | Earlier result identity and immutable bytes plus the linked superseding/invalidating result, contradicted premise, and corrected input identity; no result is restamped or silently replaced. |
 | Consumer selection | Consumer identity/version, selected target/output profile, configuration, and declared supported capability. |
 | Mapping outcome | One of `preserved`, `conditional`, `unrepresented`, or `refused`, with an exact source-bound reason and any required premise or loss. |
 
 The consumer preserves all four mapping outcomes independently from the observation
 availability state. A result that is pending, incomplete, refused, untriggered,
 unsupported, or not executed remains that state at the boundary; it cannot be
-converted to a Boolean pass, a mapped success, or a qualified run.
+converted to a Boolean pass, a mapped success, or a qualified run. A settled
+truth on an open subject retains its selected decisive basis and exact support;
+the open surrounding execution is not a reason to erase either fact. Definition
+or profile identity/revision/digest drift refuses rather than using a current
+default.
 
 ## Mapping outcome rules
 

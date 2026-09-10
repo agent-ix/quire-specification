@@ -14,8 +14,18 @@ executable test or completed coverage is claimed.
 
 ## Test Procedure
 
-Deliver preserved, pending, incomplete, unsupported, conditional, unrepresented, and refused per-obligation results to an executable/output consumer; attempt Boolean-pass coercion; and compare target text that is structurally accepted with a source-bound loss control.
+Deliver preserved, pending, incomplete, unsupported, conditional, unrepresented,
+and refused per-obligation results to an executable/output consumer, including
+open-subject decisive truth with its settlement basis and exact decision support.
+Mutate assessment execution, subject-progress/closure, selected definition/profile
+identity-revision-digest, and a late-result supersession link; attempt Boolean-pass
+coercion; and compare target text that is structurally accepted with a source-bound
+loss control.
 
 ## Expected Results
 
-Subject/capability/provenance survives. Mapping loss remains classified, no non-success disposition is promoted to a pass, and structural target-text acceptance neither changes the mapping outcome nor establishes semantic preservation.
+Subject/capability/provenance and every revised result dimension survive. Mapping
+loss remains classified, no non-success disposition is promoted to a pass,
+definition/profile drift refuses, and structural target-text acceptance neither
+changes the mapping outcome nor establishes semantic preservation. Earlier result
+bytes remain associated only through a linked superseding or invalidating result.

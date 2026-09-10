@@ -10,7 +10,10 @@ relationships:
 ---
 ## Objective
 
-Verify the planned consumer seam from the B-owned result contract to codegen and export consumers while preserving completeness, provenance, and mapping loss.
+Verify the planned consumer seam from the B-owned result contract to codegen and
+export consumers while preserving execution, subject-progress/closure, settlement
+basis, exact decision support, completeness, provenance, immutable definition
+dependencies, and mapping loss.
 
 ## Target Integration
 
@@ -19,13 +22,16 @@ The integration joins a structured per-obligation observation result through the
 ## Preconditions
 
 The selected A/B result and interchange interfaces have named revisions; in
-particular, the result input conforms to [B's FR-007](ix://agent-ix/quire-verification/FR-007).
+particular, the result input conforms to [B's FR-061](ix://agent-ix/quire-specification/FR-061)
+and [B's FR-007](ix://agent-ix/quire-verification/FR-007). Every consumed
+definition/profile dependency has an immutable identity, revision, and digest.
 The consumer declares supported capabilities and mapping profile.
 
 ## Inputs
 
 One preserved result plus pending, incomplete, unsupported, and lossy obligation
-controls, each carrying source/binding/progress identities; and target text that
+controls, each carrying source/binding/progress/definition identities, open-subject
+settlement basis and exact decision support; and target text that
 is structurally accepted while its source-bound mapping remains conditional,
 unrepresented, or refused. Include a current unqualified codegen bound-coverage
 observation as a retained input fact rather than an assessment/result substitute.
@@ -42,7 +48,16 @@ observation as a retained input fact rather than an assessment/result substitute
    - IT-051-SC-04: structural acceptance is retained as an observation and does not change the source-bound mapping outcome or establish semantic preservation.
 5. Deliver a current codegen bound-coverage observation beside an OB03 result.
    - IT-051-SC-05: its unqualified provenance remains visible and it cannot establish completeness, execution, adequacy, or obligation discharge.
+6. Deliver a late contradiction and independently mutate one definition/profile
+   identity, revision, or digest.
+   - IT-051-SC-06: prior result bytes remain historical, only a linked superseding
+     or invalidating result names the corrected input, and definition drift refuses.
 
 ## Expected Results
 
-Consumers retain requested subject, capability, provenance, completeness, and loss state. Structural target-text acceptance does not establish semantic correspondence. This planned integration does not claim codegen CLI, backend qualification, or external mapping conformance.
+Consumers retain requested subject, capability, assessment execution,
+subject-progress/closure, truth, settlement basis, decision support, provenance,
+completeness, immutable definition dependencies, and loss state. Structural
+target-text acceptance does not establish semantic correspondence. This planned
+integration does not claim codegen CLI, backend qualification, or external mapping
+conformance.
