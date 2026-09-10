@@ -116,14 +116,18 @@ preservation and the 1-draft.2 observation successors indexed above. D's standar
 observation 1-draft.1 candidates remain unchanged. The 1-draft.2 successors
 select exact package/B/E dependencies and still explicitly select D `06a62c7`.
 SR-403 is partially addressed: the inherited 1-draft.1 meaning still reaches
-an unpinned observation-contract link, and the new D standard-facing revision
-is not that selected producer. Close those remaining selections after the
-semantic corrections; do not silently replace the candidate bytes.
+an unpinned observation-contract link. D's subsequent producer correction at
+`cb740adc80fdc44aaf2c6cce0553344228c18784` is now available, with exact document
+SHA-256 `05258d455c78d6b72d1fa4c063078ac5277d4ebca627cfe965ae7fee5c31a570`;
+it is not implicitly selected by these candidates. Close the remaining selections
+after the semantic corrections; do not silently replace candidate bytes.
 
 F's new FR-112/113 and TC-142/143 controls distinguish adjacent half-open
 producer windows. SR-406's remaining mapping is from that coverage to E's
-inclusive decision interval and all three clock families; adjacent window
-controls alone do not specify it. The review's evaluated revision remains
+inclusive decision interval and all three clock families. D's `cb740ad` now
+supplies producer coverage for each clock and separates object membership from
+observation records; F/E consumer correspondence and selection remain.
+The review's evaluated revision remains
 `788b161`; `08166a2` is a subsequent contribution, not retroactive review input.
 
 B's PR #21 and E's PR #20 are integrated; their family reviews do not accept
