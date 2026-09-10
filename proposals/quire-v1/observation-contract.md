@@ -19,6 +19,14 @@ the concrete mapping, admitted records, or declared resource limits under the
 same selected definition and revision changes assessment-input identity, not
 static meaning.
 
+| Selection | Identity | Revision | Exact definition bytes |
+| --- | --- | --- | --- |
+| Observation binding | [`observation-binding.md`](definitions/observation-binding.md) `quire.observation.binding/v1` | `1-draft.1` | `sha256:9fb77da233e792b7d96dda814fe71ec2e86707253ff85dce990f29b83c1bf3e1` |
+
+The candidate definition remains unindexed and unadopted until A records its
+exact bytes in the shared definition catalog. A changed digest is a changed
+definition selection; it cannot be retained under this revision.
+
 ## Observation binding
 
 Each declared observation role has the identity of its owning native declaration,
@@ -30,7 +38,7 @@ roles. Each binding retains all of the following semantic values:
 
 | Value | Required meaning |
 | --- | --- |
-| Binding identity | Exact binding-contract definition identity and revision, applied binding identity, and source location of the authored role. |
+| Binding identity | Exact binding-contract definition identity, revision, and byte digest; applied binding identity; and source location of the authored role. |
 | Source selection | Observation source identity, schema identity/revision, declared producer, and internal/external visibility. |
 | Subject mapping | Exact D/B-owned workflow, participant, relationship, population, delivery, attempt, or effect handle selected by the role; no textual lookup fallback. |
 | Signal and value mapping | Declared signal identity, typed value declaration, unit, missing-value policy, and required/optional status. |
