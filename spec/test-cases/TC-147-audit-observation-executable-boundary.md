@@ -10,8 +10,9 @@ relationships:
 
 Planned static control for
 [NFR-052](../non-functional/NFR-052-contain-observation-executables.md). No
-observation implementation is yet claimed; this control becomes applicable before any first-party observation
-binding, replay, incremental assessment, output adapter, fixture audit, or
+observation implementation is yet claimed; this control becomes applicable
+before any first-party observation binding, replay, incremental assessment,
+output adapter, fixture audit, or
 qualification executable is admitted.
 
 ## Test Procedure
