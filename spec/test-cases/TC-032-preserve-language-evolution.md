@@ -38,6 +38,23 @@ protocol 1-draft.3 consumes that closure. Substituting new bytes under an earlie
 dependency digest refuses. The historical grammar, finite-sequence operations,
 temporal truth rules and protocol settlement relation remain unchanged.
 
+Select the preserved temporal 1-draft.2 and protocol 1-draft.3 definitions, then
+explicitly migrate to temporal 1-draft.3 and protocol 1-draft.4. Substitute the
+new FR-090/091/093/094/095 or FR-061/protocol-contract bytes under the old digest,
+and substitute the old temporal-facet digest under the new protocol selection:
+each mismatched closure refuses. Equal source/formula bytes cannot hide a
+changed definition selection. The unchanged state 1-draft.2 closure remains
+valid in both new roots.
+
+Under the new selections, exercise a closed decision scope in an open workflow,
+an open trigger scope without an observed trigger, a missing runtime sample
+under a valid binding and a malformed clock binding. Expect, respectively,
+independent closure axes, activation-unknown, incomplete and refused. Retain
+exact decisive support and supersession through the result correspondence.
+These controls select the new rules explicitly; they do not relabel an old
+candidate's outcomes. A missing E02 projection capability cannot refuse native
+source admission, but the independently requested projection remains unsupported.
+
 ## Expected Results
 
 The historical source retains its interpretation. New required meaning either has explicit support or refuses. Migration produces a new subject and source correspondence without mutating old bytes or restamping old evidence. Exact keyword/grammar vectors are supplied by L1 before implementation.
