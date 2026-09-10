@@ -33,4 +33,3 @@ The protocol result remains canonical for protocol-only dimensions. E02 remains
 canonical for its compatibility assessment. Neither object aliases the other,
 and the projection cannot grant protocol adequacy, evidence sufficiency or an
 oracle-independence claim absent from the source.
-

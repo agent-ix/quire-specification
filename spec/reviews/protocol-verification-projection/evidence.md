@@ -36,4 +36,3 @@ with authored `Test` verification.
 
 Executed evidence remains pending implementation. The review creates no local
 runner, evidence store, method registry or qualification claim.
-

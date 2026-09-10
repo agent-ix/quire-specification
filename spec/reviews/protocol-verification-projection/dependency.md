@@ -53,4 +53,3 @@ graph TD
 3. Consume the accepted E02 and Engineering Assurance Rust interfaces and
    implement FR-062.
 4. Execute TC-061/TC-064 and IT-021 through shared assurance infrastructure.
-
