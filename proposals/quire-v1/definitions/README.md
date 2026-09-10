@@ -28,6 +28,8 @@ the existence of a definition file.
 | `quire.package.composed/v1` | [package-reference.md](package-reference.md) | `1-draft.1` | `0df176dbb831117bd27443f7ef8075d9a130bcbc225022b440acbce111c62b9d` | Whole linked-package interpretation; not a source root |
 | `quire.observation.binding/v1` | [observation-binding.md](observation-binding.md) | `1-draft.1` | `9fb77da233e792b7d96dda814fe71ec2e86707253ff85dce990f29b83c1bf3e1` | Candidate binding meaning and static/assessment-input separation; dependency closure pending |
 | `quire.observation.progress/v1` | [observation-progress.md](observation-progress.md) | `1-draft.1` | `8c16aa039f6a537d7da8a8320b173241dc535bfb7f7dfa5cbf3b644559ebac4f` | Candidate scoped assertions and restoration basis; dependency closure pending |
+| `quire.observation.binding/v1` | [observation-binding-1-draft-2.md](observation-binding-1-draft-2.md) | `1-draft.2` | `5f454277722e7f4816f226361fc3204cfc1a0083f10fe442ef6e93084202f63b` | Successor with exact package/B/E and earlier D selections; remaining review dispositions below |
+| `quire.observation.progress/v1` | [observation-progress-1-draft-2.md](observation-progress-1-draft-2.md) | `1-draft.2` | `f161f36309f1cbf12dbaeace1f05e6d00ca5109e06fe67d55c9e7de3685c9fdd` | Successor with exact binding/B/E/D selections and half-open producer-window controls |
 | `quire.native.diagnostics/v1` | [native-diagnostics.md](native-diagnostics.md) | `1-draft.1` | `d3a5d54deddaf9ca8b4e0b39e3a4a40ee2abd26c0556776634046dba8e6cdb2a` | Native response codes and typed causes; not a source root or a new result envelope |
 | `quire.temporal.bounded-facet/v1` | [temporal-common-1-draft-3.md](temporal-common-1-draft-3.md) | `1-draft.3` | `e97b0065361736289c7a37fbdcd1fd0b9af73c8af38a8de1863066179c99e197` | Current temporal facet with independent scope/execution closure and exact shared result interface |
 | `quire.temporal.event-position.false-extension/v1` | [temporal-event-position-1-draft-3.md](temporal-event-position-1-draft-3.md) | `1-draft.3` | `125d5f2231318279ae6737d2fa228702c7230ed23aab70c9c46b3ff28e711b95` | Current event-position root; revised lifecycle |
@@ -107,14 +109,22 @@ value/predicate interface while retaining their own declaration permissions.
 Source admission and backend/mapping support remain separate, especially for
 past time and timestamped windows unsupported by current TL targets.
 
-F's contribution through `921993b` is integrated, including its result-consumer
-preservation requirements and cases. D's standard-facing binding contract at
+F's contribution through `08166a2` is integrated, including `921993b`'s result
+preservation and the 1-draft.2 observation successors indexed above. D's standard-facing binding contract at
 `d6ac501` is supplied for the composed review; see the exact
 [review input](../shared-foundation.md#composed-review-input). The original
-observation 1-draft.1 candidates and F's earlier `06a62c7` producer selection
-remain unchanged. The final successor selections must close their immutable
-rule/dependency links before adoption; requiring result consumers to retain a
-digest does not itself select the definition bytes.
+observation 1-draft.1 candidates remain unchanged. The 1-draft.2 successors
+select exact package/B/E dependencies and still explicitly select D `06a62c7`.
+SR-403 is partially addressed: the inherited 1-draft.1 meaning still reaches
+an unpinned observation-contract link, and the new D standard-facing revision
+is not that selected producer. Close those remaining selections after the
+semantic corrections; do not silently replace the candidate bytes.
+
+F's new FR-112/113 and TC-142/143 controls distinguish adjacent half-open
+producer windows. SR-406's remaining mapping is from that coverage to E's
+inclusive decision interval and all three clock families; adjacent window
+controls alone do not specify it. The review's evaluated revision remains
+`788b161`; `08166a2` is a subsequent contribution, not retroactive review input.
 
 B's PR #21 and E's PR #20 are integrated; their family reviews do not accept
 these successor definitions or the full baseline. FR-062 specifies the outgoing

@@ -138,7 +138,7 @@ Those dispositions select planned methods, not executed evidence.
 
 The [capability crosswalk](capabilities.md#initial-specification-crosswalk)
 links all 51 approved decisions to draft requirements and planned cases.
-Twenty versioned definition candidates and all earlier candidate bytes are
+Twenty-two versioned definition candidates and all earlier candidate bytes are
 preserved. State remains `1-draft.2`; temporal `1-draft.3` selects E's
 `19bbf7a` rules, and protocol `1-draft.4` selects B's `2d8372c` results.
 Outgoing verification projection under FR-062 is independent of native admission.
@@ -164,7 +164,15 @@ D has delivered the standard-facing
 at `d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f`, exact document SHA-256
 `d4923f378a7019998844f1b9124d5b0242f46c76060218b2d9c05af7b68c3ed8`.
 
-Its producer-owned FR-100/101/102/103 supply presence, relationship, population
+F's subsequent `08166a28b72b5a1d87d68a54cbdc25d41d976245` is also integrated.
+Both 1-draft.2 observation successors are indexed and their exact digests are
+verified; FR-112/113, TC-142/143 and TM-007 retain its half-open-boundary controls.
+This partially addresses SR-403/406: inherited observation-rule snapshot
+selection, the explicitly retained older D pin, and correspondence to all native
+clocks/inclusive intervals still need resolution. The frozen review is not
+rewritten to claim it evaluated this later contribution.
+
+D's producer-owned FR-100/101/102/103 supply presence, relationship, population
 and configuration requirements. The master index references those exact artifacts.
 All families have review input; delivery alone does not establish agreement
 or adoption. F's older producer pin at `06a62c7` and its 1-draft.1 definition
