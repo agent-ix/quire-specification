@@ -29,9 +29,9 @@ protocol's actual causal and ordered/unordered distinctions.
 
 | Metric | Target | Threshold | Method |
 | --- | --- | --- | --- |
-| Semantic result drift across equivalent presentations | 0 differing fields | 0 | Metamorphic Test (TC-063) |
-| Identity drift after changing one semantic dependency | 100% detected | 100% | Identity mutation test |
-| Reproductions missing exact input/backend provenance | 0 | 0 | Strict-reader test |
+| Semantic result drift across equivalent presentations | 0 differing fields | 0 | Test (TC-063) |
+| Identity drift after changing one semantic dependency | 100% detected | 100% | Test (TC-063) |
+| Reproductions missing exact input/backend provenance | 0 | 0 | Test (TC-063) |
 
 ## Verification
 
