@@ -12,9 +12,8 @@ Verify that monitorability, conformance, projection, realizability, refinement a
 
 ## Test Procedure
 
-Use an unprojectable but globally monitorable protocol, a satisfiable trace without a causal implementation strategy and local contracts with circular assumptions. Request every claim from a backend supporting only finite replay/conformance.
+Use an unprojectable but globally monitorable protocol, a satisfiable trace without a causal implementation strategy and local contracts with circular assumptions. Request every claim from a backend supporting only finite replay/conformance, then make one selected advanced backend return a typed failure while an independent replay result remains valid.
 
 ## Expected Results
 
-Global results remain available. Each advanced claim is refused, unsupported or separately decided with its exact fragment and premises; satisfiability and circular assumptions establish no stronger success.
-
+Global results remain available. Each advanced claim is refused, unsupported, failed or separately decided with its exact fragment and premises; no fallback runs, and satisfiability or circular assumptions establish no stronger success.

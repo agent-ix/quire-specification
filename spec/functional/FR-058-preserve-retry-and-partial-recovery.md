@@ -5,6 +5,8 @@ type: FR
 relationships:
   - target: ix://agent-ix/quire-specification/US-006
     type: implements
+  - target: ix://agent-ix/quire-specification/FR-057
+    type: depends_on
 ---
 ## Description
 
@@ -40,4 +42,3 @@ population scope, membership and completeness authorities before success.
 
 - [FR-057](./FR-057-enforce-commit-recovery.md).
 - D-owned relationship/population identity and F-owned completeness.
-
