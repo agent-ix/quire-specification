@@ -36,4 +36,3 @@ Satisfied refund, missed deadline, quiet watermark, late refund, missing provide
 ## Expected Results
 
 The integration retains provenance and separates satisfied, violating, pending, incomplete, and refused results. It remains a planned contract test, not evidence that a production monitor executed.
-

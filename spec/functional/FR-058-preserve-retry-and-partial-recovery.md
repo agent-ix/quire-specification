@@ -40,4 +40,3 @@ population scope, membership and completeness authorities before success.
 
 - [FR-057](./FR-057-enforce-commit-recovery.md).
 - D-owned relationship/population identity and F-owned completeness.
-

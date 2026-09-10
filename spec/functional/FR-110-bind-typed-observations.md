@@ -26,4 +26,3 @@ The binder SHALL NOT substitute a signal name, endpoint, trace ID, or compatible
 
 - [Shared foundation](../../proposals/quire-v1/shared-foundation.md).
 - D owns model declarations; A owns source/package/profile identity.
-

@@ -17,4 +17,3 @@ Compare healthy, violating, untriggered, missing-data, and unsupported traces. D
 ## Expected Results
 
 All dispositions remain distinct; dropped/mis-correlated inputs cannot improve adequacy; fault/mitigation lineage retains property, binding, source, and run identities.
-

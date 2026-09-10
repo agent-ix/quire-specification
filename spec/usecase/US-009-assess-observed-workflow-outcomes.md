@@ -36,4 +36,3 @@ an eligible deadline; without that authority it reports pending or incomplete.
 
 Given the same admitted observations and progress, batch replay and incremental
 assessment expose the same settled disposition.
-

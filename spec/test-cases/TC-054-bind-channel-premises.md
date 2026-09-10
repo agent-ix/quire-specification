@@ -17,4 +17,3 @@ Evaluate duplicate receipt under at-least-once delivery and two FIFO channels wi
 ## Expected Results
 
 Duplicates and ordering follow only the declared channel/key scope. Missing/conflicting premises refuse, and the one-axis change alters request identity and result provenance.
-

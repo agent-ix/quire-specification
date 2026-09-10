@@ -17,4 +17,3 @@ Bind a valid provider effect, then independently substitute its entity, signal, 
 ## Expected Results
 
 Only the valid record is admitted with exact identities. Each substitution is typed refusal, missing value is incomplete/refused rather than false, and visibility remains retained.
-

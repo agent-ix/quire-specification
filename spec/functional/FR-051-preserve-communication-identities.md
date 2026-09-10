@@ -42,4 +42,3 @@ for every accepted correspondence.
 - [FR-050](./FR-050-bind-protocol-instances.md).
 - [Shared ecosystem binding](./FR-035-bind-ecosystem-subjects.md).
 - F-owned observation/correlation contract under OB01.
-

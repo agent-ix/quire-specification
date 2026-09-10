@@ -175,4 +175,3 @@ The maintained architecture and its library list are research inputs. Earlier
 FRETish-source and foreign-runtime recommendations are superseded by the owner
 ruling: native Quire is the sole editable formal-clause language, external forms
 are export-only, and production or possible qualification integrations are Rust.
-

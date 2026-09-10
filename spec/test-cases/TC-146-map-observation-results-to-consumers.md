@@ -17,4 +17,3 @@ Deliver preserved, pending, incomplete, unsupported, conditional, unrepresented,
 ## Expected Results
 
 Subject/capability/provenance survives. Mapping loss remains classified and no non-success disposition is promoted to a pass.
-

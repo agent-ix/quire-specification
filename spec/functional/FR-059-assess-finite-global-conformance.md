@@ -42,4 +42,3 @@ produce the same semantic results.
 
 - [FR-052](./FR-052-represent-bounded-control.md) through [FR-058](./FR-058-preserve-retry-and-partial-recovery.md).
 - E/F temporal and observation contracts.
-

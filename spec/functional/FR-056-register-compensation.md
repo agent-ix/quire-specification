@@ -40,4 +40,3 @@ the source definition and effect that created it.
 
 - [FR-051](./FR-051-preserve-communication-identities.md).
 - [FR-055](./FR-055-activate-protocol-obligations.md).
-

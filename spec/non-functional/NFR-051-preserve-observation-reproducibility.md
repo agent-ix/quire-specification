@@ -23,4 +23,3 @@ The observation service SHALL make each settled assessment reproducible from its
 ## Verification
 
 Repeat batch and incremental assessment with byte-identical admitted inputs and compare structured dispositions and identities. Mutate one retained identity at a time and verify that it is visible in the resulting subject/provenance or refusal.
-

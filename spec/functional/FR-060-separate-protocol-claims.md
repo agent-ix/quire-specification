@@ -42,4 +42,3 @@ global result.
 - [Shared capability dispatcher](./FR-031-report-requested-capabilities.md).
 - [FR-059](./FR-059-assess-finite-global-conformance.md).
 - E03 library qualification for any adopted specialized implementation.
-

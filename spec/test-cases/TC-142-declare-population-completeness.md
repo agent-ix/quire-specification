@@ -17,4 +17,3 @@ Assess a finite snapshot and an event-time window; change one identity; remove o
 ## Expected Results
 
 Scope identity changes the subject. Missing membership, provider evidence, and closure remain explicit incomplete/refused reasons and cannot establish aggregate success.
-
