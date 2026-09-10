@@ -18,8 +18,12 @@ limits changes assessment input identity, not static meaning.
 
 ## Observation binding
 
-One binding maps one declared observation role to records admitted under one
-source/schema contract. It retains all of the following semantic values:
+Each declared observation role has the identity of its owning native declaration,
+original source region, and role kind; its local name is diagnostic text and never
+a global lookup key. An assessment maps every required role exactly once to a
+binding admitted under one source/schema contract. One explicit binding may be
+referenced by several compatible role mappings, but equal local names never merge
+roles. Each binding retains all of the following semantic values:
 
 | Value | Required meaning |
 | --- | --- |
