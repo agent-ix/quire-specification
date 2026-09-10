@@ -38,13 +38,17 @@ binding, observation and progress identities.
    - IT-021-SC-01: every case yields one typed result or an owned execution failure; the runner does not throw away the local result.
 2. Read every result through the OB03 and Engineering Assurance strict readers.
    - IT-021-SC-02: both readers accept valid results and preserve every orthogonal dimension and identity.
-3. Delete or substitute each trigger, role, member, binding and progress dependency independently.
-   - IT-021-SC-03: no mutation improves truth, completeness, adequacy or package status.
+3. Project every result into the exact E02 obligation and assess it through the quire-verification strict reader.
+   - IT-021-SC-03: every FR-007 finding is preserved, the derived result retains the canonical protocol-result artifact, and observation adequacy remains distinct from protocol adequacy.
+4. Delete or substitute each trigger, role, member, binding and progress dependency independently.
+   - IT-021-SC-04: no mutation improves truth, completeness, adequacy or package status.
 
 ## Expected Results
 
 All expected states remain distinct and reproducible. Missing or wrong inputs
-degrade or refuse their dependent claims. The integration retains shared
+degrade or refuse their dependent claims. The E02 projection is a distinct,
+source-bound compatibility result and cannot replace the canonical protocol
+result or conflate either adequacy domain. The integration retains shared
 execution/evidence ownership and creates no local runner, transcript parser or
 evidence store.
 
