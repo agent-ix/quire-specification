@@ -176,7 +176,7 @@ claim it. Existing ArtifactRef/SemanticRef, producer fingerprint and IR/JCS doma
 retain their selected contracts. Definition digests cover exact supplied bytes;
 an artifact need not contain its own byte digest.
 
-## Admission examples and remaining producer agreement
+## Admission examples and producer agreement
 
 Use a three-family order package with two typed per-observation inputs and a
 refund-clock role. Bind O1 and O2 through distinct workflow/relationship instances
@@ -188,12 +188,15 @@ subject. Unactivated compensation needs no fabricated refund record.
 the producer/consumer controls; none has executed yet.
 
 D's [FCD PR #97](https://github.com/agent-ix/filament-core-data/pull/97)
-at `d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f` supplies the standard-facing
-presence, relationship, population and configuration contract. F's contribution
-through `08166a2` supplies observation successors and half-open-window controls.
-The stage and correspondence tables above are A's consumer correction for
-SR-402 FND-001 and SR-406 FND-002. D's stage wording, canonical numeric domain
-and corresponding producer relation still require reconciliation; F/D/E own
-the remaining all-clock coverage mapping. No old definition selection acquires
-these changed rule bytes implicitly. A will select the agreed rules in explicit
-successor definitions after the corrections are integrated.
+at `cb740adc80fdc44aaf2c6cce0553344228c18784` supplies the standard-facing
+presence, relationship, population and configuration contract. Its static/runtime
+split and producer/native correspondence agree with the tables above, resolving
+SR-402 FND-001 and SR-406 FND-002. Its versioned exact decimal canonical domain
+resolves SR-401 FND-003 independently of native raw bytes and result JCS.
+The producer now supplies event-position, fixed-sample and timestamp coverage
+with distinct observation-record identities. F/E still need the selected
+consumer correspondence and immutable rule closure; D's FR-102 must also agree
+with its corrected claim-specific truth rule. F's contribution through `974dffa`
+preserves its earlier successors and half-open-window controls. No old definition
+selection acquires these changed rule bytes implicitly. A will select the agreed
+rules in explicit successor definitions after the corrections are integrated.

@@ -342,8 +342,9 @@ NFR-020/021, IT-020/021 and [protocol matrix](protocol/tests.md) are integrated
 through PR #21 (`2d8372c`) and resource-inspection correction `57ddca2`, separating decisive truth from subject
 closure. F's FR-110–116, NFR-050–052, IT-050/051 and
 [observation matrix](observation/tests.md) and owned requirements/cases are
-integrated through `03bda33`.
-D's standard-facing baseline at `d6ac501` is indexed as an external contribution.
+integrated through `974dffa`.
+D's standard-facing correction at `cb740ad` is indexed as an external contribution;
+its unchanged FR-102 still needs to agree with the corrected truth-support rule.
 These contributions establish draft obligations and planned cases. The composed
 grammar and examples remain proposed; binding interfaces are not fully reconciled
 and no new executable coverage is established.
@@ -356,10 +357,10 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 
 | Artifact | Type | Status |
 | --- | --- | --- |
-| [FCD FR-100](https://github.com/agent-ix/filament-core-data/blob/d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f/spec/functional/FR-100-author-field-presence-independently.md) | FR | D-owned external input; composed review requires corrections (SR-400) |
-| [FCD FR-101](https://github.com/agent-ix/filament-core-data/blob/d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f/spec/functional/FR-101-declare-first-class-relationship-contracts.md) | FR | D-owned external input; composed review requires corrections (SR-400) |
-| [FCD FR-102](https://github.com/agent-ix/filament-core-data/blob/d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f/spec/functional/FR-102-bind-populations-to-model-contracts.md) | FR | D-owned external input; composed review requires corrections (SR-400) |
-| [FCD FR-103](https://github.com/agent-ix/filament-core-data/blob/d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f/spec/functional/FR-103-declare-ecosystem-configuration-contracts.md) | FR | D-owned external input; composed review requires corrections (SR-400) |
+| [FCD FR-100](https://github.com/agent-ix/filament-core-data/blob/cb740adc80fdc44aaf2c6cce0553344228c18784/spec/functional/FR-100-author-field-presence-independently.md) | FR | D-owned external draft; acceptance and implementation pending |
+| [FCD FR-101](https://github.com/agent-ix/filament-core-data/blob/cb740adc80fdc44aaf2c6cce0553344228c18784/spec/functional/FR-101-declare-first-class-relationship-contracts.md) | FR | D-owned external draft; acceptance and implementation pending |
+| [FCD FR-102](https://github.com/agent-ix/filament-core-data/blob/cb740adc80fdc44aaf2c6cce0553344228c18784/spec/functional/FR-102-bind-populations-to-model-contracts.md) | FR | D-owned external draft; AC-3 truth-support correction remains (SR-401 FND-001) |
+| [FCD FR-103](https://github.com/agent-ix/filament-core-data/blob/cb740adc80fdc44aaf2c6cce0553344228c18784/spec/functional/FR-103-declare-ecosystem-configuration-contracts.md) | FR | D-owned external draft; acceptance and implementation pending |
 | [FR-049](functional/FR-049-bind-native-choreography-syntax.md) | FR | Native choreography source integration; proposed, reviewed in SR-400 |
 | [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Family-reviewed draft; composed review requires corrections (SR-400) |
 | [FR-050](functional/FR-050-bind-protocol-instances.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |

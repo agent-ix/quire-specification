@@ -97,10 +97,10 @@ generator is selected by this checkpoint.
 | --- | --- | --- |
 | Composed grammar, lexical rules, precedence and predicate declaration spelling | A / L1 | [One composed grammar](shared-grammar.md) now includes all three families, common query leaves and capture scopes; reconcile its model/observation bindings and examples before acceptance. No textual pattern parsing in adapters. |
 | Exact integer/rational spelling and normalized bounds; anchors and alias/composite pre-state correspondence | A / FS03 | [State contract](state-contract.md) now proposes exact arithmetic, queries and capture/anchor rules; preserve carried-forward admission and explicitly adopt extensions. |
-| Presence independent of multiplicity and explicit null; related-instance/population types | D / FCD #95, FS02, IN01 | D's FR-100–103 and baseline 1.2 at `d6ac501` are delivered; resolve the concrete stage/digest/window findings below without inventing native model semantics. |
+| Presence independent of multiplicity and explicit null; related-instance/population types | D / FCD #95, FS02, IN01 | D's baseline correction at `cb740ad` is indexed below; FR-102 still needs to preserve claim-specific truth. No native model semantics are invented. |
 | Current TL false-padding versus the old finite-window draft; clocks and past/history | E / FS04 and IR #64 | [FR-090–095](../../spec/functional/FR-090-select-temporal-profile-and-clock.md) now distinguish false-extension and timestamped finite-window meanings; current TL refuses unsupported timestamped/past mappings. Native syntax is drafted; final definition identities and review remain. |
 | Protocol structure, owned choices, parallel join, bounded repetition, compensation and conformance | B / PT01–02 with A / standard #12 | [Protocol contract](protocol-contract.md) and revised results are integrated through B's PR #21 (`2d8372c`); A's [native surface](choreography-surface.md) supplies control, value scope and registration/activation rules. SR-401/402/406 identify remaining cross-family conflicts. Global conformance is not a realizability proof. |
-| Related-instance correlation, population/window membership, silent deadlines and late data | F / OB01–03 with D/E | FR-110–116 and [observation cases](../../spec/observation/tests.md) are integrated through F's `921993b`. SR-401/403/404/406 identify the remaining replay, selection, evidence-plan and window-mapping corrections. |
+| Related-instance correlation, population/window membership, silent deadlines and late data | F / OB01–03 with D/E | FR-110–116 and [observation cases](../../spec/observation/tests.md) are integrated through F's `974dffa`. Replay and evidence-plan corrections are resolved; SR-403/406 retain selection and window-mapping work. |
 
 The original ConfigVersion minimum-only integer and parent relation stay visible
 as an admission/design gate. A graph/predicate extension receives an explicit
@@ -121,13 +121,13 @@ baseline acceptance**. Review artifacts are retained at
 `6e589dbf2fb8b2349903cbb4530ec17d78d2ef60`. Their findings replace blanket
 “undelivered family” gates.
 
-| Remaining correction | Owner / review |
+| Correction | Current disposition / review |
 | --- | --- |
-| Static type-checking versus runtime population/window prerequisites | D/A; SR-402 FND-001 |
-| Preserve decisive truth with complete exact support despite unrelated unavailable data | D with B/E/F; SR-401 FND-001 |
+| Static type-checking versus runtime population/window prerequisites | Resolved in A `89af54a` and D `cb740ad`; SR-402 FND-001 |
+| Preserve decisive truth with complete exact support despite unrelated unavailable data | D's baseline is corrected at `cb740ad`; FR-102-AC-3 still contradicts it. D owns the remaining SR-401 FND-001 correction. |
 | Preserve decisive satisfied and violated results on an open subject in replay/incremental assessment | Resolved in F `03bda33`; SR-401 FND-002, FR-114 and TC-144 |
-| Exact canonical numeric domain and producer-object/native-byte correspondence | D/A; SR-401 FND-003 and SR-406 FND-002 |
-| Map producer population/window coverage to each selected temporal clock, preserving endpoint and record identity | F with D/E/A; SR-406 FND-001 |
+| Exact canonical numeric domain and producer-object/native-byte correspondence | Resolved in D `cb740ad` with A's package correspondence; SR-401 FND-003 and SR-406 FND-002 |
+| Map producer population/window coverage to each selected temporal clock, preserving endpoint and record identity | D `cb740ad` supplies all three producer coverage forms and distinct observation records; F/E consumer correspondence and selection remain under SR-406 FND-001. |
 | Publish successor observation selections with immutable reachable rules | F/A after the affected corrections; SR-403 FND-001 |
 | Reconcile existing case/metric/method bindings and temporal wording/prerequisite | B/E/F; SR-403 FND-002, SR-404, SR-407 |
 
@@ -145,8 +145,14 @@ yet been executed against a new protocol implementation.
 A's [package correction](package-contract.md#prerequisites-by-processing-stage)
 now supplies the stage table and explicit producer/native identity correspondence,
 with FR-030-AC-9/10, FR-035-AC-9, TC-030/035 and IT-010-SC-07/08. This completes
-the concrete native consumer proposal for SR-402 FND-001 and SR-406 FND-002;
-matching D producer semantics remain required before those shared findings close.
+the native side of SR-402 FND-001 and SR-406 FND-002. D's matching
+[producer correction](https://github.com/agent-ix/filament-core-data/blob/cb740adc80fdc44aaf2c6cce0553344228c18784/docs/semantic-data-system/baseline-1-2.md)
+at `cb740adc80fdc44aaf2c6cce0553344228c18784` closes those findings at the
+specification level. Its exact document SHA-256 is
+`05258d455c78d6b72d1fa4c063078ac5277d4ebca627cfe965ae7fee5c31a570`.
+D also defines `filament-canonical-json-1` exact decimal normalization, retaining
+the distinction between adjacent large integers and equating `1`/`1.0`/`1e0`;
+this resolves SR-401 FND-003 without adopting B's separate JCS domain.
 
 F's `03bda33af53ea28c2badb21f22d3d119fd32e6c9` is integrated exactly.
 FR-114/TC-144 resolve SR-401 FND-002's settled-open replay contradiction.
@@ -169,8 +175,11 @@ B/E/F now preserve the shared distinction: `eventually[0,30] holds(p)` may
 settle true at an admitted witness while its subject remains open. Execution,
 truth, exact support, progress, closure, completeness and adequacy remain
 separate; complete global conformance has its own closure premises. The review
-identified the FR-114 contradiction now corrected by F; D's blanket incomplete
-input rule still requires reconciliation with that meaning.
+identified the FR-114 contradiction now corrected by F. D's baseline now
+preserves that truth, but its unchanged FR-102-AC-3 still requires an incomplete
+result instead of satisfied/violated whenever an observation is unavailable.
+SR-401 FND-001 remains open for that requirement; the baseline prose alone
+does not discharge it.
 
 Integrate owner corrections and validate the affected artifacts, then close
 successor definition selections and refine existing compiler #35–39 and
