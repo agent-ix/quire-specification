@@ -107,7 +107,9 @@ value/predicate interface while retaining their own declaration permissions.
 Source admission and backend/mapping support remain separate, especially for
 past time and timestamped windows unsupported by current TL targets.
 
-F's contribution through `32c95e9` is integrated. Its binding/progress candidate
+F's contribution through `65496a9` is integrated. Its current contract pins D's
+Producer interface 1.2.0 at `06a62c7` with a verified exact document digest.
+That new contract selection does not revise either 1-draft.1 candidate in place. Its binding/progress candidate
 bytes are indexed above, but their relative selected-contract links and external
 dependencies still need exact immutable selections before they form a closed
 definition set. Indexing their bytes alone does not supply those dependencies.

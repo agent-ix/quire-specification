@@ -67,7 +67,7 @@ where they preserve the required distinctions.
 | Native temporal to TL | Profile meaning, typed predicate valuations, clock/history/closure, original native correspondence | E; A/F consume |
 | Native protocol to conformance | Roles, messages/effects, causal structure, related instances, obligations, selected claim/assumptions | B; A/F consume |
 | Observation to assessment | Exact binding/input identities, correlation, clock/progress/closure, completeness and resource controls | F; B/E consume |
-| Concrete observation handoff | [F's binding contract](observation-contract.md): explicit role/schema/subject/anchor mapping, availability and scoped progress | F; through `32c95e9`, named binding/progress candidates with exact dependency closure still pending |
+| Concrete observation handoff | [F's binding contract](observation-contract.md): explicit role/schema/subject/anchor mapping, availability and scoped progress | F; through `65496a9`, named binding/progress candidates with exact dependency closure still pending |
 | Assessment to result | Requested subject/capability and per-obligation disposition, failed prerequisites, completeness/provenance | B contract; A/E/F produce |
 | Native diagnostic interpretation | [Retained codes and typed causes](definitions/native-diagnostics.md), actual producer stage, original loci and independent response-catalog identity | A; consumes existing compiler Code vocabulary and result envelopes |
 | Export | Selected mapping/profile and source-bound preserved/conditional/unrepresented/refused obligations | F coordinates; D/E contribute; A identity |
@@ -138,7 +138,9 @@ selects B's revised canonical-result rules at `2d8372c` and that temporal
 dependency. State remains `1-draft.2`, retaining the grammar without sequence
 indexing. All earlier temporal/protocol candidate files remain unchanged.
 F's binding/progress candidates are indexed;
-their exact dependency closure and D's producer contribution remain outstanding.
+F's current contract pins Producer interface 1.2.0 at D's `06a62c7`, whose
+exact document digest has been verified. F's candidate dependency closure and
+D's standard-facing model/configuration contribution remain outstanding.
 The complete baseline remains proposed and unreviewed.
 
 The [capability crosswalk](capabilities.md#initial-specification-crosswalk) now
@@ -147,7 +149,7 @@ planned cases, retaining explicit D/F/result gaps and later delivery boundaries.
 The [package reference candidate](definitions/package-reference.md) fills the
 outer-reference interpretation without flattening a package's clause profiles
 or claiming a new canonicalizer/payload reader. F's output consumer contract
-through `32c95e9` is integrated; its loss outcomes do not establish target semantics.
+through `65496a9` is integrated; its loss outcomes do not establish target semantics.
 
 B's reviewed PRs #19/#21 and E's PR #20 resolve the result distinction: `eventually[0,30] holds(p)`
 can settle true at the first admitted p witness while the surrounding execution
