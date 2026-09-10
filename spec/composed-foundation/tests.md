@@ -142,6 +142,8 @@ baseline review remain prerequisites for the corresponding executable cases.
 | FR-044 | FR-044-AC-3 | TC-044 | 🚧 Planned |
 | FR-044 | FR-044-AC-4 | TC-044 | 🚧 Planned |
 | FR-044 | FR-044-AC-5 | TC-044 | 🚧 Planned |
+| FR-044 | FR-044-AC-6 | TC-044 | 🚧 Planned |
+| FR-044 | FR-044-AC-7 | TC-044 | 🚧 Planned |
 | FR-045 | FR-045-AC-1 | TC-045 | 🚧 Planned |
 | FR-045 | FR-045-AC-2 | TC-045 | 🚧 Planned |
 | FR-045 | FR-045-AC-3 | TC-045 | 🚧 Planned |
@@ -198,7 +200,7 @@ baseline review remain prerequisites for the corresponding executable cases.
 | TC-041 | Evaluate bounded queries with occurrence-preserving semantics | Integration | P1 | FR-041-AC-1, FR-041-AC-2, FR-041-AC-3, FR-041-AC-4, FR-041-AC-5, FR-041-AC-6 | 🚧 Planned |
 | TC-042 | Select pre-state reads without retagging captured values | Integration | P1 | FR-042-AC-1, FR-042-AC-2, FR-042-AC-3, FR-042-AC-4, FR-042-AC-5 | 🚧 Planned |
 | TC-043 | Evaluate identity and reachability in explicit finite graphs | Integration | P1 | FR-043-AC-1, FR-043-AC-2, FR-043-AC-3, FR-043-AC-4, FR-043-AC-5 | 🚧 Planned |
-| TC-044 | Establish exact numeric definedness in the selected domain | Integration | P1 | FR-044-AC-1, FR-044-AC-2, FR-044-AC-3, FR-044-AC-4, FR-044-AC-5 | 🚧 Planned |
+| TC-044 | Establish exact numeric definedness in the selected domain | Integration | P1 | FR-044-AC-1, FR-044-AC-2, FR-044-AC-3, FR-044-AC-4, FR-044-AC-5, FR-044-AC-6, FR-044-AC-7 | 🚧 Planned |
 | TC-045 | Preserve conditional evaluation and exact optional-value facts | Integration | P1 | FR-045-AC-1, FR-045-AC-2, FR-045-AC-3, FR-045-AC-4, FR-045-AC-5 | 🚧 Planned |
 | TC-046 | Validate state invocation inputs before clause evaluation | Integration | P1 | FR-046-AC-1, FR-046-AC-2, FR-046-AC-3, FR-046-AC-4, FR-046-AC-5, FR-046-AC-6 | 🚧 Planned |
 | TC-047 | Classify producer diagnostics from typed causes | Integration | P1 | FR-047-AC-1, FR-047-AC-2, FR-047-AC-3, FR-047-AC-4, FR-047-AC-5 | 🚧 Planned |
