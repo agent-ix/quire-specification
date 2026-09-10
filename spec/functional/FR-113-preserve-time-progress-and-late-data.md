@@ -12,7 +12,7 @@ When assessing a timed obligation, the observation service SHALL retain event ti
 
 ## Behavior
 
-Arbitrary timestamp order SHALL NOT establish causality. Silence SHALL settle a deadline only when declared progress/closure authority covers that deadline. A late event SHALL be classified against the selected cutoff rather than silently rewriting an already settled result.
+Arbitrary timestamp order SHALL NOT establish causality. Silence SHALL settle a deadline only when declared progress/closure authority covers that deadline. The observation service SHALL classify a late event against the selected cutoff rather than silently rewriting an already settled result.
 
 ## Acceptance Criteria
 

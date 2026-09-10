@@ -12,7 +12,7 @@ When emitting an observation contribution to an assessment result, the result ad
 
 ## Behavior
 
-An untriggered compensator, absent external observation, unsupported obligation, or missing trigger telemetry SHALL NOT count as demonstrated success or adequate coverage. A confirmed fault and independently observed mitigation SHALL retain failure-mode, property, binding, and run lineage through the B-owned result contract; this requirement creates no second evidence store.
+An untriggered compensator, absent external observation, unsupported obligation, or missing trigger telemetry SHALL NOT count as demonstrated success or as an adequacy result whose required activation and participation evidence is present. A confirmed fault and independently observed mitigation SHALL retain failure-mode, property, binding, and run lineage through the B-owned result contract; this requirement creates no second evidence store.
 
 ## Acceptance Criteria
 
