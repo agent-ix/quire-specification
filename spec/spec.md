@@ -8,6 +8,8 @@ standards_alignment:
   - iso-iec-ieee-29148
   - ieee-828
 relationships:
+  - target: ix://agent-ix/quire-specification/FR-019
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-001
     type: contains
   - target: ix://agent-ix/quire-specification/FR-002
@@ -161,6 +163,12 @@ The user requested /specify and /spec-review for all work. Existing implementati
 
 ## 14. Lifecycle Status
 
+The 2026-09-09 ruling selects native Quire as the sole editable formal-clause
+language. [FR-019](functional/FR-019-admit-native-source-profile.md) and the
+[versioned amendment](../proposals/native-source-1-draft/README.md) carry forward
+its admission rules. The replacement candidate is not enabled by this document;
+the adopted historical definitions and their implementation remain distinguishable.
+
 The owner adopted e897f81 for internal implementation. Accepted IR ADR-0054
 (PR61, 690bde7) subsequently removed the universal Filament reader prerequisite;
 #54 is closed. Generic native compilation can use the existing IR API.
@@ -198,6 +206,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-016](functional/FR-016-migrate-explicitly.md) | FR | Draft |
 | [FR-017](functional/FR-017-select-verification-artifact-roles.md) | FR | Amendment |
 | [FR-018](functional/FR-018-select-verification-jcs-domain.md) | FR | Amendment |
+| [FR-019](functional/FR-019-admit-native-source-profile.md) | FR | Native-source definition candidate; implementation incomplete |
 | [US-001](usecase/US-001-understand-native-meaning.md) | US | Draft |
 | [US-002](usecase/US-002-exchange-exact-subjects.md) | US | Draft |
 | [US-003](usecase/US-003-assess-finite-state.md) | US | Draft |
