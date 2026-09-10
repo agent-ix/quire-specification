@@ -39,7 +39,7 @@ the 2026-09-10 roadmap amendment. Source inspection is not executed qualificatio
 | Observation quality determines the meaning of timed/protocol results. | Specify correlation, captures, causal order, clocks, progress, membership and completeness before relying on monitor verdicts. |
 | State truth, temporal pending and protocol state are different. | Keep specialized typed representations/evaluators while sharing predicates and identity. |
 | Protocol monitoring and compositional proof are different claims. | Deliver supported conformance/monitoring; preserve visibility, ownership and assumptions for later scoped analysis. |
-| Existing verification contracts are completed. | Reuse VP02/VP03 without reopening their historical implementation; track new consumer integration under the existing verification epic. |
+| Existing verification contracts are completed. | Reuse VP02/VP03 without reopening their historical implementation; track new consumer integration through its existing expansion epic #13. |
 
 Lexer, parser, AST and IR are successive stages, not alternatives. The lexer
 recognizes tokens; the parser applies grammar and records syntax with locations.
@@ -100,8 +100,10 @@ Standard #12 owns authored choreography meaning; research PT01 (#47) owns protoc
 representation/consumer contracts. OB01–03 own bindings, replay, incremental
 monitoring and adequacy. IN01/IN02 own configuration and compatibility. LC05 and
 QA01 retain integration/conformance ownership. The original compiler diagnostic,
-CLI and admission tickets remain reused work. Public IR #63/#64 contain only
-the generic native bridge scope, without private roadmap links.
+CLI and admission tickets remain reused work. Public IR #52/#55–57/#63/#64 consistently describe native integration and output-only
+mappings, without private roadmap links. QA01–03 cover composed conformance,
+full-v1 release completeness and related-instance/population resource limits;
+verification expansion #13 retains new consumer qualification ownership.
 
 Specify the shared semantic baseline together and run the selected QUOIN
 base-plus-seven review set at coherent PR readiness. Then implement packages and
