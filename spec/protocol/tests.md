@@ -95,7 +95,7 @@ than claiming the advanced algorithms exist.
 
 | Non-Functional Req | Verification Method | Evidence/Test Cases | Status |
 | --- | --- | --- | --- |
-| NFR-020 | Test and static analysis | TC-062 | 🚧 Planned |
+| NFR-020 | Inspection plus boundary and mutation tests | TC-065, TC-062 | 🚧 Planned |
 | NFR-021 | Metamorphic and identity mutation test | TC-063 | 🚧 Planned |
 
 ## Integration Coverage
@@ -124,3 +124,4 @@ than claiming the advanced algorithms exist.
 | TC-062 | Enforce every protocol resource boundary | Property | P1 | NFR-020 | 🚧 Planned |
 | TC-063 | Reproduce results under equivalent presentations | Property | P1 | NFR-021 | 🚧 Planned |
 | TC-064 | Project protocol results to portable verification findings | Property | P1 | FR-062-AC-1, FR-062-AC-2, FR-062-AC-3, FR-062-AC-4 | 🚧 Planned |
+| TC-065 | Audit the complete protocol resource inventory | Static | P1 | NFR-020 | 🚧 Planned |
