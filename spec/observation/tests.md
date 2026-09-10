@@ -28,7 +28,7 @@ CLI, or backend conformance.
 
 | Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
 | --- | --- | --- | --- |
-| FR-110 | FR-110-AC-1, FR-110-AC-2, FR-110-AC-3 | TC-140 | 🚧 Planned |
+| FR-110 | FR-110-AC-1, FR-110-AC-2, FR-110-AC-3, FR-110-AC-4 | TC-140 | 🚧 Planned |
 | FR-111 | FR-111-AC-1, FR-111-AC-2, FR-111-AC-3 | TC-141 | 🚧 Planned |
 | FR-112 | FR-112-AC-1, FR-112-AC-2, FR-112-AC-3 | TC-142 | 🚧 Planned |
 | FR-113 | FR-113-AC-1, FR-113-AC-2, FR-113-AC-3 | TC-143 | 🚧 Planned |
