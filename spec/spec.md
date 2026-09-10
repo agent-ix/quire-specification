@@ -339,9 +339,10 @@ not review this new scope.
 
 B's [protocol contract](../proposals/quire-v1/protocol-contract.md), FR-050–062,
 NFR-020/021, IT-020/021 and [protocol matrix](protocol/tests.md) are integrated
-through reviewed PR #21 (`2d8372c`), separating decisive truth from subject
+through PR #21 (`2d8372c`) and resource-inspection correction `57ddca2`, separating decisive truth from subject
 closure. F's FR-110–116, NFR-050–052, IT-050/051 and
-[observation matrix](observation/tests.md) are integrated through `08166a2`.
+[observation matrix](observation/tests.md) and owned requirements/cases are
+integrated through `03bda33`.
 D's standard-facing baseline at `d6ac501` is indexed as an external contribution.
 These contributions establish draft obligations and planned cases. The composed
 grammar and examples remain proposed; binding interfaces are not fully reconciled
