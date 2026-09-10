@@ -17,4 +17,3 @@ For every structural, role, message, branch, iteration, active-instance, observa
 ## Expected Results
 
 Every exact-boundary case remains eligible, every excess case returns a typed resource-incomplete result, both comparison mutants fail, and the action-capable double receives zero calls.
-

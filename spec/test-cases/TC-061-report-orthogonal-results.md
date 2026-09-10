@@ -17,4 +17,3 @@ Construct healthy, violating, inactive, pending, incomplete, refused, unsupporte
 ## Expected Results
 
 All result states remain structurally discriminable. Missing evidence never improves truth, adequacy or package status. Strict readers refuse every stale identity and impossible combination while retaining independent valid results.
-

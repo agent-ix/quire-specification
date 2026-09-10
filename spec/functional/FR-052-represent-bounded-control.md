@@ -42,4 +42,3 @@ reached within the declared finite graph.
 
 - [FR-050](./FR-050-bind-protocol-instances.md).
 - Agent A's shared grammar and predicate contracts.
-

@@ -47,4 +47,3 @@ CLI, or backend conformance.
 | TC-144 | Agree replay and incremental assessment | Integration | P1 | FR-114 | 🚧 Planned |
 | TC-145 | Report observation adequacy without promotion | Integration | P1 | FR-115 | 🚧 Planned |
 | TC-146 | Map observation results to consumers | Integration | P1 | FR-116 | 🚧 Planned |
-

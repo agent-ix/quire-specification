@@ -17,4 +17,3 @@ Use an unprojectable but globally monitorable protocol, a satisfiable trace with
 ## Expected Results
 
 Global results remain available. Each advanced claim is refused, unsupported or separately decided with its exact fragment and premises; satisfiability and circular assumptions establish no stronger success.
-

@@ -17,4 +17,3 @@ Enumerate permitted interleavings of S1 and S2 around their join. Permute equal-
 ## Expected Results
 
 All and only causally valid interleavings admit. Timestamp/input order adds no edge. Every structural mutant refuses, and a semantic graph or bound change changes protocol identity.
-

@@ -17,4 +17,3 @@ Run the same admitted O1/O2 observations and progress through batch and incremen
 ## Expected Results
 
 Settled dispositions agree. Every adverse control stays pending, incomplete, or refused as applicable and never becomes a production-monitor execution claim.
-

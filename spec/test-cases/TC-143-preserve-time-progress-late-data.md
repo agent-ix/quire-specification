@@ -17,4 +17,3 @@ Use a refund deadline with event and ingestion times, an explicit watermark, a c
 ## Expected Results
 
 Silence settles only under declared authority. Timestamp order does not establish causality, uncertainty stays explicit, and late data is retained without silently changing the selected settled result.
-

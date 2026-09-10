@@ -41,4 +41,3 @@ invalid or that a general projection theorem has been attempted.
 
 - [FR-052](./FR-052-represent-bounded-control.md).
 - Agent A's typed predicate and scope rules.
-

@@ -17,4 +17,3 @@ Create concurrent O1/O2 with a shared provider. Link a refund to O1's effect, of
 ## Expected Results
 
 O1 is selected only by its declared relation; O2 substitution, unknown/conflicting relation, and repeated delivery cannot manufacture an effect.
-

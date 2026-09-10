@@ -17,4 +17,3 @@ Present failed then successful refund attempts, a timed-out attempt and a duplic
 ## Expected Results
 
 Attempt/effect outcomes remain distinct. Only the complete exact population can satisfy aggregate recovery; missing/unknown members and excess attempts cannot produce success.
-

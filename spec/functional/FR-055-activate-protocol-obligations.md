@@ -41,4 +41,3 @@ inactive or unknown obligation as satisfied or demonstrated.
 
 - [FR-051](./FR-051-preserve-communication-identities.md).
 - E-owned temporal anchors and F-owned observation completeness.
-
