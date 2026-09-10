@@ -8,6 +8,114 @@ standards_alignment:
   - iso-iec-ieee-29148
   - ieee-828
 relationships:
+  - target: ix://agent-ix/quire-specification/US-006
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-050
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-051
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-052
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-053
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-054
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-055
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-056
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-057
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-058
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-059
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-060
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-061
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-020
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-021
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-020
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-021
+    type: contains
+  - target: ix://agent-ix/quire-specification/US-009
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-110
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-111
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-112
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-113
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-114
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-115
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-116
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-050
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-051
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-052
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-050
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-051
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-048
+    type: contains
+  - target: ix://agent-ix/quire-specification/US-008
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-090
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-091
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-092
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-093
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-094
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-095
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-040
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-040
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-041
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-010
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-040
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-041
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-042
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-043
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-044
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-045
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-046
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-047
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-036
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-037
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-038
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-039
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-030
     type: contains
   - target: ix://agent-ix/quire-specification/FR-031
@@ -205,11 +313,24 @@ Standard-wide publication terms remain unresolved.
 
 The [shared foundation](../proposals/quire-v1/shared-foundation.md) is a drafting
 checkpoint with artifact reservations and explicit outstanding decisions.
-FR-030–035 and their [planned matrix](composed-foundation/tests.md) establish
-the initial shared contribution. They have not undergone the complete baseline
-review and do not authorize dependent implementation. Family contracts and the
-composed grammar remain required contributions; historical review artifacts do
-not review this new scope.
+FR-030–048, the decomposed FR-020, NFR-010 and their
+[planned matrix](composed-foundation/tests.md) establish the shared contribution.
+The [grammar](../proposals/quire-v1/shared-grammar.md) and
+[state contract](../proposals/quire-v1/state-contract.md) now include ordered
+queries/aggregation and explicit anchor, numeric and graph proposals. E's
+FR-090–095, NFR-040, IT-040/041 and [temporal matrix](temporal/tests.md) are now
+integrated as draft temporal meaning. FR-048 connects the native temporal syntax
+and shared predicate environments to that contribution. The full baseline review
+has not run and dependent implementation is not authorized by these drafts.
+Protocol syntax and model/observation family agreement remain integration work;
+historical review artifacts do not review this new scope.
+
+B's [protocol contract](../proposals/quire-v1/protocol-contract.md), FR-050–061,
+NFR-020/021, IT-020/021 and [protocol matrix](protocol/tests.md) are integrated
+from `528d7a6`. F's FR-110–116, NFR-050–052, IT-050/051 and
+[observation matrix](observation/tests.md) are integrated from `4d58e40`.
+These contributions establish draft obligations and planned cases, not completed
+protocol grammar, fully reconciled binding interfaces or executable coverage.
 
 ## 16. References
 
@@ -219,6 +340,60 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 
 | Artifact | Type | Status |
 | --- | --- | --- |
+| [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Integrated family draft; unreviewed |
+| [FR-050](functional/FR-050-bind-protocol-instances.md) | FR | Integrated family draft; unreviewed |
+| [FR-051](functional/FR-051-preserve-communication-identities.md) | FR | Integrated family draft; unreviewed |
+| [FR-052](functional/FR-052-represent-bounded-control.md) | FR | Integrated family draft; unreviewed |
+| [FR-053](functional/FR-053-enforce-choice-visibility.md) | FR | Integrated family draft; unreviewed |
+| [FR-054](functional/FR-054-bind-channel-premises.md) | FR | Integrated family draft; unreviewed |
+| [FR-055](functional/FR-055-activate-protocol-obligations.md) | FR | Integrated family draft; unreviewed |
+| [FR-056](functional/FR-056-register-compensation.md) | FR | Integrated family draft; unreviewed |
+| [FR-057](functional/FR-057-enforce-commit-recovery.md) | FR | Integrated family draft; unreviewed |
+| [FR-058](functional/FR-058-preserve-retry-and-partial-recovery.md) | FR | Integrated family draft; unreviewed |
+| [FR-059](functional/FR-059-assess-finite-global-conformance.md) | FR | Integrated family draft; unreviewed |
+| [FR-060](functional/FR-060-separate-protocol-claims.md) | FR | Integrated family draft; unreviewed |
+| [FR-061](functional/FR-061-report-orthogonal-results.md) | FR | Integrated family draft; unreviewed |
+| [NFR-020](non-functional/NFR-020-bound-protocol-processing.md) | NFR | Integrated family draft; unreviewed |
+| [NFR-021](non-functional/NFR-021-reproduce-protocol-results.md) | NFR | Integrated family draft; unreviewed |
+| [IT-020](integration/IT-020-native-protocol-handoff.md) | IT | Integrated family draft; unreviewed |
+| [IT-021](integration/IT-021-observation-result-handoff.md) | IT | Integrated family draft; unreviewed |
+| [US-009](usecase/US-009-assess-observed-workflow-outcomes.md) | US | Integrated family draft; unreviewed |
+| [FR-110](functional/FR-110-bind-typed-observations.md) | FR | Integrated family draft; unreviewed |
+| [FR-111](functional/FR-111-correlate-related-instances-explicitly.md) | FR | Integrated family draft; unreviewed |
+| [FR-112](functional/FR-112-declare-population-and-completeness.md) | FR | Integrated family draft; unreviewed |
+| [FR-113](functional/FR-113-preserve-time-progress-and-late-data.md) | FR | Integrated family draft; unreviewed |
+| [FR-114](functional/FR-114-assess-replay-and-incremental-consistently.md) | FR | Integrated family draft; unreviewed |
+| [FR-115](functional/FR-115-report-activation-participation-and-adequacy.md) | FR | Integrated family draft; unreviewed |
+| [FR-116](functional/FR-116-map-observation-results-to-consumers.md) | FR | Integrated family draft; unreviewed |
+| [NFR-050](non-functional/NFR-050-bound-observation-retention.md) | NFR | Integrated family draft; unreviewed |
+| [NFR-051](non-functional/NFR-051-preserve-observation-reproducibility.md) | NFR | Integrated family draft; unreviewed |
+| [NFR-052](non-functional/NFR-052-contain-observation-executables.md) | NFR | Integrated family draft; unreviewed |
+| [IT-050](integration/IT-050-observation-to-temporal-and-protocol-assessment.md) | IT | Integrated family draft; unreviewed |
+| [IT-051](integration/IT-051-observation-output-consumer-contract.md) | IT | Integrated family draft; unreviewed |
+| [FR-048](functional/FR-048-bind-native-temporal-syntax.md) | FR | Native temporal source integration; unreviewed |
+| [US-008](usecase/US-008-assess-native-temporal-obligations.md) | US | Temporal family contribution; unreviewed |
+| [FR-090](functional/FR-090-select-temporal-profile-and-clock.md) | FR | Temporal family contribution; unreviewed |
+| [FR-091](functional/FR-091-evaluate-bounded-future.md) | FR | Temporal family contribution; unreviewed |
+| [FR-092](functional/FR-092-evaluate-bounded-past.md) | FR | Temporal family contribution; unreviewed |
+| [FR-093](functional/FR-093-bind-temporal-activation-and-captures.md) | FR | Temporal family contribution; unreviewed |
+| [FR-094](functional/FR-094-interpret-progress-history-and-closure.md) | FR | Temporal family contribution; unreviewed |
+| [FR-095](functional/FR-095-preserve-native-tl-correspondence.md) | FR | Temporal family contribution; unreviewed |
+| [NFR-040](non-functional/NFR-040-bound-temporal-state.md) | NFR | Temporal retention/resource contract; unreviewed |
+| [IT-040](integration/IT-040-native-future-tl-correspondence.md) | IT | Planned native/TL correspondence |
+| [IT-041](integration/IT-041-temporal-bridge-refusals.md) | IT | Planned temporal refusal correspondence |
+| [FR-040](functional/FR-040-admit-explicit-state-extensions.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [FR-041](functional/FR-041-evaluate-ordered-queries.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [FR-042](functional/FR-042-select-pre-state-reads.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [FR-043](functional/FR-043-evaluate-finite-graph-relations.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [FR-044](functional/FR-044-check-composed-numeric-definedness.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [FR-045](functional/FR-045-preserve-control-and-presence-facts.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [FR-046](functional/FR-046-validate-state-invocation-inputs.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [FR-047](functional/FR-047-emit-typed-located-causes.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [NFR-010](non-functional/NFR-010-bound-composed-processing.md) | NFR | Composed resource contract; unreviewed |
+| [FR-036](functional/FR-036-retain-lexical-source-locations.md) | FR | Shared grammar/type contribution; unreviewed |
+| [FR-037](functional/FR-037-parse-shared-native-expressions.md) | FR | Shared grammar/type contribution; unreviewed |
+| [FR-038](functional/FR-038-resolve-predicate-scopes.md) | FR | Shared grammar/type contribution; unreviewed |
+| [FR-039](functional/FR-039-normalize-exact-rational-literals.md) | FR | Shared grammar/type contribution; unreviewed |
 | [FR-030](functional/FR-030-bind-composed-definitions.md) | FR | Shared definition binding draft |
 | [FR-031](functional/FR-031-report-requested-capabilities.md) | FR | Per-request capability disposition draft |
 | [FR-032](functional/FR-032-preserve-language-evolution.md) | FR | Evolution/compatibility draft |

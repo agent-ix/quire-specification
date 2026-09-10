@@ -17,4 +17,3 @@ Present one successful payment effect, replay its observation, then replace it w
 ## Expected Results
 
 Exactly one effect-bound registration is created in the valid/replayed case. Attempt/delivery-only cases create none; early compensation reports an ordering violation and cannot repair registration retrospectively.
-

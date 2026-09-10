@@ -17,4 +17,3 @@ Link O1 and O2 concurrently through shared provider P. Independently substitute 
 ## Expected Results
 
 The valid package retains distinct static and runtime identities. Every adverse substitution refuses at its source location; one invalid dependency does not erase an independent valid definition.
-

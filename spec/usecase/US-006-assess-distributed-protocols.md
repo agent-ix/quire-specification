@@ -77,4 +77,3 @@ bounded global conformance.
 
 The normative behaviors are refined by FR-050 through FR-061 and constrained by
 NFR-020 and NFR-021 in this protocol family.
-

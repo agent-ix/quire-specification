@@ -69,4 +69,3 @@ does not authorize bespoke tooling here.
 ## Traceability
 
 The test verifies the portable shared-result seam used by PT02 and OB03.
-

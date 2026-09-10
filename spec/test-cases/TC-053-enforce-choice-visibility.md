@@ -17,4 +17,3 @@ Admit ship/cancel after fulfillment receives a payment outcome. Remove that mess
 ## Expected Results
 
 The communicated choice admits. Every other case returns the exact choice/owner/fact refusal and no successful projection or conformance claim.
-

@@ -17,4 +17,3 @@ Assess a failed shipment after E1, a successful shipment under closed complete i
 ## Expected Results
 
 The first case activates the matching captured refund; the second is inactive; the third is unknown/incomplete. Each substitution refuses and no inactive/unknown case becomes satisfied or demonstrated.
-

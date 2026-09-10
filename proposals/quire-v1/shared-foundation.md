@@ -92,12 +92,12 @@ generator is selected by this checkpoint.
 
 | Decision | Owner | Required disposition before affected implementation |
 | --- | --- | --- |
-| Composed grammar, lexical rules, precedence and predicate declaration spelling | A / L1 | Publish explicit grammar and positive/negative syntax cases; no textual pattern parsing in adapters. |
-| Exact integer/rational spelling and normalized bounds; anchors and alias/composite pre-state correspondence | A / FS03 | Preserve all carried-forward admission rules; explicitly scope any extension. |
+| Composed grammar, lexical rules, precedence and predicate declaration spelling | A / L1 | [State/temporal grammar](shared-grammar.md) now drafted with common query leaves and capture scopes; integrate protocol productions and model/observation bindings before acceptance. No textual pattern parsing in adapters. |
+| Exact integer/rational spelling and normalized bounds; anchors and alias/composite pre-state correspondence | A / FS03 | [State contract](state-contract.md) now proposes exact arithmetic, queries and capture/anchor rules; preserve carried-forward admission and explicitly adopt extensions. |
 | Presence independent of multiplicity and explicit null; related-instance/population types | D / FCD #95, FS02, IN01 | Name the producer contract or refuse; never invent native field-presence semantics to repair producer loss. |
-| Current TL false-padding versus the old finite-window draft; clocks and past/history | E / FS04 and IR #64 | Select exact native semantics, distinguishing vectors and bridge support/refusal; no equivalence assumption. |
-| Protocol structure, owned choices, parallel join, bounded repetition, compensation and conformance | B / PT01–02 with A / standard #12 | Define observable meaning and claim premises; monitoring is not general realizability proof. |
-| Related-instance correlation, population/window membership, silent deadlines and late data | F / OB01–03 with D/E | Name completeness/progress authority and incomplete/refused outcomes; no inferred success from missing data. |
+| Current TL false-padding versus the old finite-window draft; clocks and past/history | E / FS04 and IR #64 | [FR-090–095](../../spec/functional/FR-090-select-temporal-profile-and-clock.md) now distinguish false-extension and timestamped finite-window meanings; current TL refuses unsupported timestamped/past mappings. Native syntax is drafted; final definition identities and review remain. |
+| Protocol structure, owned choices, parallel join, bounded repetition, compensation and conformance | B / PT01–02 with A / standard #12 | [Protocol contract](protocol-contract.md) and FR-050–061 are integrated from B's `528d7a6`; native productions and detailed control/binding agreement remain. Global conformance is not a realizability proof. |
+| Related-instance correlation, population/window membership, silent deadlines and late data | F / OB01–03 with D/E | FR-110–116 and [observation cases](../../spec/observation/tests.md) are integrated from F's `4d58e40`; exact membership, binding and late-data contracts still need agreement with D/E/B. No inferred success from missing data. |
 
 The original ConfigVersion minimum-only integer and parent relation stay visible
 as an admission/design gate. A graph/predicate extension receives an explicit
@@ -113,6 +113,14 @@ proposal with one concrete distinguishing case. Maintain one shared meaning.
 
 The initial A requirements and planned acceptance cases are linked from the
 [shared matrix](../../spec/composed-foundation/tests.md). Family contributions
-and final grammar are still required before the complete baseline review. Run
+and final grammar are still required before the complete baseline review. E's
+[temporal matrix](../../spec/temporal/tests.md) is integrated as draft input;
+FR-048 supplies its native source integration. Run
 structural validation while drafting; reserve formal reviews for coherent PR
 readiness. C continues engineering-assurance independently.
+
+The contributions now share one draft tree. Remaining acceptance work includes
+D's model/configuration decisions, A's protocol grammar and exact profile
+definition artifacts, concrete cross-family binding/correlation/closure cases,
+and reconciliation of planned methods/traceability before the baseline review.
+The presence of a requirement file does not discharge those decisions.

@@ -17,4 +17,3 @@ Bind one send, two deliveries, one payment attempt and one successful payment ef
 ## Expected Results
 
 The valid case retains 1/2/1 message-delivery-effect cardinality. Relabeling or identity substitution refuses or violates exactly the affected relation; the attempt-only case registers no compensation.
-

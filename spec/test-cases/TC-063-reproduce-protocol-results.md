@@ -17,4 +17,3 @@ Permute map-like members and causally independent events for one admitted case, 
 ## Expected Results
 
 Equivalent presentations produce identical ordered semantic results. Every semantic dependency change alters the corresponding identity; no reproduction omits its exact provenance.
-
