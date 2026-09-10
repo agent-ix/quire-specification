@@ -10,11 +10,33 @@ relationships:
 
 When emitting an observation contribution to an assessment result, the result
 adapter SHALL preserve requested capability, assessment execution,
-subject-progress/closure, truth, settlement basis, exact decision support,
+decision-scope progress, decision-scope closure, surrounding-execution progress,
+surrounding-execution closure, truth, settlement basis, exact decision support,
 activation, participation, completeness, adequacy, claim strength, provenance,
 and immutable definition/profile dependencies as separate facts.
 
 ## Behavior
+
+The adapter SHALL retain the independent decision-scope progress,
+decision-scope closure, surrounding-execution progress and surrounding-execution
+closure facts with their exact scope, authority and boundary identities under
+[FR-061](FR-061-report-orthogonal-results.md). The adapter SHALL NOT substitute
+one progress or closure axis for another, merge them into a single subject state,
+or infer either closure from completed assessment execution or completeness.
+When a required retained axis is omitted or cross-wired to another axis or
+scope, the adapter SHALL refuse the inconsistent contribution.
+
+When a completed assessment has a settled truth with complete exact decision
+support, the adapter SHALL preserve that truth and support independently of the
+surrounding-execution progress and closure facts admitted by FR-061. The adapter
+retains the corresponding limitations in completeness.
+
+The adapter SHALL retain the closure premises required for complete global
+conformance separately from per-obligation settlement.
+
+While required execution, branch or workflow closure premises remain open or
+incomplete, the adapter SHALL NOT report complete global conformance from a closed
+decision scope or a decisive witness/counterexample alone.
 
 An untriggered compensator, absent external observation, unsupported obligation,
 or missing trigger telemetry SHALL NOT count as demonstrated success or as an
@@ -39,12 +61,12 @@ current default or a compatible-looking definition.
 | FR-115-AC-1 | Healthy, violating, untriggered, missing-data, and unsupported traces remain visibly distinct. | Test (TC-145) |
 | FR-115-AC-2 | Dropped trigger telemetry and mis-correlated response cannot improve adequacy. | Test (TC-145) |
 | FR-115-AC-3 | Confirmed fault/mitigation lineage retains source, binding, property, and run identities. | Test (TC-145) |
-| FR-115-AC-4 | Assessment execution, subject-progress/closure, truth, settlement basis, exact decision support, activation, participation, completeness, adequacy, claim strength, and provenance remain independently readable. | Test (TC-145) |
-| FR-115-AC-5 | A settled truth on an open subject retains its decisive basis and exact support; a late contradiction retains prior bytes and emits only a linked superseding or invalidating result. | Test (TC-145) |
+| FR-115-AC-4 | Assessment execution, decision-scope progress, decision-scope closure, surrounding-execution progress, surrounding-execution closure, truth, settlement basis, exact decision support, activation, participation, completeness, adequacy, claim strength, and provenance remain independently readable; independently omitting or cross-wiring each required progress/closure axis refuses the inconsistent contribution. | Test (TC-145) |
+| FR-115-AC-5 | Decisive-witness satisfied and decisive-counterexample violated results remain settled with exact support while the decision scope and surrounding execution are open; compatible changes to surrounding-execution progress/closure preserve the same deciding support and truth. A closed decision scope does not close the surrounding execution or establish complete global conformance without its own required closure premises. A late contradiction retains prior bytes and emits only a linked superseding or invalidating result. | Test (TC-145) |
 | FR-115-AC-6 | Every selected definition/profile identity, revision, and digest remains immutable at the observation-result boundary; drift or substitution is refused. | Test (TC-145) |
 
 ## Dependencies
 
 - [Shared foundation](../../proposals/quire-v1/shared-foundation.md).
-- [B's reviewed FR-061 result contract](ix://agent-ix/quire-specification/FR-061) owns assessment execution, subject-progress/closure, settlement basis, decision support, and result-combination semantics.
+- [B's reviewed FR-061 result contract](FR-061-report-orthogonal-results.md) owns assessment execution, independent decision-scope and surrounding-execution progress and closure, settlement basis, decision support, and result-combination semantics, including the closure premises for complete global conformance.
 - [B's FR-007 result contract](ix://agent-ix/quire-verification/FR-007) owns independent execution, activation, observation, participation, assumption, logical, and provenance findings; Quoin retains evidence authority.
