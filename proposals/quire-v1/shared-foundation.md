@@ -67,6 +67,7 @@ where they preserve the required distinctions.
 | Native temporal to TL | Profile meaning, typed predicate valuations, clock/history/closure, original native correspondence | E; A/F consume |
 | Native protocol to conformance | Roles, messages/effects, causal structure, related instances, obligations, selected claim/assumptions | B; A/F consume |
 | Observation to assessment | Exact binding/input identities, correlation, clock/progress/closure, completeness and resource controls | F; B/E consume |
+| Concrete observation handoff | [F's binding contract](observation-contract.md): explicit role/schema/subject/anchor mapping, availability and scoped progress | F; integrated from `c5cec84`, with exact interface selections still pending |
 | Assessment to result | Requested subject/capability and per-obligation disposition, failed prerequisites, completeness/provenance | B contract; A/E/F produce |
 | Export | Selected mapping/profile and source-bound preserved/conditional/unrepresented/refused obligations | F coordinates; D/E contribute; A identity |
 
@@ -121,7 +122,7 @@ structural validation while drafting; reserve formal reviews for coherent PR
 readiness. C continues engineering-assurance independently.
 
 The contributions now share one draft tree. Remaining acceptance work includes
-D's model/configuration decisions, exact profile definition artifacts,
+D's model/configuration decisions, acceptance of exact profile candidates,
 concrete cross-family binding/correlation/closure cases,
 and reconciliation of planned methods/traceability before the baseline review.
 The presence of a requirement file does not discharge those decisions.
@@ -130,8 +131,11 @@ A's [edition and state definition candidates](definitions/README.md) now pin the
 rule snapshot at `033fcda` with explicit core/query/graph admission and exact
 dependency digests. They retain rational division with nonzero/range proofs,
 correcting its accidental blanket refusal in the earlier composed draft.
-They do not yet supply temporal/protocol definition artifacts or settle D/F's
-producer interfaces. The complete baseline remains proposed and unreviewed.
+The catalog now also supplies E's three temporal roots, their common facet and
+the finite-global protocol candidate, selecting family rules at `697ffd0`.
+F's concrete binding proposal is integrated. D/F's exact producer interface
+selections and the B/E result disagreement remain unresolved; the complete
+baseline remains proposed and unreviewed.
 
 One result distinction needs B/E agreement: `eventually[0,30] holds(p)` can settle
 true at the first admitted p witness while the surrounding execution/window is
