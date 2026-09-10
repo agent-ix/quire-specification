@@ -73,6 +73,8 @@ baseline review remain prerequisites for the corresponding executable cases.
 | FR-030 | FR-030-AC-6 | TC-030 | 🚧 Planned |
 | FR-030 | FR-030-AC-7 | TC-030 | 🚧 Planned |
 | FR-030 | FR-030-AC-8 | TC-030 | 🚧 Planned |
+| FR-030 | FR-030-AC-9 | TC-030 | 🚧 Planned |
+| FR-030 | FR-030-AC-10 | TC-030 | 🚧 Planned |
 | FR-130 | FR-130-AC-1 | TC-030 | 🚧 Planned |
 | FR-130 | FR-130-AC-2 | TC-030 | 🚧 Planned |
 | FR-130 | FR-130-AC-3 | TC-030 | 🚧 Planned |
@@ -104,6 +106,7 @@ baseline review remain prerequisites for the corresponding executable cases.
 | FR-035 | FR-035-AC-6 | TC-035 | 🚧 Planned |
 | FR-035 | FR-035-AC-7 | TC-035 | 🚧 Planned |
 | FR-035 | FR-035-AC-8 | TC-035 | 🚧 Planned |
+| FR-035 | FR-035-AC-9 | TC-035 | 🚧 Planned |
 | FR-036 | FR-036-AC-1 | TC-036 | 🚧 Planned |
 | FR-036 | FR-036-AC-2 | TC-036 | 🚧 Planned |
 | FR-036 | FR-036-AC-3 | TC-036 | 🚧 Planned |
@@ -194,12 +197,12 @@ baseline review remain prerequisites for the corresponding executable cases.
 | Test ID | Title | Type | Priority | Traces To | Status |
 | --- | --- | --- | --- | --- | --- |
 | TC-020 | Report complete versus partial capability scope | Integration | P1 | FR-020-AC-7, FR-020-AC-8, FR-020-AC-9, FR-020-AC-10 | 🚧 Planned |
-| TC-030 | Bind clauses and composed-package references to exact definitions | Integration | P1 | FR-030-AC-1, FR-030-AC-2, FR-030-AC-3, FR-030-AC-4, FR-030-AC-5, FR-030-AC-6, FR-030-AC-7, FR-030-AC-8, FR-130-AC-1, FR-130-AC-2, FR-130-AC-3, FR-130-AC-4, FR-130-AC-5, FR-130-AC-6 | 🚧 Planned |
+| TC-030 | Bind clauses and composed-package references to exact definitions | Integration | P1 | FR-030-AC-1, FR-030-AC-2, FR-030-AC-3, FR-030-AC-4, FR-030-AC-5, FR-030-AC-6, FR-030-AC-7, FR-030-AC-8, FR-030-AC-9, FR-030-AC-10, FR-130-AC-1, FR-130-AC-2, FR-130-AC-3, FR-130-AC-4, FR-130-AC-5, FR-130-AC-6 | 🚧 Planned |
 | TC-031 | Report each requested assessment capability independently | Integration | P1 | FR-031-AC-1, FR-031-AC-2, FR-031-AC-3, FR-031-AC-4 | 🚧 Planned |
 | TC-032 | Preserve selected meanings across language evolution | Integration | P1 | FR-032-AC-1, FR-032-AC-2, FR-032-AC-3, FR-032-AC-4 | 🚧 Planned |
 | TC-033 | Admit total typed reusable Boolean predicates | Integration | P1 | FR-033-AC-1, FR-033-AC-2, FR-033-AC-3, FR-033-AC-4, FR-033-AC-5 | 🚧 Planned |
 | TC-034 | Bind cross-family predicates to explicit evaluation environments | Integration | P1 | FR-034-AC-1, FR-034-AC-2, FR-034-AC-3, FR-034-AC-4 | 🚧 Planned |
-| TC-035 | Retain explicit ecosystem scope identities in assessment requests | Integration | P1 | FR-035-AC-1, FR-035-AC-2, FR-035-AC-3, FR-035-AC-4, FR-035-AC-5, FR-035-AC-6, FR-035-AC-7, FR-035-AC-8 | 🚧 Planned |
+| TC-035 | Retain explicit ecosystem scope identities in assessment requests | Integration | P1 | FR-035-AC-1, FR-035-AC-2, FR-035-AC-3, FR-035-AC-4, FR-035-AC-5, FR-035-AC-6, FR-035-AC-7, FR-035-AC-8, FR-035-AC-9 | 🚧 Planned |
 | TC-036 | Preserve original source locations through lexical recognition | Integration | P1 | FR-036-AC-1, FR-036-AC-2, FR-036-AC-3, FR-036-AC-4, FR-036-AC-5 | 🚧 Planned |
 | TC-037 | Parse shared expressions with explicit precedence | Integration | P1 | FR-037-AC-1, FR-037-AC-2, FR-037-AC-3, FR-037-AC-4, FR-037-AC-5, FR-037-AC-6 | 🚧 Planned |
 | TC-038 | Resolve predicate names under explicit lexical scopes | Integration | P1 | FR-038-AC-1, FR-038-AC-2, FR-038-AC-3, FR-038-AC-4, FR-038-AC-5 | 🚧 Planned |

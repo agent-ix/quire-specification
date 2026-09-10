@@ -89,6 +89,68 @@ workflow's values.
 
 ## Configuration and assessment identity
 
+### Prerequisites by processing stage
+
+The linker SHALL derive concrete-input requirements without requiring their
+future observations to exist. The assessment binder SHALL check the inputs
+required by the selected claim when that claim consumes them. These obligations
+apply equally to state, temporal and choreography declarations.
+
+| Stage | Required selections and checks | Inputs not required at this stage |
+| --- | --- | --- |
+| Source recognition | Explicit source inventory, original bytes, edition and lexical/parser limits | Model instances, runtime populations, snapshots, windows, observations and progress |
+| Resolution and type/profile admission | Exact model exports and definition closure; selected binding contracts; typed anchor, scope and clock roles; static configuration selections and producer/native correspondence consumed here | Concrete workflow instances, runtime membership, a future snapshot/window, progress/closure records or compensation observations |
+| Assessment binding | An admitted subject; exact consumed runtime configuration; matching concrete role bindings and producer/native correspondence; the finite population/snapshot/window and authority required by the selected assessment | Unrelated scope inputs and observations needed only by an unactivated obligation |
+| Evaluation and result publication | The admitted inputs and exact decision support required by the selected B/E result rule, with relevant availability, progress and completeness retained separately | Complete surrounding execution or unrelated observations when the selected rule admits decisive truth without them |
+
+Absence of a required static definition/export refuses the dependent linking.
+An unknown, conflicting or incompatible runtime selection refuses the dependent
+binding; unavailable observations under a valid selected binding remain explicit
+incomplete inputs. Static success does not waive those later prerequisites.
+Missing support cannot become a value. Conversely, a producer's incomplete-input
+classification cannot erase a truth already justified by the evaluator's complete
+exact support; it remains visible on the affected coverage/completeness dimension.
+
+Which runtime scope is required follows the exact profile and role. A timestamped
+window and its authority do not substitute for event-position or fixed-sample
+inputs. The D/F/E observation-range contract supplies any permitted correspondence;
+this stage table does not invent one, require UTC for every clock, or infer a
+window from current time. Evaluators still require their own closure premises
+before publishing complete global success.
+
+### Producer and native identity correspondence
+
+When a selected producer interface identifies a model or profile by canonical
+object content, the consumer SHALL retain an explicit immutable correspondence
+to the native selection it supplies. It cannot use that producer digest in the
+native raw-byte digest position. The selected interface declares this logical
+correspondence; this contract does not invent its payload wire or canonicalizer.
+
+| Correspondence component | Required information and validation |
+| --- | --- |
+| Producer selection | Authoritative producer/interface selection, object kind and identity/revision, canonical digest, and the exact definition of that canonical content domain |
+| Native selection | Exact compiled-model artifact or native definition identity/revision and raw-byte SHA-256; permitted export/declaration handles and required definition closure where applicable |
+| Binding relation | The producer-declared relation supplying that native model/profile selection for the particular typed role; retain its exact source/configuration provenance and selected interpretation |
+
+The consumer checks both selections under their own digest contracts and checks
+the required object/declaration kind and relation against the selected producer's
+exports. An unsupported canonical domain refuses the dependent correspondence;
+ordinary JSON serialization, equal hash spelling or similar fields cannot fill
+it. The relation is an explicit producer contract, not a proof of semantic
+equivalence inferred from two hashes. Multiple declared relations may share an
+artifact or producer object, but each required role must resolve unambiguously.
+
+Removing a required relation, changing either selection while retaining the old
+relation, cross-binding a foreign export, or substituting one digest domain for
+another refuses the dependent binding. Presentation-only re-encoding may change
+raw bytes while preserving a canonical producer object: the raw native selection
+must then be changed explicitly and validated again. Correspondence consumed by
+static linking is retained with those selections; a runtime request must agree
+with it rather than silently replacing it. Full configuration provenance remains
+separate as described below.
+
+### Retained configuration
+
 Retain the complete, exact configuration artifact consumed at each stage. Its
 semantic selections must agree with source and linked requirements. A runtime
 configuration cannot change a linked model, profile or binding-contract meaning:
@@ -125,10 +187,13 @@ subject. Unactivated compensation needs no fabricated refund record.
 [IT-010](../../spec/integration/IT-010-bind-linked-package-assessments.md) specifies
 the producer/consumer controls; none has executed yet.
 
-D's inspected [FCD PR #97](https://github.com/agent-ix/filament-core-data/pull/97)
-at `fa78dc7165b4d8ddc2f49da026b372f205f23902` supplies proposed presence,
-relationship, population and explicit configuration requirements. It does not
-yet supply the standard-facing FS02 contribution. F's FR-110–114 supplies
-observation obligations but not a frozen binding record. Their exact wire/type
-correspondence and composed profile definition artifacts require agreement
-before these integration cases become executable contracts.
+D's [FCD PR #97](https://github.com/agent-ix/filament-core-data/pull/97)
+at `d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f` supplies the standard-facing
+presence, relationship, population and configuration contract. F's contribution
+through `08166a2` supplies observation successors and half-open-window controls.
+The stage and correspondence tables above are A's consumer correction for
+SR-402 FND-001 and SR-406 FND-002. D's stage wording, canonical numeric domain
+and corresponding producer relation still require reconciliation; F/D/E own
+the remaining all-clock coverage mapping. No old definition selection acquires
+these changed rule bytes implicitly. A will select the agreed rules in explicit
+successor definitions after the corrections are integrated.

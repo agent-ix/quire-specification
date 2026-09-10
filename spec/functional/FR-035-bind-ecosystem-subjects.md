@@ -28,6 +28,12 @@ linked requirements. Concrete runtime bindings are separately identified inputs;
 they cannot override static selections. Required role mappings and records needed
 by a currently activated obligation are distinct prerequisites.
 
+Runtime binding checks the package contract's stage-specific prerequisites and
+producer/native correspondence against the already linked selections. A prior
+successful type-check cannot supply missing required runtime scope or authority.
+The selected producer canonical domain and native raw-byte domain remain
+separate; a changed relation cannot override the linked model/profile.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -40,6 +46,7 @@ by a currently activated obligation are distinct prerequisites.
 | FR-035-AC-6 | A runtime configuration selecting another model/profile/binding-contract meaning refuses against the existing linked subject rather than overriding it. | Test (TC-035) |
 | FR-035-AC-7 | Changing only the runtime resource limit changes the retained configuration and assessment input identity while preserving the static subject. | Test (TC-035) |
 | FR-035-AC-8 | A valid mapping for an unactivated compensation does not require a recovery record; once required, an unavailable observation remains incomplete rather than becoming optional-none or false. | Test (TC-035) |
+| FR-035-AC-9 | A previously linked template still refuses a missing required runtime scope selection and reports unavailable required observations as incomplete; a foreign producer/native correspondence cannot override its linked model/profile selection. | Test (TC-035) |
 
 ## Dependencies
 

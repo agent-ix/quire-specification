@@ -53,6 +53,20 @@ ceilings and separate mutants listed in TC-030 and TC-035.
 6. Through an explicitly selected D/F observation-range mapping, bind a producer window with inclusive start 0 and exclusive end 30 to a native timestamped `eventually[0,30] holds(p)` obligation. Put its sole p witness at time 30. Supply truthful coverage for only the producer window, then falsely relabel that coverage as closing the native inclusive interval. Repeat with a separately authored producer window [0,31), exact progress covering time 30, and the boundary witness admitted by the mapping; also use a decisive witness at time 29 as a control.
    - IT-010-SC-06: the shorter window cannot establish closed-scope truth for the inclusive obligation; truthful missing boundary coverage stays incomplete, and the false closure mapping refuses. The explicitly covering window admits the time-30 witness and settles satisfied; a valid decisive time-29 witness remains satisfied with its exact support despite the still-uncovered upper boundary. No implicit time increment, unit conversion, endpoint rounding or reinterpretation of membership makes the shorter window complete.
 
+Additional stage and digest-correspondence controls for SR-402/406:
+
+7. Link the three-family template with its exact model, profile and binding
+   contracts before any workflow instance or runtime population/window exists.
+   Bind a later assessment first with all required inputs, then with its required
+   scope selection removed and separately with an unavailable required record.
+   - IT-010-SC-07: static linking succeeds without observations; the valid assessment binds, the missing selection refuses, and unavailable required evidence remains incomplete. No compile-time window or synthesized record fills a later prerequisite.
+8. Consume D's declared model/profile-object correspondence to A's exact native
+   model/definition selections. Swap each digest domain, remove the relation,
+   bind an unexported declaration, and supply a runtime relation to a foreign
+   profile independently. Re-encode the native model with its old raw digest,
+   then with an explicitly updated matching selection.
+   - IT-010-SC-08: both original domains and their exact relation survive; each substitution refuses its dependent binding. Changed raw bytes cannot reuse the old raw selection even when the canonical producer object stays equal; the valid explicit update succeeds without equating the two digest domains.
+
 ## Expected Results
 
 Real producers and consumers agree on the [package contract](../../proposals/quire-v1/package-contract.md).
@@ -66,10 +80,16 @@ bindings and logical truth. No executable coverage is claimed by this plan.
 [TC-030](../test-cases/TC-030-bind-composed-definitions.md) and
 [TC-035](../test-cases/TC-035-bind-ecosystem-subjects.md) provide independent controls.
 D's standard-facing model/configuration contract and F's exact observation
-binding interface remain required inputs before implementation of this test.
+binding interface are delivered review inputs. The stage/correspondence corrections
+need agreed selections before implementation of this test.
 SC-06 grounds the endpoint distinction introduced by D's
 [producer interface draft at 06a62c7](https://github.com/agent-ix/filament-core-data/blob/06a62c7624ea56bbe30120e8987d2ec4f551e77d/docs/semantic-data-system/baseline-1-2.md).
 That draft does not yet fix the D/F observation-range mapping; the case requires
 its explicit reviewed selection rather than inferring temporal coverage from a
 population's member IDs alone. E owns temporal interval meaning, F scoped
 coverage assertions, and D the window/membership representation.
+
+SC-07/08 consume the stage and producer/native correspondence in the revised
+package contract. D's later standard-facing input at `d6ac501` is present, but
+SR-402/406 still require matching producer semantics; a test fixture cannot
+invent them or serve as the producer's implementation.
