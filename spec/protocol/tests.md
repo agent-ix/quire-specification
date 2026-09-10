@@ -75,11 +75,13 @@ than claiming the advanced algorithms exist.
 | FR-060 | FR-060-AC-2 | TC-060 | 🚧 Planned |
 | FR-060 | FR-060-AC-3 | TC-060 | 🚧 Planned |
 | FR-060 | FR-060-AC-4 | TC-060 | 🚧 Planned |
+| FR-060 | FR-060-AC-5 | TC-060 | 🚧 Planned |
 | FR-061 | FR-061-AC-1 | TC-061 | 🚧 Planned |
 | FR-061 | FR-061-AC-2 | TC-061 | 🚧 Planned |
 | FR-061 | FR-061-AC-3 | TC-061 | 🚧 Planned |
 | FR-061 | FR-061-AC-4 | TC-061 | 🚧 Planned |
 | FR-061 | FR-061-AC-5 | TC-061 | 🚧 Planned |
+| FR-061 | FR-061-AC-6 | TC-061 | 🚧 Planned |
 
 ## Non-Functional Requirement Coverage
 
@@ -99,17 +101,17 @@ than claiming the advanced algorithms exist.
 
 | Test ID | Title | Type | Priority | Traces To | Status |
 | --- | --- | --- | --- | --- | --- |
-| TC-050 | Bind exact protocol roles and instances | Integration | P1 | FR-050-AC-1..FR-050-AC-4 | 🚧 Planned |
-| TC-051 | Discriminate delivery, attempt and effect identity | Integration | P1 | FR-051-AC-1..FR-051-AC-4 | 🚧 Planned |
-| TC-052 | Preserve bounded causal control | Property | P1 | FR-052-AC-1..FR-052-AC-4 | 🚧 Planned |
-| TC-053 | Refuse unobservable or ambiguously owned choice | Integration | P1 | FR-053-AC-1..FR-053-AC-4 | 🚧 Planned |
-| TC-054 | Bind channel delivery and order premises | Property | P1 | FR-054-AC-1..FR-054-AC-4 | 🚧 Planned |
-| TC-055 | Separate activation from obligation truth | Integration | P1 | FR-055-AC-1..FR-055-AC-4 | 🚧 Planned |
-| TC-056 | Register compensation after effect success | Integration | P1 | FR-056-AC-1..FR-056-AC-4 | 🚧 Planned |
-| TC-057 | Check commit ordering and recovery meaning | Integration | P1 | FR-057-AC-1..FR-057-AC-4 | 🚧 Planned |
-| TC-058 | Preserve retries, duplicates and partial recovery | Property | P1 | FR-058-AC-1..FR-058-AC-4 | 🚧 Planned |
-| TC-059 | Assess finite global conformance | Integration | P1 | FR-059-AC-1..FR-059-AC-4 | 🚧 Planned |
-| TC-060 | Separate conformance and advanced analysis claims | Analysis | P1 | FR-060-AC-1..FR-060-AC-4 | 🚧 Planned |
-| TC-061 | Discriminate protocol result dimensions | Property | P1 | FR-061-AC-1..FR-061-AC-5 | 🚧 Planned |
+| TC-050 | Bind exact protocol roles and instances | Integration | P1 | FR-050-AC-1, FR-050-AC-2, FR-050-AC-3, FR-050-AC-4 | 🚧 Planned |
+| TC-051 | Discriminate delivery, attempt and effect identity | Integration | P1 | FR-051-AC-1, FR-051-AC-2, FR-051-AC-3, FR-051-AC-4 | 🚧 Planned |
+| TC-052 | Preserve bounded causal control | Property | P1 | FR-052-AC-1, FR-052-AC-2, FR-052-AC-3, FR-052-AC-4 | 🚧 Planned |
+| TC-053 | Refuse unobservable or ambiguously owned choice | Integration | P1 | FR-053-AC-1, FR-053-AC-2, FR-053-AC-3, FR-053-AC-4 | 🚧 Planned |
+| TC-054 | Bind channel delivery and order premises | Property | P1 | FR-054-AC-1, FR-054-AC-2, FR-054-AC-3, FR-054-AC-4 | 🚧 Planned |
+| TC-055 | Separate activation from obligation truth | Integration | P1 | FR-055-AC-1, FR-055-AC-2, FR-055-AC-3, FR-055-AC-4 | 🚧 Planned |
+| TC-056 | Register compensation after effect success | Integration | P1 | FR-056-AC-1, FR-056-AC-2, FR-056-AC-3, FR-056-AC-4 | 🚧 Planned |
+| TC-057 | Check commit ordering and recovery meaning | Integration | P1 | FR-057-AC-1, FR-057-AC-2, FR-057-AC-3, FR-057-AC-4 | 🚧 Planned |
+| TC-058 | Preserve retries, duplicates and partial recovery | Property | P1 | FR-058-AC-1, FR-058-AC-2, FR-058-AC-3, FR-058-AC-4 | 🚧 Planned |
+| TC-059 | Assess finite global conformance | Integration | P1 | FR-059-AC-1, FR-059-AC-2, FR-059-AC-3, FR-059-AC-4 | 🚧 Planned |
+| TC-060 | Separate conformance and advanced analysis claims | Property | P1 | FR-060-AC-1, FR-060-AC-2, FR-060-AC-3, FR-060-AC-4, FR-060-AC-5 | 🚧 Planned |
+| TC-061 | Discriminate protocol result dimensions | Property | P1 | FR-061-AC-1, FR-061-AC-2, FR-061-AC-3, FR-061-AC-4, FR-061-AC-5, FR-061-AC-6 | 🚧 Planned |
 | TC-062 | Enforce every protocol resource boundary | Property | P1 | NFR-020 | 🚧 Planned |
 | TC-063 | Reproduce results under equivalent presentations | Property | P1 | NFR-021 | 🚧 Planned |
