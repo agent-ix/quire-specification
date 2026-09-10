@@ -6,7 +6,10 @@ support or completed conformance. The selected rule snapshot is
 `033fcda3cc9f964d018b466faa12cd14c8a9878a` for shared state rules, including
 retained rational division; temporal/protocol rules select
 `697ffd08b6937d4701beacbb0e0052f9e1ca4728`; protocol revisions `1-draft.2`/`1-draft.3` select
-`15beef776f632310e77a18c838bd7f7a4a1088a1`. No family meaning is inferred from
+`15beef776f632310e77a18c838bd7f7a4a1088a1`. Current temporal `1-draft.3` selects
+E's rules at `19bbf7a2036168a5f14dddd946f696707dc45fde`; protocol `1-draft.4`
+selects B's rules at `2d8372c0ce22f43b313dba139880d00890f02984` and the new
+temporal facet. No family meaning is inferred from
 the existence of a definition file.
 
 | Selection identity | Definition | Revision | SHA-256 of exact definition bytes | Scope |
@@ -26,12 +29,24 @@ the existence of a definition file.
 | `quire.observation.binding/v1` | [observation-binding.md](observation-binding.md) | `1-draft.1` | `9fb77da233e792b7d96dda814fe71ec2e86707253ff85dce990f29b83c1bf3e1` | Candidate binding meaning and static/assessment-input separation; dependency closure pending |
 | `quire.observation.progress/v1` | [observation-progress.md](observation-progress.md) | `1-draft.1` | `8c16aa039f6a537d7da8a8320b173241dc535bfb7f7dfa5cbf3b644559ebac4f` | Candidate scoped assertions and restoration basis; dependency closure pending |
 | `quire.native.diagnostics/v1` | [native-diagnostics.md](native-diagnostics.md) | `1-draft.1` | `d3a5d54deddaf9ca8b4e0b39e3a4a40ee2abd26c0556776634046dba8e6cdb2a` | Native response codes and typed causes; not a source root or a new result envelope |
+| `quire.temporal.bounded-facet/v1` | [temporal-common-1-draft-3.md](temporal-common-1-draft-3.md) | `1-draft.3` | `e97b0065361736289c7a37fbdcd1fd0b9af73c8af38a8de1863066179c99e197` | Current temporal facet with independent scope/execution closure and exact shared result interface |
+| `quire.temporal.event-position.false-extension/v1` | [temporal-event-position-1-draft-3.md](temporal-event-position-1-draft-3.md) | `1-draft.3` | `125d5f2231318279ae6737d2fa228702c7230ed23aab70c9c46b3ff28e711b95` | Current event-position root; revised lifecycle |
+| `quire.temporal.fixed-sample.false-extension/v1` | [temporal-fixed-sample-1-draft-3.md](temporal-fixed-sample-1-draft-3.md) | `1-draft.3` | `4b6c8e6346222508f3bb2b07b183725003df63d169ba72b90cd635644c7afe36` | Current sampled root; missing runtime sample remains incomplete |
+| `quire.temporal.timestamped-event.finite-window/v1` | [temporal-timestamped-window-1-draft-3.md](temporal-timestamped-window-1-draft-3.md) | `1-draft.3` | `13add5a82ac54977dba6fa104693349c849c7a08369dbfc0fccafea471012ef4` | Current timestamped root; revised lifecycle |
+| `quire.protocol.finite-global/v1` | [protocol-finite-1-draft-4.md](protocol-finite-1-draft-4.md) | `1-draft.4` | `721e1c0541eea01db4119c3ee990494b58af140ad90adec63ef6e4b2f6fc5270` | Current protocol root; canonical result correction and temporal 1-draft.3 closure |
+
+Temporal `1-draft.2` and protocol `1-draft.1` through `1-draft.3` rows are
+preserved earlier candidates; current selections are the successor rows above.
+All earlier files remain byte-exact in this tree.
 
 The earlier [catalog and all definition bytes at `7832e9d`](https://github.com/agent-ix/quire-specification/tree/7832e9d4b4f56013d22d96303057bcc070eb480b/proposals/quire-v1/definitions)
 remain available for exact historical selections. State/temporal revision
 `1-draft.2` corrects the core catalog's unsupported indexing claim and refreshes
-dependent digests; protocol `1-draft.3` consumes that closure. The grammar,
-numeric rules, temporal truth tables and protocol settlement rules are unchanged.
+dependent digests; protocol `1-draft.3` consumes that closure. That correction
+left the grammar, numeric rules, temporal truth tables and
+protocol settlement rules unchanged. The new temporal `1-draft.3` and protocol
+`1-draft.4` additionally select the reviewed B/E lifecycle and result corrections;
+they therefore require an explicit selection change.
 Old selected dependencies must be supplied from their pinned snapshot, never
 replaced with a current same-path file whose digest differs.
 
@@ -49,10 +64,10 @@ source can select these exact roots:
 language "ix:native" edition "1-draft";
 profile S = "quire.state.graph/v1" version "1-draft.2"
   digest "sha256:8eb33fa23455a8d6551d700c3bf23b2a690a9b7d2b30ea4a1b043af19ab5476b";
-profile T = "quire.temporal.timestamped-event.finite-window/v1" version "1-draft.2"
-  digest "sha256:d6331592934444aded53018910b7b6eea78026fc34435505e0086ee4dc271a0f";
-profile P = "quire.protocol.finite-global/v1" version "1-draft.3"
-  digest "sha256:43dd2bc6810b867930d51b4aa2c64817b06207af221527433f91fa0c8b708ec7";
+profile T = "quire.temporal.timestamped-event.finite-window/v1" version "1-draft.3"
+  digest "sha256:13add5a82ac54977dba6fa104693349c849c7a08369dbfc0fccafea471012ef4";
+profile P = "quire.protocol.finite-global/v1" version "1-draft.4"
+  digest "sha256:721e1c0541eea01db4119c3ee990494b58af140ad90adec63ef6e4b2f6fc5270";
 ```
 
 This header fragment still requires a supplied matching edition definition,
@@ -83,7 +98,8 @@ definition revision and new dependency digests; it cannot replace the old
 selection in place. Historical bytes remain recoverable at their pinned revision.
 The census checks current working-tree bytes. The preserved protocol `1-draft.1`
 definition continues to select its earlier rule snapshot; current FR-061 and
-protocol-contract bytes belong to `1-draft.2` and cannot stand in for that snapshot.
+protocol-contract bytes belong to the `1-draft.4` selection and cannot stand in
+for an earlier snapshot.
 
 Temporal identities retain FR-090's three meanings; the common temporal facet
 alone cannot select one. Temporal/protocol roots consume the exact shared
@@ -96,9 +112,12 @@ bytes are indexed above, but their relative selected-contract links and external
 dependencies still need exact immutable selections before they form a closed
 definition set. Indexing their bytes alone does not supply those dependencies.
 F also needs to preserve B's new settlement/closure/support dimensions in its
-consumer contract. B's reviewed PR #19 resolves the earlier FR-061 versus E
-decisive-prefix mismatch; protocol `1-draft.3` retains that correction. D's
-standard-facing model/configuration contribution and composed review remain open.
+consumer contract, including E's explicit decision-scope versus surrounding-
+execution closure and supersession. B's PR #21 and E's PR #20 are integrated;
+their family reviews do not accept these successor definitions or the full
+baseline. FR-062 specifies the outgoing E02 projection separately from native
+source admission. D's standard-facing model/configuration contribution and
+composed review remain open.
 
 TC-020/030/031/032/040/047/049 specify positive and mutated-selection controls. Structural
 Quire validation and this byte census do not qualify a profile implementation.

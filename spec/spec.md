@@ -354,24 +354,24 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | Artifact | Type | Status |
 | --- | --- | --- |
 | [FR-049](functional/FR-049-bind-native-choreography-syntax.md) | FR | Native choreography source integration; unreviewed |
-| [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Integrated family draft; unreviewed |
-| [FR-050](functional/FR-050-bind-protocol-instances.md) | FR | Integrated family draft; unreviewed |
-| [FR-051](functional/FR-051-preserve-communication-identities.md) | FR | Integrated family draft; unreviewed |
-| [FR-052](functional/FR-052-represent-bounded-control.md) | FR | Integrated family draft; unreviewed |
-| [FR-053](functional/FR-053-enforce-choice-visibility.md) | FR | Integrated family draft; unreviewed |
-| [FR-054](functional/FR-054-bind-channel-premises.md) | FR | Integrated family draft; unreviewed |
-| [FR-055](functional/FR-055-activate-protocol-obligations.md) | FR | Integrated family draft; unreviewed |
-| [FR-056](functional/FR-056-register-compensation.md) | FR | Integrated family draft; unreviewed |
-| [FR-057](functional/FR-057-enforce-commit-recovery.md) | FR | Integrated family draft; unreviewed |
-| [FR-058](functional/FR-058-preserve-retry-and-partial-recovery.md) | FR | Integrated family draft; unreviewed |
-| [FR-059](functional/FR-059-assess-finite-global-conformance.md) | FR | Integrated family draft; unreviewed |
-| [FR-060](functional/FR-060-separate-protocol-claims.md) | FR | Integrated family draft; unreviewed |
-| [FR-061](functional/FR-061-report-orthogonal-results.md) | FR | Integrated family draft; unreviewed |
-| [FR-062](functional/FR-062-project-results-to-portable-verification.md) | FR | B-owned projection amendment; review in progress |
-| [NFR-020](non-functional/NFR-020-bound-protocol-processing.md) | NFR | Integrated family draft; unreviewed |
-| [NFR-021](non-functional/NFR-021-reproduce-protocol-results.md) | NFR | Integrated family draft; unreviewed |
-| [IT-020](integration/IT-020-native-protocol-handoff.md) | IT | Integrated family draft; unreviewed |
-| [IT-021](integration/IT-021-observation-result-handoff.md) | IT | Integrated family draft; unreviewed |
+| [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Family-reviewed draft; composed review pending |
+| [FR-050](functional/FR-050-bind-protocol-instances.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-051](functional/FR-051-preserve-communication-identities.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-052](functional/FR-052-represent-bounded-control.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-053](functional/FR-053-enforce-choice-visibility.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-054](functional/FR-054-bind-channel-premises.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-055](functional/FR-055-activate-protocol-obligations.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-056](functional/FR-056-register-compensation.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-057](functional/FR-057-enforce-commit-recovery.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-058](functional/FR-058-preserve-retry-and-partial-recovery.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-059](functional/FR-059-assess-finite-global-conformance.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-060](functional/FR-060-separate-protocol-claims.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-061](functional/FR-061-report-orthogonal-results.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-062](functional/FR-062-project-results-to-portable-verification.md) | FR | Family-reviewed projection; composed review pending |
+| [NFR-020](non-functional/NFR-020-bound-protocol-processing.md) | NFR | Family-reviewed draft; composed review pending |
+| [NFR-021](non-functional/NFR-021-reproduce-protocol-results.md) | NFR | Family-reviewed draft; composed review pending |
+| [IT-020](integration/IT-020-native-protocol-handoff.md) | IT | Family-reviewed draft; composed review pending |
+| [IT-021](integration/IT-021-observation-result-handoff.md) | IT | Family-reviewed draft; composed review pending |
 | [US-009](usecase/US-009-assess-observed-workflow-outcomes.md) | US | Integrated family draft; unreviewed |
 | [FR-110](functional/FR-110-bind-typed-observations.md) | FR | Integrated family draft; unreviewed |
 | [FR-111](functional/FR-111-correlate-related-instances-explicitly.md) | FR | Integrated family draft; unreviewed |
@@ -386,14 +386,14 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [IT-050](integration/IT-050-observation-to-temporal-and-protocol-assessment.md) | IT | Integrated family draft; unreviewed |
 | [IT-051](integration/IT-051-observation-output-consumer-contract.md) | IT | Integrated family draft; unreviewed |
 | [FR-048](functional/FR-048-bind-native-temporal-syntax.md) | FR | Native temporal source integration; unreviewed |
-| [US-008](usecase/US-008-assess-native-temporal-obligations.md) | US | Temporal family contribution; unreviewed |
-| [FR-090](functional/FR-090-select-temporal-profile-and-clock.md) | FR | Temporal family contribution; unreviewed |
-| [FR-091](functional/FR-091-evaluate-bounded-future.md) | FR | Temporal family contribution; unreviewed |
-| [FR-092](functional/FR-092-evaluate-bounded-past.md) | FR | Temporal family contribution; unreviewed |
-| [FR-093](functional/FR-093-bind-temporal-activation-and-captures.md) | FR | Temporal family contribution; unreviewed |
-| [FR-094](functional/FR-094-interpret-progress-history-and-closure.md) | FR | Temporal family contribution; unreviewed |
-| [FR-095](functional/FR-095-preserve-native-tl-correspondence.md) | FR | Temporal family contribution; unreviewed |
-| [NFR-040](non-functional/NFR-040-bound-temporal-state.md) | NFR | Temporal retention/resource contract; unreviewed |
+| [US-008](usecase/US-008-assess-native-temporal-obligations.md) | US | Family-reviewed draft; composed review pending |
+| [FR-090](functional/FR-090-select-temporal-profile-and-clock.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-091](functional/FR-091-evaluate-bounded-future.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-092](functional/FR-092-evaluate-bounded-past.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-093](functional/FR-093-bind-temporal-activation-and-captures.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-094](functional/FR-094-interpret-progress-history-and-closure.md) | FR | Family-reviewed draft; composed review pending |
+| [FR-095](functional/FR-095-preserve-native-tl-correspondence.md) | FR | Family-reviewed draft; composed review pending |
+| [NFR-040](non-functional/NFR-040-bound-temporal-state.md) | NFR | Family-reviewed draft; composed review pending |
 | [IT-040](integration/IT-040-native-future-tl-correspondence.md) | IT | Planned native/TL correspondence |
 | [IT-041](integration/IT-041-temporal-bridge-refusals.md) | IT | Planned temporal refusal correspondence |
 | [FR-040](functional/FR-040-admit-explicit-state-extensions.md) | FR | Composed state/diagnostic contribution; unreviewed |
