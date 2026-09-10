@@ -25,4 +25,3 @@ one. Mutate inclusive endpoints and the `until` lower-bound range independently.
 Every candidate outcome equals the independent oracle. Endpoint or lower-bound
 mutations change at least one named vector. `release` remains the exact Boolean
 dual of `until`; no separately implemented boundary rule can drift.
-

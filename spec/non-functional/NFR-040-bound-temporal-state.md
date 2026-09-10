@@ -64,4 +64,3 @@ failure path to attempt a Boolean fallback.
 - Agent F owns observation storage/replay mechanisms and supplies declared
   retention/lateness limits; this requirement constrains semantic outcomes when
   those limits are insufficient.
-
