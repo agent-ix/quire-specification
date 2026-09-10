@@ -54,7 +54,7 @@ CLI, or backend conformance.
 | Non-Functional Req | Verification Method | Evidence/Test Cases | Status |
 | --- | --- | --- | --- |
 | NFR-050 | Test | TC-142, TC-144 | 🚧 Planned |
-| NFR-051 | Test | TC-144 | 🚧 Planned |
+| NFR-051 | Test | TC-144, TC-145, TC-146 | 🚧 Planned |
 | NFR-052 | Inspection | TC-147 | 🚧 Planned |
 
 ## Integration Test Matrix
