@@ -25,6 +25,7 @@ the same explicit finite typed model wherever that profile admits its types:
 | Ordered filter/map/count/sum with proved bounds | Refuse | Admit | Admit |
 | Explicit reference identity/navigation/reaches over a closed finite population | Refuse | Refuse | Admit |
 | Integer division or recursive value containment | Refuse | Refuse | Refuse |
+| Sequence indexing/slicing without a grammar production | Refuse syntax | Refuse syntax | Refuse syntax |
 
 Supply exact dependency bytes for edition → core → queries → graph; inspect the
 resolved graph rather than accepting the root filename. Independently remove a

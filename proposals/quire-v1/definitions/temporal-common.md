@@ -1,6 +1,6 @@
 # Native bounded temporal common definition
 
-Definition identity: `quire.temporal.bounded-facet/v1`; revision: `1-draft.1`.
+Definition identity: `quire.temporal.bounded-facet/v1`; revision: `1-draft.2`.
 Language: `ix:native` / `1-draft`. **Proposed, not adopted or implemented.**
 This is a required semantic facet, not a selectable source profile by itself:
 a concrete temporal root must select exactly one FR-090 clock/boundary meaning.
@@ -9,7 +9,7 @@ a concrete temporal root must select exactly one FR-090 clock/boundary meaning.
 
 | Identity | Revision | Definition artifact | Exact byte digest | Consumed interface |
 | --- | --- | --- | --- | --- |
-| `quire.state.graph/v1` | `1-draft.1` | [State/query/graph](state-graph.md) | `sha256:1d5ae5e65b60d51fd2b0de653fb232f2ef23bcf977d0fb5ec81da49b75331c65` | Checked shared values, finite queries/graphs and explicit Boolean-predicate references |
+| `quire.state.graph/v1` | `1-draft.2` | [State/query/graph](state-graph.md) | `sha256:8eb33fa23455a8d6551d700c3bf23b2a690a9b7d2b30ea4a1b043af19ab5476b` | Checked shared values, finite queries/graphs and explicit Boolean-predicate references |
 
 The concrete temporal roots admit temporal declarations. They reuse the shared
 expression checker for `holds(expr)`, activation guards and capture initializers;

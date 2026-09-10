@@ -1,13 +1,13 @@
 # Native event-position temporal definition
 
-Profile identity: `quire.temporal.event-position.false-extension/v1`; revision: `1-draft.1`.
+Profile identity: `quire.temporal.event-position.false-extension/v1`; revision: `1-draft.2`.
 Language: `ix:native` / `1-draft`. **Proposed, not adopted or implemented.**
 
 ## Required definition
 
 | Identity | Revision | Definition artifact | Exact byte digest |
 | --- | --- | --- | --- |
-| `quire.temporal.bounded-facet/v1` | `1-draft.1` | [Bounded temporal rules](temporal-common.md) | `sha256:0f03afe04bb60062d7ec5bb6051ce5e7baf3d507ad14441b2352867c5fd06d61` |
+| `quire.temporal.bounded-facet/v1` | `1-draft.2` | [Bounded temporal rules](temporal-common.md) | `sha256:0dc3b1bbbe7ab65392678d48ed5dc6a78babba98e20daeff2977148e10a1291b` |
 
 ## Selected interpretation
 

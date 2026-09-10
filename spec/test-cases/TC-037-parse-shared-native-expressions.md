@@ -15,6 +15,14 @@ These expected cases have not been implemented or executed.
 
 Parse symbolic expressions a implies b implies c, a - b - c, a + b * c and not (a = b), retaining explicit groups. Exercise nested conditionals, let bindings, zero-argument predicate calls and a quantified field predicate. Supply a < b < c, mismatched braces, and trailing tokens. Offer a recognized division expression under the candidate restricted arithmetic profile.
 
+Use a model with an admitted bounded sequence member and parse
+`self.items[0] = self.items[0]` and `self.items[0..1]` under each composed state
+profile. Brackets after a value have no indexing/slicing production in this
+edition; require a located syntax refusal, including for an unreachable branch.
+Do not accept the `self.items` prefix, infer an operation from an IR index node,
+or silently translate indexing into a quantifier. Temporal interval brackets
+remain valid in their specified syntactic position.
+
 ## Expected Results
 
 Include keyword/member controls: `view.exhausted`, `M::result` and

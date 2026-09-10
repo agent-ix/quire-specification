@@ -30,6 +30,14 @@ Explicitly migrating to 1-draft.2 creates a new linked subject and leaves the
 earlier source, definition and result identities unchanged. Digest-checking an
 envelope alone does not establish support for the revised result relation.
 
+The earlier core candidate's prose mentioned indexing despite selecting a grammar
+without it. Retain those original bytes as an unadopted inconsistent candidate;
+do not convert the mention into an admitted source form. Core/query/graph and
+temporal revision 1-draft.2 remove the claim or refresh its dependency closure;
+protocol 1-draft.3 consumes that closure. Substituting new bytes under an earlier
+dependency digest refuses. The historical grammar, finite-sequence operations,
+temporal truth rules and protocol settlement relation remain unchanged.
+
 ## Expected Results
 
 The historical source retains its interpretation. New required meaning either has explicit support or refuses. Migration produces a new subject and source correspondence without mutating old bytes or restamping old evidence. Exact keyword/grammar vectors are supplied by L1 before implementation.
