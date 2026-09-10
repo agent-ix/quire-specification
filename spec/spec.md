@@ -8,6 +8,8 @@ standards_alignment:
   - iso-iec-ieee-29148
   - ieee-828
 relationships:
+  - target: ix://agent-ix/quire-specification/FR-049
+    type: contains
   - target: ix://agent-ix/quire-specification/US-006
     type: contains
   - target: ix://agent-ix/quire-specification/FR-050
@@ -313,7 +315,7 @@ Standard-wide publication terms remain unresolved.
 
 The [shared foundation](../proposals/quire-v1/shared-foundation.md) is a drafting
 checkpoint with artifact reservations and explicit outstanding decisions.
-FR-030–048, the decomposed FR-020, NFR-010 and their
+FR-030–049, the decomposed FR-020, NFR-010 and their
 [planned matrix](composed-foundation/tests.md) establish the shared contribution.
 The [grammar](../proposals/quire-v1/shared-grammar.md) and
 [state contract](../proposals/quire-v1/state-contract.md) now include ordered
@@ -322,15 +324,19 @@ FR-090–095, NFR-040, IT-040/041 and [temporal matrix](temporal/tests.md) are n
 integrated as draft temporal meaning. FR-048 connects the native temporal syntax
 and shared predicate environments to that contribution. The full baseline review
 has not run and dependent implementation is not authorized by these drafts.
-Protocol syntax and model/observation family agreement remain integration work;
-historical review artifacts do not review this new scope.
+FR-049 and the [choreography surface](../proposals/quire-v1/choreography-surface.md)
+now add explicit roles/channels, causal control, compensation stages and typed
+cross-instance references to the composed grammar. Exact model/observation and
+result-family agreement remain integration work; historical review artifacts do
+not review this new scope.
 
 B's [protocol contract](../proposals/quire-v1/protocol-contract.md), FR-050–061,
 NFR-020/021, IT-020/021 and [protocol matrix](protocol/tests.md) are integrated
 from `528d7a6`. F's FR-110–116, NFR-050–052, IT-050/051 and
 [observation matrix](observation/tests.md) are integrated from `4d58e40`.
-These contributions establish draft obligations and planned cases, not completed
-protocol grammar, fully reconciled binding interfaces or executable coverage.
+These contributions establish draft obligations and planned cases. The composed
+grammar and examples remain proposed; binding interfaces are not fully reconciled
+and no new executable coverage is established.
 
 ## 16. References
 
@@ -340,6 +346,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 
 | Artifact | Type | Status |
 | --- | --- | --- |
+| [FR-049](functional/FR-049-bind-native-choreography-syntax.md) | FR | Native choreography source integration; unreviewed |
 | [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Integrated family draft; unreviewed |
 | [FR-050](functional/FR-050-bind-protocol-instances.md) | FR | Integrated family draft; unreviewed |
 | [FR-051](functional/FR-051-preserve-communication-identities.md) | FR | Integrated family draft; unreviewed |

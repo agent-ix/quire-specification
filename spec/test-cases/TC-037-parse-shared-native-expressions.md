@@ -17,5 +17,8 @@ Parse symbolic expressions a implies b implies c, a - b - c, a + b * c and not (
 
 ## Expected Results
 
-Syntax trees match the declared associativity and scope, preserving original loci. Invalid/trailing forms refuse as syntax; recognized prohibited division parses but refuses profile admission. No temporal/protocol body is treated as arbitrary text while its grammar is still missing.
+Include keyword/member controls: `view.exhausted`, `M::result` and
+`M::Payment::retry` retain their model names in qualified positions, while
+`let exhausted = true in exhausted` refuses as a reserved native binder.
 
+Syntax trees match the declared associativity and scope, preserving original loci. Invalid/trailing forms refuse as syntax; recognized prohibited division parses but refuses profile admission. No temporal/protocol body is treated as arbitrary text while its grammar is still missing.

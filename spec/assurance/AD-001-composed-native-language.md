@@ -14,6 +14,8 @@ relationships:
     type: realizes
   - target: ix://agent-ix/quire-specification/FR-048
     type: realizes
+  - target: ix://agent-ix/quire-specification/FR-049
+    type: realizes
 ---
 # Composed native Quire architecture
 
@@ -85,6 +87,11 @@ proposed query/graph extensions, exact arithmetic and pre-state/capture rules;
 they preserve first-profile restrictions under separate definition identities.
 Protocol nodes own control structure, participants and message relationships;
 they refer to state predicates, operation contracts and temporal obligations.
+The [choreography surface](../../proposals/quire-v1/choreography-surface.md)
+requires explicit sequence, branch/join and iteration identities, with definite
+value availability along the causal graph. Compensation captures are bound at
+registration and activation separately; observing a transport receipt cannot
+create a successful effect or a compensating action.
 Composition is a typed dependency graph, not interpolation between strings.
 
 Ordinary Boolean expressions cannot inspect a pending monitor result. Temporal

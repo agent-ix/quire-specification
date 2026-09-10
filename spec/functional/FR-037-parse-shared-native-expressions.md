@@ -31,6 +31,7 @@ The proposed common grammar defines state and predicate declarations plus shared
 | FR-037-AC-3 | Nested if/let forms, zero-argument calls and quantified expressions consume the intended body and scope boundaries without token-text rewriting. | Test (TC-037) |
 | FR-037-AC-4 | Trailing tokens, mismatched delimiters and an undefined family production refuse syntax rather than returning a successfully parsed prefix. | Test (TC-037) |
 | FR-037-AC-5 | A recognized but prohibited arithmetic operator retains its source tree for a separate profile refusal instead of enabling a backend operation. | Test (TC-037) |
+| FR-037-AC-6 | Qualified model/member names such as view.exhausted, M::result and M::Payment::retry retain their exact spelling even when the member is a keyword; the same keyword in a native binder position remains reserved. | Test (TC-037) |
 
 ## Dependencies
 
@@ -40,4 +41,3 @@ The proposed common grammar defines state and predicate declarations plus shared
 
 This contribution remains proposed until the integrated baseline review. It does
 not change historical definition bytes or claim current compiler support.
-
