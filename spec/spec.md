@@ -8,6 +8,24 @@ standards_alignment:
   - iso-iec-ieee-29148
   - ieee-828
 relationships:
+  - target: ix://agent-ix/quire-specification/NFR-010
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-040
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-041
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-042
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-043
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-044
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-045
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-046
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-047
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-036
     type: contains
   - target: ix://agent-ix/quire-specification/FR-037
@@ -213,8 +231,12 @@ Standard-wide publication terms remain unresolved.
 
 The [shared foundation](../proposals/quire-v1/shared-foundation.md) is a drafting
 checkpoint with artifact reservations and explicit outstanding decisions.
-FR-030–035 and their [planned matrix](composed-foundation/tests.md) establish
-the initial shared contribution. They have not undergone the complete baseline
+FR-030–047, the decomposed FR-020, NFR-010 and their
+[planned matrix](composed-foundation/tests.md) establish the shared contribution.
+The [grammar](../proposals/quire-v1/shared-grammar.md) and
+[state contract](../proposals/quire-v1/state-contract.md) now include ordered
+queries/aggregation and explicit anchor, numeric and graph proposals. They have
+not undergone the complete baseline
 review and do not authorize dependent implementation. Family contracts and the
 composed grammar remain required contributions; historical review artifacts do
 not review this new scope.
@@ -227,6 +249,15 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 
 | Artifact | Type | Status |
 | --- | --- | --- |
+| [FR-040](functional/FR-040-admit-explicit-state-extensions.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [FR-041](functional/FR-041-evaluate-ordered-queries.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [FR-042](functional/FR-042-select-pre-state-reads.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [FR-043](functional/FR-043-evaluate-finite-graph-relations.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [FR-044](functional/FR-044-check-composed-numeric-definedness.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [FR-045](functional/FR-045-preserve-control-and-presence-facts.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [FR-046](functional/FR-046-validate-state-invocation-inputs.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [FR-047](functional/FR-047-emit-typed-located-causes.md) | FR | Composed state/diagnostic contribution; unreviewed |
+| [NFR-010](non-functional/NFR-010-bound-composed-processing.md) | NFR | Composed resource contract; unreviewed |
 | [FR-036](functional/FR-036-retain-lexical-source-locations.md) | FR | Shared grammar/type contribution; unreviewed |
 | [FR-037](functional/FR-037-parse-shared-native-expressions.md) | FR | Shared grammar/type contribution; unreviewed |
 | [FR-038](functional/FR-038-resolve-predicate-scopes.md) | FR | Shared grammar/type contribution; unreviewed |
