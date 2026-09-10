@@ -11,7 +11,7 @@ relationships:
 ---
 ## Statement
 
-The observation service SHALL enforce declared event-size, active-key, retained-history, and population/window bounds and SHALL report exhaustion without discarding its cause.
+The observation service SHALL enforce declared event-size, active-key, retained-history, and population/window bounds; exhaustion reports retain the exceeded-bound cause.
 
 ## Measurement and Evaluation
 
@@ -23,4 +23,3 @@ The observation service SHALL enforce declared event-size, active-key, retained-
 ## Verification
 
 Test exact-bound and one-over-bound events, active keys, history, and population members. Verify that every over-bound result remains incomplete/refused with the selected subject and exceeded bound identity.
-

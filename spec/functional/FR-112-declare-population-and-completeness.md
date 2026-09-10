@@ -12,7 +12,7 @@ When assessing a population or event-time window, the assessment request SHALL r
 
 ## Behavior
 
-Unknown required membership, missing external-provider observations, or an absent declared closure input SHALL yield incomplete or refused assessment and SHALL NOT establish aggregate success. The request SHALL retain the distinction between a selected snapshot and a selected event-time window.
+Unknown required membership, missing external-provider observations, or an absent declared closure input are incomplete/refused assessment causes and cannot establish aggregate success. The request SHALL retain the distinction between a selected snapshot and a selected event-time window.
 
 ## Acceptance Criteria
 

@@ -8,11 +8,11 @@ relationships:
 ---
 ## Description
 
-When associating an observation with a workflow subject, the correlation service SHALL use an explicit typed relationship and SHALL report unknown, conflicting, or ambiguous relationships without selecting a heuristic match.
+When associating an observation with a workflow subject, the correlation service SHALL select only an explicit typed relationship; unknown, conflicting, and ambiguous relationships are typed non-success correlation outcomes rather than heuristic matches.
 
 ## Behavior
 
-Workflow instances, deliveries, attempts, effects, and receipts remain distinct. A duplicate receipt SHALL NOT establish a second business effect. A refund SHALL identify the compensated effect and its order relationship; a telemetry trace ID or shared provider identity alone SHALL not establish either relationship.
+Workflow instances, deliveries, attempts, effects, and receipts remain distinct. A duplicate receipt SHALL NOT establish a second business effect. A refund is admitted only with its compensated effect and order relationship; a telemetry trace ID or shared provider identity does not establish either relationship.
 
 ## Acceptance Criteria
 

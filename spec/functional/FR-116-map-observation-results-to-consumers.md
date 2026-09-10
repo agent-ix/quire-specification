@@ -12,7 +12,7 @@ When delivering an observation assessment to an executable or exported consumer,
 
 ## Behavior
 
-The adapter SHALL classify each mapped obligation as preserved, conditional, unrepresented, or refused and SHALL NOT relabel incomplete, pending, or refused outcomes as Boolean success. It SHALL consume A-owned interchange identities and B-owned result semantics; codegen and export mappings do not become clause authorities.
+The adapter SHALL classify each mapped obligation as preserved, conditional, unrepresented, or refused; incomplete, pending, and refused outcomes are not Boolean success. It SHALL consume A-owned interchange identities and B-owned result semantics; codegen and export mappings do not become clause authorities.
 
 ## Acceptance Criteria
 

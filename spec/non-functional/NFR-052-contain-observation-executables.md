@@ -9,7 +9,7 @@ relationships:
 ---
 ## Statement
 
-The observation implementation and qualification paths SHALL be Rust 1.98.1 and SHALL NOT require Java, JVM, Maven, Eclipse, Electron, or a foreign monitoring runtime to bind, replay, incrementally assess, or map observations.
+The observation implementation and qualification paths SHALL use Rust 1.98.1; Java, JVM, Maven, Eclipse, Electron, and foreign monitoring runtimes are prohibited for binding, replay, incremental assessment, and observation mapping.
 
 ## Measurement and Evaluation
 
@@ -21,4 +21,3 @@ The observation implementation and qualification paths SHALL be Rust 1.98.1 and 
 ## Verification
 
 Inspect owned build, test, adapter, fixture-audit, and CI definitions. Emitting a foreign textual mapping is recorded separately from taking a runtime dependency.
-
