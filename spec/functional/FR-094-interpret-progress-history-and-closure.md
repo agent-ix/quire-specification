@@ -14,9 +14,9 @@ relationships:
 
 When an evaluator consumes a validated progress or closure assertion, it shall
 apply that assertion only to the named clock, subjects, decision scope,
-surrounding execution, interval and history boundary and shall preserve their
-independent progress/closure states and the distinction between complete and
-incomplete inputs.
+surrounding execution, interval and history boundary. The evaluator shall
+preserve the independent progress/closure states and the distinction between
+complete and incomplete inputs.
 
 ## Inputs
 

@@ -5,8 +5,8 @@ type: FR
 relationships:
   - target: ix://agent-ix/quire-specification/US-008
     type: implements
-  - target: ix://agent-ix/quire-specification/FR-020
-    type: references
+  - target: ix://agent-ix/quire-specification/FR-030
+    type: depends_on
 ---
 ## Description
 
@@ -69,7 +69,9 @@ definition identity; old profile bytes and results remain historical subjects.
 
 ## Dependencies
 
-- [FR-020](./FR-020-compose-native-profiles.md) owns common profile composition.
+- [FR-030](./FR-030-bind-composed-definitions.md) admits the exact language
+  edition and temporal definition closure consumed here. FR-020 reports
+  composed release capability and is not an admission prerequisite.
 - Agent F's observation contract supplies clock bindings and completeness
   assertions; this requirement defines their temporal interpretation, not
   their transport or authority schema.

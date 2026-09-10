@@ -80,7 +80,7 @@ The v1 temporal profiles shall refuse unbounded intervals.
 | FR-091-AC-2 | On a one-position closed trace where atomic `p` is true, `always[0,1] p` is false under false-extension and true under a complete finite-window interpretation; the profiles cannot share one result identity. | Test (TC-112) |
 | FR-091-AC-3 | `p until[1,2] q` may be true with `p` false at the anchor when `q` is true at offset one, pinning the selected lower-bound convention. | Test (TC-111) |
 | FR-091-AC-4 | A decisive open decision scope may settle early only with the matching decisive basis, complete exact decision support and proof over every admitted continuation; every other unclosed future remains pending, while a closed incomplete input reports incomplete rather than applying false extension. | Test (TC-116) |
-| FR-091-AC-5 | Timestamped empty-window truth is emitted only after complete progress through the inclusive upper endpoint; an event exactly at the deadline participates. | Test (TC-116) |
+| FR-091-AC-5 | Timestamped empty existential/universal window truth is emitted only after complete progress through the inclusive upper endpoint; an eligible event exactly at the deadline participates before settlement. | Test (TC-115) |
 | FR-091-AC-6 | Unbounded intervals, unavailable total valuations and exhausted semantic work return non-Boolean dispositions. | Test (TC-118) |
 
 ## Dependencies

@@ -70,7 +70,7 @@ the coherent base-plus-seven review remain acceptance prerequisites.
 
 | Non-Functional Req | Verification Method | Evidence/Test Cases | Status |
 | --- | --- | --- | --- |
-| NFR-040 | Property, mutation and state-transition tests | TC-118 covers NFR-040-AC-1 through NFR-040-AC-4 | 🚧 Planned |
+| NFR-040 | property-based-testing, fault-injection, model-based-test-generation and integration-testing | TC-118 covers NFR-040-AC-1 through NFR-040-AC-4 | 🚧 Planned |
 
 ## Test Case Summary
 

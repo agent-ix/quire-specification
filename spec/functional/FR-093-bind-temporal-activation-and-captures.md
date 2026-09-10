@@ -13,8 +13,8 @@ relationships:
 ## Description
 
 When a temporal scope activates, the evaluator shall create a distinct
-obligation instance and shall evaluate each declared capture exactly once at
-the authored activation anchor.
+obligation instance initialized with every declared capture evaluated exactly
+once at the authored activation anchor.
 
 ## Inputs
 
