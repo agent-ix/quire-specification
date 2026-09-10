@@ -27,6 +27,25 @@ The candidate definition remains unindexed and unadopted until A records its
 exact bytes in the shared definition catalog. A changed digest is a changed
 definition selection; it cannot be retained under this revision.
 
+## Producer interface selection
+
+F consumes the producer-owned **Producer interface 1.2.0** at
+`filament-core-data` commit `06a62c7624ea56bbe30120e8987d2ec4f551e77d`:
+`docs/semantic-data-system/baseline-1-2.md`, exact bytes
+`sha256:de838deae48b2b11c79019749b91057049e9ca5e80a483d9281cb1a7d2ab96ae`.
+The selected interface supplies relationship, population, snapshot, window,
+member, configuration, and closure identities. It is D's authority and is not
+an F wire/schema definition.
+
+Each assessment input retains producer interface version `1.2.0`, exact document
+identity/digest, `modelIdentity`, `relationshipIdentity` where required,
+`populationIdentity`, `snapshotIdentity` or `windowIdentity`,
+`configurationIdentity`, and every closure digest selected by the producer.
+An unknown version, missing required identity, digest mismatch, or ambient
+environment, working-directory, current-time, or network default refuses the
+dependent assessment input. A producer's illustrative relationship spelling
+does not replace its emitted identity.
+
 ## Observation binding
 
 Each declared observation role has the identity of its owning native declaration,
@@ -40,10 +59,10 @@ roles. Each binding retains all of the following semantic values:
 | --- | --- |
 | Binding identity | Exact binding-contract definition identity, revision, and byte digest; applied binding identity; and source location of the authored role. |
 | Source selection | Observation source identity, schema identity/revision, declared producer, and internal/external visibility. |
-| Subject mapping | Exact D/B-owned workflow, participant, relationship, population, delivery, attempt, or effect handle selected by the role; no textual lookup fallback. |
+| Subject mapping | Exact Producer interface 1.2.0 model, workflow, participant, relationship, population, delivery, attempt, or effect handle selected by the role; no textual lookup fallback. |
 | Signal and value mapping | Declared signal identity, typed value declaration, unit, missing-value policy, and required/optional status. |
 | Anchor | The selected current, invocation pre/post, temporal origin/activation, protocol occurrence, or compensation registration/activation anchor. |
-| Scope premises | Selected snapshot/window, membership rule, clock/progress authority, and closure/history premise when the role needs them. |
+| Scope premises | Selected Producer interface 1.2.0 snapshot/window, membership rule/digest, configuration/closure identity and digest, clock/progress authority, and history premise when the role needs them. |
 | Capture dependencies | Immutable capture identities and their authored anchors; a binding cannot retag a capture or import another workflow's values. |
 
 Repeated mappings for one required role, incompatible mappings, selected identities

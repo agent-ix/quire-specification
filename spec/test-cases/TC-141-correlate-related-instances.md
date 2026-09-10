@@ -12,8 +12,13 @@ Planned OB01 correlation controls. No executable test or completed coverage is c
 
 ## Test Procedure
 
-Create concurrent O1/O2 with a shared provider. Link a refund to O1's effect, offer it for O2, remove/link-conflict the relation, and repeat a delivery receipt.
+Create concurrent O1/O2 with a shared provider under Producer interface 1.2.0.
+Link a refund to O1's effect, offer it for O2, remove/link-conflict the relation,
+repeat a delivery receipt, and independently mutate the producer version,
+relationship identity, and interface digest.
 
 ## Expected Results
 
-O1 is selected only by its declared relation; O2 substitution, unknown/conflicting relation, and repeated delivery cannot manufacture an effect.
+O1 is selected only by its declared relation; O2 substitution, unknown/conflicting
+relation, repeated delivery, and every producer-selection mismatch cannot
+manufacture an effect or a reconstructed relationship.
