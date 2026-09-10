@@ -11,9 +11,11 @@ relationships:
 ## Objective
 
 Verify the planned consumer seam from the B-owned result contract to codegen and
-export consumers while preserving execution, subject-progress/closure, settlement
+export consumers while preserving assessment execution, independent decision-scope
+progress and closure, surrounding-execution progress and closure, settlement
 basis, exact decision support, completeness, provenance, immutable definition
-dependencies, and mapping loss.
+dependencies, mapping loss, and the closure premises required for complete global
+conformance.
 
 ## Target Integration
 
@@ -30,11 +32,16 @@ The consumer declares supported capabilities and mapping profile.
 ## Inputs
 
 One preserved result plus pending, incomplete, unsupported, and lossy obligation
-controls, each carrying source/binding/progress/definition identities, open-subject
-settlement basis and exact decision support; and target text that
+controls, each carrying source/binding/definition identities, independently
+identified decision-scope progress and closure and surrounding-execution progress
+and closure, settlement basis and exact decision support; and target text that
 is structurally accepted while its source-bound mapping remains conditional,
 unrepresented, or refused. Include a current unqualified codegen bound-coverage
 observation as a retained input fact rather than an assessment/result substitute.
+Include decisive-witness satisfied and decisive-counterexample violated results
+with both scopes open, a settled closed-decision-scope result whose surrounding
+execution remains open, and a complete-global-conformance result with all its
+required closure premises.
 
 ## Test Procedure
 
@@ -52,12 +59,36 @@ observation as a retained input fact rather than an assessment/result substitute
    identity, revision, or digest.
    - IT-051-SC-06: prior result bytes remain historical, only a linked superseding
      or invalidating result names the corrected input, and definition drift refuses.
+7. Deliver the settled-open results through the selected consumer adapter; vary
+   surrounding-execution progress while keeping decision-scope facts, settlement
+   basis and deciding support fixed. Repeat with the closed-decision-scope result
+   under compatible open and closed surrounding-execution states.
+   - IT-051-SC-07: the actual consumer output preserves the four progress/closure
+     axes independently and retains the same truth, basis and exact deciding
+     support; decision-scope closure cannot relabel surrounding-execution closure.
+8. Independently omit each required decision-scope progress, decision-scope closure,
+   surrounding-execution progress and surrounding-execution closure axis. For each
+   axis, independently substitute its counterpart from the other scope, then the
+   same axis from O2 in an O1 result.
+   - IT-051-SC-08: every omitted or cross-wired axis refuses the inconsistent
+     contribution; another progress or closure fact cannot repair it. An explicitly
+     retained open/incomplete surrounding execution remains distinguishable from an
+     omitted axis and preserves independently supported settled truth.
+9. Deliver the complete-global-conformance result, then independently remove each
+   required execution, branch or workflow closure premise and substitute only a
+   settled obligation's decision-scope closure.
+   - IT-051-SC-09: the consumer retains valid complete-global-conformance closure
+     premises and prevents complete global success for every missing/substituted
+     premise, while retaining each independently supported per-obligation result.
 
 ## Expected Results
 
 Consumers retain requested subject, capability, assessment execution,
-subject-progress/closure, truth, settlement basis, decision support, provenance,
-completeness, immutable definition dependencies, and loss state. Structural
+decision-scope progress, decision-scope closure, surrounding-execution progress,
+surrounding-execution closure, truth, settlement basis, decision support,
+provenance, completeness, immutable definition dependencies, and loss state.
+Complete global conformance retains its own required closure premises;
+per-obligation settlement cannot substitute for them. Structural
 target-text acceptance does not establish semantic correspondence. This planned
 integration does not claim codegen CLI, backend qualification, or external mapping
 conformance.

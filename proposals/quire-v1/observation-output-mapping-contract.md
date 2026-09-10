@@ -14,9 +14,14 @@ the input retains:
 
 | Value | Required meaning |
 | --- | --- |
-| Subject and request | Exact linked-package/static subject, runtime assessment-input identity, requested capability, and selected observation binding/progress/closure identities. |
+| Subject and request | Exact linked-package/static subject, runtime assessment-input identity, requested capability, selected observation binding, and separately identified decision scope and surrounding execution. |
 | Source correspondence | Native clause, source revision/digest/span, declaration/anchor/capture identities, and every selected definition/profile identity, revision, and digest. |
-| Result facts | Independent B-owned assessment execution, subject-progress/closure, truth, settlement basis, exact decision support, activation, participation, completeness, adequacy, claim strength, assumptions, and provenance facts; no summary may erase another fact. |
+| Result facts | Independent B-owned assessment execution, truth, settlement basis, exact decision support, activation, participation, completeness, adequacy, claim strength, assumptions, and provenance facts; no summary may erase another fact. |
+| Decision-scope progress | Exact progress for the obligation's decision scope, retaining its scope, authority and boundary identities independently of surrounding-execution progress. |
+| Decision-scope closure | Exact closure state and premises for that decision scope, independently of its progress, assessment execution, completeness and surrounding-execution closure. |
+| Surrounding-execution progress | Exact progress for the surrounding execution, retaining its own scope, authority and boundary identities; decision-scope progress cannot replace it. |
+| Surrounding-execution closure | Exact closure state and premises for the surrounding execution; closing or settling one decision scope cannot close that execution. |
+| Complete global conformance | The selected claim's required execution, branch and workflow closure premises remain explicit; a per-obligation settled truth or closed decision scope does not supply them. |
 | Historical supersession | Earlier result identity and immutable bytes plus the linked superseding/invalidating result, contradicted premise, and corrected input identity; no result is restamped or silently replaced. |
 | Consumer selection | Consumer identity/version, selected target/output profile, configuration, and declared supported capability. |
 | Mapping outcome | One of `preserved`, `conditional`, `unrepresented`, or `refused`, with an exact source-bound reason and any required premise or loss. |
@@ -29,6 +34,17 @@ truth on an open subject retains its selected decisive basis and exact support;
 the open surrounding execution is not a reason to erase either fact. Definition
 or profile identity/revision/digest drift refuses rather than using a current
 default.
+
+The four progress/closure axes retain
+[B's FR-061 meaning](../../spec/functional/FR-061-report-orthogonal-results.md).
+The consumer cannot merge them into one subject state or use assessment completion
+or observation completeness as a closure substitute. Omitting a required retained
+axis or cross-wiring it to another axis or scope refuses the inconsistent
+contribution. Explicit open/incomplete surrounding-execution facts are retained
+without erasing a settled truth whose exact deciding support is complete.
+Compatible changes to surrounding-execution progress or closure preserve that
+truth, settlement basis and support. Complete global conformance still requires
+its own closure premises under the selected B contract.
 
 ## Mapping outcome rules
 
@@ -74,6 +90,14 @@ exercise conditional capture/clock correspondence, an unrepresented history or
 collection feature, a refused stale profile, pending/incomplete/refused result
 states, and a parser-accepted generated-text control. The controls retain their
 source/binding/model/profile identity and prove no target parse or serialization
-result becomes a semantic or execution claim. They are planned in
+result becomes a semantic or execution claim. Deliver both decisive-witness
+satisfaction and decisive-counterexample violation with open decision scope and
+surrounding execution; vary compatible surrounding-execution facts while retaining
+the same deciding support. Independently omit and cross-wire each decision-scope
+progress, decision-scope closure, surrounding-execution progress and
+surrounding-execution closure axis. Separately remove each closure premise required
+for complete global conformance or substitute only a settled obligation's closure;
+no missing premise becomes global success. These controls are planned in
+[TC-145](../../spec/test-cases/TC-145-report-observation-adequacy.md),
 [TC-146](../../spec/test-cases/TC-146-map-observation-results-to-consumers.md)
 and [IT-051](../../spec/integration/IT-051-observation-output-consumer-contract.md).
