@@ -353,6 +353,10 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 
 | Artifact | Type | Status |
 | --- | --- | --- |
+| [FCD FR-100](https://github.com/agent-ix/filament-core-data/blob/d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f/spec/functional/FR-100-author-field-presence-independently.md) | FR | D-owned external input; composed review pending |
+| [FCD FR-101](https://github.com/agent-ix/filament-core-data/blob/d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f/spec/functional/FR-101-declare-first-class-relationship-contracts.md) | FR | D-owned external input; composed review pending |
+| [FCD FR-102](https://github.com/agent-ix/filament-core-data/blob/d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f/spec/functional/FR-102-bind-populations-to-model-contracts.md) | FR | D-owned external input; composed review pending |
+| [FCD FR-103](https://github.com/agent-ix/filament-core-data/blob/d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f/spec/functional/FR-103-declare-ecosystem-configuration-contracts.md) | FR | D-owned external input; composed review pending |
 | [FR-049](functional/FR-049-bind-native-choreography-syntax.md) | FR | Native choreography source integration; unreviewed |
 | [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Family-reviewed draft; composed review pending |
 | [FR-050](functional/FR-050-bind-protocol-instances.md) | FR | Family-reviewed draft; composed review pending |

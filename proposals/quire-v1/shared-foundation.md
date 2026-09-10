@@ -161,3 +161,25 @@ added dimensions, including E's two closure axes and supersession. B's FR-062
 now specifies a separate outgoing verification projection that preserves the
 canonical protocol source and independent findings. B/E family reviews do not
 accept the successor definitions or the full composed baseline.
+
+## Composed review input
+
+F's result-consumer correction through `921993bbbef92a8010aec46d46277498de5e0288`
+is integrated. FR-115/116, TC-145/146, IT-051 and the output mapping retain
+settlement/support, immutable selections and linked historical supersession.
+D has delivered the standard-facing
+[model/configuration/population/window binding contract](https://github.com/agent-ix/filament-core-data/blob/d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f/docs/semantic-data-system/baseline-1-2.md)
+at `d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f`, exact document SHA-256
+`d4923f378a7019998844f1b9124d5b0242f46c76060218b2d9c05af7b68c3ed8`.
+
+Its producer-owned FR-100/101/102/103 supply presence, relationship, population
+and configuration requirements. The master index references those exact artifacts;
+reserved standard FR-070–089 numbers are not a requirement to duplicate them.
+The previous statements about undelivered D/F work are superseded by this input.
+
+All families now have review input. The composed review checks agreement across
+their boundaries and final exact definition selections; delivery alone does not
+establish agreement or adoption. F's older producer pin at `06a62c7` and its
+1-draft.1 definition files stay unchanged until an explicit successor selection.
+D's canonical object digests remain distinct from A's raw model/document and
+definition-byte digests; an equal `sha256:` prefix does not identify the domain.
