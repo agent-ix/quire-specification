@@ -152,8 +152,9 @@ F's `03bda33af53ea28c2badb21f22d3d119fd32e6c9` is integrated exactly.
 FR-114/TC-144 resolve SR-401 FND-002's settled-open replay contradiction.
 NFR-050/051/052 and TC-142–146 resolve SR-404 FND-006/007/008/010/011/014/015
 through independent resource measurements, catalog methods and explicit consumer
-controls. SR-404 FND-009 is partially addressed: TC-145/146 now omit individual
-provenance identities, but TM-007's NFR-051 row still needs their explicit binding.
+controls. F's `974dffa8811419d13826ef4274801b7f7ccc2123` completes
+SR-404 FND-009: TM-007 now binds NFR-051 to TC-144's replay comparison and
+TC-145/146's individual provenance-identity omission controls.
 These are specification/case dispositions; no replay, resource or provenance
 implementation evidence is claimed.
 
@@ -168,7 +169,8 @@ B/E/F now preserve the shared distinction: `eventually[0,30] holds(p)` may
 settle true at an admitted witness while its subject remains open. Execution,
 truth, exact support, progress, closure, completeness and adequacy remain
 separate; complete global conformance has its own closure premises. The review
-identifies the remaining FR-114 and D blanket-rule contradictions to that meaning.
+identified the FR-114 contradiction now corrected by F; D's blanket incomplete
+input rule still requires reconciliation with that meaning.
 
 Integrate owner corrections and validate the affected artifacts, then close
 successor definition selections and refine existing compiler #35–39 and
