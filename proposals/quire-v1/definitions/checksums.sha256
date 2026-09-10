@@ -54,3 +54,6 @@ da30fd6f70810b41b671a2eb00658c5c5c15f99939151d21c995234bd2a2b73b  spec/functiona
 d28c5c3ef7cb19fff3da8313305f7e3ebcb4e01d61ec8a0001f7ef2145f4ae29  spec/non-functional/NFR-020-bound-protocol-processing.md
 27d1ba16dbe5fcddbd6478b4cb732b58f0f2ed0e6fefc6212dcb13cbc11cece4  spec/non-functional/NFR-021-reproduce-protocol-results.md
 6044e889aceb244b81677bd003fb22267eeb16e41f996d931ff89016d90dd9c3  spec/non-functional/NFR-040-bound-temporal-state.md
+0df176dbb831117bd27443f7ef8075d9a130bcbc225022b440acbce111c62b9d  proposals/quire-v1/definitions/package-reference.md
+c277730c339c48c8cc789f2adb93dbbe1d48624a6df39a4043d20cd0cbeca46b  proposals/shared-reference-2-draft/schema.json
+a698b4d275d790482d01ecdd3c077c6382718777b020f1bd17314ad30e09b65e  proposals/shared-reference-2-draft/README.md

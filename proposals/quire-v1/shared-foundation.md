@@ -137,6 +137,14 @@ F's concrete binding proposal is integrated. D/F's exact producer interface
 selections and the B/E result disagreement remain unresolved; the complete
 baseline remains proposed and unreviewed.
 
+The [capability crosswalk](capabilities.md#initial-specification-crosswalk) now
+links all 51 approved capability decisions to current draft requirements and
+planned cases, retaining explicit D/F/result gaps and later delivery boundaries.
+The [package reference candidate](definitions/package-reference.md) fills the
+outer-reference interpretation without flattening a package's clause profiles
+or claiming a new canonicalizer/payload reader. F's output consumer contract
+through `1199942` is integrated; its loss outcomes do not establish target semantics.
+
 One result distinction needs B/E agreement: `eventually[0,30] holds(p)` can settle
 true at the first admitted p witness while the surrounding execution/window is
 still open. E admits decisive prefix truth; B's result table requires complete

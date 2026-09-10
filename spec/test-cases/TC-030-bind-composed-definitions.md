@@ -3,6 +3,8 @@ id: TC-030
 title: "Bind every clause to its exact semantic definitions"
 type: TC
 relationships:
+  - target: ix://agent-ix/quire-specification/FR-130
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-030
     type: verifies
 ---
@@ -32,6 +34,28 @@ Apply each control independently:
 Compare complete structured static components and references. Do not use an
 invented package hash, a producer-generated expected result or diagnostic English
 as the oracle. Concrete typed producer/consumer execution is specified by IT-010.
+
+For the [whole-package reference](../../proposals/quire-v1/definitions/package-reference.md),
+use a package declaring a predicate and all three clause families. Its outer
+selection is the package interpretation and its four exact required features;
+the inner state/temporal/protocol selections remain separate. Substitute one
+clause's profile for the outer selection, remove an inner selection, omit or add
+an outer feature, and attach an unrelated IR/JCS canonical digest. Each mutant
+refuses interpretation. Reordering the unique exact feature set preserves it.
+Changing a valid inner temporal selection changes the static subject even though
+the outer definition remains the same. A partial package cannot claim full
+linking from one valid child reference. These cases require the future actual
+payload reader; existing envelope shape tests do not discharge them.
+
+Select the outer package interpretation as a native clause's `using` profile and
+require a profile-role refusal. Supply a valid envelope naming an unknown package
+payload wire and require unsupported-wire refusal before semantic admission.
+The outer feature set cannot count as evidence for implemented family support.
+
+A predicate-only package has `declaration.predicate` without `family.state`;
+a state-only package has `family.state` without `family.temporal`. Add the known
+but absent temporal feature to that state-only package: semantic feature-set
+validation must reject it even though it is not an unknown-feature spelling.
 
 ## Expected Results
 

@@ -19,6 +19,7 @@ the existence of a definition file.
 | `quire.temporal.fixed-sample.false-extension/v1` | [temporal-fixed-sample.md](temporal-fixed-sample.md) | `1-draft.1` | `681c488548d4992656c0cab6f4a275c381327a586e246f250a335c9c23f64ad8` | Bounded future/past over an exact sampled clock |
 | `quire.temporal.timestamped-event.finite-window/v1` | [temporal-timestamped-window.md](temporal-timestamped-window.md) | `1-draft.1` | `7d08c19cfc574c076d24461b1aa48f4d8d4448c51d75e667d3292da5ba6ad388` | Bounded future/past over complete timestamped windows |
 | `quire.protocol.finite-global/v1` | [protocol-finite.md](protocol-finite.md) | `1-draft.1` | `12a52691ece065a429dc0a64c2d0bfc34cb2c16e3a2bdc65e7b432baf499ceb5` | Finite global choreography and explicit claim boundaries |
+| `quire.package.composed/v1` | [package-reference.md](package-reference.md) | `1-draft.1` | `0df176dbb831117bd27443f7ef8075d9a130bcbc225022b440acbce111c62b9d` | Whole linked-package interpretation; not a source root |
 
 Core → queries → graph describes explicit semantic extension. Required-definition
 references run in the opposite direction, ending at the edition; the graph is
@@ -46,6 +47,13 @@ It is not an admitted program or a claim that a compiler recognizes the new
 selection. State-core and queries may be selected for their declared subsets;
 neither alone satisfies a full-v1 capability claim.
 
+A whole-package semantic reference selects `quire.package.composed/v1` and keeps
+the exact inner clause selections. It cannot substitute S, T or P for the outer
+container interpretation. Its explicit declaration/family feature set describes
+package contents, not execution or full-v1 support. The package payload wire and
+strict reader remain separately selected L2/FS05 contracts; no whole-package
+canonicalizer is claimed by this candidate.
+
 The file digests bind normative bytes; repository revisions and links locate
 the corresponding snapshots. They are not typed-expression canonical hashes or
 source-package fingerprints. [checksums.sha256](checksums.sha256) records an
@@ -60,13 +68,13 @@ value/predicate interface while retaining their own declaration permissions.
 Source admission and backend/mapping support remain separate, especially for
 past time and timestamped windows unsupported by current TL targets.
 
-F's observation binding contribution at `c5cec84` is integrated, but exact
+F's observation binding/output contribution through `1199942` is integrated, but exact
 producer interface selections and D's standard-facing model/configuration
 contribution remain outstanding. The protocol candidate explicitly records the
 decisive-prefix/open-execution result disagreement with FR-061. It does not
 declare that disagreement resolved or the whole profile consistent.
 
-TC-031/032/040/049 specify positive and mutated-selection controls. Structural
+TC-020/030/031/032/040/049 specify positive and mutated-selection controls. Structural
 Quire validation and this byte census do not qualify a profile implementation.
 The selected composed baseline review and explicit adoption still precede
 dependent implementation.
