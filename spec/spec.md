@@ -8,6 +8,12 @@ standards_alignment:
   - iso-iec-ieee-29148
   - ieee-828
 relationships:
+  - target: ix://agent-ix/quire-specification/StR-002
+    type: contains
+  - target: ix://agent-ix/quire-specification/US-005
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-020
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-019
     type: contains
   - target: ix://agent-ix/quire-specification/FR-001
@@ -73,27 +79,27 @@ relationships:
 ---
 # Master Requirements Specification
 
-## Native finite-state language standard
+## Composed native Quire language standard
 
 ## 1. Purpose
 
-This root indexes the discrete requirements for Agent A's assigned native finite-state work. It corrects the earlier proposal-only authoring by using the requested /specify catalog contract. All artifacts remain draft with conditional /spec-review findings; retrospective documentation does not retroactively approve implementation.
+This root indexes the native Quire language requirements. Quire v1 includes state, temporal and protocol/choreography families under one editable source authority. The existing finite-state implementation is a development slice, not the product boundary. The [v1 design](../proposals/quire-v1/README.md) rebaselines the families together before profile-specific implementation resumes. Draft specifications and reviews do not establish implemented capabilities.
 
 ## 2. Scope
 
 ### 2.1 In Scope
 
-FS01 admitted grammar/profile; FS02 shared model/source and artifact identity; FS03 finite-state semantics; FS05 strict interchange, canonical domains and migration.
+FS01 native grammar and composed profile architecture; FS02 shared model/source and artifact identity; FS03 state semantics; FS04 temporal, clock and observation contracts; the native choreography/protocol and compensation profile; FS05 strict interchange and migration; FS06 output mapping and loss contracts. The [capability matrix](../proposals/quire-v1/capabilities.md) selects bounded v1 subsets and names later capabilities and refusals.
 
 ### 2.2 Out of Scope
 
-Temporal/protocol/message semantics, B's portable method/plan/result schemas, C's existing-repository adapter implementation, new model authority, a second executable binder, public publication and standard-wide license selection are outside this repository's implementation ownership. These exclusions do not remove the required coordinated interfaces or the full supported-state workflow.
+B's portable method/plan/result implementation, C/D's producer implementations, a duplicate model authority or executable binder, a business workflow execution engine and automatic public publication are outside this repository's implementation ownership. Advanced local projection, realizability and general relational analyses are named later capabilities; their absence does not exclude native choreography from v1. External OCL, FRETish and SysML/KerML forms are output mappings, not editable source frontends.
 
 ## 3. System Overview
 
 ### 3.1 System Description
 
-The language defines an explicit finite-state profile. The native pipeline preserves source identity through parsing, model linking, runtime validation, reference evaluation and qualified backend projection. A schema package is distinct from a runtime population. Existing shared-model and executable-IR owners remain authoritative.
+The language links state, temporal and choreography clauses through common model types and identities, with explicit semantic profiles and specialized representations/evaluators. The native pipeline preserves source identity through parsing, model linking, validation, evaluation and lowering. A schema package, runtime population and observation trace are distinct subjects. Existing shared-model, IR, temporal and evidence owners retain their boundaries.
 
 ### 3.2 Intended Users
 
@@ -123,7 +129,7 @@ Runtime inputs are immutable typed finite populations with explicit closure assu
 
 ### 8.2 Transition Semantics
 
-Operation observations belong to one invocation with an authored frame and exact object delta. This first profile does not define a protocol state machine or temporal clock semantics.
+Operation observations belong to one invocation with an authored frame and exact object delta. The required v1 choreography profile composes those contracts with roles, typed messages, choices, parallel branches, bounded repetition and compensation. Its temporal and observation contracts define clocks, captured values, progress and completeness separately from state snapshots.
 
 ### 8.3 Determinism Guarantees
 
@@ -133,11 +139,11 @@ Guard and collection evaluation order, source activation and selected canonical 
 
 ### 9.1 Event Model
 
-The pipeline may report observed implication activation. It introduces no domain event bus or observation protocol.
+The v1 observation contract distinguishes typed domain events, role instances, messages, correlation, clocks, causal ordering and progress. State snapshots and operation captures bind explicitly to those observations. A specification evaluator consumes the records; it does not execute business actions or introduce an application event bus.
 
 ### 9.2 Event Guarantees
 
-Only events actually observed during evaluation are reported. Missing backend probes remain unavailable coverage.
+Only events established by the selected observation binding contribute facts. Closed execution, an open prefix and an incomplete file have different meanings. Incremental monitoring receives explicit progress so silence can discharge or violate a deadline only when the required interval is observable. Missing probes or valuations remain unavailable evidence.
 
 ## 10. Error and Failure Model
 
@@ -155,7 +161,7 @@ Frontmatter relates StR, US, FR/NFR and IT artifacts. Acceptance-criterion-to-TC
 
 ## 12. Verification Strategy
 
-Run Quire over this exact repository scope. Use real existing producers/consumers for integration evidence. The end-state acceptance remains a supported healthy, violating and refused/incomplete native state workflow. Existing syntax tests and authored semantic examples are partial evidence only.
+Run Quire over this exact repository scope. Use real producers/consumers and independent expected cases for integration evidence. Quire v1 acceptance includes the state workflow, timed refund and branching compensated choreography through executable evaluation, replay and incremental monitoring. Qualification-oriented evidence identifies source, model, binding, implementation and method versions; an observed pass does not itself qualify the system. Existing state tests and authored examples establish only their stated subset.
 
 ## 13. Change Management
 
@@ -188,6 +194,9 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 
 | Artifact | Type | Status |
 | --- | --- | --- |
+| [StR-002](stakeholder/StR-002-composed-language.md) | StR | V1 redesign draft |
+| [US-005](usecase/US-005-author-composed-workflows.md) | US | V1 redesign draft |
+| [FR-020](functional/FR-020-compose-native-profiles.md) | FR | V1 redesign draft; implementation not authorized |
 | [FR-001](functional/FR-001-select-native-profile.md) | FR | Draft |
 | [FR-002](functional/FR-002-resolve-owned-declarations.md) | FR | Draft |
 | [FR-003](functional/FR-003-bind-source-correspondence.md) | FR | Draft |
