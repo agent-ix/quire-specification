@@ -14,8 +14,9 @@ relationships:
 ---
 ## Description
 
-Planned property, boundary and mutation controls for temporal work and required
-retained state.
+Planned property-based, fault-injection, model-based transition and integration
+controls for temporal work and required retained state, with mutation testing
+of forbidden Boolean fallbacks.
 
 ## Test Procedure
 
