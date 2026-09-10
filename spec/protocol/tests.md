@@ -15,6 +15,7 @@ relationships:
   - { target: ix://agent-ix/quire-specification/FR-059, type: references }
   - { target: ix://agent-ix/quire-specification/FR-060, type: references }
   - { target: ix://agent-ix/quire-specification/FR-061, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-062, type: references }
   - { target: ix://agent-ix/quire-specification/NFR-020, type: references }
   - { target: ix://agent-ix/quire-specification/NFR-021, type: references }
 ---
@@ -85,6 +86,10 @@ than claiming the advanced algorithms exist.
 | FR-061 | FR-061-AC-7 | TC-061 | 🚧 Planned |
 | FR-061 | FR-061-AC-8 | TC-061 | 🚧 Planned |
 | FR-061 | FR-061-AC-9 | TC-061 | 🚧 Planned |
+| FR-062 | FR-062-AC-1 | TC-064 | 🚧 Planned |
+| FR-062 | FR-062-AC-2 | TC-064 | 🚧 Planned |
+| FR-062 | FR-062-AC-3 | TC-064 | 🚧 Planned |
+| FR-062 | FR-062-AC-4 | TC-064 | 🚧 Planned |
 
 ## Non-Functional Requirement Coverage
 
@@ -118,3 +123,4 @@ than claiming the advanced algorithms exist.
 | TC-061 | Discriminate protocol result dimensions | Property | P1 | FR-061-AC-1, FR-061-AC-2, FR-061-AC-3, FR-061-AC-4, FR-061-AC-5, FR-061-AC-6, FR-061-AC-7, FR-061-AC-8, FR-061-AC-9 | 🚧 Planned |
 | TC-062 | Enforce every protocol resource boundary | Property | P1 | NFR-020 | 🚧 Planned |
 | TC-063 | Reproduce results under equivalent presentations | Property | P1 | NFR-021 | 🚧 Planned |
+| TC-064 | Project protocol results to portable verification findings | Property | P1 | FR-062-AC-1, FR-062-AC-2, FR-062-AC-3, FR-062-AC-4 | 🚧 Planned |

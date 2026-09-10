@@ -50,7 +50,7 @@ These identities remain distinct and typed:
 | Compensation registration | An obligation created only after its paired effect succeeds. |
 | Compensation attempt / effect | A recovery try / its successful business effect. Success does not imply restoration unless the recovery relation establishes it. |
 | Commit | An authored boundary after which specified compensations are no longer permitted. |
-| Result | Facts about one exact request and subject, with assessment execution, subject progress/closure, truth, settlement basis, activation, completeness and adequacy separated. |
+| Result | Facts about one exact request and subject, with assessment execution, subject progress/closure, truth, settlement basis, activation, participation, assumptions, completeness, observation adequacy and protocol adequacy separated. |
 
 Identity substitution refuses. A telemetry trace identifier, endpoint, queue,
 timestamp or equal display name cannot stand in for a workflow, role, message,
@@ -112,8 +112,10 @@ cannot execute. The minimum orthogonal dimensions are:
 | Settlement basis | closed-scope, decisive-witness, decisive-counterexample, unsettled, unavailable, with the exact decision-support set |
 | Activation | triggered, inactive, activation-unknown |
 | Participation | exact participating and required role-instance sets, or unknown with reasons |
+| Assumptions | exact assumption identities, each met, not-met, unknown or not-assessed |
 | Completeness | complete, open, incomplete, with the exact facts required by each returned claim, missing inputs and authority/progress identities; it does not encode subject closure |
-| Adequacy | demonstrated, not-demonstrated, inapplicable, unknown, with the exact obligations and cases considered |
+| Observation adequacy | adequate, inadequate, unknown or not-assessed for the exact observations required to interpret the result |
+| Protocol adequacy | demonstrated, not-demonstrated, inapplicable, unknown, with the exact obligations and cases considered |
 | Claim | global-conformance, monitorability, local-projection, realizability, refinement or composition |
 | Provenance | source/profile/model/protocol/request/binding/observation/progress/backend identities and derived artifact digests |
 
@@ -141,6 +143,13 @@ The result is a portable semantic contract for A/E/F and future Engineering
 Assurance consumers. Quoin retains evidence ownership. The protocol evaluator
 does not introduce a second evidence store, execution runner, report registry or
 verification-method catalog.
+
+The projection into `quire-verification/e02-draft-2` is a derived compatibility
+result, not the canonical protocol result. FR-062 owns the total mapping, source
+artifact retention, distinct derived identity, adequacy separation and refusal
+rules. Consumers that need subject closure, settlement support, protocol
+adequacy or claim meaning read the canonical result; they do not recover those
+facts from the narrower E02 assessment view.
 
 ## Distinguishing corpus
 
