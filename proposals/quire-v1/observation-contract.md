@@ -22,6 +22,7 @@ static meaning.
 | Selection | Identity | Revision | Exact definition bytes |
 | --- | --- | --- | --- |
 | Observation binding | [`observation-binding-1-draft-2.md`](definitions/observation-binding-1-draft-2.md) `quire.observation.binding/v1` | `1-draft.2` | `sha256:5f454277722e7f4816f226361fc3204cfc1a0083f10fe442ef6e93084202f63b` |
+| Observation range | [`observation-range-1-draft-1.md`](definitions/observation-range-1-draft-1.md) `quire.observation.range/v1` | `1-draft.1` | Selected only by a successor binding/progress definition after indexing. |
 
 The candidate definition remains unindexed and unadopted until A records its
 exact bytes in the shared definition catalog. A changed digest is a changed
@@ -46,6 +47,25 @@ environment, working-directory, current-time, or network default refuses the
 dependent assessment input. A producer's illustrative relationship spelling
 does not replace its emitted identity.
 
+## Observation-range correspondence
+
+Every temporal or choreography-aware assessment additionally selects one exact
+`quire.observation.range/v1` definition and one of its clock-family coverage
+rows. The selected range retains the producer window identity/digest, ordered
+record-set identity/digest, clock authority, temporal profile identity/revision/
+digest, and all family-specific endpoints. The range is required at assessment,
+not for static template checking.
+
+Event-position coverage binds explicit sequence positions without inventing a
+timestamp or elapsed time. Fixed-sample coverage binds exact epoch, positive
+rational period, unit, and sample indexes without interpolation or binary
+floating point. Timestamp coverage remains half-open: a witness at native
+inclusive deadline 30 is outside producer `[0,30)` and is admitted only by a
+separately selected range that contains 30. A witness at 29 may decide an
+obligation from its exact support without manufacturing unrelated coverage or
+closure. Member-object identity never substitutes for record identity or the
+selected position/sample/timestamp anchor.
+
 ## Observation binding
 
 Each declared observation role has the identity of its owning native declaration,
@@ -62,7 +82,7 @@ roles. Each binding retains all of the following semantic values:
 | Subject mapping | Exact Producer interface 1.2.0 model, workflow, participant, relationship, population, delivery, attempt, or effect handle selected by the role; no textual lookup fallback. |
 | Signal and value mapping | Declared signal identity, typed value declaration, unit, missing-value policy, and required/optional status. |
 | Anchor | The selected current, invocation pre/post, temporal origin/activation, protocol occurrence, or compensation registration/activation anchor. |
-| Scope premises | Selected Producer interface 1.2.0 snapshot/window, membership rule/digest, configuration/closure identity and digest, clock/progress authority, and history premise when the role needs them. |
+| Scope premises | Selected Producer interface 1.2.0 snapshot/window, membership rule/digest, configuration/closure identity and digest, exact observation-range definition/coverage row, clock/progress authority, and history premise when the role needs them. |
 | Capture dependencies | Immutable capture identities and their authored anchors; a binding cannot retag a capture or import another workflow's values. |
 
 Repeated mappings for one required role, incompatible mappings, selected identities
