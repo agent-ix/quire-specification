@@ -31,6 +31,11 @@ The [requirements index](spec/spec.md) covers FS01/FS02/FS03/FS05 through discre
 Quoin catalog artifacts. [Authoring status](docs/spec-workflow.md) records the
 exact skills, validation results and outstanding review work.
 
+[Functional capability ledger](docs/functional-capability-ledger.md) is the
+binding cross-stream inventory of source authorities, intentionally deferred
+features and routing decisions. It is coordination material, not a normative
+requirement or an implementation-completion claim.
+
 [Native state-core proposal](proposals/state-core/README.md) contains draft
 grammar, identity/snapshot boundaries and serialized fixture expectations.
 [Agent A's review record](reviews/agent-a-fs01.md) records inspected evidence,
