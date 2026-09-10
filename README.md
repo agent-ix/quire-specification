@@ -8,6 +8,12 @@ compiler, strict shared reader or released standard is implemented here.
 
 The open language standard: normative semantics, profiles, versioned interchange and required conformance material.
 
+Native Quire v1 includes **state, temporal and protocol/choreography** feature
+families under one editable language. The existing finite-state work is a
+development profile. The [v1 redesign](proposals/quire-v1/README.md) defines the
+broader product scope and its capability decisions; its specification and review
+precede resumed profile-specific delivery.
+
 ## First work
 
 Define scope and non-goals; distinguish language, profile, wire and implementation versions; reconcile model ownership with Filament; outline grammar/static/dynamic semantics; select open licenses for prose and reusable normative artifacts; define first positive/negative conformance cases. No unreviewed draft becomes normative.
