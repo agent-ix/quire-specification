@@ -1,89 +1,132 @@
-# Quire full-language redesign — research and recommendation report
+# Quire language foundation — architecture findings and approved roadmap
 
-**Status: research draft, saved 2026-09-09.** This report and its plan are the
-requested output. They do not authorize implementation. The capability matrix,
-architecture and detailed profile specifications must be made consistent and
-reviewed before the report is presented as the completed recommendation.
+Owner-approved roadmap: 2026-09-10. This report records the completed assessment
+and its selected ticket changes. It is not a claim that detailed language
+specifications have passed review or that new runtime capabilities exist.
 
-## Finding
+## Recommendation
 
-The custom-language decision was not the scope error. The finite-state
-development profile became the apparent official language boundary. The master
-requirements explicitly excluded temporal/protocol/message semantics even
-though the program architecture describes executable temporal and distributed
-obligations. Native temporal source-to-TL correspondence was missing, and native
-choreography had no specification ticket. Existing state code remains a useful
-foundation; it does not establish the wider language's delivery.
+Keep native Quire and extend the existing compiler into a composed state,
+temporal and choreography language. The error was treating the first finite-state
+development profile as the product boundary. The inspected compiler already has
+a Logos lexer, structured parser, linking/checking stages, immutable packages and
+independent state evaluation; those are useful foundations.
 
-The owner now requires state, temporal and protocol/choreography in Quire v1.
-The later clarification also asks for a reasoned evaluation of inherited scope
-choices against the broader OCL/FRET/KerML/SysML feature families. The complete
-language roadmap must not be bounded by today's evaluator. Nor does interest in
-those capabilities require implementing four upstream languages wholesale.
+There is **one ecosystem roadmap**, owned by
+[research program #36](https://github.com/agent-ix/quire-research/issues/36).
+Its [implementation plan](https://github.com/agent-ix/quire-research/blob/roadmap/native-language-foundation/implementation-plan.md)
+is the ticket map. This report supplies language/architecture findings to that map.
+Existing protocol, observation, integration, verification and qualification owners
+retain their work; no parallel roadmap or competing engine is introduced.
 
-## Recommendation being developed
+## Evidence and architecture assessment
 
-Specify one native language with common identity, types, source correspondence,
-observation and composition rules, and typed state/temporal/protocol families.
-Separate the language's meaning from the capabilities of each evaluator,
-analyzer and exporter. Choose a coherent bounded v1 set using the planned state,
-timed-refund and branching compensated workflows. Retain explicit later feature
-families and their future interface needs.
+The [capability matrix](capabilities.md) retains the source inventory and individual
+decisions. The assessment used maintained quire-research architecture at
+3df57c91773d8d64b1431649aeafc422a87d6578, native compiler source at
+f444d03c06539a6cd0ada6be4ae099b54466d9d9 (including unlanded work), and the pinned
+TL syntax/evaluator sources linked there. GitHub ticket states were reread during
+the 2026-09-10 roadmap amendment. Source inspection is not executed qualification.
 
-Both executable assessment and incremental monitoring belong in the design.
-Qualification-oriented use additionally needs exact subject/tool/binding
-provenance and conformance evidence. Neither a passing trace nor parser-accepted
-generated text is itself qualification of the system. Global replay, protocol
-conformance, local projection and realizability remain different requested claims.
+| Finding | Selected response |
+| --- | --- |
+| A real lexer and structured parser already exist. | Retain Logos and recursive-descent/precedence parsing; publish the grammar and share expression parsing across family modules. No parser-generator rewrite is justified by this assessment. |
+| The parser admits one hard-coded state profile. | Separate grammar recognition, semantic profile admission and requested backend support through a composed package. |
+| Existing linking, checking, source spans and immutable packages are useful. | Extend their typed contracts; preserve original bytes, historical semantic identities and explicit migrations. |
+| Future-time TL infrastructure exists; native correspondence and required past-time support are gaps. | Use the owned native-to-TL bridge contracts and existing TL work. Do not infer native support from a TL enum or successful parse. |
+| TL closure semantics differ from the earlier native finite-window draft. | Preserve each exact profile meaning; a different interpretation requires reviewed correspondence and distinguishing examples. |
+| Ecosystem behavior crosses system and workflow-instance boundaries. | Make explicit related-instance and selected population/window scopes v1; a universal trace ID is not an adequate semantic model. |
+| Observation quality determines the meaning of timed/protocol results. | Specify correlation, captures, causal order, clocks, progress, membership and completeness before relying on monitor verdicts. |
+| State truth, temporal pending and protocol state are different. | Keep specialized typed representations/evaluators while sharing predicates and identity. |
+| Protocol monitoring and compositional proof are different claims. | Deliver supported conformance/monitoring; preserve visibility, ownership and assumptions for later scoped analysis. |
+| Existing verification contracts are completed. | Reuse VP02/VP03 without reopening their historical implementation; track new consumer integration under the existing verification epic. |
 
-## Saved evidence and draft specifications
+Lexer, parser, AST and IR are successive stages, not alternatives. The lexer
+recognizes tokens; the parser applies grammar and records syntax with locations.
+Linking resolves names and checking establishes types, units and definedness.
+State, temporal and protocol representations then support their respective
+consumers. A temporal or choreography guard references a checked shared predicate,
+rather than carrying another arithmetic language.
 
-- [Capability decisions and source inventory](capabilities.md): program plans,
-  owner decisions, observed component revisions, primary external sources,
-  v1/later/refuse choices and a feature-family scope audit.
-- [Composed architecture](../../spec/assurance/AD-001-composed-native-language.md):
-  parsing, typing, representations, evaluation, monitoring, evidence and ownership.
-- [Profile composition requirement](../../spec/functional/FR-020-compose-native-profiles.md):
-  exact definitions, cross-profile references, backend refusals and migration.
-- [Stakeholder need](../../spec/stakeholder/StR-002-composed-language.md) and
-  [workflow story](../../spec/usecase/US-005-author-composed-workflows.md).
-- Corrected [master scope](../../spec/spec.md), preserving historical state
-  definition and fixture bytes.
+The existing foundations are partly implemented; the cross-family and ecosystem
+interfaces remain specification/implementation work. The assessment supports the
+architecture direction, not a claim that extensibility has already been proven.
 
-Research consumed the maintained architecture, executive summary, technical
-brief, evaluation plan, implementation plan and source-evidence ledger in
-`quire-research` at `3df57c91773d8d64b1431649aeafc422a87d6578`. Original discovery
-documents supplied examples and hypotheses, not current implementation claims.
-The exact source links and component limits are retained in the capability matrix.
+## Selected v1 and evolution boundary
 
-## Plan to finish the recommendation
+V1 contains exact bounded integer/rational values, explicit units/definedness,
+operation contracts, bounded sequence queries and acyclic named Boolean predicates.
+An explicitly adopted graph profile supplies finite references, identity and
+reachability. Temporal clauses include bounded future/past obligations and distinct
+event-position, sampled and timestamped semantics. Protocols include roles,
+messages, owned choices, parallelism/joins, bounded repetition, deadlines and
+compensation with separate attempt/delivery/effect identities.
 
-| Stage | Concrete output | Owning coordination |
-| --- | --- | --- |
-| Capability and scope audit | Complete feature-family decisions, dependencies, effort drivers and consequences of deferral, including execution/monitoring/qualification use | Standard #10 and #9; A leads |
-| Consistent semantic baseline | Common profile/type/source/result rules; temporal clocks/history/observations; choreography roles/messages/order/choices/concurrency/iteration/compensation; explicit state migration | Standard #10, FS01–05 and choreography #12 |
-| Concrete conformance scenarios | Healthy, violating, untriggered, incomplete and refused cases for all required families and their composition | A with B/C/TL contracts; existing QA01 and observation/protocol owners |
-| Review the baseline | Owner-selected QUOIN base plus seven analyses, with actual findings and dispositions; no intermediate review churn | A / standard #10 |
-| Derive implementation scope | Bounded tickets tied to reviewed requirements, real interface dependencies and expected acceptance evidence; no implementation begins | Existing native/compiler, IR/TL, observation and protocol workstreams |
-| Final report and plan | Recommended v1 set, later roadmap, architectural decisions/tradeoffs, work reuse, required changes, staged tickets and remaining owner choices | Report under standard #10 |
+Enterprise scope includes internal/external systems and relationships among orders,
+payment attempts, split shipments and partial refunds. Selected population
+obligations use declared finite snapshots or event-time windows. Reservation totals
+and related refund totals are acceptance examples. Unknown membership or incomplete
+observations cannot establish a successful aggregate.
 
-Created [choreography specification #12](https://github.com/agent-ix/quire-specification/issues/12).
-[Temporal specification #5](https://github.com/agent-ix/quire-specification/issues/5)
-and [native-to-TL bridge #64](https://github.com/agent-ix/quire-contract-ir/issues/64)
-already exist and will be reused. Research PT01/PT02 and OB01–03 retain their
-implementation routing. Implementation tickets are finalized after the coherent
-specification baseline, as the owner requested; new repositories are not assumed.
+FS01 and FS05 specify evolution now: edition/profile/wire identities, keyword and
+syntax compatibility, typed family boundaries, explicit capability discovery,
+migration and preservation of historical evidence. Extension scenarios cover a new
+operator, declaration and family. This groundwork does not require speculative
+plugins, a JIT, an editor CST or every future analysis algorithm.
 
-## Work still required before the final report
+Future pure functions/collection kinds, richer model/numeric domains and broader
+dynamic/history queries have named research tickets in the existing program.
+Related-instance choreography is not deferred. General projection, realizability,
+synthesis and relational experiments retain their existing owners and do not
+blanket-block v1.
 
-The initial matrix is a proposal, not the final v1 decision. Broad deferrals must
-be tested against product needs and future extension cost. Detailed native
-temporal/protocol semantics, exact profile identities, event/clock contracts,
-bounded collection extensions, state-graph admission, conformance cases,
-cross-stream dispositions and the final ticket dependency plan remain unfinished.
-In particular, the original minimum-only ConfigVersion and FCD #95 presence
-decisions must stay visible. No existing review or passing state test discharges
-these new obligations.
+OCL contributes value/contract concepts; FRET contributes temporal requirement
+structure; KerML/SysML contribute model and interaction concepts. Quire selects
+coherent semantics against its ecosystem use cases rather than cloning their
+whole tooling or metamodels. Primary sources:
+[OCL 2.4](https://www.omg.org/spec/OCL/2.4/PDF),
+[NASA FRET](https://github.com/NASA-SW-VnV/fret),
+[KerML 1.0](https://www.omg.org/spec/KerML/1.0/PDF),
+[SysML 2.0](https://www.omg.org/spec/SysML/2.0/Language/PDF).
 
-No grammar, runtime, backend, monitor, executable test or hosted workflow has
-been implemented or run as part of this redesign work.
+## Routed work and acceptance
+
+The approved new tickets are standard #13 (grammar), compiler #35–39 (composition,
+predicates/queries, graph, temporal and choreography compilation), and research
+#65–67 (three future studies). Their exact parents and acceptance prerequisites
+are recorded in the single roadmap, not duplicated here.
+
+Standard #12 owns authored choreography meaning; research PT01 (#47) owns protocol
+representation/consumer contracts. OB01–03 own bindings, replay, incremental
+monitoring and adequacy. IN01/IN02 own configuration and compatibility. LC05 and
+QA01 retain integration/conformance ownership. The original compiler diagnostic,
+CLI and admission tickets remain reused work. Public IR #63/#64 contain only
+the generic native bridge scope, without private roadmap links.
+
+Specify the shared semantic baseline together and run the selected QUOIN
+base-plus-seven review set at coherent PR readiness. Then implement packages and
+shared types, family compilation, consumers and integration in dependency order.
+Only actual dependencies gate engineering; future research is not a delivery gate.
+
+The common fixture is order/payment/inventory/fulfillment with an external
+provider, concurrent orders, split shipments, retries, refunds and compensation.
+Independent expected cases distinguish valid/violating/refused/incomplete/pending,
+wrong correlation/membership, missing provider observations, duplicate effects,
+aggregate constraint failures, causal ordering, silent deadlines, failed/untriggered
+recovery, replay/streaming agreement and mixed-version impacts.
+
+## Retained limitations
+
+The minimum-only ConfigVersion integer cannot be admitted by inventing a maximum
+or removing its parent relation. FCD #95 remains the producer-owned presence
+decision. Graph and reusable-predicate additions require explicit reviewed
+profile amendments; roadmap approval does not rewrite historical semantics.
+
+Existing draft architecture and requirements remain proposed. Their detailed
+temporal/profile choices must be reconciled with this roadmap in the specification
+tickets. This amendment did not run /spec-review or a Cargo qualification campaign,
+implement grammar/runtime features, deploy monitors or execute business actions.
+
+All new first-party production/qualification paths remain Rust. Local testing is
+resource-conscious and hosted workflows remain manual-dispatch only. Private
+research and historical source licenses remain preserved.

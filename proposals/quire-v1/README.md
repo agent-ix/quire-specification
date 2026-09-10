@@ -1,32 +1,29 @@
-# Native Quire v1 design
+# Native Quire v1 language foundation
 
-Proposed under [standard #10](https://github.com/agent-ix/quire-specification/issues/10),
-following the owner's 2026-09-09 full-language handoff. **State, temporal, and
-protocol/choreography are required v1 families.** The bounded state development
-profile is an implementation foundation, not the language's product boundary.
+The owner approved the [research findings and roadmap recommendation](report.md)
+on 2026-09-10. There is **one ecosystem roadmap** under
+[quire-research #36](https://github.com/agent-ix/quire-research/issues/36);
+its [implementation plan](https://github.com/agent-ix/quire-research/blob/roadmap/native-language-foundation/implementation-plan.md)
+owns the issue map. This directory supplies the language foundation.
 
-This packet selects a finite product capability set. It does not attempt to
-implement OCL, FRET, MLTL, KerML or SysML wholesale. Native Quire is the single
-editable clause language; external textual forms are output mappings. The
-language standard owns their selected meanings rather than inheriting unstated
-semantics from those external languages or from an evaluator.
+V1 includes state, temporal and choreography across internal/external systems,
+related workflow instances and selected finite population/window obligations.
+The [capability matrix](capabilities.md) distinguishes selected scope from actual
+implementation. Existing finite-state work remains an implementation foundation.
 
-The [research and recommendation report](report.md) tracks the requested report
-and staged plan; it remains a draft until the coherent baseline is complete and
-reviewed. No implementation is part of this assignment.
+The approved additions are [grammar #13](https://github.com/agent-ix/quire-specification/issues/13),
+compiler #35–39, and research #65–67. Existing protocol, observation, integration,
+verification and conformance tickets retain their work; no parallel roadmap,
+engine or speculative repository is created.
 
-The [capability matrix](capabilities.md) distinguishes product scope from observed
-implementation and routes each family. The common architecture, profile
-requirements and conformance cases are being specified together before
-implementation tasks are finalized. This proposal does not enable any new
-grammar or claim that its selected capabilities are implemented.
+Roadmap approval does not make the detailed draft grammar or semantic profiles
+normative. Reconcile and review the common specifications together under #10 and
+#12 before dependent implementation. Reviews occur at coherent PR readiness.
+Native Quire remains the only editable clause language; external forms are output
+mappings and TL remains internal infrastructure.
 
-Existing `state-finite/0-draft` definitions and fixtures remain immutable. The
-[state admission amendment](../native-source-1-draft/README.md) remains a scoped
-candidate, not the complete v1 language. Its unresolved numeric, reference and
-source-anchor obligations remain visible during this redesign.
-
-The baseline is reviewed as a whole before profile-specific delivery resumes.
-Implementation is then divided by owned interface and testable behavior, with
-state, temporal and choreography all required before a Quire v1 capability claim.
-Earlier engineering milestones may identify their delivered subset explicitly.
+Historical state definition/fixture identities remain preserved. The original
+minimum-only numeric and producer-owned field-presence decisions remain visible.
+The proposed [architecture](../../spec/assurance/AD-001-composed-native-language.md)
+and associated draft requirements are inputs to the upcoming specification work,
+not an assertion that the selected capabilities already exist.
