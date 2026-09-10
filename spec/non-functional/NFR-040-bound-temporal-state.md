@@ -37,10 +37,15 @@ from a property violation or successful closure.
 
 | Metric | Target | Threshold | Method |
 | --- | --- | --- | --- |
-| Checked bound overflows accepted | 0 | 0 | Property test |
-| Exhausted evaluations emitting true or false | 0 | 0 | Mutation test |
-| Unsettled instances whose required capture/history is silently evicted | 0 | 0 | State-transition test |
-| Results reused after a relevant limit/profile/binding change | 0 | 0 | Integration test |
+| Checked bound overflows accepted | 0 | 0 | property-based-testing |
+| Exhausted evaluations emitting true or false | 0 | 0 | fault-injection |
+| Unsettled instances whose required capture/history is silently evicted | 0 | 0 | model-based-test-generation |
+| Results reused after a relevant limit/profile/binding change | 0 | 0 | integration-testing |
+
+These catalog methods implement the composed-review disposition. A generic
+performance benchmark cannot prove that no overflow, Boolean fallback, silent
+eviction or stale reuse exists merely because each metric has threshold zero;
+the method must falsify the corresponding semantic failure mode.
 
 ## Verification
 
@@ -48,7 +53,9 @@ Generate nested future/past formulas, boundary intervals and concurrent trigger
 instances around each declared limit. Independently force arithmetic overflow,
 work exhaustion and required-state eviction. Require a typed incomplete/refused
 result that retains the affected obligation and limit identity, and mutate each
-failure path to attempt a Boolean fallback.
+failure path to attempt a Boolean fallback. Fault injection establishes the
+original exhaustion behavior; mutation testing separately measures whether the
+suite detects an illicit Boolean fallback.
 
 ## Acceptance Criteria
 
