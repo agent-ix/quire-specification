@@ -3,6 +3,12 @@ id: StR-002
 title: "Express state, temporal and choreography obligations together"
 type: StR
 relationships:
+  - target: ix://agent-ix/quire-specification/FR-030
+    type: satisfied_by
+  - target: ix://agent-ix/quire-specification/FR-035
+    type: satisfied_by
+  - target: ix://agent-ix/quire-specification/FR-041
+    type: satisfied_by
   - target: ix://agent-ix/quire-specification/FR-020
     type: satisfied_by
 ---
@@ -23,6 +29,7 @@ and assumptions. An implementation slice must not redefine the intended product.
 | StR-002-VC-1 | One native package states a state condition, a timed obligation and a branching compensated choreography with shared model and source identity. | Demonstration |
 | StR-002-VC-2 | Healthy, violating, untriggered, incomplete and unsupported requests remain distinguishable in the composed workflow. | Demonstration |
 | StR-002-VC-3 | A reviewer can find every intended family, its v1/later/refuse disposition, its owned specification and its implementation task without inferring support from the current state compiler. | Inspection |
+| StR-002-VC-4 | One enterprise example relates concurrent orders, payment/shipment/refund instances and a declared finite population/window without treating unknown membership as successful aggregate evidence. | Demonstration |
 
 ## Dependencies
 

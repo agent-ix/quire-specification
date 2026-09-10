@@ -8,7 +8,11 @@ system: native Quire v1 language and compiler boundaries
 relationships:
   - target: ix://agent-ix/quire-specification/StR-002
     type: references
-  - target: ix://agent-ix/quire-specification/FR-020
+  - target: ix://agent-ix/quire-specification/FR-030
+    type: realizes
+  - target: ix://agent-ix/quire-specification/FR-040
+    type: realizes
+  - target: ix://agent-ix/quire-specification/FR-048
     type: realizes
 ---
 # Composed native Quire architecture
@@ -71,6 +75,14 @@ one evaluator enum. Formatting consumes the same syntax structures.
 The common layer owns source/declaration identity, scalar/value types, imports,
 definedness and profile selection. Temporal nodes reference checked Boolean
 predicates; they do not contain a second arithmetic expression language.
+The [native temporal grammar](../../proposals/quire-v1/shared-grammar.md)
+uses explicit `holds(expr)` leaves, distinct current and activation inputs,
+immutable captures and a named clock role. Temporal constants remain separate
+from atomic valuations so false-extension boundaries survive optimization and
+lowering. E's selected temporal profiles retain their own meaning.
+The [state contract](../../proposals/quire-v1/state-contract.md) defines the
+proposed query/graph extensions, exact arithmetic and pre-state/capture rules;
+they preserve first-profile restrictions under separate definition identities.
 Protocol nodes own control structure, participants and message relationships;
 they refer to state predicates, operation contracts and temporal obligations.
 Composition is a typed dependency graph, not interpolation between strings.

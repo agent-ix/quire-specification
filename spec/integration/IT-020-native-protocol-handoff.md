@@ -71,4 +71,3 @@ compiler or protocol repository already implements it.
 ## Traceability
 
 The test verifies the protocol representation handoff required by PT01 and L6.
-

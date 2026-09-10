@@ -17,4 +17,3 @@ Replay every causally valid S1/S2 interleaving with payment and refund. Inject u
 ## Expected Results
 
 Valid interleavings conform. Every adverse event names its obligation; open/incomplete inputs never report complete success; settled batch and incremental semantic results agree exactly.
-
