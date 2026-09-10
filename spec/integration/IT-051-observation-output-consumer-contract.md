@@ -18,7 +18,9 @@ The integration joins a structured per-obligation observation result with the ex
 
 ## Preconditions
 
-The selected A/B result and interchange interfaces have named revisions and the consumer declares supported capabilities and mapping profile.
+The selected A/B result and interchange interfaces have named revisions; in
+particular, the result input conforms to [B's FR-007](ix://agent-ix/quire-verification/FR-007).
+The consumer declares supported capabilities and mapping profile.
 
 ## Inputs
 
@@ -36,4 +38,3 @@ One preserved result plus pending, incomplete, unsupported, and lossy obligation
 ## Expected Results
 
 Consumers retain requested subject, capability, provenance, completeness, and loss state. This planned integration does not claim codegen CLI, backend qualification, or external mapping conformance.
-
