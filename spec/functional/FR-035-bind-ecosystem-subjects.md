@@ -1,0 +1,42 @@
+---
+id: FR-035
+title: "Retain explicit ecosystem scope identities in assessment requests"
+type: FR
+relationships:
+  - target: ix://agent-ix/quire-specification/US-005
+    type: implements
+---
+## Description
+
+When binding an ecosystem assessment request, the binder SHALL retain the declared workflow, role, relationship and population-scope identities needed by that request and refuse identity substitutions that change its subject.
+
+## Inputs
+
+An admitted clause, D-owned model/configuration identities, B-owned protocol instance bindings, F-owned observation bindings and explicit finite snapshot or window scope references.
+
+## Outputs
+
+A request bound to the exact declared subjects and completeness dependencies, or a located identity/correlation refusal or explicitly incomplete binding result.
+
+## Behavior
+
+A trace ID, timestamp, endpoint or matching textual name alone does not establish a business relationship. Workflow instances, role instances, message deliveries, attempts and effects remain distinct subjects. Scope references preserve the selected snapshot/window, membership declaration and observation/progress dependencies; static package identity remains separate. Unknown required membership cannot establish aggregate success. D/B/F define the corresponding producer contracts; this requirement introduces no model store, correlation heuristic or alternate schema.
+
+## Acceptance Criteria
+
+| ID | Criteria | Verification |
+| --- | --- | --- |
+| FR-035-AC-1 | Two concurrent orders with shared infrastructure retain distinct request subjects and explicitly related payment/shipment/refund identities. | Test (TC-035) |
+| FR-035-AC-2 | A delivery ID or telemetry trace ID substituted for the required effect or workflow identity refuses binding. | Test (TC-035) |
+| FR-035-AC-3 | A population request retains the exact snapshot/window and membership/completeness dependencies; changing that scope changes the runtime request subject. | Test (TC-035) |
+| FR-035-AC-4 | Unknown required membership yields an explicitly incomplete assessment and cannot establish a successful aggregate. | Test (TC-035) |
+
+## Dependencies
+
+- [Shared drafting foundation](../../proposals/quire-v1/shared-foundation.md).
+- [Composed architecture](../assurance/AD-001-composed-native-language.md).
+- [Planned acceptance matrix](../composed-foundation/tests.md).
+
+Proposed requirement for the composed profile; it does not amend historical
+accepted definitions or establish an implemented capability.
+

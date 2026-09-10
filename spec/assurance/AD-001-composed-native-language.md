@@ -24,6 +24,10 @@ and authored assurance decisions. No single executable IR defines the language.
 
 V1 includes state, temporal and protocol/choreography together. Its concrete
 capability decisions are in the [matrix](../../proposals/quire-v1/capabilities.md).
+The [shared drafting foundation](../../proposals/quire-v1/shared-foundation.md)
+defines cross-system, related-instance and selected population/window inputs.
+Runtime workflow, role, message, delivery, attempt and business-effect identities
+remain distinct. A single trace ID cannot replace their declared relationships.
 The language's long-term architecture accommodates additional semantic families
 and methods without treating current evaluator restrictions as product limits.
 Unknown or unimplemented capabilities remain explicit, located refusals.
@@ -148,8 +152,8 @@ deployment correctness or overall qualification.
 | V1 choices merely rename today's state subset | Every required family has native syntax/semantics and execution/monitor acceptance cases; the capability matrix is the release inventory. | A; complete-baseline PR review. |
 | A broad “later” group hides a foundational type or composition capability | Audit individual semantic families against product workflows and record the cost of later addition. | A with D; complete-baseline PR review. |
 | Graph identity/closure conflicts with first state admission restrictions | Propose a separately versioned graph facet explicitly; preserve the original minimum-only ConfigVersion design gate and historical definition bytes. | A/D; state facet and baseline review. |
-| Missing temporal source-to-TL correspondence, especially past time | Native meaning precedes bridge implementation; #64 and TL #33 own the missing contracts rather than relabeling future-only support. | A/B/TL; temporal baseline review. |
-| Timestamp order or sampled telemetry produces a false deadline claim | Require clock, correlation, ordering and completeness contracts and independent binding controls. | A/C/observation owners; observation baseline review. |
+| Missing temporal source-to-TL correspondence, especially past time | Native meaning precedes bridge implementation; #64 and TL #33 own the missing contracts rather than relabeling future-only support. | A/E; temporal baseline review. |
+| Timestamp order or sampled telemetry produces a false deadline claim | Require clock, correlation, ordering and completeness contracts and independent binding controls. | E/F with A; observation baseline review. |
 | Parallel branches or repeated triggers cause unbounded retained state | Authored finite bounds and per-run resource ceilings are separate; charge before expansion and preserve incomplete results. | Protocol/observation owners; baseline resource review. |
 | Current draft specs disagree with historic definitions | Scope new normative requirements to the new definition; do not rewrite adopted bytes or silently reuse old evidence. | A/B; migration review in the same baseline. |
 | A schema, passing trace or successful export is called qualification | Results name the actual claim and evidence scope; conformance and adequacy remain separately assessed. | B/Quoin/QA01; conformance baseline review. |

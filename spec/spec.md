@@ -8,6 +8,18 @@ standards_alignment:
   - iso-iec-ieee-29148
   - ieee-828
 relationships:
+  - target: ix://agent-ix/quire-specification/FR-030
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-031
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-032
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-033
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-034
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-035
+    type: contains
   - target: ix://agent-ix/quire-specification/StR-002
     type: contains
   - target: ix://agent-ix/quire-specification/US-005
@@ -184,7 +196,20 @@ findings; its tests do not claim B's consumer implementation or adoption.
 
 ## 15. Governance Notes
 
-Use private owning issues and isolated worktrees. A owns the native producer and these requirements; B owns portable verification contracts; C owns coordinated existing-repository consumers. Do not spawn additional agents under the current assignment. Preserve original dependency/template grants. Standard-wide publication terms remain unresolved.
+Use private owning issues and isolated worktrees. A integrates the common
+standard and native syntax; B owns protocol/results; D model/configuration;
+E temporal meaning; F observation/consumer contributions. C continues
+engineering-assurance completion. The user distributes the A–F handoffs; no
+additional session dispatch is implied. Preserve dependency/template grants.
+Standard-wide publication terms remain unresolved.
+
+The [shared foundation](../proposals/quire-v1/shared-foundation.md) is a drafting
+checkpoint with artifact reservations and explicit outstanding decisions.
+FR-030–035 and their [planned matrix](composed-foundation/tests.md) establish
+the initial shared contribution. They have not undergone the complete baseline
+review and do not authorize dependent implementation. Family contracts and the
+composed grammar remain required contributions; historical review artifacts do
+not review this new scope.
 
 ## 16. References
 
@@ -194,6 +219,12 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 
 | Artifact | Type | Status |
 | --- | --- | --- |
+| [FR-030](functional/FR-030-bind-composed-definitions.md) | FR | Shared definition binding draft |
+| [FR-031](functional/FR-031-report-requested-capabilities.md) | FR | Per-request capability disposition draft |
+| [FR-032](functional/FR-032-preserve-language-evolution.md) | FR | Evolution/compatibility draft |
+| [FR-033](functional/FR-033-admit-reusable-predicates.md) | FR | Typed acyclic predicate admission draft |
+| [FR-034](functional/FR-034-bind-cross-family-predicates.md) | FR | Cross-family environment binding draft |
+| [FR-035](functional/FR-035-bind-ecosystem-subjects.md) | FR | Ecosystem subject binding draft |
 | [StR-002](stakeholder/StR-002-composed-language.md) | StR | V1 redesign draft |
 | [US-005](usecase/US-005-author-composed-workflows.md) | US | V1 redesign draft |
 | [FR-020](functional/FR-020-compose-native-profiles.md) | FR | V1 redesign draft; implementation not authorized |

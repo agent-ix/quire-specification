@@ -40,6 +40,12 @@ new Cargo tests or integration qualification were run for this inventory.
 
 ## Shared language and model capabilities
 
+Owner letters in the inspection tables retain their research-time context.
+The current [cycle allocation](https://github.com/agent-ix/quire-research/blob/roadmap/native-language-foundation/initial-spec-cycle.md)
+governs new work: B protocol/results, D model/configuration, E temporal,
+F observation/consumers, A common language/integration. C continues
+engineering-assurance completion and has no new language drafting assignment.
+
 | ID | Capability and selected boundary | Decision | Evidence / owner | Existing foundation or gap |
 | --- | --- | --- | --- | --- |
 | V1-001 | One native source, explicit edition and exact profile bundle; state, temporal and choreography clauses in one linked package | V1 | OWN, ARCH; A / #10 | Profile composition missing; current single-profile parser is a foundation. |
