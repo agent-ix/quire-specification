@@ -14,7 +14,7 @@ Verify the planned boundary from F-owned admitted observations/progress to E-own
 
 ## Target Integration
 
-The integration joins typed observation inputs, immutable captures, declared clock/history/closure inputs, and protocol obligation identities to selected temporal and protocol consumers.
+The integration joins the [observation binding contract](../../proposals/quire-v1/observation-contract.md), immutable captures, declared clock/history/closure inputs, and protocol obligation identities to selected temporal and protocol consumers.
 
 ## Preconditions
 

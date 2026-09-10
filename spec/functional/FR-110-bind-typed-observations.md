@@ -25,4 +25,5 @@ The binder SHALL NOT substitute a signal name, endpoint, trace ID, or compatible
 ## Dependencies
 
 - [Shared foundation](../../proposals/quire-v1/shared-foundation.md).
+- [Observation binding contract](../../proposals/quire-v1/observation-contract.md).
 - D owns model declarations; A owns source/package/profile identity.
