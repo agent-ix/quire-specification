@@ -319,7 +319,7 @@ Standard-wide publication terms remain unresolved.
 
 The [shared foundation](../proposals/quire-v1/shared-foundation.md) is a drafting
 checkpoint with artifact reservations and explicit outstanding decisions.
-FR-030–049, the decomposed FR-020, NFR-010 and their
+FR-030–049, FR-130, the decomposed FR-020, NFR-010 and their
 [planned matrix](composed-foundation/tests.md) establish the shared contribution.
 The [grammar](../proposals/quire-v1/shared-grammar.md) and
 [state contract](../proposals/quire-v1/state-contract.md) now include ordered
@@ -336,8 +336,9 @@ not review this new scope.
 
 B's [protocol contract](../proposals/quire-v1/protocol-contract.md), FR-050–061,
 NFR-020/021, IT-020/021 and [protocol matrix](protocol/tests.md) are integrated
-from `528d7a6`. F's FR-110–116, NFR-050–052, IT-050/051 and
-[observation matrix](observation/tests.md) are integrated from `4d58e40`.
+through reviewed PR #19 (`81ec682`), separating decisive truth from subject
+closure. F's FR-110–116, NFR-050–052, IT-050/051 and
+[observation matrix](observation/tests.md) are integrated through `32c95e9`.
 These contributions establish draft obligations and planned cases. The composed
 grammar and examples remain proposed; binding interfaces are not fully reconciled
 and no new executable coverage is established.

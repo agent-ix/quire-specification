@@ -1,11 +1,12 @@
 # Composed definition candidates
 
 These exact-byte documents make the edition and all three families' selections
-reviewable. Revision `1-draft.1` is a **candidate**, not adoption, compiler
+reviewable. All listed revisions are **candidates**, not adoption, compiler
 support or completed conformance. The selected rule snapshot is
 `033fcda3cc9f964d018b466faa12cd14c8a9878a` for shared state rules, including
 retained rational division; temporal/protocol rules select
-`697ffd08b6937d4701beacbb0e0052f9e1ca4728`. No family meaning is inferred from
+`697ffd08b6937d4701beacbb0e0052f9e1ca4728`; protocol revision `1-draft.2` selects
+`15beef776f632310e77a18c838bd7f7a4a1088a1`. No family meaning is inferred from
 the existence of a definition file.
 
 | Selection identity | Definition | Revision | SHA-256 of exact definition bytes | Scope |
@@ -18,8 +19,11 @@ the existence of a definition file.
 | `quire.temporal.event-position.false-extension/v1` | [temporal-event-position.md](temporal-event-position.md) | `1-draft.1` | `2d8f3f54fab0d36f105c71e32c6505538ae38d5d2625fbe5a106e6fc07194a8c` | Bounded future/past over semantic-event positions |
 | `quire.temporal.fixed-sample.false-extension/v1` | [temporal-fixed-sample.md](temporal-fixed-sample.md) | `1-draft.1` | `681c488548d4992656c0cab6f4a275c381327a586e246f250a335c9c23f64ad8` | Bounded future/past over an exact sampled clock |
 | `quire.temporal.timestamped-event.finite-window/v1` | [temporal-timestamped-window.md](temporal-timestamped-window.md) | `1-draft.1` | `7d08c19cfc574c076d24461b1aa48f4d8d4448c51d75e667d3292da5ba6ad388` | Bounded future/past over complete timestamped windows |
-| `quire.protocol.finite-global/v1` | [protocol-finite.md](protocol-finite.md) | `1-draft.1` | `12a52691ece065a429dc0a64c2d0bfc34cb2c16e3a2bdc65e7b432baf499ceb5` | Finite global choreography and explicit claim boundaries |
+| `quire.protocol.finite-global/v1` | [protocol-finite.md](protocol-finite.md) | `1-draft.1` | `12a52691ece065a429dc0a64c2d0bfc34cb2c16e3a2bdc65e7b432baf499ceb5` | Preserved earlier candidate; result-completeness disagreement recorded |
+| `quire.protocol.finite-global/v1` | [protocol-finite-1-draft-2.md](protocol-finite-1-draft-2.md) | `1-draft.2` | `c1718f4e1f19f05ee297b074627127ef74088c0a32e48f3452f8258c4bab492f` | Finite global choreography with decisive truth and independent subject closure |
 | `quire.package.composed/v1` | [package-reference.md](package-reference.md) | `1-draft.1` | `0df176dbb831117bd27443f7ef8075d9a130bcbc225022b440acbce111c62b9d` | Whole linked-package interpretation; not a source root |
+| `quire.observation.binding/v1` | [observation-binding.md](observation-binding.md) | `1-draft.1` | `9fb77da233e792b7d96dda814fe71ec2e86707253ff85dce990f29b83c1bf3e1` | Candidate binding meaning and static/assessment-input separation; dependency closure pending |
+| `quire.observation.progress/v1` | [observation-progress.md](observation-progress.md) | `1-draft.1` | `8c16aa039f6a537d7da8a8320b173241dc535bfb7f7dfa5cbf3b644559ebac4f` | Candidate scoped assertions and restoration basis; dependency closure pending |
 
 Core → queries → graph describes explicit semantic extension. Required-definition
 references run in the opposite direction, ending at the edition; the graph is
@@ -37,8 +41,8 @@ profile S = "quire.state.graph/v1" version "1-draft.1"
   digest "sha256:1d5ae5e65b60d51fd2b0de653fb232f2ef23bcf977d0fb5ec81da49b75331c65";
 profile T = "quire.temporal.timestamped-event.finite-window/v1" version "1-draft.1"
   digest "sha256:7d08c19cfc574c076d24461b1aa48f4d8d4448c51d75e667d3292da5ba6ad388";
-profile P = "quire.protocol.finite-global/v1" version "1-draft.1"
-  digest "sha256:12a52691ece065a429dc0a64c2d0bfc34cb2c16e3a2bdc65e7b432baf499ceb5";
+profile P = "quire.protocol.finite-global/v1" version "1-draft.2"
+  digest "sha256:c1718f4e1f19f05ee297b074627127ef74088c0a32e48f3452f8258c4bab492f";
 ```
 
 This header fragment still requires a supplied matching edition definition,
@@ -61,6 +65,9 @@ authoring byte census from the repository root, not an executable verifier.
 A semantic or byte change after this candidate is shared requires a new
 definition revision and new dependency digests; it cannot replace the old
 selection in place. Historical bytes remain recoverable at their pinned revision.
+The census checks current working-tree bytes. The preserved protocol `1-draft.1`
+definition continues to select its earlier rule snapshot; current FR-061 and
+protocol-contract bytes belong to `1-draft.2` and cannot stand in for that snapshot.
 
 Temporal identities retain FR-090's three meanings; the common temporal facet
 alone cannot select one. Temporal/protocol roots consume the exact shared
@@ -68,11 +75,14 @@ value/predicate interface while retaining their own declaration permissions.
 Source admission and backend/mapping support remain separate, especially for
 past time and timestamped windows unsupported by current TL targets.
 
-F's observation binding/output contribution through `1199942` is integrated, but exact
-producer interface selections and D's standard-facing model/configuration
-contribution remain outstanding. The protocol candidate explicitly records the
-decisive-prefix/open-execution result disagreement with FR-061. It does not
-declare that disagreement resolved or the whole profile consistent.
+F's contribution through `32c95e9` is integrated. Its binding/progress candidate
+bytes are indexed above, but their relative selected-contract links and external
+dependencies still need exact immutable selections before they form a closed
+definition set. Indexing their bytes alone does not supply those dependencies.
+F also needs to preserve B's new settlement/closure/support dimensions in its
+consumer contract. B's reviewed PR #19 resolves the earlier FR-061 versus E
+decisive-prefix mismatch; protocol `1-draft.2` selects that correction. D's
+standard-facing model/configuration contribution and composed review remain open.
 
 TC-020/030/031/032/040/049 specify positive and mutated-selection controls. Structural
 Quire validation and this byte census do not qualify a profile implementation.

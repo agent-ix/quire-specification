@@ -67,7 +67,7 @@ where they preserve the required distinctions.
 | Native temporal to TL | Profile meaning, typed predicate valuations, clock/history/closure, original native correspondence | E; A/F consume |
 | Native protocol to conformance | Roles, messages/effects, causal structure, related instances, obligations, selected claim/assumptions | B; A/F consume |
 | Observation to assessment | Exact binding/input identities, correlation, clock/progress/closure, completeness and resource controls | F; B/E consume |
-| Concrete observation handoff | [F's binding contract](observation-contract.md): explicit role/schema/subject/anchor mapping, availability and scoped progress | F; integrated from `c5cec84`, with exact interface selections still pending |
+| Concrete observation handoff | [F's binding contract](observation-contract.md): explicit role/schema/subject/anchor mapping, availability and scoped progress | F; through `32c95e9`, named binding/progress candidates with exact dependency closure still pending |
 | Assessment to result | Requested subject/capability and per-obligation disposition, failed prerequisites, completeness/provenance | B contract; A/E/F produce |
 | Export | Selected mapping/profile and source-bound preserved/conditional/unrepresented/refused obligations | F coordinates; D/E contribute; A identity |
 
@@ -132,10 +132,11 @@ rule snapshot at `033fcda` with explicit core/query/graph admission and exact
 dependency digests. They retain rational division with nonzero/range proofs,
 correcting its accidental blanket refusal in the earlier composed draft.
 The catalog now also supplies E's three temporal roots, their common facet and
-the finite-global protocol candidate, selecting family rules at `697ffd0`.
-F's concrete binding proposal is integrated. D/F's exact producer interface
-selections and the B/E result disagreement remain unresolved; the complete
-baseline remains proposed and unreviewed.
+the finite-global protocol candidates. Temporal rules retain `697ffd0`; protocol
+revision `1-draft.2` selects the corrected result rules at `15beef7`, preserving
+the earlier candidate unchanged. F's binding/progress candidates are indexed;
+their exact dependency closure and D's producer contribution remain outstanding.
+The complete baseline remains proposed and unreviewed.
 
 The [capability crosswalk](capabilities.md#initial-specification-crosswalk) now
 links all 51 approved capability decisions to current draft requirements and
@@ -143,12 +144,12 @@ planned cases, retaining explicit D/F/result gaps and later delivery boundaries.
 The [package reference candidate](definitions/package-reference.md) fills the
 outer-reference interpretation without flattening a package's clause profiles
 or claiming a new canonicalizer/payload reader. F's output consumer contract
-through `1199942` is integrated; its loss outcomes do not establish target semantics.
+through `32c95e9` is integrated; its loss outcomes do not establish target semantics.
 
-One result distinction needs B/E agreement: `eventually[0,30] holds(p)` can settle
-true at the first admitted p witness while the surrounding execution/window is
-still open. E admits decisive prefix truth; B's result table requires complete
-inputs for satisfied truth. Completeness of the supporting facts must not be
-confused with closure of all future observations. Preserve the witness and open
-execution; the shared result mapping must represent both without delaying or
-falsifying the temporal result.
+B's reviewed PR #19 resolves the result distinction: `eventually[0,30] holds(p)`
+can settle true at the first admitted p witness while the surrounding execution
+remains open. FR-061 now separates completed assessment execution, open subject
+progress, decisive settlement basis and exact supporting facts. TC-031/061 cover
+both decisive truths and pending controls; complete global conformance still
+requires its own closure premises. F's consumer contract must now preserve these
+added dimensions. B's family review does not accept the full composed baseline.

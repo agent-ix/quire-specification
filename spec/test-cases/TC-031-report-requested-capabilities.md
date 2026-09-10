@@ -26,8 +26,13 @@ On an admitted open prefix, let a required temporal existential receive its
 decisive witness while the surrounding workflow remains open. The temporal
 truth/witness stays settled under FR-091; complete global conformance stays
 unavailable under FR-059. The composed result mapping must retain both scopes
-without treating the witness as workflow closure. This is the concrete unresolved
-B/E mapping control, not a claim that FR-061 or a reader already represents it.
+without treating the witness as workflow closure. FR-061 now requires completed
+assessment execution, a decisive-witness settlement basis, exact complete
+decision support and retained open subject progress. Remove a supporting fact,
+substitute an unsettled basis or restamp the subject as closed: each mutation
+refuses the settled combination. Repeat with an independently decisive violation.
+These are planned controls for protocol definition revision 1-draft.2, not a
+claim that a reader or F's consumer already preserves the revised dimensions.
 
 ## Expected Results
 
