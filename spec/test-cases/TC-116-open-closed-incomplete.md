@@ -30,4 +30,3 @@ Decisive open prefixes may settle; undecided ones remain pending. Complete
 closure applies the selected boundary rule, while the incomplete file reports
 incomplete. Inactive activation remains separate from truth. A late
 contradiction names the prior premise/result and preserves historical bytes.
-

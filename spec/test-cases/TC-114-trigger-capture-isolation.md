@@ -26,4 +26,3 @@ Duplicate delivery creates no duplicate obligation; distinct semantic triggers
 do. Captures remain unchanged and instance-scoped. Wrong, absent, partial,
 stale or cross-instance inputs cannot activate or satisfy an obligation and
 produce no temporal Boolean.
-

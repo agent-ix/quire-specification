@@ -61,4 +61,3 @@ missing past, event-time, finite-window, history or completeness semantics.
 - [FR-092](../functional/FR-092-evaluate-bounded-past.md)
 - [FR-094](../functional/FR-094-interpret-progress-history-and-closure.md)
 - [FR-095](../functional/FR-095-preserve-native-tl-correspondence.md)
-

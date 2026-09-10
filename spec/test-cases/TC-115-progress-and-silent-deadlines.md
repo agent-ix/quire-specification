@@ -26,4 +26,3 @@ The at-deadline response participates and the late response does not. Complete
 timestamp/sample progress through the deadline settles silence; event-position
 time remains open without a new position or closure. Foreign progress cannot
 settle the obligation, and the endpoint mutation is detected.
-

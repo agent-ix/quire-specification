@@ -32,4 +32,3 @@ Every supported vector agrees and retains full correspondence. Finite-window,
 timestamped and current past-time mappings return typed unsupported without a
 substitute formula. Each identity mutation fails on its own axis, and only total
 native Boolean values enter the TL proposition population.
-
