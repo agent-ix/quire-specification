@@ -21,7 +21,7 @@ static meaning.
 
 | Selection | Identity | Revision | Exact definition bytes |
 | --- | --- | --- | --- |
-| Observation binding | [`observation-binding.md`](definitions/observation-binding.md) `quire.observation.binding/v1` | `1-draft.1` | `sha256:9fb77da233e792b7d96dda814fe71ec2e86707253ff85dce990f29b83c1bf3e1` |
+| Observation binding | [`observation-binding-1-draft-2.md`](definitions/observation-binding-1-draft-2.md) `quire.observation.binding/v1` | `1-draft.2` | `sha256:5f454277722e7f4816f226361fc3204cfc1a0083f10fe442ef6e93084202f63b` |
 
 The candidate definition remains unindexed and unadopted until A records its
 exact bytes in the shared definition catalog. A changed digest is a changed
@@ -86,12 +86,14 @@ authority.
 
 | Selection | Identity | Revision | Exact definition bytes |
 | --- | --- | --- | --- |
-| Progress/assertion and restoration | [`observation-progress.md`](definitions/observation-progress.md) `quire.observation.progress/v1` | `1-draft.1` | `sha256:8c16aa039f6a537d7da8a8320b173241dc535bfb7f7dfa5cbf3b644559ebac4f` |
+| Progress/assertion and restoration | [`observation-progress-1-draft-2.md`](definitions/observation-progress-1-draft-2.md) `quire.observation.progress/v1` | `1-draft.2` | `sha256:f161f36309f1cbf12dbaeace1f05e6d00ca5109e06fe67d55c9e7de3685c9fdd` |
 
 The selected progress definition preserves the assertion, binding, scope,
-E-owned temporal, record/revision, and restoration selections. It remains a
-candidate until A indexes its exact bytes in the shared definition catalog;
-changing those bytes is a changed definition selection, not a new assertion.
+E-owned temporal, record/revision, and restoration selections, including FCD
+`1.2.0` half-open window coverage `[start, end)`: `start` participates once and
+`end` belongs only to a later selected window. It remains a candidate until A
+indexes its exact bytes in the shared definition catalog; changing those bytes is
+a changed definition selection, not a new assertion.
 
 ## Completeness and assessment handoff
 
