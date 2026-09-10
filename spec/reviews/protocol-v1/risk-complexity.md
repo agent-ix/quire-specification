@@ -5,7 +5,7 @@ type: SpecReview
 analysis: risk-complexity
 scope: "FR-050..FR-061 and NFR-020..NFR-021"
 review_set: all
-evaluated_revision: "57ac0f3"
+evaluated_revision: "61a7524"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-059, type: reviews }

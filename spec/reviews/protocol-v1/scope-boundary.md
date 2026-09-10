@@ -5,7 +5,7 @@ type: SpecReview
 analysis: scope-boundary
 scope: "US-006, FR-050..FR-061, NFR-020..NFR-021 and IT-020..IT-021"
 review_set: all
-evaluated_revision: "57ac0f3"
+evaluated_revision: "61a7524"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/US-006, type: reviews }
@@ -36,6 +36,7 @@ flowchart LR
   P -->|shared result, IT-021| OB3["F: OB03 consumer"]
   P -->|execution/result interface| EA["Engineering Assurance"]
   P -->|evidence references| Q["Quoin authority"]
+  V["quire-verification FR-007"] -->|portable finding semantics| P
 ```
 
 ## External dependencies
@@ -48,6 +49,7 @@ flowchart LR
 | Observation producer | bindings, correlation, membership and completeness | guaranteed | F-owned contract plus IT-021 |
 | Engineering Assurance | bounded execution/result retention | guaranteed when published | IT-021; current Rust port remains in progress |
 | Quoin | evidence authority and method catalog | guaranteed through existing versioned interface | existing Quoin contracts |
+| quire-verification | portable independent-finding assessment | guaranteed through reviewed FR-007 | FR-061-AC-7 strict mapping |
 | Optional protocol/analysis library | specialized algorithm | assumed absent | E03 must qualify exact Rust version/license/profile before adoption |
 
 ## Responsibility allocation
@@ -64,4 +66,3 @@ flowchart LR
 Agent A owns syntax and common predicates; D/E/F own their producer meaning; F
 owns OB03 integration. The protocol evaluator observes and reports behavior but
 does not execute messages, operations or compensation.
-
