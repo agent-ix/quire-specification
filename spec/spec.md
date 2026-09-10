@@ -8,6 +8,14 @@ standards_alignment:
   - iso-iec-ieee-29148
   - ieee-828
 relationships:
+  - target: ix://agent-ix/quire-specification/FR-036
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-037
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-038
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-039
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-030
     type: contains
   - target: ix://agent-ix/quire-specification/FR-031
@@ -219,6 +227,10 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 
 | Artifact | Type | Status |
 | --- | --- | --- |
+| [FR-036](functional/FR-036-retain-lexical-source-locations.md) | FR | Shared grammar/type contribution; unreviewed |
+| [FR-037](functional/FR-037-parse-shared-native-expressions.md) | FR | Shared grammar/type contribution; unreviewed |
+| [FR-038](functional/FR-038-resolve-predicate-scopes.md) | FR | Shared grammar/type contribution; unreviewed |
+| [FR-039](functional/FR-039-normalize-exact-rational-literals.md) | FR | Shared grammar/type contribution; unreviewed |
 | [FR-030](functional/FR-030-bind-composed-definitions.md) | FR | Shared definition binding draft |
 | [FR-031](functional/FR-031-report-requested-capabilities.md) | FR | Per-request capability disposition draft |
 | [FR-032](functional/FR-032-preserve-language-evolution.md) | FR | Evolution/compatibility draft |

@@ -3,6 +3,14 @@ id: TM-003
 title: "Composed language shared foundation acceptance"
 type: TestMatrix
 relationships:
+  - target: ix://agent-ix/quire-specification/FR-036
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-037
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-038
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-039
+    type: references
   - target: ix://agent-ix/quire-specification/FR-030
     type: references
   - target: ix://agent-ix/quire-specification/FR-031
@@ -52,6 +60,26 @@ baseline review remain prerequisites for the corresponding executable cases.
 | FR-035 | FR-035-AC-2 | TC-035 | 🚧 Planned |
 | FR-035 | FR-035-AC-3 | TC-035 | 🚧 Planned |
 | FR-035 | FR-035-AC-4 | TC-035 | 🚧 Planned |
+| FR-036 | FR-036-AC-1 | TC-036 | 🚧 Planned |
+| FR-036 | FR-036-AC-2 | TC-036 | 🚧 Planned |
+| FR-036 | FR-036-AC-3 | TC-036 | 🚧 Planned |
+| FR-036 | FR-036-AC-4 | TC-036 | 🚧 Planned |
+| FR-036 | FR-036-AC-5 | TC-036 | 🚧 Planned |
+| FR-037 | FR-037-AC-1 | TC-037 | 🚧 Planned |
+| FR-037 | FR-037-AC-2 | TC-037 | 🚧 Planned |
+| FR-037 | FR-037-AC-3 | TC-037 | 🚧 Planned |
+| FR-037 | FR-037-AC-4 | TC-037 | 🚧 Planned |
+| FR-037 | FR-037-AC-5 | TC-037 | 🚧 Planned |
+| FR-038 | FR-038-AC-1 | TC-038 | 🚧 Planned |
+| FR-038 | FR-038-AC-2 | TC-038 | 🚧 Planned |
+| FR-038 | FR-038-AC-3 | TC-038 | 🚧 Planned |
+| FR-038 | FR-038-AC-4 | TC-038 | 🚧 Planned |
+| FR-038 | FR-038-AC-5 | TC-038 | 🚧 Planned |
+| FR-039 | FR-039-AC-1 | TC-039 | 🚧 Planned |
+| FR-039 | FR-039-AC-2 | TC-039 | 🚧 Planned |
+| FR-039 | FR-039-AC-3 | TC-039 | 🚧 Planned |
+| FR-039 | FR-039-AC-4 | TC-039 | 🚧 Planned |
+| FR-039 | FR-039-AC-5 | TC-039 | 🚧 Planned |
 
 ## Test Case Summary
 
@@ -63,4 +91,7 @@ baseline review remain prerequisites for the corresponding executable cases.
 | TC-033 | Admit total typed reusable Boolean predicates | Integration | P1 | FR-033-AC-1, FR-033-AC-2, FR-033-AC-3, FR-033-AC-4, FR-033-AC-5 | 🚧 Planned |
 | TC-034 | Bind cross-family predicates to explicit evaluation environments | Integration | P1 | FR-034-AC-1, FR-034-AC-2, FR-034-AC-3, FR-034-AC-4 | 🚧 Planned |
 | TC-035 | Retain explicit ecosystem scope identities in assessment requests | Integration | P1 | FR-035-AC-1, FR-035-AC-2, FR-035-AC-3, FR-035-AC-4 | 🚧 Planned |
-
+| TC-036 | Preserve original source locations through lexical recognition | Integration | P1 | FR-036-AC-1, FR-036-AC-2, FR-036-AC-3, FR-036-AC-4, FR-036-AC-5 | 🚧 Planned |
+| TC-037 | Parse shared expressions with explicit precedence | Integration | P1 | FR-037-AC-1, FR-037-AC-2, FR-037-AC-3, FR-037-AC-4, FR-037-AC-5 | 🚧 Planned |
+| TC-038 | Resolve predicate names under explicit lexical scopes | Integration | P1 | FR-038-AC-1, FR-038-AC-2, FR-038-AC-3, FR-038-AC-4, FR-038-AC-5 | 🚧 Planned |
+| TC-039 | Normalize exact rational literals before domain admission | Integration | P1 | FR-039-AC-1, FR-039-AC-2, FR-039-AC-3, FR-039-AC-4, FR-039-AC-5 | 🚧 Planned |
