@@ -126,6 +126,13 @@ concrete cross-family binding/correlation/closure cases,
 and reconciliation of planned methods/traceability before the baseline review.
 The presence of a requirement file does not discharge those decisions.
 
+A's [edition and state definition candidates](definitions/README.md) now pin the
+rule snapshot at `033fcda` with explicit core/query/graph admission and exact
+dependency digests. They retain rational division with nonzero/range proofs,
+correcting its accidental blanket refusal in the earlier composed draft.
+They do not yet supply temporal/protocol definition artifacts or settle D/F's
+producer interfaces. The complete baseline remains proposed and unreviewed.
+
 One result distinction needs B/E agreement: `eventually[0,30] holds(p)` can settle
 true at the first admitted p witness while the surrounding execution/window is
 still open. E admits decisive prefix truth; B's result table requires complete

@@ -15,7 +15,14 @@ No executable test or completed coverage is claimed by this artifact.
 
 Retain one historical source and definition. Introduce independently a new operator, declaration and family, including a keyword colliding with a previously legal identifier. Read old and new selections with old/new support sets. Migrate one source explicitly and compare original artifacts before and after.
 
+Use the [edition/state candidates](../../proposals/quire-v1/definitions/README.md)
+as exact new-definition inputs, distinct from the historical profile. Change a
+selected rule-file byte while retaining its declared digest: selection must
+refuse. Then issue an explicitly revised definition and dependency closure:
+it has a new selection and cannot relabel the prior result. Merely knowing the
+new artifact bytes, parsing its source or supporting its core subset cannot
+establish full graph-profile support. Assert the actual requested feature scope.
+
 ## Expected Results
 
 The historical source retains its interpretation. New required meaning either has explicit support or refuses. Migration produces a new subject and source correspondence without mutating old bytes or restamping old evidence. Exact keyword/grammar vectors are supplied by L1 before implementation.
-
