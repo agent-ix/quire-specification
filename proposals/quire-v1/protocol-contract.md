@@ -50,7 +50,7 @@ These identities remain distinct and typed:
 | Compensation registration | An obligation created only after its paired effect succeeds. |
 | Compensation attempt / effect | A recovery try / its successful business effect. Success does not imply restoration unless the recovery relation establishes it. |
 | Commit | An authored boundary after which specified compensations are no longer permitted. |
-| Result | Facts about one exact request and subject, with execution, truth, activation, completeness and adequacy separated. |
+| Result | Facts about one exact request and subject, with assessment execution, subject progress/closure, truth, settlement basis, activation, completeness and adequacy separated. |
 
 Identity substitution refuses. A telemetry trace identifier, endpoint, queue,
 timestamp or equal display name cannot stand in for a workflow, role, message,
@@ -106,11 +106,13 @@ cannot execute. The minimum orthogonal dimensions are:
 
 | Dimension | Closed meanings |
 | --- | --- |
-| Execution | completed, refused, unsupported, resource-incomplete, failed |
+| Assessment execution | completed, refused, unsupported, resource-incomplete, failed |
+| Subject progress / closure | exact progress plus separately typed required-scope and whole-execution closure states, each open, closed, incomplete or contradicted with exact authority and boundary identities |
 | Truth | satisfied, violated, pending, unavailable |
+| Settlement basis | closed-scope, decisive-witness, decisive-counterexample, unsettled, unavailable, with the exact decision-support set |
 | Activation | triggered, inactive, activation-unknown |
 | Participation | exact participating and required role-instance sets, or unknown with reasons |
-| Completeness | complete, open, incomplete, with missing inputs and authority/progress identities |
+| Completeness | complete, open, incomplete, with the exact facts required by each returned claim, missing inputs and authority/progress identities; it does not encode subject closure |
 | Adequacy | demonstrated, not-demonstrated, inapplicable, unknown, with the exact obligations and cases considered |
 | Claim | global-conformance, monitorability, local-projection, realizability, refinement or composition |
 | Provenance | source/profile/model/protocol/request/binding/observation/progress/backend identities and derived artifact digests |
@@ -121,6 +123,19 @@ observations, required roles, population members or adverse cases cannot change
 truth, adequacy or package-level status from unsuccessful or unknown to
 successful. Independent supported results remain available when another request
 is unsupported.
+
+A completed assessment may settle satisfied from a decisive witness or violated
+from a decisive counterexample while the assessed subject remains open. The
+result retains that open subject progress, the exact settlement basis and every
+supporting fact; it never relabels the subject as closed. The selected profile
+must prove the result is preserved by all admitted continuations. Otherwise an
+open subject remains pending, or unavailable when a required current fact is
+missing.
+
+A later contradiction to retained support, progress or closure creates a new
+source-bound superseding or invalidating result. The prior bytes and identity
+remain unchanged, and the contradiction is not treated as an admitted
+continuation under the old input identity.
 
 The result is a portable semantic contract for A/E/F and future Engineering
 Assurance consumers. Quoin retains evidence ownership. The protocol evaluator
@@ -144,6 +159,10 @@ Accepted cases:
    declared population and satisfy partial recovery.
 4. O1 and O2 share provider P while retaining distinct workflow/effect subjects.
 5. Global replay completes while local projection is explicitly unavailable.
+6. `eventually[0,30] paid` settles satisfied at its admitted payment witness
+   while the workflow remains open, and `always[0,30] no_duplicate_effect`
+   settles violated at its first admitted counterexample while the workflow
+   remains open; both retain exact decision support and open subject progress.
 
 Refused, violating or incomplete controls:
 
@@ -163,6 +182,12 @@ Refused, violating or incomplete controls:
    strategy: no realizability or composition success.
 8. A satisfiable but unprojectable global trace remains eligible for global
    replay while the projection request is unavailable or refused.
+9. An open prefix without a decisive basis is relabelled satisfied or violated,
+   a decisive result omits one supporting fact, or open subject progress is
+   restamped as closed: refused as an impossible result combination.
+10. A late contradiction silently rewrites or reseals the earlier settled
+    result instead of emitting a linked superseding or invalidating result:
+    refused as result-history corruption.
 
 Every case pins finite branch, iteration, message, active-instance and observation
 bounds in its fixture. Example cardinalities do not become semantic maxima.
