@@ -20,7 +20,7 @@ own checked meaning and imports a compatible typed interface into its caller.
 
 | Rule from the first-profile ruling | Composed-v1 disposition |
 | --- | --- |
-| Exact finite signed-64 integer bounds, checked arithmetic; normalized bounded rationals | Retained; rational literal and operation semantics are specified explicitly. |
+| Exact finite signed-64 integer bounds, checked arithmetic; normalized bounded rationals | Retained, including exact rational division with proved nonzero divisor and normalized result bounds; no integer division is admitted. |
 | Float, implicit integer-to-rational conversion, saturation, silent widening, integer division/remainder | Refused, even in an unreachable branch. Historical 0-draft division results remain historical. |
 | Authored presence/null/multiplicity must survive or refuse | Retained. D owns the source/model contract; no native field-presence syntax is invented here. |
 | Acyclic typed structural containment | Retained. References are identity-bearing edges, never recursive record expansion. |
@@ -42,8 +42,9 @@ Nonliteral arithmetic operands and their ordinary result use the same declared
 numeric type and exact unit. A literal requires a unique expected declared type;
 the checker cannot choose whichever imported scalar happens to fit. Integer and
 rational values never implicitly convert to one another. Like-unit addition,
-subtraction and comparisons are admitted; multiplication requires dimensionless
-operands. Unary negation, addition, subtraction and multiplication must be proved
+subtraction and comparisons are admitted; multiplication and rational division
+require dimensionless operands. Unary negation, addition, subtraction,
+multiplication and rational division must be proved
 defined for every potentially evaluated value under declared bounds and sound
 guard refinements. Unproved definedness is a checking refusal, not a discovered
 logical violation.
@@ -54,7 +55,24 @@ Rational operations use exact fractions, normalize sign/gcd (zero becomes 0/1),
 then check authored numerator/denominator bounds after each operation. Raw proof
 or normalization intermediates are not approximated or checked as though already
 normalized results. Explicit resource exhaustion stops with incompleteness.
-No rational division operator is added by the rational literal form.
+Rational `/` is an ordinary binary operator, separate from the `rational(n,d)`
+literal. Both operands and the result use the same named dimensionless rational
+type. For normalized operands a/b and c/d, prove c nonzero at every potentially
+evaluated division, compute (a*d)/(b*c) exactly, normalize sign/gcd, then check
+the normalized numerator/denominator against the declared result domain. There
+is no truncation, rounded quotient, infinity, zero fallback or implicit unit
+algebra. An unknown nonzero/range proof refuses checking; actual resource
+exhaustion remains incomplete. Native short-circuit facts may justify the
+division only in the branch and exact operand scope where they hold.
+
+For a dimensionless Q with normalized numerator [-1,1] and denominator [1,2],
+`rational(1,2) / rational(1,2)` is 1/1: raw 2/2 must normalize before the numerator
+bound is tested. `rational(1,1) / rational(1,2)` refuses the result bound;
+`rational(1,1) / rational(0,1)` refuses the zero divisor. For d:Q,
+`d != rational(0,1) implies rational(0,1) / d = rational(0,1)` has a total
+guarded quotient; the unguarded quotient needs a nonzero proof. This retains
+ADR-0053's rational admission under native control semantics; it does not
+inherit an external language's eager Boolean evaluation or integer rounding.
 
 Equality admits Boolean, same named numeric/text/enum types, and explicitly
 admitted object/reference identity. Text uses exact Unicode scalar sequences,

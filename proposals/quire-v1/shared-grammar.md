@@ -433,10 +433,14 @@ raw component exceeding a final bound can normalize inside that bound; reject
 only after normalization, subject to explicit parsing/arithmetic resource limits.
 Resource exhaustion is incomplete execution/admission, not a false predicate.
 
-`1/2`, `1 div 2`, `1 rem 2` and `1 mod 2` remain recognized expressions refused
-by the carried-forward v1 arithmetic admission. They do not spell rational
-literals. This edition's ability to parse an operator does not enable it in the
-first state profile or alter old `0-draft` division/remainder semantics.
+`/` is a left-associative product-level binary operator, never rational-literal
+punctuation. Under the carried-forward admission it requires two values of one
+named dimensionless rational type, a proved nonzero divisor and a normalized
+result inside that same domain. `rational(1,2) / rational(1,2)` can therefore
+denote 1/1 under an appropriate explicit type. Bare `1/2` cannot introduce a
+rational value: ordinary integer literals do not implicitly convert to rational.
+Integer slash, `div`, `rem` and `mod` are recognized but refused even in
+unreachable syntax. Historical `0-draft` arithmetic retains its original meaning.
 
 ## Protocol expressions and bindings
 

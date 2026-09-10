@@ -20,7 +20,7 @@ A complete located syntax tree for the selected entry point, or a typed syntax/r
 
 ## Behavior
 
-The proposed common grammar defines state and predicate declarations plus shared expression precedence. The final composed entry point must explicitly incorporate temporal/protocol productions before it is accepted; balanced unknown bodies are not productions. Preserve grouping and each call/field/operator locus. Require EOF for a complete unit. Grammar recognition is followed by separate name/type/profile admission. A recognized div/rem/mod/slash form does not enable the carried-forward prohibited integer operations or rational division.
+The proposed common grammar defines all three native families, predicate declarations and shared expression precedence; balanced unknown bodies are not productions. Preserve grouping and each call/field/operator locus. Require EOF for a complete unit. Grammar recognition is followed by separate name/type/profile admission. A recognized div/rem/mod/slash form does not enable prohibited integer arithmetic. Rational slash requires the exact typing, nonzero and normalized-range rules of FR-044; it is not literal punctuation.
 
 ## Acceptance Criteria
 
