@@ -107,19 +107,19 @@ value/predicate interface while retaining their own declaration permissions.
 Source admission and backend/mapping support remain separate, especially for
 past time and timestamped windows unsupported by current TL targets.
 
-F's contribution through `65496a9` is integrated. Its current contract pins D's
-Producer interface 1.2.0 at `06a62c7` with a verified exact document digest.
-That new contract selection does not revise either 1-draft.1 candidate in place. Its binding/progress candidate
-bytes are indexed above, but their relative selected-contract links and external
-dependencies still need exact immutable selections before they form a closed
-definition set. Indexing their bytes alone does not supply those dependencies.
-F also needs to preserve B's new settlement/closure/support dimensions in its
-consumer contract, including E's explicit decision-scope versus surrounding-
-execution closure and supersession. B's PR #21 and E's PR #20 are integrated;
-their family reviews do not accept these successor definitions or the full
-baseline. FR-062 specifies the outgoing E02 projection separately from native
-source admission. D's standard-facing model/configuration contribution and
-composed review remain open.
+F's contribution through `921993b` is integrated, including its result-consumer
+preservation requirements and cases. D's standard-facing binding contract at
+`d6ac501` is supplied for the composed review; see the exact
+[review input](../shared-foundation.md#composed-review-input). The original
+observation 1-draft.1 candidates and F's earlier `06a62c7` producer selection
+remain unchanged. The final successor selections must close their immutable
+rule/dependency links before adoption; requiring result consumers to retain a
+digest does not itself select the definition bytes.
+
+B's PR #21 and E's PR #20 are integrated; their family reviews do not accept
+these successor definitions or the full baseline. FR-062 specifies the outgoing
+E02 projection separately from native source admission. The full review now
+evaluates the delivered A/B/D/E/F contracts together.
 
 TC-020/030/031/032/040/047/049 specify positive and mutated-selection controls. Structural
 Quire validation and this byte census do not qualify a profile implementation.
