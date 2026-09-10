@@ -118,8 +118,10 @@ digest does not itself select the definition bytes.
 
 B's PR #21 and E's PR #20 are integrated; their family reviews do not accept
 these successor definitions or the full baseline. FR-062 specifies the outgoing
-E02 projection separately from native source admission. The full review now
-evaluates the delivered A/B/D/E/F contracts together.
+E02 projection separately from native source admission. The [complete review](../../../spec/reviews/composed-v1/base.md)
+evaluated the delivered A/B/D/E/F contracts at `788b161` and requires specific
+corrections before adoption. SR-403 records the successor dependency closure;
+SR-401/402/406 identify the semantic boundaries to reconcile first.
 
 TC-020/030/031/032/040/047/049 specify positive and mutated-selection controls. Structural
 Quire validation and this byte census do not qualify a profile implementation.

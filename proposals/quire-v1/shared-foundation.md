@@ -67,7 +67,7 @@ where they preserve the required distinctions.
 | Native temporal to TL | Profile meaning, typed predicate valuations, clock/history/closure, original native correspondence | E; A/F consume |
 | Native protocol to conformance | Roles, messages/effects, causal structure, related instances, obligations, selected claim/assumptions | B; A/F consume |
 | Observation to assessment | Exact binding/input identities, correlation, clock/progress/closure, completeness and resource controls | F; B/E consume |
-| Concrete observation handoff | [F's binding contract](observation-contract.md): explicit role/schema/subject/anchor mapping, availability and scoped progress | F; through `65496a9`, named binding/progress candidates with exact dependency closure still pending |
+| Concrete observation handoff | [F's binding contract](observation-contract.md): explicit role/schema/subject/anchor mapping, availability and scoped progress | F; through `921993b`, successor immutable closure tracked by SR-403 |
 | Assessment to result | Requested subject/capability and per-obligation disposition, failed prerequisites, completeness/provenance | B contract; A/E/F produce |
 | Native diagnostic interpretation | [Retained codes and typed causes](definitions/native-diagnostics.md), actual producer stage, original loci and independent response-catalog identity | A; consumes existing compiler Code vocabulary and result envelopes |
 | Export | Selected mapping/profile and source-bound preserved/conditional/unrepresented/refused obligations | F coordinates; D/E contribute; A identity |
@@ -97,70 +97,62 @@ generator is selected by this checkpoint.
 | --- | --- | --- |
 | Composed grammar, lexical rules, precedence and predicate declaration spelling | A / L1 | [One composed grammar](shared-grammar.md) now includes all three families, common query leaves and capture scopes; reconcile its model/observation bindings and examples before acceptance. No textual pattern parsing in adapters. |
 | Exact integer/rational spelling and normalized bounds; anchors and alias/composite pre-state correspondence | A / FS03 | [State contract](state-contract.md) now proposes exact arithmetic, queries and capture/anchor rules; preserve carried-forward admission and explicitly adopt extensions. |
-| Presence independent of multiplicity and explicit null; related-instance/population types | D / FCD #95, FS02, IN01 | Name the producer contract or refuse; never invent native field-presence semantics to repair producer loss. |
+| Presence independent of multiplicity and explicit null; related-instance/population types | D / FCD #95, FS02, IN01 | D's FR-100–103 and baseline 1.2 at `d6ac501` are delivered; resolve the concrete stage/digest/window findings below without inventing native model semantics. |
 | Current TL false-padding versus the old finite-window draft; clocks and past/history | E / FS04 and IR #64 | [FR-090–095](../../spec/functional/FR-090-select-temporal-profile-and-clock.md) now distinguish false-extension and timestamped finite-window meanings; current TL refuses unsupported timestamped/past mappings. Native syntax is drafted; final definition identities and review remain. |
-| Protocol structure, owned choices, parallel join, bounded repetition, compensation and conformance | B / PT01–02 with A / standard #12 | [Protocol contract](protocol-contract.md) is integrated through B's reviewed PR #18 (`5c3ab91`); A's [native surface](choreography-surface.md) proposes concrete control, value scope and registration/activation rules. Their exact binding and result agreement remains required. Global conformance is not a realizability proof. |
-| Related-instance correlation, population/window membership, silent deadlines and late data | F / OB01–03 with D/E | FR-110–116 and [observation cases](../../spec/observation/tests.md) are integrated from F's `4d58e40`; exact membership, binding and late-data contracts still need agreement with D/E/B. No inferred success from missing data. |
+| Protocol structure, owned choices, parallel join, bounded repetition, compensation and conformance | B / PT01–02 with A / standard #12 | [Protocol contract](protocol-contract.md) and revised results are integrated through B's PR #21 (`2d8372c`); A's [native surface](choreography-surface.md) supplies control, value scope and registration/activation rules. SR-401/402/406 identify remaining cross-family conflicts. Global conformance is not a realizability proof. |
+| Related-instance correlation, population/window membership, silent deadlines and late data | F / OB01–03 with D/E | FR-110–116 and [observation cases](../../spec/observation/tests.md) are integrated through F's `921993b`. SR-401/403/404/406 identify the remaining replay, selection, evidence-plan and window-mapping corrections. |
 
 The original ConfigVersion minimum-only integer and parent relation stay visible
 as an admission/design gate. A graph/predicate extension receives an explicit
 new reviewed profile identity; it never restamps the first state profile or its
 old evidence. All decisions above are specification work, not claims of coverage.
 
-## Authoring integration
+## Authoring integration and review disposition
 
-Use the reserved IDs in the cycle allocation. B/D/E/F own only their assigned
-new artifact files and family matrix; A owns this document, shared requirements,
-AD-001 and the master index. Submit changes to another editor's artifact as a
-proposal with one concrete distinguishing case. Maintain one shared meaning.
+B/D/E/F own their family artifacts; A owns the shared grammar, architecture,
+master index, catalog and composed integration. Reserved IDs are not a quota.
+D's externally owned FR-100–103 are indexed directly instead of being duplicated
+under reserved standard FR-070–089.
 
-The initial A requirements and planned acceptance cases are linked from the
-[shared matrix](../../spec/composed-foundation/tests.md). Family contributions
-and final grammar are still required before the complete baseline review. E's
-[temporal matrix](../../spec/temporal/tests.md) is integrated as draft input;
-FR-048 supplies its native source integration. Run
-structural validation while drafting; reserve formal reviews for coherent PR
-readiness. C continues engineering-assurance independently.
+The [complete QUOIN review](../../spec/reviews/composed-v1/base.md) evaluates
+`788b161bd1b7fd5d632cc42c949f497914df3ce6` with the exact inputs below.
+Base plus all seven analyses are complete; **changes are required before
+baseline acceptance**. Review artifacts are retained at
+`6e589dbf2fb8b2349903cbb4530ec17d78d2ef60`. Their findings replace blanket
+“undelivered family” gates.
 
-The contributions now share one draft tree. Remaining acceptance work includes
-D's model/configuration decisions, acceptance of exact profile candidates,
-concrete cross-family binding/correlation/closure cases,
-and reconciliation of planned methods/traceability before the baseline review.
-The presence of a requirement file does not discharge those decisions.
+| Remaining correction | Owner / review |
+| --- | --- |
+| Static type-checking versus runtime population/window prerequisites | D/A; SR-402 FND-001 |
+| Preserve decisive truth with complete exact support despite unrelated unavailable data | D with B/E/F; SR-401 FND-001 |
+| Permit decisive satisfied and violated results on an open subject in replay/incremental assessment | F; SR-401 FND-002 |
+| Exact canonical numeric domain and producer-object/native-byte correspondence | D/A; SR-401 FND-003 and SR-406 FND-002 |
+| Map producer population/window coverage to each selected temporal clock, preserving endpoint and record identity | F with D/E/A; SR-406 FND-001 |
+| Publish successor observation selections with immutable reachable rules | F/A after the affected corrections; SR-403 FND-001 |
+| Reconcile existing case/metric/method bindings and temporal wording/prerequisite | B/E/F; SR-403 FND-002, SR-404, SR-407 |
 
-A's [edition and state definition candidates](definitions/README.md) now pin the
-rule snapshot at `033fcda` with explicit core/query/graph admission and exact
-dependency digests. They retain rational division with nonzero/range proofs,
-correcting its accidental blanket refusal in the earlier composed draft.
-The catalog supplies E's three temporal roots and common facet at revision
-`1-draft.3`, selecting reviewed rules at `19bbf7a`. Protocol `1-draft.4`
-selects B's revised canonical-result rules at `2d8372c` and that temporal
-dependency. State remains `1-draft.2`, retaining the grammar without sequence
-indexing. All earlier temporal/protocol candidate files remain unchanged.
-F's binding/progress candidates are indexed;
-F's current contract pins Producer interface 1.2.0 at D's `06a62c7`, whose
-exact document digest has been verified. F's candidate dependency closure and
-D's standard-facing model/configuration contribution remain outstanding.
-The complete baseline remains proposed and unreviewed.
+SR-400 FND-001's obsolete delivery status is corrected in this navigation and
+the capability crosswalk. A accepts SR-404 FND-012/013's unit-testing dispositions
+for the existing TC-039/042 controls; the authored Test class remains valid.
+Those dispositions select planned methods, not executed evidence.
 
-The [capability crosswalk](capabilities.md#initial-specification-crosswalk) now
-links all 51 approved capability decisions to current draft requirements and
-planned cases, retaining explicit D/F/result gaps and later delivery boundaries.
-The [package reference candidate](definitions/package-reference.md) fills the
-outer-reference interpretation without flattening a package's clause profiles
-or claiming a new canonicalizer/payload reader. F's output consumer contract
-through `65496a9` is integrated; its loss outcomes do not establish target semantics.
+The [capability crosswalk](capabilities.md#initial-specification-crosswalk)
+links all 51 approved decisions to draft requirements and planned cases.
+Twenty versioned definition candidates and all earlier candidate bytes are
+preserved. State remains `1-draft.2`; temporal `1-draft.3` selects E's
+`19bbf7a` rules, and protocol `1-draft.4` selects B's `2d8372c` results.
+Outgoing verification projection under FR-062 is independent of native admission.
 
-B's reviewed PRs #19/#21 and E's PR #20 resolve the result distinction: `eventually[0,30] holds(p)`
-can settle true at the first admitted p witness while the surrounding execution
-remains open. FR-061 now separates completed assessment execution, open subject
-progress, decisive settlement basis and exact supporting facts. TC-031/061 cover
-both decisive truths and pending controls; complete global conformance still
-requires its own closure premises. F's consumer contract must now preserve these
-added dimensions, including E's two closure axes and supersession. B's FR-062
-now specifies a separate outgoing verification projection that preserves the
-canonical protocol source and independent findings. B/E family reviews do not
-accept the successor definitions or the full composed baseline.
+B/E/F now preserve the shared distinction: `eventually[0,30] holds(p)` may
+settle true at an admitted witness while its subject remains open. Execution,
+truth, exact support, progress, closure, completeness and adequacy remain
+separate; complete global conformance has its own closure premises. The review
+identifies the remaining FR-114 and D blanket-rule contradictions to that meaning.
+
+Integrate owner corrections and validate the affected artifacts, then close
+successor definition selections and refine existing compiler #35–39 and
+ecosystem tickets. Do not repeat the full review on each edit. C's
+engineering-assurance completion is independent.
 
 ## Composed review input
 
@@ -173,13 +165,9 @@ at `d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f`, exact document SHA-256
 `d4923f378a7019998844f1b9124d5b0242f46c76060218b2d9c05af7b68c3ed8`.
 
 Its producer-owned FR-100/101/102/103 supply presence, relationship, population
-and configuration requirements. The master index references those exact artifacts;
-reserved standard FR-070–089 numbers are not a requirement to duplicate them.
-The previous statements about undelivered D/F work are superseded by this input.
-
-All families now have review input. The composed review checks agreement across
-their boundaries and final exact definition selections; delivery alone does not
-establish agreement or adoption. F's older producer pin at `06a62c7` and its
-1-draft.1 definition files stay unchanged until an explicit successor selection.
-D's canonical object digests remain distinct from A's raw model/document and
-definition-byte digests; an equal `sha256:` prefix does not identify the domain.
+and configuration requirements. The master index references those exact artifacts.
+All families have review input; delivery alone does not establish agreement
+or adoption. F's older producer pin at `06a62c7` and its 1-draft.1 definition
+files stay unchanged until an explicit successor selection. D's canonical object
+digests remain distinct from A's raw model/document and definition-byte digests;
+an equal `sha256:` prefix does not identify the domain.
