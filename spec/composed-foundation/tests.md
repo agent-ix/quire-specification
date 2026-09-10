@@ -3,6 +3,8 @@ id: TM-003
 title: "Composed language shared foundation acceptance"
 type: TestMatrix
 relationships:
+  - target: ix://agent-ix/quire-specification/FR-130
+    type: references
   - target: ix://agent-ix/quire-specification/FR-049
     type: references
   - target: ix://agent-ix/quire-specification/FR-048
@@ -71,6 +73,12 @@ baseline review remain prerequisites for the corresponding executable cases.
 | FR-030 | FR-030-AC-6 | TC-030 | 🚧 Planned |
 | FR-030 | FR-030-AC-7 | TC-030 | 🚧 Planned |
 | FR-030 | FR-030-AC-8 | TC-030 | 🚧 Planned |
+| FR-130 | FR-130-AC-1 | TC-030 | 🚧 Planned |
+| FR-130 | FR-130-AC-2 | TC-030 | 🚧 Planned |
+| FR-130 | FR-130-AC-3 | TC-030 | 🚧 Planned |
+| FR-130 | FR-130-AC-4 | TC-030 | 🚧 Planned |
+| FR-130 | FR-130-AC-5 | TC-030 | 🚧 Planned |
+| FR-130 | FR-130-AC-6 | TC-030 | 🚧 Planned |
 | FR-031 | FR-031-AC-1 | TC-031 | 🚧 Planned |
 | FR-031 | FR-031-AC-2 | TC-031 | 🚧 Planned |
 | FR-031 | FR-031-AC-3 | TC-031 | 🚧 Planned |
@@ -186,7 +194,7 @@ baseline review remain prerequisites for the corresponding executable cases.
 | Test ID | Title | Type | Priority | Traces To | Status |
 | --- | --- | --- | --- | --- | --- |
 | TC-020 | Report complete versus partial capability scope | Integration | P1 | FR-020-AC-7, FR-020-AC-8, FR-020-AC-9, FR-020-AC-10 | 🚧 Planned |
-| TC-030 | Bind every clause to its exact semantic definitions | Integration | P1 | FR-030-AC-1, FR-030-AC-2, FR-030-AC-3, FR-030-AC-4, FR-030-AC-5, FR-030-AC-6, FR-030-AC-7, FR-030-AC-8 | 🚧 Planned |
+| TC-030 | Bind clauses and composed-package references to exact definitions | Integration | P1 | FR-030-AC-1, FR-030-AC-2, FR-030-AC-3, FR-030-AC-4, FR-030-AC-5, FR-030-AC-6, FR-030-AC-7, FR-030-AC-8, FR-130-AC-1, FR-130-AC-2, FR-130-AC-3, FR-130-AC-4, FR-130-AC-5, FR-130-AC-6 | 🚧 Planned |
 | TC-031 | Report each requested assessment capability independently | Integration | P1 | FR-031-AC-1, FR-031-AC-2, FR-031-AC-3, FR-031-AC-4 | 🚧 Planned |
 | TC-032 | Preserve selected meanings across language evolution | Integration | P1 | FR-032-AC-1, FR-032-AC-2, FR-032-AC-3, FR-032-AC-4 | 🚧 Planned |
 | TC-033 | Admit total typed reusable Boolean predicates | Integration | P1 | FR-033-AC-1, FR-033-AC-2, FR-033-AC-3, FR-033-AC-4, FR-033-AC-5 | 🚧 Planned |
