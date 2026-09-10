@@ -9,7 +9,11 @@ relationships:
 ---
 ## Statement
 
-The observation implementation and qualification paths SHALL use Rust 1.98.1; Java, JVM, Maven, Eclipse, Electron, and foreign monitoring runtimes are prohibited for binding, replay, incremental assessment, and observation mapping.
+The observation implementation and qualification paths SHALL use Rust 1.98.1;
+Java, JVM, Maven, Eclipse, Electron, and foreign monitoring runtimes are
+prohibited for binding, replay, incremental assessment, and observation mapping.
+Existing retained Quoin tooling SHALL NOT exempt any newly owned observation
+executable path from this requirement.
 
 ## Measurement and Evaluation
 
