@@ -3,6 +3,8 @@ id: US-005
 title: "Describe and assess a distributed workflow in one language"
 type: US
 relationships:
+  - target: ix://agent-ix/quire-specification/FR-048
+    type: exercises
   - target: ix://agent-ix/quire-specification/FR-036
     type: exercises
   - target: ix://agent-ix/quire-specification/FR-037

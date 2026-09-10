@@ -92,10 +92,10 @@ generator is selected by this checkpoint.
 
 | Decision | Owner | Required disposition before affected implementation |
 | --- | --- | --- |
-| Composed grammar, lexical rules, precedence and predicate declaration spelling | A / L1 | [Common fragment](shared-grammar.md) now drafted; integrate family productions, query/type catalogs and positive/negative cases before acceptance. No textual pattern parsing in adapters. |
+| Composed grammar, lexical rules, precedence and predicate declaration spelling | A / L1 | [State/temporal grammar](shared-grammar.md) now drafted with common query leaves and capture scopes; integrate protocol productions and model/observation bindings before acceptance. No textual pattern parsing in adapters. |
 | Exact integer/rational spelling and normalized bounds; anchors and alias/composite pre-state correspondence | A / FS03 | [State contract](state-contract.md) now proposes exact arithmetic, queries and capture/anchor rules; preserve carried-forward admission and explicitly adopt extensions. |
 | Presence independent of multiplicity and explicit null; related-instance/population types | D / FCD #95, FS02, IN01 | Name the producer contract or refuse; never invent native field-presence semantics to repair producer loss. |
-| Current TL false-padding versus the old finite-window draft; clocks and past/history | E / FS04 and IR #64 | Select exact native semantics, distinguishing vectors and bridge support/refusal; no equivalence assumption. |
+| Current TL false-padding versus the old finite-window draft; clocks and past/history | E / FS04 and IR #64 | [FR-090–095](../../spec/functional/FR-090-select-temporal-profile-and-clock.md) now distinguish false-extension and timestamped finite-window meanings; current TL refuses unsupported timestamped/past mappings. Native syntax is drafted; final definition identities and review remain. |
 | Protocol structure, owned choices, parallel join, bounded repetition, compensation and conformance | B / PT01–02 with A / standard #12 | Define observable meaning and claim premises; monitoring is not general realizability proof. |
 | Related-instance correlation, population/window membership, silent deadlines and late data | F / OB01–03 with D/E | Name completeness/progress authority and incomplete/refused outcomes; no inferred success from missing data. |
 
@@ -113,6 +113,8 @@ proposal with one concrete distinguishing case. Maintain one shared meaning.
 
 The initial A requirements and planned acceptance cases are linked from the
 [shared matrix](../../spec/composed-foundation/tests.md). Family contributions
-and final grammar are still required before the complete baseline review. Run
+and final grammar are still required before the complete baseline review. E's
+[temporal matrix](../../spec/temporal/tests.md) is integrated as draft input;
+FR-048 supplies its native source integration. Run
 structural validation while drafting; reserve formal reviews for coherent PR
 readiness. C continues engineering-assurance independently.

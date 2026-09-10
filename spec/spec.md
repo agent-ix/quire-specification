@@ -8,6 +8,28 @@ standards_alignment:
   - iso-iec-ieee-29148
   - ieee-828
 relationships:
+  - target: ix://agent-ix/quire-specification/FR-048
+    type: contains
+  - target: ix://agent-ix/quire-specification/US-008
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-090
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-091
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-092
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-093
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-094
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-095
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-040
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-040
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-041
+    type: contains
   - target: ix://agent-ix/quire-specification/NFR-010
     type: contains
   - target: ix://agent-ix/quire-specification/FR-040
@@ -231,15 +253,17 @@ Standard-wide publication terms remain unresolved.
 
 The [shared foundation](../proposals/quire-v1/shared-foundation.md) is a drafting
 checkpoint with artifact reservations and explicit outstanding decisions.
-FR-030–047, the decomposed FR-020, NFR-010 and their
+FR-030–048, the decomposed FR-020, NFR-010 and their
 [planned matrix](composed-foundation/tests.md) establish the shared contribution.
 The [grammar](../proposals/quire-v1/shared-grammar.md) and
 [state contract](../proposals/quire-v1/state-contract.md) now include ordered
-queries/aggregation and explicit anchor, numeric and graph proposals. They have
-not undergone the complete baseline
-review and do not authorize dependent implementation. Family contracts and the
-composed grammar remain required contributions; historical review artifacts do
-not review this new scope.
+queries/aggregation and explicit anchor, numeric and graph proposals. E's
+FR-090–095, NFR-040, IT-040/041 and [temporal matrix](temporal/tests.md) are now
+integrated as draft temporal meaning. FR-048 connects the native temporal syntax
+and shared predicate environments to that contribution. The full baseline review
+has not run and dependent implementation is not authorized by these drafts.
+Protocol syntax and model/observation family agreement remain integration work;
+historical review artifacts do not review this new scope.
 
 ## 16. References
 
@@ -249,6 +273,17 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 
 | Artifact | Type | Status |
 | --- | --- | --- |
+| [FR-048](functional/FR-048-bind-native-temporal-syntax.md) | FR | Native temporal source integration; unreviewed |
+| [US-008](usecase/US-008-assess-native-temporal-obligations.md) | US | Temporal family contribution; unreviewed |
+| [FR-090](functional/FR-090-select-temporal-profile-and-clock.md) | FR | Temporal family contribution; unreviewed |
+| [FR-091](functional/FR-091-evaluate-bounded-future.md) | FR | Temporal family contribution; unreviewed |
+| [FR-092](functional/FR-092-evaluate-bounded-past.md) | FR | Temporal family contribution; unreviewed |
+| [FR-093](functional/FR-093-bind-temporal-activation-and-captures.md) | FR | Temporal family contribution; unreviewed |
+| [FR-094](functional/FR-094-interpret-progress-history-and-closure.md) | FR | Temporal family contribution; unreviewed |
+| [FR-095](functional/FR-095-preserve-native-tl-correspondence.md) | FR | Temporal family contribution; unreviewed |
+| [NFR-040](non-functional/NFR-040-bound-temporal-state.md) | NFR | Temporal retention/resource contract; unreviewed |
+| [IT-040](integration/IT-040-native-future-tl-correspondence.md) | IT | Planned native/TL correspondence |
+| [IT-041](integration/IT-041-temporal-bridge-refusals.md) | IT | Planned temporal refusal correspondence |
 | [FR-040](functional/FR-040-admit-explicit-state-extensions.md) | FR | Composed state/diagnostic contribution; unreviewed |
 | [FR-041](functional/FR-041-evaluate-ordered-queries.md) | FR | Composed state/diagnostic contribution; unreviewed |
 | [FR-042](functional/FR-042-select-pre-state-reads.md) | FR | Composed state/diagnostic contribution; unreviewed |
