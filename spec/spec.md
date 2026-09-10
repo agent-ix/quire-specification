@@ -40,6 +40,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-061
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-062
+    type: contains
   - target: ix://agent-ix/quire-specification/NFR-020
     type: contains
   - target: ix://agent-ix/quire-specification/NFR-021
@@ -334,7 +336,7 @@ cross-instance references to the composed grammar. Exact model/observation and
 result-family agreement remain integration work; historical review artifacts do
 not review this new scope.
 
-B's [protocol contract](../proposals/quire-v1/protocol-contract.md), FR-050–061,
+B's [protocol contract](../proposals/quire-v1/protocol-contract.md), FR-050–062,
 NFR-020/021, IT-020/021 and [protocol matrix](protocol/tests.md) are integrated
 through reviewed PR #19 (`81ec682`), separating decisive truth from subject
 closure. F's FR-110–116, NFR-050–052, IT-050/051 and
@@ -365,6 +367,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-059](functional/FR-059-assess-finite-global-conformance.md) | FR | Integrated family draft; unreviewed |
 | [FR-060](functional/FR-060-separate-protocol-claims.md) | FR | Integrated family draft; unreviewed |
 | [FR-061](functional/FR-061-report-orthogonal-results.md) | FR | Integrated family draft; unreviewed |
+| [FR-062](functional/FR-062-project-results-to-portable-verification.md) | FR | B-owned projection amendment; review in progress |
 | [NFR-020](non-functional/NFR-020-bound-protocol-processing.md) | NFR | Integrated family draft; unreviewed |
 | [NFR-021](non-functional/NFR-021-reproduce-protocol-results.md) | NFR | Integrated family draft; unreviewed |
 | [IT-020](integration/IT-020-native-protocol-handoff.md) | IT | Integrated family draft; unreviewed |

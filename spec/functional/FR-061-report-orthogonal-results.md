@@ -15,12 +15,10 @@ relationships:
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-094
     type: depends_on
-  - target: ix://agent-ix/quire-verification/FR-007
-    type: depends_on
 ---
 ## Description
 
-When any protocol assessment is requested, the result producer SHALL retain separate assessment-execution, subject-progress/closure, truth, settlement-basis, activation, participation, completeness, adequacy, claim and provenance facts for the exact requested subject.
+When any protocol assessment is requested, the result producer SHALL retain separate assessment-execution, subject-progress/closure, truth, settlement-basis, activation, participation, assumptions, completeness, observation-adequacy, protocol-adequacy, claim and provenance facts for the exact requested subject.
 
 ## Inputs
 
@@ -45,6 +43,12 @@ proven, bounded-checked, tested and observed claim strengths as distinct
 source-bound values. The result producer SHALL reuse Quoin evidence authority.
 The result producer SHALL NOT create a local evidence store or verification-method
 registry.
+The result producer SHALL emit every canonical protocol result with
+`contractVersion` equal to `quire.protocol.result/v1-draft.1`, kind
+`ProtocolResult` and a result identity. Its enclosing artifact reference carries
+the `sha256-jcs` digest over the complete RFC 8785 canonical result bytes; the
+digest is not a self-referential field inside those bytes. A strict reader SHALL
+recompute the enclosing reference digest before accepting the result.
 Assessment execution states whether the requested evaluator completed or why it
 did not. Subject progress/closure states whether the assessed workflow, trace or
 temporal decision scope and the whole surrounding execution are independently
@@ -52,6 +56,14 @@ open, closed or incomplete. Completeness states which facts required by the
 returned claim are available and identifies every missing dependency. The
 result producer SHALL NOT use completeness as a substitute for either closure
 state.
+
+Every assumption SHALL retain its exact assumption identity and one state from
+`met`, `not-met`, `unknown` or `not-assessed`. Observation adequacy states
+whether the exact observations required to interpret the requested result are
+`adequate`, `inadequate`, `unknown` or `not-assessed`. Protocol adequacy states
+whether the exact declared obligation and case set is `demonstrated`,
+`not-demonstrated`, `inapplicable` or `unknown`. The result producer SHALL NOT
+use either adequacy domain as evidence for the other.
 
 Every truth result SHALL carry exactly one settlement basis from
 `closed-scope`, `decisive-witness`, `decisive-counterexample`, `unsettled` or
@@ -63,6 +75,13 @@ remain visible in completeness and SHALL NOT force the producer to delay or
 falsify the settled truth. A missing fact inside the decision-support set SHALL
 make that truth unavailable.
 
+Every retained decision-support record SHALL identify its exact oracle and
+observation plus one dependence relation from `independent`, `shared`, `derived`
+or `unknown`. A derived relation SHALL identify its exact predecessor; a shared
+relation SHALL identify its dependence group. A strict reader SHALL refuse a
+missing, cyclic or self-referential predecessor and SHALL NOT infer independence
+from distinct display names or implementations.
+
 When a later observation, progress or closure record contradicts a premise in a
 settled result, the result producer SHALL retain the earlier result bytes and
 emit a typed superseding or invalidating result that identifies the earlier
@@ -70,12 +89,6 @@ result, the contradicted premise and the corrected input identity. The result
 producer SHALL NOT rewrite, reseal or silently replace the earlier result. A
 premise contradiction is not an admitted continuation under the earlier input
 identity.
-
-When the result is mapped to the portable quire-verification assessment, the
-result producer SHALL preserve every independent execution, activation,
-observation, participation, assumption and logical finding required by
-quire-verification FR-007. The result producer SHALL describe protocol adequacy
-through the exact exercised protocol obligations and cases. The result producer SHALL NOT represent protocol adequacy as an evidence-sufficiency decision.
 
 The strict reader SHALL enforce the following result-combination rules.
 
@@ -91,20 +104,20 @@ The strict reader SHALL enforce the following result-combination rules.
 | A retained decision-support or closure premise is later contradicted | The earlier result bytes remain unchanged. A new result identifies the earlier result and contradiction, makes dependent package success unavailable and recomputes truth only under the corrected exact input identity. |
 | Activation is inactive | Assessment execution is completed, truth is unavailable and the trigger scope is complete under an exact closure authority. The surrounding subject execution may remain open. |
 | Activation is activation-unknown | Truth is unavailable and completeness is open or incomplete with the missing trigger dependencies. |
-| Adequacy is demonstrated | Every assessment execution and required input for the declared case set is complete and the exact required case set is present. Subject closure is required only when the declared adequacy claim depends on it. An obligation-path demonstration additionally requires triggered activation. |
+| Protocol adequacy is demonstrated | Every assessment execution and required input for the declared case set is complete and the exact required case set is present. Subject closure is required only when the declared adequacy claim depends on it. An obligation-path demonstration additionally requires triggered activation. Observation adequacy remains independently adequate. |
 | Package status is complete success | Every selected required request satisfies its claim-specific success rule. Unsupported or incomplete requests remain represented and prevent complete success. |
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-061-AC-1 | Healthy, violating, inactive, pending, incomplete, refused, unsupported, failed and settled-open-subject cases remain discriminable without diagnostic prose. | Test (TC-061) |
+| FR-061-AC-1 | Healthy, violating, inactive, pending, incomplete, refused, unsupported, failed and settled-open-subject cases remain discriminable without diagnostic prose, including independent assumption, observation-adequacy and protocol-adequacy facts. | Test (TC-061) |
 | FR-061-AC-2 | Removing a trigger, required role, provider observation, population member or negative case cannot improve truth, adequacy or package-level status. | Test (TC-061) |
-| FR-061-AC-3 | Every result binds exact source/profile/model/protocol/request/binding/input/subject-progress/closure/backend identities, settlement basis, decision-support identities and derived artifact digests. | Test (TC-061) |
+| FR-061-AC-3 | Every result binds its exact result-contract version and identity plus source/profile/model/protocol/request/binding/input/subject-progress/closure/backend identities, settlement basis and decision-support identities; its enclosing artifact reference carries a recomputed RFC 8785 digest over the complete result bytes without self-reference. | Test (TC-061) |
 | FR-061-AC-4 | A result with an impossible dimension combination, stale identity or conflicting claim strength is refused by a strict reader. | Test (TC-061) |
 | FR-061-AC-5 | One unsupported request does not remove an independent supported result, while package complete success remains unavailable. | Test (TC-061) |
 | FR-061-AC-6 | Every row of the normative result-combination table admits its valid boundary case and refuses every one-axis forbidden combination. | Test (TC-061) |
-| FR-061-AC-7 | Mapping to the portable verification assessment retains every simultaneous independent finding and its no-sufficiency-decision limit. | Test (TC-061) |
+| FR-061-AC-7 | Every decision-support record retains its exact oracle/observation identities and dependence relation; missing, self-referential or cyclic derived lineage and invented independence are refused. | Test (TC-061) |
 | FR-061-AC-8 | A decisive temporal witness or counterexample may settle truth while the subject remains open only with completed assessment execution, exact complete decision support and proof that every admitted continuation preserves the result; missing support, a non-decisive basis or false closure refuses that combination. | Test (TC-061) |
 | FR-061-AC-9 | A late contradiction to decision support, progress or closure preserves the earlier result bytes and emits a source-bound superseding or invalidating result; it cannot restamp or silently replace the earlier result. | Test (TC-061) |
 
@@ -114,4 +127,3 @@ The strict reader SHALL enforce the following result-combination rules.
 - [FR-059](./FR-059-assess-finite-global-conformance.md).
 - [FR-060](./FR-060-separate-protocol-claims.md).
 - [Protocol contract](../../proposals/quire-v1/protocol-contract.md).
-- [Portable independent-finding contract](ix://agent-ix/quire-verification/FR-007).
