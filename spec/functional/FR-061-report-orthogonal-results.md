@@ -5,6 +5,12 @@ type: FR
 relationships:
   - target: ix://agent-ix/quire-specification/US-006
     type: implements
+  - target: ix://agent-ix/quire-specification/FR-031
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-059
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-060
+    type: depends_on
 ---
 ## Description
 
@@ -34,6 +40,11 @@ source-bound values. The result producer SHALL reuse Quoin evidence authority.
 The result producer SHALL NOT create a local evidence store or verification-method
 registry.
 
+The strict reader SHALL enforce the result-combination table in the
+[protocol contract](../../proposals/quire-v1/protocol-contract.md), including
+the completed/triggered/complete premises for satisfied truth, the finite-witness
+exception for violation, and unavailable truth for non-completed execution.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -43,6 +54,7 @@ registry.
 | FR-061-AC-3 | Every result binds exact source/profile/model/protocol/request/binding/input/progress/backend identities and derived artifact digests. | Test (TC-061) |
 | FR-061-AC-4 | A result with an impossible dimension combination, stale identity or conflicting claim strength is refused by a strict reader. | Test (TC-061) |
 | FR-061-AC-5 | One unsupported request does not remove an independent supported result, while package complete success remains unavailable. | Test (TC-061) |
+| FR-061-AC-6 | Every row of the normative result-combination table admits its valid boundary case and refuses every one-axis forbidden combination. | Test (TC-061) |
 
 ## Dependencies
 

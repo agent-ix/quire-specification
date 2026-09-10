@@ -22,6 +22,12 @@ realizability, refinement and assume-guarantee composition remain independent
 requested capabilities with their own premises and may be unavailable while
 global conformance remains useful.
 
+All choice guards, obligation triggers and recovery relations are total,
+read-only typed predicates over immutable supplied values and captures. They
+perform no I/O, callbacks, mutation, reflection or user-code execution. An
+evaluation failure is a typed failed or unavailable result; it never selects a
+branch or falls back to truthiness.
+
 The representation consumes A-owned source/profile/predicate identities,
 D-owned component, relationship and population identities, E-owned clock and
 closure semantics, and F-owned observation/correlation/completeness bindings.
@@ -109,14 +115,23 @@ cannot execute. The minimum orthogonal dimensions are:
 | Claim | global-conformance, monitorability, local-projection, realizability, refinement or composition |
 | Provenance | source/profile/model/protocol/request/binding/observation/progress/backend identities and derived artifact digests |
 
-The combination is constrained. A refused or unsupported execution has no truth
-verdict. A logical success requires complete inputs for every fact on which that
-truth depends. An inactive obligation is not a satisfied obligation and cannot
-demonstrate a compensation path. Missing observations, required roles, population
-members or negative cases cannot improve truth, adequacy or package-level status.
-Package-level complete success requires every selected required request to have
-an eligible successful result; independent supported results remain available
-when another request is unsupported.
+The combination is constrained. A strict reader enforces at least these rules:
+
+| Condition | Required relation |
+| --- | --- |
+| Execution is refused, unsupported, resource-incomplete or failed | Truth is unavailable. Already-established activation/provenance facts remain retained. |
+| Truth is satisfied | Execution is completed, activation is triggered and completeness is complete. |
+| Truth is violated | Execution is completed and activation is triggered. Completeness may be incomplete only when the retained finite violation witness does not depend on missing facts. |
+| Truth is pending | Execution is completed, activation is triggered and completeness is open or incomplete. |
+| Activation is inactive | Execution is completed, truth is unavailable and completeness is complete under an exact closure authority. |
+| Activation is activation-unknown | Truth is unavailable and completeness is open or incomplete with the missing trigger dependencies. |
+| Adequacy is demonstrated | Execution and required inputs are complete and the exact required case set is present; an obligation-path demonstration additionally requires triggered activation. |
+| Package status is complete success | Every selected required request satisfies its claim-specific success rule; unsupported or incomplete requests remain represented and prevent complete success. |
+
+Missing observations, required roles, population members or adverse cases cannot
+change truth, adequacy or package-level status from unsuccessful or unknown to
+successful. Independent supported results remain available when another request
+is unsupported.
 
 The result is a portable semantic contract for A/E/F and future Engineering
 Assurance consumers. Quoin retains evidence ownership. The protocol evaluator
@@ -165,6 +180,17 @@ bounds in its fixture. Example cardinalities do not become semantic maxima.
 
 ## Reuse and claim limits
 
+No external protocol, solver or monitor library is adopted by this specification
+slice. The mapping at this revision is explicit:
+
+| Capability | Selected ownership | External candidate disposition |
+| --- | --- | --- |
+| Protocol representation, compensation and shared result meaning | Owned Quire semantics in this specification | No external semantic authority. |
+| Finite global conformance | Required future first-party Rust implementation or qualified Rust library | Candidate selection open under E03; no version or license accepted yet. |
+| Projection, realizability, refinement and composition | Separately requested later analysis capabilities | Research only; no theorem, algorithm, version or dependency adopted. |
+| Temporal monitoring used by protocol predicates | E-owned native/TL bridge and qualified Rust consumers | R2U2/C2PO and other foreign-runtime candidates are not production or qualification dependencies. |
+| Execution and evidence retention | Engineering Assurance and Quoin contracts | Consumed interfaces; the protocol implementation owns neither runner nor evidence store. |
+
 PT01/PT02 may adopt a Rust library only after E03 records exact version, source,
 license, runtime boundary, admitted algorithm/profile and discriminating adverse
 cases. Similar terminology does not transfer a theorem. General projection,
@@ -175,3 +201,8 @@ The maintained architecture and its library list are research inputs. Earlier
 FRETish-source and foreign-runtime recommendations are superseded by the owner
 ruling: native Quire is the sole editable formal-clause language, external forms
 are export-only, and production or possible qualification integrations are Rust.
+
+Until a required producer interface is reviewed and available, the affected
+request is refused or reported unsupported with the missing dependency. No
+hardcoded fixture, inferred default, source-text adapter or local stub substitutes
+for A/D/E/F/Engineering Assurance producer contracts.
