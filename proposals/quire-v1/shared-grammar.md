@@ -44,7 +44,8 @@ Common reserved words for this candidate fragment are `language`, `edition`,
 `profile`, `version`, `digest`, `model`, `using`, `predicate`, `Boolean`,
 `invariant`, `pre`, `post`, `on`, `at`, `current`, `let`, `in`, `if`, `then`,
 `else`, `implies`, `or`, `and`, `not`, `self`, `result`, `true`, `false`,
-`present`, `value`, `deref`, `size`, `forall`, `exists`, `reaches`, `rational`,
+`present`, `value`, `deref`, `size`, `contains`, `forall`, `exists`, `filter`,
+`map`, `count`, `sum`, `reaches`, `rational`,
 `div`, `rem`, `mod`, `temporal` and `protocol`. The complete edition inventory
 will add the reviewed family vocabulary before acceptance; this fragment is not
 an extensible runtime keyword registry.
@@ -90,9 +91,14 @@ primary      = 'true' | 'false' | 'self' | 'result' | uint | string
              | ident, [ '(', [ expr, { ',', expr } ], ')' ]
              | type-name, '::', ident
              | '(', expr, ')'
-             | ('present' | 'value' | 'deref' | 'size' | 'pre'),
+             | ('present' | 'value' | 'deref' | 'pre'),
                '(', expr, ')'
-             | ('forall' | 'exists'), '(', ident, 'in', expr, ':', expr, ')'
+             | 'size', [ '<', type-name, '>' ], '(', expr, ')'
+             | 'contains', '(', expr, ',', expr, ')'
+             | ('forall' | 'exists' | 'filter' | 'map'),
+               '(', ident, 'in', expr, ':', expr, ')'
+             | ('count' | 'sum'), '<', type-name, '>',
+               '(', ident, 'in', expr, ':', expr, ')'
              | 'reaches', '(', expr, ',', expr, ',', ident, ')'
              | 'rational', '(', signed-int, ',', signed-int, ')' ;
 signed-int   = [ '-' ], uint ;
@@ -102,6 +108,10 @@ signed-int   = [ '-' ], uint ;
 It is not the final composed-unit production. Adding temporal and protocol
 declarations requires explicit grammar productions, not a catch-all body.
 The common productions carry no clock, observation or protocol-control semantics.
+The [state contract](state-contract.md) specifies ordered queries, exact
+aggregation, numeric domains and operation-anchor correspondence. Type arguments
+after the reserved query names are type positions, not comparisons; the normal
+comparison grammar applies inside their argument expressions.
 Named imported model types are the authority for parameter domains. This draft
 does not introduce inline record/field schemas or infer scalar bounds from data.
 Any additional parameter type constructors require the reviewed shared type
@@ -179,7 +189,7 @@ first state profile or alter old `0-draft` division/remainder semantics.
 ## Outstanding integration
 
 Before accepting L1: integrate temporal/protocol productions and examples,
-reconcile the complete keyword/type/builtin/query catalog, agree family scopes
+reconcile the complete keyword/type catalog, agree family scopes
 and anchors, supply exact profile definition artifacts, and run the selected
 baseline review. This document neither closes those requirements nor qualifies
 the current compiler against the new syntax.
