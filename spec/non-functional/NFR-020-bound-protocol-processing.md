@@ -31,16 +31,21 @@ optional analysis backend's resource use.
 
 | Metric | Target | Threshold | Method |
 | --- | --- | --- | --- |
-| Unbounded caller-controlled collections or traversals | 0 | 0 | Analysis |
+| Unbounded caller-controlled collections or traversals | 0 | 0 | Inspection (TC-065) |
 | Limit-crossing cases returned as typed resource-incomplete results | 100% of declared limits | 100% | Test (TC-062) |
 | Business actions or compensations executed by assessment | 0 | 0 | Test |
 
 ## Verification
 
-Inspect the reviewed Rust interfaces and execute exact-boundary and one-over-
-boundary cases independently for every declared structural, instance,
-observation and result limit. Mutate each limit check so equality is rejected or
-excess is accepted; the assigned boundary case must discriminate both changes.
+Retain a complete source-bound inventory of every caller-controlled collection,
+queue and traversal, its owning request or result field, limit authority, charge
+point, termination argument, resource-incomplete code and corresponding TC-062
+boundary case. Reconcile that inventory independently against every reviewed
+Rust interface and production path; TC-065 fails when an entry or source site is
+unmatched. Execute exact-boundary and one-over-boundary cases independently for
+every inventoried structural, instance, observation and result limit. Mutate
+each limit check so equality is rejected or excess is accepted; TC-062 must
+discriminate both changes.
 
 ## Dependencies
 
