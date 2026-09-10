@@ -28,9 +28,10 @@ targets.
 
 ## Outputs
 
-A generated TL formula/valuation request plus source-correspondence record, or a
-typed unsupported/refused mapping naming every unmatched semantic dimension.
-The generated TL artifact is internal derived output and never editable source.
+A generated TL formula/valuation request plus a source/result-correspondence
+record, or a typed unsupported/refused mapping naming every unmatched semantic
+dimension. The generated TL artifact is internal derived output and never
+editable source.
 
 ## Behavior
 
@@ -51,6 +52,14 @@ language and temporal profile definition; model/type/predicate bindings;
 evaluation anchor; immutable capture environment; clock/observation binding;
 interval; closure/history premises; TL formula/profile/proposition identities;
 and bridge definition.
+
+For every mapped evaluation result, the correspondence record shall also
+preserve assessment-execution state; decision-scope progress/closure;
+surrounding-execution progress/closure; truth; settlement basis; the exact
+decision-support identities; completeness; and any superseded-result relation.
+Those dimensions remain native/shared-result metadata outside the TL formula
+and valuation request when the selected TL profile does not encode them. Equal
+formula bytes or equal TL truth shall not manufacture, erase or merge them.
 
 The bridge shall lower only total native Boolean predicates to TL propositions.
 
@@ -74,12 +83,13 @@ correspondence.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-095-AC-1 | Independent native and TL evaluators emit equal truth/pending outcomes for every exhaustive bounded future formula/trace in the declared event-position mapping domain. | Test (TC-117) |
+| FR-095-AC-1 | Independent native and TL evaluators emit equal truth/pending outcomes for every member of the declared finite exhaustive bounded-future formula/trace population in the event-position mapping domain. | Test (TC-117) |
 | FR-095-AC-2 | The one-position `always[0,1] p` vector rejects a finite-window-to-`mltl.closed-trace/v1` equivalence claim. | Test (TC-117) |
 | FR-095-AC-3 | Timestamped-event and past-time requests return typed unsupported mappings at current TL versions without emitting a substitute formula. | Test (TC-117) |
 | FR-095-AC-4 | Mutating any native/TL profile, source/span, model/predicate, clock, capture, interval, closure/history or bridge identity breaks correspondence and names that axis. | Test (TC-117) |
 | FR-095-AC-5 | A numeric, nullable, unavailable or pending native value cannot enter the TL proposition population. | Test (TC-117) |
-| FR-095-AC-6 | Fixed-sample lowering retains epoch/period/unit and rejects a missing sample, changed period or event-count reinterpretation even where the TL formula bytes match. | Test (TC-113) |
+| FR-095-AC-6 | Fixed-sample lowering retains epoch/period/unit, reports an absent runtime sample as incomplete, and refuses a changed period or event-count reinterpretation even where the TL formula bytes match. | Test (TC-113) |
+| FR-095-AC-7 | A supported TL result is accepted only when the correspondence record preserves assessment execution, both progress/closure axes, settlement basis, exact decision support, completeness and supersession; mutating or omitting one axis cannot yield a healthy native result. | Test (TC-117) |
 
 ## Dependencies
 

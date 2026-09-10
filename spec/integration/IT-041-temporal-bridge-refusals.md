@@ -39,8 +39,10 @@ missing history; silent deadline progress; and exact unsupported expectations.
 
 1. Submit each unsupported semantic request to the bridge.
    - IT-041-SC-01: the bridge returns a typed unsupported result naming every unmatched profile/operator/clock/boundary dimension and emits no substitute TL formula.
-2. Submit open, closed-complete and closed-incomplete variants with valid and foreign progress/history bindings.
-   - IT-041-SC-02: each lifecycle premise produces its specified distinct disposition and foreign premises cannot settle a result.
+2. Submit independent open/closed decision-scope, open/closed surrounding-
+   execution, completed/failed assessment, complete/incomplete input and all
+   settlement-basis variants with valid and foreign progress/history bindings.
+   - IT-041-SC-02: each lifecycle premise produces its specified distinct disposition; false closure, missing exact support and foreign premises cannot settle a result.
 3. Add a newly reviewed mock capability for one formerly unsupported dimension, then alter one semantic rule.
    - IT-041-SC-03: support appears only for the exact matching capability; the altered rule remains unsupported.
 

@@ -40,7 +40,9 @@ The event-position profile shall not claim elapsed time.
 
 The fixed-sample profile shall retain epoch, period and unit identity.
 
-The fixed-sample profile shall refuse a missing required sample.
+The fixed-sample profile shall classify an absent runtime sample under a valid
+binding as incomplete. The frontend shall refuse a malformed, incompatible or
+missing fixed-sample clock definition or binding before evaluation.
 
 The timestamped-event profile shall retain clock identity, unit, admitted order
 and the completeness premise for every evaluated window.
