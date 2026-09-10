@@ -25,4 +25,4 @@ An untriggered compensator, absent external observation, unsupported obligation,
 ## Dependencies
 
 - [Shared foundation](../../proposals/quire-v1/shared-foundation.md).
-- B owns the shared result/adequacy contract and Quoin retains evidence authority.
+- [B's FR-007 result contract](ix://agent-ix/quire-verification/FR-007) owns independent execution, activation, observation, participation, assumption, logical, and provenance findings; Quoin retains evidence authority.
