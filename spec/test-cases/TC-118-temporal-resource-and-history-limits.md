@@ -32,4 +32,3 @@ state loss and missing predecessor return incomplete/refused with exact
 obligation/limit identity and no Boolean. Required state remains retained until
 settlement or explicit incomplete disposition, and every Boolean-fallback
 mutation is detected.
-
