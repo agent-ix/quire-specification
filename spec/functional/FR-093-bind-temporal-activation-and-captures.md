@@ -42,9 +42,13 @@ activation and shall identify the missing or inconsistent input. One instance's
 captures shall not satisfy another instance's propositions.
 
 Activation, temporal truth and participation shall remain separate dimensions.
-An untriggered clause is inactive; it is not a true obligation and is not
-evidence that recovery behavior was exercised. This requirement does not define
-protocol choice/conformance or the observation transport schema.
+A trigger scope that is authoritatively closed and complete without an admitted
+trigger shall produce inactive activation; it is not a true obligation and is
+not evidence that recovery behavior was exercised. An open trigger scope shall
+produce activation-unknown with open completeness. Missing or refused trigger
+evidence shall produce activation-unknown with its incomplete or refused
+assessment-execution disposition. This requirement does not define protocol
+choice/conformance or the observation transport schema.
 
 ## Acceptance Criteria
 
@@ -54,7 +58,7 @@ protocol choice/conformance or the observation transport schema.
 | FR-093-AC-2 | A duplicate receipt for one semantic trigger retains receipt provenance but creates no duplicate obligation instance. | Test (TC-114) |
 | FR-093-AC-3 | Changing mutable source state after activation cannot change an already captured amount, reference or predicate valuation environment. | Test (TC-114) |
 | FR-093-AC-4 | Missing, nullable, wrong-type, stale or anchor-mismatched capture input reports incomplete/refused activation before temporal evaluation. | Test (TC-114) |
-| FR-093-AC-5 | An untriggered clause reports inactive separately from true, false, pending, incomplete and refused. | Test (TC-116) |
+| FR-093-AC-5 | A closed-complete trigger scope with no trigger reports inactive; an open scope or missing/refused trigger evidence reports activation-unknown with its distinct completeness/execution state, and neither case becomes temporal truth. | Test (TC-116) |
 
 ## Dependencies
 

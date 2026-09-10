@@ -38,11 +38,11 @@ native truth expectations; and one-axis identity mutations.
 ## Test Procedure
 
 1. Admit and lower every supported native vector.
-   - IT-040-SC-01: every emitted TL subject names the exact native, bridge and TL identities and all required correspondence dimensions.
+   - IT-040-SC-01: every emitted TL subject names the exact native, bridge and TL identities and all required correspondence dimensions; the bridge record separately retains assessment execution, decision-scope and surrounding-execution progress/closure, settlement basis, exact decision support, completeness and supersession.
 2. Evaluate each vector independently in the native oracle and selected TL evaluator.
    - IT-040-SC-02: truth/pending and boundary outcomes agree for every vector, including the `until` lower-bound convention and false extension.
-3. Apply each one-axis identity/value mutation.
-   - IT-040-SC-03: every mutation refuses or breaks correspondence on the changed axis without producing a substitute healthy result.
+3. Apply each one-axis identity/value/result mutation.
+   - IT-040-SC-03: every mutation refuses or breaks correspondence on the changed axis without producing a substitute healthy result, including when TL truth and formula bytes are unchanged.
 
 ## Expected Results
 
