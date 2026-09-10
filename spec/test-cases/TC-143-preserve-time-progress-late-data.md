@@ -18,6 +18,9 @@ settlement; repeat without watermark authority. Mutate the selected assertion
 definition bytes, scope, clock, source set, and restoration basis independently;
 attempt continuation without the required predecessor/history.
 Repeat with adjacent half-open windows and progress at the shared boundary.
+Carry event time, ingestion time, causal-order premise, and clock-uncertainty
+premise independently through the real consumer boundary; mutate one field at a
+time without replacing it with another field.
 
 ## Expected Results
 
@@ -27,3 +30,4 @@ changing the selected settled result. Every mismatched assertion or missing
 restoration basis remains incomplete/refused and cannot settle or restart the
 assessment. Progress includes its selected start and excludes its end, so it
 cannot settle or contradict the adjacent window through the shared boundary.
+All four timing fields/premises remain distinct at the consumer boundary.

@@ -17,9 +17,14 @@ The observation service SHALL enforce declared event-size, active-key, retained-
 
 | Metric | Target | Threshold | Method |
 | --- | --- | --- | --- |
-| Boolean success after resource exhaustion | 0 | 0 | Boundary tests |
-| Retained state above declared bound | 0 entries | 0 entries | Resource tests |
+| Boolean success after resource exhaustion | 0 | 0 | fault-injection |
+| Retained state above declared bound | 0 entries | 0 entries | property-based-testing |
 
 ## Verification
 
-Test exact-bound and one-over-bound events, active keys, history, and population members. Verify that every over-bound result remains incomplete/refused with the selected subject and exceeded bound identity.
+Test exact-bound and one-over-bound events, active keys, history, and
+population/window members. Independently observe retained state before and
+after each control, including attempted allocation/retention on the one-over
+path. Verify that every over-bound result remains incomplete/refused with the
+selected subject and exceeded bound identity, and that a correct disposition
+with excess retained state fails this metric.

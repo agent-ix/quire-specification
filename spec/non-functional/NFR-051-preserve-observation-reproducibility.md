@@ -17,9 +17,14 @@ The observation service SHALL make each settled assessment reproducible from its
 
 | Metric | Target | Threshold | Method |
 | --- | --- | --- | --- |
-| Differing settled dispositions for identical admitted inputs | 0 | 0 | Replay differential tests |
-| Assessments missing an input identity | 0 | 0 | Provenance inspection |
+| Differing settled dispositions for identical admitted inputs | 0 | 0 | metamorphic-testing |
+| Assessments missing an input identity | 0 | 0 | contract-testing |
 
 ## Verification
 
-Repeat batch and incremental assessment with byte-identical admitted inputs and compare structured dispositions and identities. Mutate one retained identity at a time and verify that it is visible in the resulting subject/provenance or refusal.
+Repeat batch and incremental assessment with byte-identical admitted inputs and
+compare structured dispositions and identities. Mutate one retained identity at
+a time and verify that it is visible in the resulting subject/provenance or
+refusal. Omit each required identity while holding any otherwise equal truth
+constant; incomplete provenance must fail this metric rather than pass because
+the disposition matches.

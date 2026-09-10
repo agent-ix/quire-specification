@@ -19,8 +19,8 @@ executable path from this requirement.
 
 | Metric | Target | Threshold | Method |
 | --- | --- | --- | --- |
-| Forbidden runtime dependencies in owned paths | 0 | 0 | Dependency inventory |
-| First-party executable paths outside Rust 1.98.1 | 0 | 0 | Build/configuration inspection |
+| Forbidden runtime dependencies in owned paths | 0 | 0 | inspection |
+| First-party executable paths outside Rust 1.98.1 | 0 | 0 | inspection |
 
 ## Verification
 

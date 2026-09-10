@@ -20,7 +20,8 @@ open-subject decisive truth with its settlement basis and exact decision support
 Mutate assessment execution, subject-progress/closure, selected definition/profile
 identity-revision-digest, and a late-result supersession link; attempt Boolean-pass
 coercion; and compare target text that is structurally accepted with a source-bound
-loss control.
+loss control. Independently omit every required source assessment and mapping
+identity while holding any otherwise equal truth and target text constant.
 
 ## Expected Results
 
@@ -29,3 +30,5 @@ loss remains classified, no non-success disposition is promoted to a pass,
 definition/profile drift refuses, and structural target-text acceptance neither
 changes the mapping outcome nor establishes semantic preservation. Earlier result
 bytes remain associated only through a linked superseding or invalidating result.
+An equal disposition with incomplete required provenance fails the mapping
+reproducibility control.
