@@ -18,7 +18,9 @@ one tick after deadline and no response. Advance a validated timestamp watermark
 and fixed-sample progress to just before, exactly at and just after the inclusive
 deadline without adding another business event. Repeat using event-position
 time. Substitute progress from a foreign clock, source set, subject or binding,
-and mutate the inclusive comparison to strict greater-than.
+and mutate the inclusive comparison to strict greater-than. On one valid
+binding, follow a later progress assertion with a regressing boundary and with
+a same-revision assertion carrying conflicting bytes.
 
 ## Expected Results
 
@@ -26,3 +28,5 @@ The at-deadline response participates and the late response does not. Complete
 timestamp/sample progress through the deadline settles silence; event-position
 time remains open without a new position or closure. Foreign progress cannot
 settle the obligation, and the endpoint mutation is detected.
+The regressing or conflicting assertion produces a typed contradiction/refusal
+without rolling back progress, closure or any earlier result identity.
