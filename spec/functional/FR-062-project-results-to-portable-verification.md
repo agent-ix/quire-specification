@@ -104,6 +104,14 @@ missing or conflicting, a source state has no mapping in the selected table, or
 the output would lose an applicable FR-007 finding. The adapter SHALL reuse
 Quoin evidence authority and SHALL NOT emit a sufficiency decision.
 
+The intended implementation owner is the future first-party Rust
+`agent-ix/quire-protocol` library after private setup ticket #33 is authorized.
+quire-verification owns the selected E02 contract and strict assessment reader;
+Engineering Assurance supplies the accepted plan/task/run execution context and
+typed result transport; Quoin retains evidence authority. This requirement does
+not authorize a local runner, evidence store, E02 fork or substitute adapter in
+another repository.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
