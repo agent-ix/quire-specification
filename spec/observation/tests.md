@@ -34,7 +34,7 @@ CLI, or backend conformance.
 | FR-113 | FR-113-AC-1, FR-113-AC-2, FR-113-AC-3 | TC-143 | 🚧 Planned |
 | FR-114 | FR-114-AC-1, FR-114-AC-2, FR-114-AC-3 | TC-144 | 🚧 Planned |
 | FR-115 | FR-115-AC-1, FR-115-AC-2, FR-115-AC-3 | TC-145 | 🚧 Planned |
-| FR-116 | FR-116-AC-1, FR-116-AC-2, FR-116-AC-3 | TC-146 | 🚧 Planned |
+| FR-116 | FR-116-AC-1, FR-116-AC-2, FR-116-AC-3, FR-116-AC-4 | TC-146 | 🚧 Planned |
 
 ## Test Case Summary
 
