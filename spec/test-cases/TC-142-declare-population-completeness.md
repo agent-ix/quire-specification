@@ -18,6 +18,11 @@ payment-provider record; remove closure input; and independently mutate producer
 version, membership digest, configuration digest, and closure digest.
 Repeat with adjacent half-open windows: a member at the first window's `start`,
 one exactly at its `end`, and the second window starting at that same instant.
+At each declared event-size and population/window-member limit, record the
+admitted event size and retained population/window-member count; repeat one
+byte or member over that exact limit. The one-over input must not be retained or
+allocated beyond its declared bound merely because the final disposition is a
+refusal.
 
 ## Expected Results
 
@@ -26,3 +31,6 @@ closure remain explicit incomplete/refused reasons. Every producer-selection
 mismatch is refused without an ambient default and cannot establish aggregate
 success. The start member occurs once in the first window; the boundary member
 occurs only in the second window and cannot be double-counted.
+Exact limits retain at most their declared event and population/window-member
+state. One-over results retain no excess state and identify the affected subject
+and exceeded bound as incomplete/refused.
