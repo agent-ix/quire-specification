@@ -1,7 +1,6 @@
-# Observation range correspondence definition candidate
+# Observation range correspondence
 
-Selection identity: `quire.observation.range/v1`; revision: `1-draft.1`.
-**Candidate only: not adopted, serialized, canonicalized, or implemented.**
+Working draft for `quire.observation.range/v1`; not adopted or implemented.
 
 This definition maps a producer-owned finite window to one selected native
 temporal clock. It does not redefine producer membership, temporal meaning,
@@ -9,14 +8,12 @@ progress authority, closure, or runtime admission. It preserves the producer's
 half-open coverage and E's selected clock meaning; a caller selects exactly one
 row below rather than converting among clock families.
 
-## Required immutable dependencies
+## Required inputs
 
-| Dependency | Identity | Revision/version | Exact bytes or source revision |
-| --- | --- | --- | --- |
-| Producer interface | FCD Producer interface | `1.2.0` at `cb740adc80fdc44aaf2c6cce0553344228c18784` | `sha256:05258d455c78d6b72d1fa4c063078ac5277d4ebca627cfe965ae7fee5c31a570` |
-| Event-position profile | `quire.temporal.event-position.false-extension/v1` | `1-draft.3` | `sha256:125d5f2231318279ae6737d2fa228702c7230ed23aab70c9c46b3ff28e711b95` |
-| Fixed-sample profile | `quire.temporal.fixed-sample.false-extension/v1` | `1-draft.3` | `sha256:4b6c8e6346222508f3bb2b07b183725003df63d169ba72b90cd635644c7afe36` |
-| Timestamped profile | `quire.temporal.timestamped-event.finite-window/v1` | `1-draft.3` | `sha256:13add5a82ac54977dba6fa104693349c849c7a08369dbfc0fccafea471012ef4` |
+Use the producer interface selected by the [observation contract](../observation-contract.md)
+and exactly one clock meaning from [FR-090](../../../spec/functional/FR-090-select-temporal-profile-and-clock.md).
+These are supplied assessment inputs; the draft does not duplicate their
+revision/digest selection tables.
 
 A range selection retains the producer interface/document identity and digest,
 window identity and digest, selected temporal profile identity/revision/digest,
@@ -52,9 +49,3 @@ premise remains incomplete with its exact identity. A wrong family, endpoint,
 authority, sequence, epoch, period, unit, record/position association, or
 producer digest refuses. Neither outcome is false, an empty population, a
 manufactured member, or an ambient default.
-
-## Adoption boundary
-
-A must index this candidate's exact digest before an observation binding or
-progress definition selects it. Earlier observation definitions retain their
-old producer pins and do not acquire this correspondence.
