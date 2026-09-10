@@ -12,9 +12,8 @@ Verify the shared result contract and its monotonic response to missing evidence
 
 ## Test Procedure
 
-Construct healthy, violating, inactive, pending, incomplete, refused, unsupported and failed results. Delete each trigger, role, provider observation, population member and adverse case independently. Mutate each provenance identity and every forbidden dimension combination.
+Construct healthy, violating, inactive, pending, incomplete, refused, unsupported and failed results. Exercise every valid row of the normative result-combination table, then mutate each constrained dimension independently. Delete each trigger, role, provider observation, population member and adverse case. Mutate every provenance identity.
 
 ## Expected Results
 
-All result states remain structurally discriminable. Missing evidence never improves truth, adequacy or package status. Strict readers refuse every stale identity and impossible combination while retaining independent valid results.
-
+All valid boundary combinations admit and all one-axis forbidden combinations refuse. Result states remain structurally discriminable; missing evidence never improves truth, adequacy or package status; strict readers refuse stale identities while retaining independent valid results.

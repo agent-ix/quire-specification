@@ -5,6 +5,10 @@ type: FR
 relationships:
   - target: ix://agent-ix/quire-specification/US-006
     type: implements
+  - target: ix://agent-ix/quire-specification/FR-051
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-055
+    type: depends_on
 ---
 ## Description
 
@@ -40,4 +44,3 @@ the source definition and effect that created it.
 
 - [FR-051](./FR-051-preserve-communication-identities.md).
 - [FR-055](./FR-055-activate-protocol-obligations.md).
-

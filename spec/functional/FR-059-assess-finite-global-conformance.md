@@ -5,6 +5,14 @@ type: FR
 relationships:
   - target: ix://agent-ix/quire-specification/US-006
     type: implements
+  - target: ix://agent-ix/quire-specification/FR-052
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-053
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-054
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-058
+    type: depends_on
 ---
 ## Description
 
@@ -42,4 +50,3 @@ produce the same semantic results.
 
 - [FR-052](./FR-052-represent-bounded-control.md) through [FR-058](./FR-058-preserve-retry-and-partial-recovery.md).
 - E/F temporal and observation contracts.
-

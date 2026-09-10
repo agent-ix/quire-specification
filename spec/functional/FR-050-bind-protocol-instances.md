@@ -5,6 +5,8 @@ type: FR
 relationships:
   - target: ix://agent-ix/quire-specification/US-006
     type: implements
+  - target: ix://agent-ix/quire-specification/FR-035
+    type: depends_on
 ---
 ## Description
 
@@ -43,4 +45,3 @@ fully observable.
 - [US-006](../usecase/US-006-assess-distributed-protocols.md).
 - [Shared foundation](../../proposals/quire-v1/shared-foundation.md).
 - [Protocol contract](../../proposals/quire-v1/protocol-contract.md).
-

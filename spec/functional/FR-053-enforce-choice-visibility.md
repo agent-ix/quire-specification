@@ -5,6 +5,8 @@ type: FR
 relationships:
   - target: ix://agent-ix/quire-specification/US-006
     type: implements
+  - target: ix://agent-ix/quire-specification/FR-052
+    type: depends_on
 ---
 ## Description
 
@@ -41,4 +43,3 @@ invalid or that a general projection theorem has been attempted.
 
 - [FR-052](./FR-052-represent-bounded-control.md).
 - Agent A's typed predicate and scope rules.
-
