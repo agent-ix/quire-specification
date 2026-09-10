@@ -21,6 +21,7 @@ The adapter SHALL classify each mapped obligation as preserved, conditional, unr
 | FR-116-AC-1 | A consumer receives source/binding/progress provenance with each per-obligation disposition. | Test (TC-146) |
 | FR-116-AC-2 | An unsupported or lossy mapping is visible as conditional, unrepresented, or refused. | Test (TC-146) |
 | FR-116-AC-3 | A consumer cannot convert pending, incomplete, or refused into a passed Boolean result. | Test (TC-146) |
+| FR-116-AC-4 | Parsing, serializing, or accepting emitted target text does not alter a mapping outcome or establish semantic preservation. | Test (TC-146) |
 
 ## Dependencies
 
