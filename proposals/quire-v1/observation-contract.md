@@ -65,6 +65,15 @@ and its asserted boundary. A progress record for O2 or another window cannot
 settle O1. EOF, a quiet transport, or a record timestamp is not progress/closure
 authority.
 
+| Selection | Identity | Revision | Exact definition bytes |
+| --- | --- | --- | --- |
+| Progress/assertion and restoration | [`observation-progress.md`](definitions/observation-progress.md) `quire.observation.progress/v1` | `1-draft.1` | `sha256:8c16aa039f6a537d7da8a8320b173241dc535bfb7f7dfa5cbf3b644559ebac4f` |
+
+The selected progress definition preserves the assertion, binding, scope,
+E-owned temporal, record/revision, and restoration selections. It remains a
+candidate until A indexes its exact bytes in the shared definition catalog;
+changing those bytes is a changed definition selection, not a new assertion.
+
 ## Completeness and assessment handoff
 
 For every requested obligation, F's handoff supplies the selected binding and

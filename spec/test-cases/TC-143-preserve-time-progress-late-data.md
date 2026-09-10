@@ -12,8 +12,16 @@ Planned OB02 timing controls. No executable test or completed coverage is claime
 
 ## Test Procedure
 
-Use a refund deadline with event and ingestion times, an explicit watermark, a causal-order counterexample, clock uncertainty, and a late refund after settlement; repeat without watermark authority.
+Use a refund deadline with event and ingestion times, an explicit watermark, a
+causal-order counterexample, clock uncertainty, and a late refund after
+settlement; repeat without watermark authority. Mutate the selected assertion
+definition bytes, scope, clock, source set, and restoration basis independently;
+attempt continuation without the required predecessor/history.
 
 ## Expected Results
 
-Silence settles only under declared authority. Timestamp order does not establish causality, uncertainty stays explicit, and late data is retained without silently changing the selected settled result.
+Silence settles only under declared authority. Timestamp order does not establish
+causality, uncertainty stays explicit, and late data is retained without silently
+changing the selected settled result. Every mismatched assertion or missing
+restoration basis remains incomplete/refused and cannot settle or restart the
+assessment.
