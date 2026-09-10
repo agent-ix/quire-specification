@@ -56,3 +56,10 @@ CLI, or backend conformance.
 | NFR-050 | Test | TC-142, TC-144 | 🚧 Planned |
 | NFR-051 | Test | TC-144 | 🚧 Planned |
 | NFR-052 | Inspection | TC-147 | 🚧 Planned |
+
+## Integration Test Matrix
+
+| Purpose | Target | Type | Test Cases |
+| --- | --- | --- | --- |
+| Bind admitted observations, captures, progress, closure, and protocol obligations without reconstructing an identity. | E-owned temporal meaning and B-owned protocol assessment through their selected structured interfaces. | event | IT-050 |
+| Deliver structured observation results and explicit mapping losses without promoting non-success, target-text parsing, or unqualified coverage evidence. | B-owned result contract, codegen/output consumer boundary, and selected export profile. | event | IT-051 |
