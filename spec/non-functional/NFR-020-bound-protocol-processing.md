@@ -31,9 +31,9 @@ optional analysis backend's resource use.
 
 | Metric | Target | Threshold | Method |
 | --- | --- | --- | --- |
-| Unbounded caller-controlled collections or traversals | 0 | 0 | Static analysis and boundary tests |
+| Unbounded caller-controlled collections or traversals | 0 | 0 | Analysis |
 | Limit-crossing cases returned as typed resource-incomplete results | 100% of declared limits | 100% | Test (TC-062) |
-| Business actions or compensations executed by assessment | 0 | 0 | Interface inspection and adverse test |
+| Business actions or compensations executed by assessment | 0 | 0 | Test |
 
 ## Verification
 

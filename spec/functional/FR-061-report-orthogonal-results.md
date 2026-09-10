@@ -5,6 +5,14 @@ type: FR
 relationships:
   - target: ix://agent-ix/quire-specification/US-006
     type: implements
+  - target: ix://agent-ix/quire-specification/FR-031
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-059
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-060
+    type: depends_on
+  - target: ix://agent-ix/quire-verification/FR-007
+    type: depends_on
 ---
 ## Description
 
@@ -33,6 +41,26 @@ proven, bounded-checked, tested and observed claim strengths as distinct
 source-bound values. The result producer SHALL reuse Quoin evidence authority.
 The result producer SHALL NOT create a local evidence store or verification-method
 registry.
+When the result is mapped to the portable quire-verification assessment, the
+result producer SHALL preserve every independent execution, activation,
+observation, participation, assumption and logical finding required by
+quire-verification FR-007. The result producer SHALL describe protocol adequacy
+through the exact exercised protocol obligations and cases. The result producer SHALL NOT represent protocol adequacy as an evidence-sufficiency decision.
+
+The strict reader SHALL enforce the following result-combination rules.
+
+### Result combination rules
+
+| Condition | Required relation |
+| --- | --- |
+| Execution is refused, unsupported, resource-incomplete or failed | Truth is unavailable. Already-established activation and provenance facts remain retained. |
+| Truth is satisfied | Execution is completed, activation is triggered and completeness is complete. |
+| Truth is violated | Execution is completed and activation is triggered. Completeness may be incomplete only when the retained finite violation witness does not depend on missing facts. |
+| Truth is pending | Execution is completed, activation is triggered and completeness is open or incomplete. |
+| Activation is inactive | Execution is completed, truth is unavailable and completeness is complete under an exact closure authority. |
+| Activation is activation-unknown | Truth is unavailable and completeness is open or incomplete with the missing trigger dependencies. |
+| Adequacy is demonstrated | Execution and required inputs are complete and the exact required case set is present. An obligation-path demonstration additionally requires triggered activation. |
+| Package status is complete success | Every selected required request satisfies its claim-specific success rule. Unsupported or incomplete requests remain represented and prevent complete success. |
 
 ## Acceptance Criteria
 
@@ -43,6 +71,8 @@ registry.
 | FR-061-AC-3 | Every result binds exact source/profile/model/protocol/request/binding/input/progress/backend identities and derived artifact digests. | Test (TC-061) |
 | FR-061-AC-4 | A result with an impossible dimension combination, stale identity or conflicting claim strength is refused by a strict reader. | Test (TC-061) |
 | FR-061-AC-5 | One unsupported request does not remove an independent supported result, while package complete success remains unavailable. | Test (TC-061) |
+| FR-061-AC-6 | Every row of the normative result-combination table admits its valid boundary case and refuses every one-axis forbidden combination. | Test (TC-061) |
+| FR-061-AC-7 | Mapping to the portable verification assessment retains every simultaneous independent finding and its no-sufficiency-decision limit. | Test (TC-061) |
 
 ## Dependencies
 
@@ -50,3 +80,4 @@ registry.
 - [FR-059](./FR-059-assess-finite-global-conformance.md).
 - [FR-060](./FR-060-separate-protocol-claims.md).
 - [Protocol contract](../../proposals/quire-v1/protocol-contract.md).
+- [Portable independent-finding contract](ix://agent-ix/quire-verification/FR-007).
