@@ -145,7 +145,7 @@ does not introduce a second evidence store, execution runner, report registry or
 verification-method catalog.
 
 The projection into `quire-verification/e02-draft-2` is a derived compatibility
-result, not the canonical protocol result. FR-061 owns the total mapping, source
+result, not the canonical protocol result. FR-062 owns the total mapping, source
 artifact retention, distinct derived identity, adequacy separation and refusal
 rules. Consumers that need subject closure, settlement support, protocol
 adequacy or claim meaning read the canonical result; they do not recover those

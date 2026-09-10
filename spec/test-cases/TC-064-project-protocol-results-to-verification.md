@@ -3,7 +3,7 @@ id: TC-064
 title: "Project protocol results to portable verification findings"
 type: TC
 relationships:
-  - target: ix://agent-ix/quire-specification/FR-061
+  - target: ix://agent-ix/quire-specification/FR-062
     type: verifies
 ---
 ## Description
@@ -25,7 +25,9 @@ dependency closure and adapter identity, then assess the emitted
 
 For each case, mutate the canonical result identity, canonical byte digest,
 target obligation, execution binding, adapter version and one source state in
-turn. Cross-wire protocol adequacy into E02 adequacy, remove the retained
+turn. Independently recompute the normative identity preimage and permute JSON
+object-member presentation while preserving the semantic `bindingRefs` order.
+Cross-wire protocol adequacy into E02 adequacy, remove the retained
 canonical-result artifact, label a shared oracle contribution independent,
 select an unknown target version or required feature, and add one otherwise
 valid future source state that the selected mapping does not represent. Repeat
@@ -39,7 +41,10 @@ case produces every FR-007 gap independently of the compatibility summary. E02
 adequacy equals observation adequacy only; protocol adequacy remains unchanged
 in the canonical source artifact, and no sufficiency decision is emitted. The
 derived identity is distinct and stable for identical inputs, changes for every
-identity/version/digest mutation, and retains the exact URI, digest and media
+identity/version/digest mutation, agrees with the independently recomputed
+`sha256-jcs` identity across object-member permutations, preserves binding order,
+and retains the exact URI, digest and media
 type of unchanged canonical bytes. Cross-wiring, invented oracle independence,
 missing source retention, unknown revisions/features and unrepresented source
-states are refused without a `TechniqueResult`.
+states are refused with the specified stable code and without a
+`TechniqueResult`.
