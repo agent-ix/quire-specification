@@ -27,6 +27,11 @@ Read [license decision](LICENSE-DECISION.md) before adding code or normative art
 
 ## Proposed state-core packet
 
+The [native-source ruling amendment](proposals/native-source-1-draft/README.md)
+proposes the replacement definition and states its admission rules, historical
+compatibility and remaining implementation gates. It does not replace the ongoing
+cross-stream capability investigation or claim ruling conformance from old tests.
+
 The [requirements index](spec/spec.md) covers FS01/FS02/FS03/FS05 through discrete
 Quoin catalog artifacts. [Authoring status](docs/spec-workflow.md) records the
 exact skills, validation results and outstanding review work.
