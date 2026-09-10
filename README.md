@@ -16,6 +16,11 @@ precede resumed profile-specific delivery.
 
 ## First work
 
+The owner-approved [language research and capability assessment](proposals/quire-v1/README.md)
+defines the expanded v1 roadmap. It preserves the first state profile as a
+development foundation; it does not adopt unreviewed grammar or claim runtime
+support for the newly selected capabilities.
+
 Define scope and non-goals; distinguish language, profile, wire and implementation versions; reconcile model ownership with Filament; outline grammar/static/dynamic semantics; select open licenses for prose and reusable normative artifacts; define first positive/negative conformance cases. No unreviewed draft becomes normative.
 
 ## Boundaries
