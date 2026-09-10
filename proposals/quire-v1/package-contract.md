@@ -187,16 +187,18 @@ subject. Unactivated compensation needs no fabricated refund record.
 [IT-010](../../spec/integration/IT-010-bind-linked-package-assessments.md) specifies
 the producer/consumer controls; none has executed yet.
 
-D's [FCD PR #97](https://github.com/agent-ix/filament-core-data/pull/97)
-at `cb740adc80fdc44aaf2c6cce0553344228c18784` supplies the standard-facing
-presence, relationship, population and configuration contract. Its static/runtime
-split and producer/native correspondence agree with the tables above, resolving
-SR-402 FND-001 and SR-406 FND-002. Its versioned exact decimal canonical domain
-resolves SR-401 FND-003 independently of native raw bytes and result JCS.
-The producer now supplies event-position, fixed-sample and timestamp coverage
-with distinct observation-record identities. F/E still need the selected
-consumer correspondence and immutable rule closure; D's FR-102 must also agree
-with its corrected claim-specific truth rule. F's contribution through `974dffa`
-preserves its earlier successors and half-open-window controls. No old definition
-selection acquires these changed rule bytes implicitly. A will select the agreed
-rules in explicit successor definitions after the corrections are integrated.
+The producer contract selected in the [observation contract](observation-contract.md)
+supplies presence, relationship, population and configuration meaning. Its
+static/runtime split, producer/native correspondence and exact decimal canonical
+domain agree with the consumer requirements above. The integrated observation
+range correspondence covers event-position, fixed-sample and timestamp inputs,
+distinct record/member identities and half-open coverage versus inclusive
+deadlines. Decisive truth retains its exact support independently of unrelated
+incompleteness.
+
+These rules are part of the [current shared draft](definitions/README.md).
+The affected package contract and D's producer contract and plan in
+[FCD PR #97](https://github.com/agent-ix/filament-core-data/pull/97) still need
+acceptance before #93 resumes. Further draft successor definitions or checksum
+publication are not prerequisites. Historical accepted selections retain their
+original meaning.
