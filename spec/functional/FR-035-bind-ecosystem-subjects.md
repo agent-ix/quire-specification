@@ -22,6 +22,12 @@ A request bound to the exact declared subjects and completeness dependencies, or
 
 A trace ID, timestamp, endpoint or matching textual name alone does not establish a business relationship. Workflow instances, role instances, message deliveries, attempts and effects remain distinct subjects. Scope references preserve the selected snapshot/window, membership declaration and observation/progress dependencies; static package identity remains separate. Unknown required membership cannot establish aggregate success. D/B/F define the corresponding producer contracts; this requirement introduces no model store, correlation heuristic or alternate schema.
 
+The [package contract](../../proposals/quire-v1/package-contract.md) defines the
+typed role mapping. Configuration and binding contracts must agree with the
+linked requirements. Concrete runtime bindings are separately identified inputs;
+they cannot override static selections. Required role mappings and records needed
+by a currently activated obligation are distinct prerequisites.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -30,6 +36,10 @@ A trace ID, timestamp, endpoint or matching textual name alone does not establis
 | FR-035-AC-2 | A delivery ID or telemetry trace ID substituted for the required effect or workflow identity refuses binding. | Test (TC-035) |
 | FR-035-AC-3 | A population request retains the exact snapshot/window and membership/completeness dependencies; changing that scope changes the runtime request subject. | Test (TC-035) |
 | FR-035-AC-4 | Unknown required membership yields an explicitly incomplete assessment and cannot establish a successful aggregate. | Test (TC-035) |
+| FR-035-AC-5 | A missing, repeated or incompatible required role mapping refuses the dependent request; an explicit compatible binding shared by two distinct roles is admitted. | Test (TC-035) |
+| FR-035-AC-6 | A runtime configuration selecting another model/profile/binding-contract meaning refuses against the existing linked subject rather than overriding it. | Test (TC-035) |
+| FR-035-AC-7 | Changing only the runtime resource limit changes the retained configuration and assessment input identity while preserving the static subject. | Test (TC-035) |
+| FR-035-AC-8 | A valid mapping for an unactivated compensation does not require a recovery record; once required, an unavailable observation remains incomplete rather than becoming optional-none or false. | Test (TC-035) |
 
 ## Dependencies
 
@@ -39,4 +49,3 @@ A trace ID, timestamp, endpoint or matching textual name alone does not establis
 
 Proposed requirement for the composed profile; it does not amend historical
 accepted definitions or establish an implemented capability.
-

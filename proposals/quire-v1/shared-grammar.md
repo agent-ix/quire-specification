@@ -225,6 +225,10 @@ contract; model identity and presence work remain with D.
 there is no backend-derived default. Profile tuples include the definition name,
 revision and byte digest, not just a convenient version label. Model aliases
 resolve exact declared exports. A grammar parse does not prove those identities.
+The [package contract](package-contract.md) defines the closed source inventory,
+compiled-model byte digest, exact definition dependencies and typed binding roles.
+The explicit compiler inventory supplies the edition definition matching the
+header; no installed-backend default completes an otherwise missing selection.
 
 ## Precedence and bindings
 

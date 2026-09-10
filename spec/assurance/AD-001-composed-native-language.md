@@ -94,6 +94,14 @@ registration and activation separately; observing a transport receipt cannot
 create a successful effect or a compensating action.
 Composition is a typed dependency graph, not interpolation between strings.
 
+The [package contract](../../proposals/quire-v1/package-contract.md) closes the
+source inventory and exact definition/model selections before publication of
+checked declarations. The linker derives typed binding requirements with source
+correspondence; request binding maps those roles to explicit runtime inputs.
+Equal local names or field shapes cannot collapse distinct roles. Configuration
+is retained in full at the stage consuming it; a changed run budget changes
+assessment provenance without rewriting the static language subject.
+
 Ordinary Boolean expressions cannot inspect a pending monitor result. Temporal
 or protocol status is not a nullable Boolean or an implicit truthy value.
 Cross-profile references select an admitted semantic interface, with explicit
