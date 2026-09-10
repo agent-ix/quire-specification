@@ -115,21 +115,10 @@ cannot execute. The minimum orthogonal dimensions are:
 | Claim | global-conformance, monitorability, local-projection, realizability, refinement or composition |
 | Provenance | source/profile/model/protocol/request/binding/observation/progress/backend identities and derived artifact digests |
 
-The combination is constrained. A strict reader enforces at least these rules:
-
-| Condition | Required relation |
-| --- | --- |
-| Execution is refused, unsupported, resource-incomplete or failed | Truth is unavailable. Already-established activation/provenance facts remain retained. |
-| Truth is satisfied | Execution is completed, activation is triggered and completeness is complete. |
-| Truth is violated | Execution is completed and activation is triggered. Completeness may be incomplete only when the retained finite violation witness does not depend on missing facts. |
-| Truth is pending | Execution is completed, activation is triggered and completeness is open or incomplete. |
-| Activation is inactive | Execution is completed, truth is unavailable and completeness is complete under an exact closure authority. |
-| Activation is activation-unknown | Truth is unavailable and completeness is open or incomplete with the missing trigger dependencies. |
-| Adequacy is demonstrated | Execution and required inputs are complete and the exact required case set is present; an obligation-path demonstration additionally requires triggered activation. |
-| Package status is complete success | Every selected required request satisfies its claim-specific success rule; unsupported or incomplete requests remain represented and prevent complete success. |
-
-Missing observations, required roles, population members or adverse cases cannot
-change truth, adequacy or package-level status from unsuccessful or unknown to
+The combination is constrained by the normative table in
+[FR-061](../../spec/functional/FR-061-report-orthogonal-results.md). Missing
+observations, required roles, population members or adverse cases cannot change
+truth, adequacy or package-level status from unsuccessful or unknown to
 successful. Independent supported results remain available when another request
 is unsupported.
 
@@ -201,7 +190,6 @@ The maintained architecture and its library list are research inputs. Earlier
 FRETish-source and foreign-runtime recommendations are superseded by the owner
 ruling: native Quire is the sole editable formal-clause language, external forms
 are export-only, and production or possible qualification integrations are Rust.
-
 Until a required producer interface is reviewed and available, the affected
 request is refused or reported unsupported with the missing dependency. No
 hardcoded fixture, inferred default, source-text adapter or local stub substitutes
