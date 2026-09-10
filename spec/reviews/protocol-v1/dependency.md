@@ -5,7 +5,7 @@ type: SpecReview
 analysis: dependency
 scope: "FR-050..FR-061 and NFR-020..NFR-021"
 review_set: all
-evaluated_revision: "989ae36"
+evaluated_revision: "57ac0f3"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-050, type: reviews }

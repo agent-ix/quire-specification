@@ -5,7 +5,7 @@ type: SpecReview
 analysis: ears-conformance
 scope: "FR-050..FR-061 and NFR-020..NFR-021"
 review_set: all
-evaluated_revision: "989ae36"
+evaluated_revision: "57ac0f3"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/US-006, type: reviews }
@@ -21,7 +21,7 @@ responses are concrete and independently observable.
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | low | No EARS defect found in FR-050..FR-061 or NFR-020..NFR-021 after remediation; deterministic validation and semantic trigger review agree. | Quire validation at 989ae36 |
+| FND-001 | low | No EARS defect found in FR-050..FR-061 or NFR-020..NFR-021 after remediation; deterministic validation and semantic trigger review agree. | Quire validation at 57ac0f3 |
 
 ## Semantic checks
 
@@ -30,4 +30,3 @@ The `When` clauses describe admission, binding or assessment events. The one
 are ubiquitous constraints. No statement relies on vague support/handle/manage
 verbs, an unnamed subject, a non-canonical trigger or more than one normative
 response.
-
