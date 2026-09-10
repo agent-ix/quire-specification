@@ -10,10 +10,17 @@ retained rational division; temporal/protocol rules select
 E's rules at `19bbf7a2036168a5f14dddd946f696707dc45fde`; protocol `1-draft.4`
 selects B's rules at `2d8372c0ce22f43b313dba139880d00890f02984` and the new
 temporal facet. No family meaning is inferred from
-the existence of a definition file.
+the existence of a definition file. The shared edition/package successors below
+select the stage/correspondence correction at `93e8265`; state `1-draft.3`
+propagates that exact dependency while retaining its state/query/graph rule bytes.
 
 | Selection identity | Definition | Revision | SHA-256 of exact definition bytes | Scope |
 | --- | --- | --- | --- | --- |
+| `ix:native / 1-draft` | [edition-1-draft-2.md](edition-1-draft-2.md) | `1-draft.2` | `3070ddb8bef9ffb0eea70d984dc663ba48f8410d9558c958bd2b3e088932575b` | Corrected stage prerequisites and producer/native correspondence |
+| `quire.state.core/v1` | [state-core-1-draft-3.md](state-core-1-draft-3.md) | `1-draft.3` | `f65d7d66962ddc3446457b00bb4eac8650caf2824bbd2a7abfc8d4bd4b41746b` | Core forms with corrected edition dependency |
+| `quire.state.queries/v1` | [state-queries-1-draft-3.md](state-queries-1-draft-3.md) | `1-draft.3` | `a1d3f7c2cdfe32ace6646aac36f64e78dd4c0882e821eeaf677b346a63647f47` | Predicates/queries with corrected core closure |
+| `quire.state.graph/v1` | [state-graph-1-draft-3.md](state-graph-1-draft-3.md) | `1-draft.3` | `f5fbd0a74d63eb57c164bcb50cc81acadc9b1623571e42f0d6175c836a131719` | Full state/query/graph scope with corrected edition closure |
+| `quire.package.composed/v1` | [package-reference-1-draft-2.md](package-reference-1-draft-2.md) | `1-draft.2` | `263804dd5a0c865fd1c600ba17e3e50f19516be30f6b3cbead9f6da3652dff47` | Linked-package interpretation with corrected edition dependency |
 | `ix:native / 1-draft` | [edition.md](edition.md) | `1-draft.1` | `86622803e6e8f010a75d150ee5c4f6de55f41e27829ff1acb48876d11df3fbe6` | Grammar, package binding and common admission rules |
 | `quire.state.core/v1` | [state-core.md](state-core.md) | `1-draft.2` | `6480cc1459438b7fd28719acf99885bf854af7d201b57cd262ad7e0dc966242d` | State clauses with the retained core value operations |
 | `quire.state.queries/v1` | [state-queries.md](state-queries.md) | `1-draft.2` | `3aa8efda949277a5df552c3dd4f659c44a91ebdfaf6dba68a383d793c8be9429` | Core plus acyclic Boolean predicates and ordered queries |
@@ -59,8 +66,8 @@ specific grammar/package rule files; each profile selects the relevant semantic
 rules and an explicit admitted-form catalog. A native `using` alias selects one
 root, never a union of whatever happens to be installed.
 
-For a package with full state, timestamped temporal and protocol scope, the
-source can select these exact roots:
+The earlier three-family candidate uses these exact roots. It retains the
+earlier edition dependency and does not acquire the post-review package rules:
 
 ```text
 language "ix:native" edition "1-draft";
@@ -72,7 +79,15 @@ profile P = "quire.protocol.finite-global/v1" version "1-draft.4"
   digest "sha256:721e1c0541eea01db4119c3ee990494b58af140ad90adec63ef6e4b2f6fc5270";
 ```
 
-This header fragment still requires a supplied matching edition definition,
+The corrected edition `1-draft.2`, state `1-draft.3` and package `1-draft.2`
+form an exact shared dependency target for the remaining family corrections.
+Current temporal `1-draft.3`, protocol `1-draft.4` and observation `1-draft.2`
+still require the earlier edition closure. Combining those old roots with the
+new ones refuses conflicting required revisions; it does not select whichever
+edition is newer. A will publish temporal/protocol successors with their ready
+owner corrections, and F will select the agreed observation successors.
+
+The header fragment still requires a supplied matching edition definition,
 the exact dependency files, explicit model imports and actual declarations.
 It is not an admitted program or a claim that a compiler recognizes the new
 selection. State-core and queries may be selected for their declared subsets;
@@ -142,10 +157,10 @@ Quire validation and this byte census do not qualify a profile implementation.
 The selected composed baseline review and explicit adoption still precede
 dependent implementation.
 
-A's post-review package/FR-030/035 stage-and-correspondence correction and B's
-NFR-020 inspection correction at `57ddca2` change current rule-document bytes.
-The census records those working-tree bytes; existing edition/state/protocol
-definitions still select their original pinned snapshots. No old definition is
-restamped. Select the agreed corrections through explicit successor roots after
+A's post-review package/FR-030/035 stage-and-correspondence correction is selected
+by the new edition/package/state successors above. B's NFR-020 inspection
+correction at `57ddca2` still needs the affected protocol successor. The census
+records working-tree bytes; all older definitions retain their original pinned
+snapshots. Close the remaining family selections after
 the remaining D/E/F contract corrections, rather than repeatedly revising the
 whole dependency graph for each owner edit.

@@ -166,9 +166,14 @@ implementation evidence is claimed.
 
 The [capability crosswalk](capabilities.md#initial-specification-crosswalk)
 links all 51 approved decisions to draft requirements and planned cases.
-Twenty-two versioned definition candidates and all earlier candidate bytes are
-preserved. State remains `1-draft.2`; temporal `1-draft.3` selects E's
+Twenty-seven versioned definition candidates and all earlier candidate bytes are
+preserved. New edition/package `1-draft.2` and state `1-draft.3` successors select
+the resolved stage/correspondence rules at `93e8265`; their state forms and
+state/query/graph rule bytes are unchanged. Temporal `1-draft.3` selects E's
 `19bbf7a` rules, and protocol `1-draft.4` selects B's `2d8372c` results.
+Those existing family roots still select the earlier edition; their successors
+must explicitly select the corrected shared closure. Mixing conflicting edition
+dependencies refuses admission, even when the grammar bytes are identical.
 Outgoing verification projection under FR-062 is independent of native admission.
 
 B/E/F now preserve the shared distinction: `eventually[0,30] holds(p)` may
