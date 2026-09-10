@@ -28,4 +28,5 @@ non-1.98.1 Rust toolchain reference into fixture controls.
 Every owned first-party executable path is Rust 1.98.1. Java, JVM, Maven,
 Eclipse, Electron, and foreign monitoring runtime references are refused for
 the selected path. Foreign output text and non-executable fixture data remain
-distinguished from executable dependencies. No hosted workflow is dispatched.
+distinguished from executable dependencies. Existing retained Quoin tooling does
+not exempt a newly owned path. No hosted workflow is dispatched.
