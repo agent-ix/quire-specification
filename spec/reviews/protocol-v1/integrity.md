@@ -5,7 +5,7 @@ type: SpecReview
 analysis: integrity
 scope: "US-006, FR-050..FR-061, NFR-020..NFR-021, IT-020..IT-021 and TM-004"
 review_set: all
-evaluated_revision: "57ac0f3"
+evaluated_revision: "61a7524"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/US-006, type: reviews }
@@ -24,6 +24,7 @@ planned external producer as an implemented fallback.
 | FND-001 | medium | Resolved: prerequisite order was present only in prose. Every local hard dependency now has a typed `depends_on` edge and the resulting graph is acyclic. | FR-050..FR-061; SR-030 |
 | FND-002 | high | Resolved: impossible result combinations were referenced but not enumerated. FR-061's normative combination table makes satisfied, violated, pending, inactive, unknown and non-completed boundaries independently testable. | FR-061; TC-061 |
 | FND-003 | medium | Resolved: unavailable cross-owner producers and analyzers now require refusal/unsupported results; the contract prohibits fixtures, inferred defaults, source-text adapters and local stubs as substitutes. | protocol-contract.md; IT-020; IT-021 |
+| FND-004 | medium | Resolved after integrated consumer readback: protocol adequacy remains distinct from evidence sufficiency and the portable mapping preserves each simultaneous execution/activation/observation/participation/assumption/logical finding. | FR-061-AC-7; quire-verification FR-007 |
 
 ## Traceability and atomicity
 
@@ -32,5 +33,5 @@ planned external producer as an implemented fallback.
 | US to stakeholder | US-006 traces to StR-002 and describes one assurance-engineer need. |
 | FR to story | All twelve FRs implement US-006 and each defines one externally observable binding, control, compensation, conformance or result obligation. |
 | NFR scope | NFR-020 constrains bounded linking/assessment; NFR-021 constrains deterministic result generation. Both name exact populations and evidence. |
-| Verification | Fifty-one FR criteria and both NFRs are represented in TM-004; IT-020/021 cover the cross-component seams. |
+| Verification | Fifty-two FR criteria and both NFRs are represented in TM-004; IT-020/021 cover the cross-component seams. |
 | Conflicts | Global conformance is explicitly independent of later projection/realizability; no requirement treats missing data, inactivity or unsupported analysis as success. |

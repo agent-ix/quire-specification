@@ -5,7 +5,7 @@ type: SpecReview
 analysis: base
 scope: "US-006, FR-050..FR-061, NFR-020..NFR-021, IT-020..IT-021, TC-050..TC-063 and TM-004"
 review_set: all
-evaluated_revision: "57ac0f3"
+evaluated_revision: "61a7524"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/US-006, type: reviews }
@@ -13,9 +13,9 @@ relationships:
 ## Summary
 
 Base-plus-seven review of the PT01/PT02 contribution found three specification
-defects at `528d7a6`; all are resolved at `57ac0f3`. The final scope has one
+defects at `528d7a6`; all are resolved at `61a7524`. The final scope has one
 story, twelve behavioral requirements, two quality requirements, two integration
-contracts, fourteen planned cases and a matrix covering all 51 FR criteria plus
+contracts, fourteen planned cases and a matrix covering all 52 FR criteria plus
 both NFRs. It claims no implementation or executed coverage.
 
 ## Verdict
@@ -32,6 +32,7 @@ contribution.
 | FND-001 | medium | Resolved: Test Matrix summary ranges minted only their endpoints, so every FR-050..061 row now lists each criterion explicitly and includes the added FR-060-AC-5 and FR-061-AC-6. | TM-004 |
 | FND-002 | high | Resolved: the initial result dimensions lacked a normative combination algebra. FR-061 now owns eight strict-reader rules and TC-061 exercises valid boundaries plus one-axis forbidden combinations. | FR-061; TC-061 |
 | FND-003 | medium | Resolved: PT01 required an explicit ownership/version/license disposition. The contract now records that no external library is adopted and names the gate for any later Rust candidate. | protocol-contract.md; research PT01/E03 |
+| FND-004 | medium | Resolved after integrated consumer readback: FR-061 now depends on quire-verification FR-007 and preserves all simultaneous independent findings plus its no-sufficiency-decision limit. | FR-061-AC-7; TC-061; quire-verification FR-007 |
 
 ## Checklist results
 

@@ -5,7 +5,7 @@ type: SpecReview
 analysis: evidence
 scope: "FR-050..FR-061, NFR-020..NFR-021 and TM-004"
 review_set: all
-evaluated_revision: "57ac0f3"
+evaluated_revision: "61a7524"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/TM-004, type: reviews }
@@ -33,11 +33,10 @@ in pre-existing NFR-001..004 and are outside this review scope.
 | Identity and result invariants | property/example shapes | Property and adverse Rust tests with one-axis identity mutations. |
 | Parallel conformance | concurrency/protocol characteristics | Deterministic simulation of permitted interleavings and model-based generation where the implementation exposes the reviewed state model. |
 | Compensation failure/timeout | reliability characteristics | Fault injection through the shared Engineering Assurance interface, with owned failed TechniqueResults. |
-| Result algebra | universal/example shapes | Strict-reader property tests across valid and forbidden dimension combinations. |
+| Result algebra | universal/example shapes | Strict-reader property tests across valid and forbidden dimension combinations plus simultaneous portable independent findings. |
 | Resource boundaries | quantified threshold | Exact-boundary and one-over tests plus limit-check mutation; static analysis for unbounded traversal inventory. |
 | Reproduction | stable identity and protocol characteristics | Metamorphic permutation tests and semantic-dependency identity mutation. |
 
 TC artifacts remain planned. Executed evidence requires the future Rust
 implementation and Engineering Assurance producer; no local runner, campaign or
 passing status is fabricated by this review.
-

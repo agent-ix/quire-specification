@@ -5,7 +5,7 @@ type: SpecReview
 analysis: dependency
 scope: "FR-050..FR-061 and NFR-020..NFR-021"
 review_set: all
-evaluated_revision: "57ac0f3"
+evaluated_revision: "61a7524"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-050, type: reviews }
@@ -67,6 +67,7 @@ graph TD
   FR031 --> FR061
   FR059 --> FR061
   FR060 --> FR061
+  FR007["quire-verification FR-007"] --> FR061
   NFR020["NFR-020 bounds"] -. constrains .-> FR052
   NFR020 -. constrains .-> FR059
   NFR021["NFR-021 reproduce"] -. constrains .-> FR059
@@ -75,7 +76,7 @@ graph TD
 
 ## Topological order
 
-1. Existing FR-031/FR-035 and cross-owner A/D contracts.
+1. Existing FR-031/FR-035, quire-verification FR-007 and cross-owner A/D contracts.
 2. FR-050, then FR-051 and FR-052.
 3. FR-053, FR-054 and FR-055.
 4. FR-056, FR-057 and FR-058.
