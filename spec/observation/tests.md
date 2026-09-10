@@ -47,3 +47,12 @@ CLI, or backend conformance.
 | TC-144 | Agree replay and incremental assessment | Integration | P1 | FR-114 | 🚧 Planned |
 | TC-145 | Report observation adequacy without promotion | Integration | P1 | FR-115 | 🚧 Planned |
 | TC-146 | Map observation results to consumers | Integration | P1 | FR-116 | 🚧 Planned |
+| TC-147 | Audit the observation executable boundary | Static | P1 | NFR-052 | 🚧 Planned |
+
+## Non-Functional Requirement Coverage
+
+| Non-Functional Req | Verification Method | Evidence/Test Cases | Status |
+| --- | --- | --- | --- |
+| NFR-050 | Test | TC-142, TC-144 | 🚧 Planned |
+| NFR-051 | Test | TC-144 | 🚧 Planned |
+| NFR-052 | Inspection | TC-147 | 🚧 Planned |
