@@ -125,7 +125,7 @@ baseline acceptance**. Review artifacts are retained at
 | --- | --- |
 | Static type-checking versus runtime population/window prerequisites | D/A; SR-402 FND-001 |
 | Preserve decisive truth with complete exact support despite unrelated unavailable data | D with B/E/F; SR-401 FND-001 |
-| Permit decisive satisfied and violated results on an open subject in replay/incremental assessment | F; SR-401 FND-002 |
+| Preserve decisive satisfied and violated results on an open subject in replay/incremental assessment | Resolved in F `03bda33`; SR-401 FND-002, FR-114 and TC-144 |
 | Exact canonical numeric domain and producer-object/native-byte correspondence | D/A; SR-401 FND-003 and SR-406 FND-002 |
 | Map producer population/window coverage to each selected temporal clock, preserving endpoint and record identity | F with D/E/A; SR-406 FND-001 |
 | Publish successor observation selections with immutable reachable rules | F/A after the affected corrections; SR-403 FND-001 |
@@ -147,6 +147,15 @@ now supplies the stage table and explicit producer/native identity correspondenc
 with FR-030-AC-9/10, FR-035-AC-9, TC-030/035 and IT-010-SC-07/08. This completes
 the concrete native consumer proposal for SR-402 FND-001 and SR-406 FND-002;
 matching D producer semantics remain required before those shared findings close.
+
+F's `03bda33af53ea28c2badb21f22d3d119fd32e6c9` is integrated exactly.
+FR-114/TC-144 resolve SR-401 FND-002's settled-open replay contradiction.
+NFR-050/051/052 and TC-142–146 resolve SR-404 FND-006/007/008/010/011/014/015
+through independent resource measurements, catalog methods and explicit consumer
+controls. SR-404 FND-009 is partially addressed: TC-145/146 now omit individual
+provenance identities, but TM-007's NFR-051 row still needs their explicit binding.
+These are specification/case dispositions; no replay, resource or provenance
+implementation evidence is claimed.
 
 The [capability crosswalk](capabilities.md#initial-specification-crosswalk)
 links all 51 approved decisions to draft requirements and planned cases.
