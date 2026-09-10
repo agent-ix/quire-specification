@@ -23,6 +23,14 @@ deadline refund. Independently compare outer true with holds(true) across a
 one-position false-extension boundary. Attempt current TL lowering for the
 timestamped and past-time forms.
 
+Bind the three exact [temporal root definitions](../../proposals/quire-v1/definitions/README.md)
+independently. The common temporal facet is not a selectable source root.
+Replace only the root identity/digest while keeping its clock input: an
+incompatible clock/boundary selection refuses instead of reusing an earlier
+result. Confirm that shared query/graph expressions keep their selected meaning
+inside `holds`, while temporal profile selection cannot enable state declarations
+or an ambient operation/pre-state scope.
+
 ## Expected Results
 
 Each accepted tree retains its original spans and exact imported type/profile
