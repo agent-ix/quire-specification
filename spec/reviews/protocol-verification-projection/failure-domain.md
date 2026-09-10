@@ -33,4 +33,3 @@ The adapter is strict rather than resilient: invalid input or projection loss
 aborts that projection with a typed refusal. Other independently requested
 protocol results remain retained under FR-061; failure never becomes a Boolean
 success or a sufficiency decision.
-

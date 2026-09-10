@@ -48,4 +48,3 @@ claims no implementation or executed coverage.
 ## Review set
 
 All seven QUOIN analysis lenses accompany this base review in the same folder.
-

@@ -38,4 +38,3 @@ mitigations.
 1. A one-axis mapping loss that changes an FR-007 finding.
 2. Treating protocol adequacy as observation adequacy or evidence sufficiency.
 3. Reusing a derived E02 result as the canonical protocol result.
-

@@ -39,4 +39,3 @@ authoritative interfaces.
 Setup authorization and contract adoption are prerequisites. Their absence does
 not authorize a local runner, JavaScript/Python adapter, evidence store or E02
 fork.
-
