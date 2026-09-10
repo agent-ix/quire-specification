@@ -69,6 +69,7 @@ where they preserve the required distinctions.
 | Observation to assessment | Exact binding/input identities, correlation, clock/progress/closure, completeness and resource controls | F; B/E consume |
 | Concrete observation handoff | [F's binding contract](observation-contract.md): explicit role/schema/subject/anchor mapping, availability and scoped progress | F; through `32c95e9`, named binding/progress candidates with exact dependency closure still pending |
 | Assessment to result | Requested subject/capability and per-obligation disposition, failed prerequisites, completeness/provenance | B contract; A/E/F produce |
+| Native diagnostic interpretation | [Retained codes and typed causes](definitions/native-diagnostics.md), actual producer stage, original loci and independent response-catalog identity | A; consumes existing compiler Code vocabulary and result envelopes |
 | Export | Selected mapping/profile and source-bound preserved/conditional/unrepresented/refused obligations | F coordinates; D/E contribute; A identity |
 
 Partial execution is allowed only for dependency-closed admitted subjects. A

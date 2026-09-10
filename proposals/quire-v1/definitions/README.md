@@ -25,6 +25,7 @@ the existence of a definition file.
 | `quire.package.composed/v1` | [package-reference.md](package-reference.md) | `1-draft.1` | `0df176dbb831117bd27443f7ef8075d9a130bcbc225022b440acbce111c62b9d` | Whole linked-package interpretation; not a source root |
 | `quire.observation.binding/v1` | [observation-binding.md](observation-binding.md) | `1-draft.1` | `9fb77da233e792b7d96dda814fe71ec2e86707253ff85dce990f29b83c1bf3e1` | Candidate binding meaning and static/assessment-input separation; dependency closure pending |
 | `quire.observation.progress/v1` | [observation-progress.md](observation-progress.md) | `1-draft.1` | `8c16aa039f6a537d7da8a8320b173241dc535bfb7f7dfa5cbf3b644559ebac4f` | Candidate scoped assertions and restoration basis; dependency closure pending |
+| `quire.native.diagnostics/v1` | [native-diagnostics.md](native-diagnostics.md) | `1-draft.1` | `d3a5d54deddaf9ca8b4e0b39e3a4a40ee2abd26c0556776634046dba8e6cdb2a` | Native response codes and typed causes; not a source root or a new result envelope |
 
 The earlier [catalog and all definition bytes at `7832e9d`](https://github.com/agent-ix/quire-specification/tree/7832e9d4b4f56013d22d96303057bcc070eb480b/proposals/quire-v1/definitions)
 remain available for exact historical selections. State/temporal revision
@@ -67,6 +68,12 @@ package contents, not execution or full-v1 support. The package payload wire and
 strict reader remain separately selected L2/FS05 contracts; no whole-package
 canonicalizer is claimed by this candidate.
 
+The diagnostic candidate selects the existing compiler Code spellings at an
+immutable revision and requires typed distinctions for similar failures. Its
+selection belongs to response interpretation/provenance, not clause meaning;
+it cannot grant syntax or turn an incomplete legacy message into a typed cause.
+The exact producer response-wire mapping remains L2/diagnostic implementation work.
+
 The file digests bind normative bytes; repository revisions and links locate
 the corresponding snapshots. They are not typed-expression canonical hashes or
 source-package fingerprints. [checksums.sha256](checksums.sha256) records an
@@ -93,7 +100,7 @@ consumer contract. B's reviewed PR #19 resolves the earlier FR-061 versus E
 decisive-prefix mismatch; protocol `1-draft.3` retains that correction. D's
 standard-facing model/configuration contribution and composed review remain open.
 
-TC-020/030/031/032/040/049 specify positive and mutated-selection controls. Structural
+TC-020/030/031/032/040/047/049 specify positive and mutated-selection controls. Structural
 Quire validation and this byte census do not qualify a profile implementation.
 The selected composed baseline review and explicit adoption still precede
 dependent implementation.
