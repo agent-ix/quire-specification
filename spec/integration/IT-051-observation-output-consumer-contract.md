@@ -14,7 +14,7 @@ Verify the planned consumer seam from the B-owned result contract to codegen and
 
 ## Target Integration
 
-The integration joins a structured per-obligation observation result with the existing codegen/output mapping boundary. It does not alter native clause authority, IR producer types, or a consumer-owned evidence store.
+The integration joins a structured per-obligation observation result through the [output-mapping contract](../../proposals/quire-v1/observation-output-mapping-contract.md) to the existing codegen/output mapping boundary. It does not alter native clause authority, IR producer types, or a consumer-owned evidence store.
 
 ## Preconditions
 

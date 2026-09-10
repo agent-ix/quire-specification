@@ -25,4 +25,5 @@ The adapter SHALL classify each mapped obligation as preserved, conditional, unr
 ## Dependencies
 
 - [Shared foundation](../../proposals/quire-v1/shared-foundation.md).
+- [Observation result consumer and output-mapping contract](../../proposals/quire-v1/observation-output-mapping-contract.md).
 - A owns interchange/versioning; B owns result semantics; D/E own their mapping meanings.
