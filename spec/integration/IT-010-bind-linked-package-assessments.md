@@ -50,6 +50,8 @@ ceilings and separate mutants listed in TC-030 and TC-035.
    - IT-010-SC-04: resource changes preserve the static subject and retain distinct full configuration references; semantic overrides refuse the original subject.
 5. Admit the compensation mapping without activation, then activate it and withhold a recovery observation required for the selected assessment.
    - IT-010-SC-05: the first request invents no recovery evidence prerequisite; the second reports incomplete required evidence, never optional-none, false or successful recovery.
+6. Through an explicitly selected D/F observation-range mapping, bind a producer window with inclusive start 0 and exclusive end 30 to a native timestamped `eventually[0,30] holds(p)` obligation. Put its sole p witness at time 30. Supply truthful coverage for only the producer window, then falsely relabel that coverage as closing the native inclusive interval. Repeat with a separately authored producer window [0,31), exact progress covering time 30, and the boundary witness admitted by the mapping; also use a decisive witness at time 29 as a control.
+   - IT-010-SC-06: the shorter window cannot establish closed-scope truth for the inclusive obligation; truthful missing boundary coverage stays incomplete, and the false closure mapping refuses. The explicitly covering window admits the time-30 witness and settles satisfied; a valid decisive time-29 witness remains satisfied with its exact support despite the still-uncovered upper boundary. No implicit time increment, unit conversion, endpoint rounding or reinterpretation of membership makes the shorter window complete.
 
 ## Expected Results
 
@@ -65,3 +67,9 @@ bindings and logical truth. No executable coverage is claimed by this plan.
 [TC-035](../test-cases/TC-035-bind-ecosystem-subjects.md) provide independent controls.
 D's standard-facing model/configuration contract and F's exact observation
 binding interface remain required inputs before implementation of this test.
+SC-06 grounds the endpoint distinction introduced by D's
+[producer interface draft at 06a62c7](https://github.com/agent-ix/filament-core-data/blob/06a62c7624ea56bbe30120e8987d2ec4f551e77d/docs/semantic-data-system/baseline-1-2.md).
+That draft does not yet fix the D/F observation-range mapping; the case requires
+its explicit reviewed selection rather than inferring temporal coverage from a
+population's member IDs alone. E owns temporal interval meaning, F scoped
+coverage assertions, and D the window/membership representation.
