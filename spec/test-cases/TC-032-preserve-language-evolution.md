@@ -23,6 +23,13 @@ it has a new selection and cannot relabel the prior result. Merely knowing the
 new artifact bytes, parsing its source or supporting its core subset cannot
 establish full graph-profile support. Assert the actual requested feature scope.
 
+Select the preserved protocol definition 1-draft.1 with its original rule bytes,
+then select 1-draft.2 with B's revised settlement/closure relation. Substituting
+the revised FR-061 bytes under the earlier definition's declared digest refuses.
+Explicitly migrating to 1-draft.2 creates a new linked subject and leaves the
+earlier source, definition and result identities unchanged. Digest-checking an
+envelope alone does not establish support for the revised result relation.
+
 ## Expected Results
 
 The historical source retains its interpretation. New required meaning either has explicit support or refuses. Migration produces a new subject and source correspondence without mutating old bytes or restamping old evidence. Exact keyword/grammar vectors are supplied by L1 before implementation.
