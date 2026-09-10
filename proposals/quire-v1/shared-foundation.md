@@ -136,6 +136,18 @@ the capability crosswalk. A accepts SR-404 FND-012/013's unit-testing dispositio
 for the existing TC-039/042 controls; the authored Test class remains valid.
 Those dispositions select planned methods, not executed evidence.
 
+B's `57ddca2dddd637789a50b4e78977cf87c939da20` is integrated. SR-404 FND-001
+is resolved at the specification level by NFR-020's inspection method, the
+independent source-site inventory in TC-065 and its TM-004 binding. The added
+case brings the four matrices to 59 planned TC artifacts; no inventory has
+yet been executed against a new protocol implementation.
+
+A's [package correction](package-contract.md#prerequisites-by-processing-stage)
+now supplies the stage table and explicit producer/native identity correspondence,
+with FR-030-AC-9/10, FR-035-AC-9, TC-030/035 and IT-010-SC-07/08. This completes
+the concrete native consumer proposal for SR-402 FND-001 and SR-406 FND-002;
+matching D producer semantics remain required before those shared findings close.
+
 The [capability crosswalk](capabilities.md#initial-specification-crosswalk)
 links all 51 approved decisions to draft requirements and planned cases.
 Twenty-two versioned definition candidates and all earlier candidate bytes are

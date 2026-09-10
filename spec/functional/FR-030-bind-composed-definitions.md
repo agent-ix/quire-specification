@@ -29,6 +29,13 @@ retains per-declaration dependency dispositions; partial admission is not a
 complete package. Static subject identity differs from serialized artifact bytes
 and build provenance; an unqualified canonical digest is not claimed.
 
+The linker's prerequisites follow the package contract's processing-stage table.
+Concrete populations, windows and observations are later assessment inputs,
+not prerequisites for type-checking a valid future obligation. When a producer
+supplies canonical model/profile objects, the linker retains the declared
+producer/native correspondence instead of substituting that canonical digest
+for a compiled-model or definition byte digest.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -41,6 +48,8 @@ and build provenance; an unqualified canonical digest is not claimed.
 | FR-030-AC-6 | Substituting a manifest/lock digest or package fingerprint for the compiled model import's byte digest refuses the import. | Test (TC-030) |
 | FR-030-AC-7 | Linked binding roles retain owning declaration, source region, kind, exact type/contract, anchor and scope prerequisites; equal local names in different clauses do not merge their roles. | Test (TC-030) |
 | FR-030-AC-8 | A compile configuration change limited to resource controls remains visible in provenance while preserving the static subject; a changed semantic selection changes the static subject. | Test (TC-030) |
+| FR-030-AC-9 | A valid three-family template links with exact static model/definition/binding contracts and no runtime population, window or observations; removing a required static definition still refuses its dependent declaration. | Test (TC-030) |
+| FR-030-AC-10 | A declared producer/native correspondence retains and validates each selection in its own digest domain; missing correspondence, foreign exports and cross-domain digest substitutions refuse the dependent static binding. | Test (TC-030) |
 
 ## Dependencies
 

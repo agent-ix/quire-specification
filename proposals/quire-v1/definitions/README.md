@@ -137,3 +137,11 @@ TC-020/030/031/032/040/047/049 specify positive and mutated-selection controls. 
 Quire validation and this byte census do not qualify a profile implementation.
 The selected composed baseline review and explicit adoption still precede
 dependent implementation.
+
+A's post-review package/FR-030/035 stage-and-correspondence correction and B's
+NFR-020 inspection correction at `57ddca2` change current rule-document bytes.
+The census records those working-tree bytes; existing edition/state/protocol
+definitions still select their original pinned snapshots. No old definition is
+restamped. Select the agreed corrections through explicit successor roots after
+the remaining D/E/F contract corrections, rather than repeatedly revising the
+whole dependency graph for each owner edit.

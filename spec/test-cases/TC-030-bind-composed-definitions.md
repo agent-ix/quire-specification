@@ -30,6 +30,10 @@ Apply each control independently:
 | Put the manifest digest, lock digest or producer fingerprint in the compiled-model import digest position | Refused import; no domain substitution. |
 | Inspect both equal-named clock roles | Distinct owning clauses/source regions; exact types, anchors and scope dependencies retained. |
 | Change only the compile resource ceiling, with both ceilings sufficient for admission | Static subject unchanged; the exact changed configuration remains in build provenance. |
+| Link a valid three-family template without concrete workflow instances, runtime populations/windows, observation records or progress | Static linking succeeds and retains the exact typed requirements for later assessment. Removing a required static definition still refuses dependent linking. |
+| Supply a producer canonical model/profile-object selection and its declared correspondence to exact native compiled-model/definition bytes | Both selections and their digest domains remain distinct; declared exports, kinds, relation and closure match independently authored expectations. |
+| Remove the required correspondence; bind a foreign export; substitute producer canonical and native raw-byte digests independently | Each dependent binding refuses with a structured cause even when labels or field shapes match. |
+| Re-encode a compiled model in a way that preserves its producer canonical object but changes its raw bytes | The old native byte selection refuses; an explicitly updated, valid selection retains the unchanged canonical producer identity and distinct native bytes. |
 
 Compare complete structured static components and references. Do not use an
 invented package hash, a producer-generated expected result or diagnostic English
