@@ -17,6 +17,7 @@ causal-order counterexample, clock uncertainty, and a late refund after
 settlement; repeat without watermark authority. Mutate the selected assertion
 definition bytes, scope, clock, source set, and restoration basis independently;
 attempt continuation without the required predecessor/history.
+Repeat with adjacent half-open windows and progress at the shared boundary.
 
 ## Expected Results
 
@@ -24,4 +25,5 @@ Silence settles only under declared authority. Timestamp order does not establis
 causality, uncertainty stays explicit, and late data is retained without silently
 changing the selected settled result. Every mismatched assertion or missing
 restoration basis remains incomplete/refused and cannot settle or restart the
-assessment.
+assessment. Progress includes its selected start and excludes its end, so it
+cannot settle or contradict the adjacent window through the shared boundary.

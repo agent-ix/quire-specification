@@ -20,6 +20,9 @@ Unknown required membership, missing external-provider observations, or an absen
 When an unknown producer version, missing selected identity, digest mismatch, or
 ambient default is encountered, the assessment service SHALL refuse it rather
 than supplying a population, membership, configuration, or closure input.
+For a selected FCD 1.2.0 window `[start, end)`, the assessment service SHALL
+include an exactly listed/digested member at `start` and exclude one at `end`;
+the latter can participate only in a separately selected later window.
 
 ## Acceptance Criteria
 
@@ -29,6 +32,7 @@ than supplying a population, membership, configuration, or closure input.
 | FR-112-AC-2 | Unknown membership and a missing provider record remain visible incomplete reasons. | Test (TC-142) |
 | FR-112-AC-3 | A complete bounded population retains membership and closure provenance. | Test (TC-142) |
 | FR-112-AC-4 | A producer version, identity, membership-digest, configuration, or closure-digest mismatch is refused without ambient defaulting. | Test (TC-142) |
+| FR-112-AC-5 | A selected half-open window includes an exact member at `start`, excludes one at `end`, and cannot double-count either across windows. | Test (TC-142) |
 
 ## Dependencies
 
