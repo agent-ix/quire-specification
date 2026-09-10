@@ -19,21 +19,17 @@ the concrete mapping, admitted records, or declared resource limits under the
 same selected definition and revision changes assessment-input identity, not
 static meaning.
 
-| Selection | Identity | Revision | Exact definition bytes |
-| --- | --- | --- | --- |
-| Observation binding | [`observation-binding-1-draft-2.md`](definitions/observation-binding-1-draft-2.md) `quire.observation.binding/v1` | `1-draft.2` | `sha256:5f454277722e7f4816f226361fc3204cfc1a0083f10fe442ef6e93084202f63b` |
-| Observation range | [`observation-range-1-draft-1.md`](definitions/observation-range-1-draft-1.md) `quire.observation.range/v1` | `1-draft.1` | Selected only by a successor binding/progress definition after indexing. |
-
-The candidate definition remains unindexed and unadopted until A records its
-exact bytes in the shared definition catalog. A changed digest is a changed
-definition selection; it cannot be retained under this revision.
+This working draft uses the [current shared specification](definitions/README.md)
+and its [range correspondence](definitions/observation-range-1-draft-1.md).
+Runtime binding/progress identities are supplied by the linked package; this
+rule document does not select itself through a copied candidate/digest table.
 
 ## Producer interface selection
 
 F consumes the producer-owned **Producer interface 1.2.0** at
-`filament-core-data` commit `06a62c7624ea56bbe30120e8987d2ec4f551e77d`:
-`docs/semantic-data-system/baseline-1-2.md`, exact bytes
-`sha256:de838deae48b2b11c79019749b91057049e9ca5e80a483d9281cb1a7d2ab96ae`.
+[filament-core-data revision 6259d3a](https://github.com/agent-ix/filament-core-data/blob/6259d3a5b99088740df9bcc8e8d60f3720aaa603/docs/semantic-data-system/baseline-1-2.md).
+That producer contract defines the exact digest domain; each runtime assessment
+retains the actual selected producer revision and digest.
 The selected interface supplies relationship, population, snapshot, window,
 member, configuration, and closure identities. It is D's authority and is not
 an F wire/schema definition.
