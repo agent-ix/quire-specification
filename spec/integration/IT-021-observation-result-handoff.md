@@ -7,6 +7,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-061
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-062
+    type: verifies
 ---
 ## Objective
 
@@ -61,7 +63,9 @@ evidence store.
 ## Dependencies
 
 [FR-059](../functional/FR-059-assess-finite-global-conformance.md),
-[FR-061](../functional/FR-061-report-orthogonal-results.md), OB01/OB02/OB03 and
+[FR-061](../functional/FR-061-report-orthogonal-results.md),
+[FR-062](../functional/FR-062-project-results-to-portable-verification.md),
+OB01/OB02/OB03 and
 the accepted Engineering Assurance typed interface.
 
 ## Notes

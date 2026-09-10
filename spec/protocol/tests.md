@@ -15,6 +15,7 @@ relationships:
   - { target: ix://agent-ix/quire-specification/FR-059, type: references }
   - { target: ix://agent-ix/quire-specification/FR-060, type: references }
   - { target: ix://agent-ix/quire-specification/FR-061, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-062, type: references }
   - { target: ix://agent-ix/quire-specification/NFR-020, type: references }
   - { target: ix://agent-ix/quire-specification/NFR-021, type: references }
 ---
@@ -82,12 +83,13 @@ than claiming the advanced algorithms exist.
 | FR-061 | FR-061-AC-4 | TC-061 | 🚧 Planned |
 | FR-061 | FR-061-AC-5 | TC-061 | 🚧 Planned |
 | FR-061 | FR-061-AC-6 | TC-061 | 🚧 Planned |
-| FR-061 | FR-061-AC-7 | TC-064 | 🚧 Planned |
+| FR-061 | FR-061-AC-7 | TC-061 | 🚧 Planned |
 | FR-061 | FR-061-AC-8 | TC-061 | 🚧 Planned |
 | FR-061 | FR-061-AC-9 | TC-061 | 🚧 Planned |
-| FR-061 | FR-061-AC-10 | TC-064 | 🚧 Planned |
-| FR-061 | FR-061-AC-11 | TC-064 | 🚧 Planned |
-| FR-061 | FR-061-AC-12 | TC-064 | 🚧 Planned |
+| FR-062 | FR-062-AC-1 | TC-064 | 🚧 Planned |
+| FR-062 | FR-062-AC-2 | TC-064 | 🚧 Planned |
+| FR-062 | FR-062-AC-3 | TC-064 | 🚧 Planned |
+| FR-062 | FR-062-AC-4 | TC-064 | 🚧 Planned |
 
 ## Non-Functional Requirement Coverage
 
@@ -118,7 +120,7 @@ than claiming the advanced algorithms exist.
 | TC-058 | Preserve retries, duplicates and partial recovery | Property | P1 | FR-058-AC-1, FR-058-AC-2, FR-058-AC-3, FR-058-AC-4 | 🚧 Planned |
 | TC-059 | Assess finite global conformance | Integration | P1 | FR-059-AC-1, FR-059-AC-2, FR-059-AC-3, FR-059-AC-4 | 🚧 Planned |
 | TC-060 | Separate conformance and advanced analysis claims | Property | P1 | FR-060-AC-1, FR-060-AC-2, FR-060-AC-3, FR-060-AC-4, FR-060-AC-5 | 🚧 Planned |
-| TC-061 | Discriminate protocol result dimensions | Property | P1 | FR-061-AC-1, FR-061-AC-2, FR-061-AC-3, FR-061-AC-4, FR-061-AC-5, FR-061-AC-6, FR-061-AC-8, FR-061-AC-9 | 🚧 Planned |
+| TC-061 | Discriminate protocol result dimensions | Property | P1 | FR-061-AC-1, FR-061-AC-2, FR-061-AC-3, FR-061-AC-4, FR-061-AC-5, FR-061-AC-6, FR-061-AC-7, FR-061-AC-8, FR-061-AC-9 | 🚧 Planned |
 | TC-062 | Enforce every protocol resource boundary | Property | P1 | NFR-020 | 🚧 Planned |
 | TC-063 | Reproduce results under equivalent presentations | Property | P1 | NFR-021 | 🚧 Planned |
-| TC-064 | Project protocol results to portable verification findings | Property | P1 | FR-061-AC-7, FR-061-AC-10, FR-061-AC-11, FR-061-AC-12 | 🚧 Planned |
+| TC-064 | Project protocol results to portable verification findings | Property | P1 | FR-062-AC-1, FR-062-AC-2, FR-062-AC-3, FR-062-AC-4 | 🚧 Planned |
