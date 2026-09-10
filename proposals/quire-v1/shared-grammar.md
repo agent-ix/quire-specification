@@ -6,13 +6,13 @@ their exact rules. The candidate uses `ix:native` / `1-draft` to make the change
 explicit without renaming historical sources. Profile definition artifacts and
 their exact revisions/digests must be accepted before this candidate executes.
 
-This draft defines common lexical rules, profile/model declarations, shared
-expressions, state clauses, reusable predicates and native temporal clauses.
-Temporal meaning comes from FR-090–095, contributed at E's `1f107dd` revision.
-Protocol productions will join this same grammar with B's contract; their bodies
-are not arbitrary balanced text and no adapter may parse them with a second
-expression grammar. L1 stays open until those productions and the family
-bindings/examples are integrated.
+This draft defines one composed entry point for common expressions, state,
+temporal and protocol/choreography declarations. Temporal meaning comes from
+FR-090–095; protocol meaning comes from FR-050–061 and the
+[protocol contract](protocol-contract.md). No family body is arbitrary balanced
+text and no adapter may parse expressions with a second grammar. L1 stays open
+until the proposed surfaces, exact family bindings and examples agree and the
+baseline review accepts their definition artifacts.
 
 ## Lexical contract
 
@@ -36,6 +36,15 @@ edition. Adding a keyword in `1-draft` cannot steal an identifier admitted by
 `0-draft`. One recognizer can retain raw word spelling and let the selected
 edition classify it; no second handwritten token scanner is required.
 
+`ident` excludes that edition's reserved words in native declaration/binder
+positions. A `member-name` accepts the same ASCII word spelling including
+reserved words in a syntactically qualified model/member position. Thus
+`view.exhausted`, `M::result` and `M::Payment::retry` preserve model-owned names;
+they do not declare native binders named `exhausted`, `result` or `retry`.
+The parser uses token spelling in those positions without rescanning source or
+changing the token's original span. No punctuation, Unicode normalization or
+implicit model-name repair is admitted by this contextual rule.
+
 An unsigned integer spelling is `0` or `[1-9][0-9]*`. A minus is a separate unary
 token. Leading zeros and malformed exponent/string forms are syntax errors.
 Decimal/exponent number forms may be recognized for an unsupported numeric-form
@@ -50,27 +59,34 @@ Common reserved words for this candidate fragment are `language`, `edition`,
 `map`, `count`, `sum`, `reaches`, `rational`,
 `div`, `rem`, `mod`, `temporal`, `protocol`, `over`, `clock`, `origin`, `each`,
 `when`, `capture`, `holds`, `eventually`, `always`, `until`, `release`, `once`,
-`historically`, `since` and `triggered`. The complete edition inventory
-will add the reviewed family vocabulary before acceptance; this fragment is not
-an extensible runtime keyword registry.
+`historically`, `since`, `triggered`, `role`, `relationship`, `channel`, `from`,
+`to`, `carries`, `ordering`, `unordered`, `fifo`, `by`, `delivery`, `requires`,
+`compensate`, `for`, `as`, `activate`, `first`, `within`, `attempts`, `of`,
+`retry`, `commit`, `never`, `recover`, `run`, `sequence`, `choice`, `visible`,
+`case`, `parallel`, `branch`, `join`, `all`, `repeat`, `max`, `while`,
+`exhausted`, `await`, `after`, `match`, `timeout`, `send`, `via`, `receive`,
+`attempt`, `contracts`, `effect`, `event`, `related`, `check` and `finish`.
+This candidate inventory is edition-owned, not an extensible runtime registry.
 
 ## Declarations and expressions
 
 EBNF uses quoted terminals, comma concatenation, `|` alternatives, `{…}`
-repetition and `[…]` optionality. `ident`, `string` and `uint` follow the lexical
-contract. `EOF` requires the entire unit to be consumed.
+repetition and `[…]` optionality. `ident`, `member-name`, `string` and `uint`
+follow the lexical contract. `EOF` requires the entire unit to be consumed.
 
 ```ebnf
-state-temporal-unit = header, profile, { profile }, { model },
+composed-unit = header, profile, { profile }, { model },
                declaration, { declaration }, EOF ;
 header       = 'language', string, 'edition', string, ';' ;
 profile      = 'profile', ident, '=', string, 'version', string,
                'digest', string, ';' ;
 model        = 'model', ident, '=', string, 'version', string,
                'digest', string, ';' ;
-type-name    = ident, '::', ident ;
+model-name   = ident, '::', member-name ;
+type-name    = model-name ;
+operation-name = type-name, '::', member-name ;
 parameter-type = 'Boolean' | type-name ;
-declaration  = predicate | state-clause | temporal-clause ;
+declaration  = predicate | state-clause | temporal-clause | protocol-clause ;
 predicate    = 'predicate', ident, 'using', ident,
                '(', [ parameter, { ',', parameter } ], ')',
                ':', 'Boolean', block ;
@@ -78,7 +94,7 @@ parameter    = ident, ':', parameter-type ;
 state-clause = 'invariant', ident, 'using', ident, 'on', type-name,
                'at', 'current', block
              | ('pre' | 'post'), ident, 'using', ident, 'on',
-               type-name, '::', ident, block ;
+               operation-name, block ;
 block        = '{', expr, '}' ;
 expr         = 'let', ident, '=', expr, 'in', expr
              | 'if', expr, 'then', expr, 'else', expr
@@ -90,10 +106,10 @@ comparison   = sum, [ ('=' | '!=' | '<' | '<=' | '>' | '>='), sum ] ;
 sum          = product, { ('+' | '-'), product } ;
 product      = unary, { ('*' | 'div' | 'rem' | 'mod' | '/'), unary } ;
 unary        = ('not' | '-'), unary | postfix ;
-postfix      = primary, { '.', ident } ;
+postfix      = primary, { '.', member-name } ;
 primary      = 'true' | 'false' | 'self' | 'result' | uint | string
              | ident, [ '(', [ expr, { ',', expr } ], ')' ]
-             | type-name, '::', ident
+             | type-name, '::', member-name
              | '(', expr, ')'
              | ('present' | 'value' | 'deref' | 'pre'),
                '(', expr, ')'
@@ -103,7 +119,7 @@ primary      = 'true' | 'false' | 'self' | 'result' | uint | string
                '(', ident, 'in', expr, ':', expr, ')'
              | ('count' | 'sum'), '<', type-name, '>',
                '(', ident, 'in', expr, ':', expr, ')'
-             | 'reaches', '(', expr, ',', expr, ',', ident, ')'
+             | 'reaches', '(', expr, ',', expr, ',', member-name, ')'
              | 'rational', '(', signed-int, ',', signed-int, ')' ;
 signed-int   = [ '-' ], uint ;
 
@@ -131,14 +147,71 @@ temporal-unary = 'not', temporal-unary
               | temporal-primary ;
 temporal-primary = 'true' | 'false' | '(', temporal-expr, ')'
                  | 'holds', '(', expr, ')' ;
+
+protocol-clause = 'protocol', ident, 'using', ident,
+                  'over', '(', parameter, ')', activation, '{',
+                  { capture }, role, { role }, { relationship }, { channel },
+                  { protocol-requirement | compensation },
+                  'run', control, finish, '}' ;
+role         = 'role', ident, 'on', model-name, ';' ;
+relationship = 'relationship', ident, '=', model-name, ';' ;
+channel      = 'channel', ident, 'from', ident, 'to', ident,
+               'carries', type-name, 'ordering', ordering,
+               'delivery', interval, ';' ;
+ordering     = 'unordered'
+             | 'fifo', 'by', '(', parameter, ')', block ;
+protocol-requirement = 'requires', 'temporal', ident, ';' ;
+node-ref     = ident, { '::', ident } ;
+compensation = 'compensate', ident, 'for', node-ref,
+               'as', '(', parameter, ')', 'by', ident,
+               'on', operation-name, 'using', ident, 'clock', string, '{',
+               { capture }, 'activate', 'first', '(', parameter, ')',
+               'when', block, '{', { capture }, '}',
+               'within', interval, ';', 'attempts', uint, 'of', type-name, ';',
+               'retry', '(', parameter, ',', parameter, ')', block, ';',
+               'commit', (node-ref | 'never'), ';',
+               'recover', '(', parameter, ')', block, ';', '}' ;
+control      = sequence | choice | parallel | repetition | await-control
+             | event-node | check | commit ;
+sequence     = 'sequence', ident, '{', { control }, '}' ;
+visibility   = 'visible', '(', [ expr, { ',', expr } ], ')' ;
+choice       = 'choice', ident, 'by', ident, visibility, '{',
+               case, case, { case }, '}' ;
+case         = 'case', ident, 'when', block, control ;
+parallel     = 'parallel', ident, '{', branch, branch, { branch }, '}',
+               'join', 'all', '[', ident, { ',', ident }, ']', ';' ;
+branch       = 'branch', ident, control ;
+repetition   = 'repeat', ident, 'by', ident, visibility, 'max', uint,
+               'while', block, control, 'exhausted', control ;
+await-control = 'await', ident, 'after', node-ref,
+                'using', ident, 'clock', string, 'within', interval,
+                'match', event-node, 'then', control, 'timeout', control ;
+related      = 'related', 'by', ident, '(', expr, ',', expr, ')' ;
+event-node   = 'send', ident, 'via', ident,
+               'as', '(', parameter, ')', { related }, block, ';'
+             | 'receive', ident, 'via', ident, 'of', node-ref,
+               'as', '(', parameter, ')', { related }, block, ';'
+             | 'attempt', ident, 'by', ident, 'on', operation-name,
+               'contracts', '[', [ ident, { ',', ident } ], ']',
+               'as', '(', parameter, ')', { related }, block, ';'
+             | 'effect', ident, 'of', node-ref,
+               'as', '(', parameter, ')', { related }, block, ';'
+             | 'event', ident, 'by', ident, [ 'for', node-ref ],
+               'as', '(', parameter, ')', { related }, block, ';' ;
+check        = 'check', ident, 'using', ident, block, ';' ;
+commit       = 'commit', ident, 'by', ident,
+               'as', '(', parameter, ')', block, ';' ;
+finish       = 'finish', ident, 'as', '(', parameter, ')', block, ';' ;
 ```
 
-`state-temporal-unit` is the explicitly limited entry point for this draft.
-The earlier common-only fragment is subsumed; neither entry point has an adopted
-profile identity. This is not the final composed-unit production. Adding protocol
-declarations requires explicit grammar productions, not a catch-all body.
+`composed-unit` subsumes the earlier common-only and state/temporal drafting
+entry points. None has an adopted profile identity. All three families are now
+syntactically represented; grammar completeness does not establish agreement of
+their model, observation or result contracts, or an executable implementation.
 Common value-expression productions carry no temporal or protocol-control
 semantics; the temporal productions have the interpretation specified below.
+The [choreography surface contract](choreography-surface.md) supplies control,
+data-scope and compensation correspondence for the protocol productions.
 The [state contract](state-contract.md) specifies ordered queries, exact
 aggregation, numeric domains and operation-anchor correspondence. Type arguments
 after the reserved query names are type positions, not comparisons; the normal
@@ -361,10 +434,28 @@ by the carried-forward v1 arithmetic admission. They do not spell rational
 literals. This edition's ability to parse an operator does not enable it in the
 first state profile or alter old `0-draft` division/remainder semantics.
 
+## Protocol expressions and bindings
+
+The protocol surface reuses `expr`, `block`, `parameter`, `capture`, `activation`,
+`interval` and exact import/profile references. Its control nodes are not Boolean
+expressions. A block is a delimiter around the common expression grammar; its
+consumer declares whether the result must be Boolean (guards, checks, recovery)
+or a specific admitted value type (FIFO keys). Shared predicate declarations
+remain Boolean-only. No callback, evaluation of source text or user-code escape
+is introduced by a protocol expression position.
+
+`node-ref` resolves protocol structure, not a model type or value. `model-name`
+resolves an imported declaration; role, relationship, payload and operation
+positions require different producer-owned declaration kinds. Equal spellings
+cannot substitute one kind for another. Group/branch paths and bounded iteration
+occurrence identities retain the original node declaration and source span.
+The [surface contract](choreography-surface.md) states definite availability of
+node values, imported temporal requirements and exact runtime binding roles.
+
 ## Outstanding integration
 
-Before accepting L1: integrate protocol productions and examples,
-reconcile the complete keyword/type catalog, agree model/observation binding slots
-and anchors, supply exact profile definition artifacts, and run the selected
+Before accepting L1: reconcile the protocol examples with B's control contract,
+the complete keyword/type catalog and D/F's exact model/observation binding slots
+and anchors; supply exact profile definition artifacts; and run the selected
 baseline review. This document neither closes those requirements nor qualifies
 the current compiler against the new syntax.

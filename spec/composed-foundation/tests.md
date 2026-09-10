@@ -3,6 +3,8 @@ id: TM-003
 title: "Composed language shared foundation acceptance"
 type: TestMatrix
 relationships:
+  - target: ix://agent-ix/quire-specification/FR-049
+    type: references
   - target: ix://agent-ix/quire-specification/FR-048
     type: references
   - target: ix://agent-ix/quire-specification/FR-020
@@ -96,6 +98,7 @@ baseline review remain prerequisites for the corresponding executable cases.
 | FR-037 | FR-037-AC-3 | TC-037 | 🚧 Planned |
 | FR-037 | FR-037-AC-4 | TC-037 | 🚧 Planned |
 | FR-037 | FR-037-AC-5 | TC-037 | 🚧 Planned |
+| FR-037 | FR-037-AC-6 | TC-037 | 🚧 Planned |
 | FR-038 | FR-038-AC-1 | TC-038 | 🚧 Planned |
 | FR-038 | FR-038-AC-2 | TC-038 | 🚧 Planned |
 | FR-038 | FR-038-AC-3 | TC-038 | 🚧 Planned |
@@ -155,6 +158,18 @@ baseline review remain prerequisites for the corresponding executable cases.
 | FR-048 | FR-048-AC-6 | TC-049 | 🚧 Planned |
 | FR-048 | FR-048-AC-7 | TC-049 | 🚧 Planned |
 | FR-048 | FR-048-AC-8 | TC-049 | 🚧 Planned |
+| FR-049 | FR-049-AC-1 | TC-170 | 🚧 Planned |
+| FR-049 | FR-049-AC-2 | TC-170 | 🚧 Planned |
+| FR-049 | FR-049-AC-3 | TC-171 | 🚧 Planned |
+| FR-049 | FR-049-AC-4 | TC-171 | 🚧 Planned |
+| FR-049 | FR-049-AC-5 | TC-172 | 🚧 Planned |
+| FR-049 | FR-049-AC-6 | TC-172 | 🚧 Planned |
+| FR-049 | FR-049-AC-7 | TC-173 | 🚧 Planned |
+| FR-049 | FR-049-AC-8 | TC-173 | 🚧 Planned |
+| FR-049 | FR-049-AC-9 | TC-174 | 🚧 Planned |
+| FR-049 | FR-049-AC-10 | TC-170 | 🚧 Planned |
+| FR-049 | FR-049-AC-11 | TC-171 | 🚧 Planned |
+| FR-049 | FR-049-AC-12 | TC-174 | 🚧 Planned |
 
 ## Test Case Summary
 
@@ -168,7 +183,7 @@ baseline review remain prerequisites for the corresponding executable cases.
 | TC-034 | Bind cross-family predicates to explicit evaluation environments | Integration | P1 | FR-034-AC-1, FR-034-AC-2, FR-034-AC-3, FR-034-AC-4 | 🚧 Planned |
 | TC-035 | Retain explicit ecosystem scope identities in assessment requests | Integration | P1 | FR-035-AC-1, FR-035-AC-2, FR-035-AC-3, FR-035-AC-4 | 🚧 Planned |
 | TC-036 | Preserve original source locations through lexical recognition | Integration | P1 | FR-036-AC-1, FR-036-AC-2, FR-036-AC-3, FR-036-AC-4, FR-036-AC-5 | 🚧 Planned |
-| TC-037 | Parse shared expressions with explicit precedence | Integration | P1 | FR-037-AC-1, FR-037-AC-2, FR-037-AC-3, FR-037-AC-4, FR-037-AC-5 | 🚧 Planned |
+| TC-037 | Parse shared expressions with explicit precedence | Integration | P1 | FR-037-AC-1, FR-037-AC-2, FR-037-AC-3, FR-037-AC-4, FR-037-AC-5, FR-037-AC-6 | 🚧 Planned |
 | TC-038 | Resolve predicate names under explicit lexical scopes | Integration | P1 | FR-038-AC-1, FR-038-AC-2, FR-038-AC-3, FR-038-AC-4, FR-038-AC-5 | 🚧 Planned |
 | TC-039 | Normalize exact rational literals before domain admission | Integration | P1 | FR-039-AC-1, FR-039-AC-2, FR-039-AC-3, FR-039-AC-4, FR-039-AC-5 | 🚧 Planned |
 | TC-040 | Admit state extensions through exact profile dependencies | Integration | P1 | FR-040-AC-1, FR-040-AC-2, FR-040-AC-3, FR-040-AC-4 | 🚧 Planned |
@@ -181,6 +196,11 @@ baseline review remain prerequisites for the corresponding executable cases.
 | TC-047 | Classify producer diagnostics from typed causes | Integration | P1 | FR-047-AC-1, FR-047-AC-2, FR-047-AC-3, FR-047-AC-4, FR-047-AC-5 | 🚧 Planned |
 | TC-048 | Stop work at its resource boundary | Integration | P1 | NFR-010 | 🚧 Planned |
 | TC-049 | Retain typed temporal syntax and activation bindings | Integration | P1 | FR-048-AC-1, FR-048-AC-2, FR-048-AC-3, FR-048-AC-4, FR-048-AC-5, FR-048-AC-6, FR-048-AC-7, FR-048-AC-8 | 🚧 Planned |
+| TC-170 | Bind choreography references without identity substitution | Integration | P1 | FR-049-AC-1, FR-049-AC-2, FR-049-AC-10 | 🚧 Planned |
+| TC-171 | Preserve causal structure and definite value availability | Integration | P1 | FR-049-AC-3, FR-049-AC-4, FR-049-AC-11 | 🚧 Planned |
+| TC-172 | Keep compensation registration and activation captures separate | Integration | P1 | FR-049-AC-5, FR-049-AC-6 | 🚧 Planned |
+| TC-173 | Bind related instances and complete recovery populations | Integration | P1 | FR-049-AC-7, FR-049-AC-8 | 🚧 Planned |
+| TC-174 | Preserve deadline branches and explicit workflow closure | Integration | P1 | FR-049-AC-9, FR-049-AC-12 | 🚧 Planned |
 
 ## Non-Functional Requirement Coverage
 
