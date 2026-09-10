@@ -27,7 +27,8 @@ The consumer declares supported capabilities and mapping profile.
 One preserved result plus pending, incomplete, unsupported, and lossy obligation
 controls, each carrying source/binding/progress identities; and target text that
 is structurally accepted while its source-bound mapping remains conditional,
-unrepresented, or refused.
+unrepresented, or refused. Include a current unqualified codegen bound-coverage
+observation as a retained input fact rather than an assessment/result substitute.
 
 ## Test Procedure
 
@@ -39,6 +40,8 @@ unrepresented, or refused.
    - IT-051-SC-03: coercion is refused or remains non-success.
 4. Observe parsing or serialization of the selected target text where that check is available.
    - IT-051-SC-04: structural acceptance is retained as an observation and does not change the source-bound mapping outcome or establish semantic preservation.
+5. Deliver a current codegen bound-coverage observation beside an OB03 result.
+   - IT-051-SC-05: its unqualified provenance remains visible and it cannot establish completeness, execution, adequacy, or obligation discharge.
 
 ## Expected Results
 

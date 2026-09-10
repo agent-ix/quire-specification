@@ -54,6 +54,14 @@ foreign runtime is required for generation or qualification. Every first-party
 executable adapter, reader, loss reporter, fixture audit, and test path is Rust
 1.98.1.
 
+The existing codegen `analyze_bound_coverage` output is an immutable,
+`provenance: unqualified` domain observation over an already bound generated
+bundle. A consumer may retain it as one input fact with its own codegen identity,
+but it cannot establish observation completeness, activation, participation,
+adequacy, native execution, authenticated producer provenance, or obligation
+discharge. The planned aggregate native-run analysis and codegen CLI remain
+separate parked work; this contract does not authorize either implementation.
+
 ## Planned controls
 
 For one common O1/O2 assessment, map a preserved obligation and independently
@@ -64,4 +72,3 @@ source/binding/model/profile identity and prove no target parse or serialization
 result becomes a semantic or execution claim. They are planned in
 [TC-146](../../spec/test-cases/TC-146-map-observation-results-to-consumers.md)
 and [IT-051](../../spec/integration/IT-051-observation-output-consumer-contract.md).
-
