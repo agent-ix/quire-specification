@@ -8,6 +8,8 @@ standards_alignment:
   - iso-iec-ieee-29148
   - ieee-828
 relationships:
+  - target: ix://agent-ix/quire-specification/IT-010
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-049
     type: contains
   - target: ix://agent-ix/quire-specification/US-006
@@ -441,3 +443,4 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [IT-001](integration/IT-001-legacy-canonical-reader.md) | IT | Draft |
 | [IT-002](integration/IT-002-independent-reference-consumer.md) | IT | Draft |
 | [IT-003](integration/IT-003-verification-reference-amendment.md) | IT | Planned |
+| [IT-010](integration/IT-010-bind-linked-package-assessments.md) | IT | Planned composed package/binding boundary |
