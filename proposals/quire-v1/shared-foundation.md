@@ -122,8 +122,9 @@ following are subsequent correction dispositions for PR review:
 ### PR correction disposition
 
 [SR-408](../../reviews/2026-09-10-composed-v1-pr15.md) records the independent
-review at `3972783`; its original FAIL verdict remains unchanged. The following
-corrections are submitted for recheck:
+review at `3972783`; its original FAIL verdict remains unchanged. A's
+[current correction recheck](../../spec/reviews/composed-v1/base.md#pr-15-correction-recheck)
+is PASS for private PR merge and verifies the following dispositions:
 
 | Finding | Current correction |
 | --- | --- |
@@ -145,7 +146,7 @@ revisions; they do not claim executed consumer qualification or baseline adoptio
 
 | Earlier findings | Current disposition |
 | --- | --- |
-| SR-200 FND-004; SR-203 FND-003; SR-300 FND-007; SR-303 FND-004; SR-306 FND-004 | Definition integration is corrected in the current files. Old checksum/successor publication instructions are superseded by the owner's one-draft workflow. |
+| SR-200 FND-004; SR-203 FND-003; SR-300 FND-007; SR-302 FND-005; SR-303 FND-004; SR-306 FND-004 | Definition integration is corrected in the current files. Old checksum/successor publication instructions are superseded by the owner's one-draft workflow. |
 | SR-200 FND-005; SR-202 FND-003; SR-203 FND-002; SR-206 FND-003; SR-300 FND-006; SR-302 FND-004; SR-303 FND-003; SR-306 FND-003 | The current FR-115/116 and observation output contract preserve B/E result dimensions, exact support and supersession. The correction at `8eea9d0` additionally names each decision-scope and surrounding-execution progress/closure axis independently. |
 | SR-204 FND-003; SR-304 FND-004 | TC-145/146 and IT-051 now specify consumer preservation controls, including independent omitted/cross-wired axes and complete-global-conformance closure premises. Execution of those controls remains planned; the missing test-specification gap is corrected. |
 
@@ -155,9 +156,9 @@ links the 51 approved scope decisions to requirements and planned cases.
 D's producer plan and FCD PR #97 need their own acceptance; #93 remains parked
 until its affected contracts and plan are accepted.
 
-Next: review the coherent PR correction set, resolve substantive findings, then
-refine existing implementation tickets. No new full review campaign for each
-edit, repetitive progress log, or per-document version cascade is required.
+The composed correction review is complete. Merge the reviewed baseline and
+refine the existing implementation tickets from its contracts. No new full
+review campaign for each edit or per-document version cascade is required.
 The four native matrices contain 59 planned TC artifacts, not executed evidence.
 Historical accepted profiles and the original ConfigVersion admission case keep
 their separate meanings. C's assurance campaign remains independent.
