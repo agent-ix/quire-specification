@@ -40,4 +40,3 @@ And/or/implies evaluate their left operand once and skip right for false/true/fa
 
 Proposed composed-v1 obligation. Historical definitions and their acceptance
 remain separate; this artifact does not establish implementation coverage.
-

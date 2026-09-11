@@ -18,4 +18,3 @@ Use source-bound counters/probes in the eventual test harness to observe operand
 ## Expected Results
 
 Evaluation and recorded activation agree with source control. Only exact guard identities establish optional safety. Refused/incomplete cases have no fabricated Boolean or participation evidence, and test observation instrumentation does not alter source meaning.
-

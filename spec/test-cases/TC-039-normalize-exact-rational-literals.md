@@ -18,4 +18,3 @@ Admit the explicit literal pairs and zero cases. Use a synthetic authored ration
 ## Expected Results
 
 Normalization and inclusive authored bound checks occur in the specified order. Zero denominators and incompatible types refuse distinctly; malformed literal arguments remain syntax errors. Equivalent values do not erase source spelling identity. Resource exhaustion cannot produce an approximate or false result.
-

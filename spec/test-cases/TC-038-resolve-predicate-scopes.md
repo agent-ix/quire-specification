@@ -18,4 +18,3 @@ Link two source units with local alias M bound to different models and distinct 
 ## Expected Results
 
 Aliases remain source-unit local and every admitted use has one exact declaration. Invalid scope uses and hidden environment access refuse with original loci. Reusing x in distinct predicate declarations is admitted; forward-call order alone does not change meaning.
-

@@ -40,4 +40,3 @@ Every emitted code belongs to the selected catalog; no ad-hoc literal or English
 
 Proposed composed-v1 obligation. Historical definitions and their acceptance
 remain separate; this artifact does not establish implementation coverage.
-

@@ -39,4 +39,3 @@ A state predicate remains a Boolean expression evaluated in its declared environ
 
 Proposed requirement for the composed profile; it does not amend historical
 accepted definitions or establish an implemented capability.
-

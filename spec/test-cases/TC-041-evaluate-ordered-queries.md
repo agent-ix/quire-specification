@@ -18,4 +18,3 @@ Use the synthetic declared domains and sequence [2,2,3], plus empty/singleton/ma
 ## Expected Results
 
 Every query preserves the specified ordering, duplicate and identity semantics. Invalid type/definedness cases refuse before completed evaluation; missing inputs and resource exhaustion remain distinct incomplete outcomes. No smaller observed sample silently narrows the authored input domain.
-
