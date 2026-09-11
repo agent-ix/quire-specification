@@ -40,4 +40,3 @@ Reject denominator zero before normalization. Move the sign to the numerator, di
 
 This contribution remains proposed until the integrated baseline review. It does
 not change historical definition bytes or claim current compiler support.
-

@@ -40,4 +40,3 @@ The candidate lexical rules are in the shared grammar. Keywords match complete i
 
 This contribution remains proposed until the integrated baseline review. It does
 not change historical definition bytes or claim current compiler support.
-

@@ -40,4 +40,3 @@ Aliases are source-unit scoped; native predicate declaration names are unique in
 
 This contribution remains proposed until the integrated baseline review. It does
 not change historical definition bytes or claim current compiler support.
-

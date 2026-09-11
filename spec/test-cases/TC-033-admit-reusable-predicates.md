@@ -18,4 +18,3 @@ Define a typed Boolean predicate and two valid callers under the proposed reusab
 ## Expected Results
 
 Valid calls share declaration identity while preserving their own loci. Invalid calls/cycles/partial bodies refuse with typed causes. No monitor or external value is implicitly read. The historical profile still refuses user-defined calls. Concrete syntax is bound to the reviewed L1 grammar before executable tests are implemented.
-

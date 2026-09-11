@@ -41,4 +41,3 @@ The state contract defines size, contains, forall, exists, filter, map, count an
 
 Proposed composed-v1 obligation. Historical definitions and their acceptance
 remain separate; this artifact does not establish implementation coverage.
-

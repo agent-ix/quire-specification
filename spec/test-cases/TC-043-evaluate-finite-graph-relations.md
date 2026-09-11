@@ -18,4 +18,3 @@ Construct explicitly finite isolated, self-loop, two-node cycle, branching/dupli
 ## Expected Results
 
 Results distinguish positive-length reachability from reflexive equality, preserve exact graph identity and terminate by finite visited identities. Refusals/incompleteness remain typed; no cutoff, missing node or unsupported representation produces a false unreachable result.
-

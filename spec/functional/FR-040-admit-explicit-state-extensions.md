@@ -39,4 +39,3 @@ The state contract explicitly proposes reusable-predicate/query and finite-graph
 
 Proposed composed-v1 obligation. Historical definitions and their acceptance
 remain separate; this artifact does not establish implementation coverage.
-

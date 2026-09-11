@@ -40,4 +40,3 @@ Identity equality uses universe, stable object type and object ID, preserving sn
 
 Proposed composed-v1 obligation. Historical definitions and their acceptance
 remain separate; this artifact does not establish implementation coverage.
-

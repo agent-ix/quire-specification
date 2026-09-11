@@ -18,4 +18,3 @@ Tokenize equivalent LF/CRLF units containing a multibyte JSON string, an escaped
 ## Expected Results
 
 Reported spans select the intended original byte slices and identities remain byte-exact. Lexical defects refuse, not repair; resource controls produce no accepted partial unit. Complete-word matching and edition selection prevent accidental keyword or identifier reinterpretation.
-

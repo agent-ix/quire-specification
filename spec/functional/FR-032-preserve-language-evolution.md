@@ -39,4 +39,3 @@ Edition, semantic-profile, wire/canonicalization and backend implementation iden
 
 Proposed requirement for the composed profile; it does not amend historical
 accepted definitions or establish an implemented capability.
-

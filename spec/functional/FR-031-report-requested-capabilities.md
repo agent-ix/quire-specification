@@ -39,4 +39,3 @@ A dependency-closed supported request can execute when another independent reque
 
 Proposed requirement for the composed profile; it does not amend historical
 accepted definitions or establish an implemented capability.
-

@@ -18,4 +18,3 @@ Reference one checked amount predicate from a state clause, temporal obligation 
 ## Expected Results
 
 All valid references retain declaration/source/model/anchor identity. Captured arguments stay at their original value. The three invalid substitutions refuse before evaluation rather than rebinding by name or converting status to Boolean.
-
