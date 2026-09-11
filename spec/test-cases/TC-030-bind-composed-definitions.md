@@ -1,0 +1,69 @@
+---
+id: TC-030
+title: "Bind every clause to its exact semantic definitions"
+type: TC
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-130
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-030
+    type: verifies
+---
+## Description
+
+Planned acceptance controls for [FR-030](../functional/FR-030-bind-composed-definitions.md).
+No executable test or completed coverage is claimed by this artifact.
+
+## Test Procedure
+
+Use one three-family package with two inventoried source units, one exact model
+closure and two distinct clauses declaring the same local clock-role name.
+Establish its expected selections from the source and producer-owned definitions.
+Apply each control independently:
+
+| Control | Expected observation |
+| --- | --- |
+| Change a definition revision or digest; duplicate the editable clause authority | Typed dependent admission refusal with the failed selection and original source region. |
+| Replace only the runtime trace | Equal static subject; different retained runtime input. |
+| Change a selected semantic definition with matching new bytes | Distinct static subject, admitted only if the new closure is supported and valid. |
+| Omit an inventoried source unit | Namespace cannot close; no guessed binding to a remaining declaration. |
+| Put a shadowing source file beside the inventoried units without adding it to the inventory | No change to the declared package or name resolution. |
+| Put the manifest digest, lock digest or producer fingerprint in the compiled-model import digest position | Refused import; no domain substitution. |
+| Inspect both equal-named clock roles | Distinct owning clauses/source regions; exact types, anchors and scope dependencies retained. |
+| Change only the compile resource ceiling, with both ceilings sufficient for admission | Static subject unchanged; the exact changed configuration remains in build provenance. |
+| Link a valid three-family template without concrete workflow instances, runtime populations/windows, observation records or progress | Static linking succeeds and retains the exact typed requirements for later assessment. Removing a required static definition still refuses dependent linking. |
+| Supply a producer canonical model/profile-object selection and its declared correspondence to exact native compiled-model/definition bytes | Both selections and their digest domains remain distinct; declared exports, kinds, relation and closure match independently authored expectations. |
+| Remove the required correspondence; bind a foreign export; substitute producer canonical and native raw-byte digests independently | Each dependent binding refuses with a structured cause even when labels or field shapes match. |
+| Re-encode a compiled model in a way that preserves its producer canonical object but changes its raw bytes | The old native byte selection refuses; an explicitly updated, valid selection retains the unchanged canonical producer identity and distinct native bytes. |
+
+Compare complete structured static components and references. Do not use an
+invented package hash, a producer-generated expected result or diagnostic English
+as the oracle. Concrete typed producer/consumer execution is specified by IT-010.
+
+For the [whole-package reference](../../proposals/quire-v1/definitions/package-reference.md),
+use a package declaring a predicate and all three clause families. Its outer
+selection is the package interpretation and its four exact required features;
+the inner state/temporal/protocol selections remain separate. Substitute one
+clause's profile for the outer selection, remove an inner selection, omit or add
+an outer feature, and attach an unrelated IR/JCS canonical digest. Each mutant
+refuses interpretation. Reordering the unique exact feature set preserves it.
+Changing a valid inner temporal selection changes the static subject even though
+the outer definition remains the same. A partial package cannot claim full
+linking from one valid child reference. These cases require the future actual
+payload reader; existing envelope shape tests do not discharge them.
+
+Select the outer package interpretation as a native clause's `using` profile and
+require a profile-role refusal. Supply a valid envelope naming an unknown package
+payload wire and require unsupported-wire refusal before semantic admission.
+The outer feature set cannot count as evidence for implemented family support.
+
+A predicate-only package has `declaration.predicate` without `family.state`;
+a state-only package has `family.state` without `family.temporal`. Add the known
+but absent temporal feature to that state-only package: semantic feature-set
+validation must reject it even though it is not an unknown-feature spelling.
+
+## Expected Results
+
+The valid package retains exact bindings and separate roles. Each invalid
+selection refuses its dependent admission with a typed cause and location.
+Runtime/provenance changes preserve static identity where specified; semantic
+changes do not. Refused dependencies never execute or claim complete admission.
