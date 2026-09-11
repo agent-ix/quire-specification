@@ -45,6 +45,11 @@ The lower-bound convention for `until` is deliberate: positions before `a` do
 not satisfy its left operand. It matches `mltl.closed-trace/v1` and shall not be
 replaced by a different unbounded-until convention under the same identity.
 
+Temporal `not`, `and`, `or` and `implies` shall evaluate pointwise at every
+offset traversed by their enclosing temporal operator. They shall not first
+reduce an operand over the entire interval and then apply one untimed Boolean
+operation to that aggregate.
+
 For the timestamped finite-window profile, an eligible future instant has an
 admitted clock distance in `[a,b]`. Existential and universal operators quantify
 only eligible admitted instants; `until` uses the admitted order and requires
@@ -82,6 +87,7 @@ The v1 temporal profiles shall refuse unbounded intervals.
 | FR-091-AC-4 | A decisive open decision scope may settle early only with the matching decisive basis, complete exact decision support and proof over every admitted continuation; every other unclosed future remains pending, while a closed incomplete input reports incomplete rather than applying false extension. | Test (TC-116) |
 | FR-091-AC-5 | Timestamped empty existential/universal window truth is emitted only after complete progress through the inclusive upper endpoint; an eligible event exactly at the deadline participates before settlement. | Test (TC-115) |
 | FR-091-AC-6 | Unbounded intervals, unavailable total valuations and exhausted semantic work return non-Boolean dispositions. | Test (TC-118) |
+| FR-091-AC-7 | On a one-position closed trace with `p` true, `always[0,1] not holds(p)` is false and `eventually[0,1] not holds(p)` is true under false extension, distinguishing pointwise temporal negation from an untimed reading. | Test (TC-111) |
 
 ## Dependencies
 
