@@ -20,7 +20,7 @@ same selected definition and revision changes assessment-input identity, not
 static meaning.
 
 This working draft uses the [current shared specification](definitions/README.md)
-and its [range correspondence](definitions/observation-range-1-draft-1.md).
+and its [range correspondence](definitions/observation-range.md).
 Runtime binding/progress identities are supplied by the linked package; this
 rule document does not select itself through a copied candidate/digest table.
 
@@ -100,16 +100,14 @@ and its asserted boundary. A progress record for O2 or another window cannot
 settle O1. EOF, a quiet transport, or a record timestamp is not progress/closure
 authority.
 
-| Selection | Identity | Revision | Exact definition bytes |
-| --- | --- | --- | --- |
-| Progress/assertion and restoration | [`observation-progress-1-draft-2.md`](definitions/observation-progress-1-draft-2.md) `quire.observation.progress/v1` | `1-draft.2` | `sha256:f161f36309f1cbf12dbaeace1f05e6d00ca5109e06fe67d55c9e7de3685c9fdd` |
-
-The selected progress definition preserves the assertion, binding, scope,
+The current [progress definition](definitions/observation-progress.md),
+`quire.observation.progress/v1` draft revision `1-draft.3`, preserves the assertion, binding, scope,
 E-owned temporal, record/revision, and restoration selections, including FCD
 `1.2.0` half-open window coverage `[start, end)`: `start` participates once and
-`end` belongs only to a later selected window. It remains a candidate until A
-indexes its exact bytes in the shared definition catalog; changing those bytes is
-a changed definition selection, not a new assertion.
+`end` belongs only to a later selected window. This is part of the current shared
+draft; no further definition catalog publication gates its review. Runtime
+assertions retain the exact accepted definition selection independently from
+their own assertion identity and revision.
 
 ## Completeness and assessment handoff
 

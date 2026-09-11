@@ -1,26 +1,37 @@
 # Current native Quire v1 draft
 
-This prototype is one working specification. The current requirements, grammar
-and contracts below are reviewed together at the PR revision. Git retains
-working history; draft edits do not require per-file checksum refreshes or new
-definition revisions.
+This prototype is one working specification. Each unsuffixed file below contains
+the latest corrected definition and links to its current requirements and
+dependencies in this checkout. Superseded draft copies live in Git history.
+No per-rule digest table selects a different working-tree snapshot.
 
-| Part | Current source |
-| --- | --- |
-| Language grammar and parsing | [Shared grammar](../shared-grammar.md), FR-036–038 |
-| Package, identity and binding | [Package contract](../package-contract.md), FR-030–035 and FR-130 |
-| State, predicates, queries and graphs | [State contract](../state-contract.md), FR-039–046 |
-| Temporal profiles and clocks | [FR-090–095](../../../spec/functional/FR-090-select-temporal-profile-and-clock.md), [temporal cases](../../../spec/temporal/tests.md) |
-| Choreography and protocol results | [Native surface](../choreography-surface.md), [protocol contract](../protocol-contract.md), FR-049–062 |
-| Observation binding, progress and ranges | [Observation contract](../observation-contract.md), [range correspondence](observation-range-1-draft-1.md), FR-110–116 |
-| Producer model and ecosystem | [D's baseline at 6259d3a](https://github.com/agent-ix/filament-core-data/blob/6259d3a5b99088740df9bcc8e8d60f3720aaa603/docs/semantic-data-system/baseline-1-2.md), external FR-100–105 |
-| Native diagnostic vocabulary | [Diagnostic definitions](native-diagnostics.md), FR-047 |
+The revision labels carry forward the latest candidates; these remain editable
+drafts, not published immutable definitions. The PR revision identifies the whole
+reviewed draft. Editing it does not require a checksum refresh or another
+successor file.
 
-The earlier candidate files in this directory are retained for historical review
-references. Their copied revision/digest tables are not the current draft's
-dependency selectors or integration gates. Current corrections are in the
-requirements and contracts above; no consumer should combine historical
-candidate tables to infer the current draft.
+| Definition | Draft revision | Current file |
+| --- | --- | --- |
+| `ix:native` / edition `1-draft` | `1-draft.2` | [Edition and shared grammar](edition.md) |
+| `quire.state.core/v1` | `1-draft.3` | [State core](state-core.md) |
+| `quire.state.queries/v1` | `1-draft.3` | [Predicates and queries](state-queries.md) |
+| `quire.state.graph/v1` | `1-draft.3` | [Finite graphs](state-graph.md) |
+| `quire.temporal.bounded-facet/v1` | `1-draft.3` | [Common temporal meaning](temporal-common.md) |
+| Event-position temporal root | `1-draft.3` | [Event positions](temporal-event-position.md) |
+| Fixed-sample temporal root | `1-draft.3` | [Fixed samples](temporal-fixed-sample.md) |
+| Timestamped-window temporal root | `1-draft.3` | [Timestamped windows](temporal-timestamped-window.md) |
+| `quire.protocol.finite-global/v1` | `1-draft.4` | [Protocol and choreography](protocol-finite.md) |
+| `quire.observation.binding/v1` | `1-draft.3` | [Observation binding](observation-binding.md) |
+| `quire.observation.progress/v1` | `1-draft.3` | [Observation progress](observation-progress.md) |
+| `quire.observation.range/v1` | `1-draft.1` | [All-clock range correspondence](observation-range.md) |
+| `quire.package.composed/v1` | `1-draft.2` | [Linked-package interpretation](package-reference.md) |
+| `quire.native.diagnostics/v1` | `1-draft.1` | [Diagnostic interpretation](native-diagnostics.md) |
+
+The [package contract](../package-contract.md), [state contract](../state-contract.md),
+[protocol contract](../protocol-contract.md) and [observation contract](../observation-contract.md)
+are current semantic inputs to these definitions. External producer and compiler
+inventory selections remain explicitly identified at their consuming boundary;
+they are not silently replaced with whatever another repository currently has.
 
 At acceptance, freeze the coherent baseline and assign the immutable definition
 identities needed by implementations. Runtime identity, source provenance,

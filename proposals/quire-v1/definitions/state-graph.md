@@ -1,13 +1,18 @@
 # Native finite graph definition
 
-Profile identity: `quire.state.graph/v1`; revision: `1-draft.2`.
+Profile identity: `quire.state.graph/v1`; revision: `1-draft.3`.
 Language: `ix:native` / `1-draft`. **Proposed, not adopted or implemented.**
+
+This is a working definition in one coherent draft. Required definitions and
+rule links resolve within this checkout; acceptance freezes their exact selections.
+Earlier draft text remains in Git history. Runtime references still require the
+selected immutable identities, revisions and digest domains.
 
 ## Required definition
 
-| Identity | Revision | Definition artifact | Exact byte digest |
-| --- | --- | --- | --- |
-| `quire.state.queries/v1` | `1-draft.2` | [Predicates and queries](state-queries.md) | `sha256:3aa8efda949277a5df552c3dd4f659c44a91ebdfaf6dba68a383d793c8be9429` |
+| Identity | Revision | Definition artifact |
+| --- | --- | --- |
+| `quire.state.queries/v1` | `1-draft.3` | [Predicates and queries](state-queries.md) |
 
 ## Explicit extension
 
@@ -34,10 +39,9 @@ and exact relationship mapping; its historical example is preserved.
 
 ## Selected graph rules
 
-Core/query definitions and their selected state-contract snapshot remain exact
-inherited dependencies. Additional graph rules are selected at repository
-revision `033fcda3cc9f964d018b466faa12cd14c8a9878a`:
+Core/query definitions and their current state contract remain inherited
+dependencies. The following current rule supplies the graph extension.
 
-| Rule | Exact byte digest |
-| --- | --- |
-| [FR-043](https://github.com/agent-ix/quire-specification/blob/033fcda3cc9f964d018b466faa12cd14c8a9878a/spec/functional/FR-043-evaluate-finite-graph-relations.md) | `sha256:9787a857499b629d8d691173cd3a1fbe5971297add0b92d76c711c6c956ab072` |
+| Rule |
+| --- |
+| [FR-043](../../../spec/functional/FR-043-evaluate-finite-graph-relations.md) |

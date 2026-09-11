@@ -1,15 +1,19 @@
 # Native bounded temporal common definition
 
-Definition identity: `quire.temporal.bounded-facet/v1`; revision: `1-draft.2`.
+Definition identity: `quire.temporal.bounded-facet/v1`; revision: `1-draft.3`.
 Language: `ix:native` / `1-draft`. **Proposed, not adopted or implemented.**
 This is a required semantic facet, not a selectable source profile by itself:
 a concrete temporal root must select exactly one FR-090 clock/boundary meaning.
 
+Working draft: rules and required definitions resolve in this same checkout
+until acceptance freezes one coherent baseline. Runtime selections still require
+the exact identities, revisions and digests prescribed by their contracts.
+
 ## Required shared interface
 
-| Identity | Revision | Definition artifact | Exact byte digest | Consumed interface |
-| --- | --- | --- | --- | --- |
-| `quire.state.graph/v1` | `1-draft.2` | [State/query/graph](state-graph.md) | `sha256:8eb33fa23455a8d6551d700c3bf23b2a690a9b7d2b30ea4a1b043af19ab5476b` | Checked shared values, finite queries/graphs and explicit Boolean-predicate references |
+| Identity | Revision | Definition artifact | Consumed interface |
+| --- | --- | --- | --- |
+| `quire.state.graph/v1` | `1-draft.3` | [State/query/graph](state-graph.md) | Checked shared values, finite queries/graphs and explicit Boolean-predicate references |
 
 The concrete temporal roots admit temporal declarations. They reuse the shared
 expression checker for `holds(expr)`, activation guards and capture initializers;
@@ -37,8 +41,20 @@ Each activation has its own exact semantic trigger/origin identity and captures.
 A duplicated receipt cannot create another trigger. Missing required current
 valuations, captures or history remain incomplete/refused; they are not false
 atoms or empty populations. A valid open prefix settles a Boolean only when
-all admitted continuations preserve it. Otherwise its future remains pending.
-Complete closure, open execution and a closed incomplete file remain distinct.
+all admitted continuations preserve it, with completed assessment execution,
+a matching decisive settlement basis and complete exact decision support.
+Otherwise its future remains pending with an unsettled basis. Missing support
+makes that truth unavailable; a missing fact outside completed support remains
+visible in completeness/adequacy without erasing the settled truth.
+Decision-scope progress and closure, surrounding-execution progress and closure,
+and input completeness remain independent. Complete decision-scope closure
+permits the selected boundary rule without closing the surrounding workflow.
+
+Only a closed-complete trigger scope with no admitted trigger is inactive.
+Open or missing/refused trigger evidence leaves activation unknown with its
+distinct completeness/execution disposition. Neither becomes temporal truth.
+Same-binding progress regression or a conflicting assertion revision produces a
+typed contradiction/refusal without rolling back progress or earlier results.
 
 Retain the clock, history, progress, source and population premises needed by
 each result. A late contradiction identifies affected earlier results and their
@@ -52,23 +68,33 @@ are exact linked/request inputs governed by the shared package contract.
 
 ## Selected temporal rules
 
-All rule files below are selected at repository revision `697ffd08b6937d4701beacbb0e0052f9e1ca4728`.
-Digests cover the entire exact file bytes; their locators do not authorize
-substitution of later working-tree versions. External links select no implicit
-runtime dependency or evidence store.
-
-| Rule | Exact byte digest |
+| Rule | Meaning |
 | --- | --- |
-| [FR-048](https://github.com/agent-ix/quire-specification/blob/697ffd08b6937d4701beacbb0e0052f9e1ca4728/spec/functional/FR-048-bind-native-temporal-syntax.md) | `sha256:1cac8faaca860ac694102481f59b527ae2639f0ad94a1883f422ca0e75de7678` |
-| [FR-090](https://github.com/agent-ix/quire-specification/blob/697ffd08b6937d4701beacbb0e0052f9e1ca4728/spec/functional/FR-090-select-temporal-profile-and-clock.md) | `sha256:dc74377395a7d6bfc6189ab3c403b566c1279764112cd841f1dd1b71e0121331` |
-| [FR-091](https://github.com/agent-ix/quire-specification/blob/697ffd08b6937d4701beacbb0e0052f9e1ca4728/spec/functional/FR-091-evaluate-bounded-future.md) | `sha256:92ed046dd295249f983cb7a6bdc807c53763e224a9e72c601ba1c937fcdbf791` |
-| [FR-092](https://github.com/agent-ix/quire-specification/blob/697ffd08b6937d4701beacbb0e0052f9e1ca4728/spec/functional/FR-092-evaluate-bounded-past.md) | `sha256:f33190f80bc439bb883b8ae3b60994fda2e3684794751111e42693538ff3eb6c` |
-| [FR-093](https://github.com/agent-ix/quire-specification/blob/697ffd08b6937d4701beacbb0e0052f9e1ca4728/spec/functional/FR-093-bind-temporal-activation-and-captures.md) | `sha256:71300d32a9ec636cd729e967cb505ead2d38ae46ca8a0d5e0eef7547a5a90dc2` |
-| [FR-094](https://github.com/agent-ix/quire-specification/blob/697ffd08b6937d4701beacbb0e0052f9e1ca4728/spec/functional/FR-094-interpret-progress-history-and-closure.md) | `sha256:b9469550f77332d26df235b2f988285ab01cadb3ff6947a2adf8931bd81c92b9` |
-| [FR-095](https://github.com/agent-ix/quire-specification/blob/697ffd08b6937d4701beacbb0e0052f9e1ca4728/spec/functional/FR-095-preserve-native-tl-correspondence.md) | `sha256:da30fd6f70810b41b671a2eb00658c5c5c15f99939151d21c995234bd2a2b73b` |
-| [NFR-040](https://github.com/agent-ix/quire-specification/blob/697ffd08b6937d4701beacbb0e0052f9e1ca4728/spec/non-functional/NFR-040-bound-temporal-state.md) | `sha256:6044e889aceb244b81677bd003fb22267eeb16e41f996d931ff89016d90dd9c3` |
+| [FR-048](../../../spec/functional/FR-048-bind-native-temporal-syntax.md) | Native temporal syntax and typed environments |
+| [FR-090](../../../spec/functional/FR-090-select-temporal-profile-and-clock.md) | Exact profile, clock and boundary selection |
+| [FR-091](../../../spec/functional/FR-091-evaluate-bounded-future.md) | Bounded future truth and decisive settlement |
+| [FR-092](../../../spec/functional/FR-092-evaluate-bounded-past.md) | Bounded past truth and history |
+| [FR-093](../../../spec/functional/FR-093-bind-temporal-activation-and-captures.md) | Activation, trigger scope and immutable captures |
+| [FR-094](../../../spec/functional/FR-094-interpret-progress-history-and-closure.md) | Independent progress/closure, decision support and supersession |
+| [FR-095](../../../spec/functional/FR-095-preserve-native-tl-correspondence.md) | Native-to-TL correspondence and refusal |
+| [NFR-040](../../../spec/non-functional/NFR-040-bound-temporal-state.md) | Temporal work, retained history and resource limits |
 
-The portable mapping must retain decisive temporal truth together with an open
-execution. B's current FR-061 completeness terminology still needs that composed
-agreement; this temporal facet does not amend B's result schema or claim the
-complete baseline is ready for adoption.
+## Shared result interface and compatibility
+
+The shared result interface is
+[FR-061](../../../spec/functional/FR-061-report-orthogonal-results.md).
+The selected interface is its assessment execution, independent scope/execution
+progress and closure, truth, activation, settlement basis, exact decision
+support and dependence lineage, completeness, and supersession rules, including
+the corresponding result-combination rows. Protocol-specific claims, protocol
+adequacy and canonical protocol-result serialization remain owned by the
+protocol contract; this facet does not import protocol declaration permissions
+or require an E02 projection to evaluate temporal source.
+
+FR-095 requires the bridge correspondence record to retain the native/shared
+result dimensions outside the TL formula when the selected TL wire does not
+encode them. Equal TL truth or formula bytes do not supply missing metadata.
+
+The interval algebra and three clock meanings are retained. Exact runtime
+definition selections remain part of the linked subject; equal formula bytes
+cannot substitute for them. Historical draft text remains in Git.

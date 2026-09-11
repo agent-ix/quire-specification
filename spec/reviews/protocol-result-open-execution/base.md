@@ -21,6 +21,11 @@ open subject independently testable.
 
 ## Verdict
 
+This verdict records the evaluated revision above. Later A/F integration
+dispositions are in [the shared foundation](../../../proposals/quire-v1/shared-foundation.md#historical-integration-findings);
+they supersede the open integration instructions below without changing this
+review's historical observations.
+
 **PASS for the B-owned contribution.** No B-owned blocking finding remains.
 The composed baseline is not ready for adoption until A updates its exact
 definition/checksum snapshot and F's consumer contract explicitly preserves the
