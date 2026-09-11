@@ -50,7 +50,7 @@ These identities remain distinct and typed:
 | Compensation registration | An obligation created only after its paired effect succeeds. |
 | Compensation attempt / effect | A recovery try / its successful business effect. Success does not imply restoration unless the recovery relation establishes it. |
 | Commit | An authored boundary after which specified compensations are no longer permitted. |
-| Result | Facts about one exact request and subject, with assessment execution, subject progress/closure, truth, settlement basis, activation, participation, assumptions, completeness, observation adequacy and protocol adequacy separated. |
+| Result | Facts about one exact request and subject, with assessment execution, decision-scope progress/closure, surrounding-execution progress/closure, complete-global-conformance closure, truth, settlement basis, activation, participation, assumptions, completeness, observation adequacy and protocol adequacy separated. |
 
 Identity substitution refuses. A telemetry trace identifier, endpoint, queue,
 timestamp or equal display name cannot stand in for a workflow, role, message,
@@ -107,13 +107,17 @@ cannot execute. The minimum orthogonal dimensions are:
 | Dimension | Closed meanings |
 | --- | --- |
 | Assessment execution | completed, refused, unsupported, resource-incomplete, failed |
-| Subject progress / closure | exact progress plus separately typed required-scope and whole-execution closure states, each open, closed, incomplete or contradicted with exact authority and boundary identities |
+| Decision-scope progress | exact progress for the claim's decision scope with its authority and boundary identities |
+| Decision-scope closure | open, closed, incomplete or contradicted for the exact decision scope and closure authority |
+| Surrounding-execution progress | exact progress for the whole surrounding execution with its distinct authority and boundary identities |
+| Surrounding-execution closure | open, closed, incomplete or contradicted for the exact surrounding execution and closure authority |
+| Complete-global-conformance closure | closed, open, incomplete or contradicted plus exact required execution, branch and workflow closure-premise identities for a global-conformance claim; `not-required` with no premise set for another claim |
 | Truth | satisfied, violated, pending, unavailable |
 | Settlement basis | closed-scope, decisive-witness, decisive-counterexample, unsettled, unavailable, with the exact decision-support set |
 | Activation | triggered, inactive, activation-unknown |
 | Participation | exact participating and required role-instance sets, or unknown with reasons |
 | Assumptions | exact assumption identities, each met, not-met, unknown or not-assessed |
-| Completeness | complete, open, incomplete, with the exact facts required by each returned claim, missing inputs and authority/progress identities; it does not encode subject closure |
+| Completeness | complete, open, incomplete, with the exact facts required by each returned claim, missing inputs and authority/progress identities; it does not encode any closure axis |
 | Observation adequacy | adequate, inadequate, unknown or not-assessed for the exact observations required to interpret the result |
 | Protocol adequacy | demonstrated, not-demonstrated, inapplicable, unknown, with the exact obligations and cases considered |
 | Claim | global-conformance, monitorability, local-projection, realizability, refinement or composition |
@@ -125,6 +129,13 @@ observations, required roles, population members or adverse cases cannot change
 truth, adequacy or package-level status from unsuccessful or unknown to
 successful. Independent supported results remain available when another request
 is unsupported.
+
+Complete global conformance is a separate claim whose closure record retains
+every required execution, branch and workflow premise. Neither a settled
+per-obligation truth, a closed decision scope, a closed surrounding execution,
+completed assessment execution nor completeness can substitute for that exact
+record or one of its premises. Mutating the global closure record cannot erase
+or change an independently settled per-obligation truth.
 
 A completed assessment may settle satisfied from a decisive witness or violated
 from a decisive counterexample while the assessed subject remains open. The

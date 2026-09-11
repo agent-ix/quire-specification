@@ -18,12 +18,19 @@ relationships:
 ---
 ## Description
 
-When any protocol assessment is requested, the result producer SHALL retain separate assessment-execution, subject-progress/closure, truth, settlement-basis, activation, participation, assumptions, completeness, observation-adequacy, protocol-adequacy, claim and provenance facts for the exact requested subject.
+When any protocol assessment is requested, the result producer SHALL retain
+separate assessment-execution, decision-scope progress, decision-scope closure,
+surrounding-execution progress, surrounding-execution closure,
+complete-global-conformance closure, truth, settlement-basis, activation,
+participation, assumptions, completeness, observation-adequacy,
+protocol-adequacy, claim and provenance facts for the exact requested subject.
 
 ## Inputs
 
-An exact assessment request plus conformance or analysis observations, prerequisite
-outcomes, limitations and derived artifacts.
+An exact assessment request plus conformance or analysis observations,
+decision-scope and surrounding-execution progress/closure facts, the
+complete-global-conformance closure record when global conformance is requested,
+prerequisite outcomes, limitations and derived artifacts.
 
 ## Outputs
 
@@ -50,12 +57,19 @@ the `sha256-jcs` digest over the complete RFC 8785 canonical result bytes; the
 digest is not a self-referential field inside those bytes. A strict reader SHALL
 recompute the enclosing reference digest before accepting the result.
 Assessment execution states whether the requested evaluator completed or why it
-did not. Subject progress/closure states whether the assessed workflow, trace or
-temporal decision scope and the whole surrounding execution are independently
-open, closed or incomplete. Completeness states which facts required by the
-returned claim are available and identifies every missing dependency. The
-result producer SHALL NOT use completeness as a substitute for either closure
-state.
+did not. Decision-scope progress and closure and surrounding-execution progress
+and closure are four independent facts with exact scope, authority and boundary
+identities. Complete-global-conformance closure is a fifth independent fact for
+a global-conformance claim: it carries one state from `closed`, `open`,
+`incomplete` or `contradicted` plus the exact required execution, branch and
+workflow closure-premise identities. For another claim it is explicitly
+`not-required` and carries no global premise set. Completeness states which
+facts required by the returned claim are available and identifies every missing
+dependency. The result producer SHALL NOT use completeness, assessment
+execution or any other progress/closure fact as a substitute for any closure
+axis. A strict reader SHALL refuse an omitted required axis,
+cross-scope substitution, global premise under `not-required`, or global claim
+without its complete-global-conformance closure record.
 
 Every assumption SHALL retain its exact assumption identity and one state from
 `met`, `not-met`, `unknown` or `not-assessed`. Observation adequacy states
@@ -96,16 +110,17 @@ The strict reader SHALL enforce the following result-combination rules.
 
 | Condition | Required relation |
 | --- | --- |
-| Assessment execution is refused, unsupported, resource-incomplete or failed | Truth and settlement basis are unavailable. Already-established activation, subject-progress and provenance facts remain retained. |
+| Assessment execution is refused, unsupported, resource-incomplete or failed | Truth and settlement basis are unavailable. Already-established activation, decision-scope progress/closure, surrounding-execution progress/closure, complete-global-conformance closure and provenance facts remain retained. |
 | Truth is satisfied | Assessment execution is completed, activation is triggered and the settlement basis is `closed-scope` or `decisive-witness`. Every fact in the exact decision-support set is complete. An open decision scope is valid only with a decisive witness whose truth is preserved by every admitted continuation; the surrounding execution may remain open after either basis settles. |
 | Truth is violated | Assessment execution is completed, activation is triggered and the settlement basis is `closed-scope` or `decisive-counterexample`. Every fact in the exact decision-support set is complete. An open decision scope is valid only with a decisive counterexample whose truth is preserved by every admitted continuation; the surrounding execution may remain open after either basis settles. |
-| Truth is pending | Assessment execution is completed, activation is triggered, subject progress is open and the settlement basis is `unsettled`. Required observations are complete through the retained progress point, but admitted continuations do not yet preserve one Boolean truth. |
+| Truth is pending | Assessment execution is completed, activation is triggered, decision-scope progress is open and the settlement basis is `unsettled`. Required observations are complete through the retained progress point, but admitted continuations do not yet preserve one Boolean truth. |
 | A required decision-support fact is missing | Truth and settlement basis are unavailable for that decision. A truth already settled from a disjoint exact support set remains settled; completeness retains the missing fact and prevents dependent adequacy or package success. |
 | A retained decision-support or closure premise is later contradicted | The earlier result bytes remain unchanged. A new result identifies the earlier result and contradiction, makes dependent package success unavailable and recomputes truth only under the corrected exact input identity. |
 | Activation is inactive | Assessment execution is completed, truth is unavailable and the trigger scope is complete under an exact closure authority. The surrounding subject execution may remain open. |
 | Activation is activation-unknown | Truth is unavailable and completeness is open or incomplete with the missing trigger dependencies. |
 | Protocol adequacy is demonstrated | Every assessment execution and required input for the declared case set is complete and the exact required case set is present. Subject closure is required only when the declared adequacy claim depends on it. An obligation-path demonstration additionally requires triggered activation. Observation adequacy remains independently adequate. |
-| Package status is complete success | Every selected required request satisfies its claim-specific success rule. Unsupported or incomplete requests remain represented and prevent complete success. |
+| Global-conformance claim is complete success | Complete-global-conformance closure is `closed`, its exact required execution, branch and workflow closure-premise set is complete, and every selected required request satisfies its claim-specific success rule. A closed decision scope, settled truth, completed assessment or closed surrounding execution cannot replace a missing global premise. Unsupported, open, incomplete or contradicted requests and closure premises remain represented and prevent complete success. |
+| Claim is not global conformance | Complete-global-conformance closure is `not-required` with no global premise set. A supplied global premise or another closure axis relabelled `not-required` is refused. |
 
 ## Acceptance Criteria
 
@@ -113,13 +128,14 @@ The strict reader SHALL enforce the following result-combination rules.
 | --- | --- | --- |
 | FR-061-AC-1 | Healthy, violating, inactive, pending, incomplete, refused, unsupported, failed and settled-open-subject cases remain discriminable without diagnostic prose, including independent assumption, observation-adequacy and protocol-adequacy facts. | Test (TC-061) |
 | FR-061-AC-2 | Removing a trigger, required role, provider observation, population member or negative case cannot improve truth, adequacy or package-level status. | Test (TC-061) |
-| FR-061-AC-3 | Every result binds its exact result-contract version and identity plus source/profile/model/protocol/request/binding/input/subject-progress/closure/backend identities, settlement basis and decision-support identities; its enclosing artifact reference carries a recomputed RFC 8785 digest over the complete result bytes without self-reference. | Test (TC-061) |
+| FR-061-AC-3 | Every result binds its exact result-contract version and identity plus source/profile/model/protocol/request/binding/input/decision-scope progress/closure/surrounding-execution progress/closure/complete-global-conformance closure/backend identities, settlement basis and decision-support identities; its enclosing artifact reference carries a recomputed RFC 8785 digest over the complete result bytes without self-reference. | Test (TC-061) |
 | FR-061-AC-4 | A result with an impossible dimension combination, stale identity or conflicting claim strength is refused by a strict reader. | Test (TC-061) |
 | FR-061-AC-5 | One unsupported request does not remove an independent supported result, while package complete success remains unavailable. | Test (TC-061) |
 | FR-061-AC-6 | Every row of the normative result-combination table admits its valid boundary case and refuses every one-axis forbidden combination. | Test (TC-061) |
 | FR-061-AC-7 | Every decision-support record retains its exact oracle/observation identities and dependence relation; missing, self-referential or cyclic derived lineage and invented independence are refused. | Test (TC-061) |
 | FR-061-AC-8 | A decisive temporal witness or counterexample may settle truth while the subject remains open only with completed assessment execution, exact complete decision support and proof that every admitted continuation preserves the result; missing support, a non-decisive basis or false closure refuses that combination. | Test (TC-061) |
 | FR-061-AC-9 | A late contradiction to decision support, progress or closure preserves the earlier result bytes and emits a source-bound superseding or invalidating result; it cannot restamp or silently replace the earlier result. | Test (TC-061) |
+| FR-061-AC-10 | Decision-scope progress, decision-scope closure, surrounding-execution progress, surrounding-execution closure and complete-global-conformance closure remain independently readable and scope-bound; independently omitting or cross-wiring each required axis or each required global premise refuses the record or prevents global success without changing an independently settled per-obligation truth. | Test (TC-061) |
 
 ## Dependencies
 

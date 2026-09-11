@@ -88,7 +88,7 @@ The following mapping is total for the selected source and target revisions:
 | Participation or its required set is unknown | `participation.status` is `unknown`, with every known participant and missing-dependency identity retained. |
 | Assumption `met` / `not-met` / `unknown` / `not-assessed` | The same exact assumption identity and E02 assumption status. |
 | Observation adequacy `adequate` / `inadequate` / `unknown` / `not-assessed` | The same E02 `adequacy.status`, with exact missing-observation identities when known. |
-| Protocol adequacy, completeness, subject progress/closure, settlement basis and claim | Retained in the canonical protocol-result artifact; never substituted for an E02 finding axis. |
+| Protocol adequacy, completeness, decision-scope progress/closure, surrounding-execution progress/closure, complete-global-conformance closure, settlement basis and claim | Retained in the canonical protocol-result artifact; never substituted for an E02 finding axis. |
 
 Every `satisfied` or `violated` projection SHALL derive its E02 oracle
 contributions from the exact decision-support identities and preserve the
