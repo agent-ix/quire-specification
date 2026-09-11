@@ -21,7 +21,7 @@ the input retains:
 | Decision-scope closure | Exact closure state and premises for that decision scope, independently of its progress, assessment execution, completeness and surrounding-execution closure. |
 | Surrounding-execution progress | Exact progress for the surrounding execution, retaining its own scope, authority and boundary identities; decision-scope progress cannot replace it. |
 | Surrounding-execution closure | Exact closure state and premises for the surrounding execution; closing or settling one decision scope cannot close that execution. |
-| Complete global conformance | The selected claim's required execution, branch and workflow closure premises remain explicit; a per-obligation settled truth or closed decision scope does not supply them. |
+| Complete-global-conformance closure | B's fifth typed closure record: `closed`, `open`, `incomplete` or `contradicted` with exact required execution, branch and workflow closure-premise identities for a global-conformance claim; `not-required` with no global premise set for another claim. Per-obligation settlement or another closure axis cannot replace it. |
 | Historical supersession | Earlier result identity and immutable bytes plus the linked superseding/invalidating result, contradicted premise, and corrected input identity; no result is restamped or silently replaced. |
 | Consumer selection | Consumer identity/version, selected target/output profile, configuration, and declared supported capability. |
 | Mapping outcome | One of `preserved`, `conditional`, `unrepresented`, or `refused`, with an exact source-bound reason and any required premise or loss. |
@@ -35,7 +35,8 @@ the open surrounding execution is not a reason to erase either fact. Definition
 or profile identity/revision/digest drift refuses rather than using a current
 default.
 
-The four progress/closure axes retain
+The four decision-scope/surrounding-execution progress/closure axes and the fifth
+complete-global-conformance closure record retain
 [B's FR-061 meaning](../../spec/functional/FR-061-report-orthogonal-results.md).
 The consumer cannot merge them into one subject state or use assessment completion
 or observation completeness as a closure substitute. Omitting a required retained
@@ -43,8 +44,11 @@ axis or cross-wiring it to another axis or scope refuses the inconsistent
 contribution. Explicit open/incomplete surrounding-execution facts are retained
 without erasing a settled truth whose exact deciding support is complete.
 Compatible changes to surrounding-execution progress or closure preserve that
-truth, settlement basis and support. Complete global conformance still requires
-its own closure premises under the selected B contract.
+truth, settlement basis and support. Complete global success requires the fifth
+record to be `closed` with every exact required premise under the selected B
+contract. Omitted, duplicated, cross-wired or scope-mismatched records/premises
+refuse. A global premise under `not-required`, a global claim marked
+`not-required`, or another axis replaced with `not-required` also refuses.
 
 ## Mapping outcome rules
 
@@ -95,9 +99,12 @@ satisfaction and decisive-counterexample violation with open decision scope and
 surrounding execution; vary compatible surrounding-execution facts while retaining
 the same deciding support. Independently omit and cross-wire each decision-scope
 progress, decision-scope closure, surrounding-execution progress and
-surrounding-execution closure axis. Separately remove each closure premise required
-for complete global conformance or substitute only a settled obligation's closure;
-no missing premise becomes global success. These controls are planned in
+surrounding-execution closure axis; independently duplicate each required axis.
+Preserve all four typed global closure states and the non-global `not-required`
+record with no premise set. Independently omit, duplicate or cross-wire the fifth
+record and each global premise; add a premise under `not-required` or substitute
+`not-required` for a global claim or another axis. No invalid record/premise
+becomes global success. These controls are planned in
 [TC-145](../../spec/test-cases/TC-145-report-observation-adequacy.md),
 [TC-146](../../spec/test-cases/TC-146-map-observation-results-to-consumers.md)
 and [IT-051](../../spec/integration/IT-051-observation-output-consumer-contract.md).

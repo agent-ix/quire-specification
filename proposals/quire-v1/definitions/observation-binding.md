@@ -67,7 +67,7 @@ closure label, membership list, or adjacent range may substitute.
 
 The selected result interface retains assessment execution, independent
 decision-scope progress and closure, surrounding-execution progress and closure,
-truth, settlement basis, exact decision support, activation, participation,
+complete-global-conformance closure, truth, settlement basis, exact decision support, activation, participation,
 completeness, separate observation/protocol adequacy, assumptions, claim strength,
 provenance and linked supersession. Omitting or cross-wiring a required retained
 axis refuses; completed assessment execution cannot supply a closure fact.
@@ -75,7 +75,9 @@ A witness or counterexample inside exact admitted support may settle truth while
 unrelated coverage remains incomplete. Compatible surrounding-execution changes
 preserve that truth/support, and decision-scope closure cannot establish complete
 global conformance without its own required execution/branch/workflow closure
-premises. A later contradiction retains earlier result bytes and produces only
+record and premises. The global record retains B's explicit state; non-global
+claims retain `not-required` with no global premise set. An absent required record,
+duplicated or foreign premise, or a cross-wired closure refuses. A later contradiction retains earlier result bytes and produces only
 linked supersession or invalidation under the corrected input identity.
 This definition consumes the shared result contract and creates no second
 result/evidence family.

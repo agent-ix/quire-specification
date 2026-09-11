@@ -30,15 +30,22 @@ progress, decision-scope closure with surrounding-execution closure,
 surrounding-execution progress with decision-scope progress, and
 surrounding-execution closure with decision-scope closure; mutate only the target
 axis in each case. Repeat each substitution with the corresponding axis from O2
-in an O1 result. Supply a complete-global-conformance claim with its required
-closure premises present, then independently remove each required closure
-premise or substitute only the settled obligation's decision-scope closure.
+in an O1 result. Independently duplicate each required retained axis.
+Supply global-conformance claims with the fifth typed closure record in each
+state (`closed`, `open`, `incomplete`, `contradicted`) and its exact required
+execution, branch and workflow premise identities. Independently omit or
+duplicate that record and each required premise, cross-wire each to another
+axis/scope, or substitute only decision-scope or surrounding-execution closure.
+Supply a non-global claim with complete-global-conformance closure `not-required`
+and no global premise set. Independently add a global premise, replace the
+global claim's record with `not-required`, and replace each of the other four
+progress/closure axes with `not-required`.
 
 Drop trigger telemetry, mis-correlate a response, mutate assessment execution,
 settlement basis, decision support, and each selected definition/profile
 identity, revision, and digest. Pair a confirmed injected fault with independently
 observed mitigation, then introduce a late contradiction to retained decision
-support or either retained closure axis.
+support or any retained closure axis.
 Independently omit each required admitted-observation, binding, capture,
 semantic-revision, and subject identity while holding any
 otherwise equal truth constant.
@@ -48,13 +55,18 @@ otherwise equal truth constant.
 All dimensions remain independently readable; dropped/mis-correlated inputs cannot
 improve adequacy; fault/mitigation lineage retains property, binding, source, and
 run identities. Decision-scope progress and closure, surrounding-execution
-progress and closure, and assessment execution remain independently readable.
+progress and closure, complete-global-conformance closure, and assessment
+execution remain independently readable.
 Settled truth retains its exact basis and deciding support under each compatible
 surrounding-execution change. Omitting or cross-wiring any required retained
 axis refuses the inconsistent contribution; explicit open/incomplete surrounding
 execution is retained without erasing an independently supported settled truth.
-Neither obligation settlement nor decision-scope closure supplies the missing
-closure premises for complete global conformance. Definition drift refuses, and
+Only a `closed` global closure record with every exact required premise permits
+complete global success; open, incomplete and contradicted records retain their
+non-success state without erasing independently settled per-obligation truth.
+The non-global `not-required` record carries no global premises and cannot replace
+another axis. Omitted, duplicated or cross-wired records/premises and invalid
+`not-required` substitutions refuse. Definition drift refuses, and
 a late contradiction preserves earlier bytes while producing only a linked
 superseding or invalidating result.
 An equal disposition with any omitted required provenance identity fails rather

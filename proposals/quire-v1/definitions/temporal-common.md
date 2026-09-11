@@ -91,6 +91,10 @@ adequacy and canonical protocol-result serialization remain owned by the
 protocol contract; this facet does not import protocol declaration permissions
 or require an E02 projection to evaluate temporal source.
 
+A temporal claim does not manufacture complete-global-conformance closure.
+When the shared result carries that record for a non-global claim, FR-061
+requires `not-required` with no global premise set.
+
 FR-095 requires the bridge correspondence record to retain the native/shared
 result dimensions outside the TL formula when the selected TL wire does not
 encode them. Equal TL truth or formula bytes do not supply missing metadata.

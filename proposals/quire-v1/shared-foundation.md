@@ -101,7 +101,7 @@ not an integration gate.
 | Contribution | Integrated input |
 | --- | --- |
 | A | Shared grammar, predicates, package stages, producer/native correspondence and choreography surface |
-| B | Protocol/results and resource-inventory correction through `57ddca2` |
+| B | Protocol/results and resource-inventory correction through `57ddca2`; explicit global-conformance closure at `fe31710` |
 | D | External FR-100–105, producer contract and Plan-016 at [6259d3a](https://github.com/agent-ix/filament-core-data/tree/6259d3a5b99088740df9bcc8e8d60f3720aaa603); capability ledger through `199adc3` |
 | E | Temporal requirement/case/method corrections through `c6a8905` |
 | F | Result preservation, resource/provenance controls and all-clock range mapping through `b7381fd` |
@@ -131,6 +131,12 @@ corrections are submitted for recheck:
 | SR-408 FND-003 | Per-rule and internal-definition draft digest pins are replaced with same-checkout links. Explicit external producer/compiler selections and runtime digest-domain requirements remain. |
 | SR-408 FND-004 | The historical A/F integration findings are dispositioned below. Their original review observations are retained; they no longer impose checksum publication or missing-consumer-text gates. |
 | SR-408 FND-005 | The capability ledger links the same current temporal/protocol files and draft revisions as the definition index. |
+
+B's independently reviewed [global-conformance closure correction](../../spec/reviews/global-conformance-closure/base.md)
+is also integrated. Its fifth closure record, including `not-required` for
+non-global claims, is preserved by the current definition and observation
+consumer contracts and their planned controls. It does not replace either
+decision-scope or surrounding-execution progress/closure.
 
 ### Historical integration findings
 
