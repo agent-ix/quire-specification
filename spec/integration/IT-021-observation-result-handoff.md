@@ -19,7 +19,8 @@ Engineering Assurance.
 ## Target Integration
 
 The producer boundary is the reviewed observation, correlation, membership,
-progress and closure contract. PT02 consumes it for global conformance and emits
+progress and closure contract. PT02 consumes it for global conformance, adds the
+independently typed complete-global-conformance closure record, and emits
 the B-owned result contract. OB03 and Engineering Assurance are strict consumers.
 
 ## Preconditions
@@ -32,7 +33,8 @@ shared Engineering Assurance system rather than a test-local substitute.
 
 Healthy, violating, inactive, missing-provider, wrong-correlation, partial-
 refund, failed-compensation and unknown-population cases with exact protocol,
-binding, observation and progress identities.
+binding, observation, decision-scope progress/closure, surrounding-execution
+progress/closure and complete-global-conformance closure identities.
 
 ## Test Procedure
 
@@ -44,6 +46,12 @@ binding, observation and progress identities.
    - IT-021-SC-03: every FR-007 finding is preserved, the derived result retains the canonical protocol-result artifact, and observation adequacy remains distinct from protocol adequacy.
 4. Delete or substitute each trigger, role, member, binding and progress dependency independently.
    - IT-021-SC-04: no mutation improves truth, completeness, adequacy or package status.
+5. Independently omit or cross-wire each of the four observation-owned
+   progress/closure axes and each required execution, branch and workflow premise
+   in PT02's complete-global-conformance closure record.
+   - IT-021-SC-05: both consumers refuse an omitted or cross-wired required axis;
+     incomplete global closure prevents complete global success without changing
+     an independently settled per-obligation truth.
 
 ## Expected Results
 
