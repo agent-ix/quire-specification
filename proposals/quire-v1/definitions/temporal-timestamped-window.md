@@ -1,13 +1,13 @@
 # Native timestamped-window temporal definition
 
-Profile identity: `quire.temporal.timestamped-event.finite-window/v1`; revision: `1-draft.2`.
+Profile identity: `quire.temporal.timestamped-event.finite-window/v1`; revision: `1-draft.3`.
 Language: `ix:native` / `1-draft`. **Proposed, not adopted or implemented.**
 
 ## Required definition
 
-| Identity | Revision | Definition artifact | Exact byte digest |
-| --- | --- | --- | --- |
-| `quire.temporal.bounded-facet/v1` | `1-draft.2` | [Bounded temporal rules](temporal-common.md) | `sha256:0dc3b1bbbe7ab65392678d48ed5dc6a78babba98e20daeff2977148e10a1291b` |
+| Identity | Revision | Definition artifact |
+| --- | --- | --- |
+| `quire.temporal.bounded-facet/v1` | `1-draft.3` | [Bounded temporal rules](temporal-common.md) |
 
 ## Selected interpretation
 
@@ -38,3 +38,6 @@ definition. The other clock/boundary interpretations are different source
 profile selections, not defaults, compatible guesses or backend switches.
 All common source, activation, capture, type, progress and resource constraints
 remain applicable.
+
+Closing a decision scope does not close the surrounding execution. Equal formula
+bytes do not establish equal definition selections.

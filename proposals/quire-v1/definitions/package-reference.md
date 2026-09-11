@@ -1,15 +1,20 @@
 # Composed linked-package reference definition
 
-Artifact interpretation: `quire.package.composed/v1`; revision: `1-draft.1`.
+Artifact interpretation: `quire.package.composed/v1`; revision: `1-draft.2`.
 Language: `ix:native` / `1-draft`. **Proposed, not adopted or implemented.**
 This defines a semantic reference to a fully linked package. It is not a source
 profile and cannot be selected by a clause's `using` alias.
 
+This is a working definition in one coherent draft. Required definitions and
+rule links resolve within this checkout; acceptance freezes their exact selections.
+Earlier draft text remains in Git history. Runtime references still require the
+selected immutable identities, revisions and digest domains.
+
 ## Required definition
 
-| Identity | Revision | Definition artifact | Exact byte digest |
-| --- | --- | --- | --- |
-| `ix:native` / `1-draft` | `1-draft.1` | [Composed edition](edition.md) | `sha256:86622803e6e8f010a75d150ee5c4f6de55f41e27829ff1acb48876d11df3fbe6` |
+| Identity | Revision | Definition artifact |
+| --- | --- | --- |
+| `ix:native` / `1-draft` | `1-draft.2` | [Composed edition](edition.md) |
 
 ## Package and clause selections
 
@@ -68,13 +73,12 @@ original profiles and wire versions; no in-place migration is inferred.
 
 ## Selected reference rules
 
-These exact files are selected at repository revision
-`0434f2df8dfa34df57ecaddc3576d6bda263f55d`:
+The following current reference rules supply the declared envelope contract.
 
-| Rule file | Exact byte digest |
-| --- | --- |
-| [Reference schema](https://github.com/agent-ix/quire-specification/blob/0434f2df8dfa34df57ecaddc3576d6bda263f55d/proposals/shared-reference-2-draft/schema.json) | `sha256:c277730c339c48c8cc789f2adb93dbbe1d48624a6df39a4043d20cd0cbeca46b` |
-| [Reference meanings](https://github.com/agent-ix/quire-specification/blob/0434f2df8dfa34df57ecaddc3576d6bda263f55d/proposals/shared-reference-2-draft/README.md) | `sha256:a698b4d275d790482d01ecdd3c077c6382718777b020f1bd17314ad30e09b65e` |
+| Rule file |
+| --- |
+| [Reference schema](../../shared-reference-2-draft/schema.json) |
+| [Reference meanings](../../shared-reference-2-draft/README.md) |
 
 TC-030 and IT-010 plan the whole-package/inner-profile controls. Existing reference
 schema and canonicalizer tests do not qualify this new artifact interpretation

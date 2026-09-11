@@ -1,13 +1,18 @@
 # Native finite state core definition
 
-Profile identity: `quire.state.core/v1`; revision: `1-draft.2`.
+Profile identity: `quire.state.core/v1`; revision: `1-draft.3`.
 Language: `ix:native` / `1-draft`. **Proposed, not adopted or implemented.**
+
+This is a working definition in one coherent draft. Required definitions and
+rule links resolve within this checkout; acceptance freezes their exact selections.
+Earlier draft text remains in Git history. Runtime references still require the
+selected immutable identities, revisions and digest domains.
 
 ## Required definition
 
-| Identity | Revision | Definition artifact | Exact byte digest |
-| --- | --- | --- | --- |
-| `ix:native` / `1-draft` | `1-draft.1` | [Edition](edition.md) | `sha256:86622803e6e8f010a75d150ee5c4f6de55f41e27829ff1acb48876d11df3fbe6` |
+| Identity | Revision | Definition artifact |
+| --- | --- | --- |
+| `ix:native` / `1-draft` | `1-draft.2` | [Edition](edition.md) |
 
 ## Admitted forms and meaning
 
@@ -48,12 +53,12 @@ or graph extensions do not grant those forms here. Its earlier first-profile
 comparison is compatibility context; the exact admitted-form catalog above and
 selected composed rules define this candidate.
 
-Selected at repository revision `033fcda3cc9f964d018b466faa12cd14c8a9878a`; digests cover exact file bytes.
+The following current rules supply the admitted state meaning.
 
-| Rule file | Exact byte digest |
-| --- | --- |
-| [state-contract.md](https://github.com/agent-ix/quire-specification/blob/033fcda3cc9f964d018b466faa12cd14c8a9878a/proposals/quire-v1/state-contract.md) | `sha256:c81d7f9f7463f879ce13be754859b20d78228c3b8f206f073352fc1386b7645e` |
-| [FR-039-normalize-exact-rational-literals.md](https://github.com/agent-ix/quire-specification/blob/033fcda3cc9f964d018b466faa12cd14c8a9878a/spec/functional/FR-039-normalize-exact-rational-literals.md) | `sha256:6775bc27f3bf0f9a0bf2afc685126584fb8e2ecdfe69bfa8630057249673c98e` |
-| [FR-044-check-composed-numeric-definedness.md](https://github.com/agent-ix/quire-specification/blob/033fcda3cc9f964d018b466faa12cd14c8a9878a/spec/functional/FR-044-check-composed-numeric-definedness.md) | `sha256:ec97683039bae198463d729db4754ca707c28331698bc5c5dd64a6ec1aa35ab4` |
-| [FR-045-preserve-control-and-presence-facts.md](https://github.com/agent-ix/quire-specification/blob/033fcda3cc9f964d018b466faa12cd14c8a9878a/spec/functional/FR-045-preserve-control-and-presence-facts.md) | `sha256:c71031ec7f2d778685707d3c3cc28fa7e67221b94285e28746eb1ab58ed01530` |
-| [FR-046-validate-state-invocation-inputs.md](https://github.com/agent-ix/quire-specification/blob/033fcda3cc9f964d018b466faa12cd14c8a9878a/spec/functional/FR-046-validate-state-invocation-inputs.md) | `sha256:d97c9e05fd9dddcf7188dd1a539356c2db95b4c657ec714a094f084d8791e61a` |
+| Rule file |
+| --- |
+| [state-contract.md](../state-contract.md) |
+| [FR-039-normalize-exact-rational-literals.md](../../../spec/functional/FR-039-normalize-exact-rational-literals.md) |
+| [FR-044-check-composed-numeric-definedness.md](../../../spec/functional/FR-044-check-composed-numeric-definedness.md) |
+| [FR-045-preserve-control-and-presence-facts.md](../../../spec/functional/FR-045-preserve-control-and-presence-facts.md) |
+| [FR-046-validate-state-invocation-inputs.md](../../../spec/functional/FR-046-validate-state-invocation-inputs.md) |

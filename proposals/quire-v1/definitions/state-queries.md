@@ -1,13 +1,18 @@
 # Native predicate and sequence-query definition
 
-Profile identity: `quire.state.queries/v1`; revision: `1-draft.2`.
+Profile identity: `quire.state.queries/v1`; revision: `1-draft.3`.
 Language: `ix:native` / `1-draft`. **Proposed, not adopted or implemented.**
+
+This is a working definition in one coherent draft. Required definitions and
+rule links resolve within this checkout; acceptance freezes their exact selections.
+Earlier draft text remains in Git history. Runtime references still require the
+selected immutable identities, revisions and digest domains.
 
 ## Required definition
 
-| Identity | Revision | Definition artifact | Exact byte digest |
-| --- | --- | --- | --- |
-| `quire.state.core/v1` | `1-draft.2` | [State core](state-core.md) | `sha256:6480cc1459438b7fd28719acf99885bf854af7d201b57cd262ad7e0dc966242d` |
+| Identity | Revision | Definition artifact |
+| --- | --- | --- |
+| `quire.state.core/v1` | `1-draft.3` | [State core](state-core.md) |
 
 ## Explicit extension
 
@@ -33,12 +38,12 @@ bound to state core.
 
 ## Selected extension rules
 
-State-core rule files remain exact inherited dependencies. Additional rules
-are selected at repository revision `033fcda3cc9f964d018b466faa12cd14c8a9878a`:
+State-core rules remain inherited dependencies. The following current rules
+supply the explicit query and predicate extension.
 
-| Rule | Exact byte digest |
-| --- | --- |
-| [FR-033](https://github.com/agent-ix/quire-specification/blob/033fcda3cc9f964d018b466faa12cd14c8a9878a/spec/functional/FR-033-admit-reusable-predicates.md) | `sha256:4293764b1235dfe11f9face4f0170a7adfeaaac6a1908396ae1d83340073029e` |
-| [FR-034](https://github.com/agent-ix/quire-specification/blob/033fcda3cc9f964d018b466faa12cd14c8a9878a/spec/functional/FR-034-bind-cross-family-predicates.md) | `sha256:949a26295572db24b313aa562b86f4709eed9224c87a192c77f33ceac05ff5f8` |
-| [FR-041](https://github.com/agent-ix/quire-specification/blob/033fcda3cc9f964d018b466faa12cd14c8a9878a/spec/functional/FR-041-evaluate-ordered-queries.md) | `sha256:d87858b46cbf650ba399f585fda38b3923e1734d014f7232f6831b355dcab799` |
-| [FR-042](https://github.com/agent-ix/quire-specification/blob/033fcda3cc9f964d018b466faa12cd14c8a9878a/spec/functional/FR-042-select-pre-state-reads.md) | `sha256:e76f521af441fe881e90032adafcf9150c85ebe38fc18d6cd231b073031b1c17` |
+| Rule |
+| --- |
+| [FR-033](../../../spec/functional/FR-033-admit-reusable-predicates.md) |
+| [FR-034](../../../spec/functional/FR-034-bind-cross-family-predicates.md) |
+| [FR-041](../../../spec/functional/FR-041-evaluate-ordered-queries.md) |
+| [FR-042](../../../spec/functional/FR-042-select-pre-state-reads.md) |

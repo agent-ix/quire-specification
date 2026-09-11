@@ -116,8 +116,32 @@ following are subsequent correction dispositions for PR review:
 | SR-401 FND-001/002 | D FR-102 and F FR-114 retain decisive truth with exact support despite unrelated incomplete observations. |
 | SR-401 FND-003; SR-402 FND-001; SR-406 FND-002 | Exact producer decimal semantics, separate static/runtime prerequisites and explicit producer/native digest correspondence. |
 | SR-406 FND-001 | F's range correspondence and TC-142/143 preserve all three clocks, record/member identity and half-open versus inclusive boundaries. |
-| SR-403 FND-001 | One current draft replaces the conflicting copied candidate selectors; the observation contract explicitly uses D's corrected producer input. Immutable runtime selections remain required; candidate checksum publication is deferred to baseline acceptance. |
+| SR-403 FND-001 | Current unsuffixed definitions contain the latest corrected meaning and link their current dependencies; the observation contract explicitly uses D's corrected producer input. Immutable runtime selections remain required; the draft has no copied checksum selectors. |
 | SR-403 FND-002; SR-404; SR-407 | E's prerequisite, deadline-case, method and wording fixes join the earlier A/B/F evidence-plan corrections. |
+
+### PR correction disposition
+
+[SR-408](../../reviews/2026-09-10-composed-v1-pr15.md) records the independent
+review at `3972783`; its original FAIL verdict remains unchanged. The following
+corrections are submitted for recheck:
+
+| Finding | Current correction |
+| --- | --- |
+| SR-408 FND-001/002 | Latest corrected definition text and revision labels are promoted to the unsuffixed files. Superseded copies are removed. Protocol, temporal and state dependencies link the matching current definitions, including state graph and temporal common at draft revision `1-draft.3`. |
+| SR-408 FND-003 | Per-rule and internal-definition draft digest pins are replaced with same-checkout links. Explicit external producer/compiler selections and runtime digest-domain requirements remain. |
+| SR-408 FND-004 | The historical A/F integration findings are dispositioned below. Their original review observations are retained; they no longer impose checksum publication or missing-consumer-text gates. |
+| SR-408 FND-005 | The capability ledger links the same current temporal/protocol files and draft revisions as the definition index. |
+
+### Historical integration findings
+
+These dispositions apply to the earlier B/E review sets at their recorded
+revisions; they do not claim executed consumer qualification or baseline adoption.
+
+| Earlier findings | Current disposition |
+| --- | --- |
+| SR-200 FND-004; SR-203 FND-003; SR-300 FND-007; SR-303 FND-004; SR-306 FND-004 | Definition integration is corrected in the current files. Old checksum/successor publication instructions are superseded by the owner's one-draft workflow. |
+| SR-200 FND-005; SR-202 FND-003; SR-203 FND-002; SR-206 FND-003; SR-300 FND-006; SR-302 FND-004; SR-303 FND-003; SR-306 FND-003 | The current FR-115/116 and observation output contract preserve B/E result dimensions, exact support and supersession. The correction at `8eea9d0` additionally names each decision-scope and surrounding-execution progress/closure axis independently. |
+| SR-204 FND-003; SR-304 FND-004 | TC-145/146 and IT-051 now specify consumer preservation controls, including independent omitted/cross-wired axes and complete-global-conformance closure premises. Execution of those controls remains planned; the missing test-specification gap is corrected. |
 
 The [master index](../../spec/spec.md) includes D's inventory and mixed-version
 impact requirements; the [capability crosswalk](capabilities.md#initial-specification-crosswalk)

@@ -1,6 +1,10 @@
 # Observation range correspondence
 
-Working draft for `quire.observation.range/v1`; not adopted or implemented.
+Definition identity: `quire.observation.range/v1`; revision: `1-draft.1`.
+**Working draft; not adopted or implemented.** Local rule and dependency links
+select the current checkout. Git preserves drafting history; a coherent baseline
+is frozen at acceptance. Immutable runtime selections and digest checks remain
+required.
 
 This definition maps a producer-owned finite window to one selected native
 temporal clock. It does not redefine producer membership, temporal meaning,
@@ -41,7 +45,7 @@ excluded endpoint nor proves surrounding execution closure.
 ## Admission and completeness boundary
 
 The range is an assessment input, not a static prerequisite for parsing or
-type-checking a future template. At assessment, A's linked-package admission
+type-checking a future template. At assessment, the assessment binder
 must validate the selected producer window, this exact range definition and the
 selected clock profile before passing admitted records to E/B. A missing record,
 sample, coverage document, required valuation, progress assertion, or closure

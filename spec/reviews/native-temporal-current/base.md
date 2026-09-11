@@ -22,6 +22,11 @@ generated/evaluation target for the exact supported domain.
 
 ## Verdict
 
+This verdict records the evaluated revision above. Later A/F integration
+dispositions are in [the shared foundation](../../../proposals/quire-v1/shared-foundation.md#historical-integration-findings);
+they supersede the open integration instructions below without changing this
+review's historical observations.
+
 **PASS for the E-owned contribution.** No E-owned blocking finding remains.
 The composed profile is not ready for adoption until F preserves the revised
 result dimensions through its consumer contract and A mints an exact successor
