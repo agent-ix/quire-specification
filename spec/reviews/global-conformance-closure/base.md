@@ -1,5 +1,5 @@
 ---
-id: SR-408
+id: SR-409
 title: "Base review of complete global conformance closure"
 type: SpecReview
 analysis: base
@@ -13,6 +13,9 @@ relationships:
   - { target: ix://agent-ix/quire-specification/FR-062, type: reviews }
 ---
 ## Summary
+
+Integration assigned SR-409 because SR-408 identifies the independent PR #15
+review. The evaluated revision and original findings below are unchanged.
 
 The targeted base review found that the B-owned protocol result claimed to
 preserve five independent progress and closure axes while its authoritative

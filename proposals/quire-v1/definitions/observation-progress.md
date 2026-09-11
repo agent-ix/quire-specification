@@ -60,6 +60,11 @@ A late contradiction identifies the prior assertion/result and produces linked
 supersession or invalidation under the corrected input identity without
 rewriting historical bytes.
 
+Result consumers also retain B's independent complete-global-conformance closure
+record: global claims retain its state and exact required premises; other claims
+retain `not-required` with no global premise set. A progress assertion cannot
+manufacture that record or substitute another closure axis for it.
+
 For an event-position range `[start,end)`, progress covers only the selected
 integer positions and silence supplies no new position. For a fixed-sample range,
 progress covers exact indexed samples under the selected epoch/period/unit,

@@ -100,6 +100,13 @@ This does not weaken FR-059's complete global conformance rule. A satisfied
 payment obligation cannot certify the still-open workflow, an unknown population
 or an unsupported independently requested claim.
 
+The complete-global-conformance closure record is a fifth independent fact:
+global claims retain `closed`, `open`, `incomplete` or `contradicted` plus the
+exact required execution, branch and workflow premises. Other claims retain
+`not-required` with no global premise set. Missing, duplicated, cross-wired or
+scope-mismatched required records/premises refuse; none of the other four
+progress/closure axes substitutes for this record.
+
 Runtime requests retain their exact selected definitions, identities, revisions
 and digest domains. Missing, stale, substituted or incompatible dependencies
 refuse their dependent request. A changed semantic selection changes the linked

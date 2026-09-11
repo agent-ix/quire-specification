@@ -14,8 +14,8 @@ Verify the planned consumer seam from the B-owned result contract to codegen and
 export consumers while preserving assessment execution, independent decision-scope
 progress and closure, surrounding-execution progress and closure, settlement
 basis, exact decision support, completeness, provenance, immutable definition
-dependencies, mapping loss, and the closure premises required for complete global
-conformance.
+dependencies, mapping loss, and B's fifth typed complete-global-conformance
+closure record.
 
 ## Target Integration
 
@@ -40,8 +40,10 @@ unrepresented, or refused. Include a current unqualified codegen bound-coverage
 observation as a retained input fact rather than an assessment/result substitute.
 Include decisive-witness satisfied and decisive-counterexample violated results
 with both scopes open, a settled closed-decision-scope result whose surrounding
-execution remains open, and a complete-global-conformance result with all its
-required closure premises.
+execution remains open, global-conformance results with the fifth closure record
+in each of `closed`, `open`, `incomplete` and `contradicted` and their exact
+required closure-premise identities, and a non-global result with `not-required`
+and no global premise set.
 
 ## Test Procedure
 
@@ -66,29 +68,38 @@ required closure premises.
    - IT-051-SC-07: the actual consumer output preserves the four progress/closure
      axes independently and retains the same truth, basis and exact deciding
      support; decision-scope closure cannot relabel surrounding-execution closure.
-8. Independently omit each required decision-scope progress, decision-scope closure,
+8. Independently omit or duplicate each required decision-scope progress, decision-scope closure,
    surrounding-execution progress and surrounding-execution closure axis. For each
    axis, independently substitute its counterpart from the other scope, then the
    same axis from O2 in an O1 result.
-   - IT-051-SC-08: every omitted or cross-wired axis refuses the inconsistent
+   - IT-051-SC-08: every omitted, duplicated or cross-wired axis refuses the inconsistent
      contribution; another progress or closure fact cannot repair it. An explicitly
      retained open/incomplete surrounding execution remains distinguishable from an
      omitted axis and preserves independently supported settled truth.
-9. Deliver the complete-global-conformance result, then independently remove each
-   required execution, branch or workflow closure premise and substitute only a
-   settled obligation's decision-scope closure.
-   - IT-051-SC-09: the consumer retains valid complete-global-conformance closure
-     premises and prevents complete global success for every missing/substituted
-     premise, while retaining each independently supported per-obligation result.
+9. Deliver each global-conformance result, then independently omit or duplicate
+   the fifth closure record and each required execution, branch or workflow
+   premise. Cross-wire each record/premise to another axis/scope; separately
+   substitute only decision-scope or surrounding-execution closure.
+   - IT-051-SC-09: the consumer preserves the typed record, state and exact premise
+     identities. Only `closed` with all required premises permits complete global
+     success; invalid records/premises refuse, while independently supported
+     per-obligation results remain retained.
+10. Deliver the non-global `not-required` record with no global premise set, then
+    independently add a global premise, mark a global claim `not-required`, and
+    replace each of the other four progress/closure axes with `not-required`.
+    - IT-051-SC-10: the valid non-global record survives delivery unchanged;
+      every invalid premise or `not-required` substitution refuses.
 
 ## Expected Results
 
 Consumers retain requested subject, capability, assessment execution,
 decision-scope progress, decision-scope closure, surrounding-execution progress,
-surrounding-execution closure, truth, settlement basis, decision support,
+surrounding-execution closure, complete-global-conformance closure, truth,
+settlement basis, decision support,
 provenance, completeness, immutable definition dependencies, and loss state.
-Complete global conformance retains its own required closure premises;
-per-obligation settlement cannot substitute for them. Structural
+The fifth closure record retains B's claim-specific state and required premise
+rules; per-obligation settlement and `not-required` cannot replace another axis.
+Structural
 target-text acceptance does not establish semantic correspondence. This planned
 integration does not claim codegen CLI, backend qualification, or external mapping
 conformance.
