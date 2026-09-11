@@ -6,10 +6,20 @@ analysis: base
 scope: "proposals/quire-v1; AD-001; StR-002; US-005/006/008/009; FR-020, FR-030–062, FR-090–095, FR-110–116, FR-130; NFR-010/020/021/040/050/051/052; TM-003/004/006/007 and associated TC/IT; external D baseline 1.2 and FR-100–103"
 review_set: all
 evaluated_revision: "788b161bd1b7fd5d632cc42c949f497914df3ce6"
+correction_evaluated_revision: "9d47ecabe0662f44b98d761c5019dd50c2eee57e"
 review_date: "2026-09-10"
 ---
 
 ## Summary
+
+**Current correction verdict: PASS for private PR #15 merge.** The bounded
+[correction recheck](#pr-15-correction-recheck) below resolves the original
+composed findings and SR-408. It covers the integrated semantics at `d8d984b`,
+the whitespace correction at `9d47eca`, and the current navigation/disposition
+updates. It does not claim executed v1 conformance, external producer acceptance
+or public standard adoption.
+
+The following initial verdict and findings remain the record at `788b161`:
 
 **Changes required before accepting the composed baseline.** D and F have
 delivered their contributions. The remaining semantic findings are specific
@@ -148,3 +158,42 @@ These checks validate artifact shape and identity. They do not qualify the EBNF
 against an implementation, execute the planned cases or establish backend
 equivalence. No Cargo/build campaign or hosted workflow ran. The final review
 artifacts receive structural validation separately from the frozen input.
+
+## PR #15 correction recheck
+
+A rechecked the affected definitions, contracts, planned controls and navigation
+after integration. This completes the original PR-readiness review cycle; it is
+not another architecture review or a claim that the original FAIL was a PASS.
+
+| Finding group | Current disposition and evidence |
+| --- | --- |
+| SR-400 FND-001 | Resolved. The capability crosswalk now distinguishes integrated D/F/B/E contracts from outstanding implementation, and assigns the compiled payload/reader to compiler #40 rather than L2 parsing/linking. |
+| SR-401/402/406 semantic boundaries | Resolved in the package and observation/range contracts with D's `6259d3a` input: static templates need no future observations; producer canonical numbers and native byte digests retain separate domains and exact correspondence; all three clocks retain coverage/member/record boundaries; complete exact support can settle truth despite unrelated incompleteness. |
+| SR-403 definition selection | Resolved by the owner's single-current-draft workflow and the consolidated definition closure. Immutable runtime selections remain required; per-edit successor publication is superseded. FR-090 now depends on FR-030. |
+| SR-404/407 planned controls and wording | Resolved by the integrated resource/provenance and method bindings, FR-091/TC-115 deadline/empty-window controls, and FR-093/094 wording corrections. The planned cases remain unexecuted. |
+| SR-408 FND-001/002 | Resolved. The unsuffixed files contain the latest semantics and revision labels; obsolete copies are absent. Protocol draft 4 selects state graph and temporal common draft 3. All 99 relative file links across the 15 definition-directory documents resolve. |
+| SR-408 FND-003/005 | Resolved. Obsolete internal digest selectors are removed; external selections and runtime digest checks remain. The ledger and definition index agree. Temporal roots retain their pre-consolidation meanings, including decisive settlement and activation-unknown distinctions. |
+| SR-408 FND-004 and B/F closure follow-up | Resolved. Historical findings are dispositioned in shared-foundation.md, including SR-302 FND-005. FR-115/116, TC-145/146, IT-051 and the mapping contract preserve five independent axes, exact global premises, explicit mapping loss and immutable supersession. |
+| PR diff cleanliness | Resolved at 9d47eca: removed 21 blank EOF lines. The earlier working-tree-only check did not establish PR-wide cleanliness; the full base-to-head check now passes. |
+
+[B's consumer recheck](https://github.com/agent-ix/quire-specification/pull/15#issuecomment-5627318474)
+and [E's temporal recheck](https://github.com/agent-ix/quire-specification/pull/15#issuecomment-5627369978)
+confirm their owned integration gates at `d8d984b`. A's targeted recheck agrees.
+SR-408's original file and evaluated FAIL verdict are unchanged.
+
+Actual checks at `9d47eca`, with base `089f3bb`:
+
+- `quire validate --scope . 'spec/**/*.md' 'plan/**/*.md' 'reviews/2026-*.md' --summary`:
+  **250/250 grammar-clean, zero grammar findings**.
+- `git diff --check origin/main...HEAD`: **exit 0**, covering the complete PR.
+
+The final review/navigation edits receive scoped validation and the complete PR
+diff check before push. No new Rust behavior is included in these corrections;
+the five passing reference tests recorded by SR-408 remain evidence at `3972783`,
+not a newly executed current-head test or full-v1 conformance claim.
+
+No open specification finding in this correction scope prevents the private
+merge. FCD #97's own review/producer acceptance, the compiler #40 artifact
+contract, concrete implementation/qualification and public rights/adoption
+decisions retain their separate owners and evidence requirements. C's assurance
+campaign does not gate this baseline.
