@@ -8,6 +8,12 @@ compiler, strict shared reader or released standard is implemented here.
 
 The open language standard: normative semantics, profiles, versioned interchange and required conformance material.
 
+Native Quire v1 includes **state, temporal and protocol/choreography** feature
+families under one editable language. The existing finite-state work is a
+development profile. The [v1 redesign](proposals/quire-v1/README.md) defines the
+broader product scope and its capability decisions; its specification and review
+precede resumed profile-specific delivery.
+
 ## First work
 
 The owner-approved [language research and capability assessment](proposals/quire-v1/README.md)
@@ -32,9 +38,19 @@ Read [license decision](LICENSE-DECISION.md) before adding code or normative art
 
 ## Proposed state-core packet
 
+The [native-source ruling amendment](proposals/native-source-1-draft/README.md)
+proposes the replacement definition and states its admission rules, historical
+compatibility and remaining implementation gates. It does not replace the ongoing
+cross-stream capability investigation or claim ruling conformance from old tests.
+
 The [requirements index](spec/spec.md) covers FS01/FS02/FS03/FS05 through discrete
 Quoin catalog artifacts. [Authoring status](docs/spec-workflow.md) records the
 exact skills, validation results and outstanding review work.
+
+[Functional capability ledger](docs/functional-capability-ledger.md) is the
+binding cross-stream inventory of source authorities, intentionally deferred
+features and routing decisions. It is coordination material, not a normative
+requirement or an implementation-completion claim.
 
 [Native state-core proposal](proposals/state-core/README.md) contains draft
 grammar, identity/snapshot boundaries and serialized fixture expectations.
