@@ -19,7 +19,9 @@ projection table and every valid participation derivation. Include all four
 assumption states, all four observation-adequacy states, all four protocol-
 adequacy states, and a result carrying simultaneous partial participation,
 `not-met` assumption, inadequate observations and violated truth. Project each
-result under one exact E02 obligation, plan, task, run, profile, binding,
+complete-global-conformance closure state and one non-global `not-required`
+state while retaining their exact premise sets only in the canonical source.
+Project each result under one exact E02 obligation, plan, task, run, profile, binding,
 dependency closure and adapter identity, then assess the emitted
 `TechniqueResult` with the quire-verification strict reader.
 
@@ -29,6 +31,7 @@ turn. Independently recompute the normative identity preimage and permute JSON
 object-member presentation while preserving the semantic `bindingRefs` order.
 Cross-wire protocol adequacy into E02 adequacy, remove the retained
 canonical-result artifact, label a shared oracle contribution independent,
+substitute complete-global-conformance closure for an E02 finding axis,
 select an unknown target version or required feature, and add one otherwise
 valid future source state that the selected mapping does not represent. Repeat
 an unchanged projection and compare its derived identity and canonical source
@@ -39,8 +42,10 @@ bytes.
 Every declared source row emits its exact target state, and the simultaneous
 case produces every FR-007 gap independently of the compatibility summary. E02
 adequacy equals observation adequacy only; protocol adequacy remains unchanged
-in the canonical source artifact, and no sufficiency decision is emitted. The
-derived identity is distinct and stable for identical inputs, changes for every
+in the canonical source artifact. Complete-global-conformance closure and its
+premises also remain unchanged only in that source artifact and cannot become an
+E02 finding or sufficiency decision. The derived identity is distinct and stable
+for identical inputs, changes for every
 identity/version/digest mutation, agrees with the independently recomputed
 `sha256-jcs` identity across object-member permutations, preserves binding order,
 and retains the exact URI, digest and media

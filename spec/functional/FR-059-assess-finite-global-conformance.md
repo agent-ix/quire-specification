@@ -20,13 +20,15 @@ When requested for an admitted finite protocol and bound observation history, th
 
 ## Inputs
 
-A linked finite protocol, exact request, qualified observations, progress/closure
-facts, resource limits and selected evaluator capability.
+A linked finite protocol, exact request, qualified observations, decision-scope
+and surrounding-execution progress/closure facts, the complete-global-conformance
+closure record, resource limits and selected evaluator capability.
 
 ## Outputs
 
-Per-obligation and global conformance results with exact violation or
-incompleteness causes and provenance.
+Per-obligation and global conformance results with an independently retained
+complete-global-conformance closure state, exact violation or incompleteness
+causes and provenance.
 
 ## Behavior
 
@@ -37,6 +39,16 @@ Open or incomplete histories SHALL NOT establish complete global success. Batch
 replay and settled incremental assessment over the same admitted facts SHALL
 produce the same semantic results.
 
+The complete-global-conformance closure record SHALL retain one state from
+`closed`, `open`, `incomplete` or `contradicted` plus the exact required
+execution, branch and workflow closure-premise identities. It is independent of
+decision-scope closure, surrounding-execution closure, assessment execution and
+completeness. Complete global success requires `closed` and every exact required
+premise; a closed decision scope, settled per-obligation truth, completed
+assessment or closed surrounding execution cannot substitute for a missing or
+non-closed global premise. A strict reader SHALL refuse an omitted, duplicated,
+cross-wired or scope-mismatched required premise.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -45,6 +57,7 @@ produce the same semantic results.
 | FR-059-AC-2 | Unexpected, missing, causally misordered, duplicate-effect and cross-workflow observations identify their exact violated obligation. | Test (TC-059) |
 | FR-059-AC-3 | An open or incomplete history remains pending/incomplete even when no violation has yet been observed. | Test (TC-059) |
 | FR-059-AC-4 | Settled incremental and batch replay results agree for the same protocol, inputs, progress and closure identities. | Test (TC-059) |
+| FR-059-AC-5 | Complete global success is available only with a `closed` complete-global-conformance closure record carrying every exact required execution, branch and workflow premise; independently omitting, duplicating, cross-wiring or changing each premise prevents complete success or refuses the record without changing an independently settled per-obligation result. | Test (TC-059) |
 
 ## Dependencies
 
