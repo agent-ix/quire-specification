@@ -614,30 +614,30 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-204](objects/foundation/FR-204-declared-object-identity.md) | FR (value_object) | Object layer; universe/type/object identity triple |
 | [FR-205](objects/foundation/FR-205-exact-rational-value.md) | FR (value_object) | Object layer; normalized rational value, distinct from literal identity |
 | [FR-206](objects/foundation/FR-206-numeric-domain.md) | FR (value_object) | Object layer; named numeric type and exact unit |
-| [FR-220](objects/causality/FR-220-causal-control-graph.md) | FR (aggregate_root) | Object layer; Causal control graph |
-| [FR-221](objects/causality/FR-221-protocol-node-occurrence.md) | FR (entity) | Object layer; Protocol node occurrence |
-| [FR-222](objects/causality/FR-222-send-occurrence.md) | FR (entity) | Object layer; Send occurrence |
-| [FR-223](objects/causality/FR-223-receive-occurrence.md) | FR (entity) | Object layer; Receive occurrence |
-| [FR-224](objects/causality/FR-224-delivery.md) | FR (entity) | Object layer; Delivery |
-| [FR-225](objects/causality/FR-225-operation-attempt.md) | FR (entity) | Object layer; Operation attempt |
-| [FR-226](objects/causality/FR-226-business-effect.md) | FR (entity) | Object layer; Business effect |
-| [FR-227](objects/causality/FR-227-owned-choice.md) | FR (entity) | Object layer; Owned choice |
-| [FR-228](objects/causality/FR-228-bounded-control-construct.md) | FR (enumeration) | Object layer; Bounded control construct vocabulary |
-| [FR-270](objects/diagnostics/FR-270-versioned-diagnostic-catalog.md) | FR (entity) | Object layer; Versioned diagnostic catalog |
-| [FR-271](objects/diagnostics/FR-271-diagnostic-code-vocabulary.md) | FR (enumeration) | Object layer; Diagnostic code vocabulary |
-| [FR-272](objects/diagnostics/FR-272-typed-diagnostic-cause.md) | FR (value_object) | Object layer; Typed diagnostic cause |
-| [FR-273](objects/diagnostics/FR-273-producer-stage.md) | FR (value_object) | Object layer; Producer stage |
-| [FR-274](objects/diagnostics/FR-274-diagnostic-location-kind.md) | FR (enumeration) | Object layer; Diagnostic location kind |
-| [FR-230](objects/obligation/FR-230-protocol-obligation.md) | FR (entity) | Object layer; Protocol obligation instance |
-| [FR-231](objects/obligation/FR-231-obligation-activation-state.md) | FR (state_machine) | Object layer; Obligation activation state |
-| [FR-232](objects/obligation/FR-232-activation-capture.md) | FR (value_object) | Object layer; Immutable activation capture |
-| [FR-233](objects/obligation/FR-233-compensation-registration.md) | FR (entity) | Object layer; Compensation registration |
-| [FR-234](objects/obligation/FR-234-compensation-obligation-lifecycle.md) | FR (state_machine) | Object layer; Compensation obligation lifecycle |
-| [FR-235](objects/obligation/FR-235-compensation-attempt.md) | FR (entity) | Object layer; Compensation attempt |
-| [FR-236](objects/obligation/FR-236-compensation-attempt-outcome.md) | FR (enumeration) | Object layer; Compensation attempt outcome vocabulary |
-| [FR-237](objects/obligation/FR-237-commit-boundary.md) | FR (entity) | Object layer; Commit boundary |
-| [FR-238](objects/obligation/FR-238-recovery-relation.md) | FR (entity) | Object layer; Authored recovery relation |
-| [FR-239](objects/obligation/FR-239-compensation-retry-policy.md) | FR (value_object) | Object layer; Compensation retry policy |
+| [FR-220](objects/protocol/FR-220-causal-control-graph.md) | FR (aggregate_root) | Object layer; Causal control graph |
+| [FR-221](objects/protocol/FR-221-protocol-node-occurrence.md) | FR (entity) | Object layer; Protocol node occurrence |
+| [FR-222](objects/protocol/FR-222-send-occurrence.md) | FR (entity) | Object layer; Send occurrence |
+| [FR-223](objects/protocol/FR-223-receive-occurrence.md) | FR (entity) | Object layer; Receive occurrence |
+| [FR-224](objects/protocol/FR-224-delivery.md) | FR (entity) | Object layer; Delivery |
+| [FR-225](objects/protocol/FR-225-operation-attempt.md) | FR (entity) | Object layer; Operation attempt |
+| [FR-226](objects/protocol/FR-226-business-effect.md) | FR (entity) | Object layer; Business effect |
+| [FR-227](objects/protocol/FR-227-owned-choice.md) | FR (entity) | Object layer; Owned choice |
+| [FR-228](objects/protocol/FR-228-bounded-control-construct.md) | FR (enumeration) | Object layer; Bounded control construct vocabulary |
+| [FR-270](objects/foundation/FR-270-versioned-diagnostic-catalog.md) | FR (entity) | Object layer; Versioned diagnostic catalog |
+| [FR-271](objects/foundation/FR-271-diagnostic-code-vocabulary.md) | FR (enumeration) | Object layer; Diagnostic code vocabulary |
+| [FR-272](objects/foundation/FR-272-typed-diagnostic-cause.md) | FR (value_object) | Object layer; Typed diagnostic cause |
+| [FR-273](objects/foundation/FR-273-producer-stage.md) | FR (value_object) | Object layer; Producer stage |
+| [FR-274](objects/foundation/FR-274-diagnostic-location-kind.md) | FR (enumeration) | Object layer; Diagnostic location kind |
+| [FR-230](objects/protocol/FR-230-protocol-obligation.md) | FR (entity) | Object layer; Protocol obligation instance |
+| [FR-231](objects/protocol/FR-231-obligation-activation-state.md) | FR (state_machine) | Object layer; Obligation activation state |
+| [FR-232](objects/protocol/FR-232-activation-capture.md) | FR (value_object) | Object layer; Immutable activation capture |
+| [FR-233](objects/protocol/FR-233-compensation-registration.md) | FR (entity) | Object layer; Compensation registration |
+| [FR-234](objects/protocol/FR-234-compensation-obligation-lifecycle.md) | FR (state_machine) | Object layer; Compensation obligation lifecycle |
+| [FR-235](objects/protocol/FR-235-compensation-attempt.md) | FR (entity) | Object layer; Compensation attempt |
+| [FR-236](objects/protocol/FR-236-compensation-attempt-outcome.md) | FR (enumeration) | Object layer; Compensation attempt outcome vocabulary |
+| [FR-237](objects/protocol/FR-237-commit-boundary.md) | FR (entity) | Object layer; Commit boundary |
+| [FR-238](objects/protocol/FR-238-recovery-relation.md) | FR (entity) | Object layer; Authored recovery relation |
+| [FR-239](objects/protocol/FR-239-compensation-retry-policy.md) | FR (value_object) | Object layer; Compensation retry policy |
 | [FR-260](objects/observation/FR-260-admitted-observation.md) | FR (entity) | Object layer; Admitted observation |
 | [FR-261](objects/observation/FR-261-observation-binding.md) | FR (value_object) | Object layer; Observation binding |
 | [FR-262](objects/observation/FR-262-declared-instance-relationship.md) | FR (value_object) | Object layer; Declared instance relationship |
@@ -656,20 +656,20 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-215](objects/protocol/FR-215-protocol-channel.md) | FR (entity) | Object layer; Protocol channel |
 | [FR-216](objects/protocol/FR-216-channel-premise.md) | FR (value_object) | Object layer; Channel premise |
 | [FR-217](objects/protocol/FR-217-role-internality.md) | FR (enumeration) | Object layer; Role internality vocabulary |
-| [FR-240](objects/result/FR-240-canonical-protocol-result.md) | FR (entity) | Object layer; Canonical protocol result |
-| [FR-241](objects/result/FR-241-assessment-execution-disposition.md) | FR (enumeration) | Object layer; Assessment execution disposition vocabulary |
-| [FR-242](objects/result/FR-242-truth-disposition.md) | FR (enumeration) | Object layer; Truth disposition vocabulary |
-| [FR-243](objects/result/FR-243-settlement-basis.md) | FR (enumeration) | Object layer; Settlement basis vocabulary |
-| [FR-244](objects/result/FR-244-activation-state.md) | FR (enumeration) | Object layer; Activation state vocabulary |
-| [FR-245](objects/result/FR-245-observation-adequacy-state.md) | FR (enumeration) | Object layer; Observation adequacy state vocabulary |
-| [FR-246](objects/result/FR-246-protocol-adequacy-state.md) | FR (enumeration) | Object layer; Protocol adequacy state vocabulary |
-| [FR-247](objects/result/FR-247-complete-global-conformance-closure-state.md) | FR (enumeration) | Object layer; Complete-global-conformance closure state vocabulary |
-| [FR-248](objects/result/FR-248-decision-support-record.md) | FR (value_object) | Object layer; Decision-support record |
-| [FR-249](objects/result/FR-249-derived-projection-result.md) | FR (entity) | Object layer; Derived portable projection result |
-| [FR-280](objects/result/FR-280-assumption-state.md) | FR (enumeration) | Object layer; Assumption state vocabulary |
-| [FR-281](objects/result/FR-281-claim-strength.md) | FR (enumeration) | Object layer; Claim strength vocabulary |
-| [FR-282](objects/result/FR-282-dependence-relation.md) | FR (enumeration) | Object layer; Decision-support dependence relation vocabulary |
-| [FR-283](objects/result/FR-283-projection-refusal-code.md) | FR (enumeration) | Object layer; Projection refusal code vocabulary |
+| [FR-240](objects/protocol/FR-240-canonical-protocol-result.md) | FR (entity) | Object layer; Canonical protocol result |
+| [FR-241](objects/protocol/FR-241-assessment-execution-disposition.md) | FR (enumeration) | Object layer; Assessment execution disposition vocabulary |
+| [FR-242](objects/protocol/FR-242-truth-disposition.md) | FR (enumeration) | Object layer; Truth disposition vocabulary |
+| [FR-243](objects/protocol/FR-243-settlement-basis.md) | FR (enumeration) | Object layer; Settlement basis vocabulary |
+| [FR-244](objects/protocol/FR-244-activation-state.md) | FR (enumeration) | Object layer; Activation state vocabulary |
+| [FR-245](objects/protocol/FR-245-observation-adequacy-state.md) | FR (enumeration) | Object layer; Observation adequacy state vocabulary |
+| [FR-246](objects/protocol/FR-246-protocol-adequacy-state.md) | FR (enumeration) | Object layer; Protocol adequacy state vocabulary |
+| [FR-247](objects/protocol/FR-247-complete-global-conformance-closure-state.md) | FR (enumeration) | Object layer; Complete-global-conformance closure state vocabulary |
+| [FR-248](objects/protocol/FR-248-decision-support-record.md) | FR (value_object) | Object layer; Decision-support record |
+| [FR-249](objects/protocol/FR-249-derived-projection-result.md) | FR (entity) | Object layer; Derived portable projection result |
+| [FR-280](objects/protocol/FR-280-assumption-state.md) | FR (enumeration) | Object layer; Assumption state vocabulary |
+| [FR-281](objects/protocol/FR-281-claim-strength.md) | FR (enumeration) | Object layer; Claim strength vocabulary |
+| [FR-282](objects/protocol/FR-282-dependence-relation.md) | FR (enumeration) | Object layer; Decision-support dependence relation vocabulary |
+| [FR-283](objects/protocol/FR-283-projection-refusal-code.md) | FR (enumeration) | Object layer; Projection refusal code vocabulary |
 | [FR-250](objects/temporal/FR-250-temporal-semantic-profile.md) | FR (enumeration) | Object layer; Temporal semantic profile identity |
 | [FR-251](objects/temporal/FR-251-tl-target-profile.md) | FR (enumeration) | Object layer; TL target evaluator profile |
 | [FR-252](objects/temporal/FR-252-temporal-clock-binding.md) | FR (value_object) | Object layer; Temporal clock binding |

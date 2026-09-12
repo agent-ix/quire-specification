@@ -148,7 +148,7 @@ under two spellings, and whether a past-time result can be pending at all given
 that FR-092 omits pending from its Outputs, is not stated anywhere. This
 artifact records all three and resolves none of them; no truth vocabulary is
 enumerated here. The truth vocabulary itself is authored as
-[FR-242](../result/FR-242-truth-disposition.md) in the result object set.
+[FR-242](../protocol/FR-242-truth-disposition.md) in the result object set.
 
 ## Status
 

@@ -106,7 +106,7 @@ maximum".
   linked protocol the graph belongs to.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
-- [FR-210](../protocol/FR-210-protocol-subject-vocabulary.md) supplies the
+- [FR-210](FR-210-protocol-subject-vocabulary.md) supplies the
   distinct protocol subject kinds.
 
 ## Open gap

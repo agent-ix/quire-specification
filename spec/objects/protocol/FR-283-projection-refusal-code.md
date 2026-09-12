@@ -25,7 +25,7 @@ When a projection adapter refuses to map a protocol result to portable verificat
 | `finding-loss` | The output would lose an applicable FR-007 finding (FR-062). |
 
 These are kebab-case spellings, distinct from the snake_case native producer
-codes of [FR-271](../diagnostics/FR-271-diagnostic-code-vocabulary.md). No
+codes of [FR-271](../foundation/FR-271-diagnostic-code-vocabulary.md). No
 requirement states which convention belongs to which namespace; see
 **Open gap**.
 
@@ -80,5 +80,5 @@ neither.
   establishes the six codes and the refusal conditions.
 - [FR-249](FR-249-derived-projection-result.md) is the result these refusals
   replace.
-- [FR-271](../diagnostics/FR-271-diagnostic-code-vocabulary.md) holds the native
+- [FR-271](../foundation/FR-271-diagnostic-code-vocabulary.md) holds the native
   producer code vocabulary this one is held distinct from.

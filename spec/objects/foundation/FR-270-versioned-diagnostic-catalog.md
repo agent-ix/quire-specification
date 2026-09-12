@@ -80,7 +80,7 @@ diagnostic list or a successful assessment" (proposed catalog).
   unavailable; byte zero, an empty path or a name-search match cannot masquerade
   as a located failure" (proposed catalog).
 - **Digest domain** — the `byte digest` component carries a digest and therefore
-  a domain ([FR-201](../foundation/FR-201-canonical-identity-domain.md)). An
+  a domain ([FR-201](FR-201-canonical-identity-domain.md)). An
   identity crossing domains is unequal regardless of byte equality. See the open
   gap below: no requirement names which domain this component is taken under.
 
@@ -116,7 +116,7 @@ requirement states which identity kind an externally selected catalog takes.
   catalogued-classification obligation.
 - [Native diagnostics catalog](../../../proposals/quire-v1/definitions/native-diagnostics.md)
   is the proposed, non-adopted catalog this artifact extracts from.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
+- [FR-201](FR-201-canonical-identity-domain.md) supplies the digest
   domain vocabulary.
-- [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
+- [FR-200](FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

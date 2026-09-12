@@ -31,7 +31,7 @@ another; see **Open gap**.
   [choreography surface](../../../proposals/quire-v1/choreography-surface.md)
   states that "Channel `delivery [a,b]` declares inclusive per-send delivery
   cardinality with `0 <= a <= b` and finite b".
-- **channel** ([FR-216](../protocol/FR-216-channel-premise.md)) — the channel whose sender,
+- **channel** ([FR-216](FR-216-channel-premise.md)) — the channel whose sender,
   receiver, message types, ordering policy, delivery cardinality and duplication
   premises are bound by FR-054.
 - **transport record** — the transport observation the delivery is bound from.
@@ -102,7 +102,7 @@ it.
   duplicated and misordered events to be reported.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
-- [FR-210](../protocol/FR-210-protocol-subject-vocabulary.md) records the
+- [FR-210](FR-210-protocol-subject-vocabulary.md) records the
   unresolved `receipt` and `delivery` membership question.
 
 ## Open gap
@@ -150,7 +150,7 @@ state:
    premise, and if one is authored, the explicit statement that it carries no
    causal meaning (FR-052-AC-2, FR-113).
 4. Whether `delivery` and `receipt` are one subject or two, which
-   [FR-210](../protocol/FR-210-protocol-subject-vocabulary.md) also records as
+   [FR-210](FR-210-protocol-subject-vocabulary.md) also records as
    unresolved.
 
 ## Status

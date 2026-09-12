@@ -25,7 +25,7 @@ When a communication is bound to a protocol instance, the protocol binder SHALL 
   authored protocol node, so it carries the node occurrence identity. FR-049-AC-2
   keeps send references distinct from receive, delivery, operation attempt,
   effect and compensation references.
-- **channel** ([FR-216](../protocol/FR-216-channel-premise.md)) — the declared channel the
+- **channel** ([FR-216](FR-216-channel-premise.md)) — the declared channel the
   send is made on. FR-054 binds the channel's sender, receiver, message types,
   ordering policy, delivery cardinality and duplication premises as explicit
   conformance assumptions.

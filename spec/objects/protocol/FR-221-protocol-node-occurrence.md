@@ -21,7 +21,7 @@ When a source node is lowered into the causal control graph, the frontend SHALL 
 
 ## Properties
 
-- **subject kind** ([FR-210](../protocol/FR-210-protocol-subject-vocabulary.md))
+- **subject kind** ([FR-210](FR-210-protocol-subject-vocabulary.md))
   — which distinct typed subject this node observes. FR-049-AC-2 states that
   "Send, receive, delivery, operation attempt, effect and compensation
   references remain distinct".

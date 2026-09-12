@@ -132,7 +132,7 @@ predicate" (`runtime_invariant`).
 - **Digest domain** — where a payload component is a digest, notably the
   `byte-digest-mismatch` and `digest-domain-mismatch` variants, it carries the
   domain it was derived under
-  ([FR-201](../foundation/FR-201-canonical-identity-domain.md)); identities
+  ([FR-201](FR-201-canonical-identity-domain.md)); identities
   crossing domains are unequal regardless of byte equality. The catalog that
   resolves the cause is itself selected by identity, revision and byte digest
   ([FR-270](FR-270-versioned-diagnostic-catalog.md)).
@@ -164,5 +164,5 @@ artifact supplies none.
   is the proposed, non-adopted source of the closed variant sets.
 - [FR-271](FR-271-diagnostic-code-vocabulary.md) supplies the code families.
 - [FR-274](FR-274-diagnostic-location-kind.md) supplies the location kinds.
-- [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
+- [FR-200](FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
