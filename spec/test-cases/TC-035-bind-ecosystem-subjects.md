@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned acceptance controls for [FR-035](../functional/FR-035-bind-ecosystem-subjects.md).
+Planned acceptance controls for [FR-035](../functional/foundation/FR-035-bind-ecosystem-subjects.md).
 No executable test or completed coverage is claimed by this artifact.
 
 ## Test Procedure

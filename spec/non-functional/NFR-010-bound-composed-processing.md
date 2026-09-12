@@ -52,5 +52,5 @@ current defaults or confuse the local Cargo job limit with language semantics.
 ## Dependencies
 
 - [State/query/graph contract](../../proposals/quire-v1/state-contract.md).
-- [Typed producer causes](../functional/FR-047-emit-typed-located-causes.md).
+- [Typed producer causes](../functional/foundation/FR-047-emit-typed-located-causes.md).
 - [Historical exhaustion distinction](NFR-002-classify-resource-incompleteness.md).

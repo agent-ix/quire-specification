@@ -35,22 +35,22 @@ These are new repositories. Missing formal plans, TC records, suites, and matric
 
 | Requirement | Class | Rationale |
 | --- | --- | --- |
-| [FR-001](../functional/FR-001-select-native-profile.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
-| [FR-002](../functional/FR-002-resolve-owned-declarations.md) | enablement | Provides a shared checked representation/boundary consumed by downstream behavior. |
-| [FR-003](../functional/FR-003-bind-source-correspondence.md) | enablement | Provides a shared checked representation/boundary consumed by downstream behavior. |
-| [FR-004](../functional/FR-004-separate-artifact-identities.md) | enablement | Provides a shared checked representation/boundary consumed by downstream behavior. |
-| [FR-005](../functional/FR-005-guard-optional-values.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
-| [FR-006](../functional/FR-006-preserve-control-evaluation.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
-| [FR-007](../functional/FR-007-prove-integer-definedness.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
-| [FR-008](../functional/FR-008-preserve-sequence-semantics.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
-| [FR-009](../functional/FR-009-preserve-object-identity.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
-| [FR-010](../functional/FR-010-evaluate-exact-reachability.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
-| [FR-011](../functional/FR-011-validate-populations.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
-| [FR-012](../functional/FR-012-bind-operation-observations.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
-| [FR-013](../functional/FR-013-validate-operation-frames.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
-| [FR-014](../functional/FR-014-read-exact-wire.md) | enablement | Provides a shared checked representation/boundary consumed by downstream behavior. |
-| [FR-015](../functional/FR-015-preserve-canonical-domains.md) | enablement | Provides a shared checked representation/boundary consumed by downstream behavior. |
-| [FR-016](../functional/FR-016-migrate-explicitly.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
+| [FR-001](../functional/foundation/FR-001-select-native-profile.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
+| [FR-002](../functional/foundation/FR-002-resolve-owned-declarations.md) | enablement | Provides a shared checked representation/boundary consumed by downstream behavior. |
+| [FR-003](../functional/foundation/FR-003-bind-source-correspondence.md) | enablement | Provides a shared checked representation/boundary consumed by downstream behavior. |
+| [FR-004](../functional/foundation/FR-004-separate-artifact-identities.md) | enablement | Provides a shared checked representation/boundary consumed by downstream behavior. |
+| [FR-005](../functional/foundation/FR-005-guard-optional-values.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
+| [FR-006](../functional/foundation/FR-006-preserve-control-evaluation.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
+| [FR-007](../functional/foundation/FR-007-prove-integer-definedness.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
+| [FR-008](../functional/foundation/FR-008-preserve-sequence-semantics.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
+| [FR-009](../functional/foundation/FR-009-preserve-object-identity.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
+| [FR-010](../functional/foundation/FR-010-evaluate-exact-reachability.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
+| [FR-011](../functional/foundation/FR-011-validate-populations.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
+| [FR-012](../functional/foundation/FR-012-bind-operation-observations.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
+| [FR-013](../functional/foundation/FR-013-validate-operation-frames.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
+| [FR-014](../functional/foundation/FR-014-read-exact-wire.md) | enablement | Provides a shared checked representation/boundary consumed by downstream behavior. |
+| [FR-015](../functional/foundation/FR-015-preserve-canonical-domains.md) | enablement | Provides a shared checked representation/boundary consumed by downstream behavior. |
+| [FR-016](../functional/foundation/FR-016-migrate-explicitly.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
 | [NFR-001](../non-functional/NFR-001-preserve-versioned-meaning.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
 | [NFR-002](../non-functional/NFR-002-classify-resource-incompleteness.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
 | [NFR-003](../non-functional/NFR-003-qualify-reference-bindings.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |

@@ -63,9 +63,9 @@ A strict reader SHALL refuse a missing, cyclic or self-referential predecessor
 
 ## Dependencies
 
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md) establishes the
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) establishes the
   vocabulary, the identification obligations and the refusals.
-- [FR-062](../../functional/FR-062-project-results-to-portable-verification.md)
+- [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
   carries it to the portable verification boundary.
 - [FR-248](FR-248-decision-support-record.md) is the record this relation is
   carried on.

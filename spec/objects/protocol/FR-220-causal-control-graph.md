@@ -19,7 +19,7 @@ relationships:
 
 ## Description
 
-When a protocol body is linked, the protocol linker SHALL construct one finite acyclic causal control graph for authored sequence, labeled choice, parallel branches, join, bounded iteration and termination without deriving causal edges from source order or timestamps ([FR-052](../../functional/FR-052-represent-bounded-control.md)).
+When a protocol body is linked, the protocol linker SHALL construct one finite acyclic causal control graph for authored sequence, labeled choice, parallel branches, join, bounded iteration and termination without deriving causal edges from source order or timestamps ([FR-052](../../functional/protocol/FR-052-represent-bounded-control.md)).
 
 ## Members
 
@@ -57,7 +57,7 @@ maximum".
   or iteration maximum changes protocol identity and preserves the original
   source span" (FR-052-AC-4).
 - **Key** — the identity of the linked protocol
-  ([FR-050](../../functional/FR-050-bind-protocol-instances.md)) together with
+  ([FR-050](../../functional/protocol/FR-050-bind-protocol-instances.md)) together with
   the authored control structure that FR-052-AC-4 names as identity-bearing:
   its branches, its join rules and its iteration maxima. Equality is
   componentwise over that key and nothing else. Display name, source path, span,
@@ -73,7 +73,7 @@ maximum".
   causal edges from source order or timestamps", FR-052-AC-2 states that
   "Reordering equal-time events does not add a causal edge absent from the
   protocol", and
-  [FR-113](../../functional/FR-113-preserve-time-progress-and-late-data.md)
+  [FR-113](../../functional/observation/FR-113-preserve-time-progress-and-late-data.md)
   states that "Arbitrary timestamp order SHALL NOT establish causality". A key
   order over any object in this context is therefore never readable as, and is
   never convertible into, a causal edge.
@@ -97,12 +97,12 @@ maximum".
 
 ## Dependencies
 
-- [FR-052](../../functional/FR-052-represent-bounded-control.md) establishes the
+- [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md) establishes the
   finite acyclic causal graph, its constructs and its refusals.
-- [FR-049](../../functional/FR-049-bind-native-choreography-syntax.md) retains
+- [FR-049](../../functional/foundation/FR-049-bind-native-choreography-syntax.md) retains
   the typed causal control under the exact selected source and model
   definitions.
-- [FR-050](../../functional/FR-050-bind-protocol-instances.md) supplies the
+- [FR-050](../../functional/protocol/FR-050-bind-protocol-instances.md) supplies the
   linked protocol the graph belongs to.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.

@@ -51,7 +51,7 @@ Priority: High. Automation: real command/file/API execution. Status: draft integ
 
 ## Dependencies
 
-- [FR-003](../functional/FR-003-bind-source-correspondence.md)
-- [FR-004](../functional/FR-004-separate-artifact-identities.md)
-- [FR-014](../functional/FR-014-read-exact-wire.md)
-- [FR-016](../functional/FR-016-migrate-explicitly.md)
+- [FR-003](../functional/foundation/FR-003-bind-source-correspondence.md)
+- [FR-004](../functional/foundation/FR-004-separate-artifact-identities.md)
+- [FR-014](../functional/foundation/FR-014-read-exact-wire.md)
+- [FR-016](../functional/foundation/FR-016-migrate-explicitly.md)

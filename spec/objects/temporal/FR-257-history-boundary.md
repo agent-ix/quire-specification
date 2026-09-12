@@ -47,8 +47,8 @@ false and Boolean constants as unchanged."
 - **Key** — (boundary kind, boundary position, clock binding, closure
   authority). Equality is componentwise over exactly these and nothing else.
   Display name, source path, span, message text, locale and rendering never
-  participate ([FR-009](../../functional/FR-009-preserve-object-identity.md),
-  [FR-047](../../functional/FR-047-emit-typed-located-causes.md)). Boundary kind
+  participate ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
+  [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)). Boundary kind
   is a key component because FR-092-AC-2 holds that "The same visible suffix
   yields a Boolean when its start is the authoritative execution origin and
   missing-history incomplete when it is merely a cutoff": equal positions under
@@ -104,9 +104,9 @@ for the other.
 
 ## Dependencies
 
-- [FR-092](../../functional/FR-092-evaluate-bounded-past.md) establishes the
+- [FR-092](../../functional/temporal/FR-092-evaluate-bounded-past.md) establishes the
   origin/cutoff distinction and the missing-history rule.
-- [FR-094](../../functional/FR-094-interpret-progress-history-and-closure.md)
+- [FR-094](../../functional/temporal/FR-094-interpret-progress-history-and-closure.md)
   establishes the history requirement through the computed lower boundary and
   the restart rule.
 - [FR-253](FR-253-temporal-evaluation-anchor.md) supplies the anchor the offsets

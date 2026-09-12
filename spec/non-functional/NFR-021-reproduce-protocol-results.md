@@ -42,5 +42,5 @@ permutations do not.
 
 ## Dependencies
 
-- [FR-059](../functional/FR-059-assess-finite-global-conformance.md).
-- [FR-061](../functional/FR-061-report-orthogonal-results.md).
+- [FR-059](../functional/protocol/FR-059-assess-finite-global-conformance.md).
+- [FR-061](../functional/protocol/FR-061-report-orthogonal-results.md).

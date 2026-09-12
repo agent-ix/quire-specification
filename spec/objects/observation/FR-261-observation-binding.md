@@ -77,7 +77,7 @@ roles".
 
 ## Dependencies
 
-- [FR-110](../../functional/FR-110-bind-typed-observations.md) establishes the
+- [FR-110](../../functional/observation/FR-110-bind-typed-observations.md) establishes the
   retained selection, the subject-change rule and the substitution prohibitions.
 - [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
   domain rule.

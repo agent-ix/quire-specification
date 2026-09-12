@@ -51,18 +51,18 @@ When a truth result is retained, the result producer SHALL carry exactly one set
 
 Four requirements state this vocabulary and one of them lists only four members.
 
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md): "Every truth
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md): "Every truth
   result SHALL carry exactly one settlement basis from `closed-scope`,
   `decisive-witness`, `decisive-counterexample`, `unsettled` or `unavailable`".
-- [FR-094](../../functional/FR-094-interpret-progress-history-and-closure.md)-AC-7:
+- [FR-094](../../functional/temporal/FR-094-interpret-progress-history-and-closure.md)-AC-7:
   "`closed-scope`, `decisive-witness`, `decisive-counterexample`, `unsettled` and
   `unavailable` are accepted only with their valid truth, scope and exact
   deciding-fact combinations".
-- [FR-115](../../functional/FR-115-report-activation-participation-and-adequacy.md):
+- [FR-115](../../functional/observation/FR-115-report-activation-participation-and-adequacy.md):
   "it SHALL retain its `closed-scope`, `decisive-witness`,
   `decisive-counterexample`, `unsettled`, or `unavailable` basis and every exact
   supporting fact/progress identity".
-- [FR-091](../../functional/FR-091-evaluate-bounded-future.md): "Such a result
+- [FR-091](../../functional/temporal/FR-091-evaluate-bounded-future.md): "Such a result
   shall identify `decisive-witness` for true or `decisive-counterexample` for
   false ... Closure of that decision scope authorizes `closed-scope`; it does not
   imply closure of the surrounding execution. An undecided open scope shall remain
@@ -84,12 +84,12 @@ and records that FR-091 does not name the fifth. It adds nothing to FR-091.
 
 ## Dependencies
 
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md) establishes the
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) establishes the
   five members and the truth/basis combination rules.
-- [FR-091](../../functional/FR-091-evaluate-bounded-future.md) and
-  [FR-094](../../functional/FR-094-interpret-progress-history-and-closure.md)
+- [FR-091](../../functional/temporal/FR-091-evaluate-bounded-future.md) and
+  [FR-094](../../functional/temporal/FR-094-interpret-progress-history-and-closure.md)
   establish the decisive-settlement and closed-boundary conditions.
-- [FR-115](../../functional/FR-115-report-activation-participation-and-adequacy.md)
+- [FR-115](../../functional/observation/FR-115-report-activation-participation-and-adequacy.md)
   restates the vocabulary at the observation-result boundary.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

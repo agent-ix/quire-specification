@@ -44,6 +44,6 @@ Priority: High. Confusing a source/model identity or incomplete execution with a
 
 ## Traceability (Informative)
 
-- [FR-002](../functional/FR-002-resolve-owned-declarations.md)
-- [FR-003](../functional/FR-003-bind-source-correspondence.md)
-- [FR-004](../functional/FR-004-separate-artifact-identities.md)
+- [FR-002](../functional/foundation/FR-002-resolve-owned-declarations.md)
+- [FR-003](../functional/foundation/FR-003-bind-source-correspondence.md)
+- [FR-004](../functional/foundation/FR-004-separate-artifact-identities.md)

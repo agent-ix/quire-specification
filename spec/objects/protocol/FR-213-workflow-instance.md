@@ -73,15 +73,15 @@ When a request names a workflow instance, the binder SHALL treat it as an author
 
 ## Dependencies
 
-- [FR-050](../../functional/FR-050-bind-protocol-instances.md) binds workflow
+- [FR-050](../../functional/protocol/FR-050-bind-protocol-instances.md) binds workflow
   instances and keeps them distinct from static definitions.
-- [FR-051](../../functional/FR-051-preserve-communication-identities.md)
+- [FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md)
   establishes the authored workflow identity and refuses trace-ID substitution.
-- [FR-035](../../functional/FR-035-bind-ecosystem-subjects.md) keeps workflow
+- [FR-035](../../functional/foundation/FR-035-bind-ecosystem-subjects.md) keeps workflow
   instances distinct subjects and governs scope and completeness dependencies.
-- [FR-111](../../functional/FR-111-correlate-related-instances-explicitly.md)
+- [FR-111](../../functional/observation/FR-111-correlate-related-instances-explicitly.md)
   admits only explicit typed relationships between related instances.
-- [FR-052](../../functional/FR-052-represent-bounded-control.md) supplies the
+- [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md) supplies the
   authored causal order.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

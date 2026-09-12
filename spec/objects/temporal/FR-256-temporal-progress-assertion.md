@@ -57,8 +57,8 @@ time passed."
   boundary. Equality is componentwise over exactly those components and nothing
   else. Display name, source path, span, message text, locale and rendering
   never participate
-  ([FR-009](../../functional/FR-009-preserve-object-identity.md),
-  [FR-047](../../functional/FR-047-emit-typed-located-causes.md)). FR-094-AC-4
+  ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
+  [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)). FR-094-AC-4
   makes the binding components decisive: "Progress for a foreign clock, subject,
   source set or binding cannot settle the obligation."
 - **Key order** — lexicographic over the key components, for collection
@@ -139,7 +139,7 @@ repair settled history."
 
 ## Dependencies
 
-- [FR-094](../../functional/FR-094-interpret-progress-history-and-closure.md)
+- [FR-094](../../functional/temporal/FR-094-interpret-progress-history-and-closure.md)
   establishes the applicability scoping, monotonicity, per-profile advance rules
   and contradiction handling.
 - [FR-252](FR-252-temporal-clock-binding.md) supplies the named clock binding.

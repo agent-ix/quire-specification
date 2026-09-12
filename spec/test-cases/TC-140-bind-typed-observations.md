@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned OB01 controls for [FR-110](../functional/FR-110-bind-typed-observations.md). No executable test or completed coverage is claimed.
+Planned OB01 controls for [FR-110](../functional/observation/FR-110-bind-typed-observations.md). No executable test or completed coverage is claimed.
 
 ## Test Procedure
 

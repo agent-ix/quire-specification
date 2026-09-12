@@ -82,9 +82,9 @@ through that boundary."
 
 ## Dependencies
 
-- [FR-112](../../functional/FR-112-declare-population-and-completeness.md)
+- [FR-112](../../functional/observation/FR-112-declare-population-and-completeness.md)
   establishes the half-open window and the later-window rule.
-- [FR-113](../../functional/FR-113-preserve-time-progress-and-late-data.md)
+- [FR-113](../../functional/observation/FR-113-preserve-time-progress-and-late-data.md)
   restricts progress and closure to `start <= instant < end` and forbids
   timestamp-derived causality.
 - [FR-265](FR-265-selected-snapshot.md) types the other selected bounds subject.

@@ -110,7 +110,7 @@ emit a sufficiency decision."
 
 ## Dependencies
 
-- [FR-062](../../functional/FR-062-project-results-to-portable-verification.md)
+- [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
   establishes the derivation tuple, preimage, refusal codes and retention
   boundary.
 - [FR-240](FR-240-canonical-protocol-result.md) supplies the source canonical

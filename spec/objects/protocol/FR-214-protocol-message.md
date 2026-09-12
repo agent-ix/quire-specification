@@ -65,12 +65,12 @@ When a protocol binder binds a communication, the binder SHALL preserve the mess
 
 ## Dependencies
 
-- [FR-051](../../functional/FR-051-preserve-communication-identities.md)
+- [FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md)
   preserves message, send, receive, delivery, attempt and effect as distinct
   subjects.
-- [FR-050](../../functional/FR-050-bind-protocol-instances.md) binds message
+- [FR-050](../../functional/protocol/FR-050-bind-protocol-instances.md) binds message
   references to exact typed declarations.
-- [FR-054](../../functional/FR-054-bind-channel-premises.md) binds message types
+- [FR-054](../../functional/protocol/FR-054-bind-channel-premises.md) binds message types
   into a channel contract.
 - [FR-210](FR-210-protocol-subject-vocabulary.md) records the subject
   vocabulary and its unreconciled lists.

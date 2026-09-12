@@ -36,7 +36,7 @@ When multiple compensation observations relate to one obligation, the conformanc
   particular `successful` does not dominate `failed` under it.
 - **Causal order** — none. An outcome is a retained fact about one attempt. The
   order of the attempts it labels is the authored partial order of
-  [FR-052](../../functional/FR-052-represent-bounded-control.md) and is never
+  [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md) and is never
   derived from key order, timestamp or source position.
 - **Absence** — an attempt whose outcome has not been established has an absent
   outcome. Absence compares only to absence and is never defaulted to `pending`,
@@ -54,11 +54,11 @@ When multiple compensation observations relate to one obligation, the conformanc
 
 ## Dependencies
 
-- [FR-058](../../functional/FR-058-preserve-retry-and-partial-recovery.md)
+- [FR-058](../../functional/protocol/FR-058-preserve-retry-and-partial-recovery.md)
   establishes the outcome vocabulary and the distinctness rules.
-- [FR-057](../../functional/FR-057-enforce-commit-recovery.md) establishes that
+- [FR-057](../../functional/protocol/FR-057-enforce-commit-recovery.md) establishes that
   recovery success is not inferred from compensation-operation success.
-- [FR-051](../../functional/FR-051-preserve-communication-identities.md)
+- [FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md)
   establishes duplicate-delivery distinctness.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

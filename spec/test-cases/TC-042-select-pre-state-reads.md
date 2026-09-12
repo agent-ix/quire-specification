@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-042](../functional/FR-042-select-pre-state-reads.md).
+Planned controls for [FR-042](../functional/foundation/FR-042-select-pre-state-reads.md).
 No executable test or observed coverage is claimed.
 
 ## Test Procedure

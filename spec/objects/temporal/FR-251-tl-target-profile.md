@@ -49,8 +49,8 @@ profile selection required by FR-090.
   evaluator profiles it targets" FR-095 Inputs require. Equality is
   componentwise over exactly that and nothing else. Display name, source path,
   span, message text, locale and rendering never participate
-  ([FR-009](../../functional/FR-009-preserve-object-identity.md),
-  [FR-047](../../functional/FR-047-emit-typed-located-causes.md)).
+  ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
+  [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)).
 - **Key order** — lexicographic over the label, for collection comparison only.
   It carries no precedence, capability ranking or causal meaning, and it is not
   an order over traces, positions or instants.
@@ -88,9 +88,9 @@ equivalence claim."
 
 ## Dependencies
 
-- [FR-095](../../functional/FR-095-preserve-native-tl-correspondence.md)
+- [FR-095](../../functional/temporal/FR-095-preserve-native-tl-correspondence.md)
   establishes the support table, the target labels and the unsupported rows.
-- [FR-091](../../functional/FR-091-evaluate-bounded-future.md) pins the
+- [FR-091](../../functional/temporal/FR-091-evaluate-bounded-future.md) pins the
   lower-bound convention shared with `mltl.closed-trace/v1`.
 - [FR-250](FR-250-temporal-semantic-profile.md) holds the authored profile
   vocabulary this one is kept separate from.

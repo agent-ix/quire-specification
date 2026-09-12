@@ -40,4 +40,4 @@ Priority: High. Confusing a source/model identity or incomplete execution with a
 
 ## Traceability (Informative)
 
-- [FR-001](../functional/FR-001-select-native-profile.md)
+- [FR-001](../functional/foundation/FR-001-select-native-profile.md)

@@ -21,7 +21,7 @@ subjects, relationships and populations.
 | Observation-range correspondence | `quire.observation.range/v1` | `1-draft.1` | [Range correspondence](observation-range.md) |
 | Observation binding rules | `quire.observation.contract/v1` | Current working draft | [Observation contract](../observation-contract.md) |
 | Temporal lifecycle/result facet | `quire.temporal.bounded-facet/v1` | `1-draft.3` | [Temporal meaning](temporal-common.md) |
-| Shared result rules | B FR-061 | Current working draft | [Orthogonal results](../../../spec/functional/FR-061-report-orthogonal-results.md) |
+| Shared result rules | B FR-061 | Current working draft | [Orthogonal results](../../../spec/functional/protocol/FR-061-report-orthogonal-results.md) |
 | Producer interface | FCD Producer interface | `1.2.0` | [Producer selection](../observation-contract.md#producer-interface-selection) |
 
 An actual assertion or restoration request selects its required dependencies by

@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-044](../functional/FR-044-check-composed-numeric-definedness.md).
+Planned controls for [FR-044](../functional/foundation/FR-044-check-composed-numeric-definedness.md).
 No executable test or observed coverage is claimed.
 
 ## Test Procedure

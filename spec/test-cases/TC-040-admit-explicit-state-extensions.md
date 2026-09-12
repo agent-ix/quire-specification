@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-040](../functional/FR-040-admit-explicit-state-extensions.md).
+Planned controls for [FR-040](../functional/foundation/FR-040-admit-explicit-state-extensions.md).
 No executable test or observed coverage is claimed.
 
 ## Test Procedure

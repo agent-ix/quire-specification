@@ -73,9 +73,9 @@ instance, refuses linking with the affected source location" (FR-050-AC-2).
 
 ## Dependencies
 
-- [FR-050](../../functional/FR-050-bind-protocol-instances.md) separates role
+- [FR-050](../../functional/protocol/FR-050-bind-protocol-instances.md) separates role
   instances from static definitions and refuses ambiguous bindings.
-- [FR-035](../../functional/FR-035-bind-ecosystem-subjects.md) keeps role
+- [FR-035](../../functional/foundation/FR-035-bind-ecosystem-subjects.md) keeps role
   instances distinct subjects and governs role mappings.
 - [FR-211](FR-211-protocol-role.md) is the static definition a role instance
   instantiates.

@@ -81,11 +81,11 @@ channel/component reference rather than becoming a participant role" (FR-054).
 
 ## Dependencies
 
-- [FR-054](../../functional/FR-054-bind-channel-premises.md) binds the channel
+- [FR-054](../../functional/protocol/FR-054-bind-channel-premises.md) binds the channel
   premises as explicit conformance assumptions.
-- [FR-050](../../functional/FR-050-bind-protocol-instances.md) binds channel
+- [FR-050](../../functional/protocol/FR-050-bind-protocol-instances.md) binds channel
   references and separates channels from roles.
-- [FR-049](../../functional/FR-049-bind-native-choreography-syntax.md) binds
+- [FR-049](../../functional/foundation/FR-049-bind-native-choreography-syntax.md) binds
   channel positions to their required declaration kinds.
 - [FR-216](FR-216-channel-premise.md) is the premise value object this channel
   contains.

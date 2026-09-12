@@ -54,7 +54,7 @@ created.
   subject or the semantic trigger-event identity, so this artifact establishes
   none. See the open gap below.
 - **Causal order** — the authored partial acyclic order of
-  [FR-052](../../functional/FR-052-represent-bounded-control.md). An obligation's
+  [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md). An obligation's
   position relative to its triggering effect is an authored causal edge; it is
   never derived from key order, timestamp or source position, and FR-052-AC-2
   states that "Reordering equal-time events does not add a causal edge absent
@@ -79,12 +79,12 @@ created.
 
 ## Dependencies
 
-- [FR-055](../../functional/FR-055-activate-protocol-obligations.md) supplies the
+- [FR-055](../../functional/protocol/FR-055-activate-protocol-obligations.md) supplies the
   obligation's dependency identities and the rule that activation is independent
   from truth.
-- [FR-093](../../functional/FR-093-bind-temporal-activation-and-captures.md)
+- [FR-093](../../functional/temporal/FR-093-bind-temporal-activation-and-captures.md)
   supplies the instance identity rule and the duplicate/distinct-trigger rules.
-- [FR-051](../../functional/FR-051-preserve-communication-identities.md) supplies
+- [FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md) supplies
   the distinctness of message, send, receive, delivery, attempt and effect.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

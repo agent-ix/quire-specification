@@ -17,7 +17,7 @@ relationships:
 
 ## Description
 
-When a communication is bound to a protocol instance, the protocol binder SHALL preserve the delivery as a subject distinct from the message, the send, the receive, the attempt and the effect ([FR-051](../../functional/FR-051-preserve-communication-identities.md)).
+When a communication is bound to a protocol instance, the protocol binder SHALL preserve the delivery as a subject distinct from the message, the send, the receive, the attempt and the effect ([FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md)).
 
 ## Properties
 
@@ -93,12 +93,12 @@ it.
 
 ## Dependencies
 
-- [FR-051](../../functional/FR-051-preserve-communication-identities.md)
+- [FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md)
   preserves delivery as a distinct typed subject and states the cardinality
   obligation.
-- [FR-054](../../functional/FR-054-bind-channel-premises.md) binds delivery
+- [FR-054](../../functional/protocol/FR-054-bind-channel-premises.md) binds delivery
   cardinality, ordering policy and duplication premises.
-- [FR-059](../../functional/FR-059-assess-finite-global-conformance.md) requires
+- [FR-059](../../functional/protocol/FR-059-assess-finite-global-conformance.md) requires
   duplicated and misordered events to be reported.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.

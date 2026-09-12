@@ -67,11 +67,11 @@ closure or complete-global-conformance closure.
 
 ## Dependencies
 
-- [FR-060](../../functional/FR-060-separate-protocol-claims.md) establishes the
+- [FR-060](../../functional/protocol/FR-060-separate-protocol-claims.md) establishes the
   failed backend disposition.
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md) establishes the
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) establishes the
   five states and their combination rules.
-- [FR-062](../../functional/FR-062-project-results-to-portable-verification.md)
+- [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
   establishes the total projection of each state into E02.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

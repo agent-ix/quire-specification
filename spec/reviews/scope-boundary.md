@@ -66,22 +66,22 @@ flowchart LR
 
 | Requirement | Owning component | Class |
 | --- | --- | --- |
-| [FR-001](../functional/FR-001-select-native-profile.md) | A: language profile contract | core |
-| [FR-002](../functional/FR-002-resolve-owned-declarations.md) | A: model/import contract | core |
-| [FR-003](../functional/FR-003-bind-source-correspondence.md) | A: source correspondence contract | cross-cutting |
-| [FR-004](../functional/FR-004-separate-artifact-identities.md) | A: shared artifact/semantic references | cross-cutting |
-| [FR-005](../functional/FR-005-guard-optional-values.md) | A: state/operation semantics | core |
-| [FR-006](../functional/FR-006-preserve-control-evaluation.md) | A: state/operation semantics | core |
-| [FR-007](../functional/FR-007-prove-integer-definedness.md) | A: state/operation semantics | core |
-| [FR-008](../functional/FR-008-preserve-sequence-semantics.md) | A: state/operation semantics | core |
-| [FR-009](../functional/FR-009-preserve-object-identity.md) | A: state/operation semantics | core |
-| [FR-010](../functional/FR-010-evaluate-exact-reachability.md) | A: state/operation semantics | core |
-| [FR-011](../functional/FR-011-validate-populations.md) | A: state/operation semantics | core |
-| [FR-012](../functional/FR-012-bind-operation-observations.md) | A: state/operation semantics | core |
-| [FR-013](../functional/FR-013-validate-operation-frames.md) | A: state/operation semantics | core |
-| [FR-014](../functional/FR-014-read-exact-wire.md) | A: closed interchange contract | infrastructure |
-| [FR-015](../functional/FR-015-preserve-canonical-domains.md) | A: canonical-domain compatibility contract | cross-cutting |
-| [FR-016](../functional/FR-016-migrate-explicitly.md) | A: explicit migration contract | cross-cutting |
+| [FR-001](../functional/foundation/FR-001-select-native-profile.md) | A: language profile contract | core |
+| [FR-002](../functional/foundation/FR-002-resolve-owned-declarations.md) | A: model/import contract | core |
+| [FR-003](../functional/foundation/FR-003-bind-source-correspondence.md) | A: source correspondence contract | cross-cutting |
+| [FR-004](../functional/foundation/FR-004-separate-artifact-identities.md) | A: shared artifact/semantic references | cross-cutting |
+| [FR-005](../functional/foundation/FR-005-guard-optional-values.md) | A: state/operation semantics | core |
+| [FR-006](../functional/foundation/FR-006-preserve-control-evaluation.md) | A: state/operation semantics | core |
+| [FR-007](../functional/foundation/FR-007-prove-integer-definedness.md) | A: state/operation semantics | core |
+| [FR-008](../functional/foundation/FR-008-preserve-sequence-semantics.md) | A: state/operation semantics | core |
+| [FR-009](../functional/foundation/FR-009-preserve-object-identity.md) | A: state/operation semantics | core |
+| [FR-010](../functional/foundation/FR-010-evaluate-exact-reachability.md) | A: state/operation semantics | core |
+| [FR-011](../functional/foundation/FR-011-validate-populations.md) | A: state/operation semantics | core |
+| [FR-012](../functional/foundation/FR-012-bind-operation-observations.md) | A: state/operation semantics | core |
+| [FR-013](../functional/foundation/FR-013-validate-operation-frames.md) | A: state/operation semantics | core |
+| [FR-014](../functional/foundation/FR-014-read-exact-wire.md) | A: closed interchange contract | infrastructure |
+| [FR-015](../functional/foundation/FR-015-preserve-canonical-domains.md) | A: canonical-domain compatibility contract | cross-cutting |
+| [FR-016](../functional/foundation/FR-016-migrate-explicitly.md) | A: explicit migration contract | cross-cutting |
 | [NFR-001](../non-functional/NFR-001-preserve-versioned-meaning.md) | A: historical contract compatibility | cross-cutting |
 | [NFR-002](../non-functional/NFR-002-classify-resource-incompleteness.md) | A: outcome/resource contract | cross-cutting |
 | [NFR-003](../non-functional/NFR-003-qualify-reference-bindings.md) | A: binding integrity contract | cross-cutting |

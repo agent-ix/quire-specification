@@ -124,7 +124,7 @@ cannot execute. The minimum orthogonal dimensions are:
 | Provenance | source/profile/model/protocol/request/binding/observation/progress/backend identities and derived artifact digests |
 
 The combination is constrained by the normative table in
-[FR-061](../../spec/functional/FR-061-report-orthogonal-results.md). Missing
+[FR-061](../../spec/functional/protocol/FR-061-report-orthogonal-results.md). Missing
 observations, required roles, population members or adverse cases cannot change
 truth, adequacy or package-level status from unsuccessful or unknown to
 successful. Independent supported results remain available when another request

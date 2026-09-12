@@ -19,7 +19,7 @@ When a numeric operand or result is checked, the checker SHALL require its named
 
 - **named_type** (identity component) — the declared numeric type. Ordinary
   operands and results share their named numeric type
-  ([FR-044](../../functional/FR-044-check-composed-numeric-definedness.md)).
+  ([FR-044](../../functional/foundation/FR-044-check-composed-numeric-definedness.md)).
 - **unit** (identity component) — the exact unit. Operands and results share it
   (FR-044). Rational operation results are checked in the same named
   dimensionless rational type (FR-044).
@@ -61,9 +61,9 @@ When a numeric operand or result is checked, the checker SHALL require its named
 
 ## Dependencies
 
-- [FR-044](../../functional/FR-044-check-composed-numeric-definedness.md)
+- [FR-044](../../functional/foundation/FR-044-check-composed-numeric-definedness.md)
   establishes the named type, unit and definedness outcomes.
-- [FR-007](../../functional/FR-007-prove-integer-definedness.md) establishes
+- [FR-007](../../functional/foundation/FR-007-prove-integer-definedness.md) establishes
   bounded integer definedness.
 - [FR-205](FR-205-exact-rational-value.md) is admitted into a numeric domain.
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity discipline.

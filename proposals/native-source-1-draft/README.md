@@ -122,7 +122,7 @@ new IR reference construct remain later design choices, neither assumed here.
 
 ## Delivery and evidence still required
 
-[FR-019](../../spec/functional/FR-019-admit-native-source-profile.md) specifies
+[FR-019](../../spec/functional/foundation/FR-019-admit-native-source-profile.md) specifies
 observable admission outcomes. Its [planned tests](../../spec/native-source/tests.md)
 are obligations for compiler #30, not executed conformance. Existing tests may
 be reused only after checking that they exercise the replacement rule.

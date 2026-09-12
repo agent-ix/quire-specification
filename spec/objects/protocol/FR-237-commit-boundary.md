@@ -48,7 +48,7 @@ Outputs requires "separate attempt, effect, commit and recovery facts".
   checked by FR-057 is a causal order, not a key order, and must not be read as
   one.
 - **Causal order** — the authored partial acyclic order of
-  [FR-052](../../functional/FR-052-represent-bounded-control.md). FR-057-AC-3
+  [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md). FR-057-AC-3
   names the violations this order detects: "Registration after commit and
   compensation before the forward effect or after a forbidding commit are
   distinct ordering violations." The order is authored and is never derived from
@@ -72,11 +72,11 @@ Outputs requires "separate attempt, effect, commit and recovery facts".
 
 ## Dependencies
 
-- [FR-057](../../functional/FR-057-enforce-commit-recovery.md) establishes the
+- [FR-057](../../functional/protocol/FR-057-enforce-commit-recovery.md) establishes the
   commit-ordering check and the forbidding-commit violations.
-- [FR-056](../../functional/FR-056-register-compensation.md) binds each
+- [FR-056](../../functional/protocol/FR-056-register-compensation.md) binds each
   registration to its commit boundary.
-- [FR-052](../../functional/FR-052-represent-bounded-control.md) supplies the
+- [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md) supplies the
   authored causal order.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

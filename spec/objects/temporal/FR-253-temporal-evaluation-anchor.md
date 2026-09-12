@@ -47,8 +47,8 @@ of its named correspondence axes, and FR-095-AC-4 holds that mutating that axis
   position, sample index or instant under that binding. Equality is
   componentwise over exactly those components and nothing else. Display name,
   source path, span, message text, locale and rendering never participate
-  ([FR-009](../../functional/FR-009-preserve-object-identity.md),
-  [FR-047](../../functional/FR-047-emit-typed-located-causes.md)). FR-093 is
+  ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
+  [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)). FR-093 is
   explicit that a timestamp is not an identity component of what the anchor
   activates: "Each event-triggered instance shall be identified by the clause
   subject and semantic trigger-event identity, not by timestamp, display name or
@@ -61,7 +61,7 @@ of its named correspondence axes, and FR-095-AC-4 holds that mutating that axis
   presented as an admitted order and never breaks a tie.
 - **Causal order** — the admitted causal/sequence order carried by the clock
   binding (FR-252), and for a protocol subject the authored partial order of
-  [FR-052](../../functional/FR-052-represent-bounded-control.md). It is never
+  [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md). It is never
   derived from the key order, from a timestamp or from ingestion order.
   FR-090-AC-4 holds that "Equal timestamps without an admitted causal/sequence
   order refuse `until`, `release`, `since` and `triggered`; ingestion order is
@@ -95,10 +95,10 @@ history cutoff is not an execution origin."
 
 ## Dependencies
 
-- [FR-091](../../functional/FR-091-evaluate-bounded-future.md) and
-  [FR-092](../../functional/FR-092-evaluate-bounded-past.md) establish the
+- [FR-091](../../functional/temporal/FR-091-evaluate-bounded-future.md) and
+  [FR-092](../../functional/temporal/FR-092-evaluate-bounded-past.md) establish the
   anchor-relative offset readings.
-- [FR-093](../../functional/FR-093-bind-temporal-activation-and-captures.md)
+- [FR-093](../../functional/temporal/FR-093-bind-temporal-activation-and-captures.md)
   establishes the authored activation anchor and the anchor identity inputs.
 - [FR-252](FR-252-temporal-clock-binding.md) supplies the clock binding and the
   admitted causal order.

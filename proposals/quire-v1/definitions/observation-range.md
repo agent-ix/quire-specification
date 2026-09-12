@@ -15,7 +15,7 @@ row below rather than converting among clock families.
 ## Required inputs
 
 Use the producer interface selected by the [observation contract](../observation-contract.md)
-and exactly one clock meaning from [FR-090](../../../spec/functional/FR-090-select-temporal-profile-and-clock.md).
+and exactly one clock meaning from [FR-090](../../../spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md).
 These are supplied assessment inputs; the draft does not duplicate their
 revision/digest selection tables.
 

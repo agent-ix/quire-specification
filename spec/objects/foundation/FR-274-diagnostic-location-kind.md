@@ -98,7 +98,7 @@ path structure.
 
 ## Dependencies
 
-- [FR-047](../../functional/FR-047-emit-typed-located-causes.md) establishes the
+- [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md) establishes the
   locus-retention obligation and the prohibition on reconstructing a location.
 - [Native diagnostics catalog](../../../proposals/quire-v1/definitions/native-diagnostics.md)
   is the proposed, non-adopted source of the three distinct location kinds.
