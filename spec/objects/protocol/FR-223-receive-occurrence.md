@@ -29,7 +29,7 @@ When a communication is bound to a protocol instance, the protocol binder SHALL 
   states that `receive ... via C of SendNode` observes "A distinct receive
   related to the exact concrete send occurrence; duplicate transport receipts do
   not create another node occurrence."
-- **channel** ([FR-216](../protocol/FR-216-channel-premise.md)) — the declared channel,
+- **channel** ([FR-216](FR-216-channel-premise.md)) — the declared channel,
   whose premises are bound by FR-054.
 - **typed payload record** — the bound record. A receive alone establishes no
   business effect (FR-051).

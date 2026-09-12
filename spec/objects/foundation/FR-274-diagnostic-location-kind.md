@@ -30,7 +30,7 @@ catalog is proposed, not adopted.
 
 | Value | Description |
 | --- | --- |
-| authored source span | A span over authored source. Typed by [FR-203](../foundation/FR-203-source-region.md), which this artifact references rather than redefining: a half-open byte region over one identified source document. |
+| authored source span | A span over authored source. Typed by [FR-203](FR-203-source-region.md), which this artifact references rather than redefining: a half-open byte region over one identified source document. |
 | JSON field/index path | A path through a JSON document's fields and indices. Required as the retained payload of the `invalid_package` and `invalid_runtime_input` families — "the actual field/index path", "the actual input path" (proposed catalog). |
 | runtime object/value path | A path through a runtime object or value. Held distinct from a JSON field/index path by the same sentence of the proposed catalog. |
 
@@ -71,7 +71,7 @@ it gives them no discriminator tags or identifier spellings. See the open gap.
   an empty path is not an absent path, and a name match is not a locus.
 - **Digest domain** — a location kind carries no digest. Where a span's document
   carries one, its domain rule is
-  [FR-201](../foundation/FR-201-canonical-identity-domain.md); the catalog that
+  [FR-201](FR-201-canonical-identity-domain.md); the catalog that
   resolves the diagnostic is itself selected by identity, revision and byte
   digest ([FR-270](FR-270-versioned-diagnostic-catalog.md)).
 
@@ -102,7 +102,7 @@ path structure.
   locus-retention obligation and the prohibition on reconstructing a location.
 - [Native diagnostics catalog](../../../proposals/quire-v1/definitions/native-diagnostics.md)
   is the proposed, non-adopted source of the three distinct location kinds.
-- [FR-203](../foundation/FR-203-source-region.md) types the authored source span
+- [FR-203](FR-203-source-region.md) types the authored source span
   kind.
-- [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
+- [FR-200](FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

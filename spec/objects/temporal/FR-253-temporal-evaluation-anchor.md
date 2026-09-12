@@ -121,8 +121,8 @@ FR-055 Behavior and FR-061 use `triggered` for the same state. FR-061 states:
 Whether "an activated obligation" and `triggered` are one value under two
 spellings, or two distinct facts, is not stated anywhere. This artifact records
 both and resolves neither; the activation vocabulary itself is typed in
-[FR-231](../obligation/FR-231-obligation-activation-state.md) and in
-[FR-244](../result/FR-244-activation-state.md).
+[FR-231](../protocol/FR-231-obligation-activation-state.md) and in
+[FR-244](../protocol/FR-244-activation-state.md).
 
 ## Status
 

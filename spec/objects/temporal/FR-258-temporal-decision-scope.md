@@ -97,7 +97,7 @@ retain its prior truth, settlement basis and support; the stop shall not erase
 or restamp it."
 
 The settlement-basis vocabulary itself is not enumerated here. It is authored as
-[FR-243](../result/FR-243-settlement-basis.md) in the result object set; this
+[FR-243](../protocol/FR-243-settlement-basis.md) in the result object set; this
 artifact names its members only where the temporal prose names them.
 
 ## Acceptance Criteria

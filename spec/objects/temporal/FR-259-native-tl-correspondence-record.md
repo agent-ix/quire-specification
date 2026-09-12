@@ -34,7 +34,7 @@ bridge preserves:
 | Language and temporal profile definition | FR-095 Behavior | [FR-250](FR-250-temporal-semantic-profile.md). |
 | Model/type/predicate bindings | FR-095 Behavior | |
 | Evaluation anchor | FR-095 Behavior | [FR-253](FR-253-temporal-evaluation-anchor.md). |
-| Immutable capture environment | FR-095 Behavior | [FR-232](../obligation/FR-232-activation-capture.md). |
+| Immutable capture environment | FR-095 Behavior | [FR-232](../protocol/FR-232-activation-capture.md). |
 | Clock/observation binding | FR-095 Behavior | [FR-252](FR-252-temporal-clock-binding.md). |
 | Interval | FR-095 Behavior | [FR-255](FR-255-bounded-temporal-interval.md). |
 | Closure/history premises | FR-095 Behavior | [FR-257](FR-257-history-boundary.md), [FR-258](FR-258-temporal-decision-scope.md). |

@@ -68,7 +68,7 @@ that do exist diverge; see the open gap below.
   failure" (proposed catalog).
 - **Digest domain** — a stage label carries no digest. The catalog that carries
   it is selected by identity, revision and byte digest, whose domain rule is
-  [FR-201](../foundation/FR-201-canonical-identity-domain.md).
+  [FR-201](FR-201-canonical-identity-domain.md).
 
 ## Acceptance Criteria
 
@@ -124,5 +124,5 @@ synthesises no merged list. Selecting between them is an owner ruling.
   is the proposed, non-adopted source of the eleven-stage list.
 - [FR-272](FR-272-typed-diagnostic-cause.md) supplies the typed cause retained
   alongside the stage.
-- [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
+- [FR-200](FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

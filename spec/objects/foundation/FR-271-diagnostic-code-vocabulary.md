@@ -97,7 +97,7 @@ catalog).
   catalog).
 - **Digest domain** — a code carries no digest. The catalog that resolves it is
   selected by identity, revision and byte digest, whose domain rule is
-  [FR-201](../foundation/FR-201-canonical-identity-domain.md).
+  [FR-201](FR-201-canonical-identity-domain.md).
 
 ## Acceptance Criteria
 
@@ -151,5 +151,5 @@ spelling for them would add members the prose does not name.
   supply the FR-spelled code literals recorded above.
 - [Native diagnostics catalog](../../../proposals/quire-v1/definitions/native-diagnostics.md)
   is the proposed, non-adopted source of the members.
-- [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
+- [FR-200](FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
