@@ -15,7 +15,7 @@ relationships:
 
 ## Description
 
-When a protocol body is linked, the protocol linker SHALL admit only the authored control constructs named by FR-052 — sequence, labeled choice, parallel branches, join, bounded iteration and termination — each contributing the causal rule stated for it and no other ([FR-052](../../functional/FR-052-represent-bounded-control.md)).
+When a protocol body is linked, the protocol linker SHALL admit only the authored control constructs named by FR-052 — sequence, labeled choice, parallel branches, join, bounded iteration and termination — each contributing the causal rule stated for it and no other ([FR-052](../../functional/protocol/FR-052-represent-bounded-control.md)).
 
 ## Values
 
@@ -70,12 +70,12 @@ records the sentence that states each construct's rule.
 
 ## Dependencies
 
-- [FR-052](../../functional/FR-052-represent-bounded-control.md) names the
+- [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md) names the
   constructs and states each rule and refusal.
-- [FR-049](../../functional/FR-049-bind-native-choreography-syntax.md) names the
+- [FR-049](../../functional/foundation/FR-049-bind-native-choreography-syntax.md) names the
   admitted all-branch join and the bounded repeat, and retains every lowered
   node's iteration identity.
-- [FR-053](../../functional/FR-053-enforce-choice-visibility.md) supplies the
+- [FR-053](../../functional/protocol/FR-053-enforce-choice-visibility.md) supplies the
   choice member's ownership and visibility rules.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.

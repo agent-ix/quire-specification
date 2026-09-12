@@ -118,7 +118,7 @@ synthesises no merged list. Selecting between them is an owner ruling.
 
 ## Dependencies
 
-- [FR-047](../../functional/FR-047-emit-typed-located-causes.md) establishes the
+- [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md) establishes the
   stage-retention obligation and the six-stage input list.
 - [Native diagnostics catalog](../../../proposals/quire-v1/definitions/native-diagnostics.md)
   is the proposed, non-adopted source of the eleven-stage list.

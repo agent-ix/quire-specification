@@ -82,15 +82,15 @@ set; see **Open gap**.
 
 ## Dependencies
 
-- [FR-049](../../functional/FR-049-bind-native-choreography-syntax.md) names send,
+- [FR-049](../../functional/foundation/FR-049-bind-native-choreography-syntax.md) names send,
   receive, delivery, operation attempt, effect and compensation.
-- [FR-050](../../functional/FR-050-bind-protocol-instances.md) binds roles, role
+- [FR-050](../../functional/protocol/FR-050-bind-protocol-instances.md) binds roles, role
   instances, workflow instances, messages and channels to exact declarations.
-- [FR-051](../../functional/FR-051-preserve-communication-identities.md) names
+- [FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md) names
   message, send, receive, delivery, attempt and effect.
-- [FR-035](../../functional/FR-035-bind-ecosystem-subjects.md) names workflow
+- [FR-035](../../functional/foundation/FR-035-bind-ecosystem-subjects.md) names workflow
   instances, role instances, message deliveries, attempts and effects.
-- [FR-111](../../functional/FR-111-correlate-related-instances-explicitly.md)
+- [FR-111](../../functional/observation/FR-111-correlate-related-instances-explicitly.md)
   names workflow instances, deliveries, attempts, effects and receipts.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

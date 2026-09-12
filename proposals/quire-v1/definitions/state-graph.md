@@ -44,4 +44,4 @@ dependencies. The following current rule supplies the graph extension.
 
 | Rule |
 | --- |
-| [FR-043](../../../spec/functional/FR-043-evaluate-finite-graph-relations.md) |
+| [FR-043](../../../spec/functional/foundation/FR-043-evaluate-finite-graph-relations.md) |

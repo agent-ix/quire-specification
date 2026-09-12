@@ -15,7 +15,7 @@ relationships:
 
 ## Description
 
-When a labeled protocol choice is admitted, the protocol linker SHALL require one owning role and evidence that the owner can distinguish every selected branch from facts available at its decision point ([FR-053](../../functional/FR-053-enforce-choice-visibility.md)).
+When a labeled protocol choice is admitted, the protocol linker SHALL require one owning role and evidence that the owner can distinguish every selected branch from facts available at its decision point ([FR-053](../../functional/protocol/FR-053-enforce-choice-visibility.md)).
 
 ## Properties
 
@@ -78,9 +78,9 @@ distinguishing fact without reporting global conformance success"
 
 ## Dependencies
 
-- [FR-053](../../functional/FR-053-enforce-choice-visibility.md) establishes
+- [FR-053](../../functional/protocol/FR-053-enforce-choice-visibility.md) establishes
   ownership, labeling, guard disjointness and the visibility obligation.
-- [FR-052](../../functional/FR-052-represent-bounded-control.md) places the
+- [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md) places the
   choice in the finite acyclic causal graph and makes its branches
   identity-bearing.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the

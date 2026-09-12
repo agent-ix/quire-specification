@@ -66,9 +66,9 @@ the four named values and declares no ordering or dominance among them.
 
 ## Dependencies
 
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md) establishes the
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) establishes the
   four strengths and their source binding.
-- [FR-115](../../functional/FR-115-report-activation-participation-and-adequacy.md)
+- [FR-115](../../functional/observation/FR-115-report-activation-participation-and-adequacy.md)
   retains claim strength as a separate fact.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

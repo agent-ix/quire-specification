@@ -48,8 +48,8 @@ elapsed-time component is admitted under it.
   premise components admitted by that profile. Equality is componentwise over
   exactly those components and nothing else. Display name, source path, span,
   message text, locale and rendering never participate
-  ([FR-009](../../functional/FR-009-preserve-object-identity.md),
-  [FR-047](../../functional/FR-047-emit-typed-located-causes.md)). FR-090-AC-3
+  ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
+  [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)). FR-090-AC-3
   fixes the set that changes identity: "Changing a sample period, epoch,
   timestamp unit, sequence authority or closed-boundary rule changes the binding
   identity and cannot reuse an earlier result."
@@ -100,10 +100,10 @@ is therefore a precondition of applying a progress assertion
 
 ## Dependencies
 
-- [FR-090](../../functional/FR-090-select-temporal-profile-and-clock.md)
+- [FR-090](../../functional/temporal/FR-090-select-temporal-profile-and-clock.md)
   establishes the clock selection, the per-profile retained components and the
   prohibition on inferring order.
-- [FR-094](../../functional/FR-094-interpret-progress-history-and-closure.md)
+- [FR-094](../../functional/temporal/FR-094-interpret-progress-history-and-closure.md)
   establishes that a progress assertion applies only to its named clock and
   binding.
 - [FR-250](FR-250-temporal-semantic-profile.md) supplies the profile identity.

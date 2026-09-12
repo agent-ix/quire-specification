@@ -53,7 +53,7 @@ receive, delivery or attempt that lacks the required successful effect" and that
 - **Key order** — none. No requirement fixes a total order over compensation
   definition identities or effect identities, so this artifact establishes none.
 - **Causal order** — the authored partial acyclic order of
-  [FR-052](../../functional/FR-052-represent-bounded-control.md). Registration is
+  [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md). Registration is
   causally after the forward effect that created it and before a forbidding
   commit: FR-056-AC-1 states that one successful payment effect "registers one
   matching refund obligation after the effect", and FR-057 requires the evaluator
@@ -81,11 +81,11 @@ receive, delivery or attempt that lacks the required successful effect" and that
 
 ## Dependencies
 
-- [FR-056](../../functional/FR-056-register-compensation.md) establishes
+- [FR-056](../../functional/protocol/FR-056-register-compensation.md) establishes
   registration, its retained components and the duplicate-registration rule.
-- [FR-051](../../functional/FR-051-preserve-communication-identities.md)
+- [FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md)
   establishes that attempts, deliveries and effects are distinct subjects.
-- [FR-057](../../functional/FR-057-enforce-commit-recovery.md) establishes the
+- [FR-057](../../functional/protocol/FR-057-enforce-commit-recovery.md) establishes the
   forbidding-commit ordering rule.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

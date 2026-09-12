@@ -58,8 +58,8 @@ and valuation request when the selected TL profile does not encode them."
 - **Key** — every preserved axis in the tables above, compared componentwise and
   nothing else. Display name, source path beyond the retained span identity,
   message text, locale and rendering never participate
-  ([FR-009](../../functional/FR-009-preserve-object-identity.md),
-  [FR-047](../../functional/FR-047-emit-typed-located-causes.md)). FR-095-AC-4
+  ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
+  [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)). FR-095-AC-4
   states the rule directly: "Mutating any native/TL profile, source/span,
   model/predicate, clock, capture, interval, closure/history or bridge identity
   breaks correspondence and names that axis." Equal formula bytes are not
@@ -111,7 +111,7 @@ valuation, capture and clock mapping as semantic correspondence."
 
 ## Dependencies
 
-- [FR-095](../../functional/FR-095-preserve-native-tl-correspondence.md)
+- [FR-095](../../functional/temporal/FR-095-preserve-native-tl-correspondence.md)
   establishes the preserved axes, the support table and the substitution
   prohibitions.
 - [FR-251](FR-251-tl-target-profile.md) supplies the TL target labels.

@@ -9,7 +9,7 @@ relationships:
 ## Description
 
 Planned consumer reconciliation controls for every acceptance criterion in
-[FR-116](../functional/FR-116-map-observation-results-to-consumers.md). No
+[FR-116](../functional/observation/FR-116-map-observation-results-to-consumers.md). No
 executable test or completed coverage is claimed.
 
 ## Test Procedure

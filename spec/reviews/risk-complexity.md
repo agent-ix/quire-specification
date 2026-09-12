@@ -35,22 +35,22 @@ These are new repositories. Missing formal plans, TC records, suites, and matric
 
 | Requirement | Technical risk | Volatility | Drivers | Mitigation |
 | --- | --- | --- | --- | --- |
-| [FR-001](../functional/FR-001-select-native-profile.md) | medium | medium | Definition selection must not silently extend the historical digest. | Retain golden profile bytes; qualify a separately accepted amendment. |
-| [FR-002](../functional/FR-002-resolve-owned-declarations.md) | high | high | Identity authority and existing typed-model adapter are external trust boundaries. | Pin exact model/lock/closure contracts; require independent consumer fixtures. |
-| [FR-003](../functional/FR-003-bind-source-correspondence.md) | high | medium | Byte/scalar source correspondence controls evidence attribution. | Generate Unicode, segment and digest adversarial cases. |
-| [FR-004](../functional/FR-004-separate-artifact-identities.md) | high | high | Artifact and semantic identities can be conflated across owners. | Closed refs, collision controls and B/C contract adoption. |
-| [FR-005](../functional/FR-005-guard-optional-values.md) | high | medium | New guarded-definedness implementation across observations. | Independent snapshot-qualified positive/adverse examples. |
-| [FR-006](../functional/FR-006-preserve-control-evaluation.md) | high | high | Control activation, sharing and interruption affect future evidence. | Pin event tuples and interrupted cases before evaluator implementation. |
-| [FR-007](../functional/FR-007-prove-integer-definedness.md) | high | medium | Bounded arithmetic must establish definedness without hidden overflow. | Generate extrema and invalid divisors; independent expected results. |
-| [FR-008](../functional/FR-008-preserve-sequence-semantics.md) | medium | medium | Order/multiplicity differ from set semantics. | Duplicate/reordering examples and generated sequences. |
-| [FR-009](../functional/FR-009-preserve-object-identity.md) | high | medium | Object identity is an evidence trust boundary. | Cross-universe/type/observation collision cases. |
-| [FR-010](../functional/FR-010-evaluate-exact-reachability.md) | high | medium | New exact graph traversal plus resource incompleteness. | Self-loop, cycle, disconnected and exhausted-budget cases. |
-| [FR-011](../functional/FR-011-validate-populations.md) | high | high | Unvalidated or incomplete population can masquerade as a valid context. | Validate closure before evaluation; inject partial validation failures. |
-| [FR-012](../functional/FR-012-bind-operation-observations.md) | high | high | Invocation/pre/post/immutable parameter correspondence crosses artifacts. | Independent pre/post/frame fixtures and conflicting-invocation controls. |
-| [FR-013](../functional/FR-013-validate-operation-frames.md) | high | medium | Frame permission and object-delta mistakes admit invalid transitions. | Creation/deletion/update boundary and wrong-invocation cases. |
-| [FR-014](../functional/FR-014-read-exact-wire.md) | high | high | New closed wire joins multiple independent consumers. | Raw-JSON fuzzing, schema checks and independently written readers. |
-| [FR-015](../functional/FR-015-preserve-canonical-domains.md) | high | high | Digest domain change could reinterpret historical evidence. | Keep legacy canonical tests/corpus and explicit domain tags. |
-| [FR-016](../functional/FR-016-migrate-explicitly.md) | high | high | Mapping scope could overgrant semantic reuse. | Byte-only migration controls; refuse implicit reverse/transitive joins. |
+| [FR-001](../functional/foundation/FR-001-select-native-profile.md) | medium | medium | Definition selection must not silently extend the historical digest. | Retain golden profile bytes; qualify a separately accepted amendment. |
+| [FR-002](../functional/foundation/FR-002-resolve-owned-declarations.md) | high | high | Identity authority and existing typed-model adapter are external trust boundaries. | Pin exact model/lock/closure contracts; require independent consumer fixtures. |
+| [FR-003](../functional/foundation/FR-003-bind-source-correspondence.md) | high | medium | Byte/scalar source correspondence controls evidence attribution. | Generate Unicode, segment and digest adversarial cases. |
+| [FR-004](../functional/foundation/FR-004-separate-artifact-identities.md) | high | high | Artifact and semantic identities can be conflated across owners. | Closed refs, collision controls and B/C contract adoption. |
+| [FR-005](../functional/foundation/FR-005-guard-optional-values.md) | high | medium | New guarded-definedness implementation across observations. | Independent snapshot-qualified positive/adverse examples. |
+| [FR-006](../functional/foundation/FR-006-preserve-control-evaluation.md) | high | high | Control activation, sharing and interruption affect future evidence. | Pin event tuples and interrupted cases before evaluator implementation. |
+| [FR-007](../functional/foundation/FR-007-prove-integer-definedness.md) | high | medium | Bounded arithmetic must establish definedness without hidden overflow. | Generate extrema and invalid divisors; independent expected results. |
+| [FR-008](../functional/foundation/FR-008-preserve-sequence-semantics.md) | medium | medium | Order/multiplicity differ from set semantics. | Duplicate/reordering examples and generated sequences. |
+| [FR-009](../functional/foundation/FR-009-preserve-object-identity.md) | high | medium | Object identity is an evidence trust boundary. | Cross-universe/type/observation collision cases. |
+| [FR-010](../functional/foundation/FR-010-evaluate-exact-reachability.md) | high | medium | New exact graph traversal plus resource incompleteness. | Self-loop, cycle, disconnected and exhausted-budget cases. |
+| [FR-011](../functional/foundation/FR-011-validate-populations.md) | high | high | Unvalidated or incomplete population can masquerade as a valid context. | Validate closure before evaluation; inject partial validation failures. |
+| [FR-012](../functional/foundation/FR-012-bind-operation-observations.md) | high | high | Invocation/pre/post/immutable parameter correspondence crosses artifacts. | Independent pre/post/frame fixtures and conflicting-invocation controls. |
+| [FR-013](../functional/foundation/FR-013-validate-operation-frames.md) | high | medium | Frame permission and object-delta mistakes admit invalid transitions. | Creation/deletion/update boundary and wrong-invocation cases. |
+| [FR-014](../functional/foundation/FR-014-read-exact-wire.md) | high | high | New closed wire joins multiple independent consumers. | Raw-JSON fuzzing, schema checks and independently written readers. |
+| [FR-015](../functional/foundation/FR-015-preserve-canonical-domains.md) | high | high | Digest domain change could reinterpret historical evidence. | Keep legacy canonical tests/corpus and explicit domain tags. |
+| [FR-016](../functional/foundation/FR-016-migrate-explicitly.md) | high | high | Mapping scope could overgrant semantic reuse. | Byte-only migration controls; refuse implicit reverse/transitive joins. |
 | [NFR-001](../non-functional/NFR-001-preserve-versioned-meaning.md) | high | medium | Compatibility and historical interpretation are evidence-sensitive. | Immutable reviewed golden fixtures and mutation controls. |
 | [NFR-002](../non-functional/NFR-002-classify-resource-incompleteness.md) | high | medium | Every new phase must propagate incomplete work correctly. | Budget/cancellation fault injection in each implemented phase. |
 | [NFR-003](../non-functional/NFR-003-qualify-reference-bindings.md) | high | high | Accepted authority/content binding is security-sensitive. | Independent negative joins with recomputed digests. |

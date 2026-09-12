@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned acceptance controls for [FR-033](../functional/FR-033-admit-reusable-predicates.md).
+Planned acceptance controls for [FR-033](../functional/foundation/FR-033-admit-reusable-predicates.md).
 No executable test or completed coverage is claimed by this artifact.
 
 ## Test Procedure

@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned acceptance controls for [FR-031](../functional/FR-031-report-requested-capabilities.md).
+Planned acceptance controls for [FR-031](../functional/foundation/FR-031-report-requested-capabilities.md).
 No executable test or completed coverage is claimed by this artifact.
 
 ## Test Procedure

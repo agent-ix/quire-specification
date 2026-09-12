@@ -15,7 +15,7 @@ future evaluator without losing profile, clock, capture or source meaning.
 ## Target Integration
 
 The system under test is the native temporal bridge specified by
-[FR-095](../functional/FR-095-preserve-native-tl-correspondence.md). Its external
+[FR-095](../functional/temporal/FR-095-preserve-native-tl-correspondence.md). Its external
 boundaries are the native frontend subject, the contract-IR typed predicate
 projection, `tl-syntax` formula/profile documents and `tl-mltl` evaluation.
 
@@ -60,4 +60,4 @@ claim exists until these planned steps execute against reviewed candidates.
 
 - [Contract-IR issue #63](https://github.com/agent-ix/quire-contract-ir/issues/63)
 - [Contract-IR issue #64](https://github.com/agent-ix/quire-contract-ir/issues/64)
-- [FR-090](../functional/FR-090-select-temporal-profile-and-clock.md)
+- [FR-090](../functional/temporal/FR-090-select-temporal-profile-and-clock.md)

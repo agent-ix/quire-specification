@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-045](../functional/FR-045-preserve-control-and-presence-facts.md).
+Planned controls for [FR-045](../functional/foundation/FR-045-preserve-control-and-presence-facts.md).
 No executable test or observed coverage is claimed.
 
 ## Test Procedure

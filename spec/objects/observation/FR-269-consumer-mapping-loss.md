@@ -67,7 +67,7 @@ is not reachable by omission.
 
 ## Dependencies
 
-- [FR-116](../../functional/FR-116-map-observation-results-to-consumers.md)
+- [FR-116](../../functional/observation/FR-116-map-observation-results-to-consumers.md)
   establishes the closed classification set and the no-promotion rules.
 - [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
   domain rule for the selections emitted beside a classification.

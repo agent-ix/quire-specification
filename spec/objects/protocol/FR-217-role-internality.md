@@ -55,7 +55,7 @@ When a protocol declares a role, the protocol linker SHALL apply the same identi
 
 ## Dependencies
 
-- [FR-050](../../functional/FR-050-bind-protocol-instances.md) establishes the
+- [FR-050](../../functional/protocol/FR-050-bind-protocol-instances.md) establishes the
   internal/external distinction, the shared identity rules and the observability
   limit.
 - [FR-211](FR-211-protocol-role.md) is the role this vocabulary classifies.

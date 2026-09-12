@@ -10,7 +10,7 @@ relationships:
 ---
 ## Description
 
-Planned acceptance controls for [FR-030](../functional/FR-030-bind-composed-definitions.md).
+Planned acceptance controls for [FR-030](../functional/foundation/FR-030-bind-composed-definitions.md).
 No executable test or completed coverage is claimed by this artifact.
 
 ## Test Procedure

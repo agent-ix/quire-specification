@@ -17,7 +17,7 @@ relationships:
 
 ## Description
 
-When a communication or business observation is bound to a protocol instance, the protocol binder SHALL preserve the attempt as a subject distinct from the message, the send, the receive, the delivery and the effect ([FR-051](../../functional/FR-051-preserve-communication-identities.md)).
+When a communication or business observation is bound to a protocol instance, the protocol binder SHALL preserve the attempt as a subject distinct from the message, the send, the receive, the delivery and the effect ([FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md)).
 
 ## Properties
 
@@ -103,11 +103,11 @@ FR-235 records the same unresolved question against its own unestablished key.
 
 ## Dependencies
 
-- [FR-051](../../functional/FR-051-preserve-communication-identities.md)
+- [FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md)
   preserves attempt as a distinct typed subject.
-- [FR-058](../../functional/FR-058-preserve-retry-and-partial-recovery.md)
+- [FR-058](../../functional/protocol/FR-058-preserve-retry-and-partial-recovery.md)
   requires each attempt identity to be preserved across retry.
-- [FR-049](../../functional/FR-049-bind-native-choreography-syntax.md) states
+- [FR-049](../../functional/foundation/FR-049-bind-native-choreography-syntax.md) states
   that retry bounds count the initial attempt.
 - [FR-235](FR-235-compensation-attempt.md) types the compensation attempt and
   owns the FR-058-AC-1 refund example.

@@ -41,8 +41,8 @@ When a protocol assessment result is emitted or read, the strict reader SHALL re
 
 ## Properties
 
-Every property below is stated by [FR-061](../../functional/FR-061-report-orthogonal-results.md)
-or [FR-059](../../functional/FR-059-assess-finite-global-conformance.md). This
+Every property below is stated by [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md)
+or [FR-059](../../functional/protocol/FR-059-assess-finite-global-conformance.md). This
 artifact adds none.
 
 | Property | Description |
@@ -123,7 +123,7 @@ observed claim strengths as distinct source-bound values"):
 
 ## Protocol claim kind
 
-**Protocol claim kind** ([FR-060](../../functional/FR-060-separate-protocol-claims.md):
+**Protocol claim kind** ([FR-060](../../functional/protocol/FR-060-separate-protocol-claims.md):
 "one independent disposition for global conformance, monitorability, local
 projection, refinement, realizability and composition without transferring
 premises or success among them"): global conformance, monitorability, local
@@ -142,11 +142,11 @@ and does not give them label spellings; this artifact does not invent any.
 
 ## Dependencies
 
-- [FR-059](../../functional/FR-059-assess-finite-global-conformance.md) supplies
+- [FR-059](../../functional/protocol/FR-059-assess-finite-global-conformance.md) supplies
   the complete-global-conformance closure record and its premise set.
-- [FR-060](../../functional/FR-060-separate-protocol-claims.md) supplies the
+- [FR-060](../../functional/protocol/FR-060-separate-protocol-claims.md) supplies the
   independent per-claim dispositions.
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md) supplies the
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) supplies the
   contract version, kind, identity, enclosing reference digest rule and every
   retained fact.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
@@ -164,7 +164,7 @@ and does not give them label spellings; this artifact does not invent any.
    FR-061-AC-4 refuses a "stale identity", but no requirement states whether the
    identity is authored by the producer or derived from named components. The
    identity kind is therefore not declared here. By contrast,
-   [FR-062](../../functional/FR-062-project-results-to-portable-verification.md)
+   [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
    fully specifies the *derived* projection identity
    ([FR-249](FR-249-derived-projection-result.md)).
 2. **Identity versus bytes.** No requirement states whether two results bearing
@@ -174,7 +174,7 @@ and does not give them label spellings; this artifact does not invent any.
    progress and surrounding-execution closure as facts with "exact scope,
    authority and boundary identities" but never lists their member states. FR-061
    uses "decision-scope progress is open" and
-   [FR-094](../../functional/FR-094-interpret-progress-history-and-closure.md)-AC-3
+   [FR-094](../../functional/temporal/FR-094-interpret-progress-history-and-closure.md)-AC-3
    uses "Open/closed decision scope, open/closed surrounding execution", but no
    requirement declares a closed vocabulary. No member list is invented here.
 4. **Participation is unenumerated at the source.** FR-061 and FR-115 both name

@@ -17,7 +17,7 @@ relationships:
 
 ## Description
 
-When a business observation is bound to a protocol instance, the protocol binder SHALL preserve the effect as a subject distinct from the message, the send, the receive, the delivery and the attempt, established only through an explicit authored relationship and never inferred from a transport fact ([FR-051](../../functional/FR-051-preserve-communication-identities.md)).
+When a business observation is bound to a protocol instance, the protocol binder SHALL preserve the effect as a subject distinct from the message, the send, the receive, the delivery and the attempt, established only through an explicit authored relationship and never inferred from a transport fact ([FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md)).
 
 ## Properties
 
@@ -81,11 +81,11 @@ delivery, trace identifier or equal payload alone", and FR-049-AC-2 states that
 
 ## Dependencies
 
-- [FR-051](../../functional/FR-051-preserve-communication-identities.md)
+- [FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md)
   preserves effect as a distinct typed subject and forbids inference.
-- [FR-058](../../functional/FR-058-preserve-retry-and-partial-recovery.md)
+- [FR-058](../../functional/protocol/FR-058-preserve-retry-and-partial-recovery.md)
   requires each effect identity to be preserved and names the duplicate effect.
-- [FR-057](../../functional/FR-057-enforce-commit-recovery.md) supplies the
+- [FR-057](../../functional/protocol/FR-057-enforce-commit-recovery.md) supplies the
   commit-ordering relations an effect participates in.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.

@@ -279,8 +279,8 @@ Examples, under appropriately typed/admitted declarations:
 
 ## Native temporal composition
 
-The temporal operators use [FR-090](../../spec/functional/FR-090-select-temporal-profile-and-clock.md)
-through [FR-095](../../spec/functional/FR-095-preserve-native-tl-correspondence.md).
+The temporal operators use [FR-090](../../spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md)
+through [FR-095](../../spec/functional/temporal/FR-095-preserve-native-tl-correspondence.md).
 The syntax does not select a different clock or closed-boundary convention to
 fit a backend. Each interval has inclusive integer bounds `0 <= a <= b`; its
 unit is one tick of the explicitly selected clock interpretation. Negative,

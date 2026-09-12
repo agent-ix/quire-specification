@@ -90,7 +90,7 @@ define their vocabulary, which is held elsewhere
 
 ## Dependencies
 
-- [FR-111](../../functional/FR-111-correlate-related-instances-explicitly.md)
+- [FR-111](../../functional/observation/FR-111-correlate-related-instances-explicitly.md)
   establishes the explicit typed relationship and its refusal cases.
 - [FR-213](../protocol/FR-213-workflow-instance.md) supplies the related
   instance subject and records that its key is unstated.

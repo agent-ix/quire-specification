@@ -18,7 +18,7 @@ When an exact rational literal is admitted, the checker SHALL compare its normal
 - **numerator** (`signed integer`, normalized) — carries the sign. Normalization
   moves the sign to the numerator and divides both components by their greatest
   common divisor
-  ([FR-039](../../functional/FR-039-normalize-exact-rational-literals.md)).
+  ([FR-039](../../functional/foundation/FR-039-normalize-exact-rational-literals.md)).
 - **denominator** (`signed integer`, normalized) — never zero. A zero
   denominator is rejected before normalization (FR-039).
 - Canonical form: a zero numerator normalizes to `0/1` (FR-039).
@@ -77,7 +77,7 @@ values differ.
 
 ## Dependencies
 
-- [FR-039](../../functional/FR-039-normalize-exact-rational-literals.md)
+- [FR-039](../../functional/foundation/FR-039-normalize-exact-rational-literals.md)
   establishes normalization, bounds checking and the refusal set.
 - [FR-206](FR-206-numeric-domain.md) supplies the named type and unit a rational
   is admitted into.

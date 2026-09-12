@@ -125,7 +125,7 @@ This artifact adopts neither convention and promotes no proposal text.
 
 ## Dependencies
 
-- [FR-113](../../functional/FR-113-preserve-time-progress-and-late-data.md)
+- [FR-113](../../functional/observation/FR-113-preserve-time-progress-and-late-data.md)
   establishes the retained inputs, the silence rule, the late-data cutoff and
   the mismatch rule.
 - [FR-266](FR-266-event-time-window.md) supplies the half-open window that

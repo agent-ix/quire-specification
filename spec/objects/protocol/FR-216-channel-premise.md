@@ -71,7 +71,7 @@ Synchronized clocks are likewise never inferred (FR-054).
 
 ## Dependencies
 
-- [FR-054](../../functional/FR-054-bind-channel-premises.md) fixes the premise
+- [FR-054](../../functional/protocol/FR-054-bind-channel-premises.md) fixes the premise
   components, the non-inference rules and the identity effect of changing one.
 - [FR-215](FR-215-protocol-channel.md) is the channel that contains this premise
   set.

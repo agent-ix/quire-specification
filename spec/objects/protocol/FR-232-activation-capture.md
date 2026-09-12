@@ -53,7 +53,7 @@ instance's captures shall not satisfy another instance's propositions."
   over the declared capture set, so this artifact establishes none.
 - **Causal order** — none of its own. A capture is anchored at the authored
   activation anchor; the anchor's position is the authored partial order of
-  [FR-052](../../functional/FR-052-represent-bounded-control.md) and is never
+  [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md) and is never
   derived from key order, timestamp or source position.
 - **Absence** — a capture that could not be established is absent, and absence
   compares only to absence. FR-093 states that such a capture "shall prevent
@@ -76,9 +76,9 @@ instance's captures shall not satisfy another instance's propositions."
 
 ## Dependencies
 
-- [FR-093](../../functional/FR-093-bind-temporal-activation-and-captures.md)
+- [FR-093](../../functional/temporal/FR-093-bind-temporal-activation-and-captures.md)
   establishes capture retention, immutability and the anchor rule.
-- [FR-055](../../functional/FR-055-activate-protocol-obligations.md) establishes
+- [FR-055](../../functional/protocol/FR-055-activate-protocol-obligations.md) establishes
   capture immutability for the obligation.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
