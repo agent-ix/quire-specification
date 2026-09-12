@@ -15,6 +15,32 @@ relationships:
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-094
     type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-231
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-240
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-241
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-242
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-243
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-244
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-245
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-246
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-247
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-248
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-280
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-281
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-282
+    type: references
 ---
 ## Description
 

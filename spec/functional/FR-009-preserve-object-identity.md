@@ -5,6 +5,10 @@ type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-003"
     type: traces_to
+  - target: ix://agent-ix/quire-specification/FR-204
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-271
+    type: references
 ---
 # FR-009: Compare objects by declared identity
 

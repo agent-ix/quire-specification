@@ -9,6 +9,28 @@ relationships:
     type: depends_on
   - target: ix://agent-ix/quire-verification/FR-007
     type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-241
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-242
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-244
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-245
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-246
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-248
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-249
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-271
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-280
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-282
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-283
+    type: references
 ---
 ## Description
 
