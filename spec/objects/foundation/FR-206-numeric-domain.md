@@ -40,6 +40,8 @@ When a numeric operand or result is checked, the checker SHALL require its named
   comparison only. It expresses no widening relation and no causal meaning;
   implicit integer-to-rational conversion is prohibited (FR-044-AC-3), so
   adjacency in this order never licenses a conversion.
+- **Causal order** — not applicable. A numeric domain participates in no causal
+  structure.
 - **Absence** — an absent named type or unit compares only to absence and is
   never defaulted. Failure to establish totality is reported as unproved
   definedness, which FR-044 keeps distinct from a proved type or domain error
@@ -65,3 +67,10 @@ When a numeric operand or result is checked, the checker SHALL require its named
   bounded integer definedness.
 - [FR-205](FR-205-exact-rational-value.md) is admitted into a numeric domain.
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity discipline.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

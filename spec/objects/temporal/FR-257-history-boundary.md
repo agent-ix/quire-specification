@@ -53,6 +53,15 @@ false and Boolean constants as unchanged."
   yields a Boolean when its start is the authoritative execution origin and
   missing-history incomplete when it is merely a cutoff": equal positions under
   different kinds are not the same boundary.
+
+  Boundary kind participates as the distinction FR-092 states in prose — an
+  authoritative execution origin versus a supplied history cutoff — and **not**
+  as a label. No requirement fixes a spelling, a wire form or a closed
+  vocabulary for boundary kinds (see **Open gap**), so no exact-string match
+  over a boundary-kind label is established and none is asserted here. Where a
+  boundary carries no admitted kind, the kind is absent and the key is not
+  established for that boundary; an unspelled or unmatched kind is not silently
+  read as either an origin or a cutoff.
 - **Key order** — the order over the boundary position within one equal clock
   binding and kind, for collection comparison only. It carries no causal
   meaning, and an earlier boundary is not a causal predecessor of a later one.
@@ -91,6 +100,7 @@ for the other.
 | FR-257-AC-3 | An absent history boundary compares only to absence and is not defaulted to the earliest available record. | Analysis |
 | FR-257-AC-4 | Missing, evicted or stale history is not represented as a conclusive Boolean. | Analysis |
 | FR-257-AC-5 | The declared key order over boundary positions is never cited as a causal relation. | Analysis |
+| FR-257-AC-6 | No boundary-kind label spelling is asserted by this artifact, and a boundary whose kind is absent or unmatched is not compared as either an origin or a cutoff. | Inspection |
 
 ## Dependencies
 
@@ -109,7 +119,10 @@ for the other.
 No requirement states which admitted history boundary kinds exist beyond the two
 FR-092 contrasts, nor how an "admitted state-restoration contract"
 (FR-094-AC-6) is identified, nor whether a restored boundary is an origin or a
-cutoff. No boundary-kind vocabulary is enumerated here.
+cutoff. No boundary-kind vocabulary is enumerated here. FR-092 names the two it
+contrasts in English prose only and fixes no label spelling, field name or wire
+form for either, so the key above compares the stated distinction and not a
+label string.
 
 ## Status
 

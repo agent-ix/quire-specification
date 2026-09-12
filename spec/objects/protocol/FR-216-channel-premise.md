@@ -93,3 +93,10 @@ Synchronized clocks are likewise never inferred (FR-054).
    closed vocabulary is established, so none is enumerated here.
 3. FR-054-AC-2 scopes a FIFO premise to a "key scope" that no requirement
    defines. This artifact does not treat that scope as a component of this key.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

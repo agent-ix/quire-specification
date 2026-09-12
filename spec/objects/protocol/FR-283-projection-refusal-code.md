@@ -24,6 +24,12 @@ When a projection adapter refuses to map a protocol result to portable verificat
 | `unrepresented-source-state` | A source state has no mapping in the selected table. It cannot be reclassified as a malformed source (FR-062). |
 | `finding-loss` | The output would lose an applicable FR-007 finding (FR-062). |
 
+The `invalid-source-result` and `identity-mismatch` rows above do not agree with
+[FR-249](FR-249-derived-projection-result.md) on which code a recomputed-digest
+mismatch receives, and no requirement settles it. That disagreement is recorded
+in full as the first entry of the [FR-249 open gap](FR-249-derived-projection-result.md#open-gap)
+and is not resolved here.
+
 These are kebab-case spellings, distinct from the snake_case native producer
 codes of [FR-271](../foundation/FR-271-diagnostic-code-vocabulary.md). No
 requirement states which convention belongs to which namespace; see
@@ -50,6 +56,12 @@ requirement states which convention belongs to which namespace; see
   [FR-201](../foundation/FR-201-canonical-identity-domain.md).
 
 ## Open gap
+
+**Which code a recomputed-digest mismatch receives is unresolved.** This
+artifact assigns it to `invalid-source-result` and
+[FR-249](FR-249-derived-projection-result.md) assigns it to `identity-mismatch`;
+FR-062-AC-4 assigns it to neither. The full record of the two assignments is the
+first entry of the [FR-249 open gap](FR-249-derived-projection-result.md#open-gap).
 
 The repository carries two code-spelling conventions and no rule assigning them
 to namespaces:
@@ -82,3 +94,10 @@ neither.
   replace.
 - [FR-271](../foundation/FR-271-diagnostic-code-vocabulary.md) holds the native
   producer code vocabulary this one is held distinct from.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

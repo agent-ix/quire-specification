@@ -122,3 +122,10 @@ Unresolved by the prose, in addition to the differing membership:
    compound of `message` and `delivery`.
 4. Whether any spelling of these subject kinds is normative. No requirement
    fixes a label string, so no key order over the members can be established.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

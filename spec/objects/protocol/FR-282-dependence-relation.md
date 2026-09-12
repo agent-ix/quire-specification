@@ -69,3 +69,10 @@ A strict reader SHALL refuse a missing, cyclic or self-referential predecessor
   carries it to the portable verification boundary.
 - [FR-248](FR-248-decision-support-record.md) is the record this relation is
   carried on.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

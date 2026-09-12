@@ -12,6 +12,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-251
     type: references
+  - target: ix://agent-ix/quire-specification/FR-201
+    type: references
 ---
 # FR-250: Temporal semantic profile identity
 
@@ -66,11 +68,13 @@ vocabulary; they are recorded separately in
   digest-mismatched, multiply selected or internally inconsistent profile/clock
   definitions refuse before evaluation". An absent profile is never defaulted to
   a member.
-- **Digest domain** — the definition digest in the key retains the domain it was
-  derived under
+- **Digest domain** — the definition digest in the key carries a selected domain
+  under `ix://agent-ix/quire-specification/FR-201`
   ([FR-201](../foundation/FR-201-canonical-identity-domain.md)). An identity
   crossing domains is unequal regardless of byte equality, and FR-090-AC-2
-  refuses a digest mismatch before evaluation.
+  refuses a digest mismatch before evaluation. No requirement selects which
+  member of that domain vocabulary this digest is derived under; this artifact
+  defers to FR-201 and selects no member. See **Open gap**.
 
 ## Meaning change requires a new identity
 
@@ -107,6 +111,18 @@ distinct temporal subjects and meanings."
   separate from this vocabulary.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
+- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the
+  digest domain rule.
+
+## Open gap
+
+FR-090 requires the "exact language edition and temporal profile definition
+identity, revision and digest" to be retained, and that digest participates in
+the key above, but FR-090 does not state which identity domain the digest is
+derived under. The domain is required to be compared before the bytes
+([FR-201](../foundation/FR-201-canonical-identity-domain.md)), and no
+requirement selects a member for this digest. This artifact records the
+dependency and selects no member.
 
 ## Status
 

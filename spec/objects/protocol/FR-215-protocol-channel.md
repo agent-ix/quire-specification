@@ -106,3 +106,10 @@ channel/component reference rather than becoming a participant role" (FR-054).
    premises as refusing when missing or conflicting; the FR-054 description
    lists six premises, adding "duplication premises". Whether a missing
    duplication premise refuses admission is unstated.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

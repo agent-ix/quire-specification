@@ -85,3 +85,10 @@ When a protocol binder binds a communication, the binder SHALL preserve the mess
 2. FR-051 lists `message` as a distinct subject; FR-049-AC-2 and FR-111 do not
    list it at all. FR-210 records that disagreement.
 3. No key order over messages can be established until the key components are.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

@@ -10,7 +10,7 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-222
     type: references
-  - target: ix://agent-ix/quire-specification/FR-216
+  - target: ix://agent-ix/quire-specification/FR-215
     type: references
 ---
 # FR-224: Delivery
@@ -31,9 +31,9 @@ another; see **Open gap**.
   [choreography surface](../../../proposals/quire-v1/choreography-surface.md)
   states that "Channel `delivery [a,b]` declares inclusive per-send delivery
   cardinality with `0 <= a <= b` and finite b".
-- **channel** ([FR-216](FR-216-channel-premise.md)) — the channel whose sender,
+- **channel** ([FR-215](FR-215-protocol-channel.md)) — the channel whose sender,
   receiver, message types, ordering policy, delivery cardinality and duplication
-  premises are bound by FR-054.
+  premises ([FR-216](FR-216-channel-premise.md)) are bound by FR-054.
 - **transport record** — the transport observation the delivery is bound from.
   FR-051 requires "explicit relationships between transport records, attempts
   and effects" and states that the binder "SHALL NOT infer a business effect

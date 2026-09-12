@@ -28,6 +28,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-248
     type: references
+  - target: ix://agent-ix/quire-specification/FR-280
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-281
+    type: references
 ---
 # FR-240: Canonical protocol result
 
@@ -57,11 +61,11 @@ artifact adds none.
 | settlement basis | Exactly one basis per truth result, plus the exact supporting fact and progress identities ([FR-243](FR-243-settlement-basis.md)). |
 | activation | One activation state ([FR-244](FR-244-activation-state.md)). |
 | participation | An independently retained axis (FR-061, FR-115). Not enumerated by FR-061 or FR-115; see **Open gap**. |
-| assumptions | Each assumption retains its exact assumption identity and one state from `met`, `not-met`, `unknown` or `not-assessed` (FR-061). See **Vocabularies retained here without their own artifact**. |
+| assumptions | Each assumption retains its exact assumption identity and one state from `met`, `not-met`, `unknown` or `not-assessed` (FR-061). The state vocabulary is defined by [FR-280](FR-280-assumption-state.md). |
 | completeness | States which facts required by the returned claim are available and identifies every missing dependency (FR-061). |
 | observation adequacy | Whether the exact observations required to interpret the requested result are adequate ([FR-245](FR-245-observation-adequacy-state.md)). |
 | protocol adequacy | Whether the exact declared obligation and case set is demonstrated ([FR-246](FR-246-protocol-adequacy-state.md)). |
-| claim | The requested protocol claim and its retained claim strength. See **Vocabularies retained here without their own artifact**. |
+| claim | The requested protocol claim and its retained claim strength. The strength vocabulary is defined by [FR-281](FR-281-claim-strength.md); the protocol claim kinds have no label spellings in the prose, see **Protocol claim kind**. |
 | decision support | Every retained decision-support record ([FR-248](FR-248-decision-support-record.md)). |
 | provenance | Source, profile, model, protocol, request, binding, input and backend identities (FR-061-AC-3). |
 
@@ -100,21 +104,24 @@ producer SHALL NOT use completeness, assessment execution or any other
 progress/closure fact as a substitute for any closure axis." This artifact
 retains them as five properties and merges none of them.
 
-## Vocabularies retained here without their own artifact
+## Vocabularies carried on this result
 
-The parent batch allocated ten identifiers (FR-240..FR-249) for sixteen typed
-nouns. The three closed vocabularies below are stated verbatim by the behavioral
-requirements and are recorded here so a consumer has one place to cite. Each
-still warrants its own `enumeration` artifact at a later identifier; this
-artifact does not claim to be that artifact.
+The two closed vocabularies below are stated verbatim by the behavioral
+requirements and each has its own `enumeration` artifact, which is the
+definition. The tables are repeated here only as a reading aid; where the two
+differ the referenced artifact governs.
 
-**Assumption state** (FR-061: "one state from `met`, `not-met`, `unknown` or
-`not-assessed`"; restated as source states in the FR-062 mapping table):
+**Assumption state** — defined by [FR-280](FR-280-assumption-state.md)
+(FR-061: "one state from `met`, `not-met`, `unknown` or `not-assessed`";
+restated as source states in the FR-062 mapping table):
 `met`, `not-met`, `unknown`, `not-assessed`.
 
-**Claim strength** (FR-061: "The result producer SHALL retain proven,
-bounded-checked, tested and observed claim strengths as distinct source-bound
-values"): `proven`, `bounded-checked`, `tested`, `observed`.
+**Claim strength** — defined by [FR-281](FR-281-claim-strength.md)
+(FR-061: "The result producer SHALL retain proven, bounded-checked, tested and
+observed claim strengths as distinct source-bound values"):
+`proven`, `bounded-checked`, `tested`, `observed`.
+
+## Protocol claim kind
 
 **Protocol claim kind** ([FR-060](../../functional/FR-060-separate-protocol-claims.md):
 "one independent disposition for global conformance, monitorability, local
@@ -146,6 +153,10 @@ and does not give them label spellings; this artifact does not invent any.
   discipline.
 - [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
   domain vocabulary.
+- [FR-280](FR-280-assumption-state.md) defines the assumption state vocabulary
+  carried here.
+- [FR-281](FR-281-claim-strength.md) defines the claim strength vocabulary
+  carried here.
 
 ## Open gap
 
@@ -177,3 +188,10 @@ and does not give them label spellings; this artifact does not invent any.
    already records that "FR-061 names a mapping but defines no total conversion
    for protocol execution states ... into E02's different closed vocabularies."
    Gaps 3 and 4 are that finding seen from the source side.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

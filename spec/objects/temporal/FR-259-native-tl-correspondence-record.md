@@ -10,6 +10,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-258
     type: references
+  - target: ix://agent-ix/quire-specification/FR-201
+    type: references
 ---
 # FR-259: Native-to-TL correspondence record
 
@@ -79,9 +81,11 @@ and valuation request when the selected TL profile does not encode them."
   an unknown mapping, substitute a profile or synthesize missing
   correspondence."
 - **Digest domain** — the native source digest and the bridge definition digest
-  retain the domains they were derived under
+  carry selected domains under `ix://agent-ix/quire-specification/FR-201`
   ([FR-201](../foundation/FR-201-canonical-identity-domain.md)); an identity
-  crossing domains is unequal regardless of byte equality.
+  crossing domains is unequal regardless of byte equality. No requirement
+  selects which member of that domain vocabulary either digest is derived under;
+  this artifact defers to FR-201 and selects no member. See **Open gap**.
 
 ## Identifier namespaces stay separate
 
@@ -115,8 +119,18 @@ valuation, capture and clock mapping as semantic correspondence."
   the record preserves.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
+- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the
+  digest domain rule.
 
 ## Open gap
+
+FR-095 requires the native source digest/revision and "an exact
+bridge-definition identity, revision and digest" to be preserved, and both
+digests participate in the key above, but FR-095 does not state which identity
+domain either digest is derived under. The domain is required to be compared
+before the bytes ([FR-201](../foundation/FR-201-canonical-identity-domain.md)),
+and no requirement selects a member for either digest. This artifact records the
+dependency and selects neither.
 
 No requirement states the identity or key of the generated TL artifact itself,
 only that it "is internal derived output and never editable source" (FR-095).

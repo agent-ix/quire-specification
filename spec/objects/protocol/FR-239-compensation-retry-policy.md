@@ -8,6 +8,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-056
     type: specifies
+  - target: ix://agent-ix/quire-specification/FR-049
+    type: specifies
 ---
 # FR-239: Compensation retry policy
 
@@ -25,7 +27,7 @@ Inputs names "bounded retry policy" as an input to the evaluation.
 
 | Property | Source | Note |
 | --- | --- | --- |
-| Authored finite retry bound | FR-058 Behavior | "It SHALL refuse attempts beyond the authored finite retry bound." |
+| Authored finite retry bound | FR-058 Behavior | "It SHALL refuse attempts beyond the authored finite retry bound." FR-049-AC-6 states what it counts from: "Retry bounds count the initial attempt." |
 | Owning registration | FR-056 Description | Each registration is bound to its retry policy ([FR-233](FR-233-compensation-registration.md)). |
 
 FR-058-AC-4 states that "Unknown or missing population membership and attempts
@@ -70,17 +72,25 @@ retained.
   establishes the bounded retry policy and the refusal rule.
 - [FR-056](../../functional/FR-056-register-compensation.md) binds each
   registration to its retry policy.
+- [FR-049](../../functional/FR-049-bind-native-choreography-syntax.md) states
+  that retry bounds count the initial attempt.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
 ## Open gap
 
-FR-058 requires the evaluator to "distinguish a repeated receipt, retried attempt
-and duplicate business effect" and to refuse "attempts beyond the authored finite
-retry bound", but no requirement states what the bound counts: attempts, retries
-after the first attempt, or attempts excluding repeated receipts. It also does not
-state whether a refused over-bound attempt is itself counted. Neither is supplied
-here.
+[FR-049](../../functional/FR-049-bind-native-choreography-syntax.md)-AC-6 states
+that "Retry bounds count the initial attempt", so the bound counts attempts
+including the first and not retries after it.
+[FR-225](FR-225-operation-attempt.md) quotes the same sentence. That part of the
+gap is closed by requirement text and is not restated as open here.
+
+What remains unstated is narrower. FR-058 requires the evaluator to "distinguish
+a repeated receipt, retried attempt and duplicate business effect" and to refuse
+"attempts beyond the authored finite retry bound", but no requirement states
+whether a refused over-bound attempt is itself counted against the bound, nor
+whether a repeated receipt of one attempt counts as one attempt or as many.
+Neither is supplied here.
 
 ## Status
 
