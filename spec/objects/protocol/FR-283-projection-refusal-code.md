@@ -88,7 +88,7 @@ neither.
 
 ## Dependencies
 
-- [FR-062](../../functional/FR-062-project-results-to-portable-verification.md)
+- [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
   establishes the six codes and the refusal conditions.
 - [FR-249](FR-249-derived-projection-result.md) is the result these refusals
   replace.

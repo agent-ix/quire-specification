@@ -49,16 +49,16 @@ When a result reports the truth of an assessed obligation, the strict reader SHA
 Three requirements state the truth vocabulary differently and none
 cross-references the others. This artifact records all three and reconciles none.
 
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md) result-combination
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) result-combination
   rules and
-  [FR-062](../../functional/FR-062-project-results-to-portable-verification.md)
+  [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
   mapping table: "Truth `satisfied` / `violated` / `pending`" and "Truth
   `unavailable`".
-- [FR-091](../../functional/FR-091-evaluate-bounded-future.md) Outputs: "A true,
+- [FR-091](../../functional/temporal/FR-091-evaluate-bounded-future.md) Outputs: "A true,
   false or pending temporal truth disposition with the exact decision scope,
   settlement basis and decision-support identities needed by the shared result
   contract".
-- [FR-092](../../functional/FR-092-evaluate-bounded-past.md) Outputs: "A true or
+- [FR-092](../../functional/temporal/FR-092-evaluate-bounded-past.md) Outputs: "A true or
   false past-time result, or a separate incomplete/refused disposition".
 
 FR-091 explicitly feeds the shared result contract that FR-061 owns, so the
@@ -78,12 +78,12 @@ spelling, because that is the spelling FR-061 and FR-062 state verbatim.
 
 ## Dependencies
 
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md) establishes the
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) establishes the
   truth axis and its combination rules.
-- [FR-062](../../functional/FR-062-project-results-to-portable-verification.md)
+- [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
   establishes the projection of each truth state.
-- [FR-091](../../functional/FR-091-evaluate-bounded-future.md) and
-  [FR-092](../../functional/FR-092-evaluate-bounded-past.md) supply the divergent
+- [FR-091](../../functional/temporal/FR-091-evaluate-bounded-future.md) and
+  [FR-092](../../functional/temporal/FR-092-evaluate-bounded-past.md) supply the divergent
   temporal spellings recorded above.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

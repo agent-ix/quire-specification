@@ -17,7 +17,7 @@ relationships:
 
 ## Description
 
-When a source node is lowered into the causal control graph, the frontend SHALL retain for every lowered node, including synthesized control edges and bounded occurrences, its declaration span and its exact derivation and iteration identity ([FR-049](../../functional/FR-049-bind-native-choreography-syntax.md) AC-11).
+When a source node is lowered into the causal control graph, the frontend SHALL retain for every lowered node, including synthesized control edges and bounded occurrences, its declaration span and its exact derivation and iteration identity ([FR-049](../../functional/foundation/FR-049-bind-native-choreography-syntax.md) AC-11).
 
 ## Properties
 
@@ -64,7 +64,7 @@ When a source node is lowered into the causal control graph, the frontend SHALL 
   iteration ordinal is a component of identity under FR-049-AC-11 and is not a
   declared key order, and this artifact supplies no key order over occurrences.
 - **Causal order** — the authored partial acyclic order of
-  [FR-052](../../functional/FR-052-represent-bounded-control.md), held in
+  [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md), held in
   [FR-220](FR-220-causal-control-graph.md). It is never derived from a key
   order, from a timestamp or from source position: FR-052-AC-2 states that
   "Reordering equal-time events does not add a causal edge absent from the
@@ -90,11 +90,11 @@ When a source node is lowered into the causal control graph, the frontend SHALL 
 
 ## Dependencies
 
-- [FR-049](../../functional/FR-049-bind-native-choreography-syntax.md) retains
+- [FR-049](../../functional/foundation/FR-049-bind-native-choreography-syntax.md) retains
   the typed node structure, its declaration spans and its iteration identity.
-- [FR-052](../../functional/FR-052-represent-bounded-control.md) supplies the
+- [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md) supplies the
   causal order the occurrences carry.
-- [FR-050](../../functional/FR-050-bind-protocol-instances.md) supplies the
+- [FR-050](../../functional/protocol/FR-050-bind-protocol-instances.md) supplies the
   workflow-instance identity.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.

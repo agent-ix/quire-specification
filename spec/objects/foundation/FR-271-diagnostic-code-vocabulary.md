@@ -142,12 +142,12 @@ spelling for them would add members the prose does not name.
 
 ## Dependencies
 
-- [FR-047](../../functional/FR-047-emit-typed-located-causes.md) establishes the
+- [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md) establishes the
   catalogued-classification obligation.
-- [FR-003](../../functional/FR-003-bind-source-correspondence.md),
-  [FR-008](../../functional/FR-008-preserve-sequence-semantics.md),
-  [FR-009](../../functional/FR-009-preserve-object-identity.md) and
-  [FR-062](../../functional/FR-062-project-results-to-portable-verification.md)
+- [FR-003](../../functional/foundation/FR-003-bind-source-correspondence.md),
+  [FR-008](../../functional/foundation/FR-008-preserve-sequence-semantics.md),
+  [FR-009](../../functional/foundation/FR-009-preserve-object-identity.md) and
+  [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
   supply the FR-spelled code literals recorded above.
 - [Native diagnostics catalog](../../../proposals/quire-v1/definitions/native-diagnostics.md)
   is the proposed, non-adopted source of the members.

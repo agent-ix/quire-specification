@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-038](../functional/FR-038-resolve-predicate-scopes.md).
+Planned controls for [FR-038](../functional/foundation/FR-038-resolve-predicate-scopes.md).
 These expected cases have not been implemented or executed.
 
 ## Test Procedure

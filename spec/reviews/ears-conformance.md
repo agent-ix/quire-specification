@@ -35,22 +35,22 @@ These are new repositories. Missing formal plans, TC records, suites, and matric
 
 | Requirement | Pattern | Review result |
 | --- | --- | --- |
-| [FR-001](../functional/FR-001-select-native-profile.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
-| [FR-002](../functional/FR-002-resolve-owned-declarations.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
-| [FR-003](../functional/FR-003-bind-source-correspondence.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
-| [FR-004](../functional/FR-004-separate-artifact-identities.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
-| [FR-005](../functional/FR-005-guard-optional-values.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
-| [FR-006](../functional/FR-006-preserve-control-evaluation.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
-| [FR-007](../functional/FR-007-prove-integer-definedness.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
-| [FR-008](../functional/FR-008-preserve-sequence-semantics.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
-| [FR-009](../functional/FR-009-preserve-object-identity.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
-| [FR-010](../functional/FR-010-evaluate-exact-reachability.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
-| [FR-011](../functional/FR-011-validate-populations.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
-| [FR-012](../functional/FR-012-bind-operation-observations.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
-| [FR-013](../functional/FR-013-validate-operation-frames.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
-| [FR-014](../functional/FR-014-read-exact-wire.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
-| [FR-015](../functional/FR-015-preserve-canonical-domains.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
-| [FR-016](../functional/FR-016-migrate-explicitly.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-001](../functional/foundation/FR-001-select-native-profile.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-002](../functional/foundation/FR-002-resolve-owned-declarations.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-003](../functional/foundation/FR-003-bind-source-correspondence.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-004](../functional/foundation/FR-004-separate-artifact-identities.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-005](../functional/foundation/FR-005-guard-optional-values.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-006](../functional/foundation/FR-006-preserve-control-evaluation.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-007](../functional/foundation/FR-007-prove-integer-definedness.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-008](../functional/foundation/FR-008-preserve-sequence-semantics.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-009](../functional/foundation/FR-009-preserve-object-identity.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-010](../functional/foundation/FR-010-evaluate-exact-reachability.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-011](../functional/foundation/FR-011-validate-populations.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-012](../functional/foundation/FR-012-bind-operation-observations.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-013](../functional/foundation/FR-013-validate-operation-frames.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-014](../functional/foundation/FR-014-read-exact-wire.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-015](../functional/foundation/FR-015-preserve-canonical-domains.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
+| [FR-016](../functional/foundation/FR-016-migrate-explicitly.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
 | [NFR-001](../non-functional/NFR-001-preserve-versioned-meaning.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |
 | [NFR-002](../non-functional/NFR-002-classify-resource-incompleteness.md) | unwanted behavior | Explicit subject and shall outcome; condition/trigger is stated where applicable |
 | [NFR-003](../non-functional/NFR-003-qualify-reference-bindings.md) | event-driven | Explicit subject and shall outcome; condition/trigger is stated where applicable |

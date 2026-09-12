@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-047](../functional/FR-047-emit-typed-located-causes.md).
+Planned controls for [FR-047](../functional/foundation/FR-047-emit-typed-located-causes.md).
 No executable test or observed coverage is claimed.
 
 ## Test Procedure

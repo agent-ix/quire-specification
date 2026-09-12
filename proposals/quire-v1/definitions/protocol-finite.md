@@ -63,19 +63,19 @@ not permission to choose a favorable interpretation or overwrite either owner.
 
 | Rule | Current normative file |
 | --- | --- |
-| FR-049 | [Native choreography binding](../../../spec/functional/FR-049-bind-native-choreography-syntax.md) |
-| FR-050 | [Protocol instances](../../../spec/functional/FR-050-bind-protocol-instances.md) |
-| FR-051 | [Communication identities](../../../spec/functional/FR-051-preserve-communication-identities.md) |
-| FR-052 | [Bounded control](../../../spec/functional/FR-052-represent-bounded-control.md) |
-| FR-053 | [Choice visibility](../../../spec/functional/FR-053-enforce-choice-visibility.md) |
-| FR-054 | [Channel premises](../../../spec/functional/FR-054-bind-channel-premises.md) |
-| FR-055 | [Obligation activation](../../../spec/functional/FR-055-activate-protocol-obligations.md) |
-| FR-056 | [Compensation registration](../../../spec/functional/FR-056-register-compensation.md) |
-| FR-057 | [Commit and recovery](../../../spec/functional/FR-057-enforce-commit-recovery.md) |
-| FR-058 | [Retry and partial recovery](../../../spec/functional/FR-058-preserve-retry-and-partial-recovery.md) |
-| FR-059 | [Finite global conformance](../../../spec/functional/FR-059-assess-finite-global-conformance.md) |
-| FR-060 | [Independent claims](../../../spec/functional/FR-060-separate-protocol-claims.md) |
-| FR-061 | [Orthogonal results](../../../spec/functional/FR-061-report-orthogonal-results.md) |
+| FR-049 | [Native choreography binding](../../../spec/functional/foundation/FR-049-bind-native-choreography-syntax.md) |
+| FR-050 | [Protocol instances](../../../spec/functional/protocol/FR-050-bind-protocol-instances.md) |
+| FR-051 | [Communication identities](../../../spec/functional/protocol/FR-051-preserve-communication-identities.md) |
+| FR-052 | [Bounded control](../../../spec/functional/protocol/FR-052-represent-bounded-control.md) |
+| FR-053 | [Choice visibility](../../../spec/functional/protocol/FR-053-enforce-choice-visibility.md) |
+| FR-054 | [Channel premises](../../../spec/functional/protocol/FR-054-bind-channel-premises.md) |
+| FR-055 | [Obligation activation](../../../spec/functional/protocol/FR-055-activate-protocol-obligations.md) |
+| FR-056 | [Compensation registration](../../../spec/functional/protocol/FR-056-register-compensation.md) |
+| FR-057 | [Commit and recovery](../../../spec/functional/protocol/FR-057-enforce-commit-recovery.md) |
+| FR-058 | [Retry and partial recovery](../../../spec/functional/protocol/FR-058-preserve-retry-and-partial-recovery.md) |
+| FR-059 | [Finite global conformance](../../../spec/functional/protocol/FR-059-assess-finite-global-conformance.md) |
+| FR-060 | [Independent claims](../../../spec/functional/protocol/FR-060-separate-protocol-claims.md) |
+| FR-061 | [Orthogonal results](../../../spec/functional/protocol/FR-061-report-orthogonal-results.md) |
 | NFR-020 | [Protocol resource bounds](../../../spec/non-functional/NFR-020-bound-protocol-processing.md) |
 | NFR-021 | [Protocol reproducibility](../../../spec/non-functional/NFR-021-reproduce-protocol-results.md) |
 | Native surface | [Choreography surface](../choreography-surface.md) |
@@ -117,12 +117,12 @@ protocol adequacy, and decision-support oracle dependence/lineage. Its enclosing
 artifact reference digests the complete canonical result, avoiding a digest
 inside its own preimage. The outgoing portable verification projection remains
 a separate requested adapter under
-[FR-062](../../../spec/functional/FR-062-project-results-to-portable-verification.md).
+[FR-062](../../../spec/functional/protocol/FR-062-project-results-to-portable-verification.md).
 It does not change source meaning or make E02 support a condition of native
 protocol admission. An outgoing projection must retain its canonical source
 result and preserve all independent target findings under the selected adapter.
 
-The [observation result contribution](../../../spec/functional/FR-115-report-activation-participation-and-adequacy.md)
+The [observation result contribution](../../../spec/functional/observation/FR-115-report-activation-participation-and-adequacy.md)
 and [output mapping](../observation-output-mapping-contract.md) preserve these
 independent progress/closure axes, settlement, support and linked supersession.
 The current [observation contract](../observation-contract.md) supplies the

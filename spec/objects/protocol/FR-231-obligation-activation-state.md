@@ -92,7 +92,7 @@ once reported, so none is drawn here.
   ordering from unknown towards triggered.
 - **Causal order** — none. An activation state is a reported fact about an
   instance, not a node in the authored partial order of
-  [FR-052](../../functional/FR-052-represent-bounded-control.md).
+  [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md).
 - **Absence** — an obligation whose activation has not been reported has an
   absent activation state. Absence compares only to absence; it is never
   defaulted to `inactive`. FR-055 states that "The evaluator SHALL NOT treat an
@@ -111,9 +111,9 @@ once reported, so none is drawn here.
 
 ## Dependencies
 
-- [FR-055](../../functional/FR-055-activate-protocol-obligations.md).
-- [FR-093](../../functional/FR-093-bind-temporal-activation-and-captures.md).
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md).
+- [FR-055](../../functional/protocol/FR-055-activate-protocol-obligations.md).
+- [FR-093](../../functional/temporal/FR-093-bind-temporal-activation-and-captures.md).
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md).
 - [FR-244](FR-244-activation-state.md) defines the activation label vocabulary
   this machine's states are read against.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity

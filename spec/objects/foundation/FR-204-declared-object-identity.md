@@ -20,7 +20,7 @@ When identity-bearing objects are compared, the evaluator SHALL compare their un
 - **universe** (identity component) — the declared universe the object belongs
   to. Identity comparison across pre and post states is permitted only within
   one declared universe
-  ([FR-009](../../functional/FR-009-preserve-object-identity.md)).
+  ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md)).
 - **type** (identity component) — the declared type of the object (FR-009).
 - **object_identity** (identity component) — the object's own declared identity
   within its universe and type (FR-009).
@@ -42,7 +42,7 @@ When identity-bearing objects are compared, the evaluator SHALL compare their un
 - **Absence** — an absent universe, type or object identity compares only to
   absence. It is never defaulted to a current or ambient universe. An unlinked
   syntax tree cannot claim a typed-expression canonical identity
-  ([FR-015](../../functional/FR-015-preserve-canonical-domains.md)-AC-4).
+  ([FR-015](../../functional/foundation/FR-015-preserve-canonical-domains.md)-AC-4).
 - **Digest domain** — not applicable; a declared object identity is authored,
   not digested. Where a derived identity is digested instead, its domain is
   selected under [FR-201](FR-201-canonical-identity-domain.md).
@@ -66,9 +66,9 @@ same object compared across pre and post of one universe compares equal
 
 ## Dependencies
 
-- [FR-009](../../functional/FR-009-preserve-object-identity.md) establishes the
+- [FR-009](../../functional/foundation/FR-009-preserve-object-identity.md) establishes the
   universe/type/object triple and the refusal.
-- [FR-043](../../functional/FR-043-evaluate-finite-graph-relations.md) evaluates
+- [FR-043](../../functional/foundation/FR-043-evaluate-finite-graph-relations.md) evaluates
   identity and reachability in explicit finite graphs.
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity discipline.
 

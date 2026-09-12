@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-036](../functional/FR-036-retain-lexical-source-locations.md).
+Planned controls for [FR-036](../functional/foundation/FR-036-retain-lexical-source-locations.md).
 These expected cases have not been implemented or executed.
 
 ## Test Procedure

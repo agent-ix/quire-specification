@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-041](../functional/FR-041-evaluate-ordered-queries.md).
+Planned controls for [FR-041](../functional/foundation/FR-041-evaluate-ordered-queries.md).
 No executable test or observed coverage is claimed.
 
 ## Test Procedure

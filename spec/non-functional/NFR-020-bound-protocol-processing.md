@@ -49,6 +49,6 @@ discriminate both changes.
 
 ## Dependencies
 
-- [FR-052](../functional/FR-052-represent-bounded-control.md).
-- [FR-059](../functional/FR-059-assess-finite-global-conformance.md).
-- [FR-061](../functional/FR-061-report-orthogonal-results.md).
+- [FR-052](../functional/protocol/FR-052-represent-bounded-control.md).
+- [FR-059](../functional/protocol/FR-059-assess-finite-global-conformance.md).
+- [FR-061](../functional/protocol/FR-061-report-orthogonal-results.md).

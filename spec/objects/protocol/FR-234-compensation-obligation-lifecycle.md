@@ -78,7 +78,7 @@ vocabulary is [FR-236](FR-236-compensation-attempt-outcome.md).
   It carries no precedence, no progress meaning and no causal meaning; in
   particular it is not a lifecycle ordering.
 - **Causal order** — the authored partial acyclic order of
-  [FR-052](../../functional/FR-052-represent-bounded-control.md) supplies the
+  [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md) supplies the
   orderings this machine checks. FR-056-AC-4 and FR-057-AC-3 name the specific
   violations: compensation before its paired forward effect, registration after a
   forbidding commit, and compensation after a forbidding commit. Those edges are
@@ -101,10 +101,10 @@ vocabulary is [FR-236](FR-236-compensation-attempt-outcome.md).
 
 ## Dependencies
 
-- [FR-056](../../functional/FR-056-register-compensation.md).
-- [FR-057](../../functional/FR-057-enforce-commit-recovery.md).
-- [FR-058](../../functional/FR-058-preserve-retry-and-partial-recovery.md).
-- [FR-051](../../functional/FR-051-preserve-communication-identities.md).
+- [FR-056](../../functional/protocol/FR-056-register-compensation.md).
+- [FR-057](../../functional/protocol/FR-057-enforce-commit-recovery.md).
+- [FR-058](../../functional/protocol/FR-058-preserve-retry-and-partial-recovery.md).
+- [FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md).
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 

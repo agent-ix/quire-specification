@@ -92,7 +92,7 @@ configuration, or closure input".
 
 ## Dependencies
 
-- [FR-112](../../functional/FR-112-declare-population-and-completeness.md)
+- [FR-112](../../functional/observation/FR-112-declare-population-and-completeness.md)
   establishes the retained set, the incomplete causes and the refusal cases.
 - [FR-264](FR-264-membership-rule.md) types the declared membership rule.
 - [FR-265](FR-265-selected-snapshot.md) and

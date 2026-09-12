@@ -61,8 +61,8 @@ incomplete input."
 - **Key** — (scope role, scope identity). Equality is componentwise over exactly
   those two components and nothing else. Display name, source path, span,
   message text, locale and rendering never participate
-  ([FR-009](../../functional/FR-009-preserve-object-identity.md),
-  [FR-047](../../functional/FR-047-emit-typed-located-causes.md)). Scope role is
+  ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
+  [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)). Scope role is
   a key component because FR-094 forbids substituting one axis for another and
   FR-061 requires that the producer "SHALL NOT use completeness, assessment
   execution or any other progress/closure fact as a substitute for any closure
@@ -135,11 +135,11 @@ artifact names its members only where the temporal prose names them.
 
 ## Dependencies
 
-- [FR-091](../../functional/FR-091-evaluate-bounded-future.md) establishes the
+- [FR-091](../../functional/temporal/FR-091-evaluate-bounded-future.md) establishes the
   decision-scope closure rule and the early-settlement condition.
-- [FR-094](../../functional/FR-094-interpret-progress-history-and-closure.md)
+- [FR-094](../../functional/temporal/FR-094-interpret-progress-history-and-closure.md)
   establishes the independence of the axes and the incomplete-input rule.
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md) establishes the
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) establishes the
   shared result contract these facts are reported through.
 - [FR-256](FR-256-temporal-progress-assertion.md) supplies the assertion that
   advances progress or stamps closure.
@@ -172,7 +172,7 @@ FR-094-AC-7:
 > and `unavailable` are accepted only with their valid truth, scope and exact
 > deciding-fact combinations; every one-axis substitution is refused."
 
-[FR-115](../../functional/FR-115-report-activation-participation-and-adequacy.md)
+[FR-115](../../functional/observation/FR-115-report-activation-participation-and-adequacy.md)
 Behavior, for a settled truth on an open subject, requires it to retain its
 "`closed-scope`, `decisive-witness`, `decisive-counterexample`, `unsettled`, or
 `unavailable`" basis.

@@ -19,7 +19,7 @@ relationships:
 
 ## Description
 
-When a communication is bound to a protocol instance, the protocol binder SHALL preserve the receive as a subject distinct from the send, the message, the delivery, the attempt and the effect ([FR-051](../../functional/FR-051-preserve-communication-identities.md)).
+When a communication is bound to a protocol instance, the protocol binder SHALL preserve the receive as a subject distinct from the send, the message, the delivery, the attempt and the effect ([FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md)).
 
 ## Properties
 
@@ -75,11 +75,11 @@ message/effect obligation".
 
 ## Dependencies
 
-- [FR-051](../../functional/FR-051-preserve-communication-identities.md)
+- [FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md)
   preserves receive as a distinct typed subject.
-- [FR-049](../../functional/FR-049-bind-native-choreography-syntax.md) forbids a
+- [FR-049](../../functional/foundation/FR-049-bind-native-choreography-syntax.md) forbids a
   duplicate receipt from minting another effect node.
-- [FR-054](../../functional/FR-054-bind-channel-premises.md) admits the
+- [FR-054](../../functional/protocol/FR-054-bind-channel-premises.md) admits the
   duplicate receipt under an at-least-once premise.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.

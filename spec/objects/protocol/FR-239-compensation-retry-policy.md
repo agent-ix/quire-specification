@@ -49,7 +49,7 @@ retained.
   comparison must not read a larger bound as a later or stronger policy.
 - **Causal order** — none. A retry policy is a bound on a count of attempts, not
   a node in the authored partial order of
-  [FR-052](../../functional/FR-052-represent-bounded-control.md). The order of
+  [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md). The order of
   the attempts it bounds is authored and is never derived from key order,
   timestamp or source position.
 - **Absence** — an absent retry bound compares only to absence. FR-058 admits
@@ -68,18 +68,18 @@ retained.
 
 ## Dependencies
 
-- [FR-058](../../functional/FR-058-preserve-retry-and-partial-recovery.md)
+- [FR-058](../../functional/protocol/FR-058-preserve-retry-and-partial-recovery.md)
   establishes the bounded retry policy and the refusal rule.
-- [FR-056](../../functional/FR-056-register-compensation.md) binds each
+- [FR-056](../../functional/protocol/FR-056-register-compensation.md) binds each
   registration to its retry policy.
-- [FR-049](../../functional/FR-049-bind-native-choreography-syntax.md) states
+- [FR-049](../../functional/foundation/FR-049-bind-native-choreography-syntax.md) states
   that retry bounds count the initial attempt.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
 ## Open gap
 
-[FR-049](../../functional/FR-049-bind-native-choreography-syntax.md)-AC-6 states
+[FR-049](../../functional/foundation/FR-049-bind-native-choreography-syntax.md)-AC-6 states
 that "Retry bounds count the initial attempt", so the bound counts attempts
 including the first and not retries after it.
 [FR-225](FR-225-operation-attempt.md) quotes the same sentence. That part of the

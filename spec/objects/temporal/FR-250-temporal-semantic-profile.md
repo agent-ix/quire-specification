@@ -49,8 +49,8 @@ vocabulary; they are recorded separately in
   temporal profile definition identity, revision and digest"). Equality is
   componentwise over exactly those components and nothing else. Display name,
   source path, span, message text, locale and rendering never participate
-  ([FR-009](../../functional/FR-009-preserve-object-identity.md),
-  [FR-047](../../functional/FR-047-emit-typed-located-causes.md)). FR-090
+  ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
+  [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)). FR-090
   forbids substituting any other signal: the frontend "shall not infer a
   profile, unit, period, origin, order or boundary rule from backend
   availability, file shape, ingestion order or a similarly spelled historical
@@ -60,7 +60,7 @@ vocabulary; they are recorded separately in
   between profiles, and it is not an order over anything the profiles evaluate.
 - **Causal order** — none. A profile identity is a selection, not a node in the
   authored partial order of
-  [FR-052](../../functional/FR-052-represent-bounded-control.md).
+  [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md).
 - **Absence** — a clause with no selected profile has an absent profile
   identity, and absence compares only to absence. FR-090 Outputs require "a
   located typed refusal that names the missing, unknown, inconsistent or
@@ -101,11 +101,11 @@ distinct temporal subjects and meanings."
 
 ## Dependencies
 
-- [FR-090](../../functional/FR-090-select-temporal-profile-and-clock.md)
+- [FR-090](../../functional/temporal/FR-090-select-temporal-profile-and-clock.md)
   establishes the three v1 interpretations, the selection rule and the
   identity-change rule.
-- [FR-091](../../functional/FR-091-evaluate-bounded-future.md) and
-  [FR-092](../../functional/FR-092-evaluate-bounded-past.md) apply the selected
+- [FR-091](../../functional/temporal/FR-091-evaluate-bounded-future.md) and
+  [FR-092](../../functional/temporal/FR-092-evaluate-bounded-past.md) apply the selected
   profile to the bounded operators.
 - [FR-251](FR-251-tl-target-profile.md) records the TL lowering targets held
   separate from this vocabulary.

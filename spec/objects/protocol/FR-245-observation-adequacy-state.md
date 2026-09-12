@@ -58,15 +58,15 @@ decision." The protocol adequacy vocabulary is
 
 ## Recorded divergence: bare "adequacy"
 
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md): "Observation
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md): "Observation
   adequacy states whether the exact observations required to interpret the
   requested result are `adequate`, `inadequate`, `unknown` or `not-assessed`."
-- [FR-115](../../functional/FR-115-report-activation-participation-and-adequacy.md)
+- [FR-115](../../functional/observation/FR-115-report-activation-participation-and-adequacy.md)
   Description and FR-115-AC-4 then write the axis unqualified: "activation,
   participation, completeness, adequacy, claim strength, provenance", and
   "activation, participation, completeness, adequacy, claim strength, and
   provenance remain independently readable".
-- [FR-116](../../functional/FR-116-map-observation-results-to-consumers.md) omits
+- [FR-116](../../functional/observation/FR-116-map-observation-results-to-consumers.md) omits
   an adequacy axis from its retained-fact list entirely.
 
 FR-115 does not say which of FR-061's two disjoint adequacy domains its bare
@@ -87,11 +87,11 @@ adequacy share the word 'adequacy' but have different authorities."
 
 ## Dependencies
 
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md) establishes the
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) establishes the
   four members and the disjointness rule.
-- [FR-062](../../functional/FR-062-project-results-to-portable-verification.md)
+- [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
   establishes the E02 adequacy projection.
-- [FR-115](../../functional/FR-115-report-activation-participation-and-adequacy.md)
+- [FR-115](../../functional/observation/FR-115-report-activation-participation-and-adequacy.md)
   supplies the bare-adequacy spelling recorded above.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

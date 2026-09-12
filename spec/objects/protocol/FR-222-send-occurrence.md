@@ -17,7 +17,7 @@ relationships:
 
 ## Description
 
-When a communication is bound to a protocol instance, the protocol binder SHALL preserve the send as a subject distinct from the message, the receive, the delivery, the attempt and the effect ([FR-051](../../functional/FR-051-preserve-communication-identities.md)).
+When a communication is bound to a protocol instance, the protocol binder SHALL preserve the send as a subject distinct from the message, the receive, the delivery, the attempt and the effect ([FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md)).
 
 ## Properties
 
@@ -75,11 +75,11 @@ cardinality".
 
 ## Dependencies
 
-- [FR-051](../../functional/FR-051-preserve-communication-identities.md)
+- [FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md)
   preserves send as a distinct typed subject.
-- [FR-049](../../functional/FR-049-bind-native-choreography-syntax.md) keeps
+- [FR-049](../../functional/foundation/FR-049-bind-native-choreography-syntax.md) keeps
   send references distinct from the other communication references.
-- [FR-054](../../functional/FR-054-bind-channel-premises.md) binds the channel
+- [FR-054](../../functional/protocol/FR-054-bind-channel-premises.md) binds the channel
   the send is made on.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.

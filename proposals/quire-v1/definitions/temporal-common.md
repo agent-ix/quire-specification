@@ -81,19 +81,19 @@ are exact linked/request inputs governed by the shared package contract.
 
 | Rule | Meaning |
 | --- | --- |
-| [FR-048](../../../spec/functional/FR-048-bind-native-temporal-syntax.md) | Native temporal syntax and typed environments |
-| [FR-090](../../../spec/functional/FR-090-select-temporal-profile-and-clock.md) | Exact profile, clock and boundary selection |
-| [FR-091](../../../spec/functional/FR-091-evaluate-bounded-future.md) | Bounded future truth and decisive settlement |
-| [FR-092](../../../spec/functional/FR-092-evaluate-bounded-past.md) | Bounded past truth and history |
-| [FR-093](../../../spec/functional/FR-093-bind-temporal-activation-and-captures.md) | Activation, trigger scope and immutable captures |
-| [FR-094](../../../spec/functional/FR-094-interpret-progress-history-and-closure.md) | Independent progress/closure, decision support and supersession |
-| [FR-095](../../../spec/functional/FR-095-preserve-native-tl-correspondence.md) | Native-to-TL correspondence and refusal |
+| [FR-048](../../../spec/functional/foundation/FR-048-bind-native-temporal-syntax.md) | Native temporal syntax and typed environments |
+| [FR-090](../../../spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md) | Exact profile, clock and boundary selection |
+| [FR-091](../../../spec/functional/temporal/FR-091-evaluate-bounded-future.md) | Bounded future truth and decisive settlement |
+| [FR-092](../../../spec/functional/temporal/FR-092-evaluate-bounded-past.md) | Bounded past truth and history |
+| [FR-093](../../../spec/functional/temporal/FR-093-bind-temporal-activation-and-captures.md) | Activation, trigger scope and immutable captures |
+| [FR-094](../../../spec/functional/temporal/FR-094-interpret-progress-history-and-closure.md) | Independent progress/closure, decision support and supersession |
+| [FR-095](../../../spec/functional/temporal/FR-095-preserve-native-tl-correspondence.md) | Native-to-TL correspondence and refusal |
 | [NFR-040](../../../spec/non-functional/NFR-040-bound-temporal-state.md) | Temporal work, retained history and resource limits |
 
 ## Shared result interface and compatibility
 
 The shared result interface is
-[FR-061](../../../spec/functional/FR-061-report-orthogonal-results.md).
+[FR-061](../../../spec/functional/protocol/FR-061-report-orthogonal-results.md).
 The selected interface is its assessment execution, independent scope/execution
 progress and closure, truth, activation, settlement basis, exact decision
 support and dependence lineage, completeness, and supersession rules, including

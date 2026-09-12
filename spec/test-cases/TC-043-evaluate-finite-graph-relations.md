@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-043](../functional/FR-043-evaluate-finite-graph-relations.md).
+Planned controls for [FR-043](../functional/foundation/FR-043-evaluate-finite-graph-relations.md).
 No executable test or observed coverage is claimed.
 
 ## Test Procedure

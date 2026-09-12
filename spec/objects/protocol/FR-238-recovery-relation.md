@@ -58,7 +58,7 @@ arithmetic."
 - **Causal order** — none of its own. The relation is evaluated over the retained
   target and achieved states; the ordering of the compensation events it reads is
   the authored partial acyclic order of
-  [FR-052](../../functional/FR-052-represent-bounded-control.md) and is never
+  [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md) and is never
   derived from key order, timestamp or source position.
 - **Absence** — an absent input compares only to absence. FR-057-AC-4 states that
   "Missing state, commit or compensation-effect inputs yield incomplete/pending
@@ -82,9 +82,9 @@ arithmetic."
 
 ## Dependencies
 
-- [FR-057](../../functional/FR-057-enforce-commit-recovery.md) establishes the
+- [FR-057](../../functional/protocol/FR-057-enforce-commit-recovery.md) establishes the
   typed recovery relation and its retained states.
-- [FR-058](../../functional/FR-058-preserve-retry-and-partial-recovery.md)
+- [FR-058](../../functional/protocol/FR-058-preserve-retry-and-partial-recovery.md)
   establishes the declared-population requirement for aggregating recovery.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

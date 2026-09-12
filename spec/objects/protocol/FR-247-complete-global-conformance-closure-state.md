@@ -71,7 +71,7 @@ exact required premise; a closed decision scope, settled per-obligation truth,
 completed assessment or closed surrounding execution cannot substitute for a
 missing or non-closed global premise."
 
-[FR-115](../../functional/FR-115-report-activation-participation-and-adequacy.md):
+[FR-115](../../functional/observation/FR-115-report-activation-participation-and-adequacy.md):
 "While complete-global-conformance closure is open, incomplete or contradicted,
 the adapter SHALL NOT report complete global success from a closed decision
 scope, closed surrounding execution or a decisive witness/counterexample alone."
@@ -93,13 +93,13 @@ requirement; see FR-240's open gap.
 
 ## Dependencies
 
-- [FR-059](../../functional/FR-059-assess-finite-global-conformance.md)
+- [FR-059](../../functional/protocol/FR-059-assess-finite-global-conformance.md)
   establishes the four states and the required premise set.
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md) adds
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) adds
   `not-required` for a non-global claim and the five-axis independence rule.
-- [FR-115](../../functional/FR-115-report-activation-participation-and-adequacy.md)
+- [FR-115](../../functional/observation/FR-115-report-activation-participation-and-adequacy.md)
   and
-  [FR-116](../../functional/FR-116-map-observation-results-to-consumers.md)
+  [FR-116](../../functional/observation/FR-116-map-observation-results-to-consumers.md)
   restate the record at the observation-result and consumer boundaries.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

@@ -36,7 +36,7 @@ Test zero, sufficient and exhausted budgets in each implemented phase. Retain mi
 
 ## Dependencies
 
-- [FR-005](../functional/FR-005-guard-optional-values.md)
-- [FR-010](../functional/FR-010-evaluate-exact-reachability.md)
-- [FR-011](../functional/FR-011-validate-populations.md)
-- [FR-015](../functional/FR-015-preserve-canonical-domains.md)
+- [FR-005](../functional/foundation/FR-005-guard-optional-values.md)
+- [FR-010](../functional/foundation/FR-010-evaluate-exact-reachability.md)
+- [FR-011](../functional/foundation/FR-011-validate-populations.md)
+- [FR-015](../functional/foundation/FR-015-preserve-canonical-domains.md)

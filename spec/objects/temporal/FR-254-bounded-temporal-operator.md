@@ -69,8 +69,8 @@ timestamps never substitutes for it.
   profile identity ([FR-250](FR-250-temporal-semantic-profile.md)). Equality is
   componentwise over exactly those components and nothing else. Display name,
   source path, span, message text, locale and rendering never participate
-  ([FR-009](../../functional/FR-009-preserve-object-identity.md),
-  [FR-047](../../functional/FR-047-emit-typed-located-causes.md)). The profile is
+  ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
+  [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)). The profile is
   a key component because FR-091-AC-2 holds that "On a one-position closed trace
   where atomic `p` is true, `always[0,1] p` is false under false-extension and
   true under a complete finite-window interpretation; the profiles cannot share
@@ -103,11 +103,11 @@ timestamps never substitutes for it.
 
 ## Dependencies
 
-- [FR-091](../../functional/FR-091-evaluate-bounded-future.md) establishes the
+- [FR-091](../../functional/temporal/FR-091-evaluate-bounded-future.md) establishes the
   four future members, the lower-bound convention and pointwise connectives.
-- [FR-092](../../functional/FR-092-evaluate-bounded-past.md) establishes the four
+- [FR-092](../../functional/temporal/FR-092-evaluate-bounded-past.md) establishes the four
   past members and strong previous.
-- [FR-090](../../functional/FR-090-select-temporal-profile-and-clock.md)
+- [FR-090](../../functional/temporal/FR-090-select-temporal-profile-and-clock.md)
   establishes the order-sensitive subset.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
