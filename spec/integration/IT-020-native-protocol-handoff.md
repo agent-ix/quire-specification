@@ -60,8 +60,8 @@ boundary.
 
 ## Dependencies
 
-Agent A's composed grammar/linker and [FR-050](../functional/FR-050-bind-protocol-instances.md)
-through [FR-054](../functional/FR-054-bind-channel-premises.md).
+Agent A's composed grammar/linker and [FR-050](../functional/protocol/FR-050-bind-protocol-instances.md)
+through [FR-054](../functional/protocol/FR-054-bind-channel-premises.md).
 
 ## Notes
 

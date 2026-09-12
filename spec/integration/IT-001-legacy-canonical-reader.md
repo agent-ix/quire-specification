@@ -45,5 +45,5 @@ Priority: High. Automation: real command/file/API execution. Status: draft integ
 
 ## Dependencies
 
-- [FR-015](../functional/FR-015-preserve-canonical-domains.md)
-- [FR-016](../functional/FR-016-migrate-explicitly.md)
+- [FR-015](../functional/foundation/FR-015-preserve-canonical-domains.md)
+- [FR-016](../functional/foundation/FR-016-migrate-explicitly.md)

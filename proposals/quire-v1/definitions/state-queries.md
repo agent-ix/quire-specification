@@ -43,7 +43,7 @@ supply the explicit query and predicate extension.
 
 | Rule |
 | --- |
-| [FR-033](../../../spec/functional/FR-033-admit-reusable-predicates.md) |
-| [FR-034](../../../spec/functional/FR-034-bind-cross-family-predicates.md) |
-| [FR-041](../../../spec/functional/FR-041-evaluate-ordered-queries.md) |
-| [FR-042](../../../spec/functional/FR-042-select-pre-state-reads.md) |
+| [FR-033](../../../spec/functional/foundation/FR-033-admit-reusable-predicates.md) |
+| [FR-034](../../../spec/functional/foundation/FR-034-bind-cross-family-predicates.md) |
+| [FR-041](../../../spec/functional/foundation/FR-041-evaluate-ordered-queries.md) |
+| [FR-042](../../../spec/functional/foundation/FR-042-select-pre-state-reads.md) |

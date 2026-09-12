@@ -59,13 +59,13 @@ is not a hash preimage prefix (FR-018).
 Three requirements independently state what is inside the preimage under the
 `quire.verification.jcs` domain, and no requirement cross-references the others:
 
-- [FR-018](../../functional/FR-018-select-verification-jcs-domain.md): for B's
+- [FR-018](../../functional/foundation/FR-018-select-verification-jcs-domain.md): for B's
   automated-report profile the qualified input is the validated automated core
   alone; the external disposition and outer report wrapper are excluded.
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md): the enclosing
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md): the enclosing
   artifact reference carries the digest over the complete canonical result
   bytes, and the digest is not a self-referential field inside those bytes.
-- [FR-062](../../functional/FR-062-project-results-to-portable-verification.md):
+- [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md):
   the derived result identity is taken over a distinct projection-identity
   preimage under `quire.protocol.e02-projection-identity/v1-draft.1`.
 
@@ -83,9 +83,9 @@ preimage belongs to the requirement that selects it.
 
 ## Dependencies
 
-- [FR-015](../../functional/FR-015-preserve-canonical-domains.md) establishes the
+- [FR-015](../../functional/foundation/FR-015-preserve-canonical-domains.md) establishes the
   distinct domains and the substitution prohibitions.
-- [FR-018](../../functional/FR-018-select-verification-jcs-domain.md) establishes
+- [FR-018](../../functional/foundation/FR-018-select-verification-jcs-domain.md) establishes
   the verification JCS selection, output syntax and prefix rule.
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity discipline.
 

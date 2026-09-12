@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-046](../functional/FR-046-validate-state-invocation-inputs.md).
+Planned controls for [FR-046](../functional/foundation/FR-046-validate-state-invocation-inputs.md).
 No executable test or observed coverage is claimed.
 
 ## Test Procedure

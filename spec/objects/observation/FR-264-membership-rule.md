@@ -65,7 +65,7 @@ FR-112 Behavior requires that members be "exactly listed/digested", and that
 
 ## Dependencies
 
-- [FR-112](../../functional/FR-112-declare-population-and-completeness.md)
+- [FR-112](../../functional/observation/FR-112-declare-population-and-completeness.md)
   establishes the declared finite membership rule and its refusal cases.
 - [FR-263](FR-263-declared-population.md) is the population the rule bounds.
 - [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest

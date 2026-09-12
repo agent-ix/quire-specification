@@ -129,9 +129,9 @@ incremental assessment may settle only under E/B semantics and declared authorit
 ## Consumer obligations and planned controls
 
 The linked-package binder consumes this contract through the exact role selection
-in [FR-035](../../spec/functional/FR-035-bind-ecosystem-subjects.md). The
-observation family requirements [FR-110](../../spec/functional/FR-110-bind-typed-observations.md)
-through [FR-116](../../spec/functional/FR-116-map-observation-results-to-consumers.md)
+in [FR-035](../../spec/functional/foundation/FR-035-bind-ecosystem-subjects.md). The
+observation family requirements [FR-110](../../spec/functional/observation/FR-110-bind-typed-observations.md)
+through [FR-116](../../spec/functional/observation/FR-116-map-observation-results-to-consumers.md)
 govern its admission, completeness, replay, result, and output effects.
 
 Planned controls use concurrent O1/O2, split shipments, a payment attempt/effect,

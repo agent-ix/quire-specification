@@ -58,7 +58,7 @@ The following current rules supply the admitted state meaning.
 | Rule file |
 | --- |
 | [state-contract.md](../state-contract.md) |
-| [FR-039-normalize-exact-rational-literals.md](../../../spec/functional/FR-039-normalize-exact-rational-literals.md) |
-| [FR-044-check-composed-numeric-definedness.md](../../../spec/functional/FR-044-check-composed-numeric-definedness.md) |
-| [FR-045-preserve-control-and-presence-facts.md](../../../spec/functional/FR-045-preserve-control-and-presence-facts.md) |
-| [FR-046-validate-state-invocation-inputs.md](../../../spec/functional/FR-046-validate-state-invocation-inputs.md) |
+| [FR-039-normalize-exact-rational-literals.md](../../../spec/functional/foundation/FR-039-normalize-exact-rational-literals.md) |
+| [FR-044-check-composed-numeric-definedness.md](../../../spec/functional/foundation/FR-044-check-composed-numeric-definedness.md) |
+| [FR-045-preserve-control-and-presence-facts.md](../../../spec/functional/foundation/FR-045-preserve-control-and-presence-facts.md) |
+| [FR-046-validate-state-invocation-inputs.md](../../../spec/functional/foundation/FR-046-validate-state-invocation-inputs.md) |

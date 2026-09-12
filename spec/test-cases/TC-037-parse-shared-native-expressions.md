@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-037](../functional/FR-037-parse-shared-native-expressions.md).
+Planned controls for [FR-037](../functional/foundation/FR-037-parse-shared-native-expressions.md).
 These expected cases have not been implemented or executed.
 
 ## Test Procedure

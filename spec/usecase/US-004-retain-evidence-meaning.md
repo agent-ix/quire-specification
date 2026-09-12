@@ -44,6 +44,6 @@ Priority: High. Confusing a source/model identity or incomplete execution with a
 
 ## Traceability (Informative)
 
-- [FR-014](../functional/FR-014-read-exact-wire.md)
-- [FR-015](../functional/FR-015-preserve-canonical-domains.md)
-- [FR-016](../functional/FR-016-migrate-explicitly.md)
+- [FR-014](../functional/foundation/FR-014-read-exact-wire.md)
+- [FR-015](../functional/foundation/FR-015-preserve-canonical-domains.md)
+- [FR-016](../functional/foundation/FR-016-migrate-explicitly.md)

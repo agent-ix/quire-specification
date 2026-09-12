@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned acceptance controls for [FR-034](../functional/FR-034-bind-cross-family-predicates.md).
+Planned acceptance controls for [FR-034](../functional/foundation/FR-034-bind-cross-family-predicates.md).
 No executable test or completed coverage is claimed by this artifact.
 
 ## Test Procedure

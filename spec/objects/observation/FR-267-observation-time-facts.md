@@ -83,7 +83,7 @@ field name, a label spelling or a wire form. See **Open gap**.
 
 ## Dependencies
 
-- [FR-113](../../functional/FR-113-preserve-time-progress-and-late-data.md)
+- [FR-113](../../functional/observation/FR-113-preserve-time-progress-and-late-data.md)
   establishes the four facts, their distinctness and the causality prohibition.
 - [FR-262](FR-262-declared-instance-relationship.md) types the declared causal
   relation.

@@ -22,9 +22,9 @@ When a producer reports a location in authored source, the producer SHALL expres
 - **document** (`FR-202` reference) — the authored source document the region
   indexes into. A region is meaningless without it.
 - **start** (`byte offset`) — zero-based
-  ([FR-003](../../functional/FR-003-bind-source-correspondence.md)).
+  ([FR-003](../../functional/foundation/FR-003-bind-source-correspondence.md)).
 - **end** (`byte offset`) — zero-based and exclusive; regions are half-open
-  (FR-003, and [FR-036](../../functional/FR-036-retain-lexical-source-locations.md)
+  (FR-003, and [FR-036](../../functional/foundation/FR-036-retain-lexical-source-locations.md)
   "original half-open byte spans").
 - **column** (`scalar column`, where reported) — one-based (FR-003).
 
@@ -89,8 +89,8 @@ This artifact records both readings and resolves neither.
 
 ## Dependencies
 
-- [FR-003](../../functional/FR-003-bind-source-correspondence.md) and
-  [FR-036](../../functional/FR-036-retain-lexical-source-locations.md) establish
+- [FR-003](../../functional/foundation/FR-003-bind-source-correspondence.md) and
+  [FR-036](../../functional/foundation/FR-036-retain-lexical-source-locations.md) establish
   the region conventions.
 - [FR-202](FR-202-authored-source-document.md) supplies the document identity.
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity discipline.

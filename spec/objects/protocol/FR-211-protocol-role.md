@@ -71,14 +71,14 @@ participant role" (FR-054).
 
 ## Dependencies
 
-- [FR-050](../../functional/FR-050-bind-protocol-instances.md) binds roles to
+- [FR-050](../../functional/protocol/FR-050-bind-protocol-instances.md) binds roles to
   exact typed declarations and separates them from components, endpoints and
   channels.
-- [FR-049](../../functional/FR-049-bind-native-choreography-syntax.md) binds role
+- [FR-049](../../functional/foundation/FR-049-bind-native-choreography-syntax.md) binds role
   positions to their required declaration kinds and retains declaration spans.
-- [FR-053](../../functional/FR-053-enforce-choice-visibility.md) requires one
+- [FR-053](../../functional/protocol/FR-053-enforce-choice-visibility.md) requires one
   owning role per labeled choice.
-- [FR-054](../../functional/FR-054-bind-channel-premises.md) forbids a queue or
+- [FR-054](../../functional/protocol/FR-054-bind-channel-premises.md) forbids a queue or
   endpoint becoming a participant role.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

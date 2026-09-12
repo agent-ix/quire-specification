@@ -81,7 +81,7 @@ gap** below.
   finite retry bound ([FR-239](FR-239-compensation-retry-policy.md)), but a bound
   is not an order.
 - **Causal order** — the authored partial acyclic order of
-  [FR-052](../../functional/FR-052-represent-bounded-control.md). A retried
+  [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md). A retried
   attempt follows the attempt it retries, and an attempt is causally after its
   registration and before any effect it establishes. That order is authored and
   never derived from key order, timestamp or source position.
@@ -105,8 +105,8 @@ gap** below.
 
 ## Dependencies
 
-- [FR-058](../../functional/FR-058-preserve-retry-and-partial-recovery.md).
-- [FR-051](../../functional/FR-051-preserve-communication-identities.md).
+- [FR-058](../../functional/protocol/FR-058-preserve-retry-and-partial-recovery.md).
+- [FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md).
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 - [FR-225](FR-225-operation-attempt.md) types the forward operation attempt this

@@ -1,7 +1,7 @@
 # Linked packages and assessment bindings
 
-Proposed consumer contract for [FR-030](../../spec/functional/FR-030-bind-composed-definitions.md)
-and [FR-035](../../spec/functional/FR-035-bind-ecosystem-subjects.md), for the
+Proposed consumer contract for [FR-030](../../spec/functional/foundation/FR-030-bind-composed-definitions.md)
+and [FR-035](../../spec/functional/foundation/FR-035-bind-ecosystem-subjects.md), for the
 composed `1-draft` candidate. It does not register a wire format or canonicalizer,
 adopt a profile, or replace D's model/configuration, F's observation or B's
 request/result contracts.

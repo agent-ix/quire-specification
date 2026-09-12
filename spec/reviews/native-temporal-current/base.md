@@ -60,11 +60,11 @@ owner boundaries, not permission for E to edit their artifacts.
 
 | Analysis | Artifact |
 | --- | --- |
-| base | [base](./base.md) |
-| failure-domain | [failure-domain](./failure-domain.md) |
-| integrity | [integrity](./integrity.md) |
-| dependency | [dependency](./dependency.md) |
-| evidence | [evidence](./evidence.md) |
-| risk-complexity | [risk-complexity](./risk-complexity.md) |
-| scope-boundary | [scope-boundary](./scope-boundary.md) |
-| ears-conformance | [ears-conformance](./ears-conformance.md) |
+| base | [base](base.md) |
+| failure-domain | [failure-domain](failure-domain.md) |
+| integrity | [integrity](integrity.md) |
+| dependency | [dependency](dependency.md) |
+| evidence | [evidence](evidence.md) |
+| risk-complexity | [risk-complexity](risk-complexity.md) |
+| scope-boundary | [scope-boundary](scope-boundary.md) |
+| ears-conformance | [ears-conformance](ears-conformance.md) |

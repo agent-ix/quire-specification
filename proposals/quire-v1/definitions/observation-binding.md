@@ -23,8 +23,8 @@ or executable interface.
 | Temporal lifecycle/result facet | `quire.temporal.bounded-facet/v1` | `1-draft.3` | [Temporal meaning](temporal-common.md) |
 | Protocol result/conformance root | `quire.protocol.finite-global/v1` | `1-draft.4` | [Protocol meaning](protocol-finite.md) |
 | Producer interface | FCD Producer interface | `1.2.0` | [Producer selection](../observation-contract.md#producer-interface-selection) |
-| Shared result rules | B FR-061 | Current working draft | [Orthogonal results](../../../spec/functional/FR-061-report-orthogonal-results.md) |
-| Observation result/output rules | F FR-115/116 | Current working draft | [Result contribution](../../../spec/functional/FR-115-report-activation-participation-and-adequacy.md) and [output mapping](../observation-output-mapping-contract.md) |
+| Shared result rules | B FR-061 | Current working draft | [Orthogonal results](../../../spec/functional/protocol/FR-061-report-orthogonal-results.md) |
+| Observation result/output rules | F FR-115/116 | Current working draft | [Result contribution](../../../spec/functional/observation/FR-115-report-activation-participation-and-adequacy.md) and [output mapping](../observation-output-mapping-contract.md) |
 
 An actual package/assessment selects its required dependency artifacts by exact
 identity, revision and bytes. Missing, substituted, stale or mutually inconsistent

@@ -82,7 +82,7 @@ and visibility provenance."
 
 ## Dependencies
 
-- [FR-110](../../functional/FR-110-bind-typed-observations.md) establishes the
+- [FR-110](../../functional/observation/FR-110-bind-typed-observations.md) establishes the
   retained set, the substitution prohibitions and the absent-valuation rule.
 - [FR-261](FR-261-observation-binding.md) types the selected binding.
 - [FR-262](FR-262-declared-instance-relationship.md) types the only admitted

@@ -94,11 +94,11 @@ relation."
 
 ## Dependencies
 
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md) establishes the
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) establishes the
   record, its relation vocabulary and its refusal rules.
-- [FR-062](../../functional/FR-062-project-results-to-portable-verification.md)
+- [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
   establishes the oracle-contribution derivation and the order-preservation rule.
-- [FR-094](../../functional/FR-094-interpret-progress-history-and-closure.md)
+- [FR-094](../../functional/temporal/FR-094-interpret-progress-history-and-closure.md)
   establishes the inside/outside decision-support distinction.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

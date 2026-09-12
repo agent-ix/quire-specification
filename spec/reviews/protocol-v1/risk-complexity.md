@@ -50,5 +50,5 @@ global-conformance slice and typed unsupported outcomes isolate those risks.
 4. FR-060: terminology can transfer an unqualified projection/realizability theorem.
 5. NFR-020: finite syntax can still drive unbounded instance or observation work.
 
-The failure-domain review is [SR-028](./failure-domain.md); its purity, backend
+The failure-domain review is [SR-028](failure-domain.md); its purity, backend
 failure and topology findings are resolved.

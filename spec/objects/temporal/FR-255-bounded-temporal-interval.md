@@ -52,8 +52,8 @@ profile shall quantify admitted past instants by inclusive clock distance."
 - **Key** — (`a`, `b`, selected profile identity, clock binding). Equality is
   componentwise over exactly these and nothing else. Display name, source path,
   span, message text, locale and rendering never participate
-  ([FR-009](../../functional/FR-009-preserve-object-identity.md),
-  [FR-047](../../functional/FR-047-emit-typed-located-causes.md)). The profile
+  ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
+  [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)). The profile
   and binding are key components because FR-090-AC-1 holds that "The same
   predicate values and numeric interval under event-position, fixed-sample and
   timestamped-event selections retain three distinct temporal subjects and
@@ -97,10 +97,10 @@ finite-window empty truth to an incomplete input."
 
 ## Dependencies
 
-- [FR-091](../../functional/FR-091-evaluate-bounded-future.md) and
-  [FR-092](../../functional/FR-092-evaluate-bounded-past.md) establish the
+- [FR-091](../../functional/temporal/FR-091-evaluate-bounded-future.md) and
+  [FR-092](../../functional/temporal/FR-092-evaluate-bounded-past.md) establish the
   inclusive bound form and the empty-window rules.
-- [FR-094](../../functional/FR-094-interpret-progress-history-and-closure.md)
+- [FR-094](../../functional/temporal/FR-094-interpret-progress-history-and-closure.md)
   establishes that progress covers an inclusive boundary.
 - [FR-252](FR-252-temporal-clock-binding.md) supplies the binding under which
   offsets and clock distances are counted.
@@ -129,14 +129,14 @@ FR-092 Behavior: "The timestamped finite-window profile shall quantify admitted
 past instants by inclusive clock distance."
 
 The observation side is half-open.
-[FR-112](../../functional/FR-112-declare-population-and-completeness.md)
+[FR-112](../../functional/observation/FR-112-declare-population-and-completeness.md)
 Behavior:
 
 > "For a selected FCD 1.2.0 window `[start, end)`, the assessment service SHALL
 > include an exactly listed/digested member at `start` and exclude one at `end`;
 > the latter can participate only in a separately selected later window."
 
-[FR-113](../../functional/FR-113-preserve-time-progress-and-late-data.md)
+[FR-113](../../functional/observation/FR-113-preserve-time-progress-and-late-data.md)
 Behavior:
 
 > "For a selected FCD 1.2.0 half-open window, the observation service SHALL

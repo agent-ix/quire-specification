@@ -36,22 +36,22 @@ These are new repositories. Missing formal plans, TC records, suites, and matric
 
 | US | FR | StR | Verification |
 | --- | --- | --- | --- |
-| [US-001](../usecase/US-001-understand-native-meaning.md) | [FR-001](../functional/FR-001-select-native-profile.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 3 ACs; no TC/matrix binding yet |
-| [US-002](../usecase/US-002-exchange-exact-subjects.md) | [FR-002](../functional/FR-002-resolve-owned-declarations.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 5 ACs; no TC/matrix binding yet |
-| [US-002](../usecase/US-002-exchange-exact-subjects.md) | [FR-003](../functional/FR-003-bind-source-correspondence.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 4 ACs; no TC/matrix binding yet |
-| [US-002](../usecase/US-002-exchange-exact-subjects.md) | [FR-004](../functional/FR-004-separate-artifact-identities.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 4 ACs; no TC/matrix binding yet |
-| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-005](../functional/FR-005-guard-optional-values.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 4 ACs; no TC/matrix binding yet |
-| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-006](../functional/FR-006-preserve-control-evaluation.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 9 ACs; no TC/matrix binding yet |
-| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-007](../functional/FR-007-prove-integer-definedness.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 6 ACs; no TC/matrix binding yet |
-| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-008](../functional/FR-008-preserve-sequence-semantics.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 5 ACs; no TC/matrix binding yet |
-| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-009](../functional/FR-009-preserve-object-identity.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 3 ACs; no TC/matrix binding yet |
-| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-010](../functional/FR-010-evaluate-exact-reachability.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 4 ACs; no TC/matrix binding yet |
-| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-011](../functional/FR-011-validate-populations.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 5 ACs; no TC/matrix binding yet |
-| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-012](../functional/FR-012-bind-operation-observations.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 8 ACs; no TC/matrix binding yet |
-| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-013](../functional/FR-013-validate-operation-frames.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 4 ACs; no TC/matrix binding yet |
-| [US-004](../usecase/US-004-retain-evidence-meaning.md) | [FR-014](../functional/FR-014-read-exact-wire.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 5 ACs; no TC/matrix binding yet |
-| [US-004](../usecase/US-004-retain-evidence-meaning.md) | [FR-015](../functional/FR-015-preserve-canonical-domains.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 4 ACs; no TC/matrix binding yet |
-| [US-004](../usecase/US-004-retain-evidence-meaning.md) | [FR-016](../functional/FR-016-migrate-explicitly.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 4 ACs; no TC/matrix binding yet |
+| [US-001](../usecase/US-001-understand-native-meaning.md) | [FR-001](../functional/foundation/FR-001-select-native-profile.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 3 ACs; no TC/matrix binding yet |
+| [US-002](../usecase/US-002-exchange-exact-subjects.md) | [FR-002](../functional/foundation/FR-002-resolve-owned-declarations.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 5 ACs; no TC/matrix binding yet |
+| [US-002](../usecase/US-002-exchange-exact-subjects.md) | [FR-003](../functional/foundation/FR-003-bind-source-correspondence.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 4 ACs; no TC/matrix binding yet |
+| [US-002](../usecase/US-002-exchange-exact-subjects.md) | [FR-004](../functional/foundation/FR-004-separate-artifact-identities.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 4 ACs; no TC/matrix binding yet |
+| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-005](../functional/foundation/FR-005-guard-optional-values.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 4 ACs; no TC/matrix binding yet |
+| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-006](../functional/foundation/FR-006-preserve-control-evaluation.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 9 ACs; no TC/matrix binding yet |
+| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-007](../functional/foundation/FR-007-prove-integer-definedness.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 6 ACs; no TC/matrix binding yet |
+| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-008](../functional/foundation/FR-008-preserve-sequence-semantics.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 5 ACs; no TC/matrix binding yet |
+| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-009](../functional/foundation/FR-009-preserve-object-identity.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 3 ACs; no TC/matrix binding yet |
+| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-010](../functional/foundation/FR-010-evaluate-exact-reachability.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 4 ACs; no TC/matrix binding yet |
+| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-011](../functional/foundation/FR-011-validate-populations.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 5 ACs; no TC/matrix binding yet |
+| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-012](../functional/foundation/FR-012-bind-operation-observations.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 8 ACs; no TC/matrix binding yet |
+| [US-003](../usecase/US-003-assess-finite-state.md) | [FR-013](../functional/foundation/FR-013-validate-operation-frames.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 4 ACs; no TC/matrix binding yet |
+| [US-004](../usecase/US-004-retain-evidence-meaning.md) | [FR-014](../functional/foundation/FR-014-read-exact-wire.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 5 ACs; no TC/matrix binding yet |
+| [US-004](../usecase/US-004-retain-evidence-meaning.md) | [FR-015](../functional/foundation/FR-015-preserve-canonical-domains.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 4 ACs; no TC/matrix binding yet |
+| [US-004](../usecase/US-004-retain-evidence-meaning.md) | [FR-016](../functional/foundation/FR-016-migrate-explicitly.md) | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | Test; 4 ACs; no TC/matrix binding yet |
 
 ## NFR scope and reverse references
 

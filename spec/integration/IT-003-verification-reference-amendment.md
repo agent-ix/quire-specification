@@ -66,6 +66,6 @@ Rust JSON Schema validator; it does not introduce a production shared reader.
 
 ## Dependencies
 
-- [FR-017](../functional/FR-017-select-verification-artifact-roles.md)
-- [FR-018](../functional/FR-018-select-verification-jcs-domain.md)
+- [FR-017](../functional/foundation/FR-017-select-verification-artifact-roles.md)
+- [FR-018](../functional/foundation/FR-018-select-verification-jcs-domain.md)
 - [IT-002](IT-002-independent-reference-consumer.md) retains the broader FS02/FS05 independent-consumer gate.

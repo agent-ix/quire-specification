@@ -61,7 +61,7 @@ dimension; it never changes the native profile to fit the available backend.
 ## Dependencies (Contextual)
 
 - The composed native language and profile identity contract in
-  [FR-020](../functional/FR-020-compose-native-profiles.md).
+  [FR-020](../functional/foundation/FR-020-compose-native-profiles.md).
 - Observation bindings and completeness/progress assertions supplied by Agent
   F's independently owned contract.
 - The [typed predicate projection ticket](https://github.com/agent-ix/quire-contract-ir/issues/63).

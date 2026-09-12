@@ -37,7 +37,7 @@ default.
 
 The four decision-scope/surrounding-execution progress/closure axes and the fifth
 complete-global-conformance closure record retain
-[B's FR-061 meaning](../../spec/functional/FR-061-report-orthogonal-results.md).
+[B's FR-061 meaning](../../spec/functional/protocol/FR-061-report-orthogonal-results.md).
 The consumer cannot merge them into one subject state or use assessment completion
 or observation completeness as a closure substitute. Omitting a required retained
 axis or cross-wiring it to another axis or scope refuses the inconsistent

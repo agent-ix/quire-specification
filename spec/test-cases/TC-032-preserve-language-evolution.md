@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned acceptance controls for [FR-032](../functional/FR-032-preserve-language-evolution.md).
+Planned acceptance controls for [FR-032](../functional/foundation/FR-032-preserve-language-evolution.md).
 No executable test or completed coverage is claimed by this artifact.
 
 ## Test Procedure

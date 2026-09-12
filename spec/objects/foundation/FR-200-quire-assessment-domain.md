@@ -193,8 +193,8 @@ Every object artifact contained in this context SHALL declare, explicitly:
 - **The key** — which components constitute identity. Equality is componentwise
   over the key and nothing else. Display name, source path, span, message text,
   locale and rendering never participate in identity
-  ([FR-009](../../functional/FR-009-preserve-object-identity.md),
-  [FR-047](../../functional/FR-047-emit-typed-located-causes.md)).
+  ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
+  [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)).
 - **Key order** — a total order over the key, used only to compare and diff
   collections. A key order carries no causal meaning.
 
@@ -209,7 +209,7 @@ Every object artifact contained in this context SHALL declare, explicitly:
   collection comparison.
 - **Causal order** — where the object participates in a causal structure, the
   authored partial order of
-  [FR-052](../../functional/FR-052-represent-bounded-control.md). It is never
+  [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md). It is never
   derived from key order, timestamp or source position.
 - **Absence** — an absent key component compares only to absence. It never
   compares to a default, an empty value or an implicit option-none.
@@ -244,7 +244,7 @@ Every object artifact contained in this context SHALL declare, explicitly:
 
 ## Dependencies
 
-- [FR-009](../../functional/FR-009-preserve-object-identity.md) supplies the
+- [FR-009](../../functional/foundation/FR-009-preserve-object-identity.md) supplies the
   universe/type/object identity triple and the rule that structural record
   equality never replaces object identity.
 - [Shared foundation](../../../proposals/quire-v1/shared-foundation.md) supplies

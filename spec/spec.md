@@ -444,7 +444,7 @@ The user requested /specify and /spec-review for all work. Existing implementati
 ## 14. Lifecycle Status
 
 The 2026-09-09 ruling selects native Quire as the sole editable formal-clause
-language. [FR-019](functional/FR-019-admit-native-source-profile.md) and the
+language. [FR-019](functional/foundation/FR-019-admit-native-source-profile.md) and the
 [versioned amendment](../proposals/native-source-1-draft/README.md) carry forward
 its admission rules. The replacement candidate is not enabled by this document;
 the adopted historical definitions and their implementation remain distinguishable.
@@ -509,90 +509,90 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FCD FR-103](https://github.com/agent-ix/filament-core-data/blob/6259d3a5b99088740df9bcc8e8d60f3720aaa603/spec/functional/FR-103-declare-ecosystem-configuration-contracts.md) | FR | D-owned external draft; acceptance and implementation pending |
 | [FCD FR-104](https://github.com/agent-ix/filament-core-data/blob/6259d3a5b99088740df9bcc8e8d60f3720aaa603/spec/functional/FR-104-lock-ecosystem-inventory-and-bindings.md) | FR | D-owned IN01 inventory and deployment-binding draft; planned TC-1364–1366 |
 | [FCD FR-105](https://github.com/agent-ix/filament-core-data/blob/6259d3a5b99088740df9bcc8e8d60f3720aaa603/spec/functional/FR-105-classify-mixed-version-impact.md) | FR | D-owned IN02 compatibility and evidence-impact draft; planned TC-1367–1369 |
-| [FR-049](functional/FR-049-bind-native-choreography-syntax.md) | FR | Native choreography source integration; proposed, reviewed in SR-400 |
+| [FR-049](functional/foundation/FR-049-bind-native-choreography-syntax.md) | FR | Native choreography source integration; proposed, reviewed in SR-400 |
 | [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-050](functional/FR-050-bind-protocol-instances.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-051](functional/FR-051-preserve-communication-identities.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-052](functional/FR-052-represent-bounded-control.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-053](functional/FR-053-enforce-choice-visibility.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-054](functional/FR-054-bind-channel-premises.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-055](functional/FR-055-activate-protocol-obligations.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-056](functional/FR-056-register-compensation.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-057](functional/FR-057-enforce-commit-recovery.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-058](functional/FR-058-preserve-retry-and-partial-recovery.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-059](functional/FR-059-assess-finite-global-conformance.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-060](functional/FR-060-separate-protocol-claims.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-061](functional/FR-061-report-orthogonal-results.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-062](functional/FR-062-project-results-to-portable-verification.md) | FR | Family-reviewed projection; composed review requires corrections (SR-400) |
+| [FR-050](functional/protocol/FR-050-bind-protocol-instances.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-051](functional/protocol/FR-051-preserve-communication-identities.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-052](functional/protocol/FR-052-represent-bounded-control.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-053](functional/protocol/FR-053-enforce-choice-visibility.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-054](functional/protocol/FR-054-bind-channel-premises.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-055](functional/protocol/FR-055-activate-protocol-obligations.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-056](functional/protocol/FR-056-register-compensation.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-057](functional/protocol/FR-057-enforce-commit-recovery.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-058](functional/protocol/FR-058-preserve-retry-and-partial-recovery.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-059](functional/protocol/FR-059-assess-finite-global-conformance.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-060](functional/protocol/FR-060-separate-protocol-claims.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-061](functional/protocol/FR-061-report-orthogonal-results.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-062](functional/protocol/FR-062-project-results-to-portable-verification.md) | FR | Family-reviewed projection; composed review requires corrections (SR-400) |
 | [NFR-020](non-functional/NFR-020-bound-protocol-processing.md) | NFR | Family-reviewed draft; composed review requires corrections (SR-400) |
 | [NFR-021](non-functional/NFR-021-reproduce-protocol-results.md) | NFR | Family-reviewed draft; composed review requires corrections (SR-400) |
 | [IT-020](integration/IT-020-native-protocol-handoff.md) | IT | Family-reviewed draft; composed review requires corrections (SR-400) |
 | [IT-021](integration/IT-021-observation-result-handoff.md) | IT | Family-reviewed draft; composed review requires corrections (SR-400) |
 | [US-009](usecase/US-009-assess-observed-workflow-outcomes.md) | US | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-110](functional/FR-110-bind-typed-observations.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-111](functional/FR-111-correlate-related-instances-explicitly.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-112](functional/FR-112-declare-population-and-completeness.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-113](functional/FR-113-preserve-time-progress-and-late-data.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-114](functional/FR-114-assess-replay-and-incremental-consistently.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-115](functional/FR-115-report-activation-participation-and-adequacy.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-116](functional/FR-116-map-observation-results-to-consumers.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
+| [FR-110](functional/observation/FR-110-bind-typed-observations.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
+| [FR-111](functional/observation/FR-111-correlate-related-instances-explicitly.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
+| [FR-112](functional/observation/FR-112-declare-population-and-completeness.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
+| [FR-113](functional/observation/FR-113-preserve-time-progress-and-late-data.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
+| [FR-114](functional/observation/FR-114-assess-replay-and-incremental-consistently.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
+| [FR-115](functional/observation/FR-115-report-activation-participation-and-adequacy.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
+| [FR-116](functional/observation/FR-116-map-observation-results-to-consumers.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
 | [NFR-050](non-functional/NFR-050-bound-observation-retention.md) | NFR | Integrated family draft; proposed, reviewed in SR-400 |
 | [NFR-051](non-functional/NFR-051-preserve-observation-reproducibility.md) | NFR | Integrated family draft; proposed, reviewed in SR-400 |
 | [NFR-052](non-functional/NFR-052-contain-observation-executables.md) | NFR | Integrated family draft; proposed, reviewed in SR-400 |
 | [IT-050](integration/IT-050-observation-to-temporal-and-protocol-assessment.md) | IT | Integrated family draft; proposed, reviewed in SR-400 |
 | [IT-051](integration/IT-051-observation-output-consumer-contract.md) | IT | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-048](functional/FR-048-bind-native-temporal-syntax.md) | FR | Native temporal source integration; proposed, reviewed in SR-400 |
+| [FR-048](functional/foundation/FR-048-bind-native-temporal-syntax.md) | FR | Native temporal source integration; proposed, reviewed in SR-400 |
 | [US-008](usecase/US-008-assess-native-temporal-obligations.md) | US | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-090](functional/FR-090-select-temporal-profile-and-clock.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-091](functional/FR-091-evaluate-bounded-future.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-092](functional/FR-092-evaluate-bounded-past.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-093](functional/FR-093-bind-temporal-activation-and-captures.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-094](functional/FR-094-interpret-progress-history-and-closure.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-095](functional/FR-095-preserve-native-tl-correspondence.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-090](functional/temporal/FR-090-select-temporal-profile-and-clock.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-091](functional/temporal/FR-091-evaluate-bounded-future.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-092](functional/temporal/FR-092-evaluate-bounded-past.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-093](functional/temporal/FR-093-bind-temporal-activation-and-captures.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-094](functional/temporal/FR-094-interpret-progress-history-and-closure.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-095](functional/temporal/FR-095-preserve-native-tl-correspondence.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
 | [NFR-040](non-functional/NFR-040-bound-temporal-state.md) | NFR | Family-reviewed draft; composed review requires corrections (SR-400) |
 | [IT-040](integration/IT-040-native-future-tl-correspondence.md) | IT | Planned native/TL correspondence |
 | [IT-041](integration/IT-041-temporal-bridge-refusals.md) | IT | Planned temporal refusal correspondence |
-| [FR-040](functional/FR-040-admit-explicit-state-extensions.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
-| [FR-041](functional/FR-041-evaluate-ordered-queries.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
-| [FR-042](functional/FR-042-select-pre-state-reads.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
-| [FR-043](functional/FR-043-evaluate-finite-graph-relations.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
-| [FR-044](functional/FR-044-check-composed-numeric-definedness.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
-| [FR-045](functional/FR-045-preserve-control-and-presence-facts.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
-| [FR-046](functional/FR-046-validate-state-invocation-inputs.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
-| [FR-047](functional/FR-047-emit-typed-located-causes.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
+| [FR-040](functional/foundation/FR-040-admit-explicit-state-extensions.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
+| [FR-041](functional/foundation/FR-041-evaluate-ordered-queries.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
+| [FR-042](functional/foundation/FR-042-select-pre-state-reads.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
+| [FR-043](functional/foundation/FR-043-evaluate-finite-graph-relations.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
+| [FR-044](functional/foundation/FR-044-check-composed-numeric-definedness.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
+| [FR-045](functional/foundation/FR-045-preserve-control-and-presence-facts.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
+| [FR-046](functional/foundation/FR-046-validate-state-invocation-inputs.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
+| [FR-047](functional/foundation/FR-047-emit-typed-located-causes.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
 | [NFR-010](non-functional/NFR-010-bound-composed-processing.md) | NFR | Composed resource contract; proposed, reviewed in SR-400 |
-| [FR-036](functional/FR-036-retain-lexical-source-locations.md) | FR | Shared grammar/type contribution; proposed, reviewed in SR-400 |
-| [FR-037](functional/FR-037-parse-shared-native-expressions.md) | FR | Shared grammar/type contribution; proposed, reviewed in SR-400 |
-| [FR-038](functional/FR-038-resolve-predicate-scopes.md) | FR | Shared grammar/type contribution; proposed, reviewed in SR-400 |
-| [FR-039](functional/FR-039-normalize-exact-rational-literals.md) | FR | Shared grammar/type contribution; proposed, reviewed in SR-400 |
-| [FR-030](functional/FR-030-bind-composed-definitions.md) | FR | Shared definition binding draft |
-| [FR-031](functional/FR-031-report-requested-capabilities.md) | FR | Per-request capability disposition draft |
-| [FR-032](functional/FR-032-preserve-language-evolution.md) | FR | Evolution/compatibility draft |
-| [FR-033](functional/FR-033-admit-reusable-predicates.md) | FR | Typed acyclic predicate admission draft |
-| [FR-034](functional/FR-034-bind-cross-family-predicates.md) | FR | Cross-family environment binding draft |
-| [FR-035](functional/FR-035-bind-ecosystem-subjects.md) | FR | Ecosystem subject binding draft |
+| [FR-036](functional/foundation/FR-036-retain-lexical-source-locations.md) | FR | Shared grammar/type contribution; proposed, reviewed in SR-400 |
+| [FR-037](functional/foundation/FR-037-parse-shared-native-expressions.md) | FR | Shared grammar/type contribution; proposed, reviewed in SR-400 |
+| [FR-038](functional/foundation/FR-038-resolve-predicate-scopes.md) | FR | Shared grammar/type contribution; proposed, reviewed in SR-400 |
+| [FR-039](functional/foundation/FR-039-normalize-exact-rational-literals.md) | FR | Shared grammar/type contribution; proposed, reviewed in SR-400 |
+| [FR-030](functional/foundation/FR-030-bind-composed-definitions.md) | FR | Shared definition binding draft |
+| [FR-031](functional/foundation/FR-031-report-requested-capabilities.md) | FR | Per-request capability disposition draft |
+| [FR-032](functional/foundation/FR-032-preserve-language-evolution.md) | FR | Evolution/compatibility draft |
+| [FR-033](functional/foundation/FR-033-admit-reusable-predicates.md) | FR | Typed acyclic predicate admission draft |
+| [FR-034](functional/foundation/FR-034-bind-cross-family-predicates.md) | FR | Cross-family environment binding draft |
+| [FR-035](functional/foundation/FR-035-bind-ecosystem-subjects.md) | FR | Ecosystem subject binding draft |
 | [StR-002](stakeholder/StR-002-composed-language.md) | StR | V1 redesign draft |
 | [US-005](usecase/US-005-author-composed-workflows.md) | US | V1 redesign draft |
-| [FR-020](functional/FR-020-compose-native-profiles.md) | FR | V1 redesign draft; implementation not authorized |
-| [FR-001](functional/FR-001-select-native-profile.md) | FR | Draft |
-| [FR-002](functional/FR-002-resolve-owned-declarations.md) | FR | Draft |
-| [FR-003](functional/FR-003-bind-source-correspondence.md) | FR | Draft |
-| [FR-004](functional/FR-004-separate-artifact-identities.md) | FR | Draft |
-| [FR-005](functional/FR-005-guard-optional-values.md) | FR | Draft |
-| [FR-006](functional/FR-006-preserve-control-evaluation.md) | FR | Draft |
-| [FR-007](functional/FR-007-prove-integer-definedness.md) | FR | Draft |
-| [FR-008](functional/FR-008-preserve-sequence-semantics.md) | FR | Draft |
-| [FR-009](functional/FR-009-preserve-object-identity.md) | FR | Draft |
-| [FR-010](functional/FR-010-evaluate-exact-reachability.md) | FR | Draft |
-| [FR-011](functional/FR-011-validate-populations.md) | FR | Draft |
-| [FR-012](functional/FR-012-bind-operation-observations.md) | FR | Draft |
-| [FR-013](functional/FR-013-validate-operation-frames.md) | FR | Draft |
-| [FR-014](functional/FR-014-read-exact-wire.md) | FR | Draft |
-| [FR-015](functional/FR-015-preserve-canonical-domains.md) | FR | Draft |
-| [FR-016](functional/FR-016-migrate-explicitly.md) | FR | Draft |
-| [FR-017](functional/FR-017-select-verification-artifact-roles.md) | FR | Amendment |
-| [FR-018](functional/FR-018-select-verification-jcs-domain.md) | FR | Amendment |
-| [FR-019](functional/FR-019-admit-native-source-profile.md) | FR | Native-source definition candidate; implementation incomplete |
+| [FR-020](functional/foundation/FR-020-compose-native-profiles.md) | FR | V1 redesign draft; implementation not authorized |
+| [FR-001](functional/foundation/FR-001-select-native-profile.md) | FR | Draft |
+| [FR-002](functional/foundation/FR-002-resolve-owned-declarations.md) | FR | Draft |
+| [FR-003](functional/foundation/FR-003-bind-source-correspondence.md) | FR | Draft |
+| [FR-004](functional/foundation/FR-004-separate-artifact-identities.md) | FR | Draft |
+| [FR-005](functional/foundation/FR-005-guard-optional-values.md) | FR | Draft |
+| [FR-006](functional/foundation/FR-006-preserve-control-evaluation.md) | FR | Draft |
+| [FR-007](functional/foundation/FR-007-prove-integer-definedness.md) | FR | Draft |
+| [FR-008](functional/foundation/FR-008-preserve-sequence-semantics.md) | FR | Draft |
+| [FR-009](functional/foundation/FR-009-preserve-object-identity.md) | FR | Draft |
+| [FR-010](functional/foundation/FR-010-evaluate-exact-reachability.md) | FR | Draft |
+| [FR-011](functional/foundation/FR-011-validate-populations.md) | FR | Draft |
+| [FR-012](functional/foundation/FR-012-bind-operation-observations.md) | FR | Draft |
+| [FR-013](functional/foundation/FR-013-validate-operation-frames.md) | FR | Draft |
+| [FR-014](functional/foundation/FR-014-read-exact-wire.md) | FR | Draft |
+| [FR-015](functional/foundation/FR-015-preserve-canonical-domains.md) | FR | Draft |
+| [FR-016](functional/foundation/FR-016-migrate-explicitly.md) | FR | Draft |
+| [FR-017](functional/foundation/FR-017-select-verification-artifact-roles.md) | FR | Amendment |
+| [FR-018](functional/foundation/FR-018-select-verification-jcs-domain.md) | FR | Amendment |
+| [FR-019](functional/foundation/FR-019-admit-native-source-profile.md) | FR | Native-source definition candidate; implementation incomplete |
 | [US-001](usecase/US-001-understand-native-meaning.md) | US | Draft |
 | [US-002](usecase/US-002-exchange-exact-subjects.md) | US | Draft |
 | [US-003](usecase/US-003-assess-finite-state.md) | US | Draft |
@@ -606,7 +606,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [IT-002](integration/IT-002-independent-reference-consumer.md) | IT | Draft |
 | [IT-003](integration/IT-003-verification-reference-amendment.md) | IT | Planned |
 | [IT-010](integration/IT-010-bind-linked-package-assessments.md) | IT | Planned composed package/binding boundary |
-| [FR-130](functional/FR-130-bind-composed-package-references.md) | FR | Proposed composed-package reference interpretation |
+| [FR-130](functional/foundation/FR-130-bind-composed-package-references.md) | FR | Proposed composed-package reference interpretation |
 | [FR-200](objects/foundation/FR-200-quire-assessment-domain.md) | FR (domain) | Object layer; bounded context and identity discipline |
 | [FR-201](objects/foundation/FR-201-canonical-identity-domain.md) | FR (enumeration) | Object layer; canonical identity domain vocabulary |
 | [FR-202](objects/foundation/FR-202-authored-source-document.md) | FR (entity) | Object layer; authored source document identity |

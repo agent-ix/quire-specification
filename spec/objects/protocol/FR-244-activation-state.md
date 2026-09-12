@@ -49,17 +49,17 @@ When a result reports whether an obligation activated, the strict reader SHALL m
 
 ## Recorded divergence: activation spelling
 
-- [FR-055](../../functional/FR-055-activate-protocol-obligations.md) Outputs:
+- [FR-055](../../functional/protocol/FR-055-activate-protocol-obligations.md) Outputs:
   "Triggered, inactive or activation-unknown obligation states with their exact
-  dependencies". [FR-061](../../functional/FR-061-report-orthogonal-results.md)
+  dependencies". [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md)
   uses `triggered`, `inactive` and `activation-unknown` verbatim in its
   result-combination rules.
-- [FR-093](../../functional/FR-093-bind-temporal-activation-and-captures.md)
+- [FR-093](../../functional/temporal/FR-093-bind-temporal-activation-and-captures.md)
   Outputs: "An inactive scope, an activated obligation with immutable typed
   captures, or a located incomplete/refused activation result", and FR-093-AC-5:
   "A closed-complete trigger scope with no trigger reports inactive; an open scope
   or missing/refused trigger evidence reports activation-unknown".
-- [FR-062](../../functional/FR-062-project-results-to-portable-verification.md)
+- [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
   treats `activated` as the **E02 target** name for the source state `triggered`:
   "Activation `triggered` / `inactive` / `activation-unknown` | `activation.status`
   is respectively `activated` / `not-activated` / `unknown`."
@@ -80,13 +80,13 @@ FR-055/FR-061 source labels and records the divergence without resolving it.
 
 ## Dependencies
 
-- [FR-055](../../functional/FR-055-activate-protocol-obligations.md) establishes
+- [FR-055](../../functional/protocol/FR-055-activate-protocol-obligations.md) establishes
   the three obligation states.
-- [FR-061](../../functional/FR-061-report-orthogonal-results.md) establishes the
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) establishes the
   activation combination rules.
-- [FR-062](../../functional/FR-062-project-results-to-portable-verification.md)
+- [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
   establishes the E02 target names, which are not source labels.
-- [FR-093](../../functional/FR-093-bind-temporal-activation-and-captures.md)
+- [FR-093](../../functional/temporal/FR-093-bind-temporal-activation-and-captures.md)
   supplies the divergent temporal spelling recorded above.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.

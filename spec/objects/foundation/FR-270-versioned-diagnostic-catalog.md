@@ -112,7 +112,7 @@ requirement states which identity kind an externally selected catalog takes.
 
 ## Dependencies
 
-- [FR-047](../../functional/FR-047-emit-typed-located-causes.md) establishes the
+- [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md) establishes the
   catalogued-classification obligation.
 - [Native diagnostics catalog](../../../proposals/quire-v1/definitions/native-diagnostics.md)
   is the proposed, non-adopted catalog this artifact extracts from.

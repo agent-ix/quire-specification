@@ -34,6 +34,6 @@ Inspect the chosen artifact grant, inherited notices, definition status and requ
 
 ## Dependencies
 
-- [FR-001](../functional/FR-001-select-native-profile.md)
-- [FR-015](../functional/FR-015-preserve-canonical-domains.md)
-- [FR-016](../functional/FR-016-migrate-explicitly.md)
+- [FR-001](../functional/foundation/FR-001-select-native-profile.md)
+- [FR-015](../functional/foundation/FR-015-preserve-canonical-domains.md)
+- [FR-016](../functional/foundation/FR-016-migrate-explicitly.md)

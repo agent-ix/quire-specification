@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-039](../functional/FR-039-normalize-exact-rational-literals.md).
+Planned controls for [FR-039](../functional/foundation/FR-039-normalize-exact-rational-literals.md).
 These expected cases have not been implemented or executed.
 
 ## Test Procedure

@@ -64,7 +64,7 @@ between a selected snapshot and a selected event-time window."
 
 ## Dependencies
 
-- [FR-112](../../functional/FR-112-declare-population-and-completeness.md)
+- [FR-112](../../functional/observation/FR-112-declare-population-and-completeness.md)
   establishes the snapshot/window distinction and the refusal cases.
 - [FR-266](FR-266-event-time-window.md) types the other selected bounds subject.
 - [FR-263](FR-263-declared-population.md) is the population the snapshot bounds.
