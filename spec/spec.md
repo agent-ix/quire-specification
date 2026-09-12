@@ -24,6 +24,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-206
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-207
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-220
     type: contains
   - target: ix://agent-ix/quire-specification/FR-221
@@ -614,6 +616,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-204](objects/foundation/FR-204-declared-object-identity.md) | FR (value_object) | Object layer; universe/type/object identity triple |
 | [FR-205](objects/foundation/FR-205-exact-rational-value.md) | FR (value_object) | Object layer; normalized rational value, distinct from literal identity |
 | [FR-206](objects/foundation/FR-206-numeric-domain.md) | FR (value_object) | Object layer; named numeric type and exact unit |
+| [FR-207](objects/foundation/FR-207-runtime-value-path.md) | FR (value_object) | Object layer; runtime value locus as a root and typed traversal steps |
 | [FR-220](objects/protocol/FR-220-causal-control-graph.md) | FR (aggregate_root) | Object layer; Causal control graph |
 | [FR-221](objects/protocol/FR-221-protocol-node-occurrence.md) | FR (entity) | Object layer; Protocol node occurrence |
 | [FR-222](objects/protocol/FR-222-send-occurrence.md) | FR (entity) | Object layer; Send occurrence |
