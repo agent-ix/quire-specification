@@ -10,6 +10,10 @@ standards_alignment:
 relationships:
   - target: ix://agent-ix/quire-specification/FR-130
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-200
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-201
+    type: contains
   - target: ix://agent-ix/quire-specification/IT-010
     type: contains
   - target: ix://agent-ix/quire-specification/FR-049
@@ -461,6 +465,8 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [IT-003](integration/IT-003-verification-reference-amendment.md) | IT | Planned |
 | [IT-010](integration/IT-010-bind-linked-package-assessments.md) | IT | Planned composed package/binding boundary |
 | [FR-130](functional/FR-130-bind-composed-package-references.md) | FR | Proposed composed-package reference interpretation |
+| [FR-200](objects/foundation/FR-200-quire-assessment-domain.md) | FR (domain) | Object layer; bounded context and identity discipline |
+| [FR-201](objects/foundation/FR-201-canonical-identity-domain.md) | FR (enumeration) | Object layer; canonical identity domain vocabulary |
 
 ## Composed baseline review
 
