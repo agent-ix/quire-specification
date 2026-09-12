@@ -34,11 +34,18 @@ previous spelling or boundary is added.
 
 `holds(expr)` is an atomic temporal valuation. A source constant `true` remains
 distinct from `holds(true)`; false-extension behavior cannot be optimized away.
+Temporal `not`, `and`, `or` and `implies` apply pointwise at every offset that
+an enclosing temporal operator evaluates; they are not untimed wrappers around
+one whole-window result.
 Until/since require the left operand only between the interval's lower bound
 and the witness; release/triggered use the selected Boolean duals.
 
 Each activation has its own exact semantic trigger/origin identity and captures.
-A duplicated receipt cannot create another trigger. Missing required current
+A duplicated receipt with the same admitted payload cannot create another trigger;
+conflicting payloads under one semantic trigger identity are a typed contradiction
+and cannot silently select a receipt. A false activation guard creates no
+obligation; an unestablished guard remains incomplete or refused rather than
+being interpreted as false. Missing required current
 valuations, captures or history remain incomplete/refused; they are not false
 atoms or empty populations. A valid open prefix settles a Boolean only when
 all admitted continuations preserve it, with completed assessment execution,
@@ -55,6 +62,10 @@ Open or missing/refused trigger evidence leaves activation unknown with its
 distinct completeness/execution disposition. Neither becomes temporal truth.
 Same-binding progress regression or a conflicting assertion revision produces a
 typed contradiction/refusal without rolling back progress or earlier results.
+If a resource ceiling stops assessment of one obligation after a sibling has
+already settled over complete exact support, the sibling retains its truth,
+settlement basis and support; the stopped obligation receives the resource
+disposition and no Boolean fallback.
 
 Retain the clock, history, progress, source and population premises needed by
 each result. A late contradiction identifies affected earlier results and their

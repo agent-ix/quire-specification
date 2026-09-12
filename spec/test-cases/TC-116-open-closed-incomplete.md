@@ -27,7 +27,9 @@ scope, open/closed surrounding execution, complete/incomplete input, all five
 settlement bases and one missing fact inside or outside the exact
 decision-support set. Mutate EOF into scope closure, scope closure into whole-
 execution closure, each decisive basis into the other basis or `closed-scope`,
-and restamp the earlier result after the late record.
+and restamp the earlier result after the late record. After one obligation
+settles over complete exact support, exhaust the resource ceiling only while
+assessing an independent sibling obligation.
 
 ## Expected Results
 
@@ -41,4 +43,6 @@ Only the closed-complete no-trigger scope is inactive. The open and missing/
 refused trigger cases remain activation-unknown with their distinct
 completeness/execution states. Neither becomes temporal truth. Every forbidden
 one-axis combination refuses. A late contradiction names the prior
-premise/result and preserves historical bytes.
+premise/result and preserves historical bytes. The settled sibling retains its
+truth, basis and support; only the exhausted obligation has a non-Boolean
+resource disposition.

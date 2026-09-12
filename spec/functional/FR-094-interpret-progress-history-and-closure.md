@@ -61,6 +61,11 @@ closed without complete required observations as an incomplete input.
 The evaluator shall not apply false extension or finite-window empty truth to
 an incomplete input.
 
+When a resource ceiling stops assessment of one obligation, it shall return a
+non-Boolean resource disposition for that obligation. A sibling obligation that
+already settled over complete exact decision support shall retain its prior
+truth, settlement basis and support; the stop shall not erase or restamp it.
+
 Assessment execution, decision-scope progress/closure, surrounding-execution
 progress/closure, truth, settlement basis and completeness shall remain
 independent. The temporal handoff shall retain the exact decision-support set.
@@ -87,6 +92,7 @@ authority or automatically repair settled history.
 | FR-094-AC-6 | Missing predecessor/history on restart requires replay or an admitted state-restoration contract and cannot resume as a fresh complete stream. | Test (TC-118) |
 | FR-094-AC-7 | `closed-scope`, `decisive-witness`, `decisive-counterexample`, `unsettled` and `unavailable` are accepted only with their valid truth, scope and exact deciding-fact combinations; every one-axis substitution is refused. | Test (TC-116) |
 | FR-094-AC-8 | A same-binding progress regression or conflicting assertion revision produces a typed contradiction/refusal and cannot roll back progress, closure or an earlier result identity. | Test (TC-115) |
+| FR-094-AC-9 | A resource ceiling stopping one obligation leaves an independently settled sibling result unchanged, while the stopped obligation emits no Boolean fallback. | Test (TC-116) |
 
 ## Dependencies
 
