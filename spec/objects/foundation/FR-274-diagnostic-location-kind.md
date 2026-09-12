@@ -8,6 +8,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-203
     type: references
+  - target: ix://agent-ix/quire-specification/FR-207
+    type: references
 ---
 # FR-274: Diagnostic location kind
 
@@ -32,11 +34,15 @@ catalog is proposed, not adopted.
 | --- | --- |
 | authored source span | A span over authored source. Typed by [FR-203](FR-203-source-region.md), which this artifact references rather than redefining: a half-open byte region over one identified source document. |
 | JSON field/index path | A path through a JSON document's fields and indices. Required as the retained payload of the `invalid_package` and `invalid_runtime_input` families — "the actual field/index path", "the actual input path" (proposed catalog). |
-| runtime object/value path | A path through a runtime object or value. Held distinct from a JSON field/index path by the same sentence of the proposed catalog. |
+| runtime object/value path | A root and an ordered sequence of typed traversal steps through a runtime object or value. Typed by [FR-207](FR-207-runtime-value-path.md), which this artifact references rather than redefining. Held distinct from a JSON field/index path by [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md) and by the same sentence of the proposed catalog. |
 
 The three values are spelled here with the catalog's own words. The catalog
 states the three kinds and states that they "remain different location kinds";
-it gives them no discriminator tags or identifier spellings. See the open gap.
+it gives them no discriminator tags or identifier spellings, and FR-047 fixes
+none either. See the open gap.
+
+Two of the three kinds are now typed: FR-203 types the authored source span and
+FR-207 types the runtime object/value path. The JSON field/index path is not.
 
 ## Identity and comparison
 
@@ -54,7 +60,10 @@ it gives them no discriminator tags or identifier spellings. See the open gap.
   location.
 - **Key order** — for the `authored source span` kind, the key order is
   FR-203's: lexicographic over (`document` key, `start`, `end`), for collection
-  comparison only. Across kinds the order is lexicographic over the kind first,
+  comparison only. For the `runtime object/value path` kind it is FR-207's: root
+  first, then step by step, a proper prefix before its extensions — total within
+  one selected observation and not across observations.
+  Across kinds the order is lexicographic over the kind first,
   for collection comparison only. It carries no causal meaning and expresses no
   severity or precedence ordering between kinds or between loci.
 - **Causal order** — none. FR-203 records that FR-052 constructs the causal
@@ -83,18 +92,22 @@ it gives them no discriminator tags or identifier spellings. See the open gap.
 | FR-274-AC-2 | An unavailable locus compares only to absence and is not represented as byte zero, an empty path or a name-search match. | Analysis |
 | FR-274-AC-3 | Changing a diagnostic's display path leaves its located kind and locus unchanged. | Analysis |
 | FR-274-AC-4 | The authored source span kind resolves through FR-203 and is not redefined here. | Inspection |
+| FR-274-AC-5 | The runtime object/value path kind resolves through FR-207 and is not redefined here. | Inspection |
 
 ## Open gap
 
 The catalog names three kinds and holds them distinct, but states **no
 discriminator tag, identifier spelling or serialized form** for the kinds
-themselves, and states no structure for the second and third kinds beyond the
-words "JSON field/index path" and "runtime object/value path". Only the first
-kind is typed anywhere: FR-203 types the authored source span. No requirement
-establishes the key components of a JSON field/index path or of a runtime
-object/value path, nor an order over either. The values above therefore carry
-the catalog's own wording, and this artifact invents neither a spelling nor a
-path structure.
+themselves. FR-047 now defines the structure, equality and order of the runtime
+object/value path kind, and explicitly fixes no serialized spelling for it, so
+the spelling gap is unresolved for all three kinds.
+
+The **JSON field/index path** remains structurally undefined. No accepted
+requirement establishes its root, its step kinds, its equality or an order over
+it; only the proposed catalog names it, as the retained payload of the
+`invalid_package` and `invalid_runtime_input` families. The values above
+therefore carry the catalog's own wording for that kind, and this artifact
+invents neither a spelling nor a path structure for it.
 
 ## Dependencies
 
@@ -103,6 +116,8 @@ path structure.
 - [Native diagnostics catalog](../../../proposals/quire-v1/definitions/native-diagnostics.md)
   is the proposed, non-adopted source of the three distinct location kinds.
 - [FR-203](FR-203-source-region.md) types the authored source span
+  kind.
+- [FR-207](FR-207-runtime-value-path.md) types the runtime object/value path
   kind.
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
