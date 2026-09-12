@@ -7,6 +7,24 @@ relationships:
     type: implements
   - target: ix://agent-ix/quire-specification/FR-050
     type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-210
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-213
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-214
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-222
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-223
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-224
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-225
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-226
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-235
+    type: references
 ---
 ## Description
 

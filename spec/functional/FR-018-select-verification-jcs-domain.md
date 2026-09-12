@@ -7,6 +7,8 @@ relationships:
     type: traces_to
   - target: "ix://agent-ix/quire-specification/FR-015"
     type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-201
+    type: references
 ---
 # FR-018: Preserve the verification JCS identity domain
 

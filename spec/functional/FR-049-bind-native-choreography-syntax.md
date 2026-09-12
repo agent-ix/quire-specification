@@ -15,6 +15,22 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-090
     type: references
+  - target: ix://agent-ix/quire-specification/FR-210
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-211
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-220
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-221
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-222
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-223
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-228
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-239
+    type: references
 ---
 ## Description
 

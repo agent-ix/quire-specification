@@ -5,6 +5,12 @@ type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-002"
     type: traces_to
+  - target: ix://agent-ix/quire-specification/FR-202
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-203
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-271
+    type: references
 ---
 # FR-003: Bind clause locations to exact source bytes
 

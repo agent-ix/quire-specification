@@ -9,6 +9,20 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-092
     type: references
+  - target: ix://agent-ix/quire-specification/FR-243
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-248
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-252
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-255
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-256
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-257
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-258
+    type: references
 ---
 ## Description
 
