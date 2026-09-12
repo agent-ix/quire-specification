@@ -71,6 +71,32 @@ set; see **Open gap**.
   selected under `ix://agent-ix/quire-specification/FR-201`, and an identity
   crossing domains is unequal regardless of byte equality.
 
+## Not members of this vocabulary
+
+A noun that the specification types as an object is not thereby a protocol
+subject kind. The four subject lists above are the whole membership question, and
+the following are named by none of them.
+
+| Noun | What the specification does with it | Why it is not a member |
+| --- | --- | --- |
+| channel | Typed as [FR-215](FR-215-protocol-channel.md), a linked object with sender, receiver, message types, ordering policy, delivery cardinality and duplication premises (FR-054). | FR-050 keeps roles "distinct from components, endpoints and channels" — a channel is something a subject is bound through, not a subject assessed. FR-051, FR-049-AC-2, FR-111 and FR-035 do not name it. |
+| compensation registration | Typed as [FR-233](FR-233-compensation-registration.md) (FR-056). | A registration is an obligation record paired with an effect. `compensation` is already the member FR-049-AC-2 names; the registration is not a second subject kind. |
+| commit boundary | Typed as [FR-237](FR-237-commit-boundary.md) (FR-057). | FR-057 requires "separate attempt, effect, commit and recovery facts" — facts checked about a compensation, not subjects of a conformance claim. |
+| recovery relation | Typed as [FR-238](FR-238-recovery-relation.md) (FR-057). | As above: an authored relation the evaluator decides recovery through, not an assessed subject. |
+| definition | No object artifact. FR-050 requires role instances and workflow instances to be kept "distinct from their static definitions". | A static definition is what an instance is held distinct *from*. `role-instance` and `workflow-instance` are the members; their definitions are the other side of that distinction. |
+| participant | No object artifact. FR-050: "Internal and external participants use the same identity rules". | "Participant" is FR-050's collective word for roles under one identity rule, not a subject kind beside `role-instance`. Role internality is typed by [FR-217](FR-217-role-internality.md). |
+| component | No object artifact. FR-050-AC-2 refuses "a component identity for a role instance". | Named only as an identity a role instance must not be substituted by. |
+| endpoint | No object artifact. FR-050-AC-2 refuses "an endpoint or channel identity for a role". | Named only as an identity a role must not be substituted by. |
+
+The four typed objects in the upper half of the table have their own identity
+questions, which are recorded on those artifacts and ticketed as
+`quire-specification#28`. Those are identity gaps, not membership gaps: adding a
+label here would not answer them.
+
+A consumer that needs to hold a channel, registration, commit boundary or
+recovery relation apart from a protocol subject does so by referencing the
+object artifact, not by minting a subject-kind label.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -79,6 +105,7 @@ set; see **Open gap**.
 | FR-210-AC-2 | Two references of different subject kinds compare unequal, and no transport record, trace identifier or equal label makes them equal. | Analysis |
 | FR-210-AC-3 | A reference with an absent subject kind compares only to absence and receives no default member. | Analysis |
 | FR-210-AC-4 | No member of this table is assigned an ordinal, precedence or wire spelling by this artifact. | Inspection |
+| FR-210-AC-5 | A channel, compensation registration, commit boundary, recovery relation, static definition, participant, component or endpoint reference is not represented as a member of this vocabulary. | Inspection |
 
 ## Dependencies
 

@@ -18,6 +18,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-264
     type: references
+  - target: ix://agent-ix/quire-specification/FR-284
+    type: references
 ---
 # FR-258: Temporal decision scope and closure
 
@@ -37,9 +39,9 @@ the surrounding execution as closed."
 | --- | --- | --- |
 | Scope role | FR-094 Inputs, FR-094 Behavior | Either the decision scope or the surrounding execution. The two are never merged. |
 | Scope identity | FR-094 Inputs | "exact decision-scope and surrounding-execution identities". |
-| Progress state | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis, advanced by a progress assertion ([FR-256](FR-256-temporal-progress-assertion.md)). No requirement lists its member states; see **Open gap**. |
-| Closure state | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis carrying its own closure authority. No requirement lists its member states; see **Open gap**. |
-| Input completeness | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis, held distinct from closure. No requirement lists its member states; see **Open gap**. |
+| Progress state | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis, advanced by a progress assertion ([FR-256](FR-256-temporal-progress-assertion.md)). It carries one state from [FR-284](../protocol/FR-284-scope-progress-and-closure-state.md): `closed` once the retained progress point covers the scope's required boundary, `open` otherwise. |
+| Closure state | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis carrying its own closure authority. It carries one state from [FR-284](../protocol/FR-284-scope-progress-and-closure-state.md): `closed` once that authority has closed the scope, `open` otherwise. |
+| Input completeness | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis, held distinct from closure and outside FR-284's vocabulary. FR-094-AC-3 names it "complete/incomplete input" and no requirement lists its member states; see **Open gap**. |
 | Exact decision-support set | FR-091 Behavior, FR-094 Behavior | "the exact valuation, capture, clock, progress and profile facts that form its decision-support set". |
 
 FR-094-AC-3 states the independence as a checkable claim: "Open/closed decision
@@ -131,7 +133,7 @@ artifact names its members only where the temporal prose names them.
 | FR-258-AC-4 | The declared key order carries no progression from open towards closed. | Analysis |
 | FR-258-AC-5 | A settled sibling result retains its truth, settlement basis and exact deciding-fact identities unchanged when a resource ceiling stops another obligation. | Analysis |
 | FR-258-AC-6 | One scope observed at two different progress points compares equal on the key, so the later observation is evaluated for monotonicity against the earlier rather than treated as a different scope. | Analysis |
-| FR-258-AC-7 | No progress, closure or completeness member list is asserted by this artifact. | Inspection |
+| FR-258-AC-7 | The progress and closure axes each carry exactly one FR-284 member, while input completeness stays a separate axis outside that vocabulary and receives no member list here. | Analysis |
 
 ## Dependencies
 
@@ -143,9 +145,10 @@ artifact names its members only where the temporal prose names them.
   shared result contract these facts are reported through.
 - [FR-256](FR-256-temporal-progress-assertion.md) supplies the assertion that
   advances progress or stamps closure.
-- [FR-240](../protocol/FR-240-canonical-protocol-result.md) records the same
-  absence of a member list for the progress and closure axes from the result
-  side.
+- [FR-240](../protocol/FR-240-canonical-protocol-result.md) carries the same
+  four axes as result properties.
+- [FR-284](../protocol/FR-284-scope-progress-and-closure-state.md) defines the
+  progress and closure state vocabulary.
 - [FR-261](../observation/FR-261-observation-binding.md) and
   [FR-264](../observation/FR-264-membership-rule.md) supply the pattern for
   holding an observed, changing set outside a key.
@@ -194,23 +197,21 @@ FR-091 omits, or a truth state that FR-061 and FR-094 additionally spell as a
 basis, is not stated anywhere. This artifact records both readings and resolves
 neither.
 
-**2. The progress and closure axes have no member list anywhere.**
+**2. Input completeness has no member list.**
 
-No requirement declares a closed vocabulary for decision-scope progress,
-decision-scope closure, surrounding-execution progress, surrounding-execution
-closure or input completeness. FR-094-AC-3 uses the phrases "Open/closed
-decision scope, open/closed surrounding execution, completed/failed assessment
-execution and complete/incomplete input" while stating that the axes "remain
-independently represented", and FR-061 requires exact scope, authority and
-boundary identities on each axis; neither passage lists the member states of any
-axis, and no requirement names a covered-through-a-point state. No member list
-is invented here.
+The progress and closure axes are enumerated:
+[FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) declares
+that each of the four decision-scope and surrounding-execution facts carries
+exactly `open` or `closed`, and
+[FR-284](../protocol/FR-284-scope-progress-and-closure-state.md) types that
+vocabulary.
 
-[FR-240](../protocol/FR-240-canonical-protocol-result.md) records the same
-absence from the result side — its **Open gap** item on the unenumerated
-progress/closure axes states that FR-061 "never lists their member states ...
-No member list is invented here" — and this artifact records it identically
-rather than supplying members the prose does not have.
+Input completeness is not covered by it. FR-094-AC-3 names the axis
+"complete/incomplete input" while holding it distinct from "Open/closed decision
+scope, open/closed surrounding execution", and FR-094 requires that a file
+"labelled closed without complete required observations" be classified as an
+incomplete input rather than a closed scope. No requirement declares a closed
+vocabulary for that axis, and none is invented here.
 
 ## Status
 
