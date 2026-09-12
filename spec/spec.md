@@ -14,6 +14,16 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-201
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-202
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-203
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-204
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-205
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-206
+    type: contains
   - target: ix://agent-ix/quire-specification/IT-010
     type: contains
   - target: ix://agent-ix/quire-specification/FR-049
@@ -467,6 +477,11 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-130](functional/FR-130-bind-composed-package-references.md) | FR | Proposed composed-package reference interpretation |
 | [FR-200](objects/foundation/FR-200-quire-assessment-domain.md) | FR (domain) | Object layer; bounded context and identity discipline |
 | [FR-201](objects/foundation/FR-201-canonical-identity-domain.md) | FR (enumeration) | Object layer; canonical identity domain vocabulary |
+| [FR-202](objects/foundation/FR-202-authored-source-document.md) | FR (entity) | Object layer; authored source document identity |
+| [FR-203](objects/foundation/FR-203-source-region.md) | FR (value_object) | Object layer; half-open source region, records the FR-003/FR-036 span-convention gap |
+| [FR-204](objects/foundation/FR-204-declared-object-identity.md) | FR (value_object) | Object layer; universe/type/object identity triple |
+| [FR-205](objects/foundation/FR-205-exact-rational-value.md) | FR (value_object) | Object layer; normalized rational value, distinct from literal identity |
+| [FR-206](objects/foundation/FR-206-numeric-domain.md) | FR (value_object) | Object layer; named numeric type and exact unit |
 
 ## Composed baseline review
 
