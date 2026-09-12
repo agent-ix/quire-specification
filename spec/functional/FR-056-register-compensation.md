@@ -9,6 +9,14 @@ relationships:
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-055
     type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-233
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-234
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-237
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-239
+    type: references
 ---
 ## Description
 

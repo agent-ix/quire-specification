@@ -5,6 +5,8 @@ type: FR
 relationships:
   - target: "ix://agent-ix/quire-specification/US-004"
     type: traces_to
+  - target: ix://agent-ix/quire-specification/FR-201
+    type: references
 ---
 # FR-015: Preserve established canonical identity domains
 

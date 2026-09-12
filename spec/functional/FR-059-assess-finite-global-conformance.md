@@ -13,6 +13,10 @@ relationships:
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-058
     type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-240
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-247
+    type: references
 ---
 ## Description
 

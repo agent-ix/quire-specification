@@ -5,6 +5,10 @@ type: FR
 relationships:
   - target: ix://agent-ix/quire-specification/US-005
     type: implements
+  - target: ix://agent-ix/quire-specification/FR-202
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-203
+    type: references
 ---
 ## Description
 

@@ -10,6 +10,152 @@ standards_alignment:
 relationships:
   - target: ix://agent-ix/quire-specification/FR-130
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-200
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-201
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-202
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-203
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-204
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-205
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-206
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-220
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-221
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-222
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-223
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-224
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-225
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-226
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-227
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-228
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-270
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-271
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-272
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-273
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-274
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-230
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-231
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-232
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-233
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-234
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-235
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-236
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-237
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-238
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-239
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-260
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-261
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-262
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-263
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-264
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-265
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-266
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-267
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-268
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-269
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-210
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-211
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-212
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-213
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-214
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-215
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-216
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-217
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-240
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-241
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-242
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-243
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-244
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-245
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-246
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-247
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-248
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-249
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-280
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-281
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-282
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-283
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-250
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-251
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-252
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-253
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-254
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-255
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-256
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-257
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-258
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-259
+    type: contains
   - target: ix://agent-ix/quire-specification/IT-010
     type: contains
   - target: ix://agent-ix/quire-specification/FR-049
@@ -461,6 +607,79 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [IT-003](integration/IT-003-verification-reference-amendment.md) | IT | Planned |
 | [IT-010](integration/IT-010-bind-linked-package-assessments.md) | IT | Planned composed package/binding boundary |
 | [FR-130](functional/FR-130-bind-composed-package-references.md) | FR | Proposed composed-package reference interpretation |
+| [FR-200](objects/foundation/FR-200-quire-assessment-domain.md) | FR (domain) | Object layer; bounded context and identity discipline |
+| [FR-201](objects/foundation/FR-201-canonical-identity-domain.md) | FR (enumeration) | Object layer; canonical identity domain vocabulary |
+| [FR-202](objects/foundation/FR-202-authored-source-document.md) | FR (entity) | Object layer; authored source document identity |
+| [FR-203](objects/foundation/FR-203-source-region.md) | FR (value_object) | Object layer; half-open source region, records the FR-003/FR-036 span-convention gap |
+| [FR-204](objects/foundation/FR-204-declared-object-identity.md) | FR (value_object) | Object layer; universe/type/object identity triple |
+| [FR-205](objects/foundation/FR-205-exact-rational-value.md) | FR (value_object) | Object layer; normalized rational value, distinct from literal identity |
+| [FR-206](objects/foundation/FR-206-numeric-domain.md) | FR (value_object) | Object layer; named numeric type and exact unit |
+| [FR-220](objects/protocol/FR-220-causal-control-graph.md) | FR (aggregate_root) | Object layer; Causal control graph |
+| [FR-221](objects/protocol/FR-221-protocol-node-occurrence.md) | FR (entity) | Object layer; Protocol node occurrence |
+| [FR-222](objects/protocol/FR-222-send-occurrence.md) | FR (entity) | Object layer; Send occurrence |
+| [FR-223](objects/protocol/FR-223-receive-occurrence.md) | FR (entity) | Object layer; Receive occurrence |
+| [FR-224](objects/protocol/FR-224-delivery.md) | FR (entity) | Object layer; Delivery |
+| [FR-225](objects/protocol/FR-225-operation-attempt.md) | FR (entity) | Object layer; Operation attempt |
+| [FR-226](objects/protocol/FR-226-business-effect.md) | FR (entity) | Object layer; Business effect |
+| [FR-227](objects/protocol/FR-227-owned-choice.md) | FR (entity) | Object layer; Owned choice |
+| [FR-228](objects/protocol/FR-228-bounded-control-construct.md) | FR (enumeration) | Object layer; Bounded control construct vocabulary |
+| [FR-270](objects/foundation/FR-270-versioned-diagnostic-catalog.md) | FR (entity) | Object layer; Versioned diagnostic catalog |
+| [FR-271](objects/foundation/FR-271-diagnostic-code-vocabulary.md) | FR (enumeration) | Object layer; Diagnostic code vocabulary |
+| [FR-272](objects/foundation/FR-272-typed-diagnostic-cause.md) | FR (value_object) | Object layer; Typed diagnostic cause |
+| [FR-273](objects/foundation/FR-273-producer-stage.md) | FR (value_object) | Object layer; Producer stage |
+| [FR-274](objects/foundation/FR-274-diagnostic-location-kind.md) | FR (enumeration) | Object layer; Diagnostic location kind |
+| [FR-230](objects/protocol/FR-230-protocol-obligation.md) | FR (entity) | Object layer; Protocol obligation instance |
+| [FR-231](objects/protocol/FR-231-obligation-activation-state.md) | FR (state_machine) | Object layer; Obligation activation state |
+| [FR-232](objects/protocol/FR-232-activation-capture.md) | FR (value_object) | Object layer; Immutable activation capture |
+| [FR-233](objects/protocol/FR-233-compensation-registration.md) | FR (entity) | Object layer; Compensation registration |
+| [FR-234](objects/protocol/FR-234-compensation-obligation-lifecycle.md) | FR (state_machine) | Object layer; Compensation obligation lifecycle |
+| [FR-235](objects/protocol/FR-235-compensation-attempt.md) | FR (entity) | Object layer; Compensation attempt |
+| [FR-236](objects/protocol/FR-236-compensation-attempt-outcome.md) | FR (enumeration) | Object layer; Compensation attempt outcome vocabulary |
+| [FR-237](objects/protocol/FR-237-commit-boundary.md) | FR (entity) | Object layer; Commit boundary |
+| [FR-238](objects/protocol/FR-238-recovery-relation.md) | FR (entity) | Object layer; Authored recovery relation |
+| [FR-239](objects/protocol/FR-239-compensation-retry-policy.md) | FR (value_object) | Object layer; Compensation retry policy |
+| [FR-260](objects/observation/FR-260-admitted-observation.md) | FR (entity) | Object layer; Admitted observation |
+| [FR-261](objects/observation/FR-261-observation-binding.md) | FR (value_object) | Object layer; Observation binding |
+| [FR-262](objects/observation/FR-262-declared-instance-relationship.md) | FR (value_object) | Object layer; Declared instance relationship |
+| [FR-263](objects/observation/FR-263-declared-population.md) | FR (entity) | Object layer; Declared finite population |
+| [FR-264](objects/observation/FR-264-membership-rule.md) | FR (value_object) | Object layer; Declared membership rule |
+| [FR-265](objects/observation/FR-265-selected-snapshot.md) | FR (value_object) | Object layer; Selected snapshot |
+| [FR-266](objects/observation/FR-266-event-time-window.md) | FR (value_object) | Object layer; Selected event-time window |
+| [FR-267](objects/observation/FR-267-observation-time-facts.md) | FR (enumeration) | Object layer; Distinguishable observation time facts |
+| [FR-268](objects/observation/FR-268-progress-and-late-data-authority.md) | FR (value_object) | Object layer; Progress and late-data authority |
+| [FR-269](objects/observation/FR-269-consumer-mapping-loss.md) | FR (enumeration) | Object layer; Consumer mapping-loss classification |
+| [FR-210](objects/protocol/FR-210-protocol-subject-vocabulary.md) | FR (enumeration) | Object layer; Protocol subject vocabulary |
+| [FR-211](objects/protocol/FR-211-protocol-role.md) | FR (entity) | Object layer; Protocol role |
+| [FR-212](objects/protocol/FR-212-role-instance.md) | FR (entity) | Object layer; Role instance |
+| [FR-213](objects/protocol/FR-213-workflow-instance.md) | FR (entity) | Object layer; Workflow instance |
+| [FR-214](objects/protocol/FR-214-protocol-message.md) | FR (entity) | Object layer; Protocol message |
+| [FR-215](objects/protocol/FR-215-protocol-channel.md) | FR (entity) | Object layer; Protocol channel |
+| [FR-216](objects/protocol/FR-216-channel-premise.md) | FR (value_object) | Object layer; Channel premise |
+| [FR-217](objects/protocol/FR-217-role-internality.md) | FR (enumeration) | Object layer; Role internality vocabulary |
+| [FR-240](objects/protocol/FR-240-canonical-protocol-result.md) | FR (entity) | Object layer; Canonical protocol result |
+| [FR-241](objects/protocol/FR-241-assessment-execution-disposition.md) | FR (enumeration) | Object layer; Assessment execution disposition vocabulary |
+| [FR-242](objects/protocol/FR-242-truth-disposition.md) | FR (enumeration) | Object layer; Truth disposition vocabulary |
+| [FR-243](objects/protocol/FR-243-settlement-basis.md) | FR (enumeration) | Object layer; Settlement basis vocabulary |
+| [FR-244](objects/protocol/FR-244-activation-state.md) | FR (enumeration) | Object layer; Activation state vocabulary |
+| [FR-245](objects/protocol/FR-245-observation-adequacy-state.md) | FR (enumeration) | Object layer; Observation adequacy state vocabulary |
+| [FR-246](objects/protocol/FR-246-protocol-adequacy-state.md) | FR (enumeration) | Object layer; Protocol adequacy state vocabulary |
+| [FR-247](objects/protocol/FR-247-complete-global-conformance-closure-state.md) | FR (enumeration) | Object layer; Complete-global-conformance closure state vocabulary |
+| [FR-248](objects/protocol/FR-248-decision-support-record.md) | FR (value_object) | Object layer; Decision-support record |
+| [FR-249](objects/protocol/FR-249-derived-projection-result.md) | FR (entity) | Object layer; Derived portable projection result |
+| [FR-280](objects/protocol/FR-280-assumption-state.md) | FR (enumeration) | Object layer; Assumption state vocabulary |
+| [FR-281](objects/protocol/FR-281-claim-strength.md) | FR (enumeration) | Object layer; Claim strength vocabulary |
+| [FR-282](objects/protocol/FR-282-dependence-relation.md) | FR (enumeration) | Object layer; Decision-support dependence relation vocabulary |
+| [FR-283](objects/protocol/FR-283-projection-refusal-code.md) | FR (enumeration) | Object layer; Projection refusal code vocabulary |
+| [FR-250](objects/temporal/FR-250-temporal-semantic-profile.md) | FR (enumeration) | Object layer; Temporal semantic profile identity |
+| [FR-251](objects/temporal/FR-251-tl-target-profile.md) | FR (enumeration) | Object layer; TL target evaluator profile |
+| [FR-252](objects/temporal/FR-252-temporal-clock-binding.md) | FR (value_object) | Object layer; Temporal clock binding |
+| [FR-253](objects/temporal/FR-253-temporal-evaluation-anchor.md) | FR (value_object) | Object layer; Temporal evaluation anchor |
+| [FR-254](objects/temporal/FR-254-bounded-temporal-operator.md) | FR (enumeration) | Object layer; Bounded temporal operator vocabulary |
+| [FR-255](objects/temporal/FR-255-bounded-temporal-interval.md) | FR (value_object) | Object layer; Bounded temporal interval |
+| [FR-256](objects/temporal/FR-256-temporal-progress-assertion.md) | FR (value_object) | Object layer; Temporal progress assertion |
+| [FR-257](objects/temporal/FR-257-history-boundary.md) | FR (value_object) | Object layer; History boundary |
+| [FR-258](objects/temporal/FR-258-temporal-decision-scope.md) | FR (value_object) | Object layer; Temporal decision scope and closure |
+| [FR-259](objects/temporal/FR-259-native-tl-correspondence-record.md) | FR (value_object) | Object layer; Native-to-TL correspondence record |
 
 ## Composed baseline review
 
