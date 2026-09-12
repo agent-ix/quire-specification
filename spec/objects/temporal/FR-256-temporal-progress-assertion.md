@@ -1,0 +1,119 @@
+---
+id: FR-256
+title: "Temporal progress assertion"
+type: FR
+object: value_object
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-094
+    type: specifies
+  - target: ix://agent-ix/quire-specification/FR-252
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-255
+    type: references
+---
+# FR-256: Temporal progress assertion
+
+## Description
+
+When an evaluator consumes a validated progress or closure assertion, it SHALL apply that assertion only to the named clock, subjects, decision scope, surrounding execution, interval and history boundary.
+
+FR-094 Inputs name them as "validated progress/completeness/closure assertions
+supplied by the observation authority". FR-094 Dependencies record the ownership
+split: Agent F "owns the validity, provenance and replay form of observation,
+progress, completeness and contradiction assertions. This requirement owns only
+their temporal interpretation."
+
+## Properties
+
+| Property | Source | Note |
+| --- | --- | --- |
+| Assertion identity and revision | FR-094 Behavior, FR-094-AC-8 | A "same-binding progress regression or conflicting assertion revision" is a typed contradiction or refusal. |
+| Named clock | FR-094 Description, FR-094-AC-4 | Progress for a foreign clock cannot settle the obligation ([FR-252](FR-252-temporal-clock-binding.md)). |
+| Named subjects | FR-094 Description, FR-094-AC-4 | Progress for a foreign subject or source set cannot settle the obligation. |
+| Named decision scope | FR-094 Description | One of the independent axes ([FR-258](FR-258-temporal-decision-scope.md)). |
+| Named surrounding execution | FR-094 Description | A second, independent axis (FR-258). |
+| Named interval | FR-094 Description | The inclusive interval it covers ([FR-255](FR-255-bounded-temporal-interval.md)). |
+| Named history boundary | FR-094 Description | The past bound it covers ([FR-257](FR-257-history-boundary.md)). |
+| Progress point | FR-094 Behavior | The watermark `W`, sample tick or admitted sequence position reached. |
+| Completeness coverage | FR-094 Behavior | "completeness covers every required source, subject and valuation through `D`". |
+
+FR-094 states the per-profile advance rules verbatim: "A timestamped watermark
+at `W` permits settlement of a deadline `D` only when `W >= D` and completeness
+covers every required source, subject and valuation through `D`. A fixed-sample
+progress assertion advances sample ticks even when no business predicate is
+true. Event-position time shall not advance during silence merely because wall
+time passed."
+
+## Identity and comparison
+
+- **Identity kind** — *authored* by the observation authority, not by this
+  family: the assertion carries its own identity and revision, which FR-094-AC-8
+  makes decisive for detecting a conflicting revision. Its temporal
+  *applicability* is a value comparison over the named bindings below.
+- **Key** — the assertion identity and revision together with the named clock,
+  subjects, decision scope, surrounding execution, interval and history
+  boundary. Equality is componentwise over exactly those components and nothing
+  else. Display name, source path, span, message text, locale and rendering
+  never participate
+  ([FR-009](../../functional/FR-009-preserve-object-identity.md),
+  [FR-047](../../functional/FR-047-emit-typed-located-causes.md)). FR-094-AC-4
+  makes the binding components decisive: "Progress for a foreign clock, subject,
+  source set or binding cannot settle the obligation."
+- **Key order** — lexicographic over the key components, for collection
+  comparison only. It carries no causal meaning and it is not the monotone
+  progress order: FR-094 states that "Progress shall be monotonic within its
+  identified binding", and that monotonicity holds over the progress point under
+  one equal binding, not over the key order of assertions.
+- **Causal order** — none of its own. The order it reports is the admitted
+  causal/sequence order of the named clock binding (FR-252), never derived from
+  key order, timestamp or ingestion order. FR-113 states that "Arbitrary
+  timestamp order SHALL NOT establish causality."
+- **Absence** — an absent named component compares only to absence, and an
+  assertion whose components do not match the assessment is never applied by
+  default. FR-094 requires the evaluator to "classify end-of-file, consumer
+  shutdown or a file labelled closed without complete required observations as
+  an incomplete input", and FR-113-AC-4 holds that "A mismatched assertion
+  definition, scope, clock, source set, or restoration basis remains
+  incomplete/refused and cannot settle or restart an assessment."
+- **Digest domain** — an assertion or binding component carried as a digest
+  retains the domain it was derived under
+  ([FR-201](../foundation/FR-201-canonical-identity-domain.md)); an identity
+  crossing domains is unequal regardless of byte equality.
+
+## Regression and contradiction retain earlier bytes
+
+FR-094 states that "A regressing or same-revision conflicting assertion shall
+produce a typed contradiction or refusal and shall not roll back progress,
+restamp closure or replace earlier result bytes", and that "A later record
+inside an interval previously declared complete is a completeness contradiction
+supplied by Agent F's contract. The evaluator shall supersede or invalidate
+affected results without rewriting their historical bytes." FR-094 also states
+that "The v1 evaluator shall not infer watermark authority or automatically
+repair settled history."
+
+## Acceptance Criteria
+
+| ID | Criteria | Verification |
+| --- | --- | --- |
+| FR-256-AC-1 | An assertion naming a different clock, subject, source set or binding compares unequal to the assessment's binding and does not settle it. | Analysis |
+| FR-256-AC-2 | A regressing or same-revision conflicting assertion does not replace an earlier progress point, closure stamp or result identity. | Analysis |
+| FR-256-AC-3 | The declared key order over assertions is never cited as the monotone progress order or as a causal relation. | Analysis |
+| FR-256-AC-4 | An end-of-file or closed-labelled input without complete required observations compares as incomplete rather than as a closure assertion. | Analysis |
+| FR-256-AC-5 | An absent named component compares only to absence and is not defaulted to the assessment's own binding. | Analysis |
+
+## Dependencies
+
+- [FR-094](../../functional/FR-094-interpret-progress-history-and-closure.md)
+  establishes the applicability scoping, monotonicity, per-profile advance rules
+  and contradiction handling.
+- [FR-252](FR-252-temporal-clock-binding.md) supplies the named clock binding.
+- [FR-255](FR-255-bounded-temporal-interval.md) supplies the named interval and
+  its inclusive boundary.
+- [FR-257](FR-257-history-boundary.md) supplies the named history boundary.
+- [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
+  identity discipline.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage.
