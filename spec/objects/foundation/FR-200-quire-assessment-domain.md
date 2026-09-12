@@ -16,6 +16,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-206
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-207
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-210
     type: contains
   - target: ix://agent-ix/quire-specification/FR-211
