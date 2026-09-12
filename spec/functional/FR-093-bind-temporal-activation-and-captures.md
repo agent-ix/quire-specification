@@ -32,8 +32,10 @@ located incomplete/refused activation result.
 Each event-triggered instance shall be identified by the clause subject and
 semantic trigger-event identity, not by timestamp, display name or equal payload
 alone. Repeated delivery of the same semantic trigger shall not create a second
-instance; a distinct semantic trigger shall create a distinct instance even if
-its captured values compare equal.
+instance when its admitted payload agrees; conflicting payloads for that one
+semantic trigger identity shall produce a typed contradiction/refusal. A distinct
+semantic trigger shall create a distinct instance even if its captured values
+compare equal.
 
 Each capture shall retain its declared expression, type, value, source/model
 binding and activation anchor. Later mutable observations shall not replace the
@@ -42,6 +44,9 @@ activation and shall identify the missing or inconsistent input. One instance's
 captures shall not satisfy another instance's propositions.
 
 Activation, temporal truth and participation shall remain separate dimensions.
+The evaluator shall create no instance and no refusal when an admitted
+activation guard is false. The evaluator shall leave an unestablished guard
+incomplete or refused and shall not interpret it as false.
 A trigger scope that is authoritatively closed and complete without an admitted
 trigger shall produce inactive activation; it is not a true obligation and is
 not evidence that recovery behavior was exercised. An open trigger scope shall
@@ -59,6 +64,7 @@ choice/conformance or the observation transport schema.
 | FR-093-AC-3 | Changing mutable source state after activation cannot change an already captured amount, reference or predicate valuation environment. | Test (TC-114) |
 | FR-093-AC-4 | Missing, nullable, wrong-type, stale or anchor-mismatched capture input reports incomplete/refused activation before temporal evaluation. | Test (TC-114) |
 | FR-093-AC-5 | A closed-complete trigger scope with no trigger reports inactive; an open scope or missing/refused trigger evidence reports activation-unknown with its distinct completeness/execution state, and neither case becomes temporal truth. | Test (TC-116) |
+| FR-093-AC-6 | False guards create no obligation, unestablished guards remain incomplete/refused, and conflicting payloads under one semantic trigger identity refuse without replacing retained captures. | Test (TC-114) |
 
 ## Dependencies
 
