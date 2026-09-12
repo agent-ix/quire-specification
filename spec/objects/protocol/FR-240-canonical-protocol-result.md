@@ -32,6 +32,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-281
     type: references
+  - target: ix://agent-ix/quire-specification/FR-284
+    type: references
 ---
 # FR-240: Canonical protocol result
 
@@ -52,10 +54,10 @@ artifact adds none.
 | result identity | The result's own identity (FR-061, FR-061-AC-3). Its derivation rule is not established; see **Open gap**. |
 | enclosing artifact reference | Carries the `sha256-jcs` digest over the complete RFC 8785 canonical result bytes. The digest is **not** a self-referential field inside those bytes, and a strict reader recomputes it before accepting the result (FR-061, FR-061-AC-3). |
 | assessment execution | One state stating whether the requested evaluator completed or why it did not ([FR-241](FR-241-assessment-execution-disposition.md)). |
-| decision-scope progress | Independent fact with exact scope, authority and boundary identities (FR-061). Not enumerated by any requirement; see **Open gap**. |
-| decision-scope closure | Independent fact with exact scope, authority and boundary identities (FR-061). Not enumerated; see **Open gap**. |
-| surrounding-execution progress | Independent fact with exact scope, authority and boundary identities (FR-061). Not enumerated; see **Open gap**. |
-| surrounding-execution closure | Independent fact with exact scope, authority and boundary identities (FR-061). Not enumerated; see **Open gap**. |
+| decision-scope progress | Independent fact with exact scope, authority and boundary identities, carrying one state from [FR-284](FR-284-scope-progress-and-closure-state.md) (FR-061). |
+| decision-scope closure | Independent fact with exact scope, authority and boundary identities, carrying one state from [FR-284](FR-284-scope-progress-and-closure-state.md) (FR-061). |
+| surrounding-execution progress | Independent fact with exact scope, authority and boundary identities, carrying one state from [FR-284](FR-284-scope-progress-and-closure-state.md) (FR-061). |
+| surrounding-execution closure | Independent fact with exact scope, authority and boundary identities, carrying one state from [FR-284](FR-284-scope-progress-and-closure-state.md) (FR-061). |
 | complete-global-conformance closure | The fifth independent fact, with its exact required execution, branch and workflow closure-premise identities for a global-conformance claim ([FR-247](FR-247-complete-global-conformance-closure-state.md)). |
 | truth | One truth disposition ([FR-242](FR-242-truth-disposition.md)). |
 | settlement basis | Exactly one basis per truth result, plus the exact supporting fact and progress identities ([FR-243](FR-243-settlement-basis.md)). |
@@ -137,6 +139,7 @@ and does not give them label spellings; this artifact does not invent any.
 | FR-240-AC-1 | Every canonical protocol result carries `contractVersion` equal to `quire.protocol.result/v1-draft.1` and kind `ProtocolResult`. | Inspection |
 | FR-240-AC-2 | The enclosing artifact reference's digest is computed over the complete canonical result bytes and does not appear as a field inside those bytes. | Analysis |
 | FR-240-AC-3 | The five progress and closure axes remain independently readable; no axis is populated from completeness or assessment execution. | Analysis |
+| FR-240-AC-6 | Each of the four decision-scope and surrounding-execution axes carries exactly one FR-284 member, and the complete-global-conformance axis carries exactly one FR-247 member. | Analysis |
 | FR-240-AC-4 | Two results are compared over the result identity alone; equal display names or implementations establish neither equality nor independence. | Analysis |
 | FR-240-AC-5 | No result-identity ordering is asserted by this artifact or inferred by a reader. | Inspection |
 
@@ -157,6 +160,8 @@ and does not give them label spellings; this artifact does not invent any.
   carried here.
 - [FR-281](FR-281-claim-strength.md) defines the claim strength vocabulary
   carried here.
+- [FR-284](FR-284-scope-progress-and-closure-state.md) defines the state
+  vocabulary the four progress and closure axes carry.
 
 ## Open gap
 
@@ -169,25 +174,19 @@ and does not give them label spellings; this artifact does not invent any.
    ([FR-249](FR-249-derived-projection-result.md)).
 2. **Identity versus bytes.** No requirement states whether two results bearing
    the same result identity and different canonical bytes are admissible.
-3. **The four progress/closure axes are unenumerated.** FR-061 names
-   decision-scope progress, decision-scope closure, surrounding-execution
-   progress and surrounding-execution closure as facts with "exact scope,
-   authority and boundary identities" but never lists their member states. FR-061
-   uses "decision-scope progress is open" and
-   [FR-094](../../functional/temporal/FR-094-interpret-progress-history-and-closure.md)-AC-3
-   uses "Open/closed decision scope, open/closed surrounding execution", but no
-   requirement declares a closed vocabulary. No member list is invented here.
-4. **Participation is unenumerated at the source.** FR-061 and FR-115 both name
+3. **Participation is unenumerated at the source.** FR-061 and FR-115 both name
    participation as a retained axis and neither lists its members. The only
    enumerated participation vocabulary in the specification is FR-062's **E02
    target** vocabulary (`complete` / `partial` / `not-started` / `not-required` /
    `unknown`), which is the projection target rather than the protocol source
    vocabulary. This artifact does not adopt a target vocabulary as a source one.
-5. The repo review
+4. The repo review
    [`SR-208`](../../reviews/protocol-verification-projection-object.md) FND-001
    already records that "FR-061 names a mapping but defines no total conversion
    for protocol execution states ... into E02's different closed vocabularies."
-   Gaps 3 and 4 are that finding seen from the source side.
+   Gap 3 is that finding seen from the source side; the four progress and closure
+   axes it also covered are now enumerated by
+   [FR-284](FR-284-scope-progress-and-closure-state.md).
 
 ## Status
 
