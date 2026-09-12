@@ -41,6 +41,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-282
     type: references
+  - target: ix://agent-ix/quire-specification/FR-284
+    type: references
 ---
 ## Description
 
@@ -96,6 +98,24 @@ execution or any other progress/closure fact as a substitute for any closure
 axis. A strict reader SHALL refuse an omitted required axis,
 cross-scope substitution, global premise under `not-required`, or global claim
 without its complete-global-conformance closure record.
+
+Each of the four decision-scope and surrounding-execution facts carries exactly
+one state from `open` or `closed`. A progress fact is `closed` when its retained
+progress point covers every required source, subject and valuation through the
+scope's required boundary, and `open` otherwise. A closure fact is `closed` when
+the scope's exact closure authority has closed it, and `open` otherwise. The
+result producer SHALL retain the four states independently; a state read on one
+axis never populates another, and a `closed` progress fact never closes its own
+scope's closure fact.
+
+That two-member vocabulary is not the complete-global-conformance vocabulary.
+`incomplete`, `contradicted` and `not-required` are members of the fifth axis
+only and are never carried on one of the four: a contradicted retained premise is
+reported by supersession, and input completeness is a separate axis. `not-started`,
+`advanced`, `stalled` and `unobserved` are members of no axis in this
+specification. An absent axis compares only to absence, is never defaulted to
+`open` or to `closed`, and remains the omitted required axis a strict reader
+refuses.
 
 Every assumption SHALL retain its exact assumption identity and one state from
 `met`, `not-met`, `unknown` or `not-assessed`. Observation adequacy states
@@ -162,10 +182,15 @@ The strict reader SHALL enforce the following result-combination rules.
 | FR-061-AC-8 | A decisive temporal witness or counterexample may settle truth while the subject remains open only with completed assessment execution, exact complete decision support and proof that every admitted continuation preserves the result; missing support, a non-decisive basis or false closure refuses that combination. | Test (TC-061) |
 | FR-061-AC-9 | A late contradiction to decision support, progress or closure preserves the earlier result bytes and emits a source-bound superseding or invalidating result; it cannot restamp or silently replace the earlier result. | Test (TC-061) |
 | FR-061-AC-10 | Decision-scope progress, decision-scope closure, surrounding-execution progress, surrounding-execution closure and complete-global-conformance closure remain independently readable and scope-bound; independently omitting or cross-wiring each required axis or each required global premise refuses the record or prevents global success without changing an independently settled per-obligation truth. | Test (TC-061) |
+| FR-061-AC-11 | Each of decision-scope progress, decision-scope closure, surrounding-execution progress and surrounding-execution closure carries exactly `open` or `closed`; `incomplete`, `contradicted`, `not-required`, `not-started`, `advanced`, `stalled`, `unobserved` or any other label on one of the four is refused. | Test (TC-061) |
+| FR-061-AC-12 | An omitted one of the four axes is refused rather than defaulted to `open` or to `closed`, and compares only to absence. | Test (TC-061) |
+| FR-061-AC-13 | A `closed` progress fact leaves its own scope's closure fact independently readable and does not close it, and a `closed` closure fact on one scope does not close the other scope. | Test (TC-061) |
 
 ## Dependencies
 
 - [Shared capability dispatcher](../foundation/FR-031-report-requested-capabilities.md).
 - [FR-059](FR-059-assess-finite-global-conformance.md).
 - [FR-060](FR-060-separate-protocol-claims.md).
+- [FR-284](../../objects/protocol/FR-284-scope-progress-and-closure-state.md)
+  types the two-member state vocabulary the four axes carry.
 - [Protocol contract](../../../proposals/quire-v1/protocol-contract.md).

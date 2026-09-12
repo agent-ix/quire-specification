@@ -99,6 +99,31 @@ catalog).
   selected by identity, revision and byte digest, whose domain rule is
   [FR-201](FR-201-canonical-identity-domain.md).
 
+## Scope: producer-minted codes
+
+This vocabulary is the **producer's**. Its members are the code families a
+producer emits when it reports a failure about the source it is processing, and
+[FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)'s
+catalogued-classification obligation is what they answer to.
+
+A code a **consumer** mints for a refusal it raises about its own operations is
+not a member of this table and is not governed by it. Such a code lives in that
+consumer's own namespace, and this specification fixes no spelling convention for
+it. A consumer code whose spelling equals a member spelling here is a different
+code in a different namespace: it never resolves to a member of this table, and
+matching is by selected catalog and exact spelling together, never by spelling
+alone.
+
+That is a scope boundary, not permission to collide. Because resolution is by
+catalog and spelling together, a consumer reusing a published family's spelling
+for a different meaning produces two codes that read alike and resolve
+differently, which is exactly the hazard the catalog's "not normalized aliases"
+rule guards against.
+
+The two-convention divergence recorded below is a divergence *within* the
+producer's own namespace. Resolving it would not settle a consumer's convention,
+and no requirement establishes one.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -107,6 +132,7 @@ catalog).
 | FR-271-AC-2 | A code that does not resolve in the selected catalog compares to absence and is not mapped onto a member by substring or message match. | Analysis |
 | FR-271-AC-3 | The key order over code spellings is not cited as a severity or precedence ordering. | Analysis |
 | FR-271-AC-4 | Localizing the message accompanying a diagnostic leaves its code unchanged. | Analysis |
+| FR-271-AC-5 | A code minted by a consumer for its own refusal does not resolve to a member of this table, even when its spelling equals a member spelling. | Analysis |
 
 ## Open gap: two spelling conventions, no namespace rule
 
