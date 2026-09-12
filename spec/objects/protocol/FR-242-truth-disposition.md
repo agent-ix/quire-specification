@@ -94,3 +94,10 @@ No requirement states whether FR-091's `true`/`false` and FR-092's `true`/`false
 are the same values as FR-061's `satisfied`/`violated`, nor how FR-092's
 "incomplete/refused disposition" reaches the FR-061 truth axis. The divergence is
 recorded, not resolved.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

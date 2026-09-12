@@ -97,3 +97,10 @@ only what cannot stand in for it.
    instance to be bound to is unstated.
 3. No key order over workflow instances can be established until the key
    components are.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

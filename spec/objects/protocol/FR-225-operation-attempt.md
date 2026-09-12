@@ -10,6 +10,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-221
     type: references
+  - target: ix://agent-ix/quire-specification/FR-235
+    type: references
 ---
 # FR-225: Operation attempt
 
@@ -37,6 +39,32 @@ When a communication or business observation is bound to a protocol instance, th
 An attempt establishes no effect: "A payment attempt with no established effect
 remains an attempt and cannot activate effect-dependent compensation"
 (FR-051-AC-3).
+
+### Relation to FR-235
+
+An attempt is typed twice in this layer. This artifact holds the **forward**
+operation attempt of FR-051 — the attempt node that is one of the six distinct
+typed subjects "message, send, receive, delivery, attempt and effect" — and it
+derives its key from the node occurrence of
+[FR-221](FR-221-protocol-node-occurrence.md).
+[FR-235](FR-235-compensation-attempt.md) holds the **compensation** attempt of
+FR-058 — an attempt against a registered compensation obligation
+([FR-233](FR-233-compensation-registration.md)) carrying a per-attempt outcome
+([FR-236](FR-236-compensation-attempt-outcome.md)) — and it declares its key
+**not established**, because FR-058 supplies no components for it.
+
+The two identity treatments are not compatible, and no requirement states
+whether a compensation attempt is a protocol node occurrence at all. This
+artifact does not extend its derived key to FR-235, and FR-235 does not adopt
+one from here.
+
+The worked example FR-058-AC-1, "A failed refund attempt followed by one
+successful retry retains both attempts and one successful refund effect", is a
+*refund* attempt and therefore a compensation attempt: it is owned by
+[FR-235](FR-235-compensation-attempt.md). The retry-discrimination analysis in
+the **Open gap** below is retained here because the node-occurrence key is what
+makes the failure demonstrable, but it is stated about the FR-235 subject and
+FR-235 records the same unresolved question against its own unestablished key.
 
 ## Identity and comparison
 
@@ -81,6 +109,8 @@ remains an attempt and cannot activate effect-dependent compensation"
   requires each attempt identity to be preserved across retry.
 - [FR-049](../../functional/FR-049-bind-native-choreography-syntax.md) states
   that retry bounds count the initial attempt.
+- [FR-235](FR-235-compensation-attempt.md) types the compensation attempt and
+  owns the FR-058-AC-1 refund example.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
 

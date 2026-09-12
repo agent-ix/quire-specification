@@ -12,6 +12,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-230
     type: references
+  - target: ix://agent-ix/quire-specification/FR-244
+    type: references
 ---
 # FR-231: Obligation activation state
 
@@ -40,7 +42,23 @@ stateDiagram-v2
     no_instance --> [*]
 ```
 
-State meanings, each taken from the prose:
+`scope_linked` is **authored scaffolding, not a prose label.** No requirement
+establishes a state named `scope_linked`, and no requirement names any state
+that an obligation occupies before its activation is reported; the diagram needs
+one source for the four cited transitions leaving it, and this artifact supplies
+that source rather than leaving the transitions unrooted. It is disclosed here
+and in the **Open gap** below, it is not part of the activation vocabulary of
+[FR-244](FR-244-activation-state.md), and it is never emitted, compared or
+matched as an activation value. Every other state below is taken from the prose.
+
+The activation label vocabulary itself is **defined by
+[FR-244](FR-244-activation-state.md)**, which holds `triggered`, `inactive` and
+`activation-unknown` as a closed vocabulary extracted from the same FR-055 and
+FR-061 prose. This artifact defers to FR-244 for the labels, their exact
+spellings and their meanings; the entries below record only how this machine
+enters each label and are not a second definition of it.
+
+State meanings, as entered by this machine and defined by FR-244:
 
 - `triggered` — an admitted trigger established the instance. FR-061 requires
   that a satisfied or violated truth has "activation is triggered".
@@ -96,10 +114,23 @@ once reported, so none is drawn here.
 - [FR-055](../../functional/FR-055-activate-protocol-obligations.md).
 - [FR-093](../../functional/FR-093-bind-temporal-activation-and-captures.md).
 - [FR-061](../../functional/FR-061-report-orthogonal-results.md).
+- [FR-244](FR-244-activation-state.md) defines the activation label vocabulary
+  this machine's states are read against.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
 ## Open gap
+
+**`scope_linked` is authored scaffolding that no requirement establishes.** The
+string `scope_linked` appears in no requirement, no proposal and nowhere else in
+this specification. The four transitions leaving it are each cited to FR-055,
+FR-093 or FR-093-AC-5; the state they leave *from* is not, because no
+requirement names a state that an obligation occupies before its activation is
+reported. It exists only so those four cited transitions have one source in the
+diagram. No requirement establishes it, it is not an activation value, and it is
+not a member of the [FR-244](FR-244-activation-state.md) vocabulary. Closing
+this would require a requirement either to name the pre-report state or to state
+that there is none.
 
 Three requirements describe the missing-trigger case, and they do not agree on
 whether activation and assessment-execution/completeness are one axis or two.

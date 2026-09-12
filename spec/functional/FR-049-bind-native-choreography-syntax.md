@@ -29,6 +29,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-228
     type: references
+  - target: ix://agent-ix/quire-specification/FR-239
+    type: references
 ---
 ## Description
 

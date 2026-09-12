@@ -97,3 +97,10 @@ No requirement states what constitutes a role instance's identity.
    unstated.
 4. No key order over role instances can be established until the key components
    are.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

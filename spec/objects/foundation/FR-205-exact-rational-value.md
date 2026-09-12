@@ -35,9 +35,15 @@ floating point and no implicit integer-to-rational conversion occurs (FR-039).
   and `rational(-2,-4)` both normalize to `1/2` and therefore compare equal;
   `rational(0,-7)` normalizes to `0/1` (FR-039-AC-1). The original spelling is
   not part of the key.
-- **Key order** — the exact arithmetic order over the normalized value, and, for
-  collection comparison, lexicographic over (`numerator`, `denominator`) in
-  normalized form. Neither carries causal meaning.
+- **Key order** — lexicographic over (`numerator`, `denominator`) in normalized
+  form. This is the order that decides collection comparison.
+- **Value order** — the exact arithmetic order over the normalized value. It is
+  a *different* order from the key order and the two disagree: `1/3` precedes
+  `1/2` arithmetically, while `(1,2)` precedes `(1,3)` lexicographically. A
+  consumer comparing magnitudes uses the value order; a consumer diffing a
+  collection uses the key order. Neither carries causal meaning.
+- **Causal order** — not applicable. A rational value participates in no causal
+  structure.
 - **Absence** — an absent numerator or denominator compares only to absence. A
   missing expected rational type is refused rather than defaulted: no expected
   rational type, ambiguous expected types, a runtime-expression argument or
@@ -76,3 +82,10 @@ values differ.
 - [FR-206](FR-206-numeric-domain.md) supplies the named type and unit a rational
   is admitted into.
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity discipline.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

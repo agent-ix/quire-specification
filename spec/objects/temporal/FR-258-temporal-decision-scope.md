@@ -12,6 +12,12 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-243
     type: references
+  - target: ix://agent-ix/quire-specification/FR-240
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-261
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-264
+    type: references
 ---
 # FR-258: Temporal decision scope and closure
 
@@ -31,9 +37,9 @@ the surrounding execution as closed."
 | --- | --- | --- |
 | Scope role | FR-094 Inputs, FR-094 Behavior | Either the decision scope or the surrounding execution. The two are never merged. |
 | Scope identity | FR-094 Inputs | "exact decision-scope and surrounding-execution identities". |
-| Progress state | FR-094 Behavior, FR-094-AC-3 | Open or covered through a named point, supplied by a progress assertion ([FR-256](FR-256-temporal-progress-assertion.md)). |
-| Closure state | FR-094 Behavior, FR-094-AC-3 | Open or closed, with its own closure authority. |
-| Input completeness | FR-094 Behavior, FR-094-AC-3 | Complete or incomplete, held distinct from closure. |
+| Progress state | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis, advanced by a progress assertion ([FR-256](FR-256-temporal-progress-assertion.md)). No requirement lists its member states; see **Open gap**. |
+| Closure state | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis carrying its own closure authority. No requirement lists its member states; see **Open gap**. |
+| Input completeness | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis, held distinct from closure. No requirement lists its member states; see **Open gap**. |
 | Exact decision-support set | FR-091 Behavior, FR-094 Behavior | "the exact valuation, capture, clock, progress and profile facts that form its decision-support set". |
 
 FR-094-AC-3 states the independence as a checkable claim: "Open/closed decision
@@ -52,20 +58,35 @@ incomplete input."
 - **Identity kind** — *value*. A scope record has no identity of its own and is
   compared componentwise; the scope it names is identified by FR-094's exact
   scope identities.
-- **Key** — (scope role, scope identity, progress state, closure state, input
-  completeness) together with the exact decision-support set where one is
-  retained. Equality is componentwise over exactly those components and nothing
-  else. Display name, source path, span, message text, locale and rendering
-  never participate
+- **Key** — (scope role, scope identity). Equality is componentwise over exactly
+  those two components and nothing else. Display name, source path, span,
+  message text, locale and rendering never participate
   ([FR-009](../../functional/FR-009-preserve-object-identity.md),
   [FR-047](../../functional/FR-047-emit-typed-located-causes.md)). Scope role is
   a key component because FR-094 forbids substituting one axis for another and
   FR-061 requires that the producer "SHALL NOT use completeness, assessment
   execution or any other progress/closure fact as a substitute for any closure
   axis".
-- **Key order** — lexicographic over the key components, for collection
-  comparison only. It carries no causal meaning and no progression from open
-  towards closed; a closed record does not sort as a successor of an open one.
+
+  **Progress state, closure state, input completeness and the exact
+  decision-support set are outside the key.** They are the mutable facts
+  observed *about* an identified scope, not components of the scope's identity.
+  FR-094 requires that "Progress shall be monotonic within its identified
+  binding" and FR-094-AC-8 requires that a "same-binding progress regression or
+  conflicting assertion revision" be detected as a typed contradiction or
+  refusal. Both rules presuppose that the same scope stays the same subject
+  while its progress advances: if a mutable axis participated in the key, one
+  scope observed at two progress points would compare as two unequal objects, a
+  regression would be a different object rather than a detected contradiction,
+  and monotonicity would have nothing to hold over. This follows the exclusion
+  pattern of [FR-261](../observation/FR-261-observation-binding.md), whose
+  concrete mapping and admitted record set stay outside the binding key, and of
+  [FR-264](../observation/FR-264-membership-rule.md), whose admitted member set
+  stays outside the rule key.
+- **Key order** — lexicographic over (scope role, scope identity), for
+  collection comparison only. It carries no causal meaning and no progression
+  from open towards closed; because no progress or closure fact participates in
+  the key, no key order over these records can express such a progression.
 - **Causal order** — none of its own. Progress advances under the admitted
   causal/sequence order of the named clock binding
   ([FR-252](FR-252-temporal-clock-binding.md)), never derived from key order,
@@ -109,6 +130,8 @@ artifact names its members only where the temporal prose names them.
 | FR-258-AC-3 | An unreported closure or completeness fact compares only to absence and receives no default value. | Analysis |
 | FR-258-AC-4 | The declared key order carries no progression from open towards closed. | Analysis |
 | FR-258-AC-5 | A settled sibling result retains its truth, settlement basis and exact deciding-fact identities unchanged when a resource ceiling stops another obligation. | Analysis |
+| FR-258-AC-6 | One scope observed at two different progress points compares equal on the key, so the later observation is evaluated for monotonicity against the earlier rather than treated as a different scope. | Analysis |
+| FR-258-AC-7 | No progress, closure or completeness member list is asserted by this artifact. | Inspection |
 
 ## Dependencies
 
@@ -120,10 +143,18 @@ artifact names its members only where the temporal prose names them.
   shared result contract these facts are reported through.
 - [FR-256](FR-256-temporal-progress-assertion.md) supplies the assertion that
   advances progress or stamps closure.
+- [FR-240](../protocol/FR-240-canonical-protocol-result.md) records the same
+  absence of a member list for the progress and closure axes from the result
+  side.
+- [FR-261](../observation/FR-261-observation-binding.md) and
+  [FR-264](../observation/FR-264-membership-rule.md) supply the pattern for
+  holding an observed, changing set outside a key.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
 
 ## Open gap
+
+**1. The settlement-basis vocabulary is stated with two different memberships.**
 
 Three requirements state the membership of the settlement-basis vocabulary and
 they do not state the same membership. Two list five members, one lists four and
@@ -162,6 +193,24 @@ decision-support set." Whether `unavailable` is a settlement-basis member that
 FR-091 omits, or a truth state that FR-061 and FR-094 additionally spell as a
 basis, is not stated anywhere. This artifact records both readings and resolves
 neither.
+
+**2. The progress and closure axes have no member list anywhere.**
+
+No requirement declares a closed vocabulary for decision-scope progress,
+decision-scope closure, surrounding-execution progress, surrounding-execution
+closure or input completeness. FR-094-AC-3 uses the phrases "Open/closed
+decision scope, open/closed surrounding execution, completed/failed assessment
+execution and complete/incomplete input" while stating that the axes "remain
+independently represented", and FR-061 requires exact scope, authority and
+boundary identities on each axis; neither passage lists the member states of any
+axis, and no requirement names a covered-through-a-point state. No member list
+is invented here.
+
+[FR-240](../protocol/FR-240-canonical-protocol-result.md) records the same
+absence from the result side — its **Open gap** item on the unenumerated
+progress/closure axes states that FR-061 "never lists their member states ...
+No member list is invented here" — and this artifact records it identically
+rather than supplying members the prose does not have.
 
 ## Status
 

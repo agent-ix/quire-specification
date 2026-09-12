@@ -95,3 +95,10 @@ identity cannot substitute (FR-050-AC-2), and that a duplicate authority refuses
 2. Whether a role's key includes its authority is unstated; only that duplicate
    authorities refuse.
 3. No key order over roles can be established until the key components are.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

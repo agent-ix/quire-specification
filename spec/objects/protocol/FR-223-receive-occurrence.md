@@ -12,6 +12,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-222
     type: references
+  - target: ix://agent-ix/quire-specification/FR-215
+    type: references
 ---
 # FR-223: Receive occurrence
 
@@ -29,8 +31,8 @@ When a communication is bound to a protocol instance, the protocol binder SHALL 
   states that `receive ... via C of SendNode` observes "A distinct receive
   related to the exact concrete send occurrence; duplicate transport receipts do
   not create another node occurrence."
-- **channel** ([FR-216](FR-216-channel-premise.md)) — the declared channel,
-  whose premises are bound by FR-054.
+- **channel** ([FR-215](FR-215-protocol-channel.md)) — the declared channel,
+  whose premise set ([FR-216](FR-216-channel-premise.md)) is bound by FR-054.
 - **typed payload record** — the bound record. A receive alone establishes no
   business effect (FR-051).
 

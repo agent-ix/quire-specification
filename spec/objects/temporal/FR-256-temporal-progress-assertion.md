@@ -10,6 +10,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-255
     type: references
+  - target: ix://agent-ix/quire-specification/FR-266
+    type: references
 ---
 # FR-256: Temporal progress assertion
 
@@ -80,6 +82,39 @@ time passed."
   ([FR-201](../foundation/FR-201-canonical-identity-domain.md)); an identity
   crossing domains is unequal regardless of byte equality.
 
+## Settlement crosses an unresolved boundary-convention conflict
+
+This artifact settles a deadline from a progress point, so the boundary
+convention at the endpoint is load-bearing here. The temporal family and the
+observation family state opposite conventions for it, and no requirement states
+a bridging rule. The conflict is recorded in full by
+[FR-255](FR-255-bounded-temporal-interval.md) **Open gap** and by
+[FR-266](../observation/FR-266-event-time-window.md) **Open gap**; it is
+cross-referenced here, and resolved here no more than there.
+
+The temporal side, which this artifact's progress point settles against, is
+inclusive. FR-091-AC-5: "Timestamped empty existential/universal window truth is
+emitted only after complete progress through the inclusive upper endpoint; an
+eligible event exactly at the deadline participates before settlement."
+FR-094-AC-1: "A timestamped response exactly at an inclusive deadline
+participates before progress settles the window; the same response after the
+deadline does not." FR-092 Behavior: "The timestamped finite-window profile
+shall quantify admitted past instants by inclusive clock distance."
+
+The observation side, which produces the progress assertion this artifact
+consumes, is half-open. FR-112 Behavior: "For a selected FCD 1.2.0 window
+`[start, end)`, the assessment service SHALL include an exactly listed/digested
+member at `start` and exclude one at `end`." FR-113 Behavior: "For a selected
+FCD 1.2.0 half-open window, the observation service SHALL apply progress/closure
+only to admitted members with instants `start <= instant < end`."
+
+A reader settling `W >= D` at an inclusive deadline `D` against a half-open
+producer window is therefore at the exact point of the conflict. No requirement
+states how the inclusive deadline is covered by the half-open window; the only
+statement of a bridging rule is in a proposal, which is not normative
+([observation contract](../../../proposals/quire-v1/observation-contract.md)).
+This artifact adopts neither convention and promotes no proposal text.
+
 ## Regression and contradiction retain earlier bytes
 
 FR-094 states that "A regressing or same-revision conflicting assertion shall
@@ -100,6 +135,7 @@ repair settled history."
 | FR-256-AC-3 | The declared key order over assertions is never cited as the monotone progress order or as a causal relation. | Analysis |
 | FR-256-AC-4 | An end-of-file or closed-labelled input without complete required observations compares as incomplete rather than as a closure assertion. | Analysis |
 | FR-256-AC-5 | An absent named component compares only to absence and is not defaulted to the assessment's own binding. | Analysis |
+| FR-256-AC-6 | Settling an inclusive deadline from a half-open producer window cites the recorded conflict rather than a bridging rule, and no bridging rule is asserted here. | Inspection |
 
 ## Dependencies
 
@@ -110,6 +146,9 @@ repair settled history."
 - [FR-255](FR-255-bounded-temporal-interval.md) supplies the named interval and
   its inclusive boundary.
 - [FR-257](FR-257-history-boundary.md) supplies the named history boundary.
+- [FR-266](../observation/FR-266-event-time-window.md) records the half-open
+  window convention this artifact settles against, and the conflict with the
+  inclusive temporal convention.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
 

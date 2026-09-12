@@ -61,3 +61,10 @@ identity and one state from `met`, `not-met`, `unknown` or `not-assessed`."
   carries it to the portable verification boundary.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

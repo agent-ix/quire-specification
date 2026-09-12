@@ -99,3 +99,10 @@ and records that FR-091 does not name the fifth. It adds nothing to FR-091.
 FR-091 lists four members where FR-061, FR-094-AC-7 and FR-115 list five. No
 requirement states whether FR-091's evaluator may emit `unavailable`. Both lists
 are quoted above; this artifact does not merge them.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

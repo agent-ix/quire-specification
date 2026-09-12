@@ -12,6 +12,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-201
     type: references
+  - target: ix://agent-ix/quire-specification/FR-282
+    type: references
 ---
 # FR-248: Decision-support record
 
@@ -25,11 +27,15 @@ When a truth result settles, the result producer SHALL retain for every decision
 | --- | --- |
 | oracle identity | The exact oracle the record identifies (FR-061). FR-062 derives every E02 oracle contribution for a `satisfied` or `violated` projection from these exact identities. |
 | observation identity | The exact observation the record identifies (FR-061). |
-| dependence relation | Exactly one of `independent`, `shared`, `derived` or `unknown` (FR-061). See **Dependence relation** below. |
+| dependence relation | Exactly one of `independent`, `shared`, `derived` or `unknown`, as defined by [FR-282](FR-282-dependence-relation.md) (FR-061). See **Dependence relation** below. |
 | predecessor | Required by a `derived` relation: "A derived relation SHALL identify its exact predecessor" (FR-061). A missing, cyclic or self-referential predecessor is refused (FR-061, FR-061-AC-7). |
 | dependence group | Required by a `shared` relation: "a shared relation SHALL identify its dependence group" (FR-061). |
 
 ## Dependence relation
+
+The vocabulary is **defined by
+[FR-282](FR-282-dependence-relation.md)**; the table below is repeated here only
+as a reading aid, and where the two differ FR-282 governs.
 
 FR-061 states the closed set verbatim: "Every retained decision-support record
 SHALL identify its exact oracle and observation plus one dependence relation from
@@ -45,9 +51,6 @@ relation."
 | `derived` | The record identifies its exact predecessor (FR-061). |
 | `unknown` | The dependence relation is not known (FR-061). |
 
-This table records the vocabulary in place; because the parent batch allocated
-ten identifiers for sixteen typed nouns, the relation has no separate
-`enumeration` artifact yet, and this artifact does not claim to be one.
 
 ## Identity and comparison
 
@@ -101,3 +104,12 @@ ten identifiers for sixteen typed nouns, the relation has no separate
   discipline.
 - [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
   domain vocabulary.
+- [FR-282](FR-282-dependence-relation.md) defines the dependence relation
+  vocabulary carried on this record.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

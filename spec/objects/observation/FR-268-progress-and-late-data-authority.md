@@ -10,6 +10,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-201
     type: references
+  - target: ix://agent-ix/quire-specification/FR-255
+    type: references
 ---
 # FR-268: Progress and late-data authority
 
@@ -78,6 +80,39 @@ classification is a retained fact about the event; it does not rewrite the
 settled result it arrives after, and it does not restart the assessment
 (FR-113-AC-3, FR-113-AC-4).
 
+## Settlement crosses an unresolved boundary-convention conflict
+
+This artifact decides when silence settles a deadline, so the boundary
+convention at that deadline is load-bearing here. The observation family and the
+temporal family state opposite conventions for it, and no requirement states a
+bridging rule. The conflict is recorded in full by
+[FR-266](FR-266-event-time-window.md) **Open gap** and by
+[FR-255](../temporal/FR-255-bounded-temporal-interval.md) **Open gap**; it is
+cross-referenced here, and resolved here no more than there.
+
+The observation side, which bounds this authority's applicability, is half-open.
+FR-113 Behavior: "For a selected FCD 1.2.0 half-open window, the observation
+service SHALL apply progress/closure only to admitted members with instants
+`start <= instant < end`." FR-112 Behavior: "For a selected FCD 1.2.0 window
+`[start, end)`, the assessment service SHALL include an exactly listed/digested
+member at `start` and exclude one at `end`; the latter can participate only in a
+separately selected later window."
+
+The temporal side, whose deadlines this authority is asked to cover, is
+inclusive. FR-091-AC-5: "an eligible event exactly at the deadline participates
+before settlement." FR-094-AC-1: "A timestamped response exactly at an inclusive
+deadline participates before progress settles the window; the same response
+after the deadline does not." FR-092 Behavior: "The timestamped finite-window
+profile shall quantify admitted past instants by inclusive clock distance."
+
+A witness at a native inclusive deadline is therefore inside the temporal
+family's interval and outside this family's window, and a reader deciding
+whether declared authority "covers that deadline" is at the exact point of the
+conflict. The only statement of a bridging rule is in a proposal, which is not
+normative
+([observation contract](../../../proposals/quire-v1/observation-contract.md)).
+This artifact adopts neither convention and promotes no proposal text.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -86,6 +121,7 @@ settled result it arrives after, and it does not restart the assessment
 | FR-268-AC-2 | Two authorities differing in definition identity, revision or byte digest compare unequal. | Analysis |
 | FR-268-AC-3 | An event classified late against the selected cutoff leaves the previously settled result's bytes unchanged. | Analysis |
 | FR-268-AC-4 | A mismatched assertion definition, scope, clock, source set or restoration basis compares only to absence for settlement purposes and does not restart an assessment. | Analysis |
+| FR-268-AC-5 | Deciding whether declared authority covers a native inclusive deadline cites the recorded boundary-convention conflict rather than a bridging rule, and no bridging rule is asserted here. | Inspection |
 
 ## Dependencies
 
@@ -96,6 +132,9 @@ settled result it arrives after, and it does not restart the assessment
   bounds progress and closure applicability.
 - [FR-267](FR-267-observation-time-facts.md) types the time facts the authority
   is interpreted against.
+- [FR-255](../temporal/FR-255-bounded-temporal-interval.md) records the
+  inclusive temporal convention this authority is asked to cover, and the
+  conflict with the half-open observation convention.
 - [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
   domain rule.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity

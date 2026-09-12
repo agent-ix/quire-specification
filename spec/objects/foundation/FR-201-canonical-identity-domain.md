@@ -43,6 +43,10 @@ equality.
 - **Absence** — a digest supplied without a selected domain has an absent
   domain. An absent domain compares only to absence; it is never defaulted to
   `raw-artifact-digest` or to any other member.
+- **Causal order** — not applicable. A domain label participates in no causal
+  structure.
+- **Digest domain** — not applicable to the label itself. This artifact *is* the
+  vocabulary of digest domains; it does not carry one.
 - **Cross-domain rule** — two identities bearing different domain labels are
   unequal. Byte equality of their digests does not make them equal, and a raw
   `sha256` digest cannot substitute for `sha256-jcs` (FR-018-AC-2).
@@ -91,3 +95,10 @@ FR-015 names "Filament fingerprints" in its behavior and "the package
 fingerprint" in FR-015-AC-3. No requirement states whether these are the same
 domain or two domains. Both labels are retained here as separate members
 pending an owner ruling; this artifact does not merge them.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

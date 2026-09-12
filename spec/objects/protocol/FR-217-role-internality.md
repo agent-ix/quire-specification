@@ -78,3 +78,10 @@ channel/component reference rather than becoming a participant role." No
 requirement states whether a participant is a role, a role instance, or a
 distinct kind, so this artifact classifies roles only and leaves `participant`
 untyped.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

@@ -10,7 +10,7 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-221
     type: references
-  - target: ix://agent-ix/quire-specification/FR-216
+  - target: ix://agent-ix/quire-specification/FR-215
     type: references
 ---
 # FR-222: Send occurrence
@@ -25,10 +25,11 @@ When a communication is bound to a protocol instance, the protocol binder SHALL 
   authored protocol node, so it carries the node occurrence identity. FR-049-AC-2
   keeps send references distinct from receive, delivery, operation attempt,
   effect and compensation references.
-- **channel** ([FR-216](FR-216-channel-premise.md)) — the declared channel the
+- **channel** ([FR-215](FR-215-protocol-channel.md)) — the declared channel the
   send is made on. FR-054 binds the channel's sender, receiver, message types,
   ordering policy, delivery cardinality and duplication premises as explicit
-  conformance assumptions.
+  conformance assumptions, held as the channel's premise set
+  ([FR-216](FR-216-channel-premise.md)).
 - **message** — the authored typed communication obligation the send carries.
   FR-054-AC-1 calls it "the single authored message/effect obligation".
 - **typed payload record** — the bound record. The payload alone establishes

@@ -10,6 +10,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-201
     type: references
+  - target: ix://agent-ix/quire-specification/FR-283
+    type: references
 ---
 # FR-249: Derived portable projection result
 
@@ -65,6 +67,11 @@ When a canonical protocol result is projected to portable verification, the proj
 
 ## Refusal codes
 
+The refusal code vocabulary is **defined by
+[FR-283](FR-283-projection-refusal-code.md)**; the table below is repeated here
+only as a reading aid, and where the two differ FR-283 governs. One row does
+differ, and no requirement settles it; see **Open gap**.
+
 FR-062 Outputs states the stable codes verbatim: "one refusal carrying a stable
 code from `invalid-source-result`, `unsupported-source-version`,
 `unsupported-target-version`, `identity-mismatch`, `unrepresented-source-state` or
@@ -79,10 +86,7 @@ code from `invalid-source-result`, `unsupported-source-version`,
 | `unrepresented-source-state` | A source state has no mapping in the selected table (FR-062). |
 | `finding-loss` | The output would lose an applicable quire-verification FR-007 finding (FR-062). |
 
-A refusal is emitted without a `TechniqueResult` (FR-062, FR-062-AC-4). Because
-the parent batch allocated ten identifiers for sixteen typed nouns, these codes
-have no separate `enumeration` artifact yet; this artifact records them in place
-and does not claim to be one.
+A refusal is emitted without a `TechniqueResult` (FR-062, FR-062-AC-4).
 
 ## Retention boundary
 
@@ -115,8 +119,36 @@ emit a sufficiency decision."
   discipline.
 - [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
   domain vocabulary.
+- [FR-283](FR-283-projection-refusal-code.md) defines the refusal code
+  vocabulary recorded above.
 
 ## Open gap
+
+**No requirement states which refusal code a recomputed-digest mismatch
+receives, and the two artifacts that record the codes assign it differently.**
+FR-062 requires the adapter to "validate the canonical protocol result and
+recompute its `sha256-jcs` digest before mapping it", and FR-062-AC-2 states
+that "substituting any identity or digest refuses the projection"; neither names
+the code that refusal carries. FR-062-AC-4 enumerates the refused conditions as
+"An invalid source, unknown source or target revision or required feature,
+unrepresented source state, missing exact context, or projection that would lose
+an applicable FR-007 finding", and a recomputed digest that does not match the
+one carried in `sourceResultRef` is none of those conditions as written. The two
+assignments standing in this layer are:
+
+- This artifact, under `identity-mismatch`: "An exact context or
+  canonical-result reference is missing or conflicting; substituting any
+  identity or digest refuses the projection (FR-062, FR-062-AC-2)."
+- [FR-283](FR-283-projection-refusal-code.md), under `invalid-source-result`:
+  "The canonical protocol result did not validate, or its recomputed
+  `sha256-jcs` digest did not match, before mapping was attempted (FR-062)."
+
+They are not reconcilable by reading: a strict reader receiving a refusal cannot
+tell from the code whether the source failed its reader or its digest
+disagreed, and a consumer matching on either code alone will miss the case. No
+requirement resolves which code a recomputed-digest mismatch receives. This
+artifact records both assignments and picks neither; closing it requires an
+owner ruling and a requirement that names the code.
 
 The repo review
 [`SR-208`](../../reviews/protocol-verification-projection-object.md) FND-001
@@ -130,3 +162,10 @@ requirement enumerates: participation (see
 progress/closure axes (open gap 3). Totality over an unenumerated source domain is
 not established here, and this artifact does not supply the missing source
 vocabularies.
+
+## Status
+
+Draft. This artifact records existing meaning structurally. It establishes no
+new obligation and claims no implementation coverage. Where the prose it
+extracts from does not establish an identity, key or order, that absence is
+recorded here rather than supplied.

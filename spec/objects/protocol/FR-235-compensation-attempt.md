@@ -10,6 +10,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-236
     type: references
+  - target: ix://agent-ix/quire-specification/FR-225
+    type: references
 ---
 # FR-235: Compensation attempt
 
@@ -31,7 +33,32 @@ receive, delivery, attempt and effect as distinct typed subjects".
 | Attempt outcome | FR-058 Outputs | [FR-236](FR-236-compensation-attempt-outcome.md). |
 
 FR-058-AC-1 states that "A failed refund attempt followed by one successful retry
-retains both attempts and one successful refund effect."
+retains both attempts and one successful refund effect." That refund attempt is
+a compensation attempt, so **this artifact owns the FR-058-AC-1 example**.
+
+### Relation to FR-225
+
+An attempt is typed twice in this layer. This artifact holds the **compensation**
+attempt of FR-058: an attempt against a registered compensation obligation
+([FR-233](FR-233-compensation-registration.md)) carrying a per-attempt outcome
+([FR-236](FR-236-compensation-attempt-outcome.md)).
+[FR-225](FR-225-operation-attempt.md) holds the **forward** operation attempt of
+FR-051, one of the six distinct typed subjects "message, send, receive,
+delivery, attempt and effect", and it derives its key from the node occurrence of
+[FR-221](FR-221-protocol-node-occurrence.md).
+
+The two identity treatments differ and are not reconciled: FR-225 declares a
+derived node-occurrence key, and this artifact declares its key **not
+established**, because FR-058 supplies no components for a compensation attempt
+and no requirement states that a compensation attempt is a protocol node
+occurrence. No key is adopted from FR-225 here, and neither artifact is merged
+into the other.
+
+FR-225 retains a retry-discrimination analysis in its own open gap, because its
+node-occurrence key is what makes the failure demonstrable; the subject of that
+analysis is the FR-058-AC-1 refund attempt owned here, and the same unresolved
+question is recorded against this artifact's unestablished key in the **Open
+gap** below.
 
 ## Identity and comparison
 
@@ -82,6 +109,8 @@ retains both attempts and one successful refund effect."
 - [FR-051](../../functional/FR-051-preserve-communication-identities.md).
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
+- [FR-225](FR-225-operation-attempt.md) types the forward operation attempt this
+  one is held distinct from.
 
 ## Open gap
 
@@ -94,6 +123,12 @@ establish:
   repeated receipt, retried attempt and duplicate business effect" without
   stating the components that separate them.
 - **Key order** — no order follows, since the components are unfixed.
+
+FR-058-AC-1 makes this concrete for the example this artifact owns: a failed
+refund attempt and its successful retry must both be retained, and no stated
+component separates them. [FR-225](FR-225-operation-attempt.md) records the same
+failure from the other side, where the node-occurrence key is constant across a
+retry.
 
 No key, order or identity kind is invented here.
 

@@ -48,7 +48,10 @@ delivery, trace identifier or equal payload alone", and FR-049-AC-2 states that
   key and nothing else. Display name, source path, span, message text, locale
   and rendering never participate. Neither does the payload nor the trace
   identifier, both excluded by FR-051 and FR-051-AC-4. Whether the establishing
-  attempt is also a key component is not stated; see **Open gap**.
+  attempt is also a key component is not stated. **This key is constant across
+  two effect claims at one static node within one workflow instance, so two
+  duplicate effects compare equal under it and the duplicate the evaluator is
+  required to detect is undetectable**; see **Open gap**.
 - **Key order** — none is established. No requirement fixes a total order over
   effects. FR-058-AC-3 states that "Two related partial refunds satisfy the
   captured amount only under a complete declared population with exact
@@ -74,6 +77,7 @@ delivery, trace identifier or equal payload alone", and FR-049-AC-2 states that
 | FR-226-AC-2 | A successful transport status, a repeated delivery, a trace identifier and an equal payload each fail to establish an effect. | Analysis |
 | FR-226-AC-3 | No requirement text supplies a component tuple by which two effect claims are judged to be the same effect. | Inspection |
 | FR-226-AC-4 | No requirement text supplies a total order over effects. | Inspection |
+| FR-226-AC-5 | Two effect claims at one static effect node within one workflow instance and one iteration identity compare equal under the declared key, so the FR-058 duplicate-effect outcome is not reachable from the key alone. | Analysis |
 
 ## Dependencies
 
@@ -88,9 +92,40 @@ delivery, trace identifier or equal payload alone", and FR-049-AC-2 states that
 
 ## Open gap
 
-**"Duplicate business effect" is a required outcome and no requirement states
-when two effects are the same effect.** The detection depends on an equality the
-prose does not define.
+**The declared key cannot detect a duplicate business effect, which FR-058
+requires the evaluator to detect.** This is not merely an undefined equality; it
+is a demonstrated failure of the key this artifact declares.
+
+The declared key is the protocol node occurrence triple (`static declaration
+path`, `workflow instance identity`, `iteration identity`) held by
+[FR-221](FR-221-protocol-node-occurrence.md), because that triple is the only
+identity the prose supplies for an effect. Every component of that triple is
+**constant** across two effect claims made at one static effect node within one
+workflow instance and one iteration identity: the static declaration path is the
+same authored node, the workflow instance identity is the same instance, and the
+iteration identity is the same ordinal or is absent for both. Two duplicate
+effect claims therefore compare **equal** under the declared key, and a
+duplicate is exactly the case in which two claims arrive at one node in one
+instance.
+
+FR-058 requires that "The evaluator SHALL distinguish a repeated receipt,
+retried attempt and duplicate business effect", and FR-051-AC-2 requires that
+relabeling a duplicate delivery as a second business effect "refuses the binding
+or yields the authored duplicate-effect violation". Under the declared key there
+is no second effect to refuse or to report: the second claim is equal to the
+first, so it is the same effect, and the required outcome is unreachable. A
+duplicate business effect is not merely undefined here — **it is undetectable**,
+and any implementation that detects one is using a discriminator no requirement
+supplies.
+
+No discriminator is invented here. The establishing attempt
+([FR-225](FR-225-operation-attempt.md)) is the obvious candidate and the prose
+does not state that it is a key component — and FR-225 records that its own key
+does not separate two attempts of one static attempt node either, so that
+candidate does not by itself restore detection. The payload and the trace
+identifier are excluded by FR-051 and FR-051-AC-4, and the timestamp by FR-113.
+
+The remainder of this gap is the equality the prose does not define.
 
 - FR-051-AC-2: "Relabeling a duplicate delivery as a second business effect
   refuses the binding or yields the authored duplicate-effect violation."
