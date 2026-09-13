@@ -14,7 +14,7 @@ relationships:
 
 ## Description
 
-When a source unit selects the adopted native-source definition, the frontend shall enforce that definition's admission rules before producing a checked clause.
+When a source unit selects an adopted native definition, the frontend shall enforce that definition's admission rules before producing a checked clause.
 
 ## Inputs
 
@@ -28,8 +28,10 @@ refusal retaining the original source and rejected construct/declaration.
 
 ## Behavior
 
-The replacement candidate is specified in the
-[native-source amendment](../../../proposals/native-source-1-draft/README.md).
+The carried-forward admission baseline is preserved in the superseded
+[native-source amendment](../../../proposals/native-source-1-draft/README.md)
+and refined by the composed state definitions selected in
+[AD-003](../../assurance/AD-003-native-quire-language-charter.md).
 The frontend shall refuse every deferred source construct even inside an
 unreachable branch. A backend's wider capability cannot admit a source construct.
 The frontend shall require declared finite numeric and collection bounds rather
@@ -46,11 +48,12 @@ The frontend shall reject duplicate clause authorities, stale source bindings
 and mismatched evaluation anchors before lowering. Invalid or unsupported input
 does not produce a Boolean; runtime exhaustion remains incomplete.
 
-The adopted state-finite/0-draft rules and fixtures remain historical evidence.
+The adopted `state-finite/0-draft` rules and fixtures remain historical evidence.
 Their division/remainder, object/record equality, reachability and pre(parameter)
-rules do not establish those capabilities in the replacement candidate. The
-candidate becomes an admitted implementation profile only through explicit
-definition adoption and corresponding compiler support.
+rules do not establish those capabilities in the composed profiles. The
+superseded `state-finite/1-draft` identity shall not be admitted or aliased.
+Each composed definition becomes an admitted implementation profile only through
+its owning semantic acceptance and corresponding compiler support.
 
 ## Acceptance Criteria
 
@@ -69,8 +72,11 @@ definition adoption and corresponding compiler support.
 - [FR-003](FR-003-bind-source-correspondence.md): original byte/span correspondence.
 - [NFR-001](../../non-functional/NFR-001-preserve-versioned-meaning.md): historical meaning.
 - [Amendment](../../../proposals/native-source-1-draft/README.md): carried-forward table, anchor rules and open design gate.
+- [AD-003](../../assurance/AD-003-native-quire-language-charter.md): accepted profile and support-stage boundaries.
 
 ## Status
 
-Definition candidate under FS01/compiler #30. The acceptance criteria are
-implementation obligations, not claims that the current compiler satisfies them.
+Accepted FS01 admission constraint for composed state definitions. The acceptance
+criteria remain implementation obligations; merged bounded-scalar/query/graph
+behavior is partial evidence and does not establish every producer, backend or
+qualification boundary.

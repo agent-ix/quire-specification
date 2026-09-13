@@ -1,14 +1,15 @@
 # ADR-0053 producer amendment handoff
 
-FS01 proposal under specification #2, for the current Contract IR/ADR owner.
-This file supplies reviewable replacement text and disposition instructions;
-it does not edit the producer repository or claim its ADR has been accepted.
+Completed FS01 producer handoff. Contract-IR PR #72 applied this disposition and
+accepted ADR-0053 at `7d4901526bf2ec64c3c546c1781d364fdc4c3054`.
+This file preserves the reviewed handoff and decision correspondence; the owning
+ADR is now authoritative.
 
 Decision record: [owner ruling](https://github.com/agent-ix/quire-contract-ir/issues/53#issuecomment-5611950216),
 with the [emitting/dependency clarification](https://github.com/agent-ix/quire-contract-ir/issues/53#issuecomment-5611958246)
 and [closed-#54 correction](https://github.com/agent-ix/quire-contract-ir/issues/53#issuecomment-5612031500).
 
-## Proposed replacement decision text
+## Applied replacement decision text
 
 Adopt native Quire as the single editable formal-clause source language. Its
 definition and profile identity are owned by FS01; admission and qualification
@@ -34,13 +35,13 @@ Temporal remains behind the separately specified tl-* bridge. Criterion
 eligibility and coverage states remain language-neutral and do not require
 every criterion to be formalized.
 
-## Edits to apply in the owning ADR
+## Applied disposition in the owning ADR
 
-| Existing section | Required disposition |
+| Existing section | Applied disposition |
 | --- | --- |
 | Title, Status and decision table | Replace OCL-first recommendation and absent-decision wording with native-source ruling; cite its record. Acceptance records the owner's actual ruling, not completed compiler qualification. |
 | Context/model boundary | Reconcile with already accepted ADR-0054. Existing formal APIs remain usable; do not recreate a universal Filament reader prerequisite or conflate archetypes with formal-model semantics. |
-| Decision proposed for approval | Use the replacement text above. Refer to the reviewed FS01 identity; the candidate state-finite/1-draft is not yet an adopted compiler profile. |
+| Decision proposed for approval | Replaced with the native-source decision. The superseded `state-finite/1-draft` candidate was not adopted as a compiler profile. |
 | Source authority, eligibility, shared admission and anchors | Preserve the binding rules. Change source-specific references only where necessary to name native Quire; do not weaken the refusal or provenance obligations. |
 | Separate #54 reference/bounds decision | Preserve the gate but state #54 is closed. Any later reference environment or IR extension needs its own ticket; neither is admitted by this first profile. |
 | OCL, SysML and FRETish profile sections | Retain as output mapping contracts under FS06, with explicit loss/refusal and semantic-correspondence obligations. Remove wording that enables them as source frontends or requires foreign-runtime qualification. |
@@ -48,5 +49,5 @@ every criterion to be formalized.
 | Tool table | Keep inspected pins and license facts as historical research. Foreign CLI/build commands are not runnable qualification prerequisites. Retain the pilot's LGPL-3.0-or-later correction. |
 
 Public promotion of this private packet, its links or rationale is not implied.
-The ADR owner must apply the producer change within its own disclosure and review
-scope. C/D coordination owns the producer routing; A retains FS01 and compiler #30.
+Contract-IR owns future ADR amendments; FS01 retains only the language/profile
+decision correspondence recorded here.
