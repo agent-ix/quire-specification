@@ -2,7 +2,7 @@
 id: Task-004
 title: "Implement total-Boolean predicate projection"
 type: Task
-status: not_started
+status: blocked
 track: B
 priority: P0
 relationships:

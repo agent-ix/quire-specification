@@ -102,7 +102,7 @@ not an integration gate.
 | --- | --- |
 | A | Shared grammar, predicates, package stages, producer/native correspondence and choreography surface |
 | B | Protocol/results and resource-inventory correction through `57ddca2`; explicit global-conformance closure at `fe31710` |
-| D | External FR-100–105, producer contract and Plan-016 at [6259d3a](https://github.com/agent-ix/filament-core-data/tree/6259d3a5b99088740df9bcc8e8d60f3720aaa603); capability ledger through `199adc3` |
+| D | External FR-106–111 and the baseline 1.2 producer contract from [PR #97 merge `1d901d7`](https://github.com/agent-ix/filament-core-data/tree/1d901d716eed003cb034a624f56bb46e2b8c2a94); FCD #95 acceptance and implementation remain open |
 | E | Temporal requirement/case/method corrections through `c6a8905` |
 | F | Result preservation, resource/provenance controls and all-clock range mapping through `b7381fd` |
 
@@ -113,7 +113,7 @@ following are subsequent correction dispositions for PR review:
 | Finding | Correction |
 | --- | --- |
 | SR-400 FND-001 | Delivered families and current ownership are reflected in the draft and master index. |
-| SR-401 FND-001/002 | D FR-102 and F FR-114 retain decisive truth with exact support despite unrelated incomplete observations. |
+| SR-401 FND-001/002 | D FR-108 and F FR-114 retain decisive truth with exact support despite unrelated incomplete observations. |
 | SR-401 FND-003; SR-402 FND-001; SR-406 FND-002 | Exact producer decimal semantics, separate static/runtime prerequisites and explicit producer/native digest correspondence. |
 | SR-406 FND-001 | F's range correspondence and TC-142/143 preserve all three clocks, record/member identity and half-open versus inclusive boundaries. |
 | SR-403 FND-001 | Current unsuffixed definitions contain the latest corrected meaning and link their current dependencies; the observation contract explicitly uses D's corrected producer input. Immutable runtime selections remain required; the draft has no copied checksum selectors. |
