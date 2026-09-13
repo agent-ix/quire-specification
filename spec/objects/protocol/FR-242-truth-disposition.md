@@ -44,28 +44,15 @@ When a result reports the truth of an assessed obligation, the strict reader SHA
   [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md)
   for the containing result's digest domain.
 
-## Recorded divergence: the truth spelling is not uniform
+## Temporal boundary correspondence
 
-Three requirements state the truth vocabulary differently and none
-cross-references the others. This artifact records all three and reconciles none.
-
-- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) result-combination
-  rules and
-  [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
-  mapping table: "Truth `satisfied` / `violated` / `pending`" and "Truth
-  `unavailable`".
-- [FR-091](../../functional/temporal/FR-091-evaluate-bounded-future.md) Outputs: "A true,
-  false or pending temporal truth disposition with the exact decision scope,
-  settlement basis and decision-support identities needed by the shared result
-  contract".
-- [FR-092](../../functional/temporal/FR-092-evaluate-bounded-past.md) Outputs: "A true or
-  false past-time result, or a separate incomplete/refused disposition".
-
-FR-091 explicitly feeds the shared result contract that FR-061 owns, so the
-`true`/`false` spelling and the `satisfied`/`violated` spelling meet at the same
-boundary. No requirement states that they are the same vocabulary, and this
-artifact does not assert it. Members are listed here only under the FR-061
-spelling, because that is the spelling FR-061 and FR-062 state verbatim.
+FR-091 and FR-092 use this vocabulary directly for completed temporal truths:
+`satisfied`, `violated` and, where future progress remains open, `pending`.
+Their incomplete or refused evaluator outcomes carry no truth fact at the lower
+boundary. The canonical FR-061 adapter represents that absence as the supplied
+value `unavailable` while retaining the distinct execution disposition and
+missing premise. It never treats absence itself as `unavailable` before that
+explicit adaptation.
 
 ## Acceptance Criteria
 
@@ -74,7 +61,7 @@ spelling, because that is the spelling FR-061 and FR-062 state verbatim.
 | FR-242-AC-1 | Each member's value equals the exact label string in the table. | Inspection |
 | FR-242-AC-2 | `pending`, `unavailable` and an absent truth are each distinguishable from `satisfied` and from each other without diagnostic prose. | Analysis |
 | FR-242-AC-3 | An absent truth compares only to absence and is never defaulted to `unavailable`. | Analysis |
-| FR-242-AC-4 | The FR-091/FR-092 `true`/`false` spelling is not silently matched against `satisfied`/`violated`. | Inspection |
+| FR-242-AC-4 | FR-091 and FR-092 emit the canonical `satisfied`/`violated` spellings for completed truths, and their non-completed lower outcomes reach this axis only through the explicit `unavailable` adaptation. | Inspection |
 
 ## Dependencies
 
@@ -83,21 +70,12 @@ spelling, because that is the spelling FR-061 and FR-062 state verbatim.
 - [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
   establishes the projection of each truth state.
 - [FR-091](../../functional/temporal/FR-091-evaluate-bounded-future.md) and
-  [FR-092](../../functional/temporal/FR-092-evaluate-bounded-past.md) supply the divergent
-  temporal spellings recorded above.
+  [FR-092](../../functional/temporal/FR-092-evaluate-bounded-past.md) supply the temporal
+  outcomes and explicit lower-boundary adaptation stated above.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
-## Open gap
-
-No requirement states whether FR-091's `true`/`false` and FR-092's `true`/`false`
-are the same values as FR-061's `satisfied`/`violated`, nor how FR-092's
-"incomplete/refused disposition" reaches the FR-061 truth axis. The divergence is
-recorded, not resolved.
-
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Accepted FS02 vocabulary ruling. These four labels are authoritative at the
+canonical-result boundary and the temporal correspondence is explicit.

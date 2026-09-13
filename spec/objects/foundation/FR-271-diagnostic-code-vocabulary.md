@@ -13,7 +13,7 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-009
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-062
-    type: specifies
+    type: references
 ---
 # FR-271: Diagnostic code vocabulary
 
@@ -120,9 +120,9 @@ for a different meaning produces two codes that read alike and resolve
 differently, which is exactly the hazard the catalog's "not normalized aliases"
 rule guards against.
 
-The two-convention divergence recorded below is a divergence *within* the
-producer's own namespace. Resolving it would not settle a consumer's convention,
-and no requirement establishes one.
+FR-283 now selects the separate projection-refusal catalog and its exact
+kebab-case spellings. That resolves the cross-namespace question without
+settling unselected native literals or treating spelling as a global convention.
 
 ## Acceptance Criteria
 
@@ -134,29 +134,26 @@ and no requirement establishes one.
 | FR-271-AC-4 | Localizing the message accompanying a diagnostic leaves its code unchanged. | Analysis |
 | FR-271-AC-5 | A code minted by a consumer for its own refusal does not resolve to a member of this table, even when its spelling equals a member spelling. | Analysis |
 
-## Open gap: two spelling conventions, no namespace rule
+## Resolved projection namespace; remaining native membership gap
 
 The catalog makes spelling load-bearing — "Hyphenated and underscored spellings
 stay exact; they are not normalized aliases" — while requirements use two
-conventions and name no catalog selection for either:
+conventions:
 
 - **Bare snake_case literals.** FR-003-AC-2: "A span splitting a UTF-8 scalar
   receives invalid_source_map." FR-008-AC-4: "Missing sequence data receives
   unavailable_observation." FR-009-AC-3: "Coincident object labels from
   different universes receive foreign_reference."
-- **Kebab-case literals.** FR-062 Outputs: "one refusal carrying a stable code
-  from `invalid-source-result`, `unsupported-source-version`,
-  `unsupported-target-version`, `identity-mismatch`, `unrepresented-source-state`
-  or `finding-loss`".
+- **Kebab-case projection literals.** FR-062 Outputs names six values and FR-283
+  now places them in `quire.protocol.projection-refusal/v1-draft.1`. They are
+  outside this native producer catalog and have no normalized aliases here.
 
-Both conventions are therefore load-bearing, but **no requirement states which
-convention belongs to which namespace**, and no requirement places
-`invalid_source_map`, `foreign_reference` or any FR-062 literal in a selected
-catalog. `unavailable_observation` is spelled identically in FR-008-AC-4 and in
-the proposed catalog; whether that is the same code or a coincident spelling in
-a second namespace is not stated. None of these FR-spelled literals is listed as
-a member above, because no prose establishes their membership. This artifact
-records the divergence and resolves neither convention nor membership.
+The remaining gap is native-only: no requirement places `invalid_source_map` or
+`foreign_reference` in a selected native catalog. `unavailable_observation` is
+spelled identically in FR-008-AC-4 and the proposed catalog, but its selection
+authority is still not stated. Those literals are not added to this table by
+coincidental spelling. FR-283 resolves only its own six-member projection
+namespace.
 
 ## Open gap: retained codes named by meaning only
 
@@ -179,6 +176,8 @@ spelling for them would add members the prose does not name.
   is the proposed, non-adopted source of the members.
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
+- [FR-283](../protocol/FR-283-projection-refusal-code.md) defines the separate
+  projection-refusal namespace.
 
 ## Status
 

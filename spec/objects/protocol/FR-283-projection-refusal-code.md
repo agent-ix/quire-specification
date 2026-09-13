@@ -13,6 +13,10 @@ relationships:
 
 When a projection adapter refuses to map a protocol result to portable verification, the adapter SHALL emit exactly one code from this closed vocabulary rather than an English explanation.
 
+This vocabulary is selected as
+`quire.protocol.projection-refusal/v1-draft.1`. Its kebab-case members are exact
+values in that catalog, not aliases for native producer codes in another catalog.
+
 ## Values
 
 | Value | Description |
@@ -20,20 +24,14 @@ When a projection adapter refuses to map a protocol result to portable verificat
 | `invalid-source-result` | The canonical protocol result did not validate, or its recomputed `sha256-jcs` digest did not match, before mapping was attempted (FR-062). |
 | `unsupported-source-version` | The source result's contract version is not one this adapter maps from (FR-062). |
 | `unsupported-target-version` | The requested target contract version is not one this adapter maps to (FR-062). |
-| `identity-mismatch` | A supplied identity does not agree with the identity derived from the selected tuple (FR-062). |
+| `identity-mismatch` | A target-context identity or derived projection identity does not agree with the exact selected/derived tuple (FR-062). It does not classify invalid canonical source bytes or a source-result digest mismatch. |
 | `unrepresented-source-state` | A source state has no mapping in the selected table. It cannot be reclassified as a malformed source (FR-062). |
 | `finding-loss` | The output would lose an applicable FR-007 finding (FR-062). |
 
-The `invalid-source-result` and `identity-mismatch` rows above do not agree with
-[FR-249](FR-249-derived-projection-result.md) on which code a recomputed-digest
-mismatch receives, and no requirement settles it. That disagreement is recorded
-in full as the first entry of the [FR-249 open gap](FR-249-derived-projection-result.md#open-gap)
-and is not resolved here.
-
 These are kebab-case spellings, distinct from the snake_case native producer
-codes of [FR-271](../foundation/FR-271-diagnostic-code-vocabulary.md). No
-requirement states which convention belongs to which namespace; see
-**Open gap**.
+codes of [FR-271](../foundation/FR-271-diagnostic-code-vocabulary.md). The
+selected catalog plus exact spelling determines membership; there is no global
+case convention or cross-catalog spelling alias.
 
 ## Identity and comparison
 
@@ -55,28 +53,18 @@ requirement states which convention belongs to which namespace; see
   `invalid-source-result` is `sha256-jcs` under
   [FR-201](../foundation/FR-201-canonical-identity-domain.md).
 
-## Open gap
+## Resolved code and namespace ruling
 
-**Which code a recomputed-digest mismatch receives is unresolved.** This
-artifact assigns it to `invalid-source-result` and
-[FR-249](FR-249-derived-projection-result.md) assigns it to `identity-mismatch`;
-FR-062-AC-4 assigns it to neither. The full record of the two assignments is the
-first entry of the [FR-249 open gap](FR-249-derived-projection-result.md#open-gap).
+A canonical source result whose strict-reader validation fails, including a
+recomputed `sha256-jcs` digest mismatch, yields `invalid-source-result` before
+mapping. `identity-mismatch` applies only after valid source acceptance to a
+missing/conflicting target context or a derived projection identity that does
+not match its exact preimage. The two outcomes cannot share a code merely
+because both mention a digest or identity.
 
-The repository carries two code-spelling conventions and no rule assigning them
-to namespaces:
-
-- FR-003-AC-2, FR-008-AC-4 and FR-009-AC-3 use bare snake_case literals
-  (`invalid_source_map`, `unavailable_observation`, `foreign_reference`) without
-  naming a selected catalog.
-- FR-062 uses the kebab-case literals above.
-
-The native diagnostics catalog states that "Hyphenated and underscored spellings
-stay exact; they are not normalized aliases", which makes the difference
-load-bearing. No requirement says which convention belongs to which namespace,
-nor whether these projection codes belong to a versioned catalog at all in the
-sense FR-047 requires. This artifact records both conventions and resolves
-neither.
+This catalog owns the six projection-adapter refusal spellings. FR-271's native
+producer catalog is a separate selected namespace; equal-looking strings across
+catalogs remain unequal and no snake/kebab normalization is performed.
 
 ## Acceptance Criteria
 
@@ -85,6 +73,7 @@ neither.
 | FR-283-AC-1 | Each member's value equals the exact label string in the table, and an underscored spelling does not match a hyphenated one. | Inspection |
 | FR-283-AC-2 | An unrepresented source state yields `unrepresented-source-state` and is not reclassified as `invalid-source-result`. | Analysis |
 | FR-283-AC-3 | Changing or localizing the human-readable refusal message leaves the emitted code unchanged. | Analysis |
+| FR-283-AC-4 | A recomputed canonical-source digest mismatch yields `invalid-source-result`, while an invalid derived projection identity yields `identity-mismatch`; neither emits a `TechniqueResult`. | Analysis |
 
 ## Dependencies
 
@@ -97,7 +86,5 @@ neither.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Accepted FS02 projection-refusal vocabulary ruling. Adapter implementation and
+mutation evidence remain planned under FR-062/TC-064.

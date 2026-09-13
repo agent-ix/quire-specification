@@ -5,6 +5,8 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-115
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-285
+    type: verifies
 ---
 ## Description
 
@@ -46,6 +48,13 @@ settlement basis, decision support, and each selected definition/profile
 identity, revision, and digest. Pair a confirmed injected fault with independently
 observed mitigation, then introduce a late contradiction to retained decision
 support or any retained closure axis.
+Exercise FR-285 known participation with empty, singleton and multi-member
+required sets and all, some and no required instances participating. Exercise
+unknown participation with known participants, missing dependencies and typed
+reasons. Independently omit, duplicate, reorder and cross-wire member
+references; mix variants; substitute a role definition, component identity,
+display name and each E02 target participation label; and compare empty, absent
+and unknown facts.
 Independently omit each required admitted-observation, binding, capture,
 semantic-revision, and subject identity while holding any
 otherwise equal truth constant.
@@ -69,5 +78,8 @@ another axis. Omitted, duplicated or cross-wired records/premises and invalid
 `not-required` substitutions refuse. Definition drift refuses, and
 a late contradiction preserves earlier bytes while producing only a linked
 superseding or invalidating result.
+Known and unknown participation retain their exact facts, empty is distinct from
+absent and unknown, and mixed variants, duplicate or display-derived identities
+and target labels in the source fact refuse without improving adequacy.
 An equal disposition with any omitted required provenance identity fails rather
 than satisfying reproducibility.
