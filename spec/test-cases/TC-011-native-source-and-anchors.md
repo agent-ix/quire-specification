@@ -25,5 +25,5 @@ source spans in the actual Markdown/native consumer path.
 
 Valid cases bind exactly one source and the intended immutable observation.
 Each mutation refuses before lowering with a typed cause and original locus.
-The historical pre(parameter) success is a replacement refusal; it does not
+The historical pre(parameter) success is a composed-profile refusal; it does not
 prove correspondence for aliases or composite pre expressions.

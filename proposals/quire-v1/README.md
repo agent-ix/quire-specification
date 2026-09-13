@@ -21,14 +21,17 @@ compiler #35–39, and research #65–67. Existing protocol, observation, integr
 verification and conformance tickets retain their work; no parallel roadmap,
 engine or speculative repository is created.
 
-Roadmap approval does not make the detailed draft grammar or semantic profiles
-normative. Reconcile and review the common specifications together under #10 and
-#12 before dependent implementation. Reviews occur at coherent PR readiness.
+FS01 accepts the composed architecture, source-language charter and profile
+identity hierarchy. That acceptance does not make each detailed draft semantic
+definition normative or fully implemented. FS02–FS06 and the named family
+tickets retain semantic adoption, delivery and qualification. Reviews occur at
+coherent PR readiness.
 Native Quire remains the only editable clause language; external forms are output
 mappings and TL remains internal infrastructure.
 
 Historical state definition/fixture identities remain preserved. The original
 minimum-only numeric and producer-owned field-presence decisions remain visible.
-The proposed [architecture draft](https://github.com/agent-ix/quire-specification/blob/0aa07ba/spec/assurance/AD-001-composed-native-language.md)
-and associated draft requirements are inputs to the upcoming specification work,
-not an assertion that the selected capabilities already exist.
+The accepted [architecture boundary](../../spec/assurance/AD-001-composed-native-language.md)
+and [language charter](../../spec/assurance/AD-003-native-quire-language-charter.md)
+fix subsystem and identity roles. The associated semantic requirements retain
+their stated statuses and do not assert capabilities beyond merged evidence.

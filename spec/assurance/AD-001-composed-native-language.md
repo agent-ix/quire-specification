@@ -2,7 +2,7 @@
 id: AD-001
 title: "Compose native state, temporal and choreography semantics"
 type: ArchitectureDescription
-status: proposed
+status: accepted
 owner: quire-agent-a
 system: native Quire v1 language and compiler boundaries
 relationships:
@@ -18,6 +18,10 @@ relationships:
     type: realizes
 ---
 # Composed native Quire architecture
+
+FS01 accepts this architecture boundary and its subsystem decomposition. That
+acceptance does not adopt every referenced draft semantic definition or claim
+that every compiler, runtime, backend or qualification path is implemented.
 
 ## System Boundary
 

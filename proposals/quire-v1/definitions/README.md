@@ -1,9 +1,12 @@
-# Current native Quire v1 draft
+# Native Quire v1 definition set
 
-This prototype is one working specification. Each unsuffixed file below contains
-the latest corrected definition and links to its current requirements and
-dependencies in this checkout. Superseded draft copies live in Git history.
-No per-rule digest table selects a different working-tree snapshot.
+FS01 accepts and reserves the identity hierarchy and dependency direction in this
+set. Each unsuffixed file contains the latest corrected semantic candidate and
+links to its current requirements and dependencies. Identity-role acceptance is
+not semantic-definition adoption, compiler/backend implementation or
+qualification. Those statuses remain explicit in each artifact and owning
+FS02–FS06/family ticket. Superseded draft copies live in Git history. No per-rule
+digest table selects a different working-tree snapshot.
 
 The revision labels carry forward the latest candidates; these remain editable
 drafts, not published immutable definitions. The PR revision identifies the whole
@@ -33,8 +36,8 @@ are current semantic inputs to these definitions. External producer and compiler
 inventory selections remain explicitly identified at their consuming boundary;
 they are not silently replaced with whatever another repository currently has.
 
-At acceptance, freeze the coherent baseline and assign the immutable definition
-identities needed by implementations. Runtime identity, source provenance,
+At each owning semantic acceptance, freeze the relevant coherent definition
+closure and its immutable revision/digest. Runtime identity, source provenance,
 digest-domain separation and refusal of mismatched inputs remain required by
-FR-030/032/035. This simpler authoring workflow does not weaken those product
-semantics or rewrite previously accepted profiles.
+FR-030/032/035. This authoring workflow does not weaken those product semantics
+or rewrite previously accepted profiles.

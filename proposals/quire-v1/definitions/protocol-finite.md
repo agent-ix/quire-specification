@@ -1,7 +1,8 @@
 # Native finite global protocol definition
 
 Profile identity: `quire.protocol.finite-global/v1`; revision: `1-draft.4`.
-Language: `ix:native` / `1-draft`. **Proposed, not adopted or implemented.**
+Language: `ix:native` / `1-draft`. **The profile role is accepted by FS01; this
+semantic revision remains proposed and is not adopted or fully implemented.**
 
 Working draft: local rule and dependency links select the current checkout.
 Git preserves drafting history; a coherent baseline is frozen at acceptance.
