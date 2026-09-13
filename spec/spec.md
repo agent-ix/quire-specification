@@ -150,6 +150,10 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-286
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-250
     type: contains
   - target: ix://agent-ix/quire-specification/FR-251
@@ -696,6 +700,8 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-284](objects/protocol/FR-284-scope-progress-and-closure-state.md) | FR (enumeration) | Object layer; the two-member state vocabulary carried by the four decision-scope and surrounding-execution progress/closure axes |
 | [FR-285](objects/protocol/FR-285-participation-fact.md) | FR (value_object) | Object layer; exact known/unknown source participation without importing target status labels |
 | [FR-286](objects/protocol/FR-286-canonical-protocol-result-identity-preimage.md) | FR (value_object) | Object layer; versioned canonical-result identity preimage and strict-reader order |
+| [FR-287](objects/protocol/FR-287-authority-qualified-runtime-subject-reference.md) | FR (value_object) | Object layer; authority-qualified opaque runtime subject identity and non-causal canonical order |
+| [FR-288](objects/protocol/FR-288-qualified-protocol-definition-identity.md) | FR (value_object) | Object layer; exact linked protocol-definition qualifier across source, declaration ownership and semantic selections |
 | [FR-250](objects/temporal/FR-250-temporal-semantic-profile.md) | FR (enumeration) | Object layer; Temporal semantic profile identity |
 | [FR-251](objects/temporal/FR-251-tl-target-profile.md) | FR (enumeration) | Object layer; TL target evaluator profile |
 | [FR-252](objects/temporal/FR-252-temporal-clock-binding.md) | FR (value_object) | Object layer; Temporal clock binding |

@@ -8,6 +8,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-058
     type: specifies
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: references
 ---
 # FR-238: Authored recovery relation
 
@@ -44,14 +46,17 @@ arithmetic."
   in native source and selected per compensation; FR-057 calls it "the
   compensation's exact typed recovery relation" and "an authored recovery
   predicate".
-- **Key** — not established. No requirement names the components that identify
-  one recovery relation. Under FR-009 and FR-047, display name, source path,
-  span, message text, locale and rendering never participate; FR-057-AC-1
-  additionally shows that a relation is not satisfied by operation success but
-  only when "the captured amount and target state match", which constrains
-  satisfaction rather than identity.
-- **Key order** — none. The key components are not fixed by the prose, so no
-  total order over them can be declared. Full restoration and partial recovery
+- **Key** — (`FR-288 qualified protocol-definition identity`, `exact
+  declaration-local compensation handle`, `exact declaration-local typed
+  recovery-expression handle`). The admitted typed expression retains its
+  selected model, state, temporal and clock semantic dependencies; a missing or
+  mismatched dependency refuses linking rather than being guessed into the key.
+  The local handle claims no source-free typed-expression identity (FR-015).
+  Target and achieved state values constrain evaluation and do not identify the
+  relation. Display name, source path, span, message text, locale and rendering
+  never participate.
+- **Key order** — lexicographic over the three key components for canonical
+  comparison only. Full restoration and partial recovery
   are not ranked: FR-057-AC-2 states that "A successful partial refund can
   satisfy an authored partial-recovery relation while failing full restoration",
   which makes them separate authored relations, not two points on a scale.
@@ -66,10 +71,9 @@ arithmetic."
   population membership and attempts beyond the retry bound cannot produce
   recovery success". An absent target or achieved state is never compared to a
   default or empty state.
-- **Digest domain** — no key component is established, so none is a digest here.
-  Where a relation or profile identity is carried as a digest, it retains the
-  domain selected under
-  [FR-201](../foundation/FR-201-canonical-identity-domain.md).
+- **Digest domain** — every digest carried by the FR-288 definition qualifier
+  retains its selected FR-201 domain. The local expression handle is not a
+  digest and claims no digest domain.
 
 ## Acceptance Criteria
 
@@ -79,6 +83,8 @@ arithmetic."
 | FR-238-AC-2 | A partial-recovery relation and a full-restoration relation are separate relations and neither ranks above the other. | Analysis |
 | FR-238-AC-3 | An aggregating relation reports success only under the exact declared population scope, membership and completeness authorities. | Analysis |
 | FR-238-AC-4 | A missing target state, achieved state or population member compares only to absence and cannot produce recovery success. | Analysis |
+| FR-238-AC-5 | Two relations compare equal exactly when all three declared key components compare equal; equal predicate text in different compensations remains unequal, while changed target/achieved operands retain the same selected relation. | Analysis |
+| FR-238-AC-6 | A missing or mismatched model, state, temporal or clock dependency refuses the typed expression binding rather than being omitted or appended as a guessed key component. | Analysis |
 
 ## Dependencies
 
@@ -88,21 +94,16 @@ arithmetic."
   establishes the declared-population requirement for aggregating recovery.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
+- [FR-288](FR-288-qualified-protocol-definition-identity.md) supplies the exact
+  linked protocol-definition component.
 
-## Open gap
-
-The prose establishes that a recovery relation is authored, typed, per
-compensation, and evaluated under selected profiles. It does not establish:
-
-- **Key** — which components identify one recovery relation, and whether the
-  selected state and temporal profile identities participate in it.
-- **Order** — no key order follows, since the components are unfixed.
+## Remaining vocabulary note
 
 FR-057 names "a full-restoration relation" and "an authored partial-recovery
-relation" as examples inside acceptance criteria. No requirement states that
-these are a closed set of relation types, so they are not enumerated here.
+relation" as examples. They are not a closed enumeration or a ranking; the
+identity rule above does not turn them into one.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no new
-obligation and claims no implementation coverage.
+Draft. Specification issue #28 fixed the recovery-relation key and comparison
+order. Executable cross-repository evidence remains planned.

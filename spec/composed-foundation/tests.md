@@ -53,6 +53,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-035
     type: references
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: references
 ---
 ## Overview
 
@@ -111,6 +115,19 @@ baseline review remain prerequisites for the corresponding executable cases.
 | FR-035 | FR-035-AC-7 | TC-035 | 🚧 Planned |
 | FR-035 | FR-035-AC-8 | TC-035 | 🚧 Planned |
 | FR-035 | FR-035-AC-9 | TC-035 | 🚧 Planned |
+| FR-035 | FR-035-AC-10 | TC-035 | 🚧 Planned |
+| FR-035 | FR-035-AC-11 | TC-035 | 🚧 Planned |
+| FR-035 | FR-035-AC-12 | TC-035 | 🚧 Planned |
+| FR-287 | FR-287-AC-1 | TC-035 | 🚧 Planned |
+| FR-287 | FR-287-AC-2 | TC-035 | 🚧 Planned |
+| FR-287 | FR-287-AC-3 | TC-035 | 🚧 Planned |
+| FR-287 | FR-287-AC-4 | TC-035 | 🚧 Planned |
+| FR-287 | FR-287-AC-5 | TC-035 | 🚧 Planned |
+| FR-288 | FR-288-AC-1 | TC-035 | 🚧 Planned |
+| FR-288 | FR-288-AC-2 | TC-035 | 🚧 Planned |
+| FR-288 | FR-288-AC-3 | TC-035 | 🚧 Planned |
+| FR-288 | FR-288-AC-4 | TC-035 | 🚧 Planned |
+| FR-288 | FR-288-AC-5 | TC-035 | 🚧 Planned |
 | FR-036 | FR-036-AC-1 | TC-036 | 🚧 Planned |
 | FR-036 | FR-036-AC-2 | TC-036 | 🚧 Planned |
 | FR-036 | FR-036-AC-3 | TC-036 | 🚧 Planned |
@@ -207,6 +224,7 @@ baseline review remain prerequisites for the corresponding executable cases.
 | FR-049 | FR-049-AC-10 | TC-170 | 🚧 Planned |
 | FR-049 | FR-049-AC-11 | TC-171 | 🚧 Planned |
 | FR-049 | FR-049-AC-12 | TC-174 | 🚧 Planned |
+| FR-049 | FR-049-AC-13 | TC-171 | 🚧 Planned |
 
 ## Test Case Summary
 
@@ -218,7 +236,7 @@ baseline review remain prerequisites for the corresponding executable cases.
 | TC-032 | Preserve selected meanings across language evolution | Integration | P1 | FR-032-AC-1, FR-032-AC-2, FR-032-AC-3, FR-032-AC-4 | 🚧 Planned |
 | TC-033 | Admit total typed reusable Boolean predicates | Integration | P1 | FR-033-AC-1, FR-033-AC-2, FR-033-AC-3, FR-033-AC-4, FR-033-AC-5 | 🚧 Planned |
 | TC-034 | Bind cross-family predicates to explicit evaluation environments | Integration | P1 | FR-034-AC-1, FR-034-AC-2, FR-034-AC-3, FR-034-AC-4 | 🚧 Planned |
-| TC-035 | Retain explicit ecosystem scope identities in assessment requests | Integration | P1 | FR-035-AC-1, FR-035-AC-2, FR-035-AC-3, FR-035-AC-4, FR-035-AC-5, FR-035-AC-6, FR-035-AC-7, FR-035-AC-8, FR-035-AC-9 | 🚧 Planned |
+| TC-035 | Retain explicit ecosystem scope identities in assessment requests | Integration | P1 | FR-035-AC-1, FR-035-AC-2, FR-035-AC-3, FR-035-AC-4, FR-035-AC-5, FR-035-AC-6, FR-035-AC-7, FR-035-AC-8, FR-035-AC-9, FR-035-AC-10, FR-035-AC-11, FR-035-AC-12, FR-287-AC-1, FR-287-AC-2, FR-287-AC-3, FR-287-AC-4, FR-287-AC-5, FR-288-AC-1, FR-288-AC-2, FR-288-AC-3, FR-288-AC-4, FR-288-AC-5 | 🚧 Planned |
 | TC-036 | Preserve original source locations through lexical recognition | Integration | P1 | FR-036-AC-1, FR-036-AC-2, FR-036-AC-3, FR-036-AC-4, FR-036-AC-5 | 🚧 Planned |
 | TC-037 | Parse shared expressions with explicit precedence | Integration | P1 | FR-037-AC-1, FR-037-AC-2, FR-037-AC-3, FR-037-AC-4, FR-037-AC-5, FR-037-AC-6 | 🚧 Planned |
 | TC-038 | Resolve predicate names under explicit lexical scopes | Integration | P1 | FR-038-AC-1, FR-038-AC-2, FR-038-AC-3, FR-038-AC-4, FR-038-AC-5 | 🚧 Planned |
@@ -234,7 +252,7 @@ baseline review remain prerequisites for the corresponding executable cases.
 | TC-048 | Stop work at its resource boundary | Integration | P1 | NFR-010 | 🚧 Planned |
 | TC-049 | Retain typed temporal syntax and activation bindings | Integration | P1 | FR-048-AC-1, FR-048-AC-2, FR-048-AC-3, FR-048-AC-4, FR-048-AC-5, FR-048-AC-6, FR-048-AC-7, FR-048-AC-8 | 🚧 Planned |
 | TC-170 | Bind choreography references without identity substitution | Integration | P1 | FR-049-AC-1, FR-049-AC-2, FR-049-AC-10 | 🚧 Planned |
-| TC-171 | Preserve causal structure and definite value availability | Integration | P1 | FR-049-AC-3, FR-049-AC-4, FR-049-AC-11 | 🚧 Planned |
+| TC-171 | Preserve causal structure and definite value availability | Integration | P1 | FR-049-AC-3, FR-049-AC-4, FR-049-AC-11, FR-049-AC-13 | 🚧 Planned |
 | TC-172 | Keep compensation registration and activation captures separate | Integration | P1 | FR-049-AC-5, FR-049-AC-6 | 🚧 Planned |
 | TC-173 | Bind related instances and complete recovery populations | Integration | P1 | FR-049-AC-7, FR-049-AC-8 | 🚧 Planned |
 | TC-174 | Preserve deadline branches and explicit workflow closure | Integration | P1 | FR-049-AC-9, FR-049-AC-12 | 🚧 Planned |

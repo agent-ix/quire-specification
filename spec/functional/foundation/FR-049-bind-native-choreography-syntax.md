@@ -31,6 +31,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-239
     type: references
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: references
 ---
 ## Description
 
@@ -65,6 +67,16 @@ of a compensation template.
 The frontend SHALL retain the typed protocol structure when a requested backend
 cannot execute or project it.
 
+For each protocol control, the frontend SHALL expose a bounded runtime
+occurrence-key schema consisting of the FR-288 qualified protocol-definition identity,
+the exact declaration-local control handle, the exact source-owned role slot or
+an explicit structural-owner marker, and the outer-to-inner domains of every
+enclosing bounded-repeat ordinal. A concrete occurrence SHALL additionally bind
+the exact workflow-instance key and one admitted ordinal for every returned
+domain. The frontend SHALL NOT mint a workflow identity or ordinal, omit a
+dimension, use a source span or display name as a key component, or treat the
+lexicographic key order as causal order.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -81,6 +93,7 @@ cannot execute or project it.
 | FR-049-AC-10 | State-contract and temporal-requirement references retain their own profile and invocation/subject bindings; an unsupported projection leaves the admitted global protocol available for other requested capabilities. | Test (TC-170) |
 | FR-049-AC-11 | Every lowered source node, including synthesized control edges and bounded occurrences, retains its declaration span and exact derivation/iteration identity. | Test (TC-171) |
 | FR-049-AC-12 | A finish record without required closure, or with unsettled required obligations, cannot establish complete global success; it does not cause any business operation or compensation to execute. | Test (TC-174) |
+| FR-049-AC-13 | The admitted occurrence schema retains the qualified definition, control handle, exact role slot or structural-owner marker, and every outer-to-inner bounded-repeat domain; binding refuses an absent or foreign workflow key, a wrong role, a missing or surplus ordinal, and an ordinal outside its declared domain. | Test (TC-171) |
 
 ## Dependencies
 
@@ -90,6 +103,7 @@ cannot execute or project it.
 - [Explicit ecosystem subjects](FR-035-bind-ecosystem-subjects.md).
 - [Temporal clock selection](../temporal/FR-090-select-temporal-profile-and-clock.md).
 - [Typed observation binding](../observation/FR-110-bind-typed-observations.md).
+- [Qualified protocol-definition identity](../../objects/protocol/FR-288-qualified-protocol-definition-identity.md).
 - [Planned common matrix](../../composed-foundation/tests.md).
 
 This source-integration requirement does not discharge the producer contracts,

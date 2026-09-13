@@ -10,6 +10,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-216
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: references
 ---
 # FR-215: Protocol channel
 
@@ -38,22 +40,18 @@ channel/component reference rather than becoming a participant role" (FR-054).
 
 ## Identity and comparison
 
-- **Identity kind** — *authored*. A channel is admitted from a native protocol
-  declaration and bound to its exact typed declaration (FR-050); FR-049-AC-1
-  binds channel positions to their required declaration kinds. It is not
-  computed from a transport record.
-- **Key** — **the prose does not fix the key components.** FR-054 states that
-  the channel contract is "bound into protocol identity" and that "Changing any
-  channel premise changes the conformance request identity and its result
-  provenance" (FR-054-AC-4). That establishes that a premise change changes the
-  *request* identity; it does not state that the premises are the channel's own
-  key. Established exclusions: an endpoint or channel identity substituted for a
-  role refuses (FR-050-AC-2), and a name-only substitution refuses (FR-050).
-  Equality is componentwise over whatever the key is and nothing else; display
-  name, source path, span, message text, locale and rendering never participate
-  (FR-035, FR-049-AC-7).
-- **Key order** — none. Because the key components are not fixed, no total
-  order over the key is stated and none is supplied here.
+- **Identity kind** — *derived*. The channel is authored; its identity is
+  derived from the linked definition and its admitted declaration-local handle.
+- **Key** — (`qualified protocol-definition identity`, `declaration-local
+  channel handle`), exactly as FR-050 states. The six channel premises are
+  semantic properties that contribute to the containing linked protocol and
+  request identity; they are not repeated as channel-key components. The
+  current wire represents the handle as a table index qualified by its admitted
+  package and declaration; an unqualified index, display name or locus does not
+  participate.
+- **Key order** — lexicographic over the two components in the declared
+  sequence for stable comparison only. It supplies no FIFO, causal or channel
+  priority order.
 - **Causal order** — a channel carries no causal order. Its ordering policy is
   a conformance premise scoped to "its declared channel and key scope"
   (FR-054-AC-2) and FR-054 forbids inferring "FIFO order across channels". The
@@ -64,10 +62,8 @@ channel/component reference rather than becoming a participant role" (FR-054).
   FIFO order across channels, reliable delivery or synchronized clocks"
   (FR-054), and "Missing or conflicting sender, receiver, message-type, order or
   delivery premises refuse admission" (FR-054-AC-3).
-- **Digest domain** — no component named by the prose is a digest. Where a
-  channel identity or its premises are carried beside a digest in result
-  provenance (FR-054-AC-4), that digest's domain is selected under
-  `ix://agent-ix/quire-specification/FR-201`.
+- **Digest domain** — every digest carried by the qualified linked-definition
+  identity or premise provenance retains its selected FR-201 domain.
 
 ## Acceptance Criteria
 
@@ -77,7 +73,7 @@ channel/component reference rather than becoming a participant role" (FR-054).
 | FR-215-AC-2 | A channel identity supplied in a role position does not resolve, and a queue or endpoint reference does not become a role. | Analysis |
 | FR-215-AC-3 | Changing a channel premise yields a different conformance request identity and result provenance from the unchanged one. | Analysis |
 | FR-215-AC-4 | A FIFO ordering premise constrains only the messages within its own declared channel and key scope. | Analysis |
-| FR-215-AC-5 | This artifact declares no key components and no key order for a channel, and cites the prose exclusions instead. | Inspection |
+| FR-215-AC-5 | Two channels compare equal exactly when their qualified definition and declaration-local channel handle compare equal; display name and source locus do not participate. | Analysis |
 
 ## Dependencies
 
@@ -91,25 +87,21 @@ channel/component reference rather than becoming a participant role" (FR-054).
   contains.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
+- [FR-288](FR-288-qualified-protocol-definition-identity.md) supplies the
+  qualified linked-definition component.
 
 ## Open gap
 
-1. No requirement states what constitutes a channel's identity. FR-054-AC-4
-   states that changing a premise changes the *conformance request* identity; no
-   requirement states whether the premises are components of the channel's own
-   key, so this artifact does not treat them as such.
-2. FR-054-AC-2 scopes a FIFO premise to a "key scope". No requirement states
+1. FR-054-AC-2 scopes a FIFO premise to a "key scope". No requirement states
    what a channel key scope is, what its components are, or how it relates to
    the identity keys of this bounded context. The two uses of "key" are not
    established to be the same notion.
-3. FR-054-AC-3 lists "sender, receiver, message-type, order or delivery"
+2. FR-054-AC-3 lists "sender, receiver, message-type, order or delivery"
    premises as refusing when missing or conflicting; the FR-054 description
    lists six premises, adding "duplication premises". Whether a missing
    duplication premise refuses admission is unstated.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Draft. Specification issue #28 fixed the channel key and comparison order. The
+remaining premise questions are tracked by specification issue #31.
