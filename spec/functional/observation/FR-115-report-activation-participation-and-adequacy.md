@@ -13,6 +13,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-281
     type: references
+  - target: ix://agent-ix/quire-specification/FR-285
+    type: references
 ---
 ## Description
 
@@ -73,6 +75,14 @@ The adapter SHALL retain every selected definition/profile identity, revision,
 and digest that its contribution depends on; it SHALL NOT replace one with a
 current default or a compatible-looking definition.
 
+The participation contribution SHALL be exactly one FR-285 `known` or `unknown`
+value object. Known participation retains the complete required-role-instance
+set and its participating subset. Unknown participation retains every known
+participant, missing dependency and typed reason without inventing a complete
+required set. The adapter SHALL refuse mixed variants, duplicate or
+display-derived role-instance references, and E02 target participation labels
+supplied as source values.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -83,9 +93,12 @@ current default or a compatible-looking definition.
 | FR-115-AC-4 | Assessment execution, decision-scope progress, decision-scope closure, surrounding-execution progress, surrounding-execution closure, complete-global-conformance closure, truth, settlement basis, exact decision support, activation, participation, completeness, adequacy, claim strength, and provenance remain independently readable. Each global closure state retains its exact required premise set; another claim retains `not-required` with no global premise set. Independently omitting, duplicating or cross-wiring a required axis or global premise, supplying a premise under `not-required`, or substituting `not-required` for a global claim or another axis refuses the inconsistent contribution. | Test (TC-145) |
 | FR-115-AC-5 | Decisive-witness satisfied and decisive-counterexample violated results remain settled with exact support while the decision scope and surrounding execution are open; compatible changes to surrounding-execution progress/closure preserve the same deciding support and truth. A closed decision scope does not close the surrounding execution or establish complete global conformance without its own required closure premises. A late contradiction retains prior bytes and emits only a linked superseding or invalidating result. | Test (TC-145) |
 | FR-115-AC-6 | Every selected definition/profile identity, revision, and digest remains immutable at the observation-result boundary; drift or substitution is refused. | Test (TC-145) |
+| FR-115-AC-7 | Participation carries exactly one FR-285 shape; empty, absent and unknown remain distinct, and no target status or display string supplies source meaning. | Test (TC-145) |
 
 ## Dependencies
 
 - [Shared foundation](../../../proposals/quire-v1/shared-foundation.md).
 - [B's reviewed FR-061 result contract](../protocol/FR-061-report-orthogonal-results.md) owns assessment execution, independent decision-scope and surrounding-execution progress and closure, the fifth typed complete-global-conformance closure record, settlement basis, decision support, and result-combination semantics.
 - [B's FR-007 result contract](ix://agent-ix/quire-verification/FR-007) owns independent execution, activation, observation, participation, assumption, logical, and provenance findings; Quoin retains evidence authority.
+- [FR-285](../../objects/protocol/FR-285-participation-fact.md) defines the
+  canonical source participation value object and its projection boundary.

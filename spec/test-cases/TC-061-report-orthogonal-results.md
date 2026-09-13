@@ -5,6 +5,16 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-061
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-240
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-242
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-243
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-285
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-286
+    type: verifies
 ---
 ## Description
 
@@ -33,7 +43,21 @@ protocol-adequacy state independently, then cross-wire the two adequacy domains.
 Build independent, shared, derived and unknown decision-support relations;
 remove each predecessor and dependence group, introduce self-reference and a
 cycle, and relabel shared support independent. Mutate every provenance identity
-and the canonical result bytes without updating the digest. Submit a later
+and every canonical result member independently. For every valid result,
+independently recompute `resultId` from the FR-286 preimage, permute JSON object
+member presentation, mutate the identity-domain prefix, omit `resultId`, reuse
+one valid identity on different canonical result bytes, and mutate the complete
+canonical bytes without updating the enclosing digest. Exercise each of the
+five FR-243 basis members, an unknown label and an absent basis with every
+permitted and forbidden truth/execution combination.
+
+Construct FR-285 `known` participation with an empty, singleton and multi-member
+required set and with all, some and none participating. Construct `unknown`
+participation with known participants, missing dependencies and typed reasons.
+Independently omit, duplicate, reorder and cross-wire every role-instance
+reference; mix the two variants; substitute a display name, role definition,
+component identity and each E02 target participation label; and compare empty,
+absent and unknown participation. Submit a later
 observation and a later record from each closure axis that contradicts one
 retained settlement or global-conformance premise; compare the old and
 superseding result bytes and identities.
@@ -54,5 +78,12 @@ dependent package success becomes unavailable. Result states remain structurally
 discriminable; missing evidence never improves truth, adequacy or package status;
 assumption, observation-adequacy and protocol-adequacy facts remain independent;
 valid support relations and lineage remain exact; and strict readers refuse stale
-identities, digest mutations, malformed lineage, invented independence or
-adequacy cross-wiring while retaining independent valid results.
+identities, same-ID/different-byte results, digest mutations, malformed lineage,
+invented independence or adequacy cross-wiring while retaining independent valid
+results. Object-member presentation permutations preserve the independently
+recomputed result identity; every semantic member mutation changes it. The five
+settlement bases admit only their exact truth/execution combinations, while
+unknown and absent bases refuse. Known and unknown participation remain
+structurally distinct; empty is not absent or unknown, exact role-instance
+identity and canonical order are preserved, and target participation labels are
+never accepted as source values.

@@ -31,6 +31,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-283
     type: references
+  - target: ix://agent-ix/quire-specification/FR-285
+    type: references
 ---
 ## Description
 
@@ -52,7 +54,11 @@ or `finding-loss`, plus the affected exact identity.
 ## Behavior
 
 The projection adapter SHALL validate the canonical protocol result and
-recompute its `sha256-jcs` digest before mapping it. The adapter SHALL preserve
+recompute its `sha256-jcs` digest before mapping it. An invalid source or a
+recomputed source digest mismatch SHALL yield `invalid-source-result`. After
+source acceptance, a missing/conflicting target-context identity or a derived
+projection identity that disagrees with its exact preimage SHALL yield
+`identity-mismatch`. The adapter SHALL preserve
 every independent execution, activation, observation, participation, assumption
 and logical finding required by quire-verification FR-007. The adapter SHALL
 describe protocol adequacy only in the canonical protocol result through the
@@ -106,8 +112,9 @@ The following mapping is total for the selected source and target revisions:
 | Truth `unavailable` after non-completed assessment execution or inactive activation | `logical.outcome` is `not-evaluated`. |
 | Truth `unavailable` after completed execution with triggered or unknown activation | `logical.outcome` is `unknown`. |
 | Activation `triggered` / `inactive` / `activation-unknown` | `activation.status` is respectively `activated` / `not-activated` / `unknown`. |
-| Known required participants all present / some present / none present / no participant required | `participation.status` is respectively `complete` / `partial` / `not-started` / `not-required`, with exact participant and missing-participant identities. |
-| Participation or its required set is unknown | `participation.status` is `unknown`, with every known participant and missing-dependency identity retained. |
+| FR-285 `known` participation with a non-empty required set and all / some / none participating | `participation.status` is respectively `complete` / `partial` / `not-started`, with exact participant and missing-participant identities derived by set difference. |
+| FR-285 `known` participation with an empty required set | `participation.status` is `not-required`; an absent required set is not treated as empty. |
+| FR-285 `unknown` participation | `participation.status` is `unknown`, with every known participant, missing-dependency identity and typed reason retained. No target status is copied back into the source fact. |
 | Assumption `met` / `not-met` / `unknown` / `not-assessed` | The same exact assumption identity and E02 assumption status. |
 | Observation adequacy `adequate` / `inadequate` / `unknown` / `not-assessed` | The same E02 `adequacy.status`, with exact missing-observation identities when known. |
 | Protocol adequacy, completeness, decision-scope progress/closure, surrounding-execution progress/closure, complete-global-conformance closure, settlement basis and claim | Retained in the canonical protocol-result artifact; never substituted for an E02 finding axis. |
@@ -141,7 +148,7 @@ another repository.
 | FR-062-AC-1 | Every source-state row maps to the selected E02 contract and retains every simultaneous independent FR-007 finding with no sufficiency decision. | Test (TC-064) |
 | FR-062-AC-2 | Every projected result has a distinct deterministic identity, exact target execution binding and retained URI/digest/media-type reference to unchanged canonical protocol-result bytes; substituting any identity or digest refuses the projection. | Test (TC-064) |
 | FR-062-AC-3 | E02 adequacy is derived only from observation adequacy; protocol adequacy remains in the canonical result and neither adequacy domain can establish the other or an evidence-sufficiency decision. | Test (TC-064) |
-| FR-062-AC-4 | An invalid source, unknown source or target revision or required feature, unrepresented source state, missing exact context, or projection that would lose an applicable FR-007 finding is refused with the corresponding stable code and no `TechniqueResult`. | Test (TC-064) |
+| FR-062-AC-4 | An invalid source or recomputed source digest mismatch yields `invalid-source-result`; an invalid derived projection identity or exact target-context mismatch yields `identity-mismatch`; unknown revisions/features, unrepresented states and finding loss yield their corresponding stable codes, all without a `TechniqueResult`. | Test (TC-064) |
 
 ## Dependencies
 

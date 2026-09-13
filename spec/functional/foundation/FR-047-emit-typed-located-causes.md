@@ -26,7 +26,9 @@ When reporting a native producer failure, the producer SHALL derive its machine-
 
 ## Inputs
 
-A failure at source recognition, identity/linking, type/profile checking, input binding, capability selection or resource-limited execution, with its available source/subject context.
+A failure observed by one exact selected producer interface, carrying one member
+of that interface's closed stage vocabulary and its available source/subject
+context.
 
 ## Outputs
 
@@ -35,6 +37,12 @@ A stable catalogued classification, failure stage and structured cause details w
 ## Behavior
 
 Every emitted code belongs to the selected catalog; no ad-hoc literal or English-message match determines its kind. Cause details distinguish materially different refusals sharing a broader category, including missing versus conflicting definitions, wrong anchor versus missing observation, unknown syntax versus prohibited recognized construct, and unproved definedness versus runtime logical violation. Diagnostic formatting/localization cannot change classification. Wire extension/version behavior follows the existing shared interchange contract; this requirement creates no competing result envelope.
+
+Every producer stage shall bind the exact producer-interface identity, revision
+and digest plus one exact member of that interface's closed stage vocabulary.
+When the interface or stage member is unknown, then the reader shall refuse the
+diagnostic interpretation without substituting a stage from another interface or
+from the six failure concerns this requirement covers.
 
 A runtime object or value path is the location kind that names a value inside a
 validated runtime subject, and it is distinct from an authored source span and
@@ -91,6 +99,7 @@ authority on the wire.
 | FR-047-AC-5 | Per-request resource/unsupported failures keep their actual stage and prerequisites rather than becoming another clause's Boolean result. | Test (TC-047) |
 | FR-047-AC-6 | A runtime object or value path locating an unavailable nested value distinguishes a field selection, an option-value selection and a member selection; two paths differing only in step kind compare unequal, and an empty step sequence is not reported as an absent path. | Test (TC-047) |
 | FR-047-AC-7 | Two paths with identical subjects and steps under different selected observations compare unequal, and paths sharing one observation are totally ordered. | Test (TC-047) |
+| FR-047-AC-8 | Every retained stage resolves in its selected producer interface; unknown interface/member pairs and labels copied from another interface refuse without replacing the originating stage. | Test (TC-047) |
 
 ## Dependencies
 

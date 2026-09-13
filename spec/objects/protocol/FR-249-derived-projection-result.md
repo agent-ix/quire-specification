@@ -69,8 +69,7 @@ When a canonical protocol result is projected to portable verification, the proj
 
 The refusal code vocabulary is **defined by
 [FR-283](FR-283-projection-refusal-code.md)**; the table below is repeated here
-only as a reading aid, and where the two differ FR-283 governs. One row does
-differ, and no requirement settles it; see **Open gap**.
+only as a reading aid and FR-283 governs.
 
 FR-062 Outputs states the stable codes verbatim: "one refusal carrying a stable
 code from `invalid-source-result`, `unsupported-source-version`,
@@ -82,7 +81,7 @@ code from `invalid-source-result`, `unsupported-source-version`,
 | `invalid-source-result` | The source result fails its strict reader (FR-062). |
 | `unsupported-source-version` | The source contract version or a required feature is unknown (FR-062). |
 | `unsupported-target-version` | The target contract version or a required feature is unknown (FR-062). |
-| `identity-mismatch` | An exact context or canonical-result reference is missing or conflicting; substituting any identity or digest refuses the projection (FR-062, FR-062-AC-2). |
+| `identity-mismatch` | An exact target context is missing/conflicting or the derived projection identity does not match its exact preimage (FR-062, FR-062-AC-2). |
 | `unrepresented-source-state` | A source state has no mapping in the selected table (FR-062). |
 | `finding-loss` | The output would lose an applicable quire-verification FR-007 finding (FR-062). |
 
@@ -122,50 +121,20 @@ emit a sufficiency decision."
 - [FR-283](FR-283-projection-refusal-code.md) defines the refusal code
   vocabulary recorded above.
 
-## Open gap
+## Resolved refusal and source-domain boundary
 
-**No requirement states which refusal code a recomputed-digest mismatch
-receives, and the two artifacts that record the codes assign it differently.**
-FR-062 requires the adapter to "validate the canonical protocol result and
-recompute its `sha256-jcs` digest before mapping it", and FR-062-AC-2 states
-that "substituting any identity or digest refuses the projection"; neither names
-the code that refusal carries. FR-062-AC-4 enumerates the refused conditions as
-"An invalid source, unknown source or target revision or required feature,
-unrepresented source state, missing exact context, or projection that would lose
-an applicable FR-007 finding", and a recomputed digest that does not match the
-one carried in `sourceResultRef` is none of those conditions as written. The two
-assignments standing in this layer are:
+The adapter validates the canonical source result and recomputes its digest
+before deriving or checking the projection identity. Any failure in that source
+validation, including a recomputed digest mismatch, yields
+`invalid-source-result`. Only a valid source can reach target-context and
+projection-preimage checks; those mismatches yield `identity-mismatch`.
 
-- This artifact, under `identity-mismatch`: "An exact context or
-  canonical-result reference is missing or conflicting; substituting any
-  identity or digest refuses the projection (FR-062, FR-062-AC-2)."
-- [FR-283](FR-283-projection-refusal-code.md), under `invalid-source-result`:
-  "The canonical protocol result did not validate, or its recomputed
-  `sha256-jcs` digest did not match, before mapping was attempted (FR-062)."
-
-They are not reconcilable by reading: a strict reader receiving a refusal cannot
-tell from the code whether the source failed its reader or its digest
-disagreed, and a consumer matching on either code alone will miss the case. No
-requirement resolves which code a recomputed-digest mismatch receives. This
-artifact records both assignments and picks neither; closing it requires an
-owner ruling and a requirement that names the code.
-
-The repo review
-[`SR-208`](../../reviews/protocol-verification-projection-object.md) FND-001
-records that FR-061 "defines no total conversion for protocol execution states
-(`refused`, `resource-incomplete`), truth states (`pending`, `unavailable`),
-activation, participation or assumptions into E02's different closed
-vocabularies." FR-062 supplies a mapping table that it declares "total for the
-selected source and target revisions", but two of its rows key on source axes no
-requirement enumerates: participation (see
-[FR-240](FR-240-canonical-protocol-result.md) open gap 4) and the four
-progress/closure axes (open gap 3). Totality over an unenumerated source domain is
-not established here, and this artifact does not supply the missing source
-vocabularies.
+FR-062's mapping is total over the selected source and target revisions. FR-284
+defines the four progress/closure axes, and
+[FR-285](FR-285-participation-fact.md) defines the closed source participation
+value object. Neither domain is inferred from E02 display text.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Accepted FS02 projection-result ruling. Implementation and mutation evidence
+remain planned under FR-062/TC-064.

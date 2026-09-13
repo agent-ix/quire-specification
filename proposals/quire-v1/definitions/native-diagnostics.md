@@ -42,11 +42,11 @@ for this mapping; preserve it without fabricating a stronger new-catalog claim.
 ## Common structured context
 
 Every diagnostic retains its observing producer stage and its catalogued code.
-Stage is the actual source, lexical, parsing, profile, linking, checking,
-package, input-validation, evaluation, lowering or host boundary named by the
-selected producer interface; a wrapper retains the originating stage and cause
-instead of replacing them with its own display stage. This catalog does not
-rename historical stage labels or create a competing pipeline enum.
+A stage binds the exact selected producer-interface identity, revision and digest
+plus one exact label from that interface's closed stage vocabulary. A wrapper
+retains the originating pair and cause instead of replacing either with its own
+display stage. This catalog does not rename historical stage labels or create a
+competing global pipeline enum.
 
 Required context is the affected request/subject, exact selections that were
 available, original source region and typed input location where known. An

@@ -17,6 +17,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-116
     type: references
+  - target: ix://agent-ix/quire-specification/FR-285
+    type: references
 ---
 ## Overview
 
@@ -33,8 +35,9 @@ CLI, or backend conformance.
 | FR-112 | FR-112-AC-1, FR-112-AC-2, FR-112-AC-3, FR-112-AC-4, FR-112-AC-5 | TC-142 | 🚧 Planned |
 | FR-113 | FR-113-AC-1, FR-113-AC-2, FR-113-AC-3, FR-113-AC-4, FR-113-AC-5 | TC-143 | 🚧 Planned |
 | FR-114 | FR-114-AC-1, FR-114-AC-2, FR-114-AC-3 | TC-144 | 🚧 Planned |
-| FR-115 | FR-115-AC-1, FR-115-AC-2, FR-115-AC-3, FR-115-AC-4, FR-115-AC-5, FR-115-AC-6 | TC-145 | 🚧 Planned |
+| FR-115 | FR-115-AC-1, FR-115-AC-2, FR-115-AC-3, FR-115-AC-4, FR-115-AC-5, FR-115-AC-6, FR-115-AC-7 | TC-145 | 🚧 Planned |
 | FR-116 | FR-116-AC-1, FR-116-AC-2, FR-116-AC-3, FR-116-AC-4, FR-116-AC-5 | TC-146 | 🚧 Planned |
+| FR-285 | FR-285-AC-1, FR-285-AC-2, FR-285-AC-3, FR-285-AC-4 | TC-145 | 🚧 Planned |
 
 ## Test Case Summary
 
@@ -45,7 +48,7 @@ CLI, or backend conformance.
 | TC-142 | Declare population and completeness | Integration | P1 | FR-112 | 🚧 Planned |
 | TC-143 | Preserve time, progress, and late-data authority | Integration | P1 | FR-113 | 🚧 Planned |
 | TC-144 | Agree replay and incremental assessment | Integration | P1 | FR-114 | 🚧 Planned |
-| TC-145 | Report observation adequacy without promotion | Integration | P1 | FR-115 | 🚧 Planned |
+| TC-145 | Report observation adequacy without promotion | Integration | P1 | FR-115-AC-1, FR-115-AC-2, FR-115-AC-3, FR-115-AC-4, FR-115-AC-5, FR-115-AC-6, FR-115-AC-7, FR-285-AC-1, FR-285-AC-2, FR-285-AC-3, FR-285-AC-4 | 🚧 Planned |
 | TC-146 | Map observation results to consumers | Integration | P1 | FR-116 | 🚧 Planned |
 | TC-147 | Audit the observation executable boundary | Static | P1 | NFR-052 | 🚧 Planned |
 
