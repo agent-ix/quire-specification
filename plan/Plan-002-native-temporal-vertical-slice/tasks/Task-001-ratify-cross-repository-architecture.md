@@ -2,7 +2,7 @@
 id: Task-001
 title: "Ratify cross-repository native-temporal architecture"
 type: Task
-status: not_started
+status: done
 track: A
 priority: P0
 relationships:

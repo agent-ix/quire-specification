@@ -2,7 +2,7 @@
 id: Task-002
 title: "Implement compiler temporal admission and `/2`"
 type: Task
-status: not_started
+status: done
 track: A
 priority: P0
 relationships:

@@ -27,7 +27,7 @@ rule document does not select itself through a copied candidate/digest table.
 ## Producer interface selection
 
 F consumes the producer-owned **Producer interface 1.2.0** at
-[filament-core-data revision 6259d3a](https://github.com/agent-ix/filament-core-data/blob/6259d3a5b99088740df9bcc8e8d60f3720aaa603/docs/semantic-data-system/baseline-1-2.md).
+[filament-core-data PR #97 merge 1d901d7](https://github.com/agent-ix/filament-core-data/blob/1d901d716eed003cb034a624f56bb46e2b8c2a94/docs/semantic-data-system/baseline-1-2.md).
 That producer contract defines the exact digest domain; each runtime assessment
 retains the actual selected producer revision and digest.
 The selected interface supplies relationship, population, snapshot, window,
