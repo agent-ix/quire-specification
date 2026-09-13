@@ -12,6 +12,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-225
     type: references
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: references
 ---
 # FR-235: Compensation attempt
 
@@ -44,42 +46,23 @@ attempt of FR-058: an attempt against a registered compensation obligation
 ([FR-236](FR-236-compensation-attempt-outcome.md)).
 [FR-225](FR-225-operation-attempt.md) holds the **forward** operation attempt of
 FR-051, one of the six distinct typed subjects "message, send, receive,
-delivery, attempt and effect", and it derives its key from the node occurrence of
-[FR-221](FR-221-protocol-node-occurrence.md).
+delivery, attempt and effect".
 
-The two identity treatments differ and are not reconciled: FR-225 declares a
-derived node-occurrence key, and this artifact declares its key **not
-established**, because FR-058 supplies no components for a compensation attempt
-and no requirement states that a compensation attempt is a protocol node
-occurrence. No key is adopted from FR-225 here, and neither artifact is merged
-into the other.
-
-FR-225 retains a retry-discrimination analysis in its own open gap, because its
-node-occurrence key is what makes the failure demonstrable; the subject of that
-analysis is the FR-058-AC-1 refund attempt owned here, and the same unresolved
-question is recorded against this artifact's unestablished key in the **Open
-gap** below.
+The kinds are deliberately different: this object uses
+`compensation-attempt`; FR-225 uses `operation-attempt`. Neither identity can
+satisfy the other's binding.
 
 ## Identity and comparison
 
-- **Identity kind** — not established by the prose. FR-058 requires the evaluator
-  to "preserve each attempt and effect identity", and FR-051 keeps attempt and
-  effect distinct, but no requirement states whether an attempt identity is
-  authored in native source or derived from components. The gap is recorded below
-  rather than filled.
-- **Key** — not established. The prose states only what the key is *not*: FR-051
-  forbids inferring "a business effect from a send, receive, successful transport
-  status, repeated delivery, trace identifier or equal payload alone", and
-  FR-051-AC-4 refuses "A transport trace ID substituted for an authored workflow,
-  attempt or effect identity". Display name, source path, span, message text,
-  locale and rendering never participate (FR-009, FR-047). Whatever the key
-  components are, an attempt identity never compares equal to an effect identity:
-  FR-058-AC-2 holds "A timed-out attempt, failed attempt and duplicate effect" as
-  "three distinct outcomes".
-- **Key order** — none. The key components are not fixed by the prose, so no
-  order over them can be declared. Attempt count is bounded by the authored
-  finite retry bound ([FR-239](FR-239-compensation-retry-policy.md)), but a bound
-  is not an order.
+- **Identity kind** — *authored*. The selected observation producer supplies one
+  concrete opaque identity for each compensation attempt.
+- **Key** — one exact [FR-287](FR-287-authority-qualified-runtime-subject-reference.md)
+  of kind `compensation-attempt`. Registration, operation and retry relation are
+  mandatory binding relationships rather than key components. Reusing one key
+  with different binding facts refuses as an identity contradiction.
+- **Key order** — FR-287's lexicographic order for canonical comparison only.
+  Attempt count is bounded by the authored finite retry maximum, but the maximum
+  and earlier/later binders supply neither identity nor order.
 - **Causal order** — the authored partial acyclic order of
   [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md). A retried
   attempt follows the attempt it retries, and an attempt is causally after its
@@ -89,10 +72,7 @@ gap** below.
   established effect has an absent related effect identity; FR-051-AC-3 states
   that it "remains an attempt and cannot activate effect-dependent compensation",
   and that absence is never compared to a default or empty effect identity.
-- **Digest domain** — no key component of this object is established, so none is
-  a digest here. Where an attempt or effect identity is carried as a digest, it
-  retains the domain selected under
-  [FR-201](../foundation/FR-201-canonical-identity-domain.md).
+- **Digest domain** — FR-287 retains the authority digest and its FR-201 domain.
 
 ## Acceptance Criteria
 
@@ -102,6 +82,7 @@ gap** below.
 | FR-235-AC-2 | An attempt identity never compares equal to an effect identity. | Analysis |
 | FR-235-AC-3 | A transport trace identifier, successful transport status, repeated delivery or equal payload alone does not establish an attempt or effect identity. | Analysis |
 | FR-235-AC-4 | An attempt with no established effect retains an absent effect identity that compares only to absence. | Analysis |
+| FR-235-AC-5 | Compensation-attempt equality and canonical order use only the FR-287 key; reusing one key for another registration, operation or retry relation refuses. | Analysis |
 
 ## Dependencies
 
@@ -111,28 +92,11 @@ gap** below.
   discipline.
 - [FR-225](FR-225-operation-attempt.md) types the forward operation attempt this
   one is held distinct from.
-
-## Open gap
-
-The prose establishes that an attempt has an identity, that it is distinct from
-an effect identity, and several things that cannot serve as it. It does not
-establish:
-
-- **Identity kind** — whether an attempt identity is authored or derived.
-- **Key** — which components constitute it. FR-058 requires distinguishing "a
-  repeated receipt, retried attempt and duplicate business effect" without
-  stating the components that separate them.
-- **Key order** — no order follows, since the components are unfixed.
-
-FR-058-AC-1 makes this concrete for the example this artifact owns: a failed
-refund attempt and its successful retry must both be retained, and no stated
-component separates them. [FR-225](FR-225-operation-attempt.md) records the same
-failure from the other side, where the node-occurrence key is constant across a
-retry.
-
-No key, order or identity kind is invented here.
+- [FR-287](FR-287-authority-qualified-runtime-subject-reference.md) defines the
+  concrete compensation-attempt key and non-causal comparison order.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no new
-obligation and claims no implementation coverage.
+Draft. Specification issue #28 fixed the concrete compensation-attempt key,
+retry relationship boundary and comparison order. Executable cross-repository
+evidence remains planned.

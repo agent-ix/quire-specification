@@ -152,6 +152,14 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-284
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-285
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-286
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: contains
 ---
 # FR-200: Quire semantic assessment bounded context
 

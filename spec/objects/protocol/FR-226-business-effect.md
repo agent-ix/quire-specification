@@ -12,6 +12,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-225
     type: references
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: references
 ---
 # FR-226: Business effect
 
@@ -41,22 +43,14 @@ delivery, trace identifier or equal payload alone", and FR-049-AC-2 states that
 
 ## Identity and comparison
 
-- **Identity kind** — *derived*, through the node occurrence it is, and related
-  to the concrete attempt that established it.
-- **Key** — (`static declaration path`, `workflow instance identity`,
-  `iteration identity`), as held by FR-221. Equality is componentwise over that
-  key and nothing else. Display name, source path, span, message text, locale
-  and rendering never participate. Neither does the payload nor the trace
-  identifier, both excluded by FR-051 and FR-051-AC-4. Whether the establishing
-  attempt is also a key component is not stated. **This key is constant across
-  two effect claims at one static node within one workflow instance, so two
-  duplicate effects compare equal under it and the duplicate the evaluator is
-  required to detect is undetectable**; see **Open gap**.
-- **Key order** — none is established. No requirement fixes a total order over
-  effects. FR-058-AC-3 states that "Two related partial refunds satisfy the
-  captured amount only under a complete declared population with exact
-  arithmetic", which is a membership and completeness rule over a declared
-  population, not an order over its members.
+- **Identity kind** — *authored*. The selected observation producer supplies
+  the concrete opaque business-effect identity.
+- **Key** — one exact [FR-287](FR-287-authority-qualified-runtime-subject-reference.md)
+  of kind `business-effect`. Effect node, effect requirement and establishing
+  attempt are mandatory typed relationships and are not key components. Reusing
+  one effect key with another relationship refuses as an identity contradiction.
+- **Key order** — FR-287's lexicographic order for canonical comparison only.
+  Population membership and exact arithmetic do not order or identify effects.
 - **Causal order** — the authored partial acyclic order of FR-052, carried by
   FR-220, never derived from key order, timestamp or source position
   (FR-052-AC-2, FR-113). The commit-ordering relations of FR-057-AC-3 are
@@ -65,9 +59,7 @@ delivery, trace identifier or equal payload alone", and FR-049-AC-2 states that
   default or empty value. An attempt with no established effect has an absent
   effect, which is never compared to an unsuccessful effect or to an empty one
   (FR-051-AC-3).
-- **Digest domain** — no component of this key is a digest; a digest carried in
-  provenance carries the domain it was derived under,
-  `ix://agent-ix/quire-specification/FR-201`.
+- **Digest domain** — FR-287 retains the authority digest and its FR-201 domain.
 
 ## Acceptance Criteria
 
@@ -75,9 +67,9 @@ delivery, trace identifier or equal payload alone", and FR-049-AC-2 states that
 | --- | --- | --- |
 | FR-226-AC-1 | An effect reference does not satisfy a comparison expecting a send, a receive, a delivery or an attempt. | Analysis |
 | FR-226-AC-2 | A successful transport status, a repeated delivery, a trace identifier and an equal payload each fail to establish an effect. | Analysis |
-| FR-226-AC-3 | No requirement text supplies a component tuple by which two effect claims are judged to be the same effect. | Inspection |
-| FR-226-AC-4 | No requirement text supplies a total order over effects. | Inspection |
-| FR-226-AC-5 | Two effect claims at one static effect node within one workflow instance and one iteration identity compare equal under the declared key, so the FR-058 duplicate-effect outcome is not reachable from the key alone. | Analysis |
+| FR-226-AC-3 | Re-observing one complete effect key with equal binding facts is replay of one effect; a second exact key validly bound to the same singleton effect occurrence is retained as the duplicate-business-effect outcome. | Analysis |
+| FR-226-AC-4 | Effect-key order is canonical comparison only and establishes no causal, commit or recovery order. | Analysis |
+| FR-226-AC-5 | The establishing attempt is a mandatory relationship, not an effect-key component; reusing one effect key with another attempt refuses rather than creating a second effect. | Analysis |
 
 ## Dependencies
 
@@ -89,76 +81,11 @@ delivery, trace identifier or equal payload alone", and FR-049-AC-2 states that
   commit-ordering relations an effect participates in.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
-
-## Open gap
-
-**The declared key cannot detect a duplicate business effect, which FR-058
-requires the evaluator to detect.** This is not merely an undefined equality; it
-is a demonstrated failure of the key this artifact declares.
-
-The declared key is the protocol node occurrence triple (`static declaration
-path`, `workflow instance identity`, `iteration identity`) held by
-[FR-221](FR-221-protocol-node-occurrence.md), because that triple is the only
-identity the prose supplies for an effect. Every component of that triple is
-**constant** across two effect claims made at one static effect node within one
-workflow instance and one iteration identity: the static declaration path is the
-same authored node, the workflow instance identity is the same instance, and the
-iteration identity is the same ordinal or is absent for both. Two duplicate
-effect claims therefore compare **equal** under the declared key, and a
-duplicate is exactly the case in which two claims arrive at one node in one
-instance.
-
-FR-058 requires that "The evaluator SHALL distinguish a repeated receipt,
-retried attempt and duplicate business effect", and FR-051-AC-2 requires that
-relabeling a duplicate delivery as a second business effect "refuses the binding
-or yields the authored duplicate-effect violation". Under the declared key there
-is no second effect to refuse or to report: the second claim is equal to the
-first, so it is the same effect, and the required outcome is unreachable. A
-duplicate business effect is not merely undefined here — **it is undetectable**,
-and any implementation that detects one is using a discriminator no requirement
-supplies.
-
-No discriminator is invented here. The establishing attempt
-([FR-225](FR-225-operation-attempt.md)) is the obvious candidate and the prose
-does not state that it is a key component — and FR-225 records that its own key
-does not separate two attempts of one static attempt node either, so that
-candidate does not by itself restore detection. The payload and the trace
-identifier are excluded by FR-051 and FR-051-AC-4, and the timestamp by FR-113.
-
-The remainder of this gap is the equality the prose does not define.
-
-- FR-051-AC-2: "Relabeling a duplicate delivery as a second business effect
-  refuses the binding or yields the authored duplicate-effect violation."
-- FR-058: "The evaluator SHALL distinguish a repeated receipt, retried attempt
-  and duplicate business effect."
-- FR-059: "It SHALL report unexpected, missing, misordered, duplicated and
-  wrongly correlated events without repairing them."
-
-These two sentences describe the same duplicate effect and do not agree on its
-disposition; this artifact records both and resolves neither:
-
-- FR-051-AC-2: "refuses the binding or yields the authored duplicate-effect
-  violation."
-- FR-058-AC-2: "A timed-out attempt, failed attempt and duplicate effect remain
-  three distinct outcomes."
-
-A refusal of the binding and a retained distinct outcome are different results
-for the same observation.
-
-To close this gap an owner would have to decide, and a requirement would have to
-state:
-
-1. Whether the establishing attempt is a component of effect identity, so that
-   two effect claims of one attempt are one effect and a second is a duplicate.
-2. What makes two effect claims the same when they are of different attempts,
-   given that equal payload and trace identifier are excluded by FR-051.
-3. Whether a duplicate effect refuses the binding (FR-051-AC-2) or is retained
-   as a distinct outcome (FR-058-AC-2).
-4. Whether any order over effects exists beyond the authored causal and commit
-   relations, and if one is authored, the explicit statement that it carries no
-   causal meaning.
+- [FR-287](FR-287-authority-qualified-runtime-subject-reference.md) defines the
+  concrete effect key and non-causal comparison order.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Draft. Specification issue #28 fixed effect identity, replay versus duplicate
+effect disposition and comparison order. Executable cross-repository evidence
+remains planned.
