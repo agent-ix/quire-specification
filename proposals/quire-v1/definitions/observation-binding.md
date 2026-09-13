@@ -1,7 +1,8 @@
 # Observation binding definition candidate
 
 Selection identity: `quire.observation.binding/v1`; revision: `1-draft.3`.
-**Candidate only: not adopted, serialized, canonicalized, or implemented.**
+**The selection role is accepted by FS01; this semantic revision remains a
+candidate and is not adopted, serialized, canonicalized or fully implemented.**
 
 Working draft: local rule and dependency links select the current checkout.
 Git preserves drafting history; a coherent baseline is frozen at acceptance.

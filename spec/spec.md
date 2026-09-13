@@ -8,6 +8,12 @@ standards_alignment:
   - iso-iec-ieee-29148
   - ieee-828
 relationships:
+  - target: ix://agent-ix/quire-specification/AD-001
+    type: contains
+  - target: ix://agent-ix/quire-specification/AD-002
+    type: contains
+  - target: ix://agent-ix/quire-specification/AD-003
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-130
     type: contains
   - target: ix://agent-ix/quire-specification/FR-200
@@ -448,10 +454,13 @@ The user requested /specify and /spec-review for all work. Existing implementati
 ## 14. Lifecycle Status
 
 The 2026-09-09 ruling selects native Quire as the sole editable formal-clause
-language. [FR-019](functional/foundation/FR-019-admit-native-source-profile.md) and the
-[versioned amendment](../proposals/native-source-1-draft/README.md) carry forward
-its admission rules. The replacement candidate is not enabled by this document;
-the adopted historical definitions and their implementation remain distinguishable.
+language. FS01's accepted [language charter](assurance/AD-003-native-quire-language-charter.md)
+fixes the `ix:native` identity, composed profile hierarchy and language/profile/
+backend separation. [FR-019](functional/foundation/FR-019-admit-native-source-profile.md)
+and the [superseded amendment](../proposals/native-source-1-draft/README.md) carry
+forward its admission rules. The old `state-finite/1-draft` candidate is not
+enabled or aliased; adopted historical definitions and their implementation
+remain distinguishable from composed semantic candidates.
 
 The owner adopted e897f81 for internal implementation. Accepted IR ADR-0054
 (PR61, 690bde7) subsequently removed the universal Filament reader prerequisite;
@@ -469,8 +478,10 @@ engineering-assurance completion. The user distributes the A–F handoffs; no
 additional session dispatch is implied. Preserve dependency/template grants.
 Standard-wide publication terms remain unresolved.
 
-The [shared foundation](../proposals/quire-v1/shared-foundation.md) is a drafting
-checkpoint with artifact reservations and explicit outstanding decisions.
+The [shared foundation](../proposals/quire-v1/shared-foundation.md) remains the
+semantic drafting checkpoint. FS01 accepts its subsystem and profile-identity
+roles; owning FS02–FS06/family tickets retain semantic revision adoption,
+implementation and qualification.
 FR-030–049, FR-130, the decomposed FR-020, NFR-010 and their
 [planned matrix](composed-foundation/tests.md) establish the shared contribution.
 The [grammar](../proposals/quire-v1/shared-grammar.md) and
@@ -507,6 +518,9 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 
 | Artifact | Type | Status |
 | --- | --- | --- |
+| [AD-001](assurance/AD-001-composed-native-language.md) | ArchitectureDescription | Accepted subsystem and ownership boundary; semantic delivery remains separately tracked |
+| [AD-002](assurance/AD-002-native-temporal-vertical-slice.md) | ArchitectureDescription | Proposed temporal refinement; FS04/temporal owners retain acceptance |
+| [AD-003](assurance/AD-003-native-quire-language-charter.md) | ArchitectureDescription | Accepted FS01 language charter and profile identity hierarchy |
 | [FCD FR-106](https://github.com/agent-ix/filament-core-data/blob/1d901d716eed003cb034a624f56bb46e2b8c2a94/spec/functional/FR-106-author-field-presence-independently.md) | FR | D-owned merged specification; FCD #95 acceptance and implementation pending |
 | [FCD FR-107](https://github.com/agent-ix/filament-core-data/blob/1d901d716eed003cb034a624f56bb46e2b8c2a94/spec/functional/FR-107-declare-first-class-relationship-contracts.md) | FR | D-owned merged specification; FCD #95 acceptance and implementation pending |
 | [FCD FR-108](https://github.com/agent-ix/filament-core-data/blob/1d901d716eed003cb034a624f56bb46e2b8c2a94/spec/functional/FR-108-bind-populations-to-model-contracts.md) | FR | D-owned merged specification; truth-support correction resolved, producer acceptance open |
@@ -578,7 +592,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [StR-002](stakeholder/StR-002-composed-language.md) | StR | V1 redesign draft |
 | [US-005](usecase/US-005-author-composed-workflows.md) | US | V1 redesign draft |
 | [FR-020](functional/foundation/FR-020-compose-native-profiles.md) | FR | V1 redesign draft; implementation not authorized |
-| [FR-001](functional/foundation/FR-001-select-native-profile.md) | FR | Draft |
+| [FR-001](functional/foundation/FR-001-select-native-profile.md) | FR | Accepted FS01 selection/evolution requirement; implementation varies by exact profile |
 | [FR-002](functional/foundation/FR-002-resolve-owned-declarations.md) | FR | Draft |
 | [FR-003](functional/foundation/FR-003-bind-source-correspondence.md) | FR | Draft |
 | [FR-004](functional/foundation/FR-004-separate-artifact-identities.md) | FR | Draft |
@@ -596,7 +610,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-016](functional/foundation/FR-016-migrate-explicitly.md) | FR | Draft |
 | [FR-017](functional/foundation/FR-017-select-verification-artifact-roles.md) | FR | Amendment |
 | [FR-018](functional/foundation/FR-018-select-verification-jcs-domain.md) | FR | Amendment |
-| [FR-019](functional/foundation/FR-019-admit-native-source-profile.md) | FR | Native-source definition candidate; implementation incomplete |
+| [FR-019](functional/foundation/FR-019-admit-native-source-profile.md) | FR | Accepted FS01 admission constraint; implementation evidence remains partial |
 | [US-001](usecase/US-001-understand-native-meaning.md) | US | Draft |
 | [US-002](usecase/US-002-exchange-exact-subjects.md) | US | Draft |
 | [US-003](usecase/US-003-assess-finite-state.md) | US | Draft |

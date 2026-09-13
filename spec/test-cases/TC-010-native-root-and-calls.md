@@ -9,7 +9,7 @@ relationships:
 ## Description
 
 Exercise root typing and prohibited effects/calls through actual native intake.
-Planned replacement-profile acceptance, with independent refused controls.
+Planned composed state-profile acceptance, with independent refused controls.
 
 ## Test Procedure
 

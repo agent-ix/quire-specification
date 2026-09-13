@@ -1,7 +1,8 @@
 # Composed linked-package reference definition
 
 Artifact interpretation: `quire.package.composed/v1`; revision: `1-draft.2`.
-Language: `ix:native` / `1-draft`. **Proposed, not adopted or implemented.**
+Language: `ix:native` / `1-draft`. **The artifact role is accepted by FS01; this
+semantic revision remains proposed and is not adopted or fully implemented.**
 This defines a semantic reference to a fully linked package. It is not a source
 profile and cannot be selected by a clause's `using` alias.
 
