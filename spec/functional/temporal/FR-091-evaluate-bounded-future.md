@@ -32,10 +32,13 @@ progress/closure information for the subject's required observations.
 
 ## Outputs
 
-A true, false or pending temporal truth disposition with the exact decision
-scope, settlement basis and decision-support identities needed by the shared
-result contract, or a separate incomplete or refused disposition with the
-affected clause, interval and missing premise.
+A `satisfied`, `violated` or `pending` temporal truth disposition with the exact
+decision scope, settlement basis and decision-support identities needed by the
+shared result contract, or a separate incomplete or refused evaluator outcome
+with the affected clause, interval and missing premise. A non-completed
+evaluator outcome carries no truth fact at this boundary; the canonical result
+adapter represents that absence as truth `unavailable` with settlement basis
+`unavailable`.
 
 ## Behavior
 
@@ -69,17 +72,17 @@ true only after the observation authority establishes completeness through the
 upper endpoint; before then the result is pending or incomplete. `release`
 remains the Boolean dual.
 
-The evaluator shall return a Boolean for an open decision scope only when the
+The evaluator shall return `satisfied` or `violated` for an open decision scope only when the
 selected profile proves that every admitted continuation preserves it. Such a
-result shall identify `decisive-witness` for true or
-`decisive-counterexample` for false and shall retain the exact valuation,
+result shall identify `decisive-witness` for `satisfied` or
+`decisive-counterexample` for `violated` and shall retain the exact valuation,
 capture, clock, progress and profile facts that form its decision-support set.
 Closure of that decision scope authorizes `closed-scope`; it does not imply
 closure of the surrounding execution. An undecided open scope shall remain
 pending with settlement basis `unsettled`.
 
 The evaluator shall represent missing required current valuations or an
-incomplete closed input as incomplete rather than pending future time or false.
+incomplete closed input as incomplete rather than pending future time or `violated`.
 The evaluator shall make truth unavailable when a fact is missing inside the
 exact decision-support set. The evaluator shall retain a fact missing outside a
 completed decision-support set in completeness and any dependent

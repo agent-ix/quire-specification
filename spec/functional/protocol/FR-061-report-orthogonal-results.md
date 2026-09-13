@@ -43,6 +43,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-284
     type: references
+  - target: ix://agent-ix/quire-specification/FR-285
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-286
+    type: references
 ---
 ## Description
 
@@ -80,10 +84,18 @@ The result producer SHALL NOT create a local evidence store or verification-meth
 registry.
 The result producer SHALL emit every canonical protocol result with
 `contractVersion` equal to `quire.protocol.result/v1-draft.1`, kind
-`ProtocolResult` and a result identity. Its enclosing artifact reference carries
+`ProtocolResult` and a `resultId` derived exactly under FR-286. The identity
+preimage is the versioned wrapper around the complete closed result with only
+`resultId` omitted. A strict reader SHALL validate closed shape, version and
+kind before recomputing the identity, and SHALL refuse a missing, stale or
+cross-domain identity. Two accepted results bearing one identity SHALL have
+byte-identical RFC 8785 canonical result bytes. A later contradiction emits a
+new identity and explicit lineage; it never reuses the old identity for changed
+bytes. Its enclosing artifact reference carries
 the `sha256-jcs` digest over the complete RFC 8785 canonical result bytes; the
 digest is not a self-referential field inside those bytes. A strict reader SHALL
-recompute the enclosing reference digest before accepting the result.
+recompute the enclosing reference digest after the result identity and before
+cross-field or lineage validation.
 Assessment execution states whether the requested evaluator completed or why it
 did not. Decision-scope progress and closure and surrounding-execution progress
 and closure are four independent facts with exact scope, authority and boundary
@@ -124,6 +136,15 @@ whether the exact observations required to interpret the requested result are
 whether the exact declared obligation and case set is `demonstrated`,
 `not-demonstrated`, `inapplicable` or `unknown`. The result producer SHALL NOT
 use either adequacy domain as evidence for the other.
+
+Participation SHALL carry exactly one FR-285 `known` or `unknown` value object.
+A known fact retains the complete required-role-instance set and its participating
+subset. An unknown fact retains every known participant plus every missing
+dependency and typed reason that prevents knowing the required set; it SHALL
+NOT invent a complete set. Collections use the selected FR-212 role-instance
+identity and canonical order. If that key or order is unavailable, construction
+or reordering SHALL refuse rather than use display names. E02 participation
+labels are derived projection states and SHALL NOT be accepted as source values.
 
 Every truth result SHALL carry exactly one settlement basis from
 `closed-scope`, `decisive-witness`, `decisive-counterexample`, `unsettled` or
@@ -185,6 +206,8 @@ The strict reader SHALL enforce the following result-combination rules.
 | FR-061-AC-11 | Each of decision-scope progress, decision-scope closure, surrounding-execution progress and surrounding-execution closure carries exactly `open` or `closed`; `incomplete`, `contradicted`, `not-required`, `not-started`, `advanced`, `stalled`, `unobserved` or any other label on one of the four is refused. | Test (TC-061) |
 | FR-061-AC-12 | An omitted one of the four axes is refused rather than defaulted to `open` or to `closed`, and compares only to absence. | Test (TC-061) |
 | FR-061-AC-13 | A `closed` progress fact leaves its own scope's closure fact independently readable and does not close it, and a `closed` closure fact on one scope does not close the other scope. | Test (TC-061) |
+| FR-061-AC-14 | The independently recomputed FR-286 identity accepts object-member presentation permutations, changes for every semantic member mutation, and refuses missing identity or the same identity on different canonical result bytes. | Test (TC-061) |
+| FR-061-AC-15 | Participation accepts exactly the FR-285 known/unknown shapes, retains exact role-instance and missing-dependency references, and refuses target labels, mixed variants, duplicate members or display-derived ordering. | Test (TC-061) |
 
 ## Dependencies
 
@@ -193,4 +216,8 @@ The strict reader SHALL enforce the following result-combination rules.
 - [FR-060](FR-060-separate-protocol-claims.md).
 - [FR-284](../../objects/protocol/FR-284-scope-progress-and-closure-state.md)
   types the two-member state vocabulary the four axes carry.
+- [FR-285](../../objects/protocol/FR-285-participation-fact.md) types the source
+  participation fact.
+- [FR-286](../../objects/protocol/FR-286-canonical-protocol-result-identity-preimage.md)
+  defines the result identity preimage and validation order.
 - [Protocol contract](../../../proposals/quire-v1/protocol-contract.md).

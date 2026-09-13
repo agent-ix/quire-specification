@@ -5,6 +5,10 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-047
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-271
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-273
+    type: verifies
 ---
 ## Description
 
@@ -38,6 +42,13 @@ and change display paths separately: code, typed cause and semantic subject stay
 equal. A changed response catalog is retained in response provenance without
 silently relinking the checked subject.
 
+For every supported producer interface, enumerate every member of its closed
+stage vocabulary through the real producer boundary. Then mutate the interface
+revision/digest, add an unknown stage member, reuse a valid label under another
+interface and replace the originating pair with a wrapper display stage. Each
+mutation refuses or preserves the original opaque pair as required; no global
+six- or eleven-member fallback is consulted.
+
 Map a legacy code/message response lacking a required discriminant. Preserve
 the legacy result without guessing a new cause from its English text. Combine
 a known invalid defect with a missing-input defect, then cap diagnostic detail
@@ -48,3 +59,8 @@ not discharge these typed-cause or consumer controls.
 ## Expected Results
 
 Machine consumers discriminate failures using stable typed data only. Classification and identity survive presentation changes. Unavailable context is explicit, not guessed; no uncatalogued literal or message-matching path is accepted as the contract.
+Every stage admits only under its exact selected producer interface. Unknown or
+cross-interface pairs retain their original bytes and provenance and refuse
+without a global-list, display-stage or first-wins fallback. Projection-refusal
+codes remain in the separate FR-283 catalog even when a spelling resembles a
+native producer code.

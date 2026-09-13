@@ -32,9 +32,12 @@ the complete required history identified by the observation binding.
 
 ## Outputs
 
-A true or false past-time result, or a separate incomplete/refused disposition
-that identifies missing history, an unsupported profile/operator or a resource
-failure.
+A `satisfied` or `violated` past-time truth disposition, or a separate
+incomplete/refused evaluator outcome that identifies missing history, an
+unsupported profile/operator or a resource failure. A non-completed evaluator
+outcome carries no truth fact at this boundary; the canonical result adapter
+represents that absence as truth `unavailable` with settlement basis
+`unavailable`.
 
 ## Behavior
 

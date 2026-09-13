@@ -34,6 +34,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-284
     type: references
+  - target: ix://agent-ix/quire-specification/FR-285
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-286
+    type: references
 ---
 # FR-240: Canonical protocol result
 
@@ -51,7 +55,7 @@ artifact adds none.
 | --- | --- |
 | `contractVersion` | Exactly `quire.protocol.result/v1-draft.1` on every canonical protocol result (FR-061). |
 | `kind` | Exactly `ProtocolResult` (FR-061). |
-| result identity | The result's own identity (FR-061, FR-061-AC-3). Its derivation rule is not established; see **Open gap**. |
+| `resultId` | The derived `sha256-jcs` identity defined by [FR-286](FR-286-canonical-protocol-result-identity-preimage.md): RFC 8785/SHA-256 over the versioned wrapper around the complete closed result with only `resultId` omitted. |
 | enclosing artifact reference | Carries the `sha256-jcs` digest over the complete RFC 8785 canonical result bytes. The digest is **not** a self-referential field inside those bytes, and a strict reader recomputes it before accepting the result (FR-061, FR-061-AC-3). |
 | assessment execution | One state stating whether the requested evaluator completed or why it did not ([FR-241](FR-241-assessment-execution-disposition.md)). |
 | decision-scope progress | Independent fact with exact scope, authority and boundary identities, carrying one state from [FR-284](FR-284-scope-progress-and-closure-state.md) (FR-061). |
@@ -62,7 +66,7 @@ artifact adds none.
 | truth | One truth disposition ([FR-242](FR-242-truth-disposition.md)). |
 | settlement basis | Exactly one basis per truth result, plus the exact supporting fact and progress identities ([FR-243](FR-243-settlement-basis.md)). |
 | activation | One activation state ([FR-244](FR-244-activation-state.md)). |
-| participation | An independently retained axis (FR-061, FR-115). Not enumerated by FR-061 or FR-115; see **Open gap**. |
+| participation | Exactly one closed [FR-285](FR-285-participation-fact.md) `known` or `unknown` value object. It is not a source status enum. |
 | assumptions | Each assumption retains its exact assumption identity and one state from `met`, `not-met`, `unknown` or `not-assessed` (FR-061). The state vocabulary is defined by [FR-280](FR-280-assumption-state.md). |
 | completeness | States which facts required by the returned claim are available and identifies every missing dependency (FR-061). |
 | observation adequacy | Whether the exact observations required to interpret the requested result are adequate ([FR-245](FR-245-observation-adequacy-state.md)). |
@@ -73,10 +77,8 @@ artifact adds none.
 
 ## Identity and comparison
 
-- **Identity kind** — the result carries an explicit **result identity** (FR-061).
-  The prose does not state whether that identity is authored by the producer or
-  derived from the result's own components, so this artifact declares neither;
-  see **Open gap**.
+- **Identity kind** — *derived*. FR-286 defines the exact versioned preimage and
+  validation order; the producer cannot author the identity independently.
 - **Key** — the result identity. Equality is componentwise over the key and
   nothing else. Display name, source path, span, message text, locale and
   rendering never participate (FR-200, FR-009). FR-061 supports this directly: a
@@ -85,6 +87,10 @@ artifact adds none.
 - **Key order** — **none is established.** No requirement states a total order
   over result identities. This artifact does not supply one. Collection
   comparison therefore has no ordering authority here.
+- **Byte uniqueness** — two accepted results with one identity have
+  byte-identical RFC 8785 canonical result bytes. Same identity on different
+  bytes is refused. Presentation permutations canonicalizing to the same bytes
+  are not different results.
 - **Causal order** — supersession lineage only. When a later observation,
   progress or closure record contradicts a premise in a settled result, the
   producer retains the earlier result bytes and emits a typed superseding or
@@ -142,6 +148,8 @@ and does not give them label spellings; this artifact does not invent any.
 | FR-240-AC-6 | Each of the four decision-scope and surrounding-execution axes carries exactly one FR-284 member, and the complete-global-conformance axis carries exactly one FR-247 member. | Analysis |
 | FR-240-AC-4 | Two results are compared over the result identity alone; equal display names or implementations establish neither equality nor independence. | Analysis |
 | FR-240-AC-5 | No result-identity ordering is asserted by this artifact or inferred by a reader. | Inspection |
+| FR-240-AC-7 | `resultId` is derived under FR-286; same identity with different canonical result bytes and any reader-supplied default identity are refused. | Analysis |
+| FR-240-AC-8 | Participation carries exactly one FR-285 value object and never an E02 target status label. | Analysis |
 
 ## Dependencies
 
@@ -162,35 +170,21 @@ and does not give them label spellings; this artifact does not invent any.
   carried here.
 - [FR-284](FR-284-scope-progress-and-closure-state.md) defines the state
   vocabulary the four progress and closure axes carry.
+- [FR-285](FR-285-participation-fact.md) defines source participation without
+  importing E02 status labels.
+- [FR-286](FR-286-canonical-protocol-result-identity-preimage.md) defines the
+  canonical result identity preimage, byte-uniqueness rule and reader order.
 
-## Open gap
+## Resolved FS02 rulings
 
-1. **Result-identity derivation.** FR-061 requires "a result identity" and
-   FR-061-AC-4 refuses a "stale identity", but no requirement states whether the
-   identity is authored by the producer or derived from named components. The
-   identity kind is therefore not declared here. By contrast,
-   [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
-   fully specifies the *derived* projection identity
-   ([FR-249](FR-249-derived-projection-result.md)).
-2. **Identity versus bytes.** No requirement states whether two results bearing
-   the same result identity and different canonical bytes are admissible.
-3. **Participation is unenumerated at the source.** FR-061 and FR-115 both name
-   participation as a retained axis and neither lists its members. The only
-   enumerated participation vocabulary in the specification is FR-062's **E02
-   target** vocabulary (`complete` / `partial` / `not-started` / `not-required` /
-   `unknown`), which is the projection target rather than the protocol source
-   vocabulary. This artifact does not adopt a target vocabulary as a source one.
-4. The repo review
-   [`SR-208`](../../reviews/protocol-verification-projection-object.md) FND-001
-   already records that "FR-061 names a mapping but defines no total conversion
-   for protocol execution states ... into E02's different closed vocabularies."
-   Gap 3 is that finding seen from the source side; the four progress and closure
-   axes it also covered are now enumerated by
-   [FR-284](FR-284-scope-progress-and-closure-state.md).
+The result identity is derived, not authored; same identity with different
+canonical bytes is invalid; and participation is a discriminated source value
+object rather than a status enumeration. FR-285 intentionally delegates the
+role-instance key and canonical member order to FR-212. If that selected rule is
+incomplete, construction or reordering refuses rather than falling back to
+display names.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Accepted FS02 canonical-result ruling. Implementation and mutation evidence
+remain planned under FR-061/TC-061.

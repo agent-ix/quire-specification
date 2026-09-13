@@ -47,31 +47,14 @@ When a truth result is retained, the result producer SHALL carry exactly one set
 - **Digest domain** — not applicable; this key contains no digest. See
   [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
 
-## Recorded divergence: membership is not stated uniformly
+## Boundary correspondence
 
-Four requirements state this vocabulary and one of them lists only four members.
-
-- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md): "Every truth
-  result SHALL carry exactly one settlement basis from `closed-scope`,
-  `decisive-witness`, `decisive-counterexample`, `unsettled` or `unavailable`".
-- [FR-094](../../functional/temporal/FR-094-interpret-progress-history-and-closure.md)-AC-7:
-  "`closed-scope`, `decisive-witness`, `decisive-counterexample`, `unsettled` and
-  `unavailable` are accepted only with their valid truth, scope and exact
-  deciding-fact combinations".
-- [FR-115](../../functional/observation/FR-115-report-activation-participation-and-adequacy.md):
-  "it SHALL retain its `closed-scope`, `decisive-witness`,
-  `decisive-counterexample`, `unsettled`, or `unavailable` basis and every exact
-  supporting fact/progress identity".
-- [FR-091](../../functional/temporal/FR-091-evaluate-bounded-future.md): "Such a result
-  shall identify `decisive-witness` for true or `decisive-counterexample` for
-  false ... Closure of that decision scope authorizes `closed-scope`; it does not
-  imply closure of the surrounding execution. An undecided open scope shall remain
-  pending with settlement basis `unsettled`."
-
-FR-091 names four members and never names `unavailable`, although FR-091 supplies
-the settlement basis "needed by the shared result contract" that FR-061 owns.
-This artifact lists the five members FR-061, FR-094-AC-7 and FR-115 each state,
-and records that FR-091 does not name the fifth. It adds nothing to FR-091.
+This five-member vocabulary is authoritative at the canonical result boundary.
+FR-091 and FR-092 emit a settlement basis only with a completed temporal truth.
+Their incomplete or refused evaluator outcomes carry no truth or basis fact at
+that lower boundary; the FR-061 adapter represents the absent pair as truth
+`unavailable` and settlement basis `unavailable`. Absence remains distinct from
+the supplied `unavailable` value.
 
 ## Acceptance Criteria
 
@@ -94,15 +77,8 @@ and records that FR-091 does not name the fifth. It adds nothing to FR-091.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
-## Open gap
-
-FR-091 lists four members where FR-061, FR-094-AC-7 and FR-115 list five. No
-requirement states whether FR-091's evaluator may emit `unavailable`. Both lists
-are quoted above; this artifact does not merge them.
-
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Accepted FS02 vocabulary ruling. The five labels above are the complete
+canonical-result vocabulary; lower evaluator outcome absence is adapted as
+specified under **Boundary correspondence** and is never defaulted silently.
