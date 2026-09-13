@@ -42,7 +42,8 @@ Compiler FR-005 and IT-005 carry the corrected native boundary. No duplicate
 archetype authority or executable binder is authorized.
 
 Standard document/reusable-artifact terms and public promotion remain deferred.
-New compiler implementation retains AGPL-3.0-only, preserving existing grants.
+New compiler implementation is AGPL-3.0-or-later (relicensed from
+AGPL-3.0-only by owner decision 2026-09-13), preserving existing grants.
 Fresh TypeSpec/Node producer execution and hosted CI dispatch were not approved.
 The broader FS and LC02 issues stay open until their actual acceptance evidence
 exists.

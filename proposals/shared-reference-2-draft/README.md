@@ -115,5 +115,5 @@ partial acceptance. No network schema retrieval is authorized by schema IDs.
 
 The candidate schema and vectors are first-party authored data. Existing document
 and reusable-artifact publication terms remain unresolved; the packet stays
-private. Any new executable qualification source is Rust under AGPL-3.0-only,
+private. Any new executable qualification source is Rust under AGPL-3.0-or-later,
 with original dependency grants retained. No hosted workflow is dispatched.
