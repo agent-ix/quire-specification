@@ -5,6 +5,14 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-051
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-210
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-224
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-225
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-226
+    type: verifies
 ---
 ## Description
 

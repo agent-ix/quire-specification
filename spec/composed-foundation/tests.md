@@ -57,6 +57,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-288
     type: references
+  - target: ix://agent-ix/quire-specification/FR-221
+    type: references
 ---
 ## Overview
 
@@ -128,6 +130,8 @@ baseline review remain prerequisites for the corresponding executable cases.
 | FR-288 | FR-288-AC-3 | TC-035 | 🚧 Planned |
 | FR-288 | FR-288-AC-4 | TC-035 | 🚧 Planned |
 | FR-288 | FR-288-AC-5 | TC-035 | 🚧 Planned |
+| FR-221 | FR-221-AC-4 | TC-171 | 🚧 Planned |
+| FR-221 | FR-221-AC-5 | TC-171 | 🚧 Planned |
 | FR-036 | FR-036-AC-1 | TC-036 | 🚧 Planned |
 | FR-036 | FR-036-AC-2 | TC-036 | 🚧 Planned |
 | FR-036 | FR-036-AC-3 | TC-036 | 🚧 Planned |
@@ -252,7 +256,7 @@ baseline review remain prerequisites for the corresponding executable cases.
 | TC-048 | Stop work at its resource boundary | Integration | P1 | NFR-010 | 🚧 Planned |
 | TC-049 | Retain typed temporal syntax and activation bindings | Integration | P1 | FR-048-AC-1, FR-048-AC-2, FR-048-AC-3, FR-048-AC-4, FR-048-AC-5, FR-048-AC-6, FR-048-AC-7, FR-048-AC-8 | 🚧 Planned |
 | TC-170 | Bind choreography references without identity substitution | Integration | P1 | FR-049-AC-1, FR-049-AC-2, FR-049-AC-10 | 🚧 Planned |
-| TC-171 | Preserve causal structure and definite value availability | Integration | P1 | FR-049-AC-3, FR-049-AC-4, FR-049-AC-11, FR-049-AC-13 | 🚧 Planned |
+| TC-171 | Preserve causal structure and definite value availability | Integration | P1 | FR-049-AC-3, FR-049-AC-4, FR-049-AC-11, FR-049-AC-13, FR-221-AC-4, FR-221-AC-5 | 🚧 Planned |
 | TC-172 | Keep compensation registration and activation captures separate | Integration | P1 | FR-049-AC-5, FR-049-AC-6 | 🚧 Planned |
 | TC-173 | Bind related instances and complete recovery populations | Integration | P1 | FR-049-AC-7, FR-049-AC-8 | 🚧 Planned |
 | TC-174 | Preserve deadline branches and explicit workflow closure | Integration | P1 | FR-049-AC-9, FR-049-AC-12 | 🚧 Planned |
