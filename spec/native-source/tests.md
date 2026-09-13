@@ -17,7 +17,7 @@ review. Rational and source-model presence contracts remain explicit dependencie
 
 ## Functional Requirement Coverage
 
-| Functional Req | Acceptance Criteria | Test Cases | Status |
+| Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
 | --- | --- | --- | --- |
 | FR-001 | FR-001-AC-1 | TC-005 | 🚧 Planned |
 | FR-001 | FR-001-AC-2 | TC-005 | 🚧 Planned |

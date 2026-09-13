@@ -137,7 +137,7 @@ delivered architecture + compiler /2 ──────────────�
 | Task-001 | A | FR-090, FR-095 | TC-110, TC-113, TC-117 | done — PR #15 / `4d6230e` |
 | Task-002 | A | FR-090 | TC-110, TC-113 | done — SL PRs #75/#77/#82 |
 | Task-003 | B | FR-093, FR-094 | TC-114, TC-115, TC-116 | in progress — observation Plan-001 / epic #1 |
-| Task-004 | B | FR-095 | TC-038, TC-117 | blocked — qcir PR #67 then issue #70 |
+| Task-004 | B | FR-095 | TC-038, TC-117 | blocked — qcir issue #70 |
 | Task-005 | A | FR-091, FR-092, FR-093, FR-094, NFR-040 | TC-111, TC-112, TC-114, TC-115, TC-116, TC-118 | in progress — TL Plan-010 / epic #52 |
 | Task-006 | C | FR-095 | TC-039, TC-113, TC-117 | blocked — qcir PR #68, #70, TL Plan-010, then #71 |
 | Task-007 | A | FR-090 through FR-095, NFR-040 | TC-110 through TC-118 | not_started |

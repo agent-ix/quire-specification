@@ -27,7 +27,7 @@ the coherent base-plus-seven review remain acceptance prerequisites.
 
 ## Functional Requirement Coverage
 
-| Functional Req | Acceptance Criteria | Test Cases | Status |
+| Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
 | --- | --- | --- | --- |
 | FR-090 | FR-090-AC-1 | TC-110 | 🚧 Planned |
 | FR-090 | FR-090-AC-2 | TC-110 | 🚧 Planned |
