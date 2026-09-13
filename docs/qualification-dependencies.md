@@ -1,8 +1,8 @@
 # Qualification implementation and dependency rights
 
 The first-party Rust test source in tests/shared_reference.rs and its Cargo
-package are AGPL-3.0-only under the owner's implementation-language/license
-decision. This does not apply a blanket license to standard prose or schemas.
+package are AGPL-3.0-or-later, the license of this repository (see
+[LICENSE](../LICENSE); owner decision 2026-09-13).
 The repository stays private; no public distribution decision is implied.
 
 | Direct dependency | Exact selection | Existing grant | Purpose |

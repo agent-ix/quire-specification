@@ -34,7 +34,7 @@ No duplicate evidence store, hidden normative dependency, or unqualified backend
 - [First specification issue](https://github.com/agent-ix/quire-specification/issues/1)
 - [Private formalization board](https://github.com/orgs/agent-ix/projects/20)
 
-Read [license decision](LICENSE-DECISION.md) before adding code or normative artifacts. Publication requires a fresh review; do not flip private history public.
+This repository is licensed under `AGPL-3.0-or-later`; see [LICENSE](LICENSE). Record the provenance and grants of any copied or generated artifact before adding it. Publication requires a fresh review; do not flip private history public.
 
 ## Native profile packets
 

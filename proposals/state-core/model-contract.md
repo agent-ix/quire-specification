@@ -3,7 +3,7 @@
 Status: proposed interface contract, `agent-a-fs02/2-draft`. This amendment
 resolves A's proposed field meanings for B/C review. It does not register a wire
 schema, complete FS02/FS03/FS05, or supply the missing #36/#54 implementation.
-Private artifact terms remain as recorded in LICENSE-DECISION.md.
+This repository is licensed under `AGPL-3.0-or-later`; see LICENSE.
 
 ## One owner for each boundary
 

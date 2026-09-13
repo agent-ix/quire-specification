@@ -1,6 +1,6 @@
 # Contributor and session guidance
 
-Read README.md, LICENSE-DECISION.md and the owning issue before editing. This is a private bootstrap repository, not a released implementation.
+Read README.md, LICENSE (`AGPL-3.0-or-later`) and the owning issue before editing. This is a private bootstrap repository, not a released implementation.
 
 - Preserve authored/source identity and explicit unsupported/incomplete results.
 - Use the first specification issue to establish requirements, acceptance fixtures and scoped implementation/CI work before scaffolding speculative crates.
