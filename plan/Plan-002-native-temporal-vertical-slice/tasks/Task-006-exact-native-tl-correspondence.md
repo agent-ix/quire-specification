@@ -2,7 +2,7 @@
 id: Task-006
 title: "Implement exact native-to-TL correspondence"
 type: Task
-status: not_started
+status: blocked
 track: C
 priority: P0
 relationships:

@@ -90,14 +90,18 @@ relationships:
 
 ## Remaining Work
 
+### Delivered foundations
+
+- **Task-001 is done.** The cross-repository architecture and correspondence
+  ownership were accepted by specification PR #15 (`4d6230e`) and its composed
+  base-plus-seven review. No replacement architecture review is required.
+- **Task-002 is done for its compiler-owned boundary.** `quire-spec-language`
+  PRs #75, #77 and #82 deliver strict compiled-protocol `/2` temporal selection,
+  authenticated evaluation/mapping inputs and the corrected closure selector.
+  The independent Contract-IR/TL bridge remains Task-004/Task-006 work.
+
 ### Track A: Critical Path (serial)
 
-- **A1 = Task-001** Ratify the cross-repository architecture — Medium; exit:
-  one reviewed correspondence table identifies owner, version, identity and
-  failure disposition for every boundary.
-- **A2 = Task-002** Implement compiler temporal admission and `/2` wire — Hard;
-  exit: a compiled native temporal subject carries authenticated profile/clock
-  selection or a located refusal.
 - **A3 = Task-005** Implement native temporal runtime result model and evaluator — Hard;
   exit: bounded future/past and activation semantics emit closed, non-Boolean
   failure states as specified.
@@ -121,7 +125,7 @@ relationships:
 ## Parallel Execution Summary
 
 ```text
-A1 architecture review ──> A2 compiler /2 ─────────────┐
+delivered architecture + compiler /2 ──────────────────┐
                          B1 observation/progress ───────┼─> A3 runtime ─> C1 bridge ─> Gate
                          B2 predicate projection ───────┘
 ```
@@ -130,12 +134,12 @@ A1 architecture review ──> A2 compiler /2 ───────────�
 
 | Task | Track | Owns | Verified by | Status |
 | --- | --- | --- | --- | --- |
-| Task-001 | A | FR-090, FR-095 | TC-110, TC-113, TC-117 | not_started |
-| Task-002 | A | FR-090 | TC-110, TC-113 | not_started |
-| Task-003 | B | FR-093, FR-094 | TC-114, TC-115, TC-116 | not_started |
-| Task-004 | B | FR-095 | TC-038, TC-117 | not_started |
-| Task-005 | A | FR-091, FR-092, FR-093, FR-094, NFR-040 | TC-111, TC-112, TC-114, TC-115, TC-116, TC-118 | not_started |
-| Task-006 | C | FR-095 | TC-039, TC-113, TC-117 | not_started |
+| Task-001 | A | FR-090, FR-095 | TC-110, TC-113, TC-117 | done — PR #15 / `4d6230e` |
+| Task-002 | A | FR-090 | TC-110, TC-113 | done — SL PRs #75/#77/#82 |
+| Task-003 | B | FR-093, FR-094 | TC-114, TC-115, TC-116 | in progress — observation Plan-001 / epic #1 |
+| Task-004 | B | FR-095 | TC-038, TC-117 | blocked — qcir PR #67 then issue #70 |
+| Task-005 | A | FR-091, FR-092, FR-093, FR-094, NFR-040 | TC-111, TC-112, TC-114, TC-115, TC-116, TC-118 | in progress — TL Plan-010 / epic #52 |
+| Task-006 | C | FR-095 | TC-039, TC-113, TC-117 | blocked — qcir PR #68, #70, TL Plan-010, then #71 |
 | Task-007 | A | FR-090 through FR-095, NFR-040 | TC-110 through TC-118 | not_started |
 
 ## Coordination Rules
@@ -146,6 +150,6 @@ A1 architecture review ──> A2 compiler /2 ───────────�
   transport. The temporal runtime consumes its identified assertions.
 - Contract IR owns FR-025 and FR-026; no compiler/runtime branch duplicates its
   formula, proposition-map or correspondence reader.
-- Merge order is Task-001 review, Task-002/003/004 foundations, Task-005,
-  Task-006, then Task-007. Any unavailable predecessor leaves its downstream
-  request typed unsupported/incomplete rather than partially implemented.
+- The remaining merge order is Task-003/004 foundations, Task-005, Task-006,
+  then Task-007. Any unavailable predecessor leaves its downstream request
+  typed unsupported/incomplete rather than partially implemented.
