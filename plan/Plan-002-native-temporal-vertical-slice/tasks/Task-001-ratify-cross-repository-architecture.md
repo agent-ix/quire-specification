@@ -22,9 +22,9 @@ envelope contracts.
 
 ## Subtasks
 
-- [ ] Name exact owners, versions, identity fields and strict readers.
-- [ ] Freeze the support table and the finite-window false-extension discriminator.
-- [ ] Record Rust wire/newtype/resource constraints and refusal code ownership.
+- [x] Name exact owners, versions, identity fields and strict readers.
+- [x] Freeze the support table and the finite-window false-extension discriminator.
+- [x] Record Rust wire/newtype/resource constraints and refusal code ownership.
 
 ## Deliverables
 
