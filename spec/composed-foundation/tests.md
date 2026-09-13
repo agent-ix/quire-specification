@@ -29,6 +29,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-047
     type: references
+  - target: ix://agent-ix/quire-specification/FR-271
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-273
+    type: references
   - target: ix://agent-ix/quire-specification/FR-036
     type: references
   - target: ix://agent-ix/quire-specification/FR-037
@@ -173,6 +177,16 @@ baseline review remain prerequisites for the corresponding executable cases.
 | FR-047 | FR-047-AC-5 | TC-047 | 🚧 Planned |
 | FR-047 | FR-047-AC-6 | TC-047 | 🚧 Planned |
 | FR-047 | FR-047-AC-7 | TC-047 | 🚧 Planned |
+| FR-047 | FR-047-AC-8 | TC-047 | 🚧 Planned |
+| FR-271 | FR-271-AC-1 | TC-047 | 🚧 Planned |
+| FR-271 | FR-271-AC-2 | TC-047 | 🚧 Planned |
+| FR-271 | FR-271-AC-3 | TC-047 | 🚧 Planned |
+| FR-271 | FR-271-AC-4 | TC-047 | 🚧 Planned |
+| FR-271 | FR-271-AC-5 | TC-047 | 🚧 Planned |
+| FR-273 | FR-273-AC-1 | TC-047 | 🚧 Planned |
+| FR-273 | FR-273-AC-2 | TC-047 | 🚧 Planned |
+| FR-273 | FR-273-AC-3 | TC-047 | 🚧 Planned |
+| FR-273 | FR-273-AC-4 | TC-047 | 🚧 Planned |
 | FR-048 | FR-048-AC-1 | TC-049 | 🚧 Planned |
 | FR-048 | FR-048-AC-2 | TC-049 | 🚧 Planned |
 | FR-048 | FR-048-AC-3 | TC-049 | 🚧 Planned |
@@ -216,7 +230,7 @@ baseline review remain prerequisites for the corresponding executable cases.
 | TC-044 | Establish exact numeric definedness in the selected domain | Integration | P1 | FR-044-AC-1, FR-044-AC-2, FR-044-AC-3, FR-044-AC-4, FR-044-AC-5, FR-044-AC-6, FR-044-AC-7 | 🚧 Planned |
 | TC-045 | Preserve conditional evaluation and exact optional-value facts | Integration | P1 | FR-045-AC-1, FR-045-AC-2, FR-045-AC-3, FR-045-AC-4, FR-045-AC-5 | 🚧 Planned |
 | TC-046 | Validate state invocation inputs before clause evaluation | Integration | P1 | FR-046-AC-1, FR-046-AC-2, FR-046-AC-3, FR-046-AC-4, FR-046-AC-5, FR-046-AC-6 | 🚧 Planned |
-| TC-047 | Classify producer diagnostics from typed causes | Integration | P1 | FR-047-AC-1, FR-047-AC-2, FR-047-AC-3, FR-047-AC-4, FR-047-AC-5, FR-047-AC-6, FR-047-AC-7 | 🚧 Planned |
+| TC-047 | Classify producer diagnostics from typed causes | Integration | P1 | FR-047-AC-1, FR-047-AC-2, FR-047-AC-3, FR-047-AC-4, FR-047-AC-5, FR-047-AC-6, FR-047-AC-7, FR-047-AC-8, FR-271-AC-1, FR-271-AC-2, FR-271-AC-3, FR-271-AC-4, FR-271-AC-5, FR-273-AC-1, FR-273-AC-2, FR-273-AC-3, FR-273-AC-4 | 🚧 Planned |
 | TC-048 | Stop work at its resource boundary | Integration | P1 | NFR-010 | 🚧 Planned |
 | TC-049 | Retain typed temporal syntax and activation bindings | Integration | P1 | FR-048-AC-1, FR-048-AC-2, FR-048-AC-3, FR-048-AC-4, FR-048-AC-5, FR-048-AC-6, FR-048-AC-7, FR-048-AC-8 | 🚧 Planned |
 | TC-170 | Bind choreography references without identity substitution | Integration | P1 | FR-049-AC-1, FR-049-AC-2, FR-049-AC-10 | 🚧 Planned |
