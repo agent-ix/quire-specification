@@ -1,4 +1,28 @@
+---
+id: SR-515
+title: "FS01 review and dependency record"
+type: SpecReview
+analysis: base
+scope: "FS01 native-source profile packet and dependency record"
+review_set: subset
+evaluated_revision: "66e032e"
+review_date: "2026-09-07"
+---
+
 # Agent A: FS01 review and dependency record
+
+## Summary
+
+Historical review record for the initial FS01 native-source profile packet and
+its dependency routing at `66e032e`. Later merged implementation does not alter
+the open profile, ADR and standard-artifact decisions recorded here.
+
+## Findings
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-001 | medium | The proposed profile and ADR direction required owner adoption before FS01 acceptance. | Decisions requested after review; Q11 |
+| FND-002 | medium | Shared model identity, presence and finite-reference contracts remained external prerequisites. | A-D2; Q4; Q6 |
 
 2026-09-07. Private review record. Thread
 `01a07e35-9c55-79a1-9524-6969be34378f`; branch

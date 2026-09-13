@@ -2,7 +2,7 @@
 id: Task-003
 title: "Implement observation and progress authority"
 type: Task
-status: not_started
+status: in_progress
 track: B
 priority: P0
 relationships:

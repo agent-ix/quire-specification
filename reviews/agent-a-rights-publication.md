@@ -1,4 +1,28 @@
+---
+id: SR-516
+title: "Artifact rights and publication review"
+type: SpecReview
+analysis: base
+scope: "E01/E04 artifact rights and publication proposal"
+review_set: subset
+evaluated_revision: "66e032e"
+review_date: "2026-09-07"
+---
+
 # Agent A: artifact rights and publication review
+
+## Summary
+
+Historical E01/E04 review of the proposed standard, fixture and implementation
+artifact terms at `66e032e`. It records a HOLD disposition and does not claim a
+later publication or license decision.
+
+## Findings
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-001 | medium | Standard artifact terms and required notices remained unselected for publication. | Artifact inventory and proposed terms |
+| FND-002 | medium | Independent consumer, dependency-rights and disclosure evidence remained open. | E01 proposed publication checklist |
 
 Private proposal, 2026-09-07. Contributes to E01/E04; does not close either.
 

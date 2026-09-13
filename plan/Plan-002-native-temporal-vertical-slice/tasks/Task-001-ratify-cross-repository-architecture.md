@@ -2,7 +2,7 @@
 id: Task-001
 title: "Ratify cross-repository native-temporal architecture"
 type: Task
-status: not_started
+status: done
 track: A
 priority: P0
 relationships:
@@ -22,9 +22,9 @@ envelope contracts.
 
 ## Subtasks
 
-- [ ] Name exact owners, versions, identity fields and strict readers.
-- [ ] Freeze the support table and the finite-window false-extension discriminator.
-- [ ] Record Rust wire/newtype/resource constraints and refusal code ownership.
+- [x] Name exact owners, versions, identity fields and strict readers.
+- [x] Freeze the support table and the finite-window false-extension discriminator.
+- [x] Record Rust wire/newtype/resource constraints and refusal code ownership.
 
 ## Deliverables
 

@@ -2,7 +2,7 @@
 id: Task-005
 title: "Implement native temporal runtime and result model"
 type: Task
-status: not_started
+status: in_progress
 track: A
 priority: P0
 relationships:
