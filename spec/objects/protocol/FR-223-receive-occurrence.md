@@ -44,15 +44,15 @@ message/effect obligation".
 ## Identity and comparison
 
 - **Identity kind** — *derived*, through the node occurrence it is.
-- **Key** — (`static declaration path`, `workflow instance identity`,
-  `iteration identity`), as held by FR-221. Equality is componentwise over that
-  key and nothing else. Display name, source path, span, message text, locale
+- **Key** — the complete FR-221 protocol-node-occurrence key. Equality is
+  componentwise over that key and nothing else. Display name, source path,
+  span, message text, locale
   and rendering never participate, and neither does the payload or a transport
   trace identifier (FR-051, FR-051-AC-4). The related send is a required
-  relation of the receive; no requirement states whether it is also a component
-  of the receive's key, and this artifact adds none.
-- **Key order** — none is established. No requirement fixes a total order over
-  receives. FR-054-AC-2 states that "A FIFO premise orders messages only within
+  relationship of the receive and is not a component of the complete FR-221
+  occurrence key.
+- **Key order** — FR-221's lexicographic order for canonical comparison only.
+  FR-054-AC-2 states that "A FIFO premise orders messages only within
   its declared channel and key scope", which is a conformance premise over
   messages on one channel and one authored key expression, not a key order over
   receive identities and not a total order.
@@ -84,24 +84,8 @@ message/effect obligation".
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
 
-## Open gap
-
-Two requirements describe the same repetition with different subjects, and
-neither cross-references the other:
-
-- FR-051-AC-1: "One message sent once, delivered twice and applied as one
-  payment effect retains cardinalities 1, 2 and 1 for the respective subjects."
-- FR-049-AC-2: "Send, receive, delivery, operation attempt, effect and
-  compensation references remain distinct; a duplicate receipt cannot mint
-  another effect node."
-
-FR-051-AC-1 counts two deliveries, while the choreography surface states that
-duplicate transport receipts "do not create another node occurrence". No
-requirement states whether the second delivery has a receive occurrence, a
-separate identity of its own, or no identity at all. This artifact records both
-sides and resolves neither; see [FR-224](FR-224-delivery.md).
-
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Draft. Specification issue #28 fixed receipt as distinct provenance about a
+delivery and retained receive occurrences separately. Executable cross-
+repository evidence remains planned.

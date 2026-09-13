@@ -8,6 +8,12 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-056
     type: specifies
+  - target: ix://agent-ix/quire-specification/FR-221
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: references
 ---
 # FR-237: Commit boundary
 
@@ -33,20 +39,20 @@ Outputs requires "separate attempt, effect, commit and recovery facts".
 
 ## Identity and comparison
 
-- **Identity kind** — *authored* in ordering only. FR-057 states that the
-  evaluator checks "authored commit ordering", so the boundary and its position
-  are written rather than inferred. No requirement states what identifies one
-  commit boundary, so the identity kind for comparison purposes is not fully
-  established; see the open gap.
-- **Key** — not established. No requirement names the components that identify a
-  commit boundary or a commit observation. The prose states only what the key is
-  not: under FR-009 and FR-047, display name, source path, span, message text,
-  locale and rendering never participate, and under FR-051 a transport trace
-  identifier or equal payload alone identifies nothing.
-- **Key order** — none. The key components are not fixed by the prose, so no
-  total order over them can be declared. In particular the commit ordering
-  checked by FR-057 is a causal order, not a key order, and must not be read as
-  one.
+- **Identity kind** — *derived*. The boundary is an authored commit control; its
+  static identity is derived from its exact linked definition and semantic
+  control handle, and its concrete boundary identity is the corresponding
+  FR-221 node-occurrence key. A concrete commit observation is separately
+  authored by the selected observation producer.
+- **Key** — static boundary key (`qualified protocol-definition identity`,
+  `declaration-local commit-control handle`); concrete boundary-occurrence key
+  is FR-221; concrete observation key is one exact
+  [FR-287](FR-287-authority-qualified-runtime-subject-reference.md) of kind
+  `commit`, bound to that occurrence and its commit requirement. The explicit
+  `never` alternative is a value with no commit identity, not an empty boundary.
+- **Key order** — lexicographic over the applicable static, occurrence or
+  FR-287 key for canonical comparison only. The commit ordering checked by
+  FR-057 is causal order and SHALL NOT be read from any key order.
 - **Causal order** — the authored partial acyclic order of
   [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md). FR-057-AC-3
   names the violations this order detects: "Registration after commit and
@@ -57,9 +63,8 @@ Outputs requires "separate attempt, effect, commit and recovery facts".
   FR-057-AC-4 states that "Missing state, commit or compensation-effect inputs
   yield incomplete/pending rather than recovery success"; an absent commit is
   never compared to a default, an empty commit or an implicit permitting commit.
-- **Digest domain** — no key component is established, so none is a digest here.
-  Where a commit identity is carried as a digest, it retains the domain selected
-  under [FR-201](../foundation/FR-201-canonical-identity-domain.md).
+- **Digest domain** — the linked definition and FR-287 authority digest retain
+  their selected FR-201 domains.
 
 ## Acceptance Criteria
 
@@ -68,7 +73,8 @@ Outputs requires "separate attempt, effect, commit and recovery facts".
 | FR-237-AC-1 | Registration after a forbidding commit and compensation after a forbidding commit are distinguishable violations. | Analysis |
 | FR-237-AC-2 | A missing commit observation yields incomplete or pending and compares only to absence. | Analysis |
 | FR-237-AC-3 | Commit ordering is read from the authored causal order and never from a key order, timestamp or source position. | Analysis |
-| FR-237-AC-4 | No key order is declared for this object. | Inspection |
+| FR-237-AC-4 | A commit boundary, its concrete occurrence and its observation retain their separate declared keys; `never` has no commit identity and receives no default. | Analysis |
+| FR-237-AC-5 | Reusing one commit-observation key for another boundary occurrence refuses, while sorting commit keys changes no authored causal order. | Analysis |
 
 ## Dependencies
 
@@ -80,26 +86,23 @@ Outputs requires "separate attempt, effect, commit and recovery facts".
   authored causal order.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
+- [FR-221](FR-221-protocol-node-occurrence.md) defines the concrete boundary
+  occurrence.
+- [FR-287](FR-287-authority-qualified-runtime-subject-reference.md) defines the
+  concrete commit-observation key.
+- [FR-288](FR-288-qualified-protocol-definition-identity.md) supplies the
+  qualified linked-definition component.
 
-## Open gap
+## Remaining disposition gap
 
-The prose establishes that a commit boundary exists, is authored, is bound to a
-registration, and may forbid a later registration or compensation. It does not
-establish:
-
-- **Identity** — whether a commit boundary is a distinct identified subject or
-  only a position in the authored order.
-- **Key** — which components identify one commit boundary or one commit
-  observation.
-- **Order** — no key order follows, since the components are unfixed.
-
-FR-057 also uses two spellings for the same check: FR-057 Behavior reads
+FR-057 uses two spellings for the same check: FR-057 Behavior reads
 "registration after a forbidding commit", while FR-057-AC-3 reads "Registration
 after commit". Whether every commit forbids registration, or only a commit with a
-forbidding disposition, is not stated. No key, order or disposition rule is
-invented here.
+forbidding disposition, remains tracked by specification issue #31. It does not
+reopen the boundary or observation identity rules fixed here.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no new
-obligation and claims no implementation coverage.
+Draft. Specification issue #28 fixed boundary, occurrence and observation
+identity. Executable cross-repository evidence remains planned; issue #31 owns
+the forbidding-disposition question.

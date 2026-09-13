@@ -47,20 +47,18 @@ cardinality".
 
 - **Identity kind** — *derived*, through the node occurrence it is. Its key is
   the occurrence key of [FR-221](FR-221-protocol-node-occurrence.md).
-- **Key** — (`static declaration path`, `workflow instance identity`,
-  `iteration identity`), as held by FR-221. Equality is componentwise over that
-  key and nothing else. Display name, source path, span, message text, locale
+- **Key** — the complete FR-221 protocol-node-occurrence key. Equality is
+  componentwise over that key and nothing else. Display name, source path,
+  span, message text, locale
   and rendering never participate; neither does the payload, since equal payload
   alone establishes nothing (FR-051), nor a transport trace identifier, which
   refuses substitution for an authored identity (FR-051-AC-4).
-- **Key order** — none is established. No requirement fixes a total order over
-  sends, and this artifact supplies none.
+- **Key order** — FR-221's lexicographic order for canonical comparison only.
 - **Causal order** — the authored partial acyclic order of FR-052, carried by
   FR-220. It is never derived from key order, timestamp or source position
   (FR-052, FR-052-AC-2, FR-113).
-- **Absence** — an absent key component compares only to absence, never to a
-  default or empty value. A send outside every bounded iteration has an absent
-  iteration identity.
+- **Absence** — every FR-221 component is required. A send outside every bounded
+  iteration carries a present zero-length ordinal sequence.
 - **Digest domain** — no component of this key is a digest. A digest carried
   beside a send in provenance carries the domain it was derived under,
   `ix://agent-ix/quire-specification/FR-201`.

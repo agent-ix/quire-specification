@@ -16,6 +16,18 @@ relationships:
   - { target: ix://agent-ix/quire-specification/FR-060, type: references }
   - { target: ix://agent-ix/quire-specification/FR-061, type: references }
   - { target: ix://agent-ix/quire-specification/FR-062, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-210, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-211, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-212, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-213, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-214, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-215, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-224, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-225, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-226, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-235, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-237, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-238, type: references }
   - { target: ix://agent-ix/quire-specification/FR-240, type: references }
   - { target: ix://agent-ix/quire-specification/FR-242, type: references }
   - { target: ix://agent-ix/quire-specification/FR-243, type: references }
@@ -43,10 +55,18 @@ than claiming the advanced algorithms exist.
 | FR-050 | FR-050-AC-2 | TC-050 | 🚧 Planned |
 | FR-050 | FR-050-AC-3 | TC-050 | 🚧 Planned |
 | FR-050 | FR-050-AC-4 | TC-050 | 🚧 Planned |
+| FR-050 | FR-050-AC-5 | TC-050 | 🚧 Planned |
+| FR-050 | FR-050-AC-6 | TC-050 | 🚧 Planned |
+| FR-050 | FR-050-AC-7 | TC-050 | 🚧 Planned |
+| FR-050 | FR-050-AC-8 | TC-050 | 🚧 Planned |
 | FR-051 | FR-051-AC-1 | TC-051 | 🚧 Planned |
 | FR-051 | FR-051-AC-2 | TC-051 | 🚧 Planned |
 | FR-051 | FR-051-AC-3 | TC-051 | 🚧 Planned |
 | FR-051 | FR-051-AC-4 | TC-051 | 🚧 Planned |
+| FR-051 | FR-051-AC-5 | TC-051 | 🚧 Planned |
+| FR-051 | FR-051-AC-6 | TC-051 | 🚧 Planned |
+| FR-051 | FR-051-AC-7 | TC-051 | 🚧 Planned |
+| FR-051 | FR-051-AC-8 | TC-051 | 🚧 Planned |
 | FR-052 | FR-052-AC-1 | TC-052 | 🚧 Planned |
 | FR-052 | FR-052-AC-2 | TC-052 | 🚧 Planned |
 | FR-052 | FR-052-AC-3 | TC-052 | 🚧 Planned |
@@ -71,10 +91,16 @@ than claiming the advanced algorithms exist.
 | FR-057 | FR-057-AC-2 | TC-057 | 🚧 Planned |
 | FR-057 | FR-057-AC-3 | TC-057 | 🚧 Planned |
 | FR-057 | FR-057-AC-4 | TC-057 | 🚧 Planned |
+| FR-057 | FR-057-AC-5 | TC-057 | 🚧 Planned |
+| FR-057 | FR-057-AC-6 | TC-057 | 🚧 Planned |
+| FR-057 | FR-057-AC-7 | TC-057 | 🚧 Planned |
 | FR-058 | FR-058-AC-1 | TC-058 | 🚧 Planned |
 | FR-058 | FR-058-AC-2 | TC-058 | 🚧 Planned |
 | FR-058 | FR-058-AC-3 | TC-058 | 🚧 Planned |
 | FR-058 | FR-058-AC-4 | TC-058 | 🚧 Planned |
+| FR-058 | FR-058-AC-5 | TC-058 | 🚧 Planned |
+| FR-058 | FR-058-AC-6 | TC-058 | 🚧 Planned |
+| FR-058 | FR-058-AC-7 | TC-058 | 🚧 Planned |
 | FR-059 | FR-059-AC-1 | TC-059 | 🚧 Planned |
 | FR-059 | FR-059-AC-2 | TC-059 | 🚧 Planned |
 | FR-059 | FR-059-AC-3 | TC-059 | 🚧 Planned |
@@ -104,6 +130,25 @@ than claiming the advanced algorithms exist.
 | FR-062 | FR-062-AC-2 | TC-064 | 🚧 Planned |
 | FR-062 | FR-062-AC-3 | TC-064 | 🚧 Planned |
 | FR-062 | FR-062-AC-4 | TC-064 | 🚧 Planned |
+| FR-210 | FR-210-AC-4 | TC-050, TC-051 | 🚧 Planned |
+| FR-210 | FR-210-AC-6 | TC-051, TC-057, TC-058 | 🚧 Planned |
+| FR-211 | FR-211-AC-3 | TC-050 | 🚧 Planned |
+| FR-212 | FR-212-AC-4 | TC-050 | 🚧 Planned |
+| FR-213 | FR-213-AC-4 | TC-050 | 🚧 Planned |
+| FR-214 | FR-214-AC-4 | TC-050 | 🚧 Planned |
+| FR-215 | FR-215-AC-5 | TC-050 | 🚧 Planned |
+| FR-224 | FR-224-AC-3 | TC-051 | 🚧 Planned |
+| FR-224 | FR-224-AC-4 | TC-051 | 🚧 Planned |
+| FR-224 | FR-224-AC-5 | TC-051 | 🚧 Planned |
+| FR-225 | FR-225-AC-4 | TC-051 | 🚧 Planned |
+| FR-226 | FR-226-AC-3 | TC-051 | 🚧 Planned |
+| FR-226 | FR-226-AC-4 | TC-051 | 🚧 Planned |
+| FR-226 | FR-226-AC-5 | TC-051 | 🚧 Planned |
+| FR-235 | FR-235-AC-5 | TC-058 | 🚧 Planned |
+| FR-237 | FR-237-AC-4 | TC-057 | 🚧 Planned |
+| FR-237 | FR-237-AC-5 | TC-057 | 🚧 Planned |
+| FR-238 | FR-238-AC-5 | TC-057 | 🚧 Planned |
+| FR-238 | FR-238-AC-6 | TC-057 | 🚧 Planned |
 | FR-240 | FR-240-AC-1 | TC-061 | 🚧 Planned |
 | FR-240 | FR-240-AC-2 | TC-061 | 🚧 Planned |
 | FR-240 | FR-240-AC-3 | TC-061 | 🚧 Planned |
@@ -159,15 +204,15 @@ than claiming the advanced algorithms exist.
 
 | Test ID | Title | Type | Priority | Traces To | Status |
 | --- | --- | --- | --- | --- | --- |
-| TC-050 | Bind exact protocol roles and instances | Integration | P1 | FR-050-AC-1, FR-050-AC-2, FR-050-AC-3, FR-050-AC-4 | 🚧 Planned |
-| TC-051 | Discriminate delivery, attempt and effect identity | Integration | P1 | FR-051-AC-1, FR-051-AC-2, FR-051-AC-3, FR-051-AC-4 | 🚧 Planned |
+| TC-050 | Bind exact protocol roles and instances | Integration | P1 | FR-050-AC-1, FR-050-AC-2, FR-050-AC-3, FR-050-AC-4, FR-050-AC-5, FR-050-AC-6, FR-050-AC-7, FR-050-AC-8, FR-210-AC-4, FR-211-AC-3, FR-212-AC-4, FR-213-AC-4, FR-214-AC-4, FR-215-AC-5 | 🚧 Planned |
+| TC-051 | Discriminate delivery, attempt and effect identity | Integration | P1 | FR-051-AC-1, FR-051-AC-2, FR-051-AC-3, FR-051-AC-4, FR-051-AC-5, FR-051-AC-6, FR-051-AC-7, FR-051-AC-8, FR-210-AC-4, FR-210-AC-6, FR-224-AC-3, FR-224-AC-4, FR-224-AC-5, FR-225-AC-4, FR-226-AC-3, FR-226-AC-4, FR-226-AC-5 | 🚧 Planned |
 | TC-052 | Preserve bounded causal control | Property | P1 | FR-052-AC-1, FR-052-AC-2, FR-052-AC-3, FR-052-AC-4 | 🚧 Planned |
 | TC-053 | Refuse unobservable or ambiguously owned choice | Integration | P1 | FR-053-AC-1, FR-053-AC-2, FR-053-AC-3, FR-053-AC-4 | 🚧 Planned |
 | TC-054 | Bind channel delivery and order premises | Property | P1 | FR-054-AC-1, FR-054-AC-2, FR-054-AC-3, FR-054-AC-4 | 🚧 Planned |
 | TC-055 | Separate activation from obligation truth | Integration | P1 | FR-055-AC-1, FR-055-AC-2, FR-055-AC-3, FR-055-AC-4 | 🚧 Planned |
 | TC-056 | Register compensation after effect success | Integration | P1 | FR-056-AC-1, FR-056-AC-2, FR-056-AC-3, FR-056-AC-4 | 🚧 Planned |
-| TC-057 | Check commit ordering and recovery meaning | Integration | P1 | FR-057-AC-1, FR-057-AC-2, FR-057-AC-3, FR-057-AC-4 | 🚧 Planned |
-| TC-058 | Preserve retries, duplicates and partial recovery | Property | P1 | FR-058-AC-1, FR-058-AC-2, FR-058-AC-3, FR-058-AC-4 | 🚧 Planned |
+| TC-057 | Check commit ordering and recovery meaning | Integration | P1 | FR-057-AC-1, FR-057-AC-2, FR-057-AC-3, FR-057-AC-4, FR-057-AC-5, FR-057-AC-6, FR-057-AC-7, FR-210-AC-6, FR-237-AC-4, FR-237-AC-5, FR-238-AC-5, FR-238-AC-6 | 🚧 Planned |
+| TC-058 | Preserve retries, duplicates and partial recovery | Property | P1 | FR-058-AC-1, FR-058-AC-2, FR-058-AC-3, FR-058-AC-4, FR-058-AC-5, FR-058-AC-6, FR-058-AC-7, FR-210-AC-6, FR-235-AC-5 | 🚧 Planned |
 | TC-059 | Assess finite global conformance | Integration | P1 | FR-059-AC-1, FR-059-AC-2, FR-059-AC-3, FR-059-AC-4, FR-059-AC-5 | 🚧 Planned |
 | TC-060 | Separate conformance and advanced analysis claims | Property | P1 | FR-060-AC-1, FR-060-AC-2, FR-060-AC-3, FR-060-AC-4, FR-060-AC-5 | 🚧 Planned |
 | TC-061 | Discriminate protocol result dimensions | Property | P1 | FR-061-AC-1, FR-061-AC-2, FR-061-AC-3, FR-061-AC-4, FR-061-AC-5, FR-061-AC-6, FR-061-AC-7, FR-061-AC-8, FR-061-AC-9, FR-061-AC-10, FR-061-AC-11, FR-061-AC-12, FR-061-AC-13, FR-061-AC-14, FR-061-AC-15, FR-240-AC-1, FR-240-AC-2, FR-240-AC-3, FR-240-AC-4, FR-240-AC-5, FR-240-AC-6, FR-240-AC-7, FR-240-AC-8, FR-242-AC-1, FR-242-AC-2, FR-242-AC-3, FR-242-AC-4, FR-243-AC-1, FR-243-AC-2, FR-243-AC-3, FR-243-AC-4, FR-285-AC-1, FR-285-AC-2, FR-285-AC-3, FR-285-AC-4, FR-286-AC-1, FR-286-AC-2, FR-286-AC-3, FR-286-AC-4, FR-286-AC-5 | 🚧 Planned |
