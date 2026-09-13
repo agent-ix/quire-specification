@@ -22,18 +22,23 @@ When a protocol requirement names a subject, the specification reader SHALL reso
 ## Values
 
 Each member below is named as a distinct subject by at least one requirement.
-The citation records which requirement names it. No requirement names this whole
-set; see **Open gap**.
+The citation records which requirement names it. These are semantic kinds, not
+one universal producer wire enum: FR-287 qualifies the exact producer-local
+kind discriminator by its selected authority. Requirements may name the subset
+they consume without claiming another requirement's list is incomplete.
 
 | Value | Description |
 | --- | --- |
 | `message` | The authored typed communication obligation. Named distinct by FR-051 ("preserve message, send, receive, delivery, attempt and effect as distinct typed subjects") and carried as "the single authored message/effect obligation" by FR-054-AC-1. |
 | `send` | A protocol event. Named distinct by FR-051 and by FR-049-AC-2. A send alone does not establish a business effect (FR-051 behavior). |
 | `receive` | A protocol event held distinct from `send`. Named distinct by FR-051 and by FR-049-AC-2. A receive alone does not establish a business effect (FR-051 behavior). |
-| `delivery` | A transport observation. Named distinct by FR-051, FR-049-AC-2, FR-111 and FR-035 (as "message deliveries"). Repeated delivery does not establish a second effect (FR-051-AC-2, FR-111-AC-3). |
-| `receipt` | Named distinct by FR-111 ("Workflow instances, deliveries, attempts, effects, and receipts remain distinct"). FR-049-AC-2 and FR-054-AC-1 both use "duplicate receipt" for the admitted repetition that FR-051-AC-1 calls "delivered twice". No requirement states whether `receipt` and `delivery` are one subject or two. |
-| `attempt` | One invocation try. Named distinct by FR-051, FR-111 and FR-035; FR-049-AC-2 names it "operation attempt". An attempt with no established effect remains an attempt (FR-051-AC-3). |
-| `effect` | A declared successful business-state transition. Named distinct by FR-051, FR-049-AC-2, FR-111 and FR-035. It is never inferred from a send, receive, successful transport status, repeated delivery, trace identifier or equal payload alone (FR-051 behavior). |
+| `delivery` | One concrete delivery subject. Named distinct by FR-051, FR-049-AC-2, FR-111 and FR-035 (as "message deliveries"). A second delivery key for one send increases delivery cardinality but establishes no second effect. |
+| `receipt` | A distinct observation/provenance record that refers to a delivery. Replaying or adding receipt records for one delivery key does not mint a delivery, receive occurrence or effect (FR-051). |
+| `operation-attempt` | One forward-operation invocation try. Named `attempt` by FR-051/FR-111/FR-035 and `operation attempt` by FR-049-AC-2. An attempt with no established effect remains an attempt (FR-051-AC-3). |
+| `business-effect` | A declared successful business-state transition, named `effect` by FR-051/FR-049/FR-111/FR-035. It is never inferred from a send, receive, successful transport status, repeated delivery, trace identifier or equal payload alone. |
+| `compensation-attempt` | One attempt against a compensation registration, distinct from `operation-attempt` under FR-058. |
+| `compensation-effect` | One business effect of a compensation attempt, distinct from both its attempt and a forward `business-effect` under FR-058. |
+| `commit` | A concrete observation of an authored commit-boundary occurrence under FR-057; it is distinct from the static boundary object. |
 | `compensation` | Named distinct by FR-049-AC-2 ("Send, receive, delivery, operation attempt, effect and compensation references remain distinct"). FR-051, FR-111 and FR-035 do not name it in their subject lists. |
 | `workflow-instance` | One assessed occurrence. Named distinct by FR-111 and FR-035; FR-050 binds it to its exact typed declaration and configuration identity. FR-051 does not name it in its subject list. |
 | `role-instance` | Named distinct by FR-035 ("Workflow instances, role instances, message deliveries, attempts and effects remain distinct subjects") and kept distinct from its static definition by FR-050. FR-051, FR-049-AC-2 and FR-111 do not name it in their subject lists. |
@@ -53,11 +58,9 @@ set; see **Open gap**.
   matching textual name alone does not establish a business relationship", and
   FR-049-AC-7 requires the exact declared relationship and endpoint direction
   "even when they share a provider, trace ID or equal scalar labels".
-- **Key order** — none is established. No requirement fixes a spelling, an
-  ordinal or a precedence for these subject kinds, so this artifact declares no
-  key order and supplies none. Members are listed above in the order FR-051
-  states them, extended by the members other requirements add; that listing
-  order is presentational and carries no meaning.
+- **Key order** — the exact subject-kind representation supplied by its selected
+  authority is compared under that producer contract as one FR-287 component.
+  This table's row order is presentational and supplies no ordinal or precedence.
 - **Causal order** — not applicable to the vocabulary. Causal order over
   protocol nodes is the authored partial acyclic order of FR-052, which "SHALL
   construct a finite causal graph ... without deriving causal edges from source
@@ -83,15 +86,15 @@ the following are named by none of them.
 | compensation registration | Typed as [FR-233](FR-233-compensation-registration.md) (FR-056). | A registration is an obligation record paired with an effect. `compensation` is already the member FR-049-AC-2 names; the registration is not a second subject kind. |
 | commit boundary | Typed as [FR-237](FR-237-commit-boundary.md) (FR-057). | FR-057 requires "separate attempt, effect, commit and recovery facts" — facts checked about a compensation, not subjects of a conformance claim. |
 | recovery relation | Typed as [FR-238](FR-238-recovery-relation.md) (FR-057). | As above: an authored relation the evaluator decides recovery through, not an assessed subject. |
-| definition | No object artifact. FR-050 requires role instances and workflow instances to be kept "distinct from their static definitions". | A static definition is what an instance is held distinct *from*. `role-instance` and `workflow-instance` are the members; their definitions are the other side of that distinction. |
+| definition | Typed by [FR-288](FR-288-qualified-protocol-definition-identity.md). FR-050 requires role instances and workflow instances to be kept "distinct from their static definitions". | A static definition qualifies authored protocol objects; it is not a concrete runtime subject kind beside `role-instance` and `workflow-instance`. |
 | participant | No object artifact. FR-050: "Internal and external participants use the same identity rules". | "Participant" is FR-050's collective word for roles under one identity rule, not a subject kind beside `role-instance`. Role internality is typed by [FR-217](FR-217-role-internality.md). |
 | component | No object artifact. FR-050-AC-2 refuses "a component identity for a role instance". | Named only as an identity a role instance must not be substituted by. |
 | endpoint | No object artifact. FR-050-AC-2 refuses "an endpoint or channel identity for a role". | Named only as an identity a role must not be substituted by. |
 
-The four typed objects in the upper half of the table have their own identity
-questions, which are recorded on those artifacts and ticketed as
-`quire-specification#28`. Those are identity gaps, not membership gaps: adding a
-label here would not answer them.
+The typed objects in the table retain their own identity rules. FR-287 types the
+runtime subject references and FR-288 types the static definition qualifier;
+neither adds a member to this subject-kind vocabulary. Remaining membership and
+ordering questions are tracked separately by `quire-specification#31`.
 
 A consumer that needs to hold a channel, registration, commit boundary or
 recovery relation apart from a protocol subject does so by referencing the
@@ -104,8 +107,9 @@ object artifact, not by minting a subject-kind label.
 | FR-210-AC-1 | Every member of the table is named as a distinct subject by the requirement cited in its description. | Inspection |
 | FR-210-AC-2 | Two references of different subject kinds compare unequal, and no transport record, trace identifier or equal label makes them equal. | Analysis |
 | FR-210-AC-3 | A reference with an absent subject kind compares only to absence and receives no default member. | Analysis |
-| FR-210-AC-4 | No member of this table is assigned an ordinal, precedence or wire spelling by this artifact. | Inspection |
+| FR-210-AC-4 | No member of this table is assigned an ordinal, precedence or universal wire spelling; its exact producer-local discriminator remains authority-qualified by FR-287. | Inspection |
 | FR-210-AC-5 | A channel, compensation registration, commit boundary, recovery relation, static definition, participant, component or endpoint reference is not represented as a member of this vocabulary. | Inspection |
+| FR-210-AC-6 | A receipt is not a delivery, `operation-attempt` is not `compensation-attempt`, `business-effect` is not `compensation-effect`, and a commit observation is not its static boundary. | Analysis |
 
 ## Dependencies
 
@@ -122,37 +126,9 @@ object artifact, not by minting a subject-kind label.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
-## Open gap
-
-Four requirements each state a closed list of "distinct" protocol subjects, and
-no requirement cross-references the others. This artifact records all four
-verbatim and does not reconcile them.
-
-- FR-051: "the protocol binder SHALL preserve message, send, receive, delivery,
-  attempt and effect as distinct typed subjects."
-- FR-049-AC-2: "Send, receive, delivery, operation attempt, effect and
-  compensation references remain distinct; a duplicate receipt cannot mint
-  another effect node."
-- FR-111: "Workflow instances, deliveries, attempts, effects, and receipts
-  remain distinct."
-- FR-035: "Workflow instances, role instances, message deliveries, attempts and
-  effects remain distinct subjects."
-
-Unresolved by the prose, in addition to the differing membership:
-
-1. Whether `receipt` (FR-111, FR-049-AC-2, FR-054-AC-1) and `delivery` (FR-051,
-   FR-051-AC-1) are one subject or two.
-2. Whether "attempt" (FR-051) and "operation attempt" (FR-049-AC-2) are one
-   subject, and whether a compensation attempt is an `attempt` or a member of
-   `compensation`.
-3. Whether "message deliveries" (FR-035) is the `delivery` subject or a
-   compound of `message` and `delivery`.
-4. Whether any spelling of these subject kinds is normative. No requirement
-   fixes a label string, so no key order over the members can be established.
-
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Draft. Specification issue #28 reconciled the contextual subject lists and the
+receipt/delivery, forward/compensation-attempt, forward/compensation-effect and
+commit-boundary/observation distinctions. Executable cross-repository evidence
+remains planned.

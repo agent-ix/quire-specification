@@ -12,6 +12,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-210
     type: references
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: references
 ---
 # FR-221: Protocol node occurrence
 
@@ -36,6 +38,8 @@ When a source node is lowered into the causal control graph, the frontend SHALL 
 - **iteration identity** — the ordinal of every enclosing bounded iteration.
   FR-049-AC-11 requires each lowered node to retain its "exact
   derivation/iteration identity".
+- **role ownership** — the exact declaration-local role slot for a role-owned
+  node, or an explicit structural-owner marker.
 - **declaration span** ([FR-203](../foundation/FR-203-source-region.md)) —
   retained by FR-049-AC-11 and preserved across identity change by FR-052-AC-4.
 - **bound typed record** — the typed record bound to the occurrence. The record
@@ -50,19 +54,19 @@ When a source node is lowered into the causal control graph, the frontend SHALL 
 - **Identity kind** — *derived*. An occurrence is not written in source with an
   identity of its own; it is computed from the static node it instantiates and
   the enclosing instance and iteration structure.
-- **Key** — (`static declaration path`, `workflow instance identity`,
-  `iteration identity`). Equality is componentwise over exactly these. Display
+- **Key** — (`qualified protocol-definition identity`, `workflow-instance key`,
+  `declaration-local control handle`, `role slot or structural-owner marker`,
+  `outer-to-inner bounded-repeat ordinal sequence`). Equality is componentwise
+  over exactly these. Display
   name, source path, span, message text, locale and rendering never participate:
   FR-049-AC-11 retains the declaration span alongside the identity rather than
   inside it, and FR-049-AC-7 requires the exact declared relationship and
   endpoint direction "even when they share a provider, trace ID or equal scalar
   labels". A transport trace identifier substituted for an authored identity
-  refuses before conformance evaluation (FR-051-AC-4). No requirement sentence
-  enumerates these three components as the key; see **Open gap**.
-- **Key order** — none is established. No requirement fixes a total order over
-  declaration paths, workflow identities or iteration ordinals. A bounded
-  iteration ordinal is a component of identity under FR-049-AC-11 and is not a
-  declared key order, and this artifact supplies no key order over occurrences.
+  refuses before conformance evaluation (FR-051-AC-4).
+- **Key order** — lexicographic over the five components in the declared
+  sequence, including repeat ordinals from outermost to innermost. It exists
+  only for stable comparison and carries no causal meaning.
 - **Causal order** — the authored partial acyclic order of
   [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md), held in
   [FR-220](FR-220-causal-control-graph.md). It is never derived from a key
@@ -70,14 +74,13 @@ When a source node is lowered into the causal control graph, the frontend SHALL 
   "Reordering equal-time events does not add a causal edge absent from the
   protocol", and FR-113 states that "Arbitrary timestamp order SHALL NOT
   establish causality".
-- **Absence** — an absent key component compares only to absence. An occurrence
-  outside every bounded iteration has an absent iteration identity, and that
-  absence is never compared to ordinal zero, to an empty ordinal list or to any
-  other supplied value.
-- **Digest domain** — no component of this key is a digest. Where an occurrence
-  is exchanged beside a digest in provenance, that digest carries the domain it
-  was derived under, `ix://agent-ix/quire-specification/FR-201`, and an identity
-  crossing domains is unequal regardless of byte equality.
+- **Absence** — every key component is required. An occurrence outside every
+  bounded iteration has a present zero-length ordinal sequence. Omitting or
+  adding a repeat dimension, or supplying an out-of-domain ordinal, refuses;
+  missing input never becomes ordinal zero.
+- **Digest domain** — every digest carried by the qualified definition or
+  workflow-instance component retains its selected FR-201 domain; equal bytes
+  crossing domains are unequal.
 
 ## Acceptance Criteria
 
@@ -86,7 +89,8 @@ When a source node is lowered into the causal control graph, the frontend SHALL 
 | FR-221-AC-1 | Every lowered node, including a synthesized control edge and a bounded occurrence, retains its declaration span and its derivation and iteration identity. | Inspection |
 | FR-221-AC-2 | Two occurrences of one static node in two workflow instances compare unequal. | Analysis |
 | FR-221-AC-3 | An equal payload, an equal scalar label or a shared trace identifier does not make two occurrences equal. | Analysis |
-| FR-221-AC-4 | An occurrence with an absent iteration identity compares only to absence and receives no default ordinal. | Analysis |
+| FR-221-AC-4 | An occurrence outside every repeat carries a present empty ordinal sequence; a missing sequence or missing, surplus or out-of-domain ordinal refuses without a default. | Analysis |
+| FR-221-AC-5 | A concrete occurrence binds exactly one workflow key, admitted control handle, exact role slot or structural marker and one in-domain ordinal per outer-to-inner repeat dimension. | Analysis |
 
 ## Dependencies
 
@@ -98,20 +102,11 @@ When a source node is lowered into the causal control graph, the frontend SHALL 
   workflow-instance identity.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
-
-## Open gap
-
-The three key components above are stated together only in the
-[choreography surface](../../../proposals/quire-v1/choreography-surface.md),
-which FR-049 takes as a dependency: "Control names and declaration paths
-identify static nodes. The canonical runtime occurrence additionally includes
-the workflow identity and every enclosing bounded-iteration ordinal." No
-requirement sentence carries that component list. FR-049-AC-11 requires the
-iteration identity to be retained but does not say what the identity is composed
-of. Closing this requires a ruling that promotes the surface sentence into a
-requirement, or an authored key.
+- [FR-288](FR-288-qualified-protocol-definition-identity.md) supplies the
+  qualified linked-definition component.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Draft. Specification issue #28 promoted the implemented occurrence-schema
+dimensions into FR-049 and fixed the key/order rule. Cross-repository runtime
+binding evidence remains planned.

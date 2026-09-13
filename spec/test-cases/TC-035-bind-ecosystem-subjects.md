@@ -5,6 +5,10 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-035
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: verifies
 ---
 ## Description
 
@@ -40,6 +44,22 @@ different model/profile with the same display name. The first and third mutants
 refuse binding; the second remains incomplete evidence. Prior static success
 cannot discharge any missing runtime prerequisite or authorize an override.
 
+For one concrete runtime subject, mutate the authority identity, revision,
+digest, subject kind and producer-local object bytes one at a time. Remove and
+empty each member, reuse the unchanged complete key with incompatible binding
+relationships, permute a finite subject collection, and change only display,
+locus, payload, trace, timestamp, arrival position and transport status.
+
+For one linked protocol definition, mutate the authored source-document key,
+admitted declaration handle, formal requirement/clause and each semantic
+dependency selection one at a time. Offer only its declaration name, source
+span or package-local table index without the admitted package qualifiers.
+Then change only external rendering metadata/path/build provenance, runtime
+observations and resource-only controls while preserving the source-document
+key, and lexicographically sort a finite definition set. Separately edit a
+display name inside the authored source and retain the resulting changed raw-
+byte source digest.
+
 ## Expected Results
 
 Declared relationships and workflow identities survive binding. Substitutions refuse, scope changes remain visible in request identity, and unavailable membership cannot produce aggregate success. Concrete producer/observation representations come from D/F's reviewed contracts, not a duplicated test model.
@@ -49,3 +69,13 @@ role mappings refuse. Runtime configuration changes remain identified and cannot
 override linked meaning. Missing future recovery records do not manufacture an
 activated obligation, while evidence required by an activated assessment remains
 incomplete. Assertions inspect typed causes, references and obligation identities.
+Every key-member mutation changes the canonical key; a semantic comparison
+across authority or kind refuses. Missing/empty members and incompatible
+rebinding refuse without a default; presentation/transport-only
+changes preserve identity; and collection permutation preserves canonical
+lexicographic order without adding causality.
+Every protocol-definition key-member mutation changes its identity. An
+unqualified declaration offer refuses, external presentation/runtime-only
+changes that preserve the source key preserve the definition key, an authored
+source edit changes it, and sorting establishes no control, delivery, retry or
+temporal order.
