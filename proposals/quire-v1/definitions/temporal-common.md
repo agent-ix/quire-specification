@@ -1,7 +1,8 @@
 # Native bounded temporal common definition
 
 Definition identity: `quire.temporal.bounded-facet/v1`; revision: `1-draft.3`.
-Language: `ix:native` / `1-draft`. **Proposed, not adopted or implemented.**
+Language: `ix:native` / `1-draft`. **The facet role is accepted by FS01; this
+semantic revision remains proposed and is not adopted or fully implemented.**
 This is a required semantic facet, not a selectable source profile by itself:
 a concrete temporal root must select exactly one FR-090 clock/boundary meaning.
 

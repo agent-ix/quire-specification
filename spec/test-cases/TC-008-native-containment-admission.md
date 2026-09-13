@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Exercise acyclic record paths and the replacement reference/equality boundary.
+Exercise acyclic record paths and the composed state-core/graph reference and equality boundary.
 Planned; the original ConfigVersion reference/bounds gate remains unresolved.
 
 ## Test Procedure
@@ -24,4 +24,4 @@ its gate; inspect that intake neither removes parent nor invents a maximum.
 Exact acyclic field paths and scalar equality succeed. Deferred operations and
 invalid containment refuse with their original source/model locus. The original
 ConfigVersion case remains a design gate; historical bounded native successes
-cannot be relabelled as replacement-profile correspondence.
+cannot be relabelled as composed-profile correspondence.

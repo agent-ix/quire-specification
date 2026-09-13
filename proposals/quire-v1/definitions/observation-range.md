@@ -1,7 +1,8 @@
 # Observation range correspondence
 
 Definition identity: `quire.observation.range/v1`; revision: `1-draft.1`.
-**Working draft; not adopted or implemented.** Local rule and dependency links
+**The definition role is accepted by FS01; this working semantic revision is not
+adopted or fully implemented.** Local rule and dependency links
 select the current checkout. Git preserves drafting history; a coherent baseline
 is frozen at acceptance. Immutable runtime selections and digest checks remain
 required.

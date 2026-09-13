@@ -10,14 +10,14 @@ relationships:
 ---
 ## Overview
 
-These are planned replacement-profile acceptance obligations for compiler #30,
-not observed runs in this standard repository. The existing historical native
-tests and compiler PR31 may supply reusable controls after exact correspondence
+These are planned composed-profile acceptance obligations for the compiler
+reconciliation, not observed runs in this standard repository. Existing
+historical native tests may supply reusable controls after exact correspondence
 review. Rational and source-model presence contracts remain explicit dependencies.
 
 ## Functional Requirement Coverage
 
-| Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
+| Functional Req | Acceptance Criteria | Test Cases | Status |
 | --- | --- | --- | --- |
 | FR-001 | FR-001-AC-1 | TC-005 | 🚧 Planned |
 | FR-001 | FR-001-AC-2 | TC-005 | 🚧 Planned |
@@ -34,7 +34,7 @@ review. Rational and source-model presence contracts remain explicit dependencie
 
 | Test ID | Title | Type | Priority | Traces To | Status |
 | --- | --- | --- | --- | --- | --- |
-| TC-005 | Exact replacement selection | Integration | P1 | FR-001 | 🚧 Planned |
+| TC-005 | Exact composed definition selection | Integration | P1 | FR-001 | 🚧 Planned |
 | TC-006 | Finite normalized arithmetic | Integration | P1 | FR-019-AC-1 | 🚧 Planned |
 | TC-007 | Presence/null correspondence | Integration | P1 | FR-019-AC-2 | 🚧 Planned |
 | TC-008 | Containment/reference admission | Integration | P1 | FR-019-AC-3 | 🚧 Planned |

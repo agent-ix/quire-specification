@@ -9,7 +9,7 @@ relationships:
 ## Description
 
 Check declared sequence bounds independently from runtime work budgets.
-Planned replacement-profile acceptance; compiler PR31 has reusable controls.
+Planned composed state-core acceptance; merged compiler tests may supply reusable controls.
 
 ## Test Procedure
 

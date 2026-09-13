@@ -1,7 +1,8 @@
 # Native timestamped-window temporal definition
 
 Profile identity: `quire.temporal.timestamped-event.finite-window/v1`; revision: `1-draft.3`.
-Language: `ix:native` / `1-draft`. **Proposed, not adopted or implemented.**
+Language: `ix:native` / `1-draft`. **The profile role is accepted by FS01; this
+semantic revision remains proposed and is not adopted or fully implemented.**
 
 ## Required definition
 

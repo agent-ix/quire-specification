@@ -1,7 +1,8 @@
 # Native Quire composed edition definition
 
 Definition identity: `ix:native`; language edition: `1-draft`;
-definition revision: `1-draft.2`. **Proposed, not adopted or implemented.**
+definition revision: `1-draft.2`. **The identity role is accepted by FS01; this
+semantic revision remains proposed and is not adopted or fully implemented.**
 
 ## Selection and scope
 

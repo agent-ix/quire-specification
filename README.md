@@ -36,12 +36,14 @@ No duplicate evidence store, hidden normative dependency, or unqualified backend
 
 Read [license decision](LICENSE-DECISION.md) before adding code or normative artifacts. Publication requires a fresh review; do not flip private history public.
 
-## Proposed state-core packet
+## Native profile packets
 
 The [native-source ruling amendment](proposals/native-source-1-draft/README.md)
-proposes the replacement definition and states its admission rules, historical
-compatibility and remaining implementation gates. It does not replace the ongoing
-cross-stream capability investigation or claim ruling conformance from old tests.
+preserves the superseded `state-finite/1-draft` candidate, its carried-forward
+admission rules and historical rationale. FS01's accepted
+[language charter](spec/assurance/AD-003-native-quire-language-charter.md) selects
+the composed profile hierarchy instead. Neither artifact claims broader
+implementation or qualification from historical tests.
 
 The [requirements index](spec/spec.md) covers FS01/FS02/FS03/FS05 through discrete
 Quoin catalog artifacts. [Authoring status](docs/spec-workflow.md) records the
@@ -73,9 +75,9 @@ state which observations are qualified and which require B's strict reader.
 Run these commands from this repository, using the pinned Rust 1.98.1 toolchain:
 
 ```sh
-cargo test --locked --target-dir target
+cargo test --locked --target-dir target-codex-backends
 cargo fmt --all -- --check
-cargo clippy --offline --locked --target-dir target --all-targets --all-features -- -D warnings
+cargo clippy --offline --locked --target-dir target-codex-backends --all-targets --all-features -- -D warnings
 quire validate --scope . 'spec/**/*.md' 'plan/**/*.md' 'reviews/2026-*.md' --summary
 ```
 

@@ -1,9 +1,9 @@
 # Native source definition amendment
 
-Status: **proposed definition amendment for private review; not compiler adoption
-or completed qualification**. FS01 owns this amendment under specification #2;
-compiler #30 owns its implementation reconciliation. Cross-stream capability
-research remains under specification #9. This packet does not add a second ledger.
+Status: **superseded as an adoption candidate; retained as the reviewed source of
+carried-forward constraints and historical rationale**. FS01 selected the composed
+v1 profile hierarchy instead of enabling `state-finite/1-draft`. This packet is
+not an implemented profile, an alias, qualification evidence or a second ledger.
 
 ## Selected authority and definition identity
 
@@ -12,15 +12,13 @@ FRETish are output-only mapping profiles under FS06. Generated text cannot becom
 a second authority for the same clause. Shared model declarations supply the
 types a clause names; they are not another clause language.
 
-Proposed replacement identity: language `ix:native`, edition `0-draft`, semantic
-profile `state-finite/1-draft`. The profile revision distinguishes the changed
-admission contract; the language tag and lexical edition do not change merely
-because a previously expressible construct becomes deferred. This identity is
-proposed here in FS01, not independently minted by a compiler or IR producer.
-It is not yet a registered, implemented or qualified profile.
-If the eventual rational spelling changes the lexical edition's contract, its
-edition identity must also be reviewed before adoption; the proposed tuple is
-not permission to reinterpret an already bound grammar.
+The superseded replacement identity was language `ix:native`, edition `0-draft`,
+semantic profile `state-finite/1-draft`. It is not registered, implemented,
+qualified or available for selection. Its constraints are refined under the
+composed `ix:native` / `1-draft` state hierarchy; no frontend may translate this
+old tuple into that hierarchy. Exact rational spelling changes the composed
+edition contract and therefore does not reinterpret the historical `0-draft`
+grammar.
 
 The adopted e897f810a7356d4ce8fd19026221ebda7b65596f profile and rule files remain
 byte-exact historical definitions of `state-finite/0-draft`. Their digests cannot
@@ -43,9 +41,11 @@ Native `present`/guarded `value`, short-circuit Boolean control, `if` and `let`
 retain their native definedness/evaluation requirements. This amendment does not
 copy OCL's restricted source grammar or truth table into the native language.
 The carried-forward table below is binding; an external language's punctuation
-does not silently redefine a native construct. Exact rational source spelling
-and the full inherited-rule closure still require a scoped FS03 amendment before
-the candidate can be adopted or claimed implemented.
+does not silently redefine a native construct. Exact rational spelling and the
+inherited-rule closure are now specified by the composed
+[shared grammar](../quire-v1/shared-grammar.md) and
+[state contract](../quire-v1/state-contract.md). Their implementation and
+qualification remain FS03/backend work; this superseded candidate is not adopted.
 
 ## Carried-forward semantic admission
 
@@ -96,8 +96,9 @@ fields; result is an explicitly declared post-only input. Missing signatures or
 anchors, bare context types, foreign operations, historical-state access on a
 parameter and cross-observation guard reuse refuse. The existing 0-draft
 `pre(parameter)` rule is therefore not inherited. The exact treatment of aliases
-and composite pre expressions must be fixed in the FS03 correspondence amendment
-before acceptance; a passing parameter fixture from 0-draft is not that evidence.
+and composite pre expressions is now specified in the composed
+[state contract](../quire-v1/state-contract.md). A passing parameter fixture from
+`0-draft` is not implementation evidence for that contract.
 
 ## Reference and ConfigVersion design gate
 
@@ -120,22 +121,21 @@ Filament model-reader prerequisite; it is not reopened or made a new blocker.
 The recommended finite identity-preserving reference environment and alternative
 new IR reference construct remain later design choices, neither assumed here.
 
-## Delivery and evidence still required
+## Retained delivery boundaries
 
 [FR-019](../../spec/functional/foundation/FR-019-admit-native-source-profile.md) specifies
 observable admission outcomes. Its [planned tests](../../spec/native-source/tests.md)
-are obligations for compiler #30, not executed conformance. Existing tests may
-be reused only after checking that they exercise the replacement rule.
+remain obligations for the composed compiler reconciliation, not executed
+conformance. Existing tests may be reused only after checking that they exercise
+the selected composed rule.
 
-1. Review this FS01 identity/admission amendment and its
-   [ADR-0053 handoff](adr-0053-handoff.md). Retain the original full workflow
-   objective and the reference gate; do not silently narrow either.
-2. Complete the exact FS03 inheritance/anchor correspondence and rational
-   syntax/type/runtime contract, including normalization-before-bounds controls.
-   The current compiler refuses rationals; that is recorded incomplete work.
-3. Adopt exact definition identities, then implement the selected source
-   admission at model/checking boundaries. Sequence admission is already proposed
-   in compiler PR31; other deferred-operation and anchor changes remain work.
+1. Retain the completed [ADR-0053 handoff](adr-0053-handoff.md), the original full
+   workflow objective and the reference gate; do not silently narrow either.
+2. Implement the composed FS03 rational and anchor contracts, including
+   normalization-before-bounds and eligible pre-state controls. Refusal is not
+   rational support.
+3. Adopt exact composed definition revisions at their owning semantic gates,
+   then implement each selected source admission at model/checking boundaries.
 4. Exercise positive, adverse and incomplete cases with actual Rust consumers;
    retain failed/unavailable stages. No schema, authored example or old green
    suite establishes full native correspondence. Independent review and later
