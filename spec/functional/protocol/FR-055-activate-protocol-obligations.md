@@ -34,8 +34,11 @@ dependencies; no business action is executed.
 
 The evaluator SHALL keep activation independent from truth. An absent trigger
 under complete closed input yields inactive; an unavailable required trigger
-yields activation-unknown or incomplete. Captured amounts, identifiers and
-anchors SHALL be immutable for that obligation. The evaluator SHALL NOT treat an
+yields `activation-unknown` plus its separate FR-287 completeness and
+assessment-execution facts. An open trigger scope also yields
+`activation-unknown` without constraining the independent completeness
+vocabulary. It never yields `incomplete` as an activation value. The evaluator SHALL retain captured amounts,
+identifiers and anchors immutably for that obligation. The evaluator SHALL NOT treat an
 inactive or unknown obligation as satisfied or demonstrated.
 
 ## Acceptance Criteria
@@ -44,7 +47,7 @@ inactive or unknown obligation as satisfied or demonstrated.
 | --- | --- | --- |
 | FR-055-AC-1 | A failed shipment after payment effect E1 activates the matching refund obligation with E1's captured amount and identity. | Test (TC-055) |
 | FR-055-AC-2 | A successful shipment leaves its refund obligation inactive and cannot count it as demonstrated recovery. | Test (TC-055) |
-| FR-055-AC-3 | A missing external trigger under open or incomplete input yields activation-unknown or incomplete rather than inactive. | Test (TC-055) |
+| FR-055-AC-3 | An open trigger scope or missing/refused trigger evidence yields `activation-unknown`; completeness and execution retain their independently derived exact states, never `inactive` or an activation value named `incomplete`. | Test (TC-055) |
 | FR-055-AC-4 | Substituting O2's trigger, a changed capture or a different evaluation anchor refuses the binding. | Test (TC-055) |
 
 ## Dependencies

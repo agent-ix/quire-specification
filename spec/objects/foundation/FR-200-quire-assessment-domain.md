@@ -152,6 +152,26 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-284
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-285
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-286
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-289
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-290
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-291
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-292
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-293
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-294
+    type: contains
 ---
 # FR-200: Quire semantic assessment bounded context
 
@@ -209,8 +229,8 @@ Every object artifact contained in this context SHALL declare, explicitly:
   not established, no key order is established either**, and the artifact SHALL
   say so rather than supply one. An artifact that declares a value order
   distinct from its key order — as an exact numeric order is distinct from a
-  lexicographic one — SHALL name both and SHALL state which one decides
-  collection comparison.
+  lexicographic one — SHALL name both and identify which one decides collection
+  comparison.
 - **Causal order** — where the object participates in a causal structure, the
   authored partial order of
   [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md). It is never
@@ -239,12 +259,12 @@ Every object artifact contained in this context SHALL declare, explicitly:
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-200-AC-1 | Every object artifact contained in this context addresses all six axes: identity kind, key, key order, causal order, absence and digest domain. An axis that does not apply is stated to not apply; an axis the prose does not establish is stated to be unestablished. Silent omission of an axis fails. | Inspection |
-| FR-200-AC-2 | No object artifact contained in this context introduces an obligation, a vocabulary member, a key component or an order absent from the behavioral requirement it extracts. Any component the artifact supplies as authored scaffolding is disclosed as such. | Analysis |
-| FR-200-AC-3 | A key order declared by a contained object carries no causal meaning and is never cited as evidence of a causal edge. | Analysis |
-| FR-200-AC-4 | No contained object declares a key order where it also records that the key components are not established. | Inspection |
-| FR-200-AC-5 | No contained object includes a mutable component in its key. | Analysis |
-| FR-200-AC-6 | Every object artifact in this context is reachable from it by a `contains` edge. | Inspection |
+| FR-200-AC-1 | Every object artifact contained in this context addresses all six axes: identity kind, key, key order, causal order, absence and digest domain. An axis that does not apply is stated to not apply; an axis the prose does not establish is stated to be unestablished. Silent omission of an axis fails. | Test |
+| FR-200-AC-2 | No object artifact contained in this context introduces an obligation, a vocabulary member, a key component or an order absent from the behavioral requirement it extracts. Any component the artifact supplies as authored scaffolding is disclosed as such. | Test |
+| FR-200-AC-3 | A key order declared by a contained object carries no causal meaning and is never cited as evidence of a causal edge. | Test |
+| FR-200-AC-4 | No contained object declares a key order where it also records that the key components are not established. | Test |
+| FR-200-AC-5 | No contained object includes a mutable component in its key. | Test |
+| FR-200-AC-6 | Every object artifact in this context is reachable from it by a `contains` edge. | Test |
 
 ## Dependencies
 

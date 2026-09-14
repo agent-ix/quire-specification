@@ -88,10 +88,10 @@ history cutoff is not an execution origin."
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-253-AC-1 | Two anchors under different clock bindings compare unequal regardless of equal position values. | Analysis |
-| FR-253-AC-2 | The declared key order over anchors is never cited to break a tie for an order-sensitive operator. | Analysis |
-| FR-253-AC-3 | An absent anchor compares only to absence and is not represented as position zero. | Analysis |
-| FR-253-AC-4 | A timestamp is absent from the declared key of the instance an anchor activates. | Inspection |
+| FR-253-AC-1 | Two anchors under different clock bindings compare unequal regardless of equal position values. | Test |
+| FR-253-AC-2 | The declared key order over anchors is never cited to break a tie for an order-sensitive operator. | Test |
+| FR-253-AC-3 | An absent anchor compares only to absence and is not represented as position zero. | Test |
+| FR-253-AC-4 | A timestamp is absent from the declared key of the instance an anchor activates. | Test |
 
 ## Dependencies
 
@@ -105,26 +105,12 @@ history cutoff is not an execution origin."
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
 
-## Open gap
+## Activation vocabulary
 
-Two requirement families spell the activated state of an obligation differently,
-and neither cross-references the other. FR-093 Outputs read:
-
-> "An inactive scope, an activated obligation with immutable typed captures, or
-> a located incomplete/refused activation result."
-
-FR-055 Behavior and FR-061 use `triggered` for the same state. FR-061 states:
-
-> "Truth is satisfied | Assessment execution is completed, activation is
-> triggered and the settlement basis is `closed-scope` or `decisive-witness`."
-
-Whether "an activated obligation" and `triggered` are one value under two
-spellings, or two distinct facts, is not stated anywhere. This artifact records
-both and resolves neither; the activation vocabulary itself is typed in
-[FR-231](../protocol/FR-231-obligation-activation-state.md) and in
-[FR-244](../protocol/FR-244-activation-state.md).
+FR-093, FR-055 and FR-061 now use the same source state `triggered`. FR-062's
+`activated` spelling remains a target projection label and is never admitted as
+the source activation state attached to this anchor.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Proposed activation-spelling reconciliation for `quire-specification#40`.

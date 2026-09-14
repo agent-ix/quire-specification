@@ -5,6 +5,14 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-112
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-263
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-264
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-265
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-266
+    type: verifies
 ---
 ## Description
 
@@ -28,6 +36,12 @@ admitted event size and retained population/window-member count; repeat one
 byte or member over that exact limit. The one-over input must not be retained or
 allocated beyond its declared bound merely because the final disposition is a
 refusal.
+Derive the explicit-members, snapshot and population identities independently
+from their exact RFC 8785 preimages. Permute presentation order and then mutate
+each semantic key component one at a time. Exercise empty, unknown, duplicate,
+unsorted-on-wire and one-over-limit member sets; exercise snapshot-only,
+window-only, neither and both selection forms; substitute a JCS digest where a
+raw-artifact digest is required and vice versa.
 
 ## Expected Results
 
@@ -43,3 +57,8 @@ cross-clock inference refuse rather than manufacturing coverage.
 Exact limits retain at most their declared event and population/window-member
 state. One-over results retain no excess state and identify the affected subject
 and exceeded bound as incomplete/refused.
+Independent derivations agree byte-for-byte. Presentation permutation preserves
+identity after canonical admission, while every semantic key mutation changes
+the applicable identity. Unknown membership is not empty membership; duplicate,
+unbounded, invalid selection-cardinality and foreign-domain inputs refuse before
+a partial population or identity is exposed.

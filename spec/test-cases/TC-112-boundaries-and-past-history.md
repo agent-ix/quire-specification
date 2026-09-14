@@ -7,6 +7,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-092
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-293
+    type: verifies
 ---
 ## Description
 
@@ -21,6 +23,10 @@ zero-width, origin-crossing and nonzero-lower-bound windows. Repeat identical
 visible suffixes once with an authoritative origin and once with an unknown
 earlier cutoff. Mutate the origin flag into a cutoff and replace missing-history
 disposition with false padding.
+Read exact `execution-origin`, exact `history-cutoff`, unknown, aliased and
+absent boundary kinds at the same clock position. Restore authenticated state
+whose earliest retained position is the cutoff and attempt to relabel it as an
+execution origin.
 
 ## Expected Results
 
@@ -28,3 +34,6 @@ False-extension makes `always[0,1] p` false while complete finite-window
 quantification makes it true. Past operators match their independent mirror
 oracles only with complete history/origin. The cutoff case reports missing
 history and every mutation that converts it to a Boolean is detected.
+Only the two exact boundary labels are admitted. Equal positions with different
+kinds remain unequal, and restoration can prove retained cutoff coverage but
+cannot authorize false extension before it.

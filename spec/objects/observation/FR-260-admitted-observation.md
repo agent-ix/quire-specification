@@ -10,6 +10,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-201
     type: references
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: references
 ---
 # FR-260: Admitted observation
 
@@ -37,22 +39,16 @@ and visibility provenance."
 
 ## Identity and comparison
 
-- **Identity kind** — **the prose does not place an observation in FR-200's
-  authored / derived / value trichotomy.** FR-110 requires that "the exact
-  observation identity" be retained, so the identity arrives with the admitted
-  record and is not computed from the record's components; it is therefore not
-  *derived*. No requirement states that an observation identity is written in
-  native Quire source, so this artifact does not claim *authored* either. See
-  **Open gap**.
-- **Key** — **the prose does not fix the key components.** It fixes what is
+- **Identity kind** — *derived* under FR-288 from the complete closed canonical
+  observation with only `observationId` omitted.
+- **Key** — the complete `sha256-jcs:` observation identity. FR-110 also fixes what is
   excluded: the binder "SHALL NOT substitute a signal name, endpoint, trace ID,
   or compatible-looking field for a declared entity, trigger, unit, or
   valuation" (FR-110 Behavior). Equality is componentwise over the key and
   nothing else; display name, source path, span, message text, locale and
-  rendering never participate. This artifact supplies no key components.
-- **Key order** — none. Because the key components are not fixed, no total order
-  over the key is stated and none is supplied here. Ordering admitted
-  observations by timestamp would contradict FR-113, which states that
+  rendering never participate.
+- **Key order** — none. Canonical identity-byte sorting serves deterministic
+  set encoding only. Ordering admitted observations by timestamp would contradict FR-113, which states that
   "Arbitrary timestamp order SHALL NOT establish causality"; any order that were
   later established would serve collection comparison only and would carry no
   causal meaning.
@@ -65,8 +61,8 @@ and visibility provenance."
   explicit for valuations: "A required absent valuation SHALL be incomplete or
   refused, never false or an implicit option-none." Absence never becomes a
   default, an empty value or an implicit option-none.
-- **Digest domain** — the observation's own identity is not stated to be a
-  digest. The binding-contract byte digest it is admitted under carries a domain
+- **Digest domain** — the observation identity uses `quire.verification.jcs`
+  under FR-288. The binding-contract byte digest it is admitted under carries a domain
   selected under `ix://agent-ix/quire-specification/FR-201`
   ([FR-261](FR-261-observation-binding.md)); an identity crossing domains is
   unequal regardless of byte equality.
@@ -75,10 +71,10 @@ and visibility provenance."
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-260-AC-1 | A signal name, endpoint, trace ID or compatible-looking field supplied for a declared entity, trigger, unit or valuation does not resolve. | Analysis |
-| FR-260-AC-2 | A required absent valuation compares only to absence and does not compare equal to false or to an option-none. | Analysis |
-| FR-260-AC-3 | An internally recorded and an externally observed record remain distinguishable after admission. | Analysis |
-| FR-260-AC-4 | This artifact declares no key components, no key order and no identity kind for an observation, and cites the prose exclusions instead. | Inspection |
+| FR-260-AC-1 | A signal name, endpoint, trace ID or compatible-looking field supplied for a declared entity, trigger, unit or valuation does not resolve. | Test |
+| FR-260-AC-2 | A required absent valuation compares only to absence and does not compare equal to false or to an option-none. | Test |
+| FR-260-AC-3 | An internally recorded and an externally observed record remain distinguishable after admission. | Test |
+| FR-260-AC-4 | Observation identity is derived exactly under FR-288; same identity on unequal canonical bytes and any authored/default identity are refused. | Test |
 
 ## Dependencies
 
@@ -91,18 +87,9 @@ and visibility provenance."
   discipline.
 - [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
   domain rule.
-
-## Open gap
-
-1. No requirement states an observation's identity kind. FR-110 requires the
-   exact identity to be retained without saying where it originates, so neither
-   *authored* nor *derived* can be claimed from the prose.
-2. No requirement states which components constitute an observation's identity.
-   It states only what cannot stand in for one.
-3. No key order over admitted observations can be established until the key
-   components are.
+- [FR-288](FR-288-admitted-observation-identity-preimage.md) defines the exact
+  preimage, key and byte-uniqueness rule.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Proposed identity closure under FR-288 for `quire-specification#40`.

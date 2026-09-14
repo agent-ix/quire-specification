@@ -13,7 +13,7 @@ relationships:
 
 ## Description
 
-When a result retains the strength of a claim, the result producer SHALL keep each strength as a distinct source-bound value from this closed vocabulary rather than collapsing them into one success fact.
+When a result retains the strength of a claim, the result producer SHALL carry exactly one distinct source-bound value from this closed vocabulary rather than collapsing strengths into one success fact.
 
 FR-061 states it directly: "The result producer SHALL retain proven,
 bounded-checked, tested and observed claim strengths as distinct source-bound
@@ -49,20 +49,21 @@ does not transfer to another claim (FR-061).
   strength may carry a digest, whose domain is selected under
   [FR-201](../foundation/FR-201-canonical-identity-domain.md).
 
-## Open gap
+## Cardinality and relation
 
-FR-061 is the only requirement that names these four values. No requirement
-states whether the set is closed, whether a claim may carry more than one
-strength, or what relation (if any) holds between them. This artifact records
-the four named values and declares no ordering or dominance among them.
+FR-061 closes the four-member set and requires exactly one strength on every
+advanced result. There is no ordering, dominance or automatic promotion among
+members. A result requiring more than one independently supported strength is
+represented as independent claims/results, not as a multi-valued strength.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-281-AC-1 | Each member's value equals the exact label string in the table. | Inspection |
-| FR-281-AC-2 | Two claims with different strengths remain distinct and neither is promoted to the other. | Analysis |
-| FR-281-AC-3 | Key-order adjacency between two strengths does not establish that one dominates the other. | Analysis |
+| FR-281-AC-1 | Each member's value equals the exact label string in the table. | Test |
+| FR-281-AC-2 | Two claims with different strengths remain distinct and neither is promoted to the other. | Test |
+| FR-281-AC-3 | Key-order adjacency between two strengths does not establish that one dominates the other. | Test |
+| FR-281-AC-4 | An advanced result with zero, multiple or unknown strengths is refused. | Test (TC-061) |
 
 ## Dependencies
 
@@ -75,7 +76,5 @@ the four named values and declares no ordering or dominance among them.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Proposed cardinality closure for `quire-specification#40`; implementation
+evidence remains planned under TC-061.

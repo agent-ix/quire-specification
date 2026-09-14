@@ -32,7 +32,7 @@ source, model, observation and anchor identities.
 
 ## Outputs
 
-An inactive scope, an activated obligation with immutable typed captures, or a
+An inactive scope, a triggered obligation with immutable typed captures, or a
 located incomplete/refused activation result.
 
 ## Behavior
@@ -55,11 +55,12 @@ Activation, temporal truth and participation shall remain separate dimensions.
 The evaluator shall create no instance and no refusal when an admitted
 activation guard is false. The evaluator shall leave an unestablished guard
 incomplete or refused and shall not interpret it as false.
-A trigger scope that is authoritatively closed and complete without an admitted
-trigger shall produce inactive activation; it is not a true obligation and is
+A trigger scope that is authoritatively closed with complete input and without
+an admitted trigger shall produce inactive activation; it is not a true obligation and is
 not evidence that recovery behavior was exercised. An open trigger scope shall
-produce activation-unknown with open completeness. Missing or refused trigger
-evidence shall produce activation-unknown with its incomplete or refused
+produce activation-unknown while retaining its independently derived FR-287
+completeness state. Missing or refused trigger evidence shall produce
+activation-unknown with its exact incomplete completeness or refused
 assessment-execution disposition. This requirement does not define protocol
 choice/conformance or the observation transport schema.
 
@@ -71,7 +72,7 @@ choice/conformance or the observation transport schema.
 | FR-093-AC-2 | A duplicate receipt for one semantic trigger retains receipt provenance but creates no duplicate obligation instance. | Test (TC-114) |
 | FR-093-AC-3 | Changing mutable source state after activation cannot change an already captured amount, reference or predicate valuation environment. | Test (TC-114) |
 | FR-093-AC-4 | Missing, nullable, wrong-type, stale or anchor-mismatched capture input reports incomplete/refused activation before temporal evaluation. | Test (TC-114) |
-| FR-093-AC-5 | A closed-complete trigger scope with no trigger reports inactive; an open scope or missing/refused trigger evidence reports activation-unknown with its distinct completeness/execution state, and neither case becomes temporal truth. | Test (TC-116) |
+| FR-093-AC-5 | A closed trigger scope with complete input and no trigger reports inactive; an open scope or missing/refused trigger evidence reports activation-unknown while completeness and execution retain their independently derived exact states, and neither case becomes temporal truth. | Test (TC-116) |
 | FR-093-AC-6 | False guards create no obligation, unestablished guards remain incomplete/refused, and conflicting payloads under one semantic trigger identity refuse without replacing retained captures. | Test (TC-114) |
 
 ## Dependencies

@@ -25,22 +25,19 @@ between a selected snapshot and a selected event-time window."
 | Snapshot identity | FR-112 Description | Retained among "population and snapshot/window identities". |
 | Distinctness from a window | FR-112 Behavior | A snapshot is not a window; the two are separately selected subjects. |
 | Subject participation | FR-112-AC-1 | "Changing a declared snapshot/window or membership rule changes the assessment subject." |
+| Producer and membership selection | FR-112 Behavior | Exact producer interface and FR-264 rule used for this capture. |
+| Capture assertion | FR-112 Behavior | Exact immutable capture identity/revision/digest, not an inferred timestamp. |
+| Admitted observations | FR-112 Behavior | Sorted distinct bounded FR-288 observation identities. |
 
 ## Identity and comparison
 
-- **Identity kind** — **the prose does not place a snapshot in FR-200's
-  authored / derived / value trichotomy.** FR-112 calls the snapshot
-  *selected* and *declared* and requires its identity to be retained, without
-  stating whether that identity is written in native source or computed. See
-  **Open gap**.
-- **Key** — **the prose does not fix the key components.** It fixes only that
-  the snapshot identity participates in the assessment subject (FR-112-AC-1) and
-  that it does not merge with a window identity (FR-112 Behavior). Equality is
-  componentwise over the key and nothing else; display name, source path, span,
-  message text, locale and rendering never participate. This artifact supplies
-  no key components.
-- **Key order** — none. Unlike a window, a snapshot is given no bounds by the
-  prose, so no total order over snapshots is stated and none is supplied here.
+- **Identity kind** — *derived* under FR-112 from the versioned RFC 8785
+  preimage containing producer selection, membership-rule identity, capture
+  assertion and admitted observation identities.
+- **Key** — the complete `sha256-jcs:` snapshot identity. Equality is over the
+  key and nothing else; display name, source path, span, message text, locale
+  and rendering never participate.
+- **Key order** — none. Unlike a window, a snapshot has no time bounds.
   Ordering snapshots by a capture timestamp would supply an order the prose does
   not state, and FR-113 states that "Arbitrary timestamp order SHALL NOT
   establish causality."
@@ -48,19 +45,17 @@ between a selected snapshot and a selected event-time window."
 - **Absence** — an absent key component compares only to absence. A missing
   selected identity is refused rather than supplied by an ambient default
   (FR-112 Behavior, FR-112-AC-4).
-- **Digest domain** — the prose names no snapshot digest. Where a snapshot
-  identity is carried beside a digest in provenance, that digest's domain is
-  selected under `ix://agent-ix/quire-specification/FR-201`, and an identity
-  crossing domains is unequal regardless of byte equality.
+- **Digest domain** — `quire.verification.jcs` under FR-201.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-265-AC-1 | A selected snapshot and a selected event-time window compare unequal and are not substitutable for one another. | Analysis |
-| FR-265-AC-2 | Changing the selected snapshot yields a different assessment subject. | Analysis |
-| FR-265-AC-3 | A missing selected snapshot identity compares only to absence and receives no ambient default. | Analysis |
-| FR-265-AC-4 | This artifact declares no identity kind, no key components and no key order for a snapshot, and cites the prose instead. | Inspection |
+| FR-265-AC-1 | A selected snapshot and a selected event-time window compare unequal and are not substitutable for one another. | Test |
+| FR-265-AC-2 | Changing the selected snapshot yields a different assessment subject. | Test |
+| FR-265-AC-3 | A missing selected snapshot identity compares only to absence and receives no ambient default. | Test |
+| FR-265-AC-4 | Independent derivation over the exact versioned preimage yields the snapshot identity; every key mutation changes it and presentation permutation does not. | Test |
+| FR-265-AC-5 | Timestamp or ingestion order cannot replace the capture assertion or supply an order over snapshots. | Test |
 
 ## Dependencies
 
@@ -71,16 +66,12 @@ between a selected snapshot and a selected event-time window."
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
-## Open gap
+## Snapshot boundary
 
-No requirement states a snapshot's identity kind, its key components, or any
-bounds or order over snapshots. FR-112 establishes only that a snapshot is
-selected, that its identity is retained, that changing it changes the assessment
-subject, and that it stays distinct from an event-time window. In particular,
-the half-open boundary rule that FR-112 and FR-113 state for a window is stated
-for the window only and is not stated for a snapshot.
+A snapshot is an immutable capture selection, not a time window. FR-266's
+half-open bounds never apply to it, and its capture assertion does not create a
+timestamp-derived causal or total order.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Proposed snapshot identity closure for `quire-specification#40`.

@@ -80,12 +80,11 @@ and valuation request when the selected TL profile does not encode them."
   temporal bridge shall not use a backend, syntax or historical result to repair
   an unknown mapping, substitute a profile or synthesize missing
   correspondence."
-- **Digest domain** — the native source digest and the bridge definition digest
-  carry selected domains under `ix://agent-ix/quire-specification/FR-201`
-  ([FR-201](../foundation/FR-201-canonical-identity-domain.md)); an identity
-  crossing domains is unequal regardless of byte equality. No requirement
-  selects which member of that domain vocabulary either digest is derived under;
-  this artifact defers to FR-201 and selects no member. See **Open gap**.
+- **Digest domain** — the native source digest and bridge-definition digest use
+  FR-201 `raw-artifact-digest`. Generated TL identities retain their selected
+  owner domains. The bridge-owned correspondence artifact reference is derived
+  over the complete key under its exact selected bridge contract and does not
+  restamp any source or target identity.
 
 ## Identifier namespaces stay separate
 
@@ -103,11 +102,12 @@ valuation, capture and clock mapping as semantic correspondence."
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-259-AC-1 | Mutating any one preserved axis yields an unequal record and names that axis. | Analysis |
-| FR-259-AC-2 | Two records with equal TL formula bytes and a different native profile, clock or interval compare unequal. | Analysis |
-| FR-259-AC-3 | An unsupported request yields an absent correspondence rather than a substitute formula. | Analysis |
-| FR-259-AC-4 | A TL proposition identifier is never compared equal to a native predicate, signal or capture identity. | Inspection |
-| FR-259-AC-5 | Every result axis named by FR-095 is present in the record for a supported mapping. | Inspection |
+| FR-259-AC-1 | Mutating any one preserved axis yields an unequal record and names that axis. | Test |
+| FR-259-AC-2 | Two records with equal TL formula bytes and a different native profile, clock or interval compare unequal. | Test |
+| FR-259-AC-3 | An unsupported request yields an absent correspondence rather than a substitute formula. | Test |
+| FR-259-AC-4 | A TL proposition identifier is never compared equal to a native predicate, signal or capture identity. | Test |
+| FR-259-AC-5 | Every result axis named by FR-095 is present in the record for a supported mapping. | Test |
+| FR-259-AC-6 | Source/bridge definition digests use `raw-artifact-digest`, target identities validate through target owner readers, and the correspondence reference is distinct from every owner identity. | Test |
 
 ## Dependencies
 
@@ -122,24 +122,13 @@ valuation, capture and clock mapping as semantic correspondence."
 - [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the
   digest domain rule.
 
-## Open gap
+## Artifact identity allocation
 
-FR-095 requires the native source digest/revision and "an exact
-bridge-definition identity, revision and digest" to be preserved, and both
-digests participate in the key above, but FR-095 does not state which identity
-domain either digest is derived under. The domain is required to be compared
-before the bytes ([FR-201](../foundation/FR-201-canonical-identity-domain.md)),
-and no requirement selects a member for either digest. This artifact records the
-dependency and selects neither.
-
-No requirement states the identity or key of the generated TL artifact itself,
-only that it "is internal derived output and never editable source" (FR-095).
-Whether two correspondence records may name the same generated TL formula
-identity, and whether the correspondence record is addressable independently of
-the native subject it was derived from, is not stated anywhere. Neither is
-supplied here.
+FR-095 now allocates generated identities to their selected TL owner readers
+and the correspondence reference to the bridge. Two correspondence records may
+name one equal generated formula only when every formula-owner input is equal;
+they remain unequal if another preserved correspondence axis differs.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Proposed identity allocation for `quire-specification#40`.
