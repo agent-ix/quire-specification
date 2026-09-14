@@ -8,6 +8,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-049
     type: specifies
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: references
 ---
 # FR-211: Protocol role
 
@@ -33,21 +35,16 @@ participant role" (FR-054).
 
 ## Identity and comparison
 
-- **Identity kind** — *authored*. A role is written in native source and bound
-  to its exact typed declaration (FR-050); every lowered source node retains its
-  declaration span (FR-049-AC-11). It is not computed from its own components
-  and it is not a value.
-- **Key** — **the prose does not fix the key components.** FR-050 establishes
-  only exclusions: a name alone is not the key, because the linker "SHALL refuse
-  ... name-only substitutions" (FR-050); an endpoint or channel identity
-  substituted for a role refuses (FR-050-AC-2); and two roles may not share one
-  authority, because duplicate role authorities refuse (FR-050). Whatever the
-  key is, equality is componentwise over it and nothing else: display name,
-  source path, span, message text, locale and rendering never participate
-  (FR-035, FR-049-AC-7). This artifact supplies no key components of its own.
-- **Key order** — none. Because the prose does not fix the key components, no
-  total order over the key can be stated without inventing one, and none is
-  stated here. A collection of roles therefore has no declared comparison order.
+- **Identity kind** — *derived*. The role is authored, while its identity is
+  derived from the exact linked definition and admitted declaration-local
+  handle.
+- **Key** — (`qualified protocol-definition identity`, `declaration-local role
+  handle`), exactly as FR-050 now states. The current wire represents the handle
+  as a table index qualified by its admitted package and declaration; an
+  unqualified index, display name or source span is not the key.
+- **Key order** — lexicographic over the two components in the declared
+  sequence. It exists only for stable comparison and diffing, ranks no role and
+  supplies no causal order.
 - **Causal order** — not carried by a role. Causal order belongs to the
   authored partial acyclic graph of FR-052, which admits no edge derived from
   source order or timestamps (FR-052, FR-052-AC-2). A role's position in source
@@ -56,9 +53,8 @@ participant role" (FR-054).
   unresolved, duplicate or ambiguous role reference "prevents dependent
   evaluation without removing independent valid definitions" (FR-050-AC-4); it
   is never defaulted to an empty name or to an implicit role.
-- **Digest domain** — no component named by the prose is a digest. Where a role
-  identity is carried beside a digest in provenance, that digest's domain is
-  selected under `ix://agent-ix/quire-specification/FR-201`.
+- **Digest domain** — every digest carried by the qualified linked-definition
+  identity retains its selected FR-201 domain.
 
 ## Acceptance Criteria
 
@@ -66,7 +62,7 @@ participant role" (FR-054).
 | --- | --- | --- |
 | FR-211-AC-1 | A role reference resolves to a typed role declaration, and an endpoint, channel or component identity supplied in a role position does not resolve. | Analysis |
 | FR-211-AC-2 | Two roles bearing equal textual names are not thereby equal, and two roles claiming one authority do not both resolve. | Analysis |
-| FR-211-AC-3 | This artifact declares no key components and no key order for a role, and cites the prose exclusions instead. | Inspection |
+| FR-211-AC-3 | Two roles compare equal exactly when their qualified definition and declaration-local role handle compare equal; display name, locus and shared participant/provider binding do not participate. | Analysis |
 | FR-211-AC-4 | An absent role key component compares only to absence and receives no default. | Analysis |
 
 ## Dependencies
@@ -82,23 +78,10 @@ participant role" (FR-054).
   endpoint becoming a participant role.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
-
-## Open gap
-
-No requirement states what constitutes a role's identity. The prose establishes
-that a name alone does not (FR-050), that an endpoint, channel or component
-identity cannot substitute (FR-050-AC-2), and that a duplicate authority refuses
-(FR-050) — but it never names the components of the key. Consequently:
-
-1. Whether a role's key includes its declaring package, protocol definition,
-   language edition or profile identity is unstated.
-2. Whether a role's key includes its authority is unstated; only that duplicate
-   authorities refuse.
-3. No key order over roles can be established until the key components are.
+- [FR-288](FR-288-qualified-protocol-definition-identity.md) supplies the
+  qualified linked-definition component.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Draft. Specification issue #28 fixed the key and comparison rule. Executable
+cross-repository identity evidence remains planned.

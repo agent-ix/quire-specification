@@ -150,9 +150,9 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-286
     type: contains
-  - target: ix://agent-ix/quire-specification/FR-295
+  - target: ix://agent-ix/quire-specification/FR-287
     type: contains
-  - target: ix://agent-ix/quire-specification/FR-296
+  - target: ix://agent-ix/quire-specification/FR-288
     type: contains
   - target: ix://agent-ix/quire-specification/FR-289
     type: contains
@@ -165,6 +165,10 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-293
     type: contains
   - target: ix://agent-ix/quire-specification/FR-294
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-295
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-296
     type: contains
   - target: ix://agent-ix/quire-specification/FR-250
     type: contains
@@ -715,6 +719,8 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-284](objects/protocol/FR-284-scope-progress-and-closure-state.md) | FR (enumeration) | Object layer; the two-member state vocabulary carried by the four decision-scope and surrounding-execution progress/closure axes |
 | [FR-285](objects/protocol/FR-285-participation-fact.md) | FR (value_object) | Object layer; exact known/unknown source participation without importing target status labels |
 | [FR-286](objects/protocol/FR-286-canonical-protocol-result-identity-preimage.md) | FR (value_object) | Object layer; versioned canonical-result identity preimage and strict-reader order |
+| [FR-287](objects/protocol/FR-287-authority-qualified-runtime-subject-reference.md) | FR (value_object) | Object layer; authority-qualified opaque runtime subject identity and non-causal canonical order |
+| [FR-288](objects/protocol/FR-288-qualified-protocol-definition-identity.md) | FR (value_object) | Object layer; exact linked protocol-definition qualifier across source, declaration ownership and semantic selections |
 | [FR-290](objects/protocol/FR-290-protocol-claim-kind.md) | FR (enumeration) | Object layer; closed protocol claim-kind vocabulary |
 | [FR-291](objects/protocol/FR-291-admitted-analysis-fragment.md) | FR (value_object) | Object layer; exact admitted analysis-fragment selection |
 | [FR-292](objects/protocol/FR-292-analysis-backend.md) | FR (value_object) | Object layer; exact analysis-backend selection |
@@ -730,6 +736,9 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-259](objects/temporal/FR-259-native-tl-correspondence-record.md) | FR (value_object) | Object layer; Native-to-TL correspondence record |
 | [FR-293](objects/temporal/FR-293-history-boundary-kind.md) | FR (enumeration) | Object layer; execution-origin and history-cutoff boundary vocabulary |
 | [FR-289](objects/temporal/FR-289-observation-temporal-boundary-mapping.md) | FR (value_object) | Object layer; explicit half-open observation to inclusive temporal boundary mapping |
+| [FR-294](objects/observation/FR-294-late-data-classification.md) | FR (enumeration) | Object layer; exact on-time and late observation classification |
+| [FR-295](objects/observation/FR-295-input-completeness-state.md) | FR (enumeration) | Object layer; independent input-completeness state derived from an exact fact population |
+| [FR-296](objects/observation/FR-296-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; versioned admitted-observation identity preimage and byte uniqueness |
 
 ## Composed baseline review
 

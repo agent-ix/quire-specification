@@ -46,7 +46,8 @@ reached within the declared finite graph.
 | FR-052-AC-1 | Split shipments S1 and S2 may interleave while each branch preserves its own order and both satisfy the authored join before completion. | Test (TC-052) |
 | FR-052-AC-2 | Reordering equal-time events does not add a causal edge absent from the protocol. | Test (TC-052) |
 | FR-052-AC-3 | A missing join input, causal cycle, zero-progress loop or absent finite iteration maximum refuses admission. | Test (TC-052) |
-| FR-052-AC-4 | Changing a branch, join rule or iteration maximum changes protocol identity and preserves the original source span. | Test (TC-052) |
+| FR-052-AC-4 | Changing any admitted semantic graph content—including a node/control kind, edge, guard or constraint value graph and dependency, event kind or binding, channel/FIFO rule, await rule, compensation reference, finish rule, branch, join or iteration maximum—requires a different qualified protocol-definition identity; source loci remain provenance rather than graph-key members. | Test (TC-052) |
+| FR-052-AC-5 | Reusing one qualified protocol-definition identity with different complete typed graph content is an identity contradiction and refuses admission rather than selecting either graph. | Test (TC-052) |
 
 ## Dependencies
 

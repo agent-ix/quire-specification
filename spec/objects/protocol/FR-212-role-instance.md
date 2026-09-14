@@ -10,6 +10,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-211
     type: references
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: references
 ---
 # FR-212: Role instance
 
@@ -38,17 +40,12 @@ instance, refuses linking with the affected source location" (FR-050-AC-2).
   bindings" as an input and refuses ambiguous instance bindings, and FR-035
   requires an "explicit compatible binding" (FR-035-AC-5). It is not *derived*,
   because no requirement states a rule that computes it from its components.
-- **Key** — **the prose does not fix the key components.** FR-050 requires
-  binding to an "exact typed declaration and configuration identity", but it
-  does not state whether the configuration identity, the role declaration, the
-  workflow instance, or some combination constitutes the key. Established
-  exclusions: a component identity cannot substitute (FR-050-AC-2), a name alone
-  cannot substitute (FR-050), and the static role definition is not the instance
-  (FR-050). Equality is componentwise over whatever the key is and nothing else;
-  display name, source path, span, message text, locale and rendering never
-  participate (FR-035, FR-049-AC-7).
-- **Key order** — none. The key components are not fixed by the prose, so no
-  total order over the key is stated and none is supplied here.
+- **Key** — one exact [FR-287](FR-287-authority-qualified-runtime-subject-reference.md)
+  of kind `role-instance`. Its workflow instance, static role slot and
+  configuration binding are separately validated relationships, not key
+  components. Reusing one key with different relationship facts refuses.
+- **Key order** — FR-287's lexicographic order. It is independent from protocol
+  role-table order and carries no role priority or causal meaning.
 - **Causal order** — not carried by a role instance. Where a role instance
   participates in protocol control, the applicable order is the authored partial
   acyclic order of FR-052, never derived from key order, timestamp or source
@@ -58,9 +55,8 @@ instance, refuses linking with the affected source location" (FR-050-AC-2).
   evaluation without removing independent valid definitions" (FR-050-AC-4), and
   a missing required role mapping refuses the dependent request rather than
   binding a default (FR-035-AC-5).
-- **Digest domain** — no component named by the prose is a digest. Where a role
-  instance identity is carried beside a digest in provenance, that digest's
-  domain is selected under `ix://agent-ix/quire-specification/FR-201`.
+- **Digest domain** — FR-287 retains the authority digest and its selected
+  FR-201 domain.
 
 ## Acceptance Criteria
 
@@ -69,7 +65,7 @@ instance, refuses linking with the affected source location" (FR-050-AC-2).
 | FR-212-AC-1 | A role instance and its static role definition are not equal, and neither resolves in the other's position. | Analysis |
 | FR-212-AC-2 | A component identity supplied for a role instance does not resolve. | Analysis |
 | FR-212-AC-3 | An ambiguous instance binding yields no selection, and the dependent evaluation does not proceed while independent valid definitions remain. | Analysis |
-| FR-212-AC-4 | This artifact declares no key components and no key order for a role instance, and cites the prose exclusions instead. | Inspection |
+| FR-212-AC-4 | Equal display or participant/provider identity does not merge role instances; equality and canonical collection order use only the FR-287 key. | Analysis |
 
 ## Dependencies
 
@@ -79,28 +75,13 @@ instance, refuses linking with the affected source location" (FR-050-AC-2).
   instances distinct subjects and governs role mappings.
 - [FR-211](FR-211-protocol-role.md) is the static definition a role instance
   instantiates.
+- [FR-287](FR-287-authority-qualified-runtime-subject-reference.md) defines the
+  concrete runtime key and its non-causal comparison order.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
-## Open gap
-
-No requirement states what constitutes a role instance's identity.
-
-1. Whether the key includes the workflow instance is unstated. FR-050-AC-3
-   establishes that two concurrent workflow instances "sharing one provider
-   remain distinct assessment subjects", but it does not say that a role
-   instance is scoped by a workflow instance.
-2. Whether the key includes the configuration identity that FR-050 requires it
-   to be bound to is unstated.
-3. FR-035-AC-5 admits "an explicit compatible binding shared by two distinct
-   roles". Whether that shared binding yields one role instance or two is
-   unstated.
-4. No key order over role instances can be established until the key components
-   are.
-
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Draft. Specification issue #28 fixed the key, relationship boundary and
+canonical comparison order. Executable cross-repository evidence remains
+planned.

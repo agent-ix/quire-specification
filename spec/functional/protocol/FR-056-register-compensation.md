@@ -39,14 +39,24 @@ attempt that lacks the required successful effect. Repeated observation of one
 effect SHALL NOT create additional registrations. Each registration SHALL retain
 the source definition and effect that created it.
 
+The registration key SHALL be the pair of the static compensation-definition
+key and the concrete forward-business-effect FR-287 key. The static definition
+key is the qualified protocol-definition identity plus the exact
+declaration-local compensation handle. Replaying the same complete pair is
+idempotent. Pairing one effect with two distinct admitted compensation
+definitions creates two distinct registrations. Role, eligibility, retry,
+commit and recovery facts remain separately validated bindings; reusing one
+registration key with conflicting bindings refuses.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-056-AC-1 | One successful payment effect registers one matching refund obligation after the effect. | Test (TC-056) |
+| FR-056-AC-1 | One successful payment effect paired with one admitted refund definition registers one obligation after the effect; pairing the same effect with a second distinct definition registers a second distinct obligation. | Test (TC-056) |
 | FR-056-AC-2 | Failed payment attempts and duplicate deliveries register no refund obligation. | Test (TC-056) |
 | FR-056-AC-3 | Replaying the same effect identity does not create a second registration. | Test (TC-056) |
 | FR-056-AC-4 | Compensation observed before its forward effect produces an ordering violation and cannot retroactively validate registration. | Test (TC-056) |
+| FR-056-AC-5 | Registration equality uses exactly the qualified compensation-definition key and concrete forward-effect FR-287 key; a missing/wrong-kind component refuses, replay is idempotent, and conflicting relationship rebinding refuses. | Test (TC-056) |
 
 ## Dependencies
 

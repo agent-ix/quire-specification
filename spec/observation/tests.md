@@ -17,6 +17,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-116
     type: references
+  - target: ix://agent-ix/quire-specification/FR-262
+    type: references
   - target: ix://agent-ix/quire-specification/FR-285
     type: references
   - target: ix://agent-ix/quire-specification/FR-295
@@ -55,7 +57,8 @@ CLI, or backend conformance.
 | Functional Req | Acceptance Criteria | Test Cases | Status |
 | --- | --- | --- | --- |
 | FR-110 | FR-110-AC-1, FR-110-AC-2, FR-110-AC-3, FR-110-AC-4, FR-110-AC-5, FR-110-AC-6 | TC-140 | 🚧 Planned |
-| FR-111 | FR-111-AC-1, FR-111-AC-2, FR-111-AC-3, FR-111-AC-4 | TC-141 | 🚧 Planned |
+| FR-111 | FR-111-AC-1, FR-111-AC-2, FR-111-AC-3, FR-111-AC-4, FR-111-AC-5, FR-111-AC-6, FR-111-AC-7 | TC-141 | 🚧 Planned |
+| FR-262 | FR-262-AC-1, FR-262-AC-2, FR-262-AC-3, FR-262-AC-4, FR-262-AC-5, FR-262-AC-6, FR-262-AC-7 | TC-141 | 🚧 Planned |
 | FR-112 | FR-112-AC-1, FR-112-AC-2, FR-112-AC-3, FR-112-AC-4, FR-112-AC-5, FR-112-AC-6, FR-112-AC-7 | TC-142 | 🚧 Planned |
 | FR-113 | FR-113-AC-1, FR-113-AC-2, FR-113-AC-3, FR-113-AC-4, FR-113-AC-5, FR-113-AC-6 | TC-143 | 🚧 Planned |
 | FR-114 | FR-114-AC-1, FR-114-AC-2, FR-114-AC-3 | TC-144 | 🚧 Planned |
@@ -80,7 +83,7 @@ CLI, or backend conformance.
 | Test ID | Title | Type | Priority | Traces To | Status |
 | --- | --- | --- | --- | --- | --- |
 | TC-140 | Bind typed observations without implicit values | Integration | P1 | FR-110, FR-260, FR-261, FR-296 | 🚧 Planned |
-| TC-141 | Correlate related instances without heuristics | Integration | P1 | FR-111 | 🚧 Planned |
+| TC-141 | Correlate related instances without heuristics | Integration | P1 | FR-111-AC-1..AC-7, FR-262-AC-1..AC-7 | 🚧 Planned |
 | TC-142 | Declare population and completeness | Integration | P1 | FR-112, FR-263, FR-264, FR-265 | 🚧 Planned |
 | TC-143 | Preserve time, progress, and late-data authority | Integration | P1 | FR-113, FR-267, FR-268, FR-296, FR-289, FR-294 | 🚧 Planned |
 | TC-144 | Agree replay and incremental assessment | Integration | P1 | FR-114 | 🚧 Planned |

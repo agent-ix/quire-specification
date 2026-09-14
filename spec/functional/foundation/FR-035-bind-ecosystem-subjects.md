@@ -11,6 +11,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-213
     type: references
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: references
 ---
 ## Description
 
@@ -40,6 +42,23 @@ successful type-check cannot supply missing required runtime scope or authority.
 The selected producer canonical domain and native raw-byte domain remain
 separate; a changed relation cannot override the linked model/profile.
 
+Every concrete runtime subject SHALL be identified by one authority-qualified
+opaque reference consisting of the exact selected producer/binding authority
+identity, revision and digest, the exact subject-kind discriminator, and the
+exact non-empty producer-supplied object-identity bytes. Equality and hashing
+are componentwise over that tuple without parsing, trimming, normalization or
+reconstruction. The binding requirement names the typed slot and authority; it
+is not the runtime object identity that fills the slot.
+
+Relationships from the runtime subject to a static declaration, workflow, role,
+channel, node, attempt or configuration are validated separately and do not
+become additional identity components. Reusing one complete identity key with
+incompatible kind, authority or relationship facts is an identity contradiction
+and SHALL refuse the affected binding. Missing or empty components SHALL refuse
+rather than default. Lexicographic key order is used only for deterministic
+collection comparison and SHALL NOT establish source, causal, delivery, retry or
+arrival order.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -53,12 +72,17 @@ separate; a changed relation cannot override the linked model/profile.
 | FR-035-AC-7 | Changing only the runtime resource limit changes the retained configuration and assessment input identity while preserving the static subject. | Test (TC-035) |
 | FR-035-AC-8 | A valid mapping for an unactivated compensation does not require a recovery record; once required, an unavailable observation remains incomplete rather than becoming optional-none or false. | Test (TC-035) |
 | FR-035-AC-9 | A previously linked template still refuses a missing required runtime scope selection and reports unavailable required observations as incomplete; a foreign producer/native correspondence cannot override its linked model/profile selection. | Test (TC-035) |
+| FR-035-AC-10 | Equal producer-local object bytes under a different authority identity, revision, digest or subject kind produce distinct canonical keys; offering one where the other authority/kind is required refuses rather than returning semantic object equality, while display, trace, timestamp, payload and source-locus changes alone do not mint a runtime subject. | Test (TC-035) |
+| FR-035-AC-11 | A missing or empty identity component, or one complete identity key rebound to incompatible typed relationship facts, refuses without a generated/default identity or dependent result. | Test (TC-035) |
+| FR-035-AC-12 | Permuting runtime subjects preserves their canonical lexicographic key order and changes no authored causal, delivery or retry relation. | Test (TC-035) |
 
 ## Dependencies
 
 - [Shared drafting foundation](../../../proposals/quire-v1/shared-foundation.md).
 - [Composed architecture](../../assurance/AD-001-composed-native-language.md).
 - [Planned acceptance matrix](../../composed-foundation/tests.md).
+- [FR-287](../../objects/protocol/FR-287-authority-qualified-runtime-subject-reference.md)
+  extracts the common runtime identity value and comparison rule.
 
 Proposed requirement for the composed profile; it does not amend historical
 accepted definitions or establish an implemented capability.
