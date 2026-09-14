@@ -42,4 +42,5 @@ Existing contract-IR canonical and bound identities, Filament fingerprints and r
 
 ## Status
 
-Draft. Specification review and prerequisite acceptance remain distinct from existing code/tests. No acceptance criterion is claimed satisfied solely because this artifact has been authored.
+Accepted by FS05 as standard behavior. Historical bytes and domain algorithms
+remain unchanged; consumer-specific execution and matrix status stay separate.

@@ -10,8 +10,9 @@ relationships:
 
 ## Description
 
-Golden and contract test, high priority, planned. Verifies FR-018-AC-1–4 and
-FR-018-AC-6 with independently authored preimage/output expectations.
+Accepted portable golden and contract controls for FR-018-AC-1–4 and
+FR-018-AC-6 with independently authored preimage/output expectations. TM-001
+remains Planned; this artifact does not claim executed portfolio coverage.
 
 ## Test Procedure
 

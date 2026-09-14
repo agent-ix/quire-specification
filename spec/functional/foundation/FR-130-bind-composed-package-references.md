@@ -55,5 +55,5 @@ their original meanings and do not migrate to this candidate implicitly.
 - [Language/wire evolution](FR-032-preserve-language-evolution.md).
 - [Planned shared matrix](../../composed-foundation/tests.md).
 
-Proposed under FS05/L2 and the existing compiler #35 scope. The requirement and
-definition do not implement or qualify a strict package reader.
+Accepted by FS05 as the composed linked-package reference interpretation. The
+requirement and definition do not implement or qualify a strict package reader.

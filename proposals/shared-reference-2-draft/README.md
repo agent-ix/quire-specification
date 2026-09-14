@@ -1,8 +1,9 @@
 # Verification reference amendment
 
-This private amendment addresses B's conditional review of specification PR8.
-It is an internal implementation contract after its recorded specification
-review; independent B adoption/qualification and public promotion remain separate.
+This private amendment, merged by specification PR #8 at `8ab058b`, addresses
+B's conditional review of that PR and is accepted by FS05 as an internal
+interchange contract. Independent consumer-specific qualification and public
+promotion remain separate.
 The adopted state-core packet at e897f81 and its 1-draft schema remain unchanged.
 
 ## Selected versions and scope
@@ -113,7 +114,7 @@ one layer. Readers retain the strict bounded intake, source/authority and
 artifact checks from the adopted packet. Exhaustion yields incomplete without
 partial acceptance. No network schema retrieval is authorized by schema IDs.
 
-The candidate schema and vectors are first-party authored data. Existing document
+The accepted schema and vectors are first-party authored data. Existing document
 and reusable-artifact publication terms remain unresolved; the packet stays
 private. Any new executable qualification source is Rust under AGPL-3.0-or-later,
 with original dependency grants retained. No hosted workflow is dispatched.
