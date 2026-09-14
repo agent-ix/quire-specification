@@ -38,5 +38,5 @@ Calls resolve by exact declaration identity and parameter order/type, including 
 - [Composed architecture](../../assurance/AD-001-composed-native-language.md).
 - [Planned acceptance matrix](../../composed-foundation/tests.md).
 
-Proposed requirement for the composed profile; it does not amend historical
-accepted definitions or establish an implemented capability.
+Accepted by FS03 for the composed state query/graph closure. It does not amend
+historical accepted definitions or establish implementation coverage.

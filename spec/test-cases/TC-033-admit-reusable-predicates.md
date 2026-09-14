@@ -8,12 +8,13 @@ relationships:
 ---
 ## Description
 
-Planned acceptance controls for [FR-033](../functional/foundation/FR-033-admit-reusable-predicates.md).
-No executable test or completed coverage is claimed by this artifact.
+Accepted portable controls for [FR-033](../functional/foundation/FR-033-admit-reusable-predicates.md).
+The matrix remains Planned; no executable test or completed coverage is claimed
+by this artifact.
 
 ## Test Procedure
 
-Define a typed Boolean predicate and two valid callers under the proposed reusable-predicate extension. Independently change argument count/type/unit and root type. Add a self-call and then an indirect two-declaration cycle. Exercise guarded and unguarded optional access. Offer the valid call under the historical no-call definition.
+Define a typed Boolean predicate and two valid callers under the accepted reusable-predicate extension. Independently change argument count/type/unit and root type. Add a self-call and then an indirect two-declaration cycle. Exercise guarded and unguarded optional access. Offer the valid call under the historical no-call definition.
 
 ## Expected Results
 

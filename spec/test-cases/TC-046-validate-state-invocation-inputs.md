@@ -8,8 +8,8 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-046](../functional/foundation/FR-046-validate-state-invocation-inputs.md).
-No executable test or observed coverage is claimed.
+Accepted portable controls for [FR-046](../functional/foundation/FR-046-validate-state-invocation-inputs.md).
+The matrix remains Planned; no executable test or observed coverage is claimed.
 
 ## Test Procedure
 

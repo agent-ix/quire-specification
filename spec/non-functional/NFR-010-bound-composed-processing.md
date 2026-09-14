@@ -54,3 +54,7 @@ current defaults or confuse the local Cargo job limit with language semantics.
 - [State/query/graph contract](../../proposals/quire-v1/state-contract.md).
 - [Typed producer causes](../functional/foundation/FR-047-emit-typed-located-causes.md).
 - [Historical exhaustion distinction](NFR-002-classify-resource-incompleteness.md).
+
+Accepted by FS03 for state parsing, proof/normalization, query and finite-graph
+processing. Temporal, observation and protocol accounting remain with their
+owning profiles; this artifact does not establish implementation coverage.

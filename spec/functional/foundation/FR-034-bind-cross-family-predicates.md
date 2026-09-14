@@ -37,5 +37,5 @@ A state predicate remains a Boolean expression evaluated in its declared environ
 - [Composed architecture](../../assurance/AD-001-composed-native-language.md).
 - [Planned acceptance matrix](../../composed-foundation/tests.md).
 
-Proposed requirement for the composed profile; it does not amend historical
-accepted definitions or establish an implemented capability.
+Accepted by FS03 for shared typed predicate bindings. It does not amend historical
+accepted definitions or establish implementation coverage in every family.

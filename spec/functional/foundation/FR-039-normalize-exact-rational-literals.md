@@ -40,5 +40,5 @@ Reject denominator zero before normalization. Move the sign to the numerator, di
 - [Shared drafting foundation](../../../proposals/quire-v1/shared-foundation.md).
 - [Planned matrix](../../composed-foundation/tests.md).
 
-This contribution remains proposed until the integrated baseline review. It does
-not change historical definition bytes or claim current compiler support.
+Accepted by FS03 for exact rational admission. It does not change historical
+definition bytes or claim complete compiler/backend coverage.

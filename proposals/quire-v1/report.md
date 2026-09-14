@@ -122,14 +122,14 @@ recovery, replay/streaming agreement and mixed-version impacts.
 The minimum-only ConfigVersion integer cannot be admitted by inventing a maximum
 or removing its parent relation. FCD #95 has accepted the producer-owned static
 presence decision; FCD #93 retains its Semantic IR/frontend delivery and no
-native presence syntax is inferred. Graph and reusable-predicate additions
-require explicit reviewed profile amendments; roadmap approval does not rewrite
+native presence syntax is inferred. FS03 accepts graph and reusable-predicate
+additions through explicit versioned profile dependencies; it does not rewrite
 historical semantics.
 
-Existing draft architecture and requirements remain proposed. Their detailed
-temporal/profile choices must be reconciled with this roadmap in the specification
-tickets. This amendment did not run /spec-review or a Cargo qualification campaign,
-implement grammar/runtime features, deploy monitors or execute business actions.
+The state core/query/graph closure is accepted by FS03. Other draft architecture
+and requirements retain their owning acceptance tickets. This roadmap amendment
+itself did not run /spec-review or a Cargo qualification campaign, implement
+grammar/runtime features, deploy monitors or execute business actions.
 
 All new first-party production/qualification paths remain Rust. Local testing is
 resource-conscious and hosted workflows remain manual-dispatch only. Private
