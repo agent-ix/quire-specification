@@ -10,6 +10,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-049
     type: specifies
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: references
 ---
 # FR-239: Compensation retry policy
 
@@ -36,6 +38,14 @@ failed refund attempt followed by one successful retry retains both attempts".
 Refusing an attempt beyond the bound does not discard the attempts already
 retained.
 
+The count is the cardinality of distinct admitted compensation-attempt FR-287
+keys bound to one registration. It includes the initial attempt and all admitted
+failed, timed-out and successful attempts. Replay or repeated receipt of one key
+counts once. An over-bound candidate is refused before retention and does not
+increment or otherwise mutate the prior count. Retry order comes only from the
+exact authored predecessor/successor relation; malformed or absent evidence is
+never repaired from key, timestamp, table or arrival order.
+
 ## Identity and comparison
 
 - **Identity kind** — *value*. A retry policy has no identity of its own; it is
@@ -43,10 +53,9 @@ retained.
 - **Key** — the authored finite retry bound, compared componentwise and nothing
   else. Display name, source path, span, message text, locale and rendering never
   participate (FR-009, FR-047).
-- **Key order** — none is declared. The bound is a number, but no requirement
-  establishes an order over retry policies, and the numeric order of two bounds
-  carries no precedence, no preference and no causal meaning. Collection
-  comparison must not read a larger bound as a later or stronger policy.
+- **Key order** — the exact numeric order of the single finite-bound component,
+  used only for canonical collection comparison. A larger bound has no
+  precedence, preference, strength or causal meaning.
 - **Causal order** — none. A retry policy is a bound on a count of attempts, not
   a node in the authored partial order of
   [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md). The order of
@@ -64,7 +73,10 @@ retained.
 | FR-239-AC-1 | An attempt beyond the authored finite retry bound is refused and cannot produce recovery success. | Analysis |
 | FR-239-AC-2 | Refusing an attempt beyond the bound leaves the previously retained attempts unchanged. | Analysis |
 | FR-239-AC-3 | An absent retry bound compares only to absence and is never defaulted to zero or to an unbounded policy. | Analysis |
-| FR-239-AC-4 | No key order over retry policies is declared, and a larger bound is not read as a later or stronger policy. | Inspection |
+| FR-239-AC-4 | Canonical collection comparison uses the bound's exact numeric order, and a larger bound is not read as a later, preferred or stronger policy. | Inspection |
+| FR-239-AC-5 | The attempt count is the number of distinct admitted compensation-attempt FR-287 keys under one registration, including the initial attempt and every admitted outcome; replay or repeated receipt counts once. | Test (TC-058) |
+| FR-239-AC-6 | A candidate beyond the maximum refuses before retention and leaves the previous count unchanged; repeating it neither increments the count nor changes the refusal. | Test (TC-058) |
+| FR-239-AC-7 | Only an exact authored predecessor/successor relation orders retries; missing observation/progress remains incomplete, while a missing, foreign, conflicting or ambiguous relation refuses. | Test (TC-058) |
 
 ## Dependencies
 
@@ -76,23 +88,12 @@ retained.
   that retry bounds count the initial attempt.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
-
-## Open gap
-
-[FR-049](../../functional/foundation/FR-049-bind-native-choreography-syntax.md)-AC-6 states
-that "Retry bounds count the initial attempt", so the bound counts attempts
-including the first and not retries after it.
-[FR-225](FR-225-operation-attempt.md) quotes the same sentence. That part of the
-gap is closed by requirement text and is not restated as open here.
-
-What remains unstated is narrower. FR-058 requires the evaluator to "distinguish
-a repeated receipt, retried attempt and duplicate business effect" and to refuse
-"attempts beyond the authored finite retry bound", but no requirement states
-whether a refused over-bound attempt is itself counted against the bound, nor
-whether a repeated receipt of one attempt counts as one attempt or as many.
-Neither is supplied here.
+- [FR-287](FR-287-authority-qualified-runtime-subject-reference.md) supplies the
+  distinct admitted compensation-attempt key.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no new
-obligation and claims no implementation coverage.
+Proposed closure for specification issue #31. Spec Language publishes the
+finite maximum, distinct attempt binding requirements and authored retry
+relation. Protocol's compensation algebra is not implemented, so executable
+evidence remains planned under TC-058.

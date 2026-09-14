@@ -8,6 +8,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-050
     type: specifies
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: references
 ---
 # FR-214: Protocol message
 
@@ -31,15 +33,13 @@ When a protocol binder binds a communication, the binder SHALL preserve the mess
 - **Identity kind** — *authored*. FR-054-AC-1 names "the single authored
   message/effect obligation", and FR-050 binds every message reference to its
   exact typed declaration. It is not derived from a transport record.
-- **Key** — **the prose does not fix the key components.** It fixes exclusions:
-  a payload type, endpoint or scalar identity in a message position refuses
-  (FR-049-AC-1); equal payload alone establishes nothing (FR-051 behavior); and
-  "equal scalar labels" do not make two references the same (FR-049-AC-7).
-  Equality is componentwise over the key and nothing else; display name, source
-  path, span, message text, locale and rendering never participate (FR-035,
-  FR-049-AC-7, FR-047). This artifact supplies no key components.
-- **Key order** — none. Because the key components are not fixed, no total
-  order over the key is stated and none is supplied here.
+- **Key** — one exact [FR-287](FR-287-authority-qualified-runtime-subject-reference.md)
+  of kind `message`. The authored message obligation, workflow and channel are
+  separately validated relationships. A static binding-requirement identity,
+  payload type, endpoint, scalar, trace or equal payload is not the concrete
+  message identity.
+- **Key order** — FR-287's lexicographic order for canonical collection
+  comparison only. It establishes neither send, receive nor delivery order.
 - **Causal order** — a message's send and receive are distinct protocol events
   ordered only by the authored partial acyclic graph of FR-052; FR-052-AC-2
   states that "Reordering equal-time events does not add a causal edge absent
@@ -50,9 +50,8 @@ When a protocol binder binds a communication, the binder SHALL preserve the mess
 - **Absence** — an absent key component compares only to absence and is never
   defaulted to an empty payload, an empty label or an implicit option-none
   (FR-035-AC-8).
-- **Digest domain** — no component named by the prose is a digest. Where a
-  message identity is carried beside a digest in provenance, that digest's
-  domain is selected under `ix://agent-ix/quire-specification/FR-201`.
+- **Digest domain** — FR-287 retains the authority digest and its selected
+  FR-201 domain.
 
 ## Acceptance Criteria
 
@@ -61,7 +60,7 @@ When a protocol binder binds a communication, the binder SHALL preserve the mess
 | FR-214-AC-1 | One message with one send, two deliveries and one effect yields three distinct subject counts and not one merged subject. | Analysis |
 | FR-214-AC-2 | Two messages with equal payload bytes or equal scalar labels are not thereby equal. | Analysis |
 | FR-214-AC-3 | A payload type, endpoint or scalar identity supplied in a message position does not resolve. | Analysis |
-| FR-214-AC-4 | This artifact declares no key components and no key order for a message, and cites the prose exclusions instead. | Inspection |
+| FR-214-AC-4 | Message equality and canonical collection order use only the FR-287 key; reusing one key for another obligation, workflow or channel refuses as an identity contradiction. | Analysis |
 
 ## Dependencies
 
@@ -76,19 +75,16 @@ When a protocol binder binds a communication, the binder SHALL preserve the mess
   vocabulary and its unreconciled lists.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
+- [FR-287](FR-287-authority-qualified-runtime-subject-reference.md) defines the
+  concrete message key and non-causal comparison order.
 
-## Open gap
+## Remaining vocabulary gap
 
-1. No requirement states what constitutes a message's identity, only what cannot
-   substitute for it. Whether the key includes the message type, the channel,
-   the sending role instance or the workflow instance is unstated.
-2. FR-051 lists `message` as a distinct subject; FR-049-AC-2 and FR-111 do not
-   list it at all. FR-210 records that disagreement.
-3. No key order over messages can be established until the key components are.
+FR-051 lists `message` as a distinct subject; FR-049-AC-2 and FR-111 do not list
+it. FR-210 retains that membership disagreement. It does not reopen the message
+key fixed here.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Draft. Specification issue #28 fixed the concrete key and canonical comparison
+order. Executable cross-repository evidence remains planned.

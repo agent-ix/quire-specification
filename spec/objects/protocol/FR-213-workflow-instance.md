@@ -10,6 +10,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-035
     type: specifies
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: references
 ---
 # FR-213: Workflow instance
 
@@ -33,17 +35,13 @@ When a request names a workflow instance, the binder SHALL treat it as an author
 - **Identity kind** — *authored*. FR-051-AC-4 names "an authored workflow ...
   identity" explicitly, and FR-050 takes explicit workflow-instance bindings as
   an input. It is not derived from any transport fact.
-- **Key** — **the prose does not fix the key components.** It fixes only what
-  is excluded from the key: a transport trace ID (FR-051-AC-4, FR-035-AC-2), a
-  delivery ID (FR-035-AC-2), a timestamp, an endpoint, a matching textual name
-  (FR-035) and a shared provider or trace infrastructure (FR-050-AC-3,
-  FR-111-AC-1). Equality is componentwise over the key and nothing else;
-  display name, source path, span, message text, locale and rendering never
-  participate (FR-035, FR-049-AC-7). This artifact supplies no key components.
-- **Key order** — none. Because the key components are not fixed, no total
-  order over the key is stated and none is supplied here. Ordering two workflow
-  instances by start timestamp or by source position would contradict FR-052,
-  which forbids deriving order from source order or timestamps.
+- **Key** — one exact [FR-287](FR-287-authority-qualified-runtime-subject-reference.md)
+  of kind `workflow-instance`. Its static protocol definition, workflow binding
+  and configuration are separately validated relationships. A provider, trace,
+  delivery, timestamp, endpoint or textual name is not a workflow identity.
+- **Key order** — FR-287's lexicographic order, used only for canonical
+  collection comparison. Start time, source position and provider order are not
+  key order and no key order supplies causality.
 - **Causal order** — within an instance, the authored partial acyclic order of
   FR-052 governs: "Sequence SHALL add only its authored order"; "Reordering
   equal-time events does not add a causal edge absent from the protocol"
@@ -56,11 +54,8 @@ When a request names a workflow instance, the binder SHALL treat it as an author
   "Unknown required membership yields an explicitly incomplete assessment and
   cannot establish a successful aggregate" (FR-035-AC-4); absence never becomes
   a default, an empty value or an optional-none (FR-035-AC-8).
-- **Digest domain** — no component named by the prose is a digest. Where a
-  workflow instance identity is carried beside a digest in provenance, that
-  digest's domain is selected under
-  `ix://agent-ix/quire-specification/FR-201`, and an identity crossing domains
-  is unequal regardless of byte equality.
+- **Digest domain** — FR-287 retains the authority digest and its selected
+  FR-201 domain; equal bytes crossing domains are unequal.
 
 ## Acceptance Criteria
 
@@ -69,7 +64,7 @@ When a request names a workflow instance, the binder SHALL treat it as an author
 | FR-213-AC-1 | Two concurrent workflow instances that share a provider or trace infrastructure compare unequal. | Analysis |
 | FR-213-AC-2 | A trace ID, delivery ID, timestamp, endpoint or matching textual name supplied for a workflow instance identity does not resolve. | Analysis |
 | FR-213-AC-3 | A workflow instance and its static protocol definition are not equal. | Analysis |
-| FR-213-AC-4 | This artifact declares no key components and no key order for a workflow instance, and cites the prose exclusions instead. | Inspection |
+| FR-213-AC-4 | A workflow-instance key compares and sorts only by FR-287; reusing one complete key with a different protocol, workflow binding or configuration refuses as an identity contradiction. | Analysis |
 
 ## Dependencies
 
@@ -85,22 +80,11 @@ When a request names a workflow instance, the binder SHALL treat it as an author
   authored causal order.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
-
-## Open gap
-
-No requirement states what constitutes a workflow instance's identity; it states
-only what cannot stand in for it.
-
-1. Whether the key includes the protocol definition, language edition, profile
-   or package identity is unstated.
-2. Whether the key includes the configuration identity that FR-050 requires the
-   instance to be bound to is unstated.
-3. No key order over workflow instances can be established until the key
-   components are.
+- [FR-287](FR-287-authority-qualified-runtime-subject-reference.md) defines the
+  concrete runtime key and non-causal comparison order.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Draft. Specification issue #28 fixed the concrete key, relationship boundary
+and canonical comparison order. Executable cross-repository evidence remains
+planned.

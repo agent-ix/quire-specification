@@ -156,9 +156,9 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-286
     type: contains
-  - target: ix://agent-ix/quire-specification/FR-295
+  - target: ix://agent-ix/quire-specification/FR-287
     type: contains
-  - target: ix://agent-ix/quire-specification/FR-296
+  - target: ix://agent-ix/quire-specification/FR-288
     type: contains
   - target: ix://agent-ix/quire-specification/FR-289
     type: contains
@@ -171,6 +171,10 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-293
     type: contains
   - target: ix://agent-ix/quire-specification/FR-294
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-295
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-296
     type: contains
 ---
 # FR-200: Quire semantic assessment bounded context

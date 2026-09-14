@@ -12,8 +12,18 @@ Verify effect-dependent, idempotent compensation registration and ordering.
 
 ## Test Procedure
 
-Present one successful payment effect, replay its observation, then replace it with failed attempts and duplicate deliveries. Present a refund before the forward effect.
+Present one successful payment effect paired with one admitted compensation
+definition, replay the same pair, then pair the same effect with a second
+definition. Independently remove or change each static-definition and concrete
+effect key member, substitute another subject kind, and rebind one complete
+registration key to conflicting role, eligibility, retry, commit and recovery
+facts. Replace the effect with failed attempts and duplicate deliveries. Present
+a refund before the forward effect.
 
 ## Expected Results
 
-Exactly one effect-bound registration is created in the valid/replayed case. Attempt/delivery-only cases create none; early compensation reports an ordering violation and cannot repair registration retrospectively.
+The exact pair creates one idempotent registration; two definitions paired with
+one effect create two registrations. Missing/wrong-kind key members and
+conflicting rebinding refuse. Attempt/delivery-only cases create none; early
+compensation reports an ordering violation and cannot repair registration
+retrospectively.
