@@ -76,35 +76,16 @@ is not reachable by omission.
 - [Observation result consumer and output-mapping contract](../../../proposals/quire-v1/observation-output-mapping-contract.md)
   supplies the consumer mapping context.
 
-## Open gap
+## FS06 resolution
 
-1. **The consumer itself is not typed here, because no requirement establishes
-   its identity.** FR-116 requires the adapter to retain "the requested subject,
-   capability, immutable source/binding/progress/definition/profile
-   identity-revision-digest selections" and to deliver to "an executable or
-   exported consumer", but states no identity, key or order for a consumer or
-   for a consumer mapping. Only the loss classification is typed.
-
-2. **Bare "adequacy" has no stated referent.** FR-061 establishes two disjoint
-   adequacy domains and forbids crossing them: observation adequacy states
-   whether the exact observations required "are `adequate`, `inadequate`,
-   `unknown` or `not-assessed`"; protocol adequacy states whether the exact
-   declared obligation and case set is "`demonstrated`, `not-demonstrated`,
-   `inapplicable` or `unknown`"; and "The result producer SHALL NOT use either
-   adequacy domain as evidence for the other."
-
-   FR-115 Description then lists, unqualified, "activation, participation,
-   completeness, adequacy, claim strength, provenance" as separate retained
-   facts, and FR-115-AC-4 repeats the bare word among the independently readable
-   facts. FR-116 omits an adequacy axis from its retained-fact list entirely.
-
-   Which of FR-061's two disjoint domains FR-115's bare "adequacy" denotes, and
-   whether FR-116's omission is deliberate, is not stated by any requirement.
-   This artifact records the contradiction and resolves neither side. The
-   adequacy vocabularies themselves are owned by the result object family, not
-   by this one.
+[FR-297](../output-mapping/FR-297-output-mapping-consumer-profile.md) defines
+the exact target consumer/profile selection. [FR-298](../output-mapping/FR-298-per-obligation-output-mapping-record.md)
+defines the independently addressable mapping record and requires observation
+adequacy and protocol adequacy to remain separately qualified under FR-245 and
+FR-246. Target output mapping accepts no bare `adequacy` member. This resolves
+the two former gaps for FS06 without changing either adequacy vocabulary.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Accepted by FS06 as the closed common mapping-loss vocabulary. Executable
+coverage remains Planned in TM-008 and the qcir target tickets.

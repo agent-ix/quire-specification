@@ -1,7 +1,8 @@
 # Observation result consumer and output-mapping contract
 
 FS04-accepted generic F-owned consumer boundary for OB03 and the composed
-`1-draft` baseline. Target-specific mapping profiles remain FS06 work.
+`1-draft` baseline. FS06 selects the target-specific profiles and common
+mapping record/package boundary under [output mappings](output-mappings/README.md).
 It reconciles structured observation results with executable and export consumers.
 It does not define an IR type, target-language mapping profile, model schema,
 canonicalizer, CLI, backend, parser, or evidence store. Native Quire remains the
@@ -17,15 +18,15 @@ the input retains:
 | --- | --- |
 | Subject and request | Exact linked-package/static subject, runtime assessment-input identity, requested capability, selected observation binding, and separately identified decision scope and surrounding execution. |
 | Source correspondence | Native clause, source revision/digest/span, declaration/anchor/capture identities, and every selected definition/profile identity, revision, and digest. |
-| Result facts | Independent B-owned assessment execution, truth, settlement basis, exact decision support, activation, participation, completeness, adequacy, claim strength, assumptions, and provenance facts; no summary may erase another fact. |
+| Result facts | Independent B-owned assessment execution, truth, settlement basis, exact decision support, activation, participation, completeness, separately qualified observation adequacy and protocol adequacy, claim strength, assumptions, and provenance facts; no summary may erase another fact or use bare `adequacy`. |
 | Decision-scope progress | Exact progress for the obligation's decision scope, retaining its scope, authority and boundary identities independently of surrounding-execution progress. |
 | Decision-scope closure | Exact closure state and premises for that decision scope, independently of its progress, assessment execution, completeness and surrounding-execution closure. |
 | Surrounding-execution progress | Exact progress for the surrounding execution, retaining its own scope, authority and boundary identities; decision-scope progress cannot replace it. |
 | Surrounding-execution closure | Exact closure state and premises for the surrounding execution; closing or settling one decision scope cannot close that execution. |
 | Complete-global-conformance closure | B's fifth typed closure record: `closed`, `open`, `incomplete` or `contradicted` with exact required execution, branch and workflow closure-premise identities for a global-conformance claim; `not-required` with no global premise set for another claim. Per-obligation settlement or another closure axis cannot replace it. |
 | Historical supersession | Earlier result identity and immutable bytes plus the linked superseding/invalidating result, contradicted premise, and corrected input identity; no result is restamped or silently replaced. |
-| Consumer selection | Consumer identity/version, selected target/output profile, configuration, and declared supported capability. |
-| Mapping outcome | One of `preserved`, `conditional`, `unrepresented`, or `refused`, with an exact source-bound reason and any required premise or loss. |
+| Consumer selection | Exact FR-297 target family, normative target revisions, mapping profile identity/revision/digest and declared required capabilities. |
+| Mapping outcome | One FR-298 identity-bearing record per obligation, classified as `preserved`, `conditional`, `unrepresented`, or `refused`, with exact source-bound conditions/causes and output regions. |
 
 The consumer preserves all four mapping outcomes independently from the observation
 availability state. A result that is pending, incomplete, refused, untriggered,
