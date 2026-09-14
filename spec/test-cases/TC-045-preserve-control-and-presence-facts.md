@@ -8,8 +8,8 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-045](../functional/foundation/FR-045-preserve-control-and-presence-facts.md).
-No executable test or observed coverage is claimed.
+Accepted portable controls for [FR-045](../functional/foundation/FR-045-preserve-control-and-presence-facts.md).
+The matrix remains Planned; no executable test or observed coverage is claimed.
 
 ## Test Procedure
 

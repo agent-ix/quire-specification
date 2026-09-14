@@ -8,8 +8,8 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-044](../functional/foundation/FR-044-check-composed-numeric-definedness.md).
-No executable test or observed coverage is claimed.
+Accepted portable controls for [FR-044](../functional/foundation/FR-044-check-composed-numeric-definedness.md).
+The matrix remains Planned; no executable test or observed coverage is claimed.
 
 ## Test Procedure
 
@@ -24,7 +24,7 @@ For d:Q, compare `d != rational(0,1) implies rational(0,1) / d = rational(0,1)`
 with its unguarded quotient and a guard on another independent value. Only the
 first supplies the required exact-subject nonzero fact. Mutate the operands to
 integers and to equal named rational types carrying a non-dimensionless unit;
-both refuse the proposed division admission rather than choosing new result types.
+both refuse the accepted division admission rather than choosing new result types.
 
 ## Expected Results
 

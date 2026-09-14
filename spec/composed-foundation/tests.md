@@ -62,10 +62,12 @@ relationships:
 ---
 ## Overview
 
-Draft shared-foundation requirements only. Family owners add their own matrices.
-Every case below is planned and unimplemented. Historical state/TL tests are not
-new composed-profile evidence. The grammar, producer/family contracts and final
-baseline review remain prerequisites for the corresponding executable cases.
+Shared-foundation requirements and planned conformance controls. FS03 accepts
+TC-033, TC-034, TC-038 through TC-046 and TC-048 as portable state-profile
+vectors, but every row below remains Planned until executable evidence is bound. Historical
+state/TL tests are not automatically composed-profile evidence. Producer/family
+contracts and exact selected definitions remain prerequisites for corresponding
+executable cases.
 
 ## Functional Requirement Coverage
 

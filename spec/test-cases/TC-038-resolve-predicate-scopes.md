@@ -8,8 +8,9 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-038](../functional/foundation/FR-038-resolve-predicate-scopes.md).
-These expected cases have not been implemented or executed.
+Accepted portable controls for [FR-038](../functional/foundation/FR-038-resolve-predicate-scopes.md).
+The matrix remains Planned; these expected cases have not been fully implemented
+or executed as this standard's conformance evidence.
 
 ## Test Procedure
 
