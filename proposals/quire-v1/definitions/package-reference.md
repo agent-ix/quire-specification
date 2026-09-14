@@ -1,13 +1,14 @@
 # Composed linked-package reference definition
 
 Artifact interpretation: `quire.package.composed/v1`; revision: `1-draft.2`.
-Language: `ix:native` / `1-draft`. **The artifact role is accepted by FS01; this
-semantic revision remains proposed and is not adopted or fully implemented.**
+Language: `ix:native` / `1-draft`. **The artifact role is accepted by FS01 and
+this semantic revision is accepted by FS05. Executable qualification remains
+separate.**
 This defines a semantic reference to a fully linked package. It is not a source
 profile and cannot be selected by a clause's `using` alias.
 
-This is a working definition in one coherent draft. Required definitions and
-rule links resolve within this checkout; acceptance freezes their exact selections.
+This is one accepted coherent definition. Required definitions and rule links
+resolve within this checkout; FS05 freezes their exact selections.
 Earlier draft text remains in Git history. Runtime references still require the
 selected immutable identities, revisions and digest domains.
 
@@ -16,6 +17,10 @@ selected immutable identities, revisions and digest domains.
 | Identity | Revision | Definition artifact |
 | --- | --- | --- |
 | `ix:native` / `1-draft` | `1-draft.2` | [Composed edition](edition.md) |
+
+FS05 selects only the edition/package identity, source-inventory and dependency
+rules reachable from this package interpretation. It does not adopt the sibling
+temporal or protocol semantic definitions, whose owning tickets remain open.
 
 ## Package and clause selections
 
@@ -59,13 +64,13 @@ execution of one such declaration cannot certify the refused whole package.
 
 ## Wire and canonical identity
 
-This candidate composes the existing `ix.shared-reference/2-draft` envelope and
+This definition composes the existing `ix.shared-reference/2-draft` envelope and
 `ix.artifact-ref/3-draft` fields. It adds no field or artifact-kind discriminant.
 The referenced package payload still needs its own exact supported wire contract;
 this semantic definition neither supplies a serialization layout nor makes an
 unknown payload wire decodable. Acceptance of the envelope is insufficient.
 
-For this candidate's whole-package reference, `canonicalIdentity` is null: no
+For this definition's whole-package reference, `canonicalIdentity` is null: no
 whole-package semantic canonicalizer is selected. A raw artifact digest, an IR
 expression digest or the verification JCS domain cannot substitute for one.
 Build provenance, runtime inputs and static components retain the separations
@@ -81,6 +86,6 @@ The following current reference rules supply the declared envelope contract.
 | [Reference schema](../../shared-reference-2-draft/schema.json) |
 | [Reference meanings](../../shared-reference-2-draft/README.md) |
 
-TC-030 and IT-010 plan the whole-package/inner-profile controls. Existing reference
-schema and canonicalizer tests do not qualify this new artifact interpretation
-or supply the pending strict linked-package reader.
+TC-030 and IT-010 retain the whole-package/inner-profile controls as Planned.
+Existing reference and consumer evidence supports FS05's semantic selection but
+does not qualify the pending strict linked-package reader or those matrix rows.

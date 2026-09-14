@@ -2,7 +2,7 @@
 id: Task-002
 title: "Review and deliver the exact PR8 unblock"
 type: Task
-status: in_progress
+status: done
 track: A
 priority: P1
 relationships:
@@ -27,13 +27,13 @@ pin to B and resolve PR8 readiness without requiring the complete compiler.
 - [x] Run actual code-review/rust-review and record remaining implementation gaps.
 - [x] Validate all changed artifacts and retain actual command outcomes.
 - [x] Push the exact revision and respond to B's concrete findings on PR8.
-- [ ] Make the PR reviewable and land it when its actual prerequisites permit.
+- [x] Make the PR reviewable and land it when its actual prerequisites permit.
 
 PR8 was marked ready for review at 56c2df7, with the direct B handoff at
 https://github.com/agent-ix/quire-specification/pull/8#issuecomment-5594213437.
-It is open and mergeable; B's independent review/adoption of the amended packet
-has not been recorded. This task does not wait for B's entire consumer to be
-implemented, and does not mark that consumer acceptance complete.
+It merged at `8ab058beff03cc76c0f39cc06c87ef98f76e8d78` on 2026-09-09.
+B's independent consumer-specific adoption remains separate. This task never
+waited for B's entire consumer and does not mark that consumer acceptance complete.
 
 ## Deliverables
 

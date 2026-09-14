@@ -37,5 +37,5 @@ Edition, semantic-profile, wire/canonicalization and backend implementation iden
 - [Composed architecture](../../assurance/AD-001-composed-native-language.md).
 - [Planned acceptance matrix](../../composed-foundation/tests.md).
 
-Proposed requirement for the composed profile; it does not amend historical
-accepted definitions or establish an implemented capability.
+Accepted by FS05 for edition/profile/wire evolution and explicit migration. It
+does not amend historical definitions or establish executable coverage.

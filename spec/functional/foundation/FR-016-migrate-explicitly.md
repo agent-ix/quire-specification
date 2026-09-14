@@ -40,4 +40,5 @@ Mappings retain historical bytes and identify their own version/digest. Common-k
 
 ## Status
 
-Draft. Specification review and prerequisite acceptance remain distinct from existing code/tests. No acceptance criterion is claimed satisfied solely because this artifact has been authored.
+Accepted by FS05 as standard behavior. Only an exact selected mapping grants its
+declared correspondence; executable migration qualification remains separate.

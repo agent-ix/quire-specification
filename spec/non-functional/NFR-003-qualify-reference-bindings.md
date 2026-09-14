@@ -37,3 +37,8 @@ Run both stale-digest mutations and changed content with a recomputed digest und
 - [FR-002](../functional/foundation/FR-002-resolve-owned-declarations.md)
 - [FR-003](../functional/foundation/FR-003-bind-source-correspondence.md)
 - [FR-004](../functional/foundation/FR-004-separate-artifact-identities.md)
+
+## Status
+
+Accepted by FS05 for strict interchange/reference binding. Each consumer still
+must execute its applicable adverse controls before claiming conformance.

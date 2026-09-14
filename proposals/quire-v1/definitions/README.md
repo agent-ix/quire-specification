@@ -29,7 +29,7 @@ not require a checksum refresh or another successor file.
 | `quire.observation.binding/v1` | `1-draft.3` | [Observation binding](observation-binding.md) |
 | `quire.observation.progress/v1` | `1-draft.3` | [Observation progress](observation-progress.md) |
 | `quire.observation.range/v1` | `1-draft.1` | [All-clock range correspondence](observation-range.md) |
-| `quire.package.composed/v1` | `1-draft.2` | [Linked-package interpretation](package-reference.md) |
+| `quire.package.composed/v1` | `1-draft.2` (accepted by FS05) | [Linked-package interpretation](package-reference.md) |
 | `quire.native.diagnostics/v1` | `1-draft.1` | [Diagnostic interpretation](native-diagnostics.md) |
 
 The [package contract](../package-contract.md), [state contract](../state-contract.md),
@@ -38,7 +38,10 @@ are current semantic inputs to these definitions. External producer and compiler
 inventory selections remain explicitly identified at their consuming boundary;
 they are not silently replaced with whatever another repository currently has.
 
-At each owning semantic acceptance, freeze the relevant coherent definition
+FS03 accepts the ordered state closure and FS05 accepts the linked-package
+interpretation plus its selected strict reference/canonical/migration contracts.
+Other listed family definitions retain their own acceptance tickets. At each
+owning semantic acceptance, freeze the relevant coherent definition
 closure and its immutable revision/digest. Runtime identity, source provenance,
 digest-domain separation and refusal of mismatched inputs remain required by
 FR-030/032/035. This authoring workflow does not weaken those product semantics

@@ -57,5 +57,6 @@ and closed vocabulary. This amendment adds no migration inference.
 
 ## Status
 
-Specification amendment for B's blocked shared reader. Consumer implementation
-and integration acceptance remain separately observed work.
+Accepted by FS05 as the exact internal verification-reference role amendment.
+Consumer-specific implementation and integration acceptance remain separately
+observed work.

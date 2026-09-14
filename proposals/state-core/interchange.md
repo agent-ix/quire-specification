@@ -1,8 +1,9 @@
 # FS05: strict references, canonical domains and migration
 
-Status: proposed `agent-a-fs05/1-draft`. This selects a reviewable wire contract;
-it does not register production interchange, qualify a consumer, or complete
-FS02/FS03. Earlier review wrappers retain their original bytes and meanings.
+Status: accepted by FS05 as `agent-a-fs05/1-draft`. This selects the standard's
+strict reference, canonical-domain and explicit-migration behavior. It does not
+register public interchange, qualify every consumer, or rewrite earlier review
+wrappers; those wrappers retain their original bytes and meanings.
 `schemas/shared-reference-1-draft.schema.json` is the single structural schema
 for this candidate. No method, plan, result or typed-model payload is defined here.
 
@@ -178,10 +179,13 @@ The structural schema plus raw JSON refusal fixtures exercise selected record
 shapes; canonical vectors preserve existing domain bytes/digests; source-map
 cases specify additional semantic checks. Producer checks must report which
 layer ran. A schema validator is not an independent consumer or evaluator.
-Every FS02 refusal condition needs independent B/C coverage before acceptance.
+Independent consumer evidence must cover the applicable refusal conditions
+before a consumer claims conformance. FS05 acceptance does not convert unrun
+consumer-specific matrices into executed evidence.
 
 A owns this standard/native producer contract, C existing-repository consumers,
 and B method/plan/result selection. Existing Quire formatVersion 1, contract-IR
 projection/canonical/bound versions, Quoin conformance JSONL v1, and TL's distinct
-version paths remain under their owners. This draft does not renumber them,
-change a canonical algorithm, close #36/#54, or authorize public promotion.
+version paths remain under their owners. This acceptance does not renumber them,
+change a canonical algorithm, close consumer-owned work, or authorize public
+promotion.

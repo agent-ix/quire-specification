@@ -40,3 +40,9 @@ Compare selected historical fixtures before and after the amendment. Exercise ch
 - [FR-014](../functional/foundation/FR-014-read-exact-wire.md)
 - [FR-015](../functional/foundation/FR-015-preserve-canonical-domains.md)
 - [FR-016](../functional/foundation/FR-016-migrate-explicitly.md)
+
+## Status
+
+Accepted by FS05 for versioned interchange and explicit migration. Historical
+fixture and canonical bytes remain immutable; executable evidence stays in its
+own matrices.
