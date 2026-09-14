@@ -9,7 +9,9 @@ relationships:
 ## Description
 
 Check the selected shared-model presence contract without inventing native clause
-syntax. Planned; FCD #95 owns the unresolved source representation.
+syntax. FCD #95 / PR #99 accepts the static authored-axis contract and QSL #93 /
+PR #94 consumes its exact admitted bundle. The Semantic IR/frontend and
+runtime-value portion remains planned under FCD #93 and the relevant consumer.
 
 ## Test Procedure
 
@@ -24,4 +26,5 @@ optional value absence and nullable invocation-result selection as separate case
 
 Each authored distinction is preserved or refused before execution; no adapter
 invents member presence from cardinality, an option, current data or a legacy IR
-field shape. No accepted outcome is assumed before #95 selects the contract.
+field shape. The accepted static producer/native result does not claim that the
+remaining source-IR or runtime-value cases have executed.

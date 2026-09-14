@@ -120,9 +120,11 @@ recovery, replay/streaming agreement and mixed-version impacts.
 ## Retained limitations
 
 The minimum-only ConfigVersion integer cannot be admitted by inventing a maximum
-or removing its parent relation. FCD #95 remains the producer-owned presence
-decision. Graph and reusable-predicate additions require explicit reviewed
-profile amendments; roadmap approval does not rewrite historical semantics.
+or removing its parent relation. FCD #95 has accepted the producer-owned static
+presence decision; FCD #93 retains its Semantic IR/frontend delivery and no
+native presence syntax is inferred. Graph and reusable-predicate additions
+require explicit reviewed profile amendments; roadmap approval does not rewrite
+historical semantics.
 
 Existing draft architecture and requirements remain proposed. Their detailed
 temporal/profile choices must be reconciled with this roadmap in the specification
