@@ -12,6 +12,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-239
     type: references
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: references
 ---
 # FR-233: Compensation registration
 
@@ -42,16 +46,20 @@ receive, delivery or attempt that lacks the required successful effect" and that
 - **Identity kind** — *derived*. A registration is not written in source; it is
   created by pairing an admitted compensation definition with a successfully
   established forward effect, and FR-056 requires it to retain exactly those two.
-- **Key** — the source compensation definition identity together with the
-  established forward effect identity. Equality is componentwise over that pair
+- **Key** — (`static compensation-definition key`, `concrete forward-effect
+  key`). The static key is the FR-288 qualified protocol-definition identity
+  plus the exact declaration-local compensation handle; the concrete effect key
+  is one FR-287 value of kind `business-effect`. Equality is componentwise over that pair
   and nothing else. Display name, source path, span, message text, locale,
   rendering, transport status, trace identifier and repetition of the observation
   never participate (FR-009, FR-047, FR-051). FR-056-AC-3 states that "Replaying
   the same effect identity does not create a second registration", and
   FR-051-AC-4 refuses "A transport trace ID substituted for an authored workflow,
   attempt or effect identity".
-- **Key order** — none. No requirement fixes a total order over compensation
-  definition identities or effect identities, so this artifact establishes none.
+- **Key order** — lexicographic over the static compensation-definition key and
+  then the concrete forward-effect FR-287 key. It is only for canonical
+  collection comparison and establishes no registration, effect or commit
+  order.
 - **Causal order** — the authored partial acyclic order of
   [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md). Registration is
   causally after the forward effect that created it and before a forbidding
@@ -59,16 +67,18 @@ receive, delivery or attempt that lacks the required successful effect" and that
   matching refund obligation after the effect", and FR-057 requires the evaluator
   to "reject or violate registration after a forbidding commit". That order is
   authored and never derived from key order, timestamp or source position.
-- **Absence** — an absent key component compares only to absence. An attempt,
+- **Absence** — both complete components are required. A missing, empty,
+  wrong-kind or foreign component refuses rather than creating a registration.
+  An attempt,
   send, receive or delivery with no established effect leaves the forward effect
   identity absent, and FR-056 forbids registering from it; absence is never
   compared to a default or empty effect identity, and FR-051-AC-3 states that "A
   payment attempt with no established effect remains an attempt and cannot
   activate effect-dependent compensation."
-- **Digest domain** — no key component of this object is a digest. Where a
-  definition or effect identity is carried as a digest, it retains the domain
-  selected under
-  [FR-201](../foundation/FR-201-canonical-identity-domain.md).
+- **Digest domain** — every digest inside the FR-288 static definition key and
+  FR-287 effect key retains its selected
+  [FR-201](../foundation/FR-201-canonical-identity-domain.md) domain. Equal bytes
+  across different domains are unequal.
 
 ## Acceptance Criteria
 
@@ -78,6 +88,8 @@ receive, delivery or attempt that lacks the required successful effect" and that
 | FR-233-AC-2 | A repeated observation of one effect identity yields the same registration rather than a second one. | Analysis |
 | FR-233-AC-3 | A registration key with an absent forward effect identity compares only to absence and is never defaulted. | Analysis |
 | FR-233-AC-4 | The declared key contains no transport status, trace identifier, delivery count or payload equality. | Inspection |
+| FR-233-AC-5 | One effect paired with two distinct static compensation-definition keys creates two registrations, while replaying either exact pair is idempotent. | Test (TC-056) |
+| FR-233-AC-6 | Role, eligibility, retry, commit and recovery are separate binding facts; reusing one complete registration key with a conflicting fact refuses rather than minting another registration. | Test (TC-056) |
 
 ## Dependencies
 
@@ -89,17 +101,13 @@ receive, delivery or attempt that lacks the required successful effect" and that
   forbidding-commit ordering rule.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
-
-## Open gap
-
-FR-056 requires each registration to retain "the source definition and effect
-that created it", and FR-056-AC-1 pairs "One successful payment effect" with "one
-matching refund obligation". No requirement states whether one effect may pair
-with more than one compensation definition, so it is not established whether the
-definition identity is a required key component or whether the effect identity
-alone is the key. Both readings are recorded; neither is selected here.
+- [FR-287](FR-287-authority-qualified-runtime-subject-reference.md) supplies the
+  concrete forward-effect key.
+- [FR-288](FR-288-qualified-protocol-definition-identity.md) qualifies the
+  declaration-local compensation handle.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no new
-obligation and claims no implementation coverage.
+Proposed closure for specification issue #31. Spec Language publishes the
+static compensation handle and binding requirements. Protocol currently retains
+no compensation records, so executable evidence remains planned under TC-056.

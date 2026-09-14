@@ -14,6 +14,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-228
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: references
 ---
 # FR-220: Causal control graph
 
@@ -43,6 +45,11 @@ The graph is the aggregate; its members have no standing outside it.
 - **termination declarations** — FR-052 takes "termination declarations" as an
   input and refuses "termination conditions that cannot be reached within the
   declared finite graph" (FR-052).
+- **complete typed semantic content** — every control and edge; every guard and
+  constraint value graph and dependency; every event kind and binding; every
+  channel, ordering and FIFO rule; every await anchor, interval and branch;
+  every compensation reference; and every finish binder, constraint and closure
+  requirement retained by the linked definition.
 
 The graph is finite and acyclic. FR-052 refuses "missing joins, cyclic causal
 dependencies, unbounded repetition and termination conditions that cannot be
@@ -52,22 +59,20 @@ maximum".
 
 ## Identity and comparison
 
-- **Identity kind** — *derived*. The graph carries no identity written beside
-  it. Its identity moves with protocol identity: "Changing a branch, join rule
-  or iteration maximum changes protocol identity and preserves the original
-  source span" (FR-052-AC-4).
-- **Key** — the identity of the linked protocol
-  ([FR-050](../../functional/protocol/FR-050-bind-protocol-instances.md)) together with
-  the authored control structure that FR-052-AC-4 names as identity-bearing:
-  its branches, its join rules and its iteration maxima. Equality is
-  componentwise over that key and nothing else. Display name, source path, span,
-  message text, locale and rendering never participate: FR-052-AC-4 states that
-  changing the structure changes identity while the source span is preserved,
-  so the span is carried and not compared. No requirement enumerates the
-  complete component list; see **Open gap**.
-- **Key order** — none is established. No requirement fixes a total order over
-  graphs or over their edges, and this artifact supplies none. The member order
-  used above is presentational and follows the order FR-052 states.
+- **Identity kind** — *derived*. The graph's identity is exactly the
+  [FR-288](FR-288-qualified-protocol-definition-identity.md) of its linked
+  protocol definition; it has no second flattened graph key.
+- **Key** — the complete FR-288 value and nothing else. The complete typed
+  semantic content above is consistency content: presenting different content
+  under the same FR-288 key is an identity contradiction and refuses. Every
+  semantic-content mutation requires a different FR-288. External filesystem
+  path, locus, build provenance and rendering metadata do not independently
+  extend the key. Authored source text, including a display-name edit, still
+  changes FR-288 through its required raw-source digest; this artifact does not
+  erase or override that already-selected identity component.
+- **Key order** — FR-288's lexicographic key order, used only for canonical
+  collection comparison. It establishes no graph-member order, precedence or
+  causal edge. The member order above is presentational.
 - **Causal order** — the authored partial acyclic order over node occurrences.
   It is authored, never derived: FR-052 constructs the graph "without deriving
   causal edges from source order or timestamps", FR-052-AC-2 states that
@@ -81,10 +86,8 @@ maximum".
   missing join input and an absent finite iteration maximum refuse admission
   (FR-052-AC-3). An absent optional component compares only to absence and is
   never compared to a default or an empty value.
-- **Digest domain** — no member of this key is a digest. Where protocol identity
-  is exchanged as a digest, that digest carries the domain it was derived under,
-  `ix://agent-ix/quire-specification/FR-201`, and an identity crossing domains
-  is unequal regardless of byte equality.
+- **Digest domain** — inherited exactly from FR-288, including the raw-source
+  and admitted semantic-selection digests in their declared FR-201 domains.
 
 ## Acceptance Criteria
 
@@ -94,6 +97,9 @@ maximum".
 | FR-220-AC-2 | Reordering two equal-time observations changes no edge of the graph. | Analysis |
 | FR-220-AC-3 | No key order declared by this artifact or by any object it contains is cited as evidence of a causal edge. | Inspection |
 | FR-220-AC-4 | A missing join input, a causal cycle, a zero-progress loop and an absent finite iteration maximum each refuse admission independently. | Analysis |
+| FR-220-AC-5 | The graph key equals its complete FR-288 qualified protocol-definition identity; there is no independent flattened or position-only graph fingerprint. | Analysis |
+| FR-220-AC-6 | Every typed semantic-content mutation requires another FR-288, and different complete graph content offered under one FR-288 refuses as an identity contradiction. | Test (TC-052) |
+| FR-220-AC-7 | External path, locus, build and rendering changes do not independently extend the graph key, while a changed authored source byte changes the raw-source digest already inside FR-288. | Analysis |
 
 ## Dependencies
 
@@ -108,20 +114,13 @@ maximum".
   identity discipline.
 - [FR-210](FR-210-protocol-subject-vocabulary.md) supplies the
   distinct protocol subject kinds.
-
-## Open gap
-
-FR-052-AC-4 names three components whose change changes protocol identity —
-a branch, a join rule and an iteration maximum. No requirement states that these
-three are the complete key. Unresolved by the prose:
-
-1. Whether a change to a node's typed payload, guard or channel binding, which
-   FR-052-AC-4 does not name, also changes protocol identity.
-2. Whether two protocols with identical authored structure at different source
-   spans are one graph identity or two. FR-052-AC-4 preserves the span but does
-   not say whether it participates.
+- [FR-288](FR-288-qualified-protocol-definition-identity.md) supplies the exact
+  graph key and selected source/semantic digest domains.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Proposed closure for specification issue #31. Spec Language publishes the
+complete typed graph content required for consistency checking. Protocol's
+current reduced `ControlShape` and position/numeric fingerprints omit semantic
+content and are partial rather than qualification evidence; executable exact
+identity evidence remains planned under TC-052.

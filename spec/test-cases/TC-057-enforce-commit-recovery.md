@@ -29,6 +29,11 @@ registration after commit, compensation before the forward effect and
 compensation after the commit; separately remove target state, commit or effect
 input.
 
+For two commit nodes, select one with `commit Node`, establish each node in turn
+and place registration, attempt, effect and recovery after it. Repeat with
+`commit never`; remove evidence for the selected non-`never` commit without
+changing the static selection.
+
 ## Expected Results
 
 Only matching linked relations report recovery. Equal predicate text under
@@ -39,3 +44,7 @@ occurrence and observation identities remain separate; `never` has no default
 identity; incompatible observation rebinding refuses; key permutation changes
 no causal verdict. The three ordering mutants yield distinct violations, while
 missing inputs remain pending/incomplete rather than successful.
+Only the selected commit produces the applicable after-commit violations;
+another commit does not. `commit never` supplies no earlier cutoff and no
+unbounded closure. Missing evidence for a selected boundary remains
+pending/incomplete rather than granting permission.

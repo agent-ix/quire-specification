@@ -6,6 +6,8 @@ object: value_object
 relationships:
   - target: ix://agent-ix/quire-specification/FR-054
     type: specifies
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: references
 ---
 # FR-216: Channel premise
 
@@ -17,29 +19,31 @@ When a conformance result is derived, the result SHALL identify the exact premis
 
 | Property | Source | Note |
 | --- | --- | --- |
-| Sender | FR-054 | The authored sending participant of the channel. Missing or conflicting refuses admission (FR-054-AC-3). |
-| Receiver | FR-054 | The authored receiving participant of the channel. Missing or conflicting refuses admission (FR-054-AC-3). |
-| Message types | FR-054 | The authored typed messages the channel carries. Missing or conflicting refuses admission (FR-054-AC-3). |
-| Ordering policy | FR-054 | Authored; "A FIFO premise orders messages only within its declared channel and key scope" (FR-054-AC-2). FIFO order across channels is never inferred (FR-054). |
-| Delivery cardinality | FR-054 | Authored; "At-least-once delivery admits a duplicate receipt while retaining the single authored message/effect obligation" (FR-054-AC-1). Exactly-once delivery and reliable delivery are never inferred (FR-054). |
-| Duplication premise | FR-054 | Whether duplication can occur, authored rather than inferred. |
+| Sender | FR-054 | The exact authored sending role of the channel. Missing or conflicting refuses admission. |
+| Receiver | FR-054 | The exact authored receiving role of the channel. Missing or conflicting refuses admission. |
+| Message type | FR-054 | The one exact admitted message type carried by the channel. Missing or conflicting refuses admission. |
+| Ordering policy | FR-054 | Exactly `unordered`, or `fifo` with its admitted declaration-local binder and typed key-expression definition. |
+| Delivery cardinality | FR-054 | One authored inclusive `[minimum, maximum]` interval of nonnegative deliveries per send, with `minimum <= maximum`. |
 
 Synchronized clocks are likewise never inferred (FR-054).
 
 ## Identity and comparison
 
 - **Identity kind** — *value*. A premise set has no identity of its own. It is
-  compared componentwise over the six components above and nothing else.
-- **Key** — all six components: sender, receiver, message types, ordering
-  policy, delivery cardinality and duplication premise. FR-054 fixes exactly
-  this component list in its description, and FR-054-AC-4 makes every one of
-  them significant: "Changing any channel premise changes the conformance
-  request identity and its result provenance." Equality is componentwise over
-  these components and nothing else. Display name, source path, span, message
-  text, locale and rendering never participate (FR-035, FR-049-AC-7, FR-047).
+  compared componentwise over the five independent components above.
+- **Key** — sender, receiver, message type, ordering policy and delivery
+  cardinality. For `fifo`, the ordering component includes the qualified
+  protocol-definition identity, declaration-local message-binder handle and
+  declaration-local typed key-expression handle; its admitted expression
+  retains its complete selected type and semantic dependencies. The runtime
+  value produced by evaluating that expression does not identify the static
+  premise. Duplication permission is derived from the delivery interval and is
+  not an additional component. Equality is componentwise over exactly these
+  values. Display name, external path, span, locale and rendering do not extend
+  this key (FR-035, FR-049-AC-7, FR-047).
 - **Key order** — componentwise, in the component order FR-054 states them:
-  sender, then receiver, then message types, then ordering policy, then delivery
-  cardinality, then duplication premise. This order exists only to compare and
+  sender, then receiver, then message type, then ordering policy, then delivery
+  cardinality. This order exists only to compare and
   diff collections of premise sets. It carries no causal meaning, no precedence
   between premises, and no claim that one premise is checked before another.
   The component order is taken from the FR-054 sentence and is not a priority.
@@ -48,26 +52,29 @@ Synchronized clocks are likewise never inferred (FR-054).
   authored partial acyclic order of FR-052, which admits no edge derived from
   source order or timestamps (FR-052, FR-052-AC-2). A FIFO premise therefore
   never contributes a causal edge and never orders messages outside its declared
-  channel and key scope (FR-054-AC-2).
+  channel and evaluated key scope (FR-054-AC-2). A runtime FIFO partition is
+  keyed by (`static channel key`, `exact typed expression result`). Equal result
+  values on different channels never create order between those channels.
 - **Absence** — an absent premise compares only to absence, and never to a
-  default: "The linker SHALL NOT infer exactly-once delivery, FIFO order across
-  channels, reliable delivery or synchronized clocks" (FR-054), and "Missing or
-  conflicting sender, receiver, message-type, order or delivery premises refuse
-  admission" (FR-054-AC-3). An absent premise is not an empty premise, not
-  at-most-once, not unordered, and not an implicit option-none.
-- **Digest domain** — no component of this key is a digest. Where a premise set
-  is carried beside a digest in result provenance (FR-054-AC-4), that digest's
-  domain is selected under `ix://agent-ix/quire-specification/FR-201`, and an
-  identity crossing domains is unequal regardless of byte equality.
+  default: "The linker SHALL NOT infer exactly-once delivery, FIFO, reliable
+  delivery or synchronized clocks" (FR-054), and a missing required component
+  refuses admission. `unordered` is a present ordering member with a positively
+  absent FIFO expression; it is not a default for a missing ordering policy.
+- **Digest domain** — every digest carried by a referenced static role, message
+  type, FIFO expression definition or qualified protocol-definition identity
+  retains its selected FR-201 domain. Equal bytes crossing domains are unequal;
+  no domain is inferred from result provenance.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-216-AC-1 | Two premise sets equal in all six components compare equal, and two differing in any one component compare unequal. | Analysis |
+| FR-216-AC-1 | Two premise sets equal in all five independent components compare equal, while changing any component, FIFO expression definition or delivery endpoint makes them unequal. | Analysis |
 | FR-216-AC-2 | A conformance result names the exact premise set under which it was derived. | Inspection |
-| FR-216-AC-3 | An absent premise compares only to absence and is never equal to exactly-once, FIFO, reliable delivery or a synchronized-clock premise. | Analysis |
+| FR-216-AC-3 | An absent premise compares only to absence and is never equal to `unordered`, FIFO, a delivery interval or a synchronized-clock fact. | Analysis |
 | FR-216-AC-4 | The declared key order over premise components is used only for collection comparison and is never cited as precedence or as a causal edge. | Analysis |
+| FR-216-AC-5 | `unordered` and FIFO are the complete ordering vocabulary; FIFO requires an exact admitted binder and stable-equality typed expression, and its runtime scope is one static channel plus one exact evaluated value. | Test (TC-054) |
+| FR-216-AC-6 | Delivery cardinality is an inclusive nonnegative per-send interval; its maximum alone derives whether a duplicate delivery is permitted, and no separate duplication premise is accepted. | Test (TC-054) |
 
 ## Dependencies
 
@@ -77,26 +84,13 @@ Synchronized clocks are likewise never inferred (FR-054).
   set.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
-
-## Open gap
-
-1. FR-054-AC-3 names five premises that refuse when missing or conflicting —
-   "sender, receiver, message-type, order or delivery" — while the FR-054
-   description binds six, adding the duplication premise. Whether a missing
-   duplication premise refuses admission is unstated. This artifact keeps all
-   six in the key, because FR-054-AC-4 makes "any channel premise" significant
-   to identity, and records the disagreement rather than resolving it.
-2. No requirement states the value domains of the ordering policy, the delivery
-   cardinality or the duplication premise. "At-least-once" (FR-054-AC-1) and
-   "FIFO" (FR-054-AC-2) are named as examples; "exactly-once", "reliable" and
-   "synchronized clocks" are named only as things not to infer (FR-054). No
-   closed vocabulary is established, so none is enumerated here.
-3. FR-054-AC-2 scopes a FIFO premise to a "key scope" that no requirement
-   defines. This artifact does not treat that scope as a component of this key.
+- [FR-288](FR-288-qualified-protocol-definition-identity.md) qualifies the FIFO
+  binder and typed key-expression handles.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Proposed closure for specification issue #31. Spec Language already emits the
+five independent channel fields and validates the FIFO binder/type/expression
+and interval shape. Protocol's current position-only FIFO fingerprint is partial
+and is not evidence of exact semantic identity; executable consumer evidence
+remains planned under TC-054.
