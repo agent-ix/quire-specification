@@ -11,6 +11,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-268
     type: references
+  - target: ix://agent-ix/quire-specification/FR-289
+    type: references
 ---
 ## Description
 
@@ -22,8 +24,9 @@ settled disposition.
 
 ## Behavior
 
-Arbitrary timestamp order SHALL NOT establish causality. Silence SHALL settle a
-deadline only when declared progress/closure authority covers that deadline. The
+The observation service SHALL NOT infer causality from arbitrary timestamp
+order. When silence is used to settle a deadline, the observation service SHALL
+do so only when declared progress/closure authority covers that deadline. The
 observation service SHALL classify a late event against the selected cutoff rather
 than silently rewriting an already settled result. When an assertion definition,
 scope, clock selection, source set, or restoration basis does not match the
@@ -31,6 +34,11 @@ assessment, the observation service SHALL retain an incomplete or refused input
 rather than settle or restart from it.
 For a selected FCD 1.2.0 half-open window, the observation service SHALL apply
 progress/closure only to admitted members with instants `start <= instant < end`.
+When that window supplies an inclusive temporal assessment `[a,b]`, the
+observation adapter SHALL apply FR-289: retain an explicit same-clock carrier `[a,e)` with `e > b`,
+filter participating observations to `a <= instant <= b`, and require progress
+covering every required source and subject through `b`. A half-open end or
+watermark equal to `b` does not prove inclusive coverage through `b`.
 
 ## Acceptance Criteria
 
@@ -41,6 +49,7 @@ progress/closure only to admitted members with instants `start <= instant < end`
 | FR-113-AC-3 | A late event is retained as late and cannot silently replace the selected settled result. | Test (TC-143) |
 | FR-113-AC-4 | A mismatched assertion definition, scope, clock, source set, or restoration basis remains incomplete/refused and cannot settle or restart an assessment. | Test (TC-143) |
 | FR-113-AC-5 | Progress/closure includes the selected window start, excludes its end, and cannot settle or contradict a later window through that boundary. | Test (TC-143) |
+| FR-113-AC-6 | The FR-289 mapping includes observations at both native inclusive endpoints, filters carrier members above the upper endpoint, uses checked successor only for discrete clocks, and refuses a foreign clock, missing greater end or overflow. | Test (TC-143) |
 
 ## Dependencies
 

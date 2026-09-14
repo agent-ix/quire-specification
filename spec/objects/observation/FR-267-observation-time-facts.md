@@ -31,24 +31,20 @@ selects from.
 | Causal relation | FR-113 Behavior, FR-113-AC-2 | The declared relation between subjects. FR-113 Behavior: "Arbitrary timestamp order SHALL NOT establish causality"; the relation is declared under [FR-262](FR-262-declared-instance-relationship.md) and never derived from either time fact. |
 | Clock uncertainty | FR-113 Description, FR-113-AC-2 | The interpretation of the declared clock. FR-113 Description retains "declared clock interpretation" among its required inputs, and a mismatched "clock selection" remains an incomplete or refused input rather than settling an assessment (FR-113 Behavior, FR-113-AC-4). |
 
-The four are held apart as facts. They are not four spellings of one timestamp,
-and no requirement admits deriving any one of them from another. The Property
-column above repeats FR-113's own English wording; it is not a declaration of a
-field name, a label spelling or a wire form. See **Open gap**.
+The exact v1 member labels are `event-time`, `ingestion-time`,
+`causal-relation`, and `clock-uncertainty`. They are held apart as facts, not
+four spellings of one timestamp. `clock-uncertainty` is the uncertainty value
+interpreted by the separately selected declared clock; it is not a second clock
+axis and cannot supply a missing clock selection.
 
 ## Identity and comparison
 
 - **Identity kind** — *value*. The time facts of an observation have no identity
   of their own; they are compared componentwise as the four facts above,
   alongside the observation they belong to.
-- **Key** — **none is established.** No requirement states a key over these
-  facts. FR-113 requires the four to remain distinguishable and requires the
-  clock selection, assertion definition, scope and source set to be retained
-  exactly, but it states neither a component subset that identifies an
-  observation's time facts nor a comparison rule over them. This artifact
-  supplies none. Where the four facts are compared, they are compared
-  componentwise and nothing else participates: display name, source path, span,
-  message text, locale and rendering never participate.
+- **Key** — the exact four-member product keyed by the labels above. Values are
+  compared under the selected clock and relationship contracts; display name,
+  source path, span, message text, locale and rendering never participate.
 - **Key order** — **none is established.** No requirement states an order over
   these four facts, and the order in which they are written above is
   presentation, not an order over anything. An order over the instants carried
@@ -75,11 +71,11 @@ field name, a label spelling or a wire form. See **Open gap**.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-267-AC-1 | Event time, ingestion time, causal relation and clock uncertainty are readable independently of one another for the same observation. | Analysis |
-| FR-267-AC-2 | Ordering two observations by either time fact does not establish a causal relation between them. | Analysis |
-| FR-267-AC-3 | An absent clock interpretation compares only to absence and does not resolve to a default clock. | Analysis |
-| FR-267-AC-4 | The four facts are exactly those named by FR-113-AC-2 and no fact has been added. | Inspection |
-| FR-267-AC-5 | No key, key order or label spelling over these facts is asserted by this artifact or inferred by a reader. | Inspection |
+| FR-267-AC-1 | Event time, ingestion time, causal relation and clock uncertainty are readable independently of one another for the same observation. | Test |
+| FR-267-AC-2 | Ordering two observations by either time fact does not establish a causal relation between them. | Test |
+| FR-267-AC-3 | An absent clock interpretation compares only to absence and does not resolve to a default clock. | Test |
+| FR-267-AC-4 | The four exact labels are `event-time`, `ingestion-time`, `causal-relation`, and `clock-uncertainty`; aliases and unknown labels are refused. | Test |
+| FR-267-AC-5 | Clock uncertainty is interpreted only under the exact selected clock and never supplies or replaces that selection. | Test |
 
 ## Dependencies
 
@@ -94,21 +90,12 @@ field name, a label spelling or a wire form. See **Open gap**.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
-## Open gap
+## Clock-selection boundary
 
-No requirement fixes a label spelling or a wire form for any of these four
-facts. FR-113 names them in English prose — "event time", "ingestion time",
-causality and "declared clock interpretation" — and nowhere establishes a
-hyphenated, underscored or otherwise serialized spelling, a field name or a
-type for any of them. The Property column above repeats the prose wording and
-declares no label; because no spelling is established, no exact-string
-comparison over such a label is established either, and none is asserted here.
-
-Whether `Clock uncertainty` in FR-113-AC-2 and "declared clock interpretation"
-in FR-113 Description name the same fact or two related facts is not stated
-anywhere, and is not resolved here.
+The declared clock selection is authority and context; `clock-uncertainty` is
+one observation fact interpreted within it. Neither is derivable from the
+other.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Proposed time-fact vocabulary closure for `quire-specification#40`.

@@ -15,6 +15,16 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-286
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-281
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-290
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-291
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-292
+    type: verifies
 ---
 ## Description
 
@@ -51,6 +61,13 @@ canonical bytes without updating the enclosing digest. Exercise each of the
 five FR-243 basis members, an unknown label and an absent basis with every
 permitted and forbidden truth/execution combination.
 
+For every exact required fact population, derive each FR-287 state; remove a
+member/status, combine missing and contradicted members, substitute each
+FR-284 progress/closure label, and vary all completeness and closure axes
+independently. Enumerate every FR-290 claim kind and FR-281 strength; omit,
+duplicate and mismatch claim kind, strength, admitted fragment and backend,
+including every identity/revision/digest/domain/capability mutation.
+
 Construct FR-285 `known` participation with an empty, singleton and multi-member
 required set and with all, some and none participating. Construct `unknown`
 participation with known participants, missing dependencies and typed reasons.
@@ -86,4 +103,7 @@ settlement bases admit only their exact truth/execution combinations, while
 unknown and absent bases refuse. Known and unknown participation remain
 structurally distinct; empty is not absent or unknown, exact role-instance
 identity and canonical order are preserved, and target participation labels are
-never accepted as source values.
+never accepted as source values. Completeness is recomputed with contradiction
+precedence and never supplies a progress/closure fact. Claim, strength, fragment
+and backend are exact, single-valued and capability-compatible; missing,
+multiple, unknown, cross-domain or display-derived selections refuse.

@@ -93,11 +93,11 @@ distinct temporal subjects and meanings."
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-250-AC-1 | Each member's value equals the exact identity string in the table, and a differently spelled or historically similar identity does not match it. | Inspection |
-| FR-250-AC-2 | The same predicate values and numeric interval under two different members compare as two distinct temporal subjects. | Analysis |
-| FR-250-AC-3 | A clause with an absent profile selection compares only to absence and receives no default member. | Analysis |
-| FR-250-AC-4 | A member with equal label bytes and a different definition revision or digest compares unequal. | Analysis |
-| FR-250-AC-5 | No TL evaluator profile appears as a member of this vocabulary. | Inspection |
+| FR-250-AC-1 | Each member's value equals the exact identity string in the table, and a differently spelled or historically similar identity does not match it. | Test |
+| FR-250-AC-2 | The same predicate values and numeric interval under two different members compare as two distinct temporal subjects. | Test |
+| FR-250-AC-3 | A clause with an absent profile selection compares only to absence and receives no default member. | Test |
+| FR-250-AC-4 | A member with equal label bytes and a different definition revision or digest compares unequal. | Test |
+| FR-250-AC-5 | No TL evaluator profile appears as a member of this vocabulary. | Test |
 
 ## Dependencies
 
@@ -114,17 +114,11 @@ distinct temporal subjects and meanings."
 - [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the
   digest domain rule.
 
-## Open gap
+## Definition digest domain
 
-FR-090 requires the "exact language edition and temporal profile definition
-identity, revision and digest" to be retained, and that digest participates in
-the key above, but FR-090 does not state which identity domain the digest is
-derived under. The domain is required to be compared before the bytes
-([FR-201](../foundation/FR-201-canonical-identity-domain.md)), and no
-requirement selects a member for this digest. This artifact records the
-dependency and selects no member.
+FR-090 selects `raw-artifact-digest` over the exact temporal-profile definition
+bytes. The domain is part of comparison and is checked before digest bytes.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Proposed digest-domain closure for `quire-specification#40`.

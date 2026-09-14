@@ -150,6 +150,22 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-286
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-288
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-289
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-290
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-291
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-292
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-293
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-294
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-250
     type: contains
   - target: ix://agent-ix/quire-specification/FR-251
@@ -671,6 +687,9 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-267](objects/observation/FR-267-observation-time-facts.md) | FR (enumeration) | Object layer; Distinguishable observation time facts |
 | [FR-268](objects/observation/FR-268-progress-and-late-data-authority.md) | FR (value_object) | Object layer; Progress and late-data authority |
 | [FR-269](objects/observation/FR-269-consumer-mapping-loss.md) | FR (enumeration) | Object layer; Consumer mapping-loss classification |
+| [FR-287](objects/observation/FR-287-input-completeness-state.md) | FR (enumeration) | Object layer; independent input-completeness state derived from an exact fact population |
+| [FR-288](objects/observation/FR-288-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; versioned admitted-observation identity preimage and byte uniqueness |
+| [FR-294](objects/observation/FR-294-late-data-classification.md) | FR (enumeration) | Object layer; exact on-time/late classification under a selected cutoff |
 | [FR-210](objects/protocol/FR-210-protocol-subject-vocabulary.md) | FR (enumeration) | Object layer; Protocol subject vocabulary |
 | [FR-211](objects/protocol/FR-211-protocol-role.md) | FR (entity) | Object layer; Protocol role |
 | [FR-212](objects/protocol/FR-212-role-instance.md) | FR (entity) | Object layer; Role instance |
@@ -696,6 +715,9 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-284](objects/protocol/FR-284-scope-progress-and-closure-state.md) | FR (enumeration) | Object layer; the two-member state vocabulary carried by the four decision-scope and surrounding-execution progress/closure axes |
 | [FR-285](objects/protocol/FR-285-participation-fact.md) | FR (value_object) | Object layer; exact known/unknown source participation without importing target status labels |
 | [FR-286](objects/protocol/FR-286-canonical-protocol-result-identity-preimage.md) | FR (value_object) | Object layer; versioned canonical-result identity preimage and strict-reader order |
+| [FR-290](objects/protocol/FR-290-protocol-claim-kind.md) | FR (enumeration) | Object layer; closed protocol claim-kind vocabulary |
+| [FR-291](objects/protocol/FR-291-admitted-analysis-fragment.md) | FR (value_object) | Object layer; exact admitted analysis-fragment selection |
+| [FR-292](objects/protocol/FR-292-analysis-backend.md) | FR (value_object) | Object layer; exact analysis-backend selection |
 | [FR-250](objects/temporal/FR-250-temporal-semantic-profile.md) | FR (enumeration) | Object layer; Temporal semantic profile identity |
 | [FR-251](objects/temporal/FR-251-tl-target-profile.md) | FR (enumeration) | Object layer; TL target evaluator profile |
 | [FR-252](objects/temporal/FR-252-temporal-clock-binding.md) | FR (value_object) | Object layer; Temporal clock binding |
@@ -706,6 +728,8 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-257](objects/temporal/FR-257-history-boundary.md) | FR (value_object) | Object layer; History boundary |
 | [FR-258](objects/temporal/FR-258-temporal-decision-scope.md) | FR (value_object) | Object layer; Temporal decision scope and closure |
 | [FR-259](objects/temporal/FR-259-native-tl-correspondence-record.md) | FR (value_object) | Object layer; Native-to-TL correspondence record |
+| [FR-293](objects/temporal/FR-293-history-boundary-kind.md) | FR (enumeration) | Object layer; execution-origin and history-cutoff boundary vocabulary |
+| [FR-289](objects/temporal/FR-289-observation-temporal-boundary-mapping.md) | FR (value_object) | Object layer; explicit half-open observation to inclusive temporal boundary mapping |
 
 ## Composed baseline review
 

@@ -9,6 +9,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-094
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: verifies
 ---
 ## Description
 
@@ -20,10 +22,10 @@ incomplete input.
 Reuse identical visible observations as an open prefix, an authoritatively
 complete closed execution and an EOF-closed file missing one required source.
 Exercise an already decisive witness and counterexample, an undecided future,
-one closed-complete scope with no trigger, one open trigger scope, missing and
+one closed trigger scope with complete input and no trigger, one open trigger scope, missing and
 refused trigger evidence, and a late record contradicting earlier completeness.
 Independently vary completed/failed assessment execution, open/closed decision
-scope, open/closed surrounding execution, complete/incomplete input, all five
+scope, open/closed surrounding execution, complete/incomplete/contradicted input, all five
 settlement bases and one missing fact inside or outside the exact
 decision-support set. Mutate EOF into scope closure, scope closure into whole-
 execution closure, each decisive basis into the other basis or `closed-scope`,
@@ -39,10 +41,13 @@ pending. Decision-scope closure applies the selected boundary rule without
 closing the surrounding execution, while the incomplete file reports
 incomplete. A fact missing inside support makes truth unavailable; one outside
 support does not alter settled truth but remains an adequacy/completeness gap.
-Only the closed-complete no-trigger scope is inactive. The open and missing/
+Only the closed-scope/complete-input no-trigger case is inactive. The open and missing/
 refused trigger cases remain activation-unknown with their distinct
 completeness/execution states. Neither becomes temporal truth. Every forbidden
 one-axis combination refuses. A late contradiction names the prior
 premise/result and preserves historical bytes. The settled sibling retains its
 truth, basis and support; only the exhausted obligation has a non-Boolean
 resource disposition.
+Every FR-287 state remains independent from all four FR-284 axes and the fifth
+global-closure axis; absent or cross-vocabulary state is refused rather than
+defaulted.

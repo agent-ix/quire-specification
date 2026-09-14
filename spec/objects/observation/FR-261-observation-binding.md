@@ -62,18 +62,18 @@ roles".
   requires that the exact identities be retained "or refuse the observation with
   a typed cause"; an absent selection is never defaulted to a current, latest or
   compatible-looking definition (FR-110 Behavior, FR-110-AC-1).
-- **Digest domain** — the byte digest carries a selected domain under
-  `ix://agent-ix/quire-specification/FR-201`. An identity crossing domains is
-  unequal regardless of byte equality.
+- **Digest domain** — FR-110 selects `raw-artifact-digest` over the exact
+  binding-contract definition bytes. An identity crossing domains is unequal
+  regardless of byte equality.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-261-AC-1 | Two bindings differing in definition identity, revision or byte digest compare unequal and link different subjects. | Analysis |
-| FR-261-AC-2 | Two bindings differing only in concrete mapping or admitted record set compare equal on the key and retain the same static subject. | Analysis |
-| FR-261-AC-3 | Two bindings with equal digest bytes selected under different identity domains compare unequal. | Analysis |
-| FR-261-AC-4 | Equal local role names do not merge two roles, and a local name does not participate in the key. | Inspection |
+| FR-261-AC-1 | Two bindings differing in definition identity, revision or byte digest compare unequal and link different subjects. | Test |
+| FR-261-AC-2 | Two bindings differing only in concrete mapping or admitted record set compare equal on the key and retain the same static subject. | Test |
+| FR-261-AC-3 | Two bindings with equal digest bytes selected under different identity domains compare unequal. | Test |
+| FR-261-AC-4 | Equal local role names do not merge two roles, and a local name does not participate in the key. | Test |
 
 ## Dependencies
 
@@ -86,15 +86,12 @@ roles".
 - [Observation binding contract](../../../proposals/quire-v1/observation-contract.md)
   supplies the role-identity and local-name rules.
 
-## Open gap
+## Definition digest
 
-FR-110 does not state which identity domain the binding-contract byte digest is
-derived under. The domain is required to be compared before the bytes
-([FR-201](../foundation/FR-201-canonical-identity-domain.md)), but no
-requirement selects a member for this digest. This artifact records the
-dependency and selects no member.
+The selected binding-contract definition uses FR-201 `raw-artifact-digest`.
+Concrete mappings and admitted record sets remain assessment inputs outside the
+static binding key.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Proposed digest-domain closure for `quire-specification#40`.

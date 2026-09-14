@@ -38,6 +38,14 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-286
     type: references
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-290
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-291
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-292
+    type: references
 ---
 # FR-240: Canonical protocol result
 
@@ -68,10 +76,10 @@ artifact adds none.
 | activation | One activation state ([FR-244](FR-244-activation-state.md)). |
 | participation | Exactly one closed [FR-285](FR-285-participation-fact.md) `known` or `unknown` value object. It is not a source status enum. |
 | assumptions | Each assumption retains its exact assumption identity and one state from `met`, `not-met`, `unknown` or `not-assessed` (FR-061). The state vocabulary is defined by [FR-280](FR-280-assumption-state.md). |
-| completeness | States which facts required by the returned claim are available and identifies every missing dependency (FR-061). |
+| completeness | One FR-287 state derived from the exact required population/boundary/assertion/per-fact status set; it remains independent from progress, closure and execution. |
 | observation adequacy | Whether the exact observations required to interpret the requested result are adequate ([FR-245](FR-245-observation-adequacy-state.md)). |
 | protocol adequacy | Whether the exact declared obligation and case set is demonstrated ([FR-246](FR-246-protocol-adequacy-state.md)). |
-| claim | The requested protocol claim and its retained claim strength. The strength vocabulary is defined by [FR-281](FR-281-claim-strength.md); the protocol claim kinds have no label spellings in the prose, see **Protocol claim kind**. |
+| claim | Exactly one FR-290 claim kind and, for an advanced result, one FR-281 strength, FR-291 admitted fragment and FR-292 backend selection. |
 | decision support | Every retained decision-support record ([FR-248](FR-248-decision-support-record.md)). |
 | provenance | Source, profile, model, protocol, request, binding, input and backend identities (FR-061-AC-3). |
 
@@ -129,27 +137,26 @@ restated as source states in the FR-062 mapping table):
 observed claim strengths as distinct source-bound values"):
 `proven`, `bounded-checked`, `tested`, `observed`.
 
-## Protocol claim kind
+## Protocol claim authority
 
-**Protocol claim kind** ([FR-060](../../functional/protocol/FR-060-separate-protocol-claims.md):
-"one independent disposition for global conformance, monitorability, local
-projection, refinement, realizability and composition without transferring
-premises or success among them"): global conformance, monitorability, local
-projection, refinement, realizability, composition. FR-060 names these in prose
-and does not give them label spellings; this artifact does not invent any.
+FR-290 defines the six exact claim-kind spellings. FR-281 defines the closed
+single-valued strength, FR-291 the admitted fragment and FR-292 the backend
+selection. Equal display labels or implementation names establish none of them.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-240-AC-1 | Every canonical protocol result carries `contractVersion` equal to `quire.protocol.result/v1-draft.1` and kind `ProtocolResult`. | Inspection |
-| FR-240-AC-2 | The enclosing artifact reference's digest is computed over the complete canonical result bytes and does not appear as a field inside those bytes. | Analysis |
-| FR-240-AC-3 | The five progress and closure axes remain independently readable; no axis is populated from completeness or assessment execution. | Analysis |
-| FR-240-AC-6 | Each of the four decision-scope and surrounding-execution axes carries exactly one FR-284 member, and the complete-global-conformance axis carries exactly one FR-247 member. | Analysis |
-| FR-240-AC-4 | Two results are compared over the result identity alone; equal display names or implementations establish neither equality nor independence. | Analysis |
-| FR-240-AC-5 | No result-identity ordering is asserted by this artifact or inferred by a reader. | Inspection |
-| FR-240-AC-7 | `resultId` is derived under FR-286; same identity with different canonical result bytes and any reader-supplied default identity are refused. | Analysis |
-| FR-240-AC-8 | Participation carries exactly one FR-285 value object and never an E02 target status label. | Analysis |
+| FR-240-AC-1 | Every canonical protocol result carries `contractVersion` equal to `quire.protocol.result/v1-draft.1` and kind `ProtocolResult`. | Test |
+| FR-240-AC-2 | The enclosing artifact reference's digest is computed over the complete canonical result bytes and does not appear as a field inside those bytes. | Test |
+| FR-240-AC-3 | The five progress and closure axes remain independently readable; no axis is populated from completeness or assessment execution. | Test |
+| FR-240-AC-6 | Each of the four decision-scope and surrounding-execution axes carries exactly one FR-284 member, and the complete-global-conformance axis carries exactly one FR-247 member. | Test |
+| FR-240-AC-4 | Two results are compared over the result identity alone; equal display names or implementations establish neither equality nor independence. | Test |
+| FR-240-AC-5 | No result-identity ordering is asserted by this artifact or inferred by a reader. | Test |
+| FR-240-AC-7 | `resultId` is derived under FR-286; same identity with different canonical result bytes and any reader-supplied default identity are refused. | Test |
+| FR-240-AC-8 | Participation carries exactly one FR-285 value object and never an E02 target status label. | Test |
+| FR-240-AC-9 | Completeness carries exactly one FR-287 state derived from its exact population and remains independent from the five progress/closure facts. | Test |
+| FR-240-AC-10 | Claim kind, strength, admitted fragment and backend retain their exact FR-290/281/291/292 shapes and compatible membership. | Test |
 
 ## Dependencies
 
@@ -174,6 +181,10 @@ and does not give them label spellings; this artifact does not invent any.
   importing E02 status labels.
 - [FR-286](FR-286-canonical-protocol-result-identity-preimage.md) defines the
   canonical result identity preimage, byte-uniqueness rule and reader order.
+- [FR-287](../observation/FR-287-input-completeness-state.md) defines input
+  completeness independently from progress and closure.
+- [FR-290](FR-290-protocol-claim-kind.md), [FR-291](FR-291-admitted-analysis-fragment.md)
+  and [FR-292](FR-292-analysis-backend.md) define claim dispatch authority.
 
 ## Resolved FS02 rulings
 
