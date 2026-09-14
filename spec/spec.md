@@ -150,9 +150,9 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-286
     type: contains
-  - target: ix://agent-ix/quire-specification/FR-287
+  - target: ix://agent-ix/quire-specification/FR-295
     type: contains
-  - target: ix://agent-ix/quire-specification/FR-288
+  - target: ix://agent-ix/quire-specification/FR-296
     type: contains
   - target: ix://agent-ix/quire-specification/FR-289
     type: contains
@@ -687,8 +687,8 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-267](objects/observation/FR-267-observation-time-facts.md) | FR (enumeration) | Object layer; Distinguishable observation time facts |
 | [FR-268](objects/observation/FR-268-progress-and-late-data-authority.md) | FR (value_object) | Object layer; Progress and late-data authority |
 | [FR-269](objects/observation/FR-269-consumer-mapping-loss.md) | FR (enumeration) | Object layer; Consumer mapping-loss classification |
-| [FR-287](objects/observation/FR-287-input-completeness-state.md) | FR (enumeration) | Object layer; independent input-completeness state derived from an exact fact population |
-| [FR-288](objects/observation/FR-288-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; versioned admitted-observation identity preimage and byte uniqueness |
+| [FR-295](objects/observation/FR-295-input-completeness-state.md) | FR (enumeration) | Object layer; independent input-completeness state derived from an exact fact population |
+| [FR-296](objects/observation/FR-296-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; versioned admitted-observation identity preimage and byte uniqueness |
 | [FR-294](objects/observation/FR-294-late-data-classification.md) | FR (enumeration) | Object layer; exact on-time/late classification under a selected cutoff |
 | [FR-210](objects/protocol/FR-210-protocol-subject-vocabulary.md) | FR (enumeration) | Object layer; Protocol subject vocabulary |
 | [FR-211](objects/protocol/FR-211-protocol-role.md) | FR (entity) | Object layer; Protocol role |

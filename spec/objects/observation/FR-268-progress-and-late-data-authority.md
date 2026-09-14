@@ -85,7 +85,7 @@ A late event is classified against the selected cutoff using FR-294's exact
 `on-time` / `late` vocabulary. The classification is a retained fact about the
 event; it does not rewrite the settled result it arrives after, and it does not
 restart the assessment (FR-113-AC-3, FR-113-AC-4). Contradiction is an
-independent completeness consequence under FR-287, never a third timing label.
+independent completeness consequence under FR-295, never a third timing label.
 
 ## Cross-family boundary mapping
 

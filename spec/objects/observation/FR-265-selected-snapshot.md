@@ -27,7 +27,7 @@ between a selected snapshot and a selected event-time window."
 | Subject participation | FR-112-AC-1 | "Changing a declared snapshot/window or membership rule changes the assessment subject." |
 | Producer and membership selection | FR-112 Behavior | Exact producer interface and FR-264 rule used for this capture. |
 | Capture assertion | FR-112 Behavior | Exact immutable capture identity/revision/digest, not an inferred timestamp. |
-| Admitted observations | FR-112 Behavior | Sorted distinct bounded FR-288 observation identities. |
+| Admitted observations | FR-112 Behavior | Sorted distinct bounded FR-296 observation identities. |
 
 ## Identity and comparison
 

@@ -47,7 +47,7 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-286
     type: references
-  - target: ix://agent-ix/quire-specification/FR-287
+  - target: ix://agent-ix/quire-specification/FR-295
     type: references
   - target: ix://agent-ix/quire-specification/FR-290
     type: references
@@ -130,7 +130,7 @@ scope's closure fact.
 
 That two-member vocabulary is not the complete-global-conformance vocabulary.
 `incomplete`, `contradicted` and `not-required` are members of the fifth axis
-and are never carried on one of the four. FR-287 independently uses
+and are never carried on one of the four. FR-295 independently uses
 `incomplete` and `contradicted` in the separate completeness vocabulary; equal
 label spelling does not make those axes substitutable. A contradicted retained
 premise is reported by supersession as well as by the current completeness
@@ -148,7 +148,7 @@ whether the exact declared obligation and case set is `demonstrated`,
 `not-demonstrated`, `inapplicable` or `unknown`. The result producer SHALL NOT
 use either adequacy domain as evidence for the other.
 
-Completeness SHALL carry exactly one FR-287 state together with the exact
+Completeness SHALL carry exactly one FR-295 state together with the exact
 required population, boundary, authority assertion and per-fact status set. The
 producer SHALL recompute the state from that complete set and refuse an omitted
 member, caller-authored aggregate state, or a progress/closure label supplied
@@ -209,7 +209,7 @@ The strict reader SHALL enforce the following result-combination rules.
 | A required decision-support fact is missing | Truth and settlement basis are unavailable for that decision. A truth already settled from a disjoint exact support set remains settled; completeness retains the missing fact and prevents dependent adequacy or package success. |
 | A retained decision-support or closure premise is later contradicted | The earlier result bytes remain unchanged. A new result identifies the earlier result and contradiction, makes dependent package success unavailable and recomputes truth only under the corrected exact input identity. |
 | Activation is inactive | Assessment execution is completed, truth is unavailable and the trigger scope is complete under an exact closure authority. The surrounding subject execution may remain open. |
-| Activation is activation-unknown | Truth is unavailable; completeness retains its independently derived FR-287 state and missing/contradicted dependencies, and an open trigger scope remains a separate progress/closure fact. |
+| Activation is activation-unknown | Truth is unavailable; completeness retains its independently derived FR-295 state and missing/contradicted dependencies, and an open trigger scope remains a separate progress/closure fact. |
 | Protocol adequacy is demonstrated | Every assessment execution and required input for the declared case set is complete and the exact required case set is present. Subject closure is required only when the declared adequacy claim depends on it. An obligation-path demonstration additionally requires triggered activation. Observation adequacy remains independently adequate. |
 | Global-conformance claim is complete success | Complete-global-conformance closure is `closed`, its exact required execution, branch and workflow closure-premise set is complete, and every selected required request satisfies its claim-specific success rule. A closed decision scope, settled truth, completed assessment or closed surrounding execution cannot replace a missing global premise. Unsupported, open, incomplete or contradicted requests and closure premises remain represented and prevent complete success. |
 | Claim is not global conformance | Complete-global-conformance closure is `not-required` with no global premise set. A supplied global premise or another closure axis relabelled `not-required` is refused. |
@@ -233,7 +233,7 @@ The strict reader SHALL enforce the following result-combination rules.
 | FR-061-AC-13 | A `closed` progress fact leaves its own scope's closure fact independently readable and does not close it, and a `closed` closure fact on one scope does not close the other scope. | Test (TC-061) |
 | FR-061-AC-14 | The independently recomputed FR-286 identity accepts object-member presentation permutations, changes for every semantic member mutation, and refuses missing identity or the same identity on different canonical result bytes. | Test (TC-061) |
 | FR-061-AC-15 | Participation accepts exactly the FR-285 known/unknown shapes, retains exact role-instance and missing-dependency references, and refuses target labels, mixed variants, duplicate members or display-derived ordering. | Test (TC-061) |
-| FR-061-AC-16 | Completeness accepts exactly the FR-287 state derived from the complete required population and remains independent from all five progress/closure facts and assessment execution. | Test (TC-061) |
+| FR-061-AC-16 | Completeness accepts exactly the FR-295 state derived from the complete required population and remains independent from all five progress/closure facts and assessment execution. | Test (TC-061) |
 | FR-061-AC-17 | Each result retains one exact FR-290 claim kind; every advanced result retains one compatible FR-281 strength, FR-291 fragment and FR-292 backend, and unknown/absent/mismatched or display-derived selections refuse. | Test (TC-061) |
 
 ## Dependencies
@@ -247,7 +247,7 @@ The strict reader SHALL enforce the following result-combination rules.
   participation fact.
 - [FR-286](../../objects/protocol/FR-286-canonical-protocol-result-identity-preimage.md)
   defines the result identity preimage and validation order.
-- [FR-287](../../objects/observation/FR-287-input-completeness-state.md)
+- [FR-295](../../objects/observation/FR-295-input-completeness-state.md)
   defines the independent input-completeness state and its population derivation.
 - [FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md),
   [FR-291](../../objects/protocol/FR-291-admitted-analysis-fragment.md), and

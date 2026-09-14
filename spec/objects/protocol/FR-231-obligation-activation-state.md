@@ -62,7 +62,7 @@ State meanings, as entered by this machine and defined by FR-244:
   the trigger scope is complete under an exact closure authority."
 - `activation-unknown` — an open trigger scope or missing/refused trigger
   evidence prevents activation from being known. Completeness retains its
-  independently derived FR-287 state; missing evidence is recorded there and a
+  independently derived FR-295 state; missing evidence is recorded there and a
   refused read remains a separate assessment-execution disposition.
 - `no_instance` — FR-093: "The evaluator shall create no instance and no refusal
   when an admitted activation guard is false." This is the absence of an
@@ -115,7 +115,7 @@ once reported, so none is drawn here.
 
 FR-055, FR-093 and FR-061 now agree: missing or refused required trigger
 evidence yields `activation-unknown`; input completeness retains its separately
-derived FR-287 state, assessment execution retains its own
+derived FR-295 state, assessment execution retains its own
 non-completed/refused state, and an open trigger scope remains a separate
 progress/closure fact. `inactive`
 requires authoritative trigger-scope closure plus complete input and no admitted

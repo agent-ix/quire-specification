@@ -38,7 +38,7 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-286
     type: references
-  - target: ix://agent-ix/quire-specification/FR-287
+  - target: ix://agent-ix/quire-specification/FR-295
     type: references
   - target: ix://agent-ix/quire-specification/FR-290
     type: references
@@ -76,7 +76,7 @@ artifact adds none.
 | activation | One activation state ([FR-244](FR-244-activation-state.md)). |
 | participation | Exactly one closed [FR-285](FR-285-participation-fact.md) `known` or `unknown` value object. It is not a source status enum. |
 | assumptions | Each assumption retains its exact assumption identity and one state from `met`, `not-met`, `unknown` or `not-assessed` (FR-061). The state vocabulary is defined by [FR-280](FR-280-assumption-state.md). |
-| completeness | One FR-287 state derived from the exact required population/boundary/assertion/per-fact status set; it remains independent from progress, closure and execution. |
+| completeness | One FR-295 state derived from the exact required population/boundary/assertion/per-fact status set; it remains independent from progress, closure and execution. |
 | observation adequacy | Whether the exact observations required to interpret the requested result are adequate ([FR-245](FR-245-observation-adequacy-state.md)). |
 | protocol adequacy | Whether the exact declared obligation and case set is demonstrated ([FR-246](FR-246-protocol-adequacy-state.md)). |
 | claim | Exactly one FR-290 claim kind and, for an advanced result, one FR-281 strength, FR-291 admitted fragment and FR-292 backend selection. |
@@ -155,7 +155,7 @@ selection. Equal display labels or implementation names establish none of them.
 | FR-240-AC-5 | No result-identity ordering is asserted by this artifact or inferred by a reader. | Test |
 | FR-240-AC-7 | `resultId` is derived under FR-286; same identity with different canonical result bytes and any reader-supplied default identity are refused. | Test |
 | FR-240-AC-8 | Participation carries exactly one FR-285 value object and never an E02 target status label. | Test |
-| FR-240-AC-9 | Completeness carries exactly one FR-287 state derived from its exact population and remains independent from the five progress/closure facts. | Test |
+| FR-240-AC-9 | Completeness carries exactly one FR-295 state derived from its exact population and remains independent from the five progress/closure facts. | Test |
 | FR-240-AC-10 | Claim kind, strength, admitted fragment and backend retain their exact FR-290/281/291/292 shapes and compatible membership. | Test |
 
 ## Dependencies
@@ -181,7 +181,7 @@ selection. Equal display labels or implementation names establish none of them.
   importing E02 status labels.
 - [FR-286](FR-286-canonical-protocol-result-identity-preimage.md) defines the
   canonical result identity preimage, byte-uniqueness rule and reader order.
-- [FR-287](../observation/FR-287-input-completeness-state.md) defines input
+- [FR-295](../observation/FR-295-input-completeness-state.md) defines input
   completeness independently from progress and closure.
 - [FR-290](FR-290-protocol-claim-kind.md), [FR-291](FR-291-admitted-analysis-fragment.md)
   and [FR-292](FR-292-analysis-backend.md) define claim dispatch authority.

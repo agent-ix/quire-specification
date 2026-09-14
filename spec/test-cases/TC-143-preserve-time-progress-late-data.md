@@ -5,7 +5,7 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-113
     type: verifies
-  - target: ix://agent-ix/quire-specification/FR-288
+  - target: ix://agent-ix/quire-specification/FR-296
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-289
     type: verifies
