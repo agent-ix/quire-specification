@@ -33,23 +33,16 @@ activation independent from truth".
 
 ```mermaid
 stateDiagram-v2
-    [*] --> scope_linked
-    scope_linked --> triggered : admitted trigger event or whole-execution origin with established captures per FR-055 and FR-093
-    scope_linked --> inactive : trigger scope authoritatively closed and complete without an admitted trigger per FR-093-AC-5
-    scope_linked --> activation_unknown : open trigger scope or missing or refused trigger evidence per FR-093-AC-5
-    scope_linked --> no_instance : admitted activation guard is false so the evaluator creates no instance and no refusal per FR-093
+    [*] --> triggered : admitted trigger event or whole-execution origin with established captures per FR-055 and FR-093
+    [*] --> inactive : trigger scope authoritatively closed with complete input and no admitted trigger per FR-093-AC-5
+    [*] --> activation_unknown : open trigger scope or missing or refused trigger evidence per FR-093-AC-5
+    [*] --> no_instance : admitted activation guard is false so the evaluator creates no instance and no refusal per FR-093
     triggered --> triggered : repeated delivery of the same semantic trigger with agreeing payload creates no second instance per FR-093-AC-2
     no_instance --> [*]
 ```
 
-`scope_linked` is **authored scaffolding, not a prose label.** No requirement
-establishes a state named `scope_linked`, and no requirement names any state
-that an obligation occupies before its activation is reported; the diagram needs
-one source for the four cited transitions leaving it, and this artifact supplies
-that source rather than leaving the transitions unrooted. It is disclosed here
-and in the **Open gap** below, it is not part of the activation vocabulary of
-[FR-244](FR-244-activation-state.md), and it is never emitted, compared or
-matched as an activation value. Every other state below is taken from the prose.
+The initial pseudostate represents assessment of a trigger scope; it is not an
+emitted activation value or an invented pre-report domain state.
 
 The activation label vocabulary itself is **defined by
 [FR-244](FR-244-activation-state.md)**, which holds `triggered`, `inactive` and
@@ -67,11 +60,10 @@ State meanings, as entered by this machine and defined by FR-244:
   not a true obligation and is not evidence that recovery behavior was
   exercised." FR-061: "Activation is inactive" implies "truth is unavailable and
   the trigger scope is complete under an exact closure authority."
-- `activation-unknown` — FR-093: "An open trigger scope shall produce
-  activation-unknown with open completeness. Missing or refused trigger evidence
-  shall produce activation-unknown with its incomplete or refused
-  assessment-execution disposition." FR-061: "Truth is unavailable and
-  completeness is open or incomplete with the missing trigger dependencies."
+- `activation-unknown` — an open trigger scope or missing/refused trigger
+  evidence prevents activation from being known. Completeness retains its
+  independently derived FR-295 state; missing evidence is recorded there and a
+  refused read remains a separate assessment-execution disposition.
 - `no_instance` — FR-093: "The evaluator shall create no instance and no refusal
   when an admitted activation guard is false." This is the absence of an
   obligation instance, not a fourth activation value.
@@ -104,10 +96,10 @@ once reported, so none is drawn here.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-231-AC-1 | A closed and complete trigger scope with no admitted trigger reports `inactive`, and an open scope or missing or refused trigger evidence reports `activation-unknown`. | Analysis |
-| FR-231-AC-2 | Neither `inactive` nor `activation-unknown` is readable as satisfied or demonstrated. | Analysis |
-| FR-231-AC-3 | A false admitted activation guard produces no instance and no refusal, and is not recorded as an activation value. | Analysis |
-| FR-231-AC-4 | An absent activation state compares only to absence and receives no default value. | Analysis |
+| FR-231-AC-1 | A closed and complete trigger scope with no admitted trigger reports `inactive`, and an open scope or missing or refused trigger evidence reports `activation-unknown`. | Test |
+| FR-231-AC-2 | Neither `inactive` nor `activation-unknown` is readable as satisfied or demonstrated. | Test |
+| FR-231-AC-3 | A false admitted activation guard produces no instance and no refusal, and is not recorded as an activation value. | Test |
+| FR-231-AC-4 | An absent activation state compares only to absence and receives no default value. | Test |
 
 ## Dependencies
 
@@ -119,48 +111,16 @@ once reported, so none is drawn here.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
-## Open gap
+## Axis ruling
 
-**`scope_linked` is authored scaffolding that no requirement establishes.** The
-string `scope_linked` appears in no requirement, no proposal and nowhere else in
-this specification. The four transitions leaving it are each cited to FR-055,
-FR-093 or FR-093-AC-5; the state they leave *from* is not, because no
-requirement names a state that an obligation occupies before its activation is
-reported. It exists only so those four cited transitions have one source in the
-diagram. No requirement establishes it, it is not an activation value, and it is
-not a member of the [FR-244](FR-244-activation-state.md) vocabulary. Closing
-this would require a requirement either to name the pre-report state or to state
-that there is none.
-
-Three requirements describe the missing-trigger case, and they do not agree on
-whether activation and assessment-execution/completeness are one axis or two.
-This artifact records all three verbatim and reconciles none of them.
-
-FR-055 Behavior reads as one axis choosing between two values:
-
-> "An absent trigger under complete closed input yields inactive; an unavailable
-> required trigger yields activation-unknown or incomplete."
-
-FR-093 Behavior reads activation and assessment execution as two independent
-axes, activation-unknown always being the activation value:
-
-> "An open trigger scope shall produce activation-unknown with open
-> completeness. Missing or refused trigger evidence shall produce
-> activation-unknown with its incomplete or refused assessment-execution
-> disposition."
-
-FR-061 likewise carries activation and completeness as separate retained facts:
-
-> "Activation is activation-unknown | Truth is unavailable and completeness is
-> open or incomplete with the missing trigger dependencies."
-
-Under FR-055 an unavailable required trigger may be reported as `incomplete`
-instead of an activation value; under FR-093 and FR-061 it is always
-`activation-unknown` carrying a separate incomplete completeness or
-assessment-execution fact. The selection belongs to an owner ruling, not to this
-artifact.
+FR-055, FR-093 and FR-061 now agree: missing or refused required trigger
+evidence yields `activation-unknown`; input completeness retains its separately
+derived FR-295 state, assessment execution retains its own
+non-completed/refused state, and an open trigger scope remains a separate
+progress/closure fact. `inactive`
+requires authoritative trigger-scope closure plus complete input and no admitted
+trigger. `incomplete` and `open` are not activation values.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no new
-obligation and claims no implementation coverage.
+Proposed activation-axis reconciliation for `quire-specification#40`.

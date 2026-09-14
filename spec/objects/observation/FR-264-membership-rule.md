@@ -26,21 +26,23 @@ mismatch is refused without ambient defaulting".
 | Rule identity | FR-112 Description | "declared finite membership rule". |
 | Rule digest | FR-112 Description, FR-112-AC-4 | A mismatch refuses; its domain is selected under [FR-201](../foundation/FR-201-canonical-identity-domain.md). |
 | Finiteness | FR-112 Description | The rule is declared *finite*. |
+| Required members | FR-112 Behavior | Under v1, the complete sorted distinct bounded semantic-member identity set. |
 
 FR-112 Behavior requires that members be "exactly listed/digested", and that
 "Unknown required membership ... cannot establish aggregate success."
 
 ## Identity and comparison
 
-- **Identity kind** — *value*. A membership rule selection has no identity of
-  its own; it is compared componentwise over its identity and digest.
-- **Key** — (`rule identity`, `rule digest`). FR-112-AC-1 establishes that
+- **Identity kind** — *derived*. The v1 rule identity is `sha256-jcs:<hex>` over
+  the RFC 8785 canonical bytes of `{"identityVersion":"quire.observation.explicit-members-identity/v1-draft.1","members":[...]}`.
+- **Key** — (contract `quire.observation.explicit-members/v1`, derived rule
+  identity, FR-201 `quire.verification.jcs` domain). FR-112-AC-1 establishes that
   changing the membership rule changes the assessment subject, and FR-112-AC-4
   that a membership-digest mismatch refuses; both components therefore
   participate. Equality is componentwise over the key and nothing else; display
   name, source path, span, message text, locale and rendering never participate.
-  The admitted member set produced by applying the rule is not part of the
-  rule's key.
+  The required member set is inside the derived identity preimage. The observed
+  subset is not.
 - **Key order** — lexicographic over (`rule identity`, `rule digest`), for
   collection comparison only. It carries no precedence, no recency and no causal
   meaning.
@@ -50,18 +52,17 @@ FR-112 Behavior requires that members be "exactly listed/digested", and that
   or digest is refused "rather than supplying a population, membership,
   configuration, or closure input" (FR-112 Behavior); it is never defaulted to a
   current or compatible-looking rule, and never to an empty population.
-- **Digest domain** — the rule digest carries a selected domain under
-  `ix://agent-ix/quire-specification/FR-201`. An identity crossing domains is
-  unequal regardless of byte equality.
+- **Digest domain** — `quire.verification.jcs`; a crossing domain is unequal.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-264-AC-1 | Two membership rules differing in identity or digest compare unequal and yield different assessment subjects. | Analysis |
-| FR-264-AC-2 | An absent membership rule or digest compares only to absence and receives no ambient default. | Analysis |
-| FR-264-AC-3 | Two rules with equal digest bytes selected under different identity domains compare unequal. | Analysis |
-| FR-264-AC-4 | Changing the admitted member set under the same rule identity and digest leaves the rule's key unchanged. | Analysis |
+| FR-264-AC-1 | Two membership rules differing in identity or digest compare unequal and yield different assessment subjects. | Test |
+| FR-264-AC-2 | An absent membership rule or digest compares only to absence and receives no ambient default. | Test |
+| FR-264-AC-3 | Two rules with equal digest bytes selected under different identity domains compare unequal. | Test |
+| FR-264-AC-4 | Changing the required member set changes the rule identity; changing only the observed subset leaves the rule key unchanged and affects completeness instead. | Test |
+| FR-264-AC-5 | Duplicate, unsorted on-wire, unbounded, unknown-contract or same-identity/unequal-member rules refuse without a partial population. | Test |
 
 ## Dependencies
 
@@ -73,13 +74,12 @@ FR-112 Behavior requires that members be "exactly listed/digested", and that
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
-## Open gap
+## V1 rule form
 
-FR-112 does not state which identity domain the membership digest is derived
-under, and does not state the form of a membership rule beyond that it is
-declared and finite. This artifact selects neither.
+The v1 contract admits exactly an explicit finite required-member set. A future
+query or predicate rule requires a successor contract and cannot be interpreted
+under this identity.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Proposed v1 membership closure for `quire-specification#40`.

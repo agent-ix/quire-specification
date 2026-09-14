@@ -47,7 +47,7 @@ The initial correspondence shall use this support table:
 | Event-position false-extension, bounded future core, open prefix | `mltl.online-prefix/v1` | Supported when every bridge premise below holds |
 | Fixed-sample false-extension, bounded future core | The same TL profiles | Supported only with one total valuation per required sample and retained epoch/period/unit correspondence |
 | Timestamped-event finite-window | Current TL profiles | Unsupported; no index conversion is inferred |
-| Any bounded past operator | Current TL profiles | Unsupported until a separately reviewed TL past profile exists |
+| Any bounded past operator with origin-complete history | `tl-syntax.past-operators/v1`, `mltl.origin-complete-history/v1`, and the selected position-history/past-evaluator contracts | Supported when every bridge premise below holds |
 | Finite-window future semantics | `mltl.closed-trace/v1` | Unsupported because TL extends atoms false beyond closure |
 
 For a supported mapping, the bridge shall preserve the native source
@@ -75,6 +75,13 @@ predicate, signal and capture identities.
 The bridge shall not treat a formula match without its valuation, capture and
 clock mapping as semantic correspondence.
 
+The native source and bridge-definition byte digests shall use the FR-201
+`raw-artifact-digest` domain. Generated formula, history/trace, request and
+report identities shall be recomputed by their selected TL public readers.
+The correspondence shall be independently addressable by the bridge-owned
+derived artifact reference over the complete preserved key; it shall not reuse
+a native or TL artifact identity.
+
 For an event-position or fixed-sample future mapping, the temporal bridge shall
 preserve the exact TL lower-bound convention and false-extension rule in
 [FR-091](FR-091-evaluate-bounded-future.md).
@@ -94,6 +101,7 @@ correspondence.
 | FR-095-AC-5 | A numeric, nullable, unavailable or pending native value cannot enter the TL proposition population. | Test (TC-117) |
 | FR-095-AC-6 | Fixed-sample lowering retains epoch/period/unit, reports an absent runtime sample as incomplete, and refuses a changed period or event-count reinterpretation even where the TL formula bytes match. | Test (TC-113) |
 | FR-095-AC-7 | A supported TL result is accepted only when the correspondence record preserves assessment execution, both progress/closure axes, settlement basis, exact decision support, completeness and supersession; mutating or omitting one axis cannot yield a healthy native result. | Test (TC-117) |
+| FR-095-AC-8 | Source/bridge definition digests use `raw-artifact-digest`; every generated artifact identity is accepted by its target owner reader; the bridge-owned correspondence reference changes with every preserved-key mutation and never substitutes for an owner identity. | Test (TC-117) |
 
 ## Dependencies
 

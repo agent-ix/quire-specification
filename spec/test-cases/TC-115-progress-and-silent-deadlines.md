@@ -5,6 +5,8 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-094
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-289
+    type: verifies
 ---
 ## Description
 
@@ -23,6 +25,11 @@ Substitute progress from a foreign clock, source set, subject or binding, and
 mutate the inclusive comparison to strict greater-than. On one valid binding,
 follow a later progress assertion with a regressing boundary and with a
 same-revision assertion carrying conflicting bytes.
+For the inclusive deadline `D`, supply half-open carriers ending below, equal
+to and greater than `D`; include observations exactly at `D` and between `D`
+and the greater carrier end. Exercise a point interval, reversed bounds,
+checked discrete-successor overflow, a foreign clock and a non-discrete clock
+without an explicit greater end.
 
 ## Expected Results
 
@@ -35,3 +42,6 @@ window settle true; the at-deadline event participates before either result is
 settled. The endpoint mutation is detected.
 The regressing or conflicting assertion produces a typed contradiction/refusal
 without rolling back progress, closure or any earlier result identity.
+Only the exact same-clock greater carrier proves inclusive coverage; its
+above-deadline members remain retained but do not participate. Equality,
+reversed bounds, overflow, a foreign clock and invented epsilon refuse.

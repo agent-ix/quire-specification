@@ -20,6 +20,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-284
     type: references
+  - target: ix://agent-ix/quire-specification/FR-295
+    type: references
 ---
 # FR-258: Temporal decision scope and closure
 
@@ -41,7 +43,7 @@ the surrounding execution as closed."
 | Scope identity | FR-094 Inputs | "exact decision-scope and surrounding-execution identities". |
 | Progress state | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis, advanced by a progress assertion ([FR-256](FR-256-temporal-progress-assertion.md)). It carries one state from [FR-284](../protocol/FR-284-scope-progress-and-closure-state.md): `closed` once the retained progress point covers the scope's required boundary, `open` otherwise. |
 | Closure state | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis carrying its own closure authority. It carries one state from [FR-284](../protocol/FR-284-scope-progress-and-closure-state.md): `closed` once that authority has closed the scope, `open` otherwise. |
-| Input completeness | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis, held distinct from closure and outside FR-284's vocabulary. FR-094-AC-3 names it "complete/incomplete input" and no requirement lists its member states; see **Open gap**. |
+| Input completeness | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis carrying exactly one FR-295 `complete`, `incomplete` or `contradicted` state and its exact population/boundary/assertion facts. |
 | Exact decision-support set | FR-091 Behavior, FR-094 Behavior | "the exact valuation, capture, clock, progress and profile facts that form its decision-support set". |
 
 FR-094-AC-3 states the independence as a checkable claim: "Open/closed decision
@@ -127,13 +129,13 @@ artifact names its members only where the temporal prose names them.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-258-AC-1 | A closed decision scope and a closed surrounding execution compare as two distinct facts, and closing one does not close the other. | Analysis |
-| FR-258-AC-2 | A file labelled closed without complete required observations compares as an incomplete input rather than as a closed scope. | Analysis |
-| FR-258-AC-3 | An unreported closure or completeness fact compares only to absence and receives no default value. | Analysis |
-| FR-258-AC-4 | The declared key order carries no progression from open towards closed. | Analysis |
-| FR-258-AC-5 | A settled sibling result retains its truth, settlement basis and exact deciding-fact identities unchanged when a resource ceiling stops another obligation. | Analysis |
-| FR-258-AC-6 | One scope observed at two different progress points compares equal on the key, so the later observation is evaluated for monotonicity against the earlier rather than treated as a different scope. | Analysis |
-| FR-258-AC-7 | The progress and closure axes each carry exactly one FR-284 member, while input completeness stays a separate axis outside that vocabulary and receives no member list here. | Analysis |
+| FR-258-AC-1 | A closed decision scope and a closed surrounding execution compare as two distinct facts, and closing one does not close the other. | Test |
+| FR-258-AC-2 | A file labelled closed without complete required observations compares as an incomplete input rather than as a closed scope. | Test |
+| FR-258-AC-3 | An unreported closure or completeness fact compares only to absence and receives no default value. | Test |
+| FR-258-AC-4 | The declared key order carries no progression from open towards closed. | Test |
+| FR-258-AC-5 | A settled sibling result retains its truth, settlement basis and exact deciding-fact identities unchanged when a resource ceiling stops another obligation. | Test |
+| FR-258-AC-6 | One scope observed at two different progress points compares equal on the key, so the later observation is evaluated for monotonicity against the earlier rather than treated as a different scope. | Test |
+| FR-258-AC-7 | The progress and closure axes each carry exactly one FR-284 member, while input completeness carries exactly one independent FR-295 member; cross-vocabulary substitution is refused. | Test |
 
 ## Dependencies
 
@@ -149,71 +151,24 @@ artifact names its members only where the temporal prose names them.
   four axes as result properties.
 - [FR-284](../protocol/FR-284-scope-progress-and-closure-state.md) defines the
   progress and closure state vocabulary.
+- [FR-295](../observation/FR-295-input-completeness-state.md) defines the
+  independent completeness vocabulary and derivation.
 - [FR-261](../observation/FR-261-observation-binding.md) and
   [FR-264](../observation/FR-264-membership-rule.md) supply the pattern for
   holding an observed, changing set outside a key.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
 
-## Open gap
+## Resolved vocabulary history
 
-**1. The settlement-basis vocabulary is stated with two different memberships.**
-
-Three requirements state the membership of the settlement-basis vocabulary and
-they do not state the same membership. Two list five members, one lists four and
-never names the fifth.
-
-FR-061 Behavior:
-
-> "Every truth result SHALL carry exactly one settlement basis from
-> `closed-scope`, `decisive-witness`, `decisive-counterexample`, `unsettled` or
-> `unavailable`, plus the exact supporting fact and progress identities."
-
-FR-094-AC-7:
-
-> "`closed-scope`, `decisive-witness`, `decisive-counterexample`, `unsettled`
-> and `unavailable` are accepted only with their valid truth, scope and exact
-> deciding-fact combinations; every one-axis substitution is refused."
-
-[FR-115](../../functional/observation/FR-115-report-activation-participation-and-adequacy.md)
-Behavior, for a settled truth on an open subject, requires it to retain its
-"`closed-scope`, `decisive-witness`, `decisive-counterexample`, `unsettled`, or
-`unavailable`" basis.
-
-FR-091 names only four, across three sentences, and never names `unavailable`:
-
-> "Such a result shall identify `decisive-witness` for true or
-> `decisive-counterexample` for false"
-
-> "Closure of that decision scope authorizes `closed-scope`"
-
-> "An undecided open scope shall remain pending with settlement basis
-> `unsettled`."
-
-FR-091 instead describes the missing-fact case without a basis label: "The
-evaluator shall make truth unavailable when a fact is missing inside the exact
-decision-support set." Whether `unavailable` is a settlement-basis member that
-FR-091 omits, or a truth state that FR-061 and FR-094 additionally spell as a
-basis, is not stated anywhere. This artifact records both readings and resolves
-neither.
-
-**2. Input completeness has no member list.**
-
-The progress and closure axes are enumerated:
-[FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) declares
-that each of the four decision-scope and surrounding-execution facts carries
-exactly `open` or `closed`, and
-[FR-284](../protocol/FR-284-scope-progress-and-closure-state.md) types that
-vocabulary.
-
-Input completeness is not covered by it. FR-094-AC-3 names the axis
-"complete/incomplete input" while holding it distinct from "Open/closed decision
-scope, open/closed surrounding execution", and FR-094 requires that a file
-"labelled closed without complete required observations" be classified as an
-incomplete input rather than a closed scope. No requirement declares a closed
-vocabulary for that axis, and none is invented here.
+FR-243 resolves the canonical settlement basis as the five-member vocabulary
+and defines the explicit lower-boundary `unavailable` adaptation. FR-295 now
+defines input completeness as the separate three-member vocabulary
+`complete`, `incomplete`, `contradicted`, derived from its exact required fact
+population. Equal label spelling between completeness and the fifth global
+closure axis does not make the axes equal or substitutable.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Proposed completeness reconciliation for `quire-specification#40`; the
+settlement-basis portion was previously accepted under FR-243.

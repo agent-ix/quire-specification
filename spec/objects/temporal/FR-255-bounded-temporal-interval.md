@@ -12,6 +12,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-252
     type: references
+  - target: ix://agent-ix/quire-specification/FR-289
+    type: references
 ---
 # FR-255: Bounded temporal interval
 
@@ -89,11 +91,11 @@ finite-window empty truth to an incomplete input."
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-255-AC-1 | Both endpoints of the bound pair participate, including for a zero-width interval where `a` equals `b`. | Analysis |
-| FR-255-AC-2 | The same numeric bound pair under two profile identities compares unequal. | Analysis |
-| FR-255-AC-3 | An interval is not shortened to the extent of the supplied data. | Analysis |
-| FR-255-AC-4 | An absent bound compares only to absence and is not defaulted to zero. | Analysis |
-| FR-255-AC-5 | The declared key order over intervals is never cited as a causal or containment relation. | Analysis |
+| FR-255-AC-1 | Both endpoints of the bound pair participate, including for a zero-width interval where `a` equals `b`. | Test |
+| FR-255-AC-2 | The same numeric bound pair under two profile identities compares unequal. | Test |
+| FR-255-AC-3 | An interval is not shortened to the extent of the supplied data. | Test |
+| FR-255-AC-4 | An absent bound compares only to absence and is not defaulted to zero. | Test |
+| FR-255-AC-5 | The declared key order over intervals is never cited as a causal or containment relation. | Test |
 
 ## Dependencies
 
@@ -107,56 +109,16 @@ finite-window empty truth to an incomplete input."
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
 
-## Open gap
+## Cross-family boundary rule
 
-The temporal family and the observation family state opposite boundary
-conventions for the endpoint at which an eligible member participates, and no
-requirement in either family cross-references the other or states a bridging
-rule.
-
-The temporal side is inclusive. FR-091-AC-5:
-
-> "Timestamped empty existential/universal window truth is emitted only after
-> complete progress through the inclusive upper endpoint; an eligible event
-> exactly at the deadline participates before settlement."
-
-FR-094 Behavior: "Progress shall cover an inclusive boundary." FR-094-AC-1:
-
-> "A timestamped response exactly at an inclusive deadline participates before
-> progress settles the window; the same response after the deadline does not."
-
-FR-092 Behavior: "The timestamped finite-window profile shall quantify admitted
-past instants by inclusive clock distance."
-
-The observation side is half-open.
-[FR-112](../../functional/observation/FR-112-declare-population-and-completeness.md)
-Behavior:
-
-> "For a selected FCD 1.2.0 window `[start, end)`, the assessment service SHALL
-> include an exactly listed/digested member at `start` and exclude one at `end`;
-> the latter can participate only in a separately selected later window."
-
-[FR-113](../../functional/observation/FR-113-preserve-time-progress-and-late-data.md)
-Behavior:
-
-> "For a selected FCD 1.2.0 half-open window, the observation service SHALL
-> apply progress/closure only to admitted members with instants
-> `start <= instant < end`."
-
-No requirement states how a native inclusive deadline is covered by a half-open
-producer window. The only statement of a bridging rule is in a proposal, not in
-a requirement
-([observation contract](../../../proposals/quire-v1/observation-contract.md)):
-
-> "Timestamp coverage remains half-open: a witness at native inclusive deadline
-> 30 is outside producer `[0,30)` and is admitted only by a separately selected
-> range that contains 30."
-
-This artifact records both conventions and the proposal-only bridging rule. It
-resolves none of them, and it does not promote the proposal text to a
-requirement.
+FR-289 preserves both conventions without identifying them: temporal
+membership remains inclusive, observation carriers remain half-open, and an
+explicit same-clock carrier with an end strictly greater than the inclusive
+upper bound supplies observations that are then filtered by the inclusive
+predicate. A discrete clock uses checked successor; a non-discrete clock
+requires an explicit greater end and never invents epsilon.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Proposed cross-family reconciliation under FR-289 for
+`quire-specification#40`.

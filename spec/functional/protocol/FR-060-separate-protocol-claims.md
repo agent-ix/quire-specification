@@ -13,15 +13,24 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-241
     type: references
+  - target: ix://agent-ix/quire-specification/FR-290
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-291
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-292
+    type: references
 ---
 ## Description
 
-When multiple protocol-analysis capabilities are requested, the dispatcher SHALL produce one independent disposition for global conformance, monitorability, local projection, refinement, realizability and composition without transferring premises or success among them.
+When multiple protocol-analysis capabilities are requested, the dispatcher SHALL produce one independent disposition for each exact requested FR-290 claim kind without transferring premises or success among them.
 
 ## Inputs
 
 An admitted protocol, exact requested claims, selected backend capabilities and
 per-claim communication, visibility, environment and correspondence premises.
+Each request selects an exact FR-291 admitted fragment and FR-292 analysis
+backend; the intersection of their closed claim/construct capabilities governs
+dispatch without ambient fallback.
 
 ## Outputs
 
@@ -47,6 +56,7 @@ unreviewed fallback or changing independent results.
 | FR-060-AC-3 | Circular local assumptions cannot establish composition success without an independently discharged premise. | Test (TC-060) |
 | FR-060-AC-4 | Every advanced result identifies its admitted fragment, backend, assumptions and source/derived-artifact correspondence. | Test (TC-060) |
 | FR-060-AC-5 | A backend failure yields a failed disposition for its exact claim and does not invoke a fallback or erase an independent result. | Test (TC-060) |
+| FR-060-AC-6 | Unknown or absent claim kind, fragment or backend and any claim/fragment/backend capability mismatch refuse or report unsupported without copying display labels or invoking a fallback. | Test (TC-060) |
 
 ## Dependencies
 
