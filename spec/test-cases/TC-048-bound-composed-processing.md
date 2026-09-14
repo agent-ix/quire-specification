@@ -8,8 +8,9 @@ relationships:
 ---
 ## Description
 
-Planned resource controls across the new producer/query/graph boundaries.
-Accounting/version contracts and runnable harnesses remain implementation work.
+Accepted portable resource controls for the state producer/query/graph
+boundaries. The matrix remains Planned; accounting/version contracts and
+runnable harnesses remain implementation work.
 
 ## Test Procedure
 

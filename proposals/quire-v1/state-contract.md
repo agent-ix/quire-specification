@@ -1,12 +1,50 @@
-# Proposed composed-v1 state contract
+# Accepted composed-v1 state contract
 
-Draft FS03 contribution. This selects the state meaning needed by the approved
-capability inventory; it is not adopted or implemented by this document.
+FS03 accepts this contract as the normative state meaning needed by the approved
+capability inventory. Acceptance fixes semantics and portable expected vectors;
+it does not claim that every compiler, runtime or backend implements them.
 Historical profile files, source bytes and results remain unchanged. The
 [first-profile amendment](../native-source-1-draft/README.md) is the retained
 admission baseline, with the explicit extensions below. A full-v1 claim requires
 the selected extensions; a first-profile implementation may still identify its
 smaller scope accurately.
+
+## FS03 acceptance envelope
+
+The accepted dependency closure is ordered and non-flattening:
+`quire.state.core/v1` is the scalar/control/anchor base,
+`quire.state.queries/v1` adds typed predicates and occurrence-preserving bounded
+queries, and `quire.state.graph/v1` adds identity-bearing finite references and
+positive-length reachability. A consumer selects one exact closure; it cannot
+combine permissions from unrelated profiles or infer support from an installed
+backend.
+
+For these state profiles, FS03 also selects the exact referenced state grammar
+forms from `ix:native` edition `1-draft.2`. That scoped dependency selection does
+not adopt temporal, protocol or package-definition semantics still owned by other
+tickets, and it does not reinterpret any historical edition.
+
+The accepted rules are FR-033, FR-034, FR-038 through FR-046 and NFR-010 for the
+state processing boundaries. Their portable vectors are TC-033, TC-034, TC-038
+through TC-046 and TC-048. Those vectors cover healthy, violating, invalid,
+unsupported, unavailable and resource-exhausted cases while keeping the matrix
+rows Planned until executable evidence is bound. In particular, optional absence,
+dangling references, unavailable observations, malformed input and work
+exhaustion are different outcomes; none is an ordinary false result.
+
+QSL #36 and #37 are implementation evidence for admitted predicates, queries and
+finite graphs, and QSL #83/#84 is bounded-scalar backend evidence. They do not
+qualify every accepted vector. Contract-IR #69 owns the wider definedness,
+object/graph and collection Kani profile and must consume this contract without
+supplying new language meaning. Unsupported kinds, casts, recursion and unproved
+definedness refuse explicitly with the authored identity and locus; a backend
+must emit no partial artifact for a refused root.
+
+FS03 admits only the exact declared nominal object/type and relationship
+identities supplied by the selected model. Unrestricted inheritance,
+redefinition, subtype casts and dynamic dispatch remain outside this profile;
+TC-040 and TC-043 require their unsupported, wrong-type and foreign-identity
+cases to refuse rather than substitute structural compatibility.
 
 ## Profile composition and type authority
 

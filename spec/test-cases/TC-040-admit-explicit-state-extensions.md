@@ -8,13 +8,13 @@ relationships:
 ---
 ## Description
 
-Planned controls for [FR-040](../functional/foundation/FR-040-admit-explicit-state-extensions.md).
-No executable test or observed coverage is claimed.
+Accepted portable controls for [FR-040](../functional/foundation/FR-040-admit-explicit-state-extensions.md).
+The matrix remains Planned; no executable test or observed coverage is claimed.
 
 ## Test Procedure
 
-Use the exact [candidate definitions](../../proposals/quire-v1/definitions/README.md)
-and their selected rule snapshots, once adopted and implemented. Keep a separately
+Use the exact [accepted state definitions](../../proposals/quire-v1/definitions/README.md)
+and their selected rule snapshots once implemented. Keep a separately
 identified historical first-profile control. Exercise this admission table with
 the same explicit finite typed model wherever that profile admits its types:
 
