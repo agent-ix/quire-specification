@@ -33,7 +33,7 @@ Outputs requires "separate attempt, effect, commit and recovery facts".
 | Property | Source | Note |
 | --- | --- | --- |
 | Authored commit ordering | FR-057 Description | The evaluator checks it; it is authored, not inferred. |
-| Forbidding disposition | FR-057 Behavior, FR-057-AC-3 | Whether the commit forbids a later registration or compensation. |
+| Forbidding selection | FR-057 Behavior, FR-057-AC-3 | `commit Node` makes that exact selected commit the forbidding boundary for this compensation; no independent disposition field exists. |
 | Commit observation | FR-057 Inputs | The observed commit the boundary is checked against. |
 | Owning registration | FR-056 Description | Each registration is bound to its commit boundary ([FR-233](FR-233-compensation-registration.md)). |
 
@@ -66,6 +66,15 @@ Outputs requires "separate attempt, effect, commit and recovery facts".
 - **Digest domain** — the linked definition and FR-287 authority digest retain
   their selected FR-201 domains.
 
+`commit Node` selects exactly one forbidding static boundary for the owning
+compensation definition. Only an established occurrence/observation of that
+selected boundary forbids later registration, compensation attempts/effects or
+recovery for its registrations; other commit nodes do not. `commit never` is a
+present alternative selecting no earlier cutoff. It neither supplies a default
+commit identity nor establishes perpetual/open-ended closure. When a selected
+non-`never` boundary lacks required runtime evidence, the evaluation remains
+pending/incomplete rather than treating the missing fact as permission.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -75,6 +84,8 @@ Outputs requires "separate attempt, effect, commit and recovery facts".
 | FR-237-AC-3 | Commit ordering is read from the authored causal order and never from a key order, timestamp or source position. | Analysis |
 | FR-237-AC-4 | A commit boundary, its concrete occurrence and its observation retain their separate declared keys; `never` has no commit identity and receives no default. | Analysis |
 | FR-237-AC-5 | Reusing one commit-observation key for another boundary occurrence refuses, while sorting commit keys changes no authored causal order. | Analysis |
+| FR-237-AC-6 | Only the exact non-`never` boundary selected by one compensation forbids its later registration, attempts, effects and recovery; another commit does not. | Test (TC-057) |
+| FR-237-AC-7 | `commit never` selects no earlier cutoff and establishes no unbounded closure; missing evidence for a selected non-`never` boundary remains pending/incomplete rather than permitting by default. | Test (TC-057) |
 
 ## Dependencies
 
@@ -93,16 +104,9 @@ Outputs requires "separate attempt, effect, commit and recovery facts".
 - [FR-288](FR-288-qualified-protocol-definition-identity.md) supplies the
   qualified linked-definition component.
 
-## Remaining disposition gap
-
-FR-057 uses two spellings for the same check: FR-057 Behavior reads
-"registration after a forbidding commit", while FR-057-AC-3 reads "Registration
-after commit". Whether every commit forbids registration, or only a commit with a
-forbidding disposition, remains tracked by specification issue #31. It does not
-reopen the boundary or observation identity rules fixed here.
-
 ## Status
 
-Draft. Specification issue #28 fixed boundary, occurrence and observation
-identity. Executable cross-repository evidence remains planned; issue #31 owns
-the forbidding-disposition question.
+Proposed closure for specification issue #31. Specification issue #28 fixed
+boundary, occurrence and observation identity. Spec Language already publishes
+the exact `commit Node`/`commit never` selection and has no independent
+disposition field. Executable evaluator evidence remains planned under TC-057.

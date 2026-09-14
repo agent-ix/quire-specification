@@ -58,6 +58,16 @@ typed-expression identity that FR-015 says current native syntax lacks. Target
 and achieved state values are operands, not key components. Changing an operand
 value changes the evaluation, not which authored relation was selected.
 
+For each compensation definition, `commit Node` selects the one exact static
+commit-control boundary that forbids later registration, compensation attempts,
+compensation effects and recovery for its registrations. Other commit controls
+do not forbid that compensation. `commit never` selects no earlier cutoff; it
+does not assert that the obligation or surrounding execution is closed forever.
+An established observation of the selected commit produces distinct
+after-commit violations. When a selected non-`never` boundary's required
+runtime commit evidence is unavailable, the check remains pending/incomplete
+and never grants permission by default.
+
 These tuples have only the mechanical lexicographic key order of FR-200. Commit
 ordering remains the authored causal order and SHALL NOT be inferred from a key,
 timestamp, source position or observation arrival. Which commits have a
@@ -70,11 +80,12 @@ identity rules.
 | --- | --- | --- |
 | FR-057-AC-1 | A full refund effect before commit satisfies a full-restoration relation only when the captured amount and target state match. | Test (TC-057) |
 | FR-057-AC-2 | A successful partial refund can satisfy an authored partial-recovery relation while failing full restoration. | Test (TC-057) |
-| FR-057-AC-3 | Registration after commit and compensation before the forward effect or after a forbidding commit are distinct ordering violations. | Test (TC-057) |
+| FR-057-AC-3 | Registration after the compensation's selected forbidding commit, compensation before the forward effect and compensation after that selected commit are distinct ordering violations; another commit does not trigger them. | Test (TC-057) |
 | FR-057-AC-4 | Missing state, commit or compensation-effect inputs yield incomplete/pending rather than recovery success. | Test (TC-057) |
 | FR-057-AC-5 | A commit boundary is identified by its qualified definition and exact commit-control handle, while `never` carries no commit identity and cannot compare equal to an empty or default boundary. | Test (TC-057) |
 | FR-057-AC-6 | A commit observation without one exact authority-qualified `commit` identity and its matching boundary occurrence and binding requirement refuses; reusing that key for another boundary is an identity contradiction, and sorting valid keys changes no authored commit order. | Test (TC-057) |
 | FR-057-AC-7 | Two recovery relations compare equal only when their qualified protocol-definition, compensation handle and typed recovery-expression handle all compare equal; the admitted expression retains its selected semantic dependencies, while target and achieved operand values do not identify the relation. | Test (TC-057) |
+| FR-057-AC-8 | `commit Node` selects exactly one forbidding boundary for that compensation, while `commit never` selects no earlier cutoff and establishes no unbounded closure; a missing selected commit observation remains pending/incomplete. | Test (TC-057) |
 
 ## Dependencies
 

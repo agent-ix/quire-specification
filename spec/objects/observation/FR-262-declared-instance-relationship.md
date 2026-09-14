@@ -10,16 +10,19 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-201
     type: references
+  - target: ix://agent-ix/quire-specification/FR-287
+    type: references
 ---
 # FR-262: Declared instance relationship
 
 ## Description
 
-When an observation is associated with a workflow subject, the correlation service SHALL select only an explicit typed relationship from the selected Producer interface 1.2.0 identity, version and digest.
+When an observation is associated with a workflow subject, the correlation service SHALL select only an explicit typed relationship carrying its selected Producer interface 1.2.0 identity, version, digest and declared digest domain, exact producer relationship identity, and ordered authority-qualified endpoints.
 
-FR-111 states that "unknown, conflicting, and ambiguous relationships are typed
-non-success correlation outcomes rather than heuristic matches", and that the
-service refuses "a missing producer identity, unknown producer version, or
+FR-111 defines exactly `resolved`, `missing`, `conflicting` and `ambiguous`
+correlation outcomes, and states that the three non-success outcomes replace
+heuristic matching. It also states that the service refuses "a missing producer
+identity, unknown producer version, unknown relationship declaration/kind, or
 producer digest mismatch rather than reconstructing a relationship from a
 foreign key, trace ID, provider name, or ambient configuration".
 
@@ -30,8 +33,9 @@ foreign key, trace ID, provider name, or ambient configuration".
 | Relationship type | FR-111 Description | "an explicit typed relationship". |
 | Producer interface identity | FR-111 Description | Selected Producer interface 1.2.0 identity. |
 | Producer version | FR-111 Description | An unknown version refuses (FR-111-AC-4). |
-| Producer digest | FR-111 Description | A digest mismatch refuses (FR-111-AC-4); its domain is selected under [FR-201](../foundation/FR-201-canonical-identity-domain.md). |
-| Related instance endpoints | FR-111 Behavior | "A refund is admitted only with its compensated effect and order relationship." |
+| Producer digest | FR-111 Description | The exact digest and its explicitly declared FR-201 domain; absence or mismatch refuses. |
+| Relationship identity | FR-111 | Exact producer-supplied identity selected under that Producer authority; a kind label does not replace it. |
+| Related instance endpoints | FR-111 Behavior | Ordered source and target, each carrying one complete FR-287 key and satisfying the producer declaration's endpoint type/direction. |
 
 FR-111 Behavior states that "a telemetry trace ID or shared provider identity
 does not establish either relationship", and FR-111-AC-1 that "A refund linked
@@ -43,41 +47,48 @@ infrastructure."
 - **Identity kind** — *value*. A relationship has no identity of its own; it is
   compared componentwise. It is not *derived*: FR-111 forbids reconstructing it
   "from a foreign key, trace ID, provider name, or ambient configuration".
-- **Key** — the relationship type together with the selected Producer interface
-  identity, version and digest, and the related instance endpoints it declares.
+- **Key** — the relationship type, selected Producer interface identity,
+  version, digest and declared digest domain, exact producer relationship
+  identity, and ordered source and target FR-287 endpoint keys.
   FR-111-AC-4 establishes the producer identity, version and digest as
   key-participating: a missing, unknown or mismatched one refuses rather than
-  resolves. **The prose does not state how the endpoints themselves are keyed**,
-  because it does not state a workflow instance's key
-  ([FR-213](../protocol/FR-213-workflow-instance.md)). Equality is componentwise
+  resolves. Equality is componentwise
   over the key and nothing else; display name, source path, span, message text,
   locale and rendering never participate, and a trace ID, provider name, foreign
   key or ambient configuration is not a key component (FR-111 Behavior).
-- **Key order** — none. Because the endpoint key components are not fixed, no
-  total order over the key is stated and none is supplied here. Any order later
-  established would serve collection comparison only and would carry no causal
-  meaning: FR-113 states that "Arbitrary timestamp order SHALL NOT establish
-  causality."
+- **Key order** — lexicographic over the key in the declared sequence, using
+  FR-287 endpoint order without sorting source and target. It serves canonical
+  collection comparison only and carries no causal meaning: FR-113 states that
+  "Arbitrary timestamp order SHALL NOT establish causality."
 - **Causal order** — the declared relationship structure itself, and nothing
   else. It is never derived from key order, from a timestamp, from a telemetry
   trace ID or from a shared provider identity (FR-111 Behavior, FR-111-AC-1).
   A repeated transport fact adds no causal node: "A duplicate receipt SHALL NOT
   establish a second business effect" (FR-111 Behavior), and repeated delivery
   "cannot alone create a second attempt or effect" (FR-111-AC-3).
-- **Absence** — an absent key component compares only to absence. A missing,
-  conflicting or ambiguous required relationship is a distinct non-success
-  correlation outcome (FR-111-AC-2) and never a default, an empty relationship
-  or an implicit option-none.
+- **Absence** — every key component of an offered relationship is required;
+  missing/empty, wrong-kind, foreign-authority, reversed or incompatible values
+  refuse. Absence of any admitted candidate for a required slot is the distinct
+  `missing` incomplete outcome, never a default relationship. A conflicting or
+  ambiguous candidate refuses.
 - **Digest domain** — the producer digest carries a selected domain under
   `ix://agent-ix/quire-specification/FR-201`. An identity crossing domains is
   unequal regardless of byte equality.
 
-## Subjects that remain distinct
+## Correlation outcomes and distinct subjects
 
-FR-111 Behavior states: "Workflow instances, deliveries, attempts, effects, and
-receipts remain distinct." This artifact relates such subjects; it does not
-define their vocabulary, which is held elsewhere
-([FR-210](../protocol/FR-210-protocol-subject-vocabulary.md)). See **Open gap**.
+The closed outcome set is `resolved`, `missing`, `conflicting`, `ambiguous`.
+`missing` means no admitted candidate exists for a required slot and is
+incomplete. `conflicting` means a candidate under the required declaration and
+source endpoint asserts an incompatible endpoint or direction and refuses.
+`ambiguous` means multiple distinct admitted candidates satisfy one required
+slot and refuses. An unknown producer version, relationship declaration/kind or
+foreign authority is an admission refusal, not a fifth correlation outcome.
+
+Workflow instances, messages, receive occurrences, deliveries, attempts,
+effects and receipt observations remain distinct. A receipt is an observation
+record referring to a delivery and never aliases that delivery, the message or
+the receive occurrence.
 
 ## Acceptance Criteria
 
@@ -85,8 +96,11 @@ define their vocabulary, which is held elsewhere
 | --- | --- | --- |
 | FR-262-AC-1 | A relationship declared between O1 and its refund does not resolve for O2 sharing a provider or trace infrastructure. | Analysis |
 | FR-262-AC-2 | A missing, unknown-version or digest-mismatched producer relationship identity does not resolve and is not reconstructed from a foreign key, trace ID, provider name or ambient configuration. | Analysis |
-| FR-262-AC-3 | Missing, conflicting and ambiguous required relationships compare unequal to one another and to a resolved relationship. | Analysis |
-| FR-262-AC-4 | A second occurrence of a transport fact carrying the same declared relationship does not add a causal edge. | Analysis |
+| FR-262-AC-3 | `resolved`, `missing`, `conflicting` and `ambiguous` are the complete unequal outcome set; missing is incomplete, conflicting/ambiguous refuse, and unknown producer/declaration input is an admission refusal rather than another relationship outcome. | Test (TC-141) |
+| FR-262-AC-4 | Exact replay of one complete relationship value is idempotent and adds no causal edge; two distinct admitted values satisfying one required slot are ambiguous. | Test (TC-141) |
+| FR-262-AC-5 | Source and target each retain a complete FR-287 key in authored order; empty, wrong-kind, foreign, reversed or statically incompatible endpoints refuse. | Test (TC-141) |
+| FR-262-AC-6 | Message, receive occurrence, delivery and receipt observation remain non-interchangeable even when transport or display data match. | Test (TC-141) |
+| FR-262-AC-7 | The producer digest carries an explicit declared domain; absence, cross-domain byte equality or digest mismatch refuses without reconstruction or defaulting. | Test (TC-141) |
 
 ## Dependencies
 
@@ -98,31 +112,14 @@ define their vocabulary, which is held elsewhere
   domain rule.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
-
-## Open gap
-
-1. **The non-success outcome vocabulary is named twice and not identically.**
-   FR-111 Description: "unknown, conflicting, and ambiguous relationships are
-   typed non-success correlation outcomes rather than heuristic matches."
-   FR-111-AC-2: "Missing, conflicting, and ambiguous required relationships
-   yield distinct non-success correlation outcomes." Whether *unknown* and
-   *missing* name one outcome or two is not stated. This artifact enumerates
-   neither set as a closed vocabulary.
-2. **The communication subject set is named three times and not identically.**
-   FR-111 Behavior: "Workflow instances, deliveries, attempts, effects, and
-   receipts remain distinct."
-   FR-051 Description: the binder preserves "message, send, receive, delivery,
-   attempt and effect as distinct typed subjects."
-   FR-049-AC-2: "Send, receive, delivery, operation attempt, effect and
-   compensation references remain distinct; a duplicate receipt cannot mint
-   another effect node."
-   Whether FR-111's "receipt" is FR-051's "receive", FR-051's "message", or a
-   fourth subject is never reconciled. This artifact records all three lists and
-   merges none.
-3. No requirement states the identity domain of the Producer interface 1.2.0
-   digest.
+- [FR-287](../protocol/FR-287-authority-qualified-runtime-subject-reference.md)
+  supplies the ordered source and target keys.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Proposed closure for specification issue #31. Spec Language already validates
+static producer relationship exports, endpoint types and direction. Observation
+currently uses unqualified endpoint identities, ignores relationship identity
+when matching and treats exact replay as ambiguity; that implementation is
+partial and incompatible. Runtime adoption remains planned under TC-141 and
+the existing Observation/Protocol owner tickets.

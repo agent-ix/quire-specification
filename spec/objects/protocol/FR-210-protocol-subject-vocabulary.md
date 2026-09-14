@@ -87,7 +87,7 @@ the following are named by none of them.
 | commit boundary | Typed as [FR-237](FR-237-commit-boundary.md) (FR-057). | FR-057 requires "separate attempt, effect, commit and recovery facts" — facts checked about a compensation, not subjects of a conformance claim. |
 | recovery relation | Typed as [FR-238](FR-238-recovery-relation.md) (FR-057). | As above: an authored relation the evaluator decides recovery through, not an assessed subject. |
 | definition | Typed by [FR-288](FR-288-qualified-protocol-definition-identity.md). FR-050 requires role instances and workflow instances to be kept "distinct from their static definitions". | A static definition qualifies authored protocol objects; it is not a concrete runtime subject kind beside `role-instance` and `workflow-instance`. |
-| participant | No object artifact. FR-050: "Internal and external participants use the same identity rules". | "Participant" is FR-050's collective word for roles under one identity rule, not a subject kind beside `role-instance`. Role internality is typed by [FR-217](FR-217-role-internality.md). |
+| participant | A distinct concrete runtime/configuration binding object keyed by FR-287 kind `participant`; [FR-217](FR-217-role-internality.md) defines its boundary from role and role-instance. | A participant fills a role instance through a separately validated relationship but is not itself selected by the assessable event-subject vocabulary in this table. It is not a collective synonym for role. |
 | component | No object artifact. FR-050-AC-2 refuses "a component identity for a role instance". | Named only as an identity a role instance must not be substituted by. |
 | endpoint | No object artifact. FR-050-AC-2 refuses "an endpoint or channel identity for a role". | Named only as an identity a role must not be substituted by. |
 
@@ -108,7 +108,7 @@ object artifact, not by minting a subject-kind label.
 | FR-210-AC-2 | Two references of different subject kinds compare unequal, and no transport record, trace identifier or equal label makes them equal. | Analysis |
 | FR-210-AC-3 | A reference with an absent subject kind compares only to absence and receives no default member. | Analysis |
 | FR-210-AC-4 | No member of this table is assigned an ordinal, precedence or universal wire spelling; its exact producer-local discriminator remains authority-qualified by FR-287. | Inspection |
-| FR-210-AC-5 | A channel, compensation registration, commit boundary, recovery relation, static definition, participant, component or endpoint reference is not represented as a member of this vocabulary. | Inspection |
+| FR-210-AC-5 | A channel, compensation registration, commit boundary, recovery relation, static definition, participant, component or endpoint reference is not represented as a member of this assessable event-subject vocabulary; each remains a distinct typed object or binding rather than a synonym for a listed member. | Inspection |
 | FR-210-AC-6 | A receipt is not a delivery, `operation-attempt` is not `compensation-attempt`, `business-effect` is not `compensation-effect`, and a commit observation is not its static boundary. | Analysis |
 
 ## Dependencies
@@ -128,7 +128,7 @@ object artifact, not by minting a subject-kind label.
 
 ## Status
 
-Draft. Specification issue #28 reconciled the contextual subject lists and the
+Draft. Specification issues #28 and #31 reconciled the contextual subject lists and the
 receipt/delivery, forward/compensation-attempt, forward/compensation-effect and
-commit-boundary/observation distinctions. Executable cross-repository evidence
-remains planned.
+commit-boundary/observation distinctions and the separate participant binding.
+Executable cross-repository evidence remains planned.
