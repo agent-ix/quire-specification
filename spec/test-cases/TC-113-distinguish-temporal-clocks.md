@@ -10,7 +10,8 @@ relationships:
 ---
 ## Description
 
-Planned clock-domain and fixed-sample bridge controls.
+Accepted FS04 portable clock-domain and fixed-sample bridge controls. TM-004
+remains Planned; no executed bridge coverage is claimed.
 
 ## Test Procedure
 

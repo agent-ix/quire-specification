@@ -32,3 +32,8 @@ production monitor.
 
 - [Shared foundation](../../../proposals/quire-v1/shared-foundation.md).
 - E owns temporal semantics; B owns protocol assessment semantics.
+
+## Status
+
+Accepted by FS04 for replay/incremental equivalence and explicit non-settled
+outcomes. Executable full-stack assessment remains Planned.

@@ -99,6 +99,14 @@ relationships:
   PRs #75, #77 and #82 deliver strict compiled-protocol `/2` temporal selection,
   authenticated evaluation/mapping inputs and the corrected closure selector.
   The independent Contract-IR/TL bridge remains Task-004/Task-006 work.
+- **Task-003 is done for its declared authority seam.** `quire-observation`
+  Plan-001 and PR #19 (`9ac80e9`) deliver typed observation, completeness,
+  progress, replay and resource contracts. Producer-qualified subject/topology
+  adoption remains separately tracked by observation #18/#13.
+- **Task-004 is done.** `quire-contract-ir` PRs #67, #68 and #77 (current
+  accepted implementation `202210c`) deliver strict total-Boolean projection
+  and the selected temporal correspondence contract. Runtime composition is
+  Task-006 / qcir #71.
 
 ### Track A: Critical Path (serial)
 
@@ -109,16 +117,9 @@ relationships:
   and preservation; pass: every declared differential vector agrees or is
   explicitly unsupported, with zero Boolean fallbacks under injected exhaustion.
 
-### Track B: Parallel foundations
-
-- **B1 = Task-003** Implement observation/progress authority — Hard; exit:
-  authenticated observations and progress establish all runtime premises.
-- **B2 = Task-004** Implement total-Boolean predicate projection — Hard; exit:
-  predicates map to deterministic TL propositions or typed non-values only.
-
 ### Track C: Post-foundation bridge
 
-- **C1 = Task-006** Implement exact native-to-TL correspondence — Hard; exit:
+- **C1 = Task-006** Compose exact native-to-TL correspondence — Hard; exit:
   supported mappings preserve every identity axis; unmatched profiles produce no
   substitute formula.
 
@@ -126,8 +127,8 @@ relationships:
 
 ```text
 delivered architecture + compiler /2 ──────────────────┐
-                         B1 observation/progress ───────┼─> A3 runtime ─> C1 bridge ─> Gate
-                         B2 predicate projection ───────┘
+delivered observation/progress + predicate projection ─┼─> A3 runtime ─> C1 bridge ─> Gate
+delivered TL owner APIs ────────────────────────────────┘
 ```
 
 ## Task File Mapping
@@ -136,10 +137,10 @@ delivered architecture + compiler /2 ──────────────�
 | --- | --- | --- | --- | --- |
 | Task-001 | A | FR-090, FR-095 | TC-110, TC-113, TC-117 | done — PR #15 / `4d6230e` |
 | Task-002 | A | FR-090 | TC-110, TC-113 | done — SL PRs #75/#77/#82 |
-| Task-003 | B | FR-093, FR-094 | TC-114, TC-115, TC-116 | in progress — observation Plan-001 / epic #1 |
-| Task-004 | B | FR-095 | TC-038, TC-117 | blocked — qcir issue #70 |
-| Task-005 | A | FR-091, FR-092, FR-093, FR-094, NFR-040 | TC-111, TC-112, TC-114, TC-115, TC-116, TC-118 | in progress — TL Plan-010 / epic #52 |
-| Task-006 | C | FR-095 | TC-039, TC-113, TC-117 | blocked — qcir PR #68, #70, TL Plan-010, then #71 |
+| Task-003 | B | FR-093, FR-094 | TC-114, TC-115, TC-116 | done — observation Plan-001 / PR #19 / `9ac80e9` |
+| Task-004 | B | FR-095 | TC-038, TC-117 | done — qcir PRs #67/#68/#77 / `202210c` |
+| Task-005 | A | FR-091, FR-092, FR-093, FR-094, NFR-040 | TC-111, TC-112, TC-114, TC-115, TC-116, TC-118 | in progress — TL owner APIs merged; native composition remains qcir #71 |
+| Task-006 | C | FR-095 | TC-039, TC-113, TC-117 | in progress — qcir #71; required owner APIs are merged |
 | Task-007 | A | FR-090 through FR-095, NFR-040 | TC-110 through TC-118 | not_started |
 
 ## Coordination Rules
@@ -150,6 +151,6 @@ delivered architecture + compiler /2 ──────────────�
   transport. The temporal runtime consumes its identified assertions.
 - Contract IR owns FR-025 and FR-026; no compiler/runtime branch duplicates its
   formula, proposition-map or correspondence reader.
-- The remaining merge order is Task-003/004 foundations, Task-005, Task-006,
-  then Task-007. Any unavailable predecessor leaves its downstream request
+- The remaining merge order is Task-005/Task-006 under qcir #71, then Task-007.
+  Any unavailable predecessor leaves its downstream request
   typed unsupported/incomplete rather than partially implemented.

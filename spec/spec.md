@@ -508,7 +508,8 @@ Standard-wide publication terms remain unresolved.
 
 The [shared foundation](../proposals/quire-v1/shared-foundation.md) remains the
 semantic coordination checkpoint. FS01 accepts its subsystem and profile-identity
-roles; FS03 accepts the state core/query/graph semantic closure. Other owning
+roles; FS03 accepts the state core/query/graph semantic closure, FS04 the
+temporal/observation closure, and FS05 the interchange closure. Other owning
 FS02–FS06/family tickets retain their semantic adoption, implementation and
 qualification boundaries. FS05 accepts the linked-package interpretation and
 strict reference/canonical/migration contracts while keeping their executable
@@ -518,12 +519,12 @@ FR-030–049, FR-130, the decomposed FR-020, NFR-010 and their
 The [grammar](../proposals/quire-v1/shared-grammar.md) and
 [state contract](../proposals/quire-v1/state-contract.md) now accept ordered
 queries/aggregation and explicit anchor, numeric and graph semantics. E's
-FR-090–095, NFR-040, IT-040/041 and [temporal matrix](temporal/tests.md) are now
-integrated as draft temporal meaning. FR-048 connects the native temporal syntax
+FR-090–095, NFR-040, IT-040/041 and [temporal matrix](temporal/tests.md) are
+accepted by FS04 as temporal meaning and portable controls. FR-048 connects the native temporal syntax
 and shared predicate environments to that contribution. The full baseline review
 is recorded in SR-400 with its correction recheck. FS03's scoped acceptance is
-recorded separately; other draft families do not authorize dependent
-implementation before their affected contracts are accepted.
+recorded separately. TM-004/TM-007 and the integration specifications remain
+Planned until their actual evidence is bound.
 FR-049 and the [choreography surface](../proposals/quire-v1/choreography-surface.md)
 now add explicit roles/channels, causal control, compensation stages and typed
 cross-instance references to the composed grammar. Exact model/observation and
@@ -554,7 +555,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | Artifact | Type | Status |
 | --- | --- | --- |
 | [AD-001](assurance/AD-001-composed-native-language.md) | ArchitectureDescription | Accepted subsystem and ownership boundary; semantic delivery remains separately tracked |
-| [AD-002](assurance/AD-002-native-temporal-vertical-slice.md) | ArchitectureDescription | Proposed temporal refinement; FS04/temporal owners retain acceptance |
+| [AD-002](assurance/AD-002-native-temporal-vertical-slice.md) | ArchitectureDescription | Accepted FS04 temporal refinement; implementation remains Plan-002 |
 | [AD-003](assurance/AD-003-native-quire-language-charter.md) | ArchitectureDescription | Accepted FS01 language charter and profile identity hierarchy |
 | [FCD FR-106](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-106-author-field-presence-independently.md) | FR | Static authored presence/multiplicity/null/default contract accepted and implemented by FCD PR #99; FCD #93 retains Semantic IR/frontends |
 | [FCD FR-107](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-107-declare-first-class-relationship-contracts.md) | FR | Static relationship/endpoints accepted in FCD PR #99 and consumed by QSL PR #94; runtime instances remain consumer work |
@@ -582,27 +583,27 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [IT-020](integration/IT-020-native-protocol-handoff.md) | IT | Family-reviewed draft; composed review requires corrections (SR-400) |
 | [IT-021](integration/IT-021-observation-result-handoff.md) | IT | Family-reviewed draft; composed review requires corrections (SR-400) |
 | [US-009](usecase/US-009-assess-observed-workflow-outcomes.md) | US | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-110](functional/observation/FR-110-bind-typed-observations.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-111](functional/observation/FR-111-correlate-related-instances-explicitly.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-112](functional/observation/FR-112-declare-population-and-completeness.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-113](functional/observation/FR-113-preserve-time-progress-and-late-data.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-114](functional/observation/FR-114-assess-replay-and-incremental-consistently.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-115](functional/observation/FR-115-report-activation-participation-and-adequacy.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-116](functional/observation/FR-116-map-observation-results-to-consumers.md) | FR | Integrated family draft; proposed, reviewed in SR-400 |
-| [NFR-050](non-functional/NFR-050-bound-observation-retention.md) | NFR | Integrated family draft; proposed, reviewed in SR-400 |
-| [NFR-051](non-functional/NFR-051-preserve-observation-reproducibility.md) | NFR | Integrated family draft; proposed, reviewed in SR-400 |
-| [NFR-052](non-functional/NFR-052-contain-observation-executables.md) | NFR | Integrated family draft; proposed, reviewed in SR-400 |
+| [FR-110](functional/observation/FR-110-bind-typed-observations.md) | FR | Accepted by FS04; implementation coverage remains separate |
+| [FR-111](functional/observation/FR-111-correlate-related-instances-explicitly.md) | FR | Accepted by FS04; producer/topology adoption remains open |
+| [FR-112](functional/observation/FR-112-declare-population-and-completeness.md) | FR | Accepted by FS04; assessment consumers remain open |
+| [FR-113](functional/observation/FR-113-preserve-time-progress-and-late-data.md) | FR | Accepted by FS04; runtime adoption remains separate |
+| [FR-114](functional/observation/FR-114-assess-replay-and-incremental-consistently.md) | FR | Accepted by FS04; full-stack execution remains Planned |
+| [FR-115](functional/observation/FR-115-report-activation-participation-and-adequacy.md) | FR | Accepted by FS04; result production remains separate |
+| [FR-116](functional/observation/FR-116-map-observation-results-to-consumers.md) | FR | Accepted FS04 generic consumer contract; target mappings are FS06 |
+| [NFR-050](non-functional/NFR-050-bound-observation-retention.md) | NFR | Accepted by FS04; concrete limits remain owner-specific |
+| [NFR-051](non-functional/NFR-051-preserve-observation-reproducibility.md) | NFR | Accepted by FS04; conformance remains separate |
+| [NFR-052](non-functional/NFR-052-contain-observation-executables.md) | NFR | Accepted by FS04 for Rust-owned observation paths |
 | [IT-050](integration/IT-050-observation-to-temporal-and-protocol-assessment.md) | IT | Integrated family draft; proposed, reviewed in SR-400 |
 | [IT-051](integration/IT-051-observation-output-consumer-contract.md) | IT | Integrated family draft; proposed, reviewed in SR-400 |
 | [FR-048](functional/foundation/FR-048-bind-native-temporal-syntax.md) | FR | Native temporal source integration; proposed, reviewed in SR-400 |
 | [US-008](usecase/US-008-assess-native-temporal-obligations.md) | US | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-090](functional/temporal/FR-090-select-temporal-profile-and-clock.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-091](functional/temporal/FR-091-evaluate-bounded-future.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-092](functional/temporal/FR-092-evaluate-bounded-past.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-093](functional/temporal/FR-093-bind-temporal-activation-and-captures.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-094](functional/temporal/FR-094-interpret-progress-history-and-closure.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-095](functional/temporal/FR-095-preserve-native-tl-correspondence.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [NFR-040](non-functional/NFR-040-bound-temporal-state.md) | NFR | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [FR-090](functional/temporal/FR-090-select-temporal-profile-and-clock.md) | FR | Accepted FS04 exact profile/clock selection |
+| [FR-091](functional/temporal/FR-091-evaluate-bounded-future.md) | FR | Accepted FS04 bounded-future meaning |
+| [FR-092](functional/temporal/FR-092-evaluate-bounded-past.md) | FR | Accepted FS04 origin-complete past/history meaning |
+| [FR-093](functional/temporal/FR-093-bind-temporal-activation-and-captures.md) | FR | Accepted FS04 activation/capture meaning |
+| [FR-094](functional/temporal/FR-094-interpret-progress-history-and-closure.md) | FR | Accepted FS04 progress/history/closure meaning |
+| [FR-095](functional/temporal/FR-095-preserve-native-tl-correspondence.md) | FR | Accepted FS04 correspondence contract; qcir #71 implements |
+| [NFR-040](non-functional/NFR-040-bound-temporal-state.md) | NFR | Accepted FS04 bounded temporal state |
 | [IT-040](integration/IT-040-native-future-tl-correspondence.md) | IT | Planned native/TL correspondence |
 | [IT-041](integration/IT-041-temporal-bridge-refusals.md) | IT | Planned temporal refusal correspondence |
 | [FR-040](functional/foundation/FR-040-admit-explicit-state-extensions.md) | FR | Accepted by FS03; implementation coverage remains separate |

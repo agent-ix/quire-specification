@@ -2,7 +2,7 @@
 id: Task-003
 title: "Implement observation and progress authority"
 type: Task
-status: in_progress
+status: done
 track: B
 priority: P0
 relationships:
@@ -22,9 +22,9 @@ and monotonic-progress assertions for temporal consumers.
 
 ## Subtasks
 
-- [ ] Implement idempotent identical receipt and conflicting identity refusal.
-- [ ] Bind progress to its source/clock/subject and inclusive endpoint.
-- [ ] Preserve predecessor/replay identity and identify late contradictions.
+- [x] Implement idempotent identical receipt and conflicting identity refusal.
+- [x] Bind progress to its source/clock/subject and inclusive endpoint.
+- [x] Preserve predecessor/replay identity and identify late contradictions.
 
 ## Deliverables
 
@@ -33,3 +33,5 @@ and monotonic-progress assertions for temporal consumers.
 ## Notes
 
 - EOF and ingestion order never substitute for closure or causal authority.
+- Completed by `quire-observation` Plan-001 / PR #19 (`9ac80e9`). Observation
+  #18/#13 retain the separate producer-qualified subject/topology adoption.

@@ -48,3 +48,8 @@ from a foreign key, trace ID, provider name, or ambient configuration.
 - D owns the selected Producer interface 1.2.0 relationship identity; B owns protocol subject meaning.
 - [FR-287](../../objects/protocol/FR-287-authority-qualified-runtime-subject-reference.md)
   supplies each ordered endpoint key.
+
+## Status
+
+Accepted by FS04 for explicit relationship correlation and ambiguity/refusal.
+Observation #18/#13 retain executable producer/topology adoption.

@@ -92,3 +92,8 @@ reconstruction.
 - The TL ecosystem owns the exact formula-v2, `tl-syntax.past-operators/v1`,
   `mltl.origin-complete-history/v1`, position-history and past-evaluator
   contracts; this requirement consumes their selected public interfaces.
+
+## Status
+
+Accepted by FS04 for bounded origin-complete past/history meaning. TL-owner and
+native-bridge execution remain independently versioned and tracked.

@@ -126,8 +126,9 @@ native presence syntax is inferred. FS03 accepts graph and reusable-predicate
 additions through explicit versioned profile dependencies; it does not rewrite
 historical semantics.
 
-The state core/query/graph closure is accepted by FS03, and the interchange/
-canonical/migration closure is accepted by FS05. Other draft architecture and
+The state core/query/graph closure is accepted by FS03, the temporal/observation
+closure by FS04, and the interchange/canonical/migration closure by FS05. Other
+draft architecture and
 requirements retain their owning acceptance tickets. This roadmap amendment
 itself did not run /spec-review or a Cargo qualification campaign, implement
 grammar/runtime features, deploy monitors or execute business actions.
