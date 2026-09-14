@@ -12,8 +12,8 @@ relationships:
 ---
 ## Description
 
-Planned distinguishing vectors for false-extension versus finite-window closure
-and for authoritative origin versus missing history.
+Accepted FS04 portable vectors for false-extension versus finite-window closure
+and authoritative origin versus missing history. TM-004 remains Planned.
 
 ## Test Procedure
 

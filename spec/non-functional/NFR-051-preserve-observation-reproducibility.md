@@ -28,3 +28,8 @@ a time and verify that it is visible in the resulting subject/provenance or
 refusal. Omit each required identity while holding any otherwise equal truth
 constant; incomplete provenance must fail this metric rather than pass because
 the disposition matches.
+
+## Status
+
+Accepted by FS04 for immutable replay/reproducibility inputs and outcomes.
+Cross-repository conformance remains separately tracked.

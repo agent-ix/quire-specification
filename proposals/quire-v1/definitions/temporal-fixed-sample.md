@@ -1,8 +1,9 @@
 # Native fixed-sample temporal definition
 
 Profile identity: `quire.temporal.fixed-sample.false-extension/v1`; revision: `1-draft.3`.
-Language: `ix:native` / `1-draft`. **The profile role is accepted by FS01; this
-semantic revision remains proposed and is not adopted or fully implemented.**
+Language: `ix:native` / `1-draft`. **The profile role is accepted by FS01 and
+this semantic revision is accepted by FS04. Executable qualification remains
+separate.**
 
 ## Required definition
 

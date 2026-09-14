@@ -18,7 +18,8 @@ relationships:
 ---
 ## Description
 
-Planned OB02 timing controls. No executable test or completed coverage is claimed.
+Accepted FS04 portable OB02 timing controls. TM-007 remains Planned; no
+executable standard coverage is claimed.
 
 ## Test Procedure
 

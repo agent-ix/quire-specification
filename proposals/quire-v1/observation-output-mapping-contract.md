@@ -1,6 +1,7 @@
 # Observation result consumer and output-mapping contract
 
-Draft F-owned consumer boundary for OB03 and the composed `1-draft` baseline.
+FS04-accepted generic F-owned consumer boundary for OB03 and the composed
+`1-draft` baseline. Target-specific mapping profiles remain FS06 work.
 It reconciles structured observation results with executable and export consumers.
 It does not define an IR type, target-language mapping profile, model schema,
 canonicalizer, CLI, backend, parser, or evidence store. Native Quire remains the

@@ -25,3 +25,8 @@ executable path from this requirement.
 ## Verification
 
 Inspect owned build, test, adapter, fixture-audit, and CI definitions. Emitting a foreign textual mapping is recorded separately from taking a runtime dependency.
+
+## Status
+
+Accepted by FS04 for first-party observation implementation and qualification
+paths. Output text in a foreign syntax remains data, not a runtime dependency.

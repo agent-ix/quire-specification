@@ -14,7 +14,8 @@ relationships:
 ---
 ## Description
 
-Planned OB01 controls for [FR-110](../functional/observation/FR-110-bind-typed-observations.md). No executable test or completed coverage is claimed.
+Accepted FS04 portable OB01 controls for [FR-110](../functional/observation/FR-110-bind-typed-observations.md).
+TM-007 remains Planned; no executable standard coverage is claimed.
 
 ## Test Procedure
 

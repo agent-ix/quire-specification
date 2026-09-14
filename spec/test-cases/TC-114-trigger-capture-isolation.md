@@ -8,8 +8,8 @@ relationships:
 ---
 ## Description
 
-Planned activation and capture controls using two concurrent order failures and
-their related payment/refund effects.
+Accepted FS04 portable activation and capture controls using two concurrent
+order failures and their related payment/refund effects. TM-004 remains Planned.
 
 ## Test Procedure
 
