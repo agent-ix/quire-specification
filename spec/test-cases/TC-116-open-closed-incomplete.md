@@ -9,7 +9,7 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-094
     type: verifies
-  - target: ix://agent-ix/quire-specification/FR-287
+  - target: ix://agent-ix/quire-specification/FR-295
     type: verifies
 ---
 ## Description
@@ -48,6 +48,6 @@ one-axis combination refuses. A late contradiction names the prior
 premise/result and preserves historical bytes. The settled sibling retains its
 truth, basis and support; only the exhausted obligation has a non-Boolean
 resource disposition.
-Every FR-287 state remains independent from all four FR-284 axes and the fifth
+Every FR-295 state remains independent from all four FR-284 axes and the fifth
 global-closure axis; absent or cross-vocabulary state is refused rather than
 defaulted.

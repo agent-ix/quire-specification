@@ -34,7 +34,7 @@ dependencies; no business action is executed.
 
 The evaluator SHALL keep activation independent from truth. An absent trigger
 under complete closed input yields inactive; an unavailable required trigger
-yields `activation-unknown` plus its separate FR-287 completeness and
+yields `activation-unknown` plus its separate FR-295 completeness and
 assessment-execution facts. An open trigger scope also yields
 `activation-unknown` without constraining the independent completeness
 vocabulary. It never yields `incomplete` as an activation value. The evaluator SHALL retain captured amounts,

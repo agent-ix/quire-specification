@@ -1,5 +1,5 @@
 ---
-id: FR-288
+id: FR-296
 title: "Admitted observation identity preimage"
 type: FR
 object: value_object
@@ -11,7 +11,7 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-201
     type: references
 ---
-# FR-288: Admitted observation identity preimage
+# FR-296: Admitted observation identity preimage
 
 ## Description
 
@@ -62,11 +62,11 @@ predecessor. Same identity on unequal canonical bytes is refused.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-288-AC-1 | Independent RFC 8785/SHA-256 computation over the exact preimage yields the admitted observation identity. | Test (TC-140) |
-| FR-288-AC-2 | Every semantic or provenance member mutation changes the identity; object-member presentation permutation does not. | Test (TC-140) |
-| FR-288-AC-3 | Equal identity on unequal canonical bytes, missing/stale identity, and a cross-domain identity are refused. | Test (TC-140) |
-| FR-288-AC-4 | Event time, ingestion time, display name, trace identifier and arrival order cannot independently substitute for observation identity or causal order. | Test (TC-140, TC-143) |
-| FR-288-AC-5 | A correction retains predecessor bytes, derives a new identity and names the exact direct predecessor. | Test (TC-143) |
+| FR-296-AC-1 | Independent RFC 8785/SHA-256 computation over the exact preimage yields the admitted observation identity. | Test (TC-140) |
+| FR-296-AC-2 | Every semantic or provenance member mutation changes the identity; object-member presentation permutation does not. | Test (TC-140) |
+| FR-296-AC-3 | Equal identity on unequal canonical bytes, missing/stale identity, and a cross-domain identity are refused. | Test (TC-140) |
+| FR-296-AC-4 | Event time, ingestion time, display name, trace identifier and arrival order cannot independently substitute for observation identity or causal order. | Test (TC-140, TC-143) |
+| FR-296-AC-5 | A correction retains predecessor bytes, derives a new identity and names the exact direct predecessor. | Test (TC-143) |
 
 ## Dependencies
 

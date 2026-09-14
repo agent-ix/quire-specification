@@ -156,9 +156,9 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-286
     type: contains
-  - target: ix://agent-ix/quire-specification/FR-287
+  - target: ix://agent-ix/quire-specification/FR-295
     type: contains
-  - target: ix://agent-ix/quire-specification/FR-288
+  - target: ix://agent-ix/quire-specification/FR-296
     type: contains
   - target: ix://agent-ix/quire-specification/FR-289
     type: contains

@@ -17,7 +17,7 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-281
     type: verifies
-  - target: ix://agent-ix/quire-specification/FR-287
+  - target: ix://agent-ix/quire-specification/FR-295
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-290
     type: verifies
@@ -61,7 +61,7 @@ canonical bytes without updating the enclosing digest. Exercise each of the
 five FR-243 basis members, an unknown label and an absent basis with every
 permitted and forbidden truth/execution combination.
 
-For every exact required fact population, derive each FR-287 state; remove a
+For every exact required fact population, derive each FR-295 state; remove a
 member/status, combine missing and contradicted members, substitute each
 FR-284 progress/closure label, and vary all completeness and closure axes
 independently. Enumerate every FR-290 claim kind and FR-281 strength; omit,

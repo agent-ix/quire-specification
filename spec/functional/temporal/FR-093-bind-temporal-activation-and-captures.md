@@ -58,7 +58,7 @@ incomplete or refused and shall not interpret it as false.
 A trigger scope that is authoritatively closed with complete input and without
 an admitted trigger shall produce inactive activation; it is not a true obligation and is
 not evidence that recovery behavior was exercised. An open trigger scope shall
-produce activation-unknown while retaining its independently derived FR-287
+produce activation-unknown while retaining its independently derived FR-295
 completeness state. Missing or refused trigger evidence shall produce
 activation-unknown with its exact incomplete completeness or refused
 assessment-execution disposition. This requirement does not define protocol

@@ -23,7 +23,7 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-258
     type: references
-  - target: ix://agent-ix/quire-specification/FR-287
+  - target: ix://agent-ix/quire-specification/FR-295
     type: references
   - target: ix://agent-ix/quire-specification/FR-289
     type: references
@@ -33,7 +33,7 @@ relationships:
 When an evaluator consumes a validated progress or closure assertion, it shall
 apply that assertion only to the named clock, subjects, decision scope,
 surrounding execution, interval and history boundary. The evaluator shall
-preserve the independent progress/closure states and the FR-287 distinction
+preserve the independent progress/closure states and the FR-295 distinction
 among complete, incomplete and contradicted inputs.
 
 ## Inputs
@@ -109,7 +109,7 @@ authority or automatically repair settled history.
 | --- | --- | --- |
 | FR-094-AC-1 | A timestamped response exactly at an inclusive deadline participates before progress settles the window; the same response after the deadline does not. | Test (TC-115) |
 | FR-094-AC-2 | With no business event, complete timestamp/sample progress through a deadline settles the applicable bounded obligation, while event-position time does not advance. | Test (TC-115) |
-| FR-094-AC-3 | Open/closed decision-scope progress/closure, open/closed surrounding-execution progress/closure, assessment execution and FR-287 complete/incomplete/contradicted input remain independently represented; changing one axis cannot populate another. | Test (TC-116) |
+| FR-094-AC-3 | Open/closed decision-scope progress/closure, open/closed surrounding-execution progress/closure, assessment execution and FR-295 complete/incomplete/contradicted input remain independently represented; changing one axis cannot populate another. | Test (TC-116) |
 | FR-094-AC-4 | Progress for a foreign clock, subject, source set or binding cannot settle the obligation. | Test (TC-115) |
 | FR-094-AC-5 | A late completeness contradiction identifies the assertion and affected historical result; no earlier bytes or profile identity are restamped. | Test (TC-116) |
 | FR-094-AC-6 | Missing predecessor/history on restart requires replay or an admitted state-restoration contract and cannot resume as a fresh complete stream. | Test (TC-118) |

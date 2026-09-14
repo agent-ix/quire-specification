@@ -1,5 +1,5 @@
 ---
-id: FR-287
+id: FR-295
 title: "Input completeness state vocabulary"
 type: FR
 object: enumeration
@@ -13,7 +13,7 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-284
     type: references
 ---
-# FR-287: Input completeness state vocabulary
+# FR-295: Input completeness state vocabulary
 
 ## Description
 
@@ -51,7 +51,7 @@ foreign boundary cannot yield `complete`.
 ## Independence from progress and closure
 
 FR-284 remains the sole two-member `open`/`closed` vocabulary for each of the
-four decision-scope and surrounding-execution progress/closure axes. No FR-287
+four decision-scope and surrounding-execution progress/closure axes. No FR-295
 member is valid on one of those axes, and no FR-284 member is valid as
 completeness. A producer SHALL NOT derive either axis from the other.
 
@@ -59,10 +59,10 @@ completeness. A producer SHALL NOT derive either axis from the other.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-287-AC-1 | Exact complete, incomplete and contradicted populations derive respectively `complete`, `incomplete` and `contradicted`. | Test (TC-061, TC-116, TC-145) |
-| FR-287-AC-2 | Contradiction takes precedence over missing/incomplete members, and omission of a required member or status cannot derive `complete`. | Test (TC-061, TC-116) |
-| FR-287-AC-3 | Every independent combination of an FR-287 state with the four FR-284 axes remains representable; cross-vocabulary labels are refused. | Test (TC-061, TC-116) |
-| FR-287-AC-4 | An absent completeness axis is refused and is not defaulted. | Test (TC-061) |
+| FR-295-AC-1 | Exact complete, incomplete and contradicted populations derive respectively `complete`, `incomplete` and `contradicted`. | Test (TC-061, TC-116, TC-145) |
+| FR-295-AC-2 | Contradiction takes precedence over missing/incomplete members, and omission of a required member or status cannot derive `complete`. | Test (TC-061, TC-116) |
+| FR-295-AC-3 | Every independent combination of an FR-295 state with the four FR-284 axes remains representable; cross-vocabulary labels are refused. | Test (TC-061, TC-116) |
+| FR-295-AC-4 | An absent completeness axis is refused and is not defaulted. | Test (TC-061) |
 
 ## Dependencies
 

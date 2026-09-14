@@ -20,7 +20,7 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-284
     type: references
-  - target: ix://agent-ix/quire-specification/FR-287
+  - target: ix://agent-ix/quire-specification/FR-295
     type: references
 ---
 # FR-258: Temporal decision scope and closure
@@ -43,7 +43,7 @@ the surrounding execution as closed."
 | Scope identity | FR-094 Inputs | "exact decision-scope and surrounding-execution identities". |
 | Progress state | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis, advanced by a progress assertion ([FR-256](FR-256-temporal-progress-assertion.md)). It carries one state from [FR-284](../protocol/FR-284-scope-progress-and-closure-state.md): `closed` once the retained progress point covers the scope's required boundary, `open` otherwise. |
 | Closure state | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis carrying its own closure authority. It carries one state from [FR-284](../protocol/FR-284-scope-progress-and-closure-state.md): `closed` once that authority has closed the scope, `open` otherwise. |
-| Input completeness | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis carrying exactly one FR-287 `complete`, `incomplete` or `contradicted` state and its exact population/boundary/assertion facts. |
+| Input completeness | FR-094 Behavior, FR-094-AC-3 | An independent, mutable axis carrying exactly one FR-295 `complete`, `incomplete` or `contradicted` state and its exact population/boundary/assertion facts. |
 | Exact decision-support set | FR-091 Behavior, FR-094 Behavior | "the exact valuation, capture, clock, progress and profile facts that form its decision-support set". |
 
 FR-094-AC-3 states the independence as a checkable claim: "Open/closed decision
@@ -135,7 +135,7 @@ artifact names its members only where the temporal prose names them.
 | FR-258-AC-4 | The declared key order carries no progression from open towards closed. | Test |
 | FR-258-AC-5 | A settled sibling result retains its truth, settlement basis and exact deciding-fact identities unchanged when a resource ceiling stops another obligation. | Test |
 | FR-258-AC-6 | One scope observed at two different progress points compares equal on the key, so the later observation is evaluated for monotonicity against the earlier rather than treated as a different scope. | Test |
-| FR-258-AC-7 | The progress and closure axes each carry exactly one FR-284 member, while input completeness carries exactly one independent FR-287 member; cross-vocabulary substitution is refused. | Test |
+| FR-258-AC-7 | The progress and closure axes each carry exactly one FR-284 member, while input completeness carries exactly one independent FR-295 member; cross-vocabulary substitution is refused. | Test |
 
 ## Dependencies
 
@@ -151,7 +151,7 @@ artifact names its members only where the temporal prose names them.
   four axes as result properties.
 - [FR-284](../protocol/FR-284-scope-progress-and-closure-state.md) defines the
   progress and closure state vocabulary.
-- [FR-287](../observation/FR-287-input-completeness-state.md) defines the
+- [FR-295](../observation/FR-295-input-completeness-state.md) defines the
   independent completeness vocabulary and derivation.
 - [FR-261](../observation/FR-261-observation-binding.md) and
   [FR-264](../observation/FR-264-membership-rule.md) supply the pattern for
@@ -162,7 +162,7 @@ artifact names its members only where the temporal prose names them.
 ## Resolved vocabulary history
 
 FR-243 resolves the canonical settlement basis as the five-member vocabulary
-and defines the explicit lower-boundary `unavailable` adaptation. FR-287 now
+and defines the explicit lower-boundary `unavailable` adaptation. FR-295 now
 defines input completeness as the separate three-member vocabulary
 `complete`, `incomplete`, `contradicted`, derived from its exact required fact
 population. Equal label spelling between completeness and the fifth global

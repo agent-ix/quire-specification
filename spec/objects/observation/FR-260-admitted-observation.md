@@ -10,7 +10,7 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-201
     type: references
-  - target: ix://agent-ix/quire-specification/FR-288
+  - target: ix://agent-ix/quire-specification/FR-296
     type: references
 ---
 # FR-260: Admitted observation
@@ -39,7 +39,7 @@ and visibility provenance."
 
 ## Identity and comparison
 
-- **Identity kind** — *derived* under FR-288 from the complete closed canonical
+- **Identity kind** — *derived* under FR-296 from the complete closed canonical
   observation with only `observationId` omitted.
 - **Key** — the complete `sha256-jcs:` observation identity. FR-110 also fixes what is
   excluded: the binder "SHALL NOT substitute a signal name, endpoint, trace ID,
@@ -62,7 +62,7 @@ and visibility provenance."
   refused, never false or an implicit option-none." Absence never becomes a
   default, an empty value or an implicit option-none.
 - **Digest domain** — the observation identity uses `quire.verification.jcs`
-  under FR-288. The binding-contract byte digest it is admitted under carries a domain
+  under FR-296. The binding-contract byte digest it is admitted under carries a domain
   selected under `ix://agent-ix/quire-specification/FR-201`
   ([FR-261](FR-261-observation-binding.md)); an identity crossing domains is
   unequal regardless of byte equality.
@@ -74,7 +74,7 @@ and visibility provenance."
 | FR-260-AC-1 | A signal name, endpoint, trace ID or compatible-looking field supplied for a declared entity, trigger, unit or valuation does not resolve. | Test |
 | FR-260-AC-2 | A required absent valuation compares only to absence and does not compare equal to false or to an option-none. | Test |
 | FR-260-AC-3 | An internally recorded and an externally observed record remain distinguishable after admission. | Test |
-| FR-260-AC-4 | Observation identity is derived exactly under FR-288; same identity on unequal canonical bytes and any authored/default identity are refused. | Test |
+| FR-260-AC-4 | Observation identity is derived exactly under FR-296; same identity on unequal canonical bytes and any authored/default identity are refused. | Test |
 
 ## Dependencies
 
@@ -87,9 +87,9 @@ and visibility provenance."
   discipline.
 - [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
   domain rule.
-- [FR-288](FR-288-admitted-observation-identity-preimage.md) defines the exact
+- [FR-296](FR-296-admitted-observation-identity-preimage.md) defines the exact
   preimage, key and byte-uniqueness rule.
 
 ## Status
 
-Proposed identity closure under FR-288 for `quire-specification#40`.
+Proposed identity closure under FR-296 for `quire-specification#40`.
