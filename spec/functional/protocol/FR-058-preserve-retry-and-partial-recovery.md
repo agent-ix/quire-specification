@@ -57,10 +57,19 @@ requires a different complete identity and remains related to its predecessor by
 the authored retry or recovery relation.
 
 The retry maximum is not an attempt ordinal and supplies neither identity nor
-order. Earlier/later retry binders select the authored retry relation; they are
-not identity components. The mechanical lexicographic key order is used only
-for stable comparison, never to establish retry sequence or causality. Which
-observations count against the retry maximum remains a separate policy rule.
+order. The evaluator SHALL count the distinct admitted compensation-attempt
+FR-287 keys bound to one registration, including the initial attempt and every
+admitted failed, timed-out or successful attempt. Replay or repeated receipt of
+one complete attempt key counts once. A candidate whose admission would exceed
+the maximum refuses, is not retained and does not change the prior count;
+repeating that over-bound evidence remains the same refusal.
+
+Earlier/later retry binders select the exact authored predecessor/successor
+relation; they are not identity components. A missing, foreign, conflicting or
+ambiguous relation refuses. Missing observation or progress evidence remains
+incomplete and is never treated as zero attempts. The mechanical lexicographic
+key order, timestamp, arrival order and table order are used neither to establish
+retry sequence nor causality.
 
 ## Acceptance Criteria
 
@@ -71,8 +80,10 @@ observations count against the retry maximum remains a separate policy rule.
 | FR-058-AC-3 | Two related partial refunds satisfy the captured amount only under a complete declared population with exact arithmetic. | Test (TC-058) |
 | FR-058-AC-4 | Unknown or missing population membership and attempts beyond the retry bound cannot produce recovery success. | Test (TC-058) |
 | FR-058-AC-5 | A failed compensation attempt and its successful retry retain different keys under one registration, while replaying either complete key creates no third attempt. | Test (TC-058) |
-| FR-058-AC-6 | The retry maximum, key order, timestamp and arrival order never supply an attempt identity or retry relation; counting observations against the maximum remains separate from identity. | Test (TC-058) |
+| FR-058-AC-6 | The retry maximum, key order, timestamp, table order and arrival order never supply an attempt identity or retry relation; only the exact authored predecessor/successor relation orders distinct admitted attempts. | Test (TC-058) |
 | FR-058-AC-7 | A compensation effect and compensation attempt use distinct authority-qualified subject kinds; replay preserves one key, while reusing either key with another registration, operation, attempt or requirement refuses as an identity contradiction. | Test (TC-058) |
+| FR-058-AC-8 | The finite maximum counts distinct admitted compensation-attempt keys including the initial attempt and every admitted outcome; replay counts once, while an over-bound candidate is refused without retention or count mutation. | Test (TC-058) |
+| FR-058-AC-9 | Missing observation/progress evidence remains incomplete, and a missing, foreign, conflicting or ambiguous retry relation refuses rather than supplying zero attempts or inferred order. | Test (TC-058) |
 
 ## Dependencies
 
