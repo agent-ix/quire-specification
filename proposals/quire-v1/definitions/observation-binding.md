@@ -1,11 +1,12 @@
-# Observation binding definition candidate
+# Observation binding definition
 
 Selection identity: `quire.observation.binding/v1`; revision: `1-draft.3`.
-**The selection role is accepted by FS01; this semantic revision remains a
-candidate and is not adopted, serialized, canonicalized or fully implemented.**
+**The selection role is accepted by FS01 and this semantic revision is accepted
+by FS04. Serialization, canonicalization and executable qualification remain
+separate.**
 
-Working draft: local rule and dependency links select the current checkout.
-Git preserves drafting history; a coherent baseline is frozen at acceptance.
+Accepted definition: local rule and dependency links select this checkout.
+Git preserves drafting history; FS04 freezes this coherent baseline.
 This editing policy does not relax immutable runtime selections or digest checks.
 
 This definition selects the observation-binding contract consumed by a linked
@@ -26,6 +27,10 @@ or executable interface.
 | Producer interface | FCD Producer interface | `1.2.0` | [Producer selection](../observation-contract.md#producer-interface-selection) |
 | Shared result rules | B FR-061 | Current working draft | [Orthogonal results](../../../spec/functional/protocol/FR-061-report-orthogonal-results.md) |
 | Observation result/output rules | F FR-115/116 | Current working draft | [Result contribution](../../../spec/functional/observation/FR-115-report-activation-participation-and-adequacy.md) and [output mapping](../observation-output-mapping-contract.md) |
+
+FS04 selects only the temporal/observation and shared result/closure rules
+reachable from this definition. It does not adopt protocol declaration or
+global-conformance semantics, whose owning work remains independent.
 
 An actual package/assessment selects its required dependency artifacts by exact
 identity, revision and bytes. Missing, substituted, stale or mutually inconsistent

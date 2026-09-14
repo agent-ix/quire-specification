@@ -16,9 +16,9 @@ relationships:
 ---
 ## Description
 
-Planned property-based, fault-injection, model-based transition and integration
-controls for temporal work and required retained state, with mutation testing
-of forbidden Boolean fallbacks.
+Accepted FS04 portable property, fault, transition and integration controls for
+temporal work and retained state, including forbidden Boolean fallbacks. TM-004
+remains Planned.
 
 ## Test Procedure
 

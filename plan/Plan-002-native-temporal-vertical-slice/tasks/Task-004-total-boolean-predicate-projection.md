@@ -2,7 +2,7 @@
 id: Task-004
 title: "Implement total-Boolean predicate projection"
 type: Task
-status: blocked
+status: done
 track: B
 priority: P0
 relationships:
@@ -19,9 +19,9 @@ mapping and its non-value decisions.
 
 ## Subtasks
 
-- [ ] Select accepted native/result/availability contracts and strict TL readers.
-- [ ] Build canonical proposition and valuation correspondence records.
-- [ ] Reject partial, non-Boolean, stale, unavailable and resource-exhausted inputs.
+- [x] Select accepted native/result/availability contracts and strict TL readers.
+- [x] Build canonical proposition and valuation correspondence records.
+- [x] Reject partial, non-Boolean, stale, unavailable and resource-exhausted inputs.
 
 ## Deliverables
 
@@ -30,3 +30,5 @@ mapping and its non-value decisions.
 ## Notes
 
 - No hardcoded proposition or Boolean default is permitted before this lands.
+- Completed by `quire-contract-ir` PRs #67, #68 and #77 (accepted default
+  implementation `202210c`). Task-006 / qcir #71 owns runtime composition.

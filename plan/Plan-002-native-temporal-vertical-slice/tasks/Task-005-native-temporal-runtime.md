@@ -41,3 +41,6 @@ axes for valid truth, pending, incomplete and refusal outcomes.
 ## Notes
 
 - Do not lower to TL here; current past and finite-window correspondence stays unsupported.
+- The strict TL syntax, parser, evaluator and rewrite owner APIs are merged at
+  `842d825`, `00c1b8d`, `2286218` and `fe03f29`. Qcir #71 owns the remaining
+  native composition; this task is not complete until that executable path lands.

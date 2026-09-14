@@ -14,8 +14,8 @@ relationships:
 ---
 ## Description
 
-Planned lifecycle controls for activation, pending future, complete closure and
-incomplete input.
+Accepted FS04 portable lifecycle controls for activation, pending future,
+complete closure and incomplete input. TM-004 remains Planned.
 
 ## Test Procedure
 

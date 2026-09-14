@@ -107,7 +107,14 @@ correspondence.
 
 - [Contract-IR issue #63](https://github.com/agent-ix/quire-contract-ir/issues/63)
   owns typed predicate projection.
-- [Contract-IR issue #64](https://github.com/agent-ix/quire-contract-ir/issues/64)
-  owns the public bridge interface ticket; this private requirement supplies
-  temporal meaning without copying private planning into that repository.
+- Closed [Contract-IR issue #64 / PR #68](https://github.com/agent-ix/quire-contract-ir/pull/68)
+  owns the public bridge interface; open
+  [issue #71](https://github.com/agent-ix/quire-contract-ir/issues/71) owns its
+  executable temporal/result composition. This requirement supplies temporal
+  meaning without copying private planning into that repository.
 - TL syntax/evaluation retains its own semantic-profile and release authority.
+
+## Status
+
+Accepted by FS04 as the exact native-to-TL correspondence contract. The
+Contract-IR bridge remains its independent implementation owner.

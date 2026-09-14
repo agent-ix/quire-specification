@@ -56,3 +56,8 @@ externally observed.
 - [Shared foundation](../../../proposals/quire-v1/shared-foundation.md).
 - [Observation binding contract](../../../proposals/quire-v1/observation-contract.md).
 - D owns model declarations; A owns source/package/profile identity.
+
+## Status
+
+Accepted by FS04 for typed observation binding and explicit absence/refusal.
+Producer/admission implementation remains separately versioned.

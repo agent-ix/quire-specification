@@ -62,3 +62,8 @@ or refused; missing representation SHALL NOT be classified as preserved.
 - [Shared foundation](../../../proposals/quire-v1/shared-foundation.md).
 - [Observation result consumer and output-mapping contract](../../../proposals/quire-v1/observation-output-mapping-contract.md).
 - A owns interchange/versioning; B owns result semantics; D/E own their mapping meanings.
+
+## Status
+
+Accepted by FS04 for generic fact-preserving consumer delivery and explicit
+mapping loss. Target-specific output mappings remain FS06 work.

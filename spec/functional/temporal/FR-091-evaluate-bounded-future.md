@@ -107,3 +107,8 @@ The v1 temporal profiles shall refuse unbounded intervals.
 - [FR-090](FR-090-select-temporal-profile-and-clock.md).
 - Total Boolean predicate projection from
   [contract-IR issue #63](https://github.com/agent-ix/quire-contract-ir/issues/63).
+
+## Status
+
+Accepted by FS04 for bounded future meaning and non-Boolean failure outcomes.
+Evaluator and bridge conformance remain separately tracked.

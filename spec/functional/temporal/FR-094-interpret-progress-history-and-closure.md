@@ -124,3 +124,8 @@ authority or automatically repair settled history.
   progress, completeness and contradiction assertions. This requirement owns
   only their temporal interpretation.
 - Agent B owns the shared result-dimension wire contract.
+
+## Status
+
+Accepted by FS04 for progress, history, closure, contradiction and retained
+result distinctions. Executable end-to-end evidence remains Planned.

@@ -1,6 +1,7 @@
 # Observation binding and assessment-input contract
 
-Draft F-owned input to OB01–03 and the composed `1-draft` baseline. This defines
+FS04-accepted F-owned semantic input to OB01–03 and the composed `1-draft`
+baseline. This defines
 the semantic content an observation producer and its temporal/protocol consumers
 must exchange. It does not register a wire encoding, canonicalizer, model schema,
 result store, or clause authority. A owns source/package/profile identities; D
@@ -19,15 +20,15 @@ the concrete mapping, admitted records, or declared resource limits under the
 same selected definition and revision changes assessment-input identity, not
 static meaning.
 
-This working draft uses the [current shared specification](definitions/README.md)
+This accepted contract uses the [current shared specification](definitions/README.md)
 and its [range correspondence](definitions/observation-range.md).
 Runtime binding/progress identities are supplied by the linked package; this
 rule document does not select itself through a copied candidate/digest table.
 
 ## Producer interface selection
 
-F consumes the producer-owned **Producer interface 1.2.0** at
-[filament-core-data PR #97 merge 1d901d7](https://github.com/agent-ix/filament-core-data/blob/1d901d716eed003cb034a624f56bb46e2b8c2a94/docs/semantic-data-system/baseline-1-2.md).
+F consumes the accepted producer-owned **Producer interface 1.2.0** at
+[filament-core-data PR #99 merge 4042882](https://github.com/agent-ix/filament-core-data/blob/4042882/docs/semantic-data-system/baseline-1-2.md).
 That producer contract defines the exact digest domain; each runtime assessment
 retains the actual selected producer revision and digest.
 The selected interface supplies relationship, population, snapshot, window,
@@ -101,11 +102,11 @@ settle O1. EOF, a quiet transport, or a record timestamp is not progress/closure
 authority.
 
 The current [progress definition](definitions/observation-progress.md),
-`quire.observation.progress/v1` draft revision `1-draft.3`, preserves the assertion, binding, scope,
+`quire.observation.progress/v1` accepted revision `1-draft.3`, preserves the assertion, binding, scope,
 E-owned temporal, record/revision, and restoration selections, including FCD
 `1.2.0` half-open window coverage `[start, end)`: `start` participates once and
 `end` belongs only to a later selected window. This is part of the current shared
-draft; no further definition catalog publication gates its review. Runtime
+contract; no further definition catalog publication gates its review. Runtime
 assertions retain the exact accepted definition selection independently from
 their own assertion identity and revision.
 

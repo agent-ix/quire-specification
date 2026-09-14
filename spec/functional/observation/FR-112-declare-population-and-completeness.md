@@ -68,3 +68,8 @@ the latter can participate only in a separately selected later window.
 
 - [Shared foundation](../../../proposals/quire-v1/shared-foundation.md).
 - D owns the selected Producer interface 1.2.0 population/model/configuration identity; E owns closure semantics.
+
+## Status
+
+Accepted by FS04 for bounded population, window, membership and completeness
+meaning. Concrete assessment consumers remain independently tracked.

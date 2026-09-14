@@ -8,7 +8,8 @@ relationships:
 ---
 ## Description
 
-Planned OB02 replay/incremental controls. No executable test or completed coverage is claimed.
+Accepted FS04 portable OB02 replay/incremental controls. TM-007 remains Planned;
+no executable standard coverage is claimed.
 
 ## Test Procedure
 

@@ -1,11 +1,10 @@
 # Observation range correspondence
 
 Definition identity: `quire.observation.range/v1`; revision: `1-draft.1`.
-**The definition role is accepted by FS01; this working semantic revision is not
-adopted or fully implemented.** Local rule and dependency links
-select the current checkout. Git preserves drafting history; a coherent baseline
-is frozen at acceptance. Immutable runtime selections and digest checks remain
-required.
+**The definition role is accepted by FS01 and this semantic revision is accepted
+by FS04. Executable qualification remains separate.** Local rule and dependency
+links select this checkout. Git preserves drafting history; FS04 freezes this
+coherent baseline. Immutable runtime selections and digest checks remain required.
 
 This definition maps a producer-owned finite window to one selected native
 temporal clock. It does not redefine producer membership, temporal meaning,
@@ -17,7 +16,7 @@ row below rather than converting among clock families.
 
 Use the producer interface selected by the [observation contract](../observation-contract.md)
 and exactly one clock meaning from [FR-090](../../../spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md).
-These are supplied assessment inputs; the draft does not duplicate their
+These are supplied assessment inputs; this definition does not duplicate their
 revision/digest selection tables.
 
 A range selection retains the producer interface/document identity and digest,

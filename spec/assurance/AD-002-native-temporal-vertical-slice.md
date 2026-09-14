@@ -2,7 +2,7 @@
 id: AD-002
 title: "Native temporal vertical-slice architecture"
 type: ArchitectureDescription
-status: proposed
+status: accepted
 owner: quire-agent-e
 system: native Quire temporal admission, observation and evaluation boundary
 relationships:
@@ -150,10 +150,10 @@ no substitute formula.
 
 ## Acceptance and handoff
 
-Task-001 in Plan-002 ratifies this table with A, F, Contract IR and TL owners.
-Task-002 must land the `/2` admission seam before runtime implementation.
-Tasks 003 and 004 may proceed in parallel. The runtime (Task-005), exact
-correspondence (Task-006) and cross-repository differential/resource gate
-(Task-007) follow in that order. TC-110 through TC-118, TC-038 and TC-039 are
-the evidence inventory; no implementation milestone may claim complete native
-temporal support before Task-007 publishes the selected versions and outcomes.
+FS04 accepts this refinement after Task-001 ratification and the `/2` admission
+seam. Observation owner contracts (Task-003) and predicate projection
+(Task-004) are implemented. TL owner APIs are merged; qcir #71 retains exact
+correspondence/result joining before the cross-repository Task-007 gate.
+TC-110 through TC-118, TC-038 and TC-039 are the evidence inventory; no
+implementation milestone may claim complete native temporal support before
+Task-007 publishes the selected versions and outcomes.
