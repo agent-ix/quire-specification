@@ -14,11 +14,17 @@ Planned OB01 correlation controls. No executable test or completed coverage is c
 
 Create concurrent O1/O2 with a shared provider under Producer interface 1.2.0.
 Link a refund to O1's effect, offer it for O2, remove/link-conflict the relation,
-repeat a delivery receipt, and independently mutate the producer version,
-relationship identity, and interface digest.
+replay one exact relationship and offer a second distinct relationship for the
+same required slot. Reverse its endpoints and independently mutate each FR-287
+endpoint member, relationship kind/identity, producer identity/version, digest
+domain and digest. Repeat a delivery receipt and substitute its message,
+delivery or receive identity in each other position.
 
 ## Expected Results
 
-O1 is selected only by its declared relation; O2 substitution, unknown/conflicting
-relation, repeated delivery, and every producer-selection mismatch cannot
-manufacture an effect or a reconstructed relationship.
+O1 is selected only by its declared relation. Missing is incomplete;
+conflicting and multiple distinct matches refuse; exact replay is idempotent.
+Unknown declaration/producer input, endpoint reversal/substitution, repeated
+delivery and every producer-selection/domain mismatch refuse without
+manufacturing an effect or reconstructed relationship. Receipt, delivery,
+receive and message remain distinct.
