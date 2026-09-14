@@ -23,14 +23,18 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-258
     type: references
+  - target: ix://agent-ix/quire-specification/FR-295
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-289
+    type: references
 ---
 ## Description
 
 When an evaluator consumes a validated progress or closure assertion, it shall
 apply that assertion only to the named clock, subjects, decision scope,
 surrounding execution, interval and history boundary. The evaluator shall
-preserve the independent progress/closure states and the distinction between
-complete and incomplete inputs.
+preserve the independent progress/closure states and the FR-295 distinction
+among complete, incomplete and contradicted inputs.
 
 ## Inputs
 
@@ -55,6 +59,11 @@ refusal and shall not roll back progress, restamp closure or replace earlier
 result bytes.
 
 Progress shall cover an inclusive boundary.
+
+Where a supplying observation contract uses a half-open window or watermark,
+the evaluator shall consume only an FR-289 mapping that proves inclusive
+coverage through the temporal boundary. It shall not reinterpret a half-open
+end equal to the inclusive deadline as coverage of that deadline.
 
 A timestamped watermark at `W` permits settlement of a
 deadline `D` only when `W >= D` and completeness covers every required source,
@@ -100,13 +109,14 @@ authority or automatically repair settled history.
 | --- | --- | --- |
 | FR-094-AC-1 | A timestamped response exactly at an inclusive deadline participates before progress settles the window; the same response after the deadline does not. | Test (TC-115) |
 | FR-094-AC-2 | With no business event, complete timestamp/sample progress through a deadline settles the applicable bounded obligation, while event-position time does not advance. | Test (TC-115) |
-| FR-094-AC-3 | Open/closed decision scope, open/closed surrounding execution, completed/failed assessment execution and complete/incomplete input remain independently represented; closing one axis cannot close or complete another. | Test (TC-116) |
+| FR-094-AC-3 | Open/closed decision-scope progress/closure, open/closed surrounding-execution progress/closure, assessment execution and FR-295 complete/incomplete/contradicted input remain independently represented; changing one axis cannot populate another. | Test (TC-116) |
 | FR-094-AC-4 | Progress for a foreign clock, subject, source set or binding cannot settle the obligation. | Test (TC-115) |
 | FR-094-AC-5 | A late completeness contradiction identifies the assertion and affected historical result; no earlier bytes or profile identity are restamped. | Test (TC-116) |
 | FR-094-AC-6 | Missing predecessor/history on restart requires replay or an admitted state-restoration contract and cannot resume as a fresh complete stream. | Test (TC-118) |
 | FR-094-AC-7 | `closed-scope`, `decisive-witness`, `decisive-counterexample`, `unsettled` and `unavailable` are accepted only with their valid truth, scope and exact deciding-fact combinations; every one-axis substitution is refused. | Test (TC-116) |
 | FR-094-AC-8 | A same-binding progress regression or conflicting assertion revision produces a typed contradiction/refusal and cannot roll back progress, closure or an earlier result identity. | Test (TC-115) |
 | FR-094-AC-9 | A resource ceiling stopping one obligation leaves an independently settled sibling result unchanged, while the stopped obligation emits no Boolean fallback. | Test (TC-116) |
+| FR-094-AC-10 | A half-open observation end/watermark equal to an inclusive deadline cannot settle it; an FR-289 carrier with exact same-clock coverage strictly beyond the endpoint admits the endpoint and filters later carrier members. | Test (TC-115) |
 
 ## Dependencies
 

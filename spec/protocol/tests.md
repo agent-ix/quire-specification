@@ -40,6 +40,10 @@ relationships:
   - { target: ix://agent-ix/quire-specification/FR-283, type: references }
   - { target: ix://agent-ix/quire-specification/FR-285, type: references }
   - { target: ix://agent-ix/quire-specification/FR-286, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-295, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-290, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-291, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-292, type: references }
   - { target: ix://agent-ix/quire-specification/NFR-020, type: references }
   - { target: ix://agent-ix/quire-specification/NFR-021, type: references }
 ---
@@ -54,7 +58,7 @@ than claiming the advanced algorithms exist.
 
 ## Functional Requirement Coverage
 
-| Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
+| Functional Req | Acceptance Criteria | Test Cases | Status |
 | --- | --- | --- | --- |
 | FR-050 | FR-050-AC-1 | TC-050 | 🚧 Planned |
 | FR-050 | FR-050-AC-2 | TC-050 | 🚧 Planned |
@@ -122,6 +126,7 @@ than claiming the advanced algorithms exist.
 | FR-060 | FR-060-AC-3 | TC-060 | 🚧 Planned |
 | FR-060 | FR-060-AC-4 | TC-060 | 🚧 Planned |
 | FR-060 | FR-060-AC-5 | TC-060 | 🚧 Planned |
+| FR-060 | FR-060-AC-6 | TC-060 | 🚧 Planned |
 | FR-061 | FR-061-AC-1 | TC-061 | 🚧 Planned |
 | FR-061 | FR-061-AC-2 | TC-061 | 🚧 Planned |
 | FR-061 | FR-061-AC-3 | TC-061 | 🚧 Planned |
@@ -137,6 +142,8 @@ than claiming the advanced algorithms exist.
 | FR-061 | FR-061-AC-13 | TC-061 | 🚧 Planned |
 | FR-061 | FR-061-AC-14 | TC-061 | 🚧 Planned |
 | FR-061 | FR-061-AC-15 | TC-061 | 🚧 Planned |
+| FR-061 | FR-061-AC-16 | TC-061 | 🚧 Planned |
+| FR-061 | FR-061-AC-17 | TC-061 | 🚧 Planned |
 | FR-062 | FR-062-AC-1 | TC-064 | 🚧 Planned |
 | FR-062 | FR-062-AC-2 | TC-064 | 🚧 Planned |
 | FR-062 | FR-062-AC-3 | TC-064 | 🚧 Planned |
@@ -175,6 +182,8 @@ than claiming the advanced algorithms exist.
 | FR-240 | FR-240-AC-6 | TC-061 | 🚧 Planned |
 | FR-240 | FR-240-AC-7 | TC-061 | 🚧 Planned |
 | FR-240 | FR-240-AC-8 | TC-061 | 🚧 Planned |
+| FR-240 | FR-240-AC-9 | TC-061 | 🚧 Planned |
+| FR-240 | FR-240-AC-10 | TC-061 | 🚧 Planned |
 | FR-242 | FR-242-AC-1 | TC-061 | 🚧 Planned |
 | FR-242 | FR-242-AC-2 | TC-061 | 🚧 Planned |
 | FR-242 | FR-242-AC-3 | TC-061 | 🚧 Planned |
@@ -203,6 +212,14 @@ than claiming the advanced algorithms exist.
 | FR-286 | FR-286-AC-3 | TC-061 | 🚧 Planned |
 | FR-286 | FR-286-AC-4 | TC-061 | 🚧 Planned |
 | FR-286 | FR-286-AC-5 | TC-061 | 🚧 Planned |
+| FR-295 | FR-295-AC-1 | TC-061, TC-116, TC-145 | 🚧 Planned |
+| FR-295 | FR-295-AC-2 | TC-061, TC-116 | 🚧 Planned |
+| FR-295 | FR-295-AC-3 | TC-061, TC-116 | 🚧 Planned |
+| FR-295 | FR-295-AC-4 | TC-061 | 🚧 Planned |
+| FR-281 | FR-281-AC-4 | TC-061 | 🚧 Planned |
+| FR-290 | FR-290-AC-1, FR-290-AC-2, FR-290-AC-3 | TC-060, TC-061 | 🚧 Planned |
+| FR-291 | FR-291-AC-1, FR-291-AC-2, FR-291-AC-3 | TC-060, TC-061 | 🚧 Planned |
+| FR-292 | FR-292-AC-1, FR-292-AC-2, FR-292-AC-3 | TC-060, TC-061 | 🚧 Planned |
 
 ## Non-Functional Requirement Coverage
 
@@ -232,8 +249,8 @@ than claiming the advanced algorithms exist.
 | TC-057 | Check commit ordering and recovery meaning | Integration | P1 | FR-057-AC-1..AC-8, FR-210-AC-6, FR-237-AC-1..AC-7, FR-238-AC-5..AC-6 | 🚧 Planned |
 | TC-058 | Preserve retries, duplicates and partial recovery | Property | P1 | FR-058-AC-1..AC-9, FR-210-AC-6, FR-235-AC-5, FR-239-AC-1..AC-7 | 🚧 Planned |
 | TC-059 | Assess finite global conformance | Integration | P1 | FR-059-AC-1, FR-059-AC-2, FR-059-AC-3, FR-059-AC-4, FR-059-AC-5 | 🚧 Planned |
-| TC-060 | Separate conformance and advanced analysis claims | Property | P1 | FR-060-AC-1, FR-060-AC-2, FR-060-AC-3, FR-060-AC-4, FR-060-AC-5 | 🚧 Planned |
-| TC-061 | Discriminate protocol result dimensions | Property | P1 | FR-061-AC-1, FR-061-AC-2, FR-061-AC-3, FR-061-AC-4, FR-061-AC-5, FR-061-AC-6, FR-061-AC-7, FR-061-AC-8, FR-061-AC-9, FR-061-AC-10, FR-061-AC-11, FR-061-AC-12, FR-061-AC-13, FR-061-AC-14, FR-061-AC-15, FR-240-AC-1, FR-240-AC-2, FR-240-AC-3, FR-240-AC-4, FR-240-AC-5, FR-240-AC-6, FR-240-AC-7, FR-240-AC-8, FR-242-AC-1, FR-242-AC-2, FR-242-AC-3, FR-242-AC-4, FR-243-AC-1, FR-243-AC-2, FR-243-AC-3, FR-243-AC-4, FR-285-AC-1, FR-285-AC-2, FR-285-AC-3, FR-285-AC-4, FR-286-AC-1, FR-286-AC-2, FR-286-AC-3, FR-286-AC-4, FR-286-AC-5 | 🚧 Planned |
+| TC-060 | Separate conformance and advanced analysis claims | Property | P1 | FR-060-AC-1..AC-6, FR-290-AC-1..AC-3, FR-291-AC-1..AC-3, FR-292-AC-1..AC-3 | 🚧 Planned |
+| TC-061 | Discriminate protocol result dimensions | Property | P1 | FR-061-AC-1..AC-17, FR-240-AC-1..AC-10, FR-242-AC-1..AC-4, FR-243-AC-1..AC-4, FR-281-AC-4, FR-285-AC-1..AC-4, FR-286-AC-1..AC-5, FR-295-AC-1..AC-4, FR-290-AC-1..AC-3, FR-291-AC-1..AC-3, FR-292-AC-1..AC-3 | 🚧 Planned |
 | TC-062 | Enforce every protocol resource boundary | Property | P1 | NFR-020 | 🚧 Planned |
 | TC-063 | Reproduce results under equivalent presentations | Property | P1 | NFR-021 | 🚧 Planned |
 | TC-064 | Project protocol results to portable verification findings | Property | P1 | FR-062-AC-1, FR-062-AC-2, FR-062-AC-3, FR-062-AC-4, FR-249-AC-1, FR-249-AC-2, FR-249-AC-3, FR-249-AC-4, FR-249-AC-5, FR-249-AC-6, FR-283-AC-1, FR-283-AC-2, FR-283-AC-3, FR-283-AC-4, FR-285-AC-1, FR-285-AC-2, FR-285-AC-3, FR-285-AC-4, FR-285-AC-5 | 🚧 Planned |

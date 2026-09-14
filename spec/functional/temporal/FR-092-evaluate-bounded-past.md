@@ -17,6 +17,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-257
     type: references
+  - target: ix://agent-ix/quire-specification/FR-293
+    type: references
 ---
 ## Description
 
@@ -52,9 +54,12 @@ false and Boolean constants as unchanged. They shall use:
 | `p since[a,b] q` | Some `d` in `[a,b]` makes `q` true at `i-d`, and every `e` in `[a,d)` makes `p` true at `i-e` |
 | `p triggered[a,b] q` | The Boolean dual of `not p since[a,b] not q` under the same profile |
 
-A supplied history cutoff is not an execution origin. If the cutoff does not
+A supplied `history-cutoff` is not an `execution-origin`. If the cutoff does not
 prove that every needed position is inside the available history, then the
 evaluator shall report missing history rather than apply false extension.
+An admitted state-restoration contract may authenticate complete retained
+history through a `history-cutoff`, but it shall not change that boundary kind
+or authorize interpretation before the cutoff.
 
 The timestamped finite-window profile shall quantify admitted past instants by
 inclusive clock distance.
@@ -78,10 +83,12 @@ reconstruction.
 | FR-092-AC-2 | The same visible suffix yields a Boolean when its start is the authoritative execution origin and missing-history incomplete when it is merely a cutoff. | Test (TC-112) |
 | FR-092-AC-3 | `p since[1,2] q` uses `p` only between the lower bound and its witness, symmetrically with the selected future `until` convention. | Test (TC-112) |
 | FR-092-AC-4 | Missing, evicted, stale or binding-mismatched history never becomes false padding or a conclusive Boolean. | Test (TC-118) |
-| FR-092-AC-5 | Current TL future-only profiles are reported unsupported for every past operator until a separately reviewed past-time TL profile establishes exact correspondence. | Test (TC-117) |
+| FR-092-AC-5 | The selected `tl-syntax.past-operators/v1` and `mltl.origin-complete-history/v1` contracts admit the bounded past operators through their exact public readers; a future-only, unknown or mismatched profile remains unsupported/refused without substitute output. | Test (TC-117) |
+| FR-092-AC-6 | Exactly the FR-293 boundary kinds are admitted; restoration may prove cutoff coverage but never converts a cutoff into an execution origin. | Test (TC-112, TC-118) |
 
 ## Dependencies
 
 - [FR-090](FR-090-select-temporal-profile-and-clock.md).
-- The future/past profile-evolution work remains separately owned in the TL
-  ecosystem; ticket existence is not implementation evidence.
+- The TL ecosystem owns the exact formula-v2, `tl-syntax.past-operators/v1`,
+  `mltl.origin-complete-history/v1`, position-history and past-evaluator
+  contracts; this requirement consumes their selected public interfaces.

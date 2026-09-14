@@ -10,6 +10,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-265
     type: references
+  - target: ix://agent-ix/quire-specification/FR-289
+    type: references
 ---
 # FR-266: Selected event-time window
 
@@ -75,10 +77,10 @@ through that boundary."
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-266-AC-1 | A member at `start` is inside the selected window and a member at `end` is outside it. | Analysis |
-| FR-266-AC-2 | A member excluded at `end` is admitted only by a separately selected later window and is not counted twice. | Analysis |
-| FR-266-AC-3 | The order over window bounds is used only to compare windows and is never cited as a causal edge between them. | Analysis |
-| FR-266-AC-4 | A selected event-time window and a selected snapshot compare unequal. | Analysis |
+| FR-266-AC-1 | A member at `start` is inside the selected window and a member at `end` is outside it. | Test |
+| FR-266-AC-2 | A member excluded at `end` is admitted only by a separately selected later window and is not counted twice. | Test |
+| FR-266-AC-3 | The order over window bounds is used only to compare windows and is never cited as a causal edge between them. | Test |
+| FR-266-AC-4 | A selected event-time window and a selected snapshot compare unequal. | Test |
 
 ## Dependencies
 
@@ -93,41 +95,15 @@ through that boundary."
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
-## Open gap
+## Cross-family boundary rule
 
-**The observation family and the temporal family state opposite boundary
-conventions, and no requirement states the bridging rule.**
-
-Half-open, in the observation family:
-
-- FR-112 Behavior: "For a selected FCD 1.2.0 window `[start, end)`, the
-  assessment service SHALL include an exactly listed/digested member at `start`
-  and exclude one at `end`; the latter can participate only in a separately
-  selected later window."
-- FR-113 Behavior: "For a selected FCD 1.2.0 half-open window, the observation
-  service SHALL apply progress/closure only to admitted members with instants
-  `start <= instant < end`."
-
-Inclusive, in the temporal family:
-
-- FR-091-AC-5: "an eligible event exactly at the deadline participates before
-  settlement."
-- FR-094-AC-1: "A timestamped response exactly at an inclusive deadline
-  participates before progress settles the window."
-- FR-092: "inclusive clock distance."
-
-An event at a native inclusive deadline is therefore inside the temporal
-family's interval and outside the observation family's window. No requirement
-states how the two are bridged. The only statement of a bridging rule is in a
-proposal, not a requirement:
-[observation contract](../../../proposals/quire-v1/observation-contract.md):
-"Timestamp coverage remains half-open: a witness at native inclusive deadline 30
-is outside producer `[0,30)` and is admitted only by a separately selected range
-that contains 30."
-
-This artifact records both conventions and reconciles neither.
+This object remains half-open. FR-289 maps it to an inclusive temporal interval
+by requiring an explicit same-clock carrier end strictly greater than the
+inclusive upper bound and filtering assessment membership to the inclusive
+predicate. The mapping neither includes this object's `end` nor changes the
+membership of an adjacent observation window.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Proposed cross-family reconciliation under FR-289 for
+`quire-specification#40`.

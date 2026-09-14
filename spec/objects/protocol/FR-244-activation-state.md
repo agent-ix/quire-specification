@@ -10,6 +10,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-062
     type: specifies
+  - target: ix://agent-ix/quire-specification/FR-231
+    type: references
 ---
 # FR-244: Activation state vocabulary
 
@@ -23,7 +25,7 @@ When a result reports whether an obligation activated, the strict reader SHALL m
 | --- | --- |
 | `triggered` | The trigger was established and the dependent obligation exists with its exact workflow, role, effect, predicate, capture and evaluation-anchor identities (FR-055). Required for truth `satisfied`, `violated` or `pending`, and for an obligation-path protocol-adequacy demonstration (FR-061). Projects to E02 `activation.status` `activated` (FR-062). |
 | `inactive` | No trigger was admitted while the trigger scope is authoritatively closed and complete (FR-055, FR-093). Assessment execution is `completed`, truth is `unavailable`, and the surrounding subject execution may remain open (FR-061). It is not evidence that recovery behavior was exercised (FR-093). Projects to E02 `not-activated` (FR-062). |
-| `activation-unknown` | The trigger scope is open, or trigger evidence is missing or refused (FR-055, FR-093). Truth is `unavailable` and completeness is open or incomplete with the missing trigger dependencies (FR-061). Projects to E02 `unknown` (FR-062). |
+| `activation-unknown` | The trigger scope is open, or trigger evidence is missing or refused (FR-055, FR-093). Truth is `unavailable`; FR-295 completeness and assessment execution retain their independently derived exact states and dependencies (FR-061). Projects to E02 `unknown` (FR-062). |
 
 ## Identity and comparison
 
@@ -47,7 +49,7 @@ When a result reports whether an obligation activated, the strict reader SHALL m
 - **Digest domain** — not applicable; this key contains no digest. See
   [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
 
-## Recorded divergence: activation spelling
+## Cross-boundary activation spelling
 
 - [FR-055](../../functional/protocol/FR-055-activate-protocol-obligations.md) Outputs:
   "Triggered, inactive or activation-unknown obligation states with their exact
@@ -55,28 +57,24 @@ When a result reports whether an obligation activated, the strict reader SHALL m
   uses `triggered`, `inactive` and `activation-unknown` verbatim in its
   result-combination rules.
 - [FR-093](../../functional/temporal/FR-093-bind-temporal-activation-and-captures.md)
-  Outputs: "An inactive scope, an activated obligation with immutable typed
-  captures, or a located incomplete/refused activation result", and FR-093-AC-5:
-  "A closed-complete trigger scope with no trigger reports inactive; an open scope
-  or missing/refused trigger evidence reports activation-unknown".
+  uses the same source label `triggered`; it keeps missing/refused trigger
+  evidence as `activation-unknown` with a separate completeness/execution fact.
 - [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
   treats `activated` as the **E02 target** name for the source state `triggered`:
   "Activation `triggered` / `inactive` / `activation-unknown` | `activation.status`
   is respectively `activated` / `not-activated` / `unknown`."
 
-FR-093 writes "an activated obligation" where FR-055 and FR-061 write
-`triggered`. No requirement states that FR-093's "activated" is the FR-061 source
-label rather than the FR-062 target label. This artifact lists only the three
-FR-055/FR-061 source labels and records the divergence without resolving it.
+The source and E02 target spellings are therefore deliberately distinct and
+connected only by FR-062's explicit projection.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-244-AC-1 | Each member's value equals the exact label string in the table, and the E02 target names `activated` / `not-activated` / `unknown` do not match a source activation state. | Inspection |
-| FR-244-AC-2 | An `inactive` or `activation-unknown` obligation is not read as satisfied or demonstrated. | Analysis |
-| FR-244-AC-3 | An absent activation state compares only to absence and is never defaulted to `inactive`. | Analysis |
-| FR-244-AC-4 | Removing trigger telemetry moves activation toward `activation-unknown` and cannot improve truth or adequacy. | Analysis |
+| FR-244-AC-1 | Each member's value equals the exact label string in the table, and the E02 target names `activated` / `not-activated` / `unknown` do not match a source activation state. | Test |
+| FR-244-AC-2 | An `inactive` or `activation-unknown` obligation is not read as satisfied or demonstrated. | Test |
+| FR-244-AC-3 | An absent activation state compares only to absence and is never defaulted to `inactive`. | Test |
+| FR-244-AC-4 | Removing trigger telemetry moves activation toward `activation-unknown` and cannot improve truth or adequacy. | Test |
 
 ## Dependencies
 
@@ -93,7 +91,4 @@ FR-055/FR-061 source labels and records the divergence without resolving it.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Proposed spelling reconciliation for `quire-specification#40`.

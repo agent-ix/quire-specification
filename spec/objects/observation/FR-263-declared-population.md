@@ -34,6 +34,14 @@ membership and closure provenance."
 | Closure identity and digest | FR-112 Description, FR-112-AC-4 | A mismatch refuses; E owns closure semantics (FR-112 Dependencies). |
 | Completeness and progress dependencies | FR-112 Description | Retained exactly. |
 
+The v1 population identity preimage is the RFC 8785 canonical form of
+`{"identityVersion":"quire.observation.population-identity/v1-draft.1","producer":...,"membershipRuleIdentity":...,"selection":...,"observationSources":[...],"configuration":...,"closure":...,"completenessDependencies":[...],"progressDependencies":[...]}`.
+Arrays that denote sets SHALL be sorted, distinct and bounded before identity
+derivation. `selection` SHALL contain exactly one FR-265 snapshot or FR-266
+event-time window. Producer-interface, configuration and closure definition
+digests use FR-201 `raw-artifact-digest`; the derived population identity uses
+FR-201 `quire.verification.jcs`.
+
 FR-112 Behavior states that "Unknown required membership, missing external-provider
 observations, or an absent declared closure input are incomplete/refused
 assessment causes and cannot establish aggregate success", and that an "unknown
@@ -43,22 +51,10 @@ configuration, or closure input".
 
 ## Identity and comparison
 
-- **Identity kind** — **the prose does not place a population in FR-200's
-  authored / derived / value trichotomy.** FR-112 calls the membership rule and
-  the population "declared" and requires their identities to be retained, but
-  does not state whether the population identity is written in native source or
-  computed from its members. See **Open gap**.
-- **Key** — **the prose does not fix the complete key.** It fixes that certain
-  components participate: FR-112-AC-1 states that "Changing a declared
-  snapshot/window or membership rule changes the assessment subject", and
-  FR-112-AC-4 that a producer version, identity, membership-digest,
-  configuration or closure-digest mismatch refuses. The selected snapshot or
-  window ([FR-265](FR-265-selected-snapshot.md),
-  [FR-266](FR-266-event-time-window.md)) and the membership rule
-  ([FR-264](FR-264-membership-rule.md)) therefore participate. Whether the list
-  is complete is not stated. Equality is componentwise over the key and nothing
-  else; display name, source path, span, message text, locale and rendering
-  never participate.
+- **Identity kind** — *derived*. The identity is `sha256-jcs:<hex>` over the
+  exact versioned preimage above.
+- **Key** — the complete derived population identity. Every retained semantic
+  selection listed in the preimage participates; presentation never does.
 - **Key order** — none. Because the key is not fixed, no total order over it is
   stated and none is supplied here. Members are "exactly listed/digested"
   (FR-112 Behavior), so a population is compared as a set under its declared
@@ -76,19 +72,20 @@ configuration, or closure input".
   reasons." A population with unknown membership is therefore neither an empty
   population nor a complete one, and an absent component is never supplied by an
   ambient default (FR-112 Behavior, FR-112-AC-4).
-- **Digest domain** — the membership, configuration, closure and producer
-  digests each carry a selected domain under
-  `ix://agent-ix/quire-specification/FR-201`. An identity crossing domains is
+- **Digest domain** — the population identity and membership-rule identity use
+  `quire.verification.jcs`. Producer-interface, configuration and closure
+  definition-byte digests use `raw-artifact-digest`. A crossing domain is
   unequal regardless of byte equality.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-263-AC-1 | Changing the declared snapshot, window or membership rule yields a different assessment subject. | Analysis |
-| FR-263-AC-2 | A population with unknown required membership compares unequal to both an empty population and a complete one. | Analysis |
-| FR-263-AC-3 | A mismatched producer version, identity, membership digest, configuration digest or closure digest does not resolve and receives no ambient default. | Analysis |
-| FR-263-AC-4 | This artifact declares no identity kind, no complete key and no key order for a population, and cites the prose instead. | Inspection |
+| FR-263-AC-1 | Changing the declared snapshot, window or membership rule yields a different assessment subject. | Test |
+| FR-263-AC-2 | A population with unknown required membership compares unequal to both an empty population and a complete one. | Test |
+| FR-263-AC-3 | A mismatched producer version, identity, membership digest, configuration digest or closure digest does not resolve and receives no ambient default. | Test |
+| FR-263-AC-4 | Independent derivation over the exact versioned preimage yields the population identity; mutation of any semantic key component changes it and presentation permutation does not. | Test |
+| FR-263-AC-5 | A population with neither or both snapshot/window selections, duplicate or unbounded set members, or a foreign/missing digest domain is refused before identity derivation. | Test |
 
 ## Dependencies
 
@@ -102,17 +99,12 @@ configuration, or closure input".
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
-## Open gap
+## Completeness boundary
 
-1. No requirement states a population's identity kind or its complete key
-   components; it states only that the snapshot/window and membership rule
-   participate and that mismatches refuse.
-2. No requirement states the identity domain of the membership, configuration or
-   closure digests.
-3. Completeness itself is a separate retained fact under FR-115 and FR-116 and
-   is not typed here.
+FR-295 completeness is a separate derived fact about the exact declared
+population. It does not participate in the population identity preimage and
+cannot be inferred from progress or closure alone.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Proposed population identity closure for `quire-specification#40`.

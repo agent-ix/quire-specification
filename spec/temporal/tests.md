@@ -17,6 +17,12 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/NFR-040
     type: references
+  - target: ix://agent-ix/quire-specification/FR-295
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-289
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-293
+    type: references
 ---
 ## Overview
 
@@ -27,13 +33,14 @@ the coherent base-plus-seven review remain acceptance prerequisites.
 
 ## Functional Requirement Coverage
 
-| Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
+| Functional Req | Acceptance Criteria | Test Cases | Status |
 | --- | --- | --- | --- |
 | FR-090 | FR-090-AC-1 | TC-110 | 🚧 Planned |
 | FR-090 | FR-090-AC-2 | TC-110 | 🚧 Planned |
 | FR-090 | FR-090-AC-3 | TC-113 | 🚧 Planned |
 | FR-090 | FR-090-AC-4 | TC-113 | 🚧 Planned |
 | FR-090 | FR-090-AC-5 | TC-117 | 🚧 Planned |
+| FR-090 | FR-090-AC-6 | TC-110 | 🚧 Planned |
 | FR-091 | FR-091-AC-1 | TC-111 | 🚧 Planned |
 | FR-091 | FR-091-AC-2 | TC-112 | 🚧 Planned |
 | FR-091 | FR-091-AC-3 | TC-111 | 🚧 Planned |
@@ -45,6 +52,7 @@ the coherent base-plus-seven review remain acceptance prerequisites.
 | FR-092 | FR-092-AC-3 | TC-112 | 🚧 Planned |
 | FR-092 | FR-092-AC-4 | TC-118 | 🚧 Planned |
 | FR-092 | FR-092-AC-5 | TC-117 | 🚧 Planned |
+| FR-092 | FR-092-AC-6 | TC-112, TC-118 | 🚧 Planned |
 | FR-093 | FR-093-AC-1 | TC-114 | 🚧 Planned |
 | FR-093 | FR-093-AC-2 | TC-114 | 🚧 Planned |
 | FR-093 | FR-093-AC-3 | TC-114 | 🚧 Planned |
@@ -58,6 +66,11 @@ the coherent base-plus-seven review remain acceptance prerequisites.
 | FR-094 | FR-094-AC-6 | TC-118 | 🚧 Planned |
 | FR-094 | FR-094-AC-7 | TC-116 | 🚧 Planned |
 | FR-094 | FR-094-AC-8 | TC-115 | 🚧 Planned |
+| FR-094 | FR-094-AC-9 | TC-116 | 🚧 Planned |
+| FR-094 | FR-094-AC-10 | TC-115 | 🚧 Planned |
+| FR-295 | FR-295-AC-1, FR-295-AC-2, FR-295-AC-3, FR-295-AC-4 | TC-116 | 🚧 Planned |
+| FR-289 | FR-289-AC-1, FR-289-AC-2, FR-289-AC-3, FR-289-AC-4, FR-289-AC-5 | TC-115 | 🚧 Planned |
+| FR-293 | FR-293-AC-1, FR-293-AC-2, FR-293-AC-3 | TC-112, TC-118 | 🚧 Planned |
 | FR-095 | FR-095-AC-1 | TC-117 | 🚧 Planned |
 | FR-095 | FR-095-AC-2 | TC-117 | 🚧 Planned |
 | FR-095 | FR-095-AC-3 | TC-117 | 🚧 Planned |
@@ -65,6 +78,7 @@ the coherent base-plus-seven review remain acceptance prerequisites.
 | FR-095 | FR-095-AC-5 | TC-117 | 🚧 Planned |
 | FR-095 | FR-095-AC-6 | TC-113 | 🚧 Planned |
 | FR-095 | FR-095-AC-7 | TC-117 | 🚧 Planned |
+| FR-095 | FR-095-AC-8 | TC-117 | 🚧 Planned |
 
 ## Non-Functional Requirement Coverage
 
@@ -78,13 +92,13 @@ the coherent base-plus-seven review remain acceptance prerequisites.
 | --- | --- | --- | --- | --- | --- |
 | TC-110 | Select one exact temporal profile and clock | Integration | P0 | FR-090-AC-1, FR-090-AC-2 | 🚧 Planned |
 | TC-111 | Evaluate bounded future truth tables | Property | P0 | FR-091-AC-1, FR-091-AC-3 | 🚧 Planned |
-| TC-112 | Distinguish closure boundaries and bounded past history | Property | P0 | FR-091-AC-2, FR-092-AC-1, FR-092-AC-2, FR-092-AC-3 | 🚧 Planned |
+| TC-112 | Distinguish closure boundaries and bounded past history | Property | P0 | FR-091-AC-2, FR-092-AC-1, FR-092-AC-2, FR-092-AC-3, FR-092-AC-6, FR-293-AC-1, FR-293-AC-3 | 🚧 Planned |
 | TC-113 | Distinguish event positions, samples and event time | Integration | P0 | FR-090-AC-3, FR-090-AC-4, FR-095-AC-6 | 🚧 Planned |
 | TC-114 | Isolate temporal triggers and immutable captures | Integration | P0 | FR-093-AC-1, FR-093-AC-2, FR-093-AC-3, FR-093-AC-4 | 🚧 Planned |
-| TC-115 | Settle inclusive deadlines from valid progress | Integration | P0 | FR-091-AC-5, FR-094-AC-1, FR-094-AC-2, FR-094-AC-4, FR-094-AC-8 | 🚧 Planned |
-| TC-116 | Separate open, closed and incomplete temporal inputs | Integration | P0 | FR-091-AC-4, FR-093-AC-5, FR-094-AC-3, FR-094-AC-5, FR-094-AC-7 | 🚧 Planned |
-| TC-117 | Prove or refuse native-to-TL temporal correspondence | Integration | P0 | FR-090-AC-5, FR-092-AC-5, FR-095-AC-1, FR-095-AC-2, FR-095-AC-3, FR-095-AC-4, FR-095-AC-5, FR-095-AC-7 | 🚧 Planned |
-| TC-118 | Refuse temporal resource and retained-state exhaustion | Property | P0 | FR-091-AC-6, FR-092-AC-4, FR-094-AC-6, NFR-040-AC-1, NFR-040-AC-2, NFR-040-AC-3, NFR-040-AC-4 | 🚧 Planned |
+| TC-115 | Settle inclusive deadlines from valid progress | Integration | P0 | FR-091-AC-5, FR-094-AC-1, FR-094-AC-2, FR-094-AC-4, FR-094-AC-8, FR-094-AC-10, FR-289-AC-1..AC-5 | 🚧 Planned |
+| TC-116 | Separate open, closed and incomplete temporal inputs | Integration | P0 | FR-091-AC-4, FR-093-AC-5, FR-094-AC-3, FR-094-AC-5, FR-094-AC-7, FR-094-AC-9, FR-295-AC-1..AC-4 | 🚧 Planned |
+| TC-117 | Prove or refuse native-to-TL temporal correspondence | Integration | P0 | FR-090-AC-5, FR-092-AC-5, FR-095-AC-1, FR-095-AC-2, FR-095-AC-3, FR-095-AC-4, FR-095-AC-5, FR-095-AC-7, FR-095-AC-8 | 🚧 Planned |
+| TC-118 | Refuse temporal resource and retained-state exhaustion | Property | P0 | FR-091-AC-6, FR-092-AC-4, FR-092-AC-6, FR-094-AC-6, FR-293-AC-2, FR-293-AC-3, NFR-040-AC-1, NFR-040-AC-2, NFR-040-AC-3, NFR-040-AC-4 | 🚧 Planned |
 
 ## Integration Test Matrix
 

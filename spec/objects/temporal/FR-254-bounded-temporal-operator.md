@@ -95,11 +95,11 @@ timestamps never substitutes for it.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-254-AC-1 | Each member's value equals the exact operator label in the table, and no member outside the table is admitted. | Inspection |
-| FR-254-AC-2 | `strong previous` resolves to `once[1,1]` and is not represented as a distinct member. | Inspection |
-| FR-254-AC-3 | The same operator label and interval under two different profile identities compares unequal. | Analysis |
-| FR-254-AC-4 | Exactly `until[a,b]`, `release[a,b]`, `since[a,b]` and `triggered[a,b]` are recorded as order-sensitive. | Inspection |
-| FR-254-AC-5 | An unbounded interval is refused rather than recorded as an absent bound. | Analysis |
+| FR-254-AC-1 | Each member's value equals the exact operator label in the table, and no member outside the table is admitted. | Test |
+| FR-254-AC-2 | `strong previous` resolves to `once[1,1]` and is not represented as a distinct member. | Test |
+| FR-254-AC-3 | The same operator label and interval under two different profile identities compares unequal. | Test |
+| FR-254-AC-4 | Exactly `until[a,b]`, `release[a,b]`, `since[a,b]` and `triggered[a,b]` are recorded as order-sensitive. | Test |
+| FR-254-AC-5 | An unbounded interval is refused rather than recorded as an absent bound. | Test |
 
 ## Dependencies
 
@@ -112,45 +112,14 @@ timestamps never substitutes for it.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
 
-## Open gap
+## Truth boundary
 
-The three requirements that state what applying these members yields do not use
-one truth vocabulary, and none of them reconciles the others.
-
-FR-091 Outputs:
-
-> "A true, false or pending temporal truth disposition with the exact decision
-> scope, settlement basis and decision-support identities needed by the shared
-> result contract, or a separate incomplete or refused disposition with the
-> affected clause, interval and missing premise."
-
-FR-092 Outputs, for the same operators in the past direction:
-
-> "A true or false past-time result, or a separate incomplete/refused
-> disposition that identifies missing history, an unsupported profile/operator
-> or a resource failure."
-
-FR-061, which FR-091 explicitly feeds through "the shared result contract":
-
-> "Truth is satisfied | Assessment execution is completed, activation is
-> triggered and the settlement basis is `closed-scope` or `decisive-witness`."
-
-> "Truth is violated | Assessment execution is completed, activation is
-> triggered and the settlement basis is `closed-scope` or
-> `decisive-counterexample`."
-
-> "Truth is pending | Assessment execution is completed, activation is
-> triggered, decision-scope progress is open and the settlement basis is
-> `unsettled`."
-
-Whether true/false/pending and satisfied/violated/pending are one vocabulary
-under two spellings, and whether a past-time result can be pending at all given
-that FR-092 omits pending from its Outputs, is not stated anywhere. This
-artifact records all three and resolves none of them; no truth vocabulary is
-enumerated here. The truth vocabulary itself is authored as
-[FR-242](../protocol/FR-242-truth-disposition.md) in the result object set.
+FR-091 and FR-092 emit the FR-242 source spellings `satisfied`, `violated` and,
+for an undecided open future only, `pending`. A non-completed evaluator outcome
+carries no truth at the evaluator boundary; the canonical result adapter
+explicitly supplies FR-242 `unavailable`. A TL Boolean is a separately selected
+mapping view and is not a source truth label.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Proposed truth-boundary reconciliation for `quire-specification#40`.
