@@ -21,14 +21,14 @@ not require a checksum refresh or another successor file.
 | `quire.state.core/v1` | `1-draft.3` | [State core](state-core.md) |
 | `quire.state.queries/v1` | `1-draft.3` | [Predicates and queries](state-queries.md) |
 | `quire.state.graph/v1` | `1-draft.3` | [Finite graphs](state-graph.md) |
-| `quire.temporal.bounded-facet/v1` | `1-draft.3` | [Common temporal meaning](temporal-common.md) |
-| Event-position temporal root | `1-draft.3` | [Event positions](temporal-event-position.md) |
-| Fixed-sample temporal root | `1-draft.3` | [Fixed samples](temporal-fixed-sample.md) |
-| Timestamped-window temporal root | `1-draft.3` | [Timestamped windows](temporal-timestamped-window.md) |
+| `quire.temporal.bounded-facet/v1` | `1-draft.3` (accepted by FS04) | [Common temporal meaning](temporal-common.md) |
+| Event-position temporal root | `1-draft.3` (accepted by FS04) | [Event positions](temporal-event-position.md) |
+| Fixed-sample temporal root | `1-draft.3` (accepted by FS04) | [Fixed samples](temporal-fixed-sample.md) |
+| Timestamped-window temporal root | `1-draft.3` (accepted by FS04) | [Timestamped windows](temporal-timestamped-window.md) |
 | `quire.protocol.finite-global/v1` | `1-draft.4` | [Protocol and choreography](protocol-finite.md) |
-| `quire.observation.binding/v1` | `1-draft.3` | [Observation binding](observation-binding.md) |
-| `quire.observation.progress/v1` | `1-draft.3` | [Observation progress](observation-progress.md) |
-| `quire.observation.range/v1` | `1-draft.1` | [All-clock range correspondence](observation-range.md) |
+| `quire.observation.binding/v1` | `1-draft.3` (accepted by FS04) | [Observation binding](observation-binding.md) |
+| `quire.observation.progress/v1` | `1-draft.3` (accepted by FS04) | [Observation progress](observation-progress.md) |
+| `quire.observation.range/v1` | `1-draft.1` (accepted by FS04) | [All-clock range correspondence](observation-range.md) |
 | `quire.package.composed/v1` | `1-draft.2` (accepted by FS05) | [Linked-package interpretation](package-reference.md) |
 | `quire.native.diagnostics/v1` | `1-draft.1` | [Diagnostic interpretation](native-diagnostics.md) |
 
@@ -38,7 +38,8 @@ are current semantic inputs to these definitions. External producer and compiler
 inventory selections remain explicitly identified at their consuming boundary;
 they are not silently replaced with whatever another repository currently has.
 
-FS03 accepts the ordered state closure and FS05 accepts the linked-package
+FS03 accepts the ordered state closure, FS04 accepts the temporal/observation
+closure, and FS05 accepts the linked-package
 interpretation plus its selected strict reference/canonical/migration contracts.
 Other listed family definitions retain their own acceptance tickets. At each
 owning semantic acceptance, freeze the relevant coherent definition

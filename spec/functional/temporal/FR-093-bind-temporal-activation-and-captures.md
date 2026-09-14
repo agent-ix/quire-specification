@@ -81,3 +81,8 @@ choice/conformance or the observation transport schema.
   evaluation environments.
 - Agent B owns protocol activation/participation result contracts; Agent F owns
   trigger observation binding and duplicate-delivery provenance.
+
+## Status
+
+Accepted by FS04 for activation, immutable captures and guard distinctions.
+Protocol and observation consumers retain their own conformance work.

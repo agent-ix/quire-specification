@@ -84,3 +84,8 @@ definition identity; old profile bytes and results remain historical subjects.
 - Agent F's observation contract supplies clock bindings and completeness
   assertions; this requirement defines their temporal interpretation, not
   their transport or authority schema.
+
+## Status
+
+Accepted by FS04 for exact temporal profile, clock and boundary selection.
+Executable profile coverage remains separately tracked.

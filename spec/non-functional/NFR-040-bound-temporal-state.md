@@ -71,3 +71,8 @@ suite detects an illicit Boolean fallback.
 - Agent F owns observation storage/replay mechanisms and supplies declared
   retention/lateness limits; this requirement constrains semantic outcomes when
   those limits are insufficient.
+
+## Status
+
+Accepted by FS04 for temporal arithmetic, work, instance and history bounds.
+Each implementation must qualify its selected concrete ceilings.

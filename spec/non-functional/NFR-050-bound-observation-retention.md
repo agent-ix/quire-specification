@@ -28,3 +28,8 @@ after each control, including attempted allocation/retention on the one-over
 path. Verify that every over-bound result remains incomplete/refused with the
 selected subject and exceeded bound identity, and that a correct disposition
 with excess retained state fails this metric.
+
+## Status
+
+Accepted by FS04 for bounded observation retention. Concrete owner limits and
+one-over evidence remain implementation-specific.

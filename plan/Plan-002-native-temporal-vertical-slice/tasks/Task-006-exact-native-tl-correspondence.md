@@ -2,7 +2,7 @@
 id: Task-006
 title: "Implement exact native-to-TL correspondence"
 type: Task
-status: blocked
+status: in_progress
 track: C
 priority: P0
 relationships:
@@ -33,3 +33,6 @@ result-binding path against selected public TL contracts.
 ## Notes
 
 - Equal formula bytes or truth never repair an unmatched correspondence.
+- Qcir #71 is the sole remaining implementation owner. Its qcir predicate/
+  correspondence contracts and required public TL owner APIs are merged, so the
+  task is active rather than dependency-blocked.

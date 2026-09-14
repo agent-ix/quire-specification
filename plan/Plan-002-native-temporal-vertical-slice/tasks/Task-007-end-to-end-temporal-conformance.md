@@ -45,3 +45,5 @@ evidence over the admitted vertical slice.
 ## Notes
 
 - A resource stop prevents an exhaustive claim; it is not a passing result.
+- This remains pending on Task-006 / qcir #71; FS04 semantic acceptance does not
+  promote TC-110–118 or TM-004/TM-007 to executed evidence.

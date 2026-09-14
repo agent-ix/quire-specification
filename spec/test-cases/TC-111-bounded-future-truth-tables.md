@@ -8,7 +8,8 @@ relationships:
 ---
 ## Description
 
-Planned independent truth-table coverage for bounded future semantics.
+Accepted FS04 portable truth-table controls for bounded future semantics.
+TM-004 remains Planned; no executed standard coverage is claimed.
 
 ## Test Procedure
 

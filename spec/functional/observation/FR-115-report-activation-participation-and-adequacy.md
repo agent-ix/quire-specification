@@ -102,3 +102,8 @@ supplied as source values.
 - [B's FR-007 result contract](ix://agent-ix/quire-verification/FR-007) owns independent execution, activation, observation, participation, assumption, logical, and provenance findings; Quoin retains evidence authority.
 - [FR-285](../../objects/protocol/FR-285-participation-fact.md) defines the
   canonical source participation value object and its projection boundary.
+
+## Status
+
+Accepted by FS04 for independent observation/result axes, exact support and
+late supersession. Protocol result production remains independently owned.

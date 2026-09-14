@@ -1,11 +1,12 @@
-# Observation progress and restoration definition candidate
+# Observation progress and restoration definition
 
 Selection identity: `quire.observation.progress/v1`; revision: `1-draft.3`.
-**The selection role is accepted by FS01; this semantic revision remains a
-candidate and is not adopted, serialized, canonicalized or fully implemented.**
+**The selection role is accepted by FS01 and this semantic revision is accepted
+by FS04. Serialization, canonicalization and executable qualification remain
+separate.**
 
-Working draft: local rule and dependency links select the current checkout.
-Git preserves drafting history; a coherent baseline is frozen at acceptance.
+Accepted definition: local rule and dependency links select this checkout.
+Git preserves drafting history; FS04 freezes this coherent baseline.
 This editing policy does not relax immutable runtime selections or digest checks.
 
 This definition selects scoped assertions, contradiction and restoration rules

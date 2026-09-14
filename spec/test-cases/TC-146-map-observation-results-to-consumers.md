@@ -8,9 +8,9 @@ relationships:
 ---
 ## Description
 
-Planned consumer reconciliation controls for every acceptance criterion in
-[FR-116](../functional/observation/FR-116-map-observation-results-to-consumers.md). No
-executable test or completed coverage is claimed.
+Accepted FS04 portable consumer controls for every acceptance criterion in
+[FR-116](../functional/observation/FR-116-map-observation-results-to-consumers.md).
+TM-007 remains Planned; no executable standard coverage is claimed.
 
 ## Test Procedure
 

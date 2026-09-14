@@ -56,3 +56,8 @@ watermark equal to `b` does not prove inclusive coverage through `b`.
 - [Shared foundation](../../../proposals/quire-v1/shared-foundation.md).
 - [Observation binding and progress contract](../../../proposals/quire-v1/observation-contract.md).
 - E owns clock, history, and closure meaning.
+
+## Status
+
+Accepted by FS04 for time/progress authority, exact range correspondence and
+late-data preservation. Runtime adoption remains separately tracked.
