@@ -10,8 +10,9 @@ relationships:
 ---
 ## Description
 
-Planned acceptance controls for [FR-030](../functional/foundation/FR-030-bind-composed-definitions.md).
-No executable test or completed coverage is claimed by this artifact.
+Accepted FS05 portable controls for FR-130 and the reference/evolution portion
+of [FR-030](../functional/foundation/FR-030-bind-composed-definitions.md).
+TM-003 remains Planned; no executable test or completed coverage is claimed.
 
 ## Test Procedure
 

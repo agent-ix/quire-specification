@@ -491,9 +491,11 @@ The owner adopted e897f81 for internal implementation. Accepted IR ADR-0054
 #54 is closed. Generic native compilation can use the existing IR API.
 The FS02 static owner/interface gate is satisfied by FCD #95 / PR #99 at
 `4042882` and the exact native consumer selected by QSL #93 / PR #94 at
-`0c83dcc`. Independent assessment-consumer qualification and full FS03/FS05
-acceptance remain open. FR-017/018 define the versioned amendment resolving B's representational
-findings; its tests do not claim B's consumer implementation or adoption.
+`0c83dcc`. FS03 accepts the state closure and FS05 accepts the versioned
+interchange/canonical/migration rules. Independent assessment-consumer
+qualification remains open. FR-017/018 define the accepted versioned amendment
+resolving B's representational findings; its local tests do not claim every
+consumer implementation or adoption.
 
 ## 15. Governance Notes
 
@@ -508,7 +510,9 @@ The [shared foundation](../proposals/quire-v1/shared-foundation.md) remains the
 semantic coordination checkpoint. FS01 accepts its subsystem and profile-identity
 roles; FS03 accepts the state core/query/graph semantic closure. Other owning
 FS02–FS06/family tickets retain their semantic adoption, implementation and
-qualification boundaries.
+qualification boundaries. FS05 accepts the linked-package interpretation and
+strict reference/canonical/migration contracts while keeping their executable
+matrices Planned.
 FR-030–049, FR-130, the decomposed FR-020, NFR-010 and their
 [planned matrix](composed-foundation/tests.md) establish the shared contribution.
 The [grammar](../proposals/quire-v1/shared-grammar.md) and
@@ -616,7 +620,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-039](functional/foundation/FR-039-normalize-exact-rational-literals.md) | FR | Accepted by FS03 for exact rational admission |
 | [FR-030](functional/foundation/FR-030-bind-composed-definitions.md) | FR | Shared definition binding draft |
 | [FR-031](functional/foundation/FR-031-report-requested-capabilities.md) | FR | Per-request capability disposition draft |
-| [FR-032](functional/foundation/FR-032-preserve-language-evolution.md) | FR | Evolution/compatibility draft |
+| [FR-032](functional/foundation/FR-032-preserve-language-evolution.md) | FR | Accepted by FS05 for explicit versioned evolution/migration |
 | [FR-033](functional/foundation/FR-033-admit-reusable-predicates.md) | FR | Accepted FS03 typed acyclic predicate admission |
 | [FR-034](functional/foundation/FR-034-bind-cross-family-predicates.md) | FR | Accepted FS03 typed environment binding; family execution varies |
 | [FR-035](functional/foundation/FR-035-bind-ecosystem-subjects.md) | FR | Ecosystem subject binding draft |
@@ -636,26 +640,26 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-011](functional/foundation/FR-011-validate-populations.md) | FR | Draft |
 | [FR-012](functional/foundation/FR-012-bind-operation-observations.md) | FR | Draft |
 | [FR-013](functional/foundation/FR-013-validate-operation-frames.md) | FR | Draft |
-| [FR-014](functional/foundation/FR-014-read-exact-wire.md) | FR | Draft |
-| [FR-015](functional/foundation/FR-015-preserve-canonical-domains.md) | FR | Draft |
-| [FR-016](functional/foundation/FR-016-migrate-explicitly.md) | FR | Draft |
-| [FR-017](functional/foundation/FR-017-select-verification-artifact-roles.md) | FR | Amendment |
-| [FR-018](functional/foundation/FR-018-select-verification-jcs-domain.md) | FR | Amendment |
+| [FR-014](functional/foundation/FR-014-read-exact-wire.md) | FR | Accepted by FS05; consumer qualification remains separate |
+| [FR-015](functional/foundation/FR-015-preserve-canonical-domains.md) | FR | Accepted by FS05; historical algorithms unchanged |
+| [FR-016](functional/foundation/FR-016-migrate-explicitly.md) | FR | Accepted by FS05; no inferred equivalence |
+| [FR-017](functional/foundation/FR-017-select-verification-artifact-roles.md) | FR | Accepted FS05 internal amendment |
+| [FR-018](functional/foundation/FR-018-select-verification-jcs-domain.md) | FR | Accepted FS05 internal amendment |
 | [FR-019](functional/foundation/FR-019-admit-native-source-profile.md) | FR | Accepted FS01 admission constraint; implementation evidence remains partial |
 | [US-001](usecase/US-001-understand-native-meaning.md) | US | Draft |
 | [US-002](usecase/US-002-exchange-exact-subjects.md) | US | Draft |
 | [US-003](usecase/US-003-assess-finite-state.md) | US | Draft |
 | [US-004](usecase/US-004-retain-evidence-meaning.md) | US | Draft |
 | [StR-001](stakeholder/StR-001-native-assessment-trust.md) | StR | Draft |
-| [NFR-001](non-functional/NFR-001-preserve-versioned-meaning.md) | NFR | Draft |
-| [NFR-002](non-functional/NFR-002-classify-resource-incompleteness.md) | NFR | Draft |
-| [NFR-003](non-functional/NFR-003-qualify-reference-bindings.md) | NFR | Draft |
+| [NFR-001](non-functional/NFR-001-preserve-versioned-meaning.md) | NFR | Accepted by FS05 for versioned interchange/migration |
+| [NFR-002](non-functional/NFR-002-classify-resource-incompleteness.md) | NFR | Accepted by FS05 for interchange work limits |
+| [NFR-003](non-functional/NFR-003-qualify-reference-bindings.md) | NFR | Accepted by FS05 for strict reference binding |
 | [NFR-004](non-functional/NFR-004-retain-review-and-rights.md) | NFR | Draft |
 | [IT-001](integration/IT-001-legacy-canonical-reader.md) | IT | Draft |
 | [IT-002](integration/IT-002-independent-reference-consumer.md) | IT | Draft |
 | [IT-003](integration/IT-003-verification-reference-amendment.md) | IT | Planned |
 | [IT-010](integration/IT-010-bind-linked-package-assessments.md) | IT | Planned composed package/binding boundary |
-| [FR-130](functional/foundation/FR-130-bind-composed-package-references.md) | FR | Proposed composed-package reference interpretation |
+| [FR-130](functional/foundation/FR-130-bind-composed-package-references.md) | FR | Accepted FS05 composed-package reference interpretation |
 | [FR-200](objects/foundation/FR-200-quire-assessment-domain.md) | FR (domain) | Object layer; bounded context and identity discipline |
 | [FR-201](objects/foundation/FR-201-canonical-identity-domain.md) | FR (enumeration) | Object layer; canonical identity domain vocabulary |
 | [FR-202](objects/foundation/FR-202-authored-source-document.md) | FR (entity) | Object layer; authored source document identity |

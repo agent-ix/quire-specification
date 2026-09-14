@@ -68,7 +68,7 @@ obligations use declared finite snapshots or event-time windows. Reservation tot
 and related refund totals are acceptance examples. Unknown membership or incomplete
 observations cannot establish a successful aggregate.
 
-FS01 and FS05 specify evolution now: edition/profile/wire identities, keyword and
+FS01 and FS05 accept the evolution contract: edition/profile/wire identities, keyword and
 syntax compatibility, typed family boundaries, explicit capability discovery,
 migration and preservation of historical evidence. Extension scenarios cover a new
 operator, declaration and family. This groundwork does not require speculative
@@ -126,8 +126,9 @@ native presence syntax is inferred. FS03 accepts graph and reusable-predicate
 additions through explicit versioned profile dependencies; it does not rewrite
 historical semantics.
 
-The state core/query/graph closure is accepted by FS03. Other draft architecture
-and requirements retain their owning acceptance tickets. This roadmap amendment
+The state core/query/graph closure is accepted by FS03, and the interchange/
+canonical/migration closure is accepted by FS05. Other draft architecture and
+requirements retain their owning acceptance tickets. This roadmap amendment
 itself did not run /spec-review or a Cargo qualification campaign, implement
 grammar/runtime features, deploy monitors or execute business actions.
 

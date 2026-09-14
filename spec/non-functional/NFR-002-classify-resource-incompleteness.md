@@ -40,3 +40,8 @@ Test zero, sufficient and exhausted budgets in each implemented phase. Retain mi
 - [FR-010](../functional/foundation/FR-010-evaluate-exact-reachability.md)
 - [FR-011](../functional/foundation/FR-011-validate-populations.md)
 - [FR-015](../functional/foundation/FR-015-preserve-canonical-domains.md)
+
+## Status
+
+Accepted by FS05 for interchange parsing, canonicalization and reference
+validation. Other processing phases retain their owning acceptance tickets.

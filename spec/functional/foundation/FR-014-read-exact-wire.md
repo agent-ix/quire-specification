@@ -41,4 +41,6 @@ Decoded duplicate keys, unknown members, omitted required members, invalid scala
 
 ## Status
 
-Draft. Specification review and prerequisite acceptance remain distinct from existing code/tests. No acceptance criterion is claimed satisfied solely because this artifact has been authored.
+Accepted by FS05 as standard behavior. Consumer-specific execution and matrix
+status remain separate; no acceptance criterion is claimed satisfied solely
+because this artifact has been authored.

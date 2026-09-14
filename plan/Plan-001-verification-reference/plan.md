@@ -2,7 +2,7 @@
 id: Plan-001
 title: "Qualify and hand off the verification reference amendment"
 type: Plan
-status: active
+status: complete
 relationships:
   - target: ix://agent-ix/quire-specification/FR-017
     type: references
@@ -42,8 +42,9 @@ Rust formatting/Clippy/tests and retained dependency rights.
 
 Task-002: code/Rust review, scoped gap record, final validation, exact commit push
 and private B handoff. Gate: the retained artifacts accurately distinguish
-producer checks from planned independent reader/report observations. Then make
-the PR reviewable and land it if its actual merge prerequisites are satisfied.
+producer checks from planned independent reader/report observations.
+Specification PR #8 merged at `8ab058b`. Independent consumer adoption remains
+outside this plan exactly as declared in Scope and Test Plan.
 
 ## Limits
 

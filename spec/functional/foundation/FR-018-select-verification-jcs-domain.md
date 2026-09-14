@@ -65,5 +65,6 @@ reviewer/procedure checks, completeness and outcome policy.
 
 ## Status
 
-Specification amendment. Authored vectors are conformance inputs, not executed
-portfolio results or a human disposition.
+Accepted by FS05 as the exact internal verification JCS identity amendment.
+Authored vectors are conformance inputs, not executed portfolio results or a
+human disposition.

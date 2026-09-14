@@ -1,10 +1,13 @@
 # Linked packages and assessment bindings
 
-Proposed consumer contract for [FR-030](../../spec/functional/foundation/FR-030-bind-composed-definitions.md)
-and [FR-035](../../spec/functional/foundation/FR-035-bind-ecosystem-subjects.md), for the
-composed `1-draft` candidate. It does not register a wire format or canonicalizer,
-adopt a profile, or replace D's model/configuration, F's observation or B's
-request/result contracts.
+FS05 accepts the package-reference and evolution portion of this consumer
+contract for [FR-030](../../spec/functional/foundation/FR-030-bind-composed-definitions.md)
+and [FR-035](../../spec/functional/foundation/FR-035-bind-ecosystem-subjects.md),
+for the composed `1-draft` definition. Runtime/assessment portions retain their
+own tickets. This acceptance does not register a public wire format or
+canonicalizer, qualify an executable linked-package reader, adopt a clause
+profile, or replace D's model/configuration, F's observation or B's request/result
+contracts.
 
 ## Static package subject
 
@@ -196,9 +199,10 @@ distinct record/member identities and half-open coverage versus inclusive
 deadlines. Decisive truth retains its exact support independently of unrelated
 incompleteness.
 
-These rules are part of the [current shared draft](definitions/README.md).
-The affected package contract and D's producer contract and plan in
-[FCD PR #97](https://github.com/agent-ix/filament-core-data/pull/97) still need
-acceptance before #93 resumes. Further draft successor definitions or checksum
-publication are not prerequisites. Historical accepted selections retain their
-original meaning.
+The FS05 reference/evolution rules are accepted; the remaining runtime and
+assessment rules stay in the [current shared draft](definitions/README.md).
+D's producer contract and plan in
+[FCD PR #97](https://github.com/agent-ix/filament-core-data/pull/97) retain their
+own acceptance and #93 dependency. Further draft successor definitions or
+checksum publication are not prerequisites. Historical accepted selections
+retain their original meaning.
