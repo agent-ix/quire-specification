@@ -489,8 +489,10 @@ remain distinguishable from composed semantic candidates.
 The owner adopted e897f81 for internal implementation. Accepted IR ADR-0054
 (PR61, 690bde7) subsequently removed the universal Filament reader prerequisite;
 #54 is closed. Generic native compilation can use the existing IR API.
-Independent consumer qualification and full FS02/FS03/FS05 acceptance remain
-open. FR-017/018 define the versioned amendment resolving B's representational
+The FS02 static owner/interface gate is satisfied by FCD #95 / PR #99 at
+`4042882` and the exact native consumer selected by QSL #93 / PR #94 at
+`0c83dcc`. Independent assessment-consumer qualification and full FS03/FS05
+acceptance remain open. FR-017/018 define the versioned amendment resolving B's representational
 findings; its tests do not claim B's consumer implementation or adoption.
 
 ## 15. Governance Notes
@@ -528,11 +530,14 @@ through PR #21 (`2d8372c`) and resource-inspection correction `57ddca2`, separat
 closure. F's FR-110–116, NFR-050–052, IT-050/051 and
 [observation matrix](observation/tests.md) and owned requirements/cases are
 integrated through `b7381fd`. E's composed corrections through `c6a8905` are integrated.
-D's merged baseline 1.2 specification and FR-106–111 at `1d901d7` are indexed as external
-contributions, including the corrected truth-support rule and IN01/IN02 contracts.
-These contributions establish draft obligations and planned cases. The composed
-grammar and examples remain proposed; binding interfaces are not fully reconciled
-and no new executable coverage is established.
+D's accepted Producer 1.2 contract at `4042882` is indexed as an external
+contribution, including its static-bundle implementation, explicit
+static/assessment split, corrected truth-support rule and IN01/IN02 contracts.
+QSL `0c83dcc` selects the exact accepted static producer. These contributions
+establish their stated obligations and planned cases without claiming the open
+assessment half. The composed grammar and examples remain proposed; assessment
+binding interfaces are not fully reconciled. QSL's executable evidence
+establishes only the accepted static adapter boundary.
 
 ## 16. References
 
@@ -545,12 +550,12 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [AD-001](assurance/AD-001-composed-native-language.md) | ArchitectureDescription | Accepted subsystem and ownership boundary; semantic delivery remains separately tracked |
 | [AD-002](assurance/AD-002-native-temporal-vertical-slice.md) | ArchitectureDescription | Proposed temporal refinement; FS04/temporal owners retain acceptance |
 | [AD-003](assurance/AD-003-native-quire-language-charter.md) | ArchitectureDescription | Accepted FS01 language charter and profile identity hierarchy |
-| [FCD FR-106](https://github.com/agent-ix/filament-core-data/blob/1d901d716eed003cb034a624f56bb46e2b8c2a94/spec/functional/FR-106-author-field-presence-independently.md) | FR | D-owned merged specification; FCD #95 acceptance and implementation pending |
-| [FCD FR-107](https://github.com/agent-ix/filament-core-data/blob/1d901d716eed003cb034a624f56bb46e2b8c2a94/spec/functional/FR-107-declare-first-class-relationship-contracts.md) | FR | D-owned merged specification; FCD #95 acceptance and implementation pending |
-| [FCD FR-108](https://github.com/agent-ix/filament-core-data/blob/1d901d716eed003cb034a624f56bb46e2b8c2a94/spec/functional/FR-108-bind-populations-to-model-contracts.md) | FR | D-owned merged specification; truth-support correction resolved, producer acceptance open |
-| [FCD FR-109](https://github.com/agent-ix/filament-core-data/blob/1d901d716eed003cb034a624f56bb46e2b8c2a94/spec/functional/FR-109-declare-ecosystem-configuration-contracts.md) | FR | D-owned merged specification; FCD #95 acceptance and implementation pending |
-| [FCD FR-110](https://github.com/agent-ix/filament-core-data/blob/1d901d716eed003cb034a624f56bb46e2b8c2a94/spec/functional/FR-110-lock-ecosystem-inventory-and-bindings.md) | FR | D-owned IN01 inventory and deployment-binding specification; planned TC-1364–1366 |
-| [FCD FR-111](https://github.com/agent-ix/filament-core-data/blob/1d901d716eed003cb034a624f56bb46e2b8c2a94/spec/functional/FR-111-classify-mixed-version-impact.md) | FR | D-owned IN02 compatibility and evidence-impact specification; planned TC-1367–1369 |
+| [FCD FR-106](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-106-author-field-presence-independently.md) | FR | Static authored presence/multiplicity/null/default contract accepted and implemented by FCD PR #99; FCD #93 retains Semantic IR/frontends |
+| [FCD FR-107](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-107-declare-first-class-relationship-contracts.md) | FR | Static relationship/endpoints accepted in FCD PR #99 and consumed by QSL PR #94; runtime instances remain consumer work |
+| [FCD FR-108](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-108-bind-populations-to-model-contracts.md) | FR | Static population ownership and truth-support rule accepted; assessment membership remains open |
+| [FCD FR-109](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-109-declare-ecosystem-configuration-contracts.md) | FR | Static configuration selection accepted and consumed; runtime assessment configuration remains open |
+| [FCD FR-110](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-110-lock-ecosystem-inventory-and-bindings.md) | FR | Static inventory/binding producer accepted; IN01 assessment qualification remains planned |
+| [FCD FR-111](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-111-classify-mixed-version-impact.md) | FR | Compatibility/evidence-impact authority accepted; IN02 executable qualification remains planned |
 | [FR-049](functional/foundation/FR-049-bind-native-choreography-syntax.md) | FR | Native choreography source integration; proposed, reviewed in SR-400 |
 | [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Family-reviewed draft; composed review requires corrections (SR-400) |
 | [FR-050](functional/protocol/FR-050-bind-protocol-instances.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |

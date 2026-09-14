@@ -102,9 +102,23 @@ not an integration gate.
 | --- | --- |
 | A | Shared grammar, predicates, package stages, producer/native correspondence and choreography surface |
 | B | Protocol/results and resource-inventory correction through `57ddca2`; explicit global-conformance closure at `fe31710` |
-| D | External FR-106–111 and the baseline 1.2 producer contract from [PR #97 merge `1d901d7`](https://github.com/agent-ix/filament-core-data/tree/1d901d716eed003cb034a624f56bb46e2b8c2a94); FCD #95 acceptance and implementation remain open |
+| D | External FR-106–129 and the Producer 1.2 contract from [FCD #95 / PR #99 merge `4042882`](https://github.com/agent-ix/filament-core-data/tree/404288282402d60de007295ccbafa960532b955e); its static bundle is accepted and implemented, while FR-119–126 assessment production and FCD #93 Semantic IR/frontends remain open |
 | E | Temporal requirement/case/method corrections through `c6a8905` |
 | F | Result preservation, resource/provenance controls and all-clock range mapping through `b7381fd` |
+
+### FS02 owner/interface closeout map
+
+| Boundary | Sole authority | Accepted evidence | Explicit remainder |
+| --- | --- | --- | --- |
+| Model declarations, authored presence/multiplicity/null/default, configuration, typed endpoints/relationships and the admitted static bundle | Filament Producer 1.2 | FCD #95 / PR #99, `4042882` | FCD #93 Semantic IR/frontends; FR-119–126 assessment production |
+| Editable clause source, composed namespace/type binding, native loci and exact static Producer adapter | Native Quire compiler | Closed SL #35/#68/#86 and QSL #93 / PR #94, `0c83dcc` | No second model reader; assessment records are not inferred from static admission |
+| Shared result vocabulary, protocol subject keys, channels, graph consistency, relationship, registration, retry, commit and recovery rules | Quire v1 standard | Specification PRs #38/#41/#42 | Protocol and observation runtime consumers |
+| Temporal boundary mapping, claim inputs, history kinds, late data, completeness and admitted-observation identity | Quire v1 standard | Specification #40 / PR #44 | TL, Contract-IR, observation and protocol execution/qualification |
+
+Equal spellings, shapes or digests from another row never transfer authority.
+Missing, ambiguous, stale, foreign, dangling, wrong-kind or cross-domain inputs
+retain their owning located refusal or incomplete outcome; no boundary repairs
+another owner's absent input by approximation.
 
 The [QUOIN base-plus-seven review](../../spec/reviews/composed-v1/base.md) remains
 the record of the evaluated `788b161` baseline and its external inputs. The
@@ -153,8 +167,11 @@ revisions; they do not claim executed consumer qualification or baseline adoptio
 The [master index](../../spec/spec.md) includes D's inventory and mixed-version
 impact requirements; the [capability crosswalk](capabilities.md#initial-specification-crosswalk)
 links the 51 approved scope decisions to requirements and planned cases.
-D's producer plan and FCD PR #97 need their own acceptance; #93 remains parked
-until its affected contracts and plan are accepted.
+D's static producer plan is accepted through FCD #95 / PR #99 at `4042882`,
+and QSL #93 / PR #94 selects that exact revision at `0c83dcc` through the real
+composed adapter. FCD #93 remains the separately tracked Semantic IR/frontend
+delivery; population, snapshot/window, observation, progress and assessment
+closure remain downstream consumer work.
 
 The composed correction review is complete. Merge the reviewed baseline and
 refine the existing implementation tickets from its contracts. No new full
