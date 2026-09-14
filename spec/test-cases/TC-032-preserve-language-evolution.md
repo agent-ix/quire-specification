@@ -8,8 +8,8 @@ relationships:
 ---
 ## Description
 
-Planned acceptance controls for [FR-032](../functional/foundation/FR-032-preserve-language-evolution.md).
-No executable test or completed coverage is claimed by this artifact.
+Accepted FS05 portable controls for [FR-032](../functional/foundation/FR-032-preserve-language-evolution.md).
+TM-003 remains Planned; no executable test or completed coverage is claimed.
 
 ## Test Procedure
 
