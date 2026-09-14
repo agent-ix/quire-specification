@@ -1,17 +1,19 @@
 # Native Quire v1 definition set
 
 FS01 accepts and reserves the identity hierarchy and dependency direction in this
-set. Each unsuffixed file contains the latest corrected semantic candidate and
+set. Each unsuffixed file contains the latest corrected semantic text and
 links to its current requirements and dependencies. Identity-role acceptance is
 not semantic-definition adoption, compiler/backend implementation or
 qualification. Those statuses remain explicit in each artifact and owning
 FS02–FS06/family ticket. Superseded draft copies live in Git history. No per-rule
 digest table selects a different working-tree snapshot.
 
-The revision labels carry forward the latest candidates; these remain editable
-drafts, not published immutable definitions. The PR revision identifies the whole
-reviewed draft. Editing it does not require a checksum refresh or another
-successor file.
+FS03 accepts the exact `state-core → state-queries → state-graph` semantic
+closure at the revisions below. The `1-draft` labels remain unpublished selection
+identities, and acceptance does not imply complete implementation or qualification.
+Other definition families remain editable candidates under their owning tickets.
+The PR revision identifies the coherent reviewed checkout; editing a draft does
+not require a checksum refresh or another successor file.
 
 | Definition | Draft revision | Current file |
 | --- | --- | --- |

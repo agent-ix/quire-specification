@@ -1,8 +1,9 @@
 # Native predicate and sequence-query definition
 
 Profile identity: `quire.state.queries/v1`; revision: `1-draft.3`.
-Language: `ix:native` / `1-draft`. **The profile role is accepted by FS01; this
-semantic revision remains proposed and is not adopted or fully implemented.**
+Language: `ix:native` / `1-draft`. **FS03 accepts this semantic revision as the
+predicate/query extension over state core; implementation and backend
+qualification remain independently reported.**
 
 This is a working definition in one coherent draft. Required definitions and
 rule links resolve within this checkout; acceptance freezes their exact selections.

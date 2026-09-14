@@ -505,19 +505,21 @@ additional session dispatch is implied. Preserve dependency/template grants.
 Standard-wide publication terms remain unresolved.
 
 The [shared foundation](../proposals/quire-v1/shared-foundation.md) remains the
-semantic drafting checkpoint. FS01 accepts its subsystem and profile-identity
-roles; owning FS02–FS06/family tickets retain semantic revision adoption,
-implementation and qualification.
+semantic coordination checkpoint. FS01 accepts its subsystem and profile-identity
+roles; FS03 accepts the state core/query/graph semantic closure. Other owning
+FS02–FS06/family tickets retain their semantic adoption, implementation and
+qualification boundaries.
 FR-030–049, FR-130, the decomposed FR-020, NFR-010 and their
 [planned matrix](composed-foundation/tests.md) establish the shared contribution.
 The [grammar](../proposals/quire-v1/shared-grammar.md) and
-[state contract](../proposals/quire-v1/state-contract.md) now include ordered
-queries/aggregation and explicit anchor, numeric and graph proposals. E's
+[state contract](../proposals/quire-v1/state-contract.md) now accept ordered
+queries/aggregation and explicit anchor, numeric and graph semantics. E's
 FR-090–095, NFR-040, IT-040/041 and [temporal matrix](temporal/tests.md) are now
 integrated as draft temporal meaning. FR-048 connects the native temporal syntax
 and shared predicate environments to that contribution. The full baseline review
-is recorded in SR-400 with changes required; these drafts do not authorize
-dependent implementation before the affected contract is accepted.
+is recorded in SR-400 with its correction recheck. FS03's scoped acceptance is
+recorded separately; other draft families do not authorize dependent
+implementation before their affected contracts are accepted.
 FR-049 and the [choreography surface](../proposals/quire-v1/choreography-surface.md)
 now add explicit roles/channels, causal control, compensation stages and typed
 cross-instance references to the composed grammar. Exact model/observation and
@@ -599,24 +601,24 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [NFR-040](non-functional/NFR-040-bound-temporal-state.md) | NFR | Family-reviewed draft; composed review requires corrections (SR-400) |
 | [IT-040](integration/IT-040-native-future-tl-correspondence.md) | IT | Planned native/TL correspondence |
 | [IT-041](integration/IT-041-temporal-bridge-refusals.md) | IT | Planned temporal refusal correspondence |
-| [FR-040](functional/foundation/FR-040-admit-explicit-state-extensions.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
-| [FR-041](functional/foundation/FR-041-evaluate-ordered-queries.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
-| [FR-042](functional/foundation/FR-042-select-pre-state-reads.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
-| [FR-043](functional/foundation/FR-043-evaluate-finite-graph-relations.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
-| [FR-044](functional/foundation/FR-044-check-composed-numeric-definedness.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
-| [FR-045](functional/foundation/FR-045-preserve-control-and-presence-facts.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
-| [FR-046](functional/foundation/FR-046-validate-state-invocation-inputs.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
+| [FR-040](functional/foundation/FR-040-admit-explicit-state-extensions.md) | FR | Accepted by FS03; implementation coverage remains separate |
+| [FR-041](functional/foundation/FR-041-evaluate-ordered-queries.md) | FR | Accepted by FS03; implementation coverage remains separate |
+| [FR-042](functional/foundation/FR-042-select-pre-state-reads.md) | FR | Accepted by FS03; implementation coverage remains separate |
+| [FR-043](functional/foundation/FR-043-evaluate-finite-graph-relations.md) | FR | Accepted by FS03; implementation coverage remains separate |
+| [FR-044](functional/foundation/FR-044-check-composed-numeric-definedness.md) | FR | Accepted by FS03; implementation coverage remains separate |
+| [FR-045](functional/foundation/FR-045-preserve-control-and-presence-facts.md) | FR | Accepted by FS03; implementation coverage remains separate |
+| [FR-046](functional/foundation/FR-046-validate-state-invocation-inputs.md) | FR | Accepted by FS03; implementation coverage remains separate |
 | [FR-047](functional/foundation/FR-047-emit-typed-located-causes.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
-| [NFR-010](non-functional/NFR-010-bound-composed-processing.md) | NFR | Composed resource contract; proposed, reviewed in SR-400 |
+| [NFR-010](non-functional/NFR-010-bound-composed-processing.md) | NFR | Accepted by FS03 for state processing; family implementation varies |
 | [FR-036](functional/foundation/FR-036-retain-lexical-source-locations.md) | FR | Shared grammar/type contribution; proposed, reviewed in SR-400 |
 | [FR-037](functional/foundation/FR-037-parse-shared-native-expressions.md) | FR | Shared grammar/type contribution; proposed, reviewed in SR-400 |
-| [FR-038](functional/foundation/FR-038-resolve-predicate-scopes.md) | FR | Shared grammar/type contribution; proposed, reviewed in SR-400 |
-| [FR-039](functional/foundation/FR-039-normalize-exact-rational-literals.md) | FR | Shared grammar/type contribution; proposed, reviewed in SR-400 |
+| [FR-038](functional/foundation/FR-038-resolve-predicate-scopes.md) | FR | Accepted by FS03 for the state query/graph closure |
+| [FR-039](functional/foundation/FR-039-normalize-exact-rational-literals.md) | FR | Accepted by FS03 for exact rational admission |
 | [FR-030](functional/foundation/FR-030-bind-composed-definitions.md) | FR | Shared definition binding draft |
 | [FR-031](functional/foundation/FR-031-report-requested-capabilities.md) | FR | Per-request capability disposition draft |
 | [FR-032](functional/foundation/FR-032-preserve-language-evolution.md) | FR | Evolution/compatibility draft |
-| [FR-033](functional/foundation/FR-033-admit-reusable-predicates.md) | FR | Typed acyclic predicate admission draft |
-| [FR-034](functional/foundation/FR-034-bind-cross-family-predicates.md) | FR | Cross-family environment binding draft |
+| [FR-033](functional/foundation/FR-033-admit-reusable-predicates.md) | FR | Accepted FS03 typed acyclic predicate admission |
+| [FR-034](functional/foundation/FR-034-bind-cross-family-predicates.md) | FR | Accepted FS03 typed environment binding; family execution varies |
 | [FR-035](functional/foundation/FR-035-bind-ecosystem-subjects.md) | FR | Ecosystem subject binding draft |
 | [StR-002](stakeholder/StR-002-composed-language.md) | StR | V1 redesign draft |
 | [US-005](usecase/US-005-author-composed-workflows.md) | US | V1 redesign draft |
