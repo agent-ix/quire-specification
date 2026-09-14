@@ -127,9 +127,11 @@ additions through explicit versioned profile dependencies; it does not rewrite
 historical semantics.
 
 The state core/query/graph closure is accepted by FS03, the temporal/observation
-closure by FS04, and the interchange/canonical/migration closure by FS05. Other
-draft architecture and
-requirements retain their owning acceptance tickets. This roadmap amendment
+closure by FS04, the interchange/canonical/migration closure by FS05, and the
+non-authoritative OCL 2.4, SysML 2.0/KerML 1.0 and FRETish 3.1 output-mapping
+subsystem by FS06. Its executable Rust exporters and correspondence evidence
+remain open in qcir #55/#56/#57. Other draft architecture and requirements
+retain their owning acceptance tickets. This roadmap amendment
 itself did not run /spec-review or a Cargo qualification campaign, implement
 grammar/runtime features, deploy monitors or execute business actions.
 

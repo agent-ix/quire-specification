@@ -14,6 +14,32 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/AD-003
     type: contains
+  - target: ix://agent-ix/quire-specification/AD-004
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-120
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-121
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-122
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-123
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-124
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-125
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-297
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-298
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-299
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-060
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-061
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-060
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-130
     type: contains
   - target: ix://agent-ix/quire-specification/FR-200
@@ -399,6 +425,11 @@ This root indexes the native Quire language requirements. Quire v1 includes stat
 
 FS01 native grammar and composed profile architecture; FS02 shared model/source and artifact identity; FS03 state semantics; FS04 temporal, clock and observation contracts; the native choreography/protocol and compensation profile; FS05 strict interchange and migration; FS06 output mapping and loss contracts. The [capability matrix](../proposals/quire-v1/capabilities.md) selects bounded v1 subsets and names later capabilities and refusals.
 
+FS06 accepts the [output-mapping subsystem](assurance/AD-004-output-mapping-subsystem.md),
+common request/record/package contract and bounded OCL 2.4, SysML 2.0/KerML
+1.0 and FRETish 3.1 profiles. Their executable Rust exporters remain qcir
+#55/#56/#57 and TM-008 remains Planned.
+
 ### 2.2 Out of Scope
 
 B's portable method/plan/result implementation, C/D's producer implementations, a duplicate model authority or executable binder, a business workflow execution engine and automatic public publication are outside this repository's implementation ownership. Advanced local projection, realizability and general relational analyses are named later capabilities; their absence does not exclude native choreography from v1. External OCL, FRETish and SysML/KerML forms are output mappings, not editable source frontends.
@@ -557,6 +588,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [AD-001](assurance/AD-001-composed-native-language.md) | ArchitectureDescription | Accepted subsystem and ownership boundary; semantic delivery remains separately tracked |
 | [AD-002](assurance/AD-002-native-temporal-vertical-slice.md) | ArchitectureDescription | Accepted FS04 temporal refinement; implementation remains Plan-002 |
 | [AD-003](assurance/AD-003-native-quire-language-charter.md) | ArchitectureDescription | Accepted FS01 language charter and profile identity hierarchy |
+| [AD-004](assurance/AD-004-output-mapping-subsystem.md) | ArchitectureDescription | Accepted FS06 common coordinator, target-mapper and structural-observer boundaries |
 | [FCD FR-106](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-106-author-field-presence-independently.md) | FR | Static authored presence/multiplicity/null/default contract accepted and implemented by FCD PR #99; FCD #93 retains Semantic IR/frontends |
 | [FCD FR-107](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-107-declare-first-class-relationship-contracts.md) | FR | Static relationship/endpoints accepted in FCD PR #99 and consumed by QSL PR #94; runtime instances remain consumer work |
 | [FCD FR-108](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-108-bind-populations-to-model-contracts.md) | FR | Static population ownership and truth-support rule accepted; assessment membership remains open |
@@ -589,7 +621,16 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-113](functional/observation/FR-113-preserve-time-progress-and-late-data.md) | FR | Accepted by FS04; runtime adoption remains separate |
 | [FR-114](functional/observation/FR-114-assess-replay-and-incremental-consistently.md) | FR | Accepted by FS04; full-stack execution remains Planned |
 | [FR-115](functional/observation/FR-115-report-activation-participation-and-adequacy.md) | FR | Accepted by FS04; result production remains separate |
-| [FR-116](functional/observation/FR-116-map-observation-results-to-consumers.md) | FR | Accepted FS04 generic consumer contract; target mappings are FS06 |
+| [FR-116](functional/observation/FR-116-map-observation-results-to-consumers.md) | FR | Accepted FS04 generic consumer contract; FS06 target contracts accepted and qcir exporters open |
+| [FR-120](functional/output-mapping/FR-120-select-output-mapping-profile.md) | FR | Accepted FS06 exact target/profile selection |
+| [FR-121](functional/output-mapping/FR-121-account-for-every-output-obligation.md) | FR | Accepted FS06 complete four-way per-obligation accounting |
+| [FR-122](functional/output-mapping/FR-122-generate-bounded-ocl-2-4-output.md) | FR | Accepted FS06 OCL 2.4 profile; qcir #55 implements |
+| [FR-123](functional/output-mapping/FR-123-generate-bounded-sysml-kerml-output.md) | FR | Accepted FS06 SysML 2.0/KerML 1.0 profile; qcir #56 implements |
+| [FR-124](functional/output-mapping/FR-124-generate-bounded-fretish-output.md) | FR | Accepted FS06 FRETish 3.1 profile; qcir #57 implements |
+| [FR-125](functional/output-mapping/FR-125-produce-deterministic-output-packages.md) | FR | Accepted FS06 immutable deterministic package boundary |
+| [NFR-060](non-functional/NFR-060-bound-and-reproduce-output-mapping.md) | NFR | Accepted FS06 checked aggregate limits and reproducibility |
+| [NFR-061](non-functional/NFR-061-contain-output-mapping-dependencies.md) | NFR | Accepted FS06 Rust/rights/optional-observer boundary |
+| [IT-060](integration/IT-060-output-mapping-owner-handoff.md) | IT | Planned qcir #55/#56/#57 common-boundary integration |
 | [NFR-050](non-functional/NFR-050-bound-observation-retention.md) | NFR | Accepted by FS04; concrete limits remain owner-specific |
 | [NFR-051](non-functional/NFR-051-preserve-observation-reproducibility.md) | NFR | Accepted by FS04; conformance remains separate |
 | [NFR-052](non-functional/NFR-052-contain-observation-executables.md) | NFR | Accepted by FS04 for Rust-owned observation paths |
@@ -705,6 +746,9 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-269](objects/observation/FR-269-consumer-mapping-loss.md) | FR (enumeration) | Object layer; Consumer mapping-loss classification |
 | [FR-295](objects/observation/FR-295-input-completeness-state.md) | FR (enumeration) | Object layer; independent input-completeness state derived from an exact fact population |
 | [FR-296](objects/observation/FR-296-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; versioned admitted-observation identity preimage and byte uniqueness |
+| [FR-297](objects/output-mapping/FR-297-output-mapping-consumer-profile.md) | FR (value_object) | Object layer; exact target standard and mapping-profile selection |
+| [FR-298](objects/output-mapping/FR-298-per-obligation-output-mapping-record.md) | FR (entity) | Object layer; identity-bearing source-bound mapping disposition |
+| [FR-299](objects/output-mapping/FR-299-generated-output-package.md) | FR (aggregate_root) | Object layer; immutable target bytes and complete ordered mapping record set |
 | [FR-294](objects/observation/FR-294-late-data-classification.md) | FR (enumeration) | Object layer; exact on-time/late classification under a selected cutoff |
 | [FR-210](objects/protocol/FR-210-protocol-subject-vocabulary.md) | FR (enumeration) | Object layer; Protocol subject vocabulary |
 | [FR-211](objects/protocol/FR-211-protocol-role.md) | FR (entity) | Object layer; Protocol role |
