@@ -66,4 +66,5 @@ or refused; missing representation SHALL NOT be classified as preserved.
 ## Status
 
 Accepted by FS04 for generic fact-preserving consumer delivery and explicit
-mapping loss. Target-specific output mappings remain FS06 work.
+mapping loss. FS06 accepts target profile, per-obligation record and generated-
+package semantics; qcir #55/#56/#57 retain exporter implementation.

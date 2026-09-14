@@ -26,11 +26,14 @@ or executable interface.
 | Protocol result/conformance root | `quire.protocol.finite-global/v1` | `1-draft.4` | [Protocol meaning](protocol-finite.md) |
 | Producer interface | FCD Producer interface | `1.2.0` | [Producer selection](../observation-contract.md#producer-interface-selection) |
 | Shared result rules | B FR-061 | Current working draft | [Orthogonal results](../../../spec/functional/protocol/FR-061-report-orthogonal-results.md) |
-| Observation result/output rules | F FR-115/116 | Current working draft | [Result contribution](../../../spec/functional/observation/FR-115-report-activation-participation-and-adequacy.md) and [output mapping](../observation-output-mapping-contract.md) |
+| Observation result rules | F FR-115/116 | FS04 accepted | [Result contribution](../../../spec/functional/observation/FR-115-report-activation-participation-and-adequacy.md) and [consumer-result boundary](../observation-output-mapping-contract.md) |
+| Target output-mapping rules | `quire.output.mapping/v1` | `1-draft.1`, FS06 accepted | [Common and target profiles](../output-mappings/README.md) |
 
 FS04 selects only the temporal/observation and shared result/closure rules
-reachable from this definition. It does not adopt protocol declaration or
-global-conformance semantics, whose owning work remains independent.
+reachable from this definition. FS06 separately selects the non-authoritative
+target-output mapping contract; that contract consumes the qualified result
+axes without changing this binding. Neither acceptance adopts protocol
+declaration or global-conformance semantics, whose owning work remains independent.
 
 An actual package/assessment selects its required dependency artifacts by exact
 identity, revision and bytes. Missing, substituted, stale or mutually inconsistent
