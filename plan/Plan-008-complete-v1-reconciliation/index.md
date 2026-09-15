@@ -19,4 +19,10 @@ okf_version: "0.1"
 * [Task-008](./tasks/Task-008-review-complete-specification.md) - Review and remediate the coherent revision.
 * [Task-009](./tasks/Task-009-populate-delivery-program.md) - Populate the existing implementation program.
 * [Task-010](./tasks/Task-010-audit-campaign-coverage.md) - Prove total campaign coverage.
+* [Task-011](./tasks/Task-011-agent-a-native-core.md) - Agent-A native compiler, runtime and tooling campaign.
+* [Task-012](./tasks/Task-012-agent-b-temporal-protocol.md) - Agent-B temporal and Protocol campaign.
+* [Task-013](./tasks/Task-013-agent-c-observation-integration.md) - Agent-C observation and composed integration campaign.
+* [Task-014](./tasks/Task-014-agent-d-verification-analysis.md) - Agent-D verification, analysis and evidence campaign.
+* [Task-015](./tasks/Task-015-agent-e-ir-backends.md) - Agent-E IR, codegen, Kani and mapping campaign.
+* [Task-016](./tasks/Task-016-complete-v1-integration-gate.md) - Cross-lane integration and release qualification gate.
 * [Update log](./log.md) - Chronological plan history.

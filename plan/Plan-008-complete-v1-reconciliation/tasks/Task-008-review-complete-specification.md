@@ -36,7 +36,7 @@ material finding and prevent independently accepted partial architectures.
 
 ## Completion evidence
 
-- SR-570 through SR-579 record the base, seven requested lenses, domain-object
+- SR-571 through SR-580 record the base, seven requested lenses, domain-object
   review and architecture evaluation. All high/medium findings were remediated.
 - The normative grammar gap is closed by FR-339; I01-I21 bind exact payload
   objects through reused FR-202/203 and FR-299 plus new FR-320 through FR-338.
