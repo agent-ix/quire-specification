@@ -3,6 +3,8 @@ id: FR-312
 title: "Preserve canonical counterexample lineage"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-011
+    type: implements
   - target: ix://agent-ix/quire-specification/FR-197
     type: references
   - target: ix://agent-ix/quire-specification/AD-011
@@ -31,6 +33,17 @@ must remain domain-valid and reproduce the same scoped failure. Different
 methods may relate equivalent examples without merging identities. Redaction or
 loss is explicit and prevents claims requiring removed replay material.
 
+## Revision and equivalence contract
+
+Each counterexample revision has a canonical digest, parent digest,
+transformation identity/options and replay result. A transformation may shrink,
+normalize, translate or redact; it cannot overwrite its input. Two examples are
+equivalent only relative to a named claim when both are domain-valid and replay
+to the same scoped failure under an explicit value/execution correspondence.
+Redaction lists removed fields and affected claims; if replay-required material
+is removed, the revision is retained as non-replayable evidence rather than a
+counterexample substitute.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -41,6 +54,10 @@ loss is explicit and prevents claims requiring removed replay material.
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

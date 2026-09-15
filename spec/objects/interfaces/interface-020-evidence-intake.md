@@ -2,6 +2,9 @@
 id: interface-020
 title: "I20 immutable evidence intake"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-337
+    type: references
 ---
 
 # [interface-020] I20 immutable evidence intake

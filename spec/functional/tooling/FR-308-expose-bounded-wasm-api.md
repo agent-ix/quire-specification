@@ -3,6 +3,8 @@ id: FR-308
 title: "Expose a bounded deterministic WASM API"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-010
+    type: implements
   - target: ix://agent-ix/quire-specification/FR-300
     type: references
   - target: ix://agent-ix/quire-specification/AD-004
@@ -33,6 +35,16 @@ filesystem/network/time authority. Allocation and input/output sizes are charged
 before expansion. Unsupported native features refuse exactly rather than run a
 smaller meaning.
 
+## WASM resource contract
+
+The module imports only bounded memory and host cancellation; it imports no
+filesystem, network, clock, randomness or process authority. Each request
+declares byte, node, collection, step and output limits. The host charges input
+before decoding, charges semantic expansion before allocation and returns a
+typed incomplete result at the first exhausted budget. Canonical versioned
+envelopes are identical to native lifecycle envelopes, so native/WASM parity is
+checked without translating verdicts.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -43,6 +55,10 @@ smaller meaning.
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

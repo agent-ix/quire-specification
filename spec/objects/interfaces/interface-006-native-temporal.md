@@ -2,6 +2,9 @@
 id: interface-006
 title: "I06 native temporal artifact and result"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-324
+    type: references
 ---
 
 # [interface-006] I06 native temporal artifact and result

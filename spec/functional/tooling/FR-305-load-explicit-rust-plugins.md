@@ -3,6 +3,8 @@ id: FR-305
 title: "Load explicit versioned Rust plugins"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-010
+    type: implements
   - target: ix://agent-ix/quire-specification/AD-004
     type: references
 ---
@@ -33,6 +35,16 @@ source identity or native meaning. Pure providers receive no effects; effectful
 tools require explicit rights and remain outside evaluators. Output is validated
 as untrusted input.
 
+## Provider boundary
+
+A manifest binds plugin identity/version, host protocol range, capability IDs,
+Rust/wire ABI choice, executable or crate digest, configuration schema and
+requested rights. Negotiation intersects exact capabilities and rejects version
+or digest mismatch before invocation. Isolated providers exchange length-bounded
+canonical envelopes with request IDs, deadlines and cancellation. Host
+validation treats crashes, malformed output and undeclared capabilities as tool
+failure and never loads native dynamic-library symbols.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -43,6 +55,10 @@ as untrusted input.
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

@@ -2,6 +2,9 @@
 id: interface-016
 title: "I16 output mapping package"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-299
+    type: references
 ---
 
 # [interface-016] I16 output mapping package

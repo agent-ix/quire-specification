@@ -3,6 +3,8 @@ id: FR-196
 title: "Generate exact Kani contracts and harnesses"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-011
+    type: implements
   - target: ix://agent-ix/quire-specification/AD-010
     type: references
   - target: ix://agent-ix/quire-specification/FR-195
@@ -35,6 +37,19 @@ Finite bounds come from model domains or explicit proof requests. Unsupported
 constructs emit no approximate harness. Generated crates are Rust-only,
 `publish = false`, and pin the exact Kani version/options.
 
+## Kani mapping contract
+
+Each lowered claim generates one Rust item and one proof harness. Preconditions
+encode checked domain membership and definedness; postconditions invoke the
+generated oracle over pre/post state and result; frame conditions assert
+unchanged non-frame locations; invariants hold at admitted state boundaries.
+Integer and collection ranges use model-derived inclusive bounds with checked
+conversions. Graph, temporal or protocol state is generated only under a finite
+exact encoding whose correspondence is recorded. Harness identity derives from
+claim identity rather than source spelling. The evidence lock records Kani and
+Rust versions, target, solver, unwind/loop bounds, dependency checksums and all
+command options.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -42,9 +57,15 @@ constructs emit no approximate harness. Generated crates are Rust-only,
 | FR-196-AC-1 | Generated preconditions and symbolic ranges equal the model's inclusive domains, including boundary values. | Test (TC-218) |
 | FR-196-AC-2 | Missing bounds or unsupported exact semantics produce requires-bound/unsupported and no harness for that item. | Test (TC-218) |
 | FR-196-AC-3 | Evidence records Kani, Rust, dependency and option pins plus every requested obligation disposition. | Inspection |
+| FR-196-AC-4 | Preconditions, postconditions, invariants and frame clauses map separately to the generated contract and harness. | Test (TC-218) |
+| FR-196-AC-5 | A finite encoding records its one-to-one semantic correspondence; absent correspondence emits unsupported and no Rust item. | Test (TC-218) |
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

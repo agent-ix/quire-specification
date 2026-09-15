@@ -2,6 +2,9 @@
 id: interface-003
 title: "I03 authoritative model selection"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-321
+    type: references
 ---
 
 # [interface-003] I03 authoritative model selection

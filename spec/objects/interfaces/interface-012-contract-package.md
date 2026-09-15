@@ -2,6 +2,9 @@
 id: interface-012
 title: "I12 target-neutral contract package"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-330
+    type: references
 ---
 
 # [interface-012] I12 target-neutral contract package

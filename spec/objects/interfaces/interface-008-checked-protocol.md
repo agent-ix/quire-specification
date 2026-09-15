@@ -2,6 +2,9 @@
 id: interface-008
 title: "I08 checked protocol artifact"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-326
+    type: references
 ---
 
 # [interface-008] I08 checked protocol artifact

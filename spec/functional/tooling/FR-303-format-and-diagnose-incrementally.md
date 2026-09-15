@@ -3,6 +3,8 @@ id: FR-303
 title: "Format and diagnose native source incrementally"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-010
+    type: implements
   - target: ix://agent-ix/quire-specification/FR-302
     type: references
   - target: ix://agent-ix/quire-specification/FR-047
@@ -33,6 +35,15 @@ the selected edition. Diagnostics carry catalog codes and source/runtime loci,
 never message-derived identity. Stale revision responses are marked stale and
 cannot be applied. Language-server requests use the same typed parser/checker.
 
+## Incremental service contract
+
+Requests bind document identity, source revision and profile. Responses bind the
+same tuple and include deterministic diagnostics ordered by primary span, stable
+code and related span. Formatting computes edits against exact source bytes,
+round-trips through the parser and is accepted only when the checked semantic
+digest is unchanged. Cancellation returns incomplete; a superseded revision is
+stale and its edits/diagnostics cannot be applied to another revision.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -43,6 +54,10 @@ cannot be applied. Language-server requests use the same typed parser/checker.
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

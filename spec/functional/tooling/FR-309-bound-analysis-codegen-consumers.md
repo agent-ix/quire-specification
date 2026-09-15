@@ -3,6 +3,8 @@ id: FR-309
 title: "Bind non-authoritative analysis and codegen consumers"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-010
+    type: implements
   - target: ix://agent-ix/quire-specification/FR-195
     type: references
   - target: ix://agent-ix/quire-specification/AD-004
@@ -33,6 +35,16 @@ Consumers cannot admit source, redefine semantics or turn heuristics into proof.
 Each finding states its method and confidence/claim kind. Each generated artifact
 accounts for every requested source obligation and preserves or reports loss.
 
+## Consumer authority contract
+
+Every consumer request names semantic subject, requested obligation identities,
+method/profile, limits and output format. The response accounts for each
+obligation as generated, unsupported, requires-bound, invalid or failed and
+records any representation loss. Analysis findings are evidence about a subject,
+not edits to that subject. Generated source includes correspondence back to
+every represented obligation; a consumer that cannot preserve required meaning
+emits no artifact for that obligation.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -43,6 +55,10 @@ accounts for every requested source obligation and preserves or reports loss.
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

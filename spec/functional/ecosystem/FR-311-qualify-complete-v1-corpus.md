@@ -3,6 +3,8 @@ id: FR-311
 title: "Qualify the complete V1 capability corpus"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-011
+    type: implements
   - target: ix://agent-ix/quire-specification/AD-011
     type: references
   - target: ix://agent-ix/quire-specification/FR-020
@@ -35,6 +37,17 @@ primary row and may have multiple vectors. Missing, unsupported, failed or
 unexecuted vectors remain gaps. Only an attributed decision record promotes a
 qualification result to release acceptance.
 
+## Qualification accounting
+
+The qualification ledger has one primary row per inventory capability and
+separate vectors for grammar, semantic kernel, runtime/monitor, analysis,
+backend, tooling and consuming integration where applicable. Each vector binds
+exact source, package, implementation, method, corpus and result versions.
+Allowed states are `planned`, `unexecuted`, `passed`, `failed`, `unsupported`
+and `waived`; waiver requires an attributed scope-limited decision but does not
+count as implementation. Complete-V1 release acceptance requires every required
+vector to be passed and an attributed release decision.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -45,6 +58,10 @@ qualification result to release acceptance.
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

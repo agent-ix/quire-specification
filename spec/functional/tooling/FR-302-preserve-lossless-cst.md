@@ -3,6 +3,8 @@ id: FR-302
 title: "Preserve a lossless concrete syntax tree"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-010
+    type: implements
   - target: ix://agent-ix/quire-specification/FR-134
     type: references
   - target: ix://agent-ix/quire-specification/AD-004
@@ -32,6 +34,15 @@ nodes are explicit, zero/fixed-width source-correspondent edits and never checke
 semantic declarations. Incremental edits create a new source revision and retain
 stable node identity only for unchanged byte-correspondent regions.
 
+## CST identity contract
+
+Each token stores byte range, token kind and exact bytes; trivia and invalid
+bytes are first-class leaf occurrences. Interior nodes store grammar production
+and ordered child identities. A source revision digest plus byte range and
+structural path identifies a node. Incremental reuse is permitted only when the
+node's exact byte slice and ancestor production path are unchanged. Recovery
+edits are a separate proposed-edit stream and never mutate source bytes.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -42,6 +53,10 @@ stable node identity only for unchanged byte-correspondent regions.
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

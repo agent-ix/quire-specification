@@ -3,6 +3,8 @@ id: FR-310
 title: "Link every semantic subject to assurance obligations"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-011
+    type: implements
   - target: ix://agent-ix/quire-specification/AD-011
     type: references
   - target: ix://agent-ix/quire-specification/FR-017
@@ -33,6 +35,17 @@ for another. Links name their relation and scope. One item may address multiple
 obligations but each discharge is explicit. Circular evidence claims cannot
 establish themselves.
 
+## Evidence graph contract
+
+Graph nodes use typed identities for source revision, package, model/binding,
+clause, semantic subject, implementation, method/provider, run, artifact,
+evidence and decision. Edges use the closed relations `derived-from`,
+`evaluates`, `implements`, `generated-by`, `replays`, `supports`, `contradicts`
+and `decides`, each with scope and provenance. A discharge path must begin at
+the exact requirement/claim, reach independently produced evidence and end at
+an attributed decision; cycles without an independent evidence node confer no
+support.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -43,6 +56,10 @@ establish themselves.
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

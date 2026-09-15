@@ -3,6 +3,8 @@ id: FR-301
 title: "Expose the complete native CLI lifecycle"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-010
+    type: implements
   - target: ix://agent-ix/quire-specification/FR-300
     type: references
 ---
@@ -31,6 +33,15 @@ versioned and separate from human diagnostics. Exit statuses distinguish success
 logical violation, invalid/refused input, unsupported capability, incomplete
 execution and tool failure. Version output reports semantic/wire/tool pins.
 
+## Command and exit contract
+
+CLI verbs mirror the lifecycle API and accept an explicit profile plus
+versioned input/output formats. Exit codes are: `0` completed without violation,
+`10` logical violation, `20` invalid/refused input, `21` unsupported, `22`
+incomplete and `30` tool failure. Multi-item machine output retains per-item
+dispositions; the process code is the highest-severity present code under this
+ordering: tool failure, invalid, unsupported, incomplete, violation, success.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -41,6 +52,10 @@ execution and tool failure. Version output reports semantic/wire/tool pins.
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

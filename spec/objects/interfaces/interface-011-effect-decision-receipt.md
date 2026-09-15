@@ -2,6 +2,9 @@
 id: interface-011
 title: "I11 effect decision and receipt"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-329
+    type: references
 ---
 
 # [interface-011] I11 effect decision and receipt
