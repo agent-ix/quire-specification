@@ -2,7 +2,7 @@
 id: Task-006
 title: "Design the complete modular V1 architecture"
 type: Task
-status: not_started
+status: in_progress
 track: C
 priority: P0
 relationships:

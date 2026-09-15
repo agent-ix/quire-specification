@@ -49,3 +49,14 @@ description: "Chronological history of the complete V1 reconciliation campaign."
   trees are not edited. Stable IDs/history, single writers and producer-before-
   consumer merge order are mandatory. Task-005 dependency and conflict
   reconciliation is now in progress; `/specify` remains gated.
+* **2026-09-15** — Task-005 reconciled all 175 atomic rows to exactly one live
+  primary epic: 21 retain completed direct implementation/verification leaves
+  but lack completion children, while 154 require one or more semantic delivery
+  children; every row still requires qualification completion. Live parent
+  tracking was repaired in Research #36-#43/#65-#67, QSpec #1/#9, QSL #1,
+  Protocol #14, Verification #13 and Contract IR #2/#52. QSL #1 was reopened
+  without reopening completed children; #65/#66/#67 are now required delivery
+  epics; QSpec #63 is a native child of #1. No new top-level epic is justified,
+  and detailed children remain Task-009 work after accepted requirements.
+  Task-006 comprehensive architecture design is in progress; `/specify` remains
+  gated.
