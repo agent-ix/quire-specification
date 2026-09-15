@@ -12,6 +12,7 @@ relationships:
   - { target: ix://agent-ix/quire-specification/FR-056, type: references }
   - { target: ix://agent-ix/quire-specification/FR-057, type: references }
   - { target: ix://agent-ix/quire-specification/FR-058, type: references }
+  - { target: ix://agent-ix/quire-specification/FR-236, type: references }
   - { target: ix://agent-ix/quire-specification/FR-059, type: references }
   - { target: ix://agent-ix/quire-specification/FR-060, type: references }
   - { target: ix://agent-ix/quire-specification/FR-061, type: references }
@@ -116,6 +117,7 @@ than claiming the advanced algorithms exist.
 | FR-058 | FR-058-AC-6 | TC-058 | 🚧 Planned |
 | FR-058 | FR-058-AC-7 | TC-058 | 🚧 Planned |
 | FR-058 | FR-058-AC-8, FR-058-AC-9 | TC-058 | 🚧 Planned |
+| FR-058 | FR-058-AC-10 | TC-058 | 🚧 Planned |
 | FR-059 | FR-059-AC-1 | TC-059 | 🚧 Planned |
 | FR-059 | FR-059-AC-2 | TC-059 | 🚧 Planned |
 | FR-059 | FR-059-AC-3 | TC-059 | 🚧 Planned |
@@ -168,6 +170,8 @@ than claiming the advanced algorithms exist.
 | FR-226 | FR-226-AC-5 | TC-051 | 🚧 Planned |
 | FR-233 | FR-233-AC-1, FR-233-AC-2, FR-233-AC-3, FR-233-AC-4, FR-233-AC-5, FR-233-AC-6 | TC-056 | 🚧 Planned |
 | FR-235 | FR-235-AC-5 | TC-058 | 🚧 Planned |
+| FR-236 | FR-236-AC-1, FR-236-AC-2, FR-236-AC-3, FR-236-AC-5 | TC-058 | 🚧 Planned |
+| FR-236 | FR-236-AC-4 | TC-057, TC-058 | 🚧 Planned |
 | FR-237 | FR-237-AC-4 | TC-057 | 🚧 Planned |
 | FR-237 | FR-237-AC-5 | TC-057 | 🚧 Planned |
 | FR-237 | FR-237-AC-1, FR-237-AC-2, FR-237-AC-3, FR-237-AC-6, FR-237-AC-7 | TC-057 | 🚧 Planned |
@@ -247,7 +251,7 @@ than claiming the advanced algorithms exist.
 | TC-055 | Separate activation from obligation truth | Integration | P1 | FR-055-AC-1, FR-055-AC-2, FR-055-AC-3, FR-055-AC-4 | 🚧 Planned |
 | TC-056 | Register compensation after effect success | Integration | P1 | FR-056-AC-1..AC-5, FR-233-AC-1..AC-6 | 🚧 Planned |
 | TC-057 | Check commit ordering and recovery meaning | Integration | P1 | FR-057-AC-1..AC-8, FR-210-AC-6, FR-237-AC-1..AC-7, FR-238-AC-5..AC-6 | 🚧 Planned |
-| TC-058 | Preserve retries, duplicates and partial recovery | Property | P1 | FR-058-AC-1..AC-9, FR-210-AC-6, FR-235-AC-5, FR-239-AC-1..AC-7 | 🚧 Planned |
+| TC-058 | Preserve retries, duplicates and partial recovery | Property | P1 | FR-058-AC-1..AC-10, FR-210-AC-6, FR-235-AC-5, FR-236-AC-1..AC-5, FR-239-AC-1..AC-7 | 🚧 Planned |
 | TC-059 | Assess finite global conformance | Integration | P1 | FR-059-AC-1, FR-059-AC-2, FR-059-AC-3, FR-059-AC-4, FR-059-AC-5 | 🚧 Planned |
 | TC-060 | Separate conformance and advanced analysis claims | Property | P1 | FR-060-AC-1..AC-6, FR-290-AC-1..AC-3, FR-291-AC-1..AC-3, FR-292-AC-1..AC-3 | 🚧 Planned |
 | TC-061 | Discriminate protocol result dimensions | Property | P1 | FR-061-AC-1..AC-17, FR-240-AC-1..AC-10, FR-242-AC-1..AC-4, FR-243-AC-1..AC-4, FR-281-AC-4, FR-285-AC-1..AC-4, FR-286-AC-1..AC-5, FR-295-AC-1..AC-4, FR-290-AC-1..AC-3, FR-291-AC-1..AC-3, FR-292-AC-1..AC-3 | 🚧 Planned |
