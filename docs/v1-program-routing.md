@@ -1,6 +1,7 @@
 # Complete V1 program routing audit
 
-Status: Task-005 live-graph reconciliation at 2026-09-15.
+Status: Task-005 epic reconciliation plus Task-009 live child-ticket graph at
+2026-09-15.
 
 This audit routes every row in the 176-row atomic inventory through the current
 GitHub program graph. It separates a primary delivery epic from downstream
@@ -12,6 +13,12 @@ The audit read live issue state and bodies rather than trusting the maintained
 research snapshots. Exact current code and specification evidence remains in
 `docs/v1-capability-inventory.md` and
 `docs/v1-existing-spec-coverage.md`.
+
+Task-009 materialized the child work after specification acceptance. The
+[implementation ticket manifest](v1-delivery-ticket-manifest.md) is now the
+authority for the five autonomous agent lanes, live primary implementation
+tickets and qualification owners. In the historical table below, “after
+Task-008” actions are satisfied by that manifest and its live linked issues.
 
 ## Baseline live graph findings before repair
 

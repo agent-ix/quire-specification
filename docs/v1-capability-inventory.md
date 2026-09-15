@@ -33,6 +33,11 @@ The five delivery columns use these fixed values:
 - `M`: evidence is missing and must be created by the delivery campaign.
 - `N/A`: the stage does not apply to this obligation.
 
+The live primary implementation and qualification ticket for every row is in
+the [Task-009 implementation ticket manifest](v1-delivery-ticket-manifest.md).
+That manifest assigns five autonomous Agent-A through Agent-E lanes and is
+audited before Task-010 opens product implementation.
+
 `Spec`, `Impl`, `Ver`, `Int`, and `Qual` mean normative specification,
 production implementation, direct verification, cross-component integration,
 and release/claim qualification respectively. Completion in one column never

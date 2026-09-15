@@ -88,7 +88,7 @@ description: "Chronological history of the complete V1 reconciliation campaign."
   `/spec-review` and remediation cycle is now in progress; implementation has
   not started.
 * **2026-09-15** — Task-008 completed the one composite self `/spec-review`.
-  SR-570–579 record the base, all seven analysis lenses including EARS, domain-
+  SR-571–580 record the base, all seven analysis lenses including EARS, domain-
   object review and architecture evaluation. Review remediation made the full
   composed grammar normative through FR-339, added immutable contracts for all
   I01–I21 payloads, closed skeletal semantic families, repaired story and exact
@@ -98,3 +98,12 @@ description: "Chronological history of the complete V1 reconciliation campaign."
   176/176 unique and criterion coverage is 1,159/1,159. Specification is now
   frozen for Task-009 implementation-program planning; product implementation
   has not started.
+* **2026-09-15** — Tasks 009 and 010 completed the implementation-program and
+  final coverage gates. Research PR #80 merged the corrected maintained plan at
+  `6ddd08870ac4e7ba566a14f2f969fe8af867629b`. The four capability maps agree on
+  176/176 unique rows; the five autonomous lanes contain 54 unique tickets and
+  every one of 56 referenced live issue targets resolves. The final audit also
+  repaired the composite base review and one earlier compensation review ID so
+  all 585 non-plan artifact IDs are unique. Strict validation reports 670/670
+  selected documents grammar-clean with zero findings. Tasks 011–015 are ready
+  after the QSpec #63 planning PR merges; Task-016 remains blocked on all five.

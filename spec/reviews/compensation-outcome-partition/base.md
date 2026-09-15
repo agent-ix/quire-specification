@@ -1,5 +1,5 @@
 ---
-id: SR-558
+id: SR-581
 title: "Base review — FR-236 compensation outcome partition"
 type: SpecReview
 analysis: base

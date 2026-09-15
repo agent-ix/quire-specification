@@ -150,12 +150,31 @@ roadmap. It does not create a competing implementation program.
 - **D2 = Task-010** Prove campaign coverage — exit: inventory-to-spec,
   inventory-to-epic and inventory-to-ticket audits are all 100%.
 
+### Track E: Autonomous implementation lanes after Task-010
+
+- **E-A = Task-011** Agent-A native compiler/runtime/tooling — exit: QSL and
+  WASM owned capabilities are implemented, integrated and qualified.
+- **E-B = Task-012** Agent-B temporal/Protocol — exit: complete temporal and
+  choreography semantics, analyses and workflows are qualified.
+- **E-C = Task-013** Agent-C observation/integration — exit: revisioned
+  observation and the composed integration/runtime path are qualified.
+- **E-D = Task-014** Agent-D verification/analysis — exit: all selected methods
+  and the evidence ledger produce replayable, attributable results.
+- **E-E = Task-015** Agent-E IR/backends — exit: every IR/backend/mapping request
+  is implemented exactly or refused per item without approximation.
+- **Gate = Task-016** Complete-V1 integration — measures all 176 rows under one
+  ecosystem lock; pass: every required vector has evidence and an attributed
+  decision, with zero deferred or unowned rows.
+
 ## Parallel Execution Summary
 
 ```text
 A1 -> A2 -> A3 --------> C1 -> C2 -> C3 -> D1 -> D2
-            \-> B1 ----/
-       \--------> B2 --/
+            \-> B1 ----/                         |-> E-A --\
+       \--------> B2 --/                         |-> E-B ---|
+                                                  |-> E-C ---|-> Gate F
+                                                  |-> E-D ---|
+                                                  \-> E-E --/
 ```
 
 The architecture and normative authoring lane is single-writer. Evidence census
@@ -174,8 +193,14 @@ architecture decision.
 | Task-006 | C | Complete subsystem architecture | TC-040, TC-049, TC-170 | done |
 | Task-007 | C | Normative specification completion | TC-020, TC-030 | done |
 | Task-008 | C | Coherent review and remediation | TC-020, TC-032 | done |
-| Task-009 | D | Existing delivery program | TC-020, TC-032 | in_progress |
-| Task-010 | D | Final coverage and tracking gate | TC-020, TC-032 | not_started |
+| Task-009 | D | Existing delivery program | TC-020, TC-032 | done |
+| Task-010 | D | Final coverage and tracking gate | TC-020, TC-032 | done |
+| Task-011 | E-A | QSL + WASM native core | TC-180, TC-185, TC-195, TC-209, TC-220 | not_started |
+| Task-012 | E-B | TL ecosystem + Protocol | TC-199–208 | not_started |
+| Task-013 | E-C | Observation + quire-integration | TC-199, TC-209, TC-211, TC-224 | not_started |
+| Task-014 | E-D | Verification + analysis + evidence | TC-212–216, TC-230–232 | not_started |
+| Task-015 | E-E | Contract IR/runtime/codegen/mappings | TC-217–219 | not_started |
+| Task-016 | F | Cross-lane integration and release qualification | TC-231 | blocked on Tasks 011–015 |
 
 ## Coordination Rules
 
