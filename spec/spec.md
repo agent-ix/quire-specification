@@ -427,8 +427,9 @@ FS01 native grammar and composed profile architecture; FS02 shared model/source 
 
 FS06 accepts the [output-mapping subsystem](assurance/AD-004-output-mapping-subsystem.md),
 common request/record/package contract and bounded OCL 2.4, SysML 2.0/KerML
-1.0 and FRETish 3.1 profiles. Their executable Rust exporters remain qcir
-#55/#56/#57 and TM-008 remains Planned.
+1.0 and FRETish 3.1 profiles. Qcir #95 / PR #98 implements the shared Rust
+request/record/package foundation at `5ea7730`; target-specific executable
+exporters remain qcir #55/#56/#57 and TM-008 remains Planned.
 
 ### 2.2 Out of Scope
 
