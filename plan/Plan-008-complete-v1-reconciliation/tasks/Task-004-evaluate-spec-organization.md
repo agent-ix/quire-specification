@@ -2,7 +2,7 @@
 id: Task-004
 title: "Evaluate specification information architecture"
 type: Task
-status: in_progress
+status: complete
 track: B
 priority: P0
 relationships:
@@ -25,12 +25,24 @@ larger flat or duplicated corpus.
 
 ## Subtasks
 
-- [ ] Inspect QSpec and every affected owner repository, especially Protocol.
-- [ ] Assess domain grouping, indexes, object ownership, cross-links and matrices.
-- [ ] Identify justified pre-expansion reorganization with preserved IDs/history.
-- [ ] Define single-writer and merge sequencing for structural changes.
+- [x] Inspect QSpec and every affected owner repository, especially Protocol.
+- [x] Assess domain grouping, indexes, object ownership, cross-links and matrices.
+- [x] Identify justified pre-expansion reorganization with preserved IDs/history.
+- [x] Define single-writer and merge sequencing for structural changes.
 
 ## Deliverables
 
 - Per-repository preserve/reorganize decision with evidence.
 - Pre-expansion topology and migration sequence where changes are required.
+
+## Result
+
+`docs/v1-spec-information-architecture.md` records the evidence-backed decision
+for every affected repository. QSpec gains a non-normative subsystem navigation
+layer and approved growth locations without moving its coherent existing
+families. QSL and Protocol require atomic structural migrations before semantic
+expansion; Protocol's current 42-FR corpus has crossed the reconsideration
+threshold in its accepted ADR-001. Small libraries and active TL/FCD/Quoin
+owners retain their existing structures. Stable IDs, historical reviews, one
+primary matrix per requirement, and single-writer migration order are explicit
+gates.

@@ -38,3 +38,14 @@ description: "Chronological history of the complete V1 reconciliation campaign."
   assigned to atomic rows and a required delta/matrix owner. Inventory Spec
   states now agree mechanically with the coverage classification. Task-004
   information-architecture evaluation is in progress; `/specify` remains gated.
+* **2026-09-15** — Task-004 completed the pre-expansion information-architecture
+  decision across all inspected owners. QSpec retains its coherent existing
+  owner families and gains subsystem navigation plus explicit growth and matrix
+  ownership. QSL's 52 flat FR and 141 flat TC files require an atomic family
+  migration. Protocol's 42-FR corpus has crossed the roughly-25 reconsideration
+  trigger in accepted ADR-001 and requires a superseding subsystem migration.
+  Contract IR, Codegen, Runtime, Observation, Analyze, Code-rs and WASM retain
+  their established boundaries; active TL, Filament and pre-Rust-port Quoin
+  trees are not edited. Stable IDs/history, single writers and producer-before-
+  consumer merge order are mandatory. Task-005 dependency and conflict
+  reconciliation is now in progress; `/specify` remains gated.
