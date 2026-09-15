@@ -46,7 +46,7 @@ roadmap. It does not create a competing implementation program.
 
 - QSpec #1, #9 and #63; quire-research #36–#43 and #65–#67.
 - The current 51-row capability crosswalk and functional ledger.
-- Existing QSpec corpus: 2 StR, 8 US, 73 FR, 13 NFR, 11 IT, 91 object
+- Existing QSpec corpus: 2 StR, 8 US, 73 functional FR, 13 NFR, 11 IT, 90 object-layer FR,
   definitions, 76 TC, 7 Test Matrices and 4 ArchitectureDescriptions.
 - Default branches and live tickets across QSpec, QSL, Contract IR, codegen,
   Protocol, Observation, TL, Verification, FCD, Quoin and related Rust owners.
@@ -167,8 +167,8 @@ architecture decision.
 | Task | Track | Owns | Verified by | Status |
 | --- | --- | --- | --- | --- |
 | Task-001 | A | Plan-008 governance | TC-020 | done |
-| Task-002 | A | Atomic inventory | TC-020, TC-032 | in_progress |
-| Task-003 | A | Existing-spec coverage | TC-020, TC-030 | not_started |
+| Task-002 | A | Atomic inventory | TC-020, TC-032 | done |
+| Task-003 | A | Existing-spec coverage | TC-020, TC-030 | in_progress |
 | Task-004 | B | Spec information architecture | TC-030, TC-032 | not_started |
 | Task-005 | B | Epic/ticket reconciliation | TC-020 | not_started |
 | Task-006 | C | Complete subsystem architecture | TC-040, TC-049, TC-170 | not_started |
