@@ -1,0 +1,22 @@
+---
+id: interface-019
+title: "I19 independent conformance corpus and result"
+type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-336
+    type: references
+---
+
+# [interface-019] I19 independent conformance corpus and result
+
+## Contract
+
+```yaml
+name: ConformanceCorpus
+associated_types: [InventoryCapabilityId, CorpusVector, ExpectedDisposition, QualificationResult]
+operations:
+  - { name: execute_corpus, inputs: [corpus, qualification subject, EcosystemLock], output: per-vector and per-capability results, semantics: covers all 176 inventory capabilities with positive boundary and refusal vectors }
+invariants:
+  - every inventory capability has exactly one primary coverage entry
+  - missing or unexecuted vectors remain visible gaps
+```

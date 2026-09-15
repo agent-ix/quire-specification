@@ -147,14 +147,15 @@ predicate" (`runtime_invariant`).
 | FR-272-AC-4 | A cause with an unavailable payload component compares only to absence and is not represented by byte zero, an empty path or a name-search match. | Analysis |
 | FR-272-AC-5 | An upstream refusal retains the originating diagnostic's own identity rather than a flattened string. | Inspection |
 
-## Open gap
+## Canonical cause payload contract
 
-The catalog requires each variant's "required payload" but does not give those
-payload components stable field names, a total order, or a spelling convention
-of their own. The key order above is therefore stated over "payload components
-in their stated order", which is the catalog's prose order and not a declared
-order. No artifact establishes a canonical payload field vocabulary; this
-artifact supplies none.
+Cause payload fields use these exact ordered names when applicable:
+`subject`, `stage`, `definition`, `capability`, `expected`, `actual`, `path`,
+`related`, `limit`, `consumed`, `upstream`. Absent inapplicable fields are
+omitted, never encoded as empty placeholders. Collections inside a field use
+their owning semantic order or canonical key order. Unknown required fields
+refuse; unknown optional fields are permitted only by a later selected wire
+revision.
 
 ## Dependencies
 
@@ -169,7 +170,5 @@ artifact supplies none.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Accepted complete-V1 typed-cause contract. Implementation and qualification
+remain tracked separately.

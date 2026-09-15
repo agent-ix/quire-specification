@@ -86,12 +86,9 @@ value was present.
   steps of equal kind by their exact name. The subject-kind and step-kind orders
   are fixed by FR-047 and are not asserted here.
 
-  This order is **total over every set of paths sharing one observation
-  identity**, which is the set a single diagnostic reports. It is **not total
-  across observations**, because no requirement fixes a key for a selected
-  observation and FR-265 therefore supplies no key order; see the open gap. No
-  order is supplied here to close that. It carries no causal, severity or
-  precedence meaning.
+  Selected observations compare by authority-qualified observation identity and
+  revision. The resulting path order is total across observations and carries no
+  causal, severity or precedence meaning.
 - **Causal order** — none. FR-052 constructs the causal graph "without deriving
   causal edges from source order", so a path that precedes another in key order
   is not its causal predecessor, and step position expresses containment rather
@@ -107,21 +104,22 @@ value was present.
   declared object identity is carried beside one, that digest's domain is
   selected under [FR-201](FR-201-canonical-identity-domain.md).
 
-## Serialization is out of scope
+## Canonical serialization
 
-FR-047 fixes the structure, equality and order of a runtime value path and fixes
-no serialized spelling, discriminator tag or separator for it. This artifact
-establishes none either. The existing shared interchange contract remains the
-only authority on the wire, and FR-047 creates no competing result envelope.
+The wire form is a tagged object with `kind: runtime_value`, a typed `root`, and
+an ordered `steps` array. Root subject tags are `object` and `invocation`.
+Step tags are `field`, `option_value`, `member`, `index` and `map_key`; named
+steps carry exact declaration spelling, indices are unsigned decimal integers,
+and map keys carry their canonical typed value. Unknown tags refuse.
 
 ## Location kinds are distinct
 
 A runtime value path, an authored source span
 ([FR-203](FR-203-source-region.md)) and a JSON field/index path remain different
 location kinds and are not compared to one another
-([FR-274](FR-274-diagnostic-location-kind.md)). This artifact types the runtime
-kind only. The JSON field/index path remains untyped, because no accepted
-requirement states its structure.
+([FR-274](FR-274-diagnostic-location-kind.md)). FR-274 types all three kinds and
+gives the JSON path a document identity plus ordered field/index steps. This
+artifact defines only the runtime kind.
 
 ## Acceptance Criteria
 
@@ -132,28 +130,17 @@ requirement states its structure.
 | FR-207-AC-3 | Two paths with equal steps under different subjects, or under different selected observations, compare unequal. | Analysis |
 | FR-207-AC-4 | A path with an empty step sequence denotes its subject and does not compare equal to an absent path. | Analysis |
 | FR-207-AC-5 | A proper prefix orders before every path that extends it, and the order is used for collection comparison only. | Analysis |
-| FR-207-AC-6 | Paths sharing one observation identity are totally ordered; this artifact supplies no order across observations. | Inspection |
-| FR-207-AC-7 | This artifact declares no serialized spelling, discriminator tag or separator for a runtime value path. | Inspection |
+| FR-207-AC-6 | Runtime value paths are totally ordered across observations by the authority-qualified observation identity and revision before subject and traversal steps. | Inspection |
+| FR-207-AC-7 | The canonical wire form uses `runtime_value`, typed root-subject tags and typed traversal-step tags; unknown tags refuse. | Inspection |
 
-## Open gap
+## Resolved path boundary
 
-The JSON field/index path kind remains unresolved. No accepted requirement
-states its root, its step kinds, its equality or an order over it, and this
-artifact supplies none; only the proposed catalog names the kind, as the
-retained payload of the `invalid_package` and `invalid_runtime_input` families.
-FR-274 continues to record that gap.
-
-No requirement fixes a wire spelling for the three step kinds or for the two
-subject kinds, and FR-047 explicitly leaves serialization open. An
-implementation choosing tags therefore chooses them outside this specification.
-
-**The order is total only within one observation.** FR-265 records that "the
-prose does not fix the key components" of a selected snapshot and that no key
-order over snapshots is stated. Root comparison therefore resolves fully for
-paths sharing an observation and does not resolve between observations. Closing
-that needs a requirement fixing the selected observation's key, which is
-workstream F's, not this artifact's. Ordering observations by a capture
-timestamp would supply an order the prose does not state, which FR-113 forbids.
+JSON paths use `kind: json`, a document identity and ordered `field`/`index`
+steps. Runtime and JSON paths therefore share no root or discriminator. Selected
+observations compare by their authority-qualified observation identity and
+revision, so runtime paths have a total lexicographic order across observations
+without using capture timestamps. The canonical tags above close the wire
+spelling; display renderings remain non-normative.
 
 ## Dependencies
 
@@ -165,7 +152,7 @@ timestamp would supply an order the prose does not state, which FR-113 forbids.
   supplies the other and establishes that an absent input remains unavailable
   "without fabricating a delta, violation or Boolean" (FR-046-AC-4).
 - [FR-265](../observation/FR-265-selected-snapshot.md) types the selected
-  observation component of the root and records that its key is unfixed.
+  observation component of the root.
 - [FR-042](../../functional/foundation/FR-042-select-pre-state-reads.md)
   establishes that presence facts never cross observation identity.
 - [FR-009](../../functional/foundation/FR-009-preserve-object-identity.md)
@@ -183,7 +170,5 @@ timestamp would supply an order the prose does not state, which FR-113 forbids.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Accepted complete-V1 runtime-path contract. Implementation and qualification
+remain tracked separately.

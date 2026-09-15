@@ -1,10 +1,28 @@
 # Functional capability ledger
 
-Status: binding coordination ledger, reconciled 2026-09-15. This is the functional inventory for the active Quire/Filament workstreams. It records **where each capability is authored, who owns its next decision or delivery, and whether the capability is defined, implemented, or still open**. Each completion is tied to merged evidence; a specification or partial implementation is not qualification. The coordinating ticket is [quire-specification#9](https://github.com/agent-ix/quire-specification/issues/9); the 2026-09-15 fact reconciliation is [quire-specification#60](https://github.com/agent-ix/quire-specification/issues/60).
+Status: binding coordination roll-up, reconciled 2026-09-15. The sole scope
+authority is the [atomic V1 capability inventory](v1-capability-inventory.md).
+This ledger records **where each broad workstream is authored, who owns its next
+decision or delivery, and whether merged evidence exists**. A CAP row is not a
+scope boundary and cannot combine away an atomic inventory row. Each completion
+is tied to merged evidence; a specification or partial implementation is not
+qualification. The coordinating ticket is
+[quire-specification#9](https://github.com/agent-ix/quire-specification/issues/9);
+the 2026-09-15 fact reconciliation is
+[quire-specification#60](https://github.com/agent-ix/quire-specification/issues/60),
+and the complete V1 repair is
+[quire-specification#63](https://github.com/agent-ix/quire-specification/issues/63).
 
 ## Reading the ledger
 
-`Defined` means the intended behavior is described sufficiently to assign a delivery. `Implemented` names a merged implementation and does not imply broader qualification. `Partial` names merged behavior with an open owning ticket for the remainder. `Ambiguous` means a needed behavior is visible but its owning source or semantics have not been selected; it must not be implemented by implication. `Deferred` is an intentional exclusion from the first native profile. `Missing` means no active design provides the capability.
+`Defined` means the intended behavior is described sufficiently to assign a
+delivery. `Implemented` names a merged implementation and does not imply broader
+qualification. `Partial` names merged behavior with an open owning ticket for
+the remainder. `Ambiguous` means a needed behavior is visible but its owning
+source or semantics have not been selected; it must not be implemented by
+implication. `Missing` means no active design provides the capability and
+therefore identifies required work. There is no deferral status in the V1
+inventory.
 
 An editable clause has exactly one source language: native Quire. OCL, SysML v2 and FRETish are output-only mappings. The shared domain model is not a second clause language: it supplies declarations consumed by the native language.
 
@@ -29,7 +47,10 @@ An editable clause has exactly one source language: native Quire. OCL, SysML v2 
 1. **No inferred language feature.** A downstream IR or extraction need does not create native Quire syntax. CAP-005 is a shared-model/extraction decision, unless its owner explicitly elects native surface syntax as the authoring authority.
 2. **Presence and cardinality are independent.** Required presence answers whether a field member must be authored; multiplicity answers how many values are permitted when it is present. For example, a required `0..*` field may be present and empty, while an optional `1..*` field may be absent but must have at least one value when present. Explicit null is a distinct channel if the selected source contract supports it.
 3. **Loss is not a conversion.** If the selected source representation cannot carry a distinction, the implementation must preserve it or report a named refusal/loss. It may not derive independent authored presence from a v1.1 field shape.
-4. **One approved crosswalk, not a second taxonomy.** The v1 capability/roadmap crosswalk is the coordination index for affected delivery tickets. A ticket records its source authority, consumer(s), supported/refused outcome and owning workstream where that crosswalk applies; this ledger does not impose a separate mandatory CAP-ID citation rule.
+4. **One atomic scope authority.** The atomic V1 inventory is the scope source;
+   this CAP ledger and the historical 51-group proposal are derived navigation
+   views. Every implementation ticket records its atomic capability IDs, source
+   authority, consumers, exact outcomes and owning workstream.
 
 ## Reconciled default-branch snapshot
 

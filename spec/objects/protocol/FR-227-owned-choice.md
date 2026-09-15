@@ -86,18 +86,16 @@ distinguishing fact without reporting global conformance success"
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
 
-## Open gap
+## Visibility evidence contract
 
-FR-053 requires "evidence that the owner can distinguish every selected branch
-from facts available at its decision point", and the
-[choreography surface](../../../proposals/quire-v1/choreography-surface.md)
-states that "listing an expression is a visibility obligation, not proof of
-visibility". No requirement states what discharges the obligation — which
-artifact constitutes the evidence, or which relation between a causal message
-and a decision point makes a fact available. This artifact records the
-obligation and supplies no discharge rule.
+Visibility is discharged by a checked evidence record linking the owner role,
+choice occurrence, distinguishing typed fact, producing declaration/message and
+an authored causal path ending before the decision point. A locally owned state
+fact may omit a message only when the model contract grants that role read
+authority at the decision anchor. Equal names, payloads, timestamps or later
+messages do not discharge visibility.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Accepted complete-V1 owned-choice contract. Implementation and qualification
+remain tracked separately.

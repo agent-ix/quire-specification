@@ -71,7 +71,7 @@ executable cases.
 
 ## Functional Requirement Coverage
 
-| Functional Req | Acceptance Criteria | Test Cases | Status |
+| Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
 | --- | --- | --- | --- |
 | FR-020 | FR-020-AC-7 | TC-020 | 🚧 Planned |
 | FR-020 | FR-020-AC-8 | TC-020 | 🚧 Planned |

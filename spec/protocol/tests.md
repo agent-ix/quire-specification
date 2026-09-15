@@ -59,7 +59,7 @@ than claiming the advanced algorithms exist.
 
 ## Functional Requirement Coverage
 
-| Functional Req | Acceptance Criteria | Test Cases | Status |
+| Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
 | --- | --- | --- | --- |
 | FR-050 | FR-050-AC-1 | TC-050 | 🚧 Planned |
 | FR-050 | FR-050-AC-2 | TC-050 | 🚧 Planned |

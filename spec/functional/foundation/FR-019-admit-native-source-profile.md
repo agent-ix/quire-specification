@@ -23,7 +23,7 @@ explicit typed model declarations, and observation/operation bindings.
 
 ## Outputs
 
-A checked Boolean clause under the selected definition or a located typed
+A checked semantic declaration under the selected definition or a located typed
 refusal retaining the original source and rejected construct/declaration.
 
 ## Behavior
@@ -32,17 +32,23 @@ The carried-forward admission baseline is preserved in the superseded
 [native-source amendment](../../../proposals/native-source-1-draft/README.md)
 and refined by the composed state definitions selected in
 [AD-003](../../assurance/AD-003-native-quire-language-charter.md).
-The frontend shall refuse every deferred source construct even inside an
-unreachable branch. A backend's wider capability cannot admit a source construct.
-The frontend shall require declared finite numeric and collection bounds rather
-than derive them from storage width or sample values. Rational admission requires
-exact normalization before range checks; refusal alone does not complete it.
+The frontend shall refuse every construct prohibited by the exact selected
+profile even inside an unreachable branch. A backend's wider capability cannot
+admit a source construct. The complete-V1 profile bundle shall admit every
+positive construct in the atomic inventory through its owning facet; historical
+bounded profiles retain their narrower admission. Finite consumers shall require
+declared numeric and collection bounds rather than derive them from storage width
+or sample values. Exact numeric admission shall apply the selected normalization
+or IEEE rounding contract before range checks.
 
 The frontend shall preserve distinct authored absence/null channels or refuse
 their declaration. Clause options do not define independently authored model
 member presence or multiplicity; the shared-model owner selects that contract.
-The frontend shall reject recursive containment and unsupported reference
-navigation without erasing the original parent relationship or inventing bounds.
+The frontend shall admit finite recursive values, structural record operations
+and closed model/reference navigation under the complete-V1 facets. Where an
+older profile prohibits them or required closure/bounds are unavailable, the
+frontend shall refuse without erasing the original relationship or inventing
+bounds.
 
 The frontend shall reject duplicate clause authorities, stale source bindings
 and mismatched evaluation anchors before lowering. Invalid or unsupported input
@@ -59,11 +65,12 @@ its owning semantic acceptance and corresponding compiler support.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-019-AC-1 | Signed-64 finite integer bounds and reject overflow are enforced; exact bounded rationals normalize before bounds. Float, implicit widening/conversion and integer division/remainder refuse, including in unreachable branches. | Test |
+| FR-019-AC-1 | Historical bounded profiles preserve their signed-64, exact-rational and prohibited-construct rules; the complete-V1 facets admit exact decimal, explicit IEEE float, mathematical integer and profile-selected division/remainder without changing historical bytes. | Test |
 | FR-019-AC-2 | Distinct authored absence, null, required presence and multiplicity are preserved through a selected model contract or refused; an absent member cannot silently become an optional value, empty collection or explicit null. | Test |
-| FR-019-AC-3 | Acyclic typed record paths are admitted; recursive containment, object/record equality, opaque-scalar dereference and deferred reference/closure operations refuse without rewriting the declaration. | Test |
-| FR-019-AC-4 | Ordered duplicate-preserving sequences admit declared maxima at most 10000; maxima 10001, undeclared bounds, unsupported kinds and implicit conversions refuse, including nested or unused declarations. | Test |
-| FR-019-AC-5 | A statically defined Boolean root is required; nullable/partial roots, truthiness coercion, user calls, recursion, reflection, I/O and ambient-store operations refuse with their source location. | Test |
+| FR-019-AC-3 | The complete model facet admits typed structural equality, finite recursive values and explicit closed-environment reference operations; unavailable closure or a profile-prohibited use refuses without rewriting the declaration. | Test |
+| FR-019-AC-4 | The complete collection facet admits bounded sequences, sets, bags and ordered sets plus explicit conversions; absent consumer bounds, implicit lossy conversion or a profile-prohibited kind refuses, including in unused declarations. | Test |
+| FR-019-AC-5 | Complete-V1 declarations admit total pure typed functions and proved recursion; truthiness coercion, reflection, I/O, mutation and ambient-store operations refuse with their source location. | Test |
+| FR-019-AC-7 | Selecting every complete-V1 facet admits the full 176-capability language inventory subject only to its normative premises; an implementation gap is reported as unimplemented capability, not as product-scope deferral. | Test (TC-180) |
 | FR-019-AC-6 | Exactly one byte/revision/span-bound clause authority and the specified invariant/pre/post anchor are required; duplicate authority, stale bytes, bare context, foreign operation, forbidden pre access and cross-observation guard reuse refuse before lowering. | Test |
 
 ## Dependencies
