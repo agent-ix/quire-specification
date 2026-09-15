@@ -2,7 +2,7 @@
 id: Task-003
 title: "Audit existing specification coverage"
 type: Task
-status: in_progress
+status: done
 track: A
 priority: P0
 relationships:
@@ -26,10 +26,10 @@ inventory row before proposing any new or amended specification artifact.
 
 ## Subtasks
 
-- [ ] Map every capability to current architecture, requirements, objects and tests.
-- [ ] Identify complete, trace-only, bounded, compound, conflicting and missing coverage.
-- [ ] Record exact amendment or reuse actions and affected matrices.
-- [ ] Reject unsupported coverage claims based only on titles or indexes.
+- [x] Map every capability to current architecture, requirements, objects and tests.
+- [x] Identify complete, trace-only, bounded, compound, conflicting and missing coverage.
+- [x] Record exact amendment or reuse actions and affected matrices.
+- [x] Reject unsupported coverage claims based only on titles or indexes.
 
 ## Deliverables
 

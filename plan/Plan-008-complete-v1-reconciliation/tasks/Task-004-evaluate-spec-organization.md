@@ -2,7 +2,7 @@
 id: Task-004
 title: "Evaluate specification information architecture"
 type: Task
-status: not_started
+status: in_progress
 track: B
 priority: P0
 relationships:

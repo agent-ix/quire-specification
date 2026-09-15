@@ -28,3 +28,13 @@ description: "Chronological history of the complete V1 reconciliation campaign."
   dispositions. Quire validation of the changed typed artifacts passed with
   only inherited duplicate-module warnings. Task-003 existing-spec mapping is
   now in progress; `/specify` remains gated.
+* **2026-09-15** — Task-003 completed a one-to-one coverage audit for all 175
+  atomic rows against the current artifact bodies and acceptance criteria: 95
+  exact reuse candidates, 39 amendments, one split, 18 conflicts requiring
+  resolution and 22 missing specification areas. The audit distinguishes
+  current object state from revision-bound review history: earlier
+  delivery/attempt/effect identity findings are repaired, while 13 of the 90
+  current object artifacts still declare explicit open gaps. Every gap is
+  assigned to atomic rows and a required delta/matrix owner. Inventory Spec
+  states now agree mechanically with the coverage classification. Task-004
+  information-architecture evaluation is in progress; `/specify` remains gated.
