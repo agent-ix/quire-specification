@@ -16,9 +16,12 @@ relationships:
 ## System Boundary
 
 FS06 refines AD-001's output branch; it does not replace PR #15's architecture.
-The subsystem produces optional derived OCL, SysML/KerML or FRETish output and a
-complete source-bound loss report. It never admits target text as source or uses
-a foreign runtime to decide native truth.
+S9 produces optional derived OCL, SysML/KerML or FRETish output and a complete
+source-bound loss report. It also owns the authoring/tool boundary for the
+lossless CST, formatter, language server, CLI, WASM surface, metadata/views,
+Rust plugin manifests, AOT/JIT providers and reusable semantic libraries. It
+never admits generated target text as source or uses a foreign runtime to decide
+native truth.
 
 ## Views
 
@@ -33,6 +36,8 @@ target-specific correspondence and downstream structural observation.
 | Target profile mapper | one exact bounded correspondence and deterministic target bytes | shared loss meaning, native semantics or another target |
 | Package assembler | immutable bytes/manifest/record binding and raw/JCS digests | target parser verdict or evidence sufficiency |
 | Optional structural observer | exact package/tool reference and parse/typecheck observation | mapping classification, package mutation or native verdict |
+| Authoring tools | lossless source edits, stable formatting, incremental diagnostics and typed lifecycle APIs | semantic reinterpretation or fabricated spans |
+| Tool/provider registry | exact Rust manifest validation, capability negotiation, isolation and provenance | ambient discovery, semantic admission or effect authorization |
 
 QSpec owns the standard contracts. Qcir #55, #56 and #57 own the separate Rust
 target mappers behind the common boundary. No target implementation is required
@@ -57,6 +62,12 @@ whole-request check or exhausted reservation exposes no partial package.
 - Observation adequacy and protocol adequacy retain their separate FR-061
   vocabularies; the mapping layer exposes no bare adequacy field.
 - New first-party executable paths are Rust 1.98.1 and `publish = false`.
+- Plugins are either compile-time Rust trait implementations or isolated Rust
+  executables using a versioned wire contract; V1 defines no unstable dynamic
+  library ABI.
+- AOT/JIT execution is an exact backend provider with cache keys over semantic
+  package, target, provider/toolchain and options; cache hits preserve native
+  runtime parity and invalidation.
 
 ## Decisions
 
@@ -66,6 +77,8 @@ whole-request check or exhausted reservation exposes no partial package.
 | One target per request/package | Multi-target fallback inside one result | Cross-target substitution is impossible and each package has one exact profile. |
 | Structural observer after assembly | Foreign parser/tool in the semantic path | Pure Rust generation is reproducible without a foreign runtime. |
 | Complete per-obligation records | Best-effort text plus warnings | Unsupported meaning remains machine-readable and cannot disappear. |
+| Lossless CST is distinct from checked AST | Reconstruct formatting from semantic nodes | Trivia, invalid-source recovery and exact source edits remain available without changing meaning. |
+| Versioned Rust providers, no ambient extension | Load arbitrary callbacks or dynamic-library ABI | Capabilities, effects, rights and provenance are explicit and testable. |
 
 ## Failure containment
 

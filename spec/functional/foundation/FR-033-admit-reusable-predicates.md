@@ -20,7 +20,15 @@ Typed predicate identities and call references with source locations, or a locat
 
 ## Behavior
 
-Calls resolve by exact declaration identity and parameter order/type, including declared units and optional-value obligations. There is no implicit numeric, collection or truthiness coercion. Pure local bindings and calls do not read ambient objects, clocks, I/O or mutable monitor status. Reject direct and indirect recursion, unresolved/ambiguous calls and unguarded partial operations. Acyclic admission alone is not a runtime resource bound; selected execution budgets still apply. The historical no-user-call profile is unchanged.
+Calls resolve by exact declaration identity and parameter order/type, including
+declared units and optional-value obligations. There is no implicit numeric,
+collection or truthiness coercion. Pure local bindings and calls do not read
+ambient objects, clocks, I/O or mutable monitor status. The predicate-only facet
+rejects recursion. The complete function facet admits recursion only when its
+well-founded termination obligation is discharged; unresolved/ambiguous calls
+and unguarded partial operations refuse. Static termination is not a runtime
+resource bound, so selected execution budgets still apply. The historical
+no-user-call profile is unchanged.
 
 ## Acceptance Criteria
 
@@ -28,7 +36,7 @@ Calls resolve by exact declaration identity and parameter order/type, including 
 | --- | --- | --- |
 | FR-033-AC-1 | An acyclic predicate called from two families resolves to the same checked declaration and preserves each call site. | Test (TC-033) |
 | FR-033-AC-2 | Wrong arity, wrong type/unit, unresolved or ambiguous names and a non-Boolean root refuse before evaluation. | Test (TC-033) |
-| FR-033-AC-3 | Direct recursion and a two-predicate cycle refuse with the involved declaration/call locations. | Test (TC-033) |
+| FR-033-AC-3 | Predicate-only and historical profiles refuse direct or mutual recursion; the complete function facet admits a recursive call graph only with a checked well-founded decrease and reports every involved declaration/call on failure. | Test (TC-181) |
 | FR-033-AC-4 | An unguarded optional or partial operation refuses definedness; a supported guarded total body is admitted without adding ambient access. | Test (TC-033) |
 | FR-033-AC-5 | The historical first-profile no-call rule continues to refuse calls; reuse requires an explicitly selected extension. | Test (TC-033) |
 

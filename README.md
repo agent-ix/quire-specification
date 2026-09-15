@@ -8,11 +8,14 @@ compiler, strict shared reader or released standard is implemented here.
 
 The open language standard: normative semantics, profiles, versioned interchange and required conformance material.
 
-Native Quire v1 includes **state, temporal and protocol/choreography** feature
-families under one editable language. The existing finite-state work is a
-development profile. The [v1 redesign](proposals/quire-v1/README.md) defines the
-broader product scope and its capability decisions; its specification and review
-precede resumed profile-specific delivery.
+Native Quire V1 includes the complete
+[atomic capability inventory](docs/v1-capability-inventory.md) under one
+editable language and its typed runtime, analysis, proof, mapping and tooling
+consumers. The existing finite-state work is a development profile. The
+[historical V1 design](proposals/quire-v1/README.md) remains evidence for the
+initial state, temporal and protocol/choreography expansion; Plan-008 supersedes
+its deferred scope decisions. Complete architecture, specification and review
+precede resumed delivery.
 
 ## First work
 
@@ -49,10 +52,11 @@ The [requirements index](spec/spec.md) covers FS01/FS02/FS03/FS05 through discre
 Quoin catalog artifacts. [Authoring status](docs/spec-workflow.md) records the
 exact skills, validation results and outstanding review work.
 
-[Functional capability ledger](docs/functional-capability-ledger.md) is the
-binding cross-stream inventory of source authorities, intentionally deferred
-features and routing decisions. It is coordination material, not a normative
-requirement or an implementation-completion claim.
+[Atomic V1 capability inventory](docs/v1-capability-inventory.md) is the binding
+scope authority. The [functional capability ledger](docs/functional-capability-ledger.md)
+is a broad cross-stream roll-up of source authorities, evidence and routing
+decisions; it cannot defer an atomic capability and is not an
+implementation-completion claim.
 
 [Native state-core proposal](proposals/state-core/README.md) contains draft
 grammar, identity/snapshot boundaries and serialized fixture expectations.

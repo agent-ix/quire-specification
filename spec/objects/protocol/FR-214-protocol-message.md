@@ -71,20 +71,20 @@ When a protocol binder binds a communication, the binder SHALL preserve the mess
   references to exact typed declarations.
 - [FR-054](../../functional/protocol/FR-054-bind-channel-premises.md) binds message types
   into a channel contract.
-- [FR-210](FR-210-protocol-subject-vocabulary.md) records the subject
-  vocabulary and its unreconciled lists.
+- [FR-210](FR-210-protocol-subject-vocabulary.md) records the complete subject
+  vocabulary and contextual subset rule.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 - [FR-287](FR-287-authority-qualified-runtime-subject-reference.md) defines the
   concrete message key and non-causal comparison order.
 
-## Remaining vocabulary gap
+## Resolved vocabulary membership
 
-FR-051 lists `message` as a distinct subject; FR-049-AC-2 and FR-111 do not list
-it. FR-210 retains that membership disagreement. It does not reopen the message
-key fixed here.
+FR-051 lists `message` as a distinct subject. FR-049-AC-2 and FR-111 name only
+the subsets they consume; their shorter lists are not exhaustive vocabularies
+and do not remove `message` from FR-210.
 
 ## Status
 
-Draft. Specification issue #28 fixed the concrete key and canonical comparison
-order. Executable cross-repository evidence remains planned.
+Accepted complete-V1 message contract. Implementation and qualification remain
+tracked separately.

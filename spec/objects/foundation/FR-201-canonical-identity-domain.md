@@ -29,6 +29,11 @@ equality.
 | `package-fingerprint` | Package fingerprint. A lock-file digest cannot substitute for it (FR-015-AC-3). |
 | `lock-file-digest` | Lock-file digest. Cannot substitute for `package-fingerprint` (FR-015-AC-3). |
 | `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout (FR-018). |
+| `filament.export/v1` | Exact canonical Filament producer export domain; distinct from the producer's own `filament-fingerprint` identifier. |
+| `quire.package.semantic/v1` | Checked semantic-package graph domain; distinct from package archive and lock-file bytes. |
+| `quire.diagnostic-catalog.bytes/v1` | Exact diagnostic-catalog source bytes, including layout. |
+| `quire.generated-artifact.bytes/v1` | Exact generated artifact bytes under its selected artifact kind/profile. |
+| `quire.tool-manifest.jcs/v1` | RFC 8785 canonical tool/plugin/provider manifest bytes. |
 | `typed-expression-identity` | Source-free typed-expression identity. Requires a typed derivation; an unlinked syntax tree cannot claim it, and current native syntax has no qualified canonical semantic identity (FR-015, FR-015-AC-4). |
 | `quire.verification.jcs` | Verification JCS domain, `version: rfc8785-v1`, `algorithm: sha256`. Emitted as `sha256-jcs:` followed by 64 lowercase hexadecimal digits over RFC 8785 canonical UTF-8 bytes (FR-018). |
 
@@ -89,16 +94,15 @@ preimage belongs to the requirement that selects it.
   the verification JCS selection, output syntax and prefix rule.
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity discipline.
 
-## Open gap
+## Resolved domain boundary
 
-FR-015 names "Filament fingerprints" in its behavior and "the package
-fingerprint" in FR-015-AC-3. No requirement states whether these are the same
-domain or two domains. Both labels are retained here as separate members
-pending an owner ruling; this artifact does not merge them.
+`filament-fingerprint` is a producer-owned identifier over its historical
+preimage. `package-fingerprint` is a Quire package identifier. They are separate
+domains and never compare equal, even when digest bytes match. A selected exact
+Filament export additionally uses `filament.export/v1`; no one of these three
+may substitute for another.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Accepted complete-V1 identity-domain contract. Implementation and qualification
+remain tracked separately.
