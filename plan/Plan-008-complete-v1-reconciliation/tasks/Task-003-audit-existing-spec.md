@@ -2,7 +2,7 @@
 id: Task-003
 title: "Audit existing specification coverage"
 type: Task
-status: not_started
+status: in_progress
 track: A
 priority: P0
 relationships:

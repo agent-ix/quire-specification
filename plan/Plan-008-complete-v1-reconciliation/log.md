@@ -16,3 +16,15 @@ description: "Chronological history of the complete V1 reconciliation campaign."
   other affected specification repository.
 * **2026-09-15** — Plan-008 validated successfully with Quire. Task-001 completed
   and the atomic master-inventory census began; `/specify` remains gated.
+* **2026-09-15** — Task-002 completed with one 175-row atomic inventory: 164
+  required product obligations and 11 delivered-integrity obligations. All 51
+  historical groups, all 15 QSL `0c2f13e` unsupported spellings, prose-only
+  exclusions, 284 normative/test artifacts, 131 prior review artifacts and 16
+  inspected Rust repository surfaces are accounted for. The legacy 51-group
+  matrix and 13-CAP ledger now
+  identify the atomic inventory as the sole scope authority; inherited Later
+  and blanket Refuse decisions no longer control V1 scope. Mechanical checks
+  found 175 unique IDs, valid stage values, named owners and no forbidden row
+  dispositions. Quire validation of the changed typed artifacts passed with
+  only inherited duplicate-module warnings. Task-003 existing-spec mapping is
+  now in progress; `/specify` remains gated.

@@ -2,7 +2,7 @@
 id: Task-002
 title: "Build the atomic master capability inventory"
 type: Task
-status: in_progress
+status: done
 track: A
 priority: P0
 relationships:
@@ -26,12 +26,12 @@ inventory spanning language, runtimes, analyzers, mappings and qualification.
 
 ## Subtasks
 
-- [ ] Atomize all 51 current capability groups.
-- [ ] Add every reserved construct and prose-only exclusion.
-- [ ] Census existing specification artifacts, public code surfaces and tickets.
-- [ ] Record independent specification, implementation, verification,
+- [x] Atomize all 51 current capability groups.
+- [x] Add every reserved construct and prose-only exclusion.
+- [x] Census existing specification artifacts, public code surfaces and tickets.
+- [x] Record independent specification, implementation, verification,
   integration and qualification states.
-- [ ] Eliminate forbidden delivery dispositions and unowned work.
+- [x] Eliminate forbidden delivery dispositions and unowned work.
 
 ## Deliverables
 

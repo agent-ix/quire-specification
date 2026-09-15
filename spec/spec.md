@@ -423,7 +423,7 @@ This root indexes the native Quire language requirements. Quire v1 includes stat
 
 ### 2.1 In Scope
 
-FS01 native grammar and composed profile architecture; FS02 shared model/source and artifact identity; FS03 state semantics; FS04 temporal, clock and observation contracts; the native choreography/protocol and compensation profile; FS05 strict interchange and migration; FS06 output mapping and loss contracts. The [capability matrix](../proposals/quire-v1/capabilities.md) selects bounded v1 subsets and names later capabilities and refusals.
+FS01 native grammar and composed profile architecture; FS02 shared model/source and artifact identity; FS03 state semantics; FS04 temporal, clock and observation contracts; the native choreography/protocol and compensation profile; FS05 strict interchange and migration; FS06 output mapping and loss contracts. The [atomic V1 inventory](../docs/v1-capability-inventory.md) is the scope authority. The older [51-group matrix](../proposals/quire-v1/capabilities.md) is a historical crosswalk and cannot defer or combine away atomic work.
 
 FS06 accepts the [output-mapping subsystem](assurance/AD-004-output-mapping-subsystem.md),
 common request/record/package contract and bounded OCL 2.4, SysML 2.0/KerML
@@ -433,7 +433,15 @@ exporters remain qcir #55/#56/#57 and TM-008 remains Planned.
 
 ### 2.2 Out of Scope
 
-B's portable method/plan/result implementation, C/D's producer implementations, a duplicate model authority or executable binder, a business workflow execution engine and automatic public publication are outside this repository's implementation ownership. Advanced local projection, realizability and general relational analyses are named later capabilities; their absence does not exclude native choreography from v1. External OCL, FRETish and SysML/KerML forms are output mappings, not editable source frontends.
+B's portable method/plan/result implementation, C/D's producer implementations,
+workflow adapters and other consuming engines are cross-repository delivery
+owners rather than production code owned by this specification repository.
+Local projection, realizability, relational analysis, model testing and workflow
+driving are complete V1 capabilities with their own typed subsystem boundaries.
+A duplicate model authority, foreign editable source frontend and automatic
+public publication remain integrity or operational boundaries. External OCL,
+FRETish and SysML/KerML forms are output mappings, not editable source
+frontends.
 
 ## 3. System Overview
 
