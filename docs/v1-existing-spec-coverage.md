@@ -138,6 +138,7 @@ an unrelated family.
 | V1-TEMP-020 | FR-034/048/095 | Reuse | Extend native predicate evaluation to richer value/function semantics. | T, CF |
 | V1-TEMP-021 | AD-001; FR-091/092/060 | Reuse | Keep finite-evidence refusal while separately specifying sound symbolic/unbounded claims. | T, New |
 | V1-TEMP-022 | FR-090/095; FR-251/252/259/289; IT-041 | Reuse | Extend mismatch cases to uncertainty and partial valuations. | T |
+| V1-TEMP-023 | AD-001/AD-003 and FR-020 currently exclude general infinite-trace analysis; no positive unbounded-property semantics exist | New | Specify an explicit infinite-trace profile, unbounded temporal syntax/meaning, sound analysis-provider contract, non-conclusive outcomes and finite-to-infinite evidence boundary. | T, New |
 
 ## 5. Protocol and choreography
 
@@ -225,7 +226,7 @@ an unrelated family.
 | --- | --- | --- | --- | --- |
 | V1-EVID-001 | FR-017/031/041/061/062/115; verification-reference artifacts | Amend | Define a uniform semantic-subject-to-requirement/assumption/method link for every subsystem. | V, CF |
 | V1-EVID-002 | AD-001; FR-004/030/061/062; NFR-021/051/060 | Reuse | Extend provenance fields and acceptance cases to new methods/tools/adapters. | V, P |
-| V1-EVID-003 | FR/TC matrices cover current bounded families only | Amend | Add feature-level conformance vectors for all 175 capabilities and integrity boundaries. | All/New |
+| V1-EVID-003 | FR/TC matrices cover current bounded families only | Amend | Add feature-level conformance vectors for all 176 capabilities and integrity boundaries. | All/New |
 | V1-EVID-004 | AD-001; FR-020/061/062/115; NFR-003/004 | Reuse | Add explicit language, runtime, monitor, analyzer and consuming-system qualification profiles. | V, New |
 | V1-EVID-005 | FR-016/030/032; NFR-021/051/060 | Reuse | Consolidate exact reproducibility fields and apply them to every method. | V, New |
 | V1-EVID-006 | FR-007/031/059/062; FR-248/249; no general counterexample contract | Amend | Define typed counterexample identity, serialization, minimization, replay and lineage. | V, New |

@@ -2,7 +2,7 @@
 id: Task-007
 title: "Complete the comprehensive V1 specification"
 type: Task
-status: not_started
+status: in_progress
 track: C
 priority: P0
 relationships:

@@ -35,10 +35,10 @@ children, preserving completed leaf evidence and eliminating closure by deferral
 
 ## Result
 
-`docs/v1-program-routing.md` assigns all 175 atomic rows to exactly one existing
+`docs/v1-program-routing.md` assigns all 176 atomic rows to exactly one existing
 primary epic and classifies their retained evidence and missing child work.
-Twenty-one rows retain direct implementation/verification leaves; 154 need
-semantic delivery children; all 175 still need qualification completion. No new
+Twenty-one rows retain direct implementation/verification leaves; 155 need
+semantic delivery children and all 176 still need qualification completion. No new
 top-level epic is justified. Live parent tracking was repaired across Research,
 QSpec, QSL, Protocol, Verification and Contract IR; QSL #1 was reopened without
 reopening its completed children, Research #65/#66/#67 were promoted to required

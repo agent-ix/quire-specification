@@ -151,6 +151,7 @@ implies completion in another.
 | V1-TEMP-020 | Evaluate temporal atoms through native typed predicate semantics. | Required | V1-028 | C | C | P | P | M | Contract IR #52 / research #39 |
 | V1-TEMP-021 | Refuse an infinite-trace or unbounded-liveness proof claim from finite evidence. | Integrity | V1-027 | C | P | P | P | M | research #37 / Verification #1 |
 | V1-TEMP-022 | Refuse clock-unit, boundary and false-extension correspondence mismatches. | Integrity | V1-022, V1-028 | C | C | P | P | M | Contract IR #52 / research #37 |
+| V1-TEMP-023 | Author and soundly analyze unbounded temporal properties under an explicit infinite-trace semantic profile. | Required | V1-027; prose census | M | M | M | M | M | TL owners / research #42 |
 
 ## 5. Protocol and choreography
 
