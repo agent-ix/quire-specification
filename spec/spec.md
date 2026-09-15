@@ -34,6 +34,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-299
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-300
+    type: contains
   - target: ix://agent-ix/quire-specification/NFR-060
     type: contains
   - target: ix://agent-ix/quire-specification/NFR-061
@@ -749,6 +751,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-297](objects/output-mapping/FR-297-output-mapping-consumer-profile.md) | FR (value_object) | Object layer; exact target standard and mapping-profile selection |
 | [FR-298](objects/output-mapping/FR-298-per-obligation-output-mapping-record.md) | FR (entity) | Object layer; identity-bearing source-bound mapping disposition |
 | [FR-299](objects/output-mapping/FR-299-generated-output-package.md) | FR (aggregate_root) | Object layer; immutable target bytes and complete ordered mapping record set |
+| [FR-300](objects/protocol/FR-300-obligation-activation-binding.md) | FR (value_object) | Object layer; exact producer-to-consumer event-triggered obligation binding |
 | [FR-294](objects/observation/FR-294-late-data-classification.md) | FR (enumeration) | Object layer; exact on-time/late classification under a selected cutoff |
 | [FR-210](objects/protocol/FR-210-protocol-subject-vocabulary.md) | FR (enumeration) | Object layer; Protocol subject vocabulary |
 | [FR-211](objects/protocol/FR-211-protocol-role.md) | FR (entity) | Object layer; Protocol role |

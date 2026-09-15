@@ -10,6 +10,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-232
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-300
+    type: depends_on
 ---
 # FR-230: Protocol obligation instance
 
@@ -59,10 +61,12 @@ created.
   never derived from key order, timestamp or source position, and FR-052-AC-2
   states that "Reordering equal-time events does not add a causal edge absent
   from the protocol."
-- **Absence** — an absent key component compares only to absence. A
-  whole-execution-origin instance (FR-093 Inputs) with no trigger event does not
-  compare equal to an instance whose trigger-event identity is present, and
-  absence is never defaulted to an empty or placeholder identity.
+- **Absence** — an absent event-trigger component compares only to absence and
+  is never defaulted to an empty or placeholder identity. Event-triggered
+  instances are constructed only from the complete FR-300 binding. A
+  whole-execution origin is not an event-triggered instance and remains outside
+  this object's event-triggered key until its own origin-key contract is
+  selected; it SHALL NOT be represented by omitting this key component.
 - **Digest domain** — no key component of this object is a digest. Where a
   component identity is carried as a digest, it retains the domain selected under
   [FR-201](../foundation/FR-201-canonical-identity-domain.md), and an identity
@@ -84,18 +88,18 @@ created.
   from truth.
 - [FR-093](../../functional/temporal/FR-093-bind-temporal-activation-and-captures.md)
   supplies the instance identity rule and the duplicate/distinct-trigger rules.
+- [FR-300](FR-300-obligation-activation-binding.md) supplies the exact typed
+  bridge from a linked control and admitted activation to this instance.
 - [FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md) supplies
   the distinctness of message, send, receive, delivery, attempt and effect.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
-## Open gap
+## Boundary ruling
 
-No requirement fixes a total order over the clause subject or the semantic
-trigger-event identity, so no key order is declared here. FR-055 and FR-093 also
-do not state whether a whole-execution-origin instance (FR-093 Inputs) carries a
-trigger-event identity component at all, or whether its key is the clause subject
-alone. Both are recorded as unresolved rather than supplied.
+FR-300 closes the event-triggered producer-to-consumer binding gap. It does not
+invent a whole-execution-origin key: that separate origin form remains outside
+the event-triggered instance contract until its owner publishes an exact key.
 
 ## Status
 
