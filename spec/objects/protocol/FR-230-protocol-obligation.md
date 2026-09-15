@@ -37,32 +37,32 @@ created.
 
 ## Identity and comparison
 
-- **Identity kind** — *derived*. FR-093 states that "Each event-triggered
-  instance shall be identified by the clause subject and semantic trigger-event
-  identity, not by timestamp, display name or equal payload alone." The instance
-  identity is therefore computed from those two identified components, not
-  written as a separate authored instance label.
-- **Key** — the clause subject together with the semantic trigger-event identity
-  (FR-093). Equality is componentwise over that pair and nothing else. Timestamp,
+- **Identity kind** — *derived*. The instance identity is computed from its
+  exact package, definition, workflow, control occurrence, clause subject and
+  origin; it is not an independently authored label.
+- **Key** — (`package`, `protocol definition`, `workflow instance`, `control
+  occurrence`, `clause subject`, `origin kind`, `origin identity`). `origin
+  kind` is `whole_execution` or `trigger_event`; the former carries the workflow
+  execution identity and the latter the semantic trigger-event identity.
+  Equality is componentwise over that tuple and nothing else. Timestamp,
   display name, equal payload, source path, span, message text, locale and
   rendering never participate (FR-093, FR-009, FR-047). FR-093 makes both
   directions explicit: "Repeated delivery of the same semantic trigger shall not
   create a second instance when its admitted payload agrees" and "A distinct
   semantic trigger shall create a distinct instance even if its captured values
   compare equal" (FR-093-AC-1, FR-093-AC-2).
-- **Key order** — none. No requirement fixes a total order over the clause
-  subject or the semantic trigger-event identity, so this artifact establishes
-  none. See the open gap below.
+- **Key order** — lexicographic canonical byte order over the complete key, for
+  collection comparison only. It is total and has no causal meaning.
 - **Causal order** — the authored partial acyclic order of
   [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md). An obligation's
   position relative to its triggering effect is an authored causal edge; it is
   never derived from key order, timestamp or source position, and FR-052-AC-2
   states that "Reordering equal-time events does not add a causal edge absent
   from the protocol."
-- **Absence** — an absent key component compares only to absence. A
-  whole-execution-origin instance (FR-093 Inputs) with no trigger event does not
-  compare equal to an instance whose trigger-event identity is present, and
-  absence is never defaulted to an empty or placeholder identity.
+- **Absence** — an absent required key component compares only to absence.
+  Whole-execution origin carries its workflow execution identity rather than an
+  absent trigger placeholder, and it never compares equal to trigger-event
+  origin. Absence is never defaulted to an empty identity.
 - **Digest domain** — no key component of this object is a digest. Where a
   component identity is carried as a digest, it retains the domain selected under
   [FR-201](../foundation/FR-201-canonical-identity-domain.md), and an identity
@@ -72,10 +72,10 @@ created.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-230-AC-1 | Two instances compare equal only when both the clause subject and the semantic trigger-event identity compare equal. | Analysis |
+| FR-230-AC-1 | Two instances compare equal only when every package, definition, workflow, control-occurrence, clause-subject, origin-kind and origin-identity component compares equal. | Analysis |
 | FR-230-AC-2 | Two instances with equal captured values and distinct semantic trigger identities compare unequal. | Analysis |
 | FR-230-AC-3 | Timestamp, display name and payload equality are absent from the declared key. | Inspection |
-| FR-230-AC-4 | An instance whose trigger-event identity is absent compares only to absence and receives no default identity. | Analysis |
+| FR-230-AC-4 | A whole-execution origin uses the workflow execution identity; a trigger-event origin uses the semantic trigger identity; an absent required origin identity refuses rather than receiving a default. | Analysis |
 
 ## Dependencies
 
@@ -89,15 +89,7 @@ created.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
-## Open gap
-
-No requirement fixes a total order over the clause subject or the semantic
-trigger-event identity, so no key order is declared here. FR-055 and FR-093 also
-do not state whether a whole-execution-origin instance (FR-093 Inputs) carries a
-trigger-event identity component at all, or whether its key is the clause subject
-alone. Both are recorded as unresolved rather than supplied.
-
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no new
-obligation and claims no implementation coverage.
+Accepted complete-V1 obligation identity contract. Implementation and
+qualification remain tracked separately.

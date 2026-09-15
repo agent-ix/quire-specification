@@ -68,13 +68,11 @@ vocabulary; they are recorded separately in
   digest-mismatched, multiply selected or internally inconsistent profile/clock
   definitions refuse before evaluation". An absent profile is never defaulted to
   a member.
-- **Digest domain** — the definition digest in the key carries a selected domain
-  under `ix://agent-ix/quire-specification/FR-201`
-  ([FR-201](../foundation/FR-201-canonical-identity-domain.md)). An identity
-  crossing domains is unequal regardless of byte equality, and FR-090-AC-2
-  refuses a digest mismatch before evaluation. No requirement selects which
-  member of that domain vocabulary this digest is derived under; this artifact
-  defers to FR-201 and selects no member. See **Open gap**.
+- **Digest domain** — the definition digest in the key uses FR-201
+  `raw-artifact-digest` over the exact selected temporal-profile definition
+  bytes, as required by FR-090. An identity crossing domains is unequal
+  regardless of byte equality, and FR-090-AC-2 refuses a digest mismatch before
+  evaluation.
 
 ## Meaning change requires a new identity
 
@@ -121,4 +119,5 @@ bytes. The domain is part of comparison and is checked before digest bytes.
 
 ## Status
 
-Proposed digest-domain closure for `quire-specification#40`.
+Accepted complete-V1 temporal-profile identity contract. Implementation and
+qualification remain tracked separately.

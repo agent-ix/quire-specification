@@ -36,13 +36,9 @@ catalog is proposed, not adopted.
 | JSON field/index path | A path through a JSON document's fields and indices. Required as the retained payload of the `invalid_package` and `invalid_runtime_input` families — "the actual field/index path", "the actual input path" (proposed catalog). |
 | runtime object/value path | A root and an ordered sequence of typed traversal steps through a runtime object or value. Typed by [FR-207](FR-207-runtime-value-path.md), which this artifact references rather than redefining. Held distinct from a JSON field/index path by [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md) and by the same sentence of the proposed catalog. |
 
-The three values are spelled here with the catalog's own words. The catalog
-states the three kinds and states that they "remain different location kinds";
-it gives them no discriminator tags or identifier spellings, and FR-047 fixes
-none either. See the open gap.
-
-Two of the three kinds are now typed: FR-203 types the authored source span and
-FR-207 types the runtime object/value path. The JSON field/index path is not.
+The complete-V1 wire discriminators are `source_span`, `json_path` and
+`runtime_value`. FR-203 types the authored source span, FR-207 types the runtime
+object/value path, and the JSON field/index path is typed below.
 
 ## Identity and comparison
 
@@ -61,8 +57,8 @@ FR-207 types the runtime object/value path. The JSON field/index path is not.
 - **Key order** — for the `authored source span` kind, the key order is
   FR-203's: lexicographic over (`document` key, `start`, `end`), for collection
   comparison only. For the `runtime object/value path` kind it is FR-207's: root
-  first, then step by step, a proper prefix before its extensions — total within
-  one selected observation and not across observations.
+  first, then step by step, a proper prefix before its extensions, total across
+  authority-qualified selected observations.
   Across kinds the order is lexicographic over the kind first,
   for collection comparison only. It carries no causal meaning and expresses no
   severity or precedence ordering between kinds or between loci.
@@ -94,20 +90,14 @@ FR-207 types the runtime object/value path. The JSON field/index path is not.
 | FR-274-AC-4 | The authored source span kind resolves through FR-203 and is not redefined here. | Inspection |
 | FR-274-AC-5 | The runtime object/value path kind resolves through FR-207 and is not redefined here. | Inspection |
 
-## Open gap
+## Canonical discriminators and JSON path
 
-The catalog names three kinds and holds them distinct, but states **no
-discriminator tag, identifier spelling or serialized form** for the kinds
-themselves. FR-047 now defines the structure, equality and order of the runtime
-object/value path kind, and explicitly fixes no serialized spelling for it, so
-the spelling gap is unresolved for all three kinds.
-
-The **JSON field/index path** remains structurally undefined. No accepted
-requirement establishes its root, its step kinds, its equality or an order over
-it; only the proposed catalog names it, as the retained payload of the
-`invalid_package` and `invalid_runtime_input` families. The values above
-therefore carry the catalog's own wording for that kind, and this artifact
-invents neither a spelling nor a path structure for it.
+The wire discriminators are `source_span`, `json_path` and `runtime_value`.
+A JSON path contains a document identity and ordered steps tagged `field` with
+an exact member spelling or `index` with a nonnegative integer. Equality and
+ordering are componentwise: document, then steps; a proper prefix orders first;
+`field` orders before `index`; equal kinds order by spelling or integer. Unknown
+discriminators/steps refuse. These wire values never alias display paths.
 
 ## Dependencies
 
@@ -124,7 +114,5 @@ invents neither a spelling nor a path structure for it.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Accepted complete-V1 diagnostic-location contract. Implementation and
+qualification remain tracked separately.

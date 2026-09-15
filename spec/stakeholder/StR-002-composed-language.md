@@ -14,22 +14,27 @@ relationships:
 ---
 ## Stakeholder Need
 
-Specification authors require that native Quire v1 shall express the selected state, temporal and protocol/choreography obligations of a distributed workflow under one source authority.
+Specification authors require that native Quire V1 shall express, execute and
+analyze the complete declared language capability inventory under one source
+authority while preserving exact meaning across runtimes, monitors, proof
+backends, mappings, tools and evidence consumers.
 
 ## Rationale
 
-A state-only language cannot express participants, correlated messages, deadlines
-or compensation. Separate authored languages risk inconsistent types, identities
-and assumptions. An implementation slice must not redefine the intended product.
+A state-only or bounded-slice language cannot express the required value/type,
+model, temporal, protocol, analysis and workflow capabilities. Separate authored
+languages risk inconsistent types, identities and assumptions. An implementation
+or backend slice must not redefine, narrow or defer the intended product.
 
 ## Validation Criteria
 
 | ID | Criteria | Validation |
 | --- | --- | --- |
-| StR-002-VC-1 | One native package states a state condition, a timed obligation and a branching compensated choreography with shared model and source identity. | Demonstration |
+| StR-002-VC-1 | One native package states complete value/model semantics, state conditions, bounded and unbounded temporal obligations, and dynamic compensated choreography with shared model and source identity. | Demonstration |
 | StR-002-VC-2 | Healthy, violating, untriggered, incomplete and unsupported requests remain distinguishable in the composed workflow. | Demonstration |
-| StR-002-VC-3 | A reviewer can find every intended family, its v1/later/refuse disposition, its owned specification and its implementation task without inferring support from the current state compiler. | Inspection |
+| StR-002-VC-3 | A reviewer can trace every one of the 176 V1 inventory capabilities to normative semantics, an implementation owner, delivery tickets and qualification evidence without a deferred product-scope disposition. | Inspection |
 | StR-002-VC-4 | One enterprise example relates concurrent orders, payment/shipment/refund instances and a declared finite population/window without treating unknown membership as successful aggregate evidence. | Demonstration |
+| StR-002-VC-5 | Native runtime, model testing, simulation, formal analysis, proof generation, authoring tools, output mappings and authorized workflow adapters consume the same immutable semantic package and report typed capability limitations without approximation. | Demonstration |
 
 ## Dependencies
 

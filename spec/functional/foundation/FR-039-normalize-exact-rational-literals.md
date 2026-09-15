@@ -22,7 +22,7 @@ An exact normalized value in its authored domain, or a typed zero-denominator, d
 
 ## Behavior
 
-Reject denominator zero before normalization. Move the sign to the numerator, divide both components by their greatest common divisor, and normalize any zero numerator to 0/1. Only normalized components are checked against the authored numerator/denominator bounds. The literal is not a runtime conversion or a user-defined function; no floating point or implicit integer-to-rational conversion occurs. Equivalent values preserve distinct original source spellings/identities. Integer slash/div/rem/mod remain separate recognized but refused forms under the carried-forward arithmetic admission.
+Reject denominator zero before normalization. Move the sign to the numerator, divide both components by their greatest common divisor, and normalize any zero numerator to 0/1. Only normalized components are checked against the authored numerator/denominator bounds. The literal is not a runtime conversion or a user-defined function; no floating point or implicit integer-to-rational conversion occurs. Equivalent values preserve distinct original source spellings/identities. Under the historical carried-forward arithmetic profile, integer slash/div/rem/mod remain recognized refusals; the complete-V1 integer operator profiles and their definedness rules are specified by FR-147.
 
 ## Acceptance Criteria
 

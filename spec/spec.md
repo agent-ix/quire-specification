@@ -410,6 +410,204 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/IT-002
     type: contains
+  - target: ix://agent-ix/quire-specification/AD-005
+    type: contains
+  - target: ix://agent-ix/quire-specification/AD-006
+    type: contains
+  - target: ix://agent-ix/quire-specification/AD-007
+    type: contains
+  - target: ix://agent-ix/quire-specification/AD-008
+    type: contains
+  - target: ix://agent-ix/quire-specification/AD-009
+    type: contains
+  - target: ix://agent-ix/quire-specification/AD-010
+    type: contains
+  - target: ix://agent-ix/quire-specification/AD-011
+    type: contains
+  - target: ix://agent-ix/quire-specification/US-010
+    type: contains
+  - target: ix://agent-ix/quire-specification/US-011
+    type: contains
+  - target: ix://agent-ix/quire-specification/US-012
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-131
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-132
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-133
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-134
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-140
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-141
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-142
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-143
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-144
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-145
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-146
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-147
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-148
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-149
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-150
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-151
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-152
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-153
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-160
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-161
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-170
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-171
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-172
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-173
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-174
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-175
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-176
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-177
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-180
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-181
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-182
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-190
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-191
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-192
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-193
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-194
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-195
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-196
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-197
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-300
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-301
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-302
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-303
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-304
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-305
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-306
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-307
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-308
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-309
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-310
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-311
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-312
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-070
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-071
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-072
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-073
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-074
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-075
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-070
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-071
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-072
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-073
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-074
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-075
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-076
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-077
+    type: contains
+  - target: ix://agent-ix/quire-specification/IT-078
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-001
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-002
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-003
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-004
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-005
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-006
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-007
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-008
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-009
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-010
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-011
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-012
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-013
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-014
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-015
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-016
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-017
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-018
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-019
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-020
+    type: contains
+  - target: ix://agent-ix/quire-specification/interface-021
+    type: contains
+  - target: ix://agent-ix/quire-specification/TM-009
+    type: contains
 ---
 # Master Requirements Specification
 
@@ -417,7 +615,13 @@ relationships:
 
 ## 1. Purpose
 
-This root indexes the native Quire language requirements. Quire v1 includes state, temporal and protocol/choreography families under one editable source authority. The existing finite-state implementation is a development slice, not the product boundary. The [v1 design](../proposals/quire-v1/README.md) rebaselines the families together before profile-specific implementation resumes. Draft specifications and reviews do not establish implemented capabilities.
+This root indexes the native Quire language requirements. Complete V1 is the
+entire 176-capability language, runtime, analysis, backend, tooling and
+qualification system under one editable source authority. The existing
+finite-state implementation is a development slice, not the product boundary.
+The [subsystem index](subsystems/index.md) and AD-001 through AD-011 organize the
+complete architecture. Draft specifications and reviews do not establish
+implemented capabilities.
 
 ## 2. Scope
 
@@ -429,7 +633,8 @@ FS06 accepts the [output-mapping subsystem](assurance/AD-004-output-mapping-subs
 common request/record/package contract and bounded OCL 2.4, SysML 2.0/KerML
 1.0 and FRETish 3.1 profiles. Qcir #95 / PR #98 implements the shared Rust
 request/record/package foundation at `5ea7730`; target-specific executable
-exporters remain qcir #55/#56/#57 and TM-008 remains Planned.
+exporters are implementation-plan work governed by the complete-V1 contracts,
+not omitted language scope.
 
 ### 2.2 Out of Scope
 
@@ -447,7 +652,13 @@ frontends.
 
 ### 3.1 System Description
 
-The language links state, temporal and choreography clauses through common model types and identities, with explicit semantic profiles and specialized representations/evaluators. The native pipeline preserves source identity through parsing, model linking, validation, evaluation and lowering. A schema package, runtime population and observation trace are distinct subjects. Existing shared-model, IR, temporal and evidence owners retain their boundaries.
+The language links complete values/models/expressions, temporal properties,
+dynamic choreography and verification plans through common typed identities,
+with explicit semantic profiles and specialized representations/evaluators. The
+native pipeline preserves source identity through lossless parsing, model
+linking, checking, execution, monitoring, analysis, exact lowering, tooling and
+evidence intake. Schema packages, runtime populations, observations, backend
+runs and qualification decisions remain distinct subjects.
 
 ### 3.2 Intended Users
 
@@ -513,7 +724,11 @@ Run Quire over this exact repository scope. Use real producers/consumers and ind
 
 ## 13. Change Management
 
-The user requested /specify and /spec-review for all work. Existing implementation is being specified retrospectively and remains subject to findings. Further dependent implementation waits for the required review and accepted shared contracts. Historical fixture and profile bytes remain immutable under their selected bindings.
+The complete architecture and all 176 atomic capabilities are specified in one
+campaign before implementation planning. The corpus then receives one composite
+`/spec-review`; dependent implementation planning begins only after every review
+finding is resolved. Historical fixture and profile bytes remain immutable under
+their selected bindings.
 
 ## 14. Lifecycle Status
 
@@ -533,27 +748,29 @@ The FS02 static owner/interface gate is satisfied by FCD #95 / PR #99 at
 `4042882` and the exact native consumer selected by QSL #93 / PR #94 at
 `0c83dcc`. FS03 accepts the state closure and FS05 accepts the versioned
 interchange/canonical/migration rules. Independent assessment-consumer
-qualification remains open. FR-017/018 define the accepted versioned amendment
-resolving B's representational findings; its local tests do not claim every
-consumer implementation or adoption.
+implementation and qualification are not yet complete. FR-017/018 define the
+accepted versioned amendment resolving B's representational findings; its local
+tests do not claim every consumer implementation or adoption. This is delivery
+status only: the complete-V1 normative scope is closed by the inventory,
+architecture and TM-009.
 
 ## 15. Governance Notes
 
-Use private owning issues and isolated worktrees. A integrates the common
-standard and native syntax; B owns protocol/results; D model/configuration;
-E temporal meaning; F observation/consumer contributions. C continues
-engineering-assurance completion. The user distributes the A–F handoffs; no
-additional session dispatch is implied. Preserve dependency/template grants.
-Standard-wide publication terms remain unresolved.
+Use owning issues and isolated worktrees. Implementation planning SHALL allocate
+each atomic capability to exactly one primary delivery ticket and SHALL record
+cross-repository dependencies explicitly. Ticket completion updates the master
+inventory, owning epic and dependent ticket state in the same work cycle.
+Preserve dependency/template grants. Publication administration is operational
+governance and does not reduce complete-V1 product scope.
 
 The [shared foundation](../proposals/quire-v1/shared-foundation.md) remains the
 semantic coordination checkpoint. FS01 accepts its subsystem and profile-identity
 roles; FS03 accepts the state core/query/graph semantic closure, FS04 the
 temporal/observation closure, and FS05 the interchange closure. Other owning
-FS02–FS06/family tickets retain their semantic adoption, implementation and
+FS02–FS06/family contracts retain their semantic adoption, implementation and
 qualification boundaries. FS05 accepts the linked-package interpretation and
-strict reference/canonical/migration contracts while keeping their executable
-matrices Planned.
+strict reference/canonical/migration contracts; incomplete executable evidence
+is tracked as implementation work, never as deferred scope.
 FR-030–049, FR-130, the decomposed FR-020, NFR-010 and their
 [planned matrix](composed-foundation/tests.md) establish the shared contribution.
 The [grammar](../proposals/quire-v1/shared-grammar.md) and
@@ -561,10 +778,9 @@ The [grammar](../proposals/quire-v1/shared-grammar.md) and
 queries/aggregation and explicit anchor, numeric and graph semantics. E's
 FR-090–095, NFR-040, IT-040/041 and [temporal matrix](temporal/tests.md) are
 accepted by FS04 as temporal meaning and portable controls. FR-048 connects the native temporal syntax
-and shared predicate environments to that contribution. The full baseline review
-is recorded in SR-400 with its correction recheck. FS03's scoped acceptance is
-recorded separately. TM-004/TM-007 and the integration specifications remain
-Planned until their actual evidence is bound.
+and shared predicate environments to that contribution. Historical family
+reviews remain revision-bound evidence; TM-009 is the complete-V1 coverage
+authority. Planned evidence denotes unfinished delivery, not unspecified scope.
 FR-049 and the [choreography surface](../proposals/quire-v1/choreography-surface.md)
 now add explicit roles/channels, causal control, compensation stages and typed
 cross-instance references to the composed grammar. Exact model/observation and
@@ -581,10 +797,11 @@ D's accepted Producer 1.2 contract at `4042882` is indexed as an external
 contribution, including its static-bundle implementation, explicit
 static/assessment split, corrected truth-support rule and IN01/IN02 contracts.
 QSL `0c83dcc` selects the exact accepted static producer. These contributions
-establish their stated obligations and planned cases without claiming the open
-assessment half. The composed grammar and examples remain proposed; assessment
-binding interfaces are not fully reconciled. QSL's executable evidence
-establishes only the accepted static adapter boundary.
+establish the implementation evidence available at their recorded revisions.
+The complete composed grammar, assessment interfaces and cross-subsystem
+boundaries are now specified by AD-001 through AD-011, I01 through I21 and the
+complete-V1 functional requirements; executable coverage is allocated during
+implementation planning.
 
 ## 16. References
 
@@ -598,6 +815,15 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [AD-002](assurance/AD-002-native-temporal-vertical-slice.md) | ArchitectureDescription | Accepted FS04 temporal refinement; implementation remains Plan-002 |
 | [AD-003](assurance/AD-003-native-quire-language-charter.md) | ArchitectureDescription | Accepted FS01 language charter and profile identity hierarchy |
 | [AD-004](assurance/AD-004-output-mapping-subsystem.md) | ArchitectureDescription | Accepted FS06 common coordinator, target-mapper and structural-observer boundaries |
+| [AD-005](assurance/AD-005-complete-value-expression-system.md) | ArchitectureDescription | Accepted complete value, type, expression and collection subsystem |
+| [AD-006](assurance/AD-006-model-graph-state-contracts.md) | ArchitectureDescription | Accepted model, graph and state subsystem |
+| [AD-007](assurance/AD-007-complete-protocol-choreography.md) | ArchitectureDescription | Accepted protocol and choreography subsystem |
+| [AD-008](assurance/AD-008-composed-runtime-workflow.md) | ArchitectureDescription | Accepted composed runtime and workflow subsystem |
+| [AD-009](assurance/AD-009-verification-method-plans.md) | ArchitectureDescription | Accepted analysis, model-testing and verification-plan subsystem |
+| [AD-010](assurance/AD-010-target-neutral-ir-backends.md) | ArchitectureDescription | Accepted target-neutral IR and proof-backend subsystem |
+| [AD-011](assurance/AD-011-integration-evidence-qualification.md) | ArchitectureDescription | Accepted tooling, integration, evidence and qualification subsystem |
+| [Complete-V1 subsystem index](subsystems/index.md) | Architecture index | Ten subsystems and I01–I21 interface ownership |
+| [TM-009](complete-v1/tests.md) | Test Matrix | All 176 atomic capabilities and complete-V1 qualification cases |
 | [FCD FR-106](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-106-author-field-presence-independently.md) | FR | Static authored presence/multiplicity/null/default contract accepted and implemented by FCD PR #99; FCD #93 retains Semantic IR/frontends |
 | [FCD FR-107](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-107-declare-first-class-relationship-contracts.md) | FR | Static relationship/endpoints accepted in FCD PR #99 and consumed by QSL PR #94; runtime instances remain consumer work |
 | [FCD FR-108](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-108-bind-populations-to-model-contracts.md) | FR | Static population ownership and truth-support rule accepted; assessment membership remains open |
@@ -714,7 +940,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-200](objects/foundation/FR-200-quire-assessment-domain.md) | FR (domain) | Object layer; bounded context and identity discipline |
 | [FR-201](objects/foundation/FR-201-canonical-identity-domain.md) | FR (enumeration) | Object layer; canonical identity domain vocabulary |
 | [FR-202](objects/foundation/FR-202-authored-source-document.md) | FR (entity) | Object layer; authored source document identity |
-| [FR-203](objects/foundation/FR-203-source-region.md) | FR (value_object) | Object layer; half-open source region, records the FR-003/FR-036 span-convention gap |
+| [FR-203](objects/foundation/FR-203-source-region.md) | FR (value_object) | Object layer; accepted complete-V1 half-open source-region contract |
 | [FR-204](objects/foundation/FR-204-declared-object-identity.md) | FR (value_object) | Object layer; universe/type/object identity triple |
 | [FR-205](objects/foundation/FR-205-exact-rational-value.md) | FR (value_object) | Object layer; normalized rational value, distinct from literal identity |
 | [FR-206](objects/foundation/FR-206-numeric-domain.md) | FR (value_object) | Object layer; named numeric type and exact unit |
@@ -807,9 +1033,9 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 
 ## Composed baseline review
 
-[SR-400](reviews/composed-v1/base.md) indexes the owner-selected base-plus-seven
-review of `788b161bd1b7fd5d632cc42c949f497914df3ce6`, with F through `921993b`
-and D's external contract at `d6ac501`. The review is complete with changes
-required; these proposed requirements are not yet an adopted baseline.
-[Current integration dispositions](../proposals/quire-v1/shared-foundation.md#authoring-integration-and-review-disposition)
-identify the actual corrections and owners.
+[SR-400](reviews/composed-v1/base.md) is revision-bound historical evidence for
+the owner-selected base-plus-seven review of
+`788b161bd1b7fd5d632cc42c949f497914df3ce6`, with F through `921993b` and D's
+external contract at `d6ac501`. Its changes-required disposition does not govern
+the later complete-V1 corpus. The current composite SpecReview produced after
+TM-009 is the acceptance gate for implementation planning.

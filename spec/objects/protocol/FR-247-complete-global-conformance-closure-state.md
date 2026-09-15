@@ -78,8 +78,8 @@ scope, closed surrounding execution or a decisive witness/counterexample alone."
 
 This artifact therefore types **only** the fifth axis. The other four axes are
 retained as separate properties of the canonical protocol result
-([FR-240](FR-240-canonical-protocol-result.md)) and are not enumerated by any
-requirement; see FR-240's open gap.
+([FR-240](FR-240-canonical-protocol-result.md)) and each carries one member of
+FR-284's closed scope-progress-and-closure vocabulary.
 
 ## Acceptance Criteria
 
@@ -106,7 +106,5 @@ requirement; see FR-240's open gap.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Accepted complete-V1 global-closure contract. Implementation and qualification
+remain tracked separately.

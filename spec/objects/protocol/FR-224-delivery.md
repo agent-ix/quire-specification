@@ -98,8 +98,8 @@ delivery, node occurrence or effect.
   duplicated and misordered events to be reported.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
-- [FR-210](FR-210-protocol-subject-vocabulary.md) records the
-  unresolved `receipt` and `delivery` membership question.
+- [FR-210](FR-210-protocol-subject-vocabulary.md) records `receipt` and
+  `delivery` as distinct complete-V1 subject kinds.
 - [FR-287](FR-287-authority-qualified-runtime-subject-reference.md) defines the
   concrete delivery key and its non-causal comparison order.
 

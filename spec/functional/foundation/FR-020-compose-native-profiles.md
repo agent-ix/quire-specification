@@ -28,9 +28,12 @@ a partial profile/package release remains distinguishable from full Quire v1.
 
 ## Behavior
 
-The required scope includes state, temporal and choreography across systems,
-related workflow instances and selected finite population/window obligations.
-One implemented construct in each family is not the entire capability set.
+The required scope is the complete 176-row atomic V1 inventory, including state,
+types/models, bounded and unbounded temporal meaning, dynamic choreography,
+runtime/workflow, analysis and synthesis, exact backends, tooling/mappings and
+qualification across systems, related workflow instances and declared
+populations. One implemented construct in each family is not the entire
+capability set.
 Missing, unsupported, unimplemented or unqualified required capabilities remain
 explicit gaps. Planned cases or historical-profile tests alone do not establish
 the new definition's conformance. A smaller release may identify its own exact
@@ -38,8 +41,8 @@ supported scope without claiming full Quire v1.
 
 The standard defines this claim boundary; existing publication/conformance
 consumers own its implementation. No new centralized release or evidence store
-is introduced. General realizability, synthesis and named later research are
-not silently added to the required v1 inventory.
+is introduced. Dependency order, provider limitation or a failed experiment
+cannot remove a capability from the required V1 inventory.
 
 ## Acceptance Criteria
 
@@ -48,11 +51,12 @@ not silently added to the required v1 inventory.
 | FR-020-AC-7 | A report missing any required v1 family cannot claim full Quire v1 conformance. | Test (TC-020) |
 | FR-020-AC-8 | A report with all three families but a missing required related-instance or population capability retains that gap and cannot claim full v1. | Test (TC-020) |
 | FR-020-AC-9 | Each supported capability names its exact selected definition, implementation scope and corresponding evidence; planned or old-profile evidence alone cannot discharge it. | Test (TC-020) |
-| FR-020-AC-10 | A partial-profile release identifies its supported scope accurately without requiring completion of unrelated later research or representing itself as full v1. | Test (TC-020) |
+| FR-020-AC-10 | A partial-profile release identifies its supported scope accurately without representing itself as full V1; every missing inventory capability remains open implementation or qualification work. | Test (TC-020) |
+| FR-020-AC-11 | A capability report accounts for all 176 inventory IDs exactly once and has no deferred, later, optional-product-scope or silently omitted disposition. | Test (TC-180) |
 
 ## Dependencies
 
-- [Capability inventory](../../../proposals/quire-v1/capabilities.md).
+- [Complete V1 capability inventory](../../../docs/v1-capability-inventory.md).
 - [Exact definition binding](FR-030-bind-composed-definitions.md).
 - [Per-request capability results](FR-031-report-requested-capabilities.md).
 - [Planned matrix](../../composed-foundation/tests.md).

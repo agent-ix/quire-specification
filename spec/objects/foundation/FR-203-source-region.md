@@ -70,22 +70,14 @@ This artifact types the first kind only.
 | FR-203-AC-3 | Changing the human-readable message that reports a region leaves the region's key unchanged. | Analysis |
 | FR-203-AC-4 | A source span, a JSON field/index path and a runtime value path are not compared to one another. | Inspection |
 
-## Open gap
+## Resolved extraction boundary
 
-Two requirements state the span convention and they do not state the same
-amount, and neither cross-references the other:
-
-- FR-003: "Regions use zero-based half-open UTF-8 byte offsets and one-based
-  scalar columns", and "A map may delete only the explicitly selected
-  indentation/CRLF/final-newline layout."
-- FR-036: "Recognized token values with original half-open byte spans", and "No
-  normalization, newline conversion or implicit semicolon insertion changes
-  source interpretation."
-
-FR-036 states half-openness but neither the zero-basing nor the column
-convention. Whether FR-003's permitted CRLF and indentation deletion is inside
-or outside FR-036's prohibition on newline conversion is not stated anywhere.
-This artifact records both readings and resolves neither.
+All lexical/source regions use zero-based half-open original-byte offsets and
+optional one-based Unicode-scalar columns. Lexing performs no newline conversion.
+A container extractor may omit only bytes its selected container contract marks
+as container-owned, and it records those omissions as monotone mapping segments.
+CRLF and final-newline bytes remain authored unless explicitly container-owned;
+no omitted byte changes token spelling or relative order.
 
 ## Dependencies
 
@@ -97,7 +89,5 @@ This artifact records both readings and resolves neither.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Accepted complete-V1 source-region contract. Implementation and qualification
+remain tracked separately.

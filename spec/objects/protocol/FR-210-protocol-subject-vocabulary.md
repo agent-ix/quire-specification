@@ -93,8 +93,9 @@ the following are named by none of them.
 
 The typed objects in the table retain their own identity rules. FR-287 types the
 runtime subject references and FR-288 types the static definition qualifier;
-neither adds a member to this subject-kind vocabulary. Remaining membership and
-ordering questions are tracked separately by `quire-specification#31`.
+neither adds a member to this subject-kind vocabulary. The table above is the
+complete-V1 membership contract; producer-local ordering remains governed by
+FR-287 rather than by table position.
 
 A consumer that needs to hold a channel, registration, commit boundary or
 recovery relation apart from a protocol subject does so by referencing the
@@ -128,7 +129,5 @@ object artifact, not by minting a subject-kind label.
 
 ## Status
 
-Draft. Specification issues #28 and #31 reconciled the contextual subject lists and the
-receipt/delivery, forward/compensation-attempt, forward/compensation-effect and
-commit-boundary/observation distinctions and the separate participant binding.
-Executable cross-repository evidence remains planned.
+Accepted complete-V1 subject-vocabulary contract. Implementation and
+qualification remain tracked separately.

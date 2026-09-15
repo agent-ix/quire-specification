@@ -90,18 +90,17 @@ channel/component reference rather than becoming a participant role" (FR-054).
 - [FR-288](FR-288-qualified-protocol-definition-identity.md) supplies the
   qualified linked-definition component.
 
-## Open gap
+## Resolved premise contract
 
-1. FR-054-AC-2 scopes a FIFO premise to a "key scope". No requirement states
-   what a channel key scope is, what its components are, or how it relates to
-   the identity keys of this bounded context. The two uses of "key" are not
-   established to be the same notion.
-2. FR-054-AC-3 lists "sender, receiver, message-type, order or delivery"
-   premises as refusing when missing or conflicting; the FR-054 description
-   lists six premises, adding "duplication premises". Whether a missing
-   duplication premise refuses admission is unstated.
+The FIFO scope key is the ordered tuple (`workflow instance`, `channel`,
+`sender role instance`, `receiver role instance`, `message type`, optional
+`conversation partition`). FIFO compares only deliveries with equal complete
+keys. Ordering, delivery-cardinality and duplication premises are all required;
+a missing premise yields unavailable/incomplete protocol analysis and a
+conflicting premise refuses admission. No missing premise defaults to reliable,
+ordered or exactly-once delivery.
 
 ## Status
 
-Draft. Specification issue #28 fixed the channel key and comparison order. The
-remaining premise questions are tracked by specification issue #31.
+Accepted complete-V1 channel contract. Implementation and qualification remain
+tracked separately.
