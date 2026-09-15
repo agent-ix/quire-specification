@@ -108,16 +108,16 @@ vocabulary is [FR-236](FR-236-compensation-attempt-outcome.md).
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
-## Open gap
+## Closed lifecycle contract
 
-No requirement names the lifecycle states as a closed labelled vocabulary; the
-state names above are the prose's own conditions, not authored labels. No
-requirement states whether `ordering_violation`, `retry_bound_refused` or
-`incomplete` are terminal, nor whether a registration that reached `incomplete`
-may later reach `recovery_decided` when the missing input arrives. Neither is
-supplied here.
+The closed labels are `unregistered`, `registered`, `eligible`, `attempting`,
+`retry_wait`, `settled_success`, `settled_failure`, `cancelled`, `incomplete`,
+`ordering_violation` and `retry_bound_refused`. Settled, cancelled and violation/
+refusal states are terminal for one input revision. `incomplete` is nonterminal:
+an explicitly related later input revision resumes from the last established
+non-incomplete state and links the superseded result.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no new
-obligation and claims no implementation coverage.
+Accepted complete-V1 compensation lifecycle contract. Implementation and
+qualification remain tracked separately.

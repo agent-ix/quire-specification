@@ -26,8 +26,10 @@ Ordinary operands/results share their named numeric type and exact unit. The sta
 
 Rational division additionally requires a proved nonzero divisor, exact quotient
 normalization and result bounds in the same named dimensionless rational type.
-Integer division/remainder remain refused. The literal constructor does not
-implicitly convert integer operands or introduce quotient rounding.
+The historical state-core profile refuses integer division/remainder; the
+complete-V1 integer profiles admit the FR-147 operators only with their exact
+rounding and definedness contracts. The literal constructor does not implicitly
+convert integer operands or introduce quotient rounding.
 
 ## Acceptance Criteria
 
@@ -35,7 +37,7 @@ implicitly convert integer operands or introduce quotient rounding.
 | --- | --- | --- |
 | FR-044-AC-1 | An unguarded possible out-of-range result refuses; a sound guard narrowing every potentially evaluated result within inclusive bounds permits checking. | Test (TC-044) |
 | FR-044-AC-2 | Normalized rational operation results are checked after sign/gcd reduction, including raw intermediates above normalized bounds, without floating approximation. | Test (TC-044) |
-| FR-044-AC-3 | Wrong named types/units, implicit integer-to-rational conversion and prohibited division/remainder refuse, including in unreachable syntax. | Test (TC-044) |
+| FR-044-AC-3 | Wrong named types/units and implicit integer-to-rational conversion refuse; division/remainder prohibited by the selected profile refuse even in unreachable syntax, while complete-V1 admitted integer profiles follow FR-147. | Test (TC-044) |
 | FR-044-AC-4 | A minimum-only integer remains unadmitted without inventing a maximum; signed-64 boundary overflow cannot wrap or widen. | Test (TC-044) |
 | FR-044-AC-5 | Insufficient proof capability is identified as unproved definedness, and exhausted checking resources as incomplete; neither is a completed Boolean violation. | Test (TC-044) |
 | FR-044-AC-6 | For a dimensionless rational type with normalized numerator [-1,1] and denominator [1,2], (1/2) divided by (1/2) admits as 1/1 after reducing raw 2/2, while 1 divided by (1/2) refuses its result bound and division by zero refuses definedness. | Test (TC-044) |

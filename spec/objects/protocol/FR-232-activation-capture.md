@@ -83,13 +83,15 @@ instance's captures shall not satisfy another instance's propositions."
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
-## Open gap
+## Ordered capture contract
 
-No requirement states whether the declared capture set of one obligation instance
-is itself ordered, nor whether two captures of the same instance may share a
-declared expression. Neither is supplied here.
+An obligation owns an authored ordered capture sequence. A capture occurrence
+key is (`obligation`, zero-based declaration index); equal expression identities
+may occur more than once and remain distinct occurrences. Evaluation follows
+authored order at the inclusive activation boundary and stores one immutable
+typed result or typed missing/conflicting cause per occurrence.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no new
-obligation and claims no implementation coverage.
+Accepted complete-V1 activation-capture contract. Implementation and
+qualification remain tracked separately.

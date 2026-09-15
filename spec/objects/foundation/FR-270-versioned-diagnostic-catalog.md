@@ -93,22 +93,13 @@ diagnostic list or a successful assessment" (proposed catalog).
 | FR-270-AC-3 | Changing or localizing the human-readable wording carried with a diagnostic leaves the selected catalog key unchanged. | Analysis |
 | FR-270-AC-4 | A code not resolvable in the selected catalog is not published as a stable producer outcome. | Inspection |
 
-## Open gap
+## Resolved catalog identity
 
-The proposed catalog makes the byte digest a key component — the response
-"selects this catalog's exact identity, revision and byte digest" — and its
-selected-inventory table records "SHA-256 of file bytes" for the two pinned
-sources. It does not state which named digest domain the catalog's own byte
-digest is taken under, and FR-201 requires that a digest be compared by domain
-before bytes. No artifact states whether this is `raw-artifact-digest`,
-`quire.verification.jcs` or a further domain. This artifact records the gap and
-supplies no domain.
-
-A second gap: FR-200 defines *authored* as "written by a person in native Quire
-source, and therefore carrying a source identity, revision and span". A selected
-interpretation catalog is authored, but not in native Quire source. No
-requirement states which identity kind an externally selected catalog takes.
-*Authored* is recorded here as the closest stated kind, not as a ruling.
+A catalog is an externally selected definition entity, not an authored native
+clause. Its key is (`catalog authority`, `catalog identity`, `revision`,
+`quire.diagnostic-catalog.bytes/v1` SHA-256 digest). The digest preimage is the
+exact catalog source bytes including layout. It cannot be replaced by JCS,
+package or semantic digests.
 
 ## Dependencies
 
@@ -123,7 +114,5 @@ requirement states which identity kind an externally selected catalog takes.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Accepted complete-V1 diagnostic-catalog contract. Implementation and
+qualification remain tracked separately.

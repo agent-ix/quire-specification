@@ -32,8 +32,12 @@ producer owns domain declarations. Existing IR, TL and protocol components own
 their specialized representations and execution; Quoin owns evidence retention
 and authored assurance decisions. No single executable IR defines the language.
 
-V1 includes state, temporal and protocol/choreography together. Its concrete
-capability decisions are in the [matrix](../../proposals/quire-v1/capabilities.md).
+V1 includes the entire 176-row atomic capability inventory: language/package
+evolution; complete values, models and expressions; bounded and unbounded
+temporal semantics; dynamic protocol/choreography; composed runtime and
+workflow adapters; verification methods; exact IR/backends; tooling/mappings;
+and evidence/qualification. Its authoritative scope is recorded in
+[`docs/v1-capability-inventory.md`](../../docs/v1-capability-inventory.md).
 The [shared drafting foundation](../../proposals/quire-v1/shared-foundation.md)
 defines cross-system, related-instance and selected population/window inputs.
 Runtime workflow, role, message, delivery, attempt and business-effect identities
@@ -121,7 +125,8 @@ name, queue receipt or telemetry trace ID is insufficient to establish a domain
 effect or business instance.
 
 State evaluation consumes validated snapshots and operation captures. Temporal
-evaluation consumes total valuations under a selected time/history profile.
+evaluation consumes total or explicitly partial valuations under a selected
+finite or infinite-trace time/history profile.
 Protocol evaluation consumes event identity, causal relationships and its
 participants' state/temporal obligations. A shared request identifies the
 semantic package, requested capability, concrete inputs and execution controls.
@@ -171,8 +176,8 @@ deployment correctness or overall qualification.
 | Separate semantic admission from requested backend capability | Make the current executable AST the language definition | Permits richer native meaning and later analyzers; unsupported method requests stay explicit. |
 | Typed family ASTs over one lexer and common predicate layer | String dispatch; duplicate parsers; one universal execution AST | Preserves source spans and avoids reimplementing expression semantics in temporal/protocol adapters. |
 | Specify identity, type, observation and composition contracts together | Design each feature in isolated implementation tickets | These interfaces are expensive to retrofit and caused the discovered scope drift. |
-| Explicit finite v1 choreography with owned choices, concurrency, bounded repetition and compensation | Temporal templates alone; unrestricted process calculus | Meets concrete distributed workflows without presuming a complete local projection or strategy-solving engine. |
-| Execution and incremental monitoring are v1 consumers; general sound local projection is later | Require all analysis algorithms before useful monitoring; claim solver support from Boolean SAT | Global conformance and local realizability are different claims. Preserve visibility/ownership information now for later analyses. |
+| Complete V1 choreography with owned choices, concurrency, proved loops, dynamic roles and compensation | Temporal templates alone; static finite choreography only | Meets the complete language scope while requiring explicit population, termination and resource contracts. |
+| Projection, realizability, assume-guarantee and refinement are distinct required V1 analyzers | Collapse every analysis into global conformance or defer the analyzers | Each claim has explicit premises, witnesses/counterexamples and non-conclusive outcomes. |
 | Reuse model, IR, TL and evidence owners through reviewed contracts | A new model/evidence store; flatten everything into the executable IR | Avoids competing authorities and keeps source, meaning, runtime observations and evidence independently versioned. |
 | No external business side effects in an evaluator | Run compensators from the monitoring language | V1 checks observed effects/recovery. Actual orchestration is an independently authorized application consumer. |
 
@@ -181,7 +186,7 @@ deployment correctness or overall qualification.
 | Risk / scenario | Design response | Owner and next review |
 | --- | --- | --- |
 | V1 choices merely rename today's state subset | Every required family has native syntax/semantics and execution/monitor acceptance cases; the capability matrix is the release inventory. | A; complete-baseline PR review. |
-| A broad “later” group hides a foundational type or composition capability | Audit individual semantic families against product workflows and record the cost of later addition. | A with D; complete-baseline PR review. |
+| A delivery sequence is mistaken for permission to defer product scope | Trace every inventory row to normative semantics, one epic and qualification work; tickets may sequence work but cannot close it as deferred. | A; complete-V1 campaign review. |
 | Graph identity/closure conflicts with first state admission restrictions | Propose a separately versioned graph facet explicitly; preserve the original minimum-only ConfigVersion design gate and historical definition bytes. | A/D; state facet and baseline review. |
 | Missing temporal source-to-TL correspondence, especially past time | Native meaning precedes bridge implementation; #64 and TL #33 own the missing contracts rather than relabeling future-only support. | A/E; temporal baseline review. |
 | Timestamp order or sampled telemetry produces a false deadline claim | Require clock, correlation, ordering and completeness contracts and independent binding controls. | E/F with A; observation baseline review. |

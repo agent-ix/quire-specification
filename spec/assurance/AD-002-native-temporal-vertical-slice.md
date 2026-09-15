@@ -95,6 +95,22 @@ incomplete. A deadline settles from an identified inclusive progress assertion,
 not EOF, quiet wall time or a later unrelated receipt. Past false extension
 requires an authoritative origin; a merely visible suffix is missing history.
 
+The complete-V1 temporal system additionally admits partial valuations,
+uncertain clock intervals, revisioned out-of-order repair and an explicit
+infinite-trace profile. A partial atom retains its possible truth set and reason;
+it is never coerced to false. Interval arithmetic uses exact declared units and
+widens the possible temporal result when ordering cannot be established. Repair
+invalidates and recomputes only the affected suffix/window, retains superseded
+results and links both revisions.
+
+An infinite-trace property is a checked native subject distinct from a bounded
+monitor formula. Finite-prefix execution may refute a safety property when it
+has a valid finite counterexample, but it cannot establish infinite-trace
+satisfaction. A selected sound analysis provider returns proved, refuted,
+inconclusive, unsupported or failed with premises and lineage. The support table
+below describes the currently implemented TL bridge, not the complete language
+scope.
+
 All externally supplied sizes, counts, interval bounds and conversions are
 checked. The runtime reserves bounded work and retained state before expansion.
 Exhaustion, overflow, active-instance limits or required-state loss produce a
@@ -138,6 +154,8 @@ no substitute formula.
 | Native source is the only authoring authority | editable TL/FRETish side language | Every lower representation is a derived, source-correspondent artifact. |
 | Result axes remain independent | nullable Boolean or diagnostic-message parsing | Pending, incomplete, refusal, settled truth and resource loss cannot be conflated. |
 | Correspondence is admitted by exact support table | approximate timestamp/future/past translation | Unsupported domains remain visible rather than yielding a plausible wrong verdict. |
+| Infinite-trace meaning is native and provider-independent | Define unbounded meaning by one solver encoding | Providers prove correspondence and soundness; finite monitors cannot overclaim. |
+| Partial valuations and clock intervals remain explicit | Default missing values or select interval midpoints | Uncertainty propagates soundly into multi-valued results. |
 
 ## Risks
 

@@ -80,26 +80,17 @@ records the sentence that states each construct's rule.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
 
-## Open gap
+## Complete control contract
 
-1. **Join policy.** FR-052 states that "A join SHALL name the branches and
-   completion rule it awaits", which admits more than one completion rule, while
-   FR-049-AC-3 names only "all-branch join" and the
-   [choreography surface](../../../proposals/quire-v1/choreography-surface.md)
-   states that "All-branch join is the join rule spelled by this candidate.
-   Another join policy requires its own admitted rule, including what happens to
-   outstanding branches". No requirement states which completion rules are
-   admitted, so this artifact enumerates no completion-rule vocabulary.
-2. **Termination.** Two requirements use a completion noun for different things
-   and neither cross-references the other. FR-052 refuses "termination
-   conditions that cannot be reached within the declared finite graph", a
-   control-graph property. FR-049-AC-12 states that "A finish record without
-   required closure, or with unsettled required obligations, cannot establish
-   complete global success", an observation record. No requirement states
-   whether a termination declaration and a finish record are the same subject,
-   so no key for termination is recorded here beyond its node occurrence.
+Join policies are `all`, `any`, `quorum(n)` and `predicate(function-id)`; each
+declares whether outstanding branches continue or are cancelled, and cancellation
+is an explicit control transition. Literal bounded iteration remains supported;
+the complete loop form additionally carries an invariant, well-founded variant
+and optional execution ceiling. A termination declaration is an authored control
+node and identity; a finish record is a separate runtime observation that may
+satisfy its closure premise but never substitutes for the declaration.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage.
+Accepted complete-V1 control-construct contract. Implementation and
+qualification remain tracked separately.

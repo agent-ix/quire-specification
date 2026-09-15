@@ -66,6 +66,16 @@ catalog).
 | `extraction-package-conflict` | An extraction refused because of conflicting compilation inputs. |
 | `extraction-clause-count` | An extraction refused on binding cardinality. These three extraction refusals "cannot share only an English distinction". |
 | `runtime_invariant` | A named established evaluator or input invariant broken. "It is a failed evaluation, not a false predicate." |
+| `io_error` | An explicitly authorized tool or adapter I/O operation failed; evaluators never emit it for a semantic value. |
+| `malformed_command` | A CLI command or option set failed structural validation. |
+| `invalid_identifier` | A digest, typed identity or canonical domain failed validation. |
+| `output_serialization` | A validated result could not be encoded under the selected output wire contract. |
+| `invalid_quire_context` | A lifecycle request supplied an incompatible package, stage or semantic context. |
+| `invalid_source_identity` | Source authority, revision or digest did not match the supplied source. |
+| `invalid_source_map` | A source map was non-monotone, out of bounds or split a UTF-8 scalar. |
+| `foreign_reference` | A supplied identity belongs to a different authority, universe, model or subject domain than the position requires. |
+| `unimplemented_capability` | Valid complete-V1 meaning is not implemented by the selected producer; distinct from prohibited source and unsupported backend projection. |
+| `parity_failure` | Two implementations required to agree produced different typed verdicts or values for the same subject/input. |
 
 ## Identity and comparison
 
@@ -134,7 +144,7 @@ settling unselected native literals or treating spelling as a global convention.
 | FR-271-AC-4 | Localizing the message accompanying a diagnostic leaves its code unchanged. | Analysis |
 | FR-271-AC-5 | A code minted by a consumer for its own refusal does not resolve to a member of this table, even when its spelling equals a member spelling. | Analysis |
 
-## Resolved projection namespace; remaining native membership gap
+## Resolved catalog namespaces
 
 The catalog makes spelling load-bearing — "Hyphenated and underscored spellings
 stay exact; they are not normalized aliases" — while requirements use two
@@ -148,20 +158,18 @@ conventions:
   now places them in `quire.protocol.projection-refusal/v1-draft.1`. They are
   outside this native producer catalog and have no normalized aliases here.
 
-The remaining gap is native-only: no requirement places `invalid_source_map` or
-`foreign_reference` in a selected native catalog. `unavailable_observation` is
-spelled identically in FR-008-AC-4 and the proposed catalog, but its selection
-authority is still not stated. Those literals are not added to this table by
-coincidental spelling. FR-283 resolves only its own six-member projection
-namespace.
+The complete-V1 native producer catalog assigns `invalid_source_map`,
+`foreign_reference` and `unavailable_observation` the exact snake-case members
+listed above. FR-283 independently resolves its six-member projection namespace;
+those kebab-case codes do not alias native members.
 
-## Open gap: retained codes named by meaning only
+## Resolved retained code spellings
 
-The proposed catalog retains seven further codes by meaning without giving their
-spellings: "I/O error, malformed command, invalid digest/identifier, output
-serialization failure, invalid Quire context, invalid source identity and
-invalid source map." They are not listed as members, because inventing a
-spelling for them would add members the prose does not name.
+The values table fixes the seven previously meaning-only spellings as
+`io_error`, `malformed_command`, `invalid_identifier`, `output_serialization`,
+`invalid_quire_context`, `invalid_source_identity` and `invalid_source_map`.
+It additionally fixes `unimplemented_capability` and `parity_failure` for the
+complete-V1 lifecycle. Matching remains catalog-qualified and exact.
 
 ## Dependencies
 
@@ -181,7 +189,5 @@ spelling for them would add members the prose does not name.
 
 ## Status
 
-Draft. This artifact records existing meaning structurally. It establishes no
-new obligation and claims no implementation coverage. Where the prose it
-extracts from does not establish an identity, key or order, that absence is
-recorded here rather than supplied.
+Accepted complete-V1 diagnostic-code contract. Implementation and qualification
+remain tracked separately.

@@ -77,9 +77,13 @@ capable backend.
 | State core | `quire.state.core/v1` | Bounded scalar, presence/control and operation-anchor semantics under FS03 |
 | State queries | `quire.state.queries/v1` requiring state core | Acyclic predicates and ordered duplicate-preserving queries under FS03 |
 | State graph | `quire.state.graph/v1` requiring state queries | Finite typed universes, references, identity and reachability under FS02/FS03 |
+| Complete value and expression system | `quire.value.complete/v1` requiring state core | Complete scalar, record, recursive-value, collection, function and equality semantics under AD-005 |
+| Complete model system | `quire.model.complete/v1` requiring state graph and complete values | Conformance, redefinition, dispatch and systems-model correspondence under AD-006 |
 | Temporal facet and roots | `quire.temporal.bounded-facet/v1` plus event-position, fixed-sample and timestamped-window roots | Clock/history/progress semantics under FS04; TL is a derived target |
-| Protocol | `quire.protocol.finite-global/v1` | Choreography, compensation and conformance semantics under the protocol owner |
+| Infinite-trace temporal facet | `quire.temporal.infinite-trace/v1` | Unbounded property meaning and sound-provider contract under AD-002/009 |
+| Protocol | `quire.protocol.complete/v1` | Static/dynamic choreography, compensation, conformance, projection, realizability, composition and refinement under AD-007 |
 | Observation | `quire.observation.binding/v1`, `.progress/v1` and `.range/v1` | Correlation, completeness, progress and range authority under the observation owner |
+| Runtime, method and backend facets | `quire.runtime.composed/v1`, `quire.verification.plan/v1`, `quire.contract-ir.complete/v1` | Execution, workflow, analysis and exact backend contracts under AD-008/009/010 |
 | Package and diagnostics | `quire.package.composed/v1` and `quire.native.diagnostics/v1` | Exact composition and diagnostic interpretation under FS02/FS05 and the owning compiler interfaces |
 
 Acceptance here fixes the identity roles and dependency direction. It does not
@@ -93,14 +97,15 @@ that definition.
 | --- | --- | --- | --- |
 | Edition/profile selection, Boolean expressions and bounded integers | Historical `state-finite/0-draft` remains admitted; composed equivalents belong to state core | Released in quire-spec-language `v0.2.0` for the bounded scalar slice | Boolean, integer and state-scalar oracle lowering is merged; broader proof is tracked separately |
 | `present`, guarded `value`, short-circuit control, `let` and `if` | State-core meaning retains distinct absence, invalidity and Boolean result channels | Released bounded state-scalar behavior is partial evidence, not producer presence qualification | Unsupported distinctions refuse; no truthiness or null-to-false approximation |
-| `rational(n,d)` and rational `/` | Recognized composed state-core form with exact normalization, positive denominator, authored component bounds and proved nonzero/range obligations | Source/runtime support remains unimplemented | Refuse until the selected frontend and backend implement the exact contract; integer `/`, `div`, `rem` and `mod` remain refused |
+| `rational(n,d)`, exact decimal, quantities and profile-selected division/remainder | Complete value facet with explicit domains, normalization, rounding/loss and definedness | Bounded rational support remains incomplete; broader values are planned work | A frontend or backend lacking the selected exact construct refuses it; it never substitutes another numeric operation |
 | Ordered sequences, `size`, `contains`, `forall`, `exists` | State core; authored maximum at most 10,000 per wrapper | Native finite-sequence admission/evaluation is merged | Broader backend proof remains tracked; bound or kind gaps refuse |
-| Named predicates, `filter`, `map`, `count`, `sum` | State-query extension only; general or recursive functions remain refused | Native query admission/evaluation is merged | Backend support is per requested claim and cannot widen the profile |
-| Object/reference identity, `deref` and positive-length `reaches` | State-graph extension only; no scalar cast, ambient lookup or recursive record expansion | Native finite-graph admission/evaluation is merged for explicit bounded universes | Object/graph/collection Kani remains qcir #69; unavailable closure or correspondence refuses |
+| General pure functions and complete collection algebra | Complete value facet; recursion requires proved termination and collections retain order/uniqueness/multiplicity | Named acyclic query support is merged; complete functions/collections remain planned | Backend support is per requested claim and cannot narrow native semantics |
+| Object/reference identity, records, recursive values and model navigation | Complete model facet with explicit closed environments, conformance and dispatch | Native finite-graph admission/evaluation is merged for explicit bounded universes | Unavailable closure/correspondence or backend support refuses without approximation |
 | Bounded future/past temporal syntax | Temporal profiles only; exact clock/root selection required | Native syntax and compiled-package production are merged | TL lowering/evaluation is limited to exact reviewed correspondences; unmatched clocks/history/operators refuse |
-| Finite choreography, compensation and protocol claims | Protocol profile only; business attempts, receipts, effects and recovery remain distinct | Native syntax and compiled-package production are merged | Consumer conformance remains protocol #14; no evaluator executes business actions |
+| Static/dynamic choreography, compensation and protocol analyses | Complete protocol profile; business attempts, receipts, effects and recovery remain distinct | Finite syntax/package support is merged; dynamic/analyzer work remains planned | No evaluator executes business actions; each analyzer negotiates exact capability |
 | External OCL, SysML and FRETish forms | Output mappings only | Not source frontends | Each mapping reports preserved, conditional, unrepresented or refused meaning; no approximation |
-| Unbounded logic, float, implicit numeric conversion, recursion, reflection, I/O and ambient stores | Not admitted by the selected v1 profiles | No implementation claim | Explicit located refusal; a wider IR or analyzer does not change admission |
+| Unbounded temporal properties, IEEE float, explicit conversion and proved recursion | Admitted by their exact complete-V1 facets | No blanket implementation claim; delivery is tracked per capability | Unsupported selected frontend/backend capabilities refuse explicitly without narrowing V1 |
+| Reflection, evaluator I/O, ambient stores and implicit lossy conversion | Integrity exclusions, not deferred product features | Not admitted | Explicit located refusal under every V1 facet |
 
 ### Required diagnostic dispositions
 
@@ -133,12 +138,12 @@ invalid, unsupported, unimplemented, incomplete and logically false outcomes.
 
 | Question | Final FS01 disposition / owner |
 | --- | --- |
-| Q1 unbounded logic | No global decidability claim. Finite evaluation, finite search, validity and cost are separate; unbounded forms refuse in selected v1 profiles. FS03 owns state bounds. |
+| Q1 unbounded logic | No global decidability claim. The infinite-trace facet defines unbounded temporal properties and sound proved/refuted/inconclusive results; finite evidence alone cannot prove infinite satisfaction. |
 | Q2 identity/name | Product/display name Quire, descriptive name native Quire, stable identity `ix:native`; any later public rename uses FS05 migration. |
 | Q3 rejection depth | Lexical/syntax invalidity is distinct from recognized-but-unsupported source; both retain exact loci. |
 | Q4 object environment | Explicit finite typed current/pre/post universes and identity-bearing references; FS02/FS03 own producer correspondence and semantics. |
-| Q5 collections | Ordered duplicate-preserving sequences and named bounded queries; set/bag/implicit flattening remain refused. FS03 owns semantics. |
-| Q6 subtyping | Refused in selected v1 profiles; any extension needs explicit substitutability/cast rules and its own versioned profile. |
+| Q5 collections | Sequence, set, bag and ordered-set semantics, explicit conversions, map/collect, flatten and fold/reduce are required in the complete value facet; the historical bounded profile remains unchanged. |
+| Q6 subtyping | The complete model facet defines closed conformance/substitutability, subsetting, redefinition and dispatch; ambiguous or unavailable closure refuses. |
 | Q7 fuel | Runtime work ceilings are distinct from semantic maxima; exhaustion is incomplete and cannot truncate meaning. |
 | Q8 compatibility | Edition, semantic profile, artifact wire, canonicalization, backend and release versions remain independent; FS05 owns migration. |
 | Q9 temporal | Native temporal profiles own meaning; TL profiles are internal targets behind exact correspondence. FS04 and temporal owners close delivery. |
