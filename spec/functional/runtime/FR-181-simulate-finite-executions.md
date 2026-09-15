@@ -34,6 +34,17 @@ Enumeration is deterministic; sampling records the seed and generator version.
 Every trace is executable by the same domain runtimes. Exhaustion reports the
 unexplored frontier and cannot claim exhaustive success.
 
+## Exploration contract
+
+The simulator state key is the canonical digest of typed semantic state,
+control positions, queues, role lifetimes, observation progress and remaining
+bounds. Exhaustive mode performs deterministic breadth-first expansion of
+authored choices and enabled schedules, coalescing only equal complete state
+keys. Sampling draws from the same successor relation with a pinned
+counter-based generator. A trace records every transition identity and remains
+replayable without the simulator. The unexplored frontier contains canonical
+state keys plus the resource limit that stopped expansion.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -41,9 +52,15 @@ unexplored frontier and cannot claim exhaustive success.
 | FR-181-AC-1 | Enumeration covers each finite declared choice/schedule exactly under canonical ordering. | Test (TC-210) |
 | FR-181-AC-2 | Seeded sampling reproduces identical traces under the same ecosystem lock. | Test (TC-210) |
 | FR-181-AC-3 | Missing bounds or exhausted work returns requires-bound/incomplete with the unexplored scope. | Test (TC-210) |
+| FR-181-AC-4 | Exhaustive exploration coalesces only equal complete state keys and visits successors in canonical breadth-first order. | Test (TC-210) |
+| FR-181-AC-5 | Every generated trace replays through the same native transition relation with the same terminal disposition. | Test (TC-210) |
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

@@ -3,6 +3,8 @@ id: FR-304
 title: "Query and render deterministic model views"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-010
+    type: implements
   - target: ix://agent-ix/quire-specification/FR-150
     type: references
   - target: ix://agent-ix/quire-specification/AD-004
@@ -32,6 +34,15 @@ View subjects use qualified declaration/runtime identities. Canonical ordering
 is defined for set-valued metadata. Rendering cannot become a clause authority,
 infer missing model relationships or claim equivalence from visual inclusion.
 
+## View contract
+
+A query declares its source artifact, identity root, traversal relation, filter,
+projection and finite result bound. Results preserve qualified identities and
+canonical semantic ordering. A renderer consumes only that typed result and a
+versioned style profile, producing an artifact plus an identity-to-region map.
+Truncation is marked incomplete with the omitted frontier; visual adjacency,
+layout or labels never create a semantic relationship.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -42,6 +53,10 @@ infer missing model relationships or claim equivalence from visual inclusion.
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

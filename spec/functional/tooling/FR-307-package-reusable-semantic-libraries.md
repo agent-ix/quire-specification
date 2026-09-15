@@ -3,6 +3,8 @@ id: FR-307
 title: "Package reusable semantic and domain libraries"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-010
+    type: implements
   - target: ix://agent-ix/quire-specification/FR-002
     type: references
   - target: ix://agent-ix/quire-specification/FR-132
@@ -33,6 +35,16 @@ definitions without acquiring a second source authority. Imports are qualified;
 diamond dependencies must select byte-identical definitions or an explicit
 compatible unification. Migration emits a new subject and correspondence.
 
+## Library resolution contract
+
+A library manifest binds package identity/version, edition/profile, exported
+qualified declarations, dependency constraints and canonical content digest.
+Resolution selects one exact version per package identity and produces a closed
+acyclic lock graph. Diamond paths unify only when they reach the same canonical
+definition digest or an explicit compatibility declaration with a checked
+migration. Imports never inject unqualified names implicitly, and migration
+creates a new package identity plus element correspondence.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -43,6 +55,10 @@ compatible unification. Migration emits a new subject and correspondence.
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

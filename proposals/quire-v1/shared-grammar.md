@@ -1,18 +1,17 @@
-# Shared native grammar draft
+# Shared native grammar
 
-Proposed L1 contribution for a new syntax edition; **not the completed composed
-grammar or an accepted profile**. Historical `ix:native` / `0-draft` sources keep
-their exact rules. The candidate uses `ix:native` / `1-draft` to make the change
-explicit without renaming historical sources. Profile definition artifacts and
-their exact revisions/digests must be accepted before this candidate executes.
+This document defines the composed `ix:native` / `1-draft` edition grammar and
+the complete-V1 facet additions. Historical `ix:native` / `0-draft` sources keep
+their exact rules and bytes. Selecting the complete facet bundle is explicit;
+it never relabels a historical package or makes an unselected construct valid.
 
-This draft defines one composed entry point for common expressions, state,
+This grammar defines one composed entry point for common expressions, state,
 temporal and protocol/choreography declarations. Temporal meaning comes from
 FR-090–095; protocol meaning comes from FR-050–061 and the
 [protocol contract](protocol-contract.md). No family body is arbitrary balanced
-text and no adapter may parse expressions with a second grammar. L1 stays open
-until the proposed surfaces, exact family bindings and examples agree and the
-baseline review accepts their definition artifacts.
+text and no adapter may parse expressions with a second grammar. The behavioral
+and object requirements own meaning; this document owns source recognition,
+precedence and binding shape.
 
 ## Lexical contract
 
@@ -67,6 +66,22 @@ Common reserved words for this candidate fragment are `language`, `edition`,
 `exhausted`, `await`, `after`, `match`, `timeout`, `send`, `via`, `receive`,
 `attempt`, `contracts`, `effect`, `event`, `related`, `check` and `finish`.
 This candidate inventory is edition-owned, not an extensible runtime registry.
+
+The complete-V1 facets additionally reserve `import`, `dimension`, `unit`,
+`ordered`, `enum`, `record`, `tuple`, `type`, `function`, `pure`, `decreases`,
+`Integer`, `Int`, `Rational`, `Decimal`, `Float32`, `Float64`, `Text`, `Option`,
+`Sequence`, `Set`, `Bag`, `OrderedSet`, `Reference`, `null`, `none`, `decimal`,
+`float32`, `float64`, `bits`, `convert`, `allInstances`, `collect`, `flatMap`,
+`flatten`, `fold`, `reduce`, `identity`, `toward-zero`, `toward-positive`,
+`toward-negative`, `nearest-even`, `nearest-away`, `unicode-scalars`, `nfc`,
+`nfd`, `nfkc`, `nfkd`, `binary-utf8`, `lifetime`, `workflow`, `scope`,
+`capacity`, `symbolic`, `overflow`, `reject`, `block`, `loss`, `at-most-once`,
+`at-least-once`, `exactly-once-premise`, `any`, `quorum`, `outstanding`,
+`continue`, `cancel`, `invariant`, `variant`, `relation`, `hyper`, `trace`,
+`bounded`, `hybrid`, `mode`, `flow`, `transition`, `reset`, `synthesis`,
+`grammar`, `satisfies`, `verify`, `claim`, `method`, `domain`, `depends` and
+`bound`. Hyphenated tokens are matched as single keyword spellings only in
+their grammar positions; they are never identifier normalization aliases.
 
 ## Declarations and expressions
 
@@ -216,10 +231,9 @@ The [state contract](state-contract.md) specifies ordered queries, exact
 aggregation, numeric domains and operation-anchor correspondence. Type arguments
 after the reserved query names are type positions, not comparisons; the normal
 comparison grammar applies inside their argument expressions.
-Named imported model types are the authority for parameter domains. This draft
-does not introduce inline record/field schemas or infer scalar bounds from data.
-Any additional parameter type constructors require the reviewed shared type
-contract; model identity and presence work remain with D.
+Named imported model types are the authority for model-owned parameter domains.
+The complete-V1 additions below also admit explicitly declared native value
+types without permitting a second model authority.
 
 `using` selects a declared profile alias for every native declaration;
 there is no backend-derived default. Profile tuples include the definition name,
@@ -229,6 +243,189 @@ The [package contract](package-contract.md) defines the closed source inventory,
 compiled-model byte digest, exact definition dependencies and typed binding roles.
 The explicit compiler inventory supplies the edition definition matching the
 header; no installed-backend default completes an otherwise missing selection.
+
+## Complete-V1 facet grammar
+
+When the package selects `quire.value.complete/v1`,
+`quire.model.complete/v1`, `quire.temporal.complete/v1`,
+`quire.protocol.complete/v1` and the applicable runtime/analysis facets, the
+following productions extend or replace the same-named bounded productions
+above. These are edition-owned terminals, not backend-discovered syntax. A
+recognized construct whose required facet is absent receives a located
+`unsupported_construct`; a selected frontend that has not implemented an
+admitted construct receives `unimplemented_capability` and cannot reinterpret
+it.
+
+```ebnf
+complete-unit = header, profile, { profile }, { import-decl }, { model },
+                declaration, { declaration }, EOF ;
+import-decl   = 'import', string, 'version', string, 'digest', string,
+                [ 'as', ident ], ';' ;
+
+declaration   = dimension-decl | unit-decl | enum-decl | record-decl
+              | tuple-decl | alias-decl | function | predicate
+              | state-clause | temporal-clause | protocol-clause
+              | relation-clause | hyper-clause | hybrid-decl
+              | synthesis-decl | verification-plan ;
+
+type-ref      = 'Boolean' | 'Integer' | qualified-name
+              | 'Int', '[', signed-int, ',', signed-int, ']'
+              | 'Rational', '[', signed-int, ',', signed-int, ';',
+                            uint, ',', uint, ']'
+              | 'Decimal', '[', signed-int, ',', signed-int, ';',
+                           uint, ',', uint, ';', rounding-mode, ']'
+              | ('Float32' | 'Float64'), '[', rounding-mode, ']'
+              | 'Text', '[', uint, ',', uint, ';', text-profile, ']'
+              | 'Option', '<', type-ref, '>'
+              | ('Sequence' | 'Set' | 'Bag' | 'OrderedSet'),
+                '<', type-ref, '>', '[', uint, ',', uint, ']'
+              | 'Reference', '<', qualified-name, '>' ;
+qualified-name = ident, { '::', member-name } ;
+rounding-mode = 'exact' | 'toward-zero' | 'toward-positive'
+              | 'toward-negative' | 'nearest-even' | 'nearest-away' ;
+text-profile  = 'unicode-scalars' | 'nfc' | 'nfd' | 'nfkc' | 'nfkd'
+              | 'binary-utf8' ;
+
+dimension-decl = 'dimension', ident,
+                 [ '=', dimension-term, { ('*' | '/'), dimension-term } ], ';' ;
+dimension-term = qualified-name, [ '^', signed-int ] ;
+unit-decl     = 'unit', ident, ':', qualified-name, '=', exact-number,
+                [ '*', qualified-name ], [ '+', exact-number ], ';' ;
+enum-decl     = [ 'ordered' ], 'enum', ident, '{', enum-member,
+                { ',', enum-member }, [ ',' ], '}' ;
+enum-member   = ident, [ '=', string ] ;
+record-decl   = 'record', ident, '{', field, { field }, '}' ;
+field         = ident, ':', type-ref, [ '?' ], ';' ;
+tuple-decl    = 'tuple', ident, '(', type-ref, { ',', type-ref }, ')', ';' ;
+alias-decl    = 'type', ident, '=', type-ref, ';' ;
+
+function      = 'function', ident, 'using', ident,
+                '(', [ parameter, { ',', parameter } ], ')', ':', type-ref,
+                'pure', [ 'decreases', '(', expr, ')' ], block ;
+parameter-type = type-ref ;
+parameter     = ident, ':', type-ref ;
+
+primary       = 'true' | 'false' | 'null' | 'none' | 'self' | 'result'
+              | uint | string | exact-number | enum-value | collection-value
+              | record-value | tuple-value | float-value
+              | ident, [ '(', [ expr, { ',', expr } ], ')' ]
+              | qualified-name | '(', expr, ')'
+              | ('present' | 'value' | 'deref' | 'pre'), '(', expr, ')'
+              | 'convert', '<', type-ref, '>', '(', expr, ')'
+              | 'allInstances', '<', type-ref, '>', '(', expr, ')'
+              | collection-call
+              | 'reaches', '(', expr, ',', expr, ',', qualified-name, ')' ;
+exact-number  = 'rational', '(', signed-int, ',', signed-int, ')'
+              | 'decimal', '(', signed-int, ',', uint, ')' ;
+float-value   = 'float32', '(', 'bits', ':', hex32, ')'
+              | 'float64', '(', 'bits', ':', hex64, ')' ;
+hex32         = '0x', hex-digit, hex-digit, hex-digit, hex-digit,
+                     hex-digit, hex-digit, hex-digit, hex-digit ;
+hex64         = '0x', hex-digit, hex-digit, hex-digit, hex-digit,
+                     hex-digit, hex-digit, hex-digit, hex-digit,
+                     hex-digit, hex-digit, hex-digit, hex-digit,
+                     hex-digit, hex-digit, hex-digit, hex-digit ;
+hex-digit     = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7'
+              | '8' | '9' | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' ;
+enum-value    = qualified-name, '::', member-name ;
+collection-value = 'sequence', '[', [ expr, { ',', expr } ], ']'
+                 | 'set', '[', [ expr, { ',', expr } ], ']'
+                 | 'bag', '[', [ expr, { ',', expr } ], ']'
+                 | 'orderedSet', '[', [ expr, { ',', expr } ], ']' ;
+record-value  = qualified-name, '{', field-value, { ',', field-value }, '}' ;
+field-value   = ident, ':', expr ;
+tuple-value   = qualified-name, '(', expr, { ',', expr }, ')' ;
+
+postfix       = primary, { '.', member-name | '[', expr, ']' } ;
+product       = unary, { ('*' | '/' | 'div' | 'rem' | 'mod'), unary } ;
+collection-call = ('map' | 'collect' | 'filter' | 'flatMap'),
+                  '(', ident, 'in', expr, ':', expr, ')'
+                | 'flatten', '(', expr, ')'
+                | ('fold' | 'reduce'), '<', qualified-name, '>',
+                  '(', ident, ',', ident, 'in', expr, ':', expr,
+                  [ ',', 'identity', ':', expr ], ')' ;
+```
+
+`null`, `none`, collection constructors, record/tuple constructors and
+bit-level float constructors are disjoint forms; no empty spelling aliases
+another kind. Decimal source is exact coefficient/scale syntax. IEEE source is
+bit-level so signed zero and NaN payload identity survive parsing. Human decimal
+float conversion is an explicit library function under a selected rounding
+profile, not a literal shortcut.
+
+### Complete temporal, choreography and analysis forms
+
+```ebnf
+interval      = '[', uint, ',', (uint | '*'), ']' ;
+temporal-unary = 'not', temporal-unary
+               | ('eventually' | 'always' | 'once' | 'historically'),
+                 interval, temporal-unary
+               | temporal-primary ;
+temporal-relation = temporal-unary,
+                    [ ('until' | 'release' | 'since' | 'triggered'),
+                      interval, temporal-unary ] ;
+
+role          = 'role', ident, 'on', qualified-name, ';'
+              | 'role', ident, 'each', qualified-name,
+                'from', ident, 'max', uint,
+                'lifetime', role-lifetime, ';' ;
+role-lifetime = 'workflow' | 'scope' | 'until', '(', expr, ')' ;
+channel       = 'channel', ident, 'from', ident, 'to', ident,
+                'carries', type-ref, 'ordering', ordering,
+                'delivery', delivery-policy,
+                'capacity', capacity,
+                'overflow', overflow-policy, ';' ;
+delivery-policy = 'unknown' | 'at-most-once' | 'at-least-once'
+                | 'exactly-once-premise' ;
+capacity      = uint | 'symbolic', '(', ident, ')' ;
+overflow-policy = 'reject' | 'block' | 'loss' ;
+parallel      = 'parallel', ident, '{', branch, branch, { branch }, '}',
+                'join', join-policy, '[', ident, { ',', ident }, ']',
+                [ 'outstanding', ('continue' | 'cancel') ], ';' ;
+join-policy   = 'all' | 'any' | 'quorum', '(', uint, ')'
+              | 'predicate', '(', ident, ')' ;
+repetition    = 'repeat', ident, 'by', ident, visibility, 'max', uint,
+                'invariant', block, 'variant', block,
+                'while', block, control, 'exhausted', control ;
+
+relation-clause = 'relation', ident, 'using', ident,
+                  'over', '(', execution-binding, ',', execution-binding,
+                  { ',', execution-binding }, ')', block ;
+execution-binding = ident, ':', qualified-name ;
+hyper-clause  = 'hyper', ident, 'using', ident, 'over', trace-domain,
+                quantifier, { quantifier }, block ;
+trace-domain  = ident, 'in', qualified-name, 'bounded', uint ;
+quantifier    = ('forall' | 'exists'), 'trace', ident ;
+hybrid-decl   = 'hybrid', ident, 'using', ident, '{', hybrid-mode,
+                { hybrid-mode }, '}' ;
+hybrid-mode   = 'mode', ident, 'invariant', block,
+                'flow', '{', equation, { equation }, '}',
+                { 'transition', 'to', ident, 'when', block,
+                  'reset', block, ';' } ;
+equation      = qualified-name, "'", '=', expr, ';' ;
+synthesis-decl = 'synthesis', ident, 'using', ident,
+                 'grammar', qualified-name, 'domain', qualified-name,
+                 'satisfies', block, ';' ;
+
+verification-plan = 'verify', ident, 'using', ident, '{',
+                    verification-step, { verification-step }, '}' ;
+verification-step = 'check', ident, 'claim', qualified-name,
+                    'method', qualified-name,
+                    'domain', qualified-name,
+                    [ 'depends', '[', ident, { ',', ident }, ']' ],
+                    [ 'bound', uint ], ';' ;
+```
+
+`*` is permitted only as an interval upper bound under an infinite-trace
+temporal profile. It is not a finite runtime bound and does not authorize a
+finite provider to claim satisfaction. `exactly-once-premise` is an authored
+environment premise, never a transport guarantee inferred by the runtime.
+`quorum(n)` requires `1 <= n <= branch-count`. A named join predicate is a
+total pure function over the explicitly captured branch dispositions. Dynamic
+role lifetime and channel capacity remain checked semantic expressions; a
+symbolic capacity requires a discharged finite bound before finite execution.
+Verification plans link outside clause-expression evaluation even though their
+source is recognized by the same edition.
 
 ## Precedence and bindings
 

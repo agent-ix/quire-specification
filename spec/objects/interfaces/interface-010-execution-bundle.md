@@ -2,6 +2,9 @@
 id: interface-010
 title: "I10 composed execution bundle"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-328
+    type: references
 ---
 
 # [interface-010] I10 composed execution bundle

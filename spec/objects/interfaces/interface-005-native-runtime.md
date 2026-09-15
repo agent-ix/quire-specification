@@ -2,6 +2,9 @@
 id: interface-005
 title: "I05 native runtime input and result"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-323
+    type: references
 ---
 
 # [interface-005] I05 native runtime input and result

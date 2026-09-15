@@ -2,6 +2,9 @@
 id: interface-021
 title: "I21 attributed human decision"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-338
+    type: references
 ---
 
 # [interface-021] I21 attributed human decision

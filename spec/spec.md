@@ -606,6 +606,46 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/interface-021
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-320
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-321
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-323
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-324
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-325
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-326
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-327
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-328
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-329
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-330
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-331
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-332
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-333
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-334
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-335
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-336
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-337
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-338
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-339
+    type: contains
   - target: ix://agent-ix/quire-specification/TM-009
     type: contains
 ---
@@ -824,32 +864,33 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [AD-011](assurance/AD-011-integration-evidence-qualification.md) | ArchitectureDescription | Accepted tooling, integration, evidence and qualification subsystem |
 | [Complete-V1 subsystem index](subsystems/index.md) | Architecture index | Ten subsystems and I01–I21 interface ownership |
 | [TM-009](complete-v1/tests.md) | Test Matrix | All 176 atomic capabilities and complete-V1 qualification cases |
+| [FR-339](functional/source-package/FR-339-define-complete-native-grammar.md) | FR | Normative complete native V1 lexical and syntactic contract |
 | [FCD FR-106](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-106-author-field-presence-independently.md) | FR | Static authored presence/multiplicity/null/default contract accepted and implemented by FCD PR #99; FCD #93 retains Semantic IR/frontends |
 | [FCD FR-107](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-107-declare-first-class-relationship-contracts.md) | FR | Static relationship/endpoints accepted in FCD PR #99 and consumed by QSL PR #94; runtime instances remain consumer work |
 | [FCD FR-108](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-108-bind-populations-to-model-contracts.md) | FR | Static population ownership and truth-support rule accepted; assessment membership remains open |
 | [FCD FR-109](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-109-declare-ecosystem-configuration-contracts.md) | FR | Static configuration selection accepted and consumed; runtime assessment configuration remains open |
 | [FCD FR-110](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-110-lock-ecosystem-inventory-and-bindings.md) | FR | Static inventory/binding producer accepted; IN01 assessment qualification remains planned |
 | [FCD FR-111](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-111-classify-mixed-version-impact.md) | FR | Compatibility/evidence-impact authority accepted; IN02 executable qualification remains planned |
-| [FR-049](functional/foundation/FR-049-bind-native-choreography-syntax.md) | FR | Native choreography source integration; proposed, reviewed in SR-400 |
-| [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-050](functional/protocol/FR-050-bind-protocol-instances.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-051](functional/protocol/FR-051-preserve-communication-identities.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-052](functional/protocol/FR-052-represent-bounded-control.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-053](functional/protocol/FR-053-enforce-choice-visibility.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-054](functional/protocol/FR-054-bind-channel-premises.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-055](functional/protocol/FR-055-activate-protocol-obligations.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-056](functional/protocol/FR-056-register-compensation.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-057](functional/protocol/FR-057-enforce-commit-recovery.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-058](functional/protocol/FR-058-preserve-retry-and-partial-recovery.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-059](functional/protocol/FR-059-assess-finite-global-conformance.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-060](functional/protocol/FR-060-separate-protocol-claims.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-061](functional/protocol/FR-061-report-orthogonal-results.md) | FR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [FR-062](functional/protocol/FR-062-project-results-to-portable-verification.md) | FR | Family-reviewed projection; composed review requires corrections (SR-400) |
-| [NFR-020](non-functional/NFR-020-bound-protocol-processing.md) | NFR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [NFR-021](non-functional/NFR-021-reproduce-protocol-results.md) | NFR | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [IT-020](integration/IT-020-native-protocol-handoff.md) | IT | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [IT-021](integration/IT-021-observation-result-handoff.md) | IT | Family-reviewed draft; composed review requires corrections (SR-400) |
-| [US-009](usecase/US-009-assess-observed-workflow-outcomes.md) | US | Integrated family draft; proposed, reviewed in SR-400 |
+| [FR-049](functional/foundation/FR-049-bind-native-choreography-syntax.md) | FR | Accepted native choreography source integration; complete-V1 review SR-570–579 |
+| [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Accepted complete-V1 protocol intent; review SR-570–579 |
+| [FR-050](functional/protocol/FR-050-bind-protocol-instances.md) | FR | Accepted complete-V1 protocol foundation; review SR-570–579 |
+| [FR-051](functional/protocol/FR-051-preserve-communication-identities.md) | FR | Accepted complete-V1 protocol foundation; review SR-570–579 |
+| [FR-052](functional/protocol/FR-052-represent-bounded-control.md) | FR | Accepted complete-V1 protocol foundation; review SR-570–579 |
+| [FR-053](functional/protocol/FR-053-enforce-choice-visibility.md) | FR | Accepted complete-V1 protocol foundation; review SR-570–579 |
+| [FR-054](functional/protocol/FR-054-bind-channel-premises.md) | FR | Accepted complete-V1 protocol foundation; review SR-570–579 |
+| [FR-055](functional/protocol/FR-055-activate-protocol-obligations.md) | FR | Accepted complete-V1 protocol foundation; review SR-570–579 |
+| [FR-056](functional/protocol/FR-056-register-compensation.md) | FR | Accepted complete-V1 protocol foundation; review SR-570–579 |
+| [FR-057](functional/protocol/FR-057-enforce-commit-recovery.md) | FR | Accepted complete-V1 protocol foundation; review SR-570–579 |
+| [FR-058](functional/protocol/FR-058-preserve-retry-and-partial-recovery.md) | FR | Accepted complete-V1 protocol foundation; review SR-570–579 |
+| [FR-059](functional/protocol/FR-059-assess-finite-global-conformance.md) | FR | Accepted complete-V1 protocol foundation; review SR-570–579 |
+| [FR-060](functional/protocol/FR-060-separate-protocol-claims.md) | FR | Accepted complete-V1 protocol foundation; review SR-570–579 |
+| [FR-061](functional/protocol/FR-061-report-orthogonal-results.md) | FR | Accepted complete-V1 protocol foundation; review SR-570–579 |
+| [FR-062](functional/protocol/FR-062-project-results-to-portable-verification.md) | FR | Accepted complete-V1 protocol projection; review SR-570–579 |
+| [NFR-020](non-functional/NFR-020-bound-protocol-processing.md) | NFR | Accepted complete-V1 protocol quality constraint; review SR-570–579 |
+| [NFR-021](non-functional/NFR-021-reproduce-protocol-results.md) | NFR | Accepted complete-V1 protocol quality constraint; review SR-570–579 |
+| [IT-020](integration/IT-020-native-protocol-handoff.md) | IT | Accepted complete-V1 protocol boundary; review SR-570–579 |
+| [IT-021](integration/IT-021-observation-result-handoff.md) | IT | Accepted complete-V1 protocol boundary; review SR-570–579 |
+| [US-009](usecase/US-009-assess-observed-workflow-outcomes.md) | US | Accepted complete-V1 observation intent; review SR-570–579 |
 | [FR-110](functional/observation/FR-110-bind-typed-observations.md) | FR | Accepted by FS04; implementation coverage remains separate |
 | [FR-111](functional/observation/FR-111-correlate-related-instances-explicitly.md) | FR | Accepted by FS04; producer/topology adoption remains open |
 | [FR-112](functional/observation/FR-112-declare-population-and-completeness.md) | FR | Accepted by FS04; assessment consumers remain open |
@@ -869,10 +910,10 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [NFR-050](non-functional/NFR-050-bound-observation-retention.md) | NFR | Accepted by FS04; concrete limits remain owner-specific |
 | [NFR-051](non-functional/NFR-051-preserve-observation-reproducibility.md) | NFR | Accepted by FS04; conformance remains separate |
 | [NFR-052](non-functional/NFR-052-contain-observation-executables.md) | NFR | Accepted by FS04 for Rust-owned observation paths |
-| [IT-050](integration/IT-050-observation-to-temporal-and-protocol-assessment.md) | IT | Integrated family draft; proposed, reviewed in SR-400 |
-| [IT-051](integration/IT-051-observation-output-consumer-contract.md) | IT | Integrated family draft; proposed, reviewed in SR-400 |
-| [FR-048](functional/foundation/FR-048-bind-native-temporal-syntax.md) | FR | Native temporal source integration; proposed, reviewed in SR-400 |
-| [US-008](usecase/US-008-assess-native-temporal-obligations.md) | US | Family-reviewed draft; composed review requires corrections (SR-400) |
+| [IT-050](integration/IT-050-observation-to-temporal-and-protocol-assessment.md) | IT | Accepted complete-V1 observation boundary; review SR-570–579 |
+| [IT-051](integration/IT-051-observation-output-consumer-contract.md) | IT | Accepted complete-V1 observation boundary; review SR-570–579 |
+| [FR-048](functional/foundation/FR-048-bind-native-temporal-syntax.md) | FR | Accepted native temporal source integration; review SR-570–579 |
+| [US-008](usecase/US-008-assess-native-temporal-obligations.md) | US | Accepted complete-V1 temporal intent; review SR-570–579 |
 | [FR-090](functional/temporal/FR-090-select-temporal-profile-and-clock.md) | FR | Accepted FS04 exact profile/clock selection |
 | [FR-091](functional/temporal/FR-091-evaluate-bounded-future.md) | FR | Accepted FS04 bounded-future meaning |
 | [FR-092](functional/temporal/FR-092-evaluate-bounded-past.md) | FR | Accepted FS04 origin-complete past/history meaning |
@@ -889,10 +930,10 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-044](functional/foundation/FR-044-check-composed-numeric-definedness.md) | FR | Accepted by FS03; implementation coverage remains separate |
 | [FR-045](functional/foundation/FR-045-preserve-control-and-presence-facts.md) | FR | Accepted by FS03; implementation coverage remains separate |
 | [FR-046](functional/foundation/FR-046-validate-state-invocation-inputs.md) | FR | Accepted by FS03; implementation coverage remains separate |
-| [FR-047](functional/foundation/FR-047-emit-typed-located-causes.md) | FR | Composed state/diagnostic contribution; proposed, reviewed in SR-400 |
+| [FR-047](functional/foundation/FR-047-emit-typed-located-causes.md) | FR | Accepted complete-V1 state/diagnostic contribution; review SR-570–579 |
 | [NFR-010](non-functional/NFR-010-bound-composed-processing.md) | NFR | Accepted by FS03 for state processing; family implementation varies |
-| [FR-036](functional/foundation/FR-036-retain-lexical-source-locations.md) | FR | Shared grammar/type contribution; proposed, reviewed in SR-400 |
-| [FR-037](functional/foundation/FR-037-parse-shared-native-expressions.md) | FR | Shared grammar/type contribution; proposed, reviewed in SR-400 |
+| [FR-036](functional/foundation/FR-036-retain-lexical-source-locations.md) | FR | Accepted complete-V1 grammar/type contribution; review SR-570–579 |
+| [FR-037](functional/foundation/FR-037-parse-shared-native-expressions.md) | FR | Accepted complete-V1 grammar/type contribution; review SR-570–579 |
 | [FR-038](functional/foundation/FR-038-resolve-predicate-scopes.md) | FR | Accepted by FS03 for the state query/graph closure |
 | [FR-039](functional/foundation/FR-039-normalize-exact-rational-literals.md) | FR | Accepted by FS03 for exact rational admission |
 | [FR-030](functional/foundation/FR-030-bind-composed-definitions.md) | FR | Shared definition binding draft |

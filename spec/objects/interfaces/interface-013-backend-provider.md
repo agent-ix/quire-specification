@@ -2,6 +2,9 @@
 id: interface-013
 title: "I13 backend capability, request and result"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-331
+    type: references
 ---
 
 # [interface-013] I13 backend capability, request and result

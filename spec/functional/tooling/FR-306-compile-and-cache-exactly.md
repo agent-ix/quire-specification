@@ -3,6 +3,8 @@ id: FR-306
 title: "Compile and cache exact AOT/JIT artifacts"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-010
+    type: implements
   - target: ix://agent-ix/quire-specification/AD-004
     type: references
   - target: ix://agent-ix/quire-specification/FR-195
@@ -34,6 +36,16 @@ all meaning-affecting inputs; mismatches invalidate rather than reuse. Executed
 results obey the same typed value/failure contract as native execution. Runtime
 code cannot access ambient effects absent an explicit non-evaluator tool contract.
 
+## Compilation and cache identity
+
+Compilation is preceded by per-node capability negotiation and emits only when
+all dependencies of that node are exact. The cache key covers semantic-subject
+digest, IR/profile versions, provider binary/configuration, target, toolchain,
+dependencies, options and relevant limits. The cached value includes the full
+typed disposition and provenance, is content-verified on read and is never
+reused after any key-field mismatch. Concurrent writers may publish only
+byte-identical values for one key.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -44,6 +56,10 @@ code cannot access ambient effects absent an explicit non-evaluator tool contrac
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

@@ -2,6 +2,9 @@
 id: interface-019
 title: "I19 independent conformance corpus and result"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-336
+    type: references
 ---
 
 # [interface-019] I19 independent conformance corpus and result

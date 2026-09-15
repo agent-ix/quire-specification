@@ -2,6 +2,9 @@
 id: interface-009
 title: "I09 protocol assessment"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-327
+    type: references
 ---
 
 # [interface-009] I09 protocol assessment

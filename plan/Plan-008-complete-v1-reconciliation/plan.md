@@ -173,8 +173,8 @@ architecture decision.
 | Task-005 | B | Epic/ticket reconciliation | TC-020 | done |
 | Task-006 | C | Complete subsystem architecture | TC-040, TC-049, TC-170 | done |
 | Task-007 | C | Normative specification completion | TC-020, TC-030 | done |
-| Task-008 | C | Coherent review and remediation | TC-020, TC-032 | in_progress |
-| Task-009 | D | Existing delivery program | TC-020, TC-032 | not_started |
+| Task-008 | C | Coherent review and remediation | TC-020, TC-032 | done |
+| Task-009 | D | Existing delivery program | TC-020, TC-032 | in_progress |
 | Task-010 | D | Final coverage and tracking gate | TC-020, TC-032 | not_started |
 
 ## Coordination Rules

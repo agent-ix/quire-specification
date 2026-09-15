@@ -2,6 +2,11 @@
 id: interface-001
 title: "I01 exact source document"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-202
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-203
+    type: references
 ---
 
 # [interface-001] I01 exact source document

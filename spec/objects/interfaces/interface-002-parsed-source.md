@@ -2,6 +2,9 @@
 id: interface-002
 title: "I02 lossless parsed source"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-320
+    type: references
 ---
 
 # [interface-002] I02 lossless parsed source

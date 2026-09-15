@@ -2,6 +2,9 @@
 id: interface-004
 title: "I04 immutable checked package"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: references
 ---
 
 # [interface-004] I04 immutable checked package

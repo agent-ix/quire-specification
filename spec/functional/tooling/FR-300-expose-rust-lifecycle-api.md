@@ -33,6 +33,15 @@ definition and capability identity. No lifecycle call reparses diagnostic text,
 uses ambient configuration or silently performs a later stage. Public crates are
 Rust-only and `publish = false` until their owning release changes that policy.
 
+## Lifecycle surface
+
+The public API exposes typed `parse`, `select_model`, `check`, `execute`,
+`monitor`, `analyze`, `lower`, `generate`, `replay` and `render` operations.
+Every request carries source/artifact identity, exact profile, limits and
+cancellation; every response carries one typed disposition, diagnostics,
+provenance and the stage artifact when successful. Artifacts are immutable,
+thread-safe values and later stages require their exact predecessor type.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -43,6 +52,10 @@ Rust-only and `publish = false` until their owning release changes that policy.
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

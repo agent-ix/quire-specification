@@ -2,6 +2,9 @@
 id: interface-018
 title: "I18 exact ecosystem lock"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-335
+    type: references
 ---
 
 # [interface-018] I18 exact ecosystem lock

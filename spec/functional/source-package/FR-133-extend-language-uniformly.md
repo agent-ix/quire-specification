@@ -3,6 +3,8 @@ id: FR-133
 title: "Extend declarations and semantic families uniformly"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-010
+    type: implements
   - target: ix://agent-ix/quire-specification/FR-032
     type: references
   - target: ix://agent-ix/quire-specification/FR-131
@@ -44,6 +46,10 @@ the unknown required capability.
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

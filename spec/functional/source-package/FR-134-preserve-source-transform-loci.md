@@ -3,6 +3,8 @@ id: FR-134
 title: "Preserve exact loci through source transformations"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-010
+    type: implements
   - target: ix://agent-ix/quire-specification/FR-003
     type: references
   - target: ix://agent-ix/quire-specification/FR-036
@@ -44,6 +46,10 @@ source occurrence exists and typed runtime paths otherwise.
 
 ## Dependencies
 
-The selected subsystem architecture and every typed frontmatter relationship
-are upstream contracts. Downstream implementation and qualification work must
-preserve those exact selections and cannot infer support from this specification.
+- [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
+  source form used by this requirement.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification acceptance.

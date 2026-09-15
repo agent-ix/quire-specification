@@ -2,6 +2,9 @@
 id: interface-007
 title: "I07 observation authority bundle"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-325
+    type: references
 ---
 
 # [interface-007] I07 observation authority bundle

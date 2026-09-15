@@ -34,7 +34,7 @@ relationships:
 
 ## Context
 
-This story drives the native finite-state work assigned to Agent A. The requirements below remain draft until the requested specification review is completed. Existing implementation observations do not establish the unimplemented pipeline stages.
+This story originated the native finite-state slice and is accepted within the complete-V1 specification review. Existing implementation observations establish only their traced stages; implementation planning owns every remaining delivery stage.
 
 ## Acceptance Examples (Illustrative)
 

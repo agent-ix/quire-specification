@@ -2,6 +2,9 @@
 id: interface-014
 title: "I14 linked verification plan"
 type: interface
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-332
+    type: references
 ---
 
 # [interface-014] I14 linked verification plan
