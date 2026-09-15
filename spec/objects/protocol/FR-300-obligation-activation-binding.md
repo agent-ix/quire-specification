@@ -29,12 +29,21 @@ admitted trigger observation, and the exact checked activation result. The
 binding SHALL be the only producer-to-consumer bridge by which an event-triggered
 FR-230 obligation instance is constructed.
 
+The compiled-protocol producer SHALL publish one versioned, declaration-local
+control-to-temporal-activation mapping for every control that can establish an
+event-triggered obligation. The mapping SHALL select the exact checked temporal
+declaration/result consumed by that control; its absence, duplication, foreign
+definition, or substitution SHALL refuse activation binding. A consumer SHALL
+not infer this relation from a control table position, temporal declaration
+position, name, capture, clock, timestamp, or observation arrival order.
+
 ## Properties
 
 | Property | Source | Note |
 | --- | --- | --- |
 | Qualified protocol-definition identity | FR-288 | Identifies the linked finite protocol under which the control was selected. |
 | Declaration-local control handle | FR-052 | Identifies the authored control occurrence; it is not a runtime subject or an obligation identity by itself. |
+| Control-to-temporal-activation mapping | FR-052, FR-093 | Versioned producer-owned relation selecting the exact temporal declaration/result for that control. |
 | Clause subject | FR-093, FR-230 | Exact subject selected by the control's checked predicate/capture binding. |
 | Semantic trigger-event identity | FR-093, FR-260 | The admitted trigger observation identity selected for this activation. |
 | Checked activation result | FR-093 | Retains trigger/guard establishment, activation state, immutable captures and the exact evaluation anchor. |
@@ -79,11 +88,13 @@ instance identity.
 | FR-300-AC-2 | Replaying the same admitted trigger with agreeing canonical bytes produces no second binding or FR-230 instance; same trigger identity on conflicting bytes refuses. | Test (TC-114) |
 | FR-300-AC-3 | Replacing any one of the definition, control handle, clause subject, trigger identity, checked activation result, capture or evaluation anchor refuses or changes the binding exactly as its owner contract requires; none is defaulted. | Test (TC-114) |
 | FR-300-AC-4 | A consumer cannot construct a binding or FR-230 instance from a caller-supplied obligation label, static binding coordinate, timestamp, arrival order, display name, span or capture value. | Test (TC-114) |
+| FR-300-AC-5 | A control can consume a checked temporal result only through its published declaration-local control-to-temporal-activation mapping; omitting, duplicating, cross-wiring, or inferring that mapping refuses rather than selecting an obligation. | Test (TC-114) |
 
 ## Dependencies
 
 - [FR-052](../../functional/protocol/FR-052-represent-bounded-control.md)
-  supplies the authored control occurrence and partial order.
+  supplies the authored control occurrence, partial order and the producer-owned
+  control-to-temporal-activation mapping.
 - [FR-093](../../functional/temporal/FR-093-bind-temporal-activation-and-captures.md)
   supplies activation, guard, capture and semantic-trigger rules.
 - [FR-230](FR-230-protocol-obligation.md) supplies the derived instance identity.
