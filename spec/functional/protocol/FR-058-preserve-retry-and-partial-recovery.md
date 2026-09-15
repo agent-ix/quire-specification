@@ -35,8 +35,8 @@ attempts/effects and any declared finite related-effect population.
 
 ## Outputs
 
-Per-attempt and aggregate recovery facts with explicit failed, timed-out,
-duplicate, pending and successful outcomes.
+Separate per-attempt outcomes and aggregate recovery facts using the exact
+FR-236 partition of failed, timed-out, duplicate, pending and successful labels.
 
 ## Behavior
 
@@ -44,6 +44,18 @@ The evaluator SHALL distinguish a repeated receipt, retried attempt and duplicat
 business effect. It SHALL refuse attempts beyond the authored finite retry bound.
 Where recovery aggregates related effects, it SHALL require the exact declared
 population scope, membership and completeness authorities before success.
+
+A per-attempt outcome admits only `failed`, `timed-out`, `pending` or
+`successful`. A recovery-relation aggregate fact admits those same four labels
+only after evaluating the exact authored relation; it does not infer a result
+from an attempt label. A duplicate-business-effect aggregate fact admits only
+`duplicate` and remains a fact about the exact effect identity, not an attempt
+outcome or retry. Absence of either fact is not `pending` and supplies no
+fallback label. The evaluator SHALL retain coexisting attempt, duplicate-effect
+and recovery-relation facts rather than selecting one by priority.
+For one exact compensation-attempt and admitted-observation pair, two different
+attempt labels are an identity contradiction and SHALL refuse rather than create
+two competing facts.
 
 A compensation attempt is keyed by one FR-035 authority-qualified opaque
 runtime reference of the distinct kind `compensation-attempt`; it SHALL bind
@@ -84,6 +96,7 @@ retry sequence nor causality.
 | FR-058-AC-7 | A compensation effect and compensation attempt use distinct authority-qualified subject kinds; replay preserves one key, while reusing either key with another registration, operation, attempt or requirement refuses as an identity contradiction. | Test (TC-058) |
 | FR-058-AC-8 | The finite maximum counts distinct admitted compensation-attempt keys including the initial attempt and every admitted outcome; replay counts once, while an over-bound candidate is refused without retention or count mutation. | Test (TC-058) |
 | FR-058-AC-9 | Missing observation/progress evidence remains incomplete, and a missing, foreign, conflicting or ambiguous retry relation refuses rather than supplying zero attempts or inferred order. | Test (TC-058) |
+| FR-058-AC-10 | Independent mutations of every admitted and forbidden outcome-subject pairing preserve the FR-236 partition: `duplicate` never labels an attempt, a successful attempt alone never labels recovery, a duplicate-effect fact neither overwrites nor relabels coexisting attempt or recovery facts, and two different labels for one exact attempt/observation pair refuse. | Property Test (TC-058) |
 
 ## Dependencies
 
