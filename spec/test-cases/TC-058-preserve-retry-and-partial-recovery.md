@@ -9,6 +9,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-235
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-236
+    type: verifies
 ---
 ## Description
 
@@ -28,6 +30,16 @@ over-bound key twice and a second over-bound key. Remove observation/progress
 evidence and independently remove, foreign-bind, conflict and duplicate the
 authored predecessor/successor relation.
 
+For each per-attempt label, mutate it independently through `failed`,
+`timed-out`, `pending`, `successful` and forbidden `duplicate`. For each
+aggregate recovery fact, mutate its fact kind and label through a
+recovery-relation fact and a duplicate-business-effect fact. Independently
+remove each identity component and required aggregate authority, substitute an
+attempt identity for an effect identity, and replace an absent fact with
+`pending`. Exercise a duplicate business effect that coexists with both a
+successful attempt and a failed recovery-relation fact. Offer two different
+attempt labels for one exact attempt/admitted-observation pair.
+
 ## Expected Results
 
 Attempt/effect outcomes and subject kinds remain distinct; replay mints no
@@ -40,3 +52,9 @@ Only distinct admitted attempt keys count. Replay counts once; refused
 over-bound candidates are not retained and never change the prior count.
 Missing observation/progress remains incomplete, while malformed retry
 relationships refuse without inferred order.
+The mutation matrix admits only the FR-236 subject/label pairs. `duplicate`
+never labels an attempt; an attempt's `successful` label never proves recovery;
+and a duplicate-effect fact remains distinct from, and cannot overwrite, the
+coexisting attempt and recovery-relation facts. Absence is never accepted as
+`pending`; two labels for the same exact attempt/observation pair refuse rather
+than becoming competing facts.
