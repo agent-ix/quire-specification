@@ -169,8 +169,8 @@ architecture decision.
 | Task-001 | A | Plan-008 governance | TC-020 | done |
 | Task-002 | A | Atomic inventory | TC-020, TC-032 | done |
 | Task-003 | A | Existing-spec coverage | TC-020, TC-030 | done |
-| Task-004 | B | Spec information architecture | TC-030, TC-032 | in_progress |
-| Task-005 | B | Epic/ticket reconciliation | TC-020 | not_started |
+| Task-004 | B | Spec information architecture | TC-030, TC-032 | done |
+| Task-005 | B | Epic/ticket reconciliation | TC-020 | in_progress |
 | Task-006 | C | Complete subsystem architecture | TC-040, TC-049, TC-170 | not_started |
 | Task-007 | C | Normative specification completion | TC-020, TC-030 | not_started |
 | Task-008 | C | Coherent review and remediation | TC-020, TC-032 | not_started |
