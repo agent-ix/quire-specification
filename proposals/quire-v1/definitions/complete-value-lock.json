@@ -19,7 +19,7 @@
     {
       "role": "accounting",
       "artifact_path": "value-accounting.md",
-      "definition": {"authority":"agent-ix","identity":"quire.value.accounting/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"f230fa69c3d0aeabf94582a764a074dd8838bb01cddff40810ee81a5576c00ec"}
+      "definition": {"authority":"agent-ix","identity":"quire.value.accounting/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"3345bd8092c817fd60bf8ad734d7eedeb0a988fa7e39862fb98cdb63d8b8c72b"}
     },
     {
       "role": "compound_unit",
