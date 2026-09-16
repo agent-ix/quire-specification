@@ -75,43 +75,107 @@ function needs no measure. A measure supplied on a non-recursive function is
 still type checked and imposes no obligation.
 
 `decreases(m)` supplies the measure. `m` is either one measure element or a call
-of a declared `tuple` whose positions are measure elements. A one-element
-measure is a one-tuple. A measure element is an `Integer` or `Int[..]`
-expression over parameters that is proved nonnegative on entry, or a parameter
-of a recursive record type ordered by strict containment. `size(p)` is a
-cardinality element. Every function in one strongly connected component
-declares a measure with the same arity and the same element kind at each
-position. For each recursive edge, the checker substitutes the callee arguments
-into the callee measure. It must then prove, under the sound FR-044 guard facts
-at that call site, that for some position `i` every earlier element is equal and
-element `i` is strictly smaller: an integer by `<`, or a record subvalue by
-being a nonempty field projection path of the caller's parameter. A projection
-path step is a field projection `.f`, or `value(q)` of an `Option` path `q`
-whose `present(q)` is a proved guard fact at that call site; for example
-`value(n.next)` under `present(n.next)` is a strict subvalue of `n`. The call-site
-nonnegativity of every integer element must also be proved. An omitted or
-mismatched measure, or an unproved decrease or nonnegativity obligation, is
-`refused { code: undefined_expression, cause: unproved-decrease }`. The
-refusal names the component cycle, the call edge and the failed obligation
-(`missing-measure`, `measure-arity`, `measure-kind`, `nonnegative` or
-`decrease`). `undefined_expression` is the FR-271 code for unproved
-definedness, and `unproved-decrease` is its catalogued cause for termination.
+of a declared `tuple` whose arguments are measure elements, and a one-element
+measure is a one-tuple. A measure element is exactly one of: an *integer
+element*, a parameter of `Integer` or `Int[..]` type; a *cardinality element*,
+`size(p)` for a collection parameter `p`; or a *structural element*, a parameter
+of a recursive record type ordered by strict containment. Any other expression
+in a measure is a `measure-kind` failure.
+
+Every function in one strongly connected component declares a measure. The
+checker checks each component's obligations in this order and reports the first
+failure: `missing-measure` (a function omits `decreases`); `measure-arity`
+(arities differ); `measure-kind` (a position is not a measure element or the
+element kinds at one position differ); `nonnegative` (an integer element's
+parameter type has a lower bound below zero, so `Integer` never qualifies);
+then `decrease` for each recursive call edge. For an edge, let `a` be the call
+argument bound to the callee's element parameter at position `i`, and `p` the
+caller's element parameter at position `i`. Position `i` is *equal* when `a` is
+exactly `p`. It is *strictly smaller* when:
+
+- for an integer element, `a` is `p - k` for an integer literal `k >= 1`;
+- for a structural element, `a` is a nonempty projection path from `p`, whose
+  each step is a field projection `.f`, or `value(q)` of an `Option` path `q`
+  whose `present(q)` is a guard fact at that call site; for example
+  `value(n.next)` under `present(n.next)` is a strict subvalue of `n`;
+- for a cardinality element, never, because Complete V1 has no source form
+  that proves a strictly smaller collection.
+
+The edge decreases when some position is strictly smaller and every earlier
+position is equal. The call argument `p - k` must still meet its parameter type
+under the ordinary range obligation below. A failure is
+`refused { code: undefined_expression, cause: unproved-decrease }`, naming the
+component cycle, the call edge and the failed obligation. `undefined_expression`
+is the FR-271 code for unproved definedness, and `unproved-decrease` is its
+catalogued cause for termination.
+
+## Accepted proof forms
+
+Definedness and range proofs use exactly the
+[state semantics](../../../proposals/state-core/state-semantics.md) section 4
+guard facts and section 6 interval discharge, closed as follows. A producer
+admits nothing that these rules do not prove and refuses nothing that they do.
+
+A *stable path* is a parameter or `let` name followed by zero or more field
+projections and proved `value(q)` steps. The facts are:
+
+1. **Declared facts.** Each integer stable path has its declared type's
+   interval, and `size(c)` for a stable collection path `c` has the declared
+   cardinality bound `[min, max]`.
+2. **Presence facts.** `present(q)` for a stable path `q` yields that fact on
+   its true outcome and its negation on its false outcome.
+3. **Comparison facts.** `x op k` or `k op x`, where `x` is an integer stable
+   path or `size(c)`, `k` is an integer literal (optionally negated) and `op` is
+   `=`, `!=`, `<`, `<=`, `>` or `>=`, intersects `x`'s interval on each outcome.
+   `!=` removes `k` only when `k` is an endpoint of the interval, and `x != 0`
+   also records a nonzero fact for `x`. A comparison of two non-literal
+   operands yields no fact.
+4. **Propagation.** Facts flow into the `then` and `else` branches of `if`,
+   the right operand of `and`, `or` and `implies` by the state-semantics rules,
+   through `not` by exchanging outcomes, and through `let` aliases. At a join
+   only facts valid on every alternative remain.
+
+The interval of an integer expression is computed over mathematical integers:
+a literal is its point; a stable path is its refined interval; `+`, `-`, `*`
+and unary `-` are exact interval arithmetic on their operand intervals; and
+every other integer form, such as a call, division, `count`, `sum` or `fold`,
+has its declared result type's interval. No other reasoning is admitted.
+
+The obligations are discharged as follows. A range obligation holds when the
+expression's interval lies inside the required type's interval. A nonzero
+obligation holds when the operand's interval excludes zero or the operand is a
+stable path with a nonzero fact. A presence obligation for `value(q)` holds when
+`q` is a stable path with a `present(q)` fact; a compound `q` must first be
+bound with `let`. A `reduce` obligation holds when the operand's `size`
+interval, from its declared bound or a comparison fact on its stable path, has
+minimum at least one.
 
 The partial operations are closed, each with its `undefined_expression` cause:
 a divisor that may be zero in FR-140, FR-142, FR-044 or FR-147
-(`unproved-nonzero`); a zero base with a negative integer exponent
-(`unproved-nonzero`); `value(e)` without a proved `present(e)`
-(`unproved-presence`); `deref` outside the state contract's existence facts
-(`unproved-presence`); `reduce` without a proved `size(c) >= 1` under FR-145
-(`unproved-range`); and an FR-148 IEEE-to-`Rational` conversion of a value that
-may be NaN or infinite (`unproved-range`). Each one needs a proved precondition
-on a path that can execute, and an unproved one is
+(`unproved-nonzero`); a zero base with a negative integer exponent, whose base
+carries the nonzero obligation (`unproved-nonzero`); `value(e)` without a proved
+`present(e)` (`unproved-presence`); `reduce` without a proved `size(c) >= 1`
+under FR-145 (`unproved-range`); and an FR-148 IEEE-to-`Rational` conversion
+(`unproved-range`). Complete V1 has no fact form that excludes NaN or infinity,
+and IEEE `=` is ill-typed, so no linked body proves that conversion defined;
+it is always refused when linked, and only direct kernel evaluation meets it,
+returning located undefined as FR-148 states. Each obligation applies on a path
+that can execute, and an unproved one is
 `refused { code: undefined_expression, cause: ... }` at that operation when the
-body is linked. Runtime refusals
-named by FR-140, FR-142, FR-144 and FR-148 (membership, strict `exact`,
-cardinality bound, NaN payload and rational domain) are typed outcomes. They
-propagate and do not make a function partial. FR-044 still owns the static
-integer and rational result-bound obligations.
+body is linked.
+
+`deref(r)` is not a partial operation of a function body. It requires `r` to
+have type `Reference<T>`; an optional reference is first unwrapped with
+`value`, whose presence obligation applies. Target existence is a runtime
+snapshot-closure input requirement that linking records, as the state semantics
+states, and a target missing from a declared-complete universe is
+`refused { code: dangling_reference, cause: absent-target-in-complete-population }`
+during input validation.
+
+Runtime refusals named by FR-140, FR-142, FR-144 and FR-148 (membership, strict
+`exact`, cardinality bound, NaN payload and rational domain) are typed
+outcomes. They propagate and do not make a function partial. FR-044 still owns
+the static integer and rational result-bound obligations.
 
 Purity, name resolution and typing are checked first, at the offending
 expression, even in an unreachable branch. Complete V1 has no source form for
@@ -120,8 +184,19 @@ call whose name resolves to a declaration other than a checked pure `function`,
 tuple constructor or reserved intrinsic, such as a model operation, predicate or
 clause, is `refused { code: ill_typed, cause: operator-ineligible }`. A call
 whose name resolves to no declaration, such as an undeclared host operation, is
-`refused { code: missing_declaration, cause: missing-name }`. Every other typing
-failure is `refused { code: ill_typed }` with its FR-272 cause.
+`refused { code: missing_declaration, cause: missing-name }`. Two function
+declarations with one name in one package are each
+`refused { code: ambiguous_declaration, cause: ambiguous-name }`, listing both
+declaration loci, whether or not either is called. Every other typing failure is
+`refused { code: ill_typed }` with its FR-272 cause.
+
+Complete V1 defines no expression depth or nesting limit for checking. A checker
+that bounds its own checking work must declare that bound as an NFR-010 node
+admission limit before accepting the package; exceeding it is
+`resource_exhausted` with cause `insufficient-next-charge`, naming the checking
+stage, the declared limit and the node that could not proceed. It is never an
+`ill_typed`, `undefined_expression` or admission verdict, and a host stack
+overflow is not a Complete-V1 outcome.
 
 Each call charges `function.call` under `quire.value.accounting/v1` before its
 arguments are bound. Arguments are evaluated left to right before that charge.
@@ -142,6 +217,7 @@ Complete-V1 outcome.
 | FR-146-AC-5 | Exhausting execution fuel for an admitted function returns incomplete without changing the function's totality verdict. | Test (TC-191) |
 | FR-146-AC-6 | Each call charges `function.call` after argument evaluation and before binding, and an unproved partial-operation precondition refuses as `undefined_expression` while runtime typed refusals propagate. | Test (TC-191) |
 | FR-146-AC-7 | A missing, mismatched or undecreasing measure in a recursive component is `undefined_expression` with cause `unproved-decrease`, a non-recursive function needs no measure, and a call to a non-function declaration or an undeclared name refuses with its named code. | Test (TC-191) |
+| FR-146-AC-8 | Definedness and decrease proofs admit exactly the closed measure elements, guard facts, interval rules and decrease forms, `deref` has no body obligation, IEEE-to-`Rational` never links, a duplicate function name is `ambiguous_declaration`, and a checking bound exceeded is `resource_exhausted`. | Test (TC-191) |
 
 ## Dependencies
 

@@ -79,6 +79,13 @@ selection per library identity, in ascending identity order.
 
 A library migration is a new library package with a new `package_id`. A package
 that imports the migrated library is a new package with a new `package_id`.
+Because `package_id` is the digest of the package's identity preimage, a reader
+recomputes it before resolution. A migrated package that reuses its source's
+`package_id` while its preimage differs is
+`refused { code: invalid_package, cause: invalid-value }` at member path
+`/package_id`, with no import, lock selection or evidence binding it. A
+"migration" whose preimage is unchanged yields the identical package and
+identity, and is not a migration.
 Evidence keyed by the old package or export identity keeps that key and is never
 relabeled. No library-level migration correspondence record is defined beyond
 FR-322's CheckedPackage V1-to-V2 migration record.
@@ -91,6 +98,7 @@ FR-322's CheckedPackage V1-to-V2 migration record.
 | FR-307-AC-2 | Conflicting definitions, import cycles or ambiguous unqualified names refuse with dependency paths. | Test (TC-227) |
 | FR-307-AC-3 | Migration preserves old/new identities and does not relabel historical evidence. | Test (TC-227) |
 | FR-307-AC-4 | An import binds the library `package_id`, a mismatched import is `stale_dependency`, a conflicting diamond or import cycle is `invalid_package` with its paths, and a duplicate qualifier is `ambiguous_declaration`; an import cycle uses cause `definition-cycle`, and a name from an import without `as` is `missing_declaration`. | Test (TC-227) |
+| FR-307-AC-5 | A migrated package that reuses its source `package_id` with a different identity preimage is `invalid_package` with cause `invalid-value` at `/package_id`. | Test (TC-227) |
 
 ## Dependencies
 

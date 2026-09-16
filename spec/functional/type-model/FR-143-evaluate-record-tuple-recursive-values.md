@@ -98,6 +98,18 @@ field; naming a field twice; supplying `null` for a required field; and calling
 a tuple with an argument count other than its declared arity. `null` is never a
 value of `Option<T>`, and `none` is never a field state.
 
+A projection `r.f` of a `?` field is admitted only as the operand of
+`present(r.f)` or `value(r.f)`. `present(r.f)` is true exactly when the slot
+holds a present value, and false for both `absent` and explicit `null`.
+`value(r.f)` returns that value and carries the FR-146 presence obligation, so
+without a proved `present(r.f)` a linked body is
+`refused { code: undefined_expression, cause: unproved-presence }`. Any other
+use of `r.f`, such as an arithmetic operand, call argument, comparison operand
+or field value, is `refused { code: ill_typed, cause: type-mismatch }`, because a
+field slot is not a value of `T`. Whole-record equality still compares slot
+states, so `absent` and `null` stay distinct. A projection of a field declared
+without `?` is always admitted.
+
 ## Recursion rule
 
 The declaration containment graph has one edge from declaration `D` to each
@@ -164,6 +176,7 @@ and equality.
 | FR-143-AC-7 | The recursion rule admits exactly the declaration graphs whose unnamed-edge and non-escaping-edge subgraphs are both acyclic, and names each refused cycle. | Test (TC-188) |
 | FR-143-AC-8 | Record fields are evaluated in declaration order, the first stopped field propagates its outcome with no later field evaluated or charged, and a completed construction charges `composite.result-retain`. | Test (TC-188) |
 | FR-143-AC-9 | `Reference<T>` admits only a model object type, and a runtime composite value from another checked package is `invalid_runtime_input` before evaluation. | Test (TC-188) |
+| FR-143-AC-10 | A `?` field projection is admitted only under `present` or `value`, an unguarded `value` is `undefined_expression` with cause `unproved-presence`, and any other use is `ill_typed` with cause `type-mismatch`. | Test (TC-188) |
 
 ## Dependencies
 
