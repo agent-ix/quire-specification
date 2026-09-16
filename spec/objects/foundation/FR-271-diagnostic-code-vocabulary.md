@@ -47,7 +47,7 @@ catalog).
 | `source_digest_mismatch` | A revision, byte-digest or digest-domain mismatch against source. "A missing artifact cannot supply an invented actual digest." |
 | `ambiguous_declaration` | A visible name or clause resolving to distinct conflicting declarations or authorities. |
 | `invalid_package` | A malformed, incomplete, conflicting or cyclic package definition, including feature-set mismatch. |
-| `invalid_model_binding` | A model binding with a wrong role, selection, export or context, a conflicting binding, unpreserved model meaning, or (revision `1-draft.3`) a specialization cycle, redefinition-target mismatch, derivation conflict, unsupplied producer record or port-direction violation. "Missing versus explicit null may not be collapsed into a generic absent value." |
+| `invalid_model_binding` | A model binding with a wrong role, selection, export or context, a conflicting binding, unpreserved model meaning, or (revision `1-draft.3`) a specialization cycle, redefinition-target mismatch, derivation conflict, unsupplied producer record, port-direction violation, or open subsetting or redefinition closure. "Missing versus explicit null may not be collapsed into a generic absent value." |
 | `ill_typed` | A type, unit, operator-eligibility, literal-ambiguity or non-Boolean-root typing failure, or (revision `1-draft.3`) a parameter or result variance, multiplicity-narrowing, effect-escape or subsetting-type conformance failure. |
 | `undefined_expression` | Definedness not proved for a potentially evaluated operation, or (revision `1-draft.3`) a redefinition refinement not constructed or proved. "Failure to prove definedness is not logical violation." |
 | `wrong_snapshot` | A wrong or forbidden observation, invocation, anchor or pre-read. |
@@ -74,7 +74,7 @@ catalog).
 | `invalid_source_identity` | Source authority, revision or digest did not match the supplied source. |
 | `invalid_source_map` | A source map was non-monotone, out of bounds or split a UTF-8 scalar. |
 | `cardinality_out_of_bound` | A constructed or converted collection whose occurrence or member count lies outside its type's inclusive cardinality bound (FR-144). |
-| `foreign_reference` | A supplied identity belongs to a different authority, universe, model or subject domain than the position requires. Revision `1-draft.3` closes its causes as `foreign-universe`, `foreign-authority`, `foreign-model-selection` and `foreign-type`. |
+| `foreign_reference` | A supplied identity belongs to a different authority, universe, model or subject domain than the position requires. Revision `1-draft.3` closes its causes as `foreign-universe`, `foreign-model-selection` and `foreign-type`. |
 | `ambiguous_dispatch` | A dispatched operation call for which some closed subtype of the receiver's static type has no applicable method or several undominated methods (revision `1-draft.3`). No source or registration order resolves it. |
 | `unimplemented_capability` | Valid complete-V1 meaning is not implemented by the selected producer; distinct from prohibited source and unsupported backend projection. |
 | `parity_failure` | Two implementations required to agree produced different typed verdicts or values for the same subject/input. |
