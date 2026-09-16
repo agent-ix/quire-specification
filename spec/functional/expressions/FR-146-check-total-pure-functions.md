@@ -155,14 +155,16 @@ a divisor that may be zero in FR-140, FR-142, FR-044 or FR-147
 (`unproved-nonzero`); a zero base with a negative integer exponent, whose base
 carries the nonzero obligation (`unproved-nonzero`); `value(e)` without a proved
 `present(e)` (`unproved-presence`); `reduce` without a proved `size(c) >= 1`
-under FR-145 (`unproved-range`); and an FR-148 IEEE-to-`Rational` conversion
-(`unproved-range`). Complete V1 has no fact form that excludes NaN or infinity,
-and IEEE `=` is ill-typed, so no linked body proves that conversion defined;
-it is always refused when linked, and only direct kernel evaluation meets it,
-returning located undefined as FR-148 states. Each obligation applies on a path
+under FR-145 (`unproved-range`). Each obligation applies on a path
 that can execute, and an unproved one is
 `refused { code: undefined_expression, cause: ... }` at that operation when the
 body is linked.
+
+An FR-148 IEEE-to-`Rational[..]` conversion carries no body obligation. The
+FR-044 exception exempts it from static domain proof, and FR-148 decides it at
+evaluation: a NaN or infinite operand is undefined after `ieee.operands`, and a
+finite non-member is `refused { code: ieee_rational_out_of_domain }`. Both are
+evaluation outcomes that propagate; neither refuses linking.
 
 `deref(r)` is not a partial operation of a function body. It requires `r` to
 have type `Reference<T>`; an optional reference is first unwrapped with
@@ -217,7 +219,7 @@ Complete-V1 outcome.
 | FR-146-AC-5 | Exhausting execution fuel for an admitted function returns incomplete without changing the function's totality verdict. | Test (TC-191) |
 | FR-146-AC-6 | Each call charges `function.call` after argument evaluation and before binding, and an unproved partial-operation precondition refuses as `undefined_expression` while runtime typed refusals propagate. | Test (TC-191) |
 | FR-146-AC-7 | A missing, mismatched or undecreasing measure in a recursive component is `undefined_expression` with cause `unproved-decrease`, a non-recursive function needs no measure, and a call to a non-function declaration or an undeclared name refuses with its named code. | Test (TC-191) |
-| FR-146-AC-8 | Definedness and decrease proofs admit exactly the closed measure elements, guard facts, interval rules and decrease forms, `deref` has no body obligation, IEEE-to-`Rational` never links, a duplicate function name is `ambiguous_declaration`, and a checking bound exceeded is `resource_exhausted`. | Test (TC-191) |
+| FR-146-AC-8 | Definedness and decrease proofs admit exactly the closed measure elements, guard facts, interval rules and decrease forms, `deref` and IEEE-to-`Rational` conversion have no body obligation, a duplicate function name is `ambiguous_declaration`, and a checking bound exceeded is `resource_exhausted`. | Test (TC-191) |
 
 ## Dependencies
 
