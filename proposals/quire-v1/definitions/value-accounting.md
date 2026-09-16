@@ -196,16 +196,17 @@ rational, sized analytically from the decoded exponent and mantissa before the
 rational is materialized, then decides `Rational[..]` target membership at
 evaluation, exempt from FR-044's static result-bound proof, which makes no
 charge and returns `refused { code: ieee_rational_out_of_domain }` for a
-non-member before `ieee.result-retain`, then `ieee.result-retain`. Complete V1
-defines no conversion from `Rational[..]` to `Decimal`, `Integer` or `Int[..]`;
-a direct IEEE conversion to those types, or a further conversion of the
-resulting `Rational[..]` value to them, is a type-time `ill_typed` refusal with
-no charge. An exact-to-IEEE conversion charges `ieee.operands` with
-`integer_bits` measured on the source: `bits(n)` for an integer `n`, `maxparts`
-for a rational, and `max(bits(coefficient), bits(10^scale))` of the retained
-representation for a decimal; it then charges `ieee.exact-intermediate` and
-`ieee.round` with `integer_bits=target width`, then decides any strict `exact`
-refusal, then charges `ieee.result-retain`.
+non-member before `ieee.result-retain`, then `ieee.result-retain`. FR-148
+defines no conversion from an IEEE value to `Decimal`, `Integer` or `Int[..]`; a
+direct IEEE conversion to those types is refused `ill_typed` with no charge, and
+an IEEE value reaches exact arithmetic only as `Rational[..]`. Conversion of a
+`Rational[..]` quantity into a decimal or integer target remains governed by
+FR-142 and is unaffected. An exact-to-IEEE conversion charges `ieee.operands`
+with `integer_bits` measured on the source: `bits(n)` for an integer `n`,
+`maxparts` for a rational, and `max(bits(coefficient), bits(10^scale))` of the
+retained representation for a decimal; it then charges `ieee.exact-intermediate`
+and `ieee.round` with `integer_bits=target width`, then decides any strict
+`exact` refusal, then charges `ieee.result-retain`.
 
 Decimal accounting is independent of implementation storage but not of
 retained scale. Every decimal amount is measured on each operand's retained

@@ -7,6 +7,8 @@ relationships:
     type: implements
   - target: ix://agent-ix/quire-specification/AD-005
     type: references
+  - target: ix://agent-ix/quire-specification/FR-044
+    type: references
 ---
 
 # FR-148: Evaluate explicit IEEE floating-point profiles
@@ -130,13 +132,13 @@ decided at evaluation, where the reduced numerator must lie in `[lo, hi]` and
 the positive denominator in `[dmin, dmax]`. Membership charges nothing, and a
 non-member returns the runtime refusal `refused { code:
 ieee_rational_out_of_domain }` after `ieee.exact-intermediate` and before
-`ieee.result-retain`. Complete V1 defines no conversion from `Rational[..]` to
-`Decimal`, `Integer` or `Int[..]`: an IEEE value reaches only `Rational[..]`,
-and a direct IEEE conversion to `Decimal`, `Integer` or `Int[..]`, or any
-further conversion of the resulting `Rational[..]` value to those types, is
-refused by type checking with `refused { code: ill_typed }` with no charge.
-Explicit conversion of any exact integer, rational or decimal value to an IEEE
-width rounds its exact value once under the selected policy, with strict `exact`
+`ieee.result-retain`. FR-148 defines no conversion from an IEEE value to
+`Decimal`, `Integer` or `Int[..]`; a direct IEEE conversion to those types is
+refused `ill_typed` with no charge, and an IEEE value reaches exact arithmetic
+only as `Rational[..]`. Conversion of a `Rational[..]` quantity into a decimal
+or integer target remains governed by FR-142 and is unaffected. Explicit
+conversion of any exact integer, rational or decimal value to an IEEE width
+rounds its exact value once under the selected policy, with strict `exact`
 refusing as for arithmetic; a decimal source is sized by its retained
 coefficient and scale, not by its reduced form.
 

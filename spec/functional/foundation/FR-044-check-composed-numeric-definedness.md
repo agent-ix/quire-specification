@@ -10,7 +10,7 @@ relationships:
 ---
 ## Description
 
-When checking an admitted numeric expression, the checker SHALL establish that each potentially evaluated result lies in its selected exact authored domain before permitting evaluation.
+When checking an admitted numeric expression, the checker SHALL establish that each potentially evaluated result lies in its selected exact authored domain before permitting evaluation, except an IEEE-to-`Rational[..]` conversion, whose membership FR-148 decides at evaluation.
 
 ## Inputs
 
