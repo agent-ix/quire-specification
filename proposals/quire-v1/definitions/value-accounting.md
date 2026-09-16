@@ -193,7 +193,10 @@ charges `ieee.result-retain`. An IEEE-to-exact conversion charges
 undefined; a finite value, either zero included, then charges
 `ieee.exact-intermediate` with `integer_bits=maxparts` of the exact result
 rational, sized analytically from the decoded exponent and mantissa before the
-rational is materialized, then `ieee.result-retain`. An exact-to-IEEE conversion
+rational is materialized, then decides `Rational[..]` target membership, which
+makes no charge and refuses before `ieee.result-retain`, then
+`ieee.result-retain`. A direct IEEE-to-`Decimal`, `Integer` or `Int[..]`
+conversion is a type-time `ill_typed` refusal with no charge. An exact-to-IEEE conversion
 charges `ieee.operands` with `integer_bits` measured on the source: `bits(n)`
 for an integer `n`, `maxparts` for a rational, and `max(bits(coefficient),
 bits(10^scale))` of the retained representation for a decimal; it then charges
