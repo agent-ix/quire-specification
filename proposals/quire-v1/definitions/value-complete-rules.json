@@ -32,13 +32,13 @@
       "identity": "quire.rule.fr-141/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-141-evaluate-text-and-enumerations.md",
-      "sha256": "1fe0976e77d112d91ad6c75b454dec6ad3c668173958603c9917994475c59f00"
+      "sha256": "5438519ea6d13e5df8947d13d5c257b46de1aed0c621295f1df76fa97e160785"
     },
     {
       "identity": "quire.rule.fr-142/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-142-evaluate-quantities-and-units.md",
-      "sha256": "d8570de95d99095a1122d098d5a9f6687ca3ae3b64d699220497dafc0ecb7756"
+      "sha256": "46e5df241b97671fd2fc6fb37d92e22eb347b2b7821906c3abacc55852001049"
     },
     {
       "identity": "quire.rule.fr-147/v1",
@@ -56,7 +56,7 @@
       "identity": "quire.rule.fr-149/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-149-apply-complete-equality-matrix.md",
-      "sha256": "352a8bc3c60f1e9013d6d65cc822bb591955342e484233a31ad87b4876056825"
+      "sha256": "3402f1f852739978bd763fd559c120cb5a0f6c3eff3b5238500a26fdcffa821f"
     }
   ]
 }
