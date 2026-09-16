@@ -18,17 +18,17 @@ When a model export is selected for native linking, the producer SHALL use the i
 
 ## Properties
 
-- `contract_version` — exact selected producer interface and adapter contract versions.
-- `authority` — producer authority, repository/package identity and revision.
-- `export` — model-export identity, canonical bytes and digest domain.
-- `closure` — ordered declarations, types, relationships and dependencies admitted by the producer.
-- `correspondence` — original declaration to ordered effective-declaration derivation paths.
+- `contract_version` — the FCD FR-126 `interfaceVersion` and `wireSchema` of the admitted producer document; under the selected `quire.model.complete/v1` definition the interface version is exactly `1.3.0`.
+- `authority` — the correspondence `ProducerObject.authority` (FCD FR-116) of the export's records.
+- `export` — the FCD FR-117 static bundle key: bundle `identity`, namespaced `revision` and `digest` with domain `filament-canonical-json-1`.
+- `closure` — ordered declarations, types, relationships and dependencies admitted by the producer, including every generalization, subsetting and redefinition record and the bundle's `generalizationClosure` statement.
+- `correspondence` — the producer supplies original declarations and their edges; QSL derives the effective declarations and ordered derivation paths as the `quire.model.effective-view/v1` identity defined by the selected `quire.model.complete/v1` definition. The producer never supplies an effective identity.
 - `feature_report` — exact available, absent and unsupported producer capabilities.
 
 ## Identity and validation
 
 The key is (`authority`, `export`, `contract_version`). Equal local labels or equal declaration bytes under another authority are unequal.
-Unknown contract versions, missing required properties, duplicate keys,
+An unknown `interfaceVersion` refuses `unknown_wire`/`unsupported-wire`. Unknown contract versions, missing required properties, duplicate keys,
 out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Acceptance Criteria
@@ -38,6 +38,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-321-AC-1 | Every effective declaration names its original declaration and ordered derivation path. | Analysis |
 | FR-321-AC-2 | An unknown producer version, stale digest or incomplete closure refuses before name binding. | Analysis |
 | FR-321-AC-3 | A consumer cannot mint, rename or merge producer identities. | Analysis |
+| FR-321-AC-4 | The key components map exactly to the FCD correspondence authority, FR-117 bundle key and FR-126 interface version, and an effective identity is derived only in a QSL domain. | Test (TC-195) |
 
 ## Dependencies
 

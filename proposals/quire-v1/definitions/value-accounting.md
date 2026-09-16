@@ -40,6 +40,11 @@ completed result. That record is closed; its members are defined under
 | rational arithmetic | `rational-arithmetic.operands`, `rational-arithmetic.arithmetic`, `rational-arithmetic.normalize`, `rational-arithmetic.result-retain` for each `Rational[..]` `+`, `-`, `*`, `/` and unary `-`, and each `Integer` or `Int[..]` `/` producing a `Rational[..]` |
 | numeric ordering | `ordering.operands`, `ordering.arithmetic`, `ordering.result-retain` for each `Integer`, `Int[..]`, `Rational[..]` or `Decimal[..]` `<`, `<=`, `>` and `>=` |
 | Boolean connective | `boolean.result-retain` for each `and`, `or`, `implies` and `not` |
+| model reference | `model.deref` for each `deref(...)`; `model.navigate` for each runtime `.name` field or relationship-end navigation, followed for a multi-valued end by one `collection.visit` per target, `collection.bound` and `collection.result-retain` |
+| graph | `graph.expand` before each node is discovered, one `graph.edge` before each edge is read, then `graph.result-retain` for each `reaches(...)` |
+| lookup | `lookup.key`, then `lookup.result-retain` when a value is returned, for each `lookup<T>(p, r) absent m` |
+| population | one `population.visit` before each selected member of `allInstances<T>(p)`, then `collection.bound` and `collection.result-retain` |
+| dispatch | `dispatch.select` for each dispatched `receiver.name(args)` call, followed by the callee's `function.call` |
 
 Each charge is the following exact `{ counter: amount }` vector. A semantic-size
 counter records the high-water maximum, not a sum: admitting amount `n` changes
@@ -110,11 +115,22 @@ rational's numerator and positive denominator.
 | `ordering.arithmetic` | for integers, `integer_bits=max(bits(a),bits(b))`; for rationals `a/b` and `c/d`, `integer_bits=max(bits(a×d),bits(c×b))`; for decimals in their retained representations `(c1,s1)` and `(c2,s2)`, never normalized, aligned to `s=max(s1,s2)`, `scale_expansion=|s1-s2|` and the `integer_bits` and `decimal_digits` of both aligned coefficients |
 | `ordering.result-retain` | `result_units += 1` |
 | `boolean.result-retain` | `result_units += 1` |
+| each `model.deref` | `value_occurrences=1` |
+| each `model.navigate` | `value_occurrences=1` |
+| kth `graph.expand` | `value_occurrences=k`, the number of distinct nodes discovered by this `reaches` evaluation including this one |
+| each `graph.edge` | no size-counter change; `work_units += 1` |
+| `graph.result-retain` | `result_units += 1` |
+| `lookup.key` | `value_occurrences=1` |
+| `lookup.result-retain` | `value_occurrences=occ(result)`, `result_units += occ(result)`: one for a `Reference<T>` or `none`, two for a present `Option<Reference<T>>` |
+| each `population.visit` | no size-counter change; `work_units += 1` |
+| `dispatch.select` | `value_occurrences=c`, where `c` is the number of linked candidates of the called effective operation; `work_units += c` instead of one |
 
 For each non-repeated row, `work_units += 1`; repeated identity, edge, rational,
-normalization-output, equality-pair, function-call, collection-element and
-collection-visit rows add one per event, and `equality.plan-form`,
-`collection.member-walk` and `collection.member-test` add their stated amounts.
+normalization-output, equality-pair, function-call, collection-element,
+collection-visit, model-deref, model-navigate, graph-expand, graph-edge and
+population-visit rows add one per event, and `equality.plan-form`,
+`collection.member-walk`, `collection.member-test` and `dispatch.select` add
+their stated amounts.
 Retaining a paired quotient/remainder costs two result units; a composite retained value costs
 `occ(result)`. Checked amount derivation and counter arithmetic precede
 allocation or semantic arithmetic. A counter amount greater than `u64::MAX`
@@ -331,6 +347,67 @@ membership refusal follows `integer-division.domain-pair` or
 `integer-modulus.domain` and precedes result retention. `mod` never charges an
 `integer-division.*` point, and `div`/`rem` never charges an
 `integer-modulus.*` point.
+
+Model and graph evaluation follows the selected `quire.model.complete/v1`
+rules. Static resolution, conformance, kind, direction, closure and foreign
+checks decided at checking or binding admission make no evaluation charge.
+`deref(r)` evaluates `r`, charges `model.deref`, then decides a dangling
+reference without a charge. A single-valued `r.name` evaluates `r`, charges
+`model.navigate`, decides the end's count bound and dangling targets without a
+charge, and returns the `Reference<T>` or `Option<Reference<T>>` with no
+further charge; a multi-valued end charges `model.navigate`, one
+`collection.visit` per target in canonical reference-key order,
+`collection.bound`, the FR-144 bound check without a charge, and
+`collection.result-retain`. `reaches(a, b, e)` evaluates `a` and `b`, then
+explores breadth-first: it charges `graph.expand` for `a`; for each dequeued
+node, in discovery order, it charges one `graph.edge` for each target of edge
+`e` in the edge value's own order (sequence order for a sequence edge) and `graph.expand` for each target not yet
+discovered, and stops without further `graph.*` charge once `b` is discovered or
+the queue is empty; a snapshot mismatch or dangling target is decided without a
+charge before its `graph.edge`; it then charges `graph.result-retain`.
+`lookup<T>(p, r) absent m` evaluates `p` and then `r`, charges `lookup.key`,
+decides the foreign checks and then key presence without a charge, and charges
+`lookup.result-retain` only when it returns a value; `absent undefined` and
+`absent refused` make no later charge. `allInstances<T>(p)` has its object and
+subtype closure decided at binding admission; it charges one
+`population.visit` per member whose most-specific type conforms to `T`, in
+canonical reference-key order, then `collection.bound` with `value_occurrences=n`,
+decides the declared maximum without a charge, and charges
+`collection.result-retain`. A dispatched call evaluates the receiver and then
+its arguments left to right, charges `dispatch.select`, selects the linked
+method for the receiver's most-specific type without a charge, decides the
+selected method's effective precondition (its own evaluation charges apply), and
+then charges `function.call` before binding the arguments.
+
+## Model normalization limits
+
+Checking a package that selects `quire.model.complete/v1` carries
+`ModelNormalizationLimitsV1` with exact `u64` limits for `producer_records`,
+`derivation_facts`, `effective_declarations`, `dispatch_candidates` and
+`work_units`, in that field order. Omission is a refused request; zero is a
+real limit and never means unlimited. These counters are independent of
+`ScalarLimitsV1`. `producer_records`, `derivation_facts`,
+`effective_declarations` and `dispatch_candidates` are high-water semantic
+sizes; `work_units` is cumulative, and every row adds one work unit.
+
+| Charge point | Order | Exact counter amount before adding one `work_unit` |
+| --- | --- | --- |
+| kth `normalize.record` | each decoded producer record (type export, member export, component, endpoint, relationship, generalization, subsetting or redefinition record; the bundle header is not a record), ascending producer key | `producer_records=k` |
+| kth `normalize.fact` | each derivation fact before it is formed: phase 2, then phase 3, then phase 4, each ascending by (owner producer key, declaration producer key, inputs), where a type fact has no owner and sorts before every owned fact | `derivation_facts=k` |
+| kth `normalize.declaration` | each effective declaration before its identity is computed: effective types, then effective members, each ascending by effective member key | `effective_declarations=k` |
+| each `conformance.axis` | each FR-151 axis, redefinition records then subsetting records, each ascending by record producer key, axes in FR-151 order | no size-counter change |
+| kth `dispatch.candidate` | each (closed subtype, family member) applicability test, per called effective operation in effective member order, subtypes ascending by effective type identity, family members ascending by effective member key; a pair already tested for that operation is not charged again | `dispatch_candidates=k` |
+
+A refusal found by a phase is reported after the charge that forms the fact,
+declaration or axis that exposes it and makes no later charge. A cycle is
+detected before charging the `normalize.fact` of the closing extension. The
+first unavailable charge ends checking with
+`incomplete { limit_kind, limit, consumed, next_charge, charge_point }`, where
+`limit_kind` is the first `ModelNormalizationLimitsV1` field, in field order,
+whose amount is unavailable; a checker surfaces it as `refused { code:
+resource_exhausted, cause: insufficient-next-charge }` at stage
+`model-normalization` and produces no effective view. The qualification seam
+below applies to these points with the `work_units` of this limit object.
 
 ## Incomplete record
 

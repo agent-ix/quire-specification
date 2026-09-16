@@ -14,7 +14,7 @@
       "identity": "quire.rule.shared-grammar/v1",
       "revision": "1-draft.1",
       "path": "../shared-grammar.md",
-      "sha256": "377be4cd1a635c32e8d67a05ea299ea635c675acdb74a1c0c87093d1040e5cdf"
+      "sha256": "0e3df373f14f775cfbabd11666cd3bc1aa0bd81dbbc6a88dc866a56a1c8909be"
     },
     {
       "identity": "quire.rule.ad-005/v1",
@@ -56,7 +56,7 @@
       "identity": "quire.rule.fr-149/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-149-apply-complete-equality-matrix.md",
-      "sha256": "896111b55905c637a1089b61f55dc54423fd2a0081c289dd1182229698a92c65"
+      "sha256": "6331474a4125c584f795db4e759c6b908a873d76fd01e8cc7423230f417358b0"
     }
   ]
 }
