@@ -47,6 +47,33 @@ encode absence as a scalar. Records and tuples use declared structural
 equality, while object references use qualified identity. Recursive type
 definitions require finite runtime values and bounded traversal.
 
+The immutable `quire.value.complete/v1` definition owns the common value
+algebra. A checked package using text, integer division or IEEE operations also
+retains the exact applicable definitions below in its ordered profile closure;
+their identities, versions and byte digests participate in package identity.
+There is no installed-tool or backend default.
+
+| Semantic selection | Closed complete-V1 definition |
+| --- | --- |
+| Scalar resource accounting | `quire.value.accounting/v1` |
+| Derived compound-unit value identity | `quire.value.compound-unit/v1` |
+| Normative scalar rule closure | `quire.value.complete.rules/v1` |
+| Unicode normalization tables | `quire.value.text.unicode-17.0.0/v1` |
+| Integer `div`/`rem` law | exactly one of `quire.value.integer-division.truncating/v1`, `quire.value.integer-division.floor/v1` or `quire.value.integer-division.euclidean/v1` |
+| IEEE exceptional-value and flag policy | `quire.value.ieee754-2019-default/v1` |
+
+An absent optional rounding spelling means strict `exact`: a representable
+result succeeds without loss and a result requiring discarded information
+refuses. For IEEE values, `exact` is a language-level strictness policy rather
+than a sixth IEEE rounding direction. The other five spellings select the five
+IEEE 754-2019 directions. Every semantic operation returns exactly one of a
+completed value (with provenance and any typed loss), undefined, refused or
+incomplete; a false Boolean is a completed value and is never a refusal.
+Static `ill_typed` is the code carried by a refused type-checking result, not a
+fifth semantic outcome. `requires-bound` and `unsupported` are per-item I13
+provider-negotiation dispositions and never change package admission or stand in
+for an evaluator result.
+
 Pure functions declare parameter and result types, effects=`none`, a
 termination obligation and resource limits. Recursion is admitted only after a
 well-founded decrease is established. Runtime fuel remains independent:
@@ -75,3 +102,4 @@ kinds, empty cases, intermediate bounds and deterministic exposure rules.
 | Structural and object identity collapse | Distinct types and equality matrices; no cross-domain equality. |
 | Float nondeterminism escapes provenance | Width, rounding mode, exceptional-value policy and tool pins enter the package/run identity. |
 | Recursive or aggregate work becomes unbounded | Static termination/domain obligations plus separately charged runtime limits. |
+| Nominal identities are caller-minted from names or source positions | Enum, unit and dimension handles are issued only from I04 checked semantic-graph node identities. |

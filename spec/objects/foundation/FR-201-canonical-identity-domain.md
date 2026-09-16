@@ -30,7 +30,8 @@ equality.
 | `lock-file-digest` | Lock-file digest. Cannot substitute for `package-fingerprint` (FR-015-AC-3). |
 | `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout (FR-018). |
 | `filament.export/v1` | Exact canonical Filament producer export domain; distinct from the producer's own `filament-fingerprint` identifier. |
-| `quire.package.semantic/v1` | Checked semantic-package graph domain; distinct from package archive and lock-file bytes. |
+| `quire.package.semantic/v1` | Frozen CheckedPackage V1 semantic-package graph domain; distinct from package archive and lock-file bytes and from every successor domain. |
+| `quire.package.semantic/v2` | Complete-V1 CheckedPackage V2 semantic-package graph domain; distinct from V1 even when the source selection or digest bytes are equal. |
 | `quire.source.bytes/v1` | Exact authored native source-document bytes, including layout; distinct from every definition/model artifact. |
 | `quire.definition.bytes/v1` | Exact selected native profile or semantic-definition bytes, including layout; distinct from source/model bytes. |
 | `quire.compiled-model.bytes/v1` | Exact selected compiled-model document bytes, including layout; distinct from source/definition bytes. |
@@ -60,6 +61,12 @@ equality.
 - **Cross-domain rule** — two identities bearing different domain labels are
   unequal. Byte equality of their digests does not make them equal, and a raw
   `sha256` digest cannot substitute for `sha256-jcs` (FR-018-AC-2).
+- **Version selection** — `quire.package.semantic/v1` and
+  `quire.package.semantic/v2` are separate identity domains. A version
+  dispatcher selects the exact contract before decoding and never relabels a V1
+  package or digest as V2. A V1-to-V2 migration re-links and re-checks the
+  authoritative inputs under V2 and records correspondence between the two
+  separately identified packages.
 
 The `sha256-jcs:` textual prefix is a domain label outside the hashed bytes. It
 is not a hash preimage prefix (FR-018).
@@ -90,6 +97,9 @@ preimage belongs to the requirement that selects it.
 | FR-201-AC-2 | Two identities with equal digest bytes and different domain labels compare unequal. | Analysis |
 | FR-201-AC-3 | A digest with an absent domain compares only to absence and receives no default member. | Analysis |
 | FR-201-AC-4 | A lock-file digest does not satisfy a comparison expecting a package fingerprint. | Analysis |
+| FR-201-AC-5 | Equal digest bytes under `quire.package.semantic/v1` and `quire.package.semantic/v2` compare unequal; a reader selects the exact version and never relabels one as the other. | Test (TC-217) |
+| FR-201-AC-6 | The complete-value definition lock closes every qualification-catalog artifact by identity, revision, `quire.definition.bytes/v1` digest domain and raw-byte digest, and its conditional and alternative package selection is exact: each catalog entry occupies one always, trigger-conditional or exactly-one slot under the closed triggers `text_bearing`, `ieee_operation` and `integer_div_rem`. | Test (TC-233) |
+| FR-201-AC-7 | The published checked-package contracts key a package identity by domain and digest: equal digest bytes under `quire.package.semantic/v1` and `quire.package.semantic/v2` form unequal keys, the frozen V1 and the V2 package schemas each refuse their own digest bytes under the other package domain, and the migration receipt schema refuses a source or target key relabelled to the other domain. | Test (TC-233) |
 
 ## Dependencies
 

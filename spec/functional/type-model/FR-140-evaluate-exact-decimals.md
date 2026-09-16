@@ -23,7 +23,9 @@ conversion requests.
 
 ## Outputs
 
-An exact decimal, typed loss/refusal, or incomplete resource outcome.
+A completed exact/rounded decimal with optional typed loss, or an undefined,
+refused or incomplete evaluator outcome. I13 dispositions are not evaluator
+outputs.
 
 ## Behavior
 
@@ -32,6 +34,15 @@ Equality compares mathematical values; declared representation constraints
 remain validation conditions. Arithmetic derives exact intermediate scales and
 requires an explicit rounding rule only when the result type cannot represent
 the exact value. No binary float is used as an intermediate.
+
+An omitted rounding spelling selects strict `exact`. A successful rounded
+operation carries `DecimalLoss { exact_numerator, exact_denominator,
+rounded_coefficient, rounded_scale, mode }`; the exact rational difference is
+therefore reconstructable and a message string is never the loss authority.
+The exact rational is canonical: its denominator is positive, numerator and
+denominator have greatest common divisor one, and zero is exactly `0/1`.
+Strict `exact`, division by zero, domain refusal and resource exhaustion carry
+no decimal value and remain distinct outcomes.
 
 ## Decimal domain and operations
 
@@ -52,15 +63,21 @@ discarded magnitude to one target unit; ties choose an even coefficient or the
 greater absolute coefficient respectively. Every result is checked against the
 declared coefficient and scale bounds after rounding and normalization.
 
+Under `quire.value.accounting/v1`, the evaluator charges the named decimal
+points and counters before a power-of-ten expansion, coefficient operation or
+result retention. The first unavailable charge returns incomplete accounting
+without attempting a smaller or floating approximation.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-140-AC-1 | `1.0` and `1.00` compare mathematically equal while retaining their declared representation provenance. | Test (TC-185) |
 | FR-140-AC-2 | Exact representable arithmetic returns the mathematical result without rounding. | Test (TC-185) |
-| FR-140-AC-3 | An unrepresentable result without a selected rounding rule refuses; an explicit rule returns the rounded value plus loss record. | Test (TC-185) |
+| FR-140-AC-3 | An unrepresentable result without a selected rounding rule refuses; an explicit rule returns the rounded value plus a canonical-rational loss record. | Test (TC-185) |
 | FR-140-AC-4 | The six rounding modes produce their declared result on positive and negative half-way values and `exact` refuses every nonzero discarded digit. | Test (TC-185) |
-| FR-140-AC-5 | Division by zero and a normalized coefficient/scale outside the target domain refuse without a floating intermediate. | Test (TC-185) |
+| FR-140-AC-5 | Division by zero is undefined, while a normalized coefficient/scale outside the target domain is refused; neither produces a value or uses a floating intermediate. | Test (TC-185) |
+| FR-140-AC-6 | Exact-bound accounting succeeds and denial of a named next decimal charge returns incomplete without a value or an implementation-specific retry. | Test (TC-185) |
 
 ## Dependencies
 

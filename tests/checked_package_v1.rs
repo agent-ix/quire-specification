@@ -3,6 +3,7 @@
 
 //! I04 checked-package structural qualification vectors.
 
+use ix_trace_rs::trace;
 use quire_verification::contracts::jcs_sha256;
 use serde_json::Value;
 use std::collections::BTreeSet;
@@ -31,9 +32,9 @@ fn parsed_fixture(bytes: &str) -> Value {
     serde_json::from_str(bytes).expect("authored fixture is valid JSON")
 }
 
-/// Tracing: TC-217, FR-322-AC-7
+#[trace("TC-233", "FR-322-AC-13")]
 #[test]
-fn tc_217_all_checked_semantic_node_families_are_admitted_by_the_public_schema() {
+fn tc_233_v1_all_checked_semantic_node_families_are_admitted_by_the_public_schema() {
     let schema = parsed_fixture(SCHEMA);
     jsonschema::validator_for(&schema)
         .expect("I04 schema is valid")
@@ -101,9 +102,9 @@ fn tc_217_all_checked_semantic_node_families_are_admitted_by_the_public_schema()
     }
 }
 
-/// Tracing: TC-217, FR-322-AC-8
+#[trace("TC-233", "FR-322-AC-13")]
 #[test]
-fn tc_217_package_identity_is_the_jcs_digest_of_its_non_circular_preimage() {
+fn tc_233_v1_package_identity_is_the_jcs_digest_of_its_non_circular_preimage() {
     let vector = parsed_fixture(POSITIVE_ALL_FAMILIES);
     let qualified_digest =
         jcs_sha256(&vector["identity_preimage"]).expect("identity preimage is canonicalizable");
@@ -119,9 +120,9 @@ fn tc_217_package_identity_is_the_jcs_digest_of_its_non_circular_preimage() {
     );
 }
 
-/// Tracing: TC-217, FR-322-AC-4, FR-322-AC-5
+#[trace("TC-233", "FR-322-AC-13")]
 #[test]
-fn tc_217_public_schema_refuses_authored_version_domain_and_node_mutations() {
+fn tc_233_v1_public_schema_refuses_authored_version_domain_and_node_mutations() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
     let adverse = parsed_fixture(ADVERSE);
     for mutation in adverse["structural_mutations"]
