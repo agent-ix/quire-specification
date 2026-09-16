@@ -53,10 +53,25 @@ the empty set:
 | F18 | binary32 `0x00000000 * 0x7f800000` with the F17 tuple | `0x7fc00000`, `{invalid}`; this classified exceptional path has no exact-intermediate/round charge; denying result retention is incomplete without bits/flags |
 | F19 | binary32 `sqrt(0x40000000)` (sqrt 2), nearest-even, with `ScalarLimitsV1 { integer_bits: 32, decimal_digits: 0, scale_expansion: 0, text_input_bytes: 0, text_scalars: 0, normalized_scalars: 0, unit_edges: 0, value_occurrences: 1, work_units: 4, result_units: 1 }` | `0x3fb504f3`, `{inexact}`; denying `ieee.exact-intermediate`, `ieee.round` or `ieee.result-retain` is incomplete without bits/flags, although the exact real is irrational |
 
+In F20-F25, `I(i,o,w,r)` abbreviates `ScalarLimitsV1 { integer_bits: i,
+decimal_digits: 0, scale_expansion: 0, text_input_bytes: 0, text_scalars: 0,
+normalized_scalars: 0, unit_edges: 0, value_occurrences: o, work_units: w,
+result_units: r }`.
+
+| Vector | Width, operation, mode and limits | Expected result |
+| --- | --- | --- |
+| F20 | Under `I(0,0,0,0)`, apply `numericEqual`, `totalOrder` and `bitIdentical` to binary32 `0x3f800000` and binary64 `0x3ff0000000000000` | each returns `refused { code: ill_typed }` with no charge |
+| F21 | binary32 `0x00000000 + 0x00000000` and `0x80000000 * 0x3f800000`, nearest-even, under `I(32,2,4,1)`; then under `I(32,2,3,1)` | `0x00000000` and `0x80000000`, no flags, after all four IEEE charges; then `incomplete { limit_kind: work_units, limit: 3, consumed: 3, next_charge: 1, charge_point: ieee.result-retain }` for each, because zero operands take the finite path |
+| F22 | F09's first operation under strict `exact` and under nearest-even, each under `I(32,2,3,1)`; then strict `exact` under `I(32,2,2,1)` | `exact` returns the F09 refusal after `ieee.round` and before `ieee.result-retain`; nearest-even returns `incomplete { limit_kind: work_units, limit: 3, consumed: 3, next_charge: 1, charge_point: ieee.result-retain }`; then `exact` returns `incomplete { limit_kind: work_units, limit: 2, consumed: 2, next_charge: 1, charge_point: ieee.round }` |
+| F23 | binary32 `0x7f7fffff + 0x73000000` (maximum finite plus half its unit in the last place) under nearest-even, toward-zero and strict `exact` | nearest-even returns `0x7f800000` with `{overflow,inexact}`; toward-zero returns `0x7f7fffff` with `{inexact}`; `exact` refuses with would-be flags `{overflow,inexact}`, the `nearest-even` flags, and no would-be bits |
+| F24 | Width-convert binary32 `0x3f800000` to binary64, nearest-even, under `I(64,1,4,1)`, then `I(32,1,4,1)`; width-convert binary64 `0x3ff0000000000000` to binary32 under `I(32,1,4,1)`; convert exact `1/3` to binary32, nearest-even, under `I(32,1,4,1)`, then `I(2,1,4,1)`; convert binary32 `0x3f000000` to exact under `I(32,1,2,1)`; convert binary32 `0x7fc00000` to exact under `I(32,1,2,1)` | `0x3ff0000000000000`, no flags; then `incomplete { limit_kind: integer_bits, limit: 32, consumed: 32, next_charge: 64, charge_point: ieee.exact-intermediate }`; `incomplete { limit_kind: integer_bits, limit: 32, consumed: 0, next_charge: 64, charge_point: ieee.operands }`; `0x3eaaaaab` with `{inexact}`; then `incomplete { limit_kind: integer_bits, limit: 2, consumed: 2, next_charge: 32, charge_point: ieee.exact-intermediate }`; exact `1/2` after `ieee.operands` and `ieee.result-retain`; undefined after `ieee.operands` only |
+| F25 | Width-convert binary64 `0x7ff0000000000001` and `0xfff8000000000003` to binary32 under `I(64,1,2,1)`; binary32 `0x7fc00001` to binary64 under `I(32,1,2,1)`; binary64 `0x7ff8000000400000` to binary32 under `I(64,1,1,0)`, then under `I(64,1,0,0)` | `0x7fc00001` with `{invalid}` and `0xffc00003` with no flag, keeping sign and payload; `0x7ff8000000000001` with no flag; `IeeeNanPayloadNotRepresentable` refusal after `ieee.operands` and before any `ieee.exact-intermediate`, because payload `2^22` does not fit binary32; then `incomplete { limit_kind: work_units, limit: 0, consumed: 0, next_charge: 1, charge_point: ieee.operands }` |
+
 At semantic admission, separately omit the IEEE definition, select two IEEE
 definitions, substitute a different revision/digest, and attempt to bind a user
 declaration to one of the reserved qualified intrinsic identities. Each returns
-`refused { code: invalid_package }` before evaluation. At I13 negotiation, an
+`refused { code: invalid_package }` before evaluation; the reserved-identity
+binding carries the closed cause `conflicting-definition`. At I13 negotiation, an
 unavailable width/intrinsic/policy returns per-item `unsupported`, while a
 missing required finite proof returns per-item `requires-bound`; neither changes
 package admission or invokes a substitute evaluator.

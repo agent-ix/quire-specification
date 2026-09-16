@@ -162,19 +162,35 @@ same `refused { code: ill_typed }` with no charge, so the order has no
 observable outcome difference.
 
 IEEE applicability is also representation-independent. Equality, `totalOrder`
-and bit identity charge only `ieee.operands` and `ieee.result-retain`. An
-arithmetic operation whose result is determined by NaN, infinity, signed-zero
-or invalid/divide-by-zero classification likewise charges only those two
-points; it constructs no finite exact real and performs no rounding. Finite
-add, subtract, multiply, divide and FMA, plus square root of a finite
-nonnegative operand, additionally charge `ieee.exact-intermediate` and
-`ieee.round` in that order. This applies even when the exact real is irrational
+and bit identity charge only `ieee.operands` and `ieee.result-retain`;
+comparison of different widths is a type-time `ill_typed` refusal with no
+charge. An arithmetic operation charges only those two points exactly when a
+NaN operand, an infinite operand, an invalid operation or a division by zero
+determines its result; it constructs no finite exact real and performs no
+rounding. Every other add, subtract, multiply, divide and FMA, whose operands
+are all finite with zeros included, plus square root of a finite nonnegative
+operand, zero included, additionally charges `ieee.exact-intermediate` and
+`ieee.round` in that order. Strict `exact` refuses after `ieee.round` and
+before `ieee.result-retain`. This applies even when the exact real is irrational
 or the rounded result is exact. The fixed width amount is total for every path
 and prevents an implementation's rational, symbolic-root or hardware
 representation from changing accounting. A negative finite square root follows
 the classified-invalid path. Thus a comparison or classified exceptional
 operation consumes two work units, while a finite arithmetic operation consumes
 four.
+
+Explicit IEEE conversions reuse the four IEEE points with arity one. A width
+conversion charges `ieee.operands` with `integer_bits=source width`; for a NaN
+source it then decides the payload refusal, and for a NaN or infinite source it
+charges only `ieee.result-retain`; for a finite source, zeros included, it
+charges `ieee.exact-intermediate` and `ieee.round` with `integer_bits=target
+width`, then any strict `exact` refusal, then `ieee.result-retain`. An
+IEEE-to-exact conversion charges `ieee.operands` with `integer_bits=source
+width`; a NaN or infinity is then undefined, and a finite value charges only
+`ieee.result-retain`. An exact-to-IEEE conversion charges `ieee.operands` with
+`integer_bits=maxparts` of the exact rational, then `ieee.exact-intermediate`
+and `ieee.round` with `integer_bits=target width`, then any strict `exact`
+refusal, then `ieee.result-retain`.
 
 Decimal accounting is independent of implementation storage but not of
 retained scale. Every decimal amount is measured on each operand's retained
