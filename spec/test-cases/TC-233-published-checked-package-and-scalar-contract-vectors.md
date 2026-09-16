@@ -27,14 +27,16 @@ remain with TC-217 and TC-187.
 ## Test Procedure
 
 Validate each positive fixture against its published schema and apply every
-authored adverse mutation; pin the frozen V1 publication bytes. Rebuild each V2
+authored adverse mutation; pin the frozen V1 publication bytes and hash each V1
+package fixture's stored identity preimage to its package id. Rebuild each V2
 identity preimage from the lock selections and occurrence-free graph, recompute
 the JCS SHA-256 package id, then edit each excluded member and each named
-preimage member. Compare equal digest bytes under the V1 and V2 package domains
-as typed keys and against each schema. Recompute every nominal node and
+preimage member, requiring each excluded member injected into the identity
+preimage to be refused. Compare equal digest bytes under the V1 and V2 package
+domains as typed keys and against each schema. Recompute every nominal node and
 compound-unit vector identity and apply each authored mutation, requiring the
 exact refusing check it names (`schema` or `semantic`), including `-0`
-spellings. Classify every published migration receipt with an independent
+spellings, and require the semantic oracle itself to refuse `-0`. Classify every published migration receipt with an independent
 oracle in the order byte-only, missing, ambiguous, stale, target. Hash every
 qualification-catalog artifact and rule against the definition lock and rule
 manifest, require each catalog role to occupy exactly one always, conditional

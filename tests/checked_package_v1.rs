@@ -102,7 +102,7 @@ fn tc_233_v1_all_checked_semantic_node_families_are_admitted_by_the_public_schem
     }
 }
 
-#[trace("TC-233", "FR-322-AC-14")]
+#[trace("TC-233", "FR-322-AC-13")]
 #[test]
 fn tc_233_v1_package_identity_is_the_jcs_digest_of_its_non_circular_preimage() {
     let vector = parsed_fixture(POSITIVE_ALL_FAMILIES);
