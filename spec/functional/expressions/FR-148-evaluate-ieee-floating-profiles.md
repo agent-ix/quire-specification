@@ -124,19 +124,21 @@ rather than truncating a payload.
 Explicit conversion of an IEEE value to an exact number targets a grammar-named
 `Rational[lo, hi; dmin, dmax]` type. A NaN or infinity is undefined. A finite
 value, either zero included, forms its exact reduced rational, with negative
-zero becoming zero, and is then admitted by the existing rational-bounds rule:
-its reduced numerator must lie in `[lo, hi]` and its positive denominator in
-`[dmin, dmax]`. Membership charges nothing; a non-member is refused by the same
-result-bound refusal FR-044 applies to a rational result, after
-`ieee.exact-intermediate` and before `ieee.result-retain`. A direct conversion
-from an IEEE type to `Decimal`, `Integer` or `Int[..]` is refused by type
-checking with `refused { code: ill_typed }` with no charge; those types are
-reached only by a further explicit conversion from the `Rational[..]` value
-under their owning requirement, FR-140 for `Decimal` and FR-044 for `Integer`
-and `Int[..]`. Explicit conversion of any exact integer, rational or decimal
-value to an IEEE width rounds its exact value once under the selected policy,
-with strict `exact` refusing as for arithmetic; a decimal source is sized by its
-retained coefficient and scale, not by its reduced form.
+zero becoming zero. Because the IEEE operand is a runtime bit pattern, this
+conversion is exempt from FR-044's static result-bound proof: membership is
+decided at evaluation, where the reduced numerator must lie in `[lo, hi]` and
+the positive denominator in `[dmin, dmax]`. Membership charges nothing, and a
+non-member returns the runtime refusal `refused { code:
+ieee_rational_out_of_domain }` after `ieee.exact-intermediate` and before
+`ieee.result-retain`. Complete V1 defines no conversion from `Rational[..]` to
+`Decimal`, `Integer` or `Int[..]`: an IEEE value reaches only `Rational[..]`,
+and a direct IEEE conversion to `Decimal`, `Integer` or `Int[..]`, or any
+further conversion of the resulting `Rational[..]` value to those types, is
+refused by type checking with `refused { code: ill_typed }` with no charge.
+Explicit conversion of any exact integer, rational or decimal value to an IEEE
+width rounds its exact value once under the selected policy, with strict `exact`
+refusing as for arithmetic; a decimal source is sized by its retained
+coefficient and scale, not by its reduced form.
 
 Before decoding retained operands or constructing an exact-real intermediate,
 the evaluator charges only the named IEEE points and counters from
