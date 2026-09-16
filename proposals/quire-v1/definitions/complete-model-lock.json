@@ -4,7 +4,7 @@
   "digest_domain": "quire.definition.bytes/v1",
   "language_edition": "1-draft",
   "requires": [
-    {"role": "complete_value_lock", "artifact_path": "complete-value-lock.json", "definition": {"authority":"agent-ix","identity":"quire.value.definition-lock/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"deb3a06903de16f5c58668e7d18843d62f4a46d7d47e2300ae81793e562888f6"}}
+    {"role": "complete_value_lock", "artifact_path": "complete-value-lock.json", "definition": {"authority":"agent-ix","identity":"quire.value.definition-lock/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"4024eca63cf92da6b54b84e64d9444f281452c14efd3956a39297b43aa200be8"}}
   ],
   "producer_interface": {"authority": "filament-core-data", "interface_version": "1.3.0", "wire_schema": "filament-core-data/producer-interface/1.3.0", "tracking": "agent-ix/filament-core-data#143"},
   "trigger_vocabulary": [],
