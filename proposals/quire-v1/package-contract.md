@@ -54,6 +54,21 @@ dependency cause. Only dependency-closed checked declarations reach a consumer;
 partial output cannot claim whole-package admission. An unrelated backend's lack
 of support is a request disposition, not a static source failure.
 
+The complete value root `quire.value.complete/v1` uses the closed semantic
+selections in [AD-005](../../spec/assurance/AD-005-complete-value-expression-system.md).
+Every package selecting that root retains `quire.value.accounting/v1` and its
+exact supplied definition bytes; no evaluator or backend may substitute a local
+cost model. It retains `quire.value.compound-unit/v1` with its exact schema and
+vector artifact digests. It also retains `quire.value.complete.rules/v1` plus every exact
+rule artifact named by that manifest as separate domain-tagged DefinitionRefs;
+the root digest alone does not freeze transitive meaning.
+Text-bearing packages retain `quire.value.text.unicode-17.0.0/v1`; integer
+`div`/`rem` retains exactly one truncating, floor or Euclidean definition; IEEE
+operations retain `quire.value.ieee754-2019-default/v1`. Those supplied
+definition bytes, not a runtime library version, select the meaning. `mod`
+always denotes Euclidean remainder and cannot be retagged by the package's
+`div`/`rem` selection.
+
 ## Typed binding requirements
 
 A required role is identified by its owning native declaration, original source

@@ -11,6 +11,8 @@ The repository stays private; no public distribution decision is implied.
 | jsonschema | 0.55.0, default features disabled | MIT | Structural schema/meta-schema validation without HTTP/file retrieval features |
 | serde_json | 1.0.151 | MIT OR Apache-2.0 | JSON values and authored fixture operations |
 | sha2 | 0.10.9 | MIT OR Apache-2.0 | Exact fixture-byte hashing and independent hashing of hand-authored golden bytes |
+| num-bigint | 0.4.8 | MIT OR Apache-2.0 | Arbitrary-precision signed integers for exact nominal-unit rational qualification |
+| num-integer | 0.1.47 | MIT OR Apache-2.0 | Exact greatest-common-divisor reduction for canonical nominal-unit rational qualification |
 | ix-trace-rs | 2ce4ebf47f726b9d76388220545cd0abda8a5cfb | AGPL-3.0-or-later | Compiler-checked single-line trace attributes |
 
 Cargo.lock pins the actual transitive graph. The retained
