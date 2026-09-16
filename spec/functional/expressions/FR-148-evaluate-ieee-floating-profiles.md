@@ -50,7 +50,11 @@ is a strict language policy rather than a sixth IEEE rounding direction. The
 evaluator computes the exact real intermediate and succeeds only when the
 selected width represents it without discarded information. An inexact,
 overflow or tiny-and-inexact result is refused with its would-be flags and no
-rounded substitute. Exact subnormal results remain admissible. Invalid
+rounded substitute. The refusal carries only the would-be flag set, never
+would-be bits, and those flags are the flags the same operation would return
+under `nearest-even`, so overflow and tininess follow that direction. Inexactness
+is decided by the rounding step: a strict `exact` refusal follows `ieee.round`
+and precedes `ieee.result-retain`. Exact subnormal results remain admissible. Invalid
 operations and division by zero retain the deterministic IEEE exceptional
 result and flag defined below because they do not substitute a rounded finite
 value.
@@ -80,8 +84,24 @@ this fixes the order of signed zeros, infinities and every signaling/quiet NaN
 payload. The exact qualified intrinsic identities are
 `quire::value::ieee::sqrt`, `quire::value::ieee::fma`,
 `quire::value::ieee::numericEqual`, `quire::value::ieee::totalOrder` and
-`quire::value::ieee::bitIdentical`. Cross-width comparison is ill-typed until
-an explicit conversion selects a target width and rounding policy.
+`quire::value::ieee::bitIdentical`. `numericEqual`, `totalOrder` and `bitIdentical` between operands of different
+widths are refused by type checking with `refused { code: ill_typed }` before
+any charge, until an explicit conversion selects a target width and rounding
+policy. A user declaration bound to a reserved qualified intrinsic identity
+refuses package admission as `refused { code: invalid_package }` with the
+closed cause `conflicting-definition`.
+
+Explicit width conversion of a finite value, zeros included, forms the source's
+exact real and rounds it once to the target width with the selected policy and
+flags. Width conversion of an infinity keeps its sign. Width conversion of a
+NaN keeps its sign and its integer payload below the quiet bit, sets the quiet
+bit and, when the source is signaling, sets `invalid`, as for every consumed
+signaling NaN; a payload not smaller than the target width's quiet bit is
+refused as `IeeeNanPayloadNotRepresentable` and is never truncated. Explicit
+conversion of a finite IEEE value to an exact rational returns its exact value,
+with negative zero becoming zero; a NaN or infinity is undefined. Explicit
+conversion of an exact rational to an IEEE width rounds once under the selected
+policy, with strict `exact` refusing as for arithmetic.
 
 Before decoding retained operands or constructing an exact-real intermediate,
 the evaluator charges only the named IEEE points and counters from
@@ -103,6 +123,8 @@ host floating point.
 | FR-148-AC-5 | The same NaN and signed-zero bit vectors distinguish numeric equality, total ordering and bit identity. | Test (TC-193) |
 | FR-148-AC-6 | Signaling/quiet NaN propagation, invalid/divide-by-zero/overflow/underflow/inexact flags and strict `exact` refusal follow the closed profile without global state. | Test (TC-193) |
 | FR-148-AC-7 | A concrete binary64 limit tuple succeeds, while denial of the named final IEEE charge returns incomplete without bits or flags. | Test (TC-193) |
+| FR-148-AC-8 | Cross-width comparison refuses `ill_typed` before any charge; zero operands take the finite charge path; strict `exact` refuses after `ieee.round` with `nearest-even` would-be flags and no bits. | Test (TC-193) |
+| FR-148-AC-9 | Width, IEEE-to-exact and exact-to-IEEE conversions charge the IEEE points at their stated widths and positions, and NaN width conversion keeps sign and payload or refuses an unrepresentable payload before `ieee.exact-intermediate`. | Test (TC-193) |
 
 ## Dependencies
 
