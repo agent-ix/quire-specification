@@ -86,7 +86,7 @@ planned row is required work, not a deferred capability or implementation claim.
 | V1-EXPR-020 | FR-012 | TC-231 | Reuse | planned |
 | V1-EXPR-021 | FR-006 | TC-231 | Reuse | planned |
 | V1-EXPR-022 | FR-013 | TC-231 | Reuse | planned |
-| V1-EXPR-023 | FR-271 | TC-230, TC-231 | Amend | planned |
+| V1-EXPR-023 | FR-271 | TC-047, TC-231 | Amend | planned |
 | V1-EXPR-024 | FR-019 | TC-231 | Reuse | planned |
 | V1-EXPR-025 | FR-019 | TC-231 | Reuse | planned |
 | V1-EXPR-026 | FR-007 | TC-231 | Reuse | planned |
