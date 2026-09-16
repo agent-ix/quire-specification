@@ -33,6 +33,8 @@ completed result. That record is closed; its members are defined under
 | integer modulus (`mod`) | `integer-modulus.operands`, `integer-modulus.arithmetic`, `integer-modulus.domain`, `integer-modulus.result-retain` |
 | IEEE | `ieee.operands`, conditional `ieee.exact-intermediate`, conditional `ieee.round`, `ieee.result-retain` |
 | equality | `equality.plan`, one `equality.pair` for each planned semantic occurrence-path pair, then `equality.result-retain` |
+| function call | one `function.call` before binding the evaluated arguments of each checked pure-function call |
+| collection | one `collection.element` before each constructor element expression or one `collection.visit` before binding each visited occurrence, one `collection.member-test` for each membership decision, then `collection.bound` and `collection.result-retain`, in the FR-144/FR-145 order |
 
 Each charge is the following exact `{ counter: amount }` vector. A semantic-size
 counter records the high-water maximum, not a sum: admitting amount `n` changes
@@ -80,10 +82,18 @@ rational's numerator and positive denominator.
 | `equality.plan` | `value_occurrences=exact total planned pair events`; without changing consumed counters, atomically require remaining capacity for `pair_events + 2` work units and one result unit, then consume the plan's one work unit |
 | each `equality.pair` | no size-counter change; `work_units += 1` |
 | `equality.result-retain` | `result_units += 1` |
+| each `function.call` | no size-counter change; `work_units += 1` |
+| each `collection.element` | no size-counter change; `work_units += 1` |
+| each `collection.visit` | no size-counter change; `work_units += 1` |
+| each `collection.member-test` | `value_occurrences=p`, where `p` is the sum of the FR-149 occurrence-pair plan sizes of the decision's comparisons; `work_units += p` instead of one |
+| `collection.bound` | `value_occurrences=n`, the FR-144 bound count of the formed collection |
+| `collection.result-retain` | `value_occurrences=occ(result)`, `result_units += occ(result)`; `result_units += 1` for a scalar query result |
 
 For each non-repeated row, `work_units += 1`; repeated identity, edge, rational,
-normalization-output and equality-pair rows add one per event. Retaining a paired
-quotient/remainder costs two result units; a composite retained value costs
+normalization-output, equality-pair, function-call, collection-element and
+collection-visit rows add one per event, and each `collection.member-test` adds
+its `p`.
+Retaining a paired quotient/remainder costs two result units; a composite retained value costs
 `occ(result)`. Checked amount derivation and counter arithmetic precede
 allocation or semantic arithmetic. A counter amount greater than `u64::MAX`
 returns incomplete at that point. No unnamed precision, shift, host-backend cost
@@ -101,6 +111,28 @@ edge, two rational events, target admission and result retention: six work
 units. Equality preflight is only an availability check: the subsequent pair
 and result-retention charges are the sole mutations for those reserved units,
 so E21 consumes exactly `1 + 17 + 1 = 19` work units and one result unit.
+
+FR-149 selects the equality schedule for a top-level Boolean, `Integer`,
+`Int[..]`, `Rational[..]`, `Decimal[..]` or `Reference<T>` comparison as a
+one-pair plan: `equality.plan` with `value_occurrences=1`, one `equality.pair`
+and `equality.result-retain`, which is three work units and one result unit, and
+no `decimal.*` or `integer-*` charge. Its plan-formation checks, including the
+`foreign_reference` universe check, precede `equality.plan` and make no charge.
+Of the FR-149 equality conversions, an FR-142 unit conversion charges its
+`unit.*` schedule and a `Decimal`-to-`Decimal` conversion charges the decimal
+conversion schedule below. Neither has a rounding step. Every other admitted
+equality conversion has no charge point. Record and tuple construction has no
+charge point of its own; only the field expressions and calls it evaluates
+charge. FR-144 collection construction and every FR-145 query and conversion
+charge the collection family in the order those requirements define: a
+constructor element or visited occurrence charges before it is evaluated or
+bound, membership decisions charge before their comparisons, and
+`collection.bound` precedes the bound check, which makes no charge. The
+comparisons inside a membership decision charge no `equality.*` point, and an
+FR-149 equality count measures only the equality expression over completed
+operands. `function.call` is the execution
+fuel of FR-146: it is charged after the call's arguments are evaluated left to
+right and before they are bound, so a denied call enters no callee.
 
 Text applicability is profile-dependent. `nfc`, `nfd`, `nfkc` and `nfkd`
 charge every text row in order. The non-normalizing `unicode-scalars` and
@@ -273,8 +305,8 @@ NFR-071 fault injection may deny the exact next charge at any named point. An
 injected denial at point `P` returns exactly
 `incomplete { limit_kind: work_units, limit: w, consumed: w, next_charge: n,
 charge_point: P }`, where `w` is the work units consumed before `P` and `n` is
-the `work_units` addition `P` requires (one, or the `equality.plan`
-reservation). A canonical exact-bound run permits every charge through result
+the `work_units` addition `P` requires (one, the `equality.plan`
+reservation, or a `collection.member-test` amount `p`). A canonical exact-bound run permits every charge through result
 retention; its one-less partner denies the final named charge. Implementations
 may use a more efficient internal algorithm, but cannot omit, reorder or change
 normative charges or expose internal partial state.

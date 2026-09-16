@@ -9,6 +9,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/AD-005
     type: references
+  - target: ix://agent-ix/quire-specification/FR-044
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-145
+    type: references
 ---
 
 # FR-146: Check total pure functions and recursion
@@ -46,13 +50,66 @@ collection cardinalities or strict-subvalue depths. Each recursive edge must
 prove that the substituted callee tuple is lexicographically smaller than the
 caller's tuple; this rule also applies across mutual recursion.
 
-Totality is path-sensitive: every pattern and conditional path must return the
-declared result, all destructuring must be exhaustive and each partial
-operation must have a proved precondition. Purity and typing are checked before
+Totality is path-sensitive: every conditional path must return the declared
+result, and each partial operation must have a proved precondition. The
+Complete-V1 expression grammar has no pattern-matching or destructuring form,
+and every `if` has an `else`, so exhaustiveness is structural. Purity and typing are checked before
 reachability, so an unreachable impure or ill-typed branch is still rejected.
 Evaluation fuel is an execution resource rather than a semantic termination
 argument: exhausting it returns `incomplete`, never a value or a proof of
 nontermination.
+
+## Calls, measures and definedness facts
+
+Functions are first order. A function is not a value, and a call names a
+`function` declaration or FR-307 export by its exact identity, so the call graph
+is static. The graph includes calls inside `let`, `if`, collection binders, fold
+steps and measure expressions. A call to a reserved `quire::value::...`
+intrinsic is not a call-graph edge.
+
+`decreases(m)` supplies the measure. `m` is either one measure element or a call
+of a declared `tuple` whose positions are measure elements. A one-element
+measure is a one-tuple. A measure element is an `Integer` or `Int[..]`
+expression over parameters that is proved nonnegative on entry, or a parameter
+of a recursive record type ordered by strict containment. `size(p)` is a
+cardinality element. Every function in one strongly connected component
+declares a measure with the same arity and the same element kind at each
+position. For each recursive edge, the checker substitutes the callee arguments
+into the callee measure. It must then prove, under the sound FR-044 guard facts
+at that call site, that for some position `i` every earlier element is equal and
+element `i` is strictly smaller: an integer by `<`, or a record subvalue by
+being a field projection path of the caller's parameter. The call-site
+nonnegativity of every integer element must also be proved. An omitted or
+mismatched measure, or an unproved obligation, is
+`refused { code: undefined_expression }`. The refusal names the component
+cycle, the call edge and the failed obligation. `undefined_expression` is the
+FR-271 code for unproved definedness.
+
+The partial operations are closed: a divisor that may be zero in FR-140, FR-142,
+FR-044 or FR-147; a zero base with a negative integer exponent; `value(e)`
+without a proved `present(e)`; `deref` outside the state contract's existence
+facts; `reduce` without a proved nonzero minimum bound; and an FR-148
+IEEE-to-`Rational` conversion of a value that may be NaN or infinite. Each one
+needs a proved precondition, and an unproved one is
+`refused { code: undefined_expression }` at that operation. Runtime refusals
+named by FR-140, FR-142, FR-144 and FR-148 (membership, strict `exact`,
+cardinality bound, NaN payload and rational domain) are typed outcomes. They
+propagate and do not make a function partial. FR-044 still owns the static
+integer and rational result-bound obligations.
+
+Purity and typing are checked first, and each failure is
+`refused { code: ill_typed }` at the offending expression, even in an
+unreachable branch. Complete V1 has no source form for I/O, mutation,
+reflection or ambient lookup. A call to such a model or host operation, or a
+call to an undeclared name, is refused rather than resolved.
+
+Each call charges `function.call` under `quire.value.accounting/v1` before its
+arguments are bound. Arguments are evaluated left to right before that charge.
+Execution fuel is the `work_units` limit. Its exhaustion is
+`incomplete { limit_kind: work_units, ... }` at the denied point, and the
+function's static totality verdict is unchanged. Call nesting depth is not a
+separate counter, and an implementation must not turn a host stack limit into a
+Complete-V1 outcome.
 
 ## Acceptance Criteria
 
@@ -63,6 +120,7 @@ nontermination.
 | FR-146-AC-3 | I/O, mutation, reflection, ambient access or wrong argument/result typing refuses even in an unreachable branch. | Test (TC-191) |
 | FR-146-AC-4 | A mutually recursive component is admitted only when every substituted cycle edge decreases the shared lexicographic measure. | Test (TC-191) |
 | FR-146-AC-5 | Exhausting execution fuel for an admitted function returns incomplete without changing the function's totality verdict. | Test (TC-191) |
+| FR-146-AC-6 | Each call charges `function.call` after argument evaluation and before binding, and an unproved partial-operation precondition refuses as `undefined_expression` while runtime typed refusals propagate. | Test (TC-191) |
 
 ## Dependencies
 
