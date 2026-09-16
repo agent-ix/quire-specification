@@ -44,8 +44,11 @@ source maps. Every node carries its schema version, semantic type and stable
 node identity; references are by identity, never array position. Lowering is
 per requested item and returns exactly one of `lowered`, `unsupported`,
 `requires_bound`, `invalid_input` or `failed`. A lowered item includes all
-reachable dependencies and a canonical semantic digest. Unknown tagged nodes
-are retained for transport but refused by consumers that do not declare them.
+reachable dependencies and a canonical semantic digest. An I04 reader refuses
+an unknown member or node tag before admitting a v1 package. A transport relay
+may retain the raw bytes of a separately selected future graph revision, but a
+lowerer that does not declare that revision refuses it before lowering; raw
+retention is not admission or a substitute node.
 
 ## Acceptance Criteria
 
@@ -61,6 +64,8 @@ are retained for transport but refused by consumers that do not declare them.
 
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
   source form used by this requirement.
+- [I04 CheckedPackage contract](../../objects/interfaces/FR-322-checked-package-artifact.md)
+  owns the frozen public checked semantic input and its strict reader boundary.
 - [Subsystem and interface index](../../subsystems/index.md) identifies the
   typed producer/consumer boundary and dependency direction.
 - Every requirement linked in frontmatter is a normative prerequisite.
