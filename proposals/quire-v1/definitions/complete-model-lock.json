@@ -4,7 +4,7 @@
   "digest_domain": "quire.definition.bytes/v1",
   "language_edition": "1-draft",
   "requires": [
-    {"role": "complete_value_lock", "artifact_path": "complete-value-lock.json", "definition": {"authority":"agent-ix","identity":"quire.value.definition-lock/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"4024eca63cf92da6b54b84e64d9444f281452c14efd3956a39297b43aa200be8"}}
+    {"role": "complete_value_lock", "artifact_path": "complete-value-lock.json", "definition": {"authority":"agent-ix","identity":"quire.value.definition-lock/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"b434e5c93a7711ffb09f679596dbddb051b89fc1e62fe05e09d1f9bde66fbd55"}}
   ],
   "producer_interface": {"authority": "filament-core-data", "interface_version": "1.3.0", "wire_schema": "filament-core-data/producer-interface/1.3.0", "tracking": "agent-ix/filament-core-data#143"},
   "trigger_vocabulary": [],
@@ -13,7 +13,7 @@
     {
       "role": "root",
       "artifact_path": "model-complete.md",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"a2c438db7000e206c29202fe835b76067276e34bd735f0a7524e9c378e040e2c"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"f34f2fe37f0dc84bf2045a986b5bb4b80ad479781134c91a825c98473a275be6"}
     },
     {
       "role": "state_graph",
@@ -23,7 +23,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "model-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"a457d96b7b27e538d8ad8f9b250b1b8c2013e30dbefee48c757f27971007c491"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"a369f976268b4c5b4d571f14813ff4e10a1783da13ed44a8fc0e49ddf790e4fe"}
     },
     {
       "role": "effective_declaration_schema",
@@ -83,7 +83,7 @@
     {
       "role": "rule_fr_321",
       "artifact_path": "../../../spec/objects/interfaces/FR-321-model-selection-artifact.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-321/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"9d9ea50ef9123899ec3b58e83afb8dc2ee7b44ef8d9c8892bfa9886e51f8c359"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-321/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"c1f70577e5fe31ba9e21162dadf915c47e702dadace00f6f2a8333e723ce9250"}
     },
     {
       "role": "rule_interface_003",

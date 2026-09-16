@@ -21,7 +21,7 @@ When a model export is selected for native linking, the producer SHALL use the i
 - `contract_version` — the FCD FR-126 `interfaceVersion` and `wireSchema` of the admitted producer document; under the selected `quire.model.complete/v1` definition the interface version is exactly `1.3.0`.
 - `authority` — the correspondence `ProducerObject.authority` (FCD FR-116) of the export's records.
 - `export` — the FCD FR-117 static bundle key: bundle `identity`, namespaced `revision` and `digest` with domain `filament-canonical-json-1`.
-- `closure` — ordered declarations, types, relationships and dependencies admitted by the producer, including every generalization, subsetting and redefinition record and the bundle's `generalizationClosure` statement.
+- `closure` — ordered declarations, types, relationships and dependencies admitted by the producer, including every generalization, subsetting and redefinition record and the bundle's `generalizationClosure`, `subsettingClosure` and `redefinitionClosure` header statements.
 - `correspondence` — the producer supplies original declarations and their edges; QSL derives the effective declarations and ordered derivation paths as the `quire.model.effective-view/v1` identity defined by the selected `quire.model.complete/v1` definition. The producer never supplies an effective identity.
 - `feature_report` — exact available, absent and unsupported producer capabilities.
 
