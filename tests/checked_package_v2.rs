@@ -773,6 +773,7 @@ fn string_set<'a>(value: &'a Value, what: &str) -> BTreeSet<&'a str> {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum SelectionRefusal {
     UnknownTrigger,
+    DuplicateTrigger,
     UnknownRole,
     DuplicateRole,
     RequiredMissing,
@@ -782,8 +783,9 @@ enum SelectionRefusal {
 }
 
 impl SelectionRefusal {
-    const ALL: [Self; 7] = [
+    const ALL: [Self; 8] = [
         Self::UnknownTrigger,
+        Self::DuplicateTrigger,
         Self::UnknownRole,
         Self::DuplicateRole,
         Self::RequiredMissing,
@@ -795,6 +797,7 @@ impl SelectionRefusal {
     fn code(self) -> &'static str {
         match self {
             Self::UnknownTrigger => "selection_unknown_trigger",
+            Self::DuplicateTrigger => "selection_duplicate_trigger",
             Self::UnknownRole => "selection_unknown_role",
             Self::DuplicateRole => "selection_duplicate_role",
             Self::RequiredMissing => "selection_required_missing",
@@ -871,6 +874,13 @@ impl<'a> PackageSelectionRules<'a> {
             .any(|trigger| !self.trigger_vocabulary.contains(trigger))
         {
             return Err(SelectionRefusal::UnknownTrigger);
+        }
+        let mut named_triggers = BTreeSet::new();
+        if !triggers
+            .iter()
+            .all(|trigger| named_triggers.insert(*trigger))
+        {
+            return Err(SelectionRefusal::DuplicateTrigger);
         }
         let known = self.slot_roles();
         if roles.iter().any(|role| !known.contains(role)) {
@@ -2836,6 +2846,15 @@ fn tc_233_package_selection_vectors_admit_exact_conditional_and_alternative_prof
             ),
             ("always-role-missing", "selection_required_missing"),
             ("unknown-trigger", "selection_unknown_trigger"),
+            ("duplicate-trigger", "selection_duplicate_trigger"),
+            (
+                "unknown-trigger-before-duplicate-trigger",
+                "selection_unknown_trigger"
+            ),
+            (
+                "duplicate-trigger-before-unknown-role",
+                "selection_duplicate_trigger"
+            ),
             ("unknown-role", "selection_unknown_role"),
             ("duplicate-role", "selection_duplicate_role"),
         ]),
