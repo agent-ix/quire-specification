@@ -56,7 +56,7 @@ planned row is required work, not a deferred capability or implementation claim.
 | V1-TYPE-021 | FR-011 | TC-231 | Reuse | planned |
 | V1-TYPE-022 | FR-009 | TC-231 | Reuse | planned |
 | V1-TYPE-023 | FR-153 | TC-198, TC-231 | Amend | planned |
-| V1-TYPE-024 | FR-010 | TC-231 | Reuse | planned |
+| V1-TYPE-024 | FR-043 | TC-043, TC-231 | Resolve | planned |
 | V1-TYPE-025 | FR-150 | TC-195, TC-231 | New | planned |
 | V1-TYPE-026 | FR-151 | TC-196, TC-231 | Resolve | planned |
 | V1-TYPE-027 | FR-151 | TC-196, TC-231 | New | planned |
@@ -760,6 +760,22 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-152 | FR-152-AC-5 | TC-197 | planned |
 | FR-153 | FR-153-AC-4 | TC-198 | planned |
 | FR-153 | FR-153-AC-5 | TC-198 | planned |
+| FR-143 | FR-143-AC-11 | TC-198 | planned |
+| FR-144 | FR-144-AC-11 | TC-198 | planned |
+| FR-149 | FR-149-AC-12 | TC-198 | planned |
+| FR-150 | FR-150-AC-6 | TC-195 | planned |
+| FR-150 | FR-150-AC-7 | TC-195 | planned |
+| FR-150 | FR-150-AC-8 | TC-195 | planned |
+| FR-151 | FR-151-AC-6 | TC-196 | planned |
+| FR-151 | FR-151-AC-7 | TC-196 | planned |
+| FR-151 | FR-151-AC-8 | TC-196 | planned |
+| FR-152 | FR-152-AC-6 | TC-197 | planned |
+| FR-152 | FR-152-AC-7 | TC-197 | planned |
+| FR-153 | FR-153-AC-6 | TC-198 | planned |
+| FR-153 | FR-153-AC-7 | TC-198 | planned |
+| FR-204 | FR-204-AC-5 | TC-198 | planned |
+| FR-272 | FR-272-AC-6 | TC-196 | planned |
+| FR-321 | FR-321-AC-4 | TC-195 | planned |
 | FR-160 | FR-160-AC-4 | TC-199 | planned |
 | FR-160 | FR-160-AC-5 | TC-199 | planned |
 | FR-161 | FR-161-AC-4 | TC-200 | planned |
@@ -940,7 +956,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 
 | Integration ID | Purpose | Target Project | Type | Test Cases | Coverage Status |
 | --- | --- | --- | --- | --- | --- |
-| IT-070 | Model producer to native package | Filament + quire-spec-language | library | TC-195, TC-196, TC-197 | planned |
+| IT-070 | Model producer to native package | Filament + quire-spec-language | library | TC-195, TC-196, TC-197, TC-198 | planned |
 | IT-071 | Composed domain execution | quire-integration + domain runtimes | library | TC-209, TC-210 | planned |
 | IT-072 | Revisioned observation repair | quire-observation + temporal/protocol | library | TC-199, TC-204 | planned |
 | IT-073 | Protocol analysis suite | quire-spec-language + quire-protocol | library | TC-205–TC-208 | planned |
@@ -949,6 +965,17 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | IT-076 | API/CLI/WASM/editor parity | QSL tool surfaces | library/process | TC-220–TC-224, TC-228 | planned |
 | IT-077 | Plugin/JIT containment | Rust provider host | library/process | TC-225, TC-226 | planned |
 | IT-078 | Workflow to evidence | quire-integration + observation + verification | library/process | TC-211, TC-230–TC-232 | planned |
+
+## Model-domain capability coverage note
+
+V1-TYPE-021 (FR-011), V1-TYPE-022 (FR-009) and V1-EXPR-017 through V1-EXPR-022
+(FR-009, FR-012, FR-006, FR-013) keep their primary requirements. Under the
+selected `quire.model.complete/v1` definition their inheritance-dependent
+meaning is covered by TC-043 and TC-046 together with the TC-196 vectors R02
+(frame with a subtype create), R08 and D06 (redefined operation pre- and
+postconditions) and the TC-198 vectors L01, L05 and L07 (identity, population
+and anchors under inheritance); V1-TYPE-024 is resolved to FR-043, which
+supersedes FR-010's parent reachability.
 
 ## Coverage gate
 

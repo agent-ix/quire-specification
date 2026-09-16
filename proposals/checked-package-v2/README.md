@@ -32,6 +32,12 @@ version is silently upgraded in place.
   `fixtures/migration-source-nominal-v1.json`, a V1 package validated by the
   frozen V1 schema; refusal vectors cover missing, stale, ambiguous,
   incompatible-target and byte-only reconstruction.
+- `model-effective-declaration.schema.json` and
+  `model-effective-declaration-vectors.json` define the QSL-derived
+  `quire.model.effective-declaration/v1`, `quire.model.effective-view/v1` and
+  `quire.model.object-universe/v1` preimages selected by
+  `quire.model.complete/v1`, with JCS SHA-256 vectors, the reference key order
+  and invalid mutations. They add no CheckedPackage V1 or V2 wire member.
 - The checked semantic graph is a closed `quire.checked-semantic-graph/v2`
   tagged union. It is source-language-neutral transport, not Contract IR and
   not an alternative language semantic authority.

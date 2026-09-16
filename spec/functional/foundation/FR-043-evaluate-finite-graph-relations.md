@@ -24,6 +24,8 @@ An identity/reachability result with retained bindings, or a typed model/binding
 
 Identity equality uses universe, stable object type and object ID, preserving snapshot qualifiers for reads. Traversal requires the same type/universe/snapshot and one-or-more edges over Ref(T), Option(Ref(T)) or ordered Seq(Ref(T),N). Check a discovered target before suppressing repeated expansion; expand each identity at most once. Reference cycles are permitted while structural containment remains acyclic. No opaque scalar gains navigation or implicit heterogeneous relation semantics.
 
+Under the selected `quire.model.complete/v1` definition, "the same type" for traversal means conformance to the static edge type: in `reaches(a, b, e)`, `a` and `b` are `Reference<S>` values whose types conform to the owner `T` of edge `e`, `e` targets `Reference<T>`, identity keeps each object's most-specific type, and a snapshot mismatch is `wrong_snapshot`. Exploration order and charges are the `graph.*` schedule of `quire.value.accounting/v1`: breadth-first in discovery order, edges in the edge value's own order (sequence order for `Seq`, the single target for `Ref` or a present `Option`). The start is discovered but not reached, so `reaches(a, a, e)` is true only when an edge of `e` returns to `a` (a self-loop or a cycle), as FR-043-AC-2 requires; each target is checked for a snapshot mismatch or dangling reference and tested against `b` before its expansion is suppressed.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
