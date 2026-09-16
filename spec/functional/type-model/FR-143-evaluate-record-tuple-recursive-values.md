@@ -58,7 +58,8 @@ typed `Reference<T>` values resolved in a closed object environment.
 
 Complete V1 declares composite value types only with the grammar's
 `record-decl` and `tuple-decl`. It has no variant, sum or tagged-union
-declaration; such a spelling is `invalid_syntax`. A record value expression
+declaration; such a spelling is
+`refused { code: invalid_syntax, cause: unexpected-token }` at its first token. A record value expression
 `R { f: e, ... }` is the single constructor of record `R`, and a tuple value is
 the qualified call `T(e, ...)` of tuple `T`. An `alias-decl` names its target
 type and creates no declaration identity.
@@ -74,9 +75,14 @@ names, owners, field names, field types or shapes never make two keys equal,
 and one declaration has exactly one key. An imported declaration has the key
 that the importing package's graph assigns to the resolved FR-307 export, so
 every dependency path that resolves one export yields one key. No composite
-key is stable across checked packages; a comparison or construction that mixes
-composite values from different checked packages is
-`refused { code: ill_typed }`. A record field identity is
+key is stable across checked packages. Mixing is impossible at check time,
+because every type named in one checked package, imported ones included,
+resolves to that package's own keys, so no source expression can denote a
+composite type of another package. Values meet evaluation only through runtime
+inputs and snapshots validated against the evaluating package. A supplied
+composite value whose declaration key is not a key of that package's graph is
+`refused { code: invalid_runtime_input, cause: wrong-value-kind }` during input
+validation, before any evaluation or charge. A record field identity is
 (declaration key, field identifier), and a tuple position identity is
 (declaration key, zero-based position).
 
@@ -117,7 +123,10 @@ For example, `record List { head: Integer; tail: List?; }` is admitted,
 ## Construction evaluation order
 
 Every construction refusal above is decided by type checking before any field
-expression is evaluated. Record field expressions are evaluated in field
+expression is evaluated. After the last field or argument completes,
+construction charges one `composite.result-retain` with
+`value_occurrences = occ(result)` and `result_units += occ(result)` under
+`quire.value.accounting/v1`, then exposes the value. Record field expressions are evaluated in field
 declaration order, regardless of the order of the source fields. Tuple
 arguments are evaluated in position order. The first field or argument whose
 outcome is undefined, refused or incomplete stops construction. That outcome
@@ -127,6 +136,10 @@ evaluated left and then right, so a stopped left operand prevents evaluation of
 the right operand.
 
 ## Object references
+
+In `Reference<T>`, `T` must name a model object type exported by a bound model;
+a record, tuple, enumeration, alias of a value type or other value type is
+`refused { code: ill_typed, cause: type-mismatch }`.
 
 No Complete-V1 source literal, constructor or conversion creates an object
 identity or a `Reference<T>` value. A reference is obtained only from a bound
@@ -149,7 +162,8 @@ and equality.
 | FR-143-AC-5 | Canonical field ordering does not make equal-shaped values of different declared record types equal. | Test (TC-188) |
 | FR-143-AC-6 | Declaration identity is the producer-assigned record/tuple node key compared only within one checked package, and a variant spelling is `invalid_syntax`. | Test (TC-188) |
 | FR-143-AC-7 | The recursion rule admits exactly the declaration graphs whose unnamed-edge and non-escaping-edge subgraphs are both acyclic, and names each refused cycle. | Test (TC-188) |
-| FR-143-AC-8 | Record fields are evaluated in declaration order, and the first stopped field propagates its outcome with no later field evaluated or charged. | Test (TC-188) |
+| FR-143-AC-8 | Record fields are evaluated in declaration order, the first stopped field propagates its outcome with no later field evaluated or charged, and a completed construction charges `composite.result-retain`. | Test (TC-188) |
+| FR-143-AC-9 | `Reference<T>` admits only a model object type, and a runtime composite value from another checked package is `invalid_runtime_input` before evaluation. | Test (TC-188) |
 
 ## Dependencies
 
