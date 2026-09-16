@@ -521,6 +521,8 @@ version = "0.0.0"
 dependencies = [
  "ix-trace-rs",
  "jsonschema",
+ "num-bigint",
+ "num-integer",
  "quire-verification",
  "serde_json",
  "sha2",

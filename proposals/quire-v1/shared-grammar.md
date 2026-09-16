@@ -273,8 +273,8 @@ type-ref      = 'Boolean' | 'Integer' | qualified-name
               | 'Rational', '[', signed-int, ',', signed-int, ';',
                             uint, ',', uint, ']'
               | 'Decimal', '[', signed-int, ',', signed-int, ';',
-                           uint, ',', uint, ';', rounding-mode, ']'
-              | ('Float32' | 'Float64'), '[', rounding-mode, ']'
+                           uint, ',', uint, [ ';', rounding-mode ], ']'
+              | ('Float32' | 'Float64'), [ '[', rounding-mode, ']' ]
               | 'Text', '[', uint, ',', uint, ';', text-profile, ']'
               | 'Option', '<', type-ref, '>'
               | ('Sequence' | 'Set' | 'Bag' | 'OrderedSet'),
@@ -306,10 +306,10 @@ parameter-type = type-ref ;
 parameter     = ident, ':', type-ref ;
 
 primary       = 'true' | 'false' | 'null' | 'none' | 'self' | 'result'
-              | uint | string | exact-number | enum-value | collection-value
-              | record-value | tuple-value | float-value
-              | ident, [ '(', [ expr, { ',', expr } ], ')' ]
-              | qualified-name | '(', expr, ')'
+              | uint | string | exact-number | collection-value
+              | record-value | float-value
+              | qualified-name, [ '(', [ expr, { ',', expr } ], ')' ]
+              | '(', expr, ')'
               | ('present' | 'value' | 'deref' | 'pre'), '(', expr, ')'
               | 'convert', '<', type-ref, '>', '(', expr, ')'
               | 'allInstances', '<', type-ref, '>', '(', expr, ')'
@@ -327,14 +327,12 @@ hex64         = '0x', hex-digit, hex-digit, hex-digit, hex-digit,
                      hex-digit, hex-digit, hex-digit, hex-digit ;
 hex-digit     = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7'
               | '8' | '9' | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' ;
-enum-value    = qualified-name, '::', member-name ;
 collection-value = 'sequence', '[', [ expr, { ',', expr } ], ']'
                  | 'set', '[', [ expr, { ',', expr } ], ']'
                  | 'bag', '[', [ expr, { ',', expr } ], ']'
                  | 'orderedSet', '[', [ expr, { ',', expr } ], ']' ;
 record-value  = qualified-name, '{', field-value, { ',', field-value }, '}' ;
 field-value   = ident, ':', expr ;
-tuple-value   = qualified-name, '(', expr, { ',', expr }, ')' ;
 
 postfix       = primary, { '.', member-name | '[', expr, ']' } ;
 product       = unary, { ('*' | '/' | 'div' | 'rem' | 'mod'), unary } ;
@@ -346,12 +344,28 @@ collection-call = ('map' | 'collect' | 'filter' | 'flatMap'),
                   [ ',', 'identity', ':', expr ], ')' ;
 ```
 
-`null`, `none`, collection constructors, record/tuple constructors and
-bit-level float constructors are disjoint forms; no empty spelling aliases
+`null`, `none`, collection constructors, record constructors and bit-level
+float constructors are disjoint forms; no empty spelling aliases
 another kind. Decimal source is exact coefficient/scale syntax. IEEE source is
 bit-level so signed zero and NaN payload identity survive parsing. Human decimal
 float conversion is an explicit library function under a selected rounding
 profile, not a literal shortcut.
+
+The one qualified reference/call production is syntactically canonical. Static
+resolution classifies a bare qualified reference as an enum member or other
+declared value and a qualified call as a tuple constructor or pure function;
+the parser does not duplicate those token strings into `enum-value`,
+`tuple-value` and call alternatives.
+
+The selected `quire.value.complete/v1` definition reserves the following exact
+qualified intrinsic identities. They use the ordinary qualified-call production
+above; their meaning is not inferred from an unqualified spelling or installed
+library: `quire::value::ieee::sqrt(x)`,
+`quire::value::ieee::fma(a,b,c)`,
+`quire::value::ieee::numericEqual(a,b)`,
+`quire::value::ieee::totalOrder(a,b)` and
+`quire::value::ieee::bitIdentical(a,b)`. User declarations cannot replace or
+shadow those selected definition identities.
 
 ### Complete temporal, choreography and analysis forms
 
