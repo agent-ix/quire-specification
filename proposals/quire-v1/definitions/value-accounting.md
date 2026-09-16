@@ -106,8 +106,8 @@ rational's numerator and positive denominator.
 | `rational-arithmetic.arithmetic` | `integer_bits=max(bits(N),bits(D))` of the unreduced exact intermediate `N/D` for operands `a/b` and `c/d`: `N=a×d±c×b`, `D=b×d` for `+` and `-`; `N=a×c`, `D=b×d` for `*`; `N=a×d`, `D=b×c` for `/`; `N=-a`, `D=b` for unary `-` |
 | `rational-arithmetic.normalize` | `integer_bits=maxparts(reduced result)` |
 | `rational-arithmetic.result-retain` | `result_units += 1` |
-| `ordering.operands` | `integer_bits=max` over both operands of `bits` for an integer, `maxparts` for a rational and `bits(coefficient)` for a decimal; `decimal_digits=max(digits(coefficient))` for decimals; `value_occurrences=2` |
-| `ordering.arithmetic` | for integers, `integer_bits=max(bits(a),bits(b))`; for rationals `a/b` and `c/d`, `integer_bits=max(bits(a×d),bits(c×b))`; for decimals `(c1,s1)` and `(c2,s2)` aligned to `s=max(s1,s2)`, `scale_expansion=|s1-s2|` and the `integer_bits` and `decimal_digits` of both aligned coefficients |
+| `ordering.operands` | `integer_bits=max` over both operands of `bits` for an integer, `maxparts` for a rational and `bits(coefficient)` for a decimal; `decimal_digits=max(digits(coefficient))` for decimals, each decimal measured in its retained representation `(coefficient, scale)` as retained and never normalized; `value_occurrences=2` |
+| `ordering.arithmetic` | for integers, `integer_bits=max(bits(a),bits(b))`; for rationals `a/b` and `c/d`, `integer_bits=max(bits(a×d),bits(c×b))`; for decimals in their retained representations `(c1,s1)` and `(c2,s2)`, never normalized, aligned to `s=max(s1,s2)`, `scale_expansion=|s1-s2|` and the `integer_bits` and `decimal_digits` of both aligned coefficients |
 | `ordering.result-retain` | `result_units += 1` |
 | `boolean.result-retain` | `result_units += 1` |
 
