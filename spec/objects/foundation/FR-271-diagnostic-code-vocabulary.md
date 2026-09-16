@@ -73,6 +73,7 @@ catalog).
 | `invalid_quire_context` | A lifecycle request supplied an incompatible package, stage or semantic context. |
 | `invalid_source_identity` | Source authority, revision or digest did not match the supplied source. |
 | `invalid_source_map` | A source map was non-monotone, out of bounds or split a UTF-8 scalar. |
+| `cardinality_out_of_bound` | A constructed or converted collection whose occurrence or member count lies outside its type's inclusive cardinality bound (FR-144). |
 | `foreign_reference` | A supplied identity belongs to a different authority, universe, model or subject domain than the position requires. |
 | `unimplemented_capability` | Valid complete-V1 meaning is not implemented by the selected producer; distinct from prohibited source and unsupported backend projection. |
 | `parity_failure` | Two implementations required to agree produced different typed verdicts or values for the same subject/input. |
@@ -169,7 +170,8 @@ The values table fixes the seven previously meaning-only spellings as
 `io_error`, `malformed_command`, `invalid_identifier`, `output_serialization`,
 `invalid_quire_context`, `invalid_source_identity` and `invalid_source_map`.
 It additionally fixes `unimplemented_capability` and `parity_failure` for the
-complete-V1 lifecycle. Matching remains catalog-qualified and exact.
+complete-V1 lifecycle, and `cardinality_out_of_bound` for FR-144 collection
+construction and FR-145 conversion. Matching remains catalog-qualified and exact.
 
 ## Dependencies
 
