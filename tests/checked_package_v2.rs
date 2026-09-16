@@ -292,10 +292,13 @@ fn digest<'a>(value: &'a Value, pointer: &str) -> &'a str {
         .expect("authored node reference has a digest")
 }
 
-/// The mathematical integer denoted by a decimal-string member, compared by
-/// value so that a spelling such as `-0` cannot evade a zero check.
+/// The mathematical integer denoted by a canonical decimal-string member.
+/// A noncanonical spelling such as `-0` or `01` denotes nothing, and callers
+/// compare the parsed value so no spelling can evade a zero check.
 fn integer(value: &Value) -> Option<BigInt> {
-    value.as_str().and_then(|number| number.parse().ok())
+    let spelling = value.as_str()?;
+    let number = spelling.parse::<BigInt>().ok()?;
+    (number.to_string() == spelling).then_some(number)
 }
 
 /// Whether a decimal-string member denotes exactly `expected`.
@@ -1256,6 +1259,7 @@ fn derive_identity_preimage(package: &Value) -> Value {
 #[trace("TC-233", "FR-322-AC-14")]
 #[test]
 fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
     for (fixture, bytes) in [
         ("positive-all-families", POSITIVE_ALL_FAMILIES),
         ("positive-nominal-identities", POSITIVE_NOMINAL_IDENTITIES),
@@ -1275,26 +1279,51 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
             "{fixture} package id is recomputed from its named members"
         );
 
-        let excluded: [(&str, &str, Value); 5] = [
-            ("source-map region", "/source_map/0/regions/0/end", json!(9)),
+        // Each excluded member: its edit pointer and replacement, plus the
+        // identity-preimage object into which the member would be smuggled.
+        let excluded: [(&str, &str, Value, &str, &str, Value); 5] = [
+            (
+                "source-map region",
+                "/source_map/0/regions/0/end",
+                json!(9),
+                "/identity_preimage",
+                "source_map",
+                package["source_map"].clone(),
+            ),
             (
                 "node source occurrence",
                 "/semantic_graph/nodes/0/occurrences/0/ordinal",
                 json!(7),
+                "/identity_preimage/identity_projection/0",
+                "occurrences",
+                package["semantic_graph"]["nodes"][0]["occurrences"].clone(),
             ),
             (
                 "raw source digest",
                 "/lock/sources/0/digest",
                 json!("8888888888888888888888888888888888888888888888888888888888888888"),
+                "/identity_preimage",
+                "sources",
+                package["lock"]["sources"].clone(),
             ),
-            ("capability disposition", "/capability_report", json!([])),
+            (
+                "capability disposition",
+                "/capability_report",
+                json!([]),
+                "/identity_preimage",
+                "capability_report",
+                package["capability_report"].clone(),
+            ),
             (
                 "diagnostic catalog",
                 "/diagnostics/catalog/digest",
                 json!("8888888888888888888888888888888888888888888888888888888888888888"),
+                "/identity_preimage",
+                "diagnostics",
+                package["diagnostics"].clone(),
             ),
         ];
-        for (label, pointer, replacement) in excluded {
+        for (label, pointer, replacement, injection_parent, member, injected) in excluded {
             let mut candidate = package.clone();
             *candidate
                 .pointer_mut(pointer)
@@ -1303,10 +1332,36 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
                 candidate, package,
                 "{fixture} {label} edit changes the package"
             );
+            assert!(
+                schema.is_valid(&candidate),
+                "{fixture} {label} edit keeps the closed V2 shape"
+            );
+            assert_eq!(
+                derive_identity_preimage(&candidate),
+                candidate["identity_preimage"],
+                "{fixture} stored identity preimage still matches the package after editing the excluded {label}"
+            );
             assert_eq!(
                 unqualified_jcs_sha256(&derive_identity_preimage(&candidate)),
                 package_id,
                 "{fixture} editing the excluded {label} leaves the package id unchanged"
+            );
+
+            let mut smuggled = package.clone();
+            let previous = smuggled
+                .pointer_mut(injection_parent)
+                .and_then(Value::as_object_mut)
+                .unwrap_or_else(|| panic!("{fixture} has an identity object for {label}"))
+                .insert(member.to_owned(), injected);
+            assert_eq!(previous, None, "{fixture} identity preimage omits {member}");
+            assert!(
+                !schema.is_valid(&smuggled),
+                "{fixture} closed identity preimage refuses the injected excluded {label}"
+            );
+            assert_ne!(
+                derive_identity_preimage(&smuggled),
+                smuggled["identity_preimage"],
+                "{fixture} an identity preimage carrying the excluded {label} mismatches its derivation"
             );
         }
 
@@ -1505,6 +1560,26 @@ fn tc_233_v1_and_v2_remain_explicitly_incompatible_closed_wires() {
 
     assert!(v1.is_valid(&v1_fixture));
     assert!(v2.is_valid(&v2_fixture));
+
+    let nominal_v1_source = parsed_fixture(MIGRATION_SOURCE_NOMINAL_V1);
+    v1.validate(&nominal_v1_source)
+        .expect("the V2-directory nominal migration source is a frozen V1 package");
+    assert!(
+        !v2.is_valid(&nominal_v1_source),
+        "the V2 schema refuses the V1 nominal migration source"
+    );
+    assert_eq!(
+        unqualified_jcs_sha256(&nominal_v1_source["identity_preimage"]),
+        nominal_v1_source["package_id"]["digest"]
+            .as_str()
+            .expect("nominal V1 source package digest is a string"),
+        "the nominal V1 migration source package id binds its stored V1 preimage"
+    );
+    assert_eq!(
+        nominal_v1_source["package_id"]["domain"].as_str(),
+        Some("quire.package.semantic/v1")
+    );
+
     assert!(
         !v1.is_valid(&v2_fixture),
         "V1 refuses the V2 version and graph"
@@ -1975,6 +2050,46 @@ fn tc_233_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
         .expect("node identity vectors are an array");
     let nominal_package = parsed_fixture(POSITIVE_NOMINAL_IDENTITIES);
     let nominal_lock = &nominal_package["lock"];
+
+    // The semantic oracle itself, not only the schema, refuses `-0`.
+    let preimage_of = |name: &str| {
+        vectors
+            .iter()
+            .find(|vector| vector["name"].as_str() == Some(name))
+            .unwrap_or_else(|| panic!("{name} vector exists"))["preimage"]
+            .clone()
+    };
+    let velocity_terms = preimage_of("dimension-velocity")["terms"].clone();
+    let velocity_terms = velocity_terms
+        .as_array()
+        .expect("velocity terms are an array");
+    assert!(terms_are_canonical(velocity_terms, "dimension_node_id"));
+    let mut negative_zero_exponent = velocity_terms.clone();
+    negative_zero_exponent[0]["exponent"] = json!("-0");
+    assert!(
+        !terms_are_canonical(&negative_zero_exponent, "dimension_node_id"),
+        "the term oracle refuses a -0 exponent"
+    );
+    let centimetre = preimage_of("unit-centimetre");
+    assert!(unit_chain_reaches_root(&centimetre, vectors));
+    let mut negative_zero_scale = centimetre.clone();
+    negative_zero_scale["scale"] = json!({"numerator": "-0", "denominator": "1"});
+    assert!(
+        !unit_chain_reaches_root(&negative_zero_scale, vectors),
+        "the unit oracle refuses a -0 scale on a non-root unit"
+    );
+    let metre = preimage_of("unit-metre");
+    assert!(unit_chain_reaches_root(&metre, vectors));
+    let mut negative_zero_offset = metre.clone();
+    negative_zero_offset["offset"]["numerator"] = json!("-0");
+    assert!(
+        !rational_is_canonical(&negative_zero_offset["offset"]),
+        "a -0 offset numerator is not a canonical rational"
+    );
+    assert!(
+        !unit_chain_reaches_root(&negative_zero_offset, vectors),
+        "the unit oracle refuses a -0 root offset"
+    );
     assert_eq!(
         named_inventory(&fixture["invalid_mutations"], "/name", "/kind"),
         BTreeSet::from([
