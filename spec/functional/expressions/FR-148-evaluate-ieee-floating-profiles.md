@@ -78,13 +78,19 @@ returns the signed infinity. Exact subnormal production sets neither `underflow`
 nor `inexact`.
 
 A zero result or zero source keeps its sign per IEEE 754-2019 §6.3 in
-arithmetic, fused multiply-add, square root and width conversion: the sign of a
-product or quotient is the exclusive or of the operand signs, a sum of two zeros
-of the same sign keeps that sign, the square root of a zero is that zero, and an
-exact zero sum or difference of operands with opposite signs, or of nonzero
-operands that cancel, is `+0` under every rounding direction and strict `exact`
-except `toward-negative`, where it is `-0`. A nonzero result that rounds to zero
-keeps the sign of the exact result.
+arithmetic, fused multiply-add, square root and width conversion. The sign of a
+product or quotient is the exclusive or of the operand signs, and the square
+root of a zero is that zero. A sum of operands with opposite signs, or a
+difference of operands with like signs, whose exact result is zero (zeros or
+cancelling nonzero operands) is `+0` under every rounding direction and strict
+`exact` except `toward-negative`, where it is `-0`. Under every direction, when
+`x` is zero, `x + x` and `x - (-x)` keep the sign of `x`; a sum of zeros with
+like signs or a difference of zeros with opposite signs is therefore that sign.
+Fused multiply-add `fma(x, y, z)` applies the same sum rule to `x × y`, whose
+sign is the exclusive or of the signs of `x` and `y`, and `z`: an exact zero
+result from operands of opposite signs is `+0` except under `toward-negative`,
+where it is `-0`, and one from operands of like signs keeps that sign. A nonzero
+result that rounds to zero keeps the sign of the exact result.
 
 `numericEqual` is false if either operand is NaN and treats positive and
 negative zero as equal. `bitIdentical` requires the same width and identical
@@ -115,16 +121,22 @@ source, because the refusal precedes consuming the NaN. This is a
 language-policy refusal: IEEE convertFormat is total, and this profile refuses
 rather than truncating a payload.
 
-Explicit conversion of an IEEE value to an exact number targets only the
-unbounded exact `Rational`: a finite value, either zero included, returns its
-exact value, with negative zero becoming zero, and a NaN or infinity is
-undefined. Reaching `Integer`, a bounded integer, a bounded `Rational` or
-`Decimal` requires a separate explicit exact conversion under its own
-requirement, with that conversion's charges and refusals. Explicit conversion of
-any exact integer, rational or decimal value to an IEEE width rounds its exact
-value once under the selected policy, with strict `exact` refusing as for
-arithmetic; a decimal source is sized by its retained coefficient and scale, not
-by its reduced form.
+Explicit conversion of an IEEE value to an exact number targets a grammar-named
+`Rational[lo, hi; dmin, dmax]` type. A NaN or infinity is undefined. A finite
+value, either zero included, forms its exact reduced rational, with negative
+zero becoming zero, and is then admitted by the existing rational-bounds rule:
+its reduced numerator must lie in `[lo, hi]` and its positive denominator in
+`[dmin, dmax]`. Membership charges nothing; a non-member is refused by the same
+result-bound refusal FR-044 applies to a rational result, after
+`ieee.exact-intermediate` and before `ieee.result-retain`. A direct conversion
+from an IEEE type to `Decimal`, `Integer` or `Int[..]` is refused by type
+checking with `refused { code: ill_typed }` with no charge; those types are
+reached only by a further explicit conversion from the `Rational[..]` value
+under their owning requirement, FR-140 for `Decimal` and FR-044 for `Integer`
+and `Int[..]`. Explicit conversion of any exact integer, rational or decimal
+value to an IEEE width rounds its exact value once under the selected policy,
+with strict `exact` refusing as for arithmetic; a decimal source is sized by its
+retained coefficient and scale, not by its reduced form.
 
 Before decoding retained operands or constructing an exact-real intermediate,
 the evaluator charges only the named IEEE points and counters from
