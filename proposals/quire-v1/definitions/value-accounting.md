@@ -52,7 +52,7 @@ rational's numerator and positive denominator.
 | `decimal.scale-expansion` | `scale_expansion=max decimal-place shift in this operation`, `integer_bits`/`decimal_digits` of every expanded coefficient |
 | `decimal.arithmetic` | `integer_bits=maxparts(exact intermediate)` and `decimal_digits=max(digits(numerator),digits(denominator))` |
 | `decimal.rounding` | `integer_bits=bits(rounded coefficient)`, `decimal_digits=digits(rounded coefficient)`; charged only under the decimal applicability rule below |
-| `decimal.result-retain` | semantic sizes of the completed decimal, `value_occurrences=1`, `result_units += 1` |
+| `decimal.result-retain` | semantic sizes of the completed decimal's retained representation (`v × 10^T`, `T`), `value_occurrences=1`, `result_units += 1` |
 | `text.input-bytes` | `text_input_bytes=sum UTF-8 bytes of all operands`, `value_occurrences=operand_count` |
 | `text.decode-scalars` | `text_scalars=sum decoded scalars of all operands` |
 | `text.normalize-input` | no size-counter change |
@@ -117,7 +117,11 @@ the classified-invalid path. Thus a comparison or classified exceptional
 operation consumes two work units, while a finite arithmetic operation consumes
 four.
 
-Decimal applicability is also representation-independent. Decimal addition,
+Decimal accounting is independent of implementation storage but not of
+retained scale. Every decimal amount is measured on each operand's retained
+representation: a literal's coefficient/scale as written, or a computed
+result's (`v × 10^T`, `T`) at its target scale `T`; a normalized form is never
+substituted. FR-140 membership makes no charge. Decimal addition,
 subtraction, multiplication, division, unary negation and explicit conversion
 each charge `decimal.operands`, `decimal.scale-expansion` and
 `decimal.arithmetic` in that order unless an earlier outcome stops evaluation.
@@ -134,7 +138,7 @@ digits are not a rounding step and make no `decimal.rounding` charge. A
 divisor whose normalized coefficient is zero is undefined after
 `decimal.operands` and before `decimal.scale-expansion`. Strict `exact` at a
 rounding step is refused after `decimal.arithmetic` and before
-`decimal.rounding`. A normalized nonmember result is refused after
+`decimal.rounding`. A nonmember result is refused after
 `decimal.rounding`, or after `decimal.arithmetic` when no rounding step occurs,
 and before `decimal.result-retain`. An undefined or refused outcome makes no
 later charge.
@@ -162,8 +166,15 @@ that counter's limit, `consumed` (`u64`) is its consumed value before the
 denied charge, and `next_charge` (a nonnegative mathematical integer that may
 exceed `u64::MAX`) is its semantic-size amount or cumulative addition. For the
 `equality.plan` availability check, `next_charge` is the unavailable
-reservation: `pair_events + 2` for `work_units` or one for `result_units`. A
-denied charge changes no counter.
+reservation: `pair_events + 2` for `work_units` or one for `result_units`;
+its canonical vector belongs to TC-194 (QSL #119), not to TC-185 or TC-192. A
+denied charge changes no counter. An injected denial is not a counter
+exhaustion: it is reported as defined under
+[Qualification seam](#qualification-seam), as if the `work_units` limit were
+`w`, so `limit = consumed = w` regardless of the configured limits. Because
+decimal scales are `u32` and integer-division operands are materialized values,
+no decimal or integer-division amount exceeds `u64::MAX`; a `next_charge`
+greater than `u64::MAX` arises from unit integer power (TC-187 U13).
 
 ## Qualification seam
 

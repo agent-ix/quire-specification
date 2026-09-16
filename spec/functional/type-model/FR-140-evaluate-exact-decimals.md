@@ -32,8 +32,10 @@ outputs.
 Literal spelling determines an exact coefficient/scale before normalization.
 Equality compares mathematical values; declared representation constraints
 remain validation conditions. Arithmetic derives exact intermediate scales and
-requires an explicit rounding rule only when the result type cannot represent
-the exact value. No binary float is used as an intermediate.
+requires a non-`exact` rounding mode only at a rounding step, when the exact
+value is not an integer multiple of `10^-T` for target scale `T`; a value
+outside the declared range refuses under every mode. No binary float is used as
+an intermediate.
 
 An omitted rounding spelling selects strict `exact`. A successful rounded
 operation carries `DecimalLoss { exact_numerator, exact_denominator,
@@ -68,9 +70,15 @@ only: equal values have equal membership, and a pre-normalized coefficient or
 scale never decides it. This differs from `Rational` bounds, which check the
 normalized numerator and denominator, because a decimal scale is
 representational: `Decimal[0,10000;2,2]` admits `1` and `1.1` as `1.00` and
-`1.10`. The target scale of a result is `smax`.
+`1.10`. Membership is decided without materializing `c*` (for example by
+comparing digit counts and exact magnitudes), makes no accounting charge and is
+total for every well-formed `smin` and `smax` up to `u32::MAX`. The target
+scale of a result is `smax`.
 
-Addition/subtraction align to the greater operand scale using exact powers of
+Each operand's retained representation is its literal coefficient/scale as
+written or, for a computed result, (`v × 10^T`, `T`) at that result's target
+scale `T`; operations and accounting use retained representations, never a
+normalized form. Addition/subtraction align to the greater operand scale using exact powers of
 ten. Multiplication multiplies coefficients and adds scales. Unary negation
 negates the coefficient. Division by a divisor whose normalized coefficient is
 zero is undefined. Otherwise division into target scale `T` forms the exact
@@ -106,9 +114,9 @@ make no later charge.
 | --- | --- | --- |
 | FR-140-AC-1 | `1.0` and `1.00` compare mathematically equal while retaining their declared representation provenance. | Test (TC-185) |
 | FR-140-AC-2 | Exact representable arithmetic returns the mathematical result without rounding. | Test (TC-185) |
-| FR-140-AC-3 | An unrepresentable result without a selected rounding rule refuses; an explicit rule returns the rounded value plus a canonical-rational loss record. | Test (TC-185) |
+| FR-140-AC-3 | A result that is not an integer multiple of `10^-T` refuses under `exact`, while a non-`exact` mode returns the rounded value plus a canonical-rational loss record; a result outside the declared range refuses under every mode. | Test (TC-185) |
 | FR-140-AC-4 | The six rounding modes produce their declared result on positive and negative half-way values and `exact` refuses every nonzero discarded digit. | Test (TC-185) |
-| FR-140-AC-5 | Division by zero is undefined, while a value whose membership coefficient `c*` or membership scale `s*` is outside the target domain is refused; neither produces a value or uses a floating intermediate. A declaration with `lo > hi`, `smin > smax` or `smax > u32::MAX` refuses type checking with `ill_typed`. | Test (TC-185) |
+| FR-140-AC-5 | Division by zero is undefined, while a value whose membership coefficient `c*` or membership scale `s*` is outside the target domain is refused; neither produces a value or uses a floating intermediate. A declaration with `lo > hi`, `smin > smax` or `smax > u32::MAX` refuses type checking with `ill_typed`. Membership charges nothing and is total up to scale `u32::MAX`. | Test (TC-185) |
 | FR-140-AC-6 | Exact-bound accounting succeeds and denial of a named next decimal charge returns incomplete without a value or an implementation-specific retry; zero-divisor, strict-`exact` and membership outcomes occur at their defined charge positions, and all-zero discarded digits make no `decimal.rounding` charge. | Test (TC-185) |
 
 ## Dependencies
