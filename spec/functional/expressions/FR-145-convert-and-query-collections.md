@@ -98,7 +98,11 @@ has type `A`, `x` has the element type, and `step` and the fold identity `i`
 must each have type `A`. `fold` requires `identity:` and `reduce` forbids it;
 each omission or addition, and each type mismatch, is
 `refused { code: ill_typed, cause: type-mismatch }`. For `reduce`, `A` must be
-the element type, and the first element initializes the accumulator. For a
+the element type, and the first element initializes the accumulator. Admission
+checks typing first: `A`, `identity:` presence, and the types of `step` and
+`i`. Only a fold or reduction that is well typed is then checked against the
+set-and-bag step catalog below, so a step that fails both is reported as
+`type-mismatch`. For a
 sequence or an ordered set, any pure total `step` of type `A` is admitted.
 
 An empty `reduce` has no value, for every collection kind. Static definedness

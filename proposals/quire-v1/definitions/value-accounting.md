@@ -37,7 +37,9 @@ completed result. That record is closed; its members are defined under
 | collection | one `collection.element` before each constructor element expression or one `collection.visit` before binding each visited occurrence, one `collection.member-walk` then one `collection.member-test` for each membership comparison, then `collection.bound` and `collection.result-retain`, in the FR-144/FR-145 order |
 | composite construction | `composite.result-retain` after the last record field or tuple argument completes |
 | integer arithmetic | `integer-arithmetic.operands`, `integer-arithmetic.arithmetic`, `integer-arithmetic.result-retain` for each `Integer` or `Int[..]` `+`, `-`, `*` and unary `-` |
-| Boolean connective | `boolean.result-retain` for each `and`, `or` and `not` |
+| rational arithmetic | `rational-arithmetic.operands`, `rational-arithmetic.arithmetic`, `rational-arithmetic.normalize`, `rational-arithmetic.result-retain` for each `Rational[..]` `+`, `-`, `*`, `/` and unary `-`, and each `Integer` or `Int[..]` `/` producing a `Rational[..]` |
+| numeric ordering | `ordering.operands`, `ordering.arithmetic`, `ordering.result-retain` for each `Integer`, `Int[..]`, `Rational[..]` or `Decimal[..]` `<`, `<=`, `>` and `>=` |
+| Boolean connective | `boolean.result-retain` for each `and`, `or`, `implies` and `not` |
 
 Each charge is the following exact `{ counter: amount }` vector. A semantic-size
 counter records the high-water maximum, not a sum: admitting amount `n` changes
@@ -100,6 +102,13 @@ rational's numerator and positive denominator.
 | `integer-arithmetic.operands` | `integer_bits=max(bits(operand_i))`, `value_occurrences=operand_count` |
 | `integer-arithmetic.arithmetic` | `integer_bits=bits(exact result)`, derived before the result is materialized |
 | `integer-arithmetic.result-retain` | `result_units += 1` |
+| `rational-arithmetic.operands` | `integer_bits=max(maxparts(operand_i))`, an integer operand `n` taken as `n/1`, `value_occurrences=operand_count` |
+| `rational-arithmetic.arithmetic` | `integer_bits=max(bits(N),bits(D))` of the unreduced exact intermediate `N/D` for operands `a/b` and `c/d`: `N=a×d±c×b`, `D=b×d` for `+` and `-`; `N=a×c`, `D=b×d` for `*`; `N=a×d`, `D=b×c` for `/`; `N=-a`, `D=b` for unary `-` |
+| `rational-arithmetic.normalize` | `integer_bits=maxparts(reduced result)` |
+| `rational-arithmetic.result-retain` | `result_units += 1` |
+| `ordering.operands` | `integer_bits=max` over both operands of `bits` for an integer, `maxparts` for a rational and `bits(coefficient)` for a decimal; `decimal_digits=max(digits(coefficient))` for decimals; `value_occurrences=2` |
+| `ordering.arithmetic` | for integers, `integer_bits=max(bits(a),bits(b))`; for rationals `a/b` and `c/d`, `integer_bits=max(bits(a×d),bits(c×b))`; for decimals `(c1,s1)` and `(c2,s2)` aligned to `s=max(s1,s2)`, `scale_expansion=|s1-s2|` and the `integer_bits` and `decimal_digits` of both aligned coefficients |
+| `ordering.result-retain` | `result_units += 1` |
 | `boolean.result-retain` | `result_units += 1` |
 
 For each non-repeated row, `work_units += 1`; repeated identity, edge, rational,
@@ -131,8 +140,10 @@ FR-149 selects the equality schedule for a top-level Boolean, `Integer`,
 one-pair plan: `equality.plan-form` with two work units, `equality.plan` with
 `value_occurrences=1`, one `equality.pair` and `equality.result-retain`, which
 is five work units and one result unit, and no `decimal.*` or `integer-*`
-charge. Every equality, top-level or nested, charges `equality.plan-form`
-before plan formation walks either operand. Plan formation then makes its
+charge. Every comparison that uses the FR-149 equality schedule, top-level or
+nested, charges `equality.plan-form` before plan formation walks either
+operand; a top-level text, enumeration or quantity comparison uses its own
+FR-141 or FR-142 schedule and charges no `equality.*` point. Plan formation then makes its
 checks, including the `foreign_reference` universe check, without a further
 charge, and precedes `equality.plan`; a refused check stops after
 `equality.plan-form`. Of the FR-149 equality conversions, an FR-142 unit
@@ -158,7 +169,18 @@ expressions and calls charge their own points. Integer `+`, `-`, `*` and unary
 `-` charge `integer-arithmetic.operands`, then `integer-arithmetic.arithmetic`,
 then decide any FR-044 bounded-result membership without a charge, then
 `integer-arithmetic.result-retain`. Boolean `and`, `or` and `not` charge
-`boolean.result-retain` once their result is decided. FR-144 collection construction and every FR-145 query and conversion
+`boolean.result-retain` once their result is decided, and `implies` does the
+same. `Rational[..]` `+`, `-`, `*`, `/` and unary `-`, and an `Integer` or
+`Int[..]` `/` whose result is `Rational[..]`, charge
+`rational-arithmetic.operands`, then `rational-arithmetic.arithmetic`, then
+`rational-arithmetic.normalize`, then decide any FR-044 result-bound membership
+without a charge, then `rational-arithmetic.result-retain`; a zero divisor met
+by direct kernel evaluation is undefined after `rational-arithmetic.operands`.
+`Integer`, `Int[..]`, `Rational[..]` and `Decimal[..]` ordering `<`, `<=`, `>`
+and `>=` charges `ordering.operands`, `ordering.arithmetic` and
+`ordering.result-retain`: three work units and one result unit. Quantity
+ordering keeps its FR-142 unit schedule. Every amount is derived analytically
+before any product or aligned coefficient is materialized. FR-144 collection construction and every FR-145 query and conversion
 charge the collection family in the order those requirements define: a
 constructor element or visited occurrence charges before it is evaluated or
 bound, each membership comparison charges `collection.member-walk` before its
