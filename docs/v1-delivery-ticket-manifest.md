@@ -71,11 +71,11 @@ closure and cannot promote missing execution.
 | V1-SRC-007 | A | QSL #117 | QSL #123 |
 | V1-SRC-008 | A | QSL #117 | QSL #123 |
 | V1-SRC-009 | A | QSL #117 | QSL #123 |
-| V1-SRC-010 | A | QSL #117 | QSL #123 |
-| V1-SRC-011 | A | QSL #117 | QSL #123 |
+| V1-SRC-010 | A | QSL #123 | QSL #123 |
+| V1-SRC-011 | A | QSL #123 | QSL #123 |
 | V1-SRC-012 | A | QSL #117 | QSL #123 |
-| V1-SRC-013 | A | QSL #117 | QSL #123 |
-| V1-SRC-014 | A | QSL #117 | QSL #123 |
+| V1-SRC-013 | A | QSL #123 | QSL #123 |
+| V1-SRC-014 | A | QSL #123 | QSL #123 |
 | V1-SRC-015 | A | QSL #117 | QSL #123 |
 | V1-TYPE-001 | A | QSL #118 | QSL #123 |
 | V1-TYPE-002 | A | QSL #118 | QSL #123 |
@@ -130,7 +130,7 @@ closure and cannot promote missing execution.
 | V1-EXPR-020 | A | QSL #120 | QSL #123 |
 | V1-EXPR-021 | A | QSL #120 | QSL #123 |
 | V1-EXPR-022 | A | QSL #120 | QSL #123 |
-| V1-EXPR-023 | A | QSL #117 | QSL #123 |
+| V1-EXPR-023 | A | QSL #123 | QSL #123 |
 | V1-EXPR-024 | A | QSL #119 | QSL #123 |
 | V1-EXPR-025 | A | QSL #119 | QSL #123 |
 | V1-EXPR-026 | A | QSL #119 | QSL #123 |
