@@ -243,9 +243,14 @@ role. The effective declaration of a Connection or Allocation, as returned by a
 binder request, is the effective member owned by the end-owner type of its
 source end.
 
-A phase 3 extension that would revisit a type already on the current path is
-`refused { code: invalid_model_binding, cause: specialization-cycle }` listing
-the cycle's generalization records in path order. A redefinition whose target is
+A phase 3 extension that would revisit a type already on the current path
+closes a cycle. Each cycle is `refused { code: invalid_model_binding, cause:
+specialization-cycle }` exactly once, keyed by the set of its generalization
+records: it is reported at the first extension, in `normalize.cycle-check`
+charge order, that closes it, and a later extension closing a cycle with the
+same record set is charged but not reported again. The refusal lists the
+cycle's records in cycle order (path order from the revisited type), rotated
+to start at the least record in producer key order. A redefinition whose target is
 not a member inherited by its owning type, or a redefining feature named by two
 redefinition records with different targets, is `refused { code:
 invalid_model_binding, cause: redefinition-target }` listing the redefinition
