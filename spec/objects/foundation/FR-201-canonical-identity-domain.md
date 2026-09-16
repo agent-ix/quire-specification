@@ -31,6 +31,11 @@ equality.
 | `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout (FR-018). |
 | `filament.export/v1` | Exact canonical Filament producer export domain; distinct from the producer's own `filament-fingerprint` identifier. |
 | `quire.package.semantic/v1` | Checked semantic-package graph domain; distinct from package archive and lock-file bytes. |
+| `quire.source.bytes/v1` | Exact authored native source-document bytes, including layout; distinct from every definition/model artifact. |
+| `quire.definition.bytes/v1` | Exact selected native profile or semantic-definition bytes, including layout; distinct from source/model bytes. |
+| `quire.compiled-model.bytes/v1` | Exact selected compiled-model document bytes, including layout; distinct from source/definition bytes. |
+| `quire.checked-semantic-node/v1` | Versioned checked semantic-node identity; distinct from its source occurrence and from the enclosing package identity. |
+| `quire.contract-ir.semantic/v1` | Versioned generated Contract IR semantic identity; distinct from the checked source package that it lowers. |
 | `quire.diagnostic-catalog.bytes/v1` | Exact diagnostic-catalog source bytes, including layout. |
 | `quire.generated-artifact.bytes/v1` | Exact generated artifact bytes under its selected artifact kind/profile. |
 | `quire.tool-manifest.jcs/v1` | RFC 8785 canonical tool/plugin/provider manifest bytes. |
