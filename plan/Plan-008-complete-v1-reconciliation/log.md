@@ -107,3 +107,11 @@ description: "Chronological history of the complete V1 reconciliation campaign."
   all 585 non-plan artifact IDs are unique. Strict validation reports 670/670
   selected documents grammar-clean with zero findings. Tasks 011–015 are ready
   after the QSpec #63 planning PR merges; Task-016 remains blocked on all five.
+* **2026-09-15** — The QSL #117 pre-implementation review corrected the
+  authoritative Task-009 allocation for V1-SRC-010/011/013/014 and
+  V1-EXPR-023. Their checked package, model and diagnostic authorities first
+  exist in QSL #123, so #123 now owns both primary implementation and final
+  qualification. TM-009 maps V1-EXPR-023 to the existing FR-271 vocabulary
+  case TC-047 while retaining TC-231 for final qualification. SR-582 records
+  the base review; no requirement, capability status or completion claim
+  changed.
