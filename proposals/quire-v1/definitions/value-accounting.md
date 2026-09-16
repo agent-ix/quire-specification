@@ -106,39 +106,52 @@ Text applicability is profile-dependent. `nfc`, `nfd`, `nfkc` and `nfkd`
 charge every text row in order. The non-normalizing `unicode-scalars` and
 `binary-utf8` profiles charge only `text.input-bytes`, `text.decode-scalars`
 and `text.result-retain`; they charge no `text.normalize-input` or
-`text.normalize-output` point and leave `normalized_scalars` unchanged. An
+`text.normalize-output` point and leave `normalized_scalars` unchanged. The
+length-bound refusal of an admission follows the charge that measures the
+bounded length: after the last `text.normalize-output` for a normalizing profile, after
+`text.decode-scalars` for `unicode-scalars` and after `text.input-bytes` for
+`binary-utf8`; it always precedes `text.result-retain`, and an exhausted counter
+at an earlier charge returns incomplete instead. An
 unordered-enumeration ordering request or cross-declaration enum comparison is
 refused by type checking before any `enum.*` charge.
 
-Every unit operation follows one schedule. It charges one `unit.identity-read`
-per operand in operand order. It then decides, without a charge, incompatible
-dimensions, affine-unit arithmetic, distinct units under addition or
-subtraction, a zero divisor and a zero base under a negative integer exponent;
-each stops evaluation. It then charges one `unit.edge` for every edge of every
-root path the operation traverses (left operand then right operand; source to
-root then root to target), all before any rational event. It then schedules the
-rational events of those edges in the same order, followed by the operation's
-own event. It then charges `unit.target-domain` and finally
+Every unit operation follows one schedule. Incompatible dimensions,
+affine-unit arithmetic and distinct units where the identical unit is required
+are FR-142 type-time `ill_typed` refusals and make no charge. Evaluation charges
+one `unit.identity-read` per operand in operand order. It then decides the
+runtime conditions in order, first match wins, without a charge: a zero divisor,
+then a zero base under a negative integer exponent; each is undefined. It then
+charges one `unit.edge` for every edge the operation traverses, all before any
+rational event: conversion traverses the full source-to-root path and then the
+full root-to-target path with no common-ancestor shortcut, and a compound side
+contributes no edge; multiplication, division, integer power, equality and
+ordering traverse the left and then the right operand's root path; addition and
+subtraction of the identical unit traverse no edge. It then schedules the two
+rational events of each edge in that same order, followed by the operation's
+own event; conversion, equality and ordering have no own event. It then charges
+`unit.target-domain`, except for equality and ordering, and finally
 `unit.result-retain`. Every quantity addition, subtraction, multiplication,
 division and integer power, and every conversion to an exact rational target,
 has an unbounded exact rational result, so its `unit.target-domain` charges no
 size counter: that result's size is already charged by its final
-`unit.rational-arithmetic` event. For a decimal target, FR-140's rounding step
-and the bits and digits of the retained coefficient `v × 10^T` (rounded when a
-rounding step occurs) are decided analytically, without materializing that
-coefficient; strict `exact` at a rounding step refuses before
-`unit.target-domain`; that charge carries those `integer_bits` and
-`decimal_digits` amounts; the coefficient is materialized only after it; and
-FR-140 membership, which charges nothing, refuses after it and before
-`unit.result-retain`. A decimal target charges no `decimal.*` point.
+`unit.rational-arithmetic` event, or by the identity read for a conversion
+without edges. For a decimal target, FR-140's rounding step and the bits and
+digits of the retained coefficient `v × 10^T` (rounded when a rounding step
+occurs) are decided analytically, without materializing that coefficient;
+strict `exact` at a rounding step refuses before `unit.target-domain`; that
+charge carries those `integer_bits` and `decimal_digits` amounts; the
+coefficient is materialized only after it; and FR-140 membership, which charges
+nothing, refuses after it and before `unit.result-retain`. An integer target is
+a decimal target at scale zero: its rounding step, strict `exact` refusal and
+`unit.target-domain` sizing occur at the same positions, and integer-domain
+membership, which charges nothing, refuses after `unit.target-domain` and
+before `unit.result-retain`. Decimal and integer targets charge no `decimal.*`
+or `integer-*` point.
 
-Quantity ordering between two operands of the identical unit charges two
-`unit.identity-read`s, one `unit.edge` per edge of the left and then the right
-operand's root path, the two rational events of each edge in that order, no
-operation event and no `unit.target-domain`, then `unit.result-retain` with
-`occ(result) = 1`. Quantity equality is the FR-149 `equality.*` relation and
-charges no `unit.*` point beyond the explicit conversions that produced its
-operands.
+Quantity equality and ordering between two operands of the identical unit use
+that schedule with no operation event and no `unit.target-domain`, then
+`unit.result-retain` with `occ(result) = 1`, and compare exact root values.
+They charge no `equality.*` point.
 
 IEEE applicability is also representation-independent. Equality, `totalOrder`
 and bit identity charge only `ieee.operands` and `ieee.result-retain`. An
