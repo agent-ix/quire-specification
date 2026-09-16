@@ -7,13 +7,15 @@ use ix_trace_rs::trace;
 use quire_verification::contracts::jcs_sha256;
 use serde_json::Value;
 use sha2::{Digest, Sha256};
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 const COMPLETE_MODEL_LOCK: &str =
     include_str!("../proposals/quire-v1/definitions/complete-model-lock.json");
 const COMPLETE_MODEL_LOCK_DIR: &str = "proposals/quire-v1/definitions";
 const COMPLETE_VALUE_LOCK_BYTES: &[u8] =
     include_bytes!("../proposals/quire-v1/definitions/complete-value-lock.json");
+const MODEL_ROOT_DEFINITION: &str =
+    include_str!("../proposals/quire-v1/definitions/model-complete.md");
 const MODEL_RULE_MANIFEST: &str =
     include_str!("../proposals/quire-v1/definitions/model-complete-rules.json");
 const EFFECTIVE_DECLARATION_VECTORS: &str =
@@ -162,9 +164,120 @@ fn model_artifact(base: &str, relative: &str) -> &'static ModelArtifact {
         .unwrap_or_else(|| panic!("{path} has compile-time bytes"))
 }
 
-fn assert_definition_ref(definition: &Value, identity: &str, bytes: &[u8]) {
+/// The text between the first pair of backticks in `text`.
+fn first_code_span(text: &str) -> Option<&str> {
+    let (_, rest) = text.split_once('`')?;
+    rest.split_once('`').map(|(span, _)| span)
+}
+
+/// Expected `(identity, revision)` for each repository-relative catalog path,
+/// stated independently of the lock by the root definition's own header and
+/// always-selected table and by the rule manifest's entries.
+fn expected_catalog_identities() -> BTreeMap<String, (String, String)> {
+    let mut expected = BTreeMap::new();
+    let header = MODEL_ROOT_DEFINITION
+        .lines()
+        .find_map(|line| line.strip_prefix("Definition identity: "))
+        .expect("root definition states its identity");
+    let (identity, revision) = header
+        .split_once("; revision: ")
+        .expect("root header states identity and revision");
+    expected.insert(
+        repository_path(COMPLETE_MODEL_LOCK_DIR, "model-complete.md"),
+        (
+            first_code_span(identity)
+                .expect("identity is a code span")
+                .to_owned(),
+            first_code_span(revision)
+                .expect("revision is a code span")
+                .to_owned(),
+        ),
+    );
+
+    let table = MODEL_ROOT_DEFINITION
+        .split_once("## Always-selected definitions")
+        .expect("root definition has an always-selected section")
+        .1
+        .lines()
+        .skip_while(|line| !line.starts_with("| `"))
+        .take_while(|line| line.starts_with("| `"));
+    for row in table {
+        let cells = row.split('|').map(str::trim).collect::<Vec<_>>();
+        let [_, identity, revision, artifact, _] = cells.as_slice() else {
+            panic!("always-selected row has three cells: {row}");
+        };
+        let link = artifact
+            .split_once("](")
+            .and_then(|(_, rest)| rest.strip_suffix(')'))
+            .expect("definition artifact is a relative link");
+        expected.insert(
+            repository_path(COMPLETE_MODEL_LOCK_DIR, link),
+            (
+                first_code_span(identity)
+                    .expect("identity is a code span")
+                    .to_owned(),
+                first_code_span(revision)
+                    .expect("revision is a code span")
+                    .to_owned(),
+            ),
+        );
+    }
+
+    let manifest = parsed_fixture(MODEL_RULE_MANIFEST);
+    for rule in manifest["rules"].as_array().expect("rules is an array") {
+        expected.insert(
+            repository_path(COMPLETE_MODEL_LOCK_DIR, str_at(rule, "/path")),
+            (
+                str_at(rule, "/identity").to_owned(),
+                str_at(rule, "/revision").to_owned(),
+            ),
+        );
+    }
+    expected
+}
+
+/// Every way the lock's catalog identities disagree with the independently
+/// stated expected set: an unexpected path, a relabelled identity or
+/// revision, or an expected artifact the catalog omits.
+fn catalog_identity_mismatches(
+    lock: &Value,
+    expected: &BTreeMap<String, (String, String)>,
+) -> Vec<String> {
+    let mut mismatches = Vec::new();
+    let mut seen = BTreeSet::new();
+    for entry in lock["qualification_catalog"]
+        .as_array()
+        .expect("qualification catalog is an array")
+    {
+        let path = repository_path(COMPLETE_MODEL_LOCK_DIR, str_at(entry, "/artifact_path"));
+        let actual = (
+            str_at(entry, "/definition/identity"),
+            str_at(entry, "/definition/revision/value"),
+        );
+        match expected.get(&path) {
+            None => mismatches.push(format!("{path} is not a stated artifact")),
+            Some((identity, revision)) if (identity.as_str(), revision.as_str()) != actual => {
+                mismatches.push(format!(
+                    "{path} states {identity}@{revision} but the lock has {}@{}",
+                    actual.0, actual.1
+                ));
+            }
+            Some(_) => {}
+        }
+        seen.insert(path);
+    }
+    mismatches.extend(
+        expected
+            .keys()
+            .filter(|path| !seen.contains(*path))
+            .map(|path| format!("{path} is missing from the lock")),
+    );
+    mismatches
+}
+
+fn assert_definition_ref(definition: &Value, bytes: &[u8]) {
+    let identity = str_at(definition, "/identity");
     assert_eq!(str_at(definition, "/authority"), "agent-ix");
-    assert_eq!(str_at(definition, "/identity"), identity);
     assert_eq!(str_at(definition, "/revision/namespace"), "quire-draft");
     assert_eq!(
         str_at(definition, "/digest_domain"),
@@ -220,11 +333,11 @@ fn tc_195_complete_model_lock_catalogs_every_artifact_byte_for_byte() {
         requires[0]["artifact_path"].as_str(),
         Some("complete-value-lock.json")
     );
-    assert_definition_ref(
-        &requires[0]["definition"],
-        "quire.value.definition-lock/v1",
-        COMPLETE_VALUE_LOCK_BYTES,
+    assert_eq!(
+        str_at(&requires[0], "/definition/identity"),
+        "quire.value.definition-lock/v1"
     );
+    assert_definition_ref(&requires[0]["definition"], COMPLETE_VALUE_LOCK_BYTES);
 
     let catalog = lock["qualification_catalog"]
         .as_array()
@@ -240,12 +353,13 @@ fn tc_195_complete_model_lock_catalogs_every_artifact_byte_for_byte() {
             roles.insert(str_at(entry, "/role")),
             "catalog roles are unique"
         );
-        assert_definition_ref(
-            &entry["definition"],
-            str_at(entry, "/definition/identity"),
-            artifact.bytes,
-        );
+        assert_definition_ref(&entry["definition"], artifact.bytes);
     }
+    assert_eq!(
+        catalog_identity_mismatches(&lock, &expected_catalog_identities()),
+        Vec::<String>::new(),
+        "every catalog identity and revision is the one its documents state"
+    );
     let always = lock["package_selection"]["always"]
         .as_array()
         .expect("always selection is an array")
@@ -360,4 +474,37 @@ fn tc_198_reference_key_order_ascends_by_fr_204_key_bytes() {
     reversed.reverse();
     reversed.sort();
     assert_eq!(reversed, keys, "sorting any permutation restores the order");
+}
+
+#[trace("TC-195", "FR-150-AC-6")]
+#[test]
+fn tc_195_complete_model_lock_refuses_relabelled_catalog_identities() {
+    let expected = expected_catalog_identities();
+    assert_eq!(expected.len(), MODEL_ARTIFACTS.len());
+    let lock = parsed_fixture(COMPLETE_MODEL_LOCK);
+    assert!(catalog_identity_mismatches(&lock, &expected).is_empty());
+
+    let mut relabelled = lock.clone();
+    relabelled["qualification_catalog"][0]["definition"]["identity"] =
+        Value::from("quire.model.complete/v2");
+    assert_eq!(catalog_identity_mismatches(&relabelled, &expected).len(), 1);
+
+    let mut swapped = lock.clone();
+    let first = swapped["qualification_catalog"][5]["definition"]["identity"].clone();
+    let second = swapped["qualification_catalog"][6]["definition"]["identity"].clone();
+    swapped["qualification_catalog"][5]["definition"]["identity"] = second;
+    swapped["qualification_catalog"][6]["definition"]["identity"] = first;
+    assert_eq!(catalog_identity_mismatches(&swapped, &expected).len(), 2);
+
+    let mut revised = lock.clone();
+    revised["qualification_catalog"][1]["definition"]["revision"]["value"] =
+        Value::from("1-draft.2");
+    assert_eq!(catalog_identity_mismatches(&revised, &expected).len(), 1);
+
+    let mut omitted = lock;
+    omitted["qualification_catalog"]
+        .as_array_mut()
+        .expect("qualification catalog is an array")
+        .pop();
+    assert_eq!(catalog_identity_mismatches(&omitted, &expected).len(), 1);
 }
