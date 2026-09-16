@@ -37,7 +37,7 @@ domains as typed keys and against each schema. Recompute every nominal node and
 compound-unit vector identity and apply each authored mutation, requiring the
 exact refusing check it names (`schema` or `semantic`), including `-0`
 spellings, and require the semantic oracle itself to refuse `-0`. Classify every published migration receipt with an independent
-oracle in the order byte-only, missing, ambiguous, stale, target. Hash every
+oracle in the order byte-only, missing, ambiguous, stale, operation, target. Hash every
 qualification-catalog artifact and rule against the definition lock and rule
 manifest, require each catalog role to occupy exactly one always, conditional
 or exactly-one slot, and evaluate every accepted and refused package-selection

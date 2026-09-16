@@ -16,8 +16,16 @@ version is silently upgraded in place.
 - `schema.json` defines the closed `quire.checked-package/v2` wire shape.
 - `node-identity-preimage.schema.json` defines the closed RFC 8785 preimages for
   complete-V1 enum, dimension and declared-unit node identities.
+- `operation-catalog.json` is the closed `quire.checked-operation-catalog/v1`:
+  every application operation identity with its operator class, operand
+  positions, required law roles (integer division, IEEE 754-2019 default, Unicode
+  17.0.0 text) and rounding or text-profile mode kind.
+- `fixtures/positive-operation-identities.json` is a V2 package whose expression
+  applications carry integer division, IEEE addition and text comparison
+  operations keyed by their expression-application preimages.
 - `node-identity-vectors.json` supplies known JCS SHA-256 vectors for those
-  preimages.
+  preimages, plus `operation_vectors` and `operation_mutations` for
+  expression-application preimages.
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes
@@ -30,7 +38,7 @@ version is silently upgraded in place.
   vectors cover an all-families `relinked-identical` migration and a nominal
   `relinked-rekeyed` migration from
   `fixtures/migration-source-nominal-v1.json`, a V1 package validated by the
-  frozen V1 schema; refusal vectors cover missing, stale, ambiguous,
+  frozen V1 schema; refusal vectors cover missing, stale, ambiguous, unresolved-operation,
   incompatible-target and byte-only reconstruction.
 - `model-effective-declaration.schema.json` and
   `model-effective-declaration-vectors.json` define the QSL-derived
@@ -102,3 +110,29 @@ exhaustion is incomplete, not an empty graph or a successful package.
 
 The QSpec qualification crate validates schema/vector correspondence only. The
 Contract IR consumer owns the production Rust strict reader and lowering path.
+
+## Operation identity rules
+
+Every V2 `application` term carries `operation: {identity, laws, mode}`. The
+identity is a member of `operation-catalog.json`; the operator class must be the
+catalog's class for that identity; `laws` lists exactly the catalog's required
+roles in order, each with a `DefinitionRef` to one of that role's catalogued
+profiles and equal to a member of the lock's `definition_selections`; `mode` is
+`null` when the catalog names no mode kind and otherwise one of that kind's
+catalogued values; the arguments fit the catalogued operand positions and rest.
+A reader refuses the first failing check, in that order, as
+`invalid_semantic_graph` with cause `unknown-operation`,
+`operation-class-mismatch`, `operation-law-missing`, `operation-law-mismatch`,
+`operation-law-unselected`, `operation-mode-mismatch` or
+`operator-ineligible` (`quire.native.diagnostics/v1` revision `1-draft.4`).
+
+An `expression` node whose body is an application has `node_id.digest` equal to
+the JCS SHA-256 of `{version: "quire.expression-application-node/v1",
+semantic_type, body}`. Its `semantic_form` is fixed by the operator class, its
+dependencies are exactly the unique digest-ascending reference targets of the
+body, and it has no `recursion_group`. Changing division from floor to
+Euclidean therefore changes the node id and the package id, and the
+`division-law-stale-selection` mutation shows that a law absent from the lock
+refuses. V1 migration refuses with `migration_operation_unresolved` when a
+target operation is not exactly derivable from the V1 application classes and
+V1 lock.

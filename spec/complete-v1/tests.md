@@ -775,6 +775,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-153 | FR-153-AC-7 | TC-198 | planned |
 | FR-204 | FR-204-AC-5 | TC-198 | planned |
 | FR-272 | FR-272-AC-6 | TC-196 | planned |
+| FR-272 | FR-272-AC-7 | TC-233 | planned |
 | FR-321 | FR-321-AC-4 | TC-195 | planned |
 | FR-160 | FR-160-AC-4 | TC-199 | planned |
 | FR-160 | FR-160-AC-5 | TC-199 | planned |
@@ -840,6 +841,13 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-322 | FR-322-AC-14 | TC-233 | planned |
 | FR-322 | FR-322-AC-15 | TC-233 | planned |
 | FR-322 | FR-322-AC-16 | TC-233 | planned |
+| FR-322 | FR-322-AC-17 | TC-233 | planned |
+| FR-322 | FR-322-AC-18 | TC-233 | planned |
+| FR-322 | FR-322-AC-19 | TC-233 | planned |
+| FR-322 | FR-322-AC-20 | TC-233 | planned |
+| interface-004 | interface-004-AC-1 | TC-233 | planned |
+| interface-004 | interface-004-AC-2 | TC-233 | planned |
+| interface-004 | interface-004-AC-3 | TC-233 | planned |
 | FR-323 | FR-323-AC-1 | TC-231 | planned |
 | FR-323 | FR-323-AC-2 | TC-231 | planned |
 | FR-323 | FR-323-AC-3 | TC-231 | planned |

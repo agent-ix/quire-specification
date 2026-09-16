@@ -29,6 +29,10 @@ const MIGRATION_CORRESPONDENCE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/migration-correspondence-vectors.json");
 const MIGRATION_SOURCE_NOMINAL_V1: &str =
     include_str!("../proposals/checked-package-v2/fixtures/migration-source-nominal-v1.json");
+const OPERATION_CATALOG: &str =
+    include_str!("../proposals/checked-package-v2/operation-catalog.json");
+const POSITIVE_OPERATION_IDENTITIES: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-operation-identities.json");
 const COMPOUND_UNIT_SCHEMA: &str =
     include_str!("../proposals/quire-v1/definitions/value-compound-unit.schema.json");
 const COMPOUND_UNIT_VECTORS: &str =
@@ -933,15 +937,17 @@ enum MigrationRefusalCode {
     InputAmbiguous,
     TargetIncompatible,
     ByteOnlyReconstruction,
+    OperationUnresolved,
 }
 
 impl MigrationRefusalCode {
-    const ALL: [Self; 5] = [
+    const ALL: [Self; 6] = [
         Self::InputMissing,
         Self::InputStale,
         Self::InputAmbiguous,
         Self::TargetIncompatible,
         Self::ByteOnlyReconstruction,
+        Self::OperationUnresolved,
     ];
 
     fn code(self) -> &'static str {
@@ -951,6 +957,7 @@ impl MigrationRefusalCode {
             Self::InputAmbiguous => "migration_input_ambiguous",
             Self::TargetIncompatible => "migration_target_incompatible",
             Self::ByteOnlyReconstruction => "migration_byte_only_reconstruction",
+            Self::OperationUnresolved => "migration_operation_unresolved",
         }
     }
 
@@ -972,7 +979,8 @@ fn source_subject(source: &Value) -> Value {
 /// V1 source package and the relinked V2 package. Every check of one class
 /// runs before any check of the next, in the normative order: byte-only,
 /// missing (an absent member, an empty source list or any V1-locked source
-/// absent), ambiguous, stale, then target incompatibility.
+/// absent), ambiguous, stale, unresolved operation identity, then target
+/// incompatibility.
 fn classify_migration(
     correspondence: &Value,
     source: &Value,
@@ -1036,6 +1044,12 @@ fn classify_migration(
     {
         return Err((MigrationRefusalCode::InputStale, json!({"input": field})));
     }
+    if let Some(ordinal) = first_unresolved_operation(source, target) {
+        return Err((
+            MigrationRefusalCode::OperationUnresolved,
+            json!({"input": "node_correspondences", "ordinal": ordinal}),
+        ));
+    }
     if correspondence["target_package_id"] != target["package_id"] {
         return Err((
             MigrationRefusalCode::TargetIncompatible,
@@ -1095,6 +1109,392 @@ fn schema_for_def(schema: &Value, definition: &str) -> jsonschema::Validator {
         "$defs": schema["$defs"]
     }))
     .unwrap_or_else(|error| panic!("{definition} is a valid schema definition: {error}"))
+}
+
+/// Every application term of a semantic term, in pre-order through
+/// application arguments, aggregate members and binding values.
+fn application_terms(term: &Value) -> Vec<&Value> {
+    let mut found = Vec::new();
+    let mut pending = vec![term];
+    while let Some(current) = pending.pop() {
+        let children = match current["term"].as_str() {
+            Some("application") => {
+                found.push(current);
+                current["arguments"].as_array()
+            }
+            Some("aggregate") => current["members"].as_array(),
+            Some("binding") => {
+                pending.push(&current["value"]);
+                None
+            }
+            _ => None,
+        };
+        pending.extend(children.into_iter().flatten().rev());
+    }
+    found
+}
+
+/// Every node reference target of a semantic term, unique and ascending by digest.
+fn reference_targets(term: &Value) -> Vec<&Value> {
+    let mut targets = BTreeMap::new();
+    let mut pending = vec![term];
+    while let Some(current) = pending.pop() {
+        match current["term"].as_str() {
+            Some("reference") => {
+                if let Some(digest) = current["target"]["digest"].as_str() {
+                    targets.insert(digest, &current["target"]);
+                }
+            }
+            Some("application") => {
+                pending.extend(current["arguments"].as_array().into_iter().flatten())
+            }
+            Some("aggregate") => {
+                pending.extend(current["members"].as_array().into_iter().flatten())
+            }
+            Some("binding") => pending.push(&current["value"]),
+            _ => {}
+        }
+    }
+    targets.into_values().collect()
+}
+
+/// V1 migration: the ordinal of the first target node whose application
+/// operation cannot be derived exactly from the V1 source node and V1 lock.
+/// Each application term must pair positionally with a V1 application of the
+/// same operator class, and every law it selects must be a V1-locked definition.
+fn first_unresolved_operation(source: &Value, target: &Value) -> Option<usize> {
+    let source_nodes = source["semantic_graph"]["nodes"].as_array()?;
+    let target_nodes = target["semantic_graph"]["nodes"].as_array()?;
+    let locked = source["lock"]["definition_selections"]
+        .as_array()
+        .map(Vec::as_slice)
+        .unwrap_or_default();
+    target_nodes
+        .iter()
+        .enumerate()
+        .find_map(|(ordinal, target_node)| {
+            let target_terms = application_terms(&target_node["body"]);
+            let source_terms = source_nodes
+                .get(ordinal)
+                .map(|node| application_terms(&node["body"]))
+                .unwrap_or_default();
+            let classes_match = target_terms.len() == source_terms.len()
+                && target_terms
+                    .iter()
+                    .zip(&source_terms)
+                    .all(|(target_term, source_term)| {
+                        target_term["operator"] == source_term["operator"]
+                    });
+            let laws_locked = target_terms.iter().all(|term| {
+                term["operation"]["laws"]
+                    .as_array()
+                    .into_iter()
+                    .flatten()
+                    .all(|law| locked.contains(&law["definition"]))
+            });
+            (!classes_match || !laws_locked).then_some(ordinal)
+        })
+}
+
+/// Closed reader refusal causes for an application's operation identity, in
+/// evaluation order. Each maps to a catalogued `quire.native.diagnostics/v1`
+/// revision `1-draft.4` cause under the reader code `invalid_semantic_graph`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum OperationRefusal {
+    UnknownOperation,
+    ClassMismatch,
+    LawMissing,
+    LawMismatch,
+    LawUnselected,
+    ModeMismatch,
+    OperatorIneligible,
+}
+
+impl OperationRefusal {
+    const ALL: [Self; 7] = [
+        Self::UnknownOperation,
+        Self::ClassMismatch,
+        Self::LawMissing,
+        Self::LawMismatch,
+        Self::LawUnselected,
+        Self::ModeMismatch,
+        Self::OperatorIneligible,
+    ];
+
+    fn cause(self) -> &'static str {
+        match self {
+            Self::UnknownOperation => "unknown-operation",
+            Self::ClassMismatch => "operation-class-mismatch",
+            Self::LawMissing => "operation-law-missing",
+            Self::LawMismatch => "operation-law-mismatch",
+            Self::LawUnselected => "operation-law-unselected",
+            Self::ModeMismatch => "operation-mode-mismatch",
+            Self::OperatorIneligible => "operator-ineligible",
+        }
+    }
+
+    fn from_cause(cause: &str) -> Option<Self> {
+        Self::ALL
+            .into_iter()
+            .find(|candidate| candidate.cause() == cause)
+    }
+}
+
+fn node_by_id<'a>(nodes: &'a [Value], node_id: &Value) -> Option<&'a Value> {
+    nodes.iter().find(|node| node["node_id"] == *node_id)
+}
+
+/// Operand family of a type node, resolving aliases and bounded domains
+/// through their semantic type with a depth bound of the graph size.
+fn type_family(nodes: &[Value], type_id: &Value, depth: usize) -> Option<&'static str> {
+    if depth > nodes.len() {
+        return None;
+    }
+    let node = node_by_id(nodes, type_id)?;
+    match (node["node_tag"].as_str()?, node["semantic_form"].as_str()?) {
+        ("scalar_type", "boolean") => Some("boolean"),
+        ("scalar_type", "integer") => Some("integer"),
+        ("scalar_type", "rational") => Some("rational"),
+        ("scalar_type", "decimal") => Some("decimal"),
+        ("scalar_type", "float32") => Some("float32"),
+        ("scalar_type", "float64") => Some("float64"),
+        ("scalar_type", "text") => Some("text"),
+        ("scalar_type", "unit") => Some("quantity"),
+        ("scalar_type", "enum") => Some(
+            if node["nominal_identity_preimage"]["ordered"].as_bool() == Some(true) {
+                "ordered_enum"
+            } else {
+                "enum"
+            },
+        ),
+        ("composite_type", "option") => Some("option"),
+        ("composite_type", "record") => Some("record"),
+        ("composite_type", "tuple") => Some("tuple"),
+        ("composite_type", "sequence") => Some("sequence"),
+        ("composite_type", "set") => Some("set"),
+        ("composite_type", "bag") => Some("bag"),
+        ("composite_type", "ordered_set") => Some("ordered_set"),
+        ("composite_type", "reference") => Some("reference"),
+        ("composite_type", "alias") | ("bounded_domain", _)
+            if node["semantic_type"] != node["node_id"] =>
+        {
+            type_family(nodes, &node["semantic_type"], depth + 1)
+        }
+        _ => None,
+    }
+}
+
+/// Operand family of an argument term: a literal by its value kind, a
+/// reference by its target (a function node, or the target's semantic type).
+fn operand_family(term: &Value, nodes: &[Value]) -> Option<&'static str> {
+    match term["term"].as_str()? {
+        "literal" => match term["value_kind"].as_str()? {
+            "boolean" => Some("boolean"),
+            "integer" => Some("integer"),
+            "rational" => Some("rational"),
+            "decimal" => Some("decimal"),
+            "float32_bits" => Some("float32"),
+            "float64_bits" => Some("float64"),
+            "text" => Some("text"),
+            "enum" => Some("enum"),
+            "none" => Some("option"),
+            _ => None,
+        },
+        "reference" => {
+            let target = node_by_id(nodes, &term["target"])?;
+            if target["node_tag"].as_str() == Some("function") {
+                Some("function")
+            } else {
+                type_family(nodes, &target["semantic_type"], 0)
+            }
+        }
+        _ => None,
+    }
+}
+
+/// Whether a catalogued operand position admits an argument term.
+fn position_admits(catalog: &Value, position: &str, argument: &Value, nodes: &[Value]) -> bool {
+    if position == "any" {
+        return true;
+    }
+    let Some(family) = operand_family(argument, nodes) else {
+        return false;
+    };
+    match catalog["operand_groups"][position].as_array() {
+        Some(members) => members.iter().any(|member| member.as_str() == Some(family)),
+        None => position == family,
+    }
+}
+
+/// Independent reader oracle for one application term against the operation
+/// catalog, the package lock and the package graph, in the normative order:
+/// unknown identity, class, missing law, mismatched law, unselected law, mode,
+/// then operand fit.
+fn classify_application(
+    term: &Value,
+    lock: &Value,
+    nodes: &[Value],
+    catalog: &Value,
+) -> Result<(), OperationRefusal> {
+    let operation = &term["operation"];
+    let entry = catalog["operations"]
+        .as_array()
+        .expect("catalog operations are an array")
+        .iter()
+        .find(|entry| entry["identity"] == operation["identity"])
+        .ok_or(OperationRefusal::UnknownOperation)?;
+    if entry["operator"] != term["operator"] {
+        return Err(OperationRefusal::ClassMismatch);
+    }
+    let required = string_list(&entry["laws"], "catalog law roles");
+    let laws = operation["laws"]
+        .as_array()
+        .ok_or(OperationRefusal::LawMismatch)?;
+    let supplied = laws
+        .iter()
+        .map(|law| law["role"].as_str().unwrap_or_default())
+        .collect::<Vec<_>>();
+    if required.iter().any(|role| !supplied.contains(role)) {
+        return Err(OperationRefusal::LawMissing);
+    }
+    let law_fits_role = |law: &Value| {
+        law["role"]
+            .as_str()
+            .and_then(|role| catalog["law_roles"][role].as_array())
+            .is_some_and(|identities| identities.contains(&law["definition"]["identity"]))
+    };
+    if supplied != required || !laws.iter().all(law_fits_role) {
+        return Err(OperationRefusal::LawMismatch);
+    }
+    let selected = lock["definition_selections"]
+        .as_array()
+        .map(Vec::as_slice)
+        .unwrap_or_default();
+    if !laws.iter().all(|law| selected.contains(&law["definition"])) {
+        return Err(OperationRefusal::LawUnselected);
+    }
+    let mode_fits = match (entry["mode"].as_str(), &operation["mode"]) {
+        (None, Value::Null) => true,
+        (Some(kind), mode) => {
+            mode["kind"].as_str() == Some(kind)
+                && catalog["modes"][kind]
+                    .as_array()
+                    .is_some_and(|values| values.contains(&mode["value"]))
+        }
+        (None, _) => false,
+    };
+    if !mode_fits {
+        return Err(OperationRefusal::ModeMismatch);
+    }
+    let positions = string_list(&entry["operands"], "catalog operand positions");
+    let rest = entry["rest"].as_str();
+    let arguments = term["arguments"]
+        .as_array()
+        .ok_or(OperationRefusal::OperatorIneligible)?;
+    let arity_fits = arguments.len() >= positions.len()
+        && (rest.is_some() || arguments.len() == positions.len());
+    let operands_fit = arguments.iter().enumerate().all(|(index, argument)| {
+        positions
+            .get(index)
+            .copied()
+            .or(rest)
+            .is_some_and(|position| position_admits(catalog, position, argument, nodes))
+    });
+    if arity_fits && operands_fit {
+        Ok(())
+    } else {
+        Err(OperationRefusal::OperatorIneligible)
+    }
+}
+
+/// The first refusal of any application term in any node body of a package.
+fn package_operations_refusal(package: &Value, catalog: &Value) -> Result<(), OperationRefusal> {
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("package nodes are an array");
+    nodes
+        .iter()
+        .flat_map(|node| application_terms(&node["body"]))
+        .try_for_each(|term| classify_application(term, &package["lock"], nodes, catalog))
+}
+
+/// Expression semantic form required for an application operator class.
+fn expression_form_for_class(class: &str) -> Option<&'static str> {
+    Some(match class {
+        "call" => "call",
+        "unary" => "unary",
+        "binary" => "binary",
+        "conditional" => "conditional",
+        "let" => "let",
+        "quantify" => "quantify",
+        "collection" => "collection",
+        "query" => "query",
+        "convert" => "conversion",
+        "pre" => "pre_read",
+        "present" => "presence_read",
+        "value" => "value_read",
+        "deref" => "deref",
+        "reaches" => "reachability",
+        _ => return None,
+    })
+}
+
+/// The `quire.expression-application-node/v1` preimage of an expression node
+/// whose body is an application.
+fn expression_application_preimage(node: &Value) -> Option<Value> {
+    (node["node_tag"].as_str() == Some("expression")
+        && node["body"]["term"].as_str() == Some("application"))
+    .then(|| {
+        json!({
+            "version": "quire.expression-application-node/v1",
+            "semantic_type": node["semantic_type"],
+            "body": node["body"],
+        })
+    })
+}
+
+/// Cross-field constraints binding an expression application node: its key is
+/// the JCS digest of its preimage, its form matches the operator class, its
+/// dependencies are exactly its reference targets and it has no recursion group.
+fn expression_application_node_is_valid(node: &Value) -> bool {
+    let Some(preimage) = expression_application_preimage(node) else {
+        return false;
+    };
+    let expected_dependencies = reference_targets(&node["body"]);
+    node["node_id"]["digest"].as_str() == Some(unqualified_jcs_sha256(&preimage).as_str())
+        && node["body"]["operator"]
+            .as_str()
+            .and_then(expression_form_for_class)
+            == node["semantic_form"].as_str()
+        && node["dependencies"]
+            .as_array()
+            .is_some_and(|actual| actual.iter().eq(expected_dependencies))
+        && node.get("recursion_group").is_none()
+}
+
+/// Rekey one expression application node in the graph, its projection and the
+/// source map to its preimage digest, then refresh the package identity.
+fn rekey_expression_node(package: &mut Value, node_index: usize) {
+    let node = &package["semantic_graph"]["nodes"][node_index];
+    let old_id = node["node_id"].clone();
+    let new_digest = unqualified_jcs_sha256(
+        &expression_application_preimage(node).expect("rekeyed node is an expression application"),
+    );
+    replace_node_field_in_graph_and_projection(
+        package,
+        node_index,
+        "/node_id/digest",
+        json!(new_digest),
+    );
+    for entry in package["source_map"]
+        .as_array_mut()
+        .expect("source map is an array")
+        .iter_mut()
+        .filter(|entry| entry["node_id"] == old_id)
+    {
+        entry["node_id"]["digest"] = json!(new_digest);
+    }
+    refresh_package_id(package);
 }
 
 /// Unit node index in `positive-nominal-identities.json`; no other node depends on it.
@@ -1273,6 +1673,10 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
     for (fixture, bytes) in [
         ("positive-all-families", POSITIVE_ALL_FAMILIES),
         ("positive-nominal-identities", POSITIVE_NOMINAL_IDENTITIES),
+        (
+            "positive-operation-identities",
+            POSITIVE_OPERATION_IDENTITIES,
+        ),
     ] {
         let package = parsed_fixture(bytes);
         assert_eq!(
@@ -1853,6 +2257,22 @@ fn tc_233_v1_to_v2_migration_refusals_use_the_closed_typed_outcome() {
             ("stale-definition-selections-input", "migration_input_stale"),
             ("stale-model-selections-input", "migration_input_stale"),
             ("stale-dependency-selections-input", "migration_input_stale"),
+            (
+                "operation-class-diverges-from-v1",
+                "migration_operation_unresolved"
+            ),
+            (
+                "operation-law-absent-from-v1-lock",
+                "migration_operation_unresolved"
+            ),
+            (
+                "stale-source-precedes-operation-unresolved",
+                "migration_input_stale"
+            ),
+            (
+                "operation-unresolved-precedes-target",
+                "migration_operation_unresolved"
+            ),
         ]),
         "the migration refusal inventory is exact"
     );
@@ -1929,7 +2349,20 @@ fn tc_233_v1_to_v2_migration_refusals_use_the_closed_typed_outcome() {
             .find(|positive| positive["name"] == refusal["base"])
             .expect("refusal base positive exists");
         let source = migration_package(base["source_package"].as_str().expect("source path"));
-        let target = migration_package(base["target_package"].as_str().expect("target path"));
+        let mut target = migration_package(base["target_package"].as_str().expect("target path"));
+        if let Some(target_patch) = refusal.get("target_patch") {
+            assert_eq!(
+                first_unresolved_operation(&source, &target),
+                None,
+                "{name}: every operation of the published target is derivable from its V1 source"
+            );
+            for patch in target_patch
+                .as_array()
+                .expect("migration target patch is an array")
+            {
+                apply_authored_patch(&mut target, patch);
+            }
+        }
         let mut candidate = base["outcome"]["correspondence"].clone();
         for patch in refusal["patch"]
             .as_array()
@@ -1969,7 +2402,8 @@ fn tc_233_v1_to_v2_migration_refusals_use_the_closed_typed_outcome() {
             }
             MigrationRefusalCode::InputStale
             | MigrationRefusalCode::InputAmbiguous
-            | MigrationRefusalCode::TargetIncompatible => {
+            | MigrationRefusalCode::TargetIncompatible
+            | MigrationRefusalCode::OperationUnresolved => {
                 assert!(
                     schema.is_valid(&candidate),
                     "{name} is structurally well formed and refused only by re-link"
@@ -2901,4 +3335,701 @@ fn tc_233_package_selection_vectors_admit_exact_conditional_and_alternative_prof
             vector["name"]
         );
     }
+}
+
+/// Operation identities admitted by the public schema's `OperationIdentity` enum.
+fn schema_operation_identities(schema: &Value) -> BTreeSet<&str> {
+    string_set(
+        &schema["$defs"]["OperationIdentity"]["enum"],
+        "schema operation identity enum",
+    )
+}
+
+#[trace("TC-233", "FR-322-AC-17")]
+#[test]
+fn tc_233_operation_catalog_is_closed_and_joins_the_schema_and_value_lock() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let schema = parsed_fixture(SCHEMA);
+    let preimage_schema = parsed_fixture(NODE_PREIMAGE_SCHEMA);
+    let operations = catalog["operations"]
+        .as_array()
+        .expect("catalog operations are an array");
+    let identities = operations
+        .iter()
+        .map(|entry| entry["identity"].as_str().expect("identity is a string"))
+        .collect::<Vec<_>>();
+    let identity_set = identities.iter().copied().collect::<BTreeSet<_>>();
+    assert_eq!(
+        identity_set.len(),
+        identities.len(),
+        "catalog identities are unique"
+    );
+    assert_eq!(
+        schema_operation_identities(&schema),
+        identity_set,
+        "the V2 schema identity enum is exactly the catalog"
+    );
+    assert_eq!(
+        schema_operation_identities(&preimage_schema),
+        identity_set,
+        "the node-preimage schema identity enum is exactly the catalog"
+    );
+    assert_eq!(
+        schema["$defs"]["Operation"], preimage_schema["$defs"]["Operation"],
+        "both schemas close the same operation object"
+    );
+
+    let application = schema["$defs"]["SemanticTerm"]["oneOf"]
+        .as_array()
+        .expect("semantic terms are a oneOf")
+        .iter()
+        .find(|term| term["properties"]["term"]["const"] == "application")
+        .expect("the V2 schema has an application term");
+    assert!(
+        string_set(&application["required"], "application required members").contains("operation"),
+        "every V2 application term requires its operation"
+    );
+    let classes = string_set(
+        &application["properties"]["operator"]["enum"],
+        "application operator classes",
+    );
+    assert_eq!(
+        operations
+            .iter()
+            .map(|entry| entry["operator"].as_str().expect("operator is a string"))
+            .collect::<BTreeSet<_>>(),
+        classes,
+        "every operator class has a catalogued operation and every operation names a schema class"
+    );
+
+    let law_roles = catalog["law_roles"]
+        .as_object()
+        .expect("law roles are an object");
+    assert_eq!(
+        law_roles
+            .keys()
+            .map(String::as_str)
+            .collect::<BTreeSet<_>>(),
+        string_set(
+            &schema["$defs"]["OperationLaw"]["properties"]["role"]["enum"],
+            "schema law roles"
+        ),
+        "the schema law-role enum is exactly the catalog law roles"
+    );
+    let lock = parsed_fixture(COMPLETE_VALUE_LOCK);
+    let locked_identities = lock["qualification_catalog"]
+        .as_array()
+        .expect("complete-value qualification catalog is an array")
+        .iter()
+        .filter_map(|artifact| artifact["definition"]["identity"].as_str())
+        .collect::<BTreeSet<_>>();
+    for (role, definitions) in law_roles {
+        for definition in string_list(definitions, "law-role definitions") {
+            assert!(
+                locked_identities.contains(definition),
+                "law role {role} selects {definition}, a complete-value lock definition"
+            );
+        }
+    }
+    let modes = catalog["modes"].as_object().expect("modes are an object");
+    for (kind, values) in modes {
+        let schema_values = schema["$defs"]["OperationMode"]["oneOf"]
+            .as_array()
+            .expect("operation modes are a oneOf")
+            .iter()
+            .find(|mode| mode["properties"]["kind"]["const"] == kind.as_str())
+            .unwrap_or_else(|| panic!("schema has the {kind} mode"));
+        assert_eq!(
+            string_set(values, "catalog mode values"),
+            string_set(
+                &schema_values["properties"]["value"]["enum"],
+                "schema mode values"
+            ),
+            "the {kind} mode values are exactly the catalog's"
+        );
+    }
+
+    let positions = string_set(&catalog["operand_families"], "operand families")
+        .into_iter()
+        .chain(
+            catalog["operand_groups"]
+                .as_object()
+                .expect("operand groups are an object")
+                .keys()
+                .map(String::as_str),
+        )
+        .collect::<BTreeSet<_>>();
+    for entry in operations {
+        let identity = entry["identity"].as_str().expect("identity is a string");
+        for position in string_list(&entry["operands"], "operand positions")
+            .into_iter()
+            .chain(entry["rest"].as_str())
+        {
+            assert!(
+                positions.contains(position),
+                "{identity} names a catalogued operand position {position}"
+            );
+        }
+        for role in string_list(&entry["laws"], "operation law roles") {
+            assert!(
+                law_roles.contains_key(role),
+                "{identity} requires a catalogued law role"
+            );
+        }
+        if let Some(mode) = entry["mode"].as_str() {
+            assert!(
+                modes.contains_key(mode),
+                "{identity} names a catalogued mode"
+            );
+        }
+        let laws = string_list(&entry["laws"], "operation law roles");
+        let expected_laws: &[&str] = match identity {
+            "quire.op.integer.div" | "quire.op.integer.rem" => &["integer_division"],
+            _ if identity.starts_with("quire.op.ieee.") => &["ieee_profile"],
+            _ if identity.starts_with("quire.op.text.") => &["text_profile"],
+            _ => &[],
+        };
+        assert_eq!(
+            laws, expected_laws,
+            "{identity} requires exactly the laws of its value family"
+        );
+        if identity.starts_with("quire.op.text.") {
+            assert_eq!(entry["mode"].as_str(), Some("text_profile"));
+        }
+    }
+    for required in [
+        "quire.op.integer.mod",
+        "quire.op.ieee.float64.total_order",
+        "quire.op.collection.flat_map",
+        "quire.op.model.deref",
+        "quire.op.model.navigate",
+        "quire.op.model.reaches",
+        "quire.op.model.lookup.refused",
+        "quire.op.model.all_instances",
+        "quire.op.model.dispatch_call",
+    ] {
+        assert!(
+            identity_set.contains(required),
+            "the catalog closes the {required} operation"
+        );
+    }
+}
+
+#[trace("TC-233", "FR-322-AC-18")]
+#[test]
+fn tc_233_operation_vectors_bind_exact_identity_law_and_mode() {
+    let preimage_schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
+        .expect("node-preimage schema is valid");
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("operation package nodes are an array");
+    let fixture = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let vectors = &fixture["operation_vectors"];
+    assert_eq!(
+        named_inventory(vectors, "/name", "/preimage/body/operation/identity"),
+        BTreeSet::from([
+            ("integer-div-floor", "quire.op.integer.div"),
+            ("integer-div-euclidean", "quire.op.integer.div"),
+            ("integer-div-truncating", "quire.op.integer.div"),
+            ("integer-rem-floor", "quire.op.integer.rem"),
+            ("integer-add", "quire.op.integer.add"),
+            ("integer-mul", "quire.op.integer.mul"),
+            ("float64-add-nearest-even", "quire.op.ieee.float64.add"),
+            ("float64-add-toward-zero", "quire.op.ieee.float64.add"),
+            ("text-eq-nfc", "quire.op.text.eq"),
+            ("text-eq-binary-utf8", "quire.op.text.eq"),
+        ]),
+        "the operation vector inventory is exact"
+    );
+    let mut lock = package["lock"].clone();
+    lock["definition_selections"]
+        .as_array_mut()
+        .expect("lock definition selections are an array")
+        .extend(
+            vectors
+                .as_array()
+                .expect("operation vectors are an array")
+                .iter()
+                .flat_map(|vector| {
+                    vector["preimage"]["body"]["operation"]["laws"]
+                        .as_array()
+                        .expect("vector laws are an array")
+                        .iter()
+                        .map(|law| law["definition"].clone())
+                }),
+        );
+    let mut digests = BTreeSet::new();
+    for vector in vectors.as_array().expect("operation vectors are an array") {
+        let name = vector["name"].as_str().expect("vector name is a string");
+        let preimage = &vector["preimage"];
+        preimage_schema
+            .validate(preimage)
+            .unwrap_or_else(|error| panic!("{name} has the closed preimage shape: {error}"));
+        let digest = vector["sha256"]
+            .as_str()
+            .expect("vector digest is a string");
+        assert_eq!(
+            unqualified_jcs_sha256(preimage),
+            digest,
+            "{name} binds its exact RFC 8785 JCS preimage"
+        );
+        assert!(
+            digests.insert(digest),
+            "{name} has a distinct node identity"
+        );
+        assert_eq!(
+            classify_application(&preimage["body"], &lock, nodes, &catalog),
+            Ok(()),
+            "{name} satisfies its catalogued class, laws, mode and operand types"
+        );
+    }
+}
+
+#[trace("TC-233", "FR-322-AC-19")]
+#[test]
+fn tc_233_operation_mutations_rekey_or_refuse_with_catalogued_causes() {
+    let preimage_schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
+        .expect("node-preimage schema is valid");
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("operation package nodes are an array");
+    let fixture = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let vectors = fixture["operation_vectors"]
+        .as_array()
+        .expect("operation vectors are an array");
+    let mutations = &fixture["operation_mutations"];
+    assert_eq!(
+        named_inventory(mutations, "/name", "/kind"),
+        BTreeSet::from([
+            ("division-law-floor-to-euclidean", "stale_key"),
+            ("integer-add-to-mul", "stale_key"),
+            ("float64-rounding-to-toward-zero", "stale_key"),
+            ("text-profile-to-binary-utf8", "stale_key"),
+            ("division-law-stale-selection", "law_unselected"),
+            ("unknown-operation", "semantic"),
+            ("operation-class-mismatch", "semantic"),
+            ("division-law-missing", "semantic"),
+            ("division-law-wrong-profile", "semantic"),
+            ("euclidean-mod-carries-no-law", "semantic"),
+            ("float64-rounding-mode-missing", "semantic"),
+            ("text-operation-with-rounding-mode", "semantic"),
+            ("integer-add-text-operand", "semantic"),
+            ("integer-add-missing-operand", "semantic"),
+        ]),
+        "the operation mutation inventory is exact"
+    );
+    assert_eq!(
+        refusing_check_inventory(mutations),
+        BTreeSet::from([
+            ("unknown-operation", "schema"),
+            ("operation-class-mismatch", "semantic"),
+            ("division-law-missing", "semantic"),
+            ("division-law-wrong-profile", "semantic"),
+            ("euclidean-mod-carries-no-law", "semantic"),
+            ("float64-rounding-mode-missing", "semantic"),
+            ("text-operation-with-rounding-mode", "semantic"),
+            ("integer-add-text-operand", "semantic"),
+            ("integer-add-missing-operand", "semantic"),
+        ]),
+        "each semantic operation mutation names its refusing check"
+    );
+    let full_lock = {
+        let mut lock = package["lock"].clone();
+        lock["definition_selections"]
+            .as_array_mut()
+            .expect("lock definition selections are an array")
+            .extend(vectors.iter().flat_map(|vector| {
+                vector["preimage"]["body"]["operation"]["laws"]
+                    .as_array()
+                    .expect("vector laws are an array")
+                    .iter()
+                    .map(|law| law["definition"].clone())
+            }));
+        lock
+    };
+
+    for mutation in mutations.as_array().expect("mutations are an array") {
+        let name = mutation["name"]
+            .as_str()
+            .expect("mutation name is a string");
+        let base = vectors
+            .iter()
+            .find(|vector| vector["name"] == mutation["base"])
+            .unwrap_or_else(|| panic!("{name} names a published base vector"));
+        let retained = mutation["retained_sha256"]
+            .as_str()
+            .expect("retained digest is a string");
+        assert_eq!(
+            base["sha256"].as_str(),
+            Some(retained),
+            "{name} retains its base key"
+        );
+        assert_eq!(mutation["expected_code"], "invalid_semantic_graph");
+        let mut candidate = base["preimage"].clone();
+        for patch in mutation["patch"].as_array().expect("patch is an array") {
+            apply_authored_patch(&mut candidate, patch);
+        }
+        assert_ne!(candidate, base["preimage"], "{name} changes its preimage");
+        let classified = classify_application(&candidate["body"], &full_lock, nodes, &catalog);
+        match mutation["kind"].as_str() {
+            Some("stale_key") => {
+                let rekeyed = vectors
+                    .iter()
+                    .find(|vector| vector["name"] == mutation["rekeyed_as"])
+                    .unwrap_or_else(|| panic!("{name} names its rekeyed vector"));
+                assert_eq!(classified, Ok(()), "{name} is itself a valid operation");
+                assert_ne!(
+                    unqualified_jcs_sha256(&candidate),
+                    retained,
+                    "{name}: the retained key is stale for the changed operation, law or mode"
+                );
+                assert_eq!(
+                    rekeyed["sha256"].as_str(),
+                    Some(unqualified_jcs_sha256(&candidate).as_str()),
+                    "{name} rekeys to exactly its published counterpart"
+                );
+            }
+            Some("law_unselected") => {
+                assert!(
+                    preimage_schema.is_valid(&candidate),
+                    "{name} is well formed"
+                );
+                assert_eq!(
+                    classified,
+                    Err(OperationRefusal::LawUnselected),
+                    "{name} refuses a law absent from the lock"
+                );
+                let mut relocked = full_lock.clone();
+                relocked["definition_selections"]
+                    .as_array_mut()
+                    .expect("lock definition selections are an array")
+                    .push(candidate["body"]["operation"]["laws"][0]["definition"].clone());
+                assert_eq!(
+                    classify_application(&candidate["body"], &relocked, nodes, &catalog),
+                    Ok(()),
+                    "{name} is refused only by the lock join"
+                );
+            }
+            Some("semantic") => {
+                let expected = mutation["expected_cause"]
+                    .as_str()
+                    .and_then(OperationRefusal::from_cause)
+                    .unwrap_or_else(|| panic!("{name} names a catalogued cause"));
+                assert_refused_by_named_check(
+                    name,
+                    &mutation["refused_by"],
+                    preimage_schema.is_valid(&candidate),
+                    classified.is_ok(),
+                );
+                assert_eq!(
+                    classified,
+                    Err(expected),
+                    "{name} refuses with its catalogued cause"
+                );
+            }
+            other => panic!("{name} has an unknown mutation kind: {other:?}"),
+        }
+    }
+}
+
+#[trace("TC-233", "FR-322-AC-18")]
+#[test]
+fn tc_233_operation_package_binds_operations_into_node_and_package_identity() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    schema
+        .validate(&package)
+        .expect("the operation package has the closed V2 shape");
+    assert_eq!(
+        unqualified_jcs_sha256(&derive_identity_preimage(&package)),
+        package["package_id"]["digest"]
+            .as_str()
+            .expect("package digest is a string"),
+        "the operation package id binds its rebuilt preimage"
+    );
+    assert_eq!(package_operations_refusal(&package, &catalog), Ok(()));
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("operation package nodes are an array");
+    let expression_indices = nodes
+        .iter()
+        .enumerate()
+        .filter(|(_, node)| expression_application_preimage(node).is_some())
+        .map(|(index, _)| index)
+        .collect::<Vec<_>>();
+    assert_eq!(expression_indices.len(), 5, "five expression applications");
+    for &index in &expression_indices {
+        assert!(
+            expression_application_node_is_valid(&nodes[index]),
+            "expression node {index} is keyed by its application preimage"
+        );
+    }
+    let all_families = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    assert_eq!(
+        package_operations_refusal(&all_families, &catalog),
+        Ok(()),
+        "every all-families application carries a valid catalogued operation"
+    );
+
+    let division = expression_indices
+        .iter()
+        .copied()
+        .find(|&index| nodes[index]["body"]["operation"]["identity"] == "quire.op.integer.div")
+        .expect("the package has an integer division node");
+    let law_pointer = "/body/operation/laws/0/definition";
+    let floor = nodes[division]
+        .pointer(law_pointer)
+        .expect("division law")
+        .clone();
+    let euclidean = json!({"authority":"agent-ix","identity":"quire.value.integer-division.euclidean/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"9f5e59b3bfe1dd3c1efc74065b2e3e7869e21813a0c90b9c5938d82107267a51"});
+
+    let mut stale = package.clone();
+    replace_node_field_in_graph_and_projection(
+        &mut stale,
+        division,
+        law_pointer,
+        euclidean.clone(),
+    );
+    refresh_package_id(&mut stale);
+    assert!(
+        schema.is_valid(&stale),
+        "a retained key is not a schema error"
+    );
+    assert!(
+        !expression_application_node_is_valid(&stale["semantic_graph"]["nodes"][division]),
+        "floor to Euclidean with a retained node key is refused as a stale identity"
+    );
+
+    let mut rekeyed = stale.clone();
+    rekey_expression_node(&mut rekeyed, division);
+    assert!(expression_application_node_is_valid(
+        &rekeyed["semantic_graph"]["nodes"][division]
+    ));
+    assert_ne!(
+        rekeyed["semantic_graph"]["nodes"][division]["node_id"],
+        package["semantic_graph"]["nodes"][division]["node_id"],
+        "floor to Euclidean changes the node id"
+    );
+    assert_eq!(
+        package_operations_refusal(&rekeyed, &catalog),
+        Err(OperationRefusal::LawUnselected),
+        "a rekeyed Euclidean law unselected by the floor lock refuses"
+    );
+    let mut relocked = rekeyed.clone();
+    let selections = package["lock"]["definition_selections"]
+        .as_array()
+        .expect("definition selections are an array")
+        .iter()
+        .map(|definition| {
+            if *definition == floor {
+                euclidean.clone()
+            } else {
+                definition.clone()
+            }
+        })
+        .collect::<Vec<_>>();
+    replace_selection_consistently(&mut relocked, "/definition_selections", json!(selections));
+    assert_eq!(package_operations_refusal(&relocked, &catalog), Ok(()));
+    assert!(schema.is_valid(&relocked));
+    assert_ne!(
+        relocked["package_id"], package["package_id"],
+        "floor to Euclidean changes the package id"
+    );
+
+    let mut stale_lock = package.clone();
+    let stale_selections = package["lock"]["definition_selections"]
+        .as_array()
+        .expect("definition selections are an array")
+        .iter()
+        .map(|definition| {
+            let mut definition = definition.clone();
+            if definition == floor {
+                definition["digest"] =
+                    json!("7777777777777777777777777777777777777777777777777777777777777777");
+            }
+            definition
+        })
+        .collect::<Vec<_>>();
+    replace_selection_consistently(
+        &mut stale_lock,
+        "/definition_selections",
+        json!(stale_selections),
+    );
+    assert!(schema.is_valid(&stale_lock));
+    assert_eq!(
+        package_operations_refusal(&stale_lock, &catalog),
+        Err(OperationRefusal::LawUnselected),
+        "a stale lock selection of the division law refuses"
+    );
+
+    for (label, pointer, replacement) in [
+        ("semantic form", "/semantic_form", json!("unary")),
+        ("dependency list", "/dependencies", json!([])),
+        ("recursion group", "/recursion_group", json!("g")),
+    ] {
+        let mut candidate = package.clone();
+        for prefix in [
+            "/semantic_graph/nodes",
+            "/identity_preimage/identity_projection",
+        ] {
+            candidate
+                .pointer_mut(&format!("{prefix}/{division}"))
+                .and_then(Value::as_object_mut)
+                .expect("division node is an object")
+                .insert(pointer[1..].to_owned(), replacement.clone());
+        }
+        refresh_package_id(&mut candidate);
+        assert!(
+            schema.is_valid(&candidate),
+            "{label} edit keeps the V2 shape"
+        );
+        assert!(
+            !expression_application_node_is_valid(&candidate["semantic_graph"]["nodes"][division]),
+            "a changed {label} fails the expression application cross-field constraint"
+        );
+    }
+
+    let mut unbound = all_families.clone();
+    for prefix in [
+        "/semantic_graph/nodes/9/body",
+        "/identity_preimage/identity_projection/9/body",
+    ] {
+        unbound
+            .pointer_mut(prefix)
+            .and_then(Value::as_object_mut)
+            .expect("temporal body is an object")
+            .remove("operation")
+            .expect("temporal application carries an operation");
+    }
+    refresh_package_id(&mut unbound);
+    assert!(
+        !schema.is_valid(&unbound),
+        "a V2 application without its operation identity is refused"
+    );
+}
+
+#[trace("TC-233", "FR-322-AC-20")]
+#[test]
+fn tc_233_v1_applications_gain_operation_identity_only_by_relink() {
+    let v1_schema =
+        jsonschema::validator_for(&parsed_fixture(SCHEMA_V1)).expect("V1 schema is valid");
+    let source = parsed_fixture(POSITIVE_ALL_FAMILIES_V1);
+    let target = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    assert_eq!(first_unresolved_operation(&source, &target), None);
+
+    let mut widened = source.clone();
+    widened["semantic_graph"]["nodes"][9]["body"]["operation"] =
+        target["semantic_graph"]["nodes"][9]["body"]["operation"].clone();
+    assert!(
+        !v1_schema.is_valid(&widened),
+        "the frozen V1 application cannot carry an operation identity"
+    );
+
+    let floor = json!({"authority":"agent-ix","identity":"quire.value.integer-division.floor/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"ca8c7a20407eaff7f61074cc997e44ad1ab9a73f675d686c6250997c6ae6192f"});
+    let mut law_target = target.clone();
+    law_target["semantic_graph"]["nodes"][5]["body"]["operation"]["laws"] =
+        json!([{"role": "integer_division", "definition": floor}]);
+    assert_eq!(
+        first_unresolved_operation(&source, &law_target),
+        Some(5),
+        "a law absent from the V1 lock cannot be derived"
+    );
+    let mut locked_source = source.clone();
+    locked_source["lock"]["definition_selections"] = json!([floor]);
+    assert_eq!(
+        first_unresolved_operation(&locked_source, &law_target),
+        None,
+        "the same law is derivable once the V1 lock selects it"
+    );
+
+    let mut reclassed_source = source.clone();
+    reclassed_source["semantic_graph"]["nodes"][9]["body"]["operator"] = json!("protocol_control");
+    assert_eq!(
+        first_unresolved_operation(&reclassed_source, &target),
+        Some(9),
+        "a V1 operator class that differs from the relinked class refuses"
+    );
+}
+
+const NATIVE_DIAGNOSTICS: &str =
+    include_str!("../proposals/quire-v1/definitions/native-diagnostics.md");
+
+/// Backtick-quoted cause spellings of the catalog row for `code`.
+fn catalog_row_causes(code: &str) -> BTreeSet<&'static str> {
+    let prefix = format!("| `{code}` |");
+    let row = NATIVE_DIAGNOSTICS
+        .lines()
+        .find(|line| line.starts_with(&prefix))
+        .unwrap_or_else(|| panic!("the native catalog has a {code} row"));
+    let causes = row[prefix.len()..]
+        .split(';')
+        .next()
+        .expect("a catalog row names its causes before its payload");
+    causes
+        .split('`')
+        .skip(1)
+        .step_by(2)
+        .collect::<BTreeSet<_>>()
+}
+
+#[trace("TC-233", "FR-272-AC-7")]
+#[test]
+fn tc_233_operation_refusals_resolve_to_distinct_catalogued_causes() {
+    assert!(
+        NATIVE_DIAGNOSTICS.contains("revision: `1-draft.4`."),
+        "the operation causes are selected by catalog revision 1-draft.4"
+    );
+    let invalid_package = catalog_row_causes("invalid_package");
+    let ill_typed = catalog_row_causes("ill_typed");
+    let schema = parsed_fixture(SCHEMA);
+    let schema_causes = string_set(
+        &schema["$defs"]["Diagnostic"]["properties"]["cause_tag"]["enum"],
+        "diagnostic cause tags",
+    );
+    let causes = OperationRefusal::ALL
+        .into_iter()
+        .map(OperationRefusal::cause)
+        .collect::<BTreeSet<_>>();
+    assert_eq!(
+        causes.len(),
+        OperationRefusal::ALL.len(),
+        "no two operation refusals share a cause"
+    );
+    for refusal in OperationRefusal::ALL {
+        let cause = refusal.cause();
+        let family = match refusal {
+            OperationRefusal::OperatorIneligible => &ill_typed,
+            OperationRefusal::UnknownOperation
+            | OperationRefusal::ClassMismatch
+            | OperationRefusal::LawMissing
+            | OperationRefusal::LawMismatch
+            | OperationRefusal::LawUnselected
+            | OperationRefusal::ModeMismatch => &invalid_package,
+        };
+        assert!(
+            family.contains(cause),
+            "{cause} is a catalogued variant of its code family"
+        );
+        assert!(
+            schema_causes.contains(cause),
+            "{cause} is a V2 diagnostic cause tag"
+        );
+        assert_eq!(OperationRefusal::from_cause(cause), Some(refusal));
+    }
+    let fixture = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let exercised = fixture["operation_mutations"]
+        .as_array()
+        .expect("operation mutations are an array")
+        .iter()
+        .filter_map(|mutation| mutation["expected_cause"].as_str())
+        .collect::<BTreeSet<_>>();
+    assert_eq!(
+        exercised, causes,
+        "every operation cause is exercised by a published mutation"
+    );
 }

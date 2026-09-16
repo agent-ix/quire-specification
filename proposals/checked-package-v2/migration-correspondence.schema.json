@@ -46,17 +46,21 @@
       ]
     },
     "MigrationRefusalCode": {
-      "enum": ["migration_input_missing", "migration_input_stale", "migration_input_ambiguous", "migration_target_incompatible", "migration_byte_only_reconstruction"]
+      "enum": ["migration_input_missing", "migration_input_stale", "migration_input_ambiguous", "migration_target_incompatible", "migration_byte_only_reconstruction", "migration_operation_unresolved"]
     },
     "MigrationRefusalSubject": {
       "type": "object",
       "required": ["input"],
       "properties": {
-        "input": {"enum": ["reconstruction_inputs", "sources", "edition", "profile_selections", "definition_selections", "model_selections", "dependency_selections", "target_package_id"]},
+        "input": {"enum": ["reconstruction_inputs", "sources", "edition", "profile_selections", "definition_selections", "model_selections", "dependency_selections", "node_correspondences", "target_package_id"]},
+        "ordinal": {"type": "integer", "minimum": 0},
         "authority": {"$ref": "#/$defs/Nonempty"},
         "identity": {"$ref": "#/$defs/Nonempty"}
       },
       "dependentRequired": {"authority": ["identity"], "identity": ["authority"]},
+      "if": {"properties": {"input": {"const": "node_correspondences"}}},
+      "then": {"required": ["ordinal"], "not": {"required": ["authority"]}},
+      "else": {"not": {"required": ["ordinal"]}},
       "additionalProperties": false
     },
     "Nonempty": {"type": "string", "minLength": 1},
