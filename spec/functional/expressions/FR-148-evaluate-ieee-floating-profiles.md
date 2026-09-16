@@ -48,16 +48,17 @@ multiply-add performs one rounding after the unrounded product and sum.
 The grammar's `exact` spelling, including an omitted optional rounding spelling,
 is a strict language policy rather than a sixth IEEE rounding direction. The
 evaluator computes the exact real intermediate and succeeds only when the
-selected width represents it without discarded information. An inexact,
-overflow or tiny-and-inexact result is refused with its would-be flags and no
-rounded substitute. The refusal carries only the would-be flag set, never
-would-be bits, and those flags are the flags the same operation would return
-under `nearest-even`, so overflow and tininess follow that direction. Inexactness
-is decided by the rounding step: a strict `exact` refusal follows `ieee.round`
-and precedes `ieee.result-retain`. Exact subnormal results remain admissible. Invalid
-operations and division by zero retain the deterministic IEEE exceptional
-result and flag defined below because they do not substitute a rounded finite
-value.
+selected width represents it without discarded information. An inexact, overflow
+or tiny-and-inexact result is refused with its would-be flags and no rounded
+substitute. The refusal carries only the would-be flag set, never would-be bits,
+and those flags are the flags the same operation would return under
+`nearest-even`, so overflow and tininess follow that direction. Inexactness at
+an IEEE width is decided by the fixed-width rounding step, so a strict `exact`
+refusal follows `ieee.round` and precedes `ieee.result-retain`; decimal and unit
+targets instead decide inexactness analytically before their sizing charge.
+Exact subnormal results remain admissible. Invalid operations and division by
+zero retain the deterministic IEEE exceptional result and flag defined below
+because they do not substitute a rounded finite value.
 
 Numeric equality, IEEE `totalOrder` and bit identity are distinct operations.
 When an arithmetic operation must produce a quiet NaN from non-NaN operands,
@@ -73,8 +74,17 @@ Each operation returns a fresh closed flag set drawn from `invalid`,
 process-global sticky state. Overflow also sets `inexact`. Underflow uses
 tininess after rounding and is set only when the rounded result is tiny and
 inexact. Division of a finite nonzero value by zero sets `divide_by_zero` and
-returns the signed infinity. Exact subnormal production sets neither
-`underflow` nor `inexact`.
+returns the signed infinity. Exact subnormal production sets neither `underflow`
+nor `inexact`.
+
+A zero result or zero source keeps its sign per IEEE 754-2019 §6.3 in
+arithmetic, fused multiply-add, square root and width conversion: the sign of a
+product or quotient is the exclusive or of the operand signs, a sum of two zeros
+of the same sign keeps that sign, the square root of a zero is that zero, and an
+exact zero sum or difference of operands with opposite signs, or of nonzero
+operands that cancel, is `+0` under every rounding direction and strict `exact`
+except `toward-negative`, where it is `-0`. A nonzero result that rounds to zero
+keeps the sign of the exact result.
 
 `numericEqual` is false if either operand is NaN and treats positive and
 negative zero as equal. `bitIdentical` requires the same width and identical
@@ -84,24 +94,37 @@ this fixes the order of signed zeros, infinities and every signaling/quiet NaN
 payload. The exact qualified intrinsic identities are
 `quire::value::ieee::sqrt`, `quire::value::ieee::fma`,
 `quire::value::ieee::numericEqual`, `quire::value::ieee::totalOrder` and
-`quire::value::ieee::bitIdentical`. `numericEqual`, `totalOrder` and `bitIdentical` between operands of different
-widths are refused by type checking with `refused { code: ill_typed }` before
-any charge, until an explicit conversion selects a target width and rounding
-policy. A user declaration bound to a reserved qualified intrinsic identity
-refuses package admission as `refused { code: invalid_package }` with the
-closed cause `conflicting-definition`.
+`quire::value::ieee::bitIdentical`.
+
+Every IEEE operation or comparison whose IEEE operands differ in width, or that
+mixes an IEEE operand with an exact type, is refused by type checking with
+`refused { code: ill_typed }` before any charge, until an explicit conversion
+selects a common type. A user declaration bound to a reserved qualified
+intrinsic identity refuses package admission as `refused { code:
+invalid_package, cause: conflicting-definition }`.
 
 Explicit width conversion of a finite value, zeros included, forms the source's
 exact real and rounds it once to the target width with the selected policy and
-flags. Width conversion of an infinity keeps its sign. Width conversion of a
-NaN keeps its sign and its integer payload below the quiet bit, sets the quiet
-bit and, when the source is signaling, sets `invalid`, as for every consumed
-signaling NaN; a payload not smaller than the target width's quiet bit is
-refused as `IeeeNanPayloadNotRepresentable` and is never truncated. Explicit
-conversion of a finite IEEE value to an exact rational returns its exact value,
-with negative zero becoming zero; a NaN or infinity is undefined. Explicit
-conversion of an exact rational to an IEEE width rounds once under the selected
-policy, with strict `exact` refusing as for arithmetic.
+flags; a zero keeps its sign. Width conversion of an infinity keeps its sign and
+sets no flag. Width conversion of a NaN keeps its sign and its integer payload
+below the quiet bit, sets the quiet bit and, when the source is signaling, sets
+`invalid`, as for every consumed signaling NaN. A payload not smaller than the
+target width's quiet bit is refused as `refused { code:
+ieee_nan_payload_not_representable }` with no flags, even for a signaling
+source, because the refusal precedes consuming the NaN. This is a
+language-policy refusal: IEEE convertFormat is total, and this profile refuses
+rather than truncating a payload.
+
+Explicit conversion of an IEEE value to an exact number targets only the
+unbounded exact `Rational`: a finite value, either zero included, returns its
+exact value, with negative zero becoming zero, and a NaN or infinity is
+undefined. Reaching `Integer`, a bounded integer, a bounded `Rational` or
+`Decimal` requires a separate explicit exact conversion under its own
+requirement, with that conversion's charges and refusals. Explicit conversion of
+any exact integer, rational or decimal value to an IEEE width rounds its exact
+value once under the selected policy, with strict `exact` refusing as for
+arithmetic; a decimal source is sized by its retained coefficient and scale, not
+by its reduced form.
 
 Before decoding retained operands or constructing an exact-real intermediate,
 the evaluator charges only the named IEEE points and counters from
@@ -123,8 +146,9 @@ host floating point.
 | FR-148-AC-5 | The same NaN and signed-zero bit vectors distinguish numeric equality, total ordering and bit identity. | Test (TC-193) |
 | FR-148-AC-6 | Signaling/quiet NaN propagation, invalid/divide-by-zero/overflow/underflow/inexact flags and strict `exact` refusal follow the closed profile without global state. | Test (TC-193) |
 | FR-148-AC-7 | A concrete binary64 limit tuple succeeds, while denial of the named final IEEE charge returns incomplete without bits or flags. | Test (TC-193) |
-| FR-148-AC-8 | Cross-width comparison refuses `ill_typed` before any charge; zero operands take the finite charge path; strict `exact` refuses after `ieee.round` with `nearest-even` would-be flags and no bits. | Test (TC-193) |
-| FR-148-AC-9 | Width, IEEE-to-exact and exact-to-IEEE conversions charge the IEEE points at their stated widths and positions, and NaN width conversion keeps sign and payload or refuses an unrepresentable payload before `ieee.exact-intermediate`. | Test (TC-193) |
+| FR-148-AC-8 | Mixed-width or IEEE-with-exact operations and comparisons refuse `ill_typed` before any charge; zero operands take the finite charge path with IEEE signed-zero results; strict `exact` refuses after `ieee.round` with `nearest-even` would-be flags and no bits. | Test (TC-193) |
+| FR-148-AC-9 | Width, IEEE-to-exact and exact-to-IEEE conversions charge the IEEE points at their stated sizes and positions; NaN width conversion keeps sign and payload, or refuses an unrepresentable payload after `ieee.operands` and before `ieee.result-retain` with no flags. | Test (TC-193) |
+| FR-148-AC-10 | A user declaration bound to a reserved qualified intrinsic identity returns `refused { code: invalid_package, cause: conflicting-definition }` at package admission. | Test (TC-193) |
 
 ## Dependencies
 

@@ -11,5 +11,7 @@ local exception flags, tininess-after-rounding rule, comparison relations and
 qualified intrinsic identities, together with FR-148's cross-width comparison
 refusal, strict-`exact` refusal position and `nearest-even` would-be flags, and
 its width and exact-rational conversion rules, including NaN sign and payload
-preservation and the `IeeeNanPayloadNotRepresentable` refusal. A host floating implementation is not the
+preservation, the language-policy
+`ieee_nan_payload_not_representable` refusal and IEEE 754-2019 §6.3 signed-zero
+results. A host floating implementation is not the
 authority for these choices.
