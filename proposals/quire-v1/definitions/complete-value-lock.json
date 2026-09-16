@@ -19,7 +19,7 @@
     {
       "role": "accounting",
       "artifact_path": "value-accounting.md",
-      "definition": {"authority":"agent-ix","identity":"quire.value.accounting/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"551cbf824964fc8444bd5ae2842564c62381232910630a46d41fa4e729c1c845"}
+      "definition": {"authority":"agent-ix","identity":"quire.value.accounting/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"60e69dc6c7352aca612a1f595e7cec908bc2fd00ea143e3467c3ae6160b664f8"}
     },
     {
       "role": "compound_unit",
@@ -39,7 +39,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "value-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.value.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"c1fb0f1467986131ed432aa7177be2e6d3e3e3e0566bb08fc63b90781972fa0a"}
+      "definition": {"authority":"agent-ix","identity":"quire.value.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"f3d1a8a40194b928c4b63446d9d7b04b6dffa791eeff38a47a7c40b8a43d75c9"}
     },
     {
       "role": "text_profile",
@@ -109,7 +109,7 @@
     {
       "role": "rule_fr_149",
       "artifact_path": "../../../spec/functional/type-model/FR-149-apply-complete-equality-matrix.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-149/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"1d71a8f4ea4c76fb83f3423ae361e65bc578aaeb0cc90563f0ef461a4ae27050"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-149/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"896111b55905c637a1089b61f55dc54423fd2a0081c289dd1182229698a92c65"}
     }
   ],
   "package_selection": {

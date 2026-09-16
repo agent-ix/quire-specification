@@ -1,6 +1,6 @@
 # Native diagnostic interpretation candidate
 
-Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.1`.
+Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.2`.
 **The interpretation role is accepted by FS01; this semantic revision remains
 proposed and is not adopted or fully implemented.** This supplies the versioned catalog
 required by FR-047. It interprets native producer diagnostics in their existing
@@ -82,7 +82,8 @@ context, but that context cannot replace a required cause field or variant.
 | `invalid_package` | `malformed-json`, `missing-member`, `duplicate-member`, `unknown-member`, `wrong-value-kind`, `invalid-value`, `definition-cycle`, `conflicting-definition`, `incompatible-definition` or `feature-set-mismatch`; retain the actual field/index path or dependency edges/feature sets appropriate to that variant. |
 | `invalid_model_binding` | `wrong-artifact-role`, `wrong-model-selection`, `wrong-export`, `wrong-context`, `conflicting-binding` or `unpreserved-model-meaning`; retain the required/actual declaration or contract, referring location and affected meaning. Missing versus explicit null may not be collapsed into a generic absent value. |
 | `ill_typed` | `type-mismatch`, `unit-mismatch`, `operator-ineligible`, `ambiguous-literal` or `non-boolean-root`; retain the operator/input locus and expected/actual named type, unit or kind. |
-| `undefined_expression` | `unproved-range`, `unproved-nonzero` or `unproved-presence`; retain the potentially evaluated operation, exact operand/read identity and applicable guard/anchor context. Failure to prove definedness is not logical violation. |
+| `undefined_expression` | `unproved-range`, `unproved-nonzero`, `unproved-presence` or `unproved-decrease`; retain the potentially evaluated operation, exact operand/read identity and applicable guard/anchor context, and for `unproved-decrease` the recursive component cycle, call edge and failed measure obligation. Failure to prove definedness is not logical violation. |
+| `cardinality_out_of_bound` | `below-minimum` or `above-maximum`; retain the collection type, its inclusive bound, the formed occurrence or member count and the constructing or converting expression locus. It is a runtime refusal of a known out-of-bound collection value, not a type error or resource exhaustion. |
 | `wrong_snapshot` | `wrong-observation`, `wrong-invocation`, `wrong-anchor` or `forbidden-pre-read`; retain required and supplied observation/invocation/anchor selections, or the exact prohibited read. |
 | `invalid_runtime_input` | `malformed-json`, `missing-member`, `duplicate-member`, `unknown-member`, `wrong-value-kind`, `invalid-value`, `wrong-role-mapping` or `conflicting-role-mapping`; retain the actual input path, owning required role and supplied mapping when relevant. A missing observation under a valid mapping is a different code. |
 | `unavailable_observation`, `incomplete_population` | `missing-required-artifact`, `missing-required-valuation` or `incomplete-scope`; retain the required role/scope, selected input and exact missing premise. Unknown membership is not an empty or complete population. |

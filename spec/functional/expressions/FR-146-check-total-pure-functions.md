@@ -65,7 +65,14 @@ Functions are first order. A function is not a value, and a call names a
 `function` declaration or FR-307 export by its exact identity, so the call graph
 is static. The graph includes calls inside `let`, `if`, collection binders, fold
 steps and measure expressions. A call to a reserved `quire::value::...`
-intrinsic is not a call-graph edge.
+intrinsic is not a call-graph edge. A function declaration is
+`function f using V (p: T, ...): R pure [decreases(m)] { body }`, where `V` is
+the declared value-profile alias.
+
+Only a function in a recursive strongly connected component of the call graph,
+including a function that calls itself, needs `decreases`. A non-recursive
+function needs no measure. A measure supplied on a non-recursive function is
+still type checked and imposes no obligation.
 
 `decreases(m)` supplies the measure. `m` is either one measure element or a call
 of a declared `tuple` whose positions are measure elements. A one-element
@@ -78,30 +85,43 @@ position. For each recursive edge, the checker substitutes the callee arguments
 into the callee measure. It must then prove, under the sound FR-044 guard facts
 at that call site, that for some position `i` every earlier element is equal and
 element `i` is strictly smaller: an integer by `<`, or a record subvalue by
-being a field projection path of the caller's parameter. The call-site
+being a nonempty field projection path of the caller's parameter. A projection
+path step is a field projection `.f`, or `value(q)` of an `Option` path `q`
+whose `present(q)` is a proved guard fact at that call site; for example
+`value(n.next)` under `present(n.next)` is a strict subvalue of `n`. The call-site
 nonnegativity of every integer element must also be proved. An omitted or
-mismatched measure, or an unproved obligation, is
-`refused { code: undefined_expression }`. The refusal names the component
-cycle, the call edge and the failed obligation. `undefined_expression` is the
-FR-271 code for unproved definedness.
+mismatched measure, or an unproved decrease or nonnegativity obligation, is
+`refused { code: undefined_expression, cause: unproved-decrease }`. The
+refusal names the component cycle, the call edge and the failed obligation
+(`missing-measure`, `measure-arity`, `measure-kind`, `nonnegative` or
+`decrease`). `undefined_expression` is the FR-271 code for unproved
+definedness, and `unproved-decrease` is its catalogued cause for termination.
 
-The partial operations are closed: a divisor that may be zero in FR-140, FR-142,
-FR-044 or FR-147; a zero base with a negative integer exponent; `value(e)`
-without a proved `present(e)`; `deref` outside the state contract's existence
-facts; `reduce` without a proved nonzero minimum bound; and an FR-148
-IEEE-to-`Rational` conversion of a value that may be NaN or infinite. Each one
-needs a proved precondition, and an unproved one is
-`refused { code: undefined_expression }` at that operation. Runtime refusals
+The partial operations are closed, each with its `undefined_expression` cause:
+a divisor that may be zero in FR-140, FR-142, FR-044 or FR-147
+(`unproved-nonzero`); a zero base with a negative integer exponent
+(`unproved-nonzero`); `value(e)` without a proved `present(e)`
+(`unproved-presence`); `deref` outside the state contract's existence facts
+(`unproved-presence`); `reduce` without a proved `size(c) >= 1` under FR-145
+(`unproved-range`); and an FR-148 IEEE-to-`Rational` conversion of a value that
+may be NaN or infinite (`unproved-range`). Each one needs a proved precondition
+on a path that can execute, and an unproved one is
+`refused { code: undefined_expression, cause: ... }` at that operation when the
+body is linked. Runtime refusals
 named by FR-140, FR-142, FR-144 and FR-148 (membership, strict `exact`,
 cardinality bound, NaN payload and rational domain) are typed outcomes. They
 propagate and do not make a function partial. FR-044 still owns the static
 integer and rational result-bound obligations.
 
-Purity and typing are checked first, and each failure is
-`refused { code: ill_typed }` at the offending expression, even in an
-unreachable branch. Complete V1 has no source form for I/O, mutation,
-reflection or ambient lookup. A call to such a model or host operation, or a
-call to an undeclared name, is refused rather than resolved.
+Purity, name resolution and typing are checked first, at the offending
+expression, even in an unreachable branch. Complete V1 has no source form for
+I/O, mutation, reflection or ambient lookup. In a function body, a qualified
+call whose name resolves to a declaration other than a checked pure `function`,
+tuple constructor or reserved intrinsic, such as a model operation, predicate or
+clause, is `refused { code: ill_typed, cause: operator-ineligible }`. A call
+whose name resolves to no declaration, such as an undeclared host operation, is
+`refused { code: missing_declaration, cause: missing-name }`. Every other typing
+failure is `refused { code: ill_typed }` with its FR-272 cause.
 
 Each call charges `function.call` under `quire.value.accounting/v1` before its
 arguments are bound. Arguments are evaluated left to right before that charge.
@@ -121,6 +141,7 @@ Complete-V1 outcome.
 | FR-146-AC-4 | A mutually recursive component is admitted only when every substituted cycle edge decreases the shared lexicographic measure. | Test (TC-191) |
 | FR-146-AC-5 | Exhausting execution fuel for an admitted function returns incomplete without changing the function's totality verdict. | Test (TC-191) |
 | FR-146-AC-6 | Each call charges `function.call` after argument evaluation and before binding, and an unproved partial-operation precondition refuses as `undefined_expression` while runtime typed refusals propagate. | Test (TC-191) |
+| FR-146-AC-7 | A missing, mismatched or undecreasing measure in a recursive component is `undefined_expression` with cause `unproved-decrease`, a non-recursive function needs no measure, and a call to a non-function declaration or an undeclared name refuses with its named code. | Test (TC-191) |
 
 ## Dependencies
 

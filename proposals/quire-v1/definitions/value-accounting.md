@@ -32,9 +32,12 @@ completed result. That record is closed; its members are defined under
 | integer division | `integer-division.operands`, `integer-division.arithmetic`, `integer-division.domain-pair`, `integer-division.result-pair` |
 | integer modulus (`mod`) | `integer-modulus.operands`, `integer-modulus.arithmetic`, `integer-modulus.domain`, `integer-modulus.result-retain` |
 | IEEE | `ieee.operands`, conditional `ieee.exact-intermediate`, conditional `ieee.round`, `ieee.result-retain` |
-| equality | `equality.plan`, one `equality.pair` for each planned semantic occurrence-path pair, then `equality.result-retain` |
+| equality | `equality.plan-form`, `equality.plan`, one `equality.pair` for each planned semantic occurrence-path pair, then `equality.result-retain` |
 | function call | one `function.call` before binding the evaluated arguments of each checked pure-function call |
-| collection | one `collection.element` before each constructor element expression or one `collection.visit` before binding each visited occurrence, one `collection.member-test` for each membership decision, then `collection.bound` and `collection.result-retain`, in the FR-144/FR-145 order |
+| collection | one `collection.element` before each constructor element expression or one `collection.visit` before binding each visited occurrence, one `collection.member-walk` then one `collection.member-test` for each membership comparison, then `collection.bound` and `collection.result-retain`, in the FR-144/FR-145 order |
+| composite construction | `composite.result-retain` after the last record field or tuple argument completes |
+| integer arithmetic | `integer-arithmetic.operands`, `integer-arithmetic.arithmetic`, `integer-arithmetic.result-retain` for each `Integer` or `Int[..]` `+`, `-`, `*` and unary `-` |
+| Boolean connective | `boolean.result-retain` for each `and`, `or` and `not` |
 
 Each charge is the following exact `{ counter: amount }` vector. A semantic-size
 counter records the high-water maximum, not a sum: admitting amount `n` changes
@@ -45,7 +48,10 @@ implementation's internal algorithm.
 Let `bits(x)` be the magnitude bit length of a mathematical integer (zero is
 one), `digits(x)` its base-ten magnitude digit count (zero is one), `occ(v)` the
 number of typed value occurrences including the outer value and every nested
-scalar/composite occurrence, and `maxparts(r)` the maximum `bits` of a reduced
+scalar/composite occurrence (`none` counts one; a present option counts one plus
+its payload; a record or tuple counts one plus its present field values, while an
+`absent` or `null` slot counts zero; a collection counts one plus every
+occurrence, a bag occurrence once per multiplicity; a reference counts one), and `maxparts(r)` the maximum `bits` of a reduced
 rational's numerator and positive denominator.
 
 | Charge point | Exact counter amount before adding one `work_unit` |
@@ -79,20 +85,27 @@ rational's numerator and positive denominator.
 | `ieee.exact-intermediate` | `integer_bits=selected width`, or for conversions the target width or IEEE-to-exact `maxparts` in the IEEE conversion paragraph; this is the fixed semantic allowance for one exact-real operation at binary32/binary64, not a claim that an irrational square root is materialized as a rational |
 | `ieee.round` | `integer_bits=selected width`, or the target width for conversions |
 | `ieee.result-retain` | `result_units += 1` for bits/flags or Boolean |
+| `equality.plan-form` | `value_occurrences=max(occ(left),occ(right))`; `work_units += occ(left) + occ(right)` instead of one; charged before plan formation walks either operand |
 | `equality.plan` | `value_occurrences=exact total planned pair events`; without changing consumed counters, atomically require remaining capacity for `pair_events + 2` work units and one result unit, then consume the plan's one work unit |
 | each `equality.pair` | no size-counter change; `work_units += 1` |
 | `equality.result-retain` | `result_units += 1` |
 | each `function.call` | no size-counter change; `work_units += 1` |
 | each `collection.element` | no size-counter change; `work_units += 1` |
 | each `collection.visit` | no size-counter change; `work_units += 1` |
-| each `collection.member-test` | `value_occurrences=p`, where `p` is the sum of the FR-149 occurrence-pair plan sizes of the decision's comparisons; `work_units += p` instead of one |
+| each `collection.member-walk` | `value_occurrences=max(occ(c),occ(m))` for candidate `c` and member `m`; `work_units += occ(c) + occ(m)` instead of one; charged before that comparison's plan formation |
+| each `collection.member-test` | `value_occurrences=p`, where `p` is the FR-149 planned pair count of that one comparison; `work_units += p` instead of one |
 | `collection.bound` | `value_occurrences=n`, the FR-144 bound count of the formed collection |
 | `collection.result-retain` | `value_occurrences=occ(result)`, `result_units += occ(result)`; `result_units += 1` for a scalar query result |
+| `composite.result-retain` | `value_occurrences=occ(result)`, `result_units += occ(result)` |
+| `integer-arithmetic.operands` | `integer_bits=max(bits(operand_i))`, `value_occurrences=operand_count` |
+| `integer-arithmetic.arithmetic` | `integer_bits=bits(exact result)`, derived before the result is materialized |
+| `integer-arithmetic.result-retain` | `result_units += 1` |
+| `boolean.result-retain` | `result_units += 1` |
 
 For each non-repeated row, `work_units += 1`; repeated identity, edge, rational,
 normalization-output, equality-pair, function-call, collection-element and
-collection-visit rows add one per event, and each `collection.member-test` adds
-its `p`.
+collection-visit rows add one per event, and `equality.plan-form`,
+`collection.member-walk` and `collection.member-test` add their stated amounts.
 Retaining a paired quotient/remainder costs two result units; a composite retained value costs
 `occ(result)`. Checked amount derivation and counter arithmetic precede
 allocation or semantic arithmetic. A counter amount greater than `u64::MAX`
@@ -110,27 +123,49 @@ normalization schedules no rational event. Thus U10 has one identity read, one
 edge, two rational events, target admission and result retention: six work
 units. Equality preflight is only an availability check: the subsequent pair
 and result-retention charges are the sole mutations for those reserved units,
-so E21 consumes exactly `1 + 17 + 1 = 19` work units and one result unit.
+so E21, whose operands each have `occ = 16`, consumes exactly
+`32 + 1 + 17 + 1 = 51` work units and one result unit.
 
 FR-149 selects the equality schedule for a top-level Boolean, `Integer`,
 `Int[..]`, `Rational[..]`, `Decimal[..]` or `Reference<T>` comparison as a
-one-pair plan: `equality.plan` with `value_occurrences=1`, one `equality.pair`
-and `equality.result-retain`, which is three work units and one result unit, and
-no `decimal.*` or `integer-*` charge. Its plan-formation checks, including the
-`foreign_reference` universe check, precede `equality.plan` and make no charge.
-Of the FR-149 equality conversions, an FR-142 unit conversion charges its
-`unit.*` schedule and a `Decimal`-to-`Decimal` conversion charges the decimal
-conversion schedule below. Neither has a rounding step. Every other admitted
-equality conversion has no charge point. Record and tuple construction has no
-charge point of its own; only the field expressions and calls it evaluates
-charge. FR-144 collection construction and every FR-145 query and conversion
+one-pair plan: `equality.plan-form` with two work units, `equality.plan` with
+`value_occurrences=1`, one `equality.pair` and `equality.result-retain`, which
+is five work units and one result unit, and no `decimal.*` or `integer-*`
+charge. Every equality, top-level or nested, charges `equality.plan-form`
+before plan formation walks either operand. Plan formation then makes its
+checks, including the `foreign_reference` universe check, without a further
+charge, and precedes `equality.plan`; a refused check stops after
+`equality.plan-form`. Of the FR-149 equality conversions, an FR-142 unit
+conversion charges its `unit.*` schedule and a `Decimal`-to-`Decimal` conversion
+charges the decimal conversion schedule below. An `Int[..]` or
+`Rational[..;d,1]` source converted to `Decimal[c1,c2;s1,s2;m]` charges the
+same four decimal points on the integer `n`: `decimal.operands` with
+`integer_bits=bits(n)`, `decimal_digits=digits(n)` and `value_occurrences=1`;
+`decimal.scale-expansion` with `scale_expansion=s1` and the `integer_bits` and
+`decimal_digits` of `n × 10^s1`; `decimal.arithmetic` with those same amounts;
+and `decimal.result-retain` for the retained `(n × 10^s1, s1)`. A `Decimal`
+source `(c, s)` converted to `Rational[..]` charges `decimal.operands` on
+`(c, s)`; `decimal.scale-expansion` with `scale_expansion=s` and
+`integer_bits=bits(10^s)`; `decimal.arithmetic` with `integer_bits=maxparts`
+and `decimal_digits=max(digits(numerator),digits(denominator))` of the reduced
+`c/10^s`; and `decimal.result-retain` with `integer_bits=maxparts` of that
+rational, `value_occurrences=1` and `result_units += 1`. Every amount is derived
+analytically before materialization, and none of these conversions has a
+rounding step. Every other admitted equality conversion keeps the source
+magnitude and has no charge point. Record and tuple construction charges
+`composite.result-retain` after its last field or argument, and its field
+expressions and calls charge their own points. Integer `+`, `-`, `*` and unary
+`-` charge `integer-arithmetic.operands`, then `integer-arithmetic.arithmetic`,
+then decide any FR-044 bounded-result membership without a charge, then
+`integer-arithmetic.result-retain`. Boolean `and`, `or` and `not` charge
+`boolean.result-retain` once their result is decided. FR-144 collection construction and every FR-145 query and conversion
 charge the collection family in the order those requirements define: a
 constructor element or visited occurrence charges before it is evaluated or
-bound, membership decisions charge before their comparisons, and
-`collection.bound` precedes the bound check, which makes no charge. The
-comparisons inside a membership decision charge no `equality.*` point, and an
-FR-149 equality count measures only the equality expression over completed
-operands. `function.call` is the execution
+bound, each membership comparison charges `collection.member-walk` before its
+plan formation and `collection.member-test` before its pair comparisons, and
+`collection.bound` precedes the bound check, which makes no charge. A membership
+comparison charges no `equality.*` point, and an FR-149 equality count measures
+only the equality expression over completed operands. `function.call` is the execution
 fuel of FR-146: it is charged after the call's arguments are evaluated left to
 right and before they are bound, so a denied call enters no callee.
 
@@ -182,7 +217,7 @@ membership, which charges nothing, refuses after `unit.target-domain` and
 before `unit.result-retain`. Decimal and integer targets charge no `decimal.*`
 or `integer-*` point.
 
-A top-level quantity `==`, `!=`, `<`, `<=`, `>` or `>=` expression between two
+A top-level quantity `=`, `!=`, `<`, `<=`, `>` or `>=` expression between two
 operands of the identical unit uses that schedule with no operation event and
 no `unit.target-domain`, then `unit.result-retain` with `occ(result) = 1`, and
 compares exact root values; it charges no `equality.*` point. A quantity leaf
@@ -306,7 +341,8 @@ injected denial at point `P` returns exactly
 `incomplete { limit_kind: work_units, limit: w, consumed: w, next_charge: n,
 charge_point: P }`, where `w` is the work units consumed before `P` and `n` is
 the `work_units` addition `P` requires (one, the `equality.plan`
-reservation, or a `collection.member-test` amount `p`). A canonical exact-bound run permits every charge through result
+reservation, or the stated amount of `equality.plan-form`,
+`collection.member-walk` or `collection.member-test`). A canonical exact-bound run permits every charge through result
 retention; its one-less partner denies the final named charge. Implementations
 may use a more efficient internal algorithm, but cannot omit, reorder or change
 normative charges or expose internal partial state.
