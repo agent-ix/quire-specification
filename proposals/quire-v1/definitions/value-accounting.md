@@ -63,7 +63,7 @@ rational's numerator and positive denominator.
 | each `unit.identity-read` | `value_occurrences=number of quantity operands read so far`, `integer_bits=maxparts` over their exact rational values |
 | kth `unit.edge` | `unit_edges=k` across all source/target root paths |
 | each `unit.rational-arithmetic` | `integer_bits=maxparts` over the exact rational result of the scheduled operation |
-| `unit.target-domain` | the target decimal/integer semantic-size amounts, or zero for an unbounded rational target |
+| `unit.target-domain` | for a decimal target, `integer_bits` and `decimal_digits` of the retained coefficient; for an integer target, only `integer_bits=bits(rounded integer)`; zero for an unbounded rational target |
 | `unit.result-retain` | `value_occurrences=occ(result)`, `result_units += occ(result)` |
 | `integer-division.operands` | `integer_bits=max(bits(a),bits(b))`, `value_occurrences=2` |
 | `integer-division.arithmetic` | `integer_bits=max(bits(a),bits(b),bits(q),bits(r))` |
@@ -143,7 +143,9 @@ charge carries those `integer_bits` and `decimal_digits` amounts; the
 coefficient is materialized only after it; and FR-140 membership, which charges
 nothing, refuses after it and before `unit.result-retain`. An integer target is
 a decimal target at scale zero: its rounding step, strict `exact` refusal and
-`unit.target-domain` sizing occur at the same positions, and integer-domain
+`unit.target-domain` sizing occur at the same positions, except that its
+`unit.target-domain` carries only `integer_bits = bits(rounded integer)` and no
+`decimal_digits` amount, and integer-domain
 membership, which charges nothing, refuses after `unit.target-domain` and
 before `unit.result-retain`. Decimal and integer targets charge no `decimal.*`
 or `integer-*` point.
