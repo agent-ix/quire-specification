@@ -18,14 +18,17 @@ version is silently upgraded in place.
   complete-V1 enum, dimension and declared-unit node identities.
 - `operation-catalog.json` is the closed `quire.checked-operation-catalog/v1`:
   every application operation identity with its operator class, operand
-  positions, required law roles (integer division, IEEE 754-2019 default, Unicode
-  17.0.0 text) and rounding or text-profile mode kind.
-- `fixtures/positive-operation-identities.json` is a V2 package whose expression
-  applications carry integer division, IEEE addition and text comparison
-  operations keyed by their expression-application preimages.
+  positions and rest, result form, constraints, required law roles (integer
+  division, IEEE 754-2019 default, Unicode 17.0.0 text), mode kind (rounding,
+  text profile or absence), member kind and structural leaf source.
+- `fixtures/positive-operation-identities.json` is a V2 package whose
+  application nodes carry integer, IEEE, text, structural, projection, model,
+  call and collection operations keyed by their application-node preimages.
+  `fixtures/positive-clause-operations.json` re-links the clause applications
+  of `fixtures/migration-source-clauses-v1.json`.
 - `node-identity-vectors.json` supplies known JCS SHA-256 vectors for those
   preimages, plus `operation_vectors` and `operation_mutations` for
-  expression-application preimages.
+  application-node preimages.
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes
@@ -35,11 +38,13 @@ version is silently upgraded in place.
   `migration-correspondence-vectors.json` define the typed V1-to-V2 re-link
   receipt, the closed `MigrationOutcome` sum (`relinked` correspondence or
   `refused` code and subject) and its refusal code vocabulary. The positive
-  vectors cover an all-families `relinked-identical` migration and a nominal
+  vectors cover a clause `relinked-rekeyed` migration from
+  `fixtures/migration-source-clauses-v1.json` and a nominal
   `relinked-rekeyed` migration from
-  `fixtures/migration-source-nominal-v1.json`, a V1 package validated by the
-  frozen V1 schema; refusal vectors cover missing, stale, ambiguous, unresolved-operation,
-  incompatible-target and byte-only reconstruction.
+  `fixtures/migration-source-nominal-v1.json`, both V1 packages validated by
+  the frozen V1 schema; refusal vectors cover missing, stale, ambiguous,
+  unresolved-operation (including the all-families function call, which V1
+  cannot derive), incompatible-target and byte-only reconstruction.
 - `model-effective-declaration.schema.json` and
   `model-effective-declaration-vectors.json` define the QSL-derived
   `quire.model.effective-declaration/v1`, `quire.model.effective-view/v1` and
@@ -113,26 +118,66 @@ Contract IR consumer owns the production Rust strict reader and lowering path.
 
 ## Operation identity rules
 
-Every V2 `application` term carries `operation: {identity, laws, mode}`. The
-identity is a member of `operation-catalog.json`; the operator class must be the
-catalog's class for that identity; `laws` lists exactly the catalog's required
-roles in order, each with a `DefinitionRef` to one of that role's catalogued
-profiles and equal to a member of the lock's `definition_selections`; `mode` is
-`null` when the catalog names no mode kind and otherwise one of that kind's
-catalogued values; the arguments fit the catalogued operand positions and rest.
-A reader refuses the first failing check, in that order, as
-`invalid_semantic_graph` with cause `unknown-operation`,
-`operation-class-mismatch`, `operation-law-missing`, `operation-law-mismatch`,
-`operation-law-unselected`, `operation-mode-mismatch` or
-`operator-ineligible` (`quire.native.diagnostics/v1` revision `1-draft.4`).
+Every V2 `application` term carries
+`operation: {identity, laws, mode, member, leaves}`, so the package alone gives
+each application exactly one meaning. The identity is a member of
+`operation-catalog.json`, and its entry fixes the rest:
 
-An `expression` node whose body is an application has `node_id.digest` equal to
-the JCS SHA-256 of `{version: "quire.expression-application-node/v1",
-semantic_type, body}`. Its `semantic_form` is fixed by the operator class, its
-dependencies are exactly the unique digest-ascending reference targets of the
-body, and it has no `recursion_group`. Changing division from floor to
-Euclidean therefore changes the node id and the package id, and the
-`division-law-stale-selection` mutation shows that a law absent from the lock
-refuses. V1 migration refuses with `migration_operation_unresolved` when a
-target operation is not exactly derivable from the V1 application classes and
-V1 lock.
+- the operator class equals the entry's class;
+- `laws` lists exactly the entry's roles in order, each with a `DefinitionRef`
+  to one of that role's catalogued profiles that is also a member of the lock's
+  `definition_selections`;
+- `mode` is `null` when the entry names no mode kind, and otherwise one of that
+  kind's values; for `rounding` and `text_profile` the operand and result types
+  are authoritative and must pin exactly that value;
+- `member` is `null` or the entry's member kind naming its declaring node
+  (record field, tuple position, element, relationship end, dispatched
+  operation or type argument);
+- `leaves` is empty unless the entry compares structured values, and then names
+  every text leaf of the compared type with its law and type-pinned mode;
+- the arguments fit the entry's operand positions, rest, constraints and result
+  form.
+
+IEEE values have no `eq`, `ne`, ordering or `negate`: numeric equality, total
+order and bit identity are three distinct identities, and only
+`quire.op.ieee.total_order` orders floats.
+
+A reader reports the first refusal in the order owned by
+`quire.native.diagnostics/v1` revision `1-draft.4`: declaration refusals, then
+nodes in ascending node-id digest order and, inside a node, applications in
+pre-order. One application checks `unknown-operation`,
+`operation-class-mismatch`, `operation-law-missing`, `operation-law-mismatch`,
+`operation-law-unselected`, `operation-mode-mismatch` and
+`operation-member-mismatch` (code `invalid_package`); then its argument
+applications; then `operation-mode-type-mismatch` (`invalid_package`) and
+`operator-ineligible` (`ill_typed`); then its leaves.
+
+Every node whose body contains an application has `node_id.digest` equal to the
+JCS SHA-256 of `{version: "quire.application-node/v1", node_tag, semantic_form,
+semantic_type, declaration, recursion, body}`, where a reference to a member of
+the node's own recursion group becomes a `group_reference` ordinal. An
+expression whose root is an application has the semantic form fixed by its
+operator class, and its dependencies are exactly the unique digest-ascending
+reference targets and member declarations of its body. Changing division from
+floor to Euclidean therefore changes the node id and the package id, and the
+`division-law-unselected-by-package-lock` mutation shows that a law absent from
+the lock refuses.
+
+## Declarations
+
+Every `scalar_type`, `composite_type`, `bounded_domain` and `function` node, and
+every non-enum `value` node with a `declaration` occurrence, carries
+`declaration: {qualified_name}`; no other node carries it. The member is part of
+the node identity. On a nominal node it equals the nominal
+`qualified_declaration` (else `declaration-nominal-mismatch`, `invalid_package`),
+and two nodes declaring one name refuse as `ambiguous-name`
+(`ambiguous_declaration`). Library exports resolve only through this member.
+
+## Migration
+
+V1 migration derives an operation only for the classes with one catalogued
+meaning and no law, mode, member or leaf selection: `conditional`, `let`,
+`pre`, `present`, `value`, `deref`, `temporal`, `protocol_control`,
+`state_transition` and `claim`. Every other class, and any target operation
+that differs from the derived one, refuses with
+`migration_operation_unresolved`.

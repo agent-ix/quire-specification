@@ -9,6 +9,10 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-142
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272
+    type: verifies
+  - target: ix://agent-ix/quire-specification/interface-004
+    type: verifies
 ---
 
 # TC-233: Published checked-package and scalar contract vectors
@@ -41,7 +45,12 @@ oracle in the order byte-only, missing, ambiguous, stale, operation, target. Has
 qualification-catalog artifact and rule against the definition lock and rule
 manifest, require each catalog role to occupy exactly one always, conditional
 or exactly-one slot, and evaluate every accepted and refused package-selection
-vector with an independent selection oracle.
+vector with an independent selection oracle. Check the operation catalog's
+closure against both V2 schemas and the value lock; recompute every operation
+vector and application node key; classify every operation mutation, ordering
+case and declaration mutation with an independent operation and declaration
+oracle; and parse the native-diagnostics rows to require each cause in exactly
+its code's row and the Diagnostic schema pairing.
 
 ## Expected Results
 

@@ -45,8 +45,9 @@ invariants:
   - the frozen V1 wire remains byte-for-byte unchanged and is never reinterpreted as V2
   - V1 to V2 migration emits no V2 package when an authoritative reconstruction input is missing stale ambiguous or incompatible or only V1 bytes are supplied
   - a migration refusal carries exactly one closed code (migration_input_missing, migration_input_stale, migration_input_ambiguous, migration_operation_unresolved, migration_target_incompatible, migration_byte_only_reconstruction) and a typed input subject
-  - every V2 application term carries one closed catalogued operation identity with exactly its required lock-selected laws and mode, bound into its expression node identity and the package identity
-  - migration never guesses an operation identity, law or mode that the V1 application class and V1 lock do not determine exactly
+  - every V2 application term carries one closed catalogued operation identity with exactly its required lock-selected laws, type-pinned mode, member and structural leaves, bound into its application node identity and the package identity
+  - every declaring node carries exactly one declaration qualified name, bound into its node identity; library exports resolve only through it
+  - migration never guesses an operation identity, law, mode, member or leaf; it derives only the closed selection-free class table
   - migration never synthesizes nominal identity evidence from V1 checked-package bytes
   - a reader retains invalid unsupported incomplete and failed dispositions; it cannot replace one with an empty graph or a successful package
 ```
@@ -105,7 +106,7 @@ check of one cause before any check of the next, and reports the first:
 | `migration_input_missing` | A reconstruction input member is absent, the source list is empty, or any V1-locked source is absent. |
 | `migration_input_ambiguous` | Two supplied sources share authority and identity. |
 | `migration_input_stale` | A supplied input differs from the exact V1 lock selection. |
-| `migration_operation_unresolved` | A re-linked application operation (class pairing or law) is not exactly derivable from the V1 node and V1 lock; the subject is `node_correspondences` with the node ordinal. |
+| `migration_operation_unresolved` | A re-linked application operation is not the operation derived from the same-class V1 application by the FR-322 selection-free class table (every other class is underivable); the subject is `node_correspondences` with the node ordinal. |
 | `migration_target_incompatible` | The re-linked result is not the named V2 target package. |
 
 None of these refusals exposes a V2 package or a correspondence.
@@ -119,24 +120,59 @@ returns an incomplete resource disposition and no admitted package.
 
 ## Operation identity
 
-A V2 `application` term carries its exact `operation`: a closed
+A V2 `application` term carries its exact
+`operation: {identity, laws, mode, member, leaves}`: a closed
 `quire.checked-operation-catalog/v1` identity from the adjacent
 `operation-catalog.json`, the ordered `{role, definition}` laws the catalog
-requires for that identity and its `rounding` or `text_profile` mode. The
-operator class alone never selects floor, truncating or Euclidean division, an
-IEEE rounding attribute or a text comparison profile. Each law definition must
-join the package lock's `definition_selections`. An expression node whose body
-is an application is keyed by its `quire.expression-application-node/v1`
-preimage, so a changed operation, law or mode changes that node's id and the
-package id. `read` refuses an unknown operation, a class, law or mode that
-contradicts the catalog, a law the lock does not select, or operands outside the
-catalogued positions as `invalid_semantic_graph` with the catalogued cause named
-by [FR-322](FR-322-checked-package-artifact.md).
+requires for that identity, its `rounding`, `text_profile` or `absence` mode,
+its member (record field, tuple position, element, relationship end, dispatched
+operation or type argument, each naming its declaring node) and one
+`{path, laws, mode}` leaf for every text leaf of a structurally compared type.
+The operator class alone never selects floor, truncating or Euclidean division,
+an IEEE rounding attribute, a text comparison profile, an absence behaviour or
+a member. Types are authoritative: a `rounding` or `text_profile` mode equals
+the value the operand and result types pin. Each law definition joins the
+package lock's `definition_selections`.
+
+Every node whose body contains an application is keyed by its
+`quire.application-node/v1` preimage (`node_tag`, `semantic_form`,
+`semantic_type`, `declaration`, `recursion`, `body`), so a changed operation,
+law, mode, member, leaf or declaration changes that node's id and the package
+id. `read` refuses with the causes and order owned by
+`quire.native.diagnostics/v1` revision `1-draft.4`:
+
+| Order | Cause | Code |
+| --- | --- | --- |
+| 1 | `unknown-operation` | `invalid_package` |
+| 2 | `operation-class-mismatch` | `invalid_package` |
+| 3 | `operation-law-missing` | `invalid_package` |
+| 4 | `operation-law-mismatch` | `invalid_package` |
+| 5 | `operation-law-unselected` | `invalid_package` |
+| 6 | `operation-mode-mismatch` | `invalid_package` |
+| 7 | `operation-member-mismatch` | `invalid_package` |
+| 8 | `operation-mode-type-mismatch` | `invalid_package` |
+| 9 | `operator-ineligible` | `ill_typed` |
+
+Causes 1 to 7 of an application precede its argument applications' refusals,
+which precede its causes 8 and 9 and then its leaves. Nodes are checked in
+ascending node-id digest order and applications in pre-order. Before any
+operation refusal, `declaration-nominal-mismatch` (`invalid_package`) and then
+`ambiguous-name` (`ambiguous_declaration`) are checked over the nodes'
+`declaration` members.
+
+## Declaration
+
+Every `scalar_type`, `composite_type`, `bounded_domain` and `function` node,
+and every non-enum `value` node with a `declaration` occurrence, carries
+`declaration: {qualified_name}`; expressions and every other node do not. It is
+part of the node identity. It equals a nominal node's `qualified_declaration`,
+and no two nodes share it. Library exports ([FR-307](../../functional/tooling/FR-307-package-reusable-semantic-libraries.md))
+resolve only through this member.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| interface-004-AC-1 | Every V2 application term names exactly one catalogued operation identity with its required lock-selected laws and mode, and the V1 wire cannot carry one. | Test (TC-233) |
-| interface-004-AC-2 | Changing an expression application's operation identity, law or mode changes its node id and package id; retaining the old key or selecting an unlocked law refuses. | Test (TC-233) |
-| interface-004-AC-3 | `relink_v1_to_v2` refuses with `migration_operation_unresolved` after stale-input checks and before target comparison whenever a re-linked operation is not exactly derivable from the V1 node and lock. | Test (TC-233) |
+| interface-004-AC-1 | Every application term of each published V2 package names exactly one catalogued operation identity and explicitly states its laws, mode, member and leaves, all admitted by the catalog and the package lock; the frozen V1 wire refuses an application carrying an operation. | Test (TC-233) |
+| interface-004-AC-2 | Changing an application's operation identity, law or absence mode changes its node id and package id and a retained key is refused; the rekeyed package is admitted, refused as `operation-law-unselected` for an unlocked law, or refused as `operator-ineligible` when the mode disagrees with the retained result type. | Test (TC-233) |
+| interface-004-AC-3 | For every application node of the published clause migration, a target operation the V1 class cannot derive makes `relink_v1_to_v2` refuse with `migration_operation_unresolved` and that node's ordinal, after stale-input checks and before target comparison. | Test (TC-233) |

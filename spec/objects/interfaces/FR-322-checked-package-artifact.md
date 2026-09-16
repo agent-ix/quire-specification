@@ -54,34 +54,65 @@ and may be read only through an explicitly selected V1 compatibility path.
   when every cycle member names the same explicit `recursion_group`; all other
   graph cycles refuse. Every node has one or more exact source occurrences.
 - `operation` — every `application` semantic term, wherever it occurs in a node
-  body, carries `{identity, laws, mode}`. `identity` is one member of the closed
-  `quire.checked-operation-catalog/v1` published as
-  `proposals/checked-package-v2/operation-catalog.json`, which names each
-  operation's operator class, operand positions, required law roles and mode
-  kind. `laws` is the ordered list of `{role, definition}` pairs whose roles are
-  exactly the catalog's required roles and whose `DefinitionRef` is one of that
-  role's catalogued profiles (integer division truncating/floor/Euclidean,
-  IEEE 754-2019 default, Unicode 17.0.0 text) and joins an exact member of the
-  lock's `definition_selections`. `mode` is `null` or the catalog's
-  `rounding`/`text_profile` value. A strict reader refuses, as
-  `invalid_semantic_graph`, the first failing check in the order: unknown
-  identity (`unknown-operation`), class other than the catalog's
-  (`operation-class-mismatch`), absent required role
-  (`operation-law-missing`), extra, reordered or uncatalogued law
-  (`operation-law-mismatch`), law not selected by the lock
-  (`operation-law-unselected`), absent, extra or uncatalogued mode
-  (`operation-mode-mismatch`), then operand arity or type outside the catalog's
-  positions (`operator-ineligible`), each resolved in
-  `quire.native.diagnostics/v1` revision `1-draft.4`.
-- `expression_application_preimage` — an `expression` node whose body is an
-  application is keyed by the JCS SHA-256 of
-  `{version: "quire.expression-application-node/v1", semantic_type, body}`, so
-  its operation identity, laws and mode participate in its node id and, through
-  the `identity_projection`, in the package id. Its `semantic_form` is the one
-  fixed by its operator class, its `dependencies` are exactly the unique
-  digest-ascending reference targets of its body, and it names no
-  `recursion_group`; a retained key or a contradictory field is
-  `invalid_semantic_graph`.
+  body, carries `{identity, laws, mode, member, leaves}`. `identity` is one
+  member of the closed `quire.checked-operation-catalog/v1` published as
+  `proposals/checked-package-v2/operation-catalog.json`, whose entry names the
+  operation's operator class, operand positions and rest, result form,
+  constraints, required law roles, mode kind, member kind and leaf source.
+  `laws` is the ordered list of `{role, definition}` pairs whose roles are
+  exactly the entry's roles and whose `DefinitionRef` is one of that role's
+  catalogued profiles (integer division truncating/floor/Euclidean,
+  IEEE 754-2019 default, Unicode 17.0.0 text), each an exact member of the lock's
+  `definition_selections`. `mode` is `null` when the entry names no mode kind
+  and otherwise one catalogued `rounding`, `text_profile` or `absence` value.
+  Types are authoritative for a `rounding` or `text_profile` mode: the value
+  equals the single value pinned by the operand and result types, and a
+  disagreement is refused rather than resolved in favour of either. `member` is
+  `null` or the entry's `field`, `position`, `element`, `relationship_end`,
+  `operation` or `type_argument` member naming its declaring node, so a
+  projection, navigation or dispatched call never resolves a name by search.
+  `leaves` is empty unless the entry compares structured values; it then lists,
+  in declaration order, one `{path, laws, mode}` entry for every text leaf of
+  the compared type (`field:<name>`, `position:<n>` and `inner` segments), with
+  the text profile law and the mode that leaf's type pins. IEEE values have no
+  `eq`, `ne`, ordering or `negate` operation: `quire.op.ieee.numeric_equal`,
+  `quire.op.ieee.total_order` and `quire.op.ieee.bit_identical` are three
+  distinct identities, and a structural comparison reaching a float leaf is
+  ineligible. A V2 reader refuses the first failing check in the order owned by
+  `quire.native.diagnostics/v1` revision `1-draft.4`: `unknown-operation`,
+  `operation-class-mismatch`, `operation-law-missing`,
+  `operation-law-mismatch`, `operation-law-unselected`,
+  `operation-mode-mismatch` and `operation-member-mismatch` (code
+  `invalid_package`); then each argument application under the same order;
+  then `operation-mode-type-mismatch` (`invalid_package`) and
+  `operator-ineligible` (arity, operand family, constraint, member or result
+  type outside the entry; code `ill_typed`); then the leaves.
+- `application_node_preimage` — every node whose body contains an application
+  is keyed by the JCS SHA-256 of `{version: "quire.application-node/v1",
+  node_tag, semantic_form, semantic_type, declaration, recursion, body}`.
+  `declaration` is the node's `declaration` member or `null`; `recursion` is
+  `null` or `{size, ordinal}` of the node inside its `recursion_group` in graph
+  order, and a body reference to a member of that group becomes
+  `{term: "group_reference", ordinal}`. Its operation identity, laws, mode,
+  member and leaves therefore participate in its node id and, through the
+  `identity_projection`, in the package id. An `expression` whose body root is
+  an application has the `semantic_form` fixed by its operator class; the
+  node's `dependencies` are exactly the unique digest-ascending reference
+  targets and member declarations of its body. A retained key or a
+  contradictory form or dependency list is `invalid_semantic_graph`.
+- `declaration` — `{qualified_name}`, the library-visible name a declaring node
+  introduces, with the `qualified_declaration` grammar. It is required on every
+  `scalar_type`, `composite_type`, `bounded_domain` and `function` node and on
+  a `value` node other than an `enum_value` that has a `declaration`
+  occurrence; every other node, including expressions and let values, must not
+  carry it. It enters the node identity preimage. On a node carrying a
+  `nominal_identity_preimage` it equals that preimage's
+  `qualified_declaration`, else the reader refuses as `invalid_package` with
+  cause `declaration-nominal-mismatch`; two nodes carrying the same name refuse
+  as `ambiguous_declaration` with cause `ambiguous-name`, both before any
+  operation refusal. Library exports resolve only through this member; a
+  consumer never recovers a name from source occurrences, display text or a
+  node's position.
 - `nominal_identity_preimage` — each applicable enum declaration/member,
   dimension or declared-unit node key uses the closed schema and known JCS/SHA-256
   vectors in `proposals/checked-package-v2`. Owner subjects must join an exact
@@ -113,7 +144,10 @@ participate in package identity. Its closed `ReadResult` is exactly one of:
 vocabulary is `unknown_contract_version`, `malformed_wire`, `duplicate_member`,
 `unknown_member`, `noncanonical_wire`, `stale_dependency`,
 `digest_domain_mismatch`, `unknown_required_capability`,
-`invalid_semantic_graph`, `invalid_source_map` and `unsupported_node_tag`.
+`invalid_semantic_graph`, `invalid_source_map`, `unsupported_node_tag`,
+`invalid_package`, `ill_typed` and `ambiguous_declaration`; the last three carry
+exactly the operation and declaration causes above with the code the native
+diagnostics catalog pairs with each cause, and no other code carries them.
 Before expensive semantic work, the reader measures raw wire bytes; a byte
 overage returns `incomplete`. It then performs strict syntax/member validation;
 a malformed wire returns `refused`. It charges depth, graph nodes/edges,
@@ -158,14 +192,34 @@ Missing, stale, ambiguous or incompatible reconstruction inputs refuse before
 any V2 package is exposed. A migrator cannot derive absent owner, qualified
 declaration, enum-member order, dimension-term or unit-conversion evidence from
 V1 graph bytes. Byte-only conversion, version relabeling and silent filling are
-not migration. A V1 application carries only its operator class, so the
-re-linked V2 operation of each target node must be exactly derivable: the
-node's application terms, in pre-order, pair one-to-one with the same-ordinal V1
-node's application terms of the same operator class, and every selected law is a
-member of the V1 lock's `definition_selections`. Otherwise the migrator refuses
-with `migration_operation_unresolved` and a `node_correspondences` subject
-carrying that node's ordinal; it never guesses a division law, rounding mode or
-text profile.
+not migration. A V1 application carries only its operator class and no law,
+mode, member or leaf, so the migrator derives a V2 operation only from this
+closed table, whose rows are exactly the catalogued classes with one operation
+and no law, mode, member or leaf selection:
+
+| V1 class | Derived operation |
+| --- | --- |
+| `conditional` | `quire.op.control.if` |
+| `let` | `quire.op.control.let` |
+| `pre` | `quire.op.state.pre` |
+| `present` | `quire.op.option.present` |
+| `value` | `quire.op.option.value` |
+| `deref` | `quire.op.model.deref` |
+| `temporal` | `quire.op.temporal.clause` |
+| `protocol_control` | `quire.op.protocol.control` |
+| `state_transition` | `quire.op.state.transition` |
+| `claim` | `quire.op.claim.clause` |
+
+Each derived operation is `{identity, laws: [], mode: null, member: null,
+leaves: []}`. Every other class (`call`, `unary`, `binary`, `quantify`,
+`collection`, `query`, `convert`, `reaches`) is unresolved even when the V1 lock
+selects a law it could use. A target node resolves only when its application
+terms, in pre-order, pair one-to-one with the same-ordinal V1 node's
+application terms of the same class and each target operation equals the
+derived one. Otherwise the migrator refuses with
+`migration_operation_unresolved` and a `node_correspondences` subject carrying
+that node's ordinal; it never guesses an operation, division law, rounding mode,
+text profile, member or leaf.
 
 The migration result is the closed `MigrationOutcome` sum: exactly
 `relinked { correspondence }` or `refused { code, subject }`. `subject` names the
@@ -182,7 +236,7 @@ as missing even when another supplied source is ambiguous or stale; the first
 failing check is reported and no other code exists.
 
 The QSpec qualification crate proves only the published schemas, vectors and
-receipt classification (FR-322-AC-13 through AC-20). The reader, linker and
+receipt classification (FR-322-AC-13 through AC-21). The reader, linker and
 lowering criteria remain owned by the Contract IR and QSL producer evidence
 named by TC-217.
 
@@ -206,10 +260,11 @@ named by TC-217.
 | FR-322-AC-14 | Each published V2 package fixture's `package_id` equals the RFC 8785 JCS SHA-256 of the identity preimage rebuilt from its lock selections and occurrence-free semantic graph; editing a source-map region, node source occurrence, raw source digest, capability disposition or diagnostic catalog leaves that id unchanged, while editing the edition, a profile/definition/model/dependency selection, a required feature, a node member or node order changes it. | Test (TC-233) |
 | FR-322-AC-15 | Each published enum, dimension and declared-unit node vector validates against the closed preimage schema and recomputes its recorded JCS SHA-256; each authored semantic mutation is refused by exactly its named schema or semantic check, an absent owner fails the package lock join, and inside the published nominal package a retained preimage with a changed body, type, dependency or unjoined owner is refused by the published cross-field or owner-join constraint. | Test (TC-233) |
 | FR-322-AC-16 | The published migration schema admits exactly the closed `MigrationOutcome` forms; each published relinked receipt is total and ordered with basis `relinked-identical` exactly when node digests are equal, and each published refusal receipt classifies to its recorded code and subject as the first failing check in the order byte-only, missing, ambiguous, stale, operation, target. | Test (TC-233) |
-| FR-322-AC-17 | The published operation catalog is closed: both V2 schemas enumerate exactly its operation identities, law roles and mode values; every schema operator class has a catalogued operation; every law-role profile is a complete-value lock definition; integer `div`/`rem` require the integer-division law, `mod` requires none, IEEE operations require the IEEE profile and text operations require the text profile and text mode; and FR-151 dispatch and model operations are present. | Test (TC-233) |
-| FR-322-AC-18 | Each published operation vector validates against the closed node-preimage schema, recomputes its recorded JCS SHA-256, is distinct from every other vector and satisfies its catalogued class, laws, mode and operand types; inside the published operation package every expression application is keyed by its preimage, floor-to-Euclidean division changes the node and package ids, a retained key or contradictory form, dependency or recursion group is refused, and an application without an operation fails the V2 schema. | Test (TC-233) |
-| FR-322-AC-19 | Each published operation mutation either rekeys to exactly its named counterpart vector (identity, law or mode change), refuses as `operation-law-unselected` until the lock selects its law (including a stale division-law selection), or is refused by exactly its named schema or semantic check with its recorded cause. | Test (TC-233) |
-| FR-322-AC-20 | A V1 application cannot carry an operation identity; migration derives each target operation only when its application terms pair by class with the V1 node and every law is V1-locked, and otherwise refuses with `migration_operation_unresolved` and the node ordinal. | Test (TC-233) |
+| FR-322-AC-17 | The published operation catalog is closed: both V2 schemas carry identical operation definitions and enumerate exactly its identities, law roles, mode kinds and values, member kinds and operator classes; every law-role `DefinitionRef`, digest included, is a complete-value lock definition; every entry's operands, rest, result form, laws, mode, member, leaf source and constraints use only catalogued families, groups and kinds; integer `div`/`rem` require the integer-division law and `mod` none, IEEE operations require the IEEE profile and have no `eq`, `ne`, ordering or `negate` identity, text operations require the text profile and text mode, `all_instances` takes one population, `lookup` requires an absence mode, `navigate` and `reaches` a relationship end, and the record, tuple and index projections, numeric/total-order/bit-identical IEEE comparisons, `deref` and `dispatch_call` are present. | Test (TC-233) |
+| FR-322-AC-18 | Each published operation vector validates against the closed node-preimage schema, recomputes its recorded JCS SHA-256 and is distinct from every other vector; every application node of the published operation package is keyed by its application-node preimage and is a published vector, and a vector outside the package refuses as `operation-law-unselected` when placed in it; floor-to-Euclidean division changes the node and package ids; a retained key, contradictory form, missing member-declaration dependency, stray recursion group or extra dependency is refused; an application without an operation fails the V2 schema; and the all-families function body calls a published function, changes its node id when rewritten as `dispatch_call` and then refuses as `operation-member-mismatch`. | Test (TC-233) |
+| FR-322-AC-19 | Each published operation mutation never keeps its stale key and either rekeys to exactly its named counterpart vector and is admitted exactly when its laws are lock-selected, refuses as `operation-law-unselected` until the lock also selects its law and again under the stale selection, or is refused by exactly its named schema or semantic check with its recorded cause and that cause's code; together the mutations exercise every operation refusal cause. | Test (TC-233) |
+| FR-322-AC-20 | Migration derives a V2 operation from a V1 application class exactly when the catalog has one operation for that class with no law, mode, member or leaf selection, and the derived operation equals that entry; every other class is unresolved. | Test (TC-233) |
+| FR-322-AC-21 | Every node of each published V2 package carries a `declaration` member exactly when it declares; the schema refuses a declaring node without it and an expression with it; the member enters the application-node preimage and package id; a name duplicated on two nodes refuses as `ambiguous-name` at the node later in node-id digest order; and a nominal node whose declaration differs from its `qualified_declaration` refuses as `declaration-nominal-mismatch` before any ambiguity. | Test (TC-233) |
 
 ## Dependencies
 

@@ -67,6 +67,17 @@ bind the same qualifier, each use is
 `refused { code: ambiguous_declaration, cause: ambiguous-name }` and lists both
 import paths.
 
+`a::Name` resolves only through the library package's FR-322 `declaration`
+members: the export node is the single node whose `declaration.qualified_name`
+equals the library's qualified `Name`. This covers scalar, composite and
+bounded types, functions, declared value constants and every nominal kind. No
+node of the library carrying that name is
+`refused { code: missing_declaration, cause: missing-name }`. The linker never
+recovers an export from source occurrences, source-map regions, display text,
+node order or a node's body; a library whose own graph carries a duplicated
+name or a declaration that disagrees with its nominal qualified declaration is
+already refused by the FR-322 reader and exports nothing.
+
 Resolution takes the transitive import closure in declaration order. When two
 dependency paths reach library identity `L`, they unify only when they name the
 same version and `package_id`. Any other combination is

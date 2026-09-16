@@ -45,8 +45,8 @@ catalog).
 | `missing_declaration` | A requested name that is not present in the owning scope. |
 | `stale_dependency` | A revision, byte-digest or digest-domain mismatch against a dependency. |
 | `source_digest_mismatch` | A revision, byte-digest or digest-domain mismatch against source. "A missing artifact cannot supply an invented actual digest." |
-| `ambiguous_declaration` | A visible name or clause resolving to distinct conflicting declarations or authorities. |
-| `invalid_package` | A malformed, incomplete, conflicting or cyclic package definition, including feature-set mismatch, or (revision `1-draft.4`) a checked-package application whose operation identity, operator class, required law, lock-selected law or mode is unknown or inconsistent. |
+| `ambiguous_declaration` | A visible name or clause resolving to distinct conflicting declarations or authorities, including (revision `1-draft.4`) two checked-package nodes declaring the same qualified name. |
+| `invalid_package` | A malformed, incomplete, conflicting or cyclic package definition, including feature-set mismatch, or (revision `1-draft.4`) a checked-package application whose operation identity, operator class, required law, lock-selected law, mode, member or type-pinned mode is unknown or inconsistent, or a checked-package declaration that disagrees with its nominal qualified declaration. |
 | `invalid_model_binding` | A model binding with a wrong role, selection, export or context, a conflicting binding, unpreserved model meaning, or (revision `1-draft.3`) a specialization cycle, redefinition-target mismatch, derivation conflict, unsupplied producer record, port-direction violation, or open subsetting or redefinition closure. "Missing versus explicit null may not be collapsed into a generic absent value." |
 | `ill_typed` | A type, unit, operator-eligibility, literal-ambiguity or non-Boolean-root typing failure, or (revision `1-draft.3`) a parameter or result variance, multiplicity-narrowing, effect-escape or subsetting-type conformance failure. |
 | `undefined_expression` | Definedness not proved for a potentially evaluated operation, or (revision `1-draft.3`) a redefinition refinement not constructed or proved. "Failure to prove definedness is not logical violation." |
@@ -175,8 +175,8 @@ complete-V1 lifecycle, `cardinality_out_of_bound` for FR-144 collection
 construction and FR-145 conversion, and, in catalog revision `1-draft.3`,
 `ambiguous_dispatch` for FR-151 link-time dispatch selection. The same revision
 closes the causes of `foreign_reference` for FR-153 and FR-204. Catalog
-revision `1-draft.4` adds no code; it adds the six checked-package operation
-variants of `invalid_package` typed by FR-272. Matching remains catalog-qualified and exact.
+revision `1-draft.4` adds no code; it adds the eight checked-package operation
+variants and `declaration-nominal-mismatch` of `invalid_package` and the checked-package use of `ambiguous-name`, typed by FR-272; `operator-ineligible` remains `ill_typed`. Matching remains catalog-qualified and exact.
 
 ## Dependencies
 
