@@ -19,7 +19,7 @@
     {
       "role": "accounting",
       "artifact_path": "value-accounting.md",
-      "definition": {"authority":"agent-ix","identity":"quire.value.accounting/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"f12d43f75641b23c6d861c843bd00e556a089429fc55580a55cd922d320d08e1"}
+      "definition": {"authority":"agent-ix","identity":"quire.value.accounting/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"b4456aef64fd3d0dfbc4748827d63dffdf9ef449b83bb5fb7bc5bf6ad2a12fef"}
     },
     {
       "role": "compound_unit",
@@ -39,7 +39,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "value-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.value.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"63f1eed25765c4faa5610c34c65035e0adf4a47726bbf300e4d7e95c9a89409c"}
+      "definition": {"authority":"agent-ix","identity":"quire.value.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"aafc15dc3cac70548394033161a157be63d77deec395144c7c4795e08e78164b"}
     },
     {
       "role": "text_profile",
@@ -84,7 +84,7 @@
     {
       "role": "rule_fr_140",
       "artifact_path": "../../../spec/functional/type-model/FR-140-evaluate-exact-decimals.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-140/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"1e9b403b82656d6fb762aaa21c82d8f0a1933377f5c19636609796404a2952b7"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-140/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"62807cb8e533ef43e284fba72e75923c229098b7caf9d0d6f84727d629241956"}
     },
     {
       "role": "rule_fr_141",
@@ -99,7 +99,7 @@
     {
       "role": "rule_fr_147",
       "artifact_path": "../../../spec/functional/expressions/FR-147-evaluate-integer-division-domains.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-147/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"f41e97ccab06fc462f69b09c320710f3e3b1988e5c921a71b548be27c7e8d35f"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-147/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"ca1551c16ecd8ed607dd3925a01db2af944bc82decbff1c4bb6b2ec717cdb2c8"}
     },
     {
       "role": "rule_fr_148",

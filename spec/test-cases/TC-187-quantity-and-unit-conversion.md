@@ -41,6 +41,7 @@ degree Fahrenheit `degF` targeting `K` with scale `5/9` and offset
 | U10 | Convert `100 cm` to `m` with `ScalarLimitsV1 { integer_bits: 7, decimal_digits: 0, scale_expansion: 0, text_input_bytes: 0, text_scalars: 0, normalized_scalars: 0, unit_edges: 1, value_occurrences: 1, work_units: 6, result_units: 1 }`; then deny `unit.result-retain` | the exact tuple returns `1 m`; the denied named final charge returns incomplete without a partial quantity |
 | U11 | Mutate the `L` unit graph to have two targetless roots, no root, a target cycle, an unknown target or a target under time dimension `T` | semantic admission refuses each topology before a quantity value exists |
 | U12 | Multiply `2 m * 3 s`, divide `6 m / 2 s`, square `2 m`, and divide `5 m / 5 m` | exact values `6`, `3`, `4`, `1` under canonical compound units `m*s`, `m*s^-1`, `m^2`, and the empty dimensionless unit respectively |
+| U13 | Raise `2 m` to integer power `18446744073709551616` with `ScalarLimitsV1 { integer_bits: 64, decimal_digits: 0, scale_expansion: 0, text_input_bytes: 0, text_scalars: 0, normalized_scalars: 0, unit_edges: 0, value_occurrences: 1, work_units: 5, result_units: 1 }` | `incomplete { limit_kind: integer_bits, limit: 64, consumed: 2, next_charge: 18446744073709551617, charge_point: unit.rational-arithmetic }` before the power is computed; `next_charge` exceeds `u64::MAX` and is reported exactly |
 
 For U01, U04 and U07, compare the complete exact affine composition through
 the canonical unit, result unit identity, normalized dimension map, original
