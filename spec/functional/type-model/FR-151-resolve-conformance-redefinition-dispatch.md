@@ -47,7 +47,9 @@ linearization is applied.
 
 Rule `quire.model.conformance.variance/v1` checks a redefining member against the
 member it redefines on these independent axes, in this order, charging one
-`conformance.axis` for each and reporting every failing axis:
+`conformance.axis` before each axis runs and reporting every failing axis in
+this order; checking is exhaustive under the limits (FR-150), while a runtime
+check stops at its first failure:
 
 | Member kind | Axis | Rule | Refusal |
 | --- | --- | --- | --- |
@@ -98,14 +100,20 @@ redefinition narrows the value type or multiplicity and an exposed operation of
 the owning effective type (inherited or own) writes that field. That operation's
 effective postcondition must establish the narrowed domain through FR-146
 closed guard facts: an interval fact for a narrowed numeric domain, a presence
-fact for a raised lower bound. A missing fact is refused
+fact for a raised lower bound. Inside the postcondition, `self` is a stable-path
+root (FR-146), and for this obligation a projection `self.f` onto the narrowed
+field or the field it redefines has the declared facts of the redefined parent
+member being refined (its declared type interval and multiplicity), never the
+narrowed type; a narrowed declaration therefore never discharges its own
+obligation. A missing fact is refused
 `undefined_expression`/`unproved-refinement` with obligation `field-domain` or
 `field-presence`; a narrowing no FR-146 fact form can express (a narrowed
 object type or an upper bound on a collection) is refused with obligation
 `no-proof-form`. No SMT or external prover is selected.
 
-At runtime, subsetting is checked at binding admission, without an evaluation
-charge, for every object of a closed population: the values of the subsetting
+At runtime, subsetting is checked at binding admission, charged as
+`binding.subset-value` under `PopulationAdmissionLimitsV1` and without an
+evaluation charge, for every object of a closed population: the values of the subsetting
 feature are a subset of the values of the subsetted feature. A violation is
 `invalid_runtime_input`/`subsetting-violation`; a population whose object
 closure is not established is `incomplete_population`/`incomplete-scope`.
@@ -132,18 +140,33 @@ applicable candidate is linked for `S`. No applicable candidate is
 `ambiguous_dispatch`/`no-applicable`; several undominated candidates are
 `ambiguous_dispatch`/`multiple-undominated` with the candidate identities and
 dominance pairs. An inherited, unredefined operation reached along several
-paths is one candidate by original identity. Each (subtype, candidate) test is
-charged as `dispatch.candidate`. A ModelSelection whose
-`generalizationClosure` is not `closed` has no dispatch table and is refused
-`incomplete_population`/`unclosed-method-set`. Every ambiguity is therefore a
-link-time refusal.
+paths is one candidate by original identity. Each subtype is charged as
+`dispatch.subtype`, each (subtype, candidate) test as `dispatch.candidate` and
+each dominance-pair enumeration as `dispatch.dominance`. Linking is exhaustive
+under the limits: it reports every no-applicable and every ambiguous subtype of
+every called operation, in charge order, and then produces no dispatch table.
+A ModelSelection whose `generalizationClosure` is not `closed` has no dispatch
+table: linking returns the incomplete outcome
+`incomplete_population`/`unclosed-method-set`, not a refusal, before any
+dispatch charge. Every ambiguity is therefore a link-time refusal.
+
+Dispatch edges are call-graph edges. For each dispatched call, the FR-146
+call graph has an edge from the declaration containing the call (a function,
+an invariant, precondition or postcondition clause, or an operation body) to
+every candidate's `operation-body` and to every precondition clause of every
+candidate's effective precondition, which the call evaluates. Operation bodies
+and contract clauses have no `decreases` form, so a cycle containing a dispatch
+edge is refused at link time as `refused { code: invalid_package, cause:
+definition-cycle }`, one refusal per strongly connected component, listing its
+edges ascending by caller and then callee source declaration order; for
+example, a precondition of `A.size` that calls `self.size()` is a self-loop.
 
 Preconditions are not part of applicability. At runtime the receiver and the
 arguments are evaluated, `dispatch.select` is charged, the method linked for
 the receiver's most-specific type is selected, the selected member's effective
 precondition is evaluated as an ordinary obligation whose false, undefined or
-incomplete result propagates (false is `undefined` with reason
-precondition-false), and `function.call` precedes the body. Inside a
+incomplete result propagates (false is `undefined` with the catalogued reason
+`precondition-false`), and `function.call` precedes the body. Inside a
 postcondition, the receiver's most-specific type is read from the receiver
 reference's own observation; an object deleted in the post state keeps its pre
 type.
@@ -154,7 +177,7 @@ type.
 | --- | --- | --- |
 | FR-151-AC-1 | A compatible specialization/redefinition yields one effective member with complete provenance. | Test (TC-196) |
 | FR-151-AC-2 | An inheritance cycle or incompatible variance refuses with its named cause and the contributing records; a weakened invariant is not expressible because effective invariants are conjunctions. | Test (TC-196) |
-| FR-151-AC-3 | Zero or multiple undominated methods for any closed subtype refuse at link time with `ambiguous_dispatch`, and an open generalization closure refuses with `unclosed-method-set`. | Test (TC-196) |
+| FR-151-AC-3 | Zero or multiple undominated methods for any closed subtype refuse at link time with `ambiguous_dispatch`, every such subtype is reported, an open generalization closure is incomplete with `unclosed-method-set`, and a call-graph cycle through a dispatch edge refuses `definition-cycle`. | Test (TC-196) |
 | FR-151-AC-4 | Parameter, result, multiplicity and effect variance are checked and reported independently, and pre/postconditions are combined by construction. | Test (TC-196) |
 | FR-151-AC-5 | Registration and source order cannot change the selected method or resolve an ambiguity. | Test (TC-196) |
 | FR-151-AC-6 | A narrowing field redefinition written by an exposed operation without an FR-146 establishing fact refuses `unproved-refinement` with its obligation. | Test (TC-196) |

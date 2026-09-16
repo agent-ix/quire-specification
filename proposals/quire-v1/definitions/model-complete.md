@@ -57,22 +57,38 @@ a producer key.
 | `operation-signature` | inline `signature` on an `operation` member export | `receiverTypeIdentity`; ordered `parameters`, each `{parameterIdentity, typeIdentity, multiplicity}`; `result`, either `{typeIdentity, multiplicity}` or JSON `null` for no result; `effect`, exactly `{fieldWrites, creates, deletes}`, each an array of export identities | The receiver is parameter 0. The effect set is the operation's authored frame: the field exports it may write, and the object types it may create and delete. |
 | `interface-signature` | inline `interfaceFeatures` on an `object` type export | ordered array of `{featureIdentity, featureKind}`, `featureKind` exactly `field` or `operation` | The object type is an Interface with exactly these ordered features. An object type export without this member is not an Interface. |
 | `port-direction` | inline `direction` on an endpoint record (FCD FR-114) | exactly `in`, `out` or `inout` | The flow direction of the endpoint used as a Port. It is never inferred from a role or from relationship direction (FCD FR-128). |
-| `typed-multiplicity` | inline `multiplicity` on a field member export, component, endpoint, relationship end, parameter or result | `lower`, a JSON integer in `0..=u64::MAX`; `upper`, such an integer or exactly the string `unbounded`; `ordered` and `unique` booleans | Inclusive bounds. `unbounded` is greater than every finite value. `lower > upper` is `refused { code: invalid_model_binding, cause: unpreserved-model-meaning }`. |
-| `part-signature` | inline `typeIdentity` and `multiplicity` on a component record | the declared part type export and its typed multiplicity | The component is a Part of its `owningTypeIdentity` composite with that declared type. |
+| `typed-multiplicity` | inline member `multiplicity`, one JSON object, on: a field member export; a component record; an endpoint record; each of a relationship record's two end objects; each `parameters` entry of an operation `signature`; and a non-null `result` of an operation `signature` | exactly the four members `lower`, a JSON integer in `0..=u64::MAX`; `upper`, such an integer or exactly the string `unbounded`; `ordered`, a JSON boolean; and `unique`, a JSON boolean | Inclusive bounds. `unbounded` is greater than every finite value. `ordered` and `unique` are members of that same `multiplicity` object, never separate records or members of the carrying record. `lower > upper` is `refused { code: invalid_model_binding, cause: unpreserved-model-meaning }`. |
+| `part-signature` | two inline members of a component record: `typeIdentity`, a type export identity string, and that record's `multiplicity` object (the `typed-multiplicity` shape) | the declared part type export and its typed multiplicity | The component is a Part of its `owningTypeIdentity` composite with that declared type. It is not a separate record. |
 | `subtype-closure` | bundle header member `generalizationClosure` | exactly `closed` or `open` | `closed` states that the bundle's generalization records are every generalization among the selected model's object types. |
+| `subsetting-closure` | bundle header member `subsettingClosure` | exactly `closed` or `open` | `closed` states that the bundle's subsetting records are every subsetting among the selected model's features. |
+| `redefinition-closure` | bundle header member `redefinitionClosure` | exactly `closed` or `open` | `closed` states that the bundle's redefinition records are every redefinition among the selected model's features. |
 
-`part-signature` is a consumer requirement beyond the seven records listed in
-agent-ix/filament-core-data#143; the producer request must carry it before a
-`1.3.0` bundle can bind a Part.
+Three requirements go beyond the seven items listed in
+agent-ix/filament-core-data#143, and the producer request must carry them
+before a `1.3.0` bundle can bind: the `part-signature` inline members of a
+component record; the `ordered` and `unique` members of every `multiplicity`
+object; and the `subsettingClosure` and `redefinitionClosure` header members.
 
 A `1.3.0` bundle whose required record or inline member is absent returns
 `refused { code: invalid_model_binding, cause: unsupplied-producer-record }`
 with payload `{capability, required: "1.3.0", supplied: "1.3.0", item}`, where
 `item` is the producer key of the record that lacks it (the FR-117 bundle key
-for an absent `generalizationClosure`). Absence of a separate generalization,
-subsetting or redefinition record is not detectable and means no such edge only
-under `generalizationClosure: closed`; under `open`, every query that needs the
-subtype set is incomplete, as FR-151 and FR-153 state.
+for an absent header member). Absence of a separate generalization, subsetting
+or redefinition record is not detectable. It means no such generalization only
+under `generalizationClosure: closed`, no such subsetting only under
+`subsettingClosure: closed`, and no such redefinition only under
+`redefinitionClosure: closed`; each header member speaks only for its own
+record kind. Under `generalizationClosure: open`, every query that needs the
+subtype set is incomplete, as FR-151 and FR-153 state. Under
+`subsettingClosure: open`, rule `quire.model.normalize.subset/v1` refuses
+`refused { code: invalid_model_binding, cause: unclosed-subsettings }`, and
+under `redefinitionClosure: open`, rule `quire.model.normalize.redefine/v1`
+refuses `refused { code: invalid_model_binding, cause: unclosed-redefinitions }`;
+each retains the ModelSelection and the header value, is decided from the
+header before phase 4's first charge, and leaves no effective view.
+
+`part-signature` is inline on components, so a component lacking it is decoded
+and reported by rule `quire.model.systems.kind-mapping/v1`, not by decoding.
 
 ### Producer interface 1.2.0 input
 
@@ -88,6 +104,8 @@ record kinds in the order the row lists them, then by item producer key. Every s
 | Capability | One refusal per item |
 | --- | --- |
 | `subtype-closure` | the bundle (its FCD FR-117 key) |
+| `subsetting-closure` | the bundle (its FCD FR-117 key) |
+| `redefinition-closure` | the bundle (its FCD FR-117 key) |
 | `generalization` | object type export |
 | `redefinition` | field or operation member export of an object type |
 | `subsetting` | field member export of an object type |
@@ -169,8 +187,8 @@ amendment adds no member to the V2 wire schema.
 The object universe of an object type `T` is the connected component of `T` in
 the admitted generalization graph restricted to object types. Its identity is
 `quire.model.object-universe/v1` over the ModelSelection key and the ascending
-array of effective type identities in that component that have no
-generalization record. A population is a membership view inside a universe,
+array of effective type identities in that component for which no
+generalization record names the type as its specific type. A population is a membership view inside a universe,
 never a universe. FCD `modelIdentity` names the ModelSelection; FCD
 `populationIdentity` names the population binding and never contributes to a
 universe identity. Every type that conforms to `T` has `T`'s universe.
@@ -186,10 +204,12 @@ A `Reference<T>` value's FR-204 triple is `(universe, type, object)`:
 - `object` is the exact UTF-8 bytes of the member's `objectIdentity`, with no
   parsing, trimming or normalization (FR-035).
 
-The canonical key compares `universe`, then `type`, then `object`. An identity
-component compares its domain string's UTF-8 bytes and then its 32 digest
-bytes; `object` compares bytes. Every comparison is unsigned bytewise
-lexicographic, with a proper prefix first. The vectors file publishes key-order
+The canonical key compares `universe`, then `type`, then `object`, each by its
+FR-204 key bytes, as FR-144 states: the key bytes of an identity component are
+its UTF-8 domain string immediately followed by its 32 digest bytes, compared
+as one byte string, and the key bytes of `object` are its exact UTF-8 bytes.
+Every comparison is unsigned bytewise lexicographic, with a proper prefix
+first. The vectors file publishes key-order
 vectors. `Reference<T>` is a static type only: an upcast never changes the
 triple.
 
@@ -205,11 +225,23 @@ producer key and derivation path in effective-member order.
 | Phase | Rule | Derivation |
 | --- | --- | --- |
 | 1 | `quire.model.normalize.decode/v1` | Decode each record under the admitted `interfaceVersion`. No derivation fact. |
-| 2 | `quire.model.normalize.qualify/v1` | One fact per original declaration: an object type export (owner `null`), or a field, operation, component or endpoint member of its owning type. Inputs are `[original]`. |
+| 2 | `quire.model.normalize.qualify/v1` | One fact per original declaration and owner, with inputs `[original]`: an object type export (owner `null`); a field or operation member export, owned by its owning type; a component record, owned by its `owningTypeIdentity`; an endpoint record, owned by the owning type of its `owningComponentIdentity` component; and a relationship record, owned by each distinct end-owner type of its two ends, source end first. |
 | 3 | `quire.model.normalize.inherit/v1` | For each type `T` and each generalization path `T -> ... -> A`: one fact on `T` with inputs `[path records..., A]`; then, for each member `m` whose original owner is `A`, one fact on the effective member `(T, m)` with inputs `[path records..., m]`. |
 | 4 | `quire.model.normalize.subset/v1` | For each subsetting record reaching `T` (owning type `T` or an ancestor of `T`): one fact on `(T, subsetting feature)` with inputs `[path records..., record, subsetted feature]`. |
-| 4 | `quire.model.normalize.redefine/v1` | For each redefinition record reaching `T`: one fact on `(T, redefining feature)` and one on `(T, redefined feature)`, each with inputs `[path records..., record, redefined feature]`. The redefined member stays in the view and is hidden from name resolution, lookup and dispatch candidacy. |
+| 4 | `quire.model.normalize.redefine/v1` | For each redefinition record reaching `T`: one fact on `(T, redefining feature)` and one on `(T, redefined feature)`, each with inputs `[path records..., record, redefined feature]`. The redefined member stays in the view and is hidden from name resolution, lookup and dispatch candidacy. When several non-conflicting records redefine one member reaching `T`, only the redefining feature of the most derived redefining owner is exposed; every other redefining feature of that member keeps its facts and is hidden in `T` the same way. |
 | 5 | `quire.model.normalize.canonicalize/v1` | Compute every effective identity and the effective view. No derivation fact; ordering never changes a producer identity or resolves ambiguity. |
+
+The *element owner* of a producer element is: the type itself for an object
+type export; the owning type for a field or operation member export; the
+`owningTypeIdentity` for a component; and, for an endpoint, the element owner
+of its `owningComponentIdentity` component. The *end-owner type* of a
+relationship end is the element owner of the element its `typeIdentity` names.
+A relationship end `e` is an end of effective type `T` exactly when `T` has the
+effective member for the relationship derived from the end-owner type of the
+opposite end; `r.name` over `Reference<T>` navigates to `e` when `name` is `e`'s
+role. The effective declaration of a Connection or Allocation, as returned by a
+binder request, is the effective member owned by the end-owner type of its
+source end.
 
 A phase 3 extension that would revisit a type already on the current path is
 `refused { code: invalid_model_binding, cause: specialization-cycle }` listing
@@ -232,8 +264,25 @@ systems kind. Kinds are disjoint.
 | Part | FCD FR-114 component record with `part-signature` | owning composite = the effective type of `owningTypeIdentity`; declared type = `typeIdentity`; typed multiplicity |
 | Port | FCD FR-114 endpoint record with `port-direction`, whose `owningComponentIdentity` is a Part | owning Part; interface type = the endpoint `typeIdentity`, which must be an Interface; endpoint typed multiplicity |
 | Interface | `object` type export with `interface-signature` | ordered feature signatures |
-| Connection | FCD FR-115 relationship record whose source and target endpoints are both Ports and whose `semantics.category` is not exactly the bytes `allocation` | relationship identity; source and target Port identities |
-| Allocation | FCD FR-115 relationship record whose `semantics.category` is exactly the bytes `allocation` | source element = the identity named by the source end's `typeIdentity`, which must be a Part (component), a Port (endpoint) or an operation member export; target element = the identity named by the target end's `typeIdentity`, which must be a Part |
+| Connection | FCD FR-115 relationship record whose two ends both name endpoint records that are Ports and whose `semantics.category` is not exactly the bytes `allocation` | effective member owned by the source end-owner type; source and target Port identities |
+| Allocation | FCD FR-115 relationship record whose `semantics.category` is exactly the bytes `allocation` | effective member owned by the source end-owner type; source element = the identity named by the source end's `typeIdentity`, which must be a Part (component), a Port (endpoint) or an operation member export; target element = the identity named by the target end's `typeIdentity`, which must be a Part |
+
+The rule maps component records, then endpoint records, then relationship
+records, each group ascending by producer key, so an endpoint's kind follows
+its component's and a relationship's follows its ends'. It reports, for each
+record, every applicable refusal: a component lacking `part-signature` is
+`refused { code: invalid_model_binding, cause: unsupplied-producer-record }`
+with capability `part-signature` and maps to no kind; an endpoint with
+`port-direction` whose owning component is not a Part is `refused { code:
+invalid_model_binding, cause: wrong-export }` with required kind `Part` and
+actual kind `none` or the component's kind, and maps to no kind; and a
+relationship whose category is not `allocation`, and one of whose ends names an
+endpoint that is not a Port, is `wrong-export` with required kind `Port` and
+actual kind `none`, once per such end, source end first, and maps to no kind. A
+relationship whose ends both name type exports is a navigation relationship
+with no systems kind. Rule `quire.model.systems.allocation/v1` then refuses an
+Allocation whose target element is not a Part with `wrong-export`, required
+kind `Part` and actual kind `none` or the element's kind.
 
 `semantics.category` is producer-defined text (FCD FR-115). The exact byte
 match on `allocation` is this consumer's mapping decision, recorded by rule

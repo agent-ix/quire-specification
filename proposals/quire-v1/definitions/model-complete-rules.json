@@ -14,7 +14,7 @@
       "identity": "quire.rule.fr-043/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/foundation/FR-043-evaluate-finite-graph-relations.md",
-      "sha256": "5654c5c46ceee5040c6f461f5a242e69da0944cc297e514c608dbe3dd89ab332"
+      "sha256": "d17f549a947016f517d9656027e107af2dc74ef88ba2b76c93f958942ebac7b7"
     },
     {
       "identity": "quire.rule.fr-143/v1",
@@ -32,25 +32,25 @@
       "identity": "quire.rule.fr-150/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-150-preserve-model-normalization-provenance.md",
-      "sha256": "e29c7b3503021dafdf4726cf490ee90106cd7282df65d8abb2c9dcbbd308161c"
+      "sha256": "cf7c1e9b18f3caafb08ebd3247908ae97d1ab47b3518f0b5774af973d7948981"
     },
     {
       "identity": "quire.rule.fr-151/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md",
-      "sha256": "8150c6f8b90c9a912c0aa4235c0e6e2c8681f2e08d9e27666a14396417f27e07"
+      "sha256": "2c27dff24a220a27e63250cc0fa830fe221bbdfff4f21e9f72469a160e67bfe6"
     },
     {
       "identity": "quire.rule.fr-152/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-152-bind-systems-model-structures.md",
-      "sha256": "d2af5414cd4436d96f1888df0665d8dcb522fe93add1c475b2b44503f51b3c65"
+      "sha256": "85a056c669ce8c732868ad6f8d7bf94ffd9d3c28383e8b8acc8f758e2c3218c0"
     },
     {
       "identity": "quire.rule.fr-153/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-153-query-closed-model-environments.md",
-      "sha256": "5da794e796e28dd47eb960b2023f79ec645ddcac96cf15eef1f7f6e44368db15"
+      "sha256": "931deb7d7105d29de00849b9ebc74994b3d9ec9590397930128c1c231c1ecba5"
     },
     {
       "identity": "quire.rule.fr-204/v1",

@@ -132,7 +132,7 @@ accounting decimal-conversion schedule with no `decimal.rounding`; and an
 admitted `Int[..]`-to-`Decimal[..]`, `Rational[..;d,1]`-to-`Decimal[..]` or
 `Decimal[..]`-to-`Rational[..]` conversion charges the accounting decimal
 schedule for that conversion, with `scale_expansion` and `integer_bits` sized
-analytically. Every other admitted equality conversion keeps the source
+from operand bit lengths. Every other admitted equality conversion keeps the source
 magnitude, has no charge point and produces only the comparison value.
 
 ## Occurrence-pair plan

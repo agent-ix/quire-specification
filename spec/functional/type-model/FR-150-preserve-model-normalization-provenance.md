@@ -74,7 +74,10 @@ capability item, in the order the selected definition fixes.
 
 The correspondence layer applies the manifest's rules in this fixed phase order:
 (1) `quire.model.normalize.decode/v1`, producer-version decoding;
-(2) `quire.model.normalize.qualify/v1`, qualified-identity formation;
+(2) `quire.model.normalize.qualify/v1`, qualified-identity formation for
+object types, field and operation members, components, endpoints (owned by
+their component's owning type) and relationship records (owned by each end's
+end-owner type);
 (3) `quire.model.normalize.inherit/v1`, inheritance expansion along supplied
 generalization records; (4) `quire.model.normalize.subset/v1` and
 `quire.model.normalize.redefine/v1`, explicit subsetting and redefinition; and
@@ -90,7 +93,10 @@ A conflict is refused `invalid_model_binding`/`derivation-conflict` with both
 derivation paths and exposes no effective member for either. A redefinition
 whose target is not an inherited member is refused
 `invalid_model_binding`/`redefinition-target`. A generalization cycle is
-refused `invalid_model_binding`/`specialization-cycle`. A record whose revision
+refused `invalid_model_binding`/`specialization-cycle`. A bundle header with
+`subsettingClosure` or `redefinitionClosure` not exactly `closed` is refused
+`invalid_model_binding`/`unclosed-subsettings` or `unclosed-redefinitions`,
+respectively, by the phase 4 rule that needs that closure. A record whose revision
 is absent is refused `invalid_model_binding`/`wrong-model-selection`; a digest
 selection whose domain is not `filament-canonical-json-1` is refused
 `stale_dependency`/`digest-domain-mismatch`. A model `variant` type export
@@ -99,8 +105,11 @@ Canonical ordering affects identity bytes only; it never changes producer
 identity or resolves semantic ambiguity.
 
 Normalization is charged under `ModelNormalizationLimitsV1` of the selected
-`quire.value.accounting/v1` definition before each record, fact and
-declaration; exhaustion ends checking as
+`quire.value.accounting/v1` definition at its named record, unsupplied-item,
+fact, cycle-check, redefinition-check, conflict-check, declaration and
+preimage-hash charge points, the last by JCS byte length. Each normalization
+phase checks exhaustively and reports every refusal it exposes in charge order;
+a phase that reports a refusal ends checking. Exhaustion ends checking as
 `resource_exhausted`/`insufficient-next-charge` with no effective view.
 
 ## Acceptance Criteria

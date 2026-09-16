@@ -387,7 +387,9 @@ resolves statically to one exposed effective operation of the receiver's static
 type and the call dispatches once, on the receiver's runtime most-specific
 type. `receiver.member-name` without parentheses is field or relationship-end
 navigation. An `operation-body` supplies the pure query body of one effective
-operation `qualified-name` of the model type named by its `using` model alias;
+operation `qualified-name`, whose first segment is a declared model alias (a
+`model` declaration or an import `as` alias) naming the model; its `using`
+selects a declared profile alias, as for every native declaration;
 its identifiers bind the receiver-less operation parameters positionally, in
 signature order, and the body reads the receiver as `self`. A package that does
 not select `quire.model.complete/v1` receives `unsupported_construct` for each
@@ -486,7 +488,9 @@ cannot shadow aliases, native declarations or another visible binding. Separate
 predicate declarations may reuse a parameter name. A `let` binding is visible
 only in its body, not its initializer. A quantifier binder is visible only in
 its predicate, not its domain. Forward predicate references can resolve after
-declaration collection; the complete call graph must be acyclic. No overload
+declaration collection; the complete call graph, including the FR-151 dispatch
+edges from a dispatched call to every candidate body and effective precondition
+clause, must be acyclic. No overload
 resolution or dynamic dispatch is introduced, except that a package selecting
 `quire.model.complete/v1` admits exactly the single dispatch on the receiver's
 runtime most-specific type defined by FR-151. That exception supersedes the
