@@ -18,7 +18,7 @@
     "ModelOwner": {"type": "object", "required": ["kind", "authority", "identity", "export"], "properties": {"kind": {"const": "model"}, "authority": {"$ref": "#/$defs/Nonempty"}, "identity": {"$ref": "#/$defs/Nonempty"}, "export": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false},
     "Owner": {"oneOf": [{"$ref": "#/$defs/SourceOwner"}, {"$ref": "#/$defs/DefinitionOwner"}, {"$ref": "#/$defs/ModelOwner"}]},
     "NodeId": {"type": "object", "required": ["domain", "digest"], "properties": {"domain": {"const": "quire.checked-semantic-node/v1"}, "digest": {"$ref": "#/$defs/HexDigest"}}, "additionalProperties": false},
-    "IntegerString": {"type": "string", "pattern": "^-?(0|[1-9][0-9]*)$"},
+    "IntegerString": {"type": "string", "pattern": "^(0|-?[1-9][0-9]*)$"},
     "PositiveIntegerString": {"type": "string", "pattern": "^[1-9][0-9]*$"},
     "Rational": {"type": "object", "required": ["numerator", "denominator"], "properties": {"numerator": {"$ref": "#/$defs/IntegerString"}, "denominator": {"$ref": "#/$defs/PositiveIntegerString"}}, "additionalProperties": false},
     "DimensionTerm": {"type": "object", "required": ["dimension_node_id", "exponent"], "properties": {"dimension_node_id": {"$ref": "#/$defs/NodeId"}, "exponent": {"$ref": "#/$defs/IntegerString"}}, "additionalProperties": false},

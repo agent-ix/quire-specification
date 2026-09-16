@@ -292,14 +292,21 @@ fn digest<'a>(value: &'a Value, pointer: &str) -> &'a str {
         .expect("authored node reference has a digest")
 }
 
+/// The mathematical integer denoted by a decimal-string member, compared by
+/// value so that a spelling such as `-0` cannot evade a zero check.
+fn integer(value: &Value) -> Option<BigInt> {
+    value.as_str().and_then(|number| number.parse().ok())
+}
+
+/// Whether a decimal-string member denotes exactly `expected`.
+fn integer_is(value: &Value, expected: i32) -> bool {
+    integer(value) == Some(BigInt::from(expected))
+}
+
 fn rational_is_canonical(value: &Value) -> bool {
-    let numerator = value["numerator"]
-        .as_str()
-        .and_then(|number| number.parse::<BigInt>().ok());
-    let denominator = value["denominator"]
-        .as_str()
-        .and_then(|number| number.parse::<BigInt>().ok());
-    let (Some(numerator), Some(denominator)) = (numerator, denominator) else {
+    let (Some(numerator), Some(denominator)) =
+        (integer(&value["numerator"]), integer(&value["denominator"]))
+    else {
         return false;
     };
     if denominator <= BigInt::from(0)
@@ -313,7 +320,7 @@ fn rational_is_canonical(value: &Value) -> bool {
 fn terms_are_canonical(terms: &[Value], reference_field: &str) -> bool {
     let mut previous = None;
     for term in terms {
-        if term["exponent"].as_str() == Some("0") {
+        if integer(&term["exponent"]).is_none_or(|exponent| exponent == BigInt::from(0)) {
             return false;
         }
         let current = term[reference_field]["digest"].as_str();
@@ -361,16 +368,16 @@ fn unit_chain_reaches_root(preimage: &Value, vectors: &[Value]) -> bool {
         let offset = &current["offset"];
         if !rational_is_canonical(scale)
             || !rational_is_canonical(offset)
-            || scale["numerator"].as_str() == Some("0")
+            || integer_is(&scale["numerator"], 0)
             || current["dimension_node_id"] != *dimension
         {
             return false;
         }
         let Some(target) = current["target_unit_node_id"].as_object() else {
-            return scale["numerator"].as_str() == Some("1")
-                && scale["denominator"].as_str() == Some("1")
-                && offset["numerator"].as_str() == Some("0")
-                && offset["denominator"].as_str() == Some("1");
+            return integer_is(&scale["numerator"], 1)
+                && integer_is(&scale["denominator"], 1)
+                && integer_is(&offset["numerator"], 0)
+                && integer_is(&offset["denominator"], 1);
         };
         let target_digest = target["digest"]
             .as_str()
@@ -665,6 +672,58 @@ fn apply_authored_patch(candidate: &mut Value, patch: &Value) {
     }
 }
 
+/// Exact `(name, refused_by)` inventory of the `semantic` mutations in an
+/// authored mutation list; every other kind must not name a refusing check.
+fn refusing_check_inventory(mutations: &Value) -> BTreeSet<(&str, &str)> {
+    mutations
+        .as_array()
+        .expect("authored mutations are an array")
+        .iter()
+        .filter_map(|mutation| {
+            let name = mutation["name"]
+                .as_str()
+                .expect("mutation name is a string");
+            if mutation["kind"].as_str() == Some("semantic") {
+                let check = mutation["refused_by"]
+                    .as_str()
+                    .unwrap_or_else(|| panic!("{name} names its refusing check"));
+                Some((name, check))
+            } else {
+                assert!(
+                    mutation.get("refused_by").is_none(),
+                    "{name} is not a semantic mutation and names no refusing check"
+                );
+                None
+            }
+        })
+        .collect()
+}
+
+/// Require a `semantic` mutation to be refused by exactly the named check:
+/// `schema` refuses the closed shape, while `semantic` passes the schema and
+/// fails only the published semantic constraint.
+fn assert_refused_by_named_check(
+    name: &str,
+    refused_by: &Value,
+    structurally_valid: bool,
+    semantically_valid: bool,
+) {
+    match refused_by.as_str() {
+        Some("schema") => assert!(
+            !structurally_valid,
+            "{name} must be refused by the closed schema"
+        ),
+        Some("semantic") => {
+            assert!(structurally_valid, "{name} must pass the closed schema");
+            assert!(
+                !semantically_valid,
+                "{name} must be refused by the semantic constraint"
+            );
+        }
+        other => panic!("{name} names an unknown refusing check: {other:?}"),
+    }
+}
+
 /// Exact `(name, kind)` inventory of an authored vector list, read through JSON pointers.
 fn named_inventory<'a>(
     entries: &'a Value,
@@ -897,8 +956,10 @@ fn source_subject(source: &Value) -> Value {
 }
 
 /// Independent migration oracle over a candidate correspondence, the selected
-/// V1 source package and the relinked V2 package. Checks run in the normative
-/// order: byte-only, missing, ambiguous, stale, then target incompatibility.
+/// V1 source package and the relinked V2 package. Every check of one class
+/// runs before any check of the next, in the normative order: byte-only,
+/// missing (an absent member, an empty source list or any V1-locked source
+/// absent), ambiguous, stale, then target incompatibility.
 fn classify_migration(
     correspondence: &Value,
     source: &Value,
@@ -910,60 +971,57 @@ fn classify_migration(
             json!({"input": "reconstruction_inputs"}),
         ));
     };
-    for field in RECONSTRUCTION_FIELDS {
-        if inputs.get(field).is_none() {
-            return Err((MigrationRefusalCode::InputMissing, json!({"input": field})));
-        }
+    if let Some(field) = RECONSTRUCTION_FIELDS
+        .into_iter()
+        .find(|field| inputs.get(field).is_none())
+    {
+        return Err((MigrationRefusalCode::InputMissing, json!({"input": field})));
     }
     let supplied = inputs["sources"]
         .as_array()
         .map(Vec::as_slice)
         .unwrap_or_default();
-    let locked = source["lock"]["sources"]
-        .as_array()
-        .expect("V1 lock sources are an array");
     if supplied.is_empty() {
         return Err((
             MigrationRefusalCode::InputMissing,
             json!({"input": "sources"}),
         ));
     }
+    let locked = source["lock"]["sources"]
+        .as_array()
+        .expect("V1 lock sources are an array");
     let same_subject = |left: &Value, right: &Value| {
         left["authority"] == right["authority"] && left["identity"] == right["identity"]
     };
-    for (index, candidate) in supplied.iter().enumerate() {
-        if supplied[..index]
+    if let Some(absent) = locked.iter().find(|wanted| {
+        !supplied
+            .iter()
+            .any(|candidate| same_subject(candidate, wanted))
+    }) {
+        return Err((MigrationRefusalCode::InputMissing, source_subject(absent)));
+    }
+    if let Some(duplicate) = supplied.iter().enumerate().find_map(|(index, candidate)| {
+        supplied[..index]
             .iter()
             .any(|earlier| same_subject(earlier, candidate))
-        {
-            return Err((
-                MigrationRefusalCode::InputAmbiguous,
-                source_subject(candidate),
-            ));
-        }
+            .then_some(candidate)
+    }) {
+        return Err((
+            MigrationRefusalCode::InputAmbiguous,
+            source_subject(duplicate),
+        ));
     }
-    for wanted in locked {
-        match supplied
-            .iter()
-            .find(|candidate| same_subject(candidate, wanted))
-        {
-            None => return Err((MigrationRefusalCode::InputMissing, source_subject(wanted))),
-            Some(candidate) if candidate != wanted => {
-                return Err((MigrationRefusalCode::InputStale, source_subject(candidate)));
-            }
-            Some(_) => {}
-        }
-    }
-    if let Some(extra) = supplied
+    if let Some(stale) = supplied
         .iter()
         .find(|candidate| !locked.contains(candidate))
     {
-        return Err((MigrationRefusalCode::InputStale, source_subject(extra)));
+        return Err((MigrationRefusalCode::InputStale, source_subject(stale)));
     }
-    for field in &RECONSTRUCTION_FIELDS[1..] {
-        if inputs[*field] != source["lock"][*field] {
-            return Err((MigrationRefusalCode::InputStale, json!({"input": field})));
-        }
+    if let Some(field) = RECONSTRUCTION_FIELDS[1..]
+        .iter()
+        .find(|field| inputs[**field] != source["lock"][**field])
+    {
+        return Err((MigrationRefusalCode::InputStale, json!({"input": field})));
     }
     if correspondence["target_package_id"] != target["package_id"] {
         return Err((
@@ -1070,9 +1128,9 @@ fn replace_selection_consistently(package: &mut Value, pointer: &str, replacemen
     refresh_package_id(package);
 }
 
-#[trace("TC-217", "FR-322-AC-7")]
+#[trace("TC-233", "FR-322-AC-13")]
 #[test]
-fn tc_217_all_checked_semantic_node_families_are_admitted_by_the_public_schema() {
+fn tc_233_all_checked_semantic_node_families_are_admitted_by_the_public_schema() {
     let schema = parsed_fixture(SCHEMA);
     jsonschema::validator_for(&schema)
         .expect("I04 schema is valid")
@@ -1140,9 +1198,9 @@ fn tc_217_all_checked_semantic_node_families_are_admitted_by_the_public_schema()
     }
 }
 
-#[trace("TC-217", "FR-322-AC-8")]
+#[trace("TC-233", "FR-322-AC-14")]
 #[test]
-fn tc_217_package_identity_is_the_jcs_digest_of_its_non_circular_preimage() {
+fn tc_233_package_identity_is_the_jcs_digest_of_its_non_circular_preimage() {
     let vector = parsed_fixture(POSITIVE_ALL_FAMILIES);
     let qualified_digest =
         jcs_sha256(&vector["identity_preimage"]).expect("identity preimage is canonicalizable");
@@ -1158,9 +1216,246 @@ fn tc_217_package_identity_is_the_jcs_digest_of_its_non_circular_preimage() {
     );
 }
 
-#[trace("TC-217", "FR-322-AC-4", "FR-322-AC-5")]
+/// Selection members of the V2 lock that are copied, in order, into the
+/// `quire.checked-package-id/v2` identity preimage.
+const IDENTITY_SELECTION_MEMBERS: [&str; 6] = [
+    "edition",
+    "profile_selections",
+    "definition_selections",
+    "model_selections",
+    "required_features",
+    "dependency_selections",
+];
+
+/// Rebuild the non-circular V2 identity preimage from a package's lock and
+/// semantic graph alone, dropping node source occurrences, so that the package
+/// id is recomputed from its named members rather than read back.
+fn derive_identity_preimage(package: &Value) -> Value {
+    let mut preimage = serde_json::Map::new();
+    preimage.insert("version".to_owned(), json!("quire.checked-package-id/v2"));
+    for member in IDENTITY_SELECTION_MEMBERS {
+        preimage.insert(member.to_owned(), package["lock"][member].clone());
+    }
+    let projection = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("semantic graph nodes are an array")
+        .iter()
+        .map(|node| {
+            let mut projected = node.clone();
+            projected
+                .as_object_mut()
+                .expect("semantic node is an object")
+                .remove("occurrences");
+            projected
+        })
+        .collect();
+    preimage.insert("identity_projection".to_owned(), Value::Array(projection));
+    Value::Object(preimage)
+}
+
+#[trace("TC-233", "FR-322-AC-14")]
 #[test]
-fn tc_217_public_schema_refuses_authored_version_domain_and_node_mutations() {
+fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member() {
+    for (fixture, bytes) in [
+        ("positive-all-families", POSITIVE_ALL_FAMILIES),
+        ("positive-nominal-identities", POSITIVE_NOMINAL_IDENTITIES),
+    ] {
+        let package = parsed_fixture(bytes);
+        assert_eq!(
+            derive_identity_preimage(&package),
+            package["identity_preimage"],
+            "{fixture} identity preimage is exactly its lock selections and occurrence-free graph"
+        );
+        let package_id = package["package_id"]["digest"]
+            .as_str()
+            .expect("package digest is a string");
+        assert_eq!(
+            unqualified_jcs_sha256(&derive_identity_preimage(&package)),
+            package_id,
+            "{fixture} package id is recomputed from its named members"
+        );
+
+        let excluded: [(&str, &str, Value); 5] = [
+            ("source-map region", "/source_map/0/regions/0/end", json!(9)),
+            (
+                "node source occurrence",
+                "/semantic_graph/nodes/0/occurrences/0/ordinal",
+                json!(7),
+            ),
+            (
+                "raw source digest",
+                "/lock/sources/0/digest",
+                json!("8888888888888888888888888888888888888888888888888888888888888888"),
+            ),
+            ("capability disposition", "/capability_report", json!([])),
+            (
+                "diagnostic catalog",
+                "/diagnostics/catalog/digest",
+                json!("8888888888888888888888888888888888888888888888888888888888888888"),
+            ),
+        ];
+        for (label, pointer, replacement) in excluded {
+            let mut candidate = package.clone();
+            *candidate
+                .pointer_mut(pointer)
+                .unwrap_or_else(|| panic!("{fixture} has an excluded {label}")) = replacement;
+            assert_ne!(
+                candidate, package,
+                "{fixture} {label} edit changes the package"
+            );
+            assert_eq!(
+                unqualified_jcs_sha256(&derive_identity_preimage(&candidate)),
+                package_id,
+                "{fixture} editing the excluded {label} leaves the package id unchanged"
+            );
+        }
+
+        let named: [(&str, &str, Value); 8] = [
+            (
+                "edition digest",
+                "/lock/edition/definition/digest",
+                json!("8888888888888888888888888888888888888888888888888888888888888888"),
+            ),
+            (
+                "profile selections",
+                "/lock/profile_selections",
+                json!([{"role": "profile", "definition": package["lock"]["edition"]["definition"]}]),
+            ),
+            (
+                "definition selections",
+                "/lock/definition_selections",
+                json!([package["lock"]["edition"]["definition"]]),
+            ),
+            (
+                "model selections",
+                "/lock/model_selections",
+                json!([{
+                    "authority": "agent-ix", "identity": "example-compiled-model",
+                    "revision": {"namespace": "git", "value": "1"},
+                    "digest_domain": "quire.compiled-model.bytes/v1",
+                    "digest": "8888888888888888888888888888888888888888888888888888888888888888",
+                    "export": "Example"
+                }]),
+            ),
+            (
+                "required features",
+                "/lock/required_features",
+                json!(["quire.value.complete/v1", "quire.value.extra/v1"]),
+            ),
+            (
+                "dependency selections",
+                "/lock/dependency_selections",
+                json!([{"role": "dependency", "definition": package["lock"]["edition"]["definition"]}]),
+            ),
+            (
+                "graph node type",
+                "/semantic_graph/nodes/0/semantic_type/digest",
+                json!("8888888888888888888888888888888888888888888888888888888888888888"),
+            ),
+            ("graph node order", "/semantic_graph/nodes", {
+                let mut nodes = package["semantic_graph"]["nodes"].clone();
+                nodes
+                    .as_array_mut()
+                    .expect("semantic graph nodes are an array")
+                    .reverse();
+                nodes
+            }),
+        ];
+        for (label, pointer, replacement) in named {
+            let mut candidate = package.clone();
+            *candidate
+                .pointer_mut(pointer)
+                .unwrap_or_else(|| panic!("{fixture} has a named {label}")) = replacement;
+            assert_ne!(
+                unqualified_jcs_sha256(&derive_identity_preimage(&candidate)),
+                package_id,
+                "{fixture} editing the named preimage member {label} changes the package id"
+            );
+        }
+    }
+}
+
+/// Typed package key: a digest compares equal only under the same domain.
+fn package_key(package_id: &Value) -> (&str, &str) {
+    (
+        package_id["domain"]
+            .as_str()
+            .expect("package id domain is a string"),
+        package_id["digest"]
+            .as_str()
+            .expect("package id digest is a string"),
+    )
+}
+
+#[trace("TC-233", "FR-201-AC-7")]
+#[test]
+fn tc_233_equal_digest_bytes_under_v1_and_v2_package_domains_compare_unequal() {
+    let v1 = jsonschema::validator_for(&parsed_fixture(SCHEMA_V1)).expect("V1 schema is valid");
+    let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let raw_migration_schema = parsed_fixture(MIGRATION_CORRESPONDENCE_SCHEMA);
+    let migration =
+        jsonschema::validator_for(&raw_migration_schema).expect("migration schema is valid");
+    let v2_package = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let v1_package = parsed_fixture(POSITIVE_ALL_FAMILIES_V1);
+
+    let v2_id = v2_package["package_id"].clone();
+    let mut v1_domain_same_bytes = v2_id.clone();
+    v1_domain_same_bytes["domain"] = json!("quire.package.semantic/v1");
+    assert_eq!(
+        package_key(&v2_id).1,
+        package_key(&v1_domain_same_bytes).1,
+        "the control shares exact digest bytes"
+    );
+    assert_ne!(
+        package_key(&v2_id),
+        package_key(&v1_domain_same_bytes),
+        "equal digest bytes under the V1 and V2 package domains are distinct keys"
+    );
+
+    let mut relabelled_v2 = v2_package.clone();
+    relabelled_v2["package_id"] = v1_domain_same_bytes.clone();
+    assert!(v2.is_valid(&v2_package));
+    assert!(
+        !v2.is_valid(&relabelled_v2),
+        "the V2 schema refuses its own digest bytes under the V1 package domain"
+    );
+    let mut relabelled_v1 = v1_package.clone();
+    relabelled_v1["package_id"]["domain"] = json!("quire.package.semantic/v2");
+    assert!(v1.is_valid(&v1_package));
+    assert!(
+        !v1.is_valid(&relabelled_v1),
+        "the frozen V1 schema refuses its own digest bytes under the V2 package domain"
+    );
+
+    let vectors = parsed_fixture(MIGRATION_CORRESPONDENCE_VECTORS);
+    let receipt = &vectors["positives"][0]["outcome"]["correspondence"];
+    assert!(migration.is_valid(receipt));
+    for (label, pointer, domain) in [
+        (
+            "source",
+            "/source_package_id/domain",
+            "quire.package.semantic/v2",
+        ),
+        (
+            "target",
+            "/target_package_id/domain",
+            "quire.package.semantic/v1",
+        ),
+    ] {
+        let mut swapped = receipt.clone();
+        *swapped
+            .pointer_mut(pointer)
+            .expect("receipt package domain exists") = json!(domain);
+        assert!(
+            !migration.is_valid(&swapped),
+            "the migration receipt refuses a {label} key relabelled to the other package domain"
+        );
+    }
+}
+
+#[trace("TC-233", "FR-322-AC-13")]
+#[test]
+fn tc_233_public_schema_refuses_authored_version_domain_and_node_mutations() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
     let adverse = parsed_fixture(ADVERSE);
     assert_eq!(
@@ -1200,9 +1495,9 @@ fn tc_217_public_schema_refuses_authored_version_domain_and_node_mutations() {
     }
 }
 
-#[trace("TC-217", "FR-322-AC-11")]
+#[trace("TC-233", "FR-322-AC-13")]
 #[test]
-fn tc_217_v1_and_v2_remain_explicitly_incompatible_closed_wires() {
+fn tc_233_v1_and_v2_remain_explicitly_incompatible_closed_wires() {
     let v1 = jsonschema::validator_for(&parsed_fixture(SCHEMA_V1)).expect("V1 schema is valid");
     let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
     let v1_fixture = parsed_fixture(POSITIVE_ALL_FAMILIES_V1);
@@ -1261,9 +1556,9 @@ fn tc_217_v1_and_v2_remain_explicitly_incompatible_closed_wires() {
     );
 }
 
-#[trace("TC-217", "FR-322-AC-11")]
+#[trace("TC-233", "FR-322-AC-13")]
 #[test]
-fn tc_217_frozen_v1_publication_bytes_match_independent_locks() {
+fn tc_233_frozen_v1_publication_bytes_match_independent_locks() {
     let locked = [
         (
             "README.md",
@@ -1296,9 +1591,9 @@ fn tc_217_frozen_v1_publication_bytes_match_independent_locks() {
     }
 }
 
-#[trace("TC-217", "FR-201-AC-5", "FR-322-AC-12")]
+#[trace("TC-233", "FR-322-AC-16")]
 #[test]
-fn tc_217_v1_to_v2_migration_correspondence_is_typed_total_and_input_bound() {
+fn tc_233_v1_to_v2_migration_correspondence_is_typed_total_and_input_bound() {
     let raw_schema = parsed_fixture(MIGRATION_CORRESPONDENCE_SCHEMA);
     let schema =
         jsonschema::validator_for(&raw_schema).expect("migration-correspondence schema is valid");
@@ -1413,9 +1708,9 @@ fn tc_217_v1_to_v2_migration_correspondence_is_typed_total_and_input_bound() {
     );
 }
 
-#[trace("TC-217", "FR-201-AC-5", "FR-322-AC-12")]
+#[trace("TC-233", "FR-322-AC-16")]
 #[test]
-fn tc_217_v1_to_v2_migration_refusals_use_the_closed_typed_outcome() {
+fn tc_233_v1_to_v2_migration_refusals_use_the_closed_typed_outcome() {
     let raw_schema = parsed_fixture(MIGRATION_CORRESPONDENCE_SCHEMA);
     let schema =
         jsonschema::validator_for(&raw_schema).expect("migration-correspondence schema is valid");
@@ -1446,8 +1741,95 @@ fn tc_217_v1_to_v2_migration_refusals_use_the_closed_typed_outcome() {
                 "migration_target_incompatible"
             ),
             ("byte-only-v1", "migration_byte_only_reconstruction"),
+            (
+                "missing-source-precedes-ambiguous-source",
+                "migration_input_missing"
+            ),
+            (
+                "missing-source-precedes-stale-source",
+                "migration_input_missing"
+            ),
+            ("missing-edition-input", "migration_input_missing"),
+            (
+                "missing-profile-selections-input",
+                "migration_input_missing"
+            ),
+            (
+                "missing-definition-selections-input",
+                "migration_input_missing"
+            ),
+            ("missing-model-selections-input", "migration_input_missing"),
+            (
+                "missing-dependency-selections-input",
+                "migration_input_missing"
+            ),
+            ("stale-edition-input", "migration_input_stale"),
+            ("stale-profile-selections-input", "migration_input_stale"),
+            ("stale-definition-selections-input", "migration_input_stale"),
+            ("stale-model-selections-input", "migration_input_stale"),
+            ("stale-dependency-selections-input", "migration_input_stale"),
         ]),
         "the migration refusal inventory is exact"
+    );
+    assert_eq!(
+        refusals
+            .as_array()
+            .expect("migration refusals are an array")
+            .iter()
+            .filter(|refusal| refusal["base"].as_str() == Some("nominal-relinked-rekeyed"))
+            .map(|refusal| (
+                refusal["name"].as_str().expect("refusal name is a string"),
+                refusal["expected_outcome"]["subject"].to_string(),
+            ))
+            .collect::<BTreeSet<_>>(),
+        [
+            (
+                "missing-source-precedes-ambiguous-source",
+                json!({"input":"sources","authority":"agent-ix","identity":"example-units"}),
+            ),
+            (
+                "missing-source-precedes-stale-source",
+                json!({"input":"sources","authority":"agent-ix","identity":"example-units"}),
+            ),
+            ("missing-edition-input", json!({"input":"edition"})),
+            (
+                "missing-profile-selections-input",
+                json!({"input":"profile_selections"}),
+            ),
+            (
+                "missing-definition-selections-input",
+                json!({"input":"definition_selections"}),
+            ),
+            (
+                "missing-model-selections-input",
+                json!({"input":"model_selections"}),
+            ),
+            (
+                "missing-dependency-selections-input",
+                json!({"input":"dependency_selections"}),
+            ),
+            ("stale-edition-input", json!({"input":"edition"})),
+            (
+                "stale-profile-selections-input",
+                json!({"input":"profile_selections"}),
+            ),
+            (
+                "stale-definition-selections-input",
+                json!({"input":"definition_selections"}),
+            ),
+            (
+                "stale-model-selections-input",
+                json!({"input":"model_selections"}),
+            ),
+            (
+                "stale-dependency-selections-input",
+                json!({"input":"dependency_selections"}),
+            ),
+        ]
+        .into_iter()
+        .map(|(name, subject)| (name, subject.to_string()))
+        .collect::<BTreeSet<_>>(),
+        "the two-source nominal base pins every non-source input and ordering subject"
     );
 
     for refusal in refusals
@@ -1484,11 +1866,20 @@ fn tc_217_v1_to_v2_migration_refusals_use_the_closed_typed_outcome() {
             Err((code, expected["subject"].clone())),
             "{name} refuses with its exact typed code and subject"
         );
+        let names_a_source = expected["subject"].get("identity").is_some();
         match code {
-            MigrationRefusalCode::InputMissing | MigrationRefusalCode::ByteOnlyReconstruction => {
+            MigrationRefusalCode::ByteOnlyReconstruction => {
                 assert!(
                     !schema.is_valid(&candidate),
                     "{name} cannot even form a correspondence receipt"
+                );
+            }
+            MigrationRefusalCode::InputMissing => {
+                assert_eq!(
+                    schema.is_valid(&candidate),
+                    names_a_source,
+                    "{name}: an absent member or empty source list cannot form a receipt, \
+                     while an absent locked source among supplied sources is refused only by re-link"
                 );
             }
             MigrationRefusalCode::InputStale
@@ -1531,9 +1922,9 @@ fn tc_217_v1_to_v2_migration_refusals_use_the_closed_typed_outcome() {
     }
 }
 
-#[trace("TC-217", "FR-322-AC-10")]
+#[trace("TC-233", "FR-322-AC-15")]
 #[test]
-fn tc_217_nominal_identity_preimages_have_exact_jcs_identities_and_semantics() {
+fn tc_233_nominal_identity_preimages_have_exact_jcs_identities_and_semantics() {
     let schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
         .expect("node-preimage schema is valid");
     let public_schema = parsed_fixture(SCHEMA);
@@ -1573,15 +1964,17 @@ fn tc_217_nominal_identity_preimages_have_exact_jcs_identities_and_semantics() {
     }
 }
 
-#[trace("TC-217", "FR-322-AC-10")]
+#[trace("TC-233", "FR-322-AC-15")]
 #[test]
-fn tc_217_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
+fn tc_233_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
     let schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
         .expect("node-preimage schema is valid");
     let fixture = parsed_fixture(NODE_IDENTITY_VECTORS);
     let vectors = fixture["vectors"]
         .as_array()
         .expect("node identity vectors are an array");
+    let nominal_package = parsed_fixture(POSITIVE_NOMINAL_IDENTITIES);
+    let nominal_lock = &nominal_package["lock"];
     assert_eq!(
         named_inventory(&fixture["invalid_mutations"], "/name", "/kind"),
         BTreeSet::from([
@@ -1594,8 +1987,27 @@ fn tc_217_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
             ("root-unit-nonidentity-scale", "semantic"),
             ("nonroot-unit-missing-target", "semantic"),
             ("unit-unreduced-rational", "semantic"),
+            ("dimension-negative-zero-exponent", "semantic"),
+            ("unit-negative-zero-scale", "semantic"),
+            ("unit-negative-zero-offset", "semantic"),
         ]),
         "the nominal-node mutation inventory is exact"
+    );
+    assert_eq!(
+        refusing_check_inventory(&fixture["invalid_mutations"]),
+        BTreeSet::from([
+            ("unordered-enum-member-order", "semantic"),
+            ("dimension-zero-exponent", "semantic"),
+            ("dimension-duplicate-term", "semantic"),
+            ("dimension-unsorted-terms", "semantic"),
+            ("root-unit-nonidentity-scale", "semantic"),
+            ("nonroot-unit-missing-target", "semantic"),
+            ("unit-unreduced-rational", "semantic"),
+            ("dimension-negative-zero-exponent", "schema"),
+            ("unit-negative-zero-scale", "schema"),
+            ("unit-negative-zero-offset", "schema"),
+        ]),
+        "every semantic nominal-node mutation names exactly its refusing check"
     );
 
     for mutation in fixture["invalid_mutations"]
@@ -1623,8 +2035,7 @@ fn tc_217_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
             "{name} fixes its expected reader code"
         );
         let structurally_valid = schema.is_valid(&candidate);
-        let semantically_valid =
-            structurally_valid && semantic_preimage_is_valid(&candidate, vectors);
+        let semantically_valid = semantic_preimage_is_valid(&candidate, vectors);
         match mutation["kind"]
             .as_str()
             .expect("mutation kind is a string")
@@ -1642,18 +2053,24 @@ fn tc_217_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
                     "{name} must fail exact stale-key recomputation"
                 );
             }
-            "semantic" => assert!(
-                !structurally_valid || !semantically_valid,
-                "{name} must fail shape or the named semantic invariant"
+            "semantic" => assert_refused_by_named_check(
+                name,
+                &mutation["refused_by"],
+                structurally_valid,
+                semantically_valid,
             ),
             "owner_join" => {
                 assert!(
                     structurally_valid && semantically_valid,
                     "{name} has valid detached bytes"
                 );
-                assert_ne!(
-                    candidate["owner"]["identity"].as_str(),
-                    Some("example-model")
+                assert!(
+                    owner_joins_lock(&base["preimage"], nominal_lock),
+                    "{name} base owner joins the nominal package lock"
+                );
+                assert!(
+                    !owner_joins_lock(&candidate, nominal_lock),
+                    "{name} owner is refused by the nominal package lock join"
                 );
             }
             kind => panic!("unknown authored mutation kind: {kind}"),
@@ -1661,9 +2078,9 @@ fn tc_217_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
     }
 }
 
-#[trace("TC-217", "FR-322-AC-5", "FR-322-AC-8", "FR-322-AC-10")]
+#[trace("TC-233", "FR-322-AC-15")]
 #[test]
-fn tc_217_nominal_preimages_are_closed_inside_a_real_package_and_lock() {
+fn tc_233_nominal_preimages_are_closed_inside_a_real_package_and_lock() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
     let package = parsed_fixture(POSITIVE_NOMINAL_IDENTITIES);
     schema
@@ -1744,9 +2161,9 @@ fn tc_217_nominal_preimages_are_closed_inside_a_real_package_and_lock() {
     assert!(!package_nominal_nodes_are_valid(&unordered_enum));
 }
 
-#[trace("TC-217", "FR-322-AC-10")]
+#[trace("TC-233", "FR-322-AC-15")]
 #[test]
-fn tc_217_nominal_preimages_join_semantic_fields_and_dependencies() {
+fn tc_233_nominal_preimages_join_semantic_fields_and_dependencies() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
     let package = parsed_fixture(POSITIVE_NOMINAL_IDENTITIES);
 
@@ -1833,9 +2250,9 @@ fn tc_217_nominal_preimages_join_semantic_fields_and_dependencies() {
     assert!(!nominal_node_cross_fields_are_valid(&nonroot_unit));
 }
 
-#[trace("TC-217", "FR-322-AC-10")]
+#[trace("TC-233", "FR-322-AC-15")]
 #[test]
-fn tc_217_owner_to_lock_join_refuses_independently_of_lock_preimage_equality() {
+fn tc_233_owner_to_lock_join_refuses_independently_of_lock_preimage_equality() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
     let model_selection = json!([{
         "authority": "agent-ix",
@@ -1935,9 +2352,9 @@ fn tc_217_owner_to_lock_join_refuses_independently_of_lock_preimage_equality() {
     }
 }
 
-#[trace("TC-187", "FR-142-AC-6")]
+#[trace("TC-233", "FR-142-AC-8")]
 #[test]
-fn tc_187_compound_unit_value_identities_have_exact_vectors_and_non_tautological_mutations() {
+fn tc_233_compound_unit_value_identities_have_exact_vectors_and_non_tautological_mutations() {
     let schema = jsonschema::validator_for(&parsed_fixture(COMPOUND_UNIT_SCHEMA))
         .expect("compound-unit schema is valid");
     let fixture = parsed_fixture(COMPOUND_UNIT_VECTORS);
@@ -1955,8 +2372,19 @@ fn tc_187_compound_unit_value_identities_have_exact_vectors_and_non_tautological
             ("zero-exponent", "semantic"),
             ("duplicate-term", "semantic"),
             ("unsorted-terms", "semantic"),
+            ("negative-zero-exponent", "semantic"),
         ]),
         "the compound-unit mutation inventory is exact"
+    );
+    assert_eq!(
+        refusing_check_inventory(&fixture["invalid_mutations"]),
+        BTreeSet::from([
+            ("zero-exponent", "semantic"),
+            ("duplicate-term", "semantic"),
+            ("unsorted-terms", "semantic"),
+            ("negative-zero-exponent", "schema"),
+        ]),
+        "every semantic compound-unit mutation names exactly its refusing check"
     );
 
     for vector in vectors {
@@ -2002,18 +2430,22 @@ fn tc_187_compound_unit_value_identities_have_exact_vectors_and_non_tautological
                         .expect("digest is a string")
                 );
             }
-            "semantic" => assert!(
-                !schema.is_valid(&candidate)
-                    || !compound_unit_preimage_is_valid(&candidate, node_vectors)
+            "semantic" => assert_refused_by_named_check(
+                mutation["name"]
+                    .as_str()
+                    .expect("mutation name is a string"),
+                &mutation["refused_by"],
+                schema.is_valid(&candidate),
+                compound_unit_preimage_is_valid(&candidate, node_vectors),
             ),
             kind => panic!("unknown compound mutation kind: {kind}"),
         }
     }
 }
 
-#[trace("TC-231", "FR-201-AC-6")]
+#[trace("TC-233", "FR-201-AC-6")]
 #[test]
-fn tc_231_complete_value_rule_manifest_binds_every_selected_rule_byte_for_byte() {
+fn tc_233_complete_value_rule_manifest_binds_every_selected_rule_byte_for_byte() {
     let manifest = parsed_fixture(VALUE_RULE_MANIFEST);
     assert_eq!(
         manifest["definition_identity"].as_str(),
@@ -2055,9 +2487,9 @@ fn tc_231_complete_value_rule_manifest_binds_every_selected_rule_byte_for_byte()
     }
 }
 
-#[trace("TC-231", "FR-201-AC-6")]
+#[trace("TC-233", "FR-201-AC-6")]
 #[test]
-fn tc_231_complete_value_lock_catalogs_every_artifact_and_separates_package_selection() {
+fn tc_233_complete_value_lock_catalogs_every_artifact_and_separates_package_selection() {
     let lock = parsed_fixture(COMPLETE_VALUE_LOCK);
     assert_eq!(
         lock["lock_version"].as_str(),
@@ -2241,9 +2673,9 @@ fn tc_231_complete_value_lock_catalogs_every_artifact_and_separates_package_sele
     assert!(!definition_lock_entry_matches_bytes(&stale_rule));
 }
 
-#[trace("TC-231", "FR-201-AC-6")]
+#[trace("TC-233", "FR-201-AC-6")]
 #[test]
-fn tc_231_package_selection_vectors_admit_exact_conditional_and_alternative_profiles() {
+fn tc_233_package_selection_vectors_admit_exact_conditional_and_alternative_profiles() {
     let lock = parsed_fixture(COMPLETE_VALUE_LOCK);
     let selection = PackageSelectionRules::from_lock(&lock);
     let vectors = parsed_fixture(COMPLETE_VALUE_SELECTION_VECTORS);

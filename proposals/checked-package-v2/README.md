@@ -60,8 +60,9 @@ owners additionally use export. Revisions and raw byte digests remain package
 lock evidence but are excluded from the semantic node preimage, allowing an
 unchanged declaration to retain identity across unrelated owner revisions.
 Qualified names are arrays of ASCII identifier segments. Arbitrary-precision
-integers/rationals use canonical decimal strings, a positive denominator,
-greatest-common-divisor one and exactly `0/1` for zero. Unordered enum members
+integers/rationals use canonical decimal strings with no leading zero and no
+`-0`, a positive denominator, greatest-common-divisor one and exactly `0/1` for
+zero. Unordered enum members
 and dimension terms are ascending by their canonical JCS key; ordered enum
 members retain declaration order. Duplicate/zero-exponent terms refuse.
 
