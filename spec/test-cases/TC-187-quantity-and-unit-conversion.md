@@ -24,7 +24,16 @@ and temperature `Theta`. Define canonical roots metre `m`, second `s` and kelvin
 targeting `m` with scale `1/100`; inch `in` targeting `m` with scale `127/5000`;
 degree Celsius `degC` targeting `K` with scale `1` and canonical offset `5463/20`; and
 degree Fahrenheit `degF` targeting `K` with scale `5/9` and offset
-`45967/180`. Execute:
+`45967/180`. Also define mass `M` with root `kg`; distinct derived dimension
+nodes `Torque` and `Energy`, both with terms `{ L: 2, M: 1, T: -2 }` and roots
+`N_m` and `J`; derived dimension `Area` with terms `{ L: 2 }` and root `m2`;
+`u1` targeting `K` with scale `1` and offset `10`; `u2` targeting `u1` with
+scale `1` and offset `-10`; `u3` targeting `degC` with scale `1` and offset
+`0`; and `rev` targeting `m` with scale `-1` and offset `0`. In the vectors
+below, `L(i,d,e,o,w,r)` abbreviates `ScalarLimitsV1 { integer_bits: i,
+decimal_digits: d, scale_expansion: 0, text_input_bytes: 0, text_scalars: 0,
+normalized_scalars: 0, unit_edges: e, value_occurrences: o, work_units: w,
+result_units: r }`. Execute:
 
 | Vector | Operation | Expected value/disposition |
 | --- | --- | --- |
@@ -42,6 +51,16 @@ degree Fahrenheit `degF` targeting `K` with scale `5/9` and offset
 | U11 | Mutate the `L` unit graph to have two targetless roots, no root, a target cycle, an unknown target or a target under time dimension `T` | semantic admission refuses each topology before a quantity value exists |
 | U12 | Multiply `2 m * 3 s`, divide `6 m / 2 s`, square `2 m`, and divide `5 m / 5 m` | exact values `6`, `3`, `4`, `1` under canonical compound units `m*s`, `m*s^-1`, `m^2`, and the empty dimensionless unit respectively |
 | U13 | Raise `2 m` to integer power `18446744073709551616` with `ScalarLimitsV1 { integer_bits: 64, decimal_digits: 0, scale_expansion: 0, text_input_bytes: 0, text_scalars: 0, normalized_scalars: 0, unit_edges: 0, value_occurrences: 1, work_units: 5, result_units: 1 }` | `incomplete { limit_kind: integer_bits, limit: 64, consumed: 2, next_charge: 18446744073709551617, charge_point: unit.rational-arithmetic }` before the power is computed; `next_charge` exceeds `u64::MAX` and is reported exactly |
+| U14 | Evaluate U03 under `L(1,0,0,2,2,0)`, then under `L(1,0,0,2,1,0)` | refused as incompatible dimensions after both `unit.identity-read`s; then `incomplete { limit_kind: work_units, limit: 1, consumed: 1, next_charge: 1, charge_point: unit.identity-read }` |
+| U15 | Convert `1 in` to `cm` under `L(13,0,2,1,9,1)`, then under `L(7,0,1,1,9,1)` | exact `127/50 cm` after one read, two edges, four rational events, target admission and retention; then `incomplete { limit_kind: unit_edges, limit: 1, consumed: 1, next_charge: 2, charge_point: unit.edge }`, because both edges are charged before the first rational event |
+| U16 | Evaluate U07 under `L(13,1,1,1,6,1)`; repeat `nearest-even` under `L(13,1,1,1,4,1)` | `exact` refuses after one read, one edge and two rational events (four work units), before `unit.target-domain`; `nearest-even` returns U07's value; the second run returns `incomplete { limit_kind: work_units, limit: 4, consumed: 4, next_charge: 1, charge_point: unit.target-domain }` |
+| U17 | Convert `3 m` into U08's target under `L(2,1,0,1,2,0)`, then under `L(2,1,0,1,1,0)` | refused by membership after `unit.target-domain` and before `unit.result-retain`; then `incomplete { limit_kind: work_units, limit: 1, consumed: 1, next_charge: 1, charge_point: unit.target-domain }` |
+| U18 | Convert `1 m` into target `Decimal[0,1;0,4294967295;exact]` under `L(18446744073709551615,64,0,1,2,1)` | `incomplete { limit_kind: decimal_digits, limit: 64, consumed: 0, next_charge: 4294967296, charge_point: unit.target-domain }`; the retained coefficient `10^4294967295` is sized analytically and never materialized |
+| U19 | Add `2 m + 3 m` under `L(3,0,0,2,5,1)`, then under `L(3,0,0,2,4,1)` | `5 m`; then `incomplete { limit_kind: work_units, limit: 4, consumed: 4, next_charge: 1, charge_point: unit.result-retain }`: the rational target charges `unit.target-domain` with one work unit and no size amount |
+| U20 | Add `1 u1 + 2 u1`, add `1 u2 + 2 u2`, and multiply `1 u3 * 1 m` | `u1` and `u3` are affine by composed offset and refuse as affine-unit arithmetic; `u2`'s offsets compose to zero, so it is not affine and the sum is exact `3 u2` |
+| U21 | Raise `0 m` to integer power `0` under `L(1,0,0,1,4,1)`; raise `0 m` to `-1` under `L(1,0,0,1,1,0)`, then under `L(1,0,0,1,0,0)` | exact dimensionless `1` after read, power event, target admission and retention; undefined after one `unit.identity-read`; then `incomplete { limit_kind: work_units, limit: 0, consumed: 0, next_charge: 1, charge_point: unit.identity-read }` |
+| U22 | Convert `1 N_m` to `J`; square `2 m` and convert the compound `4 m^2` to `m2` | refused as incompatible dimensions despite equal base-dimension maps, because the dimension nodes differ; the compound conversion compares base-dimension maps and returns exact `4 m2` |
+| U23 | Order `1 degC < 2 degC` under `L(13,0,2,2,9,1)`, then under `L(13,0,2,2,8,1)`; order `1 rev < 2 rev`; order `0 degC < 32 degF` without conversion | `true` after two reads, two edges, four rational events and retention; then `incomplete { limit_kind: work_units, limit: 8, consumed: 8, next_charge: 1, charge_point: unit.result-retain }`; `false`, because root values are `-1` and `-2`; `refused { code: ill_typed }` before any charge |
 
 For U01, U04 and U07, compare the complete exact affine composition through
 the canonical unit, result unit identity, normalized dimension map, original

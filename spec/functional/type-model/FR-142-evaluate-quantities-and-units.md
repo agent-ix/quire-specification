@@ -59,12 +59,30 @@ cross-dimension target refuses semantic admission. Composing the edges yields
 each unit's exact mapping to the canonical unit; conversion applies the source
 mapping then the inverse target mapping.
 
-A nonzero-offset unit is affine: it may be converted or compared but cannot be
-added, subtracted, multiplied, divided or raised to a power. A separately
+A unit is affine exactly when the offset of its composed mapping to the
+canonical root is nonzero; a declared edge offset alone does not decide it, so a
+zero-offset unit targeting an affine unit is affine and a unit whose nonzero
+edge offsets compose to zero is not. An affine unit may be converted or compared
+but cannot be added, subtracted, multiplied, divided or raised to a power; such
+arithmetic refuses as affine-unit arithmetic. A separately
 declared zero-offset difference unit supports arithmetic; complete V1 does not
 infer a point/difference kind from an operation. Conversion into an exact target
 reports no loss; conversion requiring
 decimal/finite-domain rounding follows FR-140 and records that loss.
+
+Conversion between two declared I04 units is admitted only when both units
+have the same dimension node identity; distinct dimension nodes with equal
+base-dimension maps, such as torque and energy, do not admit it. When either
+side is an evaluator-owned compound unit, conversion is admitted exactly when
+the two normalized base-dimension maps are equal, and the compound value is the
+value in the declared side's canonical root. Any other conversion refuses as
+incompatible dimensions.
+
+Quantity ordering (`<`, `<=`, `>`, `>=`) requires two operands of the identical
+unit; otherwise type checking returns `refused { code: ill_typed }` before any
+charge. Ordering compares both operands' exact values mapped to the canonical
+root, so an affine unit or a negative composed scale orders by root value.
+Quantity equality is the FR-149 relation over explicitly converted operands.
 
 Base-dimension and unit identities are opaque I04 checked-semantic-graph node
 keys. A base dimension's `quire.checked-semantic-node/v1` digest is SHA-256 over
@@ -98,22 +116,26 @@ reference, declaration or source-mapped authority, and evaluation does not
 insert it into the checked package. Its closed schema and vectors are selected
 by `quire.value.complete/v1`. An explicit later conversion may select a
 compatible declared I04 unit; multiplication never guesses one from a matching
-name or scale.
+name or scale. For an integer exponent, `x^0` is exactly one for every `x`,
+including zero, and a zero base under a negative exponent is undefined.
 All identity reads, traversed edges, exact rational operations, target-domain
 checks and result retention use the named points in
-`quire.value.accounting/v1`.
+`quire.value.accounting/v1`, in its unit schedule: operand identity reads, then
+the incompatible-dimension, affine-arithmetic, distinct-unit and undefined
+checks, then every edge charge, then the rational events, then the target
+domain and result retention.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-142-AC-1 | Exact compatible zero-offset conversion followed by arithmetic produces the declared result unit and value. | Test (TC-187) |
-| FR-142-AC-2 | Incompatible dimensions or prohibited affine-unit arithmetic refuses at the operator. | Test (TC-187) |
+| FR-142-AC-2 | Incompatible dimensions, including distinct dimension nodes with equal base-dimension maps, or prohibited affine-unit arithmetic refuses at the operator after the operand identity reads. | Test (TC-187) |
 | FR-142-AC-3 | A lossy conversion returns its exact loss classification or refuses when the target permits no loss. | Test (TC-187) |
 | FR-142-AC-4 | Normalized dimension maps remove zero exponents and make multiplication/division inverse for admitted quantities. | Test (TC-187) |
-| FR-142-AC-5 | Exact affine conversion composes through the unique canonical root; invalid unit-graph topology, zero scale or affine arithmetic refuses. | Test (TC-187) |
-| FR-142-AC-6 | Multiplication, division and integer power produce the exact value in the canonical compound-unit identity, including dimensionless cancellation. | Test (TC-187) |
-| FR-142-AC-7 | Exact-bound accounting succeeds and denial of a named next unit charge returns incomplete without a partial quantity or compound identity. | Test (TC-187) |
+| FR-142-AC-5 | Exact affine conversion composes through the unique canonical root; invalid unit-graph topology, zero scale or arithmetic on a unit with a nonzero composed offset refuses; quantity ordering compares root values. | Test (TC-187) |
+| FR-142-AC-6 | Multiplication, division and integer power produce the exact value in the canonical compound-unit identity, including dimensionless cancellation, `0^0 = 1` and an undefined zero base under a negative exponent. | Test (TC-187) |
+| FR-142-AC-7 | Exact-bound accounting succeeds and denial of a named next unit charge returns incomplete without a partial quantity or compound identity; every schedule boundary, including decimal-target rounding and membership, occurs at its defined charge position. | Test (TC-187) |
 | FR-142-AC-8 | The published `quire.value.compound-unit/v1` schema and vectors fix the compound-unit identity preimage: each vector is schema-valid, its RFC 8785 JCS SHA-256 equals its recorded identity, and its terms name admitted root-unit node keys with nonzero exponents in strictly ascending key order; each authored stale-key mutation changes the identity and each authored noncanonical mutation, including a `-0` exponent, is refused by exactly its named schema or semantic check. | Test (TC-233) |
 
 ## Dependencies
