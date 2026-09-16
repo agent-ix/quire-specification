@@ -93,7 +93,8 @@ refuses, while `toward-zero`, `toward-positive`, `toward-negative`,
 `nearest-even` and `nearest-away` produce a coefficient at scale `T`. Nearest
 modes compare twice the discarded magnitude to one target unit; ties choose an
 even coefficient or the greater absolute coefficient respectively. Every result
-is normalized after any rounding step and then checked for membership; a
+is kept at its retained representation (`v × 10^T`, `T`) after any rounding
+step and then checked for membership by value; a
 nonmember refuses with no value and is never re-rounded to a coarser scale,
 clamped or widened.
 

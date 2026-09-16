@@ -167,7 +167,7 @@ denied charge, and `next_charge` (a nonnegative mathematical integer that may
 exceed `u64::MAX`) is its semantic-size amount or cumulative addition. For the
 `equality.plan` availability check, `next_charge` is the unavailable
 reservation: `pair_events + 2` for `work_units` or one for `result_units`;
-its canonical vector belongs to TC-194 (QSL #119), not to TC-185 or TC-192. A
+its canonical vector is TC-194 E23. A
 denied charge changes no counter. An injected denial is not a counter
 exhaustion: it is reported as defined under
 [Qualification seam](#qualification-seam), as if the `work_units` limit were
