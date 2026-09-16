@@ -38,7 +38,7 @@
       "identity": "quire.rule.fr-142/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-142-evaluate-quantities-and-units.md",
-      "sha256": "46e5df241b97671fd2fc6fb37d92e22eb347b2b7821906c3abacc55852001049"
+      "sha256": "7eb40d7fbaea7ac5e28720ccb2bbc08595f84028bbcdcaa8998e72538a806a05"
     },
     {
       "identity": "quire.rule.fr-147/v1",
@@ -56,7 +56,7 @@
       "identity": "quire.rule.fr-149/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-149-apply-complete-equality-matrix.md",
-      "sha256": "3402f1f852739978bd763fd559c120cb5a0f6c3eff3b5238500a26fdcffa821f"
+      "sha256": "ab5e57ea2d2af16e4b61c26214e46201956ac0f5d670e7b530683635f67db801"
     }
   ]
 }

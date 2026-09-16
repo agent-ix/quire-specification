@@ -90,7 +90,8 @@ charge, in this order, where the first match wins: incompatible dimensions
 (unequal dimension nodes for direct declared-to-declared conversion, otherwise
 unequal normalized base-dimension maps where an operation requires equal
 dimensions); affine-unit arithmetic; and distinct units where an operation
-requires the identical unit. Each returns `refused { code: ill_typed }`.
+requires the identical unit. Each returns `refused { code: ill_typed }`; this
+order is informative only and has no observable outcome difference.
 Addition, subtraction, equality and ordering (`==`, `!=`, `<`, `<=`, `>`,
 `>=`) require the identical unit. After the operand identity reads, evaluation
 decides the runtime conditions in this order, where the first match wins: a
@@ -102,10 +103,12 @@ root-to-target path, with no common-ancestor shortcut, and has no operation
 event of its own; a compound side contributes no edge. Addition and subtraction
 of the identical unit traverse no edge, and their operation event is computed
 in that unit. Multiplication, division and integer power traverse the left and
-then the right operand's root path before their operation event. Equality and
-ordering share one schedule: both operands are mapped along their root paths,
+then the right operand's root path before their operation event. Top-level quantity equality and
+ordering expressions share one schedule: both operands are mapped along their root paths,
 left then right, and compared by exact root value, so an affine unit or a
-negative composed scale compares by root value. Quantity comparison between
+negative composed scale compares by root value. A quantity leaf inside an FR-149 composite
+equality plan is compared by exact value in its identical unit and charges only
+its `equality.pair`. Quantity comparison between
 distinct units requires an explicit prior conversion.
 
 Base-dimension and unit identities are opaque I04 checked-semantic-graph node

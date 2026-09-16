@@ -148,10 +148,16 @@ membership, which charges nothing, refuses after `unit.target-domain` and
 before `unit.result-retain`. Decimal and integer targets charge no `decimal.*`
 or `integer-*` point.
 
-Quantity equality and ordering between two operands of the identical unit use
-that schedule with no operation event and no `unit.target-domain`, then
-`unit.result-retain` with `occ(result) = 1`, and compare exact root values.
-They charge no `equality.*` point.
+A top-level quantity `==`, `!=`, `<`, `<=`, `>` or `>=` expression between two
+operands of the identical unit uses that schedule with no operation event and
+no `unit.target-domain`, then `unit.result-retain` with `occ(result) = 1`, and
+compares exact root values; it charges no `equality.*` point. A quantity leaf
+inside an FR-149 equality plan is instead compared by exact value in its
+identical unit and charges only its planned `equality.pair`, like every other
+scalar leaf, with no `unit.*` read, edge or event. The FR-142 order among the
+static quantity refusals is informative only: every static cause returns the
+same `refused { code: ill_typed }` with no charge, so the order has no
+observable outcome difference.
 
 IEEE applicability is also representation-independent. Equality, `totalOrder`
 and bit identity charge only `ieee.operands` and `ieee.result-retain`. An
