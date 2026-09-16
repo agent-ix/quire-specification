@@ -183,7 +183,20 @@ source `(c, s)` converted to `Rational[..]` charges `decimal.operands` on
 and `decimal_digits=max(digits(c),s+1)`; and `decimal.result-retain` with
 `integer_bits=maxparts` of the materialized reduced rational `c/10^s`,
 `value_occurrences=1` and `result_units += 1`. Every amount before retention is
-derived from operand sizes, and none of these conversions has a rounding step. Every other admitted equality conversion keeps the source
+derived from operand sizes, and none of these conversions has a rounding step.
+An explicit conversion of a `Rational[n1,n2;d1,d2]` source with `d2 > 1`, value
+reduced `n/d`, to `Decimal[c1,c2;s1,s2;m]` is decimal division of `(n, 0)` by
+`(d, 0)` into target scale `T = s2` with rounding mode `m`, whatever `d` is at
+run time. It charges the decimal division schedule: `decimal.operands` with
+`integer_bits=max(bits(n),bits(d))`, `decimal_digits=max(digits(n),digits(d))`
+and `value_occurrences=2`; `decimal.scale-expansion` with `scale_expansion=T`,
+`integer_bits=sbits(n,T)` and `decimal_digits=sdigits(n,T)`;
+`decimal.arithmetic` with `integer_bits=max(sbits(n,T),bits(d))` and
+`decimal_digits=max(sdigits(n,T),digits(d))` for the exact `N/D = (n × 10^T)/d`;
+`decimal.rounding` exactly when that division has a rounding step and `m` is not
+`exact`; and `decimal.result-retain` at scale `T`. Its divisor is never zero,
+strict `exact` at a rounding step is refused after `decimal.arithmetic`, and
+membership is decided before `decimal.result-retain`. Every other admitted equality conversion keeps the source
 magnitude and has no charge point. Record and tuple construction charges
 `composite.result-retain` after its last field or argument, and its field
 expressions and calls charge their own points. Integer `+`, `-`, `*` and unary

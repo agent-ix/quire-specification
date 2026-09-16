@@ -704,6 +704,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-140 | FR-140-AC-4 | TC-185 | planned |
 | FR-140 | FR-140-AC-5 | TC-185 | planned |
 | FR-140 | FR-140-AC-6 | TC-185 | planned |
+| FR-140 | FR-140-AC-7 | TC-185 | planned |
 | FR-141 | FR-141-AC-4 | TC-186 | planned |
 | FR-141 | FR-141-AC-5 | TC-186 | planned |
 | FR-141 | FR-141-AC-6 | TC-186 | planned |
@@ -737,6 +738,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-146 | FR-146-AC-6 | TC-191 | planned |
 | FR-146 | FR-146-AC-7 | TC-191 | planned |
 | FR-146 | FR-146-AC-8 | TC-191 | planned |
+| FR-146 | FR-146-AC-9 | TC-191 | planned |
 | FR-147 | FR-147-AC-4 | TC-192 | planned |
 | FR-147 | FR-147-AC-5 | TC-192 | planned |
 | FR-147 | FR-147-AC-6 | TC-192 | planned |
@@ -752,6 +754,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-149 | FR-149-AC-9 | TC-194 | planned |
 | FR-149 | FR-149-AC-10 | TC-194 | planned |
 | FR-149 | FR-149-AC-11 | TC-194 | planned |
+| FR-149 | FR-149-AC-13 | TC-194 | planned |
 | FR-150 | FR-150-AC-4 | TC-195 | planned |
 | FR-150 | FR-150-AC-5 | TC-195 | planned |
 | FR-151 | FR-151-AC-4 | TC-196 | planned |

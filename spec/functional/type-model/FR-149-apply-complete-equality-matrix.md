@@ -72,6 +72,13 @@ checking returns `refused { code: ill_typed }`; it never produces Boolean
 `false`. Conversion creates a comparison value but
 does not rewrite the source value's declaration or object identity.
 
+The same holds for ordering. The grammar's `<`, `<=`, `>` and `>=` with a
+`Float32` or `Float64` operand select no IEEE predicate and are
+`refused { code: ill_typed, cause: operator-ineligible }` before any charge;
+no signaling or quiet IEEE comparison is selected. Floats are ordered only by
+the explicitly called FR-148 `quire::value::ieee::totalOrder` intrinsic
+(operation `quire.op.ieee.total_order`).
+
 ## Selected schedules
 
 The grammar's comparison operators `=` and `!=` select one schedule from the
@@ -207,6 +214,7 @@ collection and object-reference rows of this requirement.
 | FR-149-AC-10 | Exactly the tabled equality conversions are admitted from declared bounds, every other conversion operand of `=` or `!=` is `ill_typed` before any charge even when the value fits, and admitted decimal and rational conversions charge their decimal schedule. | Test (TC-194) |
 | FR-149-AC-11 | Plan pair counts follow the structural-mismatch, keyed-rank and cardinality short-circuit rules exactly, every plan walk is charged by `equality.plan-form` before it happens, and a foreign-universe reference pair refuses after that charge and before `equality.plan`. | Test (TC-194) |
 | FR-149-AC-12 | Under `quire.model.complete/v1`, `Reference<Sub>` compares with `Reference<Super>` through the upcast row with no charge and unchanged identity, and a non-conforming reference pair is `ill_typed`. | Test (TC-198) |
+| FR-149-AC-13 | `<`, `<=`, `>` and `>=` with a `Float32` or `Float64` operand are `ill_typed` with cause `operator-ineligible` before any charge, while `totalOrder` orders the same operands. | Test (TC-194) |
 
 ## Dependencies
 

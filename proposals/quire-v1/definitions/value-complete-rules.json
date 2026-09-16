@@ -26,7 +26,7 @@
       "identity": "quire.rule.fr-140/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-140-evaluate-exact-decimals.md",
-      "sha256": "b9b079afa8e16e11c850937b60e7c887c71de51342a9eb083cee178bf8fd1e3e"
+      "sha256": "52132127c0afb1683bd7eba86472e6ba343cc3de595c46cf40bed85e4dc71733"
     },
     {
       "identity": "quire.rule.fr-141/v1",
@@ -56,7 +56,7 @@
       "identity": "quire.rule.fr-149/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-149-apply-complete-equality-matrix.md",
-      "sha256": "a70f5aad5af665940099c4469eb99e1c35445f81f1558cc2cd42e5b4776b250e"
+      "sha256": "93817f54b39c80918f2f14de130d8ab483d746bdea6bf719c35a98120714cf48"
     }
   ]
 }
