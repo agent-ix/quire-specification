@@ -9,6 +9,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-044
     type: references
+  - target: ix://agent-ix/quire-specification/AD-005
+    type: references
 ---
 
 # FR-147: Evaluate mathematical and bounded integer division
@@ -20,12 +22,14 @@ apply its exact profile-declared quotient/remainder law and result domain.
 
 ## Inputs
 
-Integer type, operands, selected Euclidean or truncating division profile and
+Integer type, operands, selected Euclidean, floor or truncating division profile and
 consumer-domain bounds.
 
 ## Outputs
 
-Exact quotient/remainder values or typed zero/domain/refusal outcomes.
+A completed exact quotient/remainder pair, or an undefined, refused or
+incomplete evaluator outcome. I13 `requires-bound` remains a separate provider
+negotiation disposition.
 
 ## Behavior
 
@@ -51,15 +55,28 @@ Mathematical-integer evaluation has no overflow. A bounded consumer checks the
 membership of both results, including the signed minimum divided by negative
 one case, before it exposes either value.
 
+The checked package retains exactly one of
+`quire.value.integer-division.truncating/v1`,
+`quire.value.integer-division.floor/v1` or
+`quire.value.integer-division.euclidean/v1` for `div`/`rem`; absence or multiple
+selections refuses semantic admission. `mod` always selects Euclidean remainder.
+The paired quotient/remainder is admitted atomically. Before evaluation, a
+finite I13 consumer without complete operand, intermediate and result bounds
+returns the per-item `requires-bound` negotiation disposition without narrowing
+mathematical integers. That provider disposition is not an evaluator outcome.
+Evaluation uses the named integer-division charges and counters from
+`quire.value.accounting/v1`; it never publishes only one member of the pair.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-147-AC-1 | Positive and negative operand vectors satisfy the selected quotient/remainder identity exactly. | Test (TC-192) |
-| FR-147-AC-2 | Division by zero refuses definedness and produces no numeric value. | Test (TC-192) |
-| FR-147-AC-3 | A finite backend lacking a complete derived domain returns requires-bound instead of narrowing mathematical integers. | Test (TC-192) |
+| FR-147-AC-2 | Division by zero is undefined and produces no numeric value. | Test (TC-192) |
+| FR-147-AC-3 | I13 negotiation for a finite backend lacking a complete derived domain returns `requires-bound` instead of invoking evaluation or narrowing mathematical integers. | Test (TC-192) |
 | FR-147-AC-4 | Positive and negative dividend/divisor vectors distinguish truncating, floor and Euclidean results while preserving `a = b*q + r`. | Test (TC-192) |
-| FR-147-AC-5 | `mod` under a non-Euclidean profile and every zero divisor refuse without emitting a quotient or remainder. | Test (TC-192) |
+| FR-147-AC-5 | `mod` returns the Euclidean remainder independently of the selected `div`/`rem` law; an attempted explicit non-Euclidean `mod` selection is refused, while every zero divisor is undefined, without emitting a quotient or remainder. | Test (TC-192) |
+| FR-147-AC-6 | Exact-bound accounting succeeds and denial of a named next integer-division charge returns incomplete without either quotient or remainder. | Test (TC-192) |
 
 ## Dependencies
 

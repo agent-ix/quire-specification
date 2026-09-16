@@ -44,11 +44,20 @@ source maps. Every node carries its schema version, semantic type and stable
 node identity; references are by identity, never array position. Lowering is
 per requested item and returns exactly one of `lowered`, `unsupported`,
 `requires_bound`, `invalid_input` or `failed`. A lowered item includes all
-reachable dependencies and a canonical semantic digest. An I04 reader refuses
-an unknown member or node tag before admitting a v1 package. A transport relay
+reachable dependencies and a canonical semantic digest. The complete-V1
+lowerer consumes an admitted `quire.checked-package/v2` package through the I04
+V2 reader and requires the nominal identity evidence carried by that contract.
+The V2 reader refuses an unknown member or node tag before admission. A transport
+relay
 may retain the raw bytes of a separately selected future graph revision, but a
 lowerer that does not declare that revision refuses it before lowering; raw
 retention is not admission or a substitute node.
+
+The frozen V1 reader and public Rust types remain a compatibility surface. They
+are not the complete-V1 lowerer input and are never widened with V2 members. A
+V1 package reaches the V2 lowerer only through I04's explicit re-link/re-check
+migration, which returns a distinct V2 package plus typed package/node
+correspondence; V1 bytes alone are insufficient.
 
 ## Acceptance Criteria
 
@@ -65,7 +74,8 @@ retention is not admission or a substitute node.
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
   source form used by this requirement.
 - [I04 CheckedPackage contract](../../objects/interfaces/FR-322-checked-package-artifact.md)
-  owns the frozen public checked semantic input and its strict reader boundary.
+  owns the V2 complete-V1 checked semantic input, the frozen V1 compatibility
+  path and their strict version-specific reader/migration boundaries.
 - [Subsystem and interface index](../../subsystems/index.md) identifies the
   typed producer/consumer boundary and dependency direction.
 - Every requirement linked in frontmatter is a normative prerequisite.
