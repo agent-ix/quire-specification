@@ -114,6 +114,7 @@ checks and result retention use the named points in
 | FR-142-AC-5 | Exact affine conversion composes through the unique canonical root; invalid unit-graph topology, zero scale or affine arithmetic refuses. | Test (TC-187) |
 | FR-142-AC-6 | Multiplication, division and integer power produce the exact value in the canonical compound-unit identity, including dimensionless cancellation. | Test (TC-187) |
 | FR-142-AC-7 | Exact-bound accounting succeeds and denial of a named next unit charge returns incomplete without a partial quantity or compound identity. | Test (TC-187) |
+| FR-142-AC-8 | The published `quire.value.compound-unit/v1` schema and vectors fix the compound-unit identity preimage: each vector is schema-valid, its RFC 8785 JCS SHA-256 equals its recorded identity, and its terms name admitted root-unit node keys with nonzero exponents in strictly ascending key order; each authored stale-key mutation changes the identity and each authored noncanonical mutation, including a `-0` exponent, is refused by exactly its named schema or semantic check. | Test (TC-233) |
 
 ## Dependencies
 

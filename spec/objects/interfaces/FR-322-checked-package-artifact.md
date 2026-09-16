@@ -136,9 +136,17 @@ The migration result is the closed `MigrationOutcome` sum: exactly
 offending reconstruction input and, for a source, its authority and identity.
 The refusal code vocabulary is exactly, in evaluation order,
 `migration_byte_only_reconstruction` (no reconstruction inputs; only V1 bytes),
-`migration_input_missing`, `migration_input_ambiguous`,
-`migration_input_stale` and `migration_target_incompatible`; the first failing
-check is reported and no other code exists.
+`migration_input_missing` (an absent input member, an empty source list or any
+V1-locked source absent), `migration_input_ambiguous`,
+`migration_input_stale` and `migration_target_incompatible`. Every check of one
+cause precedes every check of the next, so an absent locked source is reported
+as missing even when another supplied source is ambiguous or stale; the first
+failing check is reported and no other code exists.
+
+The QSpec qualification crate proves only the published schemas, vectors and
+receipt classification (FR-322-AC-13 through AC-16). The reader, linker and
+lowering criteria remain owned by the Contract IR and QSL producer evidence
+named by TC-217.
 
 ## Acceptance Criteria
 
@@ -156,6 +164,10 @@ check is reported and no other code exists.
 | FR-322-AC-10 | Enum, dimension and declared-unit node keys match the closed JCS preimage vectors; stale-body keys, non-normalized rationals, invalid owner joins and noncanonical member/term order refuse as `invalid_semantic_graph`. | Test (TC-217) |
 | FR-322-AC-11 | The published V1 schema and vectors remain byte-for-byte unchanged; V1 refuses V2 members/version and V2 refuses V1 rather than silently upgrading either closed wire. | Test (TC-217) |
 | FR-322-AC-12 | V1-to-V2 migration re-links and re-checks exact authoritative reconstruction inputs and returns the closed `MigrationOutcome`: `relinked` with a total typed node correspondence whose basis is `relinked-identical` exactly when node digests are equal, or `refused` with exactly one of `migration_input_missing`, `migration_input_stale`, `migration_input_ambiguous`, `migration_target_incompatible` or `migration_byte_only_reconstruction` and its typed subject, without exposing a V2 package. | Test (TC-217) |
+| FR-322-AC-13 | Each published checked-package schema admits its positive fixture carrying all 13 closed node tags with an exact source-map entry for every occurrence and refuses each authored version, digest-domain and node mutation; the frozen V1 publication bytes match independent SHA-256 locks, each schema refuses the other version, and a consistently relabelled V1 graph fails the V2 schema. | Test (TC-233) |
+| FR-322-AC-14 | Each published package fixture's `package_id` equals the RFC 8785 JCS SHA-256 of the identity preimage rebuilt from its lock selections and occurrence-free semantic graph; editing a source-map region, node source occurrence, raw source digest, capability disposition or diagnostic catalog leaves that id unchanged, while editing the edition, a profile/definition/model/dependency selection, a required feature, a node member or node order changes it. | Test (TC-233) |
+| FR-322-AC-15 | Each published enum, dimension and declared-unit node vector validates against the closed preimage schema and recomputes its recorded JCS SHA-256; each authored semantic mutation is refused by exactly its named schema or semantic check, an absent owner fails the package lock join, and inside the published nominal package a retained preimage with a changed body, type, dependency or unjoined owner is refused by the published cross-field or owner-join constraint. | Test (TC-233) |
+| FR-322-AC-16 | The published migration schema admits exactly the closed `MigrationOutcome` forms; each published relinked receipt is total and ordered with basis `relinked-identical` exactly when node digests are equal, and each published refusal receipt classifies to its recorded code and subject as the first failing check in the order byte-only, missing, ambiguous, stale, target. | Test (TC-233) |
 
 ## Dependencies
 

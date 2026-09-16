@@ -14,8 +14,9 @@
   ],
   "invalid_mutations": [
     {"name":"stale-digest","kind":"stale_key","base":"metre-per-second","patch":[{"op":"replace","path":"/terms/1/exponent","value":"-2"}],"retained_sha256":"e3a86a65aab148c97241ee4c6c11ee3511141db549ef658552ea6ea9045b4545"},
-    {"name":"zero-exponent","kind":"semantic","base":"metre-per-second","patch":[{"op":"replace","path":"/terms/1/exponent","value":"0"}],"retained_sha256":"e3a86a65aab148c97241ee4c6c11ee3511141db549ef658552ea6ea9045b4545"},
-    {"name":"duplicate-term","kind":"semantic","base":"metre-per-second","patch":[{"op":"replace","path":"/terms/1/unit_node_id","value":{"domain":"quire.checked-semantic-node/v1","digest":"79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"}}],"retained_sha256":"e3a86a65aab148c97241ee4c6c11ee3511141db549ef658552ea6ea9045b4545"},
-    {"name":"unsorted-terms","kind":"semantic","base":"metre-per-second","patch":[{"op":"move","from":"/terms/0","path":"/terms/1"}],"retained_sha256":"e3a86a65aab148c97241ee4c6c11ee3511141db549ef658552ea6ea9045b4545"}
+    {"name":"zero-exponent","kind":"semantic","refused_by":"semantic","base":"metre-per-second","patch":[{"op":"replace","path":"/terms/1/exponent","value":"0"}],"retained_sha256":"e3a86a65aab148c97241ee4c6c11ee3511141db549ef658552ea6ea9045b4545"},
+    {"name":"duplicate-term","kind":"semantic","refused_by":"semantic","base":"metre-per-second","patch":[{"op":"replace","path":"/terms/1/unit_node_id","value":{"domain":"quire.checked-semantic-node/v1","digest":"79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"}}],"retained_sha256":"e3a86a65aab148c97241ee4c6c11ee3511141db549ef658552ea6ea9045b4545"},
+    {"name":"unsorted-terms","kind":"semantic","refused_by":"semantic","base":"metre-per-second","patch":[{"op":"move","from":"/terms/0","path":"/terms/1"}],"retained_sha256":"e3a86a65aab148c97241ee4c6c11ee3511141db549ef658552ea6ea9045b4545"},
+    {"name":"negative-zero-exponent","kind":"semantic","refused_by":"schema","base":"metre-per-second","patch":[{"op":"replace","path":"/terms/1/exponent","value":"-0"}],"retained_sha256":"e3a86a65aab148c97241ee4c6c11ee3511141db549ef658552ea6ea9045b4545"}
   ]
 }

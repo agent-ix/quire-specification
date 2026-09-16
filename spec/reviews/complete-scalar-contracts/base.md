@@ -35,7 +35,9 @@ evidence.
 ## Verification
 
 Native `quoin 0.23.1-87-gb3d02d4 validate --repo . --strict` reports no
-findings. The local Rust qualification suite passes all 24 tests, including the
+findings. The local Rust qualification suite passes all 26 tests, including the
 exact definition lock, frozen-V1 byte locks, migration correspondence,
-rule-manifest, compound-unit and node-preimage vectors.
-Matrix rows remain `planned`.
+package-identity invariance, package-domain separation, rule-manifest,
+compound-unit and node-preimage vectors. Those tests trace producer-side
+TC-233 criteria only (no TC-231 or FR-311 corpus row); reader, linker, lowerer and evaluator rows
+under TC-217 and TC-187 remain unbacked. Matrix rows remain `planned`.

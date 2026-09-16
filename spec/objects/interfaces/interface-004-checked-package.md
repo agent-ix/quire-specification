@@ -93,13 +93,13 @@ reconstruction `input` (`reconstruction_inputs`, `sources`, `edition`,
 `profile_selections`, `definition_selections`, `model_selections`,
 `dependency_selections` or `target_package_id`) plus, for a source, its
 authority and identity. The refusal `code` vocabulary is closed and each cause
-has exactly one code; a migrator evaluates them in this order and reports the
-first:
+has exactly one code; a migrator evaluates them in this order, completing every
+check of one cause before any check of the next, and reports the first:
 
 | Code | Cause |
 | --- | --- |
 | `migration_byte_only_reconstruction` | Only V1 checked-package bytes are supplied; no reconstruction inputs exist. |
-| `migration_input_missing` | A reconstruction input member or a V1-locked source is absent. |
+| `migration_input_missing` | A reconstruction input member is absent, the source list is empty, or any V1-locked source is absent. |
 | `migration_input_ambiguous` | Two supplied sources share authority and identity. |
 | `migration_input_stale` | A supplied input differs from the exact V1 lock selection. |
 | `migration_target_incompatible` | The re-linked result is not the named V2 target package. |

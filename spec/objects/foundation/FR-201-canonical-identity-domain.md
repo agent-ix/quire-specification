@@ -98,7 +98,8 @@ preimage belongs to the requirement that selects it.
 | FR-201-AC-3 | A digest with an absent domain compares only to absence and receives no default member. | Analysis |
 | FR-201-AC-4 | A lock-file digest does not satisfy a comparison expecting a package fingerprint. | Analysis |
 | FR-201-AC-5 | Equal digest bytes under `quire.package.semantic/v1` and `quire.package.semantic/v2` compare unequal; a reader selects the exact version and never relabels one as the other. | Test (TC-217) |
-| FR-201-AC-6 | The complete-value definition lock closes every qualification-catalog artifact by identity, revision, `quire.definition.bytes/v1` digest domain and raw-byte digest, and its conditional and alternative package selection is exact: each catalog entry occupies one always, trigger-conditional or exactly-one slot under the closed triggers `text_bearing`, `ieee_operation` and `integer_div_rem`. | Test (TC-231) |
+| FR-201-AC-6 | The complete-value definition lock closes every qualification-catalog artifact by identity, revision, `quire.definition.bytes/v1` digest domain and raw-byte digest, and its conditional and alternative package selection is exact: each catalog entry occupies one always, trigger-conditional or exactly-one slot under the closed triggers `text_bearing`, `ieee_operation` and `integer_div_rem`. | Test (TC-233) |
+| FR-201-AC-7 | The published checked-package contracts key a package identity by domain and digest: equal digest bytes under `quire.package.semantic/v1` and `quire.package.semantic/v2` form unequal keys, the frozen V1 and the V2 package schemas each refuse their own digest bytes under the other package domain, and the migration receipt schema refuses a source or target key relabelled to the other domain. | Test (TC-233) |
 
 ## Dependencies
 

@@ -17,7 +17,7 @@
   },
   "package_id": {"domain":"quire.package.semantic/v1","algorithm":"sha256","digest":"961bc8ba63e51481ea0e43c7b65af331c3a244722d099554b82874f932491275"},
   "lock": {
-    "sources": [{"authority":"agent-ix","identity":"example","revision":{"namespace":"git","value":"1"},"digest_domain":"quire.source.bytes/v1","digest":"2222222222222222222222222222222222222222222222222222222222222222"}],
+    "sources": [{"authority":"agent-ix","identity":"example","revision":{"namespace":"git","value":"1"},"digest_domain":"quire.source.bytes/v1","digest":"2222222222222222222222222222222222222222222222222222222222222222"},{"authority":"agent-ix","identity":"example-units","revision":{"namespace":"git","value":"1"},"digest_domain":"quire.source.bytes/v1","digest":"6666666666666666666666666666666666666666666666666666666666666666"}],
     "edition": {"role":"edition","definition":{"authority":"agent-ix","identity":"quire-edition","revision":{"namespace":"semver","value":"1"},"digest_domain":"quire.definition.bytes/v1","digest":"1111111111111111111111111111111111111111111111111111111111111111"}},
     "profile_selections": [],
     "definition_selections": [{"authority":"agent-ix","identity":"example-model","revision":{"namespace":"git","value":"1"},"digest_domain":"quire.definition.bytes/v1","digest":"4444444444444444444444444444444444444444444444444444444444444444"}],
