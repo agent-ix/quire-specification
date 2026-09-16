@@ -32,7 +32,7 @@ material here, not an adopted selection.
 | Property | Source | Note |
 | --- | --- | --- |
 | Interpretation identity | Proposed catalog, header | "Interpretation identity: `quire.native.diagnostics/v1`". |
-| Revision | Proposed catalog, header | "revision: `1-draft.2`". |
+| Revision | Proposed catalog, header | "revision: `1-draft.3`". |
 | Byte digest | Proposed catalog, "Selection and compatibility" | The response "selects this catalog's exact identity, revision and byte digest". |
 | Selected inventory | Proposed catalog, selected-inventory table | Named immutable sources pinned by revision and "SHA-256 of file bytes"; "Only `Code::as_str()`'s spellings and the code/meaning table are selected". |
 | Code vocabulary | [FR-271](FR-271-diagnostic-code-vocabulary.md) | The catalogued code spellings. |
