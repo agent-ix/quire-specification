@@ -22,9 +22,10 @@ Selected definition identity or a located unsupported-profile diagnostic.
 
 ## Behavior
 
-The adopted historical implementation target is `ix:native`, edition `0-draft`,
-`state-finite/0-draft`, bound to the definitions adopted at e897f81. Grammar
-admission remains distinct from successful typing, execution and backend support.
+The implementation target is `ix:native`, edition `0-draft`,
+`state-finite/0-draft`, defined by the `proposals/state-core` profile and rule
+files whose bytes the fixtures pin (`typing-cases.json`, `reference-cases.json`
+and `SHA256SUMS`). Grammar admission remains distinct from successful typing, execution and backend support.
 
 FS01 accepts `Quire` as the product/language name, `native Quire` as its
 descriptive source-language name and `ix:native` as its stable machine identity.

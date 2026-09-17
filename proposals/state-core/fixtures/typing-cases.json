@@ -10,7 +10,7 @@
   "baseProfile": {
     "identity": "state-finite",
     "version": "0-draft",
-    "definitionDigest": "sha256:c01704a4db3e56f1bc492d77c9135b0355443d3cfd348a35756ab402f93d4bbc",
+    "definitionDigest": "sha256:c9bf08f925104499f3a4a983e8a788ad5df9076f5331061a53d778f1e8fad6c6",
     "refinementsAccepted": false
   },
   "modelBinding": {

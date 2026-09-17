@@ -22,7 +22,8 @@ field unchanged. Then mutate unknown kind, extra member, missing member,
 envelope version and artifact version individually. For exact property, subject
 (a source ArtifactRef), binding, dependency-closure and run-artifact references,
 mutate authority, identity, revision namespace/value, digest, wire identity/version
-one at a time. Check the original adopted schema/fixtures against e897f81 and
+one at a time. Verify the `proposals/state-core` schema and fixtures against their pinned
+digests and
 submit each added role under the previous closed schema.
 
 ## Expected Results
