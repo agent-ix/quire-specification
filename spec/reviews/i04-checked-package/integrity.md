@@ -1,9 +1,9 @@
 ---
 id: SR-582
-title: "Integrity review of I04 CheckedPackage V1"
+title: "Integrity review of I04 CheckedPackage V2"
 type: SpecReview
 analysis: integrity
-scope: "FR-322, FR-195, FR-201, TC-217, checked-package-v1"
+scope: "FR-322, FR-195, FR-201, TC-217, checked-package-v2"
 review_set: all
 ---
 ## Summary
