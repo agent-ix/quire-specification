@@ -24,10 +24,11 @@ Selected definition identity or a located unsupported-profile diagnostic.
 
 The implementation target is `ix:native`, edition `0-draft`,
 `state-finite/0-draft`, defined by the `proposals/state-core` definition and
-schema files whose bytes `proposals/state-core/SHA256SUMS` pins; the fixtures
-pin those bytes as well (`typing-cases.json`, `reference-cases.json` and
-`fixtures/SHA256SUMS`). Grammar admission remains distinct from successful
-typing, execution and backend support.
+schema files whose bytes `proposals/state-core/SHA256SUMS` pins.
+`typing-cases.json` and `reference-cases.json` also pin `profile.md`,
+`typing-cases.json` pins `state-semantics.md`, and `fixtures/SHA256SUMS` pins
+the fixture bytes. Grammar admission remains distinct from successful typing,
+execution and backend support.
 
 FS01 accepts `Quire` as the product/language name, `native Quire` as its
 descriptive source-language name and `ix:native` as its stable machine identity.
