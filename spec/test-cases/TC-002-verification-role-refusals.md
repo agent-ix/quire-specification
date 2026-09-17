@@ -32,5 +32,5 @@ Valid nearby kinds still refuse intended-role matching with identity-mismatch.
 Malformed shapes refuse invalid-wire and unsupported selections refuse their
 version/kind interpretation. Every exact-reference mutation fails equality;
 changing a digest without changing bytes additionally fails byte verification.
-The original adopted packet is unchanged and its schema rejects the added kinds.
+The state-core packet matches its pinned digests and its 1-draft schema rejects the added kinds.
 No failed selection returns a partially accepted reference.

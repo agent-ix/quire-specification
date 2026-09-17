@@ -21,18 +21,18 @@ When a definition or wire contract changes, the standard shall retain the identi
 
 ## Scope
 
-Historical fixture and canonical bytes; explicit definition/mapping adoption.
+Fixture and canonical bytes pinned by digest; explicit definition/mapping adoption.
 
 ## Measurement and Evaluation
 
 | Metric | Target | Threshold | Method |
 | --- | --- | --- | --- |
-| Historical golden byte drift | 0 changed bytes | 0 changed bytes | Byte comparison |
+| Pinned digest mismatches | 0 | 0 | Byte comparison |
 | Unmapped cross-version equivalence grants | 0 | 0 | Adverse consumer tests |
 
 ## Verification
 
-Compare selected historical fixtures before and after the amendment. Exercise changed profile, dependency, wire and canonical-domain controls under independent consumers.
+Verify the `proposals/state-core` definition and fixture bytes against the digests pinned in `typing-cases.json`, `reference-cases.json` and `SHA256SUMS`. Exercise changed profile, dependency, wire and canonical-domain controls under independent consumers.
 
 ## Dependencies
 
@@ -43,6 +43,6 @@ Compare selected historical fixtures before and after the amendment. Exercise ch
 
 ## Status
 
-Accepted by FS05 for versioned interchange and explicit migration. Historical
-fixture and canonical bytes remain immutable; executable evidence stays in its
+Accepted by FS05 for versioned interchange and explicit migration. Fixture and
+canonical bytes match their pinned digests; executable evidence stays in its
 own matrices.
