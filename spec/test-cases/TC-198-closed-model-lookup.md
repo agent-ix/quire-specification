@@ -26,8 +26,10 @@ profile alias `V`: object universe `U` = `91320bde`, effective types
 `A` = `3b79bb92` and `B` = `9c1ce45c`. Because `3b79bb92` precedes `9c1ce45c`,
 every `A` member precedes every `B` member in reference-key order.
 
-F1 also declares population **PA**, from artifact `population-001`, with member
-types `[A, B]` and extent `closed`. A runtime member record names its object
+F1 also declares population **PA**, from artifact `PA` with IR node identity
+`ix://test/orders/PA`, whose construct meaning is
+`quire.meaning.model.population/v1`, with member types `[A, B]` and extent
+`closed`. A runtime member record names its object
 identity and the declaration key of its most-specific type.
 
 Population binding `p` has role `population`, anchor `current`, declared

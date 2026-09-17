@@ -21,16 +21,16 @@ relationships:
 
 ## Description
 
-When model intake binds a semantic IR type definition, the binder SHALL select
-the declaration's Quire meaning by the exact `meaning` id of the definition's
-embedded construct, as listed in this vocabulary, and SHALL NOT select it by the
+When model intake binds a semantic IR type definition or population node, the
+binder SHALL select the declaration's Quire meaning by the exact `meaning` id of
+the node's embedded construct, as listed in this vocabulary, and SHALL NOT select it by the
 definition's kind name or module.
 
 QSpec owns every Quire meaning id and its spelling. A module names one of these
 ids in the `meaning` of each construct it declares. A semantic IR 2.0.0 domain
 package (agent-ix/filament-core-data#172) embeds that construct in its
-`constructs` table, and each type definition's `kind` is `{module, name}`,
-naming its construct.
+`constructs` table, and each type definition's and population node's `kind` is
+`{module, name}`, naming its construct.
 
 ## Values
 
@@ -47,8 +47,8 @@ naming its construct.
 | `quire.meaning.systems.allocation/v1` | A systems Allocation: a source element (Part, Port or operation) and a target Part (FR-152). |
 
 The systems meanings are exactly the five `quire.meaning.systems.*` values.
-Fields, relationships, operations and clauses are members of a construct, not
-constructs, and carry no meaning id of their own.
+Fields, relationships, operations and clauses are members and carry no meaning
+id.
 
 ## Identity and comparison
 
@@ -60,7 +60,7 @@ constructs, and carry no meaning id of their own.
   It carries no precedence between meanings.
 - **Absence** — a construct with no `meaning`, or with a `meaning` that is not
   a value of this vocabulary, has no Quire meaning. Model intake refuses its
-  type definitions (FR-154); it never infers a meaning from the kind name,
+  type definitions and population nodes (FR-154); it never infers a meaning from the kind name,
   the module, the shape or the members.
 - **Kind names** — a kind name is module data. Two kinds with one name in
   different modules, or one kind named like a meaning, carry only the meaning
@@ -74,7 +74,7 @@ constructs, and carry no meaning id of their own.
 | --- | --- | --- |
 | FR-208-AC-1 | Each member's value equals the exact label string in the table, and every meaning id that FR-150 through FR-154 bind is a member. | Inspection |
 | FR-208-AC-2 | A type definition whose construct names a systems meaning binds to that systems kind whatever its kind name, and a type definition whose kind name is `port` but whose construct names no systems meaning binds to no systems kind. | Test (TC-197) |
-| FR-208-AC-3 | A type definition whose construct has no `meaning`, or names a label outside this vocabulary, is refused at intake and receives no default meaning. | Test (TC-234) |
+| FR-208-AC-3 | A type definition or population node whose construct has no `meaning`, or names a label outside this vocabulary, is refused at intake and receives no default meaning. | Test (TC-234) |
 
 ## Dependencies
 
