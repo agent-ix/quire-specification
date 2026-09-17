@@ -5,6 +5,8 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-152
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-208
+    type: verifies
 ---
 
 # TC-197: Systems-model typed binding
@@ -23,8 +25,12 @@ DefinitionRefs in
 Node names, declaration keys, package identity, multiplicity notation and
 default limits follow TC-195 and TC-196; the source is TC-195 S1 importing Y,
 with profile alias `V` and model alias `M`. A binder request is written
-`resolve(kind, name)`. Each systems node is declared by one artifact of its
-kind: `part`, `port`, `interface`, `connection` or `allocation`.
+`resolve(kind, name)`. Each systems node is declared by one artifact, and its
+type definition's kind names a `constructs` entry whose `meaning` is
+`quire.meaning.systems.part/v1`, `quire.meaning.systems.port/v1`,
+`quire.meaning.systems.interface/v1`, `quire.meaning.systems.connection/v1` or
+`quire.meaning.systems.allocation/v1`; every object type's construct meaning is
+`quire.meaning.model.object-type/v1`.
 
 Fixture **Y** (domain package `test/orders`, version `y`):
 
@@ -69,6 +75,8 @@ member owned by `Pump`.
 | Y07 | Over Q, `self.parts` in `invariant I using V on M::Sys at current { ... }` with `self` = `s1`; then with every `ScalarLimitsV1` counter unlimited except `work_units: 5`, then `4`; then Q plus objects `p3` and `p4` of type `Pump` with `s1.parts` targeting `p1`, `p2`, `p3`, `p4`; then the same `s1.parts` targets with `p4` absent from the closed population | `Set<Reference<M::Pump>>[0,3]` equal to `[p1, p2]` in reference-key order, after `model.navigate` (`value_occurrences` 1), two `collection.visit`, `collection.bound` (`value_occurrences` 2) and `collection.result-retain` (`value_occurrences` 3, `result_units += 3`): five work units and three result units; the `5` run completes identically; `incomplete { limit_kind: work_units, limit: 4, consumed: 4, next_charge: 1, charge_point: collection.result-retain }`; `refused { code: cardinality_out_of_bound, cause: above-maximum }` with bound `[0,3]` and count 4 after `model.navigate`, four `collection.visit` and `collection.bound`: exactly six work units and no result unit, with no `collection.result-retain` and no value; `refused { code: dangling_reference, cause: absent-target-in-complete-population }` for `p4` after `model.navigate` and three `collection.visit` (`p1`, `p2`, `p3`): exactly four work units, decided before `collection.bound`, so no cardinality refusal |
 | Y08 | `self.home` with `self` = `p1`; `self.pump` with `self` = `t1` in an invariant on `M::Tank`; Y with `rel/home` direction `undirected`, then `self.pump` again; Y with an added field `Pump/home` typed `Tank`, then `self.home` | `Reference<M::Tank>` equal to `t1` after one `model.navigate`: one work unit and no result unit; `refused { code: ill_typed, cause: operator-ineligible }`, the traversal running target to source against `source-to-target`; the navigation checks, `undirected` admitting both traversals, and evaluating it for `t1` is `refused { code: cardinality_out_of_bound, cause: above-maximum }` with bound `[1,1]` and count 2 (`p1` and `p2`) after one `model.navigate`; `refused { code: ambiguous_declaration, cause: ambiguous-name }` listing the field and the relationship end |
 | Y09 | Y with `rel/parts` target end `{0,unbounded}`; then `{0,3}` with `ordered: true`; then Q with `p2`'s `home` targeting `t9` absent from the closed population; then Y with `rel/home`'s target end naming `ix://test/other/Tank`, a node of another domain package | `refused { code: unsupported_construct, cause: expression-form }` at `self.parts`; the same refusal; `refused { code: dangling_reference, cause: absent-target-in-complete-population }` for `t9`; `refused { code: missing_declaration, cause: missing-name }` at intake naming `rel/home`, the absent node `ix://test/other/Tank`, the artifact and the span, with no effective view |
+
+| Y10 | Y plus object type `Probe` whose kind is `{module: test/other, name: port}` and whose construct meaning is `quire.meaning.model.object-type/v1`; `resolve(Port, M::Probe)`; then that package with `Sys/pipe`'s target end replaced by `Probe`; then Y with `Sys/tank/in`'s kind renamed to `{module: test/other, name: socket}` and its construct meaning unchanged | `Probe` has no systems kind and no `systems.kind` charge; `refused { code: invalid_model_binding, cause: wrong-export }` with required `Port` and actual `none`; kind mapping refuses the target end of `Sys/pipe` with `wrong-export`, required `Port`, actual `none`, so `Sys/pipe` has no kind; the renamed node maps to Port exactly as in Y01, with the same charges and declaration keys |
 
 ## Expected Results
 

@@ -76,7 +76,9 @@ flowchart TD
    yields field, relationship, operation and clause declarations with source
    spans. quire-rs is the only parser of spec artifacts.
 2. **Lift.** FCD `extraction-frontend` lowers the extracted declarations of one
-   spec package into a semantic IR document: the **domain package**. The
+   spec package into a semantic IR 2.0.0 document: the **domain package**.
+   Each type definition names its module-qualified kind, and the document
+   embeds each kind's construct with its Quire meaning id. The
    lowering is deterministic, serialized with RFC 8785 and fingerprinted with
    `sha256-jcs`.
 3. **Intake.** QSL admits a domain package by identity, version and digest
@@ -98,7 +100,8 @@ object type's module. Quire gives it meaning.
 | --- | --- | --- | --- |
 | Fields | `## Properties` rows: `Field`, `Type`, `Multiplicity`, `Constraints` | `TypeDefinition.fields[]` with `typeRef`, `multiplicity`, `presence` | Typed attributes with checked bounds |
 | Presence | `Presence` column (`required`, `optional`) | `Field.presence` | Absent versus empty stay distinct |
-| Identity and name | Artifact `id`; declared name (artifact title) | `TypeDefinition.identity` (artifact); `TypeDefinition.displayName` (declared name) | A declaration's identity is its artifact; its class name is the declared name that clauses use |
+| Identity and name | Artifact `id`; artifact title | `TypeDefinition.identity` (artifact id); `TypeDefinition.displayName` (title) | A declaration's identity is its artifact id, and clauses name it through that identity; the title is presentation only, so retitling keeps every key |
+| Construct meaning | The object type's module declares one construct with a Quire meaning id | `TypeDefinition.kind` `{module, name}` naming an entry of the embedded `constructs` table, whose `meaning` is a Quire meaning id (FR-208) | Quire binds a declaration by its construct's meaning id, never by its kind name |
 | Generalization | Frontmatter relationship `specializes` | `TypeDefinition.supertypes[]` | Acyclic conformance; closed subtype sets |
 | Abstract types | Frontmatter `abstract: true` | `TypeDefinition.abstract` | No direct instances; dispatch covers concrete subtypes |
 | Subsetting | `Subsets` column | `Field.subsets[]` | Values of the field are contained in the named supertype field |
@@ -108,7 +111,7 @@ object type's module. Quire gives it meaning.
 | Effect frames | `Modifies:`, `Creates:`, `Deletes:` lines under an operation | `Operation.frame` | Everything outside the frame is unchanged |
 | Invariants | `## Invariants`, one `### <clauseId>` with one `quire` fence | `Clause` with `language: quire` | Checked and evaluated by Quire |
 | Populations | `population` artifact listing member types and extent | Population node | Closed extents for quantification |
-| Systems structure | `interface`, `part`, `port`, `connection`, `allocation` artifacts (spec-objects-architecture) | Corresponding IR kinds | Interfaces, parts, ports, connections and allocations resolved in the model view, interfaces first |
+| Systems structure | Systems artifacts (spec-objects-architecture) | Type definitions whose constructs name a `quire.meaning.systems.*` meaning | Interfaces, parts, ports, connections and allocations resolved in the model view, interfaces first |
 
 Clauses in any language other than `quire` are carried with their span and are
 never evaluated or used as proof obligations.
@@ -117,7 +120,8 @@ never evaluated or used as proof obligations.
 
 - A Quire package imports a domain package by identity, version and
   `sha256-jcs` digest. The import is part of the package identity.
-- Clauses name domain types by qualified name, for example `Orders::Order`.
+- Clauses name domain types by qualified name over their IR node identity, for
+  example `Orders::Order` for the artifact with id `Order`.
 - Native `record`, `enum` and `tuple` declarations remain the way to write value
   types that are not domain objects.
 

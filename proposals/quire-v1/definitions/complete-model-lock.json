@@ -12,7 +12,7 @@
     {
       "role": "root",
       "artifact_path": "model-complete.md",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"3dcec9bcd941096ce71c8a54128e396e9b1b1a0d88a8b52a11408a95425df899"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"4ccb1ff76fc60f68acbb05c8a8de70dc1e93ecf946bf89aba1293cf2943ab4a6"}
     },
     {
       "role": "state_graph",
@@ -22,7 +22,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "model-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"4a0a42c0f3c4eae8caffe27b7715187aa12f26b76a3810a17f37a01565ce2e88"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"94c5e156bd5d0bfe414c4203124ca9ae1327d648bb87dfeac3d0f04d01f72dc1"}
     },
     {
       "role": "effective_declaration_schema",
@@ -37,7 +37,7 @@
     {
       "role": "rule_ad_006",
       "artifact_path": "../../../spec/assurance/AD-006-model-graph-state-contracts.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.ad-006/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"e8320a2dfe9309c4eb0a4e3383b40e7e8c0d0e902af87f640c27789cd4e3667e"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.ad-006/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"3401ee473db30f1f96199ec70c2ab60c6d3fa536cdb2174c79e4313c7a0aa463"}
     },
     {
       "role": "rule_fr_043",
@@ -67,7 +67,7 @@
     {
       "role": "rule_fr_152",
       "artifact_path": "../../../spec/functional/type-model/FR-152-bind-systems-model-structures.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-152/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"0bda587cc5b322002d6f7970baf8ebbca350fa06e17ee232eaeca8c91795a8bf"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-152/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"4618c104bc335e3d1b971cadb787aeb2d09e4e86a20d4a232fa11044779de58c"}
     },
     {
       "role": "rule_fr_153",
@@ -77,12 +77,17 @@
     {
       "role": "rule_fr_154",
       "artifact_path": "../../../spec/functional/type-model/FR-154-admit-domain-package-model.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-154/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"eadcebdfbec8869b86b8450b73e20b6e5593eb87ade2e242eee229c8c5e0862d"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-154/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"76c64a52cbe085227dd55fe69f4b85feac65e61dbf257404fb54a64ab21cbc12"}
     },
     {
       "role": "rule_fr_204",
       "artifact_path": "../../../spec/objects/foundation/FR-204-declared-object-identity.md",
       "definition": {"authority":"agent-ix","identity":"quire.rule.fr-204/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"1396dc9b9ee4581fa64fa8f1c723b6fb22bafae6f245edda381225c6c1530a65"}
+    },
+    {
+      "role": "rule_fr_208",
+      "artifact_path": "../../../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-208/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"7f5b816652ff9e8151b682661787c4270a4f71fb5af4d58f3e907d538ade1493"}
     },
     {
       "role": "rule_fr_321",
@@ -96,7 +101,7 @@
     }
   ],
   "package_selection": {
-    "always": ["root", "state_graph", "rule_manifest", "effective_declaration_schema", "effective_declaration_vectors", "rule_ad_006", "rule_fr_043", "rule_fr_143", "rule_fr_144", "rule_fr_150", "rule_fr_151", "rule_fr_152", "rule_fr_153", "rule_fr_154", "rule_fr_204", "rule_fr_321", "rule_interface_003"],
+    "always": ["root", "state_graph", "rule_manifest", "effective_declaration_schema", "effective_declaration_vectors", "rule_ad_006", "rule_fr_043", "rule_fr_143", "rule_fr_144", "rule_fr_150", "rule_fr_151", "rule_fr_152", "rule_fr_153", "rule_fr_154", "rule_fr_204", "rule_fr_208", "rule_fr_321", "rule_interface_003"],
     "conditional": [],
     "exactly_one": []
   }

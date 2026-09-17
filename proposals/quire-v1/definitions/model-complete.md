@@ -51,8 +51,9 @@ The import is a ModelSelection (FR-321):
 `{identity, version, digest_domain: "sha256-jcs", digest}`. It is part of the
 package identity. QSL model intake admits the domain package and builds the
 Quire model declarations from its IR nodes. Quire owns the meaning of every
-declaration. Clauses name a declaration by qualified name, such as
-`Orders::Order`.
+declaration. Clauses name a declaration by qualified name: the model alias,
+then the segments of its IR node identity after the package identity, such as
+`Orders::Order` for IR node `ix://acme/orders/Order`.
 
 ### Intake
 
@@ -79,29 +80,46 @@ reports every such refusal in node order, and then no later phase runs.
 
 A source span is `{artifact, start, end}`. `artifact` is the artifact id, such
 as `entity-001`. `start` and `end` are zero-based byte offsets in the artifact
-file. The artifact id and span record where a declaration came from. They
-appear in diagnostics and provenance and are never a key member.
+file. The span records where a declaration came from. It appears in
+diagnostics and provenance and is never a key member; the artifact id enters a
+key only as the type's identity segment below.
 
-A declaration's identity is its declared name. An object type or interface
-declared by an artifact titled `Order` in domain package `acme/orders` has IR
-node identity `ix://acme/orders/Order`. A member's identity appends its declared
+A declaration's identity is its artifact id. An object type or interface
+declared by the artifact with id `Order` in domain package `acme/orders` has IR
+node identity `ix://acme/orders/Order`. A member's identity appends its member
 name to its owner's identity: field `total` of `Order` is
 `ix://acme/orders/Order/total`, and port `out` of part `Sys/pump` is
-`ix://acme/orders/Sys/pump/out`. Retitling an artifact declares a different
-class with a different declaration key, and renaming a member declares a
-different member.
+`ix://acme/orders/Sys/pump/out`. The artifact title is the declaration's
+`displayName`, used for presentation only; it is never part of an identity and
+never resolves a qualified name. Retitling an artifact keeps every declaration
+key. Changing an artifact's id declares a different type with a different
+declaration key, and renaming a member declares a different member.
+
+### Construct meanings
+
+The domain package is a semantic IR 2.0.0 document. Each type definition's
+`kind` is `{module, name}` and names one entry of the document's embedded
+`constructs` table. Intake binds each type definition by that entry's `meaning`,
+a Quire meaning id of [FR-208](../../../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md).
+The kind name and module select the construct entry only and never select a
+meaning. A type definition whose `kind` names no construct entry, or whose
+construct has no `meaning` or a `meaning` outside FR-208, is
+`invalid_model_binding`/`malformed-declaration` with its IR node identity,
+artifact and span.
 
 ### Declaration kinds
 
 | Declaration | IR node | Owner |
 | --- | --- | --- |
-| Object type | `TypeDefinition` | none |
+| Object type | `TypeDefinition` whose construct meaning is `quire.meaning.model.object-type/v1` | none |
+| Value type | `TypeDefinition` whose construct meaning is `quire.meaning.model.value-type/v1` | none |
+| Variant type | `TypeDefinition` whose construct meaning is `quire.meaning.model.variant-type/v1` | none |
 | Field | `TypeDefinition.fields[]` entry | its type |
 | Relationship | `TypeDefinition.relationships[]` entry | its type |
 | Operation | `Operation` | its receiver type |
 | Invariant | `Clause` with `language: quire` | its type or operation |
-| Population | Population node | none |
-| Part, Port, Interface, Connection, Allocation | the IR node of that kind | as in the systems table below |
+| Population | Population node whose construct meaning is `quire.meaning.model.population/v1` | none |
+| Part, Port, Interface, Connection, Allocation | the IR node whose construct meaning is that kind's `quire.meaning.systems.*` id | as in the systems table below |
 
 A clause in any other language is kept with its span. It is never evaluated
 and never a proof obligation.
@@ -114,7 +132,7 @@ Every refusal names the IR node identity, the artifact and the span.
 
 | Feature | Rule | Refusal |
 | --- | --- | --- |
-| Identity | A type's identity is `ix://<package identity>/<name>`, where `<name>` is its declared name, the artifact title. A member's identity is its owner's identity, `/` and the member's declared name. The artifact id and span are the declaration's origin and are not part of any identity. Two nodes with one identity are not allowed. | `invalid_model_binding`/`conflicting-binding` |
+| Identity | A type's identity is `ix://<package identity>/<artifact id>`. A member's identity is its owner's identity, `/` and the member name. The artifact title is `displayName`, for presentation only, and the span is the declaration's origin; neither is part of any identity. Two nodes with one identity are not allowed. | `invalid_model_binding`/`conflicting-binding` |
 | Supertypes | Every `supertypes[]` entry names an object type of the package. The supertype graph is acyclic; phase 3 checks it. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`specialization-cycle` in phase 3 |
 | Abstract | An abstract type has no direct instances. A population member whose most-specific type is abstract is refused. Dispatch covers only concrete subtypes. | `invalid_runtime_input`/`abstract-instance` |
 | Fields | `typeRef` names a type of the package or a native value type. `multiplicity` has `lower <= upper`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`unpreserved-model-meaning` |
@@ -264,16 +282,19 @@ exposed for either.
 
 ## Systems-model kind mapping
 
-Rule `quire.model.systems.kind-mapping/v1` maps each systems IR node to exactly
-one systems kind by its IR kind. Kinds are disjoint.
+Rule `quire.model.systems.kind-mapping/v1` maps each IR node whose construct
+meaning is a systems meaning to exactly one systems kind by that meaning id,
+never by its kind name or module. A node whose construct meaning is not a
+systems meaning has no systems kind, even when its kind name is `port`. Kinds
+are disjoint.
 
-| Kind | IR node | Owner and type |
+| Kind | Construct meaning | Owner and type |
 | --- | --- | --- |
-| Part | `part` | owning composite = the effective owning type; declared type; typed multiplicity |
-| Port | `port`, whose owner is a Part | owning Part; direction `in`, `out` or `inout`; interface type, which must be an Interface; typed multiplicity |
-| Interface | `interface` | ordered feature signatures, each a field or an operation |
-| Connection | `connection`, whose two ends both name Ports | effective member owned by the source end-owner type; source and target Port keys; declared `direction` |
-| Allocation | `allocation` | effective member owned by the source end-owner type; source element, which must be a Part, a Port or an operation; target element, which must be a Part |
+| Part | `quire.meaning.systems.part/v1` | owning composite = the effective owning type; declared type; typed multiplicity |
+| Port | `quire.meaning.systems.port/v1`, whose owner is a Part | owning Part; direction `in`, `out` or `inout`; interface type, which must be an Interface; typed multiplicity |
+| Interface | `quire.meaning.systems.interface/v1` | ordered feature signatures, each a field or an operation |
+| Connection | `quire.meaning.systems.connection/v1`, whose two ends both name Ports | effective member owned by the source end-owner type; source and target Port keys; declared `direction` |
+| Allocation | `quire.meaning.systems.allocation/v1` | effective member owned by the source end-owner type; source element, which must be a Part, a Port or an operation; target element, which must be a Part |
 
 The rule maps interfaces, then parts, then ports, then connections, then
 allocations, each group ascending by declaration key, so a port's kind follows
@@ -324,5 +345,6 @@ digests are the entries in `model-complete-rules.json`.
 | [Closed model environments](../../../spec/functional/type-model/FR-153-query-closed-model-environments.md) |
 | [Domain package model intake](../../../spec/functional/type-model/FR-154-admit-domain-package-model.md) |
 | [Declared object identity](../../../spec/objects/foundation/FR-204-declared-object-identity.md) |
+| [Quire meaning id vocabulary](../../../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md) |
 | [Model-selection artifact](../../../spec/objects/interfaces/FR-321-model-selection-artifact.md) |
 | [I03 model selection](../../../spec/objects/interfaces/interface-003-model-selection.md) |
