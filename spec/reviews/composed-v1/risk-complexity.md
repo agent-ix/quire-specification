@@ -3,7 +3,7 @@ id: SR-405
 title: "Composed native v1 risk and complexity review"
 type: SpecReview
 analysis: risk-complexity
-scope: "proposals/quire-v1; AD-001; StR-002; FR-020, FR-030–062, FR-090–095, FR-110–116, FR-130; NFR-010/020/021/040/050/051/052; FCD FR-100–103 and baseline 1.2"
+scope: "proposals/quire-v1; AD-001; StR-002; FR-020, FR-030–062, FR-090–095, FR-110–116, FR-130; NFR-010/020/021/040/050/051/052"
 review_set: all
 evaluated_revision: "788b161bd1b7fd5d632cc42c949f497914df3ce6"
 review_date: "2026-09-10"
@@ -16,15 +16,15 @@ and evidence ownership coherently. The highest delivery risks are the shared
 result/progress boundary, immutable dependency selection, exact arithmetic,
 causal compensation and bounded incremental state. These call for staged work
 inside the existing roadmap, not a language rewrite or an assurance campaign
-before implementation. The register scores the 48 local FRs, seven NFRs, one StR
-and four externally owned D FRs in this review. Historical obligations remain
+before implementation. The register scores the 48 local FRs, seven NFRs and one StR
+in this review. Historical obligations remain
 dependencies, not newly scored implementation scope.
 
 ## Findings
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | high | Resolve the concrete static/runtime, truth/progress and window-selection disagreements before accepting the affected shared contract. Implementing different interpretations in three consumers would multiply rework. | [SR-401](failure-domain.md), [SR-402](integrity.md), [SR-406](scope-boundary.md); FR-030, FR-048/049, FR-061, FR-094, FR-114 |
+| FND-001 | high | Resolve the concrete truth/progress and window-selection disagreements before accepting the affected shared contract. Implementing different interpretations in three consumers would multiply rework. | [SR-401](failure-domain.md), [SR-406](scope-boundary.md); FR-030, FR-048/049, FR-061, FR-094, FR-114 |
 | FND-002 | medium | Stage implementation by independently checkable contracts within existing tickets. Bounded syntax alone does not establish bounded aggregate work, sound definedness, causal recovery or replay equivalence. | FR-036/043/044, FR-052/056–059, FR-091–094, NFR-010/020/040/050 |
 | FND-003 | medium | Freeze exact dependency closures only after the affected semantic corrections; preserve historical bytes. Selection identifiers without immutable reachable rules leave integrations exposed to drift. | [SR-403](dependency.md); FR-032, FR-110/113, FR-115/116 |
 
@@ -34,8 +34,7 @@ Technical risk measures implementation difficulty or consequences, not an
 assertion that code is defective. Volatility measures likely contract change.
 Grouped rows assign both scores and the named mitigation to every listed ID.
 High scores are planning inputs; they do not impose a new blanket acceptance
-gate. The external D entries refer to FCD commit
-`d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f`, indexed in [the master spec](../../spec.md).
+gate.
 
 | Req | Tech Risk | Volatility | Drivers | Mitigation |
 | --- | --- | --- | --- | --- |
@@ -45,7 +44,7 @@ gate. The external D entries refer to FCD commit
 | FR-031 | High | Medium | Partial execution and cross-family result prerequisites | A/B exercise dependency-closed independent requests and failed prerequisites before composing execution consumers. |
 | FR-032 | High | Medium | Evolution must preserve previously selected meaning | A adds successor selections and historical controls in compiler #35; never rewrite shared definition bytes. |
 | FR-033, FR-034 | High | Medium | Shared total predicates across different environments | A establishes one checked predicate interface in compiler #36; E/B consume explicit argument/anchor/capture bindings. |
-| FR-035 | High | Medium | Related instances, finite membership and multiple identity authorities | A/D/F bind one explicit enterprise subject at a time and discriminate equal labels with different identities. |
+| FR-035 | High | Medium | Related instances, finite membership and multiple identity authorities | A/F bind one explicit enterprise subject at a time and discriminate equal labels with different identities. |
 | FR-036 | Medium | Low | Lexer, parser, spans and whole-source admission | A retains the existing lexer and structured parser; use grammar/precedence/span controls in compiler #35 instead of a parser rewrite. |
 | FR-037 | Medium | Low | Shared expression precedence, complete parsing and family dispatch | A uses one token cursor and expression parser in compiler #35; grammar recognition stays separate from profile admission. |
 | FR-038 | Medium | Low | Lexical scope, acyclic calls and exact declaration resolution | A uses explicit symbol scopes and shadowing/cycle controls in compiler #36. |
@@ -56,7 +55,7 @@ gate. The external D entries refer to FCD commit
 | FR-043 | High | Low | Cycles, positive-length reachability and incomplete universes | A separates identity from traversal state in compiler #37 and uses finite reference-graph controls. |
 | FR-044 | High | Low | Conservative but sound numeric proof, exact units and range checks | A separates proved error, unproved definedness and resource exhaustion; start with the specified exact domain in compiler #36. |
 | FR-045 | High | Low | Branch-sensitive facts and qualified optional identities | A tests skipped execution separately from full static admission; guard facts carry their precise value/observation identity. |
-| FR-046 | High | Medium | Complete pre/post populations and frame correspondence | A/D validate invocation inputs independently of predicate evaluation; retain the original ConfigVersion admission controls. |
+| FR-046 | High | Medium | Complete pre/post populations and frame correspondence | A validates invocation inputs independently of predicate evaluation; retain the original ConfigVersion admission controls. |
 | FR-047 | Medium | Low | Stable typed diagnostic catalog and located causes | A uses existing diagnostic/response boundaries; mutation of human wording must not change classification. |
 | FR-048 | High | Medium | Shared value grammar inside temporal formulas, typed captures | A/E implement source linking before clock-bound execution in compiler #38, with false-extension constant/valuation controls. |
 | FR-049 | High | Medium | Causal value availability, joins, iteration and compensation scopes | A/B implement typed native protocol linking in compiler #39 against B's exact representation; no string-based protocol parsing. |
@@ -73,8 +72,8 @@ gate. The external D entries refer to FCD commit
 | FR-093 | High | Low | Immutable per-trigger captures and later valuations | E/F distinguish equal values from equal trigger identities and preserve activation anchors in compiler #38 integration. |
 | FR-094 | High | Medium | Two closure axes, silent progress and decisive settlement | E/F reconcile authority and exact support with B results before incremental implementation; include quiet deadlines and late contradiction controls. |
 | FR-095 | High | Medium | Backend correspondence across richer native meaning | E scopes each bridge to admitted meanings and proves specified vectors under IR #64; unsupported timestamped/past mappings retain native identity. |
-| FR-110, FR-111 | High | Medium | Typed observations and explicit related-instance correlation | F/D close immutable binding selections in research #44 and reject equal-label or trace-ID substitutions. |
-| FR-112, FR-113 | High | Medium | Membership, clock authority, incomplete data and late records | F/D/E resolve the window/progress boundary and use declared finite populations under research #45; absence of data cannot invent authority. |
+| FR-110, FR-111 | High | Medium | Typed observations and explicit related-instance correlation | F closes immutable binding selections in research #44 and reject equal-label or trace-ID substitutions. |
+| FR-112, FR-113 | High | Medium | Membership, clock authority, incomplete data and late records | F/E resolve the window/progress boundary and use declared finite populations under research #45; absence of data cannot invent authority. |
 | FR-114 | High | Medium | Offline/incremental equivalence with bounded retained state | F corrects the open-prefix veto, then compares exact-support result fields over identical admitted histories in research #46. |
 | FR-115, FR-116 | High | Medium | Consumer preservation, immutable history and output losses | F consumes B's exact result combinations; test one-axis and one-dependency mutations in existing observation/consumer tickets. |
 | NFR-010 | High | Low | Aggregate source, proof, query and graph work | A charges before expansion and exercises zero/exact/insufficient limits per boundary; compiler #35–37. |
@@ -84,17 +83,13 @@ gate. The external D entries refer to FCD commit
 | NFR-050 | High | Low | Event, active-key, history and population limits are independent | F refines existing TC-142/144 boundary procedures and measures retained state; see SR-404. |
 | NFR-051 | High | Low | Exact replay provenance across modes and revisions | F binds provenance-omission controls to the metric, rather than comparing only dispositions; see SR-404. |
 | NFR-052 | Medium | Low | Executable dependency containment under the owner policy | F inventories owned runtime/qualification paths using the existing Rust policy; retained Quoin does not authorize expansion. |
-| FCD FR-100 | Medium | Low | Presence independent of nullability and multiplicity | D preserves required/optional collection and legacy-projection controls in FCD #95/#93. |
-| FCD FR-101 | High | Medium | First-class relationship lifecycle, composition and direction | D supplies exact endpoint/kind contracts; A/F consume without inferring relations from foreign keys. |
-| FCD FR-102 | High | Medium | Population identity, completeness and canonical content | D resolves the canonical numeric domain and stage-specific binding contract; F/A distinguish unavailable support from false truth. |
-| FCD FR-103 | High | Medium | Explicit configuration authority and compatibility | D makes binding prerequisites stage-specific and immutable under research #39/#49/#50; no ambient configuration fallback. |
 
 ## Top hazards
 
-1. **Different meanings at the same interface.** Resolve SR-401's truth/open
-   prefix conflicts, SR-402's static/runtime conflict and SR-406's clock/range
-   mapping before accepting affected selections. D/F are delivered inputs; these
-   are bounded corrections to their interfaces.
+1. **Different meanings at the same interface.** Resolve SR-401's open-prefix
+   conflict and SR-406's clock/range mapping before accepting affected
+   selections. F is a delivered input; these are bounded corrections to its
+   interface.
 2. **Unsound arithmetic or provenance.** FR-039/042/044/045 need independent
    oracle and mutation controls in the later implementation slices. Do not
    replace conservative refusal with a successful proof or retag a capture.
@@ -110,8 +105,7 @@ gate. The external D entries refer to FCD commit
 
 ## Failure-domain gaps and sequencing
 
-[SR-401](failure-domain.md) records the concrete truth, open-prefix and canonical
-number defects; [SR-406](scope-boundary.md) covers observation-range authority.
+[SR-401](failure-domain.md) records the concrete open-prefix defect; [SR-406](scope-boundary.md) covers observation-range authority.
 The score register does not replace those findings or add new feature scope.
 
 Resolve these spec corrections and the evidence-plan gaps in the existing

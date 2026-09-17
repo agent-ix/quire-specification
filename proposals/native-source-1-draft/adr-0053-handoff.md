@@ -40,7 +40,7 @@ every criterion to be formalized.
 | Existing section | Applied disposition |
 | --- | --- |
 | Title, Status and decision table | Replace OCL-first recommendation and absent-decision wording with native-source ruling; cite its record. Acceptance records the owner's actual ruling, not completed compiler qualification. |
-| Context/model boundary | Reconcile with already accepted ADR-0054. Existing formal APIs remain usable; do not recreate a universal Filament reader prerequisite or conflate archetypes with formal-model semantics. |
+| Context/model boundary | Reconcile with already accepted ADR-0054. Existing formal APIs remain usable; do not conflate archetypes with formal-model semantics. |
 | Decision proposed for approval | Replaced with the native-source decision. The superseded `state-finite/1-draft` candidate was not adopted as a compiler profile. |
 | Source authority, eligibility, shared admission and anchors | Preserve the binding rules. Change source-specific references only where necessary to name native Quire; do not weaken the refusal or provenance obligations. |
 | Separate #54 reference/bounds decision | Preserve the gate but state #54 is closed. Any later reference environment or IR extension needs its own ticket; neither is admitted by this first profile. |

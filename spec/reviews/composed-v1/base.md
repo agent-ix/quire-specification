@@ -3,7 +3,7 @@ id: SR-400
 title: "Composed native Quire v1 baseline review and disposition"
 type: SpecReview
 analysis: base
-scope: "proposals/quire-v1; AD-001; StR-002; US-005/006/008/009; FR-020, FR-030–062, FR-090–095, FR-110–116, FR-130; NFR-010/020/021/040/050/051/052; TM-003/004/006/007 and associated TC/IT; external D baseline 1.2 and FR-100–103"
+scope: "proposals/quire-v1; AD-001; StR-002; US-005/006/008/009; FR-020, FR-030–062, FR-090–095, FR-110–116, FR-130; NFR-010/020/021/040/050/051/052; TM-003/004/006/007 and associated TC/IT"
 review_set: all
 evaluated_revision: "788b161bd1b7fd5d632cc42c949f497914df3ce6"
 correction_evaluated_revision: "9d47ecabe0662f44b98d761c5019dd50c2eee57e"
@@ -16,14 +16,13 @@ review_date: "2026-09-10"
 [correction recheck](#pr-15-correction-recheck) below resolves the original
 composed findings and SR-408. It covers the integrated semantics at `d8d984b`,
 the whitespace correction at `9d47eca`, and the current navigation/disposition
-updates. It does not claim executed v1 conformance, external producer acceptance
-or public standard adoption.
+updates. It does not claim executed v1 conformance or public standard adoption.
 
 The following initial verdict and findings remain the record at `788b161`:
 
-**Changes required before accepting the composed baseline.** D and F have
-delivered their contributions. The remaining semantic findings are specific
-disagreements in static versus runtime prerequisites, decisive truth on open or
+**Changes required before accepting the composed baseline.** F has
+delivered its contribution. The remaining semantic findings are specific
+disagreements in decisive truth on open or
 partly observed subjects, clock/window correspondence and immutable identity
 selection. The architecture retains one lexer and expression grammar, typed
 family representations and separate model, execution and evidence authorities;
@@ -32,15 +31,14 @@ this review does not call for replacing those foundations.
 This is the owner-selected QUOIN base-plus-seven review at PR readiness, not an
 intermediate review or an implementation-coverage audit. It evaluates the exact
 native revision above with F through
-`921993bbbef92a8010aec46d46277498de5e0288` and D's external contract through
-`d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f`. Prior B/E reviews retain their original
+`921993bbbef92a8010aec46d46277498de5e0288`. Prior B/E reviews retain their original
 scope and are not substituted for this composed review.
 
 ## Findings
 
 | ID | Severity | Summary | Refs | Escape Cause |
 | --- | --- | --- | --- | --- |
-| FND-001 | medium | A's capability crosswalk and earlier shared-foundation status paragraphs still call D's standard-facing contribution absent and F's result correction pending, despite the final intake recording both. This obscures the real remaining corrections and can create a false delivery gate. Owner A: update the unpinned navigation/status material to the delivered revisions and link the concrete review findings. Preserve immutable rule snapshots and do not claim the baseline accepted. | capabilities.md, V1-001/003/049 and related crosswalk rows; shared-foundation.md, Authoring integration and Composed review input; SR-403 | wrong-requirement |
+| FND-001 | medium | A's capability crosswalk and earlier shared-foundation status paragraphs still call F's result correction pending, despite the final intake recording it. This obscures the real remaining corrections and can create a false delivery gate. Owner A: update the unpinned navigation/status material to the delivered revisions and link the concrete review findings. Preserve immutable rule snapshots and do not claim the baseline accepted. | capabilities.md, V1-001/003/049 and related crosswalk rows; shared-foundation.md, Authoring integration and Composed review input; SR-403 | wrong-requirement |
 
 ## Complete review set and disposition
 
@@ -50,20 +48,19 @@ discussion of one defect under another lens is not an additional ticket or gate.
 | Analysis | Artifact | Required disposition / owner |
 | --- | --- | --- |
 | Base | SR-400, this document | A corrects navigation/status and integrates the bounded corrections below. |
-| Failure domain | [SR-401](failure-domain.md) | D narrows the blanket unavailable-input truth veto and specifies canonical numeric semantics; F corrects FR-114's blanket open-prefix veto. B/E's exact support and closure distinctions remain authoritative. |
-| Integrity | [SR-402](integrity.md) | D/A distinguish static linking prerequisites from concrete assessment prerequisites; a future template can type-check before observations exist. |
+| Failure domain | [SR-401](failure-domain.md) | F corrects FR-114's blanket open-prefix veto. B/E's exact support and closure distinctions remain authoritative. |
+| Integrity | [SR-402](integrity.md) | No separate disposition; its review-set limitations route to SR-403, SR-404 and SR-406. |
 | Dependency | [SR-403](dependency.md) | F/A publish successor immutable dependency selections after the affected corrections; E corrects FR-090's obsolete FR-020 prerequisite. |
 | Evidence | [SR-404](evidence.md) | E/F/B reconcile identified criterion, metric, planned-case and catalog-method bindings. These are corrections to existing cases, not a demand for a full qualification campaign now. |
-| Risk and complexity | [SR-405](risk-complexity.md) | A refines existing implementation tickets by accepted contract boundaries; B/D/E/F retain their existing ownership and C continues independently. |
-| Scope boundary | [SR-406](scope-boundary.md) | F/D/E/A define runtime window-to-clock coverage; D/A define correspondence between canonical producer objects and raw native definition/model bytes without equating digest domains. |
+| Risk and complexity | [SR-405](risk-complexity.md) | A refines existing implementation tickets by accepted contract boundaries; B/E/F retain their existing ownership and C continues independently. |
+| Scope boundary | [SR-406](scope-boundary.md) | F/E/A define runtime window-to-clock coverage. |
 | EARS conformance | [SR-407](ears-conformance.md) | E resolves the identified compound trigger wording without changing temporal meaning. |
 
 All semantic findings remain open at the evaluated revision. Fix the affected
 requirements/cases through their owners, integrate the ready commits and check
 those changes. A then closes the selected definition dependencies and records
 finding dispositions. Repeating all eight analyses on every edit is unnecessary.
-Missing local FR-070–089 files are not a defect: those numbers were reservations,
-and D's actual external FR-100–103 are indexed in the master specification.
+Missing local FR-070–089 files are not a defect: those numbers were reservations.
 
 ## Architecture and requirements assessment
 
@@ -110,7 +107,7 @@ in IT-010/020/021/040/041/050/051. A planned procedure is not executed evidence.
 | Criterion coverage | All 251 scoped FR criteria name planned Test cases. SR-404 records the FR-091-AC-5 case disagreement and incomplete NFR metric bindings. No claim of complete executed coverage. |
 | Valid option combinations | TC-030/032/040 distinguish edition, outer/inner profile, feature and backend selections; TC-031/061/145/146 cover result axes. F's immutable dependency closure and the window mapping are still open, so complete composed permutations cannot yet be claimed. |
 | Constraint boundaries | Exact numeric, sequence, source, traversal, protocol and temporal limits have planned controls. SR-404 identifies missing independent event-size/active-key/retained-state controls in F's current cases. |
-| Error paths | Wrong identity/kind/anchor, ambiguous binding, unsupported backend, missing input and resource stops are explicit. SR-401/402/406 require additional distinguishing controls for the inconsistent shared boundaries. |
+| Error paths | Wrong identity/kind/anchor, ambiguous binding, unsupported backend, missing input and resource stops are explicit. SR-401/406 require additional distinguishing controls for the inconsistent shared boundaries. |
 | State transitions | Activation, first compensation registration/trigger, retry, commit, partial recovery, progress/closure and supersession have planned cases. FR-114/TC-144 must add settled-open replay agreement as SR-401 requires. |
 | Edge cases | Empty versus missing, duplicate receipt versus effect, concurrent orders, split shipments, exact deadlines, reference cycles, historical captures and late contradictions are represented. An authored example does not prove the implementation handles it. |
 
@@ -131,7 +128,7 @@ that the first profile admitted them.
 | --- | --- |
 | Source authority and loci | FR-030/036/047 retain one native editable authority, original bytes, exact revisions/digests and structured located causes. External textual forms remain output mappings. |
 | Exact numeric domain | FR-039/044 retain finite signed-64 integer bounds, exact rational normalization before bounds and proved definedness. No float, saturation, implicit conversion or integer division/remainder. Rational division requires nonzero and range proof. |
-| Presence, null and invalid | FR-046 and D FR-100 preserve authored presence independently of multiplicity; unsupported distinct channels refuse. Invalid or unavailable input does not become false or option-none. |
+| Presence, null and invalid | FR-046 preserves authored presence independently of multiplicity; unsupported distinct channels refuse. Invalid or unavailable input does not become false or option-none. |
 | Records and references | Historical acyclic records and no scalar-to-object/ambient lookup remain. The new graph facet explicitly selects finite typed reference semantics; original definition bytes are unchanged. |
 | Collections and calls | Historical ordered duplicate-preserving finite sequences and maximum 10000 remain. Shared predicates/queries receive new selected semantics; no recursion, reflection, I/O or implicit truthiness is added. |
 | Evaluation instants | FR-042/046 retain invariant/pre/post anchors, immutable captures and exact invocation observations. A bare context type is not an observation. |
@@ -167,8 +164,8 @@ not another architecture review or a claim that the original FAIL was a PASS.
 
 | Finding group | Current disposition and evidence |
 | --- | --- |
-| SR-400 FND-001 | Resolved. The capability crosswalk now distinguishes integrated D/F/B/E contracts from outstanding implementation, and assigns the compiled payload/reader to compiler #40 rather than L2 parsing/linking. |
-| SR-401/402/406 semantic boundaries | Resolved in the package and observation/range contracts with D's `6259d3a` input: static templates need no future observations; producer canonical numbers and native byte digests retain separate domains and exact correspondence; all three clocks retain coverage/member/record boundaries; complete exact support can settle truth despite unrelated incompleteness. |
+| SR-400 FND-001 | Resolved. The capability crosswalk now distinguishes integrated F/B/E contracts from outstanding implementation, and assigns the compiled payload/reader to compiler #40 rather than L2 parsing/linking. |
+| SR-401/406 semantic boundaries | Resolved in the package and observation/range contracts: static templates need no future observations; all three clocks retain coverage/member/record boundaries; complete exact support can settle truth despite unrelated incompleteness. |
 | SR-403 definition selection | Resolved by the owner's single-current-draft workflow and the consolidated definition closure. Immutable runtime selections remain required; per-edit successor publication is superseded. FR-090 now depends on FR-030. |
 | SR-404/407 planned controls and wording | Resolved by the integrated resource/provenance and method bindings, FR-091/TC-115 deadline/empty-window controls, and FR-093/094 wording corrections. The planned cases remain unexecuted. |
 | SR-408 FND-001/002 | Resolved. The unsuffixed files contain the latest semantics and revision labels; obsolete copies are absent. Protocol draft 4 selects state graph and temporal common draft 3. All 99 relative file links across the 15 definition-directory documents resolve. |
@@ -193,7 +190,7 @@ the five passing reference tests recorded by SR-408 remain evidence at `3972783`
 not a newly executed current-head test or full-v1 conformance claim.
 
 No open specification finding in this correction scope prevents the private
-merge. FCD #97's own review/producer acceptance, the compiler #40 artifact
+merge. The compiler #40 artifact
 contract, concrete implementation/qualification and public rights/adoption
 decisions retain their separate owners and evidence requirements. C's assurance
 campaign does not gate this baseline.

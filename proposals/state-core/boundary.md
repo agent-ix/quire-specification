@@ -6,12 +6,8 @@ these examples or freeze another consumer's method/result contract around them.
 
 ## Authority and import contract
 
-Domain producers own declarations and export stable type/field/operation IDs.
-The existing semantic IR `contractVersion: 1.1.0` is the proposed input boundary;
-the language typechecks against its resolved graph. A standalone producer may
-supply that contract without embedding an authoring application. Local display
-names are aliases, never declaration identity. The language must not infer type
-definitions from application Rust strings, Markdown prose or runtime examples.
+Local display names are aliases, never declaration identity. The language must
+not infer type definitions from application Rust strings or runtime examples.
 
 Resolve imports by package identity, exact version, exact bytes digest, exports
 and transitive lock closure. Do not choose the first duplicate, newest version,
@@ -20,7 +16,7 @@ foreign, ill-typed and unsupported definitions with both reference and available
 declaration loci. Stable declaration IDs survive display-name changes; their
 meaning and dependency digest may change and invalidate a compiled package.
 
-The inspected input IR distinguishes required/optional presence from nullable
+The domain package IR distinguishes required/optional presence from nullable
 values, and expresses lower/upper multiplicity, ordered/unique flags, units,
 relationships, operations and opaque clauses. Preserve each distinction or
 refuse the mapping. An absent numeric maximum or sequence upper bound is not

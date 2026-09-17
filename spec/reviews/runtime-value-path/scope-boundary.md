@@ -47,7 +47,6 @@ remains recorded where it already was.
 | FR-003 vs FR-036 source-span convention | FR-203 "Open gap" |
 | Diagnostic code snake_case vs kebab-case spelling | FR-271, FR-283 |
 | FR-047's six producer stages vs the catalog's eleven | FR-273 |
-| Filament fingerprint vs package fingerprint | FR-201 |
 | Three `sha256-jcs` preimage rules | FR-201 |
 | The catalog's own byte digest having no named domain | FR-270 |
 | Delivery, attempt and effect identity | FR-222..FR-226, FR-235; SR-502 FND-002 |

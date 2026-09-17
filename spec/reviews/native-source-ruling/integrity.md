@@ -27,7 +27,7 @@ as history, with no claim that their tests qualify the replacement.
 
 NFR-001 owns historical compatibility; original state-core and shared-reference
 trees have zero diff from 8ab058b. Profile/rules SHA-256 values still match the
-compiler's e897f81 pins. No missing producer is replaced with a fabricated model
-default, no FCD presence contract is inferred, and closed IR #54 stays closed.
+compiler's e897f81 pins. No missing model input is replaced with a fabricated
+default.
 The source-admission requirement is observable through named adverse cases;
 independent implementation acceptance remains open.

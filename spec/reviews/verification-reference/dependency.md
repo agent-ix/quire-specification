@@ -53,6 +53,5 @@ Reviewed FR-017/018 precede A's structural and existing-JCS qualification
 
 B's existing canonicalizer is already available at the pinned revision.
 A's role/JCS data amendment does not require B's future reader implementation.
-Neither stage waits for native linking, the whole compiler, IR #54 or a
-universal Filament model reader. Native compilation remains A's subsequent work.
+Neither stage waits for native linking or the whole compiler. Native compilation remains A's subsequent work.
 

@@ -131,4 +131,4 @@ No cycles occur in the proposed graph. Every FR/StR/NFR is classified exactly on
 
 ## External gates
 
-FS02/FS03/FS05 definition acceptance, the existing typed-model view/binder contract, B's independent shared-reference consumer and C's opaque extraction adapter remain explicit external gates. Existing Filament production and legacy contract-IR conformance do not discharge them. Keep these gates on their existing private owning tickets; no competing model authority or binder is justified.
+FS02/FS03/FS05 definition acceptance, the existing typed-model view/binder contract, B's independent shared-reference consumer and C's opaque extraction adapter remain explicit external gates. Legacy contract-IR conformance does not discharge them. Keep these gates on their existing private owning tickets; no competing binder is justified.
