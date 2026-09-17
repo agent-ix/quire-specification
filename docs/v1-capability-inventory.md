@@ -76,17 +76,17 @@ implies completion in another.
 | V1-TYPE-007 | Represent enumerations with declaration-qualified member identity. | Required | V1-014 | C | P | P | P | M | QSL #1 / QSL #118 |
 | V1-TYPE-008 | Represent quantities with explicit dimensions and units. | Required | V1-004, V1-014; prose census | C | M | M | M | M | research #66 / QSpec #1 |
 | V1-TYPE-009 | Convert compatible units exactly and reject dimension or precision loss. | Required | prose census | C | M | M | M | M | research #66 / QSpec #1 |
-| V1-TYPE-010 | Represent independently authored presence, absence and explicit null. | Required | V1-013 | C | P | P | P | M | QSL #119 / research #39 |
-| V1-TYPE-011 | Represent lower and upper multiplicity independently of presence. | Required | V1-013 | C | P | P | P | M | QSL #119 / research #39 |
-| V1-TYPE-012 | Represent typed fixed records and tuple values. | Required | V1-014; reserved `tuple`, `Tuple` | C | P | P | P | M | research #66 / QSL #1 |
-| V1-TYPE-013 | Compare records structurally under an explicit type-owned equality rule. | Required | V1-018 | C | M | M | M | M | research #66 / QSL #1 |
+| V1-TYPE-010 | Represent independently authored presence, absence and explicit null. | Required | V1-013 | C | C | C | P | M | QSL #119 / research #39 |
+| V1-TYPE-011 | Represent lower and upper multiplicity independently of presence. | Required | V1-013 | C | C | C | P | M | QSL #119 / research #39 |
+| V1-TYPE-012 | Represent typed fixed records and tuple values. | Required | V1-014; reserved `tuple`, `Tuple` | C | C | C | P | M | research #66 / QSL #1 |
+| V1-TYPE-013 | Compare records structurally under an explicit type-owned equality rule. | Required | V1-018 | C | C | C | M | M | research #66 / QSL #1 |
 | V1-TYPE-014 | Represent finite ordered duplicate-preserving sequences. | Required | V1-015 | C | C | C | P | M | QSL #1 / research #39 |
-| V1-TYPE-015 | Represent finite mathematical sets without sequence emulation. | Required | V1-016; reserved `set`, `Set` | C | M | M | M | M | research #65 / QSL #1 |
-| V1-TYPE-016 | Represent finite bags with explicit multiplicity semantics. | Required | V1-016; reserved `bag`, `Bag` | C | M | M | M | M | research #65 / QSL #1 |
-| V1-TYPE-017 | Represent finite ordered sets with distinct order and uniqueness semantics. | Required | V1-016; reserved `OrderedSet` | C | M | M | M | M | research #65 / QSL #1 |
-| V1-TYPE-018 | Convert collection kinds only through explicit loss-checked operations. | Required | V1-016 | C | M | M | M | M | research #65 / QSL #1 |
-| V1-TYPE-019 | Represent typed acyclic value containment. | Required | V1-014 | C | P | P | P | M | QSL #1 / QSL #119 |
-| V1-TYPE-020 | Represent recursive value containment with finite runtime bounds. | Required | V1-016; prose census | C | M | M | M | M | research #65 / QSL #119 |
+| V1-TYPE-015 | Represent finite mathematical sets without sequence emulation. | Required | V1-016; reserved `set`, `Set` | C | C | C | M | M | research #65 / QSL #1 |
+| V1-TYPE-016 | Represent finite bags with explicit multiplicity semantics. | Required | V1-016; reserved `bag`, `Bag` | C | C | C | M | M | research #65 / QSL #1 |
+| V1-TYPE-017 | Represent finite ordered sets with distinct order and uniqueness semantics. | Required | V1-016; reserved `OrderedSet` | C | C | C | M | M | research #65 / QSL #1 |
+| V1-TYPE-018 | Convert collection kinds only through explicit loss-checked operations. | Required | V1-016 | C | C | C | M | M | research #65 / QSL #1 |
+| V1-TYPE-019 | Represent typed acyclic value containment. | Required | V1-014 | C | C | C | P | M | QSL #1 / QSL #119 |
+| V1-TYPE-020 | Represent recursive value containment with finite runtime bounds. | Required | V1-016; prose census | C | C | C | M | M | research #65 / QSL #119 |
 | V1-TYPE-021 | Represent finite object populations independently of value containment. | Required | V1-017 | C | P | P | P | M | QSL #1 / research #41 |
 | V1-TYPE-022 | Represent explicit typed object references and identity equality. | Required | V1-017 | C | C | C | P | M | QSL #1 / QSL #120 |
 | V1-TYPE-023 | Resolve object lookup only through an explicit closed typed environment. | Required | V1-018; reserved `allInstances` | C | P | P | P | M | research #66 / QSL #1 |
@@ -105,19 +105,19 @@ implies completion in another.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | V1-EXPR-001 | Bind immutable local values with lexical scope. | Required | V1-004 | C | C | C | P | M | QSL #1 / research #39 |
 | V1-EXPR-002 | Declare and call acyclic named typed predicates. | Required | V1-007 | C | C | C | P | M | QSL #1 / research #39 |
-| V1-EXPR-003 | Declare and call total pure typed functions. | Required | V1-008; reserved `helper` | C | M | M | M | M | research #65 / QSL #1 |
-| V1-EXPR-004 | Admit recursive pure functions only with checked termination and resource bounds. | Required | V1-008; reserved `rec` | C | M | M | M | M | research #65 / QSL #1 |
+| V1-EXPR-003 | Declare and call total pure typed functions. | Required | V1-008; reserved `helper` | C | C | C | M | M | research #65 / QSL #1 |
+| V1-EXPR-004 | Admit recursive pure functions only with checked termination and resource bounds. | Required | V1-008; reserved `rec` | C | C | C | M | M | research #65 / QSL #1 |
 | V1-EXPR-005 | Evaluate checked integer addition, subtraction, multiplication and negation. | Required | V1-010 | C | C | C | P | M | QSL #1 / Contract IR #1 |
 | V1-EXPR-006 | Evaluate integer division and remainder with exact zero and overflow outcomes. | Required | V1-012 | C | M | M | M | M | research #66 / QSL #1 |
 | V1-EXPR-007 | Evaluate normalized rational arithmetic and division. | Required | V1-010 | C | M | M | M | M | research #66 / QSL #1 |
 | V1-EXPR-008 | Evaluate finite-width floating values under an explicit IEEE profile. | Required | V1-012; prose census | C | M | M | M | M | research #66 / QSL #1 |
 | V1-EXPR-009 | Preserve NaN, infinity, signed zero and rounding-mode semantics where the float profile admits them. | Required | V1-012 | C | M | M | M | M | research #66 / QSL #1 |
-| V1-EXPR-010 | Evaluate collection size, membership and count. | Required | V1-015; scope census | C | P | P | P | M | research #65 / QSL #1 |
+| V1-EXPR-010 | Evaluate collection size, membership and count. | Required | V1-015; scope census | C | C | C | P | M | research #65 / QSL #1 |
 | V1-EXPR-011 | Evaluate bounded universal and existential quantification. | Required | V1-015 | C | C | C | P | M | QSL #1 / Contract IR #1 |
-| V1-EXPR-012 | Filter a collection while preserving its kind and order contract. | Required | V1-015; scope census | C | P | P | P | M | research #65 / QSL #1 |
-| V1-EXPR-013 | Map or collect collection elements with typed output bounds. | Required | V1-015; reserved `collect` | C | P | P | P | M | research #65 / QSL #1 |
-| V1-EXPR-014 | Flatten nested collections with explicit kind, multiplicity and bound semantics. | Required | V1-016; reserved `flatten` | C | M | M | M | M | research #65 / QSL #1 |
-| V1-EXPR-015 | Fold bounded collections with exact empty identities and checked intermediates. | Required | V1-015; scope census | C | P | P | P | M | research #65 / QSL #1 |
+| V1-EXPR-012 | Filter a collection while preserving its kind and order contract. | Required | V1-015; scope census | C | C | C | P | M | research #65 / QSL #1 |
+| V1-EXPR-013 | Map or collect collection elements with typed output bounds. | Required | V1-015; reserved `collect` | C | C | C | P | M | research #65 / QSL #1 |
+| V1-EXPR-014 | Flatten nested collections with explicit kind, multiplicity and bound semantics. | Required | V1-016; reserved `flatten` | C | C | C | M | M | research #65 / QSL #1 |
+| V1-EXPR-015 | Fold bounded collections with exact empty identities and checked intermediates. | Required | V1-015; scope census | C | C | C | P | M | research #65 / QSL #1 |
 | V1-EXPR-016 | Compare scalar, enum, reference, record and collection values only under declared equality rules. | Required | V1-018 | C | P | P | P | M | research #66 / QSL #1 |
 | V1-EXPR-017 | Navigate properties and relationships without ambient identity lookup. | Required | V1-017, V1-018 | C | C | C | P | M | QSL #1 / QSL #120 |
 | V1-EXPR-018 | Evaluate invariants against one exact state anchor. | Required | V1-009 | C | C | C | P | M | QSL #1 / research #39 |
@@ -126,8 +126,8 @@ implies completion in another.
 | V1-EXPR-021 | Evaluate immutable captures and aliases without anchor drift. | Required | V1-009 | C | P | P | P | M | QSL #1 / research #39 |
 | V1-EXPR-022 | Enforce operation frames, created identities and deleted identities. | Required | V1-009 | C | P | P | P | M | QSL #1 / research #39 |
 | V1-EXPR-023 | Report parse, type, admission, lowering, execution and observation failures as distinct stages. | Required | V1-005 | C | P | P | P | M | QSpec #1 / research #39 |
-| V1-EXPR-024 | Reject reflection, ambient extension lookup and unreviewed user callbacks. | Integrity | V1-008 | C | P | P | P | M | research #65 / QSL #1 |
-| V1-EXPR-025 | Reject mutation and I/O during declarative clause evaluation. | Integrity | V1-008, V1-039 | C | P | P | P | M | QSpec #1 / research #39 |
+| V1-EXPR-024 | Reject reflection, ambient extension lookup and unreviewed user callbacks. | Integrity | V1-008 | C | C | C | P | M | research #65 / QSL #1 |
+| V1-EXPR-025 | Reject mutation and I/O during declarative clause evaluation. | Integrity | V1-008, V1-039 | C | C | C | P | M | QSpec #1 / research #39 |
 | V1-EXPR-026 | Report resource exhaustion and undefined arithmetic without Boolean approximation. | Integrity | V1-005, V1-010 | C | C | C | P | M | QSL #1 / Contract IR #1 |
 
 ## 4. Temporal, clocks and observation
@@ -255,7 +255,7 @@ implies completion in another.
 | V1-TOOL-005 | Provide model metadata, semantic views and deterministic rendering APIs. | Required | prose census | C | M | M | M | M | Research #77 / research #39 |
 | V1-TOOL-006 | Load versioned Rust plugins only through explicit capability, purity and provenance contracts. | Required | prose census | C | M | M | M | M | research #43 / QSpec #1 |
 | V1-TOOL-007 | Support ahead-of-time and JIT execution without changing language meaning or qualification identity. | Required | prose census | C | M | M | M | M | research #43 / Verification #1 |
-| V1-TOOL-008 | Package reusable domain libraries with exact edition/profile/dependency compatibility. | Required | prose census | C | M | M | M | M | research #43 / QSpec #1 |
+| V1-TOOL-008 | Package reusable domain libraries with exact edition/profile/dependency compatibility. | Required | prose census | C | C | C | M | M | research #43 / QSpec #1 |
 | V1-TOOL-009 | Expose a WASM consumer with the same admitted semantics and refusal behavior. | Required | code-surface census | C | P | P | M | M | quire-wasm / research #39 |
 | V1-TOOL-010 | Expose code-analysis and source-generation consumers without granting them semantic authority. | Required | code-surface census | C | P | P | M | M | quire-analyze, quire-code-rs / research #39 |
 
