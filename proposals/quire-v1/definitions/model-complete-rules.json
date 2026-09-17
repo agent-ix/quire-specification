@@ -8,7 +8,7 @@
       "identity": "quire.rule.ad-006/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/assurance/AD-006-model-graph-state-contracts.md",
-      "sha256": "e8320a2dfe9309c4eb0a4e3383b40e7e8c0d0e902af87f640c27789cd4e3667e"
+      "sha256": "fd45db52c28723e5f07da094f03f31aeefa807c823a8c82ce788ba21a46fd81b"
     },
     {
       "identity": "quire.rule.fr-043/v1",
@@ -44,7 +44,7 @@
       "identity": "quire.rule.fr-152/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-152-bind-systems-model-structures.md",
-      "sha256": "0bda587cc5b322002d6f7970baf8ebbca350fa06e17ee232eaeca8c91795a8bf"
+      "sha256": "6be03f6764468013d78e6874e28f712110f7e714303b479edfb60478c90a5e7b"
     },
     {
       "identity": "quire.rule.fr-153/v1",
@@ -56,13 +56,19 @@
       "identity": "quire.rule.fr-154/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-154-admit-domain-package-model.md",
-      "sha256": "eadcebdfbec8869b86b8450b73e20b6e5593eb87ade2e242eee229c8c5e0862d"
+      "sha256": "6e39fd517cee8467fc579ca5e197f7f8dbb6886eff9380c5ad97a141790202fa"
     },
     {
       "identity": "quire.rule.fr-204/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/objects/foundation/FR-204-declared-object-identity.md",
       "sha256": "1396dc9b9ee4581fa64fa8f1c723b6fb22bafae6f245edda381225c6c1530a65"
+    },
+    {
+      "identity": "quire.rule.fr-208/v1",
+      "revision": "1-draft.1",
+      "path": "../../../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md",
+      "sha256": "22ce069304e780f75b44c4bfe84bcd7372583fff9bc89833b2ff4e98cf6fa6a6"
     },
     {
       "identity": "quire.rule.fr-321/v1",

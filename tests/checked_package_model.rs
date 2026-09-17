@@ -30,7 +30,7 @@ struct ModelArtifact {
     bytes: &'static [u8],
 }
 
-const MODEL_ARTIFACTS: [ModelArtifact; 17] = [
+const MODEL_ARTIFACTS: [ModelArtifact; 18] = [
     ModelArtifact {
         path: "proposals/quire-v1/definitions/model-complete.md",
         bytes: include_bytes!("../proposals/quire-v1/definitions/model-complete.md"),
@@ -108,6 +108,10 @@ const MODEL_ARTIFACTS: [ModelArtifact; 17] = [
     ModelArtifact {
         path: "spec/objects/foundation/FR-204-declared-object-identity.md",
         bytes: include_bytes!("../spec/objects/foundation/FR-204-declared-object-identity.md"),
+    },
+    ModelArtifact {
+        path: "spec/objects/foundation/FR-208-quire-meaning-vocabulary.md",
+        bytes: include_bytes!("../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md"),
     },
     ModelArtifact {
         path: "spec/objects/interfaces/FR-321-model-selection-artifact.md",
