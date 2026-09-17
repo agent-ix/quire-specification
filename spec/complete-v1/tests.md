@@ -507,6 +507,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-207 | FR-207-AC-5 | TC-231 | planned |
 | FR-207 | FR-207-AC-6 | TC-231 | planned |
 | FR-207 | FR-207-AC-7 | TC-231 | planned |
+| FR-207 | FR-207-AC-8 | TC-235 | planned |
 | FR-210 | FR-210-AC-1 | TC-050 | planned |
 | FR-210 | FR-210-AC-2 | TC-050 | planned |
 | FR-210 | FR-210-AC-3 | TC-050 | planned |
@@ -786,6 +787,15 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-208 | FR-208-AC-1 | TC-231 | planned |
 | FR-208 | FR-208-AC-2 | TC-197 | planned |
 | FR-208 | FR-208-AC-3 | TC-234 | planned |
+| FR-208 | FR-208-AC-4 | TC-235 | planned |
+| FR-208 | FR-208-AC-5 | TC-235 | planned |
+| FR-208 | FR-208-AC-6 | TC-235 | planned |
+| FR-208 | FR-208-AC-7 | TC-235 | planned |
+| FR-208 | FR-208-AC-8 | TC-235 | planned |
+| FR-208 | FR-208-AC-9 | TC-235 | planned |
+| FR-208 | FR-208-AC-10 | TC-235 | planned |
+| FR-208 | FR-208-AC-11 | TC-235 | planned |
+| FR-208 | FR-208-AC-12 | TC-235 | planned |
 | FR-272 | FR-272-AC-6 | TC-196 | planned |
 | FR-321 | FR-321-AC-4 | TC-195 | planned |
 | FR-160 | FR-160-AC-4 | TC-199 | planned |
@@ -964,12 +974,13 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-232 | Counterexample lineage integrity | Property | P0 | FR-312 | 🚧 Planned |
 | TC-233 | Published checked-package and scalar contract vectors | Property | P0 | FR-322 | 🚧 Planned |
 | TC-234 | Domain package model intake | Property | P0 | FR-154, FR-208 | 🚧 Planned |
+| TC-235 | Business construct meaning binding | Property | P0 | FR-208, FR-154, FR-207, FR-047 | 🚧 Planned |
 
 ## Integration Test Matrix
 
 | Integration ID | Purpose | Target Project | Type | Test Cases | Coverage Status |
 | --- | --- | --- | --- | --- | --- |
-| IT-070 | Artifact bundle to checked package | quire-rs extraction + FCD extraction-frontend + quire-spec-language | library | TC-195, TC-196, TC-197, TC-198, TC-234 | planned |
+| IT-070 | Artifact bundle to checked package | quire-rs extraction + FCD extraction-frontend + quire-spec-language | library | TC-195, TC-196, TC-197, TC-198, TC-234, TC-235 | planned |
 | IT-071 | Composed domain execution | quire-integration + domain runtimes | library | TC-209, TC-210 | planned |
 | IT-072 | Revisioned observation repair | quire-observation + temporal/protocol | library | TC-199, TC-204 | planned |
 | IT-073 | Protocol analysis suite | quire-spec-language + quire-protocol | library | TC-205–TC-208 | planned |

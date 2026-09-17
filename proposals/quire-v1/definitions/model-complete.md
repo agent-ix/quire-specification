@@ -132,6 +132,7 @@ artifact and span.
 | Object type | `TypeDefinition` whose construct meaning is `quire.meaning.model.object-type/v1` | none |
 | Value type | `TypeDefinition` whose construct meaning is `quire.meaning.model.value-type/v1` | none |
 | Variant type | `TypeDefinition` whose construct meaning is `quire.meaning.model.variant-type/v1` | none |
+| Record value type, event type, state machine, process, persistence interface, namespace | the `TypeDefinition` whose construct meaning is `quire.meaning.model.record-value-type/v1`, `quire.meaning.model.event-type/v1`, `quire.meaning.model.state-machine/v1`, `quire.meaning.model.process/v1`, `quire.meaning.model.persistence-interface/v1` or `quire.meaning.model.namespace/v1`, valid as FR-208 defines that meaning | none |
 | Field | `TypeDefinition.fields[]` entry | its type |
 | Relationship | `TypeDefinition.relationships[]` entry | its type |
 | Operation | `Operation` | its receiver type |
@@ -151,15 +152,16 @@ Every refusal names the IR node identity, the artifact and the span.
 | Feature | Rule | Refusal |
 | --- | --- | --- |
 | Identity | A type definition's identity, including a population's and a systems construct's, is `ix://<package identity>/<artifact id>`. A member's identity is its owner's identity, `/` and the member name. The artifact title is `displayName`, for presentation only, and the span is the declaration's origin; neither is part of any identity. Two nodes with one identity are not allowed. | `invalid_model_binding`/`conflicting-binding` |
-| Supertypes | Every `supertypes[]` entry names an object type of the package. The supertype graph is acyclic; phase 3 checks it. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`specialization-cycle` in phase 3 |
+| Supertypes | Every `supertypes[]` entry of an object type names an object type of the package, and every entry of a record value type, event type, state machine or process names a node of its own meaning (FR-208); an entry naming a node of another meaning is refused. The supertype graph is acyclic; phase 3 checks it. A persistence interface or namespace with a non-empty `supertypes` is refused and its entries are not checked further. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `unsupported_construct`/`declaration-form`; `invalid_model_binding`/`specialization-cycle` in phase 3 |
 | Abstract | An abstract type has no direct instances. A population member whose most-specific type is abstract is refused. Dispatch covers only concrete subtypes. | `invalid_runtime_input`/`abstract-instance` |
-| Fields | `typeRef` names a type of the package or a native value type. `multiplicity` has `lower <= upper`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`unpreserved-model-meaning` |
+| Fields | `typeRef` names a native value type, or a type of the package; a `typeRef` naming an event type, state machine, process, persistence interface or namespace (FR-208) is refused. `multiplicity` has `lower <= upper`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `invalid_model_binding`/`unpreserved-model-meaning` |
 | Presence | `presence` is exactly `required` or `optional`. A `required` field is present in every object. An `optional` field may be absent. Absent and empty stay distinct: lower bound `0` makes an empty collection legal and never makes a field optional. | `invalid_model_binding`/`malformed-declaration`; `invalid_runtime_input`/`missing-member` |
 | Subsets | Every `subsets[]` entry names a field of the owning type or of a supertype. | `missing_declaration`/`missing-name` |
 | Redefines | `redefines` names a field or operation of the package. Phase 4 checks that the target is inherited by the owning type and that no two members of one type redefine one target. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`redefinition-target` in phase 4 |
-| Relationships | Each end names an object type of the package. Each end has a role and a multiplicity with `lower <= upper`. `direction` is exactly `source-to-target`, `target-to-source`, `bidirectional` or `undirected`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`unpreserved-model-meaning` |
-| Frames | `Operation.frame` has exactly `modifies`, `creates` and `deletes`. Each `modifies` entry names a field or relationship. Each `creates` or `deletes` entry names an object type. | `missing_declaration`/`missing-name` |
-| Populations | Each member type names an object type. `extent` is exactly `closed` or `open`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration` |
+| Relationships | Each end names an object type or a process (FR-208) of the package, and a relationship may be owned by an object type or a process, with object-type relationship meaning; an end naming a node of any other business model meaning (FR-208), and a relationship owned by one, is refused. Each end has a role and a multiplicity with `lower <= upper`. `direction` is exactly `source-to-target`, `target-to-source`, `bidirectional` or `undirected`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `invalid_model_binding`/`unpreserved-model-meaning` |
+| Frames | `Operation.frame` has exactly `modifies`, `creates` and `deletes`. Each `modifies` entry names a field or relationship. Each `creates` or `deletes` entry names an object type or a process (FR-208); an entry naming a node of any other meaning is refused. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration` |
+| Populations | Each member type names an object type or a process (FR-208); a member type naming a node of any other business model meaning (FR-208), such as a namespace, is refused. `extent` is exactly `closed` or `open`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration` |
+| Business model meanings | Each record value type, event type, state machine, process, persistence interface and namespace node meets its FR-208 rules: required members present, identity fields absent or present as its meaning states, `occurrenceField` resolving to `Timestamp`, transition, step, `persists` and `members` references naming nodes of the stated meaning, guard clauses in `quire`, unique state, transition and step identities, and no unsupported form. A process has an object universe of runs; no node of the other five meanings has one. Invariants, `Pre:` and `Post:` contracts and generalization have the meanings FR-208 states. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `invalid_model_binding`/`conflicting-binding`; `unsupported_construct`/`declaration-form`; `wrong_snapshot`/`forbidden-pre-read`; `invalid_model_binding`/`derivation-conflict` in phase 3 |
 | Systems kinds | Each part, port, interface, connection and allocation node meets the systems-model kind rules below. | as below |
 
 Multiplicity is `{lower, upper, ordered, unique}`. `lower` is an integer in
@@ -301,6 +303,20 @@ conflict unless one redefining owner is a proper descendant of every other
 redefining owner; a conflict is `refused { code: invalid_model_binding, cause:
 derivation-conflict }` with both derivation paths, and no effective member is
 exposed for either.
+
+Phase 3 also derives the business model data of FR-208. A state machine's
+effective states and transitions are the union of its own with those of every
+ancestor; a state name, or a transition's `from`, `to` and `trigger`, declared
+by two distinct owners reaching one type is `refused { code:
+invalid_model_binding, cause: derivation-conflict }` with both derivation
+paths, and a transition whose `from`, `to`, `trigger` or `guard` names no
+effective state, operation or clause of its machine is `refused { code:
+invalid_model_binding, cause: malformed-declaration }`. An event type whose
+ancestor's occurrence field is neither its own occurrence field nor a field
+that its occurrence field redefines is `refused { code: invalid_model_binding,
+cause: derivation-conflict }` with both paths. States, transitions, occurrence
+fields and steps add no `normalize.inherit` member fact, because they are not
+members; a process's steps are not inherited.
 
 ## Systems-model kind mapping
 

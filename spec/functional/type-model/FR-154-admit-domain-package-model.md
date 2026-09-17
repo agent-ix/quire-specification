@@ -74,16 +74,17 @@ Declaration refusals:
 | --- | --- |
 | A type definition's or population node's artifact id does not match `^[A-Za-z][A-Za-z0-9_]*$` | `invalid_model_binding`/`malformed-declaration` |
 | A type definition's or population node's `kind` names no entry of the `constructs` table, or its construct has no `meaning` or a `meaning` that is not a Quire meaning id (FR-208) | `invalid_model_binding`/`malformed-declaration` |
-| An IR node is not valid for its construct's meaning | `invalid_model_binding`/`malformed-declaration` |
-| A supertype, field type, subsets, redefines, relationship end, frame entry or population member names no node of the package | `missing_declaration`/`missing-name` |
-| Two nodes share one identity | `invalid_model_binding`/`conflicting-binding` |
+| An IR node is not valid for its construct's meaning, including a reference that names a node of the wrong meaning and a `supertypes` entry that names a node of another meaning (FR-208) | `invalid_model_binding`/`malformed-declaration` |
+| A supertype, field type, subsets, redefines, relationship end, frame entry, population member, `occurrenceField`, transition `from`, `to`, `trigger`, `guard` or `emits` entry, step `consumes` or `emits` entry, `persists` entry or namespace `members` entry names no node or member of the package | `missing_declaration`/`missing-name` |
+| A node of a business model meaning (FR-208) declares a form that meaning does not support: a non-empty `supertypes` or a `quire` clause of a persistence interface or namespace, an operation of a record value type, or an operation contract of a persistence interface | `unsupported_construct`/`declaration-form` |
+| Two nodes share one identity, including two states or two steps of one owner with one name, or two transitions of one state machine with equal `from`, `to` and `trigger` | `invalid_model_binding`/`conflicting-binding` |
 | A multiplicity has `lower > upper` | `invalid_model_binding`/`unpreserved-model-meaning` |
 
 Every declaration refusal retains the IR node identity, the source artifact id
 and the source span `{artifact, start, end}` that the node carries. Intake
 reports every declaration refusal in node order, and then no later phase runs.
 Within one node, every check of the table that fails reports, in table order,
-so the object id check reports first. A reference that names a node refused by
+so the object id check reports first. Several failures of one row within one node report in member-path order: a member path is a sequence of segments, each a member name or a numeric index, where `[]` denotes the index-free segment of a list member and sorts as an index before every numeric index; paths compare segment by segment, a member name before a numeric index, member names by their UTF-8 bytes and indices numerically, and a proper prefix orders first. A reference that names a node refused by
 an earlier row of the table is not reported again as
 `missing_declaration`/`missing-name`; that node's own refusal stands for it.
 An admission refusal ends intake with no declaration.
