@@ -183,7 +183,7 @@ forbidden frame change, mismatched invocation, missing pre observation, deleted
 post context and incorrect creation inventory. Three separately identified
 synthetic frame bindings prevent a test caller from implicitly redefining one
 operation's accepted frame. They remain proposed binding inputs, not linked
-model authority or live runtime capability.
+model declarations or live runtime capability.
 
 The expanded source fixture is versioned `agent-a-source-subject/1-draft` so
 strict consumers cannot mistake its new members for the prior `0-draft` shape.

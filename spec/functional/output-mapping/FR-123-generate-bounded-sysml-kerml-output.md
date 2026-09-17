@@ -12,7 +12,7 @@ relationships:
 
 When `quire.output.sysml2-kerml1/v1` revision `1-draft.1` is selected, the
 SysML/KerML mapper SHALL generate only the admitted requirement/constraint
-expression fragment over exact authoritative model bindings.
+expression fragment over exact model bindings from spec artifacts.
 
 ## Inputs
 
@@ -28,8 +28,8 @@ records.
 
 The mapper SHALL retain native identity in the package manifest and treat any
 textual short name as display only. Generated local attributes SHALL reference
-or correspond exactly to authoritative model declarations and SHALL NOT create
-a second model authority.
+or correspond exactly to model declarations from spec artifacts and SHALL NOT
+declare model elements of their own.
 
 The mapper SHALL preserve assumption/required-constraint separation only under
 an exact selected structural correspondence. It SHALL classify unsupported

@@ -770,8 +770,8 @@ Run Quire over this exact repository scope. Use real implementations and indepen
 The complete architecture and all 176 atomic capabilities are specified in one
 campaign before implementation planning. The corpus then receives one composite
 `/spec-review`; dependent implementation planning begins only after every review
-finding is resolved. Historical fixture and profile bytes remain immutable under
-their selected bindings.
+finding is resolved. Fixture and profile bytes match the digests their selected
+bindings pin.
 
 ## 14. Lifecycle Status
 

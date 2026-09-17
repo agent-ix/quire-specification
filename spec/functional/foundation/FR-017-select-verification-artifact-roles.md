@@ -47,7 +47,7 @@ and closed vocabulary. This amendment adds no migration inference.
 | FR-017-AC-2 | Substituting a nearby generic kind or any other added kind for the requested role refuses with identity-mismatch, even when bytes and every other reference field agree. | Test (TC-002) |
 | FR-017-AC-3 | Unknown kinds, extra members and omitted required fields refuse; changing only the envelope or artifact version never selects a fallback decoder. | Test (TC-002) |
 | FR-017-AC-4 | Exact property, subject, binding, dependency-closure and run references fail matching after one-axis authority, identity, revision, digest or wire changes. | Test (TC-002) |
-| FR-017-AC-5 | Prior adopted schema and fixture bytes remain unchanged; new roles are not accepted by the prior closed schema. | Test (TC-002) |
+| FR-017-AC-5 | The state-core shared-reference 1-draft schema and fixture bytes match the digests pinned in `proposals/state-core/SHA256SUMS` and `proposals/state-core/fixtures/SHA256SUMS`; new roles are not accepted by that closed schema. | Test (TC-002) |
 
 ## Dependencies
 

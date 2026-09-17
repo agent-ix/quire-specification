@@ -6,7 +6,7 @@ OMG OCL 2.4, normative document `formal/14-02-03`.
 ## Admitted fragment
 
 The profile generates named invariant and operation pre/postcondition output
-over an exact authoritative model correspondence. Its initial expression
+over an exact model correspondence from spec artifacts. Its initial expression
 fragment contains total Boolean literals and `not`/`and`/`or`/`implies`, equality
 and ordered comparison of equal types, bounded integer literals and checked
 `+`/`-`/`*`, exact field reads, immutable local bindings, and bounded

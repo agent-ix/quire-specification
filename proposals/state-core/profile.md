@@ -4,7 +4,8 @@ Status: proposed; profile identifier `state-finite/0-draft`, language tag
 `ix:native`, edition `0-draft`. These are private experimental identifiers.
 The public language name is deferred until the first release review; a rename
 requires an explicit source/profile migration, never reinterpretation of old
-bytes.
+bytes. Spec artifacts declare model fields and operations, and the domain
+package carries them. The fixtures pin this file's bytes.
 
 ## Admission and implementation status
 
@@ -73,10 +74,10 @@ primary      = 'true' | 'false' | 'self' | 'result' | integer | string | ident
 The token `pre` is context-sensitive only between clause introducer and builtin
 call; both are explicit above. `self`, `result` and declared operation parameter
 names resolve from the anchor environment. Enum values use the resolved qualified
-name `Model::Enum::Variant`. Display names in a model import
-must resolve to exactly one exported stable identity; duplicates are errors.
-The grammar declares no model fields or operations: the imported model package
-is their authority. A clause identifier maps to an authored requirement and
+name `Model::Enum::Variant`. Display names in a domain package import
+must resolve to exactly one stable declaration identity; duplicates are errors.
+The grammar declares no model fields or operations: spec artifacts declare them,
+and the imported domain package carries those declarations. A clause identifier maps to an authored requirement and
 criterion in the source manifest; it is not a newly minted requirement identity.
 
 Balanced reserved forms `helper`, `rec`, `set`, `bag`, `collect`, `cast`, `tuple`,
