@@ -507,6 +507,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-207 | FR-207-AC-5 | TC-231 | planned |
 | FR-207 | FR-207-AC-6 | TC-231 | planned |
 | FR-207 | FR-207-AC-7 | TC-231 | planned |
+| FR-207 | FR-207-AC-8 | TC-235 | planned |
 | FR-210 | FR-210-AC-1 | TC-050 | planned |
 | FR-210 | FR-210-AC-2 | TC-050 | planned |
 | FR-210 | FR-210-AC-3 | TC-050 | planned |
@@ -973,7 +974,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-232 | Counterexample lineage integrity | Property | P0 | FR-312 | 🚧 Planned |
 | TC-233 | Published checked-package and scalar contract vectors | Property | P0 | FR-322 | 🚧 Planned |
 | TC-234 | Domain package model intake | Property | P0 | FR-154, FR-208 | 🚧 Planned |
-| TC-235 | Business construct meaning binding | Property | P0 | FR-208, FR-154 | 🚧 Planned |
+| TC-235 | Business construct meaning binding | Property | P0 | FR-208, FR-154, FR-207 | 🚧 Planned |
 
 ## Integration Test Matrix
 

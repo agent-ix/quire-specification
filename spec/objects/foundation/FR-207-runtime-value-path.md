@@ -33,10 +33,19 @@ When a producer locates a value inside a validated runtime subject, the producer
   ([FR-204](FR-204-declared-object-identity.md), supplying the universe, type
   and object identity that
   [FR-009](../../functional/foundation/FR-009-preserve-object-identity.md)
-  compares) or a named parameter or result binding of one declared invocation
+  compares) or a binding of one declared invocation
   ([FR-046](../../functional/foundation/FR-046-validate-state-invocation-inputs.md):
-  "Parameters come from one declared invocation"). Two subjects of different
-  kinds are never equal (FR-047).
+  "Parameters come from one declared invocation"). An invocation binding is
+  exactly one of a named parameter binding, the result binding, or the receiver
+  binding `self`. The receiver binding is the context the invocation is made
+  on when that context has no declared object identity, such as a state-machine
+  context ([FR-208](FR-208-quire-meaning-vocabulary.md)); a receiver with a
+  declared object identity is always a declared object identity subject, never
+  the receiver binding. Two invocation bindings are equal exactly when they
+  name one invocation and agree on binding kind and, for a parameter, on the
+  exact parameter spelling, so the receiver binding `self` never equals a
+  parameter binding. Two subjects of different kinds are never equal
+  (FR-047).
 - **steps** (ordered sequence of `traversal step`, possibly empty) — the
   traversal from the subject to the located value. An empty sequence denotes the
   subject itself.
@@ -107,7 +116,9 @@ value was present.
 ## Canonical serialization
 
 The wire form is a tagged object with `kind: runtime_value`, a typed `root`, and
-an ordered `steps` array. Root subject tags are `object` and `invocation`.
+an ordered `steps` array. Root subject tags are `object` and `invocation`; an `invocation` subject
+carries its invocation and a binding tag `parameter` (with the exact parameter
+spelling), `result` or `receiver`.
 Step tags are `field`, `option_value`, `member`, `index` and `map_key`; named
 steps carry exact declaration spelling, indices are unsigned decimal integers,
 and map keys carry their canonical typed value. Unknown tags refuse.
@@ -132,6 +143,7 @@ artifact defines only the runtime kind.
 | FR-207-AC-5 | A proper prefix orders before every path that extends it, and the order is used for collection comparison only. | Analysis |
 | FR-207-AC-6 | Runtime value paths are totally ordered across observations by the authority-qualified observation identity and revision before subject and traversal steps. | Inspection |
 | FR-207-AC-7 | The canonical wire form uses `runtime_value`, typed root-subject tags and typed traversal-step tags; unknown tags refuse. | Inspection |
+| FR-207-AC-8 | A path rooted at the receiver binding `self` of an invocation whose receiver has no declared object identity locates values of that receiver, compares unequal to a path with equal steps rooted at a parameter binding of the same invocation, and is never used for a receiver with a declared object identity. | Test (TC-235) |
 
 ## Resolved path boundary
 
