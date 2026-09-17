@@ -5,7 +5,7 @@ Selected identity `quire.output.mapping/v1`, revision `1-draft.1`.
 ## Subsystem boundaries
 
 The coordinator consumes one strictly read native package, its accepted semantic
-profile selections, authoritative model bindings and an explicit
+profile selections, model bindings from spec artifacts and an explicit
 [target profile](../../../spec/objects/output-mapping/FR-297-output-mapping-consumer-profile.md).
 It validates the complete request before dispatching each obligation to exactly
 one target-profile mapper. The mapper returns one
@@ -42,7 +42,7 @@ The request retains:
 
 - exact source-package reference, source definition/profile selections and
   requested obligation identities in source order;
-- authoritative model/type/unit/operation/clock bindings applicable to those
+- model/type/unit/operation/clock bindings from spec artifacts applicable to those
   obligations;
 - exact target-profile identity, revision and digest;
 - requested output capabilities; and
