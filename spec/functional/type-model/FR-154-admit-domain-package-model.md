@@ -75,7 +75,7 @@ Declaration refusals:
 | A type definition's or population node's artifact id does not match `^[A-Za-z][A-Za-z0-9_]*$` | `invalid_model_binding`/`malformed-declaration` |
 | A type definition's or population node's `kind` names no entry of the `constructs` table, or its construct has no `meaning` or a `meaning` that is not a Quire meaning id (FR-208) | `invalid_model_binding`/`malformed-declaration` |
 | An IR node is not valid for its construct's meaning | `invalid_model_binding`/`malformed-declaration` |
-| A supertype, subsets, redefines, relationship end, frame entry or population member names no node of the package | `missing_declaration`/`missing-name` |
+| A supertype, field type, subsets, redefines, relationship end, frame entry or population member names no node of the package | `missing_declaration`/`missing-name` |
 | Two nodes share one identity | `invalid_model_binding`/`conflicting-binding` |
 | A multiplicity has `lower > upper` | `invalid_model_binding`/`unpreserved-model-meaning` |
 
