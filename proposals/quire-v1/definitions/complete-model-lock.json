@@ -12,7 +12,7 @@
     {
       "role": "root",
       "artifact_path": "model-complete.md",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"c80a1ca0f6856e456bf0ca817543043210c3cf303cf4c0690dcba9664ab2afc5"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"967d8e40dfb66042b2225a68217214e94dbfd146f4b99484f7c03e8a46a0ff9b"}
     },
     {
       "role": "state_graph",
@@ -22,7 +22,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "model-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"f839550820a4a6bc1f66d292471415cbd8e41c40593a116e261be4ffcbddbfbc"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"a624c6a129338f5894574be79aa3dcef9b855c38bf779b18b3015dd86bd154fb"}
     },
     {
       "role": "effective_declaration_schema",
@@ -77,7 +77,7 @@
     {
       "role": "rule_fr_154",
       "artifact_path": "../../../spec/functional/type-model/FR-154-admit-domain-package-model.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-154/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"907c1bedbe89d78edf9d64db14d5b50d482b4439a5d9c49c7e9ce34aafa4c62a"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-154/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"849bd92abc24a7f380be0be0a682f1c2519ab0a89e8263d394e9aedd7d078cea"}
     },
     {
       "role": "rule_fr_204",
@@ -87,7 +87,7 @@
     {
       "role": "rule_fr_208",
       "artifact_path": "../../../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-208/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"e917a26722a044962a3ee3ef620df7a7d3b8bead8da111c2175d3ca2afa1dc00"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-208/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"4781d5976ca07770502c4468d7bcd9b99c56cada3a311fee3dd339e615839697"}
     },
     {
       "role": "rule_fr_321",
