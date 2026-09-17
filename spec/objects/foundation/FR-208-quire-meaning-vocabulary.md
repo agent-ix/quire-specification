@@ -77,16 +77,19 @@ Rules common to the six meanings:
   declaration, not members. An operation's precondition and postcondition are
   part of its operation declaration.
 - **Object universe.** Only a process has an object universe (below), so a
-  process may be a population member or a `creates` or `deletes` frame entry.
-  No node of the other five meanings is either, and no node of the six
-  meanings is a relationship end. Naming one there is
-  `invalid_model_binding`/`malformed-declaration`.
+  process may be a population member, a `creates` or `deletes` frame entry or
+  a relationship end. No node of the other five meanings is any of these.
+  Naming one there is `invalid_model_binding`/`malformed-declaration`.
 - **Field types.** A field or parameter `typeRef` may name a record value
   type. Naming an event type, state machine, process, persistence interface
   or namespace is `invalid_model_binding`/`malformed-declaration`.
-- **Relationships.** A `relationships[]` entry of a node of these meanings is
-  `invalid_model_binding`/`malformed-declaration`. Links the lift does not
-  carry into the IR, such as `owns` and `transitions_to`, bind nothing.
+- **Relationships.** A process's `relationships[]` entries have object-type
+  relationship meaning over its runs (FR-150, FR-151): each is one relationship
+  declaration, its ends name object types or processes, and it is navigated in
+  the universe of its ends. A `relationships[]` entry of a node of the other
+  five meanings is `invalid_model_binding`/`malformed-declaration`. Links the
+  lift does not carry into the IR, such as `owns` and `transitions_to`, bind
+  nothing.
 - **References.** A reference below that names no node of the package is
   `missing_declaration`/`missing-name`. A reference that names a node of the
   wrong meaning is `invalid_model_binding`/`malformed-declaration`.
@@ -112,19 +115,27 @@ is the conjunction of its own invariants with those of every ancestor
   fields, and the fields of record values they hold. It reads no observation,
   so `pre` in it is `wrong_snapshot`/`forbidden-pre-read` (FR-042), and a read
   through a reference to an object is `wrong_snapshot`/`wrong-observation`.
-  It is evaluated for each value of the type that an evaluation reads: a field
-  value of an object in an observation, an operation parameter or result, or a
-  field of another record value. A false result is a violation of that clause
-  at the path where the value was read, and it depends only on the value, so
-  equal values give equal results. An object-type invariant instead ranges over
+  Its scope is every value of the type reachable through the fields of every
+  object in each invariant observation, and through the parameters and results
+  of each evaluated invocation, including collection elements, present optional
+  values and record values nested in other record values; the invariant is
+  evaluated once for each such value, with `self` bound to it. A false result is
+  a logical violation of that clause: a completed Boolean `false`, which carries
+  no diagnostic code or cause, because a logical violation is distinct from
+  every refusal (FR-047, FR-206-AC-3). The violation is located by the FR-207
+  runtime value path where the value was reached: root observation, root
+  subject the object identity or the invocation's parameter or result binding,
+  then one `field` step per field, one `index` step per collection element and
+  one `option_value` step per present optional. The result depends only on the
+  value, so equal values give equal results. An object-type invariant instead ranges over
   the objects of an object universe at a named observation and depends on
   object identity (FR-204). Under `quire.model.complete/v1` no evaluation reads
   an event value, because no field, parameter or firing carries one, so an
   event-type invariant is linked and type-checked but never evaluated.
 - **State machine.** `self` is the machine's context: the values of its
-  effective fields. The invariant holds in the pre and the post observation of
-  every invocation of every operation of the machine, whatever state the
-  machine is in. No member binds the current state
+  effective fields, bound as the State-machine context anchors below state. The
+  invariant holds in the pre and the post observation of every invocation of
+  every operation of the machine, whatever state the machine is in. No member binds the current state
   (agent-ix/spec-objects-business#14, agent-ix/filament-core-data#178), so an
   invariant is scoped to a state only through the context fields it reads.
 - **Process.** A process is an identified type: its runs are the objects of
@@ -138,6 +149,37 @@ is the conjunction of its own invariants with those of every ancestor
   precondition, and it is not evaluated. A clause is a guard exactly when some
   effective transition of the machine names it.
 
+### State-machine context anchors
+
+A state-machine context has no object identity and no object universe. This
+named extension of the state-contract anchor table (state contract, Operation
+anchors) supplies the operation, invocation, context and universe that the
+state contract requires every contract and invariant input to name:
+
+- **Context naming.** One evaluation input binds the single context of one
+  machine instance, and that context is owned by the input. It is named by the
+  machine's declaration key and the invocation identity of the input, never by
+  an object identity. The universe the state contract requires is the context
+  universe of that invocation: it holds that one context and no objects, and
+  identity equality is never applied to it.
+- **Contexts per observation.** Each of the invocation's pre and post
+  observations holds exactly one context of the machine, a value of the
+  machine's effective fields. An observation with no context of the machine is
+  `invalid_model_binding`/`wrong-context`; one with two contexts of the
+  machine is `invalid_runtime_input`/`duplicate-member`. Neither yields a
+  Boolean.
+- **Locations.** A value read from the context is located by an FR-207 runtime
+  value path whose root is the observation and the invocation binding `self`,
+  followed by one `field` step per context field.
+
+The anchors of a state-machine clause:
+
+| Clause | Context self | Parameters | Result | `pre(e)` |
+| --- | --- | --- | --- | --- |
+| Invariant | The one context in the invocation's pre observation, and separately the one context in its post observation; the invocation is the invariant's handler binding | No operation parameters | Unavailable | Refused |
+| Precondition | The one context in the invocation's pre observation | Immutable declared inputs of that invocation | Unavailable | Refused |
+| Postcondition | The one context in the invocation's post observation | Same immutable inputs | Exact declared post-only result | Reads the one context in the invocation's pre observation |
+
 ### Operation contracts
 
 An operation's precondition is its `Pre:` line and its postcondition is its
@@ -149,8 +191,8 @@ model's `Operation.pre` and `Operation.post`.
   observation and the invocation's immutable inputs, and `pre` in it is
   `wrong_snapshot`/`forbidden-pre-read`. The postcondition reads the post
   observation, the same inputs and the declared result, and may read the pre
-  observation through `pre(...)`. For a state machine `self` is the context
-  in each observation; for a process `self` is the run. Frame entries follow
+  observation through `pre(...)`. For a state machine `self` is the one context
+  of the observation, bound by the State-machine context anchors; for a process `self` is the run. Frame entries follow
   the object-type Frames rule. Redefinition follows FR-151: the effective
   precondition is the disjunction and the effective postcondition the
   conjunction over redefined members.
@@ -204,7 +246,12 @@ that the meaning states, `fields`, `identityFields`, `occurrenceField` or
   operation or clause of any state machine of the package is
   `missing_declaration`/`missing-name` at intake; one that names no effective
   state, operation or clause of its own machine is
-  `invalid_model_binding`/`malformed-declaration` in phase 3. Because
+  `invalid_model_binding`/`malformed-declaration` in phase 3. A transition of
+  a subtype whose `guard` names a clause that is an invariant of an ancestor,
+  because no transition of that ancestor names it, is
+  `invalid_model_binding`/`malformed-declaration` in phase 3 at that
+  transition's `guard`, since it would remove that invariant from the subtype.
+  Because
   the subtype's states and transitions include every ancestor's, it conforms
   to each ancestor.
 - **Process.** A subtype inherits every field, identity field, operation and
@@ -228,7 +275,8 @@ that the meaning states, `fields`, `identityFields`, `occurrenceField` or
   one or more `transitions`, and optional `fields`. Each transition names a
   `from` and a `to` state, a `trigger` operation, an optional `guard` naming a
   clause by clause id, and `emits`, a list of event types. A guard clause is
-  `language: quire`, otherwise `invalid_model_binding`/`malformed-declaration`.
+  `language: quire`, otherwise `invalid_model_binding`/`malformed-declaration`,
+  because a guard must be type-checkable against the machine's context.
   Not bound: a current state, an initial or final state, when a transition is
   enabled, firing, the order of transitions, and what happens to the state
   when a trigger is invoked.
@@ -282,10 +330,10 @@ that the meaning states, `fields`, `identityFields`, `occurrenceField` or
 | FR-208-AC-6 | A type definition whose construct names `quire.meaning.model.process/v1` binds its correlation key, an object universe of runs, and its steps in declaration order and no execution. No identity field, no steps, or a `consumes` or `emits` entry that is not an event type is `invalid_model_binding`/`malformed-declaration`; an entry naming nothing is `missing_declaration`/`missing-name`; a repeated step name is `invalid_model_binding`/`conflicting-binding`. | Test (TC-235) |
 | FR-208-AC-7 | A type definition whose construct names `quire.meaning.model.persistence-interface/v1` binds its operation signatures and `persists` list. A field, no operations, an empty `persists` or a `persists` entry that is not an object type is `invalid_model_binding`/`malformed-declaration`; an entry naming nothing is `missing_declaration`/`missing-name`; an operation contract or a `quire` clause is `unsupported_construct`/`declaration-form`. | Test (TC-235) |
 | FR-208-AC-8 | A type definition whose construct names `quire.meaning.model.namespace/v1` yields exactly one original declaration with its members and vocabulary and no effective type. A field, an operation, a namespace member, or a member already in an earlier namespace is `invalid_model_binding`/`malformed-declaration`; a member naming nothing is `missing_declaration`/`missing-name`; a `quire` clause is `unsupported_construct`/`declaration-form`. | Test (TC-235) |
-| FR-208-AC-9 | A field `typeRef` may name a record value type, and a population member or a `creates` or `deletes` frame entry may name a process. A field `typeRef` naming a node of any other business model meaning, a relationship end naming a node of any business model meaning, and a population member or `creates` or `deletes` entry naming a node of a business model meaning other than a process, is `invalid_model_binding`/`malformed-declaration`. | Test (TC-235) |
-| FR-208-AC-10 | A `quire` invariant of a record value type or event type holds for every value of the type, is evaluated with `self` bound to each value an evaluation reads, depends only on that value, and refuses `pre` with `wrong_snapshot`/`forbidden-pre-read`; a `quire` invariant of a state machine holds in the pre and post observation of every invocation of its operations; a `quire` invariant of a process holds for every run in the population at each invariant observation; a guard clause is not an invariant and is not evaluated. | Test (TC-235) |
+| FR-208-AC-9 | A field `typeRef` may name a record value type, and a population member, a `creates` or `deletes` frame entry or a relationship end may name a process, whose own `relationships[]` entries have object-type relationship meaning. A field `typeRef` naming a node of any other business model meaning, and a population member, frame `creates` or `deletes` entry, relationship end or owned relationship of a node of a business model meaning other than a process, is `invalid_model_binding`/`malformed-declaration`. | Test (TC-235) |
+| FR-208-AC-10 | A `quire` invariant of a record value type or event type is evaluated once for every value of the type reachable through the fields of every object in an invariant observation and through the parameters and results of an evaluated invocation, including collection elements, present optionals and nested record values, with `self` bound to that value; a false result is a logical violation with no diagnostic code, located by its FR-207 runtime value path; `pre` is refused with `wrong_snapshot`/`forbidden-pre-read`. A `quire` invariant of a state machine holds for the one context in the pre and post observation of every invocation of its operations, bound by the State-machine context anchors, and an observation with no context is `invalid_model_binding`/`wrong-context`; a `quire` invariant of a process holds for every run in the population at each invariant observation; a guard clause is not an invariant and is not evaluated. | Test (TC-235) |
 | FR-208-AC-11 | A `Pre:` precondition and `Post:` postcondition of a state-machine or process operation read the invocation's pre and post observations with `self` the machine context or the run, a `pre` read in a precondition is `wrong_snapshot`/`forbidden-pre-read`, and neither is related to a transition's guard, `from` or `to`. | Test (TC-235) |
-| FR-208-AC-12 | A record value type, event type, state machine or process specializing a node of its own meaning inherits its fields, invariants and operations, an event type its occurrence field, and a state machine its states and transitions, and conforms to each ancestor; a process inherits no steps; a supertype of another meaning is `invalid_model_binding`/`malformed-declaration`; a state or transition declared by two owners, or an ancestor occurrence field the subtype's neither is nor redefines, is `invalid_model_binding`/`derivation-conflict`; a persistence interface or namespace with supertypes is `unsupported_construct`/`declaration-form`. | Test (TC-235) |
+| FR-208-AC-12 | A record value type, event type, state machine or process specializing a node of its own meaning inherits its fields, invariants and operations, an event type its occurrence field, and a state machine its states and transitions, and conforms to each ancestor; a process inherits no steps; a supertype of another meaning is `invalid_model_binding`/`malformed-declaration`; a state or transition declared by two owners, or an ancestor occurrence field the subtype's neither is nor redefines, is `invalid_model_binding`/`derivation-conflict`; a subtype transition whose guard names an ancestor's invariant is `invalid_model_binding`/`malformed-declaration` at that guard; a persistence interface or namespace with supertypes is `unsupported_construct`/`declaration-form`. | Test (TC-235) |
 
 ## Dependencies
 

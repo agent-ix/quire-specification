@@ -84,7 +84,7 @@ Every declaration refusal retains the IR node identity, the source artifact id
 and the source span `{artifact, start, end}` that the node carries. Intake
 reports every declaration refusal in node order, and then no later phase runs.
 Within one node, every check of the table that fails reports, in table order,
-so the object id check reports first. A reference that names a node refused by
+so the object id check reports first. Several failures of one row within one node report in member-path order: paths compare segment by segment, member names by their UTF-8 bytes and indices numerically, and a proper prefix orders first. A reference that names a node refused by
 an earlier row of the table is not reported again as
 `missing_declaration`/`missing-name`; that node's own refusal stands for it.
 An admission refusal ends intake with no declaration.
