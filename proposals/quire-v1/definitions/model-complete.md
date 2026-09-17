@@ -74,7 +74,7 @@ Nodes are read ascending by declaration key. A node that is not a valid IR
 node of its kind, or a type definition or population node whose artifact id
 is not an object id (defined under the declaration identity rule below), is `invalid_model_binding`/`malformed-declaration`. The
 refusal retains the IR node identity, the source artifact and the source span
-that the node carries. A supertype, subsets, redefines, relationship-end,
+that the node carries. A supertype, field type, subsets, redefines, relationship-end,
 frame or population member reference that names no node of the package is
 `missing_declaration`/`missing-name` with the same artifact and span. Intake
 reports every such refusal in node order, and then no later phase runs.

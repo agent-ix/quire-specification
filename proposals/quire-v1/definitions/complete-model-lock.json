@@ -12,7 +12,7 @@
     {
       "role": "root",
       "artifact_path": "model-complete.md",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"8b210c302e5d3af9ba58bc2a5d136474886e4bb7ebf34e18a084bc599d491fb5"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"72c5c9e1f9263280188109d9dfb8aed685e8b2fe1815a777d53eb7967befed34"}
     },
     {
       "role": "state_graph",
@@ -22,7 +22,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "model-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"47ad735c2d135dea25b829d8c0caa97d42ef50e5ffdae2d1be27d2ba4dde343f"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"14620e18fd5a93e3f776fab3b1306afdf7597b8bf6712e085ae31c78cca71f64"}
     },
     {
       "role": "effective_declaration_schema",
@@ -77,7 +77,7 @@
     {
       "role": "rule_fr_154",
       "artifact_path": "../../../spec/functional/type-model/FR-154-admit-domain-package-model.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-154/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"75aba399e495f270d5db62ae59df090141dc79f4754e82fb61167ec204ee0260"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-154/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"2a266e2863d952865b9a4b80960c14dbd31b2f2ddbe4e87b02b852ef1592812f"}
     },
     {
       "role": "rule_fr_204",
