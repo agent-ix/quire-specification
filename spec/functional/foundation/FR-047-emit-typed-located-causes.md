@@ -69,15 +69,16 @@ never a field of the option it traverses.
 
 Two runtime object or value paths are equal when their roots are equal
 componentwise, their step sequences are of equal length, and each corresponding
-step pair agrees on step kind and on that kind's name where it carries one.
+step pair agrees on step kind and on that kind's name, index or canonical key
+value where it carries one.
 Rendered path text, display name, message wording, locale and reported source
 span never participate.
 
 Such paths are compared for collection comparison only, by root first and then
 step by step. Root comparison is by observation key, then by subject kind
 ordering a declared object identity before an invocation binding, then by
-subject key; an invocation binding's key orders by invocation identity, then binding kind ordered parameter before result before receiver, then parameter spelling by UTF-8 bytes. Step comparison orders a proper prefix before every path that
-extends it, orders differing step kinds as field before option-value before member before index before map-key, and orders steps of equal kind by their exact name, index steps numerically and map-key steps by the UTF-8 bytes of the key value's canonical JSON serialization. That comparison is a
+subject key; an invocation binding's key orders by invocation identity (the identity FR-004 selects, compared by the UTF-8 bytes of its RFC 8785 (JCS) canonical JSON serialization), then binding kind ordered parameter before result before receiver, then parameter spelling by UTF-8 bytes. Step comparison orders a proper prefix before every path that
+extends it, orders differing step kinds as field before option-value before member before index before map-key, and orders steps of equal kind by their exact name, index steps numerically and map-key steps by the UTF-8 bytes of the key value's RFC 8785 (JCS) canonical JSON serialization. That comparison is a
 total order over every set of paths whose roots share one observation identity,
 which is the set a single diagnostic reports; it extends to a total order across
 observations only where the selected observation identity itself supplies a key

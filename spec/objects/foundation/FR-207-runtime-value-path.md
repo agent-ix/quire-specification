@@ -44,7 +44,7 @@ When a producer locates a value inside a validated runtime subject, the producer
   the receiver binding. Two invocation bindings are equal exactly when they
   name one invocation and agree on binding kind and, for a parameter, on the
   exact parameter spelling, so the receiver binding `self` never equals a
-  parameter binding. Invocation bindings are key-ordered by invocation identity, then binding kind ordered parameter before result before receiver, then parameter spelling by UTF-8 bytes. Two subjects of different kinds are never equal
+  parameter binding. Invocation bindings are key-ordered by invocation identity (the identity FR-004 selects, compared by the UTF-8 bytes of its RFC 8785 (JCS) canonical JSON serialization), then binding kind ordered parameter before result before receiver, then parameter spelling by UTF-8 bytes. Two subjects of different kinds are never equal
   (FR-047).
 - **steps** (ordered sequence of `traversal step`, possibly empty) — the
   traversal from the subject to the located value. An empty sequence denotes the
@@ -82,7 +82,7 @@ value was present.
 - **Key** — (`root.observation`, `root.subject`, `steps`). Equality is
   componentwise over exactly these: roots equal componentwise, step sequences of
   equal length, and each corresponding step pair agreeing on step kind and on
-  that kind's name where it carries one (FR-047).
+  that kind's name, index or canonical key value where it carries one (FR-047).
   Rendered path text, display name, message wording, locale and reported source
   span never participate — FR-047-AC-1 requires that changing or localizing
   human-readable messages leaves the same typed failure's stage, code and cause
@@ -92,9 +92,9 @@ value was present.
   step. Root comparison is by observation key, then by subject kind ordering a
   declared object identity before an invocation binding, then by subject key
   (FR-204's is lexicographic over `universe`, `type`, `object_identity`; an
-  invocation binding's is its invocation identity, then binding kind ordered parameter before result before receiver, then parameter spelling by UTF-8 bytes). Step
+  invocation binding's is its invocation identity (the identity FR-004 selects, compared by the UTF-8 bytes of its RFC 8785 (JCS) canonical JSON serialization), then binding kind ordered parameter before result before receiver, then parameter spelling by UTF-8 bytes). Step
   comparison orders a proper prefix before every path that extends it, orders
-  differing step kinds as field before option-value before member before index before map-key, and orders steps of equal kind by their exact name, index steps numerically and map-key steps by the UTF-8 bytes of the key value's canonical JSON serialization. The subject-kind and step-kind orders
+  differing step kinds as field before option-value before member before index before map-key, and orders steps of equal kind by their exact name, index steps numerically and map-key steps by the UTF-8 bytes of the key value's RFC 8785 (JCS) canonical JSON serialization. The subject-kind and step-kind orders
   are fixed by FR-047 and are not asserted here.
 
   Selected observations compare by authority-qualified observation identity and
@@ -118,14 +118,18 @@ value was present.
 ## Canonical serialization
 
 The wire form is a tagged object with `kind: runtime_value`, a typed `root`, and
-an ordered `steps` array. Root subject tags are `object` and `invocation`. An `invocation` subject is
+an ordered `steps` array. The `root` object has exactly the members
+`observation` (the selected observation identity) and `subject`. Root subject tags are `object` and `invocation`. An `invocation` subject is
 an object with exactly the members `tag` (`invocation`), `invocation` (the
 invocation identity), `binding` (exactly `parameter`, `result` or `receiver`)
 and, exactly when `binding` is `parameter`, `parameter` (the exact parameter
 spelling).
-Step tags are `field`, `option_value`, `member`, `index` and `map_key`; named
-steps carry exact declaration spelling, indices are unsigned decimal integers,
-and map keys carry their canonical typed value. Unknown tags refuse.
+Step tags are `field`, `option_value`, `member`, `index` and `map_key`. Each
+step is an object with member `tag` and exactly one further member where its
+kind carries one: `name` for `field` and `member` (the exact declaration
+spelling), `index` for `index` (an unsigned decimal integer) and `key` for
+`map_key` (the canonical typed key value); an `option_value` step has no
+further member. Unknown tags refuse.
 
 ## Location kinds are distinct
 
@@ -161,7 +165,7 @@ spelling; display renderings remain non-normative.
 ## Dependencies
 
 - [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)
-  defines the path root, the three step kinds, equality, the total order,
+  defines the path root, the five step kinds, equality, the total order,
   absence, and the exclusion of serialization.
 - [FR-204](FR-204-declared-object-identity.md) supplies one of the two subject
   kinds; [FR-046](../../functional/foundation/FR-046-validate-state-invocation-inputs.md)
