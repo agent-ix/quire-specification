@@ -34,4 +34,4 @@ and monotonic-progress assertions for temporal consumers.
 
 - EOF and ingestion order never substitute for closure or causal authority.
 - Completed by `quire-observation` Plan-001 / PR #19 (`9ac80e9`). Observation
-  #18/#13 retain the separate producer-qualified subject/topology adoption.
+  #18/#13 retain the separate declaration-keyed subject/topology adoption.
