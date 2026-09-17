@@ -50,8 +50,7 @@ relationships:
   Reason: the expanded bounded Kani profile consumes accepted meaning and cannot
   supply its own.
 
-FCD #93 and concrete observation/protocol consumers are independent downstream
-work. They are not prerequisites and are not claimed complete.
+Concrete observation/protocol consumers are independent downstream work. They are not prerequisites and are not claimed complete.
 
 ### The seam
 

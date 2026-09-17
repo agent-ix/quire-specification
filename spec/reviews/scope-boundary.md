@@ -40,7 +40,6 @@ A owns the native profile, state/operation meaning and shared model/source/refer
 ```mermaid
 flowchart LR
   Authors["Authors / verification operators"] --> A["A: native contracts and compiler"]
-  Filament["Filament producer / existing model authority"] --> A
   C["C: existing extraction and adapter owners"] --> A
   A --> IR["Existing contract IR / executable binder"]
   A --> B["B: portable verification consumer"]
@@ -54,7 +53,6 @@ flowchart LR
 | Dependency / actor | Boundary | Assumed or guaranteed | Contract and limit |
 | --- | --- | --- | --- |
 | Specification author / verification operator | Selected source, profile, inputs and work budgets | assumed | FR-001/StR-001; inputs are validated, caller intent is not inferred. |
-| Filament model producer | Existing TypeSpec process / semantic IR / manifest / lock | guaranteed for the inspected production fixture only | 3b75e01c652ba00bb07c352ff5467419401e792b, TypeSpec 1.15.0; recorded fresh/locked/stale-lock checks. Native typed binding remains assumed/unqualified. |
 | Existing contract-IR owners | Typed-model view, canonicalization and executable binding | guaranteed for inspected legacy regression baseline only | decc99a430a0894de489102dbab04e83d1fb804f; 17 canonicalization/binding tests and 99 conformance rows observed in prerequisite inspection. Proposed native projection remains assumed/unqualified. |
 | Agent B / portable verification consumer | Method/plan/result envelopes and independent reference joins | assumed | Standard IT-002; private verification PR6 at 4c46481 still uses the older revision/profile shape. A-v2 adoption not established. |
 | Agent C / existing Quire extraction | Opaque body, selected source region/map and existing-repository adapter | assumed | Language IT-003; CO01 ownership/amendment proposal. No second Markdown expression compiler. |
@@ -90,4 +88,4 @@ flowchart LR
 
 ## Architecture assessment
 
-The present split is sound: one declarative token vocabulary, a parser-owned syntax tree, immutable source and source maps, then separately checked linked/evaluable representations. Keep model authority and executable binding in their existing owners. Avoid a service/event bus, plugin framework, parallel evaluator or extra crate merely to fill a diagram. Strengthen the actual seams with typed identities, standard error traits, explicit budgets and consumer contract tests. The current-code specifics are in the language code review; the unimplemented stages are planned responsibilities, not hidden capabilities.
+The present split is sound: one declarative token vocabulary, a parser-owned syntax tree, immutable source and source maps, then separately checked linked/evaluable representations. Keep executable binding in its existing owner. Avoid a service/event bus, plugin framework, parallel evaluator or extra crate merely to fill a diagram. Strengthen the actual seams with typed identities, standard error traits, explicit budgets and consumer contract tests. The current-code specifics are in the language code review; the unimplemented stages are planned responsibilities, not hidden capabilities.

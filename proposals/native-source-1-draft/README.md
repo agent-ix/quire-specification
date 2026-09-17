@@ -67,9 +67,8 @@ profile parameter. Storage width and observed sample values are not bounds.
 
 The runtime wire's explicit-null optional result selector is not a nullable
 clause value. An omitted required wire field is a decoding refusal, not evidence
-that independently authored model member presence has been specified. FCD #95
-owns that source-model/extraction decision for #93; A consumes the selected
-contract and does not introduce presence syntax by inference.
+that independently authored model member presence has been specified. A does
+not introduce presence syntax by inference.
 
 ## Source authority and evaluation anchors
 
@@ -116,8 +115,6 @@ deferred under the carried-forward rule. The relation between those deferrals
 and the desired full parent workflow needs explicit owner disposition; this
 amendment does not redefine the whole workstream as a scalar-only success.
 
-Contract IR #54 is already closed through PR61/690bde7. It removed the universal
-Filament model-reader prerequisite; it is not reopened or made a new blocker.
 The recommended finite identity-preserving reference environment and alternative
 new IR reference construct remain later design choices, neither assumed here.
 
