@@ -32,7 +32,7 @@
       "identity": "quire.rule.fr-150/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-150-preserve-model-normalization-provenance.md",
-      "sha256": "916be5697efe46003fb23bb3ba3749337ed376330823e232ef83f684759e99cc"
+      "sha256": "4eccfe0682cd994c23f33004309bb8c0c4d4397751cf9a15f25859d69eac9f41"
     },
     {
       "identity": "quire.rule.fr-151/v1",
@@ -44,7 +44,7 @@
       "identity": "quire.rule.fr-152/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-152-bind-systems-model-structures.md",
-      "sha256": "97c98d390cdf30e24246f92927ceb192b7b1c187cd8c8d8519709217091e5dbd"
+      "sha256": "0bda587cc5b322002d6f7970baf8ebbca350fa06e17ee232eaeca8c91795a8bf"
     },
     {
       "identity": "quire.rule.fr-153/v1",
@@ -56,7 +56,7 @@
       "identity": "quire.rule.fr-154/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-154-admit-domain-package-model.md",
-      "sha256": "ee42a54152f3c533d30a354e1d8a5f5f26d4a1d4a9cbf90b05a28551bda3cdec"
+      "sha256": "5b6cf829385e36a03647adc451d9dae6ba3dfbd1ad37fde542b1de132baf64b7"
     },
     {
       "identity": "quire.rule.fr-204/v1",

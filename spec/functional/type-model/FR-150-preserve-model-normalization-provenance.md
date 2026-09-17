@@ -73,9 +73,9 @@ The model checker applies the manifest's rules in this fixed phase order:
 (1) `quire.model.normalize.intake/v1` and `quire.model.features/v1`, domain
 package admission, declaration building and feature checks (FR-154);
 (2) `quire.model.normalize.qualify/v1`, qualified-identity formation for
-object types, fields, relationships, operations, parts, ports (owned by their
-part's owning type), connections and allocations (owned by each end's
-end-owner type);
+object types, interfaces, fields, relationships, operations, parts, ports
+(owned by their part's owning type), connections and allocations (owned by each
+end's end-owner type);
 (3) `quire.model.normalize.inherit/v1`, inheritance expansion along declared
 supertypes; (4) `quire.model.normalize.subset/v1` and
 `quire.model.normalize.redefine/v1`, declared subsetting and redefinition; and

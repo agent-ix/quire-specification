@@ -53,12 +53,16 @@ chain is:
    ascending by declaration key, and rule `quire.model.features/v1` checks
    each declaration.
 
+The package input maps each `sha256-jcs` digest to package bytes. Intake looks
+up the bytes by the selected digest, recomputes their digest, and only then
+compares the package's own identity and version with the selection.
+
 Admission refusals, in order:
 
 | Check | Refusal |
 | --- | --- |
-| Package bytes for the selected identity and version are supplied | `missing_import`/`missing-selection` |
 | The digest domain is exactly `sha256-jcs` | `stale_dependency`/`digest-domain-mismatch` |
+| The package input supplies bytes under the selected digest | `missing_import`/`missing-selection` |
 | SHA-256 over the package's JCS bytes equals the selected digest | `stale_dependency`/`byte-digest-mismatch` |
 | The package's own identity and version equal the selection | `invalid_model_binding`/`wrong-model-selection` |
 
@@ -92,8 +96,9 @@ Admission checks are decided before the first charge.
 | FR-154-AC-1 | An artifact bundle whose extraction and lift yield a valid domain package is admitted, and intake builds exactly one original declaration per IR node, keyed by package identity and IR node identity. | Test (TC-234) |
 | FR-154-AC-2 | A wrong digest domain, a stale digest, a missing package and a package whose identity or version differs each refuse with its named cause before any declaration is built. | Test (TC-234) |
 | FR-154-AC-3 | A malformed IR node or a dangling reference refuses with the IR node identity, the artifact id and the span, and every such refusal is reported in node order. | Test (TC-234) |
-| FR-154-AC-4 | Renaming an artifact title or publishing a new version with equal nodes leaves every declaration key unchanged, while the ModelSelection digest changes. | Test (TC-234) |
+| FR-154-AC-4 | Publishing a new version of a domain package with equal nodes leaves every declaration key and effective declaration unchanged, while the ModelSelection, the effective view and the object universe change. | Test (TC-234) |
 | FR-154-AC-5 | Intake at its exact `normalize.record` bound completes, and the one-less run is incomplete at `normalize.record`. | Test (TC-234) |
+| FR-154-AC-6 | Renaming an artifact title leaves every declaration key unchanged. | Test (TC-234) |
 
 ## Dependencies
 

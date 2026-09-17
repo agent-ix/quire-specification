@@ -104,11 +104,12 @@ The carried-forward rules cover the **state-core** semantic surface in CAP-001 t
 
 - 2026-09-09: created after the native-source-profile ruling. Initial routing: [quire-specification#9](https://github.com/agent-ix/quire-specification/issues/9) maintains this ledger.
 - 2026-09-09: corrected after program-roadmap inspection. State-finite was incorrectly treated as product scope. CAP-011 (temporal), CAP-012 (protocol/choreography), and CAP-013 (profile composition) are now in-scope design work, not deferred features.
-- 2026-09-10: corrected against the initial native Quire v1 composed cycle. CAP-011–013 are no longer recorded as missing/unowned: their temporal, protocol/choreography and composition candidates have named A/B/E/F owners and remain draft, unaccepted and unimplemented. The CAP index is an approved crosswalk, not a second mandatory ticket taxonomy.
+- 2026-09-10: corrected against the initial native Quire v1 composed cycle. CAP-011–013 are recorded as owned: their temporal, protocol/choreography and composition candidates have named A/B/D/E/F owners and remain draft, unaccepted and unimplemented. The CAP index is an approved crosswalk, not a second mandatory ticket taxonomy.
 - 2026-09-13: reconciled against standard main `f8b9f9f`, SL release
   `v0.2.0`/`6eccb05`, qcir main `69dc1a3`, TL syntax main `e70f237`,
-  protocol main `e53fb55`, and observation main `649da78`. Replaced blanket “unimplemented” statements with exact partial
-  delivery and owning-ticket dispositions. This changes no semantic contract.
+  protocol main `e53fb55`, observation main `649da78`, and FCD PR #97 merge
+  `1d901d7`. Recorded exact partial delivery and owning-ticket dispositions in
+  place of blanket “unimplemented” statements. This changes no semantic contract.
 - 2026-09-13: FS01 accepts the native Quire charter, `ix:native` composed
   identity hierarchy and language/profile/backend separation. The historical
   `state-finite/0-draft` remains unchanged; the unused `state-finite/1-draft`
@@ -140,8 +141,9 @@ The carried-forward rules cover the **state-core** semantic surface in CAP-001 t
 - 2026-09-14: FS02 #40 closed through specification PR #44 at `983b0b2`.
   It retained FR-287/288 and added collision-free FR-289/290/291/292/293/294/
   295/296 authority for temporal boundaries, claim inputs, late data, input
-  completeness and admitted-observation identity. Executable TL, Contract-IR, observation and protocol
-  adoption remains in the already named consumer tickets.
+  completeness and admitted-observation identity. Executable TL, Contract-IR,
+  observation and protocol adoption remains in the already named consumer
+  tickets.
 - 2026-09-14: FS03 accepts the exact `quire.state.core/v1` →
   `quire.state.queries/v1` → `quire.state.graph/v1` semantic closure and
   TC-033/034/038–046 portable vectors. QSL #36/#37 and #83/#84 remain partial
@@ -158,7 +160,7 @@ The carried-forward rules cover the **state-core** semantic surface in CAP-001 t
   implementation evidence; qcir #71 and observation #18/#13 remain open and
   TM-004/TM-007 stay Planned.
 - 2026-09-14: QObs #18 / PR #20 implemented FR-287 qualified runtime
-  subjects, FR-262 typed relationships and bounded four-state correlation at
+  subjects, FR-262 relationships and bounded four-state correlation at
   `8d54458`. Its local gate passed 42/42 matrix rows and FR-005 9/9. QObs #13
   remains the named owner for topology/traversal bounds and admitted
   scope/clock window anchoring; no protocol, temporal or TL-* completion is
@@ -175,7 +177,7 @@ The carried-forward rules cover the **state-core** semantic surface in CAP-001 t
   Contract IR #69 and #71, codegen #44, Protocol #11, qverify #32 and QSpec
   #57 are recorded complete at their merged revisions; none of their remaining
   downstream consumers is credited complete. QSL #111, Protocol epic #14,
-  Contract IR #50/#55/#56/#57/#58 and Quoin #519 retain exact open
+  Contract IR #50/#55/#56/#57/#58, FCD #93 and Quoin #519 retain exact open
   owners. Agent E moves to QSL #111, while Agent B retains TL-* then Protocol
   #8. QSpec #55 is blocked on `spec-artifacts-process#81` because the installed
   module structurally requires `Coverage Status` while its classifier selects
