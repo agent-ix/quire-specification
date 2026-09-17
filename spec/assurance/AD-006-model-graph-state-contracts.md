@@ -100,7 +100,7 @@ object type's module. Quire gives it meaning.
 | --- | --- | --- | --- |
 | Fields | `## Properties` rows: `Field`, `Type`, `Multiplicity`, `Constraints` | `TypeDefinition.fields[]` with `typeRef`, `multiplicity`, `presence` | Typed attributes with checked bounds |
 | Presence | `Presence` column (`required`, `optional`) | `Field.presence` | Absent versus empty stay distinct |
-| Identity and name | Artifact `id`; artifact title | `TypeDefinition.identity` (artifact id); `TypeDefinition.displayName` (title) | A declaration's identity is its artifact id, and clauses name it through that identity; the title is presentation only, so retitling keeps every key |
+| Identity and name | Artifact `id`; artifact title | `TypeDefinition.identity` (artifact id); `TypeDefinition.displayName` (title) | A declaration's identity is its artifact id, an object id matching `^[A-Za-z][A-Za-z0-9_]*$` (FR-154), and clauses name it through that identity, such as `M::sys_pump`; the title is presentation only, so retitling keeps every key |
 | Construct meaning | The object type's module declares one construct with a Quire meaning id | `TypeDefinition.kind` `{module, name}` naming an entry of the embedded `constructs` table, whose `meaning` is a Quire meaning id (FR-208) | Quire binds a declaration by its construct's meaning id, never by its kind name |
 | Generalization | Frontmatter relationship `specializes` | `TypeDefinition.supertypes[]` | Acyclic conformance; closed subtype sets |
 | Abstract types | Frontmatter `abstract: true` | `TypeDefinition.abstract` | No direct instances; dispatch covers concrete subtypes |

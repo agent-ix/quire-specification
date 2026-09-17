@@ -1,5 +1,5 @@
 ---
-id: interface-020
+id: interface_020
 title: "I20 immutable evidence intake"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-020] I20 immutable evidence intake
+# [interface_020] I20 immutable evidence intake
 
 ## Contract
 

@@ -1,5 +1,5 @@
 ---
-id: interface-002
+id: interface_002
 title: "I02 lossless parsed source"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-002] I02 lossless parsed source
+# [interface_002] I02 lossless parsed source
 
 ## Contract
 

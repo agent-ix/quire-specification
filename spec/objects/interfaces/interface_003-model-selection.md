@@ -1,5 +1,5 @@
 ---
-id: interface-003
+id: interface_003
 title: "I03 authoritative model selection"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-003] I03 authoritative model selection
+# [interface_003] I03 authoritative model selection
 
 ## Contract
 

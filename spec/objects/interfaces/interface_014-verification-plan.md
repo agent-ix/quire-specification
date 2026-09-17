@@ -1,5 +1,5 @@
 ---
-id: interface-014
+id: interface_014
 title: "I14 linked verification plan"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-014] I14 linked verification plan
+# [interface_014] I14 linked verification plan
 
 ## Contract
 

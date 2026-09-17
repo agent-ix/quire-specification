@@ -4,7 +4,7 @@ title: "Target-neutral contract package"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-012
+  - target: ix://agent-ix/quire-specification/interface_012
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-195
     type: references
@@ -43,7 +43,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Dependencies
 
-- [interface-012](./interface-012-contract-package.md) owns the operation boundary.
+- [interface_012](./interface_012-contract-package.md) owns the operation boundary.
 - FR-195 owns the behavior that produces or consumes this value.
 
 ## Status

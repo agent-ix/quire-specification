@@ -1,5 +1,5 @@
 ---
-id: interface-001
+id: interface_001
 title: "I01 exact source document"
 type: interface
 relationships:
@@ -9,7 +9,7 @@ relationships:
     type: references
 ---
 
-# [interface-001] I01 exact source document
+# [interface_001] I01 exact source document
 
 ## Contract
 

@@ -1,5 +1,5 @@
 ---
-id: interface-006
+id: interface_006
 title: "I06 native temporal artifact and result"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-006] I06 native temporal artifact and result
+# [interface_006] I06 native temporal artifact and result
 
 ## Contract
 

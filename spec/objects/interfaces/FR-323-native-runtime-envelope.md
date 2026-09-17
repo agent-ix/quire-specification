@@ -4,7 +4,7 @@ title: "Native runtime request and result envelope"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-005
+  - target: ix://agent-ix/quire-specification/interface_005
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-180
     type: references
@@ -43,7 +43,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Dependencies
 
-- [interface-005](./interface-005-native-runtime.md) owns the operation boundary.
+- [interface_005](./interface_005-native-runtime.md) owns the operation boundary.
 - FR-180 owns the behavior that produces or consumes this value.
 
 ## Status

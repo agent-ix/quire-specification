@@ -4,7 +4,7 @@ title: "Attributed human decision record"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-021
+  - target: ix://agent-ix/quire-specification/interface_021
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-311
     type: references
@@ -43,7 +43,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Dependencies
 
-- [interface-021](./interface-021-human-decision.md) owns the operation boundary.
+- [interface_021](./interface_021-human-decision.md) owns the operation boundary.
 - FR-311 owns the behavior that produces or consumes this value.
 
 ## Status

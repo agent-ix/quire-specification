@@ -118,8 +118,8 @@ const MODEL_ARTIFACTS: [ModelArtifact; 18] = [
         bytes: include_bytes!("../spec/objects/interfaces/FR-321-model-selection-artifact.md"),
     },
     ModelArtifact {
-        path: "spec/objects/interfaces/interface-003-model-selection.md",
-        bytes: include_bytes!("../spec/objects/interfaces/interface-003-model-selection.md"),
+        path: "spec/objects/interfaces/interface_003-model-selection.md",
+        bytes: include_bytes!("../spec/objects/interfaces/interface_003-model-selection.md"),
     },
 ];
 

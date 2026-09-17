@@ -4,7 +4,7 @@ title: "Checked protocol artifact"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-008
+  - target: ix://agent-ix/quire-specification/interface_008
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-171
     type: references
@@ -43,7 +43,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Dependencies
 
-- [interface-008](./interface-008-checked-protocol.md) owns the operation boundary.
+- [interface_008](./interface_008-checked-protocol.md) owns the operation boundary.
 - FR-171 owns the behavior that produces or consumes this value.
 
 ## Status

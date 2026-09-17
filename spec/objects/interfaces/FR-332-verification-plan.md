@@ -4,7 +4,7 @@ title: "Linked verification plan"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-014
+  - target: ix://agent-ix/quire-specification/interface_014
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-192
     type: references
@@ -44,7 +44,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Dependencies
 
-- [interface-014](./interface-014-verification-plan.md) owns the operation boundary.
+- [interface_014](./interface_014-verification-plan.md) owns the operation boundary.
 - FR-192 owns the behavior that produces or consumes this value.
 
 ## Status

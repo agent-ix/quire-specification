@@ -4,7 +4,7 @@ title: "Exact ecosystem lock"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-018
+  - target: ix://agent-ix/quire-specification/interface_018
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-311
     type: references
@@ -43,7 +43,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Dependencies
 
-- [interface-018](./interface-018-ecosystem-lock.md) owns the operation boundary.
+- [interface_018](./interface_018-ecosystem-lock.md) owns the operation boundary.
 - FR-311 owns the behavior that produces or consumes this value.
 
 ## Status

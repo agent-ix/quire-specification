@@ -1,5 +1,5 @@
 ---
-id: interface-011
+id: interface_011
 title: "I11 effect decision and receipt"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-011] I11 effect decision and receipt
+# [interface_011] I11 effect decision and receipt
 
 ## Contract
 

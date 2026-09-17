@@ -1,5 +1,5 @@
 ---
-id: interface-016
+id: interface_016
 title: "I16 output mapping package"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-016] I16 output mapping package
+# [interface_016] I16 output mapping package
 
 ## Contract
 
