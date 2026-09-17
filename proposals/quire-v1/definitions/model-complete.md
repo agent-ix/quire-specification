@@ -56,13 +56,15 @@ declaration. Clauses name a declaration by qualified name, such as
 
 ### Intake
 
-Rule `quire.model.normalize.intake/v1` admits one domain package. It runs
-these checks in order. Each failure ends intake with no declaration.
+Rule `quire.model.normalize.intake/v1` admits one domain package. The package
+input is a map from `sha256-jcs` digest to package bytes. Intake looks up the
+bytes by the selected digest, recomputes their digest, and then reads the
+package's own identity and version. It runs these checks in order. Each failure ends intake with no declaration.
 
 | Check | Refusal |
 | --- | --- |
-| The package bytes for the named identity and version are supplied | `missing_import`/`missing-selection` with the ModelSelection |
 | The selection's digest domain is exactly `sha256-jcs` | `stale_dependency`/`digest-domain-mismatch` with the expected and actual domain |
+| The package input supplies bytes under the selected digest | `missing_import`/`missing-selection` with the ModelSelection |
 | SHA-256 over the package's JCS bytes equals the selected digest | `stale_dependency`/`byte-digest-mismatch` with the expected and actual digest |
 | The package's own identity and version equal the selection | `invalid_model_binding`/`wrong-model-selection` with both |
 
@@ -141,9 +143,12 @@ digest or an I04 node key, even with equal digest bytes.
 
 A declaration key carries no digest. An effective declaration identity binds
 declaration keys and derivation facts only. Two versions of one domain package
-with equal nodes therefore yield equal effective declaration identities (the
-vectors `n01-type-A` and `n02-type-A`), while their effective views and object
-universes differ. Every use that must separate selections pairs the effective
+with equal nodes therefore yield equal effective declaration identities, while
+their effective views and object universes differ: the vectors `n01v2-view`
+and `n01v2-universe` select F1's nodes as version `2`, carry declarations
+byte-equal to `n01-view`'s, and differ from `n01-view` and `n01-universe`.
+Equal nodes in two different packages under one identity also share effective
+declaration identities, as `n01-type-A` and `n02-type-A` show. Every use that must separate selections pairs the effective
 declaration identity with the ModelSelection or with an object universe
 identity, which binds the selection.
 
@@ -212,7 +217,7 @@ effective-member order.
 | Phase | Rule | Derivation |
 | --- | --- | --- |
 | 1 | `quire.model.normalize.intake/v1` | Admit the domain package and build one original declaration per IR node, then apply `quire.model.features/v1`. No derivation fact. |
-| 2 | `quire.model.normalize.qualify/v1` | One fact per original declaration and owner, with inputs `[declaration]`: an object type (owner `null`); a field, relationship or operation, owned by its type; a part, owned by its owning type; a port, owned by the owning type of its part; and a connection or allocation, owned by the end-owner type of each end, source end first. |
+| 2 | `quire.model.normalize.qualify/v1` | One fact per original declaration and owner, with inputs `[declaration]`: an object type or an interface (owner `null`); a field, relationship or operation, owned by its type or interface; a part, owned by its owning type; a port, owned by the owning type of its part; and a connection or allocation, owned by the end-owner type of each end, source end first. |
 | 3 | `quire.model.normalize.inherit/v1` | For each type `T` and each supertype path `T -> P1 -> ... -> A`: one fact on `T` with inputs `[P1, ..., A]`; then, for each member `m` whose owner is `A`, one fact on the effective member `(T, m)` with inputs `[P1, ..., A, m]`. |
 | 4 | `quire.model.normalize.subset/v1` | For each field `s` whose `subsets[]` names `t`, where the owner of `s` is `T` or a supertype of `T`: one fact on `(T, s)` with inputs `[path types..., s, t]`. |
 | 4 | `quire.model.normalize.redefine/v1` | For each member `r` whose `redefines` names `t`, where the owner of `r` is `T` or a supertype of `T`: one fact on `(T, r)` and one on `(T, t)`, each with inputs `[path types..., r, t]`. The redefined member stays in the view and is hidden from name resolution, lookup and dispatch candidacy. When several non-conflicting members redefine one member reaching `T`, only the redefining member of the most derived owner is exposed; every other redefining member keeps its facts and is hidden in `T` the same way. |
@@ -221,8 +226,8 @@ effective-member order.
 `path types` is the list of supertypes from the specific type `T` to the owner,
 excluding `T`. It is empty when `T` is the owner.
 
-The *element owner* of a declaration is: the type itself for an object type;
-the owning type for a field, relationship or operation; the owning type for a
+The *element owner* of a declaration is: the type itself for an object type or
+an interface; the owning type for a field, relationship or operation; the owning type for a
 part; and, for a port, the element owner of its part. The *end-owner type* of
 a connection or allocation end is the element owner of the declaration that
 the end names. A relationship end `e` is an end of effective type `T` exactly
@@ -260,9 +265,9 @@ one systems kind by its IR kind. Kinds are disjoint.
 | Connection | `connection`, whose two ends both name Ports | effective member owned by the source end-owner type; source and target Port keys; declared `direction` |
 | Allocation | `allocation` | effective member owned by the source end-owner type; source element, which must be a Part, a Port or an operation; target element, which must be a Part |
 
-The rule maps parts, then ports, then connections, then allocations, each group
-ascending by declaration key, so a port's kind follows its part's and a
-connection's follows its ends'. It reports, for each node, every applicable
+The rule maps interfaces, then parts, then ports, then connections, then
+allocations, each group ascending by declaration key, so a port's kind follows
+its part's and its interface's, and a connection's follows its ends'. It reports, for each node, every applicable
 refusal: a port whose owner is not a Part is `refused { code:
 invalid_model_binding, cause: wrong-export }` with required kind `Part` and
 actual kind `none` or the owner's kind, and maps to no kind; a port whose

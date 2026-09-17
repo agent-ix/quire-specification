@@ -60,8 +60,8 @@ under those owners. An end `e` of type `T` exists exactly when `T` has the
 relationship member and `r.name` matches `e`'s role name. A relationship whose
 two ends both name object types is a navigation relationship with no kind.
 
-Kind mapping runs over parts, then ports, then connections, then allocations,
-each ascending by declaration key, charging `systems.kind` before each node, and
+Kind mapping runs over interfaces, then parts, then ports, then connections,
+then allocations, each ascending by declaration key, charging `systems.kind` before each node, and
 is exhaustive under the limits: a port whose owner has no kind or another kind
 is `wrong-export` (required Part); a port whose interface type is not an
 Interface is `wrong-export` (required Interface); a connection end naming a

@@ -27,8 +27,8 @@ When a linked protocol definition is used as an identity qualifier, the linker S
 - **formal owner and clause** — the exact requirement package, requirement
   identity, requirement revision and clause identity retained by FR-049.
 - **semantic selection closure** — the exact language edition, protocol profile
-  definition identity/revision/digest, model identities and required
-  producer/native correspondences retained by FR-030. Resource-only execution
+  definition identity/revision/digest, domain package selections (identity,
+  version and `sha256-jcs` digest) retained by FR-030. Resource-only execution
   controls and runtime observations are excluded.
 
 These properties form a structured key. This artifact does not prescribe a new

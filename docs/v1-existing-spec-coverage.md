@@ -281,7 +281,6 @@ subsequently repaired are not carried forward as live defects.
 
 | Object | Current unresolved boundary | Owning atomic rows |
 | --- | --- | --- |
-| FR-201 canonical identity domain | Domain package `sha256-jcs` versus package-fingerprint domain. | V1-SRC-010/011 |
 | FR-203 source region | FR-003 layout deletion versus FR-036 newline-conversion prohibition. | V1-SRC-005/007 |
 | FR-207 runtime value path | JSON field/index path, serialized step tags and ordering across observations. | V1-EXPR-023, V1-EVID-002 |
 | FR-270 diagnostic catalog | Catalog digest domain and identity-kind classification. | V1-EXPR-023, V1-SRC-010 |

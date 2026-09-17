@@ -68,9 +68,11 @@ Additional stage and declaration-key controls for SR-402/406:
    package identity, IR node identity, `sha256-jcs`). Swap the digest domain,
    name an IR node the domain package does not declare, and supply a runtime
    reference keyed to a foreign domain package independently. Change one
-   declared field in a source artifact and relift, first binding with the old
-   declaration key and then with the updated key.
-   - IT-010-SC-08: the original declaration keys survive linking and binding; each substitution refuses its dependent binding. After the source change, the old key cannot select the changed declaration; the updated key binds.
+   declared field in a source artifact and relift, then intake the relifted
+   package first under the old ModelSelection and then under a ModelSelection
+   naming the relifted package's digest. Separately remove one referenced
+   artifact, relift and bind with its old declaration key.
+   - IT-010-SC-08: the original declaration keys survive linking and binding; each substitution refuses its dependent binding. After the field change, the declaration key is unchanged; the old ModelSelection refuses `stale_dependency`/`byte-digest-mismatch` or `missing_import`/`missing-selection` when no bytes are supplied under its digest, and the new ModelSelection binds the changed declaration. After the removal, the old key refuses `missing_declaration`/`missing-name`.
 
 ## Expected Results
 

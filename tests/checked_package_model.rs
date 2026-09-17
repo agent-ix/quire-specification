@@ -414,7 +414,7 @@ fn tc_195_complete_model_rule_manifest_binds_every_rule_byte_for_byte() {
 fn tc_195_effective_declaration_vectors_recompute_their_digests() {
     let file = parsed_fixture(EFFECTIVE_DECLARATION_VECTORS);
     let vectors = file["vectors"].as_array().expect("vectors is an array");
-    assert_eq!(vectors.len(), 16);
+    assert_eq!(vectors.len(), 18);
     let mut names = BTreeSet::new();
     for vector in vectors {
         let name = str_at(vector, "/name");
@@ -430,7 +430,7 @@ fn tc_195_effective_declaration_vectors_recompute_their_digests() {
         .iter()
         .map(|vector| str_at(vector, "/sha256"))
         .collect::<BTreeSet<_>>();
-    for view in ["n01-view", "n02-view"] {
+    for view in ["n01-view", "n02-view", "n01v2-view"] {
         let vector = vectors
             .iter()
             .find(|vector| vector["name"].as_str() == Some(view))
@@ -549,7 +549,7 @@ fn tc_234_declaration_keys_name_the_domain_package_and_ir_node_only() {
             .unwrap_or_else(|error| panic!("{name} preimage is schema-valid: {error}"));
     }
 
-    for view in ["n01-view", "n02-view"] {
+    for view in ["n01-view", "n02-view", "n01v2-view"] {
         let preimage = &vector_named(vectors, view)["preimage"];
         let package = str_at(preimage, "/model_selection/identity");
         assert_eq!(
@@ -578,19 +578,31 @@ fn tc_234_declaration_keys_name_the_domain_package_and_ir_node_only() {
         }
     }
 
-    for (first, second) in [
-        ("n01-type-A", "n02-type-A"),
-        ("n01-member-A-x", "n02-member-A-x"),
-    ] {
-        assert_eq!(
-            str_at(vector_named(vectors, first), "/sha256"),
-            str_at(vector_named(vectors, second), "/sha256"),
-            "equal nodes of two package versions keep one effective identity"
-        );
-    }
+    let version_1 = &vector_named(vectors, "n01-view")["preimage"];
+    let version_2 = &vector_named(vectors, "n01v2-view")["preimage"];
+    assert_eq!(
+        version_1["model_selection"]["identity"], version_2["model_selection"]["identity"],
+        "both views select one domain package identity"
+    );
+    assert_eq!(str_at(version_1, "/model_selection/version"), "1");
+    assert_eq!(str_at(version_2, "/model_selection/version"), "2");
+    assert_eq!(
+        version_1["declarations"], version_2["declarations"],
+        "equal nodes under a new package version keep every declaration key and effective declaration"
+    );
+    assert_ne!(
+        str_at(version_1, "/model_selection/digest"),
+        str_at(version_2, "/model_selection/digest"),
+        "the two versions are selected by different digests"
+    );
     assert_ne!(
         str_at(vector_named(vectors, "n01-view"), "/sha256"),
-        str_at(vector_named(vectors, "n02-view"), "/sha256"),
-        "the view binds the ModelSelection digest"
+        str_at(vector_named(vectors, "n01v2-view"), "/sha256"),
+        "the effective view binds the ModelSelection"
+    );
+    assert_ne!(
+        str_at(vector_named(vectors, "n01-universe"), "/sha256"),
+        str_at(vector_named(vectors, "n01v2-universe"), "/sha256"),
+        "the object universe binds the ModelSelection"
     );
 }
