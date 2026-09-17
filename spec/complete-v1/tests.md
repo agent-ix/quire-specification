@@ -771,6 +771,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-151 | FR-151-AC-8 | TC-196 | planned |
 | FR-152 | FR-152-AC-6 | TC-197 | planned |
 | FR-152 | FR-152-AC-7 | TC-197 | planned |
+| FR-152 | FR-152-AC-8 | TC-197 | planned |
 | FR-153 | FR-153-AC-6 | TC-198 | planned |
 | FR-153 | FR-153-AC-7 | TC-198 | planned |
 | FR-154 | FR-154-AC-1 | TC-234 | planned |
@@ -779,6 +780,10 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-154 | FR-154-AC-4 | TC-234 | planned |
 | FR-154 | FR-154-AC-5 | TC-234 | planned |
 | FR-154 | FR-154-AC-6 | TC-234 | planned |
+| FR-154 | FR-154-AC-7 | TC-234 | planned |
+| FR-208 | FR-208-AC-1 | TC-234 | planned |
+| FR-208 | FR-208-AC-2 | TC-197 | planned |
+| FR-208 | FR-208-AC-3 | TC-234 | planned |
 | FR-204 | FR-204-AC-5 | TC-198 | planned |
 | FR-272 | FR-272-AC-6 | TC-196 | planned |
 | FR-321 | FR-321-AC-4 | TC-195 | planned |
@@ -920,7 +925,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-194 | Complete equality matrix | Property | P0 | FR-149 | 🚧 Planned |
 | TC-195 | Model normalization provenance | Property | P0 | FR-150 | 🚧 Planned |
 | TC-196 | Conformance redefinition and dispatch | Property | P0 | FR-151 | 🚧 Planned |
-| TC-197 | Systems-model typed binding | Property | P0 | FR-152 | 🚧 Planned |
+| TC-197 | Systems-model typed binding | Property | P0 | FR-152, FR-208 | 🚧 Planned |
 | TC-198 | Closed model lookup | Property | P0 | FR-153 | 🚧 Planned |
 | TC-199 | Uncertain revisioned temporal evaluation | Property | P0 | FR-160 | 🚧 Planned |
 | TC-200 | Infinite-trace provider boundary | Property | P0 | FR-161 | 🚧 Planned |
@@ -957,7 +962,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-231 | Complete V1 qualification coverage | Property | P0 | FR-311 | 🚧 Planned |
 | TC-232 | Counterexample lineage integrity | Property | P0 | FR-312 | 🚧 Planned |
 | TC-233 | Published checked-package and scalar contract vectors | Property | P0 | FR-322 | 🚧 Planned |
-| TC-234 | Domain package model intake | Property | P0 | FR-154 | 🚧 Planned |
+| TC-234 | Domain package model intake | Property | P0 | FR-154, FR-208 | 🚧 Planned |
 
 ## Integration Test Matrix
 
