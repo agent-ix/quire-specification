@@ -15,7 +15,7 @@ bounded integer literals and checked `+`/`-`/`*`, and exact attribute references
 The generated requirement retains the native requirement/clause identity in its
 manifest and a non-authoritative display-safe short name in text. The display
 name is never the native identity. Any generated local attribute is a target
-binding to an authoritative declaration, not a new model authority.
+binding to a spec-declared model declaration, never a new model declaration.
 
 ## Conditional and unsupported meaning
 

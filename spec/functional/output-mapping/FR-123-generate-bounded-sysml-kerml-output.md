@@ -28,8 +28,8 @@ records.
 
 The mapper SHALL retain native identity in the package manifest and treat any
 textual short name as display only. Generated local attributes SHALL reference
-or correspond exactly to authoritative model declarations and SHALL NOT create
-a second model authority.
+or correspond exactly to model declarations from spec artifacts and SHALL NOT
+declare model elements of their own.
 
 The mapper SHALL preserve assumption/required-constraint separation only under
 an exact selected structural correspondence. It SHALL classify unsupported

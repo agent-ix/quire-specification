@@ -60,7 +60,7 @@
   },
   "modelBinding": {
     "state": "unavailable",
-    "reason": "reviewed-compiled-model-package-required",
+    "reason": "domain-package-required",
     "package": "example/config",
     "version": "1.0.0"
   },
@@ -71,7 +71,7 @@
     },
     {
       "path": "model-expectations.json",
-      "digest": "sha256:0e175bdfe0f27617e7e7d5692c6534c5a373213c1187dfbfbdf9b4ac6425314a"
+      "digest": "sha256:1d3bd08a990aea0d5603475d558fbef054f7e1d01a957bab83cf96b50d4b2e8d"
     }
   ]
 }
