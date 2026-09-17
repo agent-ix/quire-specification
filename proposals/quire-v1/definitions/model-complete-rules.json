@@ -56,7 +56,7 @@
       "identity": "quire.rule.fr-154/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-154-admit-domain-package-model.md",
-      "sha256": "43c481131ee761079539bd73a7a972acf5492347e7c42e15354b98745cd61f56"
+      "sha256": "75aba399e495f270d5db62ae59df090141dc79f4754e82fb61167ec204ee0260"
     },
     {
       "identity": "quire.rule.fr-204/v1",
@@ -74,13 +74,13 @@
       "identity": "quire.rule.fr-321/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/objects/interfaces/FR-321-model-selection-artifact.md",
-      "sha256": "aaa771bc9252367c29dc364a8714adbb6027992918ddfcc9e9465a6b375406c3"
+      "sha256": "5d6ef080adcf51c79a62c5bd29ed49992ff544a471286ebbe4aa07eb68e3c789"
     },
     {
-      "identity": "quire.rule.interface-003/v1",
+      "identity": "quire.rule.interface_003/v1",
       "revision": "1-draft.1",
-      "path": "../../../spec/objects/interfaces/interface-003-model-selection.md",
-      "sha256": "6c1d4e68c3cdb0586afa15fb1b71668fb499afb0b53d59c5ea9e008f12f42ed0"
+      "path": "../../../spec/objects/interfaces/interface_003-model-selection.md",
+      "sha256": "76335739a12a7ac5d1503c4fb5e2603ebf41af4ed318852cecf44b91c330df5a"
     }
   ],
   "normalization_rules": [

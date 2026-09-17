@@ -4,7 +4,7 @@ title: "Authoritative model-selection artifact"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-003
+  - target: ix://agent-ix/quire-specification/interface_003
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-150
     type: references
@@ -42,7 +42,7 @@ Missing required properties, duplicate keys, out-of-domain values and non-canoni
 
 ## Dependencies
 
-- [interface-003](./interface-003-model-selection.md) owns the operation boundary.
+- [interface_003](./interface_003-model-selection.md) owns the operation boundary.
 - FR-150 owns the behavior that produces or consumes this value.
 - FR-154 owns model intake.
 

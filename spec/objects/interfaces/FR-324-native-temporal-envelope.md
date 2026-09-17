@@ -4,7 +4,7 @@ title: "Native temporal artifact and result envelope"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-006
+  - target: ix://agent-ix/quire-specification/interface_006
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-160
     type: references
@@ -43,7 +43,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Dependencies
 
-- [interface-006](./interface-006-native-temporal.md) owns the operation boundary.
+- [interface_006](./interface_006-native-temporal.md) owns the operation boundary.
 - FR-160 owns the behavior that produces or consumes this value.
 
 ## Status

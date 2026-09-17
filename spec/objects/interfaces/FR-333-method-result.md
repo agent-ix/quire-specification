@@ -4,7 +4,7 @@ title: "Verification method result"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-015
+  - target: ix://agent-ix/quire-specification/interface_015
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-192
     type: references
@@ -43,7 +43,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Dependencies
 
-- [interface-015](./interface-015-method-result.md) owns the operation boundary.
+- [interface_015](./interface_015-method-result.md) owns the operation boundary.
 - FR-192 owns the behavior that produces or consumes this value.
 
 ## Status

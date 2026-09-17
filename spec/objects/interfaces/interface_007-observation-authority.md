@@ -1,5 +1,5 @@
 ---
-id: interface-007
+id: interface_007
 title: "I07 observation authority bundle"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-007] I07 observation authority bundle
+# [interface_007] I07 observation authority bundle
 
 ## Contract
 

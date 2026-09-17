@@ -82,10 +82,14 @@ Declaration refusals:
 Every declaration refusal retains the IR node identity, the source artifact id
 and the source span `{artifact, start, end}` that the node carries. Intake
 reports every declaration refusal in node order, and then no later phase runs.
+Within one node, every check of the table that fails reports, in table order,
+so the object id check reports first. A reference that names a node refused by
+an earlier row of the table is not reported again as
+`missing_declaration`/`missing-name`; that node's own refusal stands for it.
 An admission refusal ends intake with no declaration.
 
-A model-declaring artifact is an artifact whose type is a spec-objects object
-type. Its artifact id is an object id: ASCII letters, digits and underscores,
+A model-declaring artifact is an artifact whose type is an object type of any
+spec-objects module (spec-objects-architecture, spec-objects-business, …). Its artifact id is an object id: ASCII letters, digits and underscores,
 starting with a letter (`^[A-Za-z][A-Za-z0-9_]*$`). An id such as `entity-001`
 is not an object id, and intake refuses the node it declares
 `invalid_model_binding`/`malformed-declaration`, naming the IR node identity,
@@ -129,7 +133,7 @@ Admission checks are decided before the first charge.
 | FR-154-AC-5 | Intake at its exact `normalize.record` bound completes, and the one-less run is incomplete at `normalize.record`. | Test (TC-234) |
 | FR-154-AC-6 | Retitling an artifact leaves every declaration key unchanged. Changing an artifact's id changes the declaration key of the type it declares and of that type's members, leaves every other declaration key unchanged, and a reference to the old key refuses `missing_declaration`/`missing-name`. | Test (TC-234) |
 | FR-154-AC-7 | A type definition or population node whose kind names no construct entry, or whose construct has no Quire meaning id or an id outside FR-208, refuses `invalid_model_binding`/`malformed-declaration` with the IR node identity, the artifact id and the span, and no meaning is inferred from its kind name. | Test (TC-234) |
-| FR-154-AC-8 | A type definition or population node declared by an artifact whose id does not match `^[A-Za-z][A-Za-z0-9_]*$`, such as `sys-pump`, refuses `invalid_model_binding`/`malformed-declaration` with the IR node identity, the artifact id and the span, while the artifact id `sys_pump` is admitted and a clause names its declaration `M::sys_pump`. | Test (TC-234) |
+| FR-154-AC-8 | A type definition or population node declared by an artifact whose id does not match `^[A-Za-z][A-Za-z0-9_]*$`, such as `sys-pump`, refuses `invalid_model_binding`/`malformed-declaration` with the IR node identity, the artifact id and the span, a reference to that node reports no `missing_declaration`/`missing-name`, and a second failing check on the same node reports after the id refusal; the artifact id `sys_pump` is admitted and a clause names its declaration `M::sys_pump`. | Test (TC-234) |
 
 ## Dependencies
 

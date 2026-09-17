@@ -1,5 +1,5 @@
 ---
-id: interface-008
+id: interface_008
 title: "I08 checked protocol artifact"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-008] I08 checked protocol artifact
+# [interface_008] I08 checked protocol artifact
 
 ## Contract
 

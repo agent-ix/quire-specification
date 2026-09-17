@@ -1,5 +1,5 @@
 ---
-id: interface-012
+id: interface_012
 title: "I12 target-neutral contract package"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-012] I12 target-neutral contract package
+# [interface_012] I12 target-neutral contract package
 
 ## Contract
 

@@ -1,5 +1,5 @@
 ---
-id: interface-009
+id: interface_009
 title: "I09 protocol assessment"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-009] I09 protocol assessment
+# [interface_009] I09 protocol assessment
 
 ## Contract
 

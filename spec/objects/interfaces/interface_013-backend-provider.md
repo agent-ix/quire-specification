@@ -1,5 +1,5 @@
 ---
-id: interface-013
+id: interface_013
 title: "I13 backend capability, request and result"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-013] I13 backend capability, request and result
+# [interface_013] I13 backend capability, request and result
 
 ## Contract
 

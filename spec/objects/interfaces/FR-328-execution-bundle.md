@@ -4,7 +4,7 @@ title: "Composed execution bundle"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-010
+  - target: ix://agent-ix/quire-specification/interface_010
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-180
     type: references
@@ -43,7 +43,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Dependencies
 
-- [interface-010](./interface-010-execution-bundle.md) owns the operation boundary.
+- [interface_010](./interface_010-execution-bundle.md) owns the operation boundary.
 - FR-180 owns the behavior that produces or consumes this value.
 
 ## Status
