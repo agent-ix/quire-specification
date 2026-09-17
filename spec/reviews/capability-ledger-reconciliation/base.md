@@ -42,7 +42,6 @@ architecture and all normative artifacts remain unchanged.
 | Protocol | `98c805534e4b68bea6140a54f16b58805b05a037` | #11 closed; #6–#10/#12/#13/#63 open |
 | Observation | `93bc565072fb05d1ecf29f15725b75c0a77378fb` | owner/topology/boundary epic closed |
 | Verification | `18e66cb08fd5fb5e0ccf49d045dfac0523a0613d` | #32 closed |
-| FCD | `7242b683bfa849595476a57685898c160024405f` | #95 closed; #93 open |
 | Quoin | `2e7b3301394c06e0c0b3522797df1bf9ea82861a` | #373/#519 open |
 
 ## Checklist result

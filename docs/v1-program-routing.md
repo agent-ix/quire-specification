@@ -57,9 +57,9 @@ Task-008” actions are satisfied by that manifest and its live linked issues.
 10. Research #39 and #40 remain the integration and qualification parents.
     Setup #28 still has open integration/conformance repository children #34
     and #35, so no duplicate repository or top-level epic is justified.
-11. Filament remains an external authoritative producer. No FCD ticket or code
-    is amended by this campaign; model-consumer correspondence is owned by
-    QSpec/QSL and exact producer revisions are dependencies.
+11. A spec's artifacts declare its domain model. QSpec and QSL own model
+    semantics and model intake. quire-rs extraction and the FCD
+    extraction-frontend lift are pinned dependencies at exact revisions.
 12. Quoin #519 correctly remains behind Rust-port epic #373. The architecture
     may define its typed consumer contract, but Task-009 cannot activate Quoin
     work before that dependency lands.
@@ -95,7 +95,7 @@ The following are repairs to existing owners, not replacement roadmaps:
 | QSpec #9 | Replace Deferred/Missing roll-up states with the inventory's independent Spec/Impl/Ver/Int/Qual states; link each incomplete row to its live primary epic and children. | Remain open and update after every merge; close with QSpec #1. |
 | QSL #1 | Reopen the parent without reopening its completed children; expand it from the bounded L1-L6 slice to the complete compiler, reference-runtime and native tooling surface; link the Task-004 structural migration. | Close only after every QSL-owned inventory row and downstream parity matrix is complete. |
 | Research #65 | Promote from future study to **required V1 delivery epic** for pure functions, checked recursion, set/bag/ordered-set semantics, collection conversions/queries, recursive bounded values and reusable libraries. | Children must cover QSpec semantics, QSL syntax/check/eval, IR/backend representation, negative bounds, integration and qualification. |
-| Research #66 | Promote from future study to **required V1 delivery epic** for rational/decimal/float/integer semantics, units, tuples/records/equality, inheritance, conformance, redefinition, dispatch and systems-model references. | Children must cover the same complete producer-consumer-backend chain without editing FCD authority. |
+| Research #66 | Promote from future study to **required V1 delivery epic** for rational/decimal/float/integer semantics, units, tuples/records/equality, inheritance, conformance, redefinition, dispatch and systems-model references. | Children must cover the complete artifact-extraction, model-intake and backend chain. |
 | Research #67 | Promote from future study to **required V1 delivery epic** for dynamic roles, bounded/symbolic queues, general loop obligations and complete population/history traversal. | Children must cover QSpec, QSL, Protocol, Observation, analysis and qualification; no unbounded claim may be approximated. |
 | Research #37 | Expand observation/replay scope to clock uncertainty, partial valuation, revisioned repair and incremental monitoring while retaining closed OB01-03/QObs #1 evidence. | New children close the additional rows; historical bounded work remains closed. |
 | Protocol #14 | Preserve the accepted bounded architecture, supersede its flat-layout ADR as Task-004 requires, and extend it with the complete protocol, analysis and authorized workflow-adapter interfaces allocated by Task-006. | Current bounded children remain credited; the parent cannot close until all Protocol-owned rows and their QSL/QObs/verification seams qualify. |

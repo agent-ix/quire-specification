@@ -3,7 +3,7 @@ id: SR-404
 title: "Evidence-method review of the composed native Quire v1 baseline"
 type: SpecReview
 analysis: evidence
-scope: "FR-020, FR-030–062, FR-090–095, FR-110–116, FR-130; StR-002; NFR-010/020/021/040/050–052; TM-003/004/006/007 and their TC/IT contracts; proposals/quire-v1; filament-core-data FR-100–103 and baseline-1-2.md at d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f"
+scope: "FR-020, FR-030–062, FR-090–095, FR-110–116, FR-130; StR-002; NFR-010/020/021/040/050–052; TM-003/004/006/007 and their TC/IT contracts; proposals/quire-v1"
 review_set: all
 evaluated_revision: "788b161bd1b7fd5d632cc42c949f497914df3ce6"
 review_date: "2026-09-10"
@@ -11,7 +11,7 @@ review_date: "2026-09-10"
 
 ## Summary
 
-The scoped advisor returned one method-class mismatch, ten uncatalogued NFR metric labels and four inconclusive FR criteria among 274 native obligations; D's thirteen reviewed producer criteria have none. The existing planned cases cover the major semantic distinctions, but observation resource/provenance controls and one temporal TC binding need correction; all recommendations below are reviewer judgment for the existing plan, not implementation or qualification claims.
+The scoped advisor returned one method-class mismatch, ten uncatalogued NFR metric labels and four inconclusive FR criteria among 274 native obligations. The existing planned cases cover the major semantic distinctions, but observation resource/provenance controls and one temporal TC binding need correction; all recommendations below are reviewer judgment for the existing plan, not implementation or qualification claims.
 
 ## Findings
 
@@ -39,8 +39,8 @@ The scoped advisor returned one method-class mismatch, ten uncatalogued NFR metr
 Commands executed successfully against the frozen native scope were
 `quire coverage --scope . --json`,
 `quire properties --scope . 'spec/**/*.md' --json`, `quoin advise --json`, and
-`quoin catalog methods --json`. The advisor also ran read-only against the
-separate D tree. Tools were Quoin 0.23.1 and Quire 0.31.0
+`quoin catalog methods --json`.
+Tools were Quoin 0.23.1 and Quire 0.31.0
 (`cli 4f6ed024`, `engine 0.46.0@ca7362d4`); the installed evidence skill is from
 the Quoin plugin 0.22.5. The actual installed catalog, not a remembered method
 table, supplied every method name above.
@@ -50,9 +50,6 @@ acceptance criteria, four NFR-040 acceptance criteria and nineteen NFR metrics,
 274 total. It reported one mismatch, ten uncatalogued labels and four
 inconclusive rows. All 255 FR/NFR acceptance criteria use the catalog's Test
 class. A supported class does not identify a concrete method or prove a case.
-D's FR-100–103 add thirteen acceptance criteria, each authored Test, with zero
-mismatch, uncatalogued or inconclusive results. Their verification remains
-producer-owned; absent reserved native D IDs do not create a test debt.
 
 Reproducibility digests for the complete read-only outputs are:
 
@@ -61,7 +58,6 @@ Reproducibility digests for the complete read-only outputs are:
 | Native advisor JSON | `f3a84902595e70e8c672a2472729e906a34334370f58fc32a6e61d25139077b4` |
 | Native coverage JSON | `9154f01e73100c253fe169496936731922455ee3a4701a8a55f866d0653c8654` |
 | Native properties JSON | `6f15a95f82f79bb29449f31be09754960096be2f4a06b56cd9c72980d416272d` |
-| D advisor JSON | `3f9ac9f1c316632898d511f08918864a50a5c753e6e382a53e469c5f12235803` |
 
 The advisor recommends performance-benchmarking for all nineteen NFR metrics
 because their numeric targets match `quantified-threshold`. Zero invalid truth,
@@ -140,9 +136,7 @@ does not create a second registry or change those cells.
 
 StR-002's Demonstration and Inspection methods suit its enterprise example and
 capability/ownership inventory. They validate stakeholder meaning separately
-from test execution. D's authored presence, relationships, unavailable population
-and explicit configuration criteria are suited to independent contract tests,
-consumed natively through IT-010; new duplicate D requirements are unnecessary.
+from test execution.
 
 No suites were executed or added. The existing TC/IT documents supply the
 planned corpus; concrete Rust harness bindings and evidence recording remain

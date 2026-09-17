@@ -9,14 +9,13 @@ adoption under FS02/FS05; a digest of the earlier profile file cannot silently
 cover a later semantic amendment.
 
 The accompanying `fixtures/typing-cases.json` contains independently authored
-judgment examples. Its type environments are hypotheses, not another domain
-model wire, a compiled model package, or substitute for the existing #54 adapter.
-The actual ConfigVersion producer fixture remains a separate unqualified input.
+judgment examples. Its type environments are hypotheses, not a domain package
+or a compiled model package.
 
 ## 1. Judgments and phase boundaries
 
-Let D be an immutable, resolved declaration environment supplied by the shared
-model authority. A identifies the clause, context type, invocation and selected
+Let D be an immutable, resolved declaration environment built by model intake.
+A identifies the clause, context type, invocation and selected
 observation. G maps lexical names to immutable typed values or stable access
 paths. F contains observation-qualified presence and numeric range facts.
 
@@ -268,8 +267,8 @@ be claimed equivalent merely because logical outputs agree on samples.
 FS03 review must accept or amend the explicit equality/ordering whitelist,
 contextual size typing, pre anchor/captured-value behavior, proof strategy and
 reference accounting. These resolve gaps in the initial prose; they are not
-silent changes to historical profile identity. Model-owner type mapping, source
-activation, operation frames and B/C interchange adoption remain prerequisites.
-LC02/LC03 should consume this contract only after those reviews, retaining the
-existing shared model authority and executable binder. No evaluator or healthy/
+silent changes to historical profile identity. Source activation, operation
+frames and B/C interchange adoption remain prerequisites. LC02/LC03 should
+consume this contract only after those reviews, retaining the existing
+executable binder. No evaluator or healthy/
 violating executable workflow is supplied by this document.

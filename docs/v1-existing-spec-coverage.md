@@ -38,7 +38,7 @@ an unrelated family.
 | V1-SRC-007 | FR-003/036/047/049; FR-203/274 | Resolve | Decide FR-003's permitted layout deletion versus FR-036's no-newline-conversion rule, then extend locus retention through every path. | CF, NS |
 | V1-SRC-008 | FR-002/030/035; package contract | Reuse | Extend exact import cases to richer model capabilities. | CF |
 | V1-SRC-009 | FR-002/030/035 | Reuse | Add conformance/redefinition/dispatch binding cases. | CF |
-| V1-SRC-010 | AD-001; FR-004/015/030/035; FR-200/201 | Amend | Resolve Filament/package fingerprint-domain ambiguity and register new analysis, plan, plugin and generated-artifact identities. | CF |
+| V1-SRC-010 | AD-001; FR-004/015/030/035; FR-200/201 | Amend | Keep the domain package `sha256-jcs` domain distinct from package fingerprints and register new analysis, plan, plugin and generated-artifact identities. | CF |
 | V1-SRC-011 | FR-030/032; NFR-021/051/060 | Split | Create one cross-subsystem manifest requirement rather than restating pins inside consumers. | CF |
 | V1-SRC-012 | FR-016/032 | Reuse | Add migrations for the newly admitted type and family definitions. | CF, V |
 | V1-SRC-013 | FR-014/020/031/032/130 | Amend | Define discovery for all atomic language and consumer capabilities, not four family flags. | CF |
@@ -58,8 +58,8 @@ an unrelated family.
 | V1-TYPE-007 | Model-reference prose only | New | Define enum declaration/member identity, equality, ordering and evolution. | New |
 | V1-TYPE-008 | FR-007/039/044 mention exact units but define no dimension model | Amend | Add dimension, unit identity, quantity typing and arithmetic rules. | New |
 | V1-TYPE-009 | FR-007/044 reject incompatible or implicit conversions | New | Define explicit exact unit conversion and loss/refusal behavior. | New |
-| V1-TYPE-010 | FR-019/045; producer correspondence contracts | Reuse | Add all new value/container forms to presence/null behavior. | CF, NS |
-| V1-TYPE-011 | FR-019/035/045; producer correspondence contracts | Reuse | Add richer collection and recursive-value multiplicity cases. | CF, NS |
+| V1-TYPE-010 | FR-019/045; AD-006 artifact presence declarations | Reuse | Add all new value/container forms to presence/null behavior. | CF, NS |
+| V1-TYPE-011 | FR-019/035/045; AD-006 artifact multiplicity declarations | Reuse | Add richer collection and recursive-value multiplicity cases. | CF, NS |
 | V1-TYPE-012 | FR-019 admits acyclic record paths but `tuple` is refused | Amend | Define record/tuple construction, field identity, typing, equality and bounds. | New |
 | V1-TYPE-013 | FR-009/019/043 explicitly deny structural equality | Resolve | Add typed structural equality while preserving object-identity separation. | New |
 | V1-TYPE-014 | FR-008/041 | Reuse | Preserve sequence semantics while generalizing collection interfaces. | CF, NS |
@@ -281,7 +281,6 @@ subsequently repaired are not carried forward as live defects.
 
 | Object | Current unresolved boundary | Owning atomic rows |
 | --- | --- | --- |
-| FR-201 canonical identity domain | Filament fingerprint versus package-fingerprint domain. | V1-SRC-010/011 |
 | FR-203 source region | FR-003 layout deletion versus FR-036 newline-conversion prohibition. | V1-SRC-005/007 |
 | FR-207 runtime value path | JSON field/index path, serialized step tags and ordering across observations. | V1-EXPR-023, V1-EVID-002 |
 | FR-270 diagnostic catalog | Catalog digest domain and identity-kind classification. | V1-EXPR-023, V1-SRC-010 |

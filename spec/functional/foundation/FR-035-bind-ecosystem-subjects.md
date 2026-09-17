@@ -20,7 +20,7 @@ When binding an ecosystem assessment request, the binder SHALL retain the declar
 
 ## Inputs
 
-An admitted clause, D-owned model/configuration identities, B-owned protocol instance bindings, F-owned observation bindings and explicit finite snapshot or window scope references.
+An admitted clause, declaration keys from the selected domain package, configuration identities, B-owned protocol instance bindings, F-owned observation bindings and explicit finite snapshot or window scope references.
 
 ## Outputs
 
@@ -28,7 +28,7 @@ A request bound to the exact declared subjects and completeness dependencies, or
 
 ## Behavior
 
-A trace ID, timestamp, endpoint or matching textual name alone does not establish a business relationship. Workflow instances, role instances, message deliveries, attempts and effects remain distinct subjects. Scope references preserve the selected snapshot/window, membership declaration and observation/progress dependencies; static package identity remains separate. Unknown required membership cannot establish aggregate success. D/B/F define the corresponding producer contracts; this requirement introduces no model store, correlation heuristic or alternate schema.
+A trace ID, timestamp, endpoint or matching textual name alone does not establish a business relationship. Workflow instances, role instances, message deliveries, attempts and effects remain distinct subjects. Scope references preserve the selected snapshot/window, membership declaration and observation/progress dependencies; static package identity remains separate. Unknown required membership cannot establish aggregate success. B/F define the protocol and observation binding contracts; this requirement introduces no model store, correlation heuristic or alternate schema.
 
 The [package contract](../../../proposals/quire-v1/package-contract.md) defines the
 typed role mapping. Configuration and binding contracts must agree with the
@@ -36,16 +36,17 @@ linked requirements. Concrete runtime bindings are separately identified inputs;
 they cannot override static selections. Required role mappings and records needed
 by a currently activated obligation are distinct prerequisites.
 
-Runtime binding checks the package contract's stage-specific prerequisites and
-producer/native correspondence against the already linked selections. A prior
-successful type-check cannot supply missing required runtime scope or authority.
-The selected producer canonical domain and native raw-byte domain remain
-separate; a changed relation cannot override the linked model/profile.
+Runtime binding checks the package contract's stage-specific prerequisites
+against the already linked selections. A prior successful type-check cannot
+supply missing required runtime scope or authority. The domain package
+`sha256-jcs` digest and native raw-byte digests remain separate; a runtime input
+cannot override the linked domain package or profile.
 
 Every concrete runtime subject SHALL be identified by one authority-qualified
-opaque reference consisting of the exact selected producer/binding authority
-identity, revision and digest, the exact subject-kind discriminator, and the
-exact non-empty producer-supplied object-identity bytes. Equality and hashing
+opaque reference consisting of the exact selected binding authority identity,
+revision and digest, the subject kind given as its effective declaration key
+(domain package identity, IR node identity, `sha256-jcs`), and the exact
+non-empty object-identity bytes supplied by the runtime input. Equality and hashing
 are componentwise over that tuple without parsing, trimming, normalization or
 reconstruction. The binding requirement names the typed slot and authority; it
 is not the runtime object identity that fills the slot.
@@ -71,8 +72,8 @@ arrival order.
 | FR-035-AC-6 | A runtime configuration selecting another model/profile/binding-contract meaning refuses against the existing linked subject rather than overriding it. | Test (TC-035) |
 | FR-035-AC-7 | Changing only the runtime resource limit changes the retained configuration and assessment input identity while preserving the static subject. | Test (TC-035) |
 | FR-035-AC-8 | A valid mapping for an unactivated compensation does not require a recovery record; once required, an unavailable observation remains incomplete rather than becoming optional-none or false. | Test (TC-035) |
-| FR-035-AC-9 | A previously linked template still refuses a missing required runtime scope selection and reports unavailable required observations as incomplete; a foreign producer/native correspondence cannot override its linked model/profile selection. | Test (TC-035) |
-| FR-035-AC-10 | Equal producer-local object bytes under a different authority identity, revision, digest or subject kind produce distinct canonical keys; offering one where the other authority/kind is required refuses rather than returning semantic object equality, while display, trace, timestamp, payload and source-locus changes alone do not mint a runtime subject. | Test (TC-035) |
+| FR-035-AC-9 | A previously linked template still refuses a missing required runtime scope selection and reports unavailable required observations as incomplete; a runtime input naming another domain package or profile cannot override its linked selection. | Test (TC-035) |
+| FR-035-AC-10 | Equal object-identity bytes under a different authority identity, revision, digest or subject declaration key produce distinct canonical keys; offering one where the other authority/kind is required refuses rather than returning semantic object equality, while display, trace, timestamp, payload and source-locus changes alone do not mint a runtime subject. | Test (TC-035) |
 | FR-035-AC-11 | A missing or empty identity component, or one complete identity key rebound to incompatible typed relationship facts, refuses without a generated/default identity or dependent result. | Test (TC-035) |
 | FR-035-AC-12 | Permuting runtime subjects preserves their canonical lexicographic key order and changes no authored causal, delivery or retry relation. | Test (TC-035) |
 

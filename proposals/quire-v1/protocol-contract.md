@@ -29,7 +29,7 @@ evaluation failure is a typed failed or unavailable result; it never selects a
 branch or falls back to truthiness.
 
 The representation consumes A-owned source/profile/predicate identities,
-D-owned component, relationship and population identities, E-owned clock and
+component, relationship and population declaration keys from the domain package, E-owned clock and
 closure semantics, and F-owned observation/correlation/completeness bindings.
 It preserves those authorities rather than copying their models.
 
@@ -235,7 +235,7 @@ The maintained architecture and its library list are research inputs. Earlier
 FRETish-source and foreign-runtime recommendations are superseded by the owner
 ruling: native Quire is the sole editable formal-clause language, external forms
 are export-only, and production or possible qualification integrations are Rust.
-Until a required producer interface is reviewed and available, the affected
-request is refused or reported unsupported with the missing dependency. No
-hardcoded fixture, inferred default, source-text adapter or local stub substitutes
-for A/D/E/F/Engineering Assurance producer contracts.
+Until a required interface is reviewed and available, the affected request is
+refused or reported unsupported with the missing dependency. No hardcoded
+fixture, inferred default, source-text adapter or local stub substitutes for a
+domain package or for the A/E/F/Engineering Assurance contracts.

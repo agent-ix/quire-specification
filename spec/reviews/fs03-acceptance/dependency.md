@@ -25,7 +25,6 @@ semantic prerequisite or supplying missing language meaning.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-005 | low | No blocking dependency remains: FS01 fixes source/profile identity, FS02 fixes model/static authority, and FS03 can accept its state closure independently of qcir #69 implementation. | QS #2/#3/#4; qcir #69 |
-| FND-006 | low | FCD #93 is not a hidden FS03 prerequisite. Its Semantic IR `Any`/presence/frontend delivery remains open, while FS03 consumes the already accepted static Producer 1.2 distinction and refuses unavailable representations. | CAP-005/009; FCD #93 |
 
 ## Dependency graph
 
@@ -36,7 +35,6 @@ FS02 model/static authority -----+
                                                     |
                                                     +--> qcir #69 bounded Kani profile
 
-FCD #93 ------------------------------> Semantic IR/frontends (independent)
 observation/protocol consumers --------> concrete assessments (independent)
 ```
 

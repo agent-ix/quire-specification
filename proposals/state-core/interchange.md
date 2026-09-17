@@ -106,7 +106,6 @@ Schema success alone does not prove any cross-span or source-byte condition.
 | Exact artifact bytes | `sha256:` plus lowercase SHA-256 of the complete supplied bytes, including whitespace and final newline. No semantic canonicalization. |
 | `quire.contract.canonical-json/v1` | Existing IR source-free projections and Unicode-scalar object-key ordering; semantic arrays retain their specified order. Minimal exact integers; no floats/null in this canonical model. Digest is SHA-256 of `quire-contract-ir`, NUL, profile, NUL, object kind, NUL, then canonical envelope bytes. |
 | `quire.contract.bound-identity/v1` | Existing binder's complete sorted clause bindings, package canonical digest, declaration/expression digests, and profile headers. Digest is raw SHA-256 of that canonical bound-identity envelope; do not add the other domain's prefix. |
-| Filament `RFC8785-JCS-with-identity-sorted-sets-v1` | Existing selected-set paths and package fingerprint tuple, including schema/manifest/mapping/profile/package inputs and contract version. The lock's included/excluded rules stay explicit. A lock-file digest is not its fingerprint. |
 | B's provisional `sha256-jcs:` domain | Preserve B's selected canonicalized structured value and prefix. Do not run arbitrary IR/source bytes through it and claim their existing identity. Its adoption into a shared semantic reference remains B-reviewed. |
 
 The canonicalIdentity fields select domain, version, algorithm and the exact

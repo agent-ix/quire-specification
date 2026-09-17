@@ -1,11 +1,11 @@
 # Review fixtures and expected cases
 
 These files are **proposed fixtures, not executed language results**.
-`model-expectations.json` illustrates existing semantic-core field declarations
-and the proposed identity-reference mapping; it is explicitly not a compiled
+`model-expectations.json` illustrates field declarations and the proposed
+identity-reference mapping; it is explicitly not a compiled
 model package. `parent-order.native` is a parse/source fixture. Its literal
 `unresolved-model-package` is an intentional link refusal, not a fake digest or
-claim of a working import. Replace it only with a real reviewed producer's
+claim of a working import. Replace it only with a real reviewed domain
 package digest when qualifying linking, and record the resulting source change.
 
 `subject.json` supplies concrete authored/profile/source identities to the
@@ -76,7 +76,7 @@ original revision rather than being rewritten as current evidence.
 
 The checksum command verifies this file set only. It does not validate language
 syntax, imported model semantics, canonical identity, logical outcomes or the
-claimed diagnostic behavior. Full compiler integration acceptance still needs real producer,
+claimed diagnostic behavior. Full compiler integration acceptance still needs real model intake,
 parser, linker, evaluator, generated backend and clean-consumer execution.
 
 Operation fixtures now use `agent-a-invocation-cases/1-draft`. Each case selects
@@ -94,29 +94,12 @@ refuse even if the new transport digest is internally correct. These are review
 profiles, not registered production wire contracts. Model/operation binding
 remains unavailable. The source-subject fixture version stays unchanged.
 
-`reference-cases.json` supplies the FS02 amendment's separate ArtifactRef and
+`reference-cases.json` supplies the separate ArtifactRef and
 SemanticRef around the existing exact source fixture. Its semantic profile
 points to the actual private candidate `../profile.md` digest; it claims no
 canonical semantic identity or bound model. Positive/adverse mutations are
 review expectations for B/C's independent consumers. The older operation/source
 wrapper versions are preserved; no implicit version conversion is performed.
-
-`role-compositions.json` extends the shared-reference review with property-to-
-source-region, actual model/manifest/lock/closure, snapshot/invocation/frame,
-and run/environment/native-artifact compositions. Its ArtifactRef version is
-2-draft, explicitly admitting the four new artifact kinds. The older 1-draft
-reference cases retain their bytes; `reference-migrations.json` makes conversion
-conditional on an accepted mapping. Neither version is registered production wire.
-
-The mirrored model files were produced by the existing Filament TypeSpec frontend
-at 3b75e01, not hand-written as compiled IR. The native artifact is actual CLI
-parse output. The run receipt has a unique observed run identity. Environment
-and portable-result structure remain B-owned and unqualified; model/source/frame
-linking remains unavailable. Old synthetic operation/field IDs differ from the
-new producer IDs and cannot be silently adopted. See compositions/model/RIGHTS.md.
-The mirrored native source/output grants are in compositions/RIGHTS.md. The CLI
-source revision remains the exact opaque `fixture:1` label under an explicit
-CLI-label namespace; it is not silently converted into a numeric IR revision.
 
 `typing-cases.json` contains 51 independently authored FS03 judgment examples
 under explicit abstract type/input hypotheses. They cover guarded definedness,

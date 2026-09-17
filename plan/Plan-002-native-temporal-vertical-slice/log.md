@@ -9,7 +9,7 @@ description: "Chronological log of changes to the Plan-002 bundle."
 
 * **2026-09-14** — Reconciled stale owner-lane statuses against default-branch
   code. Observation Task-003 completed through Plan-001 / PR #19 (`9ac80e9`),
-  with producer-qualified subject/topology adoption still in #18/#13.
+  with declaration-keyed subject/topology adoption still in #18/#13.
   Predicate-projection Task-004 completed through qcir PRs #67/#68/#77
   (`202210c`). Public TL syntax/parser/evaluator/rewrite APIs are merged at
   `842d825`, `00c1b8d`, `2286218` and `fe03f29`; qcir #71 is therefore the sole

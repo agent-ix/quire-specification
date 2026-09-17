@@ -12,7 +12,7 @@ When admitting a state declaration or imported predicate, the frontend SHALL enf
 
 ## Inputs
 
-Exact profile and dependency definitions, parsed state/query/graph constructs, checked predicate imports and authoritative model declarations.
+Exact profile and dependency definitions, parsed state/query/graph constructs, checked predicate imports and model declarations from the selected domain package.
 
 ## Outputs
 

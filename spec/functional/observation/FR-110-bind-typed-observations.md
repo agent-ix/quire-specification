@@ -55,9 +55,9 @@ externally observed.
 
 - [Shared foundation](../../../proposals/quire-v1/shared-foundation.md).
 - [Observation binding contract](../../../proposals/quire-v1/observation-contract.md).
-- D owns model declarations; A owns source/package/profile identity.
+- [AD-006](../../assurance/AD-006-model-graph-state-contracts.md): observed subjects are typed by the spec-declared domain declarations of the checked package; A owns source/package/profile identity.
 
 ## Status
 
 Accepted by FS04 for typed observation binding and explicit absence/refusal.
-Producer/admission implementation remains separately versioned.
+Admission implementation remains separately versioned.

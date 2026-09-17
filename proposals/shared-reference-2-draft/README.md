@@ -4,7 +4,7 @@ This private amendment, merged by specification PR #8 at `8ab058b`, addresses
 B's conditional review of that PR and is accepted by FS05 as an internal
 interchange contract. Independent consumer-specific qualification and public
 promotion remain separate.
-The adopted state-core packet at e897f81 and its 1-draft schema remain unchanged.
+The state-core 1-draft schema is a separate version.
 
 ## Selected versions and scope
 

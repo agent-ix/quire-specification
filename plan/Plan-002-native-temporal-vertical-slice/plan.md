@@ -101,7 +101,7 @@ relationships:
   The independent Contract-IR/TL bridge remains Task-004/Task-006 work.
 - **Task-003 is done for its declared authority seam.** `quire-observation`
   Plan-001 and PR #19 (`9ac80e9`) deliver typed observation, completeness,
-  progress, replay and resource contracts. Producer-qualified subject/topology
+  progress, replay and resource contracts. Declaration-keyed subject/topology
   adoption remains separately tracked by observation #18/#13.
 - **Task-004 is done.** `quire-contract-ir` PRs #67, #68 and #77 (current
   accepted implementation `202210c`) deliver strict total-Boolean projection

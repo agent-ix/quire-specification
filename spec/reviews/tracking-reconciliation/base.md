@@ -33,7 +33,7 @@ of quire-specification #33.
 | Check | Result |
 | --- | --- |
 | Identity and links | Changed live references use full repository-qualified issue, PR, release, requirement, plan, or revision identities. Historical review snapshots remain pinned to their evaluated revisions. |
-| Completion honesty | SL #35–#40, #68, #83/#84, release `v0.2.0`, QS PR #15, qcir PR #67 and qcir #63 are closed/merged. qcir #64/#68/#70/#71, FCD #95, observation #1 and TL #52 remain open. |
+| Completion honesty | SL #35–#40, #68, #83/#84, release `v0.2.0`, QS PR #15, qcir PR #67 and qcir #63 are closed/merged. qcir #64/#68/#70/#71, observation #1 and TL #52 remain open. |
 | Plan consistency | Plan-002 records Tasks 001–002 done with completed subtasks; Tasks 003–007 remain visibly in progress, blocked, or not started. No done task depends on an incomplete task. |
 | Matrix structure | All six functional TestMatrix documents retain the current catalog's `Coverage Status` header and planned rows. No row was promoted without execution evidence. |
 | Requirement quality | No normative StR/US/FR/NFR/AC statement changed. The accepted PR #15 base-plus-seven review, including EARS, therefore remains the governing semantic review. |

@@ -12,7 +12,7 @@ When admitting a composed native package, the frontend SHALL bind every clause t
 
 ## Inputs
 
-Native source with exact byte/revision/span identity, clause declarations, selected definition name/revision/byte-digest tuples and imported model identities. Selection is authored or explicitly supplied by the source profile; installed backends never choose it.
+Native source with exact byte/revision/span identity, clause declarations, selected definition name/revision/byte-digest tuples and imported domain package identities with their `sha256-jcs` digests. Selection is authored or explicitly supplied by the source profile; installed backends never choose it.
 
 ## Outputs
 
@@ -31,10 +31,10 @@ and build provenance; an unqualified canonical digest is not claimed.
 
 The linker's prerequisites follow the package contract's processing-stage table.
 Concrete populations, windows and observations are later assessment inputs,
-not prerequisites for type-checking a valid future obligation. When a producer
-supplies canonical model/profile objects, the linker retains the declared
-producer/native correspondence instead of substituting that canonical digest
-for a compiled-model or definition byte digest.
+not prerequisites for type-checking a valid future obligation. A domain package
+is selected by its identity, version and `sha256-jcs` digest. A definition is selected by
+its byte digest. The linker keeps each digest in its own domain and never
+substitutes one for the other.
 
 ## Acceptance Criteria
 
@@ -45,11 +45,11 @@ for a compiled-model or definition byte digest.
 | FR-030-AC-3 | Changing a runtime trace while keeping source, model and selected definitions fixed does not change static package identity; changing a semantic dependency does. | Test (TC-030) |
 | FR-030-AC-4 | Duplicating a clause's editable authority refuses admission rather than choosing the first or last declaration. | Test (TC-030) |
 | FR-030-AC-5 | An omitted required source unit prevents namespace closure; an extra file outside the explicit inventory cannot add or shadow a declaration. | Test (TC-030) |
-| FR-030-AC-6 | Substituting a manifest/lock digest or package fingerprint for the compiled model import's byte digest refuses the import. | Test (TC-030) |
+| FR-030-AC-6 | Substituting a manifest/lock digest or package fingerprint for the domain package import's `sha256-jcs` digest refuses the import. | Test (TC-030) |
 | FR-030-AC-7 | Linked binding roles retain owning declaration, source region, kind, exact type/contract, anchor and scope prerequisites; equal local names in different clauses do not merge their roles. | Test (TC-030) |
 | FR-030-AC-8 | A compile configuration change limited to resource controls remains visible in provenance while preserving the static subject; a changed semantic selection changes the static subject. | Test (TC-030) |
 | FR-030-AC-9 | A valid three-family template links with exact static model/definition/binding contracts and no runtime population, window or observations; removing a required static definition still refuses its dependent declaration. | Test (TC-030) |
-| FR-030-AC-10 | A declared producer/native correspondence retains and validates each selection in its own digest domain; missing correspondence, foreign exports and cross-domain digest substitutions refuse the dependent static binding. | Test (TC-030) |
+| FR-030-AC-10 | The domain package selection and each definition selection are retained and validated in their own digest domains; a missing domain package, a domain type absent from it and cross-domain digest substitutions refuse the dependent static binding. | Test (TC-030) |
 
 ## Dependencies
 

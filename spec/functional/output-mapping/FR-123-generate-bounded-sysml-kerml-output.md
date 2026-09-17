@@ -51,7 +51,7 @@ generating plausible replacement structures.
 
 - [SysML/KerML profile](../../../proposals/quire-v1/output-mappings/sysml-2.0-kerml-1.0.md).
 - [FR-121](FR-121-account-for-every-output-obligation.md).
-- Qcir #56 owns implementation; model producers retain declaration authority.
+- Qcir #56 owns implementation; the spec-declared domain declarations retain declaration authority.
 
 ## Status
 

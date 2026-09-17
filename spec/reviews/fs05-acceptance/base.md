@@ -40,7 +40,7 @@ that Planned matrices have executed.
   are unchanged; a semantic change requires a new exact selection.
 - Unknown wire versions, required features and canonical domains refuse before
   semantic use; malformed maps and exhausted work yield their distinct outcomes.
-- Artifact-byte, IR canonical, IR bound, Filament and verification-JCS identity
+- Artifact-byte, IR canonical, IR bound and verification-JCS identity
   domains retain their separate preimages and digest syntax.
 - Migration is an exact selected mapping with named preserved aspects. Reverse,
   transitive and semantic equivalence are never inferred from similar bytes.

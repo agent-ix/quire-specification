@@ -38,7 +38,7 @@ operations:
 invariants:
   - runtime inputs do not participate in static package identity
   - backend support does not alter admission
-  - source bytes, definition bytes, compiled-model documents, checked semantic graph and generated IR occupy distinct typed identity and digest domains
+  - source bytes, definition bytes, domain packages, checked semantic graph and generated IR occupy distinct typed identity and digest domains
   - the public semantic graph is a closed versioned union owned by this interface; consumers do not receive parser/CST/package implementation objects
   - complete-V1 nominal scalar node keys use the closed node-identity preimages and known vectors published with the I04 schema
   - the frozen V1 wire remains byte-for-byte unchanged and is never reinterpreted as V2

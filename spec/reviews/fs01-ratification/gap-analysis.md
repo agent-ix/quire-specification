@@ -65,5 +65,3 @@ do not establish or block FS01 evidence.
   retain the non-TL bridge work assigned to Agent E.
 - Agent B retains all TL-* libraries and protocol/result work; FS01 changes no
   TL-owned file or ticket.
-- The original ConfigVersion model remains refused until its model authority
-  supplies an explicit finite bound and relationship correspondence.

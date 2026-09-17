@@ -12,8 +12,9 @@ This editing policy does not relax immutable runtime selections or digest checks
 This definition selects scoped assertions, contradiction and restoration rules
 with the range-aware binding for all three clock families. It is not a clock
 profile, event schema, replay engine, result store or executable monitor. E owns
-clock/history/closure meaning, B owns result dispositions and D owns the selected
-subjects, relationships and populations.
+clock/history/closure meaning, B owns result dispositions and the checked
+package's domain declarations type the selected subjects, relationships and
+populations.
 
 ## Required definitions and rules
 
@@ -24,13 +25,13 @@ subjects, relationships and populations.
 | Observation binding rules | `quire.observation.contract/v1` | Current working draft | [Observation contract](../observation-contract.md) |
 | Temporal lifecycle/result facet | `quire.temporal.bounded-facet/v1` | `1-draft.3` | [Temporal meaning](temporal-common.md) |
 | Shared result rules | B FR-061 | Current working draft | [Orthogonal results](../../../spec/functional/protocol/FR-061-report-orthogonal-results.md) |
-| Producer interface | FCD Producer interface | `1.2.0` | [Producer selection](../observation-contract.md#producer-interface-selection) |
+| Domain declarations | Checked package `model_selections` domain package | `sha256-jcs` declaration keys | [Domain declaration selection](../observation-contract.md#domain-declaration-selection) |
 
 An actual assertion or restoration request selects its required dependencies by
 exact identity, revision and bytes. Missing, stale, substituted or inconsistent
 dependencies refuse the assertion; local draft links cannot select replacement
 runtime artifacts, default to a current clock/profile/result or begin a fresh
-complete stream. Producer object, raw document, definition and result digests
+complete stream. Declaration, raw document, definition and result digests
 remain distinct domains.
 
 ## Required assertion identity
@@ -72,8 +73,8 @@ integer positions and silence supplies no new position. For a fixed-sample range
 progress covers exact indexed samples under the selected epoch/period/unit,
 including silent samples only when their required valuations are supplied. For a
 timestamp range, a native timestamp tick is covered only when it lies in the
-producer's half-open interval. A timestamped native inclusive endpoint equal to
-the producer end is not covered or closed by that range. Start participates once;
+range's half-open interval. A timestamped native inclusive endpoint equal to
+the range end is not covered or closed by that range. Start participates once;
 end belongs only to a separately selected range that contains it.
 
 Member identity does not substitute for record identity, and record identity
