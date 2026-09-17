@@ -10,6 +10,25 @@ ticket. The exact existing artifacts in `Coverage` were read at the Plan-008
 baseline. `Delta` is the required specification action before the comprehensive
 `/specify` cycle can be complete.
 
+## Delivered-classification reconciliation
+
+This audit is the Plan-008 Task-003 reading of the tree at the Plan-008
+baseline. It is retained as that baseline evidence and is not re-derived here.
+The authority for the classification actually delivered by the Task-007
+`/specify` cycle is the
+[complete V1 atomic capability and requirement matrix](../spec/complete-v1/tests.md)
+(TM-009), which names one owning requirement, one specification action and the
+test cases for each of the 176 rows.
+
+One row differs between this baseline reading and the delivered matrix:
+
+| Atomic ID | Baseline class here | Delivered class in TM-009 | Reason |
+| --- | --- | --- | --- |
+| V1-TYPE-024 | Reuse | Resolve | Extending reachability over inheritance and conformance required deciding what "the same type" means for traversal. FR-043 fixes it as conformance to the static edge type under `quire.model.complete/v1`, with identity keeping each object's most-specific type. |
+
+The delivered totals are therefore 94 Reuse, 39 Amend, 23 New, 19 Resolve and
+1 Split. The baseline totals below are unchanged as the historical reading.
+
 ## Classification and matrix keys
 
 - `Reuse`: an existing requirement has exact behavior and acceptance criteria.
