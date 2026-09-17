@@ -107,7 +107,7 @@ object type's module. Quire gives it meaning.
 | Subsetting | `Subsets` column | `Field.subsets[]` | Values of the field are contained in the named supertype field |
 | Redefinition | `Redefines` column | `Field.redefines` | Narrowed type or bounds; the target must exist on a supertype |
 | Relationships | `## Relationships` rows with target and multiplicity | `TypeDefinition.relationships[]` with `multiplicity` | Typed reference edges with checked bounds |
-| Operations | `## Operations` signature, `Requires:`, `Ensures:` | `Operation.params`, `returns`, `pre[]`, `post[]` | Typed contracts over pre and post anchors |
+| Operations | `## Operations` signature, `Pre:`, `Post:` | `Operation.params`, `returns`, `pre[]`, `post[]` | Typed contracts over pre and post anchors |
 | Effect frames | `Modifies:`, `Creates:`, `Deletes:` lines under an operation | `Operation.frame` | Everything outside the frame is unchanged |
 | Invariants | `## Invariants`, one `### <clauseId>` with one `quire` fence | `Clause` with `language: quire` | Checked and evaluated by Quire |
 | Populations | `population` artifact listing member types and extent | Population node | Closed extents for quantification |
