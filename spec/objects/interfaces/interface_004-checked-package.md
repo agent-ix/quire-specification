@@ -42,9 +42,9 @@ invariants:
 
 ## Public boundary
 
-`quire.checked-package/v2` is the complete-V1 I04 interchange emitted for new
-packages. Its normative closed schema and independently authored vectors are
-published under
+`quire.checked-package/v2` is the complete-V1 I04 interchange emitted for
+checked packages. Its normative closed schema and independently authored
+vectors are published under
 [`proposals/checked-package-v2`](../../../proposals/checked-package-v2/). The
 schema defines the transport form; the grammar and the linked normative
 requirements retain authority for language meaning. This boundary deliberately

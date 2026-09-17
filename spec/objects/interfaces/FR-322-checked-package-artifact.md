@@ -104,10 +104,10 @@ unknown required features and non-canonical encodings refuse before consumption.
 An unknown object member or node tag is a V2 refusal. A transport relay may
 retain raw bytes selecting a newer graph revision without interpreting them;
 that is not an admitted V2 package and a V2 lowerer refuses it. A reader
-refuses any unrecognized `contract_version` rather than inferring missing
-identity evidence for it. Exact selected
-resource limits are admitted; one-over-limit input returns an incomplete
-resource disposition without a partial checked package.
+refuses any unrecognized `contract_version` rather than inferring the missing
+identity evidence for it. Exact selected resource limits are admitted;
+one-over-limit input returns an incomplete resource disposition without a
+partial checked package.
 
 ## Acceptance Criteria
 

@@ -26,22 +26,22 @@ require the schema to refuse an unrecognized `contract_version`.
 Then exercise unknown-version, missing/duplicate/unknown member, stale raw
 source/definition/model digest, cross-domain digest, unknown required
 capability, non-canonical-byte and each selected resource boundary through the
-real local Rust reader. Validate every object in
-the V2 `node-identity-vectors.json` against
-`node-identity-preimage.schema.json`,
+real local Rust reader. Validate every object in the V2
+`node-identity-vectors.json` against `node-identity-preimage.schema.json`,
 recompute its RFC 8785 JCS SHA-256 and require the recorded node ID. Mutate each
-enum/member/dimension/unit preimage by using an owner absent from
-the lock, a stale owner revision/digest join, a stale node ID, an unreduced or
+enum/member/dimension/unit preimage by using an owner absent from the lock, a
+stale owner revision/digest join, a stale node ID, an unreduced or
 signed-denominator rational, a duplicate/zero/unsorted term, a noncanonical
 unordered-member order, and a non-root/root scale-offset violation; each
 applicable mutation must refuse as `invalid_semantic_graph`. In a real package,
 retain an enum/member/unit preimage while independently changing the enum
 literal case, `semantic_type`, declaration/dimension dependency or unit target
 dependency, mirror the changed identity projection and recompute package ID;
-the reader must still refuse the contradictory cross-field join. Then execute the positive case, every admitted graph
-family, each declared boundary, and every explicit refusal/non-conclusive
-mutation through lowering. Compare complete typed read/lower results and
-artifact accounting with the vector criterion.
+the reader must still refuse the contradictory cross-field join. Then execute
+the positive case, every admitted graph family, each declared boundary, and
+every explicit refusal/non-conclusive mutation through lowering. Compare
+complete typed read/lower results and artifact accounting with the vector
+criterion.
 
 ## Expected Results
 
