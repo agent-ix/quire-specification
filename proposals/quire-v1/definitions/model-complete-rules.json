@@ -8,7 +8,7 @@
       "identity": "quire.rule.ad-006/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/assurance/AD-006-model-graph-state-contracts.md",
-      "sha256": "fd45db52c28723e5f07da094f03f31aeefa807c823a8c82ce788ba21a46fd81b"
+      "sha256": "553df4115f816ae453c0697121656f1b79fedcd4e290716c8ced5b3587ed54d4"
     },
     {
       "identity": "quire.rule.fr-043/v1",
@@ -56,7 +56,7 @@
       "identity": "quire.rule.fr-154/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-154-admit-domain-package-model.md",
-      "sha256": "6e39fd517cee8467fc579ca5e197f7f8dbb6886eff9380c5ad97a141790202fa"
+      "sha256": "43c481131ee761079539bd73a7a972acf5492347e7c42e15354b98745cd61f56"
     },
     {
       "identity": "quire.rule.fr-204/v1",

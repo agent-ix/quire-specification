@@ -71,7 +71,8 @@ package's own identity and version. It runs these checks in order. Each failure 
 
 Intake then reads each IR node and builds one original declaration per node.
 Nodes are read ascending by declaration key. A node that is not a valid IR
-node of its kind is `invalid_model_binding`/`malformed-declaration`. The
+node of its kind, or a type definition or population node whose artifact id
+is not an object id, is `invalid_model_binding`/`malformed-declaration`. The
 refusal retains the IR node identity, the source artifact and the source span
 that the node carries. A supertype, subsets, redefines, relationship-end,
 frame or population member reference that names no node of the package is
@@ -83,6 +84,13 @@ as `Order`. `start` and `end` are zero-based byte offsets in the artifact
 file. The span records where a declaration came from. It appears in
 diagnostics and provenance and is never a key member; the artifact id enters a
 key only as the type's identity segment below.
+
+A model-declaring artifact is an artifact whose type is a spec-objects object
+type, and its artifact id is an object id: ASCII letters, digits and
+underscores, starting with a letter (`^[A-Za-z][A-Za-z0-9_]*$`). An object id
+is always a `member-name`, so a clause names every declaration by qualified
+name, such as `M::sys_pump`. Artifact-type ids such as `FR-100` declare no
+model node.
 
 A declaration's identity is its artifact id. Every type definition is declared
 by its own artifact: an object type, value type, variant type, population,
