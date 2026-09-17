@@ -7,6 +7,10 @@ relationships:
     type: traces_to
   - target: ix://agent-ix/quire-specification/FR-271
     type: references
+  - target: ix://agent-ix/quire-specification/FR-144
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-145
+    type: references
 ---
 # FR-008: Preserve bounded sequence order and multiplicity
 
@@ -24,7 +28,24 @@ A completed quantifier value or an explicit unsupported/incomplete outcome.
 
 ## Behavior
 
-forall and exists visit occurrences in order and stop at the first decisive result. Empty forall is true; empty exists is false. Missing sequence data is unavailable. Contextual size typing remains an explicit FS03 review decision. collect, sets, bags and flattening are outside the admitted initial profile.
+Where the historical bounded sequence profile is selected, forall and exists
+visit occurrences in order and stop at the first decisive result. Empty forall
+is true; empty exists is false. Missing sequence data is unavailable.
+Contextual size typing remains an explicit FS03 review decision.
+
+This requirement owns sequence order and multiplicity. The set, bag and
+ordered-set domain is owned by
+[FR-144](../type-model/FR-144-preserve-complete-collection-algebra.md), and the
+`map`/`collect`, `filter`, `flatten`, `fold`, `reduce` and `convert` forms are
+owned by
+[FR-145](../expressions/FR-145-convert-and-query-collections.md).
+
+Where the historical bounded sequence profile alone is selected, the frontend shall refuse
+each of those forms with `unsupported_construct` and its source location.
+
+Where a complete-V1 collection facet is selected, the frontend shall admit each
+of those forms under FR-144 and FR-145 while retaining the sequence order and
+multiplicity specified here.
 
 ## Acceptance Criteria
 
@@ -34,12 +55,15 @@ forall and exists visit occurrences in order and stop at the first decisive resu
 | FR-008-AC-2 | An empty existential predicate yields false. | Test |
 | FR-008-AC-3 | A two-occurrence sequence containing equal values has size two. | Test |
 | FR-008-AC-4 | Missing sequence data receives unavailable_observation. | Test |
-| FR-008-AC-5 | A collect expression receives unsupported_construct. | Test |
+| FR-008-AC-5 | Where the historical bounded sequence profile alone is selected, a `collect`, `flatten`, set, bag or ordered-set form receives unsupported_construct with its source location. | Test |
+| FR-008-AC-6 | Where a complete-V1 collection facet is selected, the same forms are admitted under FR-144 and FR-145, and sequence order and multiplicity remain exactly as specified here. | Test (TC-189, TC-190) |
 
 ## Dependencies
 
 - [US-003](../../usecase/US-003-assess-finite-state.md) supplies the user need.
 - [Detailed contract or implementation evidence](../../../proposals/state-core/state-semantics.md) supplies the scoped context.
+- [FR-144](../type-model/FR-144-preserve-complete-collection-algebra.md) owns the complete collection-kind algebra.
+- [FR-145](../expressions/FR-145-convert-and-query-collections.md) owns every collection query and conversion form.
 
 ## Status
 
