@@ -29,9 +29,9 @@ The architecture has nine non-negotiable drivers:
    Exhaustion is data, not false, success or panic.
 7. Extensions add versioned descriptors, providers or adapters. They do not
    replace the parser, type system, result model or evidence store.
-8. First-party executable production and qualification logic is Rust. Filament
-   remains an external authoritative model producer; Quoin remains the evidence
-   retention/audit consumer behind its Rust-port gate.
+8. First-party executable production and qualification logic is Rust. A spec's
+   artifacts declare its domain model, and Quire owns that model's meaning;
+   Quoin remains the evidence retention/audit consumer behind its Rust-port gate.
 9. Every capability is V1 scope. Delivery can be dependency-ordered, but cannot
    be closed through deferral, a failed experiment or one backend's limitation.
 
@@ -67,7 +67,7 @@ dependency direction; they are not new products or scope buckets.
 | --- | --- | --- | --- |
 | S1 | Language kernel, packages and evolution | Source/CST-to-AST admission, editions, profiles, declarations, packages, dependencies, feature discovery, source identity and migration | `quire-spec-language`; normative QSpec AD-003 |
 | S2 | Values, types, expressions and collections | Scalar/value algebra, exact numeric domains, functions and termination, records, collection kinds, queries, equality, definedness and pure evaluation | `quire-spec-language`; cycle-free descriptors in `quire-contract-model` |
-| S3 | Model, graph and state-contract semantics | Authoritative model correspondence, object identity/populations/references, inheritance/redefinition/dispatch, graph traversal, state anchors, frames and operation contracts | `quire-spec-language` consuming exact Filament producer interfaces |
+| S3 | Model, graph and state-contract semantics | Model intake from domain packages, object identity/populations/references, inheritance/redefinition/dispatch, graph traversal, state anchors, frames and operation contracts | `quire-spec-language` model intake; normative QSpec AD-006 |
 
 ### Time and interaction plane
 
@@ -117,7 +117,7 @@ authority is divided as follows:
 | --- | --- | --- |
 | Authored source and source spans | QSL source reader/parser | No consumer re-parses source text or fabricates a span. |
 | Edition/profile/package admission | QSL linker/checker | Downstream tools consume one immutable checked package and its capability report. |
-| Model declarations and export identity | Exact Filament producer interface | QSL binds and interprets selected declarations; it never invents upstream identities or edits Filament. |
+| Domain model declarations and declaration keys | Spec artifacts, extracted by quire-rs and lifted by the FCD extraction-frontend into a `sha256-jcs` domain package | QSL model intake builds and checks Quire model declarations; it never invents declaration identities. |
 | Native value/type/expression meaning | QSpec semantics implemented by QSL reference evaluator | IR/backends demonstrate correspondence; they never redefine native meaning. |
 | Temporal authored meaning | QSpec/QSL native temporal artifact | TL supplies an independent selected-profile implementation and correspondence target. |
 | Observation, population, clock progress and completeness facts | QObs owner artifacts | Protocol/temporal consumers validate the exact owner contract and do not infer missing facts. |
@@ -137,7 +137,7 @@ within the same identity domain. At minimum the kernel distinguishes:
 - source bytes, source revision, source unit and lexical span;
 - edition, semantic profile, wire profile and requested feature bundle;
 - package, dependency manifest, declaration, type and semantic definition;
-- producer/model package, model element, effective specialization and
+- domain package, model declaration key, effective specialization and
   relationship;
 - runtime object, population, membership snapshot and state anchor;
 - operation invocation, capture, result, created identity and deleted identity;
@@ -222,8 +222,9 @@ into an executed Boolean.
 
 ### 4.5 Model and state semantics
 
-The model universe is a closed, versioned selection from an authoritative
-producer. QSL constructs a read-only correspondence view containing original
+The model universe is a closed selection of one or more domain packages, each
+lifted from spec artifacts and pinned by `sha256-jcs` digest. QSL model intake
+constructs a read-only model view containing original
 and effective declaration IDs, inheritance/conformance edges, redefinitions,
 parts, ports, interfaces, connections, allocations, operations and
 relationships. Dynamic dispatch resolves only inside the selected closed method
@@ -376,7 +377,7 @@ derived packages. Keeping those adapters in the full crate preserves the
 existing acyclic dependency direction:
 
 ```text
-Filament producer ──> QSL ──────────────┐
+Domain package ─────> QSL ──────────────┐
        └────────────> QObs ──> Protocol ├──> full Contract IR
 contract-model ─────> QSL/Protocol ─────┘          │
 TL syntax/evaluator ───────────────────────────────┤
@@ -499,7 +500,7 @@ Names are architectural roles; Rust names may follow repository idioms.
 | --- | --- | --- |
 | I01 Source document | editor/filesystem -> QSL | Exact bytes, revision, unit identity and bounded read outcome. |
 | I02 Parsed source | QSL parser -> formatter/linker/editor | Lossless CST, recoveries, tokens/spans and edition; not semantically admitted. |
-| I03 Model selection | Filament producer -> QSL/QObs | Exact producer interface/version, exports, declarations, relationships and canonical bytes. |
+| I03 Model selection | FCD extraction-frontend lift -> QSL/QObs | Domain package identity, `sha256-jcs` digest, declaration keys, declarations and relationships lifted from spec artifacts. |
 | I04 Checked package | QSL -> all semantic consumers | Immutable semantic graph, package lock, feature report, source map and diagnostics. |
 | I05 Native runtime input/result | caller/S6 <-> QSL | Typed state anchors, objects, frames, bounds and independent results. |
 | I06 Native temporal artifact/result | QSL/S6 <-> TL/QSL | Typed atoms/formula, clocks/history/captures, partial valuations and progress. |
@@ -539,9 +540,10 @@ without replacing an existing subsystem or creating a second authority:
    required unless the language itself changes.
 5. **Add a mapping or consumer.** Consume I12/I16 and account for every selected
    obligation. The consumer never becomes a source frontend.
-6. **Add a model producer version.** Implement a new I03 adapter and explicit
-   compatibility/migration decision. QSL's internal model semantics do not bind
-   to producer implementation structs.
+6. **Add a model feature.** Declare it in an artifact section, add its quire-rs
+   extraction rule, its semantic IR member and its module manifest section, then
+   give it Quire meaning in model intake. QSL's model semantics do not bind to
+   extraction implementation structs.
 7. **Add dynamic protocol behavior.** Extend S5 graph nodes plus bounds and
    analyzers. S6/Protocol consume the same graph; bounded kernels may refuse an
    undischargeable symbolic bound without deleting the source construct.

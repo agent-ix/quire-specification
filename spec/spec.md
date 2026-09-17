@@ -678,12 +678,13 @@ not omitted language scope.
 
 ### 2.2 Out of Scope
 
-B's portable method/plan/result implementation, C/D's producer implementations,
+B's portable method/plan/result implementation, quire-rs extraction, the FCD
+extraction-frontend lift,
 workflow adapters and other consuming engines are cross-repository delivery
 owners rather than production code owned by this specification repository.
 Local projection, realizability, relational analysis, model testing and workflow
 driving are complete V1 capabilities with their own typed subsystem boundaries.
-A duplicate model authority, foreign editable source frontend and automatic
+Domain declarations outside spec artifacts, a foreign editable source frontend and automatic
 public publication remain integrity or operational boundaries. External OCL,
 FRETish and SysML/KerML forms are output mappings, not editable source
 frontends.
@@ -702,7 +703,7 @@ runs and qualification decisions remain distinct subjects.
 
 ### 3.2 Intended Users
 
-Specification authors, model producers, verification operators and toolchain integrators.
+Specification authors, verification operators and toolchain integrators.
 
 ## 4. Requirements Architecture
 
@@ -760,7 +761,7 @@ Frontmatter relates StR, US, FR/NFR and IT artifacts. Acceptance-criterion-to-TC
 
 ## 12. Verification Strategy
 
-Run Quire over this exact repository scope. Use real producers/consumers and independent expected cases for integration evidence. Quire v1 acceptance includes the state workflow, timed refund and branching compensated choreography through executable evaluation, replay and incremental monitoring. Qualification-oriented evidence identifies source, model, binding, implementation and method versions; an observed pass does not itself qualify the system. Existing state tests and authored examples establish only their stated subset.
+Run Quire over this exact repository scope. Use real implementations and independent expected cases for integration evidence. Quire v1 acceptance includes the state workflow, timed refund and branching compensated choreography through executable evaluation, replay and incremental monitoring. Qualification-oriented evidence identifies source, model, binding, implementation and method versions; an observed pass does not itself qualify the system. Existing state tests and authored examples establish only their stated subset.
 
 ## 13. Change Management
 
@@ -781,12 +782,11 @@ forward its admission rules. The old `state-finite/1-draft` candidate is not
 enabled or aliased; adopted historical definitions and their implementation
 remain distinguishable from composed semantic candidates.
 
-The owner adopted e897f81 for internal implementation. Accepted IR ADR-0054
-(PR61, 690bde7) subsequently removed the universal Filament reader prerequisite;
-#54 is closed. Generic native compilation can use the existing IR API.
-The FS02 static owner/interface gate is satisfied by FCD #95 / PR #99 at
-`4042882` and the exact native consumer selected by QSL #93 / PR #94 at
-`0c83dcc`. FS03 accepts the state closure and FS05 accepts the versioned
+The owner adopted e897f81 for internal implementation. Generic native
+compilation uses the existing IR API. The FS02 static model boundary is
+[AD-006](assurance/AD-006-model-graph-state-contracts.md): spec artifacts declare
+the domain model, and QSL model intake checks the domain package lifted from
+them. FS03 accepts the state closure and FS05 accepts the versioned
 interchange/canonical/migration rules. Independent assessment-consumer
 implementation and qualification are not yet complete. FR-017/018 define the
 accepted versioned amendment resolving B's representational findings; its local
@@ -839,10 +839,7 @@ through PR #21 (`2d8372c`) and resource-inspection correction `57ddca2`, separat
 closure. F's FR-110–116, NFR-050–052, IT-050/051 and
 [observation matrix](observation/tests.md) and owned requirements/cases are
 integrated through `b7381fd`. E's composed corrections through `c6a8905` are integrated.
-D's accepted Producer 1.2 contract at `4042882` is indexed as an external
-contribution, including its static-bundle implementation, explicit
-static/assessment split, corrected truth-support rule and IN01/IN02 contracts.
-QSL `0c83dcc` selects the exact accepted static producer. These contributions
+These contributions
 establish the implementation evidence available at their recorded revisions.
 The complete composed grammar, assessment interfaces and cross-subsystem
 boundaries are now specified by AD-001 through AD-011, I01 through I21 and the
@@ -871,12 +868,6 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [Complete-V1 subsystem index](subsystems/index.md) | Architecture index | Ten subsystems and I01–I21 interface ownership |
 | [TM-009](complete-v1/tests.md) | Test Matrix | All 176 atomic capabilities and complete-V1 qualification cases |
 | [FR-339](functional/source-package/FR-339-define-complete-native-grammar.md) | FR | Normative complete native V1 lexical and syntactic contract |
-| [FCD FR-106](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-106-author-field-presence-independently.md) | FR | Static authored presence/multiplicity/null/default contract accepted and implemented by FCD PR #99; FCD #93 retains Semantic IR/frontends |
-| [FCD FR-107](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-107-declare-first-class-relationship-contracts.md) | FR | Static relationship/endpoints accepted in FCD PR #99 and consumed by QSL PR #94; runtime instances remain consumer work |
-| [FCD FR-108](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-108-bind-populations-to-model-contracts.md) | FR | Static population ownership and truth-support rule accepted; assessment membership remains open |
-| [FCD FR-109](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-109-declare-ecosystem-configuration-contracts.md) | FR | Static configuration selection accepted and consumed; runtime assessment configuration remains open |
-| [FCD FR-110](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-110-lock-ecosystem-inventory-and-bindings.md) | FR | Static inventory/binding producer accepted; IN01 assessment qualification remains planned |
-| [FCD FR-111](https://github.com/agent-ix/filament-core-data/blob/404288282402d60de007295ccbafa960532b955e/spec/functional/FR-111-classify-mixed-version-impact.md) | FR | Compatibility/evidence-impact authority accepted; IN02 executable qualification remains planned |
 | [FR-049](functional/foundation/FR-049-bind-native-choreography-syntax.md) | FR | Accepted native choreography source integration; complete-V1 review SR-571–580 |
 | [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Accepted complete-V1 protocol intent; review SR-571–580 |
 | [FR-050](functional/protocol/FR-050-bind-protocol-instances.md) | FR | Accepted complete-V1 protocol foundation; review SR-571–580 |
@@ -898,7 +889,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [IT-021](integration/IT-021-observation-result-handoff.md) | IT | Accepted complete-V1 protocol boundary; review SR-571–580 |
 | [US-009](usecase/US-009-assess-observed-workflow-outcomes.md) | US | Accepted complete-V1 observation intent; review SR-571–580 |
 | [FR-110](functional/observation/FR-110-bind-typed-observations.md) | FR | Accepted by FS04; implementation coverage remains separate |
-| [FR-111](functional/observation/FR-111-correlate-related-instances-explicitly.md) | FR | Accepted by FS04; producer/topology adoption remains open |
+| [FR-111](functional/observation/FR-111-correlate-related-instances-explicitly.md) | FR | Accepted by FS04; observation topology adoption remains open |
 | [FR-112](functional/observation/FR-112-declare-population-and-completeness.md) | FR | Accepted by FS04; assessment consumers remain open |
 | [FR-113](functional/observation/FR-113-preserve-time-progress-and-late-data.md) | FR | Accepted by FS04; runtime adoption remains separate |
 | [FR-114](functional/observation/FR-114-assess-replay-and-incremental-consistently.md) | FR | Accepted by FS04; full-stack execution remains Planned |
@@ -1077,12 +1068,3 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-294](objects/observation/FR-294-late-data-classification.md) | FR (enumeration) | Object layer; exact on-time and late observation classification |
 | [FR-295](objects/observation/FR-295-input-completeness-state.md) | FR (enumeration) | Object layer; independent input-completeness state derived from an exact fact population |
 | [FR-296](objects/observation/FR-296-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; versioned admitted-observation identity preimage and byte uniqueness |
-
-## Composed baseline review
-
-[SR-400](reviews/composed-v1/base.md) is revision-bound historical evidence for
-the owner-selected base-plus-seven review of
-`788b161bd1b7fd5d632cc42c949f497914df3ce6`, with F through `921993b` and D's
-external contract at `d6ac501`. Its changes-required disposition does not govern
-the later complete-V1 corpus. The current composite SpecReview produced after
-TM-009 is the acceptance gate for implementation planning.

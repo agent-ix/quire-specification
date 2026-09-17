@@ -16,7 +16,7 @@ relationships:
 
 ## Story
 
-**As a** model producer
+**As a** specification author
 **I want** to identify the exact declarations and source regions a clause uses
 **So that** consumers cannot join my clause to stale or foreign data.
 
@@ -28,13 +28,13 @@ This story originated the native finite-state slice and is accepted within the c
 
 ### US-002-EX-1
 
-- **Given** an exact source and model package.
+- **Given** an exact source and domain package.
 - **When** a consumer resolves the clause.
 - **Then** the intended stable identities are selected.
 
 ### US-002-EX-2
 
-- **Given** conflicting package exports.
+- **Given** two declarations with the same qualified domain type name.
 - **When** a consumer resolves the clause.
 - **Then** the ambiguity is surfaced.
 

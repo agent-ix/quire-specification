@@ -34,19 +34,21 @@ authored explicitly. Do not infer a bound from example data.
 
 | Term | Shared meaning / authority |
 | --- | --- |
-| System/component | An internal or external participant implementation, distinct from its protocol role and deployed version. D owns configuration bindings. |
-| Role / role instance | An authored protocol responsibility / a concrete participant bound to it. B owns protocol meaning; D supplies configuration identity. |
+| System/component | An internal or external participant implementation, distinct from its protocol role and deployed version. Spec artifacts declare configuration bindings. |
+| Role / role instance | An authored protocol responsibility / a concrete participant bound to it. B owns protocol meaning; spec artifacts declare configuration identity. |
 | Workflow instance | A concrete instance of an authored process, with identity distinct from a role, message, operation invocation or telemetry trace. B owns protocol binding. |
-| Relationship | An explicitly typed relation between identified instances, with source/model authority. D defines domain relationships; F establishes observed correlation. |
-| Population scope | A declared finite snapshot or event-time window with membership criteria and bound identity. D owns model/configuration; F supplies completeness/progress evidence. |
+| Relationship | An explicitly typed relation between identified instances, with source/model authority. Spec artifacts declare domain relationships; F establishes observed correlation. |
+| Population scope | A declared finite snapshot or event-time window with membership criteria and bound identity. Spec artifacts declare the model and configuration; F supplies completeness/progress evidence. |
 | Observation | A supplied record interpreted under a separately identified binding. F owns transport-independent binding and provenance. |
 | Message / delivery / attempt / effect | Distinct authored/observed subjects. Repeated delivery alone cannot prove another attempt or successful business effect. B defines obligations; F binds records. |
 | Capture / anchor | Immutable values and the exact evaluation instant/environment of a predicate or obligation. A owns shared bindings; E/B define temporal/protocol use. |
 | Clock / progress / closure | Time interpretation / an explicit advancement assertion / a declared execution-history boundary. E owns temporal meaning; F owns observation authority and late-data behavior. |
 | Result | Scoped facts about a requested assessment, with execution, truth, activation, completeness and provenance kept distinct. B owns shared result contracts. |
 
-Native Quire owns the editable clause. Domain declarations remain owned by the
-existing model producer; no family declares a parallel model schema. Quoin
+Native Quire owns the editable clause. A spec's artifacts declare its domain
+model, and Quire owns the meaning of that model
+([AD-006](../../spec/assurance/AD-006-model-graph-state-contracts.md)); no family
+declares a parallel model schema. Quoin
 retains evidence authority. C's engineering-assurance library is a reusable
 consumer dependency, not the source of language meaning or an evidence store.
 
@@ -59,18 +61,18 @@ where they preserve the required distinctions.
 | Boundary | Required identity and information | Editor / consumer |
 | --- | --- | --- |
 | Source to native syntax | Exact bytes/revision/digest, byte spans, clause identities, one language/edition | A; all families consume |
-| Model to linker | Exact declaration/package closure, declared types, source correspondence; explicit presence/refusal | D producer; A consumes |
+| Model to linker | Domain package identity and `sha256-jcs` digest, declaration keys, declared types, artifact source spans; explicit presence/refusal | Spec artifacts through quire-rs extraction and FCD lift; A model intake |
 | Linked package | Exact profile definitions, typed declarations and family dependency graph; source/model identity; no mutable monitor state | A; B/E/F consume |
-| Package to assessment | [Static components and typed binding roles](package-contract.md); full configuration retained separately from concrete observations, clocks, progress and resource controls | A consumer contract; D/F/B supply exact interfaces |
+| Package to assessment | [Static components and typed binding roles](package-contract.md); full configuration retained separately from concrete observations, clocks, progress and resource controls | A consumer contract; F/B supply exact interfaces |
 | Predicate reference | Declaration and type, arguments, model closure, evaluation anchor and immutable captures | A; B/E consume |
-| Scope binding | Workflow/role/relationship/population identities, exact snapshot/window and membership/progress dependencies | D/B meaning; F binding; A common interface |
+| Scope binding | Workflow/role/relationship/population identities, exact snapshot/window and membership/progress dependencies | Spec artifacts and B meaning; F binding; A common interface |
 | Native temporal to TL | Profile meaning, typed predicate valuations, clock/history/closure, original native correspondence | E; A/F consume |
 | Native protocol to conformance | Roles, messages/effects, causal structure, related instances, obligations, selected claim/assumptions | B; A/F consume |
 | Observation to assessment | Exact binding/input identities, correlation, clock/progress/closure, completeness and resource controls | F; B/E consume |
 | Concrete observation handoff | [F's binding contract](observation-contract.md): explicit role/schema/subject/anchor mapping, availability and scoped progress | F; range and result corrections integrated through `b7381fd` |
 | Assessment to result | Requested subject/capability and per-obligation disposition, failed prerequisites, completeness/provenance | B contract; A/E/F produce |
 | Native diagnostic interpretation | [Retained codes and typed causes](definitions/native-diagnostics.md), actual producer stage, original loci and independent response-catalog identity | A; consumes existing compiler Code vocabulary and result envelopes |
-| Export | Selected mapping/profile and source-bound preserved/conditional/unrepresented/refused obligations | F coordinates; D/E contribute; A identity |
+| Export | Selected mapping/profile and source-bound preserved/conditional/unrepresented/refused obligations | F coordinates; E contributes; A identity |
 
 Partial execution is allowed only for dependency-closed admitted subjects. A
 missing shared model/profile prevents every dependent clause from executing; an
@@ -100,9 +102,8 @@ not an integration gate.
 
 | Contribution | Integrated input |
 | --- | --- |
-| A | Shared grammar, predicates, package stages, producer/native correspondence and choreography surface |
+| A | Shared grammar, predicates, package stages, domain package import and choreography surface |
 | B | Protocol/results and resource-inventory correction through `57ddca2`; explicit global-conformance closure at `fe31710` |
-| D | External FR-106–129 and the Producer 1.2 contract from [FCD #95 / PR #99 merge `4042882`](https://github.com/agent-ix/filament-core-data/tree/404288282402d60de007295ccbafa960532b955e); its static bundle is accepted and implemented, while FR-119–126 assessment production and FCD #93 Semantic IR/frontends remain open |
 | E | Temporal requirement/case/method corrections through `c6a8905` |
 | F | Result preservation, resource/provenance controls and all-clock range mapping through `b7381fd` |
 
@@ -110,8 +111,8 @@ not an integration gate.
 
 | Boundary | Sole authority | Accepted evidence | Explicit remainder |
 | --- | --- | --- | --- |
-| Model declarations, authored presence/multiplicity/null/default, configuration, typed endpoints/relationships and the admitted static bundle | Filament Producer 1.2 | FCD #95 / PR #99, `4042882` | FCD #93 Semantic IR/frontends; FR-119–126 assessment production |
-| Editable clause source, composed namespace/type binding, native loci and exact static Producer adapter | Native Quire compiler | Closed SL #35/#68/#86 and QSL #93 / PR #94, `0c83dcc` | No second model reader; assessment records are not inferred from static admission |
+| Model declarations, authored presence/multiplicity/null/default, configuration and typed endpoints/relationships | Spec artifacts, lifted into a domain package | [AD-006](../../spec/assurance/AD-006-model-graph-state-contracts.md) | quire-rs extraction rules, FCD extraction-frontend lift and QSL model intake |
+| Editable clause source, composed namespace/type binding, native loci and domain package intake | Native Quire compiler | Closed SL #35/#68/#86 | No second model reader; assessment records are not inferred from static admission |
 | Shared result vocabulary, protocol subject keys, channels, graph consistency, relationship, registration, retry, commit and recovery rules | Quire v1 standard | Specification PRs #38/#41/#42 | Protocol and observation runtime consumers |
 | Temporal boundary mapping, claim inputs, history kinds, late data, completeness and admitted-observation identity | Quire v1 standard | Specification #40 / PR #44 | TL, Contract-IR, observation and protocol execution/qualification |
 
@@ -127,10 +128,10 @@ following are subsequent correction dispositions for PR review:
 | Finding | Correction |
 | --- | --- |
 | SR-400 FND-001 | Delivered families and current ownership are reflected in the draft and master index. |
-| SR-401 FND-001/002 | D FR-108 and F FR-114 retain decisive truth with exact support despite unrelated incomplete observations. |
-| SR-401 FND-003; SR-402 FND-001; SR-406 FND-002 | Exact producer decimal semantics, separate static/runtime prerequisites and explicit producer/native digest correspondence. |
+| SR-401 FND-001/002 | F FR-114 retains decisive truth with exact support despite unrelated incomplete observations. |
+| SR-401 FND-003; SR-402 FND-001; SR-406 FND-002 | Exact decimal semantics, separate static/runtime prerequisites and separate digest domains for each selection. |
 | SR-406 FND-001 | F's range correspondence and TC-142/143 preserve all three clocks, record/member identity and half-open versus inclusive boundaries. |
-| SR-403 FND-001 | Current unsuffixed definitions contain the latest corrected meaning and link their current dependencies; the observation contract explicitly uses D's corrected producer input. Immutable runtime selections remain required; the draft has no copied checksum selectors. |
+| SR-403 FND-001 | Current unsuffixed definitions contain the latest corrected meaning and link their current dependencies; the observation contract keys runtime subjects on declaration keys. Immutable runtime selections remain required; the draft has no copied checksum selectors. |
 | SR-403 FND-002; SR-404; SR-407 | E's prerequisite, deadline-case, method and wording fixes join the earlier A/B/F evidence-plan corrections. |
 
 ### PR correction disposition
@@ -143,7 +144,7 @@ is PASS for private PR merge and verifies the following dispositions:
 | Finding | Current correction |
 | --- | --- |
 | SR-408 FND-001/002 | Latest corrected definition text and revision labels are promoted to the unsuffixed files. Superseded copies are removed. Protocol, temporal and state dependencies link the matching current definitions, including state graph and temporal common at draft revision `1-draft.3`. |
-| SR-408 FND-003 | Per-rule and internal-definition draft digest pins are replaced with same-checkout links. Explicit external producer/compiler selections and runtime digest-domain requirements remain. |
+| SR-408 FND-003 | Per-rule and internal-definition draft digest pins are replaced with same-checkout links. Explicit external compiler selections and runtime digest-domain requirements remain. |
 | SR-408 FND-004 | The historical A/F integration findings are dispositioned below. Their original review observations are retained; they no longer impose checksum publication or missing-consumer-text gates. |
 | SR-408 FND-005 | The capability ledger links the same current temporal/protocol files and draft revisions as the definition index. |
 
@@ -164,14 +165,11 @@ revisions; they do not claim executed consumer qualification or baseline adoptio
 | SR-200 FND-005; SR-202 FND-003; SR-203 FND-002; SR-206 FND-003; SR-300 FND-006; SR-302 FND-004; SR-303 FND-003; SR-306 FND-003 | The current FR-115/116 and observation output contract preserve B/E result dimensions, exact support and supersession. The correction at `8eea9d0` additionally names each decision-scope and surrounding-execution progress/closure axis independently. |
 | SR-204 FND-003; SR-304 FND-004 | TC-145/146 and IT-051 now specify consumer preservation controls, including independent omitted/cross-wired axes and complete-global-conformance closure premises. Execution of those controls remains planned; the missing test-specification gap is corrected. |
 
-The [master index](../../spec/spec.md) includes D's inventory and mixed-version
-impact requirements; the [capability crosswalk](capabilities.md#initial-specification-crosswalk)
+The [capability crosswalk](capabilities.md#initial-specification-crosswalk)
 links the 51 approved scope decisions to requirements and planned cases.
-D's static producer plan is accepted through FCD #95 / PR #99 at `4042882`,
-and QSL #93 / PR #94 selects that exact revision at `0c83dcc` through the real
-composed adapter. FCD #93 remains the separately tracked Semantic IR/frontend
-delivery; population, snapshot/window, observation, progress and assessment
-closure remain downstream consumer work.
+Domain package extraction, lift and QSL model intake follow AD-006. Population,
+snapshot/window, observation, progress and assessment closure remain downstream
+consumer work.
 
 The composed correction review is complete. Merge the reviewed baseline and
 refine the existing implementation tickets from its contracts. No new full

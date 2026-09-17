@@ -194,9 +194,10 @@ observation families.
 
 It does **not** own:
 
-- **Domain declarations and their producer semantics.** The shared model
-  producer owns model, configuration and relationship identity; this context
-  consumes them by identity and never declares a parallel model schema.
+- **Domain declarations.** A spec's artifacts declare its domain model, and
+  the model view of [AD-006](../../assurance/AD-006-model-graph-state-contracts.md)
+  gives them meaning. This context consumes their declaration keys and never
+  declares a parallel model schema.
 - **Evidence.** Quoin retains evidence authority; this context creates no
   evidence store or verification-method registry.
 - **Implementation.** Nothing here selects a backend, a wire layout or a

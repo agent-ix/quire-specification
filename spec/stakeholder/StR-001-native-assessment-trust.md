@@ -55,7 +55,7 @@ Operators need to distinguish an actual violation from stale data, unsupported s
 
 ## Stakeholders
 
-Specification authors, model producers, verification operators and existing toolchain integrators.
+Specification authors, verification operators and existing toolchain integrators.
 
 ## Dependencies
 

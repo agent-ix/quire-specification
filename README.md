@@ -24,7 +24,7 @@ defines the expanded v1 roadmap. It preserves the first state profile as a
 development foundation; it does not adopt unreviewed grammar or claim runtime
 support for the newly selected capabilities.
 
-Define scope and non-goals; distinguish language, profile, wire and implementation versions; reconcile model ownership with Filament; outline grammar/static/dynamic semantics; select open licenses for prose and reusable normative artifacts; define first positive/negative conformance cases. No unreviewed draft becomes normative.
+Define scope and non-goals; distinguish language, profile, wire and implementation versions; state that spec artifacts declare the domain model; outline grammar/static/dynamic semantics; select open licenses for prose and reusable normative artifacts; define first positive/negative conformance cases. No unreviewed draft becomes normative.
 
 ## Boundaries
 
@@ -72,8 +72,8 @@ scope and the independent integration/publication gates.
 ## Verification reference amendment and local checks
 
 [The versioned amendment](proposals/shared-reference-2-draft/README.md) adds B's
-six artifact roles and selected JCS canonical identity without changing the
-adopted state-core packet. [Fixture notes](proposals/shared-reference-2-draft/fixtures/README.md)
+six artifact roles and selected JCS canonical identity as versions separate from
+the state-core schema. [Fixture notes](proposals/shared-reference-2-draft/fixtures/README.md)
 state which observations are qualified and which require B's strict reader.
 
 Run these commands from this repository, using the pinned Rust 1.98.1 toolchain:

@@ -56,8 +56,8 @@ B's conditional PR8 review identified an unrepresentable JCS canonical domain
 and missing exact artifact roles. The separate
 [2-draft amendment](../proposals/shared-reference-2-draft/README.md), specified
 at 9244dcc and reviewed through SR-009–016 at f446a64, addresses those findings.
-It selects envelope 2-draft and artifact 3-draft instead of altering the adopted
-state-core schema. Original state-core bytes remain unchanged.
+It selects envelope 2-draft and artifact 3-draft. These versions are separate
+from the state-core schema.
 
 The new Rust tests qualify schema structure and actual B canonicalizer parity.
 B's explicit consumer adoption, strict intake/role matching and actual report

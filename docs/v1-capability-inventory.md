@@ -54,8 +54,8 @@ implies completion in another.
 | V1-SRC-005 | Preserve exact source bytes and content digest. | Required | V1-002 | C | P | P | P | M | QSL #1 / research #39 |
 | V1-SRC-006 | Preserve source revision independently of source bytes. | Required | V1-002 | C | P | P | P | M | QSL #1 / research #39 |
 | V1-SRC-007 | Preserve lexical spans through parsing, linking, lowering and results. | Required | V1-002, V1-005 | C | P | P | P | M | QSL #68 / research #39 |
-| V1-SRC-008 | Import one exact authoritative model package and export set. | Required | V1-002, V1-003 | C | P | P | P | M | FCD #93 / research #39 |
-| V1-SRC-009 | Bind source names to typed model declarations without inventing identities. | Required | V1-002, V1-003 | C | P | P | P | M | QSL #1 / FCD #93 |
+| V1-SRC-008 | Import one exact domain package by identity and `sha256-jcs` digest. | Required | V1-002, V1-003 | C | P | P | P | M | QSL #117 / research #39 |
+| V1-SRC-009 | Bind qualified source names to typed domain declarations without inventing identities. | Required | V1-002, V1-003 | C | P | P | P | M | QSL #1 / QSL #117 |
 | V1-SRC-010 | Keep semantic, source, artifact, run and evidence identities distinct. | Required | V1-002, V1-041 | C | P | P | P | M | QSpec #1 / research #39 |
 | V1-SRC-011 | Preserve exact dependency manifests and implementation pins. | Required | V1-046 | C | P | P | P | M | QSpec #1 / research #40 |
 | V1-SRC-012 | Migrate definitions explicitly without relabeling historical bytes or evidence. | Required | V1-046, V1-051 | C | P | P | P | M | QSpec #1 / research #40 |
@@ -67,17 +67,17 @@ implies completion in another.
 
 | ID | Atomic capability | Class | Origin | Spec | Impl | Ver | Int | Qual | Existing program owner |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| V1-TYPE-001 | Resolve one authoritative declared type universe across all semantic families. | Required | V1-003 | C | P | P | P | M | FCD #93 / research #39 |
+| V1-TYPE-001 | Resolve one declared type universe, from spec artifacts and native value types, across all semantic families. | Required | V1-003 | C | P | P | P | M | QSL #118 / research #39 |
 | V1-TYPE-002 | Represent total Boolean values without truthiness coercion. | Required | V1-004 | C | C | C | P | M | QSL #1 / research #39 |
 | V1-TYPE-003 | Represent inclusive finite signed-64 integer domains. | Required | V1-010 | C | C | C | P | M | QSL #1 / research #39 |
 | V1-TYPE-004 | Represent exact normalized rational domains. | Required | V1-010; reserved `Rational` | C | M | M | M | M | research #66 / QSL #1 |
 | V1-TYPE-005 | Represent bounded decimal syntax through exact, non-floating semantics. | Required | reserved `Decimal`; scope census | C | M | M | M | M | research #66 / QSL #1 |
 | V1-TYPE-006 | Represent text values and their exact comparison domain. | Required | V1-014 | C | P | P | P | M | QSL #1 / research #39 |
-| V1-TYPE-007 | Represent enumerations with declaration-qualified member identity. | Required | V1-014 | C | P | P | P | M | QSL #1 / FCD #93 |
+| V1-TYPE-007 | Represent enumerations with declaration-qualified member identity. | Required | V1-014 | C | P | P | P | M | QSL #1 / QSL #118 |
 | V1-TYPE-008 | Represent quantities with explicit dimensions and units. | Required | V1-004, V1-014; prose census | C | M | M | M | M | research #66 / QSpec #1 |
 | V1-TYPE-009 | Convert compatible units exactly and reject dimension or precision loss. | Required | prose census | C | M | M | M | M | research #66 / QSpec #1 |
-| V1-TYPE-010 | Represent independently authored presence, absence and explicit null. | Required | V1-013 | C | P | P | P | M | FCD #93 / research #39 |
-| V1-TYPE-011 | Represent lower and upper multiplicity independently of presence. | Required | V1-013 | C | P | P | P | M | FCD #93 / research #39 |
+| V1-TYPE-010 | Represent independently authored presence, absence and explicit null. | Required | V1-013 | C | P | P | P | M | QSL #119 / research #39 |
+| V1-TYPE-011 | Represent lower and upper multiplicity independently of presence. | Required | V1-013 | C | P | P | P | M | QSL #119 / research #39 |
 | V1-TYPE-012 | Represent typed fixed records and tuple values. | Required | V1-014; reserved `tuple`, `Tuple` | C | P | P | P | M | research #66 / QSL #1 |
 | V1-TYPE-013 | Compare records structurally under an explicit type-owned equality rule. | Required | V1-018 | C | M | M | M | M | research #66 / QSL #1 |
 | V1-TYPE-014 | Represent finite ordered duplicate-preserving sequences. | Required | V1-015 | C | C | C | P | M | QSL #1 / research #39 |
@@ -85,17 +85,17 @@ implies completion in another.
 | V1-TYPE-016 | Represent finite bags with explicit multiplicity semantics. | Required | V1-016; reserved `bag`, `Bag` | C | M | M | M | M | research #65 / QSL #1 |
 | V1-TYPE-017 | Represent finite ordered sets with distinct order and uniqueness semantics. | Required | V1-016; reserved `OrderedSet` | C | M | M | M | M | research #65 / QSL #1 |
 | V1-TYPE-018 | Convert collection kinds only through explicit loss-checked operations. | Required | V1-016 | C | M | M | M | M | research #65 / QSL #1 |
-| V1-TYPE-019 | Represent typed acyclic value containment. | Required | V1-014 | C | P | P | P | M | QSL #1 / FCD #93 |
-| V1-TYPE-020 | Represent recursive value containment with finite runtime bounds. | Required | V1-016; prose census | C | M | M | M | M | research #65 / FCD #93 |
+| V1-TYPE-019 | Represent typed acyclic value containment. | Required | V1-014 | C | P | P | P | M | QSL #1 / QSL #119 |
+| V1-TYPE-020 | Represent recursive value containment with finite runtime bounds. | Required | V1-016; prose census | C | M | M | M | M | research #65 / QSL #119 |
 | V1-TYPE-021 | Represent finite object populations independently of value containment. | Required | V1-017 | C | P | P | P | M | QSL #1 / research #41 |
-| V1-TYPE-022 | Represent explicit typed object references and identity equality. | Required | V1-017 | C | C | C | P | M | QSL #1 / FCD #93 |
+| V1-TYPE-022 | Represent explicit typed object references and identity equality. | Required | V1-017 | C | C | C | P | M | QSL #1 / QSL #120 |
 | V1-TYPE-023 | Resolve object lookup only through an explicit closed typed environment. | Required | V1-018; reserved `allInstances` | C | P | P | P | M | research #66 / QSL #1 |
 | V1-TYPE-024 | Traverse typed relationships and compute exact bounded reachability. | Required | V1-017 | C | C | C | P | M | QSL #1 / research #39 |
-| V1-TYPE-025 | Preserve original and effective declaration identity through specialization. | Required | V1-019; prose census | C | M | M | M | M | research #66 / FCD #93 |
+| V1-TYPE-025 | Preserve original and effective declaration identity through specialization. | Required | V1-019; prose census | C | M | M | M | M | research #66 / QSL #120 |
 | V1-TYPE-026 | Type-check inheritance and conformance. | Required | V1-019 | C | M | M | M | M | research #66 / QSL #1 |
 | V1-TYPE-027 | Type-check subsetting and redefinition without provenance loss. | Required | V1-019 | C | M | M | M | M | research #66 / QSL #1 |
 | V1-TYPE-028 | Resolve dynamic dispatch against an explicit closed method set. | Required | V1-019 | C | M | M | M | M | research #66 / QSL #1 |
-| V1-TYPE-029 | Consume parts, ports, interfaces, connections and allocations as typed model references. | Required | V1-019; prose census | C | M | M | M | M | research #66 / FCD #93 |
+| V1-TYPE-029 | Consume parts, ports, interfaces, connections and allocations as typed model references. | Required | V1-019; prose census | C | M | M | M | M | research #66 / QSL #120 |
 | V1-TYPE-030 | Reject implicit numeric, collection, record and reference casts. | Integrity | V1-012, V1-016, V1-018; reserved `cast` | C | P | P | P | M | research #66 / QSL #1 |
 | V1-TYPE-031 | Represent mathematical unbounded integers while requiring finite domains only from bounded consumers. | Required | V1-011 | C | M | M | M | M | research #66 / QSL #1 |
 
@@ -119,7 +119,7 @@ implies completion in another.
 | V1-EXPR-014 | Flatten nested collections with explicit kind, multiplicity and bound semantics. | Required | V1-016; reserved `flatten` | C | M | M | M | M | research #65 / QSL #1 |
 | V1-EXPR-015 | Fold bounded collections with exact empty identities and checked intermediates. | Required | V1-015; scope census | C | P | P | P | M | research #65 / QSL #1 |
 | V1-EXPR-016 | Compare scalar, enum, reference, record and collection values only under declared equality rules. | Required | V1-018 | C | P | P | P | M | research #66 / QSL #1 |
-| V1-EXPR-017 | Navigate properties and relationships without ambient identity lookup. | Required | V1-017, V1-018 | C | C | C | P | M | QSL #1 / FCD #93 |
+| V1-EXPR-017 | Navigate properties and relationships without ambient identity lookup. | Required | V1-017, V1-018 | C | C | C | P | M | QSL #1 / QSL #120 |
 | V1-EXPR-018 | Evaluate invariants against one exact state anchor. | Required | V1-009 | C | C | C | P | M | QSL #1 / research #39 |
 | V1-EXPR-019 | Evaluate operation preconditions against exact current and pre-state anchors. | Required | V1-009 | C | C | C | P | M | QSL #1 / research #39 |
 | V1-EXPR-020 | Evaluate operation postconditions against exact pre/post anchors and result. | Required | V1-009 | C | C | C | P | M | QSL #1 / research #39 |
@@ -252,7 +252,7 @@ implies completion in another.
 | V1-TOOL-002 | Expose the same lifecycle through a stable CLI. | Required | code-surface census | C | P | P | P | M | quire-cli / research #39 |
 | V1-TOOL-003 | Preserve a lossless concrete syntax tree for editors and source transformations. | Required | prose census | C | M | M | M | M | QSL #1 / research #39 |
 | V1-TOOL-004 | Provide formatter, language-server and editor diagnostics over the lossless source model. | Required | prose census | C | M | M | M | M | QSL #1 / research #39 |
-| V1-TOOL-005 | Provide model metadata, semantic views and deterministic rendering APIs. | Required | prose census | C | M | M | M | M | FCD #93 / research #39 |
+| V1-TOOL-005 | Provide model metadata, semantic views and deterministic rendering APIs. | Required | prose census | C | M | M | M | M | Research #77 / research #39 |
 | V1-TOOL-006 | Load versioned Rust plugins only through explicit capability, purity and provenance contracts. | Required | prose census | C | M | M | M | M | research #43 / QSpec #1 |
 | V1-TOOL-007 | Support ahead-of-time and JIT execution without changing language meaning or qualification identity. | Required | prose census | C | M | M | M | M | research #43 / Verification #1 |
 | V1-TOOL-008 | Package reusable domain libraries with exact edition/profile/dependency compatibility. | Required | prose census | C | M | M | M | M | research #43 / QSpec #1 |
@@ -298,7 +298,7 @@ atomic rows; worktree-only changes do not count.
 | `tl-parse` | `2bc030dae8fd` | Temporal parsing. |
 | `tl-mltl` | `22862189ac4e` | Finite future/past temporal evaluation. |
 | `tl-rewrite` | `c416951281c3` | Semantics-preserving temporal rewrites. |
-| `filament-core-data` | `eb0d5819e1ca` | Authoritative model producer and typed model correspondence. |
+| `filament-core-data` | `eb0d5819e1ca` | Semantic IR schema and the extraction-frontend lift of spec artifacts into domain packages. |
 | `quire-cli` | `092ff2245b40` | User-facing command lifecycle. |
 | `quire-analyze` | `5f37678928ae` | Static/source analysis consumer. |
 | `quire-code-rs` | `e1b7fc303f3d` | Rust code-generation consumer. |
