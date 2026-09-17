@@ -132,6 +132,7 @@ artifact and span.
 | Object type | `TypeDefinition` whose construct meaning is `quire.meaning.model.object-type/v1` | none |
 | Value type | `TypeDefinition` whose construct meaning is `quire.meaning.model.value-type/v1` | none |
 | Variant type | `TypeDefinition` whose construct meaning is `quire.meaning.model.variant-type/v1` | none |
+| Record value type, event type, state machine, process, persistence interface, namespace | the `TypeDefinition` whose construct meaning is `quire.meaning.model.record-value-type/v1`, `quire.meaning.model.event-type/v1`, `quire.meaning.model.state-machine/v1`, `quire.meaning.model.process/v1`, `quire.meaning.model.persistence-interface/v1` or `quire.meaning.model.namespace/v1`, valid as FR-208 defines that meaning | none |
 | Field | `TypeDefinition.fields[]` entry | its type |
 | Relationship | `TypeDefinition.relationships[]` entry | its type |
 | Operation | `Operation` | its receiver type |
