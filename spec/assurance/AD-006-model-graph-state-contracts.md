@@ -84,8 +84,9 @@ flowchart TD
    this document. A domain package that fails a rule refuses with a located
    diagnostic that names the artifact and span.
 4. **Consumers.** FCD code generation reads the same domain package and emits
-   Rust, TypeScript and Python types. Those types and Quire's formal model therefore describe the same `Order`, which is
-   what lets a proof over generated code cite a Quire clause.
+   Rust, TypeScript and Python types. Those types and Quire's formal model
+   therefore describe the same `Order`, which is what lets a proof over
+   generated code cite a Quire clause.
 
 ## Model features
 
