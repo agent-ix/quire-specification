@@ -12,7 +12,7 @@
     {
       "role": "root",
       "artifact_path": "model-complete.md",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"03f9bf917e596cdea0e1ee4dac7ec1f77e5a8066bc9988f622bba04ea056d633"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"0e37555bb42573f825e6c048429263b39ade6e9653a119903f6f5ed7da4af1c8"}
     },
     {
       "role": "state_graph",
@@ -22,7 +22,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "model-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"f1b91b35fb5302ab80d73ad1b213e8f7b960831d5a83896fa71100967e38aca0"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"f6ee6144962bd43239da13332f28891abe8f13b6245b6a411a5216bc7a6f35c4"}
     },
     {
       "role": "effective_declaration_schema",
@@ -67,7 +67,7 @@
     {
       "role": "rule_fr_152",
       "artifact_path": "../../../spec/functional/type-model/FR-152-bind-systems-model-structures.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-152/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"8fcb1f8bd0abbc5e3d086158ea053fd4613f86a560cd890f182561e82a51cc29"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-152/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"6be03f6764468013d78e6874e28f712110f7e714303b479edfb60478c90a5e7b"}
     },
     {
       "role": "rule_fr_153",

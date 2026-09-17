@@ -61,7 +61,7 @@ any kind name.
 Each part, port, interface, connection and allocation is declared by its own
 artifact and is a construct, not a member. Its IR node identity is
 `ix://<package identity>/<artifact id>`, like any type definition (FR-154).
-Ownership is a reference member of the construct, never part of its identity:
+Ownership is a reference of the construct, not a member, and never part of its identity:
 a part's `owner` names its owning type; a port's `owner` names its part, and
 the port is owned by that part's owning type; and a connection or allocation
 end's end-owner type is the element owner of the declaration its source or
