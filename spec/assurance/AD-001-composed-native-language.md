@@ -16,6 +16,8 @@ relationships:
     type: realizes
   - target: ix://agent-ix/quire-specification/FR-049
     type: realizes
+  - target: ix://agent-ix/quire-specification/AD-006
+    type: references
 ---
 # Composed native Quire architecture
 
@@ -27,8 +29,10 @@ that every compiler, runtime, backend or qualification path is implemented.
 
 Native Quire is the editable language for formal obligations. The standard owns
 syntax, meaning, selected profiles and conformance. Its compiler owns native
-parsing, resolution, typing and source-preserving lowering. The shared model
-producer owns domain declarations. Existing IR, TL and protocol components own
+parsing, resolution, typing and source-preserving lowering. A spec's domain
+model is declared in its own artifacts and reaches Quire as a domain package, as
+[AD-006](AD-006-model-graph-state-contracts.md) defines. Quire owns the meaning
+of that model. Existing IR, TL and protocol components own
 their specialized representations and execution; Quoin owns evidence retention
 and authored assurance decisions. No single executable IR defines the language.
 
@@ -47,9 +51,9 @@ and methods without treating current evaluator restrictions as product limits.
 Unknown or unimplemented capabilities remain explicit, located refusals.
 
 OCL, FRETish, SysML and KerML textual forms are output mappings. TL syntax is an
-internal temporal boundary. Model declarations may be supplied by an existing
-producer; their source cannot become a second editable authority for the same
-native clause. Executing external business actions, deploying monitors and
+internal temporal boundary. Domain types come from the domain package that the
+spec's artifacts declare; no other source can declare the same type a second
+time. Executing external business actions, deploying monitors and
 certifying a consuming system are outside the language evaluator's boundary.
 
 ## Views
@@ -62,7 +66,7 @@ the identity/evidence boundaries shared by all selected semantic families.
 ```mermaid
 flowchart TD
     S[Native source and exact source map] --> P[Shared lexer and native parser]
-    M[Authoritative typed model package] --> L[Resolution and common type checks]
+    M[Domain package from spec artifacts] --> L[Resolution and common type checks]
     P --> L
     L --> N[Linked native package and profile manifest]
     N --> ST[Typed state expressions]
@@ -178,7 +182,7 @@ deployment correctness or overall qualification.
 | Specify identity, type, observation and composition contracts together | Design each feature in isolated implementation tickets | These interfaces are expensive to retrofit and caused the discovered scope drift. |
 | Complete V1 choreography with owned choices, concurrency, proved loops, dynamic roles and compensation | Temporal templates alone; static finite choreography only | Meets the complete language scope while requiring explicit population, termination and resource contracts. |
 | Projection, realizability, assume-guarantee and refinement are distinct required V1 analyzers | Collapse every analysis into global conformance or defer the analyzers | Each claim has explicit premises, witnesses/counterexamples and non-conclusive outcomes. |
-| Reuse model, IR, TL and evidence owners through reviewed contracts | A new model/evidence store; flatten everything into the executable IR | Avoids competing authorities and keeps source, meaning, runtime observations and evidence independently versioned. |
+| Declare the domain model in spec artifacts; reuse IR, TL and evidence owners through reviewed contracts | A separate model or evidence store; flatten everything into the executable IR | One model authority. Source, meaning, runtime observations and evidence stay independently versioned. |
 | No external business side effects in an evaluator | Run compensators from the monitoring language | V1 checks observed effects/recovery. Actual orchestration is an independently authorized application consumer. |
 
 ## Risks
