@@ -39,7 +39,7 @@ serially; no independent reviewer or new agent acceptance is implied.
 | FR-015 | High | Low | Cryptographic identity; preserve established preimages |
 | FR-017 | High | Medium | Wrong-role joins; enumerate six roles and substitutions |
 | FR-018 | High | Medium | JCS/IR confusion; golden vectors and actual B API |
-| NFR-001 | Medium | Low | Historical drift; exact e897f81 byte comparison |
+| NFR-001 | Medium | Low | Fixture drift; byte comparison against the digests pinned in `typing-cases.json`, `reference-cases.json` and `SHA256SUMS` |
 | NFR-002 | Medium | Low | Unbounded inputs; finite file/depth ceilings |
 | NFR-003 | High | Low | Stale/content conflict; independent identity-axis mutations |
 
