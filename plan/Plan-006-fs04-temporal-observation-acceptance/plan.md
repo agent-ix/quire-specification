@@ -42,7 +42,7 @@ relationships:
   Reason: semantic acceptance stabilizes the remaining correspondence work;
   only execution may promote the Planned conformance rows.
 
-QObs #18/#13 retain producer-qualified subject/topology adoption. Qcir #71
+QObs #18/#13 retain declaration-keyed subject/topology adoption. Qcir #71
 retains native/TL composition. FS06 owns target-specific result mappings.
 
 ### The seam
