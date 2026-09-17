@@ -47,8 +47,8 @@ mismatches, and an explicitly synthetic automated-core correspondence example.
    - IT-003-SC-02: Exact bytes and digest agree, including the non-circular core input and its mutations.
 3. Pass the packet through B's adopted strict shared reader and selected report definition (30 seconds).
    - IT-003-SC-03: Exact-role/version/identity controls and actual report correspondence receive the specified outcomes.
-4. Verify the adopted historical packet and checkout integrity (10 seconds).
-   - IT-003-SC-04: Original packet bytes remain unchanged and no B source was modified.
+4. Verify the state-core packet against its pinned digests and checkout integrity (10 seconds).
+   - IT-003-SC-04: The state-core packet matches its pinned digests and no B source was modified.
 
 ## Expected Results
 

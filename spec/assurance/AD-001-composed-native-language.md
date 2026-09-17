@@ -182,7 +182,7 @@ deployment correctness or overall qualification.
 | Specify identity, type, observation and composition contracts together | Design each feature in isolated implementation tickets | These interfaces are expensive to retrofit and caused the discovered scope drift. |
 | Complete V1 choreography with owned choices, concurrency, proved loops, dynamic roles and compensation | Temporal templates alone; static finite choreography only | Meets the complete language scope while requiring explicit population, termination and resource contracts. |
 | Projection, realizability, assume-guarantee and refinement are distinct required V1 analyzers | Collapse every analysis into global conformance or defer the analyzers | Each claim has explicit premises, witnesses/counterexamples and non-conclusive outcomes. |
-| Declare the domain model in spec artifacts; reuse IR, TL and evidence owners through reviewed contracts | A separate model or evidence store; flatten everything into the executable IR | One model authority. Source, meaning, runtime observations and evidence stay independently versioned. |
+| Declare the domain model in spec artifacts; reuse IR, TL and evidence owners through reviewed contracts | A separate model or evidence store; flatten everything into the executable IR | The spec's artifacts are the one source of the domain model. Source, meaning, runtime observations and evidence stay independently versioned. |
 | No external business side effects in an evaluator | Run compensators from the monitoring language | V1 checks observed effects/recovery. Actual orchestration is an independently authorized application consumer. |
 
 ## Risks

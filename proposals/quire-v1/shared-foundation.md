@@ -37,7 +37,7 @@ authored explicitly. Do not infer a bound from example data.
 | System/component | An internal or external participant implementation, distinct from its protocol role and deployed version. Spec artifacts declare configuration bindings. |
 | Role / role instance | An authored protocol responsibility / a concrete participant bound to it. B owns protocol meaning; spec artifacts declare configuration identity. |
 | Workflow instance | A concrete instance of an authored process, with identity distinct from a role, message, operation invocation or telemetry trace. B owns protocol binding. |
-| Relationship | An explicitly typed relation between identified instances, with source/model authority. Spec artifacts declare domain relationships; F establishes observed correlation. |
+| Relationship | An explicitly typed relation between identified instances. Spec artifacts declare domain relationships; F establishes observed correlation. |
 | Population scope | A declared finite snapshot or event-time window with membership criteria and bound identity. Spec artifacts declare the model and configuration; F supplies completeness/progress evidence. |
 | Observation | A supplied record interpreted under a separately identified binding. F owns transport-independent binding and provenance. |
 | Message / delivery / attempt / effect | Distinct authored/observed subjects. Repeated delivery alone cannot prove another attempt or successful business effect. B defines obligations; F binds records. |
@@ -121,25 +121,11 @@ Missing, ambiguous, stale, foreign, dangling, wrong-kind or cross-domain inputs
 retain their owning located refusal or incomplete outcome; no boundary repairs
 another owner's absent input by approximation.
 
-The [QUOIN base-plus-seven review](../../spec/reviews/composed-v1/base.md) remains
-the record of the evaluated `788b161` baseline and its external inputs. The
-following are subsequent correction dispositions for PR review:
-
-| Finding | Correction |
-| --- | --- |
-| SR-400 FND-001 | Delivered families and current ownership are reflected in the draft and master index. |
-| SR-401 FND-001/002 | F FR-114 retains decisive truth with exact support despite unrelated incomplete observations. |
-| SR-401 FND-003; SR-402 FND-001; SR-406 FND-002 | Exact decimal semantics, separate static/runtime prerequisites and separate digest domains for each selection. |
-| SR-406 FND-001 | F's range correspondence and TC-142/143 preserve all three clocks, record/member identity and half-open versus inclusive boundaries. |
-| SR-403 FND-001 | Current unsuffixed definitions contain the latest corrected meaning and link their current dependencies; the observation contract keys runtime subjects on declaration keys. Immutable runtime selections remain required; the draft has no copied checksum selectors. |
-| SR-403 FND-002; SR-404; SR-407 | E's prerequisite, deadline-case, method and wording fixes join the earlier A/B/F evidence-plan corrections. |
-
 ### PR correction disposition
 
 [SR-408](../../reviews/2026-09-10-composed-v1-pr15.md) records the independent
-review at `3972783`; its original FAIL verdict remains unchanged. A's
-[current correction recheck](../../spec/reviews/composed-v1/base.md#pr-15-correction-recheck)
-is PASS for private PR merge and verifies the following dispositions:
+review at `3972783`; its original FAIL verdict remains unchanged. The
+following dispositions resolve SR-408's findings:
 
 | Finding | Current correction |
 | --- | --- |
@@ -171,8 +157,7 @@ Domain package extraction, lift and QSL model intake follow AD-006. Population,
 snapshot/window, observation, progress and assessment closure remain downstream
 consumer work.
 
-The composed correction review is complete. Merge the reviewed baseline and
-refine the existing implementation tickets from its contracts. No new full
+Implementation tickets are refined from these contracts. No new full
 review campaign for each edit or per-document version cascade is required.
 The four native matrices contain 59 planned TC artifacts, not executed evidence.
 Historical accepted profiles and the original ConfigVersion admission case keep

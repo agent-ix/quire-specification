@@ -27,7 +27,7 @@
     "semanticProfile": {
       "identity": "state-finite",
       "version": "0-draft",
-      "definitionDigest": "sha256:42a0999c9d653742cf505d95f080cb5b6f24a3c147bbc37aa1c8bb69541f5252"
+      "definitionDigest": "sha256:c9bf08f925104499f3a4a983e8a788ad5df9076f5331061a53d778f1e8fad6c6"
     },
     "requiredFeatures": [
       "bounded-integer",
