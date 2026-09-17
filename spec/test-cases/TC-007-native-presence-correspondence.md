@@ -8,15 +8,16 @@ relationships:
 ---
 ## Description
 
-Check the selected shared-model presence contract without inventing native clause
-syntax. FCD #95 / PR #99 accepts the static authored-axis contract and QSL #93 /
-PR #94 consumes its exact admitted bundle. The Semantic IR/frontend and
-runtime-value portion remains planned under FCD #93 and the relevant consumer.
+Check the authored presence contract without inventing native clause syntax.
+Presence is declared in the artifact `## Properties` `Presence` column. It
+reaches Quire as IR `Field.presence` in the domain package
+([AD-006](../assurance/AD-006-model-graph-state-contracts.md)). The extraction,
+intake and runtime-value portions remain planned.
 
 ## Test Procedure
 
-Use the selected producer's distinct required-empty 0..* and optional-nonempty
-1..* declarations. Offer an absent member, present empty sequence, present nonempty
+Use domain package declarations with distinct required-empty 0..* and
+optional-nonempty 1..* fields. Offer an absent member, present empty sequence, present nonempty
 sequence and explicit null separately. Check source-derived declarations and
 runtime values at the real consumer boundary. Where the selected representation
 cannot express a distinction, exercise its explicit declaration refusal. Keep
@@ -25,6 +26,6 @@ optional value absence and nullable invocation-result selection as separate case
 ## Expected Results
 
 Each authored distinction is preserved or refused before execution; no adapter
-invents member presence from cardinality, an option, current data or a legacy IR
-field shape. The accepted static producer/native result does not claim that the
-remaining source-IR or runtime-value cases have executed.
+invents member presence from cardinality, an option, current data or an IR
+field shape that lacks `presence`. No executable coverage is claimed for the
+extraction, intake or runtime-value cases.

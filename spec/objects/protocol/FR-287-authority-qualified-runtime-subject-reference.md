@@ -14,18 +14,18 @@ relationships:
 ## Description
 
 When a concrete runtime subject is bound for assessment, the binder SHALL retain
-its exact selected authority, subject kind and producer-supplied opaque identity
+its exact selected authority, subject kind and authority-supplied opaque identity
 without deriving identity from its relationships or presentation.
 
 ## Properties
 
 | Property | Source | Note |
 | --- | --- | --- |
-| Authority identity | FR-035 | Exact identity of the selected producer or binding authority. |
+| Authority identity | FR-035 | Exact identity of the selected binding authority. |
 | Authority revision | FR-035 | Exact selected revision; it is not inferred from an object identifier. |
 | Authority digest | FR-035 | Exact selected digest in its declared FR-201 domain. |
-| Subject kind | FR-035 | Exact typed discriminator; equal opaque bytes of different kinds remain unequal. |
-| Producer-local object identity | FR-035 | Exact non-empty bytes retained without parsing, trimming, normalization or reconstruction. |
+| Subject kind | FR-035 | Exact typed discriminator; equal opaque bytes of different kinds remain unequal. For a domain object the kind is its effective declaration key (domain package identity, IR node identity, `sha256-jcs`) per AD-006. |
+| Authority-local object identity | FR-035 | Exact non-empty bytes retained without parsing, trimming, normalization or reconstruction. |
 
 The binding requirement identifies a typed slot and its expected authority. It
 does not identify the concrete object placed in that slot. Relationships to
@@ -33,8 +33,8 @@ static definitions, workflows, roles, channels, nodes, attempts, effects or
 configurations are validated separately and do not extend this value.
 
 This value specializes FR-204's universe/type/object discipline for a runtime
-producer boundary: the selected authority is the universe, the subject kind is
-the type discriminator and the producer-local bytes are the object identity.
+binding boundary: the selected authority is the universe, the subject kind is
+the type discriminator and the authority-local bytes are the object identity.
 Revision and digest qualify the exact selected authority representation.
 
 ## Identity and comparison
@@ -42,13 +42,13 @@ Revision and digest qualify the exact selected authority representation.
 - **Identity kind** — *value*. This object is the complete key value carried by
   an authored runtime identity; it has no identity separate from its members.
 - **Key** — (`authority identity`, `authority revision`, `authority digest`,
-  `subject kind`, `producer-local object identity`). Canonical key equality is
+  `subject kind`, `authority-local object identity`). Canonical key equality is
   componentwise over exactly these members. Semantic object equality is defined
   only within one authority and kind; crossing either boundary yields the typed
   foreign/wrong-kind refusal required by FR-204 rather than a Boolean verdict.
 - **Key order** — lexicographic over the key in the declared sequence, using
   each selected authority component's own exact comparison and exact byte order
-  for the producer-local identity. It ranks nothing and licenses no precedence,
+  for the authority-local identity. It ranks nothing and licenses no precedence,
   correlation or conversion.
 - **Causal order** — none. Key order SHALL NOT establish source, causal,
   delivery, retry, timestamp or arrival order.

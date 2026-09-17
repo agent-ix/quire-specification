@@ -24,7 +24,7 @@ or executable interface.
 | Observation binding rules | `quire.observation.contract/v1` | Current working draft | [Observation contract](../observation-contract.md) |
 | Temporal lifecycle/result facet | `quire.temporal.bounded-facet/v1` | `1-draft.3` | [Temporal meaning](temporal-common.md) |
 | Protocol result/conformance root | `quire.protocol.finite-global/v1` | `1-draft.4` | [Protocol meaning](protocol-finite.md) |
-| Producer interface | FCD Producer interface | `1.2.0` | [Producer selection](../observation-contract.md#producer-interface-selection) |
+| Domain declarations | Checked package `model_selections` domain package | `sha256-jcs` declaration keys | [Domain declaration selection](../observation-contract.md#domain-declaration-selection) |
 | Shared result rules | B FR-061 | Current working draft | [Orthogonal results](../../../spec/functional/protocol/FR-061-report-orthogonal-results.md) |
 | Observation result rules | F FR-115/116 | FS04 accepted | [Result contribution](../../../spec/functional/observation/FR-115-report-activation-participation-and-adequacy.md) and [consumer-result boundary](../observation-output-mapping-contract.md) |
 | Target output-mapping rules | `quire.output.mapping/v1` | `1-draft.1`, FS06 accepted | [Common and target profiles](../output-mappings/README.md) |
@@ -39,7 +39,7 @@ An actual package/assessment selects its required dependency artifacts by exact
 identity, revision and bytes. Missing, substituted, stale or mutually inconsistent
 selections refuse the dependent request. A local draft link does not authorize
 an evaluator to replace its selected artifact with current working-tree bytes.
-Producer object, raw document, definition and result digests retain their
+Declaration, raw document, definition and result digests retain their
 declared domains; equal digest prefixes do not make them interchangeable.
 
 ## Retained binding boundary and range selection
@@ -47,7 +47,7 @@ declared domains; equal digest prefixes do not make them interchangeable.
 Roles retain their owning declaration/source-region/kind identity. One explicit
 binding may serve compatible roles, but equal local names never merge roles.
 Every required role maps exactly once; repeated or incompatible mappings refuse.
-Each applied binding retains the selected producer relationship/population/window,
+Each applied binding retains the selected relationship and population declaration keys, window,
 source/schema, subject, signal/value, anchor, unit, capture, scope and range
 identity. Internal/external visibility remains explicit. A signal name, trace
 identifier, endpoint, compatible field shape or adapter version cannot replace
@@ -70,8 +70,8 @@ sequence/position identity without an invented timestamp; fixed samples retain
 exact epoch/period/unit/index; timestamped records retain their timestamp anchor.
 Member-object identity, record identity, and position/sample/timestamp-anchor
 identity remain independently readable. Start is included once and end is
-excluded in every selected producer range. A timestamped native inclusive
-deadline at the producer end needs a separately selected covering range; no
+excluded in every selected range. A timestamped native inclusive
+deadline at the range end needs a separately selected covering range; no
 closure label, membership list, or adjacent range may substitute.
 
 The selected result interface retains assessment execution, independent

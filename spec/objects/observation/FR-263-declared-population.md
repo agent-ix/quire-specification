@@ -15,7 +15,7 @@ relationships:
 
 ## Description
 
-When a population is assessed, the assessment request SHALL retain the selected Producer interface identity, version and digest, the declared finite membership rule and digest, the population identity, the bounds, the observation sources, the configuration and closure identities and digests, and the completeness and progress dependencies.
+When a population is assessed, the assessment request SHALL retain the selected domain package identity and digest, the population declaration key, the declared finite membership rule and digest, the population identity, the bounds, the observation sources, the configuration and closure identities and digests, and the completeness and progress dependencies.
 
 FR-112 states that list as the retained set for "a population or event-time
 window", and FR-112-AC-3 requires that "A complete bounded population retains
@@ -28,25 +28,26 @@ membership and closure provenance."
 | Population identity | FR-112 Description | Retained with the snapshot/window identity. |
 | Declared finite membership rule and digest | FR-112 Description | Typed by [FR-264](FR-264-membership-rule.md). |
 | Bounds | FR-112 Description | For a window, the half-open bounds of [FR-266](FR-266-event-time-window.md). |
-| Selected Producer interface identity, version, digest | FR-112 Description, FR-112-AC-4 | A mismatch refuses "without ambient defaulting". |
+| Domain package identity, digest and population declaration key | FR-112 Description, FR-112-AC-4 | A mismatch refuses "without ambient defaulting". The closed extent comes only from this spec-declared population declaration. |
 | Observation sources | FR-112 Description | Retained exactly. |
 | Configuration identity and digest | FR-112 Description, FR-112-AC-4 | A mismatch refuses. |
 | Closure identity and digest | FR-112 Description, FR-112-AC-4 | A mismatch refuses; E owns closure semantics (FR-112 Dependencies). |
 | Completeness and progress dependencies | FR-112 Description | Retained exactly. |
 
 The v1 population identity preimage is the RFC 8785 canonical form of
-`{"identityVersion":"quire.observation.population-identity/v1-draft.1","producer":...,"membershipRuleIdentity":...,"selection":...,"observationSources":[...],"configuration":...,"closure":...,"completenessDependencies":[...],"progressDependencies":[...]}`.
+`{"identityVersion":"quire.observation.population-identity/v1-draft.1","declaration":...,"membershipRuleIdentity":...,"selection":...,"observationSources":[...],"configuration":...,"closure":...,"completenessDependencies":[...],"progressDependencies":[...]}`.
 Arrays that denote sets SHALL be sorted, distinct and bounded before identity
 derivation. `selection` SHALL contain exactly one FR-265 snapshot or FR-266
-event-time window. Producer-interface, configuration and closure definition
+event-time window. `declaration` holds the domain package identity and the
+population declaration key under `sha256-jcs`. Configuration and closure definition
 digests use FR-201 `raw-artifact-digest`; the derived population identity uses
 FR-201 `quire.verification.jcs`.
 
 FR-112 Behavior states that "Unknown required membership, missing external-provider
 observations, or an absent declared closure input are incomplete/refused
-assessment causes and cannot establish aggregate success", and that an "unknown
-producer version, missing selected identity, digest mismatch, or ambient
-default" is refused "rather than supplying a population, membership,
+assessment causes and cannot establish aggregate success", and that a "declaration key
+outside the checked package, missing selected identity, digest mismatch, or
+ambient default" is refused "rather than supplying a population, membership,
 configuration, or closure input".
 
 ## Identity and comparison
@@ -73,8 +74,9 @@ configuration, or closure input".
   population nor a complete one, and an absent component is never supplied by an
   ambient default (FR-112 Behavior, FR-112-AC-4).
 - **Digest domain** — the population identity and membership-rule identity use
-  `quire.verification.jcs`. Producer-interface, configuration and closure
-  definition-byte digests use `raw-artifact-digest`. A crossing domain is
+  `quire.verification.jcs`. The domain package and population declaration key
+  use `sha256-jcs`. Configuration and closure definition-byte digests use
+  `raw-artifact-digest`. A crossing domain is
   unequal regardless of byte equality.
 
 ## Acceptance Criteria
@@ -83,7 +85,7 @@ configuration, or closure input".
 | --- | --- | --- |
 | FR-263-AC-1 | Changing the declared snapshot, window or membership rule yields a different assessment subject. | Test |
 | FR-263-AC-2 | A population with unknown required membership compares unequal to both an empty population and a complete one. | Test |
-| FR-263-AC-3 | A mismatched producer version, identity, membership digest, configuration digest or closure digest does not resolve and receives no ambient default. | Test |
+| FR-263-AC-3 | A mismatched declaration key, identity, membership digest, configuration digest or closure digest does not resolve and receives no ambient default. | Test |
 | FR-263-AC-4 | Independent derivation over the exact versioned preimage yields the population identity; mutation of any semantic key component changes it and presentation permutation does not. | Test |
 | FR-263-AC-5 | A population with neither or both snapshot/window selections, duplicate or unbounded set members, or a foreign/missing digest domain is refused before identity derivation. | Test |
 

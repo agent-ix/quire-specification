@@ -18,7 +18,7 @@ TM-003 remains Planned; no executable test or completed coverage is claimed.
 
 Use one three-family package with two inventoried source units, one exact model
 closure and two distinct clauses declaring the same local clock-role name.
-Establish its expected selections from the source and producer-owned definitions.
+Establish its expected selections from the source artifacts and selected definitions.
 Apply each control independently:
 
 | Control | Expected observation |
@@ -28,17 +28,17 @@ Apply each control independently:
 | Change a selected semantic definition with matching new bytes | Distinct static subject, admitted only if the new closure is supported and valid. |
 | Omit an inventoried source unit | Namespace cannot close; no guessed binding to a remaining declaration. |
 | Put a shadowing source file beside the inventoried units without adding it to the inventory | No change to the declared package or name resolution. |
-| Put the manifest digest, lock digest or producer fingerprint in the compiled-model import digest position | Refused import; no domain substitution. |
+| Put the manifest digest, lock digest or a raw-byte digest in the domain package import digest position | Refused import; no domain substitution. |
 | Inspect both equal-named clock roles | Distinct owning clauses/source regions; exact types, anchors and scope dependencies retained. |
 | Change only the compile resource ceiling, with both ceilings sufficient for admission | Static subject unchanged; the exact changed configuration remains in build provenance. |
 | Link a valid three-family template without concrete workflow instances, runtime populations/windows, observation records or progress | Static linking succeeds and retains the exact typed requirements for later assessment. Removing a required static definition still refuses dependent linking. |
-| Supply a producer canonical model/profile-object selection and its declared correspondence to exact native compiled-model/definition bytes | Both selections and their digest domains remain distinct; declared exports, kinds, relation and closure match independently authored expectations. |
-| Remove the required correspondence; bind a foreign export; substitute producer canonical and native raw-byte digests independently | Each dependent binding refuses with a structured cause even when labels or field shapes match. |
-| Re-encode a compiled model in a way that preserves its producer canonical object but changes its raw bytes | The old native byte selection refuses; an explicitly updated, valid selection retains the unchanged canonical producer identity and distinct native bytes. |
+| Import the domain package lifted from the package's `entity` artifacts by identity and `sha256-jcs` digest; resolve each clause's qualified domain type name | Each name resolves to one effective declaration keyed by domain package identity, IR node identity and `sha256-jcs`; declared kinds, relationships and closure match independently authored expectations. |
+| Name a type the domain package does not declare; substitute a declaration key from another domain package; substitute the domain package digest | Each dependent binding refuses with a structured cause even when labels or field shapes match. |
+| Re-serialize the domain package with a different key order but the same RFC 8785 canonical form; then change one declared field in its source artifact | The first keeps the `sha256-jcs` identity and static subject; the second changes the domain package identity and the static subject. |
 
 Compare complete structured static components and references. Do not use an
-invented package hash, a producer-generated expected result or diagnostic English
-as the oracle. Concrete typed producer/consumer execution is specified by IT-010.
+invented package hash, a tool-generated expected result or diagnostic English
+as the oracle. Concrete typed extraction, intake and binder execution is specified by IT-010.
 
 For the [whole-package reference](../../proposals/quire-v1/definitions/package-reference.md),
 use a package declaring a predicate and all three clause families. Its outer
