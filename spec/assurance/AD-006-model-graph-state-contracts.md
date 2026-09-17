@@ -33,7 +33,10 @@ them. S3 owns that model view and the runtime state environments bound to it.
 - A domain object is an instance of an object type. Declaring `Customer` means
   authoring one `entity` artifact. No type, schema, TypeSpec or other record is
   written for it.
-- FCD types documents. Quire owns the meaning of the domain model they declare.
+- FCD types documents and generates native Rust, TypeScript and Python types
+  for both layers: artifact types and object types from their module, and
+  domain objects from the domain package. Quire owns the meaning of the
+  domain model the artifacts declare.
 
 ```markdown
 ---
@@ -65,7 +68,7 @@ flowchart TD
   M --> B
   B --> E[State and graph evaluator]
   E --> R[Value, violation, incomplete or refusal]
-  D --> G[Generated Rust and TypeScript types]
+  D --> G[Generated Rust, TypeScript and Python types]
 ```
 
 1. **Extraction.** `quire_rs::semantic::extract_semantic` reads each artifact
@@ -80,9 +83,10 @@ flowchart TD
    and builds Quire model declarations from its IR nodes. It checks every model rule in
    this document. A domain package that fails a rule refuses with a located
    diagnostic that names the artifact and span.
-4. **Consumers.** Code generation reads the same domain package. Generated
-   types and Quire's formal model therefore describe the same `Order`, which is
-   what lets a proof over generated code cite a Quire clause.
+4. **Consumers.** FCD code generation reads the same domain package and emits
+   Rust, TypeScript and Python types. Those types and Quire's formal model
+   therefore describe the same `Order`, which is what lets a proof over
+   generated code cite a Quire clause.
 
 ## Model features
 
@@ -94,7 +98,7 @@ object type's module. Quire gives it meaning.
 | --- | --- | --- | --- |
 | Fields | `## Properties` rows: `Field`, `Type`, `Multiplicity`, `Constraints` | `TypeDefinition.fields[]` with `typeRef`, `multiplicity`, `presence` | Typed attributes with checked bounds |
 | Presence | `Presence` column (`required`, `optional`) | `Field.presence` | Absent versus empty stay distinct |
-| Identity | Declared name (artifact title) | `TypeDefinition.identity` | A class's identity is its name; the artifact `id` records the declaration's origin |
+| Identity and name | Artifact `id`; declared name (artifact title) | `TypeDefinition.identity` (artifact); `TypeDefinition.displayName` (declared name) | A declaration's identity is its artifact; its class name is the declared name that clauses use |
 | Generalization | Frontmatter relationship `specializes` | `TypeDefinition.supertypes[]` | Acyclic conformance; closed subtype sets |
 | Abstract types | Frontmatter `abstract: true` | `TypeDefinition.abstract` | No direct instances; dispatch covers concrete subtypes |
 | Subsetting | `Subsets` column | `Field.subsets[]` | Values of the field are contained in the named supertype field |
