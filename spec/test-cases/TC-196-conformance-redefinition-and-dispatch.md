@@ -23,8 +23,10 @@ DefinitionRefs in
 Node names, declaration keys, package identity and default limits follow
 TC-195. Every multiplicity is written `{lower,upper}` with `ordered: false` and
 `unique: true` unless stated, and every field has presence `optional` unless
-stated. Value types `Count` and `Small` are declared in the package and bound
-as `Int[0,9]` and `Int[0,5]`. Effective type identities are TC-195 N02's:
+stated. Value types `Count` and `Small` are declared in the package by
+artifacts `Count` and `Small`, bound as `Int[0,9]` and `Int[0,5]`, and each
+names a construct whose meaning is `quire.meaning.model.value-type/v1`; every
+object type's construct meaning is `quire.meaning.model.object-type/v1`. Effective type identities are TC-195 N02's:
 `C` = `1af4f5c7` < `A` = `3b79bb92` < `D` = `97f66fc4` < `B` = `9c1ce45c` in
 ascending digest order.
 
