@@ -55,7 +55,7 @@ behavior, stub, status lie or historical-profile rewrite is introduced.
   4/4 validate.
 - Untraced changed executable behaviors / source stubs / test stubs: 0 / 0 / 0.
   No Rust, Cargo, workflow, executable fixture or public API changed.
-- Semantic review: base, dependency and EARS SR-540–SR-542 pass after resolving
+- Semantic review: base, dependency and EARS pass after resolving
   profile-flattening, edition-scope and evidence-status risks.
 
 ## Inherited repository observations

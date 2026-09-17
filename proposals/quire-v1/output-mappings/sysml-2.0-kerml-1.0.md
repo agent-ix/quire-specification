@@ -7,7 +7,7 @@ Targets OMG SysML 2.0 Language `formal/26-03-02` and its KerML 1.0 foundation
 ## Admitted fragment
 
 The profile generates a SysML `requirement def` with exact references or local
-typed attributes corresponding to authoritative model declarations and a
+typed attributes corresponding to model declarations from spec artifacts and a
 `require constraint { ... }` expression. The expression fragment contains total
 Boolean literals/connectives, equality and ordered comparison of equal types,
 bounded integer literals and checked `+`/`-`/`*`, and exact attribute references.

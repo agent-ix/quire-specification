@@ -20,8 +20,8 @@ old tuple into that hierarchy. Exact rational spelling changes the composed
 edition contract and therefore does not reinterpret the historical `0-draft`
 grammar.
 
-The adopted e897f810a7356d4ce8fd19026221ebda7b65596f profile and rule files remain
-byte-exact historical definitions of `state-finite/0-draft`. Their digests cannot
+The `proposals/state-core` profile and rule files define `state-finite/0-draft`;
+its fixtures pin their current bytes. Their digests cannot
 be used to identify this amendment. Final adoption must select this definition's
 exact repository revision and SHA-256 plus every inherited rule definition and
 its precedence. No final digest or complete inheritance closure is frozen by this

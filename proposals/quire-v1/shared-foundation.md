@@ -124,9 +124,8 @@ another owner's absent input by approximation.
 ### PR correction disposition
 
 [SR-408](../../reviews/2026-09-10-composed-v1-pr15.md) records the independent
-review at `3972783`; its original FAIL verdict remains unchanged. A's
-correction recheck is PASS for private PR merge and verifies the following
-dispositions:
+review at `3972783`; its original FAIL verdict remains unchanged. The
+following dispositions resolve SR-408's findings:
 
 | Finding | Current correction |
 | --- | --- |
@@ -158,8 +157,7 @@ Domain package extraction, lift and QSL model intake follow AD-006. Population,
 snapshot/window, observation, progress and assessment closure remain downstream
 consumer work.
 
-The composed correction review is complete. Merge the reviewed baseline and
-refine the existing implementation tickets from its contracts. No new full
+Implementation tickets are refined from these contracts. No new full
 review campaign for each edit or per-document version cascade is required.
 The four native matrices contain 59 planned TC artifacts, not executed evidence.
 Historical accepted profiles and the original ConfigVersion admission case keep

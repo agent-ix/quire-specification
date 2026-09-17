@@ -4,7 +4,9 @@ Status: proposed; profile identifier `state-finite/0-draft`, language tag
 `ix:native`, edition `0-draft`. These are private experimental identifiers.
 The public language name is deferred until the first release review; a rename
 requires an explicit source/profile migration, never reinterpretation of old
-bytes.
+bytes. The profile's wording names spec artifacts and the domain package as the
+source of model declarations; this carries no semantic change, and the fixtures
+pin the current bytes.
 
 ## Admission and implementation status
 
