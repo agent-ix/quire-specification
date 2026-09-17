@@ -791,6 +791,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-208 | FR-208-AC-6 | TC-235 | planned |
 | FR-208 | FR-208-AC-7 | TC-235 | planned |
 | FR-208 | FR-208-AC-8 | TC-235 | planned |
+| FR-208 | FR-208-AC-9 | TC-235 | planned |
 | FR-272 | FR-272-AC-6 | TC-196 | planned |
 | FR-321 | FR-321-AC-4 | TC-195 | planned |
 | FR-160 | FR-160-AC-4 | TC-199 | planned |
