@@ -110,9 +110,10 @@ The carried-forward rules cover the **state-core** semantic surface in CAP-001 t
   protocol main `e53fb55`, observation main `649da78`, and FCD PR #97 merge
   `1d901d7`. Records exact partial delivery and owning-ticket dispositions. This changes no semantic contract.
 - 2026-09-13: FS01 accepts the native Quire charter, `ix:native` composed
-  identity hierarchy and language/profile/backend separation. The historical
-  `state-finite/0-draft` remains unchanged; the unused `state-finite/1-draft`
-  proposal is superseded, and each composed definition retains its independently
+  identity hierarchy and language/profile/backend separation.
+  `state-finite/0-draft` stays selectable at its pinned digests; the unused
+  `state-finite/1-draft` proposal is superseded, and each composed definition
+  retains its independently
   tracked semantic, implementation and qualification status.
 - 2026-09-13: FS02 #29 closed through specification PR #38 at `e43d1ab`.
   Producer-qualified stages, the five-member settlement basis, projection

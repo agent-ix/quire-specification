@@ -15,8 +15,8 @@ acceptance, not an executed standard test.
 ## Test Procedure
 
 Verify the `proposals/state-core` definition and fixture bytes against the
-digests pinned in `typing-cases.json`, `reference-cases.json` and
-`SHA256SUMS`. Select the unavailable
+digests pinned in `proposals/state-core/SHA256SUMS`, `typing-cases.json`,
+`reference-cases.json` and `fixtures/SHA256SUMS`. Select the unavailable
 superseded candidate through the actual parser/package reader and assert a
 located refusal. After an owning semantic ticket explicitly adopts a composed
 definition, select its exact version/digests and mutate each independently;
