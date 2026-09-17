@@ -45,7 +45,8 @@ refuse binding; the second remains incomplete evidence. Prior static success
 cannot discharge any missing runtime prerequisite or authorize an override.
 
 For one concrete runtime subject, mutate the authority identity, revision,
-digest, subject kind and local object identity bytes one at a time. Remove and
+digest, subject kind, subject declaration key and local object identity bytes
+one at a time. Remove and
 empty each member, reuse the unchanged complete key with incompatible binding
 relationships, permute a finite subject collection, and change only display,
 locus, payload, trace, timestamp, arrival position and transport status.

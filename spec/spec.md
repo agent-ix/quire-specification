@@ -466,6 +466,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-153
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-154
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-160
     type: contains
   - target: ix://agent-ix/quire-specification/FR-161

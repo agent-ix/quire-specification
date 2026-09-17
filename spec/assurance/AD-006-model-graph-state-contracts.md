@@ -76,8 +76,8 @@ flowchart TD
    spec package into a semantic IR document: the **domain package**. The
    lowering is deterministic, serialized with RFC 8785 and fingerprinted with
    `sha256-jcs`.
-3. **Intake.** QSL admits a domain package by identity and digest and builds
-   Quire model declarations from its IR nodes. It checks every model rule in
+3. **Intake.** QSL admits a domain package by identity, version and digest
+   and builds Quire model declarations from its IR nodes. It checks every model rule in
    this document. A domain package that fails a rule refuses with a located
    diagnostic that names the artifact and span.
 4. **Consumers.** Code generation reads the same domain package. Generated
@@ -111,8 +111,8 @@ never evaluated or used as proof obligations.
 
 ## Language surface
 
-- A Quire package imports a domain package by identity and `sha256-jcs`
-  digest. The import is part of the package identity.
+- A Quire package imports a domain package by identity, version and
+  `sha256-jcs` digest. The import is part of the package identity.
 - Clauses name domain types by qualified name, for example `Orders::Order`.
 - Native `record`, `enum` and `tuple` declarations remain the way to write value
   types that are not domain objects.

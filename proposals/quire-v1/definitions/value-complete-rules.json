@@ -8,7 +8,7 @@
       "identity": "quire.rule.package-contract/v1",
       "revision": "1-draft.1",
       "path": "../package-contract.md",
-      "sha256": "1f32ed70e635f511ffc929dd47bad2e6f86568dc4ced7988624b1168791d2653"
+      "sha256": "e1fc96174770947d3d6e48e045cd64c9b2a1cb9a8ec053e8109b5a7ddbf63b72"
     },
     {
       "identity": "quire.rule.shared-grammar/v1",
