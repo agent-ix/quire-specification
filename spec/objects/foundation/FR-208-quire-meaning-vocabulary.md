@@ -158,10 +158,11 @@ state contract requires every contract and invariant input to name:
 
 - **Context naming.** One evaluation input binds the single context of one
   machine instance, and that context is owned by the input. It is named by the
-  machine's declaration key and the invocation identity of the input, never by
+  most-specific machine's declaration key and the invocation identity of the input, never by
   an object identity. The universe the state contract requires is the context
   universe of that invocation: it holds that one context and no objects, and
-  identity equality is never applied to it.
+  identity equality is never applied to it. No relation between the contexts
+  of different invocations is bound.
 - **Contexts per observation.** Each of the invocation's pre and post
   observations holds exactly one context of the machine, a value of the
   machine's effective fields. An observation with no context of the machine is

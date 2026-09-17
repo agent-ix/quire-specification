@@ -56,7 +56,7 @@
       "identity": "quire.rule.fr-154/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-154-admit-domain-package-model.md",
-      "sha256": "189ddbff12c0c01ae394b9934493f2caf12bbba05627928bc6159597b21ecc97"
+      "sha256": "f34542d4fc063ff3a31cd0cd8344b7df537f2ebd52393a242fb376b0dca9dc27"
     },
     {
       "identity": "quire.rule.fr-204/v1",
@@ -68,7 +68,7 @@
       "identity": "quire.rule.fr-208/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md",
-      "sha256": "bf72eb80239c17457d263a4937d790e771d7f8209d3452b901aaa5ca43fcef04"
+      "sha256": "b5c195f6230ab6bf58d562b499cc8e2bc6baec4a90f07dc58c76acb1d357d7ce"
     },
     {
       "identity": "quire.rule.fr-321/v1",
