@@ -34,8 +34,8 @@ them. S3 owns that model view and the runtime state environments bound to it.
   authoring one `entity` artifact. No type, schema, TypeSpec or other record is
   written for it.
 - FCD types documents and generates native Rust, TypeScript and Python types
-  for both layers: object types from their module, and domain objects from the
-  domain package. Quire owns the meaning of the domain model the artifacts
+  for both layers: artifact types and object types from their module, and
+  domain objects from the domain package. Quire owns the meaning of the domain model the artifacts
   declare.
 
 ```markdown

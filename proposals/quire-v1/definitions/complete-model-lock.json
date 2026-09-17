@@ -22,7 +22,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "model-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"58ed2d4245f3027d46ba78d63ec0e301af0dda7a5d33f78d013b33b5ded9c72f"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"eb4abb3ca91241333109a9159218606a279211d9a8b6fd7b2e5c7a08c2457571"}
     },
     {
       "role": "effective_declaration_schema",
@@ -37,7 +37,7 @@
     {
       "role": "rule_ad_006",
       "artifact_path": "../../../spec/assurance/AD-006-model-graph-state-contracts.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.ad-006/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"4484ba5bc66918e26fd0f5a37d7f1099d7dcfe05a67c51aa3bf6d481009dc26f"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.ad-006/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"f110a1a4fd1d8d6f6a3a9101fa56c638f0be662c5747b36bcc1ba7eee5aa6557"}
     },
     {
       "role": "rule_fr_043",
