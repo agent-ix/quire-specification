@@ -1,6 +1,6 @@
 ---
 id: SR-587
-title: "EARS review of I04 CheckedPackage V1"
+title: "EARS review of I04 CheckedPackage V2"
 type: SpecReview
 analysis: ears-conformance
 scope: "FR-322, FR-195"

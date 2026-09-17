@@ -546,8 +546,6 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/NFR-073
     type: contains
-  - target: ix://agent-ix/quire-specification/NFR-074
-    type: contains
   - target: ix://agent-ix/quire-specification/NFR-075
     type: contains
   - target: ix://agent-ix/quire-specification/IT-070

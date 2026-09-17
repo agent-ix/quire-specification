@@ -1,9 +1,9 @@
 ---
 id: SR-581
-title: "Failure-domain review of I04 CheckedPackage V1"
+title: "Failure-domain review of I04 CheckedPackage V2"
 type: SpecReview
 analysis: failure-domain
-scope: "interface_004, FR-322, TC-217, checked-package-v1"
+scope: "interface_004, FR-322, TC-217, checked-package-v2"
 review_set: all
 ---
 ## Summary

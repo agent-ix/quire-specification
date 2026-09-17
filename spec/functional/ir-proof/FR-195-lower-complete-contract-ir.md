@@ -53,12 +53,6 @@ may retain the raw bytes of a separately selected future graph revision, but a
 lowerer that does not declare that revision refuses it before lowering; raw
 retention is not admission or a substitute node.
 
-The frozen V1 reader and public Rust types remain a compatibility surface. They
-are not the complete-V1 lowerer input and are never widened with V2 members. A
-V1 package reaches the V2 lowerer only through I04's explicit re-link/re-check
-migration, which returns a distinct V2 package plus typed package/node
-correspondence; V1 bytes alone are insufficient.
-
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -74,8 +68,8 @@ correspondence; V1 bytes alone are insufficient.
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
   source form used by this requirement.
 - [I04 CheckedPackage contract](../../objects/interfaces/FR-322-checked-package-artifact.md)
-  owns the V2 complete-V1 checked semantic input, the frozen V1 compatibility
-  path and their strict version-specific reader/migration boundaries.
+  owns the V2 complete-V1 checked semantic input and its strict
+  version-specific reader boundary.
 - [Subsystem and interface index](../../subsystems/index.md) identifies the
   typed producer/consumer boundary and dependency direction.
 - Every requirement linked in frontmatter is a normative prerequisite.

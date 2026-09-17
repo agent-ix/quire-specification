@@ -87,8 +87,7 @@ recomputes it before resolution. A migrated package that reuses its source's
 "migration" whose preimage is unchanged yields the identical package and
 identity, and is not a migration.
 Evidence keyed by the old package or export identity keeps that key and is never
-relabeled. No library-level migration correspondence record is defined beyond
-FR-322's CheckedPackage V1-to-V2 migration record.
+relabeled. No library-level migration correspondence record is defined.
 
 ## Acceptance Criteria
 

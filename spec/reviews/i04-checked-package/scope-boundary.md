@@ -1,6 +1,6 @@
 ---
 id: SR-586
-title: "Scope-boundary review of I04 CheckedPackage V1"
+title: "Scope-boundary review of I04 CheckedPackage V2"
 type: SpecReview
 analysis: scope-boundary
 scope: "interface_004, FR-322, FR-195"

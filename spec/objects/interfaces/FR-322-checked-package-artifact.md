@@ -23,8 +23,7 @@ SHALL use the immutable `quire.checked-package/v2` contract below rather than
 an untyped map, display string or implementation-local structure. Its normative
 closed schema and independent vectors are the I04 public boundary; native
 parser/CST and implementation-private package values are not part of that
-boundary. The frozen `quire.checked-package/v1` predecessor remains unchanged
-and may be read only through an explicitly selected V1 compatibility path.
+boundary.
 
 ## Properties
 
@@ -104,50 +103,11 @@ members, out-of-domain values, stale dependencies, cross-domain substitutions,
 unknown required features and non-canonical encodings refuse before consumption.
 An unknown object member or node tag is a V2 refusal. A transport relay may
 retain raw bytes selecting a newer graph revision without interpreting them;
-that is not an admitted V2 package and a V2 lowerer refuses it. V1 remains a
-separate frozen wire: adding `nominal_identity_preimage` to a V1 node is an
-unknown-member refusal, and a V2 reader refuses a V1 contract version rather
-than inferring the missing identity evidence. Exact selected
+that is not an admitted V2 package and a V2 lowerer refuses it. A reader
+refuses any unrecognized `contract_version` rather than inferring missing
+identity evidence for it. Exact selected
 resource limits are admitted; one-over-limit input returns an incomplete
 resource disposition without a partial checked package.
-
-## V1 to V2 migration
-
-Migration accepts canonical V1 bytes only as the source package reference. It
-requires the exact authored source documents, definition artifacts and
-compiled-model documents selected by the V1 lock and reruns the V2 linker and
-checker. A successful migration returns the separately identified V2 package
-and a `quire.checked-package-migration-correspondence/v1` record containing the
-source V1 package key, target V2 package key and a total ordered mapping of
-`{source_node_id, target_node_id, basis}` for every V1 node. `basis` is exactly
-`relinked-identical` or `relinked-rekeyed`. The correspondence record is
-excluded from both package identities.
-
-A row's basis is `relinked-identical` exactly when the source and target node
-digests are equal and `relinked-rekeyed` otherwise.
-
-Missing, stale, ambiguous or incompatible reconstruction inputs refuse before
-any V2 package is exposed. A migrator cannot derive absent owner, qualified
-declaration, enum-member order, dimension-term or unit-conversion evidence from
-V1 graph bytes. Byte-only conversion, version relabeling and silent filling are
-not migration.
-
-The migration result is the closed `MigrationOutcome` sum: exactly
-`relinked { correspondence }` or `refused { code, subject }`. `subject` names the
-offending reconstruction input and, for a source, its authority and identity.
-The refusal code vocabulary is exactly, in evaluation order,
-`migration_byte_only_reconstruction` (no reconstruction inputs; only V1 bytes),
-`migration_input_missing` (an absent input member, an empty source list or any
-V1-locked source absent), `migration_input_ambiguous`,
-`migration_input_stale` and `migration_target_incompatible`. Every check of one
-cause precedes every check of the next, so an absent locked source is reported
-as missing even when another supplied source is ambiguous or stale; the first
-failing check is reported and no other code exists.
-
-The QSpec qualification crate proves only the published schemas, vectors and
-receipt classification (FR-322-AC-13 through AC-16). The reader, linker and
-lowering criteria remain owned by the Contract IR and QSL producer evidence
-named by TC-217.
 
 ## Acceptance Criteria
 
@@ -163,12 +123,9 @@ named by TC-217.
 | FR-322-AC-8 | Two conformers derive the same package id from the specified JCS identity preimage; changing an excluded raw artifact/source-map/presentation or reader-limit member does not change it, while changing any named preimage member does. | Test (TC-217) |
 | FR-322-AC-9 | The reader result is exactly admitted, refused or incomplete; malformed input and the first exhausted measured limit remain distinguishable and carry their specified typed provenance/accounting. | Test (TC-217) |
 | FR-322-AC-10 | Enum, dimension and declared-unit node keys match the closed JCS preimage vectors; stale-body keys, non-normalized rationals, invalid owner joins and noncanonical member/term order refuse as `invalid_semantic_graph`. | Test (TC-217) |
-| FR-322-AC-11 | The published V1 schema and vectors remain byte-for-byte unchanged; V1 refuses V2 members/version and V2 refuses V1 rather than silently upgrading either closed wire. | Test (TC-217) |
-| FR-322-AC-12 | V1-to-V2 migration re-links and re-checks exact authoritative reconstruction inputs and returns the closed `MigrationOutcome`: `relinked` with a total typed node correspondence whose basis is `relinked-identical` exactly when node digests are equal, or `refused` with exactly one of `migration_input_missing`, `migration_input_stale`, `migration_input_ambiguous`, `migration_target_incompatible` or `migration_byte_only_reconstruction` and its typed subject, without exposing a V2 package. | Test (TC-217) |
-| FR-322-AC-13 | Each published checked-package schema admits its positive fixture carrying all 13 closed node tags with an exact source-map entry for every occurrence and refuses each authored version, digest-domain and node mutation; the frozen V1 publication bytes match independent SHA-256 locks, each schema refuses the other version, a consistently relabelled V1 graph fails the V2 schema, and each published V1 package fixture (the frozen all-families fixture and the V2-directory nominal migration source) validates against the frozen V1 schema with a `package_id` equal to the RFC 8785 JCS SHA-256 of its stored identity preimage. | Test (TC-233) |
+| FR-322-AC-13 | The published V2 checked-package schema admits its positive fixture carrying all 13 closed node tags with an exact source-map entry for every occurrence, and refuses each authored version, digest-domain and node mutation. | Test (TC-233) |
 | FR-322-AC-14 | Each published V2 package fixture's `package_id` equals the RFC 8785 JCS SHA-256 of the identity preimage rebuilt from its lock selections and occurrence-free semantic graph; editing a source-map region, node source occurrence, raw source digest, capability disposition or diagnostic catalog leaves that id unchanged, while editing the edition, a profile/definition/model/dependency selection, a required feature, a node member or node order changes it. | Test (TC-233) |
 | FR-322-AC-15 | Each published enum, dimension and declared-unit node vector validates against the closed preimage schema and recomputes its recorded JCS SHA-256; each authored semantic mutation is refused by exactly its named schema or semantic check, an absent owner fails the package lock join, and inside the published nominal package a retained preimage with a changed body, type, dependency or unjoined owner is refused by the published cross-field or owner-join constraint. | Test (TC-233) |
-| FR-322-AC-16 | The published migration schema admits exactly the closed `MigrationOutcome` forms; each published relinked receipt is total and ordered with basis `relinked-identical` exactly when node digests are equal, and each published refusal receipt classifies to its recorded code and subject as the first failing check in the order byte-only, missing, ambiguous, stale, target. | Test (TC-233) |
 
 ## Dependencies
 
