@@ -72,7 +72,7 @@ Declaration refusals:
 
 | Failure | Refusal |
 | --- | --- |
-| A type definition's `kind` names no entry of the `constructs` table, or its construct has no `meaning` or a `meaning` that is not a Quire meaning id (FR-208) | `invalid_model_binding`/`malformed-declaration` |
+| A type definition's or population node's `kind` names no entry of the `constructs` table, or its construct has no `meaning` or a `meaning` that is not a Quire meaning id (FR-208) | `invalid_model_binding`/`malformed-declaration` |
 | An IR node is not valid for its construct's meaning | `invalid_model_binding`/`malformed-declaration` |
 | A supertype, subsets, redefines, relationship end, frame entry or population member names no node of the package | `missing_declaration`/`missing-name` |
 | Two nodes share one identity | `invalid_model_binding`/`conflicting-binding` |
@@ -93,8 +93,8 @@ declaration key and its members' keys change, and a reference to the old key
 refuses `missing_declaration`/`missing-name`. Renaming a member changes that
 member's key.
 
-Intake binds each IR type definition by the `meaning` of its construct. The
-definition's `kind` is `{module, name}` and names one entry of the package's
+Intake binds each IR type definition and population node by the `meaning` of
+its construct. The node's `kind` is `{module, name}` and names one entry of the package's
 embedded `constructs` table; that entry's `meaning` is a Quire meaning id
 (FR-208). The kind name and module select the construct entry only and never
 select a meaning.
@@ -117,7 +117,14 @@ Admission checks are decided before the first charge.
 | FR-154-AC-4 | Publishing a new version of a domain package with equal nodes leaves every declaration key and effective declaration unchanged, while the ModelSelection, the effective view and the object universe change. | Test (TC-234) |
 | FR-154-AC-5 | Intake at its exact `normalize.record` bound completes, and the one-less run is incomplete at `normalize.record`. | Test (TC-234) |
 | FR-154-AC-6 | Retitling an artifact leaves every declaration key unchanged. Changing an artifact's id changes the declaration key of the type it declares and of that type's members, leaves every other declaration key unchanged, and a reference to the old key refuses `missing_declaration`/`missing-name`. | Test (TC-234) |
-| FR-154-AC-7 | A type definition whose kind names no construct entry, or whose construct has no Quire meaning id or an id outside FR-208, refuses `invalid_model_binding`/`malformed-declaration` with the IR node identity, the artifact id and the span, and no meaning is inferred from its kind name. | Test (TC-234) |
+| FR-154-AC-7 | A type definition or population node whose kind names no construct entry, or whose construct has no Quire meaning id or an id outside FR-208, refuses `invalid_model_binding`/`malformed-declaration` with the IR node identity, the artifact id and the span, and no meaning is inferred from its kind name. | Test (TC-234) |
+
+## Open Questions
+
+- A qualified name segment is a `member-name`, an ASCII word. An artifact id
+  that is not a word, such as the hyphenated `entity-001`, therefore has no
+  qualified-name spelling, and a clause cannot name its declaration. Until
+  this is ruled, fixtures and examples use word artifact ids.
 
 ## Dependencies
 

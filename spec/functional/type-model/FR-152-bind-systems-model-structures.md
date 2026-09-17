@@ -52,17 +52,24 @@ any kind name.
 
 | Kind | Construct meaning | Required identity and constraints |
 | --- | --- | --- |
-| Part | `quire.meaning.systems.part/v1` | declaration key, owning composite type, declared type and typed multiplicity |
-| Port | `quire.meaning.systems.port/v1`, whose owner is a Part | declaration key, owning part, direction `in`, `out` or `inout`, interface type (an Interface) and typed multiplicity |
-| Interface | `quire.meaning.systems.interface/v1` | declaration key and ordered feature signatures |
-| Connection | `quire.meaning.systems.connection/v1`, whose two ends both name Ports | effective member owned by the source end-owner type, compatible source and target port keys and a declared `direction` |
-| Allocation | `quire.meaning.systems.allocation/v1` | effective member owned by the source end-owner type, plus source element (Part, Port or operation) and target element (Part) keys |
+| Part | `quire.meaning.systems.part/v1` | construct declaration key, `owner` reference to the owning composite type, declared type and typed multiplicity |
+| Port | `quire.meaning.systems.port/v1`, whose `owner` names a Part | construct declaration key, `owner` reference to the owning part, direction `in`, `out` or `inout`, interface type (an Interface) and typed multiplicity |
+| Interface | `quire.meaning.systems.interface/v1` | construct declaration key and ordered feature signatures |
+| Connection | `quire.meaning.systems.connection/v1`, whose two ends both name Ports | construct declaration key, effective member owned by the source end-owner type, compatible source and target port keys and a declared `direction` |
+| Allocation | `quire.meaning.systems.allocation/v1` | construct declaration key, effective member owned by the source end-owner type, plus source element (Part, Port or operation) and target element (Part) keys |
 
-Ownership follows `quire.model.complete/v1`: a part is owned by its owning
-type; a port by the owning type of its part; and a connection or allocation
-end's end-owner type is the element owner of the declaration the end names.
-Ports, connections and allocations are qualified into the FR-150 effective view
-under those owners. An end `e` of type `T` exists exactly when `T` has the
+Each part, port, interface, connection and allocation is declared by its own
+artifact and is a construct, not a member. Its IR node identity is
+`ix://<package identity>/<artifact id>`, like any type definition (FR-154).
+Ownership is a reference member of the construct, never part of its identity:
+a part's `owner` names its owning type; a port's `owner` names its part, and
+the port is owned by that part's owning type; and a connection or allocation
+end's end-owner type is the element owner of the declaration its source or
+target end names. Parts, ports, connections and allocations are qualified into
+the FR-150 effective view as effective members `(owner effective type,
+construct declaration key)` under those owners; an interface is an effective
+type. Changing an `owner` or an end changes the effective member, never the
+construct's declaration key. An end `e` of type `T` exists exactly when `T` has the
 relationship member and `r.name` matches `e`'s role name. A relationship whose
 two ends both name object types is a navigation relationship with no kind.
 
@@ -76,7 +83,12 @@ first). Refusals cascade: a node whose dependency was refused is reported with
 actual kind `none`. Every refusal names the IR node identity, the artifact and
 the span.
 
-A binder request names the required kind and a qualified name. A resolved
+A binder request names the required kind and a qualified name. A qualified
+name names a systems construct by the model alias and its artifact id, such as
+`M::pump_out`, never through its owner. It resolves to the construct's
+effective declaration: an Interface's effective type, a Part's or Port's
+effective member under its owner, and a Connection's or Allocation's effective
+member under its source end-owner type. A resolved
 declaration of another kind is refused `invalid_model_binding`/`wrong-export`
 with the required kind, actual kind and both declaration keys; equal names
 never pass a kind check.

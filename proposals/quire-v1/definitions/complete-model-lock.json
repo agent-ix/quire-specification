@@ -12,7 +12,7 @@
     {
       "role": "root",
       "artifact_path": "model-complete.md",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"4ccb1ff76fc60f68acbb05c8a8de70dc1e93ecf946bf89aba1293cf2943ab4a6"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"03f9bf917e596cdea0e1ee4dac7ec1f77e5a8066bc9988f622bba04ea056d633"}
     },
     {
       "role": "state_graph",
@@ -22,7 +22,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "model-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"94c5e156bd5d0bfe414c4203124ca9ae1327d648bb87dfeac3d0f04d01f72dc1"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"f1b91b35fb5302ab80d73ad1b213e8f7b960831d5a83896fa71100967e38aca0"}
     },
     {
       "role": "effective_declaration_schema",
@@ -37,7 +37,7 @@
     {
       "role": "rule_ad_006",
       "artifact_path": "../../../spec/assurance/AD-006-model-graph-state-contracts.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.ad-006/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"3401ee473db30f1f96199ec70c2ab60c6d3fa536cdb2174c79e4313c7a0aa463"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.ad-006/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"fd45db52c28723e5f07da094f03f31aeefa807c823a8c82ce788ba21a46fd81b"}
     },
     {
       "role": "rule_fr_043",
@@ -67,7 +67,7 @@
     {
       "role": "rule_fr_152",
       "artifact_path": "../../../spec/functional/type-model/FR-152-bind-systems-model-structures.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-152/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"4618c104bc335e3d1b971cadb787aeb2d09e4e86a20d4a232fa11044779de58c"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-152/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"8fcb1f8bd0abbc5e3d086158ea053fd4613f86a560cd890f182561e82a51cc29"}
     },
     {
       "role": "rule_fr_153",
@@ -77,7 +77,7 @@
     {
       "role": "rule_fr_154",
       "artifact_path": "../../../spec/functional/type-model/FR-154-admit-domain-package-model.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-154/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"76c64a52cbe085227dd55fe69f4b85feac65e61dbf257404fb54a64ab21cbc12"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-154/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"6e39fd517cee8467fc579ca5e197f7f8dbb6886eff9380c5ad97a141790202fa"}
     },
     {
       "role": "rule_fr_204",
@@ -87,7 +87,7 @@
     {
       "role": "rule_fr_208",
       "artifact_path": "../../../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-208/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"7f5b816652ff9e8151b682661787c4270a4f71fb5af4d58f3e907d538ade1493"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-208/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"22ce069304e780f75b44c4bfe84bcd7372583fff9bc89833b2ff4e98cf6fa6a6"}
     },
     {
       "role": "rule_fr_321",

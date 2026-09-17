@@ -40,12 +40,12 @@ them. S3 owns that model view and the runtime state environments bound to it.
 
 ```markdown
 ---
-id: entity-001
-title: "Customer"
+id: Customer
+title: "Customer account"
 type: entity
 object: entity
 ---
-# [entity-001] Customer
+# [Customer] Customer account
 
 ## Properties
 
@@ -111,7 +111,7 @@ object type's module. Quire gives it meaning.
 | Effect frames | `Modifies:`, `Creates:`, `Deletes:` lines under an operation | `Operation.frame` | Everything outside the frame is unchanged |
 | Invariants | `## Invariants`, one `### <clauseId>` with one `quire` fence | `Clause` with `language: quire` | Checked and evaluated by Quire |
 | Populations | `population` artifact listing member types and extent | Population node | Closed extents for quantification |
-| Systems structure | Systems artifacts (spec-objects-architecture) | Type definitions whose constructs name a `quire.meaning.systems.*` meaning | Interfaces, parts, ports, connections and allocations resolved in the model view, interfaces first |
+| Systems structure | One artifact per interface, part, port, connection and allocation (spec-objects-architecture) | Type definitions whose constructs name a `quire.meaning.systems.*` meaning, each identified by its artifact id, with `owner` and end references | Interfaces, parts, ports, connections and allocations resolved in the model view, interfaces first; ownership places a construct in the view and is never part of its identity |
 
 Clauses in any language other than `quire` are carried with their span and are
 never evaluated or used as proof obligations.
