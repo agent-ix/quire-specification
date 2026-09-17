@@ -61,7 +61,7 @@ where they preserve the required distinctions.
 | Boundary | Required identity and information | Editor / consumer |
 | --- | --- | --- |
 | Source to native syntax | Exact bytes/revision/digest, byte spans, clause identities, one language/edition | A; all families consume |
-| Model to linker | Domain package identity and `sha256-jcs` digest, declaration keys, declared types, artifact source spans; explicit presence/refusal | Spec artifacts through quire-rs extraction and FCD lift; A model intake |
+| Model to linker | Domain package identity, version and `sha256-jcs` digest, declaration keys, declared types, artifact source spans; explicit presence/refusal | Spec artifacts through quire-rs extraction and FCD lift; A model intake |
 | Linked package | Exact profile definitions, typed declarations and family dependency graph; source/model identity; no mutable monitor state | A; B/E/F consume |
 | Package to assessment | [Static components and typed binding roles](package-contract.md); full configuration retained separately from concrete observations, clocks, progress and resource controls | A consumer contract; F/B supply exact interfaces |
 | Predicate reference | Declaration and type, arguments, model closure, evaluation anchor and immutable captures | A; B/E consume |

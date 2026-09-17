@@ -28,12 +28,12 @@ equality.
 | `package-fingerprint` | Package fingerprint. A lock-file digest cannot substitute for it (FR-015-AC-3). |
 | `lock-file-digest` | Lock-file digest. Cannot substitute for `package-fingerprint` (FR-015-AC-3). |
 | `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout (FR-018). |
-| `sha256-jcs` | Domain package digest. SHA-256 over the RFC 8785 canonical bytes of the semantic IR domain package lifted from spec artifacts. It is the digest component of every effective declaration key (AD-006) and is distinct from package, source and definition digests. |
+| `sha256-jcs` | Domain package digest. SHA-256 over the RFC 8785 canonical bytes of the semantic IR domain package lifted from spec artifacts. Every V2 model selection carries it, and every declaration key names it as its digest domain (AD-006). It is distinct from package, source and definition digests. |
 | `quire.package.semantic/v1` | Frozen CheckedPackage V1 semantic-package graph domain; distinct from package archive and lock-file bytes and from every successor domain. |
 | `quire.package.semantic/v2` | Complete-V1 CheckedPackage V2 semantic-package graph domain; distinct from V1 even when the source selection or digest bytes are equal. |
 | `quire.source.bytes/v1` | Exact authored native source-document bytes, including layout; distinct from every definition/model artifact. |
 | `quire.definition.bytes/v1` | Exact selected native profile or semantic-definition bytes, including layout; distinct from source/model bytes. |
-| `quire.compiled-model.bytes/v1` | Exact selected compiled-model document bytes, including layout; distinct from source/definition bytes. |
+| `quire.compiled-model.bytes/v1` | Exact model document bytes selected by a frozen CheckedPackage V1 lock, including layout. Used only to reconstruct and re-link a V1 package; a V2 model selection uses `sha256-jcs`. Distinct from source/definition bytes. |
 | `quire.checked-semantic-node/v1` | Versioned checked semantic-node identity; distinct from its source occurrence and from the enclosing package identity. |
 | `quire.contract-ir.semantic/v1` | Versioned generated Contract IR semantic identity; distinct from the checked source package that it lowers. |
 | `quire.diagnostic-catalog.bytes/v1` | Exact diagnostic-catalog source bytes, including layout. |

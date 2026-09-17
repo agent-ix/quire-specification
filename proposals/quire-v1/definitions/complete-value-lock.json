@@ -39,7 +39,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "value-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.value.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"75b249c9b56aa4809870de8d7d2825d10a8737a3b23ee6ff7810a2891ea72ce9"}
+      "definition": {"authority":"agent-ix","identity":"quire.value.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"d89a4f767997da7ecc3603406a7878f0b36264df5f06250ad2659004eb0c11e2"}
     },
     {
       "role": "text_profile",
@@ -69,7 +69,7 @@
     {
       "role": "rule_package_contract",
       "artifact_path": "../package-contract.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.package-contract/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"1f32ed70e635f511ffc929dd47bad2e6f86568dc4ced7988624b1168791d2653"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.package-contract/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"e1fc96174770947d3d6e48e045cd64c9b2a1cb9a8ec053e8109b5a7ddbf63b72"}
     },
     {
       "role": "rule_shared_grammar",
