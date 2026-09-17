@@ -12,7 +12,7 @@
     {
       "role": "root",
       "artifact_path": "model-complete.md",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"72c5c9e1f9263280188109d9dfb8aed685e8b2fe1815a777d53eb7967befed34"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"0fc1148ac85ceaa1cbd60ff5ef831efb684b18b64e96346b5cfec8d9310dda0b"}
     },
     {
       "role": "state_graph",
@@ -22,7 +22,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "model-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"ed18dc786320ebee9d366d599a17f2adab03848fb4acf2b7dd8d25ece1906083"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"783999f438a62c279dfef2d7ae1060480e4ee13fb73a071394cc6e80962708fa"}
     },
     {
       "role": "effective_declaration_schema",
@@ -87,7 +87,7 @@
     {
       "role": "rule_fr_208",
       "artifact_path": "../../../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-208/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"22ce069304e780f75b44c4bfe84bcd7372583fff9bc89833b2ff4e98cf6fa6a6"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-208/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"d06478e2634721b31b88d186befad4472e303439a6b77740625c1840d52a36ea"}
     },
     {
       "role": "rule_fr_321",
