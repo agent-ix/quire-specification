@@ -139,8 +139,7 @@ This is the current drafting map for the **same 51 capability IDs above**.
 The earlier implementation-foundation notes retain their pinned research context.
 Rows below identify authored requirements and **planned** acceptance cases; they
 do not assert complete semantics, accepted review or executed coverage. The family
-matrices retain the individual AC-to-case rows. Reserved local IDs are not an artifact quota. The [composed review](../../spec/reviews/composed-v1/base.md)
-records specific corrections against all delivered family inputs.
+matrices retain the individual AC-to-case rows. Reserved local IDs are not an artifact quota.
 
 | Capability | Draft requirements | Planned cases/boundaries | Remaining specification or delivery boundary |
 | --- | --- | --- | --- |
@@ -196,9 +195,7 @@ records specific corrections against all delivered family inputs.
 | V1-050 | [FR-041](../../spec/functional/foundation/FR-041-evaluate-ordered-queries.md), [FR-043](../../spec/functional/foundation/FR-043-evaluate-finite-graph-relations.md), [FR-049](../../spec/functional/foundation/FR-049-bind-native-choreography-syntax.md), [FR-112](../../spec/functional/observation/FR-112-declare-population-and-completeness.md), [FR-113](../../spec/functional/observation/FR-113-preserve-time-progress-late-data.md) | [TC-041](../../spec/test-cases/TC-041-evaluate-ordered-queries.md), [TC-043](../../spec/test-cases/TC-043-evaluate-finite-graph-relations.md), [TC-142](../../spec/test-cases/TC-142-declare-population-completeness.md), [TC-143](../../spec/test-cases/TC-143-preserve-time-progress-late-data.md), [TC-173](../../spec/test-cases/TC-173-bind-related-recovery-views.md) | FS03 accepts state query/graph semantics and FS04 accepts population/window/progress meaning. Observation #18/#13 and assessment consumers retain exact observation topology adoption. |
 | V1-051 | [FR-130](../../spec/functional/foundation/FR-130-bind-composed-package-references.md), [FR-020](../../spec/functional/foundation/FR-020-compose-native-profiles.md), [FR-030](../../spec/functional/foundation/FR-030-bind-composed-definitions.md), [FR-032](../../spec/functional/foundation/FR-032-preserve-language-evolution.md), [FR-040](../../spec/functional/foundation/FR-040-admit-explicit-state-extensions.md) | [TC-020](../../spec/test-cases/TC-020-report-composed-capabilities.md), [TC-030](../../spec/test-cases/TC-030-bind-composed-definitions.md), [TC-032](../../spec/test-cases/TC-032-preserve-language-evolution.md), [TC-040](../../spec/test-cases/TC-040-admit-explicit-state-extensions.md) | FS05 accepts edition/profile/wire separation, the package feature catalog and explicit migration. Family execution and the planned matrices remain independently owned. |
 
-The crosswalk separates three kinds of remaining work. SR-401/402/403/406
-identify shared-contract and immutable-selection corrections against the
-delivered F contributions. Concrete package payload/reader
+The crosswalk separates two kinds of remaining work. Concrete package payload/reader
 and native-to-TL wire details belong to the existing L2/IR interface work; their
 implementations cannot proceed on envelope or source-grammar acceptance alone.
 Target-specific exports and broad qualification remain their existing FS06/QA01

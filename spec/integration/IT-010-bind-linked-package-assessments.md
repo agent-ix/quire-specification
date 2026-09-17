@@ -57,7 +57,7 @@ ceilings and separate mutants listed in TC-030 and TC-035.
 6. Through an explicitly selected `quire.observation.range/v1` mapping, bind a window of the declared population with inclusive start 0 and exclusive end 30 to a native timestamped `eventually[0,30] holds(p)` obligation. Put its sole p witness at time 30. Supply truthful coverage for only that window, then falsely relabel that coverage as closing the native inclusive interval. Repeat with a separately selected window [0,31), exact progress covering time 30, and the boundary witness admitted by the mapping; also use a decisive witness at time 29 as a control.
    - IT-010-SC-06: the shorter window cannot establish closed-scope truth for the inclusive obligation; truthful missing boundary coverage stays incomplete, and the false closure mapping refuses. The explicitly covering window admits the time-30 witness and settles satisfied; a valid decisive time-29 witness remains satisfied with its exact support despite the still-uncovered upper boundary. No implicit time increment, unit conversion, endpoint rounding or reinterpretation of membership makes the shorter window complete.
 
-Additional stage and declaration-key controls for SR-402/406:
+Additional stage and declaration-key controls:
 
 7. Link the three-family template with its exact model, profile and binding
    contracts before any workflow instance or runtime population/window exists.
