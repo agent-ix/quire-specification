@@ -117,14 +117,17 @@ is the conjunction of its own invariants with those of every ancestor
   through a reference to an object is `wrong_snapshot`/`wrong-observation`.
   Its scope is every value of the type reachable through the fields of every
   object in each invariant observation, and through the parameters and results
-  of each evaluated invocation, including collection elements, present optional
-  values and record values nested in other record values; the invariant is
+  of each evaluated invocation, and through the fields of each state-machine
+  context, including collection elements, present optional values and record
+  values nested in other record values; the invariant is
   evaluated once for each such value, with `self` bound to it. A false result is
   a logical violation of that clause: a completed Boolean `false`, which carries
   no diagnostic code or cause, because a logical violation is distinct from
   every refusal (FR-047, FR-206-AC-3). The violation is located by the FR-207
   runtime value path where the value was reached: root observation, root
-  subject the object identity or the invocation's parameter or result binding,
+  subject the object identity, the invocation's parameter or result binding,
+  or, for a value reached through a state-machine context, the invocation's
+  receiver binding `self`,
   then one `field` step per field, one `index` step per collection element and
   one `option_value` step per present optional. The result depends only on the
   value, so equal values give equal results. An object-type invariant instead ranges over
