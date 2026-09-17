@@ -94,7 +94,7 @@ package.
 | --- | --- | --- |
 | Plausible text is called equivalent | Preservation requires a complete FR-298 record; parsing is downstream only. | common coordinator / qcir target owner |
 | Target profiles diverge in loss meaning | All consume FR-269 and the same FR-298/299 invariants. | QSpec + qcir #52 |
-| Model/exporter invents declarations | SysML/OCL mappings require exact producer correspondences and refuse ambiguity. | qcir #55/#56 + model owner |
+| Model/exporter invents declarations | SysML/OCL mappings require exact correspondences to spec-declared domain declarations and refuse ambiguity. | qcir #55/#56 + S3 (AD-006) |
 | Temporal units or end semantics drift | FRETish mappings retain explicit clock/completeness conditions and a narrow selected interval set. | qcir #57 + temporal owner |
 | Optional tool dependency becomes mandatory | NFR-061 requires removable, exact-version observers and a pure Rust result. | each implementation owner |
 
