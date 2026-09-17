@@ -1,9 +1,9 @@
 ---
 id: SR-580
-title: "Base review of I04 CheckedPackage V1"
+title: "Base review of I04 CheckedPackage V2"
 type: SpecReview
 analysis: base
-scope: "interface_004, FR-322, FR-195, FR-201, TC-217, checked-package-v1"
+scope: "interface_004, FR-322, FR-195, FR-201, TC-217, checked-package-v2"
 review_set: all
 ---
 ## Summary

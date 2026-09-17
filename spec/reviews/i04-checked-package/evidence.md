@@ -1,9 +1,9 @@
 ---
 id: SR-584
-title: "Evidence review of I04 CheckedPackage V1"
+title: "Evidence review of I04 CheckedPackage V2"
 type: SpecReview
 analysis: evidence
-scope: "FR-322, TC-217, checked-package-v1"
+scope: "FR-322, TC-217, checked-package-v2"
 review_set: all
 ---
 ## Summary
