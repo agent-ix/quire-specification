@@ -29,7 +29,7 @@ The state contract explicitly proposes reusable-predicate/query and finite-graph
 | FR-040-AC-1 | The first no-call/no-reference profile still refuses a helper call or graph navigation; the explicitly selected reviewed extension admits its supported typed form. | Test (TC-040) |
 | FR-040-AC-2 | A caller with a wider local profile cannot grant an imported predicate operations absent from that predicate's selected definition. | Test (TC-040) |
 | FR-040-AC-3 | Unknown, conflicting or missing required definitions refuse before any dependent checked clause is published. | Test (TC-040) |
-| FR-040-AC-4 | An unreachable prohibited construct still refuses, while old accepted profile bytes and fixture identities remain unchanged. | Test (TC-040) |
+| FR-040-AC-4 | An unreachable prohibited construct still refuses, while the selected profile and fixture bytes match their pinned digests. | Test (TC-040) |
 
 ## Dependencies
 
