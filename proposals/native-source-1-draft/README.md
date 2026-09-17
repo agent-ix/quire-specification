@@ -38,8 +38,8 @@ separate stages. Unsupported constructs remain source-addressable and cannot be
 removed by dead-code elimination or hidden by a more capable IR/backend.
 
 Native `present`/guarded `value`, short-circuit Boolean control, `if` and `let`
-retain their native definedness/evaluation requirements. This amendment does not
-copy OCL's restricted source grammar or truth table into the native language.
+retain their native definedness/evaluation requirements. Clause grammar and
+truth tables are Quire's own.
 The carried-forward table below is binding; an external language's punctuation
 does not silently redefine a native construct. Exact rational spelling and the
 inherited-rule closure are now specified by the composed

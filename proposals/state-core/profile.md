@@ -4,7 +4,7 @@ Status: proposed; profile identifier `state-finite/0-draft`, language tag
 `ix:native`, edition `0-draft`. These are private experimental identifiers.
 The public language name is deferred until the first release review; a rename
 requires an explicit source/profile migration, never reinterpretation of old
-bytes. An `ocl`, `sysml` or `fretish` source retains its original language.
+bytes.
 
 ## Admission and implementation status
 

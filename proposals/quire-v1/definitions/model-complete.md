@@ -79,7 +79,17 @@ reports every such refusal in node order, and then no later phase runs.
 
 A source span is `{artifact, start, end}`. `artifact` is the artifact id, such
 as `entity-001`. `start` and `end` are zero-based byte offsets in the artifact
-file.
+file. The artifact id and span record where a declaration came from. They
+appear in diagnostics and provenance and are never a key member.
+
+A declaration's identity is its declared name. An object type or interface
+declared by an artifact titled `Order` in domain package `acme/orders` has IR
+node identity `ix://acme/orders/Order`. A member's identity appends its declared
+name to its owner's identity: field `total` of `Order` is
+`ix://acme/orders/Order/total`, and port `out` of part `Sys/pump` is
+`ix://acme/orders/Sys/pump/out`. Retitling an artifact declares a different
+class with a different declaration key, and renaming a member declares a
+different member.
 
 ### Declaration kinds
 
@@ -104,7 +114,7 @@ Every refusal names the IR node identity, the artifact and the span.
 
 | Feature | Rule | Refusal |
 | --- | --- | --- |
-| Identity | Each `TypeDefinition.identity` is the artifact id path of its artifact. Two nodes with one identity are not allowed. A title rename never changes an identity. | `invalid_model_binding`/`conflicting-binding` |
+| Identity | A type's identity is `ix://<package identity>/<name>`, where `<name>` is its declared name, the artifact title. A member's identity is its owner's identity, `/` and the member's declared name. The artifact id and span are the declaration's origin and are not part of any identity. Two nodes with one identity are not allowed. | `invalid_model_binding`/`conflicting-binding` |
 | Supertypes | Every `supertypes[]` entry names an object type of the package. The supertype graph is acyclic; phase 3 checks it. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`specialization-cycle` in phase 3 |
 | Abstract | An abstract type has no direct instances. A population member whose most-specific type is abstract is refused. Dispatch covers only concrete subtypes. | `invalid_runtime_input`/`abstract-instance` |
 | Fields | `typeRef` names a type of the package or a native value type. `multiplicity` has `lower <= upper`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`unpreserved-model-meaning` |

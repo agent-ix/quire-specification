@@ -74,7 +74,7 @@ engineering-assurance completion and has no new language drafting assignment.
 | V1-016 | Sets, bags, implicit collection conversions and recursive value containment | Required | RULE; A | All named collection and containment capabilities are V1 work; no name-based emulation with sequences. |
 | V1-017 | Finite object populations, explicit references, identity comparison and exact reachability as a separately versioned state-graph facet | V1 | ARCH, ADOPT, STATE; A | FS03 accepts the explicit graph-profile extension beyond the first state subset. QSL implements native admission/evaluation; broader backend parity remains qcir #69. |
 | V1-018 | Record structural equality and ambient object lookup through opaque scalar IDs | Split by atomic inventory | RULE; A | Structural equality and explicit closed-environment lookup are required; ambient scalar-to-object navigation remains an integrity boundary. |
-| V1-019 | Full OCL/KerML/SysML metamodels, unrestricted inheritance/redefinition and dynamic dispatch | Required | OWN, MODEL; A | The atomic inventory owns conformance, specialization, redefinition, dispatch and typed systems-model consumption without creating a second authored language. |
+| V1-019 | Full model semantics: unrestricted inheritance/redefinition and dynamic dispatch over spec-declared domain models | Required | OWN, MODEL; A | The atomic inventory owns conformance, specialization, redefinition, dispatch and typed systems-model consumption without creating a second authored language. |
 
 ## Temporal and observation semantics
 
@@ -230,7 +230,7 @@ not claims that the current implementation is equivalent to those languages.
 
 | Family being assessed | Complete V1 obligation | Required architectural boundary |
 | --- | --- | --- |
-| OCL-like Boolean, value and contract expressions | Core v1: guards, state assertions, captured amounts and operation conditions depend on them. | One reusable typed predicate layer, with definedness separate from temporal truth and observation availability. |
+| Boolean, value and contract expressions in Quire clauses | Core v1: guards, state assertions, captured amounts and operation conditions depend on them. | One reusable typed predicate layer, with definedness separate from temporal truth and observation availability. |
 | Collection queries and transformations | V1 specifies size, membership, count, quantification, filtering, mapping/collect, flattening and exact bounded folds over sequences, sets, bags and ordered sets. | Distinguish container kind, element type, occurrence order, multiplicity and output bounds; collection kinds are never aliases. |
 | Tuples, derived values and named query definitions | V1 includes fixed typed records, local bindings, predicates, general pure functions and checked recursion. | Stable declaration/call identities plus explicit purity, effect, termination and resource contracts. Do not make every predicate an untyped string. |
 | Type conformance, specialization, subsetting and redefinition | V1 includes explicit model conformance, inheritance, redefinition and dispatch over declarations in spec artifacts, checked by Quire's model view. | Preserve original versus effective declaration identity; refuse ambiguity instead of copying a flattened type with lost provenance. This is Quire's model task, not a reason to fork the type system. |

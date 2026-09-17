@@ -94,7 +94,7 @@ object type's module. Quire gives it meaning.
 | --- | --- | --- | --- |
 | Fields | `## Properties` rows: `Field`, `Type`, `Multiplicity`, `Constraints` | `TypeDefinition.fields[]` with `typeRef`, `multiplicity`, `presence` | Typed attributes with checked bounds |
 | Presence | `Presence` column (`required`, `optional`) | `Field.presence` | Absent versus empty stay distinct |
-| Identity | Artifact `id` frontmatter | `TypeDefinition.identity` | Stable declaration identity that survives renaming the title |
+| Identity | Declared name (artifact title) | `TypeDefinition.identity` | A class's identity is its name; the artifact `id` records the declaration's origin |
 | Generalization | Frontmatter relationship `specializes` | `TypeDefinition.supertypes[]` | Acyclic conformance; closed subtype sets |
 | Abstract types | Frontmatter `abstract: true` | `TypeDefinition.abstract` | No direct instances; dispatch covers concrete subtypes |
 | Subsetting | `Subsets` column | `Field.subsets[]` | Values of the field are contained in the named supertype field |

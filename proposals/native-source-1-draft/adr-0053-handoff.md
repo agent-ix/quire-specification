@@ -39,12 +39,12 @@ every criterion to be formalized.
 
 | Existing section | Applied disposition |
 | --- | --- |
-| Title, Status and decision table | Replace OCL-first recommendation and absent-decision wording with native-source ruling; cite its record. Acceptance records the owner's actual ruling, not completed compiler qualification. |
+| Title, Status and decision table | State the native-source ruling: clauses are authored in Quire. Cite its record. Acceptance records the owner's actual ruling, not completed compiler qualification. |
 | Context/model boundary | Reconcile with already accepted ADR-0054. Existing formal APIs remain usable; do not conflate archetypes with formal-model semantics. |
 | Decision proposed for approval | Replaced with the native-source decision. The superseded `state-finite/1-draft` candidate was not adopted as a compiler profile. |
 | Source authority, eligibility, shared admission and anchors | Preserve the binding rules. Change source-specific references only where necessary to name native Quire; do not weaken the refusal or provenance obligations. |
 | Separate #54 reference/bounds decision | Preserve the gate but state #54 is closed. Any later reference environment or IR extension needs its own ticket; neither is admitted by this first profile. |
-| OCL, SysML and FRETish profile sections | Retain as output mapping contracts under FS06, with explicit loss/refusal and semantic-correspondence obligations. Remove wording that enables them as source frontends or requires foreign-runtime qualification. |
+| OCL, SysML and FRETish profile sections | Output mapping contracts under FS06, with explicit loss/refusal and semantic-correspondence obligations. They are not source frontends and require no foreign-runtime qualification. |
 | ConfigVersion example | Reference native compiler FR-032, retain the minimum-only/parent gate, and separate the bounded native example from the original declaration. |
 | Tool table | Keep inspected pins and license facts as historical research. Foreign CLI/build commands are not runnable qualification prerequisites. Retain the pilot's LGPL-3.0-or-later correction. |
 

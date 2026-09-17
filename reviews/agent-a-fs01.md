@@ -67,9 +67,8 @@ Key source facts are inspection evidence, not newly run compiler tests:
   records are acyclic. Its Boolean/numeric/collection representation is broader
   than the inspected codegen/analyzer support. LC04 must qualify actual backends.
 - `quire-contract-ir/spec/decisions/ADR-0053-formal-clause-source-profiles.md`
-  remains **proposed**, owner `kreneskyp`. It recommends an OCL-based subset and
-  total Boolean lowering; this native profile proposes a different language and
-  guard-aware semantics. Only the owner can amend/accept the ADR.
+  is owned by `kreneskyp`. Formal clauses are authored in native Quire with
+  guard-aware semantics. Only the owner can amend the ADR.
 
 ## Decisions requested after review
 
@@ -99,9 +98,9 @@ approval of the technical profile does not decide them.
 
 | Existing owner/ticket | Scoped amendment proposal | Acceptance dependency and disposition |
 |---|---|---|
-| IR #52/#53, ADR-0053 | Add a native-language direction and separate external-language mappings; retain old OCL proposal as proposed history. Replace neither language tags nor existing source identities automatically | A-D1 and owner ADR review; prepared, not publicly posted |
+| IR #52/#53, ADR-0053 | Select native Quire as the clause language and separate external-language output mappings. Replace neither language tags nor existing source identities automatically | A-D1 and owner ADR review; prepared, not publicly posted |
 | IR #50 / FR-023 | Acknowledge existing binder implementation; adapt native lowering to the existing public API and complete-clause rule. Keep old digest/profile bytes | LC02 + reviewed typed-model adapter; no duplicate binder |
-| IR #55/#56/#57 | Keep OCL/SysML/FRET as separately qualified mapping/frontends with loss/refusal and pinned tool evidence | FS06 and existing owners; no TL edits here |
+| IR #55/#56/#57 | Keep OCL/SysML/FRET as separately qualified output mappings with loss/refusal and pinned tool evidence | FS06 and existing owners; no TL edits here |
 | IR #58 | Preserve all source obligations and source implication activation identity; agree language facts with B's method/result contract | Agent B contribution + reviewed source-to-probe correspondence |
 | Quire #388 / `clauses.rs` | Extraction exists. A proposes compiler source-map input; C coordinates consumer/extraction adapter regression fixtures | Agree LC05 split with C before edits; no expression compiler in Markdown extractor |
 | TL #24 | Preserve pinned capability/profile/API contract; request summary only if state-to-temporal integration is selected | TL owner; temporal/clock work remains outside A |

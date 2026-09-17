@@ -80,8 +80,15 @@ and the source span `{artifact, start, end}` that the node carries. Intake
 reports every declaration refusal in node order, and then no later phase runs.
 An admission refusal ends intake with no declaration.
 
-A declaration key carries no digest. A title rename in an artifact changes no
-declaration key. Two versions of one domain package with equal nodes yield
+A declaration's IR node identity is its declared name: a type's identity is
+the package identity and the artifact title, and a member's identity is its
+owner's identity and the member name. The artifact id and span are the
+declaration's origin, not part of its key. Retitling an artifact declares a
+different class: its declaration key changes, and a reference to the old key
+refuses `missing_declaration`/`missing-name`. Renaming a field changes that
+field's key.
+
+A declaration key carries no digest. Two versions of one domain package with equal nodes yield
 equal declaration keys. The ModelSelection, which binds the digest, separates
 them.
 
@@ -98,7 +105,7 @@ Admission checks are decided before the first charge.
 | FR-154-AC-3 | A malformed IR node or a dangling reference refuses with the IR node identity, the artifact id and the span, and every such refusal is reported in node order. | Test (TC-234) |
 | FR-154-AC-4 | Publishing a new version of a domain package with equal nodes leaves every declaration key and effective declaration unchanged, while the ModelSelection, the effective view and the object universe change. | Test (TC-234) |
 | FR-154-AC-5 | Intake at its exact `normalize.record` bound completes, and the one-less run is incomplete at `normalize.record`. | Test (TC-234) |
-| FR-154-AC-6 | Renaming an artifact title leaves every declaration key unchanged. | Test (TC-234) |
+| FR-154-AC-6 | Retitling an artifact changes the declaration key of the type it declares and of that type's members, leaves every other declaration key unchanged, and a reference to the old key refuses `missing_declaration`/`missing-name`. | Test (TC-234) |
 
 ## Dependencies
 
