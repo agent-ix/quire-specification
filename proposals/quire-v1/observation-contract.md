@@ -2,11 +2,12 @@
 
 FS04-accepted F-owned semantic input to OB01–03 and the composed `1-draft`
 baseline. This defines
-the semantic content an observation producer and its temporal/protocol consumers
+the semantic content an observation source and its temporal/protocol consumers
 must exchange. It does not register a wire encoding, canonicalizer, model schema,
-result store, or clause authority. A owns source/package/profile identities; D
-owns model, relationship, population, and configuration identities; E owns clock,
-history, and closure meaning; B owns obligations and result dispositions.
+result store, or clause authority. A owns source/package/profile identities; S3
+owns the model view, including subject kind, relationship and population
+declarations; E owns clock, history, and closure meaning; B owns obligations and
+result dispositions.
 
 ## Contract selections
 
@@ -25,30 +26,32 @@ and its [range correspondence](definitions/observation-range.md).
 Runtime binding/progress identities are supplied by the linked package; this
 rule document does not select itself through a copied candidate/digest table.
 
-## Producer interface selection
+## Domain declaration selection
 
-F consumes the accepted producer-owned **Producer interface 1.2.0** at
-[filament-core-data PR #99 merge 4042882](https://github.com/agent-ix/filament-core-data/blob/4042882/docs/semantic-data-system/baseline-1-2.md).
-That producer contract defines the exact digest domain; each runtime assessment
-retains the actual selected producer revision and digest.
-The selected interface supplies relationship, population, snapshot, window,
-member, configuration, and closure identities. It is D's authority and is not
-an F wire/schema definition.
+Subject kinds, relationship declarations and population declarations are the
+effective domain declarations of the checked package. A spec declares them in
+its own artifacts ([AD-006](../../spec/assurance/AD-006-model-graph-state-contracts.md)).
+Each one is keyed by domain package identity, IR node identity and digest
+domain `sha256-jcs`. The checked package's `model_selections` name the domain
+package. Closed population extents are declared in spec artifacts.
 
-Each assessment input retains producer interface version `1.2.0`, exact document
-identity/digest, `modelIdentity`, `relationshipIdentity` where required,
-`populationIdentity`, `snapshotIdentity` or `windowIdentity`,
-`configurationIdentity`, and every closure digest selected by the producer.
-An unknown version, missing required identity, digest mismatch, or ambient
-environment, working-directory, current-time, or network default refuses the
-dependent assessment input. A producer's illustrative relationship spelling
-does not replace its emitted identity.
+Runtime observation records are assessment inputs. Their subject, relationship
+and population references are typed by those declaration keys.
+
+Each assessment input retains the selected domain package identity and digest,
+the declaration key of every subject kind it uses, the relationship declaration
+key where required, the population declaration key, `snapshotIdentity` or
+`windowIdentity`, `configurationIdentity`, and every selected closure digest.
+A declaration key outside the checked package, a missing required identity, a
+digest mismatch, or an ambient environment, working-directory, current-time, or
+network default refuses the dependent assessment input. A relationship display
+name does not replace its declaration key.
 
 ## Observation-range correspondence
 
 Every temporal or choreography-aware assessment additionally selects one exact
 `quire.observation.range/v1` definition and one of its clock-family coverage
-rows. The selected range retains the producer window identity/digest, ordered
+rows. The selected range retains the selected window identity/digest, ordered
 record-set identity/digest, clock authority, temporal profile identity/revision/
 digest, and all family-specific endpoints. The range is required at assessment,
 not for static template checking.
@@ -57,7 +60,7 @@ Event-position coverage binds explicit sequence positions without inventing a
 timestamp or elapsed time. Fixed-sample coverage binds exact epoch, positive
 rational period, unit, and sample indexes without interpolation or binary
 floating point. Timestamp coverage remains half-open: a witness at native
-inclusive deadline 30 is outside producer `[0,30)` and is admitted only by a
+inclusive deadline 30 is outside window `[0,30)` and is admitted only by a
 separately selected range that contains 30. A witness at 29 may decide an
 obligation from its exact support without manufacturing unrelated coverage or
 closure. Member-object identity never substitutes for record identity or the
@@ -75,11 +78,11 @@ roles. Each binding retains all of the following semantic values:
 | Value | Required meaning |
 | --- | --- |
 | Binding identity | Exact binding-contract definition identity, revision, and byte digest; applied binding identity; and source location of the authored role. |
-| Source selection | Observation source identity, schema identity/revision, declared producer, and internal/external visibility. |
-| Subject mapping | Exact Producer interface 1.2.0 model, workflow, participant, relationship, population, delivery, attempt, or effect handle selected by the role; no textual lookup fallback. |
+| Source selection | Observation source identity, schema identity/revision, declared source authority, and internal/external visibility. |
+| Subject mapping | Exact declaration key of the model, workflow, participant, relationship, population, delivery, attempt, or effect subject selected by the role; no textual lookup fallback. |
 | Signal and value mapping | Declared signal identity, typed value declaration, unit, missing-value policy, and required/optional status. |
 | Anchor | The selected current, invocation pre/post, temporal origin/activation, protocol occurrence, or compensation registration/activation anchor. |
-| Scope premises | Selected Producer interface 1.2.0 snapshot/window, membership rule/digest, configuration/closure identity and digest, exact observation-range definition/coverage row, clock/progress authority, and history premise when the role needs them. |
+| Scope premises | Selected population declaration key and snapshot/window, membership rule/digest, configuration/closure identity and digest, exact observation-range definition/coverage row, clock/progress authority, and history premise when the role needs them. |
 | Capture dependencies | Immutable capture identities and their authored anchors; a binding cannot retag a capture or import another workflow's values. |
 
 Repeated mappings for one required role, incompatible mappings, selected identities
@@ -103,8 +106,8 @@ authority.
 
 The current [progress definition](definitions/observation-progress.md),
 `quire.observation.progress/v1` accepted revision `1-draft.3`, preserves the assertion, binding, scope,
-E-owned temporal, record/revision, and restoration selections, including FCD
-`1.2.0` half-open window coverage `[start, end)`: `start` participates once and
+E-owned temporal, record/revision, and restoration selections, including
+half-open window coverage `[start, end)`: `start` participates once and
 `end` belongs only to a later selected window. This is part of the current shared
 contract; no further definition catalog publication gates its review. Runtime
 assertions retain the exact accepted definition selection independently from

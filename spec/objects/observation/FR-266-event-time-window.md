@@ -17,7 +17,7 @@ relationships:
 
 ## Description
 
-When an FCD 1.2.0 window is selected, the assessment service SHALL include an exactly listed or digested member at `start` and exclude one at `end`.
+When a window is selected, the assessment service SHALL include an exactly listed or digested member at `start` and exclude one at `end`.
 
 FR-112 Behavior states the window as `[start, end)` and adds that the excluded
 member "can participate only in a separately selected later window". FR-113
@@ -68,7 +68,7 @@ through that boundary."
   required membership ... cannot establish aggregate success" (FR-112 Behavior).
 - **Digest domain** — the prose names no window digest in FR-112 or FR-113. The
   [observation binding contract](../../../proposals/quire-v1/observation-contract.md)
-  names a "producer window identity/digest" retained by a selected
+  names a "selected window identity/digest" retained by a selected
   `quire.observation.range/v1` definition; where such a digest is carried, its
   domain is selected under `ix://agent-ix/quire-specification/FR-201`, and an
   identity crossing domains is unequal regardless of byte equality.

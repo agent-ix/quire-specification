@@ -21,10 +21,12 @@ executable standard coverage is claimed.
 
 ## Test Procedure
 
-Assess a finite snapshot and an event-time window under Producer interface 1.2.0;
+Assess a finite snapshot and an event-time window of a population declared in
+the checked package's domain package;
 change one identity; remove one required member; remove the external
-payment-provider record; remove closure input; and independently mutate producer
-version, membership digest, configuration digest, and closure digest.
+payment-provider record; remove closure input; offer an observation record for a member outside the
+declared closed extent; and independently mutate the population
+declaration key, membership digest, configuration digest, and closure digest.
 Repeat with adjacent half-open windows: a member at the first window's `start`,
 one exactly at its `end`, and the second window starting at that same instant.
 Repeat the selected correspondence for an event-position sequence, a
@@ -47,7 +49,8 @@ raw-artifact digest is required and vice versa.
 ## Expected Results
 
 Scope identity changes the subject. Missing membership, provider evidence, and
-closure remain explicit incomplete/refused reasons. Every producer-selection
+closure remain explicit incomplete/refused reasons. A record outside the
+declared closed extent refuses and never extends the population. Every declaration-selection
 mismatch is refused without an ambient default and cannot establish aggregate
 success. The start member occurs once in the first window; the boundary member
 occurs only in the second window and cannot be double-counted.

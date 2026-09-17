@@ -32,7 +32,7 @@ than silently rewriting an already settled result. When an assertion definition,
 scope, clock selection, source set, or restoration basis does not match the
 assessment, the observation service SHALL retain an incomplete or refused input
 rather than settle or restart from it.
-For a selected FCD 1.2.0 half-open window, the observation service SHALL apply
+For a selected half-open window, the observation service SHALL apply
 progress/closure only to admitted members with instants `start <= instant < end`.
 When that window supplies an inclusive temporal assessment `[a,b]`, the
 observation adapter SHALL apply FR-289: retain an explicit same-clock carrier `[a,e)` with `e > b`,
