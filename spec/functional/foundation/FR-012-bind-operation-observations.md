@@ -44,7 +44,7 @@ initial anchor rule admits pre(expression) only inside a postcondition.
 
 ## Examples
 
-These are specification hypotheses for the criteria above, not compiled model
+These are specification hypotheses for the criteria above, not domain
 packages or observed evaluator output. Assume one resolved operation declares
 an expectedVersion parameter with the same bounded integer type as
 self.versionNumber. One invocation supplies expectedVersion = 1. Its pre and

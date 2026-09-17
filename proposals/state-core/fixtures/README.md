@@ -2,8 +2,8 @@
 
 These files are **proposed fixtures, not executed language results**.
 `model-expectations.json` illustrates field declarations and the proposed
-identity-reference mapping; it is explicitly not a compiled
-model package. `parent-order.native` is a parse/source fixture. Its literal
+identity-reference mapping; it is explicitly not a domain
+package. `parent-order.native` is a parse/source fixture. Its literal
 `unresolved-model-package` is an intentional link refusal, not a fake digest or
 claim of a working import. Replace it only with a real reviewed domain
 package digest when qualifying linking, and record the resulting source change.
@@ -105,8 +105,8 @@ wrapper versions are preserved; no implicit version conversion is performed.
 under explicit abstract type/input hypotheses. They cover guarded definedness,
 snapshot capture, numeric bounds and units, negative division/remainder, sequence
 order/duplicates, identity/cycles, validation failures and work exhaustion. They
-bind the proposed rule document by its exact digest. They are not compiled model
-wire, a complete runtime population, typechecker/evaluator output, or accepted
+bind the proposed rule document by its exact digest. They are not a domain
+package, a complete runtime population, typechecker/evaluator output, or accepted
 extensions of the earlier profile. The native parser can check their expression
 syntax separately; it cannot establish their expected typing or logical results.
 

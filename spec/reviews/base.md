@@ -11,7 +11,7 @@ review_date: "2026-09-07"
 
 ## Summary
 
-The draft is structurally organized and keeps source/model authority and incomplete outcomes explicit. Review findings concern evidence readiness, prerequisite visibility, and the concrete implementation discrepancies identified where syntax already exists.
+The draft is structurally organized and keeps source identity, spec-declared model declarations and incomplete outcomes explicit. Review findings concern evidence readiness, prerequisite visibility, and the concrete implementation discrepancies identified where syntax already exists.
 
 ## Verdict
 

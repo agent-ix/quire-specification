@@ -1,5 +1,5 @@
 {
-  "status": "proposed-mapping-expectations-not-a-model-package",
+  "status": "proposed-mapping-expectations-not-a-domain-package",
   "package": {"identity": "example/config", "version": "1.0.0"},
   "typeIdentity": "ix://example/config/type/ConfigVersion",
   "declarations": [

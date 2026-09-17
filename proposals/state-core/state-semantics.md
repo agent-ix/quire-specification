@@ -9,8 +9,7 @@ adoption under FS02/FS05; a digest of the earlier profile file cannot silently
 cover a later semantic amendment.
 
 The accompanying `fixtures/typing-cases.json` contains independently authored
-judgment examples. Its type environments are hypotheses, not a domain package
-or a compiled model package.
+judgment examples. Its type environments are hypotheses, not a domain package.
 
 ## 1. Judgments and phase boundaries
 

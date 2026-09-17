@@ -21,5 +21,5 @@ target short name independently from native identity.
 ## Expected Results
 
 Eligible constraints produce the admitted requirement fragment. Local target
-attributes do not become model authority. Unsupported structures are explicitly
+attributes declare no model elements of their own. Unsupported structures are explicitly
 non-preserved. Display names never replace native identity.
