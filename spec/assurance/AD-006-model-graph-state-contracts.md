@@ -33,7 +33,10 @@ them. S3 owns that model view and the runtime state environments bound to it.
 - A domain object is an instance of an object type. Declaring `Customer` means
   authoring one `entity` artifact. No type, schema, TypeSpec or other record is
   written for it.
-- FCD types documents. Quire owns the meaning of the domain model they declare.
+- FCD types documents and generates native Rust, TypeScript and Python types
+  for both layers: object types from their module, and domain objects from the
+  domain package. Quire owns the meaning of the domain model the artifacts
+  declare.
 
 ```markdown
 ---
@@ -65,7 +68,7 @@ flowchart TD
   M --> B
   B --> E[State and graph evaluator]
   E --> R[Value, violation, incomplete or refusal]
-  D --> G[Generated Rust and TypeScript types]
+  D --> G[Generated Rust, TypeScript and Python types]
 ```
 
 1. **Extraction.** `quire_rs::semantic::extract_semantic` reads each artifact
@@ -80,8 +83,8 @@ flowchart TD
    and builds Quire model declarations from its IR nodes. It checks every model rule in
    this document. A domain package that fails a rule refuses with a located
    diagnostic that names the artifact and span.
-4. **Consumers.** Code generation reads the same domain package. Generated
-   types and Quire's formal model therefore describe the same `Order`, which is
+4. **Consumers.** FCD code generation reads the same domain package and emits
+   Rust, TypeScript and Python types. Those types and Quire's formal model therefore describe the same `Order`, which is
    what lets a proof over generated code cite a Quire clause.
 
 ## Model features
