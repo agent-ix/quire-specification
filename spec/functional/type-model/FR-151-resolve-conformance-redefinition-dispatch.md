@@ -181,6 +181,8 @@ type.
 | FR-151-AC-6 | A narrowing field redefinition written by an exposed operation without an FR-146 establishing fact refuses `unproved-refinement` with its obligation. | Test (TC-196) |
 | FR-151-AC-7 | A false selected precondition yields `undefined` for the call and never selects a less specific method. | Test (TC-196) |
 | FR-151-AC-8 | Dispatch charges at their exact bound complete and the one-less run is incomplete at the named charge point. | Test (TC-196) |
+| FR-151-AC-9 | A subsetting feature whose type or multiplicity fails to conform to the subsetted feature refuses `ill_typed` with `subsetting-type` or `multiplicity-narrowing` and names both declarations; a conforming pair retains each declaration's own provenance in the effective view. | Test (TC-196) |
+| FR-151-AC-10 | At binding admission over a closed population, an object whose subsetting-feature values are not a subset of its subsetted-feature values refuses `invalid_runtime_input`/`subsetting-violation`, charged as `binding.subset-value` and with no evaluation charge. | Test (TC-196) |
 
 ## Dependencies
 

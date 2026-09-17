@@ -19,6 +19,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-293
     type: references
+  - target: ix://agent-ix/quire-specification/FR-161
+    type: references
 ---
 ## Description
 
@@ -72,8 +74,7 @@ The v1 profile shall define strong previous as `once[1,1]`.
 If a later profile admits weak previous, then that profile shall define its
 boundary separately from strong previous.
 
-The v1 temporal profiles shall refuse unbounded past and implicit history
-reconstruction.
+Where a bounded temporal profile is selected, the evaluator shall refuse an unbounded past interval. Where the infinite-trace profile is selected, the evaluator shall admit the unbounded previous, historically, once and since operators with the meaning [FR-161](FR-161-analyze-infinite-trace-properties.md) states. Implicit history reconstruction is refused under every profile.
 
 ## Acceptance Criteria
 
@@ -85,6 +86,7 @@ reconstruction.
 | FR-092-AC-4 | Missing, evicted, stale or binding-mismatched history never becomes false padding or a conclusive Boolean. | Test (TC-118) |
 | FR-092-AC-5 | The selected `tl-syntax.past-operators/v1` and `mltl.origin-complete-history/v1` contracts admit the bounded past operators through their exact public readers; a future-only, unknown or mismatched profile remains unsupported/refused without substitute output. | Test (TC-117) |
 | FR-092-AC-6 | Exactly the FR-293 boundary kinds are admitted; restoration may prove cutoff coverage but never converts a cutoff into an execution origin. | Test (TC-112, TC-118) |
+| FR-092-AC-7 | Where the infinite-trace profile is selected, the unbounded past operators evaluate under their FR-161 infinite-trace meaning, with previous false at position zero, and history remains explicitly bound. | Test (TC-200) |
 
 ## Dependencies
 

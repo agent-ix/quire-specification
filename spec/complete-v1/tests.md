@@ -211,6 +211,8 @@ planned row is required work, not a deferred capability or implementation claim.
 | FR-134 | FR-134-AC-1 | TC-184 | planned |
 | FR-134 | FR-134-AC-2 | TC-184 | planned |
 | FR-134 | FR-134-AC-3 | TC-184 | planned |
+| FR-134 | FR-134-AC-4 | TC-184 | planned |
+| FR-134 | FR-134-AC-5 | TC-184 | planned |
 | FR-140 | FR-140-AC-1 | TC-185 | planned |
 | FR-140 | FR-140-AC-2 | TC-185 | planned |
 | FR-140 | FR-140-AC-3 | TC-185 | planned |
@@ -337,6 +339,7 @@ planned row is required work, not a deferred capability or implementation claim.
 | FR-306 | FR-306-AC-1 | TC-226 | planned |
 | FR-306 | FR-306-AC-2 | TC-226 | planned |
 | FR-306 | FR-306-AC-3 | TC-226 | planned |
+| FR-306 | FR-306-AC-4 | TC-226 | planned |
 | FR-307 | FR-307-AC-1 | TC-227 | planned |
 | FR-307 | FR-307-AC-2 | TC-227 | planned |
 | FR-307 | FR-307-AC-3 | TC-227 | planned |
@@ -398,6 +401,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-007 | FR-007-AC-4 | TC-231 | planned |
 | FR-007 | FR-007-AC-5 | TC-231 | planned |
 | FR-007 | FR-007-AC-6 | TC-231 | planned |
+| FR-007 | FR-007-AC-7 | TC-192 | planned |
 | FR-008 | FR-008-AC-1 | TC-231 | planned |
 | FR-008 | FR-008-AC-2 | TC-231 | planned |
 | FR-008 | FR-008-AC-3 | TC-231 | planned |
@@ -444,6 +448,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-019 | FR-019-AC-7 | TC-006 | planned |
 | FR-020 | FR-020-AC-11 | TC-020 | planned |
 | FR-091 | FR-091-AC-7 | TC-111 | planned |
+| FR-091 | FR-091-AC-8 | TC-200 | planned |
 | FR-093 | FR-093-AC-6 | TC-114 | planned |
 | FR-120 | FR-120-AC-2 | TC-150 | planned |
 | FR-120 | FR-120-AC-3 | TC-150 | planned |
@@ -550,6 +555,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-228 | FR-228-AC-2 | TC-231 | planned |
 | FR-228 | FR-228-AC-3 | TC-231 | planned |
 | FR-228 | FR-228-AC-4 | TC-231 | planned |
+| FR-228 | FR-228-AC-5 | TC-202 | planned |
 | FR-230 | FR-230-AC-1 | TC-231 | planned |
 | FR-230 | FR-230-AC-2 | TC-231 | planned |
 | FR-230 | FR-230-AC-3 | TC-231 | planned |
@@ -774,6 +780,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-151 | FR-151-AC-6 | TC-196 | planned |
 | FR-151 | FR-151-AC-7 | TC-196 | planned |
 | FR-151 | FR-151-AC-8 | TC-196 | planned |
+| FR-151 | FR-151-AC-9 | TC-196 | planned |
+| FR-151 | FR-151-AC-10 | TC-196 | planned |
 | FR-152 | FR-152-AC-6 | TC-197 | planned |
 | FR-152 | FR-152-AC-7 | TC-197 | planned |
 | FR-152 | FR-152-AC-8 | TC-197 | planned |
@@ -826,6 +834,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-180 | FR-180-AC-5 | TC-209 | planned |
 | FR-181 | FR-181-AC-4 | TC-210 | planned |
 | FR-181 | FR-181-AC-5 | TC-210 | planned |
+| FR-181 | FR-181-AC-6 | TC-210 | planned |
 | FR-182 | FR-182-AC-4 | TC-211 | planned |
 | FR-182 | FR-182-AC-5 | TC-211 | planned |
 | FR-190 | FR-190-AC-4 | TC-212 | planned |
@@ -834,6 +843,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-191 | FR-191-AC-5 | TC-213 | planned |
 | FR-192 | FR-192-AC-4 | TC-214 | planned |
 | FR-192 | FR-192-AC-5 | TC-214 | planned |
+| FR-192 | FR-192-AC-6 | TC-214 | planned |
+| FR-192 | FR-192-AC-7 | TC-214 | planned |
 | FR-193 | FR-193-AC-4 | TC-215 | planned |
 | FR-193 | FR-193-AC-5 | TC-215 | planned |
 | FR-194 | FR-194-AC-4 | TC-216 | planned |

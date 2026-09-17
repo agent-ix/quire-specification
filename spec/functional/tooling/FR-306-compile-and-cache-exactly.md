@@ -53,6 +53,7 @@ byte-identical values for one key.
 | FR-306-AC-1 | AOT/JIT and native execution agree on the complete supported conformance corpus. | Test (TC-226) |
 | FR-306-AC-2 | Changing package, target, provider, toolchain or semantic option invalidates the cache key. | Test (TC-226) |
 | FR-306-AC-3 | Unsupported constructs emit no artifact and resource/codegen failure cannot return a semantic verdict. | Test (TC-226) |
+| FR-306-AC-4 | A result produced through ahead-of-time compilation, through just-in-time compilation and through interpretation carries the same qualification identity and the same evidence provenance for the same subject and ecosystem lock; the execution mode is recorded and is not part of that identity. | Test (TC-226) |
 
 ## Dependencies
 

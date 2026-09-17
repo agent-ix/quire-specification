@@ -31,7 +31,7 @@ requires-bound/incomplete/refused outcomes.
 
 The simulator distinguishes authored nondeterminism from unspecified input.
 Enumeration is deterministic; sampling records the seed and generator version.
-Every trace is executable by the same domain runtimes. Exhaustion reports the
+Every trace is executable by the same domain runtimes. The simulator reads its inputs and emits traces and frontier records only; every transition it explores is a pure function of the simulator state key and the selected successor, and any external effect a model describes is represented as typed data in the trace. Exhaustion reports the
 unexplored frontier and cannot claim exhaustive success.
 
 ## Exploration contract
@@ -54,6 +54,7 @@ state keys plus the resource limit that stopped expansion.
 | FR-181-AC-3 | Missing bounds or exhausted work returns requires-bound/incomplete with the unexplored scope. | Test (TC-210) |
 | FR-181-AC-4 | Exhaustive exploration coalesces only equal complete state keys and visits successors in canonical breadth-first order. | Test (TC-210) |
 | FR-181-AC-5 | Every generated trace replays through the same native transition relation with the same terminal disposition. | Test (TC-210) |
+| FR-181-AC-6 | Exploring a model that describes external effects performs none of them: the effects appear only as typed trace data, and a request for evaluator I/O, mutation or an ambient store refuses with its source location. | Test (TC-210) |
 
 ## Dependencies
 
