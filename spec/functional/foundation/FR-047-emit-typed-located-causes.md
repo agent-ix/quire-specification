@@ -52,14 +52,18 @@ possibly empty sequence of traversal steps.
 The root is a selected observation identity together with a subject read under
 that observation. Presence and value facts never cross observation identity, so
 the observation is part of the root and not a step. The subject is exactly one
-of a declared object identity, or a named parameter or result binding of one
-declared invocation. Two subjects of different kinds are never equal.
+of a declared object identity, or a binding of one declared invocation: a named
+parameter binding, the result binding, or the receiver binding `self` of a
+receiver with no declared object identity (FR-207, FR-208). Two subjects of
+different kinds are never equal.
 
-Each step is exactly one of three kinds: a field selection, naming a declared
+Each step is exactly one of five kinds: a field selection, naming a declared
 field of the current value by its exact declared spelling; an option-value
 selection, naming the contained value of an option and carrying no name of its
-own; or a member selection, naming a declared model member by its exact declared
-spelling. A field selection and a member selection are never equal to one
+own; a member selection, naming a declared model member by its exact declared
+spelling; an index selection, carrying the unsigned zero-based position of an
+element of a collection value; or a map-key selection, carrying the canonical
+typed key of a value of a map value. A field selection and a member selection are never equal to one
 another even when they carry the same name, and an option-value selection is
 never a field of the option it traverses.
 
@@ -72,9 +76,8 @@ span never participate.
 Such paths are compared for collection comparison only, by root first and then
 step by step. Root comparison is by observation key, then by subject kind
 ordering a declared object identity before an invocation binding, then by
-subject key. Step comparison orders a proper prefix before every path that
-extends it, orders differing step kinds as field before option-value before
-member, and orders steps of equal kind by their exact name. That comparison is a
+subject key; an invocation binding's key orders by invocation identity, then binding kind ordered parameter before result before receiver, then parameter spelling by UTF-8 bytes. Step comparison orders a proper prefix before every path that
+extends it, orders differing step kinds as field before option-value before member before index before map-key, and orders steps of equal kind by their exact name, index steps numerically and map-key steps by the UTF-8 bytes of the key value's canonical JSON serialization. That comparison is a
 total order over every set of paths whose roots share one observation identity,
 which is the set a single diagnostic reports; it extends to a total order across
 observations only where the selected observation identity itself supplies a key
@@ -100,6 +103,7 @@ authority on the wire.
 | FR-047-AC-6 | A runtime object or value path locating an unavailable nested value distinguishes a field selection, an option-value selection and a member selection; two paths differing only in step kind compare unequal, and an empty step sequence is not reported as an absent path. | Test (TC-047) |
 | FR-047-AC-7 | Two paths with identical subjects and steps under different selected observations compare unequal, and paths sharing one observation are totally ordered. | Test (TC-047) |
 | FR-047-AC-8 | Every retained stage resolves in its selected producer interface; unknown interface/member pairs and labels copied from another interface refuse without replacing the originating stage. | Test (TC-047) |
+| FR-047-AC-9 | A path rooted at the receiver binding `self` of an invocation is a valid invocation-binding subject, compares unequal to a path with equal steps rooted at a parameter binding of that invocation, and orders after it. | Test (TC-235) |
 
 ## Dependencies
 

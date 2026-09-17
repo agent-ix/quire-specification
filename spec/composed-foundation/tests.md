@@ -201,6 +201,7 @@ executable cases.
 | FR-047 | FR-047-AC-6 | TC-047 | 🚧 Planned |
 | FR-047 | FR-047-AC-7 | TC-047 | 🚧 Planned |
 | FR-047 | FR-047-AC-8 | TC-047 | 🚧 Planned |
+| FR-047 | FR-047-AC-9 | TC-235 | 🚧 Planned |
 | FR-271 | FR-271-AC-1 | TC-047 | 🚧 Planned |
 | FR-271 | FR-271-AC-2 | TC-047 | 🚧 Planned |
 | FR-271 | FR-271-AC-3 | TC-047 | 🚧 Planned |
