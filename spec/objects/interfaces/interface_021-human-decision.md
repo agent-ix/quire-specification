@@ -1,5 +1,5 @@
 ---
-id: interface-021
+id: interface_021
 title: "I21 attributed human decision"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-021] I21 attributed human decision
+# [interface_021] I21 attributed human decision
 
 ## Contract
 

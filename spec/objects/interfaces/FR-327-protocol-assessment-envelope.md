@@ -4,7 +4,7 @@ title: "Protocol assessment request and result envelope"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-009
+  - target: ix://agent-ix/quire-specification/interface_009
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-175
     type: references
@@ -43,7 +43,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Dependencies
 
-- [interface-009](./interface-009-protocol-assessment.md) owns the operation boundary.
+- [interface_009](./interface_009-protocol-assessment.md) owns the operation boundary.
 - FR-175 owns the behavior that produces or consumes this value.
 
 ## Status

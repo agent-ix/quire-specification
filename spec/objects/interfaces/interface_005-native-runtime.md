@@ -1,5 +1,5 @@
 ---
-id: interface-005
+id: interface_005
 title: "I05 native runtime input and result"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-005] I05 native runtime input and result
+# [interface_005] I05 native runtime input and result
 
 ## Contract
 

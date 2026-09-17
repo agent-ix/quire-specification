@@ -8,7 +8,7 @@
       "identity": "quire.rule.ad-006/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/assurance/AD-006-model-graph-state-contracts.md",
-      "sha256": "fd45db52c28723e5f07da094f03f31aeefa807c823a8c82ce788ba21a46fd81b"
+      "sha256": "553df4115f816ae453c0697121656f1b79fedcd4e290716c8ced5b3587ed54d4"
     },
     {
       "identity": "quire.rule.fr-043/v1",
@@ -56,7 +56,7 @@
       "identity": "quire.rule.fr-154/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-154-admit-domain-package-model.md",
-      "sha256": "6e39fd517cee8467fc579ca5e197f7f8dbb6886eff9380c5ad97a141790202fa"
+      "sha256": "2a266e2863d952865b9a4b80960c14dbd31b2f2ddbe4e87b02b852ef1592812f"
     },
     {
       "identity": "quire.rule.fr-204/v1",
@@ -74,13 +74,13 @@
       "identity": "quire.rule.fr-321/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/objects/interfaces/FR-321-model-selection-artifact.md",
-      "sha256": "aaa771bc9252367c29dc364a8714adbb6027992918ddfcc9e9465a6b375406c3"
+      "sha256": "5d6ef080adcf51c79a62c5bd29ed49992ff544a471286ebbe4aa07eb68e3c789"
     },
     {
-      "identity": "quire.rule.interface-003/v1",
+      "identity": "quire.rule.interface_003/v1",
       "revision": "1-draft.1",
-      "path": "../../../spec/objects/interfaces/interface-003-model-selection.md",
-      "sha256": "6c1d4e68c3cdb0586afa15fb1b71668fb499afb0b53d59c5ea9e008f12f42ed0"
+      "path": "../../../spec/objects/interfaces/interface_003-model-selection.md",
+      "sha256": "76335739a12a7ac5d1503c4fb5e2603ebf41af4ed318852cecf44b91c330df5a"
     }
   ],
   "normalization_rules": [

@@ -1,5 +1,5 @@
 ---
-id: interface-018
+id: interface_018
 title: "I18 exact ecosystem lock"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-018] I18 exact ecosystem lock
+# [interface_018] I18 exact ecosystem lock
 
 ## Contract
 

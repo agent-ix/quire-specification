@@ -1,5 +1,5 @@
 ---
-id: interface-010
+id: interface_010
 title: "I10 composed execution bundle"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-010] I10 composed execution bundle
+# [interface_010] I10 composed execution bundle
 
 ## Contract
 

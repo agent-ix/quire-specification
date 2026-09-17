@@ -20,5 +20,5 @@ are explicit; payload names are no longer placeholders.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-5781 | high | Resolved: 19 previously unnamed payload schemas were added as immutable value-object requirements. | FR-320–338 |
-| FND-5782 | low | I01 reuses source/model objects FR-202/203 and I16 reuses output-mapping package FR-299 instead of creating duplicates. | interface-001; interface-016 |
+| FND-5782 | low | I01 reuses source/model objects FR-202/203 and I16 reuses output-mapping package FR-299 instead of creating duplicates. | interface_001; interface_016 |
 | FND-5783 | low | Object reference identity remains distinct from record structural equality throughout runtime and replay contracts. | FR-143; FR-149; FR-197 |

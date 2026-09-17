@@ -4,7 +4,7 @@ title: "Authorized effect decision and receipt"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-011
+  - target: ix://agent-ix/quire-specification/interface_011
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-182
     type: references
@@ -43,7 +43,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Dependencies
 
-- [interface-011](./interface-011-effect-decision-receipt.md) owns the operation boundary.
+- [interface_011](./interface_011-effect-decision-receipt.md) owns the operation boundary.
 - FR-182 owns the behavior that produces or consumes this value.
 
 ## Status

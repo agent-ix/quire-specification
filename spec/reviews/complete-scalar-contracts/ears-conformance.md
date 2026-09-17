@@ -25,4 +25,4 @@ into ambiguous outcomes.
 | --- | --- | --- | --- |
 | FND-5951 | medium | Resolved: ambiguous “ill-typed,” `requires-bound` and evaluator-outcome wording was assigned to its exact processing stage. | AD-005; FR-147–149; TC-192–194 |
 | FND-5952 | low | Native strict validation reports no repository QA or EARS findings after remediation. | `quoin validate --repo . --strict` |
-| FND-5953 | low | Migration wording names the trigger, required authoritative inputs, success output and each refusal class with its single closed code; it does not use “migration” as an unspecified compatibility promise. | NFR-074; interface-004; FR-322-AC-12 |
+| FND-5953 | low | Migration wording names the trigger, required authoritative inputs, success output and each refusal class with its single closed code; it does not use “migration” as an unspecified compatibility promise. | NFR-074; interface_004; FR-322-AC-12 |
