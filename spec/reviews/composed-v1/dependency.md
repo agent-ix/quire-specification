@@ -3,7 +3,7 @@ id: SR-403
 title: "Dependency review of the composed native Quire v1 foundation"
 type: SpecReview
 analysis: dependency
-scope: "Composed native requirements and exact definition dependencies; external D baseline 1.2 and FR-100–103 at d6ac501dc4f7514aaa9973d83b049eb2e4b15e7f"
+scope: "Composed native requirements and exact definition dependencies"
 review_set: all
 evaluated_revision: "788b161bd1b7fd5d632cc42c949f497914df3ce6"
 review_date: "2026-09-10"
@@ -15,24 +15,21 @@ relationships:
 
 The native state and current temporal/protocol definition dependencies form a
 directed acyclic graph. The composed selection is nevertheless incomplete:
-F's binding/progress candidates do not close their immutable rule dependencies,
-and their selected D contract predates the supplied standard-facing revision.
-D's external contribution is delivered; copying it into reserved local FR IDs
-is not a prerequisite. One stale temporal prerequisite also needs correction.
+F's binding/progress candidates do not close their immutable rule dependencies.
+One stale temporal prerequisite also needs correction.
 
 ## Findings
 
 | ID | Severity | Summary | Refs | Escape Cause |
 | --- | --- | --- | --- | --- |
-| FND-001 | high | F's 1-draft.1 definitions name A/B/D/E meanings through relative or unnamed selected contracts without exact immutable rule/dependency closure. observation-contract.md still selects D 06a62c7 and digest de838dea…, while the composed input supplies D d6ac501 and digest d4923f37…. Result consumers retaining whatever selections they receive does not select these missing dependencies. Owner: F for successor contracts, A for the composed catalog, with D/B/E agreement. Publish new exact selections after seam reconciliation; retain the old bytes. | observation-binding.md:15–26; observation-progress.md:6–10,19–24; observation-contract.md, Producer interface selection; definitions/README.md, final selection boundary; FR-030/032/110 | missing-requirement |
+| FND-001 | high | F's 1-draft.1 definitions name A/B/E meanings through relative or unnamed selected contracts without exact immutable rule/dependency closure. Result consumers retaining whatever selections they receive does not select these missing dependencies. Owner: F for successor contracts, A for the composed catalog, with B/E agreement. Publish new exact selections after seam reconciliation; retain the old bytes. | observation-binding.md:15–26; observation-progress.md:6–10,19–24; definitions/README.md, final selection boundary; FR-030/032/110 | missing-requirement |
 | FND-002 | medium | FR-090 still calls FR-020 the common profile-composition prerequisite, but FR-020 now reports release capability scope and explicitly transfers definition admission to FR-030. Owner: E with A. Reference the actual definition/binding prerequisite so temporal admission is not ordered behind the downstream release claim or mistaken for its completion. | FR-090:70–75; FR-020, Description and decomposition note; FR-030 | wrong-requirement |
 
 ## Classification
 
 Enablement supplies shared contracts, representations or processing foundations;
 Feature supplies an author/assessor/consumer-visible result. Every in-scope
-local FR/StR/NFR appears once. `D:` IDs are external prerequisites, not missing
-local artifacts. Cross-cutting constraints apply during dependent work even
+local FR/StR/NFR appears once. Cross-cutting constraints apply during dependent work even
 when their final conformance observation necessarily follows that work.
 
 | Requirement | Class | Rationale |
@@ -93,10 +90,6 @@ when their final conformance observation necessarily follows that work.
 | NFR-050 | Enablement | Supplies bounded observation retention. |
 | NFR-051 | Enablement | Supplies immutable replay identity constraints. |
 | NFR-052 | Enablement | Supplies executable-language containment. |
-| D:FR-100 | Enablement | Supplies authored field presence independently of multiplicity. |
-| D:FR-101 | Enablement | Supplies first-class relationship declarations. |
-| D:FR-102 | Enablement | Supplies finite model-bound populations. |
-| D:FR-103 | Enablement | Supplies explicit digested configuration and closure. |
 
 ## Dependency graph
 
@@ -110,9 +103,6 @@ proposed disposition of FND-002, not an edit already made to the requirements.
 
 | Prerequisite | Dependent requirement(s) | Grounding |
 | --- | --- | --- |
-| D:FR-100, D:FR-101 | D:FR-102 | D's explicit population dependencies. |
-| D:FR-100, D:FR-102 | D:FR-103 | D's explicit configuration dependencies. |
-| D:FR-103 | FR-030, FR-035 | Explicit selected model/configuration inputs. |
 | FR-032 | FR-036 | Lexer consumes the selected edition; evolution preserves old keyword meaning. |
 | FR-036 | FR-037 | Parser consumes located tokens. |
 | FR-037 | FR-038, FR-039 | Resolution and literal admission consume located syntax. |
@@ -120,12 +110,10 @@ proposed disposition of FND-002, not an edit already made to the requirements.
 | FR-033 | FR-034 | Family reference consumes checked predicate identity. |
 | FR-030 | FR-040, FR-090 | State/temporal selection consumes exact definitions; temporal edge corrects FND-002. |
 | FR-040, FR-044 | FR-041 | Query/aggregate evaluation requires admitted forms and numeric definedness. |
-| FR-040, D:FR-102 | FR-043 | Graph evaluation requires graph profile and finite typed universe. |
+| FR-040 | FR-043 | Graph evaluation requires graph profile and finite typed universe. |
 | FR-034 | FR-093 | Explicit temporal capture/environment dependency. |
 | FR-034, FR-090, FR-093 | FR-048 | Native temporal binding consumes shared environments and temporal selections. |
 | FR-030, FR-032 | FR-130 | Explicit package-reference dependencies. |
-| D:FR-101 | FR-111 | Correlation consumes producer relationship declarations. |
-| D:FR-102, D:FR-103 | FR-112 | Population/window input consumes producer population and closure. |
 | FR-110, FR-111, FR-112 | FR-035 | Request binder consumes selected observation/correlation/scope inputs. |
 | FR-035 | FR-050 | Explicit protocol subject-binding dependency. |
 | FR-050 | FR-051, FR-052 | Explicit protocol identity/control dependencies. |
@@ -157,7 +145,7 @@ conformance does not require general realizability or local projection.
 ## Topological order and gates
 
 1. Agree owner contracts, domain/digest/window/result seam dispositions and exact
-   successor definitions. Establish D model/configuration, edition/evolution,
+   successor definitions. Establish edition/evolution,
    lexical/value rules, resource/diagnostic constraints and B's result interface.
    This is enablement specification work, not execution of feature evaluators.
 2. Establish shared parsing/resolution, checked predicates, state admission,
@@ -184,6 +172,5 @@ FND-001. SR-401 and SR-406 identify the semantic agreements it must incorporate.
 
 All TCs and integration controls are planned. The three-family baseline is not
 implemented or qualified by this graph, a definition byte census or structural
-Quire validation. D's supplied external FR-100–103 satisfy the contribution
-inventory; FR-070–089 reservations are not a duplicated-file quota. Historical
+Quire validation. FR-070–089 reservations are not a duplicated-file quota. Historical
 native-source and earlier temporal/protocol/observation selections remain intact.

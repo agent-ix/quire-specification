@@ -20,7 +20,7 @@ bindings under the selected temporal profile.
 
 ## Inputs
 
-The located native syntax tree, exact model/profile imports, shared checked
+The located native syntax tree, exact domain package and profile imports, shared checked
 predicates and the declaration's binding requirements.
 
 ## Outputs
@@ -36,7 +36,7 @@ grammar.
 The frontend SHALL keep temporal formula nodes distinct from ordinary Boolean
 values.
 
-The linker SHALL resolve current-input and trigger types to exact model exports.
+The linker SHALL resolve current-input and trigger types to exact declaration keys in the selected domain package.
 
 The linker SHALL restrict the trigger binder to activation/guard/capture scope.
 
@@ -71,6 +71,6 @@ report the unsupported mapping against the retained native subject.
 - [Bridge correspondence](../temporal/FR-095-preserve-native-tl-correspondence.md).
 - [Planned shared matrix](../../composed-foundation/tests.md).
 
-This is A's source integration contribution. E owns temporal meaning; D/F own
-model/observation binding contracts. Exact definition artifacts and complete
+This is A's source integration contribution. E owns temporal meaning; spec artifacts declare
+the domain model and F owns observation binding contracts. Exact definition artifacts and complete
 baseline review remain required before dependent implementation.

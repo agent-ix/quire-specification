@@ -37,15 +37,16 @@ withhold that observation. Distinguish this incomplete evidence from a complete
 observed model value that legitimately has an optional member absent.
 
 Use the template linked without runtime observations in TC-030. First supply
-all required runtime scope selections and their valid producer/native relations.
+all required runtime scope selections and their valid declaration keys.
 Then independently remove a required scope selection, withhold a required record
-under the otherwise valid mapping, and substitute a producer relation for a
-different model/profile with the same display name. The first and third mutants
+under the otherwise valid mapping, and substitute a declaration key from a
+different domain package with the same display name. The first and third mutants
 refuse binding; the second remains incomplete evidence. Prior static success
 cannot discharge any missing runtime prerequisite or authorize an override.
 
 For one concrete runtime subject, mutate the authority identity, revision,
-digest, subject kind and producer-local object bytes one at a time. Remove and
+digest, subject kind, subject declaration key and local object identity bytes
+one at a time. Remove and
 empty each member, reuse the unchanged complete key with incompatible binding
 relationships, permute a finite subject collection, and change only display,
 locus, payload, trace, timestamp, arrival position and transport status.
@@ -62,7 +63,7 @@ byte source digest.
 
 ## Expected Results
 
-Declared relationships and workflow identities survive binding. Substitutions refuse, scope changes remain visible in request identity, and unavailable membership cannot produce aggregate success. Concrete producer/observation representations come from D/F's reviewed contracts, not a duplicated test model.
+Declared relationships and workflow identities survive binding. Substitutions refuse, scope changes remain visible in request identity, and unavailable membership cannot produce aggregate success. Subject kinds and relationships come from the checked package's domain declarations and observation representations from F's reviewed contract, not a duplicated test model.
 
 Compatible explicit role sharing is admitted; missing, duplicate and mismatched
 role mappings refuse. Runtime configuration changes remain identified and cannot

@@ -30,7 +30,8 @@ Native Quire remains the only editable clause language; external forms are outpu
 mappings and TL remains internal infrastructure.
 
 Historical state definition/fixture identities remain preserved. The original
-minimum-only numeric and producer-owned field-presence decisions remain visible.
+minimum-only numeric decision remains visible. Field presence is declared in
+spec artifacts ([AD-006](../../spec/assurance/AD-006-model-graph-state-contracts.md)).
 The accepted [architecture boundary](../../spec/assurance/AD-001-composed-native-language.md)
 and [language charter](../../spec/assurance/AD-003-native-quire-language-charter.md)
 fix subsystem and identity roles. The associated semantic requirements retain

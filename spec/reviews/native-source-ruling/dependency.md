@@ -9,7 +9,7 @@ review_set: all
 ## Summary
 
 The proposal can be reviewed now. Definition adoption and affected compiler
-admission depend on the explicit remaining semantic decisions, not a new #54 reader.
+admission depend on the explicit remaining semantic decisions.
 
 ## Findings
 
@@ -27,7 +27,6 @@ admission depend on the explicit remaining semantic decisions, not a new #54 rea
 
 Order: preserved historical definitions → completed replacement contract →
 adopted FR-001 selection → FR-019 compiler enforcement → consumer qualification.
-No cycle exists. FCD #95 precedes representing independent member presence;
-explicit source refusal remains possible where that distinction is unsupported.
-The decision does not block unrelated native engineering or authorize A to edit
-the producer. Wider backend/temporal capabilities remain their owners' work.
+No cycle exists. Explicit source refusal remains possible where independent
+member presence is unsupported. The decision does not block unrelated native
+engineering. Wider backend/temporal capabilities remain their owners' work.

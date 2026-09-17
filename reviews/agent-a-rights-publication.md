@@ -36,7 +36,6 @@ Private proposal, 2026-09-07. Contributes to E01/E04; does not close either.
 | Future native compiler/evaluator/tests | No implementation added by this packet | Proposed `AGPL-3.0-only`, exact notice/owner decision required before source |
 | Existing contract IR/runtime/codegen | Inspected first-party manifests/notices retain `MIT OR Apache-2.0`; no source copied | Preserve existing grants; later exact dependency closure audit |
 | Existing Quire | Inspected `AGPL-3.0-or-later`; no implementation/template copied | Preserve existing grant; adapter combination reviewed at actual dependency pin |
-| Filament declarations/kernel/generated files | Existing `AGPL-3.0-only`; interface shapes inspected, generated code and fixture contents not copied | No relicensing or vendoring; public schema/artifact release needs its owner's review |
 | OCL/SysML/KerML/FRET tools/material | No parser, grammar, normative text or examples adopted | Separate version/license/mapping qualification before any later use |
 | Validation environment | Installed Python 3, jsonschema 4.26.0, referencing 0.37.0 used only for local inspection where applicable | Not bundled or adopted as compiler runtime dependencies |
 
@@ -59,7 +58,6 @@ inventory; never expose this repository's private history.
 |---|---|
 | Standalone semantics | Profile and source/identity/snapshot proposals supplied; normative review and full FS03/FS05 rules remain |
 | Runtime independence | No private runtime dependency adopted; real compiler/package clean-consumer run still required |
-| Public model boundary | Existing producer contract inspected; independently accessible licensed model schemas/artifacts still require clearance |
 | Normative examples | Synthetic expected cases supplied; independent executable consumer and conformance qualification still required |
 | Unknown/invalid/incomplete behavior | Explicit draft rules and adverse fixture expectations; actual reader/parser/evaluator runs still required |
 | Artifact rights | File-class inventory and exact proposals above; owner selection and later included dependency/notice review still required |

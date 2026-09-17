@@ -49,7 +49,7 @@ No new production API, untraced behavior or disguised stub was found.
 Complete Task-002's private reviewable handoff. B then adopts the exact versioned
 contract and runs its strict raw-input, role/identity and report controls under
 IT-003-SC-03. The existing duplicate-key helper behavior cannot satisfy that
-reader gate. No universal Filament model reader or open IR #54 is a prerequisite.
+reader gate.
 
 The standard-wide historical gaps remain outside this bounded amendment.
 These findings are completion limits, not a request to duplicate B's reader

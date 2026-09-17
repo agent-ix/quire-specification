@@ -25,14 +25,14 @@ between a selected snapshot and a selected event-time window."
 | Snapshot identity | FR-112 Description | Retained among "population and snapshot/window identities". |
 | Distinctness from a window | FR-112 Behavior | A snapshot is not a window; the two are separately selected subjects. |
 | Subject participation | FR-112-AC-1 | "Changing a declared snapshot/window or membership rule changes the assessment subject." |
-| Producer and membership selection | FR-112 Behavior | Exact producer interface and FR-264 rule used for this capture. |
+| Declaration and membership selection | FR-112 Description | Exact population declaration key and FR-264 rule used for this capture. |
 | Capture assertion | FR-112 Behavior | Exact immutable capture identity/revision/digest, not an inferred timestamp. |
 | Admitted observations | FR-112 Behavior | Sorted distinct bounded FR-296 observation identities. |
 
 ## Identity and comparison
 
 - **Identity kind** — *derived* under FR-112 from the versioned RFC 8785
-  preimage containing producer selection, membership-rule identity, capture
+  preimage containing declaration selection, membership-rule identity, capture
   assertion and admitted observation identities.
 - **Key** — the complete `sha256-jcs:` snapshot identity. Equality is over the
   key and nothing else; display name, source path, span, message text, locale

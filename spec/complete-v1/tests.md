@@ -773,6 +773,12 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-152 | FR-152-AC-7 | TC-197 | planned |
 | FR-153 | FR-153-AC-6 | TC-198 | planned |
 | FR-153 | FR-153-AC-7 | TC-198 | planned |
+| FR-154 | FR-154-AC-1 | TC-234 | planned |
+| FR-154 | FR-154-AC-2 | TC-234 | planned |
+| FR-154 | FR-154-AC-3 | TC-234 | planned |
+| FR-154 | FR-154-AC-4 | TC-234 | planned |
+| FR-154 | FR-154-AC-5 | TC-234 | planned |
+| FR-154 | FR-154-AC-6 | TC-234 | planned |
 | FR-204 | FR-204-AC-5 | TC-198 | planned |
 | FR-272 | FR-272-AC-6 | TC-196 | planned |
 | FR-321 | FR-321-AC-4 | TC-195 | planned |
@@ -951,12 +957,13 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-231 | Complete V1 qualification coverage | Property | P0 | FR-311 | 🚧 Planned |
 | TC-232 | Counterexample lineage integrity | Property | P0 | FR-312 | 🚧 Planned |
 | TC-233 | Published checked-package and scalar contract vectors | Property | P0 | FR-322 | 🚧 Planned |
+| TC-234 | Domain package model intake | Property | P0 | FR-154 | 🚧 Planned |
 
 ## Integration Test Matrix
 
 | Integration ID | Purpose | Target Project | Type | Test Cases | Coverage Status |
 | --- | --- | --- | --- | --- | --- |
-| IT-070 | Model producer to native package | Filament + quire-spec-language | library | TC-195, TC-196, TC-197, TC-198 | planned |
+| IT-070 | Artifact bundle to checked package | quire-rs extraction + FCD extraction-frontend + quire-spec-language | library | TC-195, TC-196, TC-197, TC-198, TC-234 | planned |
 | IT-071 | Composed domain execution | quire-integration + domain runtimes | library | TC-209, TC-210 | planned |
 | IT-072 | Revisioned observation repair | quire-observation + temporal/protocol | library | TC-199, TC-204 | planned |
 | IT-073 | Protocol analysis suite | quire-spec-language + quire-protocol | library | TC-205–TC-208 | planned |

@@ -8,7 +8,7 @@ to agreement and review before implementation.
 
 ## Declarations and authority
 
-A protocol's `over` input is a producer-declared workflow view at an explicitly
+A protocol's `over` input is a declared workflow view at an explicitly
 bound observation/decision instant. Its activation and initial captures follow
 the common rules: an authoritative origin or an explicitly bound semantic
 trigger, with immutable captures and no ambient `self`, `result` or pre-state.
@@ -30,10 +30,9 @@ declarations. Related shipment/payment/refund instances are supplied through
 declared typed relationships; they need not share a transport trace identifier.
 
 Role/interface, relationship, operation and payload positions resolve different
-model declaration kinds. The baseline-1.2 model work in FCD PR #97 is inspected
-draft input, not an accepted implementation dependency. D still supplies the
-exact standard-facing model/configuration contracts; the compiler refuses a
-kind mismatch or unresolved producer capability instead of inventing a model.
+model declaration kinds. The imported domain package supplies those
+declarations, as the spec's artifacts declare them; the compiler refuses a kind
+mismatch or a name absent from the domain package instead of inventing a model.
 
 Channel `delivery [a,b]` declares inclusive per-send delivery cardinality with
 `0 <= a <= b` and finite b. `[0,3]` permits loss and bounded duplicate delivery;

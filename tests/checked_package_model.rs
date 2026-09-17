@@ -20,6 +20,8 @@ const MODEL_RULE_MANIFEST: &str =
     include_str!("../proposals/quire-v1/definitions/model-complete-rules.json");
 const EFFECTIVE_DECLARATION_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/model-effective-declaration-vectors.json");
+const EFFECTIVE_DECLARATION_SCHEMA: &str =
+    include_str!("../proposals/checked-package-v2/model-effective-declaration.schema.json");
 
 /// One compile-time byte source for a complete-model qualification-catalog
 /// entry, named by its repository-relative path.
@@ -28,7 +30,7 @@ struct ModelArtifact {
     bytes: &'static [u8],
 }
 
-const MODEL_ARTIFACTS: [ModelArtifact; 16] = [
+const MODEL_ARTIFACTS: [ModelArtifact; 17] = [
     ModelArtifact {
         path: "proposals/quire-v1/definitions/model-complete.md",
         bytes: include_bytes!("../proposals/quire-v1/definitions/model-complete.md"),
@@ -98,6 +100,10 @@ const MODEL_ARTIFACTS: [ModelArtifact; 16] = [
         bytes: include_bytes!(
             "../spec/functional/type-model/FR-153-query-closed-model-environments.md"
         ),
+    },
+    ModelArtifact {
+        path: "spec/functional/type-model/FR-154-admit-domain-package-model.md",
+        bytes: include_bytes!("../spec/functional/type-model/FR-154-admit-domain-package-model.md"),
     },
     ModelArtifact {
         path: "spec/objects/foundation/FR-204-declared-object-identity.md",
@@ -408,7 +414,7 @@ fn tc_195_complete_model_rule_manifest_binds_every_rule_byte_for_byte() {
 fn tc_195_effective_declaration_vectors_recompute_their_digests() {
     let file = parsed_fixture(EFFECTIVE_DECLARATION_VECTORS);
     let vectors = file["vectors"].as_array().expect("vectors is an array");
-    assert_eq!(vectors.len(), 16);
+    assert_eq!(vectors.len(), 18);
     let mut names = BTreeSet::new();
     for vector in vectors {
         let name = str_at(vector, "/name");
@@ -424,7 +430,7 @@ fn tc_195_effective_declaration_vectors_recompute_their_digests() {
         .iter()
         .map(|vector| str_at(vector, "/sha256"))
         .collect::<BTreeSet<_>>();
-    for view in ["n01-view", "n02-view"] {
+    for view in ["n01-view", "n02-view", "n01v2-view"] {
         let vector = vectors
             .iter()
             .find(|vector| vector["name"].as_str() == Some(view))
@@ -507,4 +513,96 @@ fn tc_195_complete_model_lock_refuses_relabelled_catalog_identities() {
         .expect("qualification catalog is an array")
         .pop();
     assert_eq!(catalog_identity_mismatches(&omitted, &expected).len(), 1);
+}
+
+fn vector_named<'a>(vectors: &'a [Value], name: &str) -> &'a Value {
+    vectors
+        .iter()
+        .find(|vector| vector["name"].as_str() == Some(name))
+        .unwrap_or_else(|| panic!("{name} is published"))
+}
+
+/// Every declaration key a declaration preimage names: its original and each
+/// derivation fact input.
+fn declaration_keys(preimage: &Value) -> Vec<&Value> {
+    let mut keys = vec![&preimage["original"]];
+    for fact in preimage["derivation"]
+        .as_array()
+        .expect("derivation is an array")
+    {
+        keys.extend(fact["inputs"].as_array().expect("fact inputs are an array"));
+    }
+    keys
+}
+
+#[trace("TC-234", "FR-154-AC-4")]
+#[test]
+fn tc_234_declaration_keys_name_the_domain_package_and_ir_node_only() {
+    let schema = jsonschema::validator_for(&parsed_fixture(EFFECTIVE_DECLARATION_SCHEMA))
+        .expect("effective declaration schema is valid");
+    let file = parsed_fixture(EFFECTIVE_DECLARATION_VECTORS);
+    let vectors = file["vectors"].as_array().expect("vectors is an array");
+    for vector in vectors {
+        let name = str_at(vector, "/name");
+        schema
+            .validate(&vector["preimage"])
+            .unwrap_or_else(|error| panic!("{name} preimage is schema-valid: {error}"));
+    }
+
+    for view in ["n01-view", "n02-view", "n01v2-view"] {
+        let preimage = &vector_named(vectors, view)["preimage"];
+        let package = str_at(preimage, "/model_selection/identity");
+        assert_eq!(
+            str_at(preimage, "/model_selection/digest_domain"),
+            "sha256-jcs"
+        );
+        for declaration in preimage["declarations"]
+            .as_array()
+            .expect("view declarations are an array")
+        {
+            for key in declaration_keys(&declaration["preimage"]) {
+                assert_eq!(
+                    str_at(key, "/package"),
+                    package,
+                    "{view} keys name its package"
+                );
+                assert!(
+                    str_at(key, "/node").starts_with("ix://"),
+                    "{view} keys name an IR node identity"
+                );
+                assert!(
+                    key.get("digest").is_none(),
+                    "a declaration key carries no digest"
+                );
+            }
+        }
+    }
+
+    let version_1 = &vector_named(vectors, "n01-view")["preimage"];
+    let version_2 = &vector_named(vectors, "n01v2-view")["preimage"];
+    assert_eq!(
+        version_1["model_selection"]["identity"], version_2["model_selection"]["identity"],
+        "both views select one domain package identity"
+    );
+    assert_eq!(str_at(version_1, "/model_selection/version"), "1");
+    assert_eq!(str_at(version_2, "/model_selection/version"), "2");
+    assert_eq!(
+        version_1["declarations"], version_2["declarations"],
+        "equal nodes under a new package version keep every declaration key and effective declaration"
+    );
+    assert_ne!(
+        str_at(version_1, "/model_selection/digest"),
+        str_at(version_2, "/model_selection/digest"),
+        "the two versions are selected by different digests"
+    );
+    assert_ne!(
+        str_at(vector_named(vectors, "n01-view"), "/sha256"),
+        str_at(vector_named(vectors, "n01v2-view"), "/sha256"),
+        "the effective view binds the ModelSelection"
+    );
+    assert_ne!(
+        str_at(vector_named(vectors, "n01-universe"), "/sha256"),
+        str_at(vector_named(vectors, "n01v2-universe"), "/sha256"),
+        "the object universe binds the ModelSelection"
+    );
 }

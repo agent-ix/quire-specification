@@ -22,7 +22,7 @@ the open profile, ADR and standard-artifact decisions recorded here.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | medium | The proposed profile and ADR direction required owner adoption before FS01 acceptance. | Decisions requested after review; Q11 |
-| FND-002 | medium | Shared model identity, presence and finite-reference contracts remained external prerequisites. | A-D2; Q4; Q6 |
+| FND-002 | medium | Finite-reference contracts remained open prerequisites. | Q4; Q6 |
 
 2026-09-07. Private review record. Thread
 `01a07e35-9c55-79a1-9524-6969be34378f`; branch
@@ -43,7 +43,6 @@ or dependency closure. The original language/core assignment remains active.
 | quire-spec-language | `509197f`, private shell; AGPL direction but exact SPDX not selected; no open PR at claim |
 | quire-contract-ir | `decc99a430a0894de489102dbab04e83d1fb804f`, also remote main; FR-023 and `src/binding.rs` implement `BoundPackage::from_json_bytes`; #50 is still open |
 | quire-rs | `8b8020e665c61a11bc74f3f23b84617c80c0c442`, also remote main; #388 closed; `src/semantic/clauses.rs` preserves bodies, classifies namespaced tags unchecked, and reports fence line/column spans |
-| filament-core-data | Local `65ea7fa6d4805752fff82d2cc2b7100eefe60bb8`; remote `3b75e01c652ba00bb07c352ff5467419401e792b` fetched without changing working files. Existing ownership, semantic-core grammar and IR schema unchanged across those commits. New kernel bundle/provenance inspected; it is not the #36 domain-extraction frontend. PR #84 owns other compiler fixes |
 
 Live FS01 has parent specification#1 and no blocked-by edges; board20 and board21
 are private. FS02, FS03, FS05, LC01–LC05, E01, E04 and CO01 were open with no
@@ -68,19 +67,8 @@ Key source facts are inspection evidence, not newly run compiler tests:
   records are acyclic. Its Boolean/numeric/collection representation is broader
   than the inspected codegen/analyzer support. LC04 must qualify actual backends.
 - `quire-contract-ir/spec/decisions/ADR-0053-formal-clause-source-profiles.md`
-  remains **proposed**, owner `kreneskyp`. It recommends an OCL-based subset and
-  total Boolean lowering; this native profile proposes a different language and
-  guard-aware semantics. Only the owner can amend/accept the ADR.
-- Filament's `docs/semantic-data-system/ownership.md` assigns semantic IR,
-  kernel/package/profile/mapping contracts to Filament core, domain vocabulary to
-  modules, extraction to Quire and runtime state to consumers. `FieldDecl`,
-  `TypeRef`, `ClauseRef` and `OperationDecl` already exist in semantic-core.
-- Filament #36 and IR #54 remain open. The ConfigVersion `min 1` example supplies
-  no finite maximum, and optional recursive references cannot be encoded as
-  existing inline contract records. These remain design/delivery gates.
-- Filament's new kernel bundle lists targets; observed files/provenance do not
-  establish every target is produced or published. Its publication gate remains
-  untaken. Do not copy a generated kernel as a second authoritative type model.
+  is owned by `kreneskyp`. Formal clauses are authored in native Quire with
+  guard-aware semantics. Only the owner can amend the ADR.
 
 ## Decisions requested after review
 
@@ -97,7 +85,6 @@ carry this disposition for B/C.
 | ID | Concrete proposal | Decision owner and gate |
 |---|---|---|
 | A-D1 | Review `proposals/state-core/profile.md` as the native first-profile direction, including explicit finite references, short-circuit implication, `if`/`let`, integer rules and deferred extensions. Experimental tag `ix:native`; defer public branding to release | Program/standard owner; FS01 acceptance, LC01 admitted grammar |
-| A-D2 | Keep Filament semantic IR v1.1 and module declaration IDs authoritative; build one coordinated #54 typed-model adapter consumed by the native compiler; reuse #50 binder. Reference projection needs a separately versioned, qualified extension | Standard and Filament/IR owners; FS02/FS03/FS05, LC02/LC04 |
 | A-D3 | Use `AGPL-3.0-only` for newly authored compiler/evaluator code; preserve imported grants. For new standard prose, grammar/schema/vector artifacts, use the W3C Software and Document License, 2023 version, subject to owner/legal notice review | Owner under E04; exact implementation terms before code; standard artifact selection before public release and reuse |
 | A-D4 | Hold publication. Review the state-core file set as a future independently usable packet; require actual clean consumer, backend and rights evidence before a later explicit promotion | Owner under E01; no current public release authorized |
 | A-D5 | Confirm source/package fixture representation with Agent B before shared schema freeze; method/plan/result envelopes remain B's | Agent B + shared-model owner; FS02/FS05 shared boundary acceptance |
@@ -111,11 +98,9 @@ approval of the technical profile does not decide them.
 
 | Existing owner/ticket | Scoped amendment proposal | Acceptance dependency and disposition |
 |---|---|---|
-| IR #52/#53, ADR-0053 | Add a native-language direction and separate external-language mappings; retain old OCL proposal as proposed history. Replace neither language tags nor existing source identities automatically | A-D1 and owner ADR review; prepared, not publicly posted |
+| IR #52/#53, ADR-0053 | Select native Quire as the clause language and separate external-language output mappings. Replace neither language tags nor existing source identities automatically | A-D1 and owner ADR review; prepared, not publicly posted |
 | IR #50 / FR-023 | Acknowledge existing binder implementation; adapt native lowering to the existing public API and complete-clause rule. Keep old digest/profile bytes | LC02 + reviewed typed-model adapter; no duplicate binder |
-| IR #54 | Retain one typed-model binding owner, specify semantic URI to IR symbol/source-revision mappings, finite reference representation and explicit finite numeric bounds | Filament #36 and profile/owner decisions; currently gated |
-| Filament #36 / #78 | Consume actual bundle extraction/semantic-core contracts, carry clauses opaquely; do not implement a second lifting frontend in language | C coordinates existing governed delivery owner; inspect current PRs before any narrow change |
-| IR #55/#56/#57 | Keep OCL/SysML/FRET as separately qualified mapping/frontends with loss/refusal and pinned tool evidence | FS06 and existing owners; no TL edits here |
+| IR #55/#56/#57 | Keep OCL/SysML/FRET as separately qualified output mappings with loss/refusal and pinned tool evidence | FS06 and existing owners; no TL edits here |
 | IR #58 | Preserve all source obligations and source implication activation identity; agree language facts with B's method/result contract | Agent B contribution + reviewed source-to-probe correspondence |
 | Quire #388 / `clauses.rs` | Extraction exists. A proposes compiler source-map input; C coordinates consumer/extraction adapter regression fixtures | Agree LC05 split with C before edits; no expression compiler in Markdown extractor |
 | TL #24 | Preserve pinned capability/profile/API contract; request summary only if state-to-temporal integration is selected | TL owner; temporal/clock work remains outside A |
@@ -159,8 +144,8 @@ those method and result expectations.
    controls, reproducible workspace, lint/test/fixture CI. Proposed baseline is
    the installed Rust 1.94.1; pin the exact toolchain when implementing. Parser
    starts with std only; any new dependency gets a pinned rights inventory.
-2. FS02/FS03/FS05 reviewed contracts and existing #54/#36 coordination; LC02
-   deterministic linking, source-revision bridge and strict linked packages.
+2. FS02/FS03/FS05 reviewed contracts; LC02 deterministic linking,
+   source-revision bridge and strict linked packages.
 3. LC03 independent finite-population evaluator, guards, collections, frames,
    identity closure and adversarial/resource cases with independent expectations.
 4. LC04 reviewed projection changes and reference/generated parity on each
@@ -168,18 +153,14 @@ those method and result expectations.
 5. LC05 original source → model → linked package → actual generated execution
    with standalone clean consumer and Quire extraction integration.
 
-No step is completed by this review record. No compiler, hosted CI, formal proof,
-model-producer implementation or released profile has run as part of this packet.
+No step is completed by this review record. No compiler, hosted CI, formal proof
+or released profile has run as part of this packet.
 The packet checks establish fixture integrity and precise expectations only.
 
 ## Packet validation actually run
 
 - Six fixture file checksums matched; the source digest and expression byte span
   matched the original UTF-8 source, including line/scalar-column coordinates.
-- The two newly authored `semanticCoreFieldDecl` examples validate against the
-  existing semantic-core 0.1.0 JSON Schema, using installed jsonschema 4.26.0 and
-  referencing 0.37.0 with a local schema registry. This is schema shape evidence,
-  not cross-field reader or typed-model adapter qualification.
 - Review JSON decoded with duplicate members rejected; candidate/review local
   Markdown links resolved; `git diff --check` passed.
 - Candidate text was checked for private research URLs, local workspace paths
@@ -194,7 +175,7 @@ the source parsed, linked, evaluated or produced the expected diagnostic cases.
 The next review pass found that the original concrete subject covered only a
 current-state invariant. Added two operation subjects (`CanAttemptUpdate` pre
 and `VersionUnchanged` post), exact whole-clause and expression digests/spans,
-one original semantic-core OperationDecl example, and seven invocation cases.
+and seven invocation cases.
 The existing current subject now also carries its clause-region digest/span.
 
 The cases distinguish an allowed change that violates the postcondition from a
@@ -210,8 +191,7 @@ Source/profile editions are unchanged and old fixture bytes remain at their
 original commit. Shared production wire/profile freeze still requires B/C review.
 
 Checks run on this revision: nine fixture file checksums; three source subjects
-and six region digest/span/coordinate checks; two FieldDecl and one OperationDecl
-examples against existing semantic-core schemas; seven invocation references
+and six region digest/span/coordinate checks; seven invocation references
 against their three declared frame bindings; six local Markdown links; and
 `git diff --check`. No parser/linker/evaluator was executed.
 

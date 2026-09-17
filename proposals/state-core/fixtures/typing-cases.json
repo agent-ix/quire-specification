@@ -5,12 +5,12 @@
     "identity": "agent-a-fs03",
     "version": "1-draft",
     "path": "../state-semantics.md",
-    "digest": "sha256:d9eb316752ac45d7984b355a054cd279ef9749164a92c7f61fbf621fe280588b"
+    "digest": "sha256:414cfe6423624a21a84116d7d27c63c5b8aa44fce06d68f5e2e6cb0a73b414cd"
   },
   "baseProfile": {
     "identity": "state-finite",
     "version": "0-draft",
-    "definitionDigest": "sha256:8bc68a3c7e46d26c7191dfbb662d4d63070af9fedc9ce985fb1885f7efe29429",
+    "definitionDigest": "sha256:42a0999c9d653742cf505d95f080cb5b6f24a3c147bbc37aa1c8bb69541f5252",
     "refinementsAccepted": false
   },
   "modelBinding": {

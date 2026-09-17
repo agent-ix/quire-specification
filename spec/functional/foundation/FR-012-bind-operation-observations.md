@@ -58,8 +58,7 @@ Both snapshots satisfy the declared population and frame validation contracts.
 | Postcondition | expectedVersion = pre(expectedVersion) | true | FR-012-AC-7 |
 
 The corresponding precondition containing pre(expectedVersion) refuses at
-linking under FR-012-AC-8, so it has no completed Boolean. Existing zero-parameter
-producer fixtures do not establish this parameterized operation contract.
+linking under FR-012-AC-8, so it has no completed Boolean.
 
 ## Dependencies
 

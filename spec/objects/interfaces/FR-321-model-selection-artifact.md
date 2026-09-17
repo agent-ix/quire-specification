@@ -14,36 +14,37 @@ relationships:
 
 ## Description
 
-When a model export is selected for native linking, the producer SHALL use the immutable ModelSelectionArtifact contract below rather than an untyped map, display string or implementation-local structure.
+When a package imports a domain package for native linking, the checker SHALL use the immutable ModelSelectionArtifact contract below rather than an untyped map, display string or implementation-local structure.
 
 ## Properties
 
-- `contract_version` — the FCD FR-126 `interfaceVersion` and `wireSchema` of the admitted producer document; under the selected `quire.model.complete/v1` definition the interface version is exactly `1.3.0`.
-- `authority` — the correspondence `ProducerObject.authority` (FCD FR-116) of the export's records.
-- `export` — the FCD FR-117 static bundle key: bundle `identity`, namespaced `revision` and `digest` with domain `filament-canonical-json-1`.
-- `closure` — ordered declarations, types, relationships and dependencies admitted by the producer, including every generalization, subsetting and redefinition record and the bundle's `generalizationClosure`, `subsettingClosure` and `redefinitionClosure` header statements.
-- `correspondence` — the producer supplies original declarations and their edges; QSL derives the effective declarations and ordered derivation paths as the `quire.model.effective-view/v1` identity defined by the selected `quire.model.complete/v1` definition. The producer never supplies an effective identity.
-- `feature_report` — exact available, absent and unsupported producer capabilities.
+- `identity` — the domain package identity, such as `acme/orders`, named by the source `model` declaration.
+- `version` — the domain package version named by the source `model` declaration.
+- `digest_domain` — exactly `sha256-jcs`.
+- `digest` — the lowercase 64-hex SHA-256 over the RFC 8785 JCS bytes of the domain package.
+- `declarations` — the original declarations that QSL model intake (FR-154) builds from the package's IR nodes. Each is keyed by `(domain package identity, IR node identity, sha256-jcs)` and keeps its source artifact and span.
+- `effective_view` — the `quire.model.effective-view/v1` identity that QSL derives from those declarations under the selected `quire.model.complete/v1` definition.
 
 ## Identity and validation
 
-The key is (`authority`, `export`, `contract_version`). Equal local labels or equal declaration bytes under another authority are unequal.
-An unknown `interfaceVersion` refuses `unknown_wire`/`unsupported-wire`. Unknown contract versions, missing required properties, duplicate keys,
-out-of-domain values and non-canonical encodings refuse before consumption.
+The key is (`identity`, `version`, `digest_domain`, `digest`). Two selections with equal identity and version and different digests are unequal.
+A digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`. Package bytes whose digest differs refuse `stale_dependency`/`byte-digest-mismatch`.
+Missing required properties, duplicate keys, out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-321-AC-1 | Every effective declaration names its original declaration and ordered derivation path. | Analysis |
-| FR-321-AC-2 | An unknown producer version, stale digest or incomplete closure refuses before name binding. | Analysis |
-| FR-321-AC-3 | A consumer cannot mint, rename or merge producer identities. | Analysis |
-| FR-321-AC-4 | The key components map exactly to the FCD correspondence authority, FR-117 bundle key and FR-126 interface version, and an effective identity is derived only in a QSL domain. | Test (TC-195) |
+| FR-321-AC-2 | A stale digest, a wrong digest domain or a malformed declaration refuses before name binding. | Analysis |
+| FR-321-AC-3 | A declaration key is fixed by the domain package identity and the IR node identity; the checker never mints, renames or merges one. | Analysis |
+| FR-321-AC-4 | The key components map exactly to the domain package identity, version and `sha256-jcs` digest, and an effective identity is derived only in a QSL domain. | Test (TC-195) |
 
 ## Dependencies
 
 - [interface-003](./interface-003-model-selection.md) owns the operation boundary.
 - FR-150 owns the behavior that produces or consumes this value.
+- FR-154 owns model intake.
 
 ## Status
 

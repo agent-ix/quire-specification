@@ -12,7 +12,7 @@ relationships:
 
 ## Description
 
-When a canonical identity is derived, the producer shall use the exact selected domain algorithm.
+When a canonical identity is derived, the deriving tool shall use the exact selected domain algorithm.
 
 ## Inputs
 
@@ -24,7 +24,7 @@ Canonical bytes/digest or an unsupported-canonicalization refusal.
 
 ## Behavior
 
-Existing contract-IR canonical and bound identities, Filament fingerprints and raw artifact digests remain distinct. Source-free typed-expression identity requires a typed derivation. JCS cannot silently replace exact-integer/scalar-order IR canonicalization. Current native syntax has no qualified canonical semantic identity.
+Existing contract-IR canonical and bound identities, domain package `sha256-jcs` digests, package fingerprints and raw artifact digests remain distinct. Source-free typed-expression identity requires a typed derivation. JCS cannot silently replace exact-integer/scalar-order IR canonicalization. Current native syntax has no qualified canonical semantic identity.
 
 ## Acceptance Criteria
 
@@ -38,7 +38,7 @@ Existing contract-IR canonical and bound identities, Filament fingerprints and r
 ## Dependencies
 
 - [US-004](../../usecase/US-004-retain-evidence-meaning.md) supplies the user need.
-- [Detailed contract or implementation evidence](../../../proposals/state-core/interchange.md) supplies the scoped context.
+- [FR-201](../../objects/foundation/FR-201-canonical-identity-domain.md) lists the identity domain vocabulary.
 
 ## Status
 

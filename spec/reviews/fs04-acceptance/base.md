@@ -32,7 +32,6 @@ target-specific output profile.
 | --- | --- | --- | --- |
 | FND-001 | high | Resolved: owning definitions and requirements still described the reviewed closure as Draft/Proposed despite merged compiler, observation, qcir and TL-owner boundaries. FS04 now accepts the semantic contract without promoting executable evidence. | FR-090–095; FR-110–116; NFR-040/050–052 |
 | FND-002 | high | Resolved: Plan-002 treated completed observation/progress and Boolean-projection foundations as active/blocked. Their exact owner revisions are now recorded as done; qcir #71 is the sole active composition item and the final conformance gate remains pending. | Plan-002 Task-003/004/006/007; QObs PR #19; qcir PRs #67/#68/#77 |
-| FND-003 | medium | Resolved: the observation contract cited Producer PR #97 / `1d901d7`; the accepted producer-interface revision is PR #99 / `4042882`. | observation-contract; Producer #95/PR #99 |
 | FND-004 | medium | Resolved: generic observation-result delivery could be confused with target-specific serialization. FR-116 and the mapping contract now reserve concrete oracle/runtime/report profiles to FS06. | FR-116; observation-output-mapping-contract; FS06 #7 |
 
 ## Acceptance check

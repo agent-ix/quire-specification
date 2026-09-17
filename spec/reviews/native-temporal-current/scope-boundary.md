@@ -3,7 +3,7 @@ id: SR-306
 title: "Scope-boundary review of native temporal lifecycle correspondence"
 type: SpecReview
 analysis: scope-boundary
-scope: "E temporal ownership across A/B/D/F, contract IR, TL, Quoin and Engineering Assurance"
+scope: "E temporal ownership across A/B/F, contract IR, TL, Quoin and Engineering Assurance"
 review_set: all
 evaluated_revision: "2f347b8"
 review_date: "2026-09-10"
@@ -32,7 +32,6 @@ result schema, IR projection, evidence retention or TL release authority.
 | Owner | Responsibility |
 | --- | --- |
 | A | Sole native grammar, exact profile definitions/digests and adoption. |
-| D | Model, reference, relationship and population identity. |
 | E | Temporal profiles, truth, captures, history, progress/closure interpretation and exact TL correspondence. |
 | B | Shared orthogonal result relation and strict-reader combinations. |
 | F | Observation/progress authority and lossless result-consumer handoff. |

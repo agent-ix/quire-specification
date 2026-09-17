@@ -458,8 +458,8 @@ fn owner_joins_lock(preimage: &Value, lock: &Value) -> bool {
     let Some(owner) = preimage["owner"].as_object() else {
         return preimage["version"].as_str() == Some("quire.enum-member-node/v1");
     };
-    let authority = owner["authority"].as_str();
-    let identity = owner["identity"].as_str();
+    let authority = owner.get("authority").and_then(Value::as_str);
+    let identity = owner.get("identity").and_then(Value::as_str);
     match owner["kind"].as_str() {
         Some("source") => lock["sources"].as_array().is_some_and(|sources| {
             sources.iter().any(|source| {
@@ -481,11 +481,9 @@ fn owner_joins_lock(preimage: &Value, lock: &Value) -> bool {
                     && edition["identity"].as_str() == identity)
         }
         Some("model") => lock["model_selections"].as_array().is_some_and(|models| {
-            models.iter().any(|model| {
-                model["authority"].as_str() == authority
-                    && model["identity"].as_str() == identity
-                    && model["export"].as_str() == owner["export"].as_str()
-            })
+            models
+                .iter()
+                .any(|model| model["identity"].as_str() == identity)
         }),
         _ => false,
     }
@@ -1395,11 +1393,9 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
                 "model selections",
                 "/lock/model_selections",
                 json!([{
-                    "authority": "agent-ix", "identity": "example-compiled-model",
-                    "revision": {"namespace": "git", "value": "1"},
-                    "digest_domain": "quire.compiled-model.bytes/v1",
-                    "digest": "8888888888888888888888888888888888888888888888888888888888888888",
-                    "export": "Example"
+                    "identity": "test/orders", "version": "1",
+                    "digest_domain": "sha256-jcs",
+                    "digest": "8888888888888888888888888888888888888888888888888888888888888888"
                 }]),
             ),
             (
@@ -2380,16 +2376,13 @@ fn tc_233_nominal_preimages_join_semantic_fields_and_dependencies() {
 fn tc_233_owner_to_lock_join_refuses_independently_of_lock_preimage_equality() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
     let model_selection = json!([{
-        "authority": "agent-ix",
-        "identity": "example-compiled-model",
-        "revision": {"namespace": "git", "value": "1"},
-        "digest_domain": "quire.compiled-model.bytes/v1",
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555",
-        "export": "Example"
+        "identity": "test/orders",
+        "version": "1",
+        "digest_domain": "sha256-jcs",
+        "digest": "5555555555555555555555555555555555555555555555555555555555555555"
     }]);
     let model_owner = json!({
-        "kind": "model", "authority": "agent-ix",
-        "identity": "example-compiled-model", "export": "Example"
+        "kind": "model", "identity": "test/orders", "node": "ix://test/orders/Example"
     });
     let cases = [
         (
@@ -2412,18 +2405,9 @@ fn tc_233_owner_to_lock_join_refuses_independently_of_lock_preimage_equality() {
         ),
         (
             "model",
-            model_owner.clone(),
-            Some(model_selection.clone()),
-            (
-                "/model_selections/0/identity",
-                json!("other-compiled-model"),
-            ),
-        ),
-        (
-            "model-export",
             model_owner,
             Some(model_selection),
-            ("/model_selections/0/export", json!("Other")),
+            ("/model_selections/0/identity", json!("test/other")),
         ),
     ];
 
@@ -2468,7 +2452,7 @@ fn tc_233_owner_to_lock_join_refuses_independently_of_lock_preimage_equality() {
         );
         assert!(
             !owner_joins_lock(&unit_preimage(&unjoined), &unjoined["lock"]),
-            "{name} owner no longer joins the lock"
+            "{name} owner does not join the lock"
         );
         assert!(
             !package_nominal_nodes_are_valid(&unjoined),
