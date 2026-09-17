@@ -93,7 +93,7 @@ id `Order` in domain package `acme/orders` has IR node identity
 member name to its owner's identity: field `total` of `Order` is
 `ix://acme/orders/Order/total`. Fields, relationships, operations and clauses
 are the only members. The owner of a part or port and the ends of a connection
-or allocation are reference members and never part of an identity. The
+or allocation are references, not members, and never part of an identity. The
 artifact title is the declaration's
 `displayName`, used for presentation only; it is never part of an identity and
 never resolves a qualified name. Retitling an artifact keeps every declaration
