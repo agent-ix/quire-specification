@@ -72,12 +72,15 @@ package's own identity and version. It runs these checks in order. Each failure 
 Intake then reads each IR node and builds one original declaration per node.
 Nodes are read ascending by declaration key. A node that is not a valid IR
 node of its kind, or a type definition or population node whose artifact id
-is not an object id, is `invalid_model_binding`/`malformed-declaration`. The
+is not an object id (defined under the declaration identity rule below), is `invalid_model_binding`/`malformed-declaration`. The
 refusal retains the IR node identity, the source artifact and the source span
 that the node carries. A supertype, subsets, redefines, relationship-end,
 frame or population member reference that names no node of the package is
 `missing_declaration`/`missing-name` with the same artifact and span. Intake
 reports every such refusal in node order, and then no later phase runs.
+Within one node, every failing check reports in FR-154's table order, the object
+id check first. A reference that names a refused node is not reported again as
+`missing_declaration`/`missing-name`.
 
 A source span is `{artifact, start, end}`. `artifact` is the artifact id, such
 as `Order`. `start` and `end` are zero-based byte offsets in the artifact
@@ -85,8 +88,9 @@ file. The span records where a declaration came from. It appears in
 diagnostics and provenance and is never a key member; the artifact id enters a
 key only as the type's identity segment below.
 
-A model-declaring artifact is an artifact whose type is a spec-objects object
-type, and its artifact id is an object id: ASCII letters, digits and
+A model-declaring artifact is an artifact whose type is an object type of any
+spec-objects module (spec-objects-architecture, spec-objects-business, …), and
+its artifact id is an object id: ASCII letters, digits and
 underscores, starting with a letter (`^[A-Za-z][A-Za-z0-9_]*$`). An object id
 is always a `member-name`, so a clause names every declaration by qualified
 name, such as `M::sys_pump`. Artifact-type ids such as `FR-100` declare no
@@ -365,4 +369,4 @@ digests are the entries in `model-complete-rules.json`.
 | [Declared object identity](../../../spec/objects/foundation/FR-204-declared-object-identity.md) |
 | [Quire meaning id vocabulary](../../../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md) |
 | [Model-selection artifact](../../../spec/objects/interfaces/FR-321-model-selection-artifact.md) |
-| [I03 model selection](../../../spec/objects/interfaces/interface-003-model-selection.md) |
+| [I03 model selection](../../../spec/objects/interfaces/interface_003-model-selection.md) |

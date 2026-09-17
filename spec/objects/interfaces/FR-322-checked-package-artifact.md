@@ -4,7 +4,7 @@ title: "Immutable checked-package artifact"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-004
+  - target: ix://agent-ix/quire-specification/interface_004
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-132
     type: references
@@ -172,7 +172,7 @@ named by TC-217.
 
 ## Dependencies
 
-- [interface-004](./interface-004-checked-package.md) owns the operation boundary.
+- [interface_004](./interface_004-checked-package.md) owns the operation boundary.
 - FR-132 owns the behavior that produces or consumes this value.
 - [FR-195](../../functional/ir-proof/FR-195-lower-complete-contract-ir.md)
   consumes this boundary for exact Contract IR lowering.

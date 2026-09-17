@@ -4,7 +4,7 @@ title: "Observation authority bundle"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-007
+  - target: ix://agent-ix/quire-specification/interface_007
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-160
     type: references
@@ -43,7 +43,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Dependencies
 
-- [interface-007](./interface-007-observation-authority.md) owns the operation boundary.
+- [interface_007](./interface_007-observation-authority.md) owns the operation boundary.
 - FR-160 owns the behavior that produces or consumes this value.
 
 ## Status

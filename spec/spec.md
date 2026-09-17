@@ -568,47 +568,47 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/IT-078
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-001
+  - target: ix://agent-ix/quire-specification/interface_001
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-002
+  - target: ix://agent-ix/quire-specification/interface_002
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-003
+  - target: ix://agent-ix/quire-specification/interface_003
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-004
+  - target: ix://agent-ix/quire-specification/interface_004
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-005
+  - target: ix://agent-ix/quire-specification/interface_005
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-006
+  - target: ix://agent-ix/quire-specification/interface_006
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-007
+  - target: ix://agent-ix/quire-specification/interface_007
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-008
+  - target: ix://agent-ix/quire-specification/interface_008
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-009
+  - target: ix://agent-ix/quire-specification/interface_009
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-010
+  - target: ix://agent-ix/quire-specification/interface_010
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-011
+  - target: ix://agent-ix/quire-specification/interface_011
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-012
+  - target: ix://agent-ix/quire-specification/interface_012
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-013
+  - target: ix://agent-ix/quire-specification/interface_013
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-014
+  - target: ix://agent-ix/quire-specification/interface_014
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-015
+  - target: ix://agent-ix/quire-specification/interface_015
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-016
+  - target: ix://agent-ix/quire-specification/interface_016
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-017
+  - target: ix://agent-ix/quire-specification/interface_017
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-018
+  - target: ix://agent-ix/quire-specification/interface_018
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-019
+  - target: ix://agent-ix/quire-specification/interface_019
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-020
+  - target: ix://agent-ix/quire-specification/interface_020
     type: contains
-  - target: ix://agent-ix/quire-specification/interface-021
+  - target: ix://agent-ix/quire-specification/interface_021
     type: contains
   - target: ix://agent-ix/quire-specification/FR-320
     type: contains

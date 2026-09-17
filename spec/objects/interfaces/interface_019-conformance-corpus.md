@@ -1,5 +1,5 @@
 ---
-id: interface-019
+id: interface_019
 title: "I19 independent conformance corpus and result"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-019] I19 independent conformance corpus and result
+# [interface_019] I19 independent conformance corpus and result
 
 ## Contract
 

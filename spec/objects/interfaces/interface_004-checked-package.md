@@ -1,5 +1,5 @@
 ---
-id: interface-004
+id: interface_004
 title: "I04 immutable checked package"
 type: interface
 relationships:
@@ -9,7 +9,7 @@ relationships:
     type: references
 ---
 
-# [interface-004] I04 immutable checked package
+# [interface_004] I04 immutable checked package
 
 ## Contract
 

@@ -25,7 +25,7 @@ claim product implementation.
 | --- | --- | --- | --- |
 | FND-5701 | high | Resolved: complete syntax was moved from an incomplete design note to a normative incorporated grammar contract. | FR-339; shared-grammar.md |
 | FND-5702 | high | Resolved: value, model, temporal, protocol, runtime, analysis, IR/backend and tooling families now state executable semantic contracts. | FR-140–197; FR-300–312 |
-| FND-5703 | medium | Resolved: all 21 interfaces now bind immutable payload contracts and exact producer/consumer identities. | interface-001–021; FR-320–338 |
+| FND-5703 | medium | Resolved: all 21 interfaces now bind immutable payload contracts and exact producer/consumer identities. | interface_001–021; FR-320–338 |
 | FND-5704 | medium | Resolved: every normative acceptance criterion is represented in a Test Matrix. | TM-009 |
 
 ## Verification

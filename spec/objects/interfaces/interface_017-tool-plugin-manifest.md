@@ -1,5 +1,5 @@
 ---
-id: interface-017
+id: interface_017
 title: "I17 tool and plugin manifest"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-017] I17 tool and plugin manifest
+# [interface_017] I17 tool and plugin manifest
 
 ## Contract
 

@@ -4,7 +4,7 @@ title: "Tool and plugin manifest"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-017
+  - target: ix://agent-ix/quire-specification/interface_017
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-305
     type: references
@@ -43,7 +43,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Dependencies
 
-- [interface-017](./interface-017-tool-plugin-manifest.md) owns the operation boundary.
+- [interface_017](./interface_017-tool-plugin-manifest.md) owns the operation boundary.
 - FR-305 owns the behavior that produces or consumes this value.
 
 ## Status

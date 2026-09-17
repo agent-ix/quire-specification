@@ -4,7 +4,7 @@ title: "Lossless parsed-source artifact"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-002
+  - target: ix://agent-ix/quire-specification/interface_002
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-302
     type: references
@@ -43,7 +43,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Dependencies
 
-- [interface-002](./interface-002-parsed-source.md) owns the operation boundary.
+- [interface_002](./interface_002-parsed-source.md) owns the operation boundary.
 - FR-302 owns the behavior that produces or consumes this value.
 
 ## Status

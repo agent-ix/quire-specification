@@ -1,5 +1,5 @@
 ---
-id: interface-015
+id: interface_015
 title: "I15 verification method result"
 type: interface
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: references
 ---
 
-# [interface-015] I15 verification method result
+# [interface_015] I15 verification method result
 
 ## Contract
 

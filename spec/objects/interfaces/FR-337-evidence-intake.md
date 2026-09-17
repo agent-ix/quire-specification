@@ -4,7 +4,7 @@ title: "Immutable evidence intake record"
 type: FR
 object: value_object
 relationships:
-  - target: ix://agent-ix/quire-specification/interface-020
+  - target: ix://agent-ix/quire-specification/interface_020
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-310
     type: references
@@ -43,7 +43,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Dependencies
 
-- [interface-020](./interface-020-evidence-intake.md) owns the operation boundary.
+- [interface_020](./interface_020-evidence-intake.md) owns the operation boundary.
 - FR-310 owns the behavior that produces or consumes this value.
 
 ## Status
