@@ -104,12 +104,11 @@ The carried-forward rules cover the **state-core** semantic surface in CAP-001 t
 
 - 2026-09-09: created after the native-source-profile ruling. Initial routing: [quire-specification#9](https://github.com/agent-ix/quire-specification/issues/9) maintains this ledger.
 - 2026-09-09: corrected after program-roadmap inspection. State-finite was incorrectly treated as product scope. CAP-011 (temporal), CAP-012 (protocol/choreography), and CAP-013 (profile composition) are now in-scope design work, not deferred features.
-- 2026-09-10: corrected against the initial native Quire v1 composed cycle. CAP-011–013 are recorded as owned: their temporal, protocol/choreography and composition candidates have named A/B/D/E/F owners and remain draft, unaccepted and unimplemented. The CAP index is an approved crosswalk, not a second mandatory ticket taxonomy.
+- 2026-09-10: CAP-011–013 are recorded as owned: their temporal, protocol/choreography and composition candidates have named A/B/D/E/F owners and remain draft, unaccepted and unimplemented. The CAP index is an approved crosswalk, not a second mandatory ticket taxonomy.
 - 2026-09-13: reconciled against standard main `f8b9f9f`, SL release
   `v0.2.0`/`6eccb05`, qcir main `69dc1a3`, TL syntax main `e70f237`,
   protocol main `e53fb55`, observation main `649da78`, and FCD PR #97 merge
-  `1d901d7`. Recorded exact partial delivery and owning-ticket dispositions in
-  place of blanket “unimplemented” statements. This changes no semantic contract.
+  `1d901d7`. Records exact partial delivery and owning-ticket dispositions. This changes no semantic contract.
 - 2026-09-13: FS01 accepts the native Quire charter, `ix:native` composed
   identity hierarchy and language/profile/backend separation. The historical
   `state-finite/0-draft` remains unchanged; the unused `state-finite/1-draft`

@@ -104,7 +104,7 @@ object type's module. Quire gives it meaning.
 | Effect frames | `Modifies:`, `Creates:`, `Deletes:` lines under an operation | `Operation.frame` | Everything outside the frame is unchanged |
 | Invariants | `## Invariants`, one `### <clauseId>` with one `quire` fence | `Clause` with `language: quire` | Checked and evaluated by Quire |
 | Populations | `population` artifact listing member types and extent | Population node | Closed extents for quantification |
-| Systems structure | `part`, `port`, `connection`, `allocation` artifacts (spec-objects-architecture) | Corresponding IR kinds | Parts, ports and connections resolved in the model view |
+| Systems structure | `interface`, `part`, `port`, `connection`, `allocation` artifacts (spec-objects-architecture) | Corresponding IR kinds | Interfaces, parts, ports, connections and allocations resolved in the model view, interfaces first |
 
 Clauses in any language other than `quire` are carried with their span and are
 never evaluated or used as proof obligations.
