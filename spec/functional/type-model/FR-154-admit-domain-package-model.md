@@ -72,6 +72,7 @@ Declaration refusals:
 
 | Failure | Refusal |
 | --- | --- |
+| A type definition's or population node's artifact id does not match `^[A-Za-z][A-Za-z0-9_]*$` | `invalid_model_binding`/`malformed-declaration` |
 | A type definition's or population node's `kind` names no entry of the `constructs` table, or its construct has no `meaning` or a `meaning` that is not a Quire meaning id (FR-208) | `invalid_model_binding`/`malformed-declaration` |
 | An IR node is not valid for its construct's meaning | `invalid_model_binding`/`malformed-declaration` |
 | A supertype, subsets, redefines, relationship end, frame entry or population member names no node of the package | `missing_declaration`/`missing-name` |
@@ -82,6 +83,16 @@ Every declaration refusal retains the IR node identity, the source artifact id
 and the source span `{artifact, start, end}` that the node carries. Intake
 reports every declaration refusal in node order, and then no later phase runs.
 An admission refusal ends intake with no declaration.
+
+A model-declaring artifact is an artifact whose type is a spec-objects object
+type. Its artifact id is an object id: ASCII letters, digits and underscores,
+starting with a letter (`^[A-Za-z][A-Za-z0-9_]*$`). An id such as `entity-001`
+is not an object id, and intake refuses the node it declares
+`invalid_model_binding`/`malformed-declaration`, naming the IR node identity,
+the artifact id and the span. Because every object id is a `member-name`, a
+clause names each declaration by qualified name, such as `M::sys_pump`.
+Artifact-type ids such as `FR-100` declare no model node and are outside this
+rule.
 
 A declaration's IR node identity is its artifact id: a type's identity is
 `ix://<package identity>/<artifact id>`, and a member's identity is its owner's
@@ -118,13 +129,7 @@ Admission checks are decided before the first charge.
 | FR-154-AC-5 | Intake at its exact `normalize.record` bound completes, and the one-less run is incomplete at `normalize.record`. | Test (TC-234) |
 | FR-154-AC-6 | Retitling an artifact leaves every declaration key unchanged. Changing an artifact's id changes the declaration key of the type it declares and of that type's members, leaves every other declaration key unchanged, and a reference to the old key refuses `missing_declaration`/`missing-name`. | Test (TC-234) |
 | FR-154-AC-7 | A type definition or population node whose kind names no construct entry, or whose construct has no Quire meaning id or an id outside FR-208, refuses `invalid_model_binding`/`malformed-declaration` with the IR node identity, the artifact id and the span, and no meaning is inferred from its kind name. | Test (TC-234) |
-
-## Open Questions
-
-- A qualified name segment is a `member-name`, an ASCII word. An artifact id
-  that is not a word, such as the hyphenated `entity-001`, therefore has no
-  qualified-name spelling, and a clause cannot name its declaration. Until
-  this is ruled, fixtures and examples use word artifact ids.
+| FR-154-AC-8 | A type definition or population node declared by an artifact whose id does not match `^[A-Za-z][A-Za-z0-9_]*$`, such as `sys-pump`, refuses `invalid_model_binding`/`malformed-declaration` with the IR node identity, the artifact id and the span, while the artifact id `sys_pump` is admitted and a clause names its declaration `M::sys_pump`. | Test (TC-234) |
 
 ## Dependencies
 
