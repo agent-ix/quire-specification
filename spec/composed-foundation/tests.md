@@ -182,6 +182,7 @@ executable cases.
 | FR-044 | FR-044-AC-5 | TC-044 | 🚧 Planned |
 | FR-044 | FR-044-AC-6 | TC-044 | 🚧 Planned |
 | FR-044 | FR-044-AC-7 | TC-044 | 🚧 Planned |
+| FR-044 | FR-044-AC-8 | TC-192 | planned |
 | FR-045 | FR-045-AC-1 | TC-045 | 🚧 Planned |
 | FR-045 | FR-045-AC-2 | TC-045 | 🚧 Planned |
 | FR-045 | FR-045-AC-3 | TC-045 | 🚧 Planned |
@@ -232,6 +233,7 @@ executable cases.
 | FR-049 | FR-049-AC-11 | TC-171 | 🚧 Planned |
 | FR-049 | FR-049-AC-12 | TC-174 | 🚧 Planned |
 | FR-049 | FR-049-AC-13 | TC-171 | 🚧 Planned |
+| FR-049 | FR-049-AC-14 | TC-202 | planned |
 
 ## Test Case Summary
 

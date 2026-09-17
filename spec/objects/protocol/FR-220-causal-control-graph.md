@@ -16,6 +16,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-288
     type: references
+  - target: ix://agent-ix/quire-specification/FR-171
+    type: references
 ---
 # FR-220: Causal control graph
 
@@ -96,7 +98,8 @@ maximum".
 | FR-220-AC-1 | Every edge in a constructed graph traces to an authored sequence, branch, join, progress or termination declaration in the protocol body. | Analysis |
 | FR-220-AC-2 | Reordering two equal-time observations changes no edge of the graph. | Analysis |
 | FR-220-AC-3 | No key order declared by this artifact or by any object it contains is cited as evidence of a causal edge. | Inspection |
-| FR-220-AC-4 | A missing join input, a causal cycle, a zero-progress loop and an absent finite iteration maximum each refuse admission independently. | Analysis |
+| FR-220-AC-4 | A missing join input, a causal cycle and a zero-progress loop each refuse admission independently. Where the bounded control profile is selected, an absent finite iteration maximum also refuses admission independently. | Analysis |
+| FR-220-AC-8 | Where a complete-V1 choreography facet is selected, the graph records a loop's invariant and well-founded variant as its termination premise in place of a finite iteration maximum, as FR-171 specifies. | Analysis |
 | FR-220-AC-5 | The graph key equals its complete FR-288 qualified protocol-definition identity; there is no independent flattened or position-only graph fingerprint. | Analysis |
 | FR-220-AC-6 | Every typed semantic-content mutation requires another FR-288, and different complete graph content offered under one FR-288 refuses as an identity contradiction. | Test (TC-052) |
 | FR-220-AC-7 | External path, locus, build and rendering changes do not independently extend the graph key, while a changed authored source byte changes the raw-source digest already inside FR-288. | Analysis |

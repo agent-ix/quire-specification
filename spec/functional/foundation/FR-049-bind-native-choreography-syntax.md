@@ -33,6 +33,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-288
     type: references
+  - target: ix://agent-ix/quire-specification/FR-171
+    type: references
 ---
 ## Description
 
@@ -83,7 +85,8 @@ lexicographic key order as causal order.
 | --- | --- | --- |
 | FR-049-AC-1 | Role, channel and relationship positions bind their required declaration kinds; substituting a payload type, endpoint or scalar identity refuses at its source location. | Test (TC-170) |
 | FR-049-AC-2 | Send, receive, delivery, operation attempt, effect and compensation references remain distinct; a duplicate receipt cannot mint another effect node. | Test (TC-170) |
-| FR-049-AC-3 | Sequence, owned choice, all-branch join and bounded repeat produce the declared causal structure; missing/duplicate join labels and unbounded or zero-progress repetitions refuse. | Test (TC-171) |
+| FR-049-AC-3 | Sequence, owned choice, all-branch join and bounded repeat produce the declared causal structure; missing or duplicate join labels and zero-progress repetitions refuse. Where the bounded control profile is selected, a repetition without a finite iteration maximum refuses. | Test (TC-171) |
+| FR-049-AC-14 | Where a complete-V1 choreography facet is selected, a repetition carrying a preserved invariant and a well-founded variant produces the declared causal structure with no authored finite iteration maximum, as FR-171 specifies. | Test (TC-202) |
 | FR-049-AC-4 | A required predecessor value is available to its successor; sibling-before-join, optional-branch escape, iteration-result escape and await-result-on-timeout references refuse. | Test (TC-171) |
 | FR-049-AC-5 | A successful forward effect creates one template registration with registration captures; the first admitted eligible trigger creates one activation with separate immutable captures. | Test (TC-172) |
 | FR-049-AC-6 | Retry bounds count the initial attempt, and exact commit/recovery references survive linking; compensation before the effect, after commit, or based only on transport success cannot satisfy recovery. | Test (TC-172) |
