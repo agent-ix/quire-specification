@@ -40,8 +40,9 @@ and may be read only through an explicitly selected V1 compatibility path.
   that preimage. Its digest value is an unprefixed 64-lowercase-hex string and
   its domain and algorithm are explicit fields.
 - `lock` — exact source-document, edition, ordered profile, dependency,
-  compiled-model selection and required-feature identities. Every byte digest
-  carries its own declared domain; a raw source/definition/model digest cannot
+  domain package selection and required-feature identities. Every byte digest
+  carries its own declared domain; a raw source/definition digest or a domain
+  package `sha256-jcs` digest cannot
   substitute for a semantic package digest or for another artifact role.
 - `semantic_graph` — one `quire.checked-semantic-graph/v2` closed tagged-node
   union. Its current tags are `scalar_type`, `composite_type`,
@@ -73,7 +74,7 @@ and may be read only through an explicitly selected V1 compatibility path.
   overlap, while regions belonging to different occurrences may nest or
   overlap. A path, display name or search result is not a source identity.
 - `capability_report` — one closed disposition for every required feature and
-  selected producer/model capability. Backend/provider installation is absent.
+  selected model capability. Backend/provider installation is absent.
 - `diagnostics` — catalog-qualified, stage-qualified typed causes and exact
   available loci. Message text is not a classification or identity component.
 
@@ -156,7 +157,7 @@ named by TC-217.
 | FR-322-AC-2 | Changing backend capability availability cannot change package admission or package identity. | Analysis |
 | FR-322-AC-3 | Changing a meaning-affecting lock member changes the package identity. | Analysis |
 | FR-322-AC-4 | The public reader refuses unknown versions, malformed/duplicate members, stale dependencies, cross-domain digest substitutions, unknown required capabilities and non-canonical bytes before exposing an admitted package. | Test (TC-217) |
-| FR-322-AC-5 | The canonical positive, boundary, refusal and mutation vectors distinguish raw source, definition and compiled-model byte digests from checked-semantic and generated-IR identities, even when digest bytes are equal. | Test (TC-217) |
+| FR-322-AC-5 | The canonical positive, boundary, refusal and mutation vectors distinguish raw source and definition byte digests and domain package `sha256-jcs` digests from checked-semantic and generated-IR identities, even when digest bytes are equal. | Test (TC-217) |
 | FR-322-AC-6 | Exact selected limits admit the boundary vector; one-over-byte, depth, node, edge, locus, diagnostic and work inputs return incomplete resource accounting and no partial checked package. | Test (TC-217) |
 | FR-322-AC-7 | A consumer obtains the complete closed semantic graph through the public schema and never through a native parser/CST/package implementation type. | Inspection |
 | FR-322-AC-8 | Two conformers derive the same package id from the specified JCS identity preimage; changing an excluded raw artifact/source-map/presentation or reader-limit member does not change it, while changing any named preimage member does. | Test (TC-217) |

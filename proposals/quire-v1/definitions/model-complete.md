@@ -28,180 +28,167 @@ Diagnostics are interpreted by `quire.native.diagnostics/v1` at revision
 `1-draft.3` or later; that catalog is selected by the response, not by this
 root.
 
-This root supersedes, for a package that selects it, the "No overload
-resolution or dynamic dispatch is introduced" sentence of the shared grammar and
-the FS03 state-contract statement that inheritance, redefinition and dynamic
-dispatch lie outside the state profile. Every other FS03 rule is retained.
+A package that selects this root has dynamic dispatch, inheritance and
+redefinition as this definition states. Every other FS03 state-contract rule
+applies unchanged.
 
-## Producer dependency
+## Model input
 
-This root consumes Filament producer interface `1.3.0`, the additive minor
-requested by agent-ix/filament-core-data#143 under FCD FR-126. It is a named
-dependency: this definition does not edit or implement the producer. The
-member names below are the consumer's exact reading. A `1.3.0` document whose
-spelling or member kind differs is `refused { code: unknown_wire, cause:
-unsupported-wire }` until this definition is revised.
+The model is declared in the spec's own artifacts (AD-006). One artifact
+declares one domain object, such as `Order`, and its module object type, such
+as `entity`, fixes the artifact's shape. quire-rs extracts the declarations.
+The FCD extraction-frontend lifts the extracted declarations of one spec
+package into one semantic IR document, the **domain package**. It is
+serialized with RFC 8785 JCS and fingerprinted with `sha256-jcs`.
 
-Every record named below carries a producer key: the correspondence
-`ProducerObject.authority` (FCD FR-116), `identity`, the namespaced `revision`
-(FCD FR-113, namespace `filament-core-data/producer-object-revision-1`) and a
-`digest` selection whose domain is exactly `filament-canonical-json-1`. It also
-carries its `locus`. The consumer never mints, renames, merges or reconstructs
-a producer key.
+A package imports a domain package with a `model` declaration:
 
-| Capability | Record or inline member | Members read | Exact meaning |
-| --- | --- | --- | --- |
-| `generalization` | separate generalization record | `specificTypeIdentity`, `generalTypeIdentity` | The specific object type export directly conforms to the general object type export. |
-| `subsetting` | separate subsetting record | `owningTypeIdentity`, `subsettingFeatureIdentity`, `subsettedFeatureIdentity` | In the owning type, the values of the subsetting feature are a subset of the values of the subsetted feature. |
-| `redefinition` | separate redefinition record | `owningTypeIdentity`, `redefiningFeatureIdentity`, `redefinedFeatureIdentity` | In the owning type and its descendants, the redefining feature replaces the one inherited redefined feature. |
-| `operation-signature` | inline `signature` on an `operation` member export | `receiverTypeIdentity`; ordered `parameters`, each `{parameterIdentity, typeIdentity, multiplicity}`; `result`, either `{typeIdentity, multiplicity}` or JSON `null` for no result; `effect`, exactly `{fieldWrites, creates, deletes}`, each an array of export identities | The receiver is parameter 0. The effect set is the operation's authored frame: the field exports it may write, and the object types it may create and delete. |
-| `interface-signature` | inline `interfaceFeatures` on an `object` type export | ordered array of `{featureIdentity, featureKind}`, `featureKind` exactly `field` or `operation` | The object type is an Interface with exactly these ordered features. An object type export without this member is not an Interface. |
-| `port-direction` | inline `direction` on an endpoint record (FCD FR-114) | exactly `in`, `out` or `inout` | The flow direction of the endpoint used as a Port. It is never inferred from a role or from relationship direction (FCD FR-128). |
-| `typed-multiplicity` | inline member `multiplicity`, one JSON object, on: a field member export; a component record; an endpoint record; each of a relationship record's two end objects; each `parameters` entry of an operation `signature`; and a non-null `result` of an operation `signature` | exactly the four members `lower`, a JSON integer in `0..=u64::MAX`; `upper`, such an integer or exactly the string `unbounded`; `ordered`, a JSON boolean; and `unique`, a JSON boolean | Inclusive bounds. `unbounded` is greater than every finite value. `ordered` and `unique` are members of that same `multiplicity` object, never separate records or members of the carrying record. `lower > upper` is `refused { code: invalid_model_binding, cause: unpreserved-model-meaning }`. |
-| `part-signature` | two inline members of a component record: `typeIdentity`, a type export identity string, and that record's `multiplicity` object (the `typed-multiplicity` shape) | the declared part type export and its typed multiplicity | The component is a Part of its `owningTypeIdentity` composite with that declared type. It is not a separate record. |
-| `subtype-closure` | bundle header member `generalizationClosure` | exactly `closed` or `open` | `closed` states that the bundle's generalization records are every generalization among the selected model's object types. |
-| `subsetting-closure` | bundle header member `subsettingClosure` | exactly `closed` or `open` | `closed` states that the bundle's subsetting records are every subsetting among the selected model's features. |
-| `redefinition-closure` | bundle header member `redefinitionClosure` | exactly `closed` or `open` | `closed` states that the bundle's redefinition records are every redefinition among the selected model's features. |
+```text
+model Orders = "acme/orders" version "1" digest "<64 lowercase hex digits>";
+```
 
-Three requirements go beyond the seven items listed in
-agent-ix/filament-core-data#143, and the producer request must carry them
-before a `1.3.0` bundle can bind: the `part-signature` inline members of a
-component record; the `ordered` and `unique` members of every `multiplicity`
-object; and the `subsettingClosure` and `redefinitionClosure` header members.
+The import is a ModelSelection (FR-321):
+`{identity, version, digest_domain: "sha256-jcs", digest}`. It is part of the
+package identity. QSL model intake admits the domain package and builds the
+Quire model declarations from its IR nodes. Quire owns the meaning of every
+declaration. Clauses name a declaration by qualified name, such as
+`Orders::Order`.
 
-A `1.3.0` bundle whose required record or inline member is absent returns
-`refused { code: invalid_model_binding, cause: unsupplied-producer-record }`
-with payload `{capability, required: "1.3.0", supplied: "1.3.0", item}`, where
-`item` is the producer key of the record that lacks it (the FR-117 bundle key
-for an absent header member). Absence of a separate generalization, subsetting
-or redefinition record is not detectable. It means no such generalization only
-under `generalizationClosure: closed`, no such subsetting only under
-`subsettingClosure: closed`, and no such redefinition only under
-`redefinitionClosure: closed`; each header member speaks only for its own
-record kind. Under `generalizationClosure: open`, every query that needs the
-subtype set is incomplete, as FR-151 and FR-153 state. Under
-`subsettingClosure: open`, rule `quire.model.normalize.subset/v1` refuses
-`refused { code: invalid_model_binding, cause: unclosed-subsettings }`, and
-under `redefinitionClosure: open`, rule `quire.model.normalize.redefine/v1`
-refuses `refused { code: invalid_model_binding, cause: unclosed-redefinitions }`;
-each retains the ModelSelection and the header value, is decided from the
-header before phase 4's first charge, and leaves no effective view.
+### Intake
 
-`part-signature` is inline on components, so a component lacking it is decoded
-and reported by rule `quire.model.systems.kind-mapping/v1`, not by decoding.
+Rule `quire.model.normalize.intake/v1` admits one domain package. It runs
+these checks in order. Each failure ends intake with no declaration.
 
-### Producer interface 1.2.0 input
-
-A package selecting this root and bound to a producer interface `1.2.0` bundle
-receives no effective view and no derived substitute: a `1.2.0` bundle is never
-read as having no generalizations, no redefinitions, no signatures or
-single-valued multiplicities. After decoding, the checker returns one
-`refused { code: invalid_model_binding, cause: unsupplied-producer-record }`
-with payload `{capability, required: "1.3.0", supplied: "1.2.0", item}` for
-each row below and each item, ordered by capability in table order, then by the
-record kinds in the order the row lists them, then by item producer key. Every such refusal is reported, and no later phase runs.
-
-| Capability | One refusal per item |
+| Check | Refusal |
 | --- | --- |
-| `subtype-closure` | the bundle (its FCD FR-117 key) |
-| `subsetting-closure` | the bundle (its FCD FR-117 key) |
-| `redefinition-closure` | the bundle (its FCD FR-117 key) |
-| `generalization` | object type export |
-| `redefinition` | field or operation member export of an object type |
-| `subsetting` | field member export of an object type |
-| `operation-signature` | operation member export |
-| `interface-signature` | object type export |
-| `port-direction` | endpoint record |
-| `typed-multiplicity` | field member export, component record, endpoint record, then relationship record |
-| `part-signature` | component record |
+| The package bytes for the named identity and version are supplied | `missing_import`/`missing-selection` with the ModelSelection |
+| The selection's digest domain is exactly `sha256-jcs` | `stale_dependency`/`digest-domain-mismatch` with the expected and actual domain |
+| SHA-256 over the package's JCS bytes equals the selected digest | `stale_dependency`/`byte-digest-mismatch` with the expected and actual digest |
+| The package's own identity and version equal the selection | `invalid_model_binding`/`wrong-model-selection` with both |
 
-A document declaring any other `interfaceVersion` is `refused { code:
-unknown_wire, cause: unsupported-wire }` before any charge. Packages that do not
-select this root keep their FS03 `quire.state.*` meaning over `1.2.0` bundles.
+Intake then reads each IR node and builds one original declaration per node.
+Nodes are read ascending by declaration key. A node that is not a valid IR
+node of its kind is `invalid_model_binding`/`malformed-declaration`. The
+refusal retains the IR node identity, the source artifact and the source span
+that the node carries. A supertype, subsets, redefines, relationship-end,
+frame or population member reference that names no node of the package is
+`missing_declaration`/`missing-name` with the same artifact and span. Intake
+reports every such refusal in node order, and then no later phase runs.
 
-## Model selection and correspondence bundle
+A source span is `{artifact, start, end}`. `artifact` is the artifact id, such
+as `entity-001`. `start` and `end` are zero-based byte offsets in the artifact
+file.
 
-A ModelSelection key (FR-321) is `(authority, export, contract_version)`:
-`authority` is the correspondence `ProducerObject.authority`; `export` is the
-admitted FCD FR-117 static bundle key `(identity, revision, digest)`; and
-`contract_version` is `(interfaceVersion, wireSchema)` (FCD FR-126). A
-correspondence bundle is exactly one admitted FR-117 static bundle joined to one
-such ModelSelection key. Two exports whose ModelSelection keys differ belong to
-different correspondence bundles.
+### Declaration kinds
+
+| Declaration | IR node | Owner |
+| --- | --- | --- |
+| Object type | `TypeDefinition` | none |
+| Field | `TypeDefinition.fields[]` entry | its type |
+| Relationship | `TypeDefinition.relationships[]` entry | its type |
+| Operation | `Operation` | its receiver type |
+| Invariant | `Clause` with `language: quire` | its type or operation |
+| Population | Population node | none |
+| Part, Port, Interface, Connection, Allocation | the IR node of that kind | as in the systems table below |
+
+A clause in any other language is kept with its span. It is never evaluated
+and never a proof obligation.
+
+## Model feature rules
+
+Rule `quire.model.features/v1` checks each declaration after intake. Each row
+is checked for every declaration of its kind, ascending by declaration key.
+Every refusal names the IR node identity, the artifact and the span.
+
+| Feature | Rule | Refusal |
+| --- | --- | --- |
+| Identity | Each `TypeDefinition.identity` is the artifact id path of its artifact. Two nodes with one identity are not allowed. A title rename never changes an identity. | `invalid_model_binding`/`conflicting-binding` |
+| Supertypes | Every `supertypes[]` entry names an object type of the package. The supertype graph is acyclic; phase 3 checks it. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`specialization-cycle` in phase 3 |
+| Abstract | An abstract type has no direct instances. A population member whose most-specific type is abstract is refused. Dispatch covers only concrete subtypes. | `invalid_runtime_input`/`abstract-instance` |
+| Fields | `typeRef` names a type of the package or a native value type. `multiplicity` has `lower <= upper`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`unpreserved-model-meaning` |
+| Presence | `presence` is exactly `required` or `optional`. A `required` field is present in every object. An `optional` field may be absent. Absent and empty stay distinct: lower bound `0` makes an empty collection legal and never makes a field optional. | `invalid_model_binding`/`malformed-declaration`; `invalid_runtime_input`/`missing-member` |
+| Subsets | Every `subsets[]` entry names a field of the owning type or of a supertype. | `missing_declaration`/`missing-name` |
+| Redefines | `redefines` names a field or operation of the package. Phase 4 checks that the target is inherited by the owning type and that no two members of one type redefine one target. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`redefinition-target` in phase 4 |
+| Relationships | Each end names an object type of the package. Each end has a role and a multiplicity with `lower <= upper`. `direction` is exactly `source-to-target`, `target-to-source`, `bidirectional` or `undirected`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`unpreserved-model-meaning` |
+| Frames | `Operation.frame` has exactly `modifies`, `creates` and `deletes`. Each `modifies` entry names a field or relationship. Each `creates` or `deletes` entry names an object type. | `missing_declaration`/`missing-name` |
+| Populations | Each member type names an object type. `extent` is exactly `closed` or `open`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration` |
+| Systems kinds | Each part, port, interface, connection and allocation node meets the systems-model kind rules below. | as below |
+
+Multiplicity is `{lower, upper, ordered, unique}`. `lower` is an integer in
+`0..=u64::MAX`. `upper` is such an integer or `unbounded`, which is greater
+than every finite value. `ordered` and `unique` are booleans.
 
 ## Identity domains
 
-An original declaration identity is the producer key above. QSL derives the
-following identities in its own domains. Their exact preimage shapes are
+An original declaration key is `{package, node, digest_domain: "sha256-jcs"}`:
+the domain package identity, the IR node identity and the fixed digest domain.
+QSL derives the following identities in its own domains. Their exact preimage
+shapes are
 [`model-effective-declaration.schema.json`](../../checked-package-v2/model-effective-declaration.schema.json)
 and their known vectors are
 [`model-effective-declaration-vectors.json`](../../checked-package-v2/model-effective-declaration-vectors.json).
 Each identity is SHA-256 over the RFC 8785 JCS bytes of its schema-valid
 preimage, written as `{domain, digest}` with a lowercase 64-hex digest. Each
-domain string differs from every producer digest domain, from
-`quire.checked-semantic-node/v1` and from every other QSL domain, so no QSL
-identity can equal a producer identity or an I04 node key, even with equal
-digest bytes.
+domain string differs from `sha256-jcs`, from `quire.checked-semantic-node/v1`
+and from every other QSL domain, so no QSL identity can equal a domain package
+digest or an I04 node key, even with equal digest bytes.
 
 | Domain | Preimage | Identifies |
 | --- | --- | --- |
 | `quire.model.effective-declaration/v1` | `{version, owner_effective_type, original, derivation}` | One effective declaration: an effective type (`owner_effective_type` is `null`) or an effective member of an effective type. |
 | `quire.model.effective-view/v1` | `{version, model_selection, rules, declarations}` | One complete effective view of one ModelSelection under one rule manifest. |
-| `quire.model.object-universe/v1` | `{version, model_selection, root_types}` | The model-level object universe export shared by a connected generalization component. |
+| `quire.model.object-universe/v1` | `{version, model_selection, root_types}` | The object universe shared by a connected generalization component. |
 
-An effective declaration identity binds only producer keys and derivation
-facts; it does not bind the ModelSelection. Equal original records under two
-ModelSelections therefore yield equal effective declaration identities (the
+A declaration key carries no digest. An effective declaration identity binds
+declaration keys and derivation facts only. Two versions of one domain package
+with equal nodes therefore yield equal effective declaration identities (the
 vectors `n01-type-A` and `n02-type-A`), while their effective views and object
 universes differ. Every use that must separate selections pairs the effective
-declaration identity with the ModelSelection key or with an object universe
+declaration identity with the ModelSelection or with an object universe
 identity, which binds the selection.
 
+Declaration keys compare by `package`, then `node`, as UTF-8 bytes, a proper
+prefix first.
+
 The effective member key is `(owner effective type identity, original
-declaration producer key)`. Paths that reach the same original declaration
-collapse to one effective member that retains a derivation fact for every path.
-Two different original declarations never collapse, whatever their names or
+declaration key)`. Paths that reach the same original declaration collapse to
+one effective member that retains a derivation fact for every path. Two
+different original declarations never collapse, whatever their names or
 shapes.
 
 `derivation` is the ordered array of the declaration's own facts. Each fact is
 `{ordinal, rule, inputs}`: `rule` is `{identity, revision}` from the manifest's
-`normalization_rules`; `inputs` is the ordered array of producer keys the fact
-consumed (generalization, subsetting or redefinition record keys along a path,
-from the specific end, followed by the original declaration key); and
-`ordinal` is the fact's zero-based decimal-string position in the array. Facts
-are ordered by phase, then by `inputs` compared element by element, each
-producer key compared by `authority`, `identity`, `revision.namespace`,
-`revision.value`, `digest.domain` and `digest.sha256` as UTF-8 bytes, a proper
-prefix first.
+`normalization_rules`; `inputs` is the ordered array of declaration keys the
+fact consumed; and `ordinal` is the fact's zero-based decimal-string position
+in the array. Facts are ordered by phase, then by `inputs` compared element by
+element in declaration key order, a proper prefix first.
 
 The effective view's `declarations` is the array of `{effective_id, preimage}`
 for every effective declaration, ascending by the `effective_id` digest hex.
-Replaying normalization from the same original records and rule manifest
+Replaying normalization from the same domain package and rule manifest
 reproduces the effective view byte for byte; replay equality is equality of
 the `quire.model.effective-view/v1` identity. An I04 checked package carries it
-as a `correspondence` node with semantic form `model_correspondence`; this
-amendment adds no member to the V2 wire schema.
+as a `correspondence` node with semantic form `model_correspondence`.
 
 ### Object universe
 
 The object universe of an object type `T` is the connected component of `T` in
-the admitted generalization graph restricted to object types. Its identity is
-`quire.model.object-universe/v1` over the ModelSelection key and the ascending
-array of effective type identities in that component for which no
-generalization record names the type as its specific type. A population is a membership view inside a universe,
-never a universe. FCD `modelIdentity` names the ModelSelection; FCD
-`populationIdentity` names the population binding and never contributes to a
-universe identity. Every type that conforms to `T` has `T`'s universe.
+the supertype graph restricted to object types. Its identity is
+`quire.model.object-universe/v1` over the ModelSelection and the ascending
+array of effective type identities in that component that have no supertype.
+A population is a membership view inside a universe, never a universe. Its
+declaration key never contributes to a universe identity. Every type that
+conforms to `T` has `T`'s universe.
 
 ### Reference identity key
 
 A `Reference<T>` value's FR-204 triple is `(universe, type, object)`:
 
 - `universe` is the object universe identity of the referenced object's type;
-- `type` is the effective type identity of the object's most-specific type, the
-  population member's `typeIdentity` (FCD FR-121) mapped through the effective
-  view, never the static type `T`;
-- `object` is the exact UTF-8 bytes of the member's `objectIdentity`, with no
+- `type` is the effective type identity of the object's most-specific type,
+  the runtime member's declaration key mapped through the effective view,
+  never the static type `T`;
+- `object` is the exact UTF-8 bytes of the member's object identity, with no
   parsing, trimming or normalization (FR-035).
 
 The canonical key compares `universe`, then `type`, then `object`, each by its
@@ -209,93 +196,87 @@ FR-204 key bytes, as FR-144 states: the key bytes of an identity component are
 its UTF-8 domain string immediately followed by its 32 digest bytes, compared
 as one byte string, and the key bytes of `object` are its exact UTF-8 bytes.
 Every comparison is unsigned bytewise lexicographic, with a proper prefix
-first. The vectors file publishes key-order
-vectors. `Reference<T>` is a static type only: an upcast never changes the
-triple.
+first. The vectors file publishes key-order vectors. `Reference<T>` is a static
+type only: an upcast never changes the triple.
 
 ## Normalization rules
 
 Each manifest `normalization_rules` entry names a rule identity, revision,
 `stage` (`normalization`, `conformance`, `dispatch`, `systems` or
 `environment`), `phase` (an integer for the `normalization` stage, otherwise
-`null`) and the artifact that defines it. Normalization applies the manifest's `normalization_rules` in phase order. No
-rule declares an override relation. Every refusal lists each contributing
-producer key and derivation path in effective-member order.
+`null`) and the artifact that defines it. Normalization applies the manifest's
+`normalization_rules` in phase order. No rule declares an override relation.
+Every refusal lists each contributing declaration key and derivation path in
+effective-member order.
 
 | Phase | Rule | Derivation |
 | --- | --- | --- |
-| 1 | `quire.model.normalize.decode/v1` | Decode each record under the admitted `interfaceVersion`. No derivation fact. |
-| 2 | `quire.model.normalize.qualify/v1` | One fact per original declaration and owner, with inputs `[original]`: an object type export (owner `null`); a field or operation member export, owned by its owning type; a component record, owned by its `owningTypeIdentity`; an endpoint record, owned by the owning type of its `owningComponentIdentity` component; and a relationship record, owned by each distinct end-owner type of its two ends, source end first. |
-| 3 | `quire.model.normalize.inherit/v1` | For each type `T` and each generalization path `T -> ... -> A`: one fact on `T` with inputs `[path records..., A]`; then, for each member `m` whose original owner is `A`, one fact on the effective member `(T, m)` with inputs `[path records..., m]`. |
-| 4 | `quire.model.normalize.subset/v1` | For each subsetting record reaching `T` (owning type `T` or an ancestor of `T`): one fact on `(T, subsetting feature)` with inputs `[path records..., record, subsetted feature]`. |
-| 4 | `quire.model.normalize.redefine/v1` | For each redefinition record reaching `T`: one fact on `(T, redefining feature)` and one on `(T, redefined feature)`, each with inputs `[path records..., record, redefined feature]`. The redefined member stays in the view and is hidden from name resolution, lookup and dispatch candidacy. When several non-conflicting records redefine one member reaching `T`, only the redefining feature of the most derived redefining owner is exposed; every other redefining feature of that member keeps its facts and is hidden in `T` the same way. |
-| 5 | `quire.model.normalize.canonicalize/v1` | Compute every effective identity and the effective view. No derivation fact; ordering never changes a producer identity or resolves ambiguity. |
+| 1 | `quire.model.normalize.intake/v1` | Admit the domain package and build one original declaration per IR node, then apply `quire.model.features/v1`. No derivation fact. |
+| 2 | `quire.model.normalize.qualify/v1` | One fact per original declaration and owner, with inputs `[declaration]`: an object type (owner `null`); a field, relationship or operation, owned by its type; a part, owned by its owning type; a port, owned by the owning type of its part; and a connection or allocation, owned by the end-owner type of each end, source end first. |
+| 3 | `quire.model.normalize.inherit/v1` | For each type `T` and each supertype path `T -> P1 -> ... -> A`: one fact on `T` with inputs `[P1, ..., A]`; then, for each member `m` whose owner is `A`, one fact on the effective member `(T, m)` with inputs `[P1, ..., A, m]`. |
+| 4 | `quire.model.normalize.subset/v1` | For each field `s` whose `subsets[]` names `t`, where the owner of `s` is `T` or a supertype of `T`: one fact on `(T, s)` with inputs `[path types..., s, t]`. |
+| 4 | `quire.model.normalize.redefine/v1` | For each member `r` whose `redefines` names `t`, where the owner of `r` is `T` or a supertype of `T`: one fact on `(T, r)` and one on `(T, t)`, each with inputs `[path types..., r, t]`. The redefined member stays in the view and is hidden from name resolution, lookup and dispatch candidacy. When several non-conflicting members redefine one member reaching `T`, only the redefining member of the most derived owner is exposed; every other redefining member keeps its facts and is hidden in `T` the same way. |
+| 5 | `quire.model.normalize.canonicalize/v1` | Compute every effective identity and the effective view. No derivation fact; ordering never changes a declaration key or resolves ambiguity. |
 
-The *element owner* of a producer element is: the type itself for an object
-type export; the owning type for a field or operation member export; the
-`owningTypeIdentity` for a component; and, for an endpoint, the element owner
-of its `owningComponentIdentity` component. The *end-owner type* of a
-relationship end is the element owner of the element its `typeIdentity` names.
-A relationship end `e` is an end of effective type `T` exactly when `T` has the
-effective member for the relationship derived from the end-owner type of the
-opposite end; `r.name` over `Reference<T>` navigates to `e` when `name` is `e`'s
-role. The effective declaration of a Connection or Allocation, as returned by a
-binder request, is the effective member owned by the end-owner type of its
-source end.
+`path types` is the list of supertypes from the specific type `T` to the owner,
+excluding `T`. It is empty when `T` is the owner.
+
+The *element owner* of a declaration is: the type itself for an object type;
+the owning type for a field, relationship or operation; the owning type for a
+part; and, for a port, the element owner of its part. The *end-owner type* of
+a connection or allocation end is the element owner of the declaration that
+the end names. A relationship end `e` is an end of effective type `T` exactly
+when `T` has the effective member for the relationship; `r.name` over
+`Reference<T>` navigates to `e` when `name` is `e`'s role. The effective
+declaration of a Connection or Allocation, as returned by a binder request, is
+the effective member owned by the end-owner type of its source end.
 
 A phase 3 extension that would revisit a type already on the current path
 closes a cycle. Each cycle is `refused { code: invalid_model_binding, cause:
-specialization-cycle }` exactly once, keyed by the set of its generalization
-records: it is reported at the first extension, in `normalize.cycle-check`
-charge order, that closes it, and a later extension closing a cycle with the
-same record set is charged but not reported again. The refusal lists the
-cycle's records in cycle order (path order from the revisited type), rotated
-to start at the least record in producer key order. A redefinition whose target is
-not a member inherited by its owning type, or a redefining feature named by two
-redefinition records with different targets, is `refused { code:
-invalid_model_binding, cause: redefinition-target }` listing the redefinition
-records. Two phase 4 redefinitions of one member reaching `T` conflict unless
-one redefining owner is a proper descendant of every other redefining owner; a
-conflict is `refused { code: invalid_model_binding, cause: derivation-conflict }`
-with both derivation paths, and no effective member is exposed for either.
+specialization-cycle }` exactly once, keyed by the set of its supertype edges:
+it is reported at the first extension, in `normalize.cycle-check` charge order,
+that closes it, and a later extension closing a cycle with the same edge set is
+charged but not reported again. The refusal lists the cycle's type keys in
+cycle order (path order from the revisited type), rotated to start at the least
+key. A redefinition whose target is not a member inherited by its owning type,
+or two members of one type that redefine one target, is
+`refused { code: invalid_model_binding, cause: redefinition-target }` listing
+every such redefining member. Two phase 4 redefinitions of one member reaching `T`
+conflict unless one redefining owner is a proper descendant of every other
+redefining owner; a conflict is `refused { code: invalid_model_binding, cause:
+derivation-conflict }` with both derivation paths, and no effective member is
+exposed for either.
 
 ## Systems-model kind mapping
 
-Rule `quire.model.systems.kind-mapping/v1` maps producer records to exactly one
-systems kind. Kinds are disjoint.
+Rule `quire.model.systems.kind-mapping/v1` maps each systems IR node to exactly
+one systems kind by its IR kind. Kinds are disjoint.
 
-| Kind | Producer record | Owner and type |
+| Kind | IR node | Owner and type |
 | --- | --- | --- |
-| Part | FCD FR-114 component record with `part-signature` | owning composite = the effective type of `owningTypeIdentity`; declared type = `typeIdentity`; typed multiplicity |
-| Port | FCD FR-114 endpoint record with `port-direction`, whose `owningComponentIdentity` is a Part | owning Part; interface type = the endpoint `typeIdentity`, which must be an Interface; endpoint typed multiplicity |
-| Interface | `object` type export with `interface-signature` | ordered feature signatures |
-| Connection | FCD FR-115 relationship record whose two ends both name endpoint records that are Ports and whose `semantics.category` is not exactly the bytes `allocation` | effective member owned by the source end-owner type; source and target Port identities |
-| Allocation | FCD FR-115 relationship record whose `semantics.category` is exactly the bytes `allocation` | effective member owned by the source end-owner type; source element = the identity named by the source end's `typeIdentity`, which must be a Part (component), a Port (endpoint) or an operation member export; target element = the identity named by the target end's `typeIdentity`, which must be a Part |
+| Part | `part` | owning composite = the effective owning type; declared type; typed multiplicity |
+| Port | `port`, whose owner is a Part | owning Part; direction `in`, `out` or `inout`; interface type, which must be an Interface; typed multiplicity |
+| Interface | `interface` | ordered feature signatures, each a field or an operation |
+| Connection | `connection`, whose two ends both name Ports | effective member owned by the source end-owner type; source and target Port keys; declared `direction` |
+| Allocation | `allocation` | effective member owned by the source end-owner type; source element, which must be a Part, a Port or an operation; target element, which must be a Part |
 
-The rule maps component records, then endpoint records, then relationship
-records, each group ascending by producer key, so an endpoint's kind follows
-its component's and a relationship's follows its ends'. It reports, for each
-record, every applicable refusal: a component lacking `part-signature` is
-`refused { code: invalid_model_binding, cause: unsupplied-producer-record }`
-with capability `part-signature` and maps to no kind; an endpoint with
-`port-direction` whose owning component is not a Part is `refused { code:
+The rule maps parts, then ports, then connections, then allocations, each group
+ascending by declaration key, so a port's kind follows its part's and a
+connection's follows its ends'. It reports, for each node, every applicable
+refusal: a port whose owner is not a Part is `refused { code:
 invalid_model_binding, cause: wrong-export }` with required kind `Part` and
-actual kind `none` or the component's kind, and maps to no kind; and a
-relationship whose category is not `allocation`, and one of whose ends names an
-endpoint that is not a Port, is `wrong-export` with required kind `Port` and
-actual kind `none`, once per such end, source end first, and maps to no kind. A
-relationship whose ends both name type exports is a navigation relationship
-with no systems kind. Rule `quire.model.systems.allocation/v1` then refuses an
-Allocation whose target element is not a Part with `wrong-export`, required
-kind `Part` and actual kind `none` or the element's kind.
+actual kind `none` or the owner's kind, and maps to no kind; a port whose
+interface type is not an Interface is `wrong-export` with required kind
+`Interface`; and a connection one of whose ends names a node that is not a Port
+is `wrong-export` with required kind `Port` and actual kind `none`, once per
+such end, source end first, and maps to no kind. A relationship between object
+types is a navigation relationship with no systems kind. Rule
+`quire.model.systems.allocation/v1` then refuses an Allocation whose target
+element is not a Part with `wrong-export`, required kind `Part` and actual
+kind `none` or the element's kind.
 
-`semantics.category` is producer-defined text (FCD FR-115). The exact byte
-match on `allocation` is this consumer's mapping decision, recorded by rule
-`quire.model.systems.allocation/v1`, as is reading an allocation end's
-`typeIdentity` as the allocated element's producer identity; no other category spelling, case variant
-or role name is read as an allocation. Direction is read only from FCD FR-128
-relationship `semantics.direction` and from `port-direction`, never from a
-role.
+Direction is read only from a connection's or relationship's declared
+`direction` and from a port's direction, never from a role.
 
 ## Qualification catalog and package selection
 
@@ -326,6 +307,7 @@ digests are the entries in `model-complete-rules.json`.
 | [Conformance, redefinition and dispatch](../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md) |
 | [Systems-model binding and navigation](../../../spec/functional/type-model/FR-152-bind-systems-model-structures.md) |
 | [Closed model environments](../../../spec/functional/type-model/FR-153-query-closed-model-environments.md) |
+| [Domain package model intake](../../../spec/functional/type-model/FR-154-admit-domain-package-model.md) |
 | [Declared object identity](../../../spec/objects/foundation/FR-204-declared-object-identity.md) |
 | [Model-selection artifact](../../../spec/objects/interfaces/FR-321-model-selection-artifact.md) |
 | [I03 model selection](../../../spec/objects/interfaces/interface-003-model-selection.md) |

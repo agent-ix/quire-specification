@@ -53,7 +53,7 @@ package identity itself, source-occurrence/source-map data, raw-byte artifacts,
 presentation, runtime inputs, installed backends, diagnostic wording and reader
 limits.
 
-Raw source documents, native definition documents, compiled-model documents,
+Raw source documents, native definition documents, `sha256-jcs` domain packages,
 checked semantic graph/package identities and generated Contract IR identities
 remain separately typed. Equal hash bytes never authorize substitution across
 those domains.
@@ -62,7 +62,8 @@ For the nominal scalar node forms covered by the node-preimage schema, the
 `quire.checked-semantic-node/v1` digest is SHA-256 of the exact RFC 8785 JCS
 preimage. An owner subject must match an admitted source, definition or model
 selection; source/definition owners use authority plus identity, and model
-owners additionally use export. Revisions and raw byte digests remain package
+owners use the domain package identity plus the IR node identity. Revisions,
+versions and digests remain package
 lock evidence but are excluded from the semantic node preimage, allowing an
 unchanged declaration to retain identity across unrelated owner revisions.
 Qualified names are arrays of ASCII identifier segments. Arbitrary-precision
