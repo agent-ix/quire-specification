@@ -36,7 +36,7 @@ The immutable key includes kind and revision namespace/value. A path or display 
 ## Dependencies
 
 - [US-002](../../usecase/US-002-exchange-exact-subjects.md) supplies the user need.
-- [Detailed contract or implementation evidence](../../../proposals/state-core/model-contract.md) supplies the scoped context.
+- [AD-006](../../assurance/AD-006-model-graph-state-contracts.md) supplies the model and state context.
 
 ## Status
 
