@@ -35,19 +35,22 @@ field through `redefines`.
 
 Vector 3 (`creates` scope): create a subtype instance under a `creates`
 entry naming its supertype, declaring the invocation's creation inventory to
-match exactly the objects actually created. Expect the creation permitted,
-because the covered population is every object whose most-specific type
-conforms to the named type (FR-151), and expect no `population_delta_mismatch`
-because the declared inventory is correct. Then, in the same invocation,
-create an instance of a type unrelated to any `creates` entry, again
-declaring the creation inventory to match exactly the objects actually
-created. Expect `frame_violation` and no `population_delta_mismatch`.
+match exactly the objects actually created. Expect exactly the creation
+permitted, with no diagnostic, because the declared inventory is correct and
+the covered population is every object whose most-specific type conforms to
+the named type (FR-151). Then, in the same invocation, create an instance of
+a type unrelated to any `creates` entry, again declaring the creation
+inventory to match exactly the objects actually created. Expect exactly
+`frame_violation`.
 
 Vector 4 (`deletes` scope): delete a subtype instance under a `deletes`
 entry naming its supertype, declaring the invocation's deletion inventory to
-match exactly the objects actually deleted. Expect the deletion permitted,
-because the covered population is every object whose most-specific type
-conforms to the named type (FR-151), and expect no `population_delta_mismatch`.
+match exactly the objects actually deleted. Expect exactly the deletion
+permitted, with no diagnostic, because the covered population is every
+object whose most-specific type conforms to the named type (FR-151). Then,
+in the same invocation, delete an instance of a type unrelated to any
+`deletes` entry, again declaring the deletion inventory to match exactly the
+objects actually deleted. Expect exactly `frame_violation`.
 
 ## Expected Results
 
@@ -55,6 +58,7 @@ A `modifies` grant's write permission and a `creates`/`deletes` grant's
 identity-set permission each range over the conformance-inclusive population
 FR-013 and FR-151 state, whether an object is reachable from a parameter or
 not and whether its effective type carries the granted field directly or
-reaches it through `redefines`; a write or identity change outside that
-population receives `frame_violation`, and a correctly declared
-creation/deletion inventory never itself produces `population_delta_mismatch`.
+reaches it through `redefines`; a write or identity change inside that
+population, declared in a matching creation/deletion inventory, succeeds with
+no diagnostic, and a write or identity change outside that population
+receives exactly `frame_violation`.
