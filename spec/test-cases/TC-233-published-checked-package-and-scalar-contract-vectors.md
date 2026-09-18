@@ -5,6 +5,8 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-322
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-340
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-201
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-142
@@ -46,9 +48,24 @@ package-selection vector with an independent selection oracle. Check the
 operation catalog's closure against both V2 schemas and the value lock;
 recompute every operation vector and application node key; classify every
 operation mutation, ordering case and declaration mutation with an
-independent operation and declaration oracle; and parse the
-native-diagnostics rows to require each cause in exactly its code's row and
-the Diagnostic schema pairing.
+independent operation and declaration oracle; check the published fixture's
+`state`/`frame` node body against an independent frame oracle, requiring each
+`modifies`/`creates`/`deletes` entry to join a declared dependency of the
+frame's own required meaning, each member to be duplicate-free and sorted
+ascending by entry digest, and a frame body carrying two simultaneous
+defects to report the one diagnostic FR-340's fixed precedence names
+regardless of which member carries which defect; splice every published
+`frame_mutations` vector into the all-families fixture's frame node and read
+it with the full normative reader (`read_package_semantics`, not the
+standalone frame oracle alone), requiring each vector's exact code, locus
+and (where the vector states one) cause, including a `model`/
+`operation_declaration`, `model`/`record_value_type` or `model`/`event_type`
+entry misdirected into `modifies`, `creates` or `deletes`, and two vectors
+that each carry two simultaneous meaning-join defects (one across member
+groups, one within one member group at two digests); check that the
+identical defect set sorted from two different collection orders yields the
+identical diagnostic; and parse the native-diagnostics rows to require each
+cause in exactly its code's row and the Diagnostic schema pairing.
 
 ## Expected Results
 
@@ -56,4 +73,13 @@ Every positive artifact validates and recomputes its recorded identity. Excluded
 edits leave the package id unchanged and named edits change it. Every mutation
 is refused by exactly its named check. Every locked artifact matches its
 raw-byte digest, and every selection vector is admitted or refused with exactly
-its recorded selection code.
+its recorded selection code. The published fixture's frame node is admitted
+with no defect; every frame-entry meaning-join and canonical-order mutation
+is refused with exactly its named cause, and a frame body carrying two
+simultaneous defects reports the same one diagnostic regardless of which
+member carries which defect. Every published `frame_mutations` vector
+refuses through the full normative reader with exactly its recorded code,
+locus and cause, including every wrong-meaning frame entry and both
+two-simultaneous-meaning-join-defect precedence vectors, and the identical
+defect set sorted from two different collection orders yields the identical
+diagnostic.
