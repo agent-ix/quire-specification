@@ -134,8 +134,8 @@ meaning and no type is inferred. The identity is a member of
   ([FR-322-AC-25](../../spec/objects/interfaces/FR-322-checked-package-artifact.md));
   naming any other model form -- including `systems_interface`, whose
   ordered feature signatures
-  [FR-152](../../spec/functional/type-model/FR-152-bind-systems-model-structures.md)
-  (line 57) gives structural-conformance meaning (FR-151), never a
+  [FR-152's Systems-model roles table](../../spec/functional/type-model/FR-152-bind-systems-model-structures.md#systems-model-roles)
+  gives structural-conformance meaning (FR-151), never a
   `dispatch_call` binding -- is `operator-ineligible`/`ill_typed` here. FR-208
   separately pins a declaring-node cause for three of those other forms:
   `unsupported_construct`/`declaration-form` on a `record_value_type`
