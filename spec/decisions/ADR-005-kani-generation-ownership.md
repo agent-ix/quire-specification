@@ -1,5 +1,5 @@
 ---
-id: ADR-0105
+id: ADR-005
 title: "Ownership of Kani harness generation and tool pinning"
 type: ADR
 status: proposed
@@ -11,7 +11,7 @@ relationships:
   - target: ix://agent-ix/quire-contract-codegen/FR-003
     type: depends_on
 ---
-# ADR-0105: Ownership of Kani harness generation and tool pinning
+# ADR-005: Ownership of Kani harness generation and tool pinning
 
 ## Status
 

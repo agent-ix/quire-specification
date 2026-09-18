@@ -1,5 +1,5 @@
 ---
-id: ADR-0102
+id: ADR-002
 title: "Semantic IR contract version for a domain package"
 type: ADR
 status: proposed
@@ -11,7 +11,7 @@ relationships:
   - target: ix://agent-ix/filament-core-data/FR-051
     type: depends_on
 ---
-# ADR-0102: Semantic IR contract version for a domain package
+# ADR-002: Semantic IR contract version for a domain package
 
 ## Status
 
