@@ -12,7 +12,7 @@ review_date: "2026-09-17"
 ## Summary
 
 PASS after remediation. Every one of the 176 atomic capabilities has one owning
-requirement with acceptance criteria, and every one of the 1,264 acceptance
+requirement with acceptance criteria, and every one of the 1,263 acceptance
 criteria in the tree is represented in a Test Matrix. ID formats, AC id
 formats, verification methods and internal link targets check clean. Five
 cross-repository boundary conflicts are posed as ADR-001 through ADR-005, and
@@ -28,4 +28,4 @@ here.
 | FND-606 | medium | Resolved: FR-044 stated without condition that no float is permitted, while FR-148 states IEEE 754-2019 binary32 and binary64 arithmetic and FR-019-AC-1 admits explicit IEEE float in the complete-V1 facets. FR-044 now states the admitted float contract per selection, backed by FR-044-AC-9. | FR-019; FR-044; FR-148 |
 | FND-602 | medium | Resolved: five capabilities were described in requirement prose with no acceptance criterion exercising them. Sixteen criteria now state them. | FR-134; FR-151; FR-181; FR-192; FR-306 |
 | FND-603 | medium | Resolved: five acceptance criteria carried no Test Matrix row and three SpecReview documents shared ids with earlier reviews. | TM-009; FR-142; FR-148; SR-596; SR-597; SR-598 |
-| FND-604 | low | Resolved: the Plan-008 Task-003 coverage audit asserted a superseded tree state as current. It is marked historical and names TM-009 as the coverage authority. | docs/v1-existing-spec-coverage.md |
+| FND-604 | low | Resolved: the Plan-008 Task-003 coverage audit read a tree the `/specify` cycle then replaced, so its per-row Coverage and Delta columns no longer held. It is deleted; its classification key, the delivered 94/39/23/19/1 totals and the V1-TYPE-024 reconciliation are now stated in TM-009, and the four documents that cited it name TM-009 or the inventory instead. | TM-009; docs/v1-capability-inventory.md |
