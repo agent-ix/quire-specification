@@ -78,8 +78,8 @@ context, but that context cannot replace a required cause field or variant.
 | `unknown_required_feature` | `unknown-feature` or `unsupported-feature`; retain the feature and selected consumer/profile scope. A recognized name is not implementation support. |
 | `missing_import`, `missing_declaration` | `missing-selection` or `missing-name`; retain the requested typed dependency/name, owning scope and referring locus. During model intake, `missing-selection` retains the ModelSelection, and `missing-name` retains the referring IR node identity, the absent node identity, the source artifact id and the span. |
 | `stale_dependency`, `source_digest_mismatch` | `revision-mismatch`, `byte-digest-mismatch` or `digest-domain-mismatch`; retain expected and actual typed selections/digest domains where available. A missing artifact cannot supply an invented actual digest. |
-| `ambiguous_declaration` | `ambiguous-name` or `conflicting-authority`; retain the visible name/clause and the distinct conflicting declaration/authority selections and loci. |
-| `invalid_package` | `malformed-json`, `missing-member`, `duplicate-member`, `unknown-member`, `wrong-value-kind`, `invalid-value`, `definition-cycle`, `conflicting-definition`, `incompatible-definition` or `feature-set-mismatch`; retain the actual field/index path or dependency edges/feature sets appropriate to that variant. Under `quire.model.complete/v1`, `definition-cycle` also covers a call-graph cycle through a dispatch edge (FR-151) and retains the cycle's call edges in the FR-151 order. |
+| `ambiguous_declaration` | `ambiguous-name` or `conflicting-authority`; retain the visible name/clause and the distinct conflicting declaration/authority selections and loci. A `quire.checked-package/v2` reader reports two nodes carrying equal `declaration.qualified_name` values as `ambiguous-name`, retaining that name and both node keys in ascending digest order. |
+| `invalid_package` | `malformed-json`, `missing-member`, `duplicate-member`, `unknown-member`, `wrong-value-kind`, `invalid-value`, `definition-cycle`, `conflicting-definition`, `incompatible-definition`, `feature-set-mismatch`, `unknown-operation`, `operation-class-mismatch`, `operation-law-missing`, `operation-law-mismatch`, `operation-law-unselected`, `operation-mode-mismatch`, `operation-member-mismatch`, `operation-mode-type-mismatch`, `stale-node-key` or `declaration-nominal-mismatch`; retain the actual field/index path or dependency edges/feature sets appropriate to that variant. Under `quire.model.complete/v1`, `definition-cycle` also covers a call-graph cycle through a dispatch edge (FR-151) and retains the cycle's call edges in the FR-151 order. The eight operation variants (revision `1-draft.4`) retain the application node key, the pre-order ordinal of the application inside that node, the leaf path (empty for the operation itself) and the supplied operation identity and operator class, plus: `unknown-operation` nothing further; `operation-class-mismatch` the catalogued operator class; `operation-law-missing` the required law role; `operation-law-mismatch` the supplied law and the catalogued `DefinitionRef` set of its role; `operation-law-unselected` the unselected law `DefinitionRef`; `operation-mode-mismatch` the required mode kind (or none) and the supplied mode; `operation-member-mismatch` the required member kind (or none) and the supplied member; `operation-mode-type-mismatch` the supplied mode value and the set of mode values pinned by the operand and result types, all as published by `proposals/checked-package-v2/operation-catalog.json`. For a clause application (`temporal`, `protocol_control`, `state_transition`, `claim`) the law role is the profile-selection role the catalog names (`temporal_profile` or `protocol_profile`), the catalogued `DefinitionRef` set is the package lock's `profile_selections` of that role, and `operation-member-mismatch` for a `profile_operator` member also retains the operator set the selected profile defines. `stale-node-key` retains the application node key as retained, the recomputed `quire.application-node/v1` digest and the node's ordinal in the package graph. `declaration-nominal-mismatch` retains the node key, its `declaration.qualified_name` and its nominal `qualified_declaration`. |
 | `invalid_model_binding` | `wrong-artifact-role`, `wrong-model-selection`, `wrong-export`, `wrong-context`, `conflicting-binding`, `unpreserved-model-meaning`, `specialization-cycle`, `redefinition-target`, `derivation-conflict`, `malformed-declaration` or `port-direction`; retain the required/actual declaration or contract, referring location and affected meaning. Missing versus explicit null may not be collapsed into a generic absent value. `wrong-export` for a systems-model kind retains the required kind, the actual kind (`none` when the declaration maps to no kind) and both declaration keys. `specialization-cycle` retains the cycle's type declaration keys in path order. `redefinition-target` retains every redefining member's declaration key and the zero or several resolved targets. `derivation-conflict` retains both derivation paths and exposes no chosen effective member. `malformed-declaration` retains the IR node identity, the member path that is invalid, the source artifact id and the source span. `port-direction` retains the connection's declaration key, its declared `direction` and both ports' directions. Every model intake and model feature refusal also retains the source artifact id and span of the IR node it names. |
 | `ill_typed` | `type-mismatch`, `unit-mismatch`, `operator-ineligible`, `ambiguous-literal`, `non-boolean-root`, `variance-parameter`, `variance-result`, `multiplicity-narrowing`, `effect-escape` or `subsetting-type`; retain the operator/input locus and expected/actual named type, unit or kind. The five conformance causes retain the redefining and redefined effective member identities, the axis (parameter index for `variance-parameter`), the expected and actual effective type, typed multiplicity or effect entry, and every contributing declaration key in effective-identity order. |
 | `undefined_expression` | `unproved-range`, `unproved-nonzero`, `unproved-presence`, `unproved-decrease` or `unproved-refinement`; retain the potentially evaluated operation, exact operand/read identity and applicable guard/anchor context, and for `unproved-decrease` the recursive component cycle, call edge and failed measure obligation. `unproved-refinement` retains the redefining field's effective identity, the writing operation's effective identity and the obligation `field-domain`, `field-presence` or `no-proof-form`. Failure to prove definedness is not logical violation. |
@@ -103,6 +103,40 @@ this revision. Their spelling and causes are selected by this table even where
 the pinned compiler inventory above does not enumerate them; a producer claiming
 revision `1-draft.3` emits them with these closed causes, and a re-pinned
 compiler inventory must agree with them.
+
+Revision `1-draft.4` adds the eight `invalid_package` operation variants,
+`stale-node-key` and `declaration-nominal-mismatch` above, and the V2
+`ambiguous-name` use. A `quire.checked-package/v2` reader emits exactly one
+diagnostic for the first refusal it finds, and never a broader code:
+
+1. schema refusals (`invalid_package`, their structural causes);
+2. graph-shape refusals of FR-322 (`invalid_semantic_graph`): an application
+   node whose `semantic_form` contradicts its body or whose dependency list is
+   not exactly the derived one;
+3. `stale-node-key` (`invalid_package`), at the first application node in
+   ascending retained node-id digest order whose retained key differs from the
+   JCS SHA-256 of its `quire.application-node/v1` preimage;
+4. `declaration-nominal-mismatch` (`invalid_package`), nodes in ascending
+   node-id digest order;
+5. `ambiguous-name` (`ambiguous_declaration`), at the first node in ascending
+   node-id digest order whose name an earlier node already declares;
+6. operation refusals, nodes in ascending node-id digest order and, inside a
+   node, applications in pre-order (an application before its arguments,
+   arguments left to right). One application is checked in this order:
+   `unknown-operation`, `operation-class-mismatch`, `operation-law-missing`,
+   `operation-law-mismatch`, `operation-law-unselected`,
+   `operation-mode-mismatch`, `operation-member-mismatch` (all
+   `invalid_package`); then every argument that is itself an application,
+   directly or as a binder value, left to right under this same order, whose
+   first refusal is reported; then `operation-mode-type-mismatch`
+   (`invalid_package`) and `operator-ineligible` (`ill_typed`); then its
+   `leaves`, each cause over all entries before the next cause:
+   `operation-law-missing` (fewer entries than compared leaves),
+   `operation-law-mismatch` (extra entries, a path out of order or a law
+   outside the role), `operation-law-unselected`, `operation-mode-mismatch`
+   and `operation-mode-type-mismatch`.
+
+A producer claiming revision `1-draft.3` emits none of these causes.
 
 Other retained host/source codes keep their selected broad meaning and original
 structured producer cause: I/O error, malformed command, invalid digest/identifier,
