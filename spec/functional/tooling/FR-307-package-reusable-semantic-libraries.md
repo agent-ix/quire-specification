@@ -67,10 +67,17 @@ bind the same qualifier, each use is
 `refused { code: ambiguous_declaration, cause: ambiguous-name }` and lists both
 import paths.
 
-`a::Name` resolves only through the library package's FR-322 `declaration`
-members: the export node is the single node whose `declaration.qualified_name`
-equals the library's qualified `Name`. This covers scalar, composite and
-bounded types, functions, declared value constants and every nominal kind. No
+`a::Name` resolves in two steps. First `a` resolves to exactly one package:
+the library package whose import binds qualifier `a`, selected by its locked
+version and `package_id`. Then `Name` resolves only through that package's
+FR-322 `declaration` members: `qualified_name` is the package-local declaration
+path, and the export node is the single node of that package whose
+`declaration.qualified_name` equals the path `Name` spells, compared segment by
+segment and byte for byte, with no case folding, Unicode normalization, suffix
+match or search in another package. This covers scalar, composite and bounded
+types, functions, declared value constants, models, protocols, claims and every
+nominal kind; builtin and anonymous nodes carry no declaration and are never
+exports. No
 node of the library carrying that name is
 `refused { code: missing_declaration, cause: missing-name }`. The linker never
 recovers an export from source occurrences, source-map regions, display text,

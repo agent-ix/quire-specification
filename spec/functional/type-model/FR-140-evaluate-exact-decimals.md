@@ -104,7 +104,13 @@ An explicit conversion of a `Rational[n1,n2;d1,d2]` value with `d2 > 1`, reduced
 same rounding step, `DecimalLoss` (whose exact value is `n/d`) and membership
 rule, and the accounting decimal division schedule. A rational source whose
 denominator bound is one converts exactly as the integer `n`. The rounding
-conversion is lossy, so FR-149 never admits it as an equality conversion.
+conversion is lossy, so FR-149 never admits it as an equality conversion. FR-149
+classifies it, and every decimal-to-decimal conversion to a smaller maximum
+scale, as a scale reduction (`quire.op.numeric.convert_rounding`), the only
+conversion that rounds. A conversion that changes only the admitted range, such
+as `Int[0,300]` into `Decimal[0,20000;2,2]`, is an FR-149 range narrowing
+(`quire.op.numeric.narrow`): its membership is an FR-146 obligation, and it
+never rounds or clamps.
 
 Decimal typing derives no default type. The operands of `+`, `-`, `*`, `/` and
 unary `-` and the result have one named `Decimal[..]` type, whose `smax` is the

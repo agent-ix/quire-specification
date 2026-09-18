@@ -411,6 +411,29 @@ charge, decides the selected method's effective precondition (its own
 evaluation charges apply), and then charges `function.call` before binding the
 arguments.
 
+## Collection sum schedule
+
+`sum<N>(x in c: e)` (FR-145) charges, in order: one `collection.visit` and the
+summand's own charges for the first occurrence, which seeds the running total
+with no addition; then, for each later occurrence in visiting order, one
+`collection.visit`, its summand's charges and one addition charged by the
+family of `N`; then one `collection.result-retain` with `result_units += 1`. An
+empty source charges only that `collection.result-retain`.
+
+| Family of `N` | Charges of one addition |
+| --- | --- |
+| `Integer` or `Int[..]` | `integer-arithmetic.operands`, `integer-arithmetic.arithmetic`, the uncharged domain decision, then `integer-arithmetic.result-retain` |
+| `Rational[..]` | the `rational-arithmetic` schedule |
+| `Decimal[..]` | the decimal addition schedule, whose `decimal.rounding` step uses the `rounding` mode `N` pins |
+| quantity | the unit addition schedule, whose decimal or integer target rounding step uses the `rounding` mode `N` pins |
+| `Float32` or `Float64` | the IEEE addition schedule under the `rounding` mode `N` pins |
+
+The checked package records that mode on the `quire.op.collection.sum.decimal`,
+`sum.quantity`, `sum.float32` or `sum.float64` application (FR-322), and it must
+equal the mode `N`'s type pins; a disagreement is refused before evaluation and
+never resolved at a charge point. The domain decision after each addition and
+seed charges nothing.
+
 ## Population admission limits
 
 A request that binds a population binding carries `PopulationAdmissionLimitsV1`

@@ -154,7 +154,8 @@ A `Rational[..]` expression has a numerator interval `N` and a positive
 denominator interval `D`, both over mathematical integers, and never a value
 interval. A literal `rational(n,d)` has the points of its normalized `n/d`; a
 stable path has its declared `[n1,n2]` and `[d1,d2]`; an `Integer` or `Int[..]`
-operand of a rational `/` has its integer interval over `[1,1]`; and every other
+operand of a rational `/` (`quire.op.rational.div`, which promotes it
+exactly to `n/1` under FR-149) has its integer interval over `[1,1]`; and every other
 rational form, such as a call, `sum`, `fold` or `convert`, has its declared
 result type's intervals. When every operand of `+`, `-`, `*`, `/` or unary `-`
 has point intervals and the divisor point is nonzero, the result has the points
@@ -173,7 +174,10 @@ zero first requires the nonzero obligation below; without it the quotient is
 `refused { code: undefined_expression, cause: unproved-nonzero }` and has no
 interval, never an infinite, clamped or approximated one. A rational range
 obligation holds when the normalized numerator interval lies inside `[n1,n2]`
-and the denominator interval inside `[d1,d2]` of the required type. A
+and the denominator interval inside `[d1,d2]` of the required type; it is the
+obligation of an FR-149 rational narrowing (`quire.op.rational.narrow`), as the
+range obligation is of a range narrowing (`quire.op.numeric.narrow`), and
+neither narrowing ever rounds. A
 comparison `x != rational(0,1)` or `rational(0,1) != x` for a rational stable
 path `x` records a nonzero fact for `x` on its true outcome, and `=` on its
 false outcome; no other rational comparison yields a fact.
@@ -199,7 +203,9 @@ a divisor that may be zero in FR-140, FR-142, FR-044 or FR-147
 (`unproved-nonzero`); a zero base with a negative integer exponent, whose base
 carries the nonzero obligation (`unproved-nonzero`); `value(e)` without a proved
 `present(e)` (`unproved-presence`); `reduce` without a proved `size(c) >= 1`
-under FR-145 (`unproved-range`). Each obligation applies on a path
+under FR-145 (`unproved-range`); an FR-149 range or rational narrowing whose
+converted value is not proved a member of its target type (`unproved-range`).
+Each obligation applies on a path
 that can execute, and an unproved one is
 `refused { code: undefined_expression, cause: ... }` at that operation when the
 body is linked.

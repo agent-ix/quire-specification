@@ -256,6 +256,10 @@ const MIGRATION_SOURCE_CLAUSES_V1: &str =
     include_str!("../proposals/checked-package-v2/fixtures/migration-source-clauses-v1.json");
 const POSITIVE_CLAUSE_OPERATIONS: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-clause-operations.json");
+const MIGRATION_SOURCE_CONTROL_V1: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/migration-source-control-v1.json");
+const POSITIVE_CONTROL_OPERATIONS: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-control-operations.json");
 const ADVERSE: &str = include_str!("../proposals/checked-package-v2/fixtures/adverse.json");
 const REQUIRED_NODE_TAGS: [&str; 13] = [
     "scalar_type",
@@ -1101,6 +1105,8 @@ fn migration_package(path: &str) -> Value {
         "fixtures/migration-source-nominal-v1.json" => MIGRATION_SOURCE_NOMINAL_V1,
         "fixtures/migration-source-clauses-v1.json" => MIGRATION_SOURCE_CLAUSES_V1,
         "fixtures/positive-clause-operations.json" => POSITIVE_CLAUSE_OPERATIONS,
+        "fixtures/migration-source-control-v1.json" => MIGRATION_SOURCE_CONTROL_V1,
+        "fixtures/positive-control-operations.json" => POSITIVE_CONTROL_OPERATIONS,
         "fixtures/positive-all-families.json" => POSITIVE_ALL_FAMILIES,
         "fixtures/positive-nominal-identities.json" => POSITIVE_NOMINAL_IDENTITIES,
         unknown => panic!("migration vector names an unpublished package: {unknown}"),
@@ -1173,7 +1179,8 @@ fn application_dependencies(term: &Value) -> Vec<Value> {
 /// The operation exactly derivable from a V1 application class. V1 carries no
 /// law, mode, member or leaf, so only the classes with one catalogued meaning
 /// and no such selection derive; every other class (`call`, `unary`, `binary`,
-/// `quantify`, `collection`, `query`, `convert`, `reaches`) is unresolved.
+/// `quantify`, `collection`, `query`, `convert`, `reaches`) and every clause
+/// class, whose profile law and operator member V1 does not carry, is unresolved.
 fn derived_v1_operation(class: &str) -> Option<Value> {
     let identity = match class {
         "conditional" => "quire.op.control.if",
@@ -1182,10 +1189,6 @@ fn derived_v1_operation(class: &str) -> Option<Value> {
         "present" => "quire.op.option.present",
         "value" => "quire.op.option.value",
         "deref" => "quire.op.model.deref",
-        "temporal" => "quire.op.temporal.clause",
-        "protocol_control" => "quire.op.protocol.control",
-        "state_transition" => "quire.op.state.transition",
-        "claim" => "quire.op.claim.clause",
         _ => return None,
     };
     Some(json!({"identity": identity, "laws": [], "mode": null, "member": null, "leaves": []}))
@@ -1486,18 +1489,22 @@ impl<'a> OperationOracle<'a> {
 
     fn descriptor(&self, term: &Value) -> Option<Descriptor> {
         match term["term"].as_str()? {
-            "literal" => Some(Descriptor::family(match term["value_kind"].as_str()? {
-                "boolean" => "boolean",
-                "integer" => "integer",
-                "rational" => "rational",
-                "decimal" => "decimal",
-                "float32_bits" => "float32",
-                "float64_bits" => "float64",
-                "text" => "text",
-                "enum" => "enum",
-                "none" => "option",
-                _ => return None,
-            })),
+            "literal" => {
+                let typed = self.typed(&term["type"])?;
+                let admitted: &[&str] = match term["value_kind"].as_str()? {
+                    "boolean" => &["boolean"],
+                    "integer" => &["integer"],
+                    "rational" => &["rational"],
+                    "decimal" => &["decimal"],
+                    "float32_bits" => &["float32"],
+                    "float64_bits" => &["float64"],
+                    "text" => &["text"],
+                    "enum" => &["enum", "ordered_enum"],
+                    "none" => &["option"],
+                    _ => return None,
+                };
+                admitted.contains(&typed.family.as_str()).then_some(typed)
+            }
             "reference" => {
                 let target = self.node(&term["target"])?;
                 match target["node_tag"].as_str()? {
@@ -1514,7 +1521,7 @@ impl<'a> OperationOracle<'a> {
                     _ => self.typed(&target["semantic_type"]),
                 }
             }
-            "application" => self.classify(term, None).ok(),
+            "application" => self.classify(term).ok(),
             "binding" => Some(Descriptor {
                 family: "binder".to_owned(),
                 ty: None,
@@ -1530,7 +1537,7 @@ impl<'a> OperationOracle<'a> {
     /// place of any refusal of the enclosing application that needs its type.
     fn argument_descriptor(&self, term: &Value) -> Result<Option<Descriptor>, OperationRefusal> {
         match term["term"].as_str() {
-            Some("application") => self.classify(term, None).map(Some),
+            Some("application") => self.classify(term).map(Some),
             Some("binding") => {
                 Ok(self
                     .argument_descriptor(&term["value"])?
@@ -1672,18 +1679,6 @@ impl<'a> OperationOracle<'a> {
         None
     }
 
-    /// FR-149 equality-conversion table, decided from declared bounds alone.
-    fn exact_conversion(&self, source: &Value, target: &Value) -> bool {
-        if source == target {
-            return true;
-        }
-        let (Some(from), Some(to)) = (self.numeric_bounds(source), self.numeric_bounds(target))
-        else {
-            return false;
-        };
-        exact_bounds_conversion(&from, &to)
-    }
-
     /// Text leaves of a compared type in declaration pre-order, each with the
     /// text profile its type pins; `None` when a leaf is IEEE, a text leaf pins
     /// no profile, or the type is cyclic.
@@ -1751,10 +1746,32 @@ impl<'a> OperationOracle<'a> {
             .unwrap_or_default()
     }
 
-    fn selected(&self, definition: &Value) -> bool {
-        self.lock["definition_selections"]
+    /// Whether a law role names a lock profile selection rather than a
+    /// catalogued definition.
+    fn is_profile_role(&self, role: &str) -> bool {
+        self.catalog["profile_law_roles"]
             .as_array()
-            .is_some_and(|selections| selections.contains(definition))
+            .is_some_and(|roles| roles.iter().any(|candidate| candidate == role))
+    }
+
+    /// Whether the lock selects a law: a profile law by an exact
+    /// `profile_selections` row of its role, any other law by an exact
+    /// `definition_selections` entry.
+    fn selected(&self, law: &Value) -> bool {
+        let role = law["role"].as_str().unwrap_or_default();
+        if self.is_profile_role(role) {
+            self.lock["profile_selections"]
+                .as_array()
+                .is_some_and(|selections| {
+                    selections.iter().any(|selection| {
+                        selection["role"] == role && selection["definition"] == law["definition"]
+                    })
+                })
+        } else {
+            self.lock["definition_selections"]
+                .as_array()
+                .is_some_and(|selections| selections.contains(&law["definition"]))
+        }
     }
 
     fn mode_value_admitted(&self, mode: &Value, kind: &str) -> bool {
@@ -1762,6 +1779,14 @@ impl<'a> OperationOracle<'a> {
             && self.catalog["modes"][kind]
                 .as_array()
                 .is_some_and(|values| values.contains(&mode["value"]))
+    }
+
+    /// FR-149 class of a conversion between two exact numeric types.
+    fn conversion_class(&self, source: &Value, target: &Value) -> Option<ConversionClass> {
+        if source == target {
+            return Some(ConversionClass::Exact);
+        }
+        conversion_class(&self.numeric_bounds(source)?, &self.numeric_bounds(target)?)
     }
 
     fn constraint_holds(
@@ -1784,6 +1809,7 @@ impl<'a> OperationOracle<'a> {
                 .is_some_and(|name| self.expand(name).contains(&family))
         };
         let ty = |descriptor: Option<&Descriptor>| descriptor.and_then(|d| d.ty.clone());
+        let converts_as = |class: ConversionClass| matches!((ty(operand(0)), member().and_then(|m| m.ty)), (Some(s), Some(t)) if self.conversion_class(&s, &t) == Some(class));
         match constraint["kind"].as_str() {
             Some("same_family") => {
                 matches!((operand(0), operand(1)), (Some(l), Some(r)) if l.family == r.family)
@@ -1826,11 +1852,17 @@ impl<'a> OperationOracle<'a> {
                     .and_then(|bound| bound.ty.clone());
                 matches!((bound, member().and_then(|m| m.ty)), (Some(l), Some(r)) if self.same_type(&l, &r))
             }
-            Some("exact_conversion") => {
-                matches!((ty(operand(0)), member().and_then(|m| m.ty)), (Some(s), Some(t)) if self.exact_conversion(&s, &t))
-            }
-            Some("lossy_conversion") => {
-                matches!((ty(operand(0)), member().and_then(|m| m.ty)), (Some(s), Some(t)) if !self.exact_conversion(&s, &t))
+            Some("exact_conversion") => converts_as(ConversionClass::Exact),
+            Some("range_narrowing") => converts_as(ConversionClass::RangeNarrowing),
+            Some("rational_narrowing") => converts_as(ConversionClass::RationalNarrowing),
+            Some("scale_reduction") => converts_as(ConversionClass::ScaleReduction),
+            Some("promotes_exact") => {
+                let promotable = self.expand("rational_promotable");
+                constraint["operands"].as_array().is_some_and(|slots| {
+                    (0..slots.len()).all(|slot| {
+                        operand(slot).is_some_and(|d| promotable.contains(&d.family.as_str()))
+                    })
+                })
             }
             Some("uniform_rest") => arguments[rest_start.min(arguments.len())..]
                 .windows(2)
@@ -1839,14 +1871,31 @@ impl<'a> OperationOracle<'a> {
         }
     }
 
-    /// Classify one application in the normative order and return its result
-    /// descriptor. `root_type` is the semantic type of an expression or
-    /// function node whose body root is this application.
-    fn classify(
-        &self,
-        term: &Value,
-        root_type: Option<&Value>,
-    ) -> Result<Descriptor, OperationRefusal> {
+    /// The declared result of an application: its `result_type` when that
+    /// type agrees with the result the catalog derives from the operands. A
+    /// clause result is declared Boolean.
+    fn declared_result(&self, term: &Value, derived: Descriptor) -> Option<Descriptor> {
+        let result_type = &term["result_type"];
+        let declared_family = self.type_family(result_type)?;
+        let fits = if derived.family == "clause" {
+            declared_family == "boolean"
+        } else {
+            declared_family == derived.family
+                && derived
+                    .ty
+                    .as_ref()
+                    .is_none_or(|ty| self.same_type(ty, result_type))
+        };
+        fits.then(|| Descriptor {
+            family: derived.family,
+            ty: Some(result_type.clone()),
+            bound: None,
+        })
+    }
+
+    /// Classify one application in the normative order and return its
+    /// declared result descriptor.
+    fn classify(&self, term: &Value) -> Result<Descriptor, OperationRefusal> {
         use OperationRefusal as Refusal;
         let operation = &term["operation"];
         let entry = self.catalog["operations"]
@@ -1870,14 +1919,18 @@ impl<'a> OperationOracle<'a> {
         let supplied_leaves = operation["leaves"].as_array().ok_or(Refusal::LawMismatch)?;
         if supplied != required
             || !laws.iter().all(|law| {
-                self.law_refs(&law["role"].as_str().unwrap_or_default())
-                    .contains(&law["definition"])
+                let role = law["role"].as_str().unwrap_or_default();
+                if self.is_profile_role(role) {
+                    matched_profile(&law["definition"]).is_some_and(|(kind, _)| kind == role)
+                } else {
+                    self.law_refs(role).contains(&law["definition"])
+                }
             })
             || (entry["leaves"].is_null() && !supplied_leaves.is_empty())
         {
             return Err(Refusal::LawMismatch);
         }
-        if !laws.iter().all(|law| self.selected(&law["definition"])) {
+        if !laws.iter().all(|law| self.selected(law)) {
             return Err(Refusal::LawUnselected);
         }
         let mode_fits = match (entry["mode"].as_str(), &operation["mode"]) {
@@ -1891,6 +1944,16 @@ impl<'a> OperationOracle<'a> {
         let member = &operation["member"];
         let member_fits = match (entry["member"].as_str(), member) {
             (None, Value::Null) => true,
+            (Some("profile_operator"), member) => {
+                member["kind"] == "profile_operator"
+                    && laws
+                        .first()
+                        .and_then(|law| profile_operators(&law["definition"]))
+                        .zip(member["operator"].as_str())
+                        .is_some_and(|(operators, operator)| {
+                            operators.iter().any(|candidate| candidate == operator)
+                        })
+            }
             (Some(kind), member) => member["kind"] == kind,
             (None, _) => false,
         };
@@ -1912,34 +1975,29 @@ impl<'a> OperationOracle<'a> {
             .expect("catalog result form is a string");
         let result = arguments
             .as_deref()
-            .and_then(|arguments| self.result_descriptor(form, operation, arguments));
+            .and_then(|arguments| self.result_descriptor(form, operation, arguments))
+            .and_then(|derived| self.declared_result(term, derived));
         if let (Some(kind), Some(arguments), Some(result)) = (
             entry["mode"].as_str(),
             arguments.as_deref(),
             result.as_ref(),
         ) {
             if self.catalog["type_pinned_modes"].get(kind).is_some() {
-                let result_source = match root_type {
-                    Some(root) => self.typed(root),
-                    None => Some(result.clone()),
-                };
                 let operand_sources = arguments
                     .iter()
-                    .map(|argument| argument.bound.as_deref().unwrap_or(argument).clone());
+                    .map(|argument| argument.bound.as_deref().unwrap_or(argument));
                 let sources = if entry["operator"] == "convert" {
-                    vec![result_source]
+                    vec![result]
                 } else {
-                    operand_sources.map(Some).chain([result_source]).collect()
+                    operand_sources.chain([result]).collect()
                 };
-                if let Some(sources) = sources.into_iter().collect::<Option<Vec<_>>>() {
-                    let pins = sources
-                        .iter()
-                        .filter_map(|source| self.pin(source, kind))
-                        .collect::<BTreeSet<_>>();
-                    let declared = operation["mode"]["value"].as_str().map(str::to_owned);
-                    if pins.len() != 1 || pins.first() != declared.as_ref() {
-                        return Err(Refusal::ModeTypeMismatch);
-                    }
+                let pins = sources
+                    .into_iter()
+                    .filter_map(|source| self.pin(source, kind))
+                    .collect::<BTreeSet<_>>();
+                let declared = operation["mode"]["value"].as_str().map(str::to_owned);
+                if pins.len() != 1 || pins.first() != declared.as_ref() {
+                    return Err(Refusal::ModeTypeMismatch);
                 }
             }
         }
@@ -1956,7 +2014,9 @@ impl<'a> OperationOracle<'a> {
                 .or(rest)
                 .is_some_and(|position| self.expand(position).contains(&argument.family.as_str()))
         });
-        let member_resolves = entry["member"].is_null() || self.member_descriptor(member).is_some();
+        let member_resolves = entry["member"].is_null()
+            || entry["member"] == "profile_operator"
+            || self.member_descriptor(member).is_some();
         let constraints_hold = entry["constraints"]
             .as_array()
             .expect("catalog constraints are an array")
@@ -1965,12 +2025,14 @@ impl<'a> OperationOracle<'a> {
                 self.constraint_holds(constraint, operation, &arguments, positions.len())
             });
         let result = result.ok_or(Refusal::OperatorIneligible)?;
-        let root_fits = root_type.is_none_or(|root| {
-            self.type_family(root) == Some(result.family.as_str())
-                && result.ty.as_ref().is_none_or(|ty| self.same_type(ty, root))
-        });
         let expected_leaves = match entry["leaves"].as_str() {
             None => Some(Vec::new()),
+            Some("result_inner") => match self.type_family(&term["result_type"]) {
+                Some("set" | "bag" | "ordered_set") => self
+                    .inner_type(&term["result_type"])
+                    .and_then(|inner| self.expected_leaves(inner)),
+                _ => Some(Vec::new()),
+            },
             Some(source) => {
                 let compared = match source {
                     "operand:0" => arguments.first().and_then(|a| a.ty.clone()),
@@ -1984,12 +2046,11 @@ impl<'a> OperationOracle<'a> {
                 compared.and_then(|id| self.expected_leaves(&id))
             }
         };
-        let (true, true, true, true, true, Some(expected)) = (
+        let (true, true, true, true, Some(expected)) = (
             arity_fits,
             families_fit,
             member_resolves,
             constraints_hold,
-            root_fits,
             expected_leaves,
         ) else {
             return Err(Refusal::OperatorIneligible);
@@ -2020,7 +2081,7 @@ impl<'a> OperationOracle<'a> {
         }
         if !supplied_leaves
             .iter()
-            .all(|leaf| self.selected(&leaf["laws"][0]["definition"]))
+            .all(|leaf| self.selected(&leaf["laws"][0]))
         {
             return Err(Refusal::LawUnselected);
         }
@@ -2040,11 +2101,126 @@ impl<'a> OperationOracle<'a> {
         Ok(result)
     }
 
-    /// Classify an application at the body root of `node` (or nested when it is not the root).
+    /// Classify an application of `node`; an expression or function whose
+    /// body root is the application declares exactly its result type.
     fn classify_in(&self, node: &Value, term: &Value) -> Result<Descriptor, OperationRefusal> {
+        let result = self.classify(term)?;
         let at_root = std::ptr::eq(term, &node["body"])
             && matches!(node["node_tag"].as_str(), Some("expression" | "function"));
-        self.classify(term, at_root.then_some(&node["semantic_type"]))
+        if at_root && node["semantic_type"] != term["result_type"] {
+            return Err(OperationRefusal::OperatorIneligible);
+        }
+        Ok(result)
+    }
+}
+
+/// FR-149 class of a conversion between exact numeric types: exact, a checked
+/// range or rational narrowing obligation, or a scale reduction that rounds.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ConversionClass {
+    Exact,
+    RangeNarrowing,
+    RationalNarrowing,
+    ScaleReduction,
+}
+
+/// FR-149 conversion class decided from declared bounds alone; `None` when no
+/// exact-numeric conversion applies.
+fn conversion_class(from: &NumericBounds, to: &NumericBounds) -> Option<ConversionClass> {
+    use NumericBounds::{Decimal, Int, Integer, Rational};
+    if exact_bounds_conversion(from, to) {
+        return Some(ConversionClass::Exact);
+    }
+    let one = BigInt::from(1);
+    let zero = BigInt::from(0);
+    match (from, to) {
+        (Decimal(Some([_, _, _, s2])), Decimal(Some([_, _, _, s4]))) if s2 > s4 => {
+            Some(ConversionClass::ScaleReduction)
+        }
+        (Decimal(None) | Rational(None), Decimal(_)) => Some(ConversionClass::ScaleReduction),
+        (Rational(Some([_, _, _, d2])), Decimal(_)) if d2 > &one => {
+            Some(ConversionClass::ScaleReduction)
+        }
+        (Rational(_), Rational(_)) => Some(ConversionClass::RationalNarrowing),
+        (Integer | Int(..), _)
+        | (Decimal(_), Rational(_) | Decimal(_))
+        | (Rational(Some(_)), Integer | Int(..) | Decimal(_)) => {
+            Some(ConversionClass::RangeNarrowing)
+        }
+        (Decimal(Some([_, _, _, s2])), Integer | Int(..)) if s2 == &zero => {
+            Some(ConversionClass::RangeNarrowing)
+        }
+        _ => None,
+    }
+}
+
+/// Bytes of the profile definitions and the rule texts that define their
+/// operator sets.
+const TEMPORAL_PROFILES: [&[u8]; 3] = [
+    include_bytes!("../proposals/quire-v1/definitions/temporal-event-position.md"),
+    include_bytes!("../proposals/quire-v1/definitions/temporal-fixed-sample.md"),
+    include_bytes!("../proposals/quire-v1/definitions/temporal-timestamped-window.md"),
+];
+const PROTOCOL_FINITE: &[u8] =
+    include_bytes!("../proposals/quire-v1/definitions/protocol-finite.md");
+const TEMPORAL_COMMON: &str = include_str!("../proposals/quire-v1/definitions/temporal-common.md");
+const BOUNDED_CONTROL_RULE: &str =
+    include_str!("../spec/functional/protocol/FR-052-represent-bounded-control.md");
+
+/// Items of an English list `a, b and c` between `start` and `end` in a text
+/// whose line breaks are read as spaces, spelled with underscores.
+fn listed_items(text: &str, start: &str, end: &str) -> Vec<String> {
+    let flat = text.split_whitespace().collect::<Vec<_>>().join(" ");
+    let (_, after) = flat
+        .split_once(start)
+        .unwrap_or_else(|| panic!("rule text lists `{start}`"));
+    let (list, _) = after
+        .split_once(end)
+        .unwrap_or_else(|| panic!("rule list after `{start}` ends with `{end}`"));
+    list.split(", ")
+        .flat_map(|item| item.split(" and "))
+        .map(|item| item.trim().replace(' ', "_"))
+        .collect()
+}
+
+/// The profile law role and definition text of a temporal or protocol
+/// profile `DefinitionRef` whose identity, revision and raw-byte digest match
+/// a published profile definition exactly; `None` for any other reference.
+fn matched_profile(definition: &Value) -> Option<(&'static str, &'static str)> {
+    let matches = |bytes: &'static [u8]| {
+        let text = std::str::from_utf8(bytes).ok()?;
+        let line = text
+            .lines()
+            .find(|line| line.starts_with("Profile identity: "))?;
+        let quoted = line.split('`').skip(1).step_by(2).collect::<Vec<_>>();
+        let (identity, revision) = (quoted.first()?, quoted.get(1)?);
+        (definition["authority"] == "agent-ix"
+            && definition["revision"]["namespace"] == "quire-draft"
+            && definition["identity"] == *identity
+            && definition["revision"]["value"] == *revision
+            && definition["digest_domain"] == "quire.definition.bytes/v1"
+            && definition["digest"] == format!("{:x}", Sha256::digest(bytes)))
+        .then_some(text)
+    };
+    TEMPORAL_PROFILES
+        .into_iter()
+        .find_map(matches)
+        .map(|text| ("temporal_profile", text))
+        .or_else(|| matches(PROTOCOL_FINITE).map(|text| ("protocol_profile", text)))
+}
+
+/// Operators a selected temporal or protocol profile defines, read from the
+/// profile definition the law names: a temporal profile requiring the bounded
+/// facet defines its eight bounded operators, and the finite protocol profile
+/// the FR-052 control constructs.
+fn profile_operators(definition: &Value) -> Option<Vec<String>> {
+    match matched_profile(definition)? {
+        ("temporal_profile", text) => text
+            .contains("| `quire.temporal.bounded-facet/v1` |")
+            .then(|| listed_items(TEMPORAL_COMMON, "bounded operators: ", ".")),
+        (_, text) => text
+            .contains("| FR-052 |")
+            .then(|| listed_items(BOUNDED_CONTROL_RULE, "graph for authored ", " without")),
     }
 }
 
@@ -2170,14 +2346,10 @@ fn application_node_preimage(node: &Value, nodes: &[Value]) -> Option<Value> {
     }))
 }
 
-/// Cross-field constraints binding an application-bearing node: its key is
-/// the JCS digest of its preimage, an expression whose root is an application
-/// has the operator's semantic form, and its dependencies are exactly its
-/// reference targets and member declarations.
-fn application_node_is_valid(node: &Value, nodes: &[Value]) -> bool {
-    let Some(preimage) = application_node_preimage(node, nodes) else {
-        return false;
-    };
+/// Graph-shape constraints of an application-bearing node: an expression
+/// whose root is an application has the operator's semantic form, and its
+/// dependencies are exactly its reference targets and member declarations.
+fn application_node_shape_is_valid(node: &Value) -> bool {
     let body = &node["body"];
     let form_fits = node["node_tag"] != "expression"
         || body["term"] != "application"
@@ -2185,11 +2357,81 @@ fn application_node_is_valid(node: &Value, nodes: &[Value]) -> bool {
             .as_str()
             .and_then(expression_form_for_class)
             == node["semantic_form"].as_str();
-    node["node_id"]["digest"].as_str() == Some(unqualified_jcs_sha256(&preimage).as_str())
+    !application_terms(body).is_empty()
         && form_fits
         && node["dependencies"]
             .as_array()
             .is_some_and(|actual| *actual == application_dependencies(body))
+}
+
+/// Whether an application-bearing node retains the JCS digest of its preimage.
+fn application_node_key_is_current(node: &Value, nodes: &[Value]) -> bool {
+    application_node_preimage(node, nodes).is_some_and(|preimage| {
+        node["node_id"]["digest"].as_str() == Some(unqualified_jcs_sha256(&preimage).as_str())
+    })
+}
+
+/// Both cross-field constraints binding an application-bearing node.
+fn application_node_is_valid(node: &Value, nodes: &[Value]) -> bool {
+    application_node_shape_is_valid(node) && application_node_key_is_current(node, nodes)
+}
+
+/// First semantic refusal of a schema-valid V2 package in the normative
+/// reader order: graph shape, then a stale application-node key, then
+/// declaration refusals, then operation refusals. Nodes are visited ascending
+/// by retained node-id digest.
+#[derive(Clone, Debug, PartialEq)]
+enum ReadRefusal {
+    GraphShape(Value),
+    StaleNodeKey(Value),
+    Declaration(DeclarationRefusal, Value),
+    Operation(OperationRefusal),
+}
+
+impl ReadRefusal {
+    /// Cause and code of the `stale-node-key` refusal.
+    const STALE_NODE_KEY: (&'static str, &'static str) = ("stale-node-key", "invalid_package");
+}
+
+/// Code catalogued for a package-read cause, when the cause is one.
+fn package_cause_code(cause: &str) -> Option<&'static str> {
+    OperationRefusal::from_cause(cause)
+        .map(OperationRefusal::code)
+        .or_else(|| {
+            DeclarationRefusal::ALL
+                .into_iter()
+                .find(|refusal| refusal.cause() == cause)
+                .map(DeclarationRefusal::code)
+        })
+        .or_else(|| {
+            (cause == ReadRefusal::STALE_NODE_KEY.0).then_some(ReadRefusal::STALE_NODE_KEY.1)
+        })
+}
+
+fn read_package_semantics(package: &Value, catalog: &Value) -> Result<(), ReadRefusal> {
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("package nodes are an array");
+    let mut ordered = nodes
+        .iter()
+        .filter(|node| !application_terms(&node["body"]).is_empty())
+        .collect::<Vec<_>>();
+    ordered.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
+    if let Some(node) = ordered
+        .iter()
+        .find(|node| !application_node_shape_is_valid(node))
+    {
+        return Err(ReadRefusal::GraphShape(node["node_id"].clone()));
+    }
+    if let Some(node) = ordered
+        .iter()
+        .find(|node| !application_node_key_is_current(node, nodes))
+    {
+        return Err(ReadRefusal::StaleNodeKey(node["node_id"].clone()));
+    }
+    package_declaration_refusal(package)
+        .map_err(|(refusal, node)| ReadRefusal::Declaration(refusal, node))?;
+    package_operations_refusal(package, catalog).map_err(ReadRefusal::Operation)
 }
 
 /// Semantic refusal of a package's `declaration` members, in the normative
@@ -2218,19 +2460,22 @@ impl DeclarationRefusal {
     }
 }
 
-/// Whether a V2 node declares a library-visible name and so must carry the
-/// `declaration` member; every other node must not carry it.
+/// Whether a V2 node is a named, source-declared declaration and so must
+/// carry the `declaration` member: a declarable tag with a declaration
+/// occurrence. Anonymous and builtin nodes, and every other tag, must not.
 fn node_declares(node: &Value) -> bool {
-    match node["node_tag"].as_str() {
-        Some("scalar_type" | "composite_type" | "bounded_domain" | "function") => true,
-        Some("value") => {
-            node["semantic_form"] != "enum_value"
-                && node["occurrences"].as_array().is_some_and(|occurrences| {
-                    occurrences.iter().any(|o| o["role"] == "declaration")
-                })
-        }
+    let declarable = match node["node_tag"].as_str() {
+        Some(
+            "scalar_type" | "composite_type" | "bounded_domain" | "function" | "model" | "protocol"
+            | "claim",
+        ) => true,
+        Some("value") => node["semantic_form"] != "enum_value",
         _ => false,
-    }
+    };
+    declarable
+        && node["occurrences"]
+            .as_array()
+            .is_some_and(|occurrences| occurrences.iter().any(|o| o["role"] == "declaration"))
 }
 
 /// Independent oracle over the `declaration` members of a schema-valid V2
@@ -2896,7 +3141,7 @@ fn tc_233_v1_to_v2_migration_correspondence_is_typed_total_and_input_bound() {
             "/outcome/correspondence/node_correspondences/0/basis"
         ),
         BTreeSet::from([
-            ("clauses-relinked-rekeyed", "relinked-identical"),
+            ("control-relinked-rekeyed", "relinked-identical"),
             ("nominal-relinked-rekeyed", "relinked-rekeyed"),
         ]),
         "the positive migration inventory is exact"
@@ -2994,8 +3239,8 @@ fn tc_233_v1_to_v2_migration_correspondence_is_typed_total_and_input_bound() {
     );
 
     let catalog = parsed_fixture(OPERATION_CATALOG);
-    let clauses_source = migration_package("fixtures/migration-source-clauses-v1.json");
-    let clauses_target = migration_package("fixtures/positive-clause-operations.json");
+    let clauses_source = migration_package("fixtures/migration-source-control-v1.json");
+    let clauses_target = migration_package("fixtures/positive-control-operations.json");
     let clause_nodes = clauses_target["semantic_graph"]["nodes"]
         .as_array()
         .expect("clause target nodes are an array");
@@ -3032,14 +3277,8 @@ fn tc_233_v1_to_v2_migration_correspondence_is_typed_total_and_input_bound() {
     }
     assert_eq!(
         derived_classes,
-        BTreeSet::from([
-            "claim",
-            "conditional",
-            "protocol_control",
-            "state_transition",
-            "temporal"
-        ]),
-        "the clause migration exercises every derivable clause class it publishes"
+        BTreeSet::from(["conditional"]),
+        "the control migration derives exactly its selection-free class; clause classes carry a profile law V1 lacks"
     );
 }
 
@@ -3163,6 +3402,10 @@ fn tc_233_v1_to_v2_migration_refusals_use_the_closed_typed_outcome() {
             ),
             (
                 "operation-unresolved-precedes-target",
+                "migration_operation_unresolved"
+            ),
+            (
+                "clause-operator-not-derivable",
                 "migration_operation_unresolved"
             ),
         ]),
@@ -4393,13 +4636,22 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
     let roles = catalog["law_roles"]
         .as_object()
         .expect("law roles are an object");
+    let profile_roles = string_set(&catalog["profile_law_roles"], "profile law roles");
+    assert!(
+        profile_roles.iter().all(|role| !roles.contains_key(*role)),
+        "a profile law role names no fixed catalog definition: the package lock selects it"
+    );
     assert_eq!(
         string_set(
             &defs["OperationLaw"]["properties"]["role"]["enum"],
             "schema law roles"
         ),
-        roles.keys().map(String::as_str).collect::<BTreeSet<_>>(),
-        "the schemas enumerate exactly the catalogued law roles"
+        roles
+            .keys()
+            .map(String::as_str)
+            .chain(profile_roles.iter().copied())
+            .collect::<BTreeSet<_>>(),
+        "the schemas enumerate exactly the catalogued law roles and profile law roles"
     );
     let branch_kinds = |definition: &str| {
         defs[definition]["oneOf"]
@@ -4488,6 +4740,7 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
         assert!(string_set(pinned, "pinned families").is_subset(&families));
     }
 
+    let leaf_sources = string_set(&catalog["leaf_sources"], "leaf sources");
     for entry in entries {
         let identity = entry["identity"].as_str().expect("identity is a string");
         let operands = string_list(&entry["operands"], "operand positions");
@@ -4516,7 +4769,7 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
         assert!(
             string_set(&entry["laws"], "entry laws")
                 .iter()
-                .all(|role| roles.contains_key(*role)),
+                .all(|role| roles.contains_key(*role) || profile_roles.contains(role)),
             "{identity} laws are law roles"
         );
         assert!(
@@ -4534,7 +4787,10 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
             "{identity} member is a member kind"
         );
         assert!(
-            [json!(null), json!("operand:0"), json!("inner:0")].contains(&entry["leaves"]),
+            entry["leaves"].is_null()
+                || entry["leaves"]
+                    .as_str()
+                    .is_some_and(|source| leaf_sources.contains(source)),
             "{identity} leaves source is closed"
         );
         for constraint in entry["constraints"]
@@ -4638,6 +4894,78 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
     assert_eq!(
         entry("quire.op.collection.contains")["leaves"],
         json!("inner:0")
+    );
+    for (identity, role) in [
+        ("quire.op.temporal.clause", "temporal_profile"),
+        ("quire.op.claim.clause", "temporal_profile"),
+        ("quire.op.protocol.control", "protocol_profile"),
+        ("quire.op.state.transition", "protocol_profile"),
+    ] {
+        assert_eq!(entry(identity)["laws"], json!([role]), "{identity} law");
+        assert_eq!(
+            entry(identity)["member"],
+            json!("profile_operator"),
+            "{identity} names the exact profile operator it applies"
+        );
+    }
+    assert_eq!(
+        entry("quire.op.rational.div")["operands"],
+        json!(["rational_promotable", "rational_promotable"])
+    );
+    assert_eq!(
+        string_set(&groups["rational_promotable"], "rational_promotable"),
+        BTreeSet::from(["integer", "rational"])
+    );
+    assert!(
+        entry("quire.op.rational.div")["constraints"]
+            .as_array()
+            .is_some_and(|constraints| constraints
+                .iter()
+                .any(|constraint| constraint["kind"] == "promotes_exact")),
+        "rational division states its exact integer promotion"
+    );
+    for (identity, kind) in [
+        ("quire.op.numeric.narrow", "range_narrowing"),
+        ("quire.op.rational.narrow", "rational_narrowing"),
+    ] {
+        assert!(
+            entry(identity)["constraints"]
+                .as_array()
+                .is_some_and(|constraints| constraints
+                    .iter()
+                    .any(|constraint| constraint["kind"] == kind)),
+            "{identity} is a checked {kind} obligation"
+        );
+        assert!(entry(identity)["mode"].is_null(), "{identity} never rounds");
+    }
+    for identity in [
+        "quire.op.collection.set",
+        "quire.op.collection.bag",
+        "quire.op.collection.ordered_set",
+        "quire.op.collection.map",
+        "quire.op.collection.flat_map",
+        "quire.op.collection.flatten",
+        "quire.op.collection.convert",
+    ] {
+        assert_eq!(
+            entry(identity)["leaves"],
+            json!("result_inner"),
+            "{identity} carries the element text leaves of its keyed result"
+        );
+    }
+    for identity in [
+        "quire.op.quantity.convert",
+        "quire.op.collection.sum.quantity",
+    ] {
+        assert_eq!(
+            entry(identity)["mode"],
+            json!("rounding"),
+            "{identity} mode"
+        );
+    }
+    assert!(
+        string_set(&catalog["type_pinned_modes"]["rounding"], "rounding pins").contains("quantity"),
+        "a quantity rounding mode agrees with the rounding its type pins"
     );
 }
 
@@ -4904,8 +5232,9 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
         OperationRefusal::ALL
             .into_iter()
             .map(OperationRefusal::cause)
+            .chain([ReadRefusal::STALE_NODE_KEY.0])
             .collect::<BTreeSet<_>>(),
-        "the mutations exercise every operation refusal cause"
+        "the mutations exercise every operation refusal cause and stale-node-key"
     );
 
     for mutation in mutations.as_array().expect("mutations are an array") {
@@ -4934,6 +5263,25 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
         assert!(
             !application_node_is_valid(&stale_nodes[index], stale_nodes),
             "{name} never keeps its stale key"
+        );
+        let mut current_shape = node.clone();
+        current_shape["dependencies"] = json!(application_dependencies(&node["body"]));
+        let retained_id = package["semantic_graph"]["nodes"][index]["node_id"].clone();
+        let shape_valid = application_node_shape_is_valid(&current_shape);
+        assert!(
+            shape_valid || mutation["kind"] != "stale_key",
+            "{name}: a stale-key mutation keeps a well-formed graph"
+        );
+        let mut retained = package.clone();
+        retained["semantic_graph"]["nodes"][index] = current_shape;
+        assert_eq!(
+            read_package_semantics(&retained, &catalog),
+            Err(if shape_valid {
+                ReadRefusal::StaleNodeKey(retained_id)
+            } else {
+                ReadRefusal::GraphShape(retained_id)
+            }),
+            "{name} retaining its key refuses stale-node-key after graph shape and before any declaration or operation cause"
         );
         let mut candidate = package.clone();
         replace_application_node(&mut candidate, index, node);
@@ -4971,7 +5319,23 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
                     },
                     "{name} rekeyed is admitted exactly when its laws are selected"
                 );
-                assert_eq!(mutation["expected_code"], "invalid_package");
+                assert_eq!(
+                    (
+                        mutation["expected_cause"].as_str(),
+                        mutation["expected_code"].as_str()
+                    ),
+                    (
+                        Some(ReadRefusal::STALE_NODE_KEY.0),
+                        Some(ReadRefusal::STALE_NODE_KEY.1)
+                    ),
+                    "{name} records the stale-node-key cause and its invalid_package code"
+                );
+                assert_eq!(
+                    read_package_semantics(&candidate, &catalog),
+                    package_operations_refusal(&candidate, &catalog)
+                        .map_err(ReadRefusal::Operation),
+                    "{name} rekeyed is no longer stale"
+                );
             }
             Some("law_unselected") => {
                 assert_eq!(
@@ -5128,6 +5492,7 @@ fn tc_233_operation_and_declaration_causes_pair_with_one_catalogued_code() {
                 .into_iter()
                 .map(|refusal| (refusal.cause(), refusal.code())),
         )
+        .chain([ReadRefusal::STALE_NODE_KEY])
         .collect::<Vec<_>>();
     assert_eq!(
         pairs
@@ -5159,11 +5524,11 @@ fn tc_233_operation_and_declaration_causes_pair_with_one_catalogued_code() {
         .expect("mutations")
     {
         let expected_code = mutation["expected_code"].as_str().expect("expected code");
-        let code = mutation["expected_cause"]
-            .as_str()
-            .map_or(Some("invalid_package"), |cause| {
-                OperationRefusal::from_cause(cause).map(OperationRefusal::code)
-            });
+        let code = package_cause_code(
+            mutation["expected_cause"]
+                .as_str()
+                .expect("every operation mutation records its cause"),
+        );
         assert_eq!(
             Some(expected_code),
             code,
@@ -5185,7 +5550,7 @@ fn first_application_mut(term: &mut Value) -> Option<&mut Value> {
     }
 }
 
-fn published_v2_packages() -> [(&'static str, Value); 4] {
+fn published_v2_packages() -> [(&'static str, Value); 5] {
     [
         (
             "operation-identities",
@@ -5195,6 +5560,10 @@ fn published_v2_packages() -> [(&'static str, Value); 4] {
         (
             "clause-operations",
             parsed_fixture(POSITIVE_CLAUSE_OPERATIONS),
+        ),
+        (
+            "control-operations",
+            parsed_fixture(POSITIVE_CONTROL_OPERATIONS),
         ),
         (
             "nominal-identities",
@@ -5344,8 +5713,8 @@ fn tc_233_underivable_relinked_operations_refuse_after_stale_inputs_and_before_t
         .as_array()
         .expect("positives are an array")
         .iter()
-        .find(|positive| positive["name"] == "clauses-relinked-rekeyed")
-        .expect("the clause migration positive is published");
+        .find(|positive| positive["name"] == "control-relinked-rekeyed")
+        .expect("the control migration positive is published");
     let source = migration_package(base["source_package"].as_str().expect("source path"));
     let target = migration_package(base["target_package"].as_str().expect("target path"));
     let correspondence = &base["outcome"]["correspondence"];
@@ -5359,7 +5728,7 @@ fn tc_233_underivable_relinked_operations_refuse_after_stale_inputs_and_before_t
         .collect::<Vec<_>>();
     assert!(
         !application_ordinals.is_empty(),
-        "the clause target re-links applications"
+        "the control target re-links applications"
     );
     for ordinal in application_ordinals {
         let mut underivable = target.clone();
@@ -5462,6 +5831,37 @@ fn tc_233_declaration_members_name_every_declaring_node_exactly_once() {
         !v2.is_valid(&stray),
         "an expression carrying a declaration fails the schema"
     );
+    let operations = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    let anonymous = operations["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .iter()
+        .position(|node| {
+            node["node_tag"] == "scalar_type"
+                && node["occurrences"]
+                    .as_array()
+                    .is_some_and(|occurrences| occurrences.iter().all(|o| o["role"] == "type"))
+        })
+        .expect("the operation package uses a builtin scalar only as a type occurrence");
+    let mut named_builtin = operations.clone();
+    for prefix in [
+        "/semantic_graph/nodes",
+        "/identity_preimage/identity_projection",
+    ] {
+        named_builtin
+            .pointer_mut(&format!("{prefix}/{anonymous}"))
+            .and_then(Value::as_object_mut)
+            .expect("node is an object")
+            .insert(
+                "declaration".to_owned(),
+                json!({"qualified_name": ["Example", "integer"]}),
+            );
+    }
+    refresh_package_id(&mut named_builtin);
+    assert!(
+        !v2.is_valid(&named_builtin),
+        "a builtin or anonymous type occurrence carrying an invented declaration fails the schema"
+    );
 
     let function = |name: &str| {
         families["semantic_graph"]["nodes"]
@@ -5471,8 +5871,8 @@ fn tc_233_declaration_members_name_every_declaring_node_exactly_once() {
             .position(|node| node["declaration"]["qualified_name"] == json!(["Example", name]))
             .unwrap_or_else(|| panic!("{name} is declared"))
     };
-    let call = function("pure_function_ffff");
-    let callee = function("pure_function_8080");
+    let call = function("run");
+    let callee = function("helper");
     let mut ambiguous = families.clone();
     let mut node = families["semantic_graph"]["nodes"][call].clone();
     node["declaration"] = families["semantic_graph"]["nodes"][callee]["declaration"].clone();
@@ -5533,4 +5933,252 @@ fn tc_233_declaration_members_name_every_declaring_node_exactly_once() {
              which precedes any ambiguity"
         );
     }
+}
+
+/// Index of the node whose root application names `identity`.
+fn node_with_operation(package: &Value, identity: &str) -> usize {
+    package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("package nodes are an array")
+        .iter()
+        .position(|node| node["body"]["operation"]["identity"] == identity)
+        .unwrap_or_else(|| panic!("a node applies {identity}"))
+}
+
+#[trace("TC-233", "FR-322-AC-22")]
+#[test]
+fn tc_233_clause_applications_bind_a_selected_profile_law_and_one_profile_member() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+    assert_eq!(package_operations_refusal(&package, &catalog), Ok(()));
+    let temporal = node_with_operation(&package, "quire.op.temporal.clause");
+    let protocol = node_with_operation(&package, "quire.op.protocol.control");
+    let operation = |index: usize| format!("/semantic_graph/nodes/{index}/body/operation");
+    let refusal = |edit: &dyn Fn(&mut Value)| {
+        let mut candidate = package.clone();
+        edit(&mut candidate);
+        package_operations_refusal(&candidate, &catalog)
+    };
+
+    assert_eq!(
+        refusal(&|candidate| {
+            *candidate
+                .pointer_mut(&format!("{}/laws", operation(temporal)))
+                .expect("laws") = json!([]);
+        }),
+        Err(OperationRefusal::LawMissing),
+        "a clause without its profile law refuses"
+    );
+    let protocol_law = package
+        .pointer(&format!("{}/laws/0/definition", operation(protocol)))
+        .expect("protocol law")
+        .clone();
+    assert_eq!(
+        refusal(&|candidate| {
+            *candidate
+                .pointer_mut(&format!("{}/laws/0/definition", operation(temporal)))
+                .expect("temporal law") = protocol_law.clone();
+        }),
+        Err(OperationRefusal::LawMismatch),
+        "a protocol definition cannot stand in the temporal_profile role"
+    );
+    assert_eq!(
+        refusal(&|candidate| {
+            for prefix in ["/lock", "/identity_preimage"] {
+                candidate
+                    .pointer_mut(&format!("{prefix}/profile_selections"))
+                    .and_then(Value::as_array_mut)
+                    .expect("profile selections")
+                    .retain(|row| row["role"] != "temporal_profile");
+            }
+            refresh_package_id(candidate);
+        }),
+        Err(OperationRefusal::LawUnselected),
+        "a profile law the package lock does not select refuses"
+    );
+    for member in [
+        json!({"kind": "profile_operator", "operator": "no_such_operator"}),
+        json!({"kind": "profile_operator", "operator": "sequence"}),
+        json!(null),
+    ] {
+        assert_eq!(
+            refusal(&|candidate| {
+                *candidate
+                    .pointer_mut(&format!("{}/member", operation(temporal)))
+                    .expect("member") = member.clone();
+            }),
+            Err(OperationRefusal::MemberMismatch),
+            "clause member {member} is not an operator of the selected temporal profile"
+        );
+    }
+}
+
+#[trace("TC-233", "FR-322-AC-23")]
+#[test]
+fn tc_233_application_result_types_and_literal_types_are_checked_not_inferred() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    let div = operation_vector_node(&package, &vectors, "rational-div-integer-operands");
+    let id =
+        |byte: &str| json!({"domain": "quire.checked-semantic-node/v1", "digest": byte.repeat(32)});
+    let with = |edit: &dyn Fn(&mut Value)| {
+        let mut candidate = package.clone();
+        edit(&mut candidate);
+        package_operations_refusal(&candidate, &catalog)
+    };
+    assert_eq!(package_operations_refusal(&package, &catalog), Ok(()));
+    assert_eq!(
+        with(&|candidate| {
+            candidate["semantic_graph"]["nodes"][div]["body"]["result_type"] = id("f2");
+        }),
+        Err(OperationRefusal::OperatorIneligible),
+        "a root result_type differing from the node semantic_type refuses"
+    );
+    assert_eq!(
+        with(&|candidate| {
+            let node = &mut candidate["semantic_graph"]["nodes"][div];
+            node["semantic_type"] = id("a3");
+            node["body"]["result_type"] = id("a3");
+        }),
+        Err(OperationRefusal::OperatorIneligible),
+        "a result_type the operation cannot produce refuses"
+    );
+    let literal = node_index_by_digest(&package, &"f4".repeat(32)).expect("literal 3 is published");
+    assert_eq!(
+        package["semantic_graph"]["nodes"][literal]["body"]["type"],
+        id("f1"),
+        "the literal carries its declared type"
+    );
+    let inline = |ty: &str| {
+        let mut literal_term = package["semantic_graph"]["nodes"][literal]["body"].clone();
+        literal_term["type"] = id(ty);
+        with(&|candidate| {
+            candidate["semantic_graph"]["nodes"][div]["body"]["arguments"][0] =
+                literal_term.clone();
+        })
+    };
+    assert_eq!(
+        inline("f1"),
+        Ok(()),
+        "an inline literal of its declared type is admitted"
+    );
+    assert_eq!(
+        inline("a3"),
+        Err(OperationRefusal::OperatorIneligible),
+        "an inline literal whose type disagrees with its value kind refuses"
+    );
+}
+
+#[trace("TC-233", "FR-322-AC-24")]
+#[test]
+fn tc_233_numeric_conversions_classify_and_rational_division_promotes_exactly() {
+    let int = |a: i32| BigInt::from(a);
+    let four = |a: i32, b: i32, c: i32, d: i32| Some([int(a), int(b), int(c), int(d)]);
+    use NumericBounds::{Decimal, Int, Integer, Rational};
+    for (from, to, expected) in [
+        (Int(int(-9), int(9)), Integer, ConversionClass::Exact),
+        (
+            Int(int(-9), int(9)),
+            Rational(four(-9, 9, 1, 1)),
+            ConversionClass::Exact,
+        ),
+        (
+            Int(int(0), int(300)),
+            Decimal(four(0, 20000, 2, 2)),
+            ConversionClass::RangeNarrowing,
+        ),
+        (
+            Integer,
+            Int(int(0), int(9)),
+            ConversionClass::RangeNarrowing,
+        ),
+        (
+            Decimal(four(0, 99999, 3, 3)),
+            Decimal(four(0, 9999, 2, 2)),
+            ConversionClass::ScaleReduction,
+        ),
+        (
+            Rational(four(-9, 9, 1, 9)),
+            Rational(four(-9, 9, 1, 3)),
+            ConversionClass::RationalNarrowing,
+        ),
+        (
+            Rational(None),
+            Rational(four(-9, 9, 1, 9)),
+            ConversionClass::RationalNarrowing,
+        ),
+    ] {
+        assert_eq!(
+            conversion_class(&from, &to),
+            Some(expected),
+            "{from:?} -> {to:?}"
+        );
+    }
+
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    let div = operation_vector_node(&package, &vectors, "rational-div-integer-operands");
+    assert_eq!(package_operations_refusal(&package, &catalog), Ok(()));
+    let entry = catalog["operations"]
+        .as_array()
+        .expect("catalog operations")
+        .iter()
+        .find(|entry| entry["identity"] == "quire.op.rational.div")
+        .expect("rational.div is catalogued");
+    assert!(
+        entry.to_string().contains("promotes_exact"),
+        "rational.div carries the promotes_exact constraint"
+    );
+    let decimal = json!({"domain": "quire.checked-semantic-node/v1", "digest": "b0".repeat(32)});
+    let mut candidate = package.clone();
+    candidate["semantic_graph"]["nodes"][div]["body"]["arguments"][1]["target"] = decimal;
+    assert_eq!(
+        package_operations_refusal(&candidate, &catalog),
+        Err(OperationRefusal::OperatorIneligible),
+        "a decimal operand is not exactly promotable to the rational result"
+    );
+}
+
+#[trace("TC-233", "FR-272-AC-7")]
+#[test]
+fn tc_233_a_stale_node_key_precedes_declaration_refusals() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let families = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let nodes = families["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes");
+    let declared = |name: &str| {
+        nodes
+            .iter()
+            .position(|node| node["declaration"]["qualified_name"] == json!(["Example", name]))
+            .unwrap_or_else(|| panic!("{name} is declared"))
+    };
+    let (call, callee) = (declared("run"), declared("helper"));
+    let mut ambiguous = families.clone();
+    let mut node = nodes[call].clone();
+    node["declaration"] = nodes[callee]["declaration"].clone();
+    replace_application_node(&mut ambiguous, call, node);
+    assert!(matches!(
+        read_package_semantics(&ambiguous, &catalog),
+        Err(ReadRefusal::Declaration(
+            DeclarationRefusal::AmbiguousName,
+            _
+        ))
+    ));
+    let other = nodes
+        .iter()
+        .position(|node| {
+            node["node_id"] != nodes[call]["node_id"]
+                && !application_terms(&node["body"]).is_empty()
+        })
+        .expect("a second application-bearing node is published");
+    assert_ne!(other, call);
+    ambiguous["semantic_graph"]["nodes"][other]["semantic_type"]["digest"] = json!("a0".repeat(32));
+    assert_eq!(
+        read_package_semantics(&ambiguous, &catalog),
+        Err(ReadRefusal::StaleNodeKey(nodes[other]["node_id"].clone())),
+        "a stale application-node key is reported before the declaration ambiguity"
+    );
 }
