@@ -1085,6 +1085,21 @@ fn expression_form_for_class(class: &str) -> Option<&'static str> {
 
 /// Independent reader oracle over the operation catalog, a package lock and
 /// its graph. Nothing is read from outside the package and catalog.
+/// The four `model` semantic forms whose declaration carries `operation`
+/// members, per FR-208: object type, process, persistence interface and
+/// state machine each declare (or declare the operation-bearing subset of)
+/// "fields, relationships, operations and invariants". The other five model
+/// forms (`value_type`, `variant_type`, `record_value_type`, `event_type`,
+/// `namespace`, and the `field_declaration`/`operation_declaration`/
+/// `clause_member_declaration` member-declaration kinds) declare no
+/// operation.
+const OPERATION_BEARING_MODEL_FORMS: [&str; 4] = [
+    "object_type",
+    "process",
+    "persistence_interface",
+    "state_machine",
+];
+
 struct OperationOracle<'a> {
     catalog: &'a Value,
     lock: &'a Value,
@@ -1338,17 +1353,20 @@ impl<'a> OperationOracle<'a> {
             }
             "operation" => {
                 let model = self.node(declaration)?;
-                (model["node_tag"] == "model" && model["semantic_form"] == "model_type")
-                    .then(|| {
-                        let function = self.node(Self::reference_target(Self::binding(
-                            model,
-                            member["name"].as_str()?,
-                        )?)?)?;
-                        (function["node_tag"] == "function")
-                            .then(|| self.typed(&function["semantic_type"]))
-                            .flatten()
-                    })
-                    .flatten()
+                (model["node_tag"] == "model"
+                    && model["semantic_form"]
+                        .as_str()
+                        .is_some_and(|form| OPERATION_BEARING_MODEL_FORMS.contains(&form)))
+                .then(|| {
+                    let function = self.node(Self::reference_target(Self::binding(
+                        model,
+                        member["name"].as_str()?,
+                    )?)?)?;
+                    (function["node_tag"] == "function")
+                        .then(|| self.typed(&function["semantic_type"]))
+                        .flatten()
+                })
+                .flatten()
             }
             "type_argument" => self.typed(declaration),
             _ => None,
@@ -2289,9 +2307,14 @@ impl FrameGroup {
 }
 
 /// The declaration meaning a `modifies`/`creates`/`deletes` entry must join:
-/// a field or relationship for `modifies`, an object type or process (both
-/// wire as `model_type`) for `creates`/`deletes`. No other checked-semantic
-/// node meaning is a compatible frame-entry target.
+/// a field or relationship for `modifies`, an object type or process for
+/// `creates`/`deletes`. No other checked-semantic node meaning is a
+/// compatible frame-entry target: FR-208 names nine further model meanings
+/// (`value_type`, `variant_type`, `record_value_type`, `event_type`,
+/// `state_machine`, `persistence_interface`, `namespace`, and the
+/// `operation_declaration`/`clause_member_declaration` member-declaration
+/// kinds), each with its own wire spelling, and none of them is Modifiable
+/// or CreatableOrDeletable.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum FrameMeaning {
     Modifiable,
@@ -2304,8 +2327,10 @@ enum FrameMeaning {
 fn frame_meaning(node: &Value) -> Option<FrameMeaning> {
     match (node["node_tag"].as_str(), node["semantic_form"].as_str()) {
         (Some("relation"), Some("relationship")) => Some(FrameMeaning::Modifiable),
-        (Some("model"), Some("model_declaration")) => Some(FrameMeaning::Modifiable),
-        (Some("model"), Some("model_type")) => Some(FrameMeaning::CreatableOrDeletable),
+        (Some("model"), Some("field_declaration")) => Some(FrameMeaning::Modifiable),
+        (Some("model"), Some("object_type" | "process")) => {
+            Some(FrameMeaning::CreatableOrDeletable)
+        }
         _ => None,
     }
 }
@@ -2432,7 +2457,15 @@ impl FrameRefusal {
         match self {
             Self::MissingName => "missing-name",
             Self::MalformedDeclaration => "malformed-declaration",
-            Self::CanonicalOrder => "invalid_semantic_graph",
+            // `invalid_semantic_graph` is one of FR-322's bare v2 refusal
+            // codes (lines 182-189: only `invalid_package`, `ill_typed` and
+            // `ambiguous_declaration` carry a cause tag); `CanonicalOrder`
+            // has no cause to return, `.cause()` is never called on it
+            // (excluded from `ALL`), and this arm exists only so the match
+            // stays exhaustive as the enum evolves.
+            Self::CanonicalOrder => {
+                unreachable!("CanonicalOrder carries no cause tag; use .code() instead")
+            }
         }
     }
 
@@ -2821,6 +2854,165 @@ fn tc_233_frame_body_outputs_are_exactly_the_schemas_required_members() {
             "{label}: every published frame is admitted by the same oracle read_package_semantics uses"
         );
     }
+}
+
+/// FR-340-AC-2/AC-3/AC-4/AC-6, through the full normative reader: every
+/// published `frame_mutations` vector is spliced into the all-families
+/// fixture's published frame node (its `dependencies` and
+/// `modifies`/`creates`/`deletes` replaced wholesale) and read with
+/// `read_package_semantics`, the same entry point a real reader uses. This
+/// is what closes the untested refusal path a mutation of
+/// `package_frame_refusal` (making it always return `Ok(())`) would
+/// otherwise pass unnoticed: every non-canonical-order vector here asserts
+/// `ReadRefusal::Frame` is the variant actually returned, its `code()` and
+/// (where the vector states one) its `cause()`, and the exact locus —not
+/// merely that the standalone oracle functions would refuse it in
+/// isolation. The `deletes-misordered` vector's expectation is asserted
+/// only by the `invalid_semantic_graph` code string, never by matching the
+/// internal `FrameDefect::CanonicalOrder`/`FrameRefusal::CanonicalOrder`
+/// variants, and its `expected_cause` is `null` because `CanonicalOrder`
+/// carries no cause tag. The two `precedence-*` vectors are what makes a
+/// swap of `FrameGroup`'s declared variant order, or of `FrameDefect::
+/// MeaningJoin`'s declared field order, fail a test: no prior vector had
+/// two meaning-join defects at once.
+#[trace("TC-233", "FR-340-AC-2")]
+#[trace("TC-233", "FR-340-AC-3")]
+#[trace("TC-233", "FR-340-AC-4")]
+#[trace("TC-233", "FR-340-AC-6")]
+#[test]
+fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cause() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let mutations = vectors["frame_mutations"]
+        .as_array()
+        .expect("frame_mutations is an array");
+    assert_eq!(
+        mutations.len(),
+        10,
+        "frame_mutations covers all ten authored vectors"
+    );
+
+    let causes = mutations
+        .iter()
+        .filter_map(|mutation| mutation["expected_cause"].as_str())
+        .collect::<BTreeSet<_>>();
+    assert_eq!(
+        causes,
+        FrameRefusal::ALL
+            .into_iter()
+            .map(FrameRefusal::cause)
+            .collect::<BTreeSet<_>>(),
+        "the mutations exercise every frame refusal cause FrameRefusal::ALL pairs with a code"
+    );
+    assert!(
+        mutations
+            .iter()
+            .any(|mutation| mutation["expected_cause"].is_null()
+                && mutation["expected_code"] == "invalid_semantic_graph"),
+        "at least one vector exercises the cause-less canonical-order refusal"
+    );
+
+    let package = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .clone();
+    let frame_index = nodes
+        .iter()
+        .position(|node| node["node_tag"] == "state" && node["semantic_form"] == "frame")
+        .expect("a frame node is published");
+
+    let digest_ref =
+        |digest: &str| json!({"domain": "quire.checked-semantic-node/v1", "digest": digest});
+    let digests = |mutation: &Value, key: &str| {
+        mutation[key]
+            .as_array()
+            .unwrap_or_else(|| panic!("{key} is an array"))
+            .iter()
+            .map(|entry| {
+                digest_ref(
+                    entry
+                        .as_str()
+                        .unwrap_or_else(|| panic!("{key} entry is a string")),
+                )
+            })
+            .collect::<Vec<_>>()
+    };
+
+    for mutation in mutations {
+        let name = mutation["name"]
+            .as_str()
+            .expect("mutation name is a string");
+        let mut candidate = package.clone();
+        let frame = &mut candidate["semantic_graph"]["nodes"][frame_index];
+        frame["dependencies"] = json!(digests(mutation, "dependencies"));
+        frame["body"]["modifies"] = json!(digests(mutation, "modifies"));
+        frame["body"]["creates"] = json!(digests(mutation, "creates"));
+        frame["body"]["deletes"] = json!(digests(mutation, "deletes"));
+
+        let expected_code = mutation["expected_code"]
+            .as_str()
+            .expect("expected_code is a string");
+        let expected_locus = digest_ref(
+            mutation["expected_locus_digest"]
+                .as_str()
+                .expect("expected_locus_digest is a string"),
+        );
+        match read_package_semantics(&candidate, &catalog) {
+            Err(ReadRefusal::Frame(refusal, locus)) => {
+                assert_eq!(refusal.code(), expected_code, "{name}: code");
+                assert_eq!(locus, expected_locus, "{name}: locus");
+                if let Some(expected_cause) = mutation["expected_cause"].as_str() {
+                    assert_eq!(refusal.cause(), expected_cause, "{name}: cause");
+                }
+            }
+            other => panic!("{name}: expected a frame refusal, got {other:?}"),
+        }
+    }
+}
+
+/// FR-340-AC-6, tightened from "the same kind of diagnostic" to "the same
+/// diagnostic": authoring the identical pair of meaning-join defects in two
+/// different collection orders sorts to the identical minimum element, not
+/// merely an element of the same variant. This is a direct
+/// comparator-invariance check on the `FrameDefect` collection itself,
+/// distinct from the group-swap check above: two real defects inside one
+/// authored frame body are already canonically ordered by digest within
+/// their own member array (AC-4), so a re-authored member array can never
+/// exercise collection-order independence — only a direct `Vec<FrameDefect>`
+/// built in two different orders can.
+#[trace("TC-233", "FR-340-AC-6")]
+#[test]
+fn tc_233_frame_defect_ordering_does_not_depend_on_collection_order() {
+    let first = FrameDefect::MeaningJoin {
+        group: FrameGroup::Modifies,
+        digest: repeated_digest("91"),
+        cause: FrameJoinCause::MalformedDeclaration,
+    };
+    let second = FrameDefect::MeaningJoin {
+        group: FrameGroup::Modifies,
+        digest: repeated_digest("92"),
+        cause: FrameJoinCause::MalformedDeclaration,
+    };
+
+    let mut forward = vec![first.clone(), second.clone()];
+    forward.sort();
+    let mut backward = vec![second, first];
+    backward.sort();
+
+    assert_eq!(
+        forward, backward,
+        "the same defect set sorts to the identical diagnostic regardless of collection order"
+    );
+    assert_eq!(
+        forward.first(),
+        Some(&FrameDefect::MeaningJoin {
+            group: FrameGroup::Modifies,
+            digest: repeated_digest("91"),
+            cause: FrameJoinCause::MalformedDeclaration,
+        }),
+        "the lower digest is the reported minimum in both orderings"
+    );
 }
 
 /// Rekey one application-bearing node in the graph, its projection and the

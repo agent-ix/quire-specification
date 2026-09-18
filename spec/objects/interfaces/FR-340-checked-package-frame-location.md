@@ -25,41 +25,50 @@ When a `quire.checked-semantic-graph/v2` node has `node_tag: "state"` and
 the business-model frame `model-complete.md`'s Frames rule and
 [FR-013](../../functional/foundation/FR-013-validate-operation-frames.md)
 already state: three named members, `modifies`, `creates` and `deletes`,
-each naming declarations of the package rather than access paths into a
-runtime value. This wire encoding is the V2 carrier of that existing model;
-it does not define a second, competing frame shape.
+each naming declarations of the package by node key. This wire encoding is
+the V2 carrier of that existing model.
 
 ## Properties
 
 - **modifies** (array of `NodeRef`) — every field or relationship the
   operation may write. Each entry is the node key of a declared
-  `relation`/`relationship` node or a declared `model`/`model_declaration`
+  `relation`/`relationship` node or a declared `model`/`field_declaration`
   node of the package's semantic graph.
 - **creates** (array of `NodeRef`) — every object type or process the
   operation may create an instance of. Each entry is the node key of a
-  declared `model`/`model_type` node.
+  declared `model`/`object_type` or `model`/`process` node.
 - **deletes** (array of `NodeRef`) — every object type or process the
   operation may delete an instance of. Each entry is the node key of a
-  declared `model`/`model_type` node, using the same closed meaning as
-  `creates`.
+  declared `model`/`object_type` or `model`/`process` node, using the same
+  closed meaning as `creates`.
 - Every entry of every member equals one of the frame node's own
   `dependencies` ([FR-322](FR-322-checked-package-artifact.md): "References
   name a compatible declared target by node key"); an entry naming no
-  dependency of the frame node, or no node of the package at all, is
-  refused. An entry naming a declared dependency of any other meaning —
-  including a `value`, `expression` or any node outside the four listed
-  above — is refused. This is the rule that makes a location-based frame
-  body, such as one rooting a field selection at a literal, unrepresentable:
-  a literal has no frame meaning.
+  dependency of the frame node, or no node of the package at all, refuses
+  `missing_declaration`/`missing-name`. An entry naming a declared
+  dependency of any other meaning refuses `invalid_model_binding`/
+  `malformed-declaration`: a `model`/`operation_declaration` or
+  `model`/`clause_member_declaration` node; a `model`/`value_type`,
+  `model`/`variant_type`, `model`/`record_value_type`, `model`/`event_type`,
+  `model`/`state_machine`, `model`/`persistence_interface` or
+  `model`/`namespace` node; or a `value`, `expression`, or any node outside
+  the two forms each member admits. A `value` literal has no frame meaning
+  at all.
 
-Mapping `modifies`/`creates`/`deletes` targets onto the existing `model`/
-`relation` node tags and forms above (`model_declaration` for a field,
-`model_type` for an object type or a process, `relation`/`relationship` for
-a relationship) is this artifact's own wiring of FR-208's closed business-
-model meanings onto the checked-semantic-graph's existing closed node-tag
-and semantic-form vocabulary. FR-208 and `model-complete.md` fix which
-meanings are eligible; they do not name checked-semantic-graph node tags.
-No new node tag or semantic form is introduced to carry them.
+`ModelNode`'s `semantic_form` names each of FR-208's business-model
+meanings individually: `field_declaration`, `operation_declaration` and
+`clause_member_declaration` for the three declaration kinds a `model` node
+other than a relationship carries, and `object_type`, `value_type`,
+`variant_type`, `record_value_type`, `event_type`, `state_machine`,
+`process`, `persistence_interface` and `namespace` for the nine business
+type kinds ([FR-208](../foundation/FR-208-quire-meaning-vocabulary.md)'s
+tenth, `population`, wires separately as `relation`/`population`). Frame
+entry eligibility is checked directly against an entry's own
+`semantic_form`: `modifies` admits `field_declaration`; `creates` and
+`deletes` admit `object_type` and `process`; every other `model` form is
+refused. A relationship is encoded exactly one way, `relation`/
+`relationship`; no `model` form carries relationship meaning, so a frame
+entry cannot name a relationship through any other node tag or form.
 
 ## Outputs
 
@@ -97,15 +106,16 @@ the ascending-digest ordering [FR-322](FR-322-checked-package-artifact.md)
 already uses for the dependency lists of application-node preimages. A
 member array that is not in this order refuses `invalid_semantic_graph`,
 the same code [FR-322-AC-10](FR-322-checked-package-artifact.md) uses for
-every other noncanonical member/term order; canonical order is not a
-distinct new refusal category.
+every other noncanonical member/term order.
 
 A reference outside the graph, or naming no declared dependency of the
 frame node, refuses `missing_declaration`/`missing-name`. A reference
 naming a declared dependency of a meaning the member cannot carry refuses
 `invalid_model_binding`/`malformed-declaration`. These are exactly
-`model-complete.md`'s Frames row causes; no new cause is invented for the
-meaning-join check.
+`model-complete.md`'s Frames row causes. A reference naming no node of the
+package at all and a reference naming a real node that is not a declared
+dependency of the frame node both refuse `missing_declaration`/
+`missing-name`, the same cause.
 
 When one frame body carries more than one defect at once, the reader
 reports exactly one diagnostic, decided in this fixed order, never by
@@ -115,36 +125,33 @@ entry's position inside its array:
 1. Any meaning-join defect (a `missing-name` or `malformed-declaration`
    entry, in any of the three members) outranks any canonical-order
    defect.
-2. Ties break by member: `modifies` before `creates` before `deletes`.
-   This is the frame body's own fixed member order, a spec fact, not an
-   authored array position.
+2. Ties break by member, in the frame body's own fixed member order:
+   `modifies`, then `creates`, then `deletes`.
 3. Remaining ties, among multiple meaning-join defects in the same
    member, break by the ascending digest of the offending entry, the same
    order rule the member array itself must satisfy.
 
-A reader that instead reported "whichever defect its traversal reaches
-first" would report different diagnostics for two frame bodies that carry
-the same two defects arranged across different members; this precedence
-rule fixes one diagnostic regardless of that arrangement.
+This precedence rule fixes exactly one diagnostic for a frame body carrying
+several defects, regardless of which member happens to carry which defect
+or where in its array an entry sits.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-340-AC-1 | `modifies`, `creates` and `deletes` may each independently be the empty array; an all-empty frame body and the published fixture's fully-populated frame body are both admitted with no defect. | Test (TC-233) |
-| FR-340-AC-2 | Every `modifies` entry names a declared dependency of the frame node that is a `relation`/`relationship` or `model`/`model_declaration` node; every `creates`/`deletes` entry names a declared dependency that is a `model`/`model_type` node. | Test (TC-233) |
-| FR-340-AC-3 | An entry naming no node of the package, or no declared dependency of the frame node, refuses `missing_declaration`/`missing-name`; an entry naming a declared dependency of any other meaning refuses `invalid_model_binding`/`malformed-declaration`; a location-based frame body rooting a field selection at a literal is unrepresentable under this rule. | Test (TC-233) |
+| FR-340-AC-2 | Every `modifies` entry names a declared dependency of the frame node that is a `relation`/`relationship` or `model`/`field_declaration` node; every `creates`/`deletes` entry names a declared dependency that is a `model`/`object_type` or `model`/`process` node. | Test (TC-233) |
+| FR-340-AC-3 | An entry naming no node of the package, or no declared dependency of the frame node, refuses `missing_declaration`/`missing-name`; an entry naming a declared dependency of any other meaning — including `model`/`operation_declaration`, `model`/`clause_member_declaration`, and every other `model`/`*_type`, `model`/`namespace`, `model`/`state_machine` or `model`/`persistence_interface` form — refuses `invalid_model_binding`/`malformed-declaration`. | Test (TC-233) |
 | FR-340-AC-4 | Each of `modifies`, `creates` and `deletes` is duplicate-free and sorted ascending by entry digest; a duplicated entry fails the schema and a misordered array refuses `invalid_semantic_graph`. | Test (TC-233) |
 | FR-340-AC-5 | The frame body shape validates only as a `state`/`frame` node's `body`; a `value` node's `body` carrying this shape, and a `state`/`frame` node's `body` carrying an ordinary `SemanticTerm` shape, both fail the published schema. | Test (TC-233) |
-| FR-340-AC-6 | When one frame body carries a meaning-join defect and a canonical-order defect at once, the reported diagnostic is the meaning-join defect regardless of which member carries which defect; two vectors with the same two defects assigned to different members report the same kind of diagnostic. | Test (TC-233) |
+| FR-340-AC-6 | When one frame body carries a meaning-join defect and a canonical-order defect at once, the reported diagnostic is the meaning-join defect regardless of which member carries which defect; two vectors with the same two defects assigned to different members report the same diagnostic. | Test (TC-233) |
 | FR-340-AC-7 | A frame body missing any of `modifies`, `creates` or `deletes` fails the schema; every published fixture's frame node is admitted with no defect by the same reader rule `read_package_semantics` applies. | Test (TC-233) |
 
 ## Dependencies
 
 - [FR-322](FR-322-checked-package-artifact.md) owns the `semantic_graph`
   property this artifact specifies the `state`/`frame` body of, including
-  the reference-resolution and canonical-order rules this artifact reuses
-  rather than redefines.
+  the reference-resolution and canonical-order rules this artifact reuses.
 - [FR-013](../../functional/foundation/FR-013-validate-operation-frames.md)
   owns the runtime enforcement of an authored frame against observed
   populations; this artifact owns only the wire shape the frame is read
@@ -152,8 +159,7 @@ rule fixes one diagnostic regardless of that arrangement.
 - [AD-006](../../assurance/AD-006-model-graph-state-contracts.md) owns
   "Effect frames" as a declared-artifact model feature (`Modifies:`,
   `Creates:`, `Deletes:` lines lowering to `Operation.frame`); this
-  artifact is the checked-package V2 carrier of that same feature, not an
-  alternative to it.
+  artifact is the checked-package V2 carrier of that same feature.
 - `proposals/quire-v1/definitions/model-complete.md`'s Frames row is the
   business-model rule this artifact's `modifies`/`creates`/`deletes` shape
   and refusal causes carry unchanged onto the V2 wire.
