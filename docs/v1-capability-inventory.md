@@ -43,23 +43,23 @@ production implementation, direct verification, cross-component integration,
 and release/claim qualification respectively. Completion in one column never
 implies completion in another.
 
-`Int` and `Qual` are inception scores. No cell in either column has changed
-since the inventory's first commit, including when A03 landed. `Int` is a
-Plan-008 code-surface census, not a per-row integration measurement. `Qual` is
-uniformly `M` and that value is correct: every row names `QSL #123` as its
-qualification ticket in the
-[ticket manifest](v1-delivery-ticket-manifest.md), that issue is open, and
-`TC-231` — the aggregate qualification corpus verifying `FR-311` — has no
-traced test on any implementation default branch. No capability has release
-qualification evidence. A public claim may not cite either column as measured
-per row until the A07 lane scores them.
+`Int` and `Qual` are inception scores, fixed at Plan-008's first commit of
+this inventory. `Int` is a Plan-008 code-surface census. `Qual` is uniformly
+`M`. It records that every capability lacks release qualification evidence:
+each row's qualification ticket in the
+[ticket manifest](v1-delivery-ticket-manifest.md) is one of seven open lane
+tickets — QSL #123 (83 rows), Protocol #82 (34), Contract IR #101 (16), QObs
+#26 (14), Research #78 (12), TL Syntax #74 (11) and Verification #38 (6) —
+and `TC-231`, the aggregate qualification corpus verifying `FR-311`, carries
+zero traced tests on any implementation default branch. Per-row measurement
+of `Int` and `Qual` remains scope for the A07 lane.
 
-`Impl` and `Ver` are row-level and must cite implementing code and an
-executing test that asserts the exact criterion it is tagged with. A trace tag
-is not evidence on its own: mis-bound tags exist in merged code, and the
-implementation repositories reuse this repository's `FR-0NN` numbers for
-different requirements, so a bare `FR-0NN-AC-M` tag does not establish credit
-against the requirement a row names here.
+`Impl` and `Ver` are row-level, established by citing implementing code and
+an executing test that asserts the exact criterion it is tagged with. Merged
+code contains mis-bound tags, and the implementation repositories reuse this
+repository's `FR-0NN` numbers for different requirements, so each row's
+evidence here rests on that cited code and test, read against the exact
+criterion this ledger names, rather than a bare `FR-0NN-AC-M` tag spelling.
 
 ## 1. Source, package and identity
 
@@ -121,7 +121,7 @@ against the requirement a row names here.
 
 | ID | Atomic capability | Class | Origin | Spec | Impl | Ver | Int | Qual | Existing program owner |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| V1-EXPR-001 | Bind immutable local values with lexical scope. | Required | V1-004 | C | C | P | P | M | QSL #1 / research #39 |
+| V1-EXPR-001 | Bind immutable local values with lexical scope. | Required | V1-004 | C | C | C | P | M | QSL #1 / research #39 |
 | V1-EXPR-002 | Declare and call acyclic named typed predicates. | Required | V1-007 | C | C | C | P | M | QSL #1 / research #39 |
 | V1-EXPR-003 | Declare and call total pure typed functions. | Required | V1-008; reserved `helper` | C | C | C | M | M | research #65 / QSL #1 |
 | V1-EXPR-004 | Admit recursive pure functions only with checked termination and resource bounds. | Required | V1-008; reserved `rec` | C | C | C | M | M | research #65 / QSL #1 |
@@ -243,7 +243,7 @@ against the requirement a row names here.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | V1-BACK-001 | Request backend capabilities independently for each clause or claim. | Required | V1-006 | C | P | P | P | M | Contract IR #1 / research #39 |
 | V1-BACK-002 | Preserve supported sibling results when another requested capability refuses or exhausts. | Required | V1-006 | C | P | P | P | M | Contract IR #1 / Verification #1 |
-| V1-BACK-003 | Lower typed clauses to versioned IR without creating a second authored language. | Required | V1-006, V1-040 | C | C | P | P | M | Contract IR #1 / QSL #1 |
+| V1-BACK-003 | Lower typed clauses to versioned IR without creating a second authored language. | Required | V1-006, V1-040 | C | C | C | P | M | Contract IR #1 / QSL #1 |
 | V1-BACK-004 | Execute Boolean, integer, rational, collection, graph, temporal and protocol IR with typed non-Boolean outcomes. | Required | V1-006 | C | P | P | P | M | Contract IR #1 / codegen #1 |
 | V1-BACK-005 | Generate bounded Kani contracts and harnesses from model domains. | Required | V1-006, V1-048 | C | P | P | P | M | Contract IR #1 / codegen #1 |
 | V1-BACK-006 | Replay every backend counterexample through the native runtime with the same verdict. | Required | V1-006, V1-047 | C | P | P | P | M | Contract IR #1 / QSL #1 |
@@ -254,7 +254,7 @@ against the requirement a row names here.
 | V1-BACK-011 | Account for every source obligation in every requested output mapping. | Required | V1-043 | C | P | P | M | M | Contract IR #58 / research #40 |
 | V1-BACK-012 | Keep external source-language imports out of the native authority chain. | Integrity | V1-044 | C | P | P | P | M | QSpec #1 / research #40 |
 | V1-BACK-013 | Keep Java, Node and Electron runtimes out of production and qualification semantics. | Integrity | V1-044 | C | P | P | P | M | QSpec #1 / research #40 |
-| V1-BACK-014 | Refuse a backend request it cannot implement exactly; never approximate. | Integrity | V1-005, V1-006 | C | C | P | P | M | Contract IR #1 / codegen #1 |
+| V1-BACK-014 | Refuse a backend request it cannot implement exactly; never approximate. | Integrity | V1-005, V1-006 | C | C | C | P | M | Contract IR #1 / codegen #1 |
 
 ## 8. Evidence, qualification, tooling and ecosystem
 
