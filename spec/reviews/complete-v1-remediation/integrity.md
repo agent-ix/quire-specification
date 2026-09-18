@@ -12,8 +12,11 @@ review_date: "2026-09-17"
 ## Summary
 
 Mechanical audit of artifact ids, acceptance criterion ids and criterion
-backing across the whole tree. Two integrity defects were found and corrected;
-the tree now carries no duplicate id and no unbacked criterion.
+backing across the whole tree. Two integrity defects were found and corrected.
+`spec/` holds 609 Markdown documents, 608 of which carry an artifact `id` in
+frontmatter (`spec/spec.md` is keyed by `name`), with no duplicate id. The
+requirement tables define 1,263 acceptance criteria, every one of which a Test
+Matrix names, and no matrix row names a criterion no requirement defines.
 
 ## Findings
 
