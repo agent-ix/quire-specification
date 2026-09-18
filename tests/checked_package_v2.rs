@@ -1083,16 +1083,11 @@ fn expression_form_for_class(class: &str) -> Option<&'static str> {
     })
 }
 
-/// Independent reader oracle over the operation catalog, a package lock and
-/// its graph. Nothing is read from outside the package and catalog.
-/// The four `model` semantic forms whose declaration carries `operation`
-/// members, per FR-208: object type, process, persistence interface and
-/// state machine each declare (or declare the operation-bearing subset of)
-/// "fields, relationships, operations and invariants". The other five model
-/// forms (`value_type`, `variant_type`, `record_value_type`, `event_type`,
-/// `namespace`, and the `field_declaration`/`operation_declaration`/
-/// `clause_member_declaration` member-declaration kinds) declare no
-/// operation.
+/// The `model` semantic forms whose declaration carries `operation` members,
+/// per FR-208's "Operation contracts" section: `object_type`, `process` and
+/// `state_machine` share object-type contract meaning (FR-151) and declare a
+/// full operation contract; `persistence_interface` declares operation
+/// signatures only.
 const OPERATION_BEARING_MODEL_FORMS: [&str; 4] = [
     "object_type",
     "process",
@@ -1100,6 +1095,30 @@ const OPERATION_BEARING_MODEL_FORMS: [&str; 4] = [
     "state_machine",
 ];
 
+/// The FR-208 cause and code an `operation` member reports when its
+/// declaring `model` node's `semantic_form` is not one of
+/// `OPERATION_BEARING_MODEL_FORMS`, and `None` when it is one of them.
+/// FR-208-AC-4 refuses an operation on a `record_value_type` as
+/// `unsupported_construct`/`declaration-form` -- a record value type cannot
+/// declare an operation at all -- and refuses one on an `event_type` as
+/// `invalid_model_binding`/`malformed-declaration`, the same cause FR-208-AC-8
+/// gives a `namespace`'s operation. Every other non-operation-bearing form
+/// carries no operation rule of its own and defaults to that same
+/// `invalid_model_binding`/`malformed-declaration` cause, FR-208's and
+/// FR-340's common "wrong meaning" cause.
+fn operation_member_meaning_refusal(model_form: &str) -> Option<(&'static str, &'static str)> {
+    if OPERATION_BEARING_MODEL_FORMS.contains(&model_form) {
+        return None;
+    }
+    Some(if model_form == "record_value_type" {
+        ("declaration-form", "unsupported_construct")
+    } else {
+        ("malformed-declaration", "invalid_model_binding")
+    })
+}
+
+/// Independent reader oracle over the operation catalog, a package lock and
+/// its graph. Nothing is read from outside the package and catalog.
 struct OperationOracle<'a> {
     catalog: &'a Value,
     lock: &'a Value,
@@ -1356,7 +1375,7 @@ impl<'a> OperationOracle<'a> {
                 (model["node_tag"] == "model"
                     && model["semantic_form"]
                         .as_str()
-                        .is_some_and(|form| OPERATION_BEARING_MODEL_FORMS.contains(&form)))
+                        .is_some_and(|form| operation_member_meaning_refusal(form).is_none()))
                 .then(|| {
                     let function = self.node(Self::reference_target(Self::binding(
                         model,
@@ -2588,9 +2607,10 @@ fn tc_233_frame_body_members_may_each_independently_be_empty() {
 }
 
 /// FR-340-AC-2/AC-3: a `modifies` entry must join a declared `relation`/
-/// `relationship` or `model`/`model_declaration` node; a `creates`/`deletes`
-/// entry must join a declared `model`/`model_type` node. An entry naming no
-/// node of the package, or naming one that is not a declared dependency,
+/// `relationship` or `model`/`field_declaration` node; a `creates`/`deletes`
+/// entry must join a declared `model`/`object_type` or `model`/`process`
+/// node. An entry naming no node of the package, or naming one that is not
+/// a declared dependency,
 /// refuses `missing_declaration`/`missing-name`; an entry naming a declared
 /// dependency of the wrong meaning refuses `invalid_model_binding`/
 /// `malformed-declaration`. This is the rule that makes the old design's
@@ -2605,8 +2625,8 @@ fn tc_233_frame_entries_join_a_declared_node_of_the_required_meaning() {
         .expect("nodes")
         .clone();
     let relationship = repeated_digest("20");
-    let model_declaration = repeated_digest("90");
-    let model_type_creates = repeated_digest("91");
+    let field_declaration = repeated_digest("90");
+    let object_type_node = repeated_digest("91");
     let literal = repeated_digest("dd");
     let absent = repeated_digest("ff");
 
@@ -2644,23 +2664,23 @@ fn tc_233_frame_entries_join_a_declared_node_of_the_required_meaning() {
         }]
     );
 
-    // A creates entry naming a declared model_declaration (field), not a
-    // model_type: wrong meaning for creates.
-    let wrong_group = authored_frame_node(&[&model_declaration], &[], &[&model_declaration], &[]);
+    // A creates entry naming a declared field_declaration node, not an
+    // object_type or process: wrong meaning for creates.
+    let wrong_group = authored_frame_node(&[&field_declaration], &[], &[&field_declaration], &[]);
     assert_eq!(
         frame_body_defects(&wrong_group, &nodes),
         vec![FrameDefect::MeaningJoin {
             group: FrameGroup::Creates,
-            digest: model_declaration.clone(),
+            digest: field_declaration.clone(),
             cause: FrameJoinCause::MalformedDeclaration,
         }]
     );
 
     // A fully compatible frame is defect-free.
     let valid = authored_frame_node(
-        &[&relationship, &model_declaration, &model_type_creates],
-        &[&relationship, &model_declaration],
-        &[&model_type_creates],
+        &[&relationship, &field_declaration, &object_type_node],
+        &[&relationship, &field_declaration],
+        &[&object_type_node],
         &[],
     );
     assert_eq!(frame_body_defects(&valid, &nodes), Vec::new());
@@ -2677,15 +2697,15 @@ fn tc_233_frame_member_arrays_are_sorted_ascending_by_entry_digest() {
         .as_array()
         .expect("nodes")
         .clone();
-    let model_type_creates = repeated_digest("91");
-    let model_type_deletes = repeated_digest("92");
+    let object_type_node = repeated_digest("91");
+    let process_node = repeated_digest("92");
     // Descending order: both entries are individually valid `deletes`
     // targets, so the only defect is the array's own order.
     let misordered = authored_frame_node(
-        &[&model_type_creates, &model_type_deletes],
+        &[&object_type_node, &process_node],
         &[],
         &[],
-        &[&model_type_deletes, &model_type_creates],
+        &[&process_node, &object_type_node],
     );
     assert_eq!(
         frame_body_defects(&misordered, &nodes),
@@ -2694,10 +2714,10 @@ fn tc_233_frame_member_arrays_are_sorted_ascending_by_entry_digest() {
         }]
     );
     let ordered = authored_frame_node(
-        &[&model_type_creates, &model_type_deletes],
+        &[&object_type_node, &process_node],
         &[],
         &[],
-        &[&model_type_creates, &model_type_deletes],
+        &[&object_type_node, &process_node],
     );
     assert_eq!(frame_body_defects(&ordered, &nodes), Vec::new());
 
@@ -2779,16 +2799,16 @@ fn tc_233_a_frame_meaning_join_defect_outranks_a_canonical_order_defect() {
         .expect("nodes")
         .clone();
     let relationship = repeated_digest("20");
-    let model_declaration = repeated_digest("90");
-    let model_type_creates = repeated_digest("91");
-    let model_type_deletes = repeated_digest("92");
+    let field_declaration = repeated_digest("90");
+    let object_type_node = repeated_digest("91");
+    let process_node = repeated_digest("92");
 
     // Vector A: modifies is misordered (canonical-order defect); deletes
     // names a relationship, wrong meaning for deletes (meaning-join defect).
     let vector_a = authored_frame_node(
-        &[&relationship, &model_declaration, &model_type_creates],
-        &[&model_declaration, &relationship],
-        &[&model_type_creates],
+        &[&relationship, &field_declaration, &object_type_node],
+        &[&field_declaration, &relationship],
+        &[&object_type_node],
         &[&relationship],
     );
     assert_eq!(
@@ -2801,20 +2821,20 @@ fn tc_233_a_frame_meaning_join_defect_outranks_a_canonical_order_defect() {
         "vector A: the meaning-join defect in deletes outranks the canonical-order defect in modifies"
     );
 
-    // Vector B: swap which group carries which defect. modifies now names a
-    // model_type, wrong meaning for modifies (meaning-join defect); deletes
+    // Vector B: swap which group carries which defect. modifies now names an
+    // object_type, wrong meaning for modifies (meaning-join defect); deletes
     // is now the misordered array (canonical-order defect).
     let vector_b = authored_frame_node(
-        &[&model_type_creates, &model_type_deletes],
-        &[&model_type_creates],
+        &[&object_type_node, &process_node],
+        &[&object_type_node],
         &[],
-        &[&model_type_deletes, &model_type_creates],
+        &[&process_node, &object_type_node],
     );
     assert_eq!(
         reported_frame_defect(&vector_b, &nodes),
         Some(FrameDefect::MeaningJoin {
             group: FrameGroup::Modifies,
-            digest: model_type_creates.clone(),
+            digest: object_type_node.clone(),
             cause: FrameJoinCause::MalformedDeclaration,
         }),
         "vector B: the meaning-join defect in modifies still outranks the canonical-order defect in deletes"
@@ -2994,24 +3014,25 @@ fn tc_233_frame_defect_ordering_does_not_depend_on_collection_order() {
         digest: repeated_digest("92"),
         cause: FrameJoinCause::MalformedDeclaration,
     };
+    let expected = vec![first.clone(), second.clone()];
 
+    // Each vector starts in a different collection order; sorting either one
+    // must reach the identical canonical (lower-digest-first) order, not
+    // merely reach whatever order the other one reaches -- comparing the two
+    // sorted vectors to each other, rather than to this fixed `expected`,
+    // would hold trivially for any total order and could never catch a
+    // reversed or dropped sort.
     let mut forward = vec![first.clone(), second.clone()];
     forward.sort();
+    assert_eq!(
+        forward, expected,
+        "collecting the lower digest first still sorts ascending by digest"
+    );
     let mut backward = vec![second, first];
     backward.sort();
-
     assert_eq!(
-        forward, backward,
-        "the same defect set sorts to the identical diagnostic regardless of collection order"
-    );
-    assert_eq!(
-        forward.first(),
-        Some(&FrameDefect::MeaningJoin {
-            group: FrameGroup::Modifies,
-            digest: repeated_digest("91"),
-            cause: FrameJoinCause::MalformedDeclaration,
-        }),
-        "the lower digest is the reported minimum in both orderings"
+        backward, expected,
+        "collecting the higher digest first still sorts to the same ascending-by-digest order"
     );
 }
 
@@ -3154,6 +3175,49 @@ fn tc_233_all_checked_semantic_node_families_are_admitted_by_the_public_schema()
             );
         }
     }
+}
+
+/// `ModelNode.semantic_form` names all five of FR-208's systems meanings
+/// (FR-152), not only the ten business-model meanings FR-340 already
+/// covers, so a systems-model declaration is never unrepresentable on the
+/// wire. This vector exercises `systems_part`; the published schema and the
+/// package-identity tests already admit and rehash it as an ordinary
+/// declared `model` node.
+#[trace("TC-233", "FR-322-AC-14")]
+#[test]
+fn tc_233_schema_names_every_fr208_systems_meaning_as_a_model_semantic_form() {
+    let schema = parsed_fixture(SCHEMA);
+    let systems_forms =
+        schema["$defs"]["ModelNode"]["allOf"][1]["properties"]["semantic_form"]["enum"]
+            .as_array()
+            .expect("ModelNode semantic_form is an enum")
+            .iter()
+            .filter_map(Value::as_str)
+            .filter(|form| form.starts_with("systems_"))
+            .collect::<BTreeSet<_>>();
+    assert_eq!(
+        systems_forms,
+        BTreeSet::from([
+            "systems_interface",
+            "systems_part",
+            "systems_port",
+            "systems_connection",
+            "systems_allocation",
+        ]),
+        "the wire names exactly FR-152's five systems kinds (interface, part, port, \
+         connection, allocation)"
+    );
+
+    let vector = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let nodes = vector["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("semantic graph nodes are an array");
+    assert!(
+        nodes
+            .iter()
+            .any(|node| node["node_tag"] == "model" && node["semantic_form"] == "systems_part"),
+        "the all-family vector declares a systems_part model node"
+    );
 }
 
 #[trace("TC-233", "FR-322-AC-14")]
@@ -5000,6 +5064,112 @@ fn tc_233_operation_vectors_key_every_application_node_of_the_published_packages
         Err(OperationRefusal::MemberMismatch),
         "dispatch_call without its operation member is refused"
     );
+}
+
+/// A minimal package exercising `member_descriptor`'s `"operation"` arm
+/// alone: a `model` node of `form` binding `run` to a `function` node whose
+/// result is a boolean scalar type, with nothing else in the graph.
+fn operation_member_package(form: &str) -> Value {
+    json!({
+        "lock": {},
+        "semantic_graph": {
+            "nodes": [
+                {
+                    "node_id": "model-1",
+                    "node_tag": "model",
+                    "semantic_form": form,
+                    "body": {
+                        "term": "aggregate",
+                        "members": [
+                            {
+                                "term": "binding",
+                                "name": "run",
+                                "value": {"term": "reference", "target": "fn-1"}
+                            }
+                        ]
+                    }
+                },
+                {
+                    "node_id": "fn-1",
+                    "node_tag": "function",
+                    "semantic_type": "bool-1"
+                },
+                {
+                    "node_id": "bool-1",
+                    "node_tag": "scalar_type",
+                    "semantic_form": "boolean"
+                }
+            ]
+        }
+    })
+}
+
+#[trace("TC-233", "FR-208-AC-4")]
+#[trace("TC-233", "FR-208-AC-7")]
+#[trace("TC-233", "FR-208-AC-8")]
+#[test]
+fn tc_233_operation_member_meaning_matches_fr208_per_declaring_form() {
+    let catalog = json!({});
+    let member = json!({"kind": "operation", "declaration": "model-1", "name": "run"});
+    let accepted_forms = [
+        "object_type",
+        "process",
+        "persistence_interface",
+        "state_machine",
+    ];
+    assert_eq!(
+        OPERATION_BEARING_MODEL_FORMS, accepted_forms,
+        "the operation-bearing forms are exactly FR-208's object type, process, \
+         persistence interface and state machine"
+    );
+    for form in accepted_forms {
+        assert_eq!(
+            operation_member_meaning_refusal(form),
+            None,
+            "{form} carries an operation contract or its signatures per FR-208"
+        );
+        let package = operation_member_package(form);
+        let oracle = OperationOracle::for_package(&catalog, &package);
+        assert!(
+            oracle.member_descriptor(&member).is_some(),
+            "a dispatched operation resolves against a declaring {form}"
+        );
+    }
+    let refused_forms: &[(&str, &str, &str)] = &[
+        (
+            "record_value_type",
+            "declaration-form",
+            "unsupported_construct",
+        ),
+        (
+            "event_type",
+            "malformed-declaration",
+            "invalid_model_binding",
+        ),
+        (
+            "namespace",
+            "malformed-declaration",
+            "invalid_model_binding",
+        ),
+        (
+            "value_type",
+            "malformed-declaration",
+            "invalid_model_binding",
+        ),
+    ];
+    for (form, cause, code) in refused_forms {
+        assert_eq!(
+            operation_member_meaning_refusal(form),
+            Some((*cause, *code)),
+            "FR-208 refuses an operation declared on a {form} as {code}/{cause}"
+        );
+        let package = operation_member_package(form);
+        let oracle = OperationOracle::for_package(&catalog, &package);
+        assert!(
+            oracle.member_descriptor(&member).is_none(),
+            "a dispatched operation does not resolve against a declaring {form}"
+        );
+    }
 }
 
 #[trace("TC-233", "FR-322-AC-19")]
