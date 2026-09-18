@@ -54,11 +54,10 @@ boundary.
   (`node_id.domain`, `node_id.digest`); node identifiers are unique within the
   graph and the `identity_projection` is the typed-key ordered projection of
   every node excluding source occurrences and presentation. References name a
-  compatible declared target by node key, except that a `state` node with
+  compatible declared target by node key; a `state` node with
   `semantic_form: "frame"` carries its references in the closed
-  `modifies`/`creates`/`deletes` shape
-  [FR-340](FR-340-checked-package-frame-location.md) specifies rather than a
-  `SemanticTerm`. A recursive reference is legal only
+  `modifies`/`creates`/`deletes` body shape
+  [FR-340](FR-340-checked-package-frame-location.md) specifies. A recursive reference is legal only
   when every cycle member names the same explicit `recursion_group`; all other
   graph cycles refuse. Every node has one or more exact source occurrences.
 - `operation` — every `application` semantic term, wherever it occurs in a node
