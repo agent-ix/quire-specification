@@ -10,7 +10,6 @@ complete.
 ## Inventory-to-spec
 
 - 176 inventory rows and 176 unique capability IDs.
-- 176/176 rows occur exactly once in `v1-existing-spec-coverage.md`.
 - Every inventory row has `Spec = C`: 165 required capabilities and 11 required
   integrity/refusal capabilities.
 - TM-009 maps all 176 rows exactly once to an owning normative requirement and

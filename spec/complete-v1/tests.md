@@ -14,6 +14,31 @@ relationships:
 This matrix is normative traceability for the complete 176-row inventory. A
 planned row is required work, not a deferred capability or implementation claim.
 
+## Specification action classification
+
+Each row's specification action records what the complete-V1 authoring pass did
+with the owning requirement.
+
+- `Reuse`: an existing requirement already has the exact behavior and
+  acceptance criteria.
+- `Amend`: the right owner exists and its behavior is extended to cover the
+  full atomic obligation.
+- `Split`: the existing owner combined independently testable behavior, which
+  is separated into its own criteria.
+- `Resolve`: normative statements disagreed, or an accepted architecture
+  excluded a capability the master inventory requires, and the disagreement is
+  decided here.
+- `New`: behavior and acceptance criteria are authored for the row.
+
+Over the 176 rows the delivered totals are 94 Reuse, 39 Amend, 23 New, 19
+Resolve and 1 Split.
+
+V1-TYPE-024 is a Resolve row because extending reachability over inheritance
+and conformance required deciding what "the same type" means for traversal.
+FR-043 fixes it as conformance to the static edge type under
+`quire.model.complete/v1`, with identity keeping each object's most-specific
+type.
+
 ## Atomic Capability Coverage
 
 | Capability | Primary requirement | Test cases | Specification action | Coverage Status |
