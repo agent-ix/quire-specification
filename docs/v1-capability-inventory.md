@@ -43,6 +43,24 @@ production implementation, direct verification, cross-component integration,
 and release/claim qualification respectively. Completion in one column never
 implies completion in another.
 
+`Int` and `Qual` are inception scores, fixed at Plan-008's first commit of
+this inventory. `Int` is a Plan-008 code-surface census. `Qual` is uniformly
+`M`. It records that every capability lacks release qualification evidence:
+each row's qualification ticket in the
+[ticket manifest](v1-delivery-ticket-manifest.md) is one of seven open lane
+tickets — QSL #123 (83 rows), Protocol #82 (34), Contract IR #101 (16), QObs
+#26 (14), Research #78 (12), TL Syntax #74 (11) and Verification #38 (6) —
+and `TC-231`, the aggregate qualification corpus verifying `FR-311`, carries
+zero traced tests on any implementation default branch. Per-row measurement
+of `Int` and `Qual` remains scope for the A07 lane.
+
+`Impl` and `Ver` are row-level, established by citing implementing code and
+an executing test that asserts the exact criterion it is tagged with. Merged
+code contains mis-bound tags, and the implementation repositories reuse this
+repository's `FR-0NN` numbers for different requirements, so each row's
+evidence here rests on that cited code and test, read against the exact
+criterion this ledger names, rather than a bare `FR-0NN-AC-M` tag spelling.
+
 ## 1. Source, package and identity
 
 | ID | Atomic capability | Class | Origin | Spec | Impl | Ver | Int | Qual | Existing program owner |
@@ -88,9 +106,9 @@ implies completion in another.
 | V1-TYPE-019 | Represent typed acyclic value containment. | Required | V1-014 | C | C | C | P | M | QSL #1 / QSL #119 |
 | V1-TYPE-020 | Represent recursive value containment with finite runtime bounds. | Required | V1-016; prose census | C | C | C | M | M | research #65 / QSL #119 |
 | V1-TYPE-021 | Represent finite object populations independently of value containment. | Required | V1-017 | C | P | P | P | M | QSL #1 / research #41 |
-| V1-TYPE-022 | Represent explicit typed object references and identity equality. | Required | V1-017 | C | C | C | P | M | QSL #1 / QSL #120 |
+| V1-TYPE-022 | Represent explicit typed object references and identity equality. | Required | V1-017 | C | P | P | P | M | QSL #1 / QSL #120 |
 | V1-TYPE-023 | Resolve object lookup only through an explicit closed typed environment. | Required | V1-018; reserved `allInstances` | C | P | P | P | M | research #66 / QSL #1 |
-| V1-TYPE-024 | Traverse typed relationships and compute exact bounded reachability. | Required | V1-017 | C | C | C | P | M | QSL #1 / research #39 |
+| V1-TYPE-024 | Traverse typed relationships and compute exact bounded reachability. | Required | V1-017 | C | P | P | P | M | QSL #1 / research #39 |
 | V1-TYPE-025 | Preserve original and effective declaration identity through specialization. | Required | V1-019; prose census | C | M | M | M | M | research #66 / QSL #120 |
 | V1-TYPE-026 | Type-check inheritance and conformance. | Required | V1-019 | C | M | M | M | M | research #66 / QSL #1 |
 | V1-TYPE-027 | Type-check subsetting and redefinition without provenance loss. | Required | V1-019 | C | M | M | M | M | research #66 / QSL #1 |
@@ -107,7 +125,7 @@ implies completion in another.
 | V1-EXPR-002 | Declare and call acyclic named typed predicates. | Required | V1-007 | C | C | C | P | M | QSL #1 / research #39 |
 | V1-EXPR-003 | Declare and call total pure typed functions. | Required | V1-008; reserved `helper` | C | C | C | M | M | research #65 / QSL #1 |
 | V1-EXPR-004 | Admit recursive pure functions only with checked termination and resource bounds. | Required | V1-008; reserved `rec` | C | C | C | M | M | research #65 / QSL #1 |
-| V1-EXPR-005 | Evaluate checked integer addition, subtraction, multiplication and negation. | Required | V1-010 | C | C | C | P | M | QSL #1 / Contract IR #1 |
+| V1-EXPR-005 | Evaluate checked integer addition, subtraction, multiplication and negation. | Required | V1-010 | C | C | P | P | M | QSL #1 / Contract IR #1 |
 | V1-EXPR-006 | Evaluate integer division and remainder with exact zero and overflow outcomes. | Required | V1-012 | C | M | M | M | M | research #66 / QSL #1 |
 | V1-EXPR-007 | Evaluate normalized rational arithmetic and division. | Required | V1-010 | C | M | M | M | M | research #66 / QSL #1 |
 | V1-EXPR-008 | Evaluate finite-width floating values under an explicit IEEE profile. | Required | V1-012; prose census | C | M | M | M | M | research #66 / QSL #1 |
@@ -119,15 +137,15 @@ implies completion in another.
 | V1-EXPR-014 | Flatten nested collections with explicit kind, multiplicity and bound semantics. | Required | V1-016; reserved `flatten` | C | C | C | M | M | research #65 / QSL #1 |
 | V1-EXPR-015 | Fold bounded collections with exact empty identities and checked intermediates. | Required | V1-015; scope census | C | C | C | P | M | research #65 / QSL #1 |
 | V1-EXPR-016 | Compare scalar, enum, reference, record and collection values only under declared equality rules. | Required | V1-018 | C | P | P | P | M | research #66 / QSL #1 |
-| V1-EXPR-017 | Navigate properties and relationships without ambient identity lookup. | Required | V1-017, V1-018 | C | C | C | P | M | QSL #1 / QSL #120 |
-| V1-EXPR-018 | Evaluate invariants against one exact state anchor. | Required | V1-009 | C | C | C | P | M | QSL #1 / research #39 |
-| V1-EXPR-019 | Evaluate operation preconditions against exact current and pre-state anchors. | Required | V1-009 | C | C | C | P | M | QSL #1 / research #39 |
+| V1-EXPR-017 | Navigate properties and relationships without ambient identity lookup. | Required | V1-017, V1-018 | C | P | P | P | M | QSL #1 / QSL #120 |
+| V1-EXPR-018 | Evaluate invariants against one exact state anchor. | Required | V1-009 | C | C | P | P | M | QSL #1 / research #39 |
+| V1-EXPR-019 | Evaluate operation preconditions against exact current and pre-state anchors. | Required | V1-009 | C | C | P | P | M | QSL #1 / research #39 |
 | V1-EXPR-020 | Evaluate operation postconditions against exact pre/post anchors and result. | Required | V1-009 | C | C | C | P | M | QSL #1 / research #39 |
 | V1-EXPR-021 | Evaluate immutable captures and aliases without anchor drift. | Required | V1-009 | C | P | P | P | M | QSL #1 / research #39 |
 | V1-EXPR-022 | Enforce operation frames, created identities and deleted identities. | Required | V1-009 | C | P | P | P | M | QSL #1 / research #39 |
 | V1-EXPR-023 | Report parse, type, admission, lowering, execution and observation failures as distinct stages. | Required | V1-005 | C | P | P | P | M | QSpec #1 / research #39 |
-| V1-EXPR-024 | Reject reflection, ambient extension lookup and unreviewed user callbacks. | Integrity | V1-008 | C | C | C | P | M | research #65 / QSL #1 |
-| V1-EXPR-025 | Reject mutation and I/O during declarative clause evaluation. | Integrity | V1-008, V1-039 | C | C | C | P | M | QSpec #1 / research #39 |
+| V1-EXPR-024 | Reject reflection, ambient extension lookup and unreviewed user callbacks. | Integrity | V1-008 | C | C | P | P | M | research #65 / QSL #1 |
+| V1-EXPR-025 | Reject mutation and I/O during declarative clause evaluation. | Integrity | V1-008, V1-039 | C | C | P | P | M | QSpec #1 / research #39 |
 | V1-EXPR-026 | Report resource exhaustion and undefined arithmetic without Boolean approximation. | Integrity | V1-005, V1-010 | C | C | C | P | M | QSL #1 / Contract IR #1 |
 
 ## 4. Temporal, clocks and observation
@@ -147,8 +165,8 @@ implies completion in another.
 | V1-TEMP-011 | Advance timeout progress during event silence from authoritative clock progress. | Required | V1-023 | C | P | P | P | M | research #37 / QObs #1 |
 | V1-TEMP-012 | Distinguish closed execution, valid open prefix and incomplete input. | Required | V1-024 | C | P | P | P | M | research #37 / QObs #1 |
 | V1-TEMP-013 | Report activation independently from verdict and settlement. | Required | V1-024, V1-041 | C | P | P | P | M | research #37 / research #38 |
-| V1-TEMP-014 | Apply an explicit late-data cutoff and retain supersession lineage. | Required | V1-025 | C | C | C | P | M | research #37 / QObs #1 |
-| V1-TEMP-015 | Bind an authoritative completeness claim to its exact population and window. | Required | V1-025, V1-050 | C | C | C | P | M | research #37 / QObs #1 |
+| V1-TEMP-014 | Apply an explicit late-data cutoff and retain supersession lineage. | Required | V1-025 | C | P | P | P | M | research #37 / QObs #1 |
+| V1-TEMP-015 | Bind an authoritative completeness claim to its exact population and window. | Required | V1-025, V1-050 | C | P | P | P | M | research #37 / QObs #1 |
 | V1-TEMP-016 | Represent bounded clock uncertainty intervals. | Required | V1-026 | C | M | M | M | M | research #37 / QSpec #1 |
 | V1-TEMP-017 | Repair out-of-order observations through explicit revisioned replay. | Required | V1-026 | C | P | P | P | M | research #37 / QObs #1 |
 | V1-TEMP-018 | Evaluate partial proposition valuations without coercing missing values to false. | Required | V1-026 | C | M | M | M | M | research #37 / TL owners |
@@ -204,7 +222,7 @@ implies completion in another.
 | V1-RUN-004 | Incrementally monitor temporal and protocol obligations. | Required | V1-047 | C | P | P | P | M | research #37 / Protocol #14 |
 | V1-RUN-005 | Retain independent execution, truth, activation and settlement dimensions. | Required | V1-041 | C | P | P | P | M | research #38 / Verification #1 |
 | V1-RUN-006 | Retain independent participation, assumptions, completeness and provenance dimensions. | Required | V1-041 | C | P | P | P | M | research #38 / Verification #1 |
-| V1-RUN-007 | Assess finite declared snapshots and event-time populations. | Required | V1-050 | C | C | C | P | M | research #37 / QObs #1 |
+| V1-RUN-007 | Assess finite declared snapshots and event-time populations. | Required | V1-050 | C | P | P | P | M | research #37 / QObs #1 |
 | V1-RUN-008 | Evaluate aggregates over reservation, refund and related workflow populations. | Required | V1-049, V1-050 | C | P | P | P | M | research #37 / Protocol #14 |
 | V1-RUN-009 | Relate order, shipment, payment-attempt and refund workflow instances. | Required | V1-049 | C | P | P | P | M | research #38 / Protocol #14 |
 | V1-RUN-010 | Run the state workflow reference example end to end. | Required | V1-042 | C | C | C | P | M | research #39 / QSL #1 |
@@ -255,7 +273,7 @@ implies completion in another.
 | V1-TOOL-005 | Provide model metadata, semantic views and deterministic rendering APIs. | Required | prose census | C | M | M | M | M | Research #77 / research #39 |
 | V1-TOOL-006 | Load versioned Rust plugins only through explicit capability, purity and provenance contracts. | Required | prose census | C | M | M | M | M | research #43 / QSpec #1 |
 | V1-TOOL-007 | Support ahead-of-time and JIT execution without changing language meaning or qualification identity. | Required | prose census | C | M | M | M | M | research #43 / Verification #1 |
-| V1-TOOL-008 | Package reusable domain libraries with exact edition/profile/dependency compatibility. | Required | prose census | C | C | C | M | M | research #43 / QSpec #1 |
+| V1-TOOL-008 | Package reusable domain libraries with exact edition/profile/dependency compatibility. | Required | prose census | C | P | P | M | M | research #43 / QSpec #1 |
 | V1-TOOL-009 | Expose a WASM consumer with the same admitted semantics and refusal behavior. | Required | code-surface census | C | P | P | M | M | quire-wasm / research #39 |
 | V1-TOOL-010 | Expose code-analysis and source-generation consumers without granting them semantic authority. | Required | code-surface census | C | P | P | M | M | quire-analyze, quire-code-rs / research #39 |
 
