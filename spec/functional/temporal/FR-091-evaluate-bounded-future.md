@@ -102,8 +102,8 @@ Where a bounded temporal profile is selected, the evaluator shall refuse an unbo
 | FR-091-AC-4 | A decisive open decision scope may settle early only with the matching decisive basis, complete exact decision support and proof over every admitted continuation; every other unclosed future remains pending, while a closed incomplete input reports incomplete rather than applying false extension. | Test (TC-116) |
 | FR-091-AC-5 | Timestamped empty existential/universal window truth is emitted only after complete progress through the inclusive upper endpoint; an eligible event exactly at the deadline participates before settlement. | Test (TC-115) |
 | FR-091-AC-6 | Where a bounded temporal profile is selected, unbounded intervals return a non-Boolean disposition; unavailable total valuations and exhausted semantic work return non-Boolean dispositions under every profile. | Test (TC-118) |
-| FR-091-AC-8 | Where the infinite-trace profile is selected, the unbounded future operators evaluate under their FR-161 infinite-trace meaning and return that requirement's conclusive or non-conclusive disposition. | Test (TC-200) |
 | FR-091-AC-7 | On a one-position closed trace with `p` true, `always[0,1] not holds(p)` is false and `eventually[0,1] not holds(p)` is true under false extension, distinguishing pointwise temporal negation from an untimed reading. | Test (TC-111) |
+| FR-091-AC-8 | Where the infinite-trace profile is selected, the unbounded future operators evaluate under their FR-161 infinite-trace meaning and return that requirement's conclusive or non-conclusive disposition. | Test (TC-200) |
 
 ## Dependencies
 
