@@ -1,100 +1,168 @@
 ---
 id: FR-340
-title: "Checked-package frame location"
+title: "Checked-package frame body"
 type: FR
 object: value_object
 relationships:
   - target: ix://agent-ix/quire-specification/FR-322
     type: specifies
-  - target: ix://agent-ix/quire-specification/FR-207
+  - target: ix://agent-ix/quire-specification/FR-013
+    type: references
+  - target: ix://agent-ix/quire-specification/AD-006
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-208
     type: references
   - target: ix://agent-ix/quire-specification/FR-047
     type: references
 ---
 
-# FR-340: Checked-package frame location
+# FR-340: Checked-package frame body
 
 ## Description
 
 When a `quire.checked-semantic-graph/v2` node has `node_tag: "state"` and
-`semantic_form: "frame"`, the producer SHALL encode its `body` as a closed,
-ordered set of locations — each an exact declared root plus an ordered
-traversal path — rather than an undifferentiated `SemanticTerm`, so a
-consumer can enumerate every location an operation may modify without
-inventing a vocabulary of its own.
+`semantic_form: "frame"`, the producer SHALL encode its `body` as exactly
+the business-model frame `model-complete.md`'s Frames rule and
+[FR-013](../../functional/foundation/FR-013-validate-operation-frames.md)
+already state: three named members, `modifies`, `creates` and `deletes`,
+each naming declarations of the package rather than access paths into a
+runtime value. This wire encoding is the V2 carrier of that existing model;
+it does not define a second, competing frame shape.
 
 ## Properties
 
-- **root** (`NodeRef`) — the exact declared node the location begins at,
-  using the same node-key reference mechanism as every other reference in
-  the checked semantic graph ([FR-322](FR-322-checked-package-artifact.md)).
-  A location's root equals one of the frame node's own `dependencies`; a
-  root naming a node the frame node does not declare as a dependency is
-  refused.
-- **steps** (ordered sequence of traversal step, possibly empty) — the
-  closed vocabulary is exactly
-  [FR-207](../foundation/FR-207-runtime-value-path.md)'s five kinds and
-  their exact wire tags: `field` and `member` each carry the exact declared
-  spelling as `name`; `index` carries an unsigned zero-based position as
-  `index`; `map_key` carries a canonical typed key value as `key`; and
-  `option_value` carries no further member. A frame location reuses this
-  vocabulary exactly rather than defining a narrower or wider one: FR-207
-  already closes "what a traversal step may be" for locating any value in
-  the complete-V1 type system, and a modifiable location is one more way of
-  locating a value. An empty step sequence denotes the root declaration
-  itself, matching FR-207's "an empty step sequence denotes the subject
-  itself".
+- **modifies** (array of `NodeRef`) — every field or relationship the
+  operation may write. Each entry is the node key of a declared
+  `relation`/`relationship` node or a declared `model`/`model_declaration`
+  node of the package's semantic graph.
+- **creates** (array of `NodeRef`) — every object type or process the
+  operation may create an instance of. Each entry is the node key of a
+  declared `model`/`model_type` node.
+- **deletes** (array of `NodeRef`) — every object type or process the
+  operation may delete an instance of. Each entry is the node key of a
+  declared `model`/`model_type` node, using the same closed meaning as
+  `creates`.
+- Every entry of every member equals one of the frame node's own
+  `dependencies` ([FR-322](FR-322-checked-package-artifact.md): "References
+  name a compatible declared target by node key"); an entry naming no
+  dependency of the frame node, or no node of the package at all, is
+  refused. An entry naming a declared dependency of any other meaning —
+  including a `value`, `expression` or any node outside the four listed
+  above — is refused. This is the rule that makes a location-based frame
+  body, such as one rooting a field selection at a literal, unrepresentable:
+  a literal has no frame meaning.
+
+Mapping `modifies`/`creates`/`deletes` targets onto the existing `model`/
+`relation` node tags and forms above (`model_declaration` for a field,
+`model_type` for an object type or a process, `relation`/`relationship` for
+a relationship) is this artifact's own wiring of FR-208's closed business-
+model meanings onto the checked-semantic-graph's existing closed node-tag
+and semantic-form vocabulary. FR-208 and `model-complete.md` fix which
+meanings are eligible; they do not name checked-semantic-graph node tags.
+No new node tag or semantic form is introduced to carry them.
+
+## Outputs
+
+Reading an admitted frame node yields exactly:
+
+- the set of declared fields and relationships the operation may write
+  (`modifies`, membership-checked against every declared dependency's
+  meaning);
+- the set of declared object types and processes the operation may create
+  (`creates`, membership-checked the same way);
+- the set of declared object types and processes the operation may delete
+  (`deletes`, membership-checked the same way);
+- nothing else. A frame body with all three members empty is a valid
+  output meaning the operation modifies, creates and deletes nothing.
+
+A frame body missing any of the three stated members fails the schema, so
+an admitted frame body's Outputs are never partial.
 
 ## Wire encoding
 
-A frame node's `body` is exactly `{"term": "aggregate", "members": [...]}`,
-where every member is exactly `{"term": "location", "root": NodeRef,
-"steps": [...]}`. Zero members is admitted and denotes an operation that
-modifies nothing. Every member is a distinct bytewise value; two
-bytewise-identical locations inside one frame body are refused. Every other
-`SemanticTerm` shape — a bare `literal`, `reference`, `application` or an
-`aggregate` whose members are not exactly `location` terms — is refused as a
-`state`/`frame` body. Step tags are exactly `field`, `option_value`,
-`member`, `index` and `map_key`; a step carrying an unrecognized tag, or
-missing the exact further member its tag requires, is refused.
+A frame node's `body` is exactly `{"term": "frame", "modifies": [...],
+"creates": [...], "deletes": [...]}`; all three members are required, and
+each may independently be the empty array. `modifies`, `creates` and
+`deletes` are each an array of `NodeRef` with no duplicate entry. This
+shape is scoped to validate only as the `body` of a `state`/`frame` node:
+a `value`, `expression`, or any other node's `body` continues to validate
+against the ordinary `SemanticTerm` union, and a `state`/`frame` node's
+`body` validates only against this shape, never against `SemanticTerm`.
 
-## Canonical ordering
+## Canonical ordering and reader precedence
 
-A frame body's `members` array is in ascending canonical order, so an
-identity preimage over a frame is stable without a separate sort step. The
-order is exactly FR-207's key order, applied to a root-and-steps location in
-place of FR-207's observation-and-subject-and-steps runtime path:
+Each of `modifies`, `creates` and `deletes` is independently sorted
+ascending by entry `NodeRef.digest` (compared as unsigned bytes), following
+the ascending-digest ordering [FR-322](FR-322-checked-package-artifact.md)
+already uses for the dependency lists of application-node preimages. A
+member array that is not in this order refuses `invalid_semantic_graph`,
+the same code [FR-322-AC-10](FR-322-checked-package-artifact.md) uses for
+every other noncanonical member/term order; canonical order is not a
+distinct new refusal category.
 
-1. Order first by root node key (`NodeRef.digest`, compared as unsigned
-   bytes).
-2. Then order by step sequence: a proper prefix orders before every path
-   that extends it; differing step kinds order `field` before
-   `option_value` before `member` before `index` before `map_key`; steps of
-   equal kind order by their exact name (UTF-8 bytes), by index
-   (numerically), or by the map key's RFC 8785 (JCS) canonical JSON bytes.
+A reference outside the graph, or naming no declared dependency of the
+frame node, refuses `missing_declaration`/`missing-name`. A reference
+naming a declared dependency of a meaning the member cannot carry refuses
+`invalid_model_binding`/`malformed-declaration`. These are exactly
+`model-complete.md`'s Frames row causes; no new cause is invented for the
+meaning-join check.
 
-A body whose members are not in this exact order is refused.
+When one frame body carries more than one defect at once, the reader
+reports exactly one diagnostic, decided in this fixed order, never by
+which member array an implementation happens to scan first or by an
+entry's position inside its array:
+
+1. Any meaning-join defect (a `missing-name` or `malformed-declaration`
+   entry, in any of the three members) outranks any canonical-order
+   defect.
+2. Ties break by member: `modifies` before `creates` before `deletes`.
+   This is the frame body's own fixed member order, a spec fact, not an
+   authored array position.
+3. Remaining ties, among multiple meaning-join defects in the same
+   member, break by the ascending digest of the offending entry, the same
+   order rule the member array itself must satisfy.
+
+A reader that instead reported "whichever defect its traversal reaches
+first" would report different diagnostics for two frame bodies that carry
+the same two defects arranged across different members; this precedence
+rule fixes one diagnostic regardless of that arrangement.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-340-AC-1 | A frame body of zero locations (`{"term":"aggregate","members":[]}`) validates against the published schema. | Test (TC-233) |
-| FR-340-AC-2 | A frame body carrying one or more `location` members, each an exact `root` and an ordered (possibly empty) `steps` sequence restricted to `field`, `option_value`, `member`, `index` and `map_key`, validates against the published schema. | Test (TC-233) |
-| FR-340-AC-3 | A `state`/`frame` node whose body is a bare `literal`, `reference`, `application`, or an `aggregate` whose members are not exactly `location` terms, fails the published schema. | Test (TC-233) |
-| FR-340-AC-4 | A location step carrying an unrecognized `tag`, a `field`/`member` step without `name`, an `index` step without `index`, or a `map_key` step without `key`, fails the published schema. | Test (TC-233) |
-| FR-340-AC-5 | Two bytewise-identical location members inside one frame body fail the published schema. | Test (TC-233) |
-| FR-340-AC-6 | Recomputing the FR-207-derived canonical order of an admitted frame body's members reproduces the authored member sequence exactly; a body with an out-of-order pair is distinguishable from a canonically ordered one by that recomputation. | Test (TC-233) |
-| FR-340-AC-7 | Every admitted location's `root` equals one of the frame node's own `dependencies`; a fixture whose location root is absent from `dependencies` is distinguishable by that join. | Test (TC-233) |
+| FR-340-AC-1 | `modifies`, `creates` and `deletes` may each independently be the empty array; an all-empty frame body and the published fixture's fully-populated frame body are both admitted with no defect. | Test (TC-233) |
+| FR-340-AC-2 | Every `modifies` entry names a declared dependency of the frame node that is a `relation`/`relationship` or `model`/`model_declaration` node; every `creates`/`deletes` entry names a declared dependency that is a `model`/`model_type` node. | Test (TC-233) |
+| FR-340-AC-3 | An entry naming no node of the package, or no declared dependency of the frame node, refuses `missing_declaration`/`missing-name`; an entry naming a declared dependency of any other meaning refuses `invalid_model_binding`/`malformed-declaration`; a location-based frame body rooting a field selection at a literal is unrepresentable under this rule. | Test (TC-233) |
+| FR-340-AC-4 | Each of `modifies`, `creates` and `deletes` is duplicate-free and sorted ascending by entry digest; a duplicated entry fails the schema and a misordered array refuses `invalid_semantic_graph`. | Test (TC-233) |
+| FR-340-AC-5 | The frame body shape validates only as a `state`/`frame` node's `body`; a `value` node's `body` carrying this shape, and a `state`/`frame` node's `body` carrying an ordinary `SemanticTerm` shape, both fail the published schema. | Test (TC-233) |
+| FR-340-AC-6 | When one frame body carries a meaning-join defect and a canonical-order defect at once, the reported diagnostic is the meaning-join defect regardless of which member carries which defect; two vectors with the same two defects assigned to different members report the same kind of diagnostic. | Test (TC-233) |
+| FR-340-AC-7 | A frame body missing any of `modifies`, `creates` or `deletes` fails the schema; every published fixture's frame node is admitted with no defect by the same reader rule `read_package_semantics` applies. | Test (TC-233) |
 
 ## Dependencies
 
 - [FR-322](FR-322-checked-package-artifact.md) owns the `semantic_graph`
-  property this artifact specifies the `state`/`frame` body of.
-- [FR-207](../foundation/FR-207-runtime-value-path.md) and
-  [FR-047](../foundation/FR-047-emit-typed-located-causes.md) supply the
-  closed traversal-step vocabulary, its exact wire tags, and its canonical
-  order, reused here without change.
+  property this artifact specifies the `state`/`frame` body of, including
+  the reference-resolution and canonical-order rules this artifact reuses
+  rather than redefines.
+- [FR-013](../../functional/foundation/FR-013-validate-operation-frames.md)
+  owns the runtime enforcement of an authored frame against observed
+  populations; this artifact owns only the wire shape the frame is read
+  from.
+- [AD-006](../../assurance/AD-006-model-graph-state-contracts.md) owns
+  "Effect frames" as a declared-artifact model feature (`Modifies:`,
+  `Creates:`, `Deletes:` lines lowering to `Operation.frame`); this
+  artifact is the checked-package V2 carrier of that same feature, not an
+  alternative to it.
+- `proposals/quire-v1/definitions/model-complete.md`'s Frames row is the
+  business-model rule this artifact's `modifies`/`creates`/`deletes` shape
+  and refusal causes carry unchanged onto the V2 wire.
+- [FR-208](../foundation/FR-208-quire-meaning-vocabulary.md) fixes which
+  business-model meanings (field, relationship, object type, process) are
+  eligible frame-entry targets.
+- [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)
+  requires this artifact's refusals to carry a stable catalogued cause and
+  an exact available locus rather than message text.
 - [interface_004](interface_004-checked-package.md) publishes the schema
   this artifact's shape is normative against, under
   [`proposals/checked-package-v2`](../../../proposals/checked-package-v2/).
