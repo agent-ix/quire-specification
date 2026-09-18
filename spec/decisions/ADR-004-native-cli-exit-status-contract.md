@@ -1,5 +1,5 @@
 ---
-id: ADR-0104
+id: ADR-004
 title: "Native CLI exit status contract"
 type: ADR
 status: proposed
@@ -9,7 +9,7 @@ relationships:
   - target: ix://agent-ix/quire-spec-language/FR-010
     type: depends_on
 ---
-# ADR-0104: Native CLI exit status contract
+# ADR-004: Native CLI exit status contract
 
 ## Status
 

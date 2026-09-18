@@ -1,5 +1,5 @@
 ---
-id: ADR-0103
+id: ADR-003
 title: "Model intake and formal type system authority"
 type: ADR
 status: proposed
@@ -11,7 +11,7 @@ relationships:
   - target: ix://agent-ix/quire-spec-language/FR-005
     type: depends_on
 ---
-# ADR-0103: Model intake and formal type system authority
+# ADR-003: Model intake and formal type system authority
 
 ## Status
 
@@ -33,9 +33,9 @@ declarations are constructed through Contract IR's DeclarationEnvironment API
 and that "Contract IR FR-013 owns the formal type system", inverting that
 direction for linking and checking.
 
-The same requirement records that the Filament reader and universal typed-model
-adapter are superseded and that no second Contract IR binder or general
-Filament model authority is introduced.
+The same requirement admits exactly one Contract IR binder and no general
+Filament model authority, and states no Filament reader or universal
+typed-model adapter.
 [FR-154](../functional/type-model/FR-154-admit-domain-package-model.md) assigns
 exactly that model intake to native Quire model linking, and
 `quire-spec-language` carries no artifact for a domain package, a model

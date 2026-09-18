@@ -1,5 +1,5 @@
 ---
-id: ADR-0101
+id: ADR-001
 title: "Declaration identity in a lifted domain package"
 type: ADR
 status: proposed
@@ -11,7 +11,7 @@ relationships:
   - target: ix://agent-ix/filament-core-data/FR-093
     type: depends_on
 ---
-# ADR-0101: Declaration identity in a lifted domain package
+# ADR-001: Declaration identity in a lifted domain package
 
 ## Status
 
