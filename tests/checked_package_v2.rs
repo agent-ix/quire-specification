@@ -2865,7 +2865,7 @@ fn tc_233_frame_body_outputs_are_exactly_the_schemas_required_members() {
     }
 }
 
-/// FR-340-AC-2/AC-3/AC-4/AC-6, through the full normative reader: every
+/// FR-340-AC-2/AC-3/AC-4/AC-6/AC-8, through the full normative reader: every
 /// published `frame_mutations` vector is spliced into the all-families
 /// fixture's published frame node (its `dependencies` and
 /// `modifies`/`creates`/`deletes` replaced wholesale) and read with
@@ -2883,11 +2883,17 @@ fn tc_233_frame_body_outputs_are_exactly_the_schemas_required_members() {
 /// carries no cause tag. The two `precedence-*` vectors are what makes a
 /// swap of `FrameGroup`'s declared variant order, or of `FrameDefect::
 /// MeaningJoin`'s declared field order, fail a test: no prior vector had
-/// two meaning-join defects at once.
+/// two meaning-join defects at once. The fifteen `systems-*-in-*` vectors
+/// (FR-340-AC-8) splice each of the five published systems-model nodes into
+/// each of `modifies`, `creates` and `deletes` in turn: they are what makes
+/// adding `| "systems_part"` to `frame_meaning`'s Modifiable arm, or mapping
+/// every `systems_*` form to `CreatableOrDeletable`, fail a test -- no prior
+/// vector named a systems-model node at all.
 #[trace("TC-233", "FR-340-AC-2")]
 #[trace("TC-233", "FR-340-AC-3")]
 #[trace("TC-233", "FR-340-AC-4")]
 #[trace("TC-233", "FR-340-AC-6")]
+#[trace("TC-233", "FR-340-AC-8")]
 #[test]
 fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cause() {
     let catalog = parsed_fixture(OPERATION_CATALOG);
@@ -2897,8 +2903,8 @@ fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cau
         .expect("frame_mutations is an array");
     assert_eq!(
         mutations.len(),
-        10,
-        "frame_mutations covers all ten authored vectors"
+        25,
+        "frame_mutations covers all twenty-five authored vectors"
     );
 
     let causes = mutations
@@ -5140,6 +5146,110 @@ fn tc_233_operation_member_resolves_only_against_an_operation_bearing_model_form
             "a dispatched operation does not resolve against a declaring {form}"
         );
     }
+}
+
+/// FR-322-AC-25's refusal exercised through the full operations reader
+/// (`package_operations_refusal`, not `member_descriptor` alone): a
+/// `systems_interface` and a `record_value_type` declaring node each refuse
+/// a real `dispatch_call` application as `operator-ineligible`/`ill_typed`.
+///
+/// `dispatch_call`'s catalog result form is itself `member`, so its
+/// `result` is `self.member_descriptor(&operation["member"])` -- the exact
+/// call `member_resolves` also makes. A failing `member_descriptor` already
+/// exhausts `result` at the earlier `result.ok_or(Refusal::OperatorIneligible)?`
+/// before the arity/family/member/constraint/leaves let-else is ever
+/// reached, so no `dispatch_call` scenario -- `systems_interface` included --
+/// can tell `member_resolves` apart from a mutant that hard-codes it `true`.
+/// `quire.op.model.reaches` is not coupled that way: its catalog result form
+/// is `boolean`, computed independently of its `relationship_end` member, so
+/// an unresolved relationship-end declaration reaches the let-else and is
+/// refused by `member_resolves` alone, dying if that term is mutated.
+#[trace("TC-233", "FR-322-AC-25")]
+#[test]
+fn tc_233_operator_ineligible_member_refusals_refuse_through_the_full_operations_reader() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+
+    for form in ["systems_interface", "record_value_type"] {
+        let mut package = operation_member_package(form);
+        let nodes = package["semantic_graph"]["nodes"]
+            .as_array_mut()
+            .expect("package nodes are an array");
+        nodes.push(json!({"node_id": "reftype-1", "node_tag": "composite_type", "semantic_form": "reference"}));
+        nodes.push(
+            json!({"node_id": "refarg-1", "node_tag": "expression", "semantic_type": "reftype-1"}),
+        );
+        nodes.push(json!({
+            "node_id": "app-1",
+            "node_tag": "function",
+            "semantic_type": "bool-1",
+            "body": {
+                "term": "application",
+                "operator": "call",
+                "operation": {
+                    "identity": "quire.op.model.dispatch_call",
+                    "laws": [],
+                    "leaves": [],
+                    "mode": null,
+                    "member": {"kind": "operation", "declaration": "model-1", "name": "run"}
+                },
+                "arguments": [
+                    {"term": "reference", "target": "refarg-1"}
+                ],
+                "result_type": "bool-1"
+            }
+        }));
+        assert_eq!(
+            package_operations_refusal(&package, &catalog),
+            Err(OperationRefusal::OperatorIneligible),
+            "a {form} declaring node refuses a dispatch_call as operator-ineligible"
+        );
+    }
+    assert_eq!(
+        OperationRefusal::OperatorIneligible.code(),
+        "ill_typed",
+        "operator-ineligible carries the ill_typed code"
+    );
+
+    let reaches_package = json!({
+        "lock": {},
+        "semantic_graph": {
+            "nodes": [
+                {"node_id": "bool-1", "node_tag": "scalar_type", "semantic_form": "boolean"},
+                {"node_id": "reftype-1", "node_tag": "composite_type", "semantic_form": "reference"},
+                {"node_id": "target-1", "node_tag": "expression", "semantic_type": "reftype-1"},
+                {
+                    "node_id": "app-1",
+                    "node_tag": "function",
+                    "semantic_type": "bool-1",
+                    "body": {
+                        "term": "application",
+                        "operator": "reaches",
+                        "operation": {
+                            "identity": "quire.op.model.reaches",
+                            "laws": [],
+                            "leaves": [],
+                            "mode": null,
+                            "member": {
+                                "kind": "relationship_end",
+                                "declaration": "target-1",
+                                "name": "end"
+                            }
+                        },
+                        "arguments": [
+                            {"term": "reference", "target": "target-1"},
+                            {"term": "reference", "target": "target-1"}
+                        ],
+                        "result_type": "bool-1"
+                    }
+                }
+            ]
+        }
+    });
+    assert_eq!(
+        package_operations_refusal(&reaches_package, &catalog),
+        Err(OperationRefusal::OperatorIneligible),
+        "an unresolved relationship-end member refuses a reaches call as operator-ineligible"
+    );
 }
 
 #[trace("TC-233", "FR-322-AC-19")]
