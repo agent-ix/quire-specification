@@ -144,6 +144,10 @@ This precedence rule fixes exactly one diagnostic for a frame body carrying
 several defects, regardless of which member happens to carry which defect
 or where in its array an entry sits.
 
+When a package publishes more than one `state`/`frame` node, the reader
+checks them in ascending `node_id` digest order and reports the first one
+carrying any defect, using that frame node's own precedence rule above.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -156,6 +160,7 @@ or where in its array an entry sits.
 | FR-340-AC-6 | When one frame body carries a meaning-join defect and a canonical-order defect at once, the reported diagnostic is the meaning-join refusal the precedence rule selects, with its exact code, cause and locus, regardless of which member carries which defect; the same frame body reports that same selected diagnostic regardless of collection or scan order. | Test (TC-233) |
 | FR-340-AC-7 | A frame body missing any of `modifies`, `creates` or `deletes` fails the schema; every published fixture's frame node is admitted with no defect by the same reader rule `read_package_semantics` applies. | Test (TC-233) |
 | FR-340-AC-8 | `ModelNode.semantic_form` names each of FR-208's five systems meanings -- `systems_part`, `systems_port`, `systems_interface`, `systems_connection` and `systems_allocation`, one per `quire.meaning.systems.<x>/v1` value -- and none of the five is admitted into `modifies`, `creates` or `deletes`. | Test (TC-233) |
+| FR-340-AC-9 | When a package publishes more than one `state`/`frame` node, the reader reports the first defect found while checking frame nodes in ascending `node_id` digest order; a lower-digest frame node's own canonical-order defect is reported even when a higher-digest frame node carries a meaning-join defect that would otherwise outrank it. | Test (TC-233) |
 
 ## Dependencies
 
