@@ -67,8 +67,8 @@ entry eligibility is checked directly against an entry's own
 `semantic_form`: `modifies` admits `field_declaration`; `creates` and
 `deletes` admit `object_type` and `process`; every other `model` form is
 refused. A relationship is encoded exactly one way, `relation`/
-`relationship`; no `model` form carries relationship meaning, so a frame
-entry cannot name a relationship through any other node tag or form.
+`relationship`, and a `modifies` entry names a relationship only through
+that one node tag and form.
 
 ## Outputs
 
@@ -118,9 +118,8 @@ dependency of the frame node both refuse `missing_declaration`/
 `missing-name`, the same cause.
 
 When one frame body carries more than one defect at once, the reader
-reports exactly one diagnostic, decided in this fixed order, never by
-which member array an implementation happens to scan first or by an
-entry's position inside its array:
+reports exactly one diagnostic: the one this fixed order, and only this
+order, decides:
 
 1. Any meaning-join defect (a `missing-name` or `malformed-declaration`
    entry, in any of the three members) outranks any canonical-order
@@ -144,7 +143,7 @@ or where in its array an entry sits.
 | FR-340-AC-3 | An entry naming no node of the package, or no declared dependency of the frame node, refuses `missing_declaration`/`missing-name`; an entry naming a declared dependency of any other meaning — including `model`/`operation_declaration`, `model`/`clause_member_declaration`, and every other `model`/`*_type`, `model`/`namespace`, `model`/`state_machine` or `model`/`persistence_interface` form — refuses `invalid_model_binding`/`malformed-declaration`. | Test (TC-233) |
 | FR-340-AC-4 | Each of `modifies`, `creates` and `deletes` is duplicate-free and sorted ascending by entry digest; a duplicated entry fails the schema and a misordered array refuses `invalid_semantic_graph`. | Test (TC-233) |
 | FR-340-AC-5 | The frame body shape validates only as a `state`/`frame` node's `body`; a `value` node's `body` carrying this shape, and a `state`/`frame` node's `body` carrying an ordinary `SemanticTerm` shape, both fail the published schema. | Test (TC-233) |
-| FR-340-AC-6 | When one frame body carries a meaning-join defect and a canonical-order defect at once, the reported diagnostic is the meaning-join defect regardless of which member carries which defect; two vectors with the same two defects assigned to different members report the same diagnostic. | Test (TC-233) |
+| FR-340-AC-6 | When one frame body carries a meaning-join defect and a canonical-order defect at once, the reported diagnostic is the meaning-join refusal the precedence rule selects, with its exact code, cause and locus, regardless of which member carries which defect; the same frame body reports that same selected diagnostic regardless of collection or scan order. | Test (TC-233) |
 | FR-340-AC-7 | A frame body missing any of `modifies`, `creates` or `deletes` fails the schema; every published fixture's frame node is admitted with no defect by the same reader rule `read_package_semantics` applies. | Test (TC-233) |
 
 ## Dependencies
@@ -168,7 +167,7 @@ or where in its array an entry sits.
   eligible frame-entry targets.
 - [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)
   requires this artifact's refusals to carry a stable catalogued cause and
-  an exact available locus rather than message text.
+  an exact available locus.
 - [interface_004](interface_004-checked-package.md) publishes the schema
   this artifact's shape is normative against, under
   [`proposals/checked-package-v2`](../../../proposals/checked-package-v2/).

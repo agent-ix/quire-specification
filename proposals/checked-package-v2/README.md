@@ -128,7 +128,18 @@ meaning and no type is inferred. The identity is a member of
   (record field, tuple position, element, relationship end, dispatched
   operation or type argument), or for a clause
   `{kind: "profile_operator", operator}` naming an operator the law's profile
-  defines;
+  defines. A dispatched operation's declaring node is a `model` node whose own
+  `semantic_form` is `object_type`, `process`, `state_machine` or
+  `persistence_interface`, the forms
+  [FR-208](../../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md#operation-contracts)'s
+  Operation contracts give an operation; naming any other model form is
+  `operator-ineligible`/`ill_typed` here. FR-208 refuses that same binding at
+  the declaring node itself with a cause its own form pins:
+  `unsupported_construct`/`declaration-form` on a `record_value_type`
+  (FR-208-AC-4, which a record value type's own fields and equality never
+  carry) and `invalid_model_binding`/`malformed-declaration` on every other
+  non-operation-bearing form, including an `event_type` (FR-208-AC-4) and a
+  `namespace` (FR-208-AC-8);
 - `leaves` is empty unless the entry names a leaf source, and then names every
   text leaf of the compared type (`operand:0`, `inner:0`) or of a `set`, `bag`
   or `ordered_set` result's element type (`result_inner`: the collection
