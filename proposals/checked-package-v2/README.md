@@ -27,13 +27,16 @@ structures, but any external consumer receives only the versioned contract.
 - `node-identity-vectors.json`'s `frame_mutations` are applied to the
   semantic graph and evaluated at the frame step of `read_package_semantics`
   (FR-322, FR-340); identity projection, `package_id` and source-map checks
-  are not part of a vector's expectation. Most vectors replace the all-
+  are outside a vector's expectation. Most vectors replace the all-
   families fixture's published frame node's `dependencies` and
-  `modifies`/`creates`/`deletes` in place. One vector additionally carries a
+  `modifies`/`creates`/`deletes` in place: each entry is a bare digest
+  string, wrapped as a `NodeRef` -- `{domain: "quire.checked-semantic-node/v1",
+  digest}` (`schema.json`'s `NodeId`) -- when substituted into the node, never
+  written into the graph as a bare string. One vector additionally carries a
   `second_frame` member: a complete second `state`/`frame` node object,
   every member a real semantic-graph node requires, inserted into the graph
   verbatim, so the vector exercises the reader's ascending-node-id-digest
-  order across two frame nodes rather than one.
+  order across two frame nodes.
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes
