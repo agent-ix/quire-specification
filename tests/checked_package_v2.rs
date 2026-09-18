@@ -2463,6 +2463,8 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
             "positive-operation-identities",
             POSITIVE_OPERATION_IDENTITIES,
         ),
+        ("positive-clause-operations", POSITIVE_CLAUSE_OPERATIONS),
+        ("positive-control-operations", POSITIVE_CONTROL_OPERATIONS),
     ] {
         let package = parsed_fixture(bytes);
         assert_eq!(
@@ -4129,8 +4131,9 @@ fn tc_233_operation_vectors_key_every_application_node_of_the_published_packages
         "the division law binds the package id"
     );
 
-    #[allow(clippy::type_complexity)]
-    let edits: [(&str, &str, fn(&mut Value)); 4] = [
+    // A named operation vector, a mutation label and the node edit it applies.
+    type GraphShapeEdit = (&'static str, &'static str, fn(&mut Value));
+    let edits: [GraphShapeEdit; 4] = [
         ("integer-add", "contradictory semantic form", |node| {
             node["semantic_form"] = json!("unary")
         }),
@@ -5120,5 +5123,44 @@ fn tc_233_a_stale_node_key_precedes_declaration_refusals() {
         read_package_semantics(&ambiguous, &catalog),
         Err(ReadRefusal::StaleNodeKey(nodes[other]["node_id"].clone())),
         "a stale application-node key is reported before the declaration ambiguity"
+    );
+}
+
+/// Every published V2 fixture, including the clause and control fixtures the
+/// operation catalog exercises, carries only current application-node keys:
+/// the full normative reader (which checks node-key currency before any
+/// declaration or operation refusal) admits each one outright. A digest edit
+/// to any application node's retained key would surface here as
+/// `ReadRefusal::StaleNodeKey` rather than passing silently, unlike a check
+/// that calls only `package_operations_refusal`, which never inspects node
+/// keys at all.
+#[trace("TC-233", "FR-272-AC-7")]
+#[test]
+fn tc_233_every_published_package_carries_only_current_application_node_keys() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    for (label, package) in published_v2_packages() {
+        assert_eq!(
+            read_package_semantics(&package, &catalog),
+            Ok(()),
+            "{label}: the full reader admits it, so every application node key is current"
+        );
+    }
+}
+
+/// FR-272-AC-7 pins these causes to catalog revision `1-draft.4` by name; a
+/// header that still claimed `1-draft.3` would, by the catalog's own line 139
+/// ("A producer claiming revision `1-draft.3` emits none of these causes"),
+/// forbid emitting `stale-node-key` and the other revision-`1-draft.4` causes
+/// this file exercises throughout.
+#[trace("TC-233", "FR-272-AC-7")]
+#[test]
+fn tc_233_native_diagnostics_header_pins_revision_1_draft_4() {
+    let header = NATIVE_DIAGNOSTICS
+        .lines()
+        .find(|line| line.starts_with("Interpretation identity:"))
+        .expect("native diagnostics has an interpretation-identity header line");
+    assert_eq!(
+        header, "Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.4`.",
+        "the catalog header claims revision 1-draft.4, matching every 1-draft.4 cause this file relies on"
     );
 }
