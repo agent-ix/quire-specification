@@ -168,8 +168,11 @@ order and bit identity are three distinct identities, and only
 A reader reports the first refusal in the order owned by
 `quire.native.diagnostics/v1` revision `1-draft.4`: graph-shape refusals, then
 `stale-node-key` (`invalid_package`) for an application node whose retained key
-is not its preimage digest, then declaration refusals, then nodes in ascending
-node-id digest order and, inside a node, applications in pre-order. One
+is not its preimage digest, then declaration refusals, then frame refusals
+(a `state`/`frame` node's own `missing_declaration`/`invalid_model_binding`
+meaning-join defect outranking its `invalid_semantic_graph` canonical-order
+defect, per FR-340), then nodes in ascending node-id digest order and, inside a
+node, applications in pre-order. One
 application checks `unknown-operation`, `operation-class-mismatch`,
 `operation-law-missing`, `operation-law-mismatch`,
 `operation-law-unselected`, `operation-mode-mismatch` and
