@@ -8,6 +8,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-195
     type: references
+  - target: ix://agent-ix/quire-contract-ir/FR-016
+    type: references
 ---
 
 # FR-330: Target-neutral contract package

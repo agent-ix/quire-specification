@@ -9,6 +9,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-299
     type: references
+  - target: ix://agent-ix/quire-contract-ir/FR-034
+    type: references
 ---
 ## Description
 

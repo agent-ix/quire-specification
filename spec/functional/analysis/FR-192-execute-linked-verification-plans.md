@@ -53,6 +53,8 @@ an authored decision rule after all required inputs have terminal dispositions.
 | FR-192-AC-3 | A circular dependency without a selected sound fixed-point rule refuses before provider execution. | Test (TC-214) |
 | FR-192-AC-4 | Every plan node yields exactly one accounted disposition, including blocked, unsupported and not-run nodes. | Test (TC-214) |
 | FR-192-AC-5 | Failure blocks only typed descendants and cannot erase or relabel independent sibling evidence. | Test (TC-214) |
+| FR-192-AC-6 | An authored plan selects its subjects by requirement, clause and claim identity, and selects methods, bounds and evidence obligations against them; a plan that restates a clause body rather than referencing its identity refuses admission. | Test (TC-214) |
+| FR-192-AC-7 | Editing a plan changes no clause meaning and no checked package identity, and editing a clause invalidates every plan result bound to its previous identity. | Test (TC-214) |
 
 ## Dependencies
 

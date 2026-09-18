@@ -8,6 +8,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-195
     type: references
+  - target: ix://agent-ix/quire-contract-ir/FR-029
+    type: references
 ---
 
 # FR-331: Backend provider request and result envelope

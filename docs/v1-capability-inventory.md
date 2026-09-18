@@ -11,8 +11,10 @@ campaign must specify, implement where executable, verify, integrate and
 qualify. The older 51-row matrix in `proposals/quire-v1/capabilities.md` and the
 13 CAP coordination groups in `docs/functional-capability-ledger.md` remain
 historical crosswalks and roll-ups. They do not remove, defer or combine a row
-from this inventory. The current per-row specification evidence and required
-delta are in the [Task-003 coverage audit](v1-existing-spec-coverage.md).
+from this inventory. The current per-row specification evidence is the
+[complete V1 atomic capability and requirement matrix](../spec/complete-v1/tests.md)
+(TM-009), which names the owning requirement, the specification action and the
+test cases for each row.
 
 ## Inventory contract
 

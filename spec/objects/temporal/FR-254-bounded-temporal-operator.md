@@ -19,11 +19,21 @@ relationships:
 
 ## Description
 
-When a native temporal clause names an operator, the reader SHALL resolve it through the closed bounded vocabulary listed here, every member of which carries an inclusive interval under one selected temporal profile.
+When a native temporal clause names an operator under a bounded temporal profile, the reader SHALL resolve it through the closed vocabulary listed here, every member of which carries an inclusive interval under one selected temporal profile.
 
-FR-091 states that "The v1 temporal profiles shall refuse unbounded intervals",
-and FR-092 states that "The v1 temporal profiles shall refuse unbounded past and
-implicit history reconstruction."
+FR-091 states that under a bounded temporal profile
+"the evaluator shall refuse an unbounded interval",
+and FR-092 states for the past that
+"the evaluator shall refuse an unbounded past interval"
+and that "Implicit history reconstruction is refused under every profile."
+
+The unbounded forms of these operator labels belong to the infinite-trace
+profile and are not members of this table. FR-091 states that under that profile
+"the evaluator shall admit the unbounded always, eventually, until and release operators"
+with the meaning FR-161 states, and FR-092 states the same for the unbounded
+previous, historically, once and since operators.
+[FR-161](../../functional/temporal/FR-161-analyze-infinite-trace-properties.md)
+owns their meaning.
 
 ## Values
 
@@ -83,10 +93,11 @@ timestamps never substitutes for it.
   order it uses is the admitted causal/sequence order of FR-252, never derived
   from key order, timestamp or ingestion order (FR-090, FR-090-AC-4).
 - **Absence** — an operand or bound that is not supplied is absent and compares
-  only to absence. An unbounded interval is not an absent bound: FR-091 and
-  FR-092 refuse it outright, and FR-091-AC-6 holds that "Unbounded intervals,
-  unavailable total valuations and exhausted semantic work return non-Boolean
-  dispositions."
+  only to absence. An unbounded interval is not an absent bound: FR-091-AC-6
+  holds that "Where a bounded temporal profile is selected, unbounded intervals
+  return a non-Boolean disposition", and an unbounded operator admitted under
+  the infinite-trace profile is a member of the FR-161 vocabulary rather than a
+  member of this table with an absent bound.
 - **Digest domain** — not applicable; no key component of this object is a
   digest. The profile identity it names carries one, under
   [FR-201](../foundation/FR-201-canonical-identity-domain.md).
@@ -99,7 +110,7 @@ timestamps never substitutes for it.
 | FR-254-AC-2 | `strong previous` resolves to `once[1,1]` and is not represented as a distinct member. | Test |
 | FR-254-AC-3 | The same operator label and interval under two different profile identities compares unequal. | Test |
 | FR-254-AC-4 | Exactly `until[a,b]`, `release[a,b]`, `since[a,b]` and `triggered[a,b]` are recorded as order-sensitive. | Test |
-| FR-254-AC-5 | An unbounded interval is refused rather than recorded as an absent bound. | Test |
+| FR-254-AC-5 | Where a bounded temporal profile is selected, an unbounded interval is refused rather than recorded as an absent bound; where the infinite-trace profile is selected, the unbounded operator resolves through FR-161 rather than as a member of this table carrying an absent bound. | Test |
 
 ## Dependencies
 

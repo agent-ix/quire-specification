@@ -10,9 +10,9 @@ closing the row end to end; it does not acquire another repository's semantic
 authority.
 
 The audit read live issue state and bodies rather than trusting the maintained
-research snapshots. Exact current code and specification evidence remains in
-`docs/v1-capability-inventory.md` and
-`docs/v1-existing-spec-coverage.md`.
+research snapshots. Exact current scope is `docs/v1-capability-inventory.md`
+and exact current specification evidence is TM-009,
+`spec/complete-v1/tests.md`.
 
 Task-009 materialized the child work after specification acceptance. The
 [implementation ticket manifest](v1-delivery-ticket-manifest.md) is now the

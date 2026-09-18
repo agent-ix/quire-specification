@@ -70,9 +70,11 @@ profile shall quantify admitted past instants by inclusive clock distance."
   order.
 - **Absence** — an absent bound compares only to absence and is never defaulted
   to zero or to the end of the supplied data. An unbounded interval is not an
-  absent bound: FR-091 states that "The v1 temporal profiles shall refuse
-  unbounded intervals", and FR-092 refuses "unbounded past and implicit history
-  reconstruction".
+  absent bound: FR-091 states that "Where a bounded temporal profile is
+  selected, the evaluator shall refuse an unbounded interval", FR-092 states the
+  same for an unbounded past interval, and FR-092 refuses implicit history
+  reconstruction "under every profile". An operator admitted under the
+  infinite-trace profile carries no interval object at all.
 - **Digest domain** — not applicable; no key component of this object is a
   digest. The profile identity it names carries one, under
   [FR-201](../foundation/FR-201-canonical-identity-domain.md).

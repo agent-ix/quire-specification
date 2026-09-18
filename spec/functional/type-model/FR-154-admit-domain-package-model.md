@@ -13,6 +13,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-208
     type: references
+  - target: ix://agent-ix/filament-core-data/FR-095
+    type: references
+  - target: ix://agent-ix/filament-core-data/FR-091
+    type: references
 ---
 
 # FR-154: Admit the domain model from a domain package

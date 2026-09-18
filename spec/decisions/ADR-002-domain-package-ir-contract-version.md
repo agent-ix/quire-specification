@@ -1,0 +1,47 @@
+---
+id: ADR-002
+title: "Semantic IR contract version for a domain package"
+type: ADR
+status: accepted
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-154
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/AD-006
+    type: depends_on
+  - target: ix://agent-ix/filament-core-data/FR-051
+    type: depends_on
+---
+# ADR-002: Semantic IR contract version for a domain package
+
+## Status
+
+**Accepted.**
+
+## Decision
+
+A lifted domain package carries semantic IR contract version `2.0.0`.
+
+`filament-core-data` is the producing side and defines the `2.0.0` member set.
+That member set includes the members
+[FR-154](../functional/type-model/FR-154-admit-domain-package-model.md),
+[AD-006](../assurance/AD-006-model-graph-state-contracts.md) and
+[FR-208](../objects/foundation/FR-208-quire-meaning-vocabulary.md) require
+Quire to admit: a supertype list, an abstractness flag, a subsets edge, a
+redefines edge, an operation frame, a population node and an embedded meaning
+vocabulary, alongside the fields, multiplicity, units, relationships,
+operations, opaque clauses and closed constraint keyword set the contract
+already defines.
+
+## Context
+
+The specification states the shape a domain package carries; the producing
+repository states how that shape is written and read. Quire admits the document
+against a producer-side requirement id rather than against an issue number, so
+one requirement in `filament-core-data` defines each member and Quire cites it.
+
+## Consequences
+
+- `filament-core-data` states the seven members above in its normative IR
+  contract at `2.0.0`, and `FR-154`, `AD-006` and `FR-208` cite that
+  requirement id.
+- `FR-051` classifies diffs over the `2.0.0` member set, including the seven.

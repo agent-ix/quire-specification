@@ -9,6 +9,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/AD-003
     type: references
+  - target: ix://agent-ix/quire-spec-language/FR-035
+    type: references
 ---
 
 # FR-339: Define the complete native V1 grammar
