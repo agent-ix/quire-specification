@@ -115,7 +115,7 @@ deleted in the post state keeps its pre most-specific type. Charges are the
 | FR-153-AC-5 | All-instances includes closed subtype populations exactly once and emits no partial population when closure is unknown. | Test (TC-198) |
 | FR-153-AC-6 | A subtype object seen through supertype and subtype queries has one reference key whose type component is its most-specific type. | Test (TC-198) |
 | FR-153-AC-7 | `pre(allInstances<T>(p))` in a postcondition reads the pre population, and a deleted object keeps its pre type. | Test (TC-198) |
-| FR-153-AC-8 | `allInstances<T>(p)`'s result is exactly `Set<Reference<T>>[0,N]`, typed to the queried `T` and bounded by `p`'s declared maximum `N`; an untyped or unbounded collection does not satisfy this criterion. Each of lookup's present results is a reference typed to the queried type; a reference typed to an unrelated type does not satisfy this criterion. | Test (TC-198) |
+| FR-153-AC-8 | `allInstances<T>(p)`'s result is exactly `Set<Reference<T>>[0,N]`, typed to the queried `T` and bounded by `p`'s declared maximum `N`. Lookup's present result is `Reference<T>` in the `undefined` and `refused` modes and `Option<Reference<T>>` in the `empty` mode, in every case typed to the queried `T`. | Test (TC-198) |
 
 ## Dependencies
 
