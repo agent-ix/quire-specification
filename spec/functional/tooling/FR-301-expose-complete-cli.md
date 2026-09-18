@@ -7,6 +7,8 @@ relationships:
     type: implements
   - target: ix://agent-ix/quire-specification/FR-300
     type: references
+  - target: ix://agent-ix/quire-spec-language/FR-010
+    type: references
 ---
 
 # FR-301: Expose the complete native CLI lifecycle

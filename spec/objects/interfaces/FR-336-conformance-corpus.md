@@ -8,6 +8,10 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-311
     type: references
+  - target: ix://agent-ix/quire-contract-ir/FR-018
+    type: references
+  - target: ix://agent-ix/quire-contract-codegen/FR-005
+    type: references
 ---
 
 # FR-336: Independent complete-V1 conformance corpus

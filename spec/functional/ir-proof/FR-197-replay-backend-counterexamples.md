@@ -9,6 +9,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-114
     type: references
+  - target: ix://agent-ix/quire-contract-ir/FR-037
+    type: references
+  - target: ix://agent-ix/quire-contract-ir/FR-031
+    type: references
 ---
 
 # FR-197: Replay proof counterexamples through native execution
