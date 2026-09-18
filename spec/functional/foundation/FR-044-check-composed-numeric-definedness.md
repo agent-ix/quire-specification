@@ -9,6 +9,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-147
     type: references
+  - target: ix://agent-ix/quire-specification/FR-148
+    type: references
 ---
 ## Description
 
@@ -24,13 +26,15 @@ A checked defined expression, a typed type/domain/definedness refusal, or an exp
 
 ## Behavior
 
-Ordinary operands/results share their named numeric type and exact unit. The state contract specifies permitted operations, rational normalization-before-bounds and sum's explicit result-domain transfer. No float, saturation, machine-width inference, implicit conversion or silent widening is permitted. Failure to establish totality is reported as unproved definedness, distinct from a proved type/domain error or observed logical violation. Checking may be conservative but cannot certify unproved operations or label its limitation a counterexample.
+Ordinary operands/results share their named numeric type and exact unit. The state contract specifies permitted operations, rational normalization-before-bounds and sum's explicit result-domain transfer. Saturation, machine-width inference, implicit conversion and silent widening are inadmissible under every profile. Where `quire.state.core/v1` is selected without `quire.value.complete/v1`, a floating-point operand or result is inadmissible as well. Where `quire.value.complete/v1` is selected, an explicitly declared IEEE 754-2019 binary32 or binary64 type is admitted and its definedness is decided by [FR-148](../expressions/FR-148-evaluate-ieee-floating-profiles.md) under `quire.value.ieee754-2019-default/v1`, which FR-019-AC-1 names among the complete-V1 facets; an IEEE operand still reaches an exact named numeric type only through an explicit conversion that reports loss. Failure to establish totality is reported as unproved definedness, distinct from a proved type/domain error or observed logical violation. Checking may be conservative but cannot certify unproved operations or label its limitation a counterexample.
 
 Rational division additionally requires a proved nonzero divisor, exact quotient
 normalization and result bounds in the same named dimensionless rational type.
-The historical state-core profile refuses integer division/remainder; the
-complete-V1 integer profiles admit the FR-147 operators only with their exact
-rounding and definedness contracts. The literal constructor does not implicitly
+Where `quire.state.core/v1` is selected without `quire.value.complete/v1`,
+integer division and remainder are refused; where `quire.value.complete/v1` is
+selected, the FR-147 operators are admitted only with the exact quotient,
+remainder and definedness contract of the retained
+`quire.value.integer-division.*` identity. The literal constructor does not implicitly
 convert integer operands or introduce quotient rounding.
 
 ## Acceptance Criteria
@@ -39,12 +43,13 @@ convert integer operands or introduce quotient rounding.
 | --- | --- | --- |
 | FR-044-AC-1 | An unguarded possible out-of-range result refuses; a sound guard narrowing every potentially evaluated result within inclusive bounds permits checking. | Test (TC-044) |
 | FR-044-AC-2 | Normalized rational operation results are checked after sign/gcd reduction, including raw intermediates above normalized bounds, without floating approximation. | Test (TC-044) |
-| FR-044-AC-3 | Wrong named types/units and implicit integer-to-rational conversion refuse; division/remainder prohibited by the selected profile refuse even in unreachable syntax, while complete-V1 admitted integer profiles follow FR-147. | Test (TC-044) |
-| FR-044-AC-4 | Where a bounded numeric profile is selected, a minimum-only integer remains unadmitted without inventing a maximum; signed-64 boundary overflow cannot wrap or widen. | Test (TC-044) |
-| FR-044-AC-8 | Where a complete-V1 integer profile is selected, a minimum-only or wholly unbounded integer declaration is admitted as a mathematical integer, and a finite consumer lacking a complete derived domain returns the FR-147 `requires-bound` negotiation disposition. | Test (TC-192) |
+| FR-044-AC-3 | Wrong named types/units and implicit integer-to-rational conversion refuse; division/remainder prohibited by the selected profile refuse even in unreachable syntax, while a package selecting `quire.value.complete/v1` follows FR-147. | Test (TC-044) |
+| FR-044-AC-4 | Where `quire.state.core/v1` is selected without `quire.value.complete/v1`, a minimum-only integer remains unadmitted without inventing a maximum; signed-64 boundary overflow cannot wrap or widen. | Test (TC-044) |
 | FR-044-AC-5 | Insufficient proof capability is identified as unproved definedness, and exhausted checking resources as incomplete; neither is a completed Boolean violation. | Test (TC-044) |
 | FR-044-AC-6 | For a dimensionless rational type with normalized numerator [-1,1] and denominator [1,2], (1/2) divided by (1/2) admits as 1/1 after reducing raw 2/2, while 1 divided by (1/2) refuses its result bound and division by zero refuses definedness. | Test (TC-044) |
 | FR-044-AC-7 | An exact nonzero guard permits an otherwise total rational quotient only where that operand's guard fact holds; an unguarded possible zero divisor or a guard for another value cannot discharge the obligation. | Test (TC-044) |
+| FR-044-AC-8 | Where `quire.value.complete/v1` is selected, a minimum-only or wholly unbounded integer declaration is admitted as a mathematical integer, and a finite consumer lacking a complete derived domain returns the FR-147 `requires-bound` negotiation disposition. | Test (TC-192) |
+| FR-044-AC-9 | Where `quire.value.complete/v1` is selected, an explicitly declared binary32 or binary64 operand is admitted and checked under FR-148; where `quire.state.core/v1` is selected without it, the same declaration refuses at its source location. An implicit conversion, a saturating result and a machine-width inference refuse under both selections. | Test (TC-193) |
 
 ## Dependencies
 
