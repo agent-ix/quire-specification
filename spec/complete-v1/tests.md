@@ -900,6 +900,15 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-322 | FR-322-AC-13 | TC-233 | planned |
 | FR-322 | FR-322-AC-14 | TC-233 | planned |
 | FR-322 | FR-322-AC-15 | TC-233 | planned |
+| FR-322 | FR-322-AC-17 | TC-233 | planned |
+| FR-322 | FR-322-AC-18 | TC-233 | planned |
+| FR-322 | FR-322-AC-19 | TC-233 | planned |
+| FR-322 | FR-322-AC-21 | TC-233 | planned |
+| FR-322 | FR-322-AC-22 | TC-233 | planned |
+| FR-322 | FR-322-AC-23 | TC-233 | planned |
+| FR-322 | FR-322-AC-24 | TC-233 | planned |
+| interface_004 | interface_004-AC-1 | TC-233 | planned |
+| interface_004 | interface_004-AC-2 | TC-233 | planned |
 | FR-323 | FR-323-AC-1 | TC-231 | planned |
 | FR-323 | FR-323-AC-2 | TC-231 | planned |
 | FR-323 | FR-323-AC-3 | TC-231 | planned |

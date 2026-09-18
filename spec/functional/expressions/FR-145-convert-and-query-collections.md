@@ -171,7 +171,8 @@ the accounting `integer-arithmetic` family, and Boolean `and` and `or` charge
 | `flatMap` | the `map` charges, then the `flatten` charges |
 | `fold` | the identity expression; then a visit and step per occurrence; then an accumulator retain |
 | `reduce` | a visit of the first occurrence, which initializes the accumulator; then a visit and step per later occurrence; then an accumulator retain; an empty source reached by direct kernel evaluation charges nothing |
-| `forall`, `exists`, `count`, `sum` | a visit and predicate or summand per occurrence until a short-circuit stops the query; each `sum` addition charges what that addition charges; then a scalar retain |
+| `forall`, `exists`, `count` | a visit and predicate per occurrence until a short-circuit stops the query; then a scalar retain |
+| `sum<N>` | exactly the `quire.value.accounting/v1` [collection sum schedule](../../../proposals/quire-v1/definitions/value-accounting.md#collection-sum-schedule), including the per-family addition charges and the type-pinned rounding mode |
 | `size` | a scalar retain only |
 | `contains(c, v)` | for each member `m` in scan order until the first equal one: `collection.member-walk` (`occ(v) + occ(m)`), the FR-149 plan-formation checks, then `collection.member-test` (the planned pair count); then a scalar retain |
 | `convert` | a visit per source occurrence (for a bag to a set or ordered set, one visit per distinct member); then formation, with membership comparisons only when the source is a sequence and the target is a set, bag or ordered set |
