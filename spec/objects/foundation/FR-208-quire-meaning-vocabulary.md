@@ -16,6 +16,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/AD-006
     type: references
+  - target: ix://agent-ix/filament-core-data/FR-031
+    type: references
 ---
 # FR-208: Quire meaning id vocabulary
 

@@ -9,6 +9,12 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-195
     type: references
+  - target: ix://agent-ix/quire-contract-ir/FR-036
+    type: references
+  - target: ix://agent-ix/quire-contract-codegen/FR-003
+    type: references
+  - target: ix://agent-ix/quire-contract-codegen/interface-001
+    type: references
 ---
 
 # FR-196: Generate exact Kani contracts and harnesses

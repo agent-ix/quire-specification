@@ -10,6 +10,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/AD-005
     type: references
+  - target: ix://agent-ix/filament-core-data/FR-097
+    type: references
+  - target: ix://agent-ix/filament-core-data/FR-016
+    type: references
 ---
 
 # Domain model declared in spec artifacts

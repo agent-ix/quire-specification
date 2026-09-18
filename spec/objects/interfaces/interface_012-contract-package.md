@@ -5,6 +5,8 @@ type: interface
 relationships:
   - target: ix://agent-ix/quire-specification/FR-330
     type: references
+  - target: ix://agent-ix/quire-contract-ir/FR-019
+    type: references
 ---
 
 # [interface_012] I12 target-neutral contract package

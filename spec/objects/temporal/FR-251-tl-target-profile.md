@@ -8,6 +8,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-250
     type: references
+  - target: ix://agent-ix/quire-contract-ir/FR-025
+    type: references
 ---
 # FR-251: TL target evaluator profile
 
