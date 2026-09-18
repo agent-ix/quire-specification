@@ -2,7 +2,7 @@
 id: ADR-002
 title: "Semantic IR contract version for a domain package"
 type: ADR
-status: proposed
+status: accepted
 relationships:
   - target: ix://agent-ix/quire-specification/FR-154
     type: depends_on
@@ -15,38 +15,33 @@ relationships:
 
 ## Status
 
-**Open question for the architect.** The producer and the consumer of the same
-document name different contract versions.
+**Accepted.**
+
+## Decision
+
+A lifted domain package carries semantic IR contract version `2.0.0`.
+
+`filament-core-data` is the producing side and defines the `2.0.0` member set.
+That member set includes the members
+[FR-154](../functional/type-model/FR-154-admit-domain-package-model.md),
+[AD-006](../assurance/AD-006-model-graph-state-contracts.md) and
+[FR-208](../objects/foundation/FR-208-quire-meaning-vocabulary.md) require
+Quire to admit: a supertype list, an abstractness flag, a subsets edge, a
+redefines edge, an operation frame, a population node and an embedded meaning
+vocabulary, alongside the fields, multiplicity, units, relationships,
+operations, opaque clauses and closed constraint keyword set the contract
+already defines.
 
 ## Context
 
-[FR-154](../functional/type-model/FR-154-admit-domain-package-model.md),
-[AD-006](../assurance/AD-006-model-graph-state-contracts.md) and
-[FR-208](../objects/foundation/FR-208-quire-meaning-vocabulary.md) require the
-lifted domain package to be a semantic IR `2.0.0` document, and require that
-document to carry generalization, abstractness, subsetting, redefinition,
-operation frames, populations and an embedded meaning vocabulary.
-
-`filament-core-data` specifies the lift as producing semantic IR v1.1, and
-`ix://agent-ix/filament-core-data/FR-051` states that projecting to `2.0.0`
-yields `UNKNOWN_CONTRACT_VERSION`. Its normative IR contract covers fields,
-multiplicity, units, relationships, operations, opaque clauses and a closed
-constraint keyword set; no requirement there defines a supertype list, an
-abstractness flag, a subsets or redefines edge, an operation frame, a
-population node or a meaning vocabulary.
-
-QSpec's only citation for the `2.0.0` members is a pair of `filament-core-data`
-issue numbers, not a requirement id, so the member set Quire admits has no
-producer-side requirement to read it from.
-
-## Question
-
-Which contract version does a lifted domain package carry, and which
-requirement on the producing side defines the members `FR-154` and `AD-006`
-require Quire to admit?
+The specification states the shape a domain package carries; the producing
+repository states how that shape is written and read. Quire admits the document
+against a producer-side requirement id rather than against an issue number, so
+one requirement in `filament-core-data` defines each member and Quire cites it.
 
 ## Consequences
 
-Until the question is answered, `FR-154` admits a document that no
-`filament-core-data` requirement produces, and the producing repository refuses
-the version Quire names.
+- `filament-core-data` states the seven members above in its normative IR
+  contract at `2.0.0`, and `FR-154`, `AD-006` and `FR-208` cite that
+  requirement id.
+- `FR-051` classifies diffs over the `2.0.0` member set, including the seven.
