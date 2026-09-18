@@ -5,7 +5,7 @@ type: SpecReview
 analysis: scope-boundary
 scope: "docs/v1-capability-inventory.md against the owning requirements named in TM-009"
 review_set: subset
-evaluated_revision: "c9c5e16 on task/63-full-v1-specification"
+evaluated_revision: "3dcf31b on task/63-full-v1-specification"
 review_date: "2026-09-17"
 ---
 
