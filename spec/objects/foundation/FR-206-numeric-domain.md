@@ -25,8 +25,11 @@ When a numeric operand or result is checked, the checker SHALL require its named
   dimensionless rational type (FR-044).
 - **bounds** (where authored) — inclusive. A sound guard narrowing every
   potentially evaluated result within inclusive bounds permits checking
-  (FR-044-AC-1). A minimum-only integer remains unadmitted without inventing a
-  maximum (FR-044-AC-4).
+  (FR-044-AC-1). Where `quire.state.core/v1` is selected without
+  `quire.value.complete/v1`, a minimum-only integer remains unadmitted without
+  inventing a maximum (FR-044-AC-4); where `quire.value.complete/v1` is
+  selected, a minimum-only or wholly unbounded integer declaration is admitted
+  as a mathematical integer (FR-044-AC-8).
 
 ## Identity and comparison
 

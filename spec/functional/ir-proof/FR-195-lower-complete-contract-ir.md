@@ -9,6 +9,12 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-031
     type: references
+  - target: ix://agent-ix/quire-contract-ir/FR-035
+    type: references
+  - target: ix://agent-ix/quire-contract-ir/FR-028
+    type: references
+  - target: ix://agent-ix/quire-contract-ir/AD-003
+    type: references
 ---
 
 # FR-195: Lower the complete language to target-neutral contract IR

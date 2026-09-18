@@ -3,9 +3,9 @@
 This document is the Task-004 decision record for how the complete V1
 specification corpus will be organized before its major expansion. It is based
 on the default-branch revisions recorded in
-`docs/v1-capability-inventory.md`, the 176-row atomic inventory, the current
-artifact bodies mapped in `docs/v1-existing-spec-coverage.md`, and each
-repository's existing root specification and architecture decisions.
+`docs/v1-capability-inventory.md`, the 176-row atomic inventory, the artifact
+bodies those rows were read against, and each repository's existing root
+specification and architecture decisions.
 
 It does not define the product architecture. Task-006 defines that architecture
 once, across the complete scope. This document defines where that architecture,

@@ -12,6 +12,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-201
     type: references
+  - target: ix://agent-ix/quire-contract-ir/FR-026
+    type: references
 ---
 # FR-259: Native-to-TL correspondence record
 

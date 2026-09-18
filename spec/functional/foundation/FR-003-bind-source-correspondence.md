@@ -11,6 +11,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-271
     type: references
+  - target: ix://agent-ix/quire-specification/FR-134
+    type: references
 ---
 # FR-003: Bind clause locations to exact source bytes
 
@@ -28,7 +30,7 @@ Verified original locations or source-correspondence diagnostics.
 
 ## Behavior
 
-Regions use zero-based half-open UTF-8 byte offsets and one-based scalar columns. A map may delete only the explicitly selected indentation/CRLF/final-newline layout. Fence ownership and explicit positive numeric IR revision mapping are separate obligations. The extractor treats expressions as opaque.
+Regions use zero-based half-open UTF-8 byte offsets and one-based scalar columns. A map may delete only the indentation, CRLF and final-newline bytes that its selected container contract marks as container-owned, as [FR-134](../source-package/FR-134-preserve-source-transform-loci.md) states. Fence ownership and explicit positive numeric IR revision mapping are separate obligations. The extractor treats expressions as opaque.
 
 ## Acceptance Criteria
 

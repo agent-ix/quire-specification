@@ -14,6 +14,31 @@ relationships:
 This matrix is normative traceability for the complete 176-row inventory. A
 planned row is required work, not a deferred capability or implementation claim.
 
+## Specification action classification
+
+Each row's specification action records what the complete-V1 authoring pass did
+with the owning requirement.
+
+- `Reuse`: an existing requirement already has the exact behavior and
+  acceptance criteria.
+- `Amend`: the right owner exists and its behavior is extended to cover the
+  full atomic obligation.
+- `Split`: the existing owner combined independently testable behavior, which
+  is separated into its own criteria.
+- `Resolve`: normative statements disagreed, or an accepted architecture
+  excluded a capability the master inventory requires, and the disagreement is
+  decided here.
+- `New`: behavior and acceptance criteria are authored for the row.
+
+Over the 176 rows the delivered totals are 94 Reuse, 39 Amend, 23 New, 19
+Resolve and 1 Split.
+
+V1-TYPE-024 is a Resolve row because extending reachability over inheritance
+and conformance required deciding what "the same type" means for traversal.
+FR-043 fixes it as conformance to the static edge type under
+`quire.model.complete/v1`, with identity keeping each object's most-specific
+type.
+
 ## Atomic Capability Coverage
 
 | Capability | Primary requirement | Test cases | Specification action | Coverage Status |
@@ -211,6 +236,8 @@ planned row is required work, not a deferred capability or implementation claim.
 | FR-134 | FR-134-AC-1 | TC-184 | planned |
 | FR-134 | FR-134-AC-2 | TC-184 | planned |
 | FR-134 | FR-134-AC-3 | TC-184 | planned |
+| FR-134 | FR-134-AC-4 | TC-184 | planned |
+| FR-134 | FR-134-AC-5 | TC-184 | planned |
 | FR-140 | FR-140-AC-1 | TC-185 | planned |
 | FR-140 | FR-140-AC-2 | TC-185 | planned |
 | FR-140 | FR-140-AC-3 | TC-185 | planned |
@@ -328,6 +355,8 @@ planned row is required work, not a deferred capability or implementation claim.
 | FR-303 | FR-303-AC-1 | TC-223 | planned |
 | FR-303 | FR-303-AC-2 | TC-223 | planned |
 | FR-303 | FR-303-AC-3 | TC-223 | planned |
+| FR-303 | FR-303-AC-4 | TC-223 | planned |
+| FR-303 | FR-303-AC-5 | TC-223 | planned |
 | FR-304 | FR-304-AC-1 | TC-224 | planned |
 | FR-304 | FR-304-AC-2 | TC-224 | planned |
 | FR-304 | FR-304-AC-3 | TC-224 | planned |
@@ -337,6 +366,7 @@ planned row is required work, not a deferred capability or implementation claim.
 | FR-306 | FR-306-AC-1 | TC-226 | planned |
 | FR-306 | FR-306-AC-2 | TC-226 | planned |
 | FR-306 | FR-306-AC-3 | TC-226 | planned |
+| FR-306 | FR-306-AC-4 | TC-226 | planned |
 | FR-307 | FR-307-AC-1 | TC-227 | planned |
 | FR-307 | FR-307-AC-2 | TC-227 | planned |
 | FR-307 | FR-307-AC-3 | TC-227 | planned |
@@ -398,11 +428,13 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-007 | FR-007-AC-4 | TC-231 | planned |
 | FR-007 | FR-007-AC-5 | TC-231 | planned |
 | FR-007 | FR-007-AC-6 | TC-231 | planned |
+| FR-007 | FR-007-AC-7 | TC-192 | planned |
 | FR-008 | FR-008-AC-1 | TC-231 | planned |
 | FR-008 | FR-008-AC-2 | TC-231 | planned |
 | FR-008 | FR-008-AC-3 | TC-231 | planned |
 | FR-008 | FR-008-AC-4 | TC-231 | planned |
 | FR-008 | FR-008-AC-5 | TC-231 | planned |
+| FR-008 | FR-008-AC-6 | TC-189, TC-190, TC-231 | planned |
 | FR-009 | FR-009-AC-1 | TC-231 | planned |
 | FR-009 | FR-009-AC-2 | TC-231 | planned |
 | FR-009 | FR-009-AC-3 | TC-231 | planned |
@@ -443,6 +475,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-019 | FR-019-AC-7 | TC-006 | planned |
 | FR-020 | FR-020-AC-11 | TC-020 | planned |
 | FR-091 | FR-091-AC-7 | TC-111 | planned |
+| FR-091 | FR-091-AC-8 | TC-200 | planned |
 | FR-093 | FR-093-AC-6 | TC-114 | planned |
 | FR-120 | FR-120-AC-2 | TC-150 | planned |
 | FR-120 | FR-120-AC-3 | TC-150 | planned |
@@ -711,6 +744,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-142 | FR-142-AC-6 | TC-187 | planned |
 | FR-142 | FR-142-AC-7 | TC-187 | planned |
 | FR-142 | FR-142-AC-8 | TC-233 | planned |
+| FR-142 | FR-142-AC-9 | TC-187 | planned |
+| FR-142 | FR-142-AC-10 | TC-187 | planned |
 | FR-143 | FR-143-AC-4 | TC-188 | planned |
 | FR-143 | FR-143-AC-5 | TC-188 | planned |
 | FR-143 | FR-143-AC-6 | TC-188 | planned |
@@ -743,6 +778,9 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-148 | FR-148-AC-5 | TC-193 | planned |
 | FR-148 | FR-148-AC-6 | TC-193 | planned |
 | FR-148 | FR-148-AC-7 | TC-193 | planned |
+| FR-148 | FR-148-AC-8 | TC-193 | planned |
+| FR-148 | FR-148-AC-9 | TC-193 | planned |
+| FR-148 | FR-148-AC-10 | TC-193 | planned |
 | FR-149 | FR-149-AC-4 | TC-194 | planned |
 | FR-149 | FR-149-AC-5 | TC-194 | planned |
 | FR-149 | FR-149-AC-6 | TC-194 | planned |
@@ -768,6 +806,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-151 | FR-151-AC-6 | TC-196 | planned |
 | FR-151 | FR-151-AC-7 | TC-196 | planned |
 | FR-151 | FR-151-AC-8 | TC-196 | planned |
+| FR-151 | FR-151-AC-9 | TC-196 | planned |
+| FR-151 | FR-151-AC-10 | TC-196 | planned |
 | FR-152 | FR-152-AC-6 | TC-197 | planned |
 | FR-152 | FR-152-AC-7 | TC-197 | planned |
 | FR-152 | FR-152-AC-8 | TC-197 | planned |
@@ -820,6 +860,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-180 | FR-180-AC-5 | TC-209 | planned |
 | FR-181 | FR-181-AC-4 | TC-210 | planned |
 | FR-181 | FR-181-AC-5 | TC-210 | planned |
+| FR-181 | FR-181-AC-6 | TC-210 | planned |
 | FR-182 | FR-182-AC-4 | TC-211 | planned |
 | FR-182 | FR-182-AC-5 | TC-211 | planned |
 | FR-190 | FR-190-AC-4 | TC-212 | planned |
@@ -828,6 +869,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-191 | FR-191-AC-5 | TC-213 | planned |
 | FR-192 | FR-192-AC-4 | TC-214 | planned |
 | FR-192 | FR-192-AC-5 | TC-214 | planned |
+| FR-192 | FR-192-AC-6 | TC-214 | planned |
+| FR-192 | FR-192-AC-7 | TC-214 | planned |
 | FR-193 | FR-193-AC-4 | TC-215 | planned |
 | FR-193 | FR-193-AC-5 | TC-215 | planned |
 | FR-194 | FR-194-AC-4 | TC-216 | planned |

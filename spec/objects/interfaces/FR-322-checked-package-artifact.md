@@ -12,6 +12,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-201
     type: references
+  - target: ix://agent-ix/quire-spec-language/FR-019
+    type: references
 ---
 
 # FR-322: Immutable checked-package artifact

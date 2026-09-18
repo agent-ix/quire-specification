@@ -426,6 +426,18 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/AD-011
     type: contains
+  - target: ix://agent-ix/quire-specification/ADR-001
+    type: contains
+  - target: ix://agent-ix/quire-specification/ADR-002
+    type: contains
+  - target: ix://agent-ix/quire-specification/ADR-003
+    type: contains
+  - target: ix://agent-ix/quire-specification/ADR-004
+    type: contains
+  - target: ix://agent-ix/quire-specification/ADR-005
+    type: contains
+  - target: ix://agent-ix/quire-specification/ADR-006
+    type: contains
   - target: ix://agent-ix/quire-specification/US-010
     type: contains
   - target: ix://agent-ix/quire-specification/US-011
@@ -867,6 +879,12 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [AD-009](assurance/AD-009-verification-method-plans.md) | ArchitectureDescription | Accepted analysis, model-testing and verification-plan subsystem |
 | [AD-010](assurance/AD-010-target-neutral-ir-backends.md) | ArchitectureDescription | Accepted target-neutral IR and proof-backend subsystem |
 | [AD-011](assurance/AD-011-integration-evidence-qualification.md) | ArchitectureDescription | Accepted tooling, integration, evidence and qualification subsystem |
+| [ADR-001](decisions/ADR-001-domain-declaration-identity.md) | ADR | Proposed; open question: declaration identity in a lifted domain package |
+| [ADR-002](decisions/ADR-002-domain-package-ir-contract-version.md) | ADR | Proposed; open question: semantic IR contract version for a domain package |
+| [ADR-003](decisions/ADR-003-model-intake-and-type-system-authority.md) | ADR | Proposed; open question: model intake and formal type system authority |
+| [ADR-004](decisions/ADR-004-native-cli-exit-status-contract.md) | ADR | Proposed; open question: native CLI exit status contract |
+| [ADR-005](decisions/ADR-005-kani-generation-ownership.md) | ADR | Proposed; open question: ownership of Kani harness generation and tool pinning |
+| [ADR-006](decisions/ADR-006-protocol-bounded-control-profile.md) | ADR | Proposed; open question: bounded control in the protocol profile layer |
 | [Complete-V1 subsystem index](subsystems/index.md) | Architecture index | Ten subsystems and I01–I21 interface ownership |
 | [TM-009](complete-v1/tests.md) | Test Matrix | All 176 atomic capabilities and complete-V1 qualification cases |
 | [FR-339](functional/source-package/FR-339-define-complete-native-grammar.md) | FR | Normative complete native V1 lexical and syntactic contract |
