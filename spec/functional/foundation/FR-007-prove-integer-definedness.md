@@ -26,7 +26,7 @@ A defined integer expression or a located typing/definedness refusal.
 
 ## Behavior
 
-Values and proof arithmetic are mathematical integers. No host overflow, inferred machine-width domain or implicit widening is admitted. Where the historical bounded integer profile is selected, div truncates toward zero and a nonzero remainder has the dividend sign. Where a complete-V1 integer profile is selected, the frontend shall apply the division law that profile selects, as [FR-147](../expressions/FR-147-evaluate-integer-division-domains.md) states. Divisor zero and signed-minimum/-1 require exclusion under every profile. Like-unit addition/comparison are admitted; multiplication/division/remainder require dimensionless operands.
+Values and proof arithmetic are mathematical integers. No host overflow, inferred machine-width domain or implicit widening is admitted. The `quire.value.integer-division.*` identity the checked package retains selects the quotient and remainder law, as [FR-147](../expressions/FR-147-evaluate-integer-division-domains.md) states: under `quire.value.integer-division.truncating/v1` div truncates toward zero and a nonzero remainder has the dividend sign; under `quire.value.integer-division.floor/v1` and `quire.value.integer-division.euclidean/v1` the quotient and remainder are those of the retained law. Divisor zero and signed-minimum/-1 require exclusion under every retained law. Like-unit addition/comparison are admitted; multiplication/division/remainder require dimensionless operands.
 
 ## Acceptance Criteria
 
@@ -34,11 +34,11 @@ Values and proof arithmetic are mathematical integers. No host overflow, inferre
 | --- | --- | --- |
 | FR-007-AC-1 | An unproved out-of-range sum receives undefined_expression. | Test |
 | FR-007-AC-2 | A guarded sum proved within its declared bounds is admitted. | Test |
-| FR-007-AC-3 | Where the historical bounded integer profile is selected, negative seven divided by three yields negative two. | Test |
-| FR-007-AC-4 | Where the historical bounded integer profile is selected, negative seven remainder three yields negative one. | Test |
+| FR-007-AC-3 | Where the checked package retains `quire.value.integer-division.truncating/v1`, negative seven divided by three yields negative two. | Test |
+| FR-007-AC-4 | Where the checked package retains `quire.value.integer-division.truncating/v1`, negative seven remainder three yields negative one. | Test |
 | FR-007-AC-5 | A possible zero divisor receives undefined_expression. | Test |
 | FR-007-AC-6 | Incompatible units receive ill_typed. | Test |
-| FR-007-AC-7 | Where a complete-V1 integer profile is selected, negative seven divided by and remainder three take the quotient and remainder of the law that profile selects, as FR-147 specifies. | Test (TC-192) |
+| FR-007-AC-7 | Where the checked package retains `quire.value.integer-division.floor/v1`, negative seven divided by three yields negative three and negative seven remainder three yields two; where it retains `quire.value.integer-division.euclidean/v1`, the same operands yield negative three and two, as FR-147 specifies. | Test (TC-192) |
 
 ## Dependencies
 
