@@ -34,8 +34,8 @@ Created/deleted sets are disjoint and equal to actual population differences. Th
 | FR-013-AC-2 | An incorrect creation inventory receives population_delta_mismatch. | Test |
 | FR-013-AC-3 | An unselected replacement frame refuses the invocation. | Test |
 | FR-013-AC-4 | Missing observations do not fabricate a frame violation. | Test |
-| FR-013-AC-5 | A write to a `modifies`-granted field on an object of the invocation's pre or post populations, whether or not it is reachable from any parameter, is permitted; a write to a field the frame does not grant receives `frame_violation`. | Test (TC-236) |
-| FR-013-AC-6 | Creating an instance of a subtype under a `creates` entry naming its supertype is permitted; creating an instance of a type unrelated to any `creates` entry receives `frame_violation`. | Test (TC-236) |
+| FR-013-AC-5 | A write to a `modifies`-granted field on an object of the invocation's pre or post populations, including an object reachable from no parameter or one whose effective type reaches the field only through `redefines`, is permitted; a write to a field the frame does not grant receives `frame_violation`. | Test (TC-236) |
+| FR-013-AC-6 | Creating an instance of a subtype under a `creates` entry naming its supertype, or deleting one under a `deletes` entry naming its supertype, is permitted; creating or deleting an instance of a type unrelated to any `creates`/`deletes` entry receives `frame_violation`. | Test (TC-236) |
 
 ## Dependencies
 

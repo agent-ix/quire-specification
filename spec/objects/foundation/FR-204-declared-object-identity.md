@@ -30,11 +30,12 @@ When identity-bearing objects are compared, the evaluator SHALL compare their un
   Under the selected `quire.model.complete/v1` definition it is the effective
   declaration identity of the object's most-specific type, as supplied by the
   population member's `typeIdentity`, never a static supertype through which
-  the object is viewed. The population a `creates`/`deletes` entry naming a
-  type `T` covers is every object of the universe whose most-specific type
-  conforms to `T`, not only the objects of `T` itself
-  ([FR-013](../../functional/foundation/FR-013-validate-operation-frames.md),
-  [FR-151](../../functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md)).
+  the object is viewed. Which population a `creates`/`deletes` entry naming a
+  type covers is
+  [FR-013](../../functional/foundation/FR-013-validate-operation-frames.md)'s
+  and
+  [FR-151](../../functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md)'s
+  rule, not restated here.
 - **object_identity** (identity component) — the object's own declared identity
   within its universe and type (FR-009).
 
