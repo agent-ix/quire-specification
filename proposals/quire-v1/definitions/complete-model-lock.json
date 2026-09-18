@@ -22,7 +22,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "model-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"fdd14e8c40c092ff07bf19ab7b1b68e8b02d668389cca20248d023713f450e87"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"3a967edbc772a0c3754c1b71b1649c254d3c64c2f613b0db6063bb1d960d5703"}
     },
     {
       "role": "effective_declaration_schema",
@@ -37,7 +37,7 @@
     {
       "role": "rule_ad_006",
       "artifact_path": "../../../spec/assurance/AD-006-model-graph-state-contracts.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.ad-006/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"a1a922e9e8ef45cc4ede3a62996b31432ced6d9416c189cb34200fb066bd7037"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.ad-006/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"a84592ca2f863d42ddddd72dd3c798a237de9325e14208373189b7b2ff6248c8"}
     },
     {
       "role": "rule_fr_043",
@@ -62,7 +62,7 @@
     {
       "role": "rule_fr_151",
       "artifact_path": "../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-151/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"627efee4adc819c235ea83ec942b126f5f4a2be997ae95a26d186945157b659a"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-151/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"84cd5a3cd9af095237ed736bdf045d77ae278418bf34fadfa63ddc3914720a10"}
     },
     {
       "role": "rule_fr_152",
@@ -77,17 +77,17 @@
     {
       "role": "rule_fr_154",
       "artifact_path": "../../../spec/functional/type-model/FR-154-admit-domain-package-model.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-154/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"88ee0a008acc1d11ddd6ec990d3e8fa64aea833da0da1a23b6ea2c4b15ac5508"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-154/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"8fb373ed2eabd5690c09644427fe71345cdeb7202d069c9f662fd3de0d40cb1a"}
     },
     {
       "role": "rule_fr_204",
       "artifact_path": "../../../spec/objects/foundation/FR-204-declared-object-identity.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-204/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"1396dc9b9ee4581fa64fa8f1c723b6fb22bafae6f245edda381225c6c1530a65"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-204/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"f2b65e27a45d03ed473a5a1dd75eb67e08403aa07f86290da2d43cffff49a46c"}
     },
     {
       "role": "rule_fr_208",
       "artifact_path": "../../../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-208/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"00ee307066a87dc3901adda788905f1e8f2848bb2a17fb64d5375bf52dbf0db4"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-208/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"01f2ca09cca39c56dc48a06138d4467cc33995ec3f5ec44df636ce1bd38251b0"}
     },
     {
       "role": "rule_fr_321",
