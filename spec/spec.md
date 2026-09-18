@@ -660,6 +660,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-339
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-340
+    type: contains
   - target: ix://agent-ix/quire-specification/TM-009
     type: contains
 ---

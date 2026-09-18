@@ -12,6 +12,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-201
     type: references
+  - target: ix://agent-ix/quire-specification/FR-340
+    type: references
   - target: ix://agent-ix/quire-spec-language/FR-019
     type: references
 ---
@@ -52,7 +54,10 @@ boundary.
   (`node_id.domain`, `node_id.digest`); node identifiers are unique within the
   graph and the `identity_projection` is the typed-key ordered projection of
   every node excluding source occurrences and presentation. References name a
-  compatible declared target by node key. A recursive reference is legal only
+  compatible declared target by node key; a `state` node with
+  `semantic_form: "frame"` carries its references in the closed
+  `modifies`/`creates`/`deletes` body shape
+  [FR-340](FR-340-checked-package-frame-location.md) specifies. A recursive reference is legal only
   when every cycle member names the same explicit `recursion_group`; all other
   graph cycles refuse. Every node has one or more exact source occurrences.
 - `operation` — every `application` semantic term, wherever it occurs in a node
@@ -86,6 +91,16 @@ boundary.
   for a clause the `{kind: "profile_operator", operator}` member naming one
   operator the law's profile defines (the eight bounded temporal operators of
   `quire.temporal.bounded-facet/v1`, or the FR-052 bounded control constructs).
+  An `operation` member's declaring node is a `model` node whose own
+  `semantic_form` is `object_type`, `process`, `state_machine` or
+  `persistence_interface`, the forms
+  [FR-208](../foundation/FR-208-quire-meaning-vocabulary.md#operation-contracts)'s
+  Operation contracts give a dispatched operation; naming any other model
+  form, including `systems_interface` (whose ordered feature signatures
+  [FR-152](../../functional/type-model/FR-152-bind-systems-model-structures.md)
+  gives structural-conformance meaning, never a `dispatch_call` binding),
+  refuses `operator-ineligible`/`ill_typed` the same as any other operand
+  outside the entry.
   An absent profile law, a law of the wrong profile kind, a profile the lock
   does not select and an operator the profile does not define refuse as
   `operation-law-missing`, `operation-law-mismatch`, `operation-law-unselected`
@@ -320,6 +335,7 @@ partial checked package.
 | FR-322-AC-22 | Every clause application of the published clause package carries exactly one profile law of its catalogued role equal to the lock's `profile_selections` row and a `profile_operator` member the profile defines; removing the law refuses as `operation-law-missing`, a protocol profile in the temporal role as `operation-law-mismatch`, a lock without the temporal profile row as `operation-law-unselected`, and an undefined, other-profile or absent operator as `operation-member-mismatch`. | Test (TC-233) |
 | FR-322-AC-23 | Every application carries a `result_type` and every literal a `type`; a root `result_type` differing from the node `semantic_type`, a `result_type` the operation cannot produce, and a literal whose `type` family its `value_kind` does not admit each refuse as `operator-ineligible`, while the same literal with its declared type is admitted. | Test (TC-233) |
 | FR-322-AC-24 | The FR-149 conversion classification is decided from declared bounds: an integer range into a containing integer or rational range is exact, an integer range whose scaled bounds exceed a decimal range is range narrowing, a decimal of scale 3 into scale 2 is scale reduction and a rational into narrower rational bounds is rational narrowing; `quire.op.rational.div` over integer-range operands carries `promotes_exact` and its published vector is admitted, while a decimal operand refuses as `operator-ineligible`. | Test (TC-233) |
+| FR-322-AC-25 | An `operation` member resolves only against a declaring `model` node of `semantic_form` `object_type`, `process`, `state_machine` or `persistence_interface`; every other model form, including `systems_interface`, refuses `operator-ineligible`/`ill_typed`. | Test (TC-233) |
 
 ## Dependencies
 
