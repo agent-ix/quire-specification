@@ -146,11 +146,7 @@ or where in its array an entry sits.
 
 When a package publishes more than one `state`/`frame` node, the reader
 checks them in ascending `node_id` digest order and reports the first one
-carrying any defect, using that frame node's own precedence rule above; a
-higher-digest frame node's defect is never reported ahead of a lower-digest
-frame node's own defect, even when the higher-digest frame node's defect
-would otherwise outrank it under the meaning-join/canonical-order
-precedence.
+carrying any defect, using that frame node's own precedence rule above.
 
 ## Acceptance Criteria
 

@@ -2979,29 +2979,16 @@ fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cau
         frame["body"]["creates"] = json!(digests(mutation, "creates"));
         frame["body"]["deletes"] = json!(digests(mutation, "deletes"));
 
+        // A vector's `second_frame`, when present, is a complete
+        // `state`/`frame` node object -- every member a real
+        // semantic-graph node requires -- and is inserted into the graph
+        // exactly as authored, so the vendored vector file alone (not this
+        // test's Rust) fixes what a second frame node looks like.
         if let Some(second_frame) = mutation.get("second_frame") {
-            let second_digest = second_frame["node_id_digest"]
-                .as_str()
-                .expect("second_frame.node_id_digest is a string");
-            let second_node = json!({
-                "node_id": digest_ref(second_digest),
-                "schema_version": "quire.checked-semantic-graph/v2",
-                "node_tag": "state",
-                "semantic_form": "frame",
-                "semantic_type": digest_ref(&repeated_digest("aa")),
-                "dependencies": digests(second_frame, "dependencies"),
-                "occurrences": [{"role": "declaration", "ordinal": 0}],
-                "body": {
-                    "term": "frame",
-                    "modifies": digests(second_frame, "modifies"),
-                    "creates": digests(second_frame, "creates"),
-                    "deletes": digests(second_frame, "deletes"),
-                },
-            });
             candidate["semantic_graph"]["nodes"]
                 .as_array_mut()
                 .expect("nodes is an array")
-                .push(second_node);
+                .push(second_frame.clone());
         }
 
         let expected_code = mutation["expected_code"]

@@ -24,6 +24,16 @@ structures, but any external consumer receives only the versioned contract.
 - `node-identity-vectors.json` supplies known JCS SHA-256 vectors for those
   preimages, plus `operation_vectors` and `operation_mutations` for
   application-node preimages.
+- `node-identity-vectors.json`'s `frame_mutations` are applied to the
+  semantic graph and evaluated at the frame step of `read_package_semantics`
+  (FR-322, FR-340); identity projection, `package_id` and source-map checks
+  are not part of a vector's expectation. Most vectors replace the all-
+  families fixture's published frame node's `dependencies` and
+  `modifies`/`creates`/`deletes` in place. One vector additionally carries a
+  `second_frame` member: a complete second `state`/`frame` node object,
+  every member a real semantic-graph node requires, inserted into the graph
+  verbatim, so the vector exercises the reader's ascending-node-id-digest
+  order across two frame nodes rather than one.
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes

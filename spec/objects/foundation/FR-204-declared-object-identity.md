@@ -35,7 +35,7 @@ When identity-bearing objects are compared, the evaluator SHALL compare their un
   [FR-013](../../functional/foundation/FR-013-validate-operation-frames.md)'s
   and
   [FR-151](../../functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md)'s
-  rule, not restated here.
+  rule.
 - **object_identity** (identity component) — the object's own declared identity
   within its universe and type (FR-009).
 
