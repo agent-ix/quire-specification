@@ -33,7 +33,10 @@ enum/member/dimension/unit preimage by using an owner absent from the lock, a
 stale owner revision/digest join, a stale node ID, an unreduced or
 signed-denominator rational, a duplicate/zero/unsorted term, a noncanonical
 unordered-member order, and a non-root/root scale-offset violation; each
-applicable mutation must refuse as `invalid_semantic_graph`. In a real package,
+applicable mutation must refuse as `invalid_semantic_graph`. Mutate an
+application node's `dependencies` list out of ascending-digest order; this
+mutation must also refuse as `invalid_semantic_graph` (FR-322-AC-10). In a
+real package,
 retain an enum/member/unit preimage while independently changing the enum
 literal case, `semantic_type`, declaration/dimension dependency or unit target
 dependency, mirror the changed identity projection and recompute package ID;

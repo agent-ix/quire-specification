@@ -120,7 +120,12 @@ operation refusal the reader checks, in order, the graph shape
 (`invalid_semantic_graph`), `stale-node-key` (`invalid_package`) for a node
 whose retained key is not its preimage digest, `declaration-nominal-mismatch`
 (`invalid_package`) and then `ambiguous-name` (`ambiguous_declaration`) over
-the nodes' `declaration` members.
+the nodes' `declaration` members, and then, at the first `state`/`frame` node
+in ascending node-id digest order carrying a defect
+([FR-340](./FR-340-checked-package-frame-location.md)), that node's own
+defect: a `missing-name`/`missing_declaration` or `malformed-declaration`/
+`invalid_model_binding` meaning-join defect outranks that same frame node's
+own `invalid_semantic_graph` canonical-order defect.
 
 ## Declaration
 

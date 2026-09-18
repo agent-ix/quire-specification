@@ -2466,11 +2466,13 @@ impl FrameRefusal {
             Self::MissingName => "missing-name",
             Self::MalformedDeclaration => "malformed-declaration",
             // `invalid_semantic_graph` is one of FR-322's bare v2 refusal
-            // codes (lines 182-189: only `invalid_package`, `ill_typed` and
-            // `ambiguous_declaration` carry a cause tag); `CanonicalOrder`
-            // has no cause to return, `.cause()` is never called on it
-            // (excluded from `ALL`), and this arm exists only so the match
-            // stays exhaustive as the enum evolves.
+            // codes: of the sixteen codes the v2 refusal vocabulary names,
+            // only `invalid_package`, `ill_typed`, `ambiguous_declaration`,
+            // `missing_declaration` and `invalid_model_binding` carry a
+            // cause tag. `CanonicalOrder` has no cause to return,
+            // `.cause()` is never called on it (excluded from `ALL`), and
+            // this arm exists only so the match stays exhaustive as the
+            // enum evolves.
             Self::CanonicalOrder => {
                 unreachable!("CanonicalOrder carries no cause tag; use .code() instead")
             }
@@ -2888,12 +2890,24 @@ fn tc_233_frame_body_outputs_are_exactly_the_schemas_required_members() {
 /// each of `modifies`, `creates` and `deletes` in turn: they are what makes
 /// adding `| "systems_part"` to `frame_meaning`'s Modifiable arm, or mapping
 /// every `systems_*` form to `CreatableOrDeletable`, fail a test -- no prior
-/// vector named a systems-model node at all.
+/// vector named a systems-model node at all. The `cross-frame-lower-digest-
+/// wins` vector (FR-340-AC-9) is the only one with a `second_frame` field:
+/// it mutates the published frame node (digest `93...93`) into a
+/// missing-name defect and the loop below inserts a second, brand-new
+/// frame node at a lower digest (`01...01`) with a canonical-order defect,
+/// so `package_frame_refusal`'s ascending node-id-digest scan reaches the
+/// lower-digest node first. No prior vector published two frame nodes at
+/// once, so this is what makes a mutant that ranks meaning-join defects
+/// first across the whole package, instead of visiting frame nodes in
+/// ascending digest order, fail a test: such a mutant would report the
+/// `93...93` node's `missing_declaration` instead of the `01...01` node's
+/// `invalid_semantic_graph`.
 #[trace("TC-233", "FR-340-AC-2")]
 #[trace("TC-233", "FR-340-AC-3")]
 #[trace("TC-233", "FR-340-AC-4")]
 #[trace("TC-233", "FR-340-AC-6")]
 #[trace("TC-233", "FR-340-AC-8")]
+#[trace("TC-233", "FR-340-AC-9")]
 #[test]
 fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cause() {
     let catalog = parsed_fixture(OPERATION_CATALOG);
@@ -2903,8 +2917,8 @@ fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cau
         .expect("frame_mutations is an array");
     assert_eq!(
         mutations.len(),
-        25,
-        "frame_mutations covers all twenty-five authored vectors"
+        26,
+        "frame_mutations covers all twenty-six authored vectors"
     );
 
     let causes = mutations
@@ -2964,6 +2978,18 @@ fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cau
         frame["body"]["modifies"] = json!(digests(mutation, "modifies"));
         frame["body"]["creates"] = json!(digests(mutation, "creates"));
         frame["body"]["deletes"] = json!(digests(mutation, "deletes"));
+
+        // A vector's `second_frame`, when present, is a complete
+        // `state`/`frame` node object -- every member a real
+        // semantic-graph node requires -- and is inserted into the graph
+        // exactly as authored, so the vendored vector file alone (not this
+        // test's Rust) fixes what a second frame node looks like.
+        if let Some(second_frame) = mutation.get("second_frame") {
+            candidate["semantic_graph"]["nodes"]
+                .as_array_mut()
+                .expect("nodes is an array")
+                .push(second_frame.clone());
+        }
 
         let expected_code = mutation["expected_code"]
             .as_str()

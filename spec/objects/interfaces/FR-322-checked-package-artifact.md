@@ -137,9 +137,13 @@ boundary.
   targets and member declarations of its body. A contradictory form or
   dependency list is `invalid_semantic_graph`. A node whose retained key differs
   from the digest of its preimage refuses as `invalid_package` with cause
-  `stale-node-key`, after every graph-shape refusal and before any declaration
-  or operation refusal, at the first such node in ascending retained digest
-  order.
+  `stale-node-key`, after every graph-shape refusal and before any declaration,
+  frame or operation refusal, at the first such node in ascending retained
+  digest order. A frame body refusal, meaning-join or canonical-order
+  ([FR-340](FR-340-checked-package-frame-location.md)), is reported after
+  every declaration refusal and before any operation refusal, at the first
+  `state`/`frame` node in ascending node-id digest order that FR-340's own
+  meaning-join/canonical-order precedence selects a defect for.
 - `declaration` — `{qualified_name}`, the name a named, source-declared node
   introduces, with the `qualified_declaration` grammar. It is carried exactly by
   a `scalar_type`, `composite_type`, `bounded_domain`, `function`, `model`,
@@ -193,9 +197,13 @@ vocabulary is `unknown_contract_version`, `malformed_wire`, `duplicate_member`,
 `unknown_member`, `noncanonical_wire`, `stale_dependency`,
 `digest_domain_mismatch`, `unknown_required_capability`,
 `invalid_semantic_graph`, `invalid_source_map`, `unsupported_node_tag`,
-`invalid_package`, `ill_typed` and `ambiguous_declaration`; the last three carry
-exactly the `stale-node-key`, operation and declaration causes above with the code the native
-diagnostics catalog pairs with each cause, and no other code carries them.
+`invalid_package`, `ill_typed`, `ambiguous_declaration`, `missing_declaration`
+and `invalid_model_binding`; the last five carry exactly the `stale-node-key`,
+operation and declaration causes above, and the `missing-name` and
+`malformed-declaration` frame-entry causes
+[FR-340](FR-340-checked-package-frame-location.md) defines, with the code the
+native diagnostics catalog pairs with each cause, and no other code carries
+them.
 Before expensive semantic work, the reader measures raw wire bytes; a byte
 overage returns `incomplete`. It then performs strict syntax/member validation;
 a malformed wire returns `refused`. It charges depth, graph nodes/edges,
@@ -324,7 +332,7 @@ partial checked package.
 | FR-322-AC-7 | A consumer obtains the complete closed semantic graph through the public schema and never through a native parser/CST/package implementation type. | Inspection |
 | FR-322-AC-8 | Two conformers derive the same package id from the specified JCS identity preimage; changing an excluded raw artifact/source-map/presentation or reader-limit member does not change it, while changing any named preimage member does. | Test (TC-217) |
 | FR-322-AC-9 | The reader result is exactly admitted, refused or incomplete; malformed input and the first exhausted measured limit remain distinguishable and carry their specified typed provenance/accounting. | Test (TC-217) |
-| FR-322-AC-10 | Enum, dimension and declared-unit node keys match the closed JCS preimage vectors; stale-body keys, non-normalized rationals, invalid owner joins and noncanonical member/term order refuse as `invalid_semantic_graph`. | Test (TC-217) |
+| FR-322-AC-10 | Enum, dimension and declared-unit node keys match the closed JCS preimage vectors; stale-body keys, non-normalized rationals, invalid owner joins and every other noncanonical member or term order this artifact refuses -- including an application node's `dependencies` list -- refuse as `invalid_semantic_graph`, except a `state`/`frame` node's own `modifies`/`creates`/`deletes` canonical order, which [FR-340-AC-4](FR-340-checked-package-frame-location.md) owns. | Test (TC-217) |
 | FR-322-AC-13 | The published V2 checked-package schema admits its positive fixture carrying all 13 closed node tags with an exact source-map entry for every occurrence, and refuses each authored version, digest-domain and node mutation. | Test (TC-233) |
 | FR-322-AC-14 | Each published V2 package fixture's `package_id` equals the RFC 8785 JCS SHA-256 of the identity preimage rebuilt from its lock selections and occurrence-free semantic graph; editing a source-map region, node source occurrence, raw source digest, capability disposition or diagnostic catalog leaves that id unchanged, while editing the edition, a profile/definition/model/dependency selection, a required feature, a node member or node order changes it. | Test (TC-233) |
 | FR-322-AC-15 | Each published enum, dimension and declared-unit node vector validates against the closed preimage schema and recomputes its recorded JCS SHA-256; each authored semantic mutation is refused by exactly its named schema or semantic check, an absent owner fails the package lock join, and inside the published nominal package a retained preimage with a changed body, type, dependency or unjoined owner is refused by the published cross-field or owner-join constraint. | Test (TC-233) |
