@@ -330,6 +330,8 @@ planned row is required work, not a deferred capability or implementation claim.
 | FR-303 | FR-303-AC-1 | TC-223 | planned |
 | FR-303 | FR-303-AC-2 | TC-223 | planned |
 | FR-303 | FR-303-AC-3 | TC-223 | planned |
+| FR-303 | FR-303-AC-4 | TC-223 | planned |
+| FR-303 | FR-303-AC-5 | TC-223 | planned |
 | FR-304 | FR-304-AC-1 | TC-224 | planned |
 | FR-304 | FR-304-AC-2 | TC-224 | planned |
 | FR-304 | FR-304-AC-3 | TC-224 | planned |

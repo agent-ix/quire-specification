@@ -21,7 +21,8 @@ incremental diagnostics for the exact document revision.
 
 ## Inputs
 
-Lossless CST, formatting profile, document revision and incremental change set.
+Lossless CST, checked semantic model, formatting profile, document revision and
+incremental change set.
 
 ## Outputs
 
@@ -44,6 +45,15 @@ round-trips through the parser and is accepted only when the checked semantic
 digest is unchanged. Cancellation returns incomplete; a superseded revision is
 stale and its edits/diagnostics cannot be applied to another revision.
 
+Navigation resolves a source position to the definition span and the reference
+spans that the checker bound at that position for the same document revision,
+and reports an unbound position as unbound. Completion proposes exactly the
+declarations the checker admits at that position under the selected profile,
+each with its resolved type and its owning declaration identity. Both read the
+checked semantic model; neither derives a result from a lexical match over the
+source bytes, and both are stale under a superseded revision on the same terms
+as diagnostics.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -51,6 +61,8 @@ stale and its edits/diagnostics cannot be applied to another revision.
 | FR-303-AC-1 | Formatting twice produces no further edits and rechecking preserves the same semantic package. | Test (TC-223) |
 | FR-303-AC-2 | Incremental and full reparse/check produce equivalent diagnostics and symbols for the same bytes. | Test (TC-223) |
 | FR-303-AC-3 | A stale document revision or overlapping/semantic-changing edit set refuses application. | Test (TC-223) |
+| FR-303-AC-4 | Definition and reference navigation at a bound position returns exactly the checker's binding spans for that revision; an unbound position reports unbound rather than a lexical match, and a superseded revision is stale. | Test (TC-223) |
+| FR-303-AC-5 | Completion at a position proposes exactly the declarations admitted there under the selected profile, each with its resolved type and owning declaration identity; a declaration the profile prohibits is not proposed, and a superseded revision is stale. | Test (TC-223) |
 
 ## Dependencies
 
