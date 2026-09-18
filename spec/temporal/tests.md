@@ -53,7 +53,7 @@ the coherent base-plus-seven review remain acceptance prerequisites.
 | FR-092 | FR-092-AC-4 | TC-118 | 🚧 Planned |
 | FR-092 | FR-092-AC-5 | TC-117 | 🚧 Planned |
 | FR-092 | FR-092-AC-6 | TC-112, TC-118 | 🚧 Planned |
-| FR-092 | FR-092-AC-7 | TC-200 | planned |
+| FR-092 | FR-092-AC-7 | TC-200 | 🚧 Planned |
 | FR-093 | FR-093-AC-1 | TC-114 | 🚧 Planned |
 | FR-093 | FR-093-AC-2 | TC-114 | 🚧 Planned |
 | FR-093 | FR-093-AC-3 | TC-114 | 🚧 Planned |
