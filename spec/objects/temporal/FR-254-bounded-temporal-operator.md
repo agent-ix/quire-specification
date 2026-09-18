@@ -21,18 +21,17 @@ relationships:
 
 When a native temporal clause names an operator under a bounded temporal profile, the reader SHALL resolve it through the closed vocabulary listed here, every member of which carries an inclusive interval under one selected temporal profile.
 
-FR-091 states that "Where a bounded temporal profile is selected, the evaluator
-shall refuse an unbounded interval", and FR-092 states that "Where a bounded
-temporal profile is selected, the evaluator shall refuse an unbounded past
-interval" and that "Implicit history reconstruction is refused under every
-profile."
+FR-091 states that under a bounded temporal profile
+"the evaluator shall refuse an unbounded interval",
+and FR-092 states for the past that
+"the evaluator shall refuse an unbounded past interval"
+and that "Implicit history reconstruction is refused under every profile."
 
 The unbounded forms of these operator labels belong to the infinite-trace
-profile and are not members of this table. FR-091 states that "Where the
-infinite-trace profile is selected, the evaluator shall admit the unbounded
-always, eventually, until and release operators with the meaning FR-161
-states", and FR-092 states the same for the unbounded previous, historically,
-once and since operators.
+profile and are not members of this table. FR-091 states that under that profile
+"the evaluator shall admit the unbounded always, eventually, until and release operators"
+with the meaning FR-161 states, and FR-092 states the same for the unbounded
+previous, historically, once and since operators.
 [FR-161](../../functional/temporal/FR-161-analyze-infinite-trace-properties.md)
 owns their meaning.
 
