@@ -10,8 +10,6 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-227
     type: references
-  - target: ix://agent-ix/quire-specification/FR-171
-    type: references
 ---
 # FR-228: Bounded control construct vocabulary
 
@@ -66,8 +64,7 @@ records the sentence that states each construct's rule.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-228-AC-1 | Every member of the table is named as a control construct by FR-052 and carries the rule cited in its description. | Inspection |
-| FR-228-AC-2 | A missing join input, a causal cycle and a zero-progress loop each refuse admission independently. Where the bounded control profile is selected, an absent finite iteration maximum also refuses admission independently. | Analysis |
-| FR-228-AC-5 | Where a complete-V1 choreography facet is selected, the construct carries a loop's invariant and well-founded variant as its termination premise in place of a finite iteration maximum, as FR-171 specifies. | Analysis |
+| FR-228-AC-2 | A missing join input, a causal cycle, a zero-progress loop and an absent finite iteration maximum each refuse admission independently. | Analysis |
 | FR-228-AC-3 | No member of this table is assigned an ordinal, a precedence or a wire spelling by this artifact. | Inspection |
 | FR-228-AC-4 | Changing a branch, a join rule or an iteration maximum changes protocol identity while the original source span is preserved. | Analysis |
 

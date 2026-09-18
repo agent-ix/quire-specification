@@ -83,7 +83,6 @@ than claiming the advanced algorithms exist.
 | FR-052 | FR-052-AC-3 | TC-052 | 🚧 Planned |
 | FR-052 | FR-052-AC-4 | TC-052 | 🚧 Planned |
 | FR-052 | FR-052-AC-5 | TC-052 | 🚧 Planned |
-| FR-052 | FR-052-AC-6 | TC-202 | planned |
 | FR-053 | FR-053-AC-1 | TC-053 | 🚧 Planned |
 | FR-053 | FR-053-AC-2 | TC-053 | 🚧 Planned |
 | FR-053 | FR-053-AC-3 | TC-053 | 🚧 Planned |
@@ -157,7 +156,6 @@ than claiming the advanced algorithms exist.
 | FR-216 | FR-216-AC-1, FR-216-AC-2, FR-216-AC-3, FR-216-AC-4, FR-216-AC-5, FR-216-AC-6 | TC-054 | 🚧 Planned |
 | FR-217 | FR-217-AC-1, FR-217-AC-2, FR-217-AC-3, FR-217-AC-4, FR-217-AC-5 | TC-050 | 🚧 Planned |
 | FR-220 | FR-220-AC-1, FR-220-AC-2, FR-220-AC-3, FR-220-AC-4, FR-220-AC-5, FR-220-AC-6, FR-220-AC-7 | TC-052 | 🚧 Planned |
-| FR-220 | FR-220-AC-8 | TC-202 | 🚧 Planned |
 | FR-211 | FR-211-AC-3 | TC-050 | 🚧 Planned |
 | FR-212 | FR-212-AC-4 | TC-050 | 🚧 Planned |
 | FR-213 | FR-213-AC-4 | TC-050 | 🚧 Planned |
