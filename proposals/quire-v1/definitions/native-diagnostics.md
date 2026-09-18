@@ -1,6 +1,6 @@
 # Native diagnostic interpretation candidate
 
-Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.3`.
+Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.4`.
 **The interpretation role is accepted by FS01; this semantic revision remains
 proposed and is not adopted or fully implemented.** This supplies the versioned catalog
 required by FR-047. It interprets native producer diagnostics in their existing

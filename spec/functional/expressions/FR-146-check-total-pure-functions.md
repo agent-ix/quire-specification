@@ -270,6 +270,7 @@ Complete-V1 outcome.
 | FR-146-AC-6 | Each call charges `function.call` after argument evaluation and before binding, and an unproved partial-operation precondition refuses as `undefined_expression` while runtime typed refusals propagate. | Test (TC-191) |
 | FR-146-AC-7 | A missing, mismatched or undecreasing measure in a recursive component is `undefined_expression` with cause `unproved-decrease`, a non-recursive function needs no measure, and a call to a non-function declaration or an undeclared name refuses with its named code. | Test (TC-191) |
 | FR-146-AC-8 | Definedness and decrease proofs admit exactly the closed measure elements, guard facts, interval rules and decrease forms, `deref` and IEEE-to-`Rational` conversion have no body obligation, a duplicate function name is `ambiguous_declaration`, and a checking bound exceeded is `resource_exhausted`. | Test (TC-191) |
+| FR-146-AC-9 | Rational `+`, `-`, `*`, `/` and unary `-` range proofs use exactly the numerator and denominator interval rules, a rational divisor whose numerator interval contains zero is `unproved-nonzero` without a nonzero fact, and every quantity division in a linked body is `unproved-nonzero`. | Test (TC-191) |
 
 ## Dependencies
 

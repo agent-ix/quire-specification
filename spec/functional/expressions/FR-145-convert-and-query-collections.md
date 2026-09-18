@@ -77,6 +77,25 @@ returns the FR-144 bound count, and `count<N>` and `sum<N>` keep the
 must prove that every accumulated prefix lies inside the domain for every visit
 order, not only for the canonical order.
 
+`sum<N>(x in c: e)` over `n` visited occurrences with summands `e_1 .. e_n`
+evaluates as follows, equal in value to the `state-contract` left fold from
+zero because `0 + e_1 = e_1` is exact:
+
+1. When `n = 0`, the result is `0`, which `N`'s domain must admit; no addition
+   occurs.
+2. Otherwise the first summand `e_1` seeds the running total `t_1 = e_1` with no
+   addition; `t_1` must be a member of `N`'s domain.
+3. For each `k` from 2 to `n`, in visiting order, one addition
+   `t_k = t_(k-1) + e_k` of `N`'s numeric family is evaluated, followed by the
+   uncharged FR-044 decision that `t_k` is a member of `N`'s domain. There are
+   exactly `n - 1` additions.
+4. The final total `t_n` (or `0`) is returned with one scalar retain.
+
+A linked `sum` whose prefixes are not all proved members is
+`refused { code: undefined_expression, cause: unproved-range }`. Under direct
+kernel evaluation, a non-member seed or prefix is a located undefined outcome
+at that summand or addition; it makes no later charge and exposes no total.
+
 The static result type is derived from source `K<T>[a,b]`, as follows. `map`
 and `collect` over a sequence or bag return `[a,b]`, and over a set or ordered
 set return `[min(a,1),b]`. `filter` returns `[0,b]`. For `flatten` of an outer

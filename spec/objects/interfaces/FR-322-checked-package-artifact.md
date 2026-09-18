@@ -296,11 +296,6 @@ identity evidence for it. Exact selected resource limits are admitted;
 one-over-limit input returns an incomplete resource disposition without a
 partial checked package.
 
-The QSpec qualification crate proves only the published schemas, vectors and
-receipt classification (FR-322-AC-13 through AC-24). The reader, linker and
-lowering criteria remain owned by the Contract IR and QSL producer evidence
-named by TC-217.
-
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
