@@ -1,14 +1,24 @@
 # Quire V1 existing-specification coverage audit
 
-Status: Plan-008 Task-003 working audit, 2026-09-15. Scope authority:
-[`v1-capability-inventory.md`](v1-capability-inventory.md).
+Status: **historical.** This is the Plan-008 Task-003 reading of the tree as it
+stood on 2026-09-15, before the Task-007 `/specify` cycle authored the complete
+V1 requirement set. It is retained as that baseline evidence.
 
-This audit compares each atomic capability with the actual behavior and
-acceptance criteria in the current QSpec tree. It does not infer coverage from
-an artifact title, accepted parent architecture, implemented code or closed
-ticket. The exact existing artifacts in `Coverage` were read at the Plan-008
-baseline. `Delta` is the required specification action before the comprehensive
-`/specify` cycle can be complete.
+Current state is read from two places. Scope is
+[`v1-capability-inventory.md`](v1-capability-inventory.md). Coverage of that
+scope is the
+[complete V1 atomic capability and requirement matrix](../spec/complete-v1/tests.md)
+(TM-009), which names the owning requirement, the specification action and the
+test cases for each of the 176 rows.
+
+The `Coverage` and `Delta` columns below record what was read and what was then
+required at the baseline. Each of the 176 rows now has an owning requirement
+with acceptance criteria, so the `Delta` column is baseline evidence, not a
+work list.
+
+This audit compares each atomic capability with the behavior and acceptance
+criteria read at the baseline. It does not infer coverage from an artifact
+title, accepted parent architecture, implemented code or closed ticket.
 
 ## Delivered-classification reconciliation
 
