@@ -28,10 +28,10 @@ A completed quantifier value or an explicit unsupported/incomplete outcome.
 
 ## Behavior
 
-Where the historical bounded sequence profile is selected, forall and exists
-visit occurrences in order and stop at the first decisive result. Empty forall
-is true; empty exists is false. Missing sequence data is unavailable.
-Contextual size typing remains an explicit FS03 review decision.
+forall and exists visit occurrences in order and stop at the first decisive
+result. Empty forall is true; empty exists is false. Missing sequence data is
+unavailable. Contextual size typing remains an explicit FS03 review decision.
+These four rules hold under every selection that admits a sequence.
 
 This requirement owns sequence order and multiplicity. The set, bag and
 ordered-set domain is owned by
@@ -40,12 +40,13 @@ ordered-set domain is owned by
 owned by
 [FR-145](../expressions/FR-145-convert-and-query-collections.md).
 
-Where the historical bounded sequence profile alone is selected, the frontend shall refuse
-each of those forms with `unsupported_construct` and its source location.
+Where `quire.state.queries/v1` is selected without `quire.value.complete/v1`,
+the frontend shall refuse each of those forms with `unsupported_construct` and
+its source location.
 
-Where a complete-V1 collection facet is selected, the frontend shall admit each
-of those forms under FR-144 and FR-145 while retaining the sequence order and
-multiplicity specified here.
+Where `quire.value.complete/v1` is selected, the frontend shall admit each of
+those forms under FR-144 and FR-145 while retaining the sequence order,
+multiplicity, empty-quantifier truth and missing-data outcome specified here.
 
 ## Acceptance Criteria
 
@@ -55,8 +56,8 @@ multiplicity specified here.
 | FR-008-AC-2 | An empty existential predicate yields false. | Test |
 | FR-008-AC-3 | A two-occurrence sequence containing equal values has size two. | Test |
 | FR-008-AC-4 | Missing sequence data receives unavailable_observation. | Test |
-| FR-008-AC-5 | Where the historical bounded sequence profile alone is selected, a `collect`, `flatten`, set, bag or ordered-set form receives unsupported_construct with its source location. | Test |
-| FR-008-AC-6 | Where a complete-V1 collection facet is selected, the same forms are admitted under FR-144 and FR-145, and sequence order and multiplicity remain exactly as specified here. | Test (TC-189, TC-190) |
+| FR-008-AC-5 | Where `quire.state.queries/v1` is selected without `quire.value.complete/v1`, a `collect`, `flatten`, set, bag or ordered-set form receives unsupported_construct with its source location. | Test |
+| FR-008-AC-6 | Where `quire.value.complete/v1` is selected, the same forms are admitted under FR-144 and FR-145, and sequence order, multiplicity, empty-quantifier truth and the missing-data outcome remain exactly as specified here. | Test (TC-189, TC-190) |
 
 ## Dependencies
 
