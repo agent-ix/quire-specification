@@ -70,6 +70,16 @@ refused. A relationship is encoded exactly one way, `relation`/
 `relationship`, and a `modifies` entry names a relationship only through
 that one node tag and form.
 
+`ModelNode`'s `semantic_form` also names each of FR-208's five systems
+meanings individually: `systems_part`, `systems_port`, `systems_interface`,
+`systems_connection` and `systems_allocation`, one per
+`quire.meaning.systems.<x>/v1` value FR-208 lists and
+[FR-152](../../functional/type-model/FR-152-bind-systems-model-structures.md)
+binds (Part, Port, Interface, Connection, Allocation). None of the five is a
+`field_declaration`, `object_type` or `process`, so frame entry eligibility
+above already refuses every one of them the same way it refuses every other
+non-admitted `model` form; no systems meaning is a frame-entry target.
+
 ## Outputs
 
 Reading an admitted frame node yields exactly:
@@ -145,6 +155,7 @@ or where in its array an entry sits.
 | FR-340-AC-5 | The frame body shape validates only as a `state`/`frame` node's `body`; a `value` node's `body` carrying this shape, and a `state`/`frame` node's `body` carrying an ordinary `SemanticTerm` shape, both fail the published schema. | Test (TC-233) |
 | FR-340-AC-6 | When one frame body carries a meaning-join defect and a canonical-order defect at once, the reported diagnostic is the meaning-join refusal the precedence rule selects, with its exact code, cause and locus, regardless of which member carries which defect; the same frame body reports that same selected diagnostic regardless of collection or scan order. | Test (TC-233) |
 | FR-340-AC-7 | A frame body missing any of `modifies`, `creates` or `deletes` fails the schema; every published fixture's frame node is admitted with no defect by the same reader rule `read_package_semantics` applies. | Test (TC-233) |
+| FR-340-AC-8 | `ModelNode.semantic_form` names each of FR-208's five systems meanings -- `systems_part`, `systems_port`, `systems_interface`, `systems_connection` and `systems_allocation`, one per `quire.meaning.systems.<x>/v1` value -- and none of the five is admitted into `modifies`, `creates` or `deletes`. | Test (TC-233) |
 
 ## Dependencies
 
