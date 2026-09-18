@@ -30,9 +30,9 @@ structures, but any external consumer receives only the versioned contract.
   are outside a vector's expectation. Most vectors replace the all-
   families fixture's published frame node's `dependencies` and
   `modifies`/`creates`/`deletes` in place: each entry is a bare digest
-  string, wrapped as a `NodeRef` -- `{domain: "quire.checked-semantic-node/v1",
-  digest}` (`schema.json`'s `NodeId`) -- when substituted into the node, never
-  written into the graph as a bare string. One vector additionally carries a
+  string, substituted into the node as the `NodeRef`
+  `{domain: "quire.checked-semantic-node/v1", digest}` (`schema.json`'s
+  `NodeId`). One vector additionally carries a
   `second_frame` member: a complete second `state`/`frame` node object,
   every member a real semantic-graph node requires, inserted into the graph
   verbatim, so the vector exercises the reader's ascending-node-id-digest
