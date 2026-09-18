@@ -1,0 +1,626 @@
+{
+  "version": "quire.checked-package-v2.business-meanings-k2/v1",
+  "package": {"identity": "test/orders", "version": "1"},
+  "nodes": [
+    {
+      "id": "ix://test/orders/Order",
+      "meaning": "object-type",
+      "fields": [{"name": "order_id", "typeRef": "UUID"}, {"name": "total", "typeRef": "Money"}],
+      "identityFields": ["order_id"]
+    },
+    {
+      "id": "ix://test/orders/Instant",
+      "meaning": "value-type"
+    },
+    {
+      "id": "ix://test/orders/Money",
+      "meaning": "record-value-type",
+      "fields": [{"name": "amount_minor", "typeRef": "Int"}, {"name": "currency", "typeRef": "String"}]
+    },
+    {
+      "id": "ix://test/orders/OrderPlaced",
+      "meaning": "event-type",
+      "fields": [{"name": "occurred_at", "typeRef": "Instant"}, {"name": "order_id", "typeRef": "UUID"}],
+      "occurrenceField": "occurred_at"
+    },
+    {
+      "id": "ix://test/orders/OrderLifecycle",
+      "meaning": "state-machine",
+      "fields": [{"name": "placed", "typeRef": "Boolean"}],
+      "operations": [
+        {"name": "place", "hasPrecondition": false, "hasPostcondition": false},
+        {"name": "cancel", "hasPrecondition": false, "hasPostcondition": false}
+      ],
+      "states": ["Draft", "Placed", "Cancelled"],
+      "transitions": [
+        {"from": "Draft", "to": "Placed", "trigger": "place", "guard": "NotYetPlaced", "emits": ["OrderPlaced"]},
+        {"from": "Draft", "to": "Cancelled", "trigger": "cancel", "emits": []},
+        {"from": "Placed", "to": "Cancelled", "trigger": "cancel", "emits": []}
+      ],
+      "clauses": [{"name": "NotYetPlaced", "language": "quire", "role": "guard"}]
+    },
+    {
+      "id": "ix://test/orders/Fulfilment",
+      "meaning": "process",
+      "identityFields": ["correlation_id"],
+      "steps": [
+        {"name": "receive_order", "consumes": ["OrderPlaced"], "emits": []},
+        {"name": "reserve_stock", "consumes": [], "emits": []},
+        {"name": "await_shipment", "consumes": [], "emits": []}
+      ]
+    },
+    {
+      "id": "ix://test/orders/OrderStore",
+      "meaning": "persistence-interface",
+      "operations": [
+        {"name": "get", "hasPrecondition": false, "hasPostcondition": false},
+        {"name": "save", "hasPrecondition": false, "hasPostcondition": false}
+      ],
+      "persists": ["Order"]
+    },
+    {
+      "id": "ix://test/orders/OrderManagement",
+      "meaning": "namespace",
+      "members": ["Order", "Money", "OrderPlaced"]
+    },
+    {
+      "id": "ix://test/orders/TaxedMoney",
+      "meaning": "record-value-type",
+      "fields": [{"name": "tax_minor", "typeRef": "Int"}],
+      "supertypes": ["Money"]
+    },
+    {
+      "id": "ix://test/orders/ExpressOrderPlaced",
+      "meaning": "event-type",
+      "fields": [{"name": "promised_by", "typeRef": "Instant"}],
+      "supertypes": ["OrderPlaced"]
+    },
+    {
+      "id": "ix://test/orders/ExpressLifecycle",
+      "meaning": "state-machine",
+      "operations": [{"name": "expedite", "hasPrecondition": false, "hasPostcondition": false}],
+      "states": ["Expedited"],
+      "transitions": [{"from": "Placed", "to": "Expedited", "trigger": "expedite", "emits": []}],
+      "supertypes": ["OrderLifecycle"]
+    },
+    {
+      "id": "ix://test/orders/ExpressFulfilment",
+      "meaning": "process",
+      "steps": [{"name": "expedite", "consumes": [], "emits": []}],
+      "supertypes": ["Fulfilment"]
+    }
+  ],
+  "vectors": [
+    {
+      "id": "AC4-record-value-type-identity-field",
+      "ac": "FR-208-AC-4",
+      "kind": "refused",
+      "scenario": "Money's amount_minor is flagged as an identity field.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/Money",
+      "member_path": "TypeDefinition.identityFields"
+    },
+    {
+      "id": "AC4-record-value-type-operation",
+      "ac": "FR-208-AC-4",
+      "kind": "refused",
+      "scenario": "Money is given operation add.",
+      "code": "unsupported_construct",
+      "cause": "declaration-form",
+      "node": "ix://test/orders/Money/add",
+      "member_path": "TypeDefinition.operations[0]"
+    },
+    {
+      "id": "AC4-record-value-type-admitted",
+      "ac": "FR-208-AC-4",
+      "kind": "admitted",
+      "scenario": "Money, with no identity field and no operation, binds its fields and equality by most-specific type and every field.",
+      "notes": "Equality over two Money values is a real evaluation (field-by-field) that this structural fixture does not run; TC-235 M02 is QSL's evaluation vector for it."
+    },
+    {
+      "id": "AC4-event-type-identity-field",
+      "ac": "FR-208-AC-4",
+      "kind": "refused",
+      "scenario": "OrderPlaced's order_id is flagged as an identity field.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/OrderPlaced",
+      "member_path": "TypeDefinition.identityFields"
+    },
+    {
+      "id": "AC4-event-type-operation",
+      "ac": "FR-208-AC-4",
+      "kind": "refused",
+      "scenario": "OrderPlaced is given operation replay.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/OrderPlaced/replay",
+      "member_path": "TypeDefinition.operations[0]"
+    },
+    {
+      "id": "AC4-event-type-occurrence-field-wrong-type",
+      "ac": "FR-208-AC-4",
+      "kind": "refused",
+      "scenario": "OrderPlaced.occurrenceField is repointed from occurred_at (typed Instant, resolving to Timestamp) to order_id (typed UUID).",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/OrderPlaced",
+      "member_path": "TypeDefinition.occurrenceField"
+    },
+    {
+      "id": "AC4-event-type-occurrence-field-missing-name",
+      "ac": "FR-208-AC-4",
+      "kind": "refused",
+      "scenario": "OrderPlaced.occurrenceField names at, which is not one of OrderPlaced's fields.",
+      "code": "missing_declaration",
+      "cause": "missing-name",
+      "node": "ix://test/orders/OrderPlaced",
+      "member_path": "TypeDefinition.occurrenceField",
+      "absent_node": "ix://test/orders/OrderPlaced/at"
+    },
+    {
+      "id": "AC5-no-operations",
+      "ac": "FR-208-AC-5",
+      "kind": "refused",
+      "scenario": "OrderLifecycle.operations is emptied.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/OrderLifecycle",
+      "member_path": "TypeDefinition.operations"
+    },
+    {
+      "id": "AC5-no-states",
+      "ac": "FR-208-AC-5",
+      "kind": "refused",
+      "scenario": "OrderLifecycle.states is emptied.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/OrderLifecycle",
+      "member_path": "TypeDefinition.states"
+    },
+    {
+      "id": "AC5-no-transitions",
+      "ac": "FR-208-AC-5",
+      "kind": "refused",
+      "scenario": "OrderLifecycle.transitions is emptied.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/OrderLifecycle",
+      "member_path": "TypeDefinition.transitions"
+    },
+    {
+      "id": "AC5-emits-not-event-type",
+      "ac": "FR-208-AC-5",
+      "kind": "refused",
+      "scenario": "Transition [0]'s emits is repointed from OrderPlaced to Money, a record value type.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/OrderLifecycle",
+      "member_path": "TypeDefinition.transitions[0].emits[0]"
+    },
+    {
+      "id": "AC5-guard-not-quire",
+      "ac": "FR-208-AC-5",
+      "kind": "refused",
+      "scenario": "Clause NotYetPlaced's language is changed from quire to ocl, and it remains transition [0]'s guard.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/OrderLifecycle",
+      "member_path": "TypeDefinition.transitions[0].guard"
+    },
+    {
+      "id": "AC5-transition-endpoint-missing-name",
+      "ac": "FR-208-AC-5",
+      "kind": "refused",
+      "scenario": "Transition [0]'s to names Shipped, which is not one of OrderLifecycle's states.",
+      "code": "missing_declaration",
+      "cause": "missing-name",
+      "node": "ix://test/orders/OrderLifecycle",
+      "member_path": "TypeDefinition.transitions[0].to",
+      "absent_node": "ix://test/orders/OrderLifecycle/Shipped"
+    },
+    {
+      "id": "AC5-repeated-state",
+      "ac": "FR-208-AC-5",
+      "kind": "refused",
+      "scenario": "OrderLifecycle.states gets a fourth entry, Draft, repeating states[0].",
+      "code": "invalid_model_binding",
+      "cause": "conflicting-binding",
+      "node": "ix://test/orders/OrderLifecycle",
+      "member_path": "TypeDefinition.states[3]"
+    },
+    {
+      "id": "AC5-admitted",
+      "ac": "FR-208-AC-5",
+      "kind": "admitted",
+      "scenario": "OrderLifecycle, unmutated, binds states {Draft, Placed, Cancelled} and transitions [0]-[2], and NotYetPlaced binds as the guard of [0] and as no invariant.",
+      "notes": "No current, initial or final state and no firing is bound; this fixture does not model or check that absence, since it has no evaluator."
+    },
+    {
+      "id": "AC6-no-identity-field",
+      "ac": "FR-208-AC-6",
+      "kind": "refused",
+      "scenario": "Fulfilment.identityFields is emptied.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/Fulfilment",
+      "member_path": "TypeDefinition.identityFields"
+    },
+    {
+      "id": "AC6-no-steps",
+      "ac": "FR-208-AC-6",
+      "kind": "refused",
+      "scenario": "Fulfilment.steps is emptied.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/Fulfilment",
+      "member_path": "TypeDefinition.steps"
+    },
+    {
+      "id": "AC6-consumes-not-event-type",
+      "ac": "FR-208-AC-6",
+      "kind": "refused",
+      "scenario": "Step [0]'s consumes is repointed from OrderPlaced to Money, a record value type.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/Fulfilment",
+      "member_path": "TypeDefinition.steps[0].consumes[0]"
+    },
+    {
+      "id": "AC6-step-entry-missing-name",
+      "ac": "FR-208-AC-6",
+      "kind": "refused",
+      "scenario": "Step [1] is given emits [StockReserved], which names no node.",
+      "code": "missing_declaration",
+      "cause": "missing-name",
+      "node": "ix://test/orders/Fulfilment",
+      "member_path": "TypeDefinition.steps[1].emits[0]",
+      "absent_node": "ix://test/orders/StockReserved"
+    },
+    {
+      "id": "AC6-repeated-step-name",
+      "ac": "FR-208-AC-6",
+      "kind": "refused",
+      "scenario": "Fulfilment.steps gets a fourth entry named reserve_stock, repeating steps[1]'s name.",
+      "code": "invalid_model_binding",
+      "cause": "conflicting-binding",
+      "node": "ix://test/orders/Fulfilment",
+      "member_path": "TypeDefinition.steps[3]"
+    },
+    {
+      "id": "AC6-admitted",
+      "ac": "FR-208-AC-6",
+      "kind": "admitted",
+      "scenario": "Fulfilment, unmutated, binds correlation key [Fulfilment/correlation_id] and its steps receive_order, reserve_stock, await_shipment in declaration order.",
+      "notes": "No execution order beyond declaration order is bound or checked here."
+    },
+    {
+      "id": "AC7-field-present",
+      "ac": "FR-208-AC-7",
+      "kind": "refused",
+      "scenario": "OrderStore is given field cache typed Order.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/OrderStore/cache",
+      "member_path": "TypeDefinition.fields[0]"
+    },
+    {
+      "id": "AC7-no-operations",
+      "ac": "FR-208-AC-7",
+      "kind": "refused",
+      "scenario": "OrderStore.operations is emptied.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/OrderStore",
+      "member_path": "TypeDefinition.operations"
+    },
+    {
+      "id": "AC7-empty-persists",
+      "ac": "FR-208-AC-7",
+      "kind": "refused",
+      "scenario": "OrderStore.persists is emptied.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/OrderStore",
+      "member_path": "TypeDefinition.persists"
+    },
+    {
+      "id": "AC7-persists-not-object-type",
+      "ac": "FR-208-AC-7",
+      "kind": "refused",
+      "scenario": "OrderStore.persists is repointed from [Order] to [Money], a record value type.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/OrderStore",
+      "member_path": "TypeDefinition.persists[0]"
+    },
+    {
+      "id": "AC7-persists-missing-name",
+      "ac": "FR-208-AC-7",
+      "kind": "refused",
+      "scenario": "OrderStore.persists is repointed to [Invoice], which names no node.",
+      "code": "missing_declaration",
+      "cause": "missing-name",
+      "node": "ix://test/orders/OrderStore",
+      "member_path": "TypeDefinition.persists[0]",
+      "absent_node": "ix://test/orders/Invoice"
+    },
+    {
+      "id": "AC7-operation-contract",
+      "ac": "FR-208-AC-7",
+      "kind": "refused",
+      "scenario": "Operation save is given a requires clause (true).",
+      "code": "unsupported_construct",
+      "cause": "declaration-form",
+      "node": "ix://test/orders/OrderStore/save",
+      "member_path": "Operation.pre"
+    },
+    {
+      "id": "AC7-quire-clause",
+      "ac": "FR-208-AC-7",
+      "kind": "refused",
+      "scenario": "OrderStore is given quire clause Healthy.",
+      "code": "unsupported_construct",
+      "cause": "declaration-form",
+      "node": "ix://test/orders/OrderStore/Healthy",
+      "member_path": "TypeDefinition.clauses[0]"
+    },
+    {
+      "id": "AC7-admitted",
+      "ac": "FR-208-AC-7",
+      "kind": "admitted",
+      "scenario": "OrderStore, unmutated, binds operation signatures get, save and persists: [Order]."
+    },
+    {
+      "id": "AC8-field-present",
+      "ac": "FR-208-AC-8",
+      "kind": "refused",
+      "scenario": "OrderManagement is given field name typed String.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/OrderManagement/name",
+      "member_path": "TypeDefinition.fields[0]"
+    },
+    {
+      "id": "AC8-operation-present",
+      "ac": "FR-208-AC-8",
+      "kind": "refused",
+      "scenario": "OrderManagement is given operation close.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/OrderManagement/close",
+      "member_path": "TypeDefinition.operations[0]"
+    },
+    {
+      "id": "AC8-member-is-a-namespace",
+      "ac": "FR-208-AC-8",
+      "kind": "refused",
+      "scenario": "A second namespace Outer (members [OrderManagement]) is added; OrderManagement is nested inside it.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/Outer",
+      "member_path": "TypeDefinition.members[0]"
+    },
+    {
+      "id": "AC8-member-already-in-earlier-namespace",
+      "ac": "FR-208-AC-8",
+      "kind": "refused",
+      "scenario": "A second namespace Billing (members [Order]) is added before OrderManagement in node order; Order is then a member of both.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/OrderManagement",
+      "member_path": "TypeDefinition.members[0]"
+    },
+    {
+      "id": "AC8-member-missing-name",
+      "ac": "FR-208-AC-8",
+      "kind": "refused",
+      "scenario": "OrderManagement.members gets a fourth entry, Ghost, which names no node.",
+      "code": "missing_declaration",
+      "cause": "missing-name",
+      "node": "ix://test/orders/OrderManagement",
+      "member_path": "TypeDefinition.members[3]",
+      "absent_node": "ix://test/orders/Ghost"
+    },
+    {
+      "id": "AC8-quire-clause",
+      "ac": "FR-208-AC-8",
+      "kind": "refused",
+      "scenario": "OrderManagement is given quire clause Scoped.",
+      "code": "unsupported_construct",
+      "cause": "declaration-form",
+      "node": "ix://test/orders/OrderManagement/Scoped",
+      "member_path": "TypeDefinition.clauses[0]"
+    },
+    {
+      "id": "AC8-admitted",
+      "ac": "FR-208-AC-8",
+      "kind": "admitted",
+      "scenario": "OrderManagement, unmutated, yields exactly one original declaration with members [Order, Money, OrderPlaced] and no effective type."
+    },
+    {
+      "id": "AC9-field-typeref-wrong-meaning",
+      "ac": "FR-208-AC-9",
+      "kind": "refused",
+      "scenario": "Order is given field ref typed OrderPlaced, an event type.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/Order/ref",
+      "member_path": "Field.typeRef"
+    },
+    {
+      "id": "AC9-population-member-wrong-meaning",
+      "ac": "FR-208-AC-9",
+      "kind": "refused",
+      "scenario": "Population PA (kind population, extent closed) is given member type OrderManagement, a namespace.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/PA",
+      "member_path": "Population.members[0].type"
+    },
+    {
+      "id": "AC9-admitted",
+      "ac": "FR-208-AC-9",
+      "kind": "admitted",
+      "scenario": "Order/total, typed Money, a record value type, is admitted; a population member, frame creates/deletes entry or relationship end may instead name Fulfilment, a process."
+    },
+    {
+      "id": "AC10-forbidden-pre-read-in-invariant",
+      "ac": "FR-208-AC-10",
+      "kind": "refused",
+      "scenario": "Money is given quire clause NonNegative, written as pre(self.amount_minor) >= 0 instead of self.amount_minor >= 0.",
+      "code": "wrong_snapshot",
+      "cause": "forbidden-pre-read",
+      "node": "ix://test/orders/Money/NonNegative",
+      "member_path": "TypeDefinition.clauses[0]"
+    },
+    {
+      "id": "AC10-state-machine-invariant-wrong-context",
+      "ac": "FR-208-AC-10",
+      "kind": "refused",
+      "scenario": "OrderLifecycle's invariant NotYetPlaced-as-invariant (hypothetically evaluated as an invariant rather than a guard) is evaluated at an invariant observation that holds no OrderLifecycle context for invocation i1 of place.",
+      "code": "invalid_model_binding",
+      "cause": "wrong-context",
+      "node": "ix://test/orders/OrderLifecycle",
+      "required_context": "(ix://test/orders/OrderLifecycle, i1)",
+      "actual_context": "none"
+    },
+    {
+      "id": "AC10-record-value-type-invariant-admitted",
+      "ac": "FR-208-AC-10",
+      "kind": "admitted",
+      "scenario": "Money is given quire clause NonNegative (self.amount_minor >= 0); it is bound as an invariant of Money, evaluated once for every reachable Money value with self bound to that value.",
+      "notes": "This fixture does not model or evaluate a false result (a logical violation located by its FR-207 runtime value path); that Boolean evaluation and path serialization requires the real QSL evaluator TC-235 targets, and is left undetermined here rather than invented."
+    },
+    {
+      "id": "AC10-process-invariant-admitted",
+      "ac": "FR-208-AC-10",
+      "kind": "admitted",
+      "scenario": "Fulfilment's invariant holds for every run in the population at each invariant observation; a guard clause, such as OrderLifecycle's NotYetPlaced, is not an invariant and is not evaluated."
+    },
+    {
+      "id": "AC11-forbidden-pre-read-in-precondition",
+      "ac": "FR-208-AC-11",
+      "kind": "refused",
+      "scenario": "Operation place is given requires pre(self.placed) = false instead of not self.placed.",
+      "code": "wrong_snapshot",
+      "cause": "forbidden-pre-read",
+      "node": "ix://test/orders/OrderLifecycle/place",
+      "member_path": "Operation.pre"
+    },
+    {
+      "id": "AC11-postcondition-reads-pre-admitted",
+      "ac": "FR-208-AC-11",
+      "kind": "admitted",
+      "scenario": "Operation place is given ensures self.placed and not pre(self.placed), reading both the post observation (self.placed) and the pre observation (pre(self.placed)) from its Post: postcondition.",
+      "notes": "AC-11 refuses a pre read only in a Pre: precondition; a Post: postcondition reads both observations and is not refused for reading pre(...)."
+    },
+    {
+      "id": "AC11-admitted-neither-related-to-guard",
+      "ac": "FR-208-AC-11",
+      "kind": "admitted",
+      "scenario": "Operation place's requires and ensures are bound with self the machine context, and neither is related to transition [0]'s guard NotYetPlaced, from or to."
+    },
+    {
+      "id": "AC12-supertype-of-another-meaning",
+      "ac": "FR-208-AC-12",
+      "kind": "refused",
+      "scenario": "ExpressFulfilment.supertypes is repointed from [Fulfilment] to [OrderLifecycle], a state machine, not a process.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/ExpressFulfilment",
+      "member_path": "TypeDefinition.supertypes[0]"
+    },
+    {
+      "id": "AC12-state-or-transition-declared-by-two-owners",
+      "ac": "FR-208-AC-12",
+      "kind": "refused",
+      "scenario": "ExpressLifecycle is given its own state Placed, which OrderLifecycle, its supertype, already declares.",
+      "code": "invalid_model_binding",
+      "cause": "derivation-conflict",
+      "node": "ix://test/orders/ExpressLifecycle",
+      "member_path": "TypeDefinition.states[1]",
+      "conflict_with": "TypeDefinition.states[1]"
+    },
+    {
+      "id": "AC12-ancestor-occurrence-field-not-redefined",
+      "ac": "FR-208-AC-12",
+      "kind": "refused",
+      "scenario": "ExpressOrderPlaced.occurrenceField is set to promised_by, its own field, while OrderPlaced.occurrenceField still names occurred_at, a field ExpressOrderPlaced neither is nor redefines from its own declaration.",
+      "code": "invalid_model_binding",
+      "cause": "derivation-conflict",
+      "node": "ix://test/orders/ExpressOrderPlaced",
+      "member_path": "TypeDefinition.occurrenceField",
+      "conflict_with": "TypeDefinition.occurrenceField"
+    },
+    {
+      "id": "AC12-subtype-guard-names-ancestor-invariant",
+      "ac": "FR-208-AC-12",
+      "kind": "refused",
+      "scenario": "OrderLifecycle is given quire invariant clause Extra (self.placed or not self.placed); ExpressLifecycle's transition [0] is given guard Extra.",
+      "code": "invalid_model_binding",
+      "cause": "malformed-declaration",
+      "node": "ix://test/orders/ExpressLifecycle",
+      "member_path": "TypeDefinition.transitions[0].guard"
+    },
+    {
+      "id": "AC12-persistence-interface-with-supertypes",
+      "ac": "FR-208-AC-12",
+      "kind": "refused",
+      "scenario": "OrderStore is given supertypes [Order] (Order is an object type, so this also violates the wrong-meaning rule, but the interface family's own rule is unconditional on the supertype's meaning).",
+      "code": "unsupported_construct",
+      "cause": "declaration-form",
+      "node": "ix://test/orders/OrderStore",
+      "member_path": "TypeDefinition.supertypes"
+    },
+    {
+      "id": "AC12-namespace-with-supertypes",
+      "ac": "FR-208-AC-12",
+      "kind": "refused",
+      "scenario": "OrderManagement is given supertypes [Order].",
+      "code": "unsupported_construct",
+      "cause": "declaration-form",
+      "node": "ix://test/orders/OrderManagement",
+      "member_path": "TypeDefinition.supertypes"
+    },
+    {
+      "id": "AC12-specialization-cycle",
+      "ac": "FR-208-AC-12",
+      "kind": "refused",
+      "scenario": "TaxedMoney.supertypes is [Money]; Money.supertypes is then set to [TaxedMoney], closing a cycle.",
+      "code": "invalid_model_binding",
+      "cause": "specialization-cycle",
+      "node": "ix://test/orders/TaxedMoney",
+      "cycle": ["ix://test/orders/Money", "ix://test/orders/TaxedMoney"]
+    },
+    {
+      "id": "AC12-record-value-type-inheritance-admitted",
+      "ac": "FR-208-AC-12",
+      "kind": "admitted",
+      "scenario": "TaxedMoney (supertypes: [Money], own field tax_minor) conforms to Money.",
+      "notes": "TaxedMoney's effective fields are the rule 'own fields union each ancestor's effective fields' (here {amount_minor, currency, tax_minor}) and its effective invariants are the same union over each ancestor's quire clauses; this fixture states the rule rather than a hand-computed field list, since only the real QSL binder performs that union."
+    },
+    {
+      "id": "AC12-event-type-inheritance-admitted",
+      "ac": "FR-208-AC-12",
+      "kind": "admitted",
+      "scenario": "ExpressOrderPlaced (supertypes: [OrderPlaced], own field promised_by, no own occurrenceField) conforms to OrderPlaced and inherits its occurrence field.",
+      "notes": "Effective occurrence field is OrderPlaced/occurred_at, by the same union-and-conform rule; not hand-computed here."
+    },
+    {
+      "id": "AC12-state-machine-inheritance-admitted",
+      "ac": "FR-208-AC-12",
+      "kind": "admitted",
+      "scenario": "ExpressLifecycle (supertypes: [OrderLifecycle], own state Expedited, own transition [0] Placed to Expedited on expedite) conforms to OrderLifecycle.",
+      "notes": "Effective states are the union {Draft, Placed, Cancelled, Expedited} and effective transitions are OrderLifecycle's [0]-[2] plus ExpressLifecycle's own [0], by the same rule; not hand-computed here."
+    },
+    {
+      "id": "AC12-process-inherits-no-steps-admitted",
+      "ac": "FR-208-AC-12",
+      "kind": "admitted",
+      "scenario": "ExpressFulfilment (supertypes: [Fulfilment], own step expedite) conforms to Fulfilment and inherits its correlation key, invariants and operations, but not its steps.",
+      "notes": "Effective steps are exactly ExpressFulfilment's own declared steps ([expedite]), unlike the other four specializable meanings, which union a structural list with their ancestor's; this is the one exception AC-12 states explicitly."
+    }
+  ]
+}
