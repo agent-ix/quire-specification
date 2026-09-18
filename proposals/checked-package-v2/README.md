@@ -130,16 +130,20 @@ meaning and no type is inferred. The identity is a member of
   `{kind: "profile_operator", operator}` naming an operator the law's profile
   defines. A dispatched operation's declaring node is a `model` node whose own
   `semantic_form` is `object_type`, `process`, `state_machine` or
-  `persistence_interface`, the forms
-  [FR-208](../../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md#operation-contracts)'s
-  Operation contracts give an operation; naming any other model form is
-  `operator-ineligible`/`ill_typed` here. FR-208 refuses that same binding at
-  the declaring node itself with a cause its own form pins:
+  `persistence_interface`
+  ([FR-322-AC-25](../../spec/objects/interfaces/FR-322-checked-package-artifact.md));
+  naming any other model form -- including `systems_interface`, whose
+  ordered feature signatures
+  [FR-152](../../spec/functional/type-model/FR-152-bind-systems-model-structures.md)
+  (line 57) gives structural-conformance meaning (FR-151), never a
+  `dispatch_call` binding -- is `operator-ineligible`/`ill_typed` here. FR-208
+  separately pins a declaring-node cause for three of those other forms:
   `unsupported_construct`/`declaration-form` on a `record_value_type`
-  (FR-208-AC-4, which a record value type's own fields and equality never
-  carry) and `invalid_model_binding`/`malformed-declaration` on every other
-  non-operation-bearing form, including an `event_type` (FR-208-AC-4) and a
-  `namespace` (FR-208-AC-8);
+  (FR-208-AC-4, which cannot declare an operation at all) and
+  `invalid_model_binding`/`malformed-declaration` on an `event_type`
+  (FR-208-AC-4) or a `namespace` (FR-208-AC-8) -- that is FR-208's own refusal
+  at the declaring node, a separate rule from this package's
+  `operator-ineligible` reference check above;
 - `leaves` is empty unless the entry names a leaf source, and then names every
   text leaf of the compared type (`operand:0`, `inner:0`) or of a `set`, `bag`
   or `ordered_set` result's element type (`result_inner`: the collection

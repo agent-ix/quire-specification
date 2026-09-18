@@ -1084,38 +1084,27 @@ fn expression_form_for_class(class: &str) -> Option<&'static str> {
 }
 
 /// The `model` semantic forms whose declaration carries `operation` members,
-/// per FR-208's "Operation contracts" section: `object_type`, `process` and
-/// `state_machine` share object-type contract meaning (FR-151) and declare a
-/// full operation contract; `persistence_interface` declares operation
-/// signatures only.
+/// per FR-322-AC-25: `object_type`, `process` and `state_machine` share
+/// object-type contract meaning (FR-151) and declare a full operation
+/// contract; `persistence_interface` declares operation signatures only
+/// (FR-208's "Operation contracts" section). `systems_interface` is
+/// deliberately absent: FR-152's Interface carries ordered feature
+/// signatures for structural conformance (FR-151), never a `dispatch_call`
+/// binding. Every other, non-listed form resolves no `"operation"` member
+/// here and refuses `operator-ineligible`/`ill_typed` at the reference
+/// itself; FR-208 separately pins a declaring-node cause for three of
+/// them -- `unsupported_construct`/`declaration-form` on a
+/// `record_value_type` (FR-208-AC-4) and `invalid_model_binding`/
+/// `malformed-declaration` on an `event_type` (FR-208-AC-4) or a `namespace`
+/// (FR-208-AC-8) -- but that is FR-208's own refusal at the declaring node,
+/// a separate rule this reader does not compute or emit, so it is not
+/// asserted here.
 const OPERATION_BEARING_MODEL_FORMS: [&str; 4] = [
     "object_type",
     "process",
     "persistence_interface",
     "state_machine",
 ];
-
-/// The FR-208 cause and code an `operation` member reports when its
-/// declaring `model` node's `semantic_form` is not one of
-/// `OPERATION_BEARING_MODEL_FORMS`, and `None` when it is one of them.
-/// FR-208-AC-4 refuses an operation on a `record_value_type` as
-/// `unsupported_construct`/`declaration-form` -- a record value type cannot
-/// declare an operation at all -- and refuses one on an `event_type` as
-/// `invalid_model_binding`/`malformed-declaration`, the same cause FR-208-AC-8
-/// gives a `namespace`'s operation. Every other non-operation-bearing form
-/// carries no operation rule of its own and defaults to that same
-/// `invalid_model_binding`/`malformed-declaration` cause, FR-208's and
-/// FR-340's common "wrong meaning" cause.
-fn operation_member_meaning_refusal(model_form: &str) -> Option<(&'static str, &'static str)> {
-    if OPERATION_BEARING_MODEL_FORMS.contains(&model_form) {
-        return None;
-    }
-    Some(if model_form == "record_value_type" {
-        ("declaration-form", "unsupported_construct")
-    } else {
-        ("malformed-declaration", "invalid_model_binding")
-    })
-}
 
 /// Independent reader oracle over the operation catalog, a package lock and
 /// its graph. Nothing is read from outside the package and catalog.
@@ -1375,7 +1364,7 @@ impl<'a> OperationOracle<'a> {
                 (model["node_tag"] == "model"
                     && model["semantic_form"]
                         .as_str()
-                        .is_some_and(|form| operation_member_meaning_refusal(form).is_none()))
+                        .is_some_and(|form| OPERATION_BEARING_MODEL_FORMS.contains(&form)))
                 .then(|| {
                     let function = self.node(Self::reference_target(Self::binding(
                         model,
@@ -3177,13 +3166,13 @@ fn tc_233_all_checked_semantic_node_families_are_admitted_by_the_public_schema()
     }
 }
 
-/// `ModelNode.semantic_form` names all five of FR-208's systems meanings
-/// (FR-152), not only the ten business-model meanings FR-340 already
-/// covers, so a systems-model declaration is never unrepresentable on the
-/// wire. This vector exercises `systems_part`; the published schema and the
-/// package-identity tests already admit and rehash it as an ordinary
-/// declared `model` node.
-#[trace("TC-233", "FR-322-AC-14")]
+/// FR-340-AC-8: `ModelNode.semantic_form` names all five of FR-208's
+/// systems meanings (FR-152), not only the ten business-model meanings
+/// FR-340 already covers, so a systems-model declaration is never
+/// unrepresentable on the wire. This vector exercises `systems_part`; the
+/// published schema and the package-identity tests already admit and
+/// rehash it as an ordinary declared `model` node.
+#[trace("TC-233", "FR-340-AC-8")]
 #[test]
 fn tc_233_schema_names_every_fr208_systems_meaning_as_a_model_semantic_form() {
     let schema = parsed_fixture(SCHEMA);
@@ -5104,11 +5093,14 @@ fn operation_member_package(form: &str) -> Value {
     })
 }
 
-#[trace("TC-233", "FR-208-AC-4")]
-#[trace("TC-233", "FR-208-AC-7")]
-#[trace("TC-233", "FR-208-AC-8")]
+/// FR-322-AC-25: an `operation` member resolves only against a declaring
+/// `model` node of `semantic_form` `object_type`, `process`,
+/// `state_machine` or `persistence_interface`. `systems_interface` is
+/// exercised alongside the business-model refusals to pin its deliberate
+/// exclusion from the dispatch set (FR-151, FR-152).
+#[trace("TC-233", "FR-322-AC-25")]
 #[test]
-fn tc_233_operation_member_meaning_matches_fr208_per_declaring_form() {
+fn tc_233_operation_member_resolves_only_against_an_operation_bearing_model_form() {
     let catalog = json!({});
     let member = json!({"kind": "operation", "declaration": "model-1", "name": "run"});
     let accepted_forms = [
@@ -5119,15 +5111,10 @@ fn tc_233_operation_member_meaning_matches_fr208_per_declaring_form() {
     ];
     assert_eq!(
         OPERATION_BEARING_MODEL_FORMS, accepted_forms,
-        "the operation-bearing forms are exactly FR-208's object type, process, \
+        "the operation-bearing forms are exactly FR-322-AC-25's object type, process, \
          persistence interface and state machine"
     );
     for form in accepted_forms {
-        assert_eq!(
-            operation_member_meaning_refusal(form),
-            None,
-            "{form} carries an operation contract or its signatures per FR-208"
-        );
         let package = operation_member_package(form);
         let oracle = OperationOracle::for_package(&catalog, &package);
         assert!(
@@ -5135,33 +5122,16 @@ fn tc_233_operation_member_meaning_matches_fr208_per_declaring_form() {
             "a dispatched operation resolves against a declaring {form}"
         );
     }
-    let refused_forms: &[(&str, &str, &str)] = &[
-        (
-            "record_value_type",
-            "declaration-form",
-            "unsupported_construct",
-        ),
-        (
-            "event_type",
-            "malformed-declaration",
-            "invalid_model_binding",
-        ),
-        (
-            "namespace",
-            "malformed-declaration",
-            "invalid_model_binding",
-        ),
-        (
-            "value_type",
-            "malformed-declaration",
-            "invalid_model_binding",
-        ),
+    let refused_forms = [
+        "record_value_type",
+        "event_type",
+        "namespace",
+        "systems_interface",
     ];
-    for (form, cause, code) in refused_forms {
-        assert_eq!(
-            operation_member_meaning_refusal(form),
-            Some((*cause, *code)),
-            "FR-208 refuses an operation declared on a {form} as {code}/{cause}"
+    for form in refused_forms {
+        assert!(
+            !OPERATION_BEARING_MODEL_FORMS.contains(&form),
+            "{form} is not one of the operation-bearing forms"
         );
         let package = operation_member_package(form);
         let oracle = OperationOracle::for_package(&catalog, &package);
