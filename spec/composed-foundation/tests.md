@@ -234,7 +234,6 @@ executable cases.
 | FR-049 | FR-049-AC-11 | TC-171 | 🚧 Planned |
 | FR-049 | FR-049-AC-12 | TC-174 | 🚧 Planned |
 | FR-049 | FR-049-AC-13 | TC-171 | 🚧 Planned |
-| FR-049 | FR-049-AC-14 | TC-202 | planned |
 
 ## Test Case Summary
 
