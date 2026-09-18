@@ -183,7 +183,20 @@ source `(c, s)` converted to `Rational[..]` charges `decimal.operands` on
 and `decimal_digits=max(digits(c),s+1)`; and `decimal.result-retain` with
 `integer_bits=maxparts` of the materialized reduced rational `c/10^s`,
 `value_occurrences=1` and `result_units += 1`. Every amount before retention is
-derived from operand sizes, and none of these conversions has a rounding step. Every other admitted equality conversion keeps the source
+derived from operand sizes, and none of these conversions has a rounding step.
+An explicit conversion of a `Rational[n1,n2;d1,d2]` source with `d2 > 1`, value
+reduced `n/d`, to `Decimal[c1,c2;s1,s2;m]` is decimal division of `(n, 0)` by
+`(d, 0)` into target scale `T = s2` with rounding mode `m`, whatever `d` is at
+run time. It charges the decimal division schedule: `decimal.operands` with
+`integer_bits=max(bits(n),bits(d))`, `decimal_digits=max(digits(n),digits(d))`
+and `value_occurrences=2`; `decimal.scale-expansion` with `scale_expansion=T`,
+`integer_bits=sbits(n,T)` and `decimal_digits=sdigits(n,T)`;
+`decimal.arithmetic` with `integer_bits=max(sbits(n,T),bits(d))` and
+`decimal_digits=max(sdigits(n,T),digits(d))` for the exact `N/D = (n × 10^T)/d`;
+`decimal.rounding` exactly when that division has a rounding step and `m` is not
+`exact`; and `decimal.result-retain` at scale `T`. Its divisor is never zero,
+strict `exact` at a rounding step is refused after `decimal.arithmetic`, and
+membership is decided before `decimal.result-retain`. Every other admitted equality conversion keeps the source
 magnitude and has no charge point. Record and tuple construction charges
 `composite.result-retain` after its last field or argument, and its field
 expressions and calls charge their own points. Integer `+`, `-`, `*` and unary
@@ -397,6 +410,29 @@ selects the linked method for the receiver's most-specific type without a
 charge, decides the selected method's effective precondition (its own
 evaluation charges apply), and then charges `function.call` before binding the
 arguments.
+
+## Collection sum schedule
+
+`sum<N>(x in c: e)` (FR-145) charges, in order: one `collection.visit` and the
+summand's own charges for the first occurrence, which seeds the running total
+with no addition; then, for each later occurrence in visiting order, one
+`collection.visit`, its summand's charges and one addition charged by the
+family of `N`; then one `collection.result-retain` with `result_units += 1`. An
+empty source charges only that `collection.result-retain`.
+
+| Family of `N` | Charges of one addition |
+| --- | --- |
+| `Integer` or `Int[..]` | `integer-arithmetic.operands`, `integer-arithmetic.arithmetic`, the uncharged domain decision, then `integer-arithmetic.result-retain` |
+| `Rational[..]` | the `rational-arithmetic` schedule |
+| `Decimal[..]` | the decimal addition schedule, whose `decimal.rounding` step uses the `rounding` mode `N` pins |
+| quantity | the unit addition schedule, whose decimal or integer target rounding step uses the `rounding` mode `N` pins |
+| `Float32` or `Float64` | the IEEE addition schedule under the `rounding` mode `N` pins |
+
+The checked package records that mode on the `quire.op.collection.sum.decimal`,
+`sum.quantity`, `sum.float32` or `sum.float64` application (FR-322), and it must
+equal the mode `N`'s type pins; a disagreement is refused before evaluation and
+never resolved at a charge point. The domain decision after each addition and
+seed charges nothing.
 
 ## Population admission limits
 
