@@ -9,6 +9,10 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-142
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272
+    type: verifies
+  - target: ix://agent-ix/quire-specification/interface_004
+    type: verifies
 ---
 
 # TC-233: Published checked-package and scalar contract vectors
@@ -17,11 +21,13 @@ relationships:
 
 Qualify the published QSpec contract artifacts themselves: the V2
 checked-package schema and fixtures, the nominal node-identity preimage
-schema and vectors, and the compound-unit value identity schema and vectors,
-and the complete-value definition lock, rule manifest and package-selection
-vectors. This case proves producer-side schema closure and digest
-recomputation only. It does not exercise a production reader, linker, lowerer
-or evaluator; those criteria remain with TC-217 and TC-187.
+schema and vectors, the operation catalog and its clause and control
+operation identities, and the compound-unit value identity schema and
+vectors, and the complete-value definition lock, rule manifest and
+package-selection vectors. This case proves producer-side schema closure,
+digest recomputation and operation-identity and diagnostic-cause closure
+only. It does not exercise a production reader, linker, lowerer or evaluator;
+those criteria remain with TC-217 and TC-187.
 
 ## Test Procedure
 
@@ -36,7 +42,13 @@ including `-0` spellings, and require the semantic oracle itself to refuse
 `-0`. Hash every qualification-catalog artifact and rule against the definition
 lock and rule manifest, require each catalog role to occupy exactly one always,
 conditional or exactly-one slot, and evaluate every accepted and refused
-package-selection vector with an independent selection oracle.
+package-selection vector with an independent selection oracle. Check the
+operation catalog's closure against both V2 schemas and the value lock;
+recompute every operation vector and application node key; classify every
+operation mutation, ordering case and declaration mutation with an
+independent operation and declaration oracle; and parse the
+native-diagnostics rows to require each cause in exactly its code's row and
+the Diagnostic schema pairing.
 
 ## Expected Results
 
