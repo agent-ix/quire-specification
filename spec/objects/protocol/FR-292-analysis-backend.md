@@ -27,7 +27,7 @@ the admitted fragment and claim capability used for that execution.
 - **revision** — positive immutable backend-interface revision.
 - **implementation digest** — exact implementation/package digest and selected FR-201 domain.
 - **admitted fragment** — exact FR-291 key.
-- **claim capabilities** — sorted distinct nonempty FR-290 member set.
+- **claim capabilities** — sorted distinct nonempty set of FR-290 protocol-family members; the interface revision selects the FR-290 vocabulary `quire.capability-kind/v1`.
 
 ## Identity and comparison
 

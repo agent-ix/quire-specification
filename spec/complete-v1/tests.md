@@ -214,7 +214,7 @@ type.
 | V1-BACK-014 | FR-019 | TC-231 | Reuse | planned |
 | V1-BACK-015 | FR-352 | TC-255, TC-231 | New | planned |
 | V1-BACK-016 | FR-352 | TC-255, TC-231 | New | planned |
-| V1-BACK-017 | FR-290 | TC-060, TC-231 | Amend | planned |
+| V1-BACK-017 | FR-290 | TC-060, TC-231, TC-271 | Amend | planned |
 | V1-BACK-018 | FR-292 | TC-060, TC-231 | Reuse | planned |
 | V1-BACK-019 | FR-349 | TC-266, TC-231 | New | planned |
 | V1-BACK-020 | FR-350 | TC-267, TC-231 | New | planned |
@@ -880,6 +880,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-272 | FR-272-AC-6 | TC-196 | planned |
 | FR-272 | FR-272-AC-7 | TC-233 | planned |
 | FR-272 | FR-272-AC-8 | TC-264 | planned |
+| FR-272 | FR-272-AC-9 | TC-271 | planned |
 | FR-321 | FR-321-AC-4 | TC-195 | planned |
 | FR-160 | FR-160-AC-4 | TC-199 | planned |
 | FR-160 | FR-160-AC-5 | TC-199 | planned |
@@ -981,6 +982,10 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-331 | FR-331-AC-1 | TC-231 | planned |
 | FR-331 | FR-331-AC-2 | TC-231 | planned |
 | FR-331 | FR-331-AC-3 | TC-231 | planned |
+| FR-331 | FR-331-AC-4 | TC-271 | planned |
+| FR-331 | FR-331-AC-5 | TC-271 | planned |
+| FR-331 | FR-331-AC-6 | TC-271 | planned |
+| FR-331 | FR-331-AC-7 | TC-271 | planned |
 | FR-332 | FR-332-AC-1 | TC-231 | planned |
 | FR-332 | FR-332-AC-2 | TC-231 | planned |
 | FR-332 | FR-332-AC-3 | TC-231 | planned |
@@ -1146,6 +1151,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-268 | Model-to-implementation abstraction relation binding and refusal | Property | P0 | FR-353 | 🚧 Planned |
 | TC-269 | Proved settlement trust basis | Property | P0 | FR-354 | 🚧 Planned |
 | TC-270 | SMT/native runtime differential parity corpus | Property | P0 | FR-355 | 🚧 Planned |
+| TC-271 | Capability kinds, advertised modes and candidate-set negotiation | Property | P0 | FR-290, FR-331, FR-272 | 🚧 Planned |
 
 ## Integration Test Matrix
 

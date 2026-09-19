@@ -51,14 +51,14 @@ sides land in the same one of these three correspondences, and a decode,
 domain or verdict mismatch outside that correspondence is an explicit parity
 failure naming the member and both verdicts, never silently resolved toward
 either side. The shared differential corpus is non-empty and includes at
-least one member for every capability FR-349's registered SMT backend
-advertises (among unbounded quantification, induction, composition and
-mathematical-integer domains). This corpus-level check is the FR-197
+least one member for every obligation form in the declared obligation-form set
+of FR-349's registered SMT backend (a subset of unbounded quantification,
+induction, compositional discharge and mathematical-integer domains). This corpus-level check is the FR-197
 counterexample-replay precedent generalized from one reported counterexample
 to every corpus member, run independently of whether any single claim
 reported a counterexample. This differential corpus is the executable check
 that the SMT encoding and the native runtime agree on meaning over every
-covered capability; it is not a mechanized equivalence proof.
+covered obligation form; it is not a mechanized equivalence proof.
 
 ## Acceptance Criteria
 
@@ -69,7 +69,7 @@ covered capability; it is not a mechanized equivalence proof.
 | FR-355-AC-3 | A parity failure records both the SMT and the native verdict unchanged, settles neither toward the other, and is never rewritten as clause success/failure. | Test (TC-270) |
 | FR-355-AC-4 | The aggregate parity report accounts for every corpus member exactly once. | Test (TC-270) |
 | FR-355-AC-5 | This corpus check is retained as an executable check distinct from, and not claiming to be, a mechanized equivalence proof. | Test (TC-270) |
-| FR-355-AC-6 | The shared differential corpus is non-empty and includes at least one member for every capability the registered SMT backend advertises under FR-349. | Test (TC-270) |
+| FR-355-AC-6 | The shared differential corpus is non-empty and includes at least one member for every obligation form in the registered SMT backend descriptor's declared obligation-form set under FR-349; a form with no member refuses the corpus naming that form. | Test (TC-270) |
 
 ## Dependencies
 

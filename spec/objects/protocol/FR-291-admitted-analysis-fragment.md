@@ -24,7 +24,7 @@ set actually admitted for that claim.
 - **definition identity** — nonempty owner-qualified fragment identity.
 - **revision** — positive immutable revision.
 - **digest** — exact canonical definition-byte digest and selected FR-201 domain.
-- **claim kinds** — sorted distinct nonempty FR-290 member set supported by the fragment.
+- **claim kinds** — sorted distinct nonempty set of FR-290 protocol-family members supported by the fragment; the fragment's revision selects the FR-290 vocabulary `quire.capability-kind/v1`.
 - **construct/profile set** — closed sorted identities of the syntax,
   semantic, clock and boundary profiles admitted by this revision.
 

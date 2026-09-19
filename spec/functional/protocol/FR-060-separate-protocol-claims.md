@@ -22,7 +22,7 @@ relationships:
 ---
 ## Description
 
-When multiple protocol-analysis capabilities are requested, the dispatcher SHALL produce one independent disposition for each exact requested FR-290 claim kind without transferring premises or success among them.
+When multiple protocol-analysis capabilities are requested, the dispatcher SHALL produce one independent disposition for each exact requested FR-290 protocol-family claim kind without transferring premises or success among them.
 
 ## Inputs
 
