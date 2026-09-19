@@ -21,6 +21,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-352
     type: references
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: references
 ---
 
 # FR-197: Replay proof counterexamples through native execution
@@ -73,6 +75,21 @@ carries the `Witness` arm of the backend re-run that preserved the failure; it
 never inherits its parent's transcript. Minimizing an `Input`-arm
 counterexample preserves the native verdict only and yields `Input`-arm
 revisions.
+
+## Failing-node identity and stage limits
+
+Because node ids are content-addressed and structurally identical nodes share
+one id, a bare node id does not tell apart the occurrences of one failing
+node; the occurrence key is FR-322's `source_map` key,
+(`node_id`, `role`, `ordinal`) (QC-8; QSL ADR-013 O-07, O-09).
+
+- The replay boundary SHALL carry the failing node's occurrence key in the
+  counterexample packet and in the obligation identity.
+- The replay boundary SHALL resolve the replayed span by that occurrence
+  key.
+- When recompiling for replay, the replay boundary SHALL run under the
+  S1–S4 stage limits recorded for the package's proving run (QC-8; QSL
+  ADR-013 O-26).
 
 ## Replay source
 
@@ -151,6 +168,8 @@ enforces this.
 | FR-197-AC-18 | A `native-run-result/2` record of an `Input` replay decodes only into the `Input`-arm result type and yields no backend-evidence verdict. | Test (TC-272) |
 | FR-197-AC-19 | Minimization of an `Input`-arm counterexample creates linked `Input`-arm revisions and retains only candidates that preserve domain validity and the native verdict. | Test (TC-219) |
 | FR-197-AC-20 | An `Input` packet with a value keyed to no parameter, or with a parameter that has no value, is refused with a typed cause before execution. | Test (TC-272) |
+| FR-197-AC-21 | The counterexample packet and the obligation identity carry the failing node's occurrence key, `(node_id, role, ordinal)`, and arrow 7 resolves the replayed span by that key rather than by node id alone. | Test (TC-272) |
+| FR-197-AC-22 | The QSL #231 replay request carries the S1–S4 stage limits recorded for the package's proving run, and the replay recompile runs under exactly those limits. | Test (TC-272) |
 
 ## Dependencies
 

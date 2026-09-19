@@ -31,6 +31,19 @@ When a checked package is executed or replayed, the producer SHALL use the immut
 - `results` — one ordered typed disposition per selected item.
 - `replay` — optional counterexample identity and expected originating verdict.
 
+## Outcome-to-verdict map
+
+QSpec fixes the replay outcome-to-verdict map once per QSL ADR-013 O-16
+category (FND-009; QC-8); no request instance selects or overrides a
+category's verdict.
+
+- When a replay outcome is settled, the producer SHALL apply the verdict
+  fixed for the outcome's QSL ADR-013 O-16 category.
+- The producer SHALL settle no agreement for an `Undefined` outcome or for
+  a refused `FamilyOutcome` (its `Refused` case, QSL ADR-011 #209 FND-008
+  S6a stage), regardless of the `replay` property's expected originating
+  verdict.
+
 ## Identity and validation
 
 Request identity includes every semantic input and limit. Result identity additionally includes implementation/toolchain pin and canonical per-item results.
@@ -44,6 +57,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-1 | Every selected item yields exactly one value, false/violation, refusal, undefined, incomplete or failed disposition; `undefined` is its own disposition carrying its reason and locus, and `failed` is exactly the `runtime_invariant`/`established-invariant-broken` failed evaluation. | Analysis |
 | FR-323-AC-2 | Replay uses the same evaluator and inputs rather than a generated-oracle shortcut. | Analysis |
 | FR-323-AC-3 | Missing anchors, exhausted limits and false predicates remain distinct. | Analysis |
+| FR-323-AC-4 | The outcome-to-verdict map assigns one verdict per QSL ADR-013 O-16 category, fixed independently of any request; an `Undefined` outcome and a refused `FamilyOutcome` never settle agreement. | Test (TC-273) |
 
 ## Dependencies
 
