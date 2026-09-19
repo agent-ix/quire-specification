@@ -18,6 +18,6 @@ operations:
   - { name: execute, inputs: [CheckedPackage, typed request, explicit inputs, limits], output: ordered per-clause results, semantics: reference native value state and graph evaluation }
   - { name: replay, inputs: [CheckedPackage, canonical counterexample, limits], output: verdict and parity metadata, semantics: uses the same execute semantics }
 invariants:
-  - invalid unsupported incomplete failed and false remain distinct
+  - invalid unsupported incomplete undefined failed and false remain distinct
   - exhaustion never truncates meaning into a completed value
 ```

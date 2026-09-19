@@ -23,7 +23,10 @@ When a checked package is executed or replayed, the producer SHALL use the immut
 - `package` — exact FR-322 checked-package reference.
 - `selection` — ordered clause/function identifiers.
 - `state_environment` — typed anchors, values, object populations, frames and invocation captures.
-- `limits` — positive work, depth, allocation and output ceilings.
+- `limits` — the `quire.value.accounting/v1` limit objects: `ScalarLimitsV1`,
+  plus `PopulationAdmissionLimitsV1` when the request binds a population.
+  Work maps to `work_units`, output to `result_units`, and allocation to the
+  high-water size counters; call nesting depth is not a separate counter.
 - `results` — one ordered typed disposition per selected item.
 - `replay` — optional counterexample identity and expected originating verdict.
 
@@ -37,7 +40,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-323-AC-1 | Every selected item yields exactly one value, false/violation, refusal, incomplete or failed disposition. | Analysis |
+| FR-323-AC-1 | Every selected item yields exactly one value, false/violation, refusal, undefined, incomplete or failed disposition; `undefined` is its own disposition carrying its reason and locus, and `failed` is exactly the `runtime_invariant`/`established-invariant-broken` failed evaluation. | Analysis |
 | FR-323-AC-2 | Replay uses the same evaluator and inputs rather than a generated-oracle shortcut. | Analysis |
 | FR-323-AC-3 | Missing anchors, exhausted limits and false predicates remain distinct. | Analysis |
 
