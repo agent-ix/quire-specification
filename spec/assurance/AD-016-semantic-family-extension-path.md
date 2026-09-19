@@ -38,6 +38,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-352
     type: references
+  - target: ix://agent-ix/quire-specification/FR-197
+    type: references
+  - target: ix://agent-ix/quire-spec-language/ADR-013
+    type: references
 ---
 
 # Semantic-family extension path
@@ -98,7 +102,9 @@ per-call Interface-001 state. A `requires-bound`, `unsupported` or
 
 Arrows 1–2 are QSL-owned. Arrows 3–7 are co-authored with Agent E; open
 decisions are marked `OPEN — decided in WP<n>`, naming the work package that
-resolves them.
+resolves them, or `OPEN — decided in QSL ADR-013 TK-<nn>` or
+`OPEN — decided in QSL #<n>`, naming the QSL ADR-013 ticket or QSL issue that
+resolves them. A ticket with an opened issue cites it, as in TK-04 (IR #144).
 
 #### Arrow 1: source AST → checked semantic node
 
@@ -170,7 +176,7 @@ resolves them.
 | --- | --- |
 | Owner | CG `kani_obligations` (Owner decision 4; answers ADR-005's generation owner) |
 | Typed in → out | Oracle + IR bounds → harness; `KaniObligationIdentity.arguments: Vec<ObligationBinding>`, ascending by identifier |
-| Identity retained | Obligation id = clause node id |
+| Identity retained | Obligation identity = the digest over every `KaniObligationIdentity` member except `source_span`. Clause node id, obligation kind and `arguments` are the members that tell apart the obligations of one clause: one clause yields one obligation per obligation kind it requests, so the clause node id alone never identifies an obligation. `source_span` is outside the preimage, because source occurrences are excluded from identity. `OPEN — decided in QSL ADR-013 TK-07`: the FR-201 digest domain of this identity (QC-4). |
 | Model / bound | Harness bound = declared finite domain from IR `requires-bound` forms. `OPEN — decided in WP8`: `SemanticFamily::Function` bound representation. |
 | Harness domain | The harness domain is a declared finite subset of the value type: Kani witnesses decode integers as 8-byte LE `i64`, while complete-V1 `Integer` is unbounded `BigInt` (RT `src/exact/integer.rs:20`). A `proved` result qualifies only over that declared subset; the subset (bound per argument) is part of the retained obligation identity and is reported with the result. Replay widens witness values into the complete-V1 value type losslessly. An unbounded domain with no declared bound is `requires-bound` (I13) and never narrowed implicitly. |
 | Refusal / unsupported / incomplete / failure | `requires-bound` is a negotiation disposition (#129 Q4), never an outcome |
@@ -199,50 +205,57 @@ resolves them.
 | Field | Contract |
 | --- | --- |
 | Owner | IR `KaniOutcomeKind` (target-neutral result), IR `src/kani` |
-| Typed in → out | Kani run → `KaniOutcome`; on counterexample, `CounterexamplePacket{…, witness: Option<Witness>}` |
-| Identity retained | Obligation id; harness symbol in `Witness.harness_symbol` |
+| Typed in → out | Kani run → `KaniOutcome`; on counterexample, `CounterexamplePacket{…, source: ReplaySource::Witness(Witness)}` (see Replay source) |
+| Identity retained | Obligation identity; harness symbol derived from the transcript by `Witness::harness_symbol()` |
 | Model / bound | The declared per-argument bound subset from arrow 5, carried in the `KaniOutcome` context; a `proved` result qualifies only over it. |
-| Refusal / unsupported / incomplete / failure | 10 `KaniOutcomeKind` kinds (see closed set below). `OPEN — decided in WP9`: IR `KaniOutcomeKind` → FR-331 result and catalog-code table, owned by IR `src/kani/outcome.rs` as one exhaustive `catalog_code()`; closure test on the IR `STD-003`/`TC-051` pattern. |
+| Refusal / unsupported / incomplete / failure | 10 `KaniOutcomeKind` kinds, each mapped to one outcome category and one FR-331 terminal record by the closed-set table below. `OPEN — decided in WP9`: IR `KaniOutcomeKind` → catalog-code table, owned by IR `src/kani/outcome.rs` as one exhaustive `catalog_code()`; closure test on the IR `STD-003`/`TC-051` pattern. |
 | Accounting | Kani run budget and use are reported in `KaniOutcome`'s profile/bound context (IR `src/kani`, `ResourceBounds` in `abi.rs:21`); no value-kernel charges occur at this arrow. `OPEN — decided in WP8`: Kani run-budget field. |
 | Source location | None: resolved at arrow 7. |
 | Capability point | None: no negotiation happens at this arrow; negotiation is settled at arrow 4. |
-| Canonical vectors / agreement | Seed counterexample vector (see table under Arrow 7 below); further vectors land in WP9, IR-owned. |
+| Canonical vectors / agreement | Seed counterexample vector (see table under Arrow 7 below). IR owns the agreement vectors, as data only; further vectors land in WP9. The crossing behaviour test (backend counterexample → native replay → parity) lives in QSL, because the `replay` facade is the only component that composes CG output with replay. CG owns a TC for its own half: emitting the harness and the packet. A criterion whose test lives in another repo gets its own test-case row, marked as discharged by the test that repo owns, and never shares a row with a criterion whose test is local: IR FR-031-AC-4 (witness vocabulary) keeps TC-221, and IR FR-031-AC-3 (the crossing behaviour) has its own row, discharged by the QSL test. |
 | Rejected item → substitute? | No packet without a counterexample; no placeholder witness (AD-014) |
 | Replay input / parity | `CounterexamplePacket` is arrow 7's input |
 
-**`KaniOutcomeKind` closed set** (declaration order, IR `src/kani/outcome.rs:8-29`)
+**`KaniOutcomeKind` closed set and WP9 category map** (declaration order, IR
+`src/kani/outcome.rs:8-29`; categories are QSL ADR-013 O-16's proof column)
 
-| # | Kind |
-| --- | --- |
-| 1 | `Proved` |
-| 2 | `Counterexample` |
-| 3 | `Refused` |
-| 4 | `InvalidInput` |
-| 5 | `IncompleteInput` |
-| 6 | `Unavailable` |
-| 7 | `TimedOut` |
-| 8 | `ResourceExhausted` |
-| 9 | `Cancelled` |
-| 10 | `Inconclusive` |
+| # | Kind | Category | FR-331 terminal record |
+| --- | --- | --- | --- |
+| 1 | `Proved` | success | result `proved` |
+| 2 | `Counterexample` | violation | result `refuted` |
+| 3 | `Refused` | refusal | one result with a typed refusal cause |
+| 4 | `InvalidInput` | refusal | one result with a typed refusal cause |
+| 5 | `IncompleteInput` | refusal | one result with a typed refusal cause |
+| 6 | `Unavailable` | unsupported | one result with a typed unavailability cause |
+| 7 | `TimedOut` | incomplete | result `incomplete`, cause kept |
+| 8 | `ResourceExhausted` | incomplete | result `incomplete`, cause kept |
+| 9 | `Cancelled` | incomplete | result `incomplete`, cause kept |
+| 10 | `Inconclusive` | inconclusive | result `inconclusive` |
 
-`OPEN — decided in WP9`: IR `KaniOutcomeKind` → FR-331 result and catalog-code
-table, owned by IR `src/kani/outcome.rs` as one exhaustive `catalog_code()`;
-closure test on the IR `STD-003`/`TC-051` pattern.
+The map is IR-owned, total and has no `_` arm; one test per row. `OPEN — decided in QSL ADR-013 TK-06`: the FR-331 result value for the
+refusal and unsupported rows (QC-9). A backend result `tested` is category success, keeps the value
+`tested`, and never counts as proof evidence; only `proved` does. A replay
+parity disagreement at arrow 7 is `inconclusive` with a typed cause. An IR
+invariant that breaks while mapping yields result `failed`.
+
+`OPEN — decided in WP9`: IR `KaniOutcomeKind` → catalog-code table, owned by IR
+`src/kani/outcome.rs` as one exhaustive `catalog_code()`; closure test on the
+IR `STD-003`/`TC-051` pattern.
 
 #### Arrow 7: → native counterexample replay
 
 | Field | Contract |
 | --- | --- |
-| Owner | Packet: IR. Reconstruction and parity comparator: CG replay adapter. Executor: QSL public complete-V1 entry (#129 Q14). |
-| Authority | Q14 (QSpec #129) rules `ConfigVersion` replay onto the complete-V1 value runtime; this AD extends that ruling to Kani counterexample replay because the native-v1 path is fixed at its three targets and admits no new families, and function application exists only in the complete-V1 value runtime. IR `src/kani/replay.rs` holds the packet type only; the executor call lives in the CG replay adapter (WP9). **(Owner decision 3.)** |
-| Typed in → out | `CounterexamplePacket` → `Witness::decode(&[WitnessBinding])` → QSL request → verdict. Executor entry (complete-V1 value runtime): `quire_spec_language::value::expression::CheckedPackage::call(&self, function: &str, arguments: Vec<Value>, objects: &ObjectEnvironment, meter: &mut Meter) -> Result<Evaluation, InputRefusal>` (src/value/expression/mod.rs). The native-v1 `runtime::execute` is not a replay target: native-v1 `ValueNode` (QSL `src/runtime/input.rs:94`) has no function variant, and `runtime::execute` is a state-observation model, not a function-call evaluator. |
-| Identity retained | Obligation id, node id; `WitnessBinding`s derive from `KaniObligationIdentity.arguments` |
+| Owner | Packet: IR. Reconstruction and parity comparator: CG replay adapter. Executor: QSL public complete-V1 entry (#129 Q14), reached only through the QSL layer-6 `replay` facade (QSL ADR-011 E9; QSL ADR-013 O-26, OQ-5). |
+| Authority | Q14 (QSpec #129) rules `ConfigVersion` replay onto the complete-V1 value runtime; this AD extends that ruling to Kani counterexample replay because the native-v1 path is fixed at its three targets and admits no new families, and function application exists only in the complete-V1 value runtime. IR `src/kani/replay.rs` holds the packet type only; the executor call lives in the CG replay adapter (WP9). IR TK-04 (IR #144) implements this contract. **(Owner decision 3.)** |
+| Typed in → out | `CounterexamplePacket.source` → replay input (`Witness`: `Witness::decode(&[WitnessBinding])` of the transcript; `Input`: the stored canonical assignments) → QSL request → verdict. The `replay` facade selects the function by a typed `QualifiedName`, resolved against the declarations of the package it recompiles from digest-addressed source. The facade passes `CheckedPackage::call` the name of the declaration it has already resolved, so the R-06 lookup happens once. Executor entry (complete-V1 value runtime): `quire_spec_language::value::expression::CheckedPackage::call(&self, function: &str, arguments: Vec<Value>, objects: &ObjectEnvironment, meter: &mut Meter) -> Result<Evaluation, InputRefusal>` (src/value/expression/mod.rs). The native-v1 `runtime::execute` is not a replay target: native-v1 `ValueNode` (QSL `src/runtime/input.rs:94`) has no function variant, and `runtime::execute` is a state-observation model, not a function-call evaluator. |
+| Identity retained | Obligation identity, node id; `WitnessBinding`s derive from `KaniObligationIdentity.arguments` |
 | Model / bound | Same finite domain as the harness |
-| Refusal / unsupported / incomplete / failure | `Witness::parse` refuses cover playback; `decode` refuses arity/width/comment mismatch. Backend/native disagreement = `inconclusive` + typed cause; never repaired. |
-| Accounting | Replay charges reported. `OPEN — decided in WP9`: carrier field in the parity result — IR PR #139's `ReplayAgreement`/`NativeReplayAgreement` gains a field distinguishing reproduced-with-evaluated-witness from reproduced-without-witness; WP9 extends that shape. |
+| Refusal / unsupported / incomplete / failure | `Witness::parse` refuses cover playback; `decode` refuses arity/width/comment mismatch. The `replay` facade returns each O-26 refusal before execution, including: a `QualifiedName` that resolves to no function; a recompiled `package_id` that differs; a source digest that differs; source bytes missing from the provision; `DependencyIdentityMismatch` (`stale_dependency`); an unknown version; an arity or type mismatch; a value outside the declared domain; a limit above the reader limit; an `Input` value with no parameter; and a parameter with no value. Each is category `refusal` with a typed cause and yields no verdict and no parity result (QSL ADR-013 O-26). Backend/native disagreement = `inconclusive` + typed cause; never repaired. `OPEN — decided in WP9`: the check that the harness symbol derived from the transcript equals the harness arrow 5 generated for the packet's obligation identity. |
+| Accounting | Replay charges reported. Parity carrier (WP9): the packet's `ReplaySource` arm. A `Witness` replay yields a `reproduced-with-evaluated-witness` result and an `Input` replay yields a `reproduced-without-witness` result, as distinct result types (see Replay source). No result stores a witness-backed flag. |
 | Source location | Replay resolves node id → nested span through the arrow-2 `source_map` |
 | Capability point | None: no negotiation happens at replay; negotiation is settled at arrow 4. |
-| Canonical vectors / agreement | `native-run-result/2` (FR-352) with the FR-351 separating witness record. Seed counterexample vector (see table below); further vectors land in WP9, IR-owned. |
+| Canonical vectors / agreement | `native-run-result/2` (FR-352) with the FR-351 separating witness record. Seed counterexample vector (see table below). IR owns the agreement vectors, as data only; further vectors land in WP9. The crossing behaviour test (backend counterexample → native replay → parity) lives in QSL, because the `replay` facade is the only component that composes CG output with replay. CG owns a TC for its own half: emitting the harness and the packet. A criterion whose test lives in another repo gets its own test-case row, marked as discharged by the test that repo owns, and never shares a row with a criterion whose test is local: IR FR-031-AC-4 (witness vocabulary) keeps TC-221, and IR FR-031-AC-3 (the crossing behaviour) has its own row, discharged by the QSL test. |
 | Rejected item → substitute? | No verdict is synthesized for a refused decode |
 | Replay input / parity | Parity = identical verdict under the same package and input domain |
 
@@ -252,8 +265,8 @@ also appear in IR PR #139 tc_042; WP9 vendors the full vector)
 
 | Field | Value |
 | --- | --- |
-| `obligationIdentitySha256` | `22ea5dc9297e696a8e7e9af8a1921403888c179aca9aa95a614cf94eab882d2b` |
-| `harnessSha256` | `0d790018573893183738f63ae7bf4c0006ed9c0f7eefde4ca3c5a9a3768ec538` |
+| `obligationIdentitySha256` | `OPEN — decided in QSL ADR-013 TK-05`: regenerated under the arrow-5 obligation identity after TK-07 defines its FR-201 digest domain (QC-4, QC-14) |
+| `harnessSha256` | `OPEN — decided in QSL ADR-013 TK-05`: regenerated with `obligationIdentitySha256`, because the harness embeds the obligation identity (QC-14) |
 | `oracleDigest` | `3330ec9bcd3a211a90ce3230f97989ac7438dfb59d7291acb80287e8e0aef021` |
 | `runtimeRevision` | `4e330525be513fe57c67717dc22b969d36656b85` |
 | `unwind` | 4 |
@@ -265,10 +278,20 @@ also appear in IR PR #139 tc_042; WP9 vendors the full vector)
 
 | Role | Owner | Contract |
 | --- | --- | --- |
-| Packet | IR | `CounterexamplePacket.witness: Option<Witness>` |
-| Witness shape | IR (IR PR #139, `src/kani/witness.rs`) | `Witness { harness_symbol, check, check_text, concrete_values: Vec<Vec<u8>>, transcript }`. `decode(&[WitnessBinding])` is the only typing step. |
+| Packet | IR | `CounterexamplePacket.source: ReplaySource { Witness(Witness), Input(values) }`. A packet holds exactly one arm, never both. Arrow 6 builds `Witness` packets. `OPEN — decided in WP9`: the component that builds `Input` packets. |
+| Witness shape | IR (IR PR #139, merged at `954c2f2`, `src/kani/witness.rs`; admission rule implemented by QSL ADR-013 TK-04 (IR #144)) | `Witness { transcript: String }`. `transcript` is the only field, and it is private. A `Witness` is admitted only through `Witness::parse`, including on deserialization; the stored transcript is the selected, trimmed assertion block, and `parse` refuses cover playback and a transcript with zero or several assertion blocks (QSL ADR-013 O-25). `harness_symbol()`, `check()`, `check_text()` and `concrete_values()` are fallible methods that re-derive their answer from `transcript` on every call. `decode(&[WitnessBinding])` is the only typing step and also reads `transcript`. |
 | Reconstruction + parity comparator | CG replay adapter | Builds `WitnessBinding`s from `KaniObligationIdentity.arguments` |
-| Native executor | QSL | Public complete-V1 entry |
+| Native executor | QSL | Public complete-V1 entry `CheckedPackage::call`, reached only through the QSL layer-6 `replay` facade, which selects the function by a typed `QualifiedName` (arrow 7) |
+| Replay result | QSL (#231) | One per-item replay result (QSL ADR-013 O-27) whose one member, `arm`, is a sum of two distinct arm types: the `Witness`-arm result and the `Input`-arm result. Each arm result holds exactly its arm's payload (`witness` or `input`), the native outcome (`native`) and a `settlement`: on agreement, `reproduced-with-evaluated-witness` for the `Witness` arm and `reproduced-without-witness` for the `Input` arm. |
+| Backend-evidence verdict | CG parity comparator | One sealed type. Its only construction path takes an agreeing `Witness`-arm result. It has no public field and implements no `Deserialize`, `Default`, `From` or `TryFrom`. |
+
+The transcript is the only stored state that carries meaning; every other value
+is derived from it, so a witness cannot disagree with its own backend evidence.
+
+A `Witness` is held only through `parse`, the step that establishes that it is a
+Kani assertion playback block. The only way to hold the fact is the way that
+establishes it, so a transcript that is not a playback block cannot be
+represented. `ReplaySource` applies the same rule to witness-backing.
 
 Reconstruction is in CG for two reasons:
 
@@ -276,6 +299,38 @@ Reconstruction is in CG for two reasons:
 2. Kani 0.67.0 counterexamples are untyped `Vec<Vec<u8>>`: one entry per `kani::any()` in declaration order, `i64` as 8 bytes little-endian, decoded value only in a `//` comment. Typing them needs the generator's schema, `KaniObligationIdentity.arguments` (CG `src/kani_obligations.rs`), which lives in CG.
 
 IR has no dependency on `quire_spec_language::runtime`.
+
+### Replay source
+
+`ReplaySource` is the one record of where a replay's input comes from.
+
+| Arm | Replay input | Agreement settles | Backend evidence |
+| --- | --- | --- | --- |
+| `Witness(Witness)` | `Witness::decode` of the transcript; no input is stored beside it | `reproduced-with-evaluated-witness` | Yes |
+| `Input(values)` | Canonical assignments keyed by parameter `WireNodeId` (QSL ADR-013 C-11), for a counterexample that did not come from a backend transcript (a corpus counterexample) | `reproduced-without-witness` (WP9) | Never |
+
+The arm is the fact. Whether a replay is witness-backed is a match on
+`ReplaySource`; no packet or replay result stores it as a second field, so no
+constructed value can hold two answers to one question. This is the rule the
+Witness shape row applies: what carries meaning is stored once, and everything
+else is derived from it. Each arm's result type holds that arm's payload and
+never a `ReplaySource`, and a `native-run-result/2` record of an `Input` replay
+decodes only into the `Input`-arm result type. Every counterexample has exactly
+one arm: one with a backend transcript is `Witness`, and one that did not come
+from a backend transcript is `Input`.
+
+`reproduced-with-evaluated-witness` and `reproduced-without-witness` are parity
+settlements under category success (QSL ADR-013 O-16), not new categories.
+
+An `Input` replay reproduces an answer supplied with its input, so its
+agreement cannot show that a backend counterexample reproduces natively. Type
+structure carries the rule. The two arms yield distinct replay-result types, a
+backend-evidence verdict is constructible only from the `Witness` arm,
+and `reproduced-without-witness` cannot occupy any position that accepts a
+backend-evidence verdict. A replay of either arm that disagrees with its
+expected verdict settles `inconclusive` with a typed cause and builds no
+verdict ([FR-197](../functional/ir-proof/FR-197-replay-backend-counterexamples.md)
+AC-6 to AC-20).
 
 ### Witness allow-list
 
@@ -292,8 +347,8 @@ layer-owned with a total conversion.
 
 | Concept | Shared / layer-owned | Owner | Total conversion and test |
 | --- | --- | --- | --- |
-| `Value`, `ValueType`, `Outcome`, `Refusal`, `BoundViolation`, `CardinalityBound`, `BoundedInteger`, `NodeKey`, `Origin`/`Location`, `ChargePoint`, `Meter`, `Incomplete` | **Shared (Owner decision 2)**: one `no_std` + `alloc` kernel holding exactly the types listed in this row plus `Undefined` and the scalar/collection operations over them. RT `exact/expression.rs` (`Frame`, `Body`, `CheckedPackage`, `Evaluation`, `plan_call`) and the `negotiate_*` predicates stay in RT. | `quire-exact` in QSL repo (`crates/quire-exact`); consumers QSL, RT, CG, footprint build | Kernel vs QSpec value/node-identity vectors. RT `conformance/qsl-agreement` is kept and retargeted to shared kernel vs QSpec canonical vectors. |
-| Semantic identities: `DeclarationKey`, checked node id | Layer-owned | QSL `model::key` | Wire strings in v2; QSL emit ↔ IR `CheckedNodeId`/`CheckedDomainPackageRef` round trip on I04 and TC-195 vectors |
+| `Value`, `ValueType`, `Outcome`, `Refusal`, `BoundViolation`, `CardinalityBound`, `BoundedInteger`, `NodeKey`, `EffectiveId`, `UniverseId`, `ObjectId`, `UnitId`, `VariantId`, `MemberId`, `Origin`/`Location`, `ChargePoint`, `Meter`, `Incomplete` | **Shared (Owner decision 2)**: one `no_std` + `alloc` kernel holding exactly the types listed in this row plus `Undefined` and the scalar/collection operations over them. Checked node ids are the kernel `NodeKey`; this row is their only listing. The `Value` component types are exactly `EffectiveId` (reference type), `UniverseId` and `ObjectId` (reference), `UnitId` (quantity), `VariantId` (enum and sum) and `MemberId` (record member): each is an opaque 32-byte digest newtype with one public constructor from a digest that QSL computes, and none depends on QSL `check` or `model`. `EffectiveId`'s FR-201 digest domain is `quire.model.effective-declaration/v1` (QSL ADR-013 QC-2), and only QSL `model` calls its constructor (QSL ADR-013 O-05; ADR-011 T-12). `OPEN — decided in QSL #213`: the FR-201 digest domain of `UniverseId`, `ObjectId`, `UnitId`, `VariantId` and `MemberId`, and whether ADR-011 T-12 limits their minting (S-2). RT `exact/expression.rs` (`Frame`, `Body`, `CheckedPackage`, `Evaluation`, `plan_call`) and the `negotiate_*` predicates stay in RT. | `quire-exact` in QSL repo (`crates/quire-exact`); consumers QSL, RT, CG, footprint build | Kernel vs QSpec value/node-identity vectors. RT `conformance/qsl-agreement` is kept and retargeted to shared kernel vs QSpec canonical vectors. `NodeKey` → v2 wire string → IR `CheckedNodeId` round trip on I04 vectors. |
+| Semantic identity: `DeclarationKey` | Layer-owned | QSL `model::key` | Wire strings in v2; QSL emit ↔ IR `CheckedDomainPackageRef` round trip on I04 and TC-195 vectors |
 | Source locations | Layer-owned; QSL sole minter | QSL `SourceMap`/`LocatedSpan`; IR `CheckedSourceMapEntry`; RT reports kernel `Location` | FCD `Locus` → `LocatedSpan` (intake); node id → span at replay; nested-span replay test |
 | IR value type, `ClauseKind` (6), `ExecutionPoint`, `CheckedNodeTag`, `Operator` | Layer-owned (target-neutral) | IR `quire-contract-model` | Total `From` from checked forms; exhaustive; `cargo mutants` on mapping fns |
 | RT observation `ClauseKind{…,Guard,Consequent}` | Layer-owned | RT | Total IR `ClauseKind` → RT observation kind, with test |

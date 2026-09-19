@@ -72,8 +72,8 @@ constructs emit no approximating artifact. Generated artifacts record complete
 toolchain/options pins and account for every requested obligation.
 
 Counterexamples use one canonical typed serialization, retain source and run
-lineage, and replay through `runtime::execute` under the same package and input
-domain. Backend and runtime verdict disagreement is an explicit parity failure.
+lineage, and replay through the QSL complete-V1 executor (FR-197, AD-016 arrow 7) under the
+same package and input domain. Backend and runtime verdict disagreement is an explicit parity failure.
 
 ## Decisions
 
