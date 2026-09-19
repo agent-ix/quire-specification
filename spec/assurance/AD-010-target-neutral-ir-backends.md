@@ -10,6 +10,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/AD-007
     type: references
+  - target: ix://agent-ix/quire-specification/AD-016
+    type: references
 ---
 
 # Target-neutral semantic IR and exact backend architecture
@@ -60,8 +62,12 @@ flowchart LR
 ```
 
 IR nodes retain exact types, definitions, source occurrences, anchors,
-identities and bounds. A provider returns supported, requires-bound,
-unsupported or invalid-request for each item before generation. Unsupported
+identities and bounds. Capability negotiation happens at one point,
+`quire-contract-codegen`'s `negotiate_*`
+([AD-016](AD-016-semantic-family-extension-path.md)), which settles each item
+before generation as exactly one of `supported`, `requires-bound`,
+`unsupported` (warned, naming the required capability) or `invalid-request`,
+over the capabilities registered backends advertise. Unsupported
 constructs emit no approximating artifact. Generated artifacts record complete
 toolchain/options pins and account for every requested obligation.
 
