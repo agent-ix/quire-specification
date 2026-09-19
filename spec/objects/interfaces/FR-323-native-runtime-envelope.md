@@ -26,7 +26,8 @@ When a checked package is executed or replayed, the producer SHALL use the immut
 - `limits` — the `quire.value.accounting/v1` limit objects: `ScalarLimitsV1`,
   plus `PopulationAdmissionLimitsV1` when the request binds a population.
   Work maps to `work_units`, output to `result_units`, and allocation to the
-  high-water size counters; call nesting depth is not a separate counter.
+  high-water size counters; depth is not a separate counter. Zero is a real
+  limit and never means unlimited.
 - `results` — one ordered typed disposition per selected item.
 - `replay` — optional counterexample identity and expected originating verdict.
 

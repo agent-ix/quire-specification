@@ -7,6 +7,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-197
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-180
+    type: verifies
 ---
 
 # IT-075: Contract backends agree with native replay

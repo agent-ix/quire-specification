@@ -7,20 +7,23 @@ it has no reverse dependency on the value or model definition roots.
 
 ## Selected interpretation
 
-The generator is counter-mode. Draw `k` at simulation step `step` is
-`SHA-256(JCS{seed, step, draw: k})`, where `seed` is the run's exact seed
-value and `step` and `draw` are nonnegative integers, each starting at zero.
-The digest bytes are read as a big-endian unsigned integer and reduced onto
-the exact size of the domain being sampled — the canonically ordered enabled
-successor set of the exploration contract at that step — by rejection
-sampling: a digest whose reduction would introduce bias, because it falls
-outside the largest exact multiple of the domain size, is rejected, `draw` is
-incremented and the digest is recomputed. There is no modulo bias and no
-floating-point intermediate.
+The generator is counter-mode. `seed` is the run's `u64` seed, written as a
+decimal string. `trace` is the trace's 0-based index within the run, and
+`step` is the transition's 0-based index within that trace, each a decimal
+string of a `u64` value. At a given `trace`/`step`, `draw` is a decimal
+string of a `u64` value that restarts at 0 and increments after every digest
+computed at that step, accepted or rejected.
+
+Draw `draw` at `trace`/`step` is `SHA-256(JCS{seed, trace, step, draw})`. Let
+`v` be the digest bytes read as a big-endian `u256`, and `n` the exact size
+of the domain being sampled — the canonically ordered enabled successor set
+of the exploration contract at that step. `v` is accepted when
+`v < n * floor(2^256 / n)`, selecting index `v mod n`; a rejected `v`
+increments `draw` and recomputes the digest. `n = 1` selects index 0 with no
+digest. `n = 0` ends the trace without a draw.
 
 Sampling selects one index into the canonically ordered enabled-successor set
-that FR-181's exploration contract already defines; it never constructs a
-successor the successor relation does not already admit.
+that FR-181's exploration contract already defines.
 
 ## Identity
 
@@ -28,6 +31,6 @@ The recorded generator version is this definition's `DefinitionRef`: its
 identity, revision and raw-byte digest, an exact member of the ecosystem
 lock's `definitions`. Two runs recording equal seeds and equal
 `DefinitionRef`s draw the identical sequence and therefore reproduce
-identical traces (FR-181-AC-2). Changing the seed, or this definition's
-revision or digest, changes the recorded generator version and the run
-identity.
+identical traces (FR-181-AC-2). Changing the seed changes the run identity;
+changing this definition's revision or digest changes the recorded generator
+version and the run identity.

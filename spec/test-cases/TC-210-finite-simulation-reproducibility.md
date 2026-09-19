@@ -37,5 +37,21 @@ The explicit refusal/non-conclusive mutations include:
   `source_map` locus;
 - a write outside the operation's declared frame, which refuses
   `frame_violation`/`unauthorized-change`;
-- a model-described external effect, which the simulator performs none of
-  and instead records only as typed trace data.
+- a model-described external effect, which returns only as typed trace data.
+
+## Non-coalescing and cancellation vectors
+
+- Two states whose typed semantic state differs only in an IEEE value's NaN
+  payload or a signed zero's sign have distinct state keys and are not
+  coalesced.
+- A successor that violates a declared invariant is recorded as a successor
+  rather than pruned from exploration.
+- A caller cancellation mid-exploration returns `incomplete` with cause
+  `cancelled`/`caller-cancelled` and carries the unexplored frontier.
+
+## Sampler index-sequence vector
+
+For seed `424242`, trace `0` and enabled-successor-set size `n = 5`, a real
+implementation of the counter-mode generator draws, at `draw = 0` for every
+step: index `0` at step `0`, index `0` at step `1`, index `4` at step `2`,
+index `4` at step `3` and index `4` at step `4`.
