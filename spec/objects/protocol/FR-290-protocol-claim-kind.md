@@ -28,6 +28,14 @@ claim's premises and outcome independent from every other member.
 | `realizability` | Whether the selected protocol admits a causal implementation strategy. |
 | `composition` | Whether selected components compose under independently discharged assumptions. |
 
+## Vocabulary authority
+
+These six labels are the single capability-kind vocabulary for protocol claims
+across the Quire ecosystem. `quire-spec-language`'s `Capability` enum and
+`quire-protocol`'s advertised claim-kind vocabulary align to this set;
+[agent-ix/quire-spec-language#190](https://github.com/agent-ix/quire-spec-language/issues/190)
+tracks the QSL-side alignment.
+
 ## Identity and comparison
 
 - **Identity kind** — *value*.
@@ -37,6 +45,10 @@ claim's premises and outcome independent from every other member.
 - **Causal order** — none.
 - **Absence** — a requested/result claim with no kind is refused and never
   defaulted to global conformance.
+- **Backend absence** — a claim no registered backend can discharge settles
+  `unsupported` with a warning naming the required capability. Backends
+  register under one contract; `quire-spec-language`'s Kani backend is one
+  registrant, and further backends register under the same contract.
 - **Digest domain** — not applicable.
 
 ## Acceptance Criteria
@@ -46,6 +58,7 @@ claim's premises and outcome independent from every other member.
 | FR-290-AC-1 | The six exact labels are the complete accepted set; unknown, absent and display-derived labels are refused. | Test (TC-060, TC-061) |
 | FR-290-AC-2 | Every pair of claim kinds may retain independent execution and outcome states without promotion or premise transfer. | Test (TC-060) |
 | FR-290-AC-3 | A non-global claim cannot carry the complete-global-conformance premise set as evidence for its own success. | Test (TC-060, TC-061) |
+| FR-290-AC-4 | A claim kind whose required capability has no registered backend settles `unsupported` with a warning naming that capability. | Test (TC-060) |
 
 ## Dependencies
 

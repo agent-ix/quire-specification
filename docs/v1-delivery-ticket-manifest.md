@@ -222,6 +222,8 @@ closure and cannot promote missing execution.
 | V1-BACK-012 | E | Contract IR #101 | Contract IR #101 |
 | V1-BACK-013 | E | Contract IR #101 | Contract IR #101 |
 | V1-BACK-014 | E | Contract IR #100 | Contract IR #101 |
+| V1-BACK-017 | D | Analyze #40 | Verification #38 |
+| V1-BACK-018 | A | QSL #185 | QSL #123 |
 | V1-EVID-001 | D | Verification #38 | Research #78 |
 | V1-EVID-002 | D | Verification #38 | Research #78 |
 | V1-EVID-003 | D | Verification #38 | Research #78 |
@@ -238,10 +240,12 @@ closure and cannot promote missing execution.
 | V1-TOOL-008 | A | QSL #119 | QSL #123 |
 | V1-TOOL-009 | A | WASM #6 | QSL #123 |
 | V1-TOOL-010 | C | Research #77 | Research #78 |
+| V1-TOOL-011 | A | QSL #191 | QSL #123 |
+| V1-TOOL-012 | A | QSL #192 | QSL #123 |
 
 ## Planning invariants
 
-- All 176 required/integrity rows have one primary implementation ticket and one
+- All 180 required/integrity rows have one primary implementation ticket and one
   qualification owner; no row is deferred, research-only or unowned.
 - Closed leaves remain immutable evidence but their qualification tickets still
   gate complete-V1 acceptance.
