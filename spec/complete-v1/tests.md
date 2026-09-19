@@ -11,7 +11,7 @@ relationships:
 
 # Complete V1 atomic capability and requirement matrix
 
-This matrix is normative traceability for the complete 176-row inventory. A
+This matrix is normative traceability for the complete 180-row inventory. A
 planned row is required work, not a deferred capability or implementation claim.
 
 ## Specification action classification
@@ -30,7 +30,7 @@ with the owning requirement.
   decided here.
 - `New`: behavior and acceptance criteria are authored for the row.
 
-Over the 176 rows the delivered totals are 94 Reuse, 39 Amend, 23 New, 19
+Over the 180 rows the delivered totals are 97 Reuse, 40 Amend, 23 New, 19
 Resolve and 1 Split.
 
 V1-TYPE-024 is a Resolve row because extending reachability over inheritance
@@ -203,6 +203,8 @@ type.
 | V1-BACK-012 | FR-019 | TC-231 | Reuse | planned |
 | V1-BACK-013 | FR-052 | TC-231 | Reuse | planned |
 | V1-BACK-014 | FR-019 | TC-231 | Reuse | planned |
+| V1-BACK-017 | FR-290 | TC-060, TC-231 | Amend | planned |
+| V1-BACK-018 | FR-292 | TC-060, TC-231 | Reuse | planned |
 | V1-EVID-001 | FR-310 | TC-230, TC-231 | Amend | planned |
 | V1-EVID-002 | FR-004 | TC-231 | Reuse | planned |
 | V1-EVID-003 | FR-311 | TC-231 | Amend | planned |
@@ -219,6 +221,8 @@ type.
 | V1-TOOL-008 | FR-307 | TC-227, TC-231 | Amend | planned |
 | V1-TOOL-009 | FR-308 | TC-228, TC-231 | New | planned |
 | V1-TOOL-010 | FR-309 | TC-229, TC-231 | New | planned |
+| V1-TOOL-011 | FR-177 | TC-208, TC-231 | Reuse | planned |
+| V1-TOOL-012 | FR-177 | TC-208, TC-231 | Reuse | planned |
 
 ## Functional Requirement Coverage
 
@@ -1057,7 +1061,7 @@ supersedes FR-010's parent reachability.
 
 ## Coverage gate
 
-Complete-V1 qualification requires all 176 capability rows and every selected
+Complete-V1 qualification requires all 180 capability rows and every selected
 acceptance-criterion row to have executed evidence under one exact ecosystem
 lock. Until then the status remains planned or partial and cannot be promoted by
 family-level samples.

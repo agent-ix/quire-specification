@@ -22,6 +22,12 @@ Native Quire remains semantic authority. The lowest `quire-contract-model`
 package contains portable descriptors only; adapters, generators and runtimes
 remain in their owning crates to preserve the acyclic dependency graph.
 
+Backends register under one exact provider contract. Kani is the first
+registered backend; Verus, SMT and further solver or code-generation backends
+register under that same contract without a second shape. A claim no
+registered backend can discharge settles `unsupported` with a warning naming
+the required capability.
+
 ## Views
 
 ```mermaid
@@ -57,6 +63,7 @@ domain. Backend and runtime verdict disagreement is an explicit parity failure.
 | Negotiate exact support per item before emission | Best-effort lowering | No proof can be claimed over approximated meaning. |
 | Bounds derive from model domains | Backend-invented constants | Kani/property domains correspond to authored semantics. |
 | One replayable counterexample envelope | Backend-specific opaque text | Every proof failure can be checked by the native runtime. |
+| Settle unsupported with a capability-naming warning when no registered backend can discharge a claim | Hold delivery pending a new backend's registration | Solver absence never stalls admitted results; the registered-backend set (Kani now; Verus, SMT and others next) can grow independently of already-admitted claims. |
 
 ## Risks
 

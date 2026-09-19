@@ -11,7 +11,7 @@ relationships:
 
 ## Description
 
-Link the full 176-capability bundle, remove one required facet, and repeat with changed backend support.
+Link the full 180-capability bundle, remove one required facet, and repeat with changed backend support.
 
 ## Test Procedure
 
