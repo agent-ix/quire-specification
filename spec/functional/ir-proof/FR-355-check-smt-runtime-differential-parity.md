@@ -66,7 +66,7 @@ covered capability; it is not a mechanized equivalence proof.
 | --- | --- | --- |
 | FR-355-AC-1 | Every differential corpus member is a bounded instance; the registered SMT backend and the native runtime both evaluate that same bounded domain under the same package, domain and claim identity. | Test (TC-270) |
 | FR-355-AC-2 | Matching verdicts are recorded as agreement under the defined correspondence — SMT `proved` against the native runtime holding over the full bounded domain, SMT `refuted` against a native in-domain counterexample, and SMT `inconclusive` against no decisive native verdict over the bounded domain; a decode, domain or verdict mismatch outside that correspondence is recorded as an explicit parity failure naming the member and both verdicts. | Test (TC-270) |
-| FR-355-AC-3 | A parity failure is never silently resolved toward either the SMT or the native verdict, and never rewritten as clause success/failure. | Test (TC-270) |
+| FR-355-AC-3 | A parity failure records both the SMT and the native verdict unchanged, settles neither toward the other, and is never rewritten as clause success/failure. | Test (TC-270) |
 | FR-355-AC-4 | The aggregate parity report accounts for every corpus member exactly once. | Test (TC-270) |
 | FR-355-AC-5 | This corpus check is retained as an executable check distinct from, and not claiming to be, a mechanized equivalence proof. | Test (TC-270) |
 | FR-355-AC-6 | The shared differential corpus is non-empty and includes at least one member for every capability the registered SMT backend advertises under FR-349. | Test (TC-270) |
