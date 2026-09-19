@@ -115,6 +115,9 @@ carrier of that fact.
   SHALL take no caller-supplied executor.
 - A `Witness` SHALL be constructed only through `Witness::parse`, including on
   deserialization.
+- When the verification boundary minimizes an `Input`-arm counterexample, it
+  SHALL yield only `Input`-arm revisions linked to their parent that preserve
+  domain validity and the native verdict.
 - When an `Input` packet holds a value keyed to no parameter, or a parameter
   has no value, the replay boundary SHALL refuse it with a typed cause before
   execution.

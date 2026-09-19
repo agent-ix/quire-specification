@@ -94,10 +94,12 @@ Evaluated against the tree committed with these records (fixes in `201b4a4`, plu
 | FND-004 | resolved | TC-272 Test Procedure: `trybuild` cases with `.stderr` snapshots and compile-pass controls; closure taken from a public-API listing of the replay crates |
 | FND-005 | resolved | TC-272 Test Procedure: `trybuild` cases with `.stderr` snapshots and compile-pass controls; closure taken from a public-API listing of the replay crates |
 | FND-006 | resolved | FR-197 Replay source: the backend-evidence verdict type has exactly one construction path, which takes an agreeing `Witness`-arm result; FR-197-AC-9, FR-197-AC-10 (no public field, `Deserialize`, `Default`, `From`, `TryFrom`); TC-272 RS-06; AD-016 Backend-evidence verdict row |
-| FND-007 | resolved | FR-197 defines a witness-backed field; FR-197-AC-11; TC-272 RS-07 lists the exact allowed field set of the packet, both arm results and the per-item result |
+| FND-007 | resolved | FR-197 defines a witness-backed field; FR-197-AC-11; TC-272 RS-07 fixes the allowed field sets: the packet holds the QSL ADR-013 O-25 packet members (IR TK-04, IR #144) plus `source`, each arm result holds exactly its payload (`witness` or `input`), `native` and `settlement`, and the per-item result holds `arm`; the AD-016 Replay result row states the same arm-result members |
 | FND-008 | resolved | FR-197-AC-12 rests on FR-197-AC-11 (no stored field) and FR-197-AC-17 (no `ReplaySource` in results); TC-272 RS-07, RS-08, RS-15 |
 | FND-009 | resolved | FR-197-AC-14; TC-272 RS-09 (both arms), RS-10 (neither) |
 | FND-010 | resolved | TC-272 Fixture: IR `tests/kani_replay.rs` tc_042 witness transcript at `954c2f2`, decoded values (8, 992) |
 | FND-011 | resolved | Kept `Test`; TC-272 Expected Results states RS-04 to RS-06 and RS-15 are Compile evidence run under the test harness |
 
 Rows for FND-002, FND-007 were updated after the PR #140 review at `9e52406`.
+
+Row FND-007 was updated again after the PR #140 re-check at `9362020`.
