@@ -203,7 +203,7 @@ type.
 | V1-BACK-003 | FR-030 | TC-231 | Reuse | planned |
 | V1-BACK-004 | FR-195 | TC-217, TC-231 | Amend | planned |
 | V1-BACK-005 | FR-196 | TC-218, TC-231 | Amend | planned |
-| V1-BACK-006 | FR-197 | TC-219, TC-231 | Amend | planned |
+| V1-BACK-006 | FR-197 | TC-219, TC-231, TC-272 | Amend | planned |
 | V1-BACK-007 | FR-120 | TC-231 | Reuse | planned |
 | V1-BACK-008 | FR-120 | TC-231 | Reuse | planned |
 | V1-BACK-009 | FR-120 | TC-231 | Reuse | planned |
@@ -927,6 +927,21 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-196 | FR-196-AC-5 | TC-218 | planned |
 | FR-197 | FR-197-AC-4 | TC-219 | planned |
 | FR-197 | FR-197-AC-5 | TC-219 | planned |
+| FR-197 | FR-197-AC-6 | TC-272 | planned |
+| FR-197 | FR-197-AC-7 | TC-272 | planned |
+| FR-197 | FR-197-AC-8 | TC-272 | planned |
+| FR-197 | FR-197-AC-9 | TC-272 | planned |
+| FR-197 | FR-197-AC-10 | TC-272 | planned |
+| FR-197 | FR-197-AC-11 | TC-272 | planned |
+| FR-197 | FR-197-AC-12 | TC-272 | planned |
+| FR-197 | FR-197-AC-13 | TC-272 | planned |
+| FR-197 | FR-197-AC-14 | TC-272 | planned |
+| FR-197 | FR-197-AC-15 | TC-272 | planned |
+| FR-197 | FR-197-AC-16 | TC-272 | planned |
+| FR-197 | FR-197-AC-17 | TC-272 | planned |
+| FR-197 | FR-197-AC-18 | TC-272 | planned |
+| FR-197 | FR-197-AC-19 | TC-219 | planned |
+| FR-197 | FR-197-AC-20 | TC-272 | planned |
 | FR-320 | FR-320-AC-1 | TC-231 | planned |
 | FR-320 | FR-320-AC-2 | TC-231 | planned |
 | FR-320 | FR-320-AC-3 | TC-231 | planned |
@@ -1152,6 +1167,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-269 | Proved settlement trust basis | Property | P0 | FR-354 | 🚧 Planned |
 | TC-270 | SMT/native runtime differential parity corpus | Property | P0 | FR-355 | 🚧 Planned |
 | TC-271 | Capability kinds, advertised modes and candidate-set negotiation | Property | P0 | FR-290, FR-331, FR-272 | 🚧 Planned |
+| TC-272 | Replay source structural separation | Property | P0 | FR-197 | 🚧 Planned |
 
 ## Integration Test Matrix
 
