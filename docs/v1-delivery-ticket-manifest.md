@@ -222,6 +222,8 @@ closure and cannot promote missing execution.
 | V1-BACK-012 | E | Contract IR #101 | Contract IR #101 |
 | V1-BACK-013 | E | Contract IR #101 | Contract IR #101 |
 | V1-BACK-014 | E | Contract IR #100 | Contract IR #101 |
+| V1-BACK-015 | A | QSL #186 | Codegen #50 |
+| V1-BACK-016 | A | QSL #186 | Codegen #50 |
 | V1-BACK-017 | D | Analyze #40 | Verification #38 |
 | V1-BACK-018 | A | QSL #185 | QSL #123 |
 | V1-EVID-001 | D | Verification #38 | Research #78 |
@@ -230,6 +232,9 @@ closure and cannot promote missing execution.
 | V1-EVID-004 | D | Verification #38 | Research #78 |
 | V1-EVID-005 | D | Verification #38 | Research #78 |
 | V1-EVID-006 | D | Verification #38 | Research #78 |
+| V1-EVID-007 | A | QSL #186 | Codegen #50 |
+| V1-EVID-008 | A | QSL #186 | Codegen #50 |
+| V1-EVID-009 | A | QSL #186 | Codegen #50 |
 | V1-TOOL-001 | A | QSL #122 | QSL #123 |
 | V1-TOOL-002 | A | QSL #122 | QSL #123 |
 | V1-TOOL-003 | A | QSL #117 | QSL #123 |
@@ -245,8 +250,11 @@ closure and cannot promote missing execution.
 
 ## Planning invariants
 
-- All 180 required/integrity rows have one primary implementation ticket and one
-  qualification owner; no row is deferred, research-only or unowned.
+- All 185 required/integrity rows have one primary implementation ticket and one
+  qualification owner; no row is deferred, research-only or unowned. Rows
+  V1-EVID-007–009 and V1-BACK-015–016 were added after the Plan-008 baseline to
+  cover the FR-351 separating-witness record and the FR-352
+  `native-run-result/2` wire (#114).
 - Closed leaves remain immutable evidence but their qualification tickets still
   gate complete-V1 acceptance.
 - Shared QSpec interfaces I01–I21 and payloads FR-320–339 are frozen inputs.

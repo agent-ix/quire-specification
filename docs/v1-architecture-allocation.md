@@ -167,6 +167,8 @@ the unique primary program epic from the Task-005 live-graph audit.
 | V1-BACK-012 | S9 | AD-004 | I12, I16, I17 | Contract IR #52 |
 | V1-BACK-013 | S9 | AD-004 | I12, I16, I17 | Contract IR #52 |
 | V1-BACK-014 | S8 | AD-010 | I12, I13, I19 | Contract IR #2 |
+| V1-BACK-015 | S8 | AD-010 | I12, I13, I19 | QSL #186 |
+| V1-BACK-016 | S8 | AD-010 | I12, I13, I19 | QSL #186 |
 | V1-BACK-017 | S8 | AD-010 | I12, I13, I19 | Analyze #40 |
 | V1-BACK-018 | S8 | AD-010 | I12, I13, I19 | QSL #185 |
 | V1-EVID-001 | S10 | AD-011 | I10, I15, I18-I21 | Verification #13 |
@@ -175,6 +177,9 @@ the unique primary program epic from the Task-005 live-graph audit.
 | V1-EVID-004 | S10 | AD-011 | I10, I15, I18-I21 | Verification #13 |
 | V1-EVID-005 | S10 | AD-011 | I10, I15, I18-I21 | Verification #13 |
 | V1-EVID-006 | S10 | AD-011 | I10, I15, I18-I21 | Verification #13 |
+| V1-EVID-007 | S10 | AD-011 | I10, I15, I18-I21 | QSL #186 |
+| V1-EVID-008 | S10 | AD-011 | I10, I15, I18-I21 | QSL #186 |
+| V1-EVID-009 | S10 | AD-011 | I10, I15, I18-I21 | QSL #186 |
 | V1-TOOL-001 | S9 | AD-004 | I02, I04, I16, I17 | QSL #1 |
 | V1-TOOL-002 | S9 | AD-004 | I02, I04, I16, I17 | QSL #1 |
 | V1-TOOL-003 | S9 | AD-004 | I02, I04, I16, I17 | QSL #1 |
@@ -190,7 +195,7 @@ the unique primary program epic from the Task-005 live-graph audit.
 
 ## Invariants
 
-- The table contains all 180 atomic inventory IDs exactly once.
+- The table contains all 185 atomic inventory IDs exactly once.
 - S1-S10 and AD-002-AD-011 cover every row; AD-001 governs the common root.
 - Interface references resolve to I01-I21 in
   `docs/v1-complete-architecture.md`.
