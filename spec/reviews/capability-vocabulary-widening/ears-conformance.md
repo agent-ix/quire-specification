@@ -46,9 +46,9 @@ Evaluated against the uncommitted working tree on 5d3aa25. Paths are relative to
 | FND-004 | resolved | One kind per item, FR-290:86; FR-290:176; FR-272 row; native-diagnostics:96 |
 | FND-005 | resolved | FR-290:86-88; FR-331:28 |
 | FND-006 | resolved | FR-349:57; FR-355-AC-6 |
-| FND-007 | open | low. The response is now observable, but the FR-349 Description (FR-349:28-34) packs four responses into one SHALL: register, advertise, declare and settle. Fix: split it into a registration SHALL and an If/then for the arm settlement. |
+| FND-007 | resolved (post-round-2, SR-606) | low. The response is now observable, but the FR-349 Description (FR-349:28-34) packs four responses into one SHALL: register, advertise, declare and settle. Fix: split it into a registration SHALL and an If/then for the arm settlement. |
 | FND-008 | resolved | FR-290:232 |
 | FND-009 | resolved | `spec/objects/foundation/FR-271-diagnostic-code-vocabulary.md:62` |
-| FND-010 (new) | open | low. The FR-290 Description (FR-290:22-24) still makes an unidentified "dispatcher" the subject for all ten kinds. Fix: "Each requested item SHALL require exactly one member of this closed vocabulary", which matches FR-290:86. |
+| FND-010 (new) | resolved (post-round-2, SR-606) | low. The FR-290 Description (FR-290:22-24) still makes an unidentified "dispatcher" the subject for all ten kinds. Fix: "Each requested item SHALL require exactly one member of this closed vocabulary", which matches FR-290:86. |
 
 Round 2 verdict: ACCEPT WITH FINDINGS
