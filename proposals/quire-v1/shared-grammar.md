@@ -292,7 +292,7 @@ type-ref      = 'Boolean' | 'Integer' | qualified-name
               | 'Text', '[', uint, ',', uint, ';', text-profile, ']'
               | 'Option', '<', type-ref, '>'
               | ('Sequence' | 'Set' | 'Bag' | 'OrderedSet'),
-                '<', type-ref, '>', '[', uint, ',', uint, ']'
+                '<', type-ref, '>', [ '[', uint, ',', uint, ']' ]
               | 'Reference', '<', qualified-name, '>' ;
 qualified-name = ident, { '::', member-name } ;
 rounding-mode = 'exact' | 'toward-zero' | 'toward-positive'

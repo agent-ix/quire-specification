@@ -1,10 +1,10 @@
 {
   "lock_version": "quire.model.definition-lock/v1",
-  "revision": "1-draft.1",
+  "revision": "1-draft.2",
   "digest_domain": "quire.definition.bytes/v1",
   "language_edition": "1-draft",
   "requires": [
-    {"role": "complete_value_lock", "artifact_path": "complete-value-lock.json", "definition": {"authority":"agent-ix","identity":"quire.value.definition-lock/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"121cfd61fb526d5bdaed56cd0fd2e5694d8be8488278a0b2d2daedad38d8093c"}}
+    {"role": "complete_value_lock", "artifact_path": "complete-value-lock.json", "definition": {"authority":"agent-ix","identity":"quire.value.definition-lock/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"d88e34f615fcd784a473258db43f13d327bc11e909bb656381140236a1a57f5c"}}
   ],
   "trigger_vocabulary": [],
   "selection_refusal_codes": ["selection_alternative_conflict", "selection_duplicate_role", "selection_duplicate_trigger", "selection_required_missing", "selection_trigger_unsatisfied", "selection_unknown_role", "selection_unknown_trigger", "selection_untriggered_profile"],
@@ -12,7 +12,7 @@
     {
       "role": "root",
       "artifact_path": "model-complete.md",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"bfbfdfdccf9deda602b0f7acf48f4843b53a12518a19031250cbd1d8cb6548d9"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"cc565d898f179957d80fb4ee7d129324855b7ec72dc7564a8494a80acd2fa684"}
     },
     {
       "role": "state_graph",
@@ -22,7 +22,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "model-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"30a3b05bbfe8759fc2a939f68ee312cad2828fe6ed6d8a1a9be46f5449a8195c"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"e1569880ac92e776daf02a1178f15e08d41a92fb664651fe129cacd485a2cf05"}
     },
     {
       "role": "effective_declaration_schema",
@@ -52,7 +52,7 @@
     {
       "role": "rule_fr_144",
       "artifact_path": "../../../spec/functional/type-model/FR-144-preserve-complete-collection-algebra.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-144/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"a1319ba750bdef42df93627e07601a808f998a4ba5f83cde02104edea6ee8951"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-144/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"f10cd0603a9a98d265f19471b39088265a35e48fadb29242441570c9c2416a93"}
     },
     {
       "role": "rule_fr_150",
@@ -72,7 +72,7 @@
     {
       "role": "rule_fr_153",
       "artifact_path": "../../../spec/functional/type-model/FR-153-query-closed-model-environments.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-153/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"25b98e18e0c7cc3719cfb1994e275f2421a1f99522f073e92be414a0d0628c7f"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-153/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"6f06699dc77b912ac770fb9f4ec84c1e717d1241c368336af12253ae94163c60"}
     },
     {
       "role": "rule_fr_154",

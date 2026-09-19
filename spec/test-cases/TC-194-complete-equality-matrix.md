@@ -15,10 +15,10 @@ Execute positive, negative and cross-type comparisons for every complete-V1 valu
 
 ## Test Procedure
 
-Select language `ix:native`, edition `1-draft` revision `1-draft.2`, and the
-`quire.value.complete/v1`, `quire.value.text.unicode-17.0.0/v1` and
-`quire.value.ieee754-2019-default/v1` definitions at revision `1-draft.1`, using
-their exact DefinitionRefs from
+Select language `ix:native`, edition `1-draft` revision `1-draft.2`, the
+`quire.value.complete/v1` definition at revision `1-draft.2`, and the
+`quire.value.text.unicode-17.0.0/v1` and `quire.value.ieee754-2019-default/v1`
+definitions at revision `1-draft.1`, using their exact DefinitionRefs from
 [`complete-value-lock.json`](../../proposals/quire-v1/definitions/complete-value-lock.json).
 Build fixtures with distinct I04 semantic-node keys
 for declarations that intentionally share names or shapes. Execute every row

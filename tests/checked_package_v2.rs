@@ -63,7 +63,7 @@ const CATALOG_ARTIFACTS: [CatalogArtifact; 21] = [
         role: "root",
         path: "value-complete.md",
         identity: "quire.value.complete/v1",
-        revision: "1-draft.1",
+        revision: "1-draft.2",
         bytes: include_bytes!("../proposals/quire-v1/definitions/value-complete.md"),
     },
     CatalogArtifact {
@@ -103,7 +103,7 @@ const CATALOG_ARTIFACTS: [CatalogArtifact; 21] = [
         role: "rule_manifest",
         path: "value-complete-rules.json",
         identity: "quire.value.complete.rules/v1",
-        revision: "1-draft.1",
+        revision: "1-draft.2",
         bytes: include_bytes!("../proposals/quire-v1/definitions/value-complete-rules.json"),
     },
     CatalogArtifact {
@@ -163,7 +163,7 @@ const CATALOG_ARTIFACTS: [CatalogArtifact; 21] = [
         role: "rule_shared_grammar",
         path: "../shared-grammar.md",
         identity: "quire.rule.shared-grammar/v1",
-        revision: "1-draft.1",
+        revision: "1-draft.2",
         bytes: include_bytes!("../proposals/quire-v1/shared-grammar.md"),
     },
     CatalogArtifact {
@@ -4117,7 +4117,7 @@ fn tc_233_complete_value_lock_catalogs_every_artifact_and_separates_package_sele
         lock["lock_version"].as_str(),
         Some("quire.value.definition-lock/v1")
     );
-    assert_eq!(lock["revision"].as_str(), Some("1-draft.1"));
+    assert_eq!(lock["revision"].as_str(), Some("1-draft.2"));
     assert_eq!(
         lock["digest_domain"].as_str(),
         Some("quire.definition.bytes/v1")

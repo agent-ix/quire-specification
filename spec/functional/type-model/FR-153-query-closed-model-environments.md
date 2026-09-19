@@ -21,10 +21,10 @@ explicit typed environment and population closure bound to the request.
 ## Inputs
 
 A population binding (package typed binding role `population`) with its anchor,
-declared maximum `N`, its population declaration from the admitted domain
-package and its runtime member records; the FR-150 effective view and
-ModelSelection; the requested type; and, for lookup, a key reference and
-absence mode.
+an optional declared maximum `N` (its absence means the population is
+unbounded), its population declaration from the admitted domain package and its
+runtime member records; the FR-150 effective view and ModelSelection; the
+requested type; and, for lookup, a key reference and absence mode.
 
 ## Outputs
 
@@ -74,15 +74,18 @@ every type that conforms to it. Object closure is decided at binding admission
 before any admission charge, subtype closure before the query's first charge,
 and no partial collection is returned.
 
-`allInstances<T>(p)` requires `p` to be a population binding with a declared
-maximum `N`, otherwise `ill_typed`/`operator-ineligible`, and `T` to be a model
-`object` type, otherwise `ill_typed`/`type-mismatch`. Its type is
-`Set<Reference<T>>[0,N]`. It contains every member whose most-specific type
+`allInstances<T>(p)` requires `p` to be a population binding, otherwise
+`ill_typed`/`operator-ineligible`, and `T` to be a model `object` type,
+otherwise `ill_typed`/`type-mismatch`. Its type is `Set<Reference<T>>[0,N]`
+when `p` declares a maximum `N`, and the unbounded `Set<Reference<T>>` when `p`
+declares none. It contains every member whose most-specific type
 conforms to `T`, once by reference key, in canonical reference-key order; the
 input member order is never observable. `population.visit` is charged for
-every member walked, whether or not it conforms to `T`. A selected count above `N` is
+every member walked, whether or not it conforms to `T`. When `p` declares a
+maximum `N`, a selected count above `N` is
 `cardinality_out_of_bound`/`above-maximum` after `collection.bound`; a denied
-charge is `incomplete` with no collection.
+charge is `incomplete` with no collection. An unbounded `p` admits every
+selected count and never returns `cardinality_out_of_bound`.
 
 `lookup<T>(p, r) absent m` requires the same population binding and a key
 `r: Reference<S>` with `S` conforming to `T`, otherwise `ill_typed`/`type-mismatch`.
@@ -115,7 +118,8 @@ deleted in the post state keeps its pre most-specific type. Charges are the
 | FR-153-AC-5 | All-instances includes closed subtype populations exactly once and emits no partial population when closure is unknown. | Test (TC-198) |
 | FR-153-AC-6 | A subtype object seen through supertype and subtype queries has one reference key whose type component is its most-specific type. | Test (TC-198) |
 | FR-153-AC-7 | `pre(allInstances<T>(p))` in a postcondition reads the pre population, and a deleted object keeps its pre type. | Test (TC-198) |
-| FR-153-AC-8 | `allInstances<T>(p)`'s result is exactly `Set<Reference<T>>[0,N]`, typed to the queried `T` and bounded by `p`'s declared maximum `N`. Lookup's present result is `Reference<T>` in the `undefined` and `refused` modes and `Option<Reference<T>>` in the `empty` mode, in every case typed to the queried `T`. | Test (TC-198) |
+| FR-153-AC-8 | `allInstances<T>(p)`'s result is exactly `Set<Reference<T>>[0,N]`, typed to the queried `T` and bounded by `p`'s declared maximum `N`, when `p` declares one. Lookup's present result is `Reference<T>` in the `undefined` and `refused` modes and `Option<Reference<T>>` in the `empty` mode, in every case typed to the queried `T`. | Test (TC-198) |
+| FR-153-AC-9 | When `p` declares no maximum, `allInstances<T>(p)`'s result is exactly the unbounded `Set<Reference<T>>`, admits every selected count, and never returns `cardinality_out_of_bound`. | Test (TC-247) |
 
 ## Dependencies
 

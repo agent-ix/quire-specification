@@ -17,7 +17,7 @@ Construct, permute, compare and overflow sequence, set, bag and ordered-set valu
 
 Use the exact version-locked subject and inputs named by FR-144. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
-Select the `quire.value.complete/v1` definitions at revision `1-draft.1` by
+Select the `quire.value.complete/v1` definitions at revision `1-draft.2` by
 their exact DefinitionRefs in
 [`complete-value-lock.json`](../../proposals/quire-v1/definitions/complete-value-lock.json).
 Unless a row states limits, run it under limits large enough that no charge is

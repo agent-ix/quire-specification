@@ -17,7 +17,7 @@ Normalize inherited/redefined declarations and mutate identity, digest and rule-
 
 Use the exact version-locked subject and inputs named by FR-150. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
-Select `quire.model.complete/v1` at revision `1-draft.1` by its exact
+Select `quire.model.complete/v1` at revision `1-draft.2` by its exact
 DefinitionRefs in
 [`complete-model-lock.json`](../../proposals/quire-v1/definitions/complete-model-lock.json),
 which also pins the `quire.value.complete/v1` lock. Every fixture is a domain

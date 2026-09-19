@@ -153,6 +153,9 @@ criterion this ledger names, rather than a bare `FR-0NN-AC-M` tag spelling.
 | V1-EXPR-024 | Reject reflection, ambient extension lookup and unreviewed user callbacks. | Integrity | V1-008 | C | C | P | P | M | research #65 / QSL #1 |
 | V1-EXPR-025 | Reject mutation and I/O during declarative clause evaluation. | Integrity | V1-008, V1-039 | C | C | P | P | M | QSpec #1 / research #39 |
 | V1-EXPR-026 | Report resource exhaustion and undefined arithmetic without Boolean approximation. | Integrity | V1-005, V1-010 | C | C | C | P | M | QSL #1 / Contract IR #1 |
+| V1-EXPR-027 | Evaluate unbounded universal and existential quantification. | Required | V1-015 | C | M | M | M | M | QSL #189 / Contract IR #132 |
+| V1-EXPR-028 | Admit inductive verification obligations over unbounded and recursive domains. | Required | #113 | C | M | M | M | M | QSL #189 / Contract IR #132 |
+| V1-EXPR-029 | Admit compositional verification obligations over independently verified interface-connected components. | Required | #113 | C | M | M | M | M | QSL #189 / Contract IR #132 |
 
 ## 4. Temporal, clocks and observation
 
