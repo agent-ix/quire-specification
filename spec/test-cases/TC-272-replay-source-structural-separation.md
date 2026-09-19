@@ -54,7 +54,7 @@ runtime vectors as ordinary tests.
 | RS-04 | Compile-fail: pass an `Input`-arm result to each function parameter that accepts a backend-evidence verdict | Does not compile; snapshot names the rejected type | FR-197-AC-8 |
 | RS-05 | Compile-fail: store an `Input`-arm result in each field that holds a backend-evidence verdict, and return one from each function whose return type is one | Does not compile; snapshot names the rejected type | FR-197-AC-8 |
 | RS-06 | Compile-fail: build a backend-evidence verdict from an `Input`-arm result, from bare values, by struct literal, through `Default`, `From`, `TryFrom` and deserialization | Does not compile; the listing shows one construction path, taking a `Witness`-arm result | FR-197-AC-9, FR-197-AC-10 |
-| RS-07 | Enumerate the fields of the packet and of every replay-result type through their serialized form and a destructuring pattern with no `..` | No witness-backed field exists | FR-197-AC-11 |
+| RS-07 | Enumerate the fields of the packet and of every replay-result type through their serialized form and a destructuring pattern with no `..` | The field sets are exactly: `CounterexamplePacket` {`profile_revision`, `source`}; `Witness`-arm result {`profile_revision`, `witness`, `native`, `settlement`}; `Input`-arm result {`profile_revision`, `input`, `native`, `settlement`}; per-item replay result {`arm`}, the sum of the two arm results. No witness-backed field exists | FR-197-AC-11 |
 | RS-08 | Ask whether each packet is witness-backed | `true` for the `Witness` packet, `false` for the `Input` packet, both from a match on `ReplaySource` | FR-197-AC-12 |
 | RS-09 | Deserialize a packet that carries both a transcript and stored values | Refused with a typed cause before any replay runs | FR-197-AC-14 |
 | RS-10 | Deserialize a packet that carries neither a transcript nor stored values | Refused with a typed cause before any replay runs | FR-197-AC-14 |
@@ -64,13 +64,14 @@ runtime vectors as ordinary tests.
 | RS-14 | Replay the `Witness` packet through the public `Witness` replay entry with a recording QSL `replay` facade | The facade records one call whose decoded arguments are (8, 992); the entry's signature takes no executor parameter | FR-197-AC-16 |
 | RS-15 | Compile-fail: build a `Witness`-arm result that holds an `Input` source, and destructure each replay-result type with no `..` | Does not compile; no replay-result type has a `ReplaySource` field | FR-197-AC-17 |
 | RS-16 | Read back the `native-run-result/2` record of RS-02, and the same record with its arm member altered to `Witness` | The first decodes into the `Input`-arm result type; the altered record refuses with a typed cause; neither yields a backend-evidence verdict | FR-197-AC-18 |
+| RS-17 | Replay an `Input` packet with one assignment keyed by a `WireNodeId` that is no parameter, and another `Input` packet with one parameter left without a value | Each refused with a typed cause before execution; a recording executor records no call | FR-197-AC-20 |
 
 ## Expected Results
 
 RS-01 to RS-03, RS-08, RS-11, RS-12 and RS-14 return exactly the listed
 result. RS-04 to RS-06 and RS-15 fail to compile with the rejected type named,
 and each compile-pass control compiles; they are Compile evidence run under the
-test harness. RS-07 finds no witness-backed field. RS-09, RS-10 and RS-13
+test harness. RS-07 finds no witness-backed field. RS-09, RS-10, RS-13 and RS-17
 refuse with a typed cause before any replay runs. RS-16 decodes the unaltered
 record into the `Input`-arm result type and refuses the altered record with a
 typed cause.

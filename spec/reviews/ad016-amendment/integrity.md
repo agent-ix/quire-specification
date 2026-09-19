@@ -99,9 +99,11 @@ Evaluated against the tree committed with these records (fixes in `201b4a4`, plu
 | FND-004 | resolved | AD-016 arrow 7 Identity retained: "Obligation identity, node id" |
 | FND-005 | resolved | AD-016 Replay ownership, Replay result and Backend-evidence verdict rows; FR-197 Replay source bullet 1 |
 | FND-006 | resolved | TC-272 Test Procedure: `trybuild` cases with `.stderr` snapshots and compile-pass controls; closure taken from a public-API listing of the replay crates |
-| FND-007 | resolved | AD-016 Replay ownership, Replay result and Backend-evidence verdict rows; FR-197 Replay source bullet 1. The QSL-side wording follow-up: Deferred, owner QSL (ADR-013 maintainers): O-27's "parity carrier OPEN" cell and its "one typed per-item result" wording need a QSL follow-up; named in the PR body. IR `witness_backed` removal is QSL ADR-013 TK-04, recorded as OPEN in AD-016 arrow 7 Authority |
-| FND-008 | resolved | Both labels code-fonted in AD-016 and FR-197; FR-197 Replay source bullets name them as settlements of the per-arm result types |
+| FND-007 | partially resolved | AD-016 Replay result row: one per-item result whose member `arm` is the sum of the two arm types. Deferred, owner QSL #244: the ADR-013 O-27, QC-7 and QC-14 wording follow-up, named in the PR body. IR `witness_backed` removal is IR TK-04 (IR #144); AD-016 arrow 7 Authority states only that TK-04 (IR #144) implements this contract |
+| FND-008 | resolved | Both labels code-fonted; AD-016 Replay source states they are parity settlements under category success (O-16), not new categories |
 | FND-009 | resolved | FR-197-AC-14; TC-272 RS-09 (both arms), RS-10 (neither) |
 | FND-010 | resolved | TC-272 Fixture: IR `tests/kani_replay.rs` tc_042 witness transcript at `954c2f2`, decoded values (8, 992) |
 | FND-011 | resolved | FR-197 uses "the verification boundary" for serialize and replay and defines "the replay boundary" as its CG adapter plus QSL facade part |
 | FND-012 | resolved | AD-016 arrow 5 Identity retained: `OPEN — decided in QSL ADR-013 TK-07` for the FR-201 digest domain (QC-4); AD-016 seed vector: `obligationIdentitySha256` and `harnessSha256` both `OPEN — decided in QSL ADR-013 TK-05`, after TK-07 (QC-14) |
+
+Rows for FND-007, FND-008 were updated after the PR #140 review at `9e52406`.

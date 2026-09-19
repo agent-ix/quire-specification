@@ -98,10 +98,12 @@ Evaluated against the tree committed with these records (fixes in `201b4a4`, plu
 
 | Finding | Disposition | Evidence |
 | --- | --- | --- |
-| FND-001 | resolved | AD-016 Replay ownership, Replay result and Backend-evidence verdict rows; FR-197 Replay source bullet 1. QSL follow-up for O-27 and #231: Deferred, owner QSL (ADR-013 maintainers): O-27's "parity carrier OPEN" cell and its "one typed per-item result" wording need a QSL follow-up; named in the PR body. IR `witness_backed` removal is QSL ADR-013 TK-04, recorded as OPEN in AD-016 arrow 7 Authority |
+| FND-001 | partially resolved | AD-016 Replay ownership, Replay result and Backend-evidence verdict rows. Deferred, owner QSL #244: the ADR-013 O-27, QC-7 and QC-14 wording follow-up, named in the PR body. IR `witness_backed` removal is IR TK-04 (IR #144); AD-016 arrow 7 Authority states only that TK-04 (IR #144) implements this contract |
 | FND-002 | resolved | AD-016 arrow 7 Owner cites QSL ADR-011 E9 and QSL ADR-013 O-26, OQ-5 |
 | FND-003 | resolved | AD-016 seed vector: `obligationIdentitySha256` and `harnessSha256` both `OPEN — decided in QSL ADR-013 TK-05`, after TK-07 (QC-14) |
 | FND-004 | resolved | AD-016 arrow 7 Identity retained: "Obligation identity, node id" |
 | FND-005 | resolved | AD-016 arrow 6 note: `OPEN — decided in QSL ADR-013 TK-06` for the FR-331 result value of the refusal and unsupported rows (QC-9) |
 | FND-006 | resolved | FR-197-AC-14; TC-272 RS-09 (both arms), RS-10 (neither) |
-| FND-007 | deferred | One definition used in both files: "did not come from a backend transcript (a corpus counterexample)" (O-25). The `Input`-packet producer is not named by ADR-013; deferred to WP9 with the corpus loader, owner WP9 |
+| FND-007 | deferred | One definition in both files: "did not come from a backend transcript (a corpus counterexample)" (O-25). Deferred, owner WP9: AD-016 Packet row marks `OPEN — decided in WP9` for the component that builds `Input` packets |
+
+Rows for FND-001, FND-007 were updated after the PR #140 review at `9e52406`.

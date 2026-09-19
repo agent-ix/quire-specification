@@ -102,8 +102,10 @@ Evaluated against the tree committed with these records (fixes in `201b4a4`, plu
 | FND-003 | resolved | FR-197 Replay source reader bullet; FR-197-AC-18; TC-272 RS-16; AD-016 Replay source |
 | FND-004 | resolved | AD-016 Replay ownership, Replay result and Backend-evidence verdict rows; FR-197 Replay source bullet 1 |
 | FND-005 | resolved | FR-197 Replay envelope: a `Witness`-arm envelope's typed input values are the decode of its transcript and it stores no input beside it; backend run identity applies to the `Witness` arm |
-| FND-006 | resolved | FR-197 Replay envelope: a minimized `Witness`-arm revision carries the `Witness` arm of the backend re-run that preserved the failure and never inherits its parent's transcript; every accepted revision passed a backend re-run |
+| FND-006 | resolved | FR-197 Replay envelope: a minimized `Witness`-arm envelope is accepted only after native and backend replay preserve the failure, carries the `Witness` arm of that backend re-run and never inherits its parent's transcript; minimizing an `Input`-arm counterexample preserves the native verdict only and yields `Input`-arm revisions. FR-197-AC-5 (`Witness` arm) and FR-197-AC-19 (`Input` arm); TC-219 MR-01 (candidate with no backend re-run) and MR-02 |
 | FND-007 | resolved | AD-016 Replay ownership, Witness shape row: admission only through `Witness::parse` including on deserialization, private `transcript`, selected trimmed block, refusal of cover playback and of zero or several assertion blocks (O-25); implementer QSL ADR-013 TK-04 |
 | FND-008 | resolved | AD-016 Replay source `Input` row and FR-197 Replay source: canonical assignments keyed by parameter `WireNodeId` (QSL ADR-013 C-11) |
 | FND-009 | resolved | AD-016 arrow 7 Identity retained: "Obligation identity, node id" |
-| FND-010 | deferred | Owner QSL #213 S-2: AD-016 kernel row: `OPEN — decided in QSL #213 S-2` for the FR-201 digest domain of each new newtype and whether ADR-011 T-12 limits their minting |
+| FND-010 | partially resolved | AD-016 kernel row: `EffectiveId` domain `quire.model.effective-declaration/v1` (QSL ADR-013 QC-2), constructor called only by QSL `model` (O-05; ADR-011 T-12). Deferred, owner QSL #213: the FR-201 digest domain of `UniverseId`, `ObjectId`, `UnitId`, `VariantId` and `MemberId` and whether T-12 limits their minting, marked `OPEN — decided in QSL #213` |
+
+Rows for FND-010, FND-006 were updated after the PR #140 review at `9e52406`.
