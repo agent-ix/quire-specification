@@ -257,6 +257,8 @@ criterion this ledger names, rather than a bare `FR-0NN-AC-M` tag spelling.
 | V1-BACK-012 | Keep external source-language imports out of the native authority chain. | Integrity | V1-044 | C | P | P | P | M | QSpec #1 / research #40 |
 | V1-BACK-013 | Keep Java, Node and Electron runtimes out of production and qualification semantics. | Integrity | V1-044 | C | P | P | P | M | QSpec #1 / research #40 |
 | V1-BACK-014 | Refuse a backend request it cannot implement exactly; never approximate. | Integrity | V1-005, V1-006 | C | C | C | P | M | Contract IR #1 / codegen #1 |
+| V1-BACK-017 | Check that a decomposed requirement's admitted result entails its parent's admitted result through a registered implication backend; absent that backend, the claim settles `unsupported` with a warning naming the required capability. | Required | V1-037; prose census | C | M | M | M | M | Analyze #40 / QSL #185 |
+| V1-BACK-018 | Catalog exact lowering targets and the FR-290 capabilities each backend advertises for registration and negotiation. | Required | V1-006 | C | M | M | M | M | QSL #185 |
 
 ## 8. Evidence, qualification, tooling and ecosystem
 
@@ -278,6 +280,8 @@ criterion this ledger names, rather than a bare `FR-0NN-AC-M` tag spelling.
 | V1-TOOL-008 | Package reusable domain libraries with exact edition/profile/dependency compatibility. | Required | prose census | C | P | P | M | M | research #43 / QSpec #1 |
 | V1-TOOL-009 | Expose a WASM consumer with the same admitted semantics and refusal behavior. | Required | code-surface census | C | P | P | M | M | quire-wasm / research #39 |
 | V1-TOOL-010 | Expose code-analysis and source-generation consumers without granting them semantic authority. | Required | code-surface census | C | P | P | M | M | quire-analyze, quire-code-rs / research #39 |
+| V1-TOOL-011 | Confirm a superseding specification edition admits every result its prior edition admitted. | Required | V1-037; prose census | C | M | M | M | M | QSL #191 |
+| V1-TOOL-012 | Preserve every parent profile's refusal as its child profile's refusal under profile layering. | Required | V1-037; prose census | C | M | M | M | M | QSL #192 |
 
 ## Source census
 
