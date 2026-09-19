@@ -49,42 +49,65 @@ order. Missing required fields, extra fields, wrong arity and conflated
 absence/null refuse construction before evaluation.
 
 A recursive value definition is legal when every recursion edge crosses a
-named constructor field. A runtime value is a finite constructor tree/DAG; a
-back-edge in value containment refuses. Sharing an immutable contained value
-does not create object identity. Cycles are representable only by explicit
-typed `Reference<T>` values resolved in a closed object environment.
+named constructor field or union member payload position. A runtime value is a
+finite constructor tree/DAG; a back-edge in value containment refuses. Sharing
+an immutable contained value does not create object identity. Cycles are
+representable only by explicit typed `Reference<T>` values resolved in a
+closed object environment.
+
+A union value construction `U::m(e, ...)` names exactly one declared member
+`m` of `U` and supplies exactly its declared payload positions in order; a
+nullary member's construction is the bare qualified reference `U::m`, with no
+call syntax. Naming an undeclared member, supplying a payload for a nullary
+member, omitting the call for a member that declares a payload, and supplying
+an argument count other than a payload member's declared arity are each
+`refused { code: ill_typed, cause: type-mismatch }`, located at the
+originating expression, before evaluation.
 
 ## Declarations and identity
 
-Complete V1 declares composite value types only with the grammar's
-`record-decl` and `tuple-decl`. It has no variant, sum or tagged-union
-declaration; such a spelling is
-`refused { code: invalid_syntax, cause: unexpected-token }` at its first token. A record value expression
-`R { f: e, ... }` is the single constructor of record `R`, and a tuple value is
-the qualified call `T(e, ...)` of tuple `T`. An `alias-decl` names its target
-type and creates no declaration identity.
+Complete V1 declares composite value types with the grammar's `record-decl`,
+`tuple-decl` and `union-decl`. A `union-decl` names a closed set of members,
+each with an optional ordered payload shape. A record value expression
+`R { f: e, ... }` is the single constructor of record `R`, a tuple value is
+the qualified call
+`T(e, ...)` of tuple `T`, and a union value is the qualified reference or call
+`U::m` / `U::m(e, ...)` of one declared member `m` of union `U`, matching that
+member's declared payload arity. An `alias-decl` names its target type and
+creates no declaration identity.
 
-A record or tuple declaration identity is the opaque I04 node key of its
-`composite_type` node whose `semantic_form` is `record` or `tuple`. Complete V1
-defines no nominal identity preimage for these nodes, unlike the enum,
-dimension and declared-unit keys of FR-141, FR-142 and FR-322. The checked
-package producer assigns the key; it is unique within one checked semantic
-graph, and no reader or evaluator recomputes it. Two declarations are the same
-exactly when their keys are equal within one checked package. Equal qualified
-names, owners, field names, field types or shapes never make two keys equal,
-and one declaration has exactly one key. An imported declaration has the key
-that the importing package's graph assigns to the resolved FR-307 export, so
-every dependency path that resolves one export yields one key. No composite
-key is stable across checked packages. Mixing is impossible at check time,
-because every type named in one checked package, imported ones included,
-resolves to that package's own keys, so no source expression can denote a
-composite type of another package. Values meet evaluation only through runtime
-inputs and snapshots validated against the evaluating package. A supplied
-composite value whose declaration key is not a key of that package's graph is
+A record, tuple or union declaration identity is the opaque I04 node key of
+its `composite_type` node whose `semantic_form` is `record`, `tuple` or
+`union`. Complete V1 defines no nominal identity preimage for these nodes,
+unlike the enum, dimension and declared-unit keys of FR-141, FR-142 and
+FR-322. The checked package producer assigns the key; it is unique within one
+checked semantic graph, and no reader or evaluator recomputes it. Two
+declarations are the same exactly when their keys are equal within one checked
+package. Equal qualified names, owners, field/member names, field/member
+types or shapes never make two keys equal, and one declaration has exactly one
+key. An imported declaration has the key that the importing package's graph
+assigns to the resolved FR-307 export, so every dependency path that resolves
+one export yields one key. No composite key is stable across checked packages.
+Mixing is impossible at check time, because every type named in one checked
+package, imported ones included, resolves to that package's own keys, so no
+source expression can denote a composite type of another package. Values meet
+evaluation only through runtime inputs and snapshots validated against the
+evaluating package. A supplied composite value whose declaration key is not a
+key of that package's graph is
 `refused { code: invalid_runtime_input, cause: wrong-value-kind }` during input
 validation, before any evaluation or charge. A record field identity is
-(declaration key, field identifier), and a tuple position identity is
-(declaration key, zero-based position).
+(declaration key, field identifier), a tuple position identity is
+(declaration key, zero-based position), and a union member identity is
+(declaration key, member identifier).
+
+A union value carries exactly one active member and, when that member
+declares a payload, exactly one value for each of its declared positions in
+order; a nullary member carries no payload. Two union values of the same
+declared union compare structurally equal exactly when their active member is
+the same declared member and, if that member carries a payload, every
+positional value compares equal in declaration order; values of the same
+member shape from different declared unions never become interchangeable,
+exactly as for record and tuple declarations above.
 
 ## Field presence
 
@@ -113,24 +136,29 @@ without `?` is always admitted.
 ## Recursion rule
 
 The declaration containment graph has one edge from declaration `D` to each
-record or tuple declaration named anywhere in the type of a field or position
-of `D`, including through `Option`, `Sequence`, `Set`, `Bag` and `OrderedSet`.
-`Reference<T>` contributes no containment edge. An edge is *named* when it
-starts at a record field; the field's whole type, including every option or
-collection nested inside it, belongs to that field. A tuple position is not a
-named constructor field, so an edge that starts at a tuple position is unnamed
-even when an option or collection lies on it. An edge *escapes* when its path
-passes a `?` field, an `Option<...>` or a collection type whose minimum bound is
-`0`.
+record, tuple or union declaration named anywhere in the type of a field,
+position or member payload position of `D`, including through `Option`,
+`Sequence`, `Set`, `Bag` and `OrderedSet`. `Reference<T>` contributes no
+containment edge. An edge is *named* when it starts at a record field or a
+union member payload position; the field's or position's whole type,
+including every option or collection nested inside it, belongs to that field
+or position. A tuple position is not a named constructor field, so an edge
+that starts at a tuple position is unnamed even when an option or collection
+lies on it. An edge *escapes* when its path passes a `?` field, an
+`Option<...>` or a collection type whose minimum bound is `0`.
 
 Type checking admits the containment graph exactly when both the subgraph of
 unnamed edges and the subgraph of non-escaping edges are acyclic, self-edges
 included. Otherwise every declaration on an offending cycle is
 `refused { code: ill_typed }`, and the refusal names the cycle. Thus every
-recursion crosses a named field, and every recursion can end in a finite value.
-For example, `record List { head: Integer; tail: List?; }` is admitted,
-`record Loop { next: Loop; }` is refused because it does not escape, and
-`tuple Pair(Integer, Option<Pair>);` is refused because it is unnamed.
+recursion crosses a named field or union member payload position, and every
+recursion can end in a finite value. For example,
+`record List { head: Integer; tail: List?; }` is admitted,
+`record Loop { next: Loop; }` is refused because it does not escape,
+`tuple Pair(Integer, Option<Pair>);` is refused because it is unnamed, and
+`union Tree { Leaf, Node(Integer, Option<Tree>, Option<Tree>) }` is admitted on
+the same basis as `List`, because each recursive member payload position
+escapes through `Option`.
 
 ## Construction evaluation order
 
@@ -177,12 +205,14 @@ and equality.
 | FR-143-AC-3 | Cyclic value containment refuses, while bounded recursive construction and object-reference cycles remain distinct. | Test (TC-188) |
 | FR-143-AC-4 | Missing/extra record fields, wrong tuple arity and absence/null substitution each refuse at the originating component. | Test (TC-188) |
 | FR-143-AC-5 | Canonical field ordering does not make equal-shaped values of different declared record types equal. | Test (TC-188) |
-| FR-143-AC-6 | Declaration identity is the producer-assigned record/tuple node key compared only within one checked package, and a variant spelling is `invalid_syntax`. | Test (TC-188) |
+| FR-143-AC-6 | Declaration identity is the producer-assigned record/tuple/union node key compared only within one checked package. | Test (TC-188) |
 | FR-143-AC-7 | The recursion rule admits exactly the declaration graphs whose unnamed-edge and non-escaping-edge subgraphs are both acyclic, and names each refused cycle. | Test (TC-188) |
 | FR-143-AC-8 | Record fields are evaluated in declaration order, the first stopped field propagates its outcome with no later field evaluated or charged, and a completed construction charges `composite.result-retain`. | Test (TC-188) |
 | FR-143-AC-9 | `Reference<T>` admits only a model object type, and a runtime composite value from another checked package is `invalid_runtime_input` before evaluation. | Test (TC-188) |
 | FR-143-AC-10 | A `?` field projection is admitted only under `present` or `value`, an unguarded `value` is `undefined_expression` with cause `unproved-presence`, and any other use is `ill_typed` with cause `type-mismatch`. | Test (TC-188) |
 | FR-143-AC-11 | Under `quire.model.complete/v1`, a reference obtained by navigation, lookup or `allInstances` carries the object's most-specific effective type, and no other source creates a reference. | Test (TC-198) |
+| FR-143-AC-12 | A `union-decl` construction admits exactly one declared member with its declared payload arity, two union values compare equal exactly when their active member and payload positions match, and equal member shapes from different declared unions never become interchangeable. | Test (TC-262) |
+| FR-143-AC-13 | The recursion rule treats a union member payload position as a named edge on the same basis as a record field, so a union recursion is admitted exactly when it escapes. | Test (TC-263) |
 
 ## Dependencies
 

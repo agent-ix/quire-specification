@@ -176,7 +176,7 @@ construction and FR-145 conversion, and, in catalog revision `1-draft.3`,
 `ambiguous_dispatch` for FR-151 link-time dispatch selection. The same revision
 closes the causes of `foreign_reference` for FR-153 and FR-204. Catalog
 revision `1-draft.4` adds no code; it adds the eight checked-package operation
-variants, `stale-node-key` and `declaration-nominal-mismatch` of `invalid_package` and the checked-package use of `ambiguous-name`, typed by FR-272; `operator-ineligible` remains `ill_typed`. Matching remains catalog-qualified and exact.
+variants, `stale-node-key` and `declaration-nominal-mismatch` of `invalid_package` and the checked-package use of `ambiguous-name`, typed by FR-272; `operator-ineligible` remains `ill_typed`. The same revision adds `unproved-exhaustiveness` of `undefined_expression`, FR-146's cause for an unproved `case` exhaustiveness obligation over a `union-decl` scrutinee, typed by FR-272. Matching remains catalog-qualified and exact.
 
 ## Dependencies
 

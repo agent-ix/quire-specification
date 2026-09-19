@@ -13,6 +13,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-145
     type: references
+  - target: ix://agent-ix/quire-specification/FR-143
+    type: references
 ---
 
 # FR-146: Check total pure functions and recursion
@@ -51,13 +53,43 @@ prove that the substituted callee tuple is lexicographically smaller than the
 caller's tuple; this rule also applies across mutual recursion.
 
 Totality is path-sensitive: every conditional path must return the declared
-result, and each partial operation must have a proved precondition. The
-Complete-V1 expression grammar has no pattern-matching or destructuring form,
-and every `if` has an `else`, so exhaustiveness is structural. Purity and typing are checked before
+result, and each partial operation must have a proved precondition. Every `if`
+has an `else`, so `if` exhaustiveness is structural. The Complete-V1
+expression grammar's only pattern-matching form is `case` over a declared
+`union`; its exhaustiveness is the proved obligation below. Purity and typing
+are checked before
 reachability, so an unreachable impure or ill-typed branch is still rejected.
 Evaluation fuel is an execution resource rather than a semantic termination
 argument: exhausting it returns `incomplete`, never a value or a proof of
 nontermination.
+
+## Case exhaustiveness
+
+A `case` expression names a scrutinee expression and one or more `case-arm`
+entries, each naming a member of exactly one declared `union`. An arm's name
+resolves against the scrutinee's declared union, so a bare member name names
+that union's member and a `U::m` spelling names the same member explicitly.
+The checker resolves the scrutinee's static type to its declared union `U` and
+checks each arm's member against `U` exactly as a union value construction is
+checked under FR-143, then checks the following obligations in this order,
+reporting the first failure: `duplicate-arm` (two arms name the same member of
+`U`); `unknown-member` (an arm's name does not resolve to a member
+of `U`); `arm-arity` (an arm's bound-identifier count differs from its named
+member's declared payload arity); then `missing-arm` (the arm set is a strict
+subset of `U`'s declared member set). A failure is
+`refused { code: undefined_expression, cause: unproved-exhaustiveness }`
+(revision `1-draft.4`), naming `U`'s declaration identity, the case
+expression's arm set and the failed obligation. `undefined_expression` is the
+FR-271 code for unproved definedness, and `unproved-exhaustiveness` is its
+catalogued cause for case-arm coverage, exactly as `unproved-decrease` is its
+catalogued cause for termination.
+
+An admitted `case` evaluates the arm whose member matches the scrutinee
+value's active member, binds that member's payload positionally to the arm's
+bound identifiers exactly as a union value's payload is read under FR-143, and
+evaluates that arm's body. Every arm's body is checked against the `case`
+expression's declared result type, exactly as every `if` branch is checked
+against its shared result type.
 
 ## Calls, measures and definedness facts
 
@@ -271,6 +303,8 @@ Complete-V1 outcome.
 | FR-146-AC-7 | A missing, mismatched or undecreasing measure in a recursive component is `undefined_expression` with cause `unproved-decrease`, a non-recursive function needs no measure, and a call to a non-function declaration or an undeclared name refuses with its named code. | Test (TC-191) |
 | FR-146-AC-8 | Definedness and decrease proofs admit exactly the closed measure elements, guard facts, interval rules and decrease forms, `deref` and IEEE-to-`Rational` conversion have no body obligation, a duplicate function name is `ambiguous_declaration`, and a checking bound exceeded is `resource_exhausted`. | Test (TC-191) |
 | FR-146-AC-9 | Rational `+`, `-`, `*`, `/` and unary `-` range proofs use exactly the numerator and denominator interval rules, a rational divisor whose numerator interval contains zero is `unproved-nonzero` without a nonzero fact, and every quantity division in a linked body is `unproved-nonzero`. | Test (TC-191) |
+| FR-146-AC-10 | A `case` expression's arm set is checked against its scrutinee's declared union in order — `duplicate-arm`, `unknown-member`, `arm-arity`, `missing-arm` — and the first violated obligation is `undefined_expression` with cause `unproved-exhaustiveness`, naming the union, the arm set and the failed obligation. | Test (TC-264) |
+| FR-146-AC-11 | An admitted `case` evaluates the arm matching the scrutinee's active member, binds its payload positionally to the arm's bound identifiers, and every arm's body is checked against the `case` expression's declared result type. | Test (TC-265) |
 
 ## Dependencies
 

@@ -50,7 +50,7 @@ this inventory. `Int` is a Plan-008 code-surface census. `Qual` is uniformly
 `M`. It records that every capability lacks release qualification evidence:
 each row's qualification ticket in the
 [ticket manifest](v1-delivery-ticket-manifest.md) is one of eight open lane
-tickets — QSL #123 (89 rows), Protocol #82 (34), Contract IR #101 (16), QObs
+tickets — QSL #123 (92 rows), Protocol #82 (34), Contract IR #101 (16), QObs
 #26 (14), Research #78 (12), TL Syntax #74 (11), Verification #38 (7) and
 Codegen #50 (5) —
 and `TC-231`, the aggregate qualification corpus verifying `FR-311`, carries
@@ -119,6 +119,9 @@ criterion this ledger names, rather than a bare `FR-0NN-AC-M` tag spelling.
 | V1-TYPE-029 | Consume parts, ports, interfaces, connections and allocations as typed model references. | Required | V1-019; prose census | C | M | M | M | M | research #66 / QSL #120 |
 | V1-TYPE-030 | Reject implicit numeric, collection, record and reference casts. | Integrity | V1-012, V1-016, V1-018; reserved `cast` | C | P | P | P | M | research #66 / QSL #1 |
 | V1-TYPE-031 | Represent mathematical unbounded integers while requiring finite domains only from bounded consumers. | Required | V1-011 | C | M | M | M | M | research #66 / QSL #1 |
+| V1-TYPE-032 | Represent closed sum types through declared union members with typed payload arity and member-qualified equality. | Required | prose census; reserved `union` | C | M | M | M | M | QSpec #115 / QSL #187 |
+| V1-TYPE-033 | Admit union member payload recursion exactly when it escapes, on the same named-edge basis as record and tuple fields. | Required | prose census | C | M | M | M | M | QSpec #115 / QSL #187 |
+| V1-TYPE-034 | Check a `case` expression's arm set for duplicate, unknown, mis-arity and missing members against its scrutinee's declared union before evaluation. | Required | prose census | C | M | M | M | M | QSpec #115 / QSL #187 |
 
 ## 3. Expressions, queries and contracts
 
