@@ -89,13 +89,15 @@ Evaluated against the tree committed with these records (fixes in `201b4a4`, plu
 | Finding | Disposition | Evidence |
 | --- | --- | --- |
 | FND-001 | resolved | FR-197 Replay source disagreement bullet; FR-197-AC-13; TC-272 RS-11 (`Witness`), RS-12 (`Input`); AD-016 Replay source last paragraph; TC-272 RS-14 records the facade call with decoded arguments (8, 992) |
-| FND-002 | resolved | FR-197-AC-15; TC-272 RS-13 (refused transcripts and a compile-fail `Witness` literal); AD-016 Replay ownership, Witness shape row: admission only through `Witness::parse` including on deserialization, private `transcript`, selected trimmed block, refusal of cover playback and of zero or several assertion blocks (O-25); implementer QSL ADR-013 TK-04. Binding a parsed transcript to a recorded backend run: Deferred, owner WP9: AD-016 arrow 7 Refusal cell `OPEN — decided in WP9` records the check that the transcript's harness symbol equals the arrow-5 harness of the packet's obligation identity. Binding the verdict to a backend run identity is carried by the `Witness`-arm envelope's backend run identity (FR-197 Replay envelope) |
+| FND-002 | partially resolved | FR-197 Replay source SHALL "A `Witness` SHALL be constructed only through `Witness::parse`, including on deserialization"; FR-197-AC-15; TC-272 RS-13 (refused transcripts and a compile-fail `Witness` literal); AD-016 Witness shape row (O-25, TK-04 (IR #144)). Deferred, owner WP9: binding a transcript to a recorded backend run, marked `OPEN — decided in WP9` in the AD-016 arrow 7 Refusal cell; listed in the PR body deferrals |
 | FND-003 | resolved | FR-197 Replay source: the public `Witness` replay entry calls the QSL `replay` facade and takes no caller-supplied executor; FR-197-AC-16; TC-272 RS-14 |
 | FND-004 | resolved | TC-272 Test Procedure: `trybuild` cases with `.stderr` snapshots and compile-pass controls; closure taken from a public-API listing of the replay crates |
 | FND-005 | resolved | TC-272 Test Procedure: `trybuild` cases with `.stderr` snapshots and compile-pass controls; closure taken from a public-API listing of the replay crates |
 | FND-006 | resolved | FR-197 Replay source: the backend-evidence verdict type has exactly one construction path, which takes an agreeing `Witness`-arm result; FR-197-AC-9, FR-197-AC-10 (no public field, `Deserialize`, `Default`, `From`, `TryFrom`); TC-272 RS-06; AD-016 Backend-evidence verdict row |
-| FND-007 | resolved | FR-197 Replay source defines a witness-backed field as any stored value, under any name, that states whether a backend witness exists; FR-197-AC-11; TC-272 RS-07 |
+| FND-007 | resolved | FR-197 defines a witness-backed field; FR-197-AC-11; TC-272 RS-07 lists the exact allowed field set of the packet, both arm results and the per-item result |
 | FND-008 | resolved | FR-197-AC-12 rests on FR-197-AC-11 (no stored field) and FR-197-AC-17 (no `ReplaySource` in results); TC-272 RS-07, RS-08, RS-15 |
 | FND-009 | resolved | FR-197-AC-14; TC-272 RS-09 (both arms), RS-10 (neither) |
 | FND-010 | resolved | TC-272 Fixture: IR `tests/kani_replay.rs` tc_042 witness transcript at `954c2f2`, decoded values (8, 992) |
 | FND-011 | resolved | Kept `Test`; TC-272 Expected Results states RS-04 to RS-06 and RS-15 are Compile evidence run under the test harness |
+
+Rows for FND-002, FND-007 were updated after the PR #140 review at `9e52406`.

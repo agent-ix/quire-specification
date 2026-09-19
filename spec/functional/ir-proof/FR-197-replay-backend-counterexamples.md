@@ -67,10 +67,12 @@ Integers and exact numbers serialize losslessly; IEEE values use width and bits;
 sets/bags use canonical semantic ordering without erasing occurrence identity.
 Native replay first validates every value against the original domain, then
 executes the same claim without backend shortcuts. A minimized envelope is a
-new revision linked to its parent and is accepted only after native and backend
-replay preserve the failure. A minimized `Witness`-arm revision carries the
-`Witness` arm of the backend re-run that preserved the failure; it never
-inherits its parent's transcript.
+new revision linked to its parent. A minimized `Witness`-arm envelope is
+accepted only after native and backend replay preserve the failure, and it
+carries the `Witness` arm of the backend re-run that preserved the failure; it
+never inherits its parent's transcript. Minimizing an `Input`-arm
+counterexample preserves the native verdict only and yields `Input`-arm
+revisions.
 
 ## Replay source
 
@@ -111,6 +113,11 @@ carrier of that fact.
   with a typed cause before any replay runs.
 - The public `Witness` replay entry SHALL call the QSL `replay` facade and
   SHALL take no caller-supplied executor.
+- A `Witness` SHALL be constructed only through `Witness::parse`, including on
+  deserialization.
+- When an `Input` packet holds a value keyed to no parameter, or a parameter
+  has no value, the replay boundary SHALL refuse it with a typed cause before
+  execution.
 
 An `Input` replay reproduces an answer supplied with its input, so its
 agreement shows that native execution matches the recorded disposition, and a
@@ -125,7 +132,7 @@ enforces this.
 | FR-197-AC-2 | Kani counterexamples replay through native execution with the same verdict on the bounded corpus. | Test (TC-219) |
 | FR-197-AC-3 | Invalid-domain, decode or verdict mismatch is retained as parity failure and never rewritten as clause success/failure. | Test (TC-219) |
 | FR-197-AC-4 | Every complete-V1 value and execution identity round-trips through the canonical counterexample envelope without narrowing. | Test (TC-219) |
-| FR-197-AC-5 | Minimization creates linked revisions and retains only candidates that preserve domain validity and both replay verdicts. | Test (TC-219) |
+| FR-197-AC-5 | Minimization of a `Witness`-arm counterexample creates linked revisions and retains only candidates that preserve domain validity and both replay verdicts. | Test (TC-219) |
 | FR-197-AC-6 | An agreeing `Input`-arm replay returns a `reproduced-without-witness` result. | Test (TC-272) |
 | FR-197-AC-7 | An agreeing `Witness`-arm replay returns a `reproduced-with-evaluated-witness` result. | Test (TC-272) |
 | FR-197-AC-8 | A `reproduced-without-witness` result fails to compile in every parameter, field and return position that accepts a backend-evidence verdict. | Test (TC-272) |
@@ -139,6 +146,8 @@ enforces this.
 | FR-197-AC-16 | The public `Witness` replay entry calls the QSL `replay` facade and takes no caller-supplied executor. | Test (TC-272) |
 | FR-197-AC-17 | No replay-result type holds a `ReplaySource`, so a `Witness`-arm result holding an `Input` source cannot be built. | Test (TC-272) |
 | FR-197-AC-18 | A `native-run-result/2` record of an `Input` replay decodes only into the `Input`-arm result type and yields no backend-evidence verdict. | Test (TC-272) |
+| FR-197-AC-19 | Minimization of an `Input`-arm counterexample creates linked `Input`-arm revisions and retains only candidates that preserve domain validity and the native verdict. | Test (TC-219) |
+| FR-197-AC-20 | An `Input` packet with a value keyed to no parameter, or with a parameter that has no value, is refused with a typed cause before execution. | Test (TC-272) |
 
 ## Dependencies
 

@@ -132,4 +132,6 @@ Evaluated against the tree committed with these records (fixes in `201b4a4`, plu
 | FND-005 | accepted | Both edges are `references`, not ordering edges: AD-016 names FR-197 as the home of the replay-source ACs and FR-197 cites AD-016 arrow 7 for the executor. Kept |
 | FND-006 | resolved | TC-272 Fixture: IR `tests/kani_replay.rs` tc_042 witness transcript at `954c2f2`, decoded values (8, 992) |
 | FND-007 | resolved | AD-016 arrow 5 Identity retained: `OPEN — decided in QSL ADR-013 TK-07` for the FR-201 digest domain (QC-4) |
-| FND-008 | resolved | AD-016 arrow 7 Authority: `OPEN — decided in QSL ADR-013 TK-04` names IR `replay_counterexample`, `replay_with_native_runtime` and the `witness_backed` fields at `954c2f2` |
+| FND-008 | resolved | AD-016 arrow 7 Authority: "IR TK-04 (IR #144) implements this contract." The IR facts at `954c2f2` (`replay_counterexample`, `replay_with_native_runtime`, the `witness_backed` fields) are stated in the PR #140 body, not in the AD |
+
+Rows for FND-008 were updated after the PR #140 review at `9e52406`.

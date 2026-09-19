@@ -108,11 +108,13 @@ Evaluated against the tree committed with these records (fixes in `201b4a4`, plu
 | --- | --- | --- |
 | FND-001 | resolved | AD-016 Replay ownership, Replay result and Backend-evidence verdict rows; FR-197 Replay source bullet 1 |
 | FND-002 | resolved | AD-016 Replay ownership, Witness shape row: admission only through `Witness::parse` including on deserialization, private `transcript`, selected trimmed block, refusal of cover playback and of zero or several assertion blocks (O-25); implementer QSL ADR-013 TK-04 |
-| FND-003 | resolved | FR-197 Description, Inputs and Replay envelope cover both arms; `Input` defined as "did not come from a backend transcript (a corpus counterexample)" in AD-016 Replay source and FR-197 |
+| FND-003 | resolved | FR-197 Description, Inputs and Replay envelope cover both arms; `Input` defined as "did not come from a backend transcript (a corpus counterexample)". FR-197 Replay envelope: a minimized `Witness`-arm envelope is accepted only after native and backend replay preserve the failure, carries the `Witness` arm of that backend re-run and never inherits its parent's transcript; minimizing an `Input`-arm counterexample preserves the native verdict only and yields `Input`-arm revisions. FR-197-AC-5 (`Witness` arm) and FR-197-AC-19 (`Input` arm); TC-219 MR-01 (candidate with no backend re-run) and MR-02 |
 | FND-004 | resolved | FR-197-AC-14; TC-272 RS-09 (both arms), RS-10 (neither) |
 | FND-005 | resolved | TC-272 Fixture: IR `tests/kani_replay.rs` tc_042 witness transcript at `954c2f2`, decoded values (8, 992) |
 | FND-006 | resolved | TC-272 Test Procedure: `trybuild` cases with `.stderr` snapshots and compile-pass controls; closure taken from a public-API listing of the replay crates |
 | FND-007 | resolved | AD-016 arrow 7 Identity retained: "Obligation identity, node id" |
-| FND-008 | resolved | AD-016 arrow 5 Identity retained: `OPEN — decided in QSL ADR-013 TK-07` for the FR-201 digest domain (QC-4); AD-016 seed vector: `obligationIdentitySha256` and `harnessSha256` both `OPEN — decided in QSL ADR-013 TK-05`, after TK-07 (QC-14) |
+| FND-008 | resolved | AD-016 arrow 5: `OPEN — decided in QSL ADR-013 TK-07` for the FR-201 digest domain (QC-4); seed vector `obligationIdentitySha256` and `harnessSha256` both `OPEN — decided in QSL ADR-013 TK-05` (QC-14). The OPEN-marker rule allows only `QSL ADR-013 TK-<nn>` and `QSL #<n>` forms, and the markers follow it |
 | FND-009 | resolved | AD-016 Replay source: "Type structure carries the rule"; FR-197 Replay source closing paragraph stated positively |
-| FND-010 | deferred | Deferred, owner QSL (ADR-013 maintainers): O-27's "parity carrier OPEN" cell and its "one typed per-item result" wording need a QSL follow-up; named in the PR body. IR `witness_backed` removal is QSL ADR-013 TK-04, recorded as OPEN in AD-016 arrow 7 Authority |
+| FND-010 | deferred | Deferred, owner QSL #244: the ADR-013 O-27, QC-7 and QC-14 wording follow-up, named in the PR body. IR `witness_backed` removal is IR TK-04 (IR #144); AD-016 arrow 7 Authority states only that TK-04 (IR #144) implements this contract |
+
+Rows for FND-003, FND-008, FND-010 were updated after the PR #140 review at `9e52406`.
