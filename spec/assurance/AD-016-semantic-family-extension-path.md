@@ -537,7 +537,7 @@ predictions, re-walked on landed code in WP11.**
 | Files | QSL source map only |
 | Crates | `quire-spec-language` |
 | Repos | QSL |
-| Conversions | Node id → nested span at replay (existing) |
+| Conversions | Occurrence key → nested span at replay (existing) |
 | Tests | Seeded counterexample replays with identical verdict and resolved nested span |
 
 #### 7. Add a frame obligation with typed subject ABI and modification domain
