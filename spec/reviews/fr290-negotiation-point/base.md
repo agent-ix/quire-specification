@@ -27,11 +27,15 @@ QSL #229, the ticket that #190 was split into.
 negotiation point and dispositions exactly as AD-016 does, and it leaves the
 reading of older four-kind QSL artifacts to QSL #229.
 
+## Review set
+
+Agent A selected base and dependency. The diff adds no FR, AC, TC or inventory id and no new obligation; it aligns FR-290 and AD-010 wording with accepted AD-016. Coverage, testability, formal, consistency and architecture analyses have no new subject in this diff.
+
 ## Findings
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | low | AD-016 spells the disposition `invalid-request` in its terminal-disposition rule and `invalid_request` in its CG capability-point row. FR-290 and AD-010 use the terminal-rule spelling `invalid-request`. AD-016 is accepted and not reopened here. | AD-016; FR-290; AD-010 |
+| FND-001 | low | Resolved: AD-016 spells the disposition `invalid-request` in its terminal-disposition rule and `invalid_request` in its CG capability-point row. FR-290 and AD-010 use the terminal-rule spelling `invalid-request`. AD-016 is accepted and not reopened here. | AD-016; FR-290; AD-010 |
 
 ## Checklist results
 
@@ -48,5 +52,5 @@ reading of older four-kind QSL artifacts to QSL #229.
 - Reviewed artifacts: `spec/objects/protocol/FR-290-protocol-claim-kind.md`,
   `spec/assurance/AD-010-target-neutral-ir-backends.md` and
   `spec/assurance/AD-016-semantic-family-extension-path.md`.
-- `quire validate --strict --summary` on both changed files reported zero
+- `quire validate --strict --summary` on all four changed files reported zero
   findings.

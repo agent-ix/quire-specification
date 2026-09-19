@@ -19,12 +19,16 @@ that the dependent tickets cite. It points QSL-side alignment at QSL #229,
 the ticket #185 depends on. It takes nothing from contract-ir or
 quire-analyze.
 
+## Review set
+
+Agent A selected base and dependency. The diff adds no FR, AC, TC or inventory id and no new obligation; it aligns FR-290 and AD-010 wording with accepted AD-016. Coverage, testability, formal, consistency and architecture analyses have no new subject in this diff.
+
 ## Findings
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | medium | Planned QSL work: QSL `main` has four `Capability` kinds (`requests.rs`), while FR-290 has six. QSL #229 owns the alignment to FR-290, including how older four-kind artifacts are read. This spec does not decide that question. | FR-290; QSL #229; QSL #185 |
-| FND-002 | low | The FR-036 absence-path wording is owned by contract-ir and tracked there as contract-ir #131. #116 lists it as out of scope, so this repo does not edit it. | contract-ir #131; FR-036 |
+| FND-001 | medium | Resolved: Planned QSL work: QSL `main` has four `Capability` kinds (`requests.rs`), while FR-290 has six. QSL #229 owns the alignment to FR-290, including how older four-kind artifacts are read. This spec does not decide that question. | FR-290; QSL #229; QSL #185 |
+| FND-002 | low | Resolved: The FR-036 absence-path wording is owned by contract-ir and tracked there as contract-ir #131. #116 lists it as out of scope, so this repo does not edit it. | contract-ir #131; FR-036 |
 
 ## Dependency allocation
 
