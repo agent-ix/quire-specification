@@ -49,6 +49,7 @@ The initial correspondence shall use this support table:
 | Timestamped-event finite-window | Current TL profiles | Unsupported; no index conversion is inferred |
 | Any bounded past operator with origin-complete history | `tl-syntax.past-operators/v1`, `mltl.origin-complete-history/v1`, and the selected position-history/past-evaluator contracts | Supported when every bridge premise below holds |
 | Finite-window future semantics | `mltl.closed-trace/v1` | Unsupported because TL extends atoms false beyond closure |
+| Infinite-trace unbounded property (no interval bound) | No TL target | Unsupported; there is no bounded TL formula to generate. [FR-161](FR-161-analyze-infinite-trace-properties.md) analyzes the request natively instead of lowering it. |
 
 For a supported mapping, the bridge shall preserve the native source
 digest/revision and exact clause/expression span; clause/requirement identity;
@@ -102,6 +103,7 @@ correspondence.
 | FR-095-AC-6 | Fixed-sample lowering retains epoch/period/unit, reports an absent runtime sample as incomplete, and refuses a changed period or event-count reinterpretation even where the TL formula bytes match. | Test (TC-113) |
 | FR-095-AC-7 | A supported TL result is accepted only when the correspondence record preserves assessment execution, both progress/closure axes, settlement basis, exact decision support, completeness and supersession; mutating or omitting one axis cannot yield a healthy native result. | Test (TC-117) |
 | FR-095-AC-8 | Source/bridge definition digests use `raw-artifact-digest`; every generated artifact identity is accepted by its target owner reader; the bridge-owned correspondence reference changes with every preserved-key mutation and never substitutes for an owner identity. | Test (TC-117) |
+| FR-095-AC-9 | An infinite-trace unbounded-property request returns a typed unsupported mapping naming the absent TL target without emitting a substitute formula. | Test (TC-200) |
 
 ## Dependencies
 

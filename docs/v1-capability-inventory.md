@@ -178,6 +178,9 @@ criterion this ledger names, rather than a bare `FR-0NN-AC-M` tag spelling.
 | V1-TEMP-021 | Refuse an infinite-trace or unbounded-liveness proof claim from finite evidence. | Integrity | V1-027 | C | P | P | P | M | research #37 / Verification #1 |
 | V1-TEMP-022 | Refuse clock-unit, boundary and false-extension correspondence mismatches. | Integrity | V1-022, V1-028 | C | C | P | P | M | Contract IR #52 / research #37 |
 | V1-TEMP-023 | Author and soundly analyze unbounded temporal properties under an explicit infinite-trace semantic profile. | Required | V1-027; prose census | C | M | M | M | M | TL owners / research #42 |
+| V1-TEMP-024 | Admit the unbounded (no interval bound) temporal operator grammar edition only under the selected infinite-trace profile. | Required | V1-027; prose census | C | M | M | M | M | QSL #188 / TL owners |
+| V1-TEMP-025 | Map infinite-trace proved/refuted/inconclusive/unsupported/failed results onto the existing execution, truth and settlement-basis vocabulary. | Required | V1-027; prose census | C | M | M | M | M | QSL #188 / TL owners |
+| V1-TEMP-026 | Settle an infinite-trace claim with no registered liveness backend as unsupported with a warning naming the missing capability, never a hold or blocker. | Integrity | V1-027; prose census | C | M | M | M | M | QSL #188 / TL owners |
 
 ## 5. Protocol and choreography
 

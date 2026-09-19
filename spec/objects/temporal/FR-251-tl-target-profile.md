@@ -33,9 +33,12 @@ FR-095 additionally records "The same TL profiles" as the target for
 fixed-sample false-extension bounded future core, "Supported only with one total
 valuation per required sample and retained epoch/period/unit correspondence",
 and "Current TL profiles" as the target of the two unsupported rows for
-timestamped-event finite-window and for "Any bounded past operator". No
-requirement enumerates any TL profile identity beyond the two labels above, so
-no further member is supplied here.
+timestamped-event finite-window and for "Any bounded past operator". FR-095
+also records "No TL target" for an infinite-trace unbounded property, resolving
+to an absent target rather than to either labeled member; FR-161 analyzes that
+request natively instead of lowering it. No requirement enumerates any TL
+profile identity beyond the two labels above, so no further member is supplied
+here.
 
 These labels are **not** members of
 [FR-250](FR-250-temporal-semantic-profile.md). A native clause never selects one
@@ -85,7 +88,7 @@ equivalence claim."
 | --- | --- | --- |
 | FR-251-AC-1 | Each member's value equals the exact label string in the table. | Inspection |
 | FR-251-AC-2 | No member of this vocabulary is accepted where an authored temporal profile identity is required. | Analysis |
-| FR-251-AC-3 | A timestamped-event or bounded-past request resolves to an absent target rather than to a member. | Analysis |
+| FR-251-AC-3 | A timestamped-event, bounded-past or infinite-trace request resolves to an absent target rather than to a member. | Analysis |
 | FR-251-AC-4 | Equal TL formula bytes under different bridge definition identities compare unequal. | Analysis |
 
 ## Dependencies

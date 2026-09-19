@@ -545,6 +545,38 @@ bounds parse but refuse semantic admission. Large valid bounds still require
 resource admission. A rational sample period belongs to the clock binding,
 not to an implicit decimal interval conversion.
 
+### Unbounded temporal operator grammar edition (infinite-trace)
+
+The refusal above governs the bracketed `interval` production; it does not
+withdraw a wholly separate production. This edition adds one, admitted only
+under an explicitly selected `quire.temporal.infinite-trace/v1` profile
+([FR-090](../../spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md),
+[FR-250](../../spec/objects/temporal/FR-250-temporal-semantic-profile.md)):
+
+```ebnf
+temporal-unary-unbounded = 'not', temporal-unary-unbounded
+                          | ('eventually' | 'always' | 'once' | 'historically'),
+                            temporal-unary-unbounded
+                          | temporal-primary ;
+temporal-relation-unbounded = temporal-unary-unbounded,
+                    [ ('until' | 'release' | 'since' | 'triggered'),
+                      temporal-unary-unbounded ] ;
+```
+
+These productions reuse the existing reserved keywords; no new keyword is
+added. They carry no `interval` token at all, bounded or `*`-bounded; the
+operand that follows `eventually`, `always`, `once`, `historically`, `until`,
+`release`, `since` or `triggered` is another unbounded operand, never a bracket
+pair. Under `0-draft` and under `1-draft` without the infinite-trace profile
+selected, this spelling is not a temporal operator and remains a syntax error;
+selecting the profile admits it without reinterpreting the bracketed form or
+any historical `0-draft` bytes, per the edition rule in
+[AD-003](../../spec/assurance/AD-003-native-quire-language-charter.md).
+[AD-012](../../spec/assurance/AD-012-unbounded-temporal-operator-grammar.md)
+accepts this edition; [FR-048](../../spec/functional/foundation/FR-048-bind-native-temporal-syntax.md)
+admits it at the frontend and [FR-161](../../spec/functional/temporal/FR-161-analyze-infinite-trace-properties.md)
+analyzes the resulting unbounded formula.
+
 `holds(expr)` is one typed native Boolean leaf at the temporal evaluation
 instant. Its argument uses the **same** `expr` production, name resolver, type
 checker and declared-domain definedness rules as a state/predicate expression.

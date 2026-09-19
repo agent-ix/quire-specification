@@ -83,7 +83,7 @@ capable backend.
 | Complete value and expression system | `quire.value.complete/v1` requiring state core | Complete scalar, record, recursive-value, collection, function and equality semantics under AD-005 |
 | Complete model system | `quire.model.complete/v1` requiring state graph and complete values | Conformance, redefinition, dispatch and systems-model structure under AD-006 |
 | Temporal facet and roots | `quire.temporal.bounded-facet/v1` plus event-position, fixed-sample and timestamped-window roots | Clock/history/progress semantics under FS04; TL is a derived target |
-| Infinite-trace temporal facet | `quire.temporal.infinite-trace/v1` | Unbounded property meaning and sound-provider contract under AD-002/009 |
+| Infinite-trace temporal facet | `quire.temporal.infinite-trace/v1` | Unbounded property meaning and sound-provider contract under AD-002/009; its unbounded temporal operator grammar edition under AD-012 |
 | Protocol | `quire.protocol.complete/v1` | Static/dynamic choreography, compensation, conformance, projection, realizability, composition and refinement under AD-007 |
 | Observation | `quire.observation.binding/v1`, `.progress/v1` and `.range/v1` | Correlation, completeness, progress and range authority under the observation owner |
 | Runtime, method and backend facets | `quire.runtime.composed/v1`, `quire.verification.plan/v1`, `quire.contract-ir.complete/v1` | Execution, workflow, analysis and exact backend contracts under AD-008/009/010 |
@@ -107,7 +107,7 @@ that definition.
 | Bounded future/past temporal syntax | Temporal profiles only; exact clock/root selection required | Native syntax and compiled-package production are merged | TL lowering/evaluation is limited to exact reviewed correspondences; unmatched clocks/history/operators refuse |
 | Static/dynamic choreography, compensation and protocol analyses | Complete protocol profile; business attempts, receipts, effects and recovery remain distinct | Finite syntax/package support is merged; dynamic/analyzer work remains planned | No evaluator executes business actions; each analyzer negotiates exact capability |
 | External OCL, SysML and FRETish forms | Output mappings only | Not source frontends | Each mapping reports preserved, conditional, unrepresented or refused meaning; no approximation |
-| Unbounded temporal properties, IEEE float, explicit conversion and proved recursion | Admitted by their exact complete-V1 facets | No blanket implementation claim; delivery is tracked per capability | Unsupported selected frontend/backend capabilities refuse explicitly without narrowing V1 |
+| Unbounded temporal properties, IEEE float, explicit conversion and proved recursion | Admitted by their exact complete-V1 facets; the unbounded temporal operator grammar edition is accepted by AD-012 | No blanket implementation claim; delivery is tracked per capability | Unsupported selected frontend/backend capabilities refuse explicitly without narrowing V1 |
 | Reflection, evaluator I/O, ambient stores and implicit lossy conversion | Integrity exclusions, not deferred product features | Not admitted | Explicit located refusal under every V1 facet |
 
 ### Required diagnostic dispositions
@@ -136,6 +136,13 @@ invalid, unsupported, unimplemented, incomplete and logically false outcomes.
 | Backend or analyzer | Advertise support for exact checked subjects and requested claims; unsupported requests preserve the source subject. |
 | Output mapping | Version the mapping and report loss/correspondence per obligation; generated text remains non-authoritative. |
 | Diagnostic interpretation | Version code/cause interpretation separately from language meaning and response wire layout. |
+
+[AD-012](AD-012-unbounded-temporal-operator-grammar.md) is one instance of the
+edition-syntax rule above: it accepts the unbounded temporal operator grammar
+(no interval bound) as its own exact edition definition under the existing
+`ix:native` / `1-draft` edition, admitted only under the selected
+`quire.temporal.infinite-trace/v1` profile, without reinterpreting the
+bracketed-interval productions or any `0-draft` bytes.
 
 ### Q1–Q12 disposition
 
