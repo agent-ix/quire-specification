@@ -108,9 +108,9 @@ closure and cannot promote missing execution.
 | V1-TYPE-029 | A | QSL #120 | QSL #123 |
 | V1-TYPE-030 | A | QSL #118 | QSL #123 |
 | V1-TYPE-031 | A | QSL #118 | QSL #123 |
-| V1-TYPE-032 | A | QSL #187 | Contract IR #100 |
-| V1-TYPE-033 | A | QSL #187 | Contract IR #100 |
-| V1-TYPE-034 | A | QSL #187 | Contract IR #100 |
+| V1-TYPE-032 | A | QSL #187 | QSL #123 |
+| V1-TYPE-033 | A | QSL #187 | QSL #123 |
+| V1-TYPE-034 | A | QSL #187 | QSL #123 |
 | V1-EXPR-001 | A | QSL #119 | QSL #123 |
 | V1-EXPR-002 | A | QSL #119 | QSL #123 |
 | V1-EXPR-003 | A | QSL #119 | QSL #123 |
@@ -256,7 +256,7 @@ closure and cannot promote missing execution.
 
 ## Planning invariants
 
-- All 188 required/integrity rows have one primary implementation ticket and one
+- All 191 required/integrity rows have one primary implementation ticket and one
   qualification owner; no row is deferred, research-only or unowned. Rows
   V1-EVID-007–009 and V1-BACK-015–016 were added after the Plan-008 baseline to
   cover the FR-351 separating-witness record and the FR-352

@@ -50,7 +50,7 @@ this inventory. `Int` is a Plan-008 code-surface census. `Qual` is uniformly
 `M`. It records that every capability lacks release qualification evidence:
 each row's qualification ticket in the
 [ticket manifest](v1-delivery-ticket-manifest.md) is one of eight open lane
-tickets — QSL #123 (89 rows), Protocol #82 (34), Contract IR #101 (16), QObs
+tickets — QSL #123 (92 rows), Protocol #82 (34), Contract IR #101 (16), QObs
 #26 (14), Research #78 (12), TL Syntax #74 (11), Verification #38 (7) and
 Codegen #50 (5) —
 and `TC-231`, the aggregate qualification corpus verifying `FR-311`, carries

@@ -391,18 +391,20 @@ declared value and a qualified call as a tuple constructor, union member
 constructor or pure function; the parser does not duplicate those token
 strings into `enum-value`, `tuple-value`, `union-value` and call alternatives.
 
-`union-decl` (revision `1-draft.4`) declares a closed set of named members,
-each with an optional ordered payload shape; a member with no parenthesized
-payload is nullary. A union value expression is the same qualified-call
-primary already used for tuple constructors: `U::m(e, ...)` for a member with
-a payload, or the bare qualified reference `U::m` for a nullary member. `expr`
-(revision `1-draft.4`) additionally admits `case`, matching a scrutinee
-against the declared members of one union through `case-arm` entries; each
-arm's optional bound identifiers correspond positionally to its member's
-declared payload. The `case` keyword spelling is the same terminal already
-reserved for the protocol `choice`/`case` construct in the composed grammar
-above; the two productions are distinguished by their syntactic context, the
-same way `first`, `value` and `result` are reused across this grammar.
+`union-decl` declares a closed set of named members, each with an optional
+ordered payload shape; a member with no parenthesized payload is nullary. A
+union value expression is the same qualified-call primary already used for
+tuple constructors: `U::m(e, ...)` for a member with a payload, or the bare
+qualified reference `U::m` for a nullary member. `expr` additionally admits
+`case`, matching a scrutinee against the declared members of one union through
+`case-arm` entries; each arm's optional bound identifiers correspond
+positionally to its member's declared payload. The `case` keyword spelling is
+the same terminal already reserved for the protocol `choice`/`case` construct
+in the composed grammar above; the two productions are distinguished by their
+syntactic context, the same way `first`, `value` and `result` are reused across
+this grammar. A `case` scrutinee is an `expr` that admits no top-level
+`record-value`, so the `{` following a scrutinee always opens the arm list; a
+record value in scrutinee position is written parenthesized.
 
 The selected `quire.value.complete/v1` definition reserves the following exact
 qualified intrinsic identities. They use the ordinary qualified-call production

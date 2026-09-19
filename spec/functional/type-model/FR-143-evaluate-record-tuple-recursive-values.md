@@ -67,10 +67,10 @@ originating expression, before evaluation.
 ## Declarations and identity
 
 Complete V1 declares composite value types with the grammar's `record-decl`,
-`tuple-decl` and, from revision `1-draft.4` of `quire.native.diagnostics/v1`,
-`union-decl`. A `union-decl` names a closed set of members, each with an
-optional ordered payload shape. A record value expression `R { f: e, ... }` is
-the single constructor of record `R`, a tuple value is the qualified call
+`tuple-decl` and `union-decl`. A `union-decl` names a closed set of members,
+each with an optional ordered payload shape. A record value expression
+`R { f: e, ... }` is the single constructor of record `R`, a tuple value is
+the qualified call
 `T(e, ...)` of tuple `T`, and a union value is the qualified reference or call
 `U::m` / `U::m(e, ...)` of one declared member `m` of union `U`, matching that
 member's declared payload arity. An `alias-decl` names its target type and

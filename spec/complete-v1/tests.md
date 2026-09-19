@@ -11,7 +11,7 @@ relationships:
 
 # Complete V1 atomic capability and requirement matrix
 
-This matrix is normative traceability for the complete 188-row inventory. A
+This matrix is normative traceability for the complete 191-row inventory. A
 planned row is required work, not a deferred capability or implementation claim.
 
 ## Specification action classification
@@ -30,7 +30,7 @@ with the owning requirement.
   decided here.
 - `New`: behavior and acceptance criteria are authored for the row.
 
-Over the 188 rows the delivered totals are 97 Reuse, 42 Amend, 29 New, 19
+Over the 191 rows the delivered totals are 97 Reuse, 45 Amend, 29 New, 19
 Resolve and 1 Split.
 
 V1-TYPE-024 is a Resolve row because extending reachability over inheritance
@@ -89,6 +89,9 @@ type.
 | V1-TYPE-029 | FR-152 | TC-197, TC-231 | Amend | planned |
 | V1-TYPE-030 | FR-019 | TC-231 | Reuse | planned |
 | V1-TYPE-031 | FR-147 | TC-192, TC-231 | Resolve | planned |
+| V1-TYPE-032 | FR-143 | TC-262, TC-231 | Amend | planned |
+| V1-TYPE-033 | FR-143 | TC-263, TC-231 | Amend | planned |
+| V1-TYPE-034 | FR-146 | TC-264, TC-231 | Amend | planned |
 | V1-EXPR-001 | FR-006 | TC-231 | Reuse | planned |
 | V1-EXPR-002 | FR-033 | TC-231 | Reuse | planned |
 | V1-EXPR-003 | FR-146 | TC-191, TC-231 | Amend | planned |
@@ -790,6 +793,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-146 | FR-146-AC-7 | TC-191 | planned |
 | FR-146 | FR-146-AC-8 | TC-191 | planned |
 | FR-146 | FR-146-AC-9 | TC-191 | planned |
+| FR-146 | FR-146-AC-10 | TC-264 | planned |
+| FR-146 | FR-146-AC-11 | TC-265 | planned |
 | FR-147 | FR-147-AC-4 | TC-192 | planned |
 | FR-147 | FR-147-AC-5 | TC-192 | planned |
 | FR-147 | FR-147-AC-6 | TC-192 | planned |
@@ -818,6 +823,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-153 | FR-153-AC-4 | TC-198 | planned |
 | FR-153 | FR-153-AC-5 | TC-198 | planned |
 | FR-143 | FR-143-AC-11 | TC-198 | planned |
+| FR-143 | FR-143-AC-12 | TC-262 | planned |
+| FR-143 | FR-143-AC-13 | TC-263 | planned |
 | FR-144 | FR-144-AC-11 | TC-198 | planned |
 | FR-149 | FR-149-AC-12 | TC-198 | planned |
 | FR-150 | FR-150-AC-6 | TC-195 | planned |
@@ -857,6 +864,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-208 | FR-208-AC-12 | TC-235 | planned |
 | FR-272 | FR-272-AC-6 | TC-196 | planned |
 | FR-272 | FR-272-AC-7 | TC-233 | planned |
+| FR-272 | FR-272-AC-8 | TC-264 | planned |
 | FR-321 | FR-321-AC-4 | TC-195 | planned |
 | FR-160 | FR-160-AC-4 | TC-199 | planned |
 | FR-160 | FR-160-AC-5 | TC-199 | planned |
@@ -1062,6 +1070,10 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-235 | Business construct meaning binding | Property | P0 | FR-208, FR-154, FR-207, FR-047 | 🚧 Planned |
 | TC-238 | Unbounded temporal operator grammar admission | Property | P0 | FR-048, FR-090 | 🚧 Planned |
 | TC-239 | Agree replay and incremental assessment on an unsettled temporal result | Property | P0 | FR-114 | 🚧 Planned |
+| TC-262 | Union construction and equality | Property | P0 | FR-143 | 🚧 Planned |
+| TC-263 | Union recursion rule | Property | P0 | FR-143 | 🚧 Planned |
+| TC-264 | Case exhaustiveness obligations | Property | P0 | FR-146, FR-272 | 🚧 Planned |
+| TC-265 | Case evaluation and binding | Property | P0 | FR-146 | 🚧 Planned |
 
 ## Integration Test Matrix
 
@@ -1090,7 +1102,7 @@ supersedes FR-010's parent reachability.
 
 ## Coverage gate
 
-Complete-V1 qualification requires all 188 capability rows and every selected
+Complete-V1 qualification requires all 191 capability rows and every selected
 acceptance-criterion row to have executed evidence under one exact ecosystem
 lock. Until then the status remains planned or partial and cannot be promoted by
 family-level samples.

@@ -12,7 +12,7 @@ relationships:
 
 ## Statement
 
-A complete-V1 qualification claim SHALL account for 100 percent of the 188
+A complete-V1 qualification claim SHALL account for 100 percent of the 191
 inventory capabilities and every normative acceptance criterion in its selected
 qualification profile.
 
@@ -30,7 +30,7 @@ capabilities.
 
 | Metric | Target | Threshold | Method |
 | --- | --- | --- | --- |
-| Inventory primary-row coverage | 188 of 188 | 188 of 188 | Matrix validation |
+| Inventory primary-row coverage | 191 of 191 | 191 of 191 | Matrix validation |
 | Selected acceptance-criterion coverage | 100% | 100% | Gap analysis |
 
 ## Verification

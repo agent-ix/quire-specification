@@ -23,9 +23,10 @@ relationships:
 ## System Boundary
 
 This decision extends AD-005's complete value system with one closed sum-type
-declaration and one matching expression, gated at `quire.native.diagnostics/v1`
-revision `1-draft.4`: `union-decl` (FR-143) and the `case` expression
-(FR-146). It does not introduce a new value kind outside the record/tuple/union
+declaration and one matching expression: `union-decl` (FR-143) and the `case`
+expression (FR-146). Their unproved exhaustiveness obligation is catalogued at
+`quire.native.diagnostics/v1` revision `1-draft.4`. It does not introduce a new
+value kind outside the record/tuple/union
 composite family, a new declaration-identity scheme, or a new code family; a
 union declaration identity is the same opaque I04 `composite_type` node key
 already used for records and tuples, and an unproved `case` exhaustiveness

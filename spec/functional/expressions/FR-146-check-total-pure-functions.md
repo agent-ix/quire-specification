@@ -55,9 +55,9 @@ caller's tuple; this rule also applies across mutual recursion.
 Totality is path-sensitive: every conditional path must return the declared
 result, and each partial operation must have a proved precondition. Every `if`
 has an `else`, so `if` exhaustiveness is structural. The Complete-V1
-expression grammar's only pattern-matching form is `case` (revision
-`1-draft.4`) over a declared `union`; its exhaustiveness is the proved
-obligation below. Purity and typing are checked before
+expression grammar's only pattern-matching form is `case` over a declared
+`union`; its exhaustiveness is the proved obligation below. Purity and typing
+are checked before
 reachability, so an unreachable impure or ill-typed branch is still rejected.
 Evaluation fuel is an execution resource rather than a semantic termination
 argument: exhausting it returns `incomplete`, never a value or a proof of
@@ -66,12 +66,14 @@ nontermination.
 ## Case exhaustiveness
 
 A `case` expression names a scrutinee expression and one or more `case-arm`
-entries, each naming a qualified member of exactly one declared `union`. The
-checker resolves the scrutinee's static type to its declared union `U` and
+entries, each naming a member of exactly one declared `union`. An arm's name
+resolves against the scrutinee's declared union, so a bare member name names
+that union's member and a `U::m` spelling names the same member explicitly.
+The checker resolves the scrutinee's static type to its declared union `U` and
 checks each arm's member against `U` exactly as a union value construction is
 checked under FR-143, then checks the following obligations in this order,
 reporting the first failure: `duplicate-arm` (two arms name the same member of
-`U`); `unknown-member` (an arm's qualified name does not resolve to a member
+`U`); `unknown-member` (an arm's name does not resolve to a member
 of `U`); `arm-arity` (an arm's bound-identifier count differs from its named
 member's declared payload arity); then `missing-arm` (the arm set is a strict
 subset of `U`'s declared member set). A failure is
