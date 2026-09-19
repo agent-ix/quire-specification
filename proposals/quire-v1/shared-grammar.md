@@ -68,7 +68,7 @@ Common reserved words for this candidate fragment are `language`, `edition`,
 This candidate inventory is edition-owned, not an extensible runtime registry.
 
 The complete-V1 facets additionally reserve `import`, `dimension`, `unit`,
-`ordered`, `enum`, `record`, `tuple`, `type`, `function`, `pure`, `decreases`,
+`ordered`, `enum`, `record`, `tuple`, `union`, `type`, `function`, `pure`, `decreases`,
 `Integer`, `Int`, `Rational`, `Decimal`, `Float32`, `Float64`, `Text`, `Option`,
 `Sequence`, `Set`, `Bag`, `OrderedSet`, `Reference`, `null`, `none`, `decimal`,
 `float32`, `float64`, `bits`, `convert`, `allInstances`, `collect`, `flatMap`,
@@ -277,7 +277,7 @@ import-decl   = 'import', string, 'version', string, 'digest', string,
                 [ 'as', ident ], ';' ;
 
 declaration   = dimension-decl | unit-decl | enum-decl | record-decl
-              | tuple-decl | alias-decl | function | predicate
+              | tuple-decl | union-decl | alias-decl | function | predicate
               | state-clause | temporal-clause | protocol-clause
               | relation-clause | hyper-clause | hybrid-decl
               | synthesis-decl | verification-plan | operation-body ;
@@ -311,6 +311,9 @@ enum-member   = ident, [ '=', string ] ;
 record-decl   = 'record', ident, '{', field, { field }, '}' ;
 field         = ident, ':', type-ref, [ '?' ], ';' ;
 tuple-decl    = 'tuple', ident, '(', type-ref, { ',', type-ref }, ')', ';' ;
+union-decl    = 'union', ident, '{', union-member, { ',', union-member },
+                [ ',' ], '}' ;
+union-member  = ident, [ '(', type-ref, { ',', type-ref }, ')' ] ;
 alias-decl    = 'type', ident, '=', type-ref, ';' ;
 
 function      = 'function', ident, 'using', ident,
@@ -318,6 +321,13 @@ function      = 'function', ident, 'using', ident,
                 'pure', [ 'decreases', '(', expr, ')' ], block ;
 parameter-type = type-ref ;
 parameter     = ident, ':', type-ref ;
+
+expr          = 'let', ident, '=', expr, 'in', expr
+              | 'if', expr, 'then', expr, 'else', expr
+              | 'case', expr, '{', case-arm, { case-arm }, '}'
+              | implication ;
+case-arm      = qualified-name, [ '(', ident, { ',', ident }, ')' ],
+                ':', expr, ';' ;
 
 primary       = 'true' | 'false' | 'null' | 'none' | 'self' | 'result'
               | uint | string | exact-number | collection-value
@@ -377,9 +387,22 @@ profile, not a literal shortcut.
 
 The one qualified reference/call production is syntactically canonical. Static
 resolution classifies a bare qualified reference as an enum member or other
-declared value and a qualified call as a tuple constructor or pure function;
-the parser does not duplicate those token strings into `enum-value`,
-`tuple-value` and call alternatives.
+declared value and a qualified call as a tuple constructor, union member
+constructor or pure function; the parser does not duplicate those token
+strings into `enum-value`, `tuple-value`, `union-value` and call alternatives.
+
+`union-decl` (revision `1-draft.4`) declares a closed set of named members,
+each with an optional ordered payload shape; a member with no parenthesized
+payload is nullary. A union value expression is the same qualified-call
+primary already used for tuple constructors: `U::m(e, ...)` for a member with
+a payload, or the bare qualified reference `U::m` for a nullary member. `expr`
+(revision `1-draft.4`) additionally admits `case`, matching a scrutinee
+against the declared members of one union through `case-arm` entries; each
+arm's optional bound identifiers correspond positionally to its member's
+declared payload. The `case` keyword spelling is the same terminal already
+reserved for the protocol `choice`/`case` construct in the composed grammar
+above; the two productions are distinguished by their syntactic context, the
+same way `first`, `value` and `result` are reused across this grammar.
 
 The selected `quire.value.complete/v1` definition reserves the following exact
 qualified intrinsic identities. They use the ordinary qualified-call production
