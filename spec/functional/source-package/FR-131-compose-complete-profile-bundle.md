@@ -15,7 +15,7 @@ relationships:
 
 When a source package selects complete V1, the linker SHALL resolve a
 dependency-closed profile bundle covering every subsystem required by the
-194-row capability inventory.
+200-row capability inventory.
 
 ## Inputs
 

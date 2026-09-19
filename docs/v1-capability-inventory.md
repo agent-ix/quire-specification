@@ -50,8 +50,8 @@ this inventory. `Int` is a Plan-008 code-surface census. `Qual` is uniformly
 `M`. It records that every capability lacks release qualification evidence:
 each row's qualification ticket in the
 [ticket manifest](v1-delivery-ticket-manifest.md) is one of nine open lane
-tickets — QSL #123 (92 rows), Protocol #82 (34), Contract IR #101 (16), QObs
-#26 (14), Research #78 (12), TL Syntax #74 (11), Verification #38 (7),
+tickets — QSL #123 (94 rows), Protocol #82 (34), Contract IR #101 (19), QObs
+#26 (14), Research #78 (12), TL Syntax #74 (11), Verification #38 (8),
 Codegen #50 (5) and Contract IR #132 (3) —
 and `TC-231`, the aggregate qualification corpus verifying `FR-311`, carries
 zero traced tests on any implementation default branch. Per-row measurement
@@ -271,6 +271,12 @@ criterion this ledger names, rather than a bare `FR-0NN-AC-M` tag spelling.
 | V1-BACK-016 | Refuse silent substitution between native-run-result/1 and /2; a consumer requiring the witness record regenerates against /2. | Integrity | V1-006, V1-047 | C | M | M | M | M | QSL #186 / Codegen #50 |
 | V1-BACK-017 | Check that a decomposed requirement's admitted result entails its parent's admitted result through a registered implication backend; absent that backend, the claim settles `unsupported` with a warning naming the required capability. | Required | V1-037; prose census | C | M | M | M | M | quire-analyze #40 / QSL #185 |
 | V1-BACK-018 | Catalog exact lowering targets and the FR-290 capabilities each backend advertises for registration and negotiation. | Required | V1-006 | C | M | M | M | M | QSL #185 |
+| V1-BACK-019 | Register an SMT backend (cvc5, with Z3 as an independent cross-check) advertising unbounded quantification, induction, composition and mathematical-integer capabilities. | Required | V1-006; prose census | C | M | M | M | M | Contract IR #135 / Contract IR #101 |
+| V1-BACK-020 | Emit Verus `requires`/`ensures` and loop invariants from QSL state contracts onto named implementation Rust functions. | Required | V1-006; prose census | C | M | M | M | M | Codegen #84 / Contract IR #101 |
+| V1-BACK-021 | Declare a model-to-implementation abstraction relation from model objects, populations and operation frames to implementation state. | Required | V1-006; prose census | C | M | M | M | M | QSL #198 / QSL #123 |
+| V1-BACK-022 | Refuse emission onto implementation code that references a model element with no bound abstraction relation, naming the element. | Integrity | V1-BACK-021; prose census | C | M | M | M | M | QSL #198 / QSL #123 |
+| V1-BACK-023 | Record a proved settlement's trust basis: `certificate-checked` when the cvc5 Alethe certificate for the exact query passes Carcara, otherwise `solver-asserted`. | Required | V1-BACK-019; prose census | C | M | M | M | M | Analyze #41 / Verification #38 |
+| V1-BACK-024 | Return the same verdict from the SMT encoding and the native runtime on a shared differential corpus. | Required | V1-BACK-019; prose census | C | M | M | M | M | Contract IR #136 / Contract IR #101 |
 
 ## 8. Evidence, qualification, tooling and ecosystem
 

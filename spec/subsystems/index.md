@@ -7,7 +7,7 @@ type: index
 # Complete V1 subsystem specification index
 
 This index is navigation, not a second source of requirements. The complete V1
-scope is the 194-row atomic inventory in
+scope is the 200-row atomic inventory in
 [`docs/v1-capability-inventory.md`](../../docs/v1-capability-inventory.md).
 Every capability remains required; dependency order does not defer scope.
 

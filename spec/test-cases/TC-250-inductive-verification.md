@@ -27,6 +27,7 @@ Every positive and boundary result matches FR-347; a matching base case and
 inductive step over an unbounded or recursive domain proves the obligation; a
 failing base case or step refutes with its own counterexample; a claim no
 registered induction-capable backend can discharge settles `unsupported` with
-a warning naming the required capability; each mutation returns its exact
-typed disposition with source/provenance and preserves independent sibling
-results.
+a warning naming the required capability; with the FR-349 SMT backend
+registered, at least one case settles `proved` and at least one settles
+`refuted` through it; each mutation returns its exact typed disposition with
+source/provenance and preserves independent sibling results.
