@@ -32,7 +32,7 @@
     {
       "role": "effective_declaration_vectors",
       "artifact_path": "../../checked-package-v2/model-effective-declaration-vectors.json",
-      "definition": {"authority":"agent-ix","identity":"quire.model.effective-declaration.vectors/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"37e8ba09d1da3b084e68c25b51a9818d650e01fa8f9c5f3b6aea6992e92123bf"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.effective-declaration.vectors/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"b641a129a1cd3960b6aac9fb4f90713b172699c2c15b996879767728337087b4"}
     },
     {
       "role": "rule_ad_006",
