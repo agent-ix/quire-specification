@@ -14,6 +14,9 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-351
     type: verifies
 ---
+
+# TC-254: Retain a family-neutral separating witness or leave the result witness-free
+
 ## Description
 
 Exercises the FR-351 separating witness record across the collection, temporal

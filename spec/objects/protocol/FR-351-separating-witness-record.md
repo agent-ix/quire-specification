@@ -14,6 +14,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-197
     type: references
+  - target: ix://agent-ix/quire-specification/FR-200
+    type: references
   - target: ix://agent-ix/quire-specification/FR-201
     type: references
 ---
@@ -21,7 +23,7 @@ relationships:
 
 ## Description
 
-When a truth result settles on a `decisive-witness` or `decisive-counterexample` basis, the result producer SHALL retain exactly one separating witness record with the deciding element, index, value path and trace position below, and a strict reader SHALL accept a witness only as this exact record or as its absence.
+When a truth result settles on a `decisive-witness` or `decisive-counterexample` basis, the result producer SHALL retain exactly one separating witness record with the deciding element, index, value path and trace position below. A strict reader accepts a witness only as this exact record or as its absence.
 
 ## Properties
 

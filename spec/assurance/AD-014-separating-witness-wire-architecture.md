@@ -43,8 +43,8 @@ flowchart TD
 `native-run-result/2` is a distinct wire identifier, fixed by the producer at
 production time and never inferred from payload content; it carries the
 FR-351 record exactly when the settlement basis is `decisive-witness` or
-`decisive-counterexample`, and no compatibility layer maps either version's
-bytes onto the other.
+`decisive-counterexample`. Each version's bytes are read only under that
+version's own identifier.
 
 ## Decisions
 

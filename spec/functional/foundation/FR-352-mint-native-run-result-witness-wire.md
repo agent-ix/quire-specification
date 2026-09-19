@@ -16,7 +16,7 @@ relationships:
 
 ## Description
 
-When a native run result is produced or read, the strict reader SHALL treat `native-run-result/1` as the closed wire FR-014 already governs, unchanged, and SHALL accept `native-run-result/2` only as an explicitly selected, distinct closed wire that adds the FR-351 separating-witness record; explicit migration under FR-032 mints the new wire without relabeling `/1` evidence.
+When a native run result is produced or read, the strict reader SHALL treat `native-run-result/1` as the closed wire FR-014 already governs, unchanged. `native-run-result/2` is accepted only as an explicitly selected, distinct closed wire that adds the FR-351 separating-witness record; explicit evolution under FR-032 mints the new wire without relabeling `/1` evidence.
 
 ## Inputs
 
@@ -28,7 +28,7 @@ A `native-run-result/1` record under FR-014's unchanged contract, a `native-run-
 
 ## Behavior
 
-`native-run-result/1` remains byte-for-byte the wire FR-014 defines; this requirement changes none of its members or refusal rules. `native-run-result/2` is a new, explicit wire identifier that a producer selects at production time and fixes in the produced artifact; a reader never infers the version from message content and refuses an unselected or unrecognized version under FR-014's unsupported-version rule. `/2` adds exactly one closed member to the `/1` grammar — the FR-351 separating-witness record, present exactly when the settlement basis is `decisive-witness` or `decisive-counterexample` and absent otherwise (FR-351) — and changes no existing `/1` member's meaning. Two otherwise-identical results, one produced on `/1` and one on `/2`, carry distinct digests; a reader never treats one version's bytes as validating the other in either direction, and no compatibility layer maps a `/1` read onto `/2` content or a `/2` read onto `/1` content. A consumer that requires the witness record selects and regenerates against `/2`.
+`native-run-result` is the run-result kind of FR-014's supported version/kind registry, and `/1` and `/2` are two registered versions of that kind. `native-run-result/1` remains byte-for-byte the wire FR-014 defines; this requirement changes none of its members or refusal rules. `native-run-result/2` is a new, explicit wire identifier that a producer selects at production time and fixes in the produced artifact; a reader never infers the version from message content and refuses an unselected or unrecognized version under FR-014's unsupported-version rule. `/2` adds exactly one closed member to the `/1` grammar — the FR-351 separating-witness record, present exactly when the settlement basis is `decisive-witness` or `decisive-counterexample` and absent otherwise (FR-351) — and changes no existing `/1` member's meaning. Two otherwise-identical results, one produced on `/1` and one on `/2`, carry distinct digests; each version's bytes are read only under that version's own identifier, and a read under any other registered version identifier refuses under FR-014's unsupported-version rule. A consumer that requires the witness record selects and regenerates against `/2`.
 
 ## Acceptance Criteria
 
@@ -38,7 +38,7 @@ A `native-run-result/1` record under FR-014's unchanged contract, a `native-run-
 | FR-352-AC-2 | `native-run-result/2` is accepted only from an explicit producer selection fixed at production, never inferred from payload content; an unselected or unrecognized version refuses under FR-014's unsupported-version rule. | Test (TC-255) |
 | FR-352-AC-3 | `native-run-result/2` carries every `/1` member unchanged plus the FR-351 separating-witness record, present exactly with a `decisive-witness` or `decisive-counterexample` settlement basis and absent otherwise. | Test (TC-255) |
 | FR-352-AC-4 | Two otherwise-identical results, one on `/1` and one on `/2`, produce distinct digests. | Test (TC-255) |
-| FR-352-AC-5 | No compatibility layer reads `/1` content as `/2` or `/2` content as `/1`; a consumer requiring the witness record regenerates against `/2` rather than reading it through `/1`. | Test (TC-255) |
+| FR-352-AC-5 | A `/1` record reads only under the `/1` identifier and a `/2` record only under the `/2` identifier; a read under the other identifier refuses under FR-014's unsupported-version rule, and a consumer requiring the witness record regenerates against `/2`. | Test (TC-255) |
 
 ## Dependencies
 

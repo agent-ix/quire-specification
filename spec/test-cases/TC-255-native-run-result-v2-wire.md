@@ -10,6 +10,9 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-352
     type: verifies
 ---
+
+# TC-255: Mint native-run-result/2 without disturbing /1 or admitting silent substitution
+
 ## Description
 
 Exercises the `native-run-result/2` wire minted by FR-352 against the FR-014
