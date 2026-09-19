@@ -1,6 +1,6 @@
 # Complete value definition
 
-Definition identity: `quire.value.complete/v1`; revision: `1-draft.1`.
+Definition identity: `quire.value.complete/v1`; revision: `1-draft.2`.
 Language: `ix:native` / `1-draft`. This definition is the complete-V1 value,
 type and expression root; implementation and qualification remain separately
 reported.
@@ -16,7 +16,7 @@ Every package that selects this root also selects:
 | `quire.value.compound-unit/v1` | `1-draft.1` | [Compound-unit value identity](value-compound-unit.md) |
 | `quire.value.compound-unit.schema/v1` | `1-draft.1` | [Compound-unit schema](value-compound-unit.schema.json) |
 | `quire.value.compound-unit.vectors/v1` | `1-draft.1` | [Compound-unit vectors](value-compound-unit-vectors.json) |
-| `quire.value.complete.rules/v1` | `1-draft.1` | [Exact rule closure](value-complete-rules.json) |
+| `quire.value.complete.rules/v1` | `1-draft.2` | [Exact rule closure](value-complete-rules.json) |
 
 ## Conditional and alternative definitions
 

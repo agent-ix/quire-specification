@@ -1,8 +1,8 @@
 {
   "definition_identity": "quire.value.complete.rules/v1",
-  "revision": "1-draft.1",
+  "revision": "1-draft.2",
   "digest_domain": "quire.definition.bytes/v1",
-  "required_by": "quire.value.complete/v1@1-draft.1",
+  "required_by": "quire.value.complete/v1@1-draft.2",
   "rules": [
     {
       "identity": "quire.rule.package-contract/v1",
@@ -12,9 +12,9 @@
     },
     {
       "identity": "quire.rule.shared-grammar/v1",
-      "revision": "1-draft.1",
+      "revision": "1-draft.2",
       "path": "../shared-grammar.md",
-      "sha256": "ff3b0290d2f458085d0da4b3ce8120a0e8fbc6e24c28299fdf2968b4773213b6"
+      "sha256": "697b2458455e0c209120019013b24ad0d2506fdf5ce57c41655d066b2b057afd"
     },
     {
       "identity": "quire.rule.ad-005/v1",

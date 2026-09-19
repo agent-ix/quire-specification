@@ -39,8 +39,8 @@ not require a checksum refresh or another successor file.
 | `quire.observation.range/v1` | `1-draft.1` (accepted by FS04) | [All-clock range correspondence](observation-range.md) |
 | `quire.package.composed/v1` | `1-draft.2` (accepted by FS05) | [Linked-package interpretation](package-reference.md) |
 | `quire.native.diagnostics/v1` | `1-draft.4` | [Diagnostic interpretation](native-diagnostics.md) |
-| `quire.value.complete/v1` | `1-draft.1` | [Complete value root](value-complete.md) |
-| `quire.value.complete.rules/v1` | `1-draft.1` | [Exact complete-value rule closure](value-complete-rules.json) |
+| `quire.value.complete/v1` | `1-draft.2` | [Complete value root](value-complete.md) |
+| `quire.value.complete.rules/v1` | `1-draft.2` | [Exact complete-value rule closure](value-complete-rules.json) |
 | `quire.value.text.unicode-17.0.0/v1` | `1-draft.1` | [Unicode text profiles](value-text-unicode-17.md) |
 | `quire.value.integer-division.truncating/v1` | `1-draft.1` | [Truncating integer division](value-integer-division-truncating.md) |
 | `quire.value.integer-division.floor/v1` | `1-draft.1` | [Floor integer division](value-integer-division-floor.md) |
@@ -48,10 +48,10 @@ not require a checksum refresh or another successor file.
 | `quire.value.ieee754-2019-default/v1` | `1-draft.1` | [IEEE binary profile](value-ieee754-2019-default.md) |
 | `quire.value.accounting/v1` | `1-draft.1` | [Scalar accounting schedule](value-accounting.md) |
 | `quire.value.compound-unit/v1` | `1-draft.1` | [Evaluator-owned compound units](value-compound-unit.md) |
-| `quire.model.complete/v1` | `1-draft.1` | [Complete model root](model-complete.md) |
-| `quire.model.complete.rules/v1` | `1-draft.1` | [Exact complete-model rule closure](model-complete-rules.json) |
-| `quire.model.effective-declaration.schema/v1` | `1-draft.1` | [Effective declaration schema](../../checked-package-v2/model-effective-declaration.schema.json) |
-| `quire.model.effective-declaration.vectors/v1` | `1-draft.1` | [Effective declaration vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
+| `quire.model.complete/v1` | `1-draft.2` | [Complete model root](model-complete.md) |
+| `quire.model.complete.rules/v1` | `1-draft.2` | [Exact complete-model rule closure](model-complete-rules.json) |
+| `quire.model.effective-declaration.schema/v1` | `1-draft.2` | [Effective declaration schema](../../checked-package-v2/model-effective-declaration.schema.json) |
+| `quire.model.effective-declaration.vectors/v1` | `1-draft.2` | [Effective declaration vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
 | `quire.model.definition-lock/v1` | `1-draft.1` | [Complete model lock](complete-model-lock.json) |
 
 The [package contract](../package-contract.md), [state contract](../state-contract.md),

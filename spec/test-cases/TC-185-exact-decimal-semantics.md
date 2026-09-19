@@ -16,7 +16,7 @@ Evaluate exact, rounded and unrepresentable decimal vectors without binary-float
 ## Test Procedure
 
 Select language `ix:native`, edition `1-draft` revision `1-draft.2`, and the
-`quire.value.complete/v1` definition at revision `1-draft.1`, using the exact
+`quire.value.complete/v1` definition at revision `1-draft.2`, using the exact
 definition-file byte digests retained by
 [`complete-value-lock.json`](../../proposals/quire-v1/definitions/complete-value-lock.json).
 Represent each decimal as `(coefficient, scale)` and
