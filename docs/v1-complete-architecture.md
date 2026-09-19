@@ -3,7 +3,7 @@
 Status: Task-006 comprehensive architecture design, prepared before the single
 complete-V1 `/specify` and `/spec-review` cycle.
 
-This is the architectural plan for all 185 atomic inventory rows. It reconciles
+This is the architectural plan for all 188 atomic inventory rows. It reconciles
 the accepted QSpec architecture with the current Rust component graph and the
 scope corrections in Plan-008. It does not claim that the described interfaces
 or capabilities are already implemented. Task-007 turns this design into
@@ -97,7 +97,7 @@ The complete primary allocation is exact:
 - S2: `V1-TYPE-001..020`, `V1-TYPE-030..031`, and all 26
   `V1-EXPR-*` rows (48 total).
 - S3: `V1-TYPE-021..029` (9).
-- S4: all 23 `V1-TEMP-*` rows.
+- S4: all 26 `V1-TEMP-*` rows.
 - S5: all 31 `V1-PROT-*` rows.
 - S6: `V1-RUN-001..012` and `V1-RUN-020` (13).
 - S7: `V1-RUN-013..019` (7).
@@ -105,7 +105,7 @@ The complete primary allocation is exact:
 - S9: `V1-BACK-007..013` and all 12 `V1-TOOL-*` rows (19).
 - S10: all 9 `V1-EVID-*` rows.
 
-The totals are 185 exactly. A cross-subsystem dependency does not change an
+The totals are 188 exactly. A cross-subsystem dependency does not change an
 item's primary owner or duplicate its normative clause.
 
 ## 3. Authority model
@@ -610,7 +610,7 @@ and authority rules; subsystem ADs cannot redefine them.
 
 ## 16. Architecture acceptance gate
 
-Task-006 is complete only when mechanical checks show all 185 inventory rows
+Task-006 is complete only when mechanical checks show all 188 inventory rows
 allocated exactly once, all ten subsystem views defined, all cross-subsystem
 data flows represented by I01-I21, all current Rust owners assigned without a
 dependency cycle, and every extension scenario preserves authority and exact

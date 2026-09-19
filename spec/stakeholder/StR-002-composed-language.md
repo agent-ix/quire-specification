@@ -32,7 +32,7 @@ or backend slice must not redefine, narrow or defer the intended product.
 | --- | --- | --- |
 | StR-002-VC-1 | One native package states complete value/model semantics, state conditions, bounded and unbounded temporal obligations, and dynamic compensated choreography with shared model and source identity. | Demonstration |
 | StR-002-VC-2 | Healthy, violating, untriggered, incomplete and unsupported requests remain distinguishable in the composed workflow. | Demonstration |
-| StR-002-VC-3 | A reviewer can trace every one of the 185 V1 inventory capabilities to normative semantics, an implementation owner, delivery tickets and qualification evidence without a deferred product-scope disposition. | Inspection |
+| StR-002-VC-3 | A reviewer can trace every one of the 188 V1 inventory capabilities to normative semantics, an implementation owner, delivery tickets and qualification evidence without a deferred product-scope disposition. | Inspection |
 | StR-002-VC-4 | One enterprise example relates concurrent orders, payment/shipment/refund instances and a declared finite population/window without treating unknown membership as successful aggregate evidence. | Demonstration |
 | StR-002-VC-5 | Native runtime, model testing, simulation, formal analysis, proof generation, authoring tools, output mappings and authorized workflow adapters consume the same immutable semantic package and report typed capability limitations without approximation. | Demonstration |
 

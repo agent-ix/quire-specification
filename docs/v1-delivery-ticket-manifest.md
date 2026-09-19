@@ -157,6 +157,9 @@ closure and cannot promote missing execution.
 | V1-TEMP-021 | B | TL Syntax #73 | TL Syntax #74 |
 | V1-TEMP-022 | B | TL Syntax #73 | TL Syntax #74 |
 | V1-TEMP-023 | B | TL Syntax #73 | TL Syntax #74 |
+| V1-TEMP-024 | A | QSL #188 | QSL #123 |
+| V1-TEMP-025 | A | QSL #188 | QSL #123 |
+| V1-TEMP-026 | A | QSL #188 | QSL #123 |
 | V1-PROT-001 | B | Protocol #83 | Protocol #82 |
 | V1-PROT-002 | B | Protocol #83 | Protocol #82 |
 | V1-PROT-003 | B | Protocol #83 | Protocol #82 |
@@ -250,11 +253,12 @@ closure and cannot promote missing execution.
 
 ## Planning invariants
 
-- All 185 required/integrity rows have one primary implementation ticket and one
+- All 188 required/integrity rows have one primary implementation ticket and one
   qualification owner; no row is deferred, research-only or unowned. Rows
   V1-EVID-007–009 and V1-BACK-015–016 were added after the Plan-008 baseline to
   cover the FR-351 separating-witness record and the FR-352
-  `native-run-result/2` wire (#114).
+  `native-run-result/2` wire (#114), and rows V1-TEMP-024–026 to cover the
+  `quire.temporal.infinite-trace/v1` liveness profile (#112).
 - Closed leaves remain immutable evidence but their qualification tickets still
   gate complete-V1 acceptance.
 - Shared QSpec interfaces I01–I21 and payloads FR-320–339 are frozen inputs.

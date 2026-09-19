@@ -9,6 +9,16 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/AD-009
     type: references
+  - target: ix://agent-ix/quire-specification/AD-012
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-090
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-251
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-341
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-114
+    type: references
 ---
 
 # FR-161: Analyze native infinite-trace temporal properties
@@ -36,6 +46,23 @@ meaning independent of one solver encoding. A valid finite counterexample may
 refute an applicable property. Finite prefixes, absence of a counterexample or
 resource exhaustion cannot prove infinite satisfaction.
 
+The unbounded operator forms this requirement analyzes are admitted only under
+the `quire.temporal.infinite-trace/v1` profile ([FR-250](../../objects/temporal/FR-250-temporal-semantic-profile.md))
+through the unbounded temporal operator grammar edition
+([FR-048](../foundation/FR-048-bind-native-temporal-syntax.md),
+[AD-012](../../assurance/AD-012-unbounded-temporal-operator-grammar.md)). Until
+a liveness backend registers the infinite-trace capability, an unbounded
+formula settles `unsupported` with a warning naming the required capability.
+
+## Result disposition mapping
+
+Each of the five Outputs labels is exactly one composition of the existing
+assessment-execution, truth and settlement-basis axes; this requirement
+introduces no new result axis. [FR-341](../../objects/temporal/FR-341-infinite-trace-result-disposition.md)
+records the closed vocabulary and the exact FR-241/FR-242/FR-243 combination
+each label requires. `inconclusive` is the infinite-trace projection of the
+FR-243 `unsettled` basis restated by [FR-094-AC-7](FR-094-interpret-progress-history-and-closure.md).
+
 ## Infinite-trace semantics
 
 For an infinite state trace `s` and position `i`, atom truth is read from
@@ -62,11 +89,27 @@ is complete, but it cannot establish liveness satisfaction.
 | FR-161-AC-3 | Unsupported operators, missing fairness/model closure or exhausted analysis return distinct non-conclusive dispositions. | Test (TC-200) |
 | FR-161-AC-4 | Always, eventually, until, release and each past operator satisfy their inductive infinite-trace definitions on conformance lassos. | Test (TC-200) |
 | FR-161-AC-5 | Fairness filters traces before evaluation and is included in every proof or counterexample replay identity. | Test (TC-200) |
+| FR-161-AC-6 | Each returned result label matches exactly one FR-341 member and its exact FR-241/FR-242/FR-243 combination. | Test (TC-200) |
+| FR-161-AC-7 | Until a liveness backend registers the infinite-trace capability, an unbounded formula settles `unsupported` with a warning naming the required capability. | Test (TC-200) |
 
 ## Dependencies
 
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
   source form used by this requirement.
+- [FR-048](../foundation/FR-048-bind-native-temporal-syntax.md) and
+  [AD-012](../../assurance/AD-012-unbounded-temporal-operator-grammar.md) admit
+  the unbounded temporal operator grammar edition this requirement analyzes.
+- [FR-090](FR-090-select-temporal-profile-and-clock.md) and
+  [FR-250](../../objects/temporal/FR-250-temporal-semantic-profile.md) select
+  the `quire.temporal.infinite-trace/v1` profile this requirement requires.
+- [FR-251](../../objects/temporal/FR-251-tl-target-profile.md) records that an
+  infinite-trace request resolves to an absent TL target rather than lowering.
+- [FR-341](../../objects/temporal/FR-341-infinite-trace-result-disposition.md)
+  records the closed result-disposition vocabulary this requirement's Outputs
+  use.
+- [FR-114](../observation/FR-114-assess-replay-and-incremental-consistently.md)
+  states the QObs/temporal non-conclusive agreement this requirement's
+  `inconclusive` result participates in.
 - [Subsystem and interface index](../../subsystems/index.md) identifies the
   typed producer/consumer boundary and dependency direction.
 - Every requirement linked in frontmatter is a normative prerequisite.

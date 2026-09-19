@@ -36,7 +36,7 @@ of that model. Existing IR, TL and protocol components own
 their specialized representations and execution; Quoin owns evidence retention
 and authored assurance decisions. No single executable IR defines the language.
 
-V1 includes the entire 185-row atomic capability inventory: language/package
+V1 includes the entire 188-row atomic capability inventory: language/package
 evolution; complete values, models and expressions; bounded and unbounded
 temporal semantics; dynamic protocol/choreography; composed runtime and
 workflow adapters; verification methods; exact IR/backends; tooling/mappings;
