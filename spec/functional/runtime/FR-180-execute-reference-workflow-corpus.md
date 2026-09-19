@@ -39,6 +39,12 @@ compensation and partial recovery.
 
 ## Reference verdict contract
 
+Each corpus case's source/package bytes are emitted by I04 `link_and_check`
+as `quire.checked-package/v2` with its `state` nodes; the corpus pins those
+exact bytes and the case's `package_id`, and the runtime admits them only
+through I04 `read`. ConfigVersion cases replay on the complete-V1 value
+runtime only.
+
 Each corpus case fixes source/package bytes, model and observation inputs,
 closure/progress, limits and expected per-clause disposition. ConfigVersion uses
 the inclusive integer domain `0..=1000`; `-1` and `1001` are refusal vectors.
@@ -53,10 +59,10 @@ disposition, not merely a Boolean projection.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-180-AC-1 | ConfigVersion native, generated-oracle, property and proof consumers agree on every bounded-corpus verdict. | Test (TC-209) |
+| FR-180-AC-1 | ConfigVersion native, generated-oracle, property and proof consumers agree on every bounded-corpus verdict. | Test (TC-209, IT-075) |
 | FR-180-AC-2 | Timed-refund cases distinguish wrong identity/amount, silence, progress, timeout, failure and achieved compensation. | Test (TC-209) |
 | FR-180-AC-3 | Fan-out/join/compensation cases preserve branch, queue, attempt/effect and full outcome-partition semantics. | Test (TC-209) |
-| FR-180-AC-4 | ConfigVersion includes 0, 1000, -1 and 1001 and all consumers agree on value or refusal and source locus. | Test (TC-209) |
+| FR-180-AC-4 | ConfigVersion includes 0, 1000, -1 and 1001 and all consumers agree on value or refusal and source locus. | Test (TC-209, IT-075) |
 | FR-180-AC-5 | Corpus identity fixes every input, semantic profile and expected disposition so a replay cannot consult ambient state. | Test (TC-209) |
 
 ## Dependencies

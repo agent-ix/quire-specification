@@ -20,3 +20,17 @@ Use the exact version-locked subject and inputs named by FR-180. Execute its pos
 ## Expected Results
 
 Every positive and boundary result matches FR-180; each invalid, unsupported or exhausted mutation returns its exact typed disposition with source/provenance, emits no approximation, and preserves independent sibling results.
+
+## Case ownership
+
+Each corpus case family is owned by the capability below; the qualification
+ticket owns this case's verification/integration/claim closure and cannot
+promote missing execution.
+
+| Case family | Capability | Primary ticket | Qualification ticket |
+| --- | --- | --- | --- |
+| ConfigVersion | V1-RUN-010 | QSL #121 | QSL #123 |
+| Timed-refund | V1-RUN-011 | Protocol #82 | Research #78 |
+| Fan-out/join/compensation choreography | V1-RUN-012 | Protocol #82 | Research #78 |
+| Cross-workflow aggregates | V1-RUN-008 | QObs #25 | QObs #26 |
+| Composed domain execution (IT-071) | — | quire-integration | — |
