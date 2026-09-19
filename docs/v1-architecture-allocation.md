@@ -180,6 +180,12 @@ the unique primary program epic from the Task-005 live-graph audit.
 | V1-BACK-016 | S8 | AD-010 | I12, I13, I19 | QSL #186 |
 | V1-BACK-017 | S8 | AD-010 | I12, I13, I19 | Analyze #40 |
 | V1-BACK-018 | S8 | AD-010 | I12, I13, I19 | QSL #185 |
+| V1-BACK-019 | S8 | AD-010 | I12, I13, I19 | Contract IR #135 |
+| V1-BACK-020 | S8 | AD-010 | I12, I13, I19 | Codegen #84 |
+| V1-BACK-021 | S8 | AD-010 | I12, I13, I19 | QSL #198 |
+| V1-BACK-022 | S8 | AD-010 | I12, I13, I19 | QSL #198 |
+| V1-BACK-023 | S8 | AD-010 | I12, I13, I19 | Analyze #41 |
+| V1-BACK-024 | S8 | AD-010 | I12, I13, I19 | Contract IR #136 |
 | V1-EVID-001 | S10 | AD-011 | I10, I15, I18-I21 | Verification #13 |
 | V1-EVID-002 | S10 | AD-011 | I10, I15, I18-I21 | Verification #13 |
 | V1-EVID-003 | S10 | AD-011 | I10, I15, I18-I21 | Research #40 |
@@ -204,7 +210,7 @@ the unique primary program epic from the Task-005 live-graph audit.
 
 ## Invariants
 
-- The table contains all 194 atomic inventory IDs exactly once.
+- The table contains all 200 atomic inventory IDs exactly once.
 - S1-S10 and AD-002-AD-011 cover every row; AD-001 governs the common root.
 - Interface references resolve to I01-I21 in
   `docs/v1-complete-architecture.md`.

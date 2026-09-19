@@ -11,7 +11,7 @@ relationships:
 
 # Complete V1 atomic capability and requirement matrix
 
-This matrix is normative traceability for the complete 194-row inventory. A
+This matrix is normative traceability for the complete 200-row inventory. A
 planned row is required work, not a deferred capability or implementation claim.
 
 ## Specification action classification
@@ -30,7 +30,7 @@ with the owning requirement.
   decided here.
 - `New`: behavior and acceptance criteria are authored for the row.
 
-Over the 194 rows the delivered totals are 97 Reuse, 45 Amend, 32 New, 19
+Over the 200 rows the delivered totals are 97 Reuse, 45 Amend, 38 New, 19
 Resolve and 1 Split.
 
 V1-TYPE-024 is a Resolve row because extending reachability over inheritance
@@ -216,6 +216,12 @@ type.
 | V1-BACK-016 | FR-352 | TC-255, TC-231 | New | planned |
 | V1-BACK-017 | FR-290 | TC-060, TC-231 | Amend | planned |
 | V1-BACK-018 | FR-292 | TC-060, TC-231 | Reuse | planned |
+| V1-BACK-019 | FR-349 | TC-266, TC-231 | New | planned |
+| V1-BACK-020 | FR-350 | TC-267, TC-231 | New | planned |
+| V1-BACK-021 | FR-353 | TC-268, TC-231 | New | planned |
+| V1-BACK-022 | FR-353 | TC-268, TC-231 | New | planned |
+| V1-BACK-023 | FR-354 | TC-269, TC-231 | New | planned |
+| V1-BACK-024 | FR-355 | TC-270, TC-231 | New | planned |
 | V1-EVID-001 | FR-310 | TC-230, TC-231 | Amend | planned |
 | V1-EVID-002 | FR-004 | TC-231 | Reuse | planned |
 | V1-EVID-003 | FR-311 | TC-231 | Amend | planned |
@@ -1007,10 +1013,12 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-346 | FR-346-AC-2 | TC-249 | planned |
 | FR-346 | FR-346-AC-3 | TC-249 | planned |
 | FR-346 | FR-346-AC-4 | TC-249 | planned |
+| FR-346 | FR-346-AC-5 | TC-249 | planned |
 | FR-347 | FR-347-AC-1 | TC-250 | planned |
 | FR-347 | FR-347-AC-2 | TC-250 | planned |
 | FR-347 | FR-347-AC-3 | TC-250 | planned |
 | FR-347 | FR-347-AC-4 | TC-250 | planned |
+| FR-347 | FR-347-AC-5 | TC-250 | planned |
 | FR-348 | FR-348-AC-1 | TC-251 | planned |
 | FR-348 | FR-348-AC-2 | TC-251 | planned |
 | FR-348 | FR-348-AC-3 | TC-251 | planned |
@@ -1026,6 +1034,31 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-352 | FR-352-AC-3 | TC-255 | planned |
 | FR-352 | FR-352-AC-4 | TC-255 | planned |
 | FR-352 | FR-352-AC-5 | TC-255 | planned |
+| FR-349 | FR-349-AC-1 | TC-266 | planned |
+| FR-349 | FR-349-AC-2 | TC-266 | planned |
+| FR-349 | FR-349-AC-3 | TC-266 | planned |
+| FR-349 | FR-349-AC-4 | TC-266 | planned |
+| FR-349 | FR-349-AC-5 | TC-266 | planned |
+| FR-350 | FR-350-AC-1 | TC-267 | planned |
+| FR-350 | FR-350-AC-2 | TC-267 | planned |
+| FR-350 | FR-350-AC-3 | TC-267 | planned |
+| FR-350 | FR-350-AC-4 | TC-267 | planned |
+| FR-350 | FR-350-AC-5 | TC-267 | planned |
+| FR-353 | FR-353-AC-1 | TC-268 | planned |
+| FR-353 | FR-353-AC-2 | TC-268 | planned |
+| FR-353 | FR-353-AC-3 | TC-268 | planned |
+| FR-353 | FR-353-AC-4 | TC-268 | planned |
+| FR-353 | FR-353-AC-5 | TC-268 | planned |
+| FR-354 | FR-354-AC-1 | TC-269 | planned |
+| FR-354 | FR-354-AC-2 | TC-269 | planned |
+| FR-354 | FR-354-AC-3 | TC-269 | planned |
+| FR-354 | FR-354-AC-4 | TC-269 | planned |
+| FR-354 | FR-354-AC-5 | TC-269 | planned |
+| FR-355 | FR-355-AC-1 | TC-270 | planned |
+| FR-355 | FR-355-AC-2 | TC-270 | planned |
+| FR-355 | FR-355-AC-3 | TC-270 | planned |
+| FR-355 | FR-355-AC-4 | TC-270 | planned |
+| FR-355 | FR-355-AC-5 | TC-270 | planned |
 
 ## Test Case Summary
 
@@ -1099,6 +1132,11 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-263 | Union recursion rule | Property | P0 | FR-143 | 🚧 Planned |
 | TC-264 | Case exhaustiveness obligations | Property | P0 | FR-146, FR-272 | 🚧 Planned |
 | TC-265 | Case evaluation and binding | Property | P0 | FR-146 | 🚧 Planned |
+| TC-266 | SMT backend registration and capability advertisement | Property | P0 | FR-349 | 🚧 Planned |
+| TC-267 | Verus contract emission from QSL state contracts | Property | P0 | FR-350 | 🚧 Planned |
+| TC-268 | Model-to-implementation abstraction relation binding and refusal | Property | P0 | FR-353 | 🚧 Planned |
+| TC-269 | Proved settlement trust basis | Property | P0 | FR-354 | 🚧 Planned |
+| TC-270 | SMT/native runtime differential parity corpus | Property | P0 | FR-355 | 🚧 Planned |
 
 ## Integration Test Matrix
 
@@ -1127,7 +1165,7 @@ supersedes FR-010's parent reachability.
 
 ## Coverage gate
 
-Complete-V1 qualification requires all 194 capability rows and every selected
+Complete-V1 qualification requires all 200 capability rows and every selected
 acceptance-criterion row to have executed evidence under one exact ecosystem
 lock. Until then the status remains planned or partial and cannot be promoted by
 family-level samples.

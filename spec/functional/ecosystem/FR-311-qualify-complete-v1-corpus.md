@@ -16,7 +16,7 @@ relationships:
 ## Description
 
 When evaluating complete-V1 conformance, the qualification runner SHALL execute
-positive, boundary and refusal vectors for every one of the 194 atomic inventory
+positive, boundary and refusal vectors for every one of the 200 atomic inventory
 capabilities under one exact ecosystem lock.
 
 ## Inputs
@@ -52,7 +52,7 @@ vector to be passed and an attributed release decision.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-311-AC-1 | The corpus maps all 194 inventory IDs exactly once and includes positive, boundary and refusal behavior where applicable. | Test (TC-231) |
+| FR-311-AC-1 | The corpus maps all 200 inventory IDs exactly once and includes positive, boundary and refusal behavior where applicable. | Test (TC-231) |
 | FR-311-AC-2 | A missing/unexecuted/unsupported vector prevents only its containing qualification scope from claiming complete success. | Test (TC-231) |
 | FR-311-AC-3 | Exact same corpus and ecosystem lock reproduce canonical per-capability results; a changed pin creates a distinct run. | Test (TC-231) |
 

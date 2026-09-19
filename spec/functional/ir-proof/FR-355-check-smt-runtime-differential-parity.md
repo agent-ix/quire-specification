@@ -1,0 +1,81 @@
+---
+id: FR-355
+title: "Check SMT/native runtime differential parity"
+type: FR
+relationships:
+  - target: ix://agent-ix/quire-specification/US-011
+    type: implements
+  - target: ix://agent-ix/quire-specification/AD-010
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-349
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-197
+    type: references
+  - target: ix://agent-ix/quire-specification/NFR-070
+    type: references
+---
+
+# FR-355: Check SMT/native runtime differential parity
+
+## Description
+
+When the SMT backend and the native runtime both evaluate a member of the
+shared differential corpus, the qualification runner SHALL compare their
+verdicts and record agreement or an explicit parity failure for every member.
+
+## Inputs
+
+The shared differential corpus (claims with a defined native `runtime::execute`
+evaluation and an SMT-encodable form), the registered SMT backend's verdict
+per member, and the native runtime's verdict per member.
+
+## Outputs
+
+Per-member agreement or explicit parity-failure result, and an aggregate
+parity report over the corpus.
+
+## Behavior
+
+Every differential corpus member is encoded for the SMT backend and evaluated
+by the native runtime under the same package, domain and claim identity.
+Agreement requires the same disposition (`proved`/`refuted`/`inconclusive` on
+the SMT side compared against the native runtime's corresponding executed
+verdict on the encoded domain); a decode, domain or verdict mismatch is an
+explicit parity failure naming the member and both verdicts, never silently
+resolved toward either side. This corpus-level check is the FR-197
+counterexample-replay precedent generalized from one reported counterexample
+to every corpus member, run independently of whether any single claim
+reported a counterexample. Until the Lean mechanized semantics (quire-research
+R27) is available, this differential corpus is the executable check that the
+SMT encoding and the native runtime agree on meaning; it does not itself
+constitute a mechanized equivalence proof.
+
+## Acceptance Criteria
+
+| ID | Criteria | Verification |
+| --- | --- | --- |
+| FR-355-AC-1 | Every differential corpus member is evaluated by both the registered SMT backend and the native runtime under the same package, domain and claim identity. | Test (TC-270) |
+| FR-355-AC-2 | Matching verdicts are recorded as agreement; a decode, domain or verdict mismatch is recorded as an explicit parity failure naming the member and both verdicts. | Test (TC-270) |
+| FR-355-AC-3 | A parity failure is never silently resolved toward either the SMT or the native verdict, and never rewritten as clause success/failure. | Test (TC-270) |
+| FR-355-AC-4 | The aggregate parity report accounts for every corpus member exactly once. | Test (TC-270) |
+| FR-355-AC-5 | This corpus check is retained as an executable check distinct from, and not claiming to be, a mechanized equivalence proof. | Inspection |
+
+## Dependencies
+
+- [AD-010](../../assurance/AD-010-target-neutral-ir-backends.md) supplies the
+  backend/runtime parity architecture (explicit parity failure on
+  disagreement) this requirement's corpus check follows.
+- [FR-349](FR-349-register-smt-backend.md) supplies the registered SMT
+  backend this requirement's corpus evaluates against.
+- [FR-197](FR-197-replay-backend-counterexamples.md) supplies the
+  single-counterexample replay-parity precedent this requirement generalizes
+  to a full differential corpus.
+- [NFR-070](../../non-functional/NFR-070-preserve-complete-semantic-fidelity.md)
+  supplies the zero-approximation fidelity constraint this corpus check
+  evidences.
+- [Subsystem and interface index](../../subsystems/index.md) identifies the
+  typed producer/consumer boundary and dependency direction.
+- Every requirement linked in frontmatter is a normative prerequisite.
+  Implementation ordering may add enablement edges but cannot change these
+  semantics or infer implementation availability from specification
+  acceptance.

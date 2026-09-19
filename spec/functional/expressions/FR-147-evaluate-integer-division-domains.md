@@ -11,6 +11,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/AD-005
     type: references
+  - target: ix://agent-ix/quire-specification/FR-349
+    type: references
 ---
 
 # FR-147: Evaluate mathematical and bounded integer division
@@ -83,6 +85,7 @@ precedes the arithmetic charge; an undefined outcome makes no later charge.
 | FR-147-AC-4 | Positive and negative dividend/divisor vectors distinguish truncating, floor and Euclidean results while preserving `a = b*q + r`. | Test (TC-192) |
 | FR-147-AC-5 | `mod` returns the Euclidean remainder independently of the selected `div`/`rem` law; an attempted explicit non-Euclidean `mod` selection is refused, while every zero divisor, including `mod`'s, is undefined after the operands charge and before the arithmetic charge, without emitting a quotient or remainder. `mod` exact-bound accounting consumes its four named `integer-modulus` charges, and denial of any of them returns incomplete without a remainder. | Test (TC-192) |
 | FR-147-AC-6 | Exact-bound accounting succeeds and denial of a named next integer-division charge returns incomplete without either quotient or remainder; a zero divisor is undefined after the operands charge and before the arithmetic charge. | Test (TC-192) |
+| FR-147-AC-7 | When a registered SMT backend advertising mathematical-integer semantics is present, the qualification corpus settles at least one integer-division obligation `proved` and at least one `refuted` through that backend via the I13 negotiation path; the AC-3 `requires-bound` absence disposition is unchanged when no such backend is registered. | Test (TC-192, TC-266) |
 
 ## Dependencies
 
@@ -90,6 +93,9 @@ precedes the arithmetic charge; an undefined outcome makes no later charge.
   source form used by this requirement.
 - [Subsystem and interface index](../../subsystems/index.md) identifies the
   typed producer/consumer boundary and dependency direction.
+- [FR-349](../ir-proof/FR-349-register-smt-backend.md) supplies the
+  registered SMT backend that discharges this requirement's `proved`/`refuted`
+  cases when registered.
 - Every requirement linked in frontmatter is a normative prerequisite.
   Implementation ordering may add enablement edges but cannot change these
   semantics or infer implementation availability from specification acceptance.
