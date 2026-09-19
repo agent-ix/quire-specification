@@ -282,13 +282,13 @@ also appear in IR PR #139 tc_042; WP9 vendors the full vector)
 | Witness shape | IR (IR PR #139, merged at `954c2f2`, `src/kani/witness.rs`; admission rule implemented by QSL ADR-013 TK-04 (IR #144)) | `Witness { transcript: String }`. `transcript` is the only field, and it is private. A `Witness` is admitted only through `Witness::parse`, including on deserialization; the stored transcript is the selected, trimmed assertion block, and `parse` refuses cover playback and a transcript with zero or several assertion blocks (QSL ADR-013 O-25). `harness_symbol()`, `check()`, `check_text()` and `concrete_values()` are fallible methods that re-derive their answer from `transcript` on every call. `decode(&[WitnessBinding])` is the only typing step and also reads `transcript`. |
 | Reconstruction + parity comparator | CG replay adapter | Builds `WitnessBinding`s from `KaniObligationIdentity.arguments` |
 | Native executor | QSL | Public complete-V1 entry `CheckedPackage::call`, reached only through the QSL layer-6 `replay` facade, which selects the function by a typed `QualifiedName` (arrow 7) |
-| Replay result | QSL (#231) | One per-item replay result (QSL ADR-013 O-27) whose one member, `arm`, is a sum of two distinct arm types: the `Witness`-arm result and the `Input`-arm result. Each arm result holds its arm's payload, the native outcome and a `settlement`: on agreement, `reproduced-with-evaluated-witness` for the `Witness` arm and `reproduced-without-witness` for the `Input` arm. |
+| Replay result | QSL (#231) | One per-item replay result (QSL ADR-013 O-27) whose one member, `arm`, is a sum of two distinct arm types: the `Witness`-arm result and the `Input`-arm result. Each arm result holds exactly its arm's payload (`witness` or `input`), the native outcome (`native`) and a `settlement`: on agreement, `reproduced-with-evaluated-witness` for the `Witness` arm and `reproduced-without-witness` for the `Input` arm. |
 | Backend-evidence verdict | CG parity comparator | One sealed type. Its only construction path takes an agreeing `Witness`-arm result. It has no public field and implements no `Deserialize`, `Default`, `From` or `TryFrom`. |
 
 The transcript is the only stored state that carries meaning; every other value
 is derived from it, so a witness cannot disagree with its own backend evidence.
 
-A `Witness` is held only through `parse`, the step that establishes it is a
+A `Witness` is held only through `parse`, the step that establishes that it is a
 Kani assertion playback block. The only way to hold the fact is the way that
 establishes it, so a transcript that is not a playback block cannot be
 represented. `ReplaySource` applies the same rule to witness-backing.
