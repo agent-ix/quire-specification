@@ -34,11 +34,15 @@ When a checked package is executed or replayed, the producer SHALL use the immut
 ## Outcome-to-verdict map
 
 QSpec fixes the replay outcome-to-verdict map once per QSL ADR-013 O-16
-category; the map applies uniformly across every request that reaches that
-category, and no request instance selects or overrides a category's verdict
-(FND-009; QC-8). An `Undefined` native outcome and a refused `FamilyOutcome`
-(its `Refused` case) never count as agreement, regardless of the `replay`
-property's expected originating verdict.
+category (FND-009; QC-8); no request instance selects or overrides a
+category's verdict.
+
+- When a replay outcome is settled, the producer SHALL apply the verdict
+  fixed for the outcome's QSL ADR-013 O-16 category.
+- The producer SHALL settle no agreement for an `Undefined` outcome or for
+  a refused `FamilyOutcome` (its `Refused` case, QSL ADR-011 #209 FND-008
+  S6a stage), regardless of the `replay` property's expected originating
+  verdict.
 
 ## Identity and validation
 

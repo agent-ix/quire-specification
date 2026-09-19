@@ -79,14 +79,17 @@ revisions.
 ## Failing-node identity and stage limits
 
 Because node ids are content-addressed and structurally identical nodes share
-one id, the counterexample packet and the failing obligation's identity carry
-the failing node's occurrence key — (`node_id`, `role`, `ordinal`), FR-322's
-`source_map` key — rather than node id alone (QC-8; QSL ADR-013 O-07,
-O-09). Arrow 7 resolves the replayed span by that occurrence key.
+one id, a bare node id does not tell apart the occurrences of one failing
+node; the occurrence key is FR-322's `source_map` key,
+(`node_id`, `role`, `ordinal`) (QC-8; QSL ADR-013 O-07, O-09).
 
-The QSL #231 replay request carries the S1–S4 stage limits copied from the
-package's proving run (QC-8; QSL ADR-013 O-26); the replay recompile executes
-under exactly those limits.
+- The replay boundary SHALL carry the failing node's occurrence key in the
+  counterexample packet and in the obligation identity.
+- The replay boundary SHALL resolve the replayed span by that occurrence
+  key.
+- When recompiling for replay, the replay boundary SHALL run under the
+  S1–S4 stage limits recorded for the package's proving run (QC-8; QSL
+  ADR-013 O-26).
 
 ## Replay source
 

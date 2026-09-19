@@ -942,6 +942,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-197 | FR-197-AC-18 | TC-272 | planned |
 | FR-197 | FR-197-AC-19 | TC-219 | planned |
 | FR-197 | FR-197-AC-20 | TC-272 | planned |
+| FR-197 | FR-197-AC-21 | TC-272 | planned |
+| FR-197 | FR-197-AC-22 | TC-272 | planned |
 | FR-320 | FR-320-AC-1 | TC-231 | planned |
 | FR-320 | FR-320-AC-2 | TC-231 | planned |
 | FR-320 | FR-320-AC-3 | TC-231 | planned |
@@ -973,6 +975,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-323 | FR-323-AC-1 | TC-231 | planned |
 | FR-323 | FR-323-AC-2 | TC-231 | planned |
 | FR-323 | FR-323-AC-3 | TC-231 | planned |
+| FR-323 | FR-323-AC-4 | TC-273 | planned |
 | FR-324 | FR-324-AC-1 | TC-231 | planned |
 | FR-324 | FR-324-AC-2 | TC-231 | planned |
 | FR-324 | FR-324-AC-3 | TC-231 | planned |
@@ -1001,6 +1004,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-331 | FR-331-AC-5 | TC-271 | planned |
 | FR-331 | FR-331-AC-6 | TC-271 | planned |
 | FR-331 | FR-331-AC-7 | TC-271 | planned |
+| FR-331 | FR-331-AC-8 | TC-274 | planned |
 | FR-332 | FR-332-AC-1 | TC-231 | planned |
 | FR-332 | FR-332-AC-2 | TC-231 | planned |
 | FR-332 | FR-332-AC-3 | TC-231 | planned |
@@ -1168,6 +1172,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-270 | SMT/native runtime differential parity corpus | Property | P0 | FR-355 | 🚧 Planned |
 | TC-271 | Capability kinds, advertised modes and candidate-set negotiation | Property | P0 | FR-290, FR-331, FR-272 | 🚧 Planned |
 | TC-272 | Replay source structural separation | Property | P0 | FR-197 | 🚧 Planned |
+| TC-273 | Outcome-to-verdict map fixed per O-16 category | Property | P0 | FR-323 | 🚧 Planned |
+| TC-274 | Vacuous Kani proof settles inconclusive | Property | P0 | FR-331 | 🚧 Planned |
 
 ## Integration Test Matrix
 
