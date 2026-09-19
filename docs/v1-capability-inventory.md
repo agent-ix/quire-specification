@@ -257,6 +257,8 @@ criterion this ledger names, rather than a bare `FR-0NN-AC-M` tag spelling.
 | V1-BACK-012 | Keep external source-language imports out of the native authority chain. | Integrity | V1-044 | C | P | P | P | M | QSpec #1 / research #40 |
 | V1-BACK-013 | Keep Java, Node and Electron runtimes out of production and qualification semantics. | Integrity | V1-044 | C | P | P | P | M | QSpec #1 / research #40 |
 | V1-BACK-014 | Refuse a backend request it cannot implement exactly; never approximate. | Integrity | V1-005, V1-006 | C | C | C | P | M | Contract IR #1 / codegen #1 |
+| V1-BACK-015 | Mint native-run-result/2 as a new closed wire carrying the separating-witness record, selected explicitly and never inferred from /1 content. | Required | V1-006, V1-047 | C | M | M | M | M | QSL #186 / Codegen #50 |
+| V1-BACK-016 | Refuse silent substitution between native-run-result/1 and /2; a consumer requiring the witness record regenerates against /2. | Integrity | V1-006, V1-047 | C | M | M | M | M | QSL #186 / Codegen #50 |
 | V1-BACK-017 | Check that a decomposed requirement's admitted result entails its parent's admitted result through a registered implication backend; absent that backend, the claim settles `unsupported` with a warning naming the required capability. | Required | V1-037; prose census | C | M | M | M | M | quire-analyze #40 / QSL #185 |
 | V1-BACK-018 | Catalog exact lowering targets and the FR-290 capabilities each backend advertises for registration and negotiation. | Required | V1-006 | C | M | M | M | M | QSL #185 |
 
@@ -270,6 +272,9 @@ criterion this ledger names, rather than a bare `FR-0NN-AC-M` tag spelling.
 | V1-EVID-004 | Qualify language conformance independently from monitor correctness and system qualification. | Required | V1-048 | C | P | P | P | M | research #40 / Verification #1 |
 | V1-EVID-005 | Reproduce results from exact source, dependency, bound, tool and option pins. | Required | V1-046, V1-048 | C | P | P | P | M | research #40 / Verification #1 |
 | V1-EVID-006 | Preserve typed counterexamples as replayable evidence. | Required | V1-047, V1-048 | C | P | P | P | M | Verification #1 / Contract IR #1 |
+| V1-EVID-007 | Retain the separating-witness record's exact deciding element, index, value path and trace position for every decisive settlement. | Required | V1-047, V1-048 | C | M | M | M | M | QSL #186 / Verification #38 |
+| V1-EVID-008 | Retain one family-neutral separating witness or counterexample shape across collection, temporal and protocol settlement. | Required | V1-047, V1-048 | C | M | M | M | M | QSL #186 / Verification #38 |
+| V1-EVID-009 | Leave an exhausted, cancelled or unsupported result witness-free rather than substituting a partial or synthesized witness. | Integrity | V1-047, V1-048 | C | M | M | M | M | QSL #186 / Verification #38 |
 | V1-TOOL-001 | Expose parse, check, lower, execute, replay, monitor and inspect through stable Rust APIs. | Required | code-surface census | C | P | P | P | M | QSL #1 / research #39 |
 | V1-TOOL-002 | Expose the same lifecycle through a stable CLI. | Required | code-surface census | C | P | P | P | M | quire-cli / research #39 |
 | V1-TOOL-003 | Preserve a lossless concrete syntax tree for editors and source transformations. | Required | prose census | C | M | M | M | M | QSL #1 / research #39 |
