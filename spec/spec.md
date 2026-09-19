@@ -1073,7 +1073,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-286](objects/protocol/FR-286-canonical-protocol-result-identity-preimage.md) | FR (value_object) | Object layer; versioned canonical-result identity preimage and strict-reader order |
 | [FR-287](objects/protocol/FR-287-authority-qualified-runtime-subject-reference.md) | FR (value_object) | Object layer; authority-qualified opaque runtime subject identity and non-causal canonical order |
 | [FR-288](objects/protocol/FR-288-qualified-protocol-definition-identity.md) | FR (value_object) | Object layer; exact linked protocol-definition qualifier across source, declaration ownership and semantic selections |
-| [FR-290](objects/protocol/FR-290-protocol-claim-kind.md) | FR (enumeration) | Object layer; closed capability-kind vocabulary, protocol and non-protocol families |
+| [FR-290](objects/protocol/FR-290-protocol-claim-kind.md) | FR (enumeration) | Object layer; cross-family authority: closed capability-kind vocabulary `quire.capability-kind/v1` for the value, state-model, finite-replay, temporal-trace and protocol families |
 | [FR-291](objects/protocol/FR-291-admitted-analysis-fragment.md) | FR (value_object) | Object layer; exact admitted analysis-fragment selection |
 | [FR-292](objects/protocol/FR-292-analysis-backend.md) | FR (value_object) | Object layer; exact analysis-backend selection |
 | [FR-250](objects/temporal/FR-250-temporal-semantic-profile.md) | FR (enumeration) | Object layer; Temporal semantic profile identity |

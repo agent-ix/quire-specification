@@ -234,7 +234,7 @@ The strict reader SHALL enforce the following result-combination rules.
 | FR-061-AC-14 | The independently recomputed FR-286 identity accepts object-member presentation permutations, changes for every semantic member mutation, and refuses missing identity or the same identity on different canonical result bytes. | Test (TC-061) |
 | FR-061-AC-15 | Participation accepts exactly the FR-285 known/unknown shapes, retains exact role-instance and missing-dependency references, and refuses target labels, mixed variants, duplicate members or display-derived ordering. | Test (TC-061) |
 | FR-061-AC-16 | Completeness accepts exactly the FR-295 state derived from the complete required population and remains independent from all five progress/closure facts and assessment execution. | Test (TC-061) |
-| FR-061-AC-17 | Each result retains one exact FR-290 protocol-family claim kind; every advanced result retains one compatible FR-281 strength, FR-291 fragment and FR-292 backend, and unknown/absent/mismatched or display-derived selections refuse. | Test (TC-061) |
+| FR-061-AC-17 | Each result retains one exact FR-290 protocol-family claim kind; every advanced result retains one compatible FR-281 strength, FR-291 fragment and FR-292 backend, and unknown/absent/mismatched or display-derived selections refuse; a non-protocol FR-290 member in the claim refuses as mismatched. | Test (TC-061) |
 
 ## Dependencies
 
