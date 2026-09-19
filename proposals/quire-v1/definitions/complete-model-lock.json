@@ -4,7 +4,7 @@
   "digest_domain": "quire.definition.bytes/v1",
   "language_edition": "1-draft",
   "requires": [
-    {"role": "complete_value_lock", "artifact_path": "complete-value-lock.json", "definition": {"authority":"agent-ix","identity":"quire.value.definition-lock/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"135ec9e43568d9ccee5c9637b9ff0655730a059ba011215d661edd3fa0588b6a"}}
+    {"role": "complete_value_lock", "artifact_path": "complete-value-lock.json", "definition": {"authority":"agent-ix","identity":"quire.value.definition-lock/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"96e20d5a5e756b97f42a5e86cc11ffa050a9d919faabe9772604b1e05f2d737c"}}
   ],
   "trigger_vocabulary": [],
   "selection_refusal_codes": ["selection_alternative_conflict", "selection_duplicate_role", "selection_duplicate_trigger", "selection_required_missing", "selection_trigger_unsatisfied", "selection_unknown_role", "selection_unknown_trigger", "selection_untriggered_profile"],
