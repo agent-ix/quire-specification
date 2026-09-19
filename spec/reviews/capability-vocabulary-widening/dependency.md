@@ -128,6 +128,6 @@ Evaluated against the uncommitted working tree on 5d3aa25. Paths are relative to
 | FND-004 | resolved | "a registered backend with no negotiation arm" settles `unknown-backend`, FR-290:174; native-diagnostics:97; FR-272 row; NG-04 (TC-271:48) |
 | FND-005 | resolved | One kind per item, FR-290:86; the empty-set warning names the item's kind and named backend, FR-290:176; native-diagnostics:96 |
 | FND-006 | resolved | P0 in both matrices, `spec/protocol/tests.md:259`, `spec/complete-v1/tests.md:1154` |
-| FND-007 | open | low. TC-060 and TC-061 are scoped to the protocol family (TC-060:21, TC-061:67-70), which resolves the first half. FR-290-AC-2 and AC-3 now cite TC-271 (FR-290:230-231), but TC-271 has no vector for independent outcomes or the global-premise refusal across families (TC-271:38-64). The trace is vacuous; see SR-610 FND-004. Fix: add that vector to TC-271. |
+| FND-007 | resolved (post-round-2, SR-606) | low. TC-060 and TC-061 are scoped to the protocol family (TC-060:21, TC-061:67-70), which resolves the first half. FR-290-AC-2 and AC-3 now cite TC-271 (FR-290:230-231), but TC-271 has no vector for independent outcomes or the global-premise refusal across families (TC-271:38-64). The trace is vacuous; see SR-610 FND-004. Fix: add that vector to TC-271. |
 
 Round 2 verdict: ACCEPT WITH FINDINGS

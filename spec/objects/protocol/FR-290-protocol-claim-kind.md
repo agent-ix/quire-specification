@@ -220,8 +220,10 @@ bytewise by backend identity, then manifest digest.
   disposition, and its accounting record is its one terminal record. Artifacts
   the item emitted before the probe are retained in the envelope and carry no
   verdict. If the tool changes after a passing probe and before the run
-  completes, then the adapter SHALL record the FR-331 result `failed` naming
-  the expected and actual tool identity. No other candidate runs, no other mode runs, and nothing waits for
+  completes, then the adapter SHALL record the FR-331 result `failed` with
+  cause `unsupported_projection`/`tool-unavailable`, naming the expected and
+  actual tool identity; the result `failed`, not the cause, distinguishes it
+  from absence found at probe. No other candidate runs, no other mode runs, and nothing waits for
   the tool. The pinned tool identity is the FR-331 request's tool lock, which
   equals the routed backend's manifest pin.
 - **Digest domain** — not applicable.
@@ -237,7 +239,7 @@ bytewise by backend identity, then manifest digest.
 | FR-290-AC-5 | Each claim form in the claim-form assignment table requires exactly its listed kind; an expression nested in a clause adds no kind; a `case` exhaustiveness obligation and an FR-353 abstraction relation request no backend. | Test (TC-271) |
 | FR-290-AC-6 | For each row of the advertised-mode table, negotiation settles the listed disposition; an unbounded extent on a bounded-only advertisement never settles `supported`; an item with no extent classification settles `invalid-request`. | Test (TC-271) |
 | FR-290-AC-7 | Each row of the candidate table settles its listed disposition and cause; an item with two or more candidates and no named backend settles `invalid-request` naming every candidate in candidate order, identically under every registration order; a duplicate or malformed registration is refused and keyed by backend identity. | Test (TC-271) |
-| FR-290-AC-8 | A routed item whose pinned tool is missing, mismatched, or whose probe errors or exceeds its limit records the FR-331 result `unsupported` with cause `unsupported_projection`/`tool-unavailable` naming the kind, backend and expected and actual tool identity; its disposition stays `supported`, and no other registered candidate or mode runs. | Test (TC-271) |
+| FR-290-AC-8 | A routed item whose pinned tool is missing, mismatched, or whose probe errors or exceeds its limit records the FR-331 result `unsupported` with cause `unsupported_projection`/`tool-unavailable` naming the kind, backend and expected and actual tool identity; its disposition stays `supported`, and no other registered candidate or mode runs; a tool that changes after a passing probe records the FR-331 result `failed` with the same cause, naming the expected and actual tool identity. | Test (TC-271) |
 
 ## Dependencies
 

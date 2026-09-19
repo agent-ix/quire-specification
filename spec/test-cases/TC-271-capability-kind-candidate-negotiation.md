@@ -63,6 +63,7 @@ Repeat every registry vector with the descriptors registered in reversed order.
 | TA-03 | TA-01 with the probe erroring, and separately exceeding its limit | As TA-01 |
 | TA-04 | The routed backend advertises both modes for the kind; remove its tool | As TA-01; no run under the other mode |
 | TA-05 | Set the request tool lock to an identity other than the routed backend's manifest pin | The request refuses before consumption |
+| TA-06 | TA-01's routed item passes the probe; replace the tool with another identity before the run completes | FR-331 result `failed` with `unsupported_projection`/`tool-unavailable` naming the expected and actual tool identity; disposition stays `supported`; one terminal accounting record; no other candidate or mode runs |
 
 ## Expected Results
 
