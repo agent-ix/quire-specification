@@ -1,6 +1,6 @@
 {
   "lock_version": "quire.value.definition-lock/v1",
-  "revision": "1-draft.1",
+  "revision": "1-draft.2",
   "digest_domain": "quire.definition.bytes/v1",
   "language_edition": "1-draft",
   "trigger_vocabulary": ["ieee_operation", "integer_div_rem", "text_bearing"],
@@ -14,7 +14,7 @@
     {
       "role": "root",
       "artifact_path": "value-complete.md",
-      "definition": {"authority":"agent-ix","identity":"quire.value.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"608bb4ebe0cdd9eb2313421c3130abe19a497de7e4dee9e17d7ba610e90f6ec2"}
+      "definition": {"authority":"agent-ix","identity":"quire.value.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"c8c7ae9fbe783286369ecc83f006190f83be4c3c8fc585766617c90f27a25b16"}
     },
     {
       "role": "accounting",
@@ -39,7 +39,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "value-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.value.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"35759aa0d956564a7992ed9aa085d1df0884992fd75f2d59eb032f5bef13a389"}
+      "definition": {"authority":"agent-ix","identity":"quire.value.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"fcb78762664b895ec03127fac69f76f3cf3a6357e564365b64fa1537bb5695d6"}
     },
     {
       "role": "text_profile",
@@ -74,7 +74,7 @@
     {
       "role": "rule_shared_grammar",
       "artifact_path": "../shared-grammar.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.shared-grammar/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"ff3b0290d2f458085d0da4b3ce8120a0e8fbc6e24c28299fdf2968b4773213b6"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.shared-grammar/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"697b2458455e0c209120019013b24ad0d2506fdf5ce57c41655d066b2b057afd"}
     },
     {
       "role": "rule_ad_005",

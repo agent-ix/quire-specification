@@ -1,6 +1,6 @@
 # Complete model definition
 
-Definition identity: `quire.model.complete/v1`; revision: `1-draft.1`.
+Definition identity: `quire.model.complete/v1`; revision: `1-draft.2`.
 Language: `ix:native` / `1-draft`. This definition is the complete-V1 model,
 inheritance, conformance, dispatch, systems-model and closed-environment root.
 Implementation and qualification remain separately reported.
@@ -14,9 +14,9 @@ its always-selected closure through
 | Identity | Revision | Definition artifact |
 | --- | --- | --- |
 | `quire.state.graph/v1` | `1-draft.3` | [Finite graphs](state-graph.md) |
-| `quire.model.complete.rules/v1` | `1-draft.1` | [Exact rule closure](model-complete-rules.json) |
-| `quire.model.effective-declaration.schema/v1` | `1-draft.1` | [Effective identity schema](../../checked-package-v2/model-effective-declaration.schema.json) |
-| `quire.model.effective-declaration.vectors/v1` | `1-draft.1` | [Effective identity vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
+| `quire.model.complete.rules/v1` | `1-draft.2` | [Exact rule closure](model-complete-rules.json) |
+| `quire.model.effective-declaration.schema/v1` | `1-draft.2` | [Effective identity schema](../../checked-package-v2/model-effective-declaration.schema.json) |
+| `quire.model.effective-declaration.vectors/v1` | `1-draft.2` | [Effective identity vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
 
 The accounting role is `quire.value.accounting/v1`, already selected by the
 complete-value root. Its model and graph charge points and its

@@ -19,7 +19,7 @@ Resolve every model element kind and attempt kind, direction and package substit
 
 Use the exact version-locked subject and inputs named by FR-152. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
-Select `quire.model.complete/v1` at revision `1-draft.1` by its exact
+Select `quire.model.complete/v1` at revision `1-draft.2` by its exact
 DefinitionRefs in
 [`complete-model-lock.json`](../../proposals/quire-v1/definitions/complete-model-lock.json).
 Node names, declaration keys, package identity, multiplicity notation and

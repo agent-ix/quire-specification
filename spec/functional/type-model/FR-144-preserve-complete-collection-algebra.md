@@ -24,7 +24,8 @@ selected sequence, set, bag or ordered-set algebra.
 
 ## Inputs
 
-Element type, collection kind, declared cardinality bound and occurrences.
+Element type, collection kind, an optional declared cardinality bound and
+occurrences. An absent bound means unbounded.
 
 ## Outputs
 
@@ -61,15 +62,21 @@ contract over this order.
 
 ## Bound and type identity
 
-The cardinality bound is part of the collection type. `K<T>[a,b]` and
+The cardinality bound, when authored, is part of the collection type. An
+absent bound means unbounded: no minimum and no maximum apply, and
+construction and traversal never refuse for cardinality. `K<T>[a,b]` and
 `K2<T2>[c,d]` are the same type exactly when `K = K2`, `T` and `T2` are the same
-type, `a = c` and `b = d`; element-type identity includes every nested bound.
-FR-149 admits no collection equality conversion, so `=` or `!=` between
-collection types that differ only in bound is
+type, and either both bounds are present with `a = c` and `b = d`, or both are
+absent; element-type identity includes every nested bound or its absence. A
+bound present on one side and absent on the other is a different type. FR-149
+admits no collection equality conversion, so `=` or `!=` between collection
+types that differ only in bound, including only in bound presence, is
 `refused { code: ill_typed, cause: type-mismatch }`. Such values are compared by
-first binding an FR-145 same-kind `convert<K<T>[a,b]>(c)` through `let`, whose
-loss is empty and whose target bound is checked at run time. A bound is not
-only a construction check, and no implicit widening or narrowing exists.
+first binding an FR-145 same-kind `convert<K<T>[a,b]>(c)` (or, to an unbounded
+target, `convert<K<T>>(c)`) through `let`, whose loss is empty and whose target
+bound, when present, is checked at run time. A bound is not only a construction
+check, and no implicit widening or narrowing exists between a present and an
+absent bound, or between two different present bounds.
 
 ## Collection literal typing
 
@@ -78,12 +85,14 @@ A collection literal (`sequence[...]`, `set[...]`, `bag[...]` or
 expected type of its position: a declared field, parameter or result type, a
 `convert` target, the element type of an enclosing literal, or the static type
 of the other operand of `=` or `!=`. The expected type must be a collection of
-the literal's kind, `K<T>[a,b]`; the literal then has exactly that type, and
+the literal's kind, `K<T>[a,b]` or the unbounded `K<T>`; the literal then has
+exactly that type, and
 each element expression is checked against the expected type `T`. A literal
 without a unique expected type, such as both operands of `=` or the right side
 of an unannotated `let`, is `refused { code: ill_typed, cause: ambiguous-literal }`.
 A literal of another kind is `refused { code: ill_typed, cause: type-mismatch }`.
-The bound is checked by construction at run time, not by type checking.
+A present bound is checked by construction at run time, not by type checking;
+an absent bound admits every constructed count.
 
 ## Element admission and canonical keys
 
@@ -130,13 +139,15 @@ unordered enumeration, reordering its cases changes no visiting order.
 
 Collection element expressions are evaluated in source position order under
 FR-143's first-stopped-element rule. The evaluator then forms the kind's
-occurrences, decides duplicates with the FR-149 relation and checks the
-declared bound. A duplicate decision that FR-149 refuses, such as a
-`foreign_reference` pair, refuses construction with that outcome. A count
-outside `min..max` returns
+occurrences, decides duplicates with the FR-149 relation and, when the type
+declares a bound, checks it. A duplicate decision that FR-149 refuses, such as a
+`foreign_reference` pair, refuses construction with that outcome. For a bounded
+type, a count outside `min..max` returns
 `refused { code: cardinality_out_of_bound, cause: below-minimum }` or
 `refused { code: cardinality_out_of_bound, cause: above-maximum }` before
-materialization, with the collection type, the bound and the formed count.
+materialization, with the collection type, the bound and the formed count. An
+unbounded type admits every formed count and makes no `cardinality_out_of_bound`
+refusal.
 
 ## Collection charges
 
@@ -155,7 +166,8 @@ constructor expression such as `set[e1, ..., en]` charges, in this order:
    including the `foreign_reference` universe check, then charges
    `collection.member-test` (`work_units += p`, the planned pair count).
 3. `collection.bound` with `value_occurrences` equal to the formed bound count,
-   then the bound check, which makes no charge.
+   then the bound check, which makes no charge. An unbounded type charges
+   `collection.bound` identically; its bound check never refuses.
 4. `collection.result-retain` with `result_units += occ(result)`.
 
 Occurrence `i` is retained as a new member when no comparison is equal;
@@ -193,9 +205,11 @@ FR-146 and FR-307; otherwise it is
 | FR-144-AC-6 | Every `=`-admitting type, `Reference` included, has exactly the tabled total canonical key, and an IEEE-bearing set, bag or ordered-set element type is `ill_typed`. | Test (TC-189) |
 | FR-144-AC-7 | Set and bag visiting uses ascending canonical-key order independent of insertion order, and a key never admits an ordering comparison. | Test (TC-189) |
 | FR-144-AC-8 | Collection construction charges `collection.element`, `collection.member-walk`, `collection.member-test`, `collection.bound` and `collection.result-retain` in the stated order and amounts, and each denied charge returns incomplete with no partial collection. | Test (TC-189) |
-| FR-144-AC-9 | The cardinality bound is part of collection type identity, so equality between bounds that differ is `ill_typed`; an unordered enumeration key uses identifier bytes and never declaration position. | Test (TC-189) |
+| FR-144-AC-9 | The cardinality bound, or its absence, is part of collection type identity, so equality between a present bound and an absent bound, or between two different present bounds, is `ill_typed`; an unordered enumeration key uses identifier bytes and never declaration position. | Test (TC-189) |
 | FR-144-AC-10 | A collection literal takes exactly its unique expected type, and a literal without one is `ill_typed` with cause `ambiguous-literal`. | Test (TC-189) |
 | FR-144-AC-11 | Reference keys order by universe, most-specific type and object bytes exactly as the published model reference-key vectors state. | Test (TC-198) |
+| FR-144-AC-12 | A collection type with no declared bound admits every occurrence count at construction and traversal and never returns `cardinality_out_of_bound`. | Test (TC-246) |
+| FR-144-AC-13 | A collection type with an absent bound and one with a present bound, same kind and same element type, are different types; equality between them is `refused { code: ill_typed, cause: type-mismatch }`, and moving a value between them requires an explicit FR-145 `convert` whose present-bound direction is checked at run time. | Test (TC-246) |
 
 ## Dependencies
 

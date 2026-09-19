@@ -137,6 +137,9 @@ closure and cannot promote missing execution.
 | V1-EXPR-024 | A | QSL #119 | QSL #123 |
 | V1-EXPR-025 | A | QSL #119 | QSL #123 |
 | V1-EXPR-026 | A | QSL #119 | QSL #123 |
+| V1-EXPR-027 | A | QSL #189 | Contract IR #132 |
+| V1-EXPR-028 | A | QSL #189 | Contract IR #132 |
+| V1-EXPR-029 | A | QSL #189 | Contract IR #132 |
 | V1-TEMP-001 | B | TL Syntax #73 | TL Syntax #74 |
 | V1-TEMP-002 | B | TL Syntax #73 | TL Syntax #74 |
 | V1-TEMP-003 | B | TL Syntax #73 | TL Syntax #74 |
@@ -256,12 +259,14 @@ closure and cannot promote missing execution.
 
 ## Planning invariants
 
-- All 191 required/integrity rows have one primary implementation ticket and one
+- All 194 required/integrity rows have one primary implementation ticket and one
   qualification owner; no row is deferred, research-only or unowned. Rows
   V1-EVID-007–009 and V1-BACK-015–016 were added after the Plan-008 baseline to
   cover the FR-351 separating-witness record and the FR-352
-  `native-run-result/2` wire (#114), and rows V1-TEMP-024–026 to cover the
-  `quire.temporal.infinite-trace/v1` liveness profile (#112).
+  `native-run-result/2` wire (#114), rows V1-TEMP-024–026 to cover the
+  `quire.temporal.infinite-trace/v1` liveness profile (#112), and rows
+  V1-EXPR-027–029 to cover the FR-346 unbounded quantification, FR-347
+  inductive and FR-348 compositional verification surface (#113).
 - Closed leaves remain immutable evidence but their qualification tickets still
   gate complete-V1 acceptance.
 - Shared QSpec interfaces I01–I21 and payloads FR-320–339 are frozen inputs.
