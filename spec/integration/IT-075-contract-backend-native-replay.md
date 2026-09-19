@@ -16,7 +16,7 @@ relationships:
 ## Objective
 
 Verify QSL-to-Contract-IR lowering, generated oracle/property/Kani consumers and
-native `runtime::execute` agree on supported bounded subjects and explicit
+the native QSL complete-V1 executor (FR-197, AD-016 arrow 7) agree on supported bounded subjects and explicit
 refusals.
 
 ## Target Integration

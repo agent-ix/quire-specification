@@ -69,7 +69,8 @@ hold on cvc5's settlement. A configured Z3 whose pinned tool probe finds it
 missing or mismatched, errors or exceeds its limit is the same warned absent
 cross-check: cvc5's verdict settles the claim, and the item never records the
 FR-290 tool-absence result `unsupported` on Z3's account. Counterexamples and witnesses retain the FR-036
-original source spans and replay through `runtime::execute` per AD-010. A
+original source spans and replay through the QSL complete-V1 executor per AD-010
+(FR-197, AD-016 arrow 7). A
 claim whose required capability kind no registered backend advertises settles
 `unsupported` with a warning naming the required capability kind; this absence
 path is unaffected by whether the SMT backend is registered for other

@@ -932,6 +932,14 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-197 | FR-197-AC-8 | TC-272 | planned |
 | FR-197 | FR-197-AC-9 | TC-272 | planned |
 | FR-197 | FR-197-AC-10 | TC-272 | planned |
+| FR-197 | FR-197-AC-11 | TC-272 | planned |
+| FR-197 | FR-197-AC-12 | TC-272 | planned |
+| FR-197 | FR-197-AC-13 | TC-272 | planned |
+| FR-197 | FR-197-AC-14 | TC-272 | planned |
+| FR-197 | FR-197-AC-15 | TC-272 | planned |
+| FR-197 | FR-197-AC-16 | TC-272 | planned |
+| FR-197 | FR-197-AC-17 | TC-272 | planned |
+| FR-197 | FR-197-AC-18 | TC-272 | planned |
 | FR-320 | FR-320-AC-1 | TC-231 | planned |
 | FR-320 | FR-320-AC-2 | TC-231 | planned |
 | FR-320 | FR-320-AC-3 | TC-231 | planned |
