@@ -111,8 +111,8 @@ Evaluated against the uncommitted working tree on 5d3aa25. Paths are relative to
 | FND-010 | accepted-as-ruled | Relocating the file is an owner question. spec.md notes the cross-family authority, `spec/spec.md:1076` |
 | FND-011 | resolved | "not a second vocabulary" restated positively, FR-290:51-52. The Kani sentence (FR-290:208-209) is required by #134 item 5. The FR-349 "not capability kinds" wording (FR-349:56-57) is optional. |
 | FND-012 | resolved | SMT-01b is renumbered SMT-04, `spec/test-cases/TC-266-smt-backend-registration.md:40`. The fix adds SMT-03b; see FND-013. |
-| FND-013 (new) | open | low. TC-266:39 adds vector `SMT-03b`, which breaks the `SMT-NN` sequence again. Fix: renumber it `SMT-05`. |
-| FND-014 (new) | open | low. TC-060:21 still says "a backend supporting only finite replay/conformance". `finite-replay` is now a non-protocol member, and FR-292:30 limits a protocol backend to protocol-family members. Fix: reword to "a backend supporting only `global-conformance`". |
+| FND-013 (new) | resolved (post-round-2) | low. TC-266:39 adds vector `SMT-03b`, which breaks the `SMT-NN` sequence again. Fix: renumber it `SMT-05`. |
+| FND-014 (new) | resolved (post-round-2) | low. TC-060:21 still says "a backend supporting only finite replay/conformance". `finite-replay` is now a non-protocol member, and FR-292:30 limits a protocol backend to protocol-family members. Fix: reword to "a backend supporting only `global-conformance`". |
 
 Round 2 verdict: ACCEPT WITH FINDINGS
 
