@@ -11,6 +11,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/AD-010
     type: references
+  - target: ix://agent-ix/quire-specification/AD-013
+    type: references
 ---
 
 # FR-348: Admit compositional verification obligations
@@ -74,6 +76,9 @@ claim no registered composition-capable backend can discharge settles
   source form used by this requirement.
 - [Subsystem and interface index](../../subsystems/index.md) identifies the
   typed producer/consumer boundary and dependency direction.
+- [AD-013](../../assurance/AD-013-unbounded-declaration-architecture.md)
+  supplies the unbounded-declaration and quantifier-negotiation
+  architecture this requirement is allocated to.
 - Every requirement linked in frontmatter is a normative prerequisite.
   Implementation ordering may add enablement edges but cannot change these
   semantics or infer implementation availability from specification

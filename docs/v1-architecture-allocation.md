@@ -82,6 +82,9 @@ the unique primary program epic from the Task-005 live-graph audit.
 | V1-EXPR-024 | S2 | AD-005 | I04, I05, I12 | Research #65 |
 | V1-EXPR-025 | S2 | AD-005 | I04, I05, I12 | QSL #1 |
 | V1-EXPR-026 | S2 | AD-005 | I04, I05, I12 | QSL #1 |
+| V1-EXPR-027 | S2 | AD-013 | I04, I05, I12 | QSL #189 |
+| V1-EXPR-028 | S7 | AD-013 | I14, I15, I19 | QSL #189 |
+| V1-EXPR-029 | S7 | AD-013 | I14, I15, I19 | QSL #189 |
 | V1-TEMP-001 | S4 | AD-002 | I06, I07, I10, I19 | TL Syntax #1 |
 | V1-TEMP-002 | S4 | AD-002 | I06, I07, I10, I19 | TL Syntax #1 |
 | V1-TEMP-003 | S4 | AD-002 | I06, I07, I10, I19 | TL Syntax #1 |
@@ -201,7 +204,7 @@ the unique primary program epic from the Task-005 live-graph audit.
 
 ## Invariants
 
-- The table contains all 191 atomic inventory IDs exactly once.
+- The table contains all 194 atomic inventory IDs exactly once.
 - S1-S10 and AD-002-AD-011 cover every row; AD-001 governs the common root.
 - Interface references resolve to I01-I21 in
   `docs/v1-complete-architecture.md`.

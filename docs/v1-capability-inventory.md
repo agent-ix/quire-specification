@@ -49,10 +49,10 @@ implies completion in another.
 this inventory. `Int` is a Plan-008 code-surface census. `Qual` is uniformly
 `M`. It records that every capability lacks release qualification evidence:
 each row's qualification ticket in the
-[ticket manifest](v1-delivery-ticket-manifest.md) is one of eight open lane
+[ticket manifest](v1-delivery-ticket-manifest.md) is one of nine open lane
 tickets — QSL #123 (92 rows), Protocol #82 (34), Contract IR #101 (16), QObs
-#26 (14), Research #78 (12), TL Syntax #74 (11), Verification #38 (7) and
-Codegen #50 (5) —
+#26 (14), Research #78 (12), TL Syntax #74 (11), Verification #38 (7),
+Codegen #50 (5) and Contract IR #132 (3) —
 and `TC-231`, the aggregate qualification corpus verifying `FR-311`, carries
 zero traced tests on any implementation default branch. Per-row measurement
 of `Int` and `Qual` remains scope for the A07 lane.
@@ -154,8 +154,8 @@ criterion this ledger names, rather than a bare `FR-0NN-AC-M` tag spelling.
 | V1-EXPR-025 | Reject mutation and I/O during declarative clause evaluation. | Integrity | V1-008, V1-039 | C | C | P | P | M | QSpec #1 / research #39 |
 | V1-EXPR-026 | Report resource exhaustion and undefined arithmetic without Boolean approximation. | Integrity | V1-005, V1-010 | C | C | C | P | M | QSL #1 / Contract IR #1 |
 | V1-EXPR-027 | Evaluate unbounded universal and existential quantification. | Required | V1-015 | C | M | M | M | M | QSL #189 / Contract IR #132 |
-| V1-EXPR-028 | Admit inductive verification obligations over unbounded and recursive domains. | Required | #113 | C | M | M | M | M | QSL #189 / Contract IR #132 |
-| V1-EXPR-029 | Admit compositional verification obligations over independently verified interface-connected components. | Required | #113 | C | M | M | M | M | QSL #189 / Contract IR #132 |
+| V1-EXPR-028 | Admit inductive verification obligations over unbounded and recursive domains. | Required | V1-038 | C | M | M | M | M | QSL #189 / Contract IR #132 |
+| V1-EXPR-029 | Admit compositional verification obligations over independently verified interface-connected components. | Required | V1-037 | C | M | M | M | M | QSL #189 / Contract IR #132 |
 
 ## 4. Temporal, clocks and observation
 

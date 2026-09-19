@@ -18,9 +18,9 @@
     },
     {
       "identity": "quire.rule.fr-143/v1",
-      "revision": "1-draft.1",
+      "revision": "1-draft.2",
       "path": "../../../spec/functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md",
-      "sha256": "cfa98d995dad5939c065fc1fca581e1524dc05c01d3596198f9f0c8bc8aa5313"
+      "sha256": "90fad259892ac0d17c2d9b344e8b294a797de482b8b1670841141bbf1c900b89"
     },
     {
       "identity": "quire.rule.fr-144/v1",

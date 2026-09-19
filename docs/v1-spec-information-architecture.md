@@ -3,7 +3,7 @@
 This document is the Task-004 decision record for how the complete V1
 specification corpus will be organized before its major expansion. It is based
 on the default-branch revisions recorded in
-`docs/v1-capability-inventory.md`, the 191-row atomic inventory, the artifact
+`docs/v1-capability-inventory.md`, the 194-row atomic inventory, the artifact
 bodies those rows were read against, and each repository's existing root
 specification and architecture decisions.
 
@@ -198,5 +198,5 @@ structural PR must prove:
 - historical reviews, tags and released references remain intact.
 
 This gate makes organization a bounded prerequisite. It cannot be used to defer
-any of the 191 complete-V1 rows or to replace the comprehensive architecture
+any of the 194 complete-V1 rows or to replace the comprehensive architecture
 and specification work required by Tasks 006 and 007.
