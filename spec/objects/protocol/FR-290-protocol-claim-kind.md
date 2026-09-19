@@ -33,7 +33,7 @@ claim's premises and outcome independent from every other member.
 These six labels are the single capability-kind vocabulary for protocol claims
 across the Quire ecosystem. `quire-spec-language`'s `Capability` enum and
 `quire-protocol`'s advertised claim-kind vocabulary align to this set;
-[agent-ix/quire-spec-language#190](https://github.com/agent-ix/quire-spec-language/issues/190)
+[agent-ix/quire-spec-language#229](https://github.com/agent-ix/quire-spec-language/issues/229)
 tracks the QSL-side alignment.
 
 ## Identity and comparison
@@ -49,6 +49,10 @@ tracks the QSL-side alignment.
   `unsupported` with a warning naming the required capability. Backends
   register under one contract; `quire-spec-language`'s Kani backend is one
   registrant, and further backends register under the same contract.
+  Capability negotiation happens at one point, `quire-contract-codegen`'s
+  `negotiate_*` ([AD-016](../../assurance/AD-016-semantic-family-extension-path.md)),
+  which settles each requested item as exactly one of `supported`,
+  `requires-bound`, `unsupported` (warned) or `invalid-request`.
 - **Digest domain** — not applicable.
 
 ## Acceptance Criteria
