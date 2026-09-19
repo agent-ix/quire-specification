@@ -42,8 +42,8 @@ The explicit refusal/non-conclusive mutations include:
 ## Non-coalescing and cancellation vectors
 
 - Two states whose typed semantic state differs only in an IEEE value's NaN
-  payload or a signed zero's sign have distinct state keys and are not
-  coalesced.
+  payload or a signed zero's sign have distinct state keys and remain
+  distinct states.
 - A successor that violates a declared invariant is recorded as a successor
   rather than pruned from exploration.
 - A caller cancellation mid-exploration returns `incomplete` with cause
@@ -54,4 +54,6 @@ The explicit refusal/non-conclusive mutations include:
 For seed `424242`, trace `0` and enabled-successor-set size `n = 5`, a real
 implementation of the counter-mode generator draws, at `draw = 0` for every
 step: index `0` at step `0`, index `0` at step `1`, index `4` at step `2`,
-index `4` at step `3` and index `4` at step `4`.
+index `4` at step `3` and index `4` at step `4`. The step-0 preimage is
+`{"draw":"0","seed":"424242","step":"0","trace":"0"}`; its SHA-256 is
+`cb7d4b3b8b8491d8310ccc1e07c3ee236d3fe86cf713d1851533a85ef6682622`.

@@ -43,12 +43,18 @@ semantic state, control positions, queues, role lifetimes, observation
 progress and remaining bounds, serialized with RFC 8785 JCS. The state-key
 digest is SHA-256 over those canonical JCS bytes, under the
 `quire.simulation.state-key/v1` digest domain (FR-201), distinct from
-`sha256-jcs`. Coalescing compares the full state-key bytes, not the digest;
-the digest identifies states only in traces and frontier records.
+`sha256-jcs`. Coalescing compares the full state-key bytes; the digest
+identifies states only in traces and frontier records.
 
 ### Typed canonical form
 
-Every value encodes as a tagged JCS object, `{"type": <tag>, ...}`:
+A decimal string is `0`, or an optional `-` followed by `[1-9][0-9]*`. A
+domain-object reference is its FR-204 (universe, type, object_identity)
+triple, realized under `quire.model.complete/v1`
+([model-complete.md](../../../proposals/quire-v1/definitions/model-complete.md))
+as `{"type":"reference","universe":"<64 lowercase hex>","object_type":"<64 lowercase hex>","identity":"<lowercase hex of the identity bytes>"}`.
+The null literal is `{"type":"null"}`. Every value encodes as a tagged JCS
+object, `{"type": <tag>, ...}`:
 
 - integer — `{"type":"integer","value":"<decimal>"}`, the exact value as a
   decimal string.
@@ -60,28 +66,38 @@ Every value encodes as a tagged JCS object, `{"type": <tag>, ...}`:
 - rational — `{"type":"rational","numerator":"<decimal>","denominator":"<decimal>"}`,
   in its FR-205 normalized numerator/denominator form.
 - decimal — `{"type":"decimal","coefficient":"<decimal>","scale":"<decimal>"}`,
-  its exact coefficient and scale (FR-140), each an exact decimal string.
+  its retained (pre-normalization) coefficient and scale (FR-140), each an
+  exact decimal string.
 - text — `{"type":"text","value":"<string>"}`.
 - `Option<T>` — `{"type":"option","value":<encoded-value>|null}`.
 - `Set<T>`/`Bag<T>` — `{"type":"set"|"bag","elements":[<encoded-value>, ...]}`,
-  sorted by each element's own encoded bytes, ascending
-  unsigned-lexicographic; a bag keeps every duplicate.
+  sorted by each element's JCS UTF-8 bytes, ascending unsigned-lexicographic;
+  a bag keeps every duplicate.
 - `Sequence<T>` — `{"type":"sequence","elements":[<encoded-value>, ...]}`, in
   the sequence's own order.
 - `OrderedSet<T>` — `{"type":"ordered-set","elements":[<encoded-value>, ...]}`,
   in the ordered set's own order, admitting no duplicate encoded element.
-- record/tuple — `{"type":"record"|"tuple","name":"<qualified-name>", ...}`,
-  carrying every declared field or component in its declaration order.
-- enum/union — `{"type":"enum"|"union","name":"<qualified-name>","member":"<member>", ...}`,
-  carrying the selected member's declared components, if any, in declaration
-  order.
-- `Reference<T>` — `{"type":"reference","name":"<qualified-name>","id":<encoded-value>}`,
-  carrying the referent's own identity.
+- record — `{"type":"record","name":"<qualified-name>","fields":[{"name":"<field>","value":<encoded>|null}, ...]}`,
+  one entry per declared field in declaration order, `null` for an absent
+  `?` field.
+- tuple — `{"type":"tuple","name":"<qualified-name>","components":[<encoded>, ...]}`,
+  in declaration order.
+- enum — `{"type":"enum","name":"<qualified-name>","member":"<member-ident>"}`.
+- union — `{"type":"union","name":"<qualified-name>","member":"<member-ident>","components":[<encoded>, ...]}`,
+  an empty array for a nullary member.
+- `Reference<T>` — the reference triple defined above.
 
-This covers every value type in the complete-V1 grammar's `type-ref`
-([Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md)). A
-control position, queue, role lifetime and observation-progress map in the
-simulator state is sorted the same way, by its own encoded key bytes.
+An alias encodes as its target type. A domain-object value is held in state
+as `Reference<T>`. A unit-bearing quantity encodes as its underlying exact
+rational or decimal value with an added `"unit":"<qualified-name>"` naming
+the declared unit identity from its FR-142 dimension/unit conversion graph.
+
+The state key is
+`{"type":"simulation-state","semantic":<encoded>,"control":<map>,"queues":<map>,"roles":<map>,"observations":<map>,"bounds":<map>}`.
+Each map is `{"type":"map","entries":[{"key":<encoded>,"value":<encoded>}, ...]}`,
+entries sorted ascending unsigned-lexicographically by the key's JCS UTF-8
+bytes. A `fifo` queue's contents encode as a `sequence` in delivery order; an
+`unordered` queue's contents encode as a `bag`.
 
 A successor is an operation applied to an argument vector from the
 operation's finite declared parameter domains, enabled when the operation's
@@ -94,7 +110,9 @@ Exhaustive mode performs deterministic breadth-first expansion of authored
 choices and enabled schedules, coalescing only equal complete state keys.
 Within one level, parent states keep their FIFO discovery order, and each
 parent's own successors are visited in ascending unsigned-lexicographic order
-of the typed canonical form of their transition identity. Sampling draws from
+of the JCS UTF-8 bytes of the typed canonical form of their transition
+identity, `{"type":"transition","operation":"<qualified-name>","arguments":[<encoded>, ...]}`
+(arguments in parameter declaration order). Sampling draws from
 the same successor relation with a pinned counter-based generator; the
 recorded generator version is the
 `quire.simulation.sampler/v1` definition's DefinitionRef. An unbounded domain
@@ -111,7 +129,7 @@ plus the resource limit that stopped expansion.
 | FR-181-AC-1 | Enumeration covers each finite declared choice/schedule exactly under canonical ordering. | Test (TC-210) |
 | FR-181-AC-2 | Seeded sampling reproduces identical traces under the same ecosystem lock. | Test (TC-210) |
 | FR-181-AC-3 | Missing bounds or exhausted work returns requires-bound/incomplete with the unexplored scope, and caller cancellation returns incomplete with cause cancelled/caller-cancelled and the unexplored frontier. | Test (TC-210) |
-| FR-181-AC-4 | Exhaustive exploration coalesces only equal complete state keys and visits successors in canonical breadth-first order; states differing only in NaN payload or zero sign are not coalesced, and a successor that violates an invariant is recorded rather than pruned. | Test (TC-210) |
+| FR-181-AC-4 | Exhaustive exploration coalesces only equal complete state keys and visits successors in canonical breadth-first order; states differing only in NaN payload or zero sign have distinct state keys and remain distinct states, and a successor that violates an invariant is recorded rather than pruned. | Test (TC-210) |
 | FR-181-AC-5 | Every generated trace replays through the same native transition relation with the same terminal disposition. | Test (TC-210) |
 | FR-181-AC-6 | Exploring a model that describes external effects performs none of them: the effects appear only as typed trace data, and a request for evaluator I/O, mutation or an ambient store refuses with its source location. | Test (TC-210) |
 
