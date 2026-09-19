@@ -139,7 +139,8 @@ observed claim strengths as distinct source-bound values"):
 
 ## Protocol claim authority
 
-FR-290 defines the six exact protocol-family claim-kind spellings. FR-281 defines the closed
+FR-290 defines the six exact protocol-family claim-kind spellings. This result's
+contract version selects the FR-290 vocabulary `quire.capability-kind/v1`. FR-281 defines the closed
 single-valued strength, FR-291 the admitted fragment and FR-292 the backend
 selection. Equal display labels or implementation names establish none of them.
 

@@ -64,9 +64,11 @@ permitted and forbidden truth/execution combination.
 For every exact required fact population, derive each FR-295 state; remove a
 member/status, combine missing and contradicted members, substitute each
 FR-284 progress/closure label, and vary all completeness and closure axes
-independently. Enumerate every FR-290 claim kind and FR-281 strength; omit,
-duplicate and mismatch claim kind, strength, admitted fragment and backend,
-including every identity/revision/digest/domain/capability mutation.
+independently. Enumerate every FR-290 protocol-family claim kind and FR-281
+strength; substitute each of the four non-protocol FR-290 members and expect a
+mismatch refusal; omit, duplicate and mismatch claim kind, strength, admitted
+fragment and backend, including every identity/revision/digest/domain/capability
+mutation.
 
 Construct FR-285 `known` participation with an empty, singleton and multi-member
 required set and with all, some and none participating. Construct `unknown`

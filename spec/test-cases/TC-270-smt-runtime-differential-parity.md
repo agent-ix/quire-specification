@@ -25,8 +25,9 @@ result and artifact accounting with the criterion.
 
 | Vector | Mutation | Expected disposition |
 | --- | --- | --- |
-| DP-01 | Configure the shared differential corpus with zero members | Refuses as an empty corpus rather than reporting a vacuous parity report; the corpus is required non-empty and to include at least one member per obligation form the FR-349 backend discharges |
+| DP-01 | Configure the shared differential corpus with zero members | Refuses as an empty corpus rather than reporting a vacuous parity report; the corpus is required non-empty and to include at least one member per obligation form in the FR-349 descriptor's declared obligation-form set |
 | DP-02 | Run a member whose SMT verdict is `inconclusive` and whose native runtime reaches no decisive holds/counterexample verdict over the same bounded domain, then mutate the native side to a decisive verdict | The matched `inconclusive`/no-decisive-verdict pair records agreement; the mutated pair records an explicit parity failure naming the member and both verdicts |
+| DP-03 | Declare quantification and induction in the SMT descriptor's obligation-form set, then remove the only corpus member for induction | Refuses the corpus naming `induction` as the uncovered declared form; no parity report is produced |
 
 ## Expected Results
 
