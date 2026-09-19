@@ -39,6 +39,12 @@ compensation and partial recovery.
 
 ## Reference verdict contract
 
+Each corpus case's source/package bytes are emitted by I04 `link_and_check`
+as `quire.checked-package/v2` with its `state` nodes; the corpus pins those
+exact bytes and the case's `package_id`, and the runtime admits them only
+through I04 `read`. ConfigVersion cases replay on the complete-V1 value
+runtime only.
+
 Each corpus case fixes source/package bytes, model and observation inputs,
 closure/progress, limits and expected per-clause disposition. ConfigVersion uses
 the inclusive integer domain `0..=1000`; `-1` and `1001` are refusal vectors.

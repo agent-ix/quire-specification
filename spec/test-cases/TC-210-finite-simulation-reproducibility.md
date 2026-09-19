@@ -20,3 +20,40 @@ Use the exact version-locked subject and inputs named by FR-181. Execute its pos
 ## Expected Results
 
 Every positive and boundary result matches FR-181; each invalid, unsupported or exhausted mutation returns its exact typed disposition with source/provenance, emits no approximation, and preserves independent sibling results.
+
+## Ecosystem lock
+
+The exact version-locked subject is a real `quire.ecosystem-lock/v1`
+(FR-335) listing only the QSL revision; its `definitions` member pins the
+package definitions and the `quire.simulation.sampler/v1` sampler used for
+seeded sampling.
+
+## Refusal vectors
+
+The explicit refusal/non-conclusive mutations include:
+
+- an application whose operation identity is outside the closed operation
+  catalog, which refuses `invalid_package`/`unknown-operation` at its
+  `source_map` locus;
+- a write outside the operation's declared frame, which refuses
+  `frame_violation`/`unauthorized-change`;
+- a model-described external effect, which returns only as typed trace data.
+
+## Non-coalescing and cancellation vectors
+
+- Two states whose typed semantic state differs only in an IEEE value's NaN
+  payload or a signed zero's sign have distinct state keys and remain
+  distinct states.
+- A successor that violates a declared invariant is recorded as a successor
+  rather than pruned from exploration.
+- A caller cancellation mid-exploration returns `incomplete` with cause
+  `cancelled`/`caller-cancelled` and carries the unexplored frontier.
+
+## Sampler index-sequence vector
+
+For seed `424242`, trace `0` and enabled-successor-set size `n = 5`, a real
+implementation of the counter-mode generator draws, at `draw = 0` for every
+step: index `0` at step `0`, index `0` at step `1`, index `4` at step `2`,
+index `4` at step `3` and index `4` at step `4`. The step-0 preimage is
+`{"draw":"0","seed":"424242","step":"0","trace":"0"}`; its SHA-256 is
+`cb7d4b3b8b8491d8310ccc1e07c3ee236d3fe86cf713d1851533a85ef6682622`.
