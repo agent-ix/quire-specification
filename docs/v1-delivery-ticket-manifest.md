@@ -235,6 +235,12 @@ closure and cannot promote missing execution.
 | V1-BACK-016 | A | QSL #186 | Codegen #50 |
 | V1-BACK-017 | D | Analyze #40 | Verification #38 |
 | V1-BACK-018 | A | QSL #185 | QSL #123 |
+| V1-BACK-019 | E | Contract IR #135 | Contract IR #101 |
+| V1-BACK-020 | E | Codegen #84 | Contract IR #101 |
+| V1-BACK-021 | A | QSL #198 | QSL #123 |
+| V1-BACK-022 | A | QSL #198 | QSL #123 |
+| V1-BACK-023 | D | Analyze #41 | Verification #38 |
+| V1-BACK-024 | E | Contract IR #136 | Contract IR #101 |
 | V1-EVID-001 | D | Verification #38 | Research #78 |
 | V1-EVID-002 | D | Verification #38 | Research #78 |
 | V1-EVID-003 | D | Verification #38 | Research #78 |
@@ -259,14 +265,17 @@ closure and cannot promote missing execution.
 
 ## Planning invariants
 
-- All 194 required/integrity rows have one primary implementation ticket and one
+- All 200 required/integrity rows have one primary implementation ticket and one
   qualification owner; no row is deferred, research-only or unowned. Rows
   V1-EVID-007–009 and V1-BACK-015–016 were added after the Plan-008 baseline to
   cover the FR-351 separating-witness record and the FR-352
   `native-run-result/2` wire (#114), rows V1-TEMP-024–026 to cover the
-  `quire.temporal.infinite-trace/v1` liveness profile (#112), and rows
+  `quire.temporal.infinite-trace/v1` liveness profile (#112), rows
   V1-EXPR-027–029 to cover the FR-346 unbounded quantification, FR-347
-  inductive and FR-348 compositional verification surface (#113).
+  inductive and FR-348 compositional verification surface (#113), and rows
+  V1-BACK-019–024 to cover the FR-349 SMT backend, FR-350 Verus emission,
+  FR-353 model-to-implementation abstraction relation, FR-354 certificate
+  trust basis and FR-355 SMT/native differential parity surface (#124).
 - Closed leaves remain immutable evidence but their qualification tickets still
   gate complete-V1 acceptance.
 - Shared QSpec interfaces I01–I21 and payloads FR-320–339 are frozen inputs.

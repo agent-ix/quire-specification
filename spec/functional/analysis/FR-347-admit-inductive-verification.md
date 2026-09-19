@@ -17,6 +17,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/AD-013
     type: references
+  - target: ix://agent-ix/quire-specification/FR-349
+    type: references
 ---
 
 # FR-347: Admit inductive verification obligations
@@ -67,6 +69,8 @@ settles `unsupported` with a warning naming the required capability.
 | FR-347-AC-2 | The base case and inductive step are lowered as one target-neutral induction obligation and negotiated with a registered induction-capable backend, never discharged by exhaustive enumeration. | Test (TC-250) |
 | FR-347-AC-3 | A failing base case or a failing inductive step returns refuted with its own counterexample, distinguishing which part failed; an unproved obligation is inconclusive rather than narrowed to finitely many checked instances. | Test (TC-250) |
 | FR-347-AC-4 | A claim no registered induction-capable backend can discharge settles `unsupported` with a warning naming the required capability. | Test (TC-250) |
+| FR-347-AC-5 | In a locked qualification run with a registered induction-capable SMT backend, the corpus settles at least one inductive obligation `proved` through that backend. | Test (TC-250, TC-266) |
+| FR-347-AC-6 | In that same locked run, the corpus settles at least one inductive obligation `refuted` through that backend; the AC-4 `unsupported`-with-warning path is unchanged in a locked run with no such backend registered. | Test (TC-250, TC-266) |
 
 ## Dependencies
 
@@ -89,6 +93,9 @@ settles `unsupported` with a warning naming the required capability.
 - [AD-013](../../assurance/AD-013-unbounded-declaration-architecture.md)
   supplies the unbounded-declaration and quantifier-negotiation
   architecture this requirement is allocated to.
+- [FR-349](../ir-proof/FR-349-register-smt-backend.md) supplies the
+  registered SMT backend that discharges this requirement's `proved`/`refuted`
+  cases when registered.
 - Every requirement linked in frontmatter is a normative prerequisite.
   Implementation ordering may add enablement edges but cannot change these
   semantics or infer implementation availability from specification

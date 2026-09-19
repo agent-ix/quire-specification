@@ -23,7 +23,7 @@ When the complete-V1 conformance corpus is published or executed, the producer S
 ## Properties
 
 - `contract_version` — exactly `quire.conformance-corpus/v1`.
-- `inventory_revision` — exact 194-row scope identity.
+- `inventory_revision` — exact 200-row scope identity.
 - `vectors` — stable vector ID, capability ID, source/model/input and expected typed disposition.
 - `classes` — positive, lower/upper boundary, just-outside, refusal, incomplete and metamorphic mutations.
 - `oracle` — independent expected value/verdict derivation and version.

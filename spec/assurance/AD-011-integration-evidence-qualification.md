@@ -41,7 +41,7 @@ providers, tools, compiler/toolchain options and deployment selections in their
 own identity domains. Each semantic subject links to requirements, assumptions,
 methods and evidence without substituting one identity for another.
 
-The feature corpus covers all 194 inventory rows, including positive, boundary
+The feature corpus covers all 200 inventory rows, including positive, boundary
 and explicit-refusal vectors. A qualification profile distinguishes language,
 runtime, monitor, analyzer/backend and consuming-system claims. Partial evidence
 cannot satisfy a broader profile. Counterexamples retain canonical inputs,
@@ -60,5 +60,5 @@ minimization lineage and native replay results.
 | Risk | Control |
 | --- | --- |
 | Evidence from another subject is reused | Typed identity domains and exact requirement/assumption/method links. |
-| Coverage appears complete while capabilities are absent | Inventory-derived 194-row matrix and refusal vectors. |
+| Coverage appears complete while capabilities are absent | Inventory-derived 200-row matrix and refusal vectors. |
 | Quoin coupling blocks producers | Stable Rust intake envelope; producers retain local artifacts until the port lands. |

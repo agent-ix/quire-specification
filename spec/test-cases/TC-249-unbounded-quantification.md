@@ -28,5 +28,7 @@ bounded collection is decided by FR-145 occurrence-visiting; over an unbounded
 collection it is lowered to a target-neutral obligation and negotiated with a
 registered quantifier-capable backend; a claim no registered backend can
 discharge settles `unsupported` with a warning naming the required capability;
-each mutation returns its exact typed disposition with source/provenance and
-preserves independent sibling results.
+with the FR-349 SMT backend registered, at least one case settles `proved` and
+at least one settles `refuted` through it; each mutation returns its exact
+typed disposition with source/provenance and preserves independent sibling
+results.

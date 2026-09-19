@@ -48,6 +48,7 @@ sign/range law and atomic exposure of both results. Then execute:
 | DIV-11 | Run truncating `7 div 0` with DIV-08's tuple and `mod(7,0)` with DIV-10's tuple, each with `work_units: 1`; then each with `work_units: 0` | `work_units: 1`: undefined after the operands charge, with no arithmetic charge; `work_units: 0`: `incomplete { limit_kind: work_units, limit: 0, consumed: 0, next_charge: 1, charge_point: integer-division.operands }` and `integer-modulus.operands` respectively |
 | DIV-12 | Run `mod(-7,3)` for a bounded consumer result domain `Int[0,1]` with DIV-10's tuple except `result_units: 0`; then `work_units: 2` | refused after `integer-modulus.domain` because remainder `2` is outside `[0,1]`; `integer-modulus.result-retain` is not charged, so it is not incomplete. With `work_units: 2`: `incomplete { limit_kind: work_units, limit: 2, consumed: 2, next_charge: 1, charge_point: integer-modulus.domain }`. (A signed-64 domain cannot refuse the Euclidean remainder of signed-64 operands, so this bounded domain is narrower.) |
 | DIV-13 | Run DIV-08 with `integer_bits: 2` and `work_units: 0` | both counters are short at `integer-division.operands`; the first in `ScalarLimitsV1` field order is reported: `incomplete { limit_kind: integer_bits, limit: 2, consumed: 0, next_charge: 3, charge_point: integer-division.operands }` |
+| DIV-14 | With the FR-349 SMT backend registered advertising mathematical-integer semantics, submit one mathematical-integer division obligation that holds and one that a mutated divisor domain violates; I13 negotiation returns the `supported` disposition for both | negotiation's `supported` disposition is not itself a verdict: the backend then evaluates the holding obligation to the verdict `proved` and the violated obligation to `refuted` with a replayable counterexample; mathematical integers are never narrowed to reach either verdict |
 
 Generate bounded signed operand pairs for all three laws, emphasizing zero,
 unit divisors, sign quadrants and finite-domain endpoints. The oracle computes
@@ -63,4 +64,10 @@ Every signed vector produces the tabled pair and satisfies its law. Zero,
 profile misuse, missing bounds, finite-domain overflow and exhaustion remain
 distinct typed dispositions. No failing case exposes only one member of a pair,
 uses host overflow or substitutes floating-point division; independent sibling
-results remain intact.
+results remain intact. I13 negotiation yields a disposition
+(`supported`/`requires-bound`/`unsupported`/`invalid-input`), never a verdict;
+in a locked run with the FR-349 SMT backend registered, negotiation returns
+`supported` and at least one mathematical-integer division obligation then
+settles the verdict `proved` and at least one settles `refuted` through it;
+the I13 `requires-bound` finite-backend negotiation disposition is unchanged
+in a locked run with no such backend registered.
