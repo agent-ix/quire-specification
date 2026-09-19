@@ -245,7 +245,7 @@ closure and cannot promote missing execution.
 
 ## Planning invariants
 
-- All 176 required/integrity rows have one primary implementation ticket and one
+- All 180 required/integrity rows have one primary implementation ticket and one
   qualification owner; no row is deferred, research-only or unowned.
 - Closed leaves remain immutable evidence but their qualification tickets still
   gate complete-V1 acceptance.

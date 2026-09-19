@@ -672,7 +672,7 @@ relationships:
 ## 1. Purpose
 
 This root indexes the native Quire language requirements. Complete V1 is the
-entire 176-capability language, runtime, analysis, backend, tooling and
+entire 180-capability language, runtime, analysis, backend, tooling and
 qualification system under one editable source authority. The existing
 finite-state implementation is a development slice, not the product boundary.
 The [subsystem index](subsystems/index.md) and AD-001 through AD-011 organize the
@@ -781,7 +781,7 @@ Run Quire over this exact repository scope. Use real implementations and indepen
 
 ## 13. Change Management
 
-The complete architecture and all 176 atomic capabilities are specified in one
+The complete architecture and all 180 atomic capabilities are specified in one
 campaign before implementation planning. The corpus then receives one composite
 `/spec-review`; dependent implementation planning begins only after every review
 finding is resolved. Fixture and profile bytes match the digests their selected
@@ -820,7 +820,7 @@ Preserve dependency/template grants. Publication administration is operational
 governance and does not reduce complete-V1 product scope.
 
 The [Task-009 implementation ticket manifest](../docs/v1-delivery-ticket-manifest.md)
-assigns all 176 atomic rows to autonomous Agent-A through Agent-E repository
+assigns all 180 atomic rows to autonomous Agent-A through Agent-E repository
 lanes. Each agent owns its whole ordered campaign rather than one ad hoc ticket;
 cross-lane consumption uses merged pinned interfaces and final integration is a
 separate downstream gate.
@@ -888,7 +888,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [ADR-005](decisions/ADR-005-kani-generation-ownership.md) | ADR | Proposed; open question: ownership of Kani harness generation and tool pinning |
 | [ADR-006](decisions/ADR-006-protocol-bounded-control-profile.md) | ADR | Proposed; open question: bounded control in the protocol profile layer |
 | [Complete-V1 subsystem index](subsystems/index.md) | Architecture index | Ten subsystems and I01–I21 interface ownership |
-| [TM-009](complete-v1/tests.md) | Test Matrix | All 176 atomic capabilities and complete-V1 qualification cases |
+| [TM-009](complete-v1/tests.md) | Test Matrix | All 180 atomic capabilities and complete-V1 qualification cases |
 | [FR-339](functional/source-package/FR-339-define-complete-native-grammar.md) | FR | Normative complete native V1 lexical and syntactic contract |
 | [FR-049](functional/foundation/FR-049-bind-native-choreography-syntax.md) | FR | Accepted native choreography source integration; complete-V1 review SR-571–580 |
 | [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Accepted complete-V1 protocol intent; review SR-571–580 |

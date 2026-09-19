@@ -221,7 +221,7 @@ than claiming the advanced algorithms exist.
 | FR-295 | FR-295-AC-3 | TC-061, TC-116 | 🚧 Planned |
 | FR-295 | FR-295-AC-4 | TC-061 | 🚧 Planned |
 | FR-281 | FR-281-AC-4 | TC-061 | 🚧 Planned |
-| FR-290 | FR-290-AC-1, FR-290-AC-2, FR-290-AC-3 | TC-060, TC-061 | 🚧 Planned |
+| FR-290 | FR-290-AC-1, FR-290-AC-2, FR-290-AC-3, FR-290-AC-4 | TC-060, TC-061 | 🚧 Planned |
 | FR-291 | FR-291-AC-1, FR-291-AC-2, FR-291-AC-3 | TC-060, TC-061 | 🚧 Planned |
 | FR-292 | FR-292-AC-1, FR-292-AC-2, FR-292-AC-3 | TC-060, TC-061 | 🚧 Planned |
 
@@ -253,7 +253,7 @@ than claiming the advanced algorithms exist.
 | TC-057 | Check commit ordering and recovery meaning | Integration | P1 | FR-057-AC-1..AC-8, FR-210-AC-6, FR-237-AC-1..AC-7, FR-238-AC-5..AC-6 | 🚧 Planned |
 | TC-058 | Preserve retries, duplicates and partial recovery | Property | P1 | FR-058-AC-1..AC-10, FR-210-AC-6, FR-235-AC-5, FR-236-AC-1..AC-5, FR-239-AC-1..AC-7 | 🚧 Planned |
 | TC-059 | Assess finite global conformance | Integration | P1 | FR-059-AC-1, FR-059-AC-2, FR-059-AC-3, FR-059-AC-4, FR-059-AC-5 | 🚧 Planned |
-| TC-060 | Separate conformance and advanced analysis claims | Property | P1 | FR-060-AC-1..AC-6, FR-290-AC-1..AC-3, FR-291-AC-1..AC-3, FR-292-AC-1..AC-3 | 🚧 Planned |
+| TC-060 | Separate conformance and advanced analysis claims | Property | P1 | FR-060-AC-1..AC-6, FR-290-AC-1..AC-4, FR-291-AC-1..AC-3, FR-292-AC-1..AC-3 | 🚧 Planned |
 | TC-061 | Discriminate protocol result dimensions | Property | P1 | FR-061-AC-1..AC-17, FR-240-AC-1..AC-10, FR-242-AC-1..AC-4, FR-243-AC-1..AC-4, FR-281-AC-4, FR-285-AC-1..AC-4, FR-286-AC-1..AC-5, FR-295-AC-1..AC-4, FR-290-AC-1..AC-3, FR-291-AC-1..AC-3, FR-292-AC-1..AC-3 | 🚧 Planned |
 | TC-062 | Enforce every protocol resource boundary | Property | P1 | NFR-020 | 🚧 Planned |
 | TC-063 | Reproduce results under equivalent presentations | Property | P1 | NFR-021 | 🚧 Planned |

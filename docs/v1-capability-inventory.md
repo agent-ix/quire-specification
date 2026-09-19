@@ -50,8 +50,8 @@ this inventory. `Int` is a Plan-008 code-surface census. `Qual` is uniformly
 `M`. It records that every capability lacks release qualification evidence:
 each row's qualification ticket in the
 [ticket manifest](v1-delivery-ticket-manifest.md) is one of seven open lane
-tickets — QSL #123 (83 rows), Protocol #82 (34), Contract IR #101 (16), QObs
-#26 (14), Research #78 (12), TL Syntax #74 (11) and Verification #38 (6) —
+tickets — QSL #123 (86 rows), Protocol #82 (34), Contract IR #101 (16), QObs
+#26 (14), Research #78 (12), TL Syntax #74 (11) and Verification #38 (7) —
 and `TC-231`, the aggregate qualification corpus verifying `FR-311`, carries
 zero traced tests on any implementation default branch. Per-row measurement
 of `Int` and `Qual` remains scope for the A07 lane.
@@ -257,7 +257,7 @@ criterion this ledger names, rather than a bare `FR-0NN-AC-M` tag spelling.
 | V1-BACK-012 | Keep external source-language imports out of the native authority chain. | Integrity | V1-044 | C | P | P | P | M | QSpec #1 / research #40 |
 | V1-BACK-013 | Keep Java, Node and Electron runtimes out of production and qualification semantics. | Integrity | V1-044 | C | P | P | P | M | QSpec #1 / research #40 |
 | V1-BACK-014 | Refuse a backend request it cannot implement exactly; never approximate. | Integrity | V1-005, V1-006 | C | C | C | P | M | Contract IR #1 / codegen #1 |
-| V1-BACK-017 | Check that a decomposed requirement's admitted result entails its parent's admitted result through a registered implication backend; absent that backend, the claim settles `unsupported` with a warning naming the required capability. | Required | V1-037; prose census | C | M | M | M | M | Analyze #40 / QSL #185 |
+| V1-BACK-017 | Check that a decomposed requirement's admitted result entails its parent's admitted result through a registered implication backend; absent that backend, the claim settles `unsupported` with a warning naming the required capability. | Required | V1-037; prose census | C | M | M | M | M | quire-analyze #40 / QSL #185 |
 | V1-BACK-018 | Catalog exact lowering targets and the FR-290 capabilities each backend advertises for registration and negotiation. | Required | V1-006 | C | M | M | M | M | QSL #185 |
 
 ## 8. Evidence, qualification, tooling and ecosystem
