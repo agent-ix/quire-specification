@@ -221,6 +221,7 @@ executable cases.
 | FR-048 | FR-048-AC-6 | TC-049 | 🚧 Planned |
 | FR-048 | FR-048-AC-7 | TC-049 | 🚧 Planned |
 | FR-048 | FR-048-AC-8 | TC-049 | 🚧 Planned |
+| FR-048 | FR-048-AC-9 | TC-238 | 🚧 Planned |
 | FR-049 | FR-049-AC-1 | TC-170 | 🚧 Planned |
 | FR-049 | FR-049-AC-2 | TC-170 | 🚧 Planned |
 | FR-049 | FR-049-AC-3 | TC-171 | 🚧 Planned |
@@ -265,6 +266,7 @@ executable cases.
 | TC-172 | Keep compensation registration and activation captures separate | Integration | P1 | FR-049-AC-5, FR-049-AC-6 | 🚧 Planned |
 | TC-173 | Bind related instances and complete recovery populations | Integration | P1 | FR-049-AC-7, FR-049-AC-8 | 🚧 Planned |
 | TC-174 | Preserve deadline branches and explicit workflow closure | Integration | P1 | FR-049-AC-9, FR-049-AC-12 | 🚧 Planned |
+| TC-238 | Unbounded temporal operator grammar admission | Property | P1 | FR-048-AC-9 | 🚧 Planned |
 
 ## Non-Functional Requirement Coverage
 

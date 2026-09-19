@@ -43,8 +43,16 @@ The temporal profile shall select exactly one of these v1 interpretations:
 | `quire.temporal.event-position.false-extension/v1` | One admitted semantic-event position in an authoritative sequence | Atomic predicates are false after closure; constants retain their value |
 | `quire.temporal.fixed-sample.false-extension/v1` | One sample of the declared positive rational period from the declared epoch | Atomic predicates are false after closure; constants retain their value |
 | `quire.temporal.timestamped-event.finite-window/v1` | One tick in the declared timestamp unit | Quantification ranges over admitted event instants in a complete bounded window |
+| `quire.temporal.infinite-trace/v1` | One admitted semantic-event position in an authoritative sequence, with no interval bound | Not applicable; the evaluated sequence never closes |
 
-The event-position profile shall not claim elapsed time.
+The event-position profile shall not claim elapsed time. The infinite-trace
+profile composes the event-position sequence authority without its
+false-extension closure and likewise shall not claim elapsed time.
+
+The infinite-trace profile shall admit no interval bound. FR-161 defines the
+checked infinite-trace subject and its sound-provider result vocabulary; FR-048
+and AD-012 define the unbounded temporal operator grammar this profile alone
+admits.
 
 The fixed-sample profile shall retain epoch, period and unit identity.
 
@@ -75,6 +83,7 @@ definition identity; old profile bytes and results remain historical subjects.
 | FR-090-AC-4 | Equal timestamps without an admitted causal/sequence order refuse `until`, `release`, `since` and `triggered`; ingestion order is not substituted. | Test (TC-113) |
 | FR-090-AC-5 | Historical profile definitions remain unchanged and a backend capability request cannot silently select a different executable profile. | Test (TC-117) |
 | FR-090-AC-6 | A profile digest with an absent/foreign domain or bytes from another definition revision refuses before evaluation. | Test (TC-110) |
+| FR-090-AC-7 | Selecting `quire.temporal.infinite-trace/v1` admits the unbounded temporal operator grammar edition; no other selected profile admits it. | Test (TC-238) |
 
 ## Dependencies
 

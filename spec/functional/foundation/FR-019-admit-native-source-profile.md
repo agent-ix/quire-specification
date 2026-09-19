@@ -70,7 +70,7 @@ its owning semantic acceptance and corresponding compiler support.
 | FR-019-AC-3 | The complete model facet admits typed structural equality, finite recursive values and explicit closed-environment reference operations; unavailable closure or a profile-prohibited use refuses without rewriting the declaration. | Test |
 | FR-019-AC-4 | The complete collection facet admits bounded sequences, sets, bags and ordered sets plus explicit conversions; absent consumer bounds, implicit lossy conversion or a profile-prohibited kind refuses, including in unused declarations. | Test |
 | FR-019-AC-5 | Complete-V1 declarations admit total pure typed functions and proved recursion; truthiness coercion, reflection, I/O, mutation and ambient-store operations refuse with their source location. | Test |
-| FR-019-AC-7 | Selecting every complete-V1 facet admits the full 185-capability language inventory subject only to its normative premises; an implementation gap is reported as unimplemented capability, not as product-scope deferral. | Test (TC-180) |
+| FR-019-AC-7 | Selecting every complete-V1 facet admits the full 188-capability language inventory subject only to its normative premises; an implementation gap is reported as unimplemented capability, not as product-scope deferral. | Test (TC-180) |
 | FR-019-AC-6 | Exactly one byte/revision/span-bound clause authority and the specified invariant/pre/post anchor are required; duplicate authority, stale bytes, bare context, foreign operation, forbidden pre access and cross-observation guard reuse refuse before lowering. | Test |
 
 ## Dependencies

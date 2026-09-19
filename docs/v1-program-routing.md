@@ -3,7 +3,7 @@
 Status: Task-005 epic reconciliation plus Task-009 live child-ticket graph at
 2026-09-15.
 
-This audit routes every row in the 185-row atomic inventory through the current
+This audit routes every row in the 188-row atomic inventory through the current
 GitHub program graph. It separates a primary delivery epic from downstream
 consumer and qualification children. The primary epic is accountable for
 closing the row end to end; it does not acquire another repository's semantic
@@ -90,7 +90,7 @@ The following are repairs to existing owners, not replacement roadmaps:
 
 | Issue | Applied amendment | Closure rule |
 | --- | --- | --- |
-| Research #36 | Replace defer/reject closure and the old finite V1 list with all 185 atomic inventory rows; name #63 as the planning gate and #65/#66/#67 as required delivery epics. | Close only after Task-010 proves every row specified, implemented where executable, verified, integrated and qualified, or delivered as an exact tested Integrity refusal. |
+| Research #36 | Replace defer/reject closure and the old finite V1 list with all 188 atomic inventory rows; name #63 as the planning gate and #65/#66/#67 as required delivery epics. | Close only after Task-010 proves every row specified, implemented where executable, verified, integrated and qualified, or delivered as an exact tested Integrity refusal. |
 | QSpec #1 | Make the atomic inventory the scope authority; remove explicit-deferral closure; retain all completed standard/reference evidence; require comprehensive Task-006/007/008 architecture and specification acceptance. | Close with QSpec #9 only after the three coverage audits are 100%. |
 | QSpec #9 | Replace Deferred/Missing roll-up states with the inventory's independent Spec/Impl/Ver/Int/Qual states; link each incomplete row to its live primary epic and children. | Remain open and update after every merge; close with QSpec #1. |
 | QSL #1 | Reopen the parent without reopening its completed children; expand it from the bounded L1-L6 slice to the complete compiler, reference-runtime and native tooling surface; link the Task-004 structural migration. | Close only after every QSL-owned inventory row and downstream parity matrix is complete. |
@@ -101,17 +101,17 @@ The following are repairs to existing owners, not replacement roadmaps:
 | Protocol #14 | Preserve the accepted bounded architecture, supersede its flat-layout ADR as Task-004 requires, and extend it with the complete protocol, analysis and authorized workflow-adapter interfaces allocated by Task-006. | Current bounded children remain credited; the parent cannot close until all Protocol-owned rows and their QSL/QObs/verification seams qualify. |
 | Verification #13 | Expand the existing production-qualification epic to model testing, relational/hyperproperty methods, verification-plan DSL, counterexample replay/shrink, synthesis result classification and complete cross-method results. | Every method has explicit domain, precondition, bounds, non-conclusive outcomes and independent replay/qualification evidence. |
 | Contract IR #2/#52 | Extend the existing typed IR/lowering and mapping parents to every Task-006-selected language family; retain the closed bounded-Kani and mapping-foundation children as exact evidence. | Every source construct is supported exactly or refused per requested backend without approximation or sibling-result loss. |
-| Research #39/#40 | Expand existing integration and qualification parents to the complete package, API, CLI, WASM, analyzer, generator and conformance corpus; use setup children #34/#35 rather than creating duplicate repositories. | Exact revision/configuration compatibility and independent release claims cover all 185 rows. |
+| Research #39/#40 | Expand existing integration and qualification parents to the complete package, API, CLI, WASM, analyzer, generator and conformance corpus; use setup children #34/#35 rather than creating duplicate repositories. | Exact revision/configuration compatibility and independent release claims cover all 188 rows. |
 | Research #41/#42/#43 | Convert model testing, relational analysis, simulation/hybrid analysis and bounded synthesis from optional research disposition into required V1 delivery tracks with scoped soundness constraints. | Experiments may reject an approach, but the capability remains open and must receive another sound implementation route; rejection cannot close the capability. |
 
 No new top-level epic is justified. The existing program already has coherent
 parents for all eight inventory families. Task-009 creates bounded child tickets
 under these repaired parents after the comprehensive specification is accepted.
 
-At this checkpoint, zero rows are satisfied end to end because all 185 still
+At this checkpoint, zero rows are satisfied end to end because all 188 still
 have missing qualification evidence. Twenty-one rows retain completed direct
 implementation and verification leaves but need integration/qualification
-children. The other 164 have an existing primary parent and need one or more
+children. The other 167 have an existing primary parent and need one or more
 semantic delivery children. No row lacks a primary epic, and no new top-level
 epic is required.
 
@@ -218,6 +218,9 @@ completed bounded leaf as proof of the broader row.
 | V1-TEMP-021 | TL Syntax #1 | Extend existing temporal ecosystem epic | Existing parent; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
 | V1-TEMP-022 | TL Syntax #1 | Extend existing temporal ecosystem epic | Existing parent; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
 | V1-TEMP-023 | TL Syntax #1 | Extend existing temporal ecosystem epic | Existing parent; delivery children missing | Add unbounded-profile syntax, sound infinite-trace analysis, finite-evidence refusal, integration and qualification children after Task-008. |
+| V1-TEMP-024 | QSL #188 | Extend existing infinite-trace liveness epic | Existing parent; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
+| V1-TEMP-025 | QSL #188 | Extend existing infinite-trace liveness epic | Existing parent; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
+| V1-TEMP-026 | QSL #188 | Extend existing infinite-trace liveness epic | Existing parent; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
 | V1-PROT-001 | Protocol #14 | Amend existing bounded epic | Existing parent; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
 | V1-PROT-002 | Protocol #14 | Amend existing bounded epic | Existing parent; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
 | V1-PROT-003 | Protocol #14 | Amend existing bounded epic | Existing parent; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |

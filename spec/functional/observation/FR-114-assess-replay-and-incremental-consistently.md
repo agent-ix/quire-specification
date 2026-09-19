@@ -5,6 +5,10 @@ type: FR
 relationships:
   - target: ix://agent-ix/quire-specification/US-009
     type: implements
+  - target: ix://agent-ix/quire-specification/FR-161
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-341
+    type: references
 ---
 ## Description
 
@@ -20,6 +24,14 @@ progress/closure remains open; that result SHALL retain the exact settlement
 basis and decision support. A replay result SHALL NOT claim execution by a
 production monitor.
 
+When the temporal analysis reports settlement basis `unsettled` (FR-243,
+[FR-161](../temporal/FR-161-analyze-infinite-trace-properties.md)
+`inconclusive`, [FR-341](../../objects/temporal/FR-341-infinite-trace-result-disposition.md)),
+the QObs assessment SHALL agree with that non-conclusive disposition in both
+batch and incremental modes and SHALL NOT resolve it to a settled truth in
+either mode; agreement on `unsettled` requires the same progress identity, not
+merely the same label.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -27,6 +39,7 @@ production monitor.
 | FR-114-AC-1 | Batch and incremental assessment agree for a decisive-witness satisfied obligation, a decisive-counterexample violated obligation, and a missed-deadline obligation. | Test (TC-144) |
 | FR-114-AC-2 | An open prefix without a recorded decisive witness or counterexample, incomplete history, and ambiguous membership remain distinct from violation in both modes. | Test (TC-144) |
 | FR-114-AC-3 | Unsupported capability and exhausted retained state remain explicit and cannot become settled success. | Test (TC-144) |
+| FR-114-AC-4 | For a temporal result carrying settlement basis `unsettled`, QObs batch and incremental assessment agree on the non-conclusive disposition and its exact progress identity, and neither mode resolves it to a settled truth. | Test (TC-239) |
 
 ## Dependencies
 
