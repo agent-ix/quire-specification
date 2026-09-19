@@ -48,6 +48,7 @@ not require a checksum refresh or another successor file.
 | `quire.value.ieee754-2019-default/v1` | `1-draft.1` | [IEEE binary profile](value-ieee754-2019-default.md) |
 | `quire.value.accounting/v1` | `1-draft.1` | [Scalar accounting schedule](value-accounting.md) |
 | `quire.value.compound-unit/v1` | `1-draft.1` | [Evaluator-owned compound units](value-compound-unit.md) |
+| `quire.simulation.sampler/v1` | `1-draft.1` | [Simulation sampler](simulation-sampler.md) |
 | `quire.model.complete/v1` | `1-draft.2` | [Complete model root](model-complete.md) |
 | `quire.model.complete.rules/v1` | `1-draft.2` | [Exact complete-model rule closure](model-complete-rules.json) |
 | `quire.model.effective-declaration.schema/v1` | `1-draft.2` | [Effective declaration schema](../../checked-package-v2/model-effective-declaration.schema.json) |
