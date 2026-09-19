@@ -65,6 +65,8 @@ runtime vectors as ordinary tests.
 | RS-15 | Compile-fail: build a `Witness`-arm result that holds an `Input` source, and destructure each replay-result type with no `..` | Does not compile; no replay-result type has a `ReplaySource` field | FR-197-AC-17 |
 | RS-16 | Read back the `native-run-result/2` record of RS-02, and the same record with its arm member altered to `Witness` | The first decodes into the `Input`-arm result type; the altered record refuses with a typed cause; neither yields a backend-evidence verdict | FR-197-AC-18 |
 | RS-17 | Replay an `Input` packet with one assignment keyed by a `WireNodeId` that is no parameter, and another `Input` packet with one parameter left without a value | Each refused with a typed cause before execution; a recording executor records no call | FR-197-AC-20 |
+| RS-18 | Build two counterexample packets for two occurrences of one content-addressed node id (same node id, different `role`/`ordinal`), then destructure each packet and the obligation identity it belongs to | Each packet and obligation identity carries the occurrence key `(node_id, role, ordinal)` of its own failing occurrence, and the two are told apart though their node ids are equal | FR-197-AC-21 |
+| RS-19 | Replay the seed counterexample vector through the QSL layer-6 `replay` facade with the package's recorded proving-run S1–S4 stage limits lowered below the recompile's requirement | The replay request carries the lowered limits and the recompile refuses with a typed limit cause under exactly those limits, not the reader's default limits | FR-197-AC-22 |
 
 ## Expected Results
 
@@ -74,4 +76,5 @@ and each compile-pass control compiles; they are Compile evidence run under the
 test harness. RS-07 finds no witness-backed field. RS-09, RS-10, RS-13 and RS-17
 refuse with a typed cause before any replay runs. RS-16 decodes the unaltered
 record into the `Input`-arm result type and refuses the altered record with a
-typed cause.
+typed cause. RS-18 finds a distinct occurrence key per packet under one shared
+node id. RS-19 finds the recompile bound by the request's carried stage limits.
