@@ -79,7 +79,7 @@ artifact adds none.
 | completeness | One FR-295 state derived from the exact required population/boundary/assertion/per-fact status set; it remains independent from progress, closure and execution. |
 | observation adequacy | Whether the exact observations required to interpret the requested result are adequate ([FR-245](FR-245-observation-adequacy-state.md)). |
 | protocol adequacy | Whether the exact declared obligation and case set is demonstrated ([FR-246](FR-246-protocol-adequacy-state.md)). |
-| claim | Exactly one FR-290 claim kind and, for an advanced result, one FR-281 strength, FR-291 admitted fragment and FR-292 backend selection. |
+| claim | Exactly one FR-290 protocol-family claim kind and, for an advanced result, one FR-281 strength, FR-291 admitted fragment and FR-292 backend selection. |
 | decision support | Every retained decision-support record ([FR-248](FR-248-decision-support-record.md)). |
 | provenance | Source, profile, model, protocol, request, binding, input and backend identities (FR-061-AC-3). |
 
@@ -139,7 +139,7 @@ observed claim strengths as distinct source-bound values"):
 
 ## Protocol claim authority
 
-FR-290 defines the six exact claim-kind spellings. FR-281 defines the closed
+FR-290 defines the six exact protocol-family claim-kind spellings. FR-281 defines the closed
 single-valued strength, FR-291 the admitted fragment and FR-292 the backend
 selection. Equal display labels or implementation names establish none of them.
 

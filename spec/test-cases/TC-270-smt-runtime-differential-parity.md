@@ -25,7 +25,7 @@ result and artifact accounting with the criterion.
 
 | Vector | Mutation | Expected disposition |
 | --- | --- | --- |
-| DP-01 | Configure the shared differential corpus with zero members | Refuses as an empty corpus rather than reporting a vacuous parity report; the corpus is required non-empty and to include at least one member per FR-349-advertised capability |
+| DP-01 | Configure the shared differential corpus with zero members | Refuses as an empty corpus rather than reporting a vacuous parity report; the corpus is required non-empty and to include at least one member per obligation form the FR-349 backend discharges |
 | DP-02 | Run a member whose SMT verdict is `inconclusive` and whose native runtime reaches no decisive holds/counterexample verdict over the same bounded domain, then mutate the native side to a decisive verdict | The matched `inconclusive`/no-decisive-verdict pair records agreement; the mutated pair records an explicit parity failure naming the member and both verdicts |
 
 ## Expected Results
@@ -39,6 +39,6 @@ verdict; a decode, domain or verdict mismatch outside that correspondence is
 recorded as an explicit parity failure naming the member and both verdicts,
 never silently resolved toward either side; the aggregate parity report
 accounts for every corpus member exactly once; the corpus is non-empty and
-covers every FR-349-advertised capability; each mutation returns its exact
+covers every obligation form the FR-349 backend discharges; each mutation returns its exact
 typed disposition with source/provenance and preserves independent sibling
 results.

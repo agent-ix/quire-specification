@@ -59,7 +59,7 @@ catalog).
 | `frame_violation` | A change to an object, field or State root not permitted by the declared frame. |
 | `resource_exhausted` | A work item that could not proceed under the effective limit and accounting contract. "A semantic maximum is not a caller work budget." |
 | `cancelled` | A work item stopped by a caller cancellation source. |
-| `unsupported_projection` | A requested capability the selected backend does not support. "It cannot reclassify a valid source as malformed." |
+| `unsupported_projection` | A requested capability no registered backend supports, an unbounded extent on a bounded-only advertisement with no finite bound, or (revision `1-draft.5`) a routed backend whose pinned tool is unavailable. "It cannot reclassify a valid source as malformed." |
 | `projection_binding` | An upstream refusal carried with its originating structured IR/mapping cause. |
 | `invalid_projection_correspondence` | A loss of correspondence between exact source and derived identities. |
 | `extraction-requires-run` | An extraction refused because of the requested command mode. |
@@ -78,6 +78,7 @@ catalog).
 | `ambiguous_dispatch` | A dispatched operation call for which some closed subtype of the receiver's static type has no applicable method or several undominated methods (revision `1-draft.3`). No source or registration order resolves it. |
 | `unimplemented_capability` | Valid complete-V1 meaning is not implemented by the selected producer; distinct from prohibited source and unsupported backend projection. |
 | `parity_failure` | Two implementations required to agree produced different typed verdicts or values for the same subject/input. |
+| `invalid_capability` | A requested or advertised capability selection that names no FR-290 kind, an unknown kind or mode, an unsupported vocabulary version, an unregistered backend, or several candidate backends with none named (revision `1-draft.5`). |
 
 ## Identity and comparison
 
@@ -176,7 +177,7 @@ construction and FR-145 conversion, and, in catalog revision `1-draft.3`,
 `ambiguous_dispatch` for FR-151 link-time dispatch selection. The same revision
 closes the causes of `foreign_reference` for FR-153 and FR-204. Catalog
 revision `1-draft.4` adds no code; it adds the eight checked-package operation
-variants, `stale-node-key` and `declaration-nominal-mismatch` of `invalid_package` and the checked-package use of `ambiguous-name`, typed by FR-272; `operator-ineligible` remains `ill_typed`. The same revision adds `unproved-exhaustiveness` of `undefined_expression`, FR-146's cause for an unproved `case` exhaustiveness obligation over a `union-decl` scrutinee, typed by FR-272. Matching remains catalog-qualified and exact.
+variants, `stale-node-key` and `declaration-nominal-mismatch` of `invalid_package` and the checked-package use of `ambiguous-name`, typed by FR-272; `operator-ineligible` remains `ill_typed`. The same revision adds `unproved-exhaustiveness` of `undefined_expression`, FR-146's cause for an unproved `case` exhaustiveness obligation over a `union-decl` scrutinee, typed by FR-272. Catalog revision `1-draft.5` adds `invalid_capability` for FR-290 capability-kind admission and candidate-set negotiation, and the `unbounded-extent` and `tool-unavailable` causes of `unsupported_projection`, typed by FR-272. Matching remains catalog-qualified and exact.
 
 ## Dependencies
 
