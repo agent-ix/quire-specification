@@ -52,9 +52,7 @@ through the unbounded temporal operator grammar edition
 ([FR-048](../foundation/FR-048-bind-native-temporal-syntax.md),
 [AD-012](../../assurance/AD-012-unbounded-temporal-operator-grammar.md)). Until
 a liveness backend registers the infinite-trace capability, an unbounded
-formula settles `unsupported` with a warning naming the missing liveness
-capability; the analyzer never holds, blocks or emits a refusal error for its
-absence.
+formula settles `unsupported` with a warning naming the required capability.
 
 ## Result disposition mapping
 
@@ -92,7 +90,7 @@ is complete, but it cannot establish liveness satisfaction.
 | FR-161-AC-4 | Always, eventually, until, release and each past operator satisfy their inductive infinite-trace definitions on conformance lassos. | Test (TC-200) |
 | FR-161-AC-5 | Fairness filters traces before evaluation and is included in every proof or counterexample replay identity. | Test (TC-200) |
 | FR-161-AC-6 | Each returned result label matches exactly one FR-341 member and its exact FR-241/FR-242/FR-243 combination. | Test (TC-200) |
-| FR-161-AC-7 | Until a liveness backend registers the infinite-trace capability, an unbounded formula settles `unsupported` with a warning naming the missing capability. | Test (TC-200) |
+| FR-161-AC-7 | Until a liveness backend registers the infinite-trace capability, an unbounded formula settles `unsupported` with a warning naming the required capability. | Test (TC-200) |
 
 ## Dependencies
 

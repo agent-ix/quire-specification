@@ -11,7 +11,7 @@ relationships:
 
 # Complete V1 atomic capability and requirement matrix
 
-This matrix is normative traceability for the complete 185-row inventory. A
+This matrix is normative traceability for the complete 188-row inventory. A
 planned row is required work, not a deferred capability or implementation claim.
 
 ## Specification action classification
@@ -30,7 +30,7 @@ with the owning requirement.
   decided here.
 - `New`: behavior and acceptance criteria are authored for the row.
 
-Over the 185 rows the delivered totals are 97 Reuse, 40 Amend, 28 New, 19
+Over the 188 rows the delivered totals are 97 Reuse, 42 Amend, 29 New, 19
 Resolve and 1 Split.
 
 V1-TYPE-024 is a Resolve row because extending reachability over inheritance
@@ -138,6 +138,9 @@ type.
 | V1-TEMP-021 | FR-091 | TC-231 | Reuse | planned |
 | V1-TEMP-022 | FR-090 | TC-231 | Reuse | planned |
 | V1-TEMP-023 | FR-161 | TC-200, TC-231 | New | planned |
+| V1-TEMP-024 | FR-048 | TC-238, TC-231 | Amend | planned |
+| V1-TEMP-025 | FR-341 | TC-200, TC-231 | New | planned |
+| V1-TEMP-026 | FR-161 | TC-200, TC-231 | Amend | planned |
 | V1-PROT-001 | FR-049 | TC-231 | Reuse | planned |
 | V1-PROT-002 | FR-035 | TC-231 | Reuse | planned |
 | V1-PROT-003 | FR-035 | TC-231 | Reuse | planned |
@@ -295,6 +298,8 @@ type.
 | FR-161 | FR-161-AC-1 | TC-200 | planned |
 | FR-161 | FR-161-AC-2 | TC-200 | planned |
 | FR-161 | FR-161-AC-3 | TC-200 | planned |
+| FR-161 | FR-161-AC-6 | TC-200 | planned |
+| FR-161 | FR-161-AC-7 | TC-200 | planned |
 | FR-170 | FR-170-AC-1 | TC-201 | planned |
 | FR-170 | FR-170-AC-2 | TC-201 | planned |
 | FR-170 | FR-170-AC-3 | TC-201 | planned |
@@ -649,6 +654,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-250 | FR-250-AC-3 | TC-231 | planned |
 | FR-250 | FR-250-AC-4 | TC-231 | planned |
 | FR-250 | FR-250-AC-5 | TC-231 | planned |
+| FR-250 | FR-250-AC-6 | TC-231 | planned |
 | FR-251 | FR-251-AC-1 | TC-231 | planned |
 | FR-251 | FR-251-AC-2 | TC-231 | planned |
 | FR-251 | FR-251-AC-3 | TC-231 | planned |
@@ -977,6 +983,11 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-339 | FR-339-AC-2 | TC-180 | planned |
 | FR-339 | FR-339-AC-3 | TC-180 | planned |
 | FR-339 | FR-339-AC-4 | TC-180 | planned |
+| FR-341 | FR-341-AC-1 | TC-200 | planned |
+| FR-341 | FR-341-AC-2 | TC-200 | planned |
+| FR-341 | FR-341-AC-3 | TC-200 | planned |
+| FR-341 | FR-341-AC-4 | TC-200 | planned |
+| FR-341 | FR-341-AC-5 | TC-200 | planned |
 | FR-351 | FR-351-AC-1 | TC-254 | planned |
 | FR-351 | FR-351-AC-2 | TC-254 | planned |
 | FR-351 | FR-351-AC-3 | TC-254 | planned |
@@ -1013,7 +1024,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-197 | Systems-model typed binding | Property | P0 | FR-152, FR-208 | 🚧 Planned |
 | TC-198 | Closed model lookup | Property | P0 | FR-153 | 🚧 Planned |
 | TC-199 | Uncertain revisioned temporal evaluation | Property | P0 | FR-160 | 🚧 Planned |
-| TC-200 | Infinite-trace provider boundary | Property | P0 | FR-161 | 🚧 Planned |
+| TC-200 | Infinite-trace provider boundary | Property | P0 | FR-161, FR-341, FR-095, FR-251 | 🚧 Planned |
 | TC-201 | Channel and queue premises | Property | P0 | FR-170 | 🚧 Planned |
 | TC-202 | Join loop and dynamic-role control | Property | P0 | FR-171 | 🚧 Planned |
 | TC-203 | Choice obligation and capture binding | Property | P0 | FR-172 | 🚧 Planned |
@@ -1049,6 +1060,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-233 | Published checked-package and scalar contract vectors | Property | P0 | FR-322 | 🚧 Planned |
 | TC-234 | Domain package model intake | Property | P0 | FR-154, FR-208 | 🚧 Planned |
 | TC-235 | Business construct meaning binding | Property | P0 | FR-208, FR-154, FR-207, FR-047 | 🚧 Planned |
+| TC-238 | Unbounded temporal operator grammar admission | Property | P0 | FR-048, FR-090 | 🚧 Planned |
+| TC-239 | Agree replay and incremental assessment on an unsettled temporal result | Property | P0 | FR-114 | 🚧 Planned |
 
 ## Integration Test Matrix
 
@@ -1077,7 +1090,7 @@ supersedes FR-010's parent reachability.
 
 ## Coverage gate
 
-Complete-V1 qualification requires all 185 capability rows and every selected
+Complete-V1 qualification requires all 188 capability rows and every selected
 acceptance-criterion row to have executed evidence under one exact ecosystem
 lock. Until then the status remains planned or partial and cannot be promoted by
 family-level samples.

@@ -55,8 +55,11 @@ report the unsupported mapping against the retained native subject.
 The frontend SHALL parse the unbounded temporal operator grammar edition
 (no interval bound) defined by [the shared grammar](../../../proposals/quire-v1/shared-grammar.md#unbounded-temporal-operator-grammar-edition-infinite-trace)
 and accepted by [AD-012](../../assurance/AD-012-unbounded-temporal-operator-grammar.md)
-only where the clause selects `quire.temporal.infinite-trace/v1`; elsewhere the
-same bare spelling remains the syntax refusal FR-048-AC-2 requires.
+only where the clause selects `quire.temporal.infinite-trace/v1`. Under any
+other selected profile the same recognized form receives `unsupported_construct`
+at its exact construct span, owning declaration and selected profile, as AD-003's
+required diagnostic dispositions state for a recognized form prohibited by the
+selected profile.
 
 ## Acceptance Criteria
 
@@ -70,7 +73,7 @@ same bare spelling remains the syntax refusal FR-048-AC-2 requires.
 | FR-048-AC-6 | On a complete one-position false-extension trace, always[0,1] true is true and always[0,1] holds(true) is false; native-to-TL lowering cannot fold away this distinction. | Test (TC-049) |
 | FR-048-AC-7 | A temporal expression in a shared Boolean argument and a non-Boolean holds root refuse, while the same admitted query/predicate expression retains its common type semantics inside holds. | Test (TC-049) |
 | FR-048-AC-8 | A source-valid timestamped or past-time declaration retains its native identity when the current TL mapping reports unsupported; no profile or clock substitution occurs. | Test (TC-049) |
-| FR-048-AC-9 | An interval-less `always`/`eventually`/`until`/`release`/`once`/`historically`/`since`/`triggered` spelling parses only when the clause selects `quire.temporal.infinite-trace/v1`; the identical spelling under any other selected profile refuses under FR-048-AC-2. | Test (TC-238) |
+| FR-048-AC-9 | An interval-less `always`/`eventually`/`until`/`release`/`once`/`historically`/`since`/`triggered` spelling is admitted only when the clause selects `quire.temporal.infinite-trace/v1`; the identical spelling under any other selected profile receives `unsupported_construct` at its construct span with the owning declaration and selected profile. | Test (TC-238) |
 
 ## Dependencies
 

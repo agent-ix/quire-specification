@@ -15,7 +15,7 @@ relationships:
 ## Statement
 
 The complete-V1 ecosystem SHALL produce zero approximated, silently omitted or
-semantically narrowed outcomes across the 185-capability conformance corpus.
+semantically narrowed outcomes across the 188-capability conformance corpus.
 
 ## Scope
 

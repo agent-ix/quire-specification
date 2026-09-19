@@ -34,8 +34,8 @@ fixed-sample false-extension bounded future core, "Supported only with one total
 valuation per required sample and retained epoch/period/unit correspondence",
 and "Current TL profiles" as the target of the two unsupported rows for
 timestamped-event finite-window and for "Any bounded past operator". FR-095
-also records "No TL target" for an infinite-trace unbounded property, resolving
-to an absent target rather than to either labeled member; FR-161 analyzes that
+also records "No TL target" for a `quire.temporal.infinite-trace/v1` unbounded
+property, resolving to an absent target rather than to either labeled member; FR-161 analyzes that
 request natively instead of lowering it. No requirement enumerates any TL
 profile identity beyond the two labels above, so no further member is supplied
 here.

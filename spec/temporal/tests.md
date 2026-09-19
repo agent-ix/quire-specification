@@ -41,6 +41,7 @@ the coherent base-plus-seven review remain acceptance prerequisites.
 | FR-090 | FR-090-AC-4 | TC-113 | 🚧 Planned |
 | FR-090 | FR-090-AC-5 | TC-117 | 🚧 Planned |
 | FR-090 | FR-090-AC-6 | TC-110 | 🚧 Planned |
+| FR-090 | FR-090-AC-7 | TC-238 | 🚧 Planned |
 | FR-091 | FR-091-AC-1 | TC-111 | 🚧 Planned |
 | FR-091 | FR-091-AC-2 | TC-112 | 🚧 Planned |
 | FR-091 | FR-091-AC-3 | TC-111 | 🚧 Planned |
@@ -80,6 +81,7 @@ the coherent base-plus-seven review remain acceptance prerequisites.
 | FR-095 | FR-095-AC-6 | TC-113 | 🚧 Planned |
 | FR-095 | FR-095-AC-7 | TC-117 | 🚧 Planned |
 | FR-095 | FR-095-AC-8 | TC-117 | 🚧 Planned |
+| FR-095 | FR-095-AC-9 | TC-200 | 🚧 Planned |
 
 ## Non-Functional Requirement Coverage
 
@@ -100,6 +102,8 @@ the coherent base-plus-seven review remain acceptance prerequisites.
 | TC-116 | Separate open, closed and incomplete temporal inputs | Integration | P0 | FR-091-AC-4, FR-093-AC-5, FR-094-AC-3, FR-094-AC-5, FR-094-AC-7, FR-094-AC-9, FR-295-AC-1..AC-4 | 🚧 Planned |
 | TC-117 | Prove or refuse native-to-TL temporal correspondence | Integration | P0 | FR-090-AC-5, FR-092-AC-5, FR-095-AC-1, FR-095-AC-2, FR-095-AC-3, FR-095-AC-4, FR-095-AC-5, FR-095-AC-7, FR-095-AC-8 | 🚧 Planned |
 | TC-118 | Refuse temporal resource and retained-state exhaustion | Property | P0 | FR-091-AC-6, FR-092-AC-4, FR-092-AC-6, FR-094-AC-6, FR-293-AC-2, FR-293-AC-3, NFR-040-AC-1, NFR-040-AC-2, NFR-040-AC-3, NFR-040-AC-4 | 🚧 Planned |
+| TC-200 | Infinite-trace provider boundary | Property | P0 | FR-095-AC-9 | 🚧 Planned |
+| TC-238 | Unbounded temporal operator grammar admission | Property | P0 | FR-090-AC-7 | 🚧 Planned |
 
 ## Integration Test Matrix
 

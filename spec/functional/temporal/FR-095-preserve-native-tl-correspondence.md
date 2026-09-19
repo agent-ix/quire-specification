@@ -49,7 +49,7 @@ The initial correspondence shall use this support table:
 | Timestamped-event finite-window | Current TL profiles | Unsupported; no index conversion is inferred |
 | Any bounded past operator with origin-complete history | `tl-syntax.past-operators/v1`, `mltl.origin-complete-history/v1`, and the selected position-history/past-evaluator contracts | Supported when every bridge premise below holds |
 | Finite-window future semantics | `mltl.closed-trace/v1` | Unsupported because TL extends atoms false beyond closure |
-| Infinite-trace unbounded property (no interval bound) | No TL target | Unsupported; there is no bounded TL formula to generate. [FR-161](FR-161-analyze-infinite-trace-properties.md) analyzes the request natively instead of lowering it. |
+| `quire.temporal.infinite-trace/v1` unbounded property (no interval bound) | No TL target | Unsupported; there is no bounded TL formula to generate. [FR-161](FR-161-analyze-infinite-trace-properties.md) analyzes the request natively instead of lowering it. |
 
 For a supported mapping, the bridge shall preserve the native source
 digest/revision and exact clause/expression span; clause/requirement identity;

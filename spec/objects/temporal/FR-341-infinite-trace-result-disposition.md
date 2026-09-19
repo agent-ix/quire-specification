@@ -34,11 +34,13 @@ provenance."
 | `refuted` | Execution `completed` (FR-241); truth `violated` (FR-242); settlement basis `closed-scope` or `decisive-counterexample` (FR-243). A finite prefix plus lasso or provider-declared complete witness replays to an admitted infinite trace (FR-161). |
 | `inconclusive` | Execution `completed` (FR-241); truth `pending` (FR-242); settlement basis `unsettled` (FR-243, restated by [FR-094-AC-7](../../functional/temporal/FR-094-interpret-progress-history-and-closure.md)). A finite-prefix monitor returns this label rather than `proved` for an unresolved liveness property (FR-161-AC-2). |
 | `unsupported` | Execution `unsupported` (FR-241); truth `unavailable` (FR-242); settlement basis `unavailable` (FR-243). Returned for an unsupported operator, a missing fairness/model closure premise, or the absence of a registered liveness backend. |
-| `failed` | Execution `failed` (FR-241); truth `unavailable` (FR-242); settlement basis `unavailable` (FR-243). Returned when the selected liveness provider fails for this exact claim without invoking a fallback or changing an independent sibling result. |
+| `failed` | Execution `failed` or `resource-incomplete` (FR-241); truth `unavailable` (FR-242); settlement basis `unavailable` (FR-243). `failed` covers a selected liveness provider that fails for this exact claim; `resource-incomplete` covers a resource ceiling that stopped the analysis. Neither invokes a fallback nor changes an independent sibling result (FR-094-AC-9). |
 
-`unsupported` and `failed` project to the same truth and settlement-basis pair;
-they remain distinct only through the FR-241 execution-disposition axis, which
-this vocabulary never substitutes for or collapses (FR-161-AC-3).
+`unsupported` and `failed` project to the same truth and settlement-basis pair,
+and `failed` itself carries two FR-241 execution dispositions. Every one of
+these non-conclusive outcomes stays distinct through the FR-241
+execution-disposition axis, which this vocabulary never substitutes for or
+collapses (FR-161-AC-3).
 
 ## Identity and comparison
 
@@ -65,7 +67,7 @@ this vocabulary never substitutes for or collapses (FR-161-AC-3).
 | FR-341-AC-1 | Each member's value equals the exact label string in the table. | Inspection |
 | FR-341-AC-2 | `proved` and `refuted` are accepted only with execution `completed`, their exact truth value, and a `closed-scope`, `decisive-witness` or `decisive-counterexample` settlement basis as named above. | Analysis |
 | FR-341-AC-3 | `inconclusive` is accepted only with execution `completed`, truth `pending` and settlement basis `unsettled`. | Analysis |
-| FR-341-AC-4 | `unsupported` and `failed` are each accepted only with their own FR-241 execution disposition, and neither is accepted with truth `satisfied` or `violated`. | Analysis |
+| FR-341-AC-4 | `unsupported` is accepted only with FR-241 execution `unsupported`, `failed` only with FR-241 execution `failed` or `resource-incomplete`, the exhausted and provider-failure cases stay distinct on that axis, and neither label is accepted with truth `satisfied` or `violated`. | Analysis |
 | FR-341-AC-5 | An absent result-disposition compares only to absence and receives no default member. | Analysis |
 
 ## Dependencies

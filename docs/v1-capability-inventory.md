@@ -50,7 +50,7 @@ this inventory. `Int` is a Plan-008 code-surface census. `Qual` is uniformly
 `M`. It records that every capability lacks release qualification evidence:
 each row's qualification ticket in the
 [ticket manifest](v1-delivery-ticket-manifest.md) is one of eight open lane
-tickets — QSL #123 (86 rows), Protocol #82 (34), Contract IR #101 (16), QObs
+tickets — QSL #123 (89 rows), Protocol #82 (34), Contract IR #101 (16), QObs
 #26 (14), Research #78 (12), TL Syntax #74 (11), Verification #38 (7) and
 Codegen #50 (5) —
 and `TC-231`, the aggregate qualification corpus verifying `FR-311`, carries
@@ -180,7 +180,7 @@ criterion this ledger names, rather than a bare `FR-0NN-AC-M` tag spelling.
 | V1-TEMP-023 | Author and soundly analyze unbounded temporal properties under an explicit infinite-trace semantic profile. | Required | V1-027; prose census | C | M | M | M | M | TL owners / research #42 |
 | V1-TEMP-024 | Admit the unbounded (no interval bound) temporal operator grammar edition only under the selected infinite-trace profile. | Required | V1-027; prose census | C | M | M | M | M | QSL #188 / TL owners |
 | V1-TEMP-025 | Map infinite-trace proved/refuted/inconclusive/unsupported/failed results onto the existing execution, truth and settlement-basis vocabulary. | Required | V1-027; prose census | C | M | M | M | M | QSL #188 / TL owners |
-| V1-TEMP-026 | Settle an infinite-trace claim with no registered liveness backend as unsupported with a warning naming the missing capability, never a hold or blocker. | Integrity | V1-027; prose census | C | M | M | M | M | QSL #188 / TL owners |
+| V1-TEMP-026 | Settle an infinite-trace claim with no registered liveness backend as unsupported with a warning naming the missing capability. | Integrity | V1-027; prose census | C | M | M | M | M | QSL #188 / TL owners |
 
 ## 5. Protocol and choreography
 

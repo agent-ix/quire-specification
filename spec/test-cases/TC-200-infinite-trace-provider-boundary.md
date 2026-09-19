@@ -11,6 +11,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-090
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-251
+    type: verifies
 ---
 
 # TC-200: Infinite-trace provider boundary
@@ -62,9 +64,10 @@ The conformance-lasso case returns `proved`; the refuting cases return
 `refuted` with a replayable witness or counterexample whose fairness identity
 is included in its provenance (FR-161-AC-1, FR-161-AC-4, FR-161-AC-5). The
 open-liveness case returns `inconclusive`, never `proved` (FR-161-AC-2). The
-unsupported-operator/closure case and the resource-ceiling case each return a
-distinct non-conclusive disposition — `unsupported` and `failed` respectively —
-and neither is interchangeable with `inconclusive` (FR-161-AC-3). The
+unsupported-operator/closure case returns `unsupported` with FR-241 execution
+`unsupported`, and the resource-ceiling case returns `failed` with FR-241
+execution `resource-incomplete`; the two remain distinct on the FR-241 axis and
+neither is interchangeable with `inconclusive` (FR-161-AC-3). The
 no-registered-backend case settles `unsupported` with a warning naming the
 missing liveness capability; it never holds, blocks or returns a refusal error
 (FR-161-AC-7). The mutated-fairness case stops proving and returns
@@ -76,7 +79,8 @@ combination: `proved`/`refuted` carry execution `completed` and basis
 `closed-scope`, `decisive-witness` or `decisive-counterexample`; `inconclusive`
 carries execution `completed`, truth `pending` and basis `unsettled`;
 `unsupported` and `failed` carry truth and basis `unavailable` and are
-distinguished only by their own FR-241 execution disposition (FR-161-AC-6).
+distinguished by their FR-241 execution disposition — `unsupported`,
+`resource-incomplete` or `failed` (FR-161-AC-6).
 
 The infinite-trace bridge request in the parallel FR-095 check returns a typed
 unsupported mapping naming an absent TL target and emits no substitute formula,

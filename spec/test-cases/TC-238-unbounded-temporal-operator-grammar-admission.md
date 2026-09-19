@@ -16,8 +16,8 @@ relationships:
 Grammar-admission mutation controls for the interval-less
 `temporal-unary-unbounded`/`temporal-relation-unbounded` edition
 ([AD-012](../assurance/AD-012-unbounded-temporal-operator-grammar.md)). Confirms
-the bare spelling parses only under `quire.temporal.infinite-trace/v1` and that
-every other v1 profile keeps today's syntax refusal.
+the bare spelling is admitted only under `quire.temporal.infinite-trace/v1` and
+that every other v1 profile receives `unsupported_construct` for it.
 
 ## Test Procedure
 
@@ -34,14 +34,14 @@ infinite-trace source while keeping its bytes otherwise fixed.
 
 ## Expected Results
 
-The bare interval-less spelling parses only under
+The bare interval-less spelling is admitted only under
 `quire.temporal.infinite-trace/v1` (FR-048-AC-9, FR-090-AC-7); under any of the
-other three profiles it returns the same syntax refusal FR-048-AC-2 already
-requires for an unbounded interval, and the refusal names the missing interval
-rather than reporting the profile as unsupported. The bracketed `[a,b]` form
-parses identically under all four profiles, unchanged from its pre-edition
-behavior. The `[a,*]` form continues to parse only under
-`quire.temporal.infinite-trace/v1`, distinct from and unaffected by the new
-bare production. Mutating only the selected profile identity on the accepted
-infinite-trace source moves it to the same syntax refusal, without a partial
-or approximated parse.
+other three profiles it receives `unsupported_construct` naming its exact
+construct span, owning declaration and selected profile, as AD-003's required
+diagnostic dispositions state for a recognized form prohibited by the selected
+profile. The bracketed `[a,b]` form parses identically under all four profiles,
+unchanged from its pre-edition behavior. The Complete-V1 `[a,*]` form keeps the
+admission it already had under each profile, distinct from and unaffected by
+the new bare production. Mutating only the selected profile identity on the
+accepted infinite-trace source moves it to the same `unsupported_construct`
+disposition, without a partial or approximated parse.

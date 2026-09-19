@@ -567,10 +567,10 @@ These productions reuse the existing reserved keywords; no new keyword is
 added. They carry no `interval` token at all, bounded or `*`-bounded; the
 operand that follows `eventually`, `always`, `once`, `historically`, `until`,
 `release`, `since` or `triggered` is another unbounded operand, never a bracket
-pair. Under `0-draft` and under `1-draft` without the infinite-trace profile
-selected, this spelling is not a temporal operator and remains a syntax error;
-selecting the profile admits it without reinterpreting the bracketed form or
-any historical `0-draft` bytes, per the edition rule in
+pair. A package that does not select `quire.temporal.infinite-trace/v1`
+receives `unsupported_construct` for each of these forms. Selecting the profile
+admits them without reinterpreting the bracketed form or any historical
+`0-draft` bytes, per the edition rule in
 [AD-003](../../spec/assurance/AD-003-native-quire-language-charter.md).
 [AD-012](../../spec/assurance/AD-012-unbounded-temporal-operator-grammar.md)
 accepts this edition; [FR-048](../../spec/functional/foundation/FR-048-bind-native-temporal-syntax.md)

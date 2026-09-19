@@ -157,9 +157,9 @@ closure and cannot promote missing execution.
 | V1-TEMP-021 | B | TL Syntax #73 | TL Syntax #74 |
 | V1-TEMP-022 | B | TL Syntax #73 | TL Syntax #74 |
 | V1-TEMP-023 | B | TL Syntax #73 | TL Syntax #74 |
-| V1-TEMP-024 | A | QSL #188 | QSL #188 |
-| V1-TEMP-025 | A | QSL #188 | QSL #188 |
-| V1-TEMP-026 | A | QSL #188 | QSL #188 |
+| V1-TEMP-024 | A | QSL #188 | QSL #123 |
+| V1-TEMP-025 | A | QSL #188 | QSL #123 |
+| V1-TEMP-026 | A | QSL #188 | QSL #123 |
 | V1-PROT-001 | B | Protocol #83 | Protocol #82 |
 | V1-PROT-002 | B | Protocol #83 | Protocol #82 |
 | V1-PROT-003 | B | Protocol #83 | Protocol #82 |
