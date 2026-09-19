@@ -52,13 +52,17 @@ advertises exactly which capabilities among unbounded quantification (FR-346),
 induction (FR-347), composition (FR-348) and mathematical-integer domains
 (FR-147) the backend discharges; an unadvertised capability is not negotiated
 to it. Z3 runs as an independent cross-check of cvc5's verdict on the same
-query; a cvc5/Z3 verdict disagreement is retained as an explicit parity
-failure rather than silently preferring either solver. Counterexamples and
-witnesses retain the FR-036 original source spans and replay through
-`runtime::execute` per AD-010. A claim whose required capability no
-registered backend advertises settles `unsupported` with a warning naming the
-required capability; this absence path is unaffected by whether the SMT
-backend is registered for other capabilities.
+query; a cvc5/Z3 verdict disagreement settles the claim `inconclusive` and is
+retained as an explicit parity failure naming both verdicts, rather than
+silently preferring either solver. When Z3 is not registered, no cross-check
+runs: cvc5's verdict settles the claim on its own, and the settlement carries
+a warning naming the absent cross-check; this is a warned outcome, never a
+hold on cvc5's settlement. Counterexamples and witnesses retain the FR-036
+original source spans and replay through `runtime::execute` per AD-010. A
+claim whose required capability no registered backend advertises settles
+`unsupported` with a warning naming the required capability; this absence
+path is unaffected by whether the SMT backend is registered for other
+capabilities.
 
 ## Acceptance Criteria
 
@@ -66,9 +70,10 @@ backend is registered for other capabilities.
 | --- | --- | --- |
 | FR-349-AC-1 | The SMT backend registers under the same exact provider contract as Kani, with no second contract shape. | Test (TC-266) |
 | FR-349-AC-2 | Registration advertises an exact capability subset among quantification, induction, composition and mathematical integers; a claim outside the advertised subset is not dispatched to it. | Test (TC-266) |
-| FR-349-AC-3 | A cvc5/Z3 verdict disagreement on the same query is retained as an explicit parity failure and never silently resolved to either solver's verdict. | Test (TC-266) |
+| FR-349-AC-3 | A cvc5/Z3 verdict disagreement on the same query settles the claim `inconclusive`, is retained as an explicit parity failure naming both verdicts, and is never resolved to either solver's verdict alone. | Test (TC-266) |
 | FR-349-AC-4 | A proved or refuted result retains a replayable witness or counterexample carrying its original FR-036 source spans. | Test (TC-266) |
 | FR-349-AC-5 | A claim whose required capability no registered backend advertises settles `unsupported` with a warning naming the required capability. | Test (TC-266) |
+| FR-349-AC-6 | Z3's absence from registration does not block or hold cvc5's settlement of a claim within its advertised capability subset; the settlement carries a warning naming the absent cross-check. | Test (TC-266) |
 
 ## Dependencies
 

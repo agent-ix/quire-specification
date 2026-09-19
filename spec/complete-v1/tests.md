@@ -808,6 +808,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-147 | FR-147-AC-4 | TC-192 | planned |
 | FR-147 | FR-147-AC-5 | TC-192 | planned |
 | FR-147 | FR-147-AC-6 | TC-192 | planned |
+| FR-147 | FR-147-AC-7 | TC-192, TC-266 | planned |
+| FR-147 | FR-147-AC-8 | TC-192, TC-266 | planned |
 | FR-148 | FR-148-AC-4 | TC-193 | planned |
 | FR-148 | FR-148-AC-5 | TC-193 | planned |
 | FR-148 | FR-148-AC-6 | TC-193 | planned |
@@ -1013,16 +1015,30 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-346 | FR-346-AC-2 | TC-249 | planned |
 | FR-346 | FR-346-AC-3 | TC-249 | planned |
 | FR-346 | FR-346-AC-4 | TC-249 | planned |
-| FR-346 | FR-346-AC-5 | TC-249 | planned |
+| FR-346 | FR-346-AC-5 | TC-249, TC-266 | planned |
+| FR-346 | FR-346-AC-6 | TC-249, TC-266 | planned |
 | FR-347 | FR-347-AC-1 | TC-250 | planned |
 | FR-347 | FR-347-AC-2 | TC-250 | planned |
 | FR-347 | FR-347-AC-3 | TC-250 | planned |
 | FR-347 | FR-347-AC-4 | TC-250 | planned |
-| FR-347 | FR-347-AC-5 | TC-250 | planned |
+| FR-347 | FR-347-AC-5 | TC-250, TC-266 | planned |
+| FR-347 | FR-347-AC-6 | TC-250, TC-266 | planned |
 | FR-348 | FR-348-AC-1 | TC-251 | planned |
 | FR-348 | FR-348-AC-2 | TC-251 | planned |
 | FR-348 | FR-348-AC-3 | TC-251 | planned |
 | FR-348 | FR-348-AC-4 | TC-251 | planned |
+| FR-349 | FR-349-AC-1 | TC-266 | planned |
+| FR-349 | FR-349-AC-2 | TC-266 | planned |
+| FR-349 | FR-349-AC-3 | TC-266 | planned |
+| FR-349 | FR-349-AC-4 | TC-266 | planned |
+| FR-349 | FR-349-AC-5 | TC-266 | planned |
+| FR-349 | FR-349-AC-6 | TC-266 | planned |
+| FR-350 | FR-350-AC-1 | TC-267 | planned |
+| FR-350 | FR-350-AC-2 | TC-267 | planned |
+| FR-350 | FR-350-AC-3 | TC-267 | planned |
+| FR-350 | FR-350-AC-4 | TC-267 | planned |
+| FR-350 | FR-350-AC-5 | TC-267 | planned |
+| FR-350 | FR-350-AC-6 | TC-267 | planned |
 | FR-351 | FR-351-AC-1 | TC-254 | planned |
 | FR-351 | FR-351-AC-2 | TC-254 | planned |
 | FR-351 | FR-351-AC-3 | TC-254 | planned |
@@ -1034,16 +1050,6 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-352 | FR-352-AC-3 | TC-255 | planned |
 | FR-352 | FR-352-AC-4 | TC-255 | planned |
 | FR-352 | FR-352-AC-5 | TC-255 | planned |
-| FR-349 | FR-349-AC-1 | TC-266 | planned |
-| FR-349 | FR-349-AC-2 | TC-266 | planned |
-| FR-349 | FR-349-AC-3 | TC-266 | planned |
-| FR-349 | FR-349-AC-4 | TC-266 | planned |
-| FR-349 | FR-349-AC-5 | TC-266 | planned |
-| FR-350 | FR-350-AC-1 | TC-267 | planned |
-| FR-350 | FR-350-AC-2 | TC-267 | planned |
-| FR-350 | FR-350-AC-3 | TC-267 | planned |
-| FR-350 | FR-350-AC-4 | TC-267 | planned |
-| FR-350 | FR-350-AC-5 | TC-267 | planned |
 | FR-353 | FR-353-AC-1 | TC-268 | planned |
 | FR-353 | FR-353-AC-2 | TC-268 | planned |
 | FR-353 | FR-353-AC-3 | TC-268 | planned |
@@ -1054,11 +1060,14 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-354 | FR-354-AC-3 | TC-269 | planned |
 | FR-354 | FR-354-AC-4 | TC-269 | planned |
 | FR-354 | FR-354-AC-5 | TC-269 | planned |
+| FR-354 | FR-354-AC-6 | TC-269 | planned |
+| FR-354 | FR-354-AC-7 | TC-269 | planned |
 | FR-355 | FR-355-AC-1 | TC-270 | planned |
 | FR-355 | FR-355-AC-2 | TC-270 | planned |
 | FR-355 | FR-355-AC-3 | TC-270 | planned |
 | FR-355 | FR-355-AC-4 | TC-270 | planned |
 | FR-355 | FR-355-AC-5 | TC-270 | planned |
+| FR-355 | FR-355-AC-6 | TC-270 | planned |
 
 ## Test Case Summary
 
@@ -1132,7 +1141,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-263 | Union recursion rule | Property | P0 | FR-143 | 🚧 Planned |
 | TC-264 | Case exhaustiveness obligations | Property | P0 | FR-146, FR-272 | 🚧 Planned |
 | TC-265 | Case evaluation and binding | Property | P0 | FR-146 | 🚧 Planned |
-| TC-266 | SMT backend registration and capability advertisement | Property | P0 | FR-349 | 🚧 Planned |
+| TC-266 | SMT backend registration and capability advertisement | Property | P0 | FR-349, FR-346, FR-347, FR-147 | 🚧 Planned |
 | TC-267 | Verus contract emission from QSL state contracts | Property | P0 | FR-350 | 🚧 Planned |
 | TC-268 | Model-to-implementation abstraction relation binding and refusal | Property | P0 | FR-353 | 🚧 Planned |
 | TC-269 | Proved settlement trust basis | Property | P0 | FR-354 | 🚧 Planned |

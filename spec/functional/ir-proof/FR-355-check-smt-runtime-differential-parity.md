@@ -36,29 +36,40 @@ parity report over the corpus.
 
 ## Behavior
 
-Every differential corpus member is encoded for the SMT backend and evaluated
-by the native runtime under the same package, domain and claim identity.
-Agreement requires the same disposition (`proved`/`refuted`/`inconclusive` on
-the SMT side compared against the native runtime's corresponding executed
-verdict on the encoded domain); a decode, domain or verdict mismatch is an
-explicit parity failure naming the member and both verdicts, never silently
-resolved toward either side. This corpus-level check is the FR-197
+Every differential corpus member is a bounded instance: a claim whose domain
+is finite and exactly the same bounded domain the SMT backend encodes and the
+native runtime executes; neither side substitutes a different or narrowed
+domain. Agreement requires the same disposition on the SMT side
+(`proved`/`refuted`/`inconclusive`) matched to the native runtime's
+corresponding executed verdict on that identical bounded domain: SMT `proved`
+corresponds to the native runtime holding the property over every instance of
+the bounded domain, SMT `refuted` corresponds to the native runtime producing
+a counterexample within that same bounded domain, and SMT `inconclusive`
+corresponds to the native runtime reaching no decisive holds/counterexample
+verdict over the bounded domain either; agreement is recorded only when both
+sides land in the same one of these three correspondences, and a decode,
+domain or verdict mismatch outside that correspondence is an explicit parity
+failure naming the member and both verdicts, never silently resolved toward
+either side. The shared differential corpus is non-empty and includes at
+least one member for every capability FR-349's registered SMT backend
+advertises (among unbounded quantification, induction, composition and
+mathematical-integer domains). This corpus-level check is the FR-197
 counterexample-replay precedent generalized from one reported counterexample
 to every corpus member, run independently of whether any single claim
-reported a counterexample. Until the Lean mechanized semantics (quire-research
-R27) is available, this differential corpus is the executable check that the
-SMT encoding and the native runtime agree on meaning; it does not itself
-constitute a mechanized equivalence proof.
+reported a counterexample. This differential corpus is the executable check
+that the SMT encoding and the native runtime agree on meaning over every
+covered capability; it is not a mechanized equivalence proof.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-355-AC-1 | Every differential corpus member is evaluated by both the registered SMT backend and the native runtime under the same package, domain and claim identity. | Test (TC-270) |
-| FR-355-AC-2 | Matching verdicts are recorded as agreement; a decode, domain or verdict mismatch is recorded as an explicit parity failure naming the member and both verdicts. | Test (TC-270) |
+| FR-355-AC-1 | Every differential corpus member is a bounded instance; the registered SMT backend and the native runtime both evaluate that same bounded domain under the same package, domain and claim identity. | Test (TC-270) |
+| FR-355-AC-2 | Matching verdicts are recorded as agreement under the defined correspondence — SMT `proved` against the native runtime holding over the full bounded domain, SMT `refuted` against a native in-domain counterexample, and SMT `inconclusive` against no decisive native verdict over the bounded domain; a decode, domain or verdict mismatch outside that correspondence is recorded as an explicit parity failure naming the member and both verdicts. | Test (TC-270) |
 | FR-355-AC-3 | A parity failure is never silently resolved toward either the SMT or the native verdict, and never rewritten as clause success/failure. | Test (TC-270) |
 | FR-355-AC-4 | The aggregate parity report accounts for every corpus member exactly once. | Test (TC-270) |
-| FR-355-AC-5 | This corpus check is retained as an executable check distinct from, and not claiming to be, a mechanized equivalence proof. | Inspection |
+| FR-355-AC-5 | This corpus check is retained as an executable check distinct from, and not claiming to be, a mechanized equivalence proof. | Test (TC-270) |
+| FR-355-AC-6 | The shared differential corpus is non-empty and includes at least one member for every capability the registered SMT backend advertises under FR-349. | Test (TC-270) |
 
 ## Dependencies
 

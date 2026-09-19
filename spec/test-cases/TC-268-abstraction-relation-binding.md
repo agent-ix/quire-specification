@@ -22,15 +22,26 @@ positive case, each declared boundary, and each explicit refusal/non-conclusive
 mutation through the real local Rust boundary; compare the complete typed
 result and artifact accounting with the criterion.
 
+## Vectors
+
+| Vector | Mutation | Expected disposition |
+| --- | --- | --- |
+| AB-01 | Request emission onto implementation code referencing a model object, population or operation frame with no authored binding | Refuses before generation with `refused { code: missing_declaration, cause: missing-name }`, naming the unbound element and its owning model identity; the refusal is scoped to that item, and an independent sibling item with a resolved binding still reaches generation |
+| AB-02 | Author a second binding for a key an existing binding already covers, once with an identical implementation representation and once with a conflicting one | Both refuse `refused { code: invalid_model_binding, cause: conflicting-binding }`, naming both candidate bindings and the shared key; neither binding is silently selected |
+
 ## Expected Results
 
 Every positive and boundary result matches FR-353; each model object,
 population and operation frame maps to exactly one implementation state
-representation; Kani and Verus generation consume the bound relation through
-the same AD-010 negotiation path; emission onto implementation code
-referencing a model element with no bound abstraction relation refuses before
-generation, naming the unbound element and its owning model identity, with no
-partial or approximated relation emitted in its place; rebinding an element
-creates an explicit new relation revision; each mutation returns its exact
-typed disposition with source/provenance and preserves independent sibling
-results.
+representation, keyed by its AD-006 effective-declaration key plus, for an
+operation frame, its FR-013 frame identity and FR-012 pre/post/result anchor
+identities; Kani and Verus generation consume the bound relation through the
+same AD-010 negotiation path; emission onto implementation code referencing a
+model element with no bound abstraction relation refuses before generation
+with `missing_declaration`/`missing-name`, naming the unbound element and its
+owning model identity, scoped to that item alone, with no partial or
+approximated relation emitted in its place; a duplicate or conflicting binding
+on one key refuses `invalid_model_binding`/`conflicting-binding` naming both
+candidate bindings and the shared key; rebinding an element creates an
+explicit new relation revision; each mutation returns its exact typed
+disposition with source/provenance and preserves independent sibling results.

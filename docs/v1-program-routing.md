@@ -298,8 +298,8 @@ completed bounded leaf as proof of the broader row.
 | V1-BACK-018 | QSL #185 | Extend existing capability-catalog epic | Existing parent; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
 | V1-BACK-019 | Contract IR #135 | Extend existing lowering epic | New child; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
 | V1-BACK-020 | Codegen #84 | Extend existing mapping epic | New child; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
-| V1-BACK-021 | QSL #198 | Extend existing capability-catalog epic | New child; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
-| V1-BACK-022 | QSL #198 | Extend existing capability-catalog epic | New child; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
+| V1-BACK-021 | QSL #198 | Extend existing abstraction-relation epic | New child; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
+| V1-BACK-022 | QSL #198 | Extend existing abstraction-relation epic | New child; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
 | V1-BACK-023 | Analyze #41 | Extend existing analysis epic | New child; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
 | V1-BACK-024 | Contract IR #136 | Extend existing lowering epic | New child; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |
 | V1-EVID-001 | Verification #13 | Amend existing verification expansion epic | Existing parent; delivery children missing | Add complete semantic, verification, integration and qualification children after Task-008. |

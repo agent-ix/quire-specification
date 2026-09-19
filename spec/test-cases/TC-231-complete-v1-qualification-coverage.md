@@ -11,7 +11,7 @@ relationships:
 
 ## Description
 
-Validate 194 exact primary rows, execute vectors and remove/mutate a vector or ecosystem pin.
+Validate 200 exact primary rows, execute vectors and remove/mutate a vector or ecosystem pin.
 
 ## Test Procedure
 

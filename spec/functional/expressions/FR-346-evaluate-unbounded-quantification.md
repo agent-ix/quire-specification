@@ -62,7 +62,8 @@ naming the required capability.
 | FR-346-AC-2 | `forall`/`exists` over an unbounded collection type is lowered as a target-neutral IR obligation and negotiated with a registered quantifier-capable backend rather than decided by visiting occurrences. | Test (TC-249) |
 | FR-346-AC-3 | A provider that discharges the obligation over the declared unbounded domain returns proved, refuted with a witness or counterexample, or inconclusive, and never substitutes a finite sample for the unbounded domain. | Test (TC-249) |
 | FR-346-AC-4 | A claim no registered quantifier-capable backend can discharge settles `unsupported` with a warning naming the required capability. | Test (TC-249) |
-| FR-346-AC-5 | When a registered quantifier-capable SMT backend is present, the qualification corpus settles at least one `forall`/`exists` case `proved` and at least one `refuted` through that backend; the AC-4 `unsupported`-with-warning absence path is unchanged when no such backend is registered. | Test (TC-249, TC-266) |
+| FR-346-AC-5 | In a locked qualification run with a registered quantifier-capable SMT backend, the corpus settles at least one `forall`/`exists` case `proved` through that backend. | Test (TC-249, TC-266) |
+| FR-346-AC-6 | In that same locked run, the corpus settles at least one `forall`/`exists` case `refuted` through that backend; the AC-4 `unsupported`-with-warning path is unchanged in a locked run with no such backend registered. | Test (TC-249, TC-266) |
 
 ## Dependencies
 

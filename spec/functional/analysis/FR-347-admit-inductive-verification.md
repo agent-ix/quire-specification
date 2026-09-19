@@ -69,7 +69,8 @@ settles `unsupported` with a warning naming the required capability.
 | FR-347-AC-2 | The base case and inductive step are lowered as one target-neutral induction obligation and negotiated with a registered induction-capable backend, never discharged by exhaustive enumeration. | Test (TC-250) |
 | FR-347-AC-3 | A failing base case or a failing inductive step returns refuted with its own counterexample, distinguishing which part failed; an unproved obligation is inconclusive rather than narrowed to finitely many checked instances. | Test (TC-250) |
 | FR-347-AC-4 | A claim no registered induction-capable backend can discharge settles `unsupported` with a warning naming the required capability. | Test (TC-250) |
-| FR-347-AC-5 | When a registered induction-capable SMT backend is present, the qualification corpus settles at least one inductive obligation `proved` and at least one `refuted` through that backend; the AC-4 `unsupported`-with-warning absence path is unchanged when no such backend is registered. | Test (TC-250, TC-266) |
+| FR-347-AC-5 | In a locked qualification run with a registered induction-capable SMT backend, the corpus settles at least one inductive obligation `proved` through that backend. | Test (TC-250, TC-266) |
+| FR-347-AC-6 | In that same locked run, the corpus settles at least one inductive obligation `refuted` through that backend; the AC-4 `unsupported`-with-warning path is unchanged in a locked run with no such backend registered. | Test (TC-250, TC-266) |
 
 ## Dependencies
 

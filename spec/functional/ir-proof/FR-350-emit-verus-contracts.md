@@ -11,6 +11,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-353
     type: references
+  - target: ix://agent-ix/quire-specification/FR-354
+    type: references
 ---
 
 # FR-350: Emit Verus contracts from QSL state contracts
@@ -51,7 +53,13 @@ through the same capability-negotiation path as Kani and SMT: `supported`,
 `requires_bound`, `unsupported` or `invalid_input` before generation, and
 proved/refuted/inconclusive/failed after. A refuted clause returns with a
 replayable counterexample; the evidence lock records Verus, Rust, dependency
-and option pins for every emitted function.
+and option pins for every emitted function. When Verus itself is not
+registered, emission is not blocked as `unsupported` on that account alone: a
+claim whose model-level obligation the registered SMT backend already
+settled `proved` keeps that settlement's FR-354 trust basis, recorded as
+`solver-asserted` with a warning naming the absent Verus verification
+capability, distinct from a claim whose required capability no registered
+backend advertises at all, which remains `unsupported`.
 
 ## Acceptance Criteria
 
@@ -62,6 +70,7 @@ and option pins for every emitted function.
 | FR-350-AC-3 | Verus registers under the same AD-010 provider contract as Kani and the SMT backend, with no second contract shape. | Test (TC-267) |
 | FR-350-AC-4 | A refuted clause returns a replayable counterexample; the evidence lock records Verus, Rust, dependency and option pins for the emitted function. | Test (TC-267) |
 | FR-350-AC-5 | A claim Verus cannot discharge settles `unsupported` with a warning naming the required capability, or `requires_bound` when a finite bound is missing. | Test (TC-267) |
+| FR-350-AC-6 | When Verus is not registered, a claim the registered SMT backend already settled `proved` keeps its FR-354 `solver-asserted` trust basis and records a warning naming the absent Verus verification capability, rather than settling `unsupported`. | Test (TC-267) |
 
 ## Dependencies
 
