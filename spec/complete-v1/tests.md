@@ -187,7 +187,7 @@ type.
 | V1-RUN-007 | FR-011 | TC-231 | Reuse | planned |
 | V1-RUN-008 | FR-180 | TC-209, TC-231 | Amend | planned |
 | V1-RUN-009 | FR-035 | TC-231 | Reuse | planned |
-| V1-RUN-010 | FR-005 | TC-231 | Reuse | planned |
+| V1-RUN-010 | FR-005 | TC-209, TC-231 | Reuse | planned |
 | V1-RUN-011 | FR-180 | TC-209, TC-231 | Amend | planned |
 | V1-RUN-012 | FR-180 | TC-209, TC-231 | Amend | planned |
 | V1-RUN-013 | FR-181 | TC-210, TC-231 | New | planned |
@@ -1156,7 +1156,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | IT-072 | Revisioned observation repair | quire-observation + temporal/protocol | library | TC-199, TC-204 | planned |
 | IT-073 | Protocol analysis suite | quire-spec-language + quire-protocol | library | TC-205–TC-208 | planned |
 | IT-074 | Verification method dispatch | quire-verification + method providers | library/process | TC-212–TC-216 | planned |
-| IT-075 | Contract backend native replay | Contract IR/codegen/runtime + QSL | library/tool | TC-217–TC-219 | planned |
+| IT-075 | Contract backend native replay | Contract IR/codegen/runtime + QSL | library/tool | TC-209, TC-217–TC-219 | planned |
 | IT-076 | API/CLI/WASM/editor parity | QSL tool surfaces | library/process | TC-220–TC-224, TC-228 | planned |
 | IT-077 | Plugin/JIT containment | Rust provider host | library/process | TC-225, TC-226 | planned |
 | IT-078 | Workflow to evidence | quire-integration + observation + verification | library/process | TC-211, TC-230–TC-232 | planned |
