@@ -465,6 +465,20 @@ fn tc_195_effective_declaration_vectors_recompute_their_digests() {
             previous = Some(effective_id);
         }
     }
+
+    for mutation in file["invalid_mutations"]
+        .as_array()
+        .expect("invalid mutations are an array")
+    {
+        let name = str_at(mutation, "/name");
+        let base_name = str_at(mutation, "/base");
+        let base = vector_named(vectors, base_name);
+        assert_eq!(
+            str_at(mutation, "/retained_sha256"),
+            str_at(base, "/sha256"),
+            "{name} retains exactly its base vector {base_name}'s digest"
+        );
+    }
 }
 
 #[trace("TC-198", "FR-144-AC-11")]
