@@ -25,18 +25,21 @@ relationships:
 
 ## Description
 
-When the target-neutral contract package is negotiated per AD-010, an SMT
-backend (cvc5, with Z3 as an independent cross-check) SHALL register under the
-same exact provider contract as Kani and advertise which of unbounded
-quantification, induction, composition and mathematical-integer capabilities it
-discharges.
+When the target-neutral contract package is negotiated per AD-010, the SMT
+backend (cvc5, with Z3 as an independent cross-check) SHALL register one
+descriptor under the same exact provider contract as Kani, carrying its FR-290
+(capability kind, mode) pairs and its declared obligation-form set.
+
+If an item's obligation form is outside that declared set, then the SMT
+negotiation arm SHALL settle the item `unsupported` with a warning naming the
+form.
 
 ## Inputs
 
 Target-neutral IR items carrying an FR-346 quantification obligation, an
 FR-347 induction obligation, an FR-348 composition obligation or an FR-147
 mathematical-integer obligation, plus the registered backend's advertised
-capability set and toolchain/options pins.
+FR-290 (capability kind, mode) pairs and toolchain/options pins.
 
 ## Outputs
 
@@ -48,32 +51,40 @@ with a replayable witness or counterexample, inconclusive, or failed.
 
 The SMT backend registers under the one exact provider contract AD-010
 defines; it is a registrant alongside Kani, never a second shape. Registration
-advertises exactly which capabilities among unbounded quantification (FR-346),
-induction (FR-347), composition (FR-348) and mathematical-integer domains
-(FR-147) the backend discharges; an unadvertised capability is not negotiated
-to it. Z3 runs as an independent cross-check of cvc5's verdict on the same
-query; a cvc5/Z3 verdict disagreement settles the claim `inconclusive` and is
+advertises exact FR-290 (capability kind, mode) pairs; an item whose required
+kind it does not advertise has it outside its candidate set. Unbounded
+quantification (FR-346), induction (FR-347), compositional discharge (FR-348)
+and mathematical-integer domains (FR-147) are proof techniques, not capability
+kinds. The backend descriptor declares the subset of these four obligation
+forms it discharges; its negotiation arm settles an item whose obligation form
+is outside the declared set `unsupported` with a warning naming the form, cause
+`unsupported_projection`/`unsupported-requested-capability`. Z3 is the cross-check inside the one SMT descriptor: it advertises no FR-290
+pairs of its own and is never a candidate. Z3 runs as an independent
+cross-check of cvc5's verdict on the same query; a cvc5/Z3 verdict disagreement settles the claim `inconclusive` and is
 retained as an explicit parity failure naming both verdicts, rather than
-silently preferring either solver. When Z3 is not registered, no cross-check
+silently preferring either solver. When Z3 is not configured in the SMT descriptor, no cross-check
 runs: cvc5's verdict settles the claim on its own, and the settlement carries
 a warning naming the absent cross-check; this is a warned outcome, never a
-hold on cvc5's settlement. Counterexamples and witnesses retain the FR-036
+hold on cvc5's settlement. A configured Z3 whose pinned tool probe finds it
+missing or mismatched, errors or exceeds its limit is the same warned absent
+cross-check: cvc5's verdict settles the claim, and the item never records the
+FR-290 tool-absence result `unsupported` on Z3's account. Counterexamples and witnesses retain the FR-036
 original source spans and replay through `runtime::execute` per AD-010. A
-claim whose required capability no registered backend advertises settles
-`unsupported` with a warning naming the required capability; this absence
+claim whose required capability kind no registered backend advertises settles
+`unsupported` with a warning naming the required capability kind; this absence
 path is unaffected by whether the SMT backend is registered for other
-capabilities.
+capability kinds.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-349-AC-1 | The SMT backend registers under the same exact provider contract as Kani, with no second contract shape. | Test (TC-266) |
-| FR-349-AC-2 | Registration advertises an exact capability subset among quantification, induction, composition and mathematical integers; a claim outside the advertised subset is not dispatched to it. | Test (TC-266) |
+| FR-349-AC-2 | Registration advertises exact FR-290 (capability kind, mode) pairs and a declared obligation-form set; an item whose kind is unadvertised is not a candidate for it, and an item whose obligation form is outside the declared set settles `unsupported` at its negotiation arm with a warning naming the form and cause `unsupported_projection`/`unsupported-requested-capability`. | Test (TC-266) |
 | FR-349-AC-3 | A cvc5/Z3 verdict disagreement on the same query settles the claim `inconclusive`, is retained as an explicit parity failure naming both verdicts, and is never resolved to either solver's verdict alone. | Test (TC-266) |
 | FR-349-AC-4 | A proved or refuted result retains a replayable witness or counterexample carrying its original FR-036 source spans. | Test (TC-266) |
-| FR-349-AC-5 | A claim whose required capability no registered backend advertises settles `unsupported` with a warning naming the required capability. | Test (TC-266) |
-| FR-349-AC-6 | Z3's absence from registration does not block or hold cvc5's settlement of a claim within its advertised capability subset; the settlement carries a warning naming the absent cross-check. | Test (TC-266) |
+| FR-349-AC-5 | A claim whose required capability kind no registered backend advertises settles `unsupported` with a warning naming the required capability kind. | Test (TC-266) |
+| FR-349-AC-6 | Z3's absence from the SMT descriptor, or a missing or mismatched Z3 tool at probe, does not block, hold or turn `unsupported` cvc5's settlement of a claim within its advertised (capability kind, mode) pairs; the settlement carries a warning naming the absent cross-check. | Test (TC-266) |
 
 ## Dependencies
 

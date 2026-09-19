@@ -111,7 +111,7 @@ resolves them.
 | Refusal / unsupported / incomplete / failure | `Diagnostic{Code}` from the closed catalog (`native-diagnostics.md`). Language admission is independent of backend capability. Declaration forms outside the admitted set refuse as `unsupported_construct`/`declaration-form`. |
 | Accounting | `quire.value.accounting/v1` `ChargePoint`/`Meter` from the `quire-exact` kernel |
 | Source location | QSL is the only minter. `Span`/`LocatedSpan`/`SourceMap`, keyed by checked node id. FCD `Locus` maps to `LocatedSpan` in intake. |
-| Capability point | Language admission only (QSL `Capability`, FR-290 six kinds; A08 #185 — QSL `main` has 4, `requests.rs:36`). Records `capability_report`; negotiates nothing. |
+| Capability point | Language admission only (QSL `Capability` takes its members from the FR-290 capability kinds; A08 #185 — QSL `main` has 4, `requests.rs:36`). Records `capability_report`; negotiates nothing. |
 | Canonical vectors / agreement | QSpec complete-value vectors, vendored by `xtask revendor` with `VENDOR.json` digests; `revendor-check` offline |
 | Rejected item → substitute? | No. A package with an error diagnostic emits no checked package. |
 | Replay input / parity | QSL complete-V1 value evaluation is the semantics arrow 7 executes |
@@ -297,7 +297,7 @@ layer-owned with a total conversion.
 | Source locations | Layer-owned; QSL sole minter | QSL `SourceMap`/`LocatedSpan`; IR `CheckedSourceMapEntry`; RT reports kernel `Location` | FCD `Locus` → `LocatedSpan` (intake); node id → span at replay; nested-span replay test |
 | IR value type, `ClauseKind` (6), `ExecutionPoint`, `CheckedNodeTag`, `Operator` | Layer-owned (target-neutral) | IR `quire-contract-model` | Total `From` from checked forms; exhaustive; `cargo mutants` on mapping fns |
 | RT observation `ClauseKind{…,Guard,Consequent}` | Layer-owned | RT | Total IR `ClauseKind` → RT observation kind, with test |
-| Capability descriptions | Layer-owned: QSL `Capability` = language admission (FR-290, six kinds); IR closed obligation-capability enum parsed at the wire edge | QSL / IR | Wire string ↔ enum total test |
+| Capability descriptions | Layer-owned: QSL `Capability` = language admission (FR-290 capability kinds); IR closed obligation-capability enum parsed at the wire edge | QSL / IR | Wire string ↔ enum total test |
 | Finite/unbounded bounds | Layer-owned | QSL `Extent`/`Population`; IR `bounded_domain`/`model_population` + single `requires-bound` predicate | v2 round trip; `requires-bound` table test |
 | Outcomes and stable diagnostic codes | Codes shared by catalog (QSpec `native-diagnostics.md`); typed causes layer-owned | Each layer: one `fn catalog_code(&self) -> CatalogCode`, exhaustive | Totality test against the vendored catalog (heads workspace) |
 | Domain-package and model references | Layer-owned | QSL `DomainPackageRef` (FR-321), `ModelRef` | Crosses to IR only as v2 wire strings |
@@ -385,7 +385,7 @@ removing the QSL -dev→ CG → QSL loop.
 
 | Construct | Disposition |
 | --- | --- |
-| Frame obligation | Arrows 3–5: `unsupported` (warned) with a catalog code until IR lowers the FR-340 `state`/`frame` node into its Kani form (IR#109). Arrow 2 already carries it. Runtime frame violations: `frame_violation`/`unauthorized-change` (#129 Q7). Subject ABI = the FR-340 `modifies`/`creates`/`deletes` sets of v2 node keys (`CheckedNodeId`) of `relation`/`model` nodes; each resolves to its `DeclarationKey` through the package's model correspondence. `OPEN — decided in WP10`: IR Kani frame lowering and CG frame-harness file list. |
+| Frame obligation | Capability kind FR-290 `operation-contract`. Arrows 3–5: `unsupported` (warned) with a catalog code until IR lowers the FR-340 `state`/`frame` node into its Kani form (IR#109). Arrow 2 already carries it. Runtime frame violations: `frame_violation`/`unauthorized-change` (#129 Q7). Subject ABI = the FR-340 `modifies`/`creates`/`deletes` sets of v2 node keys (`CheckedNodeId`) of `relation`/`model` nodes; each resolves to its `DeclarationKey` through the package's model correspondence. `OPEN — decided in WP10`: IR Kani frame lowering and CG frame-harness file list. |
 | Unbounded construct | IR `requires-bound` is the single predicate. CG negotiation maps it to `requires-bound` (finite bound available) or `unsupported` (warned, E07). Neither emits an oracle or harness. |
 
 ### Current-head integration

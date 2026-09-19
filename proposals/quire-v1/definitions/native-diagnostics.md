@@ -1,6 +1,6 @@
 # Native diagnostic interpretation candidate
 
-Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.4`.
+Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.5`.
 **The interpretation role is accepted by FS01; this semantic revision remains
 proposed and is not adopted or fully implemented.** This supplies the versioned catalog
 required by FR-047. It interprets native producer diagnostics in their existing
@@ -93,15 +93,19 @@ context, but that context cannot replace a required cause field or variant.
 | `dangling_reference` | `absent-target-in-complete-population`; retain the reference identity, exact required universe and admitted completeness selection. Without that complete population, use the incomplete-population outcome instead. |
 | `population_delta_mismatch`, `frame_violation` | `delta-disagreement` or `unauthorized-change`, respectively; retain the invocation, pre/post selections, affected object/field or State root, and the declared delta/frame permission. |
 | `resource_exhausted`, `cancelled` | `insufficient-next-charge` or `caller-cancelled`, respectively; retain the actual stage, accounting contract, effective limit or cancellation source, prior usage and the work item that could not proceed. A semantic maximum is not a caller work budget. |
-| `unsupported_projection` | `unsupported-requested-capability`; retain the exact admitted subject, requested claim/target and selected backend. It cannot reclassify a valid source as malformed. |
+| `unsupported_projection` | `unsupported-requested-capability`, `unbounded-extent` or `tool-unavailable`; retain the exact admitted subject, requested claim/target and selected backend. `unsupported-requested-capability` also retains the item's FR-290 capability kind and any named backend when its candidate set is empty, or the obligation form the one candidate's negotiation arm does not discharge. `unbounded-extent` retains the capability kind, the candidate and its advertised modes for an unbounded extent on a bounded-only advertisement with no finite bound available. `tool-unavailable` retains the capability kind, the routed backend and the expected and actual (or absent) tool identity; it accompanies FR-331 result `unsupported` when the probe finds the tool unavailable, and result `failed` when the tool changes after a passing probe. It cannot reclassify a valid source as malformed. |
+| `invalid_capability` | `absent-kind`, `unknown-kind`, `unsupported-version`, `unknown-mode`, `duplicate-backend`, `absent-extent`, `unknown-backend`, `inconsistent-candidates` or `ambiguous-backend`; retain the request item index, for a registration cause the backend identity, and for `unsupported-version` the refused carrier. `unknown-kind` and `unknown-mode` retain the exact supplied value; `unsupported-version` retains the supplied vocabulary identity, or its absence, and refuses the whole carrier; `duplicate-backend` retains the repeated backend identity; `unknown-backend` retains the named unregistered backend identity, or the registered backend with no negotiation arm; `inconsistent-candidates` retains every offending candidate; `ambiguous-backend` retains every candidate in candidate order. No cause maps a refused label to an FR-290 member. |
 | `projection_binding`, `invalid_projection_correspondence` | `upstream-refusal` or `correspondence-loss`, respectively; retain the originating structured IR/mapping cause and exact source/derived identities. |
 | `extraction-requires-run`, `extraction-package-conflict`, `extraction-clause-count` | Distinct `wrong-command-mode`, `conflicting-compilation-inputs` and `binding-cardinality` variants, respectively; retain the requested mode, conflicting selectors or actual count. These three refusals cannot share only an English distinction. |
 | `runtime_invariant` | `established-invariant-broken`; retain the named violated evaluator/input invariant and originating stage/context. It is a failed evaluation, not a false predicate. |
 
 `ambiguous_dispatch` and `foreign_reference` are catalog-owned spellings of
-this revision. Their spelling and causes are selected by this table even where
+revision `1-draft.3`, and `invalid_capability` is a catalog-owned spelling of
+revision `1-draft.5`. Their spelling and causes are selected by this table even where
 the pinned compiler inventory above does not enumerate them; a producer claiming
-revision `1-draft.3` emits them with these closed causes, and a re-pinned
+revision `1-draft.3` or later emits `ambiguous_dispatch` and
+`foreign_reference`, and one claiming `1-draft.5` or later emits
+`invalid_capability`, each with these closed causes, and a re-pinned
 compiler inventory must agree with them.
 
 Revision `1-draft.4` adds the eight `invalid_package` operation variants,
@@ -139,6 +143,12 @@ diagnostic for the first refusal it finds, and never a broader code:
    and `operation-mode-type-mismatch`.
 
 A producer claiming revision `1-draft.3` emits none of these causes.
+
+Revision `1-draft.5` adds `invalid_capability` with its nine causes, and the
+`unbounded-extent` and `tool-unavailable` causes of `unsupported_projection`,
+for FR-290 capability-kind admission, candidate-set negotiation and tool
+absence. A producer claiming revision `1-draft.4` or earlier emits none of
+them.
 
 Other retained host/source codes keep their selected broad meaning and original
 structured producer cause: I/O error, malformed command, invalid digest/identifier,
