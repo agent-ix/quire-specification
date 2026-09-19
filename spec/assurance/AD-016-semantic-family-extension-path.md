@@ -2,7 +2,7 @@
 id: AD-016
 title: "Semantic-family extension path"
 type: ArchitectureDescription
-status: proposed
+status: accepted
 owner: quire-agent-a
 system: native Quire V1 semantic-family pipeline from source to native replay
 relationships:
