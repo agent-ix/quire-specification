@@ -3624,6 +3624,7 @@ fn tc_233_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
             ("dimension-negative-zero-exponent", "semantic"),
             ("unit-negative-zero-scale", "semantic"),
             ("unit-negative-zero-offset", "semantic"),
+            ("model-owner-missing-version", "semantic"),
         ]),
         "the nominal-node mutation inventory is exact"
     );
@@ -3640,6 +3641,7 @@ fn tc_233_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
             ("dimension-negative-zero-exponent", "schema"),
             ("unit-negative-zero-scale", "schema"),
             ("unit-negative-zero-offset", "schema"),
+            ("model-owner-missing-version", "schema"),
         ]),
         "every semantic nominal-node mutation names exactly its refusing check"
     );

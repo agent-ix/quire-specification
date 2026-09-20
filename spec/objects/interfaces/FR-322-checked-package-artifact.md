@@ -145,13 +145,17 @@ boundary.
   `state`/`frame` node in ascending node-id digest order that FR-340's own
   meaning-join/canonical-order precedence selects a defect for.
 - `dependency_reference` — a reference to a declaration exported by a
-  `dependency_selections` package: `PackageNodeKey{package_id, node}`, where
-  `package_id` is that dependency's declared `quire.package.semantic/v2`
-  identity and `node` is that dependency's own node key (QSL ADR-013 T-3,
-  QC-10). It is never converted into a node key of the importing package's
-  own `semantic_graph`; a reader resolves it only against the named
-  dependency's admitted package. A `dependency_reference` naming a
-  `package_id` absent from `dependency_selections` refuses
+  `dependency_selections` package: `PackageNodeKey{package, node}`, where
+  `package` is that dependency's declared `quire.package.semantic/v2`
+  identity and `node` is a `WireNodeId` naming the declaration inside that
+  dependency's own wire package (QSL ADR-013 T-3, QC-10). Per R-10, a node id
+  read from any wire — including a package's own emitted V2 package — stays
+  a `WireNodeId`; it becomes a `NodeKey` only by lookup in a checked package
+  compiled from digest-addressed source, and never by minting one directly
+  from wire bytes, whether in the dependency's own namespace or the
+  importing package's. A reader resolves a `dependency_reference` only
+  against the named dependency's admitted package. A `dependency_reference`
+  naming a `package` absent from `dependency_selections` refuses
   `missing_declaration`/`missing-selection`.
 - `declaration` — `{qualified_name}`, the name a named, source-declared node
   introduces, with the `qualified_declaration` grammar. It is carried exactly by
@@ -358,7 +362,7 @@ partial checked package.
 | FR-322-AC-23 | Every application carries a `result_type` and every literal a `type`; a root `result_type` differing from the node `semantic_type`, a `result_type` the operation cannot produce, and a literal whose `type` family its `value_kind` does not admit each refuse as `operator-ineligible`, while the same literal with its declared type is admitted. | Test (TC-233) |
 | FR-322-AC-24 | The FR-149 conversion classification is decided from declared bounds: an integer range into a containing integer or rational range is exact, an integer range whose scaled bounds exceed a decimal range is range narrowing, a decimal of scale 3 into scale 2 is scale reduction and a rational into narrower rational bounds is rational narrowing; `quire.op.rational.div` over integer-range operands carries `promotes_exact` and its published vector is admitted, while a decimal operand refuses as `operator-ineligible`. | Test (TC-233) |
 | FR-322-AC-25 | An `operation` member resolves only against a declaring `model` node of `semantic_form` `object_type`, `process`, `state_machine` or `persistence_interface`; every other model form, including `systems_interface`, refuses `operator-ineligible`/`ill_typed`. | Test (TC-233) |
-| FR-322-AC-26 | A reference to a dependency package's node is carried as `PackageNodeKey{package_id, node}`; it is never converted into a node key of the importing package's own `semantic_graph`, and a reader resolves it only against the named dependency's admitted package, refusing a `package_id` absent from `dependency_selections` as `missing_declaration`/`missing-selection`. | Analysis |
+| FR-322-AC-26 | A reference to a dependency package's node is carried as `PackageNodeKey{package, node}`, where `node` is a `WireNodeId`; per R-10 it becomes a `NodeKey` only by lookup in a checked package compiled from digest-addressed source, never minted directly from wire bytes in either the dependency's or the importing package's namespace, and a reader resolves it only against the named dependency's admitted package, refusing a `package` absent from `dependency_selections` as `missing_declaration`/`missing-selection`. | Analysis |
 | FR-322-AC-27 | An unrecognized `node_tag` refuses as `unsupported_node_tag`; while `quire.checked-semantic-graph/v2` is prerelease, QSpec revises the closed `node_tag` set in place with no `contract_version` bump per addition. | Analysis |
 | FR-322-AC-28 | A `ModelOwner` node-identity preimage carries the declaring domain package's `identity` and `version` beside `node`; the published `ModelOwner` vectors validate against the closed preimage schema and recompute their recorded JCS SHA-256; two otherwise-identical `ModelOwner` preimages that differ only in `version` compute distinct node ids, so a `NodeKey` stays unique across domain-package versions. | Test (TC-279) |
 

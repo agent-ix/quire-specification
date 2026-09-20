@@ -36,10 +36,10 @@ recompilation outcome.
 | Vector | Mutation | Expected result | Criteria |
 | --- | --- | --- | --- |
 | BP-01 | A `byte_provision` naming every source, definition and domain-package input by matching digest domain and digest | Recompilation proceeds; no missing-input refusal | FR-323-AC-5 |
-| BP-02 | A `byte_provision` missing one input the `package` reference's `RawSourceRef` digests name | Refused with a typed cause before recompilation | FR-323-AC-5 |
+| BP-02 | A `byte_provision` missing one input the `package` reference's `RawSourceRef` digests name | Refused `stale_dependency`/`byte-digest-mismatch` before recompilation | FR-323-AC-5 |
 | BP-03 | A `byte_provision` entry whose bytes do not match its declared digest | Refused `stale_dependency`/`byte-digest-mismatch` | FR-323-AC-5 |
 | BP-04 | A `byte_provision` entry under the wrong declared digest domain | Refused `stale_dependency`/`digest-domain-mismatch` | FR-323-AC-5 |
-| BP-05 | A `byte_provision` whose bytes recompile to a `package_id` that differs from the `package` reference's declared `package_id` | Refused with a typed `package_id` mismatch cause before any result is produced | FR-323-AC-5 |
+| BP-05 | A `byte_provision` whose bytes recompile to a `package_id` that differs from the `package` reference's declared `package_id` | Refused `stale_dependency`/`DependencyIdentityMismatch` before any result is produced | FR-323-AC-5 |
 
 ## Expected Results
 

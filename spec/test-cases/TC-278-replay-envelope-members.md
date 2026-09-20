@@ -41,11 +41,16 @@ back the admitted request or refusal.
 | RE-03 | The same request with an argument keyed by ordinal position instead of parameter node id | Refused before consumption | FR-323-AC-6 |
 | RE-04 | The same request with its occurrence key replaced by a bare node id | Refused before consumption | FR-323-AC-6 |
 | RE-05 | The same request with its `backend` member removed | Refused before consumption | FR-323-AC-6 |
-| RE-06 | A non-replay `NativeRuntimeEnvelope` request | Carries no `replay` property | FR-323-AC-6 |
+| RE-06 | The same request with its `ReplaySource` member removed | Refused before consumption | FR-323-AC-6 |
+| RE-07 | The same request with its semantic profile selections member removed | Refused before consumption | FR-323-AC-6 |
+| RE-08 | The same request with its proof bounds member removed | Refused before consumption | FR-323-AC-6 |
+| RE-09 | The same request with its declared domains member removed | Refused before consumption | FR-323-AC-6 |
+| RE-10 | The same request with its trace position member removed | Refused before consumption | FR-323-AC-6 |
+| RE-11 | A non-replay `NativeRuntimeEnvelope` request | Carries no `replay` property | FR-323-AC-6 |
 
 ## Expected Results
 
 RE-01 finds every QC-8 replay member present on a well-formed replay
-request. RE-02 through RE-05 find each missing or malformed member refused
-before consumption. RE-06 finds the `replay` property entirely absent from a
-non-replay request.
+request. RE-02 through RE-10 find each of the nine named `replay` members
+refused before consumption when it is missing or malformed, in turn. RE-11
+finds the `replay` property entirely absent from a non-replay request.
