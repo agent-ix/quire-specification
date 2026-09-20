@@ -70,6 +70,16 @@ refused. A relationship is encoded exactly one way, `relation`/
 `relationship`, and a `modifies` entry names a relationship only through
 that one node tag and form.
 
+A field declared on an object type whose own type names a record value
+type, and a field declared on that record value type itself, are each a
+separate `model`/`field_declaration` node: one is a declaration of the
+object type, scoped to it; the other is a declaration of the record type,
+shared by every field of that type wherever it occurs. `modifies` admits
+both node keys in the same frame body, each independently eligible under
+the rule above, because they are distinct declaration references naming
+different declarations. `Account.address`, a field of `Account` typed
+`Address`, and `Address.street`, a field of `Address`, are one such pair.
+
 `ModelNode`'s `semantic_form` also names each of FR-208's five systems
 meanings individually: `systems_part`, `systems_port`, `systems_interface`,
 `systems_connection` and `systems_allocation`, one per
@@ -161,6 +171,7 @@ carrying any defect, using that frame node's own precedence rule above.
 | FR-340-AC-7 | A frame body missing any of `modifies`, `creates` or `deletes` fails the schema; every published fixture's frame node is admitted with no defect by the same reader rule `read_package_semantics` applies. | Test (TC-233) |
 | FR-340-AC-8 | `ModelNode.semantic_form` names each of FR-208's five systems meanings -- `systems_part`, `systems_port`, `systems_interface`, `systems_connection` and `systems_allocation`, one per `quire.meaning.systems.<x>/v1` value -- and none of the five is admitted into `modifies`, `creates` or `deletes`. | Test (TC-233) |
 | FR-340-AC-9 | When a package publishes more than one `state`/`frame` node, the reader reports the first defect found while checking frame nodes in ascending `node_id` digest order; a lower-digest frame node's own canonical-order defect is reported even when a higher-digest frame node carries a meaning-join defect that would otherwise outrank it. | Test (TC-233) |
+| FR-340-AC-10 | A `modifies` entry naming a field declared on an object type whose own type names a record value type, and a `modifies` entry naming a field declared on that record value type itself, are distinct declaration references; a frame body naming both is admitted with no defect. | Test (TC-233) |
 
 ## Dependencies
 
