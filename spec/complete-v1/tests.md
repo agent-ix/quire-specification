@@ -950,6 +950,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-321 | FR-321-AC-1 | TC-231 | planned |
 | FR-321 | FR-321-AC-2 | TC-231 | planned |
 | FR-321 | FR-321-AC-3 | TC-231 | planned |
+| FR-321 | FR-321-AC-5 | TC-231 | planned |
 | FR-322 | FR-322-AC-1 | TC-231 | planned |
 | FR-322 | FR-322-AC-2 | TC-231 | planned |
 | FR-322 | FR-322-AC-3 | TC-231 | planned |
@@ -970,12 +971,17 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-322 | FR-322-AC-22 | TC-233 | planned |
 | FR-322 | FR-322-AC-23 | TC-233 | planned |
 | FR-322 | FR-322-AC-24 | TC-233 | planned |
+| FR-322 | FR-322-AC-26 | TC-231 | planned |
+| FR-322 | FR-322-AC-27 | TC-231 | planned |
+| FR-322 | FR-322-AC-28 | TC-279 | planned |
 | interface_004 | interface_004-AC-1 | TC-233 | planned |
 | interface_004 | interface_004-AC-2 | TC-233 | planned |
 | FR-323 | FR-323-AC-1 | TC-231 | planned |
 | FR-323 | FR-323-AC-2 | TC-231 | planned |
 | FR-323 | FR-323-AC-3 | TC-231 | planned |
 | FR-323 | FR-323-AC-4 | TC-273 | planned |
+| FR-323 | FR-323-AC-5 | TC-277 | planned |
+| FR-323 | FR-323-AC-6 | TC-278 | planned |
 | FR-324 | FR-324-AC-1 | TC-231 | planned |
 | FR-324 | FR-324-AC-2 | TC-231 | planned |
 | FR-324 | FR-324-AC-3 | TC-231 | planned |
@@ -1005,6 +1011,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-331 | FR-331-AC-6 | TC-271 | planned |
 | FR-331 | FR-331-AC-7 | TC-271 | planned |
 | FR-331 | FR-331-AC-8 | TC-274 | planned |
+| FR-331 | FR-331-AC-9 | TC-275 | planned |
+| FR-331 | FR-331-AC-10 | TC-276 | planned |
 | FR-332 | FR-332-AC-1 | TC-231 | planned |
 | FR-332 | FR-332-AC-2 | TC-231 | planned |
 | FR-332 | FR-332-AC-3 | TC-231 | planned |
@@ -1174,6 +1182,11 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-272 | Replay source structural separation | Property | P0 | FR-197 | 🚧 Planned |
 | TC-273 | Outcome-to-verdict map fixed per O-16 category | Property | P0 | FR-323 | 🚧 Planned |
 | TC-274 | Vacuous Kani proof settles inconclusive | Property | P0 | FR-331 | 🚧 Planned |
+| TC-275 | One-arm counterexample entry | Property | P0 | FR-331 | 🚧 Planned |
+| TC-276 | Supported-item refusal and unavailability results | Property | P0 | FR-331 | 🚧 Planned |
+| TC-277 | Replay byte provision and source digests | Property | P0 | FR-323 | 🚧 Planned |
+| TC-278 | Replay envelope members | Property | P0 | FR-323 | 🚧 Planned |
+| TC-279 | Model-owner package-scoped node identity | Property | P0 | FR-322 | 🚧 Planned |
 
 ## Integration Test Matrix
 
