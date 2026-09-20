@@ -70,6 +70,21 @@
       "name": "unit-huge-exact-scale",
       "preimage": {"version":"quire.unit-node/v1","owner":{"kind":"definition","authority":"agent-ix","identity":"example-model"},"qualified_declaration":["Example","huge_length"],"dimension_node_id":{"domain":"quire.checked-semantic-node/v1","digest":"b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"},"target_unit_node_id":{"domain":"quire.checked-semantic-node/v1","digest":"79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"},"scale":{"numerator":"340282366920938463463374607431768211457","denominator":"1"},"offset":{"numerator":"0","denominator":"1"}},
       "sha256": "0cd2dfec999d494cb95abacbb6055b127208768f803614b43497972d41761459"
+    },
+    {
+      "name": "model-enum-order-status",
+      "preimage": {"version":"quire.enum-declaration-node/v1","owner":{"kind":"model","identity":"acme/orders","version":"1.0.0","node":"n-order-status"},"qualified_declaration":["Order","Status"],"ordered":false,"members":["PLACED","SHIPPED","DELIVERED"]},
+      "sha256": "c5e338574d6f3c3f1976c8857ef58cb8385f34926e2eb5b220d81695d8df9562"
+    },
+    {
+      "name": "model-enum-order-status-version-2",
+      "preimage": {"version":"quire.enum-declaration-node/v1","owner":{"kind":"model","identity":"acme/orders","version":"2.0.0","node":"n-order-status"},"qualified_declaration":["Order","Status"],"ordered":false,"members":["PLACED","SHIPPED","DELIVERED"]},
+      "sha256": "a7dfaf5f1810f6d312b547df68d22e10ff803665a182b0729df8ac0b7808adaf"
+    },
+    {
+      "name": "model-dimension-order-mass",
+      "preimage": {"version":"quire.dimension-node/v1","owner":{"kind":"model","identity":"acme/orders","version":"1.0.0","node":"n-mass-dimension"},"qualified_declaration":["Order","Mass"],"terms":[]},
+      "sha256": "aa4b51414baf5426d3715d1685ee515a8f3d24adc2b463c8957e87f9b8094478"
     }
   ],
   "invalid_mutations": [

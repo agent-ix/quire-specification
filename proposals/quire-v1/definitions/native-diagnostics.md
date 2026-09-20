@@ -1,6 +1,6 @@
 # Native diagnostic interpretation candidate
 
-Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.5`.
+Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.6`.
 **The interpretation role is accepted by FS01; this semantic revision remains
 proposed and is not adopted or fully implemented.** This supplies the versioned catalog
 required by FR-047. It interprets native producer diagnostics in their existing
@@ -93,6 +93,8 @@ context, but that context cannot replace a required cause field or variant.
 | `dangling_reference` | `absent-target-in-complete-population`; retain the reference identity, exact required universe and admitted completeness selection. Without that complete population, use the incomplete-population outcome instead. |
 | `population_delta_mismatch`, `frame_violation` | `delta-disagreement` or `unauthorized-change`, respectively; retain the invocation, pre/post selections, affected object/field or State root, and the declared delta/frame permission. |
 | `resource_exhausted`, `cancelled` | `insufficient-next-charge` or `caller-cancelled`, respectively; retain the actual stage, accounting contract, effective limit or cancellation source, prior usage and the work item that could not proceed. A semantic maximum is not a caller work budget. |
+| `duplicate_selection` | `duplicate-identity`; retain the repeated domain-package `identity` and both the already-selected and newly-requested `version`. A package selects at most one version of a domain-package identity (QSL ADR-013 O-01, QC-5). |
+| `stage_limit_exceeded` | `input-bytes-exceeded`, `nesting-depth-exceeded`, `node-count-exceeded` or `work-budget-exceeded`; retain the exceeded stage limit kind, its configured bound, the actual counter and the source location where it was reached, when known. This is a compiler stage S1-S4 limit (QSL ADR-013 T-4); it is distinct from `resource_exhausted`'s caller work-budget accounting. |
 | `unsupported_projection` | `unsupported-requested-capability`, `unbounded-extent` or `tool-unavailable`; retain the exact admitted subject, requested claim/target and selected backend. `unsupported-requested-capability` also retains the item's FR-290 capability kind and any named backend when its candidate set is empty, or the obligation form the one candidate's negotiation arm does not discharge. `unbounded-extent` retains the capability kind, the candidate and its advertised modes for an unbounded extent on a bounded-only advertisement with no finite bound available. `tool-unavailable` retains the capability kind, the routed backend and the expected and actual (or absent) tool identity; it accompanies FR-331 result `unsupported` when the probe finds the tool unavailable, and result `failed` when the tool changes after a passing probe. It cannot reclassify a valid source as malformed. |
 | `invalid_capability` | `absent-kind`, `unknown-kind`, `unsupported-version`, `unknown-mode`, `duplicate-backend`, `absent-extent`, `unknown-backend`, `inconsistent-candidates` or `ambiguous-backend`; retain the request item index, for a registration cause the backend identity, and for `unsupported-version` the refused carrier. `unknown-kind` and `unknown-mode` retain the exact supplied value; `unsupported-version` retains the supplied vocabulary identity, or its absence, and refuses the whole carrier; `duplicate-backend` retains the repeated backend identity; `unknown-backend` retains the named unregistered backend identity, or the registered backend with no negotiation arm; `inconsistent-candidates` retains every offending candidate; `ambiguous-backend` retains every candidate in candidate order. No cause maps a refused label to an FR-290 member. |
 | `projection_binding`, `invalid_projection_correspondence` | `upstream-refusal` or `correspondence-loss`, respectively; retain the originating structured IR/mapping cause and exact source/derived identities. |
@@ -149,6 +151,12 @@ Revision `1-draft.5` adds `invalid_capability` with its nine causes, and the
 for FR-290 capability-kind admission, candidate-set negotiation and tool
 absence. A producer claiming revision `1-draft.4` or earlier emits none of
 them.
+
+Revision `1-draft.6` adds `duplicate_selection` for a second domain-package
+model selection of an already-selected identity (QSL ADR-013 QC-5), and
+`stage_limit_exceeded` with one cause per closed compiler stage limit kind
+(QSL ADR-013 QC-11). A producer claiming revision `1-draft.5` or earlier
+emits neither.
 
 Other retained host/source codes keep their selected broad meaning and original
 structured producer cause: I/O error, malformed command, invalid digest/identifier,
