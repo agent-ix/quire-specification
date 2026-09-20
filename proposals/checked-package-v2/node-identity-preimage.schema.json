@@ -17,7 +17,7 @@
     "Declaration": {"type": "object", "required": ["qualified_name"], "properties": {"qualified_name": {"$ref": "#/$defs/QualifiedName"}}, "additionalProperties": false},
     "SourceOwner": {"type": "object", "required": ["kind", "authority", "identity"], "properties": {"kind": {"const": "source"}, "authority": {"$ref": "#/$defs/Nonempty"}, "identity": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false},
     "DefinitionOwner": {"type": "object", "required": ["kind", "authority", "identity"], "properties": {"kind": {"const": "definition"}, "authority": {"$ref": "#/$defs/Nonempty"}, "identity": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false},
-    "ModelOwner": {"type": "object", "required": ["kind", "identity", "node"], "properties": {"kind": {"const": "model"}, "identity": {"$ref": "#/$defs/Nonempty"}, "node": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false},
+    "ModelOwner": {"type": "object", "required": ["kind", "identity", "version", "node"], "properties": {"kind": {"const": "model"}, "identity": {"$ref": "#/$defs/Nonempty"}, "version": {"$ref": "#/$defs/Nonempty"}, "node": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false},
     "Owner": {"oneOf": [{"$ref": "#/$defs/SourceOwner"}, {"$ref": "#/$defs/DefinitionOwner"}, {"$ref": "#/$defs/ModelOwner"}]},
     "NodeId": {"type": "object", "required": ["domain", "digest"], "properties": {"domain": {"const": "quire.checked-semantic-node/v1"}, "digest": {"$ref": "#/$defs/HexDigest"}}, "additionalProperties": false},
     "IntegerString": {"type": "string", "pattern": "^(0|-?[1-9][0-9]*)$"},

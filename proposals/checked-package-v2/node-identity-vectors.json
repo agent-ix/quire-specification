@@ -70,6 +70,21 @@
       "name": "unit-huge-exact-scale",
       "preimage": {"version":"quire.unit-node/v1","owner":{"kind":"definition","authority":"agent-ix","identity":"example-model"},"qualified_declaration":["Example","huge_length"],"dimension_node_id":{"domain":"quire.checked-semantic-node/v1","digest":"b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"},"target_unit_node_id":{"domain":"quire.checked-semantic-node/v1","digest":"79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"},"scale":{"numerator":"340282366920938463463374607431768211457","denominator":"1"},"offset":{"numerator":"0","denominator":"1"}},
       "sha256": "0cd2dfec999d494cb95abacbb6055b127208768f803614b43497972d41761459"
+    },
+    {
+      "name": "model-enum-order-status",
+      "preimage": {"version":"quire.enum-declaration-node/v1","owner":{"kind":"model","identity":"acme/orders","version":"1.0.0","node":"n-order-status"},"qualified_declaration":["Order","Status"],"ordered":true,"members":["PLACED","SHIPPED","DELIVERED"]},
+      "sha256": "27e4b17d57d7fd399773e1482110baf86bb20d9b03d26d3702e278510ac06676"
+    },
+    {
+      "name": "model-enum-order-status-version-2",
+      "preimage": {"version":"quire.enum-declaration-node/v1","owner":{"kind":"model","identity":"acme/orders","version":"2.0.0","node":"n-order-status"},"qualified_declaration":["Order","Status"],"ordered":true,"members":["PLACED","SHIPPED","DELIVERED"]},
+      "sha256": "fb31f3d53713d46939e0090c210653cbebab006ea8bb37a08baf6c002a2d0006"
+    },
+    {
+      "name": "model-dimension-order-mass",
+      "preimage": {"version":"quire.dimension-node/v1","owner":{"kind":"model","identity":"acme/orders","version":"1.0.0","node":"n-mass-dimension"},"qualified_declaration":["Order","Mass"],"terms":[]},
+      "sha256": "aa4b51414baf5426d3715d1685ee515a8f3d24adc2b463c8957e87f9b8094478"
     }
   ],
   "invalid_mutations": [
@@ -84,7 +99,8 @@
     {"name":"unit-unreduced-rational","kind":"semantic","refused_by":"semantic","base":"unit-degree-celsius","patch":[{"op":"replace","path":"/offset/numerator","value":"27315"},{"op":"replace","path":"/offset/denominator","value":"100"}],"retained_sha256":"2ff8829f7ccd3d47c91f47ca48d64a88a7262e94a84578eb19ac63adf45cbf40","expected_code":"invalid_semantic_graph"},
     {"name":"dimension-negative-zero-exponent","kind":"semantic","refused_by":"schema","base":"dimension-velocity","patch":[{"op":"replace","path":"/terms/0/exponent","value":"-0"}],"retained_sha256":"7296d20bc3387ce37ccc8552fc74ec84a31b6f94d370e5091bcd2636027eda53","expected_code":"invalid_semantic_graph"},
     {"name":"unit-negative-zero-scale","kind":"semantic","refused_by":"schema","base":"unit-centimetre","patch":[{"op":"replace","path":"/scale/numerator","value":"-0"}],"retained_sha256":"bff2590b750ef3b1fec5ad3da79de9e714cebd7444ee5358cb09c1231cf62e88","expected_code":"invalid_semantic_graph"},
-    {"name":"unit-negative-zero-offset","kind":"semantic","refused_by":"schema","base":"unit-metre","patch":[{"op":"replace","path":"/offset/numerator","value":"-0"}],"retained_sha256":"79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4","expected_code":"invalid_semantic_graph"}
+    {"name":"unit-negative-zero-offset","kind":"semantic","refused_by":"schema","base":"unit-metre","patch":[{"op":"replace","path":"/offset/numerator","value":"-0"}],"retained_sha256":"79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4","expected_code":"invalid_semantic_graph"},
+    {"name":"model-owner-missing-version","kind":"semantic","refused_by":"schema","base":"model-enum-order-status","patch":[{"op":"remove","path":"/owner/version"}],"retained_sha256":"27e4b17d57d7fd399773e1482110baf86bb20d9b03d26d3702e278510ac06676","expected_code":"invalid_semantic_graph"}
   ],
   "operation_vectors": [
     {"name":"integer-div-floor","preimage":{"version":"quire.application-node/v1","node_tag":"expression","semantic_form":"binary","semantic_type":{"domain":"quire.checked-semantic-node/v1","digest":"a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"},"declaration":null,"recursion":null,"body":{"term":"application","operator":"binary","operation":{"identity":"quire.op.integer.div","laws":[{"role":"integer_division","definition":{"authority":"agent-ix","identity":"quire.value.integer-division.floor/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"ca8c7a20407eaff7f61074cc997e44ad1ab9a73f675d686c6250997c6ae6192f"}}],"mode":null,"member":null,"leaves":[]},"result_type":{"domain":"quire.checked-semantic-node/v1","digest":"a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"},"arguments":[{"term":"reference","target":{"domain":"quire.checked-semantic-node/v1","digest":"b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1"}},{"term":"reference","target":{"domain":"quire.checked-semantic-node/v1","digest":"b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2"}}]}},"sha256":"8a88ffb4d15fc621bd5f146c1bc6df6c44495bdf868170f9f8ad79807b6d7386"},
