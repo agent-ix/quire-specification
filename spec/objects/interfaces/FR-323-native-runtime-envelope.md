@@ -20,7 +20,14 @@ When a checked package is executed or replayed, the producer SHALL use the immut
 
 - `contract_version` — exactly `quire.native-runtime/v1`.
 - `request_id` — identity over package, selection, inputs, limits and options.
-- `package` — exact FR-322 checked-package reference.
+- `package` — exact FR-322 checked-package reference, plus the `RawSourceRef`
+  digest of every source and definition document a replay recompiles; a
+  non-replay request carries the reference alone.
+- `byte_provision` — present on a replay request only: the digest-addressed
+  bytes of every source, definition and domain-package input the replay
+  recompiles, each keyed by its declared digest domain and digest (QSL
+  ADR-013 QC-1). The executor obtains every recompilation input from this
+  provision and never from a path, environment variable or search location.
 - `selection` — ordered clause/function identifiers.
 - `state_environment` — typed anchors, values, object populations, frames and invocation captures.
 - `limits` — the `quire.value.accounting/v1` limit objects: `ScalarLimitsV1`,
@@ -29,7 +36,15 @@ When a checked package is executed or replayed, the producer SHALL use the immut
   high-water size counters. Depth counts toward the high-water size
   counters. A zero limit admits zero units.
 - `results` — one ordered typed disposition per selected item.
-- `replay` — optional counterexample identity and expected originating verdict.
+- `replay` — present only on a replay request, and absent otherwise. It
+  carries: the originating counterexample identity and expected originating
+  verdict; the `ReplaySource` (`Witness` or `Input`, FR-197); the selected
+  function's `QualifiedName`; arguments keyed by parameter node id; the
+  semantic profile selections; the failing node's occurrence key
+  (`node_id`, `role`, `ordinal`, FR-322 `source_map` key); the proof bounds
+  and declared domains carried from the obligation identity; the trace
+  position; and the `backend` member (QSL ADR-013 O-19). No replay member is
+  inferred from the package or from the non-replay properties above (QC-8).
 
 ## Outcome-to-verdict map
 
@@ -58,6 +73,8 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-2 | Replay uses the same evaluator and inputs rather than a generated-oracle shortcut. | Analysis |
 | FR-323-AC-3 | Missing anchors, exhausted limits and false predicates remain distinct. | Analysis |
 | FR-323-AC-4 | The outcome-to-verdict map assigns one verdict per QSL ADR-013 O-16 category, fixed independently of any request; an `Undefined` outcome and a refused `FamilyOutcome` never settle agreement. | Test (TC-273) |
+| FR-323-AC-5 | A replay request's `byte_provision` supplies every source, definition and domain-package input the replay recompiles, each keyed by its declared digest domain and digest; the `package` reference's `RawSourceRef` digests are exactly the source and definition digests the executor recomputes and compares, and the executor reads no recompilation input by path, environment variable or search location. | Test (TC-277) |
+| FR-323-AC-6 | A replay request's `replay` property carries the `ReplaySource`, the selected function's `QualifiedName`, arguments keyed by parameter node id, the semantic profile selections, the failing node's occurrence key, the proof bounds and declared domains, the trace position and the `backend` member; a non-replay request carries no `replay` property. | Test (TC-278) |
 
 ## Dependencies
 

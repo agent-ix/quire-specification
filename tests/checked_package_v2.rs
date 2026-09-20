@@ -3684,6 +3684,7 @@ fn tc_233_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
             ("dimension-negative-zero-exponent", "semantic"),
             ("unit-negative-zero-scale", "semantic"),
             ("unit-negative-zero-offset", "semantic"),
+            ("model-owner-missing-version", "semantic"),
         ]),
         "the nominal-node mutation inventory is exact"
     );
@@ -3700,6 +3701,7 @@ fn tc_233_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
             ("dimension-negative-zero-exponent", "schema"),
             ("unit-negative-zero-scale", "schema"),
             ("unit-negative-zero-offset", "schema"),
+            ("model-owner-missing-version", "schema"),
         ]),
         "every semantic nominal-node mutation names exactly its refusing check"
     );
@@ -3955,7 +3957,7 @@ fn tc_233_owner_to_lock_join_refuses_independently_of_lock_preimage_equality() {
         "digest": "5555555555555555555555555555555555555555555555555555555555555555"
     }]);
     let model_owner = json!({
-        "kind": "model", "identity": "test/orders", "node": "ix://test/orders/Example"
+        "kind": "model", "identity": "test/orders", "version": "1", "node": "ix://test/orders/Example"
     });
     let cases = [
         (
@@ -6248,10 +6250,11 @@ fn tc_233_every_published_package_carries_only_current_application_node_keys() {
 }
 
 /// FR-272-AC-7 pins these causes to catalog revision `1-draft.4` by name, and
-/// revision `1-draft.5` keeps them; a header that still claimed `1-draft.3`
-/// would, by the catalog's own rule ("A producer claiming revision `1-draft.3`
-/// emits none of these causes"), forbid emitting `stale-node-key` and the other
-/// revision-`1-draft.4` causes this file exercises throughout.
+/// revisions `1-draft.5` and `1-draft.6` keep them; a header that still
+/// claimed `1-draft.3` would, by the catalog's own rule ("A producer claiming
+/// revision `1-draft.3` emits none of these causes"), forbid emitting
+/// `stale-node-key` and the other revision-`1-draft.4` causes this file
+/// exercises throughout.
 #[trace("TC-233", "FR-272-AC-7")]
 #[test]
 fn tc_233_native_diagnostics_header_pins_current_revision() {
@@ -6260,7 +6263,7 @@ fn tc_233_native_diagnostics_header_pins_current_revision() {
         .find(|line| line.starts_with("Interpretation identity:"))
         .expect("native diagnostics has an interpretation-identity header line");
     assert_eq!(
-        header, "Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.5`.",
-        "the catalog header claims revision 1-draft.5, which keeps every 1-draft.4 cause this file relies on"
+        header, "Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.6`.",
+        "the catalog header claims revision 1-draft.6, which keeps every 1-draft.4 cause this file relies on"
     );
 }
