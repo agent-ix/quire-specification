@@ -1153,6 +1153,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-233 | Published checked-package and scalar contract vectors | Property | P0 | FR-322 | 🚧 Planned |
 | TC-234 | Domain package model intake | Property | P0 | FR-154, FR-208 | 🚧 Planned |
 | TC-235 | Business construct meaning binding | Property | P0 | FR-208, FR-154, FR-207, FR-047 | 🚧 Planned |
+| TC-236 | Frame grant population scope | Property | P0 | FR-013 | 🚧 Planned |
 | TC-238 | Unbounded temporal operator grammar admission | Property | P0 | FR-048, FR-090 | 🚧 Planned |
 | TC-239 | Agree replay and incremental assessment on an unsettled temporal result | Property | P0 | FR-114 | 🚧 Planned |
 | TC-246 | Unbounded collection type identity and admission | Property | P0 | FR-144 | 🚧 Planned |

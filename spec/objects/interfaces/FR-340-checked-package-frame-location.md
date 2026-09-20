@@ -80,6 +80,21 @@ the rule above, because they are distinct declaration references naming
 different declarations. `Account.address`, a field of `Account` typed
 `Address`, and `Address.street`, a field of `Address`, are one such pair.
 
+A `modifies` entry naming a relationship grants every link of that
+relationship, observed from each end: a write is covered by the grant
+whether it is read through the end whose object type declares the
+relationship or through the relationship's other end, because the entry
+names one node key that stands for the relationship as a whole.
+[interface_004](interface_004-checked-package.md)'s Declaration section
+already fixes this node key's own shape: a `relation` node is not among the
+node tags that carry `declaration: {qualified_name}`, so a relationship's
+wire encoding names no end as its own, and there is no qualified name for a
+reader to resolve as the declaring end apart from the other. This holds the
+same way for every declared `direction` -- a `bidirectional` or
+`undirected` relationship has no owning end to begin with, and a
+`source-to-target` or `target-to-source` relationship is admitted by this
+same single node key regardless.
+
 `ModelNode`'s `semantic_form` also names each of FR-208's five systems
 meanings individually: `systems_part`, `systems_port`, `systems_interface`,
 `systems_connection` and `systems_allocation`, one per
@@ -172,6 +187,7 @@ carrying any defect, using that frame node's own precedence rule above.
 | FR-340-AC-8 | `ModelNode.semantic_form` names each of FR-208's five systems meanings -- `systems_part`, `systems_port`, `systems_interface`, `systems_connection` and `systems_allocation`, one per `quire.meaning.systems.<x>/v1` value -- and none of the five is admitted into `modifies`, `creates` or `deletes`. | Test (TC-233) |
 | FR-340-AC-9 | When a package publishes more than one `state`/`frame` node, the reader reports the first defect found while checking frame nodes in ascending `node_id` digest order; a lower-digest frame node's own canonical-order defect is reported even when a higher-digest frame node carries a meaning-join defect that would otherwise outrank it. | Test (TC-233) |
 | FR-340-AC-10 | A `modifies` entry naming a field declared on an object type whose own type names a record value type, and a `modifies` entry naming a field declared on that record value type itself, are distinct declaration references; a frame body naming both is admitted with no defect. | Test (TC-233) |
+| FR-340-AC-11 | A `modifies` entry naming a relationship grants every link of that relationship, observed from each end: the entry is admitted the same way regardless of which of the relationship's two ends the frame's own operation belongs to, because a `relation`/`relationship` node carries no `declaration` a reader could resolve an owning end from. | Test (TC-233) |
 
 ## Dependencies
 
