@@ -8,6 +8,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-018
     type: specifies
+  - target: ix://agent-ix/quire-specification/FR-150
+    type: specifies
 ---
 # FR-201: Canonical identity domain vocabulary
 
@@ -40,6 +42,9 @@ equality.
 | `quire.simulation.state-key/v1` | Simulator state-key identity. SHA-256 over the RFC 8785 canonical bytes of the typed canonical encoding of simulator state, control positions, queues, role lifetimes, observation progress and remaining bounds (FR-181). Distinct from `sha256-jcs` and from every other identity/digest domain. |
 | `typed-expression-identity` | Source-free typed-expression identity. Requires a typed derivation; an unlinked syntax tree cannot claim it, and current native syntax has no qualified canonical semantic identity (FR-015, FR-015-AC-4). |
 | `quire.verification.jcs` | Verification JCS domain, `version: rfc8785-v1`, `algorithm: sha256`. Emitted as `sha256-jcs:` followed by 64 lowercase hexadecimal digits over RFC 8785 canonical UTF-8 bytes (FR-018). |
+| `quire.model.effective-declaration/v1` | QSL-derived effective-declaration identity. SHA-256 over the RFC 8785 canonical bytes of `{version, owner_effective_type, original, derivation}` (FR-150). Distinct from `sha256-jcs` and from the `quire.checked-semantic-node/v1` domain. |
+| `quire.model.effective-view/v1` | QSL-derived effective-view identity for one normalized model. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection, rule manifest and every effective declaration sorted by identity (FR-150). Distinct from every other identity/digest domain. |
+| `quire.model.object-universe/v1` | QSL-derived object-universe identity for a connected supertype component. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection and its sorted root effective-declaration identities (FR-150). Distinct from every other identity/digest domain. |
 
 ## Identity and comparison
 
@@ -98,6 +103,9 @@ preimage belongs to the requirement that selects it.
 - [FR-018](../../functional/foundation/FR-018-select-verification-jcs-domain.md) establishes
   the verification JCS selection, output syntax and prefix rule.
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity discipline.
+- [FR-150](../../functional/type-model/FR-150-preserve-model-normalization-provenance.md)
+  defines the `quire.model.effective-declaration/v1`, `quire.model.effective-view/v1`
+  and `quire.model.object-universe/v1` preimages.
 
 ## Resolved domain boundary
 
