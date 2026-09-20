@@ -2737,6 +2737,81 @@ fn tc_233_modifies_admits_a_record_typed_field_and_a_field_of_that_record() {
     );
 }
 
+/// FR-340-AC-11 (#106 Q3, option A): a `modifies` entry naming a
+/// relationship grants every link of that relationship, observed from each
+/// end. A hypothetical owning-end-only reader would need two things this
+/// wire encoding never supplies: a second `modifies` entry to reach the
+/// relationship's far end, and a wire field on the relationship naming
+/// which end declares it. Neither exists -- proving the single admitted
+/// entry cannot mean anything narrower than the whole relationship.
+#[trace("TC-233", "FR-340-AC-11")]
+#[test]
+fn tc_233_modifies_relationship_grant_is_not_scoped_to_an_owning_end() {
+    let nodes = parsed_fixture(POSITIVE_ALL_FAMILIES)["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .clone();
+    let relationship = repeated_digest("20");
+
+    // A single `modifies` entry naming the relationship is, by itself, a
+    // complete and defect-free grant -- there is no separate "far end"
+    // entry an owning-end-only reading would still be waiting on.
+    let single_entry = authored_frame_node(&[&relationship], &[&relationship], &[], &[]);
+    assert_eq!(
+        frame_body_defects(&single_entry, &nodes),
+        Vec::new(),
+        "one modifies entry naming a relationship is a complete grant with nothing left to reach the far end"
+    );
+
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
+
+    // An owning-end-only reading implies a second, end-scoped entry would
+    // be meaningful. This vocabulary has none: the only way to author
+    // "reach the relationship again" is to repeat its one node key, and
+    // the schema's own uniqueItems constraint on `modifies` refuses that
+    // outright. There is no authorable second entry to reach the far end.
+    let mut duplicated = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let frame_index = duplicated["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .iter()
+        .position(|node| node["node_tag"] == "state" && node["semantic_form"] == "frame")
+        .expect("a frame node is published");
+    duplicated["semantic_graph"]["nodes"][frame_index]["body"]["modifies"] = json!([
+        node_ref_digest(&relationship),
+        node_ref_digest(&relationship)
+    ]);
+    assert!(
+        !schema.is_valid(&duplicated),
+        "repeating a relationship's node key to author a second, end-scoped modifies entry is refused by uniqueItems -- no second entry can ever reach a 'far end'"
+    );
+
+    // Nor does the relationship's own node carry anything a reader could
+    // resolve an owning end from: interface_004's Declaration section
+    // names the node tags that carry `declaration: {qualified_name}`, and
+    // `relation` is not one of them. Marking one with a `declaration`, as
+    // an owning-end-only reading would need to record which end declares
+    // it, is not an admissible package at all.
+    let mut owner_marked = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let relationship_index = owner_marked["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .iter()
+        .position(|node| node["node_tag"] == "relation" && node["semantic_form"] == "relationship")
+        .expect("a relationship node is published");
+    owner_marked["semantic_graph"]["nodes"][relationship_index]
+        .as_object_mut()
+        .expect("relationship node is an object")
+        .insert(
+            "declaration".to_string(),
+            json!({"qualified_name": ["Example", "Account", "transactions"]}),
+        );
+    assert!(
+        !schema.is_valid(&owner_marked),
+        "a relation/relationship node cannot carry a declaration naming an owning end; the wire encoding has nothing to scope a modifies grant by"
+    );
+}
+
 /// FR-340-AC-4: each member array is sorted ascending by entry digest and
 /// duplicate-free. Duplicates are refused by the schema's `uniqueItems`
 /// before this oracle runs; a misordered array is refused here, following
