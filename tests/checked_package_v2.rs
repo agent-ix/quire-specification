@@ -2677,6 +2677,66 @@ fn tc_233_frame_entries_join_a_declared_node_of_the_required_meaning() {
     assert_eq!(frame_body_defects(&valid, &nodes), Vec::new());
 }
 
+/// FR-340-AC-10: a field declared on an object type whose own type names a
+/// record value type, and a field declared on that record value type
+/// itself, are distinct `model`/`field_declaration` node keys -- one scoped
+/// to the object type, the other shared by every field of the record type
+/// wherever it occurs. `modifies` admits both in the same frame body with
+/// no defect. `Account.address` (typed `Address`, the published fixture's
+/// `record_value_type` node) and `Address.street` (a field of `Address`)
+/// are one such pair.
+#[trace("TC-233", "FR-340-AC-10")]
+#[test]
+fn tc_233_modifies_admits_a_record_typed_field_and_a_field_of_that_record() {
+    let mut nodes = parsed_fixture(POSITIVE_ALL_FAMILIES)["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .clone();
+    let record_type = repeated_digest("95");
+    let account_address_field = repeated_digest("9c");
+    let address_street_field = repeated_digest("9d");
+
+    // Account.address: a field_declaration whose own semantic_type names
+    // the Address record_value_type node already published by the fixture.
+    nodes.push(json!({
+        "node_id": node_ref_digest(&account_address_field),
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "model",
+        "semantic_form": "field_declaration",
+        "semantic_type": node_ref_digest(&record_type),
+        "declaration": {"qualified_name": ["Example", "Account", "address"]},
+        "dependencies": [],
+        "occurrences": [{"role": "declaration", "ordinal": 0}],
+        "body": {"term": "aggregate", "members": []},
+    }));
+    // Address.street: a field_declaration of the Address record itself, a
+    // declaration reference distinct from Account.address above even
+    // though both trace back to the same record type.
+    nodes.push(json!({
+        "node_id": node_ref_digest(&address_street_field),
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "model",
+        "semantic_form": "field_declaration",
+        "semantic_type": node_ref_digest(&repeated_digest("aa")),
+        "declaration": {"qualified_name": ["Example", "Address", "street"]},
+        "dependencies": [],
+        "occurrences": [{"role": "declaration", "ordinal": 0}],
+        "body": {"term": "aggregate", "members": []},
+    }));
+
+    let both = authored_frame_node(
+        &[&account_address_field, &address_street_field],
+        &[&account_address_field, &address_street_field],
+        &[],
+        &[],
+    );
+    assert_eq!(
+        frame_body_defects(&both, &nodes),
+        Vec::new(),
+        "a modifies entry naming Account.address and one naming Address.street are distinct declaration references and both are admitted"
+    );
+}
+
 /// FR-340-AC-4: each member array is sorted ascending by entry digest and
 /// duplicate-free. Duplicates are refused by the schema's `uniqueItems`
 /// before this oracle runs; a misordered array is refused here, following
