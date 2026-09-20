@@ -34,10 +34,10 @@ boundary and read back the settled result and its cause.
 | --- | --- | --- | --- |
 | VC-01 | A `Proved` run with zero SUCCESS checks in the obligation | Item result `inconclusive` with the typed cause `kani_vacuous_proof` | FR-331-AC-8 |
 | VC-02 | A `Proved` run with one or more SUCCESS checks in the obligation | Item result `proved`; no vacuity cause | FR-331-AC-8 |
-| VC-03 | Enumerate the closed `results` vocabulary that the vacuity cause maps into | Exactly the seven existing values (`proved`, `refuted`, `tested`, `inconclusive`, `unsupported`, `incomplete`, `failed`); the vacuity cause is carried inside `inconclusive`, not an eighth value | FR-331-AC-8 |
+| VC-03 | Enumerate the closed `results` vocabulary that the vacuity cause maps into | Exactly the eight existing values (`proved`, `refuted`, `tested`, `inconclusive`, `unsupported`, `refused`, `incomplete`, `failed`); the vacuity cause is carried inside `inconclusive`, not a ninth value | FR-331-AC-8 |
 
 ## Expected Results
 
 VC-01 finds a vacuous `Proved` run recorded as `inconclusive` with the typed
 `kani_vacuous_proof` cause. VC-02 finds a non-vacuous `Proved` run recorded
-as `proved`. VC-03 finds the `results` vocabulary unchanged at seven values.
+as `proved`. VC-03 finds the `results` vocabulary unchanged at eight values.
