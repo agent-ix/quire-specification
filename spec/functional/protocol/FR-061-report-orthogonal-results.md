@@ -39,6 +39,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-281
     type: references
+  - target: ix://agent-ix/engineering-assurance/FR-022
+    type: references
   - target: ix://agent-ix/quire-specification/FR-282
     type: references
   - target: ix://agent-ix/quire-specification/FR-284
@@ -86,8 +88,8 @@ NOT classify an inactive obligation as satisfied or demonstrated. If required
 participants, observations, population members, progress or adverse cases are
 missing, then the result producer SHALL NOT change an unsuccessful or unknown
 truth, adequacy or package status to successful. The result producer SHALL retain
-proven, bounded-checked, tested and observed claim strengths as distinct
-source-bound values. The result producer SHALL reuse Quoin evidence authority.
+each claim strength from the Engineering Assurance FR-022 vocabulary as a
+distinct source-bound value. The result producer SHALL reuse Quoin evidence authority.
 The result producer SHALL NOT create a local evidence store or verification-method
 registry.
 The result producer SHALL emit every canonical protocol result with

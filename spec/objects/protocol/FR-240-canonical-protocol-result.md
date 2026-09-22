@@ -32,6 +32,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-281
     type: references
+  - target: ix://agent-ix/engineering-assurance/FR-022
+    type: references
   - target: ix://agent-ix/quire-specification/FR-284
     type: references
   - target: ix://agent-ix/quire-specification/FR-285
@@ -122,26 +124,27 @@ retains them as five properties and merges none of them.
 
 ## Vocabularies carried on this result
 
-The two closed vocabularies below are stated verbatim by the behavioral
-requirements and each has its own `enumeration` artifact, which is the
-definition. The tables are repeated here only as a reading aid; where the two
-differ the referenced artifact governs.
+Each of the two closed vocabularies below has its own governing artifact,
+which states how a result carries it. The assumption-state list is
+repeated here only as a reading aid; where the two differ the referenced
+artifact governs.
 
 **Assumption state** — defined by [FR-280](FR-280-assumption-state.md)
 (FR-061: "one state from `met`, `not-met`, `unknown` or `not-assessed`";
 restated as source states in the FR-062 mapping table):
 `met`, `not-met`, `unknown`, `not-assessed`.
 
-**Claim strength** — defined by [FR-281](FR-281-claim-strength.md)
-(FR-061: "The result producer SHALL retain proven, bounded-checked, tested and
-observed claim strengths as distinct source-bound values"):
-`proven`, `bounded-checked`, `tested`, `observed`.
+**Claim strength** — the vocabulary is owned by Engineering Assurance
+[FR-022](ix://agent-ix/engineering-assurance/FR-022), and
+[FR-281](FR-281-claim-strength.md) states how a result carries it (FR-061:
+"The result producer SHALL retain each claim strength from the Engineering
+Assurance FR-022 vocabulary as a distinct source-bound value").
 
 ## Protocol claim authority
 
 FR-290 defines the six exact protocol-family claim-kind spellings. This result's
-contract version selects the FR-290 vocabulary `quire.capability-kind/v1`. FR-281 defines the closed
-single-valued strength, FR-291 the admitted fragment and FR-292 the backend
+contract version selects the FR-290 vocabulary `quire.capability-kind/v1`. FR-281 governs the
+single-valued strength drawn from Engineering Assurance FR-022, FR-291 the admitted fragment and FR-292 the backend
 selection. Equal display labels or implementation names establish none of them.
 
 ## Acceptance Criteria
@@ -174,8 +177,8 @@ selection. Equal display labels or implementation names establish none of them.
   domain vocabulary.
 - [FR-280](FR-280-assumption-state.md) defines the assumption state vocabulary
   carried here.
-- [FR-281](FR-281-claim-strength.md) defines the claim strength vocabulary
-  carried here.
+- [FR-281](FR-281-claim-strength.md) states how the Engineering Assurance
+  FR-022 claim strength vocabulary is carried here.
 - [FR-284](FR-284-scope-progress-and-closure-state.md) defines the state
   vocabulary the four progress and closure axes carry.
 - [FR-285](FR-285-participation-fact.md) defines source participation without
