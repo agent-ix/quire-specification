@@ -1065,7 +1065,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-248](objects/protocol/FR-248-decision-support-record.md) | FR (value_object) | Object layer; Decision-support record |
 | [FR-249](objects/protocol/FR-249-derived-projection-result.md) | FR (entity) | Object layer; Derived portable projection result |
 | [FR-280](objects/protocol/FR-280-assumption-state.md) | FR (enumeration) | Object layer; Assumption state vocabulary |
-| [FR-281](objects/protocol/FR-281-claim-strength.md) | FR (enumeration) | Object layer; Claim strength vocabulary |
+| [FR-281](objects/protocol/FR-281-claim-strength.md) | FR (value_object) | Object layer; Claim strength carried from the Engineering Assurance FR-022 vocabulary |
 | [FR-282](objects/protocol/FR-282-dependence-relation.md) | FR (enumeration) | Object layer; Decision-support dependence relation vocabulary |
 | [FR-283](objects/protocol/FR-283-projection-refusal-code.md) | FR (enumeration) | Object layer; Projection refusal code vocabulary |
 | [FR-284](objects/protocol/FR-284-scope-progress-and-closure-state.md) | FR (enumeration) | Object layer; the two-member state vocabulary carried by the four decision-scope and surrounding-execution progress/closure axes |
