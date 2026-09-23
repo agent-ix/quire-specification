@@ -67,9 +67,9 @@ claims/results, not as a multi-valued strength.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-281-AC-1 | Each carried strength equals exactly one Engineering Assurance FR-022 wire spelling. | Test |
-| FR-281-AC-2 | Two claims with different strengths remain distinct and neither is promoted to the other. | Test |
-| FR-281-AC-3 | Key-order adjacency between two strengths does not establish that one dominates the other. | Test |
+| FR-281-AC-1 | Each carried strength equals exactly one Engineering Assurance FR-022 wire spelling. | Test (TC-061) |
+| FR-281-AC-2 | Two claims with different strengths remain distinct and neither is promoted to the other. | Test (TC-061) |
+| FR-281-AC-3 | Key-order adjacency between two strengths does not establish that one dominates the other. | Test (TC-061) |
 | FR-281-AC-4 | An advanced result with zero, multiple or unknown strengths is refused. | Test (TC-061) |
 
 ## Dependencies

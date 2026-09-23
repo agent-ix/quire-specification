@@ -126,8 +126,8 @@ retains them as five properties and merges none of them.
 
 Each of the two closed vocabularies below has its own governing artifact,
 which states how a result carries it. The assumption-state list is
-repeated here only as a reading aid; where the two differ the referenced
-artifact governs.
+repeated here only as a reading aid; where the list and FR-280 differ,
+FR-280 governs.
 
 **Assumption state** — defined by [FR-280](FR-280-assumption-state.md)
 (FR-061: "one state from `met`, `not-met`, `unknown` or `not-assessed`";
