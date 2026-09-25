@@ -42,7 +42,7 @@ published dependency selections of `dependency-selection-vectors.json` into
 the all-families package's lock and identity preimage, require the schema to
 admit it and its recorded package id to recompute, require each authored
 entry mutation to fail the schema in either member at the mutated entry, and
-apply each order vector's selections to require its recorded order outcome. Recompute
+apply each order vector's selections to require its recorded order outcome. Validate a `dependency_reference` term against both schemas, and its bare-digest, other-domain, missing-`node` and extra-member mutations; place it as the callee of the `function-call` operation vector and recompute the application-node id after changing only its `package` digest, then only its `node` (FR-322-AC-36). Recompute
 every nominal node and compound-unit vector identity and apply each authored
 mutation, requiring the exact refusing check it names (`schema` or `semantic`),
 including `-0` spellings, and require the semantic oracle itself to refuse
@@ -88,7 +88,7 @@ is refused by exactly its named check. Each dependency-selection entry mutation 
 schema at the mutated entry; its `outcome` is the reader refusal a strict
 reader reports for it. Each dependency-selection order vector is admitted by
 the schema and admitted or refused by the order rule with exactly its
-recorded outcome and loci. Every locked artifact matches its
+recorded outcome and loci. A `dependency_reference` term is admitted by both schemas and each of its four mutations fails both; as a call's callee it keys a valid application-node preimage, and changing its `package` or its `node` each gives a new, distinct id. Every locked artifact matches its
 raw-byte digest, and every selection vector is admitted or refused with exactly
 its recorded selection code. The published fixture's frame node is admitted
 with no defect; every frame-entry meaning-join and canonical-order mutation

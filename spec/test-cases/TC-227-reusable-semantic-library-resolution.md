@@ -38,6 +38,7 @@ compare each import digest with the library `package_id`.
 | L06 | P imports libraries `Z` and `A` in that source order | the lock lists `A` then `Z` |
 | L07 | L is migrated to L' and P to P', with evidence recorded against P's export identity | L' and P' have new `package_id`s, and the old evidence keeps its old key and is not relabeled |
 | L08 | L is migrated to L' with a changed export, and L' is presented with L's `package_id`; then P imports L' by that digest | `refused { code: invalid_package, cause: invalid-value }` at member path `/package_id`, because the recomputed digest of L''s identity preimage differs; P's import resolves no L' and binds no lock selection or evidence |
+| L09 | `import "test/geometry" version "1" digest "sha256:<package_id of test/geometry@1>" as g;`; then the bare-hex digest with `test/geometry@1` supplied as `test/geometry`, together with a library supplied as `test/geometry/extra`; then two libraries supplied as `test/geometry`; then no library supplied as `test/geometry`; then `test/geometry` supplied from source that compiles to a `package_id` other than the digest | `refused { code: invalid_digest }` at the digest string; admitted, bound to the library supplied as `test/geometry` and to no other; `refused { code: invalid_package, cause: conflicting-definition }`; `refused { code: missing_import, cause: missing-selection }` at the import; `refused { code: stale_dependency, cause: byte-digest-mismatch }` naming the digest and the compiled `package_id` |
 
 ## Expected Results
 

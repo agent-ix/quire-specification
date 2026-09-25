@@ -64,7 +64,10 @@ boundary.
   one `DependencySelection` per library identity, each
   `{identity, version, package_id}`, in strictly ascending UTF-8 byte order
   of `identity`. `identity` and `version` are the library identity and
-  version string an `import "L" version "v" digest "d"` names. `package_id`
+  version string an `import "L" version "v" digest "d"` names. A library
+  identity is a non-empty string with no segment structure: `/`, `.` and
+  every other character are ordinary bytes, and two identities are equal
+  only when their UTF-8 bytes are equal. `package_id`
   is the dependency's own `quire.package.semantic/v2` `package_id`
   (`{domain, algorithm, digest}`, the `PackageId` shape), whose `digest` is
   the import's `d`; a `quire.definition.bytes/v1`, `quire.source.bytes/v1`
@@ -196,6 +199,23 @@ boundary.
   against the named dependency's admitted package. A `dependency_reference`
   naming a `package` absent from `dependency_selections` refuses
   `missing_declaration`/`missing-selection`.
+  On the wire it is the term
+  `{term: "dependency_reference", package, node}`, where `package` has the
+  `PackageId` shape and `node` the `NodeId` shape. It stands wherever a
+  `reference` term may stand, and names a declaration node of the
+  dependency, never a node of the importing graph. The node identity
+  preimage spells it identically, so the dependency's `package_id` and the
+  referenced node id both enter the referencing node's id: a new
+  dependency `package_id` gives every node that references into it a new
+  id. A node's `dependencies` list names nodes of its own graph only, so a
+  `dependency_reference` target is never listed there; it joins through
+  `dependency_selections` instead. A `node` that is not a node carrying a
+  `declaration` in the named dependency's admitted package refuses
+  `missing_declaration`/`missing-name`. An operation operand whose catalog
+  family is `function` is satisfied by a `dependency_reference` that
+  resolves to a `function` node, and a result the catalog derives from that
+  operand (`return:0`) is that function node's result type, which the
+  referencing node's `result_type` names by node id in the importing graph.
 - `model_member` — a `field` or `operation` member whose declaring node is a
   model declaration node: a `model` or `relation` node that carries no
   `declaration` or whose `node_id` equals a model declaration node key of a
@@ -588,6 +608,7 @@ partial checked package.
 | FR-322-AC-33 | `quire.op.reference.eq` and `quire.op.reference.ne` admit two references to selected object types of which one conforms to the other along declared supertypes: two of one type, a subtype and its supertype in either operand order, a subtype two levels down, and a type with two supertypes against either. A systems interface with no declared supertype against an unrelated object type, two unrelated object types, a reference to a relationship, even compared with itself, and an operand of family `object` refuse `ill_typed`/`operator-ineligible`. An operand whose owner is not selected refuses `missing_declaration`/`missing-selection`, even compared with itself. | Test (TC-281) |
 | FR-322-AC-34 | `quire.op.record.project` over a `quire.op.model.deref` result reads a field of a model object: the `deref` result has family `object`, the projection resolves the field on the declaring object type, own or inherited, and its result is the field's member type. A projection over a reference that is not dereferenced, a `field` member naming a node other than the operand's object type, a `deref` whose `result_type` is not the operand's object type, a `deref` result of a relationship, and a projection whose `result_type` is not the field's member type refuse `ill_typed`/`operator-ineligible`. | Test (TC-281) |
 | FR-322-AC-35 | A `dependency_selections` entry is a closed `DependencySelection` `{identity, version, package_id}` whose `package_id` is a `quire.package.semantic/v2` `PackageId`: the published package carrying two such entries, one per identity in ascending identity order in both its lock and identity preimage, is admitted by the V2 schema and its recorded `package_id` recomputes from them, and changing a dependency's `package_id` changes it; an entry with a `Selection` or `DefinitionRef` shape, no `package_id`, no `version`, a bare-digest `package_id` or a `package_id` in another digest domain fails the schema in either member, at the mutated entry. Entries ordered by UTF-8 bytes where UTF-16 code-unit order differs are admitted; a second entry of one identity refuses `invalid_package`/`conflicting-definition` with both entries as loci, and an entry not strictly after its predecessor refuses `invalid_package`/`invalid-value` at its pointer. | Test (TC-233) |
+| FR-322-AC-36 | A `{term: "dependency_reference", package, node}` term whose `package` is a `quire.package.semantic/v2` `PackageId` and whose `node` is a `NodeId` is admitted by the V2 schema as an application argument and by the node-identity preimage schema as a preimage term; a `package` given as a bare digest or in another digest domain, a missing `node` and an extra member each fail both schemas. A `quire.op.function.call` application-node preimage whose callee is a `dependency_reference` has a different JCS SHA-256 when only the reference's `package` digest changes, and a different one again when only its `node` changes. | Test (TC-233) |
 
 ## Dependencies
 

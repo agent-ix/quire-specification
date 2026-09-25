@@ -50,6 +50,12 @@ structures, but any external consumer receives only the versioned contract.
   order (where UTF-16 order differs) are admitted, a repeated identity
   refuses `invalid_package`/`conflicting-definition` and a misordered entry
   `invalid_package`/`invalid-value`, each with its loci.
+- Both schemas carry the `dependency_reference` term
+  `{term: "dependency_reference", package, node}` (FR-322): `package` is a
+  `PackageId` naming a `dependency_selections` entry and `node` a `NodeId`
+  naming a declaration node of that dependency. The node-identity preimage
+  spells it as the wire does, so both components enter the referencing
+  node's id, and it is never listed in a node's `dependencies`.
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes
