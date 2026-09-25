@@ -979,6 +979,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-322 | FR-322-AC-30 | TC-280 | planned |
 | FR-322 | FR-322-AC-31 | TC-280 | planned |
 | FR-322 | FR-322-AC-32 | TC-280 | planned |
+| FR-322 | FR-322-AC-33 | TC-281 | planned |
+| FR-322 | FR-322-AC-34 | TC-281 | planned |
 | interface_004 | interface_004-AC-1 | TC-233 | planned |
 | interface_004 | interface_004-AC-2 | TC-233 | planned |
 | FR-323 | FR-323-AC-1 | TC-231 | planned |
@@ -1194,6 +1196,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-278 | Replay envelope members | Property | P0 | FR-323 | 🚧 Planned |
 | TC-279 | Model-owner package-scoped node identity | Property | P0 | FR-322 | 🚧 Planned |
 | TC-280 | Model-owned member types | Property | P0 | FR-322 | 🚧 Planned |
+| TC-281 | Model reference equality and field projection | Property | P0 | FR-322 | 🚧 Planned |
 
 ## Integration Test Matrix
 

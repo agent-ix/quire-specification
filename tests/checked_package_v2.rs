@@ -1201,6 +1201,7 @@ impl<'a> OperationOracle<'a> {
                 ("composite_type", "bag") => "bag",
                 ("composite_type", "ordered_set") => "ordered_set",
                 ("composite_type", "reference") => "reference",
+                ("model", "object_type" | "systems_interface") => "object",
                 ("bounded_domain", "model_population") => "population",
                 _ => return None,
             },
@@ -1587,6 +1588,14 @@ impl<'a> OperationOracle<'a> {
                 matches!((operand(0), operand(1)), (Some(l), Some(r)) if l.family == r.family)
             }
             Some("same_type") => {
+                matches!((ty(operand(0)), ty(operand(1))), (Some(l), Some(r)) if self.same_type(&l, &r))
+            }
+            // This oracle reads no domain package, so it decides
+            // `conforming_reference` only for two references of one type
+            // node. Conformance between distinct object types is FR-322
+            // "Reference conformance", qualified by TC-281 in
+            // `model_member_types.rs`.
+            Some("conforming_reference") => {
                 matches!((ty(operand(0)), ty(operand(1))), (Some(l), Some(r)) if self.same_type(&l, &r))
             }
             Some("same_dimension") => {

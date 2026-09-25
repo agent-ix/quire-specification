@@ -401,5 +401,26 @@
     {"name": "MS-03", "selection": {"identity": "acme/orders", "version": "1.0.0", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": [{"path": "/value_types/0/upper", "value": "8"}]}], "expected": {"refused": {"code": "stale_dependency", "cause": "byte-digest-mismatch"}}},
     {"name": "MS-04", "selection": {"identity": "acme/orders", "version": "1.0.1", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"refused": {"code": "invalid_model_binding", "cause": "wrong-model-selection"}}},
     {"name": "MS-05", "selection": {"identity": "acme/orders", "version": "1.0.0", "digest_domain": "sha256", "digest": "$document"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"refused": {"code": "stale_dependency", "cause": "digest-domain-mismatch"}}}
+  ],
+  "reference_equality_cases": [
+    {"name": "RC-01", "operation": "quire.op.reference.eq", "operands": [{"reference": "M5"}, {"reference": "M1"}], "expected": {"admitted": true}},
+    {"name": "RC-02", "operation": "quire.op.reference.eq", "operands": [{"reference": "M1"}, {"reference": "M5"}], "expected": {"admitted": true}},
+    {"name": "RC-03", "operation": "quire.op.reference.eq", "operands": [{"reference": "M7"}, {"reference": "M1"}], "expected": {"admitted": true}},
+    {"name": "RC-04", "operation": "quire.op.reference.eq", "operands": [{"reference": "M1"}, {"reference": "M1"}], "expected": {"admitted": true}},
+    {"name": "RC-05", "operation": "quire.op.reference.ne", "operands": [{"reference": "M5"}, {"reference": "M1"}], "expected": {"admitted": true}},
+    {"name": "RC-06", "operation": "quire.op.reference.eq", "operands": [{"reference": "M1"}, {"reference": "M3"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RC-07", "operation": "quire.op.reference.ne", "operands": [{"reference": "M5"}, {"reference": "M6"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RC-08", "operation": "quire.op.reference.eq", "operands": [{"reference": "M1"}, {"reference": "M4"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RC-09", "operation": "quire.op.reference.eq", "operands": [{"reference": "M2"}, {"reference": "M1"}], "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
+    {"name": "RC-10", "operation": "quire.op.reference.eq", "operands": [{"object": "M1"}, {"reference": "M1"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}}
+  ],
+  "projection_cases": [
+    {"name": "RP-01", "operand": {"deref": {"reference": "M5"}, "result_type": "M5"}, "member": {"kind": "field", "declaration": "M5", "name": "total"}, "expected": {"resolves": "ix://acme/orders/Order/total", "member_type": {"type": "Int", "min": "0", "max": "9"}}},
+    {"name": "RP-02", "operand": {"deref": {"reference": "M1"}, "result_type": "M1"}, "member": {"kind": "field", "declaration": "M1", "name": "invoice"}, "expected": {"resolves": "ix://acme/orders/Order/invoice", "member_type": {"type": "Reference", "target": "03c092fe5e919698153d67c52f23ccc3c20c3b80d8856e100d1dd00364d90e49"}}},
+    {"name": "RP-03", "operand": {"reference": "M5"}, "member": {"kind": "field", "declaration": "M5", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RP-04", "operand": {"deref": {"reference": "M5"}, "result_type": "M5"}, "member": {"kind": "field", "declaration": "M1", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RP-05", "operand": {"deref": {"reference": "M5"}, "result_type": "M1"}, "member": {"kind": "field", "declaration": "M1", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RP-06", "operand": {"deref": {"reference": "M4"}, "result_type": "M4"}, "member": {"kind": "field", "declaration": "M4", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RP-07", "operand": {"deref": {"reference": "M2"}, "result_type": "M2"}, "member": {"kind": "field", "declaration": "M2", "name": "total"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}}
   ]
 }
