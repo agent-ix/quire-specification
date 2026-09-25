@@ -48,8 +48,8 @@ structures, but any external consumer receives only the versioned contract.
   `quire.model.object-universe/v1` preimages selected by
   `quire.model.complete/v1`, with JCS SHA-256 vectors, the reference key order
   and invalid mutations. They add no CheckedPackage V2 wire member.
-- `model-member-type-vectors.json` carries a domain package as the
-  declaration records FR-154 intake reads, the model declaration node vectors
+- `model-member-type-vectors.json` carries a domain package as a projection
+  of the declaration records FR-154 intake reads from it, the model declaration node vectors
   that recover a declaring node's `ModelOwner`, and the member and selection
   cases for FR-322's "Model-owned members". The SHA-256 of the RFC 8785 bytes
   of its `domain_package` member stands for the document's `sha256-jcs`

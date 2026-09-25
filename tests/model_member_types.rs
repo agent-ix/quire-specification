@@ -68,7 +68,7 @@ fn declaration_preimage(package: &Value, tag: &str, form: &str, node: &str) -> V
 /// model declaration node key equals `node_digest`.
 fn recover<'a>(package: &'a Value, node_digest: &str) -> Option<Recovered<'a>> {
     for object_type in array(package, "object_types") {
-        let form = if object_type["interface_features"].is_null() {
+        let form = if object_type["interfaceFeatures"].is_null() {
             "object_type"
         } else {
             "systems_interface"
@@ -98,36 +98,60 @@ fn object_type<'a>(package: &'a Value, node: &str) -> Option<&'a Value> {
         .find(|object_type| text(object_type, "node") == node)
 }
 
-/// FR-322 step 3: the exposed effective members of `declared` of one member
-/// kind, own and inherited, less every member a redefinition hides.
-fn exposed<'a>(package: &'a Value, declared: &'a Value, list: &str) -> Vec<(String, &'a Value)> {
+/// The proper ancestors of `declared` along its declared supertypes.
+fn ancestors(package: &Value, declared: &Value) -> BTreeSet<String> {
     let mut reached = BTreeSet::new();
-    let mut pending = vec![declared];
-    let mut members: BTreeMap<String, &Value> = BTreeMap::new();
-    let mut redefined = BTreeSet::new();
-    while let Some(current) = pending.pop() {
-        let owner = text(current, "node");
-        if !reached.insert(owner.to_owned()) {
-            continue;
+    let mut pending: Vec<&Value> = array(declared, "supertypes").iter().collect();
+    while let Some(supertype) = pending.pop() {
+        let node = supertype.as_str().expect("a supertype is a node identity");
+        if reached.insert(node.to_owned()) {
+            let declared = object_type(package, node).expect("a supertype is declared");
+            pending.extend(array(declared, "supertypes"));
         }
+    }
+    reached
+}
+
+/// FR-322 step 3: the exposed effective members of `declared` of one member
+/// kind, own and inherited, less every member a redefinition hides and every
+/// redefining member of a less derived owner (model-complete phase 4).
+fn exposed<'a>(package: &'a Value, declared: &'a Value, list: &str) -> Vec<(String, &'a Value)> {
+    let mut owners: Vec<&Value> = vec![declared];
+    owners.extend(
+        ancestors(package, declared)
+            .iter()
+            .map(|node| object_type(package, node).expect("an ancestor is declared")),
+    );
+    let mut members: BTreeMap<String, &Value> = BTreeMap::new();
+    let mut hidden = BTreeSet::new();
+    // (redefined target, redefining member identity, redefining owner)
+    let mut redefiners: Vec<(String, String, &Value)> = Vec::new();
+    for owner in &owners {
+        let node = text(owner, "node");
         for kind in ["fields", "operations"] {
-            for member in array(current, kind) {
+            for member in array(owner, kind) {
+                let identity = format!("{node}/{}", text(member, "name"));
                 if let Some(target) = member["redefines"].as_str() {
-                    redefined.insert(target.to_owned());
+                    hidden.insert(target.to_owned());
+                    redefiners.push((target.to_owned(), identity.clone(), owner));
                 }
                 if kind == list {
-                    members.insert(format!("{owner}/{}", text(member, "name")), member);
+                    members.insert(identity, member);
                 }
             }
         }
-        for supertype in array(current, "supertypes") {
-            let supertype = supertype.as_str().expect("a supertype is a node identity");
-            pending.push(object_type(package, supertype).expect("a supertype is declared"));
+    }
+    for (target, identity, owner) in &redefiners {
+        let less_derived = redefiners.iter().any(|(other_target, _, other_owner)| {
+            other_target == target && ancestors(package, other_owner).contains(text(owner, "node"))
+        });
+        if less_derived {
+            hidden.insert(identity.clone());
         }
     }
     members
         .into_iter()
-        .filter(|(identity, _)| !redefined.contains(identity))
+        .filter(|(identity, _)| !hidden.contains(identity))
         .collect()
 }
 
@@ -138,14 +162,27 @@ fn element_type(
     constraints: &Value,
     nodes: &[Value],
 ) -> Option<Value> {
-    let bounds = (constraints.get("min"), constraints.get("max"));
-    match (type_ref, bounds) {
-        ("ix://quire/native/Boolean", (None, None)) => Some(json!({"type": "Boolean"})),
-        ("ix://quire/native/Integer", (None, None)) => Some(json!({"type": "Integer"})),
-        ("ix://quire/native/Integer", (Some(min), Some(max))) => {
-            Some(json!({"type": "Int", "min": min, "max": max}))
+    let keys: BTreeSet<&str> = constraints
+        .as_object()
+        .expect("constraints are an object")
+        .keys()
+        .map(String::as_str)
+        .collect();
+    let integer = |member: &str| {
+        constraints[member]
+            .as_str()
+            .and_then(|bound| bound.parse::<i128>().ok())
+    };
+    match (type_ref, keys.len()) {
+        ("ix://quire/native/Boolean", 0) => Some(json!({"type": "Boolean"})),
+        ("ix://quire/native/Integer", 0) => Some(json!({"type": "Integer"})),
+        ("ix://quire/native/Integer", 2) => {
+            let (min, max) = (integer("min")?, integer("max")?);
+            (min <= max).then(
+                || json!({"type": "Int", "min": constraints["min"], "max": constraints["max"]}),
+            )
         }
-        (node, (None, None)) if object_type(package, node).is_some() => {
+        (node, 0) if object_type(package, node).is_some() => {
             let target = nodes.iter().find(|vector| {
                 let owner = &vector["preimage"]["owner"];
                 owner["node"] == node && owner["version"] == package["version"]
@@ -183,6 +220,17 @@ fn refused(code: &str, cause: &str) -> Value {
     json!({"refused": {"code": code, "cause": cause}})
 }
 
+/// FR-322 step 4's element and multiplicity tables over one declared type.
+fn declared_type_of(package: &Value, declared: &Value, nodes: &[Value]) -> Option<Value> {
+    element_type(
+        package,
+        text(declared, "typeRef"),
+        &declared["constraints"],
+        nodes,
+    )
+    .and_then(|element| with_multiplicity(element, &declared["multiplicity"]))
+}
+
 /// FR-322 steps 2 to 4 for one member case, as its expectation spells them.
 fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
     let ineligible = refused("ill_typed", "operator-ineligible");
@@ -217,14 +265,19 @@ fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
     } else {
         &record["result"]
     };
-    let member_type = element_type(
-        package,
-        text(declared_type, "type_ref"),
-        &declared_type["constraints"],
-        nodes,
-    )
-    .and_then(|element| with_multiplicity(element, &declared_type["multiplicity"]))
-    .map(|value| {
+    if kind == "operation" {
+        if !declared["interfaceFeatures"].is_null() {
+            return ineligible;
+        }
+        let parameters: Option<Vec<Value>> = array(record, "parameters")
+            .iter()
+            .map(|parameter| declared_type_of(package, parameter, nodes))
+            .collect();
+        if parameters.as_deref() != Some(array(member, "arguments")) {
+            return ineligible;
+        }
+    }
+    let member_type = declared_type_of(package, declared_type, nodes).map(|value| {
         if record["presence"] == "optional" {
             json!({"type": "Option", "inner": value})
         } else {
@@ -271,7 +324,7 @@ fn select(package: &Value, case: &Value) -> Value {
     {
         return refused("invalid_model_binding", "wrong-model-selection");
     }
-    json!({"admitted": true})
+    json!({"admission": "passed"})
 }
 
 fn case_expectations<'a>(vectors: &'a Value, prefix: &str) -> Vec<&'a Value> {
@@ -340,7 +393,8 @@ fn tc_280_member_names_resolve_in_exposed_effective_members() {
     let vectors = parsed(VECTORS);
     let nodes = array(&vectors, "model_declaration_nodes");
     for name in [
-        "MT-01", "MT-02", "MT-08", "MT-09", "MA-01", "MA-02", "MA-03", "MA-04", "MA-09",
+        "MT-01", "MT-02", "MT-08", "MT-09", "MT-10", "MA-01", "MA-02", "MA-03", "MA-04", "MA-09",
+        "MA-12",
     ] {
         let case = case_expectations(&vectors, name)[0];
         assert_eq!(
@@ -357,7 +411,7 @@ fn tc_280_member_types_follow_declared_type_multiplicity_and_presence() {
     let vectors = parsed(VECTORS);
     let nodes = array(&vectors, "model_declaration_nodes");
     let cases = array(&vectors, "member_cases");
-    assert_eq!(cases.len(), 18, "every published member case is exercised");
+    assert_eq!(cases.len(), 24, "every published member case is exercised");
     for case in cases {
         assert_eq!(
             derive(&vectors["domain_package"], nodes, &case["member"]),

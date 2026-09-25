@@ -22,8 +22,10 @@ the member type from the resolved record.
 ## Preconditions
 
 - `proposals/checked-package-v2/model-member-type-vectors.json` carries the
-  domain package `acme/orders` `1.0.0` as the declaration records FR-154
-  intake reads, the model declaration node vectors M1 to M6, the member cases
+  domain package `acme/orders` `1.0.0` as a projection of the declaration
+  records FR-154 intake reads from it (`typeRef`, `interfaceFeatures`,
+  constraints, presence, multiplicity, supertypes and redefinitions), the
+  model declaration node vectors M1 to M8, the member cases
   and the selection cases. The SHA-256 of the RFC 8785 bytes of its
   `domain_package` member stands for the document's `sha256-jcs` digest.
 - The lock selects `acme/orders` `1.0.0` only.
@@ -35,9 +37,10 @@ the member type from the resolved record.
 Validate each model declaration node vector against the closed preimage schema
 and recompute its JCS SHA-256. For each member case, recover the declaring
 node's owner from the selected domain package, resolve the member and derive
-its type or refusal, and compare with the recorded expectation. For each
-selection case, run FR-322's selection check over the supplied documents and
-compare with the recorded result.
+its type or refusal, and compare with the recorded expectation; an operation case also carries the
+argument types of its call. For each selection case, run FR-322's selection
+admission checks over the supplied documents and compare with the recorded
+result.
 
 ## Vectors
 
@@ -51,7 +54,9 @@ compare with the recorded result.
 | MT-06 | `field` `invoice`, typed object type `Invoice` | `Reference<Invoice>` over M3 | FR-322-AC-31 |
 | MT-07 | `operation` `size` on M1 | Resolves `Order/size`; type `Integer` | FR-322-AC-31 |
 | MT-08 | `operation` `size` on M5, which `Sub/size` redefines | Resolves `Sub/size`; type `Integer` | FR-322-AC-30 |
-| MT-09 | `operation` `scaled` on M5, redefined with a renamed parameter | Resolves `Sub/scaled`; type `Integer` | FR-322-AC-30 |
+| MT-09 | `operation` `scaled` on M5, redefined with a renamed parameter, called with an `Integer` argument | Resolves `Sub/scaled`; type `Integer` | FR-322-AC-30 |
+| MT-10 | `operation` `size` on M7 (`SubSub`, under `Sub`), which both `Sub/size` and `SubSub/size` redefine | Resolves the most derived `SubSub/size`; type `Integer` | FR-322-AC-30 |
+| MT-11 | `operation` `scaled` on M1 with an `Integer` argument | Resolves `Order/scaled`; type `Integer` | FR-322-AC-31 |
 | MA-01 | `field` `missing` on M1 | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-02 | `field` `size`, an operation name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-03 | `operation` `total`, a field name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
@@ -61,13 +66,17 @@ compare with the recorded result.
 | MA-07 | `field` `tags`, upper bound `unbounded` | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-08 | `operation` `reset`, with no result | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-09 | `field` `code` on M6 (`Both`), declared by both supertypes `Tagged` and `Coded` | `ambiguous_declaration`/`ambiguous-name` | FR-322-AC-30 |
-| MS-01 | The document supplied under the selected digest, identity and version equal | Admitted | FR-322-AC-32 |
+| MA-10 | `operation` `scaled` on M1 with no argument | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
+| MA-11 | `operation` `scaled` on M1 with a `Boolean` argument | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
+| MA-12 | `operation` `rate` on M8 (`Flow`, a `systems_interface`) | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
+| MA-13 | `field` `floor`, `Integer` with `min` and no `max` | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
+| MS-01 | The document supplied under the selected digest, identity and version equal | Passes the selection admission checks | FR-322-AC-32 |
 | MS-02 | No document supplied | `missing_import`/`missing-selection` | FR-322-AC-32 |
 | MS-03 | A document with `Order/total`'s `max` changed to 8, supplied under the selected digest | `stale_dependency`/`byte-digest-mismatch` | FR-322-AC-32 |
 | MS-04 | The selection names version `1.0.1` | `invalid_model_binding`/`wrong-model-selection` | FR-322-AC-32 |
 
 ## Expected Results
 
-M1 to M6 validate and recompute their digests. Every member case gives exactly
+M1 to M8 validate and recompute their digests. Every member case gives exactly
 its recorded resolved declaration and type or its recorded refusal, and every
 selection case gives its recorded result.
