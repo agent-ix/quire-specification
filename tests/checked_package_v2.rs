@@ -3806,6 +3806,100 @@ fn tc_233_dependency_selections_carry_each_dependency_package_identity() {
     }
 }
 
+/// FR-322-AC-36: a reference into a dependency package is the
+/// `dependency_reference` term in the wire body and in the node-identity
+/// preimage alike, so the dependency's `package_id` and node id both enter
+/// the referencing node's id.
+#[trace("TC-233", "FR-322-AC-36")]
+#[test]
+fn tc_233_a_dependency_reference_enters_the_referencing_node_id() {
+    let wire_term = schema_for_def(&parsed_fixture(SCHEMA), "SemanticTerm");
+    let preimage_term = schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "PreimageTerm");
+    let application = schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "ApplicationNode");
+    let reference = json!({
+        "term": "dependency_reference",
+        "package": {
+            "domain": "quire.package.semantic/v2",
+            "algorithm": "sha256",
+            "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+        },
+        "node": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "5353535353535353535353535353535353535353535353535353535353535353"
+        }
+    });
+    assert!(
+        wire_term.is_valid(&reference),
+        "the V2 schema admits the term"
+    );
+    assert!(
+        preimage_term.is_valid(&reference),
+        "the preimage schema admits the term"
+    );
+
+    let mut bare = reference.clone();
+    bare["package"] = json!("3333333333333333333333333333333333333333333333333333333333333333");
+    let mut other_domain = reference.clone();
+    other_domain["package"]["domain"] = json!("quire.source.bytes/v1");
+    let mut no_node = reference.clone();
+    no_node
+        .as_object_mut()
+        .expect("the term is an object")
+        .remove("node");
+    let mut extra = reference.clone();
+    extra["target"] = reference["node"].clone();
+    for (name, mutation) in [
+        ("bare-digest package", bare),
+        ("another digest domain", other_domain),
+        ("missing node", no_node),
+        ("extra member", extra),
+    ] {
+        assert!(!wire_term.is_valid(&mutation), "{name} fails the V2 schema");
+        assert!(
+            !preimage_term.is_valid(&mutation),
+            "{name} fails the preimage schema"
+        );
+    }
+
+    let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let call = vectors["operation_vectors"]
+        .as_array()
+        .expect("operation vectors are an array")
+        .iter()
+        .find(|vector| vector["name"] == "function-call")
+        .expect("the function-call vector is published");
+    let mut preimage = call["preimage"].clone();
+    preimage["body"]["arguments"][0] = reference.clone();
+    assert!(
+        wire_term.is_valid(&preimage["body"]),
+        "a call whose callee is a dependency reference is a V2 application term"
+    );
+    assert!(
+        application.is_valid(&preimage),
+        "and a valid application-node preimage"
+    );
+    let id = unqualified_jcs_sha256(&preimage);
+    assert_ne!(
+        id,
+        call["sha256"].as_str().expect("vector digest is a string"),
+        "a dependency callee keys differently from a local one"
+    );
+    let mut repackaged = preimage.clone();
+    repackaged["body"]["arguments"][0]["package"]["digest"] =
+        json!("5555555555555555555555555555555555555555555555555555555555555555");
+    let mut renoded = preimage.clone();
+    renoded["body"]["arguments"][0]["node"]["digest"] =
+        json!("5454545454545454545454545454545454545454545454545454545454545454");
+    let repackaged_id = unqualified_jcs_sha256(&repackaged);
+    let renoded_id = unqualified_jcs_sha256(&renoded);
+    assert_ne!(
+        repackaged_id, id,
+        "the dependency package_id enters the node id"
+    );
+    assert_ne!(renoded_id, id, "the referenced node id enters the node id");
+    assert_ne!(renoded_id, repackaged_id, "the two changes key apart");
+}
+
 /// FR-322's `dependency_selections` order rule: the first entry whose
 /// identity repeats an earlier one refuses `conflicting-definition` at both
 /// entries; otherwise the first entry not strictly after its predecessor in

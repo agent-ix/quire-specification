@@ -398,6 +398,7 @@ type.
 | FR-307 | FR-307-AC-3 | TC-227 | planned |
 | FR-307 | FR-307-AC-4 | TC-227 | planned |
 | FR-307 | FR-307-AC-5 | TC-227 | planned |
+| FR-307 | FR-307-AC-6 | TC-227 | planned |
 | FR-308 | FR-308-AC-1 | TC-228 | planned |
 | FR-308 | FR-308-AC-2 | TC-228 | planned |
 | FR-308 | FR-308-AC-3 | TC-228 | planned |
@@ -982,6 +983,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-322 | FR-322-AC-33 | TC-281 | planned |
 | FR-322 | FR-322-AC-34 | TC-281 | planned |
 | FR-322 | FR-322-AC-35 | TC-233 | planned |
+| FR-322 | FR-322-AC-36 | TC-233 | planned |
+| FR-322 | FR-322-AC-37 | TC-233 | planned |
 | interface_004 | interface_004-AC-1 | TC-233 | planned |
 | interface_004 | interface_004-AC-2 | TC-233 | planned |
 | FR-323 | FR-323-AC-1 | TC-231 | planned |
@@ -990,6 +993,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-323 | FR-323-AC-4 | TC-273 | planned |
 | FR-323 | FR-323-AC-5 | TC-277 | planned |
 | FR-323 | FR-323-AC-6 | TC-278 | planned |
+| FR-323 | FR-323-AC-7 | TC-277 | planned |
 | FR-324 | FR-324-AC-1 | TC-231 | planned |
 | FR-324 | FR-324-AC-2 | TC-231 | planned |
 | FR-324 | FR-324-AC-3 | TC-231 | planned |
