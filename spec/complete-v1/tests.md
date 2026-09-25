@@ -214,7 +214,7 @@ type.
 | V1-BACK-014 | FR-019 | TC-231 | Reuse | planned |
 | V1-BACK-015 | FR-352 | TC-255, TC-231 | New | planned |
 | V1-BACK-016 | FR-352 | TC-255, TC-231 | New | planned |
-| V1-BACK-017 | FR-290 | TC-060, TC-231, TC-271 | Amend | planned |
+| V1-BACK-017 | FR-290 | TC-060, TC-231, TC-271, TC-282 | Amend | planned |
 | V1-BACK-018 | FR-292 | TC-060, TC-231 | Reuse | planned |
 | V1-BACK-019 | FR-349 | TC-266, TC-231 | New | planned |
 | V1-BACK-020 | FR-350 | TC-267, TC-231 | New | planned |
@@ -880,7 +880,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-272 | FR-272-AC-6 | TC-196 | planned |
 | FR-272 | FR-272-AC-7 | TC-233 | planned |
 | FR-272 | FR-272-AC-8 | TC-264 | planned |
-| FR-272 | FR-272-AC-9 | TC-271 | planned |
+| FR-272 | FR-272-AC-9 | TC-271, TC-282 | planned |
 | FR-272 | FR-272-AC-10 | TC-233 | planned |
 | FR-321 | FR-321-AC-4 | TC-195 | planned |
 | FR-160 | FR-160-AC-4 | TC-199 | planned |
@@ -1198,6 +1198,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-279 | Model-owner package-scoped node identity | Property | P0 | FR-322 | 🚧 Planned |
 | TC-280 | Model-owned member types | Property | P0 | FR-322 | 🚧 Planned |
 | TC-281 | Model reference equality and field projection | Property | P0 | FR-322 | 🚧 Planned |
+| TC-282 | Duplicate backend identity registration | Property | P0 | FR-290, FR-272 | 🚧 Planned |
 
 ## Integration Test Matrix
 

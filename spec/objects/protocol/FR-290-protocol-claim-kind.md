@@ -149,8 +149,33 @@ A backend identity is unique within a registry. A candidate is the pair
 ordered by backend identity, compared bytewise as UTF-8, and then by manifest
 digest.
 
-If a registration repeats a registered backend identity, then the registry
-SHALL refuse it with `invalid_capability`/`duplicate-backend`.
+A registry snapshot is a function of the set of admitted registrations it has
+received. A registration refused under "Advertised mode" is not admitted and
+takes no part in the identity rules below. For each backend identity:
+
+- When every admitted registration of the identity carries the same manifest
+  digest, the registry SHALL hold that identity once, with that manifest. The
+  manifest digest covers the whole FR-331 manifest under
+  `quire.tool-manifest.jcs/v1`, so the repeats are one registration, and a
+  repeat is not refused.
+- When the admitted registrations of the identity carry two or more distinct
+  manifest digests, the registry SHALL refuse every registration of that
+  identity with `invalid_capability`/`duplicate-backend`, once per distinct
+  manifest digest, and SHALL hold no registration of that identity.
+- When two admitted registrations of the identity carry the same manifest
+  digest and differ in any other member the registration carries, such as its
+  pinned tool identity or its advertised pairs, that digest does not cover
+  both manifests; the registry SHALL refuse every registration of that
+  identity as in the previous rule.
+
+A registration of an identity that conflicts is refused whenever it arrives:
+one admitted before the conflicting registration is withdrawn from the
+snapshot, and one arriving after is refused on arrival. The snapshot reports
+its registration refusals, so a withdrawn registration's refusal appears in
+every snapshot taken after the conflict. An identity whose
+registrations were refused is unregistered, so a request that names it
+receives the unknown-backend mark and it is a candidate for no item.
+`duplicate-backend` never refuses a registration of another identity.
 
 An item's `candidates` value in the [FR-331](../interfaces/FR-331-backend-provider-envelope.md)
 request is valid when it equals the registry snapshot's candidate set for the
@@ -190,9 +215,10 @@ candidates, and the mode is compared only at the single candidate's arm.
 The item-level causes (`absent-kind`, `unknown-kind`, `absent-extent`,
 `unknown-backend`, `inconsistent-candidates`, `ambiguous-backend`) settle only
 their own item. `unsupported-version` refuses its whole carrier.
-Registration causes (`absent-kind`, `unknown-kind`, `unknown-mode`,
-`duplicate-backend`) refuse only that registration and are reported ordered
-bytewise by backend identity, then manifest digest.
+Registration causes `absent-kind`, `unknown-kind` and `unknown-mode` refuse
+only that registration. `duplicate-backend` refuses every registration of its
+identity and no other. Registration refusals are reported ordered bytewise by
+backend identity, then manifest digest.
 
 ## Identity and comparison
 
@@ -238,8 +264,10 @@ bytewise by backend identity, then manifest digest.
 | FR-290-AC-4 | An item whose candidate set is empty settles `unsupported` with a warning naming its capability kind, and the named backend when there is one. | Test (TC-060, TC-271) |
 | FR-290-AC-5 | Each claim form in the claim-form assignment table requires exactly its listed kind; an expression nested in a clause adds no kind; a `case` exhaustiveness obligation and an FR-353 abstraction relation request no backend. | Test (TC-271) |
 | FR-290-AC-6 | For each row of the advertised-mode table, negotiation settles the listed disposition; an unbounded extent on a bounded-only advertisement never settles `supported`; an item with no extent classification settles `invalid-request`. | Test (TC-271) |
-| FR-290-AC-7 | Each row of the candidate table settles its listed disposition and cause; an item with two or more candidates and no named backend settles `invalid-request` naming every candidate in candidate order, identically under every registration order; a duplicate or malformed registration is refused and keyed by backend identity. | Test (TC-271) |
+| FR-290-AC-7 | Each row of the candidate table settles its listed disposition and cause; an item with two or more candidates and no named backend settles `invalid-request` naming every candidate in candidate order, identically under every registration order; a malformed registration is refused and keyed by backend identity. | Test (TC-271) |
 | FR-290-AC-8 | A routed item whose pinned tool is missing, mismatched, or whose probe errors or exceeds its limit records the FR-331 result `unsupported` with cause `unsupported_projection`/`tool-unavailable` naming the kind, backend and expected and actual tool identity; its disposition stays `supported`, and no other registered candidate or mode runs; a tool that changes after a passing probe records the FR-331 result `failed` with the same cause, naming the expected and actual tool identity. | Test (TC-271) |
+| FR-290-AC-9 | Two or more admitted registrations of one backend identity with the same manifest digest and the same manifest leave that identity registered once, with no refusal, and give the same snapshot and candidate sets as one registration. | Test (TC-282) |
+| FR-290-AC-10 | Admitted registrations of one backend identity with two or more distinct manifest digests, or with one digest and differing manifests, are all refused with `invalid_capability`/`duplicate-backend`, one refusal per distinct digest keyed by (identity, digest) in bytewise order; the snapshot holds no registration of that identity, a request naming it receives the unknown-backend mark, and registrations of other identities stand; the snapshot, its refusals and every candidate set are identical under every registration order. | Test (TC-282) |
 
 ## Dependencies
 
