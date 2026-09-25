@@ -28,7 +28,7 @@ admits.
   `Reference<M>`, the `composite_type`/`reference` node over node vector `M`,
   and `{object: M}` is an operand of type `M` itself. A projection case
   also carries the projection's declared `result_type`.
-- `proposals/checked-package-v2/operation-catalog.json` supplies the
+- `contracts/checked-operation-catalog-v1.json` in `agent-ix/quire-verification-contracts` supplies the
   `quire.op.reference.eq`, `quire.op.reference.ne`, `quire.op.model.deref`
   and `quire.op.record.project` entries: their operand positions, groups,
   result form and constraints are read from the catalog.

@@ -73,8 +73,8 @@ returns an incomplete resource disposition and no admitted package.
 A V2 `application` term carries its operator class, its exact
 `operation: {identity, laws, mode, member, leaves}`, its declared
 `result_type` and its arguments: a closed
-`quire.checked-operation-catalog/v1` identity from the adjacent
-`operation-catalog.json`, the ordered `{role, definition}` laws the catalog
+`quire.checked-operation-catalog/v1` identity from the
+`contracts/checked-operation-catalog-v1.json` of `agent-ix/quire-verification-contracts`, the ordered `{role, definition}` laws the catalog
 requires for that identity, its `rounding`, `text_profile` or `absence` mode,
 its member (record field, tuple position, element, relationship end, dispatched
 operation or type argument, each naming its declaring node, or a clause's

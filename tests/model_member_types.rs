@@ -12,6 +12,7 @@
 
 use ix_trace_rs::trace;
 use quire_verification::contracts::jcs_sha256;
+use quire_verification_contracts::operation_catalog::CHECKED_OPERATION_CATALOG_V1;
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -19,8 +20,8 @@ const VECTORS: &str =
     include_str!("../proposals/checked-package-v2/model-member-type-vectors.json");
 const PREIMAGE_SCHEMA: &str =
     include_str!("../proposals/checked-package-v2/node-identity-preimage.schema.json");
-const OPERATION_CATALOG: &str =
-    include_str!("../proposals/checked-package-v2/operation-catalog.json");
+/// The catalog lives only in `quire-verification-contracts`; it is read from there.
+const OPERATION_CATALOG: &str = CHECKED_OPERATION_CATALOG_V1;
 const NODE_DOMAIN: &str = "quire.checked-semantic-node/v1";
 
 fn parsed(bytes: &str) -> Value {
