@@ -84,3 +84,6 @@ All findings are fixed in the commit that follows this review.
   (`invalid_package`/`conflicting-definition`), with TC-277 BP-12 cited
   from FR-323-AC-7; QSL D-4 calls its source-count rule a QSL precondition.
 - FND-004: FR-307-AC-6's punctuation is fixed.
+- QSL SR-635 FND-003, carried here for alignment: FR-322 also refuses a
+  signature reaching a `ModelOwner` node, such as `Reference<M::T>`, with an
+  FR-322-AC-37 case and a TC-233 mutation.
