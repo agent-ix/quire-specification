@@ -4580,10 +4580,20 @@ fn operation_vector_node(package: &Value, vectors: &Value, name: &str) -> usize 
         .unwrap_or_else(|| panic!("operation vector {name} keys a published package node"))
 }
 
+const TYPED_DIAGNOSTIC_CAUSE: &str =
+    include_str!("../spec/objects/foundation/FR-272-typed-diagnostic-cause.md");
+
 /// Causes a native-diagnostics row lists for exactly the given code: the
 /// backticked spellings of its cause cell before the first `;`.
 fn native_diagnostic_row_causes(code: &str) -> BTreeSet<String> {
-    let rows = NATIVE_DIAGNOSTICS
+    diagnostic_row_causes(NATIVE_DIAGNOSTICS, code)
+}
+
+/// Causes the one table row of `document` whose first cell is exactly the
+/// given code lists: the backticked spellings of its second cell before the
+/// first `;`.
+fn diagnostic_row_causes(document: &str, code: &str) -> BTreeSet<String> {
+    let rows = document
         .lines()
         .filter(|line| {
             line.split('|')
@@ -4594,7 +4604,7 @@ fn native_diagnostic_row_causes(code: &str) -> BTreeSet<String> {
     assert_eq!(
         rows.len(),
         1,
-        "native diagnostics has exactly one `{code}` row"
+        "the document has exactly one `{code}` row"
     );
     let cause_cell = rows[0]
         .split('|')
@@ -6320,6 +6330,47 @@ fn tc_233_every_published_package_carries_only_current_application_node_keys() {
             read_package_semantics(&package, &catalog),
             Ok(()),
             "{label}: the full reader admits it, so every application node key is current"
+        );
+    }
+}
+
+/// The `stage_limit_exceeded` and `duplicate_selection` cause sets are closed:
+/// the native-diagnostics row and the FR-272 row of each code list exactly the
+/// causes of catalog revision `1-draft.7`, so neither document can add, drop or
+/// rename a cause without the other and this list.
+#[trace("TC-233", "FR-272-AC-10")]
+#[test]
+fn tc_233_stage_limit_and_duplicate_selection_cause_sets_are_closed() {
+    let expected: [(&str, &[&str]); 2] = [
+        (
+            "stage_limit_exceeded",
+            &[
+                "input-bytes-exceeded",
+                "nesting-depth-exceeded",
+                "token-count-exceeded",
+                "node-count-exceeded",
+                "edge-count-exceeded",
+                "occurrence-count-exceeded",
+                "diagnostic-count-exceeded",
+                "work-budget-exceeded",
+            ],
+        ),
+        ("duplicate_selection", &["duplicate-identity"]),
+    ];
+    for (code, causes) in expected {
+        let causes = causes
+            .iter()
+            .map(|cause| (*cause).to_owned())
+            .collect::<BTreeSet<_>>();
+        assert_eq!(
+            diagnostic_row_causes(NATIVE_DIAGNOSTICS, code),
+            causes,
+            "native-diagnostics `{code}` row lists exactly its 1-draft.7 causes"
+        );
+        assert_eq!(
+            diagnostic_row_causes(TYPED_DIAGNOSTIC_CAUSE, code),
+            causes,
+            "FR-272 `{code}` row lists exactly its 1-draft.7 causes"
         );
     }
 }

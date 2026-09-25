@@ -71,7 +71,9 @@ lower-node-id-digest frame's own defect to be reported over the
 higher-digest frame's own defect; check that the identical defect set
 sorted from two different collection orders yields the identical
 diagnostic; and parse the native-diagnostics rows to require each cause in
-exactly its code's row and the Diagnostic schema pairing.
+exactly its code's row and the Diagnostic schema pairing. Parse the
+`stage_limit_exceeded` and `duplicate_selection` rows of both native-diagnostics
+and FR-272 and require each to list exactly FR-272-AC-10's causes.
 
 ## Expected Results
 
@@ -88,6 +90,7 @@ refuses through the full normative reader with exactly its recorded code,
 locus and cause, including every wrong-meaning frame entry, both
 two-simultaneous-meaning-join-defect precedence vectors, and the
 two-frame-node vector, whose lower-node-id-digest frame's own defect is
-reported ahead of the higher-digest frame's own defect; and the identical
+reported ahead of the higher-digest frame's own defect; the identical
 defect set sorted from two different collection orders yields the identical
-diagnostic.
+diagnostic; and the `stage_limit_exceeded` and `duplicate_selection` rows of
+native-diagnostics and FR-272 each list exactly FR-272-AC-10's causes.

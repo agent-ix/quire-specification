@@ -79,6 +79,8 @@ catalog).
 | `unimplemented_capability` | Valid complete-V1 meaning is not implemented by the selected producer; distinct from prohibited source and unsupported backend projection. |
 | `parity_failure` | Two implementations required to agree produced different typed verdicts or values for the same subject/input. |
 | `invalid_capability` | A requested or advertised capability selection that names no FR-290 kind, an unknown kind or mode, an unsupported vocabulary identity, a duplicate registered backend, no extent classification, an unregistered or arm-less backend, candidates inconsistent with the manifest or named backend, or several candidate backends with none named (revision `1-draft.5`). |
+| `duplicate_selection` | A second domain-package model selection of an already-selected identity (revision `1-draft.6`). A package selects at most one version of a domain-package identity. |
+| `stage_limit_exceeded` | A compiler stage S1-S4, the I2 reader, a family `check`, `replay` or `route` reached one of its own stage limits (revision `1-draft.6`). "A semantic maximum is not a caller work budget": this is distinct from `resource_exhausted`. |
 
 ## Identity and comparison
 
@@ -177,7 +179,7 @@ construction and FR-145 conversion, and, in catalog revision `1-draft.3`,
 `ambiguous_dispatch` for FR-151 link-time dispatch selection. The same revision
 closes the causes of `foreign_reference` for FR-153 and FR-204. Catalog
 revision `1-draft.4` adds no code; it adds the eight checked-package operation
-variants, `stale-node-key` and `declaration-nominal-mismatch` of `invalid_package` and the checked-package use of `ambiguous-name`, typed by FR-272; `operator-ineligible` remains `ill_typed`. The same revision adds `unproved-exhaustiveness` of `undefined_expression`, FR-146's cause for an unproved `case` exhaustiveness obligation over a `union-decl` scrutinee, typed by FR-272. Catalog revision `1-draft.5` adds `invalid_capability` for FR-290 capability-kind admission and candidate-set negotiation, and the `unbounded-extent` and `tool-unavailable` causes of `unsupported_projection`, typed by FR-272. Matching remains catalog-qualified and exact.
+variants, `stale-node-key` and `declaration-nominal-mismatch` of `invalid_package` and the checked-package use of `ambiguous-name`, typed by FR-272; `operator-ineligible` remains `ill_typed`. The same revision adds `unproved-exhaustiveness` of `undefined_expression`, FR-146's cause for an unproved `case` exhaustiveness obligation over a `union-decl` scrutinee, typed by FR-272. Catalog revision `1-draft.5` adds `invalid_capability` for FR-290 capability-kind admission and candidate-set negotiation, and the `unbounded-extent` and `tool-unavailable` causes of `unsupported_projection`, typed by FR-272. Catalog revision `1-draft.6` adds `duplicate_selection` for a second selection of an already-selected domain-package identity, and `stage_limit_exceeded` for a stage limit, each typed by FR-272. Catalog revision `1-draft.7` adds no code; it adds the `token-count-exceeded`, `edge-count-exceeded`, `occurrence-count-exceeded` and `diagnostic-count-exceeded` causes of `stage_limit_exceeded`, typed by FR-272. Matching remains catalog-qualified and exact.
 
 ## Dependencies
 
