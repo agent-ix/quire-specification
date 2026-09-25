@@ -78,7 +78,9 @@ boundary.
   a reader checks both by the rules of "Operation families, groups and
   constraints" below. `identity` is one
   member of the closed `quire.checked-operation-catalog/v1` published as
-  `proposals/checked-package-v2/operation-catalog.json`, whose entry names the
+  `contracts/checked-operation-catalog-v1.json` in `agent-ix/quire-verification-contracts`
+  (rev `61f4a44d76d51cc53b2dfe7ed10aba7b23cfa6ef`, SHA-256
+  `b67263208e38d1c80b74bf83a43aedc6fc2e50fe7caaa0e7a83d58340aadfdd6`), whose entry names the
   operation's operator class, operand positions and rest, result form,
   constraints, required law roles, mode kind, member kind and leaf source.
   `laws` is the ordered list of `{role, definition}` pairs whose roles are

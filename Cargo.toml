@@ -9,6 +9,7 @@ description = "Private qualification tests for authored shared-reference fixture
 
 [dev-dependencies]
 quire-verification = { git = "https://github.com/agent-ix/quire-verification", rev = "5305b40d0bc78bf2a566bd5609669373361e87b8" }
+quire-verification-contracts = { git = "https://github.com/agent-ix/quire-verification-contracts", rev = "61f4a44d76d51cc53b2dfe7ed10aba7b23cfa6ef" }
 jsonschema = { version = "=0.55.0", default-features = false }
 serde_json = "=1.0.151"
 sha2 = "=0.10.9"

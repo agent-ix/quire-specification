@@ -7,6 +7,7 @@ use ix_trace_rs::trace;
 use num_bigint::BigInt;
 use num_integer::Integer;
 use quire_verification::contracts::jcs_sha256;
+use quire_verification_contracts::operation_catalog::CHECKED_OPERATION_CATALOG_V1;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
@@ -16,8 +17,8 @@ const NODE_PREIMAGE_SCHEMA: &str =
     include_str!("../proposals/checked-package-v2/node-identity-preimage.schema.json");
 const NODE_IDENTITY_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/node-identity-vectors.json");
-const OPERATION_CATALOG: &str =
-    include_str!("../proposals/checked-package-v2/operation-catalog.json");
+/// The catalog lives only in `quire-verification-contracts`; it is read from there.
+const OPERATION_CATALOG: &str = CHECKED_OPERATION_CATALOG_V1;
 const POSITIVE_OPERATION_IDENTITIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-operation-identities.json");
 const COMPOUND_UNIT_SCHEMA: &str =

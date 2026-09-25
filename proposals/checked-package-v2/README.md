@@ -10,7 +10,10 @@ structures, but any external consumer receives only the versioned contract.
 - `schema.json` defines the closed `quire.checked-package/v2` wire shape.
 - `node-identity-preimage.schema.json` defines the closed RFC 8785 preimages for
   complete-V1 enum, dimension and declared-unit node identities.
-- `operation-catalog.json` is the closed `quire.checked-operation-catalog/v1`:
+- The closed `quire.checked-operation-catalog/v1` is not kept here. Its only copy is
+  `contracts/checked-operation-catalog-v1.json` in `agent-ix/quire-verification-contracts`
+  (rev `61f4a44d76d51cc53b2dfe7ed10aba7b23cfa6ef`, SHA-256 `b67263208e38d1c80b74bf83a43aedc6fc2e50fe7caaa0e7a83d58340aadfdd6`), which the tests read
+  through that crate. It holds
   every application operation identity with its operator class, operand
   positions and rest, result form, constraints, required law roles (integer
   division, IEEE 754-2019 default, Unicode 17.0.0 text), mode kind (rounding,
@@ -132,8 +135,8 @@ Every V2 `application` term carries its `operator`,
 `operation: {identity, laws, mode, member, leaves}`, its declared
 `result_type` and its `arguments`, and every `literal` term carries its
 declared `type`, so the package alone gives each application exactly one
-meaning and no type is inferred. The identity is a member of
-`operation-catalog.json`, and its entry fixes the rest:
+meaning and no type is inferred. The identity is a member of the
+`quire-verification-contracts` operation catalog, and its entry fixes the rest:
 
 - the operator class equals the entry's class;
 - `laws` lists exactly the entry's roles in order. A value role
