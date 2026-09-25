@@ -235,3 +235,22 @@ declarations of its body; a `dependency_reference` contributes none".
 | FND-009 | Open: fix in this PR. |
 | FND-010 | Open: fix in this PR. |
 | FND-011 | Open: fix in this PR. |
+
+## Dispositions
+
+All findings are fixed in commit 56f3934.
+
+- FND-001: `invalid-digest` in FR-307, FR-307-AC-6 and TC-227 L09. The QSL
+  ADR-015 and TC-446 spelling is fixed in the QSL change.
+- FND-002: FR-323 and FR-323-AC-7 take the suggested wording; TC-277 BP-08
+  is swapped entries and an unreached entry, and BP-09 and BP-10 are added.
+- FND-003: fixed by the positive rule. A `dependency_reference` names a
+  `function` whose parameter and result types carry no `declaration`, so
+  the importing graph holds its result type under the same id; any other
+  target refuses `ill_typed`/`operator-ineligible`.
+- FND-004: FR-322 and native-diagnostics step 7 place the checks.
+- FND-005: FR-322-AC-37 with TC-233 vectors and a matrix row; the family
+  sentence is added.
+- FND-006: the supplied-dependency sentence is added to FR-322 and covered
+  by FR-322-AC-37.
+- FND-007 to FND-011: fixed as suggested.
