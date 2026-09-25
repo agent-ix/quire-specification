@@ -48,6 +48,12 @@ structures, but any external consumer receives only the versioned contract.
   `quire.model.object-universe/v1` preimages selected by
   `quire.model.complete/v1`, with JCS SHA-256 vectors, the reference key order
   and invalid mutations. They add no CheckedPackage V2 wire member.
+- `model-member-type-vectors.json` carries a domain package as a projection
+  of the declaration records FR-154 intake reads from it, the model declaration node vectors
+  that recover a declaring node's `ModelOwner`, and the member and selection
+  cases for FR-322's "Model-owned members". The SHA-256 of the RFC 8785 bytes
+  of its `domain_package` member stands for the document's `sha256-jcs`
+  digest.
 - The checked semantic graph is a closed `quire.checked-semantic-graph/v2`
   tagged union. It is source-language-neutral transport, not Contract IR and
   not an alternative language semantic authority.
@@ -208,6 +214,21 @@ reference targets and member declarations of its body. Changing division from
 floor to Euclidean therefore changes the node id and the package id, and the
 `division-law-unselected-by-package-lock` mutation shows that a law absent from
 the lock refuses.
+
+## Model-owned members
+
+A `field` or `operation` member whose declaring node is a model declaration
+node (a `model` or `relation` node with no `declaration`, keyed with a
+`ModelOwner`) is resolved through the domain package the lock selects. The
+node's body stays `aggregate{[]}`. `read` receives the selected domain package
+documents by `sha256-jcs` digest and admits each under FR-154 before graph
+admission. It recovers the declaring node's `ModelOwner` by recomputing the
+`ModelDeclarationNode` key of every object type and relationship declaration
+of each selected document and matching the node's id. It resolves the member
+name among the declaring type's exposed effective members, own and inherited,
+and derives the member type from the resolved field or operation record. The
+rule, its type tables and its refusals are
+[FR-322's "Model-owned members"](../../spec/objects/interfaces/FR-322-checked-package-artifact.md#model-owned-members).
 
 ## Declarations
 

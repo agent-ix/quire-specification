@@ -120,17 +120,23 @@ scrutinee. A `quire.checked-package/v2` reader emits exactly one
 diagnostic for the first refusal it finds, and never a broader code:
 
 1. schema refusals (`invalid_package`, their structural causes);
-2. graph-shape refusals of FR-322 (`invalid_semantic_graph`): an application
+2. the model selection check of FR-322 "Model-owned members" step 1, over
+   the `model_selections` rows in lock order, in FR-154's admission order:
+   `digest-domain-mismatch` (`stale_dependency`), `missing-selection`
+   (`missing_import`), `byte-digest-mismatch` (`stale_dependency`) and
+   `wrong-model-selection` (`invalid_model_binding`); then the first FR-154 intake or
+   `quire.model.complete/v1` normalization refusal in FR-154's report order;
+3. graph-shape refusals of FR-322 (`invalid_semantic_graph`): an application
    node whose `semantic_form` contradicts its body or whose dependency list is
    not exactly the derived one;
-3. `stale-node-key` (`invalid_package`), at the first application node in
+4. `stale-node-key` (`invalid_package`), at the first application node in
    ascending retained node-id digest order whose retained key differs from the
    JCS SHA-256 of its `quire.application-node/v1` preimage;
-4. `declaration-nominal-mismatch` (`invalid_package`), nodes in ascending
+5. `declaration-nominal-mismatch` (`invalid_package`), nodes in ascending
    node-id digest order;
-5. `ambiguous-name` (`ambiguous_declaration`), at the first node in ascending
+6. `ambiguous-name` (`ambiguous_declaration`), at the first node in ascending
    node-id digest order whose name an earlier node already declares;
-6. operation refusals, nodes in ascending node-id digest order and, inside a
+7. operation refusals, nodes in ascending node-id digest order and, inside a
    node, applications in pre-order (an application before its arguments,
    arguments left to right). One application is checked in this order:
    `unknown-operation`, `operation-class-mismatch`, `operation-law-missing`,
@@ -139,7 +145,12 @@ diagnostic for the first refusal it finds, and never a broader code:
    `invalid_package`); then every argument that is itself an application,
    directly or as a binder value, left to right under this same order, whose
    first refusal is reported; then `operation-mode-type-mismatch`
-   (`invalid_package`) and `operator-ineligible` (`ill_typed`); then its
+   (`invalid_package`) and `operator-ineligible` (`ill_typed`), where a
+   model-owned `field` or `operation` member reports FR-322 "Model-owned
+   members" steps 2 to 4 in place of `operator-ineligible`:
+   `missing-selection` (`missing_declaration`), `stale-node-key`
+   (`invalid_package`), `ambiguous-name` (`ambiguous_declaration`) and
+   `operator-ineligible` (`ill_typed`), in that order; then its
    `leaves`, each cause over all entries before the next cause:
    `operation-law-missing` (fewer entries than compared leaves),
    `operation-law-mismatch` (extra entries, a path out of order or a law
