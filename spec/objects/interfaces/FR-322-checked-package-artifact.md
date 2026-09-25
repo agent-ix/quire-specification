@@ -26,6 +26,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-spec-language/FR-019
     type: references
+  - target: ix://agent-ix/quire-specification/FR-307
+    type: references
 ---
 
 # FR-322: Immutable checked-package artifact
@@ -57,6 +59,29 @@ boundary.
   carries its own declared domain; a raw source/definition digest or a domain
   package `sha256-jcs` digest cannot
   substitute for a semantic package digest or for another artifact role.
+- `dependency_selections` — the importing package's resolved library closure
+  ([FR-307](../../functional/tooling/FR-307-package-reusable-semantic-libraries.md)):
+  one `DependencySelection` per library identity, each
+  `{identity, version, package_id}`, in strictly ascending UTF-8 byte order
+  of `identity`. `identity` and `version` are the library identity and
+  version string an `import "L" version "v" digest "d"` names. `package_id`
+  is the dependency's own `quire.package.semantic/v2` `package_id`
+  (`{domain, algorithm, digest}`, the `PackageId` shape), whose `digest` is
+  the import's `d`; a `quire.definition.bytes/v1`, `quire.source.bytes/v1`
+  or `sha256-jcs` domain in `package_id` refuses `digest_domain_mismatch`.
+  A second entry whose `identity` equals an earlier entry's refuses
+  `invalid_package`/`conflicting-definition` (FR-307's diamond cause), with
+  both entries as loci. Otherwise an entry whose `identity` is not strictly
+  after its predecessor's in UTF-8 byte order refuses
+  `invalid_package`/`invalid-value` at that entry's pointer. A
+  `dependency_reference`'s `package` equals one entry's `package_id`. A
+  supplied dependency package binds to that entry only when its identity,
+  version and recomputed `package_id` equal the entry's; otherwise it
+  refuses as FR-307 states (`stale_dependency`/`revision-mismatch` for a
+  version difference, `stale_dependency`/`byte-digest-mismatch` for a
+  `package_id` difference). The same entries, in the same order, are the
+  identity preimage's `dependency_selections`, so each dependency's
+  `package_id` enters the importing package's `package_id`.
 - `semantic_graph` — one `quire.checked-semantic-graph/v2` closed tagged-node
   union. Its current tags are `scalar_type`, `composite_type`,
   `bounded_domain`, `value`, `expression`, `function`, `model`, `relation`,
@@ -562,6 +587,7 @@ partial checked package.
 | FR-322-AC-32 | A lock-selected domain package document is checked as evidence before graph admission: a document supplied under the selected digest with matching identity and version passes the selection admission checks, while a digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`, no document refuses `missing_import`/`missing-selection`, an altered document `stale_dependency`/`byte-digest-mismatch` and a document whose version differs from the selection `invalid_model_binding`/`wrong-model-selection`. | Test (TC-280) |
 | FR-322-AC-33 | `quire.op.reference.eq` and `quire.op.reference.ne` admit two references to selected object types of which one conforms to the other along declared supertypes: two of one type, a subtype and its supertype in either operand order, a subtype two levels down, and a type with two supertypes against either. A systems interface with no declared supertype against an unrelated object type, two unrelated object types, a reference to a relationship, even compared with itself, and an operand of family `object` refuse `ill_typed`/`operator-ineligible`. An operand whose owner is not selected refuses `missing_declaration`/`missing-selection`, even compared with itself. | Test (TC-281) |
 | FR-322-AC-34 | `quire.op.record.project` over a `quire.op.model.deref` result reads a field of a model object: the `deref` result has family `object`, the projection resolves the field on the declaring object type, own or inherited, and its result is the field's member type. A projection over a reference that is not dereferenced, a `field` member naming a node other than the operand's object type, a `deref` whose `result_type` is not the operand's object type, a `deref` result of a relationship, and a projection whose `result_type` is not the field's member type refuse `ill_typed`/`operator-ineligible`. | Test (TC-281) |
+| FR-322-AC-35 | A `dependency_selections` entry is a closed `DependencySelection` `{identity, version, package_id}` whose `package_id` is a `quire.package.semantic/v2` `PackageId`: the published package carrying two such entries, one per identity in ascending identity order in both its lock and identity preimage, is admitted by the V2 schema and its recorded `package_id` recomputes from them, and changing a dependency's `package_id` changes it; an entry with a `Selection` or `DefinitionRef` shape, no `package_id`, no `version`, a bare-digest `package_id` or a `package_id` in another digest domain fails the schema in either member, at the mutated entry. Entries ordered by UTF-8 bytes where UTF-16 code-unit order differs are admitted; a second entry of one identity refuses `invalid_package`/`conflicting-definition` with both entries as loci, and an entry not strictly after its predecessor refuses `invalid_package`/`invalid-value` at its pointer. | Test (TC-233) |
 
 ## Dependencies
 

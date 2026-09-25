@@ -243,6 +243,8 @@ const POSITIVE_CLAUSE_OPERATIONS: &str =
 const POSITIVE_CONTROL_OPERATIONS: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-control-operations.json");
 const ADVERSE: &str = include_str!("../proposals/checked-package-v2/fixtures/adverse.json");
+const DEPENDENCY_SELECTION_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/dependency-selection-vectors.json");
 const REQUIRED_NODE_TAGS: [&str; 13] = [
     "scalar_type",
     "composite_type",
@@ -3588,7 +3590,13 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
             (
                 "dependency selections",
                 "/lock/dependency_selections",
-                json!([{"role": "dependency", "definition": package["lock"]["edition"]["definition"]}]),
+                json!([{
+                    "identity": "test/geometry", "version": "1",
+                    "package_id": {
+                        "domain": "quire.package.semantic/v2", "algorithm": "sha256",
+                        "digest": "8888888888888888888888888888888888888888888888888888888888888888"
+                    }
+                }]),
             ),
             (
                 "graph node type",
@@ -3658,6 +3666,175 @@ fn tc_233_public_schema_refuses_authored_version_domain_and_node_mutations() {
             mutation["id"].as_str().expect("mutation id is a string")
         );
     }
+}
+
+/// The published `positive-all-families` package with `entries` as its
+/// `dependency_selections`, in both the lock and the identity preimage.
+fn with_dependency_selections(entries: &Value) -> Value {
+    let mut package = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    package["lock"]["dependency_selections"] = entries.clone();
+    package["identity_preimage"]["dependency_selections"] = entries.clone();
+    package
+}
+
+#[trace("TC-233", "FR-322-AC-35")]
+#[test]
+fn tc_233_dependency_selections_carry_each_dependency_package_identity() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let vectors = parsed_fixture(DEPENDENCY_SELECTION_VECTORS);
+    assert_eq!(
+        vectors["base"], "fixtures/positive-all-families.json",
+        "the dependency vectors extend the all-families package"
+    );
+    let entries = &vectors["dependency_selections"];
+    let identities: Vec<&str> = entries
+        .as_array()
+        .expect("dependency selections are an array")
+        .iter()
+        .map(|entry| entry["identity"].as_str().expect("identity is a string"))
+        .collect();
+    assert!(
+        identities.len() > 1 && identities.windows(2).all(|pair| pair[0] < pair[1]),
+        "the published selections are one per library identity, ascending"
+    );
+
+    let mut package = with_dependency_selections(entries);
+    package["package_id"]["digest"] = vectors["package_id"].clone();
+    let errors: Vec<String> = schema
+        .iter_errors(&package)
+        .map(|error| format!("{} at {}", error, error.instance_path()))
+        .collect();
+    assert!(
+        errors.is_empty(),
+        "a package with dependency selections is admitted: {errors:?}"
+    );
+    assert_eq!(
+        derive_identity_preimage(&package),
+        package["identity_preimage"],
+        "dependency selections enter the identity preimage exactly as locked"
+    );
+    let package_id = unqualified_jcs_sha256(&derive_identity_preimage(&package));
+    assert_eq!(
+        package_id,
+        vectors["package_id"]
+            .as_str()
+            .expect("package id is a string"),
+        "the recorded package id binds the dependency selections"
+    );
+    assert_ne!(
+        package_id,
+        parsed_fixture(POSITIVE_ALL_FAMILIES)["package_id"]["digest"],
+        "adding dependency selections changes the package id"
+    );
+    let mut repinned = package.clone();
+    for member in ["lock", "identity_preimage"] {
+        repinned[member]["dependency_selections"][0]["package_id"]["digest"] =
+            json!("5555555555555555555555555555555555555555555555555555555555555555");
+    }
+    assert_ne!(
+        unqualified_jcs_sha256(&derive_identity_preimage(&repinned)),
+        package_id,
+        "a dependency's package id enters the importing package id"
+    );
+
+    let mutations = &vectors["entry_mutations"];
+    assert_eq!(
+        named_inventory(mutations, "/id", "/outcome"),
+        BTreeSet::from([
+            ("definition-selection-shape", "refused:malformed_wire"),
+            ("definition-ref-shape", "refused:malformed_wire"),
+            ("missing-package-id", "refused:malformed_wire"),
+            ("bare-digest-package-id", "refused:malformed_wire"),
+            ("source-bytes-package-id", "refused:digest_domain_mismatch"),
+            ("missing-version", "refused:malformed_wire"),
+        ]),
+        "the dependency-selection mutation inventory is exact"
+    );
+    for mutation in mutations.as_array().expect("entry mutations are an array") {
+        let id = mutation["id"].as_str().expect("mutation id is a string");
+        let mut entries = entries.clone();
+        entries[0] = mutation["entry"].clone();
+        for member in ["lock", "identity_preimage"] {
+            let mut candidate = package.clone();
+            candidate[member]["dependency_selections"] = entries.clone();
+            let entry_path = format!("/{member}/dependency_selections/0");
+            let errors: Vec<String> = schema
+                .iter_errors(&candidate)
+                .map(|error| error.instance_path().to_string())
+                .collect();
+            assert!(
+                !errors.is_empty(),
+                "{id} in {member}/dependency_selections must fail the public schema"
+            );
+            assert!(
+                errors.iter().all(|path| path.starts_with(&entry_path)),
+                "{id} in {member} fails the schema only at the mutated entry: {errors:?}"
+            );
+        }
+    }
+
+    let order_vectors = &vectors["order_vectors"];
+    assert_eq!(
+        named_inventory(order_vectors, "/id", "/outcome"),
+        BTreeSet::from([
+            ("utf8-byte-order", "admitted"),
+            (
+                "duplicate-identity",
+                "refused:invalid_package/conflicting-definition"
+            ),
+            ("misordered", "refused:invalid_package/invalid-value"),
+        ]),
+        "the dependency-selection order inventory is exact"
+    );
+    for vector in order_vectors
+        .as_array()
+        .expect("order vectors are an array")
+    {
+        let id = vector["id"].as_str().expect("order vector id is a string");
+        let selections = &vector["dependency_selections"];
+        let candidate = with_dependency_selections(selections);
+        assert!(
+            schema.is_valid(&candidate),
+            "{id} is admitted by the schema; the order rule, not the schema, decides it"
+        );
+        let (outcome, loci) = match dependency_order_refusal(selections) {
+            None => ("admitted".to_owned(), Vec::new()),
+            Some((cause, loci)) => (format!("refused:invalid_package/{cause}"), loci),
+        };
+        assert_eq!(outcome, vector["outcome"], "{id} order outcome");
+        assert_eq!(json!(loci), vector["loci"], "{id} order loci");
+    }
+}
+
+/// FR-322's `dependency_selections` order rule: the first entry whose
+/// identity repeats an earlier one refuses `conflicting-definition` at both
+/// entries; otherwise the first entry not strictly after its predecessor in
+/// UTF-8 byte order refuses `invalid-value` at its pointer.
+fn dependency_order_refusal(selections: &Value) -> Option<(&'static str, Vec<String>)> {
+    let identities: Vec<&[u8]> = selections
+        .as_array()
+        .expect("dependency selections are an array")
+        .iter()
+        .map(|entry| {
+            entry["identity"]
+                .as_str()
+                .expect("identity is a string")
+                .as_bytes()
+        })
+        .collect();
+    let pointer = |index: usize| format!("/lock/dependency_selections/{index}");
+    for (index, identity) in identities.iter().enumerate() {
+        if let Some(earlier) = identities[..index].iter().position(|seen| seen == identity) {
+            return Some((
+                "conflicting-definition",
+                vec![pointer(earlier), pointer(index)],
+            ));
+        }
+    }
+    identities
+        .windows(2)
+        .position(|pair| pair[0] >= pair[1])
+        .map(|index| ("invalid-value", vec![pointer(index + 1)]))
 }
 
 #[trace("TC-233", "FR-322-AC-15")]

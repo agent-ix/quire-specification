@@ -37,7 +37,12 @@ Validate each positive fixture against its published schema and apply every
 authored adverse mutation. Rebuild each V2 identity preimage from the lock
 selections and occurrence-free graph, recompute the JCS SHA-256 package id,
 then edit each excluded member and each named preimage member, requiring each
-excluded member injected into the identity preimage to be refused. Recompute
+excluded member injected into the identity preimage to be refused. Insert the
+published dependency selections of `dependency-selection-vectors.json` into
+the all-families package's lock and identity preimage, require the schema to
+admit it and its recorded package id to recompute, require each authored
+entry mutation to fail the schema in either member at the mutated entry, and
+apply each order vector's selections to require its recorded order outcome. Recompute
 every nominal node and compound-unit vector identity and apply each authored
 mutation, requiring the exact refusing check it names (`schema` or `semantic`),
 including `-0` spellings, and require the semantic oracle itself to refuse
@@ -79,7 +84,11 @@ and FR-272 and require each to list exactly FR-272-AC-10's causes.
 
 Every positive artifact validates and recomputes its recorded identity. Excluded
 edits leave the package id unchanged and named edits change it. Every mutation
-is refused by exactly its named check. Every locked artifact matches its
+is refused by exactly its named check. Each dependency-selection entry mutation fails the
+schema at the mutated entry; its `outcome` is the reader refusal a strict
+reader reports for it. Each dependency-selection order vector is admitted by
+the schema and admitted or refused by the order rule with exactly its
+recorded outcome and loci. Every locked artifact matches its
 raw-byte digest, and every selection vector is admitted or refused with exactly
 its recorded selection code. The published fixture's frame node is admitted
 with no defect; every frame-entry meaning-join and canonical-order mutation
