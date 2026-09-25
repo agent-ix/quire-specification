@@ -32,8 +32,10 @@ migration refusal.
 
 ## Behavior
 
-Libraries may export types, functions, predicates, protocols, plans and view
-definitions without acquiring a second source authority. Imports are qualified;
+A library exports its named declarations without acquiring a second source
+authority. An importing package uses an imported name as a call `a::f(…)` of
+an exported function whose parameter and result types are package-independent,
+the use FR-322's `dependency_reference` admits. Imports are qualified;
 diamond dependencies must select byte-identical definitions or an explicit
 compatible unification. Migration emits a new subject and correspondence.
 
@@ -94,8 +96,13 @@ types, functions, declared value constants, models, protocols, claims and every
 nominal kind; builtin and anonymous nodes carry no declaration and are never
 exports. No
 node of the library carrying that name is
-`refused { code: missing_declaration, cause: missing-name }`. The linker never
-recovers an export from source occurrences, source-map regions, display text,
+`refused { code: missing_declaration, cause: missing-name }`. A resolved
+export is admitted in the importing package as FR-322's `dependency_reference`
+rule states: as the callee of a call to a function no type node reachable from
+whose signature carries a `declaration`. Any other use of a resolved export,
+such as `a::R` for an exported record `R` or a call of a function returning
+`R`, is `refused { code: ill_typed, cause: operator-ineligible }` at the use.
+The linker never recovers an export from source occurrences, source-map regions, display text,
 node order or a node's body; a library whose own graph carries a duplicated
 name or a declaration that disagrees with its nominal qualified declaration is
 already refused by the FR-322 reader and exports nothing.
@@ -131,7 +138,7 @@ relabeled. No library-level migration correspondence record is defined.
 | FR-307-AC-3 | Migration preserves old/new identities and does not relabel historical evidence. | Test (TC-227) |
 | FR-307-AC-4 | An import binds the library `package_id`, a mismatched import is `stale_dependency`, a conflicting diamond or import cycle is `invalid_package` with its paths, and a duplicate qualifier is `ambiguous_declaration`; an import cycle uses cause `definition-cycle`, and a name from an import without `as` is `missing_declaration`. | Test (TC-227) |
 | FR-307-AC-5 | A migrated package that reuses its source `package_id` with a different identity preimage is `invalid_package` with cause `invalid-value` at `/package_id`. | Test (TC-227) |
-| FR-307-AC-6 | An import whose digest is `sha256:` followed by 64 lowercase hex, 64 uppercase hex, 63 or 65 lowercase hex characters is `invalid-digest` at the digest string; an import naming `test/geometry` binds to the library supplied under the identity `test/geometry` and no other; two libraries supplied under one identity are `invalid_package`/`conflicting-definition` retaining both; an import of an identity no library is supplied under is `missing_import`/`missing-selection` at its identity string; and the bound library's `package_id` is the one its compile yields, so a library whose source compiles to a `package_id` other than the import's `d` is `stale_dependency`/`byte-digest-mismatch`. | Test (TC-227) |
+| FR-307-AC-6 | An import whose digest is `sha256:` followed by 64 lowercase hex, 64 uppercase hex, 63 or 65 lowercase hex characters is `invalid-digest` at the digest string; an import naming `test/geometry` binds to the library supplied under the identity `test/geometry` and no other; two libraries supplied under one identity are `invalid_package`/`conflicting-definition` retaining both; an import of an identity no library is supplied under is `missing_import`/`missing-selection` at its identity string; and the bound library's `package_id` is the one its compile yields, so a library whose source compiles to a `package_id` other than the import's `d` is `stale_dependency`/`byte-digest-mismatch`.; with `test/geometry` exporting a record `R` and a function `f` over builtin types, `g::f(x)` is admitted and a use `g::R` is `ill_typed`/`operator-ineligible` at the use | Test (TC-227) |
 
 ## Dependencies
 

@@ -33,19 +33,27 @@ When a checked package is executed or replayed, the producer SHALL use the immut
   `package_id` are that selection's, and `sources` is the selected
   dependency package's own FR-322 lock `sources`. The producer copies these
   from the proved package and its admitted dependency packages and invents
-  none. The executor recompiles each dependency from its entry's `sources`
-  and supplies it to every import of that `identity` (FR-307). A dependency
-  whose recompiled `package_id` differs from its entry's `package_id`
-  refuses `stale_dependency`/`byte-digest-mismatch`, naming the entry's
-  `identity`, its `package_id` and the recompiled one, and yields no
-  result. The executor supplies each recompiled dependency under its
-  entry's `identity` and `version`. An import whose identity no entry
-  supplies, or whose version differs from its entry's, refuses as FR-307
-  states (`missing_import`/`missing-selection` or
-  `stale_dependency`/`revision-mismatch`). Entries not in strictly ascending
-  UTF-8 byte order of `identity`, or an entry that no import of the
-  recompiled package reaches, refuse `invalid_package`/`invalid-value` at
-  `/package/dependencies`.
+  none. The executor supplies each dependency, recompiled from its entry's
+  `sources`, under the entry's `identity` and `version` to every import of
+  that identity (FR-307). It refuses with the first of these, each rule
+  applied over all entries, in entry order, before the next rule, and
+  yields no result:
+  1. before any recompile, entries not in strictly ascending UTF-8 byte
+     order of `identity`, a repeated identity included, refuse
+     `invalid_package`/`invalid-value` at `/package/dependencies`;
+  2. the recompile's own refusals, FR-307's among them: an import whose
+     identity no entry supplies refuses `missing_import`/`missing-selection`,
+     one whose version differs from its entry's
+     `stale_dependency`/`revision-mismatch`, and one whose recorded `d`
+     differs from the `package_id` its entry's sources recompile to
+     `stale_dependency`/`byte-digest-mismatch`;
+  3. a recompiled proved `package_id` other than the request's refuses
+     `stale_dependency`/`byte-digest-mismatch`;
+  4. an entry that no import of the recompiled package reaches refuses
+     `invalid_package`/`invalid-value` at `/package/dependencies`;
+  5. an entry whose `package_id` differs from the `package_id` its sources
+     recompile to refuses `stale_dependency`/`byte-digest-mismatch`, naming
+     the entry's `identity`, its `package_id` and the recompiled one.
 - `byte_provision` — present on a replay request only: the digest-addressed
   bytes of every source, definition and domain-package input the replay
   recompiles, each keyed by its declared digest domain and digest (QSL
@@ -98,7 +106,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-4 | The outcome-to-verdict map assigns one verdict per QSL ADR-013 O-16 category, fixed independently of any request; an `Undefined` outcome and a refused `FamilyOutcome` never settle agreement. | Test (TC-273) |
 | FR-323-AC-5 | A replay request's `byte_provision` supplies every source, definition and domain-package input the replay recompiles, each keyed by its declared digest domain and digest; the `package` reference's `RawSourceRef` digests are exactly the source and definition digests the executor recomputes and compares, and the executor reads no recompilation input by path, environment variable or search location. | Test (TC-277) |
 | FR-323-AC-6 | A replay request's `replay` property carries the `ReplaySource`, the selected function's `QualifiedName`, arguments keyed by parameter node id, the semantic profile selections, the failing node's occurrence key, the proof bounds and declared domains, the trace position and the `backend` member; a non-replay request carries no `replay` property. | Test (TC-278) |
-| FR-323-AC-7 | A replay request's `package` reference names the proved package's own `sources` and one `dependencies` entry per `dependency_selections` entry, in its order, each carrying that selection's `identity`, `version` and `package_id` and the dependency's own lock `sources`. A dependency whose entry's `sources` recompile to a `package_id` other than the entry's refuses `stale_dependency`/`byte-digest-mismatch` naming that entry's `identity`, its `package_id` and the recompiled one, with no result. A removed entry refuses `missing_import`/`missing-selection`, an entry with a changed version `stale_dependency`/`revision-mismatch`, and swapped entries or an entry no import reaches `invalid_package`/`invalid-value` at `/package/dependencies`. | Test (TC-277) |
+| FR-323-AC-7 | A replay request's `package` reference names the proved package's own `sources` and one `dependencies` entry per `dependency_selections` entry, in its order, each carrying that selection's `identity`, `version` and `package_id` and the dependency's own lock `sources`. The executor refuses by the first rule of its order: swapped or repeated entries `invalid_package`/`invalid-value` at `/package/dependencies` before any recompile; a removed entry `missing_import`/`missing-selection`; an entry with a changed version `stale_dependency`/`revision-mismatch`; an entry whose sources recompile to a `package_id` other than the import's `stale_dependency`/`byte-digest-mismatch`; an entry no import reaches `invalid_package`/`invalid-value`; and an entry whose `package_id` alone is changed `stale_dependency`/`byte-digest-mismatch` naming its `identity`, its `package_id` and the recompiled one. None yields a result. | Test (TC-277) |
 
 ## Dependencies
 

@@ -48,7 +48,9 @@ through a `dependency_reference` callee, with its dependency package supplied,
 and then its FR-322-AC-37 mutations: no dependency package supplied, a
 `package` absent from `dependency_selections`, a `node` with no
 `declaration`, a `node` naming a declared record or a function returning one,
-and the target listed in `dependencies`. Recompute
+a function over `Set<R>` and one over a tuple holding `R` for a declared
+record `R`, the term as a non-callee argument, and the target listed in
+`dependencies`. Recompute
 every nominal node and compound-unit vector identity and apply each authored
 mutation, requiring the exact refusing check it names (`schema` or `semantic`),
 including `-0` spellings, and require the semantic oracle itself to refuse
@@ -97,7 +99,7 @@ the schema and admitted or refused by the order rule with exactly its
 recorded outcome and loci. A `dependency_reference` term is admitted by both schemas and each of its four mutations fails both; as a call's callee it keys a valid application-node preimage, and changing its `package` or its `node` each gives a new, distinct id. The dependency call package is admitted, and its
 mutations refuse `missing_import`/`missing-selection`,
 `missing_declaration`/`missing-selection`, `missing_declaration`/`missing-name`,
-`ill_typed`/`operator-ineligible` (twice) and `invalid_semantic_graph`. Every locked artifact matches its
+`ill_typed`/`operator-ineligible` (five times) and `invalid_semantic_graph`. Every locked artifact matches its
 raw-byte digest, and every selection vector is admitted or refused with exactly
 its recorded selection code. The published fixture's frame node is admitted
 with no defect; every frame-entry meaning-join and canonical-order mutation

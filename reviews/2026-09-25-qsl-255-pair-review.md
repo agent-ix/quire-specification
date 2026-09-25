@@ -69,3 +69,22 @@ FND-001 is shared with QSL PR 447, so land the fix in both PRs together.
 FND-003 and FND-004 should be fixed in this PR, because QSL cites these
 lines as its authority. FND-005 and FND-006 are small and can go in the
 same commit.
+
+## Dispositions
+
+All findings are fixed in the commit that follows this review.
+
+- FND-001: FR-322 admits only signatures none of whose reachable type nodes
+  carries a `declaration`; FR-322-AC-37 and TC-233 add `Set<R>` and a tuple
+  holding `R`.
+- FND-002: FR-307's Behavior and export paragraph state the use rule; TC-227
+  L01 to L04 use an exported function `f`; FR-307-AC-6 and L09 add the
+  `g::R` refusal.
+- FND-003: the term stands only as the `quire.op.function.call` callee; any
+  other place refuses `ill_typed`/`operator-ineligible`. The "wherever a
+  `reference` may stand" and "outside any application" text is gone, and the
+  family sentence gives the callee family `function`.
+- FND-004: FR-323 lists a five-rule first-refusal order, each rule over all
+  entries before the next, with a repeated identity refused by rule 1.
+- FND-005: the step 7 sentence is in the argument clause.
+- FND-006: TC-277 BP-11 is added and FR-323-AC-7 cites it.
