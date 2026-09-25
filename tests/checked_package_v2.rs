@@ -4601,11 +4601,7 @@ fn diagnostic_row_causes(document: &str, code: &str) -> BTreeSet<String> {
                 .is_some_and(|cell| cell.trim() == format!("`{code}`"))
         })
         .collect::<Vec<_>>();
-    assert_eq!(
-        rows.len(),
-        1,
-        "the document has exactly one `{code}` row"
-    );
+    assert_eq!(rows.len(), 1, "the document has exactly one `{code}` row");
     let cause_cell = rows[0]
         .split('|')
         .nth(2)
