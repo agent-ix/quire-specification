@@ -4580,10 +4580,20 @@ fn operation_vector_node(package: &Value, vectors: &Value, name: &str) -> usize 
         .unwrap_or_else(|| panic!("operation vector {name} keys a published package node"))
 }
 
+const TYPED_DIAGNOSTIC_CAUSE: &str =
+    include_str!("../spec/objects/foundation/FR-272-typed-diagnostic-cause.md");
+
 /// Causes a native-diagnostics row lists for exactly the given code: the
 /// backticked spellings of its cause cell before the first `;`.
 fn native_diagnostic_row_causes(code: &str) -> BTreeSet<String> {
-    let rows = NATIVE_DIAGNOSTICS
+    diagnostic_row_causes(NATIVE_DIAGNOSTICS, code)
+}
+
+/// Causes the one table row of `document` whose first cell is exactly the
+/// given code lists: the backticked spellings of its second cell before the
+/// first `;`.
+fn diagnostic_row_causes(document: &str, code: &str) -> BTreeSet<String> {
+    let rows = document
         .lines()
         .filter(|line| {
             line.split('|')
@@ -4591,11 +4601,7 @@ fn native_diagnostic_row_causes(code: &str) -> BTreeSet<String> {
                 .is_some_and(|cell| cell.trim() == format!("`{code}`"))
         })
         .collect::<Vec<_>>();
-    assert_eq!(
-        rows.len(),
-        1,
-        "native diagnostics has exactly one `{code}` row"
-    );
+    assert_eq!(rows.len(), 1, "the document has exactly one `{code}` row");
     let cause_cell = rows[0]
         .split('|')
         .nth(2)
@@ -6324,8 +6330,49 @@ fn tc_233_every_published_package_carries_only_current_application_node_keys() {
     }
 }
 
+/// The `stage_limit_exceeded` and `duplicate_selection` cause sets are closed:
+/// the native-diagnostics row and the FR-272 row of each code list exactly the
+/// causes of catalog revision `1-draft.7`, so neither document can add, drop or
+/// rename a cause without the other and this list.
+#[trace("TC-233", "FR-272-AC-10")]
+#[test]
+fn tc_233_stage_limit_and_duplicate_selection_cause_sets_are_closed() {
+    let expected: [(&str, &[&str]); 2] = [
+        (
+            "stage_limit_exceeded",
+            &[
+                "input-bytes-exceeded",
+                "nesting-depth-exceeded",
+                "token-count-exceeded",
+                "node-count-exceeded",
+                "edge-count-exceeded",
+                "occurrence-count-exceeded",
+                "diagnostic-count-exceeded",
+                "work-budget-exceeded",
+            ],
+        ),
+        ("duplicate_selection", &["duplicate-identity"]),
+    ];
+    for (code, causes) in expected {
+        let causes = causes
+            .iter()
+            .map(|cause| (*cause).to_owned())
+            .collect::<BTreeSet<_>>();
+        assert_eq!(
+            diagnostic_row_causes(NATIVE_DIAGNOSTICS, code),
+            causes,
+            "native-diagnostics `{code}` row lists exactly its 1-draft.7 causes"
+        );
+        assert_eq!(
+            diagnostic_row_causes(TYPED_DIAGNOSTIC_CAUSE, code),
+            causes,
+            "FR-272 `{code}` row lists exactly its 1-draft.7 causes"
+        );
+    }
+}
+
 /// FR-272-AC-7 pins these causes to catalog revision `1-draft.4` by name, and
-/// revisions `1-draft.5` and `1-draft.6` keep them; a header that still
+/// revisions `1-draft.5` to `1-draft.7` keep them; a header that still
 /// claimed `1-draft.3` would, by the catalog's own rule ("A producer claiming
 /// revision `1-draft.3` emits none of these causes"), forbid emitting
 /// `stale-node-key` and the other revision-`1-draft.4` causes this file
@@ -6338,7 +6385,7 @@ fn tc_233_native_diagnostics_header_pins_current_revision() {
         .find(|line| line.starts_with("Interpretation identity:"))
         .expect("native diagnostics has an interpretation-identity header line");
     assert_eq!(
-        header, "Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.6`.",
-        "the catalog header claims revision 1-draft.6, which keeps every 1-draft.4 cause this file relies on"
+        header, "Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.7`.",
+        "the catalog header claims revision 1-draft.7, which keeps every 1-draft.4 cause this file relies on"
     );
 }
