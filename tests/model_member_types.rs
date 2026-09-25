@@ -566,11 +566,9 @@ fn recover_vector<'a>(package: &'a Value, nodes: &[Value], name: &str) -> Option
     )
 }
 
-/// FR-322 "Reference conformance" over two reference operands.
+/// FR-322 "Reference conformance" over two reference operands: both owners
+/// are recovered by step 2, even for one type node.
 fn conforming_reference(package: &Value, nodes: &[Value], left: &str, right: &str) -> Value {
-    if left == right {
-        return json!({"admitted": true});
-    }
     let (Some(a), Some(b)) = (
         recover_vector(package, nodes, left),
         recover_vector(package, nodes, right),
@@ -699,7 +697,12 @@ fn projection(catalog: &Value, package: &Value, nodes: &[Value], case: &Value) -
             other => panic!("TC-281 decides no {other} constraint"),
         }
     }
-    derive(package, nodes, member)
+    // The `member` result form: the declared `result_type` is the step 4 type.
+    let derived = derive(package, nodes, member);
+    match derived.get("member_type") {
+        Some(member_type) if *member_type != case["result_type"] => ineligible(),
+        _ => derived,
+    }
 }
 
 #[trace("TC-281", "FR-322-AC-33")]
@@ -729,6 +732,22 @@ fn tc_281_reference_equality_admits_conforming_object_types() {
 fn tc_281_record_projection_reads_a_model_field_over_a_deref_result() {
     let vectors = parsed(VECTORS);
     let catalog = parsed(OPERATION_CATALOG);
+    let object_groups: BTreeSet<&str> = catalog["groups"]
+        .as_object()
+        .expect("groups are an object")
+        .iter()
+        .filter(|(_, members)| {
+            members
+                .as_array()
+                .is_some_and(|m| m.contains(&json!("object")))
+        })
+        .map(|(name, _)| name.as_str())
+        .collect();
+    assert_eq!(
+        object_groups,
+        BTreeSet::from(["field_owner"]),
+        "an object term fits only a field_owner position"
+    );
     let nodes = array(&vectors, "model_declaration_nodes");
     for case in array(&vectors, "projection_cases") {
         assert_eq!(

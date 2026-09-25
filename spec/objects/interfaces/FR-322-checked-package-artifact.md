@@ -364,7 +364,8 @@ the step 4 type.
 A field of a model object is read as `quire.op.record.project` over a
 `quire.op.model.deref` application. The `deref` operand has type
 `Reference<O>`, and its `result_type` is `O`'s model declaration node, the
-`inner:0` result, whose family is `object`. The projection's operand is that
+`inner:0` result, of family `object` ("Operation families, groups and
+constraints"). The projection's operand is that
 `deref` application, its `member` is `{kind: "field", name, declaration}`
 with `declaration` naming `O`'s model declaration node, and its
 `result_type` is the step 4 type of the resolved field. The `field_owner`
@@ -378,13 +379,13 @@ dereferenced refuses `ill_typed`/`operator-ineligible`.
 `quire.op.reference.eq` and `quire.op.reference.ne` carry the
 `conforming_reference` constraint over operands 0 and 1, each of type
 `Reference<X>`, the `composite_type`/`reference` node over `X`'s model
-declaration node. When both operands resolve to the same type node, the
-constraint holds. Otherwise, at the application's `operator-ineligible`
-check, the reader recovers the `ModelOwner` of each operand's model
-declaration node by step 2, with step 2's refusals, and the two
-declarations are `A` and `B`. The constraint holds exactly when `A` and `B`
-are object type declarations of the same selected document and one conforms
-to the other under
+declaration node. At the application's `operator-ineligible` check, the
+reader recovers the `ModelOwner` of each operand's model declaration node by
+step 2, with step 2's refusals, including when both operands resolve to one
+type node, and the two declarations are `A` and `B`. The constraint holds
+exactly when `A` and `B` are object type declarations, with or without
+`interfaceFeatures`, of one selected document and one conforms to the other
+under
 [FR-151](../../functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md)'s
 conformance relation: they are the same effective type, or a chain of
 declared supertypes in that document's `quire.model.complete/v1`
@@ -393,9 +394,15 @@ normalization leads from one to the other. This is the pair
 `Reference<S>` to `Reference<T>` upcast row admits in either direction, so
 [FR-153-AC-6](../../functional/type-model/FR-153-query-closed-model-environments.md)'s
 subtype object compares with a reference of its supertype. Operand order
-does not matter. Two object types of different selected documents,
-two with no supertype chain in either direction, and a relationship
-declaration refuse `ill_typed`/`operator-ineligible`.
+does not matter. Conformance follows declared supertypes only, so a
+`systems_interface` declaration conforms through its declared supertypes and
+never through FR-152 structural conformance. Every supertype edge is a
+member of one admitted document, so declarations of two documents never
+conform. Two object types with no supertype chain in either direction, and
+a relationship declaration, refuse `ill_typed`/`operator-ineligible`. That
+is the cause of every catalog operand check; FR-149-AC-12 and TC-198 L08
+report the same pair, found while checking source, as
+`ill_typed`/`type-mismatch`.
 
 ## Operation families, groups and constraints
 
@@ -409,16 +416,21 @@ A type node's **family** is read from the type the node resolves to through its
 ordered and `enum` otherwise; `composite_type` forms `option`, `record`,
 `tuple`, `sequence`, `set`, `bag`, `ordered_set` and `reference` are their own
 family, and a model declaration node whose `semantic_form` is `object_type` or
-`systems_interface` is `object`: the type `quire.op.model.deref` yields for a
-`Reference<O>` operand is `O`'s model declaration node, of family `object`. A term's family is its type's family, except
-that a function reference is `function`, a relation reference is `population`,
+`systems_interface` is `object`. A `relation` node and a `model` node of any
+other form have no family, so a term they type fits no operand position. An
+`object` term is admitted only at a `field_owner` operand position: `object`
+is a member of no other group, so the `inner:0` result of
+`quire.op.model.deref` is read only through a field projection ("Model-owned
+members"). The `type_argument` member of `quire.op.reference.upcast` names a
+`Reference<T>` node, whose family is `reference`. A term's family is its
+type's family, except that a function reference is `function`, a relation reference is `population`,
 an aggregate is `aggregate`, a binding is `binder` (whose *bound* is the
 descriptor of its value) and a clause application is `clause`.
 
 | Group | Families | Decision rule |
 | --- | --- | --- |
 | `any_value` | `boolean`, `integer`, `rational`, `decimal`, `float32`, `float64`, `text`, `enum`, `ordered_enum`, `quantity`, `option`, `record`, `tuple`, `sequence`, `set`, `bag`, `ordered_set`, `reference` | An operand position admits a term whose family is a member. |
-| `any_term` | `any_value` plus `object`, `function`, `population`, `aggregate`, `binder`, `clause` | Used only as the rest position of clause and call operations. |
+| `any_term` | `any_value` plus `function`, `population`, `aggregate`, `binder`, `clause` | Used only as the rest position of clause and call operations. |
 | `exact_numeric` | `integer`, `rational`, `decimal` | Exact numeric operands of conversions. |
 | `rational_promotable` | `integer`, `rational` | Operands promoted exactly by `n ↦ n/1` (FR-146, FR-149). |
 | `ieee_float` | `float32`, `float64` | IEEE operands; no `eq`, `ne`, ordering or `negate`. |
@@ -546,8 +558,8 @@ partial checked package.
 | FR-322-AC-30 | A model-owned `field` or `operation` member resolves among the declaring type's exposed effective members, own and inherited. A field declared by a supertype resolves on the subtype's node, and a redefined operation resolves to the most derived redefinition. An operation on a `systems_interface` node refuses `ill_typed`/`operator-ineligible`. Two exposed fields of one name refuse `ambiguous_declaration`/`ambiguous-name`. An undeclared name, a name of the other member kind and a relationship declaring node each refuse `ill_typed`/`operator-ineligible`. | Test (TC-280) |
 | FR-322-AC-31 | A resolved model member's type follows the declared-type, multiplicity and presence tables. The derived types are `Int[0, 9]` from an integer value type, `Integer` from a constrained native `Integer`, `Option<Boolean>`, `Set<Integer>[0, 3]`, `Sequence<Integer>[0, 5]`, `Set<Integer>[0, 1]`, `Set<Integer>` for `[0, unbounded]`, `Reference<Invoice>` and an operation's `Integer` result. A `Text` field, a `[1, unbounded]` field and an operation with no result each refuse `ill_typed`/`operator-ineligible`. So does a call whose receiver is not a reference to the declaring node, or whose arguments differ in number or type node from the operation's parameters. | Test (TC-280) |
 | FR-322-AC-32 | A lock-selected domain package document is checked as evidence before graph admission: a document supplied under the selected digest with matching identity and version passes the selection admission checks, while a digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`, no document refuses `missing_import`/`missing-selection`, an altered document `stale_dependency`/`byte-digest-mismatch` and a document whose version differs from the selection `invalid_model_binding`/`wrong-model-selection`. | Test (TC-280) |
-| FR-322-AC-33 | `quire.op.reference.eq` and `quire.op.reference.ne` admit two references whose object types conform one to the other, in either operand order and through a chain of supertypes, as well as two of one type. Two unrelated object types and a reference to a relationship refuse `ill_typed`/`operator-ineligible`, and an operand whose owner is not selected refuses `missing_declaration`/`missing-selection`. | Test (TC-281) |
-| FR-322-AC-34 | `quire.op.record.project` over a `quire.op.model.deref` result reads a field of a model object: the `deref` result has family `object`, the projection resolves the field on the declaring object type, own or inherited, and its result is the field's member type. A projection over a reference that is not dereferenced, a `field` member naming a node other than the operand's object type, a `deref` whose `result_type` is not the operand's object type, and a `deref` result of a relationship refuse `ill_typed`/`operator-ineligible`. | Test (TC-281) |
+| FR-322-AC-33 | `quire.op.reference.eq` and `quire.op.reference.ne` admit two references to selected object types of which one conforms to the other along declared supertypes: two of one type, a subtype and its supertype in either operand order, a subtype two levels down, and a type with two supertypes against either. A systems interface with no declared supertype against an unrelated object type, two unrelated object types, a reference to a relationship, even compared with itself, and an operand of family `object` refuse `ill_typed`/`operator-ineligible`. An operand whose owner is not selected refuses `missing_declaration`/`missing-selection`, even compared with itself. | Test (TC-281) |
+| FR-322-AC-34 | `quire.op.record.project` over a `quire.op.model.deref` result reads a field of a model object: the `deref` result has family `object`, the projection resolves the field on the declaring object type, own or inherited, and its result is the field's member type. A projection over a reference that is not dereferenced, a `field` member naming a node other than the operand's object type, a `deref` whose `result_type` is not the operand's object type, a `deref` result of a relationship, and a projection whose `result_type` is not the field's member type refuse `ill_typed`/`operator-ineligible`. | Test (TC-281) |
 
 ## Dependencies
 
