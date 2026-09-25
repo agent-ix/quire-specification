@@ -14,6 +14,7 @@ const VECTORS: &str =
     include_str!("../proposals/checked-package-v2/model-member-type-vectors.json");
 const PREIMAGE_SCHEMA: &str =
     include_str!("../proposals/checked-package-v2/node-identity-preimage.schema.json");
+const NODE_DOMAIN: &str = "quire.checked-semantic-node/v1";
 
 fn parsed(bytes: &str) -> Value {
     serde_json::from_str(bytes).expect("authored fixture is valid JSON")
@@ -39,10 +40,12 @@ fn array<'a>(value: &'a Value, member: &str) -> &'a [Value] {
         .unwrap_or_else(|| panic!("authored member {member} is an array"))
 }
 
-/// The declaration a model declaration node recovers to.
-enum Recovered<'a> {
-    ObjectType(&'a Value),
-    Relationship,
+fn refused(code: &str, cause: &str) -> Value {
+    json!({"refused": {"code": code, "cause": cause}})
+}
+
+fn ineligible() -> Value {
+    refused("ill_typed", "operator-ineligible")
 }
 
 /// The `ModelDeclarationNode` preimage FR-322 step 2 computes.
@@ -64,32 +67,62 @@ fn declaration_preimage(package: &Value, tag: &str, form: &str, node: &str) -> V
     })
 }
 
-/// FR-322 step 2: the declaration of the selected package whose recomputed
-/// model declaration node key equals `node_digest`.
-fn recover<'a>(package: &'a Value, node_digest: &str) -> Option<Recovered<'a>> {
-    for object_type in array(package, "object_types") {
+/// A declaration of the selected package with its node tag and form.
+struct Declared<'a> {
+    tag: &'static str,
+    form: &'static str,
+    node: &'a str,
+    object_type: Option<&'a Value>,
+}
+
+fn declarations(package: &Value) -> Vec<Declared<'_>> {
+    let objects = array(package, "object_types").iter().map(|object_type| {
         let form = if object_type["interfaceFeatures"].is_null() {
             "object_type"
         } else {
             "systems_interface"
         };
-        let preimage = declaration_preimage(package, "model", form, text(object_type, "node"));
-        if digest(&preimage) == node_digest {
-            return Some(Recovered::ObjectType(object_type));
+        Declared {
+            tag: "model",
+            form,
+            node: text(object_type, "node"),
+            object_type: Some(object_type),
         }
-    }
-    array(package, "relationships")
+    });
+    let relationships = array(package, "relationships")
         .iter()
-        .any(|relationship| {
-            let preimage = declaration_preimage(
-                package,
-                "relation",
-                "relationship",
-                text(relationship, "node"),
-            );
-            digest(&preimage) == node_digest
-        })
-        .then_some(Recovered::Relationship)
+        .map(|relationship| Declared {
+            tag: "relation",
+            form: "relationship",
+            node: text(relationship, "node"),
+            object_type: None,
+        });
+    objects.chain(relationships).collect()
+}
+
+fn declaration_key(package: &Value, declared: &Declared<'_>) -> String {
+    digest(&declaration_preimage(
+        package,
+        declared.tag,
+        declared.form,
+        declared.node,
+    ))
+}
+
+/// FR-322 step 2 over a wire node's key, tag and form: the matching
+/// declaration of the selected package.
+fn recover<'a>(package: &'a Value, key: &str, tag: &str, form: &str) -> Option<Declared<'a>> {
+    declarations(package).into_iter().find(|declared| {
+        declared.tag == tag && declared.form == form && declaration_key(package, declared) == key
+    })
+}
+
+/// FR-322 step 2's fixed members of a matched wire node.
+fn fixed_members_hold(node: &Value) -> bool {
+    node["semantic_type"] == node["node_id"]
+        && node.get("declaration").is_none()
+        && node.get("recursion_group").is_none()
+        && node["body"] == json!({"term": "aggregate", "members": []})
 }
 
 fn object_type<'a>(package: &'a Value, node: &str) -> Option<&'a Value> {
@@ -155,51 +188,34 @@ fn exposed<'a>(package: &'a Value, declared: &'a Value, list: &str) -> Vec<(Stri
         .collect()
 }
 
-/// FR-322 step 4's element type table.
-fn element_type(
-    package: &Value,
-    type_ref: &str,
-    constraints: &Value,
-    nodes: &[Value],
-) -> Option<Value> {
-    let keys: BTreeSet<&str> = constraints
-        .as_object()
-        .expect("constraints are an object")
-        .keys()
-        .map(String::as_str)
-        .collect();
-    let integer = |member: &str| {
-        constraints[member]
-            .as_str()
-            .and_then(|bound| bound.parse::<i128>().ok())
-    };
-    match (type_ref, keys.len()) {
-        ("ix://quire/native/Boolean", 0) => Some(json!({"type": "Boolean"})),
-        ("ix://quire/native/Integer", 0) => Some(json!({"type": "Integer"})),
-        ("ix://quire/native/Integer", 2) => {
-            let (min, max) = (integer("min")?, integer("max")?);
-            (min <= max).then(
-                || json!({"type": "Int", "min": constraints["min"], "max": constraints["max"]}),
-            )
-        }
-        (node, 0) if object_type(package, node).is_some() => {
-            let target = nodes.iter().find(|vector| {
-                let owner = &vector["preimage"]["owner"];
-                owner["node"] == node && owner["version"] == package["version"]
-            })?;
-            Some(json!({"type": "Reference", "target": target["name"]}))
-        }
-        _ => None,
+/// FR-322 step 4's element type table. A reference target is the model
+/// declaration node key recomputed from the declaration.
+fn element_type(package: &Value, type_ref: &str) -> Option<Value> {
+    match type_ref {
+        "ix://quire/native/Boolean" => return Some(json!({"type": "Boolean"})),
+        "ix://quire/native/Integer" => return Some(json!({"type": "Integer"})),
+        _ => {}
     }
+    if let Some(value_type) = array(package, "value_types")
+        .iter()
+        .find(|value_type| text(value_type, "node") == type_ref)
+    {
+        let bound = |member: &str| text(value_type, member).parse::<i128>().ok();
+        let integer = text(value_type, "native") == "ix://quire/native/Integer";
+        return (integer && bound("lower")? <= bound("upper")?).then(
+            || json!({"type": "Int", "min": value_type["lower"], "max": value_type["upper"]}),
+        );
+    }
+    let target = declarations(package)
+        .into_iter()
+        .find(|declared| declared.form == "object_type" && declared.node == type_ref)?;
+    Some(json!({"type": "Reference", "target": declaration_key(package, &target)}))
 }
 
 /// FR-322 step 4's multiplicity rule.
 fn with_multiplicity(element: Value, multiplicity: &Value) -> Option<Value> {
     let lower = text(multiplicity, "lower");
     let upper = text(multiplicity, "upper");
-    if upper == "unbounded" {
-        return None;
-    }
     if (lower, upper) == ("1", "1") {
         return Some(element);
     }
@@ -213,36 +229,36 @@ fn with_multiplicity(element: Value, multiplicity: &Value) -> Option<Value> {
         (Some(true), Some(true)) => "OrderedSet",
         _ => return None,
     };
-    Some(json!({"type": kind, "min": lower, "max": upper, "element": element}))
+    match (lower, upper) {
+        ("0", "unbounded") => Some(json!({"type": kind, "element": element})),
+        (_, "unbounded") => None,
+        _ => Some(json!({"type": kind, "min": lower, "max": upper, "element": element})),
+    }
 }
 
-fn refused(code: &str, cause: &str) -> Value {
-    json!({"refused": {"code": code, "cause": cause}})
-}
-
-/// FR-322 step 4's element and multiplicity tables over one declared type.
-fn declared_type_of(package: &Value, declared: &Value, nodes: &[Value]) -> Option<Value> {
-    element_type(
-        package,
-        text(declared, "typeRef"),
-        &declared["constraints"],
-        nodes,
-    )
-    .and_then(|element| with_multiplicity(element, &declared["multiplicity"]))
+/// FR-322 step 4's tables over one declared `typeRef` and multiplicity.
+fn declared_type_of(package: &Value, declared: &Value) -> Option<Value> {
+    element_type(package, text(declared, "typeRef"))
+        .and_then(|element| with_multiplicity(element, &declared["multiplicity"]))
 }
 
 /// FR-322 steps 2 to 4 for one member case, as its expectation spells them.
 fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
-    let ineligible = refused("ill_typed", "operator-ineligible");
     let declaring = nodes
         .iter()
         .find(|vector| vector["name"] == member["declaration"])
         .expect("a case names a published node vector");
-    let Some(recovered) = recover(package, text(declaring, "sha256")) else {
+    let preimage = &declaring["preimage"];
+    let Some(recovered) = recover(
+        package,
+        text(declaring, "sha256"),
+        text(preimage, "node_tag"),
+        text(preimage, "semantic_form"),
+    ) else {
         return refused("missing_declaration", "missing-selection");
     };
-    let Recovered::ObjectType(declared) = recovered else {
-        return ineligible;
+    let Some(declared) = recovered.object_type else {
+        return ineligible();
     };
     let (list, kind) = match text(member, "kind") {
         "field" => ("fields", "field"),
@@ -254,30 +270,33 @@ fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
         .filter(|(_, record)| record["name"] == member["name"])
         .collect();
     let (identity, record) = match matches.as_slice() {
-        [] => return ineligible,
+        [] => return ineligible(),
         [one] => one,
         _ => return refused("ambiguous_declaration", "ambiguous-name"),
     };
     let declared_type = if kind == "field" {
         record
-    } else if record["result"].is_null() {
-        return ineligible;
     } else {
-        &record["result"]
-    };
-    if kind == "operation" {
-        if !declared["interfaceFeatures"].is_null() {
-            return ineligible;
+        if recovered.form != "object_type" {
+            return ineligible();
+        }
+        let receiver = json!({"type": "Reference", "target": declaring["sha256"]});
+        if member["receiver"] != receiver {
+            return ineligible();
         }
         let parameters: Option<Vec<Value>> = array(record, "parameters")
             .iter()
-            .map(|parameter| declared_type_of(package, parameter, nodes))
+            .map(|parameter| declared_type_of(package, parameter))
             .collect();
         if parameters.as_deref() != Some(array(member, "arguments")) {
-            return ineligible;
+            return ineligible();
         }
-    }
-    let member_type = declared_type_of(package, declared_type, nodes).map(|value| {
+        if record["result"].is_null() {
+            return ineligible();
+        }
+        &record["result"]
+    };
+    let member_type = declared_type_of(package, declared_type).map(|value| {
         if record["presence"] == "optional" {
             json!({"type": "Option", "inner": value})
         } else {
@@ -286,11 +305,28 @@ fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
     });
     match member_type {
         Some(member_type) => json!({"resolves": identity, "member_type": member_type}),
-        None => ineligible,
+        None => ineligible(),
     }
 }
 
-/// FR-322 step 1 over one selection case.
+/// FR-322 step 2 over one wire node.
+fn recover_wire(package: &Value, node: &Value) -> Value {
+    assert_eq!(node["node_id"]["domain"], NODE_DOMAIN);
+    let Some(recovered) = recover(
+        package,
+        text(&node["node_id"], "digest"),
+        text(node, "node_tag"),
+        text(node, "semantic_form"),
+    ) else {
+        return refused("missing_declaration", "missing-selection");
+    };
+    if !fixed_members_hold(node) {
+        return refused("invalid_package", "stale-node-key");
+    }
+    json!({"recovers": recovered.node})
+}
+
+/// FR-322 step 1's admission checks over one selection case.
 fn select(package: &Value, case: &Value) -> Value {
     let document_digest = digest(package);
     let resolve = |value: &str| {
@@ -301,6 +337,9 @@ fn select(package: &Value, case: &Value) -> Value {
         }
     };
     let selection = &case["selection"];
+    if text(selection, "digest_domain") != "sha256-jcs" {
+        return refused("stale_dependency", "digest-domain-mismatch");
+    }
     let selected = resolve(text(selection, "digest"));
     let supplied: BTreeMap<String, Value> = array(case, "supplied")
         .iter()
@@ -327,11 +366,26 @@ fn select(package: &Value, case: &Value) -> Value {
     json!({"admission": "passed"})
 }
 
-fn case_expectations<'a>(vectors: &'a Value, prefix: &str) -> Vec<&'a Value> {
-    array(vectors, "member_cases")
+/// The member cases recorded for exactly `criterion`.
+fn cases_for<'a>(vectors: &'a Value, criterion: &str) -> Vec<&'a Value> {
+    let cases: Vec<_> = array(vectors, "member_cases")
         .iter()
-        .filter(|case| text(case, "name").starts_with(prefix))
-        .collect()
+        .filter(|case| text(case, "criterion") == criterion)
+        .collect();
+    assert!(!cases.is_empty(), "{criterion} has member cases");
+    cases
+}
+
+fn assert_member_cases(vectors: &Value, criterion: &str) {
+    let nodes = array(vectors, "model_declaration_nodes");
+    for case in cases_for(vectors, criterion) {
+        assert_eq!(
+            derive(&vectors["domain_package"], nodes, &case["member"]),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
+    }
 }
 
 #[trace("TC-280", "FR-322-AC-29")]
@@ -349,8 +403,14 @@ fn tc_280_model_declaration_node_vectors_recompute_and_recover_only_selected_own
             .unwrap_or_else(|error| panic!("{name} validates: {error}"));
         assert_eq!(digest(preimage), text(vector, "sha256"), "{name} digest");
         let selected = preimage["owner"]["version"] == package["version"];
+        let recovered = recover(
+            package,
+            text(vector, "sha256"),
+            text(preimage, "node_tag"),
+            text(preimage, "semantic_form"),
+        );
         assert_eq!(
-            recover(package, text(vector, "sha256")).is_some(),
+            recovered.is_some(),
             selected,
             "{name} recovers exactly when its owner is the selected version"
         );
@@ -376,50 +436,27 @@ fn tc_280_model_declaration_node_vectors_recompute_and_recover_only_selected_own
         "a relation node keyed as an object type is refused"
     );
 
-    let missing = case_expectations(&vectors, "MA-05");
-    assert_eq!(
-        derive(
-            package,
-            array(&vectors, "model_declaration_nodes"),
-            &missing[0]["member"]
-        ),
-        missing[0]["expected"]
-    );
-}
-
-#[trace("TC-280", "FR-322-AC-30")]
-#[test]
-fn tc_280_member_names_resolve_in_exposed_effective_members() {
-    let vectors = parsed(VECTORS);
-    let nodes = array(&vectors, "model_declaration_nodes");
-    for name in [
-        "MT-01", "MT-02", "MT-08", "MT-09", "MT-10", "MA-01", "MA-02", "MA-03", "MA-04", "MA-09",
-        "MA-12",
-    ] {
-        let case = case_expectations(&vectors, name)[0];
+    for case in array(&vectors, "wire_cases") {
         assert_eq!(
-            derive(&vectors["domain_package"], nodes, &case["member"]),
-            case["expected"],
-            "{name}"
-        );
-    }
-}
-
-#[trace("TC-280", "FR-322-AC-31")]
-#[test]
-fn tc_280_member_types_follow_declared_type_multiplicity_and_presence() {
-    let vectors = parsed(VECTORS);
-    let nodes = array(&vectors, "model_declaration_nodes");
-    let cases = array(&vectors, "member_cases");
-    assert_eq!(cases.len(), 24, "every published member case is exercised");
-    for case in cases {
-        assert_eq!(
-            derive(&vectors["domain_package"], nodes, &case["member"]),
+            recover_wire(package, &case["node"]),
             case["expected"],
             "{}",
             text(case, "name")
         );
     }
+    assert_member_cases(&vectors, "FR-322-AC-29");
+}
+
+#[trace("TC-280", "FR-322-AC-30")]
+#[test]
+fn tc_280_member_names_resolve_in_exposed_effective_members() {
+    assert_member_cases(&parsed(VECTORS), "FR-322-AC-30");
+}
+
+#[trace("TC-280", "FR-322-AC-31")]
+#[test]
+fn tc_280_member_types_follow_declared_type_multiplicity_and_presence() {
+    assert_member_cases(&parsed(VECTORS), "FR-322-AC-31");
 }
 
 #[trace("TC-280", "FR-322-AC-32")]
@@ -434,6 +471,7 @@ fn tc_280_selected_domain_package_documents_are_verified_evidence() {
     assert_eq!(
         causes,
         BTreeSet::from([
+            "digest-domain-mismatch",
             "missing-selection",
             "byte-digest-mismatch",
             "wrong-model-selection"

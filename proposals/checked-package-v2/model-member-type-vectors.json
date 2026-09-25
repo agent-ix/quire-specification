@@ -9,19 +9,176 @@
         "interfaceFeatures": null,
         "supertypes": [],
         "fields": [
-          {"name": "total", "typeRef": "ix://quire/native/Integer", "constraints": {"min": "0", "max": "9"}, "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "note", "typeRef": "ix://quire/native/Boolean", "constraints": {}, "presence": "optional", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "lines", "typeRef": "ix://quire/native/Integer", "constraints": {}, "presence": "required", "multiplicity": {"lower": "0", "upper": "3", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "history", "typeRef": "ix://quire/native/Integer", "constraints": {}, "presence": "required", "multiplicity": {"lower": "0", "upper": "5", "ordered": true, "unique": false}, "redefines": null},
-          {"name": "invoice", "typeRef": "ix://acme/orders/Invoice", "constraints": {}, "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "label", "typeRef": "ix://quire/native/Text", "constraints": {}, "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "tags", "typeRef": "ix://quire/native/Integer", "constraints": {}, "presence": "required", "multiplicity": {"lower": "0", "upper": "unbounded", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "floor", "typeRef": "ix://quire/native/Integer", "constraints": {"min": "0"}, "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null}
+          {
+            "name": "total",
+            "typeRef": "ix://acme/orders/Digit",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "note",
+            "typeRef": "ix://quire/native/Boolean",
+            "presence": "optional",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "lines",
+            "typeRef": "ix://quire/native/Integer",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "0",
+              "upper": "3",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "pick",
+            "typeRef": "ix://quire/native/Integer",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "0",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "history",
+            "typeRef": "ix://quire/native/Integer",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "0",
+              "upper": "5",
+              "ordered": true,
+              "unique": false
+            },
+            "redefines": null
+          },
+          {
+            "name": "invoice",
+            "typeRef": "ix://acme/orders/Invoice",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "label",
+            "typeRef": "ix://quire/native/Text",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "tags",
+            "typeRef": "ix://quire/native/Integer",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "0",
+              "upper": "unbounded",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "backlog",
+            "typeRef": "ix://quire/native/Integer",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "unbounded",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "floor",
+            "typeRef": "ix://quire/native/Integer",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null,
+            "constraints": {
+              "min": "0"
+            }
+          }
         ],
         "operations": [
-          {"name": "size", "parameters": [], "result": {"typeRef": "ix://quire/native/Integer", "constraints": {}, "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}}, "redefines": null},
-          {"name": "scaled", "parameters": [{"name": "n", "typeRef": "ix://quire/native/Integer", "constraints": {}, "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}}], "result": {"typeRef": "ix://quire/native/Integer", "constraints": {}, "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}}, "redefines": null},
-          {"name": "reset", "parameters": [], "result": null, "redefines": null}
+          {
+            "name": "size",
+            "parameters": [],
+            "result": {
+              "typeRef": "ix://quire/native/Integer",
+              "multiplicity": {
+                "lower": "1",
+                "upper": "1",
+                "ordered": false,
+                "unique": true
+              }
+            },
+            "redefines": null
+          },
+          {
+            "name": "scaled",
+            "parameters": [
+              {
+                "name": "n",
+                "typeRef": "ix://quire/native/Integer",
+                "multiplicity": {
+                  "lower": "1",
+                  "upper": "1",
+                  "ordered": false,
+                  "unique": true
+                }
+              }
+            ],
+            "result": {
+              "typeRef": "ix://quire/native/Integer",
+              "multiplicity": {
+                "lower": "1",
+                "upper": "1",
+                "ordered": false,
+                "unique": true
+              }
+            },
+            "redefines": null
+          },
+          {
+            "name": "reset",
+            "parameters": [],
+            "result": null,
+            "redefines": null
+          }
         ]
       },
       {
@@ -34,11 +191,50 @@
       {
         "node": "ix://acme/orders/Sub",
         "interfaceFeatures": null,
-        "supertypes": ["ix://acme/orders/Order"],
+        "supertypes": [
+          "ix://acme/orders/Order"
+        ],
         "fields": [],
         "operations": [
-          {"name": "size", "parameters": [], "result": {"typeRef": "ix://quire/native/Integer", "constraints": {}, "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}}, "redefines": "ix://acme/orders/Order/size"},
-          {"name": "scaled", "parameters": [{"name": "m", "typeRef": "ix://quire/native/Integer", "constraints": {}, "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}}], "result": {"typeRef": "ix://quire/native/Integer", "constraints": {}, "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}}, "redefines": "ix://acme/orders/Order/scaled"}
+          {
+            "name": "size",
+            "parameters": [],
+            "result": {
+              "typeRef": "ix://quire/native/Integer",
+              "multiplicity": {
+                "lower": "1",
+                "upper": "1",
+                "ordered": false,
+                "unique": true
+              }
+            },
+            "redefines": "ix://acme/orders/Order/size"
+          },
+          {
+            "name": "scaled",
+            "parameters": [
+              {
+                "name": "m",
+                "typeRef": "ix://quire/native/Integer",
+                "multiplicity": {
+                  "lower": "1",
+                  "upper": "1",
+                  "ordered": false,
+                  "unique": true
+                }
+              }
+            ],
+            "result": {
+              "typeRef": "ix://quire/native/Integer",
+              "multiplicity": {
+                "lower": "1",
+                "upper": "1",
+                "ordered": false,
+                "unique": true
+              }
+            },
+            "redefines": "ix://acme/orders/Order/scaled"
+          }
         ]
       },
       {
@@ -46,7 +242,18 @@
         "interfaceFeatures": null,
         "supertypes": [],
         "fields": [
-          {"name": "code", "typeRef": "ix://quire/native/Integer", "constraints": {}, "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null}
+          {
+            "name": "code",
+            "typeRef": "ix://quire/native/Integer",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          }
         ],
         "operations": []
       },
@@ -55,24 +262,53 @@
         "interfaceFeatures": null,
         "supertypes": [],
         "fields": [
-          {"name": "code", "typeRef": "ix://quire/native/Boolean", "constraints": {}, "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null}
+          {
+            "name": "code",
+            "typeRef": "ix://quire/native/Boolean",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          }
         ],
         "operations": []
       },
       {
         "node": "ix://acme/orders/Both",
         "interfaceFeatures": null,
-        "supertypes": ["ix://acme/orders/Tagged", "ix://acme/orders/Coded"],
+        "supertypes": [
+          "ix://acme/orders/Tagged",
+          "ix://acme/orders/Coded"
+        ],
         "fields": [],
         "operations": []
       },
       {
         "node": "ix://acme/orders/SubSub",
         "interfaceFeatures": null,
-        "supertypes": ["ix://acme/orders/Sub"],
+        "supertypes": [
+          "ix://acme/orders/Sub"
+        ],
         "fields": [],
         "operations": [
-          {"name": "size", "parameters": [], "result": {"typeRef": "ix://quire/native/Integer", "constraints": {}, "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}}, "redefines": "ix://acme/orders/Order/size"}
+          {
+            "name": "size",
+            "parameters": [],
+            "result": {
+              "typeRef": "ix://quire/native/Integer",
+              "multiplicity": {
+                "lower": "1",
+                "upper": "1",
+                "ordered": false,
+                "unique": true
+              }
+            },
+            "redefines": "ix://acme/orders/Order/size"
+          }
         ]
       },
       {
@@ -81,86 +317,89 @@
         "supertypes": [],
         "fields": [],
         "operations": [
-          {"name": "rate", "parameters": [], "result": {"typeRef": "ix://quire/native/Integer", "constraints": {}, "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}}, "redefines": null}
+          {
+            "name": "rate",
+            "parameters": [],
+            "result": {
+              "typeRef": "ix://quire/native/Integer",
+              "multiplicity": {
+                "lower": "1",
+                "upper": "1",
+                "ordered": false,
+                "unique": true
+              }
+            },
+            "redefines": null
+          }
         ]
       }
     ],
+    "value_types": [
+      {
+        "node": "ix://acme/orders/Digit",
+        "native": "ix://quire/native/Integer",
+        "lower": "0",
+        "upper": "9"
+      }
+    ],
     "relationships": [
-      {"node": "ix://acme/orders/billedTo"}
+      {
+        "node": "ix://acme/orders/billedTo"
+      }
     ]
   },
   "model_declaration_nodes": [
-    {
-      "name": "M1",
-      "preimage": {"body":{"members":[],"term":"aggregate"},"declaration":null,"node_tag":"model","owner":{"identity":"acme/orders","kind":"model","node":"ix://acme/orders/Order","version":"1.0.0"},"recursion":null,"semantic_form":"object_type","semantic_type":null,"version":"quire.structural-node/v1"},
-      "sha256": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"
-    },
-    {
-      "name": "M2",
-      "preimage": {"body":{"members":[],"term":"aggregate"},"declaration":null,"node_tag":"model","owner":{"identity":"acme/orders","kind":"model","node":"ix://acme/orders/Order","version":"2.0.0"},"recursion":null,"semantic_form":"object_type","semantic_type":null,"version":"quire.structural-node/v1"},
-      "sha256": "20168f12d2fb338965d7612cb536ba067c835179beb2e08294bd7e56e18cb169"
-    },
-    {
-      "name": "M3",
-      "preimage": {"body":{"members":[],"term":"aggregate"},"declaration":null,"node_tag":"model","owner":{"identity":"acme/orders","kind":"model","node":"ix://acme/orders/Invoice","version":"1.0.0"},"recursion":null,"semantic_form":"object_type","semantic_type":null,"version":"quire.structural-node/v1"},
-      "sha256": "03c092fe5e919698153d67c52f23ccc3c20c3b80d8856e100d1dd00364d90e49"
-    },
-    {
-      "name": "M4",
-      "preimage": {"body":{"members":[],"term":"aggregate"},"declaration":null,"node_tag":"relation","owner":{"identity":"acme/orders","kind":"model","node":"ix://acme/orders/billedTo","version":"1.0.0"},"recursion":null,"semantic_form":"relationship","semantic_type":null,"version":"quire.structural-node/v1"},
-      "sha256": "e7a7e02e98f1594481f398401d54571e7cdda8326d1c4fc1100ca7936226cea7"
-    },
-    {
-      "name": "M5",
-      "preimage": {"body":{"members":[],"term":"aggregate"},"declaration":null,"node_tag":"model","owner":{"identity":"acme/orders","kind":"model","node":"ix://acme/orders/Sub","version":"1.0.0"},"recursion":null,"semantic_form":"object_type","semantic_type":null,"version":"quire.structural-node/v1"},
-      "sha256": "a5dc42babe65ac12ff8cb0a5661a49159aef85fa1b39c3aa60c71f3c10df0df6"
-    },
-    {
-      "name": "M6",
-      "preimage": {"body":{"members":[],"term":"aggregate"},"declaration":null,"node_tag":"model","owner":{"identity":"acme/orders","kind":"model","node":"ix://acme/orders/Both","version":"1.0.0"},"recursion":null,"semantic_form":"object_type","semantic_type":null,"version":"quire.structural-node/v1"},
-      "sha256": "a3820b2fcc18f72049d50b265bc5ddd4ec690784dbfe1339ecce31e19accef05"
-    },
-    {
-      "name": "M7",
-      "preimage": {"body":{"members":[],"term":"aggregate"},"declaration":null,"node_tag":"model","owner":{"identity":"acme/orders","kind":"model","node":"ix://acme/orders/SubSub","version":"1.0.0"},"recursion":null,"semantic_form":"object_type","semantic_type":null,"version":"quire.structural-node/v1"},
-      "sha256": "79fed44f15f9e09028b1d58e5de59a34e776eaf35b8a8c51c796a8d2d2e34017"
-    },
-    {
-      "name": "M8",
-      "preimage": {"body":{"members":[],"term":"aggregate"},"declaration":null,"node_tag":"model","owner":{"identity":"acme/orders","kind":"model","node":"ix://acme/orders/Flow","version":"1.0.0"},"recursion":null,"semantic_form":"systems_interface","semantic_type":null,"version":"quire.structural-node/v1"},
-      "sha256": "f46ebef3ccd07cc8bfb7bdf980eff14aedc801e2563598a2178829cf4ed79e33"
-    }
+    {"name": "M1", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/Order", "version": "1.0.0"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"},
+    {"name": "M2", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/Order", "version": "2.0.0"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "20168f12d2fb338965d7612cb536ba067c835179beb2e08294bd7e56e18cb169"},
+    {"name": "M3", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/Invoice", "version": "1.0.0"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "03c092fe5e919698153d67c52f23ccc3c20c3b80d8856e100d1dd00364d90e49"},
+    {"name": "M4", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "relation", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/billedTo", "version": "1.0.0"}, "recursion": null, "semantic_form": "relationship", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "e7a7e02e98f1594481f398401d54571e7cdda8326d1c4fc1100ca7936226cea7"},
+    {"name": "M5", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/Sub", "version": "1.0.0"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "a5dc42babe65ac12ff8cb0a5661a49159aef85fa1b39c3aa60c71f3c10df0df6"},
+    {"name": "M6", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/Both", "version": "1.0.0"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "a3820b2fcc18f72049d50b265bc5ddd4ec690784dbfe1339ecce31e19accef05"},
+    {"name": "M7", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/SubSub", "version": "1.0.0"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "79fed44f15f9e09028b1d58e5de59a34e776eaf35b8a8c51c796a8d2d2e34017"},
+    {"name": "M8", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/Flow", "version": "1.0.0"}, "recursion": null, "semantic_form": "systems_interface", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "f46ebef3ccd07cc8bfb7bdf980eff14aedc801e2563598a2178829cf4ed79e33"}
   ],
   "member_cases": [
-    {"name": "MT-01", "member": {"kind": "field", "declaration": "M1", "name": "total"}, "expected": {"resolves": "ix://acme/orders/Order/total", "member_type": {"type": "Int", "min": "0", "max": "9"}}},
-    {"name": "MT-02", "member": {"kind": "field", "declaration": "M5", "name": "total"}, "expected": {"resolves": "ix://acme/orders/Order/total", "member_type": {"type": "Int", "min": "0", "max": "9"}}},
-    {"name": "MT-03", "member": {"kind": "field", "declaration": "M1", "name": "note"}, "expected": {"resolves": "ix://acme/orders/Order/note", "member_type": {"type": "Option", "inner": {"type": "Boolean"}}}},
-    {"name": "MT-04", "member": {"kind": "field", "declaration": "M1", "name": "lines"}, "expected": {"resolves": "ix://acme/orders/Order/lines", "member_type": {"type": "Set", "min": "0", "max": "3", "element": {"type": "Integer"}}}},
-    {"name": "MT-05", "member": {"kind": "field", "declaration": "M1", "name": "history"}, "expected": {"resolves": "ix://acme/orders/Order/history", "member_type": {"type": "Sequence", "min": "0", "max": "5", "element": {"type": "Integer"}}}},
-    {"name": "MT-06", "member": {"kind": "field", "declaration": "M1", "name": "invoice"}, "expected": {"resolves": "ix://acme/orders/Order/invoice", "member_type": {"type": "Reference", "target": "M3"}}},
-    {"name": "MT-07", "member": {"kind": "operation", "declaration": "M1", "name": "size", "arguments": []}, "expected": {"resolves": "ix://acme/orders/Order/size", "member_type": {"type": "Integer"}}},
-    {"name": "MT-08", "member": {"kind": "operation", "declaration": "M5", "name": "size", "arguments": []}, "expected": {"resolves": "ix://acme/orders/Sub/size", "member_type": {"type": "Integer"}}},
-    {"name": "MT-09", "member": {"kind": "operation", "declaration": "M5", "name": "scaled", "arguments": [{"type": "Integer"}]}, "expected": {"resolves": "ix://acme/orders/Sub/scaled", "member_type": {"type": "Integer"}}},
-    {"name": "MT-10", "member": {"kind": "operation", "declaration": "M7", "name": "size", "arguments": []}, "expected": {"resolves": "ix://acme/orders/SubSub/size", "member_type": {"type": "Integer"}}},
-    {"name": "MT-11", "member": {"kind": "operation", "declaration": "M1", "name": "scaled", "arguments": [{"type": "Integer"}]}, "expected": {"resolves": "ix://acme/orders/Order/scaled", "member_type": {"type": "Integer"}}},
-    {"name": "MA-01", "member": {"kind": "field", "declaration": "M1", "name": "missing"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-02", "member": {"kind": "field", "declaration": "M1", "name": "size"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-03", "member": {"kind": "operation", "declaration": "M1", "name": "total", "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-04", "member": {"kind": "field", "declaration": "M4", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-05", "member": {"kind": "field", "declaration": "M2", "name": "total"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "MA-06", "member": {"kind": "field", "declaration": "M1", "name": "label"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-07", "member": {"kind": "field", "declaration": "M1", "name": "tags"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-08", "member": {"kind": "operation", "declaration": "M1", "name": "reset", "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-09", "member": {"kind": "field", "declaration": "M6", "name": "code"}, "expected": {"refused": {"code": "ambiguous_declaration", "cause": "ambiguous-name"}}},
-    {"name": "MA-10", "member": {"kind": "operation", "declaration": "M1", "name": "scaled", "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-11", "member": {"kind": "operation", "declaration": "M1", "name": "scaled", "arguments": [{"type": "Boolean"}]}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-12", "member": {"kind": "operation", "declaration": "M8", "name": "rate", "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-13", "member": {"kind": "field", "declaration": "M1", "name": "floor"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}}
+    {"name": "MT-01", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "total"}, "expected": {"resolves": "ix://acme/orders/Order/total", "member_type": {"type": "Int", "min": "0", "max": "9"}}},
+    {"name": "MT-02", "criterion": "FR-322-AC-30", "member": {"kind": "field", "declaration": "M5", "name": "total"}, "expected": {"resolves": "ix://acme/orders/Order/total", "member_type": {"type": "Int", "min": "0", "max": "9"}}},
+    {"name": "MT-03", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "note"}, "expected": {"resolves": "ix://acme/orders/Order/note", "member_type": {"type": "Option", "inner": {"type": "Boolean"}}}},
+    {"name": "MT-04", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "lines"}, "expected": {"resolves": "ix://acme/orders/Order/lines", "member_type": {"type": "Set", "min": "0", "max": "3", "element": {"type": "Integer"}}}},
+    {"name": "MT-05", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "history"}, "expected": {"resolves": "ix://acme/orders/Order/history", "member_type": {"type": "Sequence", "min": "0", "max": "5", "element": {"type": "Integer"}}}},
+    {"name": "MT-06", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "invoice"}, "expected": {"resolves": "ix://acme/orders/Order/invoice", "member_type": {"type": "Reference", "target": "03c092fe5e919698153d67c52f23ccc3c20c3b80d8856e100d1dd00364d90e49"}}},
+    {"name": "MT-07", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "size", "receiver": {"type": "Reference", "target": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"}, "arguments": []}, "expected": {"resolves": "ix://acme/orders/Order/size", "member_type": {"type": "Integer"}}},
+    {"name": "MT-08", "criterion": "FR-322-AC-30", "member": {"kind": "operation", "declaration": "M5", "name": "size", "receiver": {"type": "Reference", "target": "a5dc42babe65ac12ff8cb0a5661a49159aef85fa1b39c3aa60c71f3c10df0df6"}, "arguments": []}, "expected": {"resolves": "ix://acme/orders/Sub/size", "member_type": {"type": "Integer"}}},
+    {"name": "MT-09", "criterion": "FR-322-AC-30", "member": {"kind": "operation", "declaration": "M5", "name": "scaled", "receiver": {"type": "Reference", "target": "a5dc42babe65ac12ff8cb0a5661a49159aef85fa1b39c3aa60c71f3c10df0df6"}, "arguments": [{"type": "Integer"}]}, "expected": {"resolves": "ix://acme/orders/Sub/scaled", "member_type": {"type": "Integer"}}},
+    {"name": "MT-10", "criterion": "FR-322-AC-30", "member": {"kind": "operation", "declaration": "M7", "name": "size", "receiver": {"type": "Reference", "target": "79fed44f15f9e09028b1d58e5de59a34e776eaf35b8a8c51c796a8d2d2e34017"}, "arguments": []}, "expected": {"resolves": "ix://acme/orders/SubSub/size", "member_type": {"type": "Integer"}}},
+    {"name": "MT-11", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "scaled", "receiver": {"type": "Reference", "target": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"}, "arguments": [{"type": "Integer"}]}, "expected": {"resolves": "ix://acme/orders/Order/scaled", "member_type": {"type": "Integer"}}},
+    {"name": "MT-12", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "floor"}, "expected": {"resolves": "ix://acme/orders/Order/floor", "member_type": {"type": "Integer"}}},
+    {"name": "MT-13", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "tags"}, "expected": {"resolves": "ix://acme/orders/Order/tags", "member_type": {"type": "Set", "element": {"type": "Integer"}}}},
+    {"name": "MT-14", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "pick"}, "expected": {"resolves": "ix://acme/orders/Order/pick", "member_type": {"type": "Set", "min": "0", "max": "1", "element": {"type": "Integer"}}}},
+    {"name": "MA-01", "criterion": "FR-322-AC-30", "member": {"kind": "field", "declaration": "M1", "name": "missing"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MA-02", "criterion": "FR-322-AC-30", "member": {"kind": "field", "declaration": "M1", "name": "size"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MA-03", "criterion": "FR-322-AC-30", "member": {"kind": "operation", "declaration": "M1", "name": "total", "receiver": {"type": "Reference", "target": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MA-04", "criterion": "FR-322-AC-30", "member": {"kind": "field", "declaration": "M4", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MA-05", "criterion": "FR-322-AC-29", "member": {"kind": "field", "declaration": "M2", "name": "total"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
+    {"name": "MA-06", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "label"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MA-07", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "backlog"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MA-08", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "reset", "receiver": {"type": "Reference", "target": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MA-09", "criterion": "FR-322-AC-30", "member": {"kind": "field", "declaration": "M6", "name": "code"}, "expected": {"refused": {"code": "ambiguous_declaration", "cause": "ambiguous-name"}}},
+    {"name": "MA-10", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "scaled", "receiver": {"type": "Reference", "target": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MA-11", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "scaled", "receiver": {"type": "Reference", "target": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"}, "arguments": [{"type": "Boolean"}]}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MA-12", "criterion": "FR-322-AC-30", "member": {"kind": "operation", "declaration": "M8", "name": "rate", "receiver": {"type": "Reference", "target": "f46ebef3ccd07cc8bfb7bdf980eff14aedc801e2563598a2178829cf4ed79e33"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MA-13", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "size", "receiver": {"type": "Reference", "target": "03c092fe5e919698153d67c52f23ccc3c20c3b80d8856e100d1dd00364d90e49"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}}
+  ],
+  "wire_cases": [
+    {"name": "MW-01", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"}, "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"}, "body": {"term": "aggregate", "members": []}}, "expected": {"recovers": "ix://acme/orders/Order"}},
+    {"name": "MW-02", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"}, "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"}, "body": {"term": "aggregate", "members": [{"term": "binding", "name": "total", "value": {"term": "aggregate", "members": []}}]}}, "expected": {"refused": {"code": "invalid_package", "cause": "stale-node-key"}}},
+    {"name": "MW-03", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"}, "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"}, "body": {"term": "aggregate", "members": []}, "declaration": {"qualified_name": ["M", "Order"]}}, "expected": {"refused": {"code": "invalid_package", "cause": "stale-node-key"}}},
+    {"name": "MW-04", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"}, "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "e7a7e02e98f1594481f398401d54571e7cdda8326d1c4fc1100ca7936226cea7"}, "body": {"term": "aggregate", "members": []}}, "expected": {"refused": {"code": "invalid_package", "cause": "stale-node-key"}}},
+    {"name": "MW-05", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"}, "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "328d84d7d480ead8c5e18a6ad3ad737defa9e50156a82b1504d0665ce7757768"}, "body": {"term": "aggregate", "members": []}, "recursion_group": "g"}, "expected": {"refused": {"code": "invalid_package", "cause": "stale-node-key"}}},
+    {"name": "MW-06", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "e7a7e02e98f1594481f398401d54571e7cdda8326d1c4fc1100ca7936226cea7"}, "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "e7a7e02e98f1594481f398401d54571e7cdda8326d1c4fc1100ca7936226cea7"}, "body": {"term": "aggregate", "members": []}}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}}
   ],
   "selection_cases": [
-    {"name": "MS-01", "selection": {"identity": "acme/orders", "version": "1.0.0", "digest": "$document"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"admission": "passed"}},
-    {"name": "MS-02", "selection": {"identity": "acme/orders", "version": "1.0.0", "digest": "$document"}, "supplied": [], "expected": {"refused": {"code": "missing_import", "cause": "missing-selection"}}},
-    {"name": "MS-03", "selection": {"identity": "acme/orders", "version": "1.0.0", "digest": "$document"}, "supplied": [{"under": "$document", "patch": [{"path": "/object_types/0/fields/0/constraints/max", "value": "8"}]}], "expected": {"refused": {"code": "stale_dependency", "cause": "byte-digest-mismatch"}}},
-    {"name": "MS-04", "selection": {"identity": "acme/orders", "version": "1.0.1", "digest": "$document"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"refused": {"code": "invalid_model_binding", "cause": "wrong-model-selection"}}}
+    {"name": "MS-01", "selection": {"identity": "acme/orders", "version": "1.0.0", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"admission": "passed"}},
+    {"name": "MS-02", "selection": {"identity": "acme/orders", "version": "1.0.0", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [], "expected": {"refused": {"code": "missing_import", "cause": "missing-selection"}}},
+    {"name": "MS-03", "selection": {"identity": "acme/orders", "version": "1.0.0", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": [{"path": "/value_types/0/upper", "value": "8"}]}], "expected": {"refused": {"code": "stale_dependency", "cause": "byte-digest-mismatch"}}},
+    {"name": "MS-04", "selection": {"identity": "acme/orders", "version": "1.0.1", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"refused": {"code": "invalid_model_binding", "cause": "wrong-model-selection"}}},
+    {"name": "MS-05", "selection": {"identity": "acme/orders", "version": "1.0.0", "digest_domain": "sha256", "digest": "$document"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"refused": {"code": "stale_dependency", "cause": "digest-domain-mismatch"}}}
   ]
 }

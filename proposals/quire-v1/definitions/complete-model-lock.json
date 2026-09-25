@@ -22,7 +22,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "model-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"07563a7ebeea6426037431a619b7975fbc06e07d565b45d299725ba0af1fa95f"}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"d30c9c1da9d718758cea93c4fcead8c3c846ae7e340a7a8cf1c502809e171908"}
     },
     {
       "role": "effective_declaration_schema",
@@ -57,7 +57,7 @@
     {
       "role": "rule_fr_150",
       "artifact_path": "../../../spec/functional/type-model/FR-150-preserve-model-normalization-provenance.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-150/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"4eccfe0682cd994c23f33004309bb8c0c4d4397751cf9a15f25859d69eac9f41"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-150/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"234bda5a87623399be1d98f15fc10b9734b52d379430673e66c5d3f78f3f85a9"}
     },
     {
       "role": "rule_fr_151",

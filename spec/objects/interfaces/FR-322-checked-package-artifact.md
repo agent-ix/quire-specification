@@ -226,18 +226,19 @@ vocabulary is `unknown_contract_version`, `malformed_wire`, `duplicate_member`,
 `invalid_semantic_graph`, `invalid_source_map`, `unsupported_node_tag`,
 `invalid_package`, `ill_typed`, `ambiguous_declaration`, `missing_declaration`,
 `invalid_model_binding`, `missing_import`, `unsupported_construct` and
-`wrong_snapshot`. `invalid_package`, `ill_typed`, `ambiguous_declaration`,
-`missing_declaration` and `invalid_model_binding` carry exactly the `stale-node-key`,
-operation and declaration causes above, and the `missing-name` and
-`malformed-declaration` frame-entry causes
-[FR-340](FR-340-checked-package-frame-location.md) defines, with the code the
-native diagnostics catalog pairs with each cause, and no other code carries
-them. The selection check of "Model-owned members" step 1 additionally
-reports the FR-154 intake and `quire.model.complete/v1` normalization causes
-under their own codes: `missing_import`, `stale_dependency`,
-`invalid_model_binding`, `missing_declaration`, `unsupported_construct` and
-`wrong_snapshot`; `missing_declaration`/`missing-selection` also marks an
-unrecovered declaring node (step 2).
+`wrong_snapshot`. The `stale-node-key`, operation and declaration causes
+above, and the `missing-name` and `malformed-declaration` frame-entry causes
+[FR-340](FR-340-checked-package-frame-location.md) defines, are carried by
+`invalid_package`, `ill_typed`, `ambiguous_declaration`,
+`missing_declaration` or `invalid_model_binding`, each with the code the
+native diagnostics catalog pairs with it, and by no other code. The
+causes of "Model-owned members" form a separate set: step 1 reports the
+FR-154 intake and `quire.model.complete/v1` normalization causes under their
+own codes (`stale_dependency`, `missing_import`, `invalid_model_binding`,
+`missing_declaration`, `unsupported_construct` and `wrong_snapshot`), and
+steps 2 to 4 report `missing_declaration`/`missing-selection`,
+`invalid_package`/`stale-node-key`, `ambiguous_declaration`/`ambiguous-name`
+and `ill_typed`/`operator-ineligible`.
 Before expensive semantic work, the reader measures raw wire bytes; a byte
 overage returns `incomplete`. It then performs strict syntax/member validation;
 a malformed wire returns `refused`. It charges depth, graph nodes/edges,
@@ -247,13 +248,15 @@ admitted package. Equal-limit input is admitted if all later checks succeed.
 
 ## Model-owned members
 
-A `model_member` is resolved in four steps. Steps 2 to 4 run at the
-application's `operator-ineligible` check, and their refusals take that
-check's place in the refusal order.
+A `model_member` is resolved in four steps. Step 1 runs before graph
+admission. Steps 2 to 4 run at the application's `operator-ineligible`
+check, and their refusals take that check's place in the refusal order.
 
 1. **Selection evidence.** After strict syntax and member validation and
    before graph admission, the reader admits the document of each
-   `model_selections` row, in lock order, under FR-154: the caller supplies a
+   `model_selections` row, in lock order, under FR-154's admission checks in
+   FR-154's order: the row's digest domain is `sha256-jcs`, else
+   `stale_dependency`/`digest-domain-mismatch`; the caller supplies a
    document under the row's digest, else `missing_import`/`missing-selection`;
    the SHA-256 of the document's RFC 8785 bytes equals that digest, else
    `stale_dependency`/`byte-digest-mismatch`; and the document's own identity
@@ -277,12 +280,18 @@ check's place in the refusal order.
    `model`/`systems_interface` for an object type with `interfaceFeatures` and
    `relation`/`relationship` for a relationship. Each key computed charges
    one validation visit. The declaring node's `ModelOwner` is the owner whose
-   key equals the node's `node_id` digest and whose `node_tag` and
+   key equals the node's `node_id` digest and whose preimage `node_tag` and
    `semantic_form` equal the node's, and its declaration `T` is the one that
-   key was computed from. FR-321 admits one selection per `identity`, so at
-   most one owner matches. A declaring node that no owner matches, whether
-   its owner is unselected or its key is stale, refuses
-   `missing_declaration`/`missing-selection`.
+   key was computed from. The preimage's (`identity`, `version`, `node`,
+   `node_tag`, `semantic_form`) determine the key, FR-321 admits one
+   selection per `identity` and a document declares each IR node identity
+   once, so at most one owner matches. A declaring node that no owner
+   matches, whether its owner is unselected or its key names another
+   declaration, refuses `missing_declaration`/`missing-selection`. A matched
+   node whose `semantic_type` is not its own `node_id`, or that carries a
+   `declaration` or a `recursion_group`, or whose body is not
+   `{term: "aggregate", members: []}`, refuses `invalid_package`/`stale-node-key`,
+   because its key is not the digest of its own preimage.
 3. **Resolution.** The member resolves among the effective members of `T`
    that name resolution exposes: `T`'s own and those inherited along its
    declared supertypes, less every member a redefinition hides and every
@@ -291,47 +300,54 @@ check's place in the refusal order.
    field members and an `operation` member the operation members. A member
    matches when the last `/` segment of its IR node identity equals `name`,
    byte for byte. Exactly one match resolves the member; two or more refuse
-   `ambiguous_declaration`/`ambiguous-name`; none refuses
-   `ill_typed`/`operator-ineligible`.
+   `ambiguous_declaration`/`ambiguous-name`, which FR-150's effective view
+   re-raises at this member; none refuses `ill_typed`/`operator-ineligible`.
 4. **Member type.** A field member's type is derived from its `typeRef`, its
-   `min` and `max` constraints, its multiplicity and its presence; an
-   operation member's type is derived from its result's `typeRef`,
-   constraints and multiplicity. The element type comes from the declared
-   type:
+   multiplicity and its presence; an operation member's type is derived from
+   its result's `typeRef` and multiplicity, and each parameter's type from
+   the parameter's `typeRef` and multiplicity. The element type comes from
+   the declared type:
 
-   | Declared type | Element type | Denoting node |
+   | Declared type | Element type | Node |
    | --- | --- | --- |
-   | `ix://quire/native/Boolean` with no constraint | `Boolean` | `scalar_type`/`boolean` |
-   | `ix://quire/native/Integer` with no constraint | `Integer` | `scalar_type`/`integer` |
-   | `ix://quire/native/Integer` with exactly the constraints `min` `lo` and `max` `hi`, `lo <= hi` | `Int[lo, hi]` | `bounded_domain`/`integer_range` with bounds `lo` and `hi` over an `Integer` node |
-   | an object type `O` of the same domain package, with no constraint | `Reference<O>` | `composite_type`/`reference` over `O`'s model declaration node |
+   | `ix://quire/native/Boolean` | `Boolean` | `scalar_type`/`boolean` |
+   | `ix://quire/native/Integer` | `Integer` | `scalar_type`/`integer` |
+   | a value type (FR-208 `quire.meaning.model.value-type/v1`) of the same domain package bound to native `Integer` with the closed interval `[lo, hi]`, `lo <= hi` | `Int[lo, hi]` | `bounded_domain`/`integer_range` with bounds `lo` and `hi` over the `Integer` node |
+   | an object type `O` of the same domain package | `Reference<O>` | `composite_type`/`reference` over `O`'s model declaration node |
 
-   The multiplicity `{lower, upper, ordered, unique}` then gives the type:
-   `[1, 1]` gives the element type `E`, and any other finite `[l, u]` gives
+   The multiplicity `{lower, upper, ordered, unique}` then gives the type.
+   `[1, 1]` gives the element type `E`. Any other finite `[l, u]` gives
    `K<E>[l, u]`, the `bounded_domain`/`collection_bounds` node with bounds
-   `l` and `u` over a `composite_type` node of form `K` over `E`'s node,
-   where `K` is `set` (unordered, unique), `bag` (unordered, not unique),
-   `sequence` (ordered, not unique) or `ordered_set` (ordered, unique). A
-   lower bound of `0` makes an empty collection legal and a presence of
-   `optional` makes the field optional (`quire.model.complete/v1` Presence
-   row), so a field whose presence is `optional` has `Option<X>`, the
+   `l` and `u` over the `composite_type` node of form `K` over `E`'s node.
+   `[0, unbounded]` gives `K<E>`, the `composite_type` node of form `K` over
+   `E`'s node, with no `collection_bounds` node. `K` is `set` (unordered,
+   unique), `bag` (unordered, not unique), `sequence` (ordered, not unique)
+   or `ordered_set` (ordered, unique). A lower bound of `0` makes an empty
+   collection legal, and a presence of `optional` makes a field optional
+   (`quire.model.complete/v1` Presence row), so `[0, 1]` gives `K<E>[0, 1]`
+   and a field whose presence is `optional` has `Option<X>`, the
    `composite_type`/`option` node over the node of the type `X` the
-   multiplicity gives. A declared type or constraint set outside the table,
-   an `unbounded` upper bound and an operation with no result give the
-   member no type, and the application refuses `ill_typed`/`operator-ineligible`.
-   Each parameter of an operation member has the type its `typeRef`,
-   constraints and multiplicity give by the same tables. A `dispatch_call`
-   whose arguments after the receiver differ in number from the resolved
-   operation's parameters, or whose argument at a parameter's position is not
-   a term of that parameter's type, refuses `ill_typed`/`operator-ineligible`.
+   multiplicity gives. A declared type outside the table, an `unbounded`
+   upper bound with a lower bound above `0` and an operation with no result
+   give the member no type, and the application refuses
+   `ill_typed`/`operator-ineligible`.
 
-For a model-owned member, the `member` result form yields the step 4 type.
-A node denotes that type when its tag, form and components are the table's,
-whether it is anonymous or declared, and the application's `result_type` is
-admitted exactly when it names such a node. `member_of` holds exactly when
-operand 0 resolves to the declaring node and step 3 resolves the name to a
-field member of `T`. The declaring node's body stays `aggregate{[]}`, and the
-member's type is the step 4 type.
+   Each node the tables name is the anonymous structural node, with no
+   `declaration`, exactly as QSL FR-092 and FR-094 key it, so the node that
+   stands for a type, and every application node id that references it, is
+   canonical.
+
+For a model-owned member, the `member` result form yields the step 4 type,
+and the application's `result_type` is admitted exactly when it names the
+node of that type. `member_of` holds exactly when operand 0 resolves to the
+declaring node and step 3 resolves the name to a field member of `T`. For a
+`dispatch_call`, operand 0 has type `Reference<X>`, where `X`'s model
+declaration node is the declaring node; the arguments after the receiver
+equal the resolved operation's parameters in number; and the type node of
+each argument is the node of its parameter's type. Any other receiver,
+argument count or argument type refuses `ill_typed`/`operator-ineligible`.
+The declaring node's body stays `aggregate{[]}`, and the member's type is
+the step 4 type.
 
 ## Operation families, groups and constraints
 
@@ -474,10 +490,10 @@ partial checked package.
 | FR-322-AC-26 | A reference to a dependency package's node is carried as `PackageNodeKey{package, node}`, where `node` is a `WireNodeId`; per R-10 it becomes a `NodeKey` only by lookup in a checked package compiled from digest-addressed source, never minted directly from wire bytes in either the dependency's or the importing package's namespace, and a reader resolves it only against the named dependency's admitted package, refusing a `package` absent from `dependency_selections` as `missing_declaration`/`missing-selection`. | Analysis |
 | FR-322-AC-27 | An unrecognized `node_tag` refuses as `unsupported_node_tag`; while `quire.checked-semantic-graph/v2` is prerelease, QSpec revises the closed `node_tag` set in place with no `contract_version` bump per addition. | Analysis |
 | FR-322-AC-28 | A `ModelOwner` node-identity preimage carries the declaring domain package's `identity` and `version` beside `node`; the published `ModelOwner` vectors validate against the closed preimage schema and recompute their recorded JCS SHA-256; two otherwise-identical `ModelOwner` preimages that differ only in `version` compute distinct node ids, so a `NodeKey` stays unique across domain-package versions. | Test (TC-279) |
-| FR-322-AC-29 | Each published model declaration node vector validates against the closed `ModelDeclarationNode` preimage schema and recomputes its recorded JCS SHA-256; a reader recovers a declaring node's `ModelOwner` only from a lock-selected domain package, so a field member on `Order`'s node keyed under an unselected version refuses `missing_declaration`/`missing-selection`. | Test (TC-280) |
-| FR-322-AC-30 | A model-owned `field` or `operation` member resolves among the declaring type's exposed effective members, own and inherited: a field declared by a supertype resolves on the subtype's node, a redefined operation resolves to the most derived redefinition, an operation on a `systems_interface` node refuses `ill_typed`/`operator-ineligible`, two exposed fields of one name refuse `ambiguous_declaration`/`ambiguous-name`, and an undeclared name, a name of the other member kind or a relationship declaring node refuses `ill_typed`/`operator-ineligible`. | Test (TC-280) |
-| FR-322-AC-31 | A resolved model member's type follows the declared type, multiplicity and presence tables: `Int[0, 9]`, `Option<Boolean>`, `Set<Integer>[0, 3]`, `Sequence<Integer>[0, 5]`, `Reference<Invoice>` and an operation's `Integer` result are derived, while a `Text` field, an `unbounded` field, an operation with no result and a call whose arguments differ in number or type from the operation's parameters refuse `ill_typed`/`operator-ineligible`. | Test (TC-280) |
-| FR-322-AC-32 | A lock-selected domain package document is checked as evidence before graph admission: a document supplied under the selected digest with matching identity and version passes the selection admission checks, while no document refuses `missing_import`/`missing-selection`, an altered document `stale_dependency`/`byte-digest-mismatch` and a document whose version differs from the selection `invalid_model_binding`/`wrong-model-selection`. | Test (TC-280) |
+| FR-322-AC-29 | Each published model declaration node vector validates against the closed `ModelDeclarationNode` preimage schema and recomputes its recorded JCS SHA-256. A reader recovers a declaring node's `ModelOwner` only from a lock-selected domain package with the node's own tag and form, so `Order`'s node keyed under an unselected version, and the relationship node's id carried by a `model` node, refuse `missing_declaration`/`missing-selection`. A matched node whose body has members refuses `invalid_package`/`stale-node-key`. | Test (TC-280) |
+| FR-322-AC-30 | A model-owned `field` or `operation` member resolves among the declaring type's exposed effective members, own and inherited. A field declared by a supertype resolves on the subtype's node, and a redefined operation resolves to the most derived redefinition. An operation on a `systems_interface` node refuses `ill_typed`/`operator-ineligible`. Two exposed fields of one name refuse `ambiguous_declaration`/`ambiguous-name`. An undeclared name, a name of the other member kind and a relationship declaring node each refuse `ill_typed`/`operator-ineligible`. | Test (TC-280) |
+| FR-322-AC-31 | A resolved model member's type follows the declared-type, multiplicity and presence tables. The derived types are `Int[0, 9]` from an integer value type, `Integer` from a constrained native `Integer`, `Option<Boolean>`, `Set<Integer>[0, 3]`, `Sequence<Integer>[0, 5]`, `Set<Integer>[0, 1]`, `Set<Integer>` for `[0, unbounded]`, `Reference<Invoice>` and an operation's `Integer` result. A `Text` field, a `[1, unbounded]` field and an operation with no result each refuse `ill_typed`/`operator-ineligible`. So does a call whose receiver is not a reference to the declaring node, or whose arguments differ in number or type node from the operation's parameters. | Test (TC-280) |
+| FR-322-AC-32 | A lock-selected domain package document is checked as evidence before graph admission: a document supplied under the selected digest with matching identity and version passes the selection admission checks, while a digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`, no document refuses `missing_import`/`missing-selection`, an altered document `stale_dependency`/`byte-digest-mismatch` and a document whose version differs from the selection `invalid_model_binding`/`wrong-model-selection`. | Test (TC-280) |
 
 ## Dependencies
 

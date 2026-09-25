@@ -49,8 +49,10 @@ The effective member key is `(owner effective type identity, original
 declaration key)`. Paths that reach the same original declaration collapse to
 one effective member retaining a derivation fact for every path. A source name
 that resolves to distinct original declarations is refused
-`ambiguous_declaration`/`ambiguous-name` at source resolution only; the
-effective view keeps both members.
+`ambiguous_declaration`/`ambiguous-name` at source resolution and, for a
+model-owned `field` or `operation` member of a checked package, when a V2
+reader resolves that member's name (FR-322 "Model-owned members" step 3);
+the effective view keeps both members.
 
 Each effective declaration identity is `quire.model.effective-declaration/v1`
 over `{version, owner_effective_type, original, derivation}`; the effective view
