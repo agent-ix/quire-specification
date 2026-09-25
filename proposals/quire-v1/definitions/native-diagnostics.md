@@ -155,7 +155,12 @@ diagnostic for the first refusal it finds, and never a broader code:
    `operation-law-missing` (fewer entries than compared leaves),
    `operation-law-mismatch` (extra entries, a path out of order or a law
    outside the role), `operation-law-unselected`, `operation-mode-mismatch`
-   and `operation-mode-type-mismatch`.
+   and `operation-mode-type-mismatch`. A `dependency_reference` argument
+   (FR-322) is checked with the application's arguments, before its
+   `operation-mode-type-mismatch`: `missing-selection`
+   (`missing_declaration`), `missing-name` (`missing_declaration`), then
+   `operator-ineligible` (`ill_typed`). A `dependency_reference` outside any
+   application is checked at its node, in the same node order.
 
 A producer claiming revision `1-draft.3` emits none of these causes.
 

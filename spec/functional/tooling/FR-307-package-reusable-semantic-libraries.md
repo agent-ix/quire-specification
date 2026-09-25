@@ -55,7 +55,7 @@ identity `L`, version string `v` and `d`, which is the 64-lowercase-hex
 is not a raw source or manifest byte digest. `d` is spelled as exactly 64
 lowercase hexadecimal characters with no domain prefix, the spelling of a
 `PackageId` `digest`; any other spelling, a `sha256:` prefix included, is
-`refused { code: invalid_digest }` at the import's `digest` string. `L` is
+`refused { code: invalid-digest }` at the import's `digest` string. `L` is
 the FR-322 library identity: a non-empty string compared byte for byte, with
 no segment structure. A supplied library is one library's source, offered
 under its identity `L` and version `v`. The linker compiles it through the
@@ -63,9 +63,11 @@ same stages as the importing unit, resolving its own imports against the
 same supplied libraries, and its `package_id` is the one that compile
 yields; a supplier never states a library's `package_id`. At most one
 library is supplied per identity; a second of the same identity is
-`refused { code: invalid_package, cause: conflicting-definition }`, and an
-import whose identity no supplied library has is
-`refused { code: missing_import, cause: missing-selection }`. A supplied library whose identity,
+`refused { code: invalid_package, cause: conflicting-definition }`, retaining
+both supplied libraries' identity and version, and an import whose identity
+no supplied library has is
+`refused { code: missing_import, cause: missing-selection }` at the import's
+identity string. A supplied library whose
 version or `package_id` differs from the import is
 `refused { code: stale_dependency, cause: revision-mismatch }` for a version
 difference, or `cause: byte-digest-mismatch` for a `package_id` difference.
@@ -129,7 +131,7 @@ relabeled. No library-level migration correspondence record is defined.
 | FR-307-AC-3 | Migration preserves old/new identities and does not relabel historical evidence. | Test (TC-227) |
 | FR-307-AC-4 | An import binds the library `package_id`, a mismatched import is `stale_dependency`, a conflicting diamond or import cycle is `invalid_package` with its paths, and a duplicate qualifier is `ambiguous_declaration`; an import cycle uses cause `definition-cycle`, and a name from an import without `as` is `missing_declaration`. | Test (TC-227) |
 | FR-307-AC-5 | A migrated package that reuses its source `package_id` with a different identity preimage is `invalid_package` with cause `invalid-value` at `/package_id`. | Test (TC-227) |
-| FR-307-AC-6 | An import whose digest is `sha256:` followed by 64 lowercase hex is `invalid_digest` at the digest string; an import naming `test/geometry` binds to the library supplied under the identity `test/geometry` and no other; two libraries supplied under one identity are `invalid_package`/`conflicting-definition`; an import of an identity no library is supplied under is `missing_import`/`missing-selection`; and the bound library's `package_id` is the one its compile yields, so a library whose source compiles to a `package_id` other than the import's `d` is `stale_dependency`/`byte-digest-mismatch`. | Test (TC-227) |
+| FR-307-AC-6 | An import whose digest is `sha256:` followed by 64 lowercase hex, 64 uppercase hex, 63 or 65 lowercase hex characters is `invalid-digest` at the digest string; an import naming `test/geometry` binds to the library supplied under the identity `test/geometry` and no other; two libraries supplied under one identity are `invalid_package`/`conflicting-definition` retaining both; an import of an identity no library is supplied under is `missing_import`/`missing-selection` at its identity string; and the bound library's `package_id` is the one its compile yields, so a library whose source compiles to a `package_id` other than the import's `d` is `stale_dependency`/`byte-digest-mismatch`. | Test (TC-227) |
 
 ## Dependencies
 
