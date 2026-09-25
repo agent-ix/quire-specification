@@ -219,8 +219,8 @@ boundary.
   `declaration` in the named dependency's admitted package refuses
   `missing_declaration`/`missing-name`. A `dependency_reference` names a
   `function` declaration whose parameter and result types are
-  package-independent: no type node reachable from them, through element,
-  member, component, argument or unit-term references, carries a
+  package-independent: no node in the transitive closure of the signature
+  type nodes' `dependencies` carries a
   `declaration`. Such types (builtin, bounded-domain and anonymous
   structural types over them) have the same node id in every package. The
   application's `return:0` result is that function's result type; the
@@ -231,8 +231,9 @@ boundary.
   `R` or a quantity over a declared unit, for a declared `R` or unit), or
   stands anywhere other than a `quire.op.function.call` callee refuses
   `ill_typed`/`operator-ineligible`. A reader checks each
-  `dependency_reference` in step 7 of the first-refusal order, in its
-  left-to-right place among its application's arguments:
+  `dependency_reference` in step 7 of the first-refusal order, at its place
+  in its node's pre-order term walk wherever it stands (an application
+  argument, a binding value, an aggregate member or the body root):
   `missing-selection`, then `missing-name`, then `operator-ineligible`.
 - `model_member` — a `field` or `operation` member whose declaring node is a
   model declaration node: a `model` or `relation` node that carries no
@@ -628,7 +629,7 @@ partial checked package.
 | FR-322-AC-34 | `quire.op.record.project` over a `quire.op.model.deref` result reads a field of a model object: the `deref` result has family `object`, the projection resolves the field on the declaring object type, own or inherited, and its result is the field's member type. A projection over a reference that is not dereferenced, a `field` member naming a node other than the operand's object type, a `deref` whose `result_type` is not the operand's object type, a `deref` result of a relationship, and a projection whose `result_type` is not the field's member type refuse `ill_typed`/`operator-ineligible`. | Test (TC-281) |
 | FR-322-AC-35 | A `dependency_selections` entry is a closed `DependencySelection` `{identity, version, package_id}` whose `package_id` is a `quire.package.semantic/v2` `PackageId`: the published package carrying two such entries, one per identity in ascending identity order in both its lock and identity preimage, is admitted by the V2 schema and its recorded `package_id` recomputes from them, and changing a dependency's `package_id` changes it; an entry with a `Selection` or `DefinitionRef` shape, no `package_id`, no `version`, a bare-digest `package_id` or a `package_id` in another digest domain fails the schema in either member, at the mutated entry. Entries ordered by UTF-8 bytes where UTF-16 code-unit order differs are admitted; a second entry of one identity refuses `invalid_package`/`conflicting-definition` with both entries as loci, and an entry not strictly after its predecessor refuses `invalid_package`/`invalid-value` at its pointer. | Test (TC-233) |
 | FR-322-AC-36 | A `{term: "dependency_reference", package, node}` term whose `package` is a `quire.package.semantic/v2` `PackageId` and whose `node` is a `NodeId` is admitted by the V2 schema as an application argument and by the node-identity preimage schema as a preimage term; a `package` given as a bare digest or in another digest domain, a missing `node` and an extra member each fail both schemas. A `quire.op.function.call` application-node preimage whose callee is a `dependency_reference` has a different JCS SHA-256 when only the reference's `package` digest changes, and a different one again when only its `node` changes. | Test (TC-233) |
-| FR-322-AC-37 | A package whose function calls a dependency `function` declaration over `Int[0, 9]` returning `Boolean`, through a `dependency_reference` callee, with the Boolean node as `result_type` and no `dependencies` entry for the target, is admitted when the dependency's admitted package is supplied. With no dependency package supplied it refuses `missing_import`/`missing-selection` at the selection entry; with the callee's `package` absent from `dependency_selections`, `missing_declaration`/`missing-selection`; with `node` naming a node that carries no `declaration`, `missing_declaration`/`missing-name`; with `node` naming a declared record, a function returning a declared record, a function over `Set<R>` or over a tuple holding `R` for a declared record `R`, or with the term as a non-callee argument, `ill_typed`/`operator-ineligible`; with the target listed in `dependencies`, `invalid_semantic_graph`. | Test (TC-233) |
+| FR-322-AC-37 | A package whose function calls a dependency `function` declaration over `Int[0, 9]` returning `Boolean`, through a `dependency_reference` callee, with the Boolean node as `result_type` and no `dependencies` entry for the target, is admitted when the dependency's admitted package is supplied. With no dependency package supplied it refuses `missing_import`/`missing-selection` at the selection entry; with the callee's `package` absent from `dependency_selections`, `missing_declaration`/`missing-selection`; with `node` naming a node that carries no `declaration`, `missing_declaration`/`missing-name`; with `node` naming a declared record, a function returning a declared record, a function over `Set<R>` or over a tuple holding `R` for a declared record `R`, or with the term as a non-callee argument or as a node body root, `ill_typed`/`operator-ineligible`; with the target listed in `dependencies`, `invalid_semantic_graph`. | Test (TC-233) |
 
 ## Dependencies
 

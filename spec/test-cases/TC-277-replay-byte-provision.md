@@ -46,9 +46,10 @@ recompilation outcome.
 | BP-09 | BP-06 with one `dependencies` entry removed | Refused `missing_import`/`missing-selection` at the import the entry supplied | FR-323-AC-7 |
 | BP-10 | BP-06 with one entry's `version` changed | Refused `stale_dependency`/`revision-mismatch` at the import the entry supplies | FR-323-AC-7 |
 | BP-11 | BP-06 with one entry's `package_id` changed and its sources intact | Refused `stale_dependency`/`byte-digest-mismatch` naming that entry's `identity`, its `package_id` and the recompiled one; no result | FR-323-AC-7 |
+| BP-12 | BP-06 with a second entry whose source has the authority and identity of the first entry's source | Refused `invalid_package`/`conflicting-definition` naming both entries, before any recompile | FR-323-AC-7 |
 
 ## Expected Results
 
 BP-01 and BP-06 find a complete provision admitted. BP-02 through BP-05 and
-BP-07 through BP-11 find each incomplete, mismatched or stale provision refused with its
+BP-07 through BP-12 find each incomplete, mismatched or stale provision refused with its
 named typed cause before any recompilation result is produced.
