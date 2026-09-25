@@ -1,0 +1,73 @@
+---
+id: TC-280
+title: "Model-owned member types"
+type: TC
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: verifies
+---
+
+# TC-280: Model-owned member types
+
+## Description
+
+Show that a reader derives the type of a `field` or `operation` member whose
+declaring node is a model declaration node from the lock-selected domain
+package, as FR-322's "Model-owned members" states: it admits the selected
+document as evidence, recovers the declaring node's `ModelOwner` by
+recomputing the model declaration node keys, resolves the member name among
+the declaring type's exposed effective members, own and inherited, and derives
+the member type from the resolved record.
+
+## Preconditions
+
+- `proposals/checked-package-v2/model-member-type-vectors.json` carries the
+  domain package `acme/orders` `1.0.0` as the declaration records FR-154
+  intake reads, the model declaration node vectors M1 to M6, the member cases
+  and the selection cases. The SHA-256 of the RFC 8785 bytes of its
+  `domain_package` member stands for the document's `sha256-jcs` digest.
+- The lock selects `acme/orders` `1.0.0` only.
+- `node-identity-preimage.schema.json` defines the closed
+  `ModelDeclarationNode` preimage.
+
+## Test Procedure
+
+Validate each model declaration node vector against the closed preimage schema
+and recompute its JCS SHA-256. For each member case, recover the declaring
+node's owner from the selected domain package, resolve the member and derive
+its type or refusal, and compare with the recorded expectation. For each
+selection case, run FR-322's selection check over the supplied documents and
+compare with the recorded result.
+
+## Vectors
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| MT-01 | `field` `total` on M1 (`Order`), `Integer` with `min` 0 and `max` 9 | Resolves `Order/total`; type `Int[0, 9]` | FR-322-AC-31 |
+| MT-02 | `field` `total` on M5 (`Sub`, supertype `Order`) | Resolves the inherited `Order/total`; type `Int[0, 9]` | FR-322-AC-30 |
+| MT-03 | `field` `note`, optional `Boolean` `[1, 1]` | `Option<Boolean>` | FR-322-AC-31 |
+| MT-04 | `field` `lines`, `Integer` `[0, 3]`, unordered, unique | `Set<Integer>[0, 3]` | FR-322-AC-31 |
+| MT-05 | `field` `history`, `Integer` `[0, 5]`, ordered, not unique | `Sequence<Integer>[0, 5]` | FR-322-AC-31 |
+| MT-06 | `field` `invoice`, typed object type `Invoice` | `Reference<Invoice>` over M3 | FR-322-AC-31 |
+| MT-07 | `operation` `size` on M1 | Resolves `Order/size`; type `Integer` | FR-322-AC-31 |
+| MT-08 | `operation` `size` on M5, which `Sub/size` redefines | Resolves `Sub/size`; type `Integer` | FR-322-AC-30 |
+| MT-09 | `operation` `scaled` on M5, redefined with a renamed parameter | Resolves `Sub/scaled`; type `Integer` | FR-322-AC-30 |
+| MA-01 | `field` `missing` on M1 | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
+| MA-02 | `field` `size`, an operation name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
+| MA-03 | `operation` `total`, a field name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
+| MA-04 | `field` `total` on M4, the relationship `billedTo` | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
+| MA-05 | `field` `total` on M2, `Order` keyed under version `2.0.0` | `missing_declaration`/`missing-selection` | FR-322-AC-29 |
+| MA-06 | `field` `label`, typed `Text` | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
+| MA-07 | `field` `tags`, upper bound `unbounded` | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
+| MA-08 | `operation` `reset`, with no result | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
+| MA-09 | `field` `code` on M6 (`Both`), declared by both supertypes `Tagged` and `Coded` | `ambiguous_declaration`/`ambiguous-name` | FR-322-AC-30 |
+| MS-01 | The document supplied under the selected digest, identity and version equal | Admitted | FR-322-AC-32 |
+| MS-02 | No document supplied | `missing_import`/`missing-selection` | FR-322-AC-32 |
+| MS-03 | A document with `Order/total`'s `max` changed to 8, supplied under the selected digest | `stale_dependency`/`byte-digest-mismatch` | FR-322-AC-32 |
+| MS-04 | The selection names version `1.0.1` | `invalid_model_binding`/`wrong-model-selection` | FR-322-AC-32 |
+
+## Expected Results
+
+M1 to M6 validate and recompute their digests. Every member case gives exactly
+its recorded resolved declaration and type or its recorded refusal, and every
+selection case gives its recorded result.

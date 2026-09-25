@@ -7,7 +7,8 @@
     {"$ref": "#/$defs/EnumMember"},
     {"$ref": "#/$defs/Dimension"},
     {"$ref": "#/$defs/Unit"},
-    {"$ref": "#/$defs/ApplicationNode"}
+    {"$ref": "#/$defs/ApplicationNode"},
+    {"$ref": "#/$defs/ModelDeclarationNode"}
   ],
   "$defs": {
     "Nonempty": {"type": "string", "minLength": 1},
@@ -58,6 +59,7 @@
     ]},
     "Recursion": {"oneOf": [{"type": "null"}, {"type": "object", "required": ["size", "ordinal"], "properties": {"size": {"type": "integer", "minimum": 1}, "ordinal": {"type": "integer", "minimum": 0}}, "additionalProperties": false}]},
     "ApplicationNode": {"type": "object", "required": ["version", "node_tag", "semantic_form", "semantic_type", "declaration", "recursion", "body"], "properties": {"version": {"const": "quire.application-node/v1"}, "node_tag": {"enum": ["scalar_type", "composite_type", "bounded_domain", "value", "expression", "function", "model", "relation", "state", "temporal", "protocol", "claim", "correspondence"]}, "semantic_form": {"$ref": "#/$defs/Nonempty"}, "semantic_type": {"$ref": "#/$defs/NodeId"}, "declaration": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/Declaration"}]}, "recursion": {"$ref": "#/$defs/Recursion"}, "body": {"$ref": "#/$defs/PreimageTerm"}}, "additionalProperties": false},
+    "ModelDeclarationNode": {"type": "object", "required": ["version", "node_tag", "semantic_form", "semantic_type", "declaration", "recursion", "owner", "body"], "properties": {"version": {"const": "quire.structural-node/v1"}, "node_tag": {"enum": ["model", "relation"]}, "semantic_form": {"enum": ["object_type", "systems_interface", "relationship"]}, "semantic_type": {"type": "null"}, "declaration": {"type": "null"}, "recursion": {"type": "null"}, "owner": {"$ref": "#/$defs/ModelOwner"}, "body": {"type": "object", "required": ["term", "members"], "properties": {"term": {"const": "aggregate"}, "members": {"type": "array", "maxItems": 0}}, "additionalProperties": false}}, "additionalProperties": false, "if": {"properties": {"node_tag": {"const": "relation"}}}, "then": {"properties": {"semantic_form": {"const": "relationship"}}}, "else": {"properties": {"semantic_form": {"enum": ["object_type", "systems_interface"]}}}},
     "EnumDeclaration": {"type": "object", "required": ["version", "owner", "qualified_declaration", "ordered", "members"], "properties": {"version": {"const": "quire.enum-declaration-node/v1"}, "owner": {"$ref": "#/$defs/Owner"}, "qualified_declaration": {"$ref": "#/$defs/QualifiedName"}, "ordered": {"type": "boolean"}, "members": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/Identifier"}}}, "additionalProperties": false},
     "EnumMember": {"type": "object", "required": ["version", "declaration_node_id", "case"], "properties": {"version": {"const": "quire.enum-member-node/v1"}, "declaration_node_id": {"$ref": "#/$defs/NodeId"}, "case": {"$ref": "#/$defs/Identifier"}}, "additionalProperties": false},
     "Dimension": {"type": "object", "required": ["version", "owner", "qualified_declaration", "terms"], "properties": {"version": {"const": "quire.dimension-node/v1"}, "owner": {"$ref": "#/$defs/Owner"}, "qualified_declaration": {"$ref": "#/$defs/QualifiedName"}, "terms": {"type": "array", "items": {"$ref": "#/$defs/DimensionTerm"}}}, "additionalProperties": false},
