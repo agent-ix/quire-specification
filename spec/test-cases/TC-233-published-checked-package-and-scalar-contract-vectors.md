@@ -37,7 +37,11 @@ Validate each positive fixture against its published schema and apply every
 authored adverse mutation. Rebuild each V2 identity preimage from the lock
 selections and occurrence-free graph, recompute the JCS SHA-256 package id,
 then edit each excluded member and each named preimage member, requiring each
-excluded member injected into the identity preimage to be refused. Recompute
+excluded member injected into the identity preimage to be refused. Insert the
+published dependency selections of `dependency-selection-vectors.json` into
+the all-families package's lock and identity preimage, require the schema to
+admit it and its recorded package id to recompute, and require each authored
+entry mutation to fail the schema in either member. Recompute
 every nominal node and compound-unit vector identity and apply each authored
 mutation, requiring the exact refusing check it names (`schema` or `semantic`),
 including `-0` spellings, and require the semantic oracle itself to refuse

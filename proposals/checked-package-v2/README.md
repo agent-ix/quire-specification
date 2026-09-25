@@ -40,6 +40,13 @@ structures, but any external consumer receives only the versioned contract.
   every member a real semantic-graph node requires, inserted into the graph
   verbatim, so the vector exercises the reader's ascending-node-id-digest
   order across two frame nodes.
+- `dependency-selection-vectors.json` carries two `DependencySelection`
+  entries (`{identity, version, package_id}`), the `package_id` of
+  `fixtures/positive-all-families.json` with those entries as its lock's and
+  identity preimage's `dependency_selections`, and entry mutations the schema
+  refuses: a `Selection` or `DefinitionRef` shape, a missing `package_id` or
+  `version`, a bare-digest `package_id` and a `package_id` in another digest
+  domain.
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes

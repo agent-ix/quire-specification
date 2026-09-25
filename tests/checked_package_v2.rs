@@ -243,6 +243,8 @@ const POSITIVE_CLAUSE_OPERATIONS: &str =
 const POSITIVE_CONTROL_OPERATIONS: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-control-operations.json");
 const ADVERSE: &str = include_str!("../proposals/checked-package-v2/fixtures/adverse.json");
+const DEPENDENCY_SELECTION_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/dependency-selection-vectors.json");
 const REQUIRED_NODE_TAGS: [&str; 13] = [
     "scalar_type",
     "composite_type",
@@ -3588,7 +3590,13 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
             (
                 "dependency selections",
                 "/lock/dependency_selections",
-                json!([{"role": "dependency", "definition": package["lock"]["edition"]["definition"]}]),
+                json!([{
+                    "identity": "test/geometry", "version": "1",
+                    "package_id": {
+                        "domain": "quire.package.semantic/v2", "algorithm": "sha256",
+                        "digest": "8888888888888888888888888888888888888888888888888888888888888888"
+                    }
+                }]),
             ),
             (
                 "graph node type",
@@ -3657,6 +3665,103 @@ fn tc_233_public_schema_refuses_authored_version_domain_and_node_mutations() {
             "{} must fail the public schema",
             mutation["id"].as_str().expect("mutation id is a string")
         );
+    }
+}
+
+/// The published `positive-all-families` package with `entries` as its
+/// `dependency_selections`, in both the lock and the identity preimage.
+fn with_dependency_selections(entries: &Value) -> Value {
+    let mut package = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    package["lock"]["dependency_selections"] = entries.clone();
+    package["identity_preimage"]["dependency_selections"] = entries.clone();
+    package
+}
+
+#[trace("TC-233", "FR-322-AC-35")]
+#[test]
+fn tc_233_dependency_selections_carry_each_dependency_package_identity() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let vectors = parsed_fixture(DEPENDENCY_SELECTION_VECTORS);
+    assert_eq!(
+        vectors["base"], "fixtures/positive-all-families.json",
+        "the dependency vectors extend the all-families package"
+    );
+    let entries = &vectors["dependency_selections"];
+    let identities: Vec<&str> = entries
+        .as_array()
+        .expect("dependency selections are an array")
+        .iter()
+        .map(|entry| entry["identity"].as_str().expect("identity is a string"))
+        .collect();
+    assert!(
+        identities.len() > 1 && identities.windows(2).all(|pair| pair[0] < pair[1]),
+        "the published selections are one per library identity, ascending"
+    );
+
+    let mut package = with_dependency_selections(entries);
+    package["package_id"]["digest"] = vectors["package_id"].clone();
+    let errors: Vec<String> = schema
+        .iter_errors(&package)
+        .map(|error| format!("{} at {}", error, error.instance_path()))
+        .collect();
+    assert!(
+        errors.is_empty(),
+        "a package with dependency selections is admitted: {errors:?}"
+    );
+    assert_eq!(
+        derive_identity_preimage(&package),
+        package["identity_preimage"],
+        "dependency selections enter the identity preimage exactly as locked"
+    );
+    let package_id = unqualified_jcs_sha256(&derive_identity_preimage(&package));
+    assert_eq!(
+        package_id,
+        vectors["package_id"]
+            .as_str()
+            .expect("package id is a string"),
+        "the recorded package id binds the dependency selections"
+    );
+    assert_ne!(
+        package_id,
+        parsed_fixture(POSITIVE_ALL_FAMILIES)["package_id"]["digest"],
+        "adding dependency selections changes the package id"
+    );
+    let mut repinned = package.clone();
+    for member in ["lock", "identity_preimage"] {
+        repinned[member]["dependency_selections"][0]["package_id"]["digest"] =
+            json!("5555555555555555555555555555555555555555555555555555555555555555");
+    }
+    assert_ne!(
+        unqualified_jcs_sha256(&derive_identity_preimage(&repinned)),
+        package_id,
+        "a dependency's package id enters the importing package id"
+    );
+
+    let mutations = &vectors["entry_mutations"];
+    assert_eq!(
+        named_inventory(mutations, "/id", "/outcome"),
+        BTreeSet::from([
+            ("definition-selection-shape", "refused:malformed_wire"),
+            ("definition-ref-shape", "refused:malformed_wire"),
+            ("missing-package-id", "refused:malformed_wire"),
+            ("bare-digest-package-id", "refused:malformed_wire"),
+            ("source-bytes-package-id", "refused:digest_domain_mismatch"),
+            ("missing-version", "refused:malformed_wire"),
+        ]),
+        "the dependency-selection mutation inventory is exact"
+    );
+    for mutation in mutations.as_array().expect("entry mutations are an array") {
+        let id = mutation["id"].as_str().expect("mutation id is a string");
+        let mut entries = entries.clone();
+        entries[0] = mutation["entry"].clone();
+        for member in ["lock", "identity_preimage"] {
+            let mut candidate = package.clone();
+            candidate[member]["dependency_selections"] = entries.clone();
+            assert!(
+                !schema.is_valid(&candidate),
+                "{id} in {member}/dependency_selections must fail the public schema"
+            );
+        }
     }
 }
 
