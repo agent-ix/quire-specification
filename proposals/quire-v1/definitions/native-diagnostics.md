@@ -121,10 +121,10 @@ diagnostic for the first refusal it finds, and never a broader code:
 
 1. schema refusals (`invalid_package`, their structural causes);
 2. the model selection check of FR-322 "Model-owned members" step 1, over
-   the `model_selections` rows in lock order: `digest-domain-mismatch` and
-   `byte-digest-mismatch` (`stale_dependency`), `missing-selection`
-   (`missing_import`) and `wrong-model-selection` (`invalid_model_binding`)
-   in FR-154's admission order, then the first FR-154 intake or
+   the `model_selections` rows in lock order, in FR-154's admission order:
+   `digest-domain-mismatch` (`stale_dependency`), `missing-selection`
+   (`missing_import`), `byte-digest-mismatch` (`stale_dependency`) and
+   `wrong-model-selection` (`invalid_model_binding`); then the first FR-154 intake or
    `quire.model.complete/v1` normalization refusal in FR-154's report order;
 3. graph-shape refusals of FR-322 (`invalid_semantic_graph`): an application
    node whose `semantic_form` contradicts its body or whose dependency list is

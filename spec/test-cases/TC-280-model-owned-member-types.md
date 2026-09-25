@@ -24,7 +24,7 @@ the member type from the resolved record.
 - `proposals/checked-package-v2/model-member-type-vectors.json` carries the
   domain package `acme/orders` `1.0.0` as a projection of the declaration
   records FR-154 intake reads from it (`typeRef`, `interfaceFeatures`,
-  value types with their integer bounds, presence, multiplicity, supertypes
+  value types with the `Int[lo, hi]` they are bound as (TC-196, TC-197), presence, multiplicity, supertypes
   and redefinitions), the model declaration node vectors M1 to M8, the member
   cases, each recorded with its criterion, the wire cases and the selection
   cases. The SHA-256 of the RFC 8785 bytes of its `domain_package` member
