@@ -46,7 +46,10 @@ structures, but any external consumer receives only the versioned contract.
   identity preimage's `dependency_selections`, and entry mutations the schema
   refuses: a `Selection` or `DefinitionRef` shape, a missing `package_id` or
   `version`, a bare-digest `package_id` and a `package_id` in another digest
-  domain.
+  domain. Its `order_vectors` pin FR-322's order rule: entries in UTF-8 byte
+  order (where UTF-16 order differs) are admitted, a repeated identity
+  refuses `invalid_package`/`conflicting-definition` and a misordered entry
+  `invalid_package`/`invalid-value`, each with its loci.
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes

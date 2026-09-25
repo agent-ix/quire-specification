@@ -3757,12 +3757,84 @@ fn tc_233_dependency_selections_carry_each_dependency_package_identity() {
         for member in ["lock", "identity_preimage"] {
             let mut candidate = package.clone();
             candidate[member]["dependency_selections"] = entries.clone();
+            let entry_path = format!("/{member}/dependency_selections/0");
+            let errors: Vec<String> = schema
+                .iter_errors(&candidate)
+                .map(|error| error.instance_path().to_string())
+                .collect();
             assert!(
-                !schema.is_valid(&candidate),
+                !errors.is_empty(),
                 "{id} in {member}/dependency_selections must fail the public schema"
+            );
+            assert!(
+                errors.iter().all(|path| path.starts_with(&entry_path)),
+                "{id} in {member} fails the schema only at the mutated entry: {errors:?}"
             );
         }
     }
+
+    let order_vectors = &vectors["order_vectors"];
+    assert_eq!(
+        named_inventory(order_vectors, "/id", "/outcome"),
+        BTreeSet::from([
+            ("utf8-byte-order", "admitted"),
+            (
+                "duplicate-identity",
+                "refused:invalid_package/conflicting-definition"
+            ),
+            ("misordered", "refused:invalid_package/invalid-value"),
+        ]),
+        "the dependency-selection order inventory is exact"
+    );
+    for vector in order_vectors
+        .as_array()
+        .expect("order vectors are an array")
+    {
+        let id = vector["id"].as_str().expect("order vector id is a string");
+        let selections = &vector["dependency_selections"];
+        let candidate = with_dependency_selections(selections);
+        assert!(
+            schema.is_valid(&candidate),
+            "{id} is admitted by the schema; the order rule, not the schema, decides it"
+        );
+        let (outcome, loci) = match dependency_order_refusal(selections) {
+            None => ("admitted".to_owned(), Vec::new()),
+            Some((cause, loci)) => (format!("refused:invalid_package/{cause}"), loci),
+        };
+        assert_eq!(outcome, vector["outcome"], "{id} order outcome");
+        assert_eq!(json!(loci), vector["loci"], "{id} order loci");
+    }
+}
+
+/// FR-322's `dependency_selections` order rule: the first entry whose
+/// identity repeats an earlier one refuses `conflicting-definition` at both
+/// entries; otherwise the first entry not strictly after its predecessor in
+/// UTF-8 byte order refuses `invalid-value` at its pointer.
+fn dependency_order_refusal(selections: &Value) -> Option<(&'static str, Vec<String>)> {
+    let identities: Vec<&[u8]> = selections
+        .as_array()
+        .expect("dependency selections are an array")
+        .iter()
+        .map(|entry| {
+            entry["identity"]
+                .as_str()
+                .expect("identity is a string")
+                .as_bytes()
+        })
+        .collect();
+    let pointer = |index: usize| format!("/lock/dependency_selections/{index}");
+    for (index, identity) in identities.iter().enumerate() {
+        if let Some(earlier) = identities[..index].iter().position(|seen| seen == identity) {
+            return Some((
+                "conflicting-definition",
+                vec![pointer(earlier), pointer(index)],
+            ));
+        }
+    }
+    identities
+        .windows(2)
+        .position(|pair| pair[0] >= pair[1])
+        .map(|index| ("invalid-value", vec![pointer(index + 1)]))
 }
 
 #[trace("TC-233", "FR-322-AC-15")]
