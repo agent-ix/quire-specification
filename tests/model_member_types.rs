@@ -4,6 +4,11 @@
 //! FR-322 "Model-owned members" vector qualification (TC-280): owner recovery
 //! by recomputed model declaration node keys, member resolution in the
 //! declaring type's exposed effective members and member type derivation.
+//! TC-281 applies the published operation catalog's `quire.op.reference.eq`,
+//! `quire.op.reference.ne`, `quire.op.model.deref` and
+//! `quire.op.record.project` entries over the same recovered owners:
+//! reference equality over conforming object types and a model field
+//! projection over a `deref` result.
 
 use ix_trace_rs::trace;
 use quire_verification::contracts::jcs_sha256;
@@ -14,6 +19,8 @@ const VECTORS: &str =
     include_str!("../proposals/checked-package-v2/model-member-type-vectors.json");
 const PREIMAGE_SCHEMA: &str =
     include_str!("../proposals/checked-package-v2/node-identity-preimage.schema.json");
+const OPERATION_CATALOG: &str =
+    include_str!("../proposals/checked-package-v2/operation-catalog.json");
 const NODE_DOMAIN: &str = "quire.checked-semantic-node/v1";
 
 fn parsed(bytes: &str) -> Value {
@@ -480,6 +487,271 @@ fn tc_280_selected_domain_package_documents_are_verified_evidence() {
     for case in cases {
         assert_eq!(
             select(&vectors["domain_package"], case),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
+    }
+}
+
+/// A catalog entry by identity.
+fn catalog_entry<'a>(catalog: &'a Value, identity: &str) -> &'a Value {
+    array(catalog, "operations")
+        .iter()
+        .find(|entry| entry["identity"] == identity)
+        .unwrap_or_else(|| panic!("{identity} is catalogued"))
+}
+
+/// The families a catalog operand position admits: a group's members or the
+/// family itself.
+fn admitted_families<'a>(catalog: &'a Value, position: &'a str) -> Vec<&'a str> {
+    match catalog["groups"][position].as_array() {
+        Some(members) => members.iter().filter_map(Value::as_str).collect(),
+        None => vec![position],
+    }
+}
+
+/// The published node vector named `name`.
+fn node_vector<'a>(nodes: &'a [Value], name: &str) -> &'a Value {
+    nodes
+        .iter()
+        .find(|vector| vector["name"] == name)
+        .unwrap_or_else(|| panic!("{name} is a published node vector"))
+}
+
+/// A typed operand of a TC-281 case: `{reference: M}` is the
+/// `composite_type`/`reference` node over model declaration node `M`, and
+/// `{object: M}` is `M` itself.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Operand<'a> {
+    Reference(&'a str),
+    Object(&'a str),
+}
+
+impl<'a> Operand<'a> {
+    fn from_case(value: &'a Value) -> Self {
+        match (value["reference"].as_str(), value["object"].as_str()) {
+            (Some(node), None) => Self::Reference(node),
+            (None, Some(node)) => Self::Object(node),
+            _ => panic!("an operand names a reference or an object"),
+        }
+    }
+
+    /// FR-322's family of the operand's type node: `reference` for a
+    /// reference, `object` for an object type or systems interface model
+    /// declaration node, and none for a relation node.
+    fn family(self, nodes: &[Value]) -> Option<&'static str> {
+        match self {
+            Self::Reference(_) => Some("reference"),
+            Self::Object(name) => {
+                let preimage = &node_vector(nodes, name)["preimage"];
+                match (text(preimage, "node_tag"), text(preimage, "semantic_form")) {
+                    ("model", "object_type" | "systems_interface") => Some("object"),
+                    _ => None,
+                }
+            }
+        }
+    }
+}
+
+/// FR-322 step 2 over a named node vector.
+fn recover_vector<'a>(package: &'a Value, nodes: &[Value], name: &str) -> Option<Declared<'a>> {
+    let vector = node_vector(nodes, name);
+    let preimage = &vector["preimage"];
+    recover(
+        package,
+        text(vector, "sha256"),
+        text(preimage, "node_tag"),
+        text(preimage, "semantic_form"),
+    )
+}
+
+/// FR-322 "Reference conformance" over two reference operands: both owners
+/// are recovered by step 2, even for one type node.
+fn conforming_reference(package: &Value, nodes: &[Value], left: &str, right: &str) -> Value {
+    let (Some(a), Some(b)) = (
+        recover_vector(package, nodes, left),
+        recover_vector(package, nodes, right),
+    ) else {
+        return refused("missing_declaration", "missing-selection");
+    };
+    let (Some(a_type), Some(b_type)) = (a.object_type, b.object_type) else {
+        return ineligible();
+    };
+    let conforms = a.node == b.node
+        || ancestors(package, a_type).contains(b.node)
+        || ancestors(package, b_type).contains(a.node);
+    if conforms {
+        json!({"admitted": true})
+    } else {
+        ineligible()
+    }
+}
+
+/// One reference equality case through its catalog entry: operand families,
+/// then each constraint the entry names.
+fn reference_equality(catalog: &Value, package: &Value, nodes: &[Value], case: &Value) -> Value {
+    let entry = catalog_entry(catalog, text(case, "operation"));
+    let positions = string_positions(entry);
+    let operands: Vec<Operand<'_>> = array(case, "operands")
+        .iter()
+        .map(Operand::from_case)
+        .collect();
+    if operands.len() != positions.len() {
+        return ineligible();
+    }
+    let fits = operands.iter().zip(&positions).all(|(operand, position)| {
+        operand
+            .family(nodes)
+            .is_some_and(|family| admitted_families(catalog, position).contains(&family))
+    });
+    if !fits {
+        return ineligible();
+    }
+    for constraint in array(entry, "constraints") {
+        let slot = |index: usize| match constraint["operands"][index]
+            .as_u64()
+            .and_then(|slot| usize::try_from(slot).ok())
+            .and_then(|slot| operands.get(slot))
+        {
+            Some(Operand::Reference(node)) => *node,
+            _ => panic!("a reference constraint names reference operands"),
+        };
+        match text(constraint, "kind") {
+            "conforming_reference" => {
+                let decided = conforming_reference(package, nodes, slot(0), slot(1));
+                if decided != json!({"admitted": true}) {
+                    return decided;
+                }
+            }
+            other => panic!("TC-281 decides no {other} constraint"),
+        }
+    }
+    json!({"admitted": true})
+}
+
+fn string_positions(entry: &Value) -> Vec<&str> {
+    array(entry, "operands")
+        .iter()
+        .map(|position| position.as_str().expect("an operand position is a name"))
+        .collect()
+}
+
+/// The typed operand of a projection case: a `deref` application checked
+/// against the catalog's `quire.op.model.deref` entry, or a plain operand.
+fn projection_operand<'a>(
+    catalog: &Value,
+    nodes: &[Value],
+    operand: &'a Value,
+) -> Option<Operand<'a>> {
+    if operand.get("deref").is_none() {
+        return Some(Operand::from_case(operand));
+    }
+    let entry = catalog_entry(catalog, "quire.op.model.deref");
+    let [position] = string_positions(entry)[..] else {
+        panic!("deref takes one operand");
+    };
+    let source = Operand::from_case(&operand["deref"]);
+    let admitted = source
+        .family(nodes)
+        .is_some_and(|family| admitted_families(catalog, position).contains(&family));
+    let Operand::Reference(inner) = source else {
+        return None;
+    };
+    assert_eq!(
+        text(entry, "result"),
+        "inner:0",
+        "deref yields its operand's element type"
+    );
+    let declared = Operand::Object(text(operand, "result_type"));
+    // The declared result names the derived `inner:0` type and has its family.
+    (admitted && declared == Operand::Object(inner) && declared.family(nodes).is_some())
+        .then_some(declared)
+}
+
+/// One projection case through the catalog's `quire.op.record.project`
+/// entry, then FR-322 steps 2 to 4 for its `field` member.
+fn projection(catalog: &Value, package: &Value, nodes: &[Value], case: &Value) -> Value {
+    let entry = catalog_entry(catalog, "quire.op.record.project");
+    assert_eq!(entry["member"], "field");
+    let [position] = string_positions(entry)[..] else {
+        panic!("record.project takes one operand");
+    };
+    let Some(operand) = projection_operand(catalog, nodes, &case["operand"]) else {
+        return ineligible();
+    };
+    let fits = operand
+        .family(nodes)
+        .is_some_and(|family| admitted_families(catalog, position).contains(&family));
+    if !fits {
+        return ineligible();
+    }
+    let member = &case["member"];
+    for constraint in array(entry, "constraints") {
+        match text(constraint, "kind") {
+            "member_of" => {
+                if operand != Operand::Object(text(member, "declaration")) {
+                    return ineligible();
+                }
+            }
+            other => panic!("TC-281 decides no {other} constraint"),
+        }
+    }
+    // The `member` result form: the declared `result_type` is the step 4 type.
+    let derived = derive(package, nodes, member);
+    match derived.get("member_type") {
+        Some(member_type) if *member_type != case["result_type"] => ineligible(),
+        _ => derived,
+    }
+}
+
+#[trace("TC-281", "FR-322-AC-33")]
+#[test]
+fn tc_281_reference_equality_admits_conforming_object_types() {
+    let vectors = parsed(VECTORS);
+    let catalog = parsed(OPERATION_CATALOG);
+    let nodes = array(&vectors, "model_declaration_nodes");
+    let cases = array(&vectors, "reference_equality_cases");
+    let operations: BTreeSet<_> = cases.iter().map(|case| text(case, "operation")).collect();
+    assert_eq!(
+        operations,
+        BTreeSet::from(["quire.op.reference.eq", "quire.op.reference.ne"])
+    );
+    for case in cases {
+        assert_eq!(
+            reference_equality(&catalog, &vectors["domain_package"], nodes, case),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
+    }
+}
+
+#[trace("TC-281", "FR-322-AC-34")]
+#[test]
+fn tc_281_record_projection_reads_a_model_field_over_a_deref_result() {
+    let vectors = parsed(VECTORS);
+    let catalog = parsed(OPERATION_CATALOG);
+    let object_groups: BTreeSet<&str> = catalog["groups"]
+        .as_object()
+        .expect("groups are an object")
+        .iter()
+        .filter(|(_, members)| {
+            members
+                .as_array()
+                .is_some_and(|m| m.contains(&json!("object")))
+        })
+        .map(|(name, _)| name.as_str())
+        .collect();
+    assert_eq!(
+        object_groups,
+        BTreeSet::from(["field_owner"]),
+        "an object term fits only a field_owner position"
+    );
+    let nodes = array(&vectors, "model_declaration_nodes");
+    for case in array(&vectors, "projection_cases") {
+        assert_eq!(
+            projection(&catalog, &vectors["domain_package"], nodes, case),
             case["expected"],
             "{}",
             text(case, "name")

@@ -50,8 +50,10 @@ structures, but any external consumer receives only the versioned contract.
   and invalid mutations. They add no CheckedPackage V2 wire member.
 - `model-member-type-vectors.json` carries a domain package as a projection
   of the declaration records FR-154 intake reads from it, the model declaration node vectors
-  that recover a declaring node's `ModelOwner`, and the member and selection
-  cases for FR-322's "Model-owned members". The SHA-256 of the RFC 8785 bytes
+  that recover a declaring node's `ModelOwner`, the member and selection
+  cases for FR-322's "Model-owned members", and the reference equality and
+  field projection cases for its "Reference conformance" and model field
+  projection rules (TC-281). The SHA-256 of the RFC 8785 bytes
   of its `domain_package` member stands for the document's `sha256-jcs`
   digest.
 - The checked semantic graph is a closed `quire.checked-semantic-graph/v2`
@@ -229,6 +231,14 @@ name among the declaring type's exposed effective members, own and inherited,
 and derives the member type from the resolved field or operation record. The
 rule, its type tables and its refusals are
 [FR-322's "Model-owned members"](../../spec/objects/interfaces/FR-322-checked-package-artifact.md#model-owned-members).
+
+A field of a model object is `quire.op.record.project` over a
+`quire.op.model.deref` result: `deref` yields the object type's model
+declaration node, of family `object`, which the projection's `field_owner`
+operand group admits. `quire.op.reference.eq` and `quire.op.reference.ne`
+compare two references whose object types conform one to the other
+(`conforming_reference`), decided over the owners the same recovery yields
+([FR-322's "Reference conformance"](../../spec/objects/interfaces/FR-322-checked-package-artifact.md#reference-conformance)).
 
 ## Declarations
 

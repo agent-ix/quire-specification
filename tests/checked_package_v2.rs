@@ -1201,6 +1201,7 @@ impl<'a> OperationOracle<'a> {
                 ("composite_type", "bag") => "bag",
                 ("composite_type", "ordered_set") => "ordered_set",
                 ("composite_type", "reference") => "reference",
+                ("model", "object_type" | "systems_interface") => "object",
                 ("bounded_domain", "model_population") => "population",
                 _ => return None,
             },
@@ -1588,6 +1589,13 @@ impl<'a> OperationOracle<'a> {
             }
             Some("same_type") => {
                 matches!((ty(operand(0)), ty(operand(1))), (Some(l), Some(r)) if self.same_type(&l, &r))
+            }
+            // This oracle reads no domain package and recovers no model
+            // owner, so it cannot decide `conforming_reference`; no
+            // published TC-233 package applies it. FR-322 "Reference
+            // conformance" is qualified by TC-281 in `model_member_types.rs`.
+            Some("conforming_reference") => {
+                panic!("the TC-233 oracle does not decide conforming_reference")
             }
             Some("same_dimension") => {
                 let dimension = |id: Option<Value>| {
@@ -4748,8 +4756,13 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
     }
     assert_eq!(
         string_set(&groups["any_term"], "any_term"),
-        families,
-        "every family, including aggregate, binder and clause terms, is a term"
+        families
+            .iter()
+            .copied()
+            .filter(|family| *family != "object")
+            .collect::<BTreeSet<_>>(),
+        "every family except object, including aggregate, binder and clause terms, is a term; \
+         an object term fits only a field_owner position (FR-322)"
     );
     let position_known = |name: &str| families.contains(name) || groups.contains_key(name);
     let constraint_kinds = string_set(&catalog["constraint_kinds"], "constraint kinds");

@@ -25,7 +25,7 @@ the member type from the resolved record.
   domain package `acme/orders` `1.0.0` as a projection of the declaration
   records FR-154 intake reads from it (`typeRef`, `interfaceFeatures`,
   value types with the `Int[lo, hi]` they are bound as (TC-196, TC-197), presence, multiplicity, supertypes
-  and redefinitions), the model declaration node vectors M1 to M8, the member
+  and redefinitions), the model declaration node vectors M1 to M9, the member
   cases, each recorded with its criterion, the wire cases and the selection
   cases. The SHA-256 of the RFC 8785 bytes of its `domain_package` member
   stands for the document's `sha256-jcs` digest.
@@ -90,5 +90,5 @@ result.
 
 ## Expected Results
 
-M1 to M8 validate and recompute their digests. Every wire, member and
+M1 to M9 validate and recompute their digests. Every wire, member and
 selection case gives exactly its recorded result.
