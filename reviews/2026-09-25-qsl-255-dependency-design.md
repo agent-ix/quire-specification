@@ -222,22 +222,6 @@ declarations of its body; a `dependency_reference` contributes none".
 
 ## Dispositions
 
-| ID | Disposition |
-| --- | --- |
-| FND-001 | Open: fix in this PR. Tell the QSL session about ADR-015 D-2 and TC-446. |
-| FND-002 | Open: fix in this PR. |
-| FND-003 | Open: fix in this PR. The design choice belongs to the spec owner. |
-| FND-004 | Open: fix in this PR. |
-| FND-005 | Open: fix in this PR. |
-| FND-006 | Open: fix in this PR. |
-| FND-007 | Open: fix in this PR. |
-| FND-008 | Open: fix in this PR. |
-| FND-009 | Open: fix in this PR. |
-| FND-010 | Open: fix in this PR. |
-| FND-011 | Open: fix in this PR. |
-
-## Dispositions
-
 All findings are fixed in commit 56f3934.
 
 - FND-001: `invalid-digest` in FR-307, FR-307-AC-6 and TC-227 L09. The QSL
