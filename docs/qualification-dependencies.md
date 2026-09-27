@@ -8,7 +8,7 @@ The repository stays private; no public distribution decision is implied.
 | Direct dependency | Exact selection | Existing grant | Purpose |
 | --- | --- | --- | --- |
 | quire-verification | 5305b40d0bc78bf2a566bd5609669373361e87b8 | AGPL-3.0-or-later | Actual B JCS canonicalizer and legacy bounded fixture intake |
-| quire-verification-contracts | 61f4a44d76d51cc53b2dfe7ed10aba7b23cfa6ef | AGPL-3.0-or-later | The sole copy of the closed checked-operation catalog, read by the checked-package qualification tests |
+| quire-verification-contracts | 4c49706d5db3ba77f96088ddcbb2635046246e32 | AGPL-3.0-or-later | The sole copy of the closed checked-operation catalog, read by the checked-package qualification tests |
 | jsonschema | 0.55.0, default features disabled | MIT | Structural schema/meta-schema validation without HTTP/file retrieval features |
 | serde_json | 1.0.151 | MIT OR Apache-2.0 | JSON values and authored fixture operations |
 | sha2 | 0.10.9 | MIT OR Apache-2.0 | Exact fixture-byte hashing and independent hashing of hand-authored golden bytes |

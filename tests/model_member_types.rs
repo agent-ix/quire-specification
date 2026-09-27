@@ -715,7 +715,7 @@ fn projection(catalog: &Value, package: &Value, nodes: &[Value], case: &Value) -
 fn tc_281_the_stated_catalog_digest_is_the_one_read() {
     assert_eq!(
         CHECKED_OPERATION_CATALOG_V1_SHA256,
-        "b67263208e38d1c80b74bf83a43aedc6fc2e50fe7caaa0e7a83d58340aadfdd6"
+        "9c3c40a14e386d98e03f2dea2a29bd5590c83e00e0533cdd9c62a1fe747461df"
     );
 }
 

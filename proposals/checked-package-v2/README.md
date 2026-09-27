@@ -12,7 +12,7 @@ structures, but any external consumer receives only the versioned contract.
   complete-V1 enum, dimension and declared-unit node identities.
 - The closed `quire.checked-operation-catalog/v1` is not kept here. Its only copy is
   `contracts/checked-operation-catalog-v1.json` in `agent-ix/quire-verification-contracts`
-  (rev `61f4a44d76d51cc53b2dfe7ed10aba7b23cfa6ef`, SHA-256 `b67263208e38d1c80b74bf83a43aedc6fc2e50fe7caaa0e7a83d58340aadfdd6`), which the tests read
+  (rev `4c49706d5db3ba77f96088ddcbb2635046246e32`, SHA-256 `9c3c40a14e386d98e03f2dea2a29bd5590c83e00e0533cdd9c62a1fe747461df`), which the tests read
   through that crate. It holds
   every application operation identity with its operator class, operand
   positions and rest, result form, constraints, required law roles (integer

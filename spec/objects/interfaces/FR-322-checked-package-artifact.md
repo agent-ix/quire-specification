@@ -127,8 +127,8 @@ boundary.
   constraints" below. `identity` is one
   member of the closed `quire.checked-operation-catalog/v1` published as
   `contracts/checked-operation-catalog-v1.json` in `agent-ix/quire-verification-contracts`
-  (rev `61f4a44d76d51cc53b2dfe7ed10aba7b23cfa6ef`, SHA-256
-  `b67263208e38d1c80b74bf83a43aedc6fc2e50fe7caaa0e7a83d58340aadfdd6`), whose entry names the
+  (rev `4c49706d5db3ba77f96088ddcbb2635046246e32`, SHA-256
+  `9c3c40a14e386d98e03f2dea2a29bd5590c83e00e0533cdd9c62a1fe747461df`), whose entry names the
   operation's operator class, operand positions and rest, result form,
   constraints, required law roles, mode kind, member kind and leaf source.
   `laws` is the ordered list of `{role, definition}` pairs whose roles are
