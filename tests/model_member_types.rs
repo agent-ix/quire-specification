@@ -772,3 +772,269 @@ fn tc_281_record_projection_reads_a_model_field_over_a_deref_result() {
         );
     }
 }
+
+/// FR-322 steps 2 and 3 for one member of `kind` named `name` on the node
+/// vector `declaration` names, with the step 3 refusals mapped as `refuse`
+/// maps a count of matches: the resolved (owner declaration, identity,
+/// record), or the refusal.
+fn resolve_member<'a>(
+    package: &'a Value,
+    nodes: &[Value],
+    declaration: &str,
+    list: &str,
+    name: &str,
+    none: Value,
+) -> Result<(&'a Value, String, &'a Value), Value> {
+    let recovered = recover_vector(package, nodes, declaration)
+        .ok_or_else(|| refused("missing_declaration", "missing-selection"))?;
+    let declared = recovered.object_type.ok_or_else(ineligible)?;
+    let matches: Vec<_> = exposed(package, declared, list)
+        .into_iter()
+        .filter(|(_, record)| record["name"] == name)
+        .collect();
+    match matches.as_slice() {
+        [] => Err(none),
+        [(identity, record)] => Ok((declared, identity.clone(), record)),
+        _ => Err(refused("ambiguous_declaration", "ambiguous-name")),
+    }
+}
+
+/// The owner node identity of a resolved member identity.
+fn owner_of(identity: &str) -> &str {
+    identity
+        .rsplit_once('/')
+        .map_or(identity, |(owner, _)| owner)
+}
+
+/// The step 4 type of a resolved field record, presence included.
+fn field_type(package: &Value, record: &Value) -> Option<Value> {
+    declared_type_of(package, record).map(|value| {
+        if record["presence"] == "optional" {
+            json!({"type": "Option", "inner": value})
+        } else {
+            value
+        }
+    })
+}
+
+/// FR-322's `reference_edge` constraint over one `reaches_field` case.
+fn reference_edge(
+    package: &Value,
+    nodes: &[Value],
+    case: &Value,
+    operands: &[Operand<'_>],
+) -> Value {
+    let member = &case["member"];
+    let declaration = text(member, "declaration");
+    if operands[0] != Operand::Reference(declaration) {
+        return ineligible();
+    }
+    let (_, identity, record) = match resolve_member(
+        package,
+        nodes,
+        declaration,
+        "fields",
+        text(member, "name"),
+        ineligible(),
+    ) {
+        Ok(resolved) => resolved,
+        Err(refusal) => return refusal,
+    };
+    let owner = declarations(package)
+        .into_iter()
+        .find(|declared| declared.form == "object_type" && declared.node == owner_of(&identity))
+        .expect("a field owner is a declared object type");
+    let edge = json!({"type": "Reference", "target": declaration_key(package, &owner)});
+    let admitted = match field_type(package, record) {
+        Some(ty) if ty == edge => true,
+        Some(ty) if ty["type"] == "Option" => ty["inner"] == edge,
+        Some(ty) if ty["type"] == "Sequence" => ty["element"] == edge && ty.get("max").is_some(),
+        _ => false,
+    };
+    if !admitted {
+        return ineligible();
+    }
+    let Operand::Reference(target) = operands[1] else {
+        return ineligible();
+    };
+    let Some(target) = recover_vector(package, nodes, target) else {
+        return refused("missing_declaration", "missing-selection");
+    };
+    let conforms = target.node == owner.node
+        || target
+            .object_type
+            .is_some_and(|declared| ancestors(package, declared).contains(owner.node));
+    if conforms {
+        json!({"admitted": true})
+    } else {
+        ineligible()
+    }
+}
+
+/// One `quire.op.model.reaches_field` case through its catalog entry.
+fn reaches_field(catalog: &Value, package: &Value, nodes: &[Value], case: &Value) -> Value {
+    let entry = catalog_entry(catalog, "quire.op.model.reaches_field");
+    assert_eq!(entry["member"], "field");
+    let positions = string_positions(entry);
+    let operands: Vec<Operand<'_>> = array(case, "operands")
+        .iter()
+        .map(Operand::from_case)
+        .collect();
+    let fits = operands.len() == positions.len()
+        && operands.iter().zip(&positions).all(|(operand, position)| {
+            operand
+                .family(nodes)
+                .is_some_and(|family| admitted_families(catalog, position).contains(&family))
+        });
+    if !fits {
+        return ineligible();
+    }
+    for constraint in array(entry, "constraints") {
+        match text(constraint, "kind") {
+            "reference_edge" => {
+                let decided = reference_edge(package, nodes, case, &operands);
+                if decided != json!({"admitted": true}) {
+                    return decided;
+                }
+            }
+            other => panic!("TC-281 decides no {other} constraint"),
+        }
+    }
+    json!({"admitted": true})
+}
+
+#[trace("TC-281", "FR-322-AC-38")]
+#[test]
+fn tc_281_reaches_over_a_field_admits_only_reference_edges_of_the_owner() {
+    let vectors = parsed(VECTORS);
+    let catalog = parsed(OPERATION_CATALOG);
+    let nodes = array(&vectors, "model_declaration_nodes");
+    for case in array(&vectors, "reaches_cases") {
+        assert_eq!(
+            reaches_field(&catalog, &vectors["domain_package"], nodes, case),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
+    }
+}
+
+#[trace("TC-280", "FR-340-AC-13")]
+#[test]
+fn tc_280_frame_field_entries_resolve_among_exposed_fields() {
+    let vectors = parsed(VECTORS);
+    let package = &vectors["domain_package"];
+    let nodes = array(&vectors, "model_declaration_nodes");
+    for case in array(&vectors, "frame_field_cases") {
+        let decided = match resolve_member(
+            package,
+            nodes,
+            text(case, "declaration"),
+            "fields",
+            text(case, "field"),
+            refused("missing_declaration", "missing-name"),
+        ) {
+            Ok((_, identity, _)) => json!({"resolves": identity}),
+            Err(refusal) => refusal,
+        };
+        assert_eq!(decided, case["expected"], "{}", text(case, "name"));
+    }
+}
+
+/// FR-342-AC-4 over one anchor case: the context is an object type, and
+/// the operation resolves among its exposed operation members to one the
+/// context itself declares.
+fn anchor_operation(package: &Value, nodes: &[Value], context: &str, operation: &str) -> Value {
+    let form = text(&node_vector(nodes, context)["preimage"], "semantic_form");
+    let resolved = resolve_member(
+        package,
+        nodes,
+        context,
+        "operations",
+        operation,
+        refused("missing_declaration", "missing-name"),
+    );
+    match resolved {
+        Err(refusal) => refusal,
+        Ok(_) if form != "object_type" => refused("invalid_model_binding", "malformed-declaration"),
+        Ok((declared, identity, _)) if owner_of(&identity) != text(declared, "node") => {
+            refused("invalid_model_binding", "malformed-declaration")
+        }
+        Ok((_, identity, _)) => json!({"resolves": identity}),
+    }
+}
+
+#[trace("TC-280", "FR-342-AC-4")]
+#[test]
+fn tc_280_an_anchor_operation_resolves_to_one_the_context_declares() {
+    let vectors = parsed(VECTORS);
+    let package = &vectors["domain_package"];
+    let nodes = array(&vectors, "model_declaration_nodes");
+    for case in array(&vectors, "anchor_cases") {
+        assert_eq!(
+            anchor_operation(
+                package,
+                nodes,
+                text(case, "context"),
+                text(case, "operation")
+            ),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
+    }
+}
+
+/// FR-341-AC-5: the parameter types a clause binds, in order: `self`, then
+/// the operation's result in a postcondition of an operation with one, then
+/// the operation's parameters.
+fn clause_signature(package: &Value, nodes: &[Value], case: &Value) -> Option<Vec<Value>> {
+    let context = text(case, "context");
+    let owner = recover_vector(package, nodes, context)?;
+    let mut signature =
+        vec![json!({"type": "Reference", "target": declaration_key(package, &owner)})];
+    let Some(operation) = case["operation"].as_str() else {
+        return Some(signature);
+    };
+    let (_, _, record) = resolve_member(
+        package,
+        nodes,
+        context,
+        "operations",
+        operation,
+        ineligible(),
+    )
+    .ok()?;
+    if case["clause"] == "postcondition" && !record["result"].is_null() {
+        signature.push(declared_type_of(package, &record["result"])?);
+    }
+    for parameter in array(record, "parameters") {
+        signature.push(declared_type_of(package, parameter)?);
+    }
+    Some(signature)
+}
+
+#[trace("TC-280", "FR-341-AC-5")]
+#[test]
+fn tc_280_a_clause_binds_self_result_and_parameters_of_its_operation() {
+    let vectors = parsed(VECTORS);
+    let package = &vectors["domain_package"];
+    let nodes = array(&vectors, "model_declaration_nodes");
+    for case in array(&vectors, "clause_signature_cases") {
+        let supplied: Vec<Value> = array(case, "parameters")
+            .iter()
+            .map(|parameter| match parameter["reference"].as_str() {
+                Some(name) => {
+                    json!({"type": "Reference", "target": node_vector(nodes, name)["sha256"]})
+                }
+                None => parameter.clone(),
+            })
+            .collect();
+        let decided = if clause_signature(package, nodes, case).as_ref() == Some(&supplied) {
+            json!({"admitted": true})
+        } else {
+            ineligible()
+        };
+        assert_eq!(decided, case["expected"], "{}", text(case, "name"));
+    }
+}

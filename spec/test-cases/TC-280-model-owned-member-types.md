@@ -5,6 +5,12 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-322
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-340
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-341
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-342
+    type: verifies
 ---
 
 # TC-280: Model-owned member types
@@ -43,7 +49,13 @@ recorded expectation. An operation case also carries its call's receiver type
 and argument types, and a reference type names its target by the recomputed
 model declaration node key. For each selection case, run FR-322's selection
 admission checks over the supplied documents and compare with the recorded
-result.
+result. For each frame field case, recover the declaring node's owner and
+resolve the name among its exposed fields (FR-340 "Field entries"). For each
+anchor case, resolve the operation among the context's exposed operations
+and require it to be declared by the context itself (FR-342). For each clause
+signature case, derive the list `self`, then the result for a postcondition
+of an operation with one, then the operation's parameters (FR-341), and
+compare it with the case's parameter types.
 
 ## Vectors
 
@@ -87,8 +99,31 @@ result.
 | MS-03 | A document with `Digit`'s upper bound changed to 8, supplied under the selected digest | `stale_dependency`/`byte-digest-mismatch` | FR-322-AC-32 |
 | MS-04 | The selection names version `1.0.1` | `invalid_model_binding`/`wrong-model-selection` | FR-322-AC-32 |
 | MS-05 | The selection names digest domain `sha256` | `stale_dependency`/`digest-domain-mismatch` | FR-322-AC-32 |
+| FF-01 | Frame field entry `(M1, "total")` | Resolves `Order/total` | FR-340-AC-13 |
+| FF-02 | Frame field entry `(M5, "total")` | Resolves the inherited `Order/total` | FR-340-AC-13 |
+| FF-03 | Frame field entry `(M1, "missing")` | `missing_declaration`/`missing-name` | FR-340-AC-13 |
+| FF-04 | Frame field entry `(M1, "size")`, an operation name | `missing_declaration`/`missing-name` | FR-340-AC-13 |
+| FF-05 | Frame field entry `(M6, "code")` | `ambiguous_declaration`/`ambiguous-name` | FR-340-AC-13 |
+| FF-06 | Frame field entry `(M2, "total")` | `missing_declaration`/`missing-selection` | FR-340-AC-13 |
+| AN-01 | Anchor `(M1, "scaled")` | Resolves `Order/scaled` | FR-342-AC-4 |
+| AN-02 | Anchor `(M5, "size")` | Resolves `Sub/size` | FR-342-AC-4 |
+| AN-03 | Anchor `(M5, "reset")`, which `Sub` only inherits | `invalid_model_binding`/`malformed-declaration` | FR-342-AC-4 |
+| AN-04 | Anchor `(M1, "missing")` | `missing_declaration`/`missing-name` | FR-342-AC-4 |
+| AN-05 | Anchor `(M1, "total")`, a field name | `missing_declaration`/`missing-name` | FR-342-AC-4 |
+| AN-06 | Anchor `(M2, "size")` | `missing_declaration`/`missing-selection` | FR-342-AC-4 |
+| AN-07 | Anchor `(M8, "rate")`, a `systems_interface` context | `invalid_model_binding`/`malformed-declaration` | FR-342-AC-4 |
+| CS-01 | Precondition of `Order.scaled` binding `[Reference<Order>, Integer]` | Admitted | FR-341-AC-5 |
+| CS-02 | Postcondition of `Order.scaled` binding `[Reference<Order>, Integer, Integer]` | Admitted | FR-341-AC-5 |
+| CS-03 | Postcondition of `Order.reset` binding `[Reference<Order>]` | Admitted: no result | FR-341-AC-5 |
+| CS-04 | Precondition of `Order.scaled` binding `[Reference<Order>]` | `ill_typed`/`operator-ineligible` | FR-341-AC-5 |
+| CS-05 | Postcondition of `Order.scaled` binding `[Reference<Order>, Integer]` | `ill_typed`/`operator-ineligible` | FR-341-AC-5 |
+| CS-06 | Precondition of `Order.scaled` binding `[Reference<Sub>, Integer]` | `ill_typed`/`operator-ineligible` | FR-341-AC-5 |
+| CS-07 | Precondition of `Order.scaled` binding `[Reference<Order>, Boolean]` | `ill_typed`/`operator-ineligible` | FR-341-AC-5 |
+| CS-08 | Invariant of `Order` binding `[Reference<Order>]` | Admitted | FR-341-AC-5 |
+| CS-09 | Invariant of `Order` binding `[Reference<Order>, Integer]` | `ill_typed`/`operator-ineligible` | FR-341-AC-5 |
 
 ## Expected Results
 
-M1 to M9 validate and recompute their digests. Every wire, member and
-selection case gives exactly its recorded result.
+M1 to M9 validate and recompute their digests. Every wire, member,
+selection, frame field, anchor and clause signature case gives exactly its
+recorded result.

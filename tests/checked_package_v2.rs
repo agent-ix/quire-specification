@@ -1798,6 +1798,7 @@ impl<'a> OperationOracle<'a> {
         });
         let member_resolves = entry["member"].is_null()
             || entry["member"] == "profile_operator"
+            || entry["member"] == "state_clause"
             || self.member_descriptor(member).is_some();
         let constraints_hold = entry["constraints"]
             .as_array()
@@ -2168,6 +2169,7 @@ enum ReadRefusal {
     StaleNodeKey(Value),
     Declaration(DeclarationRefusal, Value),
     Frame(FrameRefusal, Value),
+    State(StateRefusal, Value),
     Operation(OperationRefusal),
 }
 
@@ -2222,6 +2224,8 @@ fn read_package_semantics(package: &Value, catalog: &Value) -> Result<(), ReadRe
         .map_err(|(refusal, node)| ReadRefusal::Declaration(refusal, node))?;
     package_frame_refusal(package)
         .map_err(|(refusal, locus)| ReadRefusal::Frame(refusal, locus))?;
+    package_state_refusal(package)
+        .map_err(|(refusal, locus)| ReadRefusal::State(refusal, locus))?;
     package_operations_refusal(package, catalog).map_err(ReadRefusal::Operation)
 }
 
@@ -2302,22 +2306,25 @@ fn package_declaration_refusal(package: &Value) -> Result<(), (DeclarationRefusa
     Ok(())
 }
 
-/// A frame body's three named members, in the fixed order FR-340 states for
-/// the body itself: `modifies`, `creates`, `deletes`. This is a spec fact
-/// about the shape, never an authored array position, and it is the first
-/// tie-break between two simultaneous defects in different members.
+/// The frame node's own `semantic_type` and its body's three named members,
+/// in the fixed order FR-340 states: `semantic_type`, then `modifies`,
+/// `creates`, `deletes`. This is a spec fact about the shape, never an
+/// authored array position, and it is the first tie-break between two
+/// simultaneous defects in different members.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 enum FrameGroup {
+    SemanticType,
     Modifies,
     Creates,
     Deletes,
 }
 
 impl FrameGroup {
-    const ALL: [Self; 3] = [Self::Modifies, Self::Creates, Self::Deletes];
+    const MEMBERS: [Self; 3] = [Self::Modifies, Self::Creates, Self::Deletes];
 
     fn key(self) -> &'static str {
         match self {
+            Self::SemanticType => "semantic_type",
             Self::Modifies => "modifies",
             Self::Creates => "creates",
             Self::Deletes => "deletes",
@@ -2325,40 +2332,74 @@ impl FrameGroup {
     }
 }
 
-/// The declaration meaning a `modifies`/`creates`/`deletes` entry must join:
-/// a field or relationship for `modifies`, an object type or process for
-/// `creates`/`deletes`. No other checked-semantic node meaning is a
-/// compatible frame-entry target: FR-208 names nine further model meanings
-/// (`value_type`, `variant_type`, `record_value_type`, `event_type`,
-/// `state_machine`, `persistence_interface`, `namespace`, and the
-/// `operation_declaration`/`clause_member_declaration` member-declaration
-/// kinds), each with its own wire spelling, and none of them is Modifiable
-/// or CreatableOrDeletable.
+/// The declaration a frame entry names, read from where it stands: a
+/// `modifies` entry is a relationship or a field (its `kind`), and a
+/// `creates`/`deletes` entry names an object type or process whose
+/// instances the operation creates or deletes.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-enum FrameMeaning {
-    Modifiable,
-    CreatableOrDeletable,
+enum FrameEntryKind {
+    Relationship,
+    Field,
+    Instance,
 }
 
-/// The frame meaning of a node, read from its tag and form alone. Anything
-/// else (including a `value` literal, the old fixture's rooting target)
-/// has no frame meaning.
-fn frame_meaning(node: &Value) -> Option<FrameMeaning> {
-    match (node["node_tag"].as_str(), node["semantic_form"].as_str()) {
-        (Some("relation"), Some("relationship")) => Some(FrameMeaning::Modifiable),
-        (Some("model"), Some("field_declaration")) => Some(FrameMeaning::Modifiable),
-        (Some("model"), Some("object_type" | "process")) => {
-            Some(FrameMeaning::CreatableOrDeletable)
-        }
-        _ => None,
-    }
+/// Whether the declaring node an entry names carries the meaning its kind
+/// needs, read from the node's tag and form alone. A relationship entry
+/// names a `relation`/`relationship` node; a field entry names the
+/// `model`/`object_type` or `model`/`record_value_type` node declaring the
+/// field; a `creates`/`deletes` entry names a `model`/`object_type` or
+/// `model`/`process` node. Every other node, including a `value` literal and
+/// every systems-model form, has no frame meaning.
+fn frame_entry_admits(kind: FrameEntryKind, node: &Value) -> bool {
+    matches!(
+        (
+            kind,
+            node["node_tag"].as_str(),
+            node["semantic_form"].as_str()
+        ),
+        (
+            FrameEntryKind::Relationship,
+            Some("relation"),
+            Some("relationship")
+        ) | (
+            FrameEntryKind::Field,
+            Some("model"),
+            Some("object_type" | "record_value_type")
+        ) | (
+            FrameEntryKind::Instance,
+            Some("model"),
+            Some("object_type" | "process")
+        )
+    )
 }
 
-fn frame_meaning_is_compatible(group: FrameGroup, meaning: FrameMeaning) -> bool {
-    match group {
-        FrameGroup::Modifies => meaning == FrameMeaning::Modifiable,
-        FrameGroup::Creates | FrameGroup::Deletes => meaning == FrameMeaning::CreatableOrDeletable,
-    }
+/// The entries of one frame member as (declaring node digest, field name,
+/// kind); a relationship or `creates`/`deletes` entry has the empty name.
+fn frame_entries(frame_node: &Value, group: FrameGroup) -> Vec<(String, String, FrameEntryKind)> {
+    frame_node["body"][group.key()]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(|entry| match group {
+            FrameGroup::Modifies => {
+                let digest = entry["declaration"]["digest"].as_str()?.to_owned();
+                match entry["kind"].as_str()? {
+                    "field" => Some((
+                        digest,
+                        entry["name"].as_str()?.to_owned(),
+                        FrameEntryKind::Field,
+                    )),
+                    "relationship" => Some((digest, String::new(), FrameEntryKind::Relationship)),
+                    _ => None,
+                }
+            }
+            _ => Some((
+                entry["digest"].as_str()?.to_owned(),
+                String::new(),
+                FrameEntryKind::Instance,
+            )),
+        })
+        .collect()
 }
 
 fn node_by_digest<'a>(nodes: &'a [Value], digest: &str) -> Option<&'a Value> {
@@ -2367,28 +2408,30 @@ fn node_by_digest<'a>(nodes: &'a [Value], digest: &str) -> Option<&'a Value> {
         .find(|node| node["node_id"]["digest"].as_str() == Some(digest))
 }
 
-/// Why one `modifies`/`creates`/`deletes` entry fails to join: the target
-/// names no declared dependency of the frame node (`missing-name`, shared
-/// with an entry naming no node of the package at all), or it is a declared
-/// dependency of a meaning the member cannot name (`malformed-declaration`).
+/// Why one frame entry, or the frame's `semantic_type`, fails to join: the
+/// target names no declared dependency of the frame node (`missing-name`,
+/// shared with an entry naming no node of the package at all), or it names a
+/// node of a meaning the position cannot carry (`malformed-declaration`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 enum FrameJoinCause {
     MissingName,
     MalformedDeclaration,
 }
 
-/// One defect of a `state`/`frame` node's body. The variant order below,
-/// not iteration or array position, is what makes `MeaningJoin` outrank
+/// One defect of a `state`/`frame` node. The variant order below, not
+/// iteration or array position, is what makes `MeaningJoin` outrank
 /// `CanonicalOrder`: `derive(Ord)` compares the declared variants first, so
-/// any meaning-join defect anywhere in the body sorts before any
-/// canonical-order defect anywhere in the body. Within one kind, ties break
-/// by member group (`modifies` < `creates` < `deletes`) and then by the
-/// offending entry's own node digest, never by its position in the array.
+/// any meaning-join defect anywhere in the node sorts before any
+/// canonical-order defect anywhere in its body. Within one kind, ties break
+/// by position (`semantic_type` < `modifies` < `creates` < `deletes`), then
+/// by the offending entry's declaring node digest and then its field name,
+/// never by its position in the array.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 enum FrameDefect {
     MeaningJoin {
         group: FrameGroup,
         digest: String,
+        name: String,
         cause: FrameJoinCause,
     },
     CanonicalOrder {
@@ -2396,7 +2439,7 @@ enum FrameDefect {
     },
 }
 
-/// Every defect of one frame body against a schema-valid package's other
+/// Every defect of one frame node against a schema-valid package's other
 /// nodes and the frame node's own `dependencies`. Entries are visited in a
 /// fixed (group, then array order) sweep only to collect defects; which one
 /// is reported is decided afterward by sorting, so the result never depends
@@ -2411,24 +2454,39 @@ fn frame_body_defects(frame_node: &Value, nodes: &[Value]) -> Vec<FrameDefect> {
         })
         .unwrap_or_default();
     let mut defects = Vec::new();
-    for group in FrameGroup::ALL {
-        let digests = frame_node["body"][group.key()]
-            .as_array()
-            .into_iter()
-            .flatten()
-            .filter_map(|entry| entry["digest"].as_str().map(str::to_owned))
+    let semantic_type = frame_node["semantic_type"]["digest"]
+        .as_str()
+        .unwrap_or_default();
+    let declaring_type = node_by_digest(nodes, semantic_type);
+    if !declaring_type
+        .is_some_and(|node| node["node_tag"] == "model" && node["semantic_form"] == "object_type")
+    {
+        defects.push(FrameDefect::MeaningJoin {
+            group: FrameGroup::SemanticType,
+            digest: semantic_type.to_owned(),
+            name: String::new(),
+            cause: if declaring_type.is_some() {
+                FrameJoinCause::MalformedDeclaration
+            } else {
+                FrameJoinCause::MissingName
+            },
+        });
+    }
+    for group in FrameGroup::MEMBERS {
+        let entries = frame_entries(frame_node, group);
+        let keys = entries
+            .iter()
+            .map(|(digest, name, _)| (digest.clone(), name.clone()))
             .collect::<Vec<_>>();
-        let mut ascending = digests.clone();
+        let mut ascending = keys.clone();
         ascending.sort();
-        if ascending != digests {
+        if ascending != keys {
             defects.push(FrameDefect::CanonicalOrder { group });
         }
-        for digest in &digests {
-            let resolved = node_by_digest(nodes, digest);
+        for (digest, name, kind) in entries {
+            let resolved = node_by_digest(nodes, &digest);
             let is_dependency = dependencies.contains(digest.as_str());
-            let meaning_ok = resolved
-                .and_then(frame_meaning)
-                .is_some_and(|meaning| frame_meaning_is_compatible(group, meaning));
+            let meaning_ok = resolved.is_some_and(|node| frame_entry_admits(kind, node));
             if is_dependency && meaning_ok {
                 continue;
             }
@@ -2439,7 +2497,8 @@ fn frame_body_defects(frame_node: &Value, nodes: &[Value]) -> Vec<FrameDefect> {
             };
             defects.push(FrameDefect::MeaningJoin {
                 group,
-                digest: digest.clone(),
+                digest,
+                name,
                 cause,
             });
         }
@@ -2548,6 +2607,175 @@ fn package_frame_refusal(package: &Value) -> Result<(), (FrameRefusal, Value)> {
     Ok(())
 }
 
+/// Semantic refusal of a `state`/`operation_anchor` or `state`/`state_clause`
+/// node (FR-341, FR-342), with the code and cause each pairs with.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum StateRefusal {
+    MissingName,
+    MalformedDeclaration,
+    OperatorIneligible,
+}
+
+impl StateRefusal {
+    fn cause(self) -> &'static str {
+        match self {
+            Self::MissingName => "missing-name",
+            Self::MalformedDeclaration => "malformed-declaration",
+            Self::OperatorIneligible => "operator-ineligible",
+        }
+    }
+
+    fn code(self) -> &'static str {
+        match self {
+            Self::MissingName => "missing_declaration",
+            Self::MalformedDeclaration => "invalid_model_binding",
+            Self::OperatorIneligible => "ill_typed",
+        }
+    }
+}
+
+/// Join one `reference` a state node's body holds to a declared dependency
+/// of that node with an admitted (`node_tag`, `semantic_form`): a target
+/// that names no node of the package, or no declared dependency, refuses
+/// `missing-name`; a declared dependency of another meaning refuses
+/// `malformed-declaration`. The locus is the target.
+fn join_state_reference<'a>(
+    node: &Value,
+    target: &Value,
+    nodes: &'a [Value],
+    admitted: &[(&str, &str)],
+) -> Result<&'a Value, (StateRefusal, Value)> {
+    let digest = target["digest"].as_str().unwrap_or_default();
+    let is_dependency = node["dependencies"]
+        .as_array()
+        .is_some_and(|deps| deps.iter().any(|dep| dep["digest"] == digest));
+    let resolved = node_by_digest(nodes, digest)
+        .filter(|_| is_dependency)
+        .ok_or((StateRefusal::MissingName, target.clone()))?;
+    admitted
+        .iter()
+        .any(|(tag, form)| resolved["node_tag"] == *tag && resolved["semantic_form"] == *form)
+        .then_some(resolved)
+        .ok_or((StateRefusal::MalformedDeclaration, target.clone()))
+}
+
+/// The named binding's value in an `operation_anchor` body.
+fn anchor_binding<'a>(anchor: &'a Value, name: &str) -> &'a Value {
+    anchor["body"]["members"]
+        .as_array()
+        .and_then(|members| members.iter().find(|member| member["name"] == name))
+        .map_or(&Value::Null, |member| &member["value"])
+}
+
+/// FR-342's joins over one schema-valid `state`/`operation_anchor` node:
+/// `context`, then `frame`, then the two `semantic_type` agreements.
+fn anchor_refusal(anchor: &Value, nodes: &[Value]) -> Result<(), (StateRefusal, Value)> {
+    let context = &anchor_binding(anchor, "context")["target"];
+    join_state_reference(anchor, context, nodes, &[("model", "object_type")])?;
+    let frame = join_state_reference(
+        anchor,
+        &anchor_binding(anchor, "frame")["target"],
+        nodes,
+        &[("state", "frame")],
+    )?;
+    if anchor["semantic_type"] != *context || frame["semantic_type"] != *context {
+        return Err((
+            StateRefusal::MalformedDeclaration,
+            anchor["node_id"].clone(),
+        ));
+    }
+    Ok(())
+}
+
+/// FR-341's joins over one schema-valid `state`/`state_clause` node: the
+/// anchor, then each parameter reference in order, then the `self`
+/// parameter's type and, for an invariant, the parameter count.
+fn clause_refusal(clause: &Value, nodes: &[Value]) -> Result<(), (StateRefusal, Value)> {
+    let body = &clause["body"];
+    let kind = body["operation"]["member"]["clause"]
+        .as_str()
+        .unwrap_or_default();
+    let admitted_anchor: &[(&str, &str)] = if kind == "invariant" {
+        &[("model", "object_type")]
+    } else {
+        &[("state", "operation_anchor")]
+    };
+    let anchor = join_state_reference(
+        clause,
+        &body["arguments"][1]["target"],
+        nodes,
+        admitted_anchor,
+    )?;
+    let context = if kind == "invariant" {
+        anchor["node_id"].clone()
+    } else {
+        anchor_binding(anchor, "context")["target"].clone()
+    };
+    let parameters = body["arguments"][0]["members"]
+        .as_array()
+        .map(Vec::as_slice)
+        .unwrap_or_default();
+    let mut joined = Vec::new();
+    for parameter in parameters {
+        joined.push(join_state_reference(
+            clause,
+            &parameter["target"],
+            nodes,
+            &[("value", "parameter")],
+        )?);
+    }
+    let ineligible = (StateRefusal::OperatorIneligible, clause["node_id"].clone());
+    let self_type = joined
+        .first()
+        .and_then(|parameter| node_by_digest(nodes, parameter["semantic_type"]["digest"].as_str()?))
+        .ok_or_else(|| ineligible.clone())?;
+    if self_type["node_tag"] != "composite_type"
+        || self_type["semantic_form"] != "reference"
+        || self_type["body"]["members"][0]["target"] != context
+    {
+        return Err(ineligible);
+    }
+    if kind == "invariant" && joined.len() != 1 {
+        return Err(ineligible);
+    }
+    Ok(())
+}
+
+/// Independent oracle for the state step of the reader order: every
+/// `quire.op.state.clause` application stands as a `state`/`state_clause`
+/// body root; then `operation_anchor` nodes and then `state_clause` nodes,
+/// each in ascending node-id digest order, report their first defect.
+fn package_state_refusal(package: &Value) -> Result<(), (StateRefusal, Value)> {
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("package nodes are an array");
+    let mut ordered = nodes.iter().collect::<Vec<_>>();
+    ordered.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
+    for node in &ordered {
+        let root_clause = node["node_tag"] == "state" && node["semantic_form"] == "state_clause";
+        let misplaced = application_terms(&node["body"])
+            .into_iter()
+            .filter(|term| term["operation"]["identity"] == "quire.op.state.clause")
+            .any(|term| !(root_clause && std::ptr::eq(term, &node["body"])));
+        if misplaced {
+            return Err((StateRefusal::OperatorIneligible, node["node_id"].clone()));
+        }
+    }
+    for form in ["operation_anchor", "state_clause"] {
+        for node in ordered
+            .iter()
+            .filter(|node| node["node_tag"] == "state" && node["semantic_form"] == form)
+        {
+            if form == "operation_anchor" {
+                anchor_refusal(node, nodes)?;
+            } else {
+                clause_refusal(node, nodes)?;
+            }
+        }
+    }
+    Ok(())
+}
+
 /// A fixed 64-hex-character digest built by repeating one byte pattern, for
 /// hand-authored frame vectors below. Not derived from any production code.
 fn repeated_digest(byte: &str) -> String {
@@ -2558,13 +2786,25 @@ fn node_ref_digest(digest: &str) -> Value {
     json!({"domain": "quire.checked-semantic-node/v1", "digest": digest})
 }
 
-/// A hand-authored `state`/`frame` node: real `node_id`/`semantic_type`
-/// shape, an explicit `dependencies` list and body, built directly from
-/// digest strings so every vector below is independent of any shared
-/// comparator or generator function.
+/// A `modifies` entry granting every link of the relationship `digest` names.
+fn relationship_entry(digest: &str) -> Value {
+    json!({"kind": "relationship", "declaration": node_ref_digest(digest)})
+}
+
+/// A `modifies` entry granting writes to field `name` of the declaring node
+/// `digest` names.
+fn field_entry(digest: &str, name: &str) -> Value {
+    json!({"kind": "field", "declaration": node_ref_digest(digest), "name": name})
+}
+
+/// A hand-authored `state`/`frame` node: real `node_id` shape, the
+/// all-families fixture's `Account` object type (`91...91`) as its
+/// `semantic_type`, a `generated` occurrence, and an explicit `dependencies`
+/// list and body, built directly from digest strings so every vector below
+/// is independent of any shared comparator or generator function.
 fn authored_frame_node(
     dependencies: &[&str],
-    modifies: &[&str],
+    modifies: &[Value],
     creates: &[&str],
     deletes: &[&str],
 ) -> Value {
@@ -2573,16 +2813,27 @@ fn authored_frame_node(
         "schema_version": "quire.checked-semantic-graph/v2",
         "node_tag": "state",
         "semantic_form": "frame",
-        "semantic_type": node_ref_digest(&repeated_digest("aa")),
+        "semantic_type": node_ref_digest(&repeated_digest("91")),
         "dependencies": dependencies.iter().map(|d| node_ref_digest(d)).collect::<Vec<_>>(),
-        "occurrences": [{"role": "declaration", "ordinal": 0}],
+        "occurrences": [{"role": "generated", "ordinal": 0}],
         "body": {
             "term": "frame",
-            "modifies": modifies.iter().map(|d| node_ref_digest(d)).collect::<Vec<_>>(),
+            "modifies": modifies,
             "creates": creates.iter().map(|d| node_ref_digest(d)).collect::<Vec<_>>(),
             "deletes": deletes.iter().map(|d| node_ref_digest(d)).collect::<Vec<_>>(),
         },
     })
+}
+
+/// A meaning-join defect with the empty field name of a relationship,
+/// `creates`/`deletes` or `semantic_type` position.
+fn join_defect(group: FrameGroup, digest: &str, cause: FrameJoinCause) -> FrameDefect {
+    FrameDefect::MeaningJoin {
+        group,
+        digest: digest.to_owned(),
+        name: String::new(),
+        cause,
+    }
 }
 
 /// FR-340-AC-1: each of the three frame members may independently be empty;
@@ -2608,16 +2859,14 @@ fn tc_233_frame_body_members_may_each_independently_be_empty() {
     );
 }
 
-/// FR-340-AC-2/AC-3: a `modifies` entry must join a declared `relation`/
-/// `relationship` or `model`/`field_declaration` node; a `creates`/`deletes`
-/// entry must join a declared `model`/`object_type` or `model`/`process`
-/// node. An entry naming no node of the package, or naming one that is not
-/// a declared dependency,
+/// FR-340-AC-2/AC-3: a relationship entry must join a declared `relation`/
+/// `relationship` node, a field entry a declared `model`/`object_type` or
+/// `model`/`record_value_type` node, and a `creates`/`deletes` entry a
+/// declared `model`/`object_type` or `model`/`process` node. An entry naming
+/// no node of the package, or naming one that is not a declared dependency,
 /// refuses `missing_declaration`/`missing-name`; an entry naming a declared
 /// dependency of the wrong meaning refuses `invalid_model_binding`/
-/// `malformed-declaration`. This is the rule that makes the old design's
-/// fixture (two field selections rooted at a boolean literal) unrepresentable:
-/// a literal has no frame meaning at all.
+/// `malformed-declaration`. A literal has no frame meaning at all.
 #[trace("TC-233", "FR-340-AC-2")]
 #[trace("TC-233", "FR-340-AC-3")]
 #[test]
@@ -2627,124 +2876,143 @@ fn tc_233_frame_entries_join_a_declared_node_of_the_required_meaning() {
         .expect("nodes")
         .clone();
     let relationship = repeated_digest("20");
-    let field_declaration = repeated_digest("90");
     let object_type_node = repeated_digest("91");
+    let process_node = repeated_digest("92");
     let literal = repeated_digest("dd");
     let absent = repeated_digest("ff");
 
     // A modifies entry naming no node of the package at all.
-    let absent_entry = authored_frame_node(&[&absent], &[&absent], &[], &[]);
+    let absent_entry = authored_frame_node(&[&absent], &[relationship_entry(&absent)], &[], &[]);
     assert_eq!(
         frame_body_defects(&absent_entry, &nodes),
-        vec![FrameDefect::MeaningJoin {
-            group: FrameGroup::Modifies,
-            digest: absent.clone(),
-            cause: FrameJoinCause::MissingName,
-        }]
+        vec![join_defect(
+            FrameGroup::Modifies,
+            &absent,
+            FrameJoinCause::MissingName
+        )]
     );
 
-    // A modifies entry naming a real node that is not a declared dependency.
-    let undeclared = authored_frame_node(&[], &[&relationship], &[], &[]);
+    // A field entry whose declaring node is real but not a declared dependency.
+    let undeclared =
+        authored_frame_node(&[], &[field_entry(&object_type_node, "balance")], &[], &[]);
     assert_eq!(
         frame_body_defects(&undeclared, &nodes),
         vec![FrameDefect::MeaningJoin {
             group: FrameGroup::Modifies,
-            digest: relationship.clone(),
+            digest: object_type_node.clone(),
+            name: "balance".to_owned(),
             cause: FrameJoinCause::MissingName,
         }]
     );
 
-    // A modifies entry naming a declared dependency of the wrong meaning: a
-    // value literal, the old design's rooting target, has no frame meaning.
-    let wrong_meaning = authored_frame_node(&[&literal], &[&literal], &[], &[]);
+    // A relationship entry naming a declared literal: no frame meaning.
+    let wrong_meaning = authored_frame_node(&[&literal], &[relationship_entry(&literal)], &[], &[]);
     assert_eq!(
         frame_body_defects(&wrong_meaning, &nodes),
+        vec![join_defect(
+            FrameGroup::Modifies,
+            &literal,
+            FrameJoinCause::MalformedDeclaration
+        )]
+    );
+
+    // A field entry on a process, and a relationship entry naming an object
+    // type: each names a real declaration of the wrong meaning for its kind.
+    let process_field = authored_frame_node(
+        &[&process_node],
+        &[field_entry(&process_node, "stage")],
+        &[],
+        &[],
+    );
+    assert_eq!(
+        frame_body_defects(&process_field, &nodes),
         vec![FrameDefect::MeaningJoin {
             group: FrameGroup::Modifies,
-            digest: literal.clone(),
+            digest: process_node.clone(),
+            name: "stage".to_owned(),
             cause: FrameJoinCause::MalformedDeclaration,
         }]
     );
+    let object_as_relationship = authored_frame_node(
+        &[&object_type_node],
+        &[relationship_entry(&object_type_node)],
+        &[],
+        &[],
+    );
+    assert_eq!(
+        frame_body_defects(&object_as_relationship, &nodes),
+        vec![join_defect(
+            FrameGroup::Modifies,
+            &object_type_node,
+            FrameJoinCause::MalformedDeclaration
+        )]
+    );
 
-    // A creates entry naming a declared field_declaration node, not an
-    // object_type or process: wrong meaning for creates.
-    let wrong_group = authored_frame_node(&[&field_declaration], &[], &[&field_declaration], &[]);
+    // A creates entry naming a relationship, not an object type or process.
+    let wrong_group = authored_frame_node(&[&relationship], &[], &[&relationship], &[]);
     assert_eq!(
         frame_body_defects(&wrong_group, &nodes),
-        vec![FrameDefect::MeaningJoin {
-            group: FrameGroup::Creates,
-            digest: field_declaration.clone(),
-            cause: FrameJoinCause::MalformedDeclaration,
-        }]
+        vec![join_defect(
+            FrameGroup::Creates,
+            &relationship,
+            FrameJoinCause::MalformedDeclaration
+        )]
+    );
+
+    // A frame whose semantic_type is not a model/object_type node.
+    let mut wrong_type = authored_frame_node(&[], &[], &[], &[]);
+    wrong_type["semantic_type"] = node_ref_digest(&process_node);
+    assert_eq!(
+        frame_body_defects(&wrong_type, &nodes),
+        vec![join_defect(
+            FrameGroup::SemanticType,
+            &process_node,
+            FrameJoinCause::MalformedDeclaration
+        )]
     );
 
     // A fully compatible frame is defect-free.
     let valid = authored_frame_node(
-        &[&relationship, &field_declaration, &object_type_node],
-        &[&relationship, &field_declaration],
+        &[&relationship, &object_type_node, &process_node],
+        &[
+            relationship_entry(&relationship),
+            field_entry(&object_type_node, "balance"),
+        ],
         &[&object_type_node],
-        &[],
+        &[&process_node],
     );
     assert_eq!(frame_body_defects(&valid, &nodes), Vec::new());
 }
 
-/// FR-340-AC-10: a field declared on an object type whose own type names a
-/// record value type, and a field declared on that record value type
-/// itself, are distinct `model`/`field_declaration` node keys -- one scoped
-/// to the object type, the other shared by every field of the record type
-/// wherever it occurs. `modifies` admits both in the same frame body with
-/// no defect. `Account.address` (typed `Address`, the published fixture's
-/// `record_value_type` node) and `Address.street` (a field of `Address`)
-/// are one such pair.
+/// FR-340-AC-10: a field of an object type whose own type names a record
+/// value type, and a field declared on that record value type itself, are
+/// distinct field entries -- one names the object type's node, the other
+/// the record value type's node. `modifies` admits both in the same frame
+/// body with no defect. `Account.address` (on the published fixture's
+/// `Account` object type, typed `Address`) and `Address.street` (on its
+/// `Address` `record_value_type` node) are one such pair.
 #[trace("TC-233", "FR-340-AC-10")]
 #[test]
 fn tc_233_modifies_admits_a_record_typed_field_and_a_field_of_that_record() {
-    let mut nodes = parsed_fixture(POSITIVE_ALL_FAMILIES)["semantic_graph"]["nodes"]
+    let nodes = parsed_fixture(POSITIVE_ALL_FAMILIES)["semantic_graph"]["nodes"]
         .as_array()
         .expect("nodes")
         .clone();
-    let record_type = repeated_digest("95");
-    let account_address_field = repeated_digest("9c");
-    let address_street_field = repeated_digest("9d");
-
-    // Account.address: a field_declaration whose own semantic_type names
-    // the Address record_value_type node already published by the fixture.
-    nodes.push(json!({
-        "node_id": node_ref_digest(&account_address_field),
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "model",
-        "semantic_form": "field_declaration",
-        "semantic_type": node_ref_digest(&record_type),
-        "declaration": {"qualified_name": ["Example", "Account", "address"]},
-        "dependencies": [],
-        "occurrences": [{"role": "declaration", "ordinal": 0}],
-        "body": {"term": "aggregate", "members": []},
-    }));
-    // Address.street: a field_declaration of the Address record itself, a
-    // declaration reference distinct from Account.address above even
-    // though both trace back to the same record type.
-    nodes.push(json!({
-        "node_id": node_ref_digest(&address_street_field),
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "model",
-        "semantic_form": "field_declaration",
-        "semantic_type": node_ref_digest(&repeated_digest("aa")),
-        "declaration": {"qualified_name": ["Example", "Address", "street"]},
-        "dependencies": [],
-        "occurrences": [{"role": "declaration", "ordinal": 0}],
-        "body": {"term": "aggregate", "members": []},
-    }));
-
+    let account = repeated_digest("91");
+    let address = repeated_digest("95");
     let both = authored_frame_node(
-        &[&account_address_field, &address_street_field],
-        &[&account_address_field, &address_street_field],
+        &[&account, &address],
+        &[
+            field_entry(&account, "address"),
+            field_entry(&address, "street"),
+        ],
         &[],
         &[],
     );
     assert_eq!(
         frame_body_defects(&both, &nodes),
         Vec::new(),
-        "a modifies entry naming Account.address and one naming Address.street are distinct declaration references and both are admitted"
+        "a modifies entry naming Account.address and one naming Address.street are distinct field entries and both are admitted"
     );
 }
 
@@ -2767,7 +3035,12 @@ fn tc_233_modifies_relationship_grant_is_not_scoped_to_an_owning_end() {
     // A single `modifies` entry naming the relationship is, by itself, a
     // complete and defect-free grant -- there is no separate "far end"
     // entry an owning-end-only reading would still be waiting on.
-    let single_entry = authored_frame_node(&[&relationship], &[&relationship], &[], &[]);
+    let single_entry = authored_frame_node(
+        &[&relationship],
+        &[relationship_entry(&relationship)],
+        &[],
+        &[],
+    );
     assert_eq!(
         frame_body_defects(&single_entry, &nodes),
         Vec::new(),
@@ -2789,8 +3062,8 @@ fn tc_233_modifies_relationship_grant_is_not_scoped_to_an_owning_end() {
         .position(|node| node["node_tag"] == "state" && node["semantic_form"] == "frame")
         .expect("a frame node is published");
     duplicated["semantic_graph"]["nodes"][frame_index]["body"]["modifies"] = json!([
-        node_ref_digest(&relationship),
-        node_ref_digest(&relationship)
+        relationship_entry(&relationship),
+        relationship_entry(&relationship)
     ]);
     assert!(
         !schema.is_valid(&duplicated),
@@ -2857,6 +3130,34 @@ fn tc_233_frame_member_arrays_are_sorted_ascending_by_entry_digest() {
         &[&object_type_node, &process_node],
     );
     assert_eq!(frame_body_defects(&ordered, &nodes), Vec::new());
+
+    // Two field entries of one declaring node order by field name, as UTF-8
+    // bytes, after the declaring node digest.
+    let misnamed = authored_frame_node(
+        &[&object_type_node],
+        &[
+            field_entry(&object_type_node, "total"),
+            field_entry(&object_type_node, "balance"),
+        ],
+        &[],
+        &[],
+    );
+    assert_eq!(
+        frame_body_defects(&misnamed, &nodes),
+        vec![FrameDefect::CanonicalOrder {
+            group: FrameGroup::Modifies,
+        }]
+    );
+    let named = authored_frame_node(
+        &[&object_type_node],
+        &[
+            field_entry(&object_type_node, "balance"),
+            field_entry(&object_type_node, "total"),
+        ],
+        &[],
+        &[],
+    );
+    assert_eq!(frame_body_defects(&named, &nodes), Vec::new());
 
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
     let mut duplicated = parsed_fixture(POSITIVE_ALL_FAMILIES);
@@ -2936,25 +3237,27 @@ fn tc_233_a_frame_meaning_join_defect_outranks_a_canonical_order_defect() {
         .expect("nodes")
         .clone();
     let relationship = repeated_digest("20");
-    let field_declaration = repeated_digest("90");
     let object_type_node = repeated_digest("91");
     let process_node = repeated_digest("92");
 
     // Vector A: modifies is misordered (canonical-order defect); deletes
     // names a relationship, wrong meaning for deletes (meaning-join defect).
     let vector_a = authored_frame_node(
-        &[&relationship, &field_declaration, &object_type_node],
-        &[&field_declaration, &relationship],
+        &[&relationship, &object_type_node],
+        &[
+            field_entry(&object_type_node, "balance"),
+            relationship_entry(&relationship),
+        ],
         &[&object_type_node],
         &[&relationship],
     );
     assert_eq!(
         reported_frame_defect(&vector_a, &nodes),
-        Some(FrameDefect::MeaningJoin {
-            group: FrameGroup::Deletes,
-            digest: relationship.clone(),
-            cause: FrameJoinCause::MalformedDeclaration,
-        }),
+        Some(join_defect(
+            FrameGroup::Deletes,
+            &relationship,
+            FrameJoinCause::MalformedDeclaration
+        )),
         "vector A: the meaning-join defect in deletes outranks the canonical-order defect in modifies"
     );
 
@@ -2963,17 +3266,17 @@ fn tc_233_a_frame_meaning_join_defect_outranks_a_canonical_order_defect() {
     // is now the misordered array (canonical-order defect).
     let vector_b = authored_frame_node(
         &[&object_type_node, &process_node],
-        &[&object_type_node],
+        &[relationship_entry(&object_type_node)],
         &[],
         &[&process_node, &object_type_node],
     );
     assert_eq!(
         reported_frame_defect(&vector_b, &nodes),
-        Some(FrameDefect::MeaningJoin {
-            group: FrameGroup::Modifies,
-            digest: object_type_node.clone(),
-            cause: FrameJoinCause::MalformedDeclaration,
-        }),
+        Some(join_defect(
+            FrameGroup::Modifies,
+            &object_type_node,
+            FrameJoinCause::MalformedDeclaration
+        )),
         "vector B: the meaning-join defect in modifies still outranks the canonical-order defect in deletes"
     );
 }
@@ -3033,10 +3336,10 @@ fn tc_233_frame_body_outputs_are_exactly_the_schemas_required_members() {
 /// MeaningJoin`'s declared field order, fail a test: no prior vector had
 /// two meaning-join defects at once. The fifteen `systems-*-in-*` vectors
 /// (FR-340-AC-8) splice each of the five published systems-model nodes into
-/// each of `modifies`, `creates` and `deletes` in turn: they are what makes
-/// adding `| "systems_part"` to `frame_meaning`'s Modifiable arm, or mapping
-/// every `systems_*` form to `CreatableOrDeletable`, fail a test -- no prior
-/// vector named a systems-model node at all. The `cross-frame-lower-digest-
+/// each of `modifies` (as a field entry's declaring node), `creates` and
+/// `deletes` in turn: they are what makes adding `| "systems_part"` to
+/// `frame_entry_admits`'s field arm, or admitting every `systems_*` form as
+/// an instance entry, fail a test. The `cross-frame-lower-digest-
 /// wins` vector (FR-340-AC-9) is the only one with a `second_frame` field:
 /// it mutates the published frame node (digest `93...93`) into a
 /// missing-name defect and the loop below inserts a second, brand-new
@@ -3063,8 +3366,8 @@ fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cau
         .expect("frame_mutations is an array");
     assert_eq!(
         mutations.len(),
-        26,
-        "frame_mutations covers all twenty-six authored vectors"
+        30,
+        "frame_mutations covers all thirty authored vectors"
     );
 
     let causes = mutations
@@ -3121,7 +3424,22 @@ fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cau
         let mut candidate = package.clone();
         let frame = &mut candidate["semantic_graph"]["nodes"][frame_index];
         frame["dependencies"] = json!(digests(mutation, "dependencies"));
-        frame["body"]["modifies"] = json!(digests(mutation, "modifies"));
+        // A `modifies` entry is authored in its wire shape with a bare
+        // digest `declaration`, substituted here as a `NodeRef`.
+        frame["body"]["modifies"] = mutation["modifies"]
+            .as_array()
+            .expect("modifies is an array")
+            .iter()
+            .map(|entry| {
+                let mut entry = entry.clone();
+                entry["declaration"] = digest_ref(
+                    entry["declaration"]
+                        .as_str()
+                        .expect("modifies declaration is a digest string"),
+                );
+                entry
+            })
+            .collect();
         frame["body"]["creates"] = json!(digests(mutation, "creates"));
         frame["body"]["deletes"] = json!(digests(mutation, "deletes"));
 
@@ -3171,17 +3489,29 @@ fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cau
 #[trace("TC-233", "FR-340-AC-6")]
 #[test]
 fn tc_233_frame_defect_ordering_does_not_depend_on_collection_order() {
-    let first = FrameDefect::MeaningJoin {
-        group: FrameGroup::Modifies,
-        digest: repeated_digest("91"),
-        cause: FrameJoinCause::MalformedDeclaration,
-    };
-    let second = FrameDefect::MeaningJoin {
+    let first = join_defect(
+        FrameGroup::Modifies,
+        &repeated_digest("91"),
+        FrameJoinCause::MalformedDeclaration,
+    );
+    let second = join_defect(
+        FrameGroup::Modifies,
+        &repeated_digest("92"),
+        FrameJoinCause::MalformedDeclaration,
+    );
+    let expected = vec![first.clone(), second.clone()];
+
+    // Two field entries of one declaring node tie on the digest and break
+    // by field name.
+    let named = |name: &str| FrameDefect::MeaningJoin {
         group: FrameGroup::Modifies,
         digest: repeated_digest("92"),
-        cause: FrameJoinCause::MalformedDeclaration,
+        name: name.to_owned(),
+        cause: FrameJoinCause::MissingName,
     };
-    let expected = vec![first.clone(), second.clone()];
+    let mut by_name = vec![named("total"), named("balance")];
+    by_name.sort();
+    assert_eq!(by_name, vec![named("balance"), named("total")]);
 
     // Each vector starts in a different collection order; sorting either one
     // must reach the identical canonical (lower-digest-first) order, not
@@ -7088,4 +7418,404 @@ fn tc_233_native_diagnostics_header_pins_current_revision() {
         header, "Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.8`.",
         "the catalog header claims revision 1-draft.8, which keeps every 1-draft.4 cause this file relies on"
     );
+}
+
+/// Index of the node whose digest is `digest` in a published package.
+fn node_index(package: &Value, digest: &str) -> usize {
+    node_index_by_digest(package, digest).unwrap_or_else(|| panic!("{digest} is published"))
+}
+
+/// The clause fixture's `state`/`state_clause` node of `clause` kind.
+fn clause_node_index(package: &Value, clause: &str) -> usize {
+    package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .iter()
+        .position(|node| {
+            node["semantic_form"] == "state_clause"
+                && node["body"]["operation"]["member"]["clause"] == clause
+        })
+        .unwrap_or_else(|| panic!("the clause fixture carries a {clause} clause"))
+}
+
+/// Replace one clause node's body through `edit`, rekeying the node, its
+/// dependencies, projection and package id as a producer would.
+fn edited_clause(package: &Value, clause: &str, edit: impl FnOnce(&mut Value)) -> Value {
+    let mut candidate = package.clone();
+    let index = clause_node_index(&candidate, clause);
+    let mut node = candidate["semantic_graph"]["nodes"][index].clone();
+    edit(&mut node["body"]);
+    replace_application_node(&mut candidate, index, node);
+    candidate
+}
+
+/// FR-341-AC-1/AC-2, FR-341-AC-8, FR-342-AC-1, FR-340-AC-12: the node-form
+/// body rules the published schema carries. A `state`/`state_clause` body
+/// is a `quire.op.state.clause` application over a parameter aggregate of
+/// references, an anchor reference and a condition, carrying the
+/// `state_clause` member, and its occurrences are `claim`; an
+/// `operation_anchor` body is the three bindings in order and its
+/// occurrences are `anchor`; a `transition` body is a
+/// `quire.op.state.transition` application; a frame's occurrences are
+/// `generated`. No `model` node names a member declaration form.
+#[trace("TC-233", "FR-341-AC-1")]
+#[trace("TC-233", "FR-341-AC-2")]
+#[trace("TC-233", "FR-341-AC-8")]
+#[trace("TC-233", "FR-342-AC-1")]
+#[trace("TC-233", "FR-340-AC-12")]
+#[test]
+fn tc_233_state_node_forms_fix_their_body_roots_and_occurrence_roles() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
+    let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+    schema
+        .validate(&package)
+        .unwrap_or_else(|error| panic!("the clause package has the closed V2 shape: {error}"));
+    let invariant = clause_node_index(&package, "invariant");
+    let anchor = node_index(&package, &repeated_digest("b5"));
+    let frame = node_index(&package, &repeated_digest("b4"));
+    let transition = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .iter()
+        .position(|node| node["semantic_form"] == "transition")
+        .expect("the clause package carries a transition");
+    let refused = |pointer: &str, value: Value, why: &str| {
+        let mut candidate = package.clone();
+        *candidate
+            .pointer_mut(pointer)
+            .unwrap_or_else(|| panic!("{pointer} exists")) = value;
+        assert!(!schema.is_valid(&candidate), "{why}");
+    };
+    let node = |index: usize| format!("/semantic_graph/nodes/{index}");
+    let temporal = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .iter()
+        .find(|node| node["semantic_form"] == "temporal_clause")
+        .expect("a temporal clause is published")["body"]
+        .clone();
+
+    refused(
+        &format!("{}/body", node(invariant)),
+        temporal.clone(),
+        "a state_clause body root is a state.clause application, never another clause",
+    );
+    refused(
+        &format!("{}/body/operation/identity", node(invariant)),
+        json!("quire.op.state.transition"),
+        "a state_clause body names quire.op.state.clause",
+    );
+    refused(
+        &format!("{}/body/operator", node(invariant)),
+        json!("state_transition"),
+        "a state_clause body has the state_clause operator class",
+    );
+    refused(
+        &format!("{}/body/operation/member", node(invariant)),
+        json!({"kind": "profile_operator", "operator": "always"}),
+        "a state_clause body carries the state_clause member",
+    );
+    refused(
+        &format!("{}/body/operation/member/clause", node(invariant)),
+        json!("transition"),
+        "a clause kind is invariant, precondition or postcondition",
+    );
+    refused(
+        &format!("{}/body/arguments/0", node(invariant)),
+        json!({"term": "reference", "target": node_ref_digest(&repeated_digest("b3"))}),
+        "argument 0 is the parameter aggregate",
+    );
+    refused(
+        &format!("{}/body/arguments/0/members", node(invariant)),
+        json!([]),
+        "the parameter aggregate holds self at least",
+    );
+    refused(
+        &format!("{}/body/arguments/1", node(invariant)),
+        json!({"term": "aggregate", "members": []}),
+        "argument 1 is the anchor reference",
+    );
+    refused(
+        &format!("{}/occurrences/0/role", node(invariant)),
+        json!("declaration"),
+        "a state_clause occurrence is a claim",
+    );
+    refused(
+        &format!("{}/body/members/0/name", node(anchor)),
+        json!("frame"),
+        "an anchor's first binding is context",
+    );
+    refused(
+        &format!("{}/body/members/1/value/value_kind", node(anchor)),
+        json!("integer"),
+        "an anchor's operation is a text literal",
+    );
+    refused(
+        &format!("{}/body/members/2", node(anchor)),
+        Value::Null,
+        "an anchor carries exactly three bindings",
+    );
+    refused(
+        &format!("{}/occurrences/0/role", node(anchor)),
+        json!("claim"),
+        "an operation_anchor occurrence is an anchor",
+    );
+    refused(
+        &format!("{}/occurrences/0/role", node(frame)),
+        json!("declaration"),
+        "a frame occurrence is generated",
+    );
+    refused(
+        &format!("{}/body", node(transition)),
+        temporal,
+        "a transition body root is a state.transition application",
+    );
+    refused(
+        &format!(
+            "{}/semantic_form",
+            node(node_index(&package, &repeated_digest("b1")))
+        ),
+        json!("field_declaration"),
+        "no model node is a field declaration",
+    );
+    refused(
+        &format!(
+            "{}/semantic_form",
+            node(node_index(&package, &repeated_digest("b1")))
+        ),
+        json!("operation_declaration"),
+        "no model node is an operation declaration",
+    );
+    refused(
+        &format!(
+            "{}/semantic_form",
+            node(node_index(&package, &repeated_digest("b1")))
+        ),
+        json!("clause_member_declaration"),
+        "no model node is a clause member declaration",
+    );
+}
+
+/// FR-341-AC-3/AC-4/AC-6/AC-7 and FR-342-AC-2/AC-3/AC-5 through the full
+/// reader: the published clause package's anchor and clauses have no
+/// defect, and each authored defect refuses at the state step with its
+/// code, cause and locus, in the stated order.
+#[trace("TC-233", "FR-341-AC-3")]
+#[trace("TC-233", "FR-341-AC-4")]
+#[trace("TC-233", "FR-341-AC-6")]
+#[trace("TC-233", "FR-341-AC-7")]
+#[trace("TC-233", "FR-342-AC-2")]
+#[trace("TC-233", "FR-342-AC-3")]
+#[trace("TC-233", "FR-342-AC-5")]
+#[test]
+fn tc_233_state_step_joins_anchors_then_clauses_with_their_recorded_cause() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+    assert_eq!(package_state_refusal(&package), Ok(()));
+    let reference =
+        |b: &str| json!({"term": "reference", "target": node_ref_digest(&repeated_digest(b))});
+    let expect = |candidate: &Value, refusal: StateRefusal, locus: Value, why: &str| {
+        match read_package_semantics(candidate, &catalog) {
+            Err(ReadRefusal::State(actual, actual_locus)) => {
+                assert_eq!(actual, refusal, "{why}: refusal");
+                assert_eq!(actual_locus, locus, "{why}: locus");
+            }
+            other => panic!("{why}: expected a state refusal, got {other:?}"),
+        }
+    };
+    let target = |b: &str| node_ref_digest(&repeated_digest(b));
+
+    // Clause anchors (FR-341-AC-3).
+    let wrong = edited_clause(&package, "invariant", |body| {
+        body["arguments"][1] = reference("b5")
+    });
+    expect(
+        &wrong,
+        StateRefusal::MalformedDeclaration,
+        target("b5"),
+        "an invariant anchors at an object type",
+    );
+    let wrong = edited_clause(&package, "precondition", |body| {
+        body["arguments"][1] = reference("b1")
+    });
+    expect(
+        &wrong,
+        StateRefusal::MalformedDeclaration,
+        target("b1"),
+        "a precondition anchors at an operation_anchor",
+    );
+    let mut undeclared = package.clone();
+    let index = clause_node_index(&undeclared, "invariant");
+    undeclared["semantic_graph"]["nodes"][index]["dependencies"]
+        .as_array_mut()
+        .expect("dependencies")
+        .retain(|dep| dep["digest"] != repeated_digest("b1"));
+    undeclared["identity_preimage"] = derive_identity_preimage(&undeclared);
+    assert!(
+        read_package_semantics(&undeclared, &catalog)
+            .is_err_and(|refusal| matches!(refusal, ReadRefusal::GraphShape(_))),
+        "a body reference missing from dependencies is a graph-shape refusal first"
+    );
+
+    // Parameters (FR-341-AC-4).
+    let wrong = edited_clause(&package, "invariant", |body| {
+        body["arguments"][0]["members"][0] = reference("dd")
+    });
+    expect(
+        &wrong,
+        StateRefusal::MalformedDeclaration,
+        target("dd"),
+        "a parameter reference names a value/parameter node",
+    );
+    let wrong = edited_clause(&package, "invariant", |body| {
+        body["arguments"][0]["members"]
+            .as_array_mut()
+            .expect("members")
+            .push(reference("b3"));
+    });
+    let clause_id = |candidate: &Value| {
+        candidate["semantic_graph"]["nodes"][clause_node_index(candidate, "invariant")]["node_id"]
+            .clone()
+    };
+    expect(
+        &wrong,
+        StateRefusal::OperatorIneligible,
+        clause_id(&wrong),
+        "an invariant binds self alone",
+    );
+    let mut retyped = package.clone();
+    let self_index = node_index(&retyped, &repeated_digest("b3"));
+    retyped["semantic_graph"]["nodes"][self_index]["semantic_type"] = target("aa");
+    retyped["identity_preimage"] = derive_identity_preimage(&retyped);
+    expect(
+        &retyped,
+        StateRefusal::OperatorIneligible,
+        clause_id(&retyped),
+        "self has type Reference<context>",
+    );
+
+    // Misplaced clause application (FR-341-AC-6): a state.clause
+    // application nested inside another clause's condition.
+    let nested =
+        package["semantic_graph"]["nodes"][clause_node_index(&package, "invariant")]["body"]
+            .clone();
+    let wrong = edited_clause(&package, "precondition", |body| {
+        body["arguments"][2] = nested
+    });
+    let precondition_id = wrong["semantic_graph"]["nodes"]
+        [clause_node_index(&wrong, "precondition")]["node_id"]
+        .clone();
+    expect(
+        &wrong,
+        StateRefusal::OperatorIneligible,
+        precondition_id,
+        "a state.clause application is only a state_clause body root",
+    );
+
+    // Anchors (FR-342-AC-2/AC-3) and the anchors-before-clauses order (FR-342-AC-5).
+    let anchor = node_index(&package, &repeated_digest("b5"));
+    let mut wrong = package.clone();
+    wrong["semantic_graph"]["nodes"][anchor]["body"]["members"][0]["value"] = reference("b4");
+    expect(
+        &wrong,
+        StateRefusal::MalformedDeclaration,
+        target("b4"),
+        "an anchor's context is an object type",
+    );
+    let mut wrong = package.clone();
+    wrong["semantic_graph"]["nodes"][anchor]["body"]["members"][2]["value"] = reference("b1");
+    expect(
+        &wrong,
+        StateRefusal::MalformedDeclaration,
+        target("b1"),
+        "an anchor's frame is a frame node",
+    );
+    let mut wrong = package.clone();
+    wrong["semantic_graph"]["nodes"][anchor]["dependencies"] = json!([target("b1")]);
+    expect(
+        &wrong,
+        StateRefusal::MissingName,
+        target("b4"),
+        "an anchor's frame is a declared dependency",
+    );
+    let mut wrong = package.clone();
+    wrong["semantic_graph"]["nodes"][anchor]["semantic_type"] = target("b2");
+    expect(
+        &wrong,
+        StateRefusal::MalformedDeclaration,
+        target("b5"),
+        "an anchor's semantic type is its context",
+    );
+    let frame = node_index(&package, &repeated_digest("b4"));
+    let mut wrong = package.clone();
+    wrong["semantic_graph"]["nodes"][frame]["semantic_type"] = target("b2");
+    assert!(
+        matches!(
+            read_package_semantics(&wrong, &catalog),
+            Err(ReadRefusal::Frame(..))
+        ),
+        "a frame whose semantic type is not an object type refuses at the frame step, before the anchor"
+    );
+    let mut both = edited_clause(&package, "invariant", |body| {
+        body["arguments"][1] = reference("b5")
+    });
+    let anchor = node_index(&both, &repeated_digest("b5"));
+    both["semantic_graph"]["nodes"][anchor]["semantic_type"] = target("b2");
+    expect(
+        &both,
+        StateRefusal::MalformedDeclaration,
+        target("b5"),
+        "the anchor defect is reported before the clause defect",
+    );
+
+    // Every state refusal pairs with the code and cause FR-341 and FR-342 state.
+    for (refusal, code, cause) in [
+        (
+            StateRefusal::MissingName,
+            "missing_declaration",
+            "missing-name",
+        ),
+        (
+            StateRefusal::MalformedDeclaration,
+            "invalid_model_binding",
+            "malformed-declaration",
+        ),
+        (
+            StateRefusal::OperatorIneligible,
+            "ill_typed",
+            "operator-ineligible",
+        ),
+    ] {
+        assert_eq!((refusal.code(), refusal.cause()), (code, cause));
+    }
+}
+
+/// FR-341-AC-9: the catalog entry of `quire.op.state.clause`, bound to both
+/// schemas, and every published state clause admitted by the operation step.
+#[trace("TC-233", "FR-341-AC-9")]
+#[test]
+fn tc_233_state_clause_is_a_catalogued_operation_the_schemas_enumerate() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let entry = catalog["operations"]
+        .as_array()
+        .expect("catalog operations are an array")
+        .iter()
+        .find(|entry| entry["identity"] == "quire.op.state.clause")
+        .expect("quire.op.state.clause is catalogued");
+    assert_eq!(entry["operator"], "state_clause");
+    assert_eq!(entry["operands"], json!(["aggregate", "object", "boolean"]));
+    assert_eq!(entry["rest"], Value::Null);
+    assert_eq!(entry["result"], "clause");
+    assert_eq!(entry["laws"], json!([]));
+    assert_eq!(entry["mode"], Value::Null);
+    assert_eq!(entry["member"], "state_clause");
+    for schema in [parsed_fixture(SCHEMA), parsed_fixture(NODE_PREIMAGE_SCHEMA)] {
+        assert!(
+            string_set(&schema["$defs"]["OperationIdentity"]["enum"], "identities")
+                .contains("quire.op.state.clause")
+        );
+    }
+    let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+    assert_eq!(package_operations_refusal(&package, &catalog), Ok(()));
+    assert_eq!(read_package_semantics(&package, &catalog), Ok(()));
 }

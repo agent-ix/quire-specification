@@ -23,7 +23,13 @@ structures, but any external consumer receives only the versioned contract.
   call and collection operations keyed by their application-node preimages.
   `fixtures/positive-clause-operations.json` is a V2 package whose clause
   applications (`temporal`, `protocol_control`, `state_transition`, `claim`)
-  each carry a lock-selected profile law and a `profile_operator` member.
+  each carry a lock-selected profile law and a `profile_operator` member. The
+  same package carries an invariant and a precondition as
+  `state`/`state_clause` nodes whose `quire.op.state.clause` applications
+  carry a `state_clause` member and no law, the precondition's
+  `state`/`operation_anchor` node, its `state`/`frame` node with a field
+  entry, and the `value`/`parameter` node for `self` (FR-340, FR-341,
+  FR-342).
 - `node-identity-vectors.json` supplies known JCS SHA-256 vectors for those
   preimages, plus `operation_vectors` and `operation_mutations` for
   application-node preimages.
@@ -32,8 +38,11 @@ structures, but any external consumer receives only the versioned contract.
   (FR-322, FR-340); identity projection, `package_id` and source-map checks
   are outside a vector's expectation. Most vectors replace the all-
   families fixture's published frame node's `dependencies` and
-  `modifies`/`creates`/`deletes` in place: each entry is a bare digest
-  string, substituted into the node as the `NodeRef`
+  `modifies`/`creates`/`deletes` in place: each `dependencies`, `creates`
+  and `deletes` entry is a bare digest string, and each `modifies` entry is
+  a `FrameModifiesEntry` (`{kind: "relationship", declaration}` or
+  `{kind: "field", declaration, name}`) whose `declaration` is a bare digest
+  string; every bare digest is substituted into the node as the `NodeRef`
   `{domain: "quire.checked-semantic-node/v1", digest}` (`schema.json`'s
   `NodeId`). One vector additionally carries a
   `second_frame` member: a complete second `state`/`frame` node object,
@@ -172,7 +181,10 @@ meaning and no type is inferred. The identity is a member of the
   (record field, tuple position, element, relationship end, dispatched
   operation or type argument), or for a clause
   `{kind: "profile_operator", operator}` naming an operator the law's profile
-  defines. A dispatched operation's declaring node is a `model` node whose own
+  defines, or for `quire.op.state.clause` `{kind: "state_clause", clause}`
+  naming the clause kind (FR-341). `quire.op.model.reaches_field` carries a
+  `field` member and the `reference_edge` constraint (FR-322 "Reaches over a
+  field"). A dispatched operation's declaring node is a `model` node whose own
   `semantic_form` is `object_type`, `process`, `state_machine` or
   `persistence_interface`
   ([FR-322-AC-25](../../spec/objects/interfaces/FR-322-checked-package-artifact.md));
@@ -216,7 +228,10 @@ is not its preimage digest, then declaration refusals, then frame refusals at
 the first `state`/`frame` node in ascending node-id digest order carrying one
 (that node's own `missing_declaration`/`invalid_model_binding` meaning-join
 defect outranking its `invalid_semantic_graph` canonical-order defect, per
-FR-340), then nodes in ascending node-id digest order and, inside a
+FR-340), then state refusals (the placement of `quire.op.state.clause`, then
+each `state`/`operation_anchor` node and then each `state`/`state_clause`
+node in ascending node-id digest order, per FR-341 and FR-342), then nodes
+in ascending node-id digest order and, inside a
 node, applications in pre-order. One
 application checks `unknown-operation`, `operation-class-mismatch`,
 `operation-law-missing`, `operation-law-mismatch`,
