@@ -26,13 +26,13 @@
       "identity": "quire.rule.fr-140/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-140-evaluate-exact-decimals.md",
-      "sha256": "4d0dcb64423014f8f2a64fadd7216f4974626dcacf586fe6930da6a54aa51131"
+      "sha256": "eab20ba7e07d2b208bc354cd1d5a3f26c9d4386809d7354d4f3e600d96c7cfc5"
     },
     {
       "identity": "quire.rule.fr-141/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/type-model/FR-141-evaluate-text-and-enumerations.md",
-      "sha256": "5438519ea6d13e5df8947d13d5c257b46de1aed0c621295f1df76fa97e160785"
+      "sha256": "0f72138c9441599c5b5d39d774f387c92aece1b381281066ca43ad0479b73f4d"
     },
     {
       "identity": "quire.rule.fr-142/v1",
@@ -44,13 +44,13 @@
       "identity": "quire.rule.fr-147/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/expressions/FR-147-evaluate-integer-division-domains.md",
-      "sha256": "644e325dd6c0b614b4a53a82ed77ef7d0f41b1d7b20c59fb7b3f7f12426af867"
+      "sha256": "ca6bc2c9562446160117673f701c9bd122fa5eaf5a0213e50007523703f4a405"
     },
     {
       "identity": "quire.rule.fr-148/v1",
       "revision": "1-draft.1",
       "path": "../../../spec/functional/expressions/FR-148-evaluate-ieee-floating-profiles.md",
-      "sha256": "69780c292211f66cf5bacbff3e09c68e625ccaed4fe712e3b060050e5adbf618"
+      "sha256": "4a4f9783bea786b7efe3a89e118f6128aedbfe38608ea0f036ae923863fccea0"
     },
     {
       "identity": "quire.rule.fr-149/v1",

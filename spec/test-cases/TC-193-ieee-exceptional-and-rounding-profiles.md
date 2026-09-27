@@ -42,12 +42,12 @@ the empty set:
 | --- | --- | --- |
 | F07 | binary32 `0x3f800000 + 0x33800000` (`1 + 2^-24`) | nearest-even/toward-zero/toward-negative: `0x3f800000`; nearest-away/toward-positive: `0x3f800001`; every rounded result flags `{inexact}` |
 | F08 | binary32 `0xbf800000 + 0xb3800000` (`-1 - 2^-24`) | nearest-even/toward-zero/toward-positive: `0xbf800000`; nearest-away/toward-negative: `0xbf800001`; every rounded result flags `{inexact}` |
-| F09 | F07 under strict `exact`, then `0x3f800000 + 0x34000000` (`1 + 2^-23`) under `exact` | first refuses with would-be `{inexact}` and no bits; second returns `0x3f800001` with no flags |
+| F09 | F07 under strict `exact`, then `0x3f800000 + 0x34000000` (`1 + 2^-23`) under `exact` | first returns `refused { code: ieee_not_exact, cause: rounding-required }` with would-be `{inexact}` (`flags` `inexact`) and no bits; second returns `0x3f800001` with no flags |
 | F10 | binary64 `0x3ff0000000000000 + 0x3ca0000000000000` (`1 + 2^-53`) | nearest-even/toward-zero/toward-negative: `0x3ff0000000000000`; nearest-away/toward-positive: `0x3ff0000000000001`; `{inexact}` |
 | F11 | binary32 FMA `a=0x3f800001`, `b=0x3f7ffffe`, `c=0xbf800000`, nearest-even | fused result `0xa8800000`; separately rounded multiply then add gives `0x00000000` |
 | F12 | `0x00000000 * 0x7f800000`; `sqrt(0xbf800000)`, under each selected direction and strict `exact` | canonical `0x7fc00000`, flag `{invalid}` for each |
 | F13 | finite `+1`/`-1` divided by `+0`/`-0`, under each selected direction and strict `exact` | respectively `0x7f800000`, `0xff800000`, `0xff800000`, `0x7f800000`; flag `{divide_by_zero}` |
-| F14 | `0x7f7fffff + 0x7f7fffff`, nearest-even then strict `exact` | nearest-even returns `0x7f800000` with `{overflow,inexact}`; `exact` refuses with those would-be flags and no bits |
+| F14 | `0x7f7fffff + 0x7f7fffff`, nearest-even then strict `exact` | nearest-even returns `0x7f800000` with `{overflow,inexact}`; `exact` returns `refused { code: ieee_not_exact, cause: rounding-required }` with those would-be flags (`flags` `overflow,inexact`) and no bits |
 | F15 | `0x00800000 * 0x3f000000`, nearest-even | exact subnormal `0x00400000`, no flags |
 | F16 | `0x00000001 * 0x3f000000`, nearest-even | `0x00000000`, flags `{underflow,inexact}` |
 | F17 | binary32 `numericEqual(0x7fc00001, 0x3f800000)` with `ScalarLimitsV1 { integer_bits: 32, decimal_digits: 0, scale_expansion: 0, text_input_bytes: 0, text_scalars: 0, normalized_scalars: 0, unit_edges: 0, value_occurrences: 2, work_units: 2, result_units: 1 }` | false; only `ieee.operands` and `ieee.result-retain` apply; denying either is incomplete without a Boolean |

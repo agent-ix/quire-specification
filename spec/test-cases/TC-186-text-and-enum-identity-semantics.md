@@ -31,8 +31,8 @@ Every `ill-typed` expectation below means type-checking
 | T01 | U+00E9 and `U+0065 U+0301`; `unicode-scalars` | unequal |
 | T02 | the T01 strings under `nfc`, then under `nfd` | equal under each profile; retained normalized sequences are respectively U+00E9 and `U+0065 U+0301` |
 | T03 | U+FB00 and `ff` under `nfkc`, `nfkd`, then `nfc` | equal under compatibility profiles; unequal under `nfc` |
-| T04 | U+00E9 in `Text[1,1;nfc]` and `Text[1,1;binary-utf8]` | scalar-profile value succeeds at length one; binary value refuses because UTF-8 length is two bytes |
-| T05 | empty text in `Text[0,0;nfc]`, U+0061 in `Text[0,0;nfc]`, and U+0061 in `Text[1,1;nfc]` | empty and exact-bound inputs succeed; one-over input refuses |
+| T04 | U+00E9 in `Text[1,1;nfc]` and `Text[1,1;binary-utf8]` | scalar-profile value succeeds at length one; binary value returns `refused { code: text_length_out_of_domain, cause: outside-domain }` because UTF-8 length is two bytes |
+| T05 | empty text in `Text[0,0;nfc]`, U+0061 in `Text[0,0;nfc]`, and U+0061 in `Text[1,1;nfc]` | empty and exact-bound inputs succeed; one-over input returns `refused { code: text_length_out_of_domain, cause: outside-domain }` |
 | T05b | source type `Text` with its required bounds omitted | `refused { code: invalid_syntax }` at source recognition; no unbounded text type |
 | T06 | bytes `c3 28` presented at the UTF-8 reader boundary | refused as invalid UTF-8 before profile comparison |
 | T06b | source strings `"é"` and `"\u00e9"`, then runtime payload bytes `c3 a9`, under `binary-utf8` | all three values contain bytes `c3 a9` and compare equal; source spellings remain distinct provenance |

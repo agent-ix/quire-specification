@@ -55,3 +55,56 @@ outside FR-272's canonical name list. Two low findings.
 | FND-001 | medium | The new rows fix `flags` (`ieee_not_exact`) and `label` (`invalid_source_identity`) as exact payload keys. Neither is in FR-272's canonical cause payload contract, which lists exact ordered names and refuses unknown required fields. The catalog paragraph says only that `expected` and `actual` are canonical and says nothing about `flags` or `label`, so their position in the field order is also undefined. Fix: add both to FR-272's ordered list at a stated position, or use canonical names (`actual` for the would-be flags, `subject` for the label). | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:176-181; proposals/quire-v1/definitions/native-diagnostics.md:102,110,219-223 |
 | FND-002 | low | The definitions index still gives `quire.native.diagnostics/v1` draft revision `1-draft.5`, three revisions behind the header this PR sets to `1-draft.8`. This predates the PR but is the one other place that states the current revision. | proposals/quire-v1/definitions/README.md:41 |
 | FND-003 | low | "A producer claiming revision `1-draft.7` or earlier emits ... no `invalid_source_identity` cause" can be read as those producers never emitting that code. They did, as a retained code with its upstream structured cause. Say "neither `blank-label` nor `empty-path`". | proposals/quire-v1/definitions/native-diagnostics.md:224-225 |
+
+## Dispositions
+
+Transcribed verbatim from https://linear.app/agent-ix/issue/STD-110/catalog-1-draft8-codes-for-the-kernel-refusal-causes-qsl-cannot-record#comment-d19453b1
+
+<!-- reviewer-dispositions repo=agent-ix/quire-specification visibility=private quoin=0.24.1 module=spec-artifacts-process@v0.26.0 id=SR-713 date=2026-09-26 -->
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 6389506c: FR-272's ordered canonical list now holds `label` (after `capability`) and `flags` (after `actual`); the catalog paragraph names all four keys as canonical. Mutation "drop `label` from the list" fails `tc_233_revision_1_draft_8_cause_sets_and_payload_keys_are_closed` (reviewer re-ran it). |
+| FND-002 | fixed | 6389506c: README index row says `1-draft.8`. |
+| FND-003 | fixed | 6389506c: older-producer sentence now says "with neither `blank-label` nor `empty-path`". |
+
+Delta scope: `git diff 05f6e311..6389506c`. Verified at 6389506c88d3b6eab02efe917afb1adeca7f7d19. New findings from the fix round are in SR-719.
+
++++ [reviewer data]
+
+```yaml
+reviewed: 6389506c88d3b6eab02efe917afb1adeca7f7d19
+prior_reviewed: 05f6e311
+dispositions:
+  - fnd: FND-001
+    outcome: fixed
+    fix_sha: 6389506c
+    path: spec/objects/foundation/FR-272-typed-diagnostic-cause.md
+    lines: "176-180"
+    after_excerpt: |-
+      Cause payload fields use these exact ordered names when applicable:
+      `subject`, `stage`, `definition`, `capability`, `label`, `expected`, `actual`,
+      `flags`, `path`, `related`, `limit`, `consumed`, `upstream`. `label` names which
+      source label a refusal concerns and `flags` a would-be IEEE flag set (catalog
+      revision `1-draft.8`).
+    verification: "Reviewer mutation (remove `label` from the list) fails tc_233_revision_1_draft_8_cause_sets_and_payload_keys_are_closed at tests/checked_package_v2.rs:6771."
+  - fnd: FND-002
+    outcome: fixed
+    fix_sha: 6389506c
+    path: proposals/quire-v1/definitions/README.md
+    lines: "41"
+    after_excerpt: |-
+      | `quire.native.diagnostics/v1` | `1-draft.8` | [Diagnostic interpretation](native-diagnostics.md) |
+  - fnd: FND-003
+    outcome: fixed
+    fix_sha: 6389506c
+    path: proposals/quire-v1/definitions/native-diagnostics.md
+    lines: "241-243"
+    after_excerpt: |-
+      A producer claiming revision `1-draft.7` or earlier emits none of the ten codes,
+      and emits `invalid_source_identity` with neither `blank-label` nor
+      `empty-path`.
+```
+
++++
+

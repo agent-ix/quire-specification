@@ -19,7 +19,7 @@
     {
       "role": "accounting",
       "artifact_path": "value-accounting.md",
-      "definition": {"authority":"agent-ix","identity":"quire.value.accounting/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"6fdab8c89981aed6d8177b9fb295026c7aae353494df4ea8a8f325e7587203ef"}
+      "definition": {"authority":"agent-ix","identity":"quire.value.accounting/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"25dc3258642edcff47b9b8525981e019c7b6d30e076100283ba6137fd43ffe79"}
     },
     {
       "role": "compound_unit",
@@ -39,7 +39,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "value-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.value.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"3787474ae385bbafb505d5a561bd8bba89105d8ef9971a49f0e195fd19bea0bc"}
+      "definition": {"authority":"agent-ix","identity":"quire.value.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"ed93a836d6effbe49ed672de610326321cc9dfbf9e829274b6c8b5008f8d0df3"}
     },
     {
       "role": "text_profile",
@@ -84,12 +84,12 @@
     {
       "role": "rule_fr_140",
       "artifact_path": "../../../spec/functional/type-model/FR-140-evaluate-exact-decimals.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-140/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"4d0dcb64423014f8f2a64fadd7216f4974626dcacf586fe6930da6a54aa51131"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-140/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"eab20ba7e07d2b208bc354cd1d5a3f26c9d4386809d7354d4f3e600d96c7cfc5"}
     },
     {
       "role": "rule_fr_141",
       "artifact_path": "../../../spec/functional/type-model/FR-141-evaluate-text-and-enumerations.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-141/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"5438519ea6d13e5df8947d13d5c257b46de1aed0c621295f1df76fa97e160785"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-141/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"0f72138c9441599c5b5d39d774f387c92aece1b381281066ca43ad0479b73f4d"}
     },
     {
       "role": "rule_fr_142",
@@ -99,12 +99,12 @@
     {
       "role": "rule_fr_147",
       "artifact_path": "../../../spec/functional/expressions/FR-147-evaluate-integer-division-domains.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-147/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"644e325dd6c0b614b4a53a82ed77ef7d0f41b1d7b20c59fb7b3f7f12426af867"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-147/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"ca6bc2c9562446160117673f701c9bd122fa5eaf5a0213e50007523703f4a405"}
     },
     {
       "role": "rule_fr_148",
       "artifact_path": "../../../spec/functional/expressions/FR-148-evaluate-ieee-floating-profiles.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-148/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"69780c292211f66cf5bacbff3e09c68e625ccaed4fe712e3b060050e5adbf618"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-148/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"4a4f9783bea786b7efe3a89e118f6128aedbfe38608ea0f036ae923863fccea0"}
     },
     {
       "role": "rule_fr_149",

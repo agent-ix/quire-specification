@@ -211,7 +211,8 @@ same. `Rational[..]` `+`, `-`, `*`, `/` and unary `-`, and an `Integer` or
 without a charge, then `rational-arithmetic.result-retain`; a zero divisor met
 by direct kernel evaluation is undefined after `rational-arithmetic.operands`.
 A bounded integer or `Rational[..]` arithmetic result outside its result
-domain is refused, with no value and no later charge, as
+domain, other than a `sum` seed or prefix, is refused, with no value and no
+later charge, as
 `refused { code: integer_out_of_domain, cause: outside-domain }` or
 `refused { code: rational_out_of_domain, cause: outside-domain }`,
 respectively (FR-044).
@@ -424,7 +425,10 @@ summand's own charges for the first occurrence, which seeds the running total
 with no addition; then, for each later occurrence in visiting order, one
 `collection.visit`, its summand's charges and one addition charged by the
 family of `N`; then one `collection.result-retain` with `result_units += 1`. An
-empty source charges only that `collection.result-retain`.
+empty source charges only that `collection.result-retain`. A seed or running
+total that is not a member of `N`'s domain ends the sum with FR-145's located
+undefined outcome at that summand or addition, in place of the family's
+membership refusal, and makes no later charge.
 
 | Family of `N` | Charges of one addition |
 | --- | --- |
