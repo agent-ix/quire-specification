@@ -773,10 +773,11 @@ fn tc_281_record_projection_reads_a_model_field_over_a_deref_result() {
     }
 }
 
-/// FR-322 steps 2 and 3 for one member of `kind` named `name` on the node
-/// vector `declaration` names, with the step 3 refusals mapped as `refuse`
-/// maps a count of matches: the resolved (owner declaration, identity,
-/// record), or the refusal.
+/// FR-322 steps 2 and 3 for one member named `name` on the node vector
+/// `declaration` names, matched against the `list` member kind (`"fields"`
+/// or `"operations"`); `none` is the refusal returned when no member
+/// matches. Maps a count of matches: the resolved (owner declaration,
+/// identity, record), or the refusal.
 fn resolve_member<'a>(
     package: &'a Value,
     nodes: &[Value],
@@ -946,6 +947,9 @@ fn tc_280_frame_field_entries_resolve_among_exposed_fields() {
 /// context itself declares.
 fn anchor_operation(package: &Value, nodes: &[Value], context: &str, operation: &str) -> Value {
     let form = text(&node_vector(nodes, context)["preimage"], "semantic_form");
+    if form != "object_type" {
+        return refused("invalid_model_binding", "malformed-declaration");
+    }
     let resolved = resolve_member(
         package,
         nodes,
@@ -956,7 +960,6 @@ fn anchor_operation(package: &Value, nodes: &[Value], context: &str, operation: 
     );
     match resolved {
         Err(refusal) => refusal,
-        Ok(_) if form != "object_type" => refused("invalid_model_binding", "malformed-declaration"),
         Ok((declared, identity, _)) if owner_of(&identity) != text(declared, "node") => {
             refused("invalid_model_binding", "malformed-declaration")
         }

@@ -2439,12 +2439,67 @@ enum FrameDefect {
     },
 }
 
+/// FR-322's "Model-owned members" steps 2 and 3, reused by the full reader
+/// so `frame_body_defects` (FR-340) and `anchor_refusal`/`clause_refusal`
+/// (FR-341/FR-342) resolve a member's NAME against a real model, not just
+/// its declaring node's tag and form. Sourced from a package's own
+/// `model_bindings` test field when present: a domain package (the same
+/// `object_types`/`fields`/`operations` shape TC-280's standalone oracle
+/// reads) plus the model declaration nodes mapping a checked-package node
+/// digest to the domain declaration it recovers. The published schema
+/// carries no `model_bindings` key, so every published fixture has no
+/// `ModelIndex` and keeps its existing (name-blind) coverage exactly.
+struct ModelIndex<'a> {
+    domain_package: &'a Value,
+    declaration_nodes: &'a [Value],
+}
+
+fn model_index(package: &Value) -> Option<ModelIndex<'_>> {
+    let bindings = package.get("model_bindings")?;
+    Some(ModelIndex {
+        domain_package: &bindings["domain_package"],
+        declaration_nodes: bindings["model_declaration_nodes"].as_array()?,
+    })
+}
+
+/// The domain declaration node identity (FR-322 step 2's `owner.node`) a
+/// checked-package node `digest` recovers, by the fixture's own stated key
+/// (already recomputed and asserted correct by the TC-280 oracle this
+/// fixture data comes from).
+fn mm_owner_node<'a>(declaration_nodes: &'a [Value], digest: &str) -> Option<&'a str> {
+    declaration_nodes
+        .iter()
+        .find(|node| node["sha256"] == digest)
+        .and_then(|node| node["preimage"]["owner"]["node"].as_str())
+}
+
+/// FR-322 step 3 (own members only; no inheritance or redefinition) for one
+/// object type's `list` ("fields" or "operations") member named `name`.
+fn mm_declared_member<'a>(
+    domain_package: &'a Value,
+    node: &str,
+    list: &str,
+    name: &str,
+) -> Option<&'a Value> {
+    domain_package["object_types"]
+        .as_array()?
+        .iter()
+        .find(|object_type| object_type["node"] == node)?[list]
+        .as_array()?
+        .iter()
+        .find(|member| member["name"] == name)
+}
+
 /// Every defect of one frame node against a schema-valid package's other
 /// nodes and the frame node's own `dependencies`. Entries are visited in a
 /// fixed (group, then array order) sweep only to collect defects; which one
 /// is reported is decided afterward by sorting, so the result never depends
 /// on where in its array an authored entry sits.
-fn frame_body_defects(frame_node: &Value, nodes: &[Value]) -> Vec<FrameDefect> {
+fn frame_body_defects(
+    frame_node: &Value,
+    nodes: &[Value],
+    model: Option<&ModelIndex<'_>>,
+) -> Vec<FrameDefect> {
     let dependencies = frame_node["dependencies"]
         .as_array()
         .map(|deps| {
@@ -2488,6 +2543,27 @@ fn frame_body_defects(frame_node: &Value, nodes: &[Value]) -> Vec<FrameDefect> {
             let is_dependency = dependencies.contains(digest.as_str());
             let meaning_ok = resolved.is_some_and(|node| frame_entry_admits(kind, node));
             if is_dependency && meaning_ok {
+                // FR-340's field entries name a declaring node AND a field
+                // name (FR-340-AC-13); resolve the name too when a model is
+                // available, so an entry naming a real object type but no
+                // field of that name is still a meaning-join defect
+                // (`missing-name`), not silently admitted.
+                let name_ok = kind != FrameEntryKind::Field
+                    || model.is_none_or(|model| {
+                        mm_owner_node(model.declaration_nodes, &digest).is_some_and(|node| {
+                            mm_declared_member(model.domain_package, node, "fields", &name)
+                                .is_some()
+                        })
+                    });
+                if name_ok {
+                    continue;
+                }
+                defects.push(FrameDefect::MeaningJoin {
+                    group,
+                    digest,
+                    name,
+                    cause: FrameJoinCause::MissingName,
+                });
                 continue;
             }
             let cause = if resolved.is_some() && is_dependency {
@@ -2510,8 +2586,12 @@ fn frame_body_defects(frame_node: &Value, nodes: &[Value]) -> Vec<FrameDefect> {
 /// least element of its (order-independent) defect set. `frame_body_defects`
 /// collects in group/array order, but `reported_frame_defect` sorts before
 /// picking, so the outcome is the same regardless of authoring order.
-fn reported_frame_defect(frame_node: &Value, nodes: &[Value]) -> Option<FrameDefect> {
-    let mut defects = frame_body_defects(frame_node, nodes);
+fn reported_frame_defect(
+    frame_node: &Value,
+    nodes: &[Value],
+    model: Option<&ModelIndex<'_>>,
+) -> Option<FrameDefect> {
+    let mut defects = frame_body_defects(frame_node, nodes, model);
     defects.sort();
     defects.into_iter().next()
 }
@@ -2583,6 +2663,7 @@ fn package_frame_refusal(package: &Value) -> Result<(), (FrameRefusal, Value)> {
     let nodes = package["semantic_graph"]["nodes"]
         .as_array()
         .expect("package nodes are an array");
+    let model = model_index(package);
     let mut frames = nodes
         .iter()
         .filter(|node| node["node_tag"] == "state" && node["semantic_form"] == "frame")
@@ -2593,7 +2674,7 @@ fn package_frame_refusal(package: &Value) -> Result<(), (FrameRefusal, Value)> {
             .cmp(&right["node_id"]["digest"].as_str())
     });
     for frame in frames {
-        if let Some(defect) = reported_frame_defect(frame, nodes) {
+        if let Some(defect) = reported_frame_defect(frame, nodes, model.as_ref()) {
             let locus = match &defect {
                 FrameDefect::MeaningJoin { digest, .. } => json!({
                     "domain": "quire.checked-semantic-node/v1",
@@ -2614,6 +2695,7 @@ enum StateRefusal {
     MissingName,
     MalformedDeclaration,
     OperatorIneligible,
+    AmbiguousDeclaration,
 }
 
 impl StateRefusal {
@@ -2622,6 +2704,7 @@ impl StateRefusal {
             Self::MissingName => "missing-name",
             Self::MalformedDeclaration => "malformed-declaration",
             Self::OperatorIneligible => "operator-ineligible",
+            Self::AmbiguousDeclaration => "ambiguous-name",
         }
     }
 
@@ -2630,6 +2713,7 @@ impl StateRefusal {
             Self::MissingName => "missing_declaration",
             Self::MalformedDeclaration => "invalid_model_binding",
             Self::OperatorIneligible => "ill_typed",
+            Self::AmbiguousDeclaration => "ambiguous_declaration",
         }
     }
 }
@@ -2668,8 +2752,13 @@ fn anchor_binding<'a>(anchor: &'a Value, name: &str) -> &'a Value {
 }
 
 /// FR-342's joins over one schema-valid `state`/`operation_anchor` node:
-/// `context`, then `frame`, then the two `semantic_type` agreements.
-fn anchor_refusal(anchor: &Value, nodes: &[Value]) -> Result<(), (StateRefusal, Value)> {
+/// `context`, then `frame`, then the two `semantic_type` agreements, then
+/// (step 4, when a model is available) the operation name itself.
+fn anchor_refusal(
+    anchor: &Value,
+    nodes: &[Value],
+    model: Option<&ModelIndex<'_>>,
+) -> Result<(), (StateRefusal, Value)> {
     let context = &anchor_binding(anchor, "context")["target"];
     join_state_reference(anchor, context, nodes, &[("model", "object_type")])?;
     let frame = join_state_reference(
@@ -2684,13 +2773,34 @@ fn anchor_refusal(anchor: &Value, nodes: &[Value]) -> Result<(), (StateRefusal, 
             anchor["node_id"].clone(),
         ));
     }
+    if let Some(model) = model {
+        let operation = anchor_binding(anchor, "operation")["value"]
+            .as_str()
+            .unwrap_or_default();
+        let owner_node = mm_owner_node(
+            model.declaration_nodes,
+            context["digest"].as_str().unwrap_or_default(),
+        );
+        let resolves = owner_node.is_some_and(|node| {
+            mm_declared_member(model.domain_package, node, "operations", operation).is_some()
+        });
+        if !resolves {
+            return Err((StateRefusal::MissingName, anchor["node_id"].clone()));
+        }
+    }
     Ok(())
 }
 
 /// FR-341's joins over one schema-valid `state`/`state_clause` node: the
 /// anchor, then each parameter reference in order, then the `self`
-/// parameter's type and, for an invariant, the parameter count.
-fn clause_refusal(clause: &Value, nodes: &[Value]) -> Result<(), (StateRefusal, Value)> {
+/// parameter's type and, for an invariant, the parameter count; then (when
+/// a model is available) the full precondition/postcondition signature
+/// count beyond `self` (FR-341 step 3).
+fn clause_refusal(
+    clause: &Value,
+    nodes: &[Value],
+    model: Option<&ModelIndex<'_>>,
+) -> Result<(), (StateRefusal, Value)> {
     let body = &clause["body"];
     let kind = body["operation"]["member"]["clause"]
         .as_str()
@@ -2738,6 +2848,27 @@ fn clause_refusal(clause: &Value, nodes: &[Value]) -> Result<(), (StateRefusal, 
     if kind == "invariant" && joined.len() != 1 {
         return Err(ineligible);
     }
+    if kind != "invariant"
+        && let Some(model) = model
+    {
+        let operation_name = anchor_binding(anchor, "operation")["value"]
+            .as_str()
+            .unwrap_or_default();
+        let owner_node = mm_owner_node(
+            model.declaration_nodes,
+            context["digest"].as_str().unwrap_or_default(),
+        );
+        if let Some(operation) = owner_node.and_then(|node| {
+            mm_declared_member(model.domain_package, node, "operations", operation_name)
+        }) {
+            let has_result = kind == "postcondition" && !operation["result"].is_null();
+            let parameter_count = operation["parameters"].as_array().map_or(0, Vec::len);
+            let expected = 1 + usize::from(has_result) + parameter_count;
+            if joined.len() != expected {
+                return Err(ineligible);
+            }
+        }
+    }
     Ok(())
 }
 
@@ -2749,6 +2880,7 @@ fn package_state_refusal(package: &Value) -> Result<(), (StateRefusal, Value)> {
     let nodes = package["semantic_graph"]["nodes"]
         .as_array()
         .expect("package nodes are an array");
+    let model = model_index(package);
     let mut ordered = nodes.iter().collect::<Vec<_>>();
     ordered.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
     for node in &ordered {
@@ -2761,16 +2893,51 @@ fn package_state_refusal(package: &Value) -> Result<(), (StateRefusal, Value)> {
             return Err((StateRefusal::OperatorIneligible, node["node_id"].clone()));
         }
     }
-    for form in ["operation_anchor", "state_clause"] {
-        for node in ordered
-            .iter()
-            .filter(|node| node["node_tag"] == "state" && node["semantic_form"] == form)
-        {
-            if form == "operation_anchor" {
-                anchor_refusal(node, nodes)?;
-            } else {
-                clause_refusal(node, nodes)?;
-            }
+    let anchors = ordered
+        .iter()
+        .filter(|node| node["node_tag"] == "state" && node["semantic_form"] == "operation_anchor")
+        .copied()
+        .collect::<Vec<_>>();
+    for anchor in &anchors {
+        anchor_refusal(anchor, nodes, model.as_ref())?;
+    }
+    anchor_uniqueness_refusal(&anchors)?;
+    for node in ordered
+        .iter()
+        .filter(|node| node["node_tag"] == "state" && node["semantic_form"] == "state_clause")
+    {
+        clause_refusal(node, nodes, model.as_ref())?;
+    }
+    Ok(())
+}
+
+/// FR-342: one `operation_anchor` node and one `frame` node stand for one
+/// (declaring object type, operation name); no two anchors share a
+/// `context`/`operation` pair, and no `frame` target is bound by two
+/// different anchors. Checked only once every anchor's own joins already
+/// hold (`anchor_refusal`), in ascending anchor node-id digest order; the
+/// second anchor to claim a pair or a frame is the offending node.
+fn anchor_uniqueness_refusal(anchors: &[&Value]) -> Result<(), (StateRefusal, Value)> {
+    let mut pairs = BTreeSet::new();
+    let mut frames = BTreeSet::new();
+    for anchor in anchors {
+        let context = anchor_binding(anchor, "context")["target"]["digest"]
+            .as_str()
+            .unwrap_or_default()
+            .to_owned();
+        let operation = anchor_binding(anchor, "operation")["value"]
+            .as_str()
+            .unwrap_or_default()
+            .to_owned();
+        let frame = anchor_binding(anchor, "frame")["target"]["digest"]
+            .as_str()
+            .unwrap_or_default()
+            .to_owned();
+        if !pairs.insert((context, operation)) || !frames.insert(frame) {
+            return Err((
+                StateRefusal::AmbiguousDeclaration,
+                anchor["node_id"].clone(),
+            ));
         }
     }
     Ok(())
@@ -2847,13 +3014,13 @@ fn tc_233_frame_body_members_may_each_independently_be_empty() {
         .expect("nodes")
         .clone();
     let empty = authored_frame_node(&[], &[], &[], &[]);
-    assert_eq!(frame_body_defects(&empty, &nodes), Vec::new());
+    assert_eq!(frame_body_defects(&empty, &nodes, None), Vec::new());
     let published = nodes
         .iter()
         .find(|node| node["node_tag"] == "state" && node["semantic_form"] == "frame")
         .expect("the published fixture carries a frame node");
     assert_eq!(
-        frame_body_defects(published, &nodes),
+        frame_body_defects(published, &nodes, None),
         Vec::new(),
         "the published all-families frame is defect-free"
     );
@@ -2884,7 +3051,7 @@ fn tc_233_frame_entries_join_a_declared_node_of_the_required_meaning() {
     // A modifies entry naming no node of the package at all.
     let absent_entry = authored_frame_node(&[&absent], &[relationship_entry(&absent)], &[], &[]);
     assert_eq!(
-        frame_body_defects(&absent_entry, &nodes),
+        frame_body_defects(&absent_entry, &nodes, None),
         vec![join_defect(
             FrameGroup::Modifies,
             &absent,
@@ -2896,7 +3063,7 @@ fn tc_233_frame_entries_join_a_declared_node_of_the_required_meaning() {
     let undeclared =
         authored_frame_node(&[], &[field_entry(&object_type_node, "balance")], &[], &[]);
     assert_eq!(
-        frame_body_defects(&undeclared, &nodes),
+        frame_body_defects(&undeclared, &nodes, None),
         vec![FrameDefect::MeaningJoin {
             group: FrameGroup::Modifies,
             digest: object_type_node.clone(),
@@ -2908,7 +3075,7 @@ fn tc_233_frame_entries_join_a_declared_node_of_the_required_meaning() {
     // A relationship entry naming a declared literal: no frame meaning.
     let wrong_meaning = authored_frame_node(&[&literal], &[relationship_entry(&literal)], &[], &[]);
     assert_eq!(
-        frame_body_defects(&wrong_meaning, &nodes),
+        frame_body_defects(&wrong_meaning, &nodes, None),
         vec![join_defect(
             FrameGroup::Modifies,
             &literal,
@@ -2925,7 +3092,7 @@ fn tc_233_frame_entries_join_a_declared_node_of_the_required_meaning() {
         &[],
     );
     assert_eq!(
-        frame_body_defects(&process_field, &nodes),
+        frame_body_defects(&process_field, &nodes, None),
         vec![FrameDefect::MeaningJoin {
             group: FrameGroup::Modifies,
             digest: process_node.clone(),
@@ -2940,7 +3107,7 @@ fn tc_233_frame_entries_join_a_declared_node_of_the_required_meaning() {
         &[],
     );
     assert_eq!(
-        frame_body_defects(&object_as_relationship, &nodes),
+        frame_body_defects(&object_as_relationship, &nodes, None),
         vec![join_defect(
             FrameGroup::Modifies,
             &object_type_node,
@@ -2951,7 +3118,7 @@ fn tc_233_frame_entries_join_a_declared_node_of_the_required_meaning() {
     // A creates entry naming a relationship, not an object type or process.
     let wrong_group = authored_frame_node(&[&relationship], &[], &[&relationship], &[]);
     assert_eq!(
-        frame_body_defects(&wrong_group, &nodes),
+        frame_body_defects(&wrong_group, &nodes, None),
         vec![join_defect(
             FrameGroup::Creates,
             &relationship,
@@ -2963,7 +3130,7 @@ fn tc_233_frame_entries_join_a_declared_node_of_the_required_meaning() {
     let mut wrong_type = authored_frame_node(&[], &[], &[], &[]);
     wrong_type["semantic_type"] = node_ref_digest(&process_node);
     assert_eq!(
-        frame_body_defects(&wrong_type, &nodes),
+        frame_body_defects(&wrong_type, &nodes, None),
         vec![join_defect(
             FrameGroup::SemanticType,
             &process_node,
@@ -2981,7 +3148,7 @@ fn tc_233_frame_entries_join_a_declared_node_of_the_required_meaning() {
         &[&object_type_node],
         &[&process_node],
     );
-    assert_eq!(frame_body_defects(&valid, &nodes), Vec::new());
+    assert_eq!(frame_body_defects(&valid, &nodes, None), Vec::new());
 }
 
 /// FR-340-AC-10: a field of an object type whose own type names a record
@@ -3010,7 +3177,7 @@ fn tc_233_modifies_admits_a_record_typed_field_and_a_field_of_that_record() {
         &[],
     );
     assert_eq!(
-        frame_body_defects(&both, &nodes),
+        frame_body_defects(&both, &nodes, None),
         Vec::new(),
         "a modifies entry naming Account.address and one naming Address.street are distinct field entries and both are admitted"
     );
@@ -3042,7 +3209,7 @@ fn tc_233_modifies_relationship_grant_is_not_scoped_to_an_owning_end() {
         &[],
     );
     assert_eq!(
-        frame_body_defects(&single_entry, &nodes),
+        frame_body_defects(&single_entry, &nodes, None),
         Vec::new(),
         "one modifies entry naming a relationship is a complete grant with nothing left to reach the far end"
     );
@@ -3118,7 +3285,7 @@ fn tc_233_frame_member_arrays_are_sorted_ascending_by_entry_digest() {
         &[&process_node, &object_type_node],
     );
     assert_eq!(
-        frame_body_defects(&misordered, &nodes),
+        frame_body_defects(&misordered, &nodes, None),
         vec![FrameDefect::CanonicalOrder {
             group: FrameGroup::Deletes,
         }]
@@ -3129,7 +3296,7 @@ fn tc_233_frame_member_arrays_are_sorted_ascending_by_entry_digest() {
         &[],
         &[&object_type_node, &process_node],
     );
-    assert_eq!(frame_body_defects(&ordered, &nodes), Vec::new());
+    assert_eq!(frame_body_defects(&ordered, &nodes, None), Vec::new());
 
     // Two field entries of one declaring node order by field name, as UTF-8
     // bytes, after the declaring node digest.
@@ -3143,7 +3310,7 @@ fn tc_233_frame_member_arrays_are_sorted_ascending_by_entry_digest() {
         &[],
     );
     assert_eq!(
-        frame_body_defects(&misnamed, &nodes),
+        frame_body_defects(&misnamed, &nodes, None),
         vec![FrameDefect::CanonicalOrder {
             group: FrameGroup::Modifies,
         }]
@@ -3157,7 +3324,7 @@ fn tc_233_frame_member_arrays_are_sorted_ascending_by_entry_digest() {
         &[],
         &[],
     );
-    assert_eq!(frame_body_defects(&named, &nodes), Vec::new());
+    assert_eq!(frame_body_defects(&named, &nodes, None), Vec::new());
 
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
     let mut duplicated = parsed_fixture(POSITIVE_ALL_FAMILIES);
@@ -3252,7 +3419,7 @@ fn tc_233_a_frame_meaning_join_defect_outranks_a_canonical_order_defect() {
         &[&relationship],
     );
     assert_eq!(
-        reported_frame_defect(&vector_a, &nodes),
+        reported_frame_defect(&vector_a, &nodes, None),
         Some(join_defect(
             FrameGroup::Deletes,
             &relationship,
@@ -3271,7 +3438,7 @@ fn tc_233_a_frame_meaning_join_defect_outranks_a_canonical_order_defect() {
         &[&process_node, &object_type_node],
     );
     assert_eq!(
-        reported_frame_defect(&vector_b, &nodes),
+        reported_frame_defect(&vector_b, &nodes, None),
         Some(join_defect(
             FrameGroup::Modifies,
             &object_type_node,
@@ -7449,20 +7616,24 @@ fn edited_clause(package: &Value, clause: &str, edit: impl FnOnce(&mut Value)) -
     candidate
 }
 
-/// FR-341-AC-1/AC-2, FR-341-AC-8, FR-342-AC-1, FR-340-AC-12: the node-form
-/// body rules the published schema carries. A `state`/`state_clause` body
-/// is a `quire.op.state.clause` application over a parameter aggregate of
-/// references, an anchor reference and a condition, carrying the
-/// `state_clause` member, and its occurrences are `claim`; an
-/// `operation_anchor` body is the three bindings in order and its
-/// occurrences are `anchor`; a `transition` body is a
+/// FR-341-AC-1/AC-2, FR-341-AC-8, FR-342-AC-1, FR-340-AC-12/AC-14/AC-15:
+/// the node-form body rules the published schema carries. A
+/// `state`/`state_clause` body is a `quire.op.state.clause` application
+/// over a parameter aggregate of references, an anchor reference and a
+/// condition, carrying the `state_clause` member, and its occurrences are
+/// `claim`; an `operation_anchor` body is the three bindings in order and
+/// its occurrences are `anchor`; a `transition` body is a
 /// `quire.op.state.transition` application; a frame's occurrences are
-/// `generated`. No `model` node names a member declaration form.
+/// `generated`. `ModelNode.semantic_form` is the closed set FR-340-AC-15
+/// names, so no `model` node names a member declaration form.
 #[trace("TC-233", "FR-341-AC-1")]
 #[trace("TC-233", "FR-341-AC-2")]
 #[trace("TC-233", "FR-341-AC-8")]
 #[trace("TC-233", "FR-342-AC-1")]
 #[trace("TC-233", "FR-340-AC-12")]
+#[trace("TC-233", "FR-340-AC-14")]
+#[trace("TC-233", "FR-340-AC-15")]
+#[trace("TC-233", "FR-341-AC-10")]
 #[test]
 fn tc_233_state_node_forms_fix_their_body_roots_and_occurrence_roles() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
@@ -7564,6 +7735,36 @@ fn tc_233_state_node_forms_fix_their_body_roots_and_occurrence_roles() {
         &format!("{}/occurrences/0/role", node(frame)),
         json!("declaration"),
         "a frame occurrence is generated",
+    );
+    let parameter = node_index(&package, &repeated_digest("b3"));
+    refused(
+        &format!("{}/body/members/0/name", node(parameter)),
+        json!("level"),
+        "a parameter's first binding is name",
+    );
+    refused(
+        &format!("{}/body/members/0/value/value_kind", node(parameter)),
+        json!("integer"),
+        "a parameter's name is a text literal",
+    );
+    refused(
+        &format!("{}/body/members/1/value/value_kind", node(parameter)),
+        json!("text"),
+        "a parameter's level is an integer literal",
+    );
+    refused(
+        &format!("{}/body/members", node(parameter)),
+        json!([
+            {"term": "binding", "name": "name", "value": {"term": "literal", "value_kind": "text", "value": "self"}},
+            {"term": "binding", "name": "level", "value": {"term": "literal", "value_kind": "integer", "value": "0"}},
+            {"term": "binding", "name": "extra", "value": {"term": "literal", "value_kind": "integer", "value": "1"}}
+        ]),
+        "a parameter carries exactly two bindings",
+    );
+    refused(
+        &format!("{}/occurrences/0/role", node(parameter)),
+        json!("declaration"),
+        "a parameter occurrence is expression",
     );
     refused(
         &format!("{}/body", node(transition)),
@@ -7788,6 +7989,231 @@ fn tc_233_state_step_joins_anchors_then_clauses_with_their_recorded_cause() {
     ] {
         assert_eq!((refusal.code(), refusal.cause()), (code, cause));
     }
+}
+
+/// A minimal test-only domain package and model-declaration-node mapping,
+/// keyed to the published clause package's own node digests (FR-322's
+/// "Model-owned members" steps 2/3 shape, the same one TC-280's standalone
+/// oracle reads). Not a domain package any published V2 fixture selects;
+/// authored only so the full reader has a real model to resolve a frame
+/// field entry's name (FR-340-AC-13) and an anchor's operation name and a
+/// clause's signature (FR-342-AC-4, FR-341-AC-5) against, instead of the
+/// declaring node's tag and form alone.
+fn clause_model_bindings(operation_parameters: usize) -> Value {
+    let parameters = (0..operation_parameters)
+        .map(|i| {
+            json!({
+                "name": format!("p{i}"),
+                "typeRef": "ix://quire/native/Integer",
+                "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true},
+            })
+        })
+        .collect::<Vec<_>>();
+    json!({
+        "domain_package": {
+            "identity": "test/model-bindings",
+            "version": "1.0.0",
+            "object_types": [{
+                "node": "test/config-version",
+                "interfaceFeatures": null,
+                "supertypes": [],
+                "fields": [{
+                    "name": "versionNumber",
+                    "typeRef": "ix://quire/native/Integer",
+                    "presence": "required",
+                    "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true},
+                    "redefines": null,
+                }],
+                "operations": [{
+                    "name": "attemptUpdate",
+                    "parameters": parameters,
+                    "result": null,
+                    "redefines": null,
+                }],
+            }],
+            "value_types": [],
+            "relationships": [],
+        },
+        "model_declaration_nodes": [{
+            "name": "ConfigVersion",
+            "preimage": {
+                "owner": {
+                    "node": "test/config-version",
+                    "identity": "test/model-bindings",
+                    "version": "1.0.0",
+                },
+            },
+            "sha256": repeated_digest("b1"),
+        }],
+    })
+}
+
+/// FR-340-AC-13 and FR-342-AC-4/FR-341-AC-5 through the full reader (SR-725
+/// FND-001/FND-002): with a real model attached, a frame field entry's name,
+/// an anchor's operation name and a precondition's signature are resolved,
+/// not just their declaring node's tag and form; without the model attached,
+/// the very same defective packages are admitted, showing the coverage is
+/// genuinely new (mutation evidence for the checks this test adds).
+#[trace("TC-233", "FR-340-AC-13")]
+#[trace("TC-233", "FR-342-AC-4")]
+#[trace("TC-233", "FR-341-AC-5")]
+#[test]
+fn tc_233_the_full_reader_resolves_frame_anchor_and_clause_member_names() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+    let target = |b: &str| node_ref_digest(&repeated_digest(b));
+
+    let mut with_model = package.clone();
+    with_model["model_bindings"] = clause_model_bindings(0);
+    assert_eq!(
+        read_package_semantics(&with_model, &catalog),
+        Ok(()),
+        "attaching a model that agrees with the published package changes nothing"
+    );
+
+    // FND-001: an undeclared frame field entry name.
+    let frame_index = node_index(&with_model, &repeated_digest("b4"));
+    let mut bad_field = with_model.clone();
+    bad_field["semantic_graph"]["nodes"][frame_index]["body"]["modifies"][0]["name"] =
+        json!("no_such_field");
+    assert_eq!(
+        read_package_semantics(&bad_field, &catalog),
+        Err(ReadRefusal::Frame(FrameRefusal::MissingName, target("b1"))),
+        "a frame field entry naming no field of its declaring object type refuses missing-name"
+    );
+    let mut bad_field_no_model = package.clone();
+    let frame_index = node_index(&bad_field_no_model, &repeated_digest("b4"));
+    bad_field_no_model["semantic_graph"]["nodes"][frame_index]["body"]["modifies"][0]["name"] =
+        json!("no_such_field");
+    assert_eq!(
+        read_package_semantics(&bad_field_no_model, &catalog),
+        Ok(()),
+        "the same entry is silently admitted without a model to resolve its name against"
+    );
+
+    // FND-002 (FR-342 step 4): an anchor naming a nonexistent operation.
+    let anchor_index = node_index(&with_model, &repeated_digest("b5"));
+    let mut bad_operation = with_model.clone();
+    bad_operation["semantic_graph"]["nodes"][anchor_index]["body"]["members"][1]["value"]["value"] =
+        json!("doesNotExist");
+    assert_eq!(
+        read_package_semantics(&bad_operation, &catalog),
+        Err(ReadRefusal::State(StateRefusal::MissingName, target("b5"))),
+        "an anchor naming an operation the context does not declare refuses missing-name"
+    );
+    let mut bad_operation_no_model = package.clone();
+    let anchor_index = node_index(&bad_operation_no_model, &repeated_digest("b5"));
+    bad_operation_no_model["semantic_graph"]["nodes"][anchor_index]["body"]["members"][1]["value"]
+        ["value"] = json!("doesNotExist");
+    assert_eq!(
+        read_package_semantics(&bad_operation_no_model, &catalog),
+        Ok(()),
+        "the same anchor is silently admitted without a model to resolve its operation against"
+    );
+
+    // FND-002 (FR-341 step 3): a precondition missing a parameter the
+    // resolved operation declares.
+    let mut missing_parameter = package.clone();
+    missing_parameter["model_bindings"] = clause_model_bindings(1);
+    let precondition_id = missing_parameter["semantic_graph"]["nodes"]
+        [clause_node_index(&missing_parameter, "precondition")]["node_id"]
+        .clone();
+    assert_eq!(
+        read_package_semantics(&missing_parameter, &catalog),
+        Err(ReadRefusal::State(
+            StateRefusal::OperatorIneligible,
+            precondition_id
+        )),
+        "a precondition binding fewer values than self plus the operation's own parameters \
+         refuses operator-ineligible"
+    );
+}
+
+/// FR-342: one `operation_anchor` node and one `frame` node stand for one
+/// (declaring object type, operation name) (FR-342-AC-6); a duplicate
+/// anchor for the same pair, and a frame bound by two different anchors,
+/// are refused, not admitted.
+#[trace("TC-233", "FR-342-AC-6")]
+#[test]
+fn tc_233_duplicate_anchors_and_shared_frames_are_refused() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+    assert_eq!(read_package_semantics(&package, &catalog), Ok(()));
+
+    let anchor_index = node_index(&package, &repeated_digest("b5"));
+    let mut duplicated = package.clone();
+    let mut duplicate_anchor = duplicated["semantic_graph"]["nodes"][anchor_index].clone();
+    duplicate_anchor["node_id"] = node_ref_digest(&repeated_digest("b6"));
+    duplicated["semantic_graph"]["nodes"]
+        .as_array_mut()
+        .expect("nodes")
+        .push(duplicate_anchor);
+    assert_eq!(
+        read_package_semantics(&duplicated, &catalog),
+        Err(ReadRefusal::State(
+            StateRefusal::AmbiguousDeclaration,
+            node_ref_digest(&repeated_digest("b6"))
+        )),
+        "a second anchor for the same (context, operation) pair is refused, not admitted"
+    );
+
+    let mut shared_frame = package.clone();
+    let mut second_anchor = shared_frame["semantic_graph"]["nodes"][anchor_index].clone();
+    second_anchor["node_id"] = node_ref_digest(&repeated_digest("b7"));
+    second_anchor["body"]["members"][1]["value"]["value"] = json!("otherAttempt");
+    shared_frame["semantic_graph"]["nodes"]
+        .as_array_mut()
+        .expect("nodes")
+        .push(second_anchor);
+    assert_eq!(
+        read_package_semantics(&shared_frame, &catalog),
+        Err(ReadRefusal::State(
+            StateRefusal::AmbiguousDeclaration,
+            node_ref_digest(&repeated_digest("b7"))
+        )),
+        "a frame node bound by two different anchors is refused, not admitted"
+    );
+}
+
+/// FR-341-AC-7's second half: the state step reports its defect before any
+/// operation refusal (FR-322), not only before other state defects.
+#[trace("TC-233", "FR-341-AC-7")]
+#[test]
+fn tc_233_state_step_refusal_precedes_an_operation_step_refusal() {
+    const IF_NODE: &str = "c5bfe3716ed41080bb1883ac8efc2d3e3e3d1e443f72f20a46bc162f727bca9e";
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+
+    let if_index = node_index(&package, IF_NODE);
+    let mut with_operation_defect = package.clone();
+    let mut if_node = with_operation_defect["semantic_graph"]["nodes"][if_index].clone();
+    if_node["body"]["operation"]["identity"] = json!("quire.op.control.iff");
+    replace_application_node(&mut with_operation_defect, if_index, if_node);
+    assert!(
+        package_operations_refusal(&with_operation_defect, &catalog).is_err(),
+        "an unknown operation identity is, on its own, an operation-step defect"
+    );
+    assert!(
+        matches!(
+            read_package_semantics(&with_operation_defect, &catalog),
+            Err(ReadRefusal::Operation(_))
+        ),
+        "with no state defect, the operation defect is what the full reader reports"
+    );
+
+    let both = edited_clause(&with_operation_defect, "precondition", |body| {
+        body["arguments"][1] =
+            json!({"term": "reference", "target": node_ref_digest(&repeated_digest("b1"))});
+    });
+    assert_eq!(
+        read_package_semantics(&both, &catalog),
+        Err(ReadRefusal::State(
+            StateRefusal::MalformedDeclaration,
+            node_ref_digest(&repeated_digest("b1"))
+        )),
+        "a package carrying both a state defect and an operation defect reports the state \
+         defect, matching FR-341-AC-7's 'before any operation refusal'"
+    );
 }
 
 /// FR-341-AC-9: the catalog entry of `quire.op.state.clause`, bound to both

@@ -587,7 +587,7 @@ application has `semantic_type` equal to that `result_type`. A `literal` term's
 | `same_family` | The two named operands have equal families. |
 | `same_type` | The two named operands resolve to the same type node. |
 | `conforming_reference` | The two named `reference` operands conform: they resolve to the same type node, or their object types conform one to the other as "Reference conformance" below decides. |
-| `reference_edge` | The `field` member is a reference edge between the two named `reference` operands, as "Reaches over a field" below decides. |
+| `reference_edge` | The `field` member is a reference edge between the two named `reference` operands, as "Reaches over a field" above decides. |
 | `same_dimension` | Operand 0's unit and the `type_argument` member's unit carry the same `dimension_node_id`. |
 | `inner_type` | Operand 1's family is the element family of collection operand 0 and, when operand 1 names a type, the same element type node. |
 | `member_of` | Operand 0 resolves to the member's declaring type. |

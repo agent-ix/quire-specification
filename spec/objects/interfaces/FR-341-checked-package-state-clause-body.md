@@ -111,6 +111,18 @@ nested in any term, or standing as the body root of a node that is not
 `state`/`state_clause`, refuses `ill_typed`/`operator-ineligible` at that
 node.
 
+## `value`/`parameter` node body
+
+A `value`/`parameter` node's `body` is an `aggregate` of exactly two
+bindings, in order: `name`, a `text` literal naming the value (`"self"`,
+`"result"`, or the operation parameter's declared name); and `level`, an
+`integer` literal, the value's binder level in the "Operation anchors,
+aliases and captures" table above (`0` for `self`, ascending for `result`
+and each operation parameter in bound order). Every occurrence has role
+`expression`. The node's `semantic_type` is the value's type, as that table
+and [FR-322](FR-322-checked-package-artifact.md)'s "Model-owned members"
+step 4 derive it.
+
 ## Reader order
 
 The state step runs after the frame step (FR-340) and before any operation
@@ -155,6 +167,7 @@ non-Boolean node each refuse `ill_typed`/`operator-ineligible`.
 | FR-341-AC-7 | The published clause package's invariant and precondition are admitted by the state step; the state step reports anchor defects before clause defects, and runs after the frame step and before the operation step. | Test (TC-233) |
 | FR-341-AC-8 | A `state`/`transition` node's body root is a `quire.op.state.transition` application; a `state`/`transition` node whose body root is another clause application fails the published schema. | Test (TC-233) |
 | FR-341-AC-9 | The operation catalog holds `quire.op.state.clause` with operator class `state_clause`, operands `aggregate`, `object`, `boolean`, result `clause`, no laws, no mode and the `state_clause` member kind, and both V2 schemas enumerate the identity, the operator class and the member kind; each published state clause application is admitted by the operation step. | Test (TC-233) |
+| FR-341-AC-10 | A `value`/`parameter` node's body is an `aggregate` of exactly two bindings, `name` (a `text` literal) and `level` (an `integer` literal), in that order, and every occurrence has role `expression`; a body with the bindings reordered, a non-text `name`, a non-integer `level`, a missing binding and an occurrence of another role each fail the published schema. | Test (TC-233) |
 
 ## Dependencies
 
@@ -177,6 +190,5 @@ non-Boolean node each refuse `ill_typed`/`operator-ineligible`.
 ## Status
 
 Accepted complete-V1 boundary value contract for the `state`/`state_clause`
-node body. The `value`/`parameter` node's own body and structural-node
-preimage are specified separately. Implementation and qualification remain
-tracked separately.
+node body and the `value`/`parameter` node body above. Implementation and
+qualification remain tracked separately.
