@@ -89,14 +89,21 @@ A rounding step occurs exactly when the exact mathematical result is not an
 integer multiple of `10^-T`, that is, when at least one discarded digit is
 nonzero; discarded digits that are all zero are not a rounding step, select no
 rounding mode and produce no `DecimalLoss`. At a rounding step, `exact`
-refuses, while `toward-zero`, `toward-positive`, `toward-negative`,
+refuses as `refused { code: inexact_decimal, cause: nonzero-discarded-digit }`,
+while `toward-zero`, `toward-positive`, `toward-negative`,
 `nearest-even` and `nearest-away` produce a coefficient at scale `T`. Nearest
 modes compare twice the discarded magnitude to one target unit; ties choose an
 even coefficient or the greater absolute coefficient respectively. Every result
 is kept at its retained representation (`v × 10^T`, `T`) after any rounding
 step and then checked for membership by value; a
-nonmember refuses with no value and is never re-rounded to a coarser scale,
-clamped or widened.
+nonmember, other than a `sum` seed or running total, refuses as
+`refused { code: decimal_out_of_domain, cause: outside-domain }` with no value
+and is never re-rounded to a coarser scale,
+clamped or widened. A `sum` seed or running total is not the expression's
+result: FR-145 requires every running total to lie in `N`'s domain, so one
+outside it leaves the fold with no value in `N` even when a later summand would
+bring the total back inside, and FR-145 makes that a located undefined outcome,
+not a refusal.
 
 An explicit conversion of a `Rational[n1,n2;d1,d2]` value with `d2 > 1`, reduced
 `n/d`, into `Decimal[c1,c2;s1,s2;m]` is exactly the division of `(n, 0)` by
@@ -142,9 +149,9 @@ make no later charge.
 | --- | --- | --- |
 | FR-140-AC-1 | `1.0` and `1.00` compare mathematically equal while retaining their declared representation provenance. | Test (TC-185) |
 | FR-140-AC-2 | Exact representable arithmetic returns the mathematical result without rounding. | Test (TC-185) |
-| FR-140-AC-3 | A result that is not an integer multiple of `10^-T` refuses under `exact`, while a non-`exact` mode returns the rounded value plus a canonical-rational loss record; a result outside the declared range refuses under every mode. | Test (TC-185) |
+| FR-140-AC-3 | A result that is not an integer multiple of `10^-T` refuses under `exact` with `inexact_decimal`/`nonzero-discarded-digit`, while a non-`exact` mode returns the rounded value plus a canonical-rational loss record; a result outside the declared range refuses under every mode. | Test (TC-185) |
 | FR-140-AC-4 | The six rounding modes produce their declared result on positive and negative half-way values and `exact` refuses every nonzero discarded digit. | Test (TC-185) |
-| FR-140-AC-5 | Division by zero is undefined, while a value whose membership coefficient `c*` or membership scale `s*` is outside the target domain is refused; neither produces a value or uses a floating intermediate. A declaration with `lo > hi`, `smin > smax` or `smax > u32::MAX` refuses type checking with `ill_typed`. Membership charges nothing and is total up to scale `u32::MAX`. | Test (TC-185) |
+| FR-140-AC-5 | Division by zero is undefined, while a value whose membership coefficient `c*` or membership scale `s*` is outside the target domain is refused with `decimal_out_of_domain`/`outside-domain`, except a `sum` seed or running total, which is FR-145's located undefined outcome; neither produces a value or uses a floating intermediate. A declaration with `lo > hi`, `smin > smax` or `smax > u32::MAX` refuses type checking with `ill_typed`. Membership charges nothing and is total up to scale `u32::MAX`. | Test (TC-185, TC-233) |
 | FR-140-AC-6 | Exact-bound accounting succeeds and denial of a named next decimal charge returns incomplete without a value or an implementation-specific retry; zero-divisor, strict-`exact` and membership outcomes occur at their defined charge positions, and all-zero discarded digits make no `decimal.rounding` charge. | Test (TC-185) |
 | FR-140-AC-7 | A `Rational` to `Decimal` conversion follows the decimal division rule and schedule at target scale `smax`, decimal operands and result share one named type, and a `decimal(c,s)` literal without a unique expected type is `ill_typed` with cause `ambiguous-literal`. | Test (TC-185) |
 

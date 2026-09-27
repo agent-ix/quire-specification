@@ -37,6 +37,20 @@ remainder and definedness contract of the retained
 `quire.value.integer-division.*` identity. The literal constructor does not implicitly
 convert integer operands or introduce quotient rounding.
 
+At evaluation, the evaluator decides a bounded integer or `Rational[..]`
+arithmetic result's membership in its result domain after normalization and
+before retaining it (`quire.value.accounting/v1`). A result outside that domain,
+other than a `sum` seed or prefix, is refused with no value, as
+`refused { code: integer_out_of_domain, cause: outside-domain }` or
+`refused { code: rational_out_of_domain, cause: outside-domain }`,
+respectively. An expression this check admitted has that membership proved,
+so only evaluation of an expression that did not pass this check meets
+either refusal. A `sum` seed or prefix is not the expression's result: FR-145
+defines `sum` as a fold whose every running total lies in `N`'s domain, so a
+running total outside it leaves the fold with no value in `N` even when a later
+summand would bring the total back inside, and FR-145 makes that a located
+undefined outcome, not a refusal.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -50,6 +64,7 @@ convert integer operands or introduce quotient rounding.
 | FR-044-AC-7 | An exact nonzero guard permits an otherwise total rational quotient only where that operand's guard fact holds; an unguarded possible zero divisor or a guard for another value cannot discharge the obligation. | Test (TC-044) |
 | FR-044-AC-8 | Where `quire.value.complete/v1` is selected, a minimum-only or wholly unbounded integer declaration is admitted as a mathematical integer, and a finite consumer lacking a complete derived domain returns the FR-147 `requires-bound` negotiation disposition. | Test (TC-192) |
 | FR-044-AC-9 | Where `quire.value.complete/v1` is selected, an explicitly declared binary32 or binary64 operand is admitted and checked under FR-148; where `quire.state.core/v1` is selected without it, the same declaration refuses at its source location. An implicit conversion, a saturating result and a machine-width inference refuse under both selections. | Test (TC-193) |
+| FR-044-AC-10 | At evaluation, a bounded integer or `Rational[..]` arithmetic result outside its result domain, other than a `sum` seed or prefix, is `refused { code: integer_out_of_domain, cause: outside-domain }` or `refused { code: rational_out_of_domain, cause: outside-domain }` with no value, as FR-044, `quire.value.accounting/v1` and the native-diagnostics catalog each state; a `sum` seed or running total outside `N`'s domain is FR-145's located undefined outcome (TC-190 Q12), and each of the three documents states that carve-out. | Test (TC-233) |
 
 ## Dependencies
 

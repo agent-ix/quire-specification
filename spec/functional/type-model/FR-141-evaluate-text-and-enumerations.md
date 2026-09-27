@@ -48,7 +48,10 @@ provenance. A runtime text input supplies its validated payload bytes directly.
 Length is the scalar count of the retained sequence under the selected
 profile, which is the normalized sequence for `nfc`, `nfd`, `nfkc` and `nfkd`
 and the decoded sequence for `unicode-scalars`, and the payload byte count for
-`binary-utf8`; declared text bounds apply to that length. Every applicable
+`binary-utf8`; declared text bounds apply to that length, and a length outside
+them refuses as
+`refused { code: text_length_out_of_domain, cause: outside-domain }` with no
+value. Every applicable
 text charge up to the bound check is made first, so an exhausted counter returns
 incomplete before any bound refusal: under `nfc`, `nfd`, `nfkc` and `nfkd` the
 length-bound refusal follows every `text.normalize-output` charge, under
@@ -98,7 +101,7 @@ incomplete, not a truncated string.
 | FR-141-AC-1 | Canonically equivalent text compares according to the selected normalization profile and distinct text remains distinct. | Test (TC-186) |
 | FR-141-AC-2 | Comparing members of different enum declarations refuses `ill_typed`; equal member spellings are never equal across declarations. | Test (TC-186) |
 | FR-141-AC-3 | Missing text bounds, invalid scalars, unordered enum ordering or an enum node whose content does not match its normative key preimage refuses. | Test (TC-186) |
-| FR-141-AC-4 | Each text profile applies its exact length and lexicographic comparison domain, with scalar length measured after the profile's normalization and the length-bound refusal after that profile's last size charge and before `text.result-retain`; equal display text under different profiles remains differently typed. | Test (TC-186) |
+| FR-141-AC-4 | Each text profile applies its exact length and lexicographic comparison domain, with scalar length measured after the profile's normalization and the length-bound refusal, `text_length_out_of_domain`/`outside-domain`, after that profile's last size charge and before `text.result-retain`; equal display text under different profiles remains differently typed. | Test (TC-186) |
 | FR-141-AC-5 | An unordered enumeration comparison other than equality, or any cross-declaration enumeration comparison, refuses with `ill_typed` before any charge, while an ordered enumeration follows declaration order only. | Test (TC-186) |
 | FR-141-AC-6 | Exact-bound accounting succeeds and denial of a named next text or enum charge returns incomplete without a truncated value or Boolean. | Test (TC-186) |
 

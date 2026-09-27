@@ -11,6 +11,14 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-142
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-044
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-140
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-270
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-271
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-272
     type: verifies
   - target: ix://agent-ix/quire-specification/interface_004
@@ -87,7 +95,24 @@ sorted from two different collection orders yields the identical
 diagnostic; and parse the native-diagnostics rows to require each cause in
 exactly its code's row and the Diagnostic schema pairing. Parse the
 `stage_limit_exceeded` and `duplicate_selection` rows of both native-diagnostics
-and FR-272 and require each to list exactly FR-272-AC-10's causes.
+and FR-272 and require each to list exactly FR-272-AC-10's causes. Parse
+the rows of FR-272-AC-11's eleven codes in both documents and require each to
+list exactly that criterion's causes and payload keys, and require FR-272's
+canonical payload-name list to hold every one of those keys. A payload key is
+any backticked name written `key`: after the cause list, canonical or not.
+Require FR-270's
+Revision cell to quote the catalog header's revision, and FR-271's values
+table to hold exactly one row for each FR-271-AC-6 code. Require both
+`invalid_source_identity` rows to name the four labels in order and to state
+FR-272-AC-12's labels-before-path precedence; require the catalog's payload
+value spellings to hold FR-272-AC-13's domain forms and widths, the flag order
+FR-148 names and the labels in the row's order; and require FR-044,
+`quire.value.accounting/v1` and the catalog to state FR-044-AC-10's
+evaluation-time refusals and `sum` carve-out, with FR-145 keeping a non-member
+`sum` seed or prefix a located undefined outcome; and require FR-140 and the
+decimal, unit-target and integer-target membership sentences of
+`quire.value.accounting/v1` to carry the same `sum` carve-out on
+`decimal_out_of_domain` and the unit target refusals (FR-140-AC-5).
 
 ## Expected Results
 
@@ -114,4 +139,11 @@ two-frame-node vector, whose lower-node-id-digest frame's own defect is
 reported ahead of the higher-digest frame's own defect; the identical
 defect set sorted from two different collection orders yields the identical
 diagnostic; and the `stage_limit_exceeded` and `duplicate_selection` rows of
-native-diagnostics and FR-272 each list exactly FR-272-AC-10's causes.
+native-diagnostics and FR-272 each list exactly FR-272-AC-10's causes, and
+the rows of FR-272-AC-11's eleven codes each list exactly that criterion's
+causes and payload keys, every one of them a canonical FR-272 payload name;
+FR-270's Revision cell quotes the header's revision; FR-271 has one row
+for each FR-271-AC-6 code; both `invalid_source_identity` rows state the
+labels-before-path precedence; the payload value spellings match FR-272-AC-13;
+and FR-044, FR-140, value-accounting, the catalog and FR-145 give a `sum` seed
+or prefix one outcome in every family.

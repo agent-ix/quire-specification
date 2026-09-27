@@ -245,7 +245,7 @@ body is linked.
 An FR-148 IEEE-to-`Rational[..]` conversion carries no body obligation. The
 FR-044 exception exempts it from static domain proof, and FR-148 decides it at
 evaluation: a NaN or infinite operand is undefined after `ieee.operands`, and a
-finite non-member is `refused { code: ieee_rational_out_of_domain }`. Both are
+finite non-member is `refused { code: ieee_rational_out_of_domain, cause: outside-domain }`. Both are
 evaluation outcomes that propagate; neither refuses linking.
 
 `deref(r)` is not a partial operation of a function body. It requires `r` to

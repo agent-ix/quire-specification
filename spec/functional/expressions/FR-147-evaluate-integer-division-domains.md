@@ -55,7 +55,12 @@ profile satisfies `a = b*q + r` and the following additional law:
 only the Euclidean remainder and cannot inherit a truncating or floor profile.
 Mathematical-integer evaluation has no overflow. A bounded consumer checks the
 membership of both results, including the signed minimum divided by negative
-one case, before it exposes either value.
+one case, before it exposes either value. A pair with a member outside the
+consumer's domain refuses as `refused { code: division_pair_out_of_domain,
+cause: C }`, where `C` is `quotient-outside-domain`, `remainder-outside-domain`
+or `both-outside-domain` as the failing members are, and exposes neither
+member; a `mod` remainder outside it refuses as
+`refused { code: modulo_out_of_domain, cause: outside-domain }`.
 
 The checked package retains exactly one of
 `quire.value.integer-division.truncating/v1`,
@@ -87,6 +92,7 @@ precedes the arithmetic charge; an undefined outcome makes no later charge.
 | FR-147-AC-6 | Exact-bound accounting succeeds and denial of a named next integer-division charge returns incomplete without either quotient or remainder; a zero divisor is undefined after the operands charge and before the arithmetic charge. | Test (TC-192) |
 | FR-147-AC-7 | In a locked qualification run with a registered SMT backend advertising mathematical-integer semantics, the corpus settles at least one integer-division obligation `proved` through that backend via the I13 negotiation path. | Test (TC-192, TC-266) |
 | FR-147-AC-8 | In that same locked run, the corpus settles at least one integer-division obligation `refuted` through that backend via the I13 negotiation path; the AC-3 `requires-bound` finite-backend negotiation disposition is unchanged in a locked run with no such backend registered. | Test (TC-192, TC-266) |
+| FR-147-AC-9 | A bounded consumer's `div`/`rem` pair with a member outside its domain returns `refused { code: division_pair_out_of_domain }` with cause `quotient-outside-domain`, `remainder-outside-domain` or `both-outside-domain` as the failing members are, and exposes neither member; a `mod` remainder outside it returns `refused { code: modulo_out_of_domain, cause: outside-domain }`. | Test (TC-192) |
 
 ## Dependencies
 

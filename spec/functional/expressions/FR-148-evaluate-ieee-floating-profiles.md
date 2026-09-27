@@ -51,8 +51,9 @@ The grammar's `exact` spelling, including an omitted optional rounding spelling,
 is a strict language policy rather than a sixth IEEE rounding direction. The
 evaluator computes the exact real intermediate and succeeds only when the
 selected width represents it without discarded information. An inexact, overflow
-or tiny-and-inexact result is refused with its would-be flags and no rounded
-substitute. The refusal carries only the would-be flag set, never would-be bits,
+or tiny-and-inexact result is refused as
+`refused { code: ieee_not_exact, cause: rounding-required }` with its would-be
+flags and no rounded substitute. The refusal carries only the would-be flag set, never would-be bits,
 and those flags are the flags the same operation would return under
 `nearest-even`, so overflow and tininess follow that direction. Inexactness at
 an IEEE width is decided by the fixed-width rounding step, so a strict `exact`
@@ -118,7 +119,7 @@ sets no flag. Width conversion of a NaN keeps its sign and its integer payload
 below the quiet bit, sets the quiet bit and, when the source is signaling, sets
 `invalid`, as for every consumed signaling NaN. A payload not smaller than the
 target width's quiet bit is refused as `refused { code:
-ieee_nan_payload_not_representable }` with no flags, even for a signaling
+ieee_nan_payload_not_representable, cause: payload-exceeds-target }` with no flags, even for a signaling
 source, because the refusal precedes consuming the NaN. This is a
 language-policy refusal: IEEE convertFormat is total, and this profile refuses
 rather than truncating a payload.
@@ -131,7 +132,7 @@ conversion is exempt from FR-044's static result-bound proof: membership is
 decided at evaluation, where the reduced numerator must lie in `[lo, hi]` and
 the positive denominator in `[dmin, dmax]`. Membership charges nothing, and a
 non-member returns the runtime refusal `refused { code:
-ieee_rational_out_of_domain }` after `ieee.exact-intermediate` and before
+ieee_rational_out_of_domain, cause: outside-domain }` after `ieee.exact-intermediate` and before
 `ieee.result-retain`. FR-148 defines no conversion from an IEEE value to
 `Decimal`, `Integer` or `Int[..]`; a direct IEEE conversion to those types is
 refused `ill_typed` with no charge, and an IEEE value reaches exact arithmetic
@@ -160,7 +161,7 @@ host floating point.
 | FR-148-AC-3 | I13 negotiation for a backend lacking the selected width, rounding or exceptional-value policy returns `unsupported` or `requires-bound` without changing package admission or substituting decimal/rational semantics. | Test (TC-193) |
 | FR-148-AC-4 | A fused multiply-add vector demonstrates its single-rounding result separately from a multiply followed by add. | Test (TC-193) |
 | FR-148-AC-5 | The same NaN and signed-zero bit vectors distinguish numeric equality, total ordering and bit identity. | Test (TC-193) |
-| FR-148-AC-6 | Signaling/quiet NaN propagation, invalid/divide-by-zero/overflow/underflow/inexact flags and strict `exact` refusal follow the closed profile without global state. | Test (TC-193) |
+| FR-148-AC-6 | Signaling/quiet NaN propagation, invalid/divide-by-zero/overflow/underflow/inexact flags and strict `exact` refusal (`ieee_not_exact`/`rounding-required`, carrying the `nearest-even` would-be flags) follow the closed profile without global state. | Test (TC-193) |
 | FR-148-AC-7 | A concrete binary64 limit tuple succeeds, while denial of the named final IEEE charge returns incomplete without bits or flags. | Test (TC-193) |
 | FR-148-AC-8 | Mixed-width or IEEE-with-exact operations and comparisons refuse `ill_typed` before any charge; zero operands take the finite charge path with IEEE signed-zero results; strict `exact` refuses after `ieee.round` with `nearest-even` would-be flags and no bits. | Test (TC-193) |
 | FR-148-AC-9 | Width, IEEE-to-exact and exact-to-IEEE conversions charge the IEEE points at their stated sizes and positions; NaN width conversion keeps sign and payload, or refuses an unrepresentable payload after `ieee.operands` and before `ieee.result-retain` with no flags. | Test (TC-193) |

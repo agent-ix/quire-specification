@@ -4869,10 +4869,9 @@ fn native_diagnostic_row_causes(code: &str) -> BTreeSet<String> {
     diagnostic_row_causes(NATIVE_DIAGNOSTICS, code)
 }
 
-/// Causes the one table row of `document` whose first cell is exactly the
-/// given code lists: the backticked spellings of its second cell before the
-/// first `;`.
-fn diagnostic_row_causes(document: &str, code: &str) -> BTreeSet<String> {
+/// The one table row of `document` whose first cell is exactly the given
+/// code.
+fn diagnostic_row<'a>(document: &'a str, code: &str) -> &'a str {
     let rows = document
         .lines()
         .filter(|line| {
@@ -4882,17 +4881,85 @@ fn diagnostic_row_causes(document: &str, code: &str) -> BTreeSet<String> {
         })
         .collect::<Vec<_>>();
     assert_eq!(rows.len(), 1, "the document has exactly one `{code}` row");
-    let cause_cell = rows[0]
-        .split('|')
-        .nth(2)
-        .and_then(|cell| cell.split(';').next())
-        .expect("diagnostic row has a cause cell");
-    cause_cell
-        .split('`')
+    rows[0]
+}
+
+/// The backticked spellings of `text`.
+fn backticked(text: &str) -> BTreeSet<String> {
+    text.split('`')
         .skip(1)
         .step_by(2)
         .map(str::to_owned)
         .collect()
+}
+
+/// Causes the one table row of `document` whose first cell is exactly the
+/// given code lists: the backticked spellings of its second cell before the
+/// first `;`.
+fn diagnostic_row_causes(document: &str, code: &str) -> BTreeSet<String> {
+    let cause_cell = diagnostic_row(document, code)
+        .split('|')
+        .nth(2)
+        .and_then(|cell| cell.split(';').next())
+        .expect("diagnostic row has a cause cell");
+    backticked(cause_cell)
+}
+
+/// FR-272's canonical cause payload names: the backticked spellings of the
+/// sentence that introduces them.
+fn canonical_payload_names() -> BTreeSet<String> {
+    let intro = "Cause payload fields use these exact ordered names when applicable:";
+    let start = TYPED_DIAGNOSTIC_CAUSE
+        .find(intro)
+        .expect("FR-272 states its canonical payload names")
+        + intro.len();
+    let list = &TYPED_DIAGNOSTIC_CAUSE[start..];
+    let end = list.find(". ").expect("the canonical name list ends");
+    backticked(&list[..end])
+}
+
+/// Payload keys the one `code` row of `document` names: every backticked
+/// name written `key`: after its cause list (the rest of the second cell after
+/// its first `;`, and every later cell), whether or not it is canonical.
+fn diagnostic_row_payload_keys(document: &str, code: &str) -> BTreeSet<String> {
+    let cells = diagnostic_row(document, code)
+        .split('|')
+        .skip(2)
+        .collect::<Vec<_>>();
+    let mut payload = cells[0]
+        .split_once(';')
+        .map(|(_, rest)| rest.to_owned())
+        .unwrap_or_default();
+    for cell in &cells[1..] {
+        payload.push_str(cell);
+    }
+    let pieces = payload.split('`').collect::<Vec<_>>();
+    pieces
+        .iter()
+        .enumerate()
+        .skip(1)
+        .step_by(2)
+        .filter(|(index, _)| {
+            pieces
+                .get(index + 1)
+                .is_some_and(|after| after.starts_with(':'))
+        })
+        .map(|(_, name)| (*name).to_owned())
+        .collect()
+}
+
+/// `text` with every run of whitespace, line breaks included, made one space.
+fn one_line(text: &str) -> String {
+    text.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
+/// A requirement's normative text: everything before its acceptance
+/// criteria, so a criterion restating a rule cannot stand in for the rule.
+fn before_criteria(document: &str) -> &str {
+    document
+        .split("## Acceptance Criteria")
+        .next()
+        .unwrap_or(document)
 }
 
 #[trace("TC-233", "FR-322-AC-17")]
@@ -6656,8 +6723,356 @@ fn tc_233_stage_limit_and_duplicate_selection_cause_sets_are_closed() {
     }
 }
 
+/// The eleven codes of catalog revision `1-draft.8` with their closed causes
+/// and payload keys (FR-272-AC-11).
+const REVISION_1_DRAFT_8_ROWS: [(&str, &[&str], &[&str]); 11] = [
+    (
+        "invalid_source_identity",
+        &["blank-label", "empty-path"],
+        &["label"],
+    ),
+    (
+        "inexact_decimal",
+        &["nonzero-discarded-digit"],
+        &["expected"],
+    ),
+    ("decimal_out_of_domain", &["outside-domain"], &["expected"]),
+    (
+        "division_pair_out_of_domain",
+        &[
+            "quotient-outside-domain",
+            "remainder-outside-domain",
+            "both-outside-domain",
+        ],
+        &["expected"],
+    ),
+    ("modulo_out_of_domain", &["outside-domain"], &["expected"]),
+    (
+        "text_length_out_of_domain",
+        &["outside-domain"],
+        &["expected"],
+    ),
+    ("integer_out_of_domain", &["outside-domain"], &["expected"]),
+    ("rational_out_of_domain", &["outside-domain"], &["expected"]),
+    (
+        "ieee_not_exact",
+        &["rounding-required"],
+        &["expected", "flags"],
+    ),
+    (
+        "ieee_nan_payload_not_representable",
+        &["payload-exceeds-target"],
+        &["expected", "actual"],
+    ),
+    (
+        "ieee_rational_out_of_domain",
+        &["outside-domain"],
+        &["expected"],
+    ),
+];
+
+fn owned_set(items: &[&str]) -> BTreeSet<String> {
+    items.iter().map(|item| (*item).to_owned()).collect()
+}
+
+/// The eleven cause sets and payload keys of catalog revision `1-draft.8` are
+/// closed: the native-diagnostics row and the FR-272 row of each code list
+/// exactly these causes and name exactly these payload keys, and every key is
+/// one of FR-272's canonical payload names, so neither document can add, drop
+/// or rename a cause or key without the other and this list.
+#[trace("TC-233", "FR-272-AC-11")]
+#[test]
+fn tc_233_revision_1_draft_8_cause_sets_and_payload_keys_are_closed() {
+    let canonical = canonical_payload_names();
+    for (code, causes, keys) in REVISION_1_DRAFT_8_ROWS {
+        let causes = owned_set(causes);
+        let keys = owned_set(keys);
+        assert!(
+            keys.is_subset(&canonical),
+            "every `{code}` payload key is an FR-272 canonical payload name"
+        );
+        for (document, name) in [
+            (NATIVE_DIAGNOSTICS, "native-diagnostics"),
+            (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
+        ] {
+            assert_eq!(
+                diagnostic_row_causes(document, code),
+                causes,
+                "{name} `{code}` row lists exactly its 1-draft.8 causes"
+            );
+            assert_eq!(
+                diagnostic_row_payload_keys(document, code),
+                keys,
+                "{name} `{code}` row names exactly its 1-draft.8 payload keys"
+            );
+        }
+    }
+}
+
+const VERSIONED_DIAGNOSTIC_CATALOG: &str =
+    include_str!("../spec/objects/foundation/FR-270-versioned-diagnostic-catalog.md");
+const DIAGNOSTIC_CODE_VOCABULARY: &str =
+    include_str!("../spec/objects/foundation/FR-271-diagnostic-code-vocabulary.md");
+
+/// FR-270's Revision property quotes the catalog header's revision, and
+/// FR-271's values table has exactly one row for each code FR-271-AC-6 names.
+#[trace("TC-233", "FR-270-AC-5")]
+#[trace("TC-233", "FR-271-AC-6")]
+#[test]
+fn tc_233_catalog_revision_and_code_vocabulary_follow_the_catalog() {
+    let header = NATIVE_DIAGNOSTICS
+        .lines()
+        .find(|line| line.starts_with("Interpretation identity:"))
+        .expect("native diagnostics has an interpretation-identity header line");
+    let revision = header
+        .split("revision: ")
+        .nth(1)
+        .and_then(|rest| rest.strip_suffix('.'))
+        .expect("the header names a revision");
+    let cell = VERSIONED_DIAGNOSTIC_CATALOG
+        .lines()
+        .find(|line| line.starts_with("| Revision |"))
+        .expect("FR-270 has a Revision property row");
+    assert!(
+        cell.contains(&format!("\"revision: {revision}\"")),
+        "FR-270's Revision cell quotes the header's revision {revision}"
+    );
+    for (code, _, _) in REVISION_1_DRAFT_8_ROWS {
+        diagnostic_row(DIAGNOSTIC_CODE_VOCABULARY, code);
+    }
+}
+
+const EXACT_NUMERIC_DEFINEDNESS: &str =
+    include_str!("../spec/functional/foundation/FR-044-check-composed-numeric-definedness.md");
+const COLLECTION_QUERIES: &str =
+    include_str!("../spec/functional/expressions/FR-145-convert-and-query-collections.md");
+const IEEE_PROFILES: &str =
+    include_str!("../spec/functional/expressions/FR-148-evaluate-ieee-floating-profiles.md");
+const VALUE_ACCOUNTING: &str =
+    include_str!("../proposals/quire-v1/definitions/value-accounting.md");
+
+/// FR-044-AC-10: FR-044, `quire.value.accounting/v1` and the catalog each
+/// state the evaluation-time integer and `Rational[..]` result-domain
+/// refusals and the `sum` carve-out, and FR-145 keeps the `sum` seed or
+/// prefix a located undefined outcome, so one input has one outcome.
+#[trace("TC-233", "FR-044-AC-10")]
+#[test]
+fn tc_233_arithmetic_domain_refusals_leave_sum_prefixes_undefined() {
+    let integer = "refused { code: integer_out_of_domain, cause: outside-domain }";
+    let rational = "refused { code: rational_out_of_domain, cause: outside-domain }";
+    for (document, name) in [
+        (before_criteria(EXACT_NUMERIC_DEFINEDNESS), "FR-044"),
+        (VALUE_ACCOUNTING, "value-accounting"),
+    ] {
+        let text = one_line(document);
+        assert!(
+            text.contains(integer) && text.contains(rational),
+            "{name} states both evaluation-time result-domain refusals"
+        );
+        assert!(
+            text.contains("other than a `sum` seed or prefix"),
+            "{name} carves the `sum` seed or prefix out of the refusal"
+        );
+    }
+    assert!(
+        one_line(before_criteria(EXACT_NUMERIC_DEFINEDNESS))
+            .contains("FR-145 makes that a located undefined outcome, not a refusal"),
+        "FR-044 names FR-145's located undefined outcome for a `sum` prefix"
+    );
+    assert!(
+        one_line(VALUE_ACCOUNTING).contains(
+            "ends the sum with FR-145's located undefined outcome at that summand or addition, in place of the family's membership refusal"
+        ),
+        "the sum schedule replaces the family's membership refusal with FR-145's outcome"
+    );
+    assert!(
+        one_line(NATIVE_DIAGNOSTICS).contains(
+            "A `sum` seed or running total outside `N`'s domain is none of these refusals: FR-145 makes it a located undefined outcome"
+        ),
+        "the catalog excludes a `sum` running total from its value refusals"
+    );
+    assert!(
+        one_line(before_criteria(COLLECTION_QUERIES))
+            .contains("a non-member seed or prefix is a located undefined outcome"),
+        "FR-145 keeps a non-member `sum` seed or prefix undefined"
+    );
+}
+
+const EXACT_DECIMALS: &str =
+    include_str!("../spec/functional/type-model/FR-140-evaluate-exact-decimals.md");
+
+/// FR-140-AC-5: the decimal family and the quantity family's decimal and
+/// integer targets carry the same `sum` carve-out as FR-044: FR-140's
+/// normative text and each membership sentence of `quire.value.accounting/v1`
+/// leave a `sum` seed or running total to FR-145's located undefined outcome,
+/// so one input has one outcome in every family.
+#[trace("TC-233", "FR-140-AC-5")]
+#[test]
+fn tc_233_decimal_and_unit_domain_refusals_leave_sum_prefixes_undefined() {
+    let decimals = one_line(before_criteria(EXACT_DECIMALS));
+    assert!(
+        decimals.contains(
+            "a nonmember, other than a `sum` seed or running total, refuses as `refused { code: decimal_out_of_domain, cause: outside-domain }`"
+        ),
+        "FR-140 carves the `sum` seed or running total out of `decimal_out_of_domain`"
+    );
+    assert!(
+        decimals.contains("FR-145 makes that a located undefined outcome, not a refusal"),
+        "FR-140 names FR-145's located undefined outcome for a `sum` running total"
+    );
+    let accounting = one_line(VALUE_ACCOUNTING);
+    for (sentence, family) in [
+        (
+            "FR-140 membership, which charges nothing, refuses, other than a `sum` seed or running total,",
+            "a quantity's decimal target",
+        ),
+        (
+            "refuses (`integer_out_of_domain`, `outside-domain`), other than a `sum` seed or running total,",
+            "a quantity's integer target",
+        ),
+        (
+            "A nonmember result, other than a `sum` seed or running total, is refused after `decimal.rounding`",
+            "decimal arithmetic",
+        ),
+    ] {
+        assert!(
+            accounting.contains(sentence),
+            "value-accounting carves the `sum` running total out of {family}'s membership refusal"
+        );
+    }
+}
+
+/// The four source labels in their catalog order.
+const SOURCE_LABELS: [&str; 4] = ["authority", "identity", "revision_namespace", "revision"];
+
+/// FR-272-AC-12: both `invalid_source_identity` rows name the four labels in
+/// order, decide `blank-label` at the first blank label, and report
+/// `empty-path` only when every label is non-blank.
+#[trace("TC-233", "FR-272-AC-12")]
+#[test]
+fn tc_233_invalid_source_identity_checks_labels_before_the_path() {
+    for (document, name, first_blank, path_last) in [
+        (
+            NATIVE_DIAGNOSTICS,
+            "native-diagnostics",
+            "the first blank label decides `blank-label`",
+            "`empty-path` is reported only when every label is non-blank",
+        ),
+        (
+            TYPED_DIAGNOSTIC_CAUSE,
+            "FR-272",
+            "the first blank label wins",
+            "`empty-path` only when every label is non-blank",
+        ),
+    ] {
+        let row = diagnostic_row(document, "invalid_source_identity");
+        let labels = row
+            .split('`')
+            .skip(1)
+            .step_by(2)
+            .filter(|name| SOURCE_LABELS.contains(name))
+            .collect::<Vec<_>>();
+        assert_eq!(
+            labels, SOURCE_LABELS,
+            "{name} names the four labels once each, in order"
+        );
+        assert!(
+            row.contains("The label check runs first"),
+            "{name} checks the labels before the path"
+        );
+        assert!(
+            row.contains(first_blank),
+            "{name}: the first blank label decides"
+        );
+        assert!(row.contains(path_last), "{name}: `empty-path` comes last");
+    }
+}
+
+/// FR-272-AC-13: the catalog's payload value spellings: the four domain
+/// forms, the two widths, the flag order (FR-148's own order) and the four
+/// labels (the `invalid_source_identity` row's order).
+#[trace("TC-233", "FR-272-AC-13")]
+#[test]
+fn tc_233_payload_values_have_one_spelling() {
+    let catalog = one_line(NATIVE_DIAGNOSTICS);
+    let intro = "Each payload value is written as one exact ASCII string:";
+    let start = catalog
+        .find(intro)
+        .expect("the catalog states its payload value spellings")
+        + intro.len();
+    let rules = &catalog[start..];
+    let rules = &rules[..rules
+        .find("A producer claiming revision `1-draft.7`")
+        .expect("the spelling list ends before the older-producer sentence")];
+    let item = |lead: &str| -> String {
+        let begin = rules
+            .find(lead)
+            .unwrap_or_else(|| panic!("the spelling list has a `{lead}` item"));
+        let rest = &rules[begin..];
+        rest[..rest.find(";").unwrap_or(rest.len())].to_owned()
+    };
+    let domain = rules
+        .find("- a domain is")
+        .map(|begin| &rules[begin..])
+        .and_then(|rest| rest.find("- an IEEE width").map(|end| &rest[..end]))
+        .expect("the spelling list has a domain item");
+    for form in [
+        "`Int[lo, hi]`",
+        "`Decimal[lo, hi; smin, smax]`",
+        "`Rational[lo, hi; dmin, dmax]`",
+        "`Text[min, max; profile]`",
+    ] {
+        assert!(domain.contains(form), "the domain item writes {form}");
+    }
+    for rule in [
+        "each bound is written as FR-038 writes an integer",
+        "bounds within a group are separated by `, `, groups by `; `",
+        "no rounding mode is written",
+    ] {
+        assert!(domain.contains(rule), "the domain item states: {rule}");
+    }
+    assert_eq!(
+        backticked(&item("- an IEEE width is")),
+        owned_set(&["binary32", "binary64"]),
+        "an IEEE width is exactly `binary32` or `binary64`"
+    );
+    let ieee = one_line(IEEE_PROFILES);
+    let drawn = "Each operation returns a fresh closed flag set drawn from";
+    let flags_start = ieee.find(drawn).expect("FR-148 names its flag set") + drawn.len();
+    let ieee_flags = &ieee[flags_start..];
+    let ieee_flags = &ieee_flags[..ieee_flags.find(';').expect("FR-148's flag list ends")];
+    let ordered = |text: &str| -> Vec<String> {
+        text.split('`')
+            .skip(1)
+            .step_by(2)
+            .map(str::to_owned)
+            .collect()
+    };
+    let flag_item = rules
+        .find("- a flag set is")
+        .map(|begin| &rules[begin..])
+        .and_then(|rest| rest.find("- a label is").map(|end| &rest[..end]))
+        .expect("the spelling list has a flag-set item");
+    let flag_order =
+        ordered(&flag_item[..flag_item.find("joined by").expect("the flag item joins")]);
+    assert_eq!(
+        flag_order,
+        ordered(ieee_flags),
+        "the flag order is FR-148's flag order"
+    );
+    assert!(
+        flag_item.contains("joined by `,` with no space"),
+        "flags are joined by `,` with no space"
+    );
+    assert_eq!(
+        ordered(&item("- a label is")),
+        SOURCE_LABELS,
+        "a label is exactly one of the four labels, in the row's order"
+    );
+}
+
 /// FR-272-AC-7 pins these causes to catalog revision `1-draft.4` by name, and
-/// revisions `1-draft.5` to `1-draft.7` keep them; a header that still
+/// revisions `1-draft.5` to `1-draft.8` keep them; a header that still
 /// claimed `1-draft.3` would, by the catalog's own rule ("A producer claiming
 /// revision `1-draft.3` emits none of these causes"), forbid emitting
 /// `stale-node-key` and the other revision-`1-draft.4` causes this file
@@ -6670,7 +7085,7 @@ fn tc_233_native_diagnostics_header_pins_current_revision() {
         .find(|line| line.starts_with("Interpretation identity:"))
         .expect("native diagnostics has an interpretation-identity header line");
     assert_eq!(
-        header, "Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.7`.",
-        "the catalog header claims revision 1-draft.7, which keeps every 1-draft.4 cause this file relies on"
+        header, "Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.8`.",
+        "the catalog header claims revision 1-draft.8, which keeps every 1-draft.4 cause this file relies on"
     );
 }

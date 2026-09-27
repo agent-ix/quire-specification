@@ -32,7 +32,7 @@ material here, not an adopted selection.
 | Property | Source | Note |
 | --- | --- | --- |
 | Interpretation identity | Proposed catalog, header | "Interpretation identity: `quire.native.diagnostics/v1`". |
-| Revision | Proposed catalog, header | "revision: `1-draft.7`". |
+| Revision | Proposed catalog, header | "revision: `1-draft.8`". |
 | Byte digest | Proposed catalog, "Selection and compatibility" | The response "selects this catalog's exact identity, revision and byte digest". |
 | Selected inventory | Proposed catalog, selected-inventory table | Named immutable sources pinned by revision and "SHA-256 of file bytes"; "Only `Code::as_str()`'s spellings and the code/meaning table are selected". |
 | Code vocabulary | [FR-271](FR-271-diagnostic-code-vocabulary.md) | The catalogued code spellings. |
@@ -92,6 +92,7 @@ diagnostic list or a successful assessment" (proposed catalog).
 | FR-270-AC-2 | A response with no named catalog selection has an absent selection and receives no default catalog. | Analysis |
 | FR-270-AC-3 | Changing or localizing the human-readable wording carried with a diagnostic leaves the selected catalog key unchanged. | Analysis |
 | FR-270-AC-4 | A code not resolvable in the selected catalog is not published as a stable producer outcome. | Inspection |
+| FR-270-AC-5 | The Revision property's quoted revision equals the revision in the catalog header's interpretation-identity line. | Test (TC-233) |
 
 ## Resolved catalog identity
 

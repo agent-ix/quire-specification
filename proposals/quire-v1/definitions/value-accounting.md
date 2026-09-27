@@ -210,6 +210,12 @@ same. `Rational[..]` `+`, `-`, `*`, `/` and unary `-`, and an `Integer` or
 `rational-arithmetic.normalize`, then decide any FR-044 result-bound membership
 without a charge, then `rational-arithmetic.result-retain`; a zero divisor met
 by direct kernel evaluation is undefined after `rational-arithmetic.operands`.
+A bounded integer or `Rational[..]` arithmetic result outside its result
+domain, other than a `sum` seed or prefix, is refused, with no value and no
+later charge, as
+`refused { code: integer_out_of_domain, cause: outside-domain }` or
+`refused { code: rational_out_of_domain, cause: outside-domain }`,
+respectively (FR-044).
 `Integer`, `Int[..]`, `Rational[..]` and `Decimal[..]` ordering `<`, `<=`, `>`
 and `>=` charges `ordering.operands`, `ordering.arithmetic` and
 `ordering.result-retain`: three work units and one result unit. Quantity
@@ -264,12 +270,13 @@ coefficient `v × 10^T`; strict `exact` at a rounding step refuses before
 `unit.target-domain`; that charge carries `integer_bits=sbits(a,T)` and
 `decimal_digits=sdigits(a,T)`, which bound the retained coefficient; the
 coefficient is materialized only after it; and FR-140 membership, which charges
-nothing, refuses after it and before `unit.result-retain`. An integer target is
+nothing, refuses, other than a `sum` seed or running total, after it and before `unit.result-retain`. An integer target is
 a decimal target at scale zero: its rounding step, strict `exact` refusal and
 `unit.target-domain` sizing occur at the same positions, except that its
 `unit.target-domain` carries only `integer_bits = bits(a)` and no
 `decimal_digits` amount, and integer-domain
-membership, which charges nothing, refuses after `unit.target-domain` and
+membership, which charges nothing, refuses (`integer_out_of_domain`,
+`outside-domain`), other than a `sum` seed or running total, after `unit.target-domain` and
 before `unit.result-retain`. Decimal and integer targets charge no `decimal.*`
 or `integer-*` point.
 
@@ -318,7 +325,7 @@ undefined; a finite value, either zero included, then charges
 rational, sized from the operand's decoded exponent and mantissa before the
 rational is materialized, then decides `Rational[..]` target membership at
 evaluation, exempt from FR-044's static result-bound proof, which makes no
-charge and returns `refused { code: ieee_rational_out_of_domain }` for a
+charge and returns `refused { code: ieee_rational_out_of_domain, cause: outside-domain }` for a
 non-member before `ieee.result-retain`, then `ieee.result-retain`. FR-148
 defines no conversion from an IEEE value to `Decimal`, `Integer` or `Int[..]`; a
 direct IEEE conversion to those types is refused `ill_typed` with no charge, and
@@ -352,7 +359,8 @@ digits are not a rounding step and make no `decimal.rounding` charge. A
 divisor whose normalized coefficient is zero is undefined after
 `decimal.operands` and before `decimal.scale-expansion`. Strict `exact` at a
 rounding step is refused after `decimal.arithmetic` and before
-`decimal.rounding`. A nonmember result is refused after
+`decimal.rounding`. A nonmember result, other than a `sum` seed or running
+total, is refused after
 `decimal.rounding`, or after `decimal.arithmetic` when no rounding step occurs,
 and before `decimal.result-retain`. An undefined or refused outcome makes no
 later charge.
@@ -418,7 +426,10 @@ summand's own charges for the first occurrence, which seeds the running total
 with no addition; then, for each later occurrence in visiting order, one
 `collection.visit`, its summand's charges and one addition charged by the
 family of `N`; then one `collection.result-retain` with `result_units += 1`. An
-empty source charges only that `collection.result-retain`.
+empty source charges only that `collection.result-retain`. A seed or running
+total that is not a member of `N`'s domain ends the sum with FR-145's located
+undefined outcome at that summand or addition, in place of the family's
+membership refusal, and makes no later charge.
 
 | Family of `N` | Charges of one addition |
 | --- | --- |

@@ -184,6 +184,7 @@ executable cases.
 | FR-044 | FR-044-AC-7 | TC-044 | 🚧 Planned |
 | FR-044 | FR-044-AC-8 | TC-192 | 🚧 Planned |
 | FR-044 | FR-044-AC-9 | TC-193 | 🚧 Planned |
+| FR-044 | FR-044-AC-10 | TC-233 | 🚧 Planned |
 | FR-045 | FR-045-AC-1 | TC-045 | 🚧 Planned |
 | FR-045 | FR-045-AC-2 | TC-045 | 🚧 Planned |
 | FR-045 | FR-045-AC-3 | TC-045 | 🚧 Planned |
