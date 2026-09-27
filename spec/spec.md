@@ -662,6 +662,10 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-340
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-341
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-342
+    type: contains
   - target: ix://agent-ix/quire-specification/TM-009
     type: contains
 ---
@@ -890,6 +894,9 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [Complete-V1 subsystem index](subsystems/index.md) | Architecture index | Ten subsystems and I01–I21 interface ownership |
 | [TM-009](complete-v1/tests.md) | Test Matrix | All 200 atomic capabilities and complete-V1 qualification cases |
 | [FR-339](functional/source-package/FR-339-define-complete-native-grammar.md) | FR | Normative complete native V1 lexical and syntactic contract |
+| [FR-340](objects/interfaces/FR-340-checked-package-frame-location.md) | FR | Checked-package `state`/`frame` body: relationship and (declaring node, field name) entries |
+| [FR-341](objects/interfaces/FR-341-checked-package-state-clause-body.md) | FR | Checked-package `state`/`state_clause` body: `quire.op.state.clause` application and state node body roots |
+| [FR-342](objects/interfaces/FR-342-checked-package-operation-anchor-body.md) | FR | Checked-package `state`/`operation_anchor` body: context, operation and frame bindings |
 | [FR-049](functional/foundation/FR-049-bind-native-choreography-syntax.md) | FR | Accepted native choreography source integration; complete-V1 review SR-571–580 |
 | [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Accepted complete-V1 protocol intent; review SR-571–580 |
 | [FR-050](functional/protocol/FR-050-bind-protocol-instances.md) | FR | Accepted complete-V1 protocol foundation; review SR-571–580 |

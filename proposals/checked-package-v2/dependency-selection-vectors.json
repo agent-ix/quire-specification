@@ -4,7 +4,7 @@
     {"identity": "test/geometry", "version": "1", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}},
     {"identity": "test/units", "version": "2", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "4444444444444444444444444444444444444444444444444444444444444444"}}
   ],
-  "package_id": "a72ea6b33f2365998aa24d5a226f225f15d5531ae66a922b754cc5c988a90b57",
+  "package_id": "ea6dd970dfedbcc147ef0ebefafe878d931d75d1b31fa00cfd312a2576727d75",
   "entry_mutations": [
     {"id": "definition-selection-shape", "entry": {"role": "profile", "definition": {"authority": "test", "identity": "test/geometry", "revision": {"namespace": "semver", "value": "1"}, "digest_domain": "quire.definition.bytes/v1", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}}, "outcome": "refused:malformed_wire"},
     {"id": "definition-ref-shape", "entry": {"authority": "test", "identity": "test/geometry", "revision": {"namespace": "semver", "value": "1"}, "digest_domain": "quire.definition.bytes/v1", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}, "outcome": "refused:malformed_wire"},

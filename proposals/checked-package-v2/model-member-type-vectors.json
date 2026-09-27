@@ -131,7 +131,12 @@
             "constraints": {
               "min": "0"
             }
-          }
+          },
+          {"name": "parent", "typeRef": "ix://acme/orders/Order", "presence": "optional", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
+          {"name": "origin", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
+          {"name": "prior", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "3", "ordered": true, "unique": false}, "redefines": null},
+          {"name": "peers", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "3", "ordered": false, "unique": true}, "redefines": null},
+          {"name": "trail", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "unbounded", "ordered": true, "unique": false}, "redefines": null}
         ],
         "operations": [
           {
@@ -430,5 +435,50 @@
     {"name": "RP-06", "result_type": {"type": "Int", "min": "0", "max": "9"}, "operand": {"deref": {"reference": "M4"}, "result_type": "M4"}, "member": {"kind": "field", "declaration": "M4", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
     {"name": "RP-07", "result_type": {"type": "Int", "min": "0", "max": "9"}, "operand": {"deref": {"reference": "M2"}, "result_type": "M2"}, "member": {"kind": "field", "declaration": "M2", "name": "total"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
     {"name": "RP-08", "result_type": {"type": "Integer"}, "operand": {"deref": {"reference": "M5"}, "result_type": "M5"}, "member": {"kind": "field", "declaration": "M5", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}}
+  ],
+  "reaches_cases": [
+    {"name": "RE-01", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "parent"}, "expected": {"admitted": true}},
+    {"name": "RE-02", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "prior"}, "expected": {"admitted": true}},
+    {"name": "RE-03", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "origin"}, "expected": {"admitted": true}},
+    {"name": "RE-04", "operands": [{"reference": "M5"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M5", "name": "parent"}, "expected": {"admitted": true}},
+    {"name": "RE-05", "operands": [{"reference": "M1"}, {"reference": "M7"}], "member": {"kind": "field", "declaration": "M1", "name": "parent"}, "expected": {"admitted": true}},
+    {"name": "RE-06", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "peers"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RE-07", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "trail"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RE-08", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "invoice"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RE-09", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RE-10", "operands": [{"reference": "M1"}, {"reference": "M3"}], "member": {"kind": "field", "declaration": "M1", "name": "parent"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RE-11", "operands": [{"reference": "M5"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "parent"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RE-12", "operands": [{"reference": "M2"}, {"reference": "M2"}], "member": {"kind": "field", "declaration": "M2", "name": "parent"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
+    {"name": "RE-13", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "missing"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RE-14", "operands": [{"reference": "M6"}, {"reference": "M6"}], "member": {"kind": "field", "declaration": "M6", "name": "code"}, "expected": {"refused": {"code": "ambiguous_declaration", "cause": "ambiguous-name"}}},
+    {"name": "RE-15", "operands": [{"reference": "M1"}, {"object": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "parent"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}}
+  ],
+  "frame_field_cases": [
+    {"name": "FF-01", "declaration": "M1", "field": "total", "expected": {"resolves": "ix://acme/orders/Order/total"}},
+    {"name": "FF-02", "declaration": "M5", "field": "total", "expected": {"resolves": "ix://acme/orders/Order/total"}},
+    {"name": "FF-03", "declaration": "M1", "field": "missing", "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name"}}},
+    {"name": "FF-04", "declaration": "M1", "field": "size", "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name"}}},
+    {"name": "FF-05", "declaration": "M6", "field": "code", "expected": {"refused": {"code": "ambiguous_declaration", "cause": "ambiguous-name"}}},
+    {"name": "FF-06", "declaration": "M2", "field": "total", "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}}
+  ],
+  "anchor_cases": [
+    {"name": "AN-01", "context": "M1", "operation": "scaled", "expected": {"resolves": "ix://acme/orders/Order/scaled"}},
+    {"name": "AN-02", "context": "M5", "operation": "size", "expected": {"resolves": "ix://acme/orders/Sub/size"}},
+    {"name": "AN-03", "context": "M5", "operation": "reset", "expected": {"refused": {"code": "invalid_model_binding", "cause": "malformed-declaration"}}},
+    {"name": "AN-04", "context": "M1", "operation": "missing", "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name"}}},
+    {"name": "AN-05", "context": "M1", "operation": "total", "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name"}}},
+    {"name": "AN-06", "context": "M2", "operation": "size", "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
+    {"name": "AN-07", "context": "M8", "operation": "rate", "expected": {"refused": {"code": "invalid_model_binding", "cause": "malformed-declaration"}}}
+  ],
+  "clause_signature_cases": [
+    {"name": "CS-01", "clause": "precondition", "context": "M1", "operation": "scaled", "parameters": [{"reference": "M1"}, {"type": "Integer"}], "expected": {"admitted": true}},
+    {"name": "CS-02", "clause": "postcondition", "context": "M1", "operation": "scaled", "parameters": [{"reference": "M1"}, {"type": "Integer"}, {"type": "Integer"}], "expected": {"admitted": true}},
+    {"name": "CS-03", "clause": "postcondition", "context": "M1", "operation": "reset", "parameters": [{"reference": "M1"}], "expected": {"admitted": true}},
+    {"name": "CS-04", "clause": "precondition", "context": "M1", "operation": "scaled", "parameters": [{"reference": "M1"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "CS-05", "clause": "postcondition", "context": "M1", "operation": "scaled", "parameters": [{"reference": "M1"}, {"type": "Integer"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "CS-06", "clause": "precondition", "context": "M1", "operation": "scaled", "parameters": [{"reference": "M5"}, {"type": "Integer"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "CS-07", "clause": "precondition", "context": "M1", "operation": "scaled", "parameters": [{"reference": "M1"}, {"type": "Boolean"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "CS-08", "clause": "invariant", "context": "M1", "operation": null, "parameters": [{"reference": "M1"}], "expected": {"admitted": true}},
+    {"name": "CS-09", "clause": "invariant", "context": "M1", "operation": null, "parameters": [{"reference": "M1"}, {"type": "Integer"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}}
   ]
 }

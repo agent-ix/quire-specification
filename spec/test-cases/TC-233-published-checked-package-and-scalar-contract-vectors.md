@@ -7,6 +7,10 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-340
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-341
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-342
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-201
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-142
@@ -71,10 +75,13 @@ operation catalog's closure against both V2 schemas and the value lock;
 recompute every operation vector and application node key; classify every
 operation mutation, ordering case and declaration mutation with an
 independent operation and declaration oracle; check the published fixture's
-`state`/`frame` node body against an independent frame oracle, requiring each
-`modifies`/`creates`/`deletes` entry to join a declared dependency of the
-frame's own required meaning, each member to be duplicate-free and sorted
-ascending by entry digest, and a frame body carrying two simultaneous
+`state`/`frame` node body against an independent frame oracle, requiring the
+frame's `semantic_type` to be a `model`/`object_type` node, each
+`modifies` relationship entry, field entry (declaring node plus field name)
+and `creates`/`deletes` entry to join a declared dependency of the entry's
+own required meaning, each member to be duplicate-free and sorted
+ascending by entry order key (declaring node digest, then field name), and
+a frame body carrying two simultaneous
 defects to report the one diagnostic FR-340's fixed precedence names
 regardless of which member carries which defect; splice every published
 `frame_mutations` vector into the semantic graph and read it with the full
@@ -82,9 +89,11 @@ normative reader (`read_package_semantics`, not the standalone frame oracle
 alone), evaluated at the reader's frame step, where identity projection,
 `package_id` and source-map checks are outside what any vector's
 expectation covers; requiring each vector's exact code, locus and (where
-the vector states one) cause, including a `model`/`operation_declaration`,
-`model`/`record_value_type` or `model`/`event_type` entry misdirected into
-`modifies`, `creates` or `deletes`, two vectors that each carry two
+the vector states one) cause, including a field entry on a process, a
+relationship or a systems node, a relationship entry naming an object type,
+a `model`/`record_value_type` or `model`/`event_type` entry misdirected into
+`creates` or `deletes`, an undeclared field entry, two field entries of one
+declaring node in descending name order, two vectors that each carry two
 simultaneous meaning-join defects (one across member groups, one within one
 member group at two digests), and the one vector whose `second_frame`
 member is a complete second `state`/`frame` node inserted into the graph
@@ -92,7 +101,15 @@ verbatim alongside the mutated published frame node, requiring the
 lower-node-id-digest frame's own defect to be reported over the
 higher-digest frame's own defect; check that the identical defect set
 sorted from two different collection orders yields the identical
-diagnostic; and parse the native-diagnostics rows to require each cause in
+diagnostic; validate the clause-operations package's `state`/`state_clause`,
+`state`/`operation_anchor`, `state`/`frame` and `state`/`transition` nodes
+against the schema's node-form body rules and occurrence roles, and apply
+each authored body, member, argument-shape and role mutation, requiring the
+schema to refuse it; read the package's invariant and precondition through
+the full reader, requiring the state step to admit them, and read each
+authored anchor, parameter, `self`-type, arity, misplaced-clause and
+anchor-before-clause mutation, requiring its exact state refusal and locus;
+and parse the native-diagnostics rows to require each cause in
 exactly its code's row and the Diagnostic schema pairing. Parse the
 `stage_limit_exceeded` and `duplicate_selection` rows of both native-diagnostics
 and FR-272 and require each to list exactly FR-272-AC-10's causes. Parse

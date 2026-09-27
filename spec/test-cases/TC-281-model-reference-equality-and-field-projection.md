@@ -48,8 +48,18 @@ conformance along declared supertypes, for one type node as for two. For each pr
 declared result equal to the `inner:0` type with a family), fit the
 projection operand to the `record.project` operand group, decide `member_of`,
 derive the member by FR-322 steps 2 to 4, and check that the declared
-`result_type` is the member type. Compare each result with the
-recorded expectation.
+`result_type` is the member type. For each reaches case, fit both operands
+to the `quire.op.model.reaches_field` entry's `reference` positions and
+decide `reference_edge` ("Reaches over a field"): operand 0 names the
+member's declaring node, the field resolves by FR-322 steps 2 and 3, its
+step 4 type is a reference, option-of-reference or bounded sequence of
+references to its owner, and operand 1's object type conforms to that
+owner. Compare each result with the recorded expectation.
+
+The domain package's `Order` also declares `parent` (optional `Order`
+`[1, 1]`), `origin` (`Order` `[1, 1]`), `prior` (`Order` `[0, 3]`, ordered,
+not unique), `peers` (`Order` `[0, 3]`, unordered, unique) and `trail`
+(`Order` `[0, unbounded]`, ordered, not unique).
 
 ## Vectors
 
@@ -79,8 +89,23 @@ recorded expectation.
 | RP-06 | `deref` of a reference to M4 typed M4 | `ill_typed`/`operator-ineligible`: a relation node has no family | FR-322-AC-34 |
 | RP-07 | `record.project` of field `total` of M2 over `deref` of a reference to M2 typed M2 | `missing_declaration`/`missing-selection` | FR-322-AC-34 |
 | RP-08 | RP-01 declared with `result_type` `Integer` | `ill_typed`/`operator-ineligible`: not the member type `Int[0, 9]` | FR-322-AC-34 |
+| RE-01 | `reaches_field` over `Reference<Order>` twice, field `parent` of M1 | Admitted: `Option<Reference<Order>>` | FR-322-AC-38 |
+| RE-02 | Field `prior` of M1 | Admitted: `Sequence<Reference<Order>>[0, 3]` | FR-322-AC-38 |
+| RE-03 | Field `origin` of M1 | Admitted: `Reference<Order>` | FR-322-AC-38 |
+| RE-04 | `Reference<Sub>` and `Reference<Order>`, field `parent` of M5 | Admitted: inherited edge | FR-322-AC-38 |
+| RE-05 | `Reference<Order>` and `Reference<SubSub>`, field `parent` of M1 | Admitted: target conforms to `Order` | FR-322-AC-38 |
+| RE-06 | Field `peers` of M1, a set | `ill_typed`/`operator-ineligible` | FR-322-AC-38 |
+| RE-07 | Field `trail` of M1, an unbounded sequence | `ill_typed`/`operator-ineligible` | FR-322-AC-38 |
+| RE-08 | Field `invoice` of M1, `Reference<Invoice>` | `ill_typed`/`operator-ineligible` | FR-322-AC-38 |
+| RE-09 | Field `total` of M1, `Int[0, 9]` | `ill_typed`/`operator-ineligible` | FR-322-AC-38 |
+| RE-10 | `Reference<Order>` and `Reference<Invoice>`, field `parent` of M1 | `ill_typed`/`operator-ineligible` | FR-322-AC-38 |
+| RE-11 | `Reference<Sub>` and `Reference<Order>`, field `parent` of M1 | `ill_typed`/`operator-ineligible`: operand 0 is not `Reference<M1>` | FR-322-AC-38 |
+| RE-12 | Two references to M2, field `parent` of M2 | `missing_declaration`/`missing-selection` | FR-322-AC-38 |
+| RE-13 | Field `missing` of M1 | `ill_typed`/`operator-ineligible` | FR-322-AC-38 |
+| RE-14 | Two `Reference<Both>`, field `code` of M6 | `ambiguous_declaration`/`ambiguous-name` | FR-322-AC-38 |
+| RE-15 | `Reference<Order>` and an `Order` object operand | `ill_typed`/`operator-ineligible`: family `object` | FR-322-AC-38 |
 
 ## Expected Results
 
-Every reference equality and projection case gives exactly its recorded
-result.
+Every reference equality, projection and reaches case gives exactly its
+recorded result.
