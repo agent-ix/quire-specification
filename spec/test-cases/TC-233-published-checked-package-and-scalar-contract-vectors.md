@@ -87,7 +87,9 @@ sorted from two different collection orders yields the identical
 diagnostic; and parse the native-diagnostics rows to require each cause in
 exactly its code's row and the Diagnostic schema pairing. Parse the
 `stage_limit_exceeded` and `duplicate_selection` rows of both native-diagnostics
-and FR-272 and require each to list exactly FR-272-AC-10's causes.
+and FR-272 and require each to list exactly FR-272-AC-10's causes. Parse
+the rows of FR-272-AC-11's eleven codes in both documents and require each to
+list exactly that criterion's causes.
 
 ## Expected Results
 
@@ -114,4 +116,6 @@ two-frame-node vector, whose lower-node-id-digest frame's own defect is
 reported ahead of the higher-digest frame's own defect; the identical
 defect set sorted from two different collection orders yields the identical
 diagnostic; and the `stage_limit_exceeded` and `duplicate_selection` rows of
-native-diagnostics and FR-272 each list exactly FR-272-AC-10's causes.
+native-diagnostics and FR-272 each list exactly FR-272-AC-10's causes, and
+the rows of FR-272-AC-11's eleven codes each list exactly that criterion's
+causes.

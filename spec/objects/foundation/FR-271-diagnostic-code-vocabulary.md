@@ -71,7 +71,7 @@ catalog).
 | `invalid_identifier` | A digest, typed identity or canonical domain failed validation. |
 | `output_serialization` | A validated result could not be encoded under the selected output wire contract. |
 | `invalid_quire_context` | A lifecycle request supplied an incompatible package, stage or semantic context. |
-| `invalid_source_identity` | Source authority, revision or digest did not match the supplied source. |
+| `invalid_source_identity` | A required source label (authority, identity, revision namespace or revision) is empty or only whitespace, or the source path is empty. Revision `1-draft.8` closes its causes as `blank-label` and `empty-path`. |
 | `invalid_source_map` | A source map was non-monotone, out of bounds or split a UTF-8 scalar. |
 | `cardinality_out_of_bound` | A constructed or converted collection whose occurrence or member count lies outside its type's inclusive cardinality bound (FR-144). |
 | `foreign_reference` | A supplied identity belongs to a different authority, universe, model or subject domain than the position requires. Revision `1-draft.3` closes its causes as `foreign-universe`, `foreign-model-selection` and `foreign-type`. |
@@ -81,6 +81,16 @@ catalog).
 | `invalid_capability` | A requested or advertised capability selection that names no FR-290 kind, an unknown kind or mode, an unsupported vocabulary identity, a duplicate registered backend, no extent classification, an unregistered or arm-less backend, candidates inconsistent with the manifest or named backend, or several candidate backends with none named (revision `1-draft.5`). |
 | `duplicate_selection` | A second domain-package model selection of an already-selected identity (revision `1-draft.6`). A package selects at most one version of a domain-package identity. |
 | `stage_limit_exceeded` | A compiler stage S1-S4, the I2 reader, a family `check`, `replay` or `route` reached one of its own stage limits (revision `1-draft.6`). "A semantic maximum is not a caller work budget": this is distinct from `resource_exhausted`. |
+| `inexact_decimal` | Strict `exact` met a decimal rounding step: a nonzero digit would be discarded (revision `1-draft.8`). |
+| `decimal_out_of_domain` | A decimal result outside its target `Decimal[..]` domain (revision `1-draft.8`). |
+| `division_pair_out_of_domain` | A `div`/`rem` quotient/remainder pair with at least one member outside the bounded consumer's domain (revision `1-draft.8`). Neither member is exposed. |
+| `modulo_out_of_domain` | A Euclidean `mod` remainder outside the bounded consumer's domain (revision `1-draft.8`). |
+| `text_length_out_of_domain` | A text value whose profile length is outside its declared `Text[..]` bounds (revision `1-draft.8`). |
+| `integer_out_of_domain` | An exact conversion or arithmetic result outside its target integer domain (revision `1-draft.8`). |
+| `rational_out_of_domain` | An exact rational arithmetic result outside its `Rational[..]` result domain (revision `1-draft.8`). |
+| `ieee_not_exact` | Strict IEEE `exact` met an inexact, overflowing or tiny-and-inexact result (revision `1-draft.8`). Only the would-be flags are reported. |
+| `ieee_nan_payload_not_representable` | An explicit IEEE width conversion of a NaN whose payload does not fit below the target width's quiet bit (revision `1-draft.8`). |
+| `ieee_rational_out_of_domain` | An explicit IEEE-to-`Rational` conversion whose reduced rational is outside the target `Rational[..]` domain (revision `1-draft.8`). |
 
 ## Identity and comparison
 
@@ -179,7 +189,7 @@ construction and FR-145 conversion, and, in catalog revision `1-draft.3`,
 `ambiguous_dispatch` for FR-151 link-time dispatch selection. The same revision
 closes the causes of `foreign_reference` for FR-153 and FR-204. Catalog
 revision `1-draft.4` adds no code; it adds the eight checked-package operation
-variants, `stale-node-key` and `declaration-nominal-mismatch` of `invalid_package` and the checked-package use of `ambiguous-name`, typed by FR-272; `operator-ineligible` remains `ill_typed`. The same revision adds `unproved-exhaustiveness` of `undefined_expression`, FR-146's cause for an unproved `case` exhaustiveness obligation over a `union-decl` scrutinee, typed by FR-272. Catalog revision `1-draft.5` adds `invalid_capability` for FR-290 capability-kind admission and candidate-set negotiation, and the `unbounded-extent` and `tool-unavailable` causes of `unsupported_projection`, typed by FR-272. Catalog revision `1-draft.6` adds `duplicate_selection` for a second selection of an already-selected domain-package identity, and `stage_limit_exceeded` for a stage limit, each typed by FR-272. Catalog revision `1-draft.7` adds no code; it adds the `token-count-exceeded`, `edge-count-exceeded`, `occurrence-count-exceeded` and `diagnostic-count-exceeded` causes of `stage_limit_exceeded`, typed by FR-272. Matching remains catalog-qualified and exact.
+variants, `stale-node-key` and `declaration-nominal-mismatch` of `invalid_package` and the checked-package use of `ambiguous-name`, typed by FR-272; `operator-ineligible` remains `ill_typed`. The same revision adds `unproved-exhaustiveness` of `undefined_expression`, FR-146's cause for an unproved `case` exhaustiveness obligation over a `union-decl` scrutinee, typed by FR-272. Catalog revision `1-draft.5` adds `invalid_capability` for FR-290 capability-kind admission and candidate-set negotiation, and the `unbounded-extent` and `tool-unavailable` causes of `unsupported_projection`, typed by FR-272. Catalog revision `1-draft.6` adds `duplicate_selection` for a second selection of an already-selected domain-package identity, and `stage_limit_exceeded` for a stage limit, each typed by FR-272. Catalog revision `1-draft.7` adds no code; it adds the `token-count-exceeded`, `edge-count-exceeded`, `occurrence-count-exceeded` and `diagnostic-count-exceeded` causes of `stage_limit_exceeded`, typed by FR-272. Catalog revision `1-draft.8` adds `inexact_decimal`, `decimal_out_of_domain`, `division_pair_out_of_domain`, `modulo_out_of_domain`, `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`, `ieee_not_exact`, `ieee_nan_payload_not_representable` and `ieee_rational_out_of_domain`, one refusal code per evaluator value refusal, and closes the causes of `invalid_source_identity` as `blank-label` and `empty-path`, each typed by FR-272. Matching remains catalog-qualified and exact.
 
 ## Dependencies
 

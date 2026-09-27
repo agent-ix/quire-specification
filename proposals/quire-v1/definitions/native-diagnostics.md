@@ -1,6 +1,6 @@
 # Native diagnostic interpretation candidate
 
-Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.7`.
+Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.8`.
 **The interpretation role is accepted by FS01; this semantic revision remains
 proposed and is not adopted or fully implemented.** This supplies the versioned catalog
 required by FR-047. It interprets native producer diagnostics in their existing
@@ -99,17 +99,34 @@ context, but that context cannot replace a required cause field or variant.
 | `invalid_capability` | `absent-kind`, `unknown-kind`, `unsupported-version`, `unknown-mode`, `duplicate-backend`, `absent-extent`, `unknown-backend`, `inconsistent-candidates` or `ambiguous-backend`; retain the request item index, for a registration cause the backend identity, and for `unsupported-version` the refused carrier. `unknown-kind` and `unknown-mode` retain the exact supplied value; `unsupported-version` retains the supplied vocabulary identity, or its absence, and refuses the whole carrier; `duplicate-backend` retains the repeated backend identity and the refused registration's manifest digest; `unknown-backend` retains the named unregistered backend identity, or the registered backend with no negotiation arm; `inconsistent-candidates` retains every offending candidate; `ambiguous-backend` retains every candidate in candidate order. No cause maps a refused label to an FR-290 member. |
 | `projection_binding`, `invalid_projection_correspondence` | `upstream-refusal` or `correspondence-loss`, respectively; retain the originating structured IR/mapping cause and exact source/derived identities. |
 | `extraction-requires-run`, `extraction-package-conflict`, `extraction-clause-count` | Distinct `wrong-command-mode`, `conflicting-compilation-inputs` and `binding-cardinality` variants, respectively; retain the requested mode, conflicting selectors or actual count. These three refusals cannot share only an English distinction. |
+| `invalid_source_identity` | `blank-label` or `empty-path`; `blank-label` retains `label`, the first of the source labels `authority`, `identity`, `revision_namespace` and `revision`, in that order, whose value is empty or consists only of Unicode `White_Space` scalars; `empty-path` retains nothing further. Neither cause names a source region. |
+| `inexact_decimal` | `nonzero-discarded-digit`; retain `expected`, the target type's declared domain, whose maximum scale is the rounding step's target scale (an integer target has scale zero). Strict `exact` met a rounding step: at least one discarded digit is nonzero. No rounded or exact value is retained. |
+| `decimal_out_of_domain` | `outside-domain`; retain `expected`, the target `Decimal[lo, hi; smin, smax]` domain whose membership the result fails. No coefficient or scale of the result is retained. |
+| `division_pair_out_of_domain` | `quotient-outside-domain`, `remainder-outside-domain` or `both-outside-domain`; retain `expected`, the bounded consumer's integer domain both members of the `div`/`rem` pair are checked against. The cause names which members fail membership; neither member is retained. |
+| `modulo_out_of_domain` | `outside-domain`; retain `expected`, the bounded consumer's integer domain the Euclidean `mod` remainder fails. No remainder is retained. |
+| `text_length_out_of_domain` | `outside-domain`; retain `expected`, the declared `Text[min, max; profile]` bounds and profile whose length the result fails. No text is retained. |
+| `integer_out_of_domain` | `outside-domain`; retain `expected`, the target `Int[lo, hi]` domain an exact conversion or arithmetic result fails. No integer is retained. |
+| `rational_out_of_domain` | `outside-domain`; retain `expected`, the `Rational[lo, hi; dmin, dmax]` result domain an exact rational arithmetic result fails. No numerator or denominator is retained. |
+| `ieee_not_exact` | `rounding-required`; retain `expected`, the target IEEE width (`binary32` or `binary64`), and `flags`, the would-be flag set of `invalid`, `divide_by_zero`, `overflow`, `underflow` and `inexact` the rounded result would have raised. Strict `exact` met an inexact, overflowing or tiny-and-inexact result; no rounded bits are retained. |
+| `ieee_nan_payload_not_representable` | `payload-exceeds-target`; retain `expected`, the explicit width conversion's target IEEE width, and `actual`, its source IEEE width. The NaN's payload is not smaller than the target width's quiet bit; no payload bits are retained. |
+| `ieee_rational_out_of_domain` | `outside-domain`; retain `expected`, the grammar-named `Rational[lo, hi; dmin, dmax]` target of an explicit IEEE-to-exact conversion that the reduced rational fails. No numerator or denominator is retained. |
 | `runtime_invariant` | `established-invariant-broken`; retain the named violated evaluator/input invariant and originating stage/context. It is a failed evaluation, not a false predicate. |
 
 `ambiguous_dispatch` and `foreign_reference` are catalog-owned spellings of
-revision `1-draft.3`, `invalid_capability` is a catalog-owned spelling of
-revision `1-draft.5`, and `duplicate_selection` and `stage_limit_exceeded` are
-catalog-owned spellings of revision `1-draft.6`. Their spelling and causes are selected by this table even where
+revision `1-draft.3`; `invalid_capability` is a catalog-owned spelling of
+revision `1-draft.5`; `duplicate_selection` and `stage_limit_exceeded` are
+catalog-owned spellings of revision `1-draft.6`; and `inexact_decimal`,
+`decimal_out_of_domain`, `division_pair_out_of_domain`, `modulo_out_of_domain`,
+`text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`,
+`ieee_not_exact`, `ieee_nan_payload_not_representable` and
+`ieee_rational_out_of_domain` are catalog-owned spellings of revision
+`1-draft.8`. Their spelling and causes are selected by this table even where
 the pinned compiler inventory above does not enumerate them; a producer claiming
 revision `1-draft.3` or later emits `ambiguous_dispatch` and
 `foreign_reference`, one claiming `1-draft.5` or later emits
 `invalid_capability`, and one claiming `1-draft.6` or later emits
-`duplicate_selection` and `stage_limit_exceeded`, each with these closed causes, and a re-pinned
+`duplicate_selection` and `stage_limit_exceeded`, and one claiming `1-draft.8`
+or later emits the ten revision-`1-draft.8` codes, each with these closed causes, and a re-pinned
 compiler inventory must agree with them.
 
 Revision `1-draft.4` adds the eight `invalid_package` operation variants,
@@ -187,10 +204,29 @@ reader's graph dependency-edge, occurrence and source-map, and
 diagnostic-entry limits (QSL ADR-013 QC-28). A producer claiming revision
 `1-draft.6` or earlier emits none of them.
 
+Revision `1-draft.8` adds ten codes for the evaluator's value refusals, one
+per refusal: `inexact_decimal` for strict `exact` at a decimal rounding step
+(FR-140, FR-142), `decimal_out_of_domain` (FR-140), `division_pair_out_of_domain`
+and `modulo_out_of_domain` (FR-147), `text_length_out_of_domain` (FR-141),
+`integer_out_of_domain` and `rational_out_of_domain` for exact conversion and
+arithmetic results, `ieee_not_exact` for strict IEEE `exact`,
+`ieee_nan_payload_not_representable` for an explicit NaN width conversion, and
+`ieee_rational_out_of_domain` for an explicit IEEE-to-`Rational` conversion
+(FR-148). Each is category refusal: the operation is defined, and the
+selected rounding policy, target width or declared target domain does not
+admit its result. None is undefined, incomplete or a type error, and none
+retains the refused value. Revision `1-draft.8` also closes the causes of
+`invalid_source_identity` as `blank-label` and `empty-path`. In these eleven
+rows, each backticked payload name after the cause list is the exact key of
+that payload item in a refusal record's fields. `expected` and `actual` are
+FR-272's canonical payload names: a target domain or width is the expected
+selection. A producer claiming revision
+`1-draft.7` or earlier emits none of the ten codes and no
+`invalid_source_identity` cause.
+
 Other retained host/source codes keep their selected broad meaning and original
 structured producer cause: I/O error, malformed command, invalid digest/identifier,
-output serialization failure, invalid Quire context, invalid source identity and
-invalid source map. This catalog does not interpret their OS or upstream codes as
+output serialization failure, invalid Quire context and invalid source map. This catalog does not interpret their OS or upstream codes as
 native subvariants. Readers retain that upstream selection explicitly; unknown
 upstream meaning cannot establish a native semantic result.
 
