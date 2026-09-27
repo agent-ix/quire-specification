@@ -4953,6 +4953,15 @@ fn one_line(text: &str) -> String {
     text.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
+/// A requirement's normative text: everything before its acceptance
+/// criteria, so a criterion restating a rule cannot stand in for the rule.
+fn before_criteria(document: &str) -> &str {
+    document
+        .split("## Acceptance Criteria")
+        .next()
+        .unwrap_or(document)
+}
+
 #[trace("TC-233", "FR-322-AC-17")]
 #[test]
 fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lock() {
@@ -6852,7 +6861,7 @@ fn tc_233_arithmetic_domain_refusals_leave_sum_prefixes_undefined() {
     let integer = "refused { code: integer_out_of_domain, cause: outside-domain }";
     let rational = "refused { code: rational_out_of_domain, cause: outside-domain }";
     for (document, name) in [
-        (EXACT_NUMERIC_DEFINEDNESS, "FR-044"),
+        (before_criteria(EXACT_NUMERIC_DEFINEDNESS), "FR-044"),
         (VALUE_ACCOUNTING, "value-accounting"),
     ] {
         let text = one_line(document);
@@ -6866,7 +6875,7 @@ fn tc_233_arithmetic_domain_refusals_leave_sum_prefixes_undefined() {
         );
     }
     assert!(
-        one_line(EXACT_NUMERIC_DEFINEDNESS)
+        one_line(before_criteria(EXACT_NUMERIC_DEFINEDNESS))
             .contains("FR-145 makes that a located undefined outcome, not a refusal"),
         "FR-044 names FR-145's located undefined outcome for a `sum` prefix"
     );
@@ -6883,7 +6892,7 @@ fn tc_233_arithmetic_domain_refusals_leave_sum_prefixes_undefined() {
         "the catalog excludes a `sum` running total from its value refusals"
     );
     assert!(
-        one_line(COLLECTION_QUERIES)
+        one_line(before_criteria(COLLECTION_QUERIES))
             .contains("a non-member seed or prefix is a located undefined outcome"),
         "FR-145 keeps a non-member `sum` seed or prefix undefined"
     );
