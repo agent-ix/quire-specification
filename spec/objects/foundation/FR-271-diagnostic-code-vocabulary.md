@@ -158,6 +158,7 @@ settling unselected native literals or treating spelling as a global convention.
 | FR-271-AC-3 | The key order over code spellings is not cited as a severity or precedence ordering. | Analysis |
 | FR-271-AC-4 | Localizing the message accompanying a diagnostic leaves its code unchanged. | Analysis |
 | FR-271-AC-5 | A code minted by a consumer for its own refusal does not resolve to a member of this table, even when its spelling equals a member spelling. | Analysis |
+| FR-271-AC-6 | The values table has exactly one row for each of `invalid_source_identity` and the ten codes catalog revision `1-draft.8` adds: `inexact_decimal`, `decimal_out_of_domain`, `division_pair_out_of_domain`, `modulo_out_of_domain`, `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`, `ieee_not_exact`, `ieee_nan_payload_not_representable` and `ieee_rational_out_of_domain`. | Test (TC-233) |
 
 ## Resolved catalog namespaces
 

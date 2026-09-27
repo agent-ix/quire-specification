@@ -11,6 +11,10 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-142
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-270
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-271
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-272
     type: verifies
   - target: ix://agent-ix/quire-specification/interface_004
@@ -89,7 +93,10 @@ exactly its code's row and the Diagnostic schema pairing. Parse the
 `stage_limit_exceeded` and `duplicate_selection` rows of both native-diagnostics
 and FR-272 and require each to list exactly FR-272-AC-10's causes. Parse
 the rows of FR-272-AC-11's eleven codes in both documents and require each to
-list exactly that criterion's causes.
+list exactly that criterion's causes and payload keys, and require FR-272's
+canonical payload-name list to hold every one of those keys. Require FR-270's
+Revision cell to quote the catalog header's revision, and FR-271's values
+table to hold exactly one row for each FR-271-AC-6 code.
 
 ## Expected Results
 
@@ -118,4 +125,6 @@ defect set sorted from two different collection orders yields the identical
 diagnostic; and the `stage_limit_exceeded` and `duplicate_selection` rows of
 native-diagnostics and FR-272 each list exactly FR-272-AC-10's causes, and
 the rows of FR-272-AC-11's eleven codes each list exactly that criterion's
-causes.
+causes and payload keys, every one of them a canonical FR-272 payload name;
+FR-270's Revision cell quotes the header's revision; and FR-271 has one row
+for each FR-271-AC-6 code.

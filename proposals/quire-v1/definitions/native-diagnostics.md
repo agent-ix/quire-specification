@@ -99,7 +99,7 @@ context, but that context cannot replace a required cause field or variant.
 | `invalid_capability` | `absent-kind`, `unknown-kind`, `unsupported-version`, `unknown-mode`, `duplicate-backend`, `absent-extent`, `unknown-backend`, `inconsistent-candidates` or `ambiguous-backend`; retain the request item index, for a registration cause the backend identity, and for `unsupported-version` the refused carrier. `unknown-kind` and `unknown-mode` retain the exact supplied value; `unsupported-version` retains the supplied vocabulary identity, or its absence, and refuses the whole carrier; `duplicate-backend` retains the repeated backend identity and the refused registration's manifest digest; `unknown-backend` retains the named unregistered backend identity, or the registered backend with no negotiation arm; `inconsistent-candidates` retains every offending candidate; `ambiguous-backend` retains every candidate in candidate order. No cause maps a refused label to an FR-290 member. |
 | `projection_binding`, `invalid_projection_correspondence` | `upstream-refusal` or `correspondence-loss`, respectively; retain the originating structured IR/mapping cause and exact source/derived identities. |
 | `extraction-requires-run`, `extraction-package-conflict`, `extraction-clause-count` | Distinct `wrong-command-mode`, `conflicting-compilation-inputs` and `binding-cardinality` variants, respectively; retain the requested mode, conflicting selectors or actual count. These three refusals cannot share only an English distinction. |
-| `invalid_source_identity` | `blank-label` or `empty-path`; `blank-label` retains `label`, the first of the source labels `authority`, `identity`, `revision_namespace` and `revision`, in that order, whose value is empty or consists only of Unicode `White_Space` scalars; `empty-path` retains nothing further. Neither cause names a source region. |
+| `invalid_source_identity` | `blank-label` or `empty-path`; `blank-label` retains `label`, the first of the source labels `authority`, `identity`, `revision_namespace` and `revision`, in that order, whose value is empty or consists only of Unicode `White_Space` scalars; `empty-path` retains nothing further. The label check runs first, over the labels in that order, and the first blank label decides `blank-label`; `empty-path` is reported only when every label is non-blank and the source path is empty. Neither cause names a source region. |
 | `inexact_decimal` | `nonzero-discarded-digit`; retain `expected`, the target type's declared domain, whose maximum scale is the rounding step's target scale (an integer target has scale zero). Strict `exact` met a rounding step: at least one discarded digit is nonzero. No rounded or exact value is retained. |
 | `decimal_out_of_domain` | `outside-domain`; retain `expected`, the target `Decimal[lo, hi; smin, smax]` domain whose membership the result fails. No coefficient or scale of the result is retained. |
 | `division_pair_out_of_domain` | `quotient-outside-domain`, `remainder-outside-domain` or `both-outside-domain`; retain `expected`, the bounded consumer's integer domain both members of the `div`/`rem` pair are checked against. The cause names which members fail membership; neither member is retained. |
@@ -107,7 +107,7 @@ context, but that context cannot replace a required cause field or variant.
 | `text_length_out_of_domain` | `outside-domain`; retain `expected`, the declared `Text[min, max; profile]` bounds and profile whose length the result fails. No text is retained. |
 | `integer_out_of_domain` | `outside-domain`; retain `expected`, the target `Int[lo, hi]` domain an exact conversion or arithmetic result fails. No integer is retained. |
 | `rational_out_of_domain` | `outside-domain`; retain `expected`, the `Rational[lo, hi; dmin, dmax]` result domain an exact rational arithmetic result fails. No numerator or denominator is retained. |
-| `ieee_not_exact` | `rounding-required`; retain `expected`, the target IEEE width (`binary32` or `binary64`), and `flags`, the would-be flag set of `invalid`, `divide_by_zero`, `overflow`, `underflow` and `inexact` the rounded result would have raised. Strict `exact` met an inexact, overflowing or tiny-and-inexact result; no rounded bits are retained. |
+| `ieee_not_exact` | `rounding-required`; retain `expected`, the target IEEE width (`binary32` or `binary64`), and `flags`, the would-be flag set: the flags of `invalid`, `divide_by_zero`, `overflow`, `underflow` and `inexact` the same operation would return under `nearest-even` (FR-148). Strict `exact` met an inexact, overflowing or tiny-and-inexact result; no rounded bits are retained. |
 | `ieee_nan_payload_not_representable` | `payload-exceeds-target`; retain `expected`, the explicit width conversion's target IEEE width, and `actual`, its source IEEE width. The NaN's payload is not smaller than the target width's quiet bit; no payload bits are retained. |
 | `ieee_rational_out_of_domain` | `outside-domain`; retain `expected`, the grammar-named `Rational[lo, hi; dmin, dmax]` target of an explicit IEEE-to-exact conversion that the reduced rational fails. No numerator or denominator is retained. |
 | `runtime_invariant` | `established-invariant-broken`; retain the named violated evaluator/input invariant and originating stage/context. It is a failed evaluation, not a false predicate. |
@@ -208,8 +208,9 @@ Revision `1-draft.8` adds ten codes for the evaluator's value refusals, one
 per refusal: `inexact_decimal` for strict `exact` at a decimal rounding step
 (FR-140, FR-142), `decimal_out_of_domain` (FR-140), `division_pair_out_of_domain`
 and `modulo_out_of_domain` (FR-147), `text_length_out_of_domain` (FR-141),
-`integer_out_of_domain` and `rational_out_of_domain` for exact conversion and
-arithmetic results, `ieee_not_exact` for strict IEEE `exact`,
+`integer_out_of_domain` for an integer-target unit conversion (FR-142) and a
+bounded integer arithmetic result (FR-044), `rational_out_of_domain` for a
+`Rational[..]` arithmetic result (FR-044), `ieee_not_exact` for strict IEEE `exact`,
 `ieee_nan_payload_not_representable` for an explicit NaN width conversion, and
 `ieee_rational_out_of_domain` for an explicit IEEE-to-`Rational` conversion
 (FR-148). Each is category refusal: the operation is defined, and the
@@ -218,11 +219,28 @@ admit its result. None is undefined, incomplete or a type error, and none
 retains the refused value. Revision `1-draft.8` also closes the causes of
 `invalid_source_identity` as `blank-label` and `empty-path`. In these eleven
 rows, each backticked payload name after the cause list is the exact key of
-that payload item in a refusal record's fields. `expected` and `actual` are
-FR-272's canonical payload names: a target domain or width is the expected
-selection. A producer claiming revision
-`1-draft.7` or earlier emits none of the ten codes and no
-`invalid_source_identity` cause.
+that payload item in a refusal record's fields, and every one of them
+(`expected`, `actual`, `flags` and `label`) is one of FR-272's canonical
+payload names: a target domain or width is the expected selection.
+
+Each payload value is written as one exact ASCII string:
+
+- a domain is its type name and bounds, `Int[lo, hi]`,
+  `Decimal[lo, hi; smin, smax]`, `Rational[lo, hi; dmin, dmax]` or
+  `Text[min, max; profile]`: each bound is written as FR-038 writes an
+  integer (a leading `-` when negative, no other sign, leading zero or
+  exponent), bounds within a group are separated by `, `, groups by `; `, the
+  text profile is its grammar spelling, and no rounding mode is written;
+- an IEEE width is `binary32` or `binary64`;
+- a flag set is its member flag names in the order `invalid`,
+  `divide_by_zero`, `overflow`, `underflow`, `inexact`, joined by `,` with no
+  space;
+- a label is exactly `authority`, `identity`, `revision_namespace` or
+  `revision`.
+
+A producer claiming revision `1-draft.7` or earlier emits none of the ten codes,
+and emits `invalid_source_identity` with neither `blank-label` nor
+`empty-path`.
 
 Other retained host/source codes keep their selected broad meaning and original
 structured producer cause: I/O error, malformed command, invalid digest/identifier,

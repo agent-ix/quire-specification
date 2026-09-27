@@ -92,6 +92,7 @@ diagnostic list or a successful assessment" (proposed catalog).
 | FR-270-AC-2 | A response with no named catalog selection has an absent selection and receives no default catalog. | Analysis |
 | FR-270-AC-3 | Changing or localizing the human-readable wording carried with a diagnostic leaves the selected catalog key unchanged. | Analysis |
 | FR-270-AC-4 | A code not resolvable in the selected catalog is not published as a stable producer outcome. | Inspection |
+| FR-270-AC-5 | The Revision property's quoted revision equals the revision in the catalog header's interpretation-identity line. | Test (TC-233) |
 
 ## Resolved catalog identity
 

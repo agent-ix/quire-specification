@@ -210,6 +210,11 @@ same. `Rational[..]` `+`, `-`, `*`, `/` and unary `-`, and an `Integer` or
 `rational-arithmetic.normalize`, then decide any FR-044 result-bound membership
 without a charge, then `rational-arithmetic.result-retain`; a zero divisor met
 by direct kernel evaluation is undefined after `rational-arithmetic.operands`.
+A bounded integer or `Rational[..]` arithmetic result outside its result
+domain is refused, with no value and no later charge, as
+`refused { code: integer_out_of_domain, cause: outside-domain }` or
+`refused { code: rational_out_of_domain, cause: outside-domain }`,
+respectively (FR-044).
 `Integer`, `Int[..]`, `Rational[..]` and `Decimal[..]` ordering `<`, `<=`, `>`
 and `>=` charges `ordering.operands`, `ordering.arithmetic` and
 `ordering.result-retain`: three work units and one result unit. Quantity
@@ -269,7 +274,8 @@ a decimal target at scale zero: its rounding step, strict `exact` refusal and
 `unit.target-domain` sizing occur at the same positions, except that its
 `unit.target-domain` carries only `integer_bits = bits(a)` and no
 `decimal_digits` amount, and integer-domain
-membership, which charges nothing, refuses after `unit.target-domain` and
+membership, which charges nothing, refuses (`integer_out_of_domain`,
+`outside-domain`) after `unit.target-domain` and
 before `unit.result-retain`. Decimal and integer targets charge no `decimal.*`
 or `integer-*` point.
 
@@ -318,7 +324,7 @@ undefined; a finite value, either zero included, then charges
 rational, sized from the operand's decoded exponent and mantissa before the
 rational is materialized, then decides `Rational[..]` target membership at
 evaluation, exempt from FR-044's static result-bound proof, which makes no
-charge and returns `refused { code: ieee_rational_out_of_domain }` for a
+charge and returns `refused { code: ieee_rational_out_of_domain, cause: outside-domain }` for a
 non-member before `ieee.result-retain`, then `ieee.result-retain`. FR-148
 defines no conversion from an IEEE value to `Decimal`, `Integer` or `Int[..]`; a
 direct IEEE conversion to those types is refused `ill_typed` with no charge, and

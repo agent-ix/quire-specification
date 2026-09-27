@@ -19,7 +19,7 @@
     {
       "role": "accounting",
       "artifact_path": "value-accounting.md",
-      "definition": {"authority":"agent-ix","identity":"quire.value.accounting/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"1d8b15f8b0cb20bfb04841101e6dd09735cca06fe80e38652f48555a0c6871fa"}
+      "definition": {"authority":"agent-ix","identity":"quire.value.accounting/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"6fdab8c89981aed6d8177b9fb295026c7aae353494df4ea8a8f325e7587203ef"}
     },
     {
       "role": "compound_unit",
@@ -39,7 +39,7 @@
     {
       "role": "rule_manifest",
       "artifact_path": "value-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.value.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"8b8500fa5d7d3f5b0683984e9a09beecdfffc10520820f68e21ce8fbfad7bd32"}
+      "definition": {"authority":"agent-ix","identity":"quire.value.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"},"digest_domain":"quire.definition.bytes/v1","digest":"3787474ae385bbafb505d5a561bd8bba89105d8ef9971a49f0e195fd19bea0bc"}
     },
     {
       "role": "text_profile",
@@ -104,7 +104,7 @@
     {
       "role": "rule_fr_148",
       "artifact_path": "../../../spec/functional/expressions/FR-148-evaluate-ieee-floating-profiles.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-148/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"012e66aa399d4f63bbf75962b27d2f522243e652b3d6c0ac72bcb3466c0f0931"}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-148/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"},"digest_domain":"quire.definition.bytes/v1","digest":"69780c292211f66cf5bacbff3e09c68e625ccaed4fe712e3b060050e5adbf618"}
     },
     {
       "role": "rule_fr_149",

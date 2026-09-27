@@ -118,7 +118,7 @@ sets no flag. Width conversion of a NaN keeps its sign and its integer payload
 below the quiet bit, sets the quiet bit and, when the source is signaling, sets
 `invalid`, as for every consumed signaling NaN. A payload not smaller than the
 target width's quiet bit is refused as `refused { code:
-ieee_nan_payload_not_representable }` with no flags, even for a signaling
+ieee_nan_payload_not_representable, cause: payload-exceeds-target }` with no flags, even for a signaling
 source, because the refusal precedes consuming the NaN. This is a
 language-policy refusal: IEEE convertFormat is total, and this profile refuses
 rather than truncating a payload.
@@ -131,7 +131,7 @@ conversion is exempt from FR-044's static result-bound proof: membership is
 decided at evaluation, where the reduced numerator must lie in `[lo, hi]` and
 the positive denominator in `[dmin, dmax]`. Membership charges nothing, and a
 non-member returns the runtime refusal `refused { code:
-ieee_rational_out_of_domain }` after `ieee.exact-intermediate` and before
+ieee_rational_out_of_domain, cause: outside-domain }` after `ieee.exact-intermediate` and before
 `ieee.result-retain`. FR-148 defines no conversion from an IEEE value to
 `Decimal`, `Integer` or `Int[..]`; a direct IEEE conversion to those types is
 refused `ill_typed` with no charge, and an IEEE value reaches exact arithmetic

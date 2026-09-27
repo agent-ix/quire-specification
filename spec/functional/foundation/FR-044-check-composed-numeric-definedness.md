@@ -37,6 +37,16 @@ remainder and definedness contract of the retained
 `quire.value.integer-division.*` identity. The literal constructor does not implicitly
 convert integer operands or introduce quotient rounding.
 
+At evaluation, the evaluator decides a bounded integer or `Rational[..]`
+arithmetic result's membership in its result domain after normalization and
+before retaining it (`quire.value.accounting/v1`). A result outside that domain
+is refused with no value, as
+`refused { code: integer_out_of_domain, cause: outside-domain }` or
+`refused { code: rational_out_of_domain, cause: outside-domain }`,
+respectively. An expression this check admitted has that membership proved,
+so only evaluation of an expression that did not pass this check meets
+either refusal.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |

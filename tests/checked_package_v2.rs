@@ -4869,10 +4869,9 @@ fn native_diagnostic_row_causes(code: &str) -> BTreeSet<String> {
     diagnostic_row_causes(NATIVE_DIAGNOSTICS, code)
 }
 
-/// Causes the one table row of `document` whose first cell is exactly the
-/// given code lists: the backticked spellings of its second cell before the
-/// first `;`.
-fn diagnostic_row_causes(document: &str, code: &str) -> BTreeSet<String> {
+/// The one table row of `document` whose first cell is exactly the given
+/// code.
+fn diagnostic_row<'a>(document: &'a str, code: &str) -> &'a str {
     let rows = document
         .lines()
         .filter(|line| {
@@ -4882,16 +4881,65 @@ fn diagnostic_row_causes(document: &str, code: &str) -> BTreeSet<String> {
         })
         .collect::<Vec<_>>();
     assert_eq!(rows.len(), 1, "the document has exactly one `{code}` row");
-    let cause_cell = rows[0]
+    rows[0]
+}
+
+/// The backticked spellings of `text`.
+fn backticked(text: &str) -> BTreeSet<String> {
+    text.split('`')
+        .skip(1)
+        .step_by(2)
+        .map(str::to_owned)
+        .collect()
+}
+
+/// Causes the one table row of `document` whose first cell is exactly the
+/// given code lists: the backticked spellings of its second cell before the
+/// first `;`.
+fn diagnostic_row_causes(document: &str, code: &str) -> BTreeSet<String> {
+    let cause_cell = diagnostic_row(document, code)
         .split('|')
         .nth(2)
         .and_then(|cell| cell.split(';').next())
         .expect("diagnostic row has a cause cell");
-    cause_cell
-        .split('`')
-        .skip(1)
-        .step_by(2)
-        .map(str::to_owned)
+    backticked(cause_cell)
+}
+
+/// FR-272's canonical cause payload names: the backticked spellings of the
+/// sentence that introduces them.
+fn canonical_payload_names() -> BTreeSet<String> {
+    let intro = "Cause payload fields use these exact ordered names when applicable:";
+    let start = TYPED_DIAGNOSTIC_CAUSE
+        .find(intro)
+        .expect("FR-272 states its canonical payload names")
+        + intro.len();
+    let list = &TYPED_DIAGNOSTIC_CAUSE[start..];
+    let end = list.find(". ").expect("the canonical name list ends");
+    backticked(&list[..end])
+}
+
+/// Payload keys the one `code` row of `document` names: the backticked
+/// canonical payload names after its cause list (the rest of the second cell
+/// after its first `;`, and every later cell).
+fn diagnostic_row_payload_keys(
+    document: &str,
+    code: &str,
+    canonical: &BTreeSet<String>,
+) -> BTreeSet<String> {
+    let cells = diagnostic_row(document, code)
+        .split('|')
+        .skip(2)
+        .collect::<Vec<_>>();
+    let mut payload = cells[0]
+        .split_once(';')
+        .map(|(_, rest)| rest.to_owned())
+        .unwrap_or_default();
+    for cell in &cells[1..] {
+        payload.push_str(cell);
+    }
+    backticked(&payload)
+        .into_iter()
+        .filter(|name| canonical.contains(name))
         .collect()
 }
 
@@ -6656,51 +6704,122 @@ fn tc_233_stage_limit_and_duplicate_selection_cause_sets_are_closed() {
     }
 }
 
-/// The eleven cause sets of catalog revision `1-draft.8` are closed: the
-/// native-diagnostics row and the FR-272 row of each code list exactly these
-/// causes, so neither document can add, drop or rename one without the other
-/// and this list.
+/// The eleven codes of catalog revision `1-draft.8` with their closed causes
+/// and payload keys (FR-272-AC-11).
+const REVISION_1_DRAFT_8_ROWS: [(&str, &[&str], &[&str]); 11] = [
+    (
+        "invalid_source_identity",
+        &["blank-label", "empty-path"],
+        &["label"],
+    ),
+    (
+        "inexact_decimal",
+        &["nonzero-discarded-digit"],
+        &["expected"],
+    ),
+    ("decimal_out_of_domain", &["outside-domain"], &["expected"]),
+    (
+        "division_pair_out_of_domain",
+        &[
+            "quotient-outside-domain",
+            "remainder-outside-domain",
+            "both-outside-domain",
+        ],
+        &["expected"],
+    ),
+    ("modulo_out_of_domain", &["outside-domain"], &["expected"]),
+    (
+        "text_length_out_of_domain",
+        &["outside-domain"],
+        &["expected"],
+    ),
+    ("integer_out_of_domain", &["outside-domain"], &["expected"]),
+    ("rational_out_of_domain", &["outside-domain"], &["expected"]),
+    (
+        "ieee_not_exact",
+        &["rounding-required"],
+        &["expected", "flags"],
+    ),
+    (
+        "ieee_nan_payload_not_representable",
+        &["payload-exceeds-target"],
+        &["expected", "actual"],
+    ),
+    (
+        "ieee_rational_out_of_domain",
+        &["outside-domain"],
+        &["expected"],
+    ),
+];
+
+fn owned_set(items: &[&str]) -> BTreeSet<String> {
+    items.iter().map(|item| (*item).to_owned()).collect()
+}
+
+/// The eleven cause sets and payload keys of catalog revision `1-draft.8` are
+/// closed: the native-diagnostics row and the FR-272 row of each code list
+/// exactly these causes and name exactly these payload keys, and every key is
+/// one of FR-272's canonical payload names, so neither document can add, drop
+/// or rename a cause or key without the other and this list.
 #[trace("TC-233", "FR-272-AC-11")]
 #[test]
-fn tc_233_revision_1_draft_8_cause_sets_are_closed() {
-    let expected: [(&str, &[&str]); 11] = [
-        ("invalid_source_identity", &["blank-label", "empty-path"]),
-        ("inexact_decimal", &["nonzero-discarded-digit"]),
-        ("decimal_out_of_domain", &["outside-domain"]),
-        (
-            "division_pair_out_of_domain",
-            &[
-                "quotient-outside-domain",
-                "remainder-outside-domain",
-                "both-outside-domain",
-            ],
-        ),
-        ("modulo_out_of_domain", &["outside-domain"]),
-        ("text_length_out_of_domain", &["outside-domain"]),
-        ("integer_out_of_domain", &["outside-domain"]),
-        ("rational_out_of_domain", &["outside-domain"]),
-        ("ieee_not_exact", &["rounding-required"]),
-        (
-            "ieee_nan_payload_not_representable",
-            &["payload-exceeds-target"],
-        ),
-        ("ieee_rational_out_of_domain", &["outside-domain"]),
-    ];
-    for (code, causes) in expected {
-        let causes = causes
-            .iter()
-            .map(|cause| (*cause).to_owned())
-            .collect::<BTreeSet<_>>();
-        assert_eq!(
-            diagnostic_row_causes(NATIVE_DIAGNOSTICS, code),
-            causes,
-            "native-diagnostics `{code}` row lists exactly its 1-draft.8 causes"
+fn tc_233_revision_1_draft_8_cause_sets_and_payload_keys_are_closed() {
+    let canonical = canonical_payload_names();
+    for (code, causes, keys) in REVISION_1_DRAFT_8_ROWS {
+        let causes = owned_set(causes);
+        let keys = owned_set(keys);
+        assert!(
+            keys.is_subset(&canonical),
+            "every `{code}` payload key is an FR-272 canonical payload name"
         );
-        assert_eq!(
-            diagnostic_row_causes(TYPED_DIAGNOSTIC_CAUSE, code),
-            causes,
-            "FR-272 `{code}` row lists exactly its 1-draft.8 causes"
-        );
+        for (document, name) in [
+            (NATIVE_DIAGNOSTICS, "native-diagnostics"),
+            (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
+        ] {
+            assert_eq!(
+                diagnostic_row_causes(document, code),
+                causes,
+                "{name} `{code}` row lists exactly its 1-draft.8 causes"
+            );
+            assert_eq!(
+                diagnostic_row_payload_keys(document, code, &canonical),
+                keys,
+                "{name} `{code}` row names exactly its 1-draft.8 payload keys"
+            );
+        }
+    }
+}
+
+const VERSIONED_DIAGNOSTIC_CATALOG: &str =
+    include_str!("../spec/objects/foundation/FR-270-versioned-diagnostic-catalog.md");
+const DIAGNOSTIC_CODE_VOCABULARY: &str =
+    include_str!("../spec/objects/foundation/FR-271-diagnostic-code-vocabulary.md");
+
+/// FR-270's Revision property quotes the catalog header's revision, and
+/// FR-271's values table has exactly one row for each code FR-271-AC-6 names.
+#[trace("TC-233", "FR-270-AC-5")]
+#[trace("TC-233", "FR-271-AC-6")]
+#[test]
+fn tc_233_catalog_revision_and_code_vocabulary_follow_the_catalog() {
+    let header = NATIVE_DIAGNOSTICS
+        .lines()
+        .find(|line| line.starts_with("Interpretation identity:"))
+        .expect("native diagnostics has an interpretation-identity header line");
+    let revision = header
+        .split("revision: ")
+        .nth(1)
+        .and_then(|rest| rest.strip_suffix('.'))
+        .expect("the header names a revision");
+    let cell = VERSIONED_DIAGNOSTIC_CATALOG
+        .lines()
+        .find(|line| line.starts_with("| Revision |"))
+        .expect("FR-270 has a Revision property row");
+    assert!(
+        cell.contains(&format!("\"revision: {revision}\"")),
+        "FR-270's Revision cell quotes the header's revision {revision}"
+    );
+    for (code, _, _) in REVISION_1_DRAFT_8_ROWS {
+        diagnostic_row(DIAGNOSTIC_CODE_VOCABULARY, code);
     }
 }
 
