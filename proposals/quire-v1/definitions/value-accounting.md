@@ -270,13 +270,13 @@ coefficient `v × 10^T`; strict `exact` at a rounding step refuses before
 `unit.target-domain`; that charge carries `integer_bits=sbits(a,T)` and
 `decimal_digits=sdigits(a,T)`, which bound the retained coefficient; the
 coefficient is materialized only after it; and FR-140 membership, which charges
-nothing, refuses after it and before `unit.result-retain`. An integer target is
+nothing, refuses, other than a `sum` seed or running total, after it and before `unit.result-retain`. An integer target is
 a decimal target at scale zero: its rounding step, strict `exact` refusal and
 `unit.target-domain` sizing occur at the same positions, except that its
 `unit.target-domain` carries only `integer_bits = bits(a)` and no
 `decimal_digits` amount, and integer-domain
 membership, which charges nothing, refuses (`integer_out_of_domain`,
-`outside-domain`) after `unit.target-domain` and
+`outside-domain`), other than a `sum` seed or running total, after `unit.target-domain` and
 before `unit.result-retain`. Decimal and integer targets charge no `decimal.*`
 or `integer-*` point.
 
@@ -359,7 +359,8 @@ digits are not a rounding step and make no `decimal.rounding` charge. A
 divisor whose normalized coefficient is zero is undefined after
 `decimal.operands` and before `decimal.scale-expansion`. Strict `exact` at a
 rounding step is refused after `decimal.arithmetic` and before
-`decimal.rounding`. A nonmember result is refused after
+`decimal.rounding`. A nonmember result, other than a `sum` seed or running
+total, is refused after
 `decimal.rounding`, or after `decimal.arithmetic` when no rounding step occurs,
 and before `decimal.result-retain`. An undefined or refused outcome makes no
 later charge.

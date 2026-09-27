@@ -13,6 +13,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-044
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-140
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-270
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-271
@@ -107,7 +109,10 @@ value spellings to hold FR-272-AC-13's domain forms and widths, the flag order
 FR-148 names and the labels in the row's order; and require FR-044,
 `quire.value.accounting/v1` and the catalog to state FR-044-AC-10's
 evaluation-time refusals and `sum` carve-out, with FR-145 keeping a non-member
-`sum` seed or prefix a located undefined outcome.
+`sum` seed or prefix a located undefined outcome; and require FR-140 and the
+decimal, unit-target and integer-target membership sentences of
+`quire.value.accounting/v1` to carry the same `sum` carve-out on
+`decimal_out_of_domain` and the unit target refusals (FR-140-AC-5).
 
 ## Expected Results
 
@@ -140,5 +145,5 @@ causes and payload keys, every one of them a canonical FR-272 payload name;
 FR-270's Revision cell quotes the header's revision; FR-271 has one row
 for each FR-271-AC-6 code; both `invalid_source_identity` rows state the
 labels-before-path precedence; the payload value spellings match FR-272-AC-13;
-and FR-044, value-accounting, the catalog and FR-145 give a `sum` seed or
-prefix one outcome.
+and FR-044, FR-140, value-accounting, the catalog and FR-145 give a `sum` seed
+or prefix one outcome in every family.

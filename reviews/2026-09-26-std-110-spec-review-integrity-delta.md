@@ -19,7 +19,7 @@ Delta review of the fix round (`05f6e311..6389506c`): only findings the fix intr
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | medium | FR-044 (and value-accounting.md:213-217) now make an out-of-domain bounded integer/Rational arithmetic result at evaluation a `refused integer_out_of_domain`/`rational_out_of_domain`, which the catalog says is never undefined. FR-145:94-97 and TC-190 Q12 already classify the same uncharged FR-044 decision on a `sum` prefix under direct kernel evaluation as a located undefined outcome. `sum<Int[0,3]>` over `2, 2` now has two conflicting outcomes. Fix: either align FR-145/TC-190 Q12 (and any other direct-kernel non-member outcome) to the new refusal, or scope the FR-044 rule so `sum` prefixes stay undefined and say why. Choose one outcome. | spec/functional/foundation/FR-044-check-composed-numeric-definedness.md:40-48 |
-| FND-002 | low | Three normative rules added by 6389506c have no acceptance criterion and no test: FR-044's evaluation-time refusal (FR-044-AC-1..9 are all checking-time, TC-044/TC-192/TC-193), the blank-label-before-empty-path precedence, and the payload value spellings. Each can change without failing anything. | spec/functional/foundation/FR-044-check-composed-numeric-definedness.md; proposals/quire-v1/definitions/native-diagnostics.md:FR-044:40-48; native-diagnostics:102,226-239 |
+| FND-002 | low | Three normative rules added by 6389506c have no acceptance criterion and no test: FR-044's evaluation-time refusal (FR-044-AC-1..9 are all checking-time, TC-044/TC-192/TC-193), the blank-label-before-empty-path precedence, and the payload value spellings. Each can change without failing anything. | spec/functional/foundation/FR-044-check-composed-numeric-definedness.md:40-48; proposals/quire-v1/definitions/native-diagnostics.md:102,226-239 |
 | FND-003 | low | diagnostic_row_payload_keys drops every backticked name that is not already canonical before comparing, so a row that gains an extra non-canonical payload key passes tc_233_revision_1_draft_8_cause_sets_and_payload_keys_are_closed. FR-272-AC-11 says each row names exactly its keys. Renames and drops are caught (reviewer-verified). Additions are not. | tests/checked_package_v2.rs:4924-4944 |
 
 ## Reviewer comment (verbatim)
@@ -118,6 +118,72 @@ findings:
           .filter(|name| canonical.contains(name))
           .collect()
     finding: "diagnostic_row_payload_keys drops every backticked name that is not already canonical before comparing, so a row that gains an extra non-canonical payload key passes tc_233_revision_1_draft_8_cause_sets_and_payload_keys_are_closed. FR-272-AC-11 says each row names exactly its keys. Renames and drops are caught (reviewer-verified). Additions are not."
+```
+
++++
+
+
+## Dispositions
+
+Transcribed verbatim from https://linear.app/agent-ix/issue/STD-110/catalog-1-draft8-codes-for-the-kernel-refusal-causes-qsl-cannot-record#comment-3b6d96f8
+
+<!-- reviewer-dispositions repo=agent-ix/quire-specification visibility=private quoin=0.24.1 module=spec-artifacts-process@v0.26.0 id=SR-719 date=2026-09-26 -->
+
+Verified at b894ba82eb2e9d99452ed05da79d342d861e0a85 (fix commits 2cff3d9 and b894ba8).
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 2cff3d9 + b894ba8: FR-044, value-accounting (the refusal sentence and the sum schedule) and the catalog all carve out a `sum` seed or running total and hand it to FR-145's located undefined outcome. FR-145:94-97 and TC-190 Q12 are unchanged. The integer and `Rational[..]` families now give one outcome. `tc_233_arithmetic_domain_refusals_leave_sum_prefixes_undefined` (FR-044-AC-10) pins all four documents. The reviewer dropped the FR-044 carve-out in a scratch worktree and the test failed (checked_package_v2.rs:6872). The Decimal and quantity families are not closed in FR-140: see SR-723 FND-001. |
+| FND-002 | fixed | 2cff3d9: the three rules now have criteria and traced tests. FR-044-AC-10 is traced by `tc_233_arithmetic_domain_refusals_leave_sum_prefixes_undefined`, FR-272-AC-12 by `tc_233_invalid_source_identity_checks_labels_before_the_path` and FR-272-AC-13 by `tc_233_payload_values_have_one_spelling`. All are in the matrices (composed-foundation, complete-v1). The reviewer swapped `invalid` and `inexact` in the catalog's flag order and the spelling test failed (checked_package_v2.rs:7014). |
+| FND-003 | fixed | 2cff3d9: payload keys are now written `key`: in both documents, and `diagnostic_row_payload_keys` takes every backticked name followed by `:`, canonical or not. The reviewer added `` `bits`: the would-be bits `` to the `rational_out_of_domain` rows and the test failed with left `{bits, expected}`, right `{expected}` (checked_package_v2.rs:6803). An added key written without the colon would still slip through. The catalog now states the `key`: convention, so that is a convention breach, not a gap in the test. |
+
++++ [reviewer data]
+
+```yaml
+reviewed: b894ba82eb2e9d99452ed05da79d342d861e0a85
+prior_reviewed: 6389506c88d3b6eab02efe917afb1adeca7f7d19
+dispositions:
+  - fnd: FND-001
+    outcome: fixed
+    fix_sha: 2cff3d9
+    path: spec/functional/foundation/FR-044-check-composed-numeric-definedness.md
+    lines: "40-52"
+    after_excerpt: |-
+      before retaining it (`quire.value.accounting/v1`). A result outside that domain,
+      other than a `sum` seed or prefix, is refused with no value, as
+      `refused { code: integer_out_of_domain, cause: outside-domain }` or
+      `refused { code: rational_out_of_domain, cause: outside-domain }`,
+      respectively. ... A `sum` seed or prefix is not the expression's result: FR-145
+      defines `sum` as a fold whose every running total lies in `N`'s domain, ...
+      and FR-145 makes that a located undefined outcome, not a refusal.
+    verification: "Mutation: remove 'other than a `sum` seed or prefix,' from FR-044 -> tc_233_arithmetic_domain_refusals_leave_sum_prefixes_undefined panics at tests/checked_package_v2.rs:6872."
+  - fnd: FND-002
+    outcome: fixed
+    fix_sha: 2cff3d9
+    path: spec/objects/foundation/FR-272-typed-diagnostic-cause.md; spec/functional/foundation/FR-044-check-composed-numeric-definedness.md
+    lines: "FR-272:173-174; FR-044:67"
+    after_excerpt: |-
+      | FR-272-AC-12 | Under catalog revision `1-draft.8`, the native-diagnostics and FR-272 `invalid_source_identity` rows each check the labels ... in that order before the path, the first blank label deciding `blank-label`, and each reports `empty-path` only when every label is non-blank. | Test (TC-233) |
+      | FR-272-AC-13 | Under catalog revision `1-draft.8`, the catalog writes each payload value as one exact ASCII string: ... | Test (TC-233) |
+    verification: "Mutation: swap `invalid` and `inexact` in the catalog flag-set order -> tc_233_payload_values_have_one_spelling fails at tests/checked_package_v2.rs:7014 (left [inexact,...,invalid], right [invalid,...,inexact])."
+  - fnd: FND-003
+    outcome: fixed
+    fix_sha: 2cff3d9
+    path: tests/checked_package_v2.rs
+    lines: "4921-4950"
+    after_excerpt: |-
+      let pieces = payload.split('`').collect::<Vec<_>>();
+      pieces
+          .iter()
+          .enumerate()
+          .skip(1)
+          .step_by(2)
+          .filter(|(index, _)| {
+              pieces
+                  .get(index + 1)
+                  .is_some_and(|after| after.starts_with(':'))
+          })
+    verification: "Mutation: append '; and `bits`: the would-be bits.' to the native-diagnostics rational_out_of_domain row -> fails at tests/checked_package_v2.rs:6803, left {bits, expected} right {expected}."
 ```
 
 +++

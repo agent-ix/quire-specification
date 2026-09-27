@@ -767,7 +767,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-299 | FR-299-AC-4 | TC-231 | planned |
 | FR-299 | FR-299-AC-5 | TC-231 | planned |
 | FR-140 | FR-140-AC-4 | TC-185 | planned |
-| FR-140 | FR-140-AC-5 | TC-185 | planned |
+| FR-140 | FR-140-AC-5 | TC-185, TC-233 | planned |
 | FR-140 | FR-140-AC-6 | TC-185 | planned |
 | FR-140 | FR-140-AC-7 | TC-185 | planned |
 | FR-141 | FR-141-AC-4 | TC-186 | planned |

@@ -6898,6 +6898,50 @@ fn tc_233_arithmetic_domain_refusals_leave_sum_prefixes_undefined() {
     );
 }
 
+const EXACT_DECIMALS: &str =
+    include_str!("../spec/functional/type-model/FR-140-evaluate-exact-decimals.md");
+
+/// FR-140-AC-5: the decimal family and the quantity family's decimal and
+/// integer targets carry the same `sum` carve-out as FR-044: FR-140's
+/// normative text and each membership sentence of `quire.value.accounting/v1`
+/// leave a `sum` seed or running total to FR-145's located undefined outcome,
+/// so one input has one outcome in every family.
+#[trace("TC-233", "FR-140-AC-5")]
+#[test]
+fn tc_233_decimal_and_unit_domain_refusals_leave_sum_prefixes_undefined() {
+    let decimals = one_line(before_criteria(EXACT_DECIMALS));
+    assert!(
+        decimals.contains(
+            "a nonmember, other than a `sum` seed or running total, refuses as `refused { code: decimal_out_of_domain, cause: outside-domain }`"
+        ),
+        "FR-140 carves the `sum` seed or running total out of `decimal_out_of_domain`"
+    );
+    assert!(
+        decimals.contains("FR-145 makes that a located undefined outcome, not a refusal"),
+        "FR-140 names FR-145's located undefined outcome for a `sum` running total"
+    );
+    let accounting = one_line(VALUE_ACCOUNTING);
+    for (sentence, family) in [
+        (
+            "FR-140 membership, which charges nothing, refuses, other than a `sum` seed or running total,",
+            "a quantity's decimal target",
+        ),
+        (
+            "refuses (`integer_out_of_domain`, `outside-domain`), other than a `sum` seed or running total,",
+            "a quantity's integer target",
+        ),
+        (
+            "A nonmember result, other than a `sum` seed or running total, is refused after `decimal.rounding`",
+            "decimal arithmetic",
+        ),
+    ] {
+        assert!(
+            accounting.contains(sentence),
+            "value-accounting carves the `sum` running total out of {family}'s membership refusal"
+        );
+    }
+}
+
 /// The four source labels in their catalog order.
 const SOURCE_LABELS: [&str; 4] = ["authority", "identity", "revision_namespace", "revision"];
 
