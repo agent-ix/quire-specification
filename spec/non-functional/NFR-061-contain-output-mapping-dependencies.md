@@ -23,13 +23,13 @@ mapping result.
 
 | Metric | Target | Threshold | Method |
 | --- | --- | --- | --- |
-| Mandatory foreign-runtime mapping dependencies | 0 | 0 | Cargo.toml review |
+| Mandatory foreign-runtime mapping dependencies | 0 | 0 | Cargo.toml review; observer-removal test |
 | Observer results used as preservation/native truth | 0 | 0 | adverse testing |
 
 ## Verification
 
-Confirm the mapping crates' Cargo.toml declares no mandatory foreign-runtime
-dependency; remove the optional observer and reproduce identical mapping
+Confirm the mapping crates' Cargo.toml sets `publish = false` and declares no
+mandatory foreign-runtime dependency; remove the optional observer and reproduce identical mapping
 packages; inject an unavailable/ambiguous observer and verify a typed observation
 refusal with the package unchanged.
 
