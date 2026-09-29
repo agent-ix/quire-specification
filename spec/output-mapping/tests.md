@@ -51,7 +51,7 @@ separate qcir #55/#56/#57 Rust implementations bind real trace evidence.
 | Non-Functional Req | Verification Method | Evidence/Test Cases | Status |
 | --- | --- | --- | --- |
 | NFR-060 | property, boundary, fault-injection, metamorphic | TC-154, TC-155 | 🚧 Planned |
-| NFR-061 | inspection, dependency and rights audit, adverse test | TC-155 | 🚧 Planned |
+| NFR-061 | Cargo.toml review, adverse test | TC-155 | 🚧 Planned |
 
 ## Integration Test Matrix
 

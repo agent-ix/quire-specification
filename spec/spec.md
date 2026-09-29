@@ -931,7 +931,7 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-124](functional/output-mapping/FR-124-generate-bounded-fretish-output.md) | FR | Accepted FS06 FRETish 3.1 profile; qcir #57 implements |
 | [FR-125](functional/output-mapping/FR-125-produce-deterministic-output-packages.md) | FR | Accepted FS06 immutable deterministic package boundary |
 | [NFR-060](non-functional/NFR-060-bound-and-reproduce-output-mapping.md) | NFR | Accepted FS06 checked aggregate limits and reproducibility |
-| [NFR-061](non-functional/NFR-061-contain-output-mapping-dependencies.md) | NFR | Accepted FS06 Rust/rights/optional-observer boundary |
+| [NFR-061](non-functional/NFR-061-contain-output-mapping-dependencies.md) | NFR | Accepted FS06 Rust/optional-observer boundary |
 | [IT-060](integration/IT-060-output-mapping-owner-handoff.md) | IT | Planned qcir #55/#56/#57 common-boundary integration |
 | [NFR-050](non-functional/NFR-050-bound-observation-retention.md) | NFR | Accepted by FS04; concrete limits remain owner-specific |
 | [NFR-051](non-functional/NFR-051-preserve-observation-reproducibility.md) | NFR | Accepted by FS04; conformance remains separate |
