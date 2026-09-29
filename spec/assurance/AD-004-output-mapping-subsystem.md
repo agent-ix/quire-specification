@@ -37,7 +37,7 @@ target-specific correspondence and downstream structural observation.
 | Package assembler | immutable bytes/manifest/record binding and raw/JCS digests | target parser verdict or evidence sufficiency |
 | Optional structural observer | parse/typecheck observation of the immutable package | mapping classification, package mutation or native verdict |
 | Authoring tools | lossless source edits, stable formatting, incremental diagnostics and typed lifecycle APIs | semantic reinterpretation or fabricated spans |
-| Tool/provider registry | exact Rust manifest validation, capability negotiation, isolation and provenance | ambient discovery, semantic admission or effect authorization |
+| Tool/provider registry | exact Rust manifest validation, capability negotiation and isolation | ambient discovery, semantic admission or effect authorization |
 
 QSpec owns the standard contracts. Qcir #55, #56 and #57 own the separate Rust
 target mappers behind the common boundary. No target implementation is required
@@ -78,7 +78,7 @@ whole-request check or exhausted reservation exposes no partial package.
 | Structural observer after assembly | Foreign parser/tool in the semantic path | Pure Rust generation is reproducible without a foreign runtime. |
 | Complete per-obligation records | Best-effort text plus warnings | Unsupported meaning remains machine-readable and cannot disappear. |
 | Lossless CST is distinct from checked AST | Reconstruct formatting from semantic nodes | Trivia, invalid-source recovery and exact source edits remain available without changing meaning. |
-| Versioned Rust providers, no ambient extension | Load arbitrary callbacks or dynamic-library ABI | Capabilities, effects, rights and provenance are explicit and testable. |
+| Versioned Rust providers, no ambient extension | Load arbitrary callbacks or dynamic-library ABI | Capabilities, effects and rights are explicit and testable. |
 
 ## Failure containment
 

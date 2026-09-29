@@ -34,7 +34,7 @@ through actual Rust dependencies. Completion covers IT-003-SC-01/02/04 only.
 - [x] Record bounds, failures, dependency grants and local Rust gates.
 
 Observed: five local tests pass, formatting and strict all-target/all-feature
-Clippy pass on Rust 1.98.1. The adopted state-core tree has zero diff from e897f81.
+Clippy pass on Rust. The adopted state-core tree has zero diff from e897f81.
 Raw duplicate detection is a recorded existing B reader gap; no strict intake
 or semantic matching qualification is claimed. IT-003-SC-03 remains planned.
 

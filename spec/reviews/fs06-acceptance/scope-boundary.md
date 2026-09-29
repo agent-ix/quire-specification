@@ -35,4 +35,4 @@ package assembly and structural observation as distinct responsibilities.
 | Common coordinator | strict selection, dispatch, complete accounting, resources | target syntax and source parsing |
 | Target mapper | one selected correspondence and deterministic bytes | another target or shared loss semantics |
 | Package assembler | byte/record binding and identities | parser verdict and evidence sufficiency |
-| Structural observer | exact-version parse/typecheck observation | native truth, preservation and package mutation |
+| Structural observer | parse/typecheck observation | native truth, preservation and package mutation |
