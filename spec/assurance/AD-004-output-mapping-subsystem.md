@@ -35,7 +35,7 @@ target-specific correspondence and downstream structural observation.
 | Common coordinator | strict request intake, exact profile dispatch, complete ordered record set, resource reservation and generated-package identity | target-specific syntax/semantics or source parsing |
 | Target profile mapper | one exact bounded correspondence and deterministic target bytes | shared loss meaning, native semantics or another target |
 | Package assembler | immutable bytes/manifest/record binding and raw/JCS digests | target parser verdict or evidence sufficiency |
-| Optional structural observer | exact package/tool reference and parse/typecheck observation | mapping classification, package mutation or native verdict |
+| Optional structural observer | parse/typecheck observation of the immutable package | mapping classification, package mutation or native verdict |
 | Authoring tools | lossless source edits, stable formatting, incremental diagnostics and typed lifecycle APIs | semantic reinterpretation or fabricated spans |
 | Tool/provider registry | exact Rust manifest validation, capability negotiation, isolation and provenance | ambient discovery, semantic admission or effect authorization |
 
@@ -61,7 +61,7 @@ whole-request check or exhausted reservation exposes no partial package.
 - Parser/tool observations are causally downstream of the immutable package.
 - Observation adequacy and protocol adequacy retain their separate FR-061
   vocabularies; the mapping layer exposes no bare adequacy field.
-- New first-party executable paths are Rust 1.98.1 and `publish = false`.
+- New first-party executable paths are Rust and `publish = false`.
 - Plugins are either compile-time Rust trait implementations or isolated Rust
   executables using a versioned wire contract; V1 defines no unstable dynamic
   library ABI.
@@ -96,7 +96,7 @@ package.
 | Target profiles diverge in loss meaning | All consume FR-269 and the same FR-298/299 invariants. | QSpec + qcir #52 |
 | Model/exporter invents declarations | SysML/OCL mappings require exact correspondences to spec-declared domain declarations and refuse ambiguity. | qcir #55/#56 + S3 (AD-006) |
 | Temporal units or end semantics drift | FRETish mappings retain explicit clock/completeness conditions and a narrow selected interval set. | qcir #57 + temporal owner |
-| Optional tool dependency becomes mandatory | NFR-061 requires removable, exact-version observers and a pure Rust result. | each implementation owner |
+| Optional tool dependency becomes mandatory | NFR-061 requires removable observers and a pure Rust result. | each implementation owner |
 
 ## Handoff
 

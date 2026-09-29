@@ -1,6 +1,6 @@
 ---
 id: NFR-061
-title: "Contain output-mapping dependencies and rights"
+title: "Contain output-mapping dependencies"
 type: NFR
 quality_attribute: maintainability
 relationships:
@@ -14,26 +14,24 @@ relationships:
 ## Statement
 
 The first-party output-mapping production and qualification paths SHALL use Rust
-1.98.1 with `publish = false`; an external parser/tool SHALL be optional,
-downstream and selected by exact version/invocation/dependency/license identity,
-and unavailable or ambiguous rights SHALL refuse that observation without
-weakening the pure Rust mapping result.
+with `publish = false`; an external parser/tool observer SHALL be optional and
+downstream, the mapping result SHALL NOT depend on it, and an unavailable or
+ambiguous observer SHALL refuse that observation without changing the pure Rust
+mapping result.
 
 ## Measurement and Evaluation
 
 | Metric | Target | Threshold | Method |
 | --- | --- | --- | --- |
-| New first-party executable paths outside Rust 1.98.1 | 0 | 0 | inspection |
-| Mandatory foreign-runtime mapping dependencies | 0 | 0 | dependency audit |
-| Adopted external artifacts without exact rights/version record | 0 | 0 | rights inventory |
+| Mandatory foreign-runtime mapping dependencies | 0 | 0 | Cargo.toml review; observer-removal test |
 | Observer results used as preservation/native truth | 0 | 0 | adverse testing |
 
 ## Verification
 
-Inspect build, test, adapter, fixture-audit and CI paths; inventory every adopted
-artifact and transitive dependency; remove the optional observer and reproduce
-identical mapping packages; inject unavailable/ambiguous observer rights and
-verify a typed observation refusal with the package unchanged.
+Confirm the mapping crates' Cargo.toml sets `publish = false` and declares no
+mandatory foreign-runtime dependency; remove the optional observer and reproduce identical mapping
+packages; inject an unavailable/ambiguous observer and verify a typed observation
+refusal with the package unchanged.
 
 ## Status
 

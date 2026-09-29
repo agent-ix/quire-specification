@@ -22,8 +22,8 @@ TM-008 remains Planned.
 ## Test Procedure
 
 Repeat equal mapping requests across path, time, locale and optional-observer
-changes. Attach parser acceptance, parser rejection, missing tool, changed tool/
-library revision and ambiguous-rights observations. Attempt to feed generated
+changes. Attach parser acceptance, parser rejection, missing tool and ambiguous
+observer observations. Attempt to feed generated
 text as native source, use FRET formalization as TL correspondence, or promote a
 conditional/unrepresented/refused record after target acceptance.
 
