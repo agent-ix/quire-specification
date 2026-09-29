@@ -21,7 +21,7 @@ raw/JCS identities are deterministic for the exact request, profile and generato
 ## Inputs
 
 One admitted request, one complete ordered FR-298 record set, deterministic
-target bytes and the exact Rust generator identity/version.
+target bytes and the Rust generator identity.
 
 ## Outputs
 
