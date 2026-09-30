@@ -36,8 +36,7 @@ relationships:
 
 - [x] **NFR-060**: checked aggregate bounds, no partial success and repeatable
   bytes/identity.
-- [x] **NFR-061**: Rust-only first-party paths, optional downstream observers
-  and exact dependency/version/rights inventory.
+- [x] **NFR-061**: Rust-only first-party paths and optional downstream observers.
 
 ## Dependency Graph
 

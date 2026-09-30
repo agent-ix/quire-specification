@@ -3,7 +3,7 @@ id: SR-718
 title: "Gap analysis — STD-110 catalog 1-draft.8 value-refusal codes"
 type: SpecReview
 analysis: gap-analysis
-scope: "agent-ix/quire-specification@05f6e31144250e4d2ca5898b2f1284075ced297f; PR #162 diff: FR-272-AC-11, FR-270 revision cell, FR-271 new values rows, native-diagnostics header, tests/checked_package_v2.rs"
+scope: "agent-ix/quire-specification; PR #162 diff: FR-272-AC-11, FR-270 revision cell, FR-271 new values rows, native-diagnostics header, tests/checked_package_v2.rs"
 review_set: subset
 ---
 # Gap analysis — STD-110 catalog 1-draft.8 value-refusal codes
@@ -41,12 +41,11 @@ Transcribed verbatim from https://linear.app/agent-ix/issue/STD-110/catalog-1-dr
 | --- | --- | --- |
 | FND-001 | fixed | 6389506c: added FR-270-AC-5 (the Revision cell quotes the header revision) and FR-271-AC-6 (one values row for each of the eleven codes), both mapped to TC-233 in spec/complete-v1/tests.md. They are traced by `tc_233_catalog_revision_and_code_vocabulary_follow_the_catalog`. The reviewer deleted FR-271's `integer_out_of_domain` row in a scratch worktree and the test failed. |
 
-Delta scope: `git diff 05f6e311..6389506c`. Verified at 6389506c88d3b6eab02efe917afb1adeca7f7d19.
+Delta scope: `git diff 05f6e311..6389506c`.
 
 +++ [reviewer data]
 
 ```yaml
-reviewed: 6389506c88d3b6eab02efe917afb1adeca7f7d19
 prior_reviewed: 05f6e311
 dispositions:
   - fnd: FND-001

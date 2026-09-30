@@ -24,7 +24,7 @@ backend, Kani, observation and protocol dependencies.
 
 | Dependency | Current FS01 treatment |
 | --- | --- |
-| Contract-IR ADR-0053 | Completed by PR #72 at `7d4901526bf2ec64c3c546c1781d364fdc4c3054`; the local handoff is historical correspondence. |
+| Contract-IR ADR-0053 | Completed by PR #72; the local handoff is historical correspondence. |
 | Historical compiler profile | `ix:native` / `0-draft` / `state-finite/0-draft` stays immutable and remains the released bounded implementation basis. |
 | Composed state definitions | Identity roles/dependency direction accepted; FS02/FS03 freeze semantic revisions and producer correspondence. |
 | Original ConfigVersion model | Still requires an explicit finite maximum and relationship correspondence; the bounded worked example does not discharge it. |

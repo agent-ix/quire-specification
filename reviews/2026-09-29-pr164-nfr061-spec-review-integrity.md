@@ -3,7 +3,7 @@ id: SR-727
 title: "Spec review — PR #164 NFR-061 drop observer tracking"
 type: SpecReview
 analysis: integrity
-scope: "agent-ix/quire-specification@3dcefcf070a0b182a19b853932d3c725b25742d2; PR #164 diff against origin/main e56756f: NFR-061, AD-004, TC-155, spec/output-mapping/tests.md, spec/spec.md; cross-checked FR-120, FR-122, FR-123, FR-124, FR-297, TC-151, TC-152, TC-153, plan/Plan-007"
+scope: "agent-ix/quire-specification; PR #164 diff against origin/main e56756f: NFR-061, AD-004, TC-155, spec/output-mapping/tests.md, spec/spec.md; cross-checked FR-120, FR-122, FR-123, FR-124, FR-297, TC-151, TC-152, TC-153, plan/Plan-007"
 review_set: subset
 ---
 # Spec review — PR #164 NFR-061 drop observer tracking
@@ -15,7 +15,7 @@ Ticket: none found (branch `task/nfr061-drop-observer-tracking`, title
 PR #164 spec diff.
 
 The removals are clean. No version, invocation, dependency-identity, licence or
-rights wording and no Rust 1.98.1 pin remains in NFR-061, TC-155, the NFR-061
+rights wording and no Rust version pin remains in NFR-061, TC-155, the NFR-061
 rows of `spec/output-mapping/tests.md` and `spec/spec.md`, or the NFR-061
 lines of AD-004. FR-122/123/124 and TC-151/152/153 carry no such wording
 ("revision `1-draft.1`" there is profile selection, not tracking). The kept

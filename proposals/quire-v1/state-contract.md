@@ -3,7 +3,7 @@
 FS03 accepts this contract as the normative state meaning needed by the approved
 capability inventory. Acceptance fixes semantics and portable expected vectors;
 it does not claim that every compiler, runtime or backend implements them.
-Profile files and source bytes match their pinned digests; results keep their identities. The
+Results keep their identities. The
 [first-profile amendment](../native-source-1-draft/README.md) is the retained
 admission baseline, with the explicit extensions below. A full-v1 claim requires
 the selected extensions; a first-profile implementation may still identify its

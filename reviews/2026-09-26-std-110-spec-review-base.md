@@ -3,7 +3,7 @@ id: SR-713
 title: "Spec review (base) — STD-110 catalog 1-draft.8 value-refusal codes"
 type: SpecReview
 analysis: base
-scope: "agent-ix/quire-specification@05f6e31144250e4d2ca5898b2f1284075ced297f; PR #162 diff against origin/main 0d53cf2: proposals/quire-v1/definitions/native-diagnostics.md, FR-270, FR-271, FR-272 (rows and FR-272-AC-11), TC-233, spec/complete-v1/tests.md, tests/checked_package_v2.rs"
+scope: "agent-ix/quire-specification; PR #162 diff against origin/main 0d53cf2: proposals/quire-v1/definitions/native-diagnostics.md, FR-270, FR-271, FR-272 (rows and FR-272-AC-11), TC-233, spec/complete-v1/tests.md, tests/checked_package_v2.rs"
 review_set: subset
 ---
 # Spec review (base) — STD-110 catalog 1-draft.8 value-refusal codes
@@ -68,12 +68,11 @@ Transcribed verbatim from https://linear.app/agent-ix/issue/STD-110/catalog-1-dr
 | FND-002 | fixed | 6389506c: README index row says `1-draft.8`. |
 | FND-003 | fixed | 6389506c: older-producer sentence now says "with neither `blank-label` nor `empty-path`". |
 
-Delta scope: `git diff 05f6e311..6389506c`. Verified at 6389506c88d3b6eab02efe917afb1adeca7f7d19. New findings from the fix round are in SR-719.
+Delta scope: `git diff 05f6e311..6389506c`. New findings from the fix round are in SR-719.
 
 +++ [reviewer data]
 
 ```yaml
-reviewed: 6389506c88d3b6eab02efe917afb1adeca7f7d19
 prior_reviewed: 05f6e311
 dispositions:
   - fnd: FND-001

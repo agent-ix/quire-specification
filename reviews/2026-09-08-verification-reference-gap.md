@@ -5,7 +5,6 @@ type: SpecReview
 analysis: gap-analysis
 scope: "plan/Plan-001-verification-reference, spec/verification-reference/tests.md, tests"
 review_set: subset
-evaluated_revision: "395acaea412257deed63f128fbb522433c1fd5b7"
 relationships:
   - target: ix://agent-ix/quire-specification/Plan-001
     type: reviews

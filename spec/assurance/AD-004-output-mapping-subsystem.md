@@ -37,7 +37,7 @@ target-specific correspondence and downstream structural observation.
 | Package assembler | immutable bytes/manifest/record binding and raw/JCS digests | target parser verdict or evidence sufficiency |
 | Optional structural observer | parse/typecheck observation of the immutable package | mapping classification, package mutation or native verdict |
 | Authoring tools | lossless source edits, stable formatting, incremental diagnostics and typed lifecycle APIs | semantic reinterpretation or fabricated spans |
-| Tool/provider registry | exact Rust manifest validation, capability negotiation and isolation | ambient discovery, semantic admission or effect authorization |
+| Tool/provider registry | exact Rust manifest validation, capability negotiation, isolation and provenance | ambient discovery, semantic admission or effect authorization |
 
 QSpec owns the standard contracts. Qcir #55, #56 and #57 own the separate Rust
 target mappers behind the common boundary. No target implementation is required

@@ -24,7 +24,7 @@ When a producer result enters the assurance evidence store, the producer SHALL u
 - `results` — immutable native/method/qualification result references.
 - `artifacts` — content-addressed bytes, media type, digest domain and availability.
 - `traceability` — typed verifies/implements/qualifies/supersedes relationships.
-- `rights` — license, disclosure and retention metadata.
+- `rights` — provenance, license, disclosure and retention metadata.
 - `limitations` — missing/redacted/non-replayable material and its claim impact.
 
 ## Identity and validation

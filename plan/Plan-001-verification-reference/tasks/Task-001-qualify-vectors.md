@@ -33,7 +33,7 @@ through actual Rust dependencies. Completion covers IT-003-SC-01/02/04 only.
 - [x] Run B's JCS API with distinct raw-byte and semantic identities.
 
 Observed: five local tests pass, formatting and strict all-target/all-feature
-Clippy pass on Rust.
+Clippy pass.
 Raw duplicate detection is a recorded existing B reader gap; no strict intake
 or semantic matching qualification is claimed. IT-003-SC-03 remains planned.
 

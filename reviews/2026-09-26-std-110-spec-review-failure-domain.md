@@ -3,7 +3,7 @@ id: SR-715
 title: "Spec review (failure-domain) — STD-110 catalog 1-draft.8 value-refusal codes"
 type: SpecReview
 analysis: failure-domain
-scope: "agent-ix/quire-specification@05f6e31144250e4d2ca5898b2f1284075ced297f; PR #162 diff against origin/main 0d53cf2: proposals/quire-v1/definitions/native-diagnostics.md new rows and 1-draft.8 paragraph, FR-271 and FR-272 new rows; cross-checked against QSL FR-001 (origin/main), FR-140, FR-148"
+scope: "agent-ix/quire-specification; PR #162 diff against origin/main 0d53cf2: proposals/quire-v1/definitions/native-diagnostics.md new rows and 1-draft.8 paragraph, FR-271 and FR-272 new rows; cross-checked against QSL FR-001 (origin/main), FR-140, FR-148"
 review_set: subset
 ---
 # Spec review (failure-domain) — STD-110 catalog 1-draft.8 value-refusal codes
@@ -43,12 +43,11 @@ Transcribed verbatim from https://linear.app/agent-ix/issue/STD-110/catalog-1-dr
 | FND-002 | fixed | 6389506c: native-diagnostics now fixes one ASCII spelling each for domains (`Int[lo, hi]`, `Decimal[lo, hi; smin, smax]`, `Rational[lo, hi; dmin, dmax]`, `Text[min, max; profile]`, FR-038 integers, `, ` inside a group, `; ` between groups, no rounding mode), widths (`binary32`/`binary64`), the flag set (fixed order, `,` with no space) and labels. No criterion or test pins it (SR-719 FND-002). |
 | FND-003 | fixed | 6389506c: the `ieee_not_exact` rows in native-diagnostics and FR-272 both define `flags` as the flags the same operation would return under `nearest-even` (FR-148). This matches TC-193 F23. |
 
-Delta scope: `git diff 05f6e311..6389506c`. Verified at 6389506c88d3b6eab02efe917afb1adeca7f7d19.
+Delta scope: `git diff 05f6e311..6389506c`.
 
 +++ [reviewer data]
 
 ```yaml
-reviewed: 6389506c88d3b6eab02efe917afb1adeca7f7d19
 prior_reviewed: 05f6e311
 dispositions:
   - fnd: FND-001
