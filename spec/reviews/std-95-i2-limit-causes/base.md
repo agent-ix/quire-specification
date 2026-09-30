@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "STD-95 branch task/95-i2-limit-causes: native-diagnostics revision 1-draft.7 (`stage_limit_exceeded` causes `token-count-exceeded`, `edge-count-exceeded`, `occurrence-count-exceeded`, `diagnostic-count-exceeded`; catalog-owned 1-draft.6 spellings), FR-270 revision cell, FR-271 1-draft.6/1-draft.7 codes and history, FR-272 `duplicate_selection` and `stage_limit_exceeded` rows and FR-272-AC-10, TC-233, spec/complete-v1/tests.md, tests/checked_package_v2.rs"
 review_set: base
-evaluated_revision: "task/95-i2-limit-causes"
 review_date: "2026-09-24"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-270, type: reviews }

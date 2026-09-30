@@ -41,16 +41,12 @@ Transcribed verbatim from https://linear.app/agent-ix/issue/STD-110/catalog-1-dr
 | --- | --- | --- |
 | FND-001 | fixed | 6389506c: added FR-270-AC-5 (the Revision cell quotes the header revision) and FR-271-AC-6 (one values row for each of the eleven codes), both mapped to TC-233 in spec/complete-v1/tests.md. They are traced by `tc_233_catalog_revision_and_code_vocabulary_follow_the_catalog`. The reviewer deleted FR-271's `integer_out_of_domain` row in a scratch worktree and the test failed. |
 
-Delta scope: `git diff 05f6e311..6389506c`.
-
 +++ [reviewer data]
 
 ```yaml
-prior_reviewed: 05f6e311
 dispositions:
   - fnd: FND-001
     outcome: fixed
-    fix_sha: 6389506c
     path: spec/objects/foundation/FR-270-versioned-diagnostic-catalog.md; spec/objects/foundation/FR-271-diagnostic-code-vocabulary.md
     lines: "FR-270:95; FR-271:161"
     after_excerpt: |-

@@ -5,7 +5,6 @@ type: SpecReview
 analysis: scope-boundary
 scope: "QSpec #68 authority, repository ownership and QSL #118/#119 allocation"
 review_set: all
-evaluated_revision: "cd4c0a0 plus QSpec #68 working-tree remediation"
 review_date: "2026-09-15"
 relationships:
   - target: ix://agent-ix/quire-specification/issues/68

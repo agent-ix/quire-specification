@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "AD-003, profile definition set, ADR-0053 handoff and capability ledger"
 review_set: subset
-evaluated_revision: "task/2 working tree based on 96fc29d"
 review_date: "2026-09-13"
 ---
 # Dependency review of FS01 language charter ratification

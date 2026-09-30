@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "AD-001, AD-003, FR-001, FR-019 and FS01 status amendments"
 review_set: subset
-evaluated_revision: "task/2 working tree based on 96fc29d"
 review_date: "2026-09-13"
 ---
 # Base review of FS01 language charter ratification

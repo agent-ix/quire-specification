@@ -47,16 +47,12 @@ Transcribed verbatim from https://linear.app/agent-ix/issue/STD-110/catalog-1-dr
 | --- | --- | --- |
 | FND-001 | still-open | Partly fixed in 6389506c. The payload-key half is fixed: FR-272-AC-11 names each code's keys, and `tc_233_revision_1_draft_8_cause_sets_and_payload_keys_are_closed` checks both documents' rows. The reviewer re-ran the `flags`->`flag_set` rename and it fails the test. The second half of the finding is untouched: "no criterion ties a code to its FR outcome". FR-140, FR-141, FR-147 and TC-185, TC-186, TC-192 still say "refuses" without naming `inexact_decimal`, `decimal_out_of_domain`, `text_length_out_of_domain`, `division_pair_out_of_domain` or `modulo_out_of_domain`, and FR-148/TC-193 do not name `ieee_not_exact`. Only the catalog paragraph maps a code to its FR. Fix: name the code in each owning FR's refusal (as 6389506c already did for the two FR-148 IEEE codes), or defer with a ticket id. |
 
-Delta scope: `git diff 05f6e311..6389506c`.
-
 +++ [reviewer data]
 
 ```yaml
-prior_reviewed: 05f6e311
 dispositions:
   - fnd: FND-001
     outcome: still-open
-    partial_fix_sha: 6389506c
     reason: "Payload keys: fixed and mutation-verified (rename flags->flag_set in the native-diagnostics ieee_not_exact row fails at tests/checked_package_v2.rs:6784, left {expected} right {expected, flags}). Code-to-FR outcome: open. `grep -rn` over spec/functional and spec/test-cases for inexact_decimal|decimal_out_of_domain|modulo_out_of_domain|division_pair_out_of_domain|text_length_out_of_domain|ieee_not_exact returns nothing at 6389506c."
     path: spec/objects/foundation/FR-272-typed-diagnostic-cause.md
     lines: "172"
@@ -87,8 +83,6 @@ Informational, not reopened: some other TC vectors still say a bare "refuses" (T
 dispositions:
   - fnd: FND-001
     outcome: fixed
-    fix_sha: 2cff3d9
-    supersedes: "still-open at 6389506c"
     path: spec/functional/expressions/FR-147-evaluate-integer-division-domains.md
     lines: "58-63,95"
     after_excerpt: |-

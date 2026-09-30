@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "FR-090 through FR-095, NFR-040, TM-006, TC-110 through TC-118, IT-040 and IT-041"
 review_set: all
-evaluated_revision: "2f347b8"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-090, type: reviews }

@@ -5,7 +5,6 @@ type: SpecReview
 analysis: failure-domain
 scope: "Identity confusion, absence handling, digest-domain crossing, order soundness and topological edge cases across spec/objects/** at d6e19a5, against FR-047, FR-049 to FR-062, FR-090 to FR-095 and FR-110 to FR-116"
 review_set: subset
-evaluated_revision: "d6e19a5"
 review_date: "2026-09-11"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-220, type: reviews }

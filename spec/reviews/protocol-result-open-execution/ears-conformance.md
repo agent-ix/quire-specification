@@ -5,7 +5,6 @@ type: SpecReview
 analysis: ears-conformance
 scope: "FR-061 normative statements"
 review_set: all
-evaluated_revision: "cb2748d"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-061, type: reviews }

@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "Branch objects/closure-axes-vocabulary at 7a050c9: the edges added, the artifacts that depend on the closed gap, and what each consumer must do"
 review_set: subset
-evaluated_revision: "7a050c9"
 review_date: "2026-09-12"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-284, type: reviews }

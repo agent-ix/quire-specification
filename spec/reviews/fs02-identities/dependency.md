@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "quire-specification #28 identity authorities and implemented consumer reality"
 review_set: subset
-evaluated_revision: "quire-specification 6a50ab6; quire-spec-language 6eccb05; quire-protocol e53fb55; quire-observation 41e4919"
 review_date: "2026-09-13"
 ---
 # Dependency review of FS02 protocol identity rulings

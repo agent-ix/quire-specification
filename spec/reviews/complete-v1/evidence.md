@@ -5,7 +5,6 @@ type: SpecReview
 analysis: evidence
 scope: "complete V1 acceptance criteria, test methods and qualification evidence"
 review_set: all
-evaluated_revision: "cbd13b2 plus Task-008 remediation"
 review_date: "2026-09-15"
 ---
 

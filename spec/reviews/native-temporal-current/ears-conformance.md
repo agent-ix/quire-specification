@@ -5,7 +5,6 @@ type: SpecReview
 analysis: ears-conformance
 scope: "Normative statements in FR-090 through FR-095 and NFR-040"
 review_set: all
-evaluated_revision: "2f347b8"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-091, type: reviews }

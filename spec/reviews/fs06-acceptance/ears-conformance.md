@@ -5,7 +5,6 @@ type: SpecReview
 analysis: ears-conformance
 scope: "FR-120–125, FR-297–299 and NFR-060/061"
 review_set: subset
-evaluated_revision: "task/7 working tree based on 0dd4384"
 review_date: "2026-09-14"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-120, type: reviews }

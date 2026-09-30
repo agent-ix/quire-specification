@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "Edge direction, edge legality, cross-workstream dependence and identifier allocation for the change at a9368c1"
 review_set: subset
-evaluated_revision: "a9368c1"
 review_date: "2026-09-11"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-207, type: reviews }

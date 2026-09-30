@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "US-006, FR-050..FR-061, NFR-020..NFR-021, IT-020..IT-021, TC-050..TC-063 and TM-004"
 review_set: all
-evaluated_revision: "61a7524"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/US-006, type: reviews }

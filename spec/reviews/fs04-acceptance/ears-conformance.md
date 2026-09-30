@@ -5,7 +5,6 @@ type: SpecReview
 analysis: ears-conformance
 scope: "FR-090–095, FR-110–116, NFR-040 and NFR-050–052"
 review_set: subset
-evaluated_revision: "task/5 working tree based on c3f4306"
 review_date: "2026-09-14"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-090, type: reviews }

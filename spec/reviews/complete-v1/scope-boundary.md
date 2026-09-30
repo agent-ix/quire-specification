@@ -5,7 +5,6 @@ type: SpecReview
 analysis: scope-boundary
 scope: "complete V1 ownership and external-system allocation"
 review_set: all
-evaluated_revision: "cbd13b2 plus Task-008 remediation"
 review_date: "2026-09-15"
 ---
 

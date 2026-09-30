@@ -143,7 +143,6 @@ Transcribed verbatim from https://linear.app/agent-ix/issue/STD-110/catalog-1-dr
 dispositions:
   - fnd: FND-001
     outcome: fixed
-    fix_sha: 2cff3d9
     path: spec/functional/foundation/FR-044-check-composed-numeric-definedness.md
     lines: "40-52"
     after_excerpt: |-
@@ -157,7 +156,6 @@ dispositions:
     verification: "Mutation: remove 'other than a `sum` seed or prefix,' from FR-044 -> tc_233_arithmetic_domain_refusals_leave_sum_prefixes_undefined panics at tests/checked_package_v2.rs:6872."
   - fnd: FND-002
     outcome: fixed
-    fix_sha: 2cff3d9
     path: spec/objects/foundation/FR-272-typed-diagnostic-cause.md; spec/functional/foundation/FR-044-check-composed-numeric-definedness.md
     lines: "FR-272:173-174; FR-044:67"
     after_excerpt: |-
@@ -166,7 +164,6 @@ dispositions:
     verification: "Mutation: swap `invalid` and `inexact` in the catalog flag-set order -> tc_233_payload_values_have_one_spelling fails at tests/checked_package_v2.rs:7014 (left [inexact,...,invalid], right [invalid,...,inexact])."
   - fnd: FND-003
     outcome: fixed
-    fix_sha: 2cff3d9
     path: tests/checked_package_v2.rs
     lines: "4921-4950"
     after_excerpt: |-

@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "FS06 prerequisites, target standards, optional observers and qcir implementation routing"
 review_set: subset
-evaluated_revision: "task/7 working tree based on 0dd4384; qcir #55/#56/#57 open"
 review_date: "2026-09-14"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-122, type: reviews }

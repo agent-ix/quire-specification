@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "quire-specification #31; FR-050, FR-052, FR-054, FR-056, FR-057, FR-058, FR-111 and FR-210, FR-216, FR-217, FR-220, FR-233, FR-237, FR-239, FR-262"
 review_set: subset
-evaluated_revision: "task/31 working tree based on dcc22bd"
 review_date: "2026-09-13"
 ---
 # Base review of FS02 protocol residual rulings

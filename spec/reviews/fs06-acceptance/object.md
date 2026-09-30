@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "FR-269 and FR-297–299 identity, absence, ordering and digest contracts"
 review_set: subset
-evaluated_revision: "task/7 working tree based on 0dd4384"
 review_date: "2026-09-14"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-269, type: reviews }

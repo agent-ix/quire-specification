@@ -80,9 +80,9 @@ qualification tests' dev-dependencies and their licence grants are recorded
 in [Dependency rights](docs/qualification-dependencies.md). TC completion and independent
 consumer adoption remain separate from the five producer qualification tests.
 
-The dated review glob selects the typed SpecReview artifacts. The two historical
-agent-a review notes predate the artifact workflow and have no type frontmatter;
-an unrestricted reviews glob reports those two existing structural errors.
+The dated review glob selects the typed SpecReview artifacts. The historical
+agent-a review note predates the artifact workflow and has no type frontmatter;
+an unrestricted reviews glob reports that existing structural error.
 
 ## Required language
 

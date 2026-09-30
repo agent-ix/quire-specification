@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "quire-specification #31 owner rulings against current Spec Language, Protocol and Observation implementation reality"
 review_set: subset
-evaluated_revision: "quire-specification dcc22bd; quire-spec-language 6eccb05; quire-protocol e53fb55; quire-observation 41e4919"
 review_date: "2026-09-13"
 ---
 # Dependency review of FS02 protocol residual rulings

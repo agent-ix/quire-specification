@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "FS01 native-source profile packet and dependency record"
 review_set: subset
-evaluated_revision: "66e032e"
 review_date: "2026-09-07"
 ---
 

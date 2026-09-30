@@ -43,23 +43,18 @@ Transcribed verbatim from https://linear.app/agent-ix/issue/STD-110/catalog-1-dr
 | FND-002 | fixed | 6389506c: native-diagnostics now fixes one ASCII spelling each for domains (`Int[lo, hi]`, `Decimal[lo, hi; smin, smax]`, `Rational[lo, hi; dmin, dmax]`, `Text[min, max; profile]`, FR-038 integers, `, ` inside a group, `; ` between groups, no rounding mode), widths (`binary32`/`binary64`), the flag set (fixed order, `,` with no space) and labels. No criterion or test pins it (SR-719 FND-002). |
 | FND-003 | fixed | 6389506c: the `ieee_not_exact` rows in native-diagnostics and FR-272 both define `flags` as the flags the same operation would return under `nearest-even` (FR-148). This matches TC-193 F23. |
 
-Delta scope: `git diff 05f6e311..6389506c`.
-
 +++ [reviewer data]
 
 ```yaml
-prior_reviewed: 05f6e311
 dispositions:
   - fnd: FND-001
     outcome: fixed
-    fix_sha: 6389506c
     path: proposals/quire-v1/definitions/native-diagnostics.md
     lines: "102"
     after_excerpt: |-
       The label check runs first, over the labels in that order, and the first blank label decides `blank-label`; `empty-path` is reported only when every label is non-blank and the source path is empty.
   - fnd: FND-002
     outcome: fixed
-    fix_sha: 6389506c
     path: proposals/quire-v1/definitions/native-diagnostics.md
     lines: "226-239"
     after_excerpt: |-
@@ -75,7 +70,6 @@ dispositions:
         space;
   - fnd: FND-003
     outcome: fixed
-    fix_sha: 6389506c
     path: proposals/quire-v1/definitions/native-diagnostics.md
     lines: "110"
     after_excerpt: |-

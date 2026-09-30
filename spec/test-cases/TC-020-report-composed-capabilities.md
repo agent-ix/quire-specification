@@ -8,8 +8,8 @@ relationships:
 ---
 ## Description
 
-Planned reporting controls for the versioned full-v1 inventory. This TC does
-not supply any missing implementation/conformance evidence itself.
+Planned reporting controls for full-v1 capability claims. This TC does not
+supply any missing implementation/conformance evidence itself.
 
 ## Test Procedure
 
@@ -19,14 +19,8 @@ synthetic inventory. Replace selected evidence with only planned cases or an
 old profile's results. Separately request a deliberately partial profile report
 while later realizability research is unfinished.
 
-Use every ID in the [51-row capability crosswalk](../../proposals/quire-v1/capabilities.md#initial-specification-crosswalk),
-preserving its V1/Later/Refuse decision. A required positive V1 capability cannot
-disappear because another row shares its family. Later capabilities are not
-silently promoted to mandatory positive scope; selected-profile refusal rules
-still require their corresponding negative conformance controls. References to
-D's reserved but absent requirement IDs do not count as authored or verified
-requirements. An outer package feature list is discovery metadata, not evidence
-that any listed family or required capability is implemented.
+An outer package feature list is discovery metadata, not evidence that any
+listed family or required capability is implemented.
 
 ## Expected Results
 

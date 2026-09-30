@@ -5,7 +5,6 @@ type: SpecReview
 analysis: failure-domain
 scope: "FR-050..FR-061, NFR-020..NFR-021 and the protocol contract"
 review_set: all
-evaluated_revision: "61a7524"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-059, type: reviews }

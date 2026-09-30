@@ -68,16 +68,14 @@ Transcribed verbatim from https://linear.app/agent-ix/issue/STD-110/catalog-1-dr
 | FND-002 | fixed | 6389506c: README index row says `1-draft.8`. |
 | FND-003 | fixed | 6389506c: older-producer sentence now says "with neither `blank-label` nor `empty-path`". |
 
-Delta scope: `git diff 05f6e311..6389506c`. New findings from the fix round are in SR-719.
+New findings from the fix round are in SR-719.
 
 +++ [reviewer data]
 
 ```yaml
-prior_reviewed: 05f6e311
 dispositions:
   - fnd: FND-001
     outcome: fixed
-    fix_sha: 6389506c
     path: spec/objects/foundation/FR-272-typed-diagnostic-cause.md
     lines: "176-180"
     after_excerpt: |-
@@ -89,14 +87,12 @@ dispositions:
     verification: "Reviewer mutation (remove `label` from the list) fails tc_233_revision_1_draft_8_cause_sets_and_payload_keys_are_closed at tests/checked_package_v2.rs:6771."
   - fnd: FND-002
     outcome: fixed
-    fix_sha: 6389506c
     path: proposals/quire-v1/definitions/README.md
     lines: "41"
     after_excerpt: |-
       | `quire.native.diagnostics/v1` | `1-draft.8` | [Diagnostic interpretation](native-diagnostics.md) |
   - fnd: FND-003
     outcome: fixed
-    fix_sha: 6389506c
     path: proposals/quire-v1/definitions/native-diagnostics.md
     lines: "241-243"
     after_excerpt: |-

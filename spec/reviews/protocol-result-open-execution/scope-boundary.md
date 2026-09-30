@@ -5,7 +5,6 @@ type: SpecReview
 analysis: scope-boundary
 scope: "FR-061 ownership across A/B/E/F, Quoin and Engineering Assurance"
 review_set: all
-evaluated_revision: "cb2748d"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-061, type: reviews }

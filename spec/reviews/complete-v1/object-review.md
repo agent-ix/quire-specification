@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "complete V1 domain objects, value objects and I01-I21 payload contracts"
 review_set: all
-evaluated_revision: "cbd13b2 plus Task-008 remediation"
 review_date: "2026-09-15"
 ---
 
