@@ -41,3 +41,21 @@ digest hashes `NATIVE_DIAGNOSTICS` itself, as the lib docs say.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | The new public library API has no owning requirement or interface artifact in spec/; AGENTS.md asks for /specify before implementation. The owner may rule a two-constant accessor exempt. | src/lib.rs:1-20 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | medium | FR-201-AC-7 ends "and the library exposes no digest", but its only test (`tc_233_definition_library_exposes_the_exact_authored_bytes`) checks the bytes alone, so that clause has no test that could fail. It is also a negative statement. Drop the clause from AC-7 and "It records no digest." from the section. | spec/objects/foundation/FR-201-canonical-identity-domain.md:96,110 |
+| FND-003 | low | FR-201-AC-7 has no row in the complete-v1 Test Matrix; FR-201-AC-6 has one (`FR-201 | FR-201-AC-6 | TC-233 | planned`). | spec/complete-v1/tests.md:542 |
+
+## Dispositions
+
+Round 1, reviewed at 21e5a7bda4b2acfffe077af1b2649f24f1d9caf9. FR-201's
+`quire validate` output is identical at 4634f5f and 21e5a7b (23 lines: the
+existing missing `id` frontmatter and 21 `invalid-model-cell` rows), so the
+edit adds no validation error, as the coder said.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 21e5a7b |

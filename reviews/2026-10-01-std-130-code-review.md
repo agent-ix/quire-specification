@@ -46,3 +46,17 @@ blocks the accessor itself; all three are small text or layout fixes.
 | FND-001 | medium | The README paragraph this PR edits links `docs/qualification-dependencies.md`, whose "Exact selection" column and the `reviews/data/verification-reference-dependencies.json` inventory it cites restate versions and git revs that live in Cargo.toml and Cargo.lock. That is version tracking, which AGENTS.md says to remove when touched. Drop the column, the inventory file and the README's "exact selected sources" clause; keep the licence-grant rows. | README.md:92-93; docs/qualification-dependencies.md:8-26 |
 | FND-002 | low | Two `use quire_specification::...` declarations sit in the middle of the file among `const` items (one at line 30 between `include_str!` consts, one at line 5316 after a test fn) instead of with the other imports at the top. | tests/checked_package_v2.rs:30,5316 |
 | FND-003 | low | "record its grants and exact selected sources" now follows a sentence about the dependency-free `quire_specification` lib, so "its" reads as the lib. The grants belong to the dev-only qualification tests. | README.md:90-93 |
+
+## Dispositions
+
+Round 1, reviewed at 21e5a7bda4b2acfffe077af1b2649f24f1d9caf9. Gates re-run
+on that head with Rust 1.98.1: `cargo fmt --check`, `cargo test --locked`
+(78 tests, all pass) and clippy `-D warnings` all exit 0. The new
+`COMPLETE_VALUE_SELECTION_VECTORS` constant includes a file inside the package
+and no test still reads that file directly. No new code-review findings.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 21e5a7b |
+| FND-002 | fixed | 21e5a7b |
+| FND-003 | fixed | 21e5a7b |
