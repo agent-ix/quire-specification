@@ -5,7 +5,13 @@ edition = "2024"
 rust-version = "1.98"
 license = "AGPL-3.0-or-later"
 publish = false
-description = "Private qualification tests for authored shared-reference fixtures"
+description = "Authored definition documents by reference, plus private qualification tests"
+
+# The library has no dependencies, so a git-dependency consumer builds only the
+# authored bytes it exposes; everything below is dev-only qualification.
+[lib]
+name = "quire_specification"
+path = "src/lib.rs"
 
 [dev-dependencies]
 quire-verification = { git = "https://github.com/agent-ix/quire-verification", rev = "5305b40d0bc78bf2a566bd5609669373361e87b8" }

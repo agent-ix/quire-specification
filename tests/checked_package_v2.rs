@@ -27,8 +27,7 @@ const COMPOUND_UNIT_VECTORS: &str =
     include_str!("../proposals/quire-v1/definitions/value-compound-unit-vectors.json");
 const VALUE_RULE_MANIFEST: &str =
     include_str!("../proposals/quire-v1/definitions/value-complete-rules.json");
-const COMPLETE_VALUE_LOCK: &str =
-    include_str!("../proposals/quire-v1/definitions/complete-value-lock.json");
+use quire_specification::COMPLETE_VALUE_LOCK;
 const COMPLETE_VALUE_SELECTION_VECTORS: &str =
     include_str!("../proposals/quire-v1/definitions/complete-value-selection-vectors.json");
 
@@ -5314,8 +5313,7 @@ fn tc_233_package_selection_vectors_admit_exact_conditional_and_alternative_prof
     }
 }
 
-const NATIVE_DIAGNOSTICS: &str =
-    include_str!("../proposals/quire-v1/definitions/native-diagnostics.md");
+use quire_specification::NATIVE_DIAGNOSTICS;
 
 /// Replace one application-bearing node of a package, recompute its exact
 /// dependencies and key it, its projection and the package from the preimage.
