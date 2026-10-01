@@ -1154,6 +1154,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-453 | FR-453-AC-2 | TC-414 | planned |
 | FR-453 | FR-453-AC-3 | TC-414 | planned |
 | FR-453 | FR-453-AC-4 | TC-414 | planned |
+| FR-453 | FR-453-AC-5 | TC-414 | planned |
+| FR-453 | FR-453-AC-6 | TC-414 | planned |
 
 ## Test Case Summary
 

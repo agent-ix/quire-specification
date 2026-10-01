@@ -242,7 +242,10 @@ declaration cannot declare a domain object.
 `using` selects a declared profile alias for every native declaration;
 there is no backend-derived default. A profile's string names its definition
 identity, which the explicit compiler inventory resolves. A grammar parse does
-not prove that identity.
+not prove that identity. A `profile` declaration may name any
+[header-selectable layer](definitions/README.md#header-selectable-layers), and
+the declarations that use its alias are admitted under that layer's
+admitted-form set (FR-001).
 
 A `model` declaration imports one domain package. Its string names the domain
 package identity, `version` names its version, and `digest` is the

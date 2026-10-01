@@ -22,49 +22,57 @@ relationships:
 ## Description
 
 When a refinement test gate compiles one source unit under the parent and
-the child side of a V1 profile-layering edge, the gate SHALL report a
+the child side of an AD-003 profile-layering edge, the gate SHALL report a
 regression for every case whose parent side refuses the unit with a typed
-refusal and whose child side admits it or prohibits its form.
+refusal and whose child side admits it or prohibits its form, and SHALL
+report a regression for every edge whose parent layer admits the edge's
+distinguishing unit.
 
 ## Inputs
 
 A corpus of layering cases. A case names one layering edge and two source
 units, the parent unit and the child unit, that are byte-equal except for
-their `profile` declarations.
+the identity string of one `profile` declaration. Each edge also has one
+distinguishing unit and each layer one witness unit.
 
 ## Outputs
 
-One case result per case, one verdict for the run and its FR-301 exit code,
-as [FR-452](FR-452-preserve-admission-across-specification-revisions.md)
+One case result per case, one result per edge for its distinguishing unit,
+one result per layer for its witness unit, one verdict for the run and its
+FR-301 exit code, as
+[FR-452](FR-452-preserve-admission-across-specification-revisions.md)
 reports them.
 
 ## Behavior
 
-### V1 layering edges
+### Layering edges
 
-AD-003 gives each child profile explicit dependency edges to its parents and
-forbids a child from weakening an inherited rule. A V1 layering edge is an
-AD-003 dependency edge whose parent and child are each the root of a V1
-definition lock, so that a package selects either side through its
-`profile` declarations (FR-001). V1 has exactly one such edge:
+Every layer in the
+[header-selectable layers](../../../proposals/quire-v1/definitions/README.md#header-selectable-layers)
+table is a profile a `profile` declaration selects by naming its identity
+(FR-001). A layering edge is one AD-003 `requires` edge between two of those
+layers. The gate covers exactly these five edges:
 
-| Parent | Child | Why |
+| Edge | Parent | Child |
 | --- | --- | --- |
-| `quire.value.complete/v1`, root of `complete-value-lock.json` | `quire.model.complete/v1`, root of `complete-model-lock.json` | The model lock requires the value lock, and the model root selects the value root's closure unchanged. |
+| E1 | `quire.state.core/v1` | `quire.state.queries/v1` |
+| E2 | `quire.state.queries/v1` | `quire.state.graph/v1` |
+| E3 | `quire.state.core/v1` | `quire.value.complete/v1` |
+| E4 | `quire.state.graph/v1` | `quire.model.complete/v1` |
+| E5 | `quire.value.complete/v1` | `quire.model.complete/v1` |
 
-The state core, state queries and state graph layers are selected inside a
-lock's package selection, never by a `profile` declaration, so no V1 package
-compiles under one of them alone and none is a side of a V1 layering edge.
-Their inherited rules are verified by the conformance vectors of the root
-that selects them.
+AD-003 forbids a child from weakening an inherited rule, so a unit the parent
+refuses with a typed refusal stays refused under the child.
 
 ### One unit under both sides
 
-- The parent unit's `profile` declarations select the parent root, and the
-  child unit's select the child root, under the same alias, so every
-  declaration's `using` names the same alias on both sides.
-- A case whose two units differ in any byte outside their `profile`
-  declarations is a tool failure naming the case.
+- The parent unit has one `profile` declaration naming the parent layer, and
+  the child unit names the child layer in the same declaration under the same
+  alias, so every declaration's `using` names the same alias on both sides.
+- A case whose two units differ in any byte outside that identity string is
+  a tool failure naming the case.
+- A case naming a pair of layers that is not one of E1 to E5 is a tool
+  failure naming the case.
 - Each side compiles in the running build. No outcome is recorded or
   written by hand; both sides are compiled.
 
@@ -87,23 +95,50 @@ cause) gives not applicable: a child may add forms its parent prohibits
 (AD-003), so a prohibition is not a refusal the child preserves. Verdict,
 exit code and evidence status are FR-452's.
 
+### Each layer is a subset users pick
+
+A parent layer is a real user subset when a user who selects it gets a
+smaller language that a lowering target or qualification tier accepts. The
+gate checks this against the running build in two parts:
+
+- **Witness.** Each layer has a witness unit written in the form its
+  table row's user subset uses, for example a bounded-scalar runtime-monitor
+  invariant for state core. The witness selects only that layer. The layer
+  result is holds when the layer admits the witness, and regression naming
+  the layer and the refusal otherwise.
+- **Proper subset.** Each edge has a distinguishing unit that uses one form
+  its child adds over its parent. The edge result is holds when the parent
+  prohibits that form with `unsupported_construct` naming the parent layer
+  and the child admits the unit, and regression naming the edge otherwise. A
+  parent that admits its child's distinguishing unit adds nothing a user
+  would select it for.
+
+The distinguishing form of each edge is the one the child's definition file
+adds: a named predicate or query for E1; a reference or `reaches` for E2;
+whole-record equality or a `record` declaration for E3; conformance or
+dispatch over a supertype for E4; object navigation for E5.
+
 quire-spec-language FR-345 implements this gate.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-453-AC-1 | A case on the value-to-model edge whose unit the value root refuses with a typed refusal and the model root admits is a regression naming the case, the edge and the parent's codes; verdict violation, exit 10. | Test (TC-414) |
-| FR-453-AC-2 | A case both roots refuse holds and reports both codes; a case whose unit uses a model form, which the value root prohibits and the model root admits, is not applicable. | Test (TC-414) |
-| FR-453-AC-3 | A case whose two units differ outside their `profile` declarations is a tool failure, verdict tool failure, exit 30. | Test (TC-414) |
-| FR-453-AC-4 | A case naming a pair of profiles that is not a V1 layering edge, such as state core and state queries, is a tool failure naming the case. | Test (TC-414) |
+| FR-453-AC-1 | On each of E1 to E5, a case whose unit the parent layer refuses with a typed refusal and the child layer admits is a regression naming the case, the edge and the parent's codes; verdict violation, exit 10. | Test (TC-414) |
+| FR-453-AC-2 | On each of E1 to E5, a case both layers refuse holds and reports both codes, and a case whose unit uses a form the parent prohibits and the child admits is not applicable. | Test (TC-414) |
+| FR-453-AC-3 | A case whose two units differ outside the identity string of their `profile` declaration is a tool failure, verdict tool failure, exit 30. | Test (TC-414) |
+| FR-453-AC-4 | A case naming a pair of layers that is not one of E1 to E5, such as state core and complete model, is a tool failure naming the case. | Test (TC-414) |
+| FR-453-AC-5 | Each of the five layers, selected alone by a `profile` declaration, admits its witness unit; a layer that refuses its witness gives a regression naming the layer. | Test (TC-414) |
+| FR-453-AC-6 | On each of E1 to E5, the parent prohibits the edge's distinguishing unit with `unsupported_construct` naming the parent layer and the child admits it; a parent that admits it gives a regression naming the edge, verdict violation, exit 10. | Test (TC-414) |
 
 ## Dependencies
 
 - [AD-003](../../assurance/AD-003-native-quire-language-charter.md) owns the
-  profile hierarchy, its dependency edges and the non-weakening rule.
+  profile hierarchy, its `requires` edges and the non-weakening rule.
 - [FR-001](../foundation/FR-001-select-native-profile.md) owns profile
   selection by `profile` declaration.
+- The [header-selectable layers](../../../proposals/quire-v1/definitions/README.md#header-selectable-layers)
+  table owns each layer's admitted-form set and user subset.
 - [FR-452](FR-452-preserve-admission-across-specification-revisions.md)
   owns the case results, verdict and exit code.
 - [FR-301](FR-301-expose-complete-cli.md) owns the severity order and exit
@@ -113,10 +148,8 @@ quire-spec-language FR-345 implements this gate.
 
 - Capability row V1-TOOL-012.
 - quire-spec-language ADR-017 §2 RF-3, §6 Q-5; FR-345.
-- Specification tickets STD-119, STD-117.
+- Specification tickets STD-119 (owner ruling, option A), STD-117.
 
 ## Status
 
-Proposed. The V1 edge set and the two-unit case selection are the
-recommended answer to ADR-017 Q-5 and await the owner's ruling (see
-References). The comparison is ADR-017 RF-3's, already decided.
+Proposed.

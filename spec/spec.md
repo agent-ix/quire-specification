@@ -840,7 +840,7 @@ The requirement artifacts are indexed below.
 | [FR-450](functional/ir-proof/FR-450-spell-abstraction-relation-declaration.md) | FR | Abstraction relation declaration: object, population and operation binding forms, Rust spellings and refusals |
 | [FR-451](objects/interfaces/FR-451-checked-package-abstraction-relation-body.md) | FR | Checked-package `correspondence`/`abstraction_relation` body, keys and reader order |
 | [FR-452](functional/tooling/FR-452-preserve-admission-across-specification-revisions.md) | FR | Spec-versioning refinement gate: a superseding revision admits what its prior admitted |
-| [FR-453](functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md) | FR | Profile-layering refinement gate: the V1 layering edge and refusal preservation |
+| [FR-453](functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md) | FR | Profile-layering refinement gate: the five AD-003 layering edges, refusal preservation and per-layer user subsets |
 | [FR-049](functional/foundation/FR-049-bind-native-choreography-syntax.md) | FR | Accepted native choreography source integration; complete-V1 review SR-571–580 |
 | [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Accepted complete-V1 protocol intent; review SR-571–580 |
 | [FR-050](functional/protocol/FR-050-bind-protocol-instances.md) | FR | Accepted complete-V1 protocol foundation; review SR-571–580 |

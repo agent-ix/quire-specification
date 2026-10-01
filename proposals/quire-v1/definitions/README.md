@@ -49,6 +49,30 @@ Other definition families remain editable candidates under their owning tickets.
 | `quire.model.effective-declaration.vectors/v1` | `1-draft.2` | [Effective declaration vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
 | `quire.model.definition-lock/v1` | `1-draft.2` | [Complete model lock](complete-model-lock.json) |
 
+## Header-selectable layers
+
+Each layer of the AD-003 state and value/model hierarchy is a profile a
+`profile` declaration selects by naming its identity. A declaration whose
+`using` names that alias is admitted under exactly the layer's admitted-form
+set, which is the set its definition file lists together with the sets of the
+layers it requires. A form outside that set receives `unsupported_construct`
+naming the selected layer. Selecting a layer selects the definitions it
+requires; it never selects a layer that requires it. A user selects a parent
+layer to restrict a unit to the subset that a lowering target or a
+qualification tier accepts.
+
+| Layer | Requires | Admitted-form set | User subset it serves |
+| --- | --- | --- | --- |
+| `quire.state.core/v1` | edition | [State core](state-core.md) | Embedded and runtime-monitor targets: bounded scalars and finite sequences with authored maxima, no named predicates, references or recursive values; the smallest tier to qualify. |
+| `quire.state.queries/v1` | `quire.state.core/v1` | [Predicates and queries](state-queries.md) | Runtime monitors over bounded collections and logs: adds acyclic named predicates and ordered queries, still with no references. |
+| `quire.state.graph/v1` | `quire.state.queries/v1` | [Finite graphs](state-graph.md) | Finite-model verification targets: adds explicit finite typed universes, references and reachability, with no conformance or dispatch. |
+| `quire.value.complete/v1` | `quire.state.core/v1` | [Complete value root](value-complete.md) | Pure value contracts such as data validation and serialization rules: complete scalars, records, recursive values, collections and functions, with no object identity or navigation. |
+| `quire.model.complete/v1` | `quire.state.graph/v1`, `quire.value.complete/v1` | [Complete model root](model-complete.md) | Full systems models: conformance, redefinition, dispatch and systems structure over the union of both parents. |
+
+The five `requires` edges of this table are the profile-layering edges that
+[FR-453](../../../spec/functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md)
+compares.
+
 The [package contract](../package-contract.md), [state contract](../state-contract.md),
 [protocol contract](../protocol-contract.md) and [observation contract](../observation-contract.md)
 are current semantic inputs to these definitions.
