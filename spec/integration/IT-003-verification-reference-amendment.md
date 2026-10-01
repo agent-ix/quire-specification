@@ -28,8 +28,10 @@ Missing inputs fail setup; they do not skip or pass. All work is local.
 
 ## Inputs
 
-The complete amendment schema and separately authored JSON vectors. Individual
-files are limited to 1 MiB and depth 64; larger input yields incomplete. Fixtures
+The complete amendment schema and separately authored JSON vectors. Each file
+is read under caller limits on bytes and JSON values, with published defaults
+of 1 MiB and 65,536 values; input over a limit yields incomplete naming the
+limit and its value. Fixtures
 include six exact roles and wrong-role controls, version/domain/algorithm/digest
 mutations, duplicate/reordered features, exact property/subject/binding/closure/run
 mismatches, and an explicitly synthetic automated-core correspondence example.

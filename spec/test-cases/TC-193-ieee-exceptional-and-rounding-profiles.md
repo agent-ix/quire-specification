@@ -17,8 +17,7 @@ Evaluate NaN, infinity, signed zero, width and rounding-mode discriminator vecto
 
 Select language `ix:native`, edition `1-draft` revision `1-draft.2`, and the
 `quire.value.complete/v1` definition at revision `1-draft.2` and the
-`quire.value.ieee754-2019-default/v1` definition at revision `1-draft.1`, using
-their exact DefinitionRefs in
+`quire.value.ieee754-2019-default/v1` definition at revision `1-draft.1` through
 [`complete-value-lock.json`](../../proposals/quire-v1/definitions/complete-value-lock.json).
 Invoke only the qualified intrinsics fixed
 by FR-148 and execute these comparison/propagation vectors through the real

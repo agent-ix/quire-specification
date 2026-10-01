@@ -21,12 +21,8 @@ interpretation before evaluation or lowering.
 ## Inputs
 
 An admitted native clause; exact language edition and temporal profile
-definition identity, revision and digest; typed interval bounds; and one clock
-binding supplied through the shared observation interface.
-
-The temporal-profile definition digest SHALL use the FR-201
-`raw-artifact-digest` domain over the exact selected definition bytes. The
-frontend SHALL compare the domain before the digest bytes.
+definition identity; typed interval bounds; and one clock binding supplied
+through the shared observation interface.
 
 ## Outputs
 
@@ -78,11 +74,10 @@ definition identity; old profile bytes and results remain historical subjects.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-090-AC-1 | The same predicate values and numeric interval under event-position, fixed-sample and timestamped-event selections retain three distinct temporal subjects and meanings. | Test (TC-110) |
-| FR-090-AC-2 | Unknown, stale, digest-mismatched, multiply selected or internally inconsistent profile/clock definitions refuse before evaluation and name the affected clause. | Test (TC-110) |
+| FR-090-AC-2 | Unknown, multiply selected or internally inconsistent profile/clock definitions refuse before evaluation and name the affected clause. | Test (TC-110) |
 | FR-090-AC-3 | Changing a sample period, epoch, timestamp unit, sequence authority or closed-boundary rule changes the binding identity and cannot reuse an earlier result. | Test (TC-113) |
 | FR-090-AC-4 | Equal timestamps without an admitted causal/sequence order refuse `until`, `release`, `since` and `triggered`; ingestion order is not substituted. | Test (TC-113) |
 | FR-090-AC-5 | Historical profile definitions remain unchanged and a backend capability request cannot silently select a different executable profile. | Test (TC-117) |
-| FR-090-AC-6 | A profile digest with an absent/foreign domain or bytes from another definition revision refuses before evaluation. | Test (TC-110) |
 | FR-090-AC-7 | Selecting `quire.temporal.infinite-trace/v1` admits the unbounded temporal operator grammar edition; no other selected profile admits it. | Test (TC-238) |
 
 ## Dependencies

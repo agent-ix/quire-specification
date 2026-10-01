@@ -13,8 +13,8 @@ Native Quire V1 includes the complete
 editable language and its typed runtime, analysis, proof, mapping and tooling
 consumers. The existing finite-state work is a development profile. The
 [historical V1 design](proposals/quire-v1/README.md) remains evidence for the
-initial state, temporal and protocol/choreography expansion; Plan-008 supersedes
-its deferred scope decisions. Complete architecture, specification and review
+initial state, temporal and protocol/choreography expansion; the atomic
+inventory supersedes its deferred scope decisions. Complete architecture, specification and review
 precede resumed delivery.
 
 ## First work

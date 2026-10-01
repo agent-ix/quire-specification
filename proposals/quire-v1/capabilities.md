@@ -3,14 +3,14 @@
 This 2026-09-10 grouping is retained for decision and evidence history. It is
 not the current scope authority because its 51 rows combine independently
 deliverable capabilities and inherited exclusions. The current authority is the
-[Plan-008 atomic inventory](../../docs/v1-capability-inventory.md), owned by
+[atomic capability inventory](../../docs/v1-capability-inventory.md), owned by
 [standard #1](https://github.com/agent-ix/quire-specification/issues/1),
 [#9](https://github.com/agent-ix/quire-specification/issues/9) and
 [#63](https://github.com/agent-ix/quire-specification/issues/63). Every group ID
 below maps to one or more atomic rows; nothing in this historical file may
 defer, exclude or close an atomic row.
 
-The historical `V1`, `Later` and `Refuse` labels are superseded. Plan-008 splits
+The historical `V1`, `Later` and `Refuse` labels are superseded. The inventory splits
 each group into `Required` product obligations and `Integrity` obligations.
 Integrity obligations produce exact typed refusals for unsound claims,
 authority violations or prohibited side effects; they are implemented and
@@ -70,7 +70,7 @@ engineering-assurance completion and has no new language drafting assignment.
 | V1-012 | Integer division/remainder, floating point, NaN, infinity, saturation or implicit integer-to-rational conversion | Split by atomic inventory | RULE; A | Integer division and explicit IEEE floating semantics are required; implicit conversion and unrequested saturation remain integrity boundaries. |
 | V1-013 | Independently authored absence, explicit null, required presence and multiplicity preserved distinctly or explicitly refused | V1 | MODEL, RULE; A | Spec artifacts declare presence, null and multiplicity independently; the domain package carries them and QSL model intake checks them. No native field-presence grammar is presumed. |
 | V1-014 | Typed acyclic value containment; enums, text and exact units where their selected scalar contract admits them | V1 | MODEL, STATE; A | Existing state/model foundation; cross-profile payload admission needs agreement. |
-| V1-015 | Finite ordered duplicate-preserving sequences; bounded quantification and collection operations needed by authored state rules | V1 | RULE, ADOPT; A | FS03 accepts the exact ordered query catalog, duplicate semantics, empty identities, checked prefixes and declared maximum ≤10,000; executable coverage remains partial. |
+| V1-015 | Finite ordered duplicate-preserving sequences; bounded quantification and collection operations needed by authored state rules | V1 | RULE, ADOPT; A | FS03 accepts the exact ordered query catalog, duplicate semantics, empty identities, checked prefixes and an authored maximum per wrapper; executable coverage remains partial. |
 | V1-016 | Sets, bags, implicit collection conversions and recursive value containment | Required | RULE; A | All named collection and containment capabilities are V1 work; no name-based emulation with sequences. |
 | V1-017 | Finite object populations, explicit references, identity comparison and exact reachability as a separately versioned state-graph facet | V1 | ARCH, ADOPT, STATE; A | FS03 accepts the explicit graph-profile extension beyond the first state subset. QSL implements native admission/evaluation; broader backend parity remains qcir #69. |
 | V1-018 | Record structural equality and ambient object lookup through opaque scalar IDs | Split by atomic inventory | RULE; A | Structural equality and explicit closed-environment lookup are required; ambient scalar-to-object navigation remains an integrity boundary. |
@@ -207,7 +207,7 @@ prevents an engine-backed coverage claim. All new cases stay Planned.
 
 ## Scope audit and long-term architecture
 
-The Plan-008 scope correction replaces inherited deferrals with atomic V1 work.
+The atomic inventory replaces inherited deferrals with atomic V1 work.
 The V1 boundary is chosen by the complete product inventory and semantic
 dependencies, not by the operators the current backend happens to implement.
 

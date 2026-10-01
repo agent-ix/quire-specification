@@ -16,7 +16,6 @@ Every package that selects this root also selects:
 | `quire.value.compound-unit/v1` | `1-draft.1` | [Compound-unit value identity](value-compound-unit.md) |
 | `quire.value.compound-unit.schema/v1` | `1-draft.1` | [Compound-unit schema](value-compound-unit.schema.json) |
 | `quire.value.compound-unit.vectors/v1` | `1-draft.1` | [Compound-unit vectors](value-compound-unit-vectors.json) |
-| `quire.value.complete.rules/v1` | `1-draft.2` | [Exact rule closure](value-complete-rules.json) |
 
 ## Conditional and alternative definitions
 
@@ -38,25 +37,17 @@ vocabulary: `text_bearing`, `ieee_operation` and `integer_div_rem`.
   [`quire.value.integer-division.truncating/v1`](value-integer-division-truncating.md),
   and a package without that trigger selects none of them.
 
-Every selected artifact's exact bytes and `quire.definition.bytes/v1` digest are
-retained in the checked package; an identity string or installed library alone
-does not select meaning.
-
-The exact-rule manifest assigns every selected architecture/requirement document
-a stable definition identity, revision and raw-byte SHA-256. A checked package
-retains the manifest and every listed artifact as separate DefinitionRefs under
-`quire.definition.bytes/v1`; selecting only this root document or a moving
-repository revision is insufficient. Any rule-byte change requires a successor
-manifest revision and changes package identity.
+Every selected artifact is named in the checked package by its own
+DefinitionRef; an identity string or installed library alone does not select
+meaning.
 
 ## Qualification catalog and package selection
 
 The canonical lock is [`complete-value-lock.json`](complete-value-lock.json).
 It separates two facts. Its `qualification_catalog` closes every artifact a
 package may select — always-selected, conditional, alternative and rule
-artifacts — by role, identity, revision, digest domain and raw-byte digest;
-tests consume those exact DefinitionRefs rather than inventing placeholder
-digests. Catalog membership is not selection. Its `package_selection` assigns
+artifacts — by role, authority, identity and artifact path. Catalog membership
+is not selection. Its `package_selection` assigns
 each catalog role to exactly one slot: `always`, one `conditional` trigger slot,
 or one `exactly_one` alternative slot.
 
@@ -74,8 +65,7 @@ are [`complete-value-selection-vectors.json`](complete-value-selection-vectors.j
 
 ## Selected rules
 
-The links below are readable projections only. Their normative identities and
-digests are the entries in `value-complete-rules.json`.
+Each rule below is a `rule_*` role of the lock's `qualification_catalog`.
 
 | Rule |
 | --- |

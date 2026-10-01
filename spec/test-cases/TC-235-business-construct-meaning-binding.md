@@ -21,10 +21,9 @@ Admit a domain package whose type definitions name each business model meaning o
 
 ## Test Procedure
 
-Use the exact version-locked subject and inputs named by FR-208 and FR-154. Execute each positive case and each explicit refusal mutation through the real local Rust boundary; compare the complete typed result and `normalize.record` accounting with the criterion.
+Use the subject and inputs named by FR-208 and FR-154. Execute each positive case and each explicit refusal mutation through the real local Rust boundary; compare the complete typed result and `normalize.record` accounting with the criterion.
 
-Select `quire.model.complete/v1` at revision `1-draft.2` by its exact
-DefinitionRefs in
+Select `quire.model.complete/v1` at revision `1-draft.2` through
 [`complete-model-lock.json`](../../proposals/quire-v1/definitions/complete-model-lock.json).
 Node names, declaration keys, the source `S1` and the admission of a
 re-digested package follow TC-234. Every type definition and population is

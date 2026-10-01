@@ -95,8 +95,7 @@ follow the lexical contract. `EOF` requires the entire unit to be consumed.
 composed-unit = header, profile, { profile }, { model },
                declaration, { declaration }, EOF ;
 header       = 'language', string, 'edition', string, ';' ;
-profile      = 'profile', ident, '=', string, 'version', string,
-               'digest', string, ';' ;
+profile      = 'profile', ident, '=', string, ';' ;
 model        = 'model', ident, '=', string, 'version', string,
                'digest', string, ';' ;
 model-name   = ident, '::', member-name ;
@@ -239,9 +238,9 @@ domains. The complete-V1 additions below also admit native `record`, `enum` and
 declaration cannot declare a domain object.
 
 `using` selects a declared profile alias for every native declaration;
-there is no backend-derived default. Profile tuples include the definition name,
-revision and byte digest, not just a convenient version label. A grammar parse
-does not prove those identities.
+there is no backend-derived default. A profile's string names its definition
+identity, which the explicit compiler inventory resolves. A grammar parse does
+not prove that identity.
 
 A `model` declaration imports one domain package. Its string names the domain
 package identity, `version` names its version, and `digest` is the
@@ -273,8 +272,7 @@ it.
 ```ebnf
 complete-unit = header, profile, { profile }, { import-decl }, { model },
                 declaration, { declaration }, EOF ;
-import-decl   = 'import', string, 'version', string, 'digest', string,
-                [ 'as', ident ], ';' ;
+import-decl   = 'import', string, 'digest', string, [ 'as', ident ], ';' ;
 
 declaration   = dimension-decl | unit-decl | enum-decl | record-decl
               | tuple-decl | union-decl | alias-decl | function | predicate

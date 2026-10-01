@@ -63,7 +63,7 @@ own checked meaning and imports a compatible typed interface into its caller.
 | Authored presence/null/multiplicity must survive or refuse | Retained. Spec artifacts declare presence, null and multiplicity; no native field-presence syntax is invented here. |
 | Acyclic typed structural containment | Retained. References are identity-bearing edges, never recursive record expansion. |
 | Reference navigation, object identity and closure deferred in the first profile | Explicit finite-graph extension; no promotion in place of the old profile. |
-| Ordered duplicate-preserving finite sequences, authored maximum at most 10,000 per wrapper | Retained, including unused/nested declarations. Per-wrapper bounds do not bound total nested work. |
+| Ordered duplicate-preserving finite sequences, each wrapper with its authored maximum | Retained, including unused/nested declarations. Per-wrapper bounds do not bound total nested work. |
 | No user-defined calls in the first profile | Explicit acyclic Boolean-predicate extension; general recursion/functions remain refused. |
 | Statically defined Boolean clause root; no partial/nullable truthiness | Retained across shared predicates and state clauses. Monitor status is not a Boolean. |
 | Exact source authority and invocation anchors | Retained with the explicit alias/composite pre-state rules below. |
@@ -131,7 +131,7 @@ The result and actual source activation/participation are separate facts.
 ## Ordered queries and exact aggregation
 
 All query domains are validated, explicitly supplied `Seq(T,N)` values with a
-declared finite maximum N ≤ 10,000. No operator looks up an ambient population
+declared finite maximum N. No operator looks up an ambient population
 or reconstructs a missing member. A population declared in the spec's artifacts, bound through F's observation
 contract, supplies any population/window sequence, its identity and completeness. Missing sequence or
 required membership is unavailable input, not an empty sequence. Closure/progress

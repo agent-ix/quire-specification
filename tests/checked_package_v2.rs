@@ -12,7 +12,6 @@ use quire_specification::{
 use quire_verification::contracts::jcs_sha256;
 use quire_verification_contracts::operation_catalog::CHECKED_OPERATION_CATALOG_V1;
 use serde_json::{Value, json};
-use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
 
 const SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json");
@@ -28,211 +27,6 @@ const COMPOUND_UNIT_SCHEMA: &str =
     include_str!("../proposals/quire-v1/definitions/value-compound-unit.schema.json");
 const COMPOUND_UNIT_VECTORS: &str =
     include_str!("../proposals/quire-v1/definitions/value-compound-unit-vectors.json");
-const VALUE_RULE_MANIFEST: &str =
-    include_str!("../proposals/quire-v1/definitions/value-complete-rules.json");
-
-/// Whether a qualification-catalog artifact is a value definition or one of
-/// the exact rule documents listed by the rule manifest.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-enum ArtifactKind {
-    Definition,
-    Rule,
-}
-
-/// One compile-time byte source for a complete-value qualification-catalog entry.
-struct CatalogArtifact {
-    kind: ArtifactKind,
-    role: &'static str,
-    path: &'static str,
-    identity: &'static str,
-    revision: &'static str,
-    bytes: &'static [u8],
-}
-
-const CATALOG_ARTIFACTS: [CatalogArtifact; 21] = [
-    CatalogArtifact {
-        kind: ArtifactKind::Definition,
-        role: "edition",
-        path: "edition.md",
-        identity: "ix:native",
-        revision: "1-draft.2",
-        bytes: include_bytes!("../proposals/quire-v1/definitions/edition.md"),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Definition,
-        role: "root",
-        path: "value-complete.md",
-        identity: "quire.value.complete/v1",
-        revision: "1-draft.2",
-        bytes: include_bytes!("../proposals/quire-v1/definitions/value-complete.md"),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Definition,
-        role: "accounting",
-        path: "value-accounting.md",
-        identity: "quire.value.accounting/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!("../proposals/quire-v1/definitions/value-accounting.md"),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Definition,
-        role: "compound_unit",
-        path: "value-compound-unit.md",
-        identity: "quire.value.compound-unit/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!("../proposals/quire-v1/definitions/value-compound-unit.md"),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Definition,
-        role: "compound_unit_schema",
-        path: "value-compound-unit.schema.json",
-        identity: "quire.value.compound-unit.schema/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!("../proposals/quire-v1/definitions/value-compound-unit.schema.json"),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Definition,
-        role: "compound_unit_vectors",
-        path: "value-compound-unit-vectors.json",
-        identity: "quire.value.compound-unit.vectors/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!("../proposals/quire-v1/definitions/value-compound-unit-vectors.json"),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Definition,
-        role: "rule_manifest",
-        path: "value-complete-rules.json",
-        identity: "quire.value.complete.rules/v1",
-        revision: "1-draft.2",
-        bytes: include_bytes!("../proposals/quire-v1/definitions/value-complete-rules.json"),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Definition,
-        role: "text_profile",
-        path: "value-text-unicode-17.md",
-        identity: "quire.value.text.unicode-17.0.0/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!("../proposals/quire-v1/definitions/value-text-unicode-17.md"),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Definition,
-        role: "ieee_profile",
-        path: "value-ieee754-2019-default.md",
-        identity: "quire.value.ieee754-2019-default/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!("../proposals/quire-v1/definitions/value-ieee754-2019-default.md"),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Definition,
-        role: "integer_division_euclidean",
-        path: "value-integer-division-euclidean.md",
-        identity: "quire.value.integer-division.euclidean/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!(
-            "../proposals/quire-v1/definitions/value-integer-division-euclidean.md"
-        ),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Definition,
-        role: "integer_division_floor",
-        path: "value-integer-division-floor.md",
-        identity: "quire.value.integer-division.floor/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!("../proposals/quire-v1/definitions/value-integer-division-floor.md"),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Definition,
-        role: "integer_division_truncating",
-        path: "value-integer-division-truncating.md",
-        identity: "quire.value.integer-division.truncating/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!(
-            "../proposals/quire-v1/definitions/value-integer-division-truncating.md"
-        ),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Rule,
-        role: "rule_package_contract",
-        path: "../package-contract.md",
-        identity: "quire.rule.package-contract/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!("../proposals/quire-v1/package-contract.md"),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Rule,
-        role: "rule_shared_grammar",
-        path: "../shared-grammar.md",
-        identity: "quire.rule.shared-grammar/v1",
-        revision: "1-draft.2",
-        bytes: include_bytes!("../proposals/quire-v1/shared-grammar.md"),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Rule,
-        role: "rule_ad_005",
-        path: "../../../spec/assurance/AD-005-complete-value-expression-system.md",
-        identity: "quire.rule.ad-005/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!("../spec/assurance/AD-005-complete-value-expression-system.md"),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Rule,
-        role: "rule_fr_140",
-        path: "../../../spec/functional/type-model/FR-140-evaluate-exact-decimals.md",
-        identity: "quire.rule.fr-140/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!("../spec/functional/type-model/FR-140-evaluate-exact-decimals.md"),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Rule,
-        role: "rule_fr_141",
-        path: "../../../spec/functional/type-model/FR-141-evaluate-text-and-enumerations.md",
-        identity: "quire.rule.fr-141/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!(
-            "../spec/functional/type-model/FR-141-evaluate-text-and-enumerations.md"
-        ),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Rule,
-        role: "rule_fr_142",
-        path: "../../../spec/functional/type-model/FR-142-evaluate-quantities-and-units.md",
-        identity: "quire.rule.fr-142/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!(
-            "../spec/functional/type-model/FR-142-evaluate-quantities-and-units.md"
-        ),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Rule,
-        role: "rule_fr_147",
-        path: "../../../spec/functional/expressions/FR-147-evaluate-integer-division-domains.md",
-        identity: "quire.rule.fr-147/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!(
-            "../spec/functional/expressions/FR-147-evaluate-integer-division-domains.md"
-        ),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Rule,
-        role: "rule_fr_148",
-        path: "../../../spec/functional/expressions/FR-148-evaluate-ieee-floating-profiles.md",
-        identity: "quire.rule.fr-148/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!(
-            "../spec/functional/expressions/FR-148-evaluate-ieee-floating-profiles.md"
-        ),
-    },
-    CatalogArtifact {
-        kind: ArtifactKind::Rule,
-        role: "rule_fr_149",
-        path: "../../../spec/functional/type-model/FR-149-apply-complete-equality-matrix.md",
-        identity: "quire.rule.fr-149/v1",
-        revision: "1-draft.1",
-        bytes: include_bytes!(
-            "../spec/functional/type-model/FR-149-apply-complete-equality-matrix.md"
-        ),
-    },
-];
 const POSITIVE_ALL_FAMILIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-all-families.json");
 const POSITIVE_NOMINAL_IDENTITIES: &str =
@@ -326,27 +120,6 @@ fn vector_for_digest<'a>(vectors: &'a [Value], wanted: &str) -> Option<&'a Value
     vectors
         .iter()
         .find(|vector| vector["sha256"].as_str() == Some(wanted))
-}
-
-fn catalog_artifact(path: &str) -> Option<&'static CatalogArtifact> {
-    CATALOG_ARTIFACTS
-        .iter()
-        .find(|artifact| artifact.path == path)
-}
-
-fn definition_lock_entry_matches_bytes(entry: &Value) -> bool {
-    let Some(artifact) = entry["artifact_path"].as_str().and_then(catalog_artifact) else {
-        return false;
-    };
-    let definition = &entry["definition"];
-    let expected_digest = format!("{:x}", Sha256::digest(artifact.bytes));
-    entry["role"].as_str() == Some(artifact.role)
-        && definition["authority"].as_str() == Some("agent-ix")
-        && definition["identity"].as_str() == Some(artifact.identity)
-        && definition["revision"]["namespace"].as_str() == Some("quire-draft")
-        && definition["revision"]["value"].as_str() == Some(artifact.revision)
-        && definition["digest_domain"].as_str() == Some("quire.definition.bytes/v1")
-        && definition["digest"].as_str() == Some(expected_digest.as_str())
 }
 
 fn unit_chain_reaches_root(preimage: &Value, vectors: &[Value]) -> bool {
@@ -1978,23 +1751,17 @@ fn listed_items(text: &str, start: &str, end: &str) -> Vec<String> {
 }
 
 /// The profile law role and definition text of a temporal or protocol
-/// profile `DefinitionRef` whose identity, revision and raw-byte digest match
-/// a published profile definition exactly; `None` for any other reference.
+/// profile `DefinitionRef` whose authority and identity name a published
+/// profile definition; `None` for any other reference.
 fn matched_profile(definition: &Value) -> Option<(&'static str, &'static str)> {
     let matches = |bytes: &'static [u8]| {
         let text = std::str::from_utf8(bytes).ok()?;
         let line = text
             .lines()
             .find(|line| line.starts_with("Profile identity: "))?;
-        let quoted = line.split('`').skip(1).step_by(2).collect::<Vec<_>>();
-        let (identity, revision) = (quoted.first()?, quoted.get(1)?);
-        (definition["authority"] == "agent-ix"
-            && definition["revision"]["namespace"] == "quire-draft"
-            && definition["identity"] == *identity
-            && definition["revision"]["value"] == *revision
-            && definition["digest_domain"] == "quire.definition.bytes/v1"
-            && definition["digest"] == format!("{:x}", Sha256::digest(bytes)))
-        .then_some(text)
+        let identity = line.split('`').nth(1)?;
+        (definition["authority"] == "agent-ix" && definition["identity"] == identity)
+            .then_some(text)
     };
     TEMPORAL_PROFILES
         .into_iter()
@@ -4990,50 +4757,6 @@ fn tc_233_compound_unit_value_identities_have_exact_vectors_and_non_tautological
     }
 }
 
-#[trace("TC-233", "FR-201-AC-6")]
-#[test]
-fn tc_233_complete_value_rule_manifest_binds_every_selected_rule_byte_for_byte() {
-    let manifest = parsed_fixture(VALUE_RULE_MANIFEST);
-    assert_eq!(
-        manifest["definition_identity"].as_str(),
-        Some("quire.value.complete.rules/v1")
-    );
-    assert_eq!(
-        manifest["digest_domain"].as_str(),
-        Some("quire.definition.bytes/v1")
-    );
-    let rules = manifest["rules"]
-        .as_array()
-        .expect("rule manifest contains an array");
-    let rule_artifacts = CATALOG_ARTIFACTS
-        .iter()
-        .filter(|artifact| artifact.kind == ArtifactKind::Rule)
-        .collect::<Vec<_>>();
-    assert_eq!(rules.len(), rule_artifacts.len());
-    let mut identities = BTreeSet::new();
-    let mut paths = BTreeSet::new();
-
-    for rule in rules {
-        let identity = rule["identity"]
-            .as_str()
-            .expect("rule identity is a string");
-        let path = rule["path"].as_str().expect("rule path is a string");
-        assert!(identities.insert(identity), "rule identities are unique");
-        assert!(paths.insert(path), "rule paths are unique");
-        let artifact = rule_artifacts
-            .iter()
-            .find(|artifact| artifact.path == path)
-            .expect("every manifest path has compile-time rule bytes");
-        assert_eq!(identity, artifact.identity);
-        assert_eq!(rule["revision"].as_str(), Some(artifact.revision));
-        assert_eq!(
-            format!("{:x}", Sha256::digest(artifact.bytes)),
-            rule["sha256"].as_str().expect("rule digest is a string"),
-            "{identity} binds exact authored bytes"
-        );
-    }
-}
-
 #[trace("TC-233", "FR-201-AC-7")]
 #[test]
 fn tc_233_definition_library_exposes_the_exact_authored_bytes() {
@@ -5057,7 +4780,7 @@ fn tc_233_definition_library_exposes_the_exact_authored_bytes() {
     }
 }
 
-#[trace("TC-233", "FR-201-AC-6")]
+#[trace("TC-233", "FR-201-AC-9")]
 #[test]
 fn tc_233_complete_value_lock_catalogs_every_artifact_and_separates_package_selection() {
     let lock = parsed_fixture(COMPLETE_VALUE_LOCK);
@@ -5065,38 +4788,24 @@ fn tc_233_complete_value_lock_catalogs_every_artifact_and_separates_package_sele
         lock["lock_version"].as_str(),
         Some("quire.value.definition-lock/v1")
     );
-    assert_eq!(lock["revision"].as_str(), Some("1-draft.2"));
-    assert_eq!(
-        lock["digest_domain"].as_str(),
-        Some("quire.definition.bytes/v1")
-    );
     assert_eq!(lock["language_edition"].as_str(), Some("1-draft"));
 
+    let definitions =
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("proposals/quire-v1/definitions");
     let catalog = lock["qualification_catalog"]
         .as_array()
         .expect("qualification catalog is an array");
-    assert_eq!(
-        catalog
-            .iter()
-            .map(|entry| entry["artifact_path"]
-                .as_str()
-                .expect("artifact path is a string"))
-            .collect::<BTreeSet<_>>(),
-        CATALOG_ARTIFACTS
-            .iter()
-            .map(|artifact| artifact.path)
-            .collect::<BTreeSet<_>>(),
-        "the catalog closes exactly every required, conditional, alternative and rule artifact"
-    );
-    assert_eq!(catalog.len(), CATALOG_ARTIFACTS.len());
     let mut roles = BTreeSet::new();
     let mut identities = BTreeSet::new();
     for entry in catalog {
+        let path = entry["artifact_path"]
+            .as_str()
+            .expect("artifact path is a string");
         assert!(
-            definition_lock_entry_matches_bytes(entry),
-            "catalog entry binds exact authored bytes: {}",
-            entry["artifact_path"]
+            definitions.join(path).is_file(),
+            "catalog entry names an authored artifact: {path}"
         );
+        assert_eq!(entry["definition"]["authority"].as_str(), Some("agent-ix"));
         assert!(
             roles.insert(entry["role"].as_str().expect("role is a string")),
             "catalog roles are unique"
@@ -5110,42 +4819,6 @@ fn tc_233_complete_value_lock_catalogs_every_artifact_and_separates_package_sele
             "catalog identities are unique"
         );
     }
-
-    let manifest = parsed_fixture(VALUE_RULE_MANIFEST);
-    let manifest_rules = manifest["rules"]
-        .as_array()
-        .expect("rule manifest contains an array")
-        .iter()
-        .map(|rule| {
-            (
-                rule["path"].as_str(),
-                rule["identity"].as_str(),
-                rule["revision"].as_str(),
-                rule["sha256"].as_str(),
-            )
-        })
-        .collect::<BTreeSet<_>>();
-    let catalog_rules = catalog
-        .iter()
-        .filter(|entry| {
-            entry["artifact_path"]
-                .as_str()
-                .and_then(catalog_artifact)
-                .is_some_and(|artifact| artifact.kind == ArtifactKind::Rule)
-        })
-        .map(|entry| {
-            (
-                entry["artifact_path"].as_str(),
-                entry["definition"]["identity"].as_str(),
-                entry["definition"]["revision"]["value"].as_str(),
-                entry["definition"]["digest"].as_str(),
-            )
-        })
-        .collect::<BTreeSet<_>>();
-    assert_eq!(
-        catalog_rules, manifest_rules,
-        "catalog rules are the manifest rules"
-    );
 
     let selection = PackageSelectionRules::from_lock(&lock);
     let expected_triggers = BTreeSet::from(["ieee_operation", "integer_div_rem", "text_bearing"]);
@@ -5206,51 +4879,15 @@ fn tc_233_complete_value_lock_catalogs_every_artifact_and_separates_package_sele
             .collect::<BTreeSet<_>>(),
         "the lock refusal vocabulary is exactly the oracle vocabulary"
     );
-
-    let mut stale = catalog[0].clone();
-    stale["definition"]["digest"] =
-        json!("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-    assert!(!definition_lock_entry_matches_bytes(&stale));
-
-    let mut relabeled = catalog[0].clone();
-    relabeled["definition"]["identity"] = json!("ix:other");
-    assert!(!definition_lock_entry_matches_bytes(&relabeled));
-
-    let mut wrong_revision = catalog[0].clone();
-    wrong_revision["definition"]["revision"]["value"] = json!("1-draft.999");
-    assert!(!definition_lock_entry_matches_bytes(&wrong_revision));
-
-    let mut wrong_role = catalog[0].clone();
-    wrong_role["role"] = json!("root");
-    assert!(!definition_lock_entry_matches_bytes(&wrong_role));
-
-    let alternative = catalog
-        .iter()
-        .find(|entry| entry["role"].as_str() == Some("integer_division_floor"))
-        .expect("floor division profile is catalogued");
-    let mut relabeled_alternative = alternative.clone();
-    relabeled_alternative["definition"]["identity"] =
-        json!("quire.value.integer-division.other/v1");
-    assert!(!definition_lock_entry_matches_bytes(&relabeled_alternative));
-
-    let rule = catalog
-        .iter()
-        .find(|entry| entry["role"].as_str() == Some("rule_fr_147"))
-        .expect("FR-147 rule is catalogued");
-    let mut stale_rule = rule.clone();
-    stale_rule["definition"]["digest"] =
-        json!("0000000000000000000000000000000000000000000000000000000000000000");
-    assert!(!definition_lock_entry_matches_bytes(&stale_rule));
 }
 
-#[trace("TC-233", "FR-201-AC-6")]
+#[trace("TC-233", "FR-201-AC-9")]
 #[test]
 fn tc_233_package_selection_vectors_admit_exact_conditional_and_alternative_profiles() {
     let lock = parsed_fixture(COMPLETE_VALUE_LOCK);
     let selection = PackageSelectionRules::from_lock(&lock);
     let vectors = parsed_fixture(COMPLETE_VALUE_SELECTION_VECTORS);
     assert_eq!(vectors["lock"]["lock_version"], lock["lock_version"]);
-    assert_eq!(vectors["lock"]["revision"], lock["revision"]);
     let always = string_list(&vectors["always_roles"], "always roles");
     assert_eq!(
         always, selection.always,
@@ -5596,15 +5233,20 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
         .as_array()
         .expect("lock catalog is an array")
         .iter()
-        .map(|entry| &entry["definition"])
+        .map(|entry| {
+            (
+                &entry["definition"]["authority"],
+                &entry["definition"]["identity"],
+            )
+        })
         .collect::<Vec<_>>();
     for (role, references) in roles {
         let references = references.as_array().expect("role references are an array");
         assert!(!references.is_empty(), "law role {role} names a definition");
         for reference in references {
             assert!(
-                locked.contains(&reference),
-                "law role {role} definition {reference} is a complete-value lock definition, digest included"
+                locked.contains(&(&reference["authority"], &reference["identity"])),
+                "law role {role} definition {reference} is a complete-value lock definition"
             );
         }
     }

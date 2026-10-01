@@ -46,10 +46,8 @@ lowers to a TL target: FR-251 records its target as absent.
   own; it is compared componentwise as an exact string. The selection it labels
   is *authored*: FR-090 requires the frontend to "bind the clause to one exact
   temporal semantic-profile definition ... before evaluation or lowering".
-- **Key** — the label itself, matched exactly, together with the definition
-  revision and digest that FR-090 Inputs require ("exact language edition and
-  temporal profile definition identity, revision and digest"). Equality is
-  componentwise over exactly those components and nothing else. Display name,
+- **Key** — the label itself, matched exactly. Equality is over the label and
+  nothing else. Display name,
   source path, span, message text, locale and rendering never participate
   ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
   [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)). FR-090
@@ -66,15 +64,10 @@ lowers to a TL target: FR-251 records its target as absent.
 - **Absence** — a clause with no selected profile has an absent profile
   identity, and absence compares only to absence. FR-090 Outputs require "a
   located typed refusal that names the missing, unknown, inconsistent or
-  unsupported dimension", and FR-090-AC-2 holds that "Unknown, stale,
-  digest-mismatched, multiply selected or internally inconsistent profile/clock
-  definitions refuse before evaluation". An absent profile is never defaulted to
-  a member.
-- **Digest domain** — the definition digest in the key uses FR-201
-  `raw-artifact-digest` over the exact selected temporal-profile definition
-  bytes, as required by FR-090. An identity crossing domains is unequal
-  regardless of byte equality, and FR-090-AC-2 refuses a digest mismatch before
-  evaluation.
+  unsupported dimension", and FR-090-AC-2 holds that "Unknown, multiply
+  selected or internally inconsistent profile/clock definitions refuse before
+  evaluation". An absent profile is never defaulted to a member.
+- **Digest domain** — not applicable; the key carries no digest.
 
 ## Meaning change requires a new identity
 
@@ -97,7 +90,6 @@ adds a fourth, since it admits no numeric interval at all.
 | FR-250-AC-1 | Each member's value equals the exact identity string in the table, and a differently spelled or historically similar identity does not match it. | Test |
 | FR-250-AC-2 | The same predicate values and numeric interval under two different members compare as two distinct temporal subjects. | Test |
 | FR-250-AC-3 | A clause with an absent profile selection compares only to absence and receives no default member. | Test |
-| FR-250-AC-4 | A member with equal label bytes and a different definition revision or digest compares unequal. | Test |
 | FR-250-AC-5 | No TL evaluator profile appears as a member of this vocabulary. | Test |
 | FR-250-AC-6 | `quire.temporal.infinite-trace/v1` admits no interval bound and no closed-boundary rule, and selecting it is the sole way to admit the unbounded temporal operator grammar edition. | Test |
 
@@ -113,13 +105,6 @@ adds a fourth, since it admits no numeric interval at all.
   separate from this vocabulary.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the
-  digest domain rule.
-
-## Definition digest domain
-
-FR-090 selects `raw-artifact-digest` over the exact temporal-profile definition
-bytes. The domain is part of comparison and is checked before digest bytes.
 
 ## Status
 

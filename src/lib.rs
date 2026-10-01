@@ -5,9 +5,7 @@
 //!
 //! Consumers read QSpec's definition lock, its package-selection vectors and
 //! the native diagnostics catalog through these constants instead of holding copies. The crate carries the
-//! exact authored bytes and nothing else: no parsing, no recorded digests.
-//! A consumer that needs a definition digest hashes the bytes itself, and the
-//! lock's own digests are checked against the files they name by TC-233.
+//! exact authored bytes and nothing else: no parsing.
 
 /// `proposals/quire-v1/definitions/complete-value-lock.json`: the
 /// `quire.value.definition-lock/v1` lock for the complete value system.

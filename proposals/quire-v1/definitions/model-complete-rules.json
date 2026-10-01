@@ -1,207 +1,22 @@
 {
   "definition_identity": "quire.model.complete.rules/v1",
-  "revision": "1-draft.2",
-  "digest_domain": "quire.definition.bytes/v1",
-  "required_by": "quire.model.complete/v1@1-draft.2",
-  "rules": [
-    {
-      "identity": "quire.rule.ad-006/v1",
-      "revision": "1-draft.1",
-      "path": "../../../spec/assurance/AD-006-model-graph-state-contracts.md",
-      "sha256": "a84592ca2f863d42ddddd72dd3c798a237de9325e14208373189b7b2ff6248c8"
-    },
-    {
-      "identity": "quire.rule.fr-043/v1",
-      "revision": "1-draft.1",
-      "path": "../../../spec/functional/foundation/FR-043-evaluate-finite-graph-relations.md",
-      "sha256": "d17f549a947016f517d9656027e107af2dc74ef88ba2b76c93f958942ebac7b7"
-    },
-    {
-      "identity": "quire.rule.fr-143/v1",
-      "revision": "1-draft.2",
-      "path": "../../../spec/functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md",
-      "sha256": "90fad259892ac0d17c2d9b344e8b294a797de482b8b1670841141bbf1c900b89"
-    },
-    {
-      "identity": "quire.rule.fr-144/v1",
-      "revision": "1-draft.2",
-      "path": "../../../spec/functional/type-model/FR-144-preserve-complete-collection-algebra.md",
-      "sha256": "f10cd0603a9a98d265f19471b39088265a35e48fadb29242441570c9c2416a93"
-    },
-    {
-      "identity": "quire.rule.fr-150/v1",
-      "revision": "1-draft.1",
-      "path": "../../../spec/functional/type-model/FR-150-preserve-model-normalization-provenance.md",
-      "sha256": "234bda5a87623399be1d98f15fc10b9734b52d379430673e66c5d3f78f3f85a9"
-    },
-    {
-      "identity": "quire.rule.fr-151/v1",
-      "revision": "1-draft.1",
-      "path": "../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md",
-      "sha256": "84cd5a3cd9af095237ed736bdf045d77ae278418bf34fadfa63ddc3914720a10"
-    },
-    {
-      "identity": "quire.rule.fr-152/v1",
-      "revision": "1-draft.1",
-      "path": "../../../spec/functional/type-model/FR-152-bind-systems-model-structures.md",
-      "sha256": "6be03f6764468013d78e6874e28f712110f7e714303b479edfb60478c90a5e7b"
-    },
-    {
-      "identity": "quire.rule.fr-153/v1",
-      "revision": "1-draft.2",
-      "path": "../../../spec/functional/type-model/FR-153-query-closed-model-environments.md",
-      "sha256": "6f06699dc77b912ac770fb9f4ec84c1e717d1241c368336af12253ae94163c60"
-    },
-    {
-      "identity": "quire.rule.fr-154/v1",
-      "revision": "1-draft.1",
-      "path": "../../../spec/functional/type-model/FR-154-admit-domain-package-model.md",
-      "sha256": "8fb373ed2eabd5690c09644427fe71345cdeb7202d069c9f662fd3de0d40cb1a"
-    },
-    {
-      "identity": "quire.rule.fr-204/v1",
-      "revision": "1-draft.1",
-      "path": "../../../spec/objects/foundation/FR-204-declared-object-identity.md",
-      "sha256": "f2b65e27a45d03ed473a5a1dd75eb67e08403aa07f86290da2d43cffff49a46c"
-    },
-    {
-      "identity": "quire.rule.fr-208/v1",
-      "revision": "1-draft.1",
-      "path": "../../../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md",
-      "sha256": "01f2ca09cca39c56dc48a06138d4467cc33995ec3f5ec44df636ce1bd38251b0"
-    },
-    {
-      "identity": "quire.rule.fr-321/v1",
-      "revision": "1-draft.1",
-      "path": "../../../spec/objects/interfaces/FR-321-model-selection-artifact.md",
-      "sha256": "9f263c9f94df420c44ba69be87e3fd0520da109356166f118bfe03a26644f830"
-    },
-    {
-      "identity": "quire.rule.interface_003/v1",
-      "revision": "1-draft.1",
-      "path": "../../../spec/objects/interfaces/interface_003-model-selection.md",
-      "sha256": "76335739a12a7ac5d1503c4fb5e2603ebf41af4ed318852cecf44b91c330df5a"
-    }
-  ],
   "normalization_rules": [
-    {
-      "identity": "quire.model.normalize.intake/v1",
-      "revision": "1-draft.1",
-      "stage": "normalization",
-      "phase": 1,
-      "defined_by": "model-complete.md"
-    },
-    {
-      "identity": "quire.model.features/v1",
-      "revision": "1-draft.1",
-      "stage": "normalization",
-      "phase": 1,
-      "defined_by": "model-complete.md"
-    },
-    {
-      "identity": "quire.model.normalize.qualify/v1",
-      "revision": "1-draft.1",
-      "stage": "normalization",
-      "phase": 2,
-      "defined_by": "model-complete.md"
-    },
-    {
-      "identity": "quire.model.normalize.inherit/v1",
-      "revision": "1-draft.1",
-      "stage": "normalization",
-      "phase": 3,
-      "defined_by": "model-complete.md"
-    },
-    {
-      "identity": "quire.model.normalize.subset/v1",
-      "revision": "1-draft.1",
-      "stage": "normalization",
-      "phase": 4,
-      "defined_by": "model-complete.md"
-    },
-    {
-      "identity": "quire.model.normalize.redefine/v1",
-      "revision": "1-draft.1",
-      "stage": "normalization",
-      "phase": 4,
-      "defined_by": "model-complete.md"
-    },
-    {
-      "identity": "quire.model.normalize.canonicalize/v1",
-      "revision": "1-draft.1",
-      "stage": "normalization",
-      "phase": 5,
-      "defined_by": "model-complete.md"
-    },
-    {
-      "identity": "quire.model.conformance.variance/v1",
-      "revision": "1-draft.1",
-      "stage": "conformance",
-      "phase": null,
-      "defined_by": "../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md"
-    },
-    {
-      "identity": "quire.model.conformance.multiplicity/v1",
-      "revision": "1-draft.1",
-      "stage": "conformance",
-      "phase": null,
-      "defined_by": "../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md"
-    },
-    {
-      "identity": "quire.model.conformance.effect/v1",
-      "revision": "1-draft.1",
-      "stage": "conformance",
-      "phase": null,
-      "defined_by": "../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md"
-    },
-    {
-      "identity": "quire.model.conformance.refinement/v1",
-      "revision": "1-draft.1",
-      "stage": "conformance",
-      "phase": null,
-      "defined_by": "../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md"
-    },
-    {
-      "identity": "quire.model.dispatch.single/v1",
-      "revision": "1-draft.1",
-      "stage": "dispatch",
-      "phase": null,
-      "defined_by": "../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md"
-    },
-    {
-      "identity": "quire.model.systems.kind-mapping/v1",
-      "revision": "1-draft.1",
-      "stage": "systems",
-      "phase": null,
-      "defined_by": "model-complete.md"
-    },
-    {
-      "identity": "quire.model.systems.connection/v1",
-      "revision": "1-draft.1",
-      "stage": "systems",
-      "phase": null,
-      "defined_by": "../../../spec/functional/type-model/FR-152-bind-systems-model-structures.md"
-    },
-    {
-      "identity": "quire.model.systems.allocation/v1",
-      "revision": "1-draft.1",
-      "stage": "systems",
-      "phase": null,
-      "defined_by": "model-complete.md"
-    },
-    {
-      "identity": "quire.model.environment.lookup/v1",
-      "revision": "1-draft.1",
-      "stage": "environment",
-      "phase": null,
-      "defined_by": "../../../spec/functional/type-model/FR-153-query-closed-model-environments.md"
-    },
-    {
-      "identity": "quire.model.environment.population/v1",
-      "revision": "1-draft.1",
-      "stage": "environment",
-      "phase": null,
-      "defined_by": "../../../spec/functional/type-model/FR-153-query-closed-model-environments.md"
-    }
+    {"identity": "quire.model.normalize.intake/v1", "revision": "1-draft.1", "stage": "normalization", "phase": 1, "defined_by": "model-complete.md"},
+    {"identity": "quire.model.features/v1", "revision": "1-draft.1", "stage": "normalization", "phase": 1, "defined_by": "model-complete.md"},
+    {"identity": "quire.model.normalize.qualify/v1", "revision": "1-draft.1", "stage": "normalization", "phase": 2, "defined_by": "model-complete.md"},
+    {"identity": "quire.model.normalize.inherit/v1", "revision": "1-draft.1", "stage": "normalization", "phase": 3, "defined_by": "model-complete.md"},
+    {"identity": "quire.model.normalize.subset/v1", "revision": "1-draft.1", "stage": "normalization", "phase": 4, "defined_by": "model-complete.md"},
+    {"identity": "quire.model.normalize.redefine/v1", "revision": "1-draft.1", "stage": "normalization", "phase": 4, "defined_by": "model-complete.md"},
+    {"identity": "quire.model.normalize.canonicalize/v1", "revision": "1-draft.1", "stage": "normalization", "phase": 5, "defined_by": "model-complete.md"},
+    {"identity": "quire.model.conformance.variance/v1", "revision": "1-draft.1", "stage": "conformance", "phase": null, "defined_by": "../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md"},
+    {"identity": "quire.model.conformance.multiplicity/v1", "revision": "1-draft.1", "stage": "conformance", "phase": null, "defined_by": "../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md"},
+    {"identity": "quire.model.conformance.effect/v1", "revision": "1-draft.1", "stage": "conformance", "phase": null, "defined_by": "../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md"},
+    {"identity": "quire.model.conformance.refinement/v1", "revision": "1-draft.1", "stage": "conformance", "phase": null, "defined_by": "../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md"},
+    {"identity": "quire.model.dispatch.single/v1", "revision": "1-draft.1", "stage": "dispatch", "phase": null, "defined_by": "../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md"},
+    {"identity": "quire.model.systems.kind-mapping/v1", "revision": "1-draft.1", "stage": "systems", "phase": null, "defined_by": "model-complete.md"},
+    {"identity": "quire.model.systems.connection/v1", "revision": "1-draft.1", "stage": "systems", "phase": null, "defined_by": "../../../spec/functional/type-model/FR-152-bind-systems-model-structures.md"},
+    {"identity": "quire.model.systems.allocation/v1", "revision": "1-draft.1", "stage": "systems", "phase": null, "defined_by": "model-complete.md"},
+    {"identity": "quire.model.environment.lookup/v1", "revision": "1-draft.1", "stage": "environment", "phase": null, "defined_by": "../../../spec/functional/type-model/FR-153-query-closed-model-environments.md"},
+    {"identity": "quire.model.environment.population/v1", "revision": "1-draft.1", "stage": "environment", "phase": null, "defined_by": "../../../spec/functional/type-model/FR-153-query-closed-model-environments.md"}
   ]
 }

@@ -18,30 +18,59 @@ const ROOT: &str = concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/proposals/shared-reference-2-draft"
 );
-const MAX_BYTES: usize = 1024 * 1024;
-const MAX_DEPTH: usize = 64;
+/// Caller limits on one qualification fixture, with published defaults
+/// (IT-003): bytes read and JSON values (nodes) walked.
+#[derive(Clone, Copy, Debug)]
+struct IntakeLimits {
+    bytes: usize,
+    nodes: usize,
+}
+
+impl IntakeLimits {
+    const DEFAULT: Self = Self {
+        bytes: 1024 * 1024,
+        nodes: 65_536,
+    };
+}
+
+const MAX_BYTES: usize = IntakeLimits::DEFAULT.bytes;
 
 #[derive(Debug, PartialEq, Eq)]
 enum IntakeFailure {
-    Incomplete,
+    /// The named limit was reached at its configured value; raise that
+    /// `IntakeLimits` field to admit the input.
+    Incomplete {
+        limit: &'static str,
+        value: usize,
+    },
     Invalid,
 }
 
 fn intake(bytes: &[u8]) -> Result<Value, IntakeFailure> {
-    if bytes.len() > MAX_BYTES {
-        return Err(IntakeFailure::Incomplete);
+    intake_with(bytes, IntakeLimits::DEFAULT)
+}
+
+fn intake_with(bytes: &[u8], limits: IntakeLimits) -> Result<Value, IntakeFailure> {
+    if bytes.len() > limits.bytes {
+        return Err(IntakeFailure::Incomplete {
+            limit: "bytes",
+            value: limits.bytes,
+        });
     }
     let value = parse_bounded_json(bytes).map_err(|_| IntakeFailure::Invalid)?;
-    let mut pending = vec![(&value, 0)];
-    while let Some((node, depth)) = pending.pop() {
-        if depth > MAX_DEPTH {
-            return Err(IntakeFailure::Incomplete);
+    let mut pending = vec![&value];
+    let mut nodes = 0_usize;
+    while let Some(node) = pending.pop() {
+        nodes += 1;
+        if nodes > limits.nodes {
+            return Err(IntakeFailure::Incomplete {
+                limit: "nodes",
+                value: limits.nodes,
+            });
         }
         match node {
-            Value::Array(items) => pending.extend(items.iter().map(|item| (item, depth + 1))),
-            Value::Object(fields) => {
-                pending.extend(fields.values().map(|item| (item, depth + 1)));
-            }
+            Value::Array(items) => pending.extend(items),
+            Value::Object(fields) => pending.extend(fields.values()),
             Value::Null | Value::Bool(_) | Value::Number(_) | Value::String(_) => {}
         }
     }
@@ -288,7 +317,7 @@ fn synthetic_core_is_the_non_circular_preimage() {
 
 #[test]
 #[trace("IT-003-SC-01")]
-fn qualification_fixture_size_depth_and_json_syntax_controls() {
+fn qualification_fixture_size_node_and_json_syntax_controls() {
     for raw in [br#""\ud800""#.as_slice(), b"NaN", b"{} {}"] {
         assert_eq!(intake(raw), Err(IntakeFailure::Invalid));
     }
@@ -296,12 +325,31 @@ fn qualification_fixture_size_depth_and_json_syntax_controls() {
     exact[0] = b'0';
     assert_eq!(intake(&exact), Ok(json!(0)));
     exact.push(b' ');
-    assert_eq!(intake(&exact), Err(IntakeFailure::Incomplete));
-    for depth in [MAX_DEPTH, MAX_DEPTH + 1] {
-        let raw = format!("{}0{}", "[".repeat(depth), "]".repeat(depth));
-        assert_eq!(intake(raw.as_bytes()).is_ok(), depth == MAX_DEPTH);
-        if depth > MAX_DEPTH {
-            assert_eq!(intake(raw.as_bytes()), Err(IntakeFailure::Incomplete));
-        }
-    }
+    assert_eq!(
+        intake(&exact),
+        Err(IntakeFailure::Incomplete {
+            limit: "bytes",
+            value: MAX_BYTES
+        })
+    );
+    let limits = IntakeLimits {
+        nodes: 3,
+        ..IntakeLimits::DEFAULT
+    };
+    assert_eq!(intake_with(b"[0,0]", limits), Ok(json!([0, 0])));
+    assert_eq!(
+        intake_with(b"[0,0,0]", limits),
+        Err(IntakeFailure::Incomplete {
+            limit: "nodes",
+            value: 3
+        })
+    );
+    assert_eq!(
+        intake_with(b"[[[0]]]", limits),
+        Err(IntakeFailure::Incomplete {
+            limit: "nodes",
+            value: 3
+        })
+    );
+    assert_eq!(intake(b"[[[[[[[[0]]]]]]]]"), Ok(json!([[[[[[[[0]]]]]]]])));
 }

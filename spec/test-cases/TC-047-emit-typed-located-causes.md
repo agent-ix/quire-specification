@@ -28,14 +28,14 @@ response wire. Compare these paired failures independently:
 
 | Pair/control | Required structured distinction |
 | --- | --- |
-| Missing definition versus supplied definition with stale revision/digest versus a cyclic definition graph | Missing selection, exact expected/actual mismatch or identified cycle edges; no common message-only fallback. |
+| Missing definition versus a cyclic definition graph | Missing selection or identified cycle edges; no common message-only fallback. |
 | Request retaining a node identity taken from another package versus one retaining its subject's own node identity | `stale_dependency`/`content-mismatch` naming the retained and the carried identity versus acceptance; no revision comparison decides it. |
 | Valid observation binding with no required record versus supplied record from another invocation | Incomplete missing input versus refused wrong invocation, with separate expected/actual handles. |
 | Unknown source tokens versus recognized integer division under a refusing profile | Syntax failure versus profile refusal, preserving the actual stage and construct. |
 | Failure to prove a rational divisor nonzero versus a valid predicate evaluating false | Definedness refusal versus ordinary logical violation, without error-code substitution. |
 | Missing package member versus duplicate member versus wrong value kind | Distinct typed structural cause with the actual field/index path, independent of Serde's wording. |
 | Wrong extraction mode versus conflicting selected package versus wrong binding count | The three retained codes and their distinct typed payloads; deleting one guard must fail that case. |
-| Declared sequence maximum above 10000 versus a valid model exceeding a caller work budget | Invalid source/model admission versus resource incompleteness; no invented bound or shared generic limit cause. |
+| Sequence declaration without a declared maximum versus a valid model exceeding a caller work budget | Invalid source/model admission versus resource incompleteness; no invented bound or shared generic limit cause. |
 
 Supply each valid diagnostic to its strict consumer, then remove a required cause
 field, substitute another cause kind while keeping the same message, change the

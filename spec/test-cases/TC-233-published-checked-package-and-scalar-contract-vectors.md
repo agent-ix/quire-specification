@@ -37,7 +37,7 @@ Qualify the published QSpec contract artifacts themselves: the V2
 checked-package schema and fixtures, the nominal node-identity preimage
 schema and vectors, the operation catalog and its clause and control
 operation identities, and the compound-unit value identity schema and
-vectors, and the complete-value definition lock, rule manifest and
+vectors, and the complete-value and complete-model definition locks and
 package-selection vectors. This case proves producer-side schema closure,
 digest recomputation and operation-identity and diagnostic-cause closure
 only. It does not exercise a production reader, linker, lowerer or evaluator;
@@ -67,9 +67,11 @@ the term as a non-callee argument, the term as a node body root, and the target 
 every nominal node and compound-unit vector identity and apply each authored
 mutation, requiring the exact refusing check it names (`schema` or `semantic`),
 including `-0` spellings, and require the semantic oracle itself to refuse
-`-0`. Hash every qualification-catalog artifact and rule against the definition
-lock and rule manifest, require each catalog role to occupy exactly one always,
-conditional or exactly-one slot, and evaluate every accepted and refused
+`-0`. Require every qualification-catalog entry of both definition locks to name
+an authored artifact under a unique role and identity, require each
+complete-value catalog role to occupy exactly one always, conditional or
+exactly-one slot and each complete-model role the always slot, and evaluate
+every accepted and refused
 package-selection vector with an independent selection oracle. Check the
 operation catalog's closure against both V2 schemas and the value lock;
 recompute every operation vector and application node key; classify every
@@ -142,8 +144,8 @@ the schema and admitted or refused by the order rule with exactly its
 recorded outcome and loci. A `dependency_reference` term is admitted by both schemas and each of its four mutations fails both; as a call's callee it keys a valid application-node preimage, and changing its `package` or its `node` each gives a new, distinct id. The dependency call package is admitted, and its
 mutations refuse `missing_import`/`missing-selection`,
 `missing_declaration`/`missing-selection`, `missing_declaration`/`missing-name`,
-`ill_typed`/`operator-ineligible` (seven times) and `invalid_semantic_graph`. Every locked artifact matches its
-raw-byte digest, and every selection vector is admitted or refused with exactly
+`ill_typed`/`operator-ineligible` (seven times) and `invalid_semantic_graph`. Every catalog entry names an authored
+artifact, and every selection vector is admitted or refused with exactly
 its recorded selection code. The published fixture's frame node is admitted
 with no defect; every frame-entry meaning-join and canonical-order mutation
 is refused with exactly its named cause, and a frame body carrying two

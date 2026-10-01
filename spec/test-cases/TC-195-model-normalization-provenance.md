@@ -17,10 +17,9 @@ Normalize inherited/redefined declarations and mutate identity, digest and rule-
 
 Use the subject and inputs named by FR-150. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
-Select `quire.model.complete/v1` at revision `1-draft.2` by its exact
-DefinitionRefs in
+Select `quire.model.complete/v1` through
 [`complete-model-lock.json`](../../proposals/quire-v1/definitions/complete-model-lock.json),
-which also pins the `quire.value.complete/v1` lock. Every fixture is a domain
+which also selects the `quire.value.complete/v1` lock. Every fixture is a domain
 package with identity `test/orders` and version `1`. A node written `X` has IR
 node identity `ix://test/orders/X`, and its declaration key is
 `{package: test/orders, node: ix://test/orders/X, digest_domain: sha256-jcs}`.

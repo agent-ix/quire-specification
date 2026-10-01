@@ -48,8 +48,8 @@ unqualified names implicitly.
 
 ## Import binding and export identity
 
-The complete-unit `import "L" version "v" digest "d" as a;` names library
-identity `L`, version string `v` and `d`, which is the 64-lowercase-hex
+The complete-unit `import "L" digest "d" as a;` names library identity `L`
+and `d`, which is the 64-lowercase-hex
 `quire.package.semantic/v2` `package_id` of the library's CheckedPackage V2. It
 is not a raw source or manifest byte digest. `d` is spelled as exactly 64
 lowercase hexadecimal characters with no domain prefix, the spelling of a
@@ -57,7 +57,7 @@ lowercase hexadecimal characters with no domain prefix, the spelling of a
 `refused { code: invalid-digest }` at the import's `digest` string. `L` is
 the FR-322 library identity: a non-empty string compared byte for byte, with
 no segment structure. A supplied library is one library's source, offered
-under its identity `L` and version `v`. The linker compiles it through the
+under its identity `L` and its version string. The linker compiles it through the
 same stages as the importing unit, resolving its own imports against the
 same supplied libraries, and its `package_id` is the one that compile
 yields; a supplier never states a library's `package_id`. At most one

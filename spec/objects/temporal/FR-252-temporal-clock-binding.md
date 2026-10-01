@@ -18,8 +18,8 @@ relationships:
 When an admitted native temporal clause is bound, the frontend SHALL bind it to one exact clock interpretation supplied through the shared observation interface before evaluation or lowering.
 
 FR-090 Inputs name the supplied components: "exact language edition and temporal
-profile definition identity, revision and digest; typed interval bounds; and one
-clock binding supplied through the shared observation interface."
+profile definition identity; typed interval bounds; and one clock binding
+supplied through the shared observation interface."
 
 ## Properties
 
@@ -68,9 +68,9 @@ elapsed-time component is admitted under it.
   `release`, `since` and `triggered`; ingestion order is not substituted."
 - **Absence** — an absent component compares only to absence. FR-090 requires
   refusal of "a malformed, incompatible or missing fixed-sample clock definition
-  or binding before evaluation", and FR-090-AC-2 refuses "Unknown, stale,
-  digest-mismatched, multiply selected or internally inconsistent profile/clock
-  definitions" before evaluation. An absent epoch, period, unit, sequence
+  or binding before evaluation", and FR-090-AC-2 refuses "Unknown, multiply
+  selected or internally inconsistent profile/clock definitions" before
+  evaluation. An absent epoch, period, unit, sequence
   authority or admitted order is never defaulted, and an absent runtime sample
   under a valid fixed-sample binding is classified "as incomplete" (FR-090), not
   as a value.

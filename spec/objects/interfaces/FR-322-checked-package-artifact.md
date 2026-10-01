@@ -69,8 +69,9 @@ boundary.
   ([FR-307](../../functional/tooling/FR-307-package-reusable-semantic-libraries.md)):
   one `DependencySelection` per library identity, each
   `{identity, version, package_id}`, in strictly ascending UTF-8 byte order
-  of `identity`. `identity` and `version` are the library identity and
-  version string an `import "L" version "v" digest "d"` names. A library
+  of `identity`. `identity` is the library identity an `import "L" digest "d"`
+  names, and `version` is the version string of the library supplied under
+  it. A library
   identity is a non-empty string with no segment structure: `/`, `.` and
   every other character are ordinary bytes, and two identities are equal
   only when their UTF-8 bytes are equal. `package_id`
@@ -84,11 +85,10 @@ boundary.
   after its predecessor's in UTF-8 byte order refuses
   `invalid_package`/`invalid-value` at that entry's pointer. A
   `dependency_reference`'s `package` equals one entry's `package_id`. A
-  supplied dependency package binds to that entry only when its identity,
-  version and recomputed `package_id` equal the entry's; otherwise it
-  refuses as FR-307 states (`stale_dependency`/`revision-mismatch` for a
-  version difference, `stale_dependency`/`byte-digest-mismatch` for a
-  `package_id` difference). The same entries, in the same order, are the
+  supplied dependency package binds to that entry only when its identity and
+  recomputed `package_id` equal the entry's; otherwise it refuses as FR-307
+  states (`stale_dependency`/`byte-digest-mismatch` for a `package_id`
+  difference). The same entries, in the same order, are the
   identity preimage's `dependency_selections`, so each dependency's
   `package_id` enters the importing package's `package_id`. A reader
   admitting a package with a non-empty `dependency_selections` is supplied
@@ -126,9 +126,8 @@ boundary.
   a reader checks both by the rules of "Operation families, groups and
   constraints" below. `identity` is one
   member of the closed `quire.checked-operation-catalog/v1` published as
-  `contracts/checked-operation-catalog-v1.json` in `agent-ix/quire-verification-contracts`
-  (rev `4c49706d5db3ba77f96088ddcbb2635046246e32`, SHA-256
-  `9c3c40a14e386d98e03f2dea2a29bd5590c83e00e0533cdd9c62a1fe747461df`), whose entry names the
+  `contracts/checked-operation-catalog-v1.json` in `agent-ix/quire-verification-contracts`,
+  whose entry names the
   operation's operator class, operand positions and rest, result form,
   constraints, required law roles, mode kind, member kind and leaf source.
   `laws` is the ordered list of `{role, definition}` pairs whose roles are
@@ -138,8 +137,8 @@ boundary.
   `definition_selections`. For a clause operation (`quire.op.temporal.clause`,
   `quire.op.claim.clause`: role `temporal_profile`; `quire.op.protocol.control`,
   `quire.op.state.transition`: role `protocol_profile`) the `DefinitionRef` is
-  a published profile definition of that role, matched by identity, revision
-  and raw-byte digest, and equals the lock's `profile_selections` row of that
+  a published profile definition of that role, matched by authority and
+  identity, and equals the lock's `profile_selections` row of that
   role. `mode` is `null` when the entry names no mode kind
   and otherwise one catalogued `rounding`, `text_profile` or `absence` value.
   Types are authoritative for a `rounding` or `text_profile` mode: the value
@@ -671,7 +670,7 @@ partial checked package.
 | FR-322-AC-13 | The published V2 checked-package schema admits its positive fixture carrying all 13 closed node tags with an exact source-map entry for every occurrence, and refuses each authored version, digest-domain and node mutation. | Test (TC-233) |
 | FR-322-AC-14 | Each published V2 package fixture's `package_id` equals the RFC 8785 JCS SHA-256 of the identity preimage rebuilt from its lock selections and occurrence-free semantic graph; editing a source-map region, node source occurrence, raw source digest, capability disposition or diagnostic catalog leaves that id unchanged, while editing the edition, a profile/definition/model/dependency selection, a required feature, a node member or node order changes it. | Test (TC-233) |
 | FR-322-AC-15 | Each published enum, dimension and declared-unit node vector validates against the closed preimage schema and recomputes its recorded JCS SHA-256; each authored semantic mutation is refused by exactly its named schema or semantic check, an absent owner fails the package lock join, and inside the published nominal package a retained preimage with a changed body, type, dependency or unjoined owner is refused by the published cross-field or owner-join constraint. | Test (TC-233) |
-| FR-322-AC-17 | The published operation catalog is closed: both V2 schemas carry identical operation definitions and enumerate exactly its identities, law roles, mode kinds and values, member kinds and operator classes; every law-role `DefinitionRef`, digest included, is a complete-value lock definition; every entry's operands, rest, result form, laws, mode, member, leaf source and constraints use only catalogued families, groups and kinds; integer `div`/`rem` require the integer-division law and `mod` none, IEEE operations require the IEEE profile and have no `eq`, `ne`, ordering or `negate` identity, text operations require the text profile and text mode, `all_instances` takes one population, `lookup` requires an absence mode, `navigate` and `reaches` a relationship end, `reaches_field` a `field` member and the `reference_edge` constraint, `quire.op.state.clause` the `state_clause` member kind and no law, and the record, tuple and index projections, numeric/total-order/bit-identical IEEE comparisons, `deref` and `dispatch_call` are present. | Test (TC-233) |
+| FR-322-AC-17 | The published operation catalog is closed: both V2 schemas carry identical operation definitions and enumerate exactly its identities, law roles, mode kinds and values, member kinds and operator classes; every law-role `DefinitionRef` names a complete-value lock definition by authority and identity; every entry's operands, rest, result form, laws, mode, member, leaf source and constraints use only catalogued families, groups and kinds; integer `div`/`rem` require the integer-division law and `mod` none, IEEE operations require the IEEE profile and have no `eq`, `ne`, ordering or `negate` identity, text operations require the text profile and text mode, `all_instances` takes one population, `lookup` requires an absence mode, `navigate` and `reaches` a relationship end, `reaches_field` a `field` member and the `reference_edge` constraint, `quire.op.state.clause` the `state_clause` member kind and no law, and the record, tuple and index projections, numeric/total-order/bit-identical IEEE comparisons, `deref` and `dispatch_call` are present. | Test (TC-233) |
 | FR-322-AC-18 | Each published operation vector validates against the closed node-preimage schema, recomputes its recorded JCS SHA-256 and is distinct from every other vector; every application node of the published operation package is keyed by its application-node preimage and is a published vector, and a vector outside the package refuses as `operation-law-unselected` when placed in it; floor-to-Euclidean division changes the node and package ids; a retained key refuses as `stale-node-key`; a contradictory form, missing member-declaration dependency, stray recursion group or extra dependency is refused; an application without an operation fails the V2 schema; and the all-families function body calls a published function, changes its node id when rewritten as `dispatch_call` and then refuses as `operation-member-mismatch`. | Test (TC-233) |
 | FR-322-AC-19 | Each published operation mutation never keeps its stale key and either rekeys to exactly its named counterpart vector and is admitted exactly when its laws are lock-selected, refuses as `operation-law-unselected` until the lock also selects its law and again under the stale selection, or is refused by exactly its named schema or semantic check with its recorded cause and that cause's code; together the mutations exercise every operation refusal cause. | Test (TC-233) |
 | FR-322-AC-21 | Every node of each published V2 package carries a `declaration` member exactly when it declares; the schema refuses a declaring node without it and an expression with it; the member enters the application-node preimage and package id; a name duplicated on two nodes refuses as `ambiguous-name` at the node later in node-id digest order; and a nominal node whose declaration differs from its `qualified_declaration` refuses as `declaration-nominal-mismatch` before any ambiguity. | Test (TC-233) |

@@ -61,7 +61,7 @@ and no V1 scope.
 | RT | `agent-ix/quire-contract-runtime` | `no_std` native runtime ops and host-callable function ABI. |
 | CG | `agent-ix/quire-contract-codegen` | Capability negotiation, generated oracles, bounded Kani harnesses, replay reconstruction and parity. |
 | FCD | `agent-ix/filament-core-data` | Domain-package producer (semantic IR bytes). |
-| QI | `agent-ix/quire-integration` | Current-head integration workspace (`heads/`). |
+| QI | `agent-ix/quire-integration` | Cross-repository integration tests. |
 
 Adding a semantic family means one edit per owning layer plus compiler-forced
 mapping arms. No layer reinterprets another layer's semantics, and every
@@ -134,7 +134,7 @@ resolves them. A ticket with an opened issue cites it, as in TK-04 (IR #144).
 | Accounting | IR `CheckedPackageLimit` on the reader |
 | Source location | `source_map` carried as `CheckedSourceMapEntry` by occurrence key (`node_id`, `role`, `ordinal`), as minted by QSL; never re-minted |
 | Capability point | None. IR is not a second language authority; `capability_report` is data for arrow 4. |
-| Canonical vectors / agreement | QSpec I04 vectors; QSL-emit ↔ IR-read round trip over I04 and function fixtures (heads workspace); wire string ↔ enum conversions total and mutation-tested |
+| Canonical vectors / agreement | QSpec I04 vectors; QSL-emit ↔ IR-read round trip over I04 and function fixtures (QI); wire string ↔ enum conversions total and mutation-tested |
 | Rejected item → substitute? | No. A refused package yields no IR package. |
 | Replay input / parity | The v2 `source_map` is arrow 7's occurrence-key → span resolver input |
 
@@ -349,7 +349,7 @@ layer-owned with a total conversion.
 | RT observation `ClauseKind{…,Guard,Consequent}` | Layer-owned | RT | Total IR `ClauseKind` → RT observation kind, with test |
 | Capability descriptions | Layer-owned: QSL `Capability` = language admission (FR-290 capability kinds); IR closed obligation-capability enum parsed at the wire edge | QSL / IR | Wire string ↔ enum total test |
 | Finite/unbounded bounds | Layer-owned | QSL `Extent`/`Population`; IR `bounded_domain`/`model_population` + single `requires-bound` predicate | v2 round trip; `requires-bound` table test |
-| Outcomes and stable diagnostic codes | Codes shared by catalog (QSpec `native-diagnostics.md`); typed causes layer-owned | Each layer: one `fn catalog_code(&self) -> CatalogCode`, exhaustive | Totality test against the QSpec catalog (heads workspace) |
+| Outcomes and stable diagnostic codes | Codes shared by catalog (QSpec `native-diagnostics.md`); typed causes layer-owned | Each layer: one `fn catalog_code(&self) -> CatalogCode`, exhaustive | Totality test against the QSpec catalog |
 | Domain-package and model references | Layer-owned | QSL `DomainPackageRef` (FR-321), `ModelRef` | Crosses to IR only as v2 wire strings |
 | Accounting/work categories | Shared via kernel `ChargePoint` (kernel type under D-2) = `quire.value.accounting/v1` (#129 Q9) | `quire-exact` (`ChargePoint`) | `ChargePoint` lives in RT `src/exact/accounting.rs` (kernel-bound, moves with D-2). CG charge emission maps to kernel charge points. `OPEN — decided in WP5b`: RT charge agreement vs kernel `ChargePoint`. |
 | FCD identities | Layer-owned | FCD | Translated only in QSL `model::intake`; FCD conformance fixtures → admitted `DeclarationKey` set |
@@ -402,12 +402,11 @@ flowchart BT
 | Provider/oracle generation | CG | — |
 | Kani adapter + replay | CG | Replay needs the generator's schema |
 | Oracle-generation RT edge | Normal dependency with `features = ["exact"]`, CG `Cargo.toml:18`; plus a dev-dependency at `:27` with `["proptest","exact"]` | Generated oracles call RT `exact` operators directly (`src/exact_scalar.rs:1370`, `use quire_contract_runtime::exact as rt;`); under the kernel fallback rule these calls read as RT `src/exact/`. Because the oracle calls `quire-exact` directly, it is not an independent expectation for a proof of a `quire-exact` operation, or of an RT op that calls one (QSL ADR-013 O-13; ADR-011 rule 8). |
-| Replay executor's QSL edge | Normal git dependency, added in WP9 (today CG `Cargo.toml:28` is a dev-dependency) | The executor needs QSL's public complete-V1 entry at run time; the heads workspace detects API drift. |
+| Replay executor's QSL edge | Normal git dependency, added in WP9 (today CG `Cargo.toml:28` is a dev-dependency) | The executor needs QSL's public complete-V1 entry at run time. |
 
 The crate graph is acyclic over normal dependencies. QSL has no normal
 dependency on RT. The dashed IR root → QSL edge is outside this pipeline.
-CG → QSL becomes a normal dependency in WP9; the heads workspace detects API
-drift. QSL's dev-dependency on CG is retired in WP9 (acceptance item),
+CG → QSL becomes a normal dependency in WP9. QSL's dev-dependency on CG is retired in WP9 (acceptance item),
 removing the QSL -dev→ CG → QSL loop.
 
 ### Domain-package intake boundary
@@ -438,28 +437,6 @@ removing the QSL -dev→ CG → QSL loop.
 | Frame obligation | Capability kind FR-290 `operation-contract`. Arrows 3–5: `unsupported` (warned) with a catalog code until IR lowers the FR-340 `state`/`frame` node into its Kani form (IR#109). Arrow 2 already carries it. Runtime frame violations: `frame_violation`/`unauthorized-change` (#129 Q7). Subject ABI = the FR-340 `modifies`/`creates`/`deletes` sets of v2 node keys (`CheckedNodeId`) of `relation`/`model` nodes; each resolves to its `DeclarationKey` through the package's model correspondence. `OPEN — decided in WP10`: IR Kani frame lowering and CG frame-harness file list. |
 | Unbounded construct | IR `requires-bound` is the single predicate. CG negotiation maps it to `requires-bound` (finite bound available) or `unsupported` (warned, E07). Neither emits an oracle or harness. |
 
-### Current-head integration
-
-`quire-integration/heads/` is a separate Cargo workspace, outside QI's product
-crate and qualified build.
-
-| Part | Contract |
-| --- | --- |
-| `heads/Cargo.toml` | One member, `heads-check`; `[patch."<git url>"]` maps every pipeline crate (QSL, IR, RT, CG, FCD, quire-rs, QSpec) to a `.heads/` worktree at its current `origin/main` head |
-| `make heads` | `git worktree add --detach` at each repository's `origin/main`; builds and tests `heads-check`; runs the checks below |
-
-| # | Drift check | Detects |
-| --- | --- | --- |
-| 1 | QSL emits v2 for the I04 corpus; IR `read`+`lower` accept; clause/tag wire strings total both ways | QSL/IR vocabulary mismatch |
-| 2 | FCD extraction-frontend on FCD conformance fixtures → QSL intake; `DeclarationKey` set and `Extent` equal expected | QSL/domain-package identity and population mismatch |
-| 3 | CG compiles against RT head | Runtime/Codegen API gaps |
-| 4 | RT footprint and Kani gate built with the union of consumer features (`exact`) | Missing feature flags |
-| 5 | `cargo tree -d` empty for quire crates (one instance per package) | Downstream compiling against obsolete APIs |
-| 6 | Every layer's `catalog_code()` total and inside the QSpec catalog | Incompatible result/refusal mappings |
-
-- `[patch]` lives only in `heads/Cargo.toml`.
-- Hosted CI in IR, RT and CG is `workflow_dispatch` only; cross-stage evidence runs on a dev machine with `cargo-kani`. The heads workspace is the drift check.
-
 ### Change scenarios
 
 Each table is the predicted touch set on the extension path. **All seven are
@@ -473,7 +450,7 @@ predictions, re-walked on landed code in WP11.**
 | Crates | `quire-spec-language`, `quire-exact`, `quire-contract-model`, `quire-contract-codegen` |
 | Repos | QSL, IR, CG (+ QSpec vector) |
 | Conversions | Checked node → v2 tag; IR `Operator` ↔ wire name (table row) |
-| Tests | QSpec complete-value vector; heads round trip; CG three-way agreement; mutation test on mapping |
+| Tests | QSpec complete-value vector; QSL-emit ↔ IR-read round trip; CG three-way agreement; mutation test on mapping |
 
 #### 2. Add one clause or execution-anchor kind
 
@@ -493,7 +470,7 @@ predictions, re-walked on landed code in WP11.**
 | Crates | `quire-exact` or `quire-spec-language` |
 | Repos | QSL, QSpec |
 | Conversions | `DeclarationKey` wire round trip |
-| Tests | Tests read expected digests from QSpec vectors by reference; heads round trip |
+| Tests | Tests read expected digests from QSpec vectors by reference; QSL-emit ↔ IR-read round trip |
 
 #### 4. Add an unbounded construct that Kani refuses
 
@@ -513,7 +490,7 @@ predictions, re-walked on landed code in WP11.**
 | Crates | FCD semantic IR / extraction-frontend; `quire-spec-language` |
 | Repos | FCD, QSL; nothing downstream |
 | Conversions | Bound travels once as v2 `model_population` |
-| Tests | Heads FCD fixture → admitted `Extent`; v2 round trip |
+| Tests | FCD conformance fixture → admitted `Extent`; v2 round trip |
 
 #### 6. Produce and replay a counterexample with a nested source location
 
@@ -557,14 +534,12 @@ predictions, re-walked on landed code in WP11.**
 | Replay: packet in IR, reconstruction in CG, executor in QSL | Reconstruction sits with the schema that types Kani's byte vectors. |
 | Shared `quire-exact` kernel in the QSL repo (Owner decision 2) | One value/outcome/accounting implementation; RT agreement suite checks it against QSpec vectors. |
 | All other concepts layer-owned with one exhaustive `catalog_code()` per layer | Codes stay stable; typed causes stay local. |
-| Current-head workspace in QI `heads/` | Cross-repository drift is detected on current heads. |
 
 ## Risks
 
 | Risk | Control |
 | --- | --- |
 | A layer silently drops or approximates an item | Ledger-completeness test; no substitute artifact after refusal. |
-| Cross-repo drift goes unseen (hosted CI is dispatch-only) | `make heads` builds and checks every current head together. |
 | Kernel extraction weakens independent cross-checking | Agreement suite retargeted to QSpec canonical vectors. |
 | Mapping tables go partial | Exhaustive matches with no `_` arm; `cargo mutants` on mapping fns. |
 | RT call state does not hold under function application | The call-state contract's four points; a failed reentrancy or location test reopens the call-state/identity boundary. |
@@ -577,9 +552,8 @@ predictions, re-walked on landed code in WP11.**
 | 2 | One owner and typed contract per boundary | WP2 (decision); WP6, WP7, WP9 (implemented) |
 | 3 | Shared vs layer types decided with total conversion tests | WP2; WP5a, WP5b; WP6; WP7 |
 | 4 | Cycle-free, consumer-justified crate graph | WP2; WP5b; WP9 |
-| 5 | Current-head build detects drift | WP4 (WP3 partial) |
-| 6 | Function application end to end with agreement evidence | WP6, WP8, WP9 |
-| 7 | Frame and unbounded scenarios yield typed refusal/qualification | WP2 (decision); WP10 |
-| 8 | Exemplar needs no unrelated central edits or copied vocabularies | WP5a, WP5b, WP7; verified in WP11 |
-| 9 | No new V1 scope | WP1, WP2 |
-| 10 | A08–A14 and E03–E07 mapped onto the path | WP11 |
+| 5 | Function application end to end with agreement evidence | WP6, WP8, WP9 |
+| 6 | Frame and unbounded scenarios yield typed refusal/qualification | WP2 (decision); WP10 |
+| 7 | Exemplar needs no unrelated central edits or copied vocabularies | WP5a, WP5b, WP7; verified in WP11 |
+| 8 | No new V1 scope | WP1, WP2 |
+| 9 | A08–A14 and E03–E07 mapped onto the path | WP11 |

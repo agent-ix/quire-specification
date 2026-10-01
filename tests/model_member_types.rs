@@ -12,9 +12,7 @@
 
 use ix_trace_rs::trace;
 use quire_verification::contracts::jcs_sha256;
-use quire_verification_contracts::operation_catalog::{
-    CHECKED_OPERATION_CATALOG_V1, CHECKED_OPERATION_CATALOG_V1_SHA256,
-};
+use quire_verification_contracts::operation_catalog::CHECKED_OPERATION_CATALOG_V1;
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -705,17 +703,6 @@ fn projection(catalog: &Value, package: &Value, nodes: &[Value], case: &Value) -
         Some(member_type) if *member_type != case["result_type"] => ineligible(),
         _ => derived,
     }
-}
-
-/// FR-322 and the checked-package README state this rev's digest; the crate's own
-/// constant is the measurement they are checked against.
-#[trace("TC-281", "FR-322-AC-33")]
-#[test]
-fn tc_281_the_stated_catalog_digest_is_the_one_read() {
-    assert_eq!(
-        CHECKED_OPERATION_CATALOG_V1_SHA256,
-        "9c3c40a14e386d98e03f2dea2a29bd5590c83e00e0533cdd9c62a1fe747461df"
-    );
 }
 
 #[trace("TC-281", "FR-322-AC-33")]

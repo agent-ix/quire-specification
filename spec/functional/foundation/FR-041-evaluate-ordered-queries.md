@@ -12,7 +12,7 @@ When evaluating an admitted bounded sequence query, the evaluator SHALL apply th
 
 ## Inputs
 
-A complete supplied Seq(T,N), N at most 10,000, a checked binder body, declared cardinality/total type where required, exact scope identity and execution budgets.
+A complete supplied Seq(T,N) with its declared maximum N, a checked binder body, declared cardinality/total type where required, exact scope identity and execution budgets.
 
 ## Outputs
 
