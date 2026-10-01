@@ -12,8 +12,7 @@ use std::collections::{BTreeMap, BTreeSet};
 const COMPLETE_MODEL_LOCK: &str =
     include_str!("../proposals/quire-v1/definitions/complete-model-lock.json");
 const COMPLETE_MODEL_LOCK_DIR: &str = "proposals/quire-v1/definitions";
-const COMPLETE_VALUE_LOCK_BYTES: &[u8] =
-    include_bytes!("../proposals/quire-v1/definitions/complete-value-lock.json");
+const COMPLETE_VALUE_LOCK_BYTES: &[u8] = quire_specification::COMPLETE_VALUE_LOCK.as_bytes();
 const MODEL_ROOT_DEFINITION: &str =
     include_str!("../proposals/quire-v1/definitions/model-complete.md");
 const MODEL_RULE_MANIFEST: &str =
