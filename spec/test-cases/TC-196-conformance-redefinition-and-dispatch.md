@@ -15,7 +15,7 @@ Resolve valid specialization/dispatch and reject cycles, weakening and ambiguity
 
 ## Test Procedure
 
-Use the exact version-locked subject and inputs named by FR-151. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
+Use the subject and inputs named by FR-151. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
 Select `quire.model.complete/v1` at revision `1-draft.2` by its exact
 DefinitionRefs in

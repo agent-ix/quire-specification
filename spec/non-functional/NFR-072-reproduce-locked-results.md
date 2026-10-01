@@ -1,6 +1,6 @@
 ---
 id: NFR-072
-title: "Reproduce version-locked results"
+title: "Reproduce results deterministically"
 type: NFR
 quality_attribute: reliability
 relationships:
@@ -10,12 +10,12 @@ relationships:
     type: constrains
 ---
 
-# NFR-072: Reproduce version-locked results
+# NFR-072: Reproduce results deterministically
 
 ## Statement
 
 The ecosystem SHALL reproduce canonical artifacts and typed results bit-for-bit
-for equal semantic inputs and one exact ecosystem lock.
+for equal semantic inputs.
 
 ## Scope
 
@@ -24,17 +24,16 @@ AOT/JIT, WASM, mappings, evidence and qualification.
 
 ## Rationale
 
-Evidence and counterexamples cannot be trusted if ambient versions or unstable
-ordering change their meaning.
+Evidence and counterexamples cannot be trusted if unstable ordering or ambient
+state changes their meaning.
 
 ## Measurement and Evaluation
 
 | Metric | Target | Threshold | Method |
 | --- | --- | --- | --- |
 | Repeated canonical artifact equality | 100% | 100% | Differential replay |
-| Meaning-affecting pins present | 100% | 100% | Lock inspection |
 
 ## Verification
 
-Repeat the corpus from clean local builds and mutate each pin to verify that it
-creates a distinct run/cache identity.
+Repeat the corpus from clean local builds and compare the canonical artifacts
+and typed results byte for byte.

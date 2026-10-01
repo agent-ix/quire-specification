@@ -16,7 +16,7 @@ contract onto a named implementation Rust function and verify them.
 
 ## Test Procedure
 
-Use the exact version-locked subject and inputs named by FR-350. Execute its
+Use the subject and inputs named by FR-350. Execute its
 positive case, each declared boundary, and each explicit refusal/non-conclusive
 mutation through the real local Rust boundary; compare the complete typed
 result and artifact accounting with the criterion.
@@ -33,8 +33,7 @@ Every positive and boundary result matches FR-350; emitted clauses correspond
 exactly to the bound state contract's precondition, postcondition and
 invariant; emission targets only a named implementation Rust function; Verus
 registers under the same AD-010 provider contract as Kani and the SMT backend;
-a refuted clause returns a replayable counterexample and the evidence lock
-records Verus/Rust/dependency/option pins; a claim Verus cannot discharge
+a refuted clause returns a replayable counterexample; a claim Verus cannot discharge
 settles `unsupported` with a warning naming the required capability, or
 `requires_bound` when a finite bound is missing; when Verus is not
 registered, an already SMT-`proved` claim keeps its `solver-asserted` trust

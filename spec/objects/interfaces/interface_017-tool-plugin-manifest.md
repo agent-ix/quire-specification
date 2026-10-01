@@ -13,10 +13,10 @@ relationships:
 
 ```yaml
 name: ToolPluginManifest
-associated_types: [ToolId, ContractVersion, CapabilitySet, EffectSet, RightsSet, ConformanceId]
+associated_types: [ToolId, CapabilitySet, EffectSet, RightsSet]
 operations:
-  - { name: validate_manifest, inputs: [canonical manifest, host policy], output: admitted provider selection or refusal, semantics: checks version capabilities purity effects rights platform provenance and conformance }
+  - { name: validate_manifest, inputs: [canonical manifest, host policy], output: admitted provider selection or refusal, semantics: checks capabilities purity effects rights and platform }
 invariants:
-  - discovery is explicit and versioned
+  - discovery is explicit
   - manifests cannot grant semantic admission or authority
 ```

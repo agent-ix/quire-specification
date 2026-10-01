@@ -30,8 +30,9 @@ When temporal meaning crosses the native temporal boundary, the producer SHALL u
 ## Identity and validation
 
 Artifact, evaluation and result identities are separate. Equal formula text under another profile, clock or source occurrence is unequal.
-Unknown contract versions, missing required properties, duplicate keys,
-out-of-domain values and non-canonical encodings refuse before consumption.
+A document whose `contract_version` is not that identifier, missing required
+properties, duplicate keys, out-of-domain values and non-canonical encodings
+refuse before consumption.
 
 ## Acceptance Criteria
 
@@ -45,8 +46,3 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 - [interface_006](./interface_006-native-temporal.md) owns the operation boundary.
 - FR-160 owns the behavior that produces or consumes this value.
-
-## Status
-
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.

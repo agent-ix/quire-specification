@@ -24,10 +24,7 @@ Selected definition identity or a located unsupported-profile diagnostic.
 
 The implementation target is `ix:native`, edition `0-draft`,
 `state-finite/0-draft`, defined by the `proposals/state-core` definition and
-schema files whose bytes `proposals/state-core/SHA256SUMS` pins.
-`typing-cases.json` and `reference-cases.json` also pin `profile.md`,
-`typing-cases.json` pins `state-semantics.md`, and `fixtures/SHA256SUMS` pins
-the fixture bytes. Grammar admission remains distinct from successful typing,
+schema files. Grammar admission remains distinct from successful typing,
 execution and backend support.
 
 FS01 accepts `Quire` as the product/language name, `native Quire` as its
@@ -44,7 +41,6 @@ composed state definitions and [FR-019](FR-019-admit-native-source-profile.md),
 but its identity is neither enabled nor aliased to a historical or composed
 profile. When a selected definition is unavailable, the frontend shall refuse
 at the selected source location without falling back to another definition.
-The standard shall preserve historical definition bytes and identities.
 
 ## Acceptance Criteria
 

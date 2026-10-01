@@ -23,11 +23,11 @@ the AOT/JIT provider consumes the same I13 contract package.
 
 ## Preconditions
 
-Manifests, executable digests, toolchains, options, rights and limits are locked.
+Provider manifests, rights and limits are explicit.
 
 ## Inputs
 
-Supported/unsupported requests plus malformed output, version/rights mismatch,
+Supported/unsupported requests plus malformed output, rights mismatch,
 crash, timeout and cache-key mutation cases.
 
 ## Test Procedure

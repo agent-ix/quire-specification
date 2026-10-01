@@ -12,8 +12,6 @@ relationships:
     type: realizes
   - target: ix://agent-ix/quire-specification/FR-019
     type: realizes
-  - target: ix://agent-ix/quire-specification/NFR-001
-    type: references
   - target: ix://agent-ix/quire-specification/AD-006
     type: references
 ---
@@ -23,10 +21,7 @@ relationships:
 
 Quire is the product and language name. “Native Quire” distinguishes the sole
 editable formal-clause language from generated mappings. `ix:native` is its
-stable machine identity; it is not a display-name placeholder. A future public
-brand change requires an explicitly versioned edition and FS05 migration. It
-cannot reinterpret source, definitions, reports or evidence already bound to
-`ix:native`.
+stable machine identity; it is not a display-name placeholder.
 
 The language standard owns grammar, semantic profile definitions and their
 composition rules. The compiler recognizes syntax, selects exact definitions,
@@ -90,9 +85,7 @@ capable backend.
 | Package and diagnostics | `quire.package.composed/v1` and `quire.native.diagnostics/v1` | Exact composition and diagnostic interpretation under FS02/FS05 and the owning compiler interfaces |
 
 Acceptance here fixes the identity roles and dependency direction. It does not
-freeze the current draft revision labels or claim all profile implementations.
-An owning semantic ticket freezes its exact revision and digest when it accepts
-that definition.
+claim all profile implementations.
 
 ### Construct and delivery status
 
@@ -150,17 +143,16 @@ bracketed-interval productions or any `0-draft` bytes.
 | Question | Final FS01 disposition / owner |
 | --- | --- |
 | Q1 unbounded logic | No global decidability claim. The infinite-trace facet defines unbounded temporal properties and sound proved/refuted/inconclusive results; finite evidence alone cannot prove infinite satisfaction. |
-| Q2 identity/name | Product/display name Quire, descriptive name native Quire, stable identity `ix:native`; any later public rename uses FS05 migration. |
+| Q2 identity/name | Product/display name Quire, descriptive name native Quire, stable identity `ix:native`. |
 | Q3 rejection depth | Lexical/syntax invalidity is distinct from recognized-but-unsupported source; both retain exact loci. |
 | Q4 object environment | Explicit finite typed current/pre/post universes and identity-bearing references; FS02/FS03 own model intake from the domain package and its semantics. |
 | Q5 collections | Sequence, set, bag and ordered-set semantics, explicit conversions, map/collect, flatten and fold/reduce are required in the complete value facet; the historical bounded profile remains unchanged. |
 | Q6 subtyping | The complete model facet defines closed conformance/substitutability, subsetting, redefinition and dispatch; ambiguous or unavailable closure refuses. |
 | Q7 fuel | Runtime work ceilings are distinct from semantic maxima; exhaustion is incomplete and cannot truncate meaning. |
-| Q8 compatibility | Edition, semantic profile, artifact wire, canonicalization, backend and release versions remain independent; FS05 owns migration. |
+| Q8 identity dimensions | Edition, semantic profile, artifact wire, canonicalization and backend identities remain independent. |
 | Q9 temporal | Native temporal profiles own meaning; TL profiles are internal targets behind exact correspondence. FS04 and temporal owners close delivery. |
 | Q10 crate layout | The current Rust package/module boundary remains implementation-owned; split only for an independently versioned consumer interface. |
 | Q11 ADR-0053 | Contract-IR PR #72 accepted native Quire-only source authority; external languages are mappings and the reference/bounds gate remains explicit. |
-| Q12 tracking | QS #1 and this capability ledger are the plan of record; owning tickets and ledgers are updated immediately after merge. |
 
 ### Example discriminators
 
@@ -175,7 +167,7 @@ bracketed-interval productions or any `0-draft` bytes.
 | Choice | Rejected alternative | Consequence |
 | --- | --- | --- |
 | Accept one native Quire language charter and the composed profile hierarchy | Adopt the temporary `state-finite/1-draft` replacement or separate family languages | Historical bytes remain stable while state, temporal and protocol grow through explicit dependent facets. |
-| Accept profile identity separately from semantic revision acceptance and implementation | Mark every PR #15 draft implemented or leave all identities ambiguous | Owners can build against stable roles without overstating delivery; each semantic ticket freezes its exact definition. |
+| Accept profile identity separately from semantic revision acceptance and implementation | Mark every PR #15 draft implemented or leave all identities ambiguous | Owners can build against stable roles without overstating delivery. |
 | Fix exact rational, inheritance and pre-state rules in the composed definition set | Leave the old amendment's open questions attached to a dead candidate | `rational(n,d)`, normalization, nonzero/range proofs, child-profile monotonicity and eligible pre-state reads now have one drafted meaning for FS03 delivery. |
 | Retain the original ConfigVersion reference/bounds gate | Invent a maximum, erase `parent`, or treat the bounded worked example as the original model | The original subject refuses until its spec artifacts declare the finite domain and the relationship explicitly. |
 | Accept the PR #15 architecture boundary | Make an executable IR, TL form or backend the language | Normative language meaning remains independent of each consumer representation and support set. |
@@ -184,7 +176,6 @@ bracketed-interval productions or any `0-draft` bytes.
 
 | Risk / scenario | Required control | Owner / next work |
 | --- | --- | --- |
-| Identity acceptance is mistaken for complete semantic adoption | Every definition and ledger keeps separate defined, implemented and qualified status. | A; FS02–FS06 |
 | The superseded first-profile candidate is silently enabled | Frontends refuse its unavailable identity; no alias maps it to historical or composed profiles. | A; compiler inventory/evolution tests |
 | A backend capability widens source admission | Admission completes before backend selection; unsupported source never reaches lowering as an admitted subject. | Compiler/backend owners |
 | A model gap is repaired in the language by inference | Missing bounds, presence, relationships and closure refuse until the spec artifacts declare them. | A; FS02/FS03 |

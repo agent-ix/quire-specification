@@ -23,19 +23,19 @@ When the complete-V1 conformance corpus is published or executed, the producer S
 ## Properties
 
 - `contract_version` — exactly `quire.conformance-corpus/v1`.
-- `inventory_revision` — exact 200-row scope identity.
-- `vectors` — stable vector ID, capability ID, source/model/input and expected typed disposition.
+- `vectors` — vector ID, inventory capability ID, source/model/input and expected typed disposition.
 - `classes` — positive, lower/upper boundary, just-outside, refusal, incomplete and metamorphic mutations.
-- `oracle` — independent expected value/verdict derivation and version.
+- `oracle` — independent expected value/verdict derivation.
 - `applicability` — required consumer types and supported semantic profiles.
 - `results` — subject/run/vector outcomes and artifact references.
 - `coverage` — exactly one primary capability entry plus criterion/consumer rollups.
 
 ## Identity and validation
 
-Vector identity covers its complete input and oracle; corpus identity covers the ordered vector set and inventory revision.
-Unknown contract versions, missing required properties, duplicate keys,
-out-of-domain values and non-canonical encodings refuse before consumption.
+Vector identity covers its complete input and oracle; corpus identity covers the ordered vector set.
+A document whose `contract_version` is not that identifier, missing required
+properties, duplicate keys, out-of-domain values and non-canonical encodings
+refuse before consumption.
 
 ## Acceptance Criteria
 
@@ -49,8 +49,3 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 - [interface_019](./interface_019-conformance-corpus.md) owns the operation boundary.
 - FR-311 owns the behavior that produces or consumes this value.
-
-## Status
-
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.

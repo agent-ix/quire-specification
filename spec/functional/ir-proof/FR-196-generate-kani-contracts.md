@@ -23,12 +23,12 @@ relationships:
 
 When Kani generation is requested, the backend SHALL derive contract
 preconditions, symbolic domains and harness bounds from the checked model and
-record the exact Kani/Rust/options pins.
+record the Kani version and options it ran.
 
 ## Inputs
 
 Target-neutral items, model domains, requested proof claims, Kani capability
-profile and toolchain/options lock.
+profile and Kani options.
 
 ## Outputs
 
@@ -40,8 +40,8 @@ dispositions, or generation failure.
 Boolean, numeric, state, collection, graph, temporal and protocol items are
 accepted only where the selected Kani profile encodes their exact semantics.
 Finite bounds come from model domains or explicit proof requests. Unsupported
-constructs emit no approximate harness. Generated crates are Rust-only,
-`publish = false`, and pin the exact Kani version/options.
+constructs emit no approximate harness. Generated crates are Rust-only and
+`publish = false`.
 
 ## Kani mapping contract
 
@@ -52,9 +52,8 @@ unchanged non-frame locations; invariants hold at admitted state boundaries.
 Integer and collection ranges use model-derived inclusive bounds with checked
 conversions. Graph, temporal or protocol state is generated only under a finite
 exact encoding whose correspondence is recorded. Harness identity derives from
-claim identity rather than source spelling. The evidence lock records Kani and
-Rust versions, target, solver, unwind/loop bounds, dependency checksums and all
-command options.
+claim identity rather than source spelling. The evidence names the Kani version
+it ran, its target, solver, unwind/loop bounds and command options.
 
 ## Acceptance Criteria
 
@@ -62,7 +61,7 @@ command options.
 | --- | --- | --- |
 | FR-196-AC-1 | Generated preconditions and symbolic ranges equal the model's inclusive domains, including boundary values. | Test (TC-218) |
 | FR-196-AC-2 | Missing bounds or unsupported exact semantics produce requires-bound/unsupported and no harness for that item. | Test (TC-218) |
-| FR-196-AC-3 | Evidence records Kani, Rust, dependency and option pins plus every requested obligation disposition. | Inspection |
+| FR-196-AC-3 | Evidence accounts for every requested obligation with its disposition and the unwind/loop bounds it was checked under. | Inspection |
 | FR-196-AC-4 | Preconditions, postconditions, invariants and frame clauses map separately to the generated contract and harness. | Test (TC-218) |
 | FR-196-AC-5 | A finite encoding records its one-to-one semantic correspondence; absent correspondence emits unsupported and no Rust item. | Test (TC-218) |
 

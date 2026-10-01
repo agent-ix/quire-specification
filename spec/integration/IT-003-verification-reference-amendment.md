@@ -18,18 +18,13 @@ checks, existing JCS parity and future strict-reader/report qualification.
 ## Target Integration
 
 A's immutable schema/vectors and B's public Rust canonicalization functions,
-followed by B's one strict shared-reference reader and report assembler. Existing
-canonicalizer inspection pin: quire-verification
-5305b40d0bc78bf2a566bd5609669373361e87b8, contracts::jcs_canonicalize and
-contracts::jcs_sha256. A does not change B's workspace or own its result schema.
+followed by B's one strict shared-reference reader and report assembler. The
+canonicalizer is quire-verification's `contracts::jcs_canonicalize` and
+`contracts::jcs_sha256`. A does not change B's workspace or own its result schema.
 
 ## Preconditions
 
-The amended contract has completed the retained QUOIN review set. The Rust
-qualification tool records the exact A/B revisions and actual commands. A
-caller-supplied local B checkout must match its expected revision and be clean
-before and after qualification. Missing inputs fail setup; they do not skip or
-pass. Rust 1.98.1 is the qualification toolchain. All work is local.
+Missing inputs fail setup; they do not skip or pass. All work is local.
 
 ## Inputs
 
@@ -47,12 +42,10 @@ mismatches, and an explicitly synthetic automated-core correspondence example.
    - IT-003-SC-02: Exact bytes and digest agree, including the non-circular core input and its mutations.
 3. Pass the packet through B's adopted strict shared reader and selected report definition (30 seconds).
    - IT-003-SC-03: Exact-role/version/identity controls and actual report correspondence receive the specified outcomes.
-4. Verify the state-core packet against its pinned digests and checkout integrity (10 seconds).
-   - IT-003-SC-04: The state-core packet matches its pinned digests and no B source was modified.
 
 ## Expected Results
 
-All four criteria require observed evidence for complete integration acceptance.
+All three criteria require observed evidence for complete integration acceptance.
 SC-01/02 can establish a reviewable producer/canonicalizer handoff now. SC-03 stays
 planned until B adopts the amendment and implements its consumer. A synthetic
 core fixture proves the selected projection rule only; it is never reported as

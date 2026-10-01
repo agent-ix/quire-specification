@@ -18,7 +18,7 @@ with identical partial/uncertain input meaning and retained supersession.
 
 ## Target Integration
 
-Pinned QObs Rust owner-view APIs feed the real temporal and protocol Rust
+QObs Rust owner-view APIs feed the real temporal and protocol Rust
 consumers; results re-enter the composed runtime bundle.
 
 ## Preconditions

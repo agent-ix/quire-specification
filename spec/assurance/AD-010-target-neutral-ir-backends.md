@@ -68,8 +68,8 @@ identities and bounds. Capability negotiation happens at one point,
 before generation as exactly one of `supported`, `requires-bound`,
 `unsupported` (warned, naming the required capability) or `invalid-request`,
 over the capabilities registered backends advertise. Unsupported
-constructs emit no approximating artifact. Generated artifacts record complete
-toolchain/options pins and account for every requested obligation.
+constructs emit no approximating artifact. Generated artifacts name the tool
+version and options they ran and account for every requested obligation.
 
 Counterexamples use one canonical typed serialization, retain source and run
 lineage, and replay through the QSL complete-V1 executor (FR-197, AD-016 arrow 7) under the
@@ -91,7 +91,6 @@ same package and input domain. Backend and runtime verdict disagreement is an ex
 | Risk | Control |
 | --- | --- |
 | Generated code silently omits a clause | Per-obligation accounting and package-level completeness rule. |
-| Backend version changes a verdict | Exact Rust/Kani/solver/options pins in run identity. |
 | Runtime and proof models diverge | Bounded corpus parity plus counterexample replay as qualification gates. |
 | SMT encoding and native runtime disagree on meaning | Differential corpus parity check (FR-355) records every disagreement as an explicit failure. |
 | A `solver-asserted` proof is mistaken for a checked one | The trust basis (FR-354) is a required, distinct field on every `proved` settlement. |

@@ -30,14 +30,9 @@ Define scope and non-goals; distinguish language, profile, wire and implementati
 
 No duplicate evidence store, hidden normative dependency, or unqualified backend promise. Existing Quire/Quoin/Filament interfaces must be inspected before replacement or extraction. Research and private issue links must not enter a public release packet.
 
-## Tracking
+## Licence
 
-- [Creation ticket](https://github.com/agent-ix/quire-research/issues/29)
-- [Program epic](https://github.com/agent-ix/quire-research/issues/28)
-- [First specification issue](https://github.com/agent-ix/quire-specification/issues/1)
-- [Private formalization board](https://github.com/orgs/agent-ix/projects/20)
-
-This repository is licensed under `AGPL-3.0-or-later`; see [LICENSE](LICENSE). Record the provenance and grants of any copied or generated artifact before adding it. Publication requires a fresh review; do not flip private history public.
+This repository is licensed under `AGPL-3.0-or-later`; see [LICENSE](LICENSE). Publication requires a fresh review; do not flip private history public.
 
 ## Native profile packets
 
@@ -49,25 +44,16 @@ the composed profile hierarchy instead. Neither artifact claims broader
 implementation or qualification from historical tests.
 
 The [requirements index](spec/spec.md) covers FS01/FS02/FS03/FS05 through discrete
-Quoin catalog artifacts. [Authoring status](docs/spec-workflow.md) records the
-exact skills, validation results and outstanding review work.
+Quoin catalog artifacts.
 
 [Atomic V1 capability inventory](docs/v1-capability-inventory.md) is the binding
-scope authority. The [functional capability ledger](docs/functional-capability-ledger.md)
-is a broad cross-stream roll-up of source authorities, evidence and routing
-decisions; it cannot defer an atomic capability and is not an
-implementation-completion claim.
+scope authority.
 
 [Native state-core proposal](proposals/state-core/README.md) contains draft
 grammar, identity/snapshot boundaries and serialized fixture expectations.
 [Agent A's review record](reviews/agent-a-fs01.md) records inspected evidence,
 owner decisions and remaining implementation gates. These are review artifacts,
 not a released standard or a working compiler.
-
-The owner adopted the FS02/FS03/FS05 proposal at e897f81 as the target for
-internal LC02 implementation on 2026-09-08. The
-[decision record](docs/internal-implementation-adoption.md) preserves its exact
-scope and the independent integration/publication gates.
 
 ## Verification reference amendment and local checks
 
@@ -76,7 +62,7 @@ six artifact roles and selected JCS canonical identity as versions separate from
 the state-core schema. [Fixture notes](proposals/shared-reference-2-draft/fixtures/README.md)
 state which observations are qualified and which require B's strict reader.
 
-Run these commands from this repository, using the pinned Rust 1.98.1 toolchain:
+Run these commands from this repository:
 
 ```sh
 cargo test --locked --target-dir target-codex-backends

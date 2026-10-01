@@ -14,7 +14,7 @@ When a native import is linked, the linker shall resolve its domain type names t
 
 ## Inputs
 
-Package identity, exact version, domain package identity, version and `sha256-jcs` digest, manifest, lock, qualified domain type names and declaration keys.
+Package identity, exact version, domain package identity, version and `sha256-jcs` digest, lock, qualified domain type names and declaration keys.
 
 ## Outputs
 
@@ -22,7 +22,7 @@ Unique resolved declaration handles or import diagnostics.
 
 ## Behavior
 
-The spec's artifacts declare the domain model. The domain package lifted from them is the only source of domain declarations. Import aliases are lexical names. Package identity uses the owner/name contract; a declaration key (domain package identity, IR node identity, `sha256-jcs`) is separate from it. The linker checks manifest, lock and transitive closure independently of the domain package digest.
+The spec's artifacts declare the domain model. The domain package lifted from them is the only source of domain declarations. Import aliases are lexical names. Package identity uses the owner/name contract; a declaration key (domain package identity, IR node identity, `sha256-jcs`) is separate from it. The linker checks the lock and transitive closure independently of the domain package digest.
 
 ## Acceptance Criteria
 

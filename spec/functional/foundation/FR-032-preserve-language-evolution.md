@@ -1,6 +1,6 @@
 ---
 id: FR-032
-title: "Preserve selected meanings across language evolution"
+title: "Refuse unsupported required features"
 type: FR
 relationships:
   - target: ix://agent-ix/quire-specification/US-005
@@ -8,34 +8,28 @@ relationships:
 ---
 ## Description
 
-When a tool adds a native operator, declaration form, profile or semantic family, it SHALL preserve the meaning and identity rules of previously selected definitions and require an explicit selection for the new meaning.
+When a reader meets a source or artifact that selects a required feature (a native operator, declaration form, profile or semantic family) it does not support, it SHALL refuse with a located unsupported-selection refusal.
 
 ## Inputs
 
-Historical and new source subjects, exact definition selections, versioned wire/canonicalization contracts and a tool version supporting an expanded feature set.
+A source subject or artifact, its exact definition selections and required-feature set, and the reader's supported feature set.
 
 ## Outputs
 
-A historical subject interpreted under its original definition, an explicitly selected new subject, or a located unsupported-selection refusal.
+The subject interpreted under its selected definitions, or a located unsupported-selection refusal.
 
 ## Behavior
 
-Edition, semantic-profile, wire/canonicalization and backend implementation identities are separate dimensions. A new token or keyword must not change how a historically admitted identifier is interpreted under its old edition. New optional metadata is ignorable only where the selected wire contract explicitly permits it; unknown required meaning refuses. Explicit migration creates a new subject with correspondence to the original and does not relabel historical evidence. Compatibility decisions state which dimension changed.
+Edition, semantic-profile, wire/canonicalization and backend implementation identities are separate dimensions. A selected required feature the reader does not support refuses; the reader never drops it or evaluates a smaller subset as the whole subject. Optional metadata is ignorable only where the selected wire contract explicitly permits it.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-032-AC-1 | Adding an operator, declaration and family leaves historical accepted sources with their prior interpretation and semantic identity under unchanged definitions. | Test (TC-032) |
-| FR-032-AC-2 | A new spelling conflicting with an old admitted identifier does not reinterpret that identifier under the old edition. | Test (TC-032) |
 | FR-032-AC-3 | A reader that lacks the selected new required feature refuses instead of dropping it or evaluating a smaller subset as the whole subject. | Test (TC-032) |
-| FR-032-AC-4 | Explicit migration creates a separately identified subject while the original definition bytes, source and result identities remain unchanged. | Test (TC-032) |
 
 ## Dependencies
 
 - [Shared drafting foundation](../../../proposals/quire-v1/shared-foundation.md).
 - [Composed architecture](../../assurance/AD-001-composed-native-language.md).
 - [Planned acceptance matrix](../../composed-foundation/tests.md).
-
-Accepted by FS05 for edition/profile/wire evolution and explicit migration. It
-does not amend historical definitions or establish executable coverage.

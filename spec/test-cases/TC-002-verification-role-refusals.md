@@ -22,10 +22,7 @@ field unchanged. Then mutate unknown kind, extra member, missing member,
 envelope version and artifact version individually. For exact property, subject
 (a source ArtifactRef), binding, dependency-closure and run-artifact references,
 mutate authority, identity, revision namespace/value, digest, wire identity/version
-one at a time. Verify the `proposals/state-core` schema and fixtures against the
-digests pinned in `proposals/state-core/SHA256SUMS` and
-`proposals/state-core/fixtures/SHA256SUMS`, and submit each added role under the
-previous closed schema.
+one at a time. Submit each added role under the previous closed schema.
 
 ## Expected Results
 
@@ -33,7 +30,5 @@ Valid nearby kinds still refuse intended-role matching with identity-mismatch.
 Malformed shapes refuse invalid-wire and unsupported selections refuse their
 version/kind interpretation. Every exact-reference mutation fails equality;
 changing a digest without changing bytes additionally fails byte verification.
-The state-core packet matches the digests pinned in `proposals/state-core/SHA256SUMS`
-and `proposals/state-core/fixtures/SHA256SUMS`, and its 1-draft schema rejects
-the added kinds.
+The state-core 1-draft schema rejects the added kinds.
 No failed selection returns a partially accepted reference.

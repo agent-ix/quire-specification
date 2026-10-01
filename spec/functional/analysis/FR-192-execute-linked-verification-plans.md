@@ -19,8 +19,8 @@ dispatching a provider.
 
 ## Inputs
 
-Versioned plan, checked package, method-provider manifests, ecosystem lock and
-resource policy.
+Verification plan, checked package, method-provider manifests and resource
+policy.
 
 ## Outputs
 

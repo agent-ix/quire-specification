@@ -53,11 +53,7 @@ per requested item and returns exactly one of `lowered`, `unsupported`,
 reachable dependencies and a canonical semantic digest. The complete-V1
 lowerer consumes an admitted `quire.checked-package/v2` package through the I04
 V2 reader and requires the nominal identity evidence carried by that contract.
-The V2 reader refuses an unknown member or node tag before admission. A transport
-relay
-may retain the raw bytes of a separately selected future graph revision, but a
-lowerer that does not declare that revision refuses it before lowering; raw
-retention is not admission or a substitute node.
+The V2 reader refuses an unknown member or node tag before admission.
 
 ## Acceptance Criteria
 
@@ -66,7 +62,7 @@ retention is not admission or a substitute node.
 | FR-195-AC-1 | Every complete-V1 construct has a round-trip semantic vector or an exact per-item unsupported disposition. | Test (TC-217) |
 | FR-195-AC-2 | Source/type/anchor/identity/bound mutation is detected before a target artifact is emitted. | Test (TC-217) |
 | FR-195-AC-3 | No lowerer approximates an unsupported construct, drops an obligation or changes sibling results. | Test (TC-217) |
-| FR-195-AC-4 | Every reference resolves by stable identity to a reachable version-compatible node and every node maps to exact source loci. | Test (TC-217) |
+| FR-195-AC-4 | Every reference resolves by stable identity to a reachable node and every node maps to exact source loci. | Test (TC-217) |
 | FR-195-AC-5 | Mixed supported and unsupported requests preserve independent per-item dispositions and emit no placeholder semantics. | Test (TC-217) |
 
 ## Dependencies

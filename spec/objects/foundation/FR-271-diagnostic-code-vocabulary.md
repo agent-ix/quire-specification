@@ -43,7 +43,7 @@ catalog).
 | `unknown_required_feature` | A required feature that is unknown or unsupported in the selected consumer/profile scope. "A recognized name is not implementation support." |
 | `missing_import` | A requested typed dependency that is not present in the owning scope. |
 | `missing_declaration` | A requested name that is not present in the owning scope. |
-| `stale_dependency` | A revision, byte-digest or digest-domain mismatch against a dependency. |
+| `stale_dependency` | A revision, byte-digest, digest-domain or content-identity mismatch against a dependency. |
 | `source_digest_mismatch` | A revision, byte-digest or digest-domain mismatch against source. "A missing artifact cannot supply an invented actual digest." |
 | `ambiguous_declaration` | A visible name or clause resolving to distinct conflicting declarations or authorities, including (revision `1-draft.4`) two checked-package nodes declaring the same qualified name. |
 | `invalid_package` | A malformed, incomplete, conflicting or cyclic package definition, including feature-set mismatch, or (revision `1-draft.4`) a checked-package application whose operation identity, operator class, required law, lock-selected law, mode, member or type-pinned mode is unknown or inconsistent, a checked-package application node that retains a stale node key, or a checked-package declaration that disagrees with its nominal qualified declaration. |

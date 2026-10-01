@@ -16,45 +16,35 @@ relationships:
 ## Description
 
 When evaluating complete-V1 conformance, the qualification runner SHALL execute
-positive, boundary and refusal vectors for every one of the 200 atomic inventory
-capabilities under one exact ecosystem lock.
+positive, boundary and refusal vectors for every atomic inventory capability.
 
 ## Inputs
 
-Independent conformance corpus, qualification profile, ecosystem lock and
-selected producer/runtime/backend/tool subjects.
+Independent conformance corpus, qualification profile and selected
+producer/runtime/backend/tool subjects.
 
 ## Outputs
 
-Per-capability results, coverage/accounting report and scoped qualification
+Per-capability results, a coverage report and a scoped qualification
 disposition.
 
 ## Behavior
 
 Qualification profiles distinguish language, runtime, monitor, analyzer/backend,
 tool and consuming-system claims. Every inventory ID appears exactly once as a
-primary row and may have multiple vectors. Missing, unsupported, failed or
-unexecuted vectors remain gaps. Only an attributed decision record promotes a
-qualification result to release acceptance.
-
-## Qualification accounting
-
-The qualification ledger has one primary row per inventory capability and
-separate vectors for grammar, semantic kernel, runtime/monitor, analysis,
-backend, tooling and consuming integration where applicable. Each vector binds
-exact source, package, implementation, method, corpus and result versions.
-Allowed states are `planned`, `unexecuted`, `passed`, `failed`, `unsupported`
-and `waived`; waiver requires an attributed scope-limited decision but does not
-count as implementation. Complete-V1 release acceptance requires every required
-vector to be passed and an attributed release decision.
+primary row and may have multiple vectors, separately for grammar, semantic
+kernel, runtime/monitor, analysis, backend, tooling and consuming integration
+where applicable. Each vector result is `passed`, `failed`, `unsupported` or
+`unexecuted`. A missing, unsupported, failed or unexecuted vector remains a gap
+in the scope that contains it. A scope claims complete success only when every
+required vector in it passed.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-311-AC-1 | The corpus maps all 200 inventory IDs exactly once and includes positive, boundary and refusal behavior where applicable. | Test (TC-231) |
+| FR-311-AC-1 | The corpus maps every inventory ID exactly once and includes positive, boundary and refusal behavior where applicable. | Test (TC-231) |
 | FR-311-AC-2 | A missing/unexecuted/unsupported vector prevents only its containing qualification scope from claiming complete success. | Test (TC-231) |
-| FR-311-AC-3 | Exact same corpus and ecosystem lock reproduce canonical per-capability results; a changed pin creates a distinct run. | Test (TC-231) |
 
 ## Dependencies
 

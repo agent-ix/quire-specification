@@ -9,6 +9,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-273
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272
+    type: verifies
 ---
 ## Description
 
@@ -19,14 +21,15 @@ No executable test or observed coverage is claimed.
 
 Trigger each declared failure through its real producer boundary and compare the structured outcomes before/after changing only presentation wording. Audit emitted catalog membership and independently vary similar refusal causes. Use repeated declaration names and multibyte source to verify original locus retention; exercise missing source context without inventing a span.
 
-Select the exact [native diagnostic candidate](../../proposals/quire-v1/definitions/native-diagnostics.md)
-and its retained compiler code inventory. Cover every required cause variant at
+Select the exact [native diagnostic candidate](../../proposals/quire-v1/definitions/native-diagnostics.md).
+Cover every required cause variant at
 the actual boundary that can emit it, after that producer adopts a supported
 response wire. Compare these paired failures independently:
 
 | Pair/control | Required structured distinction |
 | --- | --- |
 | Missing definition versus supplied definition with stale revision/digest versus a cyclic definition graph | Missing selection, exact expected/actual mismatch or identified cycle edges; no common message-only fallback. |
+| Request retaining a node identity taken from another package versus one retaining its subject's own node identity | `stale_dependency`/`content-mismatch` naming the retained and the carried identity versus acceptance; no revision comparison decides it. |
 | Valid observation binding with no required record versus supplied record from another invocation | Incomplete missing input versus refused wrong invocation, with separate expected/actual handles. |
 | Unknown source tokens versus recognized integer division under a refusing profile | Syntax failure versus profile refusal, preserving the actual stage and construct. |
 | Failure to prove a rational divisor nonzero versus a valid predicate evaluating false | Definedness refusal versus ordinary logical violation, without error-code substitution. |
@@ -49,8 +52,8 @@ interface and replace the originating pair with a wrapper display stage. Each
 mutation refuses or preserves the original opaque pair as required; no global
 six- or eleven-member fallback is consulted.
 
-Map a legacy code/message response lacking a required discriminant. Preserve
-the legacy result without guessing a new cause from its English text. Combine
+Supply a code/message response lacking a required discriminant. No cause is
+guessed from its English text. Combine
 a known invalid defect with a missing-input defect, then cap diagnostic detail
 to zero: both independent dispositions remain represented and overall success
 does not appear from the empty detail vector. Existing code spelling checks do

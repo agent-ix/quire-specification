@@ -18,12 +18,12 @@ formatter and language server preserve identical subjects and dispositions.
 
 ## Target Integration
 
-Pinned QSL/CLI/WASM/editor Rust components run locally through their public APIs
+QSL/CLI/WASM/editor Rust components run locally through their public APIs
 and command/process boundaries.
 
 ## Preconditions
 
-Machine wire versions, source revisions and resource limits are explicit.
+Machine wire identifiers and resource limits are explicit.
 
 ## Inputs
 

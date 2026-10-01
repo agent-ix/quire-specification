@@ -15,7 +15,7 @@ Exercise every join policy, proved/unproved loops and bounded/unbounded dynamic 
 
 ## Test Procedure
 
-Use the exact version-locked subject and inputs named by FR-171. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
+Use the subject and inputs named by FR-171. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
 ## Expected Results
 

@@ -1,14 +1,8 @@
 # Complete Quire V1 architecture
 
-Status: Task-006 comprehensive architecture design, prepared before the single
-complete-V1 `/specify` and `/spec-review` cycle.
-
-This is the architectural plan for all 200 atomic inventory rows. It reconciles
-the accepted QSpec architecture with the current Rust component graph and the
-scope corrections in Plan-008. It does not claim that the described interfaces
-or capabilities are already implemented. Task-007 turns this design into
-normative EARS requirements and object/interface artifacts; Task-008 reviews
-that one coherent revision.
+This is the architecture for every row of the
+[atomic capability inventory](v1-capability-inventory.md). It reconciles the
+accepted QSpec architecture with the current Rust component graph.
 
 ## 1. Architectural drivers
 
@@ -89,7 +83,7 @@ dependency direction; they are not new products or scope buckets.
 | ID | Subsystem | Owns | Primary Rust owners |
 | --- | --- | --- | --- |
 | S9 | Mappings, authoring and tooling | OCL/SysML/KerML/FRETish outputs, deterministic packages, formatter, lossless CST/editor/LSP, CLI, WASM, code/model views, plugins, JIT and reusable libraries | Contract IR mapping adapters, QSL, `quire-cli`, `quire-wasm`, `quire-code-rs` |
-| S10 | Integration, evidence and qualification | Version-locked ecosystem configurations, conformance corpora, provenance, verification-result composition, independent qualification, evidence intake/retention and release decisions | `quire-integration`, `quire-verification`, future Rust Quoin interface, human release owner |
+| S10 | Integration, evidence and qualification | Conformance corpora, verification-result composition, independent qualification, evidence intake/retention and release decisions | `quire-integration`, `quire-verification`, future Rust Quoin interface, human release owner |
 
 The complete primary allocation is exact:
 
@@ -153,24 +147,16 @@ byte digests, semantic digests, artifact digests and evidence digests cannot be
 compared as bare bytes. A revision is never reconstructed from content, and an
 effective model declaration never replaces its original declaration identity.
 
-### 4.2 Version axes
+### 4.2 Selection axes
 
-Five independently selected axes prevent one version number from carrying
-unrelated compatibility promises:
+Four independently selected axes keep unrelated meaning apart:
 
 1. **Edition** selects source grammar and language meaning.
 2. **Semantic profile bundle** selects named optional/parameterized semantic
    families within that edition.
-3. **Artifact/wire contract** selects serialized representation and reader
-   compatibility.
+3. **Artifact/wire contract** selects serialized representation.
 4. **Provider profile** selects a temporal engine, analyzer, backend, plugin or
    mapping's supported correspondence and options.
-5. **Implementation/toolchain pin** identifies exact producer code, dependency
-   closure, compiler and execution options.
-
-An immutable package lock contains all five where applicable. Migration reads
-one exact old identity, emits a new identity and a source-bound transformation
-record, and never relabels old bytes or evidence.
 
 ### 4.3 Type and value algebra
 
@@ -397,7 +383,7 @@ provider returns one capability disposition per clause/feature:
 
 Execution returns independent per-obligation outcomes and accounting. One
 unsupported or exhausted item cannot erase supported sibling outputs. Generated
-code embeds source maps and all pins. Kani, proptest, SMT, JIT and generated
+code embeds source maps. Kani, proptest, SMT, JIT and generated
 Rust use the same protocol and must replay counterexamples through S6/native
 execution. Approximation, implicit numeric narrowing, omitted obligations and
 success on an unexecuted precondition are forbidden.
@@ -438,15 +424,15 @@ Two plugin forms are supported:
 2. isolated Rust executables implementing the bounded provider wire protocol.
 
 There is no unstable in-process dynamic-library ABI. A plugin declares its
-semantic role, capabilities, purity/effect class, resource needs, provenance
-and conformance corpus. Unknown or conflicting extensions refuse. A plugin
+semantic role, capabilities, purity/effect class, resource needs and
+conformance corpus. Unknown or conflicting extensions refuse. A plugin
 cannot add source meaning without a registered edition/profile extension.
 
 JIT is an S8 backend provider. Its artifact identity includes checked IR,
 provider/toolchain/options and target. It must agree with native reference
 execution on the conformance corpus and cannot be the sole qualification oracle.
-Reusable domain libraries are immutable Quire packages with exact edition,
-profile and dependency locks, not arbitrary runtime callbacks.
+Reusable domain libraries are immutable Quire packages that select an exact
+edition and profile, not arbitrary runtime callbacks.
 
 ## 11. Common request, result and failure contracts
 
@@ -455,11 +441,11 @@ domain-specific payloads:
 
 ### Request envelope
 
-- operation and contract version;
+- operation;
 - exact subject/package/dependency identities;
 - requested capabilities and output ordering;
 - finite domains, resource budget and cancellation policy;
-- producer/provider/toolchain/options pins;
+- provider and options;
 - caller and authorization context where effects are possible; and
 - source/object loci for each selected obligation.
 
@@ -470,8 +456,8 @@ domain-specific payloads:
 - independent execution, semantic truth/value, activation, participation,
   settlement, completeness, assumption and provenance axes;
 - resource usage and cancellation state;
-- source maps, counterexamples and supersession/replay lineage; and
-- canonical domain/version plus digest.
+- source maps, counterexamples and replay material; and
+- canonical content identity.
 
 ### Failure taxonomy
 
@@ -493,7 +479,7 @@ flatten owner code catalogs into one ambiguous global enum.
 
 ## 12. Interface catalog
 
-Task-007 must specify these versioned interfaces as objects plus FR/IT/TC rows.
+These interfaces are specified as objects plus FR/IT/TC rows.
 Names are architectural roles; Rust names may follow repository idioms.
 
 | Interface | Producer -> consumer | Contract |
@@ -509,13 +495,12 @@ Names are architectural roles; Rust names may follow repository idioms.
 | I09 Protocol assessment | Protocol -> S6/Verification/IR | Conformance/projection/refinement outcomes, premises, axes and lineage. |
 | I10 Execution bundle | S6 -> CLI/Verification/Quoin intake | Ordered cross-domain native results without semantic flattening. |
 | I11 Effect decision/receipt | S6 <-> authorized adapter | Decision, authority, idempotency, request and external receipt/observation link. |
-| I12 Target-neutral contract package | QSL/full IR -> backend providers | Cycle-free types/expressions/clauses/protocol refs, source map and version lock. |
+| I12 Target-neutral contract package | QSL/full IR -> backend providers | Cycle-free types/expressions/clauses/protocol refs and source map. |
 | I13 Backend capability/request/result | S8 coordinator <-> provider | Per-item exact support, bounds/options, artifact accounting and counterexamples. |
 | I14 Verification plan | author/Verification -> method providers | Referenced clauses, methods, domains, dependencies, bounds and evidence obligations. |
 | I15 Method result | provider -> Verification/S10 | Domain-native result, non-conclusive state, provenance and replay material. |
 | I16 Output mapping package | mapping adapter -> consumer | Target text/schema plus per-obligation preservation/loss/refusal records. |
-| I17 Tool/plugin manifest | tool/plugin -> S9 registry | Version, capabilities, purity/effects, platform, provenance and conformance identity. |
-| I18 Ecosystem lock | Integration -> every run/qualification | Exact repositories/packages/profiles/providers/tools/build/deployment selections. |
+| I17 Tool/plugin manifest | tool/plugin -> S9 registry | Capabilities, purity/effects, platform and conformance identity. |
 | I19 Conformance corpus/result | independent corpus -> producer/Qualification | Feature/refusal vectors, expected domains and independently produced outcomes. |
 | I20 Evidence intake | native producers/Verification -> Quoin | Immutable structured result references and artifacts; no producer execution. |
 | I21 Human decision | ix-flow/human -> release record | Attributed scope, inputs, disposition, rationale and supersession. |
@@ -553,70 +538,3 @@ without replacing an existing subsystem or creating a second authority:
 9. **Add a plugin or JIT.** Use I17 plus I13/process isolation; exact
    toolchain/options and artifact identity prevent a plugin from changing
    meaning invisibly.
-10. **Evolve an artifact.** A new wire version has a reader, compatibility
-    classification, explicit migration and old-version corpus. Evidence remains
-    bound to the original bytes and version.
-
-## 14. Dependency and migration order
-
-All stages are required V1 delivery; the sequence expresses dependencies, not
-deferral:
-
-1. Accept the complete root architecture and all ten subsystem views in one
-   QSpec revision.
-2. Land the QSpec navigation skeleton, then QSL and Protocol structural
-   migrations from Task-004 with zero semantic change.
-3. Extend the cycle-free contract-model identity/type/request/result envelopes
-   needed by multiple producers.
-4. Deliver S1-S3 source/type/model semantics and the checked package contract.
-5. Deliver S4-S5 temporal/observation/protocol semantics against that package.
-6. Create the already-authorized `quire-integration` Rust workspace and deliver
-   S6 replay/monitor/workflow coordination without duplicating evaluators.
-7. Deliver S7 methods and S8 exact provider paths in dependency-sized parallel
-   children, retaining native replay parity.
-8. Deliver S9 mappings, CST/editor/CLI/WASM/plugin/JIT/library consumers.
-9. Deliver S10 ecosystem locks, independent corpus, evidence intake and
-   qualification across the complete composed reference scenario.
-
-A producer contract merges before its consumer requirement; a consumer
-requirement merges before implementation. Exact pins move only through reviewed
-compatibility tickets. Active TL work and the Quoin Rust port continue under
-their owners; this branch does not edit them. Quoin integration activates only
-after its Rust-port dependency provides the accepted interface.
-
-## 15. Normative architecture delta for Task-007
-
-Task-007 will preserve stable IDs and author this design through one root plus
-ten subsystem ArchitectureDescriptions:
-
-| Artifact | Task-007 action |
-| --- | --- |
-| AD-001 | Amend into the complete root/component/dependency architecture and remove the general-analysis exclusions that conflict with the inventory. |
-| AD-002 | Amend the native temporal vertical slice into S4 temporal/observation architecture, preserving its accepted finite semantics. |
-| AD-003 | Amend the language charter into S1 package/evolution architecture and remove blanket refusals as product-scope decisions. |
-| AD-004 | Amend the output-mapping architecture into S9 mappings/authoring/tooling architecture, preserving the accepted loss-accounting coordinator. |
-| AD-005 | Add S2 values/types/expressions/collections architecture. |
-| AD-006 | Add S3 model/graph/state-contract architecture. |
-| AD-007 | Add S5 complete protocol/choreography architecture. |
-| AD-008 | Add S6 composed execution/monitor/workflow architecture and `quire-integration` boundary. |
-| AD-009 | Add S7 verification-method/plan architecture. |
-| AD-010 | Add S8 target-neutral IR/backend architecture. |
-| AD-011 | Add S10 integration/evidence/qualification architecture. |
-
-Every AD must reference its inventory rows, owning objects, interfaces,
-failure/resource model, extension scenarios, matrices and implementation
-owners. The root AD owns common identities, version axes, dependency direction
-and authority rules; subsystem ADs cannot redefine them.
-
-## 16. Architecture acceptance gate
-
-Task-006 is complete only when mechanical checks show all 200 inventory rows
-allocated exactly once, all ten subsystem views defined, all cross-subsystem
-data flows represented by I01-I21, all current Rust owners assigned without a
-dependency cycle, and every extension scenario preserves authority and exact
-refusal.
-
-Task-007 may refine field names and acceptance criteria but may not add an
-unarchitected major subsystem. If normative authoring reveals a missing major
-piece, it returns to this complete architecture before any implementation; it
-cannot be deferred to a later piecemeal design cycle.

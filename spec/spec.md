@@ -382,8 +382,6 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-015
     type: contains
-  - target: ix://agent-ix/quire-specification/FR-016
-    type: contains
   - target: ix://agent-ix/quire-specification/FR-017
     type: contains
   - target: ix://agent-ix/quire-specification/FR-018
@@ -400,15 +398,11 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/StR-001
     type: contains
-  - target: ix://agent-ix/quire-specification/NFR-001
-    type: contains
   - target: ix://agent-ix/quire-specification/NFR-002
     type: contains
   - target: ix://agent-ix/quire-specification/NFR-003
     type: contains
   - target: ix://agent-ix/quire-specification/NFR-004
-    type: contains
-  - target: ix://agent-ix/quire-specification/IT-001
     type: contains
   - target: ix://agent-ix/quire-specification/IT-002
     type: contains
@@ -612,8 +606,6 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/interface_017
     type: contains
-  - target: ix://agent-ix/quire-specification/interface_018
-    type: contains
   - target: ix://agent-ix/quire-specification/interface_019
     type: contains
   - target: ix://agent-ix/quire-specification/interface_020
@@ -650,8 +642,6 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-334
     type: contains
-  - target: ix://agent-ix/quire-specification/FR-335
-    type: contains
   - target: ix://agent-ix/quire-specification/FR-336
     type: contains
   - target: ix://agent-ix/quire-specification/FR-337
@@ -676,7 +666,7 @@ relationships:
 ## 1. Purpose
 
 This root indexes the native Quire language requirements. Complete V1 is the
-entire 200-capability language, runtime, analysis, backend, tooling and
+entire language, runtime, analysis, backend, tooling and
 qualification system under one editable source authority. The existing
 finite-state implementation is a development slice, not the product boundary.
 The [subsystem index](subsystems/index.md) and AD-001 through AD-011 organize the
@@ -781,15 +771,12 @@ Frontmatter relates StR, US, FR/NFR and IT artifacts. Acceptance-criterion-to-TC
 
 ## 12. Verification Strategy
 
-Run Quire over this exact repository scope. Use real implementations and independent expected cases for integration evidence. Quire v1 acceptance includes the state workflow, timed refund and branching compensated choreography through executable evaluation, replay and incremental monitoring. Qualification-oriented evidence identifies source, model, binding, implementation and method versions; an observed pass does not itself qualify the system. Existing state tests and authored examples establish only their stated subset.
+Run Quire over this exact repository scope. Use real implementations and independent expected cases for integration evidence. Quire v1 acceptance includes the state workflow, timed refund and branching compensated choreography through executable evaluation, replay and incremental monitoring. An observed pass does not itself qualify the system. Existing state tests and authored examples establish only their stated subset.
 
 ## 13. Change Management
 
-The complete architecture and all 200 atomic capabilities are specified in one
-campaign before implementation planning. The corpus then receives one composite
-`/spec-review`; dependent implementation planning begins only after every review
-finding is resolved. Fixture and profile bytes match the digests their selected
-bindings pin.
+Specification changes are reviewed with `/spec-review` before implementation
+that depends on them.
 
 ## 14. Lifecycle Status
 
@@ -802,73 +789,18 @@ forward its admission rules. The old `state-finite/1-draft` candidate is not
 enabled or aliased; adopted historical definitions and their implementation
 remain distinguishable from composed semantic candidates.
 
-The owner adopted e897f81 for internal implementation. Generic native
-compilation uses the existing IR API. The FS02 static model boundary is
-[AD-006](assurance/AD-006-model-graph-state-contracts.md): spec artifacts declare
-the domain model, and QSL model intake checks the domain package lifted from
-them. FS03 accepts the state closure and FS05 accepts the versioned
-interchange/canonical/migration rules. Independent assessment-consumer
-implementation and qualification are not yet complete. FR-017/018 define the
-accepted versioned amendment resolving B's representational findings; its local
-tests do not claim every consumer implementation or adoption. This is delivery
-status only: the complete-V1 normative scope is closed by the inventory,
-architecture and TM-009.
-
 ## 15. Governance Notes
 
-Use owning issues and isolated worktrees. Implementation planning SHALL allocate
-each atomic capability to exactly one primary delivery ticket and SHALL record
-cross-repository dependencies explicitly. Ticket completion updates the master
-inventory, owning epic and dependent ticket state in the same work cycle.
-Preserve dependency/template grants. Publication administration is operational
-governance and does not reduce complete-V1 product scope.
-
-The [Task-009 implementation ticket manifest](../docs/v1-delivery-ticket-manifest.md)
-assigns all 200 atomic rows to autonomous Agent-A through Agent-E repository
-lanes. Each agent owns its whole ordered campaign rather than one ad hoc ticket;
-cross-lane consumption uses merged pinned interfaces and final integration is a
-separate downstream gate.
-
-The [shared foundation](../proposals/quire-v1/shared-foundation.md) remains the
-semantic coordination checkpoint. FS01 accepts its subsystem and profile-identity
-roles; FS03 accepts the state core/query/graph semantic closure, FS04 the
-temporal/observation closure, and FS05 the interchange closure. Other owning
-FS02–FS06/family contracts retain their semantic adoption, implementation and
-qualification boundaries. FS05 accepts the linked-package interpretation and
-strict reference/canonical/migration contracts; incomplete executable evidence
-is tracked as implementation work, never as deferred scope.
-FR-030–049, FR-130, the decomposed FR-020, NFR-010 and their
-[planned matrix](composed-foundation/tests.md) establish the shared contribution.
-The [grammar](../proposals/quire-v1/shared-grammar.md) and
-[state contract](../proposals/quire-v1/state-contract.md) now accept ordered
-queries/aggregation and explicit anchor, numeric and graph semantics. E's
-FR-090–095, NFR-040, IT-040/041 and [temporal matrix](temporal/tests.md) are
-accepted by FS04 as temporal meaning and portable controls. FR-048 connects the native temporal syntax
-and shared predicate environments to that contribution. Historical family
-reviews remain revision-bound evidence; TM-009 is the complete-V1 coverage
-authority. Planned evidence denotes unfinished delivery, not unspecified scope.
-FR-049 and the [choreography surface](../proposals/quire-v1/choreography-surface.md)
-now add explicit roles/channels, causal control, compensation stages and typed
-cross-instance references to the composed grammar. Exact model/observation and
-result-family agreement remain integration work; historical review artifacts do
-not review this new scope.
-
-B's [protocol contract](../proposals/quire-v1/protocol-contract.md), FR-050–062,
-NFR-020/021, IT-020/021 and [protocol matrix](protocol/tests.md) are integrated
-through PR #21 (`2d8372c`) and resource-inspection correction `57ddca2`, separating decisive truth from subject
-closure. F's FR-110–116, NFR-050–052, IT-050/051 and
-[observation matrix](observation/tests.md) and owned requirements/cases are
-integrated through `b7381fd`. E's composed corrections through `c6a8905` are integrated.
-These contributions
-establish the implementation evidence available at their recorded revisions.
-The complete composed grammar, assessment interfaces and cross-subsystem
-boundaries are now specified by AD-001 through AD-011, I01 through I21 and the
-complete-V1 functional requirements; executable coverage is allocated during
-implementation planning.
+Use owning issues and isolated worktrees. Preserve dependency/template grants.
+Publication administration is operational governance and does not reduce
+complete-V1 product scope. The complete composed grammar, assessment interfaces
+and cross-subsystem boundaries are specified by AD-001 through AD-011, the
+interfaces in the [subsystem index](subsystems/index.md) and the complete-V1
+functional requirements.
 
 ## 16. References
 
-The full task is tmp/formalization-agent-a-language-core.md in the workspace. The current authoring pack selected agent-ix from the Git remote. Authoring used Quoin 0.23.1, Quire 0.31.0 and the installed spec-artifacts-iso catalog shapes.
+The requirement artifacts are indexed below.
 
 ## Requirements
 
@@ -889,10 +821,10 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [ADR-002](decisions/ADR-002-domain-package-ir-contract-version.md) | ADR | Proposed; open question: semantic IR contract version for a domain package |
 | [ADR-003](decisions/ADR-003-model-intake-and-type-system-authority.md) | ADR | Proposed; open question: model intake and formal type system authority |
 | [ADR-004](decisions/ADR-004-native-cli-exit-status-contract.md) | ADR | Proposed; open question: native CLI exit status contract |
-| [ADR-005](decisions/ADR-005-kani-generation-ownership.md) | ADR | Proposed; open question: ownership of Kani harness generation and tool pinning |
+| [ADR-005](decisions/ADR-005-kani-generation-ownership.md) | ADR | Proposed; open question: ownership of Kani harness generation |
 | [ADR-006](decisions/ADR-006-protocol-bounded-control-profile.md) | ADR | Proposed; open question: bounded control in the protocol profile layer |
 | [Complete-V1 subsystem index](subsystems/index.md) | Architecture index | Ten subsystems and I01–I21 interface ownership |
-| [TM-009](complete-v1/tests.md) | Test Matrix | All 200 atomic capabilities and complete-V1 qualification cases |
+| [TM-009](complete-v1/tests.md) | Test Matrix | Every atomic capability and complete-V1 qualification case |
 | [FR-339](functional/source-package/FR-339-define-complete-native-grammar.md) | FR | Normative complete native V1 lexical and syntactic contract |
 | [FR-340](objects/interfaces/FR-340-checked-package-frame-location.md) | FR | Checked-package `state`/`frame` body: relationship and (declaring node, field name) entries |
 | [FR-341](objects/interfaces/FR-341-checked-package-state-clause-body.md) | FR | Checked-package `state`/`state_clause` body: `quire.op.state.clause` application and state node body roots |
@@ -986,7 +918,6 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [FR-013](functional/foundation/FR-013-validate-operation-frames.md) | FR | Draft |
 | [FR-014](functional/foundation/FR-014-read-exact-wire.md) | FR | Accepted by FS05; consumer qualification remains separate |
 | [FR-015](functional/foundation/FR-015-preserve-canonical-domains.md) | FR | Accepted by FS05; historical algorithms unchanged |
-| [FR-016](functional/foundation/FR-016-migrate-explicitly.md) | FR | Accepted by FS05; no inferred equivalence |
 | [FR-017](functional/foundation/FR-017-select-verification-artifact-roles.md) | FR | Accepted FS05 internal amendment |
 | [FR-018](functional/foundation/FR-018-select-verification-jcs-domain.md) | FR | Accepted FS05 internal amendment |
 | [FR-019](functional/foundation/FR-019-admit-native-source-profile.md) | FR | Accepted FS01 admission constraint; implementation evidence remains partial |
@@ -995,11 +926,9 @@ The full task is tmp/formalization-agent-a-language-core.md in the workspace. Th
 | [US-003](usecase/US-003-assess-finite-state.md) | US | Draft |
 | [US-004](usecase/US-004-retain-evidence-meaning.md) | US | Draft |
 | [StR-001](stakeholder/StR-001-native-assessment-trust.md) | StR | Draft |
-| [NFR-001](non-functional/NFR-001-preserve-versioned-meaning.md) | NFR | Accepted by FS05 for versioned interchange/migration |
 | [NFR-002](non-functional/NFR-002-classify-resource-incompleteness.md) | NFR | Accepted by FS05 for interchange work limits |
 | [NFR-003](non-functional/NFR-003-qualify-reference-bindings.md) | NFR | Accepted by FS05 for strict reference binding |
 | [NFR-004](non-functional/NFR-004-retain-review-and-rights.md) | NFR | Draft |
-| [IT-001](integration/IT-001-legacy-canonical-reader.md) | IT | Draft |
 | [IT-002](integration/IT-002-independent-reference-consumer.md) | IT | Draft |
 | [IT-003](integration/IT-003-verification-reference-amendment.md) | IT | Planned |
 | [IT-010](integration/IT-010-bind-linked-package-assessments.md) | IT | Planned composed package/binding boundary |

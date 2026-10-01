@@ -28,7 +28,7 @@ Apply each control independently:
 | Change a selected semantic definition with matching new bytes | Distinct static subject, admitted only if the new closure is supported and valid. |
 | Omit an inventoried source unit | Namespace cannot close; no guessed binding to a remaining declaration. |
 | Put a shadowing source file beside the inventoried units without adding it to the inventory | No change to the declared package or name resolution. |
-| Put the manifest digest, lock digest or a raw-byte digest in the domain package import digest position | Refused import; no domain substitution. |
+| Put the lock digest, a package fingerprint or a raw-byte digest in the domain package import digest position | Refused import; no domain substitution. |
 | Inspect both equal-named clock roles | Distinct owning clauses/source regions; exact types, anchors and scope dependencies retained. |
 | Change only the compile resource ceiling, with both ceilings sufficient for admission | Static subject unchanged; the exact changed configuration remains in build provenance. |
 | Link a valid three-family template without concrete workflow instances, runtime populations/windows, observation records or progress | Static linking succeeds and retains the exact typed requirements for later assessment. Removing a required static definition still refuses dependent linking. |

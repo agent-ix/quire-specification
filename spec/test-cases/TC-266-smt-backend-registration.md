@@ -24,7 +24,7 @@ kind, mode) pairs and its negotiation arm.
 
 ## Test Procedure
 
-Use the exact version-locked subject and inputs named by FR-349. Execute its
+Use the subject and inputs named by FR-349. Execute its
 positive case, each declared boundary, and each explicit refusal/non-conclusive
 mutation through the real local Rust boundary; compare the complete typed
 result and artifact accounting with the criterion.
@@ -37,7 +37,7 @@ result and artifact accounting with the criterion.
 | SMT-02 | Run cvc5 and Z3 on the same query and mutate one solver's verdict to disagree with the other | Settles `inconclusive`, retained as an explicit parity failure naming both verdicts; neither verdict is silently preferred |
 | SMT-03 | Run a claim within cvc5's advertised subset with Z3 not registered | cvc5's verdict settles the claim on its own, with a warning naming the absent cross-check; the settlement is not held pending Z3's registration |
 | SMT-04 | Negotiate a `value-validity` item carrying an obligation form (e.g. induction) its negotiation arm does not discharge, outside the descriptor's declared obligation-form set (e.g. quantification only) | Settles `unsupported` at the SMT negotiation arm with a warning naming the obligation form and cause `unsupported_projection`/`unsupported-requested-capability`; no artifact is emitted |
-| SMT-05 | Configure Z3 in the SMT descriptor, then remove its pinned tool from `PATH` (and, separately, install a different Z3 identity) before a claim within cvc5's advertised subset | cvc5's verdict settles the claim, with a warning naming the absent cross-check; the item's result is never `unsupported` on Z3's account |
+| SMT-05 | Configure Z3 in the SMT descriptor, then remove its tool from `PATH` before a claim within cvc5's advertised subset | cvc5's verdict settles the claim, with a warning naming the absent cross-check; the item's result is never `unsupported` on Z3's account |
 
 ## Expected Results
 

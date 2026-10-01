@@ -30,8 +30,9 @@ When a parsed source crosses the parser boundary, the producer SHALL use the imm
 ## Identity and validation
 
 The artifact key is (`source`, `edition`, canonical tokens/trivia/nodes/recoveries). Node indices are artifact-local and never source or semantic identities.
-Unknown contract versions, missing required properties, duplicate keys,
-out-of-domain values and non-canonical encodings refuse before consumption.
+A document whose `contract_version` is not that identifier, missing required
+properties, duplicate keys, out-of-domain values and non-canonical encodings
+refuse before consumption.
 
 ## Acceptance Criteria
 
@@ -45,8 +46,3 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 - [interface_002](./interface_002-parsed-source.md) owns the operation boundary.
 - FR-302 owns the behavior that produces or consumes this value.
-
-## Status
-
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.

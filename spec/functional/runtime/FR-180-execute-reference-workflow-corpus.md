@@ -21,7 +21,7 @@ multidimensional expected results.
 
 ## Inputs
 
-Version-locked ConfigVersion, timed-refund and fan-out/join/compensation packages;
+ConfigVersion, timed-refund and fan-out/join/compensation packages;
 snapshots/events/progress/populations; run limits.
 
 ## Outputs
@@ -40,7 +40,7 @@ compensation and partial recovery.
 ## Reference verdict contract
 
 Each corpus case's source/package bytes are emitted by I04 `link_and_check`
-as `quire.checked-package/v2` with its `state` nodes; the corpus pins those
+as `quire.checked-package/v2` with its `state` nodes; the corpus holds those
 exact bytes and the case's `package_id`, and the runtime admits them only
 through I04 `read`. ConfigVersion cases replay on the complete-V1 value
 runtime only.

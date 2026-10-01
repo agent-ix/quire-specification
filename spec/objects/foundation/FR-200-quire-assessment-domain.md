@@ -278,8 +278,6 @@ Every object artifact contained in this context SHALL declare, explicitly:
   equality never replaces object identity.
 - [Shared foundation](../../../proposals/quire-v1/shared-foundation.md) supplies
   the cross-family vocabulary and its ownership.
-- [Functional capability ledger](../../../docs/functional-capability-ledger.md)
-  records the workstream that owns each family.
 
 ## Status
 

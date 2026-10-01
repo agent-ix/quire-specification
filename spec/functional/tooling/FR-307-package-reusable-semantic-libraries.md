@@ -18,17 +18,17 @@ relationships:
 ## Description
 
 When importing a reusable Quire library, the linker SHALL resolve its exported
-declarations, semantic definitions, model dependencies and compatibility/migration
-contracts through the package lock.
+declarations, semantic definitions and model dependencies, and record the
+resolved closure in the package lock.
 
 ## Inputs
 
-Library package, export table, dependencies, version constraints and migrations.
+Library package, export table, dependencies and supplied libraries.
 
 ## Outputs
 
-Resolved qualified exports and dependency closure, or conflict/cycle/version/
-migration refusal.
+Resolved qualified exports and dependency closure, or a conflict, cycle or
+identity refusal.
 
 ## Behavior
 
@@ -36,18 +36,15 @@ A library exports its named declarations without acquiring a second source
 authority. An importing package uses an imported name as a call `a::f(…)` of
 an exported function whose parameter and result types are package-independent,
 the use FR-322's `dependency_reference` admits. Imports are qualified;
-diamond dependencies must select byte-identical definitions or an explicit
-compatible unification. Migration emits a new subject and correspondence.
+diamond dependencies must select the same `package_id`.
 
 ## Library resolution contract
 
-A library manifest binds package identity/version, edition/profile, exported
-qualified declarations, dependency constraints and canonical content digest.
-Resolution selects one exact version per package identity and produces a closed
-acyclic lock graph. Diamond paths unify only when they reach the same canonical
-definition digest or an explicit compatibility declaration with a checked
-migration. Imports never inject unqualified names implicitly, and migration
-creates a new package identity plus element correspondence.
+A library is identified by its library identity and its `package_id`, the
+canonical content digest of its CheckedPackage V2. Resolution selects one
+library per identity and produces a closed acyclic lock graph. Diamond paths
+unify only when they reach the same `package_id`. Imports never inject
+unqualified names implicitly.
 
 ## Import binding and export identity
 
@@ -70,9 +67,8 @@ both supplied libraries' identity and version, and an import whose identity
 no supplied library has is
 `refused { code: missing_import, cause: missing-selection }` at the import's
 identity string. A supplied library whose
-version or `package_id` differs from the import is
-`refused { code: stale_dependency, cause: revision-mismatch }` for a version
-difference, or `cause: byte-digest-mismatch` for a `package_id` difference.
+`package_id` differs from the import is
+`refused { code: stale_dependency, cause: byte-digest-mismatch }`.
 An export identity is (library package key, export node key in that library's
 graph). Imported declarations are named only as `a::Name`. The grammar makes
 `as` optional: an import without `as` still selects and verifies the library,
@@ -86,7 +82,7 @@ import paths.
 
 `a::Name` resolves in two steps. First `a` resolves to exactly one package:
 the library package whose import binds qualifier `a`, selected by its locked
-version and `package_id`. Then `Name` resolves only through that package's
+`package_id`. Then `Name` resolves only through that package's
 FR-322 `declaration` members: `qualified_name` is the package-local declaration
 path, and the export node is the single node of that package whose
 `declaration.qualified_name` equals the path `Name` spells, compared segment by
@@ -109,35 +105,27 @@ already refused by the FR-322 reader and exports nothing.
 
 Resolution takes the transitive import closure in declaration order. When two
 dependency paths reach library identity `L`, they unify only when they name the
-same version and `package_id`. Any other combination is
+same `package_id`. Any other combination is
 `refused { code: invalid_package, cause: conflicting-definition }`, and the
-refusal lists both dependency paths. Complete V1 has no source form for a
-compatibility declaration, so distinct `package_id`s never unify. An import
+refusal lists both dependency paths. Distinct `package_id`s never unify. An import
 cycle is `refused { code: invalid_package, cause: definition-cycle }`, whose
 dependency-edge payload lists the cycle path. A resolved closure is recorded in the importing package lock as one
 selection per library identity, in ascending identity order.
 
-A library migration is a new library package with a new `package_id`. A package
-that imports the migrated library is a new package with a new `package_id`.
 Because `package_id` is the digest of the package's identity preimage, a reader
-recomputes it before resolution. A migrated package that reuses its source's
-`package_id` while its preimage differs is
+recomputes it before resolution. A package whose retained `package_id`
+differs from the digest of its identity preimage is
 `refused { code: invalid_package, cause: invalid-value }` at member path
-`/package_id`, with no import, lock selection or evidence binding it. A
-"migration" whose preimage is unchanged yields the identical package and
-identity, and is not a migration.
-Evidence keyed by the old package or export identity keeps that key and is never
-relabeled. No library-level migration correspondence record is defined.
+`/package_id`, with no import or lock selection binding it.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-307-AC-1 | A compatible dependency diamond resolves one exact export identity and reproducible lock. | Test (TC-227) |
+| FR-307-AC-1 | A dependency diamond whose paths reach one `package_id` resolves one exact export identity and reproducible lock. | Test (TC-227) |
 | FR-307-AC-2 | Conflicting definitions, import cycles or ambiguous unqualified names refuse with dependency paths. | Test (TC-227) |
-| FR-307-AC-3 | Migration preserves old/new identities and does not relabel historical evidence. | Test (TC-227) |
 | FR-307-AC-4 | An import binds the library `package_id`, a mismatched import is `stale_dependency`, a conflicting diamond or import cycle is `invalid_package` with its paths, and a duplicate qualifier is `ambiguous_declaration`; an import cycle uses cause `definition-cycle`, and a name from an import without `as` is `missing_declaration`. | Test (TC-227) |
-| FR-307-AC-5 | A migrated package that reuses its source `package_id` with a different identity preimage is `invalid_package` with cause `invalid-value` at `/package_id`. | Test (TC-227) |
+| FR-307-AC-5 | A package whose retained `package_id` differs from the digest of its identity preimage is `invalid_package` with cause `invalid-value` at `/package_id`. | Test (TC-227) |
 | FR-307-AC-6 | An import whose digest is `sha256:` followed by 64 lowercase hex, 64 uppercase hex, 63 or 65 lowercase hex characters is `invalid-digest` at the digest string; an import naming `test/geometry` binds to the library supplied under the identity `test/geometry` and no other; two libraries supplied under one identity are `invalid_package`/`conflicting-definition` retaining both; an import of an identity no library is supplied under is `missing_import`/`missing-selection` at its identity string; and the bound library's `package_id` is the one its compile yields, so a library whose source compiles to a `package_id` other than the import's `d` is `stale_dependency`/`byte-digest-mismatch`; and with `test/geometry` exporting a record `R` and a function `f` over builtin types, `g::f(x)` is admitted and a use `g::R` is `ill_typed`/`operator-ineligible` at the use. | Test (TC-227) |
 
 ## Dependencies

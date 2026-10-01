@@ -16,7 +16,7 @@ remains Planned; this artifact does not claim executed portfolio coverage.
 
 ## Test Procedure
 
-Validate the new semantic reference and call B's pinned Rust jcs_canonicalize
+Validate the new semantic reference and call B's Rust jcs_canonicalize
 and jcs_sha256 functions on the exact vector value. Compare canonical bytes and
 prefixed digest to the recorded expected values. Use reordered object members,
 a supplementary-plane key beside a high BMP key, numeric -0/1e-7 inputs and

@@ -22,15 +22,14 @@ declarations, systems-model relations, identity domains and refusal behavior.
 
 ## Target Integration
 
-The pinned quire-rs semantic extraction API reads an artifact bundle. The
-pinned FCD extraction-frontend lifts the result into a domain package. QSL
+The quire-rs semantic extraction API reads an artifact bundle. The FCD
+extraction-frontend lifts the result into a domain package. QSL
 model intake, normalization and package linking consume that domain package in
 one local process.
 
 ## Preconditions
 
-quire-rs, FCD and quire-spec-language are pinned by one ecosystem lock and
-build locally with their published Rust interfaces; `resources/native-v1/` is
+quire-rs, FCD and quire-spec-language build locally with their published Rust interfaces; `resources/native-v1/` is
 read-only.
 
 ## Inputs

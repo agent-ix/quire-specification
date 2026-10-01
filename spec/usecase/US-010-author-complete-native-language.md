@@ -18,7 +18,7 @@ relationships:
 ## Context
 
 Authors need complete values, models, expressions, time, protocols and linked
-plans while retaining exact diagnostics, formatting and migration provenance.
+plans while retaining exact diagnostics and formatting.
 
 ## Acceptance Examples (Illustrative)
 

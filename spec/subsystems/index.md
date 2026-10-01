@@ -7,7 +7,7 @@ type: index
 # Complete V1 subsystem specification index
 
 This index is navigation, not a second source of requirements. The complete V1
-scope is the 200-row atomic inventory in
+scope is the atomic inventory in
 [`docs/v1-capability-inventory.md`](../../docs/v1-capability-inventory.md).
 Every capability remains required; dependency order does not defer scope.
 
@@ -17,7 +17,7 @@ Every capability remains required; dependency order does not defer scope.
 | --- | --- | --- | --- |
 | S1 language, packages and evolution | AD-001, AD-003 | `functional/foundation`, `functional/source-package` | `quire-spec-language` |
 | S2 values, types, expressions and collections | AD-005 | `functional/type-model`, `functional/expressions` | `quire-spec-language`, `quire-contract-model` |
-| S3 model, graph and state contracts | AD-006 | `functional/type-model`, `objects/interfaces` | `quire-spec-language` QSL model intake; pinned `quire-rs` semantic extraction and FCD `extraction-frontend` |
+| S3 model, graph and state contracts | AD-006 | `functional/type-model`, `objects/interfaces` | `quire-spec-language` QSL model intake; `quire-rs` semantic extraction and FCD `extraction-frontend` |
 | S4 temporal and observation | AD-002 | `functional/temporal`, `functional/observation` | QSL, `tl-*`, `quire-observation` |
 | S5 protocol and choreography | AD-007 | `functional/protocol`, `objects/protocol` | QSL, `quire-protocol` |
 | S6 composed execution, monitoring and workflow | AD-008 | `functional/runtime`, `functional/workflow` | `quire-integration` plus domain evaluators |

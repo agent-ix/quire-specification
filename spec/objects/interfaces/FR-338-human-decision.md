@@ -30,8 +30,9 @@ When a human accepts, rejects or limits a qualification or release scope, the pr
 ## Identity and validation
 
 The decision key is `decision_id`; its preimage includes actor, authority, scope, evidence, disposition, rationale and supersession.
-Unknown contract versions, missing required properties, duplicate keys,
-out-of-domain values and non-canonical encodings refuse before consumption.
+A document whose `contract_version` is not that identifier, missing required
+properties, duplicate keys, out-of-domain values and non-canonical encodings
+refuse before consumption.
 
 ## Acceptance Criteria
 
@@ -45,8 +46,3 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 - [interface_021](./interface_021-human-decision.md) owns the operation boundary.
 - FR-311 owns the behavior that produces or consumes this value.
-
-## Status
-
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.

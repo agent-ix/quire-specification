@@ -33,8 +33,6 @@ relationships:
     type: satisfied_by
   - target: "ix://agent-ix/quire-specification/FR-015"
     type: satisfied_by
-  - target: "ix://agent-ix/quire-specification/FR-016"
-    type: satisfied_by
 ---
 # StR-001: Trust native finite-state assessments
 

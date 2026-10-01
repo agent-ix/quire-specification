@@ -8,8 +8,6 @@ relationships:
     type: constrains
   - target: "ix://agent-ix/quire-specification/FR-015"
     type: constrains
-  - target: "ix://agent-ix/quire-specification/FR-016"
-    type: constrains
 ---
 # NFR-004: Retain review and publication prerequisites
 
@@ -36,4 +34,3 @@ Inspect the chosen artifact grant, inherited notices, definition status and requ
 
 - [FR-001](../functional/foundation/FR-001-select-native-profile.md)
 - [FR-015](../functional/foundation/FR-015-preserve-canonical-domains.md)
-- [FR-016](../functional/foundation/FR-016-migrate-explicitly.md)

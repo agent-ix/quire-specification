@@ -45,7 +45,7 @@ substitutes one for the other.
 | FR-030-AC-3 | Changing a runtime trace while keeping source, model and selected definitions fixed does not change static package identity; changing a semantic dependency does. | Test (TC-030) |
 | FR-030-AC-4 | Duplicating a clause's editable authority refuses admission rather than choosing the first or last declaration. | Test (TC-030) |
 | FR-030-AC-5 | An omitted required source unit prevents namespace closure; an extra file outside the explicit inventory cannot add or shadow a declaration. | Test (TC-030) |
-| FR-030-AC-6 | Substituting a manifest/lock digest or package fingerprint for the domain package import's `sha256-jcs` digest refuses the import. | Test (TC-030) |
+| FR-030-AC-6 | Substituting a lock digest, package fingerprint or raw-byte digest for the domain package import's `sha256-jcs` digest refuses the import. | Test (TC-030) |
 | FR-030-AC-7 | Linked binding roles retain owning declaration, source region, kind, exact type/contract, anchor and scope prerequisites; equal local names in different clauses do not merge their roles. | Test (TC-030) |
 | FR-030-AC-8 | A compile configuration change limited to resource controls remains visible in provenance while preserving the static subject; a changed semantic selection changes the static subject. | Test (TC-030) |
 | FR-030-AC-9 | A valid three-family template links with exact static model/definition/binding contracts and no runtime population, window or observations; removing a required static definition still refuses its dependent declaration. | Test (TC-030) |

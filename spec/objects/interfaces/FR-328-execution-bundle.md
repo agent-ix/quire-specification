@@ -20,7 +20,7 @@ When domain results are composed for a workflow request, the producer SHALL use 
 
 - `contract_version` — exactly `quire.execution-bundle/v1`.
 - `request` — package, workflow, selected claims, observations, domains and limits.
-- `shared_prerequisites` — exact model, package, clock, population and ecosystem locks.
+- `shared_prerequisites` — exact model, package, clock and population selections.
 - `state_results` — ordered native state results.
 - `temporal_results` — ordered native temporal results.
 - `protocol_results` — ordered protocol results.
@@ -30,8 +30,9 @@ When domain results are composed for a workflow request, the producer SHALL use 
 ## Identity and validation
 
 The key is the canonical request plus every retained domain-result identity. Ordering follows selected item identities, not completion time.
-Unknown contract versions, missing required properties, duplicate keys,
-out-of-domain values and non-canonical encodings refuse before consumption.
+A document whose `contract_version` is not that identifier, missing required
+properties, duplicate keys, out-of-domain values and non-canonical encodings
+refuse before consumption.
 
 ## Acceptance Criteria
 
@@ -45,8 +46,3 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 - [interface_010](./interface_010-execution-bundle.md) owns the operation boundary.
 - FR-180 owns the behavior that produces or consumes this value.
-
-## Status
-
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.

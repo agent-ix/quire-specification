@@ -9,8 +9,6 @@ relationships:
     type: verifies
   - target: "ix://agent-ix/quire-specification/FR-014"
     type: verifies
-  - target: "ix://agent-ix/quire-specification/FR-016"
-    type: verifies
 ---
 # IT-002: Qualify the shared reference consumer
 
@@ -24,11 +22,11 @@ A native producer packet consumed through B/C-owned existing-repository adapters
 
 ## Preconditions
 
-The exact FS02/FS05 candidate and consumer revisions must be accepted and pinned. The real consumer must be available. Current adoption is unresolved; this test remains planned and cannot pass using only A's producer audit.
+The selected FS02/FS05 producer and consumer are built from their current sources. The real consumer must be available. Current adoption is unresolved; this test remains planned and cannot pass using only A's producer audit.
 
 ## Inputs
 
-Versioned source/property/model/frame/snapshot/invocation/run references; valid and malformed source maps; one-axis stale, duplicate, unknown-version and migration mutations.
+Versioned source/property/model/frame/snapshot/invocation/run references; valid and malformed source maps; one-axis stale, duplicate and unknown-identifier mutations.
 
 ## Test Procedure
 
@@ -54,4 +52,3 @@ Priority: High. Automation: real command/file/API execution. Status: draft integ
 - [FR-003](../functional/foundation/FR-003-bind-source-correspondence.md)
 - [FR-004](../functional/foundation/FR-004-separate-artifact-identities.md)
 - [FR-014](../functional/foundation/FR-014-read-exact-wire.md)
-- [FR-016](../functional/foundation/FR-016-migrate-explicitly.md)

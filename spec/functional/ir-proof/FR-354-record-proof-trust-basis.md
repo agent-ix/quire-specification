@@ -38,13 +38,13 @@ the Carcara check run identity.
 
 A `proved` settlement is never recorded without its trust basis. The query
 identity a certificate is checked against is a digest over the exact query
-bytes together with the solver options pin selected for that run; a
+bytes together with the solver options selected for that run; a
 certificate whose query identity does not match the settled claim's query
 identity is a foreign certificate and never yields `certificate-checked`,
 regardless of whether Carcara itself passes it. When cvc5 produces an Alethe
 certificate for the exact settled query identity and Carcara checks that
 certificate and passes, the settlement records `certificate-checked` and
-retains the Carcara run identity and options pin. When no certificate is
+retains the Carcara run identity and options. When no certificate is
 produced for the exact query identity, Carcara does not pass it, or a
 produced certificate's query identity does not match, the settlement records
 `solver-asserted`: cvc5's word alone, with no independent proof check. A

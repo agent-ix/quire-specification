@@ -21,8 +21,8 @@ refusals.
 
 ## Target Integration
 
-Real pinned Rust APIs from QSL, Contract Model/IR, Codegen and Contract Runtime
-run locally; Kani uses the recorded installed version/options.
+Real Rust APIs from QSL, Contract Model/IR, Codegen and Contract Runtime
+run locally; the result names the Kani version and options it ran.
 
 ## Preconditions
 
@@ -45,5 +45,5 @@ plus unsupported/missing-bound and mutation cases.
 
 ## Expected Results
 
-No unsupported construct emits an approximating artifact; domain bounds and
-tool pins are exact and replayable.
+No unsupported construct emits an approximating artifact; domain bounds are
+exact and replayable.

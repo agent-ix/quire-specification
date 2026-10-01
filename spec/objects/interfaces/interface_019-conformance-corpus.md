@@ -15,7 +15,7 @@ relationships:
 name: ConformanceCorpus
 associated_types: [InventoryCapabilityId, CorpusVector, ExpectedDisposition, QualificationResult]
 operations:
-  - { name: execute_corpus, inputs: [corpus, qualification subject, EcosystemLock], output: per-vector and per-capability results, semantics: covers all 200 inventory capabilities with positive boundary and refusal vectors }
+  - { name: execute_corpus, inputs: [corpus, qualification subject], output: per-vector and per-capability results, semantics: covers every inventory capability with positive boundary and refusal vectors }
 invariants:
   - every inventory capability has exactly one primary coverage entry
   - missing or unexecuted vectors remain visible gaps
