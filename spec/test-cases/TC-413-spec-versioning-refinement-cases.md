@@ -33,7 +33,11 @@ classification or comparison.
 | SV-04 | The superseding compile refuses `unsupported_construct`/`not-yet-implemented` for a case the prior admits | Unresolved, not holds; verdict unsupported, exit 21 |
 | SV-05 | The superseding run of an admitted case has a one-unit work limit | Unresolved, not holds; verdict incomplete, exit 22 |
 | SV-06 | SV-01 with its two revision labels swapped and the same `prior`/`superseding` naming | The same case results as SV-01 |
-| SV-07 | A case the prior revision refuses | Not applicable |
+| SV-07 | A case the prior revision refuses at evaluation, with a superseding run that is unsupported | Not applicable |
+| SV-08 | A case whose prior revision fails to compile with a typed refusal | Tool failure naming the case; exit 30 |
+| SV-09 | A pair whose two revisions differ in document identity | Tool failure naming the pair; no case runs; exit 30 |
+| SV-10 | A case whose prior compile refuses `unsupported_construct`/`not-yet-implemented` | Unresolved, not tool failure; verdict unsupported, exit 21 |
+| SV-11 | A case the prior admits whose superseding evaluation divides by zero, settling refuted with cause `UndefinedEvaluation` | Regression; exit 10 |
 
 ## Expected Results
 

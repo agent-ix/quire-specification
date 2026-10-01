@@ -35,8 +35,9 @@ code. Each expected result is a literal in the test.
 | PL-03 | PL-01's E1 to E5 cases, each with a test-only fault in the child side's compile that skips the failing range proof, so the child admits the unit | Regression on each edge naming the case, the edge and the parent's codes; verdict violation, exit 10 |
 | PL-04 | Two units that differ in one byte of a declaration body | Tool failure naming the case; exit 30 |
 | PL-05 | A case naming state core as parent and complete model as child | Tool failure naming the case; exit 30 |
-| PL-06 | Each layer's witness unit selected alone: a bounded-scalar monitor invariant (state core), a named-predicate query over a bounded log (state queries), a reachability invariant over a finite universe (state graph), a record validation function (complete value), a dispatched operation contract (complete model) | Holds for each of the five layers; verdict pass, exit 0 |
+| PL-06 | Each layer's witness unit selected alone: a bounded-scalar monitor invariant (state core), a named-predicate query over a bounded log (state queries), a reachability invariant over a finite universe (state graph), a record validation function (complete value), a dispatched operation contract (complete model), each requested from every target its layer's `accepted_by` names | Holds for each of the five layers, every named target settling every item `supported`; verdict success, exit 0 |
 | PL-07 | PL-06's state-core witness with a test-only fault that makes state core refuse it | Regression naming state core and the refusal; verdict violation, exit 10 |
+| PL-07b | PL-06's state-core witness with a test-only fault that makes `kani` settle one item `unsupported` | Regression naming state core and `kani`; verdict violation, exit 10 |
 | PL-08 | Each edge's distinguishing unit compiled under its parent and its child | Holds on each edge: the parent gives `unsupported_construct` naming the parent layer and the child admits |
 | PL-09 | E1's distinguishing unit with a test-only fault that makes state core admit named predicates | Regression naming E1; verdict violation, exit 10 |
 

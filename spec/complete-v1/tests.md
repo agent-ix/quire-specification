@@ -1146,10 +1146,14 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-451 | FR-451-AC-4 | TC-412 | planned |
 | FR-451 | FR-451-AC-5 | TC-412 | planned |
 | FR-451 | FR-451-AC-6 | TC-412 | planned |
+| FR-451 | FR-451-AC-7 | TC-412 | planned |
 | FR-452 | FR-452-AC-1 | TC-413 | planned |
 | FR-452 | FR-452-AC-2 | TC-413 | planned |
 | FR-452 | FR-452-AC-3 | TC-413 | planned |
 | FR-452 | FR-452-AC-4 | TC-413 | planned |
+| FR-452 | FR-452-AC-5 | TC-413 | planned |
+| FR-452 | FR-452-AC-6 | TC-413 | planned |
+| FR-452 | FR-452-AC-7 | TC-413 | planned |
 | FR-453 | FR-453-AC-1 | TC-414 | planned |
 | FR-453 | FR-453-AC-2 | TC-414 | planned |
 | FR-453 | FR-453-AC-3 | TC-414 | planned |

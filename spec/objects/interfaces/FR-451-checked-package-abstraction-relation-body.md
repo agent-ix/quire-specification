@@ -103,8 +103,10 @@ check is its defect:
    `relation`/`population`, refuses `invalid_model_binding`/
    `malformed-declaration`; an owner the reader cannot recover refuses with
    FR-322 step 2's own refusal. The locus is the target.
-4. **Members**, entry by entry in the same order: a `fields` name that is
-   not an effective field member of the object type; a frame `operation`
+4. **Members**, entry by entry in the same order: two `fields` entries of
+   one object entry with equal `name` refuse `invalid_model_binding`/
+   `conflicting-binding` naming both entries and the name; otherwise, a
+   `fields` name that is not an effective field member of the object type; a frame `operation`
    that does not resolve as FR-342 "Operation resolution" resolves an
    anchor's operation, with that section's refusals; a `parameters` list
    that is not exactly the operation's declared parameters; two
@@ -129,6 +131,7 @@ object, population or operation key refuses `invalid_model_binding`/
 | FR-451-AC-4 | A `type` target naming a `relation`/`population` node and a `population` target naming an object type refuse `invalid_model_binding`/`malformed-declaration` at the target; a target missing from `dependencies` refuses `missing_declaration`/`missing-name`; a frame `operation` the context only inherits refuses `invalid_model_binding`/`malformed-declaration`; a `parameters` list missing a declared parameter refuses `invalid_model_binding`/`malformed-declaration` at the entry. | Test (TC-412) |
 | FR-451-AC-5 | Two nodes that bind one object key refuse `invalid_model_binding`/`conflicting-binding` naming both entries and the key, at the second in ascending node-id digest order. | Test (TC-412) |
 | FR-451-AC-6 | Recompiling an unchanged unit gives the same node id and package id; changing one field's `rust_field` changes both. | Test (TC-412) |
+| FR-451-AC-7 | An object entry holding two `fields` entries named `version`, bound to different Rust fields, refuses `invalid_model_binding`/`conflicting-binding` naming both entries and `version`. | Test (TC-412) |
 
 ## Dependencies
 

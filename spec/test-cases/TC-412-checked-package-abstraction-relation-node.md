@@ -42,6 +42,7 @@ refusal's code, cause and locus, with the vector.
 | AN-10 | `parameters` is `[]` | `invalid_model_binding`/`malformed-declaration` at the entry |
 | AN-11 | A second relation node binding the `ConfigVersion` object key | `invalid_model_binding`/`conflicting-binding` at the second node in ascending node-id digest order, naming both entries and the key |
 | AN-12 | AD-01 compiled twice; then AD-01 with `version to "v2"` | The two unchanged compiles give equal node ids and package ids; the edited one gives a different node id and package id |
+| AN-13 | The `ConfigVersion` object entry with two `fields` entries named `version`, bound to `"version"` and `"rev"` | `invalid_model_binding`/`conflicting-binding` at the entry, naming both entries and `version` |
 
 ## Expected Results
 

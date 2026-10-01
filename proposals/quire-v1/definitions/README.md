@@ -51,31 +51,15 @@ Other definition families remain editable candidates under their owning tickets.
 
 ## Header-selectable layers
 
-Each layer of the AD-003 state and value/model hierarchy is a profile a
-`profile` declaration selects by naming its identity. A declaration whose
-`using` names that alias is admitted under exactly the layer's admitted-form
-set, which is the set its definition file lists together with the sets of the
-layers it requires. A form outside that set receives `unsupported_construct`
-naming the selected layer. Selecting a layer selects the definitions it
-requires; it never selects a layer that requires it. A user selects a parent
-layer to restrict a unit to the subset that a lowering target or a
-qualification tier accepts.
-
-The [complete-value lock](complete-value-lock.json)'s
-`header_selectable_layers` rows are the catalog a compiler reads: one row
-per layer with its `identity`, the identities it `requires` and its
-`admitted_forms` definition file. The table below restates those rows with
-the user subset each layer serves.
-
-| Layer | Requires | Admitted-form set | User subset it serves |
-| --- | --- | --- | --- |
-| `quire.state.core/v1` | edition | [State core](state-core.md) | Embedded and runtime-monitor targets: bounded scalars and finite sequences with authored maxima, no named predicates, references or recursive values; the smallest tier to qualify. |
-| `quire.state.queries/v1` | `quire.state.core/v1` | [Predicates and queries](state-queries.md) | Runtime monitors over bounded collections and logs: adds acyclic named predicates and ordered queries, still with no references. |
-| `quire.state.graph/v1` | `quire.state.queries/v1` | [Finite graphs](state-graph.md) | Finite-model verification targets: adds explicit finite typed universes, references and reachability, with no conformance or dispatch. |
-| `quire.value.complete/v1` | `quire.state.core/v1` | [Complete value root](value-complete.md) | Pure value contracts such as data validation and serialization rules: complete scalars, records, recursive values, collections and functions, with no object identity or navigation. |
-| `quire.model.complete/v1` | `quire.state.graph/v1`, `quire.value.complete/v1` | [Complete model root](model-complete.md) | Full systems models: conformance, redefinition, dispatch and systems structure over the union of both parents. |
-
-The five `requires` edges of this table are the profile-layering edges that
+The `header_selectable_layers` rows of the
+[complete-value lock](complete-value-lock.json) are the one catalog of the
+AD-003 state and value/model layers a `profile` declaration selects
+([FR-001](../../../spec/functional/foundation/FR-001-select-native-profile.md)).
+Each row gives the layer's `identity`, the layers it `requires`, its
+`admitted_forms` definition file, a one-line statement of what it `admits`,
+and the AD-010 targets (`accepted_by`) that accept every form it admits. A
+user selects a layer to keep a unit inside the subset those targets accept.
+The rows' `requires` edges are the profile-layering edges that
 [FR-453](../../../spec/functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md)
 compares.
 

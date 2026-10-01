@@ -32,7 +32,7 @@ code, cause, named key or entry and source span.
 | AR-02 | `population M::Nowhere` | `missing_declaration`/`missing-name`, naming `M::Nowhere` |
 | AR-03 | `operation M::Sub::attemptUpdate` | `missing_declaration`/`missing-name`, naming the key (`Sub`, `attemptUpdate`); AD-01's own key (`ConfigVersion`, `attemptUpdate`) checks |
 | AR-04 | `type M::Label` | `invalid_model_binding`/`malformed-declaration` |
-| AR-05 | Rust path `"type"`, `"9lives"`, `"a::"`, `"r#crate"`, `"ab"` and an identifier in NFD form, one per run | `invalid_model_binding`/`malformed-declaration`, naming the first malformed segment and its source span |
+| AR-05 | Rust path `"type"`, `"9lives"`, `"a::"`, `"r#crate"`, `"a-b"` and an identifier in NFD form, one per run | `invalid_model_binding`/`malformed-declaration`, naming the first malformed segment and its source span |
 | AR-06 | Field index `"01"` | `invalid_model_binding`/`malformed-declaration`, naming `01` and its span |
 | AR-07 | Rust path `"r#type"`, path `"config_store::Store"`, field index `"0"`, receiver `"self"` | Admitted |
 | AR-08 | Field binding `missing to "x"` | `invalid_model_binding`/`malformed-declaration`, naming the entry |
