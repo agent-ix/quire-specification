@@ -108,11 +108,11 @@ For the nominal scalar node forms covered by the node-preimage schema, the
 `quire.checked-semantic-node/v1` digest is SHA-256 of the exact RFC 8785 JCS
 preimage. An owner subject must match an admitted source, definition or model
 selection; source/definition owners use authority plus identity, and model
-owners use the domain package identity plus its declared version plus the IR
-node identity (QSL ADR-013 O-04, QC-18): a domain package selects at most one
-version of an identity (FR-321), so the owner's `identity`/`version` pair
-scopes a `ModelOwner` node's identity to its declaring domain package and
-keeps a `NodeKey` unique across packages. Source/definition revisions and
+owners use the domain package identity plus the IR node identity: a checked
+package selects at most one domain package per identity (FR-321), so the
+owner's `identity` scopes a `ModelOwner` node's identity to its declaring
+domain package. A node id depends only on content: a domain package's
+declared version label is not part of it. Source/definition revisions and
 digests remain package lock evidence but are excluded from the semantic node
 preimage, allowing an unchanged source- or definition-owned declaration to
 retain identity across unrelated document revisions.

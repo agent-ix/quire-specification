@@ -12,39 +12,34 @@ relationships:
 ## Description
 
 Show that a `ModelOwner` node-identity preimage carries the declaring domain
-package's `identity` and `version` beside `node`, that the published
+package's `identity` beside `node` and no version label, that the published
 `ModelOwner` vectors validate against the closed preimage schema and
-recompute their recorded JCS SHA-256, and that a `ModelOwner` node's id is
-scoped to its declaring domain package's `identity@version`, per QSL
-ADR-013 O-04, QC-3 and QC-18.
+recompute their recorded JCS SHA-256, and that a `ModelOwner` node's id
+depends only on content.
 
 ## Preconditions
 
-- FR-321 admits at most one version of a domain-package `identity`.
+- FR-321 admits at most one domain package per `identity`.
 - The `proposals/checked-package-v2/node-identity-preimage.schema.json`
-  `ModelOwner` definition requires `kind`, `identity`, `version` and `node`.
+  `ModelOwner` definition requires exactly `kind`, `identity` and `node`.
 
 ## Test Procedure
 
-Validate the published `model-enum-order-status`,
-`model-enum-order-status-version-2` and `model-dimension-order-mass` vectors
-in `node-identity-vectors.json` against the closed preimage schema, recompute
-each vector's JCS SHA-256 and compare digests across the version-only
-mutation.
+Validate the published `model-enum-order-status` and
+`model-dimension-order-mass` vectors in `node-identity-vectors.json` against
+the closed preimage schema and recompute each vector's JCS SHA-256. Apply the
+`model-owner-carries-version` mutation and validate the result.
 
 ## Vectors
 
 | Vector | Mutation | Expected result | Criteria |
 | --- | --- | --- | --- |
-| MO-01 | `model-enum-order-status`: a `ModelOwner` enum declaration with `identity: acme/orders`, `version: 1.0.0` | Validates against the closed schema; recomputed SHA-256 equals the published digest | FR-322-AC-28 |
-| MO-02 | `model-dimension-order-mass`: a `ModelOwner` dimension declaration with `identity: acme/orders`, `version: 1.0.0` | Validates against the closed schema; recomputed SHA-256 equals the published digest | FR-322-AC-28 |
-| MO-03 | `model-enum-order-status-version-2`: the same owner `identity` and `node` as MO-01 with `version: 2.0.0` | Validates against the closed schema; computes a node id distinct from MO-01's | FR-322-AC-28 |
-| MO-04 | A `ModelOwner` preimage with `identity` and `node` present and `version` omitted | Refused by the closed preimage schema before digest computation | FR-322-AC-28 |
+| MO-01 | `model-enum-order-status`: a `ModelOwner` enum declaration with `identity: acme/orders` | Validates against the closed schema; recomputed SHA-256 equals the published digest | FR-322-AC-28 |
+| MO-02 | `model-dimension-order-mass`: a `ModelOwner` dimension declaration with `identity: acme/orders` | Validates against the closed schema; recomputed SHA-256 equals the published digest | FR-322-AC-28 |
+| MO-03 | `model-owner-carries-version`: MO-01 with a `version` member added to its owner | Refused by the closed preimage schema before digest computation | FR-322-AC-28 |
 
 ## Expected Results
 
-MO-01 and MO-02 find general `ModelOwner`-owned declarations admitted and
-correctly digested. MO-03 finds that a version-only change to the declaring
-domain package yields a different node id, so a `NodeKey` stays unique
-across domain-package versions. MO-04 finds a `ModelOwner` preimage missing
-`version` refused by the schema.
+MO-01 and MO-02 find `ModelOwner`-owned declarations admitted and correctly
+digested from content alone. MO-03 finds a `ModelOwner` preimage that carries
+a version label refused by the schema.

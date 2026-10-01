@@ -70,7 +70,6 @@ fn declaration_preimage(package: &Value, tag: &str, form: &str, node: &str) -> V
         "owner": {
             "kind": "model",
             "identity": package["identity"],
-            "version": package["version"],
             "node": node
         },
         "body": {"term": "aggregate", "members": []}
@@ -412,7 +411,7 @@ fn tc_280_model_declaration_node_vectors_recompute_and_recover_only_selected_own
             .validate(preimage)
             .unwrap_or_else(|error| panic!("{name} validates: {error}"));
         assert_eq!(digest(preimage), text(vector, "sha256"), "{name} digest");
-        let selected = preimage["owner"]["version"] == package["version"];
+        let selected = preimage["owner"]["identity"] == package["identity"];
         let recovered = recover(
             package,
             text(vector, "sha256"),
@@ -422,7 +421,7 @@ fn tc_280_model_declaration_node_vectors_recompute_and_recover_only_selected_own
         assert_eq!(
             recovered.is_some(),
             selected,
-            "{name} recovers exactly when its owner is the selected version"
+            "{name} recovers exactly when its owner is the selected domain package"
         );
 
         let mut named_body = preimage.clone();

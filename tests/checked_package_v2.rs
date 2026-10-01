@@ -656,6 +656,18 @@ fn apply_authored_patch(candidate: &mut Value, patch: &Value) {
                 .remove(member)
                 .expect("authored remove member exists");
         }
+        "add" => {
+            let path = patch["path"].as_str().expect("add path is a string");
+            let (parent, member) = path
+                .rsplit_once('/')
+                .expect("add path contains an object member");
+            let previous = candidate
+                .pointer_mut(parent)
+                .and_then(Value::as_object_mut)
+                .expect("add parent is an object")
+                .insert(member.to_owned(), patch["value"].clone());
+            assert!(previous.is_none(), "authored add member is new");
+        }
         operation => panic!("unsupported authored patch operation: {operation}"),
     }
 }
@@ -4535,7 +4547,7 @@ fn tc_233_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
             ("dimension-negative-zero-exponent", "semantic"),
             ("unit-negative-zero-scale", "semantic"),
             ("unit-negative-zero-offset", "semantic"),
-            ("model-owner-missing-version", "semantic"),
+            ("model-owner-carries-version", "semantic"),
         ]),
         "the nominal-node mutation inventory is exact"
     );
@@ -4552,7 +4564,7 @@ fn tc_233_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
             ("dimension-negative-zero-exponent", "schema"),
             ("unit-negative-zero-scale", "schema"),
             ("unit-negative-zero-offset", "schema"),
-            ("model-owner-missing-version", "schema"),
+            ("model-owner-carries-version", "schema"),
         ]),
         "every semantic nominal-node mutation names exactly its refusing check"
     );
@@ -4808,7 +4820,7 @@ fn tc_233_owner_to_lock_join_refuses_independently_of_lock_preimage_equality() {
         "digest": "5555555555555555555555555555555555555555555555555555555555555555"
     }]);
     let model_owner = json!({
-        "kind": "model", "identity": "test/orders", "version": "1", "node": "ix://test/orders/Example"
+        "kind": "model", "identity": "test/orders", "node": "ix://test/orders/Example"
     });
     let cases = [
         (
