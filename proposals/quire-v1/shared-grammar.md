@@ -80,9 +80,11 @@ The complete-V1 facets additionally reserve `import`, `dimension`, `unit`,
 `continue`, `cancel`, `invariant`, `variant`, `relation`, `hyper`, `trace`,
 `bounded`, `hybrid`, `mode`, `flow`, `transition`, `reset`, `synthesis`,
 `grammar`, `satisfies`, `verify`, `claim`, `method`, `domain`, `depends`,
-`bound`, `lookup`, `absent` and `body`. The words `undefined`, `empty` and
-`refused` are matched as keyword spellings only in the lookup absence position
-and remain identifiers elsewhere. Hyphenated tokens are matched as single keyword spellings only in
+`bound`, `lookup`, `absent`, `body` and `abstraction`. The words `undefined`,
+`empty` and `refused` are matched as keyword spellings only in the lookup
+absence position and remain identifiers elsewhere. The words `population`,
+`operation` and `receiver` are matched as keyword spellings only in their
+`abstraction-decl` positions and remain identifiers elsewhere. Hyphenated tokens are matched as single keyword spellings only in
 their grammar positions; they are never identifier normalization aliases.
 
 ## Declarations and expressions
@@ -278,7 +280,8 @@ declaration   = dimension-decl | unit-decl | enum-decl | record-decl
               | tuple-decl | union-decl | alias-decl | function | predicate
               | state-clause | temporal-clause | protocol-clause
               | relation-clause | hyper-clause | hybrid-decl
-              | synthesis-decl | verification-plan | operation-body ;
+              | synthesis-decl | verification-plan | operation-body
+              | abstraction-decl ;
 
 type-ref      = 'Boolean' | 'Integer' | qualified-name
               | 'Int', '[', signed-int, ',', signed-int, ']'
@@ -503,6 +506,39 @@ role lifetime and channel capacity remain checked semantic expressions; a
 symbolic capacity requires a discharged finite bound before finite execution.
 Verification plans link outside clause-expression evaluation even though their
 source is recognized by the same edition.
+
+### Abstraction relation declaration
+
+An `abstraction-decl` spells the model-to-implementation abstraction relation
+of FR-353. FR-450 owns its static meaning and refusals. It is distinct from
+`relation-clause`, which relates executions of one model.
+
+```ebnf
+abstraction-decl   = 'abstraction', ident, 'using', ident, '{',
+                     abstraction-binding, { abstraction-binding }, '}' ;
+abstraction-binding = object-binding | population-binding | frame-binding ;
+object-binding     = 'type', type-name, 'to', rust-path,
+                     [ '{', field-binding, { field-binding }, '}' ], ';' ;
+field-binding      = member-name, 'to', rust-field, ';' ;
+population-binding = 'population', model-name, 'to', rust-path, ';' ;
+frame-binding      = 'operation', operation-name, 'to', rust-path,
+                     'receiver', rust-receiver,
+                     '(', [ parameter-binding, { ',', parameter-binding } ],
+                     ')', ';' ;
+parameter-binding  = member-name, 'to', rust-name ;
+rust-path          = string ;
+rust-field         = string ;
+rust-receiver      = string ;
+rust-name          = string ;
+```
+
+The four Rust positions are quoted strings so that Rust spellings never meet
+this edition's lexical contract. The parser recognizes any string in them.
+FR-450 checks each string's content against its Rust syntax, and because that
+content admits no escape sequence, every Rust segment's byte offsets inside the
+string are source spans. A package that does not select
+`quire.model.complete/v1` receives `unsupported_construct` for an
+`abstraction-decl`.
 
 ## Precedence and bindings
 

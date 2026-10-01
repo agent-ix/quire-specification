@@ -17,6 +17,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-013
     type: references
+  - target: ix://agent-ix/quire-specification/FR-450
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-451
+    type: references
 ---
 
 # FR-353: Declare a model-to-implementation abstraction relation
@@ -48,12 +52,22 @@ The abstraction relation is authored, never inferred: a model object maps to
 exactly one implementation state representation, a population maps to exactly
 one implementation collection representation, and an operation frame maps to
 exactly one implementation function's parameters, result and framed state.
-Each binding is keyed by the bound model element's AD-006 effective-declaration
-key (domain package identity, IR node identity, digest domain `sha256-jcs`)
-together with, for an operation frame, its FR-013 frame identity and the
-FR-012 pre/post/result anchor identities the frame's parameters, result and
-framed state are read under; a model object or population binding is keyed by
-its effective-declaration key alone. The relation is consumed by the same
+A model object or population binding is keyed by the bound element's AD-006
+effective-declaration key (domain package identity, IR node identity, digest
+domain `sha256-jcs`). An operation frame binding is keyed by its operation
+key: the AD-006 effective-declaration key of the object type that declares
+the operation, and the operation's identifier. An operation has one FR-013
+frame and one set of FR-012 pre/post/result anchors, so its frame identity
+and anchor identities are functions of the operation key and are not key
+members: the bound function's entry is the pre anchor, its exit the post
+anchor and its return value the result, and its parameters, result and
+framed state are read under those anchors. A frame binding therefore exists
+for an operation whether or not any clause names that operation. An
+inherited operation is keyed at the object type that declares it.
+[FR-450](FR-450-spell-abstraction-relation-declaration.md) spells the
+relation in source and
+[FR-451](../../objects/interfaces/FR-451-checked-package-abstraction-relation-body.md)
+carries it in the checked package. The relation is consumed by the same
 target-neutral negotiation path AD-010 defines for Kani (FR-196) and Verus
 (FR-350) generation; a claim referencing a model element carries the
 element's bound implementation representation forward into the generated
@@ -76,7 +90,7 @@ it does not silently reinterpret an already-generated contract.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-353-AC-1 | An authored abstraction relation, keyed by each model element's AD-006 effective-declaration key plus, for an operation frame, its FR-013 frame identity and FR-012 pre/post/result anchor identities, maps each model object, population and operation frame to exactly one implementation state representation. | Test (TC-268) |
+| FR-353-AC-1 | An authored abstraction relation, keyed by each model object's and population's AD-006 effective-declaration key and by each operation frame's operation key (the declaring object type's effective-declaration key and the operation identifier), maps each model object, population and operation frame to exactly one implementation state representation; a frame binding for an operation no clause names is admitted, and the binding resolves to the same FR-013 frame and FR-012 anchors as a clause that names the operation. | Test (TC-268) |
 | FR-353-AC-2 | Kani and Verus generation consume the bound abstraction relation through the same AD-010 negotiation path used for their other capability advertisements. | Test (TC-268) |
 | FR-353-AC-3 | Emission onto implementation code referencing a model element with no bound abstraction relation refuses before generation with `missing_declaration`/`missing-name`, naming the unbound element and its owning model identity; the refusal is scoped to that item alone, independent sibling items with resolved bindings are unaffected, and no partial or approximated relation is emitted in its place. | Test (TC-268) |
 | FR-353-AC-4 | Authoring a duplicate binding for a key an existing binding already covers, or a binding that conflicts with an existing one on that key, refuses `invalid_model_binding`/`conflicting-binding`, naming both candidate bindings and the shared key, rather than silently selecting either binding. | Test (TC-268) |
@@ -92,9 +106,10 @@ it does not silently reinterpret an already-generated contract.
   this relation maps from.
 - [FR-012](../foundation/FR-012-bind-operation-observations.md) defines the
   pre/post/result anchor identities an operation frame binding's parameters,
-  result and framed state are keyed under.
+  result and framed state are read under.
 - [FR-013](../foundation/FR-013-validate-operation-frames.md) defines the
-  operation frames this relation binds and the frame identity it keys on.
+  operation frames this relation binds; each is a function of its operation
+  key.
 - [FR-196](FR-196-generate-kani-contracts.md) and
   [FR-350](FR-350-emit-verus-contracts.md) are the two generation paths that
   consume this relation and refuse in its absence.
@@ -104,3 +119,8 @@ it does not silently reinterpret an already-generated contract.
   Implementation ordering may add enablement edges but cannot change these
   semantics or infer implementation availability from specification
   acceptance.
+
+## References
+
+- quire-spec-language ADR-017 §3 AR-2 and §6 Q-7 (the operation key).
+- Specification ticket STD-121.
