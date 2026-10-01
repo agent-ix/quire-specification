@@ -88,9 +88,10 @@ quire validate --scope . 'spec/**/*.md' 'plan/**/*.md' 'reviews/2026-*.md' --sum
 The first Cargo run may fetch the exact private B dependency; subsequent runs
 can add --offline. All tests must execute locally; no hosted workflow exists.
 The crate's only library API is `quire_specification`: dependency-free
-constants carrying the authored bytes of `complete-value-lock.json` and
-`native-diagnostics.md`, so consumers read them by reference. [Dependency rights](docs/qualification-dependencies.md)
-record its grants and exact selected sources. TC completion and independent
+constants carrying the authored bytes of `complete-value-lock.json`,
+`complete-value-selection-vectors.json` and `native-diagnostics.md`, so consumers read them by reference. The
+qualification tests' dev-dependencies and their licence grants are recorded
+in [Dependency rights](docs/qualification-dependencies.md). TC completion and independent
 consumer adoption remain separate from the five producer qualification tests.
 
 The dated review glob selects the typed SpecReview artifacts. The two historical

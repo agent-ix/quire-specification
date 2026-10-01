@@ -6,6 +6,9 @@
 use ix_trace_rs::trace;
 use num_bigint::BigInt;
 use num_integer::Integer;
+use quire_specification::{
+    COMPLETE_VALUE_LOCK, COMPLETE_VALUE_SELECTION_VECTORS, NATIVE_DIAGNOSTICS,
+};
 use quire_verification::contracts::jcs_sha256;
 use quire_verification_contracts::operation_catalog::CHECKED_OPERATION_CATALOG_V1;
 use serde_json::{Value, json};
@@ -27,9 +30,6 @@ const COMPOUND_UNIT_VECTORS: &str =
     include_str!("../proposals/quire-v1/definitions/value-compound-unit-vectors.json");
 const VALUE_RULE_MANIFEST: &str =
     include_str!("../proposals/quire-v1/definitions/value-complete-rules.json");
-use quire_specification::COMPLETE_VALUE_LOCK;
-const COMPLETE_VALUE_SELECTION_VECTORS: &str =
-    include_str!("../proposals/quire-v1/definitions/complete-value-selection-vectors.json");
 
 /// Whether a qualification-catalog artifact is a value definition or one of
 /// the exact rule documents listed by the rule manifest.
@@ -5022,6 +5022,29 @@ fn tc_233_complete_value_rule_manifest_binds_every_selected_rule_byte_for_byte()
     }
 }
 
+#[trace("TC-233", "FR-201-AC-7")]
+#[test]
+fn tc_233_definition_library_exposes_the_exact_authored_bytes() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+    for (exposed, path) in [
+        (
+            COMPLETE_VALUE_LOCK,
+            "proposals/quire-v1/definitions/complete-value-lock.json",
+        ),
+        (
+            COMPLETE_VALUE_SELECTION_VECTORS,
+            "proposals/quire-v1/definitions/complete-value-selection-vectors.json",
+        ),
+        (
+            NATIVE_DIAGNOSTICS,
+            "proposals/quire-v1/definitions/native-diagnostics.md",
+        ),
+    ] {
+        let on_disk = std::fs::read(root.join(path)).expect("authored file reads");
+        assert_eq!(exposed.as_bytes(), on_disk.as_slice(), "{path}");
+    }
+}
+
 #[trace("TC-233", "FR-201-AC-6")]
 #[test]
 fn tc_233_complete_value_lock_catalogs_every_artifact_and_separates_package_selection() {
@@ -5312,8 +5335,6 @@ fn tc_233_package_selection_vectors_admit_exact_conditional_and_alternative_prof
         );
     }
 }
-
-use quire_specification::NATIVE_DIAGNOSTICS;
 
 /// Replace one application-bearing node of a package, recompute its exact
 /// dependencies and key it, its projection and the package from the preimage.

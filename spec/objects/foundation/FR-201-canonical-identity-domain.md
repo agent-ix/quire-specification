@@ -86,6 +86,18 @@ Three requirements independently state what is inside the preimage under the
 This artifact records all three. It does not reconcile them; the selection of a
 preimage belongs to the requirement that selects it.
 
+## Definition bytes by reference
+
+The `quire_specification` library of this repository's Rust package exposes
+`COMPLETE_VALUE_LOCK`, `COMPLETE_VALUE_SELECTION_VECTORS` and
+`NATIVE_DIAGNOSTICS`: the exact bytes of
+`proposals/quire-v1/definitions/complete-value-lock.json`, its
+package-selection vectors `complete-value-selection-vectors.json` and
+`proposals/quire-v1/definitions/native-diagnostics.md`. It records no digest.
+A consumer that needs a `quire.definition.bytes/v1` digest hashes these bytes
+itself, and reads the complete-value lock's catalog and selection vectors
+from them instead of holding a copy.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -95,6 +107,7 @@ preimage belongs to the requirement that selects it.
 | FR-201-AC-3 | A digest with an absent domain compares only to absence and receives no default member. | Analysis |
 | FR-201-AC-4 | A lock-file digest does not satisfy a comparison expecting a package fingerprint. | Analysis |
 | FR-201-AC-6 | The complete-value definition lock closes every qualification-catalog artifact by identity, revision, `quire.definition.bytes/v1` digest domain and raw-byte digest, and its conditional and alternative package selection is exact: each catalog entry occupies one always, trigger-conditional or exactly-one slot under the closed triggers `text_bearing`, `ieee_operation` and `integer_div_rem`. | Test (TC-233) |
+| FR-201-AC-7 | The `quire_specification` library's `COMPLETE_VALUE_LOCK`, `COMPLETE_VALUE_SELECTION_VECTORS` and `NATIVE_DIAGNOSTICS` equal the exact bytes of `complete-value-lock.json`, `complete-value-selection-vectors.json` and `native-diagnostics.md`, and the library exposes no digest. | Test (TC-233) |
 
 ## Dependencies
 
