@@ -50,7 +50,10 @@ reports them.
 Every layer in the
 [header-selectable layers](../../../proposals/quire-v1/definitions/README.md#header-selectable-layers)
 table is a profile a `profile` declaration selects by naming its identity
-(FR-001). A layering edge is one AD-003 `requires` edge between two of those
+(FR-001). The `header_selectable_layers` rows of the
+[complete-value lock](../../../proposals/quire-v1/definitions/complete-value-lock.json)
+carry each layer's identity, the layers it requires and its admitted-form
+definition file for a compiler to read. A layering edge is one AD-003 `requires` edge between two of those
 layers. The gate covers exactly these five edges:
 
 | Edge | Parent | Child |

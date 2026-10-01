@@ -61,6 +61,12 @@ requires; it never selects a layer that requires it. A user selects a parent
 layer to restrict a unit to the subset that a lowering target or a
 qualification tier accepts.
 
+The [complete-value lock](complete-value-lock.json)'s
+`header_selectable_layers` rows are the catalog a compiler reads: one row
+per layer with its `identity`, the identities it `requires` and its
+`admitted_forms` definition file. The table below restates those rows with
+the user subset each layer serves.
+
 | Layer | Requires | Admitted-form set | User subset it serves |
 | --- | --- | --- | --- |
 | `quire.state.core/v1` | edition | [State core](state-core.md) | Embedded and runtime-monitor targets: bounded scalars and finite sequences with authored maxima, no named predicates, references or recursive values; the smallest tier to qualify. |

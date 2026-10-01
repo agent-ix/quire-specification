@@ -105,6 +105,13 @@
       "definition": {"authority":"agent-ix","identity":"quire.rule.fr-149/v1"}
     }
   ],
+  "header_selectable_layers": [
+    {"identity": "quire.state.core/v1", "requires": [], "admitted_forms": "state-core.md"},
+    {"identity": "quire.state.queries/v1", "requires": ["quire.state.core/v1"], "admitted_forms": "state-queries.md"},
+    {"identity": "quire.state.graph/v1", "requires": ["quire.state.queries/v1"], "admitted_forms": "state-graph.md"},
+    {"identity": "quire.value.complete/v1", "requires": ["quire.state.core/v1"], "admitted_forms": "value-complete.md"},
+    {"identity": "quire.model.complete/v1", "requires": ["quire.state.graph/v1", "quire.value.complete/v1"], "admitted_forms": "model-complete.md"}
+  ],
   "package_selection": {
     "always": ["edition", "root", "accounting", "compound_unit", "compound_unit_schema", "compound_unit_vectors", "rule_package_contract", "rule_shared_grammar", "rule_ad_005", "rule_fr_140", "rule_fr_141", "rule_fr_142", "rule_fr_147", "rule_fr_148", "rule_fr_149"],
     "conditional": [
