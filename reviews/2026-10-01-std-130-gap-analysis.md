@@ -59,3 +59,13 @@ edit adds no validation error, as the coder said.
 | FND | outcome | sha/reason |
 | --- | --- | --- |
 | FND-001 | fixed | 21e5a7b |
+
+Round 2, reviewed at f3368b5c48a8faa8a78074c4aba70eb9d711beac. The change
+since 21e5a7b touches only spec/ and reviews/; no Rust, Cargo or test file
+changed, so the round-1 gate run on 21e5a7b still covers the code. FR-201's
+and spec/complete-v1/tests.md's `quire validate` output is unchanged.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-002 | fixed | f3368b5 |
+| FND-003 | fixed | f3368b5 |
