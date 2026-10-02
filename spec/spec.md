@@ -1021,7 +1021,7 @@ The requirement artifacts are indexed below.
 | [FR-226](objects/protocol/FR-226-business-effect.md) | FR (entity) | Object layer; Business effect |
 | [FR-227](objects/protocol/FR-227-owned-choice.md) | FR (entity) | Object layer; Owned choice |
 | [FR-228](objects/protocol/FR-228-bounded-control-construct.md) | FR (enumeration) | Object layer; Bounded control construct vocabulary |
-| [FR-270](objects/foundation/FR-270-versioned-diagnostic-catalog.md) | FR (entity) | Object layer; Versioned diagnostic catalog |
+| [FR-270](objects/foundation/FR-270-diagnostic-catalog.md) | FR (entity) | Object layer; Diagnostic catalog |
 | [FR-271](objects/foundation/FR-271-diagnostic-code-vocabulary.md) | FR (enumeration) | Object layer; Diagnostic code vocabulary |
 | [FR-272](objects/foundation/FR-272-typed-diagnostic-cause.md) | FR (value_object) | Object layer; Typed diagnostic cause |
 | [FR-273](objects/foundation/FR-273-producer-stage.md) | FR (value_object) | Object layer; Producer stage |

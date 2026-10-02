@@ -59,7 +59,7 @@ catalog).
 | `frame_violation` | A change to an object, field or State root not permitted by the declared frame. |
 | `resource_exhausted` | A work item that could not proceed under the effective limit and accounting contract. "A semantic maximum is not a caller work budget." |
 | `cancelled` | A work item stopped by a caller cancellation source. |
-| `unsupported_projection` | A requested capability kind with an empty candidate set (no registrant advertises it, or the named backend does not), an obligation form the one candidate's negotiation arm does not discharge, or an unbounded extent on a bounded-only advertisement with no finite bound or a routed backend whose pinned tool is unavailable. "It cannot reclassify a valid source as malformed." |
+| `unsupported_projection` | A requested capability kind with an empty candidate set (no registrant advertises it, or the named backend does not), an obligation form the one candidate's negotiation arm does not discharge, or an unbounded extent on a bounded-only advertisement with no finite bound or a routed backend whose tool is unavailable. "It cannot reclassify a valid source as malformed." |
 | `projection_binding` | An upstream refusal carried with its originating structured IR/mapping cause. |
 | `invalid_projection_correspondence` | A loss of correspondence between exact source and derived identities. |
 | `extraction-requires-run` | An extraction refused because of the requested command mode. |
@@ -97,9 +97,9 @@ catalog).
 - **Identity kind** — *value*. A code is an exact string with no identity of its
   own; it is compared componentwise.
 - **Key** — the code spelling itself, taken together with the catalog selection
-  that resolves it ([FR-270](FR-270-versioned-diagnostic-catalog.md)), because
+  that resolves it ([FR-270](FR-270-diagnostic-catalog.md)), because
   FR-047-AC-2 requires that "every emitted machine code resolves to the selected
-  versioned catalog". Matching is exact and case-sensitive: hyphenated and
+  catalog". Matching is exact and case-sensitive: hyphenated and
   underscored spellings "stay exact; they are not normalized aliases" (proposed
   catalog). Message text, locale and rendering never participate — FR-047-AC-1:
   "Changing/localizing human-readable messages leaves the same typed failure's
@@ -122,7 +122,7 @@ catalog).
   catalog).
 - **Digest domain** — a code carries no digest. The catalog that resolves it is
   selected by its interpretation identity
-  ([FR-270](FR-270-versioned-diagnostic-catalog.md)).
+  ([FR-270](FR-270-diagnostic-catalog.md)).
 
 ## Scope: producer-minted codes
 

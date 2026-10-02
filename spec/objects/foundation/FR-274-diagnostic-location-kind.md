@@ -78,7 +78,7 @@ object/value path, and the JSON field/index path is typed below.
   carries one, its domain rule is
   [FR-201](FR-201-canonical-identity-domain.md); the catalog that
   resolves the diagnostic is itself selected by identity, revision and byte
-  digest ([FR-270](FR-270-versioned-diagnostic-catalog.md)).
+  digest ([FR-270](FR-270-diagnostic-catalog.md)).
 
 ## Acceptance Criteria
 

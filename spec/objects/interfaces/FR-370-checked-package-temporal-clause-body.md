@@ -23,9 +23,9 @@ relationships:
 
 When a `quire.checked-semantic-graph/v2` node has `node_tag: "temporal"` and
 `semantic_form: "temporal_clause"`, the producer SHALL encode its `body` as one
-application of `quire.op.temporal.clause` whose formula argument is a tree of
-the temporal operation applications catalogued below, each operator with its
-own operation identity. The reader SHALL refuse a node whose rules below do
+application of `quire.op.temporal.clause` whose formula argument references a
+tree of `temporal`/`formula` nodes, each the application of one temporal
+operation catalogued below with its own operation identity. The reader SHALL refuse a node whose rules below do
 not hold, with the first refusal in the reader order below.
 
 ## Properties
@@ -44,15 +44,22 @@ not hold, with the first refusal in the reader order below.
      the Boolean guard term for `each` with a guard, absent otherwise;
   4. **captures** — an `aggregate` with one binding per capture in source
      order, named by the capture and holding its initializer term;
-  5. **fairness** — an `aggregate` of `quire.op.temporal.fair` applications,
+  5. **fairness** — an `aggregate` of `reference`s to `temporal`/`fairness`
+     nodes, each the body root of one `quire.op.temporal.fair` application,
      one per member of the resolved fairness set
      ([FR-362](../../functional/temporal/FR-362-apply-fairness-constraints.md)),
      in fairness-set order; empty for a clause with none;
-  6. **formula** — the clause's temporal term, an application of family
-     `temporal`.
+  6. **formula** — a `reference` to the `temporal`/`formula` node whose body
+     root is the clause's temporal term, an application of family `temporal`.
+     An operand of a `temporal_formula` application that is itself a temporal
+     term is a `reference` to its own `temporal`/`formula` node, so every body
+     follows FR-322's body grammar whatever the formula's depth.
 - **semantic_type** — the `scalar_type`/`boolean` node; the application's
   `result_type` names the same node.
 - **occurrences** — every occurrence has role `claim`.
+- **formula and fairness nodes** — a `temporal`/`formula` or
+  `temporal`/`fairness` node has the clause's `semantic_type`, occurrences of
+  role `expression`, and FR-322's application-node identity and dependencies.
 - **dependencies** — FR-322's application-node rule: the unique
   digest-ascending `reference` targets and member declarations of the body.
 
@@ -98,9 +105,11 @@ upper: "1"}`; it has no identity of its own.
 
 - A `quire.op.temporal.clause` application is the body root of a
   `temporal`/`temporal_clause` node and stands nowhere else.
-- A `temporal_formula` application stands only in a clause's formula argument
-  or as an operand of another `temporal_formula` application. A
-  `quire.op.temporal.fair` application stands only in a clause's fairness
+- A `temporal_formula` application stands only as the body root of a
+  `temporal`/`formula` node, and that node is referenced only from a clause's
+  formula argument or as an operand of another `temporal_formula` application.
+  A `quire.op.temporal.fair` application stands only as the body root of a
+  `temporal`/`fairness` node, referenced only from a clause's fairness
   argument.
 - Under a bounded `temporal_profile` law every interval-capable operator
   carries an interval with a non-null `upper` and the fairness argument is

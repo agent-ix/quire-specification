@@ -40,7 +40,10 @@ Encode as V2 packages:
 
 1. Both are admitted: each body is a `quire.op.temporal.clause` application
    with one `temporal_profile` law, a `null` member and the arguments over,
-   clock, activation, captures, fairness and formula (FR-370-AC-1).
+   clock, activation, captures, fairness and formula; the formula argument and
+   each fairness member reference their own `temporal`/`formula` and
+   `temporal`/`fairness` nodes, and every body follows FR-322's body grammar
+   (FR-370-AC-1).
 2. Each operator carries its own identity; bounded operators carry
    `{lower, upper}` and unbounded ones `null`; `once[1,1]` is
    `quire.op.temporal.once` with `{lower: "1", upper: "1"}`; both V2 schemas

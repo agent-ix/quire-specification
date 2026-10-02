@@ -603,8 +603,9 @@ is admitted only as a state clause's anchor. The `type_argument` member of `quir
 type's family, except that a function reference is `function`, a relation reference is `population`,
 a `dependency_reference` callee has family `function`,
 an aggregate is `aggregate`, a binding is `binder` (whose *bound* is the
-descriptor of its value), a clause application is `clause` and a temporal
-formula application is `temporal`
+descriptor of its value), a clause application is `clause`, a temporal
+formula application is `temporal`, and a reference to a `temporal`/`formula`
+or `temporal`/`fairness` node has the family of its body's root application
 ([FR-370](FR-370-checked-package-temporal-clause-body.md)).
 
 | Group | Families | Decision rule |

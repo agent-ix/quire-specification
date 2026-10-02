@@ -99,7 +99,7 @@ claim all profile implementations.
 | Missing observation, population closure or required history | Incomplete/unavailable input, distinct from false | Required role/scope and source-linked obligation; input/runtime path where the missing fact has no source span |
 | Resource exhaustion or cancellation | Incomplete execution, distinct from invalid source and false | Originating stage, charged work item and effective limit/cancellation source |
 
-The versioned diagnostic catalog may refine these typed causes. It cannot merge
+The diagnostic catalog may refine these typed causes. It cannot merge
 invalid, unsupported, unimplemented, incomplete and logically false outcomes.
 
 ### Extension points

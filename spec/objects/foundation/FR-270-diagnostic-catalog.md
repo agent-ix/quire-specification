@@ -1,6 +1,6 @@
 ---
 id: FR-270
-title: "Versioned diagnostic catalog"
+title: "Diagnostic catalog"
 type: FR
 object: entity
 relationships:
@@ -11,15 +11,15 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-272
     type: contains
 ---
-# FR-270: Versioned diagnostic catalog
+# FR-270: Diagnostic catalog
 
 ## Description
 
-When a producer publishes a machine-readable classification, the producer SHALL resolve it through one selected versioned diagnostic catalog rather than through an ad-hoc literal or a match on English message text.
+When a producer publishes a machine-readable classification, the producer SHALL resolve it through one selected diagnostic catalog rather than through an ad-hoc literal or a match on English message text.
 
-FR-047 requires "a typed cause in its versioned diagnostic catalog rather than
+FR-047 requires "a typed cause in its diagnostic catalog rather than
 diagnostic message text", and FR-047-AC-2 requires that "every emitted machine
-code resolves to the selected versioned catalog; an uncatalogued code cannot be
+code resolves to the selected catalog; an uncatalogued code cannot be
 published as a stable producer outcome". This artifact types the catalog that
 requirement selects. The only catalog so far offered is the **proposed** native
 diagnostic interpretation
