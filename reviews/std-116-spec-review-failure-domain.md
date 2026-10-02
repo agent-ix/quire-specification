@@ -25,3 +25,15 @@ package-wide key uniqueness is checked after per-node checks.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | medium | The reader never refuses two `fields` entries with the same `name` in one object entry: the order rule is "sorted ascending" (not strictly), step 4 checks membership only, and the schema has no uniqueness; FR-340 states its arrays duplicate-free, FR-451 does not, so a hand-built package can bind one model field to two Rust fields. | spec/objects/interfaces/FR-451-checked-package-abstraction-relation-body.md:79-82,106 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | A field named twice gets invalid_model_binding/conflicting-binding from the reader (FR-451-AC-7) but invalid_model_binding/malformed-declaration from the compiler (FR-450-AC-6), so one defect has two causes. | spec/objects/interfaces/FR-451-checked-package-abstraction-relation-body.md:106-109,134 |
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | bc860c9 |

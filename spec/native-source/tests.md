@@ -21,7 +21,6 @@ review. Rational and source-model presence contracts remain explicit dependencie
 | --- | --- | --- | --- |
 | FR-001 | FR-001-AC-1 | TC-005 | 🚧 Planned |
 | FR-001 | FR-001-AC-2 | TC-005 | 🚧 Planned |
-| FR-001 | FR-001-AC-3 | TC-005 | 🚧 Planned |
 | FR-001 | FR-001-AC-4 | TC-005 | 🚧 Planned |
 | FR-001 | FR-001-AC-5 | TC-005 | 🚧 Planned |
 | FR-001 | FR-001-AC-6 | TC-005 | 🚧 Planned |

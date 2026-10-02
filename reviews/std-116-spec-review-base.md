@@ -39,3 +39,22 @@ selection of each layer (the core of option A) has no owning FR/AC, and the
 | FND-005 | medium | FR-452 delegates the classification of compile and run results to quire-spec-language FR-340..344 and never states how a run result maps to admit/refuse, including that an undefined evaluation (refuted, UndefinedEvaluation) is a refusal. | spec/functional/tooling/FR-452-preserve-admission-across-specification-revisions.md:68-69 |
 | FND-006 | medium | FR-452's prior-side rules overlap: a prior unsupported at compile is both "unresolved" and "fails to compile" (tool failure), and a prior compile refusal is both "not applicable" and tool failure; ADR-017 RF-2 resolves these by stage, FR-452 does not. | spec/functional/tooling/FR-452-preserve-admission-across-specification-revisions.md:53-58 |
 | FND-007 | low | Normative layer text names what each layer lacks ("no named predicates, references or recursive values", "still with no references", "with no object identity or navigation", "never selects a layer that requires it") instead of stating what it admits. | proposals/quire-v1/definitions/README.md:65-76 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-008 | medium | This PR changed FR-001 to select profiles by exact identity only, and the profile declaration no longer carries a digest, but FR-001-AC-3 and TC-005's procedure (select exact version/digests and mutate each) still test a definition digest; the AC tests nothing and is digest ceremony to delete. | spec/functional/foundation/FR-001-select-native-profile.md:73 |
+| FND-009 | medium | The accepted_by names (oracle, kani, property-tests, cvc5-z3, verus) are not FR-331 backend identities and no FR defines them, and the witness check does not say which FR-290 kind each witness item requests, so the AD-010 negotiation the check relies on cannot be run as written. | spec/functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md:111-117 |
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 1f0e91b |
+| FND-002 | fixed | bc860c9 |
+| FND-003 | fixed | bc860c9 |
+| FND-004 | fixed | bc860c9 |
+| FND-005 | fixed | bc860c9 |
+| FND-006 | fixed | bc860c9 |
+| FND-007 | fixed | bc860c9 |

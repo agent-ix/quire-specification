@@ -57,9 +57,13 @@ AD-003 state and value/model layers a `profile` declaration selects
 ([FR-001](../../../spec/functional/foundation/FR-001-select-native-profile.md)).
 Each row gives the layer's `identity`, the layers it `requires`, its
 `admitted_forms` definition file, a one-line statement of what it `admits`,
-and the AD-010 targets (`accepted_by`) that accept every form it admits. A
-user selects a layer to keep a unit inside the subset those targets accept.
-The rows' `requires` edges are the profile-layering edges that
+and the `witness_request`: the FR-290 kind and FR-331 extent classification
+that the layer's witness item requests from the registered backends. A user
+selects a layer to keep a unit inside the subset the backends serving that
+request accept.
+The lock's `package_selection` applies when a unit's selected layers include
+its `layer`; a unit selecting only state layers selects the `without_layer`
+rows. The rows' `requires` edges are the profile-layering edges that
 [FR-453](../../../spec/functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md)
 compares.
 

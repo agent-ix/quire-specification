@@ -93,9 +93,12 @@ binding's key:
 3. a Rust string whose content is not of its position's syntax:
    `invalid_model_binding`/`malformed-declaration`, naming the first
    malformed segment and its span;
-4. a field binding naming a name that is not an effective field member of
-   the object type (own or inherited), a field named twice in one object
-   binding, a parameter binding naming a name the operation does not declare,
+4. a field named twice in one object binding:
+   `invalid_model_binding`/`conflicting-binding`, naming both field bindings
+   and the field name, as the checked-package reader refuses the same
+   defect (FR-451); otherwise, a field binding naming a name that is not an
+   effective field member of the object type (own or inherited), a
+   parameter binding naming a name the operation does not declare,
    an operation binding that omits a declared parameter, names one twice,
    maps two parameters to one Rust parameter, or maps a parameter to the
    receiver's spelling: `invalid_model_binding`/`malformed-declaration`,
@@ -132,7 +135,7 @@ no evaluation and is carried in the checked package as one node
 | FR-450-AC-3 | An `abstraction-decl` in a package that does not select `quire.model.complete/v1` refuses `unsupported_construct` at the declaration's span; a declaration with no binding, and a binding with an unquoted Rust path, refuse `invalid_syntax` at the offending token. | Test (TC-410) |
 | FR-450-AC-4 | A `type` name absent from the domain package, a `population` name absent from it, and an `operation` its type only inherits each refuse `missing_declaration`/`missing-name` naming the name and its owning domain package identity; the same operation keyed at its declaring type checks. | Test (TC-411) |
 | FR-450-AC-5 | The Rust paths `"type"`, `"9lives"`, `"a::"`, `"r#crate"` and `"a-b"`, the field index `"01"` and a non-NFC identifier each refuse `invalid_model_binding`/`malformed-declaration` naming the segment and its source span; `"r#type"`, `"config_store::Store"`, the field index `"0"` and the receiver `"self"` are admitted. | Test (TC-411) |
-| FR-450-AC-6 | A field binding naming an undeclared field, a field named twice, and an operation binding that omits a parameter, names an undeclared one, maps two parameters to one Rust parameter or maps a parameter to the receiver's spelling each refuse `invalid_model_binding`/`malformed-declaration` naming the entry; a field the object type inherits is admitted. | Test (TC-411) |
+| FR-450-AC-6 | A field named twice in one object binding refuses `invalid_model_binding`/`conflicting-binding` naming both field bindings and the name. A field binding naming an undeclared field, and an operation binding that omits a parameter, names an undeclared one, maps two parameters to one Rust parameter or maps a parameter to the receiver's spelling each refuse `invalid_model_binding`/`malformed-declaration` naming the entry; a field the object type inherits is admitted. | Test (TC-411) |
 | FR-450-AC-7 | Two equal bindings for one key and two different bindings for one key, in one declaration and across two declarations of one package, each refuse `invalid_model_binding`/`conflicting-binding` naming both bindings and the key. | Test (TC-411) |
 
 ## Dependencies

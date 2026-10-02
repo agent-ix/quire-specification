@@ -24,3 +24,9 @@ References.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | FR-453's Description joins two SHALL responses under one trigger and omits the per-layer witness behaviour that FR-453-AC-5 tests, so the statement does not cover all of the FR's ACs. | spec/functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md:24-29 |
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | bc860c9 |

@@ -29,3 +29,12 @@ malformed, so no correct implementation can pass it.
 | FND-002 | low | FR-452's tool-failure and not-applicable outcomes have no AC; TC-413 SV-07 tests not-applicable with no AC behind it, and no vector covers a prior-side tool failure. | spec/functional/tooling/FR-452-preserve-admission-across-specification-revisions.md:56-58,74-79 |
 | FND-003 | low | FR-452 Inputs require "different revisions" while Behavior says the gate "compares nothing about" revision labels, and no outcome is stated for a pair whose document identities differ or revisions are equal. | spec/functional/tooling/FR-452-preserve-admission-across-specification-revisions.md:30-32,44-46 |
 | FND-004 | low | TC-414 PL-06 expects "verdict pass", which is not an FR-301 verdict; FR-452 and TC-413 use "success". | spec/test-cases/TC-414-profile-layering-refinement-cases.md:38 |
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | bc860c9 |
+| FND-002 | fixed | bc860c9 |
+| FND-003 | fixed | bc860c9 |
+| FND-004 | fixed | bc860c9 |

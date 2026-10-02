@@ -13,6 +13,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-452
     type: references
+  - target: ix://agent-ix/quire-specification/FR-290
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-331
+    type: references
   - target: ix://agent-ix/quire-spec-language/FR-345
     type: references
 ---
@@ -29,9 +33,9 @@ report a regression naming the case and its edge.
 When a parent layer admits its edge's distinguishing unit, the gate SHALL
 report a regression naming the edge.
 
-When a layer's witness unit is refused by the layer, or is not accepted by a
-target that the layer's `accepted_by` names, the gate SHALL report a
-regression naming the layer.
+When a layer's witness unit is refused by the layer, or its witness item,
+requested with the layer's `witness_request`, does not settle `supported`,
+the gate SHALL report a regression naming the layer.
 
 ## Inputs
 
@@ -56,8 +60,8 @@ Each `header_selectable_layers` row of the
 [complete-value lock](../../../proposals/quire-v1/definitions/complete-value-lock.json)
 is a layer a `profile` declaration selects by naming its identity (FR-001).
 The row carries the layer's identity, the layers it `requires`, its
-`admitted_forms` definition, what it `admits` and the targets that accept
-it (`accepted_by`). A layering edge is one AD-003 `requires` edge between two of those
+`admitted_forms` definition, what it `admits` and its `witness_request`
+(an FR-290 kind and an FR-331 extent classification). A layering edge is one AD-003 `requires` edge between two of those
 layers. The gate covers exactly these five edges:
 
 | Edge | Parent | Child |
@@ -78,6 +82,9 @@ refuses with a typed refusal stays refused under the child.
   alias, so every declaration's `using` names the same alias on both sides.
 - A case whose two units differ in any byte outside that identity string is
   a tool failure naming the case.
+- Each side's selected definitions follow FR-001: its layer and the layer's
+  `requires` closure, plus the qualification rows the complete-value lock's
+  `package_selection` gives for those layers.
 - A case naming a pair of layers that is not one of E1 to E5 is a tool
   failure naming the case.
 - Each side compiles in the running build. No outcome is recorded or
@@ -105,16 +112,23 @@ exit code and evidence status are FR-452's.
 ### Each layer is a subset users pick
 
 A layer is a real user subset when a user who selects it gets a smaller
-language that the targets its `accepted_by` names accept. The gate checks
+language that registered backends serve. The gate checks
 this against the running build in two parts:
 
 - **Witness.** Each layer has a witness unit that uses the forms its
   `admits` statement names, for example a bounded-scalar invariant for
-  state core. The witness selects only that layer. The gate compiles it,
-  then requests each `accepted_by` target for it through AD-010 capability
-  negotiation. The layer result is holds when the layer admits the witness
-  and every named target settles every item `supported`, and regression
-  naming the layer and the refusing stage or target otherwise.
+  state core. The witness selects only that layer and holds one clause, the
+  witness item. The gate compiles it, then submits the item in an FR-331
+  request whose required FR-290 kind and extent classification are the
+  layer's `witness_request`: `operation-contract`, `bounded` for state
+  core, state queries, state graph and complete model, whose witnesses are
+  operation and invariant clauses; `value-validity`, `bounded` for complete
+  value, whose witness is a Boolean clause over values. Its candidates are
+  the registry's FR-290 candidate set for that kind, and `negotiate_*`
+  settles it (FR-331-AC-4). The layer result is holds when the layer admits
+  the witness and the item settles `supported`, and regression naming the
+  layer and the refusing stage, or the item's disposition and the
+  candidate backend identities, otherwise.
 - **Proper subset.** Each edge has a distinguishing unit that uses one form
   its child adds over its parent. The edge result is holds when the parent
   prohibits that form with `unsupported_construct` naming the parent layer
@@ -137,7 +151,7 @@ quire-spec-language FR-345 implements this gate.
 | FR-453-AC-2 | On each of E1 to E5, a case both layers refuse holds and reports both codes, and a case whose unit uses a form the parent prohibits and the child admits is not applicable. | Test (TC-414) |
 | FR-453-AC-3 | A case whose two units differ outside the identity string of their `profile` declaration is a tool failure, verdict tool failure, exit 30. | Test (TC-414) |
 | FR-453-AC-4 | A case naming a pair of layers that is not one of E1 to E5, such as state core and complete model, is a tool failure naming the case. | Test (TC-414) |
-| FR-453-AC-5 | Each of the five layers, selected alone by a `profile` declaration, admits its witness unit and every target its `accepted_by` names settles every item of the witness `supported`; a layer that refuses its witness, or a named target that settles an item `unsupported`, gives a regression naming the layer and the stage or target. | Test (TC-414) |
+| FR-453-AC-5 | Each of the five layers, selected alone by a `profile` declaration, admits its witness unit, and its witness item, requested with the layer's `witness_request` kind and extent, settles `supported`; a layer that refuses its witness, or a witness item that settles `unsupported`, gives a regression naming the layer and the stage, or the disposition and candidate backend identities. | Test (TC-414) |
 | FR-453-AC-6 | On each of E1 to E5, the parent prohibits the edge's distinguishing unit with `unsupported_construct` naming the parent layer and the child admits it; a parent that admits it gives a regression naming the edge, verdict violation, exit 10. | Test (TC-414) |
 
 ## Dependencies

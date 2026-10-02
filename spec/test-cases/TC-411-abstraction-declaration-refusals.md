@@ -36,7 +36,7 @@ code, cause, named key or entry and source span.
 | AR-06 | Field index `"01"` | `invalid_model_binding`/`malformed-declaration`, naming `01` and its span |
 | AR-07 | Rust path `"r#type"`, path `"config_store::Store"`, field index `"0"`, receiver `"self"` | Admitted |
 | AR-08 | Field binding `missing to "x"` | `invalid_model_binding`/`malformed-declaration`, naming the entry |
-| AR-09 | `version` bound twice in one object binding | `invalid_model_binding`/`malformed-declaration`, naming the second entry |
+| AR-09 | `version` bound twice in one object binding | `invalid_model_binding`/`conflicting-binding`, naming both field bindings and `version` |
 | AR-10 | `Sub` bound with a field inherited from `ConfigVersion` | Admitted |
 | AR-11 | Operation binding with `()`; with `(next to "a", other to "b")`; with a parameter mapped twice; with `next` mapped to `"self"` | Each `invalid_model_binding`/`malformed-declaration`, naming the entry |
 | AR-12 | The object binding repeated unchanged in the same declaration | `invalid_model_binding`/`conflicting-binding`, naming both bindings and the key |
