@@ -1258,6 +1258,98 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-255 | FR-255-AC-6 | TC-298 | planned |
 | FR-250 | FR-250-AC-6 | TC-238, TC-298 | planned |
 | FR-331 | FR-331-AC-11 | TC-302 | planned |
+| FR-434 | FR-434-AC-1 | TC-388, TC-390 | planned |
+| FR-434 | FR-434-AC-2 | TC-388 | planned |
+| FR-434 | FR-434-AC-3 | TC-388 | planned |
+| FR-434 | FR-434-AC-4 | TC-388 | planned |
+| FR-434 | FR-434-AC-5 | TC-388 | planned |
+| FR-435 | FR-435-AC-1 | TC-389 | planned |
+| FR-435 | FR-435-AC-2 | TC-389 | planned |
+| FR-435 | FR-435-AC-3 | TC-389 | planned |
+| FR-435 | FR-435-AC-4 | TC-389 | planned |
+| FR-435 | FR-435-AC-5 | TC-389 | planned |
+| FR-435 | FR-435-AC-6 | TC-389 | planned |
+| FR-436 | FR-436-AC-1 | TC-390 | planned |
+| FR-436 | FR-436-AC-2 | TC-391 | planned |
+| FR-436 | FR-436-AC-3 | TC-390 | planned |
+| FR-436 | FR-436-AC-4 | TC-390 | planned |
+| FR-436 | FR-436-AC-5 | TC-390 | planned |
+| FR-437 | FR-437-AC-1 | TC-390 | planned |
+| FR-437 | FR-437-AC-2 | TC-391 | planned |
+| FR-437 | FR-437-AC-3 | TC-390 | planned |
+| FR-437 | FR-437-AC-4 | TC-393 | planned |
+| FR-437 | FR-437-AC-5 | TC-391 | planned |
+| FR-437 | FR-437-AC-6 | TC-391 | planned |
+| FR-438 | FR-438-AC-1 | TC-392 | planned |
+| FR-438 | FR-438-AC-2 | TC-392 | planned |
+| FR-438 | FR-438-AC-3 | TC-392 | planned |
+| FR-438 | FR-438-AC-4 | TC-392 | planned |
+| FR-438 | FR-438-AC-5 | TC-392 | planned |
+| FR-439 | FR-439-AC-1 | TC-390, TC-393 | planned |
+| FR-439 | FR-439-AC-2 | TC-393 | planned |
+| FR-439 | FR-439-AC-3 | TC-393 | planned |
+| FR-439 | FR-439-AC-4 | TC-393 | planned |
+| FR-439 | FR-439-AC-5 | TC-394 | planned |
+| FR-439 | FR-439-AC-6 | TC-389, TC-394 | planned |
+| FR-439 | FR-439-AC-7 | TC-394 | planned |
+| FR-439 | FR-439-AC-8 | TC-393 | planned |
+| FR-425 | FR-425-AC-1 | TC-375 | planned |
+| FR-425 | FR-425-AC-2 | TC-375 | planned |
+| FR-425 | FR-425-AC-3 | TC-375 | planned |
+| FR-425 | FR-425-AC-4 | TC-375 | planned |
+| FR-425 | FR-425-AC-5 | TC-375 | planned |
+| FR-426 | FR-426-AC-1 | TC-376 | planned |
+| FR-426 | FR-426-AC-2 | TC-377 | planned |
+| FR-426 | FR-426-AC-3 | TC-378 | planned |
+| FR-426 | FR-426-AC-4 | TC-376 | planned |
+| FR-426 | FR-426-AC-5 | TC-376 | planned |
+| FR-426 | FR-426-AC-6 | TC-376, TC-387 | planned |
+| FR-426 | FR-426-AC-7 | TC-378 | planned |
+| FR-426 | FR-426-AC-8 | TC-376 | planned |
+| FR-426 | FR-426-AC-9 | TC-377, TC-380 | planned |
+| FR-426 | FR-426-AC-10 | TC-376 | planned |
+| FR-427 | FR-427-AC-1 | TC-380 | planned |
+| FR-427 | FR-427-AC-2 | TC-380 | planned |
+| FR-427 | FR-427-AC-3 | TC-380 | planned |
+| FR-427 | FR-427-AC-4 | TC-380 | planned |
+| FR-427 | FR-427-AC-5 | TC-380 | planned |
+| FR-428 | FR-428-AC-1 | TC-381 | planned |
+| FR-428 | FR-428-AC-2 | TC-381 | planned |
+| FR-428 | FR-428-AC-3 | TC-381 | planned |
+| FR-428 | FR-428-AC-4 | TC-382 | planned |
+| FR-428 | FR-428-AC-5 | TC-382 | planned |
+| FR-428 | FR-428-AC-6 | TC-382 | planned |
+| FR-428 | FR-428-AC-7 | TC-381, TC-382 | planned |
+| FR-429 | FR-429-AC-1 | TC-376, TC-383 | planned |
+| FR-429 | FR-429-AC-2 | TC-376 | planned |
+| FR-429 | FR-429-AC-3 | TC-383 | planned |
+| FR-429 | FR-429-AC-4 | TC-381, TC-383 | planned |
+| FR-429 | FR-429-AC-5 | TC-383 | planned |
+| FR-429 | FR-429-AC-6 | TC-383 | planned |
+| FR-429 | FR-429-AC-7 | TC-383 | planned |
+| FR-430 | FR-430-AC-1 | TC-384 | planned |
+| FR-430 | FR-430-AC-2 | TC-384 | planned |
+| FR-430 | FR-430-AC-3 | TC-384 | planned |
+| FR-430 | FR-430-AC-4 | TC-384 | planned |
+| FR-430 | FR-430-AC-5 | TC-384 | planned |
+| FR-430 | FR-430-AC-6 | TC-384 | planned |
+| FR-431 | FR-431-AC-1 | TC-385 | planned |
+| FR-431 | FR-431-AC-2 | TC-380, TC-385 | planned |
+| FR-431 | FR-431-AC-3 | TC-385 | planned |
+| FR-431 | FR-431-AC-4 | TC-385 | planned |
+| FR-431 | FR-431-AC-5 | TC-385 | planned |
+| FR-432 | FR-432-AC-1 | TC-386 | planned |
+| FR-432 | FR-432-AC-2 | TC-386 | planned |
+| FR-432 | FR-432-AC-3 | TC-386 | planned |
+| FR-432 | FR-432-AC-4 | TC-386 | planned |
+| FR-432 | FR-432-AC-5 | TC-386 | planned |
+| FR-433 | FR-433-AC-1 | TC-387 | planned |
+| FR-433 | FR-433-AC-2 | TC-387 | planned |
+| FR-433 | FR-433-AC-3 | TC-384, TC-387 | planned |
+| FR-433 | FR-433-AC-4 | TC-387 | planned |
+| FR-433 | FR-433-AC-5 | TC-387 | planned |
+| FR-433 | FR-433-AC-6 | TC-387 | planned |
+| FR-433 | FR-433-AC-7 | TC-387 | planned |
 
 ## Test Case Summary
 
@@ -1324,7 +1416,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-239 | Agree replay and incremental assessment on an unsettled temporal result | Property | P0 | FR-114 | 🚧 Planned |
 | TC-246 | Unbounded collection type identity and admission | Property | P0 | FR-144 | 🚧 Planned |
 | TC-247 | Unbounded population query | Property | P0 | FR-153 | 🚧 Planned |
-| TC-248 | Unbounded iteration admitted by proved invariant/variant | Property | P0 | FR-228, FR-171 | 🚧 Planned |
+| TC-248 | Iteration admitted without a maximum or a proved invariant/variant | Property | P0 | FR-228, FR-171 | 🚧 Planned |
 | TC-249 | Unbounded quantification negotiation | Property | P0 | FR-346 | 🚧 Planned |
 | TC-250 | Inductive verification obligation negotiation | Property | P0 | FR-347 | 🚧 Planned |
 | TC-251 | Compositional verification obligation negotiation | Property | P0 | FR-348 | 🚧 Planned |
@@ -1377,6 +1469,26 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-399 | Union construction and case accounting | Property | P0 | FR-143, FR-146 | 🚧 Planned |
 | TC-400 | Supplied union values and the value profile | Property | P0 | FR-143 | 🚧 Planned |
 | TC-401 | Pre-call precondition observation | Property | P0 | FR-046, FR-208 | 🚧 Planned |
+| TC-375 | Protocol state key and coalescing | Property | P0 | FR-425 | 🚧 Planned |
+| TC-376 | Two branches and a join: states, deadlock and repair | Property | P0 | FR-426, FR-429 | 🚧 Planned |
+| TC-377 | Join policies at zero, below, at and past threshold | Property | P0 | FR-426 | 🚧 Planned |
+| TC-378 | Channels under each ordering, delivery and overflow policy | Property | P0 | FR-426 | 🚧 Planned |
+| TC-379 | Split-shipment causal interleavings | Property | P0 | FR-052 | 🚧 Planned |
+| TC-380 | Compensation in a protocol subject | Property | P0 | FR-427, FR-431, FR-426 | 🚧 Planned |
+| TC-381 | Per-trigger activation and the instance budget | Property | P0 | FR-428, FR-429 | 🚧 Planned |
+| TC-382 | Replicated role spawn, action and lifetimes | Property | P0 | FR-428 | 🚧 Planned |
+| TC-383 | Protocol terminal member, deadlock opt-out and wait causes | Property | P0 | FR-429 | 🚧 Planned |
+| TC-384 | Scheduler fairness and adversarial scheduling | Property | P0 | FR-430, FR-433 | 🚧 Planned |
+| TC-385 | Counted-step interval distance and protocol anchors | Property | P0 | FR-431 | 🚧 Planned |
+| TC-386 | Explicit refinement rows for every protocol step class | Property | P0 | FR-432 | 🚧 Planned |
+| TC-387 | Protocol counterexample wire and replay | Property | P0 | FR-433, FR-426 | 🚧 Planned |
+| TC-388 | Memory model selection, nesting and identity | Property | P0 | FR-434 | 🚧 Planned |
+| TC-389 | Memory access classification, orderings and fences | Property | P0 | FR-435, FR-439 | 🚧 Planned |
+| TC-390 | Store buffering under sc, tso and ra | Property | P0 | FR-434, FR-436, FR-437, FR-439 | 🚧 Planned |
+| TC-391 | Litmus conformance vectors under sc, tso and ra | Property | P0 | FR-436, FR-437 | 🚧 Planned |
+| TC-392 | Race-freedom item and race counterexamples | Property | P0 | FR-438 | 🚧 Planned |
+| TC-393 | Memory budgets, bound-limited states and verdicts | Property | P0 | FR-439, FR-437 | 🚧 Planned |
+| TC-394 | Weak-memory counterexample wire and replay | Property | P0 | FR-439 | 🚧 Planned |
 
 ## Integration Test Matrix
 

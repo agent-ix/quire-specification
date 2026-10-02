@@ -1,6 +1,6 @@
 ---
 id: TC-248
-title: "Unbounded iteration admitted by proved invariant/variant"
+title: "Iteration admitted without a maximum or a proved invariant/variant"
 type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-228
@@ -9,13 +9,13 @@ relationships:
     type: verifies
 ---
 
-# TC-248: Unbounded iteration admitted by proved invariant/variant
+# TC-248: Iteration admitted without a maximum or a proved invariant/variant
 
 ## Description
 
-Admit a `bounded-iteration` construct that carries a proved invariant and
-well-founded variant and no authored finite maximum, and refuse one that
-carries neither.
+Admit a `bounded-iteration` construct with a progress edge whether it carries
+an authored maximum, an unproved authored invariant and variant, both or
+neither, and refuse a zero-progress loop.
 
 ## Test Procedure
 
@@ -27,8 +27,9 @@ the complete typed result and artifact accounting with the criterion.
 ## Expected Results
 
 Every positive and boundary result matches FR-228-AC-5 and FR-171-AC-2: a loop
-with a proved invariant and well-founded variant is admitted without an
-authored finite maximum; a loop with neither refuses; an unproved termination
-claim is inconclusive or refused rather than silently bounded; each mutation
+with an invariant and variant and no maximum is admitted without its
+invariant or variant being proved; a loop with neither is admitted; a
+zero-progress loop refuses; an unproved termination claim is inconclusive or
+refused rather than silently bounded; each mutation
 returns its exact typed disposition with source/provenance and preserves
 independent sibling results.

@@ -30,7 +30,7 @@ records the sentence that states each construct's rule.
 | `parallel-branch` | An independently ordered branch. "Parallel branches SHALL admit every interleaving that preserves each branch's causal edges" (FR-052). FR-052-AC-1: "Split shipments S1 and S2 may interleave while each branch preserves its own order and both satisfy the authored join before completion." |
 | `join` | The awaited completion of named branches. "A join SHALL name the branches and completion rule it awaits" (FR-052). A missing join input refuses admission (FR-052-AC-3), and FR-049-AC-3 refuses "missing/duplicate join labels". FR-049-AC-3 names the admitted rule "all-branch join". |
 | `choice` | A labeled decision with one owning role, typed by [FR-227](FR-227-owned-choice.md). FR-052 names "labeled choice" among the constructs; FR-053 supplies ownership, labeling, guard disjointness and visibility. |
-| `bounded-iteration` | Repetition with an authored finite maximum, or with an authored invariant and well-founded variant proving termination in its place. "Iteration SHALL carry an authored finite maximum and progress edge" (FR-052). A loop with a proved invariant and well-founded variant is admitted without a finite maximum ([FR-171](../../functional/protocol/FR-171-evaluate-dynamic-control.md), FR-171-AC-2). A zero-progress loop and a loop with neither an authored finite maximum nor a proved invariant/variant refuse (FR-052, FR-052-AC-3, FR-049-AC-3); an unproved termination claim is inconclusive/refused rather than silently bounded (FR-171-AC-2). The maximum, or the invariant and variant, is identity-bearing (FR-052-AC-4). |
+| `bounded-iteration` | Repetition with progress: every cycle in its body graph passes through a step node. An authored iteration maximum and an authored invariant with a variant are each optional model meaning (FR-052). A stated maximum bounds the loop to that many iterations; the invariant and variant are read only by a termination claim, and admission does not require them to be proved ([FR-171](../../functional/protocol/FR-171-evaluate-dynamic-control.md)). A zero-progress loop refuses `unsupported_construct`/`declaration-form` (FR-052, FR-052-AC-3, FR-049-AC-3); an unproved termination claim is inconclusive/refused rather than silently bounded (FR-171-AC-2). The maximum and the invariant and variant, when authored, are identity-bearing (FR-052-AC-4). |
 | `termination` | An authored termination declaration. FR-052 takes "termination declarations" as an input and refuses "termination conditions that cannot be reached within the declared finite graph" (FR-052). |
 
 ## Identity and comparison
@@ -54,9 +54,9 @@ records the sentence that states each construct's rule.
   protocol". No listing order, table order or member order in this artifact is
   readable as a causal edge.
 - **Absence** — an absent required component of a construct refuses admission
-  rather than receiving a default: "A missing join input, causal cycle,
-  zero-progress loop or absent finite iteration maximum refuses admission"
-  (FR-052-AC-3). An absent optional component compares only to absence.
+  rather than receiving a default: a missing join input, a causal cycle or a
+  zero-progress loop refuses admission (FR-052-AC-3). An absent optional
+  component, such as an iteration maximum, compares only to absence.
 - **Digest domain** — no member of this key is a digest. Where a construct is
   carried beside a digest in provenance, that digest carries the domain it was
   derived under, `ix://agent-ix/quire-specification/FR-201`.
@@ -66,10 +66,10 @@ records the sentence that states each construct's rule.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-228-AC-1 | Every member of the table is named as a control construct by FR-052 and carries the rule cited in its description. | Inspection |
-| FR-228-AC-2 | A missing join input, a causal cycle, a zero-progress loop and a loop with neither an authored finite iteration maximum nor a proved invariant and well-founded variant each refuse admission independently. | Analysis |
+| FR-228-AC-2 | A missing join input, a causal cycle and a zero-progress loop each refuse admission independently; a loop with neither an iteration maximum nor an invariant and variant is admitted. | Analysis |
 | FR-228-AC-3 | No member of this table is assigned an ordinal, a precedence or a wire spelling by this artifact. | Inspection |
 | FR-228-AC-4 | Changing a branch, a join rule, an iteration maximum, or an iteration's invariant or variant, changes protocol identity while the original source span is preserved. | Analysis |
-| FR-228-AC-5 | A loop with a proved invariant and well-founded variant and no authored finite maximum is admitted per FR-171 rather than refused for an absent maximum; an unproved termination claim on such a loop is inconclusive or refused, never silently bounded. | Test (TC-248) |
+| FR-228-AC-5 | A loop with an authored invariant and variant and no maximum is admitted without its invariant or variant being proved; a termination claim on it is decided by FR-171, and an unproved termination claim is inconclusive or refused, never silently bounded. | Test (TC-248) |
 
 ## Dependencies
 

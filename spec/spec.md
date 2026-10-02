@@ -692,6 +692,36 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/TM-009
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-434
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-435
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-436
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-437
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-438
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-439
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-425
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-426
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-427
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-428
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-429
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-430
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-431
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-432
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-433
+    type: contains
 ---
 # Master Requirements Specification
 
@@ -856,7 +886,7 @@ The requirement artifacts are indexed below.
 | [ADR-003](decisions/ADR-003-model-intake-and-type-system-authority.md) | ADR | Proposed; open question: model intake and formal type system authority |
 | [ADR-004](decisions/ADR-004-native-cli-exit-status-contract.md) | ADR | Proposed; open question: native CLI exit status contract |
 | [ADR-005](decisions/ADR-005-kani-generation-ownership.md) | ADR | Proposed; open question: ownership of Kani harness generation |
-| [ADR-006](decisions/ADR-006-protocol-bounded-control-profile.md) | ADR | Proposed; open question: bounded control in the protocol profile layer |
+| [ADR-006](decisions/ADR-006-protocol-bounded-control-profile.md) | ADR | Decided: one protocol profile; a repeat needs only a progress edge, with an optional maximum and optional invariant and variant |
 | [Complete-V1 subsystem index](subsystems/index.md) | Architecture index | Ten subsystems and I01–I21 interface ownership |
 | [TM-009](complete-v1/tests.md) | Test Matrix | Every atomic capability and complete-V1 qualification case |
 | [FR-339](functional/source-package/FR-339-define-complete-native-grammar.md) | FR | Normative complete native V1 lexical and syntactic contract |
@@ -1078,3 +1108,18 @@ The requirement artifacts are indexed below.
 | [FR-294](objects/observation/FR-294-late-data-classification.md) | FR (enumeration) | Object layer; exact on-time and late observation classification |
 | [FR-295](objects/observation/FR-295-input-completeness-state.md) | FR (enumeration) | Object layer; independent input-completeness state derived from an exact fact population |
 | [FR-296](objects/observation/FR-296-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; versioned admitted-observation identity preimage and byte uniqueness |
+| [FR-425](functional/protocol/FR-425-define-protocol-subjects-and-state-keys.md) | FR | Define protocol subjects and their state keys |
+| [FR-426](functional/protocol/FR-426-apply-protocol-steps.md) | FR | Apply protocol steps atomically with canonical transition identities |
+| [FR-427](functional/protocol/FR-427-check-protocol-compensation.md) | FR | Check compensation templates inside a protocol subject |
+| [FR-428](functional/protocol/FR-428-check-replicated-roles-and-per-trigger-activation.md) | FR | Check replicated roles and per-trigger protocol activation |
+| [FR-429](functional/protocol/FR-429-report-protocol-deadlocks.md) | FR | Read protocol terminal states and report protocol deadlocks |
+| [FR-430](functional/protocol/FR-430-apply-protocol-fairness.md) | FR | Apply scheduler and authored fairness over protocol steps |
+| [FR-431](functional/protocol/FR-431-count-protocol-steps-for-intervals.md) | FR | Observe protocol positions and measure intervals in counted steps |
+| [FR-432](functional/protocol/FR-432-map-every-protocol-step-in-refinements.md) | FR | Map every concrete protocol step class by an explicit refinement row |
+| [FR-433](functional/protocol/FR-433-replay-protocol-counterexamples.md) | FR | Carry and replay protocol counterexamples |
+| [FR-434](functional/memory/FR-434-select-memory-models-for-parallel.md) | FR | Select the memory model of each parallel from source and request |
+| [FR-435](functional/memory/FR-435-classify-memory-accesses-and-orderings.md) | FR | Classify memory accesses, orderings and fences |
+| [FR-436](functional/memory/FR-436-explore-total-store-order.md) | FR | Explore a parallel under the x86-TSO memory model |
+| [FR-437](functional/memory/FR-437-explore-release-acquire-memory.md) | FR | Explore a parallel under the RC11 release-acquire memory model |
+| [FR-438](functional/memory/FR-438-report-data-races.md) | FR | Report data races on non-atomic locations through a derived item |
+| [FR-439](functional/memory/FR-439-bound-replay-and-report-weak-memory-runs.md) | FR | Bound, report and replay weak-memory runs |
