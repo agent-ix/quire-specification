@@ -113,11 +113,46 @@ fn scalar_end(bytes: &[u8], at: usize) -> usize {
 /// Strings, numbers and literals are decoded by `serde_json` one token at a
 /// time, so a lone surrogate, `NaN` or trailing content is `Invalid`; a raw
 /// duplicate key keeps its last value.
+///
+/// The parse never builds a value it then drops recursively: on refusal every
+/// partly built value is released by [`dispose`]. A caller holding a deeply
+/// nested result releases it with [`dispose`] too.
 fn intake_with(bytes: &[u8], limits: IntakeLimits) -> Result<Value, IntakeFailure> {
     if bytes.len() > limits.bytes {
         return Err(IntakeFailure::bytes(limits));
     }
     let mut stack: Vec<Open> = Vec::new();
+    let parsed = parse(bytes, limits, &mut stack);
+    for open in stack {
+        match open {
+            Open::Array(items) => items.into_iter().for_each(dispose),
+            Open::Object(fields, _) => fields.into_iter().for_each(|(_, value)| dispose(value)),
+        }
+    }
+    parsed
+}
+
+/// Releases a value without recursion: children move onto a heap stack
+/// before their container is dropped, so nesting depth never reaches the
+/// call stack.
+fn dispose(value: Value) {
+    let mut pending = vec![value];
+    while let Some(current) = pending.pop() {
+        match current {
+            Value::Array(items) => pending.extend(items),
+            Value::Object(fields) => pending.extend(fields.into_iter().map(|(_, value)| value)),
+            Value::Null | Value::Bool(_) | Value::Number(_) | Value::String(_) => {}
+        }
+    }
+}
+
+/// The parse proper; `stack` holds the open containers and is left for the
+/// caller to release when the parse refuses.
+fn parse(
+    bytes: &[u8],
+    limits: IntakeLimits,
+    stack: &mut Vec<Open>,
+) -> Result<Value, IntakeFailure> {
     let mut nodes = 0_usize;
     let mut at = 0;
     let root = loop {
@@ -203,8 +238,13 @@ fn intake_with(bytes: &[u8], limits: IntakeLimits) -> Result<Value, IntakeFailur
                 }
             }
             Some(Open::Object(fields, key)) => {
-                let name = key.take().ok_or(IntakeFailure::Invalid)?;
-                fields.insert(name, value);
+                let Some(name) = key.take() else {
+                    dispose(value);
+                    return Err(IntakeFailure::Invalid);
+                };
+                if let Some(replaced) = fields.insert(name, value) {
+                    dispose(replaced);
+                }
                 if bytes.get(at) == Some(&b',') {
                     at += 1;
                     skip_whitespace(bytes, &mut at);
@@ -221,6 +261,7 @@ fn intake_with(bytes: &[u8], limits: IntakeLimits) -> Result<Value, IntakeFailur
     if at == bytes.len() {
         Ok(root)
     } else {
+        dispose(root);
         Err(IntakeFailure::Invalid)
     }
 }
@@ -532,4 +573,28 @@ fn qualification_fixture_nesting_is_not_a_limit() {
             .expect("each level holds one array");
     }
     assert_eq!(value, json!(0));
+}
+
+/// A 40,000-level array, inside the default limits, parses and is released
+/// on the default test-thread stack, and so is a refused input that has
+/// already built a 40,000-level value.
+#[test]
+#[trace("IT-003-SC-01")]
+fn qualification_fixture_deep_values_are_released_without_recursion() {
+    let depth = 40_000;
+    let raw = format!("{}0{}", "[".repeat(depth), "]".repeat(depth));
+    let value = intake(raw.as_bytes()).expect("deep nesting is admitted");
+    let mut levels = 0;
+    let mut current = &value;
+    while let Some(inner) = current.as_array().and_then(|items| items.first()) {
+        levels += 1;
+        current = inner;
+    }
+    assert_eq!((levels, current), (depth, &json!(0)));
+    dispose(value);
+
+    let trailing = format!("[{raw} x");
+    assert_eq!(intake(trailing.as_bytes()), Err(IntakeFailure::Invalid));
+    let unclosed = format!("[{raw}");
+    assert_eq!(intake(unclosed.as_bytes()), Err(IntakeFailure::Invalid));
 }

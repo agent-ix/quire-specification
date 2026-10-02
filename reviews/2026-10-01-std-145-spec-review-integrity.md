@@ -60,3 +60,16 @@ FND-001 finishes the digest-chain deletion inside checked-package
 | FND-004 | low | References to the deleted FR-016 and NFR-001 remain. Plan-005 has `relationships` targets `ix://agent-ix/quire-specification/FR-016` and prose citing FR-016 and NFR-001. The shared-reference fixture README cites FR-016/TC-029. `quire validate` does not flag them. | plan/Plan-005-fs05-interchange-acceptance/plan.md:9,28,35,63,96; plan/Plan-005-fs05-interchange-acceptance/tasks/Task-001-accept-fs05.md:11; proposals/shared-reference-2-draft/fixtures/README.md:27 |
 | FND-005 | low | The spec index row for FR-032 still reads "Accepted by FS05 for explicit versioned evolution/migration". This PR retitled FR-032 to "Refuse unsupported required features" and removed its migration ACs. | spec/spec.md:899 |
 | FND-006 | low | This PR rewrote FR-322-AC-28, but no test carries a `FR-322-AC-28` trace. The `model-owner-carries-version` refusal runs under the FR-322-AC-15 trace, so the matrix row "FR-322-AC-28 / TC-279" has no traced test. The trace gap predates this PR. | tests/checked_package_v2.rs:4251; spec/complete-v1/tests.md:969 |
+
+## Dispositions
+
+Round 1, reviewed at 87d32f40fd7ef0b86990e749067247cc821331d9. I recomputed with JCS SHA-256 all 64 preimage/sha256 vectors under `proposals/checked-package-v2/` (including the re-keyed `integer-div-floor`, `integer-div-euclidean`, `integer-div-truncating`, `text-eq-nfc` and `text-eq-binary-utf8` operation vectors) and all 5 fixture `package_id`s. Every one matches. `quire validate` reports 140 failing documents, the same as round 0, with no new errors.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 87d32f4 |
+| FND-002 | fixed | 87d32f4 |
+| FND-003 | fixed | 87d32f4 |
+| FND-004 | fixed | 87d32f4 |
+| FND-005 | fixed | 87d32f4 |
+| FND-006 | fixed | 87d32f4 |
