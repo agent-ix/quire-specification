@@ -19,25 +19,24 @@ When a tool or plugin is registered, the producer SHALL use the immutable ToolPl
 ## Properties
 
 - `contract_version` — exactly `quire.tool-plugin-manifest/v1`.
-- `tool_id` — authority-qualified provider identity and implementation revision.
+- `tool_id` — authority-qualified provider identity.
 - `capabilities` — exact operation/profile/format tuples.
 - `effects` — closed set of filesystem, network, clock, process and external-action effects.
 - `rights` — required grants and scope constraints for each effect.
-- `platform` — target, ABI/process-wire and toolchain requirements.
+- `platform` — target and ABI/process-wire requirements.
 - `limits` — input, output, memory, time and concurrency ceilings.
-- `conformance` — corpus identity and result required for admission.
 
 ## Identity and validation
 
 The key is every field above except transient availability. Compile-time traits and isolated executables are separate provider kinds.
-Unknown contract versions, missing required properties, duplicate keys,
+A document whose `contract_version` is not `quire.tool-plugin-manifest/v1`, missing required properties, duplicate keys,
 out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-334-AC-1 | An unknown manifest version/capability/effect refuses registration. | Analysis |
+| FR-334-AC-1 | An unknown capability or effect refuses registration. | Analysis |
 | FR-334-AC-2 | Pure providers declare an empty effect set and receive no ambient authority. | Analysis |
 | FR-334-AC-3 | Manifest rights cannot grant language admission or semantic authority. | Analysis |
 

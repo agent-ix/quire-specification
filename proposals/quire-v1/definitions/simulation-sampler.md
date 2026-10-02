@@ -27,10 +27,7 @@ that FR-181's exploration contract already defines.
 
 ## Identity
 
-The recorded generator version is this definition's `DefinitionRef`: its
-identity, revision and raw-byte digest, an exact member of the ecosystem
-lock's `definitions`. Two runs recording equal seeds and equal
-`DefinitionRef`s draw the identical sequence and therefore reproduce
-identical traces (FR-181-AC-2). Changing the seed changes the run identity;
-changing this definition's revision or digest changes the recorded generator
-version and the run identity.
+The recorded generator is this definition's identity. Two runs recording
+equal seeds and the same sampler identity draw the identical sequence and
+therefore reproduce identical traces (FR-181-AC-2). Changing the seed changes
+the run identity.

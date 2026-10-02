@@ -31,8 +31,9 @@ When an authored verification plan completes linking, the producer SHALL use the
 ## Identity and validation
 
 The plan key covers all fields except execution results. Source order is retained for diagnostics but dependency order governs execution.
-Unknown contract versions, missing required properties, duplicate keys,
-out-of-domain values and non-canonical encodings refuse before consumption.
+A document whose `contract_version` is not that identifier, missing required
+properties, duplicate keys, out-of-domain values and non-canonical encodings
+refuse before consumption.
 
 ## Acceptance Criteria
 
@@ -46,8 +47,3 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 - [interface_014](./interface_014-verification-plan.md) owns the operation boundary.
 - FR-192 owns the behavior that produces or consumes this value.
-
-## Status
-
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.

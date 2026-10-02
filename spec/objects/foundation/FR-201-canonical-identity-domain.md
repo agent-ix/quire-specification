@@ -30,10 +30,9 @@ equality.
 | `package-fingerprint` | Package fingerprint. A lock-file digest cannot substitute for it (FR-015-AC-3). |
 | `lock-file-digest` | Lock-file digest. Cannot substitute for `package-fingerprint` (FR-015-AC-3). |
 | `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout (FR-018). |
-| `sha256-jcs` | Domain package digest. SHA-256 over the RFC 8785 canonical bytes of the semantic IR domain package lifted from spec artifacts. Every V2 model selection carries it, and every declaration key names it as its digest domain (AD-006). It is distinct from package, source and definition digests. |
+| `sha256-jcs` | Domain package digest. SHA-256 over the RFC 8785 canonical bytes of the semantic IR domain package lifted from spec artifacts. Every V2 model selection carries it, and every declaration key names it as its digest domain (AD-006). It is distinct from package and source digests. |
 | `quire.package.semantic/v2` | Complete-V1 CheckedPackage V2 semantic-package graph domain; distinct from package archive and lock-file bytes and from every other identity/digest domain. |
 | `quire.source.bytes/v1` | Exact authored native source-document bytes, including layout; distinct from every definition/model artifact. |
-| `quire.definition.bytes/v1` | Exact selected native profile or semantic-definition bytes, including layout; distinct from source/model bytes. |
 | `quire.checked-semantic-node/v1` | Versioned checked semantic-node identity; distinct from its source occurrence and from the enclosing package identity. |
 | `quire.contract-ir.semantic/v1` | Versioned generated Contract IR semantic identity; distinct from the checked source package that it lowers. |
 | `quire.diagnostic-catalog.bytes/v1` | Exact diagnostic-catalog source bytes, including layout. |
@@ -94,9 +93,8 @@ The `quire_specification` library of this repository's Rust package exposes
 `proposals/quire-v1/definitions/complete-value-lock.json`, its
 package-selection vectors `complete-value-selection-vectors.json` and
 `proposals/quire-v1/definitions/native-diagnostics.md`.
-A consumer that needs a `quire.definition.bytes/v1` digest hashes these bytes
-itself, and reads the complete-value lock's catalog and selection vectors
-from them instead of holding a copy.
+A consumer reads the complete-value lock's catalog and selection vectors from
+them instead of holding a copy.
 
 ## Acceptance Criteria
 
@@ -106,8 +104,8 @@ from them instead of holding a copy.
 | FR-201-AC-2 | Two identities with equal digest bytes and different domain labels compare unequal. | Analysis |
 | FR-201-AC-3 | A digest with an absent domain compares only to absence and receives no default member. | Analysis |
 | FR-201-AC-4 | A lock-file digest does not satisfy a comparison expecting a package fingerprint. | Analysis |
-| FR-201-AC-6 | The complete-value definition lock closes every qualification-catalog artifact by identity, revision, `quire.definition.bytes/v1` digest domain and raw-byte digest, and its conditional and alternative package selection is exact: each catalog entry occupies one always, trigger-conditional or exactly-one slot under the closed triggers `text_bearing`, `ieee_operation` and `integer_div_rem`. | Test (TC-233) |
 | FR-201-AC-7 | The `quire_specification` library's `COMPLETE_VALUE_LOCK`, `COMPLETE_VALUE_SELECTION_VECTORS` and `NATIVE_DIAGNOSTICS` equal the exact bytes of `complete-value-lock.json`, `complete-value-selection-vectors.json` and `native-diagnostics.md`. | Test (TC-233) |
+| FR-201-AC-9 | Every qualification-catalog entry of the complete-value and complete-model locks names an authored artifact under a unique role and identity, and package selection is exact: each complete-value catalog role occupies one always, trigger-conditional or exactly-one slot under the closed triggers `text_bearing`, `ieee_operation` and `integer_div_rem`, every complete-model catalog role is always selected, and each accepted and refused selection vector is admitted or refused with exactly its recorded selection code. | Test (TC-233) |
 
 ## Dependencies
 

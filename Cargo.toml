@@ -14,14 +14,13 @@ name = "quire_specification"
 path = "src/lib.rs"
 
 [dev-dependencies]
-quire-verification = { git = "https://github.com/agent-ix/quire-verification", rev = "5305b40d0bc78bf2a566bd5609669373361e87b8" }
-quire-verification-contracts = { git = "https://github.com/agent-ix/quire-verification-contracts", rev = "4c49706d5db3ba77f96088ddcbb2635046246e32" }
+quire-verification-contracts = { git = "https://github.com/agent-ix/quire-verification-contracts", branch = "main" }
 jsonschema = { version = "=0.55.0", default-features = false }
 serde_json = "=1.0.151"
 sha2 = "=0.10.9"
 num-bigint = "=0.4.8"
 num-integer = "=0.1.47"
-ix-trace-rs = { git = "https://github.com/agent-ix/ix-trace-rs", rev = "2ce4ebf47f726b9d76388220545cd0abda8a5cfb" }
+ix-trace-rs = { git = "https://github.com/agent-ix/ix-trace-rs", branch = "main" }
 
 [lints.rust]
 unsafe_code = "forbid"

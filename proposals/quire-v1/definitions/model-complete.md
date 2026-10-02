@@ -14,7 +14,7 @@ its always-selected closure through
 | Identity | Revision | Definition artifact |
 | --- | --- | --- |
 | `quire.state.graph/v1` | `1-draft.3` | [Finite graphs](state-graph.md) |
-| `quire.model.complete.rules/v1` | `1-draft.2` | [Exact rule closure](model-complete-rules.json) |
+| `quire.model.complete.rules/v1` | `1-draft.2` | [Normalization rules](model-complete-rules.json) |
 | `quire.model.effective-declaration.schema/v1` | `1-draft.2` | [Effective identity schema](../../checked-package-v2/model-effective-declaration.schema.json) |
 | `quire.model.effective-declaration.vectors/v1` | `1-draft.2` | [Effective identity vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
 
@@ -355,21 +355,16 @@ Direction is read only from a connection's or relationship's declared
 ## Qualification catalog and package selection
 
 The canonical lock is [`complete-model-lock.json`](complete-model-lock.json).
-Its `requires` entry pins the complete-value lock by raw-byte digest. Its
+Its `requires` entry names the complete-value lock. Its
 `qualification_catalog` closes every artifact this root selects by role,
-identity, revision, digest domain and raw-byte digest. Its `package_selection`
+authority, identity and artifact path. Its `package_selection`
 places every catalog role in `always`; this root has no conditional or
 alternative profile. A package selection is checked with the same closed
 refusal codes and order as the complete-value lock.
 
-Every selected artifact's exact bytes and `quire.definition.bytes/v1` digest are
-retained in the checked package. Any rule-byte change requires a successor
-manifest revision and changes package identity.
-
 ## Selected rules
 
-The links below are readable projections only. Their normative identities and
-digests are the entries in `model-complete-rules.json`.
+Each rule below is a `rule_*` role of the lock's `qualification_catalog`.
 
 | Rule |
 | --- |

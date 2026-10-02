@@ -30,8 +30,9 @@ When observation facts are supplied to a semantic consumer, the producer SHALL u
 ## Identity and validation
 
 The bundle key is (`authority`, `scope`, `revision`). Timestamp, filename and ingestion position never substitute.
-Unknown contract versions, missing required properties, duplicate keys,
-out-of-domain values and non-canonical encodings refuse before consumption.
+A document whose `contract_version` is not that identifier, missing required
+properties, duplicate keys, out-of-domain values and non-canonical encodings
+refuse before consumption.
 
 ## Acceptance Criteria
 
@@ -45,8 +46,3 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 - [interface_007](./interface_007-observation-authority.md) owns the operation boundary.
 - FR-160 owns the behavior that produces or consumes this value.
-
-## Status
-
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.

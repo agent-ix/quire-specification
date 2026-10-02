@@ -40,7 +40,6 @@ the coherent base-plus-seven review remain acceptance prerequisites.
 | FR-090 | FR-090-AC-3 | TC-113 | 🚧 Planned |
 | FR-090 | FR-090-AC-4 | TC-113 | 🚧 Planned |
 | FR-090 | FR-090-AC-5 | TC-117 | 🚧 Planned |
-| FR-090 | FR-090-AC-6 | TC-110 | 🚧 Planned |
 | FR-090 | FR-090-AC-7 | TC-238 | 🚧 Planned |
 | FR-091 | FR-091-AC-1 | TC-111 | 🚧 Planned |
 | FR-091 | FR-091-AC-2 | TC-112 | 🚧 Planned |

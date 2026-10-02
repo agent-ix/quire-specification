@@ -14,7 +14,7 @@ independent state evaluation; those are useful foundations.
 
 There is **one ecosystem roadmap**, owned by
 [research program #36](https://github.com/agent-ix/quire-research/issues/36).
-Its [implementation plan](https://github.com/agent-ix/quire-research/blob/roadmap/native-language-foundation/implementation-plan.md)
+Its implementation plan (`agent-ix/quire-research`)
 is the ticket map. This report supplies language/architecture findings to that map.
 Existing protocol, observation, integration, verification and qualification owners
 retain their work; no parallel roadmap or competing engine is introduced.
@@ -22,10 +22,9 @@ retain their work; no parallel roadmap or competing engine is introduced.
 ## Evidence and architecture assessment
 
 The [capability matrix](capabilities.md) retains the source inventory and individual
-decisions. The assessment used maintained quire-research architecture at
-3df57c91773d8d64b1431649aeafc422a87d6578, native compiler source at
-f444d03c06539a6cd0ada6be4ae099b54466d9d9 (including unlanded work), and the pinned
-TL syntax/evaluator sources linked there. GitHub ticket states were reread during
+decisions. The assessment used the maintained quire-research architecture, the
+native compiler source (including unlanded work) and the TL syntax/evaluator
+sources linked there. GitHub ticket states were reread during
 the 2026-09-10 roadmap amendment. Source inspection is not executed qualification.
 
 | Finding | Selected response |

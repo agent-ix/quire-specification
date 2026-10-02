@@ -22,11 +22,7 @@ projection, `tl-syntax` formula/profile documents and `tl-mltl` evaluation.
 ## Preconditions
 
 The coherent native grammar/profile baseline and IR #63/#64 bridge contracts
-have passed their required reviews. The exact candidate revisions of every
-producer/consumer are recorded. The reference baseline inspected for this draft
-is native shared seed `e687474d47b6f7ea511d26f1a160cb85562e1f65`,
-`tl-syntax` `7fb0fe32f6ba4ef2606d120ddbe5858965d4fb5a` and `tl-mltl`
-`a8ad227473d58c2d2ed42411b80d1e09b9c4cdf0`; inspection is not qualification.
+have passed their required reviews.
 
 ## Inputs
 

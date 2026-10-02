@@ -28,7 +28,7 @@ a partial profile/package release remains distinguishable from full Quire v1.
 
 ## Behavior
 
-The required scope is the complete 200-row atomic V1 inventory, including state,
+The required scope is the complete atomic V1 inventory, including state,
 types/models, bounded and unbounded temporal meaning, dynamic choreography,
 runtime/workflow, analysis and synthesis, exact backends, tooling/mappings and
 qualification across systems, related workflow instances and declared
@@ -52,7 +52,7 @@ cannot remove a capability from the required V1 inventory.
 | FR-020-AC-8 | A report with all three families but a missing required related-instance or population capability retains that gap and cannot claim full v1. | Test (TC-020) |
 | FR-020-AC-9 | Each supported capability names its exact selected definition, implementation scope and corresponding evidence; planned or old-profile evidence alone cannot discharge it. | Test (TC-020) |
 | FR-020-AC-10 | A partial-profile release identifies its supported scope accurately without representing itself as full V1; every missing inventory capability remains open implementation or qualification work. | Test (TC-020) |
-| FR-020-AC-11 | A capability report accounts for all 200 inventory IDs exactly once and has no deferred, later, optional-product-scope or silently omitted disposition. | Test (TC-180) |
+| FR-020-AC-11 | A capability report accounts for every inventory ID exactly once and has no deferred, later, optional-product-scope or silently omitted disposition. | Test (TC-180) |
 
 ## Dependencies
 
@@ -61,8 +61,3 @@ cannot remove a capability from the required V1 inventory.
 - [Per-request capability results](FR-031-report-requested-capabilities.md).
 - [Planned matrix](../../composed-foundation/tests.md).
 
-The earlier **unreviewed** FR-020 bundled unrelated obligations. Its AC-1/2
-are now owned by FR-030; AC-3 by FR-033/034/040; AC-4/5 by FR-031; and AC-6 by
-FR-032. Those old criterion IDs are not reused for different behavior. AC-7
-retains its original release-scope meaning. No historical implemented profile
-or accepted review is changed by decomposing this draft.

@@ -11,7 +11,7 @@ relationships:
 
 # Complete V1 atomic capability and requirement matrix
 
-This matrix is normative traceability for the complete 200-row inventory. A
+This matrix is normative traceability for the complete inventory. A
 planned row is required work, not a deferred capability or implementation claim.
 
 ## Specification action classification
@@ -30,9 +30,6 @@ with the owning requirement.
   decided here.
 - `New`: behavior and acceptance criteria are authored for the row.
 
-Over the 200 rows the delivered totals are 97 Reuse, 45 Amend, 38 New, 19
-Resolve and 1 Split.
-
 V1-TYPE-024 is a Resolve row because extending reachability over inheritance
 and conformance required deciding what "the same type" means for traversal.
 FR-043 fixes it as conformance to the static edge type under
@@ -48,13 +45,10 @@ type.
 | V1-SRC-003 | FR-131 | TC-180, TC-231 | Amend | planned |
 | V1-SRC-004 | FR-131 | TC-180, TC-231 | Amend | planned |
 | V1-SRC-005 | FR-003 | TC-231 | Reuse | planned |
-| V1-SRC-006 | FR-003 | TC-231 | Reuse | planned |
 | V1-SRC-007 | FR-134 | TC-184, TC-231 | Resolve | planned |
 | V1-SRC-008 | FR-002 | TC-231 | Reuse | planned |
 | V1-SRC-009 | FR-002 | TC-231 | Reuse | planned |
 | V1-SRC-010 | FR-132 | TC-182, TC-231 | Amend | planned |
-| V1-SRC-011 | FR-132 | TC-182, TC-231 | Split | planned |
-| V1-SRC-012 | FR-016 | TC-231 | Reuse | planned |
 | V1-SRC-013 | FR-132 | TC-182, TC-231 | Amend | planned |
 | V1-SRC-014 | FR-133 | TC-183, TC-231 | Amend | planned |
 | V1-SRC-015 | FR-001 | TC-231 | Reuse | planned |
@@ -223,10 +217,8 @@ type.
 | V1-BACK-023 | FR-354 | TC-269, TC-231 | New | planned |
 | V1-BACK-024 | FR-355 | TC-270, TC-231 | New | planned |
 | V1-EVID-001 | FR-310 | TC-230, TC-231 | Amend | planned |
-| V1-EVID-002 | FR-004 | TC-231 | Reuse | planned |
 | V1-EVID-003 | FR-311 | TC-231 | Amend | planned |
 | V1-EVID-004 | FR-020 | TC-231 | Reuse | planned |
-| V1-EVID-005 | FR-016 | TC-231 | Reuse | planned |
 | V1-EVID-006 | FR-312 | TC-232, TC-231 | Amend | planned |
 | V1-EVID-007 | FR-351 | TC-254, TC-231 | New | planned |
 | V1-EVID-008 | FR-351 | TC-254, TC-231 | New | planned |
@@ -251,7 +243,6 @@ type.
 | FR-131 | FR-131-AC-1 | TC-180 | planned |
 | FR-131 | FR-131-AC-2 | TC-180 | planned |
 | FR-131 | FR-131-AC-3 | TC-180 | planned |
-| FR-132 | FR-132-AC-1 | TC-182 | planned |
 | FR-132 | FR-132-AC-2 | TC-182 | planned |
 | FR-132 | FR-132-AC-3 | TC-182 | planned |
 | FR-133 | FR-133-AC-1 | TC-183 | planned |
@@ -395,7 +386,6 @@ type.
 | FR-306 | FR-306-AC-4 | TC-226 | planned |
 | FR-307 | FR-307-AC-1 | TC-227 | planned |
 | FR-307 | FR-307-AC-2 | TC-227 | planned |
-| FR-307 | FR-307-AC-3 | TC-227 | planned |
 | FR-307 | FR-307-AC-4 | TC-227 | planned |
 | FR-307 | FR-307-AC-5 | TC-227 | planned |
 | FR-307 | FR-307-AC-6 | TC-227 | planned |
@@ -410,7 +400,6 @@ type.
 | FR-310 | FR-310-AC-3 | TC-230 | planned |
 | FR-311 | FR-311-AC-1 | TC-231 | planned |
 | FR-311 | FR-311-AC-2 | TC-231 | planned |
-| FR-311 | FR-311-AC-3 | TC-231 | planned |
 | FR-312 | FR-312-AC-1 | TC-232 | planned |
 | FR-312 | FR-312-AC-2 | TC-232 | planned |
 | FR-312 | FR-312-AC-3 | TC-232 | planned |
@@ -497,10 +486,6 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-015 | FR-015-AC-2 | TC-231 | planned |
 | FR-015 | FR-015-AC-3 | TC-231 | planned |
 | FR-015 | FR-015-AC-4 | TC-231 | planned |
-| FR-016 | FR-016-AC-1 | TC-231 | planned |
-| FR-016 | FR-016-AC-2 | TC-231 | planned |
-| FR-016 | FR-016-AC-3 | TC-231 | planned |
-| FR-016 | FR-016-AC-4 | TC-231 | planned |
 | FR-019 | FR-019-AC-7 | TC-006 | planned |
 | FR-020 | FR-020-AC-11 | TC-020 | planned |
 | FR-091 | FR-091-AC-7 | TC-111 | planned |
@@ -539,8 +524,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-201 | FR-201-AC-2 | TC-231 | planned |
 | FR-201 | FR-201-AC-3 | TC-231 | planned |
 | FR-201 | FR-201-AC-4 | TC-231 | planned |
-| FR-201 | FR-201-AC-6 | TC-233 | planned |
 | FR-201 | FR-201-AC-7 | TC-233 | planned |
+| FR-201 | FR-201-AC-9 | TC-233 | planned |
 | FR-202 | FR-202-AC-1 | TC-231 | planned |
 | FR-202 | FR-202-AC-2 | TC-231 | planned |
 | FR-202 | FR-202-AC-3 | TC-231 | planned |
@@ -667,7 +652,6 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-250 | FR-250-AC-1 | TC-231 | planned |
 | FR-250 | FR-250-AC-2 | TC-231 | planned |
 | FR-250 | FR-250-AC-3 | TC-231 | planned |
-| FR-250 | FR-250-AC-4 | TC-231 | planned |
 | FR-250 | FR-250-AC-5 | TC-231 | planned |
 | FR-250 | FR-250-AC-6 | TC-231 | planned |
 | FR-251 | FR-251-AC-1 | TC-231 | planned |
@@ -890,6 +874,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-272 | FR-272-AC-11 | TC-233 | planned |
 | FR-272 | FR-272-AC-12 | TC-233 | planned |
 | FR-272 | FR-272-AC-13 | TC-233 | planned |
+| FR-272 | FR-272-AC-14 | TC-047 | planned |
 | FR-321 | FR-321-AC-4 | TC-195 | planned |
 | FR-160 | FR-160-AC-4 | TC-199 | planned |
 | FR-160 | FR-160-AC-5 | TC-199 | planned |
@@ -1073,9 +1058,6 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-334 | FR-334-AC-1 | TC-231 | planned |
 | FR-334 | FR-334-AC-2 | TC-231 | planned |
 | FR-334 | FR-334-AC-3 | TC-231 | planned |
-| FR-335 | FR-335-AC-1 | TC-231 | planned |
-| FR-335 | FR-335-AC-2 | TC-231 | planned |
-| FR-335 | FR-335-AC-3 | TC-231 | planned |
 | FR-336 | FR-336-AC-1 | TC-231 | planned |
 | FR-336 | FR-336-AC-2 | TC-231 | planned |
 | FR-336 | FR-336-AC-3 | TC-231 | planned |
@@ -1158,8 +1140,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | --- | --- | --- | --- | --- | --- |
 | TC-180 | Complete V1 profile bundle accounting | Property | P0 | FR-131 | 🚧 Planned |
 | TC-181 | Recursive function termination profiles | Property | P0 | FR-146 | 🚧 Planned |
-| TC-182 | Canonical complete package manifest | Property | P0 | FR-132 | 🚧 Planned |
-| TC-183 | Uniform extension compatibility | Property | P0 | FR-133 | 🚧 Planned |
+| TC-182 | Complete package capabilities and identity domains | Property | P0 | FR-132 | 🚧 Planned |
+| TC-183 | Uniform extension non-interference | Property | P0 | FR-133 | 🚧 Planned |
 | TC-184 | Original source locus preservation | Property | P0 | FR-134 | 🚧 Planned |
 | TC-185 | Exact decimal semantics | Property | P0 | FR-140 | 🚧 Planned |
 | TC-186 | Text and enum identity semantics | Property | P0 | FR-141 | 🚧 Planned |
@@ -1270,7 +1252,6 @@ supersedes FR-010's parent reachability.
 
 ## Coverage gate
 
-Complete-V1 qualification requires all 200 capability rows and every selected
-acceptance-criterion row to have executed evidence under one exact ecosystem
-lock. Until then the status remains planned or partial and cannot be promoted by
+Complete-V1 qualification requires every capability row and every selected
+acceptance-criterion row to have executed evidence. Until then the status remains planned or partial and cannot be promoted by
 family-level samples.

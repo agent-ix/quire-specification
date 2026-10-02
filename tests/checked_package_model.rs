@@ -4,132 +4,22 @@
 //! Complete-model definition lock and effective-declaration vector qualification.
 
 use ix_trace_rs::trace;
-use quire_verification::contracts::jcs_sha256;
+use quire_verification_contracts::jcs_sha256;
 use serde_json::Value;
-use sha2::{Digest, Sha256};
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 
 const COMPLETE_MODEL_LOCK: &str =
     include_str!("../proposals/quire-v1/definitions/complete-model-lock.json");
 const COMPLETE_MODEL_LOCK_DIR: &str = "proposals/quire-v1/definitions";
-const COMPLETE_VALUE_LOCK_BYTES: &[u8] = quire_specification::COMPLETE_VALUE_LOCK.as_bytes();
-const MODEL_ROOT_DEFINITION: &str =
-    include_str!("../proposals/quire-v1/definitions/model-complete.md");
-const MODEL_RULE_MANIFEST: &str =
-    include_str!("../proposals/quire-v1/definitions/model-complete-rules.json");
 const EFFECTIVE_DECLARATION_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/model-effective-declaration-vectors.json");
 const EFFECTIVE_DECLARATION_SCHEMA: &str =
     include_str!("../proposals/checked-package-v2/model-effective-declaration.schema.json");
 
-/// One compile-time byte source for a complete-model qualification-catalog
-/// entry, named by its repository-relative path.
-struct ModelArtifact {
-    path: &'static str,
-    bytes: &'static [u8],
-}
-
-const MODEL_ARTIFACTS: [ModelArtifact; 18] = [
-    ModelArtifact {
-        path: "proposals/quire-v1/definitions/model-complete.md",
-        bytes: include_bytes!("../proposals/quire-v1/definitions/model-complete.md"),
-    },
-    ModelArtifact {
-        path: "proposals/quire-v1/definitions/state-graph.md",
-        bytes: include_bytes!("../proposals/quire-v1/definitions/state-graph.md"),
-    },
-    ModelArtifact {
-        path: "proposals/quire-v1/definitions/model-complete-rules.json",
-        bytes: include_bytes!("../proposals/quire-v1/definitions/model-complete-rules.json"),
-    },
-    ModelArtifact {
-        path: "proposals/checked-package-v2/model-effective-declaration.schema.json",
-        bytes: include_bytes!(
-            "../proposals/checked-package-v2/model-effective-declaration.schema.json"
-        ),
-    },
-    ModelArtifact {
-        path: "proposals/checked-package-v2/model-effective-declaration-vectors.json",
-        bytes: include_bytes!(
-            "../proposals/checked-package-v2/model-effective-declaration-vectors.json"
-        ),
-    },
-    ModelArtifact {
-        path: "spec/assurance/AD-006-model-graph-state-contracts.md",
-        bytes: include_bytes!("../spec/assurance/AD-006-model-graph-state-contracts.md"),
-    },
-    ModelArtifact {
-        path: "spec/functional/foundation/FR-043-evaluate-finite-graph-relations.md",
-        bytes: include_bytes!(
-            "../spec/functional/foundation/FR-043-evaluate-finite-graph-relations.md"
-        ),
-    },
-    ModelArtifact {
-        path: "spec/functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md",
-        bytes: include_bytes!(
-            "../spec/functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md"
-        ),
-    },
-    ModelArtifact {
-        path: "spec/functional/type-model/FR-144-preserve-complete-collection-algebra.md",
-        bytes: include_bytes!(
-            "../spec/functional/type-model/FR-144-preserve-complete-collection-algebra.md"
-        ),
-    },
-    ModelArtifact {
-        path: "spec/functional/type-model/FR-150-preserve-model-normalization-provenance.md",
-        bytes: include_bytes!(
-            "../spec/functional/type-model/FR-150-preserve-model-normalization-provenance.md"
-        ),
-    },
-    ModelArtifact {
-        path: "spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md",
-        bytes: include_bytes!(
-            "../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md"
-        ),
-    },
-    ModelArtifact {
-        path: "spec/functional/type-model/FR-152-bind-systems-model-structures.md",
-        bytes: include_bytes!(
-            "../spec/functional/type-model/FR-152-bind-systems-model-structures.md"
-        ),
-    },
-    ModelArtifact {
-        path: "spec/functional/type-model/FR-153-query-closed-model-environments.md",
-        bytes: include_bytes!(
-            "../spec/functional/type-model/FR-153-query-closed-model-environments.md"
-        ),
-    },
-    ModelArtifact {
-        path: "spec/functional/type-model/FR-154-admit-domain-package-model.md",
-        bytes: include_bytes!("../spec/functional/type-model/FR-154-admit-domain-package-model.md"),
-    },
-    ModelArtifact {
-        path: "spec/objects/foundation/FR-204-declared-object-identity.md",
-        bytes: include_bytes!("../spec/objects/foundation/FR-204-declared-object-identity.md"),
-    },
-    ModelArtifact {
-        path: "spec/objects/foundation/FR-208-quire-meaning-vocabulary.md",
-        bytes: include_bytes!("../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md"),
-    },
-    ModelArtifact {
-        path: "spec/objects/interfaces/FR-321-model-selection-artifact.md",
-        bytes: include_bytes!("../spec/objects/interfaces/FR-321-model-selection-artifact.md"),
-    },
-    ModelArtifact {
-        path: "spec/objects/interfaces/interface_003-model-selection.md",
-        bytes: include_bytes!("../spec/objects/interfaces/interface_003-model-selection.md"),
-    },
-];
-
 const EFFECTIVE_DECLARATION_DOMAIN: &str = "quire.model.effective-declaration/v1";
 
 fn parsed_fixture(bytes: &str) -> Value {
     serde_json::from_str(bytes).expect("authored fixture is valid JSON")
-}
-
-fn raw_sha256(bytes: &[u8]) -> String {
-    format!("{:x}", Sha256::digest(bytes))
 }
 
 fn unqualified_jcs_sha256(value: &Value) -> String {
@@ -165,140 +55,6 @@ fn repository_path(base: &str, relative: &str) -> String {
     segments.join("/")
 }
 
-fn model_artifact(base: &str, relative: &str) -> &'static ModelArtifact {
-    let path = repository_path(base, relative);
-    MODEL_ARTIFACTS
-        .iter()
-        .find(|artifact| artifact.path == path)
-        .unwrap_or_else(|| panic!("{path} has compile-time bytes"))
-}
-
-/// The text between the first pair of backticks in `text`.
-fn first_code_span(text: &str) -> Option<&str> {
-    let (_, rest) = text.split_once('`')?;
-    rest.split_once('`').map(|(span, _)| span)
-}
-
-/// Expected `(identity, revision)` for each repository-relative catalog path,
-/// stated independently of the lock by the root definition's own header and
-/// always-selected table and by the rule manifest's entries.
-fn expected_catalog_identities() -> BTreeMap<String, (String, String)> {
-    let mut expected = BTreeMap::new();
-    let header = MODEL_ROOT_DEFINITION
-        .lines()
-        .find_map(|line| line.strip_prefix("Definition identity: "))
-        .expect("root definition states its identity");
-    let (identity, revision) = header
-        .split_once("; revision: ")
-        .expect("root header states identity and revision");
-    expected.insert(
-        repository_path(COMPLETE_MODEL_LOCK_DIR, "model-complete.md"),
-        (
-            first_code_span(identity)
-                .expect("identity is a code span")
-                .to_owned(),
-            first_code_span(revision)
-                .expect("revision is a code span")
-                .to_owned(),
-        ),
-    );
-
-    let table = MODEL_ROOT_DEFINITION
-        .split_once("## Always-selected definitions")
-        .expect("root definition has an always-selected section")
-        .1
-        .lines()
-        .skip_while(|line| !line.starts_with("| `"))
-        .take_while(|line| line.starts_with("| `"));
-    for row in table {
-        let cells = row.split('|').map(str::trim).collect::<Vec<_>>();
-        let [_, identity, revision, artifact, _] = cells.as_slice() else {
-            panic!("always-selected row has three cells: {row}");
-        };
-        let link = artifact
-            .split_once("](")
-            .and_then(|(_, rest)| rest.strip_suffix(')'))
-            .expect("definition artifact is a relative link");
-        expected.insert(
-            repository_path(COMPLETE_MODEL_LOCK_DIR, link),
-            (
-                first_code_span(identity)
-                    .expect("identity is a code span")
-                    .to_owned(),
-                first_code_span(revision)
-                    .expect("revision is a code span")
-                    .to_owned(),
-            ),
-        );
-    }
-
-    let manifest = parsed_fixture(MODEL_RULE_MANIFEST);
-    for rule in manifest["rules"].as_array().expect("rules is an array") {
-        expected.insert(
-            repository_path(COMPLETE_MODEL_LOCK_DIR, str_at(rule, "/path")),
-            (
-                str_at(rule, "/identity").to_owned(),
-                str_at(rule, "/revision").to_owned(),
-            ),
-        );
-    }
-    expected
-}
-
-/// Every way the lock's catalog identities disagree with the independently
-/// stated expected set: an unexpected path, a relabelled identity or
-/// revision, or an expected artifact the catalog omits.
-fn catalog_identity_mismatches(
-    lock: &Value,
-    expected: &BTreeMap<String, (String, String)>,
-) -> Vec<String> {
-    let mut mismatches = Vec::new();
-    let mut seen = BTreeSet::new();
-    for entry in lock["qualification_catalog"]
-        .as_array()
-        .expect("qualification catalog is an array")
-    {
-        let path = repository_path(COMPLETE_MODEL_LOCK_DIR, str_at(entry, "/artifact_path"));
-        let actual = (
-            str_at(entry, "/definition/identity"),
-            str_at(entry, "/definition/revision/value"),
-        );
-        match expected.get(&path) {
-            None => mismatches.push(format!("{path} is not a stated artifact")),
-            Some((identity, revision)) if (identity.as_str(), revision.as_str()) != actual => {
-                mismatches.push(format!(
-                    "{path} states {identity}@{revision} but the lock has {}@{}",
-                    actual.0, actual.1
-                ));
-            }
-            Some(_) => {}
-        }
-        seen.insert(path);
-    }
-    mismatches.extend(
-        expected
-            .keys()
-            .filter(|path| !seen.contains(*path))
-            .map(|path| format!("{path} is missing from the lock")),
-    );
-    mismatches
-}
-
-fn assert_definition_ref(definition: &Value, bytes: &[u8]) {
-    let identity = str_at(definition, "/identity");
-    assert_eq!(str_at(definition, "/authority"), "agent-ix");
-    assert_eq!(str_at(definition, "/revision/namespace"), "quire-draft");
-    assert_eq!(
-        str_at(definition, "/digest_domain"),
-        "quire.definition.bytes/v1"
-    );
-    assert_eq!(
-        str_at(definition, "/digest"),
-        raw_sha256(bytes),
-        "{identity} binds exact authored bytes"
-    );
-}
-
 /// FR-204 key bytes of an identity component: the UTF-8 domain string
 /// immediately followed by the 32 digest bytes.
 fn identity_key_bytes(component: &Value) -> Vec<u8> {
@@ -320,18 +76,19 @@ fn reference_key(entry: &Value) -> (Vec<u8>, Vec<u8>, Vec<u8>) {
     )
 }
 
-#[trace("TC-195", "FR-150-AC-6")]
+#[trace("TC-233", "FR-201-AC-9")]
 #[test]
-fn tc_195_complete_model_lock_catalogs_every_artifact_byte_for_byte() {
+fn tc_233_complete_model_lock_selects_every_catalogued_artifact() {
     let lock = parsed_fixture(COMPLETE_MODEL_LOCK);
     assert_eq!(
         lock["lock_version"].as_str(),
         Some("quire.model.definition-lock/v1")
     );
-    assert_eq!(
-        lock["digest_domain"].as_str(),
-        Some("quire.definition.bytes/v1")
-    );
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+    let resolves = |relative: &str| {
+        root.join(repository_path(COMPLETE_MODEL_LOCK_DIR, relative))
+            .is_file()
+    };
 
     let requires = lock["requires"]
         .as_array()
@@ -339,36 +96,26 @@ fn tc_195_complete_model_lock_catalogs_every_artifact_byte_for_byte() {
     assert_eq!(requires.len(), 1);
     assert_eq!(requires[0]["role"].as_str(), Some("complete_value_lock"));
     assert_eq!(
-        requires[0]["artifact_path"].as_str(),
-        Some("complete-value-lock.json")
-    );
-    assert_eq!(
         str_at(&requires[0], "/definition/identity"),
         "quire.value.definition-lock/v1"
     );
-    assert_definition_ref(&requires[0]["definition"], COMPLETE_VALUE_LOCK_BYTES);
+    assert!(resolves(str_at(&requires[0], "/artifact_path")));
 
     let catalog = lock["qualification_catalog"]
         .as_array()
         .expect("qualification catalog is an array");
-    assert_eq!(catalog.len(), MODEL_ARTIFACTS.len());
     let mut paths = BTreeSet::new();
     let mut roles = BTreeSet::new();
     for entry in catalog {
         let relative = str_at(entry, "/artifact_path");
-        let artifact = model_artifact(COMPLETE_MODEL_LOCK_DIR, relative);
-        assert!(paths.insert(artifact.path), "catalog paths are unique");
+        assert!(resolves(relative), "{relative} is an authored artifact");
+        assert!(paths.insert(relative), "catalog paths are unique");
         assert!(
             roles.insert(str_at(entry, "/role")),
             "catalog roles are unique"
         );
-        assert_definition_ref(&entry["definition"], artifact.bytes);
+        assert_eq!(str_at(entry, "/definition/authority"), "agent-ix");
     }
-    assert_eq!(
-        catalog_identity_mismatches(&lock, &expected_catalog_identities()),
-        Vec::<String>::new(),
-        "every catalog identity and revision is the one its documents state"
-    );
     let always = lock["package_selection"]["always"]
         .as_array()
         .expect("always selection is an array")
@@ -376,40 +123,6 @@ fn tc_195_complete_model_lock_catalogs_every_artifact_byte_for_byte() {
         .map(|role| role.as_str().expect("role is a string"))
         .collect::<BTreeSet<_>>();
     assert_eq!(always, roles, "every catalog role is always selected");
-}
-
-#[trace("TC-195", "FR-150-AC-6")]
-#[test]
-fn tc_195_complete_model_rule_manifest_binds_every_rule_byte_for_byte() {
-    let manifest = parsed_fixture(MODEL_RULE_MANIFEST);
-    assert_eq!(
-        manifest["definition_identity"].as_str(),
-        Some("quire.model.complete.rules/v1")
-    );
-    let lock = parsed_fixture(COMPLETE_MODEL_LOCK);
-    let catalog = lock["qualification_catalog"]
-        .as_array()
-        .expect("qualification catalog is an array");
-    let rules = manifest["rules"]
-        .as_array()
-        .expect("rule manifest contains an array");
-    assert!(!rules.is_empty());
-    for rule in rules {
-        let identity = str_at(rule, "/identity");
-        let relative = str_at(rule, "/path");
-        let artifact = model_artifact(COMPLETE_MODEL_LOCK_DIR, relative);
-        assert_eq!(
-            str_at(rule, "/sha256"),
-            raw_sha256(artifact.bytes),
-            "{identity} binds exact authored bytes"
-        );
-        let entry = catalog
-            .iter()
-            .find(|entry| entry["definition"]["identity"].as_str() == Some(identity))
-            .unwrap_or_else(|| panic!("{identity} is catalogued by the lock"));
-        assert_eq!(str_at(entry, "/artifact_path"), relative);
-        assert_eq!(str_at(entry, "/definition/digest"), str_at(rule, "/sha256"));
-    }
 }
 
 #[trace("TC-195", "FR-150-AC-6")]
@@ -497,39 +210,6 @@ fn tc_198_reference_key_order_ascends_by_fr_204_key_bytes() {
     reversed.reverse();
     reversed.sort();
     assert_eq!(reversed, keys, "sorting any permutation restores the order");
-}
-
-#[trace("TC-195", "FR-150-AC-6")]
-#[test]
-fn tc_195_complete_model_lock_refuses_relabelled_catalog_identities() {
-    let expected = expected_catalog_identities();
-    assert_eq!(expected.len(), MODEL_ARTIFACTS.len());
-    let lock = parsed_fixture(COMPLETE_MODEL_LOCK);
-    assert!(catalog_identity_mismatches(&lock, &expected).is_empty());
-
-    let mut relabelled = lock.clone();
-    relabelled["qualification_catalog"][0]["definition"]["identity"] =
-        Value::from("quire.model.complete/v2");
-    assert_eq!(catalog_identity_mismatches(&relabelled, &expected).len(), 1);
-
-    let mut swapped = lock.clone();
-    let first = swapped["qualification_catalog"][5]["definition"]["identity"].clone();
-    let second = swapped["qualification_catalog"][6]["definition"]["identity"].clone();
-    swapped["qualification_catalog"][5]["definition"]["identity"] = second;
-    swapped["qualification_catalog"][6]["definition"]["identity"] = first;
-    assert_eq!(catalog_identity_mismatches(&swapped, &expected).len(), 2);
-
-    let mut revised = lock.clone();
-    revised["qualification_catalog"][1]["definition"]["revision"]["value"] =
-        Value::from("1-draft.2");
-    assert_eq!(catalog_identity_mismatches(&revised, &expected).len(), 1);
-
-    let mut omitted = lock;
-    omitted["qualification_catalog"]
-        .as_array_mut()
-        .expect("qualification catalog is an array")
-        .pop();
-    assert_eq!(catalog_identity_mismatches(&omitted, &expected).len(), 1);
 }
 
 fn vector_named<'a>(vectors: &'a [Value], name: &str) -> &'a Value {

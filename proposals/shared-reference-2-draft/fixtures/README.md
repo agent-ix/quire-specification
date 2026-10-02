@@ -23,8 +23,7 @@ be a required semantic refusal; adverse.json preserves that distinction.
 
 An initial test incorrectly assumed B's existing parse_bounded_json already
 rejected duplicate decoded keys. The actual test failed: the helper accepted
-the two decoded a keys as one map entry. B already tracks that strict-reader work
-under FR-016/TC-029. The producer test was scoped back to its actual schema/JCS
+the two decoded a keys as one map entry. The producer test was scoped back to its actual schema/JCS
 boundary; raw-duplicate.json remains a required, unexecuted strict-reader
 control. No duplicate-key intake qualification or complete reader is claimed.
 

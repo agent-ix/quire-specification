@@ -60,7 +60,7 @@ reviewer/procedure checks, completeness and outcome policy.
 ## Dependencies
 
 - [US-004](../../usecase/US-004-retain-evidence-meaning.md), [FR-015](FR-015-preserve-canonical-domains.md) and [FR-017](FR-017-select-verification-artifact-roles.md).
-- [NFR-001](../../non-functional/NFR-001-preserve-versioned-meaning.md) preserves historical meaning; [NFR-002](../../non-functional/NFR-002-classify-resource-incompleteness.md) preserves incomplete outcomes.
+- [NFR-002](../../non-functional/NFR-002-classify-resource-incompleteness.md) preserves incomplete outcomes.
 - [IT-003](../../integration/IT-003-verification-reference-amendment.md) separates existing canonicalizer parity from a fully qualified shared reader.
 
 ## Status

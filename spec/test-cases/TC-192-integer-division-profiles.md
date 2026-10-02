@@ -18,7 +18,7 @@ Evaluate signed vectors, zero divisors and missing finite-backend domains under 
 Select language `ix:native`, edition `1-draft` revision `1-draft.2`, and the
 `quire.value.complete/v1` definition at revision `1-draft.2`. For `div`/`rem`,
 select exactly one of the three revision-`1-draft.1` integer-division
-definitions in FR-147. Retain the exact DefinitionRefs from
+definitions in FR-147, through
 [`complete-value-lock.json`](../../proposals/quire-v1/definitions/complete-value-lock.json).
 For `(a,b)` in
 `(7,3)`, `(7,-3)`, `(-7,3)` and `(-7,-3)`, execute the paired operation and

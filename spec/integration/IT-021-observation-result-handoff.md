@@ -25,8 +25,7 @@ the B-owned result contract. OB03 and Engineering Assurance are strict consumers
 
 ## Preconditions
 
-All three contracts and the fixture rights/provenance are pinned to exact
-revisions. The assessment runner and evidence retention are supplied by the
+The assessment runner and evidence retention are supplied by the
 shared Engineering Assurance system rather than a test-local substitute.
 
 ## Inputs

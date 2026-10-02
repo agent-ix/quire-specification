@@ -32,7 +32,7 @@ nonzero proofs apply to potentially evaluated operations under sound native
 control facts. Scalar types, units, bounds, presence and source declarations
 come from exact supplied model contracts. No default numeric maximum or field
 is derived from example data. Sequences are finite, ordered and duplicate
-preserving with authored maxima at most 10,000 per wrapper.
+preserving, each wrapper with its authored maximum.
 
 Whole-record/sequence/option equality, reference/object identity and navigation,
 `reaches`, named predicate declarations/calls, `filter`, `map`, `count`

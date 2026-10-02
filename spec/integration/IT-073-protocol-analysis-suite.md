@@ -18,7 +18,7 @@ refinement consume the same real checked Protocol graph and keep separate claims
 
 ## Target Integration
 
-QSL emits I08 through its Rust API; pinned `quire-protocol` analyzers consume it
+QSL emits I08 through its Rust API; `quire-protocol` analyzers consume it
 and emit I09 results locally.
 
 ## Preconditions

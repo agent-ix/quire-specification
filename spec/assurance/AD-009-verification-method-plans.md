@@ -35,7 +35,7 @@ flowchart LR
 ```
 
 Plans name clauses, methods, assumptions, domains, bounds, dependencies,
-required evidence and tool/provider pins. Model-based tests derive values from
+required evidence and method providers. Model-based tests derive values from
 model domains, use the native runtime as oracle, shrink while retaining domain
 validity and serialize replay provenance. Relational and hyperproperty methods
 bind multiple executions or trace sets explicitly. Hybrid providers declare

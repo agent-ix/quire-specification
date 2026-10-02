@@ -33,8 +33,7 @@ material here, not an adopted selection.
 | --- | --- | --- |
 | Interpretation identity | Proposed catalog, header | "Interpretation identity: `quire.native.diagnostics/v1`". |
 | Revision | Proposed catalog, header | "revision: `1-draft.8`". |
-| Byte digest | Proposed catalog, "Selection and compatibility" | The response "selects this catalog's exact identity, revision and byte digest". |
-| Selected inventory | Proposed catalog, selected-inventory table | Named immutable sources pinned by revision and "SHA-256 of file bytes"; "Only `Code::as_str()`'s spellings and the code/meaning table are selected". |
+| Byte digest | Proposed catalog, "Selection" | The response "selects this catalog's exact identity, revision and byte digest". |
 | Code vocabulary | [FR-271](FR-271-diagnostic-code-vocabulary.md) | The catalogued code spellings. |
 | Closed cause sets | [FR-272](FR-272-typed-diagnostic-cause.md) | "A cause is a closed discriminated value with the payload required by its selected variant, not a free-form string map." |
 
@@ -45,10 +44,8 @@ source permissions from it" (proposed catalog). Changing the catalog "does not
 change a checked clause's static meaning"; it "does change the response's
 interpretation/provenance".
 
-Extension is closed against the implementation: "A current compiler enum or its
-`non_exhaustive` annotation cannot silently extend this immutable selection. A
-new required code or cause variant needs a new catalog revision and explicit
-reader support." An unknown selection, code or required variant "refuses
+Extension is closed against the implementation: "A compiler enum or its
+`non_exhaustive` annotation cannot extend this selection." An unknown selection, code or required variant "refuses
 interpretation of that diagnostic while retaining its original bytes and
 available provenance. It cannot be recast as a known failure, an empty
 diagnostic list or a successful assessment" (proposed catalog).

@@ -16,7 +16,7 @@ remains Planned; this artifact does not claim executed portfolio coverage.
 
 ## Test Procedure
 
-Validate the new semantic reference and call B's pinned Rust jcs_canonicalize
+Validate the new semantic reference and call B's Rust jcs_canonicalize
 and jcs_sha256 functions on the exact vector value. Compare canonical bytes and
 prefixed digest to the recorded expected values. Use reordered object members,
 a supplementary-plane key beside a high BMP key, numeric -0/1e-7 inputs and
@@ -24,8 +24,8 @@ ordered arrays. Mutate canonical domain, version, algorithm and digest one at
 a time, including sha256 and bare-hex substitutions. Exercise requiredFeatures
 as empty, singleton, two reordered unique features, duplicate decoded features
 and an unknown feature. Validate both unchanged IR domain forms and reject JCS
-prefix substitutions in them. Resource controls use 1 MiB/depth 64 limits from
-IT-003, including exact limit and one-over-limit; missing dependencies fail setup.
+prefix substitutions in them. Resource controls use IT-003's byte and value
+limits, including exact limit and one-over-limit; missing dependencies fail setup.
 
 ## Expected Results
 

@@ -47,10 +47,10 @@ encode absence as a scalar. Records and tuples use declared structural
 equality, while object references use qualified identity. Recursive type
 definitions require finite runtime values and bounded traversal.
 
-The immutable `quire.value.complete/v1` definition owns the common value
-algebra. A checked package using text, integer division or IEEE operations also
-retains the exact applicable definitions below in its ordered profile closure;
-their identities, versions and byte digests participate in package identity.
+The `quire.value.complete/v1` definition owns the common value algebra. A
+checked package using text, integer division or IEEE operations also retains
+the applicable definitions below in its ordered profile closure; their
+identities participate in package identity.
 There is no installed-tool or backend default.
 
 | Semantic selection | Closed complete-V1 definition |
@@ -100,6 +100,6 @@ kinds, empty cases, intermediate bounds and deterministic exposure rules.
 | --- | --- |
 | A backend silently approximates unsupported values | Per-node capability negotiation and explicit refusal before artifact emission. |
 | Structural and object identity collapse | Distinct types and equality matrices; no cross-domain equality. |
-| Float nondeterminism escapes provenance | Width, rounding mode, exceptional-value policy and tool pins enter the package/run identity. |
+| Float nondeterminism changes a result | Width, rounding mode and exceptional-value policy enter the package/run identity. |
 | Recursive or aggregate work becomes unbounded | Static termination/domain obligations plus separately charged runtime limits. |
 | Nominal identities are caller-minted from names or source positions | Enum, unit and dimension handles are issued only from I04 checked semantic-graph node identities. |

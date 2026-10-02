@@ -12,8 +12,6 @@ relationships:
     type: realizes
   - target: ix://agent-ix/quire-specification/FR-019
     type: realizes
-  - target: ix://agent-ix/quire-specification/NFR-001
-    type: references
   - target: ix://agent-ix/quire-specification/AD-006
     type: references
 ---
@@ -23,10 +21,7 @@ relationships:
 
 Quire is the product and language name. “Native Quire” distinguishes the sole
 editable formal-clause language from generated mappings. `ix:native` is its
-stable machine identity; it is not a display-name placeholder. A future public
-brand change requires an explicitly versioned edition and FS05 migration. It
-cannot reinterpret source, definitions, reports or evidence already bound to
-`ix:native`.
+stable machine identity; it is not a display-name placeholder.
 
 The language standard owns grammar, semantic profile definitions and their
 composition rules. The compiler recognizes syntax, selects exact definitions,
@@ -52,8 +47,8 @@ identity is neither enabled nor aliased to a composed profile.
 
 ## Views
 
-The following views fix the selection pipeline, hierarchy, current delivery
-status, refusal taxonomy, extension seams and retained acceptance examples.
+The following views fix the selection pipeline, hierarchy, refusal taxonomy,
+extension seams and retained acceptance examples.
 
 ### Selection and support stages
 
@@ -90,26 +85,7 @@ capable backend.
 | Package and diagnostics | `quire.package.composed/v1` and `quire.native.diagnostics/v1` | Exact composition and diagnostic interpretation under FS02/FS05 and the owning compiler interfaces |
 
 Acceptance here fixes the identity roles and dependency direction. It does not
-freeze the current draft revision labels or claim all profile implementations.
-An owning semantic ticket freezes its exact revision and digest when it accepts
-that definition.
-
-### Construct and delivery status
-
-| Construct or family | Profile disposition | Merged implementation at FS01 close | Backend / Kani disposition |
-| --- | --- | --- | --- |
-| Edition/profile selection, Boolean expressions and bounded integers | Historical `state-finite/0-draft` remains admitted; composed equivalents belong to state core | Released in quire-spec-language `v0.2.0` for the bounded scalar slice | Boolean, integer and state-scalar oracle lowering is merged; broader proof is tracked separately |
-| `present`, guarded `value`, short-circuit control, `let` and `if` | State-core meaning retains distinct absence, invalidity and Boolean result channels | Released bounded state-scalar behavior is partial evidence, not authored presence qualification | Unsupported distinctions refuse; no truthiness or null-to-false approximation |
-| `rational(n,d)`, exact decimal, quantities and profile-selected division/remainder | Complete value facet with explicit domains, normalization, rounding/loss and definedness | Bounded rational support remains incomplete; broader values are planned work | A frontend or backend lacking the selected exact construct refuses it; it never substitutes another numeric operation |
-| Ordered sequences, `size`, `contains`, `forall`, `exists` | State core; authored maximum at most 10,000 per wrapper | Native finite-sequence admission/evaluation is merged | Broader backend proof remains tracked; bound or kind gaps refuse |
-| General pure functions and complete collection algebra | Complete value facet; recursion requires proved termination and collections retain order/uniqueness/multiplicity | Named acyclic query support is merged; complete functions/collections remain planned | Backend support is per requested claim and cannot narrow native semantics |
-| Object/reference identity and model navigation | Complete model facet with explicit closed environments, conformance and dispatch | Native finite-graph admission/evaluation is merged for explicit bounded universes | Backend support is exactly the closure and capability available for each bounded universe |
-| Records, tuples, unions and their recursion rule | Complete value facet under AD-005; admits exactly the declaration graphs whose named and escaping edges make every cycle finite | Native record/tuple admission and evaluation is merged; union admission is planned | Backend support is per requested claim and cannot narrow native semantics |
-| Bounded future/past temporal syntax | Temporal profiles only; exact clock/root selection required | Native syntax and compiled-package production are merged | TL lowering/evaluation is limited to exact reviewed correspondences; unmatched clocks/history/operators refuse |
-| Static/dynamic choreography, compensation and protocol analyses | Complete protocol profile; business attempts, receipts, effects and recovery remain distinct | Finite syntax/package support is merged; dynamic/analyzer work remains planned | No evaluator executes business actions; each analyzer negotiates exact capability |
-| External OCL, SysML and FRETish forms | Output mappings only | Not source frontends | Each mapping reports preserved, conditional, unrepresented or refused meaning; no approximation |
-| Unbounded temporal properties, IEEE float, explicit conversion and proved recursion | Admitted by their exact complete-V1 facets; the unbounded temporal operator grammar edition is accepted by AD-012 | No blanket implementation claim; delivery is tracked per capability | Unsupported selected frontend/backend capabilities refuse explicitly without narrowing V1 |
-| Reflection, evaluator I/O, ambient stores and implicit lossy conversion | Integrity exclusions, not deferred product features | Not admitted | Explicit located refusal under every V1 facet |
+claim all profile implementations.
 
 ### Required diagnostic dispositions
 
@@ -145,22 +121,21 @@ edition-syntax rule above: it accepts the unbounded temporal operator grammar
 `quire.temporal.infinite-trace/v1` profile, without reinterpreting the
 bracketed-interval productions or any `0-draft` bytes.
 
-### Q1–Q12 disposition
+### Q1–Q11 disposition
 
 | Question | Final FS01 disposition / owner |
 | --- | --- |
 | Q1 unbounded logic | No global decidability claim. The infinite-trace facet defines unbounded temporal properties and sound proved/refuted/inconclusive results; finite evidence alone cannot prove infinite satisfaction. |
-| Q2 identity/name | Product/display name Quire, descriptive name native Quire, stable identity `ix:native`; any later public rename uses FS05 migration. |
+| Q2 identity/name | Product/display name Quire, descriptive name native Quire, stable identity `ix:native`. |
 | Q3 rejection depth | Lexical/syntax invalidity is distinct from recognized-but-unsupported source; both retain exact loci. |
 | Q4 object environment | Explicit finite typed current/pre/post universes and identity-bearing references; FS02/FS03 own model intake from the domain package and its semantics. |
 | Q5 collections | Sequence, set, bag and ordered-set semantics, explicit conversions, map/collect, flatten and fold/reduce are required in the complete value facet; the historical bounded profile remains unchanged. |
 | Q6 subtyping | The complete model facet defines closed conformance/substitutability, subsetting, redefinition and dispatch; ambiguous or unavailable closure refuses. |
 | Q7 fuel | Runtime work ceilings are distinct from semantic maxima; exhaustion is incomplete and cannot truncate meaning. |
-| Q8 compatibility | Edition, semantic profile, artifact wire, canonicalization, backend and release versions remain independent; FS05 owns migration. |
+| Q8 identity dimensions | Edition, semantic profile, artifact wire, canonicalization and backend identities remain independent. |
 | Q9 temporal | Native temporal profiles own meaning; TL profiles are internal targets behind exact correspondence. FS04 and temporal owners close delivery. |
 | Q10 crate layout | The current Rust package/module boundary remains implementation-owned; split only for an independently versioned consumer interface. |
 | Q11 ADR-0053 | Contract-IR PR #72 accepted native Quire-only source authority; external languages are mappings and the reference/bounds gate remains explicit. |
-| Q12 tracking | QS #1 and this capability ledger are the plan of record; owning tickets and ledgers are updated immediately after merge. |
 
 ### Example discriminators
 
@@ -175,7 +150,7 @@ bracketed-interval productions or any `0-draft` bytes.
 | Choice | Rejected alternative | Consequence |
 | --- | --- | --- |
 | Accept one native Quire language charter and the composed profile hierarchy | Adopt the temporary `state-finite/1-draft` replacement or separate family languages | Historical bytes remain stable while state, temporal and protocol grow through explicit dependent facets. |
-| Accept profile identity separately from semantic revision acceptance and implementation | Mark every PR #15 draft implemented or leave all identities ambiguous | Owners can build against stable roles without overstating delivery; each semantic ticket freezes its exact definition. |
+| Accept profile identity separately from semantic revision acceptance and implementation | Mark every PR #15 draft implemented or leave all identities ambiguous | Owners can build against stable roles without overstating delivery. |
 | Fix exact rational, inheritance and pre-state rules in the composed definition set | Leave the old amendment's open questions attached to a dead candidate | `rational(n,d)`, normalization, nonzero/range proofs, child-profile monotonicity and eligible pre-state reads now have one drafted meaning for FS03 delivery. |
 | Retain the original ConfigVersion reference/bounds gate | Invent a maximum, erase `parent`, or treat the bounded worked example as the original model | The original subject refuses until its spec artifacts declare the finite domain and the relationship explicitly. |
 | Accept the PR #15 architecture boundary | Make an executable IR, TL form or backend the language | Normative language meaning remains independent of each consumer representation and support set. |
@@ -184,7 +159,6 @@ bracketed-interval productions or any `0-draft` bytes.
 
 | Risk / scenario | Required control | Owner / next work |
 | --- | --- | --- |
-| Identity acceptance is mistaken for complete semantic adoption | Every definition and ledger keeps separate defined, implemented and qualified status. | A; FS02–FS06 |
 | The superseded first-profile candidate is silently enabled | Frontends refuse its unavailable identity; no alias maps it to historical or composed profiles. | A; compiler inventory/evolution tests |
 | A backend capability widens source admission | Admission completes before backend selection; unsupported source never reaches lowering as an admitted subject. | Compiler/backend owners |
 | A model gap is repaired in the language by inference | Missing bounds, presence, relationships and closure refuse until the spec artifacts declare them. | A; FS02/FS03 |

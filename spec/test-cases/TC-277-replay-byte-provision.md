@@ -44,7 +44,6 @@ recompilation outcome.
 | BP-07 | BP-06 with one dependency entry's source bytes replaced by an edit that changes that dependency's `package_id` (digests updated to match the new bytes) | Refused `stale_dependency`/`byte-digest-mismatch` in the recompile, at the import that records the old `package_id`; no result | FR-323-AC-7 |
 | BP-08 | BP-06 with the two `dependencies` entries swapped; then with one entry repeated; then with an extra entry no import reaches | Refused `invalid_package`/`invalid-value` at `/package/dependencies`, the first two before any recompile | FR-323-AC-7 |
 | BP-09 | BP-06 with one `dependencies` entry removed | Refused `missing_import`/`missing-selection` at the import the entry supplied | FR-323-AC-7 |
-| BP-10 | BP-06 with one entry's `version` changed | Refused `stale_dependency`/`revision-mismatch` at the import the entry supplies | FR-323-AC-7 |
 | BP-11 | BP-06 with one entry's `package_id` changed and its sources intact | Refused `stale_dependency`/`byte-digest-mismatch` naming that entry's `identity`, its `package_id` and the recompiled one; no result | FR-323-AC-7 |
 | BP-12 | BP-06 with a second entry whose source has the authority and identity of the first entry's source | Refused `invalid_package`/`conflicting-definition` naming both entries, before any recompile | FR-323-AC-7 |
 

@@ -19,19 +19,20 @@ When a verification provider returns a method result, the producer SHALL use the
 ## Properties
 
 - `contract_version` — exactly `quire.method-result/v1`.
-- `run_id` — request, provider, implementation, toolchain and option identity.
+- `run_id` — request, provider and option identity.
 - `subject_claim` — exact obligation and claimed strength.
 - `outcome` — proved, refuted, tested, observed, inconclusive, unsupported, incomplete or failed.
 - `assumptions_domain` — exact premises and explored domain.
 - `witness` — proof reference, test observations, strategy or counterexample.
 - `coverage` — explored items/transitions/branches and omitted scope.
-- `provenance` — package, model, observations, ecosystem lock and timestamps as metadata.
+- `provenance` — package, model, observations and timestamps as metadata.
 
 ## Identity and validation
 
 The result key is (`run_id`, canonical result content). Outcome strength cannot be inferred from provider name or artifact extension.
-Unknown contract versions, missing required properties, duplicate keys,
-out-of-domain values and non-canonical encodings refuse before consumption.
+A document whose `contract_version` is not that identifier, missing required
+properties, duplicate keys, out-of-domain values and non-canonical encodings
+refuse before consumption.
 
 ## Acceptance Criteria
 
@@ -45,8 +46,3 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 - [interface_015](./interface_015-method-result.md) owns the operation boundary.
 - FR-192 owns the behavior that produces or consumes this value.
-
-## Status
-
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.

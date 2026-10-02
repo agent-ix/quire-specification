@@ -61,7 +61,7 @@ and no V1 scope.
 | RT | `agent-ix/quire-contract-runtime` | `no_std` native runtime ops and host-callable function ABI. |
 | CG | `agent-ix/quire-contract-codegen` | Capability negotiation, generated oracles, bounded Kani harnesses, replay reconstruction and parity. |
 | FCD | `agent-ix/filament-core-data` | Domain-package producer (semantic IR bytes). |
-| QI | `agent-ix/quire-integration` | Current-head integration workspace (`heads/`). |
+| QI | `agent-ix/quire-integration` | Cross-repository integration tests. |
 
 Adding a semantic family means one edit per owning layer plus compiler-forced
 mapping arms. No layer reinterprets another layer's semantics, and every
@@ -118,7 +118,7 @@ resolves them. A ticket with an opened issue cites it, as in TK-04 (IR #144).
 | Accounting | `quire.value.accounting/v1` `ChargePoint`/`Meter` from the `quire-exact` kernel |
 | Source location | QSL is the only minter. `Span`/`LocatedSpan`/`SourceMap`, keyed by occurrence key (`node_id`, `role`, `ordinal`; FR-322 `source_map`). FCD `Locus` maps to `LocatedSpan` in intake. |
 | Capability point | Language admission only (QSL `Capability` takes its members from the FR-290 capability kinds; A08 #185 — QSL `main` has 4, `requests.rs:36`). Records `capability_report`; negotiates nothing. |
-| Canonical vectors / agreement | QSpec complete-value vectors, vendored by `xtask revendor` with `VENDOR.json` digests; `revendor-check` offline |
+| Canonical vectors / agreement | QSpec complete-value vectors, read by reference from the `quire_specification` crate |
 | Rejected item → substitute? | No. A package with an error diagnostic emits no checked package. |
 | Replay input / parity | QSL complete-V1 value evaluation is the semantics arrow 7 executes |
 
@@ -134,7 +134,7 @@ resolves them. A ticket with an opened issue cites it, as in TK-04 (IR #144).
 | Accounting | IR `CheckedPackageLimit` on the reader |
 | Source location | `source_map` carried as `CheckedSourceMapEntry` by occurrence key (`node_id`, `role`, `ordinal`), as minted by QSL; never re-minted |
 | Capability point | None. IR is not a second language authority; `capability_report` is data for arrow 4. |
-| Canonical vectors / agreement | QSpec I04 vectors; QSL-emit ↔ IR-read round trip over I04 and function fixtures (heads workspace); wire string ↔ enum conversions total and mutation-tested |
+| Canonical vectors / agreement | QSpec I04 vectors; QSL-emit ↔ IR-read round trip over I04 and function fixtures (QI); wire string ↔ enum conversions total and mutation-tested |
 | Rejected item → substitute? | No. A refused package yields no IR package. |
 | Replay input / parity | The v2 `source_map` is arrow 7's occurrence-key → span resolver input |
 
@@ -183,22 +183,13 @@ resolves them. A ticket with an opened issue cites it, as in TK-04 (IR #144).
 | Accounting | `OPEN — decided in WP8`: harness-generation accounting owner |
 | Source location | Inherited from arrow 4 tags |
 | Capability point | Same point as arrow 4 |
-| Canonical vectors / agreement | Harness goldens against the pinned Kani toolchain (see Kani tool pin table below). |
+| Canonical vectors / agreement | Harness goldens. |
 | Rejected item → substitute? | No harness for any item not settled `supported` |
 | Replay input / parity | `KaniObligationIdentity.arguments` is the reconstruction schema for arrow 7 |
 
-**Kani tool pin** (measured; source: CG `origin/main` `a4b2a73`, `tc_025` lane)
-
-| Field | Value |
-| --- | --- |
-| `kaniVersion` | 0.67.0 |
-| `cbmcVersion` | 6.8.0 (`cbmc-6.8.0`) |
-| `rustToolchain` | `nightly-2025-11-21-x86_64-unknown-linux-gnu` |
-| `targetTriple` | `x86_64-unknown-linux-gnu` |
-| `launcherSha256` | `7f143a251d11c7e6e232bbf2cbccf56f9ce66a5f0107eeb3008698e6715f55d9` |
-| `driverSha256` | `683f3ad1216e67686a39b2fcd6dc661f5090574f55fde9dd407966dca42cbfad` |
-| Option set (in order) | `-Z function-contracts -Z concrete-playback --harness <symbol> --exact --unwind 4 --solver cadical --output-format regular --concrete-playback print` |
-| Load-bearing note | The two `-Z` flags (`function-contracts`, `concrete-playback`) are unstable Kani features on a nightly toolchain, so this pin is load-bearing: changing any pinned field above is a recorded evidence-identity change. |
+The harness runs with Kani's unstable `function-contracts` and
+`concrete-playback` features; CG's own toolchain files select the Kani and
+Rust versions.
 
 #### Arrow 6: → typed result
 
@@ -264,16 +255,14 @@ IR `STD-003`/`TC-051` pattern.
 | Rejected item → substitute? | No verdict is synthesized for a refused decode |
 | Replay input / parity | Parity = identical verdict under the same package and input domain |
 
-**Seed counterexample vector** (seed, not yet vendored; source: measured by
-agent-e-claude on CG `a4b2a73` tc_025 lane, local run; the `concrete_vals`
-also appear in IR PR #139 tc_042; WP9 vendors the full vector)
+**Seed counterexample vector** (source: measured on the CG tc_025 lane, local
+run; the `concrete_vals` also appear in IR tc_042; IR owns the full vector as
+data)
 
 | Field | Value |
 | --- | --- |
 | `obligationIdentitySha256` | `OPEN — decided in QSL ADR-013 TK-05`: regenerated under the arrow-5 obligation identity after TK-07 defines its FR-201 digest domain (QC-4, QC-14) |
-| `harnessSha256` | `OPEN — decided in QSL ADR-013 TK-05`: regenerated with `obligationIdentitySha256`, because the harness embeds the obligation identity (QC-14) |
 | `oracleDigest` | `3330ec9bcd3a211a90ce3230f97989ac7438dfb59d7291acb80287e8e0aef021` |
-| `runtimeRevision` | `4e330525be513fe57c67717dc22b969d36656b85` |
 | `unwind` | 4 |
 | `solver` | `cadical` |
 | `exitCode` | 1 |
@@ -285,7 +274,7 @@ also appear in IR PR #139 tc_042; WP9 vendors the full vector)
 | --- | --- | --- |
 | Packet | IR | `CounterexamplePacket.source: ReplaySource { Witness(Witness), Input(values) }`. A packet holds exactly one arm, never both, and carries the failing node's occurrence key (QC-8; see arrow 5). Arrow 6 builds `Witness` packets. `OPEN — decided in WP9`: the component that builds `Input` packets. |
 | Replay request | QSL (#231) | Carries the S1–S4 stage limits copied from the package's proving run; the replay recompile runs under exactly those limits (QC-8; QSL ADR-013 O-26). |
-| Witness shape | IR (IR PR #139, merged at `954c2f2`, `src/kani/witness.rs`; admission rule implemented by QSL ADR-013 TK-04 (IR #144)) | `Witness { transcript: String }`. `transcript` is the only field, and it is private. A `Witness` is admitted only through `Witness::parse`, including on deserialization; the stored transcript is the selected, trimmed assertion block, and `parse` refuses cover playback and a transcript with zero or several assertion blocks (QSL ADR-013 O-25). `harness_symbol()`, `check()`, `check_text()` and `concrete_values()` are fallible methods that re-derive their answer from `transcript` on every call. `decode(&[WitnessBinding])` is the only typing step and also reads `transcript`. |
+| Witness shape | IR (`src/kani/witness.rs`; admission rule implemented by QSL ADR-013 TK-04 (IR #144)) | `Witness { transcript: String }`. `transcript` is the only field, and it is private. A `Witness` is admitted only through `Witness::parse`, including on deserialization; the stored transcript is the selected, trimmed assertion block, and `parse` refuses cover playback and a transcript with zero or several assertion blocks (QSL ADR-013 O-25). `harness_symbol()`, `check()`, `check_text()` and `concrete_values()` are fallible methods that re-derive their answer from `transcript` on every call. `decode(&[WitnessBinding])` is the only typing step and also reads `transcript`. |
 | Reconstruction + parity comparator | CG replay adapter | Builds `WitnessBinding`s from `KaniObligationIdentity.arguments` |
 | Native executor | QSL | Public complete-V1 entry `CheckedPackage::call`, reached only through the QSL layer-6 `replay` facade, which selects the function by a typed `QualifiedName` (arrow 7) |
 | Replay result | QSL (#231) | One per-item replay result (QSL ADR-013 O-27) whose one member, `arm`, is a sum of two distinct arm types: the `Witness`-arm result and the `Input`-arm result. Each arm result holds exactly its arm's payload (`witness` or `input`), the native outcome (`native`) and a `settlement`: on agreement, `reproduced-with-evaluated-witness` for the `Witness` arm and `reproduced-without-witness` for the `Input` arm. |
@@ -360,7 +349,7 @@ layer-owned with a total conversion.
 | RT observation `ClauseKind{…,Guard,Consequent}` | Layer-owned | RT | Total IR `ClauseKind` → RT observation kind, with test |
 | Capability descriptions | Layer-owned: QSL `Capability` = language admission (FR-290 capability kinds); IR closed obligation-capability enum parsed at the wire edge | QSL / IR | Wire string ↔ enum total test |
 | Finite/unbounded bounds | Layer-owned | QSL `Extent`/`Population`; IR `bounded_domain`/`model_population` + single `requires-bound` predicate | v2 round trip; `requires-bound` table test |
-| Outcomes and stable diagnostic codes | Codes shared by catalog (QSpec `native-diagnostics.md`); typed causes layer-owned | Each layer: one `fn catalog_code(&self) -> CatalogCode`, exhaustive | Totality test against the vendored catalog (heads workspace) |
+| Outcomes and stable diagnostic codes | Codes shared by catalog (QSpec `native-diagnostics.md`); typed causes layer-owned | Each layer: one `fn catalog_code(&self) -> CatalogCode`, exhaustive | Totality test against the QSpec catalog |
 | Domain-package and model references | Layer-owned | QSL `DomainPackageRef` (FR-321), `ModelRef` | Crosses to IR only as v2 wire strings |
 | Accounting/work categories | Shared via kernel `ChargePoint` (kernel type under D-2) = `quire.value.accounting/v1` (#129 Q9) | `quire-exact` (`ChargePoint`) | `ChargePoint` lives in RT `src/exact/accounting.rs` (kernel-bound, moves with D-2). CG charge emission maps to kernel charge points. `OPEN — decided in WP5b`: RT charge agreement vs kernel `ChargePoint`. |
 | FCD identities | Layer-owned | FCD | Translated only in QSL `model::intake`; FCD conformance fixtures → admitted `DeclarationKey` set |
@@ -412,13 +401,12 @@ flowchart BT
 | `no_std` execution kernel | `quire-exact` (Owner decision 2) | Consumers: QSL evaluator, RT host ABI, CG oracles, footprint build |
 | Provider/oracle generation | CG | — |
 | Kani adapter + replay | CG | Replay needs the generator's schema |
-| Oracle-generation RT edge | Normal dependency with `features = ["exact"]` at rev `4e33052` (pre-RT #47), CG `Cargo.toml:18`; plus a dev-dependency at `:27` with `["proptest","exact"]` | Generated oracles call RT `exact` operators directly (`src/exact_scalar.rs:1370`, `use quire_contract_runtime::exact as rt;`); under the kernel fallback rule these calls read as RT `src/exact/`. Because the oracle calls `quire-exact` directly, it is not an independent expectation for a proof of a `quire-exact` operation, or of an RT op that calls one (QSL ADR-013 O-13; ADR-011 rule 8). |
-| Replay executor's QSL edge | Normal git dependency, added in WP9 (today CG `Cargo.toml:28` is a dev-dependency at rev `21c507e`) | The executor needs QSL's public complete-V1 entry at run time; the heads workspace detects rev drift. |
+| Oracle-generation RT edge | Normal dependency with `features = ["exact"]`, CG `Cargo.toml:18`; plus a dev-dependency at `:27` with `["proptest","exact"]` | Generated oracles call RT `exact` operators directly (`src/exact_scalar.rs:1370`, `use quire_contract_runtime::exact as rt;`); under the kernel fallback rule these calls read as RT `src/exact/`. Because the oracle calls `quire-exact` directly, it is not an independent expectation for a proof of a `quire-exact` operation, or of an RT op that calls one (QSL ADR-013 O-13; ADR-011 rule 8). |
+| Replay executor's QSL edge | Normal git dependency, added in WP9 (today CG `Cargo.toml:28` is a dev-dependency) | The executor needs QSL's public complete-V1 entry at run time. |
 
 The crate graph is acyclic over normal dependencies. QSL has no normal
 dependency on RT. The dashed IR root → QSL edge is outside this pipeline.
-CG → QSL becomes a normal dependency in WP9; the heads workspace detects rev
-drift. QSL's dev-dependency on CG is retired in WP9 (acceptance item),
+CG → QSL becomes a normal dependency in WP9. QSL's dev-dependency on CG is retired in WP9 (acceptance item),
 removing the QSL -dev→ CG → QSL loop.
 
 ### Domain-package intake boundary
@@ -449,32 +437,6 @@ removing the QSL -dev→ CG → QSL loop.
 | Frame obligation | Capability kind FR-290 `operation-contract`. Arrows 3–5: `unsupported` (warned) with a catalog code until IR lowers the FR-340 `state`/`frame` node into its Kani form (IR#109). Arrow 2 already carries it. Runtime frame violations: `frame_violation`/`unauthorized-change` (#129 Q7). Subject ABI = the FR-340 `modifies`/`creates`/`deletes` sets of v2 node keys (`CheckedNodeId`) of `relation`/`model` nodes; each resolves to its `DeclarationKey` through the package's model correspondence. `OPEN — decided in WP10`: IR Kani frame lowering and CG frame-harness file list. |
 | Unbounded construct | IR `requires-bound` is the single predicate. CG negotiation maps it to `requires-bound` (finite bound available) or `unsupported` (warned, E07). Neither emits an oracle or harness. |
 
-### Current-head integration
-
-`quire-integration/heads/` is a separate Cargo workspace, outside QI's product
-crate and qualified build.
-
-| Part | Contract |
-| --- | --- |
-| `heads/heads.toml` | Checked manifest: repo → full SHA for QSL, IR, RT, CG, FCD, quire-rs, QSpec. `make heads-update` writes `origin/main` SHAs (optionally `--pr repo#n`). |
-| `heads/Cargo.toml` | One member, `heads-check`; `[patch."<git url>"]` maps every pipeline crate to `.heads/` worktrees at the manifest SHAs, so every pinned rev of a source resolves to the one head |
-| `make heads` | `git worktree add --detach` at manifest SHAs, refusing dirty or unmanifested trees; builds and tests `heads-check`; runs the checks below |
-
-| # | Drift check | Detects |
-| --- | --- | --- |
-| 1 | QSL emits v2 for the I04 corpus; IR `read`+`lower` accept; clause/tag wire strings total both ways | QSL/IR vocabulary mismatch |
-| 2 | FCD extraction-frontend on FCD conformance fixtures → QSL intake; `DeclarationKey` set and `Extent` equal expected | QSL/domain-package identity and population mismatch |
-| 3 | CG compiles against RT head | Runtime/Codegen API gaps |
-| 4 | Every `VENDOR.json`/`PROVENANCE*` file blob equals the source repo at its declared pin; pin ≤ manifest head; lag reported | Copied or stale vectors |
-| 5 | RT footprint and Kani gate built with the union of consumer features (`exact`) | Missing feature flags |
-| 6 | `cargo tree -d` empty for quire crates (one instance per package) | Downstream compiling against obsolete APIs |
-| 7 | Every layer's `catalog_code()` total and inside the vendored catalog | Incompatible result/refusal mappings |
-
-- Immutable release pins are unchanged: each repo's `Cargo.toml`/`Cargo.lock` keep exact revs, and `[patch]` lives only in `heads/Cargo.toml`.
-- The heads workspace is a drift check only; AD-011 ecosystem locks are the qualified mechanism.
-- A green heads run precedes each per-repo pin-bump PR.
-- Hosted CI in IR, RT and CG is `workflow_dispatch` only; cross-stage evidence runs on a dev machine with pinned `cargo-kani`. The heads workspace is the drift check.
-
 ### Change scenarios
 
 Each table is the predicted touch set on the extension path. **All seven are
@@ -488,7 +450,7 @@ predictions, re-walked on landed code in WP11.**
 | Crates | `quire-spec-language`, `quire-exact`, `quire-contract-model`, `quire-contract-codegen` |
 | Repos | QSL, IR, CG (+ QSpec vector) |
 | Conversions | Checked node → v2 tag; IR `Operator` ↔ wire name (table row) |
-| Tests | QSpec complete-value vector; heads round trip; CG three-way agreement; mutation test on mapping |
+| Tests | QSpec complete-value vector; QSL-emit ↔ IR-read round trip; CG three-way agreement; mutation test on mapping |
 
 #### 2. Add one clause or execution-anchor kind
 
@@ -504,11 +466,11 @@ predictions, re-walked on landed code in WP11.**
 
 | Kind | Changes |
 | --- | --- |
-| Files | `quire-exact` `NodeKey` or QSL `model/key.rs`; QSpec vectors re-vendored |
+| Files | `quire-exact` `NodeKey` or QSL `model/key.rs`; QSpec vectors |
 | Crates | `quire-exact` or `quire-spec-language` |
-| Repos | QSL, QSpec; downstream pin bumps after a green heads run |
+| Repos | QSL, QSpec |
 | Conversions | `DeclarationKey` wire round trip |
-| Tests | Tests read expected digests from vendored vectors; heads stale-vendor check |
+| Tests | Tests read expected digests from QSpec vectors by reference; QSL-emit ↔ IR-read round trip |
 
 #### 4. Add an unbounded construct that Kani refuses
 
@@ -528,7 +490,7 @@ predictions, re-walked on landed code in WP11.**
 | Crates | FCD semantic IR / extraction-frontend; `quire-spec-language` |
 | Repos | FCD, QSL; nothing downstream |
 | Conversions | Bound travels once as v2 `model_population` |
-| Tests | Heads FCD fixture → admitted `Extent`; v2 round trip |
+| Tests | FCD conformance fixture → admitted `Extent`; v2 round trip |
 
 #### 6. Produce and replay a counterexample with a nested source location
 
@@ -557,7 +519,7 @@ predictions, re-walked on landed code in WP11.**
 | 1 | Accept AD-016. |
 | 2 | `quire-exact` kernel crate in the QSL repo (D-2), with the fallback rule. |
 | 3 | Extend Q14 (complete-V1 executor) to Kani counterexample replay. |
-| 4 | Answer ADR-005: CG `kani_obligations` generates harnesses, and the Kani pin table is the tool pin. |
+| 4 | Answer ADR-005: CG `kani_obligations` generates harnesses. |
 | 5 | CG → QSL normal dependency (WP9). |
 | 6 | Renames of `CanonicalDigest`/`DeclarationKey`/`CheckedPackage` deferred until the owner asks. |
 
@@ -572,14 +534,12 @@ predictions, re-walked on landed code in WP11.**
 | Replay: packet in IR, reconstruction in CG, executor in QSL | Reconstruction sits with the schema that types Kani's byte vectors. |
 | Shared `quire-exact` kernel in the QSL repo (Owner decision 2) | One value/outcome/accounting implementation; RT agreement suite checks it against QSpec vectors. |
 | All other concepts layer-owned with one exhaustive `catalog_code()` per layer | Codes stay stable; typed causes stay local. |
-| Current-head workspace in QI `heads/` | Drift is detected before pin bumps without touching release pins. |
 
 ## Risks
 
 | Risk | Control |
 | --- | --- |
 | A layer silently drops or approximates an item | Ledger-completeness test; no substitute artifact after refusal. |
-| Cross-repo drift goes unseen (hosted CI is dispatch-only) | `make heads` drift checks precede every pin bump. |
 | Kernel extraction weakens independent cross-checking | Agreement suite retargeted to QSpec canonical vectors. |
 | Mapping tables go partial | Exhaustive matches with no `_` arm; `cargo mutants` on mapping fns. |
 | RT call state does not hold under function application | The call-state contract's four points; a failed reentrancy or location test reopens the call-state/identity boundary. |
@@ -592,9 +552,8 @@ predictions, re-walked on landed code in WP11.**
 | 2 | One owner and typed contract per boundary | WP2 (decision); WP6, WP7, WP9 (implemented) |
 | 3 | Shared vs layer types decided with total conversion tests | WP2; WP5a, WP5b; WP6; WP7 |
 | 4 | Cycle-free, consumer-justified crate graph | WP2; WP5b; WP9 |
-| 5 | Current-head build detects drift without weakening pins | WP4 (WP3 partial) |
-| 6 | Function application end to end with agreement evidence | WP6, WP8, WP9 |
-| 7 | Frame and unbounded scenarios yield typed refusal/qualification | WP2 (decision); WP10 |
-| 8 | Exemplar needs no unrelated central edits or copied vocabularies | WP5a, WP5b, WP7; verified in WP11 |
-| 9 | No new V1 scope | WP1, WP2 |
-| 10 | A08–A14 and E03–E07 mapped onto the path | WP11 |
+| 5 | Function application end to end with agreement evidence | WP6, WP8, WP9 |
+| 6 | Frame and unbounded scenarios yield typed refusal/qualification | WP2 (decision); WP10 |
+| 7 | Exemplar needs no unrelated central edits or copied vocabularies | WP5a, WP5b, WP7; verified in WP11 |
+| 8 | No new V1 scope | WP1, WP2 |
+| 9 | A08–A14 and E03–E07 mapped onto the path | WP11 |

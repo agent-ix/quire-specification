@@ -6,8 +6,6 @@ status: complete
 relationships:
   - target: ix://agent-ix/quire-specification/FR-014
     type: references
-  - target: ix://agent-ix/quire-specification/FR-016
-    type: references
   - target: ix://agent-ix/quire-specification/FR-018
     type: references
   - target: ix://agent-ix/quire-specification/FR-032
@@ -25,15 +23,14 @@ relationships:
   refusal before semantic use.
 - [x] **FR-015/018**: preserve independent canonical identity domains and exact
   verification-JCS derivation.
-- [x] **FR-016/032**: preserve historical selections and require explicit,
-  separately identified migration for changed meaning.
+- [x] **FR-032**: refuse an unsupported required feature.
 - [x] **FR-130**: retain outer composed-package identity separately from each
   inner semantic profile and payload wire.
 
 ### Non-functional requirements
 
-- [x] **NFR-001–003**: zero historical byte drift, no inferred equivalence,
-  incomplete on resource exhaustion and refusal of unqualified identity reuse.
+- [x] **NFR-002–003**: incomplete on resource exhaustion and refusal of
+  unqualified identity reuse.
 
 ## Dependency Graph
 
@@ -60,7 +57,7 @@ status. TM-001 and TM-003 rows remain Planned.
 
 ### Specification and portable-control checks
 
-- [x] Validate FR-014–018, FR-032, FR-130, NFR-001–003 and their selected TC
+- [x] Validate FR-014, FR-015, FR-017, FR-018, FR-032, FR-130, NFR-002–003 and their selected TC
   artifacts with the installed Quire catalog.
 - [x] Confirm historical schema/vector bytes are untouched and every explicit
   refusal/incomplete boundary remains present.
@@ -93,7 +90,7 @@ continues owning TL-* libraries; no implementation lane is delegated here.
 
 | Task | Track | Owns (references) | Verified by (verifies) | Status |
 | --- | --- | --- | --- | --- |
-| Task-001 | A | FR-014–018, FR-032, FR-130, NFR-001–003 | TC-001–004, TC-030, TC-032 | done |
+| Task-001 | A | FR-014, FR-015, FR-017, FR-018, FR-032, FR-130, NFR-002–003 | TC-001–004, TC-030, TC-032 | done |
 
 ## Coordination Rules
 

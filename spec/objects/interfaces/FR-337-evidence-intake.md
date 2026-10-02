@@ -30,8 +30,9 @@ When a producer result enters the assurance evidence store, the producer SHALL u
 ## Identity and validation
 
 Evidence identity never substitutes for any subject, result, artifact or run identity. Intake is append-only; corrections supersede.
-Unknown contract versions, missing required properties, duplicate keys,
-out-of-domain values and non-canonical encodings refuse before consumption.
+A document whose `contract_version` is not that identifier, missing required
+properties, duplicate keys, out-of-domain values and non-canonical encodings
+refuse before consumption.
 
 ## Acceptance Criteria
 
@@ -45,8 +46,3 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 - [interface_020](./interface_020-evidence-intake.md) owns the operation boundary.
 - FR-310 owns the behavior that produces or consumes this value.
-
-## Status
-
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.

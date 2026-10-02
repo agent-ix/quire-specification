@@ -9,8 +9,6 @@ relationships:
     type: exercises
   - target: "ix://agent-ix/quire-specification/FR-015"
     type: exercises
-  - target: "ix://agent-ix/quire-specification/FR-016"
-    type: exercises
 ---
 # US-004: Retain evidence meaning across versions
 
@@ -34,9 +32,9 @@ This story originated the native finite-state slice and is accepted within the c
 
 ### US-004-EX-2
 
-- **Given** an unaccepted migration.
-- **When** I compare versions.
-- **Then** the unsupported join is reported.
+- **Given** two references whose content differs.
+- **When** I compare subjects.
+- **Then** no correspondence is established between them.
 
 ## Priority and Risk (Informative)
 
@@ -46,4 +44,3 @@ Priority: High. Confusing a source/model identity or incomplete execution with a
 
 - [FR-014](../functional/foundation/FR-014-read-exact-wire.md)
 - [FR-015](../functional/foundation/FR-015-preserve-canonical-domains.md)
-- [FR-016](../functional/foundation/FR-016-migrate-explicitly.md)

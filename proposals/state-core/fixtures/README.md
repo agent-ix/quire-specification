@@ -35,10 +35,9 @@ unsupported, stale and incomplete mutations and expected diagnostics for later
 independent readers. Expected diagnostics are assertions to implement, not
 observed tool output.
 
-Reproduce the fixture byte/source checks from this directory:
+Reproduce the fixture source-span checks from this directory:
 
 ```sh
-sha256sum --check SHA256SUMS
 python3 - <<'PY'
 import hashlib, json
 from pathlib import Path
@@ -74,9 +73,7 @@ frozen or registered. Source-language edition and semantic profile remain
 unchanged. Old fixture bytes and their identities stay associated with their
 original revision rather than being rewritten as current evidence.
 
-The checksum command verifies this file set only. It does not validate language
-syntax, imported model semantics, canonical identity, logical outcomes or the
-claimed diagnostic behavior. Full compiler integration acceptance still needs real model intake,
+Full compiler integration acceptance still needs real model intake,
 parser, linker, evaluator, generated backend and clean-consumer execution.
 
 Operation fixtures now use `agent-a-invocation-cases/1-draft`. Each case selects

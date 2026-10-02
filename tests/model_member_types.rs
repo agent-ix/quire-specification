@@ -11,10 +11,8 @@
 //! projection over a `deref` result.
 
 use ix_trace_rs::trace;
-use quire_verification::contracts::jcs_sha256;
-use quire_verification_contracts::operation_catalog::{
-    CHECKED_OPERATION_CATALOG_V1, CHECKED_OPERATION_CATALOG_V1_SHA256,
-};
+use quire_verification_contracts::jcs_sha256;
+use quire_verification_contracts::operation_catalog::CHECKED_OPERATION_CATALOG_V1;
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -70,7 +68,6 @@ fn declaration_preimage(package: &Value, tag: &str, form: &str, node: &str) -> V
         "owner": {
             "kind": "model",
             "identity": package["identity"],
-            "version": package["version"],
             "node": node
         },
         "body": {"term": "aggregate", "members": []}
@@ -412,7 +409,7 @@ fn tc_280_model_declaration_node_vectors_recompute_and_recover_only_selected_own
             .validate(preimage)
             .unwrap_or_else(|error| panic!("{name} validates: {error}"));
         assert_eq!(digest(preimage), text(vector, "sha256"), "{name} digest");
-        let selected = preimage["owner"]["version"] == package["version"];
+        let selected = preimage["owner"]["identity"] == package["identity"];
         let recovered = recover(
             package,
             text(vector, "sha256"),
@@ -422,7 +419,7 @@ fn tc_280_model_declaration_node_vectors_recompute_and_recover_only_selected_own
         assert_eq!(
             recovered.is_some(),
             selected,
-            "{name} recovers exactly when its owner is the selected version"
+            "{name} recovers exactly when its owner is the selected domain package"
         );
 
         let mut named_body = preimage.clone();
@@ -706,17 +703,6 @@ fn projection(catalog: &Value, package: &Value, nodes: &[Value], case: &Value) -
         Some(member_type) if *member_type != case["result_type"] => ineligible(),
         _ => derived,
     }
-}
-
-/// FR-322 and the checked-package README state this rev's digest; the crate's own
-/// constant is the measurement they are checked against.
-#[trace("TC-281", "FR-322-AC-33")]
-#[test]
-fn tc_281_the_stated_catalog_digest_is_the_one_read() {
-    assert_eq!(
-        CHECKED_OPERATION_CATALOG_V1_SHA256,
-        "9c3c40a14e386d98e03f2dea2a29bd5590c83e00e0533cdd9c62a1fe747461df"
-    );
 }
 
 #[trace("TC-281", "FR-322-AC-33")]

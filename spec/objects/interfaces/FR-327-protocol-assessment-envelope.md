@@ -23,14 +23,14 @@ When a protocol claim is submitted to an analyzer, the producer SHALL use the im
 - `claim` — conformance, projection, realizability, composition or refinement with exact strength.
 - `subject` — checked protocol plus observations or finite model.
 - `premises` — closure, fairness, channel, population and environment assumptions.
-- `provider` — selected capability/profile/options and implementation pin.
+- `provider` — selected capability, profile and options.
 - `result` — FR-240 canonical result or analyzer-specific non-conclusive result.
 - `witness` — strategy, trace set, counterexample or incompatibility core with source mapping.
 
 ## Identity and validation
 
 The request and result keep claim kind, strength and premise identities independent; display labels never identify them.
-Unknown contract versions, missing required properties, duplicate keys,
+A document whose `contract_version` is not `quire.protocol.assessment/v1`, missing required properties, duplicate keys,
 out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Acceptance Criteria

@@ -18,12 +18,12 @@ temporal/observation and protocol APIs while preserving every result axis.
 
 ## Target Integration
 
-The local Rust facade calls pinned domain-library APIs directly and emits I10
+The local Rust facade calls domain-library APIs directly and emits I10
 execution bundles; no hosted service or mock evaluator participates.
 
 ## Preconditions
 
-All component crates build with the ecosystem lock and use distinct local state.
+All component crates build locally and use distinct local state.
 
 ## Inputs
 
@@ -36,8 +36,8 @@ healthy, violating, incomplete, unsupported and exhausted cases.
    - IT-071-SC-01: domain results match their standalone results.
 2. Compose the returned results.
    - IT-071-SC-02: ordering, prerequisites and independent axes are preserved.
-3. Replay the same inputs and mutate one pin.
-   - IT-071-SC-03: equal locks reproduce; changed pins create distinct runs.
+3. Replay the same inputs.
+   - IT-071-SC-03: equal inputs reproduce byte-identical bundles.
 
 ## Expected Results
 

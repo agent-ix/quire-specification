@@ -19,12 +19,12 @@ domains, dependencies and non-conclusive results.
 
 ## Target Integration
 
-Pinned planner and method-provider Rust APIs exchange I14/I15 envelopes in local
+Planner and method-provider Rust APIs exchange I14/I15 envelopes in local
 processes or isolated Rust executables according to their manifests.
 
 ## Preconditions
 
-Every provider manifest and tool/options pin is present in the ecosystem lock.
+Every provider manifest is available locally.
 
 ## Inputs
 

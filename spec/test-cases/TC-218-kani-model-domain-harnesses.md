@@ -11,11 +11,11 @@ relationships:
 
 ## Description
 
-Generate boundary harnesses from exact domains and inspect missing-bound, unsupported and pin accounting.
+Generate boundary harnesses from exact domains and inspect missing-bound, unsupported and obligation accounting.
 
 ## Test Procedure
 
-Use the exact version-locked subject and inputs named by FR-196. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
+Use the subject and inputs named by FR-196. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
 ## Expected Results
 

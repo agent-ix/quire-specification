@@ -46,8 +46,7 @@ When a checked package is executed or replayed, the producer SHALL use the immut
      entry's source as `invalid_package`/`conflicting-definition`, naming
      both; then the recompile's own refusals, FR-307's among them: an import whose
      identity no entry supplies refuses `missing_import`/`missing-selection`,
-     one whose version differs from its entry's
-     `stale_dependency`/`revision-mismatch`, and one whose recorded `d`
+     and one whose recorded `d`
      differs from the `package_id` its entry's sources recompile to
      `stale_dependency`/`byte-digest-mismatch`;
   3. a recompiled proved `package_id` other than the request's refuses
@@ -95,8 +94,8 @@ category's verdict.
 
 ## Identity and validation
 
-Request identity includes every semantic input and limit. Result identity additionally includes implementation/toolchain pin and canonical per-item results.
-Unknown contract versions, missing required properties, duplicate keys,
+Request identity includes every semantic input and limit. Result identity additionally includes the canonical per-item results.
+A document whose `contract_version` is not `quire.native-runtime/v1`, missing required properties, duplicate keys,
 out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Acceptance Criteria
@@ -109,7 +108,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-4 | The outcome-to-verdict map assigns one verdict per QSL ADR-013 O-16 category, fixed independently of any request; an `Undefined` outcome and a refused `FamilyOutcome` never settle agreement. | Test (TC-273) |
 | FR-323-AC-5 | A replay request's `byte_provision` supplies every source, definition and domain-package input the replay recompiles, each keyed by its declared digest domain and digest; the `package` reference's `RawSourceRef` digests are exactly the source and definition digests the executor recomputes and compares, and the executor reads no recompilation input by path, environment variable or search location. | Test (TC-277) |
 | FR-323-AC-6 | A replay request's `replay` property carries the `ReplaySource`, the selected function's `QualifiedName`, arguments keyed by parameter node id, the semantic profile selections, the failing node's occurrence key, the proof bounds and declared domains, the trace position and the `backend` member; a non-replay request carries no `replay` property. | Test (TC-278) |
-| FR-323-AC-7 | A replay request's `package` reference names the proved package's own `sources` and one `dependencies` entry per `dependency_selections` entry, in its order, each carrying that selection's `identity`, `version` and `package_id` and the dependency's own lock `sources`. The executor refuses by the first rule of its order: swapped or repeated entries `invalid_package`/`invalid-value` at `/package/dependencies` before any recompile; an entry whose source shares the authority and identity of another source `invalid_package`/`conflicting-definition` naming both; a removed entry `missing_import`/`missing-selection`; an entry with a changed version `stale_dependency`/`revision-mismatch`; an entry whose sources recompile to a `package_id` other than the import's `stale_dependency`/`byte-digest-mismatch`; an entry no import reaches `invalid_package`/`invalid-value`; and an entry whose `package_id` alone is changed `stale_dependency`/`byte-digest-mismatch` naming its `identity`, its `package_id` and the recompiled one. None yields a result. | Test (TC-277) |
+| FR-323-AC-7 | A replay request's `package` reference names the proved package's own `sources` and one `dependencies` entry per `dependency_selections` entry, in its order, each carrying that selection's `identity`, `version` and `package_id` and the dependency's own lock `sources`. The executor refuses by the first rule of its order: swapped or repeated entries `invalid_package`/`invalid-value` at `/package/dependencies` before any recompile; an entry whose source shares the authority and identity of another source `invalid_package`/`conflicting-definition` naming both; a removed entry `missing_import`/`missing-selection`; an entry whose sources recompile to a `package_id` other than the import's `stale_dependency`/`byte-digest-mismatch`; an entry no import reaches `invalid_package`/`invalid-value`; and an entry whose `package_id` alone is changed `stale_dependency`/`byte-digest-mismatch` naming its `identity`, its `package_id` and the recompiled one. None yields a result. | Test (TC-277) |
 
 ## Dependencies
 

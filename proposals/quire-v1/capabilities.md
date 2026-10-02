@@ -3,14 +3,14 @@
 This 2026-09-10 grouping is retained for decision and evidence history. It is
 not the current scope authority because its 51 rows combine independently
 deliverable capabilities and inherited exclusions. The current authority is the
-[Plan-008 atomic inventory](../../docs/v1-capability-inventory.md), owned by
+[atomic capability inventory](../../docs/v1-capability-inventory.md), owned by
 [standard #1](https://github.com/agent-ix/quire-specification/issues/1),
 [#9](https://github.com/agent-ix/quire-specification/issues/9) and
 [#63](https://github.com/agent-ix/quire-specification/issues/63). Every group ID
 below maps to one or more atomic rows; nothing in this historical file may
 defer, exclude or close an atomic row.
 
-The historical `V1`, `Later` and `Refuse` labels are superseded. Plan-008 splits
+The historical `V1`, `Later` and `Refuse` labels are superseded. The inventory splits
 each group into `Required` product obligations and `Integrity` obligations.
 Integrity obligations produce exact typed refusals for unsound claims,
 authority violations or prohibited side effects; they are implemented and
@@ -28,13 +28,13 @@ tracking reconciliation.
 | --- | --- | --- |
 | OWN | Owner handoff `/tmp/quire-spec-design-handoff.md`; [#10](https://github.com/agent-ix/quire-specification/issues/10) | All three families are v1 requirements; architecture and review precede implementation. |
 | RULE | [Native-source ruling](https://github.com/agent-ix/quire-contract-ir/issues/53#issuecomment-5611950216) and [reference correction](https://github.com/agent-ix/quire-contract-ir/issues/53#issuecomment-5612031500) | One source language, Rust production/qualification, output-only external mappings, state admission and retained reference design gate. |
-| PLAN | [Maintained research plan at `8d86f64`](https://github.com/agent-ix/quire-research/blob/8d86f64d5e4feafe8ace4165f3b83cab63703fc6/implementation-plan.md) | FS01–06, LC01–05, observation OB01–03, protocol PT01/PT02 and qualification owners; it is the approved delivery order. |
+| PLAN | Maintained research plan in `agent-ix/quire-research` | FS01–06, LC01–05, observation OB01–03, protocol PT01/PT02 and qualification owners; it is the approved delivery order. |
 | ARCH | [Accepted composed baseline PR #15](https://github.com/agent-ix/quire-specification/pull/15) | State, temporal/protocol, relational and verification-plan subjects; clocks, correlation, compensation and distinct conformance claims. Its accepted review is the architecture baseline and is not repeated. |
-| DISC | [Original choreography research](https://github.com/agent-ix/quire-research/blob/8d86f64d5e4feafe8ace4165f3b83cab63703fc6/discovery/2026-09-07-choreography-research/architecture.md) | Product examples and proposed features only. FRETish authoring, implied solver capabilities, endpoint-as-role and automatic monitor qualification claims are superseded or unestablished. |
+| DISC | Original choreography research in `agent-ix/quire-research` | Product examples and proposed features only. FRETish authoring, implied solver capabilities, endpoint-as-role and automatic monitor qualification claims are superseded or unestablished. |
 | STATE | [Native compiler `v0.2.0`](https://github.com/agent-ix/quire-spec-language/tree/v0.2.0), especially `src/checking`, `src/runtime`, `src/linking`, `src/lowering` and `examples/config-version` | Composed parsing/linking/checking, state/operation runtime, protocol artifact production and bounded-scalar oracle/proptest/Kani agreement are landed. Object/graph/collection Kani and the independent native/TL bridge remain open. |
-| ADOPT | [State definition](../state-core/profile.md), [semantics](../state-core/state-semantics.md), [internal adoption](../../docs/internal-implementation-adoption.md) | Actual state foundation; not the full official language. |
-| TL | [Syntax `842d825`](https://github.com/agent-ix/tl-syntax/tree/842d82553f045eb69a7f38745756d968254fc25e), [parser `00c1b8d`](https://github.com/agent-ix/tl-parse/tree/00c1b8debf5a35774c7230ba48f93ab7df071677), [evaluator `2286218`](https://github.com/agent-ix/tl-mltl/tree/22862189ac4eb515ab84928faec25b2eac47d835) and [rewrite `fe03f29`](https://github.com/agent-ix/tl-rewrite/tree/fe03f2967a7c313c19be1266be716acc1371c58e) owner revisions | Formula-v2, closed O/H/Y/S/T past syntax, clean-ASCII parsing, origin-complete evaluation/rewrites and owner-corpus replay are landed. Agent B retains TL maintenance; native composition remains qcir #71. |
-| TLE | [Current evaluator tree `2286218`](https://github.com/agent-ix/tl-mltl/tree/22862189ac4eb515ab84928faec25b2eac47d835/src) | Finite-trace, pending-aware and origin-complete past evaluation is a reusable owner boundary. Its merged checks are not proof of native correspondence or execution of QSpec's matrix. |
+| ADOPT | [State definition](../state-core/profile.md), [semantics](../state-core/state-semantics.md) | Actual state foundation; not the full official language. |
+| TL | [Syntax](https://github.com/agent-ix/tl-syntax), [parser](https://github.com/agent-ix/tl-parse), [evaluator](https://github.com/agent-ix/tl-mltl) and [rewrite](https://github.com/agent-ix/tl-rewrite) | Formula-v2, closed O/H/Y/S/T past syntax, clean-ASCII parsing, origin-complete evaluation/rewrites and owner-corpus replay are landed. Agent B retains TL maintenance; native composition remains qcir #71. |
+| TLE | [Evaluator](https://github.com/agent-ix/tl-mltl) | Finite-trace, pending-aware and origin-complete past evaluation is a reusable owner boundary. Its merged checks are not proof of native correspondence or execution of QSpec's matrix. |
 | TIME | [FS04](https://github.com/agent-ix/quire-specification/issues/5), [closed temporal-authority #40 / PR #44](https://github.com/agent-ix/quire-specification/pull/44), [OB01](https://github.com/agent-ix/quire-research/issues/44), [OB02](https://github.com/agent-ix/quire-research/issues/45) | Accepted clock/boundary, activation, completeness, observation identity, claim-input and late-data authority; executable consumer work remains in TL, Contract-IR, observation and protocol tickets. |
 | PROTO | [PT01](https://github.com/agent-ix/quire-research/issues/47), [PT02](https://github.com/agent-ix/quire-research/issues/48), [choreography specification #12](https://github.com/agent-ix/quire-specification/issues/12) | Roles, channels, branching, parallelism, iteration, compensation and separate replay/conformance/projection obligations. |
 | BRIDGE | Closed Contract IR [#63/PR #67](https://github.com/agent-ix/quire-contract-ir/pull/67), [#64/PR #68](https://github.com/agent-ix/quire-contract-ir/pull/68) and [#70/PR #77](https://github.com/agent-ix/quire-contract-ir/pull/77); implementation [#71](https://github.com/agent-ix/quire-contract-ir/issues/71) remains open | FR-025 predicate projection is implemented and FR-026 temporal correspondence is specified. #71 owns the remaining bridge implementation. FRETish remains output-only. |
@@ -44,7 +44,7 @@ tracking reconciliation.
 ## Shared language and model capabilities
 
 Owner letters in the inspection tables retain their research-time context.
-The current [cycle allocation](https://github.com/agent-ix/quire-research/blob/roadmap/native-language-foundation/initial-spec-cycle.md)
+The current cycle allocation (`agent-ix/quire-research`)
 governs new work: B protocol/results, E temporal, F observation/consumers,
 A common language, model intake and integration. C continues
 engineering-assurance completion and has no new language drafting assignment.
@@ -70,7 +70,7 @@ engineering-assurance completion and has no new language drafting assignment.
 | V1-012 | Integer division/remainder, floating point, NaN, infinity, saturation or implicit integer-to-rational conversion | Split by atomic inventory | RULE; A | Integer division and explicit IEEE floating semantics are required; implicit conversion and unrequested saturation remain integrity boundaries. |
 | V1-013 | Independently authored absence, explicit null, required presence and multiplicity preserved distinctly or explicitly refused | V1 | MODEL, RULE; A | Spec artifacts declare presence, null and multiplicity independently; the domain package carries them and QSL model intake checks them. No native field-presence grammar is presumed. |
 | V1-014 | Typed acyclic value containment; enums, text and exact units where their selected scalar contract admits them | V1 | MODEL, STATE; A | Existing state/model foundation; cross-profile payload admission needs agreement. |
-| V1-015 | Finite ordered duplicate-preserving sequences; bounded quantification and collection operations needed by authored state rules | V1 | RULE, ADOPT; A | FS03 accepts the exact ordered query catalog, duplicate semantics, empty identities, checked prefixes and declared maximum ≤10,000; executable coverage remains partial. |
+| V1-015 | Finite ordered duplicate-preserving sequences; bounded quantification and collection operations needed by authored state rules | V1 | RULE, ADOPT; A | FS03 accepts the exact ordered query catalog, duplicate semantics, empty identities, checked prefixes and an authored maximum per wrapper; executable coverage remains partial. |
 | V1-016 | Sets, bags, implicit collection conversions and recursive value containment | Required | RULE; A | All named collection and containment capabilities are V1 work; no name-based emulation with sequences. |
 | V1-017 | Finite object populations, explicit references, identity comparison and exact reachability as a separately versioned state-graph facet | V1 | ARCH, ADOPT, STATE; A | FS03 accepts the explicit graph-profile extension beyond the first state subset. QSL implements native admission/evaluation; broader backend parity remains qcir #69. |
 | V1-018 | Record structural equality and ambient object lookup through opaque scalar IDs | Split by atomic inventory | RULE; A | Structural equality and explicit closed-environment lookup are required; ambient scalar-to-object navigation remains an integrity boundary. |
@@ -207,7 +207,7 @@ prevents an engine-backed coverage claim. All new cases stay Planned.
 
 ## Scope audit and long-term architecture
 
-The Plan-008 scope correction replaces inherited deferrals with atomic V1 work.
+The atomic inventory replaces inherited deferrals with atomic V1 work.
 The V1 boundary is chosen by the complete product inventory and semantic
 dependencies, not by the operators the current backend happens to implement.
 

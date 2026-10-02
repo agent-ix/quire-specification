@@ -22,7 +22,7 @@ complete loss and capability accounting.
 ## Inputs
 
 Checked or target-neutral package, consumer profile, requested outputs and
-toolchain/options lock.
+consumer options.
 
 ## Outputs
 

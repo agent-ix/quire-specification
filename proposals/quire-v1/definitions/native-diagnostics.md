@@ -6,7 +6,7 @@ proposed and is not adopted or fully implemented.** This supplies the versioned 
 required by FR-047. It interprets native producer diagnostics in their existing
 result envelopes; it is not a clause profile, payload wire or evidence store.
 
-## Selection and compatibility
+## Selection
 
 The producer response selects this catalog's exact identity, revision and byte
 digest separately from its language/profile, payload wire and backend selections.
@@ -15,29 +15,17 @@ change a checked clause's static meaning. A different diagnostic interpretation
 does change the response's interpretation/provenance. No clause `using` alias
 can select this catalog or acquire source permissions from it.
 
-The following immutable compiler sources establish the retained code spellings
-and broad meanings. Only `Code::as_str()`'s spellings and the code/meaning table
-are selected; their implementation, envelope layouts and status-aggregation
-policy are not normative dependencies of this catalog. The typed refinements
-below supply this candidate's additional requirements.
-
-| Selected inventory | Exact source at quire-spec-language revision `f444d03c06539a6cd0ada6be4ae099b54466d9d9` | SHA-256 of file bytes |
-| --- | --- | --- |
-| Native Code spellings | [src/diagnostic.rs](https://github.com/agent-ix/quire-spec-language/blob/f444d03c06539a6cd0ada6be4ae099b54466d9d9/src/diagnostic.rs) | `c73eaf5a543c67d2187b976846c7253db9af4cc4f9bd23dc535921e91fbf136d` |
-| Broad code meanings | [docs/native-error-codes.md](https://github.com/agent-ix/quire-spec-language/blob/f444d03c06539a6cd0ada6be4ae099b54466d9d9/docs/native-error-codes.md) | `c447024767a3ebac8085383658547130d04741894aefae6a0afcb2e3683905a2` |
+This catalog selects the native producer code spellings that FR-271 lists,
+with their broad meanings, and the typed refinements below.
 
 Hyphenated and underscored spellings stay exact; they are not normalized aliases.
-A current compiler enum or its `non_exhaustive` annotation cannot silently extend
-this immutable selection. A new required code or cause variant needs a new
-catalog revision and explicit reader support. An unknown selection, code or
+A compiler enum or its `non_exhaustive` annotation cannot extend this
+selection. An unknown selection, code or
 required variant refuses interpretation of that diagnostic while retaining its
 original bytes and available provenance. It cannot be recast as a known failure,
 an empty diagnostic list or a successful assessment.
 
-Historical responses retain their original contracts. A legacy code plus message
-does not establish the new typed cause by substring matching. Where the old
-response lacks distinguishing data, its interpretation remains legacy/incomplete
-for this mapping; preserve it without fabricating a stronger new-catalog claim.
+A code plus message does not establish a typed cause by substring matching.
 
 ## Common structured context
 
@@ -77,7 +65,7 @@ context, but that context cannot replace a required cause field or variant.
 | `unknown_wire` | `unsupported-wire`; retain the actual selected wire and expected artifact role, even if its outer reference envelope is well formed. |
 | `unknown_required_feature` | `unknown-feature` or `unsupported-feature`; retain the feature and selected consumer/profile scope. A recognized name is not implementation support. |
 | `missing_import`, `missing_declaration` | `missing-selection` or `missing-name`; retain the requested typed dependency/name, owning scope and referring locus. During model intake, `missing-selection` retains the ModelSelection, and `missing-name` retains the referring IR node identity, the absent node identity, the source artifact id and the span. |
-| `stale_dependency`, `source_digest_mismatch` | `revision-mismatch`, `byte-digest-mismatch` or `digest-domain-mismatch`; retain expected and actual typed selections/digest domains where available. A missing artifact cannot supply an invented actual digest. |
+| `stale_dependency`, `source_digest_mismatch` | `revision-mismatch`, `byte-digest-mismatch`, `digest-domain-mismatch` or `content-mismatch`; retain expected and actual typed selections/digest domains where available. `content-mismatch` is a content identity a request retains that differs from the identity its subject carries, such as a node identity taken from another package; it retains both identities. A missing artifact cannot supply an invented actual digest. |
 | `ambiguous_declaration` | `ambiguous-name` or `conflicting-authority`; retain the visible name/clause and the distinct conflicting declaration/authority selections and loci. A `quire.checked-package/v2` reader reports two nodes carrying equal `declaration.qualified_name` values as `ambiguous-name`, retaining that name and both node keys in ascending digest order. |
 | `invalid_package` | `malformed-json`, `missing-member`, `duplicate-member`, `unknown-member`, `wrong-value-kind`, `invalid-value`, `definition-cycle`, `conflicting-definition`, `incompatible-definition`, `feature-set-mismatch`, `unknown-operation`, `operation-class-mismatch`, `operation-law-missing`, `operation-law-mismatch`, `operation-law-unselected`, `operation-mode-mismatch`, `operation-member-mismatch`, `operation-mode-type-mismatch`, `stale-node-key` or `declaration-nominal-mismatch`; retain the actual field/index path or dependency edges/feature sets appropriate to that variant. Under `quire.model.complete/v1`, `definition-cycle` also covers a call-graph cycle through a dispatch edge (FR-151) and retains the cycle's call edges in the FR-151 order. The eight operation variants (revision `1-draft.4`) retain the application node key, the pre-order ordinal of the application inside that node, the leaf path (empty for the operation itself) and the supplied operation identity and operator class, plus: `unknown-operation` nothing further; `operation-class-mismatch` the catalogued operator class; `operation-law-missing` the required law role; `operation-law-mismatch` the supplied law and the catalogued `DefinitionRef` set of its role; `operation-law-unselected` the unselected law `DefinitionRef`; `operation-mode-mismatch` the required mode kind (or none) and the supplied mode; `operation-member-mismatch` the required member kind (or none) and the supplied member; `operation-mode-type-mismatch` the supplied mode value and the set of mode values pinned by the operand and result types, all as published by `contracts/checked-operation-catalog-v1.json` in `agent-ix/quire-verification-contracts`. For a clause application (`temporal`, `protocol_control`, `state_transition`, `claim`) the law role is the profile-selection role the catalog names (`temporal_profile` or `protocol_profile`), the catalogued `DefinitionRef` set is the package lock's `profile_selections` of that role, and `operation-member-mismatch` for a `profile_operator` member also retains the operator set the selected profile defines. `stale-node-key` retains the application node key as retained, the recomputed `quire.application-node/v1` digest and the node's ordinal in the package graph. `declaration-nominal-mismatch` retains the node key, its `declaration.qualified_name` and its nominal `qualified_declaration`. |
 | `invalid_model_binding` | `wrong-artifact-role`, `wrong-model-selection`, `wrong-export`, `wrong-context`, `conflicting-binding`, `unpreserved-model-meaning`, `specialization-cycle`, `redefinition-target`, `derivation-conflict`, `malformed-declaration` or `port-direction`; retain the required/actual declaration or contract, referring location and affected meaning. Missing versus explicit null may not be collapsed into a generic absent value. `wrong-export` for a systems-model kind retains the required kind, the actual kind (`none` when the declaration maps to no kind) and both declaration keys. `specialization-cycle` retains the cycle's type declaration keys in path order. `redefinition-target` retains every redefining member's declaration key and the zero or several resolved targets. `derivation-conflict` retains both derivation paths and exposes no chosen effective member. `malformed-declaration` retains the IR node identity, the member path that is invalid, the source artifact id and the source span. `port-direction` retains the connection's declaration key, its declared `direction` and both ports' directions. Every model intake and model feature refusal also retains the source artifact id and span of the IR node it names. |
@@ -120,14 +108,12 @@ catalog-owned spellings of revision `1-draft.6`; and `inexact_decimal`,
 `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`,
 `ieee_not_exact`, `ieee_nan_payload_not_representable` and
 `ieee_rational_out_of_domain` are catalog-owned spellings of revision
-`1-draft.8`. Their spelling and causes are selected by this table even where
-the pinned compiler inventory above does not enumerate them; a producer claiming
+`1-draft.8`. Their spelling and causes are selected by this table; a producer claiming
 revision `1-draft.3` or later emits `ambiguous_dispatch` and
 `foreign_reference`, one claiming `1-draft.5` or later emits
 `invalid_capability`, and one claiming `1-draft.6` or later emits
 `duplicate_selection` and `stage_limit_exceeded`, and one claiming `1-draft.8`
-or later emits the ten revision-`1-draft.8` codes, each with these closed causes, and a re-pinned
-compiler inventory must agree with them.
+or later emits the ten revision-`1-draft.8` codes, each with these closed causes.
 
 Revision `1-draft.4` adds the eight `invalid_package` operation variants,
 `stale-node-key` and `declaration-nominal-mismatch` above, the V2

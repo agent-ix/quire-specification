@@ -30,8 +30,9 @@ When a protocol declaration completes static checking, the producer SHALL use th
 ## Identity and validation
 
 The key is (`contract_version`, `definition`, canonical checked content). Occurrence identities and runtime observations are excluded.
-Unknown contract versions, missing required properties, duplicate keys,
-out-of-domain values and non-canonical encodings refuse before consumption.
+A document whose `contract_version` is not that identifier, missing required
+properties, duplicate keys, out-of-domain values and non-canonical encodings
+refuse before consumption.
 
 ## Acceptance Criteria
 
@@ -45,8 +46,3 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 - [interface_008](./interface_008-checked-protocol.md) owns the operation boundary.
 - FR-171 owns the behavior that produces or consumes this value.
-
-## Status
-
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.

@@ -1,6 +1,6 @@
 ---
 id: FR-132
-title: "Lock every complete-package identity and capability"
+title: "Declare every complete-package capability and identity domain"
 type: FR
 relationships:
   - target: ix://agent-ix/quire-specification/US-010
@@ -11,13 +11,13 @@ relationships:
     type: references
 ---
 
-# FR-132: Lock every complete-package identity and capability
+# FR-132: Declare every complete-package capability and identity domain
 
 ## Description
 
-When publishing a checked package, the publisher SHALL emit one canonical
-manifest that locks every semantic, domain package, dependency and capability
-selection in its own identity domain.
+When publishing a checked package, the publisher SHALL declare every atomic
+required capability of the package and keep each identity it carries in its
+own identity domain.
 
 ## Inputs
 
@@ -26,21 +26,21 @@ declared consumer requirements.
 
 ## Outputs
 
-A canonical package manifest and digest, or a typed identity/capability refusal.
+A checked package carrying its required-feature set, or a typed
+identity/capability refusal.
 
 ## Behavior
 
-The manifest separates source, semantic, domain package, package, generated
-artifact and tool identity domains. Its required-feature set contains atomic
-language and consumer capabilities, not only family flags. It records original
-and effective declarations, analysis plans, plugins and generated artifacts by
+The package separates source, semantic, domain package, package and generated
+artifact identity domains. Its required-feature set contains atomic language
+and consumer capabilities, not only family flags. It records original and
+effective declarations, analysis plans, plugins and generated artifacts by
 typed reference without including runtime observations in static identity.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-132-AC-1 | Canonical manifests with reordered set-valued entries have equal identities while ordered semantic entries remain order-sensitive. | Test (TC-182) |
 | FR-132-AC-2 | Substituting a domain package `sha256-jcs` digest, package digest or generated-artifact digest across identity domains refuses. | Test (TC-182) |
 | FR-132-AC-3 | Every atomic required capability is discoverable and an unknown required capability refuses rather than being dropped. | Test (TC-182) |
 

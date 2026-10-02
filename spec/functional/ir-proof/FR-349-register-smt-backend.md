@@ -39,7 +39,7 @@ form.
 Target-neutral IR items carrying an FR-346 quantification obligation, an
 FR-347 induction obligation, an FR-348 composition obligation or an FR-147
 mathematical-integer obligation, plus the registered backend's advertised
-FR-290 (capability kind, mode) pairs and toolchain/options pins.
+FR-290 (capability kind, mode) pairs and solver options.
 
 ## Outputs
 
@@ -65,8 +65,8 @@ retained as an explicit parity failure naming both verdicts, rather than
 silently preferring either solver. When Z3 is not configured in the SMT descriptor, no cross-check
 runs: cvc5's verdict settles the claim on its own, and the settlement carries
 a warning naming the absent cross-check; this is a warned outcome, never a
-hold on cvc5's settlement. A configured Z3 whose pinned tool probe finds it
-missing or mismatched, errors or exceeds its limit is the same warned absent
+hold on cvc5's settlement. A configured Z3 whose tool probe finds it
+missing, errors or exceeds its limit is the same warned absent
 cross-check: cvc5's verdict settles the claim, and the item never records the
 FR-290 tool-absence result `unsupported` on Z3's account. Counterexamples and witnesses retain the FR-036
 original source spans and replay through the QSL complete-V1 executor per AD-010
@@ -85,7 +85,7 @@ capability kinds.
 | FR-349-AC-3 | A cvc5/Z3 verdict disagreement on the same query settles the claim `inconclusive`, is retained as an explicit parity failure naming both verdicts, and is never resolved to either solver's verdict alone. | Test (TC-266) |
 | FR-349-AC-4 | A proved or refuted result retains a replayable witness or counterexample carrying its original FR-036 source spans. | Test (TC-266) |
 | FR-349-AC-5 | A claim whose required capability kind no registered backend advertises settles `unsupported` with a warning naming the required capability kind. | Test (TC-266) |
-| FR-349-AC-6 | Z3's absence from the SMT descriptor, or a missing or mismatched Z3 tool at probe, does not block, hold or turn `unsupported` cvc5's settlement of a claim within its advertised (capability kind, mode) pairs; the settlement carries a warning naming the absent cross-check. | Test (TC-266) |
+| FR-349-AC-6 | Z3's absence from the SMT descriptor, or a missing Z3 tool at probe, does not block, hold or turn `unsupported` cvc5's settlement of a claim within its advertised (capability kind, mode) pairs; the settlement carries a warning naming the absent cross-check. | Test (TC-266) |
 
 ## Dependencies
 

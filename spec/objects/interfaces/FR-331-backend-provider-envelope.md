@@ -35,7 +35,7 @@ When a contract package is submitted to a backend provider, the producer SHALL u
 
 ## Identity and validation
 
-Request identity includes the capability vocabulary, manifest, package, claim/domain/bounds/options, each item's kind, extent classification, named backend and candidates, and the tool lock. Result identity includes artifacts, results and execution provenance.
+Request identity includes the capability vocabulary, manifest, package, claim/domain/bounds/options, each item's kind, extent classification, named backend and candidates, and the tool lock. Result identity includes artifacts and results.
 Unknown contract versions, missing required properties, duplicate keys,
 out-of-domain values, non-canonical encodings and a tool lock that differs from a routed backend's pinned tool identity refuse before consumption. A `capability_vocabulary` other than `quire.capability-kind/v1`, or none, refuses the envelope as `invalid_capability`/`unsupported-version`.
 

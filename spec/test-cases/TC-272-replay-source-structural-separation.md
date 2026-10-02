@@ -29,7 +29,7 @@ replay-result type stores a witness-backed field.
 ## Fixture
 
 The `Witness` packet's transcript is the IR `tests/kani_replay.rs` tc_042
-witness transcript at IR `954c2f2`, whose concrete values match the AD-016 seed
+witness transcript, whose concrete values match the AD-016 seed
 counterexample vector. The `Input` packet carries the same decoded values
 (8, 992) as canonical assignments keyed by parameter `WireNodeId`.
 

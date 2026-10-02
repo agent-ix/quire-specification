@@ -25,8 +25,7 @@ No Quoin runtime dependency is required before its Rust port lands.
 
 ## Preconditions
 
-Authority grants, adapter/evidence contracts and one complete ecosystem lock are
-available locally.
+Authority grants and adapter/evidence contracts are available locally.
 
 ## Inputs
 

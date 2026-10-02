@@ -11,8 +11,7 @@ Cargo.toml and Cargo.lock only.
 
 | Direct dependency | Existing grant | Purpose |
 | --- | --- | --- |
-| quire-verification | AGPL-3.0-or-later | Actual B JCS canonicalizer and legacy bounded fixture intake |
-| quire-verification-contracts | AGPL-3.0-or-later | The sole copy of the closed checked-operation catalog, read by the checked-package qualification tests |
+| quire-verification-contracts | AGPL-3.0-or-later | B's JCS canonicalizer and the sole copy of the closed checked-operation catalog, read by the qualification tests |
 | jsonschema | MIT | Structural schema/meta-schema validation, default features disabled so no HTTP/file retrieval |
 | serde_json | MIT OR Apache-2.0 | JSON values and authored fixture operations |
 | sha2 | MIT OR Apache-2.0 | Exact fixture-byte hashing and independent hashing of hand-authored golden bytes |

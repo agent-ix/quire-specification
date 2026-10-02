@@ -15,18 +15,16 @@ Enumerate and seed-sample declared schedules, replay them, and exhaust the explo
 
 ## Test Procedure
 
-Use the exact version-locked subject and inputs named by FR-181. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
+Use the subject and inputs named by FR-181. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
 ## Expected Results
 
 Every positive and boundary result matches FR-181; each invalid, unsupported or exhausted mutation returns its exact typed disposition with source/provenance, emits no approximation, and preserves independent sibling results.
 
-## Ecosystem lock
+## Sampler
 
-The exact version-locked subject is a real `quire.ecosystem-lock/v1`
-(FR-335) listing only the QSL revision; its `definitions` member pins the
-package definitions and the `quire.simulation.sampler/v1` sampler used for
-seeded sampling.
+Seeded sampling selects the `quire.simulation.sampler/v1` sampler by its
+identity.
 
 ## Refusal vectors
 

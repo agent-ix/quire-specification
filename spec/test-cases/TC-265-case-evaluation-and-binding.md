@@ -17,7 +17,7 @@ Evaluate an admitted `case` expression, binding each arm's payload positionally,
 
 Use the exact subject and inputs named by FR-146-AC-11. Execute the positive case and each declared boundary through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
-This test case exercises `case` evaluation, admitted under `quire.value.complete/v1` at its current draft revision; it is not locked by `complete-value-lock.json`, whose DefinitionRefs remain scoped to the record/tuple surface TC-188/TC-191 verify at revision `1-draft.1`. Unless a row states limits, run it under limits large enough that no charge is denied.
+This test case exercises `case` evaluation, admitted under `quire.value.complete/v1`. Unless a row states limits, run it under limits large enough that no charge is denied.
 
 | Vector | Input | Expected result/disposition |
 | --- | --- | --- |

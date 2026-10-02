@@ -25,7 +25,7 @@ independent declarations whose names and dependencies are established.
 | --- | --- |
 | Sources | Exact authority, identity, revision and byte digest per unit; original source regions and clause/declaration identities. Two editable authorities for one clause refuse. |
 | Language | Exact language/edition and supplied definition artifact; no implementation-version default. |
-| Profiles | Each declaration's selected root definition name/revision/byte digest, exact required definition closure and the meaning owned by each dependency. |
+| Profiles | Each declaration's selected root definition identity, exact required definition closure and the meaning owned by each dependency. |
 | Models | Domain package imported by identity, version and `sha256-jcs` digest; its effective declaration keys and exact manifest/lock/dependency closure. |
 | Native dependencies | Resolved predicate, operation-contract and temporal-obligation references with their defining source, model and profile selections; typed anchors and capture requirements. |
 | Binding requirements | Typed roles, selected model/observation contracts and clock/scope premises described below. Concrete runtime instances are not inserted here. |
@@ -60,10 +60,9 @@ The complete value root `quire.value.complete/v1` uses the closed semantic
 selections in [AD-005](../../spec/assurance/AD-005-complete-value-expression-system.md).
 Every package selecting that root retains `quire.value.accounting/v1` and its
 exact supplied definition bytes; no evaluator or backend may substitute a local
-cost model. It retains `quire.value.compound-unit/v1` with its exact schema and
-vector artifact digests. It also retains `quire.value.complete.rules/v1` plus every exact
-rule artifact named by that manifest as separate domain-tagged DefinitionRefs;
-the root digest alone does not freeze transitive meaning.
+cost model. It retains `quire.value.compound-unit/v1` with its schema and
+vectors, and every rule artifact of the complete-value lock as a separate
+DefinitionRef.
 Text-bearing packages retain `quire.value.text.unicode-17.0.0/v1`; integer
 `div`/`rem` retains exactly one truncating, floor or Euclidean definition; IEEE
 operations retain `quire.value.ieee754-2019-default/v1`. Those supplied
@@ -162,8 +161,7 @@ even if a typed-expression canonicalizer establishes equal expression meaning.
 Canonical identity is optional until its exact domain/version/algorithm is
 selected and qualified; structural comparison or ordinary JSON hashing cannot
 claim it. Existing ArtifactRef/SemanticRef, domain package `sha256-jcs` and IR domains
-retain their selected contracts. Definition digests cover exact supplied bytes;
-an artifact need not contain its own byte digest.
+retain their selected contracts.
 
 ## Admission examples
 

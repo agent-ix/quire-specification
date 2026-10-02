@@ -32,8 +32,9 @@ When checked native meaning is lowered for backend consumption, the producer SHA
 ## Identity and validation
 
 The package identity covers all types, expressions, clauses, profiles and correspondence. It never becomes native source or semantic authority.
-Unknown contract versions, missing required properties, duplicate keys,
-out-of-domain values and non-canonical encodings refuse before consumption.
+A document whose `contract_version` is not that identifier, missing required
+properties, duplicate keys, out-of-domain values and non-canonical encodings
+refuse before consumption.
 
 ## Acceptance Criteria
 
@@ -47,8 +48,3 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 - [interface_012](./interface_012-contract-package.md) owns the operation boundary.
 - FR-195 owns the behavior that produces or consumes this value.
-
-## Status
-
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.

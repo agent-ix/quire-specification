@@ -20,7 +20,7 @@ unsupported nodes.
 
 ## Test Procedure
 
-Use the exact version-locked subject and inputs named by FR-195 and FR-322.
+Use the subject and inputs named by FR-195 and FR-322.
 Validate the `proposals/checked-package-v2` schema and positive fixtures;
 require the schema to refuse an unrecognized `contract_version`.
 Then exercise unknown-version, missing/duplicate/unknown member, stale raw
