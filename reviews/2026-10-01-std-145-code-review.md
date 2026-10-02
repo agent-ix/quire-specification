@@ -68,3 +68,9 @@ Round 1, reviewed at 87d32f40fd7ef0b86990e749067247cc821331d9 (confirmed with `g
 | FND-001 | fixed | 87d32f4 |
 | FND-002 | fixed | 87d32f4 |
 | FND-003 | fixed | 87d32f4 |
+
+Round 2, reviewed at 774981aacbb886b2d0471a2b9442c80355e78c84 (confirmed with `git ls-remote`). Gates: `cargo test --locked` exits 0 (lib 0, model 4, v2 56, member 10, shared 7, doctests 0), and `cargo clippy --locked --all-targets -- -D warnings` exits 0. I reproduced the case with the branch's own intake code on a 2 MiB thread. A 40,000-deep input releases through `dispose`, and so do the refused trailing-content and unclosed forms. The deepest admitted input (65,535) and the node-limit refusal at 65,536 also release. Plain `drop` of the same 40,000-deep value still aborts, which confirms the test would catch a regression. No new findings.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-004 | fixed | 774981a |
