@@ -19,6 +19,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-161
     type: references
+  - target: ix://agent-ix/quire-specification/FR-367
+    type: references
 ---
 ## Description
 
@@ -90,7 +92,7 @@ exact decision-support set. The evaluator shall retain a fact missing outside a
 completed decision-support set in completeness and any dependent
 adequacy/package result without changing an already settled temporal truth.
 
-Where a bounded temporal profile is selected, the evaluator shall refuse an unbounded interval. Where the infinite-trace profile is selected, the evaluator shall admit the unbounded always, eventually, until and release operators with the meaning [FR-161](FR-161-analyze-infinite-trace-properties.md) states.
+Where a bounded temporal profile is selected, the evaluator shall refuse an unbounded interval. Where the infinite-trace profile is selected, the evaluator shall admit the unbounded always, eventually, until and release operators with the meaning [FR-161](FR-161-analyze-infinite-trace-properties.md) states. Where the infinite-trace profile is selected, the evaluator shall admit the interval operators above, nested in any order with unbounded ones, with the offset meaning of the false-extension table read over the infinite trace, where every future position exists and no closed-boundary rule applies ([FR-367](FR-367-evaluate-interval-operators-under-infinite-trace.md)).
 
 ## Acceptance Criteria
 
@@ -104,6 +106,7 @@ Where a bounded temporal profile is selected, the evaluator shall refuse an unbo
 | FR-091-AC-6 | Where a bounded temporal profile is selected, unbounded intervals return a non-Boolean disposition; unavailable total valuations and exhausted semantic work return non-Boolean dispositions under every profile. | Test (TC-118) |
 | FR-091-AC-7 | On a one-position closed trace with `p` true, `always[0,1] not holds(p)` is false and `eventually[0,1] not holds(p)` is true under false extension, distinguishing pointwise temporal negation from an untimed reading. | Test (TC-111) |
 | FR-091-AC-8 | Where the infinite-trace profile is selected, the unbounded future operators evaluate under their FR-161 infinite-trace meaning and return that requirement's conclusive or non-conclusive disposition. | Test (TC-200) |
+| FR-091-AC-9 | Where the infinite-trace profile is selected, `eventually[a,b]`, `always[a,b]`, `until[a,b]` and `release[a,b]` evaluate with their offset meaning over the infinite trace, including nested under an unbounded operator, and no position reads a closed-boundary value. | Test (TC-298) |
 
 ## Dependencies
 

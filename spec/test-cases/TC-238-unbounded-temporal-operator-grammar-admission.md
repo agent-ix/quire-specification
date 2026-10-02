@@ -7,6 +7,10 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-090
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-367
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-250
+    type: verifies
 ---
 
 # TC-238: Admit the unbounded temporal operator grammar only under infinite-trace
@@ -28,8 +32,9 @@ For each of `always`, `eventually`, `once`, `historically`, `until`, `release`,
 `quire.temporal.event-position.false-extension/v1`,
 `quire.temporal.fixed-sample.false-extension/v1` and
 `quire.temporal.timestamped-event.finite-window/v1`. Repeat with a bracketed
-`[a,b]` interval and with the Complete-V1 `[a,*]` form under all four
-profiles. Independently mutate the selected profile identity on one accepted
+`[a,b]` interval and with an `[a,*]` spelling under all four profiles, and
+author `always (holds(fail) implies eventually always[0,10] holds(healthy))`
+and `once[1,1] holds(p) since holds(q)` under all four profiles. Independently mutate the selected profile identity on one accepted
 infinite-trace source while keeping its bytes otherwise fixed.
 
 ## Expected Results
@@ -40,8 +45,12 @@ other three profiles it receives `unsupported_construct` naming its exact
 construct span, owning declaration and selected profile, as AD-003's required
 diagnostic dispositions state for a recognized form prohibited by the selected
 profile. The bracketed `[a,b]` form parses identically under all four profiles,
-unchanged from its pre-edition behavior. The Complete-V1 `[a,*]` form keeps the
-admission it already had under each profile, distinct from and unaffected by
-the new bare production. Mutating only the selected profile identity on the
+unchanged from its pre-edition behavior. `[a,*]` parses as a lower-bounded
+operator under `quire.temporal.infinite-trace/v1` and receives
+`unsupported_construct` under each of the other three profiles (FR-048-AC-10,
+FR-367-AC-7). The two nested formulas are admitted under
+`quire.temporal.infinite-trace/v1` with their interval and unbounded operators
+nested as written, and under each bounded profile their interval-less
+operators receive `unsupported_construct` (FR-090-AC-7, FR-367-AC-1, FR-250-AC-6). Mutating only the selected profile identity on the
 accepted infinite-trace source moves it to the same `unsupported_construct`
 disposition, without a partial or approximated parse.

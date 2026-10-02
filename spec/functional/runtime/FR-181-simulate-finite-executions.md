@@ -7,6 +7,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/US-011
     type: implements
+  - target: ix://agent-ix/quire-specification/FR-361
+    type: references
 ---
 
 # FR-181: Simulate finite composed executions reproducibly
@@ -111,8 +113,17 @@ choices and enabled schedules, coalescing only equal complete state keys.
 Within one level, parent states keep their FIFO discovery order, and each
 parent's own successors are visited in ascending unsigned-lexicographic order
 of the JCS UTF-8 bytes of the typed canonical form of their transition
-identity, `{"type":"transition","operation":"<qualified-name>","arguments":[<encoded>, ...]}`
-(arguments in parameter declaration order). Sampling draws from
+identity, `{"type":"transition","operation":"<qualified-name>","receiver":<encoded>|null,"arguments":[<encoded>, ...]}`
+(`receiver` the operation's receiver reference, `null` for an operation with
+no receiver; arguments in parameter declaration order). Two transitions of one
+operation with different receivers have different transition identities.
+
+A state at which no transition identity is enabled is terminal. Exploration
+records a terminal state as a state with no successor. A temporal analysis
+reads a terminal state by
+[FR-361](../temporal/FR-361-read-model-behaviours-as-temporal-traces.md):
+closed under a bounded profile, and extended by the terminal stutter step
+`{"type":"terminal-stutter"}` under the infinite-trace profile. Sampling draws from
 the same successor relation with a pinned counter-based generator; the
 recorded generator version is the
 `quire.simulation.sampler/v1` definition's DefinitionRef. An unbounded domain
@@ -132,6 +143,7 @@ plus the resource limit that stopped expansion.
 | FR-181-AC-4 | Exhaustive exploration coalesces only equal complete state keys and visits successors in canonical breadth-first order; states differing only in NaN payload or zero sign have distinct state keys and remain distinct states, and a successor that violates an invariant is recorded rather than pruned. | Test (TC-210) |
 | FR-181-AC-5 | Every generated trace replays through the same native transition relation with the same terminal disposition. | Test (TC-210) |
 | FR-181-AC-6 | Exploring a model that describes external effects performs none of them: the effects appear only as typed trace data, and a request for evaluator I/O, mutation or an ambient store refuses with its source location. | Test (TC-210) |
+| FR-181-AC-7 | The same operation applied with the same arguments to two receivers yields two transition identities that differ only in `receiver`, ordered by their JCS bytes; a state with no enabled transition identity is recorded with no successor. | Test (TC-290) |
 
 ## Dependencies
 

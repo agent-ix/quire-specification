@@ -14,6 +14,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-146
     type: references
+  - target: ix://agent-ix/quire-specification/FR-368
+    type: references
 ---
 # FR-290: Capability kind vocabulary
 
@@ -141,6 +143,14 @@ kind:
 
 An unbounded extent settles `supported` only on a candidate that advertises
 `unbounded` for the kind.
+
+A backend that advertises `temporal-satisfaction` also advertises the fairness
+kinds it decides, a subset of {`weak`, `strong`}. At the single candidate's
+arm, an item whose fairness set holds a kind the candidate does not advertise
+settles `unsupported`, `unsupported_projection`/`unsupported-requested-capability`,
+with a warning naming the missing fairness kind; negotiation never drops or
+weakens a fairness constraint
+([FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md)).
 
 ## Candidate set and negotiation
 

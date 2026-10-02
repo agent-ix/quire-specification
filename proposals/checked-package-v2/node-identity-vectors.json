@@ -82,6 +82,11 @@
       "sha256": "640e314f98c26d909151f5d65bd7aea9e3489d28f4fa9ff014edf71753aba209"
     }
   ],
+  "union_member_vectors": [
+    {"name": "union-member-u1-circle", "preimage": {"version":"quire.union-member-node/v1","declaration_node_id":{"domain":"quire.checked-semantic-node/v1","digest":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},"member":"Circle"}, "sha256": "40a8492e5616a286cae9977ee9a7d5acab89cc50eb75654df0b8ad1096efd692"},
+    {"name": "union-member-u1-empty", "preimage": {"version":"quire.union-member-node/v1","declaration_node_id":{"domain":"quire.checked-semantic-node/v1","digest":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},"member":"Empty"}, "sha256": "83c93448259809db143345be4182a358f92481032ad0ae3b782a482d3897296b"},
+    {"name": "union-member-u2-circle", "preimage": {"version":"quire.union-member-node/v1","declaration_node_id":{"domain":"quire.checked-semantic-node/v1","digest":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"},"member":"Circle"}, "sha256": "611ebd3f928ce6ca8713c9400e4725af94e51d96f0aaa5ef437ebed8c88ae75c"}
+  ],
   "invalid_mutations": [
     {"name":"enum-member-stale-case","kind":"stale_key","base":"enum-status-ready","patch":[{"op":"replace","path":"/case","value":"DONE"}],"retained_sha256":"42ba51e7e622d99f292a5e6dcc196bd216efb98b33755910e54af4d65078d032","expected_code":"invalid_semantic_graph"},
     {"name":"enum-owner-absent-from-lock","kind":"owner_join","base":"enum-status","patch":[{"op":"replace","path":"/owner/identity","value":"absent-model"}],"retained_sha256":"7928f1e1b570335b404c8d21c66da8a3b8e37e434b0ebc622f80285488811562","expected_code":"invalid_semantic_graph"},

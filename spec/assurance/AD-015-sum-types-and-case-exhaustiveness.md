@@ -16,6 +16,12 @@ relationships:
     type: realizes
   - target: ix://agent-ix/quire-specification/FR-146
     type: realizes
+  - target: ix://agent-ix/quire-specification/FR-144
+    type: realizes
+  - target: ix://agent-ix/quire-specification/FR-440
+    type: realizes
+  - target: ix://agent-ix/quire-specification/FR-441
+    type: realizes
 ---
 
 # Sum types and case-expression exhaustiveness
@@ -31,6 +37,17 @@ composite family, a new declaration-identity scheme, or a new code family; a
 union declaration identity is the same opaque I04 `composite_type` node key
 already used for records and tuples, and an unproved `case` exhaustiveness
 obligation is one new cause of the existing `undefined_expression` code.
+
+`quire.value.complete/v1` admits unions and `case` wherever it admits records
+and tuples, with no further selection (FR-143 "Value profile"). A union value
+has an FR-144 canonical key, so it is admitted as a set, bag or ordered-set
+element exactly when its payload types admit `=`. A `case` result type follows
+FR-146 "Case result type". Union construction charges the existing
+`composite.result-retain`, and arm selection makes no charge. In a checked
+package, a union is a `composite_type`/`union` node, a construction a
+`value`/`union_value` node and a `case` an `expression`/`case` node whose arms
+lower in member declaration order (FR-440), and each member is keyed by the
+`quire.union-member-node/v1` preimage (FR-441).
 
 ## Views
 

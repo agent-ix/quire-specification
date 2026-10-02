@@ -38,8 +38,8 @@ operator spelling with no bracketed interval was a syntax error under every
 selected profile: the shared grammar's `temporal-unary`/`temporal-relation`
 productions require an `interval` token between the operator and its operand.
 This edition adds a sibling pair of productions,
-`temporal-unary-unbounded`/`temporal-relation-unbounded`, that never carry an
-`interval` token, admitted only under the existing `ix:native` / `1-draft`
+`temporal-unary-unbounded`/`temporal-relation-unbounded`, whose `interval` token
+is optional, admitted only under the existing `ix:native` / `1-draft`
 edition and only when the clause selects `quire.temporal.infinite-trace/v1`.
 It reuses the eight existing reserved keywords (`eventually`, `always`, `once`,
 `historically`, `until`, `release`, `since`, `triggered`); no keyword is added,
@@ -60,26 +60,23 @@ historical one.
 | Profile admission | A | `quire.temporal.infinite-trace/v1` selected ([FR-090](../functional/temporal/FR-090-select-temporal-profile-and-clock.md), [FR-250](../objects/temporal/FR-250-temporal-semantic-profile.md)) | Any other selected profile: `unsupported_construct`, per FR-048-AC-9 |
 | Frontend binding | A | [FR-048](../functional/foundation/FR-048-bind-native-temporal-syntax.md) typed leaf/scope/capture rules, unchanged | Same typed refusals FR-048 already defines |
 | TL lowering | Contract IR | none; there is no TL target | Absent target, per [FR-251](../objects/temporal/FR-251-tl-target-profile.md) and [FR-095](../functional/temporal/FR-095-preserve-native-tl-correspondence.md) |
-| Analysis | E | selected sound infinite-trace provider | `proved`/`refuted`/`inconclusive`/`unsupported`/`failed` per [FR-161](../functional/temporal/FR-161-analyze-infinite-trace-properties.md) and [FR-341](../objects/temporal/FR-341-infinite-trace-result-disposition.md); `unsupported` with a warning naming the missing liveness capability until a liveness backend registers |
+| Analysis | E | selected sound infinite-trace provider | `proved`/`refuted`/`inconclusive`/`unsupported`/`failed` per [FR-161](../functional/temporal/FR-161-analyze-infinite-trace-properties.md) and [FR-360](../objects/temporal/FR-360-infinite-trace-result-disposition.md); an item with no candidate settles `unsupported` with a warning under the FR-290 candidate and advertised-mode tables ([FR-368](../functional/temporal/FR-368-negotiate-temporal-model-check-items.md)) |
 
-### Why a new production and not a widened `interval`
+### Interval operators under the same profile
 
-The Complete-V1 facet grammar already widens `interval` to `[a, (uint | '*')]`
-under the infinite-trace profile. That widened production still requires
-brackets and a lower bound; it is bounded-interval syntax with an open upper
-end, not the interval-less spelling this ticket requires. Reusing `interval`
-for the fully unbounded form would require accepting a bracket-free spelling
-inside a production whose non-terminal name and every other caller assume
-brackets are present, which is exactly the "reinterpret old bytes" AD-003
-forbids. A disjoint sibling production keeps the old `interval` non-terminal,
-its callers and its refusal behavior for every other profile completely
-unchanged.
+Under the infinite-trace profile the interval is optional on every
+interval-capable operator: with an interval the operator is an interval
+operator, without one an unbounded operator, and the two nest in any order
+([FR-367](../functional/temporal/FR-367-evaluate-interval-operators-under-infinite-trace.md)).
+An interval always has two integer bounds; the `interval` production carries
+no open upper end under any profile. Every bounded profile keeps its required
+interval and its refusal of the interval-less spelling.
 
 ## Decisions
 
 | Decision | Alternatives rejected | Consequence |
 | --- | --- | --- |
-| Add `temporal-unary-unbounded`/`temporal-relation-unbounded` as new productions | Widen `interval` to accept an absent bracket pair | The bounded grammar, its refusals and its test evidence (TC-049, TC-110) are untouched |
+| Add `temporal-unary-unbounded`/`temporal-relation-unbounded` with an optional interval, admitted only under the infinite-trace profile | Make the interval optional under every profile | The bounded grammar, its refusals and its test evidence (TC-049, TC-110) are untouched, and infinite-trace formulas nest interval and unbounded operators |
 | Gate admission on the selected profile, not on edition alone | Make the bare spelling valid under every `1-draft` package | A source file that never selects the infinite-trace profile keeps today's syntax refusal for `always p` |
 | Reuse existing reserved keywords | Mint new interval-less keyword spellings (e.g. `always-forever`) | No lexical surface grows; the same eight operators keep one spelling across both grammar forms |
 | No TL lowering target for this form | Approximate with a bounded TL window | FR-095/FR-251 keep the absence explicit instead of emitting a semantically wrong finite formula |
@@ -90,7 +87,7 @@ unchanged.
 | --- | --- | --- |
 | A bare temporal spelling silently parses under a profile that did not intend infinite-trace meaning | Profile-gated admission (FR-048-AC-9) plus TC-238 mutation coverage across all four v1 profiles | A |
 | The new production is read as widening the historical bounded grammar | Explicit non-reinterpretation clause above and in the shared grammar; disjoint non-terminal names | A |
-| Absence of a registered liveness backend is read as a hold or blocking error | FR-161's explicit `unsupported`-with-warning settlement (FR-161-AC-7); no hold state exists in the result vocabulary | E |
+| An item with no candidate is read as a hold or blocking error | FR-161's explicit `unsupported`-with-warning settlement (FR-161-AC-7); no hold state exists in the result vocabulary | E |
 
 ## Acceptance and handoff
 

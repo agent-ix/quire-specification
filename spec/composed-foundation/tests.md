@@ -193,6 +193,7 @@ executable cases.
 | FR-046 | FR-046-AC-4 | TC-046 | 🚧 Planned |
 | FR-046 | FR-046-AC-5 | TC-046 | 🚧 Planned |
 | FR-046 | FR-046-AC-6 | TC-046 | 🚧 Planned |
+| FR-046 | FR-046-AC-7 | TC-401 | 🚧 Planned |
 | FR-047 | FR-047-AC-1 | TC-047 | 🚧 Planned |
 | FR-047 | FR-047-AC-2 | TC-047 | 🚧 Planned |
 | FR-047 | FR-047-AC-3 | TC-047 | 🚧 Planned |

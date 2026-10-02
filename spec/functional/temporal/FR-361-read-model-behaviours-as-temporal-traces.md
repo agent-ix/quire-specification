@@ -1,0 +1,155 @@
+---
+id: FR-361
+title: "Read a model subject's behaviours as temporal traces"
+type: FR
+relationships:
+  - target: ix://agent-ix/quire-specification/US-011
+    type: implements
+  - target: ix://agent-ix/quire-specification/US-008
+    type: implements
+  - target: ix://agent-ix/quire-specification/FR-090
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-161
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-181
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-362
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-363
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-366
+    type: references
+---
+
+# FR-361: Read a model subject's behaviours as temporal traces
+
+## Description
+
+When a temporal clause is checked over a model subject, the analyzer SHALL
+read every behaviour of that subject as a temporal trace whose positions,
+anchors, clock and terminal-state reading are the ones stated below.
+
+## Inputs
+
+A checked package with a state model; a non-empty ordered list of initial
+states, each an admitted snapshot of the model's populations; the universe of
+each population the subject reads; any proof bounds the request substitutes;
+and one checked temporal clause with its selected profile.
+
+## Outputs
+
+The subject's behaviours as temporal traces, each with its positions and
+their anchors; or `unsupported` for a profile the model subject does not
+admit; or `requires-bound` for an unbounded root; or the FR-363 verdict
+`inconclusive` with cause `no-initial-state` when the list of initial states
+is empty.
+
+## Behavior
+
+### Model subject
+
+A **model subject** is the tuple (checked package, ordered list of initial
+states, universe of each population, substituted proof bounds). Its successor
+relation is the successor rule of
+[FR-181](../runtime/FR-181-simulate-finite-executions.md): an operation applied
+to a receiver and an argument vector from the operation's finite declared
+parameter domains, enabled when the operation's effective precondition holds,
+times every post-state within the operation's declared frame that satisfies
+its postcondition. Each transition carries its FR-181 transition identity,
+which names the operation, the receiver and the argument vector. The subject is
+part of every verdict's scope and of every obligation identity that reads it
+([FR-368](FR-368-negotiate-temporal-model-check-items.md)).
+
+Before any expansion, the analyzer SHALL classify every root of the subject
+under the request's universes. An unbounded population root, parameter domain,
+result domain or field domain returns the FR-181 `requires-bound` negotiation
+disposition, which the caller answers with a universe or a bounded domain.
+
+### Behaviours and positions
+
+A **behaviour** is a maximal path of the successor relation from an initial
+state. The analyzer SHALL number its positions from 0:
+
+| Position | State | Anchor |
+| --- | --- | --- |
+| 0 | the initial state | `initialization` |
+| `i > 0` | the post-state of the behaviour's `i`-th transition | that transition's operation anchor |
+
+Each position is observed as the synthesized state observation of its state,
+anchored as the table states. A `holds` atom SHALL evaluate through the same
+clause evaluator that evaluates state clauses, over the observation at its
+position. The step sequence is the event-position sequence authority of every
+profile the subject admits.
+
+### Profiles and clock
+
+A model subject admits exactly two profiles:
+`quire.temporal.event-position.false-extension/v1` and
+`quire.temporal.infinite-trace/v1`. Under both, one tick is one step of the
+behaviour, and the clause's clock role binds to the subject's step sequence
+([FR-090](FR-090-select-temporal-profile-and-clock.md)). A clause under any
+other profile over a model subject settles `unsupported`,
+`unsupported_projection`/`unsupported-requested-capability`, at negotiation,
+because a model behaviour carries no sample period or timestamp.
+
+### Terminal states
+
+A state at which no transition identity is enabled is **terminal**. Every
+terminal state reads by this rule, whether the model intends it or it is a
+deadlock ([FR-366](FR-366-check-deadlock-freedom.md)).
+
+- Under the event-position false-extension profile, a behaviour that reaches a
+  terminal state is a closed finite execution. The analyzer SHALL read it with
+  that profile's closed-boundary rule: atomic predicates are false after the
+  last position and constants keep their value.
+- Under the infinite-trace profile, a behaviour that reaches a terminal state
+  is extended by a **terminal stutter step** that repeats the terminal state
+  forever. The stutter step has the transition identity
+  `{"type":"terminal-stutter"}`. It enables no operation, takes no fairness
+  constraint, and lies outside every fairness constraint
+  ([FR-362](FR-362-apply-fairness-constraints.md)). Each stutter position is
+  observed as the terminal state's observation, anchored by the stutter step.
+
+### Binding of the clause's `over` parameter
+
+A clause `over (x: T)` over a model subject is checked once for each object of
+the subject's universe whose type conforms to `T`. Each check binds `x` to that
+object's reference. The clause holds for the subject when it holds for every
+binding, and a refutation names the binding it refutes.
+
+At a position where the bound object is not a member of its population, a read
+through `x` SHALL return the kernel's undefined value with reason
+`absent-key`, the same value `lookup<T>(p, x) absent undefined` returns for
+that object. The claim then evaluates undefined at that position, and the item
+settles `refuted` with cause `undefined-evaluation`
+([FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md)), naming the
+binding, the position and the locus of the read. Population membership is a
+defined Boolean, so a clause guards such reads with it.
+
+## Acceptance Criteria
+
+| ID | Criteria | Verification |
+| --- | --- | --- |
+| FR-361-AC-1 | Position 0 of every behaviour reads the initial state with the `initialization` anchor, and position `i > 0` reads the post-state of transition `i` with that transition's operation anchor; a `holds` atom evaluated at a position returns the clause evaluator's value over that position's observation. | Test (TC-290) |
+| FR-361-AC-2 | A clause under `quire.temporal.fixed-sample.false-extension/v1` or `quire.temporal.timestamped-event.finite-window/v1` over a model subject settles `unsupported` with `unsupported-requested-capability` at negotiation; the event-position false-extension and infinite-trace profiles are admitted, with one tick per step. | Test (TC-290) |
+| FR-361-AC-3 | One model with a reachable terminal state is read as a closed finite execution under event-position false-extension and as a terminal stutter loop under infinite-trace, and the same `always[0,4]` claim receives different verdicts under the two profiles. | Test (TC-290) |
+| FR-361-AC-4 | The terminal stutter step carries the transition identity `{"type":"terminal-stutter"}`, enables no operation and takes no fairness constraint. | Test (TC-290, TC-291) |
+| FR-361-AC-5 | A clause `over (x: T)` over a universe of two objects of `T` is checked once per object; it holds for the subject only when both checks hold, and its refutation names the refuted object. | Test (TC-290) |
+| FR-361-AC-6 | An unguarded read through the bound object at a reachable position where that object is absent settles the item `refuted` with cause `undefined-evaluation` naming the binding, the position and the read's locus, the same outcome as the `lookup ... absent undefined` spelling of that read; the same read guarded by population membership evaluates. | Test (TC-290, TC-305) |
+| FR-361-AC-7 | A subject with an unbounded population root and no universe returns `requires-bound` before expansion; a subject with an empty list of initial states settles `inconclusive` with cause `no-initial-state`. | Test (TC-294) |
+
+## Dependencies
+
+- [FR-181](../runtime/FR-181-simulate-finite-executions.md) owns the successor
+  rule, the transition identity and the canonical breadth-first order.
+- [FR-090](FR-090-select-temporal-profile-and-clock.md) and
+  [FR-161](FR-161-analyze-infinite-trace-properties.md) own the profiles and
+  the infinite-trace semantics read over these traces.
+- [FR-362](FR-362-apply-fairness-constraints.md) owns fairness over the
+  behaviours; [FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md)
+  owns the verdict over them.
+
+## References
+
+- quire-spec-language ADR-018 SM-2 to SM-4 and QS-1, QS-2, QS-3 and QS-5;
+  Linear STD-131 (paired with QSL-366).

@@ -19,7 +19,7 @@ incremental assessment agree on a temporal result carrying settlement basis
 
 Use an infinite-trace obligation that returns `inconclusive`
 ([FR-161](../functional/temporal/FR-161-analyze-infinite-trace-properties.md),
-[FR-341](../objects/temporal/FR-341-infinite-trace-result-disposition.md))
+[FR-360](../objects/temporal/FR-360-infinite-trace-result-disposition.md))
 because its finite observed prefix has neither a conformance lasso nor a
 complete bad prefix. Run the same admitted observations and progress through
 the batch and incremental QObs paths. Record the reported disposition label,

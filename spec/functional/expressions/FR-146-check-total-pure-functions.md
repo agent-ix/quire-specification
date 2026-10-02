@@ -15,6 +15,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-143
     type: references
+  - target: ix://agent-ix/quire-specification/FR-144
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-440
+    type: references
 ---
 
 # FR-146: Check total pure functions and recursion
@@ -84,12 +88,58 @@ FR-271 code for unproved definedness, and `unproved-exhaustiveness` is its
 catalogued cause for case-arm coverage, exactly as `unproved-decrease` is its
 catalogued cause for termination.
 
-An admitted `case` evaluates the arm whose member matches the scrutinee
-value's active member, binds that member's payload positionally to the arm's
-bound identifiers exactly as a union value's payload is read under FR-143, and
-evaluates that arm's body. Every arm's body is checked against the `case`
-expression's declared result type, exactly as every `if` branch is checked
-against its shared result type.
+An admitted `case` evaluates its scrutinee first. A scrutinee outcome that is
+undefined, refused or incomplete is the `case` expression's outcome, and no arm
+is evaluated. Otherwise the `case` evaluates the arm whose member matches the
+scrutinee value's active member, binds that member's payload positionally to
+the arm's bound identifiers exactly as a union value's payload is read under
+FR-143, and evaluates that arm's body, whose outcome is the `case`
+expression's outcome. Selecting the arm and binding its payload make no
+`quire.value.accounting/v1` charge: a `case` charges exactly its scrutinee's
+charges and then its selected arm body's charges, and an unselected arm body
+is neither evaluated nor charged.
+
+## Case result type
+
+A `case` expression is checked in this order, and only its first refusal is
+reported:
+
+1. **Scrutinee.** The scrutinee is typed and its static type resolved to its
+   declared union `U`. A scrutinee refusal, including a scrutinee whose type
+   is not a declared union (`refused { code: ill_typed, cause: type-mismatch }`),
+   is the `case`'s refusal, and no arm is checked.
+2. **Arm bodies.** In source arm order, each arm whose name resolves to a
+   member of `U` and whose bound-identifier count equals that member's
+   payload arity has its binders typed from the member's payload types, and
+   its body is checked against the result type below. The first failing arm
+   body is the `case`'s refusal. An arm whose name does not resolve to a
+   member of `U`, or whose bound-identifier count differs from the member's
+   payload arity, has untyped binders; its body is not checked, and that arm
+   is reported only through its exhaustiveness obligation.
+3. **Exhaustiveness.** The obligations of "Case exhaustiveness" run in their
+   order over the arm names and counts alone.
+
+The result type is decided as follows:
+
+1. **Expected type.** When the `case` stands where its position supplies a
+   unique expected type — a declared field, parameter, function result or
+   `let` annotation, a `convert` target, the element of an enclosing
+   collection literal, the other operand of `=` or `!=`, or an arm body or
+   `if` branch whose own expected type is unique — that type is the result
+   type, and each arm body is checked against it exactly as an expression
+   standing directly in that position is checked.
+2. **Inferred type.** Otherwise each arm body's type is inferred. When every
+   arm body has the same type, that type is the result type. When every arm
+   body's type is `Integer` or an `Int[..]` type, the result type is
+   `Integer`. Otherwise the first arm body, in source arm order, whose type is
+   neither the first arm body's type nor, when the first arm body's type is
+   `Integer` or `Int[..]`, an `Integer` or `Int[..]` type, is
+   `refused { code: ill_typed, cause: type-mismatch }`. An arm body that has
+   no type without an expected type, such as a collection literal, is refused
+   by its own rule (`ill_typed`, cause `ambiguous-literal`).
+
+The arm bodies are checked in source arm order, which is independent of the
+member declaration order a checked package lowers the arms in (FR-440).
 
 ## Calls, measures and definedness facts
 
@@ -304,7 +354,10 @@ Complete-V1 outcome.
 | FR-146-AC-8 | Definedness and decrease proofs admit exactly the closed measure elements, guard facts, interval rules and decrease forms, `deref` and IEEE-to-`Rational` conversion have no body obligation, a duplicate function name is `ambiguous_declaration`, and a checking bound exceeded is `resource_exhausted`. | Test (TC-191) |
 | FR-146-AC-9 | Rational `+`, `-`, `*`, `/` and unary `-` range proofs use exactly the numerator and denominator interval rules, a rational divisor whose numerator interval contains zero is `unproved-nonzero` without a nonzero fact, and every quantity division in a linked body is `unproved-nonzero`. | Test (TC-191) |
 | FR-146-AC-10 | A `case` expression's arm set is checked against its scrutinee's declared union in order — `duplicate-arm`, `unknown-member`, `arm-arity`, `missing-arm` — and the first violated obligation is `undefined_expression` with cause `unproved-exhaustiveness`, naming the union, the arm set and the failed obligation. | Test (TC-264) |
-| FR-146-AC-11 | An admitted `case` evaluates the arm matching the scrutinee's active member, binds its payload positionally to the arm's bound identifiers, and every arm's body is checked against the `case` expression's declared result type. | Test (TC-265) |
+| FR-146-AC-11 | An admitted `case` evaluates the arm matching the scrutinee's active member, binds its payload positionally to the arm's bound identifiers, and every arm's body is checked against the `case` expression's result type. | Test (TC-265) |
+| FR-146-AC-12 | A `case` that is the body of a function declared `: Int[0..100]`, with arms `0` and a parameter `w: Int[0..9]`, has result type `Int[0..100]`; under an unannotated `let`, arms `r: Int[0..9]` and `w: Int[0..99]` infer `Integer`, and arms that are both `Text` parameters infer that `Text` type; arms `0` and `"none"` refuse `ill_typed`/`type-mismatch` at the `"none"` arm body, and arms `"none"` and `0` at the `0` arm body; and an arm body `sequence[]` with no expected type refuses `ill_typed`/`ambiguous-literal`. | Test (TC-398) |
+| FR-146-AC-13 | A `case` charges its scrutinee's charges and then only its selected arm body's charges, with no charge for arm selection or payload binding; an undefined scrutinee is the `case`'s outcome with no arm evaluated or charged; and a work limit equal to the scrutinee's and selected arm body's work units admits the `case` while one unit less returns `incomplete { limit_kind: work_units }`. | Test (TC-399) |
+| FR-146-AC-14 | A `case` whose scrutinee is an `Integer` and whose arms name unknown members is refused `ill_typed`/`type-mismatch` at the scrutinee only; a `case` with an ill-typed body in a resolved arm and a missing arm is refused `ill_typed`/`type-mismatch` at that body only; and a `case` whose `unknown-member` arm has an ill-typed body, or whose `arm-arity` arm's body uses an unbound identifier, is refused `undefined_expression`/`unproved-exhaustiveness` with that obligation only. | Test (TC-398) |
 
 ## Dependencies
 

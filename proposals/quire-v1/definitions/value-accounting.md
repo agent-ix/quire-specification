@@ -35,7 +35,7 @@ completed result. That record is closed; its members are defined under
 | equality | `equality.plan-form`, `equality.plan`, one `equality.pair` for each planned semantic occurrence-path pair, then `equality.result-retain` |
 | function call | one `function.call` before binding the evaluated arguments of each checked pure-function call |
 | collection | one `collection.element` before each constructor element expression or one `collection.visit` before binding each visited occurrence, one `collection.member-walk` then one `collection.member-test` for each membership comparison, then `collection.bound` and `collection.result-retain`, in the FR-144/FR-145 order |
-| composite construction | `composite.result-retain` after the last record field or tuple argument completes |
+| composite construction | `composite.result-retain` after the last record field, tuple argument or union payload argument completes, and at once for a nullary union member |
 | integer arithmetic | `integer-arithmetic.operands`, `integer-arithmetic.arithmetic`, `integer-arithmetic.result-retain` for each `Integer` or `Int[..]` `+`, `-`, `*` and unary `-` |
 | rational arithmetic | `rational-arithmetic.operands`, `rational-arithmetic.arithmetic`, `rational-arithmetic.normalize`, `rational-arithmetic.result-retain` for each `Rational[..]` `+`, `-`, `*`, `/` and unary `-`, and each `Integer` or `Int[..]` `/` producing a `Rational[..]` |
 | numeric ordering | `ordering.operands`, `ordering.arithmetic`, `ordering.result-retain` for each `Integer`, `Int[..]`, `Rational[..]` or `Decimal[..]` `<`, `<=`, `>` and `>=` |
@@ -57,7 +57,8 @@ one), `digits(x)` its base-ten magnitude digit count (zero is one), `occ(v)` the
 number of typed value occurrences including the outer value and every nested
 scalar/composite occurrence (`none` counts one; a present option counts one plus
 its payload; a record or tuple counts one plus its present field values, while an
-`absent` or `null` slot counts zero; a collection counts one plus every
+`absent` or `null` slot counts zero; a union value counts one plus its payload
+values, so a nullary union value counts one; a collection counts one plus every
 occurrence, a bag occurrence once per multiplicity; a reference counts one), and `maxparts(r)` the maximum `bits` of a reduced
 rational's numerator and positive denominator. For a coefficient `c` shifted
 by `k` decimal places, `sbits(c,k)` is `bits(c)` when `k = 0` and
@@ -197,9 +198,12 @@ and `value_occurrences=2`; `decimal.scale-expansion` with `scale_expansion=T`,
 `exact`; and `decimal.result-retain` at scale `T`. Its divisor is never zero,
 strict `exact` at a rounding step is refused after `decimal.arithmetic`, and
 membership is decided before `decimal.result-retain`. Every other admitted equality conversion keeps the source
-magnitude and has no charge point. Record and tuple construction charges
-`composite.result-retain` after its last field or argument, and its field
-expressions and calls charge their own points. Integer `+`, `-`, `*` and unary
+magnitude and has no charge point. Record, tuple and union value construction charges
+`composite.result-retain` after its last field or argument, or at once for a
+nullary union member, and its field expressions, payload arguments and calls
+charge their own points. A `case` charges its scrutinee's points and then its
+selected arm body's points; selecting the arm and binding its payload make no
+charge (FR-146). Integer `+`, `-`, `*` and unary
 `-` charge `integer-arithmetic.operands`, then `integer-arithmetic.arithmetic`,
 then decide any FR-044 bounded-result membership without a charge, then
 `integer-arithmetic.result-retain`. Boolean `and`, `or` and `not` charge

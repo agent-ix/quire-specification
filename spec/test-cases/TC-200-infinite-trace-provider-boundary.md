@@ -5,13 +5,19 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-161
     type: verifies
-  - target: ix://agent-ix/quire-specification/FR-341
+  - target: ix://agent-ix/quire-specification/FR-360
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-095
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-090
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-251
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-362
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-364
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-368
     type: verifies
 ---
 
@@ -23,7 +29,7 @@ Sound infinite-trace analysis differential and typed-boundary controls for
 `always`, `eventually`, `until`, `release` and the past duals `previous`,
 `historically`, `once` and `since`, selected under
 `quire.temporal.infinite-trace/v1`. Verifies the FR-161 result vocabulary maps
-exactly onto FR-341/FR-241/FR-242/FR-243, that infinite-trace requests never
+exactly onto FR-360/FR-241/FR-242/FR-243, that infinite-trace requests never
 reach a TL target, and that a missing liveness backend settles `unsupported`
 rather than holding.
 
@@ -51,7 +57,13 @@ each operator against:
    capability.
 
 Independently mutate the fairness assumption on one otherwise-proving case and
-confirm the lasso no longer proves the property. For every result, retrieve
+confirm the lasso no longer proves the property. For each operator, add a fair
+and an unfair variant of its conformance lasso under `fair weak whole Op` and
+`fair strong whole Op` over a two-operation model: the fair variant is admitted
+and evaluated, and the unfair variant is refused as an unfair lasso before
+evaluation. Add one lasso whose formula reads `once[1,1]` and an unbounded
+`since` across the loop boundary, and one formula that nests `always[0,2]`
+under unbounded `eventually`. For every result, retrieve
 premises, and for proved/refuted results, retrieve the witness or counterexample
 and replay it against an independent evaluator of the same inductive
 definitions. In parallel, submit one event-position bounded-future request and
@@ -62,18 +74,24 @@ bridge and inspect its support-table disposition for each.
 
 The conformance-lasso case returns `proved`; the refuting cases return
 `refuted` with a replayable witness or counterexample whose fairness identity
-is included in its provenance (FR-161-AC-1, FR-161-AC-4, FR-161-AC-5). The
+is included in its replay identity (FR-161-AC-1, FR-161-AC-4, FR-161-AC-5). The
 open-liveness case returns `inconclusive`, never `proved` (FR-161-AC-2). The
 unsupported-operator/closure case returns `unsupported` with FR-241 execution
 `unsupported`, and the resource-ceiling case returns `failed` with FR-241
 execution `resource-incomplete`; the two remain distinct on the FR-241 axis and
 neither is interchangeable with `inconclusive` (FR-161-AC-3). The
-no-registered-backend case settles `unsupported` with a warning naming the
-missing liveness capability; it never holds, blocks or returns a refusal error
-(FR-161-AC-7). The mutated-fairness case stops proving and returns
+no-registered-backend case settles `unsupported` with a warning naming
+`temporal-satisfaction`, and a single bounded-only candidate settles
+`unsupported` with `unbounded-extent`; neither holds, blocks or returns a
+refusal error (FR-161-AC-7, FR-368-AC-5). Each fair lasso variant evaluates to
+its operator's expected truth and each unfair variant is refused naming its
+constraint (FR-362-AC-3). The loop-boundary lasso evaluates by the infinite
+trace it denotes, `once[1,1]` false at position 0 (FR-364-AC-7, FR-092-AC-7),
+and the nested `always[0,2]` formula evaluates with offset meaning over the
+infinite trace (FR-091-AC-9). The mutated-fairness case stops proving and returns
 `inconclusive` or `unsupported`, never a stale `proved`.
 
-Every returned result label matches exactly one [FR-341](../objects/temporal/FR-341-infinite-trace-result-disposition.md)
+Every returned result label matches exactly one [FR-360](../objects/temporal/FR-360-infinite-trace-result-disposition.md)
 member with its required FR-241 execution, FR-242 truth and FR-243 settlement-basis
 combination: `proved`/`refuted` carry execution `completed` and basis
 `closed-scope`, `decisive-witness` or `decisive-counterexample`; `inconclusive`

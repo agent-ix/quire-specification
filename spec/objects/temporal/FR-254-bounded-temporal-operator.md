@@ -31,7 +31,10 @@ The unbounded forms of these operator labels belong to the infinite-trace
 profile and are not members of this table. FR-091 states that under that profile
 "the evaluator shall admit the unbounded always, eventually, until and release operators"
 with the meaning FR-161 states, and FR-092 states the same for the unbounded
-previous, historically, once and since operators.
+historically, once, since and triggered operators. The members of this table are
+also admitted under the infinite-trace profile, nested with the unbounded
+forms; their key then carries that profile identity
+([FR-367](../../functional/temporal/FR-367-evaluate-interval-operators-under-infinite-trace.md)).
 [FR-161](../../functional/temporal/FR-161-analyze-infinite-trace-properties.md)
 owns their meaning.
 
