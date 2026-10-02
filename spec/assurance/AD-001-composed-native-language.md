@@ -191,7 +191,7 @@ deployment correctness or overall qualification.
 | --- | --- | --- |
 | V1 choices merely rename today's state subset | Every required family has native syntax/semantics and execution/monitor acceptance cases; the capability matrix is the release inventory. | A; complete-baseline PR review. |
 | A delivery sequence is mistaken for permission to defer product scope | Trace every inventory row to normative semantics, one epic and qualification work; tickets may sequence work but cannot close it as deferred. | A; complete-V1 campaign review. |
-| Graph identity/closure conflicts with first state admission restrictions | Propose a separate graph facet explicitly; preserve the original minimum-only ConfigVersion design gate and historical definition bytes. | A/D; state facet and baseline review. |
+| Graph identity/closure conflicts with first state admission restrictions | Propose a separate graph facet explicitly; keep the minimum-only ConfigVersion design gate. | A/D; state facet and baseline review. |
 | Missing temporal source-to-TL correspondence, especially past time | Native meaning precedes bridge implementation; #64 and TL #33 own the missing contracts rather than relabeling future-only support. | A/E; temporal baseline review. |
 | Timestamp order or sampled telemetry produces a false deadline claim | Require clock, correlation, ordering and completeness contracts and independent binding controls. | E/F with A; observation baseline review. |
 | Parallel branches or repeated triggers cause unbounded retained state | Authored finite bounds and per-run resource ceilings are separate; charge before expansion and preserve incomplete results. | Protocol/observation owners; baseline resource review. |

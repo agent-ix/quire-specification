@@ -93,6 +93,15 @@ Reviewed at 44ca4adfef42a297a5c5b5d6bc5604d3e98793e2, rebased onto main ae02648b
 | FND-012 | low | The catalog no longer has a revision (08bebe3, and FR-270 keys it by interpretation identity only), but FR-047's statement and FR-270's title and statement still call it a "versioned diagnostic catalog" | spec/functional/foundation/FR-047-emit-typed-located-causes.md:25; spec/objects/foundation/FR-270-versioned-diagnostic-catalog.md:3,14,18 |
 | FND-013 | low | The PR deletes the dependency-selection "mutation inventory is exact" assertion, but the same function keeps the "order inventory is exact" assertion, and seven other exact-name inventory assertions over fixture lists remain. Each fails when a vector is added and asserts nothing the per-vector behaviour loop does not already check | tests/checked_package_v2.rs:3916,4047,4297,4316,4676,4687,4900,5938 |
 
+## New findings (disposition pass 2)
+
+Reviewed at e678bb5f04db7e361cdafc10bd396cc52f1c2dd6, rebased onto main aa031866. Delta: the PR's files, 44ca4adf to e678bb5f, limited to lines the delta changed. `cargo test --locked` passes at e678bb5f.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-014 | low | FR-013's Behavior charges "each field write's grant test and each `redefines` link it follows" at `frame.write` and `frame.redefines-link` but does not say which is charged first. FR-013-AC-7 and TC-236 Vector 5 depend on `frame.write` coming first: with `work_units` = k, they expect the stop "at the last `frame.redefines-link`" with `consumed = k`. Charged links-first, the same run stops at `frame.write`. State the order in the Behavior sentence. | spec/functional/foundation/FR-013-validate-operation-frames.md:27, :39; spec/test-cases/TC-236-frame-grant-population-scope.md |
+| FND-015 | low | The AD-001 risk row edited by this PR still mitigates by "preserv[ing] the original minimum-only ConfigVersion design gate and historical definition bytes". That keeps superseded bytes as a compatibility record. Drop the clause. | spec/assurance/AD-001-composed-native-language.md:194 |
+
 ## Dispositions
 
 | FND | outcome | sha/reason |
@@ -106,3 +115,12 @@ Reviewed at 44ca4adfef42a297a5c5b5d6bc5604d3e98793e2, rebased onto main ae02648b
 | FND-007 | fixed | d07b11f (#174 on main, TC-003 and IT-003); 646c033 (TC-154) |
 | FND-008 | fixed | 08bebe3 |
 | FND-009 | fixed | 646c033 |
+
+Round 2, reviewed at e678bb5f04db7e361cdafc10bd396cc52f1c2dd6.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-010 | fixed | 0085926: FR-150: each derived fact records its declaration-key inputs, rule identity and ordinal. |
+| FND-011 | fixed | dbc5834: FR-331 drops manifest digest, version, pinned tool and tool lock; FR-271's row reads "a routed backend whose tool is unavailable". |
+| FND-012 | fixed | dbc5834: FR-270 is titled "Diagnostic catalog"; FR-047 says "its diagnostic catalog". |
+| FND-013 | fixed | 0085926: No "inventory is exact" assertion remains in tests/checked_package_v2.rs. |
