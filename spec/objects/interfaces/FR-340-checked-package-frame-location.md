@@ -45,18 +45,31 @@ key. This wire encoding is the V2 carrier of that existing model.
   the operation may write. An entry is one of:
   - `{kind: "relationship", declaration}`: `declaration` is the node key of
     a declared `relation`/`relationship` node;
-  - `{kind: "field", declaration, name}`: `declaration` is the node key of
-    the `model`/`object_type` or `model`/`record_value_type` node that
+  - `{kind: "field", declaration, name, scope}`: `declaration` is the node
+    key of the `model`/`object_type` or `model`/`record_value_type` node that
     declares, or inherits, the field, and `name` is the field's name. This
     is the same pair a `field` operation member carries
     ([FR-322](FR-322-checked-package-artifact.md) "Model-owned members").
+    `scope` is exactly `receiver` or `every-object`, the entry's
+    [FR-013](../../functional/foundation/FR-013-validate-operation-frames.md)
+    scope: `receiver` grants the write on the operation's receiver only,
+    `every-object` on every object whose effective type has the field.
 - **creates** (array of `NodeRef`) — every object type or process the
   operation may create an instance of. Each entry is the node key of a
   declared `model`/`object_type` or `model`/`process` node.
 - **deletes** (array of `NodeRef`) — every object type or process the
   operation may delete an instance of. Each entry is the node key of a
   declared `model`/`object_type` or `model`/`process` node, using the same
-  closed meaning as `creates`.
+  closed meaning as `creates`. Such an entry is type-wide.
+- **deletes_scoped** (array of `FrameDeletesScopedEntry`) — every scoped
+  [FR-013](../../functional/foundation/FR-013-validate-operation-frames.md)
+  `deletes` entry: `{kind: "receiver"}` for `deletes self`, or
+  `{kind: "parameter", name}` for `deletes p`, `name` being the reference
+  parameter's name. The member is required and may be empty; a `parameter`
+  entry whose name is not a reference parameter of the operation refuses
+  `missing_declaration`/`missing-name`. Entries are sorted with `receiver`
+  first, then `parameter` entries by name as UTF-8 bytes, with no duplicate;
+  a misordered array refuses `invalid_semantic_graph`.
 - Every entry's node key (a `modifies` entry's `declaration`, a `creates`
   or `deletes` entry itself) equals one of the frame node's own
   `dependencies` ([FR-322](FR-322-checked-package-artifact.md): "References
@@ -138,20 +151,23 @@ Reading an admitted frame node yields exactly:
   (`creates`, membership-checked the same way);
 - the set of declared object types and processes the operation may delete
   (`deletes`, membership-checked the same way);
-- nothing else. A frame body with all three members empty is a valid
+- the scoped deletes the operation may perform (`deletes_scoped`): the
+  receiver, or the argument bound to a named reference parameter;
+- nothing else. A frame body with all four members empty is a valid
   output meaning the operation modifies, creates and deletes nothing.
 
-A frame body missing any of the three stated members fails the schema, so
+A frame body missing any of the four stated members fails the schema, so
 an admitted frame body's Outputs are never partial.
 
 ## Wire encoding
 
 A frame node's `body` is exactly `{"term": "frame", "modifies": [...],
-"creates": [...], "deletes": [...]}`; all three members are required, and
-each may independently be the empty array. `modifies` is an array of
-`FrameModifiesEntry` (`{"kind": "field", "declaration", "name"}` or
+"creates": [...], "deletes": [...], "deletes_scoped": [...]}`; all four
+members are required, and each may independently be the empty array. `modifies` is an array of
+`FrameModifiesEntry` (`{"kind": "field", "declaration", "name", "scope"}` or
 `{"kind": "relationship", "declaration"}`), and `creates` and `deletes` are
-each an array of `NodeRef`; no member holds a duplicate entry. This shape
+each an array of `NodeRef`, and `deletes_scoped` an array of
+`FrameDeletesScopedEntry`; no member holds a duplicate entry. This shape
 is scoped to validate only as the `body` of a `state`/`frame` node: a
 `value`, `expression`, or any other node's `body` continues to validate
 against the ordinary `SemanticTerm` union, and a `state`/`frame` node's
@@ -160,6 +176,13 @@ frame body holds no application, so no clause operation is ever the body
 root of a frame node ([FR-341](FR-341-checked-package-state-clause-body.md)
 "Node forms and body roots"). The schema also requires every occurrence of
 a `state`/`frame` node to have role `generated`.
+
+A field entry's `scope` enters the frame node's identity, so changing an
+entry from `every-object` to `receiver` changes the node id and the
+`package_id`. A field entry with no `scope`, or a `scope` other than
+`receiver` or `every-object`, fails the schema. Two field entries with the
+same `declaration` and `name` and different scopes refuse
+`invalid_model_binding`/`conflicting-binding`, naming both entries.
 
 ## Canonical ordering and reader precedence
 
@@ -231,6 +254,8 @@ The frame step runs before the state step of
 | FR-340-AC-13 | A field entry's name resolves among the exposed effective fields of its declaring object type, own and inherited: `(Order, "total")` and `(Sub, "total")` resolve to `Order`'s field; an undeclared name and an operation's name refuse `missing_declaration`/`missing-name`, a name two supertypes both expose refuses `ambiguous_declaration`/`ambiguous-name`, and a declaring node keyed under an unselected domain package version refuses `missing_declaration`/`missing-selection`. | Test (TC-280) |
 | FR-340-AC-14 | A frame occurrence with a role other than `generated` fails the schema. | Test (TC-233) |
 | FR-340-AC-15 | No `model` node stands for a field, an operation or a clause member on its own: `ModelNode.semantic_form` names only FR-208's business type kinds, `model_import` and FR-208's five systems meanings. | Test (TC-233) |
+| FR-340-AC-16 | A field entry carries `scope` exactly `receiver` or `every-object`; an entry without it or with another value fails the schema, two entries for one field with different scopes refuse `invalid_model_binding`/`conflicting-binding`, and changing an entry's scope changes the frame node id and the `package_id`. | Test (TC-326) |
+| FR-340-AC-17 | A frame body carries `deletes_scoped`, possibly empty; `deletes self` encodes as `{kind: "receiver"}` and `deletes p` as `{kind: "parameter", name: "p"}`; a body without the member fails the schema, a `parameter` entry naming no reference parameter refuses `missing_declaration`/`missing-name`, and a misordered array refuses `invalid_semantic_graph`. | Test (TC-326) |
 
 ## Dependencies
 
@@ -266,3 +291,9 @@ The frame step runs before the state step of
 
 Accepted complete-V1 boundary value contract for the `state`/`frame` node
 body. Implementation and qualification remain tracked separately.
+
+## References
+
+- Receiver scope design: quire-spec-language ADR-021 (POR-3, RU-1, QS-4).
+- Scoped `deletes`: quire-spec-language SR-1140 FND-004.
+- Tickets: Linear STD-134; paired QSL-368.

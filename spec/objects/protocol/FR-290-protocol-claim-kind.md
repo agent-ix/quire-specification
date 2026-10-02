@@ -48,7 +48,7 @@ outcome independent from every other member.
 | `global-conformance` | Finite global protocol conformance under the exact selected closure premises. |
 | `monitorability` | Whether the selected admitted fragment can be monitored under the declared observations. |
 | `local-projection` | Whether one selected participant projection is defined under its exact premises. |
-| `refinement` | Whether one exact protocol refines another under a selected relation. |
+| `refinement` | Whether one exact protocol refines another under a selected relation; its two subjects are protocol models (FR-177). |
 | `realizability` | Whether the selected protocol admits a causal implementation strategy. |
 | `composition` | Whether selected components compose under independently discharged assumptions. |
 | `probabilistic-satisfaction` | Whether a probabilistic claim's bound holds over a model subject under its workload or every scheduler ([FR-407](../../functional/analysis/FR-407-state-probabilistic-claims.md)), with `statistical` or `exact` evidence. |
@@ -118,8 +118,10 @@ as a function application or a `case` expression, adds no kind.
 | `hyper` clause over `behaviours` of model subjects ([FR-395](../../functional/analysis/FR-395-analyze-hyperproperties-over-behaviours.md)) | `temporal-satisfaction`; its form is an obligation form |
 | Model claim of a `relation` clause over model operations ([FR-397](../../functional/analysis/FR-397-check-step-relations-over-model-operations.md)) | `temporal-satisfaction`; its form is an obligation form |
 | Code claim of a `relation` clause over model operations whose every operation has an implementation binding | `operation-contract`; one claim per relation, with every declared invariant of each execution's model as its pre-state premise |
-| Refinement between two protocols | `refinement` |
-| Refinement between two operation contracts or state models | `operation-contract`; each implication between the two contracts' clauses is one `operation-contract` claim |
+| Refinement between two protocols ([FR-177](../../functional/protocol/FR-177-check-protocol-refinement.md)) | `refinement` |
+| Whole refinement between two model subjects ([FR-377](../../functional/analysis/FR-377-decide-model-refinement.md)) | `temporal-satisfaction` |
+| Per-step simulation obligation of a model refinement, or a relation-family refinement gate between two operation contracts | `operation-contract`; each implication between the two contracts' clauses is one `operation-contract` claim, and a model refinement's step-row and initial-state obligations are such implications |
+| Claim transferred through a model refinement ([FR-380](../../functional/analysis/FR-380-transfer-claims-through-refinement.md)) | `temporal-satisfaction` |
 | FR-353 abstraction relation | none; it is a premise of the `operation-contract` claim it binds |
 | Other protocol analysis claim ([FR-060](../../functional/protocol/FR-060-separate-protocol-claims.md)) | its `protocol`-family member |
 | Probabilistic claim of any FR-407 form | `probabilistic-satisfaction` |

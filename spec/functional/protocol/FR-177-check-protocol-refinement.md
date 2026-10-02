@@ -9,6 +9,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/AD-007
     type: references
+  - target: ix://agent-ix/quire-specification/FR-377
+    type: references
 ---
 
 # FR-177: Check protocol implementation refinement
@@ -48,6 +50,35 @@ implementation steps must preserve correspondence and cannot hide infinite
 divergence when divergence is observable. Environment assumptions in the
 implementation must be no stronger than those of the specification.
 
+## Relation over the model-refinement step rules
+
+The relation is decided by the step rules of
+[FR-377](../analysis/FR-377-decide-model-refinement.md) on the product of the
+two explored protocol models, with one step function and one counterexample
+type:
+
+- a permitted internal implementation action is a `stutter` step: it passes
+  when the corresponding specification state is unchanged;
+- a visible implementation step is a step-map row whose label is its
+  observation: it passes when a specification step with the same observation
+  takes the corresponding state to the corresponding successor, after zero or
+  more permitted specification internal steps;
+- the paired initial states are FR-377's initial-state rule.
+
+Four checks are protocol-only and run over the same product edges and
+states:
+
+- **divergence-freedom**: when the profile makes divergence observable, a loop
+  of internal implementation steps at a specification state that can move is
+  a violation whatever the fairness sets are, where FR-377 reads stutter tails
+  only through abstract fairness;
+- **refusal sets**: every implementation refusal is allowed by the matched
+  specification state;
+- **terminal success**: implementation terminal success matches specification
+  terminal success;
+- **assumption weakening**: implementation environment assumptions are no
+  stronger than the specification's.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -57,9 +88,12 @@ implementation must be no stronger than those of the specification.
 | FR-177-AC-3 | Missing correspondence or unsupported dynamic behavior returns inconclusive/unsupported rather than refines. | Test (TC-208) |
 | FR-177-AC-4 | Internal-step stuttering preserves correspondence and cannot hide a catastrophic divergence. | Test (TC-208) |
 | FR-177-AC-5 | Failure-set inclusion and assumption weakening are checked independently from visible-trace inclusion. | Test (TC-208) |
+| FR-177-AC-6 | Visible-step matching, internal steps and paired initial states are decided by FR-377's step rules with internal actions as `stutter` steps and observations as step labels; an observable internal loop at a specification state that can move refutes as a divergence under every fairness set, including an empty one, while the same loop in a model refinement with empty abstract fairness holds. | Test (TC-318) |
 
 ## Dependencies
 
+- [FR-377](../analysis/FR-377-decide-model-refinement.md) owns the step rules,
+  product and counterexample type this relation is decided on.
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
   source form used by this requirement.
 - [Subsystem and interface index](../../subsystems/index.md) identifies the
@@ -67,3 +101,8 @@ implementation must be no stronger than those of the specification.
 - Every requirement linked in frontmatter is a normative prerequisite.
   Implementation ordering may add enablement edges but cannot change these
   semantics or infer implementation availability from specification acceptance.
+
+## References
+
+- Design: quire-spec-language ADR-020 (MC-1, QS-8, RU-2).
+- Tickets: Linear STD-133; paired QSL-367.

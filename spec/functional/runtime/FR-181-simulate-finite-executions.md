@@ -23,6 +23,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-420
     type: references
+  - target: ix://agent-ix/quire-specification/FR-383
+    type: references
 ---
 
 # FR-181: Simulate finite composed executions reproducibly
@@ -129,7 +131,10 @@ operation's declared frame for which the operation's postcondition holds
 successor rather than pruned from exploration.
 
 Exhaustive mode performs deterministic breadth-first expansion of authored
-choices and enabled schedules, coalescing only equal complete state keys.
+choices and enabled schedules, coalescing only equal complete state keys,
+except that a model-check item selecting a state-space reduction explores
+under [FR-383](../analysis/FR-383-explore-under-state-space-reduction.md),
+which coalesces equal canonical state keys and expands ample sets.
 Within one level, parent states keep their FIFO discovery order, and each
 parent's own successors are visited in ascending unsigned-lexicographic order
 of the JCS UTF-8 bytes of the typed canonical form of their transition
@@ -219,8 +224,8 @@ so every timed refutation has a counterexample with exact rational delays.
 | FR-181-AC-1 | Enumeration covers each finite declared choice/schedule exactly under canonical ordering. | Test (TC-210) |
 | FR-181-AC-2 | Seeded sampling reproduces identical traces for the same seed and trace index. | Test (TC-210) |
 | FR-181-AC-3 | Missing bounds or exhausted work returns requires-bound/incomplete with the unexplored scope, and caller cancellation returns incomplete with cause cancelled/caller-cancelled and the unexplored frontier. | Test (TC-210) |
-| FR-181-AC-4 | Exhaustive exploration coalesces only equal complete state keys and visits successors in canonical breadth-first order; states differing only in NaN payload or zero sign have distinct state keys and remain distinct states, and a successor that violates an invariant is recorded rather than pruned. | Test (TC-210) |
-| FR-181-AC-5 | Every generated trace, and every state-graph witness path, replays through the same native transition relation with the same terminal disposition. | Test (TC-210, TC-335) |
+| FR-181-AC-4 | Exhaustive exploration with no selected reduction coalesces only equal complete state keys and visits successors in canonical breadth-first order, and a model-check item selecting a reduction explores under FR-383; states differing only in NaN payload or zero sign have distinct state keys and remain distinct states, and a successor that violates an invariant is recorded rather than pruned. | Test (TC-210) |
+| FR-181-AC-5 | Every generated trace, every state-graph witness path, and every trace concretised from a reduced search replays through the same native transition relation with the same terminal disposition, and no trace carries a canonical state, permutation or reduction. | Test (TC-210, TC-335, TC-327) |
 | FR-181-AC-6 | Exploring a model that describes external effects performs none of them: the effects appear only as typed trace data, and a request for evaluator I/O, mutation or an ambient store refuses with its source location. | Test (TC-210) |
 | FR-181-AC-7 | The same operation applied with the same arguments to two receivers yields two transition identities that differ only in `receiver`, ordered by their JCS bytes; a state with no enabled transition identity is recorded with no successor. | Test (TC-290) |
 | FR-181-AC-13 | Exhaustive exploration from a given state treats it as the only initial state, explores its forward closure in canonical breadth-first order under the request's limits, and retains every explored edge with each state's open or closed status. | Test (TC-335) |
@@ -231,6 +236,8 @@ so every timed refutation has a counterexample with exact rational delays.
 
 ## Dependencies
 
+- [FR-383](../analysis/FR-383-explore-under-state-space-reduction.md) owns
+  exploration under a selected state-space reduction.
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
   source form used by this requirement.
 - [Subsystem and interface index](../../subsystems/index.md) identifies the

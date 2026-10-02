@@ -752,6 +752,28 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-421
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-375
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-376
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-377
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-378
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-379
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-380
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-381
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-382
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-383
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-384
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-385
+    type: contains
   - target: ix://agent-ix/quire-specification/TM-009
     type: contains
   - target: ix://agent-ix/quire-specification/FR-434
@@ -1201,6 +1223,17 @@ The requirement artifacts are indexed below.
 | [FR-294](objects/observation/FR-294-late-data-classification.md) | FR (enumeration) | Object layer; exact on-time and late observation classification |
 | [FR-295](objects/observation/FR-295-input-completeness-state.md) | FR (enumeration) | Object layer; independent input-completeness state derived from an exact fact population |
 | [FR-296](objects/observation/FR-296-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; admitted-observation identity preimage and byte uniqueness |
+| [FR-375](functional/analysis/FR-375-declare-model-refinement.md) | FR | Draft; Refinement declaration between two state models: syntax, row checks, checked-package node |
+| [FR-376](functional/analysis/FR-376-evaluate-population-valued-mapping-expressions.md) | FR | Draft; Population-valued expressions in refinement mappings |
+| [FR-377](functional/analysis/FR-377-decide-model-refinement.md) | FR | Draft; Refinement between two model subjects: step rules, abstract progress, terminal states |
+| [FR-378](functional/analysis/FR-378-check-refinement-auxiliary-state.md) | FR | Draft; Refinement history fields and hidden abstract fields |
+| [FR-379](functional/analysis/FR-379-report-and-replay-refinement-counterexamples.md) | FR | Draft; Refinement verdicts, counterexample wire and replay |
+| [FR-380](functional/analysis/FR-380-transfer-claims-through-refinement.md) | FR | Draft; Claim transfer through a refinement (vertical composition) |
+| [FR-381](functional/analysis/FR-381-check-symmetric-populations.md) | FR | Draft; Symmetric population annotation and identity transparency |
+| [FR-382](functional/analysis/FR-382-select-state-space-reductions.md) | FR | Draft; Reduction request members, admission, identity and negotiation |
+| [FR-383](functional/analysis/FR-383-explore-under-state-space-reduction.md) | FR | Draft; Reduced exhaustive exploration: canonicaliser, ample sets, boundary states |
+| [FR-384](functional/analysis/FR-384-decide-each-fairness-on-annotated-quotient.md) | FR | Draft; Each-granularity fairness under symmetry on the annotated quotient |
+| [FR-385](functional/analysis/FR-385-report-reduced-verdicts.md) | FR | Draft; Preservation table and reduced verdicts |
 | [FR-425](functional/protocol/FR-425-define-protocol-subjects-and-state-keys.md) | FR | Define protocol subjects and their state keys |
 | [FR-426](functional/protocol/FR-426-apply-protocol-steps.md) | FR | Apply protocol steps atomically with canonical transition identities |
 | [FR-427](functional/protocol/FR-427-check-protocol-compensation.md) | FR | Check compensation templates inside a protocol subject |
