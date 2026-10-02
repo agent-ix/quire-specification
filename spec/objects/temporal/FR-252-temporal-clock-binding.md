@@ -10,16 +10,38 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-250
     type: references
+  - target: ix://agent-ix/quire-specification/FR-415
+    type: references
 ---
 # FR-252: Temporal clock binding
 
 ## Description
 
-When an admitted native temporal clause is bound, the frontend SHALL bind it to one exact clock interpretation supplied through the shared observation interface before evaluation or lowering.
+When an admitted native temporal clause is bound, the frontend SHALL bind it to one exact clock interpretation before evaluation or lowering: over a trace subject, the binding supplied through the shared observation interface; over a model subject, the `model-steps` or `model-time` binding below.
 
 FR-090 Inputs name the supplied components: "exact language edition and temporal
-profile definition identity; typed interval bounds; and one clock binding
-supplied through the shared observation interface."
+profile definition identity; typed interval bounds; and one clock binding".
+
+## Model-subject bindings
+
+A temporal claim over a model subject has exactly one of two bindings:
+
+- **`model-steps`** — the model's step sequence is the event-position sequence
+  authority, and an interval counts steps. It serves the event-position and
+  infinite-trace profiles.
+- **`model-time`** — the claim is bound to the model's time source
+  ([FR-415](../../functional/temporal/FR-415-declare-clocks-and-timed-models.md)),
+  and an interval counts time units. It selects `quire.temporal.timed/v1`. A
+  dense source gives each position the sum of the delays before it; a digital
+  source (`time tick O period p`) gives it `p` times the number of `O` steps up
+  to it. Both give non-decreasing exact rational time stamps in unit `u`, with
+  step order as the admitted order.
+
+**Default.** A claim over a timed model binds `model-time` unless it writes
+`clock "model-steps"`; a claim over an untimed model binds `model-steps`.
+Writing the default changes nothing: the binding enters the obligation
+identity, not its spelling. A `model-time` binding over an untimed model
+refuses with `invalid_timed_model`/`model-time-on-untimed-model`.
 
 ## Properties
 
@@ -33,10 +55,14 @@ supplied through the shared observation interface."
 | Sequence authority | FR-090 Behavior, FR-090-AC-3 | Event-position only: "One admitted semantic-event position in an authoritative sequence". Changing it changes the binding identity. |
 | Admitted order | FR-090 Behavior | Retained by the timestamped-event profile and required by the order-sensitive operators ([FR-254](FR-254-bounded-temporal-operator.md)). |
 | Completeness premise | FR-090 Behavior | Retained "for every evaluated window" by the timestamped-event profile. |
+| Time source | Model-subject bindings | `model-time` only: the model's qualified name and its time source kind (`dense` or `tick`), with the tick operation for a digital source. |
+| Binding kind | Model-subject bindings | Model subject only: `model-steps` or `model-time`. |
 
-The three profiles do not carry the same component set. FR-090 states that the
+The profiles do not carry the same component set. FR-090 states that the
 event-position profile "shall not claim elapsed time", so no epoch, period or
-elapsed-time component is admitted under it.
+elapsed-time component is admitted under it. A `model-time` binding carries
+the timed profile identity, the time source, the unit, the period for a
+digital source, and step order as sequence authority.
 
 ## Identity and comparison
 
@@ -44,8 +70,8 @@ elapsed-time component is admitted under it.
   compared componentwise. The clock it names is identified; the binding is the
   componentwise selection of that clock under one profile.
 - **Key** — the selected profile identity together with the clock identity,
-  unit, epoch, period, sequence authority, admitted order and completeness
-  premise components admitted by that profile. Equality is componentwise over
+  unit, epoch, period, sequence authority, admitted order, completeness
+  premise, binding kind and time source components admitted by that profile. Equality is componentwise over
   exactly those components and nothing else. Display name, source path, span,
   message text, locale and rendering never participate
   ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
@@ -74,10 +100,7 @@ elapsed-time component is admitted under it.
   authority or admitted order is never defaulted, and an absent runtime sample
   under a valid fixed-sample binding is classified "as incomplete" (FR-090), not
   as a value.
-- **Digest domain** — a clock or definition component carried as a digest
-  retains the domain it was derived under
-  ([FR-201](../foundation/FR-201-canonical-identity-domain.md)); an identity
-  crossing domains is unequal regardless of byte equality.
+- **Digest domain** — not applicable; no key component is a digest.
 
 ## A foreign binding cannot settle
 
@@ -97,6 +120,8 @@ is therefore a precondition of applying a progress assertion
 | FR-252-AC-3 | The declared key order over binding components is never cited as an admitted order for an order-sensitive operator. | Analysis |
 | FR-252-AC-4 | A binding under the event-position profile carries no epoch, period or elapsed-time component. | Inspection |
 | FR-252-AC-5 | A binding whose clock identity differs compares unequal regardless of equal unit and epoch. | Analysis |
+| FR-252-AC-6 | A claim over a timed model with no `clock` member binds `model-time`, `clock "model-steps"` binds steps, a claim over an untimed model binds `model-steps`, and writing the default leaves the binding and obligation identity unchanged. | Test (TC-368) |
+| FR-252-AC-7 | Changing the time source kind, unit or period of a `model-time` binding yields an unequal binding; a `model-time` binding over an untimed model refuses `invalid_timed_model`/`model-time-on-untimed-model`. | Test (TC-368) |
 
 ## Dependencies
 

@@ -346,7 +346,7 @@ type.
 | FR-192 | FR-192-AC-2 | TC-214 | planned |
 | FR-192 | FR-192-AC-3 | TC-214 | planned |
 | FR-193 | FR-193-AC-1 | TC-215 | planned |
-| FR-193 | FR-193-AC-2 | TC-215 | planned |
+| FR-193 | FR-193-AC-2 | TC-215, TC-373 | planned |
 | FR-193 | FR-193-AC-3 | TC-215 | planned |
 | FR-194 | FR-194-AC-1 | TC-216 | planned |
 | FR-194 | FR-194-AC-2 | TC-216 | planned |
@@ -1276,6 +1276,152 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-255 | FR-255-AC-6 | TC-298 | planned |
 | FR-250 | FR-250-AC-6 | TC-238, TC-298 | planned |
 | FR-331 | FR-331-AC-11 | TC-302 | planned |
+| FR-405 | FR-405-AC-1 | TC-350 | planned |
+| FR-405 | FR-405-AC-2 | TC-350 | planned |
+| FR-405 | FR-405-AC-3 | TC-350 | planned |
+| FR-405 | FR-405-AC-4 | TC-350 | planned |
+| FR-405 | FR-405-AC-5 | TC-350 | planned |
+| FR-405 | FR-405-AC-6 | TC-350 | planned |
+| FR-405 | FR-405-AC-7 | TC-350 | planned |
+| FR-405 | FR-405-AC-8 | TC-350 | planned |
+| FR-406 | FR-406-AC-1 | TC-351 | planned |
+| FR-406 | FR-406-AC-2 | TC-351, TC-352 | planned |
+| FR-406 | FR-406-AC-3 | TC-351 | planned |
+| FR-406 | FR-406-AC-4 | TC-352 | planned |
+| FR-406 | FR-406-AC-5 | TC-352 | planned |
+| FR-406 | FR-406-AC-6 | TC-351 | planned |
+| FR-407 | FR-407-AC-1 | TC-353 | planned |
+| FR-407 | FR-407-AC-2 | TC-353 | planned |
+| FR-407 | FR-407-AC-3 | TC-353 | planned |
+| FR-407 | FR-407-AC-4 | TC-353 | planned |
+| FR-407 | FR-407-AC-5 | TC-353 | planned |
+| FR-407 | FR-407-AC-6 | TC-353 | planned |
+| FR-407 | FR-407-AC-7 | TC-353, TC-374 | planned |
+| FR-407 | FR-407-AC-8 | TC-353, TC-360 | planned |
+| FR-407 | FR-407-AC-9 | TC-353 | planned |
+| FR-408 | FR-408-AC-1 | TC-353 | planned |
+| FR-408 | FR-408-AC-2 | TC-355 | planned |
+| FR-408 | FR-408-AC-3 | TC-355 | planned |
+| FR-408 | FR-408-AC-4 | TC-355 | planned |
+| FR-408 | FR-408-AC-5 | TC-356 | planned |
+| FR-408 | FR-408-AC-6 | TC-357 | planned |
+| FR-408 | FR-408-AC-7 | TC-355 | planned |
+| FR-408 | FR-408-AC-8 | TC-356 | planned |
+| FR-408 | FR-408-AC-9 | TC-355 | planned |
+| FR-408 | FR-408-AC-10 | TC-355 | planned |
+| FR-408 | FR-408-AC-11 | TC-359 | planned |
+| FR-408 | FR-408-AC-12 | TC-356 | planned |
+| FR-409 | FR-409-AC-1 | TC-358 | planned |
+| FR-409 | FR-409-AC-2 | TC-358 | planned |
+| FR-409 | FR-409-AC-3 | TC-358 | planned |
+| FR-409 | FR-409-AC-4 | TC-358 | planned |
+| FR-409 | FR-409-AC-5 | TC-358 | planned |
+| FR-410 | FR-410-AC-1 | TC-358 | planned |
+| FR-410 | FR-410-AC-2 | TC-355 | planned |
+| FR-410 | FR-410-AC-3 | TC-359 | planned |
+| FR-410 | FR-410-AC-4 | TC-359 | planned |
+| FR-410 | FR-410-AC-5 | TC-359 | planned |
+| FR-411 | FR-411-AC-1 | TC-360 | planned |
+| FR-411 | FR-411-AC-2 | TC-360 | planned |
+| FR-411 | FR-411-AC-3 | TC-361 | planned |
+| FR-411 | FR-411-AC-4 | TC-361, TC-374 | planned |
+| FR-411 | FR-411-AC-5 | TC-361 | planned |
+| FR-411 | FR-411-AC-6 | TC-362 | planned |
+| FR-411 | FR-411-AC-7 | TC-365 | planned |
+| FR-411 | FR-411-AC-8 | TC-365 | planned |
+| FR-411 | FR-411-AC-9 | TC-360 | planned |
+| FR-411 | FR-411-AC-10 | TC-361 | planned |
+| FR-411 | FR-411-AC-11 | TC-361 | planned |
+| FR-411 | FR-411-AC-12 | TC-364 | planned |
+| FR-411 | FR-411-AC-13 | TC-360 | planned |
+| FR-411 | FR-411-AC-14 | TC-360 | planned |
+| FR-411 | FR-411-AC-15 | TC-365 | planned |
+| FR-412 | FR-412-AC-1 | TC-363 | planned |
+| FR-412 | FR-412-AC-2 | TC-362 | planned |
+| FR-412 | FR-412-AC-3 | TC-363 | planned |
+| FR-412 | FR-412-AC-4 | TC-363 | planned |
+| FR-412 | FR-412-AC-5 | TC-363 | planned |
+| FR-412 | FR-412-AC-6 | TC-363 | planned |
+| FR-412 | FR-412-AC-7 | TC-363 | planned |
+| FR-413 | FR-413-AC-1 | TC-364 | planned |
+| FR-413 | FR-413-AC-2 | TC-364 | planned |
+| FR-413 | FR-413-AC-3 | TC-364 | planned |
+| FR-413 | FR-413-AC-4 | TC-364 | planned |
+| FR-413 | FR-413-AC-5 | TC-364 | planned |
+| FR-413 | FR-413-AC-6 | TC-364 | planned |
+| FR-413 | FR-413-AC-7 | TC-364 | planned |
+| FR-413 | FR-413-AC-8 | TC-374 | planned |
+| FR-413 | FR-413-AC-9 | TC-364, TC-360 | planned |
+| FR-414 | FR-414-AC-1 | TC-366 | planned |
+| FR-414 | FR-414-AC-2 | TC-366 | planned |
+| FR-414 | FR-414-AC-3 | TC-366 | planned |
+| FR-414 | FR-414-AC-4 | TC-366 | planned |
+| FR-414 | FR-414-AC-5 | TC-366 | planned |
+| FR-414 | FR-414-AC-6 | TC-366 | planned |
+| FR-415 | FR-415-AC-1 | TC-367 | planned |
+| FR-415 | FR-415-AC-2 | TC-367 | planned |
+| FR-415 | FR-415-AC-3 | TC-367 | planned |
+| FR-415 | FR-415-AC-4 | TC-367 | planned |
+| FR-415 | FR-415-AC-5 | TC-367 | planned |
+| FR-416 | FR-416-AC-1 | TC-369 | planned |
+| FR-416 | FR-416-AC-2 | TC-369 | planned |
+| FR-416 | FR-416-AC-3 | TC-369 | planned |
+| FR-416 | FR-416-AC-4 | TC-369 | planned |
+| FR-416 | FR-416-AC-5 | TC-369, TC-371 | planned |
+| FR-416 | FR-416-AC-6 | TC-368 | planned |
+| FR-416 | FR-416-AC-7 | TC-369 | planned |
+| FR-416 | FR-416-AC-8 | TC-369 | planned |
+| FR-417 | FR-417-AC-1 | TC-370 | planned |
+| FR-417 | FR-417-AC-2 | TC-370 | planned |
+| FR-417 | FR-417-AC-3 | TC-370 | planned |
+| FR-417 | FR-417-AC-4 | TC-370 | planned |
+| FR-417 | FR-417-AC-5 | TC-370, TC-371 | planned |
+| FR-418 | FR-418-AC-1 | TC-371 | planned |
+| FR-418 | FR-418-AC-2 | TC-371 | planned |
+| FR-418 | FR-418-AC-3 | TC-371 | planned |
+| FR-418 | FR-418-AC-4 | TC-371 | planned |
+| FR-418 | FR-418-AC-5 | TC-371 | planned |
+| FR-419 | FR-419-AC-1 | TC-372 | planned |
+| FR-419 | FR-419-AC-2 | TC-372 | planned |
+| FR-419 | FR-419-AC-3 | TC-372 | planned |
+| FR-419 | FR-419-AC-4 | TC-372 | planned |
+| FR-419 | FR-419-AC-5 | TC-372 | planned |
+| FR-419 | FR-419-AC-6 | TC-372 | planned |
+| FR-420 | FR-420-AC-1 | TC-374 | planned |
+| FR-420 | FR-420-AC-2 | TC-374 | planned |
+| FR-420 | FR-420-AC-3 | TC-374 | planned |
+| FR-420 | FR-420-AC-4 | TC-374 | planned |
+| FR-420 | FR-420-AC-5 | TC-374 | planned |
+| FR-420 | FR-420-AC-6 | TC-374 | planned |
+| FR-420 | FR-420-AC-7 | TC-374 | planned |
+| FR-421 | FR-421-AC-1 | TC-374 | planned |
+| FR-421 | FR-421-AC-2 | TC-374 | planned |
+| FR-421 | FR-421-AC-3 | TC-374 | planned |
+| FR-421 | FR-421-AC-4 | TC-374 | planned |
+| FR-421 | FR-421-AC-5 | TC-374 | planned |
+| FR-421 | FR-421-AC-6 | TC-374 | planned |
+| FR-161 | FR-161-AC-13 | TC-369 | planned |
+| FR-161 | FR-161-AC-14 | TC-369 | planned |
+| FR-161 | FR-161-AC-15 | TC-370 | planned |
+| FR-161 | FR-161-AC-16 | TC-369 | planned |
+| FR-181 | FR-181-AC-9 | TC-354 | planned |
+| FR-181 | FR-181-AC-10 | TC-354 | planned |
+| FR-181 | FR-181-AC-11 | TC-369 | planned |
+| FR-181 | FR-181-AC-12 | TC-369 | planned |
+| FR-193 | FR-193-AC-6 | TC-373 | planned |
+| FR-193 | FR-193-AC-7 | TC-373 | planned |
+| FR-250 | FR-250-AC-7 | TC-368 | planned |
+| FR-252 | FR-252-AC-6 | TC-368 | planned |
+| FR-252 | FR-252-AC-7 | TC-368 | planned |
+| FR-255 | FR-255-AC-7 | TC-368 | planned |
+| FR-255 | FR-255-AC-8 | TC-368 | planned |
+| FR-272 | FR-272-AC-15 | TC-350, TC-358, TC-367 | planned |
+| FR-290 | FR-290-AC-11 | TC-353, TC-370, TC-372 | planned |
+| FR-290 | FR-290-AC-12 | TC-353 | planned |
+| FR-331 | FR-331-AC-13 | TC-358 | planned |
+| FR-331 | FR-331-AC-14 | TC-353 | planned |
+| FR-331 | FR-331-AC-15 | TC-363, TC-371, TC-372 | planned |
+| FR-331 | FR-331-AC-16 | TC-358 | planned |
 | FR-434 | FR-434-AC-1 | TC-388, TC-390 | planned |
 | FR-434 | FR-434-AC-2 | TC-388 | planned |
 | FR-434 | FR-434-AC-3 | TC-388 | planned |
@@ -1606,6 +1752,31 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-399 | Union construction and case accounting | Property | P0 | FR-143, FR-146 | 🚧 Planned |
 | TC-400 | Supplied union values and the value profile | Property | P0 | FR-143 | 🚧 Planned |
 | TC-401 | Pre-call precondition observation | Property | P0 | FR-046, FR-208 | 🚧 Planned |
+| TC-350 | Probabilistic declarations admission | Property | P0 | FR-405, FR-272 | 🚧 Planned |
+| TC-351 | Step probability, Markov condition and measure per initial state | Property | P0 | FR-406, FR-407 | 🚧 Planned |
+| TC-352 | Every-scheduler and fair-scheduler semantics | Property | P0 | FR-406 | 🚧 Planned |
+| TC-353 | Probabilistic claim forms, confidence parameters and evidence routing | Property | P0 | FR-407, FR-408, FR-290, FR-331 | 🚧 Planned |
+| TC-354 | Weighted sampler, choice index and trace index | Property | P0 | FR-181 | 🚧 Planned |
+| TC-355 | Okamoto and SPRT decisions | Property | P0 | FR-408, FR-410 | 🚧 Planned |
+| TC-356 | Regenerative long-run fractions and statistical budgets | Property | P0 | FR-408 | 🚧 Planned |
+| TC-357 | Bonferroni over tests and symmetry reduction of tests | Property | P0 | FR-408 | 🚧 Planned |
+| TC-358 | Measured axis, result combination and pipeline gating | Property | P0 | FR-409, FR-410, FR-331, FR-272 | 🚧 Planned |
+| TC-359 | Sampled witness wire and replay | Property | P0 | FR-410, FR-408, FR-409 | 🚧 Planned |
+| TC-360 | Exact finite-horizon values | Property | P0 | FR-411 | 🚧 Planned |
+| TC-361 | Exact unbounded reachability, expected rewards and fairness sets | Property | P0 | FR-411 | 🚧 Planned |
+| TC-362 | Exact long-run fractions | Property | P0 | FR-411, FR-412 | 🚧 Planned |
+| TC-363 | Probability certificate checker | Property | P0 | FR-412, FR-331 | 🚧 Planned |
+| TC-364 | Probabilistic counterexample replay | Property | P0 | FR-413, FR-411 | 🚧 Planned |
+| TC-365 | Exact limits, precision budget and partial evidence | Property | P0 | FR-411 | 🚧 Planned |
+| TC-366 | Window aggregates in monitors | Property | P0 | FR-414 | 🚧 Planned |
+| TC-367 | Clock and timed model declarations | Property | P0 | FR-415, FR-272 | 🚧 Planned |
+| TC-368 | Timed profile, clock bindings and interval openness | Property | P0 | FR-090, FR-250, FR-252, FR-255, FR-416 | 🚧 Planned |
+| TC-369 | Timed semantics, verdicts and replay | Property | P0 | FR-416, FR-161, FR-181 | 🚧 Planned |
+| TC-370 | Time-lock freedom and vacuity | Property | P0 | FR-417, FR-161, FR-290 | 🚧 Planned |
+| TC-371 | Zone certificate checker | Property | P0 | FR-418, FR-416, FR-417, FR-331 | 🚧 Planned |
+| TC-372 | Task-set schedulability | Property | P0 | FR-419, FR-290, FR-331 | 🚧 Planned |
+| TC-373 | Hybrid solver verdict map | Property | P0 | FR-193 | 🚧 Planned |
+| TC-374 | Stochastic delays, timed sampling and exact digital checking | Property | P0 | FR-420, FR-421, FR-411, FR-407 | 🚧 Planned |
 | TC-375 | Protocol state key and coalescing | Property | P0 | FR-425 | 🚧 Planned |
 | TC-376 | Two branches and a join: states, deadlock and repair | Property | P0 | FR-426, FR-429 | 🚧 Planned |
 | TC-377 | Join policies at zero, below, at and past threshold | Property | P0 | FR-426 | 🚧 Planned |

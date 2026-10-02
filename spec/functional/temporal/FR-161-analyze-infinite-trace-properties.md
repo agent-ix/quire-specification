@@ -29,6 +29,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-368
     type: references
+  - target: ix://agent-ix/quire-specification/FR-415
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-416
+    type: references
 ---
 
 # FR-161: Analyze native infinite-trace temporal properties
@@ -106,6 +110,48 @@ provider-declared complete witness whose replay denotes an admitted infinite
 trace. A bare finite prefix can refute a safety obligation once its bad prefix
 is complete, but it cannot establish liveness satisfaction.
 
+## Timed subjects
+
+Over a timed subject ([FR-415](FR-415-declare-clocks-and-timed-models.md)),
+positions are those of FR-181's timed behaviours, each with its time stamp and
+clock valuation, and the analyzer reads them as follows.
+
+- **Time divergence.** A timed behaviour is admitted only when its time
+  diverges: its time stamps grow beyond every bound. A proof establishes the
+  formula for every time-divergent admitted behaviour under every profile.
+  Under `time tick O period p`, divergence is infinitely many `O` steps, and
+  the terminal stutter step counts as an `O` step.
+- **Idle tail.** A discrete state is **quiescent** when no time invariant
+  applies at it and it is not urgent. A behaviour may end its discrete steps
+  at a quiescent state and delay forever; under the infinite-trace and timed
+  profiles it is extended by the terminal stutter step, repeated forever, each
+  after a positive delay of any length, and every such choice is an admitted
+  behaviour. Under a bounded profile an idle tail closes the execution at its
+  last discrete step. The stutter step is outside every fairness constraint.
+- **Fairness over time.** Enabledness is read at timed states. A behaviour
+  satisfies weak fairness for a constraint when from no instant onward the
+  constraint stays enabled at every instant, positions and the delays between
+  them, while none of its transitions is taken. Fairness and time divergence
+  are independent premises: an accepting cycle refutes only when it is fair
+  and its loop has positive total delay.
+- **Timed lasso.** A liveness counterexample is a lasso whose loop has
+  positive total delay `D`. At the loop's end the discrete state equals the
+  entry's; each clock the loop resets has the entry's value; each clock the
+  loop never resets is, at entry, above the largest constant it is compared
+  with in the model and the claim. Repeating the loop with the same delays is
+  then a time-divergent behaviour whose time stamps grow by `D` per
+  repetition. An idle tail is the lasso whose loop is one stutter step with a
+  positive delay. Replay checks loop closure, `D > 0` and fairness, and
+  evaluates the formula over the lasso unrolled until its time span covers the
+  formula's time reach.
+- **Vacuity.** A proof over a timed subject whose initial state has no fair
+  time-divergent behaviour settles `inconclusive`, `no-admitted-behaviour`.
+- **Causes.** Timed analysis adds the inconclusive causes
+  `no-admitted-behaviour`, `lasso-not-concretized` and `certificate-rejected` and
+  the unsupported cause `punctual-interval` ([FR-416](FR-416-evaluate-timed-temporal-claims.md)),
+  each mapped onto FR-360's labels as every inconclusive or unsupported result
+  is.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -117,6 +163,10 @@ is complete, but it cannot establish liveness satisfaction.
 | FR-161-AC-5 | Fairness filters traces before evaluation and is included in every proof or counterexample replay identity. | Test (TC-200) |
 | FR-161-AC-6 | Each returned result label matches exactly one FR-360 member and its exact FR-241/FR-242/FR-243 combination. | Test (TC-200) |
 | FR-161-AC-7 | An infinite-trace item with no candidate for `temporal-satisfaction` settles `unsupported` with a warning naming that capability kind, and one whose single candidate advertises only `bounded` for it settles `unsupported` with `unbounded-extent`. | Test (TC-200, TC-301) |
+| FR-161-AC-13 | Over a timed subject, a Zeno behaviour is outside the admitted set, and a quiescent state's idle tail is an admitted behaviour for every positive delay choice. | Test (TC-369) |
+| FR-161-AC-14 | A timed liveness counterexample is a lasso with positive total loop delay whose unreset clocks exceed their largest compared constants at entry; a loop with zero total delay is refused by replay as `invalid_runtime_input`/`invalid-value`. | Test (TC-369) |
+| FR-161-AC-15 | A proof over a timed subject whose initial state has no fair time-divergent behaviour settles `inconclusive`, `no-admitted-behaviour`. | Test (TC-370) |
+| FR-161-AC-16 | Weak fairness over a timed subject reads enabledness at every instant, positions and delays, and an accepting cycle refutes only when fair with positive loop delay. | Test (TC-369) |
 
 ## Dependencies
 

@@ -1,0 +1,146 @@
+---
+id: FR-419
+title: "Analyze task-set schedulability"
+type: FR
+relationships:
+  - target: ix://agent-ix/quire-specification/US-011
+    type: implements
+  - target: ix://agent-ix/quire-specification/FR-142
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-290
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-331
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-415
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-416
+    type: references
+---
+
+# FR-419: Analyze task-set schedulability
+
+## Description
+
+When a package declares a task set and a schedulability or response claim
+over it, the analyzer SHALL decide the claim by the exact closed-form analysis
+of the named policy in exact rationals, conditional on the task set's stated
+premises, and SHALL settle it only after its evidence is recomputed.
+
+## Inputs
+
+A `taskset` declaration of the shared grammar's timed forms; a `schedulable`
+or `response` claim; the FR-290 kind `schedulability`.
+
+## Outputs
+
+`proved` with basis `closed-form{analysis}` and its evidence; `refuted` with
+its evidence; or an inconclusive or unsupported result with its typed cause.
+
+## Behavior
+
+### Task sets
+
+A task set is for one preemptive uniprocessor. Each task declares its
+arrival (periodic with period `T`, or sporadic with minimum inter-arrival time
+`T`), its relative deadline `D`, its worst-case execution time `C`, its
+optional `priority` (a natural number; a smaller value is a higher priority),
+and its criticality `LO` or `HI`
+with budgets `C(LO) <= C(HI)` for a `HI` task. Release jitter `J` and a
+blocking term `B` are optional members; a task that declares neither has
+`J = 0` and `B = 0`. Every value is an exact rational time
+quantity (FR-142). A task set with a non-positive `T` or `C`, `C(LO) > C(HI)`,
+or two tasks of equal priority refuses with
+`invalid_timed_model`/`invalid-task-set`, naming the task. A
+`fixed_priority` or `amc` claim over a task set in which a task declares no
+`priority` refuses with `invalid_timed_model`/`invalid-task-set`, naming that
+task; an `edf` claim reads no priority.
+
+### Premises
+
+`C`, `C(LO)`, `C(HI)`, `B` and `J` are stated premises. They are part of the
+task set, so part of the subject and its obligation identity, and a verdict
+holds for exactly those values.
+
+### Claims
+
+`schedulable N on S under fixed_priority`, `under edf` or `under amc`, and
+`response N on S.τ <= d under fixed_priority`, `N` the claim's name and `S`
+the task set, each requiring the FR-290 kind `schedulability`. The proof basis
+`closed-form{analysis}` names the analysis as `fixed-priority`, `edf` or
+`amc-rtb` (FR-331).
+
+### Fixed priority
+
+Each task's worst-case response time is the least fixpoint of
+`R = C_i + B_i + Σ_{j ∈ hp(i)} ⌈(R + J_j) / T_j⌉ · C_j`, iterated from
+`C_i + B_i` in exact rationals; the response time is `R + J_i`. The iteration
+stops at the fixpoint or as soon as `R + J_i` exceeds `D_i`. A deadline
+beyond the period uses the busy-period extension over the jobs of the level-`i`
+busy period.
+
+### EDF
+
+Utilization above 1 fails. Otherwise the demand bound
+`dbf(t) = Σ_i max(0, ⌊(t − D_i) / T_i⌋ + 1) · C_i` must not exceed `t` at any
+absolute deadline up to the synchronous busy-period length, checked by Quick
+Processor-demand Analysis.
+
+### Mixed criticality (AMC-rtb)
+
+Low-mode response times with `C(LO)`; high-mode response times with `C(HI)`
+over higher-priority `HI` tasks; and the mode-change bound that charges
+higher-priority `LO` tasks only up to the low-mode response time. A low-mode
+miss is a miss and refutes. AMC-rtb is sufficient: a high-mode criterion that
+fails settles `inconclusive`, `sufficient-test-failed`.
+
+### Verdicts and evidence
+
+| Outcome | FR-331 value | Evidence |
+| --- | --- | --- |
+| Schedulable, or response bound met | `proved`, basis `closed-scope`, proof basis `closed-form{analysis}` | Each task's fixpoint sequence (fixed priority, AMC); the busy-period length and QPA's check sequence (EDF) |
+| Miss | `refuted`, basis `decisive-counterexample` | Fixed priority: the task and its scheduling points up to `D_i`, at each of which the demand exceeds the point; EDF: a `t` with `dbf(t) > t`, or the utilization above 1 |
+| AMC high-mode criterion fails | `inconclusive` | `sufficient-test-failed` |
+
+`check_closed_form` recomputes the evidence in exact rationals before the
+verdict settles; a disagreement settles `inconclusive`, `replay-parity`.
+
+### Task automata
+
+A timed model whose operations release tasks of a task set, each by a
+`release S.τ on M::o;` declaration, is a task automaton. In the decidable class (every combination except interval
+execution times together with completion feedback and preemption), the
+frontend lowers the model and policy to a timed subject and the claim "no task
+misses its deadline" to a TT-1 claim decided by [FR-416](../temporal/FR-416-evaluate-timed-temporal-claims.md);
+the queue length the lowering needs is derived from the task set. A model in
+the other class settles `unsupported`, `stopwatch-required`.
+
+## Acceptance Criteria
+
+| ID | Criteria | Verification |
+| --- | --- | --- |
+| FR-419-AC-1 | Task set `Ctl` with `(C, T = D)` of `(1, 4)`, `(2, 6)`, `(5, 12)` ms under fixed priority settles `proved` with response times `1`, `3`, `12` and the third task's fixpoint sequence `5, 9, 12, 12`; under EDF it settles `proved` at utilization exactly 1. | Test (TC-372) |
+| FR-419-AC-2 | With `C = 6` for the third task, fixed priority settles `refuted` with scheduling points 4, 6, 8, 12 and demands 9, 10, 12, 13; EDF settles `refuted` with utilization `13/12`. | Test (TC-372) |
+| FR-419-AC-3 | An AMC set whose high-mode criterion fails settles `inconclusive`, `sufficient-test-failed`; a low-mode miss settles `refuted`. | Test (TC-372) |
+| FR-419-AC-4 | `check_closed_form` recomputes the evidence before settlement, and altered evidence settles `inconclusive`, `replay-parity`. | Test (TC-372) |
+| FR-419-AC-5 | Changing one stated premise changes the obligation identity; an invalid task set refuses `invalid_timed_model`/`invalid-task-set` naming the task; a `fixed_priority` or `amc` claim over a task with no `priority` refuses `invalid_timed_model`/`invalid-task-set` naming that task, and an `edf` claim over the same set is admitted. | Test (TC-372) |
+| FR-419-AC-6 | A task automaton in the decidable class lowers to a TT-1 claim; one needing stopwatches settles `unsupported`, `stopwatch-required`. | Test (TC-372) |
+
+## Dependencies
+
+- [FR-142](../type-model/FR-142-evaluate-quantities-and-units.md) supplies
+  exact time quantities.
+- [FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md) carries the
+  kind `schedulability`.
+- [FR-415](../temporal/FR-415-declare-clocks-and-timed-models.md) and
+  [FR-416](../temporal/FR-416-evaluate-timed-temporal-claims.md) supply the
+  task-automaton lowering target.
+
+## References
+
+- QSL ADR-026 RT-1 to RT-8, OV-10.
+- Owner ruling recorded on QSL-373: native closed-form schedulability; WCET is
+  a stated premise; undecidable task-automaton cases settle unsupported.
+- M. Joseph and P. Pandya, 1986; N. Audsley et al., 1993; J. Lehoczky, 1990;
+  S. Baruah, L. Rosier and R. Howell, 1990; F. Zhang and A. Burns, 2009;
+  S. Baruah, A. Burns and R. Davis, 2011; E. Fersman et al., 2007.
+- Ticket: STD-139 (paired with QSL-373).

@@ -2,28 +2,72 @@
 
 Definition identity: `quire.simulation.sampler/v1`.
 This is a leaf definition selected by a simulation request
-([FR-181](../../../spec/functional/runtime/FR-181-simulate-finite-executions.md));
+([FR-181](../../../spec/functional/runtime/FR-181-simulate-finite-executions.md))
+and by statistical checking
+([FR-408](../../../spec/functional/analysis/FR-408-settle-probabilistic-claims-statistically.md));
 it has no reverse dependency on the value or model definition roots.
 
-## Selected interpretation
+## Digests
 
 The generator is counter-mode. `seed` is the run's `u64` seed, written as a
-decimal string. `trace` is the trace's 0-based index within the run, and
-`step` is the transition's 0-based index within that trace, each a decimal
-string of a `u64` value. At a given `trace`/`step`, `draw` is a decimal
-string of a `u64` value that restarts at 0 and increments after every digest
-computed at that step, accepted or rejected.
+decimal string. `trace` is the trace's 0-based index within the run, `step`
+the transition's 0-based index within that trace, and `choice` the 0-based
+index of a choice within that step, each a decimal string of a `u64` value.
+At a given `trace`/`step`/`choice`, `draw` is a decimal string of a `u64`
+value that starts at 0 and increments after every digest computed for that
+choice, accepted or rejected.
 
-Draw `draw` at `trace`/`step` is `SHA-256(JCS{seed, trace, step, draw})`. Let
-`v` be the digest bytes read as a big-endian `u256`, and `n` the exact size
-of the domain being sampled — the canonically ordered enabled successor set
-of the exploration contract at that step. `v` is accepted when
-`v < n * floor(2^256 / n)`, selecting index `v mod n`; a rejected `v`
-increments `draw` and recomputes the digest. `n = 1` selects index 0 with no
-digest. `n = 0` ends the trace without a draw.
+Draw `draw` is `SHA-256(JCS{choice, draw, seed, step, trace})`, and `v` is the
+digest bytes read as a big-endian `u256`.
 
-Sampling selects one index into the canonically ordered enabled-successor set
-that FR-181's exploration contract already defines.
+## Choices within a step
+
+A step makes the choices of exactly one of the first two lists below, by
+whether the run has a workload, and then, over a timed subject, the choices of
+the third. The choices are made in the listed order.
+
+1. Without a workload: one uniform choice over the canonically ordered enabled
+   successor set of FR-181's exploration contract.
+2. Under a workload: one weighted choice of the operation among the enabled
+   operations, in canonical operation order, by the workload's weights; then
+   one uniform choice of the scheduled identity among the operation's enabled
+   scheduled identities, in canonical transition order; then one weighted
+   choice per random parameter, in parameter declaration order, over its
+   support in canonical value order;
+3. Over a timed subject: one choice per racing identity with a given delay,
+   in canonical transition order, and one uniform choice per tie-break
+   position ([FR-420](../../../spec/functional/analysis/FR-420-sample-stochastic-timed-models.md)).
+
+A choice that draws takes the next choice index, starting from 0 at each
+step. A choice over one item (`n = 1`), such as one enabled operation, one
+enabled scheduled identity or a one-value support, selects that item, draws
+no digest and takes no choice index: the next choice that draws takes the
+index the one-item choice would have taken.
+
+## Uniform and weighted selection
+
+A weighted choice over items with positive exact rational weights scales the
+weights by the least common multiple of their denominators to positive
+integers `w_0, …, w_{k−1}` with sum `n`; a uniform choice over `k` items has
+`w_i = 1` and `n = k`. `v` is accepted when `v < n · ⌊2^256 / n⌋`, and the
+choice selects the least index `i` with `v mod n < w_0 + … + w_i`; a rejected
+`v` increments `draw` and recomputes the digest. `n = 1` selects index 0 with
+no digest and no choice index. An empty item set ends the trace without a draw.
+
+## Grid draws for delays
+
+A `discrete` delay is a weighted choice over its delays conditioned on the
+window, by the weights of the delays inside the window. A `uniform`,
+`uniform[a, b]` or `exponential` delay with grid exponent `q >= 1` reads the
+grid value `u = (v mod 2^q) / 2^q` from one accepted digest when `q <= 256`
+(every `v` is accepted), and from the big-endian concatenation of the digests
+at `draw = 0, 1, …` reduced modulo `2^q` when `q > 256`. It returns the
+distribution's inverse distribution function, conditioned on the window, at
+`u`: for a uniform family, the point at length `u · |W|` along the window `W`
+taken in increasing order; for `exponential(λ)`, the point `x` of `W` with
+`Pr(X <= x | X ∈ W) = u`, computed with FR-408's rational bounds and rounded
+up to a multiple of `2^-q` of the model's unit. Every sampled delay is an
+exact rational.
 
 ## Identity
 

@@ -15,6 +15,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-367
     type: references
+  - target: ix://agent-ix/quire-specification/FR-415
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-416
+    type: references
 ---
 ## Description
 
@@ -25,8 +29,9 @@ interpretation before evaluation or lowering.
 ## Inputs
 
 An admitted native clause; exact language edition and temporal profile
-definition identity; typed interval bounds; and one clock binding supplied
-through the shared observation interface.
+definition identity; typed interval bounds; and one clock binding, supplied
+through the shared observation interface for a trace subject or by the model's
+time source for a model subject (FR-252).
 
 ## Outputs
 
@@ -44,6 +49,7 @@ The temporal profile shall select exactly one of these v1 interpretations:
 | `quire.temporal.fixed-sample.false-extension/v1` | One sample of the declared positive rational period from the declared epoch | Atomic predicates are false after closure; constants retain their value |
 | `quire.temporal.timestamped-event.finite-window/v1` | One tick in the declared timestamp unit | Quantification ranges over admitted event instants in a complete bounded window |
 | `quire.temporal.infinite-trace/v1` | One admitted semantic-event position in an authoritative sequence | Not applicable; the evaluated sequence never closes |
+| `quire.temporal.timed/v1` | One exact rational duration of the binding's time unit, measured between time-stamped positions in step order | Not applicable; time-divergent behaviours never close |
 
 The event-position profile shall not claim elapsed time. The infinite-trace
 profile composes the event-position sequence authority without its
@@ -63,6 +69,15 @@ the authoritative sequence is the subject's step sequence: one tick is one
 step of a behaviour, and the clause's clock role binds to that step sequence.
 A model subject admits the event-position false-extension and infinite-trace
 profiles only.
+
+The timed profile reads positions in step order, each with an exact rational
+time stamp, over time-divergent behaviours of a timed subject (FR-415) or over
+a timed trace (a finite prefix or lasso of time-stamped positions). Each of
+its intervals has exact rational bounds `a <= b` in the binding's unit, each
+end closed or open, with `a < b` when an end is open, and a finite upper bound
+(FR-255). It admits the unbounded operator grammar edition as well as timed
+intervals, and FR-416 gives it its meaning. It is selected by a `model-time`
+clock binding over a timed subject (FR-252).
 
 The fixed-sample profile shall retain epoch, period and unit identity.
 
@@ -92,8 +107,9 @@ definition identity; old profile bytes and results remain historical subjects.
 | FR-090-AC-3 | Changing a sample period, epoch, timestamp unit, sequence authority or closed-boundary rule changes the binding identity and cannot reuse an earlier result. | Test (TC-113) |
 | FR-090-AC-4 | Equal timestamps without an admitted causal/sequence order refuse `until`, `release`, `since` and `triggered`; ingestion order is not substituted. | Test (TC-113) |
 | FR-090-AC-5 | Historical profile definitions remain unchanged and a backend capability request cannot silently select a different executable profile. | Test (TC-117) |
-| FR-090-AC-7 | Selecting `quire.temporal.infinite-trace/v1` admits the unbounded temporal operator grammar edition and interval operators nested with unbounded ones; selecting the event-position false-extension, fixed-sample or timestamped-event profile admits no unbounded operator. | Test (TC-238) |
+| FR-090-AC-7 | Selecting `quire.temporal.infinite-trace/v1` or `quire.temporal.timed/v1` admits the unbounded temporal operator grammar edition, and `quire.temporal.infinite-trace/v1` also admits interval operators nested with unbounded ones; selecting the event-position false-extension, fixed-sample or timestamped-event profile admits no unbounded operator. | Test (TC-238, TC-368) |
 | FR-090-AC-8 | Over a model subject, a clause under the event-position false-extension or infinite-trace profile binds its clock role to the subject's step sequence with one tick per step, and a clause under the fixed-sample or timestamped-event profile settles `unsupported`. | Test (TC-290) |
+| FR-090-AC-9 | Selecting `quire.temporal.timed/v1` reads intervals as exact rational time bounds with open or closed ends between time-stamped positions; the same numeric interval under the timed profile and under a step-counting profile retains two distinct meanings. | Test (TC-368) |
 
 ## Dependencies
 
@@ -103,6 +119,9 @@ definition identity; old profile bytes and results remain historical subjects.
 - Agent F's observation contract supplies clock bindings and completeness
   assertions; this requirement defines their temporal interpretation, not
   their transport or authority schema.
+- [FR-415](FR-415-declare-clocks-and-timed-models.md) and
+  [FR-416](FR-416-evaluate-timed-temporal-claims.md) declare timed subjects
+  and give the timed profile its meaning.
 
 ## Status
 

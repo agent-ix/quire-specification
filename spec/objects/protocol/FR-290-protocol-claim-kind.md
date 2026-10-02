@@ -24,6 +24,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-397
     type: references
+  - target: ix://agent-ix/quire-specification/FR-407
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-419
+    type: references
 ---
 # FR-290: Capability kind vocabulary
 
@@ -47,6 +51,8 @@ outcome independent from every other member.
 | `refinement` | Whether one exact protocol refines another under a selected relation. |
 | `realizability` | Whether the selected protocol admits a causal implementation strategy. |
 | `composition` | Whether selected components compose under independently discharged assumptions. |
+| `probabilistic-satisfaction` | Whether a probabilistic claim's bound holds over a model subject under its workload or every scheduler ([FR-407](../../functional/analysis/FR-407-state-probabilistic-claims.md)), with `statistical` or `exact` evidence. |
+| `schedulability` | Whether a task set is schedulable, or a task's response time is bounded, under a named scheduling policy ([FR-419](../../functional/analysis/FR-419-analyze-task-set-schedulability.md)). |
 
 ## Families
 
@@ -57,6 +63,8 @@ outcome independent from every other member.
 | finite-replay | `finite-replay` |
 | temporal-trace | `temporal-satisfaction` |
 | protocol | `global-conformance`, `monitorability`, `local-projection`, `refinement`, `realizability`, `composition` |
+| probabilistic | `probabilistic-satisfaction` |
+| real-time | `schedulability` |
 
 A family is a descriptive grouping of members. Requests, advertisements and
 results name members only. A protocol claim is a claim whose kind is in the
@@ -67,7 +75,7 @@ results name members only. A protocol claim is a claim whose kind is in the
 
 ## Vocabulary authority
 
-These ten labels are the single capability-kind vocabulary of the Quire
+These twelve labels are the single capability-kind vocabulary of the Quire
 ecosystem. `quire-spec-language`'s `Capability` type, the backend descriptors
 registered in its registry and `quire-protocol`'s advertised claim kinds all
 take their members from this table.
@@ -83,7 +91,7 @@ vocabulary as follows:
 | Any other cross-repository carrier | the member its owner assigns, exactly `quire.capability-kind/v1` |
 
 A reader SHALL refuse a carrier whose selection is any other identity or
-version, or is absent, with `invalid_capability`/`unsupported-version`, and
+version, or is absent, with `invalid_capability`/`unknown-vocabulary`, and
 SHALL read none of its labels.
 
 A reader SHALL refuse a kind that is absent or `null` with
@@ -114,6 +122,10 @@ as a function application or a `case` expression, adds no kind.
 | Refinement between two operation contracts or state models | `operation-contract`; each implication between the two contracts' clauses is one `operation-contract` claim |
 | FR-353 abstraction relation | none; it is a premise of the `operation-contract` claim it binds |
 | Other protocol analysis claim ([FR-060](../../functional/protocol/FR-060-separate-protocol-claims.md)) | its `protocol`-family member |
+| Probabilistic claim of any FR-407 form | `probabilistic-satisfaction` |
+| Temporal claim over a timed subject under any profile, and the derived time-lock-freedom item ([FR-417](../../functional/temporal/FR-417-settle-time-lock-freedom.md)) | `temporal-satisfaction` |
+| `schedulable` or `response` claim over a task set | `schedulability` |
+| Hybrid-model claim ([FR-193](../../functional/analysis/FR-193-analyze-continuous-hybrid-models.md)) | `temporal-satisfaction` |
 
 Unbounded quantification (FR-346), induction (FR-347), compositional discharge
 (FR-348), mathematical integers (FR-147), the three state-graph forms (FR-390)
@@ -165,6 +177,29 @@ with a warning naming the missing fairness kind; negotiation never drops or
 weakens a fairness constraint
 ([FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md)).
 
+## Evidence kinds
+
+A backend that advertises `probabilistic-satisfaction` also advertises a
+nonempty set of evidence kinds, each exactly `statistical` or `exact`. A
+request item of kind `probabilistic-satisfaction` names exactly one evidence
+kind; an item naming none, or another value, settles `invalid-request` with
+`invalid_capability`/`absent-evidence-kind` or
+`invalid_capability`/`unknown-evidence-kind`. A registration that advertises
+`probabilistic-satisfaction` with no evidence kind or another value is refused
+with `invalid_capability`/`unknown-evidence-kind`, keyed by backend identity.
+For such an item a backend is a candidate only when it advertises both the
+kind and the item's evidence kind. Negotiation never substitutes one evidence
+kind for the other: an item naming `exact` with no candidate advertising
+`exact` settles `unsupported` with
+`unsupported_projection`/`unsupported-requested-capability`, even when a
+`statistical` candidate exists, and the converse holds as well. A
+`statistical` candidate's negotiation arm settles `unsupported` an item whose
+claim states no confidence parameters (`missing-confidence`), whose scheduler
+clause is `under every scheduler` (`every-scheduler`), or whose form is an
+exact-only form (`exact-only-form`) (FR-408). One claim may be
+requested twice, once per evidence kind; the two items have separate terminal
+records.
+
 ## Candidate set and negotiation
 
 A backend identity is unique within a registry. A candidate is the backend
@@ -173,7 +208,9 @@ compared bytewise as UTF-8.
 
 A registry snapshot is a function of the set of admitted registrations it has
 received. A registration refused under "Advertised mode" is not admitted and
-takes no part in the identity rules below. For each backend identity:
+takes no part in the identity rules below. Two registrations carry equal
+descriptors when their FR-331 manifest descriptors have byte-equal RFC 8785
+canonical encodings. For each backend identity:
 
 - When every admitted registration of the identity carries an equal FR-331
   manifest, the registry SHALL hold that identity once, with that manifest.
@@ -230,7 +267,7 @@ candidates, and the mode is compared only at the single candidate's arm.
 
 The item-level causes (`absent-kind`, `unknown-kind`, `absent-extent`,
 `unknown-backend`, `inconsistent-candidates`, `ambiguous-backend`) settle only
-their own item. `unsupported-version` refuses its whole carrier.
+their own item. `unknown-vocabulary` refuses its whole carrier.
 Registration causes `absent-kind`, `unknown-kind` and `unknown-mode` refuse
 only that registration. `duplicate-backend` refuses every registration of its
 identity and no other. Registration refusals are reported ordered bytewise by
@@ -272,7 +309,7 @@ backend identity, then by the manifest's RFC 8785 bytes.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-290-AC-1 | The ten exact labels are the complete accepted set; absent, unknown and display-derived labels refuse with their named `invalid_capability` cause and are never mapped to a member; a carrier selecting a vocabulary other than `quire.capability-kind/v1`, or none, is refused with none of its labels read. | Test (TC-060, TC-061, TC-271) |
+| FR-290-AC-1 | The twelve exact labels are the complete accepted set; absent, unknown and display-derived labels refuse with their named `invalid_capability` cause and are never mapped to a member; a carrier selecting a vocabulary other than `quire.capability-kind/v1`, or none, is refused with none of its labels read. | Test (TC-060, TC-061, TC-271) |
 | FR-290-AC-2 | Every pair of claim kinds may retain independent execution and outcome states without promotion or premise transfer. | Test (TC-060, TC-271) |
 | FR-290-AC-3 | A non-global claim cannot carry the complete-global-conformance premise set as evidence for its own success. | Test (TC-060, TC-061, TC-271) |
 | FR-290-AC-4 | An item whose candidate set is empty settles `unsupported` with a warning naming its capability kind, and the named backend when there is one. | Test (TC-060, TC-271) |
@@ -282,6 +319,8 @@ backend identity, then by the manifest's RFC 8785 bytes.
 | FR-290-AC-8 | A routed item whose tool is missing, or whose probe errors or exceeds its limit, records the FR-331 result `unsupported` with cause `unsupported_projection`/`tool-unavailable` naming the kind and backend; its disposition stays `supported`, and no other registered candidate or mode runs; a tool that becomes unavailable after a passing probe records the FR-331 result `failed` with the same cause. | Test (TC-271) |
 | FR-290-AC-9 | Two or more admitted registrations of one backend identity with equal manifests leave that identity registered once, with no refusal, and give the same snapshot and candidate sets as one registration. | Test (TC-282) |
 | FR-290-AC-10 | Admitted registrations of one backend identity with two or more differing manifests are all refused with `invalid_capability`/`duplicate-backend`, one refusal per distinct manifest, ordered by identity and then by the manifest's RFC 8785 bytes; the snapshot holds no registration of that identity, a request naming it receives the unknown-backend mark, and registrations of other identities stand; the snapshot, its refusals and every candidate set are identical under every registration order. | Test (TC-282) |
+| FR-290-AC-11 | A probabilistic claim requires `probabilistic-satisfaction`, a task-set claim `schedulability`, and a timed temporal claim and the time-lock-freedom item `temporal-satisfaction`. | Test (TC-353, TC-370, TC-372) |
+| FR-290-AC-12 | A `probabilistic-satisfaction` item is a candidate only for backends advertising its evidence kind; an `exact` item with only a `statistical` candidate, and the converse, settle `unsupported`, `unsupported-requested-capability`; an item with an absent or unknown evidence kind settles `invalid-request` with its named cause. | Test (TC-353) |
 
 ## Dependencies
 

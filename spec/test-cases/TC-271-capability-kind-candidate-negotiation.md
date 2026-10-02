@@ -21,7 +21,7 @@ sets and extents through `negotiate_*`, including tool absence after routing.
 
 ## Test Procedure
 
-Hold the ten FR-290 labels as a test constant. Build registries from fixture
+Hold the twelve FR-290 labels as a test constant. Build registries from fixture
 backend descriptors, each with a unique identity, advertising a set of
 (kind, mode) pairs. Build
 FR-331 envelopes with `capability_vocabulary` `quire.capability-kind/v1` whose
@@ -35,9 +35,9 @@ Repeat every registry vector with the descriptors registered in reversed order.
 
 | Vector | Mutation | Expected disposition |
 | --- | --- | --- |
-| CK-01 | Request each of the ten FR-290 labels | Each admits as exactly that member |
+| CK-01 | Request each of the twelve FR-290 labels | Each admits as exactly that member |
 | CK-02 | Request no kind, `null`, `""`, `Global-Conformance`, `value validity`, each of `FamilyCheck`, `StateOperation`, `FiniteReplay`, `TemporalProjection`, and a label outside the table | `invalid_capability` with `absent-kind` for the first two and `unknown-kind` for the rest, each retaining the received bytes and the item's request index; no label is mapped to a member |
-| CK-03 | Set the FR-331 `capability_vocabulary` to `quire.capability-kind/v2`, to `quire.foreign-kind/v1`, and remove it | `invalid_capability`/`unsupported-version` for the whole envelope; no kind in it is read |
+| CK-03 | Set the FR-331 `capability_vocabulary` to `quire.capability-kind/v2`, to `quire.foreign-kind/v1`, and remove it | `invalid_capability`/`unknown-vocabulary` for the whole envelope; no kind in it is read |
 | CK-04 | Register a descriptor advertising the mode `finite`; another advertising the kind `smt-proof`; another with no kind | Each registration refuses as `invalid_capability` with `unknown-mode`, `unknown-kind` and `absent-kind` respectively, each retaining the refused backend identity; other registrations stand. TC-282 covers a repeated identity |
 | CK-05 | Derive the required kind of every row of the FR-290 claim-form table: a function-application clause, a clause with a nested `case` expression and function application, an operation precondition, postcondition and invariant, a frame obligation, a contract refinement gate, a finite replay, a finite-trace and an infinite-trace temporal requirement, a protocol refinement, and a claim of each of `global-conformance`, `monitorability`, `local-projection`, `realizability` and `composition` | `value-validity` (twice, one kind each), `operation-contract` (five times), `finite-replay`, `temporal-satisfaction` (twice), `refinement`, then each of the five protocol members |
 | CK-06 | Check a non-exhaustive `case` over a union | Refuses as `undefined_expression`/`unproved-exhaustiveness` during admission; no candidate set is computed and no backend is requested |

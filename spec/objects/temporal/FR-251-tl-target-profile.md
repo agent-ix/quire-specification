@@ -36,7 +36,10 @@ and "Current TL profiles" as the target of the two unsupported rows for
 timestamped-event finite-window and for "Any bounded past operator". FR-095
 also records "No TL target" for a `quire.temporal.infinite-trace/v1` unbounded
 property, resolving to an absent target rather than to either labeled member; FR-161 analyzes that
-request natively instead of lowering it. No requirement enumerates any TL
+request natively instead of lowering it. A `quire.temporal.timed/v1` claim
+likewise resolves to an absent target; FR-416 analyzes it natively, and an
+embedded monitor of a timed claim runs under the timestamped-event profile.
+No requirement enumerates any TL
 profile identity beyond the two labels above, so no further member is supplied
 here.
 
@@ -88,7 +91,7 @@ equivalence claim."
 | --- | --- | --- |
 | FR-251-AC-1 | Each member's value equals the exact label string in the table. | Inspection |
 | FR-251-AC-2 | No member of this vocabulary is accepted where an authored temporal profile identity is required. | Analysis |
-| FR-251-AC-3 | A timestamped-event, bounded-past or infinite-trace request resolves to an absent target rather than to a member. | Analysis |
+| FR-251-AC-3 | A timestamped-event, bounded-past, infinite-trace or timed request resolves to an absent target rather than to a member. | Analysis |
 | FR-251-AC-4 | Equal TL formula bytes under different bridge definition identities compare unequal. | Analysis |
 
 ## Dependencies

@@ -52,7 +52,7 @@ first ordering's record and with the expected result.
 
 Every ordering of a vector's registrations gives the same snapshot, the same
 refusals in the same reported order and the same candidate set for every
-item. A repeat of an identical manifest is never refused. A conflicting
+item. A repeat of an equal descriptor is never refused. A conflicting
 identity is never held, contributes no candidate and never refuses a
 registration of another identity. Each `duplicate-backend` refusal retains the
 repeated backend identity and its own manifest.

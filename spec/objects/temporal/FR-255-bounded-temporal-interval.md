@@ -16,12 +16,24 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-367
     type: references
+  - target: ix://agent-ix/quire-specification/FR-416
+    type: references
 ---
 # FR-255: Bounded temporal interval
 
 ## Description
 
-When a bounded temporal operator is applied, the evaluator SHALL read its interval as the inclusive bound pair of the selected profile without shortening that interval to the supplied file.
+When a bounded temporal operator is applied, the evaluator SHALL read its interval as the bound pair of the selected profile, with the end openness that profile admits, without shortening that interval to the supplied file.
+
+Under every profile except `quire.temporal.timed/v1` both ends are closed and
+the bounds are integers. Under `quire.temporal.timed/v1` the bounds are exact
+rational time quantities `0 <= a <= b` in the binding's unit, converted
+exactly (FR-142), each end closed or open, written `[a, b]`, `(a, b]`,
+`[a, b)` or `(a, b)`; an interval with an open end has `a < b`, and the upper
+bound is finite; an interval that breaks either rule refuses with
+`invalid_timed_model`/`invalid-interval`. A closed interval with `a = b` is **punctual**. An offset
+`τ_j − τ_i` lies in the interval when it is above `a` (or equal to it at a
+closed lower end) and below `b` (or equal to it at a closed upper end).
 
 FR-091 states the form as "inclusive integers `0 <= a <= b`" and requires the
 inclusive interval and boundary rules to be applied "to every admitted bounded
@@ -32,8 +44,10 @@ states the same bound form for the past direction.
 
 | Property | Source | Note |
 | --- | --- | --- |
-| Lower bound `a` | FR-091 Behavior, FR-092 Inputs | Inclusive integer, `0 <= a`. |
-| Upper bound `b` | FR-091 Behavior, FR-092 Inputs | Inclusive integer, `a <= b`. |
+| Lower bound `a` | FR-091 Behavior, FR-092 Inputs | Integer, `0 <= a`; under the timed profile an exact rational time quantity. |
+| Upper bound `b` | FR-091 Behavior, FR-092 Inputs | Integer, `a <= b`; under the timed profile an exact rational time quantity, finite. |
+| Lower end openness | Timed profile | `closed` under every other profile; `closed` or `open` under the timed profile. |
+| Upper end openness | Timed profile | As the lower end. |
 | Selected profile identity | FR-090, FR-091-AC-2 | One tick's meaning is fixed by the profile ([FR-250](FR-250-temporal-semantic-profile.md)), so the same numeric pair under two profiles is not the same interval. |
 | Clock binding | FR-090, FR-094-AC-4 | Offsets are counted under one binding ([FR-252](FR-252-temporal-clock-binding.md)). |
 
@@ -53,7 +67,8 @@ profile shall quantify admitted past instants by inclusive clock distance."
 
 - **Identity kind** — *value*. An interval has no identity of its own and is
   compared componentwise.
-- **Key** — (`a`, `b`, selected profile identity, clock binding). Equality is
+- **Key** — (`a`, `b`, lower end openness, upper end openness, selected
+  profile identity, clock binding). Equality is
   componentwise over exactly these and nothing else. Display name, source path,
   span, message text, locale and rendering never participate
   ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
@@ -103,6 +118,8 @@ finite-window empty truth to an incomplete input."
 | FR-255-AC-4 | An absent bound compares only to absence and is not defaulted to zero. | Test |
 | FR-255-AC-5 | The declared key order over intervals is never cited as a causal or containment relation. | Test |
 | FR-255-AC-6 | An interval `[a,b]` on an operator under `quire.temporal.infinite-trace/v1` is admitted, keyed with that profile identity, and compares unequal to the same bound pair under a bounded profile. | Test (TC-298) |
+| FR-255-AC-7 | Under the timed profile, `[0, 3]`, `[0, 3)`, `(0, 3]` and `(0, 3)` in ms are four unequal intervals, an offset of exactly 3 ms lies in the first and third only, and an open-ended interval with `a = b` refuses `invalid_timed_model`/`invalid-interval`. | Test (TC-368) |
+| FR-255-AC-8 | The same numeric bounds under the timed profile and under a step-counting profile compare unequal. | Test (TC-368) |
 
 ## Dependencies
 
