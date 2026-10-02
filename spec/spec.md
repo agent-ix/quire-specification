@@ -718,6 +718,40 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-403
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-405
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-406
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-407
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-408
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-409
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-410
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-411
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-412
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-413
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-414
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-415
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-416
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-417
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-418
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-419
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-420
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-421
+    type: contains
   - target: ix://agent-ix/quire-specification/TM-009
     type: contains
   - target: ix://agent-ix/quire-specification/FR-434
@@ -925,6 +959,23 @@ The requirement artifacts are indexed below.
 | [FR-451](objects/interfaces/FR-451-checked-package-abstraction-relation-body.md) | FR | Checked-package `correspondence`/`abstraction_relation` body, keys and reader order |
 | [FR-452](functional/tooling/FR-452-preserve-admission-across-specification-revisions.md) | FR | Spec-versioning refinement gate: a superseding revision admits what its prior admitted |
 | [FR-453](functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md) | FR | Profile-layering refinement gate: the five AD-003 layering edges, refusal preservation and per-layer user subsets |
+| [FR-405](functional/analysis/FR-405-declare-probabilistic-models.md) | FR | Declare random parameters, workloads and rewards |
+| [FR-406](functional/analysis/FR-406-interpret-probabilistic-models.md) | FR | Interpret probabilistic models under a workload or every scheduler |
+| [FR-407](functional/analysis/FR-407-state-probabilistic-claims.md) | FR | State probabilistic claims over events and measures |
+| [FR-408](functional/analysis/FR-408-settle-probabilistic-claims-statistically.md) | FR | Settle probabilistic claims with statistical evidence |
+| [FR-409](objects/protocol/FR-409-measured-decision.md) | FR (enumeration) | Measured decision vocabulary |
+| [FR-410](objects/interfaces/FR-410-statistical-verdict.md) | FR (value_object) | Statistical verdict and sampled witness |
+| [FR-411](functional/analysis/FR-411-settle-probabilistic-claims-exactly.md) | FR | Settle probabilistic claims with exact evidence |
+| [FR-412](objects/interfaces/FR-412-probability-certificate.md) | FR (value_object) | Probability certificate and its checker |
+| [FR-413](objects/interfaces/FR-413-probabilistic-counterexample.md) | FR (value_object) | Probabilistic counterexample and witness scheduler |
+| [FR-414](functional/temporal/FR-414-evaluate-window-aggregates.md) | FR | Evaluate window aggregates over observed traces |
+| [FR-415](functional/temporal/FR-415-declare-clocks-and-timed-models.md) | FR | Declare clocks and timed models |
+| [FR-416](functional/temporal/FR-416-evaluate-timed-temporal-claims.md) | FR | Evaluate timed temporal claims under the timed profile |
+| [FR-417](functional/temporal/FR-417-settle-time-lock-freedom.md) | FR | Settle time-lock freedom for every timed subject |
+| [FR-418](objects/interfaces/FR-418-zone-certificate.md) | FR (value_object) | Zone certificate and its checker |
+| [FR-419](functional/analysis/FR-419-analyze-task-set-schedulability.md) | FR | Analyze task-set schedulability |
+| [FR-420](functional/analysis/FR-420-sample-stochastic-timed-models.md) | FR | Interpret and sample stochastic timed models |
+| [FR-421](functional/temporal/FR-421-check-probabilistic-timed-claims-exactly.md) | FR | Check probabilistic timed claims exactly through digital clocks |
 | [FR-440](objects/interfaces/FR-440-checked-package-union-and-case-nodes.md) | FR | Checked-package `composite_type`/`union`, `value`/`union_value` and `expression`/`case` nodes and the `quire.op.control.case` catalog entry |
 | [FR-441](objects/interfaces/FR-441-union-member-key.md) | FR | Union member key: the `quire.union-member-node/v1` preimage |
 | [FR-390](functional/analysis/FR-390-analyze-state-graph-claims.md) | FR | State-graph claims `possible`, `always possible` and `unique path` over a model subject: forms, graph semantics and admission |
@@ -1121,7 +1172,7 @@ The requirement artifacts are indexed below.
 | [FR-286](objects/protocol/FR-286-canonical-protocol-result-identity-preimage.md) | FR (value_object) | Object layer; canonical-result identity preimage and strict-reader order |
 | [FR-287](objects/protocol/FR-287-authority-qualified-runtime-subject-reference.md) | FR (value_object) | Object layer; authority-qualified opaque runtime subject identity and non-causal canonical order |
 | [FR-288](objects/protocol/FR-288-qualified-protocol-definition-identity.md) | FR (value_object) | Object layer; exact linked protocol-definition qualifier across source, declaration ownership and semantic selections |
-| [FR-290](objects/protocol/FR-290-protocol-claim-kind.md) | FR (enumeration) | Object layer; cross-family authority: closed capability-kind vocabulary `quire.capability-kind/v1` for the value, state-model, finite-replay, temporal-trace and protocol families |
+| [FR-290](objects/protocol/FR-290-protocol-claim-kind.md) | FR (enumeration) | Object layer; cross-family authority: closed capability-kind vocabulary `quire.capability-kind/v1` for the value, state-model, finite-replay, temporal-trace, protocol, probabilistic and real-time families |
 | [FR-291](objects/protocol/FR-291-admitted-analysis-fragment.md) | FR (value_object) | Object layer; exact admitted analysis-fragment selection |
 | [FR-292](objects/protocol/FR-292-analysis-backend.md) | FR (value_object) | Object layer; exact analysis-backend selection |
 | [FR-250](objects/temporal/FR-250-temporal-semantic-profile.md) | FR (enumeration) | Object layer; Temporal semantic profile identity |

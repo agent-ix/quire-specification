@@ -17,6 +17,12 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-394
     type: references
+  - target: ix://agent-ix/quire-specification/FR-406
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-415
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-420
+    type: references
 ---
 
 # FR-181: Simulate finite composed executions reproducibly
@@ -142,8 +148,11 @@ reads a terminal state by
 closed under a bounded profile, and extended by the terminal stutter step
 `{"type":"terminal-stutter"}` under the infinite-trace profile. Sampling draws from
 the same successor relation with the counter-based generator that the
-`quire.simulation.sampler/v1` definition defines; a sampled trace is named by
-its seed and trace index. An unbounded domain
+`quire.simulation.sampler/v1` definition
+([sampler definition](../../../proposals/quire-v1/definitions/simulation-sampler.md))
+defines; a sampled trace is named by
+its seed and trace index. A sampled step makes one or more draws, each with its own choice index: with no workload, one uniform draw over the enabled successor set; under a workload ([FR-406](../analysis/FR-406-interpret-probabilistic-models.md)), one draw for the operation by exact integer weight, one uniform draw for the scheduled identity, one draw per random parameter in declaration order by its exact integer weights and, over a timed subject, one draw per delay and per tie-break ([FR-420](../analysis/FR-420-sample-stochastic-timed-models.md)). A statistical run assigns trace index `i · m + j` to sample `i` of test `j` among `m` tests.
+An unbounded domain
 or population returns the I13 `requires-bound` per-item negotiation
 disposition before exploration begins; `requires-bound` is never an evaluator
 outcome. A trace records every transition identity and remains replayable
@@ -165,6 +174,44 @@ are evaluated. A state whose successors exploration has not fully computed is
 open, and every other explored state is closed
 ([FR-391](../analysis/FR-391-settle-state-graph-claims.md)).
 
+## Timed subjects
+
+Over a timed subject ([FR-415](../temporal/FR-415-declare-clocks-and-timed-models.md))
+a state is a **timed state** `(s, v)`: `s` the discrete state (every non-clock
+field) and `v` the clock valuation, every clock 0 initially.
+
+- A **delay** by real `d >= 0` takes `(s, v)` to `(s, v + d)`. It is admissible
+  when `d = 0`, or when `s` is not urgent and every time invariant whose
+  predicate holds at `s` holds at `v + d` (then at every point between).
+- A **discrete step** by transition identity `t` takes `(s, v)` to `(s', v')`
+  when `t`'s data precondition holds at `s`, its guard holds at `v`, `s'` is a
+  post-state of the successor rule above, `v'` is `v` with `t`'s resets
+  applied, and every time invariant whose predicate holds at `s'` holds at
+  `v'`.
+- A **timed behaviour** alternates one delay, possibly 0, with each discrete
+  step from an initial state at time 0. Position 0 is the initial state and
+  position `i > 0` the post-state of the `i`-th discrete step; each position
+  carries its time stamp, the sum of the delays up to it, and its clock
+  valuation. Delays are not positions.
+- Under `time tick O period p` every delay is 0 and the time stamp of position
+  `i` is `p` times the number of `O` steps among steps 1 to `i`.
+
+A timed trace step carries, beside its transition identity and post-state
+digest, `delay`: the exact non-negative rational delay before the step in the
+model's unit. The post-state digest is the canonical identity digest of the
+discrete state and the exact clock valuation. A time-lock counterexample (`kind`
+`time-lock`) ends with its member `final_delay` ([FR-417](../temporal/FR-417-settle-time-lock-freedom.md)).
+
+**Timed replay** starts every clock at 0 and, for each step, checks that the
+delay is admissible, applies it, checks that the transition identity is
+enabled at the delayed state, selects the successor by the post-state digest,
+applies the resets and checks the target's time invariants, all in exact
+rational arithmetic. A violated delay or guard refuses
+`invalid_runtime_input`/`invalid-value`; a digest with no matching successor
+refuses `stale_dependency`/`revision-mismatch`. Every non-empty set of
+valuations of an automaton with rational constants contains a rational point,
+so every timed refutation has a counterexample with exact rational delays.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -177,6 +224,10 @@ open, and every other explored state is closed
 | FR-181-AC-6 | Exploring a model that describes external effects performs none of them: the effects appear only as typed trace data, and a request for evaluator I/O, mutation or an ambient store refuses with its source location. | Test (TC-210) |
 | FR-181-AC-7 | The same operation applied with the same arguments to two receivers yields two transition identities that differ only in `receiver`, ordered by their JCS bytes; a state with no enabled transition identity is recorded with no successor. | Test (TC-290) |
 | FR-181-AC-13 | Exhaustive exploration from a given state treats it as the only initial state, explores its forward closure in canonical breadth-first order under the request's limits, and retains every explored edge with each state's open or closed status. | Test (TC-335) |
+| FR-181-AC-9 | Under a workload each sampled step draws the operation by exact integer weight, the scheduled identity uniformly and each random parameter by its weights, each with its own choice index; with unit weights and one choice per step the selection equals the unweighted uniform selection. | Test (TC-354) |
+| FR-181-AC-10 | Sample `i` of test `j` among `m` tests uses trace index `i · m + j`. | Test (TC-354) |
+| FR-181-AC-11 | Timed replay checks each delay's admissibility, the guard at the delayed state, the post-state digest over the discrete state and exact clock valuation, and the target's time invariants in exact rationals; a violated delay or guard refuses `invalid_runtime_input`/`invalid-value`. | Test (TC-369) |
+| FR-181-AC-12 | Under `time tick O period p` a position's time stamp is `p` times the number of `O` steps up to it. | Test (TC-369) |
 
 ## Dependencies
 

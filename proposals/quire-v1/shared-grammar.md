@@ -149,7 +149,7 @@ primary      = 'true' | 'false' | 'self' | 'result' | uint | string
 signed-int   = [ '-' ], uint ;
 
 temporal-clause = 'temporal', ident, 'using', ident,
-                 'over', '(', parameter, ')', 'clock', string,
+                 'over', '(', parameter, ')', [ 'clock', string ],
                  activation, '{', { capture }, temporal-expr, '}' ;
 activation   = 'on', 'origin'
              | 'on', 'each', '(', parameter, ')',
@@ -687,6 +687,135 @@ rules only.
 | `possible Win using v over (g: G::Game) { g.phase = G::Phase::Won }` | One `possible` state-graph clause with one `over` parameter. |
 | `always possible Rec using v from (not x.lost) { x.ok }` | One `always possible` clause with no `over` parameter and one `from` predicate. |
 | `unique path One using v over (j: M::Job) from (not j.a) to (j.done);` | One `unique path` clause with its two predicates. |
+
+### Probabilistic, timed and real-time forms
+
+These productions extend `declaration` when the package selects the complete
+facets. [FR-405](../../spec/functional/analysis/FR-405-declare-probabilistic-models.md)
+to [FR-421](../../spec/functional/temporal/FR-421-check-probabilistic-timed-claims-exactly.md)
+own their meaning.
+`a =/ b` adds the alternatives `b` to the existing production `a`.
+
+```ebnf
+declaration    =/ random-decl | reward-decl | delay-decl | workload-decl
+                | probabilistic-clause | time-decl | time-invariant
+                | urgent-decl | taskset-decl | release-decl
+                | schedulability-clause ;
+
+exact-value    = uint | decimal-literal | exact-number ;
+quantity-literal = exact-value, qualified-name ;
+primary        =/ quantity-literal ;
+
+random-decl    = 'random', qualified-name, '(', ident, ')', '~',
+                 '{', weighted-value, { ',', weighted-value }, [ ',' ], '}', ';' ;
+weighted-value = expr, ':', exact-value ;
+reward-decl    = 'reward', ident, 'on', qualified-name, '=', expr, ';' ;
+delay-decl     = 'delay', qualified-name, '~', delay-dist, ';' ;
+delay-dist     = 'uniform', [ '[', quantity-literal, ',', quantity-literal, ']' ]
+               | 'exponential', '(', exact-value, ')'
+               | 'discrete', '{', weighted-delay, { ',', weighted-delay },
+                 [ ',' ], '}' ;
+weighted-delay = quantity-literal, ':', exact-value ;
+workload-decl  = 'workload', ident, 'on', ident, '{',
+                 workload-weight, { workload-weight }, '}' ;
+workload-weight = 'weight', qualified-name, '=', exact-value, ';' ;
+
+probabilistic-clause = 'probabilistic', ident, 'using', ident, 'on', ident,
+                       [ 'over', '(', parameter, ')' ],
+                       scheduler-clause, activation, [ confidence ],
+                       '{', probabilistic-form, '}' ;
+scheduler-clause = 'under', ident
+                 | 'under', 'every', 'scheduler', { fairness-item } ;
+fairness-item  = 'fair', ( 'weak' | 'strong' ), [ 'each' ], qualified-name ;
+confidence     = 'with', confidence-item, { ',', confidence-item } ;
+confidence-item = ( 'alpha' | 'beta' | 'indifference' ), exact-value ;
+probabilistic-form
+               = 'probability', bound-op, exact-value, '[', event, ']'
+               | 'quantile', exact-value, 'of', '(', measure, ')', bound-op, expr
+               | 'mean', 'of', '(', fraction, ')', bound-op, exact-value
+               | 'long_run_fraction', 'holds', '(', expr, ')',
+                 [ weighting ], bound-op, exact-value
+               | 'expected', ( 'accumulate', ident | 'elapsed' ),
+                 'until', 'holds', '(', expr, ')', bound-op, expr ;
+bound-op       = '<=' | '>=' ;
+event          = temporal-expr | measure, bound-op, expr ;
+measure        = ( 'accumulate', ident | 'steps' | 'elapsed' ),
+                 'from', 'holds', '(', expr, ')',
+                 'until', 'holds', '(', expr, ')', 'within', horizon
+               | fraction ;
+fraction       = 'fraction', 'holds', '(', expr, ')',
+                 'over', '[', '0', ',', horizon, ']', [ weighting ] ;
+weighting      = 'weighted', 'by', ( ident | 'delay' ) ;
+horizon        = uint | quantity-literal ;
+
+aggregate-atom = aggregate-term, ( '<' | '<=' | '=' | '>=' | '>' ), expr ;
+aggregate-term = ( 'count' | 'sum' | 'min' | 'max'
+                 | 'fraction', 'holds', '(', expr, ')'
+                 | 'quantile', exact-value ),
+                 [ 'of', expr ], [ 'where', 'holds', '(', expr, ')' ],
+                 'over', 'past', window, 'min_count', uint ;
+window         = '[', horizon, ',', horizon, ']' ;
+temporal-primary =/ aggregate-atom ;
+
+time-decl      = 'time', ident, ( 'dense'
+                                | 'tick', qualified-name, 'period', quantity-literal ),
+                 'unit', qualified-name, ';' ;
+time-invariant = 'time', 'invariant', ident, 'when', block,
+                 '{', clock-bound, { 'and', clock-bound }, '}' ;
+clock-bound    = postfix, ( '<' | '<=' ), quantity-literal ;
+urgent-decl    = 'urgent', ident, ( 'when', block | qualified-name ), ';' ;
+type-ref       =/ 'Clock' ;
+timed-interval = ( '[' | '(' ), quantity-literal, ',', quantity-literal, ( ']' | ')' ) ;
+
+taskset-decl   = 'taskset', ident, '{', task, { task }, '}' ;
+task           = 'task', ident, ( 'periodic' | 'sporadic' ), quantity-literal,
+                 'deadline', quantity-literal, 'wcet', quantity-literal,
+                 [ 'priority', uint ], [ 'jitter', quantity-literal ],
+                 [ 'blocking', quantity-literal ],
+                 ( 'lo' | 'hi', 'wcet_hi', quantity-literal ), ';' ;
+release-decl   = 'release', ident, '.', ident, 'on', qualified-name, ';' ;
+schedulability-clause
+               = 'schedulable', ident, 'on', ident, 'under', policy, ';'
+               | 'response', ident, 'on', ident, '.', ident,
+                 '<=', quantity-literal, 'under', 'fixed_priority', ';' ;
+policy         = 'fixed_priority' | 'edf' | 'amc' ;
+```
+
+`random-decl` names an operation and one of its parameters; `reward-decl`,
+`delay-decl` and `workload-weight` name operations of the model whose alias
+`workload-decl` and `probabilistic-clause` name after `on`. Under the
+`quire.temporal.timed/v1` profile an interval-capable operator takes a
+`timed-interval` in place of `interval`. An interval opener `(` is followed by
+a `quantity-literal`, which begins with a `uint`, a `decimal-literal` or `rational`,
+and a temporal operand never begins with any of these, so a recognizer
+distinguishes a timed interval from a parenthesized operand by its second
+token.
+
+A `decimal-literal` is one token spelled `[0-9]+ '.' [0-9]+`, with no exponent. In an
+`exact-value` position it denotes the exact rational it spells, so `0.95` is
+`19/20` and `0.0005` is `1/2000`; it is never a floating-point value, and in
+every other position it keeps the unsupported numeric-form diagnostic.
+
+A `probabilistic-clause` with no `over` parameter has one binding, the empty
+one; with `over (p: T)` it holds for every binding of `p`
+([FR-406](../../spec/functional/analysis/FR-406-interpret-probabilistic-models.md)).
+A `confidence` clause states each of `alpha`, `beta` and `indifference`
+exactly once; a clause that omits or repeats one refuses with
+`invalid_probabilistic_model`/`partial-confidence`
+([FR-407](../../spec/functional/analysis/FR-407-state-probabilistic-claims.md)).
+A `temporal-clause` with no `clock` member binds the profile's default clock
+([FR-252](../../spec/objects/temporal/FR-252-temporal-clock-binding.md)).
+A `window` takes `uint` positions under the event-position false-extension
+profile and time quantities under the timestamped-event finite-window profile
+([FR-414](../../spec/functional/temporal/FR-414-evaluate-window-aggregates.md)).
+In `release-decl`, `release S.τ on M::o;` makes each step of operation `o`
+release one job of task `τ` of task set `S`
+([FR-419](../../spec/functional/analysis/FR-419-analyze-task-set-schedulability.md)).
+In `schedulability-clause`, the first `ident` names the claim and the second
+the task set. A clock read in `clock-bound` or in an operation's precondition
+compares a `Clock` field with a `quantity-literal` of the time dimension. In
+`task`, `wcet` is `C`, or `C(LO)` for a `hi` task whose `wcet_hi` is `C(HI)`.
+A form whose facet is not selected receives `unsupported_construct`.
 
 ## Precedence and bindings
 
