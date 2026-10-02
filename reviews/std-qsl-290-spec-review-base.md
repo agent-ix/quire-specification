@@ -29,3 +29,11 @@ Examined:
 ## Verdict
 
 The row is right. `text_bounds` with `min`, `max` and `text_profile` bindings is the form schema.json's `DomainNode` and the positive-operation-identities fixture already use. The six profiles are FR-141's, and the Rust derivation implements the row exactly. The refusals are unchanged: native `Text` stays MA-06 under AC-31, and inverted bounds and `casefold` refuse `ill_typed`/`operator-ineligible`. Against QSL #577's FR-056-AC-11 (spec/381-depth at adf724a5), the six profiles agree. The bounds differ slightly: QSpec requires `0 <= min <= max`, while QSL FR-056 says only `min <= max`, so QSL #577 should add `0 <=`. `cargo test --locked` passes (61 + 12 + 7 + 3 tests, 0 failed). `quire validate` passes TC-280. On FR-322 it reports two structural errors (a `value_object` `id` field and a `fields` record), but main 5e85e890 reports the same two, so #179 did not cause them. One low finding: AC-44 does not test the `min >= 0` rule. **Mergeable once FND-001 is fixed.**
+
+## Dispositions
+
+Round 1, reviewed at bc6c063d7125e0fdeba82a6221108d23a087840b.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | bc6c063d |
