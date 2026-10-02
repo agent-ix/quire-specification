@@ -25,7 +25,7 @@ reads target text as native source or depends on an external runtime.
 
 ## Preconditions
 
-FR-120–125, FR-269, FR-297–299 and NFR-060/061 are selected by exact revision;
+FR-120–125, FR-269, FR-297–299 and NFR-060/061 are selected by exact identity;
 each target mapper declares its exact supported capabilities and generator
 identity; the common and target limits are known before dispatch.
 

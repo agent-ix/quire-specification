@@ -26,7 +26,7 @@ upper bound without treating the half-open end as an included instant.
 
 ## Properties
 
-- **clock binding** — exact clock identity and revision shared by both domains.
+- **clock binding** — exact clock identity shared by both domains.
 - **native interval** — inclusive lower and upper bounds `[a,b]`, with `a <= b`.
 - **observation carrier** — selected half-open bounds `[a,e)` in the same clock
   domain, where `e > b`.

@@ -21,10 +21,9 @@ relationships:
 FR-351 owns one family-neutral separating witness record shared by the
 collection, temporal and protocol families' decisive settlements. FR-352 owns
 `native-run-result/2`, the explicitly selected closed wire that carries that
-record.
-Neither artifact amends quire-protocol's own canonical result wire
-(`quire.protocol.result/v1-draft.1`, FR-240); that wire's corresponding
-draft-revision bump is a separate, owned change.
+record. Neither artifact amends quire-protocol's own canonical result wire
+(`quire.protocol.result/v1-draft.1`, FR-240); a change to that wire is separate
+and owned by quire-protocol.
 
 ## Views
 
@@ -35,7 +34,7 @@ flowchart TD
   V2 --> S[QSL #186 forall witness channel and /2 serializer]
   V2 --> C[Codegen #50 canonical replay]
   V2 --> R[Verification #38 witness consumer]
-  P[quire-protocol result wire, FR-240] -.-> B[Protocol #96 draft-revision bump]
+  P[quire-protocol result wire, FR-240] -.-> B[Protocol #96 result wire change]
 ```
 
 `native-run-result/2` is the wire identifier, fixed by the producer at
@@ -58,4 +57,4 @@ identifier and refuses any other identifier (FR-352-AC-2).
 | --- | --- |
 | A consumer infers `/2` from payload shape instead of an explicit selection | FR-352 requires an explicit production-time selection; an unselected or unrecognized version refuses under FR-014's unsupported-version rule. |
 | A partial or foreign-shaped record is accepted as a witness | FR-351's one-axis-substitution refusal, extending FR-094-AC-7 to the witness axis. |
-| quire-protocol's own result wire drifts out of step with this witness shape | Its draft-revision bump is owned separately by [agent-ix/quire-protocol#96](https://github.com/agent-ix/quire-protocol/issues/96), referenced here and not amended by this architecture. |
+| quire-protocol's own result wire drifts out of step with this witness shape | A change to it is owned separately by [agent-ix/quire-protocol#96](https://github.com/agent-ix/quire-protocol/issues/96), referenced here and not amended by this architecture. |

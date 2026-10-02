@@ -62,18 +62,17 @@ scope, closed surrounding execution or a decisive witness/counterexample alone.
 An untriggered compensator, absent external observation, unsupported obligation,
 or missing trigger telemetry SHALL NOT count as demonstrated success or as an
 adequacy result whose required activation and participation evidence is present.
-A confirmed fault and independently observed mitigation SHALL retain failure-mode,
-property, binding, and run lineage through the B-owned result contract; this
-requirement creates no second evidence store. When the result adapter emits a
-settled truth on an open subject, it SHALL retain its `closed-scope`,
-`decisive-witness`, `decisive-counterexample`, `unsettled`, or `unavailable`
-basis and every exact supporting fact/progress identity. When a later
-contradiction is admitted, the result adapter SHALL retain earlier result bytes
-and emit only a linked superseding or invalidating result under the corrected
-input identity.
-The adapter SHALL retain every selected definition/profile identity, revision,
-and digest that its contribution depends on; it SHALL NOT replace one with a
-current default or a compatible-looking definition.
+A confirmed fault and independently observed mitigation SHALL retain
+failure-mode, property, binding, and run lineage through the B-owned result
+contract; this requirement creates no second evidence store. When the result
+adapter emits a settled truth on an open subject, it SHALL retain its
+`closed-scope`, `decisive-witness`, `decisive-counterexample`, `unsettled`, or
+`unavailable` basis and every exact supporting fact/progress identity. When a
+later contradiction is admitted, the result adapter SHALL retain earlier result
+bytes and emit only a linked superseding or invalidating result under the
+corrected input identity. The adapter SHALL retain every selected
+definition/profile identity that its contribution depends on; it SHALL NOT
+replace one with a current default or a compatible-looking definition.
 
 The participation contribution SHALL be exactly one FR-285 `known` or `unknown`
 value object. Known participation retains the complete required-role-instance
@@ -92,7 +91,7 @@ supplied as source values.
 | FR-115-AC-3 | Confirmed fault/mitigation lineage retains source, binding, property, and run identities. | Test (TC-145) |
 | FR-115-AC-4 | Assessment execution, decision-scope progress, decision-scope closure, surrounding-execution progress, surrounding-execution closure, complete-global-conformance closure, truth, settlement basis, exact decision support, activation, participation, completeness, adequacy, claim strength, and provenance remain independently readable. Each global closure state retains its exact required premise set; another claim retains `not-required` with no global premise set. Independently omitting, duplicating or cross-wiring a required axis or global premise, supplying a premise under `not-required`, or substituting `not-required` for a global claim or another axis refuses the inconsistent contribution. | Test (TC-145) |
 | FR-115-AC-5 | Decisive-witness satisfied and decisive-counterexample violated results remain settled with exact support while the decision scope and surrounding execution are open; compatible changes to surrounding-execution progress/closure preserve the same deciding support and truth. A closed decision scope does not close the surrounding execution or establish complete global conformance without its own required closure premises. A late contradiction retains prior bytes and emits only a linked superseding or invalidating result. | Test (TC-145) |
-| FR-115-AC-6 | Every selected definition/profile identity, revision, and digest remains immutable at the observation-result boundary; drift or substitution is refused. | Test (TC-145) |
+| FR-115-AC-6 | Every selected definition/profile identity remains immutable at the observation-result boundary; substitution is refused. | Test (TC-145) |
 | FR-115-AC-7 | Participation carries exactly one FR-285 shape; empty, absent and unknown remain distinct, and no target status or display string supplies source meaning. | Test (TC-145) |
 
 ## Dependencies

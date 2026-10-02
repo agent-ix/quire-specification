@@ -103,7 +103,7 @@ versions. The E02 property, subject, profile, binding, dependency-closure,
 execution-scope, plan, task and run fields SHALL equal their selected context;
 the adapter SHALL NOT infer or substitute one from display text.
 
-The following mapping is total for the selected source and target revisions:
+The following mapping is total for the selected source and target:
 
 | Protocol source fact | Required E02 fact |
 | --- | --- |

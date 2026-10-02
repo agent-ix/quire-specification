@@ -1,13 +1,12 @@
 # Observation progress and restoration definition
 
 Selection identity: `quire.observation.progress/v1`.
-**The selection role is accepted by FS01 and this semantic revision is accepted
-by FS04. Serialization, canonicalization and executable qualification remain
+**The selection role is accepted by FS01 and these semantics are accepted by
+FS04. Serialization, canonicalization and executable qualification remain
 separate.**
 
-Accepted definition: local rule and dependency links select this checkout.
-Git preserves drafting history; FS04 freezes this coherent baseline.
-This editing policy does not relax immutable runtime selections or digest checks.
+Local rule and dependency links resolve within this checkout. Runtime references
+select each definition by its immutable identity.
 
 This definition selects scoped assertions, contradiction and restoration rules
 with the range-aware binding for all three clock families. It is not a clock
@@ -28,11 +27,9 @@ populations.
 | Domain declarations | Checked package `model_selections` domain package | [Domain declaration selection](../observation-contract.md#domain-declaration-selection) |
 
 An actual assertion or restoration request selects its required dependencies by
-exact identity, revision and bytes. Missing, stale, substituted or inconsistent
-dependencies refuse the assertion; local draft links cannot select replacement
-runtime artifacts, default to a current clock/profile/result or begin a fresh
-complete stream. Declaration, raw document, definition and result digests
-remain distinct domains.
+exact identity. Missing, substituted or inconsistent dependencies refuse the
+assertion; local links cannot select replacement runtime artifacts, default to a
+current clock/profile/result or begin a fresh complete stream.
 
 ## Required assertion identity
 
@@ -41,10 +38,10 @@ retains the following immutable selections:
 
 | Value | Required meaning |
 | --- | --- |
-| Assertion identity | Assertion kind, unique assertion identity and exact progress definition identity/revision/bytes. |
-| Binding selection | Exact binding definition identity/revision/bytes and applied role/binding identities. |
+| Assertion identity | Assertion kind, unique assertion identity and exact progress definition identity. |
+| Binding selection | Exact binding definition identity and applied role/binding identities. |
 | Scope selection | Exact workflow/subject/relationship handles, population or window identity, membership rule and required source set. |
-| Temporal and range selection | Exact clock/profile identity/revision/bytes, selected range and coverage row, inclusive asserted boundary and history/closure premise. |
+| Temporal and range selection | Exact clock/profile identity, selected range and coverage row, inclusive asserted boundary and history/closure premise. |
 | Record and revision | Admitted-record identities, ingestion/order information and the retained observation/history revision to which the assertion applies. |
 | Restoration selection | Exact predecessor assessment/checkpoint identity, retained-state revision, resource-limit identity and replay basis when continuing from retained state. |
 

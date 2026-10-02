@@ -1,17 +1,16 @@
 # Native Quire v1 definition set
 
-FS01 accepts and reserves the identity hierarchy and dependency direction in this
-set. Each unsuffixed file contains the latest corrected semantic text and
-links to its current requirements and dependencies. Identity-role acceptance is
-not semantic-definition adoption, compiler/backend implementation or
-qualification. Those statuses remain explicit in each artifact and owning
-FS02–FS06/family ticket. Superseded draft copies live in Git history.
-The complete-value [definition lock](complete-value-lock.json) separates the
-qualification catalog (always-selected, conditional, alternative and rule
-artifacts) from per-package selection: the Unicode text profile is selected only
-by `text_bearing` packages, the IEEE profile only by `ieee_operation` packages,
-and exactly one integer-division profile only by `integer_div_rem` packages.
-Listing a profile in the catalog does not select it.
+FS01 accepts and reserves the identity hierarchy and dependency direction in
+this set. Each file contains its semantic text and links to its requirements and
+dependencies. Identity-role acceptance is not semantic-definition adoption,
+compiler/backend implementation or qualification. Those statuses remain explicit
+in each artifact and owning FS02–FS06/family ticket. The complete-value
+[definition lock](complete-value-lock.json) separates the qualification catalog
+(always-selected, conditional, alternative and rule artifacts) from per-package
+selection: the Unicode text profile is selected only by `text_bearing` packages,
+the IEEE profile only by `ieee_operation` packages, and exactly one
+integer-division profile only by `integer_div_rem` packages. Listing a profile
+in the catalog does not select it.
 
 FS03 accepts the exact `state-core → state-queries → state-graph` semantic
 closure below, and acceptance does not imply complete implementation or qualification.

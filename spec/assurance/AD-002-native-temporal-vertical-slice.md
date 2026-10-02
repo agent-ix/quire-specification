@@ -57,7 +57,7 @@ truth default.
 
 | Boundary | Owner | Required selections | Failure behavior |
 | --- | --- | --- | --- |
-| Native source → linked temporal subject | A | source/span; language edition; temporal profile definition revision/digest; typed predicates; anchor/scope/capture roles | located compiler refusal |
+| Native source → linked temporal subject | A | source/span; language edition; temporal profile definition identity; typed predicates; anchor/scope/capture roles | located compiler refusal |
 | Linked subject → `quire.compiled-protocol/2` | A | all subject identities plus tagged clock: `sequence_authority`, or `epoch`/`period`/`unit`, or `timestamp_unit` | strict `/2` refusal; `/1` stays readable but is not authenticated temporal input |
 | Observation → runtime | F | semantic-event/correlation identity; causal order; payload; duplicate rule; completeness; progress/closure assertion | unavailable, incomplete or typed contradiction; never false padding |
 | Native predicate → TL proposition | Contract IR #63 | exact checked predicate, result/availability contract, valuation and proposition-map identity | typed non-value; no numeric/nullable/pending coercion |
@@ -76,8 +76,8 @@ The three v1 clock forms are structurally distinct:
   completeness assertion; timestamp or ingestion order alone establishes no
   causality.
 
-`quire.compiled-protocol/2` is the only wire revision that may carry this
-admission decision. `/1` is retained for strict backwards reading but cannot be
+`quire.compiled-protocol/2` is the only wire that may carry this admission
+decision. `/1` is retained for strict backwards reading but cannot be
 reinterpreted as a `/2` temporal subject. Missing, unknown, stale, digest-
 mismatched or multiply selected fields refuse before a runtime or bridge call.
 

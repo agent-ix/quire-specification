@@ -1,12 +1,11 @@
 # Native finite global protocol definition
 
 Profile identity: `quire.protocol.finite-global/v1`.
-Language: `ix:native` / `1-draft`. **The profile role is accepted by FS01; this
-semantic revision remains proposed and is not adopted or fully implemented.**
+Language: `ix:native` / `1-draft`. **The profile role is accepted by FS01; these
+semantics remain proposed and is not adopted or fully implemented.**
 
-Working draft: local rule and dependency links select the current checkout.
-Git preserves drafting history; a coherent baseline is frozen at acceptance.
-This editing policy does not relax immutable runtime selections or digest checks.
+Local rule and dependency links resolve within this checkout. Runtime references
+select each definition by its immutable identity.
 
 ## Required definitions and interfaces
 
@@ -108,10 +107,10 @@ exact required execution, branch and workflow premises. Other claims retain
 scope-mismatched required records/premises refuse; none of the other four
 progress/closure axes substitutes for this record.
 
-Runtime requests retain their exact selected definitions, identities, revisions
-and digest domains. Missing, stale, substituted or incompatible dependencies
-refuse their dependent request. A changed semantic selection changes the linked
-subject; an existing result cannot be relabelled under a different selection.
+Runtime requests retain their exact selected definition identities. Missing,
+substituted or incompatible dependencies refuse their dependent request. A
+changed semantic selection changes the linked subject; an existing result cannot
+be relabelled under a different selection.
 
 The canonical result now carries exact assumptions, separate observation and
 protocol adequacy, and decision-support oracle dependence/lineage. Its enclosing

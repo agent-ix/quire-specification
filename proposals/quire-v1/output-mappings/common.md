@@ -44,7 +44,7 @@ The request retains:
   requested obligation identities in source order;
 - model/type/unit/operation/clock bindings from spec artifacts applicable to those
   obligations;
-- exact target-profile identity, revision and digest;
+- exact target-profile identity;
 - requested output capabilities; and
 - byte, obligation, expression-node, nesting, emitted-byte and work limits.
 

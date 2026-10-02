@@ -63,5 +63,5 @@ fan-out/join and compensation workflows.
 | Risk | Control |
 | --- | --- |
 | Retry duplicates an external effect | Stable decision/idempotency identities and receipt reconciliation. |
-| Replay differs from monitoring | Same immutable package/input revisions and explicit repair/supersession tests. |
-| Aggregate membership changes silently | Versioned population and grouping identity in every result. |
+| Replay differs from monitoring | Same immutable package and input identities and explicit repair/supersession tests. |
+| Aggregate membership changes silently | Population and grouping identity in every result. |

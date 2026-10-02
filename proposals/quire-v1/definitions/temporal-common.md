@@ -1,15 +1,14 @@
 # Native bounded temporal common definition
 
 Definition identity: `quire.temporal.bounded-facet/v1`.
-Language: `ix:native` / `1-draft`. **The facet role is accepted by FS01 and this
-semantic revision is accepted by FS04. Executable qualification remains
-separate.**
-This is a required semantic facet, not a selectable source profile by itself:
-a concrete temporal root must select exactly one FR-090 clock/boundary meaning.
+Language: `ix:native` / `1-draft`. **The facet role is accepted by FS01 and
+these semantics are accepted by FS04. Executable qualification remains
+separate.** This is a required semantic facet, not a selectable source profile
+by itself: a concrete temporal root must select exactly one FR-090
+clock/boundary meaning.
 
-Accepted definition: rules and required definitions resolve in this same
-checkout and FS04 freezes this coherent baseline. Runtime selections still require
-the exact identities, revisions and digests prescribed by their contracts.
+Rules and required definitions resolve within this checkout. Runtime references
+select each definition by its immutable identity.
 
 ## Required shared interface
 

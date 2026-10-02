@@ -75,10 +75,9 @@ object/value path, and the JSON field/index path is typed below.
   location by searching for a repeated name". Byte zero is not an absent span,
   an empty path is not an absent path, and a name match is not a locus.
 - **Digest domain** — a location kind carries no digest. Where a span's document
-  carries one, its domain rule is
-  [FR-201](FR-201-canonical-identity-domain.md); the catalog that
-  resolves the diagnostic is itself selected by identity, revision and byte
-  digest ([FR-270](FR-270-diagnostic-catalog.md)).
+  carries one, its domain rule is [FR-201](FR-201-canonical-identity-domain.md);
+  the catalog that resolves the diagnostic is itself selected by identity
+  ([FR-270](FR-270-diagnostic-catalog.md)).
 
 ## Acceptance Criteria
 

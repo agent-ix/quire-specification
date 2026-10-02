@@ -2,7 +2,7 @@
 
 Profile identity: `quire.temporal.fixed-sample.false-extension/v1`.
 Language: `ix:native` / `1-draft`. **The profile role is accepted by FS01 and
-this semantic revision is accepted by FS04. Executable qualification remains
+these semantics are accepted by FS04. Executable qualification remains
 separate.**
 
 ## Required definition

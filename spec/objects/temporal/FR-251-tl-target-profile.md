@@ -50,10 +50,10 @@ profile selection required by FR-090.
 - **Identity kind** — *value*. A TL profile label has no identity of its own and
   is compared componentwise as an exact string.
 - **Key** — the label itself, matched exactly, as it appears inside the bridge
-  definition whose "identity, revision and digest naming the TL syntax and
-  evaluator profiles it targets" FR-095 Inputs require. Equality is
-  componentwise over exactly that and nothing else. Display name, source path,
-  span, message text, locale and rendering never participate
+  definition whose "identity naming the TL syntax and evaluator profiles it
+  targets" FR-095 Inputs require. Equality is componentwise over exactly that
+  and nothing else. Display name, source path, span, message text, locale and
+  rendering never participate
   ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
   [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)).
 - **Key order** — lexicographic over the label, for collection comparison only.

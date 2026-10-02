@@ -132,7 +132,7 @@ following dispositions resolve SR-408's findings:
 | SR-408 FND-001/002 | Latest corrected definition text is promoted to the unsuffixed files. Superseded copies are removed. Protocol, temporal and state dependencies link the matching current definitions, including state graph and temporal common. |
 | SR-408 FND-003 | Per-rule and internal-definition draft digest pins are replaced with same-checkout links. Explicit external compiler selections and runtime digest-domain requirements remain. |
 | SR-408 FND-004 | The historical A/F integration findings are dispositioned below. Their original review observations are retained; they no longer impose checksum publication or missing-consumer-text gates. |
-| SR-408 FND-005 | The capability ledger links the same current temporal/protocol files and draft revisions as the definition index. |
+| SR-408 FND-005 | The capability ledger links the same temporal/protocol files as the definition index. |
 
 B's independently reviewed [global-conformance closure correction](../../spec/reviews/global-conformance-closure/base.md)
 is also integrated. Its fifth closure record, including `not-required` for
@@ -142,8 +142,8 @@ decision-scope or surrounding-execution progress/closure.
 
 ### Historical integration findings
 
-These dispositions apply to the earlier B/E review sets at their recorded
-revisions; they do not claim executed consumer qualification or baseline adoption.
+These dispositions apply to the earlier B/E review sets; they do not claim
+executed consumer qualification or baseline adoption.
 
 | Earlier findings | Current disposition |
 | --- | --- |

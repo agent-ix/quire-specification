@@ -15,7 +15,7 @@ per-obligation mapping account.
 
 All four profile identities are exact selections, not public registrations.
 Changing a target standard, selected fragment, mapping rule or canonical field
-requires a new revision. No historical generated package is rewritten.
+requires a new profile identity. No historical generated package is rewritten.
 
 ## Common outcome rule
 

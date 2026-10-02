@@ -155,8 +155,8 @@ package-level reporting never hides an unsupported clause behind another pass.
 The package records one native language/edition and exact semantic profile
 definitions. Profiles describe meaning; backend capabilities describe accepted
 subjects and requested claims. These identities must not be conflated.
-Definition revisions and digests, source revision/digest/spans, requirement and
-clause identities, model closure, observation binding, runtime trace/snapshots,
+Definition identities, source revision/digest/spans, requirement and clause
+identities, model closure, observation binding, runtime trace/snapshots,
 adapter/implementation and result identity remain distinguishable.
 
 Every lowered node retains its source and typed declaration correspondence,

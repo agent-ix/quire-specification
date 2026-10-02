@@ -27,7 +27,7 @@ binding to a spec-declared model declaration, never a new model declaration.
   unrepresented.
 - Pre/post operation anchors, collection queries, object/relationship traversal,
   protocol execution, temporal/history semantics and target library units with
-  no exact source correspondence are unrepresented by this revision.
+  no exact source correspondence are unrepresented by this profile.
 - Parts, ports, actions, state machines, allocations and model interchange are
   outside this expression profile. The exporter does not generate a replacement
   system model or infer a feature from a display name.

@@ -23,11 +23,12 @@ The integration joins a structured per-obligation observation result through the
 
 ## Preconditions
 
-The selected A/B result and interchange interfaces have named revisions; in
-particular, the result input conforms to [B's FR-061](ix://agent-ix/quire-specification/FR-061)
-and [B's FR-007](ix://agent-ix/quire-verification/FR-007). Every consumed
-definition/profile dependency has an immutable identity, revision, and digest.
-The consumer declares supported capabilities and mapping profile.
+The selected A/B result and interchange interfaces are selected by exact
+identity; in particular, the result input conforms to [B's
+FR-061](ix://agent-ix/quire-specification/FR-061) and [B's
+FR-007](ix://agent-ix/quire-verification/FR-007). Every consumed
+definition/profile dependency has an immutable identity. The consumer declares
+supported capabilities and mapping profile.
 
 ## Inputs
 
@@ -58,9 +59,9 @@ and no global premise set.
 5. Deliver a current codegen bound-coverage observation beside an OB03 result.
    - IT-051-SC-05: its unqualified provenance remains visible and it cannot establish completeness, execution, adequacy, or obligation discharge.
 6. Deliver a late contradiction and independently mutate one definition/profile
-   identity, revision, or digest.
+   identity.
    - IT-051-SC-06: prior result bytes remain historical, only a linked superseding
-     or invalidating result names the corrected input, and definition drift refuses.
+     or invalidating result names the corrected input, and a definition identity other than the selected one refuses.
 7. Deliver the settled-open results through the selected consumer adapter; vary
    surrounding-execution progress while keeping decision-scope facts, settlement
    basis and deciding support fixed. Repeat with the closed-decision-scope result

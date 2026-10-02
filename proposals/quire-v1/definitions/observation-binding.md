@@ -1,13 +1,12 @@
 # Observation binding definition
 
 Selection identity: `quire.observation.binding/v1`.
-**The selection role is accepted by FS01 and this semantic revision is accepted
-by FS04. Serialization, canonicalization and executable qualification remain
+**The selection role is accepted by FS01 and these semantics are accepted by
+FS04. Serialization, canonicalization and executable qualification remain
 separate.**
 
-Accepted definition: local rule and dependency links select this checkout.
-Git preserves drafting history; FS04 freezes this coherent baseline.
-This editing policy does not relax immutable runtime selections or digest checks.
+Local rule and dependency links resolve within this checkout. Runtime references
+select each definition by its immutable identity.
 
 This definition selects the observation-binding contract consumed by a linked
 package, including role sharing, correlation, availability, independent result
@@ -36,11 +35,9 @@ axes without changing this binding. Neither acceptance adopts protocol
 declaration or global-conformance semantics, whose owning work remains independent.
 
 An actual package/assessment selects its required dependency artifacts by exact
-identity, revision and bytes. Missing, substituted, stale or mutually inconsistent
-selections refuse the dependent request. A local draft link does not authorize
-an evaluator to replace its selected artifact with current working-tree bytes.
-Declaration, raw document, definition and result digests retain their
-declared domains; equal digest prefixes do not make them interchangeable.
+identity. Missing, substituted or mutually inconsistent selections refuse the
+dependent request. A local link does not authorize an evaluator to replace its
+selected artifact with another artifact.
 
 ## Retained binding boundary and range selection
 

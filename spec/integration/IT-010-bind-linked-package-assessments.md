@@ -27,10 +27,11 @@ FS02 and OB01, not an implemented integration.
 
 ## Preconditions
 
-The domain package, configuration, reference, profile and binding contracts have
-reviewed exact revisions. The Rust extraction, intake and binder implement those
-revisions. All input source units and dependency bytes are supplied locally;
-the fixture declares finite bounds rather than deriving them from sample data.
+The domain package, configuration, reference, profile and binding contracts are
+selected by exact identity. The Rust extraction, intake and binder implement
+those contracts. All input source units and dependency bytes are supplied
+locally; the fixture declares finite bounds rather than deriving them from
+sample data.
 
 ## Inputs
 

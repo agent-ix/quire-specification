@@ -108,19 +108,16 @@ For the nominal scalar node forms covered by the node-preimage schema, the
 preimage. An owner subject must match an admitted source, definition or model
 selection; source/definition owners use authority plus identity, and model
 owners use the domain package identity plus the IR node identity: a checked
-package selects at most one domain package per identity (FR-321), so the
-owner's `identity` scopes a `ModelOwner` node's identity to its declaring
-domain package. A node id depends only on content: a domain package's
-declared version label is not part of it. Source/definition revisions and
-digests remain package lock evidence but are excluded from the semantic node
-preimage, allowing an unchanged source- or definition-owned declaration to
-retain identity across unrelated document revisions.
-Qualified names are arrays of ASCII identifier segments. Arbitrary-precision
-integers/rationals use canonical decimal strings with no leading zero and no
-`-0`, a positive denominator, greatest-common-divisor one and exactly `0/1` for
-zero. Unordered enum members
-and dimension terms are ascending by their canonical JCS key; ordered enum
-members retain declaration order. Duplicate/zero-exponent terms refuse.
+package selects at most one domain package per identity (FR-321), so the owner's
+`identity` scopes a `ModelOwner` node's identity to its declaring domain
+package. A node id depends only on content: an unchanged source- or
+definition-owned declaration retains its identity across unrelated document
+changes. Qualified names are arrays of ASCII identifier segments.
+Arbitrary-precision integers/rationals use canonical decimal strings with no
+leading zero and no `-0`, a positive denominator, greatest-common-divisor one
+and exactly `0/1` for zero. Unordered enum members and dimension terms are
+ascending by their canonical JCS key; ordered enum members retain declaration
+order. Duplicate/zero-exponent terms refuse.
 
 The JSON Schema fixes structural shape; the strict reader additionally enforces
 these semantic constraints. A targetless root unit has scale `1/1` and offset

@@ -26,9 +26,9 @@ protocol representation selected by the composed native profile.
 
 ## Preconditions
 
-The composed native profile, protocol representation and strict consumer are at
-reviewed exact revisions. The order/payment/split-shipment fixture declares all
-required finite bounds and source/model identities.
+The composed native profile, protocol representation and strict consumer are
+selected by exact identity. The order/payment/split-shipment fixture declares
+all required finite bounds and source/model identities.
 
 ## Inputs
 

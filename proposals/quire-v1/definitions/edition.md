@@ -7,15 +7,12 @@ definition remains proposed and is not adopted or fully implemented.**
 ## Selection and scope
 
 The compiler inventory binds this exact definition artifact; source headers
-select `language "ix:native" edition "1-draft";`. The artifact byte digest,
-definition revision and language/edition remain distinct. This draft includes
-the corrected static/runtime prerequisites and the domain package import.
-Historical `0-draft` sources retain their separate identity.
+select `language "ix:native" edition "1-draft";`. The definition identity and
+the language edition remain distinct. The edition includes the static/runtime
+prerequisites and the domain package import.
 
-This is a working definition in one coherent draft. Required definitions and
-rule links resolve within this checkout; acceptance freezes their exact selections.
-Earlier draft text remains in Git history. Runtime references still require the
-selected immutable identities, revisions and digest domains.
+Required definitions and rule links resolve within this checkout. Runtime
+references select each definition by its immutable identity.
 
 
 This definition owns the complete lexical and syntactic grammar, closed source
@@ -31,11 +28,11 @@ another facet do not grant that facet's forms. A child profile may add explicitl
 listed forms; it cannot weaken inherited numeric, presence, identity, purity,
 anchor or resource rules. Imported predicates retain their own defining profile.
 
-Required definitions use exact identity, revision and byte digest. Unknown or
-conflicting definitions, cycles and incompatible inherited rules refuse dependent
-admission. No definition is a runtime script, plugin or implicit network fetch.
-A compiler reports support for the selected contract separately from knowing its
-bytes. Markdown is the normative document encoding, not another clause parser.
+Required definitions are selected by exact identity. Unknown or conflicting
+definitions, cycles and incompatible inherited rules refuse dependent admission.
+No definition is a runtime script, plugin or implicit network fetch. A compiler
+reports support for the selected contract separately from knowing its bytes.
+Markdown is the normative document encoding, not another clause parser.
 
 Only the rule files explicitly selected below and transitive required definitions
 are normative dependencies. Their external/background links do not silently add

@@ -25,10 +25,10 @@ native operator, predicate, clock, capture, history and closure meaning.
 ## Inputs
 
 An exact native temporal subject; total-Boolean predicate projections governed
-by [contract-IR issue #63](https://github.com/agent-ix/quire-contract-ir/issues/63);
-selected observation and clock bindings; and an exact bridge-definition
-identity, revision and digest naming the TL syntax and evaluator profiles it
-targets.
+by [contract-IR issue
+#63](https://github.com/agent-ix/quire-contract-ir/issues/63); selected
+observation and clock bindings; and an exact bridge-definition identity naming
+the TL syntax and evaluator profiles it targets.
 
 ## Outputs
 

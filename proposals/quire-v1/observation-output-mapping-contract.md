@@ -17,7 +17,7 @@ the input retains:
 | Value | Required meaning |
 | --- | --- |
 | Subject and request | Exact linked-package/static subject, runtime assessment-input identity, requested capability, selected observation binding, and separately identified decision scope and surrounding execution. |
-| Source correspondence | Native clause, source revision/digest/span, declaration/anchor/capture identities, and every selected definition/profile identity, revision, and digest. |
+| Source correspondence | Native clause, source revision/digest/span, declaration/anchor/capture identities, and every selected definition/profile identity. |
 | Result facts | Independent B-owned assessment execution, truth, settlement basis, exact decision support, activation, participation, completeness, separately qualified observation adequacy and protocol adequacy, claim strength, assumptions, and provenance facts; no summary may erase another fact or use bare `adequacy`. |
 | Decision-scope progress | Exact progress for the obligation's decision scope, retaining its scope, authority and boundary identities independently of surrounding-execution progress. |
 | Decision-scope closure | Exact closure state and premises for that decision scope, independently of its progress, assessment execution, completeness and surrounding-execution closure. |
@@ -25,17 +25,17 @@ the input retains:
 | Surrounding-execution closure | Exact closure state and premises for the surrounding execution; closing or settling one decision scope cannot close that execution. |
 | Complete-global-conformance closure | B's fifth typed closure record: `closed`, `open`, `incomplete` or `contradicted` with exact required execution, branch and workflow closure-premise identities for a global-conformance claim; `not-required` with no global premise set for another claim. Per-obligation settlement or another closure axis cannot replace it. |
 | Historical supersession | Earlier result identity and immutable bytes plus the linked superseding/invalidating result, contradicted premise, and corrected input identity; no result is restamped or silently replaced. |
-| Consumer selection | Exact FR-297 target family, normative target revisions, mapping profile identity/revision/digest and declared required capabilities. |
+| Consumer selection | Exact FR-297 target family, normative target revisions, mapping profile identity and declared required capabilities. |
 | Mapping outcome | One FR-298 identity-bearing record per obligation, classified as `preserved`, `conditional`, `unrepresented`, or `refused`, with exact source-bound conditions/causes and output regions. |
 
-The consumer preserves all four mapping outcomes independently from the observation
-availability state. A result that is pending, incomplete, refused, untriggered,
-unsupported, or not executed remains that state at the boundary; it cannot be
-converted to a Boolean pass, a mapped success, or a qualified run. A settled
-truth on an open subject retains its selected decisive basis and exact support;
-the open surrounding execution is not a reason to erase either fact. Definition
-or profile identity/revision/digest drift refuses rather than using a current
-default.
+The consumer preserves all four mapping outcomes independently from the
+observation availability state. A result that is pending, incomplete, refused,
+untriggered, unsupported, or not executed remains that state at the boundary; it
+cannot be converted to a Boolean pass, a mapped success, or a qualified run. A
+settled truth on an open subject retains its selected decisive basis and exact
+support; the open surrounding execution is not a reason to erase either fact. A
+definition or profile identity other than the selected one refuses rather than
+using a current default.
 
 The four decision-scope/surrounding-execution progress/closure axes and the fifth
 complete-global-conformance closure record retain

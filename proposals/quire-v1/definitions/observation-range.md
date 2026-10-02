@@ -1,10 +1,10 @@
 # Observation range correspondence
 
 Definition identity: `quire.observation.range/v1`.
-**The definition role is accepted by FS01 and this semantic revision is accepted
-by FS04. Executable qualification remains separate.** Local rule and dependency
-links select this checkout. Git preserves drafting history; FS04 freezes this
-coherent baseline. Immutable runtime selections and digest checks remain required.
+**The definition role is accepted by FS01 and these semantics are accepted by
+FS04. Executable qualification remains separate.** Local rule and dependency
+links resolve within this checkout. Runtime references select each definition by
+its immutable identity.
 
 This definition maps a selected finite window to one selected native
 temporal clock. It does not redefine declared population membership, temporal
@@ -14,17 +14,18 @@ row below rather than converting among clock families.
 
 ## Required inputs
 
-Use the domain declarations selected by the [observation contract](../observation-contract.md)
-and exactly one clock meaning from [FR-090](../../../spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md).
+Use the domain declarations selected by the [observation
+contract](../observation-contract.md) and exactly one clock meaning from
+[FR-090](../../../spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md).
 These are supplied assessment inputs; this definition does not duplicate their
-revision/digest selection tables.
+selection tables.
 
-A range selection retains the domain package identity and digest, the
-population declaration key, window identity and digest, selected temporal profile identity/revision/digest,
-clock authority, ordered record-set identity/digest, and the exact coverage row.
-Missing, substituted, stale, mutually inconsistent, or multiply selected values
-refuse the dependent assessment. A member-object identity, a timestamp, a
-record arrival order, or a digest from another domain is not a substitute.
+A range selection retains the domain package identity, the population
+declaration key, window identity, selected temporal profile identity, clock
+authority, ordered record-set identity, and the exact coverage row. Missing,
+substituted, mutually inconsistent, or multiply selected values refuse the
+dependent assessment. A member-object identity, a timestamp, a record arrival
+order, or a digest from another domain is not a substitute.
 
 ## Selected correspondence
 

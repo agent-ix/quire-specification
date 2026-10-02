@@ -11,7 +11,7 @@ relationships:
 ---
 ## Statement
 
-The observation service SHALL make each settled assessment reproducible from its immutable admitted observations, bindings, captures, progress/closure inputs, and selected semantic revisions.
+The observation service SHALL make each settled assessment reproducible from its immutable admitted observations, bindings, captures, progress/closure inputs, and selected semantic definition identities.
 
 ## Measurement and Evaluation
 
