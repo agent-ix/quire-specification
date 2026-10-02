@@ -96,6 +96,8 @@ with these key names:
 | `document` | observed arm: the `sha256-jcs` digest of the observed document there |
 | `locus` | the source locus of the expression that has no value |
 | `transition` | for an undefined guard only: the FR-181 transition identity whose guard it is |
+| `predicate` | for a predicate of a state-graph claim only: `"P"`, `"Q"`, `"X"` or `"Y"`, the predicate that has no value ([FR-393](../../objects/interfaces/FR-393-state-graph-evidence.md)) |
+| `variables` | for a hyperproperty only: the trace or execution variables with their aliases, `[{"variable":"<ident>","alias":"<ident>"}, ...]`, in the order of the plural keys ([FR-400](../../objects/interfaces/FR-400-hyper-counterexample.md)) |
 
 An engine whose evaluation point is not one position names it with the same
 keys in their plural forms (`positions`, `state_keys`), and its own
@@ -204,4 +206,5 @@ counterexamples an engine returned.
 ## References
 
 - quire-spec-language ADR-018 CX-1 to CX-4, SM-7, SM-8, DL-4, DL-5 and QS-8;
-  ADR-019 SR-8, SV-4 and QS-5, QS-6; Linear STD-131 and STD-132.
+  ADR-019 SR-8, SV-4 and QS-5, QS-6; Linear STD-131 and STD-132; STD-135 and
+  STD-136 (the `predicate` and `variables` keys).

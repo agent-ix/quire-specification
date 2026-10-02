@@ -690,6 +690,34 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-453
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-390
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-391
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-392
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-393
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-394
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-395
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-396
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-397
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-398
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-399
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-400
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-401
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-402
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-403
+    type: contains
   - target: ix://agent-ix/quire-specification/TM-009
     type: contains
   - target: ix://agent-ix/quire-specification/FR-434
@@ -899,6 +927,20 @@ The requirement artifacts are indexed below.
 | [FR-453](functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md) | FR | Profile-layering refinement gate: the five AD-003 layering edges, refusal preservation and per-layer user subsets |
 | [FR-440](objects/interfaces/FR-440-checked-package-union-and-case-nodes.md) | FR | Checked-package `composite_type`/`union`, `value`/`union_value` and `expression`/`case` nodes and the `quire.op.control.case` catalog entry |
 | [FR-441](objects/interfaces/FR-441-union-member-key.md) | FR | Union member key: the `quire.union-member-node/v1` preimage |
+| [FR-390](functional/analysis/FR-390-analyze-state-graph-claims.md) | FR | State-graph claims `possible`, `always possible` and `unique path` over a model subject: forms, graph semantics and admission |
+| [FR-391](functional/analysis/FR-391-settle-state-graph-claims.md) | FR | Settlement of state-graph claims from decisive evidence on open and closed nodes; verdicts, settlement method and reduction rows |
+| [FR-392](functional/analysis/FR-392-sample-possible-witnesses.md) | FR | Seeded witness sampling for `possible` claims; `witness_samples`, `seed` and `max_walk_steps` |
+| [FR-393](objects/interfaces/FR-393-state-graph-evidence.md) | FR | `GraphEvidence` wire: witness, trap and path-pair arms |
+| [FR-394](functional/analysis/FR-394-replay-state-graph-evidence.md) | FR | Replay of state-graph evidence, including trap re-exploration from a recorded state |
+| [FR-395](functional/analysis/FR-395-analyze-hyperproperties-over-behaviours.md) | FR | Hyperproperties over every behaviour of a model: aliases, indexed reads, match, per-variable fairness and lockstep semantics |
+| [FR-396](functional/analysis/FR-396-classify-hyperproperty-forms.md) | FR | Hyperproperty forms HP-1 to HP-6, the admitted fragment and single-existential routing to the possibility family |
+| [FR-397](functional/analysis/FR-397-check-step-relations-over-model-operations.md) | FR | Step relations over model operations: model claim over reachable transitions and separate code claim |
+| [FR-398](functional/analysis/FR-398-align-hyperproperty-traces-on-a-projection.md) | FR | Projection alignment of universal safety hyperproperties with `align skip` |
+| [FR-399](functional/analysis/FR-399-settle-hyperproperty-results.md) | FR | Hyperproperty and step-relation verdicts, the `∀∃` witness set, inconclusive causes and run limits |
+| [FR-400](objects/interfaces/FR-400-hyper-counterexample.md) | FR | `HyperCounterexample` wire: lockstep, witness-exhausted, projected and step-tuple kinds |
+| [FR-401](functional/analysis/FR-401-replay-hyper-counterexamples.md) | FR | Replay of hyper counterexamples and step-relation code-claim counterexamples |
+| [FR-402](objects/interfaces/FR-402-hyperproperty-obligation-identity.md) | FR | Checked-package hyperproperty claim body and obligation identity |
+| [FR-403](functional/analysis/FR-403-reduce-hyperproperty-state-spaces.md) | FR | Reduction preservation rows for hyper forms and compiler-verified copy-swap symmetry |
 | [FR-049](functional/foundation/FR-049-bind-native-choreography-syntax.md) | FR | Accepted native choreography source integration; complete-V1 review SR-571–580 |
 | [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Accepted complete-V1 protocol intent; review SR-571–580 |
 | [FR-050](functional/protocol/FR-050-bind-protocol-instances.md) | FR | Accepted complete-V1 protocol foundation; review SR-571–580 |

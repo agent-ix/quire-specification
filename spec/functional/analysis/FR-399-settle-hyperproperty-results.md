@@ -1,0 +1,188 @@
+---
+id: FR-399
+title: "Settle hyperproperty and step-relation results"
+type: FR
+relationships:
+  - target: ix://agent-ix/quire-specification/US-011
+    type: implements
+  - target: ix://agent-ix/quire-specification/FR-395
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-396
+    type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-360
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-243
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-331
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-401
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-363
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-368
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-461
+    type: references
+---
+
+# FR-399: Settle hyperproperty and step-relation results
+
+## Description
+
+When a hyper or step-relation item over model subjects is checked, the
+analyzer SHALL settle it with one FR-360 label and one FR-243 basis by the
+table below, SHALL settle a refutation only after its counterexample replays,
+and SHALL stop at a run limit with the limit named rather than continue past
+it.
+
+## Inputs
+
+The item's form ([FR-396](FR-396-classify-hyperproperty-forms.md)), its
+subjects, the run's outcome and evidence, and the request's model-check
+limits.
+
+## Outputs
+
+One result per item with its label, basis, cause where inconclusive or
+stopped, settlement method, and counterexample where refuted.
+
+## The witness set of a `∀∃` clause
+
+For an HP-3 clause and a tuple of universal paths, the witness set `X_j` at
+joint position `j` holds every pair (existential tuple of model states, state
+of the body's safety automaton) reachable along a matched existential prefix.
+The safety automaton is the Büchi automaton of the body with every state of
+empty language removed and every remaining state accepting. `X_0` holds every
+(initial existential tuple, automaton state reached by reading joint position
+0); `X_{j+1}` holds every (existential post-tuple, automaton successor)
+reached from a member of `X_j` by an existential joint step on which `μ_E`
+holds against universal step `j + 1`, the automaton reading the joint
+post-position. An empty `X` stays empty.
+
+The clause is violated by a fair universal tuple along which some `X_j` is
+empty: every existential tuple matched with it has left the body's safety
+closure by position `j`. If `X` stays non-empty along a fair universal
+behaviour, König's lemma gives an existential tuple matched at every step on
+which the body holds. `X` is a function of the universal prefix, the
+existential subjects and the body, so a refutation's existential half is a
+closed computation that replay repeats.
+
+## Verdicts
+
+| Outcome | FR-360 label | FR-243 basis | Cause or evidence |
+| --- | --- | --- | --- |
+| Exhaustive check completed with no violation: HP-1 every tuple true; HP-2 no fair accepting cycle of the self-composition; HP-3 no reachable empty `X` with a cycle fair for every universal variable; HP-6 no reachable bad projected prefix | `proved` | `closed-scope` | exhaustive, or reduced with its reductions |
+| Inductive proof of an HP-2 safety body | `proved` | `decisive-witness` | induction at its depth |
+| Counterexample that replays | `refuted` | `decisive-counterexample` | a hyper counterexample |
+| The body, a match, or a guard, the `terminal when` predicate or a state constraint of a component's subject evaluated undefined at a reachable joint step, and the `undefined` counterexample ending there replays | `refuted` | `decisive-counterexample` | cause `undefined-evaluation`, with `where` and `cause`, and that counterexample |
+| Every depth up to the maximum completed with no violation | `inconclusive` | `unsettled` | `bound-reached` naming the depth |
+| The match was refused or incomplete at a reachable joint step | `inconclusive` | `unsettled` | `match-undetermined` |
+| A vacuous clause ([FR-395](FR-395-analyze-hyperproperties-over-behaviours.md)) | `inconclusive` | `unsettled` | `vacuous-match` |
+| An undecided successor, no initial state, an induction step that does not close, replay disagreement or replay refusal | `inconclusive` | `unsettled` | `undecided-successor`, `no-initial-state`, `induction-not-closed`, `replay-parity` or `replay-refused` |
+| A run limit, meter or time budget stopped the run | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `limit-reached{limit, value, setting}` |
+| The caller cancelled the run | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `cancelled` |
+| HP-4, or a clause over `behaviours` under a profile other than infinite-trace | `unsupported` | `unavailable` | `unsupported_projection`/`unsupported-requested-capability` |
+
+An HP-5 item settles by [FR-396](FR-396-classify-hyperproperty-forms.md)'s
+single-existential rows.
+
+An undefined evaluation refutes by the FR-363 rule for every model proof
+engine. When the body or a match, for a universal or an existential variable,
+evaluates undefined at a reachable joint step, the analyzer SHALL settle the
+item `refuted` with cause `undefined-evaluation`, whose `where` names the
+tuple of trace or execution variables with their aliases, the joint position,
+each component's `quire.simulation.state-key/v1` digest there and the locus of
+the expression that has no value, and whose `cause` names the undefined
+value's catalogued reason. Its counterexample is the `undefined` kind of
+[FR-400](../../objects/interfaces/FR-400-hyper-counterexample.md), ending at
+that joint step, and [FR-401](FR-401-replay-hyper-counterexamples.md) replay
+reproduces the undefined value there. The `undefined` counterexample carries
+that `undefined-evaluation` value.
+
+The same rule covers each component's subject. Each component trace runs over
+its alias's subject, which evaluates a guard of each transition
+enabled-tested at the component's state, its `terminal when` predicate at a
+state with no enabled transition, and each state constraint that restricts
+its explored states. When one of them evaluates undefined at a component
+state of a reachable joint step, the analyzer SHALL settle the item `refuted`
+with cause `undefined-evaluation`, whose `where` names that component's
+variable and alias alone, the joint position, that component's
+`quire.simulation.state-key/v1` digest and the locus of the expression, plus,
+for a guard, the FR-181 transition identity whose guard it is. An undefined
+guard is never read as a disabled transition, and an undefined `terminal when`
+predicate never as a non-terminal state. A subject's expression belongs to
+the subject, so its undefined evaluation refutes every hyperproperty item
+over that subject whose analysis reaches that state.
+
+**Canonical order of refuting evidence.** A violation and an undefined
+evaluation are both refuting evidence, ordered as FR-363 orders them. The
+analyzer SHALL report the first refuting evidence in this canonical order:
+for HP-1, the first tuple in the product of the subjects' FR-181 canonical
+edge orders, in binding order; for HP-2, HP-3 and HP-6, the first product
+state in FR-181 canonical breadth-first order over the product, whose
+successors are ordered by the tuple of component transition identities in
+quantifier order and then by the automaton or witness-set component. At one
+tuple or product state, an undefined evaluation precedes a false body, since
+the evaluation that has no value is reached first.
+
+`bound-reached` means: for HP-2 and HP-3, no counterexample whose universal
+lasso has at most the maximum depth of joint steps; for HP-1, no
+counterexample whose executions all leave states at depth below it; for HP-6,
+no counterexample of at most that many moves. `match-undetermined` and
+`vacuous-match` join the model-subject inconclusive causes; neither adds a
+label, basis or category.
+
+## Run limits
+
+Every limit is a caller-set member of the request's temporal `limits`
+([FR-368](../temporal/FR-368-negotiate-temporal-model-check-items.md)). No
+form, formula size, arity or depth is capped. Each limit is counted with
+checked arithmetic as the run reaches it, and reaching one stops the run and
+settles FR-331 result `incomplete` with cause `limit-reached{limit, value,
+setting}`, naming the limit, its value and its setting as
+[FR-461](../foundation/FR-461-name-the-limit-value-and-setting.md) names and renders it, so the caller raises it
+and reruns.
+
+| Member | Counts | Setting |
+| --- | --- | --- |
+| `max_witness_set` | the members one HP-3 witness set may reach | `model_check.max_witness_set` |
+| `max_relation_tuples` | the tuples an HP-1 run may evaluate | `model_check.max_relation_tuples` |
+
+The routed provider publishes each default, which applies when the request
+sets none. The model-subject
+limits on states, transitions and automaton states count product states, joint
+steps and automaton states for hyper items.
+
+## Acceptance Criteria
+
+| ID | Criteria | Verification |
+| --- | --- | --- |
+| FR-399-AC-1 | Each outcome row settles exactly its listed FR-360 label, FR-243 basis and cause, a stopped run `incomplete` with `limit-reached` and a cancelled run `incomplete` with `cancelled`, and each label matches exactly one FR-360 member with its FR-241, FR-242 and FR-243 combination. | Test (TC-338, TC-339, TC-340, TC-342) |
+| FR-399-AC-2 | An HP-3 clause is refuted exactly when a fair universal tuple reaches an empty witness set; on the leaky vault `X_1` is empty, and on the secure vault every `X` is a singleton and the clause is proved. | Test (TC-339) |
+| FR-399-AC-3 | An HP-3 run whose witness set reaches `max_witness_set` stops and settles `incomplete` with cause `limit-reached` naming `max_witness_set`, its value and its setting; a request that sets none runs under the provider's published default. | Test (TC-339) |
+| FR-399-AC-4 | An HP-1 run that reaches `max_relation_tuples` stops and settles `incomplete` with cause `limit-reached` naming the limit, its value and its setting; a request that sets none runs under the provider's published default. | Test (TC-343) |
+| FR-399-AC-5 | A match refused at a reachable joint step settles `inconclusive` with `match-undetermined`, and a vacuous clause with `vacuous-match`; neither settles `proved`. | Test (TC-340) |
+| FR-399-AC-6 | A run that completes every depth up to the maximum with no violation settles `inconclusive` with `bound-reached` naming the depth, never `proved`. | Test (TC-338) |
+| FR-399-AC-7 | A refutation settles only after its counterexample replays; a counterexample that fails replay settles `inconclusive` with `replay-parity` or `replay-refused`. | Test (TC-345) |
+| FR-399-AC-8 | A body that evaluates undefined at a reachable joint step settles `refuted`, basis `decisive-counterexample`, cause `undefined-evaluation` whose `where` names the variable tuple, the joint position, each component's state-key digest and the expression's locus and whose `cause` names the catalogued reason, after its `undefined` counterexample replays to the same undefined value. | Test (TC-348) |
+| FR-399-AC-9 | With a violation and an undefined evaluation both reachable, the reported refutation is the first in canonical order: the first false or undefined tuple in the product of canonical edge orders for HP-1, and the first violating or undefined product state in canonical breadth-first order for HP-2, HP-3 and HP-6. | Test (TC-348) |
+| FR-399-AC-10 | A guard, the `terminal when` predicate or a state constraint of a component's subject that evaluates undefined at a component state of a reachable joint step settles the item `refuted`, `decisive-counterexample`, cause `undefined-evaluation` whose `where` names that component's variable and alias, the joint position, its state-key digest and the expression's locus, plus the FR-181 transition identity for a guard, after its `undefined` counterexample replays to the same undefined value. | Test (TC-348) |
+
+## Dependencies
+
+- [FR-395](FR-395-analyze-hyperproperties-over-behaviours.md) and
+  [FR-396](FR-396-classify-hyperproperty-forms.md) state the meaning and the
+  form.
+- [FR-360](../../objects/temporal/FR-360-infinite-trace-result-disposition.md)
+  and [FR-243](../../objects/protocol/FR-243-settlement-basis.md) supply the
+  labels and bases.
+- [FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md)
+  carries the limits and the terminal record.
+- [FR-401](FR-401-replay-hyper-counterexamples.md) replays counterexamples.
+- [FR-363](../temporal/FR-363-settle-every-behaviour-temporal-verdicts.md) and [FR-368](../temporal/FR-368-negotiate-temporal-model-check-items.md)
+  own the model-subject verdict map, its inconclusive causes, the undefined-evaluation rule and the temporal `limits` member.
+
+## References
+
+- STD-136 (this requirement); QSL-370 and its ADR-023 (design).
+- QSL-366: the owner ruling that an undefined evaluation refutes.

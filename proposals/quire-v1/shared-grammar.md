@@ -290,9 +290,9 @@ import-decl   = 'import', string, 'digest', string, [ 'as', ident ], ';' ;
 declaration   = dimension-decl | unit-decl | enum-decl | record-decl
               | tuple-decl | union-decl | alias-decl | function | predicate
               | state-clause | temporal-clause | protocol-clause
-              | relation-clause | hyper-clause | hybrid-decl
-              | synthesis-decl | verification-plan | operation-body
-              | abstraction-decl | terminal-decl ;
+              | relation-clause | hyper-clause | state-graph-clause
+              | hybrid-decl | synthesis-decl | verification-plan
+              | operation-body | abstraction-decl | terminal-decl ;
 
 type-ref      = 'Boolean' | 'Integer' | qualified-name
               | 'Int', '[', signed-int, ',', signed-int, ']'
@@ -529,10 +529,33 @@ relation-clause = 'relation', ident, 'using', ident,
                   'over', '(', execution-binding, ',', execution-binding,
                   { ',', execution-binding }, ')', block ;
 execution-binding = ident, ':', qualified-name ;
-hyper-clause  = 'hyper', ident, 'using', ident, 'over', trace-domain,
-                quantifier, { quantifier }, block ;
+hyper-clause  = 'hyper', ident, 'using', ident, 'over',
+                ( trace-domain, quantifier, { quantifier }, block
+                | behaviours-domain, quantifier, { quantifier },
+                  [ align-skip ], [ match-block ],
+                  '{', temporal-expr, '}' ) ;
 trace-domain  = ident, 'in', qualified-name, 'bounded', uint ;
-quantifier    = ('forall' | 'exists'), 'trace', ident ;
+behaviours-domain = 'behaviours',
+                    [ '(', parameter, { ',', parameter }, ')' ] ;
+quantifier    = ('forall' | 'exists'), 'trace', ident,
+                [ 'of', ident, { fairness } ] ;
+align-skip    = 'align', 'skip', '{', qualified-name,
+                { ',', qualified-name }, '}' ;
+match-block   = 'match', block ;
+step-label    = ident, '.', 'step', '.',
+                ( 'op' | 'receiver' | qualified-name, '.', member-name ) ;
+indexed-read  = postfix, '@', ident ;
+state-graph-clause = possible-clause | always-possible-clause
+                   | unique-path-clause ;
+possible-clause = 'possible', ident, 'using', ident,
+                  [ graph-over ], block ;
+always-possible-clause = 'always', 'possible', ident, 'using', ident,
+                         [ graph-over ], [ 'from', '(', expr, ')' ],
+                         block ;
+unique-path-clause = 'unique', 'path', ident, 'using', ident,
+                     [ graph-over ], 'from', '(', expr, ')',
+                     'to', '(', expr, ')', ';' ;
+graph-over    = 'over', '(', parameter, ')' ;
 hybrid-decl   = 'hybrid', ident, 'using', ident, '{', hybrid-mode,
                 { hybrid-mode }, '}' ;
 hybrid-mode   = 'mode', ident, 'invariant', block,
@@ -619,6 +642,51 @@ content admits no escape sequence, every Rust segment's byte offsets inside the
 string are source spans. A package that does not select
 `quire.model.complete/v1` receives `unsupported_construct` for an
 `abstraction-decl`.
+
+### Hyperproperty and state-graph forms over a model
+
+[FR-395](../../spec/functional/analysis/FR-395-analyze-hyperproperties-over-behaviours.md)
+gives a `hyper` clause over `behaviours` its meaning,
+[FR-397](../../spec/functional/analysis/FR-397-check-step-relations-over-model-operations.md)
+a `relation` clause whose execution bindings name model operations,
+[FR-398](../../spec/functional/analysis/FR-398-align-hyperproperty-traces-on-a-projection.md)
+the `align skip` list and
+[FR-390](../../spec/functional/analysis/FR-390-analyze-state-graph-claims.md)
+the three state-graph clauses. The rules below are recognition and binding
+rules only.
+
+- `behaviours`, `align`, `skip`, `possible`, `unique` and `path` are
+  reserved words of the complete facets. `step`, `op`, `receiver` and
+  `stutter` are matched as keyword spellings only inside a `match-block`, in
+  the `step-label` position and as the `stutter` primary; they remain
+  identifiers and member names elsewhere.
+- A quantifier's fairness set is the `fairness` constraints written after its
+  alias, each the temporal facet's `fairness` production with its `;`; a
+  quantifier with none has the empty set
+  ([FR-362](../../spec/functional/temporal/FR-362-apply-fairness-constraints.md)).
+- Inside a `match-block`, `primary` additionally admits `step-label` and the
+  `stutter` keyword. `step-label` is admitted nowhere else.
+- Inside the body of a `hyper` clause over `behaviours`, the `expr` of a
+  `holds(...)` leaf admits `indexed-read` wherever it admits `postfix`. `@`
+  is a single punctuation token that binds tighter than every operator and
+  looser than member navigation, so `v.l @ a = v.l @ b` is
+  `(v.l @ a) = (v.l @ b)`. `indexed-read` is admitted nowhere else.
+- An `align-skip` entry and a model-operation execution binding each name an
+  operation as `qualified-name`, whose first segment is a model alias the
+  clause binds.
+- The keywords of the state-graph clauses are distinct from the `reaches`
+  primary: `reaches` reads one state's object graph and the state-graph
+  clauses read the model's state graph.
+
+| Source fragment | Expected syntax / binding |
+| --- | --- |
+| `hyper NI using inf over behaviours (v: V::Vault) forall trace a of V forall trace b of V match { a.step.op = b.step.op } { always holds(v.l @ a = v.l @ b) }` | One hyper clause over behaviours, two quantifiers over alias `V`, one match block and one temporal body with two indexed reads. |
+| `hyper NI using inf over behaviours forall trace a of V fair weak V::Vault::step; forall trace b of V { always holds(true) }` | Quantifier `a` with one weak `whole` constraint; quantifier `b` with the empty fairness set. |
+| `hyper H using inf over t in Q bounded 4 forall trace a of V { true }` | Parses; the `of` on a finite trace domain refuses at semantic admission (FR-395). |
+| `always holds(v.l @ a)` in a `temporal` clause | Syntax error: `indexed-read` is admitted only in a hyper body over `behaviours`. |
+| `possible Win using v over (g: G::Game) { g.phase = G::Phase::Won }` | One `possible` state-graph clause with one `over` parameter. |
+| `always possible Rec using v from (not x.lost) { x.ok }` | One `always possible` clause with no `over` parameter and one `from` predicate. |
+| `unique path One using v over (j: M::Job) from (not j.a) to (j.done);` | One `unique path` clause with its two predicates. |
 
 ## Precedence and bindings
 
