@@ -1,20 +1,17 @@
 # Native predicate and sequence-query definition
 
-Profile identity: `quire.state.queries/v1`; revision: `1-draft.3`.
-Language: `ix:native` / `1-draft`. **FS03 accepts this semantic revision as the
-predicate/query extension over state core; implementation and backend
-qualification remain independently reported.**
+Profile identity: `quire.state.queries/v1`. Language: `ix:native` / `1-draft`.
+**FS03 accepts these semantics as the predicate/query extension over state core;
+implementation and backend qualification remain independently reported.**
 
-This is a working definition in one coherent draft. Required definitions and
-rule links resolve within this checkout; acceptance freezes their exact selections.
-Earlier draft text remains in Git history. Runtime references still require the
-selected immutable identities, revisions and digest domains.
+Required definitions and rule links resolve within this checkout. Runtime
+references select each definition by its immutable identity.
 
 ## Required definition
 
-| Identity | Revision | Definition artifact |
-| --- | --- | --- |
-| `quire.state.core/v1` | `1-draft.3` | [State core](state-core.md) |
+| Identity | Definition artifact |
+| --- | --- |
+| `quire.state.core/v1` | [State core](state-core.md) |
 
 ## Explicit extension
 

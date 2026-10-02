@@ -26,7 +26,7 @@ executable standard coverage is claimed.
 Use a refund deadline with event and ingestion times, an explicit watermark, a
 causal-order counterexample, clock uncertainty, and a late refund after
 settlement; repeat without watermark authority. Mutate the selected assertion
-definition bytes, scope, clock, source set, and restoration basis independently;
+definition identity, scope, clock, source set, and restoration basis independently;
 attempt continuation without the required predecessor/history.
 Repeat with adjacent half-open windows and progress at the shared boundary.
 Carry event time, ingestion time, causal-order premise, and clock-uncertainty
@@ -42,9 +42,9 @@ without an explicit greater end. Independently use event-position and
 fixed-sample ranges without converting either to UTC timestamps.
 Derive authority and cutoff identities independently; mutate every authority
 scope, clock, source-set, boundary and restoration component and every cutoff
-clock, instant and rule-revision component. Feed exact `on-time`, exact `late`,
+clock, instant and rule-identity component. Feed exact `on-time`, exact `late`,
 unknown, aliased and absent timing labels. Substitute clock uncertainty for the
-clock selection and a JCS digest for raw definition bytes.
+clock selection.
 
 ## Expected Results
 

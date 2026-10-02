@@ -43,13 +43,13 @@ catalog).
 | `unknown_required_feature` | A required feature that is unknown or unsupported in the selected consumer/profile scope. "A recognized name is not implementation support." |
 | `missing_import` | A requested typed dependency that is not present in the owning scope. |
 | `missing_declaration` | A requested name that is not present in the owning scope. |
-| `stale_dependency` | A revision, byte-digest, digest-domain or content-identity mismatch against a dependency. |
-| `source_digest_mismatch` | A revision, byte-digest or digest-domain mismatch against source. "A missing artifact cannot supply an invented actual digest." |
-| `ambiguous_declaration` | A visible name or clause resolving to distinct conflicting declarations or authorities, including (revision `1-draft.4`) two checked-package nodes declaring the same qualified name. |
-| `invalid_package` | A malformed, incomplete, conflicting or cyclic package definition, including feature-set mismatch, or (revision `1-draft.4`) a checked-package application whose operation identity, operator class, required law, lock-selected law, mode, member or type-pinned mode is unknown or inconsistent, a checked-package application node that retains a stale node key, or a checked-package declaration that disagrees with its nominal qualified declaration. |
-| `invalid_model_binding` | A model binding with a wrong role, selection, export or context, a conflicting binding, unpreserved model meaning, or (revision `1-draft.3`) a specialization cycle, redefinition-target mismatch, derivation conflict, malformed domain package declaration or port-direction violation. "Missing versus explicit null may not be collapsed into a generic absent value." |
-| `ill_typed` | A type, unit, operator-eligibility, literal-ambiguity or non-Boolean-root typing failure, or (revision `1-draft.3`) a parameter or result variance, multiplicity-narrowing, effect-escape or subsetting-type conformance failure. |
-| `undefined_expression` | Definedness not proved for a potentially evaluated operation, or (revision `1-draft.3`) a redefinition refinement not constructed or proved. "Failure to prove definedness is not logical violation." |
+| `stale_dependency` | A byte-digest, digest-domain or content-identity mismatch against a dependency. |
+| `source_digest_mismatch` | A byte-digest or digest-domain mismatch against source. "A missing artifact cannot supply an invented actual digest." |
+| `ambiguous_declaration` | A visible name or clause resolving to distinct conflicting declarations or authorities, including two checked-package nodes declaring the same qualified name. |
+| `invalid_package` | A malformed, incomplete, conflicting or cyclic package definition, including feature-set mismatch, or a checked-package application whose operation identity, operator class, required law, lock-selected law, mode, member or type-pinned mode is unknown or inconsistent, a checked-package application node that retains a stale node key, or a checked-package declaration that disagrees with its nominal qualified declaration. |
+| `invalid_model_binding` | A model binding with a wrong role, selection, export or context, a conflicting binding, unpreserved model meaning, or a specialization cycle, redefinition-target mismatch, derivation conflict, malformed domain package declaration or port-direction violation. "Missing versus explicit null may not be collapsed into a generic absent value." |
+| `ill_typed` | A type, unit, operator-eligibility, literal-ambiguity or non-Boolean-root typing failure, or a parameter or result variance, multiplicity-narrowing, effect-escape or subsetting-type conformance failure. |
+| `undefined_expression` | Definedness not proved for a potentially evaluated operation, or a redefinition refinement not constructed or proved. "Failure to prove definedness is not logical violation." |
 | `wrong_snapshot` | A wrong or forbidden observation, invocation, anchor or pre-read. |
 | `invalid_runtime_input` | Malformed, incomplete, conflicting or wrongly-mapped runtime input. "A missing observation under a valid mapping is a different code." |
 | `unavailable_observation` | A required artifact, valuation or scope premise that is not available. Named by FR-008-AC-4: "Missing sequence data receives unavailable_observation." |
@@ -59,7 +59,7 @@ catalog).
 | `frame_violation` | A change to an object, field or State root not permitted by the declared frame. |
 | `resource_exhausted` | A work item that could not proceed under the effective limit and accounting contract. "A semantic maximum is not a caller work budget." |
 | `cancelled` | A work item stopped by a caller cancellation source. |
-| `unsupported_projection` | A requested capability kind with an empty candidate set (no registrant advertises it, or the named backend does not), an obligation form the one candidate's negotiation arm does not discharge, or (revision `1-draft.5`) an unbounded extent on a bounded-only advertisement with no finite bound or a routed backend whose pinned tool is unavailable. "It cannot reclassify a valid source as malformed." |
+| `unsupported_projection` | A requested capability kind with an empty candidate set (no registrant advertises it, or the named backend does not), an obligation form the one candidate's negotiation arm does not discharge, or an unbounded extent on a bounded-only advertisement with no finite bound or a routed backend whose tool is unavailable. "It cannot reclassify a valid source as malformed." |
 | `projection_binding` | An upstream refusal carried with its originating structured IR/mapping cause. |
 | `invalid_projection_correspondence` | A loss of correspondence between exact source and derived identities. |
 | `extraction-requires-run` | An extraction refused because of the requested command mode. |
@@ -71,35 +71,35 @@ catalog).
 | `invalid_identifier` | A digest, typed identity or canonical domain failed validation. |
 | `output_serialization` | A validated result could not be encoded under the selected output wire contract. |
 | `invalid_quire_context` | A lifecycle request supplied an incompatible package, stage or semantic context. |
-| `invalid_source_identity` | A required source label (authority, identity, revision namespace or revision) is empty or only whitespace, or the source path is empty. Revision `1-draft.8` closes its causes as `blank-label` and `empty-path`. |
+| `invalid_source_identity` | A required source label (authority, identity, revision namespace or revision) is empty or only whitespace, or the source path is empty. Its causes are `blank-label` and `empty-path`. |
 | `invalid_source_map` | A source map was non-monotone, out of bounds or split a UTF-8 scalar. |
 | `cardinality_out_of_bound` | A constructed or converted collection whose occurrence or member count lies outside its type's inclusive cardinality bound (FR-144). |
-| `foreign_reference` | A supplied identity belongs to a different authority, universe, model or subject domain than the position requires. Revision `1-draft.3` closes its causes as `foreign-universe`, `foreign-model-selection` and `foreign-type`. |
-| `ambiguous_dispatch` | A dispatched operation call for which some closed subtype of the receiver's static type has no applicable method or several undominated methods (revision `1-draft.3`). No source or registration order resolves it. |
+| `foreign_reference` | A supplied identity belongs to a different authority, universe, model or subject domain than the position requires. Its causes are `foreign-universe`, `foreign-model-selection` and `foreign-type`. |
+| `ambiguous_dispatch` | A dispatched operation call for which some closed subtype of the receiver's static type has no applicable method or several undominated methods. No source or registration order resolves it. |
 | `unimplemented_capability` | Valid complete-V1 meaning is not implemented by the selected producer; distinct from prohibited source and unsupported backend projection. |
 | `parity_failure` | Two implementations required to agree produced different typed verdicts or values for the same subject/input. |
-| `invalid_capability` | A requested or advertised capability selection that names no FR-290 kind, an unknown kind or mode, an unsupported vocabulary identity, a duplicate registered backend, no extent classification, an unregistered or arm-less backend, candidates inconsistent with the manifest or named backend, or several candidate backends with none named (revision `1-draft.5`). |
-| `duplicate_selection` | A second domain-package model selection of an already-selected identity (revision `1-draft.6`). A package selects at most one version of a domain-package identity. |
-| `stage_limit_exceeded` | A compiler stage S1-S4, the I2 reader, a family `check`, `replay` or `route` reached one of its own stage limits (revision `1-draft.6`). "A semantic maximum is not a caller work budget": this is distinct from `resource_exhausted`. |
-| `inexact_decimal` | Strict `exact` met a decimal rounding step: a nonzero digit would be discarded (revision `1-draft.8`). |
-| `decimal_out_of_domain` | A decimal result outside its target `Decimal[..]` domain (revision `1-draft.8`). |
-| `division_pair_out_of_domain` | A `div`/`rem` quotient/remainder pair with at least one member outside the bounded consumer's domain (revision `1-draft.8`). Neither member is exposed. |
-| `modulo_out_of_domain` | A Euclidean `mod` remainder outside the bounded consumer's domain (revision `1-draft.8`). |
-| `text_length_out_of_domain` | A text value whose profile length is outside its declared `Text[..]` bounds (revision `1-draft.8`). |
-| `integer_out_of_domain` | An exact conversion or arithmetic result outside its target integer domain (revision `1-draft.8`). |
-| `rational_out_of_domain` | An exact rational arithmetic result outside its `Rational[..]` result domain (revision `1-draft.8`). |
-| `ieee_not_exact` | Strict IEEE `exact` met an inexact, overflowing or tiny-and-inexact result (revision `1-draft.8`). Only the would-be flags are reported. |
-| `ieee_nan_payload_not_representable` | An explicit IEEE width conversion of a NaN whose payload does not fit below the target width's quiet bit (revision `1-draft.8`). |
-| `ieee_rational_out_of_domain` | An explicit IEEE-to-`Rational` conversion whose reduced rational is outside the target `Rational[..]` domain (revision `1-draft.8`). |
+| `invalid_capability` | A requested or advertised capability selection that names no FR-290 kind, an unknown kind or mode, an unsupported vocabulary identity, a duplicate registered backend, no extent classification, an unregistered or arm-less backend, candidates inconsistent with the manifest or named backend, or several candidate backends with none named. |
+| `duplicate_selection` | A second domain-package model selection of an already-selected identity. A package selects at most one version of a domain-package identity. |
+| `stage_limit_exceeded` | A compiler stage S1-S4, the I2 reader, a family `check`, `replay` or `route` reached one of its own stage limits. "A semantic maximum is not a caller work budget": this is distinct from `resource_exhausted`. |
+| `inexact_decimal` | Strict `exact` met a decimal rounding step: a nonzero digit would be discarded. |
+| `decimal_out_of_domain` | A decimal result outside its target `Decimal[..]` domain. |
+| `division_pair_out_of_domain` | A `div`/`rem` quotient/remainder pair with at least one member outside the bounded consumer's domain. Neither member is exposed. |
+| `modulo_out_of_domain` | A Euclidean `mod` remainder outside the bounded consumer's domain. |
+| `text_length_out_of_domain` | A text value whose profile length is outside its declared `Text[..]` bounds. |
+| `integer_out_of_domain` | An exact conversion or arithmetic result outside its target integer domain. |
+| `rational_out_of_domain` | An exact rational arithmetic result outside its `Rational[..]` result domain. |
+| `ieee_not_exact` | Strict IEEE `exact` met an inexact, overflowing or tiny-and-inexact result. Only the would-be flags are reported. |
+| `ieee_nan_payload_not_representable` | An explicit IEEE width conversion of a NaN whose payload does not fit below the target width's quiet bit. |
+| `ieee_rational_out_of_domain` | An explicit IEEE-to-`Rational` conversion whose reduced rational is outside the target `Rational[..]` domain. |
 
 ## Identity and comparison
 
 - **Identity kind** — *value*. A code is an exact string with no identity of its
   own; it is compared componentwise.
 - **Key** — the code spelling itself, taken together with the catalog selection
-  that resolves it ([FR-270](FR-270-versioned-diagnostic-catalog.md)), because
+  that resolves it ([FR-270](FR-270-diagnostic-catalog.md)), because
   FR-047-AC-2 requires that "every emitted machine code resolves to the selected
-  versioned catalog". Matching is exact and case-sensitive: hyphenated and
+  catalog". Matching is exact and case-sensitive: hyphenated and
   underscored spellings "stay exact; they are not normalized aliases" (proposed
   catalog). Message text, locale and rendering never participate — FR-047-AC-1:
   "Changing/localizing human-readable messages leaves the same typed failure's
@@ -121,8 +121,8 @@ catalog).
   failure, an empty diagnostic list or a successful assessment" (proposed
   catalog).
 - **Digest domain** — a code carries no digest. The catalog that resolves it is
-  selected by identity, revision and byte digest, whose domain rule is
-  [FR-201](FR-201-canonical-identity-domain.md).
+  selected by its interpretation identity
+  ([FR-270](FR-270-diagnostic-catalog.md)).
 
 ## Scope: producer-minted codes
 
@@ -158,7 +158,7 @@ settling unselected native literals or treating spelling as a global convention.
 | FR-271-AC-3 | The key order over code spellings is not cited as a severity or precedence ordering. | Analysis |
 | FR-271-AC-4 | Localizing the message accompanying a diagnostic leaves its code unchanged. | Analysis |
 | FR-271-AC-5 | A code minted by a consumer for its own refusal does not resolve to a member of this table, even when its spelling equals a member spelling. | Analysis |
-| FR-271-AC-6 | The values table has exactly one row for each of `invalid_source_identity` and the ten codes catalog revision `1-draft.8` adds: `inexact_decimal`, `decimal_out_of_domain`, `division_pair_out_of_domain`, `modulo_out_of_domain`, `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`, `ieee_not_exact`, `ieee_nan_payload_not_representable` and `ieee_rational_out_of_domain`. | Test (TC-233) |
+| FR-271-AC-6 | The values table has exactly one row for each of `invalid_source_identity` and the ten evaluator value-refusal codes: `inexact_decimal`, `decimal_out_of_domain`, `division_pair_out_of_domain`, `modulo_out_of_domain`, `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`, `ieee_not_exact`, `ieee_nan_payload_not_representable` and `ieee_rational_out_of_domain`. | Test (TC-233) |
 
 ## Resolved catalog namespaces
 
@@ -186,11 +186,21 @@ The values table fixes the seven previously meaning-only spellings as
 `invalid_quire_context`, `invalid_source_identity` and `invalid_source_map`.
 It additionally fixes `unimplemented_capability` and `parity_failure` for the
 complete-V1 lifecycle, `cardinality_out_of_bound` for FR-144 collection
-construction and FR-145 conversion, and, in catalog revision `1-draft.3`,
-`ambiguous_dispatch` for FR-151 link-time dispatch selection. The same revision
-closes the causes of `foreign_reference` for FR-153 and FR-204. Catalog
-revision `1-draft.4` adds no code; it adds the eight checked-package operation
-variants, `stale-node-key` and `declaration-nominal-mismatch` of `invalid_package` and the checked-package use of `ambiguous-name`, typed by FR-272; `operator-ineligible` remains `ill_typed`. The same revision adds `unproved-exhaustiveness` of `undefined_expression`, FR-146's cause for an unproved `case` exhaustiveness obligation over a `union-decl` scrutinee, typed by FR-272. Catalog revision `1-draft.5` adds `invalid_capability` for FR-290 capability-kind admission and candidate-set negotiation, and the `unbounded-extent` and `tool-unavailable` causes of `unsupported_projection`, typed by FR-272. Catalog revision `1-draft.6` adds `duplicate_selection` for a second selection of an already-selected domain-package identity, and `stage_limit_exceeded` for a stage limit, each typed by FR-272. Catalog revision `1-draft.7` adds no code; it adds the `token-count-exceeded`, `edge-count-exceeded`, `occurrence-count-exceeded` and `diagnostic-count-exceeded` causes of `stage_limit_exceeded`, typed by FR-272. Catalog revision `1-draft.8` adds `inexact_decimal`, `decimal_out_of_domain`, `division_pair_out_of_domain`, `modulo_out_of_domain`, `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`, `ieee_not_exact`, `ieee_nan_payload_not_representable` and `ieee_rational_out_of_domain`, one refusal code per evaluator value refusal, and closes the causes of `invalid_source_identity` as `blank-label` and `empty-path`, each typed by FR-272. Matching remains catalog-qualified and exact.
+construction and FR-145 conversion, `ambiguous_dispatch` for FR-151 link-time
+dispatch selection, `invalid_capability` for FR-290 capability-kind admission
+and candidate-set negotiation, `duplicate_selection` for a second selection of
+an already-selected domain-package identity, `stage_limit_exceeded` for a stage
+limit, and `inexact_decimal`, `decimal_out_of_domain`,
+`division_pair_out_of_domain`, `modulo_out_of_domain`,
+`text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`,
+`ieee_not_exact`, `ieee_nan_payload_not_representable` and
+`ieee_rational_out_of_domain`, one refusal code per evaluator value refusal.
+FR-272 types every cause, including the causes of `foreign_reference` for
+FR-153 and FR-204, the checked-package operation variants, `stale-node-key`,
+`declaration-nominal-mismatch` and `ambiguous-name`, `unproved-exhaustiveness`
+for FR-146, the `unbounded-extent` and `tool-unavailable` causes of
+`unsupported_projection`, the `stage_limit_exceeded` causes, and the
+`invalid_source_identity` causes; `operator-ineligible` remains `ill_typed`. Matching remains catalog-qualified and exact.
 
 ## Dependencies
 

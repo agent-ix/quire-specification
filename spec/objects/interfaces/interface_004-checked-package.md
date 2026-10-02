@@ -36,7 +36,7 @@ invariants:
   - runtime inputs do not participate in static package identity
   - backend support does not alter admission
   - source bytes, definition bytes, domain packages, checked semantic graph and generated IR occupy distinct typed identity and digest domains
-  - the public semantic graph is a closed versioned union owned by this interface; consumers do not receive parser/CST/package implementation objects
+  - the public semantic graph is a closed union owned by this interface; consumers do not receive parser/CST/package implementation objects
   - complete-V1 nominal scalar node keys use the closed node-identity preimages and known vectors published with the I04 schema
   - every V2 application term carries one closed catalogued operation identity with exactly its required lock-selected laws (a clause its lock-selected profile law and one profile operator member), type-pinned mode, member, structural or keyed-collection leaves and declared result type, bound into its application node identity and the package identity
   - every literal term carries its declared type; no application result or literal type is inferred
@@ -57,16 +57,18 @@ does not expose a parser CST, a filesystem path, a display string, or an
 implementation-private native package structure.
 
 The adjacent `node-identity-preimage.schema.json` and
-`node-identity-vectors.json` are normative parts of this version. They close the
+`node-identity-vectors.json` are normative parts of this contract. They close the
 JCS preimages for enum declarations/members, dimensions and declared units
 without making a whole package identity part of a nominal type identity.
 
 The `read` operation is a strict, bounded admission operation. It verifies the
-declared wire before graph interpretation and returns a typed refusal for an
-unknown version, malformed or duplicate member, cross-domain substitution,
+declared wire before graph interpretation and returns a typed refusal for a
+document that is not a checked package, a malformed or duplicate member, cross-domain substitution,
 stale dependency, unknown capability, or graph/source-map invariant violation.
-Exceeding a selected byte, depth, node, edge, locus, diagnostic, or work limit
-returns an incomplete resource disposition and no admitted package.
+Exceeding a selected byte, node, edge, locus, diagnostic, or work limit
+returns an incomplete resource disposition naming the limit, its value and its
+setting, and no admitted package. A node body follows FR-322's closed
+five-stratum body grammar, so the wire's JSON depth is fixed by its schema.
 
 ## Operation identity
 
@@ -99,7 +101,7 @@ Every node whose body contains an application is keyed by its
 `semantic_type`, `declaration`, `recursion`, `body`), so a changed operation,
 law, mode, member, leaf, result type or declaration changes that node's id and
 the package id. `read` refuses with the causes and order owned by
-`quire.native.diagnostics/v1` revision `1-draft.4`:
+`quire.native.diagnostics/v1`:
 
 | Order | Cause | Code |
 | --- | --- | --- |

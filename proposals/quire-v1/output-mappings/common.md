@@ -1,6 +1,6 @@
 # Common output-mapping contract
 
-Selected identity `quire.output.mapping/v1`, revision `1-draft.1`.
+Selected identity `quire.output.mapping/v1`.
 
 ## Subsystem boundaries
 
@@ -44,7 +44,7 @@ The request retains:
   requested obligation identities in source order;
 - model/type/unit/operation/clock bindings from spec artifacts applicable to those
   obligations;
-- exact target-profile identity, revision and digest;
+- exact target-profile identity;
 - requested output capabilities; and
 - byte, obligation, expression-node, nesting, emitted-byte and work limits.
 

@@ -27,10 +27,11 @@ FS02 and OB01, not an implemented integration.
 
 ## Preconditions
 
-The domain package, configuration, reference, profile and binding contracts have
-reviewed exact revisions. The Rust extraction, intake and binder implement those
-revisions. All input source units and dependency bytes are supplied locally;
-the fixture declares finite bounds rather than deriving them from sample data.
+The domain package, configuration, reference, profile and binding contracts are
+selected by exact identity. The Rust extraction, intake and binder implement
+those contracts. All input source units and dependency bytes are supplied
+locally; the fixture declares finite bounds rather than deriving them from
+sample data.
 
 ## Inputs
 
@@ -72,7 +73,7 @@ Additional stage and declaration-key controls:
    with its bytes supplied under the old ModelSelection's digest, then with its
    bytes supplied under its own digest and a ModelSelection naming that digest. Separately remove one referenced
    artifact, relift and bind with its old declaration key.
-   - IT-010-SC-08: the original declaration keys survive linking and binding; each substitution refuses its dependent binding. After the field change, the declaration key is unchanged; the old ModelSelection refuses `stale_dependency`/`byte-digest-mismatch`, and the new ModelSelection binds the changed declaration. After the removal, the old key refuses `missing_declaration`/`missing-name`.
+   - IT-010-SC-08: the original declaration keys survive linking and binding; each substitution refuses its dependent binding. After the field change, the declaration key is unchanged; the old ModelSelection, with the changed document supplied under its digest, refuses `stale_dependency`/`content-mismatch`, and the new ModelSelection binds the changed declaration. After the removal, the old key refuses `missing_declaration`/`missing-name`.
 
 ## Expected Results
 

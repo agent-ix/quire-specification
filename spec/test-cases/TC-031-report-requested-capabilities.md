@@ -31,7 +31,7 @@ assessment execution, a decisive-witness settlement basis, exact complete
 decision support and retained open subject progress. Remove a supporting fact,
 substitute an unsettled basis or restamp the subject as closed: each mutation
 refuses the settled combination. Repeat with an independently decisive violation.
-These are planned controls for protocol definition revision 1-draft.2, not a
+These are planned controls for the protocol definition, not a
 claim that a reader or F's consumer already preserves the revised dimensions.
 
 ## Expected Results

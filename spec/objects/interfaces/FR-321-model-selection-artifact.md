@@ -19,7 +19,6 @@ When a package imports a domain package for native linking, the checker SHALL us
 ## Properties
 
 - `identity` — the domain package identity, such as `acme/orders`, named by the source `model` declaration.
-- `version` — the domain package version named by the source `model` declaration.
 - `digest_domain` — exactly `sha256-jcs`.
 - `digest` — the lowercase 64-hex SHA-256 over the RFC 8785 JCS bytes of the domain package.
 - `declarations` — the original declarations that QSL model intake (FR-154) builds from the package's IR nodes. Each is keyed by `(domain package identity, IR node identity, sha256-jcs)` and keeps its source artifact and span.
@@ -27,9 +26,9 @@ When a package imports a domain package for native linking, the checker SHALL us
 
 ## Identity and validation
 
-The key is (`identity`, `version`, `digest_domain`, `digest`). Two selections with equal identity and version and different digests are unequal.
-A digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`. Package bytes whose digest differs refuse `stale_dependency`/`byte-digest-mismatch`.
-A package selects at most one version of a domain-package `identity`; intake
+The key is (`identity`, `digest_domain`, `digest`): the domain package identity and its content digest. Two selections with equal identity and different digests are unequal.
+A digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`. Intake reads the package bytes supplied under the selection's digest and refuses a document whose recomputed canonical digest differs from it as `stale_dependency`/`content-mismatch` (FR-154).
+A package selects at most one domain package per `identity`; intake
 refuses a second selection of an already-selected `identity`, before name
 binding, as `duplicate_selection`/`duplicate-identity` (QSL ADR-013 O-01,
 QC-5).
@@ -40,10 +39,10 @@ Missing required properties, duplicate keys, out-of-domain values and non-canoni
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-321-AC-1 | Every effective declaration names its original declaration and ordered derivation path. | Analysis |
-| FR-321-AC-2 | A stale digest, a wrong digest domain or a malformed declaration refuses before name binding. | Analysis |
+| FR-321-AC-2 | A document whose recomputed digest differs from the selected digest, a wrong digest domain or a malformed declaration refuses before name binding. | Analysis |
 | FR-321-AC-3 | A declaration key is fixed by the domain package identity and the IR node identity; the checker never mints, renames or merges one. | Analysis |
-| FR-321-AC-4 | The key components map exactly to the domain package identity, version and `sha256-jcs` digest, and an effective identity is derived only in a QSL domain. | Test (TC-195) |
-| FR-321-AC-5 | A second selection of an already-selected domain-package `identity` refuses `duplicate_selection`/`duplicate-identity` before name binding, retaining the repeated identity and both attempted versions; a second selection of a distinct `identity` is unaffected. | Analysis |
+| FR-321-AC-4 | The key components map exactly to the domain package identity and its `sha256-jcs` digest, and an effective identity is derived only in a QSL domain. | Test (TC-195) |
+| FR-321-AC-5 | A second selection of an already-selected domain-package `identity` refuses `duplicate_selection`/`duplicate-identity` before name binding, retaining the repeated identity and both selected digests; a second selection of a distinct `identity` is unaffected. | Analysis |
 
 ## Dependencies
 

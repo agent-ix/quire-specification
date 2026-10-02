@@ -11,12 +11,20 @@ relationships:
 
 ## Description
 
-Run valid trait/process plugins and inject version, rights, malformed, crash and timeout failures.
+Runs a compile-time provider and a process plugin through registration,
+negotiation and result settlement. Planned.
 
 ## Test Procedure
 
-Use the subject and inputs named by FR-305. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
+| Row | Input | Expected | AC |
+| --- | --- | --- | --- |
+| PL-01 | A compile-time provider and a process plugin, each advertising one capability kind; one source compiled with an empty registry and with both registered | Each receives only the items negotiation routes to it and returns results the typed FR-331 reader admits; the two checked packages are byte-equal | FR-305-AC-1 |
+| PL-02 | A process plugin returning `proved` for its item | The record is `proved`, names the plugin's backend identity and carries the basis label `trusted`; the text rendering shows `trusted` beside the verdict | FR-305-AC-2 |
+| PL-03 | A plugin returning malformed output, an oversized frame, a timeout and a crash, beside a second provider with its own items | Each affected item settles `failed` or `incomplete` with its typed cause and no verdict; the second provider's records are unchanged | FR-305-AC-3 |
+| PL-04 | A plugin counterexample that replay reproduces, and one it does not | The first settles `refuted`; the second settles `inconclusive` | FR-305-AC-4 |
 
 ## Expected Results
 
-Every positive and boundary result matches FR-305; each invalid, unsupported or exhausted mutation returns its exact typed disposition with source/provenance, emits no approximation, and preserves independent sibling results.
+A plugin reaches only its routed items, every result passes the typed reader,
+its proofs are labelled `trusted`, and its counterexamples count only after
+replay.

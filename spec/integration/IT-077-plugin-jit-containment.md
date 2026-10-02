@@ -13,8 +13,9 @@ relationships:
 
 ## Objective
 
-Verify compile-time and isolated Rust providers negotiate exact capabilities,
-enforce rights/resources and preserve native parity/cache identity.
+Verify compile-time and process Rust providers negotiate exact capabilities,
+stay within their run budgets, and that JIT execution keeps interpreter parity
+and the content-keyed cache.
 
 ## Target Integration
 
@@ -23,20 +24,20 @@ the AOT/JIT provider consumes the same I13 contract package.
 
 ## Preconditions
 
-Provider manifests, rights and limits are explicit.
+Manifests, options and run budgets are given in the request.
 
 ## Inputs
 
-Supported/unsupported requests plus malformed output, rights mismatch,
+Supported and unsupported requests plus malformed output, wrong wire identity,
 crash, timeout and cache-key mutation cases.
 
 ## Test Procedure
 
 1. Negotiate and execute valid providers.
-   - IT-077-SC-01: capabilities/results/provenance are exact and native-parity holds.
-2. Mutate each cache and manifest identity component.
-   - IT-077-SC-02: stale artifacts are invalidated or refused.
-3. Inject malformed/crash/timeout/unauthorized behavior.
+   - IT-077-SC-01: capabilities and results are exact and interpreter parity holds.
+2. Mutate each cache-key input and the provider manifest.
+   - IT-077-SC-02: each mutation is a cache miss, and a plugin result is never cached.
+3. Inject malformed, crashing and timed-out plugin behaviour.
    - IT-077-SC-03: the host contains failure and emits no semantic substitute.
 
 ## Expected Results

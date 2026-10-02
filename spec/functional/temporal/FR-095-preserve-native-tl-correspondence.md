@@ -19,16 +19,16 @@ relationships:
 ## Description
 
 When lowering an admitted native temporal clause, the bridge shall emit a TL
-subject only for a versioned correspondence whose admitted domain preserves the
+subject only for a correspondence whose admitted domain preserves the
 native operator, predicate, clock, capture, history and closure meaning.
 
 ## Inputs
 
 An exact native temporal subject; total-Boolean predicate projections governed
-by [contract-IR issue #63](https://github.com/agent-ix/quire-contract-ir/issues/63);
-selected observation and clock bindings; and an exact bridge-definition
-identity, revision and digest naming the TL syntax and evaluator profiles it
-targets.
+by [contract-IR issue
+#63](https://github.com/agent-ix/quire-contract-ir/issues/63); selected
+observation and clock bindings; and an exact bridge-definition identity naming
+the TL syntax and evaluator profiles it targets.
 
 ## Outputs
 

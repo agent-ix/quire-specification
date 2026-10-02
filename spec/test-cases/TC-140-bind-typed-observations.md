@@ -20,10 +20,10 @@ TM-007 remains Planned; no executable standard coverage is claimed.
 ## Test Procedure
 
 Bind a valid provider effect, then independently substitute its entity, signal,
-unit, trigger, and schema revision; remove a required field; and change
-internal/external visibility. Change the selected binding-contract definition,
-revision, or byte digest, then separately change only the concrete mapping and
-admitted-record set under the original selected definition and revision.
+unit, trigger, and schema identity; remove a required field; and change
+internal/external visibility. Change the selected binding-contract definition
+identity, then separately change only the concrete mapping and admitted-record
+set under the original selected definition.
 Independently recompute the FR-296 identity; permute object-member presentation,
 mutate every semantic/provenance member, remove or stale the identity, change
 its digest domain, and pair one identity with unequal canonical bytes. Supply a
@@ -34,8 +34,8 @@ self-referential and digest-mismatched predecessors.
 
 Only the valid record is admitted with exact identities. Each substitution is
 typed refusal, missing value is incomplete/refused rather than false, and
-visibility remains retained. A changed binding-contract definition, revision, or
-byte digest requires a newly linked subject; changed concrete mapping or records
+visibility remains retained. A changed binding-contract definition identity
+requires a newly linked subject; changed concrete mapping or records
 retain the same static subject and produce a distinct identified assessment input.
 Presentation permutation preserves the derived observation identity; every
 semantic/provenance mutation changes it. Missing/stale/cross-domain identities,

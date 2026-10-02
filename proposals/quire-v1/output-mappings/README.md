@@ -5,17 +5,17 @@ target profiles. Native Quire remains the only editable clause source. Generated
 OCL, SysML/KerML and FRETish are derived data accompanied by a complete
 per-obligation mapping account.
 
-| Contract | Selected identity and revision | Implementation owner |
+| Contract | Selected identity | Implementation owner |
 | --- | --- | --- |
-| [Common request, record and package](common.md) | `quire.output.mapping/v1` `1-draft.1` | qcir #52 shared boundary |
-| [OCL 2.4](ocl-2.4.md) | `quire.output.ocl24/v1` `1-draft.1` | qcir #55 |
-| [SysML 2.0 / KerML 1.0](sysml-2.0-kerml-1.0.md) | `quire.output.sysml2-kerml1/v1` `1-draft.1` | qcir #56 |
-| [FRETish 3.1](fretish-3.1.md) | `quire.output.fretish31/v1` `1-draft.1` | qcir #57 |
+| [Common request, record and package](common.md) | `quire.output.mapping/v1` | qcir #52 shared boundary |
+| [OCL 2.4](ocl-2.4.md) | `quire.output.ocl24/v1` | qcir #55 |
+| [SysML 2.0 / KerML 1.0](sysml-2.0-kerml-1.0.md) | `quire.output.sysml2-kerml1/v1` | qcir #56 |
+| [FRETish 3.1](fretish-3.1.md) | `quire.output.fretish31/v1` | qcir #57 |
 | [Sources and rights](sources-and-rights.md) | FS06 inspection record | each implementation owner |
 
 All four profile identities are exact selections, not public registrations.
 Changing a target standard, selected fragment, mapping rule or canonical field
-requires a new revision. No historical generated package is rewritten.
+requires a new profile identity. No historical generated package is rewritten.
 
 ## Common outcome rule
 

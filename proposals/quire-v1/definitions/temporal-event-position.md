@@ -1,15 +1,15 @@
 # Native event-position temporal definition
 
-Profile identity: `quire.temporal.event-position.false-extension/v1`; revision: `1-draft.3`.
+Profile identity: `quire.temporal.event-position.false-extension/v1`.
 Language: `ix:native` / `1-draft`. **The profile role is accepted by FS01 and
-this semantic revision is accepted by FS04. Executable qualification remains
+these semantics are accepted by FS04. Executable qualification remains
 separate.**
 
 ## Required definition
 
-| Identity | Revision | Definition artifact |
-| --- | --- | --- |
-| `quire.temporal.bounded-facet/v1` | `1-draft.3` | [Bounded temporal rules](temporal-common.md) |
+| Identity | Definition artifact |
+| --- | --- |
+| `quire.temporal.bounded-facet/v1` | [Bounded temporal rules](temporal-common.md) |
 
 ## Selected interpretation
 

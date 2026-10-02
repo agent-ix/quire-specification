@@ -51,7 +51,7 @@ diagnostic; recognition does not admit floating point. Numeric value/range
 checking follows syntax and the selected scalar domain.
 
 Common reserved words for this candidate fragment are `language`, `edition`,
-`profile`, `version`, `digest`, `model`, `using`, `predicate`, `Boolean`,
+`profile`, `digest`, `model`, `using`, `predicate`, `Boolean`,
 `invariant`, `pre`, `post`, `on`, `at`, `current`, `let`, `in`, `if`, `then`,
 `else`, `implies`, `or`, `and`, `not`, `self`, `result`, `true`, `false`,
 `present`, `value`, `deref`, `size`, `contains`, `forall`, `exists`, `filter`,
@@ -106,8 +106,7 @@ composed-unit = header, profile, { profile }, { model },
                declaration, { declaration }, EOF ;
 header       = 'language', string, 'edition', string, ';' ;
 profile      = 'profile', ident, '=', string, ';' ;
-model        = 'model', ident, '=', string, 'version', string,
-               'digest', string, ';' ;
+model        = 'model', ident, '=', string, 'digest', string, ';' ;
 model-name   = ident, '::', member-name ;
 type-name    = model-name ;
 operation-name = type-name, '::', member-name ;
@@ -257,13 +256,13 @@ the declarations that use its alias are admitted under that layer's
 admitted-form set (FR-001).
 
 A `model` declaration imports one domain package. Its string names the domain
-package identity, `version` names its version, and `digest` is the
+package identity, and `digest` is the
 `sha256-jcs` digest of the domain package: SHA-256 over the RFC 8785 canonical
 bytes of the semantic IR document lifted from the imported spec's artifacts
 ([AD-006](../../spec/assurance/AD-006-model-graph-state-contracts.md)). The
 import is part of the package identity. Clauses name domain types by qualified
 name through the model alias, for example `Orders::Order` after
-`model Orders = "acme/orders" version "1" digest "…";`. A qualified name
+`model Orders = "acme/orders" digest "…";`. A qualified name
 resolves to one effective declaration key (domain package identity, IR node
 identity, `sha256-jcs`). A name absent from the domain package refuses.
 The [package contract](package-contract.md) defines the closed source inventory,

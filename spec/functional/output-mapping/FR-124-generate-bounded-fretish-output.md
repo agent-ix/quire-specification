@@ -12,7 +12,7 @@ relationships:
 ---
 ## Description
 
-When `quire.output.fretish31/v1` revision `1-draft.1` is selected, the FRETish
+When `quire.output.fretish31/v1` is selected, the FRETish
 mapper SHALL generate only the admitted Classic scope/condition/component/
 timing/response fragment with explicit clock/completeness conditions.
 

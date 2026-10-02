@@ -73,7 +73,7 @@ flowchart TD
     N --> TT[Temporal formulas with typed predicate references]
     N --> PT[Protocol structure with state and temporal obligations]
     ST --> IR[State IR and native evaluator]
-    TT --> TL[Versioned native to TL bridge]
+    TT --> TL[Native to TL bridge]
     PT --> PR[Protocol conformance and monitor representation]
     N --> EX[Output mappings and loss reports]
 ```
@@ -122,7 +122,7 @@ anchor and capture bindings. Circular semantic dependencies refuse at linking.
 ### Execution and monitoring
 
 One immutable linked package supports concrete state evaluation, finite replay
-and incremental monitoring. A versioned observation binding maps supplied
+and incremental monitoring. An observation binding maps supplied
 records to typed events, populations, role instances, correlation and clocks.
 It is a separately identified input with its own verification cases. A raw span
 name, queue receipt or telemetry trace ID is insufficient to establish a domain
@@ -155,8 +155,8 @@ package-level reporting never hides an unsupported clause behind another pass.
 The package records one native language/edition and exact semantic profile
 definitions. Profiles describe meaning; backend capabilities describe accepted
 subjects and requested claims. These identities must not be conflated.
-Definition revisions and digests, source revision/digest/spans, requirement and
-clause identities, model closure, observation binding, runtime trace/snapshots,
+Definition identities, source revision/digest/spans, requirement and clause
+identities, model closure, observation binding, runtime trace/snapshots,
 adapter/implementation and result identity remain distinguishable.
 
 Every lowered node retains its source and typed declaration correspondence,
@@ -182,7 +182,7 @@ deployment correctness or overall qualification.
 | Specify identity, type, observation and composition contracts together | Design each feature in isolated implementation tickets | These interfaces are expensive to retrofit and caused the discovered scope drift. |
 | Complete V1 choreography with owned choices, concurrency, proved loops, dynamic roles and compensation | Temporal templates alone; static finite choreography only | Meets the complete language scope while requiring explicit population, termination and resource contracts. |
 | Projection, realizability, assume-guarantee and refinement are distinct required V1 analyzers | Collapse every analysis into global conformance or defer the analyzers | Each claim has explicit premises, witnesses/counterexamples and non-conclusive outcomes. |
-| Declare the domain model in spec artifacts; reuse IR, TL and evidence owners through reviewed contracts | A separate model or evidence store; flatten everything into the executable IR | The spec's artifacts are the one source of the domain model. Source, meaning, runtime observations and evidence stay independently versioned. |
+| Declare the domain model in spec artifacts; reuse IR, TL and evidence owners through reviewed contracts | A separate model or evidence store; flatten everything into the executable IR | The spec's artifacts are the one source of the domain model. Source, meaning, runtime observations and evidence stay independent. |
 | No external business side effects in an evaluator | Run compensators from the monitoring language | V1 checks observed effects/recovery. Actual orchestration is an independently authorized application consumer. |
 
 ## Risks
@@ -191,7 +191,7 @@ deployment correctness or overall qualification.
 | --- | --- | --- |
 | V1 choices merely rename today's state subset | Every required family has native syntax/semantics and execution/monitor acceptance cases; the capability matrix is the release inventory. | A; complete-baseline PR review. |
 | A delivery sequence is mistaken for permission to defer product scope | Trace every inventory row to normative semantics, one epic and qualification work; tickets may sequence work but cannot close it as deferred. | A; complete-V1 campaign review. |
-| Graph identity/closure conflicts with first state admission restrictions | Propose a separately versioned graph facet explicitly; preserve the original minimum-only ConfigVersion design gate and historical definition bytes. | A/D; state facet and baseline review. |
+| Graph identity/closure conflicts with first state admission restrictions | Propose a separate graph facet explicitly; keep the minimum-only ConfigVersion design gate. | A/D; state facet and baseline review. |
 | Missing temporal source-to-TL correspondence, especially past time | Native meaning precedes bridge implementation; #64 and TL #33 own the missing contracts rather than relabeling future-only support. | A/E; temporal baseline review. |
 | Timestamp order or sampled telemetry produces a false deadline claim | Require clock, correlation, ordering and completeness contracts and independent binding controls. | E/F with A; observation baseline review. |
 | Parallel branches or repeated triggers cause unbounded retained state | Authored finite bounds and per-run resource ceilings are separate; charge before expansion and preserve incomplete results. | Protocol/observation owners; baseline resource review. |

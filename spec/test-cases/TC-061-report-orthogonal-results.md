@@ -62,17 +62,17 @@ five FR-243 basis members, an unknown label and an absent basis with every
 permitted and forbidden truth/execution combination.
 
 For every exact required fact population, derive each FR-295 state; remove a
-member/status, combine missing and contradicted members, substitute each
-FR-284 progress/closure label, and vary all completeness and closure axes
+member/status, combine missing and contradicted members, substitute each FR-284
+progress/closure label, and vary all completeness and closure axes
 independently. Enumerate every FR-290 protocol-family claim kind and every
 Engineering Assurance FR-022 claim strength carried under FR-281; carry each
 strength as its exact FR-022 wire spelling and refuse any case, separator,
-whitespace or unknown variant; keep two claims with different strengths
-distinct with neither promoted to the other; and confirm that key-order
-adjacency between two strengths establishes no dominance. Substitute each of the four non-protocol FR-290 members and expect a
-mismatch refusal; omit, duplicate and mismatch claim kind, strength, admitted
-fragment and backend, including every identity/revision/digest/domain/capability
-mutation.
+whitespace or unknown variant; keep two claims with different strengths distinct
+with neither promoted to the other; and confirm that key-order adjacency between
+two strengths establishes no dominance. Substitute each of the four non-protocol
+FR-290 members and expect a mismatch refusal; omit, duplicate and mismatch claim
+kind, strength, admitted fragment and backend, including every identity and
+capability mutation.
 
 Construct FR-285 `known` participation with an empty, singleton and multi-member
 required set and with all, some and none participating. Construct `unknown`

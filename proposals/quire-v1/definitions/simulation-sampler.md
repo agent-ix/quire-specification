@@ -1,6 +1,6 @@
 # Native simulation sampler definition
 
-Definition identity: `quire.simulation.sampler/v1`; revision: `1-draft.1`.
+Definition identity: `quire.simulation.sampler/v1`.
 This is a leaf definition selected by a simulation request
 ([FR-181](../../../spec/functional/runtime/FR-181-simulate-finite-executions.md));
 it has no reverse dependency on the value or model definition roots.

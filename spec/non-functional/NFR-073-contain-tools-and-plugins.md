@@ -14,9 +14,9 @@ relationships:
 
 ## Statement
 
-Every tool, plugin, WASM module and generated executable SHALL receive only
-declared capabilities, effects, rights and bounded inputs through a validated
-Rust contract.
+The host SHALL pass every tool, plugin, WASM module and generated executable
+only bounded inputs through a typed Rust contract, and SHALL read every result
+it returns with the typed reader before that result settles any item.
 
 ## Scope
 
@@ -24,17 +24,19 @@ All first-party and third-party extension/provider execution paths.
 
 ## Rationale
 
-Untrusted extensions must not gain semantic authority or ambient access through
-the formal-analysis path.
+An installed plugin is a trusted program, like any program the user installs.
+Its output still crosses a typed boundary: it can settle only the items routed
+to it, its counterexamples count only after replay, and its proofs carry the
+`trusted` label (FR-305).
 
 ## Measurement and Evaluation
 
 | Metric | Target | Threshold | Method |
 | --- | --- | --- | --- |
-| Undeclared ambient authority paths | 0 | 0 | Rust/security inspection |
+| Plugin results settling an item without passing the typed reader | 0 | 0 | Test |
 | Malformed/crash/timeout isolation cases contained | 100% | 100% | Fault injection |
 
 ## Verification
 
-Exercise manifest mismatch, malformed output, oversized input, timeout, crash
-and unauthorized effect cases locally.
+Exercise malformed output, oversized frames, timeout, crash, a result for an
+unrouted item and a result for an unadvertised capability locally.

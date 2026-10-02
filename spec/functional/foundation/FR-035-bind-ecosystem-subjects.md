@@ -44,10 +44,10 @@ cannot override the linked domain package or profile.
 
 Every concrete runtime subject SHALL be identified by one authority-qualified
 opaque reference consisting of the exact selected binding authority identity,
-revision and digest, the subject kind given as its effective declaration key
-(domain package identity, IR node identity, `sha256-jcs`), and the exact
-non-empty object-identity bytes supplied by the runtime input. Equality and hashing
-are componentwise over that tuple without parsing, trimming, normalization or
+the subject kind given as its effective declaration key (domain package
+identity, IR node identity, `sha256-jcs`), and the exact non-empty
+object-identity bytes supplied by the runtime input. Equality and hashing are
+componentwise over that tuple without parsing, trimming, normalization or
 reconstruction. The binding requirement names the typed slot and authority; it
 is not the runtime object identity that fills the slot.
 
@@ -73,7 +73,7 @@ arrival order.
 | FR-035-AC-7 | Changing only the runtime resource limit changes the retained configuration and assessment input identity while preserving the static subject. | Test (TC-035) |
 | FR-035-AC-8 | A valid mapping for an unactivated compensation does not require a recovery record; once required, an unavailable observation remains incomplete rather than becoming optional-none or false. | Test (TC-035) |
 | FR-035-AC-9 | A previously linked template still refuses a missing required runtime scope selection and reports unavailable required observations as incomplete; a runtime input naming another domain package or profile cannot override its linked selection. | Test (TC-035) |
-| FR-035-AC-10 | Equal object-identity bytes under a different authority identity, revision, digest or subject declaration key produce distinct canonical keys; offering one where the other authority/kind is required refuses rather than returning semantic object equality, while display, trace, timestamp, payload and source-locus changes alone do not mint a runtime subject. | Test (TC-035) |
+| FR-035-AC-10 | Equal object-identity bytes under a different authority identity or subject declaration key produce distinct canonical keys; offering one where the other authority/kind is required refuses rather than returning semantic object equality, while display, trace, timestamp, payload and source-locus changes alone do not mint a runtime subject. | Test (TC-035) |
 | FR-035-AC-11 | A missing or empty identity component, or one complete identity key rebound to incompatible typed relationship facts, refuses without a generated/default identity or dependent result. | Test (TC-035) |
 | FR-035-AC-12 | Permuting runtime subjects preserves their canonical lexicographic key order and changes no authored causal, delivery or retry relation. | Test (TC-035) |
 

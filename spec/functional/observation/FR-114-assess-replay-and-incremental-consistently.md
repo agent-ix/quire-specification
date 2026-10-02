@@ -12,7 +12,9 @@ relationships:
 ---
 ## Description
 
-For the same admitted observations, binding revision, immutable captures, and progress/closure input, the assessment service SHALL produce the same settled per-obligation disposition in batch replay and incremental assessment.
+For the same admitted observations, binding selection, immutable captures, and
+progress/closure input, the assessment service SHALL produce the same settled
+per-obligation disposition in batch replay and incremental assessment.
 
 ## Behavior
 

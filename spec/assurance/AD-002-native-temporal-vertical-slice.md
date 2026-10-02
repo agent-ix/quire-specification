@@ -50,14 +50,14 @@ flowchart LR
   R --> E
 ```
 
-The arrows denote typed, versioned contracts, not in-process calls. Every
+The arrows denote typed contracts, not in-process calls. Every
 reader validates its own input and names the rejected semantic axis. No arrow
 permits an ambient registry lookup, source-text reparsing, network action or
 truth default.
 
 | Boundary | Owner | Required selections | Failure behavior |
 | --- | --- | --- | --- |
-| Native source → linked temporal subject | A | source/span; language edition; temporal profile definition revision/digest; typed predicates; anchor/scope/capture roles | located compiler refusal |
+| Native source → linked temporal subject | A | source/span; language edition; temporal profile definition identity; typed predicates; anchor/scope/capture roles | located compiler refusal |
 | Linked subject → `quire.compiled-protocol/2` | A | all subject identities plus tagged clock: `sequence_authority`, or `epoch`/`period`/`unit`, or `timestamp_unit` | strict `/2` refusal; `/1` stays readable but is not authenticated temporal input |
 | Observation → runtime | F | semantic-event/correlation identity; causal order; payload; duplicate rule; completeness; progress/closure assertion | unavailable, incomplete or typed contradiction; never false padding |
 | Native predicate → TL proposition | Contract IR #63 | exact checked predicate, result/availability contract, valuation and proposition-map identity | typed non-value; no numeric/nullable/pending coercion |
@@ -76,10 +76,9 @@ The three v1 clock forms are structurally distinct:
   completeness assertion; timestamp or ingestion order alone establishes no
   causality.
 
-`quire.compiled-protocol/2` is the only wire revision that may carry this
-admission decision. `/1` is retained for strict backwards reading but cannot be
-reinterpreted as a `/2` temporal subject. Missing, unknown, stale, digest-
-mismatched or multiply selected fields refuse before a runtime or bridge call.
+`quire.compiled-protocol/2` is the only wire that carries and is read for this
+admission decision. Missing, unknown or multiply selected fields refuse before a
+runtime or bridge call.
 
 ### Runtime and resource model
 
@@ -139,7 +138,7 @@ no substitute formula.
 
 - Use domain newtypes for clause, profile, clock, event, capture, proposition,
   correspondence and result identities; do not exchange plain strings.
-- Use closed versioned wire structs/enums and exhaustive matching at every
+- Use closed wire structs/enums and exhaustive matching at every
   reader; retain unknown/missing versions as refusals, not defaults.
 - Use checked conversions and arithmetic at wire, persistence and horizon
   boundaries; never saturate semantic indices or durations.

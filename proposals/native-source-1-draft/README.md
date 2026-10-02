@@ -131,7 +131,7 @@ the selected composed rule.
 2. Implement the composed FS03 rational and anchor contracts, including
    normalization-before-bounds and eligible pre-state controls. Refusal is not
    rational support.
-3. Adopt exact composed definition revisions at their owning semantic gates,
+3. Adopt exact composed definition identities at their owning semantic gates,
    then implement each selected source admission at model/checking boundaries.
 4. Exercise positive, adverse and incomplete cases with actual Rust consumers;
    retain failed/unavailable stages. No schema, authored example or old green

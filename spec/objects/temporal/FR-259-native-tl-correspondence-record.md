@@ -19,7 +19,7 @@ relationships:
 
 ## Description
 
-When an admitted native temporal clause is lowered, the bridge SHALL emit a TL subject only for a versioned correspondence whose admitted domain preserves the native operator, predicate, clock, capture, history and closure meaning.
+When an admitted native temporal clause is lowered, the bridge SHALL emit a TL subject only for a correspondence whose admitted domain preserves the native operator, predicate, clock, capture, history and closure meaning.
 
 FR-095 Outputs name the record and its derived status: "A generated TL
 formula/valuation request plus a source/result-correspondence record, or a typed
@@ -43,7 +43,7 @@ bridge preserves:
 | Interval | FR-095 Behavior | [FR-255](FR-255-bounded-temporal-interval.md). |
 | Closure/history premises | FR-095 Behavior | [FR-257](FR-257-history-boundary.md), [FR-258](FR-258-temporal-decision-scope.md). |
 | TL formula/profile/proposition identities | FR-095 Behavior | Target profile per [FR-251](FR-251-tl-target-profile.md). |
-| Bridge definition | FR-095 Inputs, FR-095 Behavior | "an exact bridge-definition identity, revision and digest naming the TL syntax and evaluator profiles it targets". |
+| Bridge definition | FR-095 Inputs, FR-095 Behavior | "an exact bridge-definition identity naming the TL syntax and evaluator profiles it targets". |
 
 For every mapped evaluation result, FR-095 states that the record "shall also
 preserve assessment-execution state; decision-scope progress/closure;

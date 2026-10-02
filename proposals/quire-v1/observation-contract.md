@@ -12,13 +12,13 @@ result dispositions.
 ## Contract selections
 
 Every assessment input selects immutable identities for the native linked package,
-the observation binding-contract definition and revision, each observation
+the observation binding-contract definition, each observation
 source/schema, and the applied binding. A compatible field shape, signal name,
 trace ID, endpoint, or adapter version does not substitute for any selected
-identity. Changing the selected binding-contract definition or revision, including
+identity. Changing the selected binding-contract definition, including
 any change to its binding meaning, requires a newly linked subject. Changing only
 the concrete mapping, admitted records, or declared resource limits under the
-same selected definition and revision changes assessment-input identity, not
+same selected definition changes assessment-input identity, not
 static meaning.
 
 This accepted contract uses the [current shared specification](definitions/README.md)
@@ -51,9 +51,9 @@ name does not replace its declaration key.
 
 Every temporal or choreography-aware assessment additionally selects one exact
 `quire.observation.range/v1` definition and one of its clock-family coverage
-rows. The selected range retains the selected window identity/digest, ordered
-record-set identity/digest, clock authority, temporal profile identity/revision/
-digest, and all family-specific endpoints. The range is required at assessment,
+rows. The selected range retains the selected window identity, ordered
+record-set identity, clock authority, temporal profile identity, and all
+family-specific endpoints. The range is required at assessment,
 not for static template checking.
 
 Event-position coverage binds explicit sequence positions without inventing a
@@ -77,8 +77,8 @@ roles. Each binding retains all of the following semantic values:
 
 | Value | Required meaning |
 | --- | --- |
-| Binding identity | Exact binding-contract definition identity, revision, and byte digest; applied binding identity; and source location of the authored role. |
-| Source selection | Observation source identity, schema identity/revision, declared source authority, and internal/external visibility. |
+| Binding identity | Exact binding-contract definition identity; applied binding identity; and source location of the authored role. |
+| Source selection | Observation source identity, schema identity, declared source authority, and internal/external visibility. |
 | Subject mapping | Exact declaration key of the model, workflow, participant, relationship, population, delivery, attempt, or effect subject selected by the role; no textual lookup fallback. |
 | Signal and value mapping | Declared signal identity, typed value declaration, unit, missing-value policy, and required/optional status. |
 | Anchor | The selected current, invocation pre/post, temporal origin/activation, protocol occurrence, or compensation registration/activation anchor. |
@@ -105,13 +105,13 @@ settle O1. EOF, a quiet transport, or a record timestamp is not progress/closure
 authority.
 
 The current [progress definition](definitions/observation-progress.md),
-`quire.observation.progress/v1` accepted revision `1-draft.3`, preserves the assertion, binding, scope,
-E-owned temporal, record/revision, and restoration selections, including
+`quire.observation.progress/v1`, preserves the assertion, binding, scope,
+E-owned temporal, record, and restoration selections, including
 half-open window coverage `[start, end)`: `start` participates once and
 `end` belongs only to a later selected window. This is part of the current shared
 contract; no further definition catalog publication gates its review. Runtime
 assertions retain the exact accepted definition selection independently from
-their own assertion identity and revision.
+their own assertion identity.
 
 ## Completeness and assessment handoff
 

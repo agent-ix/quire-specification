@@ -23,7 +23,7 @@ Apply each control independently:
 
 | Control | Expected observation |
 | --- | --- |
-| Change a definition revision or digest; duplicate the editable clause authority | Typed dependent admission refusal with the failed selection and original source region. |
+| Select a definition identity other than the selected one; duplicate the editable clause authority | Typed dependent admission refusal with the failed selection and original source region. |
 | Replace only the runtime trace | Equal static subject; different retained runtime input. |
 | Change a selected semantic definition with matching new bytes | Distinct static subject, admitted only if the new closure is supported and valid. |
 | Omit an inventoried source unit | Namespace cannot close; no guessed binding to a remaining declaration. |
@@ -32,7 +32,7 @@ Apply each control independently:
 | Inspect both equal-named clock roles | Distinct owning clauses/source regions; exact types, anchors and scope dependencies retained. |
 | Change only the compile resource ceiling, with both ceilings sufficient for admission | Static subject unchanged; the exact changed configuration remains in build provenance. |
 | Link a valid three-family template without concrete workflow instances, runtime populations/windows, observation records or progress | Static linking succeeds and retains the exact typed requirements for later assessment. Removing a required static definition still refuses dependent linking. |
-| Import the domain package lifted from the package's `entity` artifacts by identity, version and `sha256-jcs` digest; resolve each clause's qualified domain type name | Each name resolves to one effective declaration keyed by domain package identity, IR node identity and `sha256-jcs`; declared kinds, relationships and closure match independently authored expectations. |
+| Import the domain package lifted from the package's `entity` artifacts by identity and `sha256-jcs` digest; resolve each clause's qualified domain type name | Each name resolves to one effective declaration keyed by domain package identity, IR node identity and `sha256-jcs`; declared kinds, relationships and closure match independently authored expectations. |
 | Omit the imported domain package; name a type the domain package does not declare; substitute a declaration key from another domain package; put a `quire.source.bytes/v1` digest in the domain package position and the domain package digest in a source position | Each dependent binding refuses with a structured cause even when labels or field shapes match. |
 | Re-serialize the domain package with a different key order but the same RFC 8785 canonical form; then change one declared field in its source artifact | The first keeps the `sha256-jcs` identity and static subject; the second changes the domain package identity and the static subject. |
 

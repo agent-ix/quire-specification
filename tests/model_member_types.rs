@@ -364,10 +364,9 @@ fn select(package: &Value, case: &Value) -> Value {
         return refused("missing_import", "missing-selection");
     };
     if digest(document) != selected {
-        return refused("stale_dependency", "byte-digest-mismatch");
+        return refused("stale_dependency", "content-mismatch");
     }
-    if document["identity"] != selection["identity"] || document["version"] != selection["version"]
-    {
+    if document["identity"] != selection["identity"] {
         return refused("invalid_model_binding", "wrong-model-selection");
     }
     json!({"admission": "passed"})
@@ -468,7 +467,7 @@ fn tc_280_member_types_follow_declared_type_multiplicity_and_presence() {
 
 #[trace("TC-280", "FR-322-AC-32")]
 #[test]
-fn tc_280_selected_domain_package_documents_are_verified_evidence() {
+fn tc_280_selected_domain_package_documents_are_admitted_by_content_and_identity() {
     let vectors = parsed(VECTORS);
     let cases = array(&vectors, "selection_cases");
     let causes: BTreeSet<_> = cases
@@ -480,7 +479,7 @@ fn tc_280_selected_domain_package_documents_are_verified_evidence() {
         BTreeSet::from([
             "digest-domain-mismatch",
             "missing-selection",
-            "byte-digest-mismatch",
+            "content-mismatch",
             "wrong-model-selection"
         ])
     );
@@ -492,6 +491,26 @@ fn tc_280_selected_domain_package_documents_are_verified_evidence() {
             text(case, "name")
         );
     }
+}
+
+#[trace("TC-280", "FR-322-AC-43")]
+#[test]
+fn tc_280_an_altered_document_under_the_selected_digest_is_refused() {
+    let vectors = parsed(VECTORS);
+    let case = |name: &str| {
+        array(&vectors, "selection_cases")
+            .iter()
+            .find(|case| case["name"] == name)
+            .unwrap_or_else(|| panic!("{name} is recorded"))
+    };
+    assert_eq!(
+        select(&vectors["domain_package"], case("MS-03")),
+        refused("stale_dependency", "content-mismatch")
+    );
+    assert_eq!(
+        select(&vectors["domain_package"], case("MS-01")),
+        json!({"admission": "passed"})
+    );
 }
 
 /// A catalog entry by identity.

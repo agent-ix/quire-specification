@@ -15,10 +15,10 @@ relationships:
 
 ## Description
 
-When a native temporal clause is lowered, the reader SHALL treat the TL evaluator profiles listed here as lowering targets of a versioned correspondence rather than as authored Quire temporal profiles.
+When a native temporal clause is lowered, the reader SHALL treat the TL evaluator profiles listed here as lowering targets of a correspondence rather than as authored Quire temporal profiles.
 
 FR-200 records that `tl-*` syntax and evaluators "are consumed behind a
-versioned native-Quire lowering boundary; they are not a second authored source
+native-Quire lowering boundary; they are not a second authored source
 language". FR-095 states that "The generated TL artifact is internal derived
 output and never editable source."
 
@@ -50,10 +50,10 @@ profile selection required by FR-090.
 - **Identity kind** — *value*. A TL profile label has no identity of its own and
   is compared componentwise as an exact string.
 - **Key** — the label itself, matched exactly, as it appears inside the bridge
-  definition whose "identity, revision and digest naming the TL syntax and
-  evaluator profiles it targets" FR-095 Inputs require. Equality is
-  componentwise over exactly that and nothing else. Display name, source path,
-  span, message text, locale and rendering never participate
+  definition whose "identity naming the TL syntax and evaluator profiles it
+  targets" FR-095 Inputs require. Equality is componentwise over exactly that
+  and nothing else. Display name, source path, span, message text, locale and
+  rendering never participate
   ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md),
   [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)).
 - **Key order** — lexicographic over the label, for collection comparison only.

@@ -52,6 +52,18 @@ in the same invocation, delete an instance of a type unrelated to any
 `deletes` entry, again declaring the deletion inventory to match exactly the
 objects actually deleted. Expect exactly `frame_violation`.
 
+Vector 5 (`frame.redefines-link` metering): extend the model to a chain
+`T0`, `T1 ≤ T0`, `T2 ≤ T1`, `T3 ≤ T2`, where field `T0/f` is redefined by
+`T1/f1`, `T1/f1` by `T2/f2` and `T2/f2` by `T3/f3`, and an operation whose
+frame grants only `modifies: [T0/f]`. Run one invocation whose sole change is
+a write of `f3` on one `T3` object, so the walk follows `k = 3` `redefines`
+links (`f3` to `f2`, `f2` to `f1`, `f1` to `f`). With `work_units` limited to
+4, expect the write permitted, with exactly one `frame.write` and three
+`frame.redefines-link` charges and `work_units` consumed 4. With `work_units`
+limited to 3, expect `incomplete { limit_kind: work_units, limit: 3,
+consumed: 3, next_charge: 1, charge_point: frame.redefines-link }` and no
+frame verdict.
+
 ## Expected Results
 
 A `modifies` grant's write permission and a `creates`/`deletes` grant's
@@ -61,4 +73,7 @@ not and whether its effective type carries the granted field directly or
 reaches it through `redefines`; a write or identity change inside that
 population, declared in a matching creation/deletion inventory, succeeds with
 no diagnostic, and a write or identity change outside that population
-receives exactly `frame_violation`.
+receives exactly `frame_violation`. Each field write charges one
+`frame.write` and one `frame.redefines-link` per `redefines` link followed,
+so Vector 5 consumes exactly four work units and stops at its third
+`frame.redefines-link` under a limit of three (FR-013-AC-7).

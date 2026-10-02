@@ -12,7 +12,7 @@ relationships:
 ---
 ## Description
 
-When `quire.output.ocl24/v1` revision `1-draft.1` is selected, the OCL mapper SHALL
+When `quire.output.ocl24/v1` is selected, the OCL mapper SHALL
 generate only the admitted OCL 2.4 invariant/pre/post fragment.
 
 ## Inputs

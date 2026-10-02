@@ -32,8 +32,6 @@ that "A quiet eligible deadline settles only with declared progress authority."
 | Property | Source | Note |
 | --- | --- | --- |
 | Selected progress/assertion definition identity | FR-113 Description | Retained exactly before a settled disposition is produced. |
-| Revision | FR-113 Description | Retained exactly. |
-| Byte digest | FR-113 Description | Retained exactly; its domain is selected under [FR-201](../foundation/FR-201-canonical-identity-domain.md). |
 | Declared clock interpretation | FR-113 Description | Typed as a distinguishable fact by [FR-267](FR-267-observation-time-facts.md). |
 | Progress authority | FR-113 Description, FR-113-AC-1 | Its coverage is what permits silence to settle a deadline. |
 | Captured trigger identity | FR-113 Description | Retained exactly. |
@@ -47,25 +45,23 @@ FR-113-AC-3 that "A late event is retained as late and cannot silently replace
 the selected settled result."
 
 The v1 authority identity is derived under `quire.verification.jcs` from the
-exact definition identity/revision/raw-artifact digest, subject scope, clock
+exact definition identity, subject scope, clock
 selection, required source set, boundary convention and restoration basis.
 The v1 cutoff identity is derived separately under
 `quire.verification.jcs` from the clock selection, cutoff instant and cutoff
-rule revision. The authority definition-byte digest uses
-`raw-artifact-digest`. Neither identity admits an ambient latest revision.
+rule identity.
 
 ## Identity and comparison
 
 - **Identity kind** — *derived*. Authority and cutoff have separate
-  `sha256-jcs:<hex>` identities over the versioned preimages above.
+  `sha256-jcs:<hex>` identities over the preimages above.
 - **Key** — the complete derived identity of the selected authority or cutoff.
   All named semantic components participate; display name, source path, span,
   message text, locale and rendering never do.
-- **Key order** — lexicographic over (`definition identity`, `revision`,
-  `byte digest`), for collection comparison only. It carries **no causal
-  meaning** and no recency: a higher revision is not a successor of a lower one
-  in any settlement sense, and FR-113 Behavior states that "Arbitrary timestamp
-  order SHALL NOT establish causality."
+- **Key order** — bytewise over `definition identity`, for collection
+  comparison only. It carries **no causal meaning** and no recency, and FR-113
+  Behavior states that "Arbitrary timestamp order SHALL NOT establish
+  causality."
 - **Causal order** — none. Coverage of a deadline by a progress authority is a
   declared scope relation, not a causal edge, and it never crosses a window
   boundary: FR-113-AC-5 requires that progress and closure "cannot settle or
@@ -76,8 +72,8 @@ rule revision. The authority definition-byte digest uses
   nor a violated one. An absent or mismatched restoration basis, scope, clock or
   source set "SHALL retain an incomplete or refused input" (FR-113 Behavior) and
   is never defaulted.
-- **Digest domain** — definition bytes use `raw-artifact-digest`; authority and
-  cutoff identities use `quire.verification.jcs`. A crossing domain is unequal.
+- **Digest domain** — authority and cutoff identities use
+  `quire.verification.jcs`. A crossing domain is unequal.
 
 ## Late data
 
@@ -100,12 +96,12 @@ half-open end/watermark and the inclusive deadline is insufficient.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-268-AC-1 | A quiet deadline not covered by a declared progress authority compares unequal to a settled deadline and to a violated one. | Test |
-| FR-268-AC-2 | Two authorities differing in definition identity, revision or byte digest compare unequal. | Test |
+| FR-268-AC-2 | Two authorities differing in definition identity compare unequal. | Test |
 | FR-268-AC-3 | An event classified late against the selected cutoff leaves the previously settled result's bytes unchanged. | Test |
 | FR-268-AC-4 | A mismatched assertion definition, scope, clock, source set or restoration basis compares only to absence for settlement purposes and does not restart an assessment. | Test |
 | FR-268-AC-5 | A native inclusive deadline is covered only through an exact FR-289 mapping; equality of a half-open end/watermark with that deadline cannot settle it. | Test |
-| FR-268-AC-6 | Any authority scope, clock, required-source set, boundary or restoration-basis mutation changes the authority identity; any cutoff clock, instant or rule-revision mutation changes the cutoff identity. | Test |
-| FR-268-AC-7 | Missing, foreign-domain, duplicate, unknown-version or unbounded authority/cutoff inputs refuse before settlement or timing classification. | Test |
+| FR-268-AC-6 | Any authority scope, clock, required-source set, boundary or restoration-basis mutation changes the authority identity; any cutoff clock, instant or rule-identity mutation changes the cutoff identity. | Test |
+| FR-268-AC-7 | Missing, foreign-domain, duplicate or unbounded authority/cutoff inputs refuse before settlement or timing classification. | Test |
 
 ## Dependencies
 

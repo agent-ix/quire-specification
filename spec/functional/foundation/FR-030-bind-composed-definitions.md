@@ -12,7 +12,10 @@ When admitting a composed native package, the frontend SHALL bind every clause t
 
 ## Inputs
 
-Native source with exact byte/revision/span identity, clause declarations, selected definition name/revision/byte-digest tuples and imported domain package identities with their `sha256-jcs` digests. Selection is authored or explicitly supplied by the source profile; installed backends never choose it.
+Native source with exact byte/revision/span identity, clause declarations,
+selected definition identities and imported domain package identities with their
+`sha256-jcs` digests. Selection is authored or explicitly supplied by the source
+profile; installed backends never choose it.
 
 ## Outputs
 
@@ -20,7 +23,12 @@ A linked clause with resolved definition and model dependencies, or a located ty
 
 ## Behavior
 
-A reused profile name with a different revision or digest is a different selection, not an alias for an installed definition. Unknown or conflicting definitions refuse all clauses depending on them. A source- or model-identity conflict prevents dependent admission; unrelated valid clauses may remain inspectable. Repeated declarations cannot introduce a second editable authority. Runtime observations and changing monitor state do not participate in static package identity.
+A profile name is resolved only to its selected definition identity, never to an
+installed definition. Unknown or conflicting definitions refuse all clauses
+depending on them. A source- or model-identity conflict prevents dependent
+admission; unrelated valid clauses may remain inspectable. Repeated declarations
+cannot introduce a second editable authority. Runtime observations and changing
+monitor state do not participate in static package identity.
 
 The [package contract](../../../proposals/quire-v1/package-contract.md) defines the
 static components, exact import digest and typed binding requirements. The
@@ -41,7 +49,7 @@ substitutes one for the other.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-030-AC-1 | A package with state, temporal and protocol clauses retains each exact selected definition and a shared exact model closure. | Test (TC-030) |
-| FR-030-AC-2 | An unknown revision, digest mismatch or conflicting definition refuses dependent clauses before execution and identifies the failed selection. | Test (TC-030) |
+| FR-030-AC-2 | An unknown or conflicting definition refuses dependent clauses before execution and identifies the failed selection. | Test (TC-030) |
 | FR-030-AC-3 | Changing a runtime trace while keeping source, model and selected definitions fixed does not change static package identity; changing a semantic dependency does. | Test (TC-030) |
 | FR-030-AC-4 | Duplicating a clause's editable authority refuses admission rather than choosing the first or last declaration. | Test (TC-030) |
 | FR-030-AC-5 | An omitted required source unit prevents namespace closure; an extra file outside the explicit inventory cannot add or shadow a declaration. | Test (TC-030) |

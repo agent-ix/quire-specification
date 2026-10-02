@@ -18,7 +18,8 @@ The integration joins the [observation binding contract](../../proposals/quire-v
 
 ## Preconditions
 
-The consumed A/B/E interfaces are at named reviewed revisions. The O1/O2 fixture declares finite bounds, relationships, clock authority, and expected outcomes.
+The consumed A/B/E interfaces are selected by exact identity. The O1/O2 fixture
+declares finite bounds, relationships, clock authority, and expected outcomes.
 
 ## Inputs
 

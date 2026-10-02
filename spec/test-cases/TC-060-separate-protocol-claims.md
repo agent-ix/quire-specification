@@ -18,7 +18,17 @@ Verify that monitorability, conformance, projection, realizability, refinement a
 
 ## Test Procedure
 
-Use an unprojectable but globally monitorable protocol, a satisfiable trace without a causal implementation strategy and local contracts with circular assumptions. Request every claim from a backend supporting only `global-conformance`, then make one selected advanced backend return a typed failure while an independent replay result remains valid. Enumerate every FR-290 protocol-family member, and pair each non-protocol member with a protocol fragment and backend to confirm it refuses as mismatched. Independently mutate or omit claim kind, fragment identity/revision/digest/domain and construct membership, and backend identity/revision/digest/domain/capability. Pair otherwise valid fragments and backends with disjoint claim capabilities and attempt display-name selection and fallback. Request a claim whose required capability no registered backend advertises.
+Use an unprojectable but globally monitorable protocol, a satisfiable trace
+without a causal implementation strategy and local contracts with circular
+assumptions. Request every claim from a backend supporting only
+`global-conformance`, then make one selected advanced backend return a typed
+failure while an independent replay result remains valid. Enumerate every FR-290
+protocol-family member, and pair each non-protocol member with a protocol
+fragment and backend to confirm it refuses as mismatched. Independently mutate
+or omit claim kind, fragment identity and construct membership, and backend
+identity and capability. Pair otherwise valid fragments and backends with
+disjoint claim capabilities and attempt display-name selection and fallback.
+Request a claim whose required capability no registered backend advertises.
 
 ## Expected Results
 

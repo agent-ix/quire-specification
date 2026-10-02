@@ -39,7 +39,7 @@ it never chooses another list by label or rewrites the pair.
 
 | Property | Source | Note |
 | --- | --- | --- |
-| Producer-interface reference | FR-047 and native catalog | Exact identity, revision and digest of the interface that owns stage membership. |
+| Producer-interface reference | FR-047 and native catalog | Exact identity of the interface that owns stage membership. |
 | Stage label | Selected producer interface | One exact member of that interface's closed stage vocabulary. |
 | Originating-stage retention | Proposed catalog; FR-047-AC-5 | A wrapper "retains the originating stage and cause instead of replacing them with its own display stage"; a failure keeps "their actual stage". |
 | Selected producer interface | Proposed catalog | The only membership authority for the paired stage label; no global first-wins registry participates. |
@@ -74,8 +74,7 @@ it never chooses another list by label or rewrites the pair.
   zero, an empty path or a name-search match cannot masquerade as a located
   failure" (proposed catalog).
 - **Digest domain** — a stage label carries no digest. The catalog that carries
-  it is selected by identity, revision and byte digest, whose domain rule is
-  [FR-201](FR-201-canonical-identity-domain.md).
+  it is selected by identity ([FR-270](FR-270-diagnostic-catalog.md)).
 
 ## Acceptance Criteria
 
@@ -105,9 +104,9 @@ The merged native compiler demonstrates why this boundary is necessary. Its
 native diagnostic interface currently distinguishes `source`, `lex`, `parse`,
 `profile`, `format`, `source_map`, `link`, `check`, `validate` and `evaluate`;
 its command envelope owns additional file/request/output/package/lower/input and
-extraction labels. Those are separate versioned interfaces, not permissions to
-extend this standard by observing an installed enum. Their exact selected
-interface revisions remain the membership authority.
+extraction labels. Those are separate interfaces, not permissions to extend this
+standard by observing an installed enum. Their exact selected interface
+identities remain the membership authority.
 
 ## Dependencies
 
@@ -123,4 +122,4 @@ interface revisions remain the membership authority.
 ## Status
 
 Accepted FS02 membership ruling. Producer interfaces still require their own
-versioned closed vocabularies and consumer implementation evidence.
+closed vocabularies and consumer implementation evidence.

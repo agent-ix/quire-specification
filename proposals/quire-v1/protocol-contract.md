@@ -215,7 +215,7 @@ bounds in its fixture. Example cardinalities do not become semantic maxima.
 ## Reuse and claim limits
 
 No external protocol, solver or monitor library is adopted by this specification
-slice. The mapping at this revision is explicit:
+slice. The mapping is explicit:
 
 | Capability | Selected ownership | External candidate disposition |
 | --- | --- | --- |

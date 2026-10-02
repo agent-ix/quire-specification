@@ -17,7 +17,7 @@ Resolve valid specialization/dispatch and reject cycles, weakening and ambiguity
 
 Use the subject and inputs named by FR-151. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
-Select `quire.model.complete/v1` at revision `1-draft.2` through
+Select `quire.model.complete/v1` through
 [`complete-model-lock.json`](../../proposals/quire-v1/definitions/complete-model-lock.json).
 Node names, declaration keys, package identity and default limits follow
 TC-195. Every multiplicity is written `{lower,upper}` with `ordered: false` and
@@ -26,7 +26,7 @@ stated. Value types `Count` and `Small` are declared in the package by
 artifacts `Count` and `Small`, bound as `Int[0,9]` and `Int[0,5]`, and each
 names a construct whose meaning is `quire.meaning.model.value-type/v1`; every
 object type's construct meaning is `quire.meaning.model.object-type/v1`. Effective type identities are TC-195 N02's:
-`C` = `1af4f5c7` < `A` = `3b79bb92` < `D` = `97f66fc4` < `B` = `9c1ce45c` in
+`C` = `b23df80c` < `A` = `23664417` < `D` = `9fb83dd4` < `B` = `ca6ff932` in
 ascending digest order.
 
 Fixtures:

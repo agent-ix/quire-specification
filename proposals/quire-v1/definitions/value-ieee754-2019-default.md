@@ -1,7 +1,7 @@
 # IEEE 754-2019 binary profile definition
 
-Definition identity: `quire.value.ieee754-2019-default/v1`; revision:
-`1-draft.1`. This is a leaf semantic-profile definition selected alongside
+Definition identity: `quire.value.ieee754-2019-default/v1`.
+This is a leaf semantic-profile definition selected alongside
 `quire.value.complete/v1`; it has no reverse dependency on that root.
 
 This definition selects FR-148's binary32/binary64 interchange formats, five

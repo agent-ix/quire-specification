@@ -1,13 +1,12 @@
 # Observation binding definition
 
-Selection identity: `quire.observation.binding/v1`; revision: `1-draft.3`.
-**The selection role is accepted by FS01 and this semantic revision is accepted
-by FS04. Serialization, canonicalization and executable qualification remain
+Selection identity: `quire.observation.binding/v1`.
+**The selection role is accepted by FS01 and these semantics are accepted by
+FS04. Serialization, canonicalization and executable qualification remain
 separate.**
 
-Accepted definition: local rule and dependency links select this checkout.
-Git preserves drafting history; FS04 freezes this coherent baseline.
-This editing policy does not relax immutable runtime selections or digest checks.
+Local rule and dependency links resolve within this checkout. Runtime references
+select each definition by its immutable identity.
 
 This definition selects the observation-binding contract consumed by a linked
 package, including role sharing, correlation, availability, independent result
@@ -17,17 +16,17 @@ or executable interface.
 
 ## Required definitions and rules
 
-| Dependency | Identity | Revision/version | Current normative contract |
-| --- | --- | --- | --- |
-| Linked package interpretation | `quire.package.composed/v1` | `1-draft.2` | [Package reference](package-reference.md) |
-| Observation-range correspondence | `quire.observation.range/v1` | `1-draft.1` | [Range correspondence](observation-range.md) |
-| Observation binding rules | `quire.observation.contract/v1` | Current working draft | [Observation contract](../observation-contract.md) |
-| Temporal lifecycle/result facet | `quire.temporal.bounded-facet/v1` | `1-draft.3` | [Temporal meaning](temporal-common.md) |
-| Protocol result/conformance root | `quire.protocol.finite-global/v1` | `1-draft.4` | [Protocol meaning](protocol-finite.md) |
-| Domain declarations | Checked package `model_selections` domain package | `sha256-jcs` declaration keys | [Domain declaration selection](../observation-contract.md#domain-declaration-selection) |
-| Shared result rules | B FR-061 | Current working draft | [Orthogonal results](../../../spec/functional/protocol/FR-061-report-orthogonal-results.md) |
-| Observation result rules | F FR-115/116 | FS04 accepted | [Result contribution](../../../spec/functional/observation/FR-115-report-activation-participation-and-adequacy.md) and [consumer-result boundary](../observation-output-mapping-contract.md) |
-| Target output-mapping rules | `quire.output.mapping/v1` | `1-draft.1`, FS06 accepted | [Common and target profiles](../output-mappings/README.md) |
+| Dependency | Identity | Current normative contract |
+| --- | --- | --- |
+| Linked package interpretation | `quire.package.composed/v1` | [Package reference](package-reference.md) |
+| Observation-range correspondence | `quire.observation.range/v1` | [Range correspondence](observation-range.md) |
+| Observation binding rules | `quire.observation.contract/v1` | [Observation contract](../observation-contract.md) |
+| Temporal lifecycle/result facet | `quire.temporal.bounded-facet/v1` | [Temporal meaning](temporal-common.md) |
+| Protocol result/conformance root | `quire.protocol.finite-global/v1` | [Protocol meaning](protocol-finite.md) |
+| Domain declarations | Checked package `model_selections` domain package | [Domain declaration selection](../observation-contract.md#domain-declaration-selection) |
+| Shared result rules | B FR-061 | [Orthogonal results](../../../spec/functional/protocol/FR-061-report-orthogonal-results.md) |
+| Observation result rules | F FR-115/116 | [Result contribution](../../../spec/functional/observation/FR-115-report-activation-participation-and-adequacy.md) and [consumer-result boundary](../observation-output-mapping-contract.md) |
+| Target output-mapping rules | `quire.output.mapping/v1` | [Common and target profiles](../output-mappings/README.md) |
 
 FS04 selects only the temporal/observation and shared result/closure rules
 reachable from this definition. FS06 separately selects the non-authoritative
@@ -36,11 +35,9 @@ axes without changing this binding. Neither acceptance adopts protocol
 declaration or global-conformance semantics, whose owning work remains independent.
 
 An actual package/assessment selects its required dependency artifacts by exact
-identity, revision and bytes. Missing, substituted, stale or mutually inconsistent
-selections refuse the dependent request. A local draft link does not authorize
-an evaluator to replace its selected artifact with current working-tree bytes.
-Declaration, raw document, definition and result digests retain their
-declared domains; equal digest prefixes do not make them interchangeable.
+identity. Missing, substituted or mutually inconsistent selections refuse the
+dependent request. A local link does not authorize an evaluator to replace its
+selected artifact with another artifact.
 
 ## Retained binding boundary and range selection
 

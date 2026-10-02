@@ -99,7 +99,7 @@ claim all profile implementations.
 | Missing observation, population closure or required history | Incomplete/unavailable input, distinct from false | Required role/scope and source-linked obligation; input/runtime path where the missing fact has no source span |
 | Resource exhaustion or cancellation | Incomplete execution, distinct from invalid source and false | Originating stage, charged work item and effective limit/cancellation source |
 
-The versioned diagnostic catalog may refine these typed causes. It cannot merge
+The diagnostic catalog may refine these typed causes. It cannot merge
 invalid, unsupported, unimplemented, incomplete and logically false outcomes.
 
 ### Extension points
@@ -107,7 +107,7 @@ invalid, unsupported, unimplemented, incomplete and logically false outcomes.
 | Extension point | Rule |
 | --- | --- |
 | Edition syntax | Add grammar only under a new exact edition definition; never steal a historical identifier or reinterpret old bytes. |
-| Semantic profile | Add a versioned definition and explicit dependency edges; a child may add named forms but cannot weaken inherited rules. |
+| Semantic profile | Add a definition and explicit dependency edges; a child may add named forms but cannot weaken inherited rules. |
 | Model/type capability | Add an artifact feature, its extraction rule, its semantic IR member and its Quire meaning together under AD-006; downstream IR shape cannot invent authoring semantics. |
 | Semantic family | Add a typed family AST/interface and package capability; do not flatten it into scalar truth or string dispatch. |
 | Backend or analyzer | Advertise support for exact checked subjects and requested claims; unsupported requests preserve the source subject. |
@@ -134,7 +134,7 @@ bracketed-interval productions or any `0-draft` bytes.
 | Q7 fuel | Runtime work ceilings are distinct from semantic maxima; exhaustion is incomplete and cannot truncate meaning. |
 | Q8 identity dimensions | Edition, semantic profile, artifact wire, canonicalization and backend identities remain independent. |
 | Q9 temporal | Native temporal profiles own meaning; TL profiles are internal targets behind exact correspondence. FS04 and temporal owners close delivery. |
-| Q10 crate layout | The current Rust package/module boundary remains implementation-owned; split only for an independently versioned consumer interface. |
+| Q10 crate layout | The current Rust package/module boundary remains implementation-owned; split only for an independent consumer interface. |
 | Q11 ADR-0053 | Contract-IR PR #72 accepted native Quire-only source authority; external languages are mappings and the reference/bounds gate remains explicit. |
 
 ### Example discriminators
@@ -150,7 +150,7 @@ bracketed-interval productions or any `0-draft` bytes.
 | Choice | Rejected alternative | Consequence |
 | --- | --- | --- |
 | Accept one native Quire language charter and the composed profile hierarchy | Adopt the temporary `state-finite/1-draft` replacement or separate family languages | Historical bytes remain stable while state, temporal and protocol grow through explicit dependent facets. |
-| Accept profile identity separately from semantic revision acceptance and implementation | Mark every PR #15 draft implemented or leave all identities ambiguous | Owners can build against stable roles without overstating delivery. |
+| Accept profile identity separately from semantic acceptance and implementation | Mark every PR #15 draft implemented or leave all identities ambiguous | Owners can build against stable roles without overstating delivery. |
 | Fix exact rational, inheritance and pre-state rules in the composed definition set | Leave the old amendment's open questions attached to a dead candidate | `rational(n,d)`, normalization, nonzero/range proofs, child-profile monotonicity and eligible pre-state reads now have one drafted meaning for FS03 delivery. |
 | Retain the original ConfigVersion reference/bounds gate | Invent a maximum, erase `parent`, or treat the bounded worked example as the original model | The original subject refuses until its spec artifacts declare the finite domain and the relationship explicitly. |
 | Accept the PR #15 architecture boundary | Make an executable IR, TL form or backend the language | Normative language meaning remains independent of each consumer representation and support set. |

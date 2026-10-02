@@ -1021,7 +1021,7 @@ The requirement artifacts are indexed below.
 | [FR-226](objects/protocol/FR-226-business-effect.md) | FR (entity) | Object layer; Business effect |
 | [FR-227](objects/protocol/FR-227-owned-choice.md) | FR (entity) | Object layer; Owned choice |
 | [FR-228](objects/protocol/FR-228-bounded-control-construct.md) | FR (enumeration) | Object layer; Bounded control construct vocabulary |
-| [FR-270](objects/foundation/FR-270-versioned-diagnostic-catalog.md) | FR (entity) | Object layer; Versioned diagnostic catalog |
+| [FR-270](objects/foundation/FR-270-diagnostic-catalog.md) | FR (entity) | Object layer; Diagnostic catalog |
 | [FR-271](objects/foundation/FR-271-diagnostic-code-vocabulary.md) | FR (enumeration) | Object layer; Diagnostic code vocabulary |
 | [FR-272](objects/foundation/FR-272-typed-diagnostic-cause.md) | FR (value_object) | Object layer; Typed diagnostic cause |
 | [FR-273](objects/foundation/FR-273-producer-stage.md) | FR (value_object) | Object layer; Producer stage |
@@ -1047,7 +1047,7 @@ The requirement artifacts are indexed below.
 | [FR-268](objects/observation/FR-268-progress-and-late-data-authority.md) | FR (value_object) | Object layer; Progress and late-data authority |
 | [FR-269](objects/observation/FR-269-consumer-mapping-loss.md) | FR (enumeration) | Object layer; Consumer mapping-loss classification |
 | [FR-295](objects/observation/FR-295-input-completeness-state.md) | FR (enumeration) | Object layer; independent input-completeness state derived from an exact fact population |
-| [FR-296](objects/observation/FR-296-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; versioned admitted-observation identity preimage and byte uniqueness |
+| [FR-296](objects/observation/FR-296-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; admitted-observation identity preimage and byte uniqueness |
 | [FR-297](objects/output-mapping/FR-297-output-mapping-consumer-profile.md) | FR (value_object) | Object layer; exact target standard and mapping-profile selection |
 | [FR-298](objects/output-mapping/FR-298-per-obligation-output-mapping-record.md) | FR (entity) | Object layer; identity-bearing source-bound mapping disposition |
 | [FR-299](objects/output-mapping/FR-299-generated-output-package.md) | FR (aggregate_root) | Object layer; immutable target bytes and complete ordered mapping record set |
@@ -1076,7 +1076,7 @@ The requirement artifacts are indexed below.
 | [FR-283](objects/protocol/FR-283-projection-refusal-code.md) | FR (enumeration) | Object layer; Projection refusal code vocabulary |
 | [FR-284](objects/protocol/FR-284-scope-progress-and-closure-state.md) | FR (enumeration) | Object layer; the two-member state vocabulary carried by the four decision-scope and surrounding-execution progress/closure axes |
 | [FR-285](objects/protocol/FR-285-participation-fact.md) | FR (value_object) | Object layer; exact known/unknown source participation without importing target status labels |
-| [FR-286](objects/protocol/FR-286-canonical-protocol-result-identity-preimage.md) | FR (value_object) | Object layer; versioned canonical-result identity preimage and strict-reader order |
+| [FR-286](objects/protocol/FR-286-canonical-protocol-result-identity-preimage.md) | FR (value_object) | Object layer; canonical-result identity preimage and strict-reader order |
 | [FR-287](objects/protocol/FR-287-authority-qualified-runtime-subject-reference.md) | FR (value_object) | Object layer; authority-qualified opaque runtime subject identity and non-causal canonical order |
 | [FR-288](objects/protocol/FR-288-qualified-protocol-definition-identity.md) | FR (value_object) | Object layer; exact linked protocol-definition qualifier across source, declaration ownership and semantic selections |
 | [FR-290](objects/protocol/FR-290-protocol-claim-kind.md) | FR (enumeration) | Object layer; cross-family authority: closed capability-kind vocabulary `quire.capability-kind/v1` for the value, state-model, finite-replay, temporal-trace and protocol families |
@@ -1107,7 +1107,7 @@ The requirement artifacts are indexed below.
 | [FR-289](objects/temporal/FR-289-observation-temporal-boundary-mapping.md) | FR (value_object) | Object layer; explicit half-open observation to inclusive temporal boundary mapping |
 | [FR-294](objects/observation/FR-294-late-data-classification.md) | FR (enumeration) | Object layer; exact on-time and late observation classification |
 | [FR-295](objects/observation/FR-295-input-completeness-state.md) | FR (enumeration) | Object layer; independent input-completeness state derived from an exact fact population |
-| [FR-296](objects/observation/FR-296-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; versioned admitted-observation identity preimage and byte uniqueness |
+| [FR-296](objects/observation/FR-296-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; admitted-observation identity preimage and byte uniqueness |
 | [FR-425](functional/protocol/FR-425-define-protocol-subjects-and-state-keys.md) | FR | Define protocol subjects and their state keys |
 | [FR-426](functional/protocol/FR-426-apply-protocol-steps.md) | FR | Apply protocol steps atomically with canonical transition identities |
 | [FR-427](functional/protocol/FR-427-check-protocol-compensation.md) | FR | Check compensation templates inside a protocol subject |

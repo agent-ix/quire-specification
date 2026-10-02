@@ -21,11 +21,10 @@ For event-position correspondence, exhaustively enumerate ASTs of depth at most
 two from constants, propositions `{p,q}`, negation, conjunction and the four
 future operators using every interval `0 <= a <= b <= 3`; enumerate trace
 lengths zero through five, every total Boolean valuation, every valid anchor and
-both closed and open-prefix lifecycle states. Record the generator revision,
-population cardinality and any infeasible resource stop. For fixed-sample
-correspondence, exercise the same finite population under two declared rational
-periods and epochs. Compare an independent native oracle with the exact selected
-TL evaluator profiles.
+both closed and open-prefix lifecycle states. Record the population cardinality
+and any infeasible resource stop. For fixed-sample correspondence, exercise the
+same finite population under two declared rational periods and epochs. Compare
+an independent native oracle with the exact selected TL evaluator profiles.
 Include the one-position `always[0,1] p` closure discriminator. Request
 timestamped finite-window and each past operator from current TL. Independently
 mutate every native/TL profile, source/span, model/predicate, clock, capture,

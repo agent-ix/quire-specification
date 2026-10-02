@@ -15,7 +15,7 @@ relationships:
 name: ModelSelection
 associated_types: [DomainPackageId, DeclarationKey, EffectiveDeclarationId]
 operations:
-  - { name: select_package, inputs: [domain package identity, version, sha256-jcs digest], output: immutable admitted domain package or refusal, semantics: validates the exact package bytes against the sha256-jcs digest }
+  - { name: select_package, inputs: [domain package identity, sha256-jcs digest], output: immutable admitted domain package or refusal, semantics: validates the exact package bytes against the sha256-jcs digest }
   - { name: intake, inputs: [admitted domain package, selected quire.model.complete/v1 definition], output: original declarations keyed by (package identity, IR node identity, sha256-jcs) or located refusal, semantics: builds one declaration per IR node and refuses with the artifact and span }
   - { name: normalize, inputs: [original declarations, selected quire.model.complete/v1 definition], output: original-to-effective view (quire.model.effective-view/v1) or refusal, semantics: QSL derives effective identities in its own domains and preserves ordered derivation provenance }
 invariants:

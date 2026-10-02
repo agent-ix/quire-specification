@@ -20,7 +20,7 @@ combine permissions from unrelated profiles or infer support from an installed
 backend.
 
 For these state profiles, FS03 also selects the exact referenced state grammar
-forms from `ix:native` edition `1-draft.2`. That scoped dependency selection does
+forms from `ix:native` edition `1-draft`. That scoped dependency selection does
 not adopt temporal, protocol or package-definition semantics still owned by other
 tickets, and it does not reinterpret any historical edition.
 

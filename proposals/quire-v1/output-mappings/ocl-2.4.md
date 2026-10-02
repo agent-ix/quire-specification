@@ -1,6 +1,6 @@
 # OCL 2.4 output profile
 
-Selected identity `quire.output.ocl24/v1`, revision `1-draft.1`. Target standard:
+Selected identity `quire.output.ocl24/v1`. Target standard:
 OMG OCL 2.4, normative document `formal/14-02-03`.
 
 ## Admitted fragment
@@ -28,7 +28,7 @@ only to `Sequence`; no Set/Bag/OrderedSet coercion is permitted.
 - Exact rationals with denominator other than one, integer division/remainder,
   one-based indexed access, collection transformation/sum, object/relationship
   navigation without an exact model mapping, temporal operators and protocol
-  control are unrepresented by this revision.
+  control are unrepresented by this profile.
 - A ConfigVersion scalar bound/invariant or exact operation pre/post comparison
   is eligible. ParentPrecedes navigation is preserved only with an exact
   relationship/endpoint mapping; otherwise that obligation is unrepresented or

@@ -11,6 +11,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-197
     type: references
+  - target: ix://agent-ix/quire-specification/FR-305
+    type: references
 ---
 
 # FR-354: Record a proved settlement's trust basis
@@ -19,20 +21,24 @@ relationships:
 
 When an SMT backend settles a claim `proved`, the evidence record SHALL carry
 an exact trust basis: `certificate-checked` when the cvc5 Alethe certificate
-for the exact query passes Carcara, otherwise `solver-asserted`.
+for the exact query passes Carcara, otherwise `solver-asserted`. When a
+plugin (FR-305) settles a claim `proved`, the evidence record SHALL carry the
+trust basis `trusted`.
 
 ## Inputs
 
 A `proved` verdict from the registered SMT backend, the exact query identity
 it settled (a digest over the query bytes plus the solver options selected
 for that run), and, when produced, the cvc5 Alethe proof certificate for that
-exact query identity.
+exact query identity. For a plugin, a `proved` result from that plugin and
+its backend identity.
 
 ## Outputs
 
 The `proved` verdict paired with exactly one trust-basis value
-(`certificate-checked` or `solver-asserted`) and, for `certificate-checked`,
-the Carcara check run identity.
+(`certificate-checked`, `solver-asserted` or `trusted`); for
+`certificate-checked`, the Carcara check run identity; for `trusted`, the
+plugin's backend identity.
 
 ## Behavior
 
@@ -63,17 +69,25 @@ or silently upgrades a `solver-asserted` basis to `certificate-checked`. Z3's
 independent cross-check (FR-349) is a separate parity signal from the trust
 basis and is recorded alongside it, not folded into it.
 
+A plugin's `proved` result cannot be replayed and has no in-core certificate
+checker (FR-305 "Trusted proofs"). Its settlement stays `proved`, records the
+basis `trusted` and names the plugin's backend identity. A renderer shows
+`trusted` beside the verdict. `trusted` is recorded only for a plugin's
+`proved` result, and a plugin's result never records `certificate-checked` or
+`solver-asserted`.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-354-AC-1 | A `proved` settlement always carries exactly one of `certificate-checked` or `solver-asserted`; neither is inferred from verdict alone. | Test (TC-269) |
+| FR-354-AC-1 | A `proved` settlement always carries exactly one of `certificate-checked`, `solver-asserted` or `trusted`; none is inferred from verdict alone. | Test (TC-269) |
 | FR-354-AC-2 | `certificate-checked` requires Carcara to have checked the cvc5 Alethe certificate for the exact settled query identity (a digest over the query bytes plus solver options) and passed it; the Carcara run identity is retained. | Test (TC-269) |
 | FR-354-AC-3 | A missing certificate or a failing Carcara check records `solver-asserted` and does not change the `proved` verdict. | Test (TC-269) |
 | FR-354-AC-4 | A recorded trust basis changes only through a new Carcara check run that produces its own new record, not by rewriting an existing record in place; the new record distinguishes a basis that was never checked (no certificate existed to check) from one that was checked and rejected (a certificate existed and failed, or matched no query identity). | Test (TC-269) |
 | FR-354-AC-5 | The Z3 cross-check result is recorded alongside the trust basis as an independent parity signal, never merged into the trust-basis value. | Test (TC-269) |
 | FR-354-AC-6 | A certificate whose query identity does not match the settled claim's query identity never yields `certificate-checked`, even when Carcara passes it. | Test (TC-269) |
 | FR-354-AC-7 | Carcara's absence from registration records `solver-asserted` with a warning naming the absent certificate-checking capability. | Test (TC-269) |
+| FR-354-AC-8 | A plugin's `proved` result settles `proved` with the basis `trusted` and the plugin's backend identity, the rendered outcome shows `trusted` beside the verdict, and an SMT backend's `proved` result never records `trusted`. | Test (TC-269) |
 
 ## Dependencies
 
@@ -83,6 +97,8 @@ basis and is recorded alongside it, not folded into it.
 - [FR-349](FR-349-register-smt-backend.md) supplies the registered SMT
   backend and the Z3 cross-check this requirement's trust basis is paired
   with.
+- [FR-305](../tooling/FR-305-load-explicit-rust-plugins.md) supplies the
+  plugin whose `proved` result records the `trusted` basis.
 - [FR-197](FR-197-replay-backend-counterexamples.md) supplies the parity
   precedent (independent, replayable, never-silently-resolved verdict
   agreement) this requirement follows for the Z3 cross-check.

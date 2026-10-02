@@ -46,8 +46,7 @@ Token spans refer to original bytes, before formatting or newline conversion.
 ```ebnf
 unit         = 'language', string, 'edition', string, ';',
                'profile', string, ';', import, { import }, clause, { clause } ;
-import       = 'model', ident, '=', string, 'version', string,
-               'digest', string, ';' ;
+import       = 'model', ident, '=', string, 'digest', string, ';' ;
 type-name    = ident, '::', ident ;
 clause       = 'invariant', ident, 'on', type-name, 'at', 'current', block
              | ('pre' | 'post'), ident, 'on', type-name, '::', ident, block ;

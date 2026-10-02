@@ -1,22 +1,19 @@
 # Composed linked-package reference definition
 
-Artifact interpretation: `quire.package.composed/v1`; revision: `1-draft.2`.
+Artifact interpretation: `quire.package.composed/v1`.
 Language: `ix:native` / `1-draft`. **The artifact role is accepted by FS01 and
-this semantic revision is accepted by FS05. Executable qualification remains
-separate.**
-This defines a semantic reference to a fully linked package. It is not a source
-profile and cannot be selected by a clause's `using` alias.
+these semantics are accepted by FS05. Executable qualification remains
+separate.** This defines a semantic reference to a fully linked package. It is
+not a source profile and cannot be selected by a clause's `using` alias.
 
-This is one accepted coherent definition. Required definitions and rule links
-resolve within this checkout; FS05 freezes their exact selections.
-Earlier draft text remains in Git history. Runtime references still require the
-selected immutable identities, revisions and digest domains.
+Required definitions and rule links resolve within this checkout. Runtime
+references select each definition by its immutable identity.
 
 ## Required definition
 
-| Identity | Revision | Definition artifact |
-| --- | --- | --- |
-| `ix:native` / `1-draft` | `1-draft.2` | [Composed edition](edition.md) |
+| Identity | Definition artifact |
+| --- | --- |
+| `ix:native` / `1-draft` | [Composed edition](edition.md) |
 
 FS05 selects only the edition/package identity, source-inventory and dependency
 rules reachable from this package interpretation. It does not adopt the sibling
@@ -25,12 +22,12 @@ temporal or protocol semantic definitions, whose owning tickets remain open.
 ## Package and clause selections
 
 The package's outer `SemanticRef.semanticProfile` selects this definition's
-identity, revision and exact byte digest. Its artifact kind is `linked-package`;
-its language selects the composed edition. The inner package retains every
-declaration's exact state, predicate, temporal or protocol profile selection,
-typed dependency closure, source correspondence and required binding roles.
-The outer selection describes that container contract; it does not replace,
-merge or choose between the inner clause meanings.
+identity. Its artifact kind is `linked-package`; its language selects the
+composed edition. The inner package retains every declaration's exact state,
+predicate, temporal or protocol profile selection, typed dependency closure,
+source correspondence and required binding roles. The outer selection describes
+that container contract; it does not replace, merge or choose between the inner
+clause meanings.
 
 A state/temporal/protocol profile cannot stand in for this outer package
 interpretation, even for a package containing only that family. Conversely,

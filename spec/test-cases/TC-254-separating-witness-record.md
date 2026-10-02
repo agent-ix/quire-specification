@@ -13,6 +13,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-351
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-207
+    type: verifies
 ---
 
 # TC-254: Retain a family-neutral separating witness or leave the result witness-free
@@ -27,8 +29,12 @@ Planned.
 
 Decide a bounded `forall`/`exists` query, a temporal obligation and a protocol
 claim each to a `decisive-witness` and a `decisive-counterexample` basis, and
-inspect each retained record's deciding element, index, value path and trace
-position. Compare the collection, temporal and protocol records for identical
+inspect each retained record's deciding quantifier, deciding element, index,
+value path and trace position. Refute a collection `forall` at its third
+element; refute two occurrences of one quantifier node at equal elements and
+compare the two records; decide a quantifier over a `filter` domain and over a
+`map` domain; and decide a quantifier over a collection built inside the
+claim (FR-351-AC-7). Compare the collection, temporal and protocol records for identical
 shape. Separately drive one obligation to a `closed-scope` basis, one to
 `unsettled`, one to resource exhaustion, one to cancellation and one to an
 unsupported requested backend capability. Attempt to read a record missing its
@@ -38,7 +44,12 @@ value substituted for an absent index, value path or trace position.
 ## Expected Results
 
 Every decisive basis retains one record with its exact deciding element and
-the index, value path and trace position its family assigns; the collection,
+the deciding quantifier, index, value path and trace position its family
+assigns; the third-element refutation records the quantifier's occurrence key,
+that element, index 2 and the path to the stored collection; the two
+occurrence records compare unequal; the `filter` and `map` records name the
+stored source collection and source index; the built-collection record is
+rooted at the building expression's occurrence key; the collection,
 temporal and protocol records share one shape. `closed-scope` and `unsettled`
 results carry no witness. The exhausted, cancelled and unsupported results
 retain their disposition and checked subject and emit no witness or substitute

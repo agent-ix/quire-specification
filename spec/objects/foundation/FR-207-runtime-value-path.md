@@ -12,6 +12,10 @@ relationships:
     type: composes
   - target: ix://agent-ix/quire-specification/FR-274
     type: references
+  - target: ix://agent-ix/quire-specification/FR-041
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-351
+    type: references
 ---
 # FR-207: Runtime value path
 
@@ -28,8 +32,8 @@ When a producer locates a value inside a validated runtime subject, the producer
   ([FR-042](../../functional/foundation/FR-042-select-pre-state-reads.md)) and a
   guard cannot justify "a same-named field on another object or observation"
   ([FR-045](../../functional/foundation/FR-045-preserve-control-and-presence-facts.md)-AC-3).
-- **root.subject** (`declared object identity` | `invocation binding`) — exactly
-  one of a declared object identity
+- **root.subject** (`declared object identity` | `invocation binding` |
+  `population` | `built collection`) — exactly one of a declared object identity
   ([FR-204](FR-204-declared-object-identity.md), supplying the universe, type
   and object identity that
   [FR-009](../../functional/foundation/FR-009-preserve-object-identity.md)
@@ -44,13 +48,19 @@ When a producer locates a value inside a validated runtime subject, the producer
   the receiver binding. Two invocation bindings are equal exactly when they
   name one invocation and agree on binding kind and, for a parameter, on the
   exact parameter spelling, so the receiver binding `self` never equals a
-  parameter binding. Invocation bindings are key-ordered by invocation identity (the identity FR-004 selects, compared by the UTF-8 bytes of its RFC 8785 (JCS) canonical JSON serialization), then binding kind ordered parameter before result before receiver, then parameter spelling by UTF-8 bytes. Two subjects of different kinds are never equal
-  (FR-047).
+  parameter binding. Invocation bindings are key-ordered by invocation identity (the identity FR-004 selects, compared by the UTF-8 bytes of its RFC 8785 (JCS) canonical JSON serialization), then binding kind ordered parameter before result before receiver, then parameter spelling by UTF-8 bytes.
+  A *population* subject is the object universe of a declared population
+  ([FR-204](FR-204-declared-object-identity.md)'s universe identity), for a
+  value read from a population query. A *built collection* subject is the
+  occurrence key (`node_id`, `role`, `ordinal`, the FR-322 `source_map` key) of
+  the expression that builds a collection inside the evaluated claim, for an
+  element that has no stored location in the observation. Two subjects of
+  different kinds are never equal.
 - **steps** (ordered sequence of `traversal step`, possibly empty) — the
   traversal from the subject to the located value. An empty sequence denotes the
   subject itself.
 
-Each traversal step is exactly one of five kinds (FR-047):
+Each traversal step is exactly one of six kinds:
 
 | Step kind | Carries | Selects |
 | --- | --- | --- |
@@ -59,10 +69,11 @@ Each traversal step is exactly one of five kinds (FR-047):
 | member selection | the exact declared member spelling | a declared model member |
 | index selection | an unsigned integer position | the element at that zero-based position of a collection value |
 | map-key selection | a canonical typed key value | the value stored under that key of a map value |
+| object-reference selection | the declared object identity the reference names ([FR-204](FR-204-declared-object-identity.md)) | the object a reference value refers to |
 
 A field selection and a member selection carrying the same name are never equal
 to one another, and an option-value selection is never a field of the option it
-traverses (FR-047). The exact declared spelling is the one retained by
+traverses. The exact declared spelling is the one retained by
 [FR-037](../../functional/foundation/FR-037-parse-shared-native-expressions.md),
 which requires that qualified model and member names "retain their exact
 spelling even when the member is a keyword".
@@ -75,6 +86,18 @@ guard justifies only "the same immutable optional value/field/observation"
 A path therefore records where a value was sought; it does not assert that the
 value was present.
 
+## Computed collections
+
+A path to an element of a collection computed by `filter` or `map` names the
+stored source occurrence the element was bound from, following each source
+binding [FR-041](../../functional/foundation/FR-041-evaluate-ordered-queries.md)-AC-4
+retains back to a stored collection, and its index step is the element's
+position in that stored collection. An element of a collection built inside
+the claim, which has no stored source location, is located by a path rooted at
+the built collection subject, whose index step is the element's position in
+the built collection. These are the value paths a separating witness record
+carries ([FR-351](../protocol/FR-351-separating-witness-record.md)).
+
 ## Identity and comparison
 
 - **Identity kind** — *value*. A runtime value path has no identity of its own
@@ -82,7 +105,7 @@ value was present.
 - **Key** — (`root.observation`, `root.subject`, `steps`). Equality is
   componentwise over exactly these: roots equal componentwise, step sequences of
   equal length, and each corresponding step pair agreeing on step kind and on
-  that kind's name, index or canonical key value where it carries one (FR-047).
+  that kind's name, index or canonical key value where it carries one.
   Rendered path text, display name, message wording, locale and reported source
   span never participate — FR-047-AC-1 requires that changing or localizing
   human-readable messages leaves the same typed failure's stage, code and cause
@@ -94,8 +117,9 @@ value was present.
   (FR-204's is lexicographic over `universe`, `type`, `object_identity`; an
   invocation binding's is its invocation identity (the identity FR-004 selects, compared by the UTF-8 bytes of its RFC 8785 (JCS) canonical JSON serialization), then binding kind ordered parameter before result before receiver, then parameter spelling by UTF-8 bytes). Step
   comparison orders a proper prefix before every path that extends it, orders
-  differing step kinds as field before option-value before member before index before map-key, and orders steps of equal kind by their exact name, index steps numerically and map-key steps by the UTF-8 bytes of the key value's RFC 8785 (JCS) canonical JSON serialization. The subject-kind and step-kind orders
-  are fixed by FR-047 and are not asserted here.
+  differing step kinds as field before option-value before member before index before map-key before object-reference, and orders steps of equal kind by their exact name, index steps numerically, map-key steps by the UTF-8 bytes of the key value's RFC 8785 (JCS) canonical JSON serialization and object-reference steps by FR-204's key. Subject kinds order declared object identity before invocation binding before population before built collection; a population subject orders by its universe key and a built collection subject by `node_id` digest, then role, then ordinal. This requirement is the one source of
+  the subject kinds, the step kinds and their orders; FR-047 reports paths
+  under them.
 
   Selected observations compare by authority-qualified observation identity and
   revision. The resulting path order is total across observations and carries no
@@ -119,17 +143,18 @@ value was present.
 
 The wire form is a tagged object with `kind: runtime_value`, a typed `root`, and
 an ordered `steps` array. The `root` object has exactly the members
-`observation` (the selected observation identity) and `subject`. Root subject tags are `object` and `invocation`. An `invocation` subject is
+`observation` (the selected observation identity) and `subject`. Root subject tags are `object`, `invocation`, `population` and `built`. A `population` subject is an object with exactly the members `tag` and `universe` (the FR-204 universe identity). A `built` subject is an object with exactly the members `tag` and `occurrence`, an object with exactly the members `node_id`, `role` and `ordinal`. An `invocation` subject is
 an object with exactly the members `tag` (`invocation`), `invocation` (the
 invocation identity), `binding` (exactly `parameter`, `result` or `receiver`)
 and, exactly when `binding` is `parameter`, `parameter` (the exact parameter
 spelling).
-Step tags are `field`, `option_value`, `member`, `index` and `map_key`. Each
-step is an object with member `tag` and exactly one further member where its
-kind carries one: `name` for `field` and `member` (the exact declaration
-spelling), `index` for `index` (an unsigned decimal integer) and `key` for
-`map_key` (the canonical typed key value); an `option_value` step has no
-further member. Unknown tags refuse.
+Step tags are `field`, `option_value`, `member`, `index`, `map_key` and
+`reference`. Each step is an object with member `tag` and exactly one further
+member where its kind carries one: `name` for `field` and `member` (the exact
+declaration spelling), `index` for `index` (an unsigned decimal integer),
+`key` for `map_key` (the canonical typed key value) and `object` for
+`reference` (the FR-204 declared object identity); an `option_value` step has
+no further member. Unknown tags refuse.
 
 ## Location kinds are distinct
 
@@ -152,6 +177,9 @@ artifact defines only the runtime kind.
 | FR-207-AC-6 | Runtime value paths are totally ordered across observations by the authority-qualified observation identity and revision before subject and traversal steps. | Inspection |
 | FR-207-AC-7 | The canonical wire form uses `runtime_value`, typed root-subject tags and typed traversal-step tags; unknown tags refuse. | Inspection |
 | FR-207-AC-8 | A path rooted at the receiver binding `self` of an invocation whose receiver has no declared object identity locates values of that receiver, compares unequal to a path with equal steps rooted at a parameter binding of the same invocation, and is never used for a receiver with a declared object identity. | Test (TC-235) |
+| FR-207-AC-9 | A path to an element of a population query result is rooted at a `population` subject naming the population's universe, and a path to an element of a collection built inside the claim is rooted at a `built` subject naming the building expression's occurrence key, with an index step for the element's position in that collection; each serializes with exactly its tagged members and an extra or missing member refuses. | Test (TC-429) |
+| FR-207-AC-10 | A path that follows a reference value carries a `reference` step naming the referenced object's FR-204 identity, compares unequal to a path with a field or member step at that position, and orders after a map-key step at that position. | Test (TC-429) |
+| FR-207-AC-11 | A path to an element of a collection computed by `filter` or `map` names the stored source collection the element was bound from and the element's index in it, never the position in the computed collection. | Test (TC-429) |
 
 ## Resolved path boundary
 

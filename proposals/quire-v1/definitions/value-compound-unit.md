@@ -1,6 +1,6 @@
 # Compound-unit value identity definition
 
-Definition identity: `quire.value.compound-unit/v1`; revision: `1-draft.1`.
+Definition identity: `quire.value.compound-unit/v1`.
 This evaluator-owned value identity is selected by `quire.value.complete/v1`.
 It is not an I04 checked-semantic node and has no source occurrence.
 

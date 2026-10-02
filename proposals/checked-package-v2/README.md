@@ -3,7 +3,7 @@
 This directory is the normative public transport contract for I04 immutable
 checked packages. It is intentionally a schema-and-vector boundary, not a
 native Rust package API: QSL remains free to use internal parser/CST/package
-structures, but any external consumer receives only the versioned contract.
+structures, but any external consumer receives only the contract.
 
 ## Contract contents
 
@@ -108,19 +108,16 @@ For the nominal scalar node forms covered by the node-preimage schema, the
 preimage. An owner subject must match an admitted source, definition or model
 selection; source/definition owners use authority plus identity, and model
 owners use the domain package identity plus the IR node identity: a checked
-package selects at most one domain package per identity (FR-321), so the
-owner's `identity` scopes a `ModelOwner` node's identity to its declaring
-domain package. A node id depends only on content: a domain package's
-declared version label is not part of it. Source/definition revisions and
-digests remain package lock evidence but are excluded from the semantic node
-preimage, allowing an unchanged source- or definition-owned declaration to
-retain identity across unrelated document revisions.
-Qualified names are arrays of ASCII identifier segments. Arbitrary-precision
-integers/rationals use canonical decimal strings with no leading zero and no
-`-0`, a positive denominator, greatest-common-divisor one and exactly `0/1` for
-zero. Unordered enum members
-and dimension terms are ascending by their canonical JCS key; ordered enum
-members retain declaration order. Duplicate/zero-exponent terms refuse.
+package selects at most one domain package per identity (FR-321), so the owner's
+`identity` scopes a `ModelOwner` node's identity to its declaring domain
+package. A node id depends only on content: an unchanged source- or
+definition-owned declaration retains its identity across unrelated document
+changes. Qualified names are arrays of ASCII identifier segments.
+Arbitrary-precision integers/rationals use canonical decimal strings with no
+leading zero and no `-0`, a positive denominator, greatest-common-divisor one
+and exactly `0/1` for zero. Unordered enum members and dimension terms are
+ascending by their canonical JCS key; ordered enum members retain declaration
+order. Duplicate/zero-exponent terms refuse.
 
 The JSON Schema fixes structural shape; the strict reader additionally enforces
 these semantic constraints. A targetless root unit has scale `1/1` and offset
@@ -147,8 +144,11 @@ For a node form covered by the node-preimage schema, it reconstructs the closed
 preimage from the graph and lock, hashes its JCS bytes and requires exact
 `node_id` equality; stale nominal keys are `invalid_semantic_graph`, while a stale application-node key is `invalid_package` with cause `stale-node-key`.
 Its outcome is the closed sum type admitted/refused/incomplete. It enforces
-caller-provided byte/depth/node/edge/occurrence/diagnostic/work limits;
-exhaustion is incomplete, not an empty graph or a successful package.
+caller-provided byte/node/edge/occurrence/diagnostic/work limits;
+exhaustion is incomplete, not an empty graph or a successful package. A node
+`body` follows the closed five-stratum grammar of FR-322 ("Body grammar"), so
+the JSON depth of every package is fixed by the schema and the reader has no
+depth limit; a body outside the grammar is a malformed wire.
 
 The QSpec qualification crate validates schema/vector correspondence only. The
 Contract IR consumer owns the production Rust strict reader and lowering path.
@@ -221,7 +221,7 @@ order and bit identity are three distinct identities, and only
 `quire.op.ieee.total_order` orders floats.
 
 A reader reports the first refusal in the order owned by
-`quire.native.diagnostics/v1` revision `1-draft.4`: graph-shape refusals, then
+`quire.native.diagnostics/v1`: graph-shape refusals, then
 `stale-node-key` (`invalid_package`) for an application node whose retained key
 is not its preimage digest, then declaration refusals, then frame refusals at
 the first `state`/`frame` node in ascending node-id digest order carrying one

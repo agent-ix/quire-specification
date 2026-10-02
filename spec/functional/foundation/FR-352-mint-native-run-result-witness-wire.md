@@ -1,6 +1,6 @@
 ---
 id: FR-352
-title: "Mint the native-run-result/2 witness wire"
+title: "Produce and read the native-run-result/2 wire"
 type: FR
 relationships:
   - target: ix://agent-ix/quire-specification/US-011
@@ -9,56 +9,93 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-351
     type: references
+  - target: ix://agent-ix/quire-specification/FR-243
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-207
+    type: references
 ---
-# FR-352: Mint the native-run-result/2 witness wire
+# FR-352: Produce and read the native-run-result/2 wire
 
 ## Description
 
-When a native run result is produced or read, the strict reader SHALL treat `native-run-result/1` as the closed wire FR-014 already governs, unchanged. `native-run-result/2` is accepted only as an explicitly selected, distinct closed wire that adds the FR-351 separating-witness record.
+When a native run result is produced or read, the producer and the strict
+reader SHALL use the closed `native-run-result/2` wire: the FR-014 run-result
+members plus the FR-243 settlement `basis` and the FR-351 separating witness
+record.
 
 ## Inputs
 
-An explicit wire identifier selection; a native run result's existing FR-014 members; the FR-351 separating-witness record where the settlement basis is `decisive-witness` or `decisive-counterexample`.
+A clause run's FR-014 run-result members, its FR-243 settlement basis and,
+where the basis is `decisive-witness` or `decisive-counterexample`, its
+FR-351 separating witness record.
 
 ## Outputs
 
-A `native-run-result/1` record under FR-014's unchanged contract, a `native-run-result/2` record carrying every FR-014 member plus the FR-351 witness slot, or a located wire diagnostic.
+A `native-run-result/2` record, or a located wire diagnostic.
 
 ## Behavior
 
-`native-run-result/1` and `native-run-result/2` are two distinct registered wire identifiers in FR-014's registry, each an opaque string compared exactly. `native-run-result/1` remains byte-for-byte the wire FR-014 defines; this requirement changes none of its members or refusal rules. `native-run-result/2` is a new, explicit wire identifier that a producer selects at production time and fixes in the produced artifact; a reader never infers the identifier from message content, and a document whose identifier is not the selected one refuses before consumption (FR-014 `unsupported-version`). `/2` adds exactly one closed member to the `/1` grammar — the FR-351 separating-witness record, present exactly when the settlement basis is `decisive-witness` or `decisive-counterexample` and absent otherwise (FR-351) — and changes no existing `/1` member's meaning. Two otherwise-identical results, one produced on `/1` and one on `/2`, carry distinct digests; each wire's bytes are read only under its own identifier, and a read under any other identifier refuses before consumption (FR-014 `unsupported-version`). A consumer that requires the witness record selects and regenerates against `/2`.
+`native-run-result/2` is the CLI `run` serialization of a clause run and the
+run-result identifier of FR-014's registry. A producer writes it, and a reader
+reads a document as a native run result only when its identifier is exactly
+`native-run-result/2`; any other identifier is not a native run result and
+refuses before consumption (FR-014 `unsupported-version`). A reader never
+infers the identifier from payload content.
+
+## Members
+
+Beside the FR-014 run-result members, a `native-run-result/2` record carries
+exactly two members:
+
+- `basis` — the [FR-243](../../objects/protocol/FR-243-settlement-basis.md)
+  settlement basis label, on every clause-run result, as every other verdict
+  carries it. An evaluated `success` or `violation` carries
+  `decisive-counterexample`, `decisive-witness` or `closed-scope`. Every other
+  disposition (refused, undefined, incomplete, cancelled, unsupported) carries
+  `unavailable`.
+- `witness` — the FR-351 separating witness record, present exactly when
+  `basis` is `decisive-witness` or `decisive-counterexample`, and absent
+  otherwise. It is a closed object with these members:
+
+  | Member | Value |
+  | --- | --- |
+  | `quantifier` | the deciding quantifier's occurrence key: an object with exactly `node_id` (the FR-322 `NodeId` shape), `role` and `ordinal`; absent for a family whose decision has no quantifier occurrence |
+  | `deciding_element` | the deciding element, in the canonical typed value encoding FR-331 canonical assignments use |
+  | `index` | the element's zero-based position as an unsigned integer; absent for a family that assigns no position |
+  | `value_path` | the [FR-207](../../objects/foundation/FR-207-runtime-value-path.md) `runtime_value` wire form |
+  | `trace_position` | the unsigned trace position; absent for a family that retains no trace |
+
+  An absent component is an absent member, never `null`, zero or an empty
+  value. The document encodes as RFC 8785 JSON.
+
+A reader refuses a `basis` outside the FR-243 labels, a `witness`
+present with a basis that is not decisive or absent with one that is, and a
+`witness` missing a component its family assigns, carrying a member outside
+the table, or substituting a default for an absent component.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-352-AC-1 | `native-run-result/1` decodes under FR-014's unchanged member set and refusal rules; this requirement adds no member and removes none. | Test (TC-255) |
-| FR-352-AC-2 | `native-run-result/2` is accepted only from an explicit producer selection fixed at production, never inferred from payload content; a document whose identifier is not the selected one refuses before consumption (FR-014 `unsupported-version`). | Test (TC-255) |
-| FR-352-AC-3 | `native-run-result/2` carries every `/1` member unchanged plus the FR-351 separating-witness record, present exactly with a `decisive-witness` or `decisive-counterexample` settlement basis and absent otherwise. | Test (TC-255) |
-| FR-352-AC-4 | Two otherwise-identical results, one on `/1` and one on `/2`, produce distinct digests. | Test (TC-255) |
-| FR-352-AC-5 | A `/1` record reads only under the `/1` identifier and a `/2` record only under the `/2` identifier; a read under the other identifier refuses before consumption (FR-014 `unsupported-version`), and a consumer requiring the witness record regenerates against `/2`. | Test (TC-255) |
+| FR-352-AC-1 | A clause run's result is written as `native-run-result/2` carrying the FR-014 run-result members, `basis` and, with a decisive basis, `witness`, and the strict reader admits it. | Test (TC-255) |
+| FR-352-AC-2 | A document whose identifier is not exactly `native-run-result/2`, including a document with no identifier, refuses before consumption (FR-014 `unsupported-version`), whatever its payload holds. | Test (TC-255) |
+| FR-352-AC-3 | `witness` is present exactly when `basis` is `decisive-witness` or `decisive-counterexample`, and absent otherwise. | Test (TC-255) |
+| FR-352-AC-6 | Every `native-run-result/2` clause-run result carries `basis`: `decisive-counterexample` with a `witness` for a state `forall` refuted at an element, `decisive-witness` with a `witness` for an `exists` satisfied at an element, `closed-scope` with no `witness` for a truth decided elsewhere, and `unavailable` with no `witness` for a refused, undefined, incomplete, cancelled or unsupported result. | Test (TC-255) |
+| FR-352-AC-7 | A `witness` serializes with exactly the members `quantifier`, `deciding_element`, `index`, `value_path` and `trace_position` its family assigns; a reader refuses an unknown `basis`, a `witness` whose presence disagrees with the basis, a missing assigned member, an extra member, and a `null` or default standing for an absent member. | Test (TC-255) |
 
 ## Dependencies
 
-- [FR-014](FR-014-read-exact-wire.md) supplies the closed-wire contract `/1`
-  continues to satisfy unchanged, and the identifier refusal `/2` reuses.
+- [FR-014](FR-014-read-exact-wire.md) supplies the closed-wire contract and
+  the identifier refusal.
+- [FR-243](../../objects/protocol/FR-243-settlement-basis.md) supplies the
+  `basis` labels.
 - [FR-351](../../objects/protocol/FR-351-separating-witness-record.md) supplies
-  the record `/2` carries.
+  the record `witness` carries, and
+  [FR-207](../../objects/foundation/FR-207-runtime-value-path.md) its value
+  path.
 - [US-011](../../usecase/US-011-analyze-complete-models.md) supplies the
   replay/comparability need this wire serves.
 
-## Cross-repo note
+## References
 
-quire-protocol's own canonical result wire (`quire.protocol.result/v1-draft.1`,
-FR-240) is a distinct contract and is not amended by this requirement. Its
-corresponding draft-revision bump for carrying the FR-351 witness shape is
-owned by [agent-ix/quire-protocol#96](https://github.com/agent-ix/quire-protocol/issues/96).
-
-## Status
-
-Draft. Mints `native-run-result/2` normatively over the FR-014 closed-wire
-contract. quire-spec-language's wire-catalog implementation and replay
-evidence remain planned under
-[agent-ix/quire-spec-language#186](https://github.com/agent-ix/quire-spec-language/issues/186),
-[agent-ix/quire-contract-codegen#50](https://github.com/agent-ix/quire-contract-codegen/issues/50)
-and [agent-ix/quire-verification#38](https://github.com/agent-ix/quire-verification/issues/38).
+- Linear STD-144; QSL ADR-031 SW-10, SW-11, R-1 to R-4.

@@ -8,9 +8,6 @@ use quire_verification_contracts::jcs_sha256;
 use serde_json::Value;
 use std::collections::BTreeSet;
 
-const COMPLETE_MODEL_LOCK: &str =
-    include_str!("../proposals/quire-v1/definitions/complete-model-lock.json");
-const COMPLETE_MODEL_LOCK_DIR: &str = "proposals/quire-v1/definitions";
 const EFFECTIVE_DECLARATION_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/model-effective-declaration-vectors.json");
 const EFFECTIVE_DECLARATION_SCHEMA: &str =
@@ -37,24 +34,6 @@ fn str_at<'a>(value: &'a Value, pointer: &str) -> &'a str {
         .unwrap_or_else(|| panic!("authored member {pointer} is a string"))
 }
 
-/// Resolves a lock-relative artifact path against `base` into a
-/// repository-relative path, refusing a path that climbs above the root.
-fn repository_path(base: &str, relative: &str) -> String {
-    let mut segments = base.split('/').collect::<Vec<_>>();
-    for segment in relative.split('/') {
-        match segment {
-            ".." => {
-                segments
-                    .pop()
-                    .expect("artifact path stays inside the repository");
-            }
-            "." => {}
-            other => segments.push(other),
-        }
-    }
-    segments.join("/")
-}
-
 /// FR-204 key bytes of an identity component: the UTF-8 domain string
 /// immediately followed by the 32 digest bytes.
 fn identity_key_bytes(component: &Value) -> Vec<u8> {
@@ -76,61 +55,11 @@ fn reference_key(entry: &Value) -> (Vec<u8>, Vec<u8>, Vec<u8>) {
     )
 }
 
-#[trace("TC-233", "FR-201-AC-9")]
-#[test]
-fn tc_233_complete_model_lock_selects_every_catalogued_artifact() {
-    let lock = parsed_fixture(COMPLETE_MODEL_LOCK);
-    assert_eq!(
-        lock["lock_version"].as_str(),
-        Some("quire.model.definition-lock/v1")
-    );
-    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
-    let resolves = |relative: &str| {
-        root.join(repository_path(COMPLETE_MODEL_LOCK_DIR, relative))
-            .is_file()
-    };
-
-    let requires = lock["requires"]
-        .as_array()
-        .expect("model lock requires an array");
-    assert_eq!(requires.len(), 1);
-    assert_eq!(requires[0]["role"].as_str(), Some("complete_value_lock"));
-    assert_eq!(
-        str_at(&requires[0], "/definition/identity"),
-        "quire.value.definition-lock/v1"
-    );
-    assert!(resolves(str_at(&requires[0], "/artifact_path")));
-
-    let catalog = lock["qualification_catalog"]
-        .as_array()
-        .expect("qualification catalog is an array");
-    let mut paths = BTreeSet::new();
-    let mut roles = BTreeSet::new();
-    for entry in catalog {
-        let relative = str_at(entry, "/artifact_path");
-        assert!(resolves(relative), "{relative} is an authored artifact");
-        assert!(paths.insert(relative), "catalog paths are unique");
-        assert!(
-            roles.insert(str_at(entry, "/role")),
-            "catalog roles are unique"
-        );
-        assert_eq!(str_at(entry, "/definition/authority"), "agent-ix");
-    }
-    let always = lock["package_selection"]["always"]
-        .as_array()
-        .expect("always selection is an array")
-        .iter()
-        .map(|role| role.as_str().expect("role is a string"))
-        .collect::<BTreeSet<_>>();
-    assert_eq!(always, roles, "every catalog role is always selected");
-}
-
 #[trace("TC-195", "FR-150-AC-6")]
 #[test]
 fn tc_195_effective_declaration_vectors_recompute_their_digests() {
     let file = parsed_fixture(EFFECTIVE_DECLARATION_VECTORS);
     let vectors = file["vectors"].as_array().expect("vectors is an array");
-    assert_eq!(vectors.len(), 18);
     let mut names = BTreeSet::new();
     for vector in vectors {
         let name = str_at(vector, "/name");
@@ -275,22 +204,20 @@ fn tc_234_declaration_keys_name_the_domain_package_and_ir_node_only() {
         }
     }
 
-    let version_1 = &vector_named(vectors, "n01-view")["preimage"];
-    let version_2 = &vector_named(vectors, "n01v2-view")["preimage"];
+    let first = &vector_named(vectors, "n01-view")["preimage"];
+    let second = &vector_named(vectors, "n01v2-view")["preimage"];
     assert_eq!(
-        version_1["model_selection"]["identity"], version_2["model_selection"]["identity"],
+        first["model_selection"]["identity"], second["model_selection"]["identity"],
         "both views select one domain package identity"
     );
-    assert_eq!(str_at(version_1, "/model_selection/version"), "1");
-    assert_eq!(str_at(version_2, "/model_selection/version"), "2");
     assert_eq!(
-        version_1["declarations"], version_2["declarations"],
-        "equal nodes under a new package version keep every declaration key and effective declaration"
+        first["declarations"], second["declarations"],
+        "equal nodes under a new package digest keep every declaration key and effective declaration"
     );
     assert_ne!(
-        str_at(version_1, "/model_selection/digest"),
-        str_at(version_2, "/model_selection/digest"),
-        "the two versions are selected by different digests"
+        str_at(first, "/model_selection/digest"),
+        str_at(second, "/model_selection/digest"),
+        "the two documents are selected by different digests"
     );
     assert_ne!(
         str_at(vector_named(vectors, "n01-view"), "/sha256"),

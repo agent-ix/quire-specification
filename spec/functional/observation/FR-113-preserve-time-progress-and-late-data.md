@@ -17,9 +17,8 @@ relationships:
 ## Description
 
 When assessing a timed obligation, the observation service SHALL retain event
-time, ingestion time, selected progress/assertion definition identity, revision,
-and byte digest, declared clock interpretation, progress authority, captured
-trigger identity, late-data cutoff, and any restoration basis before producing a
+time, ingestion time, selected progress/assertion definition identity, declared
+clock interpretation, progress authority, captured trigger identity, late-data cutoff, and any restoration basis before producing a
 settled disposition.
 
 ## Behavior

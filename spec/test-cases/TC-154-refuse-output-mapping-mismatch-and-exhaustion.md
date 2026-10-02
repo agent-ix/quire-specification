@@ -21,7 +21,7 @@ Accepted FS06 portable adverse/resource controls. TM-008 remains Planned.
 Mutate or omit each source/profile/standard/model/semantic/generator identity;
 duplicate obligations/records; cross-wire source regions and target regions;
 overflow aggregate arithmetic; exercise zero, exact and just-over request,
-obligation, node, depth, work, record and output-byte limits; inject cancellation
+obligation, node, work, record and output-byte limits; inject cancellation
 at validation, mapping and assembly.
 
 ## Expected Results

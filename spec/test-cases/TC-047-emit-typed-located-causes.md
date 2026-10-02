@@ -47,7 +47,7 @@ silently relinking the checked subject.
 
 For every supported producer interface, enumerate every member of its closed
 stage vocabulary through the real producer boundary. Then mutate the interface
-revision/digest, add an unknown stage member, reuse a valid label under another
+identity, add an unknown stage member, reuse a valid label under another
 interface and replace the originating pair with a wrapper display stage. Each
 mutation refuses or preserves the original opaque pair as required; no global
 six- or eleven-member fallback is consulted.

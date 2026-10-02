@@ -40,6 +40,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-307
     type: references
+  - target: ix://agent-ix/quire-specification/FR-460
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-461
+    type: references
 ---
 
 # FR-322: Immutable checked-package artifact
@@ -55,7 +59,8 @@ boundary.
 
 ## Properties
 
-- `contract_version` — exactly `quire.checked-package/v2`.
+- `contract_version` — exactly `quire.checked-package/v2`, the document-type
+  tag that tells a checked package apart from every other document.
 - `identity_preimage` — exact `quire.checked-package-id/v2` JCS value whose
   ordered members are `edition`, `profile_selections`, `definition_selections`,
   `model_selections`, `required_features`, `dependency_selections` and the
@@ -75,10 +80,8 @@ boundary.
 - `dependency_selections` — the importing package's resolved library closure
   ([FR-307](../../functional/tooling/FR-307-package-reusable-semantic-libraries.md)):
   one `DependencySelection` per library identity, each
-  `{identity, version, package_id}`, in strictly ascending UTF-8 byte order
-  of `identity`. `identity` is the library identity an `import "L" digest "d"`
-  names, and `version` is the version string of the library supplied under
-  it. A library
+  `{identity, package_id}`, in strictly ascending UTF-8 byte order
+  of `identity`. `identity` is the library identity an import names. A library
   identity is a non-empty string with no segment structure: `/`, `.` and
   every other character are ordinary bytes, and two identities are equal
   only when their UTF-8 bytes are equal. `package_id`
@@ -198,7 +201,7 @@ boundary.
   `quire.op.ieee.total_order` and `quire.op.ieee.bit_identical` are three
   distinct identities, and a structural comparison reaching a float leaf is
   ineligible. A V2 reader refuses the first failing check in the order owned by
-  `quire.native.diagnostics/v1` revision `1-draft.4`: `unknown-operation`,
+  `quire.native.diagnostics/v1`: `unknown-operation`,
   `operation-class-mismatch`, `operation-law-missing`,
   `operation-law-mismatch`, `operation-law-unselected`,
   `operation-mode-mismatch` and `operation-member-mismatch` (code
@@ -360,11 +363,42 @@ steps 2 to 4 report `missing_declaration`/`missing-selection`,
 `invalid_package`/`stale-node-key`, `ambiguous_declaration`/`ambiguous-name`
 and `ill_typed`/`operator-ineligible`.
 Before expensive semantic work, the reader measures raw wire bytes; a byte
-overage returns `incomplete`. It then performs strict syntax/member validation;
-a malformed wire returns `refused`. It charges depth, graph nodes/edges,
-occurrences/loci, diagnostics and validation visits as they are traversed; the
-first exhausted limit returns `incomplete` with its actual counter and no
-admitted package. Equal-limit input is admitted if all later checks succeed.
+overage returns `incomplete`. It then performs strict syntax/member validation,
+including the body grammar below; a malformed wire returns `refused`. It
+charges graph nodes/edges, occurrences/loci, diagnostics and validation visits
+as they are traversed; the first exhausted limit returns `incomplete` with its
+actual counter, its configured bound and its setting name
+([FR-461](../../functional/foundation/FR-461-name-the-limit-value-and-setting.md)),
+and no admitted package. Equal-limit input is admitted if all later checks
+succeed. The reader has no depth limit: the body grammar fixes the JSON depth
+of every package
+([FR-460](../../functional/foundation/FR-460-bound-every-stage-by-resource-limits.md)).
+
+## Body grammar
+
+A node's `body` is drawn from a closed grammar of five strata. No production
+names itself or a higher stratum, so the JSON depth of every V2 package is
+fixed by the schema, whatever the model's size.
+
+| Stratum | Productions |
+| --- | --- |
+| Leaf | `literal`, `reference`, `dependency_reference` |
+| Group | `aggregate` whose members are each a Leaf or a `binding` whose value is a Leaf |
+| Tuple | `aggregate` whose members are each a Leaf or a Group |
+| Member | a Leaf, a Group, or a `binding` whose value is a Leaf, a Group or a Tuple |
+| Body | a Leaf; an `application` whose `arguments` are each a Member; an `aggregate` whose members are each a Member; a `frame` body ([FR-340](FR-340-checked-package-frame-location.md)); or an `abstraction_relation` body ([FR-451](FR-451-checked-package-abstraction-relation-body.md)) |
+
+Every composite subterm is its own node, reached by `reference`: an
+application never stands inside another application's arguments, an
+aggregate's members or a binding's value. The `state_clause`
+([FR-341](FR-341-checked-package-state-clause-body.md)) and `operation_anchor`
+([FR-342](FR-342-checked-package-operation-anchor-body.md)) bodies are Body
+productions. A diagnostic's `details` are each a Member. The node-identity
+preimage of a body follows the same grammar, with `group_reference` as a
+further Leaf, so every body preimage has a schema-fixed depth. A reader
+refuses a body outside the grammar as `malformed_wire`, never as a limit.
+A producer whose expression has a deeper shape emits each composite subterm
+as its own node, so the grammar holds for an expression of any depth.
 
 ## Model-owned members
 
@@ -381,8 +415,8 @@ conformance" below).
    `stale_dependency`/`digest-domain-mismatch`; the caller supplies a
    document under the row's digest, else `missing_import`/`missing-selection`;
    the SHA-256 of the document's RFC 8785 bytes equals that digest, else
-   `stale_dependency`/`byte-digest-mismatch`; and the document's own identity
-   and version equal the row's, else
+   `stale_dependency`/`content-mismatch` with the selected and the recomputed
+   digest; and the document's own identity equals the row's, else
    `invalid_model_binding`/`wrong-model-selection`. The reader then reads the
    document's declarations under FR-154 and normalizes them under the
    `quire.model.complete/v1` rules. The read's refusal is the first refusal
@@ -569,8 +603,9 @@ is admitted only as a state clause's anchor. The `type_argument` member of `quir
 type's family, except that a function reference is `function`, a relation reference is `population`,
 a `dependency_reference` callee has family `function`,
 an aggregate is `aggregate`, a binding is `binder` (whose *bound* is the
-descriptor of its value), a clause application is `clause` and a temporal
-formula application is `temporal`
+descriptor of its value), a clause application is `clause`, a temporal
+formula application is `temporal`, and a reference to a `temporal`/`formula`
+or `temporal`/`fairness` node has the family of its body's root application
 ([FR-370](FR-370-checked-package-temporal-clause-body.md)).
 
 | Group | Families | Decision rule |
@@ -657,21 +692,24 @@ element type.
 
 The key is (`contract_version`, `package_id`); runtime inputs, backend
 availability, filesystem paths, display ordering and diagnostic rendering are
-excluded. A strict reader first validates the selected contract version, closed
-wire shape and canonical bytes, then recomputes all required raw and semantic
-digests before graph admission. Unknown contract versions, missing or duplicate
+excluded. A strict reader first validates the `contract_version` document-type tag, closed
+wire shape and canonical bytes, then recomputes `package_id` from
+`identity_preimage` and each node key from its preimage before graph
+admission. A locked source, definition or domain-package digest is an
+identity member of the lock: it enters `package_id` through the identity
+preimage, and a domain-package digest keys the document the reader reads and
+is the one content check the reader makes on that document ("Model-owned
+members" step 1). A document whose `contract_version` is not
+`quire.checked-package/v2` is not a checked package. Such a document, missing or duplicate
 members, out-of-domain values, stale dependencies, cross-domain substitutions,
 unknown required features and non-canonical encodings refuse before consumption.
 An unknown object member is a V2 refusal. An unrecognized `node_tag` refuses
-as `unsupported_node_tag` (QSL ADR-013 O-14, QC-19). While
-`quire.checked-semantic-graph/v2` is prerelease, QSpec revises this closed
-`node_tag` set in place, adding a tag with no `contract_version` bump; a
-reader refuses a `node_tag` outside its currently-selected set explicitly
-with `unsupported_node_tag` rather than admitting or inferring it. A transport relay may
-retain raw bytes selecting a newer graph revision without interpreting them;
-that is not an admitted V2 package and a V2 lowerer refuses it. A reader
-refuses any unrecognized `contract_version` rather than inferring the missing
-identity evidence for it. Exact selected resource limits are admitted;
+as `unsupported_node_tag` (QSL ADR-013 O-14, QC-19). QSpec revises the closed
+`node_tag` set in place; a reader refuses a `node_tag` outside the set
+explicitly with `unsupported_node_tag` rather than admitting or inferring it.
+A reader refuses a document with any other `contract_version` as
+`unknown_contract_version`, the refusal that the document is not a checked
+package, and infers nothing from its content. Exact selected resource limits are admitted;
 one-over-limit input returns an incomplete resource disposition without a
 partial checked package.
 
@@ -682,14 +720,14 @@ partial checked package.
 | FR-322-AC-1 | Every admitted semantic occurrence maps to at least one original source region. | Analysis |
 | FR-322-AC-2 | Changing backend capability availability cannot change package admission or package identity. | Analysis |
 | FR-322-AC-3 | Changing a meaning-affecting lock member changes the package identity. | Analysis |
-| FR-322-AC-4 | The public reader refuses unknown versions, malformed/duplicate members, stale dependencies, cross-domain digest substitutions, unknown required capabilities and non-canonical bytes before exposing an admitted package. | Test (TC-217) |
-| FR-322-AC-5 | The canonical positive, boundary, refusal and mutation vectors distinguish raw source byte digests and domain package `sha256-jcs` digests from checked-semantic and generated-IR identities, even when digest bytes are equal. | Test (TC-217) |
-| FR-322-AC-6 | Exact selected limits admit the boundary vector; one-over-byte, depth, node, edge, locus, diagnostic and work inputs return incomplete resource accounting and no partial checked package. | Test (TC-217) |
+| FR-322-AC-4 | The public reader refuses a document that is not a checked package (`unknown_contract_version`), malformed/duplicate members, stale dependencies, cross-domain digest substitutions, unknown required capabilities and non-canonical bytes before exposing an admitted package. | Test (TC-217) |
+| FR-322-AC-5 | The canonical positive, boundary, refusal and mutation vectors distinguish raw source and definition byte digests and domain package `sha256-jcs` digests from checked-semantic and generated-IR identities, even when digest bytes are equal. | Test (TC-217) |
+| FR-322-AC-6 | Exact selected limits admit the boundary vector; one-over-byte, node, edge, locus, diagnostic and work inputs return incomplete resource accounting naming the limit, its value and its setting, and no partial checked package. | Test (TC-217) |
 | FR-322-AC-7 | A consumer obtains the complete closed semantic graph through the public schema and never through a native parser/CST/package implementation type. | Inspection |
 | FR-322-AC-8 | Two conformers derive the same package id from the specified JCS identity preimage; changing an excluded raw artifact/source-map/presentation or reader-limit member does not change it, while changing any named preimage member does. | Test (TC-217) |
 | FR-322-AC-9 | The reader result is exactly admitted, refused or incomplete; malformed input and the first exhausted measured limit remain distinguishable and carry their specified typed provenance/accounting. | Test (TC-217) |
 | FR-322-AC-10 | Enum, dimension and declared-unit node keys match the closed JCS preimage vectors; stale-body keys, non-normalized rationals, invalid owner joins and every other noncanonical member or term order this artifact refuses -- including an application node's `dependencies` list -- refuse as `invalid_semantic_graph`, except a `state`/`frame` node's own `modifies`/`creates`/`deletes` canonical order, which [FR-340-AC-4](FR-340-checked-package-frame-location.md) owns. | Test (TC-217) |
-| FR-322-AC-13 | The published V2 checked-package schema admits its positive fixture carrying all 13 closed node tags with an exact source-map entry for every occurrence, and refuses each authored version, digest-domain and node mutation. | Test (TC-233) |
+| FR-322-AC-13 | The published V2 checked-package schema admits its positive fixture carrying all 13 closed node tags with an exact source-map entry for every occurrence, and refuses each authored document-type, digest-domain and node mutation. | Test (TC-233) |
 | FR-322-AC-14 | Each published V2 package fixture's `package_id` equals the RFC 8785 JCS SHA-256 of the identity preimage rebuilt from its lock selections and occurrence-free semantic graph; editing a source-map region, node source occurrence, raw source digest, capability disposition or diagnostic catalog leaves that id unchanged, while editing the edition, a profile/definition/model/dependency selection, a required feature, a node member or node order changes it. | Test (TC-233) |
 | FR-322-AC-15 | Each published enum, dimension and declared-unit node vector validates against the closed preimage schema and recomputes its recorded JCS SHA-256; each authored semantic mutation is refused by exactly its named schema or semantic check, an absent owner fails the package lock join, and inside the published nominal package a retained preimage with a changed body, type, dependency or unjoined owner is refused by the published cross-field or owner-join constraint. | Test (TC-233) |
 | FR-322-AC-17 | The published operation catalog is closed: both V2 schemas carry identical operation definitions and enumerate exactly its identities, law roles, mode kinds and values, member kinds and operator classes; every law-role `DefinitionRef` names a complete-value lock definition by authority and identity; every entry's operands, rest, result form, laws, mode, member, leaf source and constraints use only catalogued families, groups and kinds; integer `div`/`rem` require the integer-division law and `mod` none, IEEE operations require the IEEE profile and have no `eq`, `ne`, ordering or `negate` identity, text operations require the text profile and text mode, `all_instances` takes one population, `lookup` requires an absence mode, `navigate` and `reaches` a relationship end, `reaches_field` a `field` member and the `reference_edge` constraint, `quire.op.state.clause` the `state_clause` member kind and no law, and the record, tuple and index projections, numeric/total-order/bit-identical IEEE comparisons, `deref` and `dispatch_call` are present. | Test (TC-233) |
@@ -701,18 +739,23 @@ partial checked package.
 | FR-322-AC-24 | The FR-149 conversion classification is decided from declared bounds: an integer range into a containing integer or rational range is exact, an integer range whose scaled bounds exceed a decimal range is range narrowing, a decimal of scale 3 into scale 2 is scale reduction and a rational into narrower rational bounds is rational narrowing; `quire.op.rational.div` over integer-range operands carries `promotes_exact` and its published vector is admitted, while a decimal operand refuses as `operator-ineligible`. | Test (TC-233) |
 | FR-322-AC-25 | An `operation` member resolves only against a declaring `model` node of `semantic_form` `object_type`, `process`, `state_machine` or `persistence_interface`; every other model form, including `systems_interface`, refuses `operator-ineligible`/`ill_typed`. | Test (TC-233) |
 | FR-322-AC-26 | A reference to a dependency package's node is carried as `PackageNodeKey{package, node}`, where `node` is a `WireNodeId`; per R-10 it becomes a `NodeKey` only by lookup in a checked package compiled from digest-addressed source, never minted directly from wire bytes in either the dependency's or the importing package's namespace, and a reader resolves it only against the named dependency's admitted package, refusing a `package` absent from `dependency_selections` as `missing_declaration`/`missing-selection`. | Analysis |
-| FR-322-AC-27 | An unrecognized `node_tag` refuses as `unsupported_node_tag`; while `quire.checked-semantic-graph/v2` is prerelease, QSpec revises the closed `node_tag` set in place with no `contract_version` bump per addition. | Analysis |
+| FR-322-AC-27 | An unrecognized `node_tag` refuses as `unsupported_node_tag`, and QSpec revises the closed `node_tag` set in place. | Analysis |
 | FR-322-AC-28 | A `ModelOwner` node-identity preimage carries the declaring domain package's `identity` beside `node` and no version label, so a node id depends only on content; the published `ModelOwner` vectors validate against the closed preimage schema and recompute their recorded JCS SHA-256, and a `ModelOwner` preimage that carries a `version` member is refused by the closed preimage schema. | Test (TC-279) |
 | FR-322-AC-29 | Each published model declaration node vector validates against the closed `ModelDeclarationNode` preimage schema and recomputes its recorded JCS SHA-256. A reader recovers a declaring node's `ModelOwner` only from a lock-selected domain package with the node's own tag and form, so `Order`'s node keyed under an unselected domain package, and the relationship node's id carried by a `model` node, refuse `missing_declaration`/`missing-selection`. A matched node whose `semantic_type` is not its own id, or that carries a `declaration` or a `recursion_group`, or whose body has members, refuses `invalid_package`/`stale-node-key`. | Test (TC-280) |
 | FR-322-AC-30 | A model-owned `field` or `operation` member resolves among the declaring type's exposed effective members, own and inherited. A field declared by a supertype resolves on the subtype's node, and a redefined operation resolves to the most derived redefinition. An operation on a `systems_interface` node refuses `ill_typed`/`operator-ineligible`. Two exposed fields of one name refuse `ambiguous_declaration`/`ambiguous-name`. An undeclared name, a name of the other member kind and a relationship declaring node each refuse `ill_typed`/`operator-ineligible`. | Test (TC-280) |
 | FR-322-AC-31 | A resolved model member's type follows the declared-type, multiplicity and presence tables. The derived types are `Int[0, 9]` from an integer value type, `Integer` from a constrained native `Integer`, `Option<Boolean>`, `Set<Integer>[0, 3]`, `Sequence<Integer>[0, 5]`, `Set<Integer>[0, 1]`, `Set<Integer>` for `[0, unbounded]`, `Reference<Invoice>` and an operation's `Integer` result. A `Text` field, a `[1, unbounded]` field and an operation with no result each refuse `ill_typed`/`operator-ineligible`. So does a call whose receiver is not a reference to the declaring node, or whose arguments differ in number or type node from the operation's parameters. | Test (TC-280) |
-| FR-322-AC-32 | A lock-selected domain package document is checked as evidence before graph admission: a document supplied under the selected digest with matching identity and version passes the selection admission checks, while a digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`, no document refuses `missing_import`/`missing-selection`, an altered document `stale_dependency`/`byte-digest-mismatch` and a document whose version differs from the selection `invalid_model_binding`/`wrong-model-selection`. | Test (TC-280) |
+| FR-322-AC-32 | A lock-selected domain package document is checked as evidence before graph admission: a document supplied under the selected digest with matching identity passes the selection admission checks, while a digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`, no document refuses `missing_import`/`missing-selection` and a document whose identity differs from the selection `invalid_model_binding`/`wrong-model-selection`. | Test (TC-280) |
 | FR-322-AC-33 | `quire.op.reference.eq` and `quire.op.reference.ne` admit two references to selected object types of which one conforms to the other along declared supertypes: two of one type, a subtype and its supertype in either operand order, a subtype two levels down, and a type with two supertypes against either. A systems interface with no declared supertype against an unrelated object type, two unrelated object types, a reference to a relationship, even compared with itself, and an operand of family `object` refuse `ill_typed`/`operator-ineligible`. An operand whose owner is not selected refuses `missing_declaration`/`missing-selection`, even compared with itself. | Test (TC-281) |
 | FR-322-AC-34 | `quire.op.record.project` over a `quire.op.model.deref` result reads a field of a model object: the `deref` result has family `object`, the projection resolves the field on the declaring object type, own or inherited, and its result is the field's member type. A projection over a reference that is not dereferenced, a `field` member naming a node other than the operand's object type, a `deref` whose `result_type` is not the operand's object type, a `deref` result of a relationship, and a projection whose `result_type` is not the field's member type refuse `ill_typed`/`operator-ineligible`. | Test (TC-281) |
-| FR-322-AC-35 | A `dependency_selections` entry is a closed `DependencySelection` `{identity, version, package_id}` whose `package_id` is a `quire.package.semantic/v2` `PackageId`: the published package carrying two such entries, one per identity in ascending identity order in both its lock and identity preimage, is admitted by the V2 schema and its recorded `package_id` recomputes from them, and changing a dependency's `package_id` changes it; an entry with a `Selection` or `DefinitionRef` shape, no `package_id`, no `version`, a bare-digest `package_id` or a `package_id` in another digest domain fails the schema in either member, at the mutated entry. Entries ordered by UTF-8 bytes where UTF-16 code-unit order differs are admitted; a second entry of one identity refuses `invalid_package`/`conflicting-definition` with both entries as loci, and an entry not strictly after its predecessor refuses `invalid_package`/`invalid-value` at its pointer. | Test (TC-233) |
+| FR-322-AC-35 | A `dependency_selections` entry is a closed `DependencySelection` `{identity, package_id}` whose `package_id` is a `quire.package.semantic/v2` `PackageId`: the published package carrying two such entries, one per identity in ascending identity order in both its lock and identity preimage, is admitted by the V2 schema and its recorded `package_id` recomputes from them, and changing a dependency's `package_id` changes it; an entry with a `Selection` or `DefinitionRef` shape, no `package_id`, a bare-digest `package_id` or a `package_id` in another digest domain fails the schema in either member, at the mutated entry. Entries ordered by UTF-8 bytes where UTF-16 code-unit order differs are admitted; a second entry of one identity refuses `invalid_package`/`conflicting-definition` with both entries as loci, and an entry not strictly after its predecessor refuses `invalid_package`/`invalid-value` at its pointer. | Test (TC-233) |
 | FR-322-AC-36 | A `{term: "dependency_reference", package, node}` term whose `package` is a `quire.package.semantic/v2` `PackageId` and whose `node` is a `NodeId` is admitted by the V2 schema as an application argument and by the node-identity preimage schema as a preimage term; a `package` given as a bare digest or in another digest domain, a missing `node` and an extra member each fail both schemas. A `quire.op.function.call` application-node preimage whose callee is a `dependency_reference` has a different JCS SHA-256 when only the reference's `package` digest changes, and a different one again when only its `node` changes. | Test (TC-233) |
 | FR-322-AC-37 | A package whose function calls a dependency `function` declaration over `Int[0, 9]` returning `Boolean`, through a `dependency_reference` callee, with the Boolean node as `result_type` and no `dependencies` entry for the target, is admitted when the dependency's admitted package is supplied. With no dependency package supplied it refuses `missing_import`/`missing-selection` at the selection entry; with the callee's `package` absent from `dependency_selections`, `missing_declaration`/`missing-selection`; with `node` naming a node that carries no `declaration`, `missing_declaration`/`missing-name`; with `node` naming a declared record, a function returning a declared record, a function over `Set<R>` or over a tuple holding `R` for a declared record `R`, a function over `Reference<M::T>` for a model type `M::T`, or with the term as a non-callee argument or as a node body root, `ill_typed`/`operator-ineligible`; with the target listed in `dependencies`, `invalid_semantic_graph`. | Test (TC-233) |
 | FR-322-AC-38 | `quire.op.model.reaches_field` admits a field edge of the owner's own reference type: `Order.parent` (`Option<Reference<Order>>`), `Order.prior` (`Sequence<Reference<Order>>[0, 3]`) and `Order.origin` (`Reference<Order>`), the inherited `parent` read on `Sub`, and a target of a subtype of `Order`. A set edge, an unbounded sequence edge, an edge to another object type, a non-reference field, a target of an unrelated type, an operand 0 of a type other than the member's declaring node, an undeclared field name and an operand of family `object` refuse `ill_typed`/`operator-ineligible`; an ambiguous field name refuses `ambiguous_declaration`/`ambiguous-name`, and a declaring node keyed under an unselected domain package version `missing_declaration`/`missing-selection`. | Test (TC-281) |
+| FR-322-AC-39 | Every node body of every published V2 package and every node-identity vector conforms to the five-stratum body grammar, and the V2 schema and the node-identity preimage schema each admit exactly that grammar. | Test (TC-427) |
+| FR-322-AC-40 | A body carrying an application inside an application's arguments, an application or a binding of an aggregate inside an aggregate's members, or an aggregate inside a Group's members fails the V2 schema and is refused `malformed_wire`, and the same meaning with each composite subterm as its own referenced node is admitted. | Test (TC-427) |
+| FR-322-AC-41 | A package holding a 100,000-deep expression has the same JSON nesting depth as a package holding a one-level expression, is emitted, read back and admitted under node, edge and byte limits sized for its node count, and no reader limit or effective-limit record names a depth. | Test (TC-427) |
+| FR-322-AC-42 | A package whose lock names source and definition digests is admitted with no source or definition bytes and no digest evidence supplied. | Test (TC-427) |
+| FR-322-AC-43 | A domain-package document supplied under its selection's digest with the selection's identity, but altered so that the SHA-256 of its RFC 8785 bytes differs from that digest, refuses `stale_dependency`/`content-mismatch` naming the selected and the recomputed digest, before its identity is compared and before any declaration is read; the unaltered document passes. | Test (TC-280) |
 
 ## Dependencies
 

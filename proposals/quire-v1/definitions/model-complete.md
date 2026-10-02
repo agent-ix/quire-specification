@@ -1,6 +1,6 @@
 # Complete model definition
 
-Definition identity: `quire.model.complete/v1`; revision: `1-draft.2`.
+Definition identity: `quire.model.complete/v1`.
 Language: `ix:native` / `1-draft`. This definition is the complete-V1 model,
 inheritance, conformance, dispatch, systems-model and closed-environment root.
 Implementation and qualification remain separately reported.
@@ -11,12 +11,12 @@ Every package that selects this root also selects the complete-value root and
 its always-selected closure through
 [`complete-value-lock.json`](complete-value-lock.json), and:
 
-| Identity | Revision | Definition artifact |
-| --- | --- | --- |
-| `quire.state.graph/v1` | `1-draft.3` | [Finite graphs](state-graph.md) |
-| `quire.model.complete.rules/v1` | `1-draft.2` | [Normalization rules](model-complete-rules.json) |
-| `quire.model.effective-declaration.schema/v1` | `1-draft.2` | [Effective identity schema](../../checked-package-v2/model-effective-declaration.schema.json) |
-| `quire.model.effective-declaration.vectors/v1` | `1-draft.2` | [Effective identity vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
+| Identity | Definition artifact |
+| --- | --- |
+| `quire.state.graph/v1` | [Finite graphs](state-graph.md) |
+| `quire.model.complete.rules/v1` | [Normalization rules](model-complete-rules.json) |
+| `quire.model.effective-declaration.schema/v1` | [Effective identity schema](../../checked-package-v2/model-effective-declaration.schema.json) |
+| `quire.model.effective-declaration.vectors/v1` | [Effective identity vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
 
 The accounting role is `quire.value.accounting/v1`, already selected by the
 complete-value root. Its model and graph charge points and its
@@ -24,8 +24,7 @@ complete-value root. Its model and graph charge points and its
 QSL `quire.state.evaluation-work/1` counter set is not selected: a package
 selecting this root is evaluated and checked only under
 `quire.value.accounting/v1`, and no caller limit is clamped to a default.
-Diagnostics are interpreted by `quire.native.diagnostics/v1` at revision
-`1-draft.3` or later; that catalog is selected by the response, not by this
+Diagnostics are interpreted by `quire.native.diagnostics/v1`; that catalog is selected by the response, not by this
 root.
 
 A package that selects this root has dynamic dispatch, inheritance and
@@ -44,11 +43,11 @@ serialized with RFC 8785 JCS and fingerprinted with `sha256-jcs`.
 A package imports a domain package with a `model` declaration:
 
 ```text
-model Orders = "acme/orders" version "1" digest "<64 lowercase hex digits>";
+model Orders = "acme/orders" digest "<64 lowercase hex digits>";
 ```
 
 The import is a ModelSelection (FR-321):
-`{identity, version, digest_domain: "sha256-jcs", digest}`. It is part of the
+`{identity, digest_domain: "sha256-jcs", digest}`. It is part of the
 package identity. QSL model intake admits the domain package and builds the
 Quire model declarations from its IR nodes. Quire owns the meaning of every
 declaration. Clauses name a declaration by qualified name: the model alias,
@@ -59,15 +58,15 @@ then the segments of its IR node identity after the package identity, such as
 
 Rule `quire.model.normalize.intake/v1` admits one domain package. The package
 input is a map from `sha256-jcs` digest to package bytes. Intake looks up the
-bytes by the selected digest, recomputes their digest, and then reads the
-package's own identity and version. It runs these checks in order. Each failure ends intake with no declaration.
+bytes by the selected digest, recomputes their canonical `sha256-jcs` digest,
+and then reads the package's own identity. It runs these checks in order. Each failure ends intake with no declaration.
 
 | Check | Refusal |
 | --- | --- |
 | The selection's digest domain is exactly `sha256-jcs` | `stale_dependency`/`digest-domain-mismatch` with the expected and actual domain |
 | The package input supplies bytes under the selected digest | `missing_import`/`missing-selection` with the ModelSelection |
-| SHA-256 over the package's JCS bytes equals the selected digest | `stale_dependency`/`byte-digest-mismatch` with the expected and actual digest |
-| The package's own identity and version equal the selection | `invalid_model_binding`/`wrong-model-selection` with both |
+| SHA-256 over the supplied document's RFC 8785 JCS bytes equals the selected digest | `stale_dependency`/`content-mismatch` with the selected and the recomputed digest |
+| The package's own identity equals the selection's | `invalid_model_binding`/`wrong-model-selection` with both |
 
 Intake then reads each IR node and builds one original declaration per node.
 Nodes are read ascending by declaration key. A node that is not a valid IR
@@ -190,10 +189,11 @@ digest or an I04 node key, even with equal digest bytes.
 | `quire.model.object-universe/v1` | `{version, model_selection, root_types}` | The object universe shared by a connected generalization component. |
 
 A declaration key carries no digest. An effective declaration identity binds
-declaration keys and derivation facts only. Two versions of one domain package
-with equal nodes therefore yield equal effective declaration identities, while
-their effective views and object universes differ: the vectors `n01v2-view`
-and `n01v2-universe` select F1's nodes as version `2`, carry declarations
+declaration keys and derivation facts only. Two domain package documents
+with equal nodes and different digests therefore yield equal effective
+declaration identities, while their effective views and object universes
+differ: the vectors `n01v2-view` and `n01v2-universe` select F1's nodes under
+the digest `n01v2`, carry declarations
 byte-equal to `n01-view`'s, and differ from `n01-view` and `n01-universe`.
 Equal nodes in two different packages under one identity also share effective
 declaration identities, as `n01-type-A` and `n02-type-A` show. Every use that must separate selections pairs the effective
@@ -210,7 +210,7 @@ different original declarations never collapse, whatever their names or
 shapes.
 
 `derivation` is the ordered array of the declaration's own facts. Each fact is
-`{ordinal, rule, inputs}`: `rule` is `{identity, revision}` from the manifest's
+`{ordinal, rule, inputs}`: `rule` is `{identity}` from the manifest's
 `normalization_rules`; `inputs` is the ordered array of declaration keys the
 fact consumed; and `ordinal` is the fact's zero-based decimal-string position
 in the array. Facts are ordered by phase, then by `inputs` compared element by
@@ -254,7 +254,7 @@ type only: an upcast never changes the triple.
 
 ## Normalization rules
 
-Each manifest `normalization_rules` entry names a rule identity, revision,
+Each manifest `normalization_rules` entry names a rule identity,
 `stage` (`normalization`, `conformance`, `dispatch`, `systems` or
 `environment`), `phase` (an integer for the `normalization` stage, otherwise
 `null`) and the artifact that defines it. Normalization applies the manifest's
