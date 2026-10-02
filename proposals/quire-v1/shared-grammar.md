@@ -439,7 +439,7 @@ of these forms.
 ### Complete temporal, choreography and analysis forms
 
 ```ebnf
-interval      = '[', uint, ',', uint, ']' ;
+interval      = '[', uint, ',', ( uint | '*' ), ']' ;
 temporal-clause = 'temporal', ident, 'using', ident,
                   'over', '(', parameter, ')', 'clock', string,
                   activation, '{', { fairness }, { capture },
@@ -507,8 +507,9 @@ verification-step = 'check', ident, 'claim', qualified-name,
                     [ 'bound', uint ], ';' ;
 ```
 
-An interval always has two integer bounds; an unbounded operator is written
-with no interval
+An interval is a closed `[a,b]` or a lower-bounded `[a,*]`; `[a,*]` is
+admitted only on a clause that selects `quire.temporal.infinite-trace/v1`, and
+an unbounded operator is written with no interval
 ([FR-367](../../spec/functional/temporal/FR-367-evaluate-interval-operators-under-infinite-trace.md)).
 `fair`, `weak`, `strong`, `whole`, `terminal` and `any` are reserved words of
 the temporal facet. A `fairness` constraint is admitted only on a clause that

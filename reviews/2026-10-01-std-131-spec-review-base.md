@@ -97,6 +97,16 @@ deletion by #174. They are not reviewed here as a finding.
 | --- | --- | --- | --- |
 | FND-018 | medium | 9b9114e makes FR-370 state that the catalog holds the `temporal` family "a member of the `any_term` group" (the qvc#11 catalog does). FR-322's group table, which defines each group's families, still lists `any_term` as "`any_value` plus `function`, `population`, `aggregate`, `binder`, `clause`", and FR-322's term-family rule names no `temporal` family. The two FRs now disagree on `any_term`'s membership. Add `temporal` to FR-322's `any_term` row and its term-family rule, citing FR-370. | FR-322:565, FR-322:557-560, FR-370:153-154 |
 
+
+## New findings (disposition pass 4)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-019 | high | 650f034 admits `[a,*]` under infinite-trace in FR-048, FR-367 and FR-370 and in both V2 schemas. The shared grammar #170 rewrites still has `interval = '[', uint, ',', uint, ']'` with no `*`, and its note says "An interval always has two integer bounds; an unbounded operator is written with no interval". The grammar refuses the form the FRs admit. | proposals/quire-v1/shared-grammar.md:442,510 |
+| FND-020 | medium | #170 rewrites the FR-250 `quire.temporal.infinite-trace/v1` row, but the row still says "Selecting this profile is the sole way to admit the unbounded temporal operator grammar edition". That is the claim the SR-1170 FND-004 fix removed from FR-250-AC-6 and FR-090-AC-7. The row also names only closed `[a,b]` interval operators, as FR-090:53 does, with no lower-bounded operator. | spec/objects/temporal/FR-250-temporal-semantic-profile.md:37; spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md:53 |
+| FND-021 | medium | FR-364's `interval` member is `null` under infinite-trace. Interval and lower-bounded operators exist under infinite-trace (FR-367), and replay step 5 checks that `interval` equals the interval of the clause's operator. An infinite-trace formula counterexample falsified at an interval operator either refuses `content-mismatch` or has a vacuous check, and the `{lower, upper: null}` shape is not listed. | spec/functional/temporal/FR-364-replay-temporal-counterexamples.md:75,143 |
+| FND-022 | medium | FR-363 brings an undefined state constraint under the refuted rule, with the FR-364 undefined-evaluation counterexample. FR-364 replay step 6 names only the claim, a guard and `terminal when`, so a state-constraint counterexample has no replay rule and cannot settle `reproduced-with-evaluated-witness`. | spec/functional/temporal/FR-363-settle-every-behaviour-temporal-verdicts.md:124; spec/functional/temporal/FR-364-replay-temporal-counterexamples.md:152 |
+
 ## Dispositions
 
 | FND | outcome | sha/reason |
@@ -120,3 +130,9 @@ deletion by #174. They are not reviewed here as a finding.
 | FND-015 | fixed | 9b9114e |
 | FND-016 | fixed | 9b9114e |
 | FND-017 | fixed | 9b9114e |
+
+Round 4, reviewed at 650f03478f5b3d976553460b13aea01f4745289c (squashed onto main ae02648). Stacked #172 at dbcb527 with an uncommitted path `[patch]` to qvc#11 at 02cb972: `cargo test --locked --no-fail-fast` exits 0 (lib 0, model 4, v2 59, member 10, shared 7). Cargo.lock was restored and target deleted. The SR-1170 items #170 owns were checked at 650f034: the one model-side undefined rule (FR-363, FR-366, FR-365 tie), FR-364 owning every arm with the kebab `undefined-evaluation` envelope and the observed arm, the FR-090-AC-7 and FR-250-AC-6 wording that names the bounded profiles and leaves timed to #175, `content-mismatch` for a post-state matching no successor, and `[a,*]` admitted under infinite-trace and `unsupported_construct` under the bounded profiles. They hold, except FND-019..022 above.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-018 | fixed | 00f757a |

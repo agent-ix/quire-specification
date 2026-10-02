@@ -41,6 +41,9 @@ subject. Derive:
 12. Step 10's counterexample with its third document missing from the
     provision.
 13. Step 10's counterexample with `interval` `{lower: "0", upper: "2"}`.
+14. An infinite-trace formula counterexample for `eventually[2,*] holds(p)`
+    with `interval` `{lower: "2", upper: null}`, replayed against that clause
+    and against `eventually[3,*] holds(p)`.
 
 ## Expected Results
 
@@ -65,3 +68,6 @@ subject. Derive:
 12. Refuses `invalid_runtime_input`/`invalid-value` (FR-364-AC-9).
 13. Refuses `stale_dependency`/`content-mismatch` naming `interval`
     (FR-364-AC-9).
+14. Against `eventually[2,*] holds(p)` the interval check passes and replay
+    evaluates the formula; against `eventually[3,*] holds(p)` it refuses
+    `stale_dependency`/`content-mismatch` naming `interval` (FR-364-AC-9).

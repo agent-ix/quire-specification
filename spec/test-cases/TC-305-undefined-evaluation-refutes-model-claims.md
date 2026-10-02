@@ -57,6 +57,9 @@ value 0, and the operation `drop` that removes `d` from `counters`. `rd` is a
     over a subject whose one operation `inc_drop` increments `c` and removes
     `d` in one step, so the state after it makes the first conjunct false and
     the second undefined.
+11. Give the subject with `drop` the state constraint
+    `(lookup<Cnt::Counter>(counters, rd) absent undefined).value <= 3`,
+    check `always holds(c.value <= 3)`, then replay its counterexample.
 
 ## Expected Results
 
@@ -100,3 +103,9 @@ value 0, and the operation `drop` that removes `d` from `counters`. `rd` is a
 10. The reported cause is `undefined-evaluation` and the counterexample is the
     undefined-evaluation one ending at the state after `inc_drop`
     (FR-363-AC-9, FR-365-AC-6).
+11. The constraint evaluates undefined at the state after `drop`: the item
+    settles `refuted`, cause `undefined-evaluation`, with `where` naming
+    position 1, its state-key digest and the constraint's locus. Replay
+    re-evaluates the constraint at the state `where.state_key` names and
+    reproduces the undefined value: `reproduced-with-evaluated-witness`
+    (FR-363-AC-9, FR-364-AC-8).

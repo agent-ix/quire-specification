@@ -72,7 +72,7 @@ this table does not list refuses before replay.
 | `loop` | the ordered steps of the loop; empty for a finite prefix |
 | `over_binding` | model arm: the reference of the object the clause's `over` parameter is bound to, `null` for `kind: deadlock`; observed arm: `null` |
 | `fairness` | the item's resolved fairness set, each member `{kind, operation, granularity}` with `kind` `weak` or `strong` and `granularity` `whole` or `each`, in fairness-set order; empty for `kind: deadlock` |
-| `interval` | under a bounded profile, the `{lower, upper}` interval of the interval operator whose evaluation is false at `trace_position`; `null` under infinite-trace, for `kind: deadlock` and for the undefined-evaluation envelope |
+| `interval` | for `kind: formula`, the interval of the formula's first interval-carrying operator in pre-order: `{lower, upper}` for a closed interval `[a,b]` and `{lower, upper: null}` for a lower-bounded interval `[a,*]`, under every profile; `null` when the formula has no interval-carrying operator, for `kind: deadlock` and for the undefined-evaluation envelope |
 | `trace_position` | for `kind: formula`, the position at which the evaluator returns false; for the undefined-evaluation envelope, the position of its `where`, which is the prefix's last position; `null` for `kind: deadlock` |
 
 A model-arm step is `{transition, post_state}`: `transition` is the step's
@@ -140,9 +140,12 @@ The replayer SHALL, in this order:
    `unsupported_projection`/`missing-fairness-premise`, naming its first
    constraint, with no formula evaluated, since an observed trace carries no
    enabledness (FR-362).
-5. For `kind: formula`, check that `interval` equals the interval of the
-   clause's operator at that place, else refuse
-   `stale_dependency`/`content-mismatch` naming `interval`; then evaluate the
+5. For `kind: formula`, compute the interval of the re-admitted clause's
+   first interval-carrying operator in pre-order, in the same shape
+   (`{lower, upper}`, `{lower, upper: null}` or `null`), and check that
+   `interval` equals it member by member, so a counterexample produced for
+   another interval of the same clause is refused; else refuse
+   `stale_dependency`/`content-mismatch` naming `interval`. Then evaluate the
    clause's formula over the behaviour with the trace evaluator. A lasso
    denotes the infinite trace that repeats its loop forever: a position past
    the represented steps reads the position congruent to it modulo the loop
@@ -151,8 +154,10 @@ The replayer SHALL, in this order:
    result disagrees.
 6. For the undefined-evaluation envelope, evaluate at `where` the expression
    its `locus` names: the clause's formula over the prefix for a claim, the
-   guard of `where.transition` at the last state for a guard, or the
-   `terminal when` predicate at the last state. The undefined value at
+   guard of `where.transition` at the last state for a guard, the
+   `terminal when` predicate at the last state, or the state constraint at
+   the last state, the state `where.state_key` names, for a state constraint.
+   The undefined value at
    `trace_position`, with the envelope's own `locus` and `cause`, agrees with
    the engine. Replay reads both from the counterexample, never from the item.
    A defined value there, or an undefined value at another position,
@@ -183,8 +188,8 @@ counterexamples an engine returned.
 | FR-364-AC-5 | A lasso that fails a weak or a strong constraint of its fairness set, with enabledness recomputed from the model, refuses as an unfair lasso naming the constraint and settles no `refuted`. | Test (TC-295, TC-299) |
 | FR-364-AC-6 | A counterexample on which the evaluator returns true at `trace_position` settles `inconclusive`, cause `replay-parity`; a deadlock counterexample whose last state enables a transition or satisfies `P` settles the same. | Test (TC-295, TC-297) |
 | FR-364-AC-7 | A lasso whose formula reads a past operator across the loop boundary evaluates by the infinite trace the lasso denotes. | Test (TC-200) |
-| FR-364-AC-8 | A counterexample of an undefined evaluation is a finite prefix with an empty `loop`, a `kind` that is the envelope `{"type": "undefined-evaluation", "where", "cause"}` and `trace_position` at its last position; its replay reproduces the undefined value with the locus and reason the envelope carries, read from the counterexample alone, settling `reproduced-with-evaluated-witness` and the item `refuted` with cause `undefined-evaluation`; a `trace_position` at which the expression is defined settles `inconclusive`, cause `replay-parity`. | Test (TC-305) |
-| FR-364-AC-9 | An observed-arm formula counterexample whose documents are held by the byte provision, with an empty `fairness`, replays over the documents' trace and settles `reproduced-with-evaluated-witness` when the formula is false at `trace_position`; the same counterexample with a non-empty `fairness` settles `unsupported`, cause `missing-fairness-premise`, with no formula evaluated; a step digest the provision does not hold refuses `invalid_runtime_input`/`invalid-value`; an `interval` unequal to the clause's refuses `stale_dependency`/`content-mismatch` naming `interval`. | Test (TC-295) |
+| FR-364-AC-8 | A counterexample of an undefined evaluation is a finite prefix with an empty `loop`, a `kind` that is the envelope `{"type": "undefined-evaluation", "where", "cause"}` and `trace_position` at its last position; its replay re-evaluates the claim, guard, `terminal when` predicate or state constraint the locus names at the reported state and reproduces the undefined value with the locus and reason the envelope carries, read from the counterexample alone, settling `reproduced-with-evaluated-witness` and the item `refuted` with cause `undefined-evaluation`; a `trace_position` at which the expression is defined settles `inconclusive`, cause `replay-parity`. | Test (TC-305) |
+| FR-364-AC-9 | An observed-arm formula counterexample whose documents are held by the byte provision, with an empty `fairness`, replays over the documents' trace and settles `reproduced-with-evaluated-witness` when the formula is false at `trace_position`; the same counterexample with a non-empty `fairness` settles `unsupported`, cause `missing-fairness-premise`, with no formula evaluated; a step digest the provision does not hold refuses `invalid_runtime_input`/`invalid-value`; an `interval` unequal to the clause's refuses `stale_dependency`/`content-mismatch` naming `interval`, and an infinite-trace formula counterexample for `eventually[2,*] holds(p)` carries `interval` `{lower: "2", upper: null}` and is refused the same way against the clause `eventually[3,*] holds(p)`. | Test (TC-295) |
 
 ## Dependencies
 

@@ -49,8 +49,9 @@ The event-position profile shall not claim elapsed time. The infinite-trace
 profile composes the event-position sequence authority without its
 false-extension closure and likewise shall not claim elapsed time.
 
-The infinite-trace profile shall admit both unbounded temporal operators and
-interval operators with a closed interval `[a,b]`, nested in any order
+The infinite-trace profile shall admit unbounded temporal operators, interval
+operators with a closed interval `[a,b]` and lower-bounded operators with an
+interval `[a,*]`, nested in any order
 ([FR-367](FR-367-evaluate-interval-operators-under-infinite-trace.md)). FR-161
 defines the checked infinite-trace subject and its sound-provider result
 vocabulary; FR-048 and AD-012 define the unbounded temporal operator grammar
