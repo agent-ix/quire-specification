@@ -64,12 +64,15 @@ required diagnostic dispositions state for a recognized form prohibited by the
 selected profile.
 
 Where the clause selects the infinite-trace profile, the frontend SHALL also
-parse the bracketed interval form on every interval-capable
-operator, nested with the interval-less form
+parse the bracketed interval form `[a,b]` and the lower-bounded form `[a,*]`
+on every interval-capable operator, nested with the interval-less form
 ([FR-367](../temporal/FR-367-evaluate-interval-operators-under-infinite-trace.md)),
 the clause's fairness constraints
 ([FR-362](../temporal/FR-362-apply-fairness-constraints.md)) and a model's
 `terminal` declaration ([FR-366](../temporal/FR-366-check-deadlock-freedom.md)).
+Under any other selected profile the lower-bounded form `[a,*]` receives
+`unsupported_construct` at its exact construct span, owning declaration and
+selected profile, as the interval-less form does.
 
 ## Acceptance Criteria
 
@@ -84,7 +87,7 @@ the clause's fairness constraints
 | FR-048-AC-7 | A temporal expression in a shared Boolean argument and a non-Boolean holds root refuse, while the same admitted query/predicate expression retains its common type semantics inside holds. | Test (TC-049) |
 | FR-048-AC-8 | A source-valid timestamped or past-time declaration retains its native identity when the current TL mapping reports unsupported; no profile or clock substitution occurs. | Test (TC-049) |
 | FR-048-AC-9 | An interval-less `always`/`eventually`/`until`/`release`/`once`/`historically`/`since`/`triggered` spelling is admitted only when the clause selects `quire.temporal.infinite-trace/v1`; the identical spelling under any other selected profile receives `unsupported_construct` at its construct span with the owning declaration and selected profile. | Test (TC-238) |
-| FR-048-AC-10 | Under `quire.temporal.infinite-trace/v1`, `always (holds(f) implies eventually always[0,10] holds(h))` parses with the interval-less and bracketed forms nested; under every profile, `[a,*]` is a syntax refusal. | Test (TC-238) |
+| FR-048-AC-10 | Under `quire.temporal.infinite-trace/v1`, `always (holds(f) implies eventually always[0,10] holds(h))` parses with the interval-less and bracketed forms nested, and `eventually[2,*] holds(h)` parses as a lower-bounded operator; under the event-position false-extension, fixed-sample and timestamped-event profiles, `[a,*]` receives `unsupported_construct` at its construct span with the owning declaration and selected profile. | Test (TC-238) |
 
 ## Dependencies
 

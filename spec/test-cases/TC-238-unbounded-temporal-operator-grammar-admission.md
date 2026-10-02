@@ -45,8 +45,10 @@ other three profiles it receives `unsupported_construct` naming its exact
 construct span, owning declaration and selected profile, as AD-003's required
 diagnostic dispositions state for a recognized form prohibited by the selected
 profile. The bracketed `[a,b]` form parses identically under all four profiles,
-unchanged from its pre-edition behavior. `[a,*]` is a located syntax refusal
-under every profile (FR-048-AC-10). The two nested formulas are admitted under
+unchanged from its pre-edition behavior. `[a,*]` parses as a lower-bounded
+operator under `quire.temporal.infinite-trace/v1` and receives
+`unsupported_construct` under each of the other three profiles (FR-048-AC-10,
+FR-367-AC-7). The two nested formulas are admitted under
 `quire.temporal.infinite-trace/v1` with their interval and unbounded operators
 nested as written, and under each bounded profile their interval-less
 operators receive `unsupported_construct` (FR-090-AC-7, FR-367-AC-1, FR-250-AC-6). Mutating only the selected profile identity on the

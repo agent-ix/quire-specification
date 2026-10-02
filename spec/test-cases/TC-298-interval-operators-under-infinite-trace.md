@@ -51,6 +51,11 @@ under `quire.temporal.infinite-trace/v1`.
    infinite-trace profile with `[0,3]` under the event-position profile.
 7. Evaluate `eventually[2,4] holds(p)` nested under unbounded `always` and
    `p since[1,2] q` on lassos covering every endpoint.
+8. Evaluate `eventually[2,*] holds(p)` at position 0 of a lasso whose `p`
+   holds only at position 3 and of a lasso whose `p` holds only at position 1;
+   `once[2,*] holds(p)` at position 1; `eventually[0,*] holds(p)` against
+   `eventually holds(p)`; classify `always eventually[2,*] holds(p)`; author
+   `eventually[2,*] holds(p)` under the event-position profile.
 
 ## Expected Results
 
@@ -76,3 +81,7 @@ under `quire.temporal.infinite-trace/v1`.
    trace, with no closed-boundary value at any position, the profile having no
    closed-boundary rule (FR-250-AC-6, FR-091-AC-9,
    FR-092-AC-8, FR-367-AC-1).
+8. True on the first lasso and false on the second; `once[2,*]` is false at
+   position 1; `[0,*]` agrees with the unbounded operator at every position;
+   the formula is liveness; under the event-position profile the spelling
+   receives `unsupported_construct` (FR-367-AC-7).

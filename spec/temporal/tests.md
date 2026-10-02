@@ -154,6 +154,7 @@ the coherent base-plus-seven review remain acceptance prerequisites.
 | FR-367 | FR-367-AC-4 | TC-298 | 🚧 Planned |
 | FR-367 | FR-367-AC-5 | TC-298 | 🚧 Planned |
 | FR-367 | FR-367-AC-6 | TC-298 | 🚧 Planned |
+| FR-367 | FR-367-AC-7 | TC-238, TC-298 | 🚧 Planned |
 | FR-368 | FR-368-AC-1 | TC-302 | 🚧 Planned |
 | FR-368 | FR-368-AC-2 | TC-301 | 🚧 Planned |
 | FR-368 | FR-368-AC-3 | TC-301 | 🚧 Planned |
@@ -191,7 +192,7 @@ the coherent base-plus-seven review remain acceptance prerequisites.
 | TC-117 | Prove or refuse native-to-TL temporal correspondence | Integration | P0 | FR-090-AC-5, FR-092-AC-5, FR-095-AC-1, FR-095-AC-2, FR-095-AC-3, FR-095-AC-4, FR-095-AC-5, FR-095-AC-7, FR-095-AC-8 | 🚧 Planned |
 | TC-118 | Refuse temporal resource and retained-state exhaustion | Property | P0 | FR-091-AC-6, FR-092-AC-4, FR-092-AC-6, FR-094-AC-6, FR-293-AC-2, FR-293-AC-3, NFR-040-AC-1, NFR-040-AC-2, NFR-040-AC-3, NFR-040-AC-4 | 🚧 Planned |
 | TC-200 | Infinite-trace provider boundary | Property | P0 | FR-095-AC-9 | 🚧 Planned |
-| TC-238 | Unbounded temporal operator grammar admission | Property | P0 | FR-090-AC-7, FR-250-AC-6 | 🚧 Planned |
+| TC-238 | Unbounded temporal operator grammar admission | Property | P0 | FR-090-AC-7, FR-250-AC-6, FR-367-AC-7 | 🚧 Planned |
 | TC-290 | Model behaviours read as temporal traces | Property | P0 | FR-090-AC-8, FR-181-AC-7, FR-361-AC-1, FR-361-AC-2, FR-361-AC-3, FR-361-AC-4, FR-361-AC-5, FR-361-AC-6 | 🚧 Planned |
 | TC-291 | Weak and strong fairness on conformance lassos | Property | P0 | FR-361-AC-4, FR-362-AC-1, FR-362-AC-2, FR-362-AC-3, FR-362-AC-4, FR-362-AC-5, FR-362-AC-7 | 🚧 Planned |
 | TC-292 | Fairness over a supplied trace is a missing fairness premise | Property | P0 | FR-362-AC-8 | 🚧 Planned |
@@ -200,7 +201,7 @@ the coherent base-plus-seven review remain acceptance prerequisites.
 | TC-295 | Temporal counterexample wire, replay and refusals | Property | P0 | FR-364-AC-1, FR-364-AC-2, FR-364-AC-3, FR-364-AC-4, FR-364-AC-5, FR-364-AC-6, FR-364-AC-9 | 🚧 Planned |
 | TC-296 | Canonical counterexample of an explicit-state analysis | Property | P0 | FR-365-AC-1, FR-365-AC-2, FR-365-AC-3 | 🚧 Planned |
 | TC-297 | Deadlock-freedom vectors | Property | P0 | FR-364-AC-1, FR-364-AC-6, FR-365-AC-5, FR-366-AC-1, FR-366-AC-2, FR-366-AC-3, FR-366-AC-4, FR-366-AC-5, FR-366-AC-6, FR-366-AC-7 | 🚧 Planned |
-| TC-298 | Interval operators under infinite-trace | Property | P0 | FR-091-AC-9, FR-092-AC-8, FR-250-AC-6, FR-255-AC-6, FR-363-AC-2, FR-363-AC-4, FR-367-AC-1, FR-367-AC-2, FR-367-AC-3, FR-367-AC-4, FR-367-AC-5, FR-367-AC-6, FR-368-AC-7 | 🚧 Planned |
+| TC-298 | Interval operators under infinite-trace | Property | P0 | FR-091-AC-9, FR-092-AC-8, FR-250-AC-6, FR-255-AC-6, FR-363-AC-2, FR-363-AC-4, FR-367-AC-1, FR-367-AC-2, FR-367-AC-3, FR-367-AC-4, FR-367-AC-5, FR-367-AC-6, FR-367-AC-7, FR-368-AC-7 | 🚧 Planned |
 | TC-299 | Strong fairness on the contended mutex | Property | P0 | FR-362-AC-6, FR-364-AC-5 | 🚧 Planned |
 | TC-300 | Strong-fairness refinement past one level | Property | P0 | FR-365-AC-4 | 🚧 Planned |
 | TC-301 | Temporal negotiation, provider commitments and fairness kinds | Property | P0 | FR-368-AC-2, FR-368-AC-3, FR-368-AC-4, FR-368-AC-5, FR-368-AC-6 | 🚧 Planned |

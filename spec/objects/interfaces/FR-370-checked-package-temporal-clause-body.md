@@ -82,8 +82,8 @@ operand position except a nested temporal operator's.
 
 The `temporal_interval` member is `{kind: "temporal_interval", interval}`,
 where `interval` is `{lower, upper}`, two decimal strings with
-`lower <= upper`, for an interval operator, and `null` for an unbounded
-operator ([FR-367](../../functional/temporal/FR-367-evaluate-interval-operators-under-infinite-trace.md)).
+`lower <= upper`, for an interval operator; `{lower, upper: null}` for a
+lower-bounded operator `[a,*]`; and `null` for an unbounded operator ([FR-367](../../functional/temporal/FR-367-evaluate-interval-operators-under-infinite-trace.md)).
 
 The `fairness` member is `{kind: "fairness", fairness_kind, granularity,
 declaration, name}`: `fairness_kind` is `weak` or `strong`, `granularity` is
@@ -103,11 +103,12 @@ upper: "1"}`; it has no identity of its own.
   `quire.op.temporal.fair` application stands only in a clause's fairness
   argument.
 - Under a bounded `temporal_profile` law every interval-capable operator
-  carries a non-null interval and the fairness argument is empty. Under
-  `quire.temporal.infinite-trace/v1` an interval may be null or not.
+  carries an interval with a non-null `upper` and the fairness argument is
+  empty. Under `quire.temporal.infinite-trace/v1` an interval may be null,
+  lower-bounded or closed.
 
 A misplaced application refuses `ill_typed`/`operator-ineligible` at the node
-that holds it. A null interval or a non-empty fairness argument under a bounded
+that holds it. A null interval, a null `upper` or a non-empty fairness argument under a bounded
 profile refuses `invalid_package`/`operation-member-mismatch` at the
 application. An interval with `lower > upper` refuses
 `invalid_package`/`invalid-value` at the application.
@@ -134,7 +135,7 @@ applications' catalog checks at the operation step.
 | --- | --- | --- |
 | FR-370-AC-1 | A `temporal`/`temporal_clause` node's body is a `quire.op.temporal.clause` application with one `temporal_profile` law, a `null` member and the six arguments over, clock, activation, captures, fairness and formula in that order; a body with arguments reordered, missing or of another term shape fails the published schema. | Test (TC-303) |
 | FR-370-AC-2 | Each of the eight interval-capable operators, `holds`, the two temporal constants and the four connectives is encoded with its own `quire.op.temporal.*` identity, both V2 schemas enumerate those identities, the `temporal_formula` and `temporal_fairness` operator classes and the `temporal_interval` and `fairness` member kinds, and the operation catalog lists the `temporal` family. | Test (TC-303) |
-| FR-370-AC-3 | An interval operator carries `{lower, upper}`; an unbounded operator carries `null` and is admitted under `quire.temporal.infinite-trace/v1`; a `null` interval under a bounded profile refuses `operation-member-mismatch`, and `lower > upper` refuses `invalid-value`. | Test (TC-303) |
+| FR-370-AC-3 | An interval operator carries `{lower, upper}`; a lower-bounded operator carries `{lower, upper: null}` and an unbounded operator `null`, both admitted under `quire.temporal.infinite-trace/v1`; a `null` interval or a `null` `upper` under a bounded profile refuses `operation-member-mismatch`, and `lower > upper` refuses `invalid-value`. | Test (TC-303) |
 | FR-370-AC-4 | `fair Op` and `fair weak whole Op` encode to byte-identical `quire.op.temporal.fair` applications, and a fairness member naming an operation absent from its declaring node refuses `missing_declaration`/`missing-name`; a non-empty fairness argument under a bounded profile refuses `operation-member-mismatch`. | Test (TC-303) |
 | FR-370-AC-5 | A temporal operator application outside a clause's formula, a `quire.op.temporal.fair` application outside its fairness argument, and a `quire.op.temporal.clause` application nested in another term refuse `ill_typed`/`operator-ineligible` at the node that holds them. | Test (TC-303) |
 | FR-370-AC-6 | Strong previous encodes as `quire.op.temporal.once` with interval `{lower: "1", upper: "1"}`. | Test (TC-303) |

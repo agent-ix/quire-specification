@@ -47,8 +47,9 @@ limit, the FR-363 stopped verdict naming that limit.
 Under the infinite-trace profile each of `eventually`, `always`, `until`,
 `release`, `once`, `historically`, `since` and `triggered` is written either
 with a closed interval `[a,b]`, integers `0 <= a <= b`, making it an
-**interval operator**, or with no interval, making it an **unbounded
-operator**. The two nest in any order, so
+**interval operator**; with a lower-bounded interval `[a,*]`, integer
+`a >= 0`, making it a **lower-bounded operator**; or with no interval, making
+it an **unbounded operator**. The three nest in any order, so
 `always (holds(fail) implies eventually always[0,10] holds(healthy))` is
 admitted. Reversed bounds `a > b` parse and refuse semantic admission, as under
 every profile. An interval's key carries the infinite-trace profile identity
@@ -66,6 +67,18 @@ that reaches before position 0 reads atomic predicates there as false, FR-092's
 complete-history rule. An unbounded operator has the meaning
 [FR-161](FR-161-analyze-infinite-trace-properties.md) states.
 
+A lower-bounded operator has the offset meaning with no upper bound. At
+position `i`: `eventually[a,*] p` holds when `p` holds at some `j >= i + a`;
+`always[a,*] p` when `p` holds at every `j >= i + a`; `p until[a,*] q` when `q`
+holds at some `j >= i + a` and `p` at every `k` with `i <= k < j`;
+`p release[a,*] q` is `not (not p until[a,*] not q)`. `once[a,*] p` holds when
+`p` holds at some `j` with `0 <= j <= i - a`, and is false when `i < a`;
+`historically[a,*] p` is `not once[a,*] not p`; `p since[a,*] q` holds when `q`
+holds at some `j <= i - a` and `p` at every `k` with `j < k <= i`;
+`p triggered[a,*] q` is `not (not p since[a,*] not q)`. `[0,*]` has the meaning
+of the unbounded operator. Under a bounded profile `[a,*]` is not admitted
+([FR-048](../foundation/FR-048-bind-native-temporal-syntax.md)).
+
 ### Previous
 
 Strong previous is `once[1,1]` under every profile, the infinite-trace profile
@@ -79,13 +92,17 @@ The safety fragment admits interval operators: the truth of an interval
 operator at a position is decided within `b` positions of it. So
 `always (holds(req) implies eventually[0,5] holds(ack))` is a safety formula,
 and a formula with an interval operator under an unbounded `eventually` or
-`until`, such as the recovery-stability formula above, is a liveness formula
+`until`, such as the recovery-stability formula above, is a liveness formula.
+A lower-bounded operator classifies as its unbounded operator does: `always[a,*]`
+in a safety position keeps the formula safety, and `eventually[a,*]` or
+`until[a,*]` makes it liveness
 ([FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md)).
 
 ### Stutter invariance
 
-An interval operator counts positions, previous included, so a formula that
-contains one is not stutter-invariant: inserting a step that repeats a state
+An interval operator, or a lower-bounded operator with `a > 0`, counts
+positions, previous included, so a formula that contains one is not
+stutter-invariant: inserting a step that repeats a state
 can change its truth. A formula built only from atoms, constants, Boolean
 connectives and unbounded operators is stutter-invariant. A transfer of a claim
 through a refinement mapping or a reduction that relies on stutter invariance
@@ -114,6 +131,7 @@ bounds.
 | FR-367-AC-4 | Inserting one repeated state into a trace changes the truth of `always (holds(p) implies once[1,1] holds(q))` and of an `eventually[0,1]` formula, and leaves the truth of a formula with only unbounded operators unchanged. | Test (TC-298) |
 | FR-367-AC-5 | An analysis whose property automaton exceeds `max_automaton_states` settles FR-331 `incomplete`, FR-360 `failed`, execution `resource-incomplete`, naming the limit, its value and the request member that raises it; the same request with the limit raised completes. | Test (TC-298) |
 | FR-367-AC-6 | A past interval reaching before position 0 reads atomic predicates there as false, and an interval operator under infinite-trace never compares equal to the same numeric interval under a bounded profile. | Test (TC-298) |
+| FR-367-AC-7 | Under the infinite-trace profile, `eventually[2,*] holds(p)` is true at position 0 of a lasso whose `p` holds only at position 3 and false at position 0 of a lasso whose `p` holds only at position 1, `once[2,*] holds(p)` is false at position 1, `eventually[0,*] holds(p)` equals `eventually holds(p)`, and `always eventually[2,*] holds(p)` classifies as liveness; under the event-position profile `eventually[2,*] holds(p)` receives `unsupported_construct`. | Test (TC-298, TC-238) |
 
 ## Dependencies
 
