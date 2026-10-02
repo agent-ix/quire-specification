@@ -915,7 +915,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-180 | FR-180-AC-4 | TC-209 | planned |
 | FR-180 | FR-180-AC-5 | TC-209 | planned |
 | FR-181 | FR-181-AC-4 | TC-210 | planned |
-| FR-181 | FR-181-AC-5 | TC-210, TC-335 | planned |
+| FR-181 | FR-181-AC-5 | TC-210, TC-335, TC-327 | planned |
 | FR-181 | FR-181-AC-6 | TC-210 | planned |
 | FR-181 | FR-181-AC-13 | TC-335 | planned |
 | FR-182 | FR-182-AC-4 | TC-211 | planned |
@@ -1633,6 +1633,96 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-403 | FR-403-AC-2 | TC-347 | planned |
 | FR-403 | FR-403-AC-3 | TC-347 | planned |
 | FR-403 | FR-403-AC-4 | TC-347 | planned |
+| FR-375 | FR-375-AC-1 | TC-310 | planned |
+| FR-375 | FR-375-AC-2 | TC-310 | planned |
+| FR-375 | FR-375-AC-3 | TC-310 | planned |
+| FR-375 | FR-375-AC-4 | TC-310 | planned |
+| FR-375 | FR-375-AC-5 | TC-310 | planned |
+| FR-375 | FR-375-AC-6 | TC-310 | planned |
+| FR-375 | FR-375-AC-7 | TC-310 | planned |
+| FR-375 | FR-375-AC-8 | TC-310 | planned |
+| FR-376 | FR-376-AC-1 | TC-311 | planned |
+| FR-376 | FR-376-AC-2 | TC-311 | planned |
+| FR-376 | FR-376-AC-3 | TC-311, TC-316 | planned |
+| FR-376 | FR-376-AC-4 | TC-311 | planned |
+| FR-376 | FR-376-AC-5 | TC-311, TC-316 | planned |
+| FR-377 | FR-377-AC-1 | TC-311, TC-315 | planned |
+| FR-377 | FR-377-AC-2 | TC-312, TC-313, TC-316 | planned |
+| FR-377 | FR-377-AC-3 | TC-313 | planned |
+| FR-377 | FR-377-AC-4 | TC-312 | planned |
+| FR-377 | FR-377-AC-5 | TC-313 | planned |
+| FR-377 | FR-377-AC-6 | TC-313 | planned |
+| FR-377 | FR-377-AC-7 | TC-312 | planned |
+| FR-377 | FR-377-AC-8 | TC-312, TC-313 | planned |
+| FR-378 | FR-378-AC-1 | TC-314 | planned |
+| FR-378 | FR-378-AC-2 | TC-314 | planned |
+| FR-378 | FR-378-AC-3 | TC-315 | planned |
+| FR-378 | FR-378-AC-4 | TC-314 | planned |
+| FR-378 | FR-378-AC-5 | TC-314 | planned |
+| FR-378 | FR-378-AC-6 | TC-314 | planned |
+| FR-378 | FR-378-AC-7 | TC-314 | planned |
+| FR-378 | FR-378-AC-8 | TC-314 | planned |
+| FR-379 | FR-379-AC-1 | TC-312, TC-315 | planned |
+| FR-379 | FR-379-AC-2 | TC-312, TC-313 | planned |
+| FR-379 | FR-379-AC-3 | TC-315 | planned |
+| FR-379 | FR-379-AC-4 | TC-315 | planned |
+| FR-379 | FR-379-AC-5 | TC-315 | planned |
+| FR-379 | FR-379-AC-6 | TC-315, TC-316, TC-311 | planned |
+| FR-379 | FR-379-AC-7 | TC-312 | planned |
+| FR-380 | FR-380-AC-1 | TC-317 | planned |
+| FR-380 | FR-380-AC-2 | TC-317 | planned |
+| FR-380 | FR-380-AC-3 | TC-317 | planned |
+| FR-380 | FR-380-AC-4 | TC-317 | planned |
+| FR-380 | FR-380-AC-5 | TC-317 | planned |
+| FR-380 | FR-380-AC-6 | TC-317 | planned |
+| FR-380 | FR-380-AC-7 | TC-317 | planned |
+| FR-380 | FR-380-AC-8 | TC-317 | planned |
+| FR-381 | FR-381-AC-1 | TC-320 | planned |
+| FR-381 | FR-381-AC-2 | TC-320 | planned |
+| FR-381 | FR-381-AC-3 | TC-320 | planned |
+| FR-381 | FR-381-AC-4 | TC-320 | planned |
+| FR-382 | FR-382-AC-1 | TC-321, TC-327 | planned |
+| FR-382 | FR-382-AC-2 | TC-327 | planned |
+| FR-382 | FR-382-AC-3 | TC-320, TC-321 | planned |
+| FR-382 | FR-382-AC-4 | TC-321 | planned |
+| FR-382 | FR-382-AC-5 | TC-324 | planned |
+| FR-382 | FR-382-AC-6 | TC-327 | planned |
+| FR-383 | FR-383-AC-1 | TC-321 | planned |
+| FR-383 | FR-383-AC-2 | TC-321 | planned |
+| FR-383 | FR-383-AC-3 | TC-326 | planned |
+| FR-383 | FR-383-AC-4 | TC-323 | planned |
+| FR-383 | FR-383-AC-5 | TC-325 | planned |
+| FR-383 | FR-383-AC-6 | TC-324 | planned |
+| FR-383 | FR-383-AC-7 | TC-321, TC-322 | planned |
+| FR-383 | FR-383-AC-8 | TC-327 | planned |
+| FR-383 | FR-383-AC-9 | TC-323 | planned |
+| FR-383 | FR-383-AC-10 | TC-323 | planned |
+| FR-383 | FR-383-AC-11 | TC-323 | planned |
+| FR-383 | FR-383-AC-12 | TC-323 | planned |
+| FR-383 | FR-383-AC-13 | TC-326 | planned |
+| FR-383 | FR-383-AC-14 | TC-323 | planned |
+| FR-383 | FR-383-AC-15 | TC-329 | planned |
+| FR-383 | FR-383-AC-16 | TC-323 | planned |
+| FR-384 | FR-384-AC-1 | TC-322 | planned |
+| FR-384 | FR-384-AC-2 | TC-322 | planned |
+| FR-384 | FR-384-AC-3 | TC-322 | planned |
+| FR-384 | FR-384-AC-4 | TC-322 | planned |
+| FR-384 | FR-384-AC-5 | TC-322 | planned |
+| FR-385 | FR-385-AC-1 | TC-323, TC-327 | planned |
+| FR-385 | FR-385-AC-2 | TC-323 | planned |
+| FR-385 | FR-385-AC-3 | TC-321, TC-323, TC-324 | planned |
+| FR-385 | FR-385-AC-4 | TC-321, TC-323 | planned |
+| FR-385 | FR-385-AC-5 | TC-324 | planned |
+| FR-385 | FR-385-AC-6 | TC-323 | planned |
+| FR-385 | FR-385-AC-7 | TC-327 | planned |
+| FR-385 | FR-385-AC-8 | TC-325 | planned |
+| FR-385 | FR-385-AC-9 | TC-323 | planned |
+| FR-013 | FR-013-AC-8 | TC-326 | planned |
+| FR-013 | FR-013-AC-9 | TC-326 | planned |
+| FR-161 | FR-161-AC-12 | TC-328 | planned |
+| FR-177 | FR-177-AC-6 | TC-318 | planned |
+| FR-340 | FR-340-AC-16 | TC-326 | planned |
+| FR-340 | FR-340-AC-17 | TC-326 | planned |
 
 ## Test Case Summary
 
@@ -1822,6 +1912,25 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-347 | Hyperproperty reductions and copy-swap symmetry | Property | P0 | FR-403, FR-401 | 🚧 Planned |
 | TC-348 | Undefined evaluation refutes a hyperproperty | Property | P0 | FR-399, FR-400, FR-401 | 🚧 Planned |
 | TC-349 | Undefined evaluation refutes a state-graph claim | Property | P0 | FR-391, FR-393, FR-394 | 🚧 Planned |
+| TC-310 | Refinement declaration admission | Property | P0 | FR-375 | 🚧 Planned |
+| TC-311 | Population-valued mapping expressions | Property | P0 | FR-376, FR-377 | 🚧 Planned |
+| TC-312 | Counter refinement vectors | Property | P0 | FR-377, FR-379 | 🚧 Planned |
+| TC-313 | Refinement initial, stutter and terminal-state vectors | Property | P0 | FR-377, FR-379 | 🚧 Planned |
+| TC-314 | Refinement history and hidden-field vectors | Property | P0 | FR-378 | 🚧 Planned |
+| TC-315 | Refinement undetermined mappings and replay | Property | P0 | FR-379, FR-378, FR-377 | 🚧 Planned |
+| TC-316 | Ring-buffer to queue data refinement | Property | P0 | FR-376, FR-377, FR-379 | 🚧 Planned |
+| TC-317 | Claim transfer through a refinement | Property | P0 | FR-380 | 🚧 Planned |
+| TC-318 | Protocol refinement over the model-refinement step rules | Property | P0 | FR-177 | 🚧 Planned |
+| TC-320 | Symmetric population authoring checks | Property | P0 | FR-381, FR-382 | 🚧 Planned |
+| TC-321 | Symmetry reduction vectors | Property | P0 | FR-382, FR-383, FR-385 | 🚧 Planned |
+| TC-322 | Annotated quotient each-fairness vectors | Property | P0 | FR-384, FR-383 | 🚧 Planned |
+| TC-323 | Partial-order reduction vectors | Property | P0 | FR-383, FR-385 | 🚧 Planned |
+| TC-324 | State constraint vectors | Property | P0 | FR-382, FR-383, FR-385 | 🚧 Planned |
+| TC-325 | Partial-order reduction under fairness | Property | P0 | FR-383, FR-385 | 🚧 Planned |
+| TC-326 | Receiver-scoped frames and footprints | Property | P0 | FR-013, FR-340, FR-383 | 🚧 Planned |
+| TC-327 | Reduced request identity, negotiation and records | Property | P0 | FR-382, FR-383, FR-385, FR-181 | 🚧 Planned |
+| TC-328 | Stutter invariance of since and triggered | Property | P0 | FR-161 | 🚧 Planned |
+| TC-329 | Reduced and unreduced runs agree over the conformance corpus | Property | P0 | FR-383 | 🚧 Planned |
 
 ## Integration Test Matrix
 

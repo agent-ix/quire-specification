@@ -97,7 +97,14 @@ while every `k` from `i` through `j-1` satisfies `p`. Release is the dual
 `p R q = not(not p U not q)`. Past operators use the finite prefix through `i`:
 `H`, `O` and `S` are respectively historically, once and since, and triggered
 is the dual `p T q = not(not p S not q)`. Previous, `Y p`, is the interval
-operator `once[1,1] p`, false at position zero. Fairness restricts the
+operator `once[1,1] p`, false at position zero. `p S q` means that some `j <= i` satisfies `q` while every `k` from `j+1`
+through `i` satisfies `p`. Until, release, since and triggered are
+non-strict: `q` at `i` itself satisfies `p U q` and `p S q`. So inserting a
+position that repeats the state at an adjacent position changes the truth
+value of no formula built from always, eventually, until, release,
+historically, once, since and triggered over state atoms; a formula with a
+previous or interval operator counts positions and is not so invariant.
+Fairness restricts the
 admitted infinite traces before formula evaluation: weak and strong fairness
 of operations, each at `whole` or `each` granularity, as
 [FR-362](FR-362-apply-fairness-constraints.md) defines them. A fairness
@@ -167,6 +174,7 @@ clock valuation, and the analyzer reads them as follows.
 | FR-161-AC-14 | A timed liveness counterexample is a lasso with positive total loop delay whose unreset clocks exceed their largest compared constants at entry; a loop with zero total delay is refused by replay as `invalid_runtime_input`/`invalid-value`. | Test (TC-369) |
 | FR-161-AC-15 | A proof over a timed subject whose initial state has no fair time-divergent behaviour settles `inconclusive`, `no-admitted-behaviour`. | Test (TC-370) |
 | FR-161-AC-16 | Weak fairness over a timed subject reads enabledness at every instant, positions and delays, and an accepting cycle refutes only when fair with positive loop delay. | Test (TC-369) |
+| FR-161-AC-12 | Since and triggered are non-strict: `p S q` holds at a position where `q` holds, and `p T q` is `not(not p S not q)`; on conformance traces, inserting a repeated state leaves every formula over always, eventually, until, release, historically, once, since and triggered unchanged, while a formula with previous can change at the inserted position. | Test (TC-328) |
 
 ## Dependencies
 
