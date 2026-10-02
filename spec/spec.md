@@ -656,6 +656,14 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-342
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-450
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-451
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-452
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-453
+    type: contains
   - target: ix://agent-ix/quire-specification/TM-009
     type: contains
 ---
@@ -829,6 +837,10 @@ The requirement artifacts are indexed below.
 | [FR-340](objects/interfaces/FR-340-checked-package-frame-location.md) | FR | Checked-package `state`/`frame` body: relationship and (declaring node, field name) entries |
 | [FR-341](objects/interfaces/FR-341-checked-package-state-clause-body.md) | FR | Checked-package `state`/`state_clause` body: `quire.op.state.clause` application and state node body roots |
 | [FR-342](objects/interfaces/FR-342-checked-package-operation-anchor-body.md) | FR | Checked-package `state`/`operation_anchor` body: context, operation and frame bindings |
+| [FR-450](functional/ir-proof/FR-450-spell-abstraction-relation-declaration.md) | FR | Abstraction relation declaration: object, population and operation binding forms, Rust spellings and refusals |
+| [FR-451](objects/interfaces/FR-451-checked-package-abstraction-relation-body.md) | FR | Checked-package `correspondence`/`abstraction_relation` body, keys and reader order |
+| [FR-452](functional/tooling/FR-452-preserve-admission-across-specification-revisions.md) | FR | Spec-versioning refinement gate: a superseding revision admits what its prior admitted |
+| [FR-453](functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md) | FR | Profile-layering refinement gate: the five AD-003 layering edges, refusal preservation and per-layer user subsets |
 | [FR-049](functional/foundation/FR-049-bind-native-choreography-syntax.md) | FR | Accepted native choreography source integration; complete-V1 review SR-571–580 |
 | [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Accepted complete-V1 protocol intent; review SR-571–580 |
 | [FR-050](functional/protocol/FR-050-bind-protocol-instances.md) | FR | Accepted complete-V1 protocol foundation; review SR-571–580 |

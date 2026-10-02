@@ -105,7 +105,16 @@
       "definition": {"authority":"agent-ix","identity":"quire.rule.fr-149/v1"}
     }
   ],
+  "header_selectable_layers": [
+    {"identity": "quire.state.core/v1", "requires": [], "admitted_forms": "state-core.md", "admits": "bounded scalars, explicit rationals, presence and control, and finite ordered sequences with authored maxima in invariants, preconditions and postconditions", "witness_request": {"kind": "operation-contract", "extent": "bounded"}},
+    {"identity": "quire.state.queries/v1", "requires": ["quire.state.core/v1"], "admitted_forms": "state-queries.md", "admits": "state core plus typed acyclic named predicates and the ordered queries filter, map, count and sum", "witness_request": {"kind": "operation-contract", "extent": "bounded"}},
+    {"identity": "quire.state.graph/v1", "requires": ["quire.state.queries/v1"], "admitted_forms": "state-graph.md", "admits": "state queries plus explicit finite typed universes, references, object identity and reachability", "witness_request": {"kind": "operation-contract", "extent": "bounded"}},
+    {"identity": "quire.value.complete/v1", "requires": ["quire.state.core/v1"], "admitted_forms": "value-complete.md", "admits": "state core plus complete scalars, records, tuples, unions, recursive values, collections and pure functions", "witness_request": {"kind": "value-validity", "extent": "bounded"}},
+    {"identity": "quire.model.complete/v1", "requires": ["quire.state.graph/v1", "quire.value.complete/v1"], "admitted_forms": "model-complete.md", "admits": "state graph and complete values plus conformance, redefinition, dispatch and systems-model structure", "witness_request": {"kind": "operation-contract", "extent": "bounded"}}
+  ],
   "package_selection": {
+    "layer": "quire.value.complete/v1",
+    "without_layer": ["edition"],
     "always": ["edition", "root", "accounting", "compound_unit", "compound_unit_schema", "compound_unit_vectors", "rule_package_contract", "rule_shared_grammar", "rule_ad_005", "rule_fr_140", "rule_fr_141", "rule_fr_142", "rule_fr_147", "rule_fr_148", "rule_fr_149"],
     "conditional": [
       {"trigger": "text_bearing", "role": "text_profile"},

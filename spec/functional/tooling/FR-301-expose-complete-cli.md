@@ -33,7 +33,7 @@ exit status.
 Commands never infer a wider profile or fallback target. Machine output is
 versioned and separate from human diagnostics. Exit statuses distinguish success,
 logical violation, invalid/refused input, unsupported capability, incomplete
-execution and tool failure. Version output reports semantic/wire/tool pins.
+execution and tool failure. Version output reports the app version.
 
 ## Command and exit contract
 

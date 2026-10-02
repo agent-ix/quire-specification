@@ -97,7 +97,7 @@ as a function application or a `case` expression, adds no kind.
 | Replay of one finite execution against state or protocol semantics | `finite-replay` |
 | Temporal requirement under a finite-trace or infinite-trace profile | `temporal-satisfaction` |
 | Refinement between two protocols | `refinement` |
-| Refinement between two operation contracts or state models (a relation-family refinement gate) | `operation-contract`; each implication between the two contracts' clauses is one `operation-contract` claim |
+| Refinement between two operation contracts or state models | `operation-contract`; each implication between the two contracts' clauses is one `operation-contract` claim |
 | FR-353 abstraction relation | none; it is a premise of the `operation-contract` claim it binds |
 | Other protocol analysis claim ([FR-060](../../functional/protocol/FR-060-separate-protocol-claims.md)) | its `protocol`-family member |
 

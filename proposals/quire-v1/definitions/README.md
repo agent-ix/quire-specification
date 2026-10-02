@@ -49,6 +49,24 @@ Other definition families remain editable candidates under their owning tickets.
 | `quire.model.effective-declaration.vectors/v1` | `1-draft.2` | [Effective declaration vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
 | `quire.model.definition-lock/v1` | `1-draft.2` | [Complete model lock](complete-model-lock.json) |
 
+## Header-selectable layers
+
+The `header_selectable_layers` rows of the
+[complete-value lock](complete-value-lock.json) are the one catalog of the
+AD-003 state and value/model layers a `profile` declaration selects
+([FR-001](../../../spec/functional/foundation/FR-001-select-native-profile.md)).
+Each row gives the layer's `identity`, the layers it `requires`, its
+`admitted_forms` definition file, a one-line statement of what it `admits`,
+and the `witness_request`: the FR-290 kind and FR-331 extent classification
+that the layer's witness item requests from the registered backends. A user
+selects a layer to keep a unit inside the subset the backends serving that
+request accept.
+The lock's `package_selection` applies when a unit's selected layers include
+its `layer`; a unit selecting only state layers selects the `without_layer`
+rows. The rows' `requires` edges are the profile-layering edges that
+[FR-453](../../../spec/functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md)
+compares.
+
 The [package contract](../package-contract.md), [state contract](../state-contract.md),
 [protocol contract](../protocol-contract.md) and [observation contract](../observation-contract.md)
 are current semantic inputs to these definitions.

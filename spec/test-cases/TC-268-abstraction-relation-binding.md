@@ -33,9 +33,10 @@ result and artifact accounting with the criterion.
 
 Every positive and boundary result matches FR-353; each model object,
 population and operation frame maps to exactly one implementation state
-representation, keyed by its AD-006 effective-declaration key plus, for an
-operation frame, its FR-013 frame identity and FR-012 pre/post/result anchor
-identities; Kani and Verus generation consume the bound relation through the
+representation, a model object or population keyed by its AD-006
+effective-declaration key and an operation frame by its operation key (the
+declaring object type's effective-declaration key and the operation
+identifier), with a frame binding admitted for an operation no clause names; Kani and Verus generation consume the bound relation through the
 same AD-010 negotiation path; emission onto implementation code referencing a
 model element with no bound abstraction relation refuses before generation
 with `missing_declaration`/`missing-name`, naming the unbound element and its

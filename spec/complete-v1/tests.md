@@ -233,8 +233,8 @@ type.
 | V1-TOOL-008 | FR-307 | TC-227, TC-231 | Amend | planned |
 | V1-TOOL-009 | FR-308 | TC-228, TC-231 | New | planned |
 | V1-TOOL-010 | FR-309 | TC-229, TC-231 | New | planned |
-| V1-TOOL-011 | FR-177 | TC-208, TC-231 | Reuse | planned |
-| V1-TOOL-012 | FR-177 | TC-208, TC-231 | Reuse | planned |
+| V1-TOOL-011 | FR-452 | TC-413, TC-231 | New | planned |
+| V1-TOOL-012 | FR-453 | TC-414, TC-231 | New | planned |
 
 ## Functional Requirement Coverage
 
@@ -1133,6 +1133,33 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-355 | FR-355-AC-4 | TC-270 | planned |
 | FR-355 | FR-355-AC-5 | TC-270 | planned |
 | FR-355 | FR-355-AC-6 | TC-270 | planned |
+| FR-450 | FR-450-AC-1 | TC-410 | planned |
+| FR-450 | FR-450-AC-2 | TC-410 | planned |
+| FR-450 | FR-450-AC-3 | TC-410 | planned |
+| FR-450 | FR-450-AC-4 | TC-411 | planned |
+| FR-450 | FR-450-AC-5 | TC-411 | planned |
+| FR-450 | FR-450-AC-6 | TC-411 | planned |
+| FR-450 | FR-450-AC-7 | TC-411 | planned |
+| FR-451 | FR-451-AC-1 | TC-412 | planned |
+| FR-451 | FR-451-AC-2 | TC-412 | planned |
+| FR-451 | FR-451-AC-3 | TC-412 | planned |
+| FR-451 | FR-451-AC-4 | TC-412 | planned |
+| FR-451 | FR-451-AC-5 | TC-412 | planned |
+| FR-451 | FR-451-AC-6 | TC-412 | planned |
+| FR-451 | FR-451-AC-7 | TC-412 | planned |
+| FR-452 | FR-452-AC-1 | TC-413 | planned |
+| FR-452 | FR-452-AC-2 | TC-413 | planned |
+| FR-452 | FR-452-AC-3 | TC-413 | planned |
+| FR-452 | FR-452-AC-4 | TC-413 | planned |
+| FR-452 | FR-452-AC-5 | TC-413 | planned |
+| FR-452 | FR-452-AC-6 | TC-413 | planned |
+| FR-452 | FR-452-AC-7 | TC-413 | planned |
+| FR-453 | FR-453-AC-1 | TC-414 | planned |
+| FR-453 | FR-453-AC-2 | TC-414 | planned |
+| FR-453 | FR-453-AC-3 | TC-414 | planned |
+| FR-453 | FR-453-AC-4 | TC-414 | planned |
+| FR-453 | FR-453-AC-5 | TC-414 | planned |
+| FR-453 | FR-453-AC-6 | TC-414 | planned |
 
 ## Test Case Summary
 
@@ -1224,6 +1251,11 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-280 | Model-owned member types | Property | P0 | FR-322 | 🚧 Planned |
 | TC-281 | Model reference equality and field projection | Property | P0 | FR-322 | 🚧 Planned |
 | TC-282 | Duplicate backend identity registration | Property | P0 | FR-290, FR-272 | 🚧 Planned |
+| TC-410 | Abstraction relation declaration syntax and binding forms | Property | P0 | FR-450 | 🚧 Planned |
+| TC-411 | Abstraction relation declaration refusals | Property | P0 | FR-450, FR-353 | 🚧 Planned |
+| TC-412 | Checked-package abstraction relation node | Property | P0 | FR-451, FR-353 | 🚧 Planned |
+| TC-413 | Spec-versioning refinement cases | Property | P0 | FR-452 | 🚧 Planned |
+| TC-414 | Profile-layering refinement cases | Property | P0 | FR-453 | 🚧 Planned |
 
 ## Integration Test Matrix
 
