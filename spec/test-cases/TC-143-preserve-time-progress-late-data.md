@@ -42,7 +42,7 @@ without an explicit greater end. Independently use event-position and
 fixed-sample ranges without converting either to UTC timestamps.
 Derive authority and cutoff identities independently; mutate every authority
 scope, clock, source-set, boundary and restoration component and every cutoff
-clock, instant and rule-revision component. Feed exact `on-time`, exact `late`,
+clock, instant and rule-identity component. Feed exact `on-time`, exact `late`,
 unknown, aliased and absent timing labels. Substitute clock uncertainty for the
 clock selection and a JCS digest for raw definition bytes.
 

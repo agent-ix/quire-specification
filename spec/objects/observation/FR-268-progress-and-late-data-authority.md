@@ -51,7 +51,7 @@ exact definition identity/revision/raw-artifact digest, subject scope, clock
 selection, required source set, boundary convention and restoration basis.
 The v1 cutoff identity is derived separately under
 `quire.verification.jcs` from the clock selection, cutoff instant and cutoff
-rule revision. The authority definition-byte digest uses
+rule identity. The authority definition-byte digest uses
 `raw-artifact-digest`. Neither identity admits an ambient latest revision.
 
 ## Identity and comparison
@@ -104,7 +104,7 @@ half-open end/watermark and the inclusive deadline is insufficient.
 | FR-268-AC-3 | An event classified late against the selected cutoff leaves the previously settled result's bytes unchanged. | Test |
 | FR-268-AC-4 | A mismatched assertion definition, scope, clock, source set or restoration basis compares only to absence for settlement purposes and does not restart an assessment. | Test |
 | FR-268-AC-5 | A native inclusive deadline is covered only through an exact FR-289 mapping; equality of a half-open end/watermark with that deadline cannot settle it. | Test |
-| FR-268-AC-6 | Any authority scope, clock, required-source set, boundary or restoration-basis mutation changes the authority identity; any cutoff clock, instant or rule-revision mutation changes the cutoff identity. | Test |
+| FR-268-AC-6 | Any authority scope, clock, required-source set, boundary or restoration-basis mutation changes the authority identity; any cutoff clock, instant or rule-identity mutation changes the cutoff identity. | Test |
 | FR-268-AC-7 | Missing, foreign-domain, duplicate, unknown-version or unbounded authority/cutoff inputs refuse before settlement or timing classification. | Test |
 
 ## Dependencies
