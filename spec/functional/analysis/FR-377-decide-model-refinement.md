@@ -134,11 +134,14 @@ the concrete subject, its history values and, when hidden fields exist, the
 FR-378 candidate set, running the step function on every retained edge and,
 when `F_A` is non-empty, deciding `F_A` under the `F_C` filter on the
 retained graph. A per-step simulation engine discharges the safety half of a
-declaration with no hidden field and no `any` row as one `operation-contract`
+declaration with no hidden field, no history field and no `any` row as one `operation-contract`
 obligation per step row and one for the initial-state rule
 ([FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md)): the
 concrete invariants, the operation's effective precondition, frame and
 postcondition over `(s, s')` imply the row's rule over `(map(s), map(s'))`.
+A per-step obligation reads one concrete step and cannot see history values,
+so a declaration with a history field is decided by the explicit-state engine
+only.
 
 **Stuttering-invariant reading.** With stutter positions removed, an infinite
 mapped behaviour is a behaviour of the abstract subject, and a finite one is a
@@ -155,7 +158,7 @@ until and since are non-strict ([FR-161](../temporal/FR-161-analyze-infinite-tra
 | FR-377-AC-4 | With `F_A` empty, a concrete loop of `stutter` steps at a mapped state where an abstract transition is enabled does not refute the refinement; with an `F_A` constraint enabled there and the loop fair under `F_C`, it refutes with failure `Divergence`. | Test (TC-312) |
 | FR-377-AC-5 | A concrete terminal state whose mapped state is abstract-terminal holds; one whose mapped state enables an abstract transition holds with `F_A` empty and refutes `Divergence` when an `F_A` constraint is enabled there; each verdict is the same under all four combinations of the two models' `terminal` members. | Test (TC-313) |
 | FR-377-AC-6 | A concrete state where only `stutter`-mapped operations are enabled is not a deadlock of the concrete model, and a request with a refinement item over the concrete subject also carries the concrete model's deadlock-freedom item as a separate item. | Test (TC-313) |
-| FR-377-AC-7 | A per-step simulation obligation is one `operation-contract` item per step row and one for the initial-state rule; it is never routed for a declaration with a hidden field or for an `any` row. | Test (TC-312) |
+| FR-377-AC-7 | A per-step simulation obligation is one `operation-contract` item per step row and one for the initial-state rule; it is never routed for a declaration with a hidden field, a history field or an `any` row. | Test (TC-312) |
 | FR-377-AC-8 | The compare-and-set counter refines the abstract counter (28 reachable concrete states, every edge passing the step function, no fair stutter SCC below `value` 2); the same refinement under a concrete `terminal when` member written from the abstract predicate has its concrete deadlock-freedom item proved. | Test (TC-312, TC-313) |
 
 ## Dependencies

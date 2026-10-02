@@ -39,6 +39,11 @@ nothing. Abstract: `inc` needs `value < 2` and sets `value = pre(value) + 1`.
 5. **Safety refinement.** Remove the `ensure` row from case 4 and check.
 6. **Per-step.** Request the per-step simulation obligations for cases 1 and
    2; request them for case 3 and for a declaration with a hidden field.
+7. **Per-step with a history field.** Add to the positive declaration the
+   row `history Impl::Counter.commits: Int[0, 4] = 0 { on
+   Impl::Counter::commitA: pre(self.commits) + 1; on Impl::Counter::commitB:
+   pre(self.commits) + 1; }`, request the per-step simulation obligations,
+   and check the refinement.
 
 Replay each refutation under FR-379.
 
@@ -65,4 +70,7 @@ failure `Divergence{inc}`, fair under `F_C` (FR-377-AC-4, FR-379-AC-2). Case
 settles `proved`, basis `decisive-witness`; the `commitB` obligation of case 2
 fails from `(1, 0, f, 0, t)` and settles `inconclusive`, induction not
 closed, never `refuted`; no per-step obligation is routed for case 3's `any`
-row or for the hidden-field declaration (FR-377-AC-7, FR-379-AC-1).
+row or for the hidden-field declaration (FR-377-AC-7, FR-379-AC-1). In case 7
+no per-step obligation is routed, and the refinement item is decided by the
+explicit-state engine alone and settles `proved`, as case 1 does
+(FR-377-AC-7).
