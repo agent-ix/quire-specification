@@ -424,6 +424,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-003 | FR-003-AC-1 | TC-231 | planned |
 | FR-003 | FR-003-AC-2 | TC-231 | planned |
 | FR-003 | FR-003-AC-3 | TC-231 | planned |
+| FR-003 | FR-003-AC-4 | TC-231 | planned |
 | FR-004 | FR-004-AC-1 | TC-231 | planned |
 | FR-004 | FR-004-AC-2 | TC-231 | planned |
 | FR-004 | FR-004-AC-3 | TC-231 | planned |

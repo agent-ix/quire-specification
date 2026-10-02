@@ -30,7 +30,7 @@ Verified original locations or source-correspondence diagnostics.
 
 ## Behavior
 
-Regions use zero-based half-open UTF-8 byte offsets and one-based scalar columns. A map may delete only the indentation, CRLF and final-newline bytes that its selected container contract marks as container-owned, as [FR-134](../source-package/FR-134-preserve-source-transform-loci.md) states. Fence ownership is a separate obligation. The extractor treats expressions as opaque.
+Regions use zero-based half-open UTF-8 byte offsets and one-based scalar columns. A map may delete only the indentation, CRLF and final-newline bytes that its selected container contract marks as container-owned, as [FR-134](../source-package/FR-134-preserve-source-transform-loci.md) states. Fence ownership and the explicit mapping of a requirement's positive authored revision to the IR requirement revision are separate obligations. The extractor treats expressions as opaque.
 
 ## Acceptance Criteria
 
@@ -39,6 +39,7 @@ Regions use zero-based half-open UTF-8 byte offsets and one-based scalar columns
 | FR-003-AC-1 | The selected expression region reproduces its declared digest. | Test |
 | FR-003-AC-2 | A span splitting a UTF-8 scalar receives invalid_source_map. | Test |
 | FR-003-AC-3 | A segment map that deletes an interior source token receives invalid_source_map. | Test |
+| FR-003-AC-4 | A missing mapping from a requirement's positive authored revision to the IR requirement revision refuses executable projection. | Test |
 
 ## Dependencies
 

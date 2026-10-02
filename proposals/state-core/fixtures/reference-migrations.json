@@ -10,7 +10,7 @@
     "kind": "source",
     "authority": "agent-a-review-fixtures",
     "identity": "ix://example/config/source/parent-order",
-    "digest": "sha256:6030625958c37eec713ba1b38dde5778d1b6a8d7713d8ceca1efd8942c68fc9c",
+    "digest": "sha256:a889ed9465af43d83babc97910ec218886345c404a8135317ba34ee03f9ae49f",
     "wire": {
       "identity": "ix.native.source",
       "version": "0-draft"
@@ -21,7 +21,7 @@
     "kind": "source",
     "authority": "agent-a-review-fixtures",
     "identity": "ix://example/config/source/parent-order",
-    "digest": "sha256:6030625958c37eec713ba1b38dde5778d1b6a8d7713d8ceca1efd8942c68fc9c",
+    "digest": "sha256:a889ed9465af43d83babc97910ec218886345c404a8135317ba34ee03f9ae49f",
     "wire": {
       "identity": "ix.native.source",
       "version": "0-draft"
