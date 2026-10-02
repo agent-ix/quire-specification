@@ -136,7 +136,10 @@
           {"name": "origin", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
           {"name": "prior", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "3", "ordered": true, "unique": false}, "redefines": null},
           {"name": "peers", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "3", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "trail", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "unbounded", "ordered": true, "unique": false}, "redefines": null}
+          {"name": "trail", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "unbounded", "ordered": true, "unique": false}, "redefines": null},
+          {"name": "sku", "typeRef": "ix://acme/orders/Code", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
+          {"name": "alias", "typeRef": "ix://acme/orders/Inverted", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
+          {"name": "slug", "typeRef": "ix://acme/orders/Folded", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null}
         ],
         "operations": [
           {
@@ -345,7 +348,10 @@
         "native": "ix://quire/native/Integer",
         "lower": "0",
         "upper": "9"
-      }
+      },
+      {"node": "ix://acme/orders/Code", "native": "ix://quire/native/Text", "lower": "0", "upper": "64", "profile": "nfc"},
+      {"node": "ix://acme/orders/Inverted", "native": "ix://quire/native/Text", "lower": "5", "upper": "2", "profile": "nfc"},
+      {"node": "ix://acme/orders/Folded", "native": "ix://quire/native/Text", "lower": "0", "upper": "64", "profile": "casefold"}
     ],
     "relationships": [
       {
@@ -391,7 +397,10 @@
     {"name": "MA-10", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "scaled", "receiver": {"type": "Reference", "target": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
     {"name": "MA-11", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "scaled", "receiver": {"type": "Reference", "target": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "arguments": [{"type": "Boolean"}]}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
     {"name": "MA-12", "criterion": "FR-322-AC-30", "member": {"kind": "operation", "declaration": "M8", "name": "rate", "receiver": {"type": "Reference", "target": "36d21580d52c7feb25fc4322ce2e0ec34b3fd7637c05f8c201c64a1454d78887"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-13", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "size", "receiver": {"type": "Reference", "target": "4b07c3fd269e699bdd4bc1065acc80d2de047cc01e20fcd8bcf27fe404f79583"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}}
+    {"name": "MA-13", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "size", "receiver": {"type": "Reference", "target": "4b07c3fd269e699bdd4bc1065acc80d2de047cc01e20fcd8bcf27fe404f79583"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MT-15", "criterion": "FR-322-AC-44", "member": {"kind": "field", "declaration": "M1", "name": "sku"}, "expected": {"resolves": "ix://acme/orders/Order/sku", "member_type": {"type": "Text", "min": "0", "max": "64", "profile": "nfc"}}},
+    {"name": "MA-14", "criterion": "FR-322-AC-44", "member": {"kind": "field", "declaration": "M1", "name": "alias"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MA-15", "criterion": "FR-322-AC-44", "member": {"kind": "field", "declaration": "M1", "name": "slug"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}}
   ],
   "wire_cases": [
     {"name": "MW-01", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "body": {"term": "aggregate", "members": []}}, "expected": {"recovers": "ix://acme/orders/Order"}},

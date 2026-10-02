@@ -30,7 +30,8 @@ the member type from the resolved record.
 - `proposals/checked-package-v2/model-member-type-vectors.json` carries the
   domain package `acme/orders` `1.0.0` as a projection of the declaration
   records FR-154 intake reads from it (`typeRef`, `interfaceFeatures`,
-  value types with the `Int[lo, hi]` they are bound as (TC-196, TC-197), presence, multiplicity, supertypes
+  value types with the `Int[lo, hi]` they are bound as (TC-196, TC-197) and with
+  the `Text[min, max; profile]` they are bound as, presence, multiplicity, supertypes
   and redefinitions), the model declaration node vectors M1 to M9, the member
   cases, each recorded with its criterion, the wire cases and the selection
   cases. The SHA-256 of the RFC 8785 bytes of its `domain_package` member
@@ -80,7 +81,7 @@ compare it with the case's parameter types.
 | MA-03 | `operation` `total`, a field name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-04 | `field` `total` on M4, the relationship `billedTo` | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-05 | `field` `total` on M2, `Order` keyed under version `2.0.0` | `missing_declaration`/`missing-selection` | FR-322-AC-29 |
-| MA-06 | `field` `label`, typed `Text` | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
+| MA-06 | `field` `label`, typed native `Text` with no bounds | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-07 | `field` `backlog`, `[1, unbounded]` | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-08 | `operation` `reset`, with no result | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-09 | `field` `code` on M6 (`Both`), declared by both supertypes `Tagged` and `Coded` | `ambiguous_declaration`/`ambiguous-name` | FR-322-AC-30 |
@@ -88,6 +89,9 @@ compare it with the case's parameter types.
 | MA-11 | `operation` `scaled` on M1 with a `Boolean` argument | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-12 | `operation` `rate` on M8 (`Flow`, a `systems_interface`) | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-13 | `operation` `size` on M1 with receiver `Reference<Invoice>` | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
+| MT-15 | `field` `sku` on M1, typed value type `Code`, `Text` bound to `[0, 64; nfc]` | Resolves `Order/sku`; type `Text[0, 64; nfc]` | FR-322-AC-44 |
+| MA-14 | `field` `alias`, typed value type `Inverted`, `Text` bound to `[5, 2; nfc]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
+| MA-15 | `field` `slug`, typed value type `Folded`, `Text` bound to `[0, 64; casefold]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
 | MW-01 | A `model`/`object_type` wire node with M1's id, its own id as `semantic_type` and an empty body | Recovers `Order` | FR-322-AC-29 |
 | MW-02 | MW-01 with a body member | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
 | MW-03 | MW-01 with a `declaration` | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
