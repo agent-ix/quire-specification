@@ -33,7 +33,7 @@ bridge preserves:
 
 | Property | Source | Note |
 | --- | --- | --- |
-| Native source digest/revision and exact clause/expression span | FR-095 Behavior | Span identity per [FR-203](../foundation/FR-203-source-region.md). |
+| Native source digest and exact clause/expression span | FR-095 Behavior | Span identity per [FR-203](../foundation/FR-203-source-region.md). |
 | Clause/requirement identity | FR-095 Behavior | |
 | Language and temporal profile definition | FR-095 Behavior | [FR-250](FR-250-temporal-semantic-profile.md). |
 | Model/type/predicate bindings | FR-095 Behavior | |

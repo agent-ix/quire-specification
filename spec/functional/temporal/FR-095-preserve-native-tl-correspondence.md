@@ -52,7 +52,7 @@ The initial correspondence shall use this support table:
 | `quire.temporal.infinite-trace/v1` unbounded property (no interval bound) | No TL target | Unsupported; there is no bounded TL formula to generate. [FR-161](FR-161-analyze-infinite-trace-properties.md) analyzes the request natively instead of lowering it. |
 
 For a supported mapping, the bridge shall preserve the native source
-digest/revision and exact clause/expression span; clause/requirement identity;
+digest and exact clause/expression span; clause/requirement identity;
 language and temporal profile definition; model/type/predicate bindings;
 evaluation anchor; immutable capture environment; clock/observation binding;
 interval; closure/history premises; TL formula/profile/proposition identities;

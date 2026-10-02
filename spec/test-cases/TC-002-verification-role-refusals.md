@@ -21,7 +21,7 @@ generated-artifact plus each of the other five new kinds, leaving every other
 field unchanged. Then mutate unknown kind, extra member, missing member,
 envelope version and artifact version individually. For exact property, subject
 (a source ArtifactRef), binding, dependency-closure and run-artifact references,
-mutate authority, identity, revision namespace/value, digest, wire identity/version
+mutate authority, identity, digest, wire identity/version
 one at a time. Submit each added role under the previous closed schema.
 
 ## Expected Results

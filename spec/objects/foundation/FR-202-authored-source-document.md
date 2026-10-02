@@ -15,15 +15,13 @@ relationships:
 
 ## Description
 
-When a clause location is exchanged, the producer SHALL bind it to one authored source document identified by its document identity, revision and digest rather than by its path or its name.
+When a clause location is exchanged, the producer SHALL bind it to one authored source document identified by its document identity and digest rather than by its path or its name.
 
 ## Properties
 
 - **document_identity** (identity) — the original document identity carried with
   every exchanged clause location
   ([FR-003](../../functional/foundation/FR-003-bind-source-correspondence.md) Inputs).
-- **revision** (identity component) — the original document revision, exchanged
-  alongside the identity and digest (FR-003 Inputs).
 - **digest** (identity component) — the original document digest. It is a raw
   artifact digest, which hashes the complete supplied bytes including layout
   ([FR-018](../../functional/foundation/FR-018-select-verification-jcs-domain.md)), and it
@@ -45,18 +43,18 @@ produce no semantic tokens (FR-036).
 
 - **Identity kind** — *authored*. The document is written by a person; its
   identity is carried in the exchange, not computed from its content.
-- **Key** — (`document_identity`, `revision`, `digest`). Equality is
-  componentwise over exactly these three. The file path, the display name and
+- **Key** — (`document_identity`, `digest`). Equality is
+  componentwise over exactly these two. The file path, the display name and
   any rendering of the document never participate: FR-003 binds a location to
   the document identity, and FR-047-AC-4 requires that diagnostics "do not
   reconstruct a location by searching for a repeated name".
-- **Key order** — lexicographic over (`document_identity`, `revision`,
-  `digest`). It exists to compare and diff document collections. It carries no
-  precedence between revisions and no causal meaning.
+- **Key order** — lexicographic over (`document_identity`, `digest`). It
+  exists to compare and diff document collections. It carries no precedence
+  and no causal meaning.
 - **Causal order** — none. A document participates in no causal structure;
   FR-052 forbids deriving causal edges from source order.
-- **Absence** — an absent revision or digest compares only to absence. It is
-  never defaulted to a current revision or to the empty digest. A changed
+- **Absence** — an absent digest compares only to absence. It is never
+  defaulted to the empty digest. A changed
   definition digest prevents reuse of the earlier semantic subject
   ([FR-001](../../functional/foundation/FR-001-select-native-profile.md)-AC-3).
 - **Digest domain** — `raw-artifact-digest` under
@@ -68,14 +66,14 @@ produce no semantic tokens (FR-036).
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-202-AC-1 | Two source documents with identical bytes and different document identities compare unequal. | Analysis |
-| FR-202-AC-2 | A document key compares equal only when identity, revision and digest all compare equal. | Analysis |
-| FR-202-AC-3 | An absent revision or digest compares only to absence and receives no current-revision default. | Analysis |
+| FR-202-AC-2 | A document key compares equal only when identity and digest both compare equal. | Analysis |
+| FR-202-AC-3 | An absent digest compares only to absence and receives no default digest. | Analysis |
 | FR-202-AC-4 | Path and display name are absent from the key. | Inspection |
 
 ## Dependencies
 
 - [FR-003](../../functional/foundation/FR-003-bind-source-correspondence.md) establishes the
-  identity/revision/digest triple and the segment-map limits.
+  identity and digest pair and the segment-map limits.
 - [FR-036](../../functional/foundation/FR-036-retain-lexical-source-locations.md)
   establishes the original-bytes input and comment retention.
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity discipline.

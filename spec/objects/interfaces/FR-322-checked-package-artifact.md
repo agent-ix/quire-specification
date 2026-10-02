@@ -327,7 +327,7 @@ boundary.
   mapping. An occurrence key is (`node_id`, `role`, `ordinal`), where role is
   `declaration`, `type`, `expression`, `anchor`, `claim` or `generated`; a
   source region is a half-open UTF-8 byte interval `[start,end)` under one exact
-  source-document identity/revision/raw-byte digest. An occurrence may name
+  source-document identity/raw-byte digest. An occurrence may name
   multiple ordered regions; regions for that one occurrence/document cannot
   overlap, while regions belonging to different occurrences may nest or
   overlap. A path, display name or search result is not a source identity.

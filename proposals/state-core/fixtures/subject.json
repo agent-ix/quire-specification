@@ -22,14 +22,6 @@
   },
   "source": {
     "identity": "ix://example/config/source/parent-order",
-    "revision": {
-      "namespace": "synthetic-source-revision",
-      "value": "1"
-    },
-    "irRevisionMapping": {
-      "document": "ParentOrder",
-      "revision": 1
-    },
     "path": "parent-order.native",
     "digest": "sha256:6030625958c37eec713ba1b38dde5778d1b6a8d7713d8ceca1efd8942c68fc9c",
     "spanConvention": "utf8-half-open-scalar-column/0-draft",

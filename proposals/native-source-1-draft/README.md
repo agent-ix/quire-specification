@@ -23,7 +23,7 @@ grammar.
 The `proposals/state-core` profile and rule files define `state-finite/0-draft`;
 its fixtures pin their current bytes. Their digests cannot
 be used to identify this amendment. Final adoption must select this definition's
-exact repository revision and SHA-256 plus every inherited rule definition and
+exact SHA-256 plus every inherited rule definition and
 its precedence. No final digest or complete inheritance closure is frozen by this
 review draft. An unavailable selection refuses; it cannot silently fall back to
 0-draft. Historical reports keep their original meaning and identity. Recompiling
@@ -74,7 +74,7 @@ not introduce presence syntax by inference.
 
 Each clause has one stable identity and exactly one editable source: a selected
 native inline region or a selected local-file region, never both. Bind SHA-256
-of the exact bytes, source revision and half-open byte span. A path or floating
+of the exact bytes and the half-open byte span. A path or floating
 URL is insufficient. Multi-clause files bind each clause separately. Preserve
 source/profile, clause/requirement revision, declaration closure, tool pins and
 anchor inputs independently of a source-free semantic digest. Duplicate

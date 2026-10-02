@@ -14,9 +14,8 @@ these two forms only. Existing source-map and migration envelopes keep their
 1-draft selection; this amendment supplies no inferred migration, decoder
 fallback or general extension bag.
 
-An artifact value selects `ix.artifact-ref/3-draft`. Its seven mandatory fields
-are refVersion, kind, authority, identity, revision, digest and wire. Revision
-has exactly namespace and value (nonempty strings). Wire has exactly identity
+An artifact value selects `ix.artifact-ref/3-draft`. Its six mandatory fields
+are refVersion, kind, authority, identity, digest and wire. Wire has exactly identity
 and version (nonempty strings). Authority and identity are nonempty strings.
 Digest is exactly `sha256:` plus 64 lowercase hexadecimal digits, hashing all
 supplied artifact bytes with no normalization. Every record is closed.
@@ -37,10 +36,10 @@ dependency-closure. The six additional kinds have these exact roles:
 
 The consumer selects its expected role explicitly. A structurally valid nearby
 kind is an identity-mismatch for that role. No generic-kind fallback is permitted.
-Artifact identity is the exact tuple of kind, authority, identity, structured
-revision, digest and wire under its selected refVersion. Equal bytes alone cannot
-join different roles. Conflicting contents for one immutable identity/revision
-remain identity-content-conflict. Changing versions requires a separately accepted
+Artifact identity is the exact tuple of kind, authority, identity, digest and
+wire under its selected refVersion. Equal bytes alone cannot join different
+roles. Supplied bytes whose digest differs from the reference's digest remain
+identity-content-conflict. Changing versions requires a separately accepted
 mapping; an amendment's existence is not that mapping.
 
 ## Semantic reference and JCS identity

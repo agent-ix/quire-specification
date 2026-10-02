@@ -8,9 +8,5 @@
     ],
     "allowedCreatedTypes": [],
     "allowedDeletedTypes": []
-  },
-  "revision": {
-    "namespace": "agent-a-review-fixture",
-    "value": "1"
   }
 }

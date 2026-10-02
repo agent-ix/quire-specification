@@ -10,10 +10,6 @@
     "kind": "source",
     "authority": "agent-a-review-fixtures",
     "identity": "ix://example/config/source/parent-order",
-    "revision": {
-      "namespace": "synthetic-source-revision",
-      "value": "1"
-    },
     "digest": "sha256:6030625958c37eec713ba1b38dde5778d1b6a8d7713d8ceca1efd8942c68fc9c",
     "wire": {
       "identity": "ix.native.source",
@@ -25,10 +21,6 @@
     "kind": "source",
     "authority": "agent-a-review-fixtures",
     "identity": "ix://example/config/source/parent-order",
-    "revision": {
-      "namespace": "synthetic-source-revision",
-      "value": "1"
-    },
     "digest": "sha256:6030625958c37eec713ba1b38dde5778d1b6a8d7713d8ceca1efd8942c68fc9c",
     "wire": {
       "identity": "ix.native.source",
@@ -39,7 +31,6 @@
     "kind",
     "authority",
     "identity",
-    "revision",
     "digest",
     "wire"
   ],

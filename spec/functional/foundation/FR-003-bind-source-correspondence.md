@@ -22,7 +22,7 @@ When a clause location is exchanged, the producer shall bind it to the exact aut
 
 ## Inputs
 
-Original document identity/revision/digest, clause and expression regions, optional extracted body and segment map.
+Original document identity/digest, clause and expression regions, optional extracted body and segment map.
 
 ## Outputs
 
@@ -30,7 +30,7 @@ Verified original locations or source-correspondence diagnostics.
 
 ## Behavior
 
-Regions use zero-based half-open UTF-8 byte offsets and one-based scalar columns. A map may delete only the indentation, CRLF and final-newline bytes that its selected container contract marks as container-owned, as [FR-134](../source-package/FR-134-preserve-source-transform-loci.md) states. Fence ownership and explicit positive numeric IR revision mapping are separate obligations. The extractor treats expressions as opaque.
+Regions use zero-based half-open UTF-8 byte offsets and one-based scalar columns. A map may delete only the indentation, CRLF and final-newline bytes that its selected container contract marks as container-owned, as [FR-134](../source-package/FR-134-preserve-source-transform-loci.md) states. Fence ownership is a separate obligation. The extractor treats expressions as opaque.
 
 ## Acceptance Criteria
 
@@ -39,7 +39,6 @@ Regions use zero-based half-open UTF-8 byte offsets and one-based scalar columns
 | FR-003-AC-1 | The selected expression region reproduces its declared digest. | Test |
 | FR-003-AC-2 | A span splitting a UTF-8 scalar receives invalid_source_map. | Test |
 | FR-003-AC-3 | A segment map that deletes an interior source token receives invalid_source_map. | Test |
-| FR-003-AC-4 | A missing numeric IR revision mapping refuses executable projection. | Test |
 
 ## Dependencies
 

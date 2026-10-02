@@ -10,9 +10,5 @@
     "allowedDeletedTypes": [
       "ix://example/config/type/ConfigVersion"
     ]
-  },
-  "revision": {
-    "namespace": "agent-a-review-fixture",
-    "value": "1"
   }
 }

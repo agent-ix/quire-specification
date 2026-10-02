@@ -52,7 +52,7 @@ engineering-assurance completion and has no new language drafting assignment.
 | ID | Capability and selected boundary | Decision | Evidence / owner | Existing foundation or gap |
 | --- | --- | --- | --- | --- |
 | V1-001 | One native source, explicit edition and exact profile bundle; state, temporal and choreography clauses in one linked package | V1 | OWN, ARCH; A / #10 | Profile composition missing; current single-profile parser is a foundation. |
-| V1-002 | Byte/revision/span identity, exact model imports, typed bindings, semantic versus artifact versus run identities | V1 | RULE, STATE; A/B/C | State implementations exist; common cross-profile contract and consumers must be extended. |
+| V1-002 | Byte/span identity, exact model imports, typed bindings, semantic versus artifact versus run identities | V1 | RULE, STATE; A/B/C | State implementations exist; common cross-profile contract and consumers must be extended. |
 | V1-003 | One shared declared type authority; roles/messages reference model declarations without making another domain schema | V1 | MODEL, ARCH; A | Spec artifacts declare the domain model; QSL model intake builds the declarations; role/event contract needs specification. |
 | V1-004 | Total typed Boolean predicates; local bindings, explicit units and guarded optional access | V1 | ADOPT, STATE; A | FS03 accepts the typed predicate/value contract; QSL implements the admitted native slice, while family consumers qualify separately. |
 | V1-005 | Distinct parse/type/admission/lowering/execution/observation failures with typed context and located source | V1 | STATE, RULE; A/B/C | Partial existing codes; cross-profile catalog and stage behavior missing. |

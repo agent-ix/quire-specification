@@ -6959,10 +6959,10 @@ fn tc_233_decimal_and_unit_domain_refusals_leave_sum_prefixes_undefined() {
     }
 }
 
-/// The four source labels in their catalog order.
-const SOURCE_LABELS: [&str; 4] = ["authority", "identity", "revision_namespace", "revision"];
+/// The two source labels in their catalog order.
+const SOURCE_LABELS: [&str; 2] = ["authority", "identity"];
 
-/// FR-272-AC-12: both `invalid_source_identity` rows name the four labels in
+/// FR-272-AC-12: both `invalid_source_identity` rows name the two labels in
 /// order, decide `blank-label` at the first blank label, and report
 /// `empty-path` only when every label is non-blank.
 #[trace("TC-233", "FR-272-AC-12")]
@@ -6991,7 +6991,7 @@ fn tc_233_invalid_source_identity_checks_labels_before_the_path() {
             .collect::<Vec<_>>();
         assert_eq!(
             labels, SOURCE_LABELS,
-            "{name} names the four labels once each, in order"
+            "{name} names the two labels once each, in order"
         );
         assert!(
             row.contains("The label check runs first"),
@@ -7006,7 +7006,7 @@ fn tc_233_invalid_source_identity_checks_labels_before_the_path() {
 }
 
 /// FR-272-AC-13: the catalog's payload value spellings: the four domain
-/// forms, the two widths, the flag order (FR-148's own order) and the four
+/// forms, the two widths, the flag order (FR-148's own order) and the two
 /// labels (the `invalid_source_identity` row's order).
 #[trace("TC-233", "FR-272-AC-13")]
 #[test]
@@ -7084,7 +7084,7 @@ fn tc_233_payload_values_have_one_spelling() {
     assert_eq!(
         ordered(&item("- a label is")),
         SOURCE_LABELS,
-        "a label is exactly one of the four labels, in the row's order"
+        "a label is exactly one of the two labels, in the row's order"
     );
 }
 

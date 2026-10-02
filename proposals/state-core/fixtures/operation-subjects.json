@@ -24,14 +24,6 @@
       },
       "source": {
         "identity": "ix://example/config/source/version-update",
-        "revision": {
-          "namespace": "synthetic-source-revision",
-          "value": "1"
-        },
-        "irRevisionMapping": {
-          "document": "VersionUpdate",
-          "revision": 1
-        },
         "path": "version-update.native",
         "digest": "sha256:3863a233230fd289a39031c067094850598639bae2824e735aac0bda9d24134f",
         "spanConvention": "utf8-half-open-scalar-column/0-draft",
@@ -101,14 +93,6 @@
       },
       "source": {
         "identity": "ix://example/config/source/version-update",
-        "revision": {
-          "namespace": "synthetic-source-revision",
-          "value": "1"
-        },
-        "irRevisionMapping": {
-          "document": "VersionUpdate",
-          "revision": 1
-        },
         "path": "version-update.native",
         "digest": "sha256:3863a233230fd289a39031c067094850598639bae2824e735aac0bda9d24134f",
         "spanConvention": "utf8-half-open-scalar-column/0-draft",

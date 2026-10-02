@@ -21,7 +21,7 @@ concrete syntax tree.
 
 ## Inputs
 
-Exact source bytes, source revision and edition.
+Exact source bytes, source digest and edition.
 
 ## Outputs
 
@@ -31,14 +31,14 @@ Lossless CST with recoveries/diagnostics, or fatal encoding/resource refusal.
 
 Serializing an unrecovered CST reproduces the original bytes exactly. Recovery
 nodes are explicit, zero/fixed-width source-correspondent edits and never checked
-semantic declarations. Incremental edits create a new source revision and retain
+semantic declarations. Incremental edits create a new source digest and retain
 stable node identity only for unchanged byte-correspondent regions.
 
 ## CST identity contract
 
 Each token stores byte range, token kind and exact bytes; trivia and invalid
 bytes are first-class leaf occurrences. Interior nodes store grammar production
-and ordered child identities. A source revision digest plus byte range and
+and ordered child identities. A source digest plus byte range and
 structural path identifies a node. Incremental reuse is permitted only when the
 node's exact byte slice and ancestor production path are unchanged. Recovery
 edits are a separate proposed-edit stream and never mutate source bytes.
@@ -49,7 +49,7 @@ edits are a separate proposed-edit stream and never mutate source bytes.
 | --- | --- | --- |
 | FR-302-AC-1 | Arbitrary valid source including comments/whitespace round-trips byte-for-byte through the CST. | Test (TC-222) |
 | FR-302-AC-2 | Invalid source exposes explicit recoveries and exact loci without publishing a checked package. | Test (TC-222) |
-| FR-302-AC-3 | Incremental edits preserve identity only for unchanged mapped nodes under the new source revision. | Test (TC-222) |
+| FR-302-AC-3 | Incremental edits preserve identity only for unchanged mapped nodes under the new source digest. | Test (TC-222) |
 
 ## Dependencies
 
