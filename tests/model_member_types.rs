@@ -195,6 +195,17 @@ fn exposed<'a>(package: &'a Value, declared: &'a Value, list: &str) -> Vec<(Stri
         .collect()
 }
 
+/// FR-141's six text profiles, the only profiles a `Text[min, max; profile]`
+/// member type names.
+const TEXT_PROFILES: [&str; 6] = [
+    "unicode-scalars",
+    "nfc",
+    "nfd",
+    "nfkc",
+    "nfkd",
+    "binary-utf8",
+];
+
 /// FR-322 step 4's element type table. A reference target is the model
 /// declaration node key recomputed from the declaration.
 fn element_type(package: &Value, type_ref: &str) -> Option<Value> {
@@ -208,10 +219,24 @@ fn element_type(package: &Value, type_ref: &str) -> Option<Value> {
         .find(|value_type| text(value_type, "node") == type_ref)
     {
         let bound = |member: &str| text(value_type, member).parse::<i128>().ok();
-        let integer = text(value_type, "native") == "ix://quire/native/Integer";
-        return (integer && bound("lower")? <= bound("upper")?).then(
-            || json!({"type": "Int", "min": value_type["lower"], "max": value_type["upper"]}),
-        );
+        let ordered = bound("lower")? <= bound("upper")?;
+        return match text(value_type, "native") {
+            "ix://quire/native/Integer" => ordered.then(
+                || json!({"type": "Int", "min": value_type["lower"], "max": value_type["upper"]}),
+            ),
+            "ix://quire/native/Text" => (ordered
+                && bound("lower")? >= 0
+                && TEXT_PROFILES.contains(&text(value_type, "profile")))
+            .then(|| {
+                json!({
+                    "type": "Text",
+                    "min": value_type["lower"],
+                    "max": value_type["upper"],
+                    "profile": value_type["profile"]
+                })
+            }),
+            _ => None,
+        };
     }
     let target = declarations(package)
         .into_iter()
@@ -463,6 +488,12 @@ fn tc_280_member_names_resolve_in_exposed_effective_members() {
 #[test]
 fn tc_280_member_types_follow_declared_type_multiplicity_and_presence() {
     assert_member_cases(&parsed(VECTORS), "FR-322-AC-31");
+}
+
+#[trace("TC-280", "FR-322-AC-44")]
+#[test]
+fn tc_280_text_value_type_members_carry_their_bounds_and_profile() {
+    assert_member_cases(&parsed(VECTORS), "FR-322-AC-44");
 }
 
 #[trace("TC-280", "FR-322-AC-32")]
