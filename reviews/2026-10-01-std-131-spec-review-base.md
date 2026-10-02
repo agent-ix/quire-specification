@@ -136,3 +136,12 @@ Round 4, reviewed at 650f03478f5b3d976553460b13aea01f4745289c (squashed onto mai
 | FND | outcome | sha/reason |
 | --- | --- | --- |
 | FND-018 | fixed | 00f757a |
+
+Round 5, reviewed at a7e2385be43427c939329b0ac330e0d086495c6e. #172 is squashed onto it as a00533e8. Its own diff against a7e2385 is byte-identical to round 2's diff against 650f034, except for the committed SR-830 round-2 note. Cargo.lock points at quire-verification-contracts main 41bb306e (qvc#11 merged). `cargo test --locked --no-fail-fast` on a00533e8 with no `[patch]` exits 0 (lib 0, model 4, v2 59, member 10, shared 7). No new findings.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-019 | fixed | a7e2385 |
+| FND-020 | fixed | a7e2385 |
+| FND-021 | fixed | a7e2385 |
+| FND-022 | fixed | a7e2385 |
