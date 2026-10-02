@@ -11,6 +11,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-252
     type: references
+  - target: ix://agent-ix/quire-specification/FR-361
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-367
+    type: references
 ---
 ## Description
 
@@ -39,16 +43,24 @@ The temporal profile shall select exactly one of these v1 interpretations:
 | `quire.temporal.event-position.false-extension/v1` | One admitted semantic-event position in an authoritative sequence | Atomic predicates are false after closure; constants retain their value |
 | `quire.temporal.fixed-sample.false-extension/v1` | One sample of the declared positive rational period from the declared epoch | Atomic predicates are false after closure; constants retain their value |
 | `quire.temporal.timestamped-event.finite-window/v1` | One tick in the declared timestamp unit | Quantification ranges over admitted event instants in a complete bounded window |
-| `quire.temporal.infinite-trace/v1` | One admitted semantic-event position in an authoritative sequence, with no interval bound | Not applicable; the evaluated sequence never closes |
+| `quire.temporal.infinite-trace/v1` | One admitted semantic-event position in an authoritative sequence | Not applicable; the evaluated sequence never closes |
 
 The event-position profile shall not claim elapsed time. The infinite-trace
 profile composes the event-position sequence authority without its
 false-extension closure and likewise shall not claim elapsed time.
 
-The infinite-trace profile shall admit no interval bound. FR-161 defines the
-checked infinite-trace subject and its sound-provider result vocabulary; FR-048
-and AD-012 define the unbounded temporal operator grammar this profile alone
-admits.
+The infinite-trace profile shall admit both unbounded temporal operators and
+interval operators with a closed interval `[a,b]`, nested in any order
+([FR-367](FR-367-evaluate-interval-operators-under-infinite-trace.md)). FR-161
+defines the checked infinite-trace subject and its sound-provider result
+vocabulary; FR-048 and AD-012 define the unbounded temporal operator grammar
+this profile alone admits.
+
+Over a model subject ([FR-361](FR-361-read-model-behaviours-as-temporal-traces.md)),
+the authoritative sequence is the subject's step sequence: one tick is one
+step of a behaviour, and the clause's clock role binds to that step sequence.
+A model subject admits the event-position false-extension and infinite-trace
+profiles only.
 
 The fixed-sample profile shall retain epoch, period and unit identity.
 
@@ -78,7 +90,8 @@ definition identity; old profile bytes and results remain historical subjects.
 | FR-090-AC-3 | Changing a sample period, epoch, timestamp unit, sequence authority or closed-boundary rule changes the binding identity and cannot reuse an earlier result. | Test (TC-113) |
 | FR-090-AC-4 | Equal timestamps without an admitted causal/sequence order refuse `until`, `release`, `since` and `triggered`; ingestion order is not substituted. | Test (TC-113) |
 | FR-090-AC-5 | Historical profile definitions remain unchanged and a backend capability request cannot silently select a different executable profile. | Test (TC-117) |
-| FR-090-AC-7 | Selecting `quire.temporal.infinite-trace/v1` admits the unbounded temporal operator grammar edition; no other selected profile admits it. | Test (TC-238) |
+| FR-090-AC-7 | Selecting `quire.temporal.infinite-trace/v1` admits the unbounded temporal operator grammar edition and interval operators nested with unbounded ones; no other selected profile admits an unbounded operator. | Test (TC-238) |
+| FR-090-AC-8 | Over a model subject, a clause under the event-position false-extension or infinite-trace profile binds its clock role to the subject's step sequence with one tick per step, and a clause under the fixed-sample or timestamped-event profile settles `unsupported`. | Test (TC-290) |
 
 ## Dependencies
 

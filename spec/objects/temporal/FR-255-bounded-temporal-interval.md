@@ -14,6 +14,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-289
     type: references
+  - target: ix://agent-ix/quire-specification/FR-367
+    type: references
 ---
 # FR-255: Bounded temporal interval
 
@@ -73,8 +75,10 @@ profile shall quantify admitted past instants by inclusive clock distance."
   absent bound: FR-091 states that "Where a bounded temporal profile is
   selected, the evaluator shall refuse an unbounded interval", FR-092 states the
   same for an unbounded past interval, and FR-092 refuses implicit history
-  reconstruction "under every profile". An operator admitted under the
-  infinite-trace profile carries no interval object at all.
+  reconstruction "under every profile". Under the infinite-trace profile an
+  interval operator carries this object with the infinite-trace profile
+  identity in its key, and an unbounded operator carries none
+  ([FR-367](../../functional/temporal/FR-367-evaluate-interval-operators-under-infinite-trace.md)).
 - **Digest domain** — not applicable; no key component of this object is a
   digest. The profile identity it names carries one, under
   [FR-201](../foundation/FR-201-canonical-identity-domain.md).
@@ -98,6 +102,7 @@ finite-window empty truth to an incomplete input."
 | FR-255-AC-3 | An interval is not shortened to the extent of the supplied data. | Test |
 | FR-255-AC-4 | An absent bound compares only to absence and is not defaulted to zero. | Test |
 | FR-255-AC-5 | The declared key order over intervals is never cited as a causal or containment relation. | Test |
+| FR-255-AC-6 | An interval `[a,b]` on an operator under `quire.temporal.infinite-trace/v1` is admitted, keyed with that profile identity, and compares unequal to the same bound pair under a bounded profile. | Test (TC-298) |
 
 ## Dependencies
 

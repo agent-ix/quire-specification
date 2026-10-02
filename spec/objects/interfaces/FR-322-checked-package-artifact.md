@@ -16,6 +16,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-341
     type: references
+  - target: ix://agent-ix/quire-specification/FR-370
+    type: references
   - target: ix://agent-ix/quire-specification/FR-342
     type: references
   - target: ix://agent-ix/quire-specification/FR-043
@@ -150,9 +152,14 @@ boundary.
   projection, navigation or dispatched call resolves its name only in that
   node (for a model-owned member, in its exposed effective members, step 3
   of "Model-owned members"), or
-  for a clause the `{kind: "profile_operator", operator}` member naming one
-  operator the law's profile defines (the eight bounded temporal operators of
-  `quire.temporal.bounded-facet/v1`, or the FR-052 bounded control constructs),
+  for a `quire.op.protocol.control`, `quire.op.state.transition` or
+  `quire.op.claim.clause` application the `{kind: "profile_operator", operator}`
+  member naming one operator the law's profile defines (the FR-052 bounded
+  control constructs, or for a claim the temporal operator it applies), or for
+  `quire.op.temporal.clause` no member: a temporal clause's body, its
+  `quire.op.temporal.*` operator identities and their `temporal_interval` and
+  `fairness` members are
+  [FR-370](FR-370-checked-package-temporal-clause-body.md)'s,
   or for `quire.op.state.clause` the `{kind: "state_clause", clause}` member
   naming the clause kind (`invariant`, `precondition` or `postcondition`,
   [FR-341](FR-341-checked-package-state-clause-body.md)). A state clause
@@ -552,12 +559,14 @@ is admitted only as a state clause's anchor. The `type_argument` member of `quir
 type's family, except that a function reference is `function`, a relation reference is `population`,
 a `dependency_reference` callee has family `function`,
 an aggregate is `aggregate`, a binding is `binder` (whose *bound* is the
-descriptor of its value) and a clause application is `clause`.
+descriptor of its value), a clause application is `clause` and a temporal
+formula application is `temporal`
+([FR-370](FR-370-checked-package-temporal-clause-body.md)).
 
 | Group | Families | Decision rule |
 | --- | --- | --- |
 | `any_value` | `boolean`, `integer`, `rational`, `decimal`, `float32`, `float64`, `text`, `enum`, `ordered_enum`, `quantity`, `option`, `record`, `tuple`, `sequence`, `set`, `bag`, `ordered_set`, `reference` | An operand position admits a term whose family is a member. |
-| `any_term` | `any_value` plus `function`, `population`, `aggregate`, `binder`, `clause` | Used only as the rest position of clause and call operations. |
+| `any_term` | `any_value` plus `function`, `population`, `aggregate`, `binder`, `clause`, `temporal` ([FR-370](FR-370-checked-package-temporal-clause-body.md)) | Used only as the rest position of clause and call operations. |
 | `exact_numeric` | `integer`, `rational`, `decimal` | Exact numeric operands of conversions. |
 | `rational_promotable` | `integer`, `rational` | Operands promoted exactly by `n ↦ n/1` (FR-146, FR-149). |
 | `ieee_float` | `float32`, `float64` | IEEE operands; no `eq`, `ne`, ordering or `negate`. |
@@ -675,7 +684,7 @@ partial checked package.
 | FR-322-AC-18 | Each published operation vector validates against the closed node-preimage schema, recomputes its recorded JCS SHA-256 and is distinct from every other vector; every application node of the published operation package is keyed by its application-node preimage and is a published vector, and a vector outside the package refuses as `operation-law-unselected` when placed in it; floor-to-Euclidean division changes the node and package ids; a retained key refuses as `stale-node-key`; a contradictory form, missing member-declaration dependency, stray recursion group or extra dependency is refused; an application without an operation fails the V2 schema; and the all-families function body calls a published function, changes its node id when rewritten as `dispatch_call` and then refuses as `operation-member-mismatch`. | Test (TC-233) |
 | FR-322-AC-19 | Each published operation mutation never keeps its stale key and either rekeys to exactly its named counterpart vector and is admitted exactly when its laws are lock-selected, refuses as `operation-law-unselected` until the lock also selects its law and again under the stale selection, or is refused by exactly its named schema or semantic check with its recorded cause and that cause's code; together the mutations exercise every operation refusal cause. | Test (TC-233) |
 | FR-322-AC-21 | Every node of each published V2 package carries a `declaration` member exactly when it declares; the schema refuses a declaring node without it and an expression with it; the member enters the application-node preimage and package id; a name duplicated on two nodes refuses as `ambiguous-name` at the node later in node-id digest order; and a nominal node whose declaration differs from its `qualified_declaration` refuses as `declaration-nominal-mismatch` before any ambiguity. | Test (TC-233) |
-| FR-322-AC-22 | Every clause application of the published clause package carries exactly one profile law of its catalogued role equal to the lock's `profile_selections` row and a `profile_operator` member the profile defines; removing the law refuses as `operation-law-missing`, a protocol profile in the temporal role as `operation-law-mismatch`, a lock without the temporal profile row as `operation-law-unselected`, and an undefined, other-profile or absent operator as `operation-member-mismatch`. | Test (TC-233) |
+| FR-322-AC-22 | Every clause application of the published clause package carries exactly one profile law of its catalogued role equal to the lock's `profile_selections` row, and every clause application other than `quire.op.temporal.clause` (FR-370) a `profile_operator` member the profile defines; removing the law refuses as `operation-law-missing`, a protocol profile in the temporal role as `operation-law-mismatch`, a lock without the temporal profile row as `operation-law-unselected`, and an undefined, other-profile or absent operator as `operation-member-mismatch`. | Test (TC-233) |
 | FR-322-AC-23 | Every application carries a `result_type` and every literal a `type`; a root `result_type` differing from the node `semantic_type`, a `result_type` the operation cannot produce, and a literal whose `type` family its `value_kind` does not admit each refuse as `operator-ineligible`, while the same literal with its declared type is admitted. | Test (TC-233) |
 | FR-322-AC-24 | The FR-149 conversion classification is decided from declared bounds: an integer range into a containing integer or rational range is exact, an integer range whose scaled bounds exceed a decimal range is range narrowing, a decimal of scale 3 into scale 2 is scale reduction and a rational into narrower rational bounds is rational narrowing; `quire.op.rational.div` over integer-range operands carries `promotes_exact` and its published vector is admitted, while a decimal operand refuses as `operator-ineligible`. | Test (TC-233) |
 | FR-322-AC-25 | An `operation` member resolves only against a declaring `model` node of `semantic_form` `object_type`, `process`, `state_machine` or `persistence_interface`; every other model form, including `systems_interface`, refuses `operator-ineligible`/`ill_typed`. | Test (TC-233) |

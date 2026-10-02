@@ -1,5 +1,5 @@
 ---
-id: FR-341
+id: FR-360
 title: "Infinite-trace result disposition vocabulary"
 type: FR
 object: enumeration
@@ -12,8 +12,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-243
     type: references
+  - target: ix://agent-ix/quire-specification/FR-363
+    type: references
 ---
-# FR-341: Infinite-trace result disposition vocabulary
+# FR-360: Infinite-trace result disposition vocabulary
 
 ## Description
 
@@ -33,14 +35,19 @@ provenance."
 | `proved` | Execution `completed` (FR-241); truth `satisfied` (FR-242); settlement basis `closed-scope` or `decisive-witness` (FR-243). The provider returns replayable evidence for every admitted infinite trace (FR-161-AC-1). |
 | `refuted` | Execution `completed` (FR-241); truth `violated` (FR-242); settlement basis `closed-scope` or `decisive-counterexample` (FR-243). A finite prefix plus lasso or provider-declared complete witness replays to an admitted infinite trace (FR-161). |
 | `inconclusive` | Execution `completed` (FR-241); truth `pending` (FR-242); settlement basis `unsettled` (FR-243, restated by [FR-094-AC-7](../../functional/temporal/FR-094-interpret-progress-history-and-closure.md)). A finite-prefix monitor returns this label rather than `proved` for an unresolved liveness property (FR-161-AC-2). |
-| `unsupported` | Execution `unsupported` (FR-241); truth `unavailable` (FR-242); settlement basis `unavailable` (FR-243). Returned for an unsupported operator, a missing fairness/model closure premise, or the absence of a registered liveness backend. |
-| `failed` | Execution `failed` or `resource-incomplete` (FR-241); truth `unavailable` (FR-242); settlement basis `unavailable` (FR-243). `failed` covers a selected liveness provider that fails for this exact claim; `resource-incomplete` covers a resource ceiling that stopped the analysis. Neither invokes a fallback nor changes an independent sibling result (FR-094-AC-9). |
+| `unsupported` | Execution `unsupported` (FR-241); truth `unavailable` (FR-242); settlement basis `unavailable` (FR-243). Returned for an unsupported operator, a missing fairness premise ([FR-362](../../functional/temporal/FR-362-apply-fairness-constraints.md): a fairness constraint over a trace that carries no enabledness), a profile the subject does not admit ([FR-361](../../functional/temporal/FR-361-read-model-behaviours-as-temporal-traces.md)), or no candidate that decides the item ([FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md)). |
+| `failed` | Execution `failed` or `resource-incomplete` (FR-241); truth `unavailable` (FR-242); settlement basis `unavailable` (FR-243). `failed` covers a selected liveness provider that fails for this exact claim; `resource-incomplete` covers a caller-configurable run limit that stopped the analysis before it completed its method, such as the automaton-state limit of [FR-367](../../functional/temporal/FR-367-evaluate-interval-operators-under-infinite-trace.md). Neither invokes a fallback nor changes an independent sibling result (FR-094-AC-9). |
 
 `unsupported` and `failed` project to the same truth and settlement-basis pair,
 and `failed` itself carries two FR-241 execution dispositions. Every one of
 these non-conclusive outcomes stays distinct through the FR-241
 execution-disposition axis, which this vocabulary never substitutes for or
 collapses (FR-161-AC-3).
+
+A verdict over a model subject maps onto these labels by the verdict table of
+[FR-363](../../functional/temporal/FR-363-settle-every-behaviour-temporal-verdicts.md).
+A completed analysis that found no counterexample up to a depth is
+`inconclusive`, never `proved`.
 
 ## Identity and comparison
 
@@ -64,11 +71,11 @@ collapses (FR-161-AC-3).
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-341-AC-1 | Each member's value equals the exact label string in the table. | Inspection |
-| FR-341-AC-2 | `proved` and `refuted` are accepted only with execution `completed`, their exact truth value, and a `closed-scope`, `decisive-witness` or `decisive-counterexample` settlement basis as named above. | Analysis |
-| FR-341-AC-3 | `inconclusive` is accepted only with execution `completed`, truth `pending` and settlement basis `unsettled`. | Analysis |
-| FR-341-AC-4 | `unsupported` is accepted only with FR-241 execution `unsupported`, `failed` only with FR-241 execution `failed` or `resource-incomplete`, the exhausted and provider-failure cases stay distinct on that axis, and neither label is accepted with truth `satisfied` or `violated`. | Analysis |
-| FR-341-AC-5 | An absent result-disposition compares only to absence and receives no default member. | Analysis |
+| FR-360-AC-1 | Each member's value equals the exact label string in the table. | Inspection |
+| FR-360-AC-2 | `proved` and `refuted` are accepted only with execution `completed`, their exact truth value, and a `closed-scope`, `decisive-witness` or `decisive-counterexample` settlement basis as named above. | Analysis |
+| FR-360-AC-3 | `inconclusive` is accepted only with execution `completed`, truth `pending` and settlement basis `unsettled`. | Analysis |
+| FR-360-AC-4 | `unsupported` is accepted only with FR-241 execution `unsupported`, `failed` only with FR-241 execution `failed` or `resource-incomplete`, the exhausted and provider-failure cases stay distinct on that axis, and neither label is accepted with truth `satisfied` or `violated`. | Analysis |
+| FR-360-AC-5 | An absent result-disposition compares only to absence and receives no default member. | Analysis |
 
 ## Dependencies
 

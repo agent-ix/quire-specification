@@ -1446,11 +1446,11 @@ impl<'a> OperationOracle<'a> {
 
     /// The declared result of an application: its `result_type` when that
     /// type agrees with the result the catalog derives from the operands. A
-    /// clause result is declared Boolean.
+    /// clause result and a temporal formula result are declared Boolean.
     fn declared_result(&self, term: &Value, derived: Descriptor) -> Option<Descriptor> {
         let result_type = &term["result_type"];
         let declared_family = self.type_family(result_type)?;
-        let fits = if derived.family == "clause" {
+        let fits = if derived.family == "clause" || derived.family == "temporal" {
             declared_family == "boolean"
         } else {
             declared_family == derived.family
@@ -1589,6 +1589,8 @@ impl<'a> OperationOracle<'a> {
         let member_resolves = entry["member"].is_null()
             || entry["member"] == "profile_operator"
             || entry["member"] == "state_clause"
+            || entry["member"] == "temporal_interval"
+            || entry["member"] == "fairness"
             || self.member_descriptor(member).is_some();
         let constraints_hold = entry["constraints"]
             .as_array()
@@ -5447,8 +5449,51 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
         entry("quire.op.collection.contains")["leaves"],
         json!("inner:0")
     );
+    assert_eq!(
+        entry("quire.op.temporal.clause")["laws"],
+        json!(["temporal_profile"]),
+        "quire.op.temporal.clause law"
+    );
+    assert_eq!(
+        entry("quire.op.temporal.clause")["member"],
+        Value::Null,
+        "a temporal clause names no operator: its formula's operators are their own identities (FR-370)"
+    );
+    for operator in [
+        "holds",
+        "true",
+        "false",
+        "not",
+        "and",
+        "or",
+        "implies",
+        "eventually",
+        "always",
+        "once",
+        "historically",
+        "until",
+        "release",
+        "since",
+        "triggered",
+    ] {
+        let identity = format!("quire.op.temporal.{operator}");
+        assert_eq!(
+            entry(&identity)["operator"],
+            json!("temporal_formula"),
+            "{identity} class"
+        );
+        assert_eq!(
+            entry(&identity)["laws"],
+            json!([]),
+            "{identity} carries no law"
+        );
+    }
+    assert_eq!(
+        entry("quire.op.temporal.fair")["member"],
+        json!("fairness"),
+        "a fairness constraint carries the fairness member"
+    );
     for (identity, role) in [
-        ("quire.op.temporal.clause", "temporal_profile"),
         ("quire.op.claim.clause", "temporal_profile"),
         ("quire.op.protocol.control", "protocol_profile"),
         ("quire.op.state.transition", "protocol_profile"),
@@ -6650,19 +6695,32 @@ fn tc_233_clause_applications_bind_a_selected_profile_law_and_one_profile_member
         Err(OperationRefusal::LawUnselected),
         "a profile law the package lock does not select refuses"
     );
+    assert_eq!(
+        package.pointer(&format!("{}/member", operation(temporal))),
+        Some(&Value::Null),
+        "a temporal clause carries no member; its operators are quire.op.temporal.* applications"
+    );
+    assert_eq!(
+        refusal(&|candidate| {
+            *candidate
+                .pointer_mut(&format!("{}/member", operation(temporal)))
+                .expect("member") = json!({"kind": "profile_operator", "operator": "eventually"});
+        }),
+        Err(OperationRefusal::MemberMismatch),
+        "a temporal clause naming a profile operator refuses"
+    );
     for member in [
         json!({"kind": "profile_operator", "operator": "no_such_operator"}),
-        json!({"kind": "profile_operator", "operator": "sequence"}),
         json!(null),
     ] {
         assert_eq!(
             refusal(&|candidate| {
                 *candidate
-                    .pointer_mut(&format!("{}/member", operation(temporal)))
+                    .pointer_mut(&format!("{}/member", operation(protocol)))
                     .expect("member") = member.clone();
             }),
             Err(OperationRefusal::MemberMismatch),
-            "clause member {member} is not an operator of the selected temporal profile"
+            "clause member {member} is not an operator of the selected protocol profile"
         );
     }
 }

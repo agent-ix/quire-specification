@@ -284,7 +284,7 @@ declaration   = dimension-decl | unit-decl | enum-decl | record-decl
               | state-clause | temporal-clause | protocol-clause
               | relation-clause | hyper-clause | hybrid-decl
               | synthesis-decl | verification-plan | operation-body
-              | abstraction-decl ;
+              | abstraction-decl | terminal-decl ;
 
 type-ref      = 'Boolean' | 'Integer' | qualified-name
               | 'Int', '[', signed-int, ',', signed-int, ']'
@@ -439,7 +439,15 @@ of these forms.
 ### Complete temporal, choreography and analysis forms
 
 ```ebnf
-interval      = '[', uint, ',', (uint | '*'), ']' ;
+interval      = '[', uint, ',', uint, ']' ;
+temporal-clause = 'temporal', ident, 'using', ident,
+                  'over', '(', parameter, ')', 'clock', string,
+                  activation, '{', { fairness }, { capture },
+                  temporal-expr, '}' ;
+fairness      = 'fair', [ 'weak' | 'strong' ], [ 'whole' | 'each' ],
+                qualified-name, ';' ;
+terminal-decl = 'terminal', ident, 'using', ident, 'on', ident,
+                ( 'when', block | 'any' ), ';' ;
 temporal-unary = 'not', temporal-unary
                | ('eventually' | 'always' | 'once' | 'historically'),
                  interval, temporal-unary
@@ -499,9 +507,18 @@ verification-step = 'check', ident, 'claim', qualified-name,
                     [ 'bound', uint ], ';' ;
 ```
 
-`*` is permitted only as an interval upper bound under an infinite-trace
-temporal profile. It is not a finite runtime bound and does not authorize a
-finite provider to claim satisfaction. `exactly-once-premise` is an authored
+An interval always has two integer bounds; an unbounded operator is written
+with no interval
+([FR-367](../../spec/functional/temporal/FR-367-evaluate-interval-operators-under-infinite-trace.md)).
+`fair`, `weak`, `strong`, `whole`, `terminal` and `any` are reserved words of
+the temporal facet. A `fairness` constraint is admitted only on a clause that
+selects `quire.temporal.infinite-trace/v1`; its unwritten kind is `weak` and
+its unwritten granularity is `whole`
+([FR-362](../../spec/functional/temporal/FR-362-apply-fairness-constraints.md)).
+A package has at most one `terminal-decl` per model alias; it declares the
+model's intended terminal states
+([FR-366](../../spec/functional/temporal/FR-366-check-deadlock-freedom.md)).
+`exactly-once-premise` is an authored
 environment premise, never a transport guarantee inferred by the runtime.
 `quorum(n)` requires `1 <= n <= branch-count`. A named join predicate is a
 total pure function over the explicitly captured branch dispositions. Dynamic
@@ -609,28 +626,30 @@ not to an implicit decimal interval conversion.
 
 ### Unbounded temporal operator grammar edition (infinite-trace)
 
-The refusal above governs the bracketed `interval` production; it does not
-withdraw a wholly separate production. This edition adds one, admitted only
-under an explicitly selected `quire.temporal.infinite-trace/v1` profile
+The refusal above governs the bracketed `interval` production. Under an
+explicitly selected `quire.temporal.infinite-trace/v1` profile
 ([FR-090](../../spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md),
-[FR-250](../../spec/objects/temporal/FR-250-temporal-semantic-profile.md)):
+[FR-250](../../spec/objects/temporal/FR-250-temporal-semantic-profile.md)),
+this edition makes the interval optional on every interval-capable operator:
 
 ```ebnf
 temporal-unary-unbounded = 'not', temporal-unary-unbounded
                           | ('eventually' | 'always' | 'once' | 'historically'),
-                            temporal-unary-unbounded
+                            [ interval ], temporal-unary-unbounded
                           | temporal-primary ;
 temporal-relation-unbounded = temporal-unary-unbounded,
                     [ ('until' | 'release' | 'since' | 'triggered'),
-                      temporal-unary-unbounded ] ;
+                      [ interval ], temporal-unary-unbounded ] ;
 ```
 
-These productions reuse the existing reserved keywords; no new keyword is
-added. They carry no `interval` token at all, bounded or `*`-bounded; the
-operand that follows `eventually`, `always`, `once`, `historically`, `until`,
-`release`, `since` or `triggered` is another unbounded operand, never a bracket
-pair. A package that does not select `quire.temporal.infinite-trace/v1`
-receives `unsupported_construct` for each of these forms. Selecting the profile
+These productions reuse the existing reserved keywords. An operator written
+with an interval is an interval operator and one written without is an
+unbounded operator; the two nest in any order, so
+`always (holds(fail) implies eventually always[0,10] holds(healthy))` is one
+admitted formula
+([FR-367](../../spec/functional/temporal/FR-367-evaluate-interval-operators-under-infinite-trace.md)).
+A package that does not select `quire.temporal.infinite-trace/v1` receives
+`unsupported_construct` for an operator written without an interval. Selecting the profile
 admits them without reinterpreting the bracketed form or any historical
 `0-draft` bytes, per the edition rule in
 [AD-003](../../spec/assurance/AD-003-native-quire-language-charter.md).

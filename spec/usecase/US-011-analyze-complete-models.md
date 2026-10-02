@@ -27,3 +27,12 @@ must carry the exact domain, assumptions, provider and replay lineage.
 - **Given** a proof backend reports a bounded counterexample
 - **When** the same typed input is replayed through the native runtime
 - **Then** both methods produce the same clause verdict or an explicit parity failure
+
+### US-011-EX-2: Temporal property over every behaviour
+
+- **Given** a finite model subject and a liveness claim with a weak fairness
+  constraint
+- **When** an explicit-state analysis checks the claim
+- **Then** it returns `proved` over every fair behaviour, or `refuted` with a
+  lasso counterexample that replays without the engine, or a non-conclusive
+  verdict that names its depth, cause or limit

@@ -139,7 +139,7 @@ type.
 | V1-TEMP-022 | FR-090 | TC-231 | Reuse | planned |
 | V1-TEMP-023 | FR-161 | TC-200, TC-231 | New | planned |
 | V1-TEMP-024 | FR-048 | TC-238, TC-231 | Amend | planned |
-| V1-TEMP-025 | FR-341 | TC-200, TC-231 | New | planned |
+| V1-TEMP-025 | FR-360 | TC-200, TC-231 | New | planned |
 | V1-TEMP-026 | FR-161 | TC-200, TC-231 | Amend | planned |
 | V1-PROT-001 | FR-049 | TC-231 | Reuse | planned |
 | V1-PROT-002 | FR-035 | TC-231 | Reuse | planned |
@@ -300,9 +300,9 @@ type.
 | FR-160 | FR-160-AC-3 | TC-199 | planned |
 | FR-161 | FR-161-AC-1 | TC-200 | planned |
 | FR-161 | FR-161-AC-2 | TC-200 | planned |
-| FR-161 | FR-161-AC-3 | TC-200 | planned |
+| FR-161 | FR-161-AC-3 | TC-200, TC-292 | planned |
 | FR-161 | FR-161-AC-6 | TC-200 | planned |
-| FR-161 | FR-161-AC-7 | TC-200 | planned |
+| FR-161 | FR-161-AC-7 | TC-200, TC-301 | planned |
 | FR-170 | FR-170-AC-1 | TC-201 | planned |
 | FR-170 | FR-170-AC-2 | TC-201 | planned |
 | FR-170 | FR-170-AC-3 | TC-201 | planned |
@@ -1071,11 +1071,11 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-339 | FR-339-AC-2 | TC-180 | planned |
 | FR-339 | FR-339-AC-3 | TC-180 | planned |
 | FR-339 | FR-339-AC-4 | TC-180 | planned |
-| FR-341 | FR-341-AC-1 | TC-200 | planned |
-| FR-341 | FR-341-AC-2 | TC-200 | planned |
-| FR-341 | FR-341-AC-3 | TC-200 | planned |
-| FR-341 | FR-341-AC-4 | TC-200 | planned |
-| FR-341 | FR-341-AC-5 | TC-200 | planned |
+| FR-360 | FR-360-AC-1 | TC-200 | planned |
+| FR-360 | FR-360-AC-2 | TC-200 | planned |
+| FR-360 | FR-360-AC-3 | TC-200 | planned |
+| FR-360 | FR-360-AC-4 | TC-200 | planned |
+| FR-360 | FR-360-AC-5 | TC-200 | planned |
 | FR-346 | FR-346-AC-1 | TC-249 | planned |
 | FR-346 | FR-346-AC-2 | TC-249 | planned |
 | FR-346 | FR-346-AC-3 | TC-249 | planned |
@@ -1160,6 +1160,83 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-453 | FR-453-AC-4 | TC-414 | planned |
 | FR-453 | FR-453-AC-5 | TC-414 | planned |
 | FR-453 | FR-453-AC-6 | TC-414 | planned |
+| FR-361 | FR-361-AC-1 | TC-290 | planned |
+| FR-361 | FR-361-AC-2 | TC-290 | planned |
+| FR-361 | FR-361-AC-3 | TC-290 | planned |
+| FR-361 | FR-361-AC-4 | TC-290, TC-291 | planned |
+| FR-361 | FR-361-AC-5 | TC-290 | planned |
+| FR-361 | FR-361-AC-6 | TC-290, TC-305 | planned |
+| FR-361 | FR-361-AC-7 | TC-294 | planned |
+| FR-362 | FR-362-AC-1 | TC-291 | planned |
+| FR-362 | FR-362-AC-2 | TC-291 | planned |
+| FR-362 | FR-362-AC-3 | TC-291 | planned |
+| FR-362 | FR-362-AC-4 | TC-291 | planned |
+| FR-362 | FR-362-AC-5 | TC-291, TC-293 | planned |
+| FR-362 | FR-362-AC-6 | TC-299 | planned |
+| FR-362 | FR-362-AC-7 | TC-291 | planned |
+| FR-362 | FR-362-AC-8 | TC-292 | planned |
+| FR-363 | FR-363-AC-1 | TC-293, TC-294 | planned |
+| FR-363 | FR-363-AC-2 | TC-298 | planned |
+| FR-363 | FR-363-AC-3 | TC-294 | planned |
+| FR-363 | FR-363-AC-4 | TC-294, TC-298 | planned |
+| FR-363 | FR-363-AC-5 | TC-294 | planned |
+| FR-363 | FR-363-AC-6 | TC-293 | planned |
+| FR-363 | FR-363-AC-7 | TC-302 | planned |
+| FR-363 | FR-363-AC-8 | TC-305 | planned |
+| FR-364 | FR-364-AC-1 | TC-295, TC-297 | planned |
+| FR-364 | FR-364-AC-2 | TC-295 | planned |
+| FR-364 | FR-364-AC-3 | TC-293, TC-295 | planned |
+| FR-364 | FR-364-AC-4 | TC-295 | planned |
+| FR-364 | FR-364-AC-5 | TC-295, TC-299 | planned |
+| FR-364 | FR-364-AC-6 | TC-295, TC-297 | planned |
+| FR-364 | FR-364-AC-7 | TC-200 | planned |
+| FR-364 | FR-364-AC-8 | TC-305 | planned |
+| FR-365 | FR-365-AC-1 | TC-296 | planned |
+| FR-365 | FR-365-AC-2 | TC-296 | planned |
+| FR-365 | FR-365-AC-3 | TC-296 | planned |
+| FR-365 | FR-365-AC-4 | TC-300 | planned |
+| FR-365 | FR-365-AC-5 | TC-297 | planned |
+| FR-365 | FR-365-AC-6 | TC-305 | planned |
+| FR-366 | FR-366-AC-1 | TC-297 | planned |
+| FR-366 | FR-366-AC-2 | TC-297 | planned |
+| FR-366 | FR-366-AC-3 | TC-297 | planned |
+| FR-366 | FR-366-AC-4 | TC-297, TC-302 | planned |
+| FR-366 | FR-366-AC-5 | TC-297 | planned |
+| FR-366 | FR-366-AC-6 | TC-297 | planned |
+| FR-366 | FR-366-AC-7 | TC-297 | planned |
+| FR-367 | FR-367-AC-1 | TC-238, TC-298 | planned |
+| FR-367 | FR-367-AC-2 | TC-298 | planned |
+| FR-367 | FR-367-AC-3 | TC-298 | planned |
+| FR-367 | FR-367-AC-4 | TC-298 | planned |
+| FR-367 | FR-367-AC-5 | TC-298 | planned |
+| FR-367 | FR-367-AC-6 | TC-298 | planned |
+| FR-368 | FR-368-AC-1 | TC-302 | planned |
+| FR-368 | FR-368-AC-2 | TC-301 | planned |
+| FR-368 | FR-368-AC-3 | TC-301 | planned |
+| FR-368 | FR-368-AC-4 | TC-301 | planned |
+| FR-368 | FR-368-AC-5 | TC-200, TC-301 | planned |
+| FR-368 | FR-368-AC-6 | TC-301 | planned |
+| FR-368 | FR-368-AC-7 | TC-298, TC-302 | planned |
+| FR-369 | FR-369-AC-1 | TC-304 | planned |
+| FR-369 | FR-369-AC-2 | TC-304 | planned |
+| FR-369 | FR-369-AC-3 | TC-304 | planned |
+| FR-369 | FR-369-AC-4 | TC-304 | planned |
+| FR-369 | FR-369-AC-5 | TC-304 | planned |
+| FR-370 | FR-370-AC-1 | TC-303 | planned |
+| FR-370 | FR-370-AC-2 | TC-303 | planned |
+| FR-370 | FR-370-AC-3 | TC-303 | planned |
+| FR-370 | FR-370-AC-4 | TC-303 | planned |
+| FR-370 | FR-370-AC-5 | TC-303 | planned |
+| FR-370 | FR-370-AC-6 | TC-303 | planned |
+| FR-370 | FR-370-AC-7 | TC-303 | planned |
+| FR-090 | FR-090-AC-8 | TC-290 | planned |
+| FR-091 | FR-091-AC-9 | TC-298 | planned |
+| FR-092 | FR-092-AC-8 | TC-298 | planned |
+| FR-181 | FR-181-AC-7 | TC-290 | planned |
+| FR-048 | FR-048-AC-10 | TC-238 | planned |
+| FR-255 | FR-255-AC-6 | TC-298 | planned |
+| FR-250 | FR-250-AC-6 | TC-238, TC-298 | planned |
+| FR-331 | FR-331-AC-11 | TC-302 | planned |
 
 ## Test Case Summary
 
@@ -1185,7 +1262,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-197 | Systems-model typed binding | Property | P0 | FR-152, FR-208 | 🚧 Planned |
 | TC-198 | Closed model lookup | Property | P0 | FR-153 | 🚧 Planned |
 | TC-199 | Uncertain revisioned temporal evaluation | Property | P0 | FR-160 | 🚧 Planned |
-| TC-200 | Infinite-trace provider boundary | Property | P0 | FR-161, FR-341, FR-095, FR-251 | 🚧 Planned |
+| TC-200 | Infinite-trace provider boundary | Property | P0 | FR-161, FR-360, FR-095, FR-251, FR-362, FR-364, FR-368 | 🚧 Planned |
 | TC-201 | Channel and queue premises | Property | P0 | FR-170 | 🚧 Planned |
 | TC-202 | Join loop and dynamic-role control | Property | P0 | FR-171 | 🚧 Planned |
 | TC-203 | Choice obligation and capture binding | Property | P0 | FR-172 | 🚧 Planned |
@@ -1222,7 +1299,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-234 | Domain package model intake | Property | P0 | FR-154, FR-208 | 🚧 Planned |
 | TC-235 | Business construct meaning binding | Property | P0 | FR-208, FR-154, FR-207, FR-047 | 🚧 Planned |
 | TC-236 | Frame grant population scope | Property | P0 | FR-013 | 🚧 Planned |
-| TC-238 | Unbounded temporal operator grammar admission | Property | P0 | FR-048, FR-090 | 🚧 Planned |
+| TC-238 | Unbounded temporal operator grammar admission | Property | P0 | FR-048, FR-090, FR-367, FR-250 | 🚧 Planned |
 | TC-239 | Agree replay and incremental assessment on an unsettled temporal result | Property | P0 | FR-114 | 🚧 Planned |
 | TC-246 | Unbounded collection type identity and admission | Property | P0 | FR-144 | 🚧 Planned |
 | TC-247 | Unbounded population query | Property | P0 | FR-153 | 🚧 Planned |
@@ -1256,6 +1333,22 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-412 | Checked-package abstraction relation node | Property | P0 | FR-451, FR-353 | 🚧 Planned |
 | TC-413 | Spec-versioning refinement cases | Property | P0 | FR-452 | 🚧 Planned |
 | TC-414 | Profile-layering refinement cases | Property | P0 | FR-453 | 🚧 Planned |
+| TC-290 | Model behaviours read as temporal traces | Property | P0 | FR-361, FR-090, FR-181 | 🚧 Planned |
+| TC-291 | Weak and strong fairness on conformance lassos | Property | P0 | FR-362, FR-361 | 🚧 Planned |
+| TC-292 | Fairness over a supplied trace is a missing fairness premise | Property | P0 | FR-362, FR-161 | 🚧 Planned |
+| TC-293 | Every-behaviour verdicts on the ConfigVersion subject | Property | P0 | FR-363, FR-362, FR-364 | 🚧 Planned |
+| TC-294 | Verdict strength, bound reached, undecided and stopped runs | Property | P0 | FR-363, FR-361 | 🚧 Planned |
+| TC-295 | Temporal counterexample wire, replay and refusals | Property | P0 | FR-364 | 🚧 Planned |
+| TC-296 | Canonical counterexample of an explicit-state analysis | Property | P0 | FR-365 | 🚧 Planned |
+| TC-297 | Deadlock-freedom vectors | Property | P0 | FR-366, FR-364, FR-365 | 🚧 Planned |
+| TC-298 | Interval operators under infinite-trace | Property | P0 | FR-367, FR-363, FR-091, FR-092, FR-250, FR-255, FR-368 | 🚧 Planned |
+| TC-299 | Strong fairness on the contended mutex | Property | P0 | FR-362, FR-364 | 🚧 Planned |
+| TC-300 | Strong-fairness refinement past one level | Property | P0 | FR-365, FR-362 | 🚧 Planned |
+| TC-301 | Temporal negotiation, provider commitments and fairness kinds | Property | P0 | FR-368, FR-161 | 🚧 Planned |
+| TC-302 | Temporal request members and obligation identity | Property | P0 | FR-368, FR-331, FR-363, FR-366 | 🚧 Planned |
+| TC-303 | Checked-package temporal clause body and operation identities | Property | P0 | FR-370, FR-322 | 🚧 Planned |
+| TC-304 | Strong-fairness hint on a reproduced refutation | Property | P0 | FR-369 | 🚧 Planned |
+| TC-305 | Undefined evaluation refutes a model claim | Property | P0 | FR-361, FR-363, FR-364, FR-365 | 🚧 Planned |
 
 ## Integration Test Matrix
 

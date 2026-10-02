@@ -218,6 +218,28 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-259
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-360
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-361
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-362
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-363
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-364
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-365
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-366
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-367
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-368
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-369
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-370
+    type: contains
   - target: ix://agent-ix/quire-specification/IT-010
     type: contains
   - target: ix://agent-ix/quire-specification/FR-049
@@ -1035,6 +1057,17 @@ The requirement artifacts are indexed below.
 | [FR-258](objects/temporal/FR-258-temporal-decision-scope.md) | FR (value_object) | Object layer; Temporal decision scope and closure |
 | [FR-259](objects/temporal/FR-259-native-tl-correspondence-record.md) | FR (value_object) | Object layer; Native-to-TL correspondence record |
 | [FR-293](objects/temporal/FR-293-history-boundary-kind.md) | FR (enumeration) | Object layer; execution-origin and history-cutoff boundary vocabulary |
+| [FR-360](objects/temporal/FR-360-infinite-trace-result-disposition.md) | FR (enumeration) | Object layer; infinite-trace result disposition vocabulary |
+| [FR-361](functional/temporal/FR-361-read-model-behaviours-as-temporal-traces.md) | FR | Model subject: behaviours, positions, profiles, terminal states, `over` binding |
+| [FR-362](functional/temporal/FR-362-apply-fairness-constraints.md) | FR | Weak and strong fairness, `whole`/`each` granularity, missing fairness premise |
+| [FR-363](functional/temporal/FR-363-settle-every-behaviour-temporal-verdicts.md) | FR | Every-behaviour verdict table, property forms, length and depth |
+| [FR-364](functional/temporal/FR-364-replay-temporal-counterexamples.md) | FR | Temporal counterexample wire and replay |
+| [FR-365](functional/temporal/FR-365-build-canonical-temporal-counterexample.md) | FR | Canonical counterexample: stem and greedy-walk loop |
+| [FR-366](functional/temporal/FR-366-check-deadlock-freedom.md) | FR | `terminal` declarations and the derived deadlock-freedom item |
+| [FR-367](functional/temporal/FR-367-evaluate-interval-operators-under-infinite-trace.md) | FR | Interval operators under infinite-trace, previous, `max_automaton_states` |
+| [FR-368](functional/temporal/FR-368-negotiate-temporal-model-check-items.md) | FR | Temporal request members, provider commitments, fairness kinds |
+| [FR-369](functional/temporal/FR-369-name-excluding-strong-fairness.md) | FR | `fairness.strong-would-exclude` diagnostic |
+| [FR-370](objects/interfaces/FR-370-checked-package-temporal-clause-body.md) | FR | Checked-package `temporal`/`temporal_clause` body and `quire.op.temporal.*` identities |
 | [FR-289](objects/temporal/FR-289-observation-temporal-boundary-mapping.md) | FR (value_object) | Object layer; explicit half-open observation to inclusive temporal boundary mapping |
 | [FR-294](objects/observation/FR-294-late-data-classification.md) | FR (enumeration) | Object layer; exact on-time and late observation classification |
 | [FR-295](objects/observation/FR-295-input-completeness-state.md) | FR (enumeration) | Object layer; independent input-completeness state derived from an exact fact population |

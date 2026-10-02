@@ -7,7 +7,7 @@ relationships:
     type: implements
   - target: ix://agent-ix/quire-specification/FR-161
     type: references
-  - target: ix://agent-ix/quire-specification/FR-341
+  - target: ix://agent-ix/quire-specification/FR-360
     type: references
 ---
 ## Description
@@ -26,7 +26,7 @@ production monitor.
 
 When the temporal analysis reports settlement basis `unsettled` (FR-243,
 [FR-161](../temporal/FR-161-analyze-infinite-trace-properties.md)
-`inconclusive`, [FR-341](../../objects/temporal/FR-341-infinite-trace-result-disposition.md)),
+`inconclusive`, [FR-360](../../objects/temporal/FR-360-infinite-trace-result-disposition.md)),
 the QObs assessment SHALL agree with that non-conclusive disposition in both
 batch and incremental modes and SHALL NOT resolve it to a settled truth in
 either mode; agreement on `unsettled` requires the same progress identity, not
