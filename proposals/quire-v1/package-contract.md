@@ -23,7 +23,7 @@ independent declarations whose names and dependencies are established.
 
 | Static component | Information retained and checked |
 | --- | --- |
-| Sources | Exact authority, identity, revision and byte digest per unit; original source regions and clause/declaration identities. Two editable authorities for one clause refuse. |
+| Sources | Exact authority, identity and byte digest per unit; original source regions and clause/declaration identities. Two editable authorities for one clause refuse. |
 | Language | Exact language/edition and supplied definition artifact; no implementation-version default. |
 | Profiles | Each declaration's selected root definition identity, exact required definition closure and the meaning owned by each dependency. |
 | Models | Domain package imported by identity, version and `sha256-jcs` digest; its effective declaration keys and exact manifest/lock/dependency closure. |

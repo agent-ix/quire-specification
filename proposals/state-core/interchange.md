@@ -15,7 +15,7 @@ The selected kind determines the value schema. Schema identifiers are local
 contract selectors, not instructions to fetch a remote schema or executable.
 
 Artifact values use `ix.artifact-ref/2-draft` from FS02. Every member is required,
-including structured revision and the referenced artifact's wire identity and
+including the referenced artifact's wire identity and
 version. Semantic values require artifact, language, semanticProfile,
 requiredFeatures and canonicalIdentity. Explicit null is permitted only where
 specified; a missing member never means null, empty, current or latest.
@@ -51,10 +51,10 @@ bindings. A structurally valid unfamiliar wire still refuses interpretation.
 3. Validate selected authority, wire/language/profile versions and all required
    features against the consumer's declared support. An unknown canonical domain
    or unqualified derivation refuses canonical interpretation. No network lookup,
-   fall-through decoder, string-to-number revision cast or profile default occurs.
+   fall-through decoder, string-to-number cast or profile default occurs.
 4. Resolve locally supplied artifacts and compare their exact byte digests.
-   Check immutable identity/revision bindings, model manifest/lock/closure, and
-   any explicit numeric source revision mapping independently. A retrieval path
+   Check immutable identity/digest bindings and model manifest/lock/closure
+   independently. A retrieval path
    never confers authority or joins a different artifact kind.
 5. Validate source regions/maps and canonical derivations, then compare the
    intended reference role using its local collection semantics. Only a fully
@@ -88,7 +88,7 @@ whitespace deletion is inferred from a matching expression meaning.
 
 The existing native SourceMap verifier defines the candidate producer behavior:
 verify exact source bytes and all segments before exposing a map, preserve
-discontiguous original ranges, and reject foreign identity/revision/path/bytes.
+discontiguous original ranges, and reject foreign identity/path/bytes.
 Zero-width diagnostics select the following segment at a boundary and the last
 mapped end at EOF; an empty map selects the original region start. Coordinates
 derive from original bytes under the established scalar-column convention.
@@ -159,10 +159,10 @@ references retain their selected version; only the explicitly named 1-draft and
 environment, model-manifest, model-lock or dependency-closure.
 
 An accepted mapping between common kinds may establish the same underlying byte
-artifact only when kind, authority, identity, structured revision, digest and
+artifact only when kind, authority, identity, digest and
 wire all remain equal. Changed reference encoding yields a new wrapper artifact;
 it does not rewrite the stored old record or adopt an authored identity. The
-mapping must be selected by exact identity/revision/digest and explicitly
+mapping must be selected by exact identity/digest and explicitly
 accepted for the requested equivalence. Without it, reject the version join.
 
 This mapping preserves byte-artifact correspondence only. It does not preserve

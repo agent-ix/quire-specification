@@ -12,7 +12,7 @@ When admitting a composed native package, the frontend SHALL bind every clause t
 
 ## Inputs
 
-Native source with exact byte/revision/span identity, clause declarations,
+Native source with exact byte/span identity, clause declarations,
 selected definition identities and imported domain package identities with their
 `sha256-jcs` digests. Selection is authored or explicitly supplied by the source
 profile; installed backends never choose it.

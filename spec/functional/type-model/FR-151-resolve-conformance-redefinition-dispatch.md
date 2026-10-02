@@ -183,6 +183,7 @@ type.
 | FR-151-AC-8 | Dispatch charges at their exact bound complete and the one-less run is incomplete at the named charge point. | Test (TC-196) |
 | FR-151-AC-9 | A subsetting feature whose type or multiplicity fails to conform to the subsetted feature refuses `ill_typed` with `subsetting-type` or `multiplicity-narrowing` and names both declarations; a conforming pair retains each declaration's own provenance in the effective view. | Test (TC-196) |
 | FR-151-AC-10 | At binding admission over a closed population, an object whose subsetting-feature values are not a subset of its subsetted-feature values refuses `invalid_runtime_input`/`subsetting-violation`, charged as `binding.subset-value` and with no evaluation charge. | Test (TC-196) |
+| FR-151-AC-11 | The operation effect axis charges `max(1, t)` work units, where each field write compared against `n` redefined `modifies` entries adds `n × (1 + r)` for the `r` `redefines` links walked from the written field; a write that reaches its one redefined entry through one link charges two. | Test (TC-196) |
 
 ## Dependencies
 
@@ -193,3 +194,7 @@ type.
 - Every requirement linked in frontmatter is a normative prerequisite.
   Implementation ordering may add enablement edges but cannot change these
   semantics or infer implementation availability from specification acceptance.
+
+## References
+
+- Tickets: Linear QSL-48.

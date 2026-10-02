@@ -16,11 +16,7 @@
     "artifactRef": {
       "authority": "agent-a-review-fixtures",
       "identity": "ix://example/config/snapshot/incorrect-creation-inventory/pre",
-      "revision": {
-        "namespace": "agent-a-review-fixture",
-        "value": "1"
-      },
-      "digest": "sha256:38a669c17f3e6f806a8f716b63fa1449f8f4c28f80c6d0ea59c77fb61863ff3f",
+      "digest": "sha256:70654757799af02e64c823bba120da350093b8b6be33176506e8ddea1fd40f4a",
       "profile": "agent-a-snapshot/1-draft"
     }
   },
@@ -29,11 +25,7 @@
     "artifactRef": {
       "authority": "agent-a-review-fixtures",
       "identity": "ix://example/config/snapshot/incorrect-creation-inventory/post",
-      "revision": {
-        "namespace": "agent-a-review-fixture",
-        "value": "1"
-      },
-      "digest": "sha256:d89863d4a89426b1705ee6192ee59391ed6216598fb1f46bcf387b076fa8d21d",
+      "digest": "sha256:f02b19a1c15bff488b5414f8bc048f26e35f642004ecd65cc5f9bba119c43fa0",
       "profile": "agent-a-snapshot/1-draft"
     }
   },
@@ -46,16 +38,8 @@
     "artifactRef": {
       "authority": "agent-a-review-fixtures",
       "identity": "ix://example/config/binding/allow-version-write",
-      "revision": {
-        "namespace": "agent-a-review-fixture",
-        "value": "1"
-      },
-      "digest": "sha256:1cd09cc97401840b31ef9e99db0b5aee6e969d493c9070c99f297f1055003e9b",
+      "digest": "sha256:2a738f60ad414e0fb3ac5348fac7ba62b66820ce698e7499441f3f51e4821632",
       "profile": "agent-a-frame-binding/1-draft"
     }
-  },
-  "revision": {
-    "namespace": "agent-a-review-fixture",
-    "value": "1"
   }
 }

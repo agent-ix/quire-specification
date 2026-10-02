@@ -128,7 +128,7 @@ authority is divided as follows:
 All shared identities are opaque validated newtypes. Equality is allowed only
 within the same identity domain. At minimum the kernel distinguishes:
 
-- source bytes, source revision, source unit and lexical span;
+- source bytes, source digest, source unit and lexical span;
 - edition, semantic profile, wire profile and requested feature bundle;
 - package, dependency manifest, declaration, type and semantic definition;
 - domain package, model declaration key, effective specialization and
@@ -144,7 +144,7 @@ within the same identity domain. At minimum the kernel distinguishes:
 
 A digest is always computed over a named canonical domain and version. Source
 byte digests, semantic digests, artifact digests and evidence digests cannot be
-compared as bare bytes. A revision is never reconstructed from content, and an
+compared as bare bytes. An
 effective model declaration never replaces its original declaration identity.
 
 ### 4.2 Selection axes
@@ -484,7 +484,7 @@ Names are architectural roles; Rust names may follow repository idioms.
 
 | Interface | Producer -> consumer | Contract |
 | --- | --- | --- |
-| I01 Source document | editor/filesystem -> QSL | Exact bytes, revision, unit identity and bounded read outcome. |
+| I01 Source document | editor/filesystem -> QSL | Exact bytes, unit identity and bounded read outcome. |
 | I02 Parsed source | QSL parser -> formatter/linker/editor | Lossless CST, recoveries, tokens/spans and edition; not semantically admitted. |
 | I03 Model selection | FCD extraction-frontend lift -> QSL/QObs | Domain package identity, `sha256-jcs` digest, declaration keys, declarations and relationships lifted from spec artifacts. |
 | I04 Checked package | QSL -> all semantic consumers | Immutable semantic graph, package lock, feature report, source map and diagnostics. |

@@ -122,7 +122,7 @@ any backticked name written `key`: after the cause list, canonical or not.
 Require FR-270's
 Revision cell to quote the catalog header's revision, and FR-271's values
 table to hold exactly one row for each FR-271-AC-6 code. Require both
-`invalid_source_identity` rows to name the four labels in order and to state
+`invalid_source_identity` rows to name the two labels in order and to state
 FR-272-AC-12's labels-before-path precedence; require the catalog's payload
 value spellings to hold FR-272-AC-13's domain forms and widths, the flag order
 FR-148 names and the labels in the row's order; and require FR-044,

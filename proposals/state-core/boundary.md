@@ -30,7 +30,7 @@ the observed sample. Exact domain limits are reviewed model/profile data.
 |---|---|
 | Authored requirement/criterion | Package namespace, requirement ID, positive authored revision, clause ID; retained when a derived file changes |
 | Declaration | Stable semantic URI and containing package lock entry; field and operation IDs distinct from display names |
-| Source unit | Source ID, revision namespace/value, exact UTF-8 digest, local path, byte region and coordinate convention |
+| Source unit | Source ID, exact UTF-8 digest, local path, byte region and coordinate convention |
 | Language | Language tag and edition, independent from implementation version |
 | Semantic profile | Explicit profile identifier/version and required feature set |
 | Wire | Exact wire schema/version; an unknown version refuses |
@@ -41,11 +41,9 @@ the observed sample. Exact domain limits are reviewed model/profile data.
 | Snapshot/invocation | Population digest, current/pre/post role, universe, completeness and operation/invocation correspondence |
 | Artifact/run | Actual byte digest and producer version; distinct run ID and environment binding owned by the execution layer |
 
-A Git commit is not the positive numeric `SourceRevision` used by the existing
-contract IR. Preserve an explicit mapping from source namespace/value to the
-IR source-document/revision pair. Do not hash a Git string down to a revision
-integer or silently assign revision 1 to every source. The same applies to
-requirement revisions. Missing mappings refuse the executable projection.
+A source unit is identified by its source ID and exact content digest. A
+requirement's positive authored revision maps explicitly to the IR requirement
+revision; a missing mapping refuses the executable projection.
 
 ## Source reference proposal
 
@@ -127,17 +125,18 @@ result. The mutation cases isolate individual defects where practical.
 
 The amended operation fixture uses a local reference wrapper with `path` and
 `artifactRef`. The artifact reference has exactly the common dimensions under
-review with the verification owner: `authority`, `identity`, `revision`, `digest`
-and `profile`. Here `revision` has explicit namespace/value strings; `profile`
-identifies the fixture encoding, independently of the language semantic profile.
-`digest` binds exact named file bytes. The path only locates those bytes.
+review with the verification owner: `authority`, `identity`, `digest` and
+`profile`. `profile` identifies the fixture encoding, independently of the
+language semantic profile. `digest` binds exact named file bytes. The path only
+locates those bytes.
 
 Each invocation binds one immutable pre/post observation per available role and
 one exact frame contract. Populations and frame data live once in separate files;
 expected outcomes live outside invocation inputs. Case-scoped invocation and
 observation IDs remove accidental identity reuse across independent examples.
-An authority/identity/revision already bound to one profile/digest cannot accept
-changed content under that same reference, even with a recomputed transport digest.
+The digest is part of the reference: changed content is a different reference,
+and an authority/identity/digest already bound to one profile cannot be rebound
+to another.
 Changing a selected frame or population reference changes the invocation bytes
 and digest, so downstream evidence must bind the new exact invocation artifact.
 

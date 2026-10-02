@@ -38,7 +38,7 @@ cannot be applied. Language-server requests use the same typed parser/checker.
 
 ## Incremental service contract
 
-Requests bind document identity, source revision and profile. Responses bind the
+Requests bind document identity, source digest and profile. Responses bind the
 same tuple and include deterministic diagnostics ordered by primary span, stable
 code and related span. Formatting computes edits against exact source bytes,
 round-trips through the parser and is accepted only when the checked semantic

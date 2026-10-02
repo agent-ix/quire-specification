@@ -37,7 +37,7 @@ establish themselves.
 
 ## Evidence graph contract
 
-Graph nodes use typed identities for source revision, package, model/binding,
+Graph nodes use typed identities for source document, package, model/binding,
 clause, semantic subject, implementation, method/provider, run, artifact,
 evidence and decision. Edges use the closed relations `derived-from`,
 `evaluates`, `implements`, `generated-by`, `replays`, `supports`, `contradicts`

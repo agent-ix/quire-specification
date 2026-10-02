@@ -19,7 +19,7 @@
   },
   "package_id": {"domain":"quire.package.semantic/v2","algorithm":"sha256","digest":"80b90ed59737fba3077550f2c4675f0b32486090e818b3a53d1eb1dadfe77ded"},
   "lock": {
-    "sources": [{"authority":"agent-ix","identity":"example","revision":{"namespace":"git","value":"1"},"digest_domain":"quire.source.bytes/v1","digest":"2222222222222222222222222222222222222222222222222222222222222222"},{"authority":"agent-ix","identity":"example-units","revision":{"namespace":"git","value":"1"},"digest_domain":"quire.source.bytes/v1","digest":"6666666666666666666666666666666666666666666666666666666666666666"}],
+    "sources": [{"authority":"agent-ix","identity":"example","digest_domain":"quire.source.bytes/v1","digest":"2222222222222222222222222222222222222222222222222222222222222222"},{"authority":"agent-ix","identity":"example-units","digest_domain":"quire.source.bytes/v1","digest":"6666666666666666666666666666666666666666666666666666666666666666"}],
     "edition": {"role":"edition","definition":{"authority":"agent-ix","identity":"quire-edition"}},
     "profile_selections": [],
     "definition_selections": [
@@ -39,10 +39,10 @@
     ]
   },
   "source_map": [
-    {"node_id":{"domain":"quire.checked-semantic-node/v1","digest":"42ba51e7e622d99f292a5e6dcc196bd216efb98b33755910e54af4d65078d032"},"role":"declaration","ordinal":0,"regions":[{"source":{"authority":"agent-ix","identity":"example","revision":{"namespace":"git","value":"1"},"digest_domain":"quire.source.bytes/v1","digest":"2222222222222222222222222222222222222222222222222222222222222222"},"start":0,"end":1}]},
-    {"node_id":{"domain":"quire.checked-semantic-node/v1","digest":"7928f1e1b570335b404c8d21c66da8a3b8e37e434b0ebc622f80285488811562"},"role":"declaration","ordinal":0,"regions":[{"source":{"authority":"agent-ix","identity":"example","revision":{"namespace":"git","value":"1"},"digest_domain":"quire.source.bytes/v1","digest":"2222222222222222222222222222222222222222222222222222222222222222"},"start":1,"end":2}]},
-    {"node_id":{"domain":"quire.checked-semantic-node/v1","digest":"79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"},"role":"declaration","ordinal":0,"regions":[{"source":{"authority":"agent-ix","identity":"example","revision":{"namespace":"git","value":"1"},"digest_domain":"quire.source.bytes/v1","digest":"2222222222222222222222222222222222222222222222222222222222222222"},"start":2,"end":3}]},
-    {"node_id":{"domain":"quire.checked-semantic-node/v1","digest":"b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"},"role":"declaration","ordinal":0,"regions":[{"source":{"authority":"agent-ix","identity":"example","revision":{"namespace":"git","value":"1"},"digest_domain":"quire.source.bytes/v1","digest":"2222222222222222222222222222222222222222222222222222222222222222"},"start":3,"end":4}]}
+    {"node_id":{"domain":"quire.checked-semantic-node/v1","digest":"42ba51e7e622d99f292a5e6dcc196bd216efb98b33755910e54af4d65078d032"},"role":"declaration","ordinal":0,"regions":[{"source":{"authority":"agent-ix","identity":"example","digest_domain":"quire.source.bytes/v1","digest":"2222222222222222222222222222222222222222222222222222222222222222"},"start":0,"end":1}]},
+    {"node_id":{"domain":"quire.checked-semantic-node/v1","digest":"7928f1e1b570335b404c8d21c66da8a3b8e37e434b0ebc622f80285488811562"},"role":"declaration","ordinal":0,"regions":[{"source":{"authority":"agent-ix","identity":"example","digest_domain":"quire.source.bytes/v1","digest":"2222222222222222222222222222222222222222222222222222222222222222"},"start":1,"end":2}]},
+    {"node_id":{"domain":"quire.checked-semantic-node/v1","digest":"79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"},"role":"declaration","ordinal":0,"regions":[{"source":{"authority":"agent-ix","identity":"example","digest_domain":"quire.source.bytes/v1","digest":"2222222222222222222222222222222222222222222222222222222222222222"},"start":2,"end":3}]},
+    {"node_id":{"domain":"quire.checked-semantic-node/v1","digest":"b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"},"role":"declaration","ordinal":0,"regions":[{"source":{"authority":"agent-ix","identity":"example","digest_domain":"quire.source.bytes/v1","digest":"2222222222222222222222222222222222222222222222222222222222222222"},"start":3,"end":4}]}
   ],
   "capability_report": [{"feature":"quire.value.complete/v1","disposition":"available"}],
   "diagnostics": {"catalog":{"authority":"agent-ix","identity":"catalog"},"entries":[]}

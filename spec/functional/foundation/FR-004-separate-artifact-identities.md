@@ -10,7 +10,7 @@ relationships:
 
 ## Description
 
-When a reference is bound, the consumer shall preserve its artifact kind, authority, identity, revision and content binding.
+When a reference is bound, the consumer shall preserve its artifact kind, authority, identity and content binding.
 
 ## Inputs
 
@@ -22,7 +22,7 @@ Exact role-specific bindings or identity-conflict diagnostics.
 
 ## Behavior
 
-The immutable key includes kind and revision namespace/value. A path or display label is a locator. Reusing the same key with changed digest or wire is a conflict. Runtime snapshots, invocations and runs do not adopt authored requirement identity. The earlier operation fixtures retain their established draft encoding.
+The immutable key is kind, authority, identity and content digest. A path or display label is a locator. Reusing the same key with a changed wire is a conflict. Runtime snapshots, invocations and runs do not adopt authored requirement identity. The earlier operation fixtures retain their established draft encoding.
 
 ## Acceptance Criteria
 

@@ -89,7 +89,7 @@ context, but that context cannot replace a required cause field or variant.
 | `invalid_result` | `measured-with-truth`, `missing-member` or `unknown-cause`; retain the result item index and the offending member, and for `unknown-cause` the received spelling of the result cause or proof basis (FR-331, FR-409, FR-410). |
 | `projection_binding`, `invalid_projection_correspondence` | `upstream-refusal` or `correspondence-loss`, respectively; retain the originating structured IR/mapping cause and exact source/derived identities. |
 | `extraction-requires-run`, `extraction-package-conflict`, `extraction-clause-count` | Distinct `wrong-command-mode`, `conflicting-compilation-inputs` and `binding-cardinality` variants, respectively; retain the requested mode, conflicting selectors or actual count. These three refusals cannot share only an English distinction. |
-| `invalid_source_identity` | `blank-label` or `empty-path`; `blank-label` retains `label`: the first of the source labels `authority`, `identity`, `revision_namespace` and `revision`, in that order, whose value is empty or consists only of Unicode `White_Space` scalars; `empty-path` retains nothing further. The label check runs first, over the labels in that order, and the first blank label decides `blank-label`; `empty-path` is reported only when every label is non-blank and the source path is empty. Neither cause names a source region. |
+| `invalid_source_identity` | `blank-label` or `empty-path`; `blank-label` retains `label`: the first of the source labels `authority` and `identity`, in that order, whose value is empty or consists only of Unicode `White_Space` scalars; `empty-path` retains nothing further. The label check runs first, over the labels in that order, and the first blank label decides `blank-label`; `empty-path` is reported only when every label is non-blank and the source path is empty. Neither cause names a source region. |
 | `inexact_decimal` | `nonzero-discarded-digit`; retain `expected`: the target type's declared domain, whose maximum scale is the rounding step's target scale (an integer target has scale zero). Strict `exact` met a rounding step: at least one discarded digit is nonzero. No rounded or exact value is retained. |
 | `decimal_out_of_domain` | `outside-domain`; retain `expected`: the target `Decimal[lo, hi; smin, smax]` domain whose membership the result fails. No coefficient or scale of the result is retained. |
 | `division_pair_out_of_domain` | `quotient-outside-domain`, `remainder-outside-domain` or `both-outside-domain`; retain `expected`: the bounded consumer's integer domain both members of the `div`/`rem` pair are checked against. The cause names which members fail membership; neither member is retained. |
@@ -211,8 +211,7 @@ Each payload value is written as one exact ASCII string:
 - a flag set is its member flag names in the order `invalid`,
   `divide_by_zero`, `overflow`, `underflow`, `inexact`, joined by `,` with no
   space;
-- a label is exactly `authority`, `identity`, `revision_namespace` or
-  `revision`.
+- a label is exactly `authority` or `identity`.
 
 Other retained host/source codes keep their selected broad meaning and original
 structured producer cause: I/O error, malformed command, invalid digest/identifier,

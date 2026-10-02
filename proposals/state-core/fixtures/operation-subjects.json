@@ -24,31 +24,23 @@
       },
       "source": {
         "identity": "ix://example/config/source/version-update",
-        "revision": {
-          "namespace": "synthetic-source-revision",
-          "value": "1"
-        },
-        "irRevisionMapping": {
-          "document": "VersionUpdate",
-          "revision": 1
-        },
         "path": "version-update.native",
-        "digest": "sha256:3863a233230fd289a39031c067094850598639bae2824e735aac0bda9d24134f",
+        "digest": "sha256:becc2d091938449d91a8d05308ffbc91da1143bffd412c68610a7a51ef9357ab",
         "spanConvention": "utf8-half-open-scalar-column/0-draft",
         "expressionSpan": {
-          "startByte": 273,
+          "startByte": 257,
           "startLine": 6,
           "startColumn": 3,
-          "endByte": 298,
+          "endByte": 282,
           "endLine": 6,
           "endColumn": 28
         },
         "expectedExpression": "self.versionNumber < 1000",
         "clauseSpan": {
-          "startByte": 213,
+          "startByte": 197,
           "startLine": 5,
           "startColumn": 1,
-          "endByte": 300,
+          "endByte": 284,
           "endLine": 7,
           "endColumn": 2
         },
@@ -70,7 +62,7 @@
       "reviewArtifacts": [
         {
           "path": "version-update.native",
-          "digest": "sha256:3863a233230fd289a39031c067094850598639bae2824e735aac0bda9d24134f"
+          "digest": "sha256:becc2d091938449d91a8d05308ffbc91da1143bffd412c68610a7a51ef9357ab"
         },
         {
           "path": "model-expectations.json",
@@ -101,31 +93,23 @@
       },
       "source": {
         "identity": "ix://example/config/source/version-update",
-        "revision": {
-          "namespace": "synthetic-source-revision",
-          "value": "1"
-        },
-        "irRevisionMapping": {
-          "document": "VersionUpdate",
-          "revision": 1
-        },
         "path": "version-update.native",
-        "digest": "sha256:3863a233230fd289a39031c067094850598639bae2824e735aac0bda9d24134f",
+        "digest": "sha256:becc2d091938449d91a8d05308ffbc91da1143bffd412c68610a7a51ef9357ab",
         "spanConvention": "utf8-half-open-scalar-column/0-draft",
         "expressionSpan": {
-          "startByte": 362,
+          "startByte": 346,
           "startLine": 9,
           "startColumn": 3,
-          "endByte": 406,
+          "endByte": 390,
           "endLine": 9,
           "endColumn": 47
         },
         "expectedExpression": "self.versionNumber = pre(self.versionNumber)",
         "clauseSpan": {
-          "startByte": 301,
+          "startByte": 285,
           "startLine": 8,
           "startColumn": 1,
-          "endByte": 408,
+          "endByte": 392,
           "endLine": 10,
           "endColumn": 2
         },
@@ -147,7 +131,7 @@
       "reviewArtifacts": [
         {
           "path": "version-update.native",
-          "digest": "sha256:3863a233230fd289a39031c067094850598639bae2824e735aac0bda9d24134f"
+          "digest": "sha256:becc2d091938449d91a8d05308ffbc91da1143bffd412c68610a7a51ef9357ab"
         },
         {
           "path": "model-expectations.json",

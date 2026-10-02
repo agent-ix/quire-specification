@@ -19,8 +19,8 @@ When a linked protocol definition is used as an identity qualifier, the linker S
 
 ## Properties
 
-- **authored source document key** — the exact FR-202 document identity,
-  revision and raw-byte digest of the source owning the declaration.
+- **authored source document key** — the exact FR-202 document identity
+  and raw-byte digest of the source owning the declaration.
 - **admitted declaration handle** — the source-inventory-qualified handle of
   the protocol declaration. A wire table index is a local representation of
   this handle and is comparable only inside the same admitted package.

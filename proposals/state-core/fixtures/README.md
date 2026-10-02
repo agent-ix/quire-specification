@@ -71,7 +71,7 @@ It adds clause-region and expression digests/spans to the earlier `0-draft`
 fixture. A consumer must explicitly support this version; neither version is
 frozen or registered. Source-language edition and semantic profile remain
 unchanged. Old fixture bytes and their identities stay associated with their
-original revision rather than being rewritten as current evidence.
+original fixture version rather than being rewritten as current evidence.
 
 Full compiler integration acceptance still needs real model intake,
 parser, linker, evaluator, generated backend and clean-consumer execution.
@@ -79,15 +79,15 @@ parser, linker, evaluator, generated backend and clean-consumer execution.
 Operation fixtures now use `agent-a-invocation-cases/1-draft`. Each case selects
 one exact invocation file. That file binds case-scoped immutable pre/post
 observation files and one frame file using `artifactRef` with authority, identity,
-revision namespace/value, SHA-256 of exact file bytes, and explicit fixture profile.
+SHA-256 of exact file bytes, and explicit fixture profile.
 Expected outcomes remain outside invocation bytes. Changes to any selected frame
 or snapshot digest therefore change the invocation artifact bytes and digest.
 No fixture contains a claimed evaluator result/evidence identity.
 
 Snapshots, frames and invocation inputs each have one authoritative payload file;
 there is no second inline copy to synchronize. Paths locate local bytes and are
-not identity. Reusing an authority/identity/revision with changed content must
-refuse even if the new transport digest is internally correct. These are review
+not identity. Changed content under one authority and identity is a different reference,
+because the digest is part of the reference. These are review
 profiles, not registered production wire contracts. Model/operation binding
 remains unavailable. The source-subject fixture version stays unchanged.
 

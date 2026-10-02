@@ -29,7 +29,7 @@ the same explicit finite typed model wherever that profile admits its types:
 
 Supply exact dependency bytes for edition → core → queries → graph; inspect the
 resolved graph rather than accepting the root filename. Independently remove a
-required file, alter its digest, change bytes under one identity/revision, create
+required file, alter its digest, change bytes under one identity, create
 a dependency cycle in a newly identified mutant definition, and replace a
 requirement with an incompatible definition. Known supported roots do not grant
 support to these mutants. Each control expects its typed selection/dependency

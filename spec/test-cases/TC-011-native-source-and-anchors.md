@@ -15,7 +15,7 @@ Planned; alias/composite pre-expression correspondence requires FS03 completion.
 
 Run valid named invariant/current, precondition/pre and postcondition/post
 bindings, with postcondition pre-state access to the same operation. Mutate
-source bytes/revision/span, duplicate inline/file authority, clause identity,
+source bytes/span, duplicate inline/file authority, clause identity,
 model declaration identity and operation anchor separately. Offer a bare context,
 result in invariant/precondition, pre in invariant/precondition, pre(parameter),
 and a pre guard used for a post optional value. Preserve original and extracted

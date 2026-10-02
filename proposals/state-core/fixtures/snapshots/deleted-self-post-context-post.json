@@ -5,9 +5,5 @@
   "observation": "post",
   "invocation": "ix://example/config/invocation/deleted-self-post-context",
   "complete": true,
-  "objects": [],
-  "revision": {
-    "namespace": "agent-a-review-fixture",
-    "value": "1"
-  }
+  "objects": []
 }
