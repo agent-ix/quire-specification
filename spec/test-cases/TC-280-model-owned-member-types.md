@@ -92,6 +92,7 @@ compare it with the case's parameter types.
 | MT-15 | `field` `sku` on M1, typed value type `Code`, `Text` bound to `[0, 64; nfc]` | Resolves `Order/sku`; type `Text[0, 64; nfc]` | FR-322-AC-44 |
 | MA-14 | `field` `alias`, typed value type `Inverted`, `Text` bound to `[5, 2; nfc]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
 | MA-15 | `field` `slug`, typed value type `Folded`, `Text` bound to `[0, 64; casefold]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
+| MA-16 | `field` `stub`, typed value type `Negative`, `Text` bound to `[-1, 4; nfc]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
 | MW-01 | A `model`/`object_type` wire node with M1's id, its own id as `semantic_type` and an empty body | Recovers `Order` | FR-322-AC-29 |
 | MW-02 | MW-01 with a body member | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
 | MW-03 | MW-01 with a `declaration` | `invalid_package`/`stale-node-key` | FR-322-AC-29 |

@@ -757,7 +757,7 @@ partial checked package.
 | FR-322-AC-41 | A package holding a 100,000-deep expression has the same JSON nesting depth as a package holding a one-level expression, is emitted, read back and admitted under node, edge and byte limits sized for its node count, and no reader limit or effective-limit record names a depth. | Test (TC-427) |
 | FR-322-AC-42 | A package whose lock names source and definition digests is admitted with no source or definition bytes and no digest evidence supplied. | Test (TC-427) |
 | FR-322-AC-43 | A domain-package document supplied under its selection's digest with the selection's identity, but altered so that the SHA-256 of its RFC 8785 bytes differs from that digest, refuses `stale_dependency`/`content-mismatch` naming the selected and the recomputed digest, before its identity is compared and before any declaration is read; the unaltered document passes. | Test (TC-280) |
-| FR-322-AC-44 | A field typed by a value type bound as `Text[min, max; profile]` has type `Text[min, max; profile]` over a `text_bounds` node; a value type bound as `Text` with `min > max` or with a profile outside FR-141's six gives the member no type and refuses `ill_typed`/`operator-ineligible`. | Test (TC-280) |
+| FR-322-AC-44 | A field typed by a value type bound as `Text[min, max; profile]` has type `Text[min, max; profile]` over a `text_bounds` node; a value type bound as `Text` with a negative `min`, with `min > max` or with a profile outside FR-141's six gives the member no type and refuses `ill_typed`/`operator-ineligible`. | Test (TC-280) |
 
 ## Dependencies
 
