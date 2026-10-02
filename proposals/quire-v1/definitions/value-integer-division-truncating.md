@@ -1,7 +1,7 @@
 # Truncating integer-division definition
 
-Definition identity: `quire.value.integer-division.truncating/v1`; revision:
-`1-draft.1`. This is a leaf semantic-profile definition selected alongside
+Definition identity: `quire.value.integer-division.truncating/v1`.
+This is a leaf semantic-profile definition selected alongside
 `quire.value.complete/v1`; it has no reverse dependency on that root.
 
 For nonzero divisor `b`, quotient is the exact rational `a/b` rounded toward

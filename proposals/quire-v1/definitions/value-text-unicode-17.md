@@ -1,7 +1,7 @@
 # Unicode 17 text-profile definition
 
-Definition identity: `quire.value.text.unicode-17.0.0/v1`; revision:
-`1-draft.1`. This definition selects the Unicode 17.0.0 normalization data and
+Definition identity: `quire.value.text.unicode-17.0.0/v1`.
+This definition selects the Unicode 17.0.0 normalization data and
 algorithms for the `nfc`, `nfd`, `nfkc` and `nfkd` profiles in FR-141.
 
 The normative external closure is the following exact set of Unicode-hosted

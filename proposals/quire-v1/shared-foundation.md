@@ -129,7 +129,7 @@ following dispositions resolve SR-408's findings:
 
 | Finding | Current correction |
 | --- | --- |
-| SR-408 FND-001/002 | Latest corrected definition text and revision labels are promoted to the unsuffixed files. Superseded copies are removed. Protocol, temporal and state dependencies link the matching current definitions, including state graph and temporal common at draft revision `1-draft.3`. |
+| SR-408 FND-001/002 | Latest corrected definition text is promoted to the unsuffixed files. Superseded copies are removed. Protocol, temporal and state dependencies link the matching current definitions, including state graph and temporal common. |
 | SR-408 FND-003 | Per-rule and internal-definition draft digest pins are replaced with same-checkout links. Explicit external compiler selections and runtime digest-domain requirements remain. |
 | SR-408 FND-004 | The historical A/F integration findings are dispositioned below. Their original review observations are retained; they no longer impose checksum publication or missing-consumer-text gates. |
 | SR-408 FND-005 | The capability ledger links the same current temporal/protocol files and draft revisions as the definition index. |

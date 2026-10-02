@@ -1,6 +1,6 @@
 # Composed linked-package reference definition
 
-Artifact interpretation: `quire.package.composed/v1`; revision: `1-draft.2`.
+Artifact interpretation: `quire.package.composed/v1`.
 Language: `ix:native` / `1-draft`. **The artifact role is accepted by FS01 and
 this semantic revision is accepted by FS05. Executable qualification remains
 separate.**
@@ -14,9 +14,9 @@ selected immutable identities, revisions and digest domains.
 
 ## Required definition
 
-| Identity | Revision | Definition artifact |
-| --- | --- | --- |
-| `ix:native` / `1-draft` | `1-draft.2` | [Composed edition](edition.md) |
+| Identity | Definition artifact |
+| --- | --- |
+| `ix:native` / `1-draft` | [Composed edition](edition.md) |
 
 FS05 selects only the edition/package identity, source-inventory and dependency
 rules reachable from this package interpretation. It does not adopt the sibling

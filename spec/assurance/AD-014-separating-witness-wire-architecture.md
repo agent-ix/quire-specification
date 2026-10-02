@@ -20,8 +20,8 @@ relationships:
 
 FR-351 owns one family-neutral separating witness record shared by the
 collection, temporal and protocol families' decisive settlements. FR-352 owns
-minting `native-run-result/2` as a new, explicitly selected closed wire that
-adds that record to the unchanged `native-run-result/1` wire FR-014 governs.
+`native-run-result/2`, the explicitly selected closed wire that carries that
+record.
 Neither artifact amends quire-protocol's own canonical result wire
 (`quire.protocol.result/v1-draft.1`, FR-240); that wire's corresponding
 draft-revision bump is a separate, owned change.
@@ -31,7 +31,6 @@ draft-revision bump is a separate, owned change.
 ```mermaid
 flowchart TD
   D[Decisive settlement forall/exists, temporal, protocol] --> W[FR-351 separating witness record]
-  W --> V1[native-run-result/1 unchanged, FR-014]
   W --> V2[native-run-result/2 explicit selection, FR-352]
   V2 --> S[QSL #186 forall witness channel and /2 serializer]
   V2 --> C[Codegen #50 canonical replay]
@@ -39,18 +38,17 @@ flowchart TD
   P[quire-protocol result wire, FR-240] -.-> B[Protocol #96 draft-revision bump]
 ```
 
-`native-run-result/1` retains every FR-014 member and refusal rule unchanged.
-`native-run-result/2` is a distinct wire identifier, fixed by the producer at
+`native-run-result/2` is the wire identifier, fixed by the producer at
 production time and never inferred from payload content; it carries the
 FR-351 record exactly when the settlement basis is `decisive-witness` or
-`decisive-counterexample`. Each version's bytes are read only under that
-version's own identifier.
+`decisive-counterexample`. A reader reads the bytes only under that
+identifier and refuses any other identifier (FR-352-AC-2).
 
 ## Decisions
 
 | Choice | Rejected alternative | Consequence |
 | --- | --- | --- |
-| Mint `native-run-result/2` as an explicit, separately selected wire | Read an optional witness member on `/1` inferred from payload shape | `/1` evidence stays byte-for-byte immutable; a reader never infers a version from content. |
+| `native-run-result/2` is an explicit, separately selected wire | Read an optional witness member inferred from payload shape | A reader never infers a wire from content. |
 | One family-neutral separating witness record for collection, temporal and protocol | A per-family witness shape for `forall`/`exists`, temporal and protocol results | Every consumer that replays a counterexample (codegen, verification, protocol) replays one record shape. |
 | Exhausted, cancelled and unsupported results stay witness-free | Emit a placeholder or best-effort witness for an incomplete or unsupported result | Matches AD-003's incomplete-execution and `unsupported_projection` dispositions; no substitute witness is invented. |
 

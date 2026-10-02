@@ -147,8 +147,11 @@ For a node form covered by the node-preimage schema, it reconstructs the closed
 preimage from the graph and lock, hashes its JCS bytes and requires exact
 `node_id` equality; stale nominal keys are `invalid_semantic_graph`, while a stale application-node key is `invalid_package` with cause `stale-node-key`.
 Its outcome is the closed sum type admitted/refused/incomplete. It enforces
-caller-provided byte/depth/node/edge/occurrence/diagnostic/work limits;
-exhaustion is incomplete, not an empty graph or a successful package.
+caller-provided byte/node/edge/occurrence/diagnostic/work limits;
+exhaustion is incomplete, not an empty graph or a successful package. A node
+`body` follows the closed five-stratum grammar of FR-322 ("Body grammar"), so
+the JSON depth of every package is fixed by the schema and the reader has no
+depth limit; a body outside the grammar is a malformed wire.
 
 The QSpec qualification crate validates schema/vector correspondence only. The
 Contract IR consumer owns the production Rust strict reader and lowering path.
@@ -221,7 +224,7 @@ order and bit identity are three distinct identities, and only
 `quire.op.ieee.total_order` orders floats.
 
 A reader reports the first refusal in the order owned by
-`quire.native.diagnostics/v1` revision `1-draft.4`: graph-shape refusals, then
+`quire.native.diagnostics/v1`: graph-shape refusals, then
 `stale-node-key` (`invalid_package`) for an application node whose retained key
 is not its preimage digest, then declaration refusals, then frame refusals at
 the first `state`/`frame` node in ascending node-id digest order carrying one

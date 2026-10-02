@@ -1,6 +1,6 @@
 # Native bounded temporal common definition
 
-Definition identity: `quire.temporal.bounded-facet/v1`; revision: `1-draft.3`.
+Definition identity: `quire.temporal.bounded-facet/v1`.
 Language: `ix:native` / `1-draft`. **The facet role is accepted by FS01 and this
 semantic revision is accepted by FS04. Executable qualification remains
 separate.**
@@ -13,9 +13,9 @@ the exact identities, revisions and digests prescribed by their contracts.
 
 ## Required shared interface
 
-| Identity | Revision | Definition artifact | Consumed interface |
-| --- | --- | --- | --- |
-| `quire.state.graph/v1` | `1-draft.3` | [State/query/graph](state-graph.md) | Checked shared values, finite queries/graphs and explicit Boolean-predicate references |
+| Identity | Definition artifact | Consumed interface |
+| --- | --- | --- |
+| `quire.state.graph/v1` | [State/query/graph](state-graph.md) | Checked shared values, finite queries/graphs and explicit Boolean-predicate references |
 
 The concrete temporal roots admit temporal declarations. They reuse the shared
 expression checker for `holds(expr)`, activation guards and capture initializers;

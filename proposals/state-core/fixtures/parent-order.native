@@ -1,7 +1,7 @@
 // Synthetic parent order; café makes byte and character offsets differ.
 language "ix:native" edition "0-draft";
 profile "state-finite/0-draft";
-model M = "example/config" version "1.0.0" digest "unresolved-model-package";
+model M = "example/config" digest "unresolved-model-package";
 invariant ParentPrecedes on M::ConfigVersion at current {
   present(self.parent) implies deref(value(self.parent)).versionNumber < self.versionNumber
 }

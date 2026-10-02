@@ -1,6 +1,6 @@
 # Observation progress and restoration definition
 
-Selection identity: `quire.observation.progress/v1`; revision: `1-draft.3`.
+Selection identity: `quire.observation.progress/v1`.
 **The selection role is accepted by FS01 and this semantic revision is accepted
 by FS04. Serialization, canonicalization and executable qualification remain
 separate.**
@@ -18,14 +18,14 @@ populations.
 
 ## Required definitions and rules
 
-| Dependency | Identity | Revision/version | Current normative contract |
-| --- | --- | --- | --- |
-| Observation binding | `quire.observation.binding/v1` | `1-draft.3` | [Observation binding](observation-binding.md) |
-| Observation-range correspondence | `quire.observation.range/v1` | `1-draft.1` | [Range correspondence](observation-range.md) |
-| Observation binding rules | `quire.observation.contract/v1` | Current working draft | [Observation contract](../observation-contract.md) |
-| Temporal lifecycle/result facet | `quire.temporal.bounded-facet/v1` | `1-draft.3` | [Temporal meaning](temporal-common.md) |
-| Shared result rules | B FR-061 | Current working draft | [Orthogonal results](../../../spec/functional/protocol/FR-061-report-orthogonal-results.md) |
-| Domain declarations | Checked package `model_selections` domain package | `sha256-jcs` declaration keys | [Domain declaration selection](../observation-contract.md#domain-declaration-selection) |
+| Dependency | Identity | Current normative contract |
+| --- | --- | --- |
+| Observation binding | `quire.observation.binding/v1` | [Observation binding](observation-binding.md) |
+| Observation-range correspondence | `quire.observation.range/v1` | [Range correspondence](observation-range.md) |
+| Observation binding rules | `quire.observation.contract/v1` | [Observation contract](../observation-contract.md) |
+| Temporal lifecycle/result facet | `quire.temporal.bounded-facet/v1` | [Temporal meaning](temporal-common.md) |
+| Shared result rules | B FR-061 | [Orthogonal results](../../../spec/functional/protocol/FR-061-report-orthogonal-results.md) |
+| Domain declarations | Checked package `model_selections` domain package | [Domain declaration selection](../observation-contract.md#domain-declaration-selection) |
 
 An actual assertion or restoration request selects its required dependencies by
 exact identity, revision and bytes. Missing, stale, substituted or inconsistent

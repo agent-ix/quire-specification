@@ -14,40 +14,39 @@ and exactly one integer-division profile only by `integer_div_rem` packages.
 Listing a profile in the catalog does not select it.
 
 FS03 accepts the exact `state-core → state-queries → state-graph` semantic
-closure at the revisions below. The `1-draft` labels remain unpublished selection
-identities, and acceptance does not imply complete implementation or qualification.
+closure below, and acceptance does not imply complete implementation or qualification.
 Other definition families remain editable candidates under their owning tickets.
 
-| Definition | Draft revision | Current file |
-| --- | --- | --- |
-| `ix:native` / edition `1-draft` | `1-draft.2` | [Edition and shared grammar](edition.md) |
-| `quire.state.core/v1` | `1-draft.3` | [State core](state-core.md) |
-| `quire.state.queries/v1` | `1-draft.3` | [Predicates and queries](state-queries.md) |
-| `quire.state.graph/v1` | `1-draft.3` | [Finite graphs](state-graph.md) |
-| `quire.temporal.bounded-facet/v1` | `1-draft.3` (accepted by FS04) | [Common temporal meaning](temporal-common.md) |
-| Event-position temporal root | `1-draft.3` (accepted by FS04) | [Event positions](temporal-event-position.md) |
-| Fixed-sample temporal root | `1-draft.3` (accepted by FS04) | [Fixed samples](temporal-fixed-sample.md) |
-| Timestamped-window temporal root | `1-draft.3` (accepted by FS04) | [Timestamped windows](temporal-timestamped-window.md) |
-| `quire.protocol.finite-global/v1` | `1-draft.4` | [Protocol and choreography](protocol-finite.md) |
-| `quire.observation.binding/v1` | `1-draft.3` (accepted by FS04) | [Observation binding](observation-binding.md) |
-| `quire.observation.progress/v1` | `1-draft.3` (accepted by FS04) | [Observation progress](observation-progress.md) |
-| `quire.observation.range/v1` | `1-draft.1` (accepted by FS04) | [All-clock range correspondence](observation-range.md) |
-| `quire.package.composed/v1` | `1-draft.2` (accepted by FS05) | [Linked-package interpretation](package-reference.md) |
-| `quire.native.diagnostics/v1` | `1-draft.8` | [Diagnostic interpretation](native-diagnostics.md) |
-| `quire.value.complete/v1` | `1-draft.2` | [Complete value root](value-complete.md) |
-| `quire.value.text.unicode-17.0.0/v1` | `1-draft.1` | [Unicode text profiles](value-text-unicode-17.md) |
-| `quire.value.integer-division.truncating/v1` | `1-draft.1` | [Truncating integer division](value-integer-division-truncating.md) |
-| `quire.value.integer-division.floor/v1` | `1-draft.1` | [Floor integer division](value-integer-division-floor.md) |
-| `quire.value.integer-division.euclidean/v1` | `1-draft.1` | [Euclidean integer division](value-integer-division-euclidean.md) |
-| `quire.value.ieee754-2019-default/v1` | `1-draft.1` | [IEEE binary profile](value-ieee754-2019-default.md) |
-| `quire.value.accounting/v1` | `1-draft.1` | [Scalar accounting schedule](value-accounting.md) |
-| `quire.value.compound-unit/v1` | `1-draft.1` | [Evaluator-owned compound units](value-compound-unit.md) |
-| `quire.simulation.sampler/v1` | `1-draft.1` | [Simulation sampler](simulation-sampler.md) |
-| `quire.model.complete/v1` | `1-draft.2` | [Complete model root](model-complete.md) |
-| `quire.model.complete.rules/v1` | `1-draft.2` | [Complete-model normalization rules](model-complete-rules.json) |
-| `quire.model.effective-declaration.schema/v1` | `1-draft.2` | [Effective declaration schema](../../checked-package-v2/model-effective-declaration.schema.json) |
-| `quire.model.effective-declaration.vectors/v1` | `1-draft.2` | [Effective declaration vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
-| `quire.model.definition-lock/v1` | `1-draft.2` | [Complete model lock](complete-model-lock.json) |
+| Definition | Current file |
+| --- | --- |
+| `ix:native` / edition `1-draft` | [Edition and shared grammar](edition.md) |
+| `quire.state.core/v1` | [State core](state-core.md) |
+| `quire.state.queries/v1` | [Predicates and queries](state-queries.md) |
+| `quire.state.graph/v1` | [Finite graphs](state-graph.md) |
+| `quire.temporal.bounded-facet/v1` | [Common temporal meaning](temporal-common.md) |
+| Event-position temporal root | [Event positions](temporal-event-position.md) |
+| Fixed-sample temporal root | [Fixed samples](temporal-fixed-sample.md) |
+| Timestamped-window temporal root | [Timestamped windows](temporal-timestamped-window.md) |
+| `quire.protocol.finite-global/v1` | [Protocol and choreography](protocol-finite.md) |
+| `quire.observation.binding/v1` | [Observation binding](observation-binding.md) |
+| `quire.observation.progress/v1` | [Observation progress](observation-progress.md) |
+| `quire.observation.range/v1` | [All-clock range correspondence](observation-range.md) |
+| `quire.package.composed/v1` | [Linked-package interpretation](package-reference.md) |
+| `quire.native.diagnostics/v1` | [Diagnostic interpretation](native-diagnostics.md) |
+| `quire.value.complete/v1` | [Complete value root](value-complete.md) |
+| `quire.value.text.unicode-17.0.0/v1` | [Unicode text profiles](value-text-unicode-17.md) |
+| `quire.value.integer-division.truncating/v1` | [Truncating integer division](value-integer-division-truncating.md) |
+| `quire.value.integer-division.floor/v1` | [Floor integer division](value-integer-division-floor.md) |
+| `quire.value.integer-division.euclidean/v1` | [Euclidean integer division](value-integer-division-euclidean.md) |
+| `quire.value.ieee754-2019-default/v1` | [IEEE binary profile](value-ieee754-2019-default.md) |
+| `quire.value.accounting/v1` | [Scalar accounting schedule](value-accounting.md) |
+| `quire.value.compound-unit/v1` | [Evaluator-owned compound units](value-compound-unit.md) |
+| `quire.simulation.sampler/v1` | [Simulation sampler](simulation-sampler.md) |
+| `quire.model.complete/v1` | [Complete model root](model-complete.md) |
+| `quire.model.complete.rules/v1` | [Complete-model normalization rules](model-complete-rules.json) |
+| `quire.model.effective-declaration.schema/v1` | [Effective declaration schema](../../checked-package-v2/model-effective-declaration.schema.json) |
+| `quire.model.effective-declaration.vectors/v1` | [Effective declaration vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
+| `quire.model.definition-lock/v1` | [Complete model lock](complete-model-lock.json) |
 
 ## Header-selectable layers
 

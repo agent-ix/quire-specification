@@ -1,6 +1,6 @@
 # Complete scalar accounting definition
 
-Definition identity: `quire.value.accounting/v1`; revision: `1-draft.1`.
+Definition identity: `quire.value.accounting/v1`.
 This is a leaf definition selected by `quire.value.complete/v1`; it has no
 reverse dependency on that root.
 

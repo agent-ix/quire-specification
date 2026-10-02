@@ -35,9 +35,9 @@ equality.
 | `quire.source.bytes/v1` | Exact authored native source-document bytes, including layout; distinct from every definition/model artifact. |
 | `quire.checked-semantic-node/v1` | Versioned checked semantic-node identity; distinct from its source occurrence and from the enclosing package identity. |
 | `quire.contract-ir.semantic/v1` | Versioned generated Contract IR semantic identity; distinct from the checked source package that it lowers. |
-| `quire.diagnostic-catalog.bytes/v1` | Exact diagnostic-catalog source bytes, including layout. |
 | `quire.generated-artifact.bytes/v1` | Exact generated artifact bytes under its selected artifact kind/profile. |
 | `quire.tool-manifest.jcs/v1` | RFC 8785 canonical tool/plugin/provider manifest bytes. |
+| `quire.cache-key/v1` | Cache-entry key. SHA-256 over the RFC 8785 canonical bytes of the cached operation, the subject's `quire.package.semantic/v2` `package_id`, the canonical request, the provider's backend identity and, for `generate`, the generation target and its options (FR-306). Distinct from every other identity/digest domain. |
 | `quire.simulation.state-key/v1` | Simulator state-key identity. SHA-256 over the RFC 8785 canonical bytes of the typed canonical encoding of simulator state, control positions, queues, role lifetimes, observation progress and remaining bounds (FR-181). Distinct from `sha256-jcs` and from every other identity/digest domain. |
 | `typed-expression-identity` | Source-free typed-expression identity. Requires a typed derivation; an unlinked syntax tree cannot claim it, and current native syntax has no qualified canonical semantic identity (FR-015, FR-015-AC-4). |
 | `quire.verification.jcs` | Verification JCS domain, `version: rfc8785-v1`, `algorithm: sha256`. Emitted as `sha256-jcs:` followed by 64 lowercase hexadecimal digits over RFC 8785 canonical UTF-8 bytes (FR-018). |
@@ -105,6 +105,7 @@ them instead of holding a copy.
 | FR-201-AC-3 | A digest with an absent domain compares only to absence and receives no default member. | Analysis |
 | FR-201-AC-4 | A lock-file digest does not satisfy a comparison expecting a package fingerprint. | Analysis |
 | FR-201-AC-7 | The `quire_specification` library's `COMPLETE_VALUE_LOCK`, `COMPLETE_VALUE_SELECTION_VECTORS` and `NATIVE_DIAGNOSTICS` equal the exact bytes of `complete-value-lock.json`, `complete-value-selection-vectors.json` and `native-diagnostics.md`. | Test (TC-233) |
+| FR-201-AC-8 | A `quire.cache-key/v1` key computed over the same cached operation, `package_id`, canonical request, backend identity and generation target equals one computed by a second conformer, and compares unequal to a digest with equal bytes in any other domain. | Test (TC-226) |
 | FR-201-AC-9 | Every qualification-catalog entry of the complete-value and complete-model locks names an authored artifact under a unique role and identity, and package selection is exact: each complete-value catalog role occupies one always, trigger-conditional or exactly-one slot under the closed triggers `text_bearing`, `ieee_operation` and `integer_div_rem`, every complete-model catalog role is always selected, and each accepted and refused selection vector is admitted or refused with exactly its recorded selection code. | Test (TC-233) |
 
 ## Dependencies

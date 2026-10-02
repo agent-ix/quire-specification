@@ -1,6 +1,6 @@
 # Complete value definition
 
-Definition identity: `quire.value.complete/v1`; revision: `1-draft.2`.
+Definition identity: `quire.value.complete/v1`.
 Language: `ix:native` / `1-draft`. This definition is the complete-V1 value,
 type and expression root; implementation and qualification remain separately
 reported.
@@ -9,14 +9,14 @@ reported.
 
 Every package that selects this root also selects:
 
-| Identity | Revision | Definition artifact |
-| --- | --- | --- |
-| `ix:native` / `1-draft` | `1-draft.2` | [Edition](edition.md) |
-| `quire.state.core/v1` | `1-draft.3` | [State core](state-core.md), the layer this root requires (its `header_selectable_layers` row in the [complete-value lock](complete-value-lock.json)) |
-| `quire.value.accounting/v1` | `1-draft.1` | [Scalar accounting](value-accounting.md) |
-| `quire.value.compound-unit/v1` | `1-draft.1` | [Compound-unit value identity](value-compound-unit.md) |
-| `quire.value.compound-unit.schema/v1` | `1-draft.1` | [Compound-unit schema](value-compound-unit.schema.json) |
-| `quire.value.compound-unit.vectors/v1` | `1-draft.1` | [Compound-unit vectors](value-compound-unit-vectors.json) |
+| Identity | Definition artifact |
+| --- | --- |
+| `ix:native` / `1-draft` | [Edition](edition.md) |
+| `quire.state.core/v1` | [State core](state-core.md), the layer this root requires (its `header_selectable_layers` row in the [complete-value lock](complete-value-lock.json)) |
+| `quire.value.accounting/v1` | [Scalar accounting](value-accounting.md) |
+| `quire.value.compound-unit/v1` | [Compound-unit value identity](value-compound-unit.md) |
+| `quire.value.compound-unit.schema/v1` | [Compound-unit schema](value-compound-unit.schema.json) |
+| `quire.value.compound-unit.vectors/v1` | [Compound-unit vectors](value-compound-unit-vectors.json) |
 
 ## Conditional and alternative definitions
 

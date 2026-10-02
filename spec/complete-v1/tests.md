@@ -363,6 +363,8 @@ type.
 | FR-300 | FR-300-AC-1 | TC-220 | planned |
 | FR-300 | FR-300-AC-2 | TC-220 | planned |
 | FR-300 | FR-300-AC-3 | TC-220 | planned |
+| FR-300 | FR-300-AC-4 | TC-220 | planned |
+| FR-300 | FR-300-AC-5 | TC-220 | planned |
 | FR-301 | FR-301-AC-1 | TC-221 | planned |
 | FR-301 | FR-301-AC-2 | TC-221 | planned |
 | FR-301 | FR-301-AC-3 | TC-221 | planned |
@@ -380,10 +382,12 @@ type.
 | FR-305 | FR-305-AC-1 | TC-225 | planned |
 | FR-305 | FR-305-AC-2 | TC-225 | planned |
 | FR-305 | FR-305-AC-3 | TC-225 | planned |
+| FR-305 | FR-305-AC-4 | TC-225 | planned |
 | FR-306 | FR-306-AC-1 | TC-226 | planned |
 | FR-306 | FR-306-AC-2 | TC-226 | planned |
 | FR-306 | FR-306-AC-3 | TC-226 | planned |
 | FR-306 | FR-306-AC-4 | TC-226 | planned |
+| FR-306 | FR-306-AC-5 | TC-226 | planned |
 | FR-307 | FR-307-AC-1 | TC-227 | planned |
 | FR-307 | FR-307-AC-2 | TC-227 | planned |
 | FR-307 | FR-307-AC-4 | TC-227 | planned |
@@ -526,6 +530,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-201 | FR-201-AC-4 | TC-231 | planned |
 | FR-201 | FR-201-AC-7 | TC-233 | planned |
 | FR-201 | FR-201-AC-9 | TC-233 | planned |
+| FR-201 | FR-201-AC-8 | TC-226 | planned |
 | FR-202 | FR-202-AC-1 | TC-231 | planned |
 | FR-202 | FR-202-AC-2 | TC-231 | planned |
 | FR-202 | FR-202-AC-3 | TC-231 | planned |
@@ -554,6 +559,9 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-207 | FR-207-AC-6 | TC-231 | planned |
 | FR-207 | FR-207-AC-7 | TC-231 | planned |
 | FR-207 | FR-207-AC-8 | TC-235 | planned |
+| FR-207 | FR-207-AC-9 | TC-429 | planned |
+| FR-207 | FR-207-AC-10 | TC-429 | planned |
+| FR-207 | FR-207-AC-11 | TC-429 | planned |
 | FR-210 | FR-210-AC-1 | TC-050 | planned |
 | FR-210 | FR-210-AC-2 | TC-050 | planned |
 | FR-210 | FR-210-AC-3 | TC-050 | planned |
@@ -710,7 +718,6 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-270 | FR-270-AC-2 | TC-231 | planned |
 | FR-270 | FR-270-AC-3 | TC-231 | planned |
 | FR-270 | FR-270-AC-4 | TC-231 | planned |
-| FR-270 | FR-270-AC-5 | TC-233 | planned |
 | FR-271 | FR-271-AC-6 | TC-233 | planned |
 | FR-272 | FR-272-AC-1 | TC-231 | planned |
 | FR-272 | FR-272-AC-2 | TC-231 | planned |
@@ -986,6 +993,11 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-322 | FR-322-AC-36 | TC-233 | planned |
 | FR-322 | FR-322-AC-37 | TC-233 | planned |
 | FR-322 | FR-322-AC-38 | TC-281 | planned |
+| FR-322 | FR-322-AC-39 | TC-427 | planned |
+| FR-322 | FR-322-AC-40 | TC-427 | planned |
+| FR-322 | FR-322-AC-41 | TC-427 | planned |
+| FR-322 | FR-322-AC-42 | TC-427 | planned |
+| FR-322 | FR-322-AC-43 | TC-280 | planned |
 | FR-340 | FR-340-AC-1 | TC-233 | planned |
 | FR-340 | FR-340-AC-2 | TC-233 | planned |
 | FR-340 | FR-340-AC-3 | TC-233 | planned |
@@ -1035,6 +1047,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-323 | FR-323-AC-5 | TC-277 | planned |
 | FR-323 | FR-323-AC-6 | TC-278 | planned |
 | FR-323 | FR-323-AC-7 | TC-277 | planned |
+| FR-323 | FR-323-AC-8 | TC-426 | planned |
 | FR-324 | FR-324-AC-1 | TC-231 | planned |
 | FR-324 | FR-324-AC-2 | TC-231 | planned |
 | FR-324 | FR-324-AC-3 | TC-231 | planned |
@@ -1127,11 +1140,12 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-351 | FR-351-AC-4 | TC-254 | planned |
 | FR-351 | FR-351-AC-5 | TC-254 | planned |
 | FR-351 | FR-351-AC-6 | TC-254 | planned |
+| FR-351 | FR-351-AC-7 | TC-254 | planned |
 | FR-352 | FR-352-AC-1 | TC-255 | planned |
 | FR-352 | FR-352-AC-2 | TC-255 | planned |
 | FR-352 | FR-352-AC-3 | TC-255 | planned |
-| FR-352 | FR-352-AC-4 | TC-255 | planned |
-| FR-352 | FR-352-AC-5 | TC-255 | planned |
+| FR-352 | FR-352-AC-6 | TC-255 | planned |
+| FR-352 | FR-352-AC-7 | TC-255 | planned |
 | FR-353 | FR-353-AC-1 | TC-268 | planned |
 | FR-353 | FR-353-AC-2 | TC-268 | planned |
 | FR-353 | FR-353-AC-3 | TC-268 | planned |
@@ -1144,6 +1158,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-354 | FR-354-AC-5 | TC-269 | planned |
 | FR-354 | FR-354-AC-6 | TC-269 | planned |
 | FR-354 | FR-354-AC-7 | TC-269 | planned |
+| FR-354 | FR-354-AC-8 | TC-269 | planned |
 | FR-355 | FR-355-AC-1 | TC-270 | planned |
 | FR-355 | FR-355-AC-2 | TC-270 | planned |
 | FR-355 | FR-355-AC-3 | TC-270 | planned |
@@ -1350,6 +1365,23 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-433 | FR-433-AC-5 | TC-387 | planned |
 | FR-433 | FR-433-AC-6 | TC-387 | planned |
 | FR-433 | FR-433-AC-7 | TC-387 | planned |
+| FR-460 | FR-460-AC-1 | TC-425 | planned |
+| FR-460 | FR-460-AC-2 | TC-425 | planned |
+| FR-460 | FR-460-AC-3 | TC-425 | planned |
+| FR-460 | FR-460-AC-4 | TC-425 | planned |
+| FR-460 | FR-460-AC-5 | TC-426 | planned |
+| FR-461 | FR-461-AC-1 | TC-426 | planned |
+| FR-461 | FR-461-AC-2 | TC-426 | planned |
+| FR-461 | FR-461-AC-3 | TC-426 | planned |
+| FR-461 | FR-461-AC-4 | TC-426 | planned |
+| FR-461 | FR-461-AC-5 | TC-426 | planned |
+| FR-461 | FR-461-AC-6 | TC-426 | planned |
+| FR-462 | FR-462-AC-1 | TC-428 | planned |
+| FR-462 | FR-462-AC-2 | TC-428 | planned |
+| FR-462 | FR-462-AC-3 | TC-428 | planned |
+| FR-462 | FR-462-AC-4 | TC-428 | planned |
+| FR-462 | FR-462-AC-5 | TC-428 | planned |
+| FR-462 | FR-462-AC-6 | TC-428 | planned |
 
 ## Test Case Summary
 
@@ -1401,7 +1433,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-223 | Formatter LSP incremental parity | Property | P0 | FR-303 | 🚧 Planned |
 | TC-224 | Model query and rendering determinism | Property | P0 | FR-304 | 🚧 Planned |
 | TC-225 | Rust plugin validation and containment | Property | P0 | FR-305 | 🚧 Planned |
-| TC-226 | AOT JIT native and cache parity | Property | P0 | FR-306 | 🚧 Planned |
+| TC-226 | AOT JIT native and cache parity | Property | P0 | FR-306, FR-201 | 🚧 Planned |
 | TC-227 | Reusable semantic library resolution | Property | P0 | FR-307 | 🚧 Planned |
 | TC-228 | WASM native parity and bounds | Property | P0 | FR-308 | 🚧 Planned |
 | TC-229 | Analysis codegen accounting | Property | P0 | FR-309 | 🚧 Planned |
@@ -1489,6 +1521,11 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-392 | Race-freedom item and race counterexamples | Property | P0 | FR-438 | 🚧 Planned |
 | TC-393 | Memory budgets, bound-limited states and verdicts | Property | P0 | FR-439, FR-437 | 🚧 Planned |
 | TC-394 | Weak-memory counterexample wire and replay | Property | P0 | FR-439 | 🚧 Planned |
+| TC-425 | Deep inputs settle on their content at every stage | Property | P0 | FR-460, FR-146 | 🚧 Planned |
+| TC-426 | Limit outcomes name the limit, its value and its setting | Property | P0 | FR-460, FR-461, FR-323 | 🚧 Planned |
+| TC-427 | The v2 body grammar fixes package depth by schema | Property | P0 | FR-322 | 🚧 Planned |
+| TC-428 | The plugin wire frames, identifies and settles every plugin run | Property | P0 | FR-462 | 🚧 Planned |
+| TC-429 | Value paths root and step through every witness location | Property | P0 | FR-207, FR-351 | 🚧 Planned |
 
 ## Integration Test Matrix
 

@@ -1,6 +1,6 @@
 # Native finite global protocol definition
 
-Profile identity: `quire.protocol.finite-global/v1`; revision: `1-draft.4`.
+Profile identity: `quire.protocol.finite-global/v1`.
 Language: `ix:native` / `1-draft`. **The profile role is accepted by FS01; this
 semantic revision remains proposed and is not adopted or fully implemented.**
 
@@ -10,10 +10,10 @@ This editing policy does not relax immutable runtime selections or digest checks
 
 ## Required definitions and interfaces
 
-| Identity | Revision | Definition artifact | Consumed interface |
-| --- | --- | --- | --- |
-| `quire.state.graph/v1` | `1-draft.3` | [State/query/graph](state-graph.md) | Checked shared values, guards, captures and predicate references |
-| `quire.temporal.bounded-facet/v1` | `1-draft.3` | [Temporal meaning](temporal-common.md) | Explicit activation, bounded clock/history/progress and temporal-reference contract |
+| Identity | Definition artifact | Consumed interface |
+| --- | --- | --- |
+| `quire.state.graph/v1` | [State/query/graph](state-graph.md) | Checked shared values, guards, captures and predicate references |
+| `quire.temporal.bounded-facet/v1` | [Temporal meaning](temporal-common.md) | Explicit activation, bounded clock/history/progress and temporal-reference contract |
 
 The source root admits protocol declarations. State and temporal declarations
 select their own profiles; an imported declaration retains that exact selection.
@@ -84,8 +84,8 @@ not permission to choose a favorable interpretation or overwrite either owner.
 
 ## Result settlement and compatibility
 
-This draft consumes the current canonical result contract, the 1-draft.3
-temporal facet and the 1-draft.3 state dependency. It retains assessment execution,
+This draft consumes the current canonical result contract, the temporal facet
+and the state dependency. It retains assessment execution,
 decision-scope progress, decision-scope closure, surrounding-execution progress,
 surrounding-execution closure, truth, settlement basis and exact decision support
 as independent facts. A completed

@@ -1,6 +1,6 @@
 # FRETish 3.1 output profile
 
-Selected identity `quire.output.fretish31/v1`, revision `1-draft.1`. Target
+Selected identity `quire.output.fretish31/v1`. Target
 reference: NASA FRET release `v3.1.0` and its Classic FRETish
 scope/condition/component/shall/timing/response grammar and documentation.
 

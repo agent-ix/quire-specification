@@ -38,7 +38,9 @@ factor parser modules but cannot expose backend-specific syntax, omit a facet or
 accept an undeclared extension under the complete-V1 identity. Reserved words,
 literal spellings, operator precedence and declaration forms are versioned by
 the linked language profile. Lossless parsing preserves source bytes and loci
-without granting syntactically invalid input semantic meaning.
+without granting syntactically invalid input semantic meaning. Parsing,
+checking and packaging take no provider registry, so their output is
+independent of which backends or plugins are installed.
 
 ## Acceptance Criteria
 
@@ -46,7 +48,7 @@ without granting syntactically invalid input semantic meaning.
 | --- | --- | --- |
 | FR-339-AC-1 | Every production in the base and complete-V1 facet grammar has positive, boundary and located-negative corpus vectors. | Test (TC-180) |
 | FR-339-AC-2 | Parsing and lossless rendering reproduce accepted UTF-8 source bytes exactly, including comments and whitespace. | Test (TC-180) |
-| FR-339-AC-3 | Backend installation cannot add, remove or reinterpret syntax under the same language/profile identity. | Test (TC-180) |
+| FR-339-AC-3 | Backend installation cannot add, remove or reinterpret syntax under the same language/profile identity: compiling one source with an empty provider registry and with a populated one gives byte-equal checked-package bytes and the same check outcome. | Test (TC-180) |
 | FR-339-AC-4 | An undeclared keyword, operator or extension refuses at its exact source span without producing a checked declaration. | Test (TC-180) |
 
 ## Dependencies

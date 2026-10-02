@@ -20,7 +20,7 @@ separate target correspondence and implementation ownership.
 
 The integration joins strict FS05 packages and accepted native/model/temporal/
 observation semantics to qcir #55/#56/#57 through
-`quire.output.mapping/v1` `1-draft.1`. No target mapper invokes another target,
+`quire.output.mapping/v1`. No target mapper invokes another target,
 reads target text as native source or depends on an external runtime.
 
 ## Preconditions

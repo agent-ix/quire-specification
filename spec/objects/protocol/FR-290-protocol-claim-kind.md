@@ -289,8 +289,7 @@ backend identity, then manifest digest.
   vocabulary selection, advertised (kind, mode) pairs, the candidate set and
   the per-item result.
 - [FR-272](../foundation/FR-272-typed-diagnostic-cause.md) types the
-  `invalid_capability` and `unsupported_projection` causes at catalog revision
-  `1-draft.5`.
+  `invalid_capability` and `unsupported_projection` causes.
 - [AD-016](../../assurance/AD-016-semantic-family-extension-path.md) places the
   one negotiation point.
 

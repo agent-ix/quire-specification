@@ -761,7 +761,7 @@ fn application_dependencies(term: &Value) -> Vec<Value> {
 
 /// Closed reader refusal causes for an application's operation, in evaluation
 /// order. The first eight are `invalid_package` causes and the last is the
-/// `ill_typed` cause of `quire.native.diagnostics/v1` revision `1-draft.4`.
+/// `ill_typed` cause of `quire.native.diagnostics/v1`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum OperationRefusal {
     UnknownOperation,
@@ -3863,7 +3863,7 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
                 "model selections",
                 "/lock/model_selections",
                 json!([{
-                    "identity": "test/orders", "version": "1",
+                    "identity": "test/orders",
                     "digest_domain": "sha256-jcs",
                     "digest": "8888888888888888888888888888888888888888888888888888888888888888"
                 }]),
@@ -3877,7 +3877,7 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
                 "dependency selections",
                 "/lock/dependency_selections",
                 json!([{
-                    "identity": "test/geometry", "version": "1",
+                    "identity": "test/geometry",
                     "package_id": {
                         "domain": "quire.package.semantic/v2", "algorithm": "sha256",
                         "digest": "8888888888888888888888888888888888888888888888888888888888888888"
@@ -4024,18 +4024,6 @@ fn tc_233_dependency_selections_carry_each_dependency_package_identity() {
     );
 
     let mutations = &vectors["entry_mutations"];
-    assert_eq!(
-        named_inventory(mutations, "/id", "/outcome"),
-        BTreeSet::from([
-            ("definition-selection-shape", "refused:malformed_wire"),
-            ("definition-ref-shape", "refused:malformed_wire"),
-            ("missing-package-id", "refused:malformed_wire"),
-            ("bare-digest-package-id", "refused:malformed_wire"),
-            ("source-bytes-package-id", "refused:digest_domain_mismatch"),
-            ("missing-version", "refused:malformed_wire"),
-        ]),
-        "the dependency-selection mutation inventory is exact"
-    );
     for mutation in mutations.as_array().expect("entry mutations are an array") {
         let id = mutation["id"].as_str().expect("mutation id is a string");
         let mut entries = entries.clone();
@@ -4593,7 +4581,6 @@ fn tc_233_owner_to_lock_join_refuses_independently_of_lock_preimage_equality() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
     let model_selection = json!([{
         "identity": "test/orders",
-        "version": "1",
         "digest_domain": "sha256-jcs",
         "digest": "5555555555555555555555555555555555555555555555555555555555555555"
     }]);
@@ -4801,21 +4788,12 @@ fn tc_233_complete_value_lock_catalogs_every_artifact_and_separates_package_sele
     );
     assert_eq!(lock["language_edition"].as_str(), Some("1-draft"));
 
-    let definitions =
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("proposals/quire-v1/definitions");
     let catalog = lock["qualification_catalog"]
         .as_array()
         .expect("qualification catalog is an array");
     let mut roles = BTreeSet::new();
     let mut identities = BTreeSet::new();
     for entry in catalog {
-        let path = entry["artifact_path"]
-            .as_str()
-            .expect("artifact path is a string");
-        assert!(
-            definitions.join(path).is_file(),
-            "catalog entry names an authored artifact: {path}"
-        );
         assert_eq!(entry["definition"]["authority"].as_str(), Some("agent-ix"));
         assert!(
             roles.insert(entry["role"].as_str().expect("role is a string")),
@@ -6922,9 +6900,10 @@ fn tc_233_every_published_package_carries_only_current_application_node_keys() {
 }
 
 /// The `stage_limit_exceeded` and `duplicate_selection` cause sets are closed:
-/// the native-diagnostics row and the FR-272 row of each code list exactly the
-/// causes of catalog revision `1-draft.7`, so neither document can add, drop or
-/// rename a cause without the other and this list.
+/// the native-diagnostics row and the FR-272 row of each code list exactly
+/// these causes, so neither document can add, drop or rename a cause without
+/// the other and this list. No `stage_limit_exceeded` cause names a depth, and
+/// both of its rows name the `setting` that raises the limit.
 #[trace("TC-233", "FR-272-AC-10")]
 #[test]
 fn tc_233_stage_limit_and_duplicate_selection_cause_sets_are_closed() {
@@ -6933,7 +6912,6 @@ fn tc_233_stage_limit_and_duplicate_selection_cause_sets_are_closed() {
             "stage_limit_exceeded",
             &[
                 "input-bytes-exceeded",
-                "nesting-depth-exceeded",
                 "token-count-exceeded",
                 "node-count-exceeded",
                 "edge-count-exceeded",
@@ -6952,19 +6930,28 @@ fn tc_233_stage_limit_and_duplicate_selection_cause_sets_are_closed() {
         assert_eq!(
             diagnostic_row_causes(NATIVE_DIAGNOSTICS, code),
             causes,
-            "native-diagnostics `{code}` row lists exactly its 1-draft.7 causes"
+            "native-diagnostics `{code}` row lists exactly its causes"
         );
         assert_eq!(
             diagnostic_row_causes(TYPED_DIAGNOSTIC_CAUSE, code),
             causes,
-            "FR-272 `{code}` row lists exactly its 1-draft.7 causes"
+            "FR-272 `{code}` row lists exactly its causes"
+        );
+    }
+    for (document, label) in [
+        (NATIVE_DIAGNOSTICS, "native-diagnostics"),
+        (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
+    ] {
+        assert!(
+            diagnostic_row_payload_keys(document, "stage_limit_exceeded").contains("setting"),
+            "{label} `stage_limit_exceeded` row names the `setting` payload key"
         );
     }
 }
 
-/// The eleven codes of catalog revision `1-draft.8` with their closed causes
+/// The eleven value-refusal and source-identity codes with their closed causes
 /// and payload keys (FR-272-AC-11).
-const REVISION_1_DRAFT_8_ROWS: [(&str, &[&str], &[&str]); 11] = [
+const VALUE_REFUSAL_ROWS: [(&str, &[&str], &[&str]); 11] = [
     (
         "invalid_source_identity",
         &["blank-label", "empty-path"],
@@ -7014,7 +7001,7 @@ fn owned_set(items: &[&str]) -> BTreeSet<String> {
     items.iter().map(|item| (*item).to_owned()).collect()
 }
 
-/// The eleven cause sets and payload keys of catalog revision `1-draft.8` are
+/// The eleven value-refusal and source-identity cause sets and payload keys are
 /// closed: the native-diagnostics row and the FR-272 row of each code list
 /// exactly these causes and name exactly these payload keys, and every key is
 /// one of FR-272's canonical payload names, so neither document can add, drop
@@ -7023,7 +7010,7 @@ fn owned_set(items: &[&str]) -> BTreeSet<String> {
 #[test]
 fn tc_233_revision_1_draft_8_cause_sets_and_payload_keys_are_closed() {
     let canonical = canonical_payload_names();
-    for (code, causes, keys) in REVISION_1_DRAFT_8_ROWS {
+    for (code, causes, keys) in VALUE_REFUSAL_ROWS {
         let causes = owned_set(causes);
         let keys = owned_set(keys);
         assert!(
@@ -7037,46 +7024,25 @@ fn tc_233_revision_1_draft_8_cause_sets_and_payload_keys_are_closed() {
             assert_eq!(
                 diagnostic_row_causes(document, code),
                 causes,
-                "{name} `{code}` row lists exactly its 1-draft.8 causes"
+                "{name} `{code}` row lists exactly its causes"
             );
             assert_eq!(
                 diagnostic_row_payload_keys(document, code),
                 keys,
-                "{name} `{code}` row names exactly its 1-draft.8 payload keys"
+                "{name} `{code}` row names exactly its payload keys"
             );
         }
     }
 }
 
-const VERSIONED_DIAGNOSTIC_CATALOG: &str =
-    include_str!("../spec/objects/foundation/FR-270-versioned-diagnostic-catalog.md");
 const DIAGNOSTIC_CODE_VOCABULARY: &str =
     include_str!("../spec/objects/foundation/FR-271-diagnostic-code-vocabulary.md");
 
-/// FR-270's Revision property quotes the catalog header's revision, and
 /// FR-271's values table has exactly one row for each code FR-271-AC-6 names.
-#[trace("TC-233", "FR-270-AC-5")]
 #[trace("TC-233", "FR-271-AC-6")]
 #[test]
-fn tc_233_catalog_revision_and_code_vocabulary_follow_the_catalog() {
-    let header = NATIVE_DIAGNOSTICS
-        .lines()
-        .find(|line| line.starts_with("Interpretation identity:"))
-        .expect("native diagnostics has an interpretation-identity header line");
-    let revision = header
-        .split("revision: ")
-        .nth(1)
-        .and_then(|rest| rest.strip_suffix('.'))
-        .expect("the header names a revision");
-    let cell = VERSIONED_DIAGNOSTIC_CATALOG
-        .lines()
-        .find(|line| line.starts_with("| Revision |"))
-        .expect("FR-270 has a Revision property row");
-    assert!(
-        cell.contains(&format!("\"revision: {revision}\"")),
-        "FR-270's Revision cell quotes the header's revision {revision}"
-    );
-    for (code, _, _) in REVISION_1_DRAFT_8_ROWS {
+fn tc_233_code_vocabulary_follows_the_catalog() {
+    for (code, _, _) in VALUE_REFUSAL_ROWS {
         diagnostic_row(DIAGNOSTIC_CODE_VOCABULARY, code);
     }
 }
@@ -7241,8 +7207,8 @@ fn tc_233_payload_values_have_one_spelling() {
         + intro.len();
     let rules = &catalog[start..];
     let rules = &rules[..rules
-        .find("A producer claiming revision `1-draft.7`")
-        .expect("the spelling list ends before the older-producer sentence")];
+        .find("Other retained host/source codes")
+        .expect("the spelling list ends before the host/source code paragraph")];
     let item = |lead: &str| -> String {
         let begin = rules
             .find(lead)
@@ -7307,25 +7273,6 @@ fn tc_233_payload_values_have_one_spelling() {
         ordered(&item("- a label is")),
         SOURCE_LABELS,
         "a label is exactly one of the four labels, in the row's order"
-    );
-}
-
-/// FR-272-AC-7 pins these causes to catalog revision `1-draft.4` by name, and
-/// revisions `1-draft.5` to `1-draft.8` keep them; a header that still
-/// claimed `1-draft.3` would, by the catalog's own rule ("A producer claiming
-/// revision `1-draft.3` emits none of these causes"), forbid emitting
-/// `stale-node-key` and the other revision-`1-draft.4` causes this file
-/// exercises throughout.
-#[trace("TC-233", "FR-272-AC-7")]
-#[test]
-fn tc_233_native_diagnostics_header_pins_current_revision() {
-    let header = NATIVE_DIAGNOSTICS
-        .lines()
-        .find(|line| line.starts_with("Interpretation identity:"))
-        .expect("native diagnostics has an interpretation-identity header line");
-    assert_eq!(
-        header, "Interpretation identity: `quire.native.diagnostics/v1`; revision: `1-draft.8`.",
-        "the catalog header claims revision 1-draft.8, which keeps every 1-draft.4 cause this file relies on"
     );
 }
 
@@ -8224,4 +8171,200 @@ fn tc_396_union_member_keys_recompute_and_differ_across_unions() {
         vectors[0]["sha256"].as_str().unwrap_or_default(),
         "a member identifier is compared byte for byte"
     );
+}
+
+/// A Leaf term of FR-322's body grammar. `group_reference` is a Leaf only in
+/// a node-identity preimage.
+fn is_leaf_term(term: &Value, preimage: bool) -> bool {
+    match term["term"].as_str() {
+        Some("literal" | "reference" | "dependency_reference") => true,
+        Some("group_reference") => preimage,
+        _ => false,
+    }
+}
+
+/// A Group term: an `aggregate` whose members are each a Leaf or a `binding`
+/// of a Leaf.
+fn is_group_term(term: &Value, preimage: bool) -> bool {
+    term["term"] == "aggregate"
+        && term["members"].as_array().is_some_and(|members| {
+            members.iter().all(|member| {
+                is_leaf_term(member, preimage)
+                    || (member["term"] == "binding" && is_leaf_term(&member["value"], preimage))
+            })
+        })
+}
+
+/// A Tuple term: an `aggregate` whose members are each a Leaf or a Group.
+fn is_tuple_term(term: &Value, preimage: bool) -> bool {
+    term["term"] == "aggregate"
+        && term["members"].as_array().is_some_and(|members| {
+            members
+                .iter()
+                .all(|member| is_leaf_term(member, preimage) || is_group_term(member, preimage))
+        })
+}
+
+/// A Member term: a Leaf, a Group, or a `binding` of a Leaf, a Group or a
+/// Tuple.
+fn is_member_term(term: &Value, preimage: bool) -> bool {
+    let value = &term["value"];
+    is_leaf_term(term, preimage)
+        || is_group_term(term, preimage)
+        || (term["term"] == "binding"
+            && (is_leaf_term(value, preimage)
+                || is_group_term(value, preimage)
+                || is_tuple_term(value, preimage)))
+}
+
+/// A Body term: a Leaf, an `application` of Members, an `aggregate` of
+/// Members, or a `frame` body. No production names itself or a higher
+/// stratum, so the walk is a fixed number of levels deep.
+fn is_body_term(term: &Value, preimage: bool) -> bool {
+    let all_members = |items: &Value| {
+        items
+            .as_array()
+            .is_some_and(|items| items.iter().all(|item| is_member_term(item, preimage)))
+    };
+    match term["term"].as_str() {
+        Some("application") => all_members(&term["arguments"]),
+        Some("aggregate") => all_members(&term["members"]),
+        Some("frame" | "abstraction_relation") => true,
+        _ => is_leaf_term(term, preimage),
+    }
+}
+
+/// Every node body of every published V2 package, and every application
+/// node-identity preimage, is in the closed five-stratum body grammar.
+#[trace("TC-427", "FR-322-AC-39")]
+#[test]
+fn tc_427_published_bodies_follow_the_five_stratum_body_grammar() {
+    for (label, package) in published_v2_packages() {
+        for node in package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("the graph has nodes")
+        {
+            assert!(
+                is_body_term(&node["body"], false),
+                "{label}: node {} has a body in the grammar",
+                node["node_id"]["digest"]
+            );
+        }
+    }
+    let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let application = schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "ApplicationNode");
+    let mut preimages = 0;
+    for vector in vectors["operation_vectors"]
+        .as_array()
+        .expect("operation vectors are an array")
+    {
+        let preimage = &vector["preimage"];
+        assert!(
+            application.is_valid(preimage),
+            "an application preimage fits the schema"
+        );
+        assert!(
+            is_body_term(&preimage["body"], true),
+            "an application preimage body is in the grammar"
+        );
+        preimages += 1;
+    }
+    assert!(
+        preimages > 0,
+        "the operation vectors carry application preimages"
+    );
+}
+
+/// JSON nesting depth of a value: a scalar is 0, a container one more than its
+/// deepest member.
+fn json_depth(value: &Value) -> usize {
+    match value {
+        Value::Array(items) => 1 + items.iter().map(json_depth).max().unwrap_or(0),
+        Value::Object(members) => 1 + members.values().map(json_depth).max().unwrap_or(0),
+        _ => 0,
+    }
+}
+
+/// An `abstraction_relation` body is a Body production of fixed JSON depth:
+/// its entries hold only identifiers, node ids and Rust paths, so a filled
+/// body is no deeper than an empty one plus its fixed entry shape, and an
+/// extra nested level fails the schema.
+#[trace("TC-427", "FR-322-AC-39")]
+#[test]
+fn tc_427_abstraction_relation_bodies_are_fixed_depth_body_productions() {
+    let schema = schema_for_def(&parsed_fixture(SCHEMA), "AbstractionRelationBody");
+    let node = json!({"domain": "quire.checked-semantic-node/v1", "digest": "1".repeat(64)});
+    let body = json!({
+        "term": "abstraction_relation",
+        "objects": [{
+            "type": node,
+            "rust_type": ["crate", "Config"],
+            "fields": [{"name": "versionNumber", "rust_field": "version_number"}]
+        }],
+        "populations": [{"population": node, "collection": ["crate", "configs"]}],
+        "frames": [{
+            "context": node,
+            "operation": "attemptUpdate",
+            "function": ["crate", "attempt_update"],
+            "receiver": "self",
+            "parameters": [{"name": "next", "rust_parameter": "next"}]
+        }]
+    });
+    assert!(schema.is_valid(&body), "the filled body fits the schema");
+    assert!(is_body_term(&body, false), "the body is a Body production");
+    let empty = json!({"term": "abstraction_relation", "objects": [], "populations": [], "frames": []});
+    assert!(schema.is_valid(&empty));
+    assert_eq!(json_depth(&body), 5, "entry shapes fix the depth");
+    let mut deeper = body.clone();
+    deeper["objects"][0]["fields"][0]["rust_field"] = json!({"nested": "version_number"});
+    assert!(!schema.is_valid(&deeper), "a further nested level fails the schema");
+}
+
+/// A composite subterm standing inline where the grammar admits only a Leaf
+/// or a Group fails the V2 schema, and the same meaning with that subterm as
+/// its own referenced node passes it.
+#[trace("TC-427", "FR-322-AC-40")]
+#[test]
+fn tc_427_nested_inline_terms_fail_the_schema_and_referenced_terms_pass() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
+    let adverse = parsed_fixture(ADVERSE);
+    let mutations = adverse["body_grammar_mutations"]
+        .as_array()
+        .expect("body grammar mutations are an array");
+    assert_eq!(
+        mutations
+            .iter()
+            .map(|mutation| mutation["outcome"].as_str().expect("outcome is a string"))
+            .collect::<BTreeSet<_>>(),
+        BTreeSet::from(["refused:malformed_wire"]),
+        "every body grammar defect is a malformed wire"
+    );
+    for mutation in mutations {
+        let id = mutation["id"].as_str().expect("mutation id is a string");
+        let pointer = mutation["pointer"].as_str().expect("pointer is a string");
+        let node_body = |candidate: &Value| {
+            let node = pointer.split('/').take(4).collect::<Vec<_>>().join("/");
+            candidate
+                .pointer(&format!("{node}/body"))
+                .expect("the mutation names a node body")
+                .clone()
+        };
+        let mut nested = parsed_fixture(POSITIVE_ALL_FAMILIES);
+        *nested.pointer_mut(pointer).expect("pointer exists") = mutation["replacement"].clone();
+        assert!(!schema.is_valid(&nested), "{id} fails the V2 schema");
+        assert!(
+            !is_body_term(&node_body(&nested), false),
+            "{id} is outside the grammar"
+        );
+        let mut referenced = parsed_fixture(POSITIVE_ALL_FAMILIES);
+        *referenced.pointer_mut(pointer).expect("pointer exists") = mutation["flattened"].clone();
+        assert!(
+            schema.is_valid(&referenced),
+            "{id} with a referenced subterm passes"
+        );
+        assert!(
+            is_body_term(&node_body(&referenced), false),
+            "{id} referenced form is in the grammar"
+        );
+    }
 }

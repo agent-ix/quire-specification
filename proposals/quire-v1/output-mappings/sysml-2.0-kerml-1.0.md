@@ -1,6 +1,6 @@
 # SysML 2.0 / KerML 1.0 output profile
 
-Selected identity `quire.output.sysml2-kerml1/v1`, revision `1-draft.1`.
+Selected identity `quire.output.sysml2-kerml1/v1`.
 Targets OMG SysML 2.0 Language `formal/26-03-02` and its KerML 1.0 foundation
 `formal/26-03-01` as one inseparable profile selection.
 

@@ -12,8 +12,8 @@ relationships:
 ## Description
 
 Record `certificate-checked` when Carcara passes the cvc5 Alethe certificate
-for the exact settled query, and `solver-asserted` otherwise, without changing
-the `proved` verdict.
+for the exact settled query, `solver-asserted` otherwise, and `trusted` for a
+plugin's `proved` result, without changing the `proved` verdict.
 
 ## Test Procedure
 
@@ -28,11 +28,14 @@ result and artifact accounting with the criterion.
 | --- | --- | --- |
 | TB-01 | Present Carcara with a certificate whose query identity (digest over query bytes plus solver options) does not match the settled claim's query identity, including a certificate that Carcara itself passes as internally valid | Records `solver-asserted`, never `certificate-checked`; the mismatched query identity is named |
 | TB-02 | Run a settlement with Carcara not registered | Records `solver-asserted` with a warning naming the absent certificate-checking capability; the `proved` verdict is unaffected |
+| TB-03 | A plugin returns `proved` for one item; the SMT backend returns `proved` for a second item with no certificate | The first settles `proved` with basis `trusted` and the plugin's backend identity, and its rendered outcome shows `trusted` beside the verdict; the second records `solver-asserted`, never `trusted` |
 
 ## Expected Results
 
 Every positive and boundary result matches FR-354; a `proved` settlement
-always carries exactly one of `certificate-checked` or `solver-asserted`;
+always carries exactly one of `certificate-checked`, `solver-asserted` or
+`trusted`; a plugin's `proved` result records `trusted` with its backend
+identity;
 `certificate-checked` requires Carcara to have checked the cvc5 Alethe
 certificate for the exact settled query identity (a digest over the query
 bytes plus solver options) and passed it, and retains the Carcara run

@@ -38,8 +38,8 @@ A stable catalogued classification, failure stage and structured cause details w
 
 Every emitted code belongs to the selected catalog; no ad-hoc literal or English-message match determines its kind. Cause details distinguish materially different refusals sharing a broader category, including missing versus conflicting definitions, wrong anchor versus missing observation, unknown syntax versus prohibited recognized construct, and unproved definedness versus runtime logical violation. Diagnostic formatting/localization cannot change classification. Wire extension/version behavior follows the existing shared interchange contract; this requirement creates no competing result envelope.
 
-Every producer stage shall bind the exact producer-interface identity, revision
-and digest plus one exact member of that interface's closed stage vocabulary.
+Every producer stage shall bind the exact producer-interface identity plus one
+exact member of that interface's closed stage vocabulary.
 When the interface or stage member is unknown, then the reader shall refuse the
 diagnostic interpretation without substituting a stage from another interface or
 from the six failure concerns this requirement covers.
@@ -51,38 +51,14 @@ possibly empty sequence of traversal steps.
 
 The root is a selected observation identity together with a subject read under
 that observation. Presence and value facts never cross observation identity, so
-the observation is part of the root and not a step. The subject is exactly one
-of a declared object identity, or a binding of one declared invocation: a named
-parameter binding, the result binding, or the receiver binding `self` of a
-receiver with no declared object identity (FR-207, FR-208). Two subjects of
-different kinds are never equal.
-
-Each step is exactly one of five kinds: a field selection, naming a declared
-field of the current value by its exact declared spelling; an option-value
-selection, naming the contained value of an option and carrying no name of its
-own; a member selection, naming a declared model member by its exact declared
-spelling; an index selection, carrying the unsigned zero-based position of an
-element of a collection value; or a map-key selection, carrying the canonical
-typed key of a value of a map value. A field selection and a member selection are never equal to one
-another even when they carry the same name, and an option-value selection is
-never a field of the option it traverses.
-
-Two runtime object or value paths are equal when their roots are equal
-componentwise, their step sequences are of equal length, and each corresponding
-step pair agrees on step kind and on that kind's name, index or canonical key
-value where it carries one.
+the observation is part of the root and not a step. FR-207 is the one source of
+the subject kinds, the traversal step kinds, path equality and the path
+comparison order, and this requirement reports paths under exactly those rules.
 Rendered path text, display name, message wording, locale and reported source
-span never participate.
-
-Such paths are compared for collection comparison only, by root first and then
-step by step. Root comparison is by observation key, then by subject kind
-ordering a declared object identity before an invocation binding, then by
-subject key; an invocation binding's key orders by invocation identity (the identity FR-004 selects, compared by the UTF-8 bytes of its RFC 8785 (JCS) canonical JSON serialization), then binding kind ordered parameter before result before receiver, then parameter spelling by UTF-8 bytes. Step comparison orders a proper prefix before every path that
-extends it, orders differing step kinds as field before option-value before member before index before map-key, and orders steps of equal kind by their exact name, index steps numerically and map-key steps by the UTF-8 bytes of the key value's RFC 8785 (JCS) canonical JSON serialization. That comparison is a
-total order over every set of paths whose roots share one observation identity,
-which is the set a single diagnostic reports; it extends to a total order across
-observations only where the selected observation identity itself supplies a key
-order. It carries no causal, severity or precedence meaning.
+span never participate in equality or order. The comparison is a total order
+over every set of paths whose roots share one observation identity, which is
+the set a single diagnostic reports. It carries no causal, severity or
+precedence meaning.
 
 An unavailable path is explicitly absent and compares only to absence; an empty
 step sequence denotes the subject itself and is never an absent path, and a

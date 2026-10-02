@@ -402,11 +402,11 @@
     {"name": "MW-06", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "aa598d3142945d973a62e44cd87de545bd4e0046352b1669777b32abd074ed54"}, "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "aa598d3142945d973a62e44cd87de545bd4e0046352b1669777b32abd074ed54"}, "body": {"term": "aggregate", "members": []}}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}}
   ],
   "selection_cases": [
-    {"name": "MS-01", "selection": {"identity": "acme/orders", "version": "1.0.0", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"admission": "passed"}},
-    {"name": "MS-02", "selection": {"identity": "acme/orders", "version": "1.0.0", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [], "expected": {"refused": {"code": "missing_import", "cause": "missing-selection"}}},
-    {"name": "MS-03", "selection": {"identity": "acme/orders", "version": "1.0.0", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": [{"path": "/value_types/0/upper", "value": "8"}]}], "expected": {"refused": {"code": "stale_dependency", "cause": "byte-digest-mismatch"}}},
-    {"name": "MS-04", "selection": {"identity": "acme/orders", "version": "1.0.1", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"refused": {"code": "invalid_model_binding", "cause": "wrong-model-selection"}}},
-    {"name": "MS-05", "selection": {"identity": "acme/orders", "version": "1.0.0", "digest_domain": "sha256", "digest": "$document"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"refused": {"code": "stale_dependency", "cause": "digest-domain-mismatch"}}}
+    {"name": "MS-01", "selection": {"identity": "acme/orders", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"admission": "passed"}},
+    {"name": "MS-02", "selection": {"identity": "acme/orders", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [], "expected": {"refused": {"code": "missing_import", "cause": "missing-selection"}}},
+    {"name": "MS-03", "selection": {"identity": "acme/orders", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": [{"path": "/value_types/0/upper", "value": "8"}]}], "expected": {"refused": {"code": "stale_dependency", "cause": "content-mismatch"}}},
+    {"name": "MS-05", "selection": {"identity": "acme/orders", "digest_domain": "sha256", "digest": "$document"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"refused": {"code": "stale_dependency", "cause": "digest-domain-mismatch"}}},
+    {"name": "MS-06", "selection": {"identity": "acme/invoices", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"refused": {"code": "invalid_model_binding", "cause": "wrong-model-selection"}}}
   ],
   "reference_equality_cases": [
     {"name": "RC-01", "operation": "quire.op.reference.eq", "operands": [{"reference": "M5"}, {"reference": "M1"}], "expected": {"admitted": true}},

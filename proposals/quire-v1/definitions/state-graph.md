@@ -1,6 +1,6 @@
 # Native finite graph definition
 
-Profile identity: `quire.state.graph/v1`; revision: `1-draft.3`.
+Profile identity: `quire.state.graph/v1`.
 Language: `ix:native` / `1-draft`. **FS03 accepts this semantic revision as the
 finite-graph extension over queries and state core; implementation and backend
 qualification remain independently reported.**
@@ -12,9 +12,9 @@ selected immutable identities, revisions and digest domains.
 
 ## Required definition
 
-| Identity | Revision | Definition artifact |
-| --- | --- | --- |
-| `quire.state.queries/v1` | `1-draft.3` | [Predicates and queries](state-queries.md) |
+| Identity | Definition artifact |
+| --- | --- |
+| `quire.state.queries/v1` | [Predicates and queries](state-queries.md) |
 
 ## Explicit extension
 

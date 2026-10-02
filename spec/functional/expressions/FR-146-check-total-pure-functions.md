@@ -19,6 +19,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-440
     type: references
+  - target: ix://agent-ix/quire-specification/FR-460
+    type: references
 ---
 
 # FR-146: Check total pure functions and recursion
@@ -44,7 +46,7 @@ refusals.
 Functions may return any complete-V1 value type. Calls bind exact declaration
 identity, arity and ordered arguments. Recursion uses a declared well-founded
 measure proven to decrease on every cycle. Reflection, mutation, I/O and ambient
-lookups are prohibited. Runtime depth/fuel exhaustion remains incomplete.
+lookups are prohibited. Runtime fuel exhaustion remains incomplete.
 
 ## Termination and totality contract
 
@@ -81,8 +83,8 @@ reporting the first failure: `duplicate-arm` (two arms name the same member of
 of `U`); `arm-arity` (an arm's bound-identifier count differs from its named
 member's declared payload arity); then `missing-arm` (the arm set is a strict
 subset of `U`'s declared member set). A failure is
-`refused { code: undefined_expression, cause: unproved-exhaustiveness }`
-(revision `1-draft.4`), naming `U`'s declaration identity, the case
+`refused { code: undefined_expression, cause: unproved-exhaustiveness }`,
+naming `U`'s declaration identity, the case
 expression's arm set and the failed obligation. `undefined_expression` is the
 FR-271 code for unproved definedness, and `unproved-exhaustiveness` is its
 catalogued cause for case-arm coverage, exactly as `unproved-decrease` is its
@@ -324,21 +326,22 @@ declarations with one name in one package are each
 declaration loci, whether or not either is called. Every other typing failure is
 `refused { code: ill_typed }` with its FR-272 cause.
 
-Complete V1 defines no expression depth or nesting limit for checking. A checker
-that bounds its own checking work must declare that bound as an NFR-010 node
-admission limit before accepting the package; exceeding it is
-`resource_exhausted` with cause `insufficient-next-charge`, naming the checking
-stage, the declared limit and the node that could not proceed. It is never an
-`ill_typed`, `undefined_expression` or admission verdict, and a host stack
-overflow is not a Complete-V1 outcome.
+Checking is bounded as every stage is
+([FR-460](../foundation/FR-460-bound-every-stage-by-resource-limits.md)): by
+its node, preimage-byte and work limits, never by expression depth or nesting.
+A checker declares those limits, with their published defaults, before
+accepting the package; reaching one is `stage_limit_exceeded`, naming the
+checking stage, the limit, its value, its setting
+([FR-461](../foundation/FR-461-name-the-limit-value-and-setting.md)) and the
+node that could not proceed. It is never an `ill_typed`, `undefined_expression`
+or admission verdict, and a host stack exhaustion is never an outcome.
 
 Each call charges `function.call` under `quire.value.accounting/v1` before its
 arguments are bound. Arguments are evaluated left to right before that charge.
 Execution fuel is the `work_units` limit. Its exhaustion is
 `incomplete { limit_kind: work_units, ... }` at the denied point, and the
 function's static totality verdict is unchanged. Call nesting depth is not a
-separate counter, and an implementation must not turn a host stack limit into a
-Complete-V1 outcome.
+counter, and no call depth turns into an outcome (FR-460).
 
 ## Acceptance Criteria
 
@@ -351,7 +354,7 @@ Complete-V1 outcome.
 | FR-146-AC-5 | Exhausting execution fuel for an admitted function returns incomplete without changing the function's totality verdict. | Test (TC-191) |
 | FR-146-AC-6 | Each call charges `function.call` after argument evaluation and before binding, and an unproved partial-operation precondition refuses as `undefined_expression` while runtime typed refusals propagate. | Test (TC-191) |
 | FR-146-AC-7 | A missing, mismatched or undecreasing measure in a recursive component is `undefined_expression` with cause `unproved-decrease`, a non-recursive function needs no measure, and a call to a non-function declaration or an undeclared name refuses with its named code. | Test (TC-191) |
-| FR-146-AC-8 | Definedness and decrease proofs admit exactly the closed measure elements, guard facts, interval rules and decrease forms, `deref` and IEEE-to-`Rational` conversion have no body obligation, a duplicate function name is `ambiguous_declaration`, and a checking bound exceeded is `resource_exhausted`. | Test (TC-191) |
+| FR-146-AC-8 | Definedness and decrease proofs admit exactly the closed measure elements, guard facts, interval rules and decrease forms, `deref` and IEEE-to-`Rational` conversion have no body obligation, a duplicate function name is `ambiguous_declaration`, and a checking limit exceeded is `stage_limit_exceeded` naming the limit, its value and its setting. | Test (TC-191) |
 | FR-146-AC-9 | Rational `+`, `-`, `*`, `/` and unary `-` range proofs use exactly the numerator and denominator interval rules, a rational divisor whose numerator interval contains zero is `unproved-nonzero` without a nonzero fact, and every quantity division in a linked body is `unproved-nonzero`. | Test (TC-191) |
 | FR-146-AC-10 | A `case` expression's arm set is checked against its scrutinee's declared union in order — `duplicate-arm`, `unknown-member`, `arm-arity`, `missing-arm` — and the first violated obligation is `undefined_expression` with cause `unproved-exhaustiveness`, naming the union, the arm set and the failed obligation. | Test (TC-264) |
 | FR-146-AC-11 | An admitted `case` evaluates the arm matching the scrutinee's active member, binds its payload positionally to the arm's bound identifiers, and every arm's body is checked against the `case` expression's result type. | Test (TC-265) |

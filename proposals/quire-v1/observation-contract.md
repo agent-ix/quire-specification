@@ -105,7 +105,7 @@ settle O1. EOF, a quiet transport, or a record timestamp is not progress/closure
 authority.
 
 The current [progress definition](definitions/observation-progress.md),
-`quire.observation.progress/v1` accepted revision `1-draft.3`, preserves the assertion, binding, scope,
+`quire.observation.progress/v1`, preserves the assertion, binding, scope,
 E-owned temporal, record/revision, and restoration selections, including
 half-open window coverage `[start, end)`: `start` participates once and
 `end` belongs only to a later selected window. This is part of the current shared

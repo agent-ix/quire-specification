@@ -1,37 +1,39 @@
 ---
 id: TC-255
-title: "Mint native-run-result/2 without disturbing /1 or admitting silent substitution"
+title: "Produce and read native-run-result/2 with its basis and witness"
 type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-014
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-352
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-243
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-351
+    type: verifies
 ---
 
-# TC-255: Mint native-run-result/2 without disturbing /1 or admitting silent substitution
+# TC-255: Produce and read native-run-result/2 with its basis and witness
 
 ## Description
 
-Exercises the `native-run-result/2` wire minted by FR-352 against the FR-014
-closed-wire contract `/1` continues to satisfy. Planned.
+Runs state clauses through the CLI `run` command and reads the
+`native-run-result/2` records back, covering every basis, the witness member
+and the identifier refusal. Planned.
 
 ## Test Procedure
 
-Decode an existing `native-run-result/1` record and confirm every FR-014
-refusal (duplicate member, omitted or duplicate requiredFeatures, unknown
-version) is unchanged. Produce one result on `/2` explicitly, and attempt to
-decode it without an explicit version selection and under the `/1` version
-identifier. Produce two otherwise-identical results, one on `/1` and one on
-`/2` carrying the added FR-351 witness slot, and compare their digests.
-Attempt to read `/1` bytes as `/2` and `/2` bytes as `/1`.
+| Row | Input | Expected | AC |
+| --- | --- | --- | --- |
+| NR-01 | `invariant forall(item in self.items: item < self.n)` over an observation where the third item fails | One `native-run-result/2` record with the FR-014 members, `basis` `decisive-counterexample` and a `witness` naming the quantifier's occurrence key, the third item, `index` 2 and the value path to `self.items`; the strict reader admits it | FR-352-AC-1, FR-352-AC-3, FR-352-AC-6 |
+| NR-02 | `exists(item in self.items: item > 5)` true at the second item; `not forall(...)` true | `basis` `decisive-witness` with a `witness` for each | FR-352-AC-6 |
+| NR-03 | `forall(...) == q` true; `forall(...)` true over every element | `basis` `closed-scope` and no `witness` | FR-352-AC-3, FR-352-AC-6 |
+| NR-04 | A refused, an undefined, a budget-exhausted, a cancelled and an unsupported clause run | `basis` `unavailable` and no `witness` for each | FR-352-AC-6 |
+| NR-05 | NR-01's record with its identifier changed to `quire.run-result/2`, and with the identifier removed | Each refuses before consumption with FR-014 `unsupported-version` | FR-352-AC-2 |
+| NR-06 | NR-01's record with: `basis` `maybe`; `witness` removed; a `witness` added to NR-03's record; `index` removed; an extra `witness` member; `trace_position` written as `null` | Each refuses | FR-352-AC-7 |
 
 ## Expected Results
 
-`/1` decodes and refuses exactly as FR-014 states, with no added or removed
-member. `/2` is accepted only from an explicit selection; an unselected or
-foreign-version read refuses as unsupported-version. `/2` carries every `/1`
-member plus the witness slot, present only with a `decisive-witness` or
-`decisive-counterexample` basis. The `/1` and `/2` digests differ. Every
-cross-version read attempt refuses rather than substituting one version's
-bytes for the other.
+Every clause run carries exactly one basis label, a witness travels exactly
+with a decisive basis in its closed shape, and only `native-run-result/2`
+reads as a native run result.

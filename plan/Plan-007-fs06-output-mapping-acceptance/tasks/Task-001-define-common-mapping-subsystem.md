@@ -35,5 +35,5 @@ boundary shared by all three output mappers without making target text source.
 ## Deliverables
 
 - AD-004; FR-120/121/125; FR-297–299; NFR-060/061.
-- Common output-mapping profile `quire.output.mapping/v1` `1-draft.1`.
+- Common output-mapping profile `quire.output.mapping/v1`.
 - Portable controls TC-150, TC-154 and TC-155.

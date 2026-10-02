@@ -1,6 +1,6 @@
 # Observation range correspondence
 
-Definition identity: `quire.observation.range/v1`; revision: `1-draft.1`.
+Definition identity: `quire.observation.range/v1`.
 **The definition role is accepted by FS01 and this semantic revision is accepted
 by FS04. Executable qualification remains separate.** Local rule and dependency
 links select this checkout. Git preserves drafting history; FS04 freezes this

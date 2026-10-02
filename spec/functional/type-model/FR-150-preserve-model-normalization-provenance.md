@@ -82,7 +82,7 @@ end's end-owner type);
 supertypes; (4) `quire.model.normalize.subset/v1` and
 `quire.model.normalize.redefine/v1`, declared subsetting and redefinition; and
 (5) `quire.model.normalize.canonicalize/v1`, identity computation. Each derived
-fact records its declaration-key inputs, rule identity, rule revision and
+fact records its declaration-key inputs, rule identity and
 ordinal. A later phase may reference but cannot erase an earlier derivation. No
 rule declares an override relation, and no precedence exists between rules.
 
@@ -95,8 +95,8 @@ whose target is not an inherited member is refused
 `invalid_model_binding`/`redefinition-target`. A supertype cycle is refused
 `invalid_model_binding`/`specialization-cycle`. A ModelSelection whose digest
 domain is not `sha256-jcs` is refused `stale_dependency`/`digest-domain-mismatch`,
-and package bytes whose digest differs are refused
-`stale_dependency`/`byte-digest-mismatch`. A model `variant` type referenced by
+and a supplied document whose recomputed canonical digest differs from the
+selected digest is refused `stale_dependency`/`content-mismatch`. A model `variant` type referenced by
 source is refused `unsupported_construct`/`declaration-form`. Canonical ordering
 affects identity bytes only; it never changes a declaration key or resolves
 semantic ambiguity.

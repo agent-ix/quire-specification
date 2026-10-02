@@ -1,6 +1,6 @@
 # Common output-mapping contract
 
-Selected identity `quire.output.mapping/v1`, revision `1-draft.1`.
+Selected identity `quire.output.mapping/v1`.
 
 ## Subsystem boundaries
 

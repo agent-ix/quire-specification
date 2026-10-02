@@ -24,14 +24,13 @@ relationships:
 ## Description
 
 When a package imports a domain package, QSL model intake SHALL admit the
-package by identity, version and `sha256-jcs` digest and SHALL build one Quire
+package by identity and `sha256-jcs` digest and SHALL build one Quire
 model declaration for each IR node, refusing any invalid node with its source
 artifact and span.
 
 ## Inputs
 
-The source `model` declaration with its domain package identity, version and
-digest; the domain package bytes; and the selected `quire.model.complete/v1`
+The source `model` declaration with its domain package identity and digest; the domain package bytes; and the selected `quire.model.complete/v1`
 definition.
 
 ## Outputs
@@ -60,8 +59,11 @@ chain is:
    each declaration.
 
 The package input maps each `sha256-jcs` digest to package bytes. Intake looks
-up the bytes by the selected digest, recomputes their digest, and only then
-compares the package's own identity and version with the selection.
+up the bytes by the selected digest, recomputes the canonical `sha256-jcs`
+digest of the supplied document, compares it with the selected digest, and
+then compares the package's own identity with the selection. The selected
+digest is the key of that lookup and the content identity member of the
+ModelSelection (FR-321).
 
 Admission refusals, in order:
 
@@ -69,8 +71,8 @@ Admission refusals, in order:
 | --- | --- |
 | The digest domain is exactly `sha256-jcs` | `stale_dependency`/`digest-domain-mismatch` |
 | The package input supplies bytes under the selected digest | `missing_import`/`missing-selection` |
-| SHA-256 over the package's JCS bytes equals the selected digest | `stale_dependency`/`byte-digest-mismatch` |
-| The package's own identity and version equal the selection | `invalid_model_binding`/`wrong-model-selection` |
+| The canonical `sha256-jcs` digest of the supplied document equals the selected digest | `stale_dependency`/`content-mismatch` with the selected and the recomputed digest |
+| The package's own identity equals the selection's | `invalid_model_binding`/`wrong-model-selection` |
 
 Declaration refusals:
 
@@ -119,7 +121,7 @@ embedded `constructs` table; that entry's `meaning` is a Quire meaning id
 (FR-208). The kind name and module select the construct entry only and never
 select a meaning.
 
-A declaration key carries no digest. Two versions of one domain package with equal nodes yield
+A declaration key carries no digest. Two domain package documents with equal nodes yield
 equal declaration keys. The ModelSelection, which binds the digest, separates
 them.
 
@@ -132,9 +134,9 @@ Admission checks are decided before the first charge.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-154-AC-1 | An artifact bundle whose extraction and lift yield a valid domain package is admitted, and intake builds exactly one original declaration per IR node, keyed by package identity and IR node identity. | Test (TC-234) |
-| FR-154-AC-2 | A wrong digest domain, a stale digest, a missing package and a package whose identity or version differs each refuse with its named cause before any declaration is built. | Test (TC-234) |
+| FR-154-AC-2 | A wrong digest domain, a missing package, a document whose recomputed canonical digest differs from the selected digest and a package whose identity differs each refuse with its named cause before any declaration is built, and a package supplied under the selected digest with the selection's identity is admitted. | Test (TC-234) |
 | FR-154-AC-3 | A malformed IR node or a dangling reference refuses with the IR node identity, the artifact id and the span, and every such refusal is reported in node order. | Test (TC-234) |
-| FR-154-AC-4 | Publishing a new version of a domain package with equal nodes leaves every declaration key and effective declaration unchanged, while the ModelSelection, the effective view and the object universe change. | Test (TC-234) |
+| FR-154-AC-4 | Publishing a domain package document with equal nodes and a different digest leaves every declaration key and effective declaration unchanged, while the ModelSelection, the effective view and the object universe change. | Test (TC-234) |
 | FR-154-AC-5 | Intake at its exact `normalize.record` bound completes, and the one-less run is incomplete at `normalize.record`. | Test (TC-234) |
 | FR-154-AC-6 | Retitling an artifact leaves every declaration key unchanged. Changing an artifact's id changes the declaration key of the type it declares and of that type's members, leaves every other declaration key unchanged, and a reference to the old key refuses `missing_declaration`/`missing-name`. | Test (TC-234) |
 | FR-154-AC-7 | A type definition or population node whose kind names no construct entry, or whose construct has no Quire meaning id or an id outside FR-208, refuses `invalid_model_binding`/`malformed-declaration` with the IR node identity, the artifact id and the span, and no meaning is inferred from its kind name. | Test (TC-234) |

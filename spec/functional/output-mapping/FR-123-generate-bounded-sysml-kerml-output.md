@@ -10,7 +10,7 @@ relationships:
 ---
 ## Description
 
-When `quire.output.sysml2-kerml1/v1` revision `1-draft.1` is selected, the
+When `quire.output.sysml2-kerml1/v1` is selected, the
 SysML/KerML mapper SHALL generate only the admitted requirement/constraint
 expression fragment over exact model bindings from spec artifacts.
 

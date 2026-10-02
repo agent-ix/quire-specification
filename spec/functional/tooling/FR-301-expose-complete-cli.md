@@ -31,25 +31,39 @@ exit status.
 ## Behavior
 
 Commands never infer a wider profile or fallback target. Machine output is
-versioned and separate from human diagnostics. Exit statuses distinguish success,
-logical violation, invalid/refused input, unsupported capability, incomplete
-execution and tool failure. Version output reports the app version.
+separate from human diagnostics. Exit statuses distinguish success, logical
+violation, undefined evaluation, invalid/refused input, unsupported capability,
+incomplete execution, inconclusive results and tool failure. Version output reports the app version.
 
 ## Command and exit contract
 
 CLI verbs mirror the lifecycle API and accept an explicit profile plus
-versioned input/output formats. Exit codes are: `0` completed without violation,
-`10` logical violation, `20` invalid/refused input, `21` unsupported, `22`
-incomplete and `30` tool failure. Multi-item machine output retains per-item
-dispositions; the process code is the highest-severity present code under this
-ordering: tool failure, invalid, unsupported, incomplete, violation, success.
+explicit input/output formats. One total function maps each outcome
+category to its exit code:
+
+| Outcome category | Exit code |
+| --- | --- |
+| success: completed without violation | `0` |
+| violation: a logical violation, including a claim whose evaluation is undefined | `10` |
+| undefined: a value run (`run` of a function) whose value is undefined | `10` |
+| refusal: invalid or refused input | `20` |
+| unsupported | `21` |
+| incomplete: a limit, cancellation, deadline or budget | `22` |
+| inconclusive | `22` |
+| internal failure, including tool failure | `30` |
+
+A claim whose evaluation is undefined settles violation (refuted) with cause
+`UndefinedEvaluation{where, cause}` and exits `10`. A value run whose value is
+undefined exits `10` and its machine output keeps the label `undefined`. Multi-item machine output retains
+per-item dispositions; the process code is the highest-severity present code
+under this ordering: `30`, `20`, `21`, `22`, `10`, `0`.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-301-AC-1 | Every lifecycle command round-trips its typed API request/result in machine-output mode. | Test (TC-221) |
-| FR-301-AC-2 | Each outcome class produces its assigned stable exit status without parsing message text. | Test (TC-221) |
+| FR-301-AC-2 | Each outcome category produces its assigned stable exit status without parsing message text; a claim whose evaluation is undefined exits `10` as a violation with cause `UndefinedEvaluation`, a value run whose value is undefined exits `10` with the label `undefined`, and `version` reports the application version. | Test (TC-221) |
 | FR-301-AC-3 | Unknown options/profiles/providers refuse before execution and identify the command argument locus. | Test (TC-221) |
 
 ## Dependencies

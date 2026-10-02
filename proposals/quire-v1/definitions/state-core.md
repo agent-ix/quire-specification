@@ -1,6 +1,6 @@
 # Native finite state core definition
 
-Profile identity: `quire.state.core/v1`; revision: `1-draft.3`.
+Profile identity: `quire.state.core/v1`.
 Language: `ix:native` / `1-draft`. **FS03 accepts this semantic revision as the
 state base; implementation and backend qualification remain independently
 reported.**
@@ -12,9 +12,9 @@ selected immutable identities, revisions and digest domains.
 
 ## Required definition
 
-| Identity | Revision | Definition artifact |
-| --- | --- | --- |
-| `ix:native` / `1-draft` | `1-draft.2` | [Edition](edition.md) |
+| Identity | Definition artifact |
+| --- | --- |
+| `ix:native` / `1-draft` | [Edition](edition.md) |
 
 ## Admitted forms and meaning
 

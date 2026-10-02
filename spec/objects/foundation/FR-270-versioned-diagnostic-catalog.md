@@ -32,8 +32,6 @@ material here, not an adopted selection.
 | Property | Source | Note |
 | --- | --- | --- |
 | Interpretation identity | Proposed catalog, header | "Interpretation identity: `quire.native.diagnostics/v1`". |
-| Revision | Proposed catalog, header | "revision: `1-draft.8`". |
-| Byte digest | Proposed catalog, "Selection" | The response "selects this catalog's exact identity, revision and byte digest". |
 | Code vocabulary | [FR-271](FR-271-diagnostic-code-vocabulary.md) | The catalogued code spellings. |
 | Closed cause sets | [FR-272](FR-272-typed-diagnostic-cause.md) | "A cause is a closed discriminated value with the payload required by its selected variant, not a free-form string map." |
 
@@ -53,51 +51,42 @@ diagnostic list or a successful assessment" (proposed catalog).
 ## Identity and comparison
 
 - **Identity kind** — *authored*. The catalog states its own interpretation
-  identity and revision in its header; neither is computed from its bytes.
-- **Key** — (`interpretation identity`, `revision`, `byte digest`). Equality is
-  componentwise over exactly these three, because the response "selects this
-  catalog's exact identity, revision and byte digest" (proposed catalog). No
-  rendering participates: FR-047-AC-1 requires that "changing/localizing
+  identity in its header; it is not computed from its bytes.
+- **Key** — (`interpretation identity`). Equality is exact equality of that
+  identity, because the response "selects this catalog's exact identity"
+  (proposed catalog). No rendering participates: FR-047-AC-1 requires that "changing/localizing
   human-readable messages leaves the same typed failure's stage, code and cause
   details unchanged", and FR-047 states "diagnostic formatting/localization
   cannot change classification". Display wording, display paths and locale are
   therefore outside the key — "Changing diagnostic wording, display paths or
   this response catalog does not change a checked clause's static meaning."
-- **Key order** — lexicographic over (`interpretation identity`, `revision`,
-  `byte digest`), for collection comparison only. It carries no causal meaning
+- **Key order** — by the interpretation identity's UTF-8 bytes, for collection
+  comparison only. It carries no causal meaning
   and expresses no precedence, recency or preference between catalogs.
 - **Causal order** — none. A catalog participates in no causal structure. Where
   a diagnostic names an upstream diagnostic, that upstream diagnostic retains
   its own identity rather than an ordering: "Related declarations and upstream
   diagnostics retain their own exact source/catalog identities rather than being
   flattened into a string" (proposed catalog).
-- **Absence** — an absent key component compares only to absence. A response
+- **Absence** — an absent identity compares only to absence. A response
   that names no catalog selection has an absent selection; it is never defaulted
   to the proposed native catalog. "Unavailable context is explicitly
   unavailable; byte zero, an empty path or a name-search match cannot masquerade
   as a located failure" (proposed catalog).
-- **Digest domain** — the `byte digest` component carries a digest and therefore
-  a domain ([FR-201](FR-201-canonical-identity-domain.md)). An
-  identity crossing domains is unequal regardless of byte equality. See the open
-  gap below: no requirement names which domain this component is taken under.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-270-AC-1 | Two catalog selections differing only in revision or byte digest compare unequal. | Analysis |
+| FR-270-AC-1 | Two catalog selections compare equal exactly when their interpretation identities are equal. | Analysis |
 | FR-270-AC-2 | A response with no named catalog selection has an absent selection and receives no default catalog. | Analysis |
 | FR-270-AC-3 | Changing or localizing the human-readable wording carried with a diagnostic leaves the selected catalog key unchanged. | Analysis |
 | FR-270-AC-4 | A code not resolvable in the selected catalog is not published as a stable producer outcome. | Inspection |
-| FR-270-AC-5 | The Revision property's quoted revision equals the revision in the catalog header's interpretation-identity line. | Test (TC-233) |
 
 ## Resolved catalog identity
 
 A catalog is an externally selected definition entity, not an authored native
-clause. Its key is (`catalog authority`, `catalog identity`, `revision`,
-`quire.diagnostic-catalog.bytes/v1` SHA-256 digest). The digest preimage is the
-exact catalog source bytes including layout. It cannot be replaced by JCS,
-package or semantic digests.
+clause. Its key is (`catalog authority`, `catalog identity`).
 
 ## Dependencies
 
@@ -105,8 +94,6 @@ package or semantic digests.
   catalogued-classification obligation.
 - [Native diagnostics catalog](../../../proposals/quire-v1/definitions/native-diagnostics.md)
   is the proposed, non-adopted catalog this artifact extracts from.
-- [FR-201](FR-201-canonical-identity-domain.md) supplies the digest
-  domain vocabulary.
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 

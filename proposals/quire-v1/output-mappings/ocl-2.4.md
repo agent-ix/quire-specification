@@ -1,6 +1,6 @@
 # OCL 2.4 output profile
 
-Selected identity `quire.output.ocl24/v1`, revision `1-draft.1`. Target standard:
+Selected identity `quire.output.ocl24/v1`. Target standard:
 OMG OCL 2.4, normative document `formal/14-02-03`.
 
 ## Admitted fragment

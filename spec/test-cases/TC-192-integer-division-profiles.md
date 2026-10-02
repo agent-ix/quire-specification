@@ -15,9 +15,9 @@ Evaluate signed vectors, zero divisors and missing finite-backend domains under 
 
 ## Test Procedure
 
-Select language `ix:native`, edition `1-draft` revision `1-draft.2`, and the
-`quire.value.complete/v1` definition at revision `1-draft.2`. For `div`/`rem`,
-select exactly one of the three revision-`1-draft.1` integer-division
+Select language `ix:native`, edition `1-draft`, and the
+`quire.value.complete/v1` definition. For `div`/`rem`,
+select exactly one of the three integer-division
 definitions in FR-147, through
 [`complete-value-lock.json`](../../proposals/quire-v1/definitions/complete-value-lock.json).
 For `(a,b)` in

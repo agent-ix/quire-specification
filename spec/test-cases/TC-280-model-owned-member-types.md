@@ -94,11 +94,11 @@ compare it with the case's parameter types.
 | MW-04 | MW-01 with M4's id as `semantic_type` | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
 | MW-05 | MW-01 with a `recursion_group` | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
 | MW-06 | A `model`/`object_type` wire node carrying M4's id | `missing_declaration`/`missing-selection` | FR-322-AC-29 |
-| MS-01 | The document supplied under the selected digest, identity and version equal | Passes the selection admission checks | FR-322-AC-32 |
+| MS-01 | The document supplied under the selected digest, identity equal | Passes the selection admission checks | FR-322-AC-32 |
 | MS-02 | No document supplied | `missing_import`/`missing-selection` | FR-322-AC-32 |
-| MS-03 | A document with `Digit`'s upper bound changed to 8, supplied under the selected digest | `stale_dependency`/`byte-digest-mismatch` | FR-322-AC-32 |
-| MS-04 | The selection names version `1.0.1` | `invalid_model_binding`/`wrong-model-selection` | FR-322-AC-32 |
+| MS-03 | A document with `Digit`'s upper bound changed to 8, supplied under the selected digest, identity equal | `stale_dependency`/`content-mismatch` naming the selected and the recomputed digest | FR-322-AC-43 |
 | MS-05 | The selection names digest domain `sha256` | `stale_dependency`/`digest-domain-mismatch` | FR-322-AC-32 |
+| MS-06 | The selection names identity `acme/invoices` | `invalid_model_binding`/`wrong-model-selection` | FR-322-AC-32 |
 | FF-01 | Frame field entry `(M1, "total")` | Resolves `Order/total` | FR-340-AC-13 |
 | FF-02 | Frame field entry `(M5, "total")` | Resolves the inherited `Order/total` | FR-340-AC-13 |
 | FF-03 | Frame field entry `(M1, "missing")` | `missing_declaration`/`missing-name` | FR-340-AC-13 |

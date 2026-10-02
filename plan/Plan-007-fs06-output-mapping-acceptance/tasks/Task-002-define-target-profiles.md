@@ -30,6 +30,6 @@ correspondences over the shared Task-001 boundary.
 
 ## Deliverables
 
-- FR-122–124 and the three `1-draft.1` target profiles.
+- FR-122–124 and the three target profiles.
 - Portable controls TC-151–153 and the target cases in TC-155.
 - Independent implementation handoffs to qcir #55/#56/#57.
