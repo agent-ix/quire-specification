@@ -47,6 +47,12 @@ selection of each layer (the core of option A) has no owning FR/AC, and the
 | FND-008 | medium | This PR changed FR-001 to select profiles by exact identity only, and the profile declaration no longer carries a digest, but FR-001-AC-3 and TC-005's procedure (select exact version/digests and mutate each) still test a definition digest; the AC tests nothing and is digest ceremony to delete. | spec/functional/foundation/FR-001-select-native-profile.md:73 |
 | FND-009 | medium | The accepted_by names (oracle, kani, property-tests, cvc5-z3, verus) are not FR-331 backend identities and no FR defines them, and the witness check does not say which FR-290 kind each witness item requests, so the AD-010 negotiation the check relies on cannot be run as written. | spec/functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md:111-117 |
 
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-010 | high | The witness item names no backend and takes the registry's whole candidate set for its kind, but FR-290's candidate table settles an unnamed item with more than one candidate as invalid-request/ambiguous-backend; once two registrants share operation-contract (Kani and the FR-349 SMT backend, as FR-290 itself notes), every witness regresses on a real registry, and TC-414 PL-06 hides this by using a one-backend test registry. | spec/functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md:118-131,154 |
+
 ## Dispositions
 
 | FND | outcome | sha/reason |
@@ -58,3 +64,5 @@ selection of each layer (the core of option A) has no owning FR/AC, and the
 | FND-005 | fixed | bc860c9 |
 | FND-006 | fixed | bc860c9 |
 | FND-007 | fixed | bc860c9 |
+| FND-008 | fixed | 1f76aa1 |
+| FND-009 | fixed | 1f76aa1 |

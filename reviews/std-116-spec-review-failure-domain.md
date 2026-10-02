@@ -37,3 +37,4 @@ package-wide key uniqueness is checked after per-node checks.
 | FND | outcome | sha/reason |
 | --- | --- | --- |
 | FND-001 | fixed | bc860c9 |
+| FND-002 | fixed | 1f76aa1 |
