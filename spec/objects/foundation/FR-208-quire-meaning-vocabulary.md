@@ -163,13 +163,15 @@ state contract requires every contract and invariant input to name:
 
 - **Context naming.** One evaluation input binds the single context of one
   machine instance, and that context is owned by the input. It is named by the
-  most-specific machine's declaration key and the invocation identity of the input, never by
-  an object identity. The universe the state contract requires is the context
-  universe of that invocation: it holds that one context and no objects, and
+  most-specific machine's declaration key and the identity of the input's
+  observation (the invocation, or the pre snapshot of a pre-call observation),
+  never by an object identity. The universe the state contract requires is the
+  context universe of that observation: it holds that one context and no objects, and
   identity equality is never applied to it. No relation between the contexts
   of different invocations is bound.
 - **Contexts per observation.** Each of the invocation's pre and post
-  observations holds exactly one context of the machine, a value of the
+  observations, and the pre snapshot of a pre-call observation, holds exactly
+  one context of the machine, a value of the
   machine's effective fields. An observation with no context of the machine is
   `invalid_model_binding`/`wrong-context`; one with two contexts of the
   machine is `invalid_runtime_input`/`duplicate-member`. Neither yields a
@@ -183,7 +185,7 @@ The anchors of a state-machine clause:
 | Clause | Context self | Parameters | Result | `pre(e)` |
 | --- | --- | --- | --- | --- |
 | Invariant | The one context in the invocation's pre observation, and separately the one context in its post observation; the invocation is the invariant's handler binding | No operation parameters | Unavailable | Refused |
-| Precondition | The one context in the invocation's pre observation | Immutable declared inputs of that invocation | Unavailable | Refused |
+| Precondition | The one context in the pre-call observation's pre snapshot | Immutable declared inputs of that call | Unavailable | Refused |
 | Postcondition | The one context in the invocation's post observation | Same immutable inputs | Exact declared post-only result | Reads the one context in the invocation's pre observation |
 
 ### Operation contracts
@@ -193,9 +195,10 @@ An operation's precondition is its `Pre:` line and its postcondition is its
 model's `Operation.pre` and `Operation.post`.
 
 - **State machine and process.** Operations have object-type contract meaning
-  (FR-151, state contract). The precondition reads the invocation's pre
-  observation and the invocation's immutable inputs, and `pre` in it is
-  `wrong_snapshot`/`forbidden-pre-read`. The postcondition reads the post
+  (FR-151, state contract). The precondition is observed pre-call (FR-046):
+  it reads the call's pre-call observation, which is the pre snapshot, `self`
+  in it and the call's immutable inputs, and no post observation, result or
+  delta; `pre` in it is `wrong_snapshot`/`forbidden-pre-read`. The postcondition reads the post
   observation, the same inputs and the declared result, and may read the pre
   observation through `pre(...)`. For a state machine `self` is the one context
   of the observation, bound by the State-machine context anchors; for a process `self` is the run. Frame entries follow
@@ -338,8 +341,9 @@ that the meaning states, `fields`, `identityFields`, `occurrenceField` or
 | FR-208-AC-8 | A type definition whose construct names `quire.meaning.model.namespace/v1` yields exactly one original declaration with its members and vocabulary and no effective type. A field, an operation, a namespace member, or a member already in an earlier namespace is `invalid_model_binding`/`malformed-declaration`; a member naming nothing is `missing_declaration`/`missing-name`; a `quire` clause is `unsupported_construct`/`declaration-form`. | Test (TC-235) |
 | FR-208-AC-9 | A field `typeRef` may name a record value type, and a population member, a `creates` or `deletes` frame entry or a relationship end may name a process, whose own `relationships[]` entries have object-type relationship meaning. A field `typeRef` naming a node of any other business model meaning, and a population member, frame `creates` or `deletes` entry, relationship end or owned relationship of a node of a business model meaning other than a process, is `invalid_model_binding`/`malformed-declaration`. | Test (TC-235) |
 | FR-208-AC-10 | A `quire` invariant of a record value type or event type is evaluated once for every value of the type reachable through the fields of every object in an invariant observation and through the parameters and results of an evaluated invocation, including collection elements, present optionals and nested record values, with `self` bound to that value; a false result is a logical violation with no diagnostic code, located by its FR-207 runtime value path; `pre` is refused with `wrong_snapshot`/`forbidden-pre-read`. A `quire` invariant of a state machine holds for the one context in the pre and post observation of every invocation of its operations, bound by the State-machine context anchors, and an observation with no context is `invalid_model_binding`/`wrong-context`; a `quire` invariant of a process holds for every run in the population at each invariant observation; a guard clause is not an invariant and is not evaluated. | Test (TC-235) |
-| FR-208-AC-11 | A `Pre:` precondition and `Post:` postcondition of a state-machine or process operation read the invocation's pre and post observations with `self` the machine context or the run, a `pre` read in a precondition is `wrong_snapshot`/`forbidden-pre-read`, and neither is related to a transition's guard, `from` or `to`. | Test (TC-235) |
+| FR-208-AC-11 | A `Pre:` precondition of a state-machine or process operation reads the call's pre-call observation and a `Post:` postcondition the invocation's pre and post observations, with `self` the machine context or the run; a `pre` read in a precondition is `wrong_snapshot`/`forbidden-pre-read`, and neither is related to a transition's guard, `from` or `to`. | Test (TC-235) |
 | FR-208-AC-12 | A record value type, event type, state machine or process specializing a node of its own meaning inherits its fields, invariants and operations, an event type its occurrence field, and a state machine its states and transitions, and conforms to each ancestor; a process inherits no steps; a supertype of another meaning is `invalid_model_binding`/`malformed-declaration`; a state or transition declared by two owners, or an ancestor occurrence field the subtype's neither is nor redefines, is `invalid_model_binding`/`derivation-conflict`; a subtype transition whose guard names an ancestor's invariant is `invalid_model_binding`/`malformed-declaration` at that guard; a persistence interface or namespace with supertypes is `unsupported_construct`/`declaration-form`. | Test (TC-235) |
+| FR-208-AC-13 | A state-machine operation's precondition over a pre-call observation holding one machine context, with no post observation, evaluates over that context and the call's parameters; the same pre-call observation with no context of the machine is `invalid_model_binding`/`wrong-context`. | Test (TC-401) |
 
 ## Dependencies
 

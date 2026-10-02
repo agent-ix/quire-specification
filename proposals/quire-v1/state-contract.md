@@ -187,8 +187,8 @@ queries does not remove the total-work/resource obligations.
 | Clause | Context self | Parameters | Result | `pre(e)` |
 | --- | --- | --- | --- | --- |
 | Invariant | Exact named initialization/handler observation's current snapshot | No operation parameters | Unavailable | Refused |
-| Precondition | Selected operation invocation's pre observation | Immutable declared inputs of that invocation | Unavailable | Refused |
-| Postcondition | Same invocation's post observation | Same immutable inputs | Exact declared post-only result | Selected invocation's pre reads only |
+| Precondition | Selected operation call's pre-call observation: its pre snapshot | Immutable declared inputs of that call | Unavailable | Refused |
+| Postcondition | Selected operation invocation's post observation | Same immutable inputs | Exact declared post-only result | Selected invocation's pre reads only |
 
 `pre(e)` is a snapshot selector for state reads, not a time machine for captured
 values. In a postcondition it changes explicit context-dependent reads performed
@@ -228,6 +228,10 @@ sufficient for the arithmetic shown. These are expected source correspondences:
 | `pre(delta)` or `pre(result)` | Refuse parameter-only or post-only selection. |
 | `present(pre(self.parent)) implies value(self.parent)` | Refuse cross-observation presence fact. |
 
+A precondition is observed pre-call (FR-046): its input is the operation, the
+pre snapshot the call starts from, the receiver in that snapshot and the call's
+immutable parameter values, supplied alone or as the pre part of one invocation,
+and it reads no post snapshot, result or delta.
 Pre/post inputs must name one exact operation, invocation, context and universe.
 An invariant likewise needs its exact named initialization/handler binding;
 a bare context type or arbitrary current snapshot is not a substitute.

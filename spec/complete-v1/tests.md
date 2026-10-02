@@ -793,6 +793,9 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-146 | FR-146-AC-9 | TC-191 | planned |
 | FR-146 | FR-146-AC-10 | TC-264 | planned |
 | FR-146 | FR-146-AC-11 | TC-265 | planned |
+| FR-146 | FR-146-AC-12 | TC-398 | planned |
+| FR-146 | FR-146-AC-13 | TC-399 | planned |
+| FR-146 | FR-146-AC-14 | TC-398 | planned |
 | FR-147 | FR-147-AC-4 | TC-192 | planned |
 | FR-147 | FR-147-AC-5 | TC-192 | planned |
 | FR-147 | FR-147-AC-6 | TC-192 | planned |
@@ -826,9 +829,13 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-143 | FR-143-AC-11 | TC-198 | planned |
 | FR-143 | FR-143-AC-12 | TC-262 | planned |
 | FR-143 | FR-143-AC-13 | TC-263 | planned |
+| FR-143 | FR-143-AC-14 | TC-399 | planned |
+| FR-143 | FR-143-AC-15 | TC-400 | planned |
+| FR-143 | FR-143-AC-16 | TC-400 | planned |
 | FR-144 | FR-144-AC-11 | TC-198 | planned |
 | FR-144 | FR-144-AC-12 | TC-246 | planned |
 | FR-144 | FR-144-AC-13 | TC-246 | planned |
+| FR-144 | FR-144-AC-14 | TC-397 | planned |
 | FR-149 | FR-149-AC-12 | TC-198 | planned |
 | FR-150 | FR-150-AC-6 | TC-195 | planned |
 | FR-150 | FR-150-AC-7 | TC-195 | planned |
@@ -866,6 +873,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-208 | FR-208-AC-10 | TC-235 | planned |
 | FR-208 | FR-208-AC-11 | TC-235 | planned |
 | FR-208 | FR-208-AC-12 | TC-235 | planned |
+| FR-208 | FR-208-AC-13 | TC-401 | planned |
 | FR-272 | FR-272-AC-6 | TC-196 | planned |
 | FR-272 | FR-272-AC-7 | TC-233 | planned |
 | FR-272 | FR-272-AC-8 | TC-264 | planned |
@@ -1009,6 +1017,15 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-342 | FR-342-AC-4 | TC-280 | planned |
 | FR-342 | FR-342-AC-5 | TC-233 | planned |
 | FR-342 | FR-342-AC-6 | TC-233 | planned |
+| FR-440 | FR-440-AC-1 | TC-395 | planned |
+| FR-440 | FR-440-AC-2 | TC-395 | planned |
+| FR-440 | FR-440-AC-3 | TC-395 | planned |
+| FR-440 | FR-440-AC-4 | TC-395 | planned |
+| FR-440 | FR-440-AC-5 | TC-395 | planned |
+| FR-440 | FR-440-AC-6 | TC-395 | planned |
+| FR-441 | FR-441-AC-1 | TC-396 | planned |
+| FR-441 | FR-441-AC-2 | TC-396 | planned |
+| FR-441 | FR-441-AC-3 | TC-396 | planned |
 | interface_004 | interface_004-AC-1 | TC-233 | planned |
 | interface_004 | interface_004-AC-2 | TC-233 | planned |
 | FR-323 | FR-323-AC-1 | TC-231 | planned |
@@ -1353,6 +1370,13 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-303 | Checked-package temporal clause body and operation identities | Property | P0 | FR-370, FR-322 | 🚧 Planned |
 | TC-304 | Strong-fairness hint on a reproduced refutation | Property | P0 | FR-369 | 🚧 Planned |
 | TC-305 | Undefined evaluation refutes a model claim | Property | P0 | FR-361, FR-363, FR-364, FR-365, FR-366 | 🚧 Planned |
+| TC-395 | Checked-package union, union value and case nodes | Property | P0 | FR-440, FR-322 | 🚧 Planned |
+| TC-396 | Union member key | Property | P0 | FR-441 | 🚧 Planned |
+| TC-397 | Union canonical key and union collection elements | Property | P0 | FR-144 | 🚧 Planned |
+| TC-398 | Case result type | Property | P0 | FR-146 | 🚧 Planned |
+| TC-399 | Union construction and case accounting | Property | P0 | FR-143, FR-146 | 🚧 Planned |
+| TC-400 | Supplied union values and the value profile | Property | P0 | FR-143 | 🚧 Planned |
+| TC-401 | Pre-call precondition observation | Property | P0 | FR-046, FR-208 | 🚧 Planned |
 
 ## Integration Test Matrix
 

@@ -678,6 +678,10 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-342
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-440
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-441
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-450
     type: contains
   - target: ix://agent-ix/quire-specification/FR-451
@@ -863,6 +867,8 @@ The requirement artifacts are indexed below.
 | [FR-451](objects/interfaces/FR-451-checked-package-abstraction-relation-body.md) | FR | Checked-package `correspondence`/`abstraction_relation` body, keys and reader order |
 | [FR-452](functional/tooling/FR-452-preserve-admission-across-specification-revisions.md) | FR | Spec-versioning refinement gate: a superseding revision admits what its prior admitted |
 | [FR-453](functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md) | FR | Profile-layering refinement gate: the five AD-003 layering edges, refusal preservation and per-layer user subsets |
+| [FR-440](objects/interfaces/FR-440-checked-package-union-and-case-nodes.md) | FR | Checked-package `composite_type`/`union`, `value`/`union_value` and `expression`/`case` nodes and the `quire.op.control.case` catalog entry |
+| [FR-441](objects/interfaces/FR-441-union-member-key.md) | FR | Union member key: the `quire.union-member-node/v1` preimage |
 | [FR-049](functional/foundation/FR-049-bind-native-choreography-syntax.md) | FR | Accepted native choreography source integration; complete-V1 review SR-571–580 |
 | [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Accepted complete-V1 protocol intent; review SR-571–580 |
 | [FR-050](functional/protocol/FR-050-bind-protocol-instances.md) | FR | Accepted complete-V1 protocol foundation; review SR-571–580 |

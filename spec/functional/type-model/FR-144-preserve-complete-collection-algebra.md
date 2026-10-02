@@ -13,6 +13,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-204
     type: references
+  - target: ix://agent-ix/quire-specification/FR-143
+    type: references
 ---
 
 # FR-144: Preserve complete collection-kind semantics
@@ -116,10 +118,15 @@ when they are FR-149 equal.
 | `Reference<T>` | the FR-204 identity triple (universe identity, object-type declaration identity, object identity), compared component by component, each component lexicographically by its canonical identity bytes; under `quire.model.complete/v1` the universe and type bytes are the UTF-8 domain string followed by the 32 digest bytes, and the object bytes are the exact producer UTF-8 object identity, all compared unsigned bytewise with a proper prefix first |
 | `Option<T>` | `none` before a present value, then the key of the payload |
 | record, tuple | lexicographic over fields in declaration order or positions in order; a slot orders `absent` before `null` before a present value, and present values by key |
+| union | the active member's identifier ASCII bytes, lexicographically, never its declaration position; then, for two values of one member, lexicographic over the payload values' keys in position order |
 | `Sequence<T>`, `OrderedSet<T>` | lexicographic over element keys; a proper prefix comes first |
 | `Set<T>`, `Bag<T>` | lexicographic over the ascending element-key list, with a bag occurrence listed once per multiplicity |
 
-A recursive record type has a key because every finite value of it does.
+A recursive record or union type has a key because every finite value of it
+does. A union admits `=` exactly when every payload type of every member
+admits it (FR-143), so a union with a `Float32` or `Float64` payload at any
+depth is an element type that admits no `=`. Because declaration position is
+never used for a union, reordering its members changes no visiting order.
 References from different universes never meet in one collection, because
 their FR-149 comparison refuses construction. A universe is a model-level object
 universe shared by a whole generalization component, never a population, so
@@ -210,6 +217,7 @@ FR-146 and FR-307; otherwise it is
 | FR-144-AC-11 | Reference keys order by universe, most-specific type and object bytes exactly as the published model reference-key vectors state. | Test (TC-198) |
 | FR-144-AC-12 | A collection type with no declared bound admits every occurrence count at construction and traversal and never returns `cardinality_out_of_bound`. | Test (TC-246) |
 | FR-144-AC-13 | A collection type with an absent bound and one with a present bound, same kind and same element type, are different types; equality between them is `refused { code: ill_typed, cause: type-mismatch }`, and moving a value between them requires an explicit FR-145 `convert` whose present-bound direction is checked at run time. | Test (TC-246) |
+| FR-144-AC-14 | For `union Shape { Rect(Integer, Integer), Circle(Integer), Empty }`, `set[Shape::Rect(2, 3), Shape::Empty, Shape::Circle(5), Shape::Circle(1), Shape::Rect(2, 3)]` holds four members visited in the order `Circle(1)`, `Circle(5)`, `Empty`, `Rect(2, 3)`, the same order after the members are declared in another order; a `Bag<Shape>` of the same elements holds `Rect(2, 3)` with multiplicity two; and a `Set<U>` whose union `U` has a `Float64` payload is `ill_typed` with cause `operator-ineligible`. | Test (TC-397) |
 
 ## Dependencies
 

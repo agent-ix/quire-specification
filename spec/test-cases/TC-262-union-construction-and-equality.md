@@ -17,7 +17,7 @@ Construct declared union values, refuse malformed constructions, and compare uni
 
 Use the exact subject and inputs named by FR-143-AC-12. Execute the positive case, each declared boundary, and each explicit refusal through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
-This test case exercises `union-decl` and union values, admitted under `quire.value.complete/v1` alongside `quire.native.diagnostics/v1` revision `1-draft.4`. Unless a row states limits, run it under limits large enough that no charge is denied.
+Unless a row states limits, run it under limits large enough that no charge is denied.
 
 | Vector | Input | Expected result/disposition |
 | --- | --- | --- |

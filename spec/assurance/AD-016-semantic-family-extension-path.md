@@ -40,6 +40,16 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-197
     type: references
+  - target: ix://agent-ix/quire-specification/FR-143
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-144
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-146
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-440
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-441
+    type: references
   - target: ix://agent-ix/quire-spec-language/ADR-013
     type: references
 ---
@@ -437,6 +447,21 @@ removing the QSL -dev→ CG → QSL loop.
 | Frame obligation | Capability kind FR-290 `operation-contract`. Arrows 3–5: `unsupported` (warned) with a catalog code until IR lowers the FR-340 `state`/`frame` node into its Kani form (IR#109). Arrow 2 already carries it. Runtime frame violations: `frame_violation`/`unauthorized-change` (#129 Q7). Subject ABI = the FR-340 `modifies`/`creates`/`deletes` sets of v2 node keys (`CheckedNodeId`) of `relation`/`model` nodes; each resolves to its `DeclarationKey` through the package's model correspondence. `OPEN — decided in WP10`: IR Kani frame lowering and CG frame-harness file list. |
 | Unbounded construct | IR `requires-bound` is the single predicate. CG negotiation maps it to `requires-bound` (finite bound available) or `unsupported` (warned, E07). Neither emits an oracle or harness. |
 
+### Union family
+
+The union family follows the seven arrows like every other family. This table
+fixes its per-repo owners and the contracts its kernel row needs.
+
+| Field | Contract |
+| --- | --- |
+| Owner | QSL: `union-decl`, union construction and `case` checking (FR-143, FR-146), the checked-package/v2 emitter arms for the `composite_type`/`union`, `value`/`union_value` and `expression`/`case` nodes ([FR-440](../objects/interfaces/FR-440-checked-package-union-and-case-nodes.md)), and the `Value::Union` value, member-key derivation and `case` evaluation in the `quire-exact` kernel. QSpec: the union, union value and case wire forms (FR-440), the member key (FR-441) and the canonical vectors. quire-verification-contracts: the `union` family, the `quire.op.control.case` entry, the `arm_body` result form and the `union_arms` constraint kind in `quire.checked-operation-catalog/v1`. IR: reading and lowering the three node forms in `quire-contract-model`. RT and CG: selecting the kernel union operations and rendering `case`. |
+| Value shape | A union value is its union's declaration key, its active member's [FR-441](../objects/interfaces/FR-441-union-member-key.md) member key (`quire.union-member-node/v1` over the union node's `NodeId` and the member identifier), and its payload values in position order, as many as the member's declared payload arity. A nullary member has no payload. A supplied union value carries the same three parts (FR-143). |
+| Identity retained | The union node's checked node id (FR-201) and, derived from it, each member key; a checked package never carries a member key. Member keys of two unions, or a member key and an enum member key, are never equal. |
+| Refusal / undefined | A supplied union value whose member key is no member of its union, whose payload count differs from the member's arity, or whose payload value has the wrong type refuses `invalid_runtime_input`/`wrong-value-kind` before any evaluation or charge (FR-143). A `case` whose scrutinee is undefined, refused or incomplete has that outcome, with no arm evaluated (FR-146). A `case` failing its type or exhaustiveness obligations refuses at check time with the first FR-146 refusal; the kernel never sees it. |
+| Accounting | `quire.value.accounting/v1` charges from the kernel `Meter`. Construction charges one `composite.result-retain` after its payload arguments, with `occ` one plus each payload value's `occ` (FR-143). A union value used as a collection element is ordered and compared by the FR-144 union key, the active member's identifier bytes and then the payload keys, under the FR-144 collection charge points. A `case` charges its scrutinee's charges and then only its selected arm body's charges, with no charge for arm selection or payload binding (FR-146). |
+| Canonical vectors / agreement | QSpec TC-262 to TC-265 and TC-395 to TC-400: the union member-key vectors (FR-441-AC-1, FR-441-AC-2), the union key and collection order vectors (FR-144-AC-14), the construction and `case` accounting vectors (FR-143-AC-14, FR-146-AC-13), the supplied-value refusals (FR-143-AC-15), and the `positive-union-nodes.json` checked package. The kernel runs them through the RT agreement suite like every other family. |
+| Rejected item → substitute? | No. A refused union value or `case` yields no value and no partial charge. |
+
 ### Change scenarios
 
 Each table is the predicted touch set on the extension path. **All seven are
@@ -557,3 +582,7 @@ predictions, re-walked on landed code in WP11.**
 | 7 | Exemplar needs no unrelated central edits or copied vocabularies | WP5a, WP5b, WP7; verified in WP11 |
 | 8 | No new V1 scope | WP1, WP2 |
 | 9 | A08–A14 and E03–E07 mapped onto the path | WP11 |
+
+## References
+
+- Linear STD-142 (union family row).

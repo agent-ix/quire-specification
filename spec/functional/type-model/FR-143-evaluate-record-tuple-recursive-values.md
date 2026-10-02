@@ -13,6 +13,12 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-307
     type: references
+  - target: ix://agent-ix/quire-specification/AD-015
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-440
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-441
+    type: references
 ---
 
 # FR-143: Evaluate records, tuples and finite recursive values
@@ -95,7 +101,17 @@ evaluation only through runtime inputs and snapshots validated against the
 evaluating package. A supplied composite value whose declaration key is not a
 key of that package's graph is
 `refused { code: invalid_runtime_input, cause: wrong-value-kind }` during input
-validation, before any evaluation or charge. A record field identity is
+validation, before any evaluation or charge. A supplied union value names its
+union by declaration key, its active member by that member's
+[FR-441](../../objects/interfaces/FR-441-union-member-key.md) member key, and
+its payload values in position order. Input validation refuses it with
+`refused { code: invalid_runtime_input, cause: wrong-value-kind }`, before any
+evaluation or charge, when its member key is not the key of a member of that
+union, when its payload count differs from that member's declared payload
+arity, or when a payload value is not a value of the member's declared type at
+its position. Input validation walks each payload value exactly as it walks a
+record field value, so a reference held in a payload is validated as one held
+in a field is. A record field identity is
 (declaration key, field identifier), a tuple position identity is
 (declaration key, zero-based position), and a union member identity is
 (declaration key, member identifier).
@@ -108,6 +124,14 @@ the same declared member and, if that member carries a payload, every
 positional value compares equal in declaration order; values of the same
 member shape from different declared unions never become interchangeable,
 exactly as for record and tuple declarations above.
+
+## Value profile
+
+`quire.value.complete/v1` admits union declarations, union values, union
+construction and `case` (FR-146) in every package that selects it, exactly
+where it admits record and tuple declarations and values. A package that
+declares or evaluates a union selects the same always-selected definitions,
+triggers and alternatives as one that declares only records and tuples.
 
 ## Field presence
 
@@ -168,10 +192,14 @@ construction charges one `composite.result-retain` with
 `value_occurrences = occ(result)` and `result_units += occ(result)` under
 `quire.value.accounting/v1`, then exposes the value. Record field expressions are evaluated in field
 declaration order, regardless of the order of the source fields. Tuple
-arguments are evaluated in position order. The first field or argument whose
+arguments and union payload arguments are evaluated in position order. A
+union value construction charges the same `composite.result-retain` after its
+last payload argument completes; a nullary member's construction evaluates no
+argument and charges it at once. `occ` of a union value is one plus `occ` of
+each of its payload values, so a nullary union value has `occ` one. The first field or argument whose
 outcome is undefined, refused or incomplete stops construction. That outcome
 becomes the construction's outcome, no later field or argument is evaluated or
-charged, and no record or tuple exists. Operands of a binary expression are
+charged, and no record, tuple or union value exists. Operands of a binary expression are
 evaluated left and then right, so a stopped left operand prevents evaluation of
 the right operand.
 
@@ -213,6 +241,9 @@ and equality.
 | FR-143-AC-11 | Under `quire.model.complete/v1`, a reference obtained by navigation, lookup or `allInstances` carries the object's most-specific effective type, and no other source creates a reference. | Test (TC-198) |
 | FR-143-AC-12 | A `union-decl` construction admits exactly one declared member with its declared payload arity, two union values compare equal exactly when their active member and payload positions match, and equal member shapes from different declared unions never become interchangeable. | Test (TC-262) |
 | FR-143-AC-13 | The recursion rule treats a union member payload position as a named edge on the same basis as a record field, so a union recursion is admitted exactly when it escapes. | Test (TC-263) |
+| FR-143-AC-14 | `Shape::Rect(2, 3)` evaluates `2` then `3`, then charges one `composite.result-retain` with `value_occurrences = 3` and `result_units += 3`; `Shape::Empty` charges one `composite.result-retain` with `value_occurrences = 1` and evaluates nothing; a stopped first payload argument propagates its outcome with the second argument neither evaluated nor charged and no `composite.result-retain`. | Test (TC-399) |
+| FR-143-AC-15 | A supplied `Shape` argument is refused `invalid_runtime_input`/`wrong-value-kind` before any evaluation or charge when its member key is a member key of another union, when its member key is no member's key, when it carries one payload value for `Rect`, and when its `Circle` payload is a `Text` value; a well-formed supplied `Shape::Rect(2, 3)` is admitted. | Test (TC-400) |
+| FR-143-AC-16 | A package selecting `quire.value.complete/v1` with exactly the always-selected definitions and no trigger admits a union declaration, its construction and a `case` over it, and its selection equals that of the same package with the union replaced by a record. | Test (TC-400) |
 
 ## Dependencies
 

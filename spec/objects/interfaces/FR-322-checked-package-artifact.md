@@ -20,6 +20,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-342
     type: references
+  - target: ix://agent-ix/quire-specification/FR-440
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-441
+    type: references
   - target: ix://agent-ix/quire-specification/FR-043
     type: references
   - target: ix://agent-ix/quire-specification/FR-150
@@ -114,6 +118,12 @@ boundary.
   [FR-341](FR-341-checked-package-state-clause-body.md) specifies, and one
   with `semantic_form: "operation_anchor"` the binding aggregate
   [FR-342](FR-342-checked-package-operation-anchor-body.md) specifies. A
+  `composite_type` node with `semantic_form: "union"`, a `value` node with
+  `semantic_form: "union_value"` and an `expression` node with
+  `semantic_form: "case"` carry the bodies
+  [FR-440](FR-440-checked-package-union-and-case-nodes.md) specifies, and
+  each union member is keyed as
+  [FR-441](FR-441-union-member-key.md) specifies. A
   `value` node with `semantic_form: "parameter"` stands for a value a binder
   binds (a function parameter, or the `self`, `result` and operation
   parameters of a state clause), and its `semantic_type` is the bound
@@ -544,8 +554,8 @@ A type node's **family** is read from the type the node resolves to through its
 `rational`, `decimal`, `float32`, `float64` and `text` are their own family, a
 `unit` is `quantity`, an enum is `ordered_enum` when its nominal preimage is
 ordered and `enum` otherwise; `composite_type` forms `option`, `record`,
-`tuple`, `sequence`, `set`, `bag`, `ordered_set` and `reference` are their own
-family, and a model declaration node whose `semantic_form` is `object_type` or
+`tuple`, `union`, `sequence`, `set`, `bag`, `ordered_set` and `reference` are
+their own family, and a model declaration node whose `semantic_form` is `object_type` or
 `systems_interface` is `object`. A `relation` node and a `model` node of any
 other form have no family, so a term they type fits no operand position. An
 `object` term is admitted only at a `field_owner` operand position and at
@@ -565,13 +575,13 @@ formula application is `temporal`
 
 | Group | Families | Decision rule |
 | --- | --- | --- |
-| `any_value` | `boolean`, `integer`, `rational`, `decimal`, `float32`, `float64`, `text`, `enum`, `ordered_enum`, `quantity`, `option`, `record`, `tuple`, `sequence`, `set`, `bag`, `ordered_set`, `reference` | An operand position admits a term whose family is a member. |
+| `any_value` | `boolean`, `integer`, `rational`, `decimal`, `float32`, `float64`, `text`, `enum`, `ordered_enum`, `quantity`, `option`, `record`, `tuple`, `union`, `sequence`, `set`, `bag`, `ordered_set`, `reference` | An operand position admits a term whose family is a member. |
 | `any_term` | `any_value` plus `function`, `population`, `aggregate`, `binder`, `clause`, `temporal` ([FR-370](FR-370-checked-package-temporal-clause-body.md)) | Used only as the rest position of clause and call operations. |
 | `exact_numeric` | `integer`, `rational`, `decimal` | Exact numeric operands of conversions. |
 | `rational_promotable` | `integer`, `rational` | Operands promoted exactly by `n ↦ n/1` (FR-146, FR-149). |
 | `ieee_float` | `float32`, `float64` | IEEE operands; no `eq`, `ne`, ordering or `negate`. |
 | `collection_kind` | `sequence`, `set`, `bag`, `ordered_set` | Collection operands and `element` members. |
-| `structural_kind` | `option`, `record`, `tuple`, `sequence`, `set`, `bag`, `ordered_set` | Structural comparison operands. |
+| `structural_kind` | `option`, `record`, `tuple`, `union`, `sequence`, `set`, `bag`, `ordered_set` | Structural comparison operands. |
 | `enum_kind` | `enum`, `ordered_enum` | Enum operands. |
 | `field_owner` | `record`, `object` | Operands of a `field` projection: a record value, or a dereferenced model object whose field the "Model-owned members" rule resolves. |
 
@@ -583,7 +593,8 @@ constraint holds. The result form derives the application's result:
 n's family (the element type comes from `result_type`); `inner:<n>` the element
 type of operand n; `return:<n>` the return type of function operand n; `member`
 the type the member names; `absence` `option` for mode `empty`, otherwise
-`reference`. The application's `result_type` must have the derived family and,
+`reference`; `arm_body` the type every arm body of a `case` application has
+([FR-440](FR-440-checked-package-union-and-case-nodes.md)). The application's `result_type` must have the derived family and,
 when the derived result names a type, be that same type node; a clause result
 is declared `boolean`. An `expression` or `function` whose body root is the
 application has `semantic_type` equal to that `result_type`. A `literal` term's
@@ -610,6 +621,7 @@ application has `semantic_type` equal to that `result_type`. A `literal` term's
 | `scale_reduction` | FR-149 classifies it as scale reduction to a decimal; this is the only conversion that rounds, and it requires a `rounding` mode. |
 | `promotes_exact` | Every named operand is in `rational_promotable` and is promoted exactly to its rational value before the operation. |
 | `uniform_rest` | Every rest argument has the same family. |
+| `union_arms` | The rest arguments are exactly one arm per member of operand 0's union, in member declaration order, each with as many binders as that member's payload arity, each binder typed by its payload position ([FR-440](FR-440-checked-package-union-and-case-nodes.md)). |
 
 FR-149 classifies a conversion from declared bounds alone, first match wins:
 **exact** when every source value is a target value (an integer range into

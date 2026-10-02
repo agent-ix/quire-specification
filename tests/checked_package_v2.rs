@@ -35,6 +35,8 @@ const POSITIVE_CLAUSE_OPERATIONS: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-clause-operations.json");
 const POSITIVE_CONTROL_OPERATIONS: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-control-operations.json");
+const POSITIVE_UNION_NODES: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-union-nodes.json");
 const ADVERSE: &str = include_str!("../proposals/checked-package-v2/fixtures/adverse.json");
 const DEPENDENCY_SELECTION_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/dependency-selection-vectors.json");
@@ -856,6 +858,7 @@ fn expression_form_for_class(class: &str) -> Option<&'static str> {
         "unary" => "unary",
         "binary" => "binary",
         "conditional" => "conditional",
+        "case" => "case",
         "let" => "let",
         "quantify" => "quantify",
         "collection" => "collection",
@@ -5314,7 +5317,9 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
                         .parse::<usize>()
                         .is_ok_and(|index| index < operands.len())
             }
-            None => families.contains(result) || ["member", "absence"].contains(&result),
+            None => {
+                families.contains(result) || ["member", "absence", "arm_body"].contains(&result)
+            }
         };
         assert!(
             result_fits,
@@ -8037,4 +8042,186 @@ fn tc_279_model_owner_preimages_carry_package_identity_and_node_only() {
             "{name} identity depends on the owning domain package"
         );
     }
+}
+
+/// The node in `package` whose `node_tag` and `semantic_form` are given.
+fn union_fixture_node<'a>(package: &'a Value, tag: &str, form: &str) -> &'a Value {
+    package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("semantic graph nodes are an array")
+        .iter()
+        .find(|node| node["node_tag"] == tag && node["semantic_form"] == form)
+        .unwrap_or_else(|| panic!("the union fixture carries a {tag}/{form} node"))
+}
+
+#[trace("TC-395", "FR-440-AC-1")]
+#[trace("TC-395", "FR-440-AC-2")]
+#[trace("TC-395", "FR-440-AC-3")]
+#[test]
+fn tc_395_union_nodes_fixture_is_a_closed_v2_package_with_member_ordered_arms() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let package = parsed_fixture(POSITIVE_UNION_NODES);
+    schema
+        .validate(&package)
+        .unwrap_or_else(|error| panic!("the union fixture is a closed V2 package: {error}"));
+    assert_eq!(
+        derive_identity_preimage(&package),
+        package["identity_preimage"],
+        "the union fixture's identity preimage is its selections and occurrence-free graph"
+    );
+    assert_eq!(
+        unqualified_jcs_sha256(&package["identity_preimage"]),
+        package["package_id"]["digest"].as_str().unwrap_or_default(),
+        "the union fixture's package id is recomputed from its preimage"
+    );
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("semantic graph nodes are an array");
+    for node in nodes
+        .iter()
+        .filter(|node| !application_terms(&node["body"]).is_empty())
+    {
+        assert!(
+            application_node_is_valid(node, nodes),
+            "{} keys its application preimage and lists exactly its references",
+            node["semantic_form"]
+        );
+    }
+
+    let union = union_fixture_node(&package, "composite_type", "union");
+    let members = union["body"]["members"]
+        .as_array()
+        .expect("union body members are an array");
+    let shape = members
+        .iter()
+        .map(|binding| {
+            (
+                binding["name"].as_str().unwrap_or_default(),
+                binding["value"]["members"].as_array().map_or(0, Vec::len),
+            )
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(shape, [("Circle", 1), ("Rect", 2), ("Empty", 0)]);
+
+    let case = union_fixture_node(&package, "expression", "case");
+    let arms = case["body"]["arguments"]
+        .as_array()
+        .expect("case arguments are an array")
+        .iter()
+        .skip(1)
+        .map(|arm| {
+            (
+                arm["name"].as_str().unwrap_or_default(),
+                arm["value"]["members"][0]["members"]
+                    .as_array()
+                    .map_or(0, Vec::len),
+            )
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(
+        arms, shape,
+        "a case's arms follow the union's member declaration order and payload arities"
+    );
+}
+
+#[trace("TC-395", "FR-440-AC-1")]
+#[trace("TC-395", "FR-440-AC-2")]
+#[trace("TC-395", "FR-440-AC-4")]
+#[test]
+fn tc_395_malformed_union_bodies_fail_the_published_schema() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let package = parsed_fixture(POSITIVE_UNION_NODES);
+    let index = |tag: &str, form: &str| {
+        package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("semantic graph nodes are an array")
+            .iter()
+            .position(|node| node["node_tag"] == tag && node["semantic_form"] == form)
+            .expect("the fixture carries the node")
+    };
+    let union = index("composite_type", "union");
+    let value = index("value", "union_value");
+    let case = index("expression", "case");
+    let mutations: [(&str, String, Value); 4] = [
+        (
+            "union member payload that is not an aggregate",
+            format!("/semantic_graph/nodes/{union}/body/members/0/value"),
+            json!({"term": "aggregate", "members": [{"term": "aggregate", "members": []}]}),
+        ),
+        (
+            "union value with two member bindings",
+            format!("/semantic_graph/nodes/{value}/body/members/1"),
+            package["semantic_graph"]["nodes"][value]["body"]["members"][0].clone(),
+        ),
+        (
+            "case arm without its binder aggregate",
+            format!("/semantic_graph/nodes/{case}/body/arguments/1/value/members/0"),
+            json!({"term": "reference", "target": package["semantic_graph"]["nodes"][case]["body"]["arguments"][0]["target"].clone()}),
+        ),
+        (
+            "case application naming another operation",
+            format!("/semantic_graph/nodes/{case}/body/operation/identity"),
+            json!("quire.op.control.if"),
+        ),
+    ];
+    for (label, pointer, replacement) in mutations {
+        let mut mutated = package.clone();
+        let (parent, last) = pointer.rsplit_once('/').expect("pointer has a parent");
+        let target = mutated
+            .pointer_mut(parent)
+            .unwrap_or_else(|| panic!("{label}: {parent} exists"));
+        match target {
+            Value::Array(items) => {
+                let at = last.parse::<usize>().expect("array index");
+                if at < items.len() {
+                    items[at] = replacement;
+                } else {
+                    items.push(replacement);
+                }
+            }
+            Value::Object(map) => {
+                map.insert(last.to_owned(), replacement);
+            }
+            _ => panic!("{label}: {parent} is a container"),
+        }
+        assert!(
+            !schema.is_valid(&mutated),
+            "{label} fails the published V2 schema"
+        );
+    }
+}
+
+#[trace("TC-396", "FR-441-AC-1")]
+#[trace("TC-396", "FR-441-AC-2")]
+#[trace("TC-396", "FR-441-AC-3")]
+#[test]
+fn tc_396_union_member_keys_recompute_and_differ_across_unions() {
+    let schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
+        .expect("node-preimage schema is valid");
+    let fixture = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let vectors = fixture["union_member_vectors"]
+        .as_array()
+        .expect("union member vectors are an array");
+    let mut digests = BTreeSet::new();
+    for vector in vectors {
+        let name = vector["name"].as_str().expect("vector name is a string");
+        schema
+            .validate(&vector["preimage"])
+            .unwrap_or_else(|error| panic!("{name} has the closed preimage shape: {error}"));
+        let digest = unqualified_jcs_sha256(&vector["preimage"]);
+        assert_eq!(
+            digest,
+            vector["sha256"].as_str().unwrap_or_default(),
+            "{name} binds its exact RFC 8785 JCS preimage"
+        );
+        assert!(digests.insert(digest), "{name} has its own member key");
+    }
+    assert_eq!(digests.len(), 3);
+    let mut renamed = vectors[0]["preimage"].clone();
+    renamed["member"] = json!("circle");
+    assert_ne!(
+        unqualified_jcs_sha256(&renamed),
+        vectors[0]["sha256"].as_str().unwrap_or_default(),
+        "a member identifier is compared byte for byte"
+    );
 }
