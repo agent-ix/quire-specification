@@ -15,10 +15,10 @@ relationships:
 
 ## Description
 
-When a native temporal clause is lowered, the reader SHALL treat the TL evaluator profiles listed here as lowering targets of a versioned correspondence rather than as authored Quire temporal profiles.
+When a native temporal clause is lowered, the reader SHALL treat the TL evaluator profiles listed here as lowering targets of a correspondence rather than as authored Quire temporal profiles.
 
 FR-200 records that `tl-*` syntax and evaluators "are consumed behind a
-versioned native-Quire lowering boundary; they are not a second authored source
+native-Quire lowering boundary; they are not a second authored source
 language". FR-095 states that "The generated TL artifact is internal derived
 output and never editable source."
 

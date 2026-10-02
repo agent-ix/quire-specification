@@ -36,7 +36,7 @@ incorporated by this requirement as the normative syntax contract. Its base
 grammar and complete-V1 facets form one grammar; a conforming implementation may
 factor parser modules but cannot expose backend-specific syntax, omit a facet or
 accept an undeclared extension under the complete-V1 identity. Reserved words,
-literal spellings, operator precedence and declaration forms are versioned by
+literal spellings, operator precedence and declaration forms are fixed by
 the linked language profile. Lossless parsing preserves source bytes and loci
 without granting syntactically invalid input semantic meaning. Parsing,
 checking and packaging take no provider registry, so their output is

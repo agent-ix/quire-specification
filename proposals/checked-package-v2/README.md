@@ -3,7 +3,7 @@
 This directory is the normative public transport contract for I04 immutable
 checked packages. It is intentionally a schema-and-vector boundary, not a
 native Rust package API: QSL remains free to use internal parser/CST/package
-structures, but any external consumer receives only the versioned contract.
+structures, but any external consumer receives only the contract.
 
 ## Contract contents
 

@@ -23,7 +23,7 @@ identity rather than by a display name or installed tool.
 | `target_standard_refs` | Ordered exact normative/tool references required by the selected family. |
 | `mapping_profile_id` | One of `quire.output.ocl24/v1`, `quire.output.sysml2-kerml1/v1` or `quire.output.fretish31/v1`. |
 | `required_capabilities` | Closed requested subset of the selected mapping profile. |
-| `observer_selection` | Optional, independently versioned structural observer/tool selection; never part of semantic support. |
+| `observer_selection` | Optional, independent structural observer/tool selection; never part of semantic support. |
 
 ## Identity and comparison
 

@@ -55,7 +55,7 @@ consumer dependency, not the source of language meaning or an evidence store.
 ## Interfaces to agree together
 
 These are semantic contract boundaries, not a frozen serialization layout or
-permission to create new registries. Existing versioned interfaces are reused
+permission to create new registries. Existing interfaces are reused
 where they preserve the required distinctions.
 
 | Boundary | Required identity and information | Editor / consumer |

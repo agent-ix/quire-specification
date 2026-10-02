@@ -55,4 +55,4 @@ externally observed.
 ## Status
 
 Accepted by FS04 for typed observation binding and explicit absence/refusal.
-Admission implementation remains separately versioned.
+Admission implementation remains separate.

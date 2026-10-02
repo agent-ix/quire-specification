@@ -15,7 +15,7 @@ relationships:
 ## Objective
 
 Verify that Agent A's native compiler and the PT01 protocol consumer agree on one
-typed, versioned representation without reparsing source text or changing source,
+typed representation without reparsing source text or changing source,
 model, profile, role, message, channel or control identities.
 
 ## Target Integration

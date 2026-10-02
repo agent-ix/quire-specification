@@ -19,7 +19,7 @@ relationships:
 
 ## Description
 
-When an admitted native temporal clause is lowered, the bridge SHALL emit a TL subject only for a versioned correspondence whose admitted domain preserves the native operator, predicate, clock, capture, history and closure meaning.
+When an admitted native temporal clause is lowered, the bridge SHALL emit a TL subject only for a correspondence whose admitted domain preserves the native operator, predicate, clock, capture, history and closure meaning.
 
 FR-095 Outputs name the record and its derived status: "A generated TL
 formula/valuation request plus a source/result-correspondence record, or a typed

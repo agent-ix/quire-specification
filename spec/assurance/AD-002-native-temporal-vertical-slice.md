@@ -50,7 +50,7 @@ flowchart LR
   R --> E
 ```
 
-The arrows denote typed, versioned contracts, not in-process calls. Every
+The arrows denote typed contracts, not in-process calls. Every
 reader validates its own input and names the rejected semantic axis. No arrow
 permits an ambient registry lookup, source-text reparsing, network action or
 truth default.
@@ -76,10 +76,9 @@ The three v1 clock forms are structurally distinct:
   completeness assertion; timestamp or ingestion order alone establishes no
   causality.
 
-`quire.compiled-protocol/2` is the only wire that may carry this admission
-decision. `/1` is retained for strict backwards reading but cannot be
-reinterpreted as a `/2` temporal subject. Missing, unknown, stale, digest-
-mismatched or multiply selected fields refuse before a runtime or bridge call.
+`quire.compiled-protocol/2` is the only wire that carries and is read for this
+admission decision. Missing, unknown or multiply selected fields refuse before a
+runtime or bridge call.
 
 ### Runtime and resource model
 
@@ -139,7 +138,7 @@ no substitute formula.
 
 - Use domain newtypes for clause, profile, clock, event, capture, proposition,
   correspondence and result identities; do not exchange plain strings.
-- Use closed versioned wire structs/enums and exhaustive matching at every
+- Use closed wire structs/enums and exhaustive matching at every
   reader; retain unknown/missing versions as refusals, not defaults.
 - Use checked conversions and arithmetic at wire, persistence and horizon
   boundaries; never saturate semantic indices or durations.

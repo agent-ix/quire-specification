@@ -19,7 +19,7 @@ relationships:
 ## Description
 
 When lowering an admitted native temporal clause, the bridge shall emit a TL
-subject only for a versioned correspondence whose admitted domain preserves the
+subject only for a correspondence whose admitted domain preserves the
 native operator, predicate, clock, capture, history and closure meaning.
 
 ## Inputs

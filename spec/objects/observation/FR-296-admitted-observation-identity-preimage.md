@@ -16,7 +16,7 @@ relationships:
 ## Description
 
 When an observation is admitted or read, its observation identity SHALL be
-derived from one exact versioned RFC 8785 preimage so immutable fact populations
+derived from one exact RFC 8785 preimage so immutable fact populations
 and corrections can compare observations without names, arrival order or
 caller-authored identifiers.
 

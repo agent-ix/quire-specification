@@ -122,4 +122,4 @@ identities remain the membership authority.
 ## Status
 
 Accepted FS02 membership ruling. Producer interfaces still require their own
-versioned closed vocabularies and consumer implementation evidence.
+closed vocabularies and consumer implementation evidence.

@@ -107,7 +107,7 @@ invalid, unsupported, unimplemented, incomplete and logically false outcomes.
 | Extension point | Rule |
 | --- | --- |
 | Edition syntax | Add grammar only under a new exact edition definition; never steal a historical identifier or reinterpret old bytes. |
-| Semantic profile | Add a versioned definition and explicit dependency edges; a child may add named forms but cannot weaken inherited rules. |
+| Semantic profile | Add a definition and explicit dependency edges; a child may add named forms but cannot weaken inherited rules. |
 | Model/type capability | Add an artifact feature, its extraction rule, its semantic IR member and its Quire meaning together under AD-006; downstream IR shape cannot invent authoring semantics. |
 | Semantic family | Add a typed family AST/interface and package capability; do not flatten it into scalar truth or string dispatch. |
 | Backend or analyzer | Advertise support for exact checked subjects and requested claims; unsupported requests preserve the source subject. |
@@ -134,7 +134,7 @@ bracketed-interval productions or any `0-draft` bytes.
 | Q7 fuel | Runtime work ceilings are distinct from semantic maxima; exhaustion is incomplete and cannot truncate meaning. |
 | Q8 identity dimensions | Edition, semantic profile, artifact wire, canonicalization and backend identities remain independent. |
 | Q9 temporal | Native temporal profiles own meaning; TL profiles are internal targets behind exact correspondence. FS04 and temporal owners close delivery. |
-| Q10 crate layout | The current Rust package/module boundary remains implementation-owned; split only for an independently versioned consumer interface. |
+| Q10 crate layout | The current Rust package/module boundary remains implementation-owned; split only for an independent consumer interface. |
 | Q11 ADR-0053 | Contract-IR PR #72 accepted native Quire-only source authority; external languages are mappings and the reference/bounds gate remains explicit. |
 
 ### Example discriminators
