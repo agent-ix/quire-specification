@@ -66,3 +66,4 @@ selection of each layer (the core of option A) has no owning FR/AC, and the
 | FND-007 | fixed | bc860c9 |
 | FND-008 | fixed | 1f76aa1 |
 | FND-009 | fixed | 1f76aa1 |
+| FND-010 | fixed | 3a894ac |
