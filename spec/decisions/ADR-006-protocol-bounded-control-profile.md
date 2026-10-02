@@ -2,7 +2,7 @@
 id: ADR-006
 title: "Bounded control in the protocol profile layer"
 type: ADR
-status: proposed
+status: accepted
 relationships:
   - target: ix://agent-ix/quire-specification/AD-003
     type: depends_on
@@ -17,9 +17,13 @@ relationships:
 
 ## Status
 
-**Open question for the architect.** Two normative statements bind the same
-protocol loop to opposite dispositions, and the profile hierarchy offers no
-identity that separates them.
+**Decided, 2026-10-01** (team-leader decision for the protocol
+transition-system specification). `quire.protocol.complete/v1` is the one
+protocol admission profile. A `repeat` needs only progress, every body cycle
+passing through a step node; an
+iteration maximum and an invariant with a variant are each optional model
+meaning. The Context and Question sections record the contradiction as it
+stood; the Decision and Consequences sections record the outcome.
 
 ## Context
 
@@ -66,11 +70,38 @@ identities the hierarchy carries; which termination premises an admitted
 iteration may carry; and whether FR-220 and FR-228 record a finite maximum, an
 invariant-and-variant pair, or either.
 
+## Decision
+
+`quire.protocol.complete/v1` is the one protocol admission profile. A
+`repeat` carries progress: every cycle in its body graph passes through a step
+node.
+
+- An authored iteration maximum is optional model meaning: the loop runs at
+  most that many iterations, and its `exhausted` control runs at the maximum.
+- An authored invariant and variant are optional model meaning. Only a
+  termination claim reads them (FR-171-AC-2); admission does not require them
+  to be proved.
+- A loop with neither runs for as long as its guard admits. An explorer keeps
+  no iteration counter for it and closes its cycles through the state key.
+- Only a zero-progress loop refuses.
+
 ## Consequences
 
-Until the question is answered, FR-052-AC-3, FR-049-AC-3, FR-220-AC-4 and
-FR-228-AC-2 bind the same loop opposite to FR-171-AC-2, and an implementation
-can satisfy one side only. The contradiction is recorded here rather than scoped
-away, because scoping it would require naming a profile no accepted hierarchy
-supplies, and deleting either side would remove a normative refusal or a
-normative admission without a decision.
+- FR-052-AC-3, FR-049-AC-3, FR-220-AC-4 and FR-228-AC-2 refuse only missing
+  join inputs, causal cycles and zero-progress loops, and admit a repeat with
+  or without a maximum and with or without an invariant and variant. FR-228-AC-5
+  admits an authored invariant and variant without a proof. None of them
+  contradicts FR-171-AC-2 any longer.
+- The shared grammar's `repetition` production makes the maximum and the
+  invariant and variant each optional; only a repetition with a maximum has an
+  `exhausted` control.
+- A protocol may model a loop meant to run for ever, such as a spinning reader
+  or a store loop, and its liveness is decided over lassos. Such a loop's
+  termination claim settles inconclusive or refused by FR-171-AC-2.
+- A bound is either model meaning or a caller-set resource limit, never a
+  fixed cap the language imposes.
+
+## References
+
+- Raised from the protocol transition-system design: quire-spec-language
+  ADR-027 PS-6; Linear STD-140, paired QSL-396.

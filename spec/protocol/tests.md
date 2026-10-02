@@ -83,6 +83,7 @@ than claiming the advanced algorithms exist.
 | FR-052 | FR-052-AC-3 | TC-052 | 🚧 Planned |
 | FR-052 | FR-052-AC-4 | TC-052 | 🚧 Planned |
 | FR-052 | FR-052-AC-5 | TC-052 | 🚧 Planned |
+| FR-052 | FR-052-AC-6 | TC-379 | 🚧 Planned |
 | FR-053 | FR-053-AC-1 | TC-053 | 🚧 Planned |
 | FR-053 | FR-053-AC-2 | TC-053 | 🚧 Planned |
 | FR-053 | FR-053-AC-3 | TC-053 | 🚧 Planned |
@@ -248,6 +249,7 @@ than claiming the advanced algorithms exist.
 | TC-050 | Bind exact protocol roles and instances | Integration | P1 | FR-050-AC-1..AC-10, FR-210-AC-4..AC-5, FR-211-AC-3, FR-212-AC-4, FR-213-AC-4, FR-214-AC-4, FR-215-AC-5, FR-217-AC-1..AC-5 | 🚧 Planned |
 | TC-051 | Discriminate delivery, attempt and effect identity | Integration | P1 | FR-051-AC-1, FR-051-AC-2, FR-051-AC-3, FR-051-AC-4, FR-051-AC-5, FR-051-AC-6, FR-051-AC-7, FR-051-AC-8, FR-210-AC-4, FR-210-AC-6, FR-224-AC-3, FR-224-AC-4, FR-224-AC-5, FR-225-AC-4, FR-226-AC-3, FR-226-AC-4, FR-226-AC-5 | 🚧 Planned |
 | TC-052 | Preserve bounded causal control | Property | P1 | FR-052-AC-1..AC-5, FR-220-AC-1..AC-7 | 🚧 Planned |
+| TC-379 | Split-shipment causal interleavings | Property | P0 | FR-052-AC-6 | 🚧 Planned |
 | TC-053 | Refuse unobservable or ambiguously owned choice | Integration | P1 | FR-053-AC-1, FR-053-AC-2, FR-053-AC-3, FR-053-AC-4 | 🚧 Planned |
 | TC-054 | Bind channel delivery and order premises | Property | P1 | FR-054-AC-1..AC-5, FR-216-AC-1..AC-6 | 🚧 Planned |
 | TC-055 | Separate activation from obligation truth | Integration | P1 | FR-055-AC-1, FR-055-AC-2, FR-055-AC-3, FR-055-AC-4 | 🚧 Planned |

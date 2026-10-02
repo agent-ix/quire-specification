@@ -80,7 +80,15 @@ The complete-V1 facets additionally reserve `import`, `dimension`, `unit`,
 `continue`, `cancel`, `invariant`, `variant`, `relation`, `hyper`, `trace`,
 `bounded`, `hybrid`, `mode`, `flow`, `transition`, `reset`, `synthesis`,
 `grammar`, `satisfies`, `verify`, `claim`, `method`, `domain`, `depends`,
-`bound`, `lookup`, `absent`, `body` and `abstraction`. The words `undefined`,
+`bound`, `lookup`, `absent`, `body`, `abstraction`, `terminal`, `scheduling`,
+`adversarial`, `memory`, `fence`, `fork`, `node` and `stutter`. In a
+`protocol-step-source`, `join` and `activate` keep their common reservation
+and name a step kind. The words `sc`, `tso`, `ra`, `relaxed`, `acquire`,
+`acq_rel`, `seq_cst`, `cend`, `duplicate`, `lose`, `spawn` and `retire` are
+matched as keyword spellings only in the `memory-clause`, `memory-order`,
+`fence-order` and `protocol-step-source` positions and remain identifiers
+elsewhere; `release` keeps its common reservation, and `ordering` is reused
+from channel declarations. The words `undefined`,
 `empty` and `refused` are matched as keyword spellings only in the lookup
 absence position and remain identifiers elsewhere. The words `population`,
 `operation` and `receiver` are matched as keyword spellings only in their
@@ -199,8 +207,9 @@ case         = 'case', ident, 'when', block, control ;
 parallel     = 'parallel', ident, '{', branch, branch, { branch }, '}',
                'join', 'all', '[', ident, { ',', ident }, ']', ';' ;
 branch       = 'branch', ident, control ;
-repetition   = 'repeat', ident, 'by', ident, visibility, 'max', uint,
-               'while', block, control, 'exhausted', control ;
+repetition   = 'repeat', ident, 'by', ident, visibility,
+               ( 'max', uint, 'while', block, control, 'exhausted', control
+               | 'while', block, control ) ;
 await-control = 'await', ident, 'after', node-ref,
                 'using', ident, 'clock', string, 'within', interval,
                 'match', event-node, 'then', control, 'timeout', control ;
@@ -470,14 +479,52 @@ delivery-policy = 'unknown' | 'at-most-once' | 'at-least-once'
                 | 'exactly-once-premise' ;
 capacity      = uint | 'symbolic', '(', ident, ')' ;
 overflow-policy = 'reject' | 'block' | 'loss' ;
-parallel      = 'parallel', ident, '{', branch, branch, { branch }, '}',
+parallel      = 'parallel', ident, [ memory-clause ],
+                '{', branch, branch, { branch }, '}',
                 'join', join-policy, '[', ident, { ',', ident }, ']',
                 [ 'outstanding', ('continue' | 'cancel') ], ';' ;
+memory-clause = 'memory', ( 'sc' | 'tso' | 'ra' ) ;
 join-policy   = 'all' | 'any' | 'quorum', '(', uint, ')'
               | 'predicate', '(', ident, ')' ;
-repetition    = 'repeat', ident, 'by', ident, visibility, 'max', uint,
-                'invariant', block, 'variant', block,
-                'while', block, control, 'exhausted', control ;
+repetition    = 'repeat', ident, 'by', ident, visibility,
+                ( 'max', uint, [ loop-proof ],
+                  'while', block, control, 'exhausted', control
+                | [ loop-proof ], 'while', block, control ) ;
+loop-proof    = 'invariant', block, 'variant', block ;
+
+protocol-clause = 'protocol', ident, 'using', ident,
+                  'over', '(', parameter, ')', activation, '{',
+                  { capture }, role, { role }, { relationship }, { channel },
+                  { protocol-requirement | compensation },
+                  { protocol-terminal | protocol-scheduling },
+                  'run', control, finish, '}' ;
+protocol-terminal   = 'terminal', ( 'when', block | 'any' ), ';' ;
+protocol-scheduling = 'scheduling', 'adversarial', ';' ;
+control       = sequence | choice | parallel | repetition | await-control
+              | event-node | check | commit | fence ;
+fence         = 'fence', ident, 'ordering', fence-order, ';' ;
+event-node    = 'send', ident, 'via', ident,
+                'as', '(', parameter, ')', { related }, block, ';'
+              | 'receive', ident, 'via', ident, 'of', node-ref,
+                'as', '(', parameter, ')', { related }, block, ';'
+              | 'attempt', ident, 'by', ident, 'on', operation-name,
+                [ 'ordering', memory-order ],
+                'contracts', '[', [ ident, { ',', ident } ], ']',
+                'as', '(', parameter, ')', { related }, block, ';'
+              | 'effect', ident, 'of', node-ref,
+                'as', '(', parameter, ')', { related }, block, ';'
+              | 'event', ident, 'by', ident, [ 'for', node-ref ],
+                'as', '(', parameter, ')', { related }, block, ';' ;
+memory-order  = 'relaxed' | 'acquire' | 'release' | 'acq_rel' | 'seq_cst' ;
+fence-order   = 'acquire' | 'release' | 'acq_rel' | 'seq_cst' ;
+protocol-step-row    = 'step', protocol-step-source, '->',
+                       protocol-step-target, ';' ;
+protocol-step-source = [ 'fork' | 'join' | 'cend' | 'duplicate' | 'lose'
+                         | 'spawn' | 'retire' | 'activate' ], qualified-name
+                     | 'memory', ident ;
+protocol-step-target = step-target
+                     | 'node', qualified-name,
+                       [ '(', step-argument, { ',', step-argument }, ')' ] ;
 
 relation-clause = 'relation', ident, 'using', ident,
                   'over', '(', execution-binding, ',', execution-binding,
@@ -527,6 +574,19 @@ role lifetime and channel capacity remain checked semantic expressions; a
 symbolic capacity requires a discharged finite bound before finite execution.
 Verification plans link outside clause-expression evaluation even though their
 source is recognized by the same edition.
+
+A complete `repetition` carries progress, every cycle of its body passing
+through a step node; an iteration maximum and a
+`loop-proof` are each optional model meaning, and only a repetition with a
+maximum has an `exhausted` control (FR-052). A protocol clause carries at most
+one `protocol-terminal` and at most one `protocol-scheduling` member; a second
+refuses `ambiguous_declaration`/`ambiguous-name` (FR-429, FR-430). The
+`memory-clause`, `memory-order` and `fence` forms have the meaning of FR-434
+and FR-435. A `protocol-step-row` is one row of a refinement declaration whose
+concrete side is a protocol subject (FR-432); it is admitted wherever that
+declaration admits a step row, and its first `qualified-name` names a
+concrete protocol node, template, channel, role or protocol. `step-target`
+and `step-argument` are the refinement declaration's productions (FR-375).
 
 ### Abstraction relation declaration
 

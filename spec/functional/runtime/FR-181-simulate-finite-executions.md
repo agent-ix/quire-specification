@@ -9,6 +9,10 @@ relationships:
     type: implements
   - target: ix://agent-ix/quire-specification/FR-361
     type: references
+  - target: ix://agent-ix/quire-specification/FR-425
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-426
+    type: references
 ---
 
 # FR-181: Simulate finite composed executions reproducibly
@@ -95,11 +99,17 @@ rational or decimal value with an added `"unit":"<qualified-name>"` naming
 the declared unit identity from its FR-142 dimension/unit conversion graph.
 
 The state key is
-`{"type":"simulation-state","semantic":<encoded>,"control":<map>,"queues":<map>,"roles":<map>,"observations":<map>,"bounds":<map>}`.
+`{"type":"simulation-state","semantic":<encoded>,"control":<map>,"queues":<map>,"roles":<map>,"observations":<map>,"bounds":<map>,"memory":<map>}`.
 Each map is `{"type":"map","entries":[{"key":<encoded>,"value":<encoded>}, ...]}`,
 entries sorted ascending unsigned-lexicographically by the key's JCS UTF-8
 bytes. A `fifo` queue's contents encode as a `sequence` in delivery order; an
 `unordered` queue's contents encode as a `bag`.
+For a model subject `control`, `queues`, `roles`, `observations`, `bounds`
+and `memory` are empty maps. For a protocol subject their entries are those
+of [FR-425](../protocol/FR-425-define-protocol-subjects-and-state-keys.md),
+and `memory` holds the memory component of
+[FR-434](../memory/FR-434-select-memory-models-for-parallel.md), empty under
+`sc`.
 
 A successor is an operation applied to an argument vector from the
 operation's finite declared parameter domains, enabled when the operation's
@@ -116,7 +126,10 @@ of the JCS UTF-8 bytes of the typed canonical form of their transition
 identity, `{"type":"transition","operation":"<qualified-name>","receiver":<encoded>|null,"arguments":[<encoded>, ...]}`
 (`receiver` the operation's receiver reference, `null` for an operation with
 no receiver; arguments in parameter declaration order). Two transitions of one
-operation with different receivers have different transition identities.
+operation with different receivers have different transition identities. A
+protocol subject's steps carry the `protocol-transition` identity of
+[FR-426](../protocol/FR-426-apply-protocol-steps.md) and are visited in the
+same order.
 
 A state at which no transition identity is enabled is terminal. Exploration
 records a terminal state as a state with no successor. A temporal analysis
@@ -154,3 +167,9 @@ plus the resource limit that stopped expansion.
 - Every requirement linked in frontmatter is a normative prerequisite.
   Implementation ordering may add enablement edges but cannot change these
   semantics or infer implementation availability from specification acceptance.
+
+## References
+
+- Protocol and memory members of the state key: quire-spec-language ADR-027
+  PS-8, TS-2, QS-3 and QS-4, and ADR-025 MS-1; Linear STD-140 and STD-138,
+  paired QSL-396 and QSL-372.

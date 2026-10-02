@@ -1,0 +1,43 @@
+---
+id: TC-378
+title: "Channels under each ordering, delivery and overflow policy"
+type: TC
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-426
+    type: verifies
+---
+
+# TC-378: Channels under each ordering, delivery and overflow policy
+
+## Description
+
+Check the `send`, `receive`, `duplicate` and `lose` steps of FR-426 for a
+`fifo` and an `unordered` channel under every delivery policy, the three
+overflow policies at capacity, and the untimed `timeout` of an `await`.
+
+## Test Procedure
+
+Build a protocol whose `sender` branch sends two messages `m1` then `m2` on
+channel `h` and whose `receiver` branch receives twice from that send node.
+Vary the channel's ordering, delivery policy, capacity and overflow policy as
+each vector states, explore exhaustively, and record at each state the queue
+contents and the enabled channel steps.
+
+## Vectors
+
+| Vector | Channel | Expected result |
+| --- | --- | --- |
+| CH-01 | `fifo` by a constant key, `exactly-once-premise`, capacity 2 | With both messages queued, only `m1` is deliverable; no `duplicate` or `lose` step exists; the receiver binds `m1` then `m2` on every behaviour |
+| CH-02 | `unordered`, `exactly-once-premise`, capacity 2 | With both queued, two `receive` steps are enabled, one per entry; both receive orders are behaviours |
+| CH-03 | `fifo`, `at-least-once`, capacity 3 | `duplicate` is enabled for each queued entry while the queue holds fewer than 3; `lose` never is |
+| CH-04 | `fifo`, `at-most-once`, capacity 2 | `lose` is enabled for each queued entry; `duplicate` never is; a behaviour that loses `m1` leaves the receiver waiting with `empty-queue` |
+| CH-05 | `unordered`, `unknown`, capacity 2 | both `duplicate` (below capacity) and `lose` are enabled |
+| CH-06 | `fifo`, `exactly-once-premise`, capacity 1, overflow `block` | With `m1` queued, the second `send` is not enabled until the receiver takes `m1` |
+| CH-07 | as CH-06 with overflow `reject` | With `m1` queued, the second `send` is enabled, leaves the queue unchanged and records the rejection in its binder |
+| CH-08 | as CH-06 with overflow `loss` | With `m1` queued, the second `send` applies the declared loss selector |
+| CH-09 | `await W after S within [0, 5] match receive R … then … timeout …` with no sender | `timeout(W)` is enabled at every state where `W` waits; no clock value appears in any state key |
+
+## Expected Results
+
+Every enabled-step set and queue content matches the table, and the queue of
+each channel is keyed per protocol instance and FIFO key as FR-425 states.
