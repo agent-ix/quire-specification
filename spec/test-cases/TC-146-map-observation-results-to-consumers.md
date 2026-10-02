@@ -36,7 +36,7 @@ claim's record with `not-required`, and replace each other axis with
 `not-required`.
 
 Independently mutate assessment execution, each selected definition/profile
-identity, revision and digest, and a late-result supersession link; attempt
+identity, and a late-result supersession link; attempt
 Boolean-pass coercion. Compare structurally accepted target text with a
 source-bound loss control, including a target unable to represent each required
 axis or global premise independently. Independently omit every required source
@@ -47,7 +47,7 @@ prior-result identity, contradicted premise and corrected input identity.
 
 Subject/capability/provenance and every revised result dimension survive. Mapping
 loss remains classified, no non-success disposition is promoted to a pass,
-definition/profile drift refuses, and structural target-text acceptance neither
+a definition/profile identity other than the selected one refuses, and structural target-text acceptance neither
 changes the mapping outcome nor establishes semantic preservation. Earlier result
 bytes remain associated only through a linked superseding or invalidating result.
 An equal disposition with incomplete required provenance fails the mapping

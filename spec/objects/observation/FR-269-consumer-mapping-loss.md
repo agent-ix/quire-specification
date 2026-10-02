@@ -50,11 +50,10 @@ is not reachable by omission.
   (FR-116 Behavior). An incomplete, pending or refused outcome is likewise never
   promoted to a Boolean success (FR-116 Behavior, FR-116-AC-3).
 - **Digest domain** — not applicable; a classification label carries no digest.
-  The definition and profile identity/revision/digest selections it is emitted
-  beside are retained under FR-116 Behavior, which requires the adapter to
-  "refuse definition/profile identity, revision, or digest drift rather than
-  emit a mapping under a current default"; those digests carry domains selected
-  under `ix://agent-ix/quire-specification/FR-201`.
+  The definition and profile identity selections it is emitted beside are
+  retained under FR-116 Behavior, which requires the adapter to "refuse a
+  definition or profile identity other than the selected one rather than emit a
+  mapping under a current default".
 
 ## Acceptance Criteria
 
@@ -69,8 +68,6 @@ is not reachable by omission.
 
 - [FR-116](../../functional/observation/FR-116-map-observation-results-to-consumers.md)
   establishes the closed classification set and the no-promotion rules.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
-  domain rule for the selections emitted beside a classification.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 - [Observation result consumer and output-mapping contract](../../../proposals/quire-v1/observation-output-mapping-contract.md)

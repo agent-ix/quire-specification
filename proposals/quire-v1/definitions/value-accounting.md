@@ -45,6 +45,7 @@ completed result. That record is closed; its members are defined under
 | lookup | `lookup.key`, then `lookup.result-retain` when a value is returned, for each `lookup<T>(p, r) absent m` |
 | population | one `population.visit` before each member walked by `allInstances<T>(p)`, conforming or not, then `collection.bound` and `collection.result-retain` |
 | dispatch | `dispatch.select` for each dispatched `receiver.name(args)` call, followed by the callee's `function.call` |
+| frame | for each field write of an invocation, in ascending (object reference key, field declaration key) order: one `frame.write` before the write is tested against the frame's `modifies` grants, then one `frame.redefines-link` before each `redefines` link followed from the written member, stopping at the first member a `modifies` entry names or at a member with no `redefines` link |
 
 Each charge is the following exact `{ counter: amount }` vector. A semantic-size
 counter records the high-water maximum, not a sum: admitting amount `n` changes
@@ -131,11 +132,13 @@ unmaterialized result.
 | `lookup.result-retain` | `value_occurrences=occ(result)`, `result_units += occ(result)`: one for a `Reference<T>` or `none`, two for a present `Option<Reference<T>>` |
 | each `population.visit` | no size-counter change; `work_units += 1` |
 | `dispatch.select` | `value_occurrences=c`, where `c` is the number of linked candidates of the called effective operation; `work_units += c` instead of one |
+| each `frame.write` | no size-counter change; `work_units += 1` |
+| each `frame.redefines-link` | no size-counter change; `work_units += 1` |
 
 For each non-repeated row, `work_units += 1`; repeated identity, edge, rational,
 normalization-output, equality-pair, function-call, collection-element,
-collection-visit, model-deref, model-navigate, graph-expand, graph-edge and
-population-visit rows add one per event, and `equality.plan-form`,
+collection-visit, model-deref, model-navigate, graph-expand, graph-edge,
+population-visit, frame-write and frame-redefines-link rows add one per event, and `equality.plan-form`,
 `collection.member-walk`, `collection.member-test` and `dispatch.select` add
 their stated amounts.
 Retaining a paired quotient/remainder costs two result units; a composite retained value costs

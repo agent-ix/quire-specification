@@ -56,7 +56,7 @@ CLI, or backend conformance.
 
 | Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
 | --- | --- | --- | --- |
-| FR-110 | FR-110-AC-1, FR-110-AC-2, FR-110-AC-3, FR-110-AC-4, FR-110-AC-5, FR-110-AC-6 | TC-140 | 🚧 Planned |
+| FR-110 | FR-110-AC-1, FR-110-AC-2, FR-110-AC-3, FR-110-AC-4, FR-110-AC-5 | TC-140 | 🚧 Planned |
 | FR-111 | FR-111-AC-1, FR-111-AC-2, FR-111-AC-3, FR-111-AC-4, FR-111-AC-5, FR-111-AC-6, FR-111-AC-7 | TC-141 | 🚧 Planned |
 | FR-262 | FR-262-AC-1, FR-262-AC-2, FR-262-AC-3, FR-262-AC-4, FR-262-AC-5, FR-262-AC-6, FR-262-AC-7 | TC-141 | 🚧 Planned |
 | FR-112 | FR-112-AC-1, FR-112-AC-2, FR-112-AC-3, FR-112-AC-4, FR-112-AC-5, FR-112-AC-6, FR-112-AC-7 | TC-142 | 🚧 Planned |
@@ -70,7 +70,7 @@ CLI, or backend conformance.
 | FR-296 | FR-296-AC-1, FR-296-AC-2, FR-296-AC-3, FR-296-AC-4, FR-296-AC-5 | TC-140, TC-143 | 🚧 Planned |
 | FR-289 | FR-289-AC-1, FR-289-AC-2, FR-289-AC-3, FR-289-AC-4, FR-289-AC-5 | TC-143, TC-115 | 🚧 Planned |
 | FR-260 | FR-260-AC-1, FR-260-AC-2, FR-260-AC-3, FR-260-AC-4 | TC-140 | 🚧 Planned |
-| FR-261 | FR-261-AC-1, FR-261-AC-2, FR-261-AC-3, FR-261-AC-4 | TC-140 | 🚧 Planned |
+| FR-261 | FR-261-AC-1, FR-261-AC-2, FR-261-AC-3 | TC-140 | 🚧 Planned |
 | FR-263 | FR-263-AC-1, FR-263-AC-2, FR-263-AC-3, FR-263-AC-4, FR-263-AC-5 | TC-142 | 🚧 Planned |
 | FR-264 | FR-264-AC-1, FR-264-AC-2, FR-264-AC-3, FR-264-AC-4, FR-264-AC-5 | TC-142 | 🚧 Planned |
 | FR-265 | FR-265-AC-1, FR-265-AC-2, FR-265-AC-3, FR-265-AC-4, FR-265-AC-5 | TC-142 | 🚧 Planned |

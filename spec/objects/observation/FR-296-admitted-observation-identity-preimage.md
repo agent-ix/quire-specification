@@ -34,7 +34,7 @@ canonical UTF-8 bytes of:
 }
 ```
 
-The preimage includes the source revision/schema identity, binding and subject
+The preimage includes the source schema identity, binding and subject
 identities, typed valuation and units, visibility, event/ingestion time facts,
 declared causal relation, clock interpretation, and every provenance field in
 the selected closed observation contract. It excludes only `observationId`.

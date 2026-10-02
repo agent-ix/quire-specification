@@ -14,7 +14,7 @@ relationships:
 
 When delivering an observation assessment to an executable or exported consumer,
 the consumer adapter SHALL retain the requested subject, capability, immutable
-source/binding/progress/definition/profile identity-revision-digest selections,
+source/binding/progress/definition/profile identity selections,
 assessment execution, decision-scope progress, decision-scope closure,
 surrounding-execution progress, surrounding-execution closure,
 complete-global-conformance closure, truth, settlement basis, exact decision
@@ -29,8 +29,8 @@ Boolean success. It SHALL consume A-owned interchange identities and B-owned
 result semantics; codegen and export mappings do not become clause authorities.
 It SHALL preserve a late contradiction's prior-result identity and linked
 superseding/invalidating result without rewriting historical bytes. It SHALL
-refuse definition/profile identity, revision, or digest drift rather than emit a
-mapping under a current default.
+refuse a definition or profile identity other than the selected one rather than
+emit a mapping under a current default.
 
 The adapter SHALL retain the four decision-scope/surrounding-execution
 progress/closure axes with their exact scope, authority and boundary identities

@@ -17,7 +17,7 @@ relationships:
 
 ## Description
 
-When a record is admitted as an observation, the observation binder SHALL retain the exact observation identity, source revision/schema identity, declared binding identity, field units, selected subject identity, and whether the record is internal or externally observed, or refuse the record with a typed cause.
+When a record is admitted as an observation, the observation binder SHALL retain the exact observation identity, source schema identity, declared binding identity, field units, selected subject identity, and whether the record is internal or externally observed, or refuse the record with a typed cause.
 
 FR-110 states the retained set as one list and makes refusal the only alternative
 to retaining it.
@@ -27,7 +27,7 @@ to retaining it.
 | Property | Source | Note |
 | --- | --- | --- |
 | Observation identity | FR-110 Description | "the exact observation identity". |
-| Source revision/schema identity | FR-110 Description | Retained exactly; a stale schema identity "is refused with the affected binding identity" (FR-110-AC-1). |
+| Source schema identity | FR-110 Description | Retained exactly; a wrong schema identity "is refused with the affected binding identity" (FR-110-AC-1). |
 | Declared binding identity | FR-110 Description | Retained exactly; the binding itself is typed by [FR-261](FR-261-observation-binding.md). |
 | Field units | FR-110 Description | A "compatible-looking field" is not a unit (FR-110 Behavior). |
 | Selected subject identity | FR-110 Description | The linked subject of FR-110-AC-4. |
@@ -62,10 +62,8 @@ and visibility provenance."
   refused, never false or an implicit option-none." Absence never becomes a
   default, an empty value or an implicit option-none.
 - **Digest domain** — the observation identity uses `quire.verification.jcs`
-  under FR-296. The binding-contract byte digest it is admitted under carries a domain
-  selected under `ix://agent-ix/quire-specification/FR-201`
-  ([FR-261](FR-261-observation-binding.md)); an identity crossing domains is
-  unequal regardless of byte equality.
+  under FR-296; an identity crossing domains is unequal regardless of byte
+  equality.
 
 ## Acceptance Criteria
 
