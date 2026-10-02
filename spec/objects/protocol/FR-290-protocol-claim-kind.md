@@ -16,6 +16,14 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-368
     type: references
+  - target: ix://agent-ix/quire-specification/FR-390
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-395
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-396
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-397
+    type: references
 ---
 # FR-290: Capability kind vocabulary
 
@@ -98,14 +106,19 @@ as a function application or a `case` expression, adds no kind.
 | Frame obligation over `modifies`, `creates` and `deletes` sets | `operation-contract` |
 | Replay of one finite execution against state or protocol semantics | `finite-replay` |
 | Temporal requirement under a finite-trace or infinite-trace profile | `temporal-satisfaction` |
+| State-graph claim (`possible`, `always possible`, `unique path`) over a model subject ([FR-390](../../functional/analysis/FR-390-analyze-state-graph-claims.md)) | `temporal-satisfaction`; its form is an obligation form |
+| `hyper` clause over `behaviours` of model subjects ([FR-395](../../functional/analysis/FR-395-analyze-hyperproperties-over-behaviours.md)) | `temporal-satisfaction`; its form is an obligation form |
+| Model claim of a `relation` clause over model operations ([FR-397](../../functional/analysis/FR-397-check-step-relations-over-model-operations.md)) | `temporal-satisfaction`; its form is an obligation form |
+| Code claim of a `relation` clause over model operations whose every operation has an implementation binding | `operation-contract`; one claim per relation, with every declared invariant of each execution's model as its pre-state premise |
 | Refinement between two protocols | `refinement` |
 | Refinement between two operation contracts or state models | `operation-contract`; each implication between the two contracts' clauses is one `operation-contract` claim |
 | FR-353 abstraction relation | none; it is a premise of the `operation-contract` claim it binds |
 | Other protocol analysis claim ([FR-060](../../functional/protocol/FR-060-separate-protocol-claims.md)) | its `protocol`-family member |
 
 Unbounded quantification (FR-346), induction (FR-347), compositional discharge
-(FR-348) and mathematical integers (FR-147) are obligation forms inside a claim
-that has one kind from this table. The selected backend's negotiation arm
+(FR-348), mathematical integers (FR-147), the three state-graph forms (FR-390)
+and the hyperproperty and step-relation forms (FR-396) are obligation forms
+inside a claim that has one kind from this table. The selected backend's negotiation arm
 settles the obligation forms it discharges.
 
 ## Advertised mode
@@ -263,7 +276,7 @@ backend identity, then by the manifest's RFC 8785 bytes.
 | FR-290-AC-2 | Every pair of claim kinds may retain independent execution and outcome states without promotion or premise transfer. | Test (TC-060, TC-271) |
 | FR-290-AC-3 | A non-global claim cannot carry the complete-global-conformance premise set as evidence for its own success. | Test (TC-060, TC-061, TC-271) |
 | FR-290-AC-4 | An item whose candidate set is empty settles `unsupported` with a warning naming its capability kind, and the named backend when there is one. | Test (TC-060, TC-271) |
-| FR-290-AC-5 | Each claim form in the claim-form assignment table requires exactly its listed kind; an expression nested in a clause adds no kind; a `case` exhaustiveness obligation and an FR-353 abstraction relation request no backend. | Test (TC-271) |
+| FR-290-AC-5 | Each claim form in the claim-form assignment table requires exactly its listed kind; an expression nested in a clause adds no kind; a `case` exhaustiveness obligation and an FR-353 abstraction relation request no backend. | Test (TC-271, TC-330, TC-342, TC-343) |
 | FR-290-AC-6 | For each row of the advertised-mode table, negotiation settles the listed disposition; an unbounded extent on a bounded-only advertisement never settles `supported`; an item with no extent classification settles `invalid-request`. | Test (TC-271) |
 | FR-290-AC-7 | Each row of the candidate table settles its listed disposition and cause; an item with two or more candidates and no named backend settles `invalid-request` naming every candidate in candidate order, identically under every registration order; a malformed registration is refused and keyed by backend identity. | Test (TC-271) |
 | FR-290-AC-8 | A routed item whose tool is missing, or whose probe errors or exceeds its limit, records the FR-331 result `unsupported` with cause `unsupported_projection`/`tool-unavailable` naming the kind and backend; its disposition stays `supported`, and no other registered candidate or mode runs; a tool that becomes unavailable after a passing probe records the FR-331 result `failed` with the same cause. | Test (TC-271) |

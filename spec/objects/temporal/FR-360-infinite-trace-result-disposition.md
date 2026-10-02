@@ -14,12 +14,17 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-363
     type: references
+  - target: ix://agent-ix/quire-specification/FR-391
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-399
+    type: references
 ---
 # FR-360: Infinite-trace result disposition vocabulary
 
 ## Description
 
-When an infinite-trace analysis result is reported, the strict reader SHALL
+When an infinite-trace, state-graph or model-subject hyperproperty analysis
+result is reported, the strict reader SHALL
 match its label as an exact string from this closed vocabulary and SHALL read
 each label only through the exact assessment-execution ([FR-241](../protocol/FR-241-assessment-execution-disposition.md)),
 truth ([FR-242](../protocol/FR-242-truth-disposition.md)) and settlement-basis
@@ -27,6 +32,15 @@ truth ([FR-242](../protocol/FR-242-truth-disposition.md)) and settlement-basis
 FR-161 states the vocabulary directly: "Proved, refuted, inconclusive,
 unsupported or failed result with premises, witness/counterexample and
 provenance."
+
+## Scope
+
+The vocabulary covers infinite-trace results, state-graph results
+([FR-391](../../functional/analysis/FR-391-settle-state-graph-claims.md)) and
+hyperproperty and step-relation results over a model subject
+([FR-399](../../functional/analysis/FR-399-settle-hyperproperty-results.md)).
+Each label keeps the exact FR-241, FR-242 and FR-243 combination below for
+every one of them.
 
 ## Values
 

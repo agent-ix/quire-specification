@@ -7,6 +7,12 @@ relationships:
     type: implements
   - target: ix://agent-ix/quire-specification/AD-009
     type: references
+  - target: ix://agent-ix/quire-specification/FR-395
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-397
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-398
+    type: references
 ---
 
 # FR-191: Analyze relational and finite-trace-set hyperproperties
@@ -19,7 +25,8 @@ explicitly.
 
 ## Inputs
 
-Checked relational syntax, paired/multiple execution subjects, trace domains,
+Checked relational syntax, paired/multiple execution subjects, trace domains
+(declared finite trace populations or model-subject behaviours),
 quantifier prefix, alignment relation and finite analysis bounds.
 
 ## Outputs
@@ -45,6 +52,24 @@ total relation for every value the formula reads; an absent or ambiguous match
 is incomplete. Declassification and environment assumptions restrict the
 population before quantification and are part of result identity.
 
+## Model subjects
+
+A trace variable's domain may instead be the fair behaviours of a model
+subject: a `hyper` clause over `behaviours` binds each variable to a model
+alias, and the variable ranges over that subject's behaviours that satisfy
+its own fairness set
+([FR-395](FR-395-analyze-hyperproperties-over-behaviours.md)). Such a domain
+is closed by the subject, not by a declared trace population. Lockstep
+alignment, which pairs positions by their index in each model's step
+sequence, and projection alignment on the steps of unlisted operations
+([FR-398](FR-398-align-hyperproperty-traces-on-a-projection.md)) are explicit
+total alignments over behaviours. A `match` block restricts the universal and
+existential domains before quantification, as declassification and
+environment assumptions restrict a population. An execution variable may
+range over the reachable transitions of a model operation
+([FR-397](FR-397-check-step-relations-over-model-operations.md)). Objects are
+correlated across traces by universe key, never by local name.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -54,6 +79,7 @@ population before quantification and are part of result identity.
 | FR-191-AC-3 | Missing trace closure/alignment or exceeded domain bounds returns incomplete/requires-bound. | Test (TC-213) |
 | FR-191-AC-4 | Universal/existential quantifier order is preserved and ranges over exact trace identities from the closed population. | Test (TC-213) |
 | FR-191-AC-5 | An absent or ambiguous alignment returns incomplete without comparing unrelated positions by index or name. | Test (TC-213) |
+| FR-191-AC-6 | A hyper clause over `behaviours` quantifies over the fair behaviours of the subject each variable's alias names, compares them only at lockstep or projected positions and only on matched steps, and preserves quantifier order in its result and identity. | Test (TC-338, TC-339, TC-346) |
 
 ## Dependencies
 

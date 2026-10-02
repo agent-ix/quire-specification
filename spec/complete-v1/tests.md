@@ -915,14 +915,16 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-180 | FR-180-AC-4 | TC-209 | planned |
 | FR-180 | FR-180-AC-5 | TC-209 | planned |
 | FR-181 | FR-181-AC-4 | TC-210 | planned |
-| FR-181 | FR-181-AC-5 | TC-210 | planned |
+| FR-181 | FR-181-AC-5 | TC-210, TC-335 | planned |
 | FR-181 | FR-181-AC-6 | TC-210 | planned |
+| FR-181 | FR-181-AC-13 | TC-335 | planned |
 | FR-182 | FR-182-AC-4 | TC-211 | planned |
 | FR-182 | FR-182-AC-5 | TC-211 | planned |
 | FR-190 | FR-190-AC-4 | TC-212 | planned |
 | FR-190 | FR-190-AC-5 | TC-212 | planned |
 | FR-191 | FR-191-AC-4 | TC-213 | planned |
 | FR-191 | FR-191-AC-5 | TC-213 | planned |
+| FR-191 | FR-191-AC-6 | TC-338, TC-339, TC-346 | planned |
 | FR-192 | FR-192-AC-4 | TC-214 | planned |
 | FR-192 | FR-192-AC-5 | TC-214 | planned |
 | FR-192 | FR-192-AC-6 | TC-214 | planned |
@@ -1383,6 +1385,108 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-462 | FR-462-AC-4 | TC-428 | planned |
 | FR-462 | FR-462-AC-5 | TC-428 | planned |
 | FR-462 | FR-462-AC-6 | TC-428 | planned |
+| FR-331 | FR-331-AC-17 | TC-336, TC-339 | planned |
+| FR-390 | FR-390-AC-1 | TC-330 | planned |
+| FR-390 | FR-390-AC-2 | TC-330 | planned |
+| FR-390 | FR-390-AC-3 | TC-331, TC-332 | planned |
+| FR-390 | FR-390-AC-4 | TC-333 | planned |
+| FR-390 | FR-390-AC-5 | TC-332 | planned |
+| FR-390 | FR-390-AC-6 | TC-330 | planned |
+| FR-390 | FR-390-AC-7 | TC-330 | planned |
+| FR-391 | FR-391-AC-1 | TC-331, TC-336 | planned |
+| FR-391 | FR-391-AC-2 | TC-331, TC-332, TC-334 | planned |
+| FR-391 | FR-391-AC-3 | TC-333 | planned |
+| FR-391 | FR-391-AC-4 | TC-332, TC-333, TC-334 | planned |
+| FR-391 | FR-391-AC-5 | TC-334 | planned |
+| FR-391 | FR-391-AC-6 | TC-331, TC-336 | planned |
+| FR-391 | FR-391-AC-7 | TC-334 | planned |
+| FR-391 | FR-391-AC-8 | TC-334 | planned |
+| FR-391 | FR-391-AC-9 | TC-336 | planned |
+| FR-391 | FR-391-AC-10 | TC-349 | planned |
+| FR-391 | FR-391-AC-11 | TC-349 | planned |
+| FR-391 | FR-391-AC-12 | TC-336, TC-349 | planned |
+| FR-391 | FR-391-AC-13 | TC-334, TC-336 | planned |
+| FR-391 | FR-391-AC-14 | TC-349 | planned |
+| FR-392 | FR-392-AC-1 | TC-336 | planned |
+| FR-392 | FR-392-AC-2 | TC-336 | planned |
+| FR-392 | FR-392-AC-3 | TC-331, TC-336 | planned |
+| FR-392 | FR-392-AC-4 | TC-331, TC-336 | planned |
+| FR-392 | FR-392-AC-5 | TC-336 | planned |
+| FR-392 | FR-392-AC-6 | TC-336 | planned |
+| FR-392 | FR-392-AC-7 | TC-336 | planned |
+| FR-392 | FR-392-AC-8 | TC-336 | planned |
+| FR-392 | FR-392-AC-9 | TC-336 | planned |
+| FR-393 | FR-393-AC-1 | TC-335, TC-349 | planned |
+| FR-393 | FR-393-AC-2 | TC-331, TC-335 | planned |
+| FR-393 | FR-393-AC-3 | TC-335 | planned |
+| FR-393 | FR-393-AC-5 | TC-335, TC-349 | planned |
+| FR-393 | FR-393-AC-4 | TC-335 | planned |
+| FR-394 | FR-394-AC-1 | TC-331, TC-335 | planned |
+| FR-394 | FR-394-AC-2 | TC-331, TC-332, TC-335 | planned |
+| FR-394 | FR-394-AC-3 | TC-333, TC-335 | planned |
+| FR-394 | FR-394-AC-4 | TC-335 | planned |
+| FR-394 | FR-394-AC-5 | TC-335 | planned |
+| FR-394 | FR-394-AC-6 | TC-335 | planned |
+| FR-394 | FR-394-AC-7 | TC-349 | planned |
+| FR-394 | FR-394-AC-8 | TC-342 | planned |
+| FR-394 | FR-394-AC-9 | TC-342 | planned |
+| FR-395 | FR-395-AC-1 | TC-337 | planned |
+| FR-395 | FR-395-AC-2 | TC-337, TC-338 | planned |
+| FR-395 | FR-395-AC-3 | TC-338 | planned |
+| FR-395 | FR-395-AC-4 | TC-339 | planned |
+| FR-395 | FR-395-AC-5 | TC-340 | planned |
+| FR-395 | FR-395-AC-6 | TC-340 | planned |
+| FR-395 | FR-395-AC-7 | TC-341 | planned |
+| FR-395 | FR-395-AC-8 | TC-341 | planned |
+| FR-395 | FR-395-AC-9 | TC-337 | planned |
+| FR-395 | FR-395-AC-10 | TC-340 | planned |
+| FR-396 | FR-396-AC-1 | TC-342 | planned |
+| FR-396 | FR-396-AC-2 | TC-342 | planned |
+| FR-396 | FR-396-AC-3 | TC-342 | planned |
+| FR-396 | FR-396-AC-4 | TC-342 | planned |
+| FR-396 | FR-396-AC-5 | TC-342 | planned |
+| FR-396 | FR-396-AC-6 | TC-342 | planned |
+| FR-397 | FR-397-AC-1 | TC-343 | planned |
+| FR-397 | FR-397-AC-2 | TC-343 | planned |
+| FR-397 | FR-397-AC-3 | TC-343 | planned |
+| FR-397 | FR-397-AC-4 | TC-343 | planned |
+| FR-397 | FR-397-AC-5 | TC-343 | planned |
+| FR-397 | FR-397-AC-6 | TC-337 | planned |
+| FR-398 | FR-398-AC-1 | TC-344 | planned |
+| FR-398 | FR-398-AC-2 | TC-344 | planned |
+| FR-398 | FR-398-AC-3 | TC-337 | planned |
+| FR-398 | FR-398-AC-4 | TC-344 | planned |
+| FR-399 | FR-399-AC-1 | TC-338, TC-339, TC-340, TC-342 | planned |
+| FR-399 | FR-399-AC-2 | TC-339 | planned |
+| FR-399 | FR-399-AC-3 | TC-339 | planned |
+| FR-399 | FR-399-AC-4 | TC-343 | planned |
+| FR-399 | FR-399-AC-5 | TC-340 | planned |
+| FR-399 | FR-399-AC-6 | TC-338 | planned |
+| FR-399 | FR-399-AC-7 | TC-345 | planned |
+| FR-399 | FR-399-AC-8 | TC-348 | planned |
+| FR-399 | FR-399-AC-9 | TC-348 | planned |
+| FR-399 | FR-399-AC-10 | TC-348 | planned |
+| FR-400 | FR-400-AC-1 | TC-345, TC-348 | planned |
+| FR-400 | FR-400-AC-2 | TC-338, TC-339, TC-343, TC-344 | planned |
+| FR-400 | FR-400-AC-4 | TC-345, TC-348 | planned |
+| FR-400 | FR-400-AC-3 | TC-345 | planned |
+| FR-401 | FR-401-AC-1 | TC-338 | planned |
+| FR-401 | FR-401-AC-2 | TC-339 | planned |
+| FR-401 | FR-401-AC-3 | TC-345 | planned |
+| FR-401 | FR-401-AC-4 | TC-345 | planned |
+| FR-401 | FR-401-AC-5 | TC-344, TC-345 | planned |
+| FR-401 | FR-401-AC-6 | TC-343 | planned |
+| FR-401 | FR-401-AC-7 | TC-347 | planned |
+| FR-401 | FR-401-AC-8 | TC-348 | planned |
+| FR-401 | FR-401-AC-9 | TC-345 | planned |
+| FR-402 | FR-402-AC-1 | TC-346 | planned |
+| FR-402 | FR-402-AC-2 | TC-346 | planned |
+| FR-402 | FR-402-AC-3 | TC-346 | planned |
+| FR-402 | FR-402-AC-4 | TC-343, TC-346 | planned |
+| FR-403 | FR-403-AC-1 | TC-347 | planned |
+| FR-403 | FR-403-AC-2 | TC-347 | planned |
+| FR-403 | FR-403-AC-3 | TC-347 | planned |
+| FR-403 | FR-403-AC-4 | TC-347 | planned |
 
 ## Test Case Summary
 
@@ -1527,6 +1631,26 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-427 | The v2 body grammar fixes package depth by schema | Property | P0 | FR-322 | 🚧 Planned |
 | TC-428 | The plugin wire frames, identifies and settles every plugin run | Property | P0 | FR-462 | 🚧 Planned |
 | TC-429 | Value paths root and step through every witness location | Property | P0 | FR-207, FR-351 | 🚧 Planned |
+| TC-330 | State-graph claim syntax, refusals and routing | Property | P0 | FR-390, FR-290 | 🚧 Planned |
+| TC-331 | Possible claims on the ConfigVersion subject | Property | P0 | FR-390, FR-391, FR-392, FR-393, FR-394 | 🚧 Planned |
+| TC-332 | Always-possible claims on the game subject | Property | P0 | FR-390, FR-391, FR-394 | 🚧 Planned |
+| TC-333 | Unique-path claims and path counting | Property | P0 | FR-390, FR-391, FR-394 | 🚧 Planned |
+| TC-334 | State-graph partial runs, verdict map and reductions | Property | P0 | FR-391 | 🚧 Planned |
+| TC-335 | State-graph evidence wire and replay disagreements | Property | P0 | FR-393, FR-394, FR-181 | 🚧 Planned |
+| TC-336 | Witness sampling for possibility claims | Property | P0 | FR-392, FR-391, FR-331 | 🚧 Planned |
+| TC-337 | Hyperproperty and step-relation syntax, binding and refusals | Property | P0 | FR-395, FR-397, FR-398 | 🚧 Planned |
+| TC-338 | Noninterference in lockstep (universal hyperproperty) | Property | P0 | FR-395, FR-399, FR-400, FR-401, FR-191 | 🚧 Planned |
+| TC-339 | ∀∃ safety hyperproperty and the witness-set limit | Property | P0 | FR-395, FR-399, FR-400, FR-401, FR-191, FR-331 | 🚧 Planned |
+| TC-340 | Hyperproperty vacuity, terminal stutter and deadlock items | Property | P0 | FR-395, FR-399 | 🚧 Planned |
+| TC-341 | Per-variable fairness and mixed interval bodies | Property | P0 | FR-395 | 🚧 Planned |
+| TC-342 | Hyperproperty form classification, unsupported forms and single-existential claims | Property | P0 | FR-396, FR-399, FR-290, FR-394 | 🚧 Planned |
+| TC-343 | Step relations: model claims and code claims | Property | P0 | FR-397, FR-399, FR-400, FR-401, FR-402, FR-290 | 🚧 Planned |
+| TC-344 | Projection-aligned hyperproperty | Property | P0 | FR-398, FR-400, FR-401 | 🚧 Planned |
+| TC-345 | Hyper counterexample wire and replay refusals | Property | P0 | FR-400, FR-401, FR-399 | 🚧 Planned |
+| TC-346 | Hyperproperty claim body and obligation identity | Property | P0 | FR-402, FR-191 | 🚧 Planned |
+| TC-347 | Hyperproperty reductions and copy-swap symmetry | Property | P0 | FR-403, FR-401 | 🚧 Planned |
+| TC-348 | Undefined evaluation refutes a hyperproperty | Property | P0 | FR-399, FR-400, FR-401 | 🚧 Planned |
+| TC-349 | Undefined evaluation refutes a state-graph claim | Property | P0 | FR-391, FR-393, FR-394 | 🚧 Planned |
 
 ## Integration Test Matrix
 

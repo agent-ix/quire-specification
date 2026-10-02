@@ -13,6 +13,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-426
     type: references
+  - target: ix://agent-ix/quire-specification/FR-390
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-394
+    type: references
 ---
 
 # FR-181: Simulate finite composed executions reproducibly
@@ -36,7 +40,7 @@ requires-bound/incomplete/refused outcomes.
 ## Behavior
 
 The simulator distinguishes authored nondeterminism from unspecified input.
-Enumeration is deterministic; sampling records the seed and generator version.
+Enumeration is deterministic; sampling records its seed.
 Every trace is executable by the same domain runtimes. The simulator reads its inputs and emits traces and frontier records only; every transition it explores is a pure function of the simulator state key and the selected successor, and any external effect a model describes is represented as typed data in the trace. Exhaustion reports the
 unexplored frontier and cannot claim exhaustive success. Cancellation returns
 `incomplete` with cause `cancelled`/`caller-cancelled` and carries the
@@ -137,26 +141,42 @@ reads a terminal state by
 [FR-361](../temporal/FR-361-read-model-behaviours-as-temporal-traces.md):
 closed under a bounded profile, and extended by the terminal stutter step
 `{"type":"terminal-stutter"}` under the infinite-trace profile. Sampling draws from
-the same successor relation with a pinned counter-based generator; the
-recorded generator version is the
-`quire.simulation.sampler/v1` definition's DefinitionRef. An unbounded domain
+the same successor relation with the counter-based generator that the
+`quire.simulation.sampler/v1` definition defines; a sampled trace is named by
+its seed and trace index. An unbounded domain
 or population returns the I13 `requires-bound` per-item negotiation
 disposition before exploration begins; `requires-bound` is never an evaluator
 outcome. A trace records every transition identity and remains replayable
 without the simulator. The unexplored frontier contains state-key digests
 plus the resource limit that stopped expansion.
 
+## Exploration from a given state and the explored graph
+
+Exhaustive mode may start from a given state instead of the subject's initial
+states: the given state is the only initial state, and exploration, ordering,
+coalescing and limits are as above. Trap replay of a state-graph claim
+([FR-394](../analysis/FR-394-replay-state-graph-evidence.md)) explores the
+forward closure of a recorded state this way, unreduced.
+
+The explored graph is the set of explored states with every explored edge
+(source, transition identity, post-state) retained. It is the state graph over
+which state-graph claims ([FR-390](../analysis/FR-390-analyze-state-graph-claims.md))
+are evaluated. A state whose successors exploration has not fully computed is
+open, and every other explored state is closed
+([FR-391](../analysis/FR-391-settle-state-graph-claims.md)).
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-181-AC-1 | Enumeration covers each finite declared choice/schedule exactly under canonical ordering. | Test (TC-210) |
-| FR-181-AC-2 | Seeded sampling reproduces identical traces under the same ecosystem lock. | Test (TC-210) |
+| FR-181-AC-2 | Seeded sampling reproduces identical traces for the same seed and trace index. | Test (TC-210) |
 | FR-181-AC-3 | Missing bounds or exhausted work returns requires-bound/incomplete with the unexplored scope, and caller cancellation returns incomplete with cause cancelled/caller-cancelled and the unexplored frontier. | Test (TC-210) |
 | FR-181-AC-4 | Exhaustive exploration coalesces only equal complete state keys and visits successors in canonical breadth-first order; states differing only in NaN payload or zero sign have distinct state keys and remain distinct states, and a successor that violates an invariant is recorded rather than pruned. | Test (TC-210) |
-| FR-181-AC-5 | Every generated trace replays through the same native transition relation with the same terminal disposition. | Test (TC-210) |
+| FR-181-AC-5 | Every generated trace, and every state-graph witness path, replays through the same native transition relation with the same terminal disposition. | Test (TC-210, TC-335) |
 | FR-181-AC-6 | Exploring a model that describes external effects performs none of them: the effects appear only as typed trace data, and a request for evaluator I/O, mutation or an ambient store refuses with its source location. | Test (TC-210) |
 | FR-181-AC-7 | The same operation applied with the same arguments to two receivers yields two transition identities that differ only in `receiver`, ordered by their JCS bytes; a state with no enabled transition identity is recorded with no successor. | Test (TC-290) |
+| FR-181-AC-13 | Exhaustive exploration from a given state treats it as the only initial state, explores its forward closure in canonical breadth-first order under the request's limits, and retains every explored edge with each state's open or closed status. | Test (TC-335) |
 
 ## Dependencies
 
