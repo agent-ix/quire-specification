@@ -94,7 +94,7 @@ trace with no closed boundary.
 | FR-250-AC-2 | The same predicate values and numeric interval under two different members compare as two distinct temporal subjects. | Test |
 | FR-250-AC-3 | A clause with an absent profile selection compares only to absence and receives no default member. | Test |
 | FR-250-AC-5 | No TL evaluator profile appears as a member of this vocabulary. | Test |
-| FR-250-AC-6 | `quire.temporal.infinite-trace/v1` has no closed-boundary rule, admits closed-interval operators nested with unbounded ones, and selecting it is the sole way to admit the unbounded temporal operator grammar edition. | Test (TC-238, TC-298) |
+| FR-250-AC-6 | `quire.temporal.infinite-trace/v1` has no closed-boundary rule, admits closed-interval operators nested with unbounded ones, and admits the unbounded temporal operator grammar edition; the event-position false-extension, fixed-sample and timestamped-event members admit no unbounded operator. | Test (TC-238, TC-298) |
 
 ## Dependencies
 

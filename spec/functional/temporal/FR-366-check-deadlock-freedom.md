@@ -54,7 +54,7 @@ a declared model alias. `using` selects a declared value profile alias, as for
 every native declaration. A second `terminal` declaration for the same model
 alias refuses `ambiguous_declaration`/`ambiguous-name`, naming both.
 
-- `terminal T using v on M when { P }`: `P` is a total Boolean state predicate,
+- `terminal T using v on M when { P }`: `P` is a Boolean state predicate,
   read through the same clause evaluator as state clauses over a state's
   observation. A terminal state that satisfies `P` is intended. `P` classifies
   terminal states only: a state that satisfies `P` and has an enabled
@@ -92,6 +92,13 @@ counterexample of `kind: deadlock`: a finite prefix from an initial state to
 the deadlocked state. An expansion that meets an undecided contract
 conjunction settles `inconclusive`, cause `undecided-successor`.
 
+A `terminal when` predicate that evaluates undefined at a reachable state with
+no enabled transition settles the item `refuted`, cause
+`undefined-evaluation`, by the one model-side undefined rule of
+[FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md), with the FR-364
+undefined-evaluation counterexample ending at that state. The state is read
+neither as intended nor as a deadlock.
+
 ### Claims read every terminal state the same way
 
 A deadlock changes no authored claim's verdict. Every terminal state, intended
@@ -113,6 +120,7 @@ A `terminal` declaration changes only the deadlock-freedom item.
 | FR-366-AC-5 | Under infinite-trace, an authored `eventually holds(p)` claim over a model that deadlocks before `p` is refuted with the terminal stutter lasso, with and without a `terminal` declaration covering the deadlocked state. | Test (TC-297) |
 | FR-366-AC-6 | A second `terminal` declaration for one model alias refuses `ambiguous_declaration`/`ambiguous-name` naming both declarations. | Test (TC-297) |
 | FR-366-AC-7 | A state that satisfies `P` and enables a transition is not terminal and is never reported as a deadlock or as intended. | Test (TC-297) |
+| FR-366-AC-8 | A model whose `terminal when` predicate evaluates undefined at a reachable state with no enabled transition settles the deadlock-freedom item `refuted`, cause `undefined-evaluation`, with an undefined-evaluation counterexample ending at that state, never `proved` and never a `deadlock` counterexample. | Test (TC-305) |
 
 ## Dependencies
 

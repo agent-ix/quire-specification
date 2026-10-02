@@ -1183,6 +1183,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-363 | FR-363-AC-6 | TC-293 | planned |
 | FR-363 | FR-363-AC-7 | TC-302 | planned |
 | FR-363 | FR-363-AC-8 | TC-305 | planned |
+| FR-363 | FR-363-AC-9 | TC-305 | planned |
 | FR-364 | FR-364-AC-1 | TC-295, TC-297 | planned |
 | FR-364 | FR-364-AC-2 | TC-295 | planned |
 | FR-364 | FR-364-AC-3 | TC-293, TC-295 | planned |
@@ -1191,6 +1192,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-364 | FR-364-AC-6 | TC-295, TC-297 | planned |
 | FR-364 | FR-364-AC-7 | TC-200 | planned |
 | FR-364 | FR-364-AC-8 | TC-305 | planned |
+| FR-364 | FR-364-AC-9 | TC-295 | planned |
 | FR-365 | FR-365-AC-1 | TC-296 | planned |
 | FR-365 | FR-365-AC-2 | TC-296 | planned |
 | FR-365 | FR-365-AC-3 | TC-296 | planned |
@@ -1204,6 +1206,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-366 | FR-366-AC-5 | TC-297 | planned |
 | FR-366 | FR-366-AC-6 | TC-297 | planned |
 | FR-366 | FR-366-AC-7 | TC-297 | planned |
+| FR-366 | FR-366-AC-8 | TC-305 | planned |
 | FR-367 | FR-367-AC-1 | TC-238, TC-298 | planned |
 | FR-367 | FR-367-AC-2 | TC-298 | planned |
 | FR-367 | FR-367-AC-3 | TC-298 | planned |
@@ -1348,7 +1351,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-302 | Temporal request members and obligation identity | Property | P0 | FR-368, FR-331, FR-363, FR-366 | 🚧 Planned |
 | TC-303 | Checked-package temporal clause body and operation identities | Property | P0 | FR-370, FR-322 | 🚧 Planned |
 | TC-304 | Strong-fairness hint on a reproduced refutation | Property | P0 | FR-369 | 🚧 Planned |
-| TC-305 | Undefined evaluation refutes a model claim | Property | P0 | FR-361, FR-363, FR-364, FR-365 | 🚧 Planned |
+| TC-305 | Undefined evaluation refutes a model claim | Property | P0 | FR-361, FR-363, FR-364, FR-365, FR-366 | 🚧 Planned |
 
 ## Integration Test Matrix
 

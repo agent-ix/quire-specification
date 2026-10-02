@@ -100,15 +100,17 @@ state at which the property's monitor rejects.
 
 ### Undefined evaluation
 
-A product state at which the claim evaluates undefined
+A product state at which an expression evaluates undefined
 ([FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md)) is a
 first-phase violation. The first phase explores the product in FR-181
 canonical breadth-first order and finds undefined states, rejecting states and
 the deadlocked states of a deadlock item. Among those it found, the canonical
 counterexample is the one with the shortest prefix; at equal length, the state
-discovered first in FR-181 canonical breadth-first order wins. When an
-undefined state wins, the counterexample is the canonical breadth-first path
-to it, with an `undefined_evaluation` kind (FR-364).
+discovered first in FR-181 canonical breadth-first order wins. At one state
+that is both undefined and rejecting, the undefined evaluation is reported.
+When an undefined state wins, the counterexample is the canonical
+breadth-first path to it, with the undefined-evaluation envelope as its kind
+(FR-364).
 
 The second phase, which searches for a passing component of a liveness item,
 runs only when the first phase found no undefined state. An undefined state
@@ -125,7 +127,7 @@ undefined state.
 | FR-365-AC-3 | The greedy walk performs at most one breadth-first search per obligation plus one, and on the TC-293 ConfigVersion subject under `fair weak whole` its loop is three `upd(a)` steps from the initial state with an empty stem. | Test (TC-296) |
 | FR-365-AC-4 | An SCC that fails a strong constraint is refined by removing every state at which it is enabled, and a fair accepting cycle in the remainder is found, past more than one level of refinement. | Test (TC-300) |
 | FR-365-AC-5 | The canonical deadlock counterexample is the canonical breadth-first path to the first deadlocked state. | Test (TC-297) |
-| FR-365-AC-6 | An undefined state ranks as a first-phase violation: the canonical counterexample is the shortest prefix to an undefined, rejecting or deadlocked state, ties broken by canonical breadth-first discovery order, and a winning undefined state yields the canonical breadth-first path to it with an `undefined_evaluation` kind; a liveness item with a reachable undefined state is refuted by that state and its liveness phase never runs, even when a passing component's stem is shorter. | Test (TC-305) |
+| FR-365-AC-6 | An undefined state ranks as a first-phase violation: the canonical counterexample is the shortest prefix to an undefined, rejecting or deadlocked state, ties broken by canonical breadth-first discovery order, and a winning undefined state yields the canonical breadth-first path to it with the undefined-evaluation envelope as its kind; a state that is both undefined and rejecting yields the undefined-evaluation counterexample; a liveness item with a reachable undefined state is refuted by that state and its liveness phase never runs, even when a passing component's stem is shorter. | Test (TC-305) |
 
 ## Dependencies
 

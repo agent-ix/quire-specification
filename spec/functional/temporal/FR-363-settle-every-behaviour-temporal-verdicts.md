@@ -19,7 +19,9 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-091
     type: references
-  - target: ix://agent-ix/quire-specification/FR-272
+  - target: ix://agent-ix/quire-specification/FR-364
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-366
     type: references
 ---
 
@@ -59,7 +61,8 @@ A formula **holds for a subject** exactly when the trace evaluator returns true
 on every admitted behaviour: every behaviour under a bounded profile, and every
 behaviour that satisfies the fairness set under infinite-trace. A
 **refutation** is one admitted behaviour on which the evaluator returns false,
-or on which the claim evaluates undefined at a position the evaluator reads.
+or on which an expression the analysis evaluates is undefined ("Undefined
+evaluation" below).
 
 ### Property forms
 
@@ -95,7 +98,7 @@ position of every behaviour; it is an unbounded safety property.
 | Bounded-complete to `k` | a bounded `on origin` claim unrolled to depth `k >= h`, so every behaviour is decided | `proved` | `closed-scope` | `proved` | proof basis `bounded-complete`, depth `k` |
 | Inductive at `k` | the property holds in the first `k` steps of every behaviour, and any `k` consecutive states of the declared types that satisfy it have only satisfying successors | `proved` | `decisive-witness` | `proved` | proof basis `inductive`, depth `k` |
 | Refuted | a counterexample that reproduced by replay ([FR-364](FR-364-replay-temporal-counterexamples.md)) | `refuted` | `decisive-counterexample` | `refuted` | none |
-| Refuted, undefined evaluation | the claim evaluates undefined at a position of an admitted behaviour, and a counterexample ending at that position reproduced by replay ([FR-364](FR-364-replay-temporal-counterexamples.md)) | `refuted` | `decisive-counterexample` | `refuted` | cause `undefined-evaluation`, with `where` and `cause` |
+| Refuted, undefined evaluation | the claim, a guard, a `terminal when` predicate or a state constraint evaluates undefined at a position of an admitted behaviour, and a counterexample ending at that position reproduced by replay ([FR-364](FR-364-replay-temporal-counterexamples.md)) | `refuted` | `decisive-counterexample` | `refuted` | cause `undefined-evaluation`, with `where` and `cause` |
 | Bound reached at `k` | the analysis completed every depth up to `k` and found no counterexample of length at most `k` | `inconclusive` | `unsettled` | `inconclusive` | cause `bound-reached`, depth `k` |
 | Inconclusive, other | `induction-not-closed` with depth `k`: the base case holds to `k` and the step case has a counterexample to induction; `undecided-successor`: a contract conjunction of the successor relation is undecided (defined below), so the successor relation is not exactly known; `no-initial-state`: the subject has no initial state; `replay-parity`: replay disagreed with the engine (FR-364) | `inconclusive` | `unsettled` | `inconclusive` | that cause |
 | Stopped | a run limit stopped the analysis before it completed its method: state, transition or automaton-state limit, work meter, time, cancellation | `failed`, execution `resource-incomplete` | `unavailable` | `incomplete` | the limit that stopped it, its value and the request member that raises it |
@@ -106,30 +109,47 @@ basis is carried only on a `proved` result.
 
 ### Undefined evaluation
 
-The claim **evaluates undefined** at a position when an expression the trace
-evaluator reads at that position, through a `holds` atom or a state predicate,
-returns the kernel's undefined value: an evaluation with no value and a
-catalogued reason, such as `lookup<T>(p, r) absent undefined` at a key the
-population does not hold (reason `absent-key`).
+An expression **evaluates undefined** when it returns the kernel's undefined
+value: an evaluation with no value and a catalogued reason, such as
+`lookup<T>(p, r) absent undefined` at a key the population does not hold
+(reason `absent-key`). This one rule covers every expression an analysis of a
+model subject evaluates at a state:
 
-When the claim evaluates undefined at a position of an admitted behaviour, the
+- the claim, read at a position through a `holds` atom or a state predicate;
+- an operation's guard, its effective precondition, evaluated for a candidate
+  transition at its pre-state;
+- the `terminal when` predicate of the model's `terminal` declaration
+  ([FR-366](FR-366-check-deadlock-freedom.md)), evaluated at a state with no
+  enabled transition;
+- a state constraint that restricts the subject's explored states.
+
+When any of them evaluates undefined at a state of an admitted behaviour, the
 analyzer SHALL settle the item `refuted`, basis `decisive-counterexample`,
-FR-331 result `refuted`, with cause `undefined-evaluation` carrying:
+FR-331 result `refuted`, with the FR-331 result cause `undefined-evaluation`
+carrying:
 
 - `where`: the position, the `quire.simulation.state-key/v1` digest of the
-  state at that position, and the source locus of the expression that has no
-  value;
+  state at that position (`state_key`), the source locus of the expression
+  that has no value, and, for a guard, the FR-181 transition identity whose
+  guard it is;
 - `cause`: the undefined value's catalogued reason.
 
-This rule binds every proof engine that settles a claim over a model subject:
-explicit-state and bounded model checking, hyperproperty analysis, statistical
-and exact probabilistic analysis, and timed analysis. Each engine's `where`
-names its own evaluation point: a state, a tuple of behaviours and their
-positions, a sample and its position, or a timed state. A false evaluation and
-an undefined evaluation are both refuting evidence: an engine reports the
-first refuting evidence it finds, in either form, and its counterexample ends
-at that evidence. The cause is the native-diagnostics `undefined_expression`
-cause `undefined-evaluation` ([FR-272](../../objects/foundation/FR-272-typed-diagnostic-cause.md)).
+An undefined guard is never read as a disabled transition, and an undefined
+`terminal when` predicate never as a non-terminal state. A guard, `terminal
+when` predicate or state constraint belongs to the subject, so its undefined
+evaluation refutes every item over the subject whose analysis reaches that
+state. The counterexample is
+the [FR-364](FR-364-replay-temporal-counterexamples.md) undefined-evaluation
+counterexample ending at that state.
+
+This rule binds every engine that settles a claim over a model subject. Each
+engine's `where` names its own evaluation point with the FR-364 key names. A
+false evaluation and an undefined evaluation are both refuting evidence: an
+engine reports the first refuting evidence it finds, in either form, and its
+counterexample ends at that evidence. At one state, an undefined evaluation
+precedes a false one. Statistical analysis reports the same evidence in its
+own result form: a sampled behaviour on which an expression evaluates
+undefined is a rejection, `measured: rejected`, cause `undefined-evaluation`.
 An undefined evaluation adds no label, basis or result value.
 
 ### Undecided successor
@@ -141,8 +161,8 @@ the clause evaluator refuses it or returns an incomplete outcome, for example
 because an observation the contract reads is unavailable or incomplete. The
 successor relation is then not exactly known, and the item settles
 `inconclusive`, cause `undecided-successor`. An undecided contract is not an
-undefined evaluation of the claim: a claim expression that returns the
-kernel's undefined value refutes the claim by the rule above.
+undefined evaluation: a guard or claim expression that returns the kernel's
+undefined value refutes by the rule above.
 
 ### Length and depth
 
@@ -174,6 +194,7 @@ universe is joined only to the request that names that universe.
 | FR-363-AC-6 | A bounded `on origin` claim with horizon `h` unrolled to `k >= h` with no counterexample settles `proved`, proof basis `bounded-complete`, depth `k`; a bounded claim refuted over a model returns a finite prefix covering the horizon from the refuted activation or ending at a terminal state. | Test (TC-293) |
 | FR-363-AC-7 | A verdict carries its subject; a verdict over one universe never settles an item whose request names a different universe. | Test (TC-302) |
 | FR-363-AC-8 | A claim that evaluates undefined at a reachable position settles `refuted`, basis `decisive-counterexample`, FR-331 result `refuted`, cause `undefined-evaluation` whose `where` names the position, its state-key digest and the expression's locus and whose `cause` names the undefined value's catalogued reason; the same claim with the read defined at every reachable position settles by its truth values. | Test (TC-305) |
+| FR-363-AC-9 | A model whose operation guard evaluates undefined for a candidate transition at a reachable state settles every item over the subject `refuted`, cause `undefined-evaluation` whose `where` names that position, its state-key digest, the guard's locus and the transition identity, and never reads the transition as disabled; a model whose `terminal when` predicate evaluates undefined at a reachable state with no enabled transition settles `refuted` the same way, never reading the state as non-terminal; at a state where the claim is both false and undefined, the reported cause is `undefined-evaluation`. | Test (TC-305) |
 
 ## Dependencies
 

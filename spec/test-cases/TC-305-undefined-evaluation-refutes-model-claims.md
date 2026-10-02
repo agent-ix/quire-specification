@@ -11,15 +11,17 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-361
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-366
+    type: verifies
 ---
 
 # TC-305: Undefined evaluation refutes a model claim
 
 ## Description
 
-A claim that evaluates undefined at a reachable state settles `refuted` with
-cause `undefined-evaluation`, and its counterexample ends at that state and
-replays to the same undefined value.
+A claim, guard or `terminal when` predicate that evaluates undefined at a
+reachable state settles `refuted` with cause `undefined-evaluation`, and its
+counterexample ends at that state and replays to the same undefined value.
 
 ## Test Procedure
 
@@ -45,13 +47,23 @@ value 0, and the operation `drop` that removes `d` from `counters`. `rd` is a
    undefined state one step from the initial state.
 7. Check `always holds(x.value <= 3)` with `over (x: Cnt::Counter)` bound to
    `d`, reading `x.value` with no guard, over the subject with `drop`.
+8. Give `inc` the guard `(lookup<Cnt::Counter>(counters, rd) absent undefined).value < 3`
+   and check `always holds(c.value <= 3)` over the subject with `drop`, then
+   replay its counterexample.
+9. Over the subject with `drop` and no other operation enabled after it, add
+   `terminal T using v on Cnt when { (lookup<Cnt::Counter>(counters, rd) absent undefined).value = 0 }`
+   and check the derived deadlock-freedom item.
+10. Check `always holds(c.value = 1 and (lookup<Cnt::Counter>(counters, rd) absent undefined).value = 0)`
+    over a subject whose one operation `inc_drop` increments `c` and removes
+    `d` in one step, so the state after it makes the first conjunct false and
+    the second undefined.
 
 ## Expected Results
 
 1. `refuted`, basis `decisive-counterexample`, FR-331 result `refuted`, cause
    `undefined-evaluation` with `where` naming position 1, the state-key digest
    of the state after `drop` and the locus of the `lookup`, and `cause`
-   `absent-key` (FR-363-AC-8). The counterexample has an `undefined_evaluation` kind carrying the same `where` and `cause`, a
+   `absent-key` (FR-363-AC-8). The counterexample's `kind` is the envelope `{"type": "undefined-evaluation", "where", "cause"}` carrying the same `where` and `cause`, a
    prefix of the one `drop` step, an empty `loop` and `trace_position` 1
    (FR-364-AC-8).
 2. Replay reads `where` and `cause` from the counterexample and reproduces the
@@ -65,7 +77,7 @@ value 0, and the operation `drop` that removes `d` from `counters`. `rd` is a
    values (FR-363-AC-8).
 5. Both candidates are first-phase violations. The canonical counterexample has
    a one-step prefix, never a longer one: the one of `drop` (an
-   `undefined_evaluation` kind) and `inc(d)` (`kind: formula`) whose
+   undefined-evaluation envelope as its kind) and `inc(d)` (`kind: formula`) whose
    post-state comes first in FR-181 canonical breadth-first discovery order;
    two runs return byte-identical counterexamples (FR-365-AC-6).
 6. `refuted` with cause `undefined-evaluation` and the one-step `drop` prefix.
@@ -74,3 +86,17 @@ value 0, and the operation `drop` that removes `d` from `counters`. `rd` is a
 7. `refuted`, cause `undefined-evaluation`, with `where` naming the position
    after `drop` and the locus of `x.value`; the same outcome as the `lookup`
    spelling of step 1 (FR-361-AC-6).
+8. After `drop`, the guard of `inc(c)` evaluates undefined: every item over the
+   subject settles `refuted`, cause `undefined-evaluation`, with `where`
+   naming position 1, its state-key digest, the guard's locus and the
+   transition identity of `inc(c)`; `inc(c)` is never read as disabled. Replay
+   evaluates that guard at the last state and reproduces the undefined value
+   (FR-363-AC-9, FR-364-AC-8).
+9. The state after `drop` has no enabled transition and `P` evaluates
+   undefined there: the deadlock-freedom item settles `refuted`, cause
+   `undefined-evaluation`, with the undefined-evaluation counterexample ending
+   at that state, never `proved` and never a `deadlock` counterexample
+   (FR-363-AC-9, FR-366-AC-8).
+10. The reported cause is `undefined-evaluation` and the counterexample is the
+    undefined-evaluation one ending at the state after `inc_drop`
+    (FR-363-AC-9, FR-365-AC-6).
