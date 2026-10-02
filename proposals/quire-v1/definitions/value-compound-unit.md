@@ -5,12 +5,9 @@ This evaluator-owned value identity is selected by `quire.value.complete/v1`.
 It is not an I04 checked-semantic node and has no source occurrence.
 
 The normative preimage shape is
-[value-compound-unit.schema.json](value-compound-unit.schema.json), SHA-256
-`740824cbee8d83a9826d688106a429227e96408547db7aabe1bb607e81ce1654`.
+[value-compound-unit.schema.json](value-compound-unit.schema.json).
 The normative examples and mutations are
-[value-compound-unit-vectors.json](value-compound-unit-vectors.json), SHA-256
-`8636d0d7f7db87d5f311bab3f2a2b0bd19e9753bb955e21f6ea23a3657b2589c`.
-Hashes use the `quire.definition.bytes/v1` raw-byte domain without rewriting.
+[value-compound-unit-vectors.json](value-compound-unit-vectors.json).
 
 A value identity is SHA-256 over RFC 8785 JCS of the schema-valid preimage.
 Terms reference admitted canonical root-unit I04 node IDs, use nonzero

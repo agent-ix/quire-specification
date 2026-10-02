@@ -4,10 +4,10 @@
     {"identity": "test/geometry", "version": "1", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}},
     {"identity": "test/units", "version": "2", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "4444444444444444444444444444444444444444444444444444444444444444"}}
   ],
-  "package_id": "ea6dd970dfedbcc147ef0ebefafe878d931d75d1b31fa00cfd312a2576727d75",
+  "package_id": "e5caaaa670befe9032e74bf56de922c17d3b7691cabf22ae02201282810e2c91",
   "entry_mutations": [
-    {"id": "definition-selection-shape", "entry": {"role": "profile", "definition": {"authority": "test", "identity": "test/geometry", "revision": {"namespace": "semver", "value": "1"}, "digest_domain": "quire.definition.bytes/v1", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}}, "outcome": "refused:malformed_wire"},
-    {"id": "definition-ref-shape", "entry": {"authority": "test", "identity": "test/geometry", "revision": {"namespace": "semver", "value": "1"}, "digest_domain": "quire.definition.bytes/v1", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}, "outcome": "refused:malformed_wire"},
+    {"id": "definition-selection-shape", "entry": {"role": "profile", "definition": {"authority": "test", "identity": "test/geometry"}}, "outcome": "refused:malformed_wire"},
+    {"id": "definition-ref-shape", "entry": {"authority": "test", "identity": "test/geometry"}, "outcome": "refused:malformed_wire"},
     {"id": "missing-package-id", "entry": {"identity": "test/geometry", "version": "1"}, "outcome": "refused:malformed_wire"},
     {"id": "bare-digest-package-id", "entry": {"identity": "test/geometry", "version": "1", "package_id": "3333333333333333333333333333333333333333333333333333333333333333"}, "outcome": "refused:malformed_wire"},
     {"id": "source-bytes-package-id", "entry": {"identity": "test/geometry", "version": "1", "package_id": {"domain": "quire.source.bytes/v1", "algorithm": "sha256", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}}, "outcome": "refused:digest_domain_mismatch"},

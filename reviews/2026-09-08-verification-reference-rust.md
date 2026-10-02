@@ -80,8 +80,6 @@ cargo +1.98.1 test --offline --locked --target-dir target
 test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-[Test output](data/verification-reference-tests.txt) and
-[Clippy output](data/verification-reference-clippy.txt) retain the actual logs.
 Cargo metadata records all 114 selected packages, including this crate, with no
 missing declared license. There is no deny.toml; no cargo-deny result is claimed.
 The adopted state-core and LICENSE-DECISION.md have zero diff from e897f81.

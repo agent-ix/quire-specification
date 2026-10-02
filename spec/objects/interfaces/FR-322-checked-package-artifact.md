@@ -61,8 +61,9 @@ boundary.
   that preimage. Its digest value is an unprefixed 64-lowercase-hex string and
   its domain and algorithm are explicit fields.
 - `lock` — exact source-document, edition, ordered profile, dependency,
-  domain package selection and required-feature identities. Every byte digest
-  carries its own declared domain; a raw source/definition digest or a domain
+  domain package selection and required-feature identities. A definition
+  selection is a `DefinitionRef` `{authority, identity}`. Every byte digest
+  carries its own declared domain; a raw source digest or a domain
   package `sha256-jcs` digest cannot
   substitute for a semantic package digest or for another artifact role.
 - `dependency_selections` — the importing package's resolved library closure
@@ -77,7 +78,7 @@ boundary.
   only when their UTF-8 bytes are equal. `package_id`
   is the dependency's own `quire.package.semantic/v2` `package_id`
   (`{domain, algorithm, digest}`, the `PackageId` shape), whose `digest` is
-  the import's `d`; a `quire.definition.bytes/v1`, `quire.source.bytes/v1`
+  the import's `d`; a `quire.source.bytes/v1`
   or `sha256-jcs` domain in `package_id` refuses `digest_domain_mismatch`.
   A second entry whose `identity` equals an earlier entry's refuses
   `invalid_package`/`conflicting-definition` (FR-307's diamond cause), with
@@ -131,8 +132,8 @@ boundary.
   operation's operator class, operand positions and rest, result form,
   constraints, required law roles, mode kind, member kind and leaf source.
   `laws` is the ordered list of `{role, definition}` pairs whose roles are
-  exactly the entry's roles. For a value law role the `DefinitionRef` is one of
-  that role's catalogued definitions (integer division truncating/floor/Euclidean,
+  exactly the entry's roles. For a value law role the `DefinitionRef` names,
+  by authority and identity, one of that role's catalogued definitions (integer division truncating/floor/Euclidean,
   IEEE 754-2019 default, Unicode 17.0.0 text) and an exact member of the lock's
   `definition_selections`. For a clause operation (`quire.op.temporal.clause`,
   `quire.op.claim.clause`: role `temporal_profile`; `quire.op.protocol.control`,
@@ -661,7 +662,7 @@ partial checked package.
 | FR-322-AC-2 | Changing backend capability availability cannot change package admission or package identity. | Analysis |
 | FR-322-AC-3 | Changing a meaning-affecting lock member changes the package identity. | Analysis |
 | FR-322-AC-4 | The public reader refuses unknown versions, malformed/duplicate members, stale dependencies, cross-domain digest substitutions, unknown required capabilities and non-canonical bytes before exposing an admitted package. | Test (TC-217) |
-| FR-322-AC-5 | The canonical positive, boundary, refusal and mutation vectors distinguish raw source and definition byte digests and domain package `sha256-jcs` digests from checked-semantic and generated-IR identities, even when digest bytes are equal. | Test (TC-217) |
+| FR-322-AC-5 | The canonical positive, boundary, refusal and mutation vectors distinguish raw source byte digests and domain package `sha256-jcs` digests from checked-semantic and generated-IR identities, even when digest bytes are equal. | Test (TC-217) |
 | FR-322-AC-6 | Exact selected limits admit the boundary vector; one-over-byte, depth, node, edge, locus, diagnostic and work inputs return incomplete resource accounting and no partial checked package. | Test (TC-217) |
 | FR-322-AC-7 | A consumer obtains the complete closed semantic graph through the public schema and never through a native parser/CST/package implementation type. | Inspection |
 | FR-322-AC-8 | Two conformers derive the same package id from the specified JCS identity preimage; changing an excluded raw artifact/source-map/presentation or reader-limit member does not change it, while changing any named preimage member does. | Test (TC-217) |

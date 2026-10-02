@@ -14,7 +14,6 @@ name = "quire_specification"
 path = "src/lib.rs"
 
 [dev-dependencies]
-quire-verification = { git = "https://github.com/agent-ix/quire-verification", branch = "main" }
 quire-verification-contracts = { git = "https://github.com/agent-ix/quire-verification-contracts", branch = "main" }
 jsonschema = { version = "=0.55.0", default-features = false }
 serde_json = "=1.0.151"

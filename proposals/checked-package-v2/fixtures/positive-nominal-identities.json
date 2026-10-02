@@ -2,10 +2,10 @@
   "contract_version": "quire.checked-package/v2",
   "identity_preimage": {
     "version": "quire.checked-package-id/v2",
-    "edition": {"role":"edition","definition":{"authority":"agent-ix","identity":"quire-edition","revision":{"namespace":"semver","value":"1"},"digest_domain":"quire.definition.bytes/v1","digest":"1111111111111111111111111111111111111111111111111111111111111111"}},
+    "edition": {"role":"edition","definition":{"authority":"agent-ix","identity":"quire-edition"}},
     "profile_selections": [],
     "definition_selections": [
-      {"authority":"agent-ix","identity":"example-model","revision":{"namespace":"git","value":"1"},"digest_domain":"quire.definition.bytes/v1","digest":"4444444444444444444444444444444444444444444444444444444444444444"}
+      {"authority":"agent-ix","identity":"example-model"}
     ],
     "model_selections": [],
     "required_features": ["quire.value.complete/v1"],
@@ -17,13 +17,13 @@
       {"node_id":{"domain":"quire.checked-semantic-node/v1","digest":"b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"},"schema_version":"quire.checked-semantic-graph/v2","node_tag":"scalar_type","semantic_form":"dimension","semantic_type":{"domain":"quire.checked-semantic-node/v1","digest":"b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"},"declaration":{"qualified_name":["Example","Length"]},"dependencies":[],"nominal_identity_preimage":{"version":"quire.dimension-node/v1","owner":{"kind":"definition","authority":"agent-ix","identity":"example-model"},"qualified_declaration":["Example","Length"],"terms":[]},"body":{"term":"aggregate","members":[]}}
     ]
   },
-  "package_id": {"domain":"quire.package.semantic/v2","algorithm":"sha256","digest":"b70a9f27c9ef49711fb603d56014aa5ce092379cd820c5e62a0154c89877e7b4"},
+  "package_id": {"domain":"quire.package.semantic/v2","algorithm":"sha256","digest":"80b90ed59737fba3077550f2c4675f0b32486090e818b3a53d1eb1dadfe77ded"},
   "lock": {
     "sources": [{"authority":"agent-ix","identity":"example","revision":{"namespace":"git","value":"1"},"digest_domain":"quire.source.bytes/v1","digest":"2222222222222222222222222222222222222222222222222222222222222222"},{"authority":"agent-ix","identity":"example-units","revision":{"namespace":"git","value":"1"},"digest_domain":"quire.source.bytes/v1","digest":"6666666666666666666666666666666666666666666666666666666666666666"}],
-    "edition": {"role":"edition","definition":{"authority":"agent-ix","identity":"quire-edition","revision":{"namespace":"semver","value":"1"},"digest_domain":"quire.definition.bytes/v1","digest":"1111111111111111111111111111111111111111111111111111111111111111"}},
+    "edition": {"role":"edition","definition":{"authority":"agent-ix","identity":"quire-edition"}},
     "profile_selections": [],
     "definition_selections": [
-      {"authority":"agent-ix","identity":"example-model","revision":{"namespace":"git","value":"1"},"digest_domain":"quire.definition.bytes/v1","digest":"4444444444444444444444444444444444444444444444444444444444444444"}
+      {"authority":"agent-ix","identity":"example-model"}
     ],
     "model_selections": [],
     "required_features": ["quire.value.complete/v1"],
@@ -45,5 +45,5 @@
     {"node_id":{"domain":"quire.checked-semantic-node/v1","digest":"b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"},"role":"declaration","ordinal":0,"regions":[{"source":{"authority":"agent-ix","identity":"example","revision":{"namespace":"git","value":"1"},"digest_domain":"quire.source.bytes/v1","digest":"2222222222222222222222222222222222222222222222222222222222222222"},"start":3,"end":4}]}
   ],
   "capability_report": [{"feature":"quire.value.complete/v1","disposition":"available"}],
-  "diagnostics": {"catalog":{"authority":"agent-ix","identity":"catalog","revision":{"namespace":"draft","value":"1"},"digest_domain":"quire.definition.bytes/v1","digest":"3333333333333333333333333333333333333333333333333333333333333333"},"entries":[]}
+  "diagnostics": {"catalog":{"authority":"agent-ix","identity":"catalog"},"entries":[]}
 }

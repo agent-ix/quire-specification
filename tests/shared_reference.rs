@@ -2,15 +2,15 @@
 // Copyright (C) 2026 Agent-IX
 
 //! Producer structure and real B canonicalizer parity, not a shared reader.
-//! Fixture loading reuses B's legacy bounded parser, which does not reject raw
-//! duplicate keys. Strict intake and semantic matching remain IT-003-SC-03.
+//! Fixture loading keeps the last value of a raw duplicate key. Strict intake
+//! and semantic matching remain IT-003-SC-03.
 
 use std::fs::File;
 use std::io::Read;
 use std::path::{Component, Path};
 
 use ix_trace_rs::trace;
-use quire_verification::contracts::{jcs_canonicalize, jcs_sha256, parse_bounded_json};
+use quire_verification_contracts::{jcs_canonicalize, jcs_sha256};
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 
@@ -19,7 +19,8 @@ const ROOT: &str = concat!(
     "/proposals/shared-reference-2-draft"
 );
 /// Caller limits on one qualification fixture, with published defaults
-/// (IT-003): bytes read and JSON values (nodes) walked.
+/// (IT-003): bytes read and JSON values (nodes) parsed. Nesting depth is not a
+/// limit: the parser keeps its open containers on the heap.
 #[derive(Clone, Copy, Debug)]
 struct IntakeLimits {
     bytes: usize,
@@ -33,70 +34,220 @@ impl IntakeLimits {
     };
 }
 
-const MAX_BYTES: usize = IntakeLimits::DEFAULT.bytes;
-
 #[derive(Debug, PartialEq, Eq)]
 enum IntakeFailure {
-    /// The named limit was reached at its configured value; raise that
-    /// `IntakeLimits` field to admit the input.
+    /// The named limit was reached at its configured value; `raise` names the
+    /// `IntakeLimits` field a caller raises to admit the input.
     Incomplete {
         limit: &'static str,
         value: usize,
+        raise: &'static str,
     },
     Invalid,
+}
+
+impl IntakeFailure {
+    fn bytes(limits: IntakeLimits) -> Self {
+        Self::Incomplete {
+            limit: "bytes",
+            value: limits.bytes,
+            raise: "IntakeLimits::bytes",
+        }
+    }
+
+    fn nodes(limits: IntakeLimits) -> Self {
+        Self::Incomplete {
+            limit: "nodes",
+            value: limits.nodes,
+            raise: "IntakeLimits::nodes",
+        }
+    }
 }
 
 fn intake(bytes: &[u8]) -> Result<Value, IntakeFailure> {
     intake_with(bytes, IntakeLimits::DEFAULT)
 }
 
-fn intake_with(bytes: &[u8], limits: IntakeLimits) -> Result<Value, IntakeFailure> {
-    if bytes.len() > limits.bytes {
-        return Err(IntakeFailure::Incomplete {
-            limit: "bytes",
-            value: limits.bytes,
-        });
-    }
-    let value = parse_bounded_json(bytes).map_err(|_| IntakeFailure::Invalid)?;
-    let mut pending = vec![&value];
-    let mut nodes = 0_usize;
-    while let Some(node) = pending.pop() {
-        nodes += 1;
-        if nodes > limits.nodes {
-            return Err(IntakeFailure::Incomplete {
-                limit: "nodes",
-                value: limits.nodes,
-            });
-        }
-        match node {
-            Value::Array(items) => pending.extend(items),
-            Value::Object(fields) => pending.extend(fields.values()),
-            Value::Null | Value::Bool(_) | Value::Number(_) | Value::String(_) => {}
-        }
-    }
-    Ok(value)
+/// One open container while parsing: an array's items so far, or an object's
+/// members so far and the key awaiting its value.
+enum Open {
+    Array(Vec<Value>),
+    Object(serde_json::Map<String, Value>, Option<String>),
 }
 
-fn bytes(name: &str) -> Vec<u8> {
+fn skip_whitespace(bytes: &[u8], at: &mut usize) {
+    while bytes
+        .get(*at)
+        .is_some_and(|byte| matches!(byte, b' ' | b'\t' | b'\n' | b'\r'))
+    {
+        *at += 1;
+    }
+}
+
+/// The end of the JSON string token starting at `at` (its opening quote).
+fn string_end(bytes: &[u8], at: usize) -> Result<usize, IntakeFailure> {
+    let mut index = at + 1;
+    while let Some(byte) = bytes.get(index) {
+        match byte {
+            b'"' => return Ok(index + 1),
+            b'\\' => index += 2,
+            _ => index += 1,
+        }
+    }
+    Err(IntakeFailure::Invalid)
+}
+
+/// The end of the number or literal token starting at `at`.
+fn scalar_end(bytes: &[u8], at: usize) -> usize {
+    let mut index = at;
+    while bytes
+        .get(index)
+        .is_some_and(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'+' | b'-' | b'.'))
+    {
+        index += 1;
+    }
+    index
+}
+
+/// RFC 8259 JSON intake bounded only by the caller's byte and node limits.
+/// Strings, numbers and literals are decoded by `serde_json` one token at a
+/// time, so a lone surrogate, `NaN` or trailing content is `Invalid`; a raw
+/// duplicate key keeps its last value.
+fn intake_with(bytes: &[u8], limits: IntakeLimits) -> Result<Value, IntakeFailure> {
+    if bytes.len() > limits.bytes {
+        return Err(IntakeFailure::bytes(limits));
+    }
+    let mut stack: Vec<Open> = Vec::new();
+    let mut nodes = 0_usize;
+    let mut at = 0;
+    let root = loop {
+        skip_whitespace(bytes, &mut at);
+        if let Some(Open::Object(_, key @ None)) = stack.last_mut() {
+            match bytes.get(at) {
+                Some(b'}') => {}
+                Some(b'"') => {
+                    let end = string_end(bytes, at)?;
+                    *key = Some(
+                        serde_json::from_slice(&bytes[at..end])
+                            .map_err(|_| IntakeFailure::Invalid)?,
+                    );
+                    at = end;
+                    skip_whitespace(bytes, &mut at);
+                    if bytes.get(at) != Some(&b':') {
+                        return Err(IntakeFailure::Invalid);
+                    }
+                    at += 1;
+                    continue;
+                }
+                _ => return Err(IntakeFailure::Invalid),
+            }
+        }
+        let closes = matches!(
+            (stack.last(), bytes.get(at)),
+            (Some(Open::Array(_)), Some(b']')) | (Some(Open::Object(_, None)), Some(b'}'))
+        );
+        let value = if closes {
+            at += 1;
+            match stack.pop() {
+                Some(Open::Array(items)) => Value::Array(items),
+                Some(Open::Object(fields, _)) => Value::Object(fields),
+                None => return Err(IntakeFailure::Invalid),
+            }
+        } else {
+            nodes += 1;
+            if nodes > limits.nodes {
+                return Err(IntakeFailure::nodes(limits));
+            }
+            match bytes.get(at) {
+                Some(b'[') => {
+                    at += 1;
+                    stack.push(Open::Array(Vec::new()));
+                    skip_whitespace(bytes, &mut at);
+                    continue;
+                }
+                Some(b'{') => {
+                    at += 1;
+                    stack.push(Open::Object(serde_json::Map::new(), None));
+                    continue;
+                }
+                Some(b'"') => {
+                    let end = string_end(bytes, at)?;
+                    let value = serde_json::from_slice(&bytes[at..end])
+                        .map_err(|_| IntakeFailure::Invalid)?;
+                    at = end;
+                    value
+                }
+                Some(_) => {
+                    let end = scalar_end(bytes, at);
+                    let value = serde_json::from_slice(&bytes[at..end])
+                        .map_err(|_| IntakeFailure::Invalid)?;
+                    at = end;
+                    value
+                }
+                None => return Err(IntakeFailure::Invalid),
+            }
+        };
+        skip_whitespace(bytes, &mut at);
+        match stack.last_mut() {
+            None => break value,
+            Some(Open::Array(items)) => {
+                items.push(value);
+                if bytes.get(at) == Some(&b',') {
+                    at += 1;
+                    skip_whitespace(bytes, &mut at);
+                    if bytes.get(at) == Some(&b']') {
+                        return Err(IntakeFailure::Invalid);
+                    }
+                } else if bytes.get(at) != Some(&b']') {
+                    return Err(IntakeFailure::Invalid);
+                }
+            }
+            Some(Open::Object(fields, key)) => {
+                let name = key.take().ok_or(IntakeFailure::Invalid)?;
+                fields.insert(name, value);
+                if bytes.get(at) == Some(&b',') {
+                    at += 1;
+                    skip_whitespace(bytes, &mut at);
+                    if bytes.get(at) != Some(&b'"') {
+                        return Err(IntakeFailure::Invalid);
+                    }
+                } else if bytes.get(at) != Some(&b'}') {
+                    return Err(IntakeFailure::Invalid);
+                }
+            }
+        }
+    };
+    skip_whitespace(bytes, &mut at);
+    if at == bytes.len() {
+        Ok(root)
+    } else {
+        Err(IntakeFailure::Invalid)
+    }
+}
+
+/// The authored bytes of a fixture under `ROOT`, read up to the default byte
+/// limit; a larger file is the named `bytes` limit.
+fn bytes(name: &str) -> Result<Vec<u8>, IntakeFailure> {
     assert!(
         Path::new(name)
             .components()
             .all(|part| matches!(part, Component::Normal(_)))
     );
+    let limits = IntakeLimits::DEFAULT;
     let file = File::open(Path::new(ROOT).join(name)).expect("required authored fixture");
     let mut bytes = Vec::new();
-    file.take(u64::try_from(MAX_BYTES + 1).expect("bounded constant"))
+    file.take(u64::try_from(limits.bytes + 1).expect("bounded constant"))
         .read_to_end(&mut bytes)
         .expect("read fixture");
-    assert!(
-        bytes.len() <= MAX_BYTES,
-        "fixture exceeds qualification budget"
-    );
-    bytes
+    if bytes.len() > limits.bytes {
+        return Err(IntakeFailure::bytes(limits));
+    }
+    Ok(bytes)
 }
 
 fn load(name: &str) -> Value {
-    intake(&bytes(name)).expect("valid bounded authored fixture")
+    intake(&bytes(name).expect("fixture within the byte limit"))
+        .expect("valid bounded authored fixture")
 }
 
 fn fixture(name: &str) -> Value {
@@ -126,7 +277,7 @@ fn six_role_shapes_and_actual_bytes() {
         let envelope = &role["envelope"];
         schema.validate(envelope).expect("positive role shape");
         let name = role["file"].as_str().expect("fixture filename");
-        let actual = bytes(&format!("fixtures/{name}"));
+        let actual = bytes(&format!("fixtures/{name}")).expect("fixture within the byte limit");
         assert_eq!(
             envelope["value"]["digest"],
             format!("sha256:{:x}", Sha256::digest(actual))
@@ -296,13 +447,16 @@ fn synthetic_core_is_the_non_circular_preimage() {
     assert_eq!(semantic["value"]["canonicalIdentity"]["digest"], digest);
     assert_eq!(
         semantic["value"]["artifact"]["digest"],
-        format!("sha256:{:x}", Sha256::digest(bytes("fixtures/core.json")))
+        format!(
+            "sha256:{:x}",
+            Sha256::digest(bytes("fixtures/core.json").expect("fixture within the byte limit"))
+        )
     );
     assert_eq!(
         semantic["value"]["semanticProfile"]["definitionDigest"],
         format!(
             "sha256:{:x}",
-            Sha256::digest(bytes("fixtures/profile.json"))
+            Sha256::digest(bytes("fixtures/profile.json").expect("fixture within the byte limit"))
         )
     );
     let disposition = fixture("review-disposition.json");
@@ -318,10 +472,23 @@ fn synthetic_core_is_the_non_circular_preimage() {
 #[test]
 #[trace("IT-003-SC-01")]
 fn qualification_fixture_size_node_and_json_syntax_controls() {
-    for raw in [br#""\ud800""#.as_slice(), b"NaN", b"{} {}"] {
-        assert_eq!(intake(raw), Err(IntakeFailure::Invalid));
+    for raw in [
+        br#""\ud800""#.as_slice(),
+        b"NaN",
+        b"{} {}",
+        b"[0,]",
+        b"{\"a\":0,}",
+        b"01",
+        b"[0",
+    ] {
+        assert_eq!(intake(raw), Err(IntakeFailure::Invalid), "{raw:?}");
     }
-    let mut exact = vec![b' '; MAX_BYTES];
+    assert_eq!(
+        intake(br#"{"a":[true,null,{"b":"c"}],"d":-1.5e3}"#),
+        Ok(json!({"a": [true, null, {"b": "c"}], "d": -1.5e3}))
+    );
+    let defaults = IntakeLimits::DEFAULT;
+    let mut exact = vec![b' '; defaults.bytes];
     exact[0] = b'0';
     assert_eq!(intake(&exact), Ok(json!(0)));
     exact.push(b' ');
@@ -329,27 +496,40 @@ fn qualification_fixture_size_node_and_json_syntax_controls() {
         intake(&exact),
         Err(IntakeFailure::Incomplete {
             limit: "bytes",
-            value: MAX_BYTES
+            value: defaults.bytes,
+            raise: "IntakeLimits::bytes",
         })
     );
     let limits = IntakeLimits {
         nodes: 3,
-        ..IntakeLimits::DEFAULT
+        ..defaults
     };
     assert_eq!(intake_with(b"[0,0]", limits), Ok(json!([0, 0])));
-    assert_eq!(
-        intake_with(b"[0,0,0]", limits),
-        Err(IntakeFailure::Incomplete {
-            limit: "nodes",
-            value: 3
-        })
-    );
-    assert_eq!(
-        intake_with(b"[[[0]]]", limits),
-        Err(IntakeFailure::Incomplete {
-            limit: "nodes",
-            value: 3
-        })
-    );
-    assert_eq!(intake(b"[[[[[[[[0]]]]]]]]"), Ok(json!([[[[[[[[0]]]]]]]])));
+    for over in [b"[0,0,0]".as_slice(), b"[[[0]]]"] {
+        assert_eq!(
+            intake_with(over, limits),
+            Err(IntakeFailure::Incomplete {
+                limit: "nodes",
+                value: 3,
+                raise: "IntakeLimits::nodes",
+            })
+        );
+    }
+}
+
+/// Nesting is bounded only by the node limit: 1000 levels, far past any
+/// fixed parser depth, are admitted under the defaults.
+#[test]
+#[trace("IT-003-SC-01")]
+fn qualification_fixture_nesting_is_not_a_limit() {
+    let depth = 1000;
+    let raw = format!("{}0{}", "[".repeat(depth), "]".repeat(depth));
+    let mut value = intake(raw.as_bytes()).expect("deep nesting is admitted");
+    for _ in 0..depth {
+        value = value
+            .as_array_mut()
+            .and_then(Vec::pop)
+            .expect("each level holds one array");
+    }
+    assert_eq!(value, json!(0));
 }

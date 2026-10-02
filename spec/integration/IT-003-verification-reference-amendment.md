@@ -30,8 +30,9 @@ Missing inputs fail setup; they do not skip or pass. All work is local.
 
 The complete amendment schema and separately authored JSON vectors. Each file
 is read under caller limits on bytes and JSON values, with published defaults
-of 1 MiB and 65,536 values; input over a limit yields incomplete naming the
-limit and its value. Fixtures
+of 1 MiB and 65,536 values, and nesting depth is not a limit; input over a
+limit yields incomplete naming the limit, its value and the limit field that
+raises it. Fixtures
 include six exact roles and wrong-role controls, version/domain/algorithm/digest
 mutations, duplicate/reordered features, exact property/subject/binding/closure/run
 mismatches, and an explicitly synthetic automated-core correspondence example.
@@ -64,3 +65,7 @@ Rust JSON Schema validator; it does not introduce a production shared reader.
 - [FR-017](../functional/foundation/FR-017-select-verification-artifact-roles.md)
 - [FR-018](../functional/foundation/FR-018-select-verification-jcs-domain.md)
 - [IT-002](IT-002-independent-reference-consumer.md) retains the broader FS02/FS05 independent-consumer gate.
+
+## References
+
+- VER-54: replace the fixed JSON depth and size caps in `quire-verification-contracts` with caller limits.

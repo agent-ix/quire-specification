@@ -30,10 +30,9 @@ equality.
 | `package-fingerprint` | Package fingerprint. A lock-file digest cannot substitute for it (FR-015-AC-3). |
 | `lock-file-digest` | Lock-file digest. Cannot substitute for `package-fingerprint` (FR-015-AC-3). |
 | `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout (FR-018). |
-| `sha256-jcs` | Domain package digest. SHA-256 over the RFC 8785 canonical bytes of the semantic IR domain package lifted from spec artifacts. Every V2 model selection carries it, and every declaration key names it as its digest domain (AD-006). It is distinct from package, source and definition digests. |
+| `sha256-jcs` | Domain package digest. SHA-256 over the RFC 8785 canonical bytes of the semantic IR domain package lifted from spec artifacts. Every V2 model selection carries it, and every declaration key names it as its digest domain (AD-006). It is distinct from package and source digests. |
 | `quire.package.semantic/v2` | Complete-V1 CheckedPackage V2 semantic-package graph domain; distinct from package archive and lock-file bytes and from every other identity/digest domain. |
 | `quire.source.bytes/v1` | Exact authored native source-document bytes, including layout; distinct from every definition/model artifact. |
-| `quire.definition.bytes/v1` | Exact selected native profile or semantic-definition bytes, including layout; distinct from source/model bytes. |
 | `quire.checked-semantic-node/v1` | Versioned checked semantic-node identity; distinct from its source occurrence and from the enclosing package identity. |
 | `quire.contract-ir.semantic/v1` | Versioned generated Contract IR semantic identity; distinct from the checked source package that it lowers. |
 | `quire.diagnostic-catalog.bytes/v1` | Exact diagnostic-catalog source bytes, including layout. |

@@ -11,7 +11,7 @@
 //! projection over a `deref` result.
 
 use ix_trace_rs::trace;
-use quire_verification::contracts::jcs_sha256;
+use quire_verification_contracts::jcs_sha256;
 use quire_verification_contracts::operation_catalog::CHECKED_OPERATION_CATALOG_V1;
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};

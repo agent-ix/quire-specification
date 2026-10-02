@@ -3,10 +3,10 @@
 The owner approved the [research findings and roadmap recommendation](report.md)
 on 2026-09-10. There is **one ecosystem roadmap** under
 [quire-research #36](https://github.com/agent-ix/quire-research/issues/36);
-its [implementation plan](https://github.com/agent-ix/quire-research/blob/roadmap/native-language-foundation/implementation-plan.md)
+its implementation plan (`agent-ix/quire-research`)
 owns the issue map. This directory supplies the language foundation.
 
-The approved [initial spec cycle](https://github.com/agent-ix/quire-research/blob/roadmap/native-language-foundation/initial-spec-cycle.md)
+The approved initial spec cycle (`agent-ix/quire-research`)
 assigns A the integrated language, B protocol/results, D model/configuration,
 E temporal meaning and F observation/consumer specifications. C continues its
 existing engineering-assurance work to completion.

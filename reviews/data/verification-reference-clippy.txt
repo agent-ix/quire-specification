@@ -1,2 +1,0 @@
-    Checking quire-specification-qualification v0.0.0 (/home/peter/dev/worktrees/formalization-a-spec)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.27s

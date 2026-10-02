@@ -10,92 +10,92 @@
     {
       "role": "root",
       "artifact_path": "model-complete.md",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"}}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1"}
     },
     {
       "role": "state_graph",
       "artifact_path": "state-graph.md",
-      "definition": {"authority":"agent-ix","identity":"quire.state.graph/v1","revision":{"namespace":"quire-draft","value":"1-draft.3"}}
+      "definition": {"authority":"agent-ix","identity":"quire.state.graph/v1"}
     },
     {
       "role": "rule_manifest",
       "artifact_path": "model-complete-rules.json",
-      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"}}
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1"}
     },
     {
       "role": "effective_declaration_schema",
       "artifact_path": "../../checked-package-v2/model-effective-declaration.schema.json",
-      "definition": {"authority":"agent-ix","identity":"quire.model.effective-declaration.schema/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"}}
+      "definition": {"authority":"agent-ix","identity":"quire.model.effective-declaration.schema/v1"}
     },
     {
       "role": "effective_declaration_vectors",
       "artifact_path": "../../checked-package-v2/model-effective-declaration-vectors.json",
-      "definition": {"authority":"agent-ix","identity":"quire.model.effective-declaration.vectors/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"}}
+      "definition": {"authority":"agent-ix","identity":"quire.model.effective-declaration.vectors/v1"}
     },
     {
       "role": "rule_ad_006",
       "artifact_path": "../../../spec/assurance/AD-006-model-graph-state-contracts.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.ad-006/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"}}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.ad-006/v1"}
     },
     {
       "role": "rule_fr_043",
       "artifact_path": "../../../spec/functional/foundation/FR-043-evaluate-finite-graph-relations.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-043/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"}}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-043/v1"}
     },
     {
       "role": "rule_fr_143",
       "artifact_path": "../../../spec/functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-143/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"}}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-143/v1"}
     },
     {
       "role": "rule_fr_144",
       "artifact_path": "../../../spec/functional/type-model/FR-144-preserve-complete-collection-algebra.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-144/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"}}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-144/v1"}
     },
     {
       "role": "rule_fr_150",
       "artifact_path": "../../../spec/functional/type-model/FR-150-preserve-model-normalization-provenance.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-150/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"}}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-150/v1"}
     },
     {
       "role": "rule_fr_151",
       "artifact_path": "../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-151/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"}}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-151/v1"}
     },
     {
       "role": "rule_fr_152",
       "artifact_path": "../../../spec/functional/type-model/FR-152-bind-systems-model-structures.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-152/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"}}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-152/v1"}
     },
     {
       "role": "rule_fr_153",
       "artifact_path": "../../../spec/functional/type-model/FR-153-query-closed-model-environments.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-153/v1","revision":{"namespace":"quire-draft","value":"1-draft.2"}}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-153/v1"}
     },
     {
       "role": "rule_fr_154",
       "artifact_path": "../../../spec/functional/type-model/FR-154-admit-domain-package-model.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-154/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"}}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-154/v1"}
     },
     {
       "role": "rule_fr_204",
       "artifact_path": "../../../spec/objects/foundation/FR-204-declared-object-identity.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-204/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"}}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-204/v1"}
     },
     {
       "role": "rule_fr_208",
       "artifact_path": "../../../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-208/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"}}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-208/v1"}
     },
     {
       "role": "rule_fr_321",
       "artifact_path": "../../../spec/objects/interfaces/FR-321-model-selection-artifact.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-321/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"}}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-321/v1"}
     },
     {
       "role": "rule_interface_003",
       "artifact_path": "../../../spec/objects/interfaces/interface_003-model-selection.md",
-      "definition": {"authority":"agent-ix","identity":"quire.rule.interface_003/v1","revision":{"namespace":"quire-draft","value":"1-draft.1"}}
+      "definition": {"authority":"agent-ix","identity":"quire.rule.interface_003/v1"}
     }
   ],
   "package_selection": {

@@ -9,7 +9,7 @@ use num_integer::Integer;
 use quire_specification::{
     COMPLETE_VALUE_LOCK, COMPLETE_VALUE_SELECTION_VECTORS, NATIVE_DIAGNOSTICS,
 };
-use quire_verification::contracts::jcs_sha256;
+use quire_verification_contracts::jcs_sha256;
 use quire_verification_contracts::operation_catalog::CHECKED_OPERATION_CATALOG_V1;
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
@@ -1299,11 +1299,17 @@ impl<'a> OperationOracle<'a> {
         Some(())
     }
 
-    fn law_refs(&self, role: &str) -> &'a [Value] {
+    /// The catalogued definitions of a law role, each as the package
+    /// `DefinitionRef` that names it: its authority and identity.
+    fn law_refs(&self, role: &str) -> Vec<Value> {
         self.catalog["law_roles"][role]
             .as_array()
-            .map(Vec::as_slice)
-            .unwrap_or_default()
+            .into_iter()
+            .flatten()
+            .map(|reference| {
+                json!({"authority": reference["authority"], "identity": reference["identity"]})
+            })
+            .collect()
     }
 
     /// Whether a law role names a lock profile selection rather than a
@@ -3783,8 +3789,8 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
             ),
             (
                 "diagnostic catalog",
-                "/diagnostics/catalog/digest",
-                json!("8888888888888888888888888888888888888888888888888888888888888888"),
+                "/diagnostics/catalog/identity",
+                json!("another-catalog"),
                 "/identity_preimage",
                 "diagnostics",
                 package["diagnostics"].clone(),
@@ -3834,9 +3840,9 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
 
         let named: [(&str, &str, Value); 8] = [
             (
-                "edition digest",
-                "/lock/edition/definition/digest",
-                json!("8888888888888888888888888888888888888888888888888888888888888888"),
+                "edition identity",
+                "/lock/edition/definition/identity",
+                json!("another-edition"),
             ),
             (
                 "profile selections",
@@ -7917,4 +7923,60 @@ fn tc_233_state_clause_is_a_catalogued_operation_the_schemas_enumerate() {
     let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
     assert_eq!(package_operations_refusal(&package, &catalog), Ok(()));
     assert_eq!(read_package_semantics(&package, &catalog), Ok(()));
+}
+
+#[trace("TC-279", "FR-322-AC-28")]
+#[test]
+fn tc_279_model_owner_preimages_carry_package_identity_and_node_only() {
+    let schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
+        .expect("node-identity preimage schema is valid");
+    let file = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let owned = file["vectors"]
+        .as_array()
+        .expect("vectors are an array")
+        .iter()
+        .filter(|vector| vector["preimage"]["owner"]["kind"] == "model")
+        .collect::<Vec<_>>();
+    assert!(
+        !owned.is_empty(),
+        "the vectors publish ModelOwner preimages"
+    );
+    for vector in owned {
+        let name = vector["name"].as_str().expect("vector name is a string");
+        let preimage = &vector["preimage"];
+        assert_eq!(
+            preimage["owner"]
+                .as_object()
+                .expect("owner is an object")
+                .keys()
+                .map(String::as_str)
+                .collect::<BTreeSet<_>>(),
+            BTreeSet::from(["identity", "kind", "node"]),
+            "{name} owner names the domain package identity and node only"
+        );
+        assert!(schema.is_valid(preimage), "{name} validates");
+        assert_eq!(
+            unqualified_jcs_sha256(preimage),
+            vector["sha256"]
+                .as_str()
+                .expect("vector digest is a string"),
+            "{name} recomputes its recorded identity"
+        );
+
+        let mut versioned = preimage.clone();
+        versioned["owner"]["version"] = json!("1.0.0");
+        assert!(
+            !schema.is_valid(&versioned),
+            "{name} with a version label is refused by the closed schema"
+        );
+
+        let mut other_package = preimage.clone();
+        other_package["owner"]["identity"] = json!("acme/other");
+        assert!(schema.is_valid(&other_package));
+        assert_ne!(
+            unqualified_jcs_sha256(&other_package),
+            unqualified_jcs_sha256(preimage),
+            "{name} identity depends on the owning domain package"
+        );
+    }
 }

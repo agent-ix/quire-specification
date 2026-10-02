@@ -233,6 +233,7 @@ type.
 | V1-TOOL-008 | FR-307 | TC-227, TC-231 | Amend | planned |
 | V1-TOOL-009 | FR-308 | TC-228, TC-231 | New | planned |
 | V1-TOOL-010 | FR-309 | TC-229, TC-231 | New | planned |
+| V1-TOOL-011 | FR-177 | TC-208, TC-231 | Reuse | planned |
 | V1-TOOL-012 | FR-177 | TC-208, TC-231 | Reuse | planned |
 
 ## Functional Requirement Coverage

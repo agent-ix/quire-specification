@@ -4,7 +4,7 @@
 //! Complete-model definition lock and effective-declaration vector qualification.
 
 use ix_trace_rs::trace;
-use quire_verification::contracts::jcs_sha256;
+use quire_verification_contracts::jcs_sha256;
 use serde_json::Value;
 use std::collections::BTreeSet;
 

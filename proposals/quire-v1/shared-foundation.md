@@ -4,7 +4,7 @@ Working draft for the owner-approved initial specification cycle. The initial
 composed review and owner corrections are integrated; acceptance remains at the
 PR boundary. The
 [capability inventory](capabilities.md) and
-[cycle allocation](https://github.com/agent-ix/quire-research/blob/roadmap/native-language-foundation/initial-spec-cycle.md)
+cycle allocation (`agent-ix/quire-research`)
 govern scope and artifact ownership.
 
 ## Common enterprise example

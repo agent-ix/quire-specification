@@ -896,7 +896,7 @@ The requirement artifacts are indexed below.
 | [FR-039](functional/foundation/FR-039-normalize-exact-rational-literals.md) | FR | Accepted by FS03 for exact rational admission |
 | [FR-030](functional/foundation/FR-030-bind-composed-definitions.md) | FR | Shared definition binding draft |
 | [FR-031](functional/foundation/FR-031-report-requested-capabilities.md) | FR | Per-request capability disposition draft |
-| [FR-032](functional/foundation/FR-032-preserve-language-evolution.md) | FR | Accepted by FS05 for explicit versioned evolution/migration |
+| [FR-032](functional/foundation/FR-032-preserve-language-evolution.md) | FR | Refuses a package that requires a feature the reader does not support |
 | [FR-033](functional/foundation/FR-033-admit-reusable-predicates.md) | FR | Accepted FS03 typed acyclic predicate admission |
 | [FR-034](functional/foundation/FR-034-bind-cross-family-predicates.md) | FR | Accepted FS03 typed environment binding; family execution varies |
 | [FR-035](functional/foundation/FR-035-bind-ecosystem-subjects.md) | FR | Ecosystem subject binding draft |
