@@ -89,6 +89,14 @@ Reviewed at b6d7d8914e67169121f72054146a0b1c1bdc8063 (commit b6d7d891, caller ca
 | FND-016 | low | FR-411 now says a caller cancellation stops the exact engine with `incomplete`, `cancelled`, naming the cancellation source, but no FR-411 AC or TC tests it. Only FR-408-AC-8 and TC-356 RG-06 cover `cancelled`, and both are for the statistical engine. | spec/functional/analysis/FR-411-settle-probabilistic-claims-exactly.md:233-234 |
 | FND-017 | low | FR-331's closed `incomplete` row adds `cancelled`, "naming the cancellation source", but unlike `limit-reached{limit, value, setting}` and `precision-budget{lower, upper}` it names no member that carries the source. Two implementations would encode the source differently. Give the member, for example `cancelled{source}`. | spec/objects/interfaces/FR-331-backend-provider-envelope.md:60 |
 
+## New findings (disposition pass 5)
+
+Reviewed at fcfcd6b67c3f9767d0d3447d146a117520ee5df7, squashed onto main 2da1e5c. Limited to lines the PR changed since b6d7d891, the merge resolution in FR-290, FR-331, TC-271 and TC-282 against main, and the new zero-activation and time-locked-sample rules. `cargo test --locked` passes.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-018 | medium | FR-411 now settles both quantile forms `proved` when the activation probability is 0, under a workload too, where FR-411 computes the conditional probability as "the ratio of two finite-horizon probabilities", which is 0/0. FR-407, which owns a quantile claim's meaning (`Pr(M <= c \| activated) >= q`), does not say what the claim means when activation has probability 0. So the exact engine decides a semantic case the semantics leave open. FR-408's statistical engine never sees an activated sample there and runs to `max_draws` as `limit-reached`. State the zero-activation meaning in FR-407 (vacuously true, matching the every-scheduler reading where a never-activating scheduler contributes 0), have FR-411 cite it, and give FR-408 a settlement for a run with no activated sample. The owner rule that undefined evaluation refutes means a 0/0 conditional cannot be left implicit. | spec/functional/analysis/FR-411-settle-probabilistic-claims-exactly.md:83-85; spec/functional/analysis/FR-407-state-probabilistic-claims.md:104; spec/functional/analysis/FR-408-settle-probabilistic-claims-statistically.md:121 |
+
 ## Dispositions
 
 Round 1, reviewed at 9ed6fab8b33842c1fef83d918d683f84d2b4de04 (fix commits 96a98644 and 9ed6fab8).
@@ -123,3 +131,10 @@ Round 3, reviewed at b2cf33d49e7a173e46f1f117e0a79619807c1118 (commits 98ef379c 
 | FND-015 | fixed | 98ef379c |
 
 Round 4, reviewed at b6d7d8914e67169121f72054146a0b1c1bdc8063. No finding had a still-open or missing outcome before this round.
+
+Round 5, reviewed at fcfcd6b67c3f9767d0d3447d146a117520ee5df7.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-016 | fixed | fcfcd6b6: FR-411-AC-15 and TC-365 XL-05 test exact-engine cancellation. |
+| FND-017 | fixed | fcfcd6b6: FR-331 spells `cancelled{source}`, `source` the caller's cancellation identity. |

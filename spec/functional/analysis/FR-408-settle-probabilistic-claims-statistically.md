@@ -120,7 +120,11 @@ method decides that form.
 
 A quantile claim is conditioned on activation. A sample that is not activated
 is drawn and not counted: it advances the trace index and counts toward
-`max_draws`, never toward `N` or the SPRT sum.
+`max_draws`, never toward `N` or the SPRT sum. Sampling cannot observe that
+activation has probability 0, the case in which the claim holds vacuously
+(FR-407): such a run draws only non-activated samples until `max_draws` and
+settles `incomplete`, `limit-reached` naming `max_draws`. That is the expected
+statistical outcome for the case, not a contradiction of the exact verdict.
 
 ### Regenerative method
 

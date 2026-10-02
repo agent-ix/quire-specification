@@ -1298,6 +1298,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-407 | FR-407-AC-6 | TC-353 | planned |
 | FR-407 | FR-407-AC-7 | TC-353, TC-374 | planned |
 | FR-407 | FR-407-AC-8 | TC-353, TC-360 | planned |
+| FR-407 | FR-407-AC-9 | TC-353 | planned |
 | FR-408 | FR-408-AC-1 | TC-353 | planned |
 | FR-408 | FR-408-AC-2 | TC-355 | planned |
 | FR-408 | FR-408-AC-3 | TC-355 | planned |

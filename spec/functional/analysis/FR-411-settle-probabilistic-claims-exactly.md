@@ -81,8 +81,9 @@ the claim is refuted when it is positive, since some scheduler then activates
 with `Pr(M < c | activated) = q`, and proved when it is 0. Under a workload the
 conditional probability is the ratio of two finite-horizon probabilities, and
 for `quantile q of M >= c` a ratio equal to `q` refutes. When the activation
-probability is 0, both quantile forms settle `proved`, as over every scheduler,
-where a scheduler that never activates contributes 0. The
+probability is 0, both quantile forms settle `proved`: the claim holds
+vacuously ([FR-407](FR-407-state-probabilistic-claims.md)) and no ratio is
+formed. The
 unweighted mean of a fraction is `1/(h + 1)` times a finite-horizon expected
 count; a weighted fraction accumulates both sums and is an expected terminal
 reward.

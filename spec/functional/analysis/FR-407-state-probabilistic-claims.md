@@ -109,6 +109,11 @@ A window that reaches a terminal state continues on its stutter steps.
 
 The last two rows are the **exact-only forms**.
 
+A quantile claim whose activation has probability 0 holds vacuously, under
+every scheduler and under every workload: no activated run exists to violate
+it, so the conditional probability is not read. Over every scheduler this is
+the reading in which a scheduler that never activates contributes 0.
+
 ### Thresholds and units
 
 A probability threshold, a quantile level and a fraction threshold `θ` are
@@ -153,6 +158,7 @@ request settings and are outside the obligation identity.
 | FR-407-AC-6 | Changing the workload or the fairness set changes the obligation identity, and a fairness set under a workload refuses `invalid_probabilistic_model`/`fairness-under-workload`; changing the evidence kind, method or a budget does not. | Test (TC-353) |
 | FR-407-AC-7 | A weighted long-run fraction and a `weighted by delay` fraction are admitted and evaluate as the weighted ratio. | Test (TC-353, TC-374) |
 | FR-407-AC-8 | `quantile q of M >= c` reduces to the strict bound `Pr(M < c | activated) < q`: with `M` equal to 1 or 3 with probability `1/2` each, `quantile 0.5 of M >= 3` is false (the quantile is 1, and `Pr(M < 3) = 1/2` is not below `1/2`), and `quantile 0.5 of M >= 1` is true. | Test (TC-353, TC-360) |
+| FR-407-AC-9 | A quantile claim, in either form, over a subject whose activation has probability 0 holds, under a workload and under every scheduler. | Test (TC-353) |
 
 ## Dependencies
 

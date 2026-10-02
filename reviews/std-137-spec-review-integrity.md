@@ -66,3 +66,10 @@ Round 2, reviewed at addbd0986dcee88165668b4bb956d8f33569e816 (rebased onto main
 | FND | Outcome | sha/reason |
 | --- | --- | --- |
 | FND-010 | fixed | b56235f8 |
+
+Round 3, reviewed at fcfcd6b67c3f9767d0d3447d146a117520ee5df7.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | fcfcd6b6: Rebased onto main; none of the clashing FRs holds a duplicate AC id. |
+| FND-007 | fixed | fcfcd6b6: FR-161 cites FR-360; FR-363 is on main. |
