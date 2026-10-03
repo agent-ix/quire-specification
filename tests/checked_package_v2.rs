@@ -9303,6 +9303,61 @@ fn tc_303_formula_fairness_and_case_terms_stand_only_where_placed() {
             "a {operator} application in details refuses at its operator, not malformed_wire"
         );
     }
+    let mut formula_application = case_body.clone();
+    formula_application["operator"] = json!("temporal_formula");
+    let mut with_nested_case = formula_application.clone();
+    with_nested_case["arguments"] = json!([case_body.clone()]);
+    assert_eq!(
+        details_refusal(&with_details(vec![with_nested_case])),
+        Err(TemporalRefusal::OperatorIneligible(
+            "/diagnostics/entries/1/details/0/operator".to_owned()
+        )),
+        "the outermost application of a details term is reported first"
+    );
+    let aggregate = json!({"term": "aggregate", "members": [formula_application, case_body]});
+    assert_eq!(
+        details_refusal(&with_details(vec![aggregate])),
+        Err(TemporalRefusal::OperatorIneligible(
+            "/diagnostics/entries/1/details/0/members/0/operator".to_owned()
+        )),
+        "the first member in document order is reported first"
+    );
+}
+
+#[trace("TC-303", "FR-370-AC-5")]
+#[test]
+fn tc_303_nested_temporal_applications_are_malformed_wire() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let package = parsed_fixture(POSITIVE_UNION_NODES);
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes");
+    let host = nodes
+        .iter()
+        .position(|node| node["body"]["term"] == "application" && node["semantic_form"] != "case")
+        .expect("the fixture has another application node");
+    let case_body = nodes
+        .iter()
+        .find(|node| node["semantic_form"] == "case")
+        .expect("the fixture has a case node")["body"]
+        .clone();
+    for operator in ["temporal_formula", "temporal_fairness", "temporal"] {
+        let mut application = case_body.clone();
+        application["operator"] = json!(operator);
+        let mut nested = package.clone();
+        nested["semantic_graph"]["nodes"][host]["body"]["arguments"][0] = application;
+        assert!(
+            !schema.is_valid(&nested),
+            "a nested {operator} application is outside the body grammar"
+        );
+        assert_eq!(
+            case_placement_refusal(&nested),
+            Err(TemporalRefusal::MalformedWire(format!(
+                "/semantic_graph/nodes/{host}/body/arguments/0"
+            ))),
+            "a nested {operator} application is a malformed wire, not operator-ineligible"
+        );
+    }
 }
 
 /// FR-440 "Case placement" and FR-322's body grammar: a nested `case`

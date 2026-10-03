@@ -194,17 +194,31 @@ integer-form interval are not admitted: a timed interval has a finite upper
 bound (FR-255) and its bounds are exact rationals. The timed form is
 admitted under no other profile.
 
-A misplaced application, and a misplaced reference to a formula or
-fairness node, refuses `ill_typed`/`operator-ineligible` at the node that
-holds it. A reference from a diagnostic's `details` to one of the three node
-forms above refuses `ill_typed`/`operator-ineligible` at that `details`
+An application at the body root of a node the rules above do not place it
+in, and a misplaced reference to a formula or fairness node, refuses
+`ill_typed`/`operator-ineligible` at the node whose body holds it. A
+`temporal_formula`, `temporal_fairness` or `temporal` application nested
+inside a node body or inside another term is outside
+[FR-322](FR-322-checked-package-artifact.md)'s body grammar and refuses
+`malformed_wire` at strict wire validation, like any other nested
+application; only a nested `case` application is FR-322's named exception
+([FR-440](FR-440-checked-package-union-and-case-nodes.md) "Case
+placement"). Temporal nesting is expressed through references to
+`temporal`/`formula` nodes. A reference from a diagnostic's `details` to
+one of the three node forms above refuses `ill_typed`/`operator-ineligible` at that `details`
 entry, `/diagnostics/entries/{e}/details/{d}`. An application of one of the
 three operator classes above inside a `details` term refuses
 `ill_typed`/`operator-ineligible` at that application's `operator` member,
 `/diagnostics/entries/{e}/details/{d}/operator` when the term is the
 application; strict wire validation reports it so, not as `malformed_wire`
-([FR-322](FR-322-checked-package-artifact.md) "Body grammar"). An interval shape, or a
-non-empty fairness argument, that the clause's profile does not admit
+([FR-322](FR-322-checked-package-artifact.md) "Body grammar"). When one
+`details` term holds several such constructs, the reader reports the first
+in document pre-order, outermost first: a `temporal_formula` application
+with a nested `case` argument refuses at
+`/diagnostics/entries/{e}/details/{d}/operator`, and an aggregate whose
+members are a `temporal_formula` application and then a `case` application
+refuses at `/diagnostics/entries/{e}/details/{d}/members/0/operator`. An
+interval shape, or a non-empty fairness argument, that the clause's profile does not admit
 refuses `invalid_package`/`operation-member-mismatch` at the application.
 An interval with `lower > upper`, or a timed interval with an open end and
 `lower = upper`, refuses `invalid_package`/`invalid-value` at the
@@ -259,14 +273,14 @@ applications' catalog checks at the operation step.
 | FR-370-AC-2 | Each of the eight interval-capable operators, `holds`, the two temporal constants and the four connectives is encoded with its own `quire.op.temporal.*` identity, both V2 schemas enumerate those identities, the `temporal_formula` and `temporal_fairness` operator classes and the `temporal_interval` and `fairness` member kinds, and the operation catalog lists the `temporal` family. | Test (TC-303) |
 | FR-370-AC-3 | An interval operator carries `{lower, upper}`; a lower-bounded operator carries `{lower, upper: null}` and an unbounded operator `{kind: "temporal_interval", interval: null}`; under `quire.temporal.infinite-trace/v1` all three are admitted; under `quire.temporal.timed/v1` `null` and a timed `[a,b]` are admitted and `[a,*]` and an integer-form `[a,b]` refuse `operation-member-mismatch`; under each of the three bounded profiles only an integer `[a,b]` is admitted and `null` or `[a,*]` refuses `operation-member-mismatch`; a `null` member on an interval-capable operator refuses `operation-member-mismatch`; and `lower > upper` refuses `invalid-value` after the profile fit. | Test (TC-303) |
 | FR-370-AC-4 | `fair Op` and `fair weak whole Op` encode to byte-identical `quire.op.temporal.fair` applications, and a fairness member naming an operation absent from its declaring node's effective operations refuses `missing_declaration`/`missing-name`; a non-empty fairness argument is admitted under `quire.temporal.timed/v1` and `quire.temporal.infinite-trace/v1` and refuses `operation-member-mismatch` under each of the three bounded profiles. | Test (TC-303) |
-| FR-370-AC-5 | A temporal operator application outside a clause's formula, a `quire.op.temporal.fair` application outside its fairness argument, and a `quire.op.temporal.clause` application nested in another term refuse `ill_typed`/`operator-ineligible` at the node that holds them. | Test (TC-303) |
+| FR-370-AC-5 | A `temporal_formula` application at the body root of a node other than a `temporal`/`formula` node, a `quire.op.temporal.fair` application at the body root of a node other than a `temporal`/`fairness` node, and a `quire.op.temporal.clause` application at the body root of a node other than a `temporal`/`temporal_clause` node refuse `ill_typed`/`operator-ineligible` at that node; each of the three nested inside a node body or inside another term fails the V2 schema and refuses `malformed_wire` at the nested application. | Test (TC-303) |
 | FR-370-AC-6 | Strong previous encodes as `quire.op.temporal.once` with interval `{lower: "1", upper: "1"}`. | Test (TC-303) |
 | FR-370-AC-7 | The temporal step reports placement defects before clause defects, runs after the state step and before the operation step, and a `holds` operand of a non-Boolean family refuses `ill_typed`/`operator-ineligible` at the operation step. | Test (TC-303) |
 | FR-370-AC-8 | Under `quire.temporal.timed/v1`, `[0, 3]`, `[0, 3)`, `(0, 3]` and `(0, 3)` in the timed form are four distinct admitted members, `{numerator: "1", denominator: "2"}` is an admitted bound, a timed interval `(3, 3]` and a timed `lower > upper` refuse `invalid_package`/`invalid-value`, a bound `{numerator: "2", denominator: "4"}` refuses `invalid_semantic_graph`, and the timed form under any other profile refuses `operation-member-mismatch`. | Test (TC-303) |
 | FR-370-AC-9 | A negative interval bound, `{lower: "-1", upper: null}` or `{lower: "0", upper: "-1"}`, or a negative timed numerator fails the published schema and refuses `invalid_package`/`invalid-value` at the bound under every profile, before any temporal-step check, so it is never `operation-member-mismatch`. | Test (TC-303) |
 | FR-370-AC-10 | A clause's profile check runs before its other checks: a law naming `quire.temporal.timed/v1` is known; a law naming the package's own `protocol_profile` selection refuses `unknown_profile`/`wrong-selection-role` and a law naming `quire.temporal.unknown/v1`, selected under no role, `unknown_profile`/`unsupported-selection`, each at `/semantic_graph/nodes/{n}/body/operation/laws/0/definition` and each before a defect in the same clause's `over` reference or intervals. | Test (TC-303) |
 | FR-370-AC-11 | A fairness member naming an operation its `object_type` declaring node only inherits is admitted and resolves to the most derived redefinition; a name matching two effective operations refuses `ambiguous_declaration`/`ambiguous-name`; a declaring node no selected owner matches refuses `missing_declaration`/`missing-selection`; and a `declaration` naming a `systems_interface` model node or a non-model node refuses `invalid_model_binding`/`malformed-declaration` at the target. | Test (TC-303) |
-| FR-370-AC-12 | A reference to a `temporal`/`formula` node from a state clause's condition, and a reference to a `temporal`/`fairness` node from a clause's formula argument, refuse `ill_typed`/`operator-ineligible` located at the referencing node; a diagnostic whose `details` reference a `temporal`/`formula`, `temporal`/`fairness` or `expression`/`case` node refuses `ill_typed`/`operator-ineligible` at `/diagnostics/entries/{e}/details/{d}`; a `details` term that is an application of the `temporal_formula`, `temporal_fairness` or `case` operator class refuses `ill_typed`/`operator-ineligible` at `/diagnostics/entries/{e}/details/{d}/operator`; and `details` referencing a `composite_type`/`union` or `value`/`union_value` node are admitted. | Test (TC-303) |
+| FR-370-AC-12 | A reference to a `temporal`/`formula` node from a state clause's condition, and a reference to a `temporal`/`fairness` node from a clause's formula argument, refuse `ill_typed`/`operator-ineligible` located at the referencing node; a diagnostic whose `details` reference a `temporal`/`formula`, `temporal`/`fairness` or `expression`/`case` node refuses `ill_typed`/`operator-ineligible` at `/diagnostics/entries/{e}/details/{d}`; a `details` term that is an application of the `temporal_formula`, `temporal_fairness` or `case` operator class refuses `ill_typed`/`operator-ineligible` at `/diagnostics/entries/{e}/details/{d}/operator`; a `details` term holding several such applications refuses at the first in document pre-order, so a `temporal_formula` application with a nested `case` argument refuses at `/diagnostics/entries/{e}/details/{d}/operator` and an aggregate of a `temporal_formula` application and then a `case` application at `/diagnostics/entries/{e}/details/{d}/members/0/operator`; and `details` referencing a `composite_type`/`union` or `value`/`union_value` node are admitted. | Test (TC-303) |
 
 ## Published artifacts and the operation catalog
 
