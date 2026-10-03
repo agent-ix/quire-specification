@@ -81,6 +81,7 @@ catalog).
 | `invalid_capability` | A requested or advertised capability selection that names no FR-290 kind, an unknown kind or mode, an unsupported vocabulary identity, a duplicate registered backend, no extent classification, an unregistered or arm-less backend, candidates inconsistent with the manifest or named backend, or several candidate backends with none named. |
 | `duplicate_selection` | A second domain-package model selection of an already-selected identity. A package selects at most one version of a domain-package identity. |
 | `stage_limit_exceeded` | A compiler stage S1-S4, the I2 reader, a family `check`, `replay` or `route` reached one of its own stage limits. "A semantic maximum is not a caller work budget": this is distinct from `resource_exhausted`. |
+| `noncanonical_wire` | A JSON wire document that its RFC 8785 encoding does not carry as written: a number whose exact value that encoding loses, with cause `inexact-integer` or `inexact-number` at its `document_pointer`, or, for a reader that requires canonical bytes as the checked-package V2 reader does (FR-322), any other bytes, as a refusal about the byte stream. |
 | `inexact_decimal` | Strict `exact` met a decimal rounding step: a nonzero digit would be discarded. |
 | `decimal_out_of_domain` | A decimal result outside its target `Decimal[..]` domain. |
 | `division_pair_out_of_domain` | A `div`/`rem` quotient/remainder pair with at least one member outside the bounded consumer's domain. Neither member is exposed. |
@@ -190,7 +191,9 @@ construction and FR-145 conversion, `ambiguous_dispatch` for FR-151 link-time
 dispatch selection, `invalid_capability` for FR-290 capability-kind admission
 and candidate-set negotiation, `duplicate_selection` for a second selection of
 an already-selected domain-package identity, `stage_limit_exceeded` for a stage
-limit, and `inexact_decimal`, `decimal_out_of_domain`,
+limit, `noncanonical_wire` for a JSON number that RFC 8785 cannot carry
+exactly and for the FR-322 V2 reader's non-canonical bytes, and
+`inexact_decimal`, `decimal_out_of_domain`,
 `division_pair_out_of_domain`, `modulo_out_of_domain`,
 `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`,
 `ieee_not_exact`, `ieee_nan_payload_not_representable` and
@@ -199,8 +202,8 @@ FR-272 types every cause, including the causes of `foreign_reference` for
 FR-153 and FR-204, the checked-package operation variants, `stale-node-key`,
 `declaration-nominal-mismatch` and `ambiguous-name`, `unproved-exhaustiveness`
 for FR-146, the `unbounded-extent` and `tool-unavailable` causes of
-`unsupported_projection`, the `stage_limit_exceeded` causes, and the
-`invalid_source_identity` causes; `operator-ineligible` remains `ill_typed`. Matching remains catalog-qualified and exact.
+`unsupported_projection`, the `stage_limit_exceeded` causes, the
+`noncanonical_wire` causes, and the `invalid_source_identity` causes; `operator-ineligible` remains `ill_typed`. Matching remains catalog-qualified and exact.
 
 ## Dependencies
 
