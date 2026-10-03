@@ -427,13 +427,18 @@ misplaced application's `operator` member:
   ([FR-440](FR-440-checked-package-union-and-case-nodes.md) "Case
   placement").
 
-A `temporal_formula`, `temporal_fairness` or `temporal` application nested
-inside a node body or inside another term is no exception: it is refused
-`malformed_wire` at the nested application, like any other nested
-application. Temporal nesting is expressed through references to
-`temporal`/`formula` nodes
+An application of any operator class other than `case` nested inside a
+node body or inside another term is no exception: it is refused
+`malformed_wire` at the nested application. This holds for every such
+class, including a
+`temporal_formula`, `temporal_fairness` or `temporal` application
 ([FR-370](FR-370-checked-package-temporal-clause-body.md) "Placement and
-profile fit"). When one body or one `details` term holds several offending
+profile fit") and a `quire.op.state.clause` application
+([FR-341](FR-341-checked-package-state-clause-body.md)). Such nesting is
+expressed through references to the nodes whose body roots hold those
+applications. Only an application at the body root of a node its class
+does not place it in refuses `ill_typed`/`operator-ineligible` at that
+node. When one body or one `details` term holds several offending
 constructs, the reader reports the first one in document pre-order,
 outermost first. A `details` term that is a `temporal_formula` application
 with a nested `case` argument refuses at

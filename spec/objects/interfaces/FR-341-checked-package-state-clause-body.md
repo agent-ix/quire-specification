@@ -107,9 +107,12 @@ the kind member decides which clause an application is.
   and holds no application.
 
 The schema fixes each body root. A `quire.op.state.clause` application
-nested in any term, or standing as the body root of a node that is not
-`state`/`state_clause`, refuses `ill_typed`/`operator-ineligible` at that
-node.
+standing as the body root of a node that is not `state`/`state_clause`
+refuses `ill_typed`/`operator-ineligible` at that node. A
+`quire.op.state.clause` application nested inside a node body or inside
+another term is outside [FR-322](FR-322-checked-package-artifact.md)'s body
+grammar and refuses `malformed_wire` at the nested application, at strict
+wire validation, like any other nested application other than `case`.
 
 ## `value`/`parameter` node body
 
@@ -163,7 +166,7 @@ non-Boolean node each refuse `ill_typed`/`operator-ineligible`.
 | FR-341-AC-3 | The anchor of an invariant is a declared `model`/`object_type` dependency and the anchor of a precondition or postcondition a declared `state`/`operation_anchor` dependency; an invariant anchored at an operation anchor and a precondition anchored at an object type refuse `invalid_model_binding`/`malformed-declaration` at the anchor's target. | Test (TC-233) |
 | FR-341-AC-4 | Each parameter reference targets a declared `value`/`parameter` dependency, else it refuses `invalid_model_binding`/`malformed-declaration` at its target; `self` has type `Reference<C>` for the clause's context `C`, and an invariant binds `self` alone; a `self` of another type and an invariant binding a second parameter refuse `ill_typed`/`operator-ineligible` at the clause node. | Test (TC-233) |
 | FR-341-AC-5 | A precondition binds `self` and then the resolved operation's parameters; a postcondition binds `self`, then the operation's result when it has one, then its parameters; for `Order.scaled(n: Integer): Integer`, `[Reference<Order>, Integer]` is the precondition's list and `[Reference<Order>, Integer, Integer]` the postcondition's, and `Order.reset()` with no result gives `[Reference<Order>]`. A missing parameter, a missing result, a `self` of another object type and a parameter of another type each refuse `ill_typed`/`operator-ineligible`. | Test (TC-280) |
-| FR-341-AC-6 | A `quire.op.state.clause` application nested inside another term refuses `ill_typed`/`operator-ineligible` at the node that holds it. | Test (TC-233) |
+| FR-341-AC-6 | A `quire.op.state.clause` application at the body root of a node other than a `state`/`state_clause` node refuses `ill_typed`/`operator-ineligible` at that node; a `quire.op.state.clause` application nested inside a node body or inside another term fails the V2 schema and refuses `malformed_wire` at the nested application. | Test (TC-233) |
 | FR-341-AC-7 | The published clause package's invariant and precondition are admitted by the state step; the state step reports anchor defects before clause defects, and runs after the frame step and before the operation step. | Test (TC-233) |
 | FR-341-AC-8 | A `state`/`transition` node's body root is a `quire.op.state.transition` application; a `state`/`transition` node whose body root is another clause application fails the published schema. | Test (TC-233) |
 | FR-341-AC-9 | The operation catalog holds `quire.op.state.clause` with operator class `state_clause`, operands `aggregate`, `object`, `boolean`, result `clause`, no laws, no mode and the `state_clause` member kind, and both V2 schemas enumerate the identity, the operator class and the member kind; each published state clause application is admitted by the operation step. | Test (TC-233) |
