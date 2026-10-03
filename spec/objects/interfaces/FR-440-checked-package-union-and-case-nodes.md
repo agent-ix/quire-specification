@@ -61,7 +61,10 @@ whose joins below do not hold with the refusal this requirement names, in
   union's member declaration order, whatever order the source arms are
   written in. Its `result_type` and the node's `semantic_type` are the
   `case` result type ([FR-146](../../functional/expressions/FR-146-check-total-pure-functions.md),
-  "Case result type").
+  "Case result type"). A `quire.op.control.case` application stands only as
+  the body root of an `expression`/`case` node; a `case` used inside another
+  term, including another `case`'s arm body, is a `reference` to its own
+  `expression`/`case` node.
 - **Arm** — a `binding` whose `name` is the member identifier and whose
   `value` is an `aggregate` of exactly two members, in order:
   1. **the binder aggregate** — an `aggregate` of `reference` terms to
@@ -92,6 +95,18 @@ whose joins below do not hold with the refusal this requirement names, in
   `any_value` and `structural_kind` groups, so `quire.op.structural.eq` and
   `quire.op.structural.ne` compare two union values of one union type
   (FR-143), and a union value fits every `any_value` operand position.
+- **Structural leaves** — in [FR-322](FR-322-checked-package-artifact.md)'s
+  "Structural leaf walk" each union member is an anchor, as a record field
+  or a tuple position is. A text leaf reached through a union has the path
+  segments `member:<Name>` then `position:i`, where `i` is the index in that
+  member's ordered payload, even for a single payload; members are walked in
+  member declaration order, and a member with no payload has no leaf. For
+  `union Label { Named(Text[0,8;nfc]), Tagged(Integer, Text[0,8;nfc]), Empty }`
+  the text leaves are `["member:Named", "position:0"]` and
+  `["member:Tagged", "position:1"]`, and `Empty` has none. A cycle through
+  a union, as in `union List { Cons(Integer, List), Nil }`, is a recursion
+  leaf: `quire.op.structural.eq` over two `List` values is admitted, never
+  `operator-ineligible`.
 - **Published schema** — the published V2 package schema enumerates
   `union` among `CompositeTypeNode` forms, `union_value` among `ValueNode`
   forms and `case` among `ExpressionNode` forms, and binds the three bodies
@@ -138,17 +153,26 @@ nested `Only` arm's `x` takes `5`.
 The reader checks these joins at FR-322's operation step, in ascending
 node-id digest order, each node at its place in that order:
 
-1. **Union type.** Two bindings of one union type node with one `name`
+1. **Case placement.** A `quire.op.control.case` application at the body
+   root of any node other than an `expression`/`case` node refuses
+   `ill_typed`/`operator-ineligible` at the node that holds it. An
+   `expression` node whose `semantic_form` contradicts its root
+   application's operator class is FR-322's `invalid_semantic_graph`, and a
+   `case` application inside another term fails FR-322's body grammar. A
+   diagnostic `details` reference to a `case` or union node is refused by
+   [FR-370](FR-370-checked-package-temporal-clause-body.md)'s placement
+   check.
+2. **Union type.** Two bindings of one union type node with one `name`
    refuse `invalid_package`/`duplicate-member` at the node. A
    payload reference that is not a type node refuses
    `ill_typed`/`operator-ineligible` at the node.
-2. **Union value.** The `semantic_type` of a `union_value` node is a union
+3. **Union value.** The `semantic_type` of a `union_value` node is a union
    type node, its binding names a member of that union, its payload count
    equals that member's payload arity, and each payload term's type is the
    member's payload type at its position; otherwise the node refuses
    `ill_typed`/`type-mismatch`, as FR-143 refuses the same construction at
    type checking.
-3. **Case.** The `case` application's operand family, its `union_arms`
+4. **Case.** The `case` application's operand family, its `union_arms`
    constraint and its `arm_body` result are catalog checks; a failure of
    any of them refuses `ill_typed`/`operator-ineligible`, located at the
    `case` node.
@@ -169,6 +193,8 @@ id and no `package_id`.
 | FR-440-AC-4 | A `case` application whose arms are out of member order, omit or repeat a member, carry a binder aggregate whose count differs from the member's payload arity, type a binder other than its payload position, or carry an arm body of a type other than the `result_type` refuses `ill_typed`/`operator-ineligible` at the `case` node. | Test (TC-395) |
 | FR-440-AC-5 | In the "Binder levels" worked vector, `t`, `w`, `h`, `r` and `x` carry the levels `3`, `4`, `5`, `4` and `5`; with `let t = k in` removed (and `t` replaced by `k`), `w`, `h`, `r` and `x` carry `3`, `4`, `3` and `4`. | Test (TC-395) |
 | FR-440-AC-6 | `quire.op.structural.eq` over two `Shape` values is admitted, and over a `Shape` value and a value of another union refuses `ill_typed`/`operator-ineligible` by its `same_type` constraint. | Test (TC-395) |
+| FR-440-AC-7 | A `quire.op.control.case` application as the body root of a `function` node refuses `ill_typed`/`operator-ineligible` at that node, and the same `case` as an `expression`/`case` node referenced from the function body is admitted. | Test (TC-395) |
+| FR-440-AC-8 | `quire.op.structural.eq` over two `Label` values carries the leaves `["member:Named", "position:0"]` and `["member:Tagged", "position:1"]` and none for `Empty`, and over two `List` values of `union List { Cons(Integer, List), Nil }` is admitted with empty `leaves`. | Test (TC-395) |
 
 ## Dependencies
 
