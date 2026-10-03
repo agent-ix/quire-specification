@@ -844,6 +844,24 @@ const OPERATION_BEARING_MODEL_FORMS: [&str; 4] = [
     "state_machine",
 ];
 
+/// One leaf of FR-322's "Structural leaf walk".
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum ExpectedLeaf {
+    /// A text leaf at its path, with the text profile its type pins.
+    Text(Vec<String>, String),
+    /// A recursion leaf, whose path ends in `recursion:<d>`; it carries
+    /// `laws` `[]` and `mode` `null`.
+    Recursion(Vec<String>),
+}
+
+impl ExpectedLeaf {
+    fn path(&self) -> &[String] {
+        match self {
+            Self::Text(path, _) | Self::Recursion(path) => path,
+        }
+    }
+}
+
 /// Independent reader oracle over the operation catalog, a package lock and
 /// its graph. Nothing is read from outside the package and catalog.
 struct OperationOracle<'a> {
@@ -934,6 +952,7 @@ impl<'a> OperationOracle<'a> {
                 ("composite_type", "option") => "option",
                 ("composite_type", "record") => "record",
                 ("composite_type", "tuple") => "tuple",
+                ("composite_type", "union") => "union",
                 ("composite_type", "sequence") => "sequence",
                 ("composite_type", "set") => "set",
                 ("composite_type", "bag") => "bag",
@@ -1198,63 +1217,130 @@ impl<'a> OperationOracle<'a> {
         None
     }
 
-    /// Text leaves of a compared type in declaration pre-order, each with the
-    /// text profile its type pins; `None` when a leaf is IEEE, a text leaf pins
-    /// no profile, or the type is cyclic.
-    fn expected_leaves(&self, id: &Value) -> Option<Vec<(Vec<String>, String)>> {
+    /// Leaves of a compared type in FR-322 "Structural leaf walk" order: a
+    /// text leaf with the text profile its type pins, or a recursion leaf
+    /// (`recursion:<d>`, no profile). `None` when a leaf is IEEE, a text leaf
+    /// pins no profile, or a cycle reenters a type that is not a record,
+    /// tuple or union.
+    fn expected_leaves(&self, id: &Value) -> Option<Vec<ExpectedLeaf>> {
         let mut leaves = Vec::new();
         self.collect_leaves(id, &mut Vec::new(), &mut Vec::new(), &mut leaves)?;
         Some(leaves)
     }
 
-    fn collect_leaves(
-        &self,
-        id: &Value,
-        path: &mut Vec<String>,
-        visiting: &mut Vec<Value>,
-        leaves: &mut Vec<(Vec<String>, String)>,
-    ) -> Option<()> {
+    /// The walk steps out of one type: each field, tuple position, union
+    /// member payload position or element type, with the path segments that
+    /// reach it. Any other type has none.
+    fn leaf_children(&self, id: &Value) -> Option<Vec<(Vec<String>, &'a Value)>> {
         let node = self.resolve(id)?;
-        if visiting.contains(&node["node_id"]) {
-            return None;
-        }
-        let family = self.type_family(id)?;
-        let children: Vec<(String, &Value)> = match family {
-            "text" => {
-                leaves.push((path.clone(), self.pin(&self.typed(id)?, "text_profile")?));
-                return Some(());
-            }
-            "float32" | "float64" => return None,
-            "record" => node["body"]["members"]
-                .as_array()?
+        let members = || node["body"]["members"].as_array();
+        Some(match self.type_family(id)? {
+            "record" => members()?
                 .iter()
                 .map(|member| {
                     Some((
-                        format!("field:{}", member["name"].as_str()?),
+                        vec![format!("field:{}", member["name"].as_str()?)],
                         Self::reference_target(&member["value"])?,
                     ))
                 })
                 .collect::<Option<_>>()?,
-            "tuple" => node["body"]["members"]
-                .as_array()?
+            "tuple" => members()?
                 .iter()
                 .enumerate()
                 .map(|(index, member)| {
-                    Some((format!("position:{index}"), Self::reference_target(member)?))
+                    Some((
+                        vec![format!("position:{index}")],
+                        Self::reference_target(member)?,
+                    ))
                 })
                 .collect::<Option<_>>()?,
-            "option" | "sequence" | "set" | "bag" | "ordered_set" => {
-                vec![("inner".to_owned(), self.inner_type(id)?)]
+            "union" => {
+                let mut children = Vec::new();
+                for binding in members()? {
+                    let name = binding["name"].as_str()?;
+                    for (index, payload) in
+                        binding["value"]["members"].as_array()?.iter().enumerate()
+                    {
+                        children.push((
+                            vec![format!("member:{name}"), format!("position:{index}")],
+                            Self::reference_target(payload)?,
+                        ));
+                    }
+                }
+                children
             }
-            _ => return Some(()),
-        };
-        visiting.push(node["node_id"].clone());
-        for (segment, child) in children {
-            path.push(segment);
-            self.collect_leaves(child, path, visiting, leaves)?;
-            path.pop();
+            "option" | "sequence" | "set" | "bag" | "ordered_set" => {
+                vec![(vec!["inner".to_owned()], self.inner_type(id)?)]
+            }
+            _ => Vec::new(),
+        })
+    }
+
+    /// Whether some walk step sequence leads from `id` to a text type.
+    fn reaches_text(&self, id: &Value) -> bool {
+        let mut seen = BTreeSet::new();
+        let mut pending = vec![id];
+        while let Some(current) = pending.pop() {
+            if self.type_family(current) == Some("text") {
+                return true;
+            }
+            let Some(node) = self.resolve(current) else {
+                continue;
+            };
+            if !seen.insert(node["node_id"].to_string()) {
+                continue;
+            }
+            pending.extend(
+                self.leaf_children(current)
+                    .into_iter()
+                    .flatten()
+                    .map(|(_, child)| child),
+            );
         }
-        visiting.pop();
+        false
+    }
+
+    /// One step of the walk at `path`. `open` holds each type node being
+    /// walked on the current path with the path length at which it was
+    /// entered.
+    fn collect_leaves(
+        &self,
+        id: &Value,
+        path: &mut Vec<String>,
+        open: &mut Vec<(Value, usize)>,
+        leaves: &mut Vec<ExpectedLeaf>,
+    ) -> Option<()> {
+        let node = self.resolve(id)?;
+        let family = self.type_family(id)?;
+        if let Some((_, entered)) = open.iter().find(|(open_id, _)| *open_id == node["node_id"]) {
+            if !matches!(family, "record" | "tuple" | "union") {
+                return None;
+            }
+            if self.reaches_text(id) {
+                let mut recursion = path.clone();
+                recursion.push(format!("recursion:{entered}"));
+                leaves.push(ExpectedLeaf::Recursion(recursion));
+            }
+            return Some(());
+        }
+        match family {
+            "text" => {
+                let profile = self.pin(&self.typed(id)?, "text_profile")?;
+                leaves.push(ExpectedLeaf::Text(path.clone(), profile));
+                return Some(());
+            }
+            "float32" | "float64" => return None,
+            _ => {}
+        }
+        let children = self.leaf_children(id)?;
+        open.push((node["node_id"].clone(), path.len()));
+        for (segments, child) in children {
+            let depth = path.len();
+            path.extend(segments);
+            self.collect_leaves(child, path, open, leaves)?;
+            path.truncate(depth);
+        }
+        open.pop();
         Some(())
     }
 
@@ -1595,41 +1681,49 @@ impl<'a> OperationOracle<'a> {
         }
         let text_refs = self.law_refs("text_profile");
         let leaf_shape_fits = supplied_leaves.len() == expected.len()
-            && supplied_leaves
-                .iter()
-                .zip(&expected)
-                .all(|(leaf, (path, _))| {
-                    leaf["path"].as_array().is_some_and(|segments| {
-                        segments
-                            .iter()
-                            .map(Value::as_str)
-                            .eq(path.iter().map(|s| Some(s.as_str())))
-                    }) && leaf["laws"].as_array().is_some_and(|laws| {
+            && supplied_leaves.iter().zip(&expected).all(|(leaf, want)| {
+                let path_fits = leaf["path"].as_array().is_some_and(|segments| {
+                    segments
+                        .iter()
+                        .map(Value::as_str)
+                        .eq(want.path().iter().map(|s| Some(s.as_str())))
+                });
+                let laws_fit = leaf["laws"].as_array().is_some_and(|laws| match want {
+                    ExpectedLeaf::Text(..) => {
                         laws.len() == 1
                             && laws[0]["role"] == "text_profile"
                             && text_refs.contains(&laws[0]["definition"])
-                    })
+                    }
+                    ExpectedLeaf::Recursion(_) => laws.is_empty(),
                 });
+                path_fits && laws_fit
+            });
         if !leaf_shape_fits {
             return Err(Refusal::LawMismatch);
         }
-        if !supplied_leaves
-            .iter()
-            .all(|leaf| self.selected(&leaf["laws"][0]))
-        {
+        let text_leaves = || {
+            supplied_leaves
+                .iter()
+                .zip(&expected)
+                .filter_map(|(leaf, want)| match want {
+                    ExpectedLeaf::Text(_, pin) => Some((leaf, pin)),
+                    ExpectedLeaf::Recursion(_) => None,
+                })
+        };
+        if !text_leaves().all(|(leaf, _)| self.selected(&leaf["laws"][0])) {
             return Err(Refusal::LawUnselected);
         }
         if !supplied_leaves
             .iter()
-            .all(|leaf| self.mode_value_admitted(&leaf["mode"], "text_profile"))
+            .zip(&expected)
+            .all(|(leaf, want)| match want {
+                ExpectedLeaf::Text(..) => self.mode_value_admitted(&leaf["mode"], "text_profile"),
+                ExpectedLeaf::Recursion(_) => leaf["mode"].is_null(),
+            })
         {
             return Err(Refusal::ModeMismatch);
         }
-        if !supplied_leaves
-            .iter()
-            .zip(&expected)
-            .all(|(leaf, (_, pin))| leaf["mode"]["value"] == pin.as_str())
-        {
+        if !text_leaves().all(|(leaf, pin)| leaf["mode"]["value"] == pin.as_str()) {
             return Err(Refusal::ModeTypeMismatch);
         }
         Ok(result)
@@ -8183,4 +8277,1120 @@ fn tc_427_nested_inline_terms_fail_the_schema_and_referenced_terms_pass() {
             "{id} referenced form is in the grammar"
         );
     }
+}
+
+const SEMANTIC_NODE_DOMAIN: &str = "quire.checked-semantic-node/v1";
+
+fn walk_id(name: &str) -> Value {
+    json!({"domain": SEMANTIC_NODE_DOMAIN, "digest": name})
+}
+
+fn walk_ref(name: &str) -> Value {
+    json!({"term": "reference", "target": walk_id(name)})
+}
+
+/// A type node named `name` whose body is an aggregate of `members`.
+fn walk_type(name: &str, tag: &str, form: &str, members: Vec<Value>) -> Value {
+    json!({
+        "node_id": walk_id(name),
+        "node_tag": tag,
+        "semantic_form": form,
+        "semantic_type": walk_id(name),
+        "body": {"term": "aggregate", "members": members}
+    })
+}
+
+fn walk_text(name: &str, profile: &str) -> Value {
+    walk_type(
+        name,
+        "scalar_type",
+        "text",
+        vec![
+            json!({"term": "binding", "name": "text_profile", "value": {"term": "literal", "value": profile}}),
+        ],
+    )
+}
+
+fn walk_scalar(name: &str, form: &str) -> Value {
+    walk_type(name, "scalar_type", form, vec![])
+}
+
+fn walk_record(name: &str, fields: &[(&str, &str)]) -> Value {
+    let members = fields
+        .iter()
+        .map(|(field, ty)| json!({"term": "binding", "name": field, "value": walk_ref(ty)}))
+        .collect();
+    walk_type(name, "composite_type", "record", members)
+}
+
+fn walk_tuple(name: &str, positions: &[&str]) -> Value {
+    walk_type(
+        name,
+        "composite_type",
+        "tuple",
+        positions.iter().map(|ty| walk_ref(ty)).collect(),
+    )
+}
+
+fn walk_union(name: &str, members: &[(&str, &[&str])]) -> Value {
+    let members = members
+        .iter()
+        .map(|(member, payload)| {
+            json!({
+                "term": "binding",
+                "name": member,
+                "value": {"term": "aggregate", "members": payload.iter().map(|ty| walk_ref(ty)).collect::<Vec<_>>()}
+            })
+        })
+        .collect();
+    walk_type(name, "composite_type", "union", members)
+}
+
+fn walk_option(name: &str, inner: &str) -> Value {
+    walk_type(name, "composite_type", "option", vec![walk_ref(inner)])
+}
+
+/// The catalog's text-profile law definition.
+fn walk_text_law(catalog: &Value) -> Value {
+    let law = &catalog["law_roles"]["text_profile"][0];
+    json!({"authority": law["authority"], "identity": law["identity"]})
+}
+
+/// A package holding `types`, two operand values `left` and `right` of type
+/// `compared` and a Boolean result type, whose lock selects the text law.
+fn walk_package(catalog: &Value, mut types: Vec<Value>, compared: &str) -> Value {
+    types.push(walk_scalar("Bool", "boolean"));
+    for operand in ["left", "right"] {
+        types.push(json!({
+            "node_id": walk_id(operand),
+            "node_tag": "value",
+            "semantic_form": "parameter",
+            "semantic_type": walk_id(compared),
+            "body": {"term": "aggregate", "members": []}
+        }));
+    }
+    json!({
+        "lock": {"profile_selections": [], "definition_selections": [walk_text_law(catalog)]},
+        "semantic_graph": {"nodes": types}
+    })
+}
+
+/// `quire.op.structural.eq` over `left` and `right` carrying `leaves`.
+fn walk_structural_eq(leaves: &[Value]) -> Value {
+    json!({
+        "term": "application",
+        "operator": "binary",
+        "operation": {"identity": "quire.op.structural.eq", "laws": [], "mode": null, "member": null, "leaves": leaves},
+        "result_type": walk_id("Bool"),
+        "arguments": [walk_ref("left"), walk_ref("right")]
+    })
+}
+
+fn walk_text_leaf(catalog: &Value, path: &[&str], profile: &str) -> Value {
+    json!({
+        "path": path,
+        "laws": [{"role": "text_profile", "definition": walk_text_law(catalog)}],
+        "mode": {"kind": "text_profile", "value": profile}
+    })
+}
+
+fn walk_recursion_leaf(path: &[&str]) -> Value {
+    json!({"path": path, "laws": [], "mode": null})
+}
+
+/// `quire.op.structural.eq` over two `compared` values of `types` is admitted
+/// with exactly `leaves`, in order: with the last leaf dropped it refuses
+/// `operation-law-missing`, and with the leaves reversed it refuses
+/// `operation-law-mismatch`.
+fn assert_structural_leaves(types: Vec<Value>, compared: &str, leaves: &[Value]) {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = walk_package(&catalog, types, compared);
+    let oracle = OperationOracle::for_package(&catalog, &package);
+    assert_eq!(
+        oracle
+            .classify(&walk_structural_eq(leaves))
+            .map(|result| result.family),
+        Ok("boolean".to_owned()),
+        "eq over {compared} is admitted with exactly its walk's leaves"
+    );
+    if let Some((_, fewer)) = leaves.split_last() {
+        assert_eq!(
+            oracle.classify(&walk_structural_eq(fewer)).err(),
+            Some(OperationRefusal::LawMissing),
+            "eq over {compared} without its last leaf refuses"
+        );
+    }
+    if leaves.len() > 1 {
+        let reversed = leaves.iter().rev().cloned().collect::<Vec<_>>();
+        assert_eq!(
+            oracle.classify(&walk_structural_eq(&reversed)).err(),
+            Some(OperationRefusal::LawMismatch),
+            "eq over {compared} with its leaves out of walk order refuses"
+        );
+    }
+}
+
+/// FR-322's `Label` union: text leaves under `member:<Name>`, `position:i`,
+/// in member declaration order, none for the payload-less member.
+#[trace("TC-395", "FR-322-AC-45")]
+#[trace("TC-395", "FR-440-AC-8")]
+#[test]
+fn tc_395_union_text_leaves_are_member_then_position_paths_in_member_order() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    assert_structural_leaves(
+        vec![
+            walk_text("Short", "nfc"),
+            walk_scalar("Integer", "integer"),
+            walk_union(
+                "Label",
+                &[
+                    ("Named", &["Short"]),
+                    ("Tagged", &["Integer", "Short"]),
+                    ("Empty", &[]),
+                ],
+            ),
+        ],
+        "Label",
+        &[
+            walk_text_leaf(&catalog, &["member:Named", "position:0"], "nfc"),
+            walk_text_leaf(&catalog, &["member:Tagged", "position:1"], "nfc"),
+        ],
+    );
+    for source in [SCHEMA, NODE_PREIMAGE_SCHEMA] {
+        let segment = schema_for_def(&parsed_fixture(source), "LeafSegment");
+        assert!(segment.is_valid(&json!("member:Named")));
+        assert!(!segment.is_valid(&json!("member:")));
+    }
+}
+
+/// A cycle through a record, tuple or union is a recursion leaf: nothing
+/// when no text type is reachable, else `recursion:<d>` with `laws` `[]` and
+/// `mode` `null`; never `operator-ineligible`.
+#[trace("TC-395", "FR-322-AC-46")]
+#[trace("TC-395", "FR-440-AC-8")]
+#[test]
+fn tc_395_cycles_through_records_tuples_and_unions_are_recursion_leaves() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let text = || walk_text("Short", "nfc");
+    let integer = || walk_scalar("Integer", "integer");
+
+    let list = || walk_union("List", &[("Cons", &["Integer", "List"]), ("Nil", &[])]);
+    assert_structural_leaves(vec![integer(), list()], "List", &[]);
+    assert_structural_leaves(
+        vec![
+            integer(),
+            walk_record("Tree", &[("kids", "Forest")]),
+            walk_union("Forest", &[("Grow", &["Integer", "Tree"]), ("Done", &[])]),
+        ],
+        "Tree",
+        &[],
+    );
+
+    assert_structural_leaves(
+        vec![
+            text(),
+            walk_record("Node", &[("label", "Short"), ("next", "OptNode")]),
+            walk_option("OptNode", "Node"),
+        ],
+        "Node",
+        &[
+            walk_text_leaf(&catalog, &["field:label"], "nfc"),
+            walk_recursion_leaf(&["field:next", "inner", "recursion:0"]),
+        ],
+    );
+    assert_structural_leaves(
+        vec![
+            text(),
+            walk_record("Cell", &[("item", "Pair")]),
+            walk_tuple("Pair", &["Short", "OptCell"]),
+            walk_option("OptCell", "Cell"),
+        ],
+        "Cell",
+        &[
+            walk_text_leaf(&catalog, &["field:item", "position:0"], "nfc"),
+            walk_recursion_leaf(&["field:item", "position:1", "inner", "recursion:0"]),
+        ],
+    );
+    let chain = || walk_union("Chain", &[("Link", &["Short", "Chain"]), ("End", &[])]);
+    assert_structural_leaves(
+        vec![text(), chain()],
+        "Chain",
+        &[
+            walk_text_leaf(&catalog, &["member:Link", "position:0"], "nfc"),
+            walk_recursion_leaf(&["member:Link", "position:1", "recursion:0"]),
+        ],
+    );
+    assert_structural_leaves(
+        vec![text(), chain(), walk_option("OptChain", "Chain")],
+        "OptChain",
+        &[
+            walk_text_leaf(&catalog, &["inner", "member:Link", "position:0"], "nfc"),
+            walk_recursion_leaf(&["inner", "member:Link", "position:1", "recursion:1"]),
+        ],
+    );
+
+    let package = walk_package(&catalog, vec![text(), chain()], "Chain");
+    let oracle = OperationOracle::for_package(&catalog, &package);
+    let mut with_law = walk_recursion_leaf(&["member:Link", "position:1", "recursion:0"]);
+    with_law["laws"] = json!([{"role": "text_profile", "definition": walk_text_law(&catalog)}]);
+    assert_eq!(
+        oracle
+            .classify(&walk_structural_eq(&[
+                walk_text_leaf(&catalog, &["member:Link", "position:0"], "nfc"),
+                with_law,
+            ]))
+            .err(),
+        Some(OperationRefusal::LawMismatch),
+        "a recursion leaf carries no law"
+    );
+
+    for source in [SCHEMA, NODE_PREIMAGE_SCHEMA] {
+        let segment = schema_for_def(&parsed_fixture(source), "LeafSegment");
+        for admitted in ["recursion:0", "recursion:12"] {
+            assert!(
+                segment.is_valid(&json!(admitted)),
+                "{admitted} is a segment"
+            );
+        }
+        for refused in ["recursion:", "recursion:01", "recursion:-1"] {
+            assert!(
+                !segment.is_valid(&json!(refused)),
+                "{refused} is no segment"
+            );
+        }
+    }
+}
+
+/// The V2 Diagnostic schema admits each #181 cause only with its codes.
+#[trace("TC-233", "FR-322-AC-47")]
+#[test]
+fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes() {
+    let schema = parsed_fixture(SCHEMA);
+    let diagnostic = schema_for_def(&schema, "Diagnostic");
+    let codes = string_list(
+        &schema["$defs"]["Diagnostic"]["properties"]["code"]["enum"],
+        "diagnostic codes",
+    );
+    let pairings: [(&str, &[&str]); 4] = [
+        ("type-mismatch", &["ill_typed"]),
+        (
+            "missing-selection",
+            &["missing_import", "missing_declaration"],
+        ),
+        (
+            "unsupported-selection",
+            &["unknown_language", "unknown_edition", "unknown_profile"],
+        ),
+        (
+            "wrong-selection-role",
+            &["unknown_language", "unknown_edition", "unknown_profile"],
+        ),
+    ];
+    for (cause, admitted) in pairings {
+        for code in &codes {
+            let entry = json!({"stage": "package_read", "code": code, "cause_tag": cause, "details": [], "loci": []});
+            assert_eq!(
+                diagnostic.is_valid(&entry),
+                admitted.contains(code),
+                "the Diagnostic schema pairs {cause} with `{code}` exactly when FR-322 lists it"
+            );
+        }
+    }
+}
+
+/// A temporal-step refusal of FR-370 (or the wire or graph check that
+/// precedes the step), with its FR-272 code and cause.
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum TemporalRefusal {
+    /// `invalid_package`/`invalid-value`.
+    InvalidValue,
+    /// `invalid_package`/`operation-member-mismatch`.
+    MemberMismatch,
+    /// `invalid_semantic_graph`: a rational bound not in lowest terms.
+    InvalidSemanticGraph,
+    /// `unknown_profile`/`wrong-selection-role`.
+    WrongSelectionRole,
+    /// `unknown_profile`/`unsupported-selection`.
+    UnsupportedSelection,
+    /// `missing_declaration`/`missing-name`.
+    MissingName,
+    /// `ambiguous_declaration`/`ambiguous-name`.
+    AmbiguousName,
+    /// `missing_declaration`/`missing-selection`.
+    MissingSelection,
+    /// `invalid_model_binding`/`malformed-declaration`.
+    MalformedDeclaration,
+    /// `ill_typed`/`operator-ineligible` at a JSON pointer or node id.
+    OperatorIneligible(String),
+    /// `malformed_wire` at a JSON pointer.
+    MalformedWire(String),
+}
+
+const FR_250: &str = include_str!("../spec/objects/temporal/FR-250-temporal-semantic-profile.md");
+const INFINITE_TRACE: &str = "quire.temporal.infinite-trace/v1";
+const TIMED: &str = "quire.temporal.timed/v1";
+
+/// FR-250's five profile identities, read from its Values table.
+fn fr_250_profiles() -> Vec<&'static str> {
+    FR_250
+        .lines()
+        .filter(|line| line.starts_with("| `quire.temporal."))
+        .filter_map(|line| line.split('`').nth(1))
+        .collect()
+}
+
+fn exact_rational(value: &Value) -> Option<(BigInt, BigInt)> {
+    Some((
+        integer(&value["numerator"])?,
+        integer(&value["denominator"])?,
+    ))
+}
+
+/// FR-370's checks of one `temporal_interval` member of a clause under
+/// `profile`, in reader order: strict wire validation, the graph's
+/// lowest-terms rule, the profile fit, then the bounds.
+fn interval_refusal(
+    member_schemas: &[jsonschema::Validator],
+    profile: &str,
+    interval: &Value,
+) -> Result<(), TemporalRefusal> {
+    let member = json!({"kind": "temporal_interval", "interval": interval});
+    if !member_schemas.iter().all(|schema| schema.is_valid(&member)) {
+        return Err(TemporalRefusal::InvalidValue);
+    }
+    let timed = interval.get("lower_end").is_some();
+    if timed
+        && [&interval["lower"], &interval["upper"]]
+            .into_iter()
+            .any(|bound| !rational_is_canonical(bound))
+    {
+        return Err(TemporalRefusal::InvalidSemanticGraph);
+    }
+    let admitted = match profile {
+        INFINITE_TRACE => !timed,
+        TIMED => interval.is_null() || timed,
+        _ => !interval.is_null() && !timed && !interval["upper"].is_null(),
+    };
+    if !admitted {
+        return Err(TemporalRefusal::MemberMismatch);
+    }
+    bounds_refusal(interval)
+}
+
+/// FR-370's bound check: `lower > upper`, or a timed open end with
+/// `lower = upper`, is `invalid-value`.
+fn bounds_refusal(interval: &Value) -> Result<(), TemporalRefusal> {
+    if interval.is_null() || interval["upper"].is_null() {
+        return Ok(());
+    }
+    let ordering = if interval.get("lower_end").is_some() {
+        let ((ln, ld), (un, ud)) = (
+            exact_rational(&interval["lower"]).ok_or(TemporalRefusal::InvalidValue)?,
+            exact_rational(&interval["upper"]).ok_or(TemporalRefusal::InvalidValue)?,
+        );
+        let ordering = (ln * &ud).cmp(&(un * &ld));
+        let open = interval["lower_end"] == "open" || interval["upper_end"] == "open";
+        if ordering.is_eq() && open {
+            return Err(TemporalRefusal::InvalidValue);
+        }
+        ordering
+    } else {
+        integer(&interval["lower"]).cmp(&integer(&interval["upper"]))
+    };
+    if ordering.is_gt() {
+        return Err(TemporalRefusal::InvalidValue);
+    }
+    Ok(())
+}
+
+fn temporal_member_schemas() -> Vec<jsonschema::Validator> {
+    [SCHEMA, NODE_PREIMAGE_SCHEMA]
+        .into_iter()
+        .map(|source| schema_for_def(&parsed_fixture(source), "OperationMember"))
+        .collect()
+}
+
+fn timed_interval(lower: (&str, &str), upper: (&str, &str), ends: (&str, &str)) -> Value {
+    json!({
+        "lower": {"numerator": lower.0, "denominator": lower.1},
+        "upper": {"numerator": upper.0, "denominator": upper.1},
+        "lower_end": ends.0,
+        "upper_end": ends.1
+    })
+}
+
+#[trace("TC-303", "FR-370-AC-8")]
+#[test]
+fn tc_303_timed_intervals_carry_exact_rational_bounds_and_open_or_closed_ends() {
+    let schemas = temporal_member_schemas();
+    let three = ("3", "1");
+    let zero = ("0", "1");
+    let ends = [
+        ("closed", "closed"),
+        ("closed", "open"),
+        ("open", "closed"),
+        ("open", "open"),
+    ];
+    let variants = ends
+        .iter()
+        .map(|end| timed_interval(zero, three, *end))
+        .collect::<Vec<_>>();
+    for interval in &variants {
+        assert_eq!(
+            interval_refusal(&schemas, TIMED, interval),
+            Ok(()),
+            "{interval} is admitted"
+        );
+    }
+    assert_eq!(
+        variants
+            .iter()
+            .map(unqualified_jcs_sha256)
+            .collect::<BTreeSet<_>>()
+            .len(),
+        4,
+        "the four end variants are distinct members"
+    );
+    let cases = [
+        (timed_interval(("1", "2"), three, ends[0]), Ok(())),
+        (
+            timed_interval(three, three, ("open", "closed")),
+            Err(TemporalRefusal::InvalidValue),
+        ),
+        (
+            timed_interval(three, ("1", "1"), ends[0]),
+            Err(TemporalRefusal::InvalidValue),
+        ),
+        (
+            timed_interval(("2", "4"), three, ends[0]),
+            Err(TemporalRefusal::InvalidSemanticGraph),
+        ),
+    ];
+    for (interval, outcome) in cases {
+        assert_eq!(
+            interval_refusal(&schemas, TIMED, &interval),
+            outcome,
+            "{interval}"
+        );
+    }
+    for profile in fr_250_profiles()
+        .into_iter()
+        .filter(|profile| *profile != TIMED)
+    {
+        assert_eq!(
+            interval_refusal(&schemas, profile, &variants[0]),
+            Err(TemporalRefusal::MemberMismatch),
+            "the timed form is not admitted under {profile}"
+        );
+    }
+}
+
+#[trace("TC-303", "FR-370-AC-9")]
+#[test]
+fn tc_303_negative_interval_bounds_fail_the_schema_under_every_profile() {
+    let schemas = temporal_member_schemas();
+    let negatives = [
+        json!({"lower": "-1", "upper": null}),
+        json!({"lower": "0", "upper": "-1"}),
+        timed_interval(("-1", "1"), ("3", "1"), ("closed", "closed")),
+    ];
+    let profiles = fr_250_profiles();
+    assert_eq!(profiles.len(), 5, "FR-250 lists five profiles");
+    for profile in profiles {
+        for interval in &negatives {
+            assert_eq!(
+                interval_refusal(&schemas, profile, interval),
+                Err(TemporalRefusal::InvalidValue),
+                "{interval} under {profile} is invalid-value, never operation-member-mismatch"
+            );
+        }
+    }
+}
+
+/// FR-370 "Profile check" of a clause law's definition against the lock.
+fn profile_check(definition: &Value, lock: &Value) -> Result<(), TemporalRefusal> {
+    if fr_250_profiles().contains(&definition["identity"].as_str().unwrap_or_default()) {
+        return Ok(());
+    }
+    let other_role = std::iter::once(&lock["edition"])
+        .chain(lock["profile_selections"].as_array().into_iter().flatten())
+        .any(|selection| {
+            selection["definition"] == *definition && selection["role"] != "temporal_profile"
+        });
+    Err(if other_role {
+        TemporalRefusal::WrongSelectionRole
+    } else {
+        TemporalRefusal::UnsupportedSelection
+    })
+}
+
+/// A temporal clause reduced to what FR-370's per-clause checks read.
+struct TemporalClauseCase {
+    law: Value,
+    over_declared: bool,
+    intervals: Vec<Value>,
+}
+
+/// FR-370's per-clause checks in reader order: wire and graph checks of the
+/// intervals, the profile check, the `over` reference, the profile fit of
+/// every interval, then each interval's bounds.
+fn temporal_clause_refusal(
+    clause: &TemporalClauseCase,
+    lock: &Value,
+) -> Result<(), TemporalRefusal> {
+    let schemas = temporal_member_schemas();
+    for interval in &clause.intervals {
+        match interval_refusal(&schemas, TIMED, interval) {
+            Err(
+                refusal @ (TemporalRefusal::InvalidValue | TemporalRefusal::InvalidSemanticGraph),
+            ) if interval_refusal(&schemas, INFINITE_TRACE, interval) == Err(refusal.clone()) => {
+                return Err(refusal);
+            }
+            _ => {}
+        }
+    }
+    profile_check(&clause.law, lock)?;
+    if !clause.over_declared {
+        return Err(TemporalRefusal::MissingName);
+    }
+    let profile = clause.law["identity"].as_str().unwrap_or_default();
+    for interval in &clause.intervals {
+        if interval_refusal(&schemas, profile, interval) == Err(TemporalRefusal::MemberMismatch) {
+            return Err(TemporalRefusal::MemberMismatch);
+        }
+    }
+    clause.intervals.iter().try_for_each(bounds_refusal)
+}
+
+#[trace("TC-303", "FR-370-AC-10")]
+#[test]
+fn tc_303_a_clause_profile_check_runs_before_its_other_checks() {
+    let protocol = json!({"authority": "agent-ix", "identity": "quire.protocol.finite/v1"});
+    let lock = json!({
+        "edition": {"role": "edition", "definition": {"authority": "agent-ix", "identity": "quire-edition"}},
+        "profile_selections": [{"role": "protocol_profile", "definition": protocol}]
+    });
+    let law = |identity: &str| json!({"authority": "agent-ix", "identity": identity});
+    let integer_interval = json!({"lower": "0", "upper": "3"});
+    let known = TemporalClauseCase {
+        law: law(TIMED),
+        over_declared: true,
+        intervals: vec![json!(null)],
+    };
+    assert_eq!(temporal_clause_refusal(&known, &lock), Ok(()));
+    for (definition, refusal) in [
+        (protocol.clone(), TemporalRefusal::WrongSelectionRole),
+        (
+            law("quire.temporal.unknown/v1"),
+            TemporalRefusal::UnsupportedSelection,
+        ),
+    ] {
+        let clause = TemporalClauseCase {
+            law: definition,
+            over_declared: false,
+            intervals: vec![
+                json!({"lower": "3", "upper": "1"}),
+                integer_interval.clone(),
+            ],
+        };
+        assert_eq!(
+            temporal_clause_refusal(&clause, &lock),
+            Err(refusal),
+            "the profile check precedes the over and interval defects"
+        );
+    }
+    let clause = TemporalClauseCase {
+        law: law(TIMED),
+        over_declared: false,
+        intervals: vec![integer_interval],
+    };
+    assert_eq!(
+        temporal_clause_refusal(&clause, &lock),
+        Err(TemporalRefusal::MissingName),
+        "with a known profile the over defect is reported next"
+    );
+}
+
+/// FR-370 "Fairness resolution": the effective operations of an object
+/// type, own first, then each supertype's that the type does not redefine,
+/// each with the type that declares it.
+fn effective_operations(domain: &Value, node: &str) -> Vec<(String, String)> {
+    let Some(object_type) = domain["object_types"]
+        .as_array()
+        .and_then(|types| types.iter().find(|candidate| candidate["node"] == node))
+    else {
+        return Vec::new();
+    };
+    let own = string_list(&object_type["operations"], "operations");
+    let mut effective = own
+        .iter()
+        .map(|name| ((*name).to_owned(), node.to_owned()))
+        .collect::<Vec<_>>();
+    for supertype in string_list(&object_type["supertypes"], "supertypes") {
+        for inherited in effective_operations(domain, supertype) {
+            if !own.contains(&inherited.0.as_str()) && !effective.contains(&inherited) {
+                effective.push(inherited);
+            }
+        }
+    }
+    effective
+}
+
+/// The three steps of FR-370 "Fairness resolution" for one fairness member;
+/// `Ok` names the type whose operation it resolves to.
+fn fairness_resolution(
+    nodes: &[Value],
+    selected: &[&str],
+    domain: &Value,
+    member: &Value,
+) -> Result<String, TemporalRefusal> {
+    let digest = member["declaration"]["digest"].as_str().unwrap_or_default();
+    let declaring = node_by_digest(nodes, digest)
+        .filter(|node| node["node_tag"] == "model" && node["semantic_form"] == "object_type");
+    if declaring.is_none() {
+        return Err(TemporalRefusal::MalformedDeclaration);
+    }
+    if !selected.contains(&digest) {
+        return Err(TemporalRefusal::MissingSelection);
+    }
+    let matches = effective_operations(domain, digest)
+        .into_iter()
+        .filter(|(name, _)| member["name"] == name.as_str())
+        .collect::<Vec<_>>();
+    match matches.as_slice() {
+        [] => Err(TemporalRefusal::MissingName),
+        [(_, owner)] => Ok(owner.clone()),
+        _ => Err(TemporalRefusal::AmbiguousName),
+    }
+}
+
+#[trace("TC-303", "FR-370-AC-11")]
+#[test]
+fn tc_303_fairness_members_resolve_among_effective_operations() {
+    let model = |name: &str, form: &str| json!({"node_id": walk_id(name), "node_tag": "model", "semantic_form": form});
+    let nodes = [
+        model("Base", "object_type"),
+        model("Derived", "object_type"),
+        model("Leaf", "object_type"),
+        model("Left", "object_type"),
+        model("Right", "object_type"),
+        model("Both", "object_type"),
+        model("Stray", "object_type"),
+        model("Gateway", "systems_interface"),
+        json!({"node_id": walk_id("Count"), "node_tag": "value", "semantic_form": "parameter"}),
+    ];
+    let selected = [
+        "Base", "Derived", "Leaf", "Left", "Right", "Both", "Gateway",
+    ];
+    let domain = json!({"object_types": [
+        {"node": "Base", "operations": ["run", "stop"], "supertypes": []},
+        {"node": "Derived", "operations": ["run"], "supertypes": ["Base"]},
+        {"node": "Leaf", "operations": [], "supertypes": ["Derived"]},
+        {"node": "Left", "operations": ["go"], "supertypes": []},
+        {"node": "Right", "operations": ["go"], "supertypes": []},
+        {"node": "Both", "operations": [], "supertypes": ["Left", "Right"]},
+        {"node": "Stray", "operations": ["run"], "supertypes": []}
+    ]});
+    let member = |declaration: &str, name: &str| json!({"kind": "fairness", "fairness_kind": "weak", "granularity": "whole", "declaration": walk_id(declaration), "name": name});
+    let cases = [
+        (member("Leaf", "run"), Ok("Derived".to_owned())),
+        (member("Leaf", "stop"), Ok("Base".to_owned())),
+        (member("Leaf", "halt"), Err(TemporalRefusal::MissingName)),
+        (member("Both", "go"), Err(TemporalRefusal::AmbiguousName)),
+        (
+            member("Stray", "run"),
+            Err(TemporalRefusal::MissingSelection),
+        ),
+        (
+            member("Gateway", "run"),
+            Err(TemporalRefusal::MalformedDeclaration),
+        ),
+        (
+            member("Count", "run"),
+            Err(TemporalRefusal::MalformedDeclaration),
+        ),
+    ];
+    for (member, outcome) in cases {
+        assert_eq!(
+            fairness_resolution(&nodes, &selected, &domain, &member),
+            outcome,
+            "{member}"
+        );
+    }
+}
+
+/// Every application within `term` with its JSON pointer, `pointer` naming
+/// `term` itself.
+fn applications_at<'v>(term: &'v Value, pointer: &str) -> Vec<(String, &'v Value)> {
+    let mut found = Vec::new();
+    let nested = |key: &str| {
+        term[key]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .enumerate()
+            .flat_map(|(index, item)| applications_at(item, &format!("{pointer}/{key}/{index}")))
+            .collect::<Vec<_>>()
+    };
+    match term["term"].as_str() {
+        Some("application") => {
+            found.push((pointer.to_owned(), term));
+            found.extend(nested("arguments"));
+        }
+        Some("aggregate") => found.extend(nested("members")),
+        Some("binding") => {
+            found.extend(applications_at(&term["value"], &format!("{pointer}/value")))
+        }
+        _ => {}
+    }
+    found
+}
+
+/// Every reference target within `term`.
+fn reference_targets(term: &Value) -> Vec<&Value> {
+    match term["term"].as_str() {
+        Some("reference") => vec![&term["target"]],
+        Some("application") => term["arguments"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .flat_map(reference_targets)
+            .collect(),
+        Some("aggregate") => term["members"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .flat_map(reference_targets)
+            .collect(),
+        Some("binding") => reference_targets(&term["value"]),
+        _ => Vec::new(),
+    }
+}
+
+fn node_form<'v>(nodes: &'v [Value], target: &Value) -> Option<(&'v str, &'v str)> {
+    let node = nodes.iter().find(|node| node["node_id"] == *target)?;
+    Some((node["node_tag"].as_str()?, node["semantic_form"].as_str()?))
+}
+
+/// FR-370 placement of references to formula and fairness nodes: a formula
+/// node only from a clause's formula argument or a formula application's
+/// operand, a fairness node only from a clause's fairness argument.
+/// Located at the referencing node.
+fn temporal_reference_refusal(nodes: &[Value]) -> Result<(), TemporalRefusal> {
+    let mut ordered = nodes.iter().collect::<Vec<_>>();
+    ordered.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
+    for node in ordered {
+        let body = &node["body"];
+        let clause = node["node_tag"] == "temporal" && node["semantic_form"] == "temporal_clause";
+        let formula_operator = body["operator"] == "temporal_formula";
+        let positioned = match body["arguments"].as_array() {
+            Some(arguments) if clause => arguments
+                .iter()
+                .enumerate()
+                .flat_map(|(index, argument)| {
+                    reference_targets(argument)
+                        .into_iter()
+                        .map(move |target| (Some(index), target))
+                })
+                .collect::<Vec<_>>(),
+            _ => reference_targets(body)
+                .into_iter()
+                .map(|target| (None, target))
+                .collect(),
+        };
+        for (position, target) in positioned {
+            let admitted = match node_form(nodes, target) {
+                Some(("temporal", "formula")) => formula_operator || position == Some(5),
+                Some(("temporal", "fairness")) => position == Some(4),
+                _ => true,
+            };
+            if !admitted {
+                return Err(TemporalRefusal::OperatorIneligible(
+                    node["node_id"]["digest"]
+                        .as_str()
+                        .unwrap_or_default()
+                        .to_owned(),
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
+/// FR-370 placement of diagnostic `details`: strict wire validation reports
+/// an application of the formula, fairness or case operator class at its
+/// `operator`; the temporal step then reports a reference to a formula,
+/// fairness or case node at its `details` entry.
+fn details_refusal(package: &Value) -> Result<(), TemporalRefusal> {
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .map_or(&[][..], Vec::as_slice);
+    let details = package["diagnostics"]["entries"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .enumerate()
+        .flat_map(|(e, entry)| {
+            entry["details"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .enumerate()
+                .map(move |(d, term)| (format!("/diagnostics/entries/{e}/details/{d}"), term))
+        })
+        .collect::<Vec<_>>();
+    for (pointer, term) in &details {
+        if let Some((at, _)) =
+            applications_at(term, pointer)
+                .into_iter()
+                .find(|(_, application)| {
+                    matches!(
+                        application["operator"].as_str(),
+                        Some("temporal_formula" | "temporal_fairness" | "case")
+                    )
+                })
+        {
+            return Err(TemporalRefusal::OperatorIneligible(format!(
+                "{at}/operator"
+            )));
+        }
+    }
+    for (pointer, term) in details {
+        let refused = reference_targets(term).into_iter().any(|target| {
+            matches!(
+                node_form(nodes, target),
+                Some(("temporal", "formula" | "fairness") | ("expression", "case"))
+            )
+        });
+        if refused {
+            return Err(TemporalRefusal::OperatorIneligible(pointer));
+        }
+    }
+    Ok(())
+}
+
+#[trace("TC-303", "FR-370-AC-12")]
+#[test]
+fn tc_303_formula_fairness_and_case_terms_stand_only_where_placed() {
+    let node = |name: &str, tag: &str, form: &str, body: Value| json!({"node_id": walk_id(name), "node_tag": tag, "semantic_form": form, "body": body});
+    let clause_body = |fairness: &str, formula: &str| {
+        json!({"term": "application", "operator": "temporal", "arguments": [
+            walk_ref("over"), walk_ref("clock"), walk_ref("activation"), walk_ref("captures"),
+            {"term": "aggregate", "members": [walk_ref(fairness)]}, walk_ref(formula)
+        ]})
+    };
+    let formula = node(
+        "formula",
+        "temporal",
+        "formula",
+        json!({"term": "application", "operator": "temporal_formula", "arguments": []}),
+    );
+    let fairness = node(
+        "fairness",
+        "temporal",
+        "fairness",
+        json!({"term": "application", "operator": "temporal_fairness", "arguments": []}),
+    );
+    let clause = node(
+        "clause",
+        "temporal",
+        "temporal_clause",
+        clause_body("fairness", "formula"),
+    );
+    assert_eq!(
+        temporal_reference_refusal(&[formula.clone(), fairness.clone(), clause]),
+        Ok(())
+    );
+    let state = node(
+        "state",
+        "state",
+        "clause",
+        json!({"term": "application", "operator": "state_clause", "arguments": [walk_ref("formula")]}),
+    );
+    assert_eq!(
+        temporal_reference_refusal(&[formula.clone(), fairness.clone(), state]),
+        Err(TemporalRefusal::OperatorIneligible("state".to_owned())),
+        "a formula reference from a state clause's condition refuses at the referencing node"
+    );
+    let misplaced = node(
+        "clause",
+        "temporal",
+        "temporal_clause",
+        clause_body("fairness", "fairness"),
+    );
+    assert_eq!(
+        temporal_reference_refusal(&[formula, fairness, misplaced]),
+        Err(TemporalRefusal::OperatorIneligible("clause".to_owned())),
+        "a fairness reference from a formula argument refuses at the referencing node"
+    );
+
+    let union_package = parsed_fixture(POSITIVE_UNION_NODES);
+    let mut package = union_package.clone();
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array_mut()
+        .expect("nodes");
+    nodes.push(node(
+        "formula",
+        "temporal",
+        "formula",
+        json!({"term": "aggregate", "members": []}),
+    ));
+    nodes.push(node(
+        "fairness",
+        "temporal",
+        "fairness",
+        json!({"term": "aggregate", "members": []}),
+    ));
+    let id_of =
+        |tag: &str, form: &str| union_fixture_node(&union_package, tag, form)["node_id"].clone();
+    let reference = |target: Value| json!({"term": "reference", "target": target});
+    let with_details = |details: Vec<Value>| {
+        let mut candidate = package.clone();
+        candidate["diagnostics"]["entries"] = json!([{"stage": "package_read", "code": "ill_typed", "cause_tag": "operator-ineligible", "details": [], "loci": []}, {"stage": "package_read", "code": "ill_typed", "cause_tag": "operator-ineligible", "details": details, "loci": []}]);
+        candidate
+    };
+    let admitted = with_details(vec![
+        reference(id_of("composite_type", "union")),
+        json!({"term": "binding", "name": "value", "value": reference(id_of("value", "union_value"))}),
+    ]);
+    assert_eq!(
+        details_refusal(&admitted),
+        Ok(()),
+        "details may reference union and union_value nodes"
+    );
+    for target in [
+        walk_id("formula"),
+        walk_id("fairness"),
+        id_of("expression", "case"),
+    ] {
+        assert_eq!(
+            details_refusal(&with_details(vec![
+                reference(id_of("composite_type", "union")),
+                reference(target.clone())
+            ])),
+            Err(TemporalRefusal::OperatorIneligible(
+                "/diagnostics/entries/1/details/1".to_owned()
+            )),
+            "a details reference to {target} refuses at its details entry"
+        );
+    }
+    let diagnostic = schema_for_def(&parsed_fixture(SCHEMA), "Diagnostic");
+    let case_body = union_fixture_node(&union_package, "expression", "case")["body"].clone();
+    for operator in ["temporal_formula", "temporal_fairness", "case"] {
+        let mut application = case_body.clone();
+        application["operator"] = json!(operator);
+        let candidate = with_details(vec![application]);
+        assert!(
+            !diagnostic.is_valid(&candidate["diagnostics"]["entries"][1]),
+            "a {operator} application in details is outside the body grammar"
+        );
+        assert_eq!(
+            details_refusal(&candidate),
+            Err(TemporalRefusal::OperatorIneligible(
+                "/diagnostics/entries/1/details/0/operator".to_owned()
+            )),
+            "a {operator} application in details refuses at its operator, not malformed_wire"
+        );
+    }
+}
+
+/// FR-440 "Case placement" and FR-322's body grammar: a nested `case`
+/// application refuses at its `operator` and any other nested application
+/// is a malformed wire, both at strict wire validation; a `case` at the body
+/// root of a node other than `expression`/`case` then refuses at that node.
+fn case_placement_refusal(package: &Value) -> Result<(), TemporalRefusal> {
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .map_or(&[][..], Vec::as_slice);
+    for (index, node) in nodes.iter().enumerate() {
+        let root = format!("/semantic_graph/nodes/{index}/body");
+        for (pointer, application) in applications_at(&node["body"], &root) {
+            if pointer == root {
+                continue;
+            }
+            return Err(if application["operator"] == "case" {
+                TemporalRefusal::OperatorIneligible(format!("{pointer}/operator"))
+            } else {
+                TemporalRefusal::MalformedWire(pointer)
+            });
+        }
+    }
+    for (index, node) in nodes.iter().enumerate() {
+        let at_root = node["body"]["operation"]["identity"] == "quire.op.control.case";
+        let case_node = node["node_tag"] == "expression" && node["semantic_form"] == "case";
+        if at_root && !case_node {
+            return Err(TemporalRefusal::OperatorIneligible(format!(
+                "/semantic_graph/nodes/{index}"
+            )));
+        }
+    }
+    Ok(())
+}
+
+#[trace("TC-395", "FR-440-AC-7")]
+#[test]
+fn tc_395_a_case_application_stands_only_at_an_expression_case_body_root() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let package = parsed_fixture(POSITIVE_UNION_NODES);
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes");
+    let case = nodes
+        .iter()
+        .position(|node| node["semantic_form"] == "case")
+        .expect("the fixture has a case node");
+
+    let mut referenced = package.clone();
+    referenced["semantic_graph"]["nodes"]
+        .as_array_mut()
+        .expect("nodes")
+        .push(json!({
+            "node_id": walk_id("area"),
+            "node_tag": "function",
+            "semantic_form": "function",
+            "body": {"term": "reference", "target": nodes[case]["node_id"].clone()}
+        }));
+    assert_eq!(
+        case_placement_refusal(&referenced),
+        Ok(()),
+        "a referenced expression/case node is admitted"
+    );
+
+    let mut rooted = package.clone();
+    rooted["semantic_graph"]["nodes"][case]["node_tag"] = json!("function");
+    rooted["semantic_graph"]["nodes"][case]["semantic_form"] = json!("function");
+    assert_eq!(
+        case_placement_refusal(&rooted),
+        Err(TemporalRefusal::OperatorIneligible(format!(
+            "/semantic_graph/nodes/{case}"
+        ))),
+        "a case at a function's body root refuses at that node"
+    );
+
+    let host = nodes
+        .iter()
+        .position(|node| node["body"]["term"] == "application" && node["semantic_form"] != "case")
+        .expect("the fixture has another application node");
+    let mut nested = package.clone();
+    nested["semantic_graph"]["nodes"][host]["body"]["arguments"][0] = nodes[case]["body"].clone();
+    assert!(
+        !schema.is_valid(&nested),
+        "a nested case is outside the body grammar"
+    );
+    assert_eq!(
+        case_placement_refusal(&nested),
+        Err(TemporalRefusal::OperatorIneligible(format!(
+            "/semantic_graph/nodes/{host}/body/arguments/0/operator"
+        ))),
+        "a nested case refuses at its operator, not malformed_wire"
+    );
+    let mut other = nested.clone();
+    other["semantic_graph"]["nodes"][host]["body"]["arguments"][0]["operator"] = json!("binary");
+    assert_eq!(
+        case_placement_refusal(&other),
+        Err(TemporalRefusal::MalformedWire(format!(
+            "/semantic_graph/nodes/{host}/body/arguments/0"
+        ))),
+        "any other nested application stays a malformed wire"
+    );
 }
