@@ -642,9 +642,9 @@ reachable from that node, the walk lists the entry
 reachable from it, the walk lists nothing for it. A text type is reachable
 from a node when some sequence of field, position, member payload and
 element steps leads from it to a text type. This is the recursion leaf of
-QSL FR-093 "Text leaves" rule 3,
-extended to unions. A recursion leaf stands for the leaves of the type
-entered at the first `d` segments of its path, re-rooted at its path. The
+QSL FR-093 "Text leaves" rule 3, extended to unions. A recursion leaf
+stands for the leaves of the type entered at the first `d` segments of its
+path, re-rooted at its path. The
 application is admitted: a recursion leaf, through a record, a tuple or a
 union, is never `operator-ineligible`. A type reached twice along different
 paths, with no cycle, is walked at each.
