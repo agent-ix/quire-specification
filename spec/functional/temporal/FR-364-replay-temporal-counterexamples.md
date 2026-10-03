@@ -19,6 +19,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-366
     type: references
+  - target: ix://agent-ix/quire-specification/FR-370
+    type: references
 ---
 
 # FR-364: Carry and replay a temporal counterexample
@@ -72,7 +74,7 @@ this table does not list refuses before replay.
 | `loop` | the ordered steps of the loop; empty for a finite prefix |
 | `over_binding` | model arm: the reference of the object the clause's `over` parameter is bound to, `null` for `kind: deadlock`; observed arm: `null` |
 | `fairness` | the item's resolved fairness set, each member `{kind, operation, granularity}` with `kind` `weak` or `strong` and `granularity` `whole` or `each`, in fairness-set order; empty for `kind: deadlock` |
-| `interval` | for `kind: formula`, the interval of the formula's first interval-carrying operator in pre-order: `{lower, upper}` for a closed interval `[a,b]` and `{lower, upper: null}` for a lower-bounded interval `[a,*]`, under every profile; `null` when the formula has no interval-carrying operator, for `kind: deadlock` and for the undefined-evaluation envelope |
+| `interval` | for `kind: formula`, the interval of the formula's first interval-carrying operator in pre-order, in the form [FR-370](../../objects/interfaces/FR-370-checked-package-temporal-clause-body.md) encodes it under the clause's profile: the integer form `{lower, upper}` for a closed interval `[a,b]` or `{lower, upper: null}` for a lower-bounded interval `[a,*]`, two non-negative decimal integer strings; or, under `quire.temporal.timed/v1`, the timed form `{lower, upper, lower_end, upper_end}`, where `lower` and `upper` are exact non-negative rationals `{numerator, denominator}` in lowest terms and `lower_end` and `upper_end` are each `closed` or `open`; `null` when the formula has no interval-carrying operator, for `kind: deadlock` and for the undefined-evaluation envelope |
 | `trace_position` | for `kind: formula`, the position at which the evaluator returns false; for the undefined-evaluation envelope, the position of its `where`, which is the prefix's last position; `null` for `kind: deadlock` |
 
 A model-arm step is `{transition, post_state}`: `transition` is the step's
@@ -144,7 +146,8 @@ The replayer SHALL, in this order:
    enabledness (FR-362).
 5. For `kind: formula`, compute the interval of the re-admitted clause's
    first interval-carrying operator in pre-order, in the same shape
-   (`{lower, upper}`, `{lower, upper: null}` or `null`), and check that
+   (`{lower, upper}`, `{lower, upper: null}`,
+   `{lower, upper, lower_end, upper_end}` or `null`), and check that
    `interval` equals it member by member, so a counterexample produced for
    another interval of the same clause is refused; else refuse
    `stale_dependency`/`content-mismatch` naming `interval`. Then evaluate the

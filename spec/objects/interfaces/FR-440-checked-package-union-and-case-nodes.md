@@ -104,9 +104,15 @@ whose joins below do not hold with the refusal this requirement names, in
   `union Label { Named(Text[0,8;nfc]), Tagged(Integer, Text[0,8;nfc]), Empty }`
   the text leaves are `["member:Named", "position:0"]` and
   `["member:Tagged", "position:1"]`, and `Empty` has none. A cycle through
-  a union, as in `union List { Cons(Integer, List), Nil }`, is a recursion
-  leaf: `quire.op.structural.eq` over two `List` values is admitted, never
-  `operator-ineligible`.
+  a union is a recursion leaf, never `operator-ineligible`. It lists the
+  entry `recursion:<d>` with `laws` `[]` and `mode` `null` when a text type
+  is reachable from the union, so
+  `union Chain { Link(Text[0,8;nfc], Chain), End }` has the leaves
+  `["member:Link", "position:0"]` and
+  `["member:Link", "position:1", "recursion:0"]`; and nothing when none is,
+  so `quire.op.structural.eq` over two values of
+  `union List { Cons(Integer, List), Nil }` is admitted with empty
+  `leaves`.
 - **Published schema** — the published V2 package schema enumerates
   `union` among `CompositeTypeNode` forms, `union_value` among `ValueNode`
   forms and `case` among `ExpressionNode` forms, and binds the three bodies
@@ -157,11 +163,17 @@ node-id digest order, each node at its place in that order:
    root of any node other than an `expression`/`case` node refuses
    `ill_typed`/`operator-ineligible` at the node that holds it. An
    `expression` node whose `semantic_form` contradicts its root
-   application's operator class is FR-322's `invalid_semantic_graph`, and a
-   `case` application inside another term fails FR-322's body grammar. A
-   diagnostic `details` reference to a `case` or union node is refused by
+   application's operator class is FR-322's `invalid_semantic_graph`. A
+   `quire.op.control.case` application nested inside another term, such as
+   another application's arguments, an aggregate's members or a binding's
+   value, refuses `ill_typed`/`operator-ineligible` at that nested
+   application's `operator` member, not as an FR-322 body-grammar failure
+   (FR-322 "Body grammar"). A diagnostic `details` reference to an
+   `expression`/`case` node, and a `case` application inside a `details`
+   term, are refused by
    [FR-370](FR-370-checked-package-temporal-clause-body.md)'s placement
-   check.
+   check; a `details` reference to a `composite_type`/`union` or
+   `value`/`union_value` node is admitted.
 2. **Union type.** Two bindings of one union type node with one `name`
    refuse `invalid_package`/`duplicate-member` at the node. A
    payload reference that is not a type node refuses
@@ -193,8 +205,8 @@ id and no `package_id`.
 | FR-440-AC-4 | A `case` application whose arms are out of member order, omit or repeat a member, carry a binder aggregate whose count differs from the member's payload arity, type a binder other than its payload position, or carry an arm body of a type other than the `result_type` refuses `ill_typed`/`operator-ineligible` at the `case` node. | Test (TC-395) |
 | FR-440-AC-5 | In the "Binder levels" worked vector, `t`, `w`, `h`, `r` and `x` carry the levels `3`, `4`, `5`, `4` and `5`; with `let t = k in` removed (and `t` replaced by `k`), `w`, `h`, `r` and `x` carry `3`, `4`, `3` and `4`. | Test (TC-395) |
 | FR-440-AC-6 | `quire.op.structural.eq` over two `Shape` values is admitted, and over a `Shape` value and a value of another union refuses `ill_typed`/`operator-ineligible` by its `same_type` constraint. | Test (TC-395) |
-| FR-440-AC-7 | A `quire.op.control.case` application as the body root of a `function` node refuses `ill_typed`/`operator-ineligible` at that node, and the same `case` as an `expression`/`case` node referenced from the function body is admitted. | Test (TC-395) |
-| FR-440-AC-8 | `quire.op.structural.eq` over two `Label` values carries the leaves `["member:Named", "position:0"]` and `["member:Tagged", "position:1"]` and none for `Empty`, and over two `List` values of `union List { Cons(Integer, List), Nil }` is admitted with empty `leaves`. | Test (TC-395) |
+| FR-440-AC-7 | A `quire.op.control.case` application as the body root of a `function` node refuses `ill_typed`/`operator-ineligible` at that node, and the same `case` as an `expression`/`case` node referenced from the function body is admitted; the same `case` application nested in another application's arguments refuses `ill_typed`/`operator-ineligible` at that nested application's `operator` member, not `malformed_wire`. | Test (TC-395) |
+| FR-440-AC-8 | `quire.op.structural.eq` over two `Label` values carries the leaves `["member:Named", "position:0"]` and `["member:Tagged", "position:1"]` and none for `Empty`; over two `List` values of `union List { Cons(Integer, List), Nil }` it is admitted with empty `leaves`; and over two `Chain` values of `union Chain { Link(Text[0,8;nfc], Chain), End }` it is admitted with the leaves `["member:Link", "position:0"]` and `["member:Link", "position:1", "recursion:0"]`. | Test (TC-395) |
 
 ## Dependencies
 

@@ -38,6 +38,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-spec-language/FR-019
     type: references
+  - target: ix://agent-ix/quire-spec-language/FR-093
+    type: references
   - target: ix://agent-ix/quire-specification/FR-307
     type: references
   - target: ix://agent-ix/quire-specification/FR-460
@@ -197,7 +199,8 @@ boundary.
   or, for `result_inner`, of the element type of a `set`, `bag` or
   `ordered_set` result (`field:<name>`, `member:<name>`, `position:<n>` and
   `inner` segments), with the text profile law and the mode that leaf's
-  type pins. IEEE values have no
+  type pins, and one `{path, laws: [], mode: null}` entry for every
+  recursion leaf, whose path ends in a `recursion:<d>` segment. IEEE values have no
   `eq`, `ne`, ordering or `negate` operation: `quire.op.ieee.numeric_equal`,
   `quire.op.ieee.total_order` and `quire.op.ieee.bit_identical` are three
   distinct identities, and a structural comparison reaching a float leaf is
@@ -404,13 +407,26 @@ application never stands inside another application's arguments, an
 aggregate's members or a binding's value. The `state_clause`
 ([FR-341](FR-341-checked-package-state-clause-body.md)) and `operation_anchor`
 ([FR-342](FR-342-checked-package-operation-anchor-body.md)) bodies are Body
-productions. A diagnostic's `details` are each a Member, and no `details`
-term references a temporal formula, temporal fairness, `case` or union node
+productions. A diagnostic's `details` are each a Member; a `details` term
+may reference a `composite_type`/`union` or `value`/`union_value` node, and
+no `details` term references a `temporal`/`formula`, `temporal`/`fairness`
+or `expression`/`case` node
 ([FR-370](FR-370-checked-package-temporal-clause-body.md) "Placement and
 profile fit"). The node-identity
 preimage of a body follows the same grammar, with `group_reference` as a
 further Leaf, so every body preimage has a schema-fixed depth. A reader
-refuses a body outside the grammar as `malformed_wire`, never as a limit.
+refuses a body outside the grammar as `malformed_wire`, never as a limit,
+with two exceptions, each refused `ill_typed`/`operator-ineligible` at the
+misplaced application's `operator` member:
+
+- an application of the `temporal_formula`, `temporal_fairness` or `case`
+  operator class inside a diagnostic's `details` term, located at
+  `/diagnostics/entries/{e}/details/{d}/operator` when the term is that
+  application ([FR-370](FR-370-checked-package-temporal-clause-body.md));
+- a `quire.op.control.case` application nested inside another term
+  ([FR-440](FR-440-checked-package-union-and-case-nodes.md) "Case
+  placement").
+
 A producer whose expression has a deeper shape emits each composite subterm
 as its own node, so the grammar holds for an expression of any depth.
 
@@ -612,23 +628,50 @@ and visits types in declaration pre-order:
 - Every other type contributes no leaf; a float type makes the comparison
   ineligible, as stated above.
 
-A record, tuple or union type node the walk reaches while that same node
-is already being walked on its current path is a **recursion leaf**: a cycle through a
-`recursion_group`, which
+The walk keeps each record, tuple and union type node it is walking on the
+current path as **open**, with `d`, the number of segments the path had
+when the walk entered it. A record, tuple or union type node the walk
+reaches while that same node is open is a **recursion leaf**: a cycle
+through a `recursion_group`, which
 [FR-143](../../functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md)
 admits when every recursion edge crosses a record field or a union member
-payload position. The walk does not descend into a recursion leaf and lists
-no entry for it, and the application is admitted: a recursion leaf, through
-a union as through a record or tuple, is never `operator-ineligible`. A type
-reached twice along different paths, with no cycle, is walked at each.
+payload position. The walk does not descend into it. When a text type is
+reachable from that node, the walk lists the entry
+`{path: p + ["recursion:<d>"], laws: [], mode: null}` at the current path
+`p`, with `d` written as a canonical decimal string; when no text type is
+reachable from it, the walk lists nothing for it. A text type is reachable
+from a node when some sequence of field, position, member payload and
+element steps leads from it to a text type. This is the recursion leaf of
+QSL FR-093 "Text leaves" rule 3,
+extended to unions. A recursion leaf stands for the leaves of the type
+entered at the first `d` segments of its path, re-rooted at its path. The
+application is admitted: a recursion leaf, through a record, a tuple or a
+union, is never `operator-ineligible`. A type reached twice along different
+paths, with no cycle, is walked at each.
 
 For `union Label { Named(Text[0,8;nfc]), Tagged(Integer, Text[0,8;nfc]), Empty }`
 the text leaves are `["member:Named", "position:0"]` and
 `["member:Tagged", "position:1"]`, and `Empty` has none. For
 `union List { Cons(Integer, List), Nil }` the walk reaches `List` again at
-`["member:Cons", "position:1"]`, a recursion leaf, so
+`["member:Cons", "position:1"]`; no text type is reachable from `List`, so
 `quire.op.structural.eq` over two `List` values is admitted with empty
 `leaves`.
+
+Each of these types reaches text, so its cycle lists a recursion leaf:
+
+- record: for `record Node { label: Text[0,8;nfc]; next: Option<Node>; }`
+  the leaves are `["field:label"]` with the `nfc` law and mode, then
+  `["field:next", "inner", "recursion:0"]`;
+- tuple: for `record Cell { item: (Text[0,8;nfc], Option<Cell>); }` the
+  leaves are `["field:item", "position:0"]` with the `nfc` law and mode,
+  then `["field:item", "position:1", "inner", "recursion:0"]`;
+- union: for `union Chain { Link(Text[0,8;nfc], Chain), End }` the leaves
+  are `["member:Link", "position:0"]` with the `nfc` law and mode, then
+  `["member:Link", "position:1", "recursion:0"]`; over `Option<Chain>` they
+  are `["inner", "member:Link", "position:0"]` and
+  `["inner", "member:Link", "position:1", "recursion:1"]`.
+
+Each recursion leaf carries `laws` `[]` and `mode` `null`.
 
 ## Operation families, groups and constraints
 
@@ -810,7 +853,7 @@ partial checked package.
 | FR-322-AC-43 | A domain-package document supplied under its selection's digest with the selection's identity, but altered so that the SHA-256 of its RFC 8785 bytes differs from that digest, refuses `stale_dependency`/`content-mismatch` naming the selected and the recomputed digest, before its identity is compared and before any declaration is read; the unaltered document passes. | Test (TC-280) |
 | FR-322-AC-44 | A field typed by a value type bound as `Text[min, max; profile]` has type `Text[min, max; profile]` over a `text_bounds` node; a value type bound as `Text` with a negative `min`, with `min > max` or with a profile outside FR-141's six gives the member no type and refuses `ill_typed`/`operator-ineligible`. | Test (TC-280) |
 | FR-322-AC-45 | `quire.op.structural.eq` over two `Label` values of `union Label { Named(Text[0,8;nfc]), Tagged(Integer, Text[0,8;nfc]), Empty }` carries exactly the leaves `["member:Named", "position:0"]` and `["member:Tagged", "position:1"]` in that order, each with the `nfc` text law and mode, and none for `Empty`; both V2 schemas admit the `member:<Ident>` segment. | Test (TC-395) |
-| FR-322-AC-46 | `quire.op.structural.eq` over two values of `union List { Cons(Integer, List), Nil }`, whose cycle names one `recursion_group`, is admitted with empty `leaves`, and a record whose field's type cycles back to the record through a union is likewise admitted; neither refuses `operator-ineligible`. | Test (TC-395) |
+| FR-322-AC-46 | `quire.op.structural.eq` over two values of `union List { Cons(Integer, List), Nil }`, whose cycle names one `recursion_group`, is admitted with empty `leaves`, and a record whose field's type cycles back to the record through a union is likewise admitted; neither refuses `operator-ineligible`. Over `Node`, `Cell`, `Chain` and `Option<Chain>` of the "Structural leaf walk" examples it is admitted with exactly the listed leaves in that order, each recursion leaf with `laws` `[]` and `mode` `null`; both V2 schemas admit the `recursion:<d>` segment. | Test (TC-395) |
 | FR-322-AC-47 | The V2 `Diagnostic` schema admits `type-mismatch` only with `ill_typed`, `missing-selection` only with `missing_import` or `missing_declaration`, and `unsupported-selection` and `wrong-selection-role` only with `unknown_language`, `unknown_edition` or `unknown_profile`. | Test (TC-233) |
 
 ## Dependencies
