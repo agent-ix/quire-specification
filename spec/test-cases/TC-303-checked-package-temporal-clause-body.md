@@ -29,8 +29,11 @@ Encode as V2 packages:
    an unbounded `eventually` under the event-position profile; a fairness
    member under the event-position profile; an interval `{lower: "3", upper:
    "1"}`; a fairness member naming `attemptUpdat`; a `quire.op.temporal.always`
-   application in a state clause's condition; a `quire.op.temporal.fair`
-   application in a formula; a `quire.op.temporal.clause` nested in a formula;
+   application, a `quire.op.temporal.fair` application and a
+   `quire.op.temporal.clause` application each at the body root of a
+   `function` node; each of a `quire.op.temporal.always`,
+   `quire.op.temporal.fair` and `quire.op.temporal.clause` application
+   nested in a node body's arguments;
    a `holds` whose operand is an integer term.
 4. Encode `fair Op` and `fair weak whole Op` versions of one clause.
 5. Feed a package with a state-step defect and a temporal placement defect,
@@ -57,7 +60,10 @@ Encode as V2 packages:
     `temporal`/`formula`, `temporal`/`fairness`, `expression`/`case`,
     `composite_type`/`union` and `value`/`union_value` node; a diagnostic
     whose `details` term is an application of each of the
-    `temporal_formula`, `temporal_fairness` and `case` operator classes.
+    `temporal_formula`, `temporal_fairness` and `case` operator classes; a
+    `details` term that is a `temporal_formula` application with a nested
+    `case` argument; a `details` aggregate of a `temporal_formula`
+    application and then a `case` application.
 
 ## Expected Results
 
@@ -77,9 +83,11 @@ Encode as V2 packages:
    `operation-member-mismatch`, the reversed interval `invalid-value`
    (FR-370-AC-3, FR-370-AC-4); the unknown operation refuses
    `missing_declaration`/`missing-name` (FR-370-AC-4); the three misplaced
-   applications refuse `ill_typed`/`operator-ineligible` at the node holding
-   them (FR-370-AC-5); the integer `holds` operand refuses `ill_typed`/
-   `operator-ineligible` at the operation step (FR-370-AC-7).
+   body-root applications refuse `ill_typed`/`operator-ineligible` at the
+   node holding them and the three nested applications fail the schema and
+   refuse `malformed_wire` at the nested application (FR-370-AC-5); the
+   integer `holds` operand refuses `ill_typed`/`operator-ineligible` at the
+   operation step (FR-370-AC-7).
 4. The two encodings are byte-identical (FR-370-AC-4).
 5. The state-step defect is reported first; then the placement defect before
    the clause defect (FR-370-AC-7).
@@ -109,5 +117,7 @@ Encode as V2 packages:
     the referencing node; each `details` reference to a formula, fairness or
     `case` node refuses `ill_typed`/`operator-ineligible` at
     `/diagnostics/entries/{e}/details/{d}`, each `details` application at
-    `/diagnostics/entries/{e}/details/{d}/operator`, and the union and
-    union-value references are admitted (FR-370-AC-12).
+    `/diagnostics/entries/{e}/details/{d}/operator`, the application with a
+    nested `case` at `/diagnostics/entries/{e}/details/{d}/operator`, the
+    aggregate at `/diagnostics/entries/{e}/details/{d}/members/0/operator`,
+    and the union and union-value references are admitted (FR-370-AC-12).

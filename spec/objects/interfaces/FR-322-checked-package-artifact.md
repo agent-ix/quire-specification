@@ -427,6 +427,21 @@ misplaced application's `operator` member:
   ([FR-440](FR-440-checked-package-union-and-case-nodes.md) "Case
   placement").
 
+A `temporal_formula`, `temporal_fairness` or `temporal` application nested
+inside a node body or inside another term is no exception: it is refused
+`malformed_wire` at the nested application, like any other nested
+application. Temporal nesting is expressed through references to
+`temporal`/`formula` nodes
+([FR-370](FR-370-checked-package-temporal-clause-body.md) "Placement and
+profile fit"). When one body or one `details` term holds several offending
+constructs, the reader reports the first one in document pre-order,
+outermost first. A `details` term that is a `temporal_formula` application
+with a nested `case` argument refuses at
+`/diagnostics/entries/{e}/details/{d}/operator`, and a `details` aggregate
+whose members are a `temporal_formula` application and then a `case`
+application refuses at
+`/diagnostics/entries/{e}/details/{d}/members/0/operator`.
+
 A producer whose expression has a deeper shape emits each composite subterm
 as its own node, so the grammar holds for an expression of any depth.
 
