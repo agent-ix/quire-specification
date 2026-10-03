@@ -55,7 +55,9 @@ Encode as V2 packages:
     clause's condition; a reference to a `temporal`/`fairness` node from a
     formula argument; a diagnostic whose `details` reference each of a
     `temporal`/`formula`, `temporal`/`fairness`, `expression`/`case`,
-    `composite_type`/`union` and `value`/`union_value` node.
+    `composite_type`/`union` and `value`/`union_value` node; a diagnostic
+    whose `details` term is an application of each of the
+    `temporal_formula`, `temporal_fairness` and `case` operator classes.
 
 ## Expected Results
 
@@ -104,5 +106,8 @@ Encode as V2 packages:
    under the timed and infinite-trace profiles and refuses
    `operation-member-mismatch` under the three bounded ones (FR-370-AC-4).
 10. Both misplaced references refuse `ill_typed`/`operator-ineligible` at
-    the referencing node, and each `details` reference refuses
-    `ill_typed`/`operator-ineligible` at its `details` entry (FR-370-AC-12).
+    the referencing node; each `details` reference to a formula, fairness or
+    `case` node refuses `ill_typed`/`operator-ineligible` at
+    `/diagnostics/entries/{e}/details/{d}`, each `details` application at
+    `/diagnostics/entries/{e}/details/{d}/operator`, and the union and
+    union-value references are admitted (FR-370-AC-12).
