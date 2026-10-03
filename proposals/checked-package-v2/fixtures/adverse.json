@@ -4,7 +4,8 @@
     {"id":"cross-domain-package-id","pointer":"/package_id/domain","replacement":"quire.source.bytes/v1","outcome":"refused:digest_domain_mismatch"},
     {"id":"cross-domain-source-digest","pointer":"/lock/sources/0/digest_domain","replacement":"quire.definition.bytes/v1","outcome":"refused:digest_domain_mismatch"},
     {"id":"unknown-semantic-node-tag","pointer":"/semantic_graph/nodes/0/node_tag","replacement":"future_node","outcome":"refused:unsupported_node_tag"},
-    {"id":"wrong-node-family-form","pointer":"/semantic_graph/nodes/0/semantic_form","replacement":"protocol_clause","outcome":"refused:invalid_semantic_graph"}
+    {"id":"wrong-node-family-form","pointer":"/semantic_graph/nodes/0/semantic_form","replacement":"protocol_clause","outcome":"refused:invalid_semantic_graph"},
+    {"id":"negative-temporal-interval-bound","pointer":"/semantic_graph/nodes/29/body/operation/member/interval/lower","replacement":"-1","outcome":"refused:invalid_package"}
   ],
   "body_grammar_mutations": [
     {"id":"application-in-application-arguments","pointer":"/semantic_graph/nodes/5/body/arguments/0","replacement":{"term":"application","operator":"call","operation":{"identity":"quire.op.function.call","laws":[],"mode":null,"member":null,"leaves":[]},"result_type":{"domain":"quire.checked-semantic-node/v1","digest":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},"arguments":[{"term":"reference","target":{"domain":"quire.checked-semantic-node/v1","digest":"8080808080808080808080808080808080808080808080808080808080808080"}}]},"flattened":{"term":"reference","target":{"domain":"quire.checked-semantic-node/v1","digest":"736baaed11db476bcb4e5d21d89942a7a60d8691a4e2d0f49c874727d4d40210"}},"outcome":"refused:malformed_wire"},

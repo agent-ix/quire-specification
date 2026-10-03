@@ -192,11 +192,12 @@ boundary.
   `operation-law-missing`, `operation-law-mismatch`, `operation-law-unselected`
   and `operation-member-mismatch` respectively.
   `leaves` is empty unless the entry names a leaf source; it then lists,
-  in declaration order, one `{path, laws, mode}` entry for every text leaf of
-  the compared type (`operand:0`, `inner:0`) or, for `result_inner`, of the
-  element type of a `set`, `bag` or `ordered_set` result (`field:<name>`,
-  `position:<n>` and `inner` segments), with the text profile law and the mode
-  that leaf's type pins. IEEE values have no
+  in the order of the "Structural leaf walk" below, one `{path, laws, mode}`
+  entry for every text leaf of the compared type (`operand:0`, `inner:0`)
+  or, for `result_inner`, of the element type of a `set`, `bag` or
+  `ordered_set` result (`field:<name>`, `member:<name>`, `position:<n>` and
+  `inner` segments), with the text profile law and the mode that leaf's
+  type pins. IEEE values have no
   `eq`, `ne`, ordering or `negate` operation: `quire.op.ieee.numeric_equal`,
   `quire.op.ieee.total_order` and `quire.op.ieee.bit_identical` are three
   distinct identities, and a structural comparison reaching a float leaf is
@@ -346,8 +347,8 @@ vocabulary is `unknown_contract_version`, `malformed_wire`, `duplicate_member`,
 `digest_domain_mismatch`, `unknown_required_capability`,
 `invalid_semantic_graph`, `invalid_source_map`, `unsupported_node_tag`,
 `invalid_package`, `ill_typed`, `ambiguous_declaration`, `missing_declaration`,
-`invalid_model_binding`, `missing_import`, `unsupported_construct` and
-`wrong_snapshot`. The `stale-node-key`, operation and declaration causes
+`invalid_model_binding`, `missing_import`, `unknown_profile`,
+`unsupported_construct` and `wrong_snapshot`. The `stale-node-key`, operation and declaration causes
 above, and the `missing-name` and `malformed-declaration` frame-entry causes
 [FR-340](FR-340-checked-package-frame-location.md) defines, are carried by
 `invalid_package`, `ill_typed`, `ambiguous_declaration`,
@@ -362,6 +363,16 @@ own codes (`stale_dependency`, `missing_import`, `invalid_model_binding`,
 steps 2 to 4 report `missing_declaration`/`missing-selection`,
 `invalid_package`/`stale-node-key`, `ambiguous_declaration`/`ambiguous-name`
 and `ill_typed`/`operator-ineligible`.
+The remaining (code, cause) pairs a V2 reader reports are each the pairing
+[FR-272](../foundation/FR-272-typed-diagnostic-cause.md) lists, and the V2
+`Diagnostic` schema admits each cause only with its code:
+`ill_typed`/`type-mismatch` (FR-440's union value join);
+`missing_import`/`missing-selection` and `missing_declaration`/`missing-selection`;
+and `unknown_profile`/`unsupported-selection` and
+`unknown_profile`/`wrong-selection-role`
+([FR-370](FR-370-checked-package-temporal-clause-body.md)'s profile check),
+the schema admitting those two causes with any of FR-272's
+`unknown_language`, `unknown_edition` and `unknown_profile`.
 Before expensive semantic work, the reader measures raw wire bytes; a byte
 overage returns `incomplete`. It then performs strict syntax/member validation,
 including the body grammar below; a malformed wire returns `refused`. It
@@ -393,7 +404,10 @@ application never stands inside another application's arguments, an
 aggregate's members or a binding's value. The `state_clause`
 ([FR-341](FR-341-checked-package-state-clause-body.md)) and `operation_anchor`
 ([FR-342](FR-342-checked-package-operation-anchor-body.md)) bodies are Body
-productions. A diagnostic's `details` are each a Member. The node-identity
+productions. A diagnostic's `details` are each a Member, and no `details`
+term references a temporal formula, temporal fairness, `case` or union node
+([FR-370](FR-370-checked-package-temporal-clause-body.md) "Placement and
+profile fit"). The node-identity
 preimage of a body follows the same grammar, with `group_reference` as a
 further Leaf, so every body preimage has a schema-fixed depth. A reader
 refuses a body outside the grammar as `malformed_wire`, never as a limit.
@@ -579,6 +593,43 @@ unbounded sequence, a reference to another object type, or a non-reference
 type), refuses `ill_typed`/`operator-ineligible`. Traversal follows
 [FR-043](../../functional/foundation/FR-043-evaluate-finite-graph-relations.md).
 
+## Structural leaf walk
+
+The leaf walk of a compared type starts at that type with the empty path
+and visits types in declaration pre-order:
+
+- A text type is a **leaf**: it lists one entry at the current path.
+- A record, a tuple and each member of a union are **anchors**. A record
+  visits each field's type in field declaration order under `field:<name>`.
+  A tuple visits each position's type under `position:<i>`. A union visits
+  its members in member declaration order, and each member's ordered
+  payload types under the two segments `member:<Name>` then `position:<i>`,
+  where `<Name>` is the member identifier and `i` is the index in that
+  member's payload, even for a member with a single payload position. A
+  member with no payload contributes no leaf.
+- An `option`, `sequence`, `set`, `bag` or `ordered_set` visits its element
+  type under `inner`.
+- Every other type contributes no leaf; a float type makes the comparison
+  ineligible, as stated above.
+
+A record, tuple or union type node the walk reaches while that same node
+is already being walked on its current path is a **recursion leaf**: a cycle through a
+`recursion_group`, which
+[FR-143](../../functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md)
+admits when every recursion edge crosses a record field or a union member
+payload position. The walk does not descend into a recursion leaf and lists
+no entry for it, and the application is admitted: a recursion leaf, through
+a union as through a record or tuple, is never `operator-ineligible`. A type
+reached twice along different paths, with no cycle, is walked at each.
+
+For `union Label { Named(Text[0,8;nfc]), Tagged(Integer, Text[0,8;nfc]), Empty }`
+the text leaves are `["member:Named", "position:0"]` and
+`["member:Tagged", "position:1"]`, and `Empty` has none. For
+`union List { Cons(Integer, List), Nil }` the walk reaches `List` again at
+`["member:Cons", "position:1"]`, a recursion leaf, so
+`quire.op.structural.eq` over two `List` values is admitted with empty
+`leaves`.
+
 ## Operation families, groups and constraints
 
 This section is normative; the catalog file is its machine-readable copy and a
@@ -735,7 +786,7 @@ partial checked package.
 | FR-322-AC-18 | Each published operation vector validates against the closed node-preimage schema, recomputes its recorded JCS SHA-256 and is distinct from every other vector; every application node of the published operation package is keyed by its application-node preimage and is a published vector, and a vector outside the package refuses as `operation-law-unselected` when placed in it; floor-to-Euclidean division changes the node and package ids; a retained key refuses as `stale-node-key`; a contradictory form, missing member-declaration dependency, stray recursion group or extra dependency is refused; an application without an operation fails the V2 schema; and the all-families function body calls a published function, changes its node id when rewritten as `dispatch_call` and then refuses as `operation-member-mismatch`. | Test (TC-233) |
 | FR-322-AC-19 | Each published operation mutation never keeps its stale key and either rekeys to exactly its named counterpart vector and is admitted exactly when its laws are lock-selected, refuses as `operation-law-unselected` until the lock also selects its law and again under the stale selection, or is refused by exactly its named schema or semantic check with its recorded cause and that cause's code; together the mutations exercise every operation refusal cause. | Test (TC-233) |
 | FR-322-AC-21 | Every node of each published V2 package carries a `declaration` member exactly when it declares; the schema refuses a declaring node without it and an expression with it; the member enters the application-node preimage and package id; a name duplicated on two nodes refuses as `ambiguous-name` at the node later in node-id digest order; and a nominal node whose declaration differs from its `qualified_declaration` refuses as `declaration-nominal-mismatch` before any ambiguity. | Test (TC-233) |
-| FR-322-AC-22 | Every clause application of the published clause package carries exactly one profile law of its catalogued role equal to the lock's `profile_selections` row, and every clause application other than `quire.op.temporal.clause` (FR-370) a `profile_operator` member the profile defines; removing the law refuses as `operation-law-missing`, a protocol profile in the temporal role as `operation-law-mismatch`, a lock without the temporal profile row as `operation-law-unselected`, and an undefined, other-profile or absent operator as `operation-member-mismatch`. | Test (TC-233) |
+| FR-322-AC-22 | Every clause application of the published clause package carries exactly one profile law of its catalogued role equal to the lock's `profile_selections` row, and every clause application other than `quire.op.temporal.clause` (FR-370) a `profile_operator` member the profile defines; removing the law refuses as `operation-law-missing`, a protocol profile in the temporal role as `operation-law-mismatch`, a lock without the temporal profile row as `operation-law-unselected`, and an undefined, other-profile or absent operator as `operation-member-mismatch`; for a `quire.op.temporal.clause` law naming no FR-250 profile, the full reader reports FR-370's earlier profile check (`unknown_profile`) before the operation step's `operation-law-mismatch`. | Test (TC-233) |
 | FR-322-AC-23 | Every application carries a `result_type` and every literal a `type`; a root `result_type` differing from the node `semantic_type`, a `result_type` the operation cannot produce, and a literal whose `type` family its `value_kind` does not admit each refuse as `operator-ineligible`, while the same literal with its declared type is admitted. | Test (TC-233) |
 | FR-322-AC-24 | The FR-149 conversion classification is decided from declared bounds: an integer range into a containing integer or rational range is exact, an integer range whose scaled bounds exceed a decimal range is range narrowing, a decimal of scale 3 into scale 2 is scale reduction and a rational into narrower rational bounds is rational narrowing; `quire.op.rational.div` over integer-range operands carries `promotes_exact` and its published vector is admitted, while a decimal operand refuses as `operator-ineligible`. | Test (TC-233) |
 | FR-322-AC-25 | An `operation` member resolves only against a declaring `model` node of `semantic_form` `object_type`, `process`, `state_machine` or `persistence_interface`; every other model form, including `systems_interface`, refuses `operator-ineligible`/`ill_typed`. | Test (TC-233) |
@@ -758,6 +809,9 @@ partial checked package.
 | FR-322-AC-42 | A package whose lock names source and definition digests is admitted with no source or definition bytes and no digest evidence supplied. | Test (TC-427) |
 | FR-322-AC-43 | A domain-package document supplied under its selection's digest with the selection's identity, but altered so that the SHA-256 of its RFC 8785 bytes differs from that digest, refuses `stale_dependency`/`content-mismatch` naming the selected and the recomputed digest, before its identity is compared and before any declaration is read; the unaltered document passes. | Test (TC-280) |
 | FR-322-AC-44 | A field typed by a value type bound as `Text[min, max; profile]` has type `Text[min, max; profile]` over a `text_bounds` node; a value type bound as `Text` with a negative `min`, with `min > max` or with a profile outside FR-141's six gives the member no type and refuses `ill_typed`/`operator-ineligible`. | Test (TC-280) |
+| FR-322-AC-45 | `quire.op.structural.eq` over two `Label` values of `union Label { Named(Text[0,8;nfc]), Tagged(Integer, Text[0,8;nfc]), Empty }` carries exactly the leaves `["member:Named", "position:0"]` and `["member:Tagged", "position:1"]` in that order, each with the `nfc` text law and mode, and none for `Empty`; both V2 schemas admit the `member:<Ident>` segment. | Test (TC-395) |
+| FR-322-AC-46 | `quire.op.structural.eq` over two values of `union List { Cons(Integer, List), Nil }`, whose cycle names one `recursion_group`, is admitted with empty `leaves`, and a record whose field's type cycles back to the record through a union is likewise admitted; neither refuses `operator-ineligible`. | Test (TC-395) |
+| FR-322-AC-47 | The V2 `Diagnostic` schema admits `type-mismatch` only with `ill_typed`, `missing-selection` only with `missing_import` or `missing_declaration`, and `unsupported-selection` and `wrong-selection-role` only with `unknown_language`, `unknown_edition` or `unknown_profile`. | Test (TC-233) |
 
 ## Dependencies
 

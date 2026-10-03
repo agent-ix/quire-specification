@@ -52,6 +52,9 @@ that no `stale-node-key` refusal masks the join under test.
 | N07 | the `case` arms out of member order; the `Empty` arm removed; a second `Rect` arm; a `Rect` binder aggregate of one reference; the `r` binder typed `Text`; an arm body typed `Text` under `result_type` `Integer` | each `ill_typed`/`operator-ineligible` at the `case` node |
 | N08 | FR-440's "Binder levels" worked vector, then the same function with `let t = k in` removed and `t` replaced by `k` | `t`, `w`, `h`, `r`, `x` at levels `3`, `4`, `5`, `4`, `5`; then `w`, `h`, `r`, `x` at `3`, `4`, `3`, `4` |
 | N09 | `quire.op.structural.eq` over two `Shape` values; over a `Shape` value and a value of a second union | admitted; `ill_typed`/`operator-ineligible` by `same_type` |
+| N10 | the `area` body's `quire.op.control.case` application placed as the body root of the `area` `function` node; the same `case` as an `expression`/`case` node the function body references | `ill_typed`/`operator-ineligible` at the `function` node; admitted (FR-440-AC-7) |
+| N11 | `quire.op.structural.eq` over two values of `union Label { Named(Text[0,8;nfc]), Tagged(Integer, Text[0,8;nfc]), Empty }` | admitted with exactly the leaves `["member:Named", "position:0"]` then `["member:Tagged", "position:1"]`, each with the `nfc` text law and mode, and none for `Empty`; both V2 schemas admit the `member:<Ident>` segment (FR-322-AC-45, FR-440-AC-8) |
+| N12 | `quire.op.structural.eq` over two values of `union List { Cons(Integer, List), Nil }` whose cycle names one `recursion_group`; over two values of a record whose field's type cycles back to it through a union | each admitted with empty `leaves`, neither `operator-ineligible` (FR-322-AC-46, FR-440-AC-8) |
 
 ## Expected Results
 

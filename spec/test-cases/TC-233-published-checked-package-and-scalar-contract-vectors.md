@@ -132,6 +132,9 @@ evaluation-time refusals and `sum` carve-out, with FR-145 keeping a non-member
 decimal, unit-target and integer-target membership sentences of
 `quire.value.accounting/v1` to carry the same `sum` carve-out on
 `decimal_out_of_domain` and the unit target refusals (FR-140-AC-5).
+Validate a Diagnostic entry carrying each of `type-mismatch`,
+`missing-selection`, `unsupported-selection` and `wrong-selection-role` with
+every code of the schema's code enum (FR-322-AC-47).
 
 ## Expected Results
 
@@ -165,4 +168,8 @@ FR-270's Revision cell quotes the header's revision; FR-271 has one row
 for each FR-271-AC-6 code; both `invalid_source_identity` rows state the
 labels-before-path precedence; the payload value spellings match FR-272-AC-13;
 and FR-044, FR-140, value-accounting, the catalog and FR-145 give a `sum` seed
-or prefix one outcome in every family.
+or prefix one outcome in every family. The Diagnostic schema admits
+`type-mismatch` only with `ill_typed`, `missing-selection` only with
+`missing_import` and `missing_declaration`, and `unsupported-selection` and
+`wrong-selection-role` only with `unknown_language`, `unknown_edition` and
+`unknown_profile`.
