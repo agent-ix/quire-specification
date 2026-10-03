@@ -8646,32 +8646,48 @@ fn exact_rational(value: &Value) -> Option<(BigInt, BigInt)> {
     ))
 }
 
-/// FR-370's checks of one `temporal_interval` member of a clause under
-/// `profile`, in reader order: strict wire validation, the graph's
-/// lowest-terms rule, the profile fit, then the bounds.
-fn interval_refusal(
+/// Strict wire validation of one `temporal_interval` member's `interval`
+/// against both V2 schemas, then the graph's lowest-terms rule for a timed
+/// bound.
+fn interval_wire_refusal(
     member_schemas: &[jsonschema::Validator],
-    profile: &str,
     interval: &Value,
 ) -> Result<(), TemporalRefusal> {
     let member = json!({"kind": "temporal_interval", "interval": interval});
     if !member_schemas.iter().all(|schema| schema.is_valid(&member)) {
         return Err(TemporalRefusal::InvalidValue);
     }
-    let timed = interval.get("lower_end").is_some();
-    if timed
+    if interval.get("lower_end").is_some()
         && [&interval["lower"], &interval["upper"]]
             .into_iter()
             .any(|bound| !rational_is_canonical(bound))
     {
         return Err(TemporalRefusal::InvalidSemanticGraph);
     }
-    let admitted = match profile {
+    Ok(())
+}
+
+/// FR-370 "Placement and profile fit": whether `profile` admits the shape
+/// of `interval`.
+fn profile_fits(profile: &str, interval: &Value) -> bool {
+    let timed = interval.get("lower_end").is_some();
+    match profile {
         INFINITE_TRACE => !timed,
         TIMED => interval.is_null() || timed,
         _ => !interval.is_null() && !timed && !interval["upper"].is_null(),
-    };
-    if !admitted {
+    }
+}
+
+/// FR-370's checks of one `temporal_interval` member of a clause under
+/// `profile`, in reader order: wire and graph checks, the profile fit, then
+/// the bounds.
+fn interval_refusal(
+    member_schemas: &[jsonschema::Validator],
+    profile: &str,
+    interval: &Value,
+) -> Result<(), TemporalRefusal> {
+    interval_wire_refusal(member_schemas, interval)?;
+    if !profile_fits(profile, interval) {
         return Err(TemporalRefusal::MemberMismatch);
     }
     bounds_refusal(interval)
@@ -8840,24 +8856,19 @@ fn temporal_clause_refusal(
 ) -> Result<(), TemporalRefusal> {
     let schemas = temporal_member_schemas();
     for interval in &clause.intervals {
-        match interval_refusal(&schemas, TIMED, interval) {
-            Err(
-                refusal @ (TemporalRefusal::InvalidValue | TemporalRefusal::InvalidSemanticGraph),
-            ) if interval_refusal(&schemas, INFINITE_TRACE, interval) == Err(refusal.clone()) => {
-                return Err(refusal);
-            }
-            _ => {}
-        }
+        interval_wire_refusal(&schemas, interval)?;
     }
     profile_check(&clause.law, lock)?;
     if !clause.over_declared {
         return Err(TemporalRefusal::MissingName);
     }
     let profile = clause.law["identity"].as_str().unwrap_or_default();
-    for interval in &clause.intervals {
-        if interval_refusal(&schemas, profile, interval) == Err(TemporalRefusal::MemberMismatch) {
-            return Err(TemporalRefusal::MemberMismatch);
-        }
+    if !clause
+        .intervals
+        .iter()
+        .all(|interval| profile_fits(profile, interval))
+    {
+        return Err(TemporalRefusal::MemberMismatch);
     }
     clause.intervals.iter().try_for_each(bounds_refusal)
 }
