@@ -49,12 +49,15 @@ structures, but any external consumer receives only the contract.
   verbatim, so the vector exercises the reader's ascending-node-id-digest
   order across two frame nodes.
 - `dependency-selection-vectors.json` carries two `DependencySelection`
-  entries (`{identity, version, package_id}`), the `package_id` of
+  entries (`{identity, package_id}`), the `package_id` of
   `fixtures/positive-all-families.json` with those entries as its lock's and
   identity preimage's `dependency_selections`, and entry mutations the schema
-  refuses: a `Selection` or `DefinitionRef` shape, a missing `package_id` or
-  `version`, a bare-digest `package_id` and a `package_id` in another digest
-  domain. Its `order_vectors` pin FR-322's order rule: entries in UTF-8 byte
+  refuses: a `Selection` or `DefinitionRef` shape, a missing `package_id`, a
+  bare-digest `package_id`, a `package_id` in another digest domain and an
+  extra `version` member. Its `model_selections` entry and
+  `model_entry_mutations` pin the same rule for a `ModelRef`: one carrying
+  `version` fails the schema at that entry and a reader refuses it
+  `unknown_member`. Its `order_vectors` pin FR-322's order rule: entries in UTF-8 byte
   order (where UTF-16 order differs) are admitted, a repeated identity
   refuses `invalid_package`/`conflicting-definition` and a misordered entry
   `invalid_package`/`invalid-value`, each with its loci.
