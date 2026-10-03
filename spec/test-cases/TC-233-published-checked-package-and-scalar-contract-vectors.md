@@ -109,8 +109,11 @@ against the schema's node-form body rules and occurrence roles, and apply
 each authored body, member, argument-shape and role mutation, requiring the
 schema to refuse it; read the package's invariant and precondition through
 the full reader, requiring the state step to admit them, and read each
-authored anchor, parameter, `self`-type, arity, misplaced-clause and
-anchor-before-clause mutation, requiring its exact state refusal and locus;
+authored anchor, parameter, `self`-type, arity, body-root misplaced-clause
+and anchor-before-clause mutation, requiring its exact state refusal and
+locus; require a `quire.op.state.clause` application nested in another
+clause's condition to fail the schema and refuse `malformed_wire` at the
+nested application;
 and parse the native-diagnostics rows to require each cause in
 exactly its code's row and the Diagnostic schema pairing. Parse the
 `stage_limit_exceeded` and `duplicate_selection` rows of both native-diagnostics

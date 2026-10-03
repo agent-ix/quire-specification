@@ -2711,9 +2711,10 @@ fn clause_refusal(
     Ok(())
 }
 
-/// Independent oracle for the state step of the reader order: every
-/// `quire.op.state.clause` application stands as a `state`/`state_clause`
-/// body root; then `operation_anchor` nodes and then `state_clause` nodes,
+/// Independent oracle for the state step of the reader order: a
+/// `quire.op.state.clause` application at a body root stands only on a
+/// `state`/`state_clause` node (a nested one is a malformed wire, refused
+/// before this step); then `operation_anchor` nodes and then `state_clause` nodes,
 /// each in ascending node-id digest order, report their first defect.
 fn package_state_refusal(package: &Value) -> Result<(), (StateRefusal, Value)> {
     let nodes = package["semantic_graph"]["nodes"]
@@ -2724,10 +2725,8 @@ fn package_state_refusal(package: &Value) -> Result<(), (StateRefusal, Value)> {
     ordered.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
     for node in &ordered {
         let root_clause = node["node_tag"] == "state" && node["semantic_form"] == "state_clause";
-        let misplaced = application_terms(&node["body"])
-            .into_iter()
-            .filter(|term| term["operation"]["identity"] == "quire.op.state.clause")
-            .any(|term| !(root_clause && std::ptr::eq(term, &node["body"])));
+        let misplaced =
+            node["body"]["operation"]["identity"] == "quire.op.state.clause" && !root_clause;
         if misplaced {
             return Err((StateRefusal::OperatorIneligible, node["node_id"].clone()));
         }
@@ -7491,21 +7490,53 @@ fn tc_233_state_step_joins_anchors_then_clauses_with_their_recorded_cause() {
     );
 
     // Misplaced clause application (FR-341-AC-6): a state.clause
-    // application nested inside another clause's condition.
-    let nested =
-        package["semantic_graph"]["nodes"][clause_node_index(&package, "invariant")]["body"]
-            .clone();
-    let wrong = edited_clause(&package, "precondition", |body| {
-        body["arguments"][2] = nested
-    });
-    let precondition_id = wrong["semantic_graph"]["nodes"]
-        [clause_node_index(&wrong, "precondition")]["node_id"]
+    // application at the body root of a node other than state_clause
+    // refuses at that node; one nested inside another clause's condition
+    // is outside the body grammar and is a malformed wire.
+    let clause_body = package["semantic_graph"]["nodes"][clause_node_index(&package, "invariant")]
+        ["body"]
         .clone();
+    let mut wrong = package.clone();
+    let mut function =
+        wrong["semantic_graph"]["nodes"][clause_node_index(&package, "invariant")].clone();
+    function["node_tag"] = json!("function");
+    function["semantic_form"] = json!("function");
+    function["body"] = clause_body.clone();
+    let index = wrong["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .len();
+    wrong["semantic_graph"]["nodes"]
+        .as_array_mut()
+        .expect("nodes")
+        .push(function.clone());
+    wrong["identity_preimage"]["identity_projection"]
+        .as_array_mut()
+        .expect("identity projection")
+        .push(function.clone());
+    replace_application_node(&mut wrong, index, function);
+    let misplaced_id = wrong["semantic_graph"]["nodes"][index]["node_id"].clone();
     expect(
         &wrong,
         StateRefusal::OperatorIneligible,
-        precondition_id,
-        "a state.clause application is only a state_clause body root",
+        misplaced_id,
+        "a state.clause application at a function's body root refuses at that node",
+    );
+    let nested = edited_clause(&package, "precondition", |body| {
+        body["arguments"][2] = clause_body
+    });
+    let precondition = clause_node_index(&nested, "precondition");
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    assert!(
+        !schema.is_valid(&nested),
+        "a nested state.clause application is outside the body grammar"
+    );
+    assert_eq!(
+        case_placement_refusal(&nested),
+        Err(TemporalRefusal::MalformedWire(format!(
+            "/semantic_graph/nodes/{precondition}/body/arguments/2"
+        ))),
+        "a nested state.clause application is a malformed wire, not operator-ineligible"
     );
 
     // Anchors (FR-342-AC-2/AC-3) and the anchors-before-clauses order (FR-342-AC-5).
