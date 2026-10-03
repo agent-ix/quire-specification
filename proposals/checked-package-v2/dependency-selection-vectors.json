@@ -10,7 +10,14 @@
     {"id": "definition-ref-shape", "entry": {"authority": "test", "identity": "test/geometry"}, "outcome": "refused:malformed_wire"},
     {"id": "missing-package-id", "entry": {"identity": "test/geometry"}, "outcome": "refused:malformed_wire"},
     {"id": "bare-digest-package-id", "entry": {"identity": "test/geometry", "package_id": "3333333333333333333333333333333333333333333333333333333333333333"}, "outcome": "refused:malformed_wire"},
-    {"id": "source-bytes-package-id", "entry": {"identity": "test/geometry", "package_id": {"domain": "quire.source.bytes/v1", "algorithm": "sha256", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}}, "outcome": "refused:digest_domain_mismatch"}
+    {"id": "source-bytes-package-id", "entry": {"identity": "test/geometry", "package_id": {"domain": "quire.source.bytes/v1", "algorithm": "sha256", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}}, "outcome": "refused:digest_domain_mismatch"},
+    {"id": "selection-carries-version", "entry": {"identity": "test/geometry", "version": "1.0.0", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}}, "outcome": "refused:unknown_member"}
+  ],
+  "model_selections": [
+    {"identity": "test/orders", "digest_domain": "sha256-jcs", "digest": "8888888888888888888888888888888888888888888888888888888888888888"}
+  ],
+  "model_entry_mutations": [
+    {"id": "model-selection-carries-version", "entry": {"identity": "test/orders", "version": "1.0.0", "digest_domain": "sha256-jcs", "digest": "8888888888888888888888888888888888888888888888888888888888888888"}, "outcome": "refused:unknown_member"}
   ],
   "order_vectors": [
     {"id": "utf8-byte-order", "dependency_selections": [{"identity": "test/\uff61", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "6666666666666666666666666666666666666666666666666666666666666666"}}, {"identity": "test/\ud83d\ude00", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "7777777777777777777777777777777777777777777777777777777777777777"}}], "outcome": "admitted", "loci": []},

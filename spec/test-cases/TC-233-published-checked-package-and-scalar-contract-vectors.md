@@ -53,7 +53,8 @@ excluded member injected into the identity preimage to be refused. Insert the
 published dependency selections of `dependency-selection-vectors.json` into
 the all-families package's lock and identity preimage, require the schema to
 admit it and its recorded package id to recompute, require each authored
-entry mutation to fail the schema in either member at the mutated entry, and
+entry mutation, and each `model_entry_mutations` entry placed in
+`model_selections`, to fail the schema in either member at the mutated entry, and
 apply each order vector's selections to require its recorded order outcome. Validate a `dependency_reference` term against both schemas, and its bare-digest, other-domain, missing-`node` and extra-member mutations; place it as the callee of the `function-call` operation vector and recompute the application-node id after changing only its `package` digest, then only its `node` (FR-322-AC-36). Read
 a package whose function calls a dependency `function` returning `Boolean`
 through a `dependency_reference` callee, with its dependency package supplied,

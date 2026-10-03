@@ -4079,6 +4079,47 @@ fn tc_233_dependency_selections_carry_each_dependency_package_identity() {
         }
     }
 
+    // A model selection binds by `{identity, digest_domain, digest}` alone;
+    // a `ModelRef` carrying any further member, such as `version`, fails.
+    let models = &vectors["model_selections"];
+    let mut with_models = package.clone();
+    for member in ["lock", "identity_preimage"] {
+        with_models[member]["model_selections"] = models.clone();
+    }
+    let errors: Vec<String> = schema
+        .iter_errors(&with_models)
+        .map(|error| format!("{} at {}", error, error.instance_path()))
+        .collect();
+    assert!(
+        errors.is_empty(),
+        "a package with the published model selection is admitted: {errors:?}"
+    );
+    for mutation in vectors["model_entry_mutations"]
+        .as_array()
+        .expect("model entry mutations are an array")
+    {
+        let id = mutation["id"].as_str().expect("mutation id is a string");
+        let mut entries = models.clone();
+        entries[0] = mutation["entry"].clone();
+        for member in ["lock", "identity_preimage"] {
+            let mut candidate = with_models.clone();
+            candidate[member]["model_selections"] = entries.clone();
+            let entry_path = format!("/{member}/model_selections/0");
+            let errors: Vec<String> = schema
+                .iter_errors(&candidate)
+                .map(|error| error.instance_path().to_string())
+                .collect();
+            assert!(
+                !errors.is_empty(),
+                "{id} in {member}/model_selections must fail the public schema"
+            );
+            assert!(
+                errors.iter().all(|path| path.starts_with(&entry_path)),
+                "{id} in {member} fails the schema only at the mutated entry: {errors:?}"
+            );
+        }
+    }
+
     let order_vectors = &vectors["order_vectors"];
     for vector in order_vectors
         .as_array()
