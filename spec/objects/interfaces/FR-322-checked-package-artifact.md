@@ -612,8 +612,8 @@ and visits types in declaration pre-order:
 - Every other type contributes no leaf; a float type makes the comparison
   ineligible, as stated above.
 
-A type node the walk reaches while that same node is already an anchor on
-its current path is a **recursion leaf**: a cycle through a
+A record, tuple or union type node the walk reaches while that same node
+is already being walked on its current path is a **recursion leaf**: a cycle through a
 `recursion_group`, which
 [FR-143](../../functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md)
 admits when every recursion edge crosses a record field or a union member
