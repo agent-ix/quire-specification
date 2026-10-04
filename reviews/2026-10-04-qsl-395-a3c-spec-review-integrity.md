@@ -84,3 +84,17 @@ mismatch (`byte-digest-mismatch`) and a `sha256-jcs` mismatch
 | FND-002 | medium | TC-277 BP-03 expects any `byte_provision` entry whose bytes do not match its declared digest to refuse `byte-digest-mismatch`. FR-323 says the provision also carries domain-package inputs, which are keyed by a `sha256-jcs` digest. Under the ruling, a `sha256-jcs` digest that differs from the one recomputed from the document is `content-mismatch`, as FR-322-AC-43 and FR-154 already say. QSL FR-071:109 and the A3c `ReplayRequest::decode` refuse exactly that case `content-mismatch`. The PR body says BP-03 covers source bytes only, but the vector does not say so. **Fix:** limit BP-03 to an entry under a raw-byte digest domain, and add a vector: a `sha256-jcs` domain-package entry whose document recomputes to another digest refuses `stale_dependency`/`content-mismatch` naming the selected and the recomputed digest. | spec/test-cases/TC-277-replay-byte-provision.md:40; spec/objects/interfaces/FR-323-native-runtime-envelope.md:68-72 |
 | FND-003 | low | BP-05 now expects the refusal to name the declared and the recompiled `package_id`. It traces to FR-323-AC-5, but AC-5 covers only provision completeness and `RawSourceRef` digests. It does not state rule 5 (the proved `package_id` comparison) or its payload, so no AC states what BP-05 checks. This gap predates the PR, but the PR widened BP-05's expectation. **Fix:** add the rule-5 refusal and its two named ids to FR-323-AC-5, or to a new AC that BP-05 traces to. | spec/test-cases/TC-277-replay-byte-provision.md:42; spec/objects/interfaces/FR-323-native-runtime-envelope.md:63-67,124 |
 | FND-004 | low | FR-272's third column is "Required payload". The PR adds a sentence there that defines `byte-digest-mismatch` ("is a raw-bytes digest that differs from…"). That is a meaning, not a payload. native-diagnostics.md's column is "cause distinction and required payload", where the sentence fits. **Fix:** state the payload in FR-272 ("for `byte-digest-mismatch`, the declared digest and the digest of the supplied raw bytes"), and leave the definition to the catalog row and FR-271. | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:54,62 |
+
+## Dispositions
+
+Round 1, reviewed at 659cfce78bcb6c156f263633854cd8bd5a85ad1c (fix range
+97cc67d..659cfce). Each fix was checked against the diff. `quire validate
+--scope . 'spec/**/*.md'` at 659cfce gives output identical to 97cc67d's
+(145 failures that were already there, none new). No new findings this round.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 659cfce |
+| FND-002 | fixed | 659cfce |
+| FND-003 | fixed | 659cfce |
+| FND-004 | fixed | 659cfce |
