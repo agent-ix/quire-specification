@@ -82,3 +82,21 @@ removes it, so that sentence goes stale when #186 merges.
 | FND-005 | medium | FR-323 rule 4 says "this is the rule that catches an edited dependency", and BP-07 expects every `package_id`-changing edit to refuse by rule 4. An edit that removes the export the proved package calls, or changes its parameter or result type, makes the recompile itself refuse (`missing_declaration` or `ill_typed`, in the importing unit) at rule 2, before rule 4 runs. QSL D-4 has the same order (rule 4 recompile before rules 6 and 7), so the repos agree; the QSpec claim and the vector are too broad. Fix: BP-07's edit changes a declaration the proved package does not call, or the body of the called function, and the rule 4 sentence says it catches an edit the recompile admits. | spec/objects/interfaces/FR-323-native-runtime-envelope.md:52-57; spec/test-cases/TC-277-replay-byte-provision.md:44 |
 | FND-006 | low | TC-227 L04 says "A and B each import L with the same `package_id`". An import no longer carries a `package_id`; in one compile both imports select the one library supplied under `L`. Fix: "A and B each import L, supplied once, and call `l::f`". | spec/test-cases/TC-227-reusable-semantic-library-resolution.md:36 |
 | FND-007 | low | FR-002's Inputs still list "Package identity, exact version". No package version exists in FR-322's identity preimage or the package contract, and the PR edited this line for the domain package version but kept this one. Fix: drop "exact version". | spec/functional/foundation/FR-002-resolve-owned-declarations.md:17 |
+
+## Dispositions
+
+Round 1, reviewed at 11fd601 (fix commit 11fd601 over 137820a). FND-004
+follows the lead's ruling: QSpec adopts QSL's spine rule (ADR-015 D-1,
+FR-099-AC-3). `quire validate` on 11fd601 against origin/main 2f846f8: no
+new failure (145 failed documents on both; the added review file is
+grammar-clean, 951 documents against 950).
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 11fd601 |
+| FND-002 | fixed | 11fd601 |
+| FND-003 | fixed | 11fd601 |
+| FND-004 | fixed | 11fd601 |
+| FND-005 | fixed | 11fd601 |
+| FND-006 | fixed | 11fd601 |
+| FND-007 | fixed | 11fd601 |
