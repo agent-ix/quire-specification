@@ -40,7 +40,7 @@ and build provenance; an unqualified canonical digest is not claimed.
 The linker's prerequisites follow the package contract's processing-stage table.
 Concrete populations, windows and observations are later assessment inputs,
 not prerequisites for type-checking a valid future obligation. A domain package
-is selected by its identity, version and `sha256-jcs` digest. A definition is selected by
+is selected by its identity and `sha256-jcs` digest. A definition is selected by
 its byte digest. The linker keeps each digest in its own domain and never
 substitutes one for the other.
 
