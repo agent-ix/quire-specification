@@ -47,8 +47,8 @@ or its domain package.
      relation matches.
 2. Link a complete native package against the admitted model view.
    - IT-070-SC-02: all typed references resolve with exact provenance, and the
-     checked package's `model_selections` name the domain package by identity,
-     version and `sha256-jcs` digest.
+     checked package's `model_selections` name the domain package by identity
+     and `sha256-jcs` digest.
 3. Run each mutant through the same chain.
    - IT-070-SC-03: each refuses at its exact identity, rule or locus, and each
      declaration refusal names its artifact and span.

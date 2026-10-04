@@ -48,27 +48,30 @@ unqualified names implicitly.
 
 ## Import binding and export identity
 
-The complete-unit `import "L" digest "d" as a;` names library identity `L`
-and `d`, which is the 64-lowercase-hex
-`quire.package.semantic/v2` `package_id` of the library's CheckedPackage V2. It
-is not a raw source or manifest byte digest. `d` is spelled as exactly 64
-lowercase hexadecimal characters with no domain prefix, the spelling of a
-`PackageId` `digest`; any other spelling, a `sha256:` prefix included, is
-`refused { code: invalid-digest }` at the import's `digest` string. `L` is
-the FR-322 library identity: a non-empty string compared byte for byte, with
-no segment structure. A supplied library is one library's source, offered
-under its identity `L` and its version string. The linker compiles it through the
-same stages as the importing unit, resolving its own imports against the
-same supplied libraries, and its `package_id` is the one that compile
-yields; a supplier never states a library's `package_id`. At most one
-library is supplied per identity; a second of the same identity is
-`refused { code: invalid_package, cause: conflicting-definition }`, retaining
-both supplied libraries' identity and version, and an import whose identity
-no supplied library has is
+The complete-unit import is `import "L" [as a];`. It names library identity
+`L` and nothing else: it carries no version and no digest, and any other
+token after the identity string, a `version` or `digest` token included, is
+`refused { code: invalid_syntax, cause: unexpected-token }` at that token.
+`L` is the FR-322 library identity: a non-empty string compared byte for
+byte, with no segment structure. A supplied library is one library's
+source, offered under its identity `L` alone, with no version string. The
+import selects the library supplied under `L`. The linker compiles it
+through the same stages as the importing unit, resolving its own imports
+against the same supplied libraries, and its `package_id` is the one that
+compile yields; a supplier never states a library's `package_id`, and an
+import never states one either. That recomputed `package_id`, the
+`quire.package.semantic/v2` `package_id` of the library's CheckedPackage
+V2, is the library's selection in the importing package's lock, and it is
+what binds the library's content. At most one library is supplied per
+identity; a second library supplied under an identity already supplied is
+`refused { code: invalid_package, cause: conflicting-definition }` when the
+dependency input is built, before any compile and whether or not the two
+differ, naming both supplied libraries by their identity, and an import
+whose identity no supplied library has is
 `refused { code: missing_import, cause: missing-selection }` at the import's
-identity string. A supplied library whose
-`package_id` differs from the import is
-`refused { code: stale_dependency, cause: byte-digest-mismatch }`.
+identity string. Because an import carries no digest, no import-level
+comparison detects an edited dependency; a stale dependency is caught at
+replay by the `package_id` the lock records for it (FR-323).
 An export identity is (library package key, export node key in that library's
 graph). Imported declarations are named only as `a::Name`. The grammar makes
 `as` optional: an import without `as` still selects and verifies the library,
@@ -103,8 +106,11 @@ node order or a node's body; a library whose own graph carries a duplicated
 name or a declaration that disagrees with its nominal qualified declaration is
 already refused by the FR-322 reader and exports nothing.
 
-Resolution takes the transitive import closure in declaration order. When two
-dependency paths reach library identity `L`, they unify only when they name the
+Resolution takes the transitive import closure in declaration order. Every
+import of identity `L` in one compile selects the one library supplied under
+`L`, so its paths reach one `package_id`. When checked packages are linked,
+two dependency paths reach library identity `L` through the selections their
+packages' locks record, and they unify only when those selections name the
 same `package_id`. Any other combination is
 `refused { code: invalid_package, cause: conflicting-definition }`, and the
 refusal lists both dependency paths. Distinct `package_id`s never unify. An import
@@ -124,9 +130,9 @@ differs from the digest of its identity preimage is
 | --- | --- | --- |
 | FR-307-AC-1 | A dependency diamond whose paths reach one `package_id` resolves one exact export identity and reproducible lock. | Test (TC-227) |
 | FR-307-AC-2 | Conflicting definitions, import cycles or ambiguous unqualified names refuse with dependency paths. | Test (TC-227) |
-| FR-307-AC-4 | An import binds the library `package_id`, a mismatched import is `stale_dependency`, a conflicting diamond or import cycle is `invalid_package` with its paths, and a duplicate qualifier is `ambiguous_declaration`; an import cycle uses cause `definition-cycle`, and a name from an import without `as` is `missing_declaration`. | Test (TC-227) |
+| FR-307-AC-4 | An import binds the `package_id` its supplied library compiles to, recorded as the lock selection of its identity; a conflicting diamond or import cycle is `invalid_package` with its paths, and a duplicate qualifier is `ambiguous_declaration`; an import cycle uses cause `definition-cycle`, and a name from an import without `as` is `missing_declaration`. | Test (TC-227) |
 | FR-307-AC-5 | A package whose retained `package_id` differs from the digest of its identity preimage is `invalid_package` with cause `invalid-value` at `/package_id`. | Test (TC-227) |
-| FR-307-AC-6 | An import whose digest is `sha256:` followed by 64 lowercase hex, 64 uppercase hex, 63 or 65 lowercase hex characters is `invalid-digest` at the digest string; an import naming `test/geometry` binds to the library supplied under the identity `test/geometry` and no other; two libraries supplied under one identity are `invalid_package`/`conflicting-definition` retaining both; an import of an identity no library is supplied under is `missing_import`/`missing-selection` at its identity string; and the bound library's `package_id` is the one its compile yields, so a library whose source compiles to a `package_id` other than the import's `d` is `stale_dependency`/`byte-digest-mismatch`; and with `test/geometry` exporting a record `R` and a function `f` over builtin types, `g::f(x)` is admitted and a use `g::R` is `ill_typed`/`operator-ineligible` at the use. | Test (TC-227) |
+| FR-307-AC-6 | `import "test/geometry" as g;` binds to the library supplied under the identity `test/geometry` and no other, and the lock selection of `test/geometry` is the `package_id` that library's source compiles to; an import carrying a `version` or `digest` token after its identity string is `invalid_syntax`/`unexpected-token` at that token; two libraries supplied under one identity, whether or not they differ, are `invalid_package`/`conflicting-definition` before any compile, naming both by their identity; an import of an identity no library is supplied under is `missing_import`/`missing-selection` at its identity string; and with `test/geometry` exporting a record `R` and a function `f` over builtin types, `g::f(x)` is admitted and a use `g::R` is `ill_typed`/`operator-ineligible` at the use. | Test (TC-227) |
 
 ## Dependencies
 

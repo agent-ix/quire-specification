@@ -88,8 +88,9 @@ boundary.
   every other character are ordinary bytes, and two identities are equal
   only when their UTF-8 bytes are equal. `package_id`
   is the dependency's own `quire.package.semantic/v2` `package_id`
-  (`{domain, algorithm, digest}`, the `PackageId` shape), whose `digest` is
-  the import's `d`; a `quire.source.bytes/v1`
+  (`{domain, algorithm, digest}`, the `PackageId` shape), recomputed from
+  the library compiled from the source supplied under `identity`; an import
+  names only the identity and states no digest. A `quire.source.bytes/v1`
   or `sha256-jcs` domain in `package_id` refuses `digest_domain_mismatch`.
   A second entry whose `identity` equals an earlier entry's refuses
   `invalid_package`/`conflicting-definition` (FR-307's diamond cause), with
@@ -98,9 +99,9 @@ boundary.
   `invalid_package`/`invalid-value` at that entry's pointer. A
   `dependency_reference`'s `package` equals one entry's `package_id`. A
   supplied dependency package binds to that entry only when its identity and
-  recomputed `package_id` equal the entry's; otherwise it refuses as FR-307
-  states (`stale_dependency`/`byte-digest-mismatch` for a `package_id`
-  difference). The same entries, in the same order, are the
+  recomputed `package_id` equal the entry's; a `package_id` difference
+  refuses `stale_dependency`/`byte-digest-mismatch` naming the entry's
+  `identity`, its `package_id` and the recomputed one. The same entries, in the same order, are the
   identity preimage's `dependency_selections`, so each dependency's
   `package_id` enters the importing package's `package_id`. A reader
   admitting a package with a non-empty `dependency_selections` is supplied

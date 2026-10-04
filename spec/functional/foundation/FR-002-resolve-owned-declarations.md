@@ -14,7 +14,7 @@ When a native import is linked, the linker shall resolve its domain type names t
 
 ## Inputs
 
-Package identity, exact version, domain package identity, version and `sha256-jcs` digest, lock, qualified domain type names and declaration keys.
+Package identity, domain package identity and `sha256-jcs` digest, lock, qualified domain type names and declaration keys.
 
 ## Outputs
 

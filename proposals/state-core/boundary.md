@@ -9,9 +9,9 @@ these examples or freeze another consumer's method/result contract around them.
 Local display names are aliases, never declaration identity. The language must
 not infer type definitions from application Rust strings or runtime examples.
 
-Resolve imports by domain package identity, exact version and `sha256-jcs`
-digest, then by exports and transitive lock closure. Do not choose the first
-duplicate, newest version, or a reachable but undeclared package. Reject
+Resolve imports by domain package identity and `sha256-jcs` digest, then by
+exports and transitive lock closure. Do not choose the first duplicate or a
+reachable but undeclared package. Reject
 missing, ambiguous, stale, foreign, ill-typed and unsupported definitions with
 both reference and available declaration loci. Stable declaration IDs survive
 display-name changes; their meaning and dependency digest may change and

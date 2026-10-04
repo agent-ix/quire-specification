@@ -285,7 +285,7 @@ it.
 ```ebnf
 complete-unit = header, profile, { profile }, { import-decl }, { model },
                 declaration, { declaration }, EOF ;
-import-decl   = 'import', string, 'digest', string, [ 'as', ident ], ';' ;
+import-decl   = 'import', string, [ 'as', ident ], ';' ;
 
 declaration   = dimension-decl | unit-decl | enum-decl | record-decl
               | tuple-decl | union-decl | alias-decl | function | predicate
