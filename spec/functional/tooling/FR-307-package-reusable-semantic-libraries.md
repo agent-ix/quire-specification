@@ -63,9 +63,10 @@ import never states one either. That recomputed `package_id`, the
 `quire.package.semantic/v2` `package_id` of the library's CheckedPackage
 V2, is the library's selection in the importing package's lock, and it is
 what binds the library's content. At most one library is supplied per
-identity; a second, different package of the same identity is
-`refused { code: invalid_package, cause: conflicting-definition }`,
-retaining the identity and both packages' `package_id`s, and an import
+identity; a second library supplied under an identity already supplied is
+`refused { code: invalid_package, cause: conflicting-definition }` when the
+dependency input is built, before any compile and whether or not the two
+differ, naming both supplied libraries by their identity, and an import
 whose identity no supplied library has is
 `refused { code: missing_import, cause: missing-selection }` at the import's
 identity string. Because an import carries no digest, no import-level
@@ -131,7 +132,7 @@ differs from the digest of its identity preimage is
 | FR-307-AC-2 | Conflicting definitions, import cycles or ambiguous unqualified names refuse with dependency paths. | Test (TC-227) |
 | FR-307-AC-4 | An import binds the `package_id` its supplied library compiles to, recorded as the lock selection of its identity; a conflicting diamond or import cycle is `invalid_package` with its paths, and a duplicate qualifier is `ambiguous_declaration`; an import cycle uses cause `definition-cycle`, and a name from an import without `as` is `missing_declaration`. | Test (TC-227) |
 | FR-307-AC-5 | A package whose retained `package_id` differs from the digest of its identity preimage is `invalid_package` with cause `invalid-value` at `/package_id`. | Test (TC-227) |
-| FR-307-AC-6 | `import "test/geometry" as g;` binds to the library supplied under the identity `test/geometry` and no other, and the lock selection of `test/geometry` is the `package_id` that library's source compiles to; an import carrying a `version` or `digest` token after its identity string is `invalid_syntax`/`unexpected-token` at that token; two different packages supplied under one identity are `invalid_package`/`conflicting-definition` retaining the identity and both `package_id`s; an import of an identity no library is supplied under is `missing_import`/`missing-selection` at its identity string; and with `test/geometry` exporting a record `R` and a function `f` over builtin types, `g::f(x)` is admitted and a use `g::R` is `ill_typed`/`operator-ineligible` at the use. | Test (TC-227) |
+| FR-307-AC-6 | `import "test/geometry" as g;` binds to the library supplied under the identity `test/geometry` and no other, and the lock selection of `test/geometry` is the `package_id` that library's source compiles to; an import carrying a `version` or `digest` token after its identity string is `invalid_syntax`/`unexpected-token` at that token; two libraries supplied under one identity, whether or not they differ, are `invalid_package`/`conflicting-definition` before any compile, naming both by their identity; an import of an identity no library is supplied under is `missing_import`/`missing-selection` at its identity string; and with `test/geometry` exporting a record `R` and a function `f` over builtin types, `g::f(x)` is admitted and a use `g::R` is `ill_typed`/`operator-ineligible` at the use. | Test (TC-227) |
 
 ## Dependencies
 

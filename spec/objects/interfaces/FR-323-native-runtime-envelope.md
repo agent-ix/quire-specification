@@ -53,8 +53,13 @@ When a checked package is executed or replayed, the producer SHALL use the immut
      recompile to refuses `stale_dependency`/`byte-digest-mismatch` (QSL's
      `DependencyIdentityMismatch`), naming the entry's `identity`, its
      `package_id` and the recompiled one. An import carries no digest, so
-     this is the rule that catches an edited dependency: the entry's
-     `package_id` is the one the proved package's lock pinned;
+     this is the rule that catches an edited dependency the recompile
+     admits, such as an edit to a declaration the proved package does not
+     call or to the body of a called function with its signature unchanged:
+     the entry's `package_id` is the one the proved package's lock pinned.
+     An edit that removes or retypes an export the proved package uses
+     makes the recompile itself refuse at rule 2 (`missing_declaration` or
+     `ill_typed`) before this rule runs;
   5. a recompiled proved `package_id` other than the request's refuses
      `stale_dependency`/`byte-digest-mismatch`. An edited dependency also
      changes the proved package's `package_id`, so rules 3 and 4 run first
@@ -117,7 +122,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-4 | The outcome-to-verdict map assigns one verdict per QSL ADR-013 O-16 category, fixed independently of any request; an `Undefined` outcome and a refused `FamilyOutcome` never settle agreement. | Test (TC-273) |
 | FR-323-AC-5 | A replay request's `byte_provision` supplies every source, definition and domain-package input the replay recompiles, each keyed by its declared digest domain and digest; the `package` reference's `RawSourceRef` digests are exactly the source and definition digests the executor recomputes and compares, and the executor reads no recompilation input by path, environment variable or search location. | Test (TC-277) |
 | FR-323-AC-6 | A replay request's `replay` property carries the `ReplaySource`, the selected function's `QualifiedName`, arguments keyed by parameter node id, the semantic profile selections, the failing node's occurrence key, the proof bounds and declared domains, the trace position and the `backend` member; a non-replay request carries no `replay` property. | Test (TC-278) |
-| FR-323-AC-7 | A replay request's `package` reference names the proved package's own `sources` and one `dependencies` entry per `dependency_selections` entry, in its order, each carrying that selection's `identity` and `package_id` and the dependency's own lock `sources`. The executor refuses by the first rule of its order: swapped or repeated entries `invalid_package`/`invalid-value` at `/package/dependencies` before any recompile; an entry whose source shares the authority and identity of another source `invalid_package`/`conflicting-definition` naming both; a removed entry `missing_import`/`missing-selection`; an entry no import reaches `invalid_package`/`invalid-value`; an entry whose sources are edited so that they recompile to a `package_id` other than the entry's, and an entry whose `package_id` alone is changed, each `stale_dependency`/`byte-digest-mismatch` naming its `identity`, its `package_id` and the recompiled one, before the proved package's `package_id` is compared. None yields a result. | Test (TC-277) |
+| FR-323-AC-7 | A replay request's `package` reference names the proved package's own `sources` and one `dependencies` entry per `dependency_selections` entry, in its order, each carrying that selection's `identity` and `package_id` and the dependency's own lock `sources`. The executor refuses by the first rule of its order: swapped or repeated entries `invalid_package`/`invalid-value` at `/package/dependencies` before any recompile; an entry whose source shares the authority and identity of another source `invalid_package`/`conflicting-definition` naming both; a removed entry `missing_import`/`missing-selection`; an entry no import reaches `invalid_package`/`invalid-value`; an entry whose sources are edited, by an edit the recompile admits, so that they recompile to a `package_id` other than the entry's, and an entry whose `package_id` alone is changed, each `stale_dependency`/`byte-digest-mismatch` naming its `identity`, its `package_id` and the recompiled one, before the proved package's `package_id` is compared. An edit removing an export the proved package calls instead refuses in the recompile, `missing_declaration`/`missing-name`. None yields a result. | Test (TC-277) |
 | FR-323-AC-8 | A replay request's `stage_limits` entry raises its named stage limit for the replay recompile, a stage limit the request does not name runs at its published default, and an entry naming no stage-limit setting refuses before any stage runs. | Test (TC-426) |
 
 ## Dependencies
