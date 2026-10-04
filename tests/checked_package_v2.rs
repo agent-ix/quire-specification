@@ -6910,12 +6910,8 @@ const VALUE_REFUSAL_ROWS: [(&str, &[&str], &[&str]); 11] = [
     ),
     ("decimal_out_of_domain", &["outside-domain"], &["expected"]),
     (
-        "division_pair_out_of_domain",
-        &[
-            "quotient-outside-domain",
-            "remainder-outside-domain",
-            "both-outside-domain",
-        ],
+        "division_out_of_domain",
+        &["quotient-outside-domain", "remainder-outside-domain"],
         &["expected"],
     ),
     ("modulo_out_of_domain", &["outside-domain"], &["expected"]),

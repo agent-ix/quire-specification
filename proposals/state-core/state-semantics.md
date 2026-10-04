@@ -169,8 +169,10 @@ only under an explicit capability/accounting contract.
 `div` truncates toward zero. `a rem b = a - (a div b) * b`, so `-7 div 3 = -2`
 and `-7 rem 3 = -1`; the remainder has the dividend's sign when nonzero. The
 identity defines mathematical remainder, not a lowering that adds unchecked
-host intermediates. Signed minimum divided by -1 and a result outside the
-declared bounds refuse unless the path's proved domains exclude the case.
+host intermediates. Only the member the operator exposes is checked against
+the declared bounds: a `div` quotient or a `rem` remainder outside them refuses
+unless the path's proved domains exclude the case. Signed minimum `div` -1
+refuses in a signed-64 domain; signed minimum `rem` -1 is `0`.
 
 ## 7. Collections and reachability
 

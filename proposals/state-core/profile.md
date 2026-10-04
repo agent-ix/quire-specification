@@ -115,12 +115,16 @@ root and definedness for every potentially evaluated subexpression.
   not anonymous structural records. `reaches` accepts two such objects or typed
   references to the same object type/universe and follows the specified field.
 - Integers are mathematical signed values within explicit model min/max bounds
-  contained in signed 64-bit representation. Every intermediate result must fit
-  its declared type. Prove bounds statically using declared ranges and guards;
+  contained in signed 64-bit representation. Every intermediate result, other
+  than the division member the operator does not expose, must fit its declared
+  type. Prove bounds statically using declared ranges and guards;
   inability to establish definedness refuses compilation, even if samples fit.
   `div` truncates toward zero; `a rem b = a - (a div b) * b`, so `-7 rem 3 = -1`.
-  Zero divisor and minimum-signed-value divided by `-1` require refusal unless
-  excluded by bounds/guards. No host overflow, widening or floating arithmetic.
+  The quotient and remainder are computed exactly, and only the member the
+  operator exposes must fit: the quotient for `div`, the remainder for `rem`.
+  A zero divisor, and a `div` whose quotient leaves the declared type (such as
+  minimum-signed-value `div -1`), require refusal unless excluded by
+  bounds/guards; minimum-signed-value `rem -1` is `0`. No host overflow, widening or floating arithmetic.
 - A sequence's order and repeated values are significant. Its length obeys an
   authored maximum. Iterate `forall`/`exists` in order, short-circuit on the first
   false/true respectively. Missing sequence data is not an empty sequence.
