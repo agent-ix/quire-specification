@@ -100,7 +100,7 @@ boundary.
   `dependency_reference`'s `package` equals one entry's `package_id`. A
   supplied dependency package binds to that entry only when its identity and
   recomputed `package_id` equal the entry's; a `package_id` difference
-  refuses `stale_dependency`/`byte-digest-mismatch` naming the entry's
+  refuses `stale_dependency`/`content-mismatch` naming the entry's
   `identity`, its `package_id` and the recomputed one. The same entries, in the same order, are the
   identity preimage's `dependency_selections`, so each dependency's
   `package_id` enters the importing package's `package_id`. A reader
