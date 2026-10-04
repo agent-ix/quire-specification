@@ -33,3 +33,17 @@ Changes needed: one medium finding.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | medium | The new state-semantics.md text says "Only the member the operator exposes is checked against the declared bounds ... signed minimum `rem` -1 is `0`". The state-core profile it elaborates still says "Every intermediate result must fit its declared type" and "Zero divisor and minimum-signed-value divided by `-1` require refusal unless excluded by bounds/guards" (profile.md:117-123). Under profile.md, MIN `rem` -1 refuses, because its quotient `2^63` is an intermediate outside signed-64. state-semantics.md also says of itself that a later semantic amendment cannot silently cover the profile. The two state-core documents now disagree. Make them agree: change profile.md:118-123 the same way, or drop the state-semantics.md hunk and leave the historical state-core profile as it was (FR-147 governs complete-V1). | proposals/state-core/state-semantics.md:172-175; proposals/state-core/profile.md:117-123 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | The fix adds the member-only rule to profile.md, but two sentences earlier the same bullet still says "Every intermediate result must fit its declared type" (profile.md:118-119). FND-001 cited this sentence as the conflict: by the identity `a rem b = a - (a div b) * b`, the quotient `2^63` of minimum-signed-value `rem -1` is an intermediate that does not fit signed-64. A reader can take the newer, more specific sentence as an exception, but the two still disagree as written. A one-clause carve-out would fix it, for example "Every intermediate result, other than the division member the operator does not expose, must fit its declared type". | proposals/state-core/profile.md:118-119 |
+
+## Dispositions
+
+Round 1, reviewed at becb65069f2929d905b94bde03d893923f4de04b (fix range f0002b92..becb6506).
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | becb650 |

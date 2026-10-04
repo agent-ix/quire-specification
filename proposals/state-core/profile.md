@@ -115,8 +115,9 @@ root and definedness for every potentially evaluated subexpression.
   not anonymous structural records. `reaches` accepts two such objects or typed
   references to the same object type/universe and follows the specified field.
 - Integers are mathematical signed values within explicit model min/max bounds
-  contained in signed 64-bit representation. Every intermediate result must fit
-  its declared type. Prove bounds statically using declared ranges and guards;
+  contained in signed 64-bit representation. Every intermediate result, other
+  than the division member the operator does not expose, must fit its declared
+  type. Prove bounds statically using declared ranges and guards;
   inability to establish definedness refuses compilation, even if samples fit.
   `div` truncates toward zero; `a rem b = a - (a div b) * b`, so `-7 rem 3 = -1`.
   The quotient and remainder are computed exactly, and only the member the

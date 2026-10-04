@@ -70,3 +70,11 @@ has the medium state-core finding.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | TC-192 DIV-06 asks for "a `div` whose quotient is one below `MIN` or one over `MAX`". With signed-64 operands and a nonzero divisor, no profile gives a quotient below `MIN`: `abs(q) <= abs(a) <= 2^63`, and the floor or Euclidean quotient of a positive divisor is at least `-2^63`. Only "one over `MAX`" can happen, and its example `MIN div -1` is the DIV-05 case again. Drop the "one below `MIN`" half, or say it is unreachable. | spec/test-cases/TC-192-integer-division-profiles.md:45 |
+
+## Dispositions
+
+Round 1, reviewed at becb65069f2929d905b94bde03d893923f4de04b (fix range f0002b92..becb6506).
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | becb650 |
