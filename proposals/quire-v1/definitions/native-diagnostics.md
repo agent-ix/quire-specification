@@ -93,7 +93,7 @@ context, but that context cannot replace a required cause field or variant.
 | `invalid_source_identity` | `blank-label` or `empty-path`; `blank-label` retains `label`: the first of the source labels `authority` and `identity`, in that order, whose value is empty or consists only of Unicode `White_Space` scalars; `empty-path` retains nothing further. The label check runs first, over the labels in that order, and the first blank label decides `blank-label`; `empty-path` is reported only when every label is non-blank and the source path is empty. Neither cause names a source region. |
 | `inexact_decimal` | `nonzero-discarded-digit`; retain `expected`: the target type's declared domain, whose maximum scale is the rounding step's target scale (an integer target has scale zero). Strict `exact` met a rounding step: at least one discarded digit is nonzero. No rounded or exact value is retained. |
 | `decimal_out_of_domain` | `outside-domain`; retain `expected`: the target `Decimal[lo, hi; smin, smax]` domain whose membership the result fails. No coefficient or scale of the result is retained. |
-| `division_pair_out_of_domain` | `quotient-outside-domain`, `remainder-outside-domain` or `both-outside-domain`; retain `expected`: the bounded consumer's integer domain both members of the `div`/`rem` pair are checked against. The cause names which members fail membership; neither member is retained. |
+| `division_out_of_domain` | `quotient-outside-domain` for a `div` whose quotient fails membership, or `remainder-outside-domain` for a `rem` whose remainder fails it, under the selected integer-division profile; retain `expected`: the bounded consumer's integer domain. Only the member the operator exposes is checked; the other member is never checked and cannot refuse. No member is retained. |
 | `modulo_out_of_domain` | `outside-domain`; retain `expected`: the bounded consumer's integer domain the Euclidean `mod` remainder fails. No remainder is retained. |
 | `text_length_out_of_domain` | `outside-domain`; retain `expected`: the declared `Text[min, max; profile]` bounds and profile whose length the result fails. No text is retained. |
 | `integer_out_of_domain` | `outside-domain`; retain `expected`: the target `Int[lo, hi]` domain an exact conversion or arithmetic result fails. No integer is retained. |
@@ -106,7 +106,7 @@ context, but that context cannot replace a required cause field or variant.
 `ambiguous_dispatch`, `foreign_reference`, `invalid_capability`,
 `duplicate_selection`, `stage_limit_exceeded`, `noncanonical_wire`,
 `inexact_decimal`,
-`decimal_out_of_domain`, `division_pair_out_of_domain`, `modulo_out_of_domain`,
+`decimal_out_of_domain`, `division_out_of_domain`, `modulo_out_of_domain`,
 `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`,
 `ieee_not_exact`, `ieee_nan_payload_not_representable` and
 `ieee_rational_out_of_domain` are catalog-owned spellings. Their spelling and
@@ -181,7 +181,7 @@ and `edge-count-exceeded`, `occurrence-count-exceeded` and
 occurrence and source-map, and diagnostic-entry limits (QSL ADR-013 QC-28).
 
 Ten codes cover the evaluator's value refusals, one per refusal: `inexact_decimal` for strict `exact` at a decimal rounding step
-(FR-140, FR-142), `decimal_out_of_domain` (FR-140), `division_pair_out_of_domain`
+(FR-140, FR-142), `decimal_out_of_domain` (FR-140), `division_out_of_domain`
 and `modulo_out_of_domain` (FR-147), `text_length_out_of_domain` (FR-141),
 `integer_out_of_domain` for an integer-target unit conversion (FR-142) and a
 bounded integer arithmetic result (FR-044), `rational_out_of_domain` for a

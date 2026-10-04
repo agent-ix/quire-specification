@@ -29,7 +29,7 @@ completed result. That record is closed; its members are defined under
 | text | `text.input-bytes`, `text.decode-scalars`, `text.normalize-input`, one `text.normalize-output` before each emitted scalar, `text.result-retain` |
 | enum | `enum.identity-read`, `enum.result-retain` |
 | unit | `unit.identity-read`, one `unit.edge` before each source/target edge, `unit.rational-arithmetic`, `unit.target-domain`, `unit.result-retain` |
-| integer division | `integer-division.operands`, `integer-division.arithmetic`, `integer-division.domain-pair`, `integer-division.result-pair` |
+| integer division | `integer-division.operands`, `integer-division.arithmetic`, `integer-division.domain`, `integer-division.result-retain` |
 | integer modulus (`mod`) | `integer-modulus.operands`, `integer-modulus.arithmetic`, `integer-modulus.domain`, `integer-modulus.result-retain` |
 | IEEE | `ieee.operands`, conditional `ieee.exact-intermediate`, conditional `ieee.round`, `ieee.result-retain` |
 | equality | `equality.plan-form`, `equality.plan`, one `equality.pair` for each planned semantic occurrence-path pair, then `equality.result-retain` |
@@ -90,8 +90,8 @@ unmaterialized result.
 | `unit.result-retain` | `value_occurrences=occ(result)`, `result_units += occ(result)` |
 | `integer-division.operands` | `integer_bits=max(bits(a),bits(b))`, `value_occurrences=2` |
 | `integer-division.arithmetic` | `integer_bits=max(bits(a),bits(b))`, which bounds both quotient and remainder |
-| `integer-division.domain-pair` | `value_occurrences=2` |
-| `integer-division.result-pair` | `result_units += 2` atomically |
+| `integer-division.domain` | `value_occurrences=1`: the one member the operator exposes, the quotient for `div` and the remainder for `rem` |
+| `integer-division.result-retain` | `result_units += 1` |
 | `integer-modulus.operands` | `integer_bits=max(bits(a),bits(b))`, `value_occurrences=2` |
 | `integer-modulus.arithmetic` | `integer_bits=max(bits(a),bits(b))`, which bounds the Euclidean quotient and remainder |
 | `integer-modulus.domain` | `value_occurrences=1` |
@@ -141,8 +141,7 @@ collection-visit, model-deref, model-navigate, graph-expand, graph-edge,
 population-visit, frame-write and frame-redefines-link rows add one per event, and `equality.plan-form`,
 `collection.member-walk`, `collection.member-test` and `dispatch.select` add
 their stated amounts.
-Retaining a paired quotient/remainder costs two result units; a composite retained value costs
-`occ(result)`. Checked amount derivation and counter arithmetic precede
+A composite retained value costs `occ(result)`. Checked amount derivation and counter arithmetic precede
 allocation or semantic arithmetic. A counter amount greater than `u64::MAX`
 returns incomplete at that point. No unnamed precision, shift, host-backend cost
 or implementation-work counter may change an outcome.
@@ -376,7 +375,7 @@ Integer `div`/`rem` and `mod` charge their domain point on every evaluation,
 including an unbounded mathematical-integer result. A zero divisor is undefined
 after `integer-division.operands` or `integer-modulus.operands` and before the
 corresponding arithmetic point, and makes no later charge. A bounded-consumer
-membership refusal follows `integer-division.domain-pair` or
+membership refusal follows `integer-division.domain` or
 `integer-modulus.domain` and precedes result retention. `mod` never charges an
 `integer-division.*` point, and `div`/`rem` never charges an
 `integer-modulus.*` point.

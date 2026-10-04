@@ -810,6 +810,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-147 | FR-147-AC-7 | TC-192, TC-266 | planned |
 | FR-147 | FR-147-AC-8 | TC-192, TC-266 | planned |
 | FR-147 | FR-147-AC-9 | TC-192 | planned |
+| FR-147 | FR-147-AC-10 | TC-192 | planned |
 | FR-148 | FR-148-AC-4 | TC-193 | planned |
 | FR-148 | FR-148-AC-5 | TC-193 | planned |
 | FR-148 | FR-148-AC-6 | TC-193 | planned |

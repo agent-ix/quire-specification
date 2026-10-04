@@ -84,7 +84,7 @@ catalog).
 | `noncanonical_wire` | A JSON wire document that its RFC 8785 encoding does not carry as written: a number whose exact value that encoding loses, with cause `inexact-integer` or `inexact-number` at its `document_pointer`, or, for a reader that requires canonical bytes as the checked-package V2 reader does (FR-322), any other bytes, as a refusal about the byte stream. |
 | `inexact_decimal` | Strict `exact` met a decimal rounding step: a nonzero digit would be discarded. |
 | `decimal_out_of_domain` | A decimal result outside its target `Decimal[..]` domain. |
-| `division_pair_out_of_domain` | A `div`/`rem` quotient/remainder pair with at least one member outside the bounded consumer's domain. Neither member is exposed. |
+| `division_out_of_domain` | A `div` quotient or a `rem` remainder outside the bounded consumer's domain. Only the member the operator exposes is checked; the refused member is not exposed. |
 | `modulo_out_of_domain` | A Euclidean `mod` remainder outside the bounded consumer's domain. |
 | `text_length_out_of_domain` | A text value whose profile length is outside its declared `Text[..]` bounds. |
 | `integer_out_of_domain` | An exact conversion or arithmetic result outside its target integer domain. |
@@ -159,7 +159,7 @@ settling unselected native literals or treating spelling as a global convention.
 | FR-271-AC-3 | The key order over code spellings is not cited as a severity or precedence ordering. | Analysis |
 | FR-271-AC-4 | Localizing the message accompanying a diagnostic leaves its code unchanged. | Analysis |
 | FR-271-AC-5 | A code minted by a consumer for its own refusal does not resolve to a member of this table, even when its spelling equals a member spelling. | Analysis |
-| FR-271-AC-6 | The values table has exactly one row for each of `invalid_source_identity` and the ten evaluator value-refusal codes: `inexact_decimal`, `decimal_out_of_domain`, `division_pair_out_of_domain`, `modulo_out_of_domain`, `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`, `ieee_not_exact`, `ieee_nan_payload_not_representable` and `ieee_rational_out_of_domain`. | Test (TC-233) |
+| FR-271-AC-6 | The values table has exactly one row for each of `invalid_source_identity` and the ten evaluator value-refusal codes: `inexact_decimal`, `decimal_out_of_domain`, `division_out_of_domain`, `modulo_out_of_domain`, `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`, `ieee_not_exact`, `ieee_nan_payload_not_representable` and `ieee_rational_out_of_domain`. | Test (TC-233) |
 
 ## Resolved catalog namespaces
 
@@ -194,7 +194,7 @@ an already-selected domain-package identity, `stage_limit_exceeded` for a stage
 limit, `noncanonical_wire` for a JSON number that RFC 8785 cannot carry
 exactly and for the FR-322 V2 reader's non-canonical bytes, and
 `inexact_decimal`, `decimal_out_of_domain`,
-`division_pair_out_of_domain`, `modulo_out_of_domain`,
+`division_out_of_domain`, `modulo_out_of_domain`,
 `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`,
 `ieee_not_exact`, `ieee_nan_payload_not_representable` and
 `ieee_rational_out_of_domain`, one refusal code per evaluator value refusal.

@@ -29,7 +29,8 @@ consumer-domain bounds.
 
 ## Outputs
 
-A completed exact quotient/remainder pair, or an undefined, refused or
+A completed exact integer: the quotient for `div`, the remainder for `rem`
+and the Euclidean remainder for `mod`. Otherwise an undefined, refused or
 incomplete evaluator outcome. I13 `requires-bound` remains a separate provider
 negotiation disposition.
 
@@ -37,8 +38,9 @@ negotiation disposition.
 
 Mathematical integers are unbounded language values. `div`/`rem` use the
 selected law and satisfy its quotient identity; operator spellings cannot mix
-laws. Bounded consumers prove operand/intermediate/result membership. Division
-by zero is undefined and no backend may saturate or substitute float division.
+laws. Bounded consumers prove operand membership and the membership of the one
+member the operator exposes. Division by zero is undefined and no backend may
+saturate or substitute float division.
 
 ## Division profiles
 
@@ -51,29 +53,38 @@ profile satisfies `a = b*q + r` and the following additional law:
 | floor | `q` is the exact rational quotient rounded toward negative infinity | `abs(r) < abs(b)` and a nonzero `r` has the sign of `b` |
 | Euclidean | `q` is the unique integer satisfying the remainder constraint | `0 <= r < abs(b)` |
 
-`div` and `rem` are a paired operation under the selected profile. `mod` names
-only the Euclidean remainder and cannot inherit a truncating or floor profile.
-Mathematical-integer evaluation has no overflow. A bounded consumer checks the
-membership of both results, including the signed minimum divided by negative
-one case, before it exposes either value. A pair with a member outside the
-consumer's domain refuses as `refused { code: division_pair_out_of_domain,
-cause: C }`, where `C` is `quotient-outside-domain`, `remainder-outside-domain`
-or `both-outside-domain` as the failing members are, and exposes neither
-member; a `mod` remainder outside it refuses as
-`refused { code: modulo_out_of_domain, cause: outside-domain }`.
+For every nonzero divisor, `a div b` and `a rem b` compute the exact `q` and
+`r` of the selected profile, and `mod` computes the exact Euclidean `q` and
+`r`. Each operator exposes one member: `div` exposes `q`, `rem` exposes `r` and
+`mod` exposes the Euclidean `r`. Mathematical-integer evaluation has no
+overflow. A bounded consumer checks only the exposed member against its domain;
+the unexposed member is never checked, retained or exposed, so it cannot cause
+a refusal. Under every profile:
+
+| Operator | Member checked | Refusal when that member is outside the domain |
+| --- | --- | --- |
+| `div` | `q` of the selected profile | `refused { code: division_out_of_domain, cause: quotient-outside-domain }` |
+| `rem` | `r` of the selected profile | `refused { code: division_out_of_domain, cause: remainder-outside-domain }` |
+| `mod` | Euclidean `r` | `refused { code: modulo_out_of_domain, cause: outside-domain }` |
+
+A refusal exposes no member. The signed minimum divided by negative one is a
+`div` whose quotient lies outside a signed-64 domain; its `rem` is `0` and
+completes in that domain. `mod` names only the Euclidean remainder and cannot
+inherit a truncating or floor profile.
 
 The checked package retains exactly one of
 `quire.value.integer-division.truncating/v1`,
 `quire.value.integer-division.floor/v1` or
 `quire.value.integer-division.euclidean/v1` for `div`/`rem`; absence or multiple
 selections refuses semantic admission. `mod` always selects Euclidean remainder.
-The paired quotient/remainder is admitted atomically. Before evaluation, a
+Before evaluation, a
 finite I13 consumer without complete operand, intermediate and result bounds
 returns the per-item `requires-bound` negotiation disposition without narrowing
 mathematical integers. That provider disposition is not an evaluator outcome.
-Evaluation uses the named integer-division charges and counters from
-`quire.value.accounting/v1`; it never publishes only one member of the pair.
-`mod` is a single-result operation charged at exactly
+`div` and `rem` are each a single-result operation charged at exactly
+`integer-division.operands`, `integer-division.arithmetic`,
+`integer-division.domain` and `integer-division.result-retain`, in that order,
+with the measures defined by `quire.value.accounting/v1`. `mod` is a single-result operation charged at exactly
 `integer-modulus.operands`, `integer-modulus.arithmetic`,
 `integer-modulus.domain` and `integer-modulus.result-retain`, in that order,
 with the measures defined by `quire.value.accounting/v1`. For `div`/`rem` and
@@ -84,15 +95,16 @@ precedes the arithmetic charge; an undefined outcome makes no later charge.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-147-AC-1 | Positive and negative operand vectors satisfy the selected quotient/remainder identity exactly. | Test (TC-192) |
+| FR-147-AC-1 | Positive and negative operand vectors give a `div` quotient and a `rem` remainder that together satisfy the selected profile's identity `a = b*q + r` exactly. | Test (TC-192) |
 | FR-147-AC-2 | Division by zero is undefined and produces no numeric value. | Test (TC-192) |
 | FR-147-AC-3 | I13 negotiation for a finite backend lacking a complete derived domain returns `requires-bound` instead of invoking evaluation or narrowing mathematical integers. | Test (TC-192) |
 | FR-147-AC-4 | Positive and negative dividend/divisor vectors distinguish truncating, floor and Euclidean results while preserving `a = b*q + r`. | Test (TC-192) |
 | FR-147-AC-5 | `mod` returns the Euclidean remainder independently of the selected `div`/`rem` law; an attempted explicit non-Euclidean `mod` selection is refused, while every zero divisor, including `mod`'s, is undefined after the operands charge and before the arithmetic charge, without emitting a quotient or remainder. `mod` exact-bound accounting consumes its four named `integer-modulus` charges, and denial of any of them returns incomplete without a remainder. | Test (TC-192) |
-| FR-147-AC-6 | Exact-bound accounting succeeds and denial of a named next integer-division charge returns incomplete without either quotient or remainder; a zero divisor is undefined after the operands charge and before the arithmetic charge. | Test (TC-192) |
+| FR-147-AC-6 | Exact-bound accounting of `div` and of `rem` consumes their four named `integer-division` charges and succeeds, and denial of a named next integer-division charge returns incomplete with no quotient or remainder; a zero divisor is undefined after the operands charge and before the arithmetic charge. | Test (TC-192) |
 | FR-147-AC-7 | In a locked qualification run with a registered SMT backend advertising mathematical-integer semantics, the corpus settles at least one integer-division obligation `proved` through that backend via the I13 negotiation path. | Test (TC-192, TC-266) |
 | FR-147-AC-8 | In that same locked run, the corpus settles at least one integer-division obligation `refuted` through that backend via the I13 negotiation path; the AC-3 `requires-bound` finite-backend negotiation disposition is unchanged in a locked run with no such backend registered. | Test (TC-192, TC-266) |
-| FR-147-AC-9 | A bounded consumer's `div`/`rem` pair with a member outside its domain returns `refused { code: division_pair_out_of_domain }` with cause `quotient-outside-domain`, `remainder-outside-domain` or `both-outside-domain` as the failing members are, and exposes neither member; a `mod` remainder outside it returns `refused { code: modulo_out_of_domain, cause: outside-domain }`. | Test (TC-192) |
+| FR-147-AC-9 | Under each profile, a bounded consumer's `div` whose quotient is outside its domain returns `refused { code: division_out_of_domain, cause: quotient-outside-domain }`, a `rem` whose remainder is outside it returns `refused { code: division_out_of_domain, cause: remainder-outside-domain }`, and a `mod` whose Euclidean remainder is outside it returns `refused { code: modulo_out_of_domain, cause: outside-domain }`; no refusal exposes a member. | Test (TC-192) |
+| FR-147-AC-10 | The unexposed member never refuses: over the consumer domain `Int[1,10]`, `10 div y` at `y = 5` returns `2` although the remainder `0` is outside the domain, and over `Int[-10,5]`, `x rem -1` at `x = -10` returns `0` although the quotient `10` is outside the domain. | Test (TC-192) |
 
 ## Dependencies
 
