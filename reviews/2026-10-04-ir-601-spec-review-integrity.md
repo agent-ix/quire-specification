@@ -47,3 +47,9 @@ Round 1, reviewed at becb65069f2929d905b94bde03d893923f4de04b (fix range f0002b9
 | FND | Outcome | sha/reason |
 | --- | --- | --- |
 | FND-001 | fixed | becb650 |
+
+Round 2, reviewed at 293be66303f75c2e9e20ab5fe8d5426680732ada (fix range becb6506..293be663).
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-002 | fixed | 293be66 |
