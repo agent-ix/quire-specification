@@ -2952,6 +2952,7 @@ fn clause_digest(role: &str) -> String {
         "frame" => ("state", "frame"),
         "anchor" => ("state", "operation_anchor"),
         "reference" => ("composite_type", "reference"),
+        "boolean" => ("scalar_type", "boolean"),
         other => panic!("unknown clause-operations role {other}"),
     };
     published_digest(&package, tag, form, None)
@@ -7728,7 +7729,7 @@ fn tc_233_state_step_joins_anchors_then_clauses_with_their_recorded_cause() {
     );
     let mut retyped = package.clone();
     let self_index = node_index(&retyped, &clause_digest("parameter"));
-    retyped["semantic_graph"]["nodes"][self_index]["semantic_type"] = target("aa");
+    retyped["semantic_graph"]["nodes"][self_index]["semantic_type"] = target("boolean");
     retyped["identity_preimage"] = derive_identity_preimage(&retyped);
     expect(
         &retyped,
