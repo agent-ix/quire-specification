@@ -2935,6 +2935,17 @@ fn all_families_digest(role: &str) -> String {
 /// Digest of a node the clause-operations fixture publishes, by its role there.
 fn clause_digest(role: &str) -> String {
     let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+    if role == "boolean_literal" {
+        return package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .find(|node| node["node_tag"] == "value" && node["body"]["value_kind"] == "boolean")
+            .expect("a boolean literal is published")["node_id"]["digest"]
+            .as_str()
+            .expect("digest")
+            .to_owned();
+    }
     let (tag, form) = match role {
         "object_type" => ("model", "object_type"),
         "parameter" => ("value", "parameter"),
@@ -7691,12 +7702,12 @@ fn tc_233_state_step_joins_anchors_then_clauses_with_their_recorded_cause() {
 
     // Parameters (FR-341-AC-4).
     let wrong = edited_clause(&package, "invariant", |body| {
-        body["arguments"][0]["members"][0] = reference("dd")
+        body["arguments"][0]["members"][0] = reference("boolean_literal")
     });
     expect(
         &wrong,
         StateRefusal::MalformedDeclaration,
-        target("dd"),
+        target("boolean_literal"),
         "a parameter reference names a value/parameter node",
     );
     let wrong = edited_clause(&package, "invariant", |body| {
