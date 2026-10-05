@@ -37,6 +37,8 @@ const POSITIVE_CONTROL_OPERATIONS: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-control-operations.json");
 const POSITIVE_UNION_NODES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-union-nodes.json");
+const POSITIVE_RECURSIVE_RECORDS: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-recursive-records.json");
 const ADVERSE: &str = include_str!("../proposals/checked-package-v2/fixtures/adverse.json");
 const DEPENDENCY_SELECTION_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/dependency-selection-vectors.json");
@@ -2019,7 +2021,9 @@ fn declaring_source_owner(package: &Value, node: &Value) -> Option<Value> {
 /// exactly when it is declared, and a `null` `semantic_type` when the node is
 /// its own type.
 fn structural_node_preimage(package: &Value, node: &Value) -> Option<Value> {
-    if node.get("nominal_identity_preimage").is_some() || !application_terms(&node["body"]).is_empty()
+    if node.get("nominal_identity_preimage").is_some()
+        || node.get("recursion_group").is_some()
+        || !application_terms(&node["body"]).is_empty()
     {
         return None;
     }
@@ -2056,6 +2060,7 @@ fn structural_node_key_is_current(package: &Value, node: &Value) -> bool {
 /// and collection composites, and the integer and collection-bound ranges.
 fn is_derived_shape(node: &Value) -> bool {
     node.get("declaration").is_none()
+        && node.get("recursion_group").is_none()
         && matches!(
             (node["node_tag"].as_str(), node["semantic_form"].as_str()),
             (Some("scalar_type"), Some("boolean" | "integer"))
@@ -2074,7 +2079,8 @@ fn is_derived_shape(node: &Value) -> bool {
 /// scalar or composite node is its own `semantic_type`, which the preimage
 /// records as `null`.
 fn derived_shape_key_is_current(package: &Value, node: &Value) -> bool {
-    let self_typed = node["node_tag"] == "bounded_domain" || node["semantic_type"] == node["node_id"];
+    let self_typed =
+        node["node_tag"] == "bounded_domain" || node["semantic_type"] == node["node_id"];
     self_typed && structural_node_key_is_current(package, node)
 }
 
@@ -2900,7 +2906,11 @@ fn published_digest(package: &Value, tag: &str, form: &str, name: Option<&str>) 
             })
         })
         .collect::<Vec<_>>();
-    assert_eq!(hits.len(), 1, "{tag}/{form} {name:?} names exactly one node");
+    assert_eq!(
+        hits.len(),
+        1,
+        "{tag}/{form} {name:?} names exactly one node"
+    );
     hits[0]["node_id"]["digest"]
         .as_str()
         .expect("node digest is a string")
@@ -3128,7 +3138,10 @@ fn tc_233_frame_entries_join_a_declared_node_of_the_required_meaning() {
     // A fully compatible frame is defect-free.
     let mut valid_entries = [
         (relationship.clone(), relationship_entry(&relationship)),
-        (object_type_node.clone(), field_entry(&object_type_node, "balance")),
+        (
+            object_type_node.clone(),
+            field_entry(&object_type_node, "balance"),
+        ),
     ];
     valid_entries.sort_by(|a, b| a.0.cmp(&b.0));
     let valid = authored_frame_node(
@@ -3274,24 +3287,15 @@ fn tc_233_frame_member_arrays_are_sorted_ascending_by_entry_digest() {
     };
     // Descending order: both entries are individually valid `deletes`
     // targets, so the only defect is the array's own order.
-    let misordered = authored_frame_node(
-        &[&object_type_node, &process_node],
-        &[],
-        &[],
-        &[high, low],
-    );
+    let misordered =
+        authored_frame_node(&[&object_type_node, &process_node], &[], &[], &[high, low]);
     assert_eq!(
         frame_body_defects(&misordered, &nodes, None),
         vec![FrameDefect::CanonicalOrder {
             group: FrameGroup::Deletes,
         }]
     );
-    let ordered = authored_frame_node(
-        &[&object_type_node, &process_node],
-        &[],
-        &[],
-        &[low, high],
-    );
+    let ordered = authored_frame_node(&[&object_type_node, &process_node], &[], &[], &[low, high]);
     assert_eq!(frame_body_defects(&ordered, &nodes, None), Vec::new());
 
     // Two field entries of one declaring node order by field name, as UTF-8
@@ -3406,7 +3410,10 @@ fn tc_233_a_frame_meaning_join_defect_outranks_a_canonical_order_defect() {
     // Vector A: modifies is misordered (canonical-order defect); deletes
     // names a relationship, wrong meaning for deletes (meaning-join defect).
     let mut descending = [
-        (object_type_node.clone(), field_entry(&object_type_node, "balance")),
+        (
+            object_type_node.clone(),
+            field_entry(&object_type_node, "balance"),
+        ),
         (relationship.clone(), relationship_entry(&relationship)),
     ];
     descending.sort_by(|a, b| b.0.cmp(&a.0));
@@ -7780,7 +7787,8 @@ fn tc_233_state_step_joins_anchors_then_clauses_with_their_recorded_cause() {
         "an anchor's context is an object type",
     );
     let mut wrong = package.clone();
-    wrong["semantic_graph"]["nodes"][anchor]["body"]["members"][2]["value"] = reference("object_type");
+    wrong["semantic_graph"]["nodes"][anchor]["body"]["members"][2]["value"] =
+        reference("object_type");
     expect(
         &wrong,
         StateRefusal::MalformedDeclaration,
@@ -7934,7 +7942,10 @@ fn tc_233_the_full_reader_resolves_frame_anchor_and_clause_member_names() {
         json!("no_such_field");
     assert_eq!(
         read_package_semantics(&bad_field, &catalog),
-        Err(ReadRefusal::Frame(FrameRefusal::MissingName, target("object_type"))),
+        Err(ReadRefusal::Frame(
+            FrameRefusal::MissingName,
+            target("object_type")
+        )),
         "a frame field entry naming no field of its declaring object type refuses missing-name"
     );
     let mut bad_field_no_model = package.clone();
@@ -7954,7 +7965,10 @@ fn tc_233_the_full_reader_resolves_frame_anchor_and_clause_member_names() {
         json!("doesNotExist");
     assert_eq!(
         read_package_semantics(&bad_operation, &catalog),
-        Err(ReadRefusal::State(StateRefusal::MissingName, target("anchor"))),
+        Err(ReadRefusal::State(
+            StateRefusal::MissingName,
+            target("anchor")
+        )),
         "an anchor naming an operation the context does not declare refuses missing-name"
     );
     let mut bad_operation_no_model = package.clone();
@@ -9736,7 +9750,10 @@ fn tc_233_positive_fixtures_carry_derived_structural_keys() {
         ("positive-all-families", POSITIVE_ALL_FAMILIES),
         ("positive-clause-operations", POSITIVE_CLAUSE_OPERATIONS),
         ("positive-control-operations", POSITIVE_CONTROL_OPERATIONS),
-        ("positive-operation-identities", POSITIVE_OPERATION_IDENTITIES),
+        (
+            "positive-operation-identities",
+            POSITIVE_OPERATION_IDENTITIES,
+        ),
         ("positive-union-nodes", POSITIVE_UNION_NODES),
     ] {
         let package = parsed_fixture(text);
@@ -9812,7 +9829,10 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
         );
         assert!(schema.is_valid(&candidate), "{id}: the schema admits it");
         assert_eq!(
-            (mutation["expected_cause"].as_str(), mutation["expected_code"].as_str()),
+            (
+                mutation["expected_cause"].as_str(),
+                mutation["expected_code"].as_str()
+            ),
             (
                 Some(ReadRefusal::STALE_NODE_KEY.0),
                 Some(ReadRefusal::STALE_NODE_KEY.1)
@@ -9825,6 +9845,143 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
                 candidate["semantic_graph"]["nodes"][index]["node_id"].clone()
             )),
             "{id}: refused stale-node-key at the tampered node"
+        );
+    }
+}
+
+/// Key of a recursion-group member by QSL FR-092 "An in-group node's
+/// preimage": the group-local preimage built from the member's place in graph
+/// order, whose `recursion` carries the group digest.
+fn group_member_key(
+    package: &Value,
+    group: &[&Value],
+    member: usize,
+    label: Option<&str>,
+) -> String {
+    let ordinal_of = |id: &Value| group.iter().position(|node| node["node_id"] == *id);
+    fn in_group(term: &Value, ordinal_of: &dyn Fn(&Value) -> Option<usize>) -> Value {
+        match term {
+            Value::Object(members) if members.get("term") == Some(&json!("reference")) => {
+                match ordinal_of(&members["target"]) {
+                    Some(ordinal) => json!({"term": "group_reference", "ordinal": ordinal}),
+                    None => term.clone(),
+                }
+            }
+            Value::Object(members) => Value::Object(
+                members
+                    .iter()
+                    .map(|(name, value)| (name.clone(), in_group(value, ordinal_of)))
+                    .collect(),
+            ),
+            Value::Array(items) => Value::Array(
+                items
+                    .iter()
+                    .map(|item| in_group(item, ordinal_of))
+                    .collect(),
+            ),
+            other => other.clone(),
+        }
+    }
+    let node = group[member];
+    let semantic_type = if node["semantic_type"] == node["node_id"] {
+        Value::Null
+    } else {
+        match ordinal_of(&node["semantic_type"]) {
+            Some(ordinal) => json!({"term": "group_reference", "ordinal": ordinal}),
+            None => node["semantic_type"].clone(),
+        }
+    };
+    let mut preimage = json!({
+        "version": "quire.structural-node/v1",
+        "node_tag": node["node_tag"],
+        "semantic_form": node["semantic_form"],
+        "semantic_type": semantic_type,
+        "declaration": node.get("declaration").cloned().unwrap_or(Value::Null),
+        "recursion": {"size": group.len(), "ordinal": member},
+        "body": in_group(&node["body"], &ordinal_of),
+    });
+    if let Some(label) = label {
+        preimage["recursion"]["group"] = json!(label);
+    }
+    if !preimage["declaration"].is_null() {
+        preimage["owner"] =
+            declaring_source_owner(package, node).expect("declared node has a source");
+    }
+    unqualified_jcs_sha256(&preimage)
+}
+
+/// QSL-635: the recursive-record fixture (`record List { next?: List; }` through
+/// an `Option` field and `record Tree { kids: Sequence<Tree>[0, 3]; }` through a
+/// bounded collection), as QSL's emitter writes it, is schema-valid, binds its
+/// package id, and every recursion-group member's key and group label recompute
+/// from the members' places in graph order.
+#[trace("TC-233", "FR-322-AC-10")]
+#[test]
+fn tc_233_recursive_record_fixture_carries_derived_group_keys() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let package = parsed_fixture(POSITIVE_RECURSIVE_RECORDS);
+    assert!(
+        schema.is_valid(&package),
+        "the recursive fixture is a V2 package"
+    );
+    assert_eq!(
+        derive_identity_preimage(&package),
+        package["identity_preimage"]
+    );
+    assert_eq!(
+        unqualified_jcs_sha256(&package["identity_preimage"]),
+        package["package_id"]["digest"]
+            .as_str()
+            .expect("package digest")
+    );
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes");
+    let labels = nodes
+        .iter()
+        .filter_map(|node| node["recursion_group"].as_str())
+        .collect::<BTreeSet<_>>();
+    assert_eq!(labels.len(), 2, "one group for List and one for Tree");
+    for label in labels {
+        let positions = nodes
+            .iter()
+            .enumerate()
+            .filter(|(_, node)| node["recursion_group"] == label)
+            .map(|(index, _)| index)
+            .collect::<Vec<_>>();
+        assert!(
+            positions.windows(2).all(|pair| pair[1] == pair[0] + 1),
+            "a group's members are written together"
+        );
+        let group = positions
+            .iter()
+            .map(|&index| &nodes[index])
+            .collect::<Vec<_>>();
+        // The group label is the digest of the members' group-local keys.
+        let local_keys = (0..group.len())
+            .map(|member| group_member_key(&package, &group, member, None))
+            .collect::<Vec<_>>();
+        assert_eq!(unqualified_jcs_sha256(&json!(local_keys)), label);
+        for (member, node) in group.iter().enumerate() {
+            assert_eq!(
+                json!(group_member_key(&package, &group, member, Some(label))),
+                node["node_id"]["digest"],
+                "{} {} keys from its group preimage",
+                node["node_tag"],
+                node["semantic_form"]
+            );
+        }
+    }
+    for node in nodes
+        .iter()
+        .filter(|node| node.get("recursion_group").is_none())
+    {
+        assert!(
+            application_terms(&node["body"]).is_empty()
+                && structural_node_key_is_current(&package, node),
+            "{} {} is keyed outside every group",
+            node["node_tag"],
+            node["semantic_form"]
         );
     }
 }

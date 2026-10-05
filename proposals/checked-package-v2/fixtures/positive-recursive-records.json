@@ -1,0 +1,789 @@
+{
+  "capability_report": [
+    {
+      "disposition": "available",
+      "feature": "quire.value.complete/v1"
+    }
+  ],
+  "contract_version": "quire.checked-package/v2",
+  "diagnostics": {
+    "catalog": {
+      "authority": "agent-ix",
+      "identity": "quire.native.diagnostics/v1"
+    },
+    "entries": []
+  },
+  "identity_preimage": {
+    "definition_selections": [
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.complete/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.accounting/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.compound-unit/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.compound-unit.schema/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.compound-unit.vectors/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.package-contract/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.shared-grammar/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.ad-005/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-140/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-141/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-142/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-147/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-148/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-149/v1"
+      }
+    ],
+    "dependency_selections": [],
+    "edition": {
+      "definition": {
+        "authority": "agent-ix",
+        "identity": "ix:native"
+      },
+      "role": "edition"
+    },
+    "identity_projection": [
+      {
+        "body": {
+          "members": [
+            {
+              "target": {
+                "digest": "8a69ece82bb34c5857bb0b3386367af4003bca6480ca864e7b04a8697e61e79b",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [
+          {
+            "digest": "8a69ece82bb34c5857bb0b3386367af4003bca6480ca864e7b04a8697e61e79b",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "060cc5df3b74317489ef49b6d6fa5cd221667a2f2923910ac1f60855d581366b",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "composite_type",
+        "recursion_group": "c4f49ce64b352b9d55a753e8ce21fa995ee78bd025587acbeba67223442bafcc",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "option",
+        "semantic_type": {
+          "digest": "060cc5df3b74317489ef49b6d6fa5cd221667a2f2923910ac1f60855d581366b",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "next",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "name": "optional",
+                    "term": "binding",
+                    "value": {
+                      "target": {
+                        "digest": "060cc5df3b74317489ef49b6d6fa5cd221667a2f2923910ac1f60855d581366b",
+                        "domain": "quire.checked-semantic-node/v1"
+                      },
+                      "term": "reference"
+                    }
+                  }
+                ],
+                "term": "aggregate"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "declaration": {
+          "qualified_name": [
+            "List"
+          ]
+        },
+        "dependencies": [
+          {
+            "digest": "060cc5df3b74317489ef49b6d6fa5cd221667a2f2923910ac1f60855d581366b",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "8a69ece82bb34c5857bb0b3386367af4003bca6480ca864e7b04a8697e61e79b",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "composite_type",
+        "recursion_group": "c4f49ce64b352b9d55a753e8ce21fa995ee78bd025587acbeba67223442bafcc",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "record",
+        "semantic_type": {
+          "digest": "8a69ece82bb34c5857bb0b3386367af4003bca6480ca864e7b04a8697e61e79b",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "scalar_type",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "integer",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "kids",
+              "term": "binding",
+              "value": {
+                "target": {
+                  "digest": "6bd6dd7f2b655affb65a4b49dfcff572129d960f9d45766bf954cfc8ce6a4028",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "term": "reference"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "declaration": {
+          "qualified_name": [
+            "Tree"
+          ]
+        },
+        "dependencies": [
+          {
+            "digest": "6bd6dd7f2b655affb65a4b49dfcff572129d960f9d45766bf954cfc8ce6a4028",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "5dd245d1f95885f7c628dfa8424f4b4ddb616a218369984e488731a5e3061c64",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "composite_type",
+        "recursion_group": "098352bbb5f6c2dd2836b1dc59c7bbc6fdf93076c767bf4c358304da0b98ca6b",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "record",
+        "semantic_type": {
+          "digest": "5dd245d1f95885f7c628dfa8424f4b4ddb616a218369984e488731a5e3061c64",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "target": {
+                "digest": "5dd245d1f95885f7c628dfa8424f4b4ddb616a218369984e488731a5e3061c64",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [
+          {
+            "digest": "5dd245d1f95885f7c628dfa8424f4b4ddb616a218369984e488731a5e3061c64",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "5dab1d21b36212959d997c17b88ab44822bf4078e35ae1b993c17db591425756",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "composite_type",
+        "recursion_group": "098352bbb5f6c2dd2836b1dc59c7bbc6fdf93076c767bf4c358304da0b98ca6b",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "sequence",
+        "semantic_type": {
+          "digest": "5dab1d21b36212959d997c17b88ab44822bf4078e35ae1b993c17db591425756",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "min",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "0",
+                "value_kind": "integer"
+              }
+            },
+            {
+              "name": "max",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "3",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [
+          {
+            "digest": "5dab1d21b36212959d997c17b88ab44822bf4078e35ae1b993c17db591425756",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "6bd6dd7f2b655affb65a4b49dfcff572129d960f9d45766bf954cfc8ce6a4028",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "bounded_domain",
+        "recursion_group": "098352bbb5f6c2dd2836b1dc59c7bbc6fdf93076c767bf4c358304da0b98ca6b",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "collection_bounds",
+        "semantic_type": {
+          "digest": "5dab1d21b36212959d997c17b88ab44822bf4078e35ae1b993c17db591425756",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      }
+    ],
+    "model_selections": [],
+    "profile_selections": [],
+    "required_features": [
+      "quire.value.complete/v1"
+    ],
+    "version": "quire.checked-package-id/v2"
+  },
+  "lock": {
+    "definition_selections": [
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.complete/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.accounting/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.compound-unit/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.compound-unit.schema/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.compound-unit.vectors/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.package-contract/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.shared-grammar/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.ad-005/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-140/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-141/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-142/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-147/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-148/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-149/v1"
+      }
+    ],
+    "dependency_selections": [],
+    "edition": {
+      "definition": {
+        "authority": "agent-ix",
+        "identity": "ix:native"
+      },
+      "role": "edition"
+    },
+    "model_selections": [],
+    "profile_selections": [],
+    "required_features": [
+      "quire.value.complete/v1"
+    ],
+    "sources": [
+      {
+        "authority": "a",
+        "digest": "a207f0e326aa21d722d3f645cda01595a51ffb0f6299acbd15d4da1a708bfa15",
+        "digest_domain": "quire.source.bytes/v1",
+        "identity": "u"
+      }
+    ]
+  },
+  "package_id": {
+    "algorithm": "sha256",
+    "digest": "3b31e429453a0a541edc0178308b01def529d32e51309ac84212b9fd325782bd",
+    "domain": "quire.package.semantic/v2"
+  },
+  "semantic_graph": {
+    "graph_version": "quire.checked-semantic-graph/v2",
+    "nodes": [
+      {
+        "body": {
+          "members": [
+            {
+              "target": {
+                "digest": "8a69ece82bb34c5857bb0b3386367af4003bca6480ca864e7b04a8697e61e79b",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [
+          {
+            "digest": "8a69ece82bb34c5857bb0b3386367af4003bca6480ca864e7b04a8697e61e79b",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "060cc5df3b74317489ef49b6d6fa5cd221667a2f2923910ac1f60855d581366b",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "composite_type",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "generated"
+          }
+        ],
+        "recursion_group": "c4f49ce64b352b9d55a753e8ce21fa995ee78bd025587acbeba67223442bafcc",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "option",
+        "semantic_type": {
+          "digest": "060cc5df3b74317489ef49b6d6fa5cd221667a2f2923910ac1f60855d581366b",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "next",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "name": "optional",
+                    "term": "binding",
+                    "value": {
+                      "target": {
+                        "digest": "060cc5df3b74317489ef49b6d6fa5cd221667a2f2923910ac1f60855d581366b",
+                        "domain": "quire.checked-semantic-node/v1"
+                      },
+                      "term": "reference"
+                    }
+                  }
+                ],
+                "term": "aggregate"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "declaration": {
+          "qualified_name": [
+            "List"
+          ]
+        },
+        "dependencies": [
+          {
+            "digest": "060cc5df3b74317489ef49b6d6fa5cd221667a2f2923910ac1f60855d581366b",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "8a69ece82bb34c5857bb0b3386367af4003bca6480ca864e7b04a8697e61e79b",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "composite_type",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "declaration"
+          }
+        ],
+        "recursion_group": "c4f49ce64b352b9d55a753e8ce21fa995ee78bd025587acbeba67223442bafcc",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "record",
+        "semantic_type": {
+          "digest": "8a69ece82bb34c5857bb0b3386367af4003bca6480ca864e7b04a8697e61e79b",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "scalar_type",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "generated"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "integer",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "kids",
+              "term": "binding",
+              "value": {
+                "target": {
+                  "digest": "6bd6dd7f2b655affb65a4b49dfcff572129d960f9d45766bf954cfc8ce6a4028",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "term": "reference"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "declaration": {
+          "qualified_name": [
+            "Tree"
+          ]
+        },
+        "dependencies": [
+          {
+            "digest": "6bd6dd7f2b655affb65a4b49dfcff572129d960f9d45766bf954cfc8ce6a4028",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "5dd245d1f95885f7c628dfa8424f4b4ddb616a218369984e488731a5e3061c64",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "composite_type",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "declaration"
+          }
+        ],
+        "recursion_group": "098352bbb5f6c2dd2836b1dc59c7bbc6fdf93076c767bf4c358304da0b98ca6b",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "record",
+        "semantic_type": {
+          "digest": "5dd245d1f95885f7c628dfa8424f4b4ddb616a218369984e488731a5e3061c64",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "target": {
+                "digest": "5dd245d1f95885f7c628dfa8424f4b4ddb616a218369984e488731a5e3061c64",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [
+          {
+            "digest": "5dd245d1f95885f7c628dfa8424f4b4ddb616a218369984e488731a5e3061c64",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "5dab1d21b36212959d997c17b88ab44822bf4078e35ae1b993c17db591425756",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "composite_type",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "generated"
+          }
+        ],
+        "recursion_group": "098352bbb5f6c2dd2836b1dc59c7bbc6fdf93076c767bf4c358304da0b98ca6b",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "sequence",
+        "semantic_type": {
+          "digest": "5dab1d21b36212959d997c17b88ab44822bf4078e35ae1b993c17db591425756",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "min",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "0",
+                "value_kind": "integer"
+              }
+            },
+            {
+              "name": "max",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "3",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [
+          {
+            "digest": "5dab1d21b36212959d997c17b88ab44822bf4078e35ae1b993c17db591425756",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "6bd6dd7f2b655affb65a4b49dfcff572129d960f9d45766bf954cfc8ce6a4028",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "bounded_domain",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "generated"
+          }
+        ],
+        "recursion_group": "098352bbb5f6c2dd2836b1dc59c7bbc6fdf93076c767bf4c358304da0b98ca6b",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "collection_bounds",
+        "semantic_type": {
+          "digest": "5dab1d21b36212959d997c17b88ab44822bf4078e35ae1b993c17db591425756",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      }
+    ]
+  },
+  "source_map": [
+    {
+      "node_id": {
+        "digest": "060cc5df3b74317489ef49b6d6fa5cd221667a2f2923910ac1f60855d581366b",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 66,
+          "source": {
+            "authority": "a",
+            "digest": "a207f0e326aa21d722d3f645cda01595a51ffb0f6299acbd15d4da1a708bfa15",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "u"
+          },
+          "start": 0
+        }
+      ],
+      "role": "generated"
+    },
+    {
+      "node_id": {
+        "digest": "8a69ece82bb34c5857bb0b3386367af4003bca6480ca864e7b04a8697e61e79b",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 66,
+          "source": {
+            "authority": "a",
+            "digest": "a207f0e326aa21d722d3f645cda01595a51ffb0f6299acbd15d4da1a708bfa15",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "u"
+          },
+          "start": 0
+        }
+      ],
+      "role": "declaration"
+    },
+    {
+      "node_id": {
+        "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 66,
+          "source": {
+            "authority": "a",
+            "digest": "a207f0e326aa21d722d3f645cda01595a51ffb0f6299acbd15d4da1a708bfa15",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "u"
+          },
+          "start": 0
+        }
+      ],
+      "role": "generated"
+    },
+    {
+      "node_id": {
+        "digest": "5dd245d1f95885f7c628dfa8424f4b4ddb616a218369984e488731a5e3061c64",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 66,
+          "source": {
+            "authority": "a",
+            "digest": "a207f0e326aa21d722d3f645cda01595a51ffb0f6299acbd15d4da1a708bfa15",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "u"
+          },
+          "start": 0
+        }
+      ],
+      "role": "declaration"
+    },
+    {
+      "node_id": {
+        "digest": "5dab1d21b36212959d997c17b88ab44822bf4078e35ae1b993c17db591425756",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 66,
+          "source": {
+            "authority": "a",
+            "digest": "a207f0e326aa21d722d3f645cda01595a51ffb0f6299acbd15d4da1a708bfa15",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "u"
+          },
+          "start": 0
+        }
+      ],
+      "role": "generated"
+    },
+    {
+      "node_id": {
+        "digest": "6bd6dd7f2b655affb65a4b49dfcff572129d960f9d45766bf954cfc8ce6a4028",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 66,
+          "source": {
+            "authority": "a",
+            "digest": "a207f0e326aa21d722d3f645cda01595a51ffb0f6299acbd15d4da1a708bfa15",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "u"
+          },
+          "start": 0
+        }
+      ],
+      "role": "generated"
+    }
+  ]
+}
