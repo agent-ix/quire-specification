@@ -139,6 +139,15 @@ decimal, unit-target and integer-target membership sentences of
 Validate a Diagnostic entry carrying each of `type-mismatch`,
 `missing-selection`, `unsupported-selection` and `wrong-selection-role` with
 every code of the schema's code enum (FR-322-AC-47).
+Recompute the QSL FR-092 key of every derived-shape and in-group structural
+node of every published positive fixture, and the recursive-records
+fixture's group digests, and read every published positive fixture with the
+full reader (FR-322-AC-50). Apply each `derived_shape_key_mutations` entry of
+`adverse.json` to its base fixture's node and `identity_projection` entry,
+keep the node id, recompute `package_id`, and read it with the full reader
+(FR-322-AC-48, FR-322-AC-49); relabel the recursive-records `Tree` group with
+a label that is not its group digest, rekey each member under it, rewrite
+every reference and read it (FR-322-AC-49).
 
 ## Expected Results
 
@@ -177,3 +186,10 @@ or prefix one outcome in every family. The Diagnostic schema admits
 `missing_import` and `missing_declaration`, and `unsupported-selection` and
 `wrong-selection-role` only with `unknown_language`, `unknown_edition` and
 `unknown_profile`.
+Every derived-shape and in-group structural node of every published positive
+fixture carries the key QSL's FR-092 key function mints, the recursive-records
+group labels are their group digests, and the full reader admits every
+published positive fixture. Each derived-shape mutation, ungrouped or
+in-group, refuses `invalid_package`/`stale-node-key` at the tampered node,
+and the relabelled `Tree` group refuses `invalid_package`/`stale-node-key` at
+its member with the lowest node-id digest.

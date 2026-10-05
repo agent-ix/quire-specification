@@ -4,7 +4,7 @@
     {"identity": "test/geometry", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}},
     {"identity": "test/units", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "4444444444444444444444444444444444444444444444444444444444444444"}}
   ],
-  "package_id": "4f11fff1c15cb947a84afb8bef4e2e79dbdf83133e1e39570bbffe1ec4098700",
+  "package_id": "e14bf249cc05771fbc65f31ce554022df03b05b90e25c7bcb5733cc77a9fd087",
   "entry_mutations": [
     {"id": "definition-selection-shape", "entry": {"role": "profile", "definition": {"authority": "test", "identity": "test/geometry"}}, "outcome": "refused:malformed_wire"},
     {"id": "definition-ref-shape", "entry": {"authority": "test", "identity": "test/geometry"}, "outcome": "refused:malformed_wire"},
