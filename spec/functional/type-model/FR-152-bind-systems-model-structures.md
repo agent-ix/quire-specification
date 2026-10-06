@@ -80,8 +80,8 @@ is `wrong-export` (required Part); a port whose interface type is not an
 Interface is `wrong-export` (required Interface); a connection end naming a
 node that is not a Port is `wrong-export` (required Port, once per end, source
 first). Refusals cascade: a node whose dependency was refused is reported with
-actual kind `none`. Every refusal names the IR node identity, the artifact and
-the span.
+actual kind `none`. Every refusal names the IR node identity and its FCD `origin`
+(FR-154).
 
 A binder request names the required kind and a qualified name. A qualified
 name names a systems construct by the model alias and its artifact id, such as

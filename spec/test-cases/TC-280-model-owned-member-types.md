@@ -28,15 +28,28 @@ the member type from the resolved record.
 
 ## Preconditions
 
+- `proposals/checked-package-v2/domain-package-acme-orders.json` is the
+  selected evidence: the FCD semantic IR 2.0.0 domain package `acme/orders`
+  `1.0.0` (FR-154), authored by hand with FCD-minted identities (types
+  `ix://acme/orders/<Id>`, members `<type>/<member>`, relationships
+  `ix://acme/orders/relationship/<Name>-<verb>-<Target>`). Its `sha256-jcs`
+  digest is the digest every published selection of `acme/orders` carries.
 - `proposals/checked-package-v2/model-member-type-vectors.json` carries the
-  domain package `acme/orders` `1.0.0` as a projection of the declaration
-  records FR-154 intake reads from it (`typeRef`, `interfaceFeatures`,
+  `domain_package` member, the projection of the document's declarations
+  that FR-154 intake reads, derived from the document (a test derives it and
+  compares) (`typeRef`, `interfaceFeatures`,
   value types with the `Int[lo, hi]` they are bound as (TC-196, TC-197) and with
   the `Text[min, max; profile]` they are bound as, presence, multiplicity, supertypes
-  and redefinitions), the model declaration node vectors M1 to M9, the member
+  and redefinitions), the model declaration node vectors M1 to M12, the member
   cases, each recorded with its criterion, the wire cases and the selection
-  cases. The SHA-256 of the RFC 8785 bytes of its `domain_package` member
-  stands for the document's `sha256-jcs` digest.
+  cases. The selection cases patch and digest the document, not the projection.
+  The value type `OrderTotal` is the alias FR-095 mints for `Order`'s
+  constrained field `total` (`<Name><Field>`), with its constraints under
+  `constraint/Order-total-min` and `-max`.
+  Status: the vectors drop the redefined-operation cases (MT-08, MT-09, MT-10,
+  AN-02) and the text-profile cases (MT-15, MA-14, MA-15, MA-16); AGE-2226
+  (filament-core-data: operation `redefines`, text profile, value-type
+  constraint slots) restores them against the next FCD revision.
 - The wire cases are hand authored: each is a single model declaration
   node, a shape QSL emits only inside a package, keyed by QSL FR-094 exactly
   as emitter output would be. The model declaration nodes of the positive
@@ -71,16 +84,13 @@ compare it with the case's parameter types.
 
 | Vector | Input | Expected result | Criteria |
 | --- | --- | --- | --- |
-| MT-01 | `field` `total` on M1 (`Order`), typed value type `Digit`, `Integer` bound to `[0, 9]` | Resolves `Order/total`; type `Int[0, 9]` | FR-322-AC-31 |
+| MT-01 | `field` `total` on M1 (`Order`), typed value type `OrderTotal`, `Integer` bound to `[0, 9]` | Resolves `Order/total`; type `Int[0, 9]` | FR-322-AC-31 |
 | MT-02 | `field` `total` on M5 (`Sub`, supertype `Order`) | Resolves the inherited `Order/total`; type `Int[0, 9]` | FR-322-AC-30 |
 | MT-03 | `field` `note`, optional `Boolean` `[1, 1]` | `Option<Boolean>` | FR-322-AC-31 |
 | MT-04 | `field` `lines`, `Integer` `[0, 3]`, unordered, unique | `Set<Integer>[0, 3]` | FR-322-AC-31 |
 | MT-05 | `field` `history`, `Integer` `[0, 5]`, ordered, not unique | `Sequence<Integer>[0, 5]` | FR-322-AC-31 |
 | MT-06 | `field` `invoice`, typed object type `Invoice` | `Reference<Invoice>` over M3 | FR-322-AC-31 |
 | MT-07 | `operation` `size` on M1, receiver `Reference<Order>` | Resolves `Order/size`; type `Integer` | FR-322-AC-31 |
-| MT-08 | `operation` `size` on M5, which `Sub/size` redefines | Resolves `Sub/size`; type `Integer` | FR-322-AC-30 |
-| MT-09 | `operation` `scaled` on M5, redefined with a renamed parameter, called with an `Integer` argument | Resolves `Sub/scaled`; type `Integer` | FR-322-AC-30 |
-| MT-10 | `operation` `size` on M7 (`SubSub`, under `Sub`), which both `Sub/size` and `SubSub/size` redefine | Resolves the most derived `SubSub/size`; type `Integer` | FR-322-AC-30 |
 | MT-11 | `operation` `scaled` on M1 with an `Integer` argument | Resolves `Order/scaled`; type `Integer` | FR-322-AC-31 |
 | MT-12 | `field` `floor`, native `Integer` carrying a `min` constraint | `Integer` | FR-322-AC-31 |
 | MT-13 | `field` `tags`, `Integer` `[0, unbounded]`, unordered, unique | `Set<Integer>` with no bounds | FR-322-AC-31 |
@@ -88,7 +98,7 @@ compare it with the case's parameter types.
 | MA-01 | `field` `missing` on M1 | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-02 | `field` `size`, an operation name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-03 | `operation` `total`, a field name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
-| MA-04 | `field` `total` on M4, the relationship `billedTo` | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
+| MA-04 | `field` `total` on M4, the relationship `Order-order-Order` | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-05 | `field` `total` on M2, `Order` owned by the unselected `acme/billing` | `missing_declaration`/`missing-selection` | FR-322-AC-29 |
 | MA-06 | `field` `label`, typed native `Text` with no bounds | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-07 | `field` `backlog`, `[1, unbounded]` | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
@@ -98,27 +108,40 @@ compare it with the case's parameter types.
 | MA-11 | `operation` `scaled` on M1 with a `Boolean` argument | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-12 | `operation` `rate` on M8 (`Flow`, a `systems_interface`) | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-13 | `operation` `size` on M1 with receiver `Reference<Invoice>` | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
-| MT-15 | `field` `sku` on M1, typed value type `Code`, `Text` bound to `[0, 64; nfc]` | Resolves `Order/sku`; type `Text[0, 64; nfc]` | FR-322-AC-44 |
-| MA-14 | `field` `alias`, typed value type `Inverted`, `Text` bound to `[5, 2; nfc]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
-| MA-15 | `field` `slug`, typed value type `Folded`, `Text` bound to `[0, 64; casefold]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
-| MA-16 | `field` `stub`, typed value type `Negative`, `Text` bound to `[-1, 4; nfc]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
+| RE-ends-1 | `relationship_end` `order` on M4, the relationship `Order-order-Order` | Resolves the end `order` | FR-322-AC-56 |
+| RE-ends-2 | `relationship_end` `next` on M4 | Resolves the end `next` (`targetEnd.role`) | FR-322-AC-56 |
+| RE-ends-3 | `relationship_end` `invoiced` on M10, the relationship `Order-invoiced-Invoice` with no `targetEnd.role` | Resolves the end `invoiced` | FR-322-AC-56 |
+| RE-ends-4 | `relationship_end` `next` on M10 | `missing_declaration`/`missing-name` at `member.name`: M10 has no inverse end | FR-322-AC-56 |
+| RE-ends-5 | `relationship_end` `invoice` on M10 | `missing_declaration`/`missing-name` | FR-322-AC-56 |
+| RE-ends-6 | `relationship_end` `order` on M1, an object type | `ill_typed`/`operator-ineligible` at `member.declaration` | FR-322-AC-56 |
+| RE-ends-7 | `relationship_end` `follows` on M11, the `source-to-target` relationship `Order-follows-Order` | Resolves the end `follows` | FR-322-AC-56 |
+| RE-ends-8 | `relationship_end` `followedBy` on M11 (the named inverse, traversed target to source) | `ill_typed`/`operator-ineligible` at `member.name`: the direction is `source-to-target` (FR-152) | FR-322-AC-56 |
+| RE-ends-9 | `relationship_end` `twin` on M12, whose source and target roles are both `twin` | `ambiguous_declaration`/`ambiguous-name` at `member.name` | FR-322-AC-56 |
 | MW-01 | A `model`/`object_type` wire node with M1's id, M1's owner (`acme/orders`, `ix://acme/orders/Order`), its own id as `semantic_type` and an empty body | Resolves `Order` | FR-322-AC-29 |
 | MW-02 | MW-01 with a body member | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
 | MW-03 | MW-01 with a `declaration` | Fails the V2 schema; `malformed_wire` | FR-322-AC-29 |
 | MW-04 | MW-01 with M4's id as `semantic_type` | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
 | MW-05 | MW-01 with a `recursion_group` | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
-| MW-06 | A `model`/`object_type` wire node carrying M4's id and M4's owner (`acme/orders`, `ix://acme/orders/billedTo`) | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
-| MW-07 | A `model`/`object_type` wire node carrying M4's owner, keyed by its own `model`/`object_type` preimage | `missing_declaration`/`missing-selection` at the owner join: `billedTo` is a relationship | FR-322-AC-29, FR-322-AC-55 |
+| MW-06 | A `model`/`object_type` wire node carrying M4's id and M4's owner (`acme/orders`, `ix://acme/orders/relationship/Order-order-Order`) | `missing_declaration`/`missing-selection` at the owner join: `Order-order-Order` is a relationship, and the join runs over every owner-bearing node before either key pass, so the stale key (M4's id on an object-type node) is never reached; the outcome equals MW-07's | FR-322-AC-29, FR-322-AC-55 |
+| MW-07 | A `model`/`object_type` wire node carrying M4's owner, keyed by its own `model`/`object_type` preimage | `missing_declaration`/`missing-selection` at the owner join: `Order-order-Order` is a relationship | FR-322-AC-29, FR-322-AC-55 |
 | MW-08 | A `model`/`object_type` wire node with M2's id and M2's owner (`acme/billing`, `ix://acme/billing/Order`) | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-29 |
 | MW-09 | MW-01 with no `owner` | Fails the V2 schema; `malformed_wire` | FR-322-AC-29 |
 | MW-10 | A `model`/`object_type` wire node with owner (`acme/orders`, `ix://acme/orders/Nope`), keyed by its own preimage, that no member reaches | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
-| MW-11 | A clause function wire node owned by (`acme/orders`, `ix://acme/orders/Order/size`), keyed by its own preimage (FR-094 C1) | Passes the owner join | FR-322-AC-55 |
-| MW-12 | A clause function wire node owned by (`acme/orders`, `ix://acme/orders/Order`), an invariant clause, keyed by its own preimage | Passes the owner join | FR-322-AC-55 |
+| MW-11 | A clause function wire node (`clause` binding `precondition`) owned by (`acme/orders`, `ix://acme/orders/Order/size`), keyed by its own preimage (FR-094 C1) | Passes the owner join | FR-322-AC-55 |
+| MW-12 | A clause function wire node (`clause` binding `invariant`) owned by (`acme/orders`, `ix://acme/orders/Order`), keyed by its own preimage | Passes the owner join | FR-322-AC-55 |
 | MW-13 | MW-11 owned by `ix://acme/orders/Order/missing`, rekeyed | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
 | MW-14 | MW-11 owned by `ix://acme/orders/Order/total`, a field, rekeyed | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
+| MW-15 | A `model`/`object_type` wire node carrying M4's id (the relationship's) and M1's owner (`acme/orders`, `ix://acme/orders/Order`), its own id as `semantic_type` and an empty body | `invalid_package`/`stale-node-key`: the owner joins, the key was computed under another tag | FR-322-AC-29 |
+| MW-16 | A clause function (`clause` binding `precondition`) owned by the object type `ix://acme/orders/Order`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join: only an invariant is owned by an object type | FR-322-AC-55 |
+| MW-17 | A clause function (`clause` binding `body`) owned by `ix://acme/orders/Order/size`, keyed by its own preimage | Passes the owner join | FR-322-AC-55 |
+| MW-18 | A clause function (`clause` binding `invariant`) owned by the operation member `ix://acme/orders/Order/size`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join: an invariant is owned by an object type | FR-322-AC-55 |
+| MW-19 | A clause function whose `clause` binding is `postcondition`, owned by `ix://acme/orders/Order/size` | `missing_declaration`/`missing-selection` at the owner join: a postcondition is FR-341's `state_clause` node, not a clause function kind | FR-322-AC-55 |
+| MW-20 | MW-17 with two `clause` bindings | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
+| MW-21 | MW-17 with no `clause` binding | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
+| MW-22 | A clause function (`clause` binding `invariant`) owned by the systems interface `ix://acme/orders/Flow` | `missing_declaration`/`missing-selection` at the owner join: an invariant is owned by an object type with no `interfaceFeatures` | FR-322-AC-55 |
 | MS-01 | The document supplied under the selected digest, identity equal | Passes the selection admission checks | FR-322-AC-32 |
 | MS-02 | No document supplied | `missing_import`/`missing-selection` | FR-322-AC-32 |
-| MS-03 | A document with `Digit`'s upper bound changed to 8, supplied under the selected digest, identity equal | `stale_dependency`/`content-mismatch` naming the selected and the recomputed digest | FR-322-AC-43 |
+| MS-03 | A document with `OrderTotal`'s upper bound changed to 8, supplied under the selected digest, identity equal | `stale_dependency`/`content-mismatch` naming the selected and the recomputed digest | FR-322-AC-43 |
 | MS-05 | The selection names digest domain `sha256` | `stale_dependency`/`digest-domain-mismatch` | FR-322-AC-32 |
 | MS-06 | The selection names identity `acme/invoices` | `invalid_model_binding`/`wrong-model-selection` | FR-322-AC-32 |
 | FF-01 | Frame field entry `(M1, "total")` | Resolves `Order/total` | FR-340-AC-13 |
@@ -128,7 +151,6 @@ compare it with the case's parameter types.
 | FF-05 | Frame field entry `(M6, "code")` | `ambiguous_declaration`/`ambiguous-name` | FR-340-AC-13 |
 | FF-06 | Frame field entry `(M2, "total")` | `missing_declaration`/`missing-selection` | FR-340-AC-13 |
 | AN-01 | Anchor `(M1, "scaled")` | Resolves `Order/scaled` | FR-342-AC-4 |
-| AN-02 | Anchor `(M5, "size")` | Resolves `Sub/size` | FR-342-AC-4 |
 | AN-03 | Anchor `(M5, "reset")`, which `Sub` only inherits | `invalid_model_binding`/`malformed-declaration` | FR-342-AC-4 |
 | AN-04 | Anchor `(M1, "missing")` | `missing_declaration`/`missing-name` | FR-342-AC-4 |
 | AN-05 | Anchor `(M1, "total")`, a field name | `missing_declaration`/`missing-name` | FR-342-AC-4 |
@@ -146,6 +168,12 @@ compare it with the case's parameter types.
 
 ## Expected Results
 
-M1 to M9 validate and recompute their digests. Every wire, member,
+M1 to M12 validate and recompute their digests. Every wire, member,
 selection, frame field, anchor and clause signature case gives exactly its
 recorded result.
+
+## Relationship declaration cases
+
+`fixtures/adverse.json` `relationship_document_cases` patch the selected
+document and are read under FR-154's relationship declaration refusals
+(FR-154-AC-10); each refusal is reported at the selection row. Ids: `relationship-document-admitted`, `relationship-without-target-role-admitted`, `relationship-with-generated-origin-admitted`, `relationship-identity-owner-nested`, `relationship-identity-foreign-package`, `relationship-identity-wrong-slot`, `relationship-identity-missing`, `relationship-two-identities-missing`, `relationship-direction-missing`, `relationship-direction-null`, `relationship-direction-unsupported`, `relationship-category-missing`, `relationship-category-unsupported`, `relationship-composite-wrong-type`, `relationship-origin-missing`, `relationship-origin-both-branches`, `relationship-source-role-missing`, `relationship-target-role-null`, `relationship-target-role-empty`, `relationship-target-role-non-string`, `relationship-source-end-names-another-owner`, `relationship-target-end-type-unresolved`, `relationship-target-end-type-names-a-relationship`, `relationship-target-end-type-names-a-value-type`, `relationship-end-multiplicity-malformed`, `relationship-end-multiplicity-reversed`, `relationship-identity-repeated-under-two-owners`, `relationship-malformed-role-beats-unresolved-end-type`, `relationship-unresolved-end-type-beats-reversed-multiplicity`, `relationship-duplicate-identity-beats-reversed-multiplicity`.

@@ -155,6 +155,11 @@
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "composite_type",
+        "owner": {
+          "authority": "a",
+          "identity": "u",
+          "kind": "source"
+        },
         "recursion_group": "c4f49ce64b352b9d55a753e8ce21fa995ee78bd025587acbeba67223442bafcc",
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "record",
@@ -214,6 +219,11 @@
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "composite_type",
+        "owner": {
+          "authority": "a",
+          "identity": "u",
+          "kind": "source"
+        },
         "recursion_group": "098352bbb5f6c2dd2836b1dc59c7bbc6fdf93076c767bf4c358304da0b98ca6b",
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "record",
@@ -396,7 +406,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "3b31e429453a0a541edc0178308b01def529d32e51309ac84212b9fd325782bd",
+    "digest": "29e63e994f6799e36a206ba93db1ee456493896116221d2d5f19c55d3cda87c0",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -488,6 +498,11 @@
             "role": "declaration"
           }
         ],
+        "owner": {
+          "authority": "a",
+          "identity": "u",
+          "kind": "source"
+        },
         "recursion_group": "c4f49ce64b352b9d55a753e8ce21fa995ee78bd025587acbeba67223442bafcc",
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "record",
@@ -559,6 +574,11 @@
             "role": "declaration"
           }
         ],
+        "owner": {
+          "authority": "a",
+          "identity": "u",
+          "kind": "source"
+        },
         "recursion_group": "098352bbb5f6c2dd2836b1dc59c7bbc6fdf93076c767bf4c358304da0b98ca6b",
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "record",

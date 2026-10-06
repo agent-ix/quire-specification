@@ -1,69 +1,117 @@
 {
+  "capability_report": [
+    {
+      "disposition": "available",
+      "feature": "quire.value.complete/v1"
+    }
+  ],
   "contract_version": "quire.checked-package/v2",
+  "diagnostics": {
+    "catalog": {
+      "authority": "agent-ix",
+      "identity": "catalog"
+    },
+    "entries": []
+  },
   "identity_preimage": {
-    "version": "quire.checked-package-id/v2",
+    "definition_selections": [],
+    "dependency_selections": [],
     "edition": {
-      "role": "edition",
       "definition": {
         "authority": "agent-ix",
         "identity": "quire-edition"
-      }
+      },
+      "role": "edition"
     },
-    "profile_selections": [],
-    "definition_selections": [],
-    "model_selections": [],
-    "required_features": [
-      "quire.value.complete/v1"
-    ],
-    "dependency_selections": [],
     "identity_projection": [
       {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+        "body": {
+          "members": [],
+          "term": "aggregate"
         },
-        "schema_version": "quire.checked-semantic-graph/v2",
+        "dependencies": [],
+        "node_id": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        },
         "node_tag": "scalar_type",
+        "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "integer",
         "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [],
-        "body": {
-          "term": "aggregate",
-          "members": []
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
         }
       },
       {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659"
+        "body": {
+          "members": [],
+          "term": "aggregate"
         },
-        "schema_version": "quire.checked-semantic-graph/v2",
+        "dependencies": [],
+        "node_id": {
+          "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+          "domain": "quire.checked-semantic-node/v1"
+        },
         "node_tag": "scalar_type",
+        "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "text",
         "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659"
-        },
-        "dependencies": [],
-        "body": {
-          "term": "aggregate",
-          "members": []
+          "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+          "domain": "quire.checked-semantic-node/v1"
         }
       },
       {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "composite_type",
-        "semantic_form": "union",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173"
+        "body": {
+          "members": [
+            {
+              "name": "Circle",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "target": {
+                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                ],
+                "term": "aggregate"
+              }
+            },
+            {
+              "name": "Rect",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "target": {
+                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  },
+                  {
+                    "target": {
+                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                ],
+                "term": "aggregate"
+              }
+            },
+            {
+              "name": "Empty",
+              "term": "binding",
+              "value": {
+                "members": [],
+                "term": "aggregate"
+              }
+            }
+          ],
+          "term": "aggregate"
         },
         "declaration": {
           "qualified_name": [
@@ -72,683 +120,694 @@
         },
         "dependencies": [
           {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
           }
         ],
+        "node_id": {
+          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "composite_type",
+        "owner": {
+          "authority": "agent-ix",
+          "identity": "example",
+          "kind": "source"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "union",
+        "semantic_type": {
+          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
         "body": {
-          "term": "aggregate",
           "members": [
             {
+              "name": "name",
               "term": "binding",
-              "name": "Circle",
               "value": {
-                "term": "aggregate",
-                "members": [
-                  {
-                    "term": "reference",
-                    "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-                    }
-                  }
-                ]
+                "term": "literal",
+                "type": {
+                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "s",
+                "value_kind": "text"
               }
             },
             {
+              "name": "level",
               "term": "binding",
-              "name": "Rect",
               "value": {
-                "term": "aggregate",
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "0",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "parameter",
+        "semantic_type": {
+          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "name",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "r",
+                "value_kind": "text"
+              }
+            },
+            {
+              "name": "level",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "1",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "parameter",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "name",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "w",
+                "value_kind": "text"
+              }
+            },
+            {
+              "name": "level",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "1",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "parameter",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "name",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "h",
+                "value_kind": "text"
+              }
+            },
+            {
+              "name": "level",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "2",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "parameter",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "term": "literal",
+          "type": {
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "value": "0",
+          "value_kind": "integer"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "literal",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "term": "literal",
+          "type": {
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "value": "2",
+          "value_kind": "integer"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "literal",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "term": "literal",
+          "type": {
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "value": "3",
+          "value_kind": "integer"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "literal",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "Rect",
+              "term": "binding",
+              "value": {
                 "members": [
                   {
-                    "term": "reference",
                     "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-                    }
+                      "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
                   },
                   {
-                    "term": "reference",
                     "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-                    }
+                      "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
                   }
-                ]
-              }
-            },
-            {
-              "term": "binding",
-              "name": "Empty",
-              "value": {
-                "term": "aggregate",
-                "members": []
+                ],
+                "term": "aggregate"
               }
             }
-          ]
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "parameter",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173"
-        },
-        "dependencies": [],
-        "body": {
-          "term": "aggregate",
-          "members": [
-            {
-              "term": "binding",
-              "name": "name",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659"
-                },
-                "value_kind": "text",
-                "value": "s"
-              }
-            },
-            {
-              "term": "binding",
-              "name": "level",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-                },
-                "value_kind": "integer",
-                "value": "0"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "parameter",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [],
-        "body": {
-          "term": "aggregate",
-          "members": [
-            {
-              "term": "binding",
-              "name": "name",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659"
-                },
-                "value_kind": "text",
-                "value": "r"
-              }
-            },
-            {
-              "term": "binding",
-              "name": "level",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-                },
-                "value_kind": "integer",
-                "value": "1"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "parameter",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [],
-        "body": {
-          "term": "aggregate",
-          "members": [
-            {
-              "term": "binding",
-              "name": "name",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659"
-                },
-                "value_kind": "text",
-                "value": "w"
-              }
-            },
-            {
-              "term": "binding",
-              "name": "level",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-                },
-                "value_kind": "integer",
-                "value": "1"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "parameter",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [],
-        "body": {
-          "term": "aggregate",
-          "members": [
-            {
-              "term": "binding",
-              "name": "name",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659"
-                },
-                "value_kind": "text",
-                "value": "h"
-              }
-            },
-            {
-              "term": "binding",
-              "name": "level",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-                },
-                "value_kind": "integer",
-                "value": "2"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "literal",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [],
-        "body": {
-          "term": "literal",
-          "type": {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-          },
-          "value_kind": "integer",
-          "value": "0"
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "literal",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [],
-        "body": {
-          "term": "literal",
-          "type": {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-          },
-          "value_kind": "integer",
-          "value": "2"
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "literal",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [],
-        "body": {
-          "term": "literal",
-          "type": {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-          },
-          "value_kind": "integer",
-          "value": "3"
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "e50bf8e0e17f7cf14ce559bdfe07c5a6f7baafb0820b0b2fdc2db02ed34c385f"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "union_value",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173"
+          ],
+          "term": "aggregate"
         },
         "dependencies": [
           {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f"
+            "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f",
+            "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc"
+            "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc",
+            "domain": "quire.checked-semantic-node/v1"
           }
         ],
-        "body": {
-          "term": "aggregate",
-          "members": [
-            {
-              "term": "binding",
-              "name": "Rect",
-              "value": {
-                "term": "aggregate",
-                "members": [
-                  {
-                    "term": "reference",
-                    "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc"
-                    }
-                  },
-                  {
-                    "term": "reference",
-                    "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f"
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      },
-      {
         "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "d09135f93f7eaef2b22d256039978e7dcff7133bc85710b2bdceba5777bb9a60"
+          "digest": "e50bf8e0e17f7cf14ce559bdfe07c5a6f7baafb0820b0b2fdc2db02ed34c385f",
+          "domain": "quire.checked-semantic-node/v1"
         },
-        "schema_version": "quire.checked-semantic-graph/v2",
         "node_tag": "value",
+        "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "union_value",
         "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173"
-        },
-        "dependencies": [],
-        "body": {
-          "term": "aggregate",
-          "members": [
-            {
-              "term": "binding",
-              "name": "Empty",
-              "value": {
-                "term": "aggregate",
-                "members": []
-              }
-            }
-          ]
+          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
+          "domain": "quire.checked-semantic-node/v1"
         }
       },
       {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "expression",
-        "semantic_form": "binary",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [
-          {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b"
-          },
-          {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd"
-          }
-        ],
         "body": {
-          "term": "application",
-          "operator": "binary",
+          "members": [
+            {
+              "name": "Empty",
+              "term": "binding",
+              "value": {
+                "members": [],
+                "term": "aggregate"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "d09135f93f7eaef2b22d256039978e7dcff7133bc85710b2bdceba5777bb9a60",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "union_value",
+        "semantic_type": {
+          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "arguments": [
+            {
+              "target": {
+                "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            },
+            {
+              "target": {
+                "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            }
+          ],
           "operation": {
             "identity": "quire.op.integer.mul",
             "laws": [],
-            "mode": null,
+            "leaves": [],
             "member": null,
-            "leaves": []
+            "mode": null
           },
+          "operator": "binary",
           "result_type": {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
           },
-          "arguments": [
-            {
-              "term": "reference",
-              "target": {
-                "domain": "quire.checked-semantic-node/v1",
-                "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd"
-              }
-            },
-            {
-              "term": "reference",
-              "target": {
-                "domain": "quire.checked-semantic-node/v1",
-                "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "8d7858a8635af44d4becada9e80b23b186f3bf634a4fafb30965380a8b1a1665"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "expression",
-        "semantic_form": "case",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+          "term": "application"
         },
         "dependencies": [
           {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d"
+            "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
+            "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e"
-          },
-          {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779"
-          },
-          {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b"
-          },
-          {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa"
-          },
-          {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd"
+            "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
+            "domain": "quire.checked-semantic-node/v1"
           }
         ],
+        "node_id": {
+          "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "expression",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "binary",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
         "body": {
-          "term": "application",
-          "operator": "case",
+          "arguments": [
+            {
+              "target": {
+                "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            },
+            {
+              "name": "Circle",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "members": [
+                      {
+                        "target": {
+                          "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa",
+                          "domain": "quire.checked-semantic-node/v1"
+                        },
+                        "term": "reference"
+                      }
+                    ],
+                    "term": "aggregate"
+                  },
+                  {
+                    "target": {
+                      "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                ],
+                "term": "aggregate"
+              }
+            },
+            {
+              "name": "Rect",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "members": [
+                      {
+                        "target": {
+                          "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
+                          "domain": "quire.checked-semantic-node/v1"
+                        },
+                        "term": "reference"
+                      },
+                      {
+                        "target": {
+                          "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
+                          "domain": "quire.checked-semantic-node/v1"
+                        },
+                        "term": "reference"
+                      }
+                    ],
+                    "term": "aggregate"
+                  },
+                  {
+                    "target": {
+                      "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                ],
+                "term": "aggregate"
+              }
+            },
+            {
+              "name": "Empty",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "members": [],
+                    "term": "aggregate"
+                  },
+                  {
+                    "target": {
+                      "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                ],
+                "term": "aggregate"
+              }
+            }
+          ],
           "operation": {
             "identity": "quire.op.control.case",
             "laws": [],
-            "mode": null,
+            "leaves": [],
             "member": null,
-            "leaves": []
+            "mode": null
           },
+          "operator": "case",
           "result_type": {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
           },
-          "arguments": [
-            {
-              "term": "reference",
-              "target": {
-                "domain": "quire.checked-semantic-node/v1",
-                "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e"
-              }
-            },
-            {
-              "term": "binding",
-              "name": "Circle",
-              "value": {
-                "term": "aggregate",
-                "members": [
-                  {
-                    "term": "aggregate",
-                    "members": [
-                      {
-                        "term": "reference",
-                        "target": {
-                          "domain": "quire.checked-semantic-node/v1",
-                          "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa"
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "term": "reference",
-                    "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa"
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "term": "binding",
-              "name": "Rect",
-              "value": {
-                "term": "aggregate",
-                "members": [
-                  {
-                    "term": "aggregate",
-                    "members": [
-                      {
-                        "term": "reference",
-                        "target": {
-                          "domain": "quire.checked-semantic-node/v1",
-                          "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd"
-                        }
-                      },
-                      {
-                        "term": "reference",
-                        "target": {
-                          "domain": "quire.checked-semantic-node/v1",
-                          "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b"
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "term": "reference",
-                    "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d"
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "term": "binding",
-              "name": "Empty",
-              "value": {
-                "term": "aggregate",
-                "members": [
-                  {
-                    "term": "aggregate",
-                    "members": []
-                  },
-                  {
-                    "term": "reference",
-                    "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779"
-                    }
-                  }
-                ]
-              }
-            }
-          ]
+          "term": "application"
+        },
+        "dependencies": [
+          {
+            "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
+            "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
+            "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
+            "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
+            "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
+            "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "8d7858a8635af44d4becada9e80b23b186f3bf634a4fafb30965380a8b1a1665",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "expression",
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "case",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
         }
+      }
+    ],
+    "model_selections": [],
+    "profile_selections": [],
+    "required_features": [
+      "quire.value.complete/v1"
+    ],
+    "version": "quire.checked-package-id/v2"
+  },
+  "lock": {
+    "definition_selections": [],
+    "dependency_selections": [],
+    "edition": {
+      "definition": {
+        "authority": "agent-ix",
+        "identity": "quire-edition"
+      },
+      "role": "edition"
+    },
+    "model_selections": [],
+    "profile_selections": [],
+    "required_features": [
+      "quire.value.complete/v1"
+    ],
+    "sources": [
+      {
+        "authority": "agent-ix",
+        "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "digest_domain": "quire.source.bytes/v1",
+        "identity": "example"
       }
     ]
   },
   "package_id": {
-    "domain": "quire.package.semantic/v2",
     "algorithm": "sha256",
-    "digest": "5aa2d3af3caa851f182f83286c13833990219e77d3394e8a47e3fedb484a8d9f"
-  },
-  "lock": {
-    "sources": [
-      {
-        "authority": "agent-ix",
-        "identity": "example",
-        "digest_domain": "quire.source.bytes/v1",
-        "digest": "2222222222222222222222222222222222222222222222222222222222222222"
-      }
-    ],
-    "edition": {
-      "role": "edition",
-      "definition": {
-        "authority": "agent-ix",
-        "identity": "quire-edition"
-      }
-    },
-    "profile_selections": [],
-    "definition_selections": [],
-    "model_selections": [],
-    "required_features": [
-      "quire.value.complete/v1"
-    ],
-    "dependency_selections": []
+    "digest": "a53341c63668b91a9fdc383bbe478a8a12d497e76ea91960b82c2d9adf526ebf",
+    "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
     "graph_version": "quire.checked-semantic-graph/v2",
     "nodes": [
       {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+        "body": {
+          "members": [],
+          "term": "aggregate"
         },
-        "schema_version": "quire.checked-semantic-graph/v2",
+        "dependencies": [],
+        "node_id": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        },
         "node_tag": "scalar_type",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "type"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "integer",
         "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [],
-        "occurrences": [
-          {
-            "role": "type",
-            "ordinal": 0
-          }
-        ],
-        "body": {
-          "term": "aggregate",
-          "members": []
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
         }
       },
       {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659"
+        "body": {
+          "members": [],
+          "term": "aggregate"
         },
-        "schema_version": "quire.checked-semantic-graph/v2",
+        "dependencies": [],
+        "node_id": {
+          "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+          "domain": "quire.checked-semantic-node/v1"
+        },
         "node_tag": "scalar_type",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "type"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "text",
         "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659"
-        },
-        "dependencies": [],
-        "occurrences": [
-          {
-            "role": "type",
-            "ordinal": 0
-          }
-        ],
-        "body": {
-          "term": "aggregate",
-          "members": []
+          "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+          "domain": "quire.checked-semantic-node/v1"
         }
       },
       {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "composite_type",
-        "semantic_form": "union",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173"
+        "body": {
+          "members": [
+            {
+              "name": "Circle",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "target": {
+                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                ],
+                "term": "aggregate"
+              }
+            },
+            {
+              "name": "Rect",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "target": {
+                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  },
+                  {
+                    "target": {
+                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                ],
+                "term": "aggregate"
+              }
+            },
+            {
+              "name": "Empty",
+              "term": "binding",
+              "value": {
+                "members": [],
+                "term": "aggregate"
+              }
+            }
+          ],
+          "term": "aggregate"
         },
         "declaration": {
           "qualified_name": [
@@ -757,660 +816,624 @@
         },
         "dependencies": [
           {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
           }
         ],
+        "node_id": {
+          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "composite_type",
         "occurrences": [
           {
-            "role": "declaration",
-            "ordinal": 0
+            "ordinal": 0,
+            "role": "declaration"
           }
         ],
+        "owner": {
+          "authority": "agent-ix",
+          "identity": "example",
+          "kind": "source"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "union",
+        "semantic_type": {
+          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
         "body": {
-          "term": "aggregate",
           "members": [
             {
+              "name": "name",
               "term": "binding",
-              "name": "Circle",
               "value": {
-                "term": "aggregate",
-                "members": [
-                  {
-                    "term": "reference",
-                    "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-                    }
-                  }
-                ]
+                "term": "literal",
+                "type": {
+                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "s",
+                "value_kind": "text"
               }
             },
             {
+              "name": "level",
               "term": "binding",
-              "name": "Rect",
               "value": {
-                "term": "aggregate",
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "0",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "parameter",
+        "semantic_type": {
+          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "name",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "r",
+                "value_kind": "text"
+              }
+            },
+            {
+              "name": "level",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "1",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "parameter",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "name",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "w",
+                "value_kind": "text"
+              }
+            },
+            {
+              "name": "level",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "1",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "parameter",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "name",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "h",
+                "value_kind": "text"
+              }
+            },
+            {
+              "name": "level",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "2",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "parameter",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "term": "literal",
+          "type": {
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "value": "0",
+          "value_kind": "integer"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "literal",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "term": "literal",
+          "type": {
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "value": "2",
+          "value_kind": "integer"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "literal",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "term": "literal",
+          "type": {
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "value": "3",
+          "value_kind": "integer"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "literal",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "Rect",
+              "term": "binding",
+              "value": {
                 "members": [
                   {
-                    "term": "reference",
                     "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-                    }
+                      "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
                   },
                   {
-                    "term": "reference",
                     "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-                    }
+                      "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
                   }
-                ]
-              }
-            },
-            {
-              "term": "binding",
-              "name": "Empty",
-              "value": {
-                "term": "aggregate",
-                "members": []
+                ],
+                "term": "aggregate"
               }
             }
-          ]
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "parameter",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173"
-        },
-        "dependencies": [],
-        "occurrences": [
-          {
-            "role": "expression",
-            "ordinal": 0
-          }
-        ],
-        "body": {
-          "term": "aggregate",
-          "members": [
-            {
-              "term": "binding",
-              "name": "name",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659"
-                },
-                "value_kind": "text",
-                "value": "s"
-              }
-            },
-            {
-              "term": "binding",
-              "name": "level",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-                },
-                "value_kind": "integer",
-                "value": "0"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "parameter",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [],
-        "occurrences": [
-          {
-            "role": "expression",
-            "ordinal": 0
-          }
-        ],
-        "body": {
-          "term": "aggregate",
-          "members": [
-            {
-              "term": "binding",
-              "name": "name",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659"
-                },
-                "value_kind": "text",
-                "value": "r"
-              }
-            },
-            {
-              "term": "binding",
-              "name": "level",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-                },
-                "value_kind": "integer",
-                "value": "1"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "parameter",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [],
-        "occurrences": [
-          {
-            "role": "expression",
-            "ordinal": 0
-          }
-        ],
-        "body": {
-          "term": "aggregate",
-          "members": [
-            {
-              "term": "binding",
-              "name": "name",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659"
-                },
-                "value_kind": "text",
-                "value": "w"
-              }
-            },
-            {
-              "term": "binding",
-              "name": "level",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-                },
-                "value_kind": "integer",
-                "value": "1"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "parameter",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [],
-        "occurrences": [
-          {
-            "role": "expression",
-            "ordinal": 0
-          }
-        ],
-        "body": {
-          "term": "aggregate",
-          "members": [
-            {
-              "term": "binding",
-              "name": "name",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659"
-                },
-                "value_kind": "text",
-                "value": "h"
-              }
-            },
-            {
-              "term": "binding",
-              "name": "level",
-              "value": {
-                "term": "literal",
-                "type": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-                },
-                "value_kind": "integer",
-                "value": "2"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "literal",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [],
-        "occurrences": [
-          {
-            "role": "expression",
-            "ordinal": 0
-          }
-        ],
-        "body": {
-          "term": "literal",
-          "type": {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-          },
-          "value_kind": "integer",
-          "value": "0"
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "literal",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [],
-        "occurrences": [
-          {
-            "role": "expression",
-            "ordinal": 0
-          }
-        ],
-        "body": {
-          "term": "literal",
-          "type": {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-          },
-          "value_kind": "integer",
-          "value": "2"
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "literal",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [],
-        "occurrences": [
-          {
-            "role": "expression",
-            "ordinal": 0
-          }
-        ],
-        "body": {
-          "term": "literal",
-          "type": {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-          },
-          "value_kind": "integer",
-          "value": "3"
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "e50bf8e0e17f7cf14ce559bdfe07c5a6f7baafb0820b0b2fdc2db02ed34c385f"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
-        "semantic_form": "union_value",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173"
+          ],
+          "term": "aggregate"
         },
         "dependencies": [
           {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f"
+            "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f",
+            "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc"
+            "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc",
+            "domain": "quire.checked-semantic-node/v1"
           }
         ],
+        "node_id": {
+          "digest": "e50bf8e0e17f7cf14ce559bdfe07c5a6f7baafb0820b0b2fdc2db02ed34c385f",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
         "occurrences": [
           {
-            "role": "expression",
-            "ordinal": 0
+            "ordinal": 0,
+            "role": "expression"
           }
         ],
-        "body": {
-          "term": "aggregate",
-          "members": [
-            {
-              "term": "binding",
-              "name": "Rect",
-              "value": {
-                "term": "aggregate",
-                "members": [
-                  {
-                    "term": "reference",
-                    "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc"
-                    }
-                  },
-                  {
-                    "term": "reference",
-                    "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f"
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "d09135f93f7eaef2b22d256039978e7dcff7133bc85710b2bdceba5777bb9a60"
-        },
         "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "value",
         "semantic_form": "union_value",
         "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173"
-        },
-        "dependencies": [],
-        "occurrences": [
-          {
-            "role": "expression",
-            "ordinal": 0
-          }
-        ],
-        "body": {
-          "term": "aggregate",
-          "members": [
-            {
-              "term": "binding",
-              "name": "Empty",
-              "value": {
-                "term": "aggregate",
-                "members": []
-              }
-            }
-          ]
+          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
+          "domain": "quire.checked-semantic-node/v1"
         }
       },
       {
+        "body": {
+          "members": [
+            {
+              "name": "Empty",
+              "term": "binding",
+              "value": {
+                "members": [],
+                "term": "aggregate"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [],
         "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d"
+          "digest": "d09135f93f7eaef2b22d256039978e7dcff7133bc85710b2bdceba5777bb9a60",
+          "domain": "quire.checked-semantic-node/v1"
         },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "expression",
-        "semantic_form": "binary",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-        },
-        "dependencies": [
-          {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b"
-          },
-          {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd"
-          }
-        ],
+        "node_tag": "value",
         "occurrences": [
           {
-            "role": "expression",
-            "ordinal": 0
+            "ordinal": 0,
+            "role": "expression"
           }
         ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "union_value",
+        "semantic_type": {
+          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
         "body": {
-          "term": "application",
-          "operator": "binary",
+          "arguments": [
+            {
+              "target": {
+                "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            },
+            {
+              "target": {
+                "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            }
+          ],
           "operation": {
             "identity": "quire.op.integer.mul",
             "laws": [],
-            "mode": null,
+            "leaves": [],
             "member": null,
-            "leaves": []
+            "mode": null
           },
+          "operator": "binary",
           "result_type": {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
           },
-          "arguments": [
-            {
-              "term": "reference",
-              "target": {
-                "domain": "quire.checked-semantic-node/v1",
-                "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd"
-              }
-            },
-            {
-              "term": "reference",
-              "target": {
-                "domain": "quire.checked-semantic-node/v1",
-                "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "8d7858a8635af44d4becada9e80b23b186f3bf634a4fafb30965380a8b1a1665"
-        },
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "expression",
-        "semantic_form": "case",
-        "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+          "term": "application"
         },
         "dependencies": [
           {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d"
+            "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
+            "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e"
-          },
-          {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779"
-          },
-          {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b"
-          },
-          {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa"
-          },
-          {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd"
+            "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
+            "domain": "quire.checked-semantic-node/v1"
           }
         ],
+        "node_id": {
+          "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "expression",
         "occurrences": [
           {
-            "role": "expression",
-            "ordinal": 0
+            "ordinal": 0,
+            "role": "expression"
           }
         ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "binary",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
         "body": {
-          "term": "application",
-          "operator": "case",
+          "arguments": [
+            {
+              "target": {
+                "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            },
+            {
+              "name": "Circle",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "members": [
+                      {
+                        "target": {
+                          "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa",
+                          "domain": "quire.checked-semantic-node/v1"
+                        },
+                        "term": "reference"
+                      }
+                    ],
+                    "term": "aggregate"
+                  },
+                  {
+                    "target": {
+                      "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                ],
+                "term": "aggregate"
+              }
+            },
+            {
+              "name": "Rect",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "members": [
+                      {
+                        "target": {
+                          "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
+                          "domain": "quire.checked-semantic-node/v1"
+                        },
+                        "term": "reference"
+                      },
+                      {
+                        "target": {
+                          "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
+                          "domain": "quire.checked-semantic-node/v1"
+                        },
+                        "term": "reference"
+                      }
+                    ],
+                    "term": "aggregate"
+                  },
+                  {
+                    "target": {
+                      "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                ],
+                "term": "aggregate"
+              }
+            },
+            {
+              "name": "Empty",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "members": [],
+                    "term": "aggregate"
+                  },
+                  {
+                    "target": {
+                      "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                ],
+                "term": "aggregate"
+              }
+            }
+          ],
           "operation": {
             "identity": "quire.op.control.case",
             "laws": [],
-            "mode": null,
+            "leaves": [],
             "member": null,
-            "leaves": []
+            "mode": null
           },
+          "operator": "case",
           "result_type": {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
           },
-          "arguments": [
-            {
-              "term": "reference",
-              "target": {
-                "domain": "quire.checked-semantic-node/v1",
-                "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e"
-              }
-            },
-            {
-              "term": "binding",
-              "name": "Circle",
-              "value": {
-                "term": "aggregate",
-                "members": [
-                  {
-                    "term": "aggregate",
-                    "members": [
-                      {
-                        "term": "reference",
-                        "target": {
-                          "domain": "quire.checked-semantic-node/v1",
-                          "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa"
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "term": "reference",
-                    "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa"
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "term": "binding",
-              "name": "Rect",
-              "value": {
-                "term": "aggregate",
-                "members": [
-                  {
-                    "term": "aggregate",
-                    "members": [
-                      {
-                        "term": "reference",
-                        "target": {
-                          "domain": "quire.checked-semantic-node/v1",
-                          "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd"
-                        }
-                      },
-                      {
-                        "term": "reference",
-                        "target": {
-                          "domain": "quire.checked-semantic-node/v1",
-                          "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b"
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "term": "reference",
-                    "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d"
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "term": "binding",
-              "name": "Empty",
-              "value": {
-                "term": "aggregate",
-                "members": [
-                  {
-                    "term": "aggregate",
-                    "members": []
-                  },
-                  {
-                    "term": "reference",
-                    "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779"
-                    }
-                  }
-                ]
-              }
-            }
-          ]
+          "term": "application"
+        },
+        "dependencies": [
+          {
+            "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
+            "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
+            "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
+            "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
+            "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
+            "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "8d7858a8635af44d4becada9e80b23b186f3bf634a4fafb30965380a8b1a1665",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "expression",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "case",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
         }
       }
     ]
@@ -1418,296 +1441,283 @@
   "source_map": [
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+        "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+        "domain": "quire.checked-semantic-node/v1"
       },
-      "role": "type",
       "ordinal": 0,
       "regions": [
         {
+          "end": 1,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
             "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
-          "start": 0,
-          "end": 1
+          "start": 0
         }
-      ]
+      ],
+      "role": "type"
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659"
+        "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+        "domain": "quire.checked-semantic-node/v1"
       },
-      "role": "type",
       "ordinal": 0,
       "regions": [
         {
+          "end": 2,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
             "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
-          "start": 1,
-          "end": 2
+          "start": 1
         }
-      ]
+      ],
+      "role": "type"
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173"
+        "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
+        "domain": "quire.checked-semantic-node/v1"
       },
-      "role": "declaration",
       "ordinal": 0,
       "regions": [
         {
+          "end": 3,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
             "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
-          "start": 2,
-          "end": 3
+          "start": 2
         }
-      ]
+      ],
+      "role": "declaration"
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e"
+        "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e",
+        "domain": "quire.checked-semantic-node/v1"
       },
-      "role": "expression",
       "ordinal": 0,
       "regions": [
         {
+          "end": 4,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
             "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
-          "start": 3,
-          "end": 4
+          "start": 3
         }
-      ]
+      ],
+      "role": "expression"
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa"
+        "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa",
+        "domain": "quire.checked-semantic-node/v1"
       },
-      "role": "expression",
       "ordinal": 0,
       "regions": [
         {
+          "end": 5,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
             "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
-          "start": 4,
-          "end": 5
+          "start": 4
         }
-      ]
+      ],
+      "role": "expression"
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd"
+        "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
+        "domain": "quire.checked-semantic-node/v1"
       },
-      "role": "expression",
       "ordinal": 0,
       "regions": [
         {
+          "end": 6,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
             "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
-          "start": 5,
-          "end": 6
+          "start": 5
         }
-      ]
+      ],
+      "role": "expression"
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b"
+        "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
+        "domain": "quire.checked-semantic-node/v1"
       },
-      "role": "expression",
       "ordinal": 0,
       "regions": [
         {
+          "end": 7,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
             "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
-          "start": 6,
-          "end": 7
+          "start": 6
         }
-      ]
+      ],
+      "role": "expression"
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779"
+        "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779",
+        "domain": "quire.checked-semantic-node/v1"
       },
-      "role": "expression",
       "ordinal": 0,
       "regions": [
         {
+          "end": 8,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
             "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
-          "start": 7,
-          "end": 8
+          "start": 7
         }
-      ]
+      ],
+      "role": "expression"
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc"
+        "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc",
+        "domain": "quire.checked-semantic-node/v1"
       },
-      "role": "expression",
       "ordinal": 0,
       "regions": [
         {
+          "end": 9,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
             "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
-          "start": 8,
-          "end": 9
+          "start": 8
         }
-      ]
+      ],
+      "role": "expression"
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f"
+        "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f",
+        "domain": "quire.checked-semantic-node/v1"
       },
-      "role": "expression",
       "ordinal": 0,
       "regions": [
         {
+          "end": 10,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
             "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
-          "start": 9,
-          "end": 10
+          "start": 9
         }
-      ]
+      ],
+      "role": "expression"
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "e50bf8e0e17f7cf14ce559bdfe07c5a6f7baafb0820b0b2fdc2db02ed34c385f"
+        "digest": "e50bf8e0e17f7cf14ce559bdfe07c5a6f7baafb0820b0b2fdc2db02ed34c385f",
+        "domain": "quire.checked-semantic-node/v1"
       },
-      "role": "expression",
       "ordinal": 0,
       "regions": [
         {
+          "end": 11,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
             "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
-          "start": 10,
-          "end": 11
+          "start": 10
         }
-      ]
+      ],
+      "role": "expression"
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "d09135f93f7eaef2b22d256039978e7dcff7133bc85710b2bdceba5777bb9a60"
+        "digest": "d09135f93f7eaef2b22d256039978e7dcff7133bc85710b2bdceba5777bb9a60",
+        "domain": "quire.checked-semantic-node/v1"
       },
-      "role": "expression",
       "ordinal": 0,
       "regions": [
         {
+          "end": 12,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
             "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
-          "start": 11,
-          "end": 12
+          "start": 11
         }
-      ]
+      ],
+      "role": "expression"
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d"
+        "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d",
+        "domain": "quire.checked-semantic-node/v1"
       },
-      "role": "expression",
       "ordinal": 0,
       "regions": [
         {
+          "end": 13,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
             "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
-          "start": 12,
-          "end": 13
+          "start": 12
         }
-      ]
+      ],
+      "role": "expression"
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "8d7858a8635af44d4becada9e80b23b186f3bf634a4fafb30965380a8b1a1665"
+        "digest": "8d7858a8635af44d4becada9e80b23b186f3bf634a4fafb30965380a8b1a1665",
+        "domain": "quire.checked-semantic-node/v1"
       },
-      "role": "expression",
       "ordinal": 0,
       "regions": [
         {
+          "end": 14,
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
             "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
-          "start": 13,
-          "end": 14
+          "start": 13
         }
-      ]
+      ],
+      "role": "expression"
     }
-  ],
-  "capability_report": [
-    {
-      "feature": "quire.value.complete/v1",
-      "disposition": "available"
-    }
-  ],
-  "diagnostics": {
-    "catalog": {
-      "authority": "agent-ix",
-      "identity": "catalog"
-    },
-    "entries": []
-  }
+  ]
 }

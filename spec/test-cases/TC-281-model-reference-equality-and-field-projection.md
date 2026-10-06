@@ -72,10 +72,10 @@ not unique), `peers` (`Order` `[0, 3]`, unordered, unique) and `trail`
 | RC-05 | `reference.ne` over `Reference<Sub>` and `Reference<Order>` | Admitted | FR-322-AC-33 |
 | RC-06 | `reference.eq` over `Reference<Order>` and `Reference<Invoice>` | `ill_typed`/`operator-ineligible` | FR-322-AC-33 |
 | RC-07 | `reference.ne` over `Reference<Sub>` and `Reference<Both>` | `ill_typed`/`operator-ineligible` | FR-322-AC-33 |
-| RC-08 | `reference.eq` over `Reference<Order>` and a reference to the relationship `billedTo` (M4) | `ill_typed`/`operator-ineligible` | FR-322-AC-33 |
+| RC-08 | `reference.eq` over `Reference<Order>` and a reference to the relationship `Order-order-Order` (M4) | `ill_typed`/`operator-ineligible` | FR-322-AC-33 |
 | RC-09 | `reference.eq` over a reference to M2 (`Order` keyed under the unselected version `2.0.0`) and `Reference<Order>` | `missing_declaration`/`missing-selection` | FR-322-AC-33 |
 | RC-10 | `reference.eq` over an `Order` object operand and `Reference<Order>` | `ill_typed`/`operator-ineligible`: family `object` is not `reference` | FR-322-AC-33 |
-| RC-11 | `reference.eq` over two references to the relationship `billedTo` (M4) | `ill_typed`/`operator-ineligible` | FR-322-AC-33 |
+| RC-11 | `reference.eq` over two references to the relationship `Order-order-Order` (M4) | `ill_typed`/`operator-ineligible` | FR-322-AC-33 |
 | RC-12 | `reference.eq` over two references to M2 | `missing_declaration`/`missing-selection` | FR-322-AC-33 |
 | RC-13 | `reference.eq` over `Reference<Both>` and `Reference<Tagged>` | Admitted: `Both` conforms to its supertype `Tagged` | FR-322-AC-33 |
 | RC-14 | `reference.ne` over `Reference<Tagged>` and `Reference<Both>` | Admitted | FR-322-AC-33 |
@@ -109,3 +109,32 @@ not unique), `peers` (`Order` `[0, 3]`, unordered, unique) and `trail`
 
 Every reference equality, projection and reaches case gives exactly its
 recorded result.
+
+## Relationship ends
+
+`model-member-type-vectors.json` `relationship_navigation_cases` apply
+`quire.op.model.navigate` and `quire.op.model.reaches` over the relationship
+ends of the selected document (FR-322-AC-57). A case that patches an end
+multiplicity edits the selected document before it is read.
+
+| ID | Case | Expected | Criterion |
+| --- | --- | --- | --- |
+| RN-01 | `navigate` `order` on M4, receiver M1, result `Reference<Order>` | Admitted | FR-322-AC-57 |
+| RN-02 | `navigate` `next` on M4, receiver M1, result `Set<Order>` | `unsupported_construct`/`expression-form` at `member.name` | FR-322-AC-57 |
+| RN-03 | `navigate` `next` on M4, receiver M1, result `Set<Order>`, with the end multiplicity patched | Admitted | FR-322-AC-57 |
+| RN-04 | `navigate` `next` on M4, receiver M1, result `Bag<Order>`, with the end multiplicity patched | Admitted | FR-322-AC-57 |
+| RN-05 | `navigate` `order` on M4, receiver M1, result `Option<Order>`, with the end multiplicity patched | Admitted | FR-322-AC-57 |
+| RN-06 | `navigate` `order` on M4, receiver M5, result `Reference<Order>` | Admitted | FR-322-AC-57 |
+| RN-07 | `navigate` `order` on M4, receiver M3, result `Reference<Order>` | `ill_typed`/`operator-ineligible` at `arguments/0` | FR-322-AC-57 |
+| RN-08 | `navigate` `order` on M4, receiver M1, result `Option<Order>` | `ill_typed`/`operator-ineligible` at `result_type` | FR-322-AC-57 |
+| RN-09 | `navigate` `follows` on M11, receiver M1, result `Reference<Order>` | Admitted | FR-322-AC-57 |
+| RN-10 | `navigate` `followedBy` on M11, receiver M1, result `Set<Order>`, with the end multiplicity patched | `ill_typed`/`operator-ineligible` at `member.name` | FR-322-AC-57 |
+| RN-11 | `navigate` `next` on M10, receiver M3, result `Option<Order>` | `missing_declaration`/`missing-name` at `member.name` | FR-322-AC-57 |
+| RN-12 | `navigate` `twin` on M12, receiver M1, result `Reference<Order>` | `ambiguous_declaration`/`ambiguous-name` at `member.name` | FR-322-AC-57 |
+| RN-13 | `navigate` `order` on M1, receiver M1, result `Reference<Order>` | `ill_typed`/`operator-ineligible` at `member.declaration` | FR-322-AC-57 |
+| RN-14 | `navigate` `invoiced` on M10, receiver M1, result `Reference<Invoice>` | Admitted | FR-322-AC-57 |
+| RN-15 | `reaches` `order` on M4, operands M1, M1 | Admitted | FR-322-AC-57 |
+| RN-16 | `reaches` `order` on M4, operands M1, M3 | `ill_typed`/`operator-ineligible` at `arguments/1` | FR-322-AC-57 |
+| RN-17 | `reaches` `order` on M4, operands M1, M1, with the end multiplicity patched | Admitted | FR-322-AC-57 |
+| RN-18 | `reaches` `order` on M4, operands M1, M1, with the end multiplicity patched | `ill_typed`/`operator-ineligible` at `member.name` | FR-322-AC-57 |
+| RN-19 | `reaches` `invoiced` on M10, operands M1, M1 | `ill_typed`/`operator-ineligible` at `member.name` | FR-322-AC-57 |

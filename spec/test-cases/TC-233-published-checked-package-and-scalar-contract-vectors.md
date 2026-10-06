@@ -173,7 +173,7 @@ the `SourceOwner` of its fixture's lock source (`agent-ix`/`example`, or
 gains the member and the fixture's `package_id` is recomputed. The undeclared
 `relation`/`relationship` nodes of `positive-all-families.json` and
 `positive-operation-identities.json` become model declaration nodes: each
-carries M4's `ModelOwner` (`acme/orders`, `ix://acme/orders/billedTo`), is
+carries M4's `ModelOwner` (`acme/orders`, `ix://acme/orders/relationship/Order-order-Order`), is
 its own `semantic_type`, has an empty body and is keyed M4; each fixture's
 lock and identity preimage select `acme/orders` under the digest of
 `model-member-type-vectors.json`'s `domain_package`, and every node and
@@ -210,6 +210,33 @@ application-keyed `three` node's id across both, and read package
 `a` carrying package `b`'s `owner` members, with `b`'s source added to its
 lock and its declaration regions moved to it (FR-322-AC-53).
 
+`positive-all-families.json` also carries one clause function, a `function`
+node with no `declaration`, owned by the `ModelOwner` of the operation member
+`ix://acme/orders/Order/size` and whose body holds the one `clause` binding
+`precondition` (QSL FR-094); `model-member-type-vectors.json`'s
+`domain_package` projection (derived from the selected document `domain-package-acme-orders.json`,
+which every model-selecting fixture selects by its JCS digest) declares
+`Order-order-Order` with the ends `order` and `next` (`bidirectional`) and `Order-invoiced-Invoice`
+with the one end `invoiced` (no `targetEnd.role`, `source-to-target`) and
+`Order-follows-Order` (`source-to-target`, ends `follows` and `followedBy`).
+`adverse.json` `relationship_end_cases` holds `relationship-end-forward-without-inverse`
+(admitted), `relationship-end-inverse-against-direction` (`ill_typed`/`operator-ineligible`,
+FR-152) and `relationship-end-names-missing-inverse`
+(`missing_declaration`/`missing-name`), all FR-322-AC-56.
+`adverse.json` gains `clause_owner_cases`
+(`clause-precondition-operation-owner` admitted;
+`clause-precondition-owned-by-object-type`,
+`clause-invariant-owned-by-operation-member`, `clause-invariant-owned-by-systems-interface`, `clause-kind-postcondition`,
+`clause-without-kind` and `clause-two-kind-bindings` each refused
+`missing_declaration`/`missing-selection` at the clause function's node id)
+and `projection_owner_mutations` (`projection-source-owner-differs-from-node`
+and `projection-model-owner-differs-from-node`, each refused
+`invalid_package`/`invalid-value` at
+`/identity_preimage/identity_projection/{i}/owner`), read with the full
+reader (FR-322-AC-51, FR-322-AC-55). The `state`/`state_clause` nodes of
+`positive-clause-operations.json` carry no `owner`, and the schema refuses one
+that does.
+
 Only the `correspondence`/`abstraction_relation` form is outside the
 derived-shape key stage; the all-families `correspondence`/`source_locus`
 node stays a structural node the stage keys. `positive-clause-operations.json`
@@ -219,7 +246,7 @@ gains one `correspondence`/`abstraction_relation` node (FR-451): no `owner`, emp
 its own `semantic_type`, its body targets as `dependencies` and a
 `declaration` occurrence, keyed by FR-451's
 `quire.abstraction-relation-node/v1` preimage. Read the package with the
-full reader, and read it again with one `rust_type` segment of that node's
+full reader, and read it again with one `function` segment of its `frames` entry's
 body changed, canonical order and `dependencies` kept, its node id kept, its
 projection entry patched and `package_id` recomputed (FR-322-AC-54).
 

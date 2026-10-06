@@ -88,7 +88,7 @@ flowchart TD
 3. **Intake.** QSL admits a domain package by identity and `sha256-jcs` digest
    and builds Quire model declarations from its IR nodes. It checks every model rule in
    this document. A domain package that fails a rule refuses with a located
-   diagnostic that names the artifact and span.
+   diagnostic that retains the node's IR identity and `origin`.
 4. **Consumers.** FCD code generation reads the same domain package and emits
    Rust, TypeScript and Python types. Those types and Quire's formal model
    therefore describe the same `Order`, which is what lets a proof over

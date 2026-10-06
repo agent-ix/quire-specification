@@ -71,8 +71,8 @@ differently from its meaning: `thing` with
 - `OrderManagement` (kind `context`): members `[Order, Money, OrderPlaced]`,
   vocabulary `[{term: Place, doc: "Commit a draft order"}]`. 1 declaration.
 
-K2 has 21 declarations. Each refusal below also names the refused node's
-artifact and span, and no refused run exposes an effective view. "N charges"
+K2 has 21 declarations. Each refusal below also retains the refused node's
+IR identity and `origin`, and no refused run exposes an effective view. "N charges"
 means the run charges `normalize.record` exactly N times before it reports.
 
 | Vector | Input | Expected result/disposition |
@@ -102,4 +102,4 @@ means the run charges `normalize.record` exactly N times before it reports.
 
 ## Expected Results
 
-Every positive result matches the FR-208 rules of its node's construct meaning; each refusal carries its code, cause, node, member path, artifact and span, reported in FR-154 order after exactly the stated charges; and no meaning or behavior is taken from a kind name or from a member the meaning leaves structural.
+Every positive result matches the FR-208 rules of its node's construct meaning; each refusal carries its code, cause, node, member path and `origin`, reported in FR-154 order after exactly the stated charges; and no meaning or behavior is taken from a kind name or from a member the meaning leaves structural.
