@@ -22,6 +22,13 @@ const PREIMAGE_SCHEMA: &str =
     include_str!("../proposals/checked-package-v2/node-identity-preimage.schema.json");
 /// The catalog lives only in `quire-verification-contracts`; it is read from there.
 const OPERATION_CATALOG: &str = CHECKED_OPERATION_CATALOG_V1;
+/// The selected domain package document: an FCD semantic IR 2.0.0 document.
+/// `domain_package` in the vectors is the projection of its declarations that
+/// FR-154 intake reads, derived from it by `project_document`.
+const DOCUMENT: &str =
+    include_str!("../proposals/checked-package-v2/domain-package-acme-orders.json");
+const ADVERSE: &str = include_str!("../proposals/checked-package-v2/fixtures/adverse.json");
+const SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json");
 const NODE_DOMAIN: &str = "quire.checked-semantic-node/v1";
 
 fn parsed(bytes: &str) -> Value {
@@ -50,6 +57,12 @@ fn array<'a>(value: &'a Value, member: &str) -> &'a [Value] {
 
 fn refused(code: &str, cause: &str) -> Value {
     json!({"refused": {"code": code, "cause": cause}})
+}
+
+/// A refusal with the pointer it is reported at, relative to the application
+/// (`member.declaration`, `member.name`, `arguments/0`, `result_type`).
+fn refused_at(code: &str, cause: &str, at: &str) -> Value {
+    json!({"refused": {"code": code, "cause": cause, "at": at}})
 }
 
 fn ineligible() -> Value {
@@ -124,14 +137,6 @@ fn recover<'a>(package: &'a Value, key: &str, tag: &str, form: &str) -> Option<D
     })
 }
 
-/// FR-322 step 2's fixed members of a matched wire node.
-fn fixed_members_hold(node: &Value) -> bool {
-    node["semantic_type"] == node["node_id"]
-        && node.get("declaration").is_none()
-        && node.get("recursion_group").is_none()
-        && node["body"] == json!({"term": "aggregate", "members": []})
-}
-
 fn object_type<'a>(package: &'a Value, node: &str) -> Option<&'a Value> {
     array(package, "object_types")
         .iter()
@@ -195,17 +200,6 @@ fn exposed<'a>(package: &'a Value, declared: &'a Value, list: &str) -> Vec<(Stri
         .collect()
 }
 
-/// FR-141's six text profiles, the only profiles a `Text[min, max; profile]`
-/// member type names.
-const TEXT_PROFILES: [&str; 6] = [
-    "unicode-scalars",
-    "nfc",
-    "nfd",
-    "nfkc",
-    "nfkd",
-    "binary-utf8",
-];
-
 /// FR-322 step 4's element type table. A reference target is the model
 /// declaration node key recomputed from the declaration.
 fn element_type(package: &Value, type_ref: &str) -> Option<Value> {
@@ -224,17 +218,6 @@ fn element_type(package: &Value, type_ref: &str) -> Option<Value> {
             "ix://quire/native/Integer" => ordered.then(
                 || json!({"type": "Int", "min": value_type["lower"], "max": value_type["upper"]}),
             ),
-            "ix://quire/native/Text" => (ordered
-                && bound("lower")? >= 0
-                && TEXT_PROFILES.contains(&text(value_type, "profile")))
-            .then(|| {
-                json!({
-                    "type": "Text",
-                    "min": value_type["lower"],
-                    "max": value_type["upper"],
-                    "profile": value_type["profile"]
-                })
-            }),
             _ => None,
         };
     }
@@ -274,6 +257,44 @@ fn declared_type_of(package: &Value, declared: &Value) -> Option<Value> {
         .and_then(|element| with_multiplicity(element, &declared["multiplicity"]))
 }
 
+/// FR-322 step 3 for a `relationship_end` member: the named ends of the
+/// recovered relationship are its `sourceEnd.role` and, when the document
+/// declares one, its `targetEnd.role`. A role the relationship does not name
+/// refuses `missing_declaration`/`missing-name`; no name is synthesized. A
+/// named end traversed against the relationship's direction refuses as
+/// FR-152 says.
+fn relationship_end(package: &Value, recovered: &Declared<'_>, member: &Value) -> Value {
+    if recovered.form != "relationship" {
+        return refused_at("ill_typed", "operator-ineligible", "member.declaration");
+    }
+    let Some(declared) = array(package, "relationships")
+        .iter()
+        .find(|relationship| text(relationship, "node") == recovered.node)
+    else {
+        return refused_at("missing_declaration", "missing-name", "member.name");
+    };
+    let named: Vec<&Value> = array(declared, "ends")
+        .iter()
+        .filter(|end| end["role"] == member["name"])
+        .collect();
+    let end = match named.as_slice() {
+        [] => return refused_at("missing_declaration", "missing-name", "member.name"),
+        [end] => end,
+        _ => return refused_at("ambiguous_declaration", "ambiguous-name", "member.name"),
+    };
+    // FR-152: traversal from source to target requires `source-to-target`,
+    // `bidirectional` or `undirected`, and from target to source
+    // `target-to-source`, `bidirectional` or `undirected`.
+    let allowed = match text(end, "end") {
+        "source" => "source-to-target",
+        _ => "target-to-source",
+    };
+    if ![allowed, "bidirectional", "undirected"].contains(&text(declared, "direction")) {
+        return refused_at("ill_typed", "operator-ineligible", "member.name");
+    }
+    json!({"resolves_end": {"relationship": recovered.node, "role": member["name"]}})
+}
+
 /// FR-322 steps 2 to 4 for one member case, as its expectation spells them.
 fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
     let declaring = nodes
@@ -289,6 +310,9 @@ fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
     ) else {
         return refused("missing_declaration", "missing-selection");
     };
+    if text(member, "kind") == "relationship_end" {
+        return relationship_end(package, &recovered, member);
+    }
     let Some(declared) = recovered.object_type else {
         return ineligible();
     };
@@ -341,21 +365,110 @@ fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
     }
 }
 
-/// FR-322 step 2 over one wire node.
-fn recover_wire(package: &Value, node: &Value) -> Value {
-    assert_eq!(node["node_id"]["domain"], NODE_DOMAIN);
-    let Some(recovered) = recover(
-        package,
-        text(&node["node_id"], "digest"),
-        text(node, "node_tag"),
-        text(node, "semantic_form"),
-    ) else {
-        return refused("missing_declaration", "missing-selection");
+/// Whether the selected document declares the owner's `node` as the kind the
+/// wire node stands for: an object type, an interface or a relationship for a
+/// model declaration node; an operation member or an object type for a
+/// clause function.
+fn owner_declares(package: &Value, node: &Value, owner_node: &str) -> bool {
+    let object_types = array(package, "object_types");
+    let object_type = |interface: bool| {
+        object_types.iter().any(|object| {
+            object["node"] == owner_node && object["interfaceFeatures"].is_null() != interface
+        })
     };
-    if !fixed_members_hold(node) {
+    match (text(node, "node_tag"), text(node, "semantic_form")) {
+        ("model", "object_type") => object_type(false),
+        ("model", "systems_interface") => object_type(true),
+        ("relation", "relationship") => array(package, "relationships")
+            .iter()
+            .any(|relationship| relationship["node"] == owner_node),
+        ("function", _) => match clause_kind(node) {
+            // An invariant clause is owned by its object type; a
+            // precondition or body clause by an operation member of an
+            // object type, the operation's context.
+            Some("invariant") => object_types.iter().any(|object| {
+                object["node"] == owner_node && object["interfaceFeatures"].is_null()
+            }),
+            Some("precondition" | "body") => object_types.iter().any(|object| {
+                let declaring = text(object, "node");
+                array(object, "operations").iter().any(|operation| {
+                    format!("{declaring}/{}", text(operation, "name")) == owner_node
+                })
+            }),
+            _ => false,
+        },
+        _ => false,
+    }
+}
+
+/// A clause function's clause kind: the text literal of the one `clause`
+/// binding of its body (QSL FR-094): `invariant`, `precondition` or `body`.
+fn clause_kind(node: &Value) -> Option<&str> {
+    let mut bindings = node["body"]["members"]
+        .as_array()?
+        .iter()
+        .filter(|member| member["term"] == "binding" && member["name"] == "clause");
+    let binding = bindings.next().filter(|_| bindings.next().is_none())?;
+    (binding["value"]["term"] == "literal" && binding["value"]["value_kind"] == "text")
+        .then(|| binding["value"]["value"].as_str())
+        .flatten()
+}
+
+/// The key of a model-owned wire node, from the node's own members and its
+/// `owner` (QSL FR-094): `quire.structural-node/v1` with `semantic_type`
+/// `null` exactly when the node is its own type.
+fn wire_key(node: &Value) -> String {
+    let semantic_type = if node["semantic_type"] == node["node_id"] {
+        Value::Null
+    } else {
+        node["semantic_type"].clone()
+    };
+    digest(&json!({
+        "version": "quire.structural-node/v1",
+        "node_tag": node["node_tag"],
+        "semantic_form": node["semantic_form"],
+        "semantic_type": semantic_type,
+        "declaration": node.get("declaration").cloned().unwrap_or(Value::Null),
+        "recursion": null,
+        "owner": node["owner"],
+        "body": node["body"],
+    }))
+}
+
+/// FR-322's owner presence rule (the V2 schema), the owner join, the currency
+/// check of the derived-shape key stage and step 2 over one wire node.
+fn read_wire(package: &Value, node: &Value) -> Value {
+    assert_eq!(node["node_id"]["domain"], NODE_DOMAIN);
+    let schema = parsed(SCHEMA);
+    let validator = jsonschema::validator_for(&json!({
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$ref": "#/$defs/SemanticNode",
+        "$defs": schema["$defs"]
+    }))
+    .expect("SemanticNode is a valid schema definition");
+    if !validator.is_valid(node) {
+        return json!({"refused": {"code": "malformed_wire"}});
+    }
+    let owner = &node["owner"];
+    if owner["identity"] != package["identity"]
+        || !owner_declares(package, node, text(owner, "node"))
+    {
+        return refused("missing_declaration", "missing-selection");
+    }
+    let model_declaration = text(node, "node_tag") != "function";
+    let current = wire_key(node) == text(&node["node_id"], "digest")
+        && (!model_declaration
+            || (node["semantic_type"] == node["node_id"]
+                && node.get("recursion_group").is_none()
+                && node["body"] == json!({"term": "aggregate", "members": []})));
+    if !current {
         return refused("invalid_package", "stale-node-key");
     }
-    json!({"recovers": recovered.node})
+    if model_declaration {
+        json!({"recovers": owner["node"]})
+    } else {
+        json!({"passes": "owner-join"})
+    }
 }
 
 /// FR-322 step 1's admission checks over one selection case.
@@ -391,7 +504,7 @@ fn select(package: &Value, case: &Value) -> Value {
     if digest(document) != selected {
         return refused("stale_dependency", "content-mismatch");
     }
-    if document["identity"] != selection["identity"] {
+    if document["package"]["identity"] != selection["identity"] {
         return refused("invalid_model_binding", "wrong-model-selection");
     }
     json!({"admission": "passed"})
@@ -469,7 +582,7 @@ fn tc_280_model_declaration_node_vectors_recompute_and_recover_only_selected_own
 
     for case in array(&vectors, "wire_cases") {
         assert_eq!(
-            recover_wire(package, &case["node"]),
+            read_wire(package, &case["node"]),
             case["expected"],
             "{}",
             text(case, "name")
@@ -488,12 +601,6 @@ fn tc_280_member_names_resolve_in_exposed_effective_members() {
 #[test]
 fn tc_280_member_types_follow_declared_type_multiplicity_and_presence() {
     assert_member_cases(&parsed(VECTORS), "FR-322-AC-31");
-}
-
-#[trace("TC-280", "FR-322-AC-44")]
-#[test]
-fn tc_280_text_value_type_members_carry_their_bounds_and_profile() {
-    assert_member_cases(&parsed(VECTORS), "FR-322-AC-44");
 }
 
 #[trace("TC-280", "FR-322-AC-32")]
@@ -516,7 +623,7 @@ fn tc_280_selected_domain_package_documents_are_admitted_by_content_and_identity
     );
     for case in cases {
         assert_eq!(
-            select(&vectors["domain_package"], case),
+            select(&parsed(DOCUMENT), case),
             case["expected"],
             "{}",
             text(case, "name")
@@ -535,11 +642,11 @@ fn tc_280_an_altered_document_under_the_selected_digest_is_refused() {
             .unwrap_or_else(|| panic!("{name} is recorded"))
     };
     assert_eq!(
-        select(&vectors["domain_package"], case("MS-03")),
+        select(&parsed(DOCUMENT), case("MS-03")),
         refused("stale_dependency", "content-mismatch")
     );
     assert_eq!(
-        select(&vectors["domain_package"], case("MS-01")),
+        select(&parsed(DOCUMENT), case("MS-01")),
         json!({"admission": "passed"})
     );
 }
@@ -1076,4 +1183,715 @@ fn tc_280_a_clause_binds_self_result_and_parameters_of_its_operation() {
         };
         assert_eq!(decided, case["expected"], "{}", text(case, "name"));
     }
+}
+
+/// A number or text constraint operand as the projection spells it.
+fn operand_text(constraint: &Value) -> String {
+    match &constraint["operands"]["value"] {
+        Value::String(text) => text.clone(),
+        other => other.to_string(),
+    }
+}
+
+fn constraint_of<'a>(declared: &'a Value, keyword: &str) -> Option<&'a Value> {
+    declared["constraints"]
+        .as_array()?
+        .iter()
+        .find(|constraint| constraint["keyword"] == keyword)
+}
+
+fn projected_multiplicity(multiplicity: &Value) -> Value {
+    json!({
+        "lower": multiplicity["lower"].to_string(),
+        "upper": multiplicity.get("upper").map_or("unbounded".to_owned(), Value::to_string),
+        "ordered": multiplicity["ordered"],
+        "unique": multiplicity["unique"],
+    })
+}
+
+fn projected_slot(slot: &Value) -> Value {
+    json!({
+        "name": slot["name"],
+        "typeRef": slot["typeRef"],
+        "multiplicity": projected_multiplicity(&slot["multiplicity"]),
+    })
+}
+
+/// The projection FR-154 intake reads from the selected document: for each
+/// object type or interface its supertypes, fields, operations and
+/// operation redefinitions; for each value type its native type, bounds and
+/// text profile; for each relationship its named ends, `sourceEnd.role` then
+/// `targetEnd.role` when present. Lists ascend by node identity.
+fn project_document(document: &Value) -> Value {
+    let meanings: BTreeMap<(&str, &str), &str> = array(document, "constructs")
+        .iter()
+        .map(|construct| {
+            (
+                (
+                    text(&construct["kind"], "module"),
+                    text(&construct["kind"], "name"),
+                ),
+                text(&construct["construct"], "meaning"),
+            )
+        })
+        .collect();
+    let mut object_types = Vec::new();
+    let mut value_types = Vec::new();
+    let mut relationships = Vec::new();
+    for declared in array(document, "types") {
+        let meaning = meanings[&(
+            text(&declared["kind"], "module"),
+            text(&declared["kind"], "name"),
+        )];
+        let node = text(declared, "identity");
+        match meaning {
+            "quire.meaning.model.object-type/v1" | "quire.meaning.systems.interface/v1" => {
+                let fields: Vec<Value> = array(declared, "fields")
+                    .iter()
+                    .map(|field| {
+                        let mut projected = projected_slot(field);
+                        projected["presence"] = field["presence"].clone();
+                        projected["redefines"] =
+                            field.get("redefines").cloned().unwrap_or(Value::Null);
+                        if let Some(constraints) = field["constraints"].as_array() {
+                            projected["constraints"] = Value::Object(
+                                constraints
+                                    .iter()
+                                    .map(|constraint| {
+                                        (
+                                            text(constraint, "keyword").to_owned(),
+                                            json!(operand_text(constraint)),
+                                        )
+                                    })
+                                    .collect(),
+                            );
+                        }
+                        projected
+                    })
+                    .collect();
+                let operations: Vec<Value> = array(declared, "operations")
+                    .iter()
+                    .map(|operation| {
+                        json!({
+                            "name": operation["name"],
+                            "parameters": array(operation, "params")
+                                .iter()
+                                .map(projected_slot)
+                                .collect::<Vec<_>>(),
+                            "result": operation.get("returns").map(|returns| json!({
+                                "typeRef": returns["typeRef"],
+                                "multiplicity": projected_multiplicity(&returns["multiplicity"]),
+                            })),
+                            "redefines": Value::Null,
+                        })
+                    })
+                    .collect();
+                for relationship in array(declared, "relationships") {
+                    let mut ends = vec![json!({
+                        "role": relationship["sourceEnd"]["role"],
+                        "type": relationship["sourceEnd"]["type"],
+                        "end": "source",
+                    })];
+                    if let Some(role) = relationship["targetEnd"].get("role") {
+                        ends.push(json!({
+                            "role": role,
+                            "type": relationship["targetEnd"]["type"],
+                            "end": "target",
+                        }));
+                    }
+                    relationships.push(json!({
+                        "node": relationship["identity"],
+                        "direction": relationship["direction"],
+                        "ends": ends,
+                    }));
+                }
+                object_types.push(json!({
+                    "node": node,
+                    "interfaceFeatures": (meaning == "quire.meaning.systems.interface/v1")
+                        .then(|| json!([])),
+                    "supertypes": declared["supertypes"],
+                    "fields": fields,
+                    "operations": operations,
+                }));
+            }
+            "quire.meaning.model.value-type/v1" => {
+                assert_eq!(
+                    text(declared, "scalar"),
+                    "integer",
+                    "only integer value types are projected"
+                );
+                let projected = json!({
+                    "node": node,
+                    "native": "ix://quire/native/Integer",
+                    "lower": operand_text(constraint_of(declared, "min").expect("a lower bound")),
+                    "upper": operand_text(constraint_of(declared, "max").expect("an upper bound")),
+                });
+                value_types.push(projected);
+            }
+            other => panic!("unexpected meaning {other}"),
+        }
+    }
+    relationships
+        .sort_by(|left: &Value, right: &Value| left["node"].as_str().cmp(&right["node"].as_str()));
+    json!({
+        "identity": document["package"]["identity"],
+        "version": document["package"]["version"],
+        "object_types": object_types,
+        "value_types": value_types,
+        "relationships": relationships,
+    })
+}
+
+/// FR-322 "Model-owned members": the selected evidence is the semantic IR
+/// document, and the vectors' `domain_package` is exactly the projection of it
+/// that `project_document` derives.
+#[trace("TC-280", "FR-322-AC-32")]
+#[test]
+fn tc_280_the_domain_package_projection_is_derived_from_the_selected_document() {
+    let vectors = parsed(VECTORS);
+    let sorted = |mut package: Value| {
+        for list in ["object_types", "value_types", "relationships"] {
+            package[list]
+                .as_array_mut()
+                .expect("projection list")
+                .sort_by(|left, right| left["node"].as_str().cmp(&right["node"].as_str()));
+        }
+        package
+    };
+    assert_eq!(
+        sorted(project_document(&parsed(DOCUMENT))),
+        sorted(vectors["domain_package"].clone())
+    );
+}
+
+/// FR-154-AC-9: the document carries filament-core-data FR-095's identity
+/// forms. A type is its artifact id; a field, operation and parameter nest
+/// under their owner; a relationship is `relationship/<Name>-<verb>-<Target>`
+/// and is not owner-nested.
+#[trace("TC-280", "FR-154-AC-9")]
+#[test]
+fn tc_280_the_document_carries_fr_095_identity_forms() {
+    let document = parsed(DOCUMENT);
+    let members =
+        |value: &Value, member: &str| value[member].as_array().cloned().unwrap_or_default();
+    let leaf = |identity: &str| identity.rsplit('/').next().unwrap_or_default().to_owned();
+    for declared in array(&document, "types") {
+        let owner = text(declared, "identity");
+        assert_eq!(owner, format!("ix://acme/orders/{}", leaf(owner)));
+        for field in &members(declared, "fields") {
+            assert_eq!(
+                text(field, "identity"),
+                format!("{owner}/{}", text(field, "name"))
+            );
+        }
+        for operation in &members(declared, "operations") {
+            let identity = format!("{owner}/{}", text(operation, "name"));
+            assert_eq!(text(operation, "identity"), identity);
+            for param in &members(operation, "params") {
+                assert_eq!(
+                    text(param, "identity"),
+                    format!("{identity}/{}", text(param, "name"))
+                );
+            }
+        }
+        for relationship in &members(declared, "relationships") {
+            assert_eq!(
+                text(relationship, "identity"),
+                format!(
+                    "ix://acme/orders/relationship/{}-{}-{}",
+                    leaf(owner),
+                    text(&relationship["sourceEnd"], "role"),
+                    leaf(text(&relationship["targetEnd"], "type"))
+                )
+            );
+        }
+    }
+}
+
+/// Edit `document` at an authored pointer. A segment `@name` selects the
+/// array member whose `identity` ends with `/name`.
+fn pointer_target<'a>(document: &'a mut Value, segments: &[&str]) -> &'a mut Value {
+    let mut current = document;
+    for segment in segments {
+        current = match segment.strip_prefix('@') {
+            Some(name) => {
+                let suffix = format!("/{name}");
+                current
+                    .as_array_mut()
+                    .expect("an @ segment indexes an array")
+                    .iter_mut()
+                    .find(|member| {
+                        member["identity"]
+                            .as_str()
+                            .is_some_and(|i| i.ends_with(&suffix))
+                    })
+                    .unwrap_or_else(|| panic!("a member named {name}"))
+            }
+            None if current.is_array() => {
+                &mut current[segment.parse::<usize>().expect("an index segment")]
+            }
+            None => current
+                .get_mut(*segment)
+                .unwrap_or_else(|| panic!("member {segment}")),
+        };
+    }
+    current
+}
+
+fn apply_edit(document: &mut Value, edit: &Value) {
+    let path = text(edit, "path");
+    let segments: Vec<&str> = path.split('/').skip(1).collect();
+    let (last, parents) = segments.split_last().expect("a pointer names a member");
+    let parent = pointer_target(document, parents);
+    match text(edit, "op") {
+        "replace" => {
+            if parent.is_array() {
+                parent[last.parse::<usize>().expect("an index")] = edit["value"].clone();
+            } else {
+                // A replace sets the member, adding an optional one such as
+                // `upper` when the document leaves it absent.
+                parent
+                    .as_object_mut()
+                    .expect("an object")
+                    .insert((*last).to_owned(), edit["value"].clone());
+            }
+        }
+        "remove" => {
+            parent.as_object_mut().expect("an object").remove(*last);
+        }
+        "add" => {
+            assert_eq!(*last, "-", "an add appends");
+            parent
+                .as_array_mut()
+                .expect("an array")
+                .push(edit["value"].clone());
+        }
+        other => panic!("unexpected edit {other}"),
+    }
+}
+
+/// An authored `patch` over the selected document, or a copy when absent.
+fn patched_document(patches: Option<&Value>) -> Value {
+    let mut document = parsed(DOCUMENT);
+    for edit in patches.and_then(Value::as_array).into_iter().flatten() {
+        apply_edit(&mut document, edit);
+    }
+    document
+}
+
+const MALFORMED: (&str, &str) = ("invalid_model_binding", "malformed-declaration");
+
+fn non_empty_string(value: &Value) -> bool {
+    value.as_str().is_some_and(|text| !text.is_empty())
+}
+
+/// A relationship end's multiplicity: non-negative `lower`, optional `upper`
+/// and boolean `ordered` and `unique`; the pair `(lower, upper)`.
+fn end_multiplicity(end: &Value) -> Option<(u64, Option<u64>)> {
+    let multiplicity = end.get("multiplicity")?;
+    multiplicity["ordered"].as_bool()?;
+    multiplicity["unique"].as_bool()?;
+    let lower = multiplicity["lower"].as_u64()?;
+    match multiplicity.get("upper") {
+        None => Some((lower, None)),
+        Some(upper) => Some((lower, Some(upper.as_u64()?))),
+    }
+}
+
+/// The common-schema origin: exactly one closed branch, `source` with a
+/// source locus or `generated` with a generator.
+fn origin_is_valid(origin: &Value) -> bool {
+    let Some(branches) = origin.as_object().filter(|branches| branches.len() == 1) else {
+        return false;
+    };
+    let positive = |value: &Value| value.as_u64().is_some_and(|number| number >= 1);
+    if let Some(source) = branches.get("source") {
+        let allowed = [
+            "sourceIdentity",
+            "path",
+            "startLine",
+            "startColumn",
+            "endLine",
+            "endColumn",
+        ];
+        return source.as_object().is_some_and(|locus| {
+            locus.keys().all(|key| allowed.contains(&key.as_str()))
+                && non_empty_string(&source["sourceIdentity"])
+                && non_empty_string(&source["path"])
+                && positive(&source["startLine"])
+                && positive(&source["startColumn"])
+                && ["endLine", "endColumn"]
+                    .iter()
+                    .all(|key| source.get(*key).is_none_or(positive))
+        });
+    }
+    branches.get("generated").is_some_and(|generated| {
+        generated.as_object().is_some_and(|object| {
+            object.len() == 3
+                && non_empty_string(&generated["generatorIdentity"])
+                && non_empty_string(&generated["generatorVersion"])
+                && generated["inputIdentities"]
+                    .as_array()
+                    .is_some_and(|inputs| !inputs.is_empty() && inputs.iter().all(Value::is_string))
+        })
+    })
+}
+
+/// FR-154 step 1's relationship declaration refusals over the selected
+/// document (QSL-638 / IR-661): the refusal, in node order and within a node
+/// in the order malformed declaration, unresolved end type, duplicate
+/// identity, reversed multiplicity, each reported at the selection row.
+fn read_relationships(document: &Value) -> Result<(), (&'static str, &'static str)> {
+    read_relationships_retaining(document).map_err(|(code, cause, _, _)| (code, cause))
+}
+
+/// A refusal's code, cause and the node's retained identity and `origin`,
+/// verbatim; the origin is `None` when the node carries none.
+type Retained = (&'static str, &'static str, Option<Value>, Option<Value>);
+
+fn read_relationships_retaining(document: &Value) -> Result<(), Retained> {
+    const MISSING_NAME: (&str, &str) = ("missing_declaration", "missing-name");
+    let package = text(&document["package"], "identity");
+    let slot = format!("ix://{package}/relationship/");
+    let mut types: Vec<&Value> = array(document, "types").iter().collect();
+    types.sort_by_key(|declared| declared["identity"].as_str().map(str::to_owned));
+    let meanings: BTreeMap<(&str, &str), &str> = array(document, "constructs")
+        .iter()
+        .map(|construct| {
+            (
+                (
+                    text(&construct["kind"], "module"),
+                    text(&construct["kind"], "name"),
+                ),
+                text(&construct["construct"], "meaning"),
+            )
+        })
+        .collect();
+    let is_object_type = |declared: &Value| {
+        meanings
+            .get(&(
+                declared["kind"]["module"].as_str().unwrap_or_default(),
+                declared["kind"]["name"].as_str().unwrap_or_default(),
+            ))
+            .is_some_and(|meaning| {
+                [
+                    "quire.meaning.model.object-type/v1",
+                    "quire.meaning.systems.interface/v1",
+                ]
+                .contains(meaning)
+            })
+    };
+    let objects: BTreeSet<&str> = types
+        .iter()
+        .filter(|declared| is_object_type(declared))
+        .filter_map(|declared| declared["identity"].as_str())
+        .collect();
+    let others: BTreeSet<&str> = types
+        .iter()
+        .filter(|declared| !is_object_type(declared))
+        .filter_map(|declared| declared["identity"].as_str())
+        .collect();
+    let relationships: BTreeSet<&str> = types
+        .iter()
+        .flat_map(|declared| array_or_empty(declared, "relationships"))
+        .filter_map(|relationship| relationship["identity"].as_str())
+        .collect();
+    let mut seen = BTreeSet::new();
+    for owner in &types {
+        let owner_identity = owner["identity"].as_str().unwrap_or_default();
+        for relationship in array_or_empty(owner, "relationships") {
+            let identity = relationship["identity"].as_str();
+            let retain = |(code, cause): (&'static str, &'static str)| -> Retained {
+                (
+                    code,
+                    cause,
+                    relationship.get("identity").cloned(),
+                    relationship
+                        .get("origin")
+                        .filter(|origin| origin_is_valid(origin))
+                        .cloned(),
+                )
+            };
+            let source = &relationship["sourceEnd"];
+            let target = &relationship["targetEnd"];
+            let closed = |value: &Value, members: &[&str]| {
+                value
+                    .as_object()
+                    .is_some_and(|object| object.keys().all(|key| members.contains(&key.as_str())))
+            };
+            let multiplicity_closed = |end: &Value| {
+                closed(
+                    &end["multiplicity"],
+                    &["lower", "upper", "ordered", "unique"],
+                )
+            };
+            let malformed = !closed(
+                relationship,
+                &[
+                    "identity",
+                    "category",
+                    "composite",
+                    "direction",
+                    "sourceEnd",
+                    "targetEnd",
+                    "origin",
+                ],
+            ) || !closed(source, &["role", "multiplicity", "type"])
+                || !closed(target, &["role", "multiplicity", "type"])
+                || !multiplicity_closed(source)
+                || !multiplicity_closed(target)
+                || !identity.is_some_and(|identity| {
+                    identity
+                        .strip_prefix(&slot)
+                        .is_some_and(|rest| !rest.is_empty() && !rest.contains('/'))
+                })
+                || !relationship["direction"].as_str().is_some_and(|direction| {
+                    [
+                        "source-to-target",
+                        "target-to-source",
+                        "bidirectional",
+                        "undirected",
+                    ]
+                    .contains(&direction)
+                })
+                || !relationship["category"].as_str().is_some_and(|category| {
+                    [
+                        "structural",
+                        "behavioral",
+                        "dataflow",
+                        "dependency",
+                        "realization",
+                        "governance",
+                        "traceability",
+                    ]
+                    .contains(&category)
+                })
+                || !relationship["composite"].is_boolean()
+                || !origin_is_valid(&relationship["origin"])
+                || !non_empty_string(&source["role"])
+                || target
+                    .get("role")
+                    .is_some_and(|role| !non_empty_string(role))
+                || end_multiplicity(source).is_none()
+                || end_multiplicity(target).is_none()
+                || source["type"].as_str() != Some(owner_identity)
+                || !target["type"].is_string()
+                || [source, target].iter().any(|end| {
+                    end["type"]
+                        .as_str()
+                        .is_some_and(|name| relationships.contains(name) || others.contains(name))
+                });
+            if malformed {
+                return Err(retain(MALFORMED));
+            }
+            let unresolved = [source, target]
+                .iter()
+                .any(|end| !objects.contains(text(end, "type")));
+            if unresolved {
+                return Err(retain(MISSING_NAME));
+            }
+            if !seen.insert(identity.unwrap_or_default()) {
+                return Err(retain(("invalid_model_binding", "conflicting-binding")));
+            }
+            let reversed = [source, target].iter().any(|end| {
+                end_multiplicity(end).is_some_and(|(lower, upper)| upper.is_some_and(|u| lower > u))
+            });
+            if reversed {
+                return Err(retain((
+                    "invalid_model_binding",
+                    "unpreserved-model-meaning",
+                )));
+            }
+        }
+    }
+    Ok(())
+}
+
+fn array_or_empty<'a>(value: &'a Value, member: &str) -> &'a [Value] {
+    value[member].as_array().map_or(&[], Vec::as_slice)
+}
+
+/// FR-154 relationship declaration refusals and admissions: each published
+/// `relationship_document_cases` entry patches the selected document and the
+/// reader reports the recorded refusal at the selection row.
+#[trace("TC-280", "FR-154-AC-10")]
+#[test]
+fn tc_280_relationship_declarations_refuse_each_defect_at_the_selection_row() {
+    let adverse = parsed(ADVERSE);
+    let cases = array(&adverse, "relationship_document_cases");
+    assert_eq!(cases.len(), 33);
+    for case in cases {
+        let id = text(case, "id");
+        let document = patched_document(Some(&case["patch"]));
+        let outcome = read_relationships(&document);
+        match case["outcome"].as_str() {
+            Some("admitted") => assert_eq!(outcome, Ok(()), "{id}"),
+            _ => {
+                assert_eq!(text(case, "expected_locus"), "selection_row", "{id}");
+                assert_eq!(
+                    outcome,
+                    Err((text(case, "expected_code"), text(case, "expected_cause"))),
+                    "{id}"
+                );
+            }
+        }
+    }
+}
+
+/// The mapping `derive`'s wire cases name: a model declaration vector's
+/// declared node identity.
+fn vector_node<'a>(nodes: &'a [Value], name: &str) -> &'a str {
+    text(&node_vector(nodes, name)["preimage"]["owner"], "node")
+}
+
+fn conforms_to(projection: &Value, node: &str, endpoint: &str) -> bool {
+    node == endpoint
+        || object_type(projection, node)
+            .is_some_and(|declared| ancestors(projection, declared).contains(endpoint))
+}
+
+/// FR-152 "Navigation": the destination type of one traversed end.
+fn destination_type(end: &Value, destination: &str) -> Result<Value, Value> {
+    let multiplicity = &end["multiplicity"];
+    let (lower, upper) = end_multiplicity(end).expect("an authored end");
+    if multiplicity["ordered"] == true || upper.is_none() {
+        return Err(refused_at(
+            "unsupported_construct",
+            "expression-form",
+            "member.name",
+        ));
+    }
+    Ok(match (lower, upper) {
+        (1, Some(1)) => json!({"kind": "Reference", "of": destination}),
+        (0, Some(1)) => json!({"kind": "Option", "of": destination}),
+        (lower, upper) => json!({
+            "kind": if multiplicity["unique"] == true { "Set" } else { "Bag" },
+            "of": destination,
+            "min": lower.to_string(),
+            "max": upper.expect("a finite upper bound").to_string(),
+        }),
+    })
+}
+
+/// One `quire.op.model.navigate` or `quire.op.model.reaches` application over
+/// a model-owned relationship end, in the operation-step order of FR-322
+/// "Model-owned members" step 3: declaration kind, role lookup, receiver
+/// endpoint, direction, destination multiplicity, then the operation's own
+/// type comparison.
+fn relationship_navigation(projection: &Value, nodes: &[Value], case: &Value) -> Value {
+    let document = patched_document(case.get("patch"));
+    let relationship_vector = node_vector(nodes, text(case, "relationship"));
+    if relationship_vector["preimage"]["semantic_form"] != "relationship" {
+        return refused_at("ill_typed", "operator-ineligible", "member.declaration");
+    }
+    let node = vector_node(nodes, text(case, "relationship"));
+    let declared = array(&document, "types")
+        .iter()
+        .flat_map(|owner| array_or_empty(owner, "relationships"))
+        .find(|relationship| relationship["identity"] == node)
+        .expect("a published relationship");
+    let role = text(case, "role");
+    let forward = declared["sourceEnd"]["role"] == role;
+    let inverse = declared["targetEnd"]["role"] == role;
+    let (receiver_end, destination_end, needs) = match (forward, inverse) {
+        (false, false) => return refused_at("missing_declaration", "missing-name", "member.name"),
+        (true, true) => {
+            return refused_at("ambiguous_declaration", "ambiguous-name", "member.name");
+        }
+        (true, false) => (
+            &declared["sourceEnd"],
+            &declared["targetEnd"],
+            "source-to-target",
+        ),
+        (false, true) => (
+            &declared["targetEnd"],
+            &declared["sourceEnd"],
+            "target-to-source",
+        ),
+    };
+    let endpoint = text(receiver_end, "type");
+    let operands: Vec<&str> = match case.get("receiver") {
+        Some(receiver) => vec![receiver.as_str().expect("a receiver vector name")],
+        None => array(case, "operands")
+            .iter()
+            .map(|operand| operand.as_str().expect("an operand vector name"))
+            .collect(),
+    };
+    for (index, operand) in operands.iter().enumerate() {
+        if !conforms_to(projection, vector_node(nodes, operand), endpoint) {
+            return refused_at(
+                "ill_typed",
+                "operator-ineligible",
+                &format!("arguments/{index}"),
+            );
+        }
+    }
+    if ![needs, "bidirectional", "undirected"].contains(&text(declared, "direction")) {
+        return refused_at("ill_typed", "operator-ineligible", "member.name");
+    }
+    let destination = text(destination_end, "type");
+    let derived = match destination_type(destination_end, destination) {
+        Ok(derived) => derived,
+        Err(refusal) => return refusal,
+    };
+    if text(case, "operation") == "reaches" {
+        let edge = ["Reference", "Option"].contains(&text(&derived, "kind"));
+        if !edge || destination != endpoint {
+            return refused_at("ill_typed", "operator-ineligible", "member.name");
+        }
+    } else if derived != case["result"] {
+        return refused_at("ill_typed", "operator-ineligible", "result_type");
+    }
+    json!({"admitted": true})
+}
+
+/// FR-322-AC-57: navigation and reachability over a model-owned
+/// relationship end, in the recorded operation-step order, each refusal at
+/// its recorded application pointer.
+#[trace("TC-281", "FR-322-AC-57")]
+#[test]
+fn tc_281_relationship_ends_navigate_by_role_receiver_direction_and_destination() {
+    let vectors = parsed(VECTORS);
+    let nodes = array(&vectors, "model_declaration_nodes");
+    let cases = array(&vectors, "relationship_navigation_cases");
+    assert_eq!(cases.len(), 19);
+    for case in cases {
+        assert_eq!(
+            relationship_navigation(&vectors["domain_package"], nodes, case),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
+    }
+}
+
+/// FR-154: a declaration refusal retains the node's IR identity and `origin`
+/// verbatim, a source origin with its locus and a generated origin with its
+/// members and no span; nothing is synthesized.
+#[trace("TC-280", "FR-154-AC-10")]
+#[test]
+fn tc_280_a_declaration_refusal_retains_the_nodes_origin_verbatim() {
+    let adverse = parsed(ADVERSE);
+    let cases = array(&adverse, "declaration_origin_cases");
+    assert_eq!(cases.len(), 3);
+    for case in cases {
+        let id = text(case, "id");
+        let document = patched_document(Some(&case["patch"]));
+        let (code, cause, identity, origin) =
+            read_relationships_retaining(&document).expect_err(id);
+        assert_eq!(
+            (code, cause),
+            (text(case, "expected_code"), text(case, "expected_cause")),
+            "{id}"
+        );
+        assert_eq!(identity, Some(case["expected_identity"].clone()), "{id}");
+        assert_eq!(origin, case.get("expected_origin").cloned(), "{id}");
+    }
+    // A malformed origin retains none, like a missing one.
+    let document = patched_document(Some(&json!([{
+        "op": "remove",
+        "path": "/types/@Order/relationships/@Order-follows-Order/origin"
+    }])));
+    let (_, _, _, origin) = read_relationships_retaining(&document).expect_err("a missing origin");
+    assert_eq!(origin, None);
 }

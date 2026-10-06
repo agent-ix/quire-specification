@@ -21,7 +21,7 @@ When a package imports a domain package for native linking, the checker SHALL us
 - `identity` — the domain package identity, such as `acme/orders`, named by the source `model` declaration.
 - `digest_domain` — exactly `sha256-jcs`.
 - `digest` — the lowercase 64-hex SHA-256 over the RFC 8785 JCS bytes of the domain package.
-- `declarations` — the original declarations that QSL model intake (FR-154) builds from the package's IR nodes. Each is keyed by `(domain package identity, IR node identity, sha256-jcs)` and keeps its source artifact and span.
+- `declarations` — the original declarations that QSL model intake (FR-154) builds from the package's IR nodes. Each is keyed by `(domain package identity, IR node identity, sha256-jcs)` and keeps the IR node's FCD `origin` (FR-154).
 - `effective_view` — the `quire.model.effective-view/v1` identity that QSL derives from those declarations under the selected `quire.model.complete/v1` definition.
 
 ## Identity and validation

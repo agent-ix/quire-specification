@@ -51,7 +51,7 @@ or its domain package.
      and `sha256-jcs` digest.
 3. Run each mutant through the same chain.
    - IT-070-SC-03: each refuses at its exact identity, rule or locus, and each
-     declaration refusal names its artifact and span.
+     declaration refusal retains the node's IR identity and `origin`.
 
 ## Expected Results
 

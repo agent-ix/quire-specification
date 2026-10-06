@@ -72,20 +72,20 @@ Intake then reads each IR node and builds one original declaration per node.
 Nodes are read ascending by declaration key. A node that is not a valid IR
 node of its kind, or a type definition or population node whose artifact id
 is not an object id (defined under the declaration identity rule below), is `invalid_model_binding`/`malformed-declaration`. The
-refusal retains the IR node identity, the source artifact and the source span
-that the node carries. A supertype, field type, subsets, redefines, relationship-end,
+refusal retains the IR node identity and the node's FCD `origin` verbatim. A supertype, field type, subsets, redefines, relationship-end,
 frame or population member reference that names no node of the package is
-`missing_declaration`/`missing-name` with the same artifact and span. Intake
+`missing_declaration`/`missing-name` with the referring node's `origin`. Intake
 reports every such refusal in node order, and then no later phase runs.
 Within one node, every failing check reports in FR-154's table order, the object
 id check first. A reference that names a refused node is not reported again as
 `missing_declaration`/`missing-name`.
 
-A source span is `{artifact, start, end}`. `artifact` is the artifact id, such
-as `Order`. `start` and `end` are zero-based byte offsets in the artifact
-file. The span records where a declaration came from. It appears in
-diagnostics and provenance and is never a key member; the artifact id enters a
-key only as the type's identity segment below.
+A node's `origin` is the FCD origin object (`common.schema.json` `$defs.origin`): a
+source origin (`sourceIdentity`, `path`, `startLine`, `startColumn` and optional
+`endLine`, `endColumn`) or a generated origin (`generatorIdentity`,
+`generatorVersion`, `inputIdentities`, no span). It appears in diagnostics and
+provenance verbatim and is never a key member; the artifact id enters a key only
+as the type's identity segment below.
 
 A model-declaring artifact is an artifact whose type is an object type of any
 spec-objects module (spec-objects-architecture, spec-objects-business, …), and
@@ -121,8 +121,8 @@ A population node names its construct the same way. The kind name and module
 select the construct entry only and never select a meaning. A type definition
 or population node whose `kind` names no construct entry, or whose construct
 has no `meaning` or a `meaning` outside FR-208, is
-`invalid_model_binding`/`malformed-declaration` with its IR node identity,
-artifact and span.
+`invalid_model_binding`/`malformed-declaration` with its IR node identity
+and `origin`.
 
 ### Declaration kinds
 
@@ -146,11 +146,11 @@ and never a proof obligation.
 
 Rule `quire.model.features/v1` checks each declaration after intake. Each row
 is checked for every declaration of its kind, ascending by declaration key.
-Every refusal names the IR node identity, the artifact and the span.
+Every refusal names the IR node identity and its FCD `origin`.
 
 | Feature | Rule | Refusal |
 | --- | --- | --- |
-| Identity | A type definition's identity, including a population's and a systems construct's, is `ix://<package identity>/<artifact id>`. A member's identity is its owner's identity, `/` and the member name. The artifact title is `displayName`, for presentation only, and the span is the declaration's origin; neither is part of any identity. Two nodes with one identity are not allowed. | `invalid_model_binding`/`conflicting-binding` |
+| Identity | A type definition's identity, including a population's and a systems construct's, is `ix://<package identity>/<artifact id>`. Only a field, an operation and an operation parameter nest under their owner (`<owner identity>/<member>`, `<operation identity>/<param>`); a relationship, a clause and every other node kind take their own global slot, as FR-154 states from FCD FR-095 (`relationship/<Name>-<verb>-<TargetName>`, `clause/<Name>-<clauseId>`). The artifact title is `displayName`, for presentation only, and the declaration's `origin` is not part of any identity. Two nodes with one identity are not allowed. | `invalid_model_binding`/`conflicting-binding` |
 | Supertypes | Every `supertypes[]` entry of an object type names an object type of the package, and every entry of a record value type, event type, state machine or process names a node of its own meaning (FR-208); an entry naming a node of another meaning is refused. The supertype graph is acyclic; phase 3 checks it. A persistence interface or namespace with a non-empty `supertypes` is refused and its entries are not checked further. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `unsupported_construct`/`declaration-form`; `invalid_model_binding`/`specialization-cycle` in phase 3 |
 | Abstract | An abstract type has no direct instances. A population member whose most-specific type is abstract is refused. Dispatch covers only concrete subtypes. | `invalid_runtime_input`/`abstract-instance` |
 | Fields | `typeRef` names a native value type, or a type of the package; a `typeRef` naming an event type, state machine, process, persistence interface or namespace (FR-208) is refused. `multiplicity` has `lower <= upper`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `invalid_model_binding`/`unpreserved-model-meaning` |

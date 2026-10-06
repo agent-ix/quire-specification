@@ -119,7 +119,12 @@ package selects at most one domain package per identity (FR-321), so the owner's
 `identity` scopes a `ModelOwner` node's identity to its declaring domain
 package. A node id depends only on content: an unchanged source- or
 definition-owned declaration retains its identity across unrelated document
-changes. Qualified names are arrays of ASCII identifier segments.
+changes. A structural node carries its `owner` member (`SourceOwner` on a
+declared node, `ModelOwner` on a model declaration node or clause function, none
+elsewhere), also on its `identity_projection` entry, so a reader re-derives
+every structural key from the package alone. `fixtures/positive-two-owners-a.json`
+and `-b.json` declare the same records under two `SourceOwner`s and differ in
+every owner-keyed node id. Qualified names are arrays of ASCII identifier segments.
 Arbitrary-precision integers/rationals use canonical decimal strings with no
 leading zero and no `-0`, a positive denominator, greatest-common-divisor one
 and exactly `0/1` for zero. Unordered enum members and dimension terms are

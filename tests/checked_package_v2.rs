@@ -39,6 +39,8 @@ const POSITIVE_UNION_NODES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-union-nodes.json");
 const POSITIVE_RECURSIVE_RECORDS: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-recursive-records.json");
+const MODEL_MEMBER_TYPE_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/model-member-type-vectors.json");
 const ADVERSE: &str = include_str!("../proposals/checked-package-v2/fixtures/adverse.json");
 const DEPENDENCY_SELECTION_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/dependency-selection-vectors.json");
@@ -723,6 +725,12 @@ enum OperationRefusal {
     MemberMismatch,
     ModeTypeMismatch,
     OperatorIneligible,
+    /// `missing_declaration`/`missing-name`: a `relationship_end` member names
+    /// an end its relationship does not name.
+    MissingName,
+    /// `ambiguous_declaration`/`ambiguous-name`: a `relationship_end` member
+    /// names a role both ends of its relationship carry.
+    AmbiguousName,
 }
 
 impl OperationRefusal {
@@ -749,12 +757,16 @@ impl OperationRefusal {
             Self::MemberMismatch => "operation-member-mismatch",
             Self::ModeTypeMismatch => "operation-mode-type-mismatch",
             Self::OperatorIneligible => "operator-ineligible",
+            Self::MissingName => "missing-name",
+            Self::AmbiguousName => "ambiguous-name",
         }
     }
 
     fn code(self) -> &'static str {
         match self {
             Self::OperatorIneligible => "ill_typed",
+            Self::MissingName => "missing_declaration",
+            Self::AmbiguousName => "ambiguous_declaration",
             Self::UnknownOperation
             | Self::ClassMismatch
             | Self::LawMissing
@@ -767,6 +779,13 @@ impl OperationRefusal {
     }
 
     fn from_cause(cause: &str) -> Option<Self> {
+        // `MissingName` and `AmbiguousName` are the relationship-end refusals, outside the nine
+        // operation causes whose pairing and mutations the tests enumerate.
+        for outside in [Self::MissingName, Self::AmbiguousName] {
+            if cause == outside.cause() {
+                return Some(outside);
+            }
+        }
         Self::ALL
             .into_iter()
             .find(|candidate| candidate.cause() == cause)
@@ -870,6 +889,8 @@ struct OperationOracle<'a> {
     catalog: &'a Value,
     lock: &'a Value,
     nodes: &'a [Value],
+    /// The admitted document of each `model_selections` row.
+    documents: Vec<Value>,
 }
 
 impl<'a> OperationOracle<'a> {
@@ -880,6 +901,12 @@ impl<'a> OperationOracle<'a> {
             nodes: package["semantic_graph"]["nodes"]
                 .as_array()
                 .expect("package nodes are an array"),
+            documents: package["lock"]["model_selections"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .filter_map(|row| selected_model_document(package, row["identity"].as_str()?))
+                .collect(),
         }
     }
 
@@ -1088,6 +1115,45 @@ impl<'a> OperationOracle<'a> {
         }
     }
 
+    /// The relationship the selected document declares for a model
+    /// declaration node, or `None` when the node is not a model-owned
+    /// relationship the document declares.
+    fn model_relationship(&self, relationship: &Value) -> Option<&Value> {
+        if !(is_model_declaration(relationship) && relationship["node_tag"] == "relation") {
+            return None;
+        }
+        let owner = &relationship["owner"];
+        self.documents
+            .iter()
+            .filter(|document| document["identity"] == owner["identity"])
+            .flat_map(|document| document["relationships"].as_array().into_iter().flatten())
+            .find(|declared| declared["node"] == owner["node"])
+    }
+
+    /// The refusal of a `relationship_end` member whose model-owned
+    /// relationship does not name its role exactly once (FR-322 "Model-owned
+    /// members" step 3): `missing-name` for none, including an absent inverse
+    /// (no name is synthesized), `ambiguous-name` for two.
+    fn end_lookup_refusal(&self, member: &Value) -> Option<OperationRefusal> {
+        if member["kind"] != "relationship_end" {
+            return None;
+        }
+        let relationship = self
+            .node(&member["declaration"])
+            .and_then(|relationship| self.model_relationship(relationship))?;
+        let name = member["name"].as_str()?;
+        match relationship["ends"]
+            .as_array()?
+            .iter()
+            .filter(|end| end["role"] == name)
+            .count()
+        {
+            0 => Some(OperationRefusal::MissingName),
+            1 => None,
+            _ => Some(OperationRefusal::AmbiguousName),
+        }
+    }
+
     /// Result descriptor of a member selection, resolved against its declaration.
     fn member_descriptor(&self, member: &Value) -> Option<Descriptor> {
         let declaration = &member["declaration"];
@@ -1117,6 +1183,27 @@ impl<'a> OperationOracle<'a> {
             }
             "relationship_end" => {
                 let relationship = self.node(declaration)?;
+                if let Some(declared) = self.model_relationship(relationship) {
+                    // A model-owned relationship names no end in its body; its
+                    // named ends are the document's: `sourceEnd.role` and, when
+                    // declared, `targetEnd.role`. FR-152: traversal from source
+                    // to target needs `source-to-target`, `bidirectional` or
+                    // `undirected`, and from target to source
+                    // `target-to-source`, `bidirectional` or `undirected`.
+                    let name = member["name"].as_str()?;
+                    let end = declared["ends"]
+                        .as_array()?
+                        .iter()
+                        .find(|end| end["role"] == name)?;
+                    let needed = if end["end"] == "source" {
+                        "source-to-target"
+                    } else {
+                        "target-to-source"
+                    };
+                    return [needed, "bidirectional", "undirected"]
+                        .contains(&declared["direction"].as_str()?)
+                        .then(|| Descriptor::family("reference"));
+                }
                 (relationship["node_tag"] == "relation"
                     && relationship["semantic_form"] == "relationship")
                     .then(|| {
@@ -1154,6 +1241,7 @@ impl<'a> OperationOracle<'a> {
         form: &str,
         operation: &Value,
         arguments: &[Descriptor],
+        terms: &[Value],
     ) -> Option<Descriptor> {
         let indexed = |prefix: &str| {
             form.strip_prefix(prefix)
@@ -1175,6 +1263,28 @@ impl<'a> OperationOracle<'a> {
                 .flatten();
         }
         match form {
+            // FR-440: the type every arm body has: every arm body agrees, else
+            // there is no such type. `union_arms` fixes that the arms are the
+            // union's own.
+            "arm_body" => {
+                let bodies = terms
+                    .get(1..)?
+                    .iter()
+                    .map(|arm| self.descriptor(&arm["value"]["members"][1]))
+                    .collect::<Option<Vec<_>>>()?;
+                let first = bodies.first()?;
+                bodies
+                    .iter()
+                    .all(|body| {
+                        body.family == first.family
+                            && match (&body.ty, &first.ty) {
+                                (Some(left), Some(right)) => self.same_type(left, right),
+                                (None, None) => true,
+                                _ => false,
+                            }
+                    })
+                    .then(|| first.clone())
+            }
             "member" => self.member_descriptor(&operation["member"]),
             "absence" => Some(Descriptor::family(
                 if operation["mode"]["value"] == "empty" {
@@ -1402,11 +1512,50 @@ impl<'a> OperationOracle<'a> {
         conversion_class(&self.numeric_bounds(source)?, &self.numeric_bounds(target)?)
     }
 
+    /// FR-440's `union_arms`: `arms` are exactly one arm per member of
+    /// `union`, in member declaration order, each named by its member, each
+    /// binder aggregate holding as many parameter references as the member's
+    /// payload arity, each binder's `semantic_type` the payload type there.
+    fn union_arms_hold(&self, union: &Value, arms: &[Value]) -> bool {
+        let Some(members) = self
+            .resolve(union)
+            .filter(|node| node["semantic_form"] == "union")
+            .and_then(|node| node["body"]["members"].as_array())
+        else {
+            return false;
+        };
+        members.len() == arms.len()
+            && members.iter().zip(arms).all(|(member, arm)| {
+                let payloads = member["value"]["members"].as_array().map(Vec::as_slice);
+                let arm_members = arm["value"]["members"].as_array().map(Vec::as_slice);
+                let binders = arm_members
+                    .filter(|parts| parts.len() == 2)
+                    .and_then(|parts| parts[0]["members"].as_array());
+                arm["term"] == "binding"
+                    && arm["name"] == member["name"]
+                    && payloads.zip(binders).is_some_and(|(payloads, binders)| {
+                        payloads.len() == binders.len()
+                            && payloads.iter().zip(binders).all(|(payload, binder)| {
+                                Self::reference_target(payload)
+                                    .zip(self.resolve(&binder["target"]))
+                                    .is_some_and(|(payload_type, parameter)| {
+                                        binder["term"] == "reference"
+                                            && self.same_type(
+                                                payload_type,
+                                                &parameter["semantic_type"],
+                                            )
+                                    })
+                            })
+                    })
+            })
+    }
+
     fn constraint_holds(
         &self,
         constraint: &Value,
         operation: &Value,
         arguments: &[Descriptor],
+        terms: &[Value],
         rest_start: usize,
     ) -> bool {
         let operand = |slot: usize| {
@@ -1484,6 +1633,11 @@ impl<'a> OperationOracle<'a> {
                     })
                 })
             }
+            Some("union_arms") => operand(0)
+                .and_then(|scrutinee| scrutinee.ty.as_ref())
+                .is_some_and(|union| {
+                    self.union_arms_hold(union, terms.get(1..).unwrap_or_default())
+                }),
             Some("uniform_rest") => arguments[rest_start.min(arguments.len())..]
                 .windows(2)
                 .all(|pair| pair[0].family == pair[1].family),
@@ -1581,10 +1735,11 @@ impl<'a> OperationOracle<'a> {
             return Err(Refusal::MemberMismatch);
         }
 
-        let arguments = term["arguments"]
+        let terms = term["arguments"]
             .as_array()
             .map(Vec::as_slice)
-            .unwrap_or_default()
+            .unwrap_or_default();
+        let arguments = terms
             .iter()
             .map(|argument| self.argument_descriptor(argument))
             .collect::<Result<Vec<_>, _>>()?
@@ -1595,7 +1750,7 @@ impl<'a> OperationOracle<'a> {
             .expect("catalog result form is a string");
         let result = arguments
             .as_deref()
-            .and_then(|arguments| self.result_descriptor(form, operation, arguments))
+            .and_then(|arguments| self.result_descriptor(form, operation, arguments, terms))
             .and_then(|derived| self.declared_result(term, derived));
         if let (Some(kind), Some(arguments), Some(result)) = (
             entry["mode"].as_str(),
@@ -1621,6 +1776,9 @@ impl<'a> OperationOracle<'a> {
             }
         }
 
+        if let Some(refusal) = self.end_lookup_refusal(member) {
+            return Err(refusal);
+        }
         let arguments = arguments.ok_or(Refusal::OperatorIneligible)?;
         let positions = string_list(&entry["operands"], "catalog operand positions");
         let rest = entry["rest"].as_str();
@@ -1644,7 +1802,7 @@ impl<'a> OperationOracle<'a> {
             .expect("catalog constraints are an array")
             .iter()
             .all(|constraint| {
-                self.constraint_holds(constraint, operation, &arguments, positions.len())
+                self.constraint_holds(constraint, operation, &arguments, terms, positions.len())
             });
         let result = result.ok_or(Refusal::OperatorIneligible)?;
         let expected_leaves = match entry["leaves"].as_str() {
@@ -1995,32 +2153,11 @@ fn application_node_key_is_current(node: &Value, nodes: &[Value]) -> bool {
     })
 }
 
-/// Source owner of a declared node: the source its `declaration` occurrence
-/// names, as `{kind: "source", authority, identity}`.
-fn declaring_source_owner(package: &Value, node: &Value) -> Option<Value> {
-    package["source_map"]
-        .as_array()?
-        .iter()
-        .find(|entry| {
-            entry["node_id"] == node["node_id"]
-                && entry["role"] == "declaration"
-                && entry["ordinal"] == 0
-        })
-        .map(|entry| {
-            let source = &entry["regions"][0]["source"];
-            json!({
-                "kind": "source",
-                "authority": source["authority"],
-                "identity": source["identity"],
-            })
-        })
-}
-
-/// The `quire.structural-node/v1` preimage (QSL FR-092) of a node that is
-/// neither nominal nor application-bearing: the node's own members, `owner`
-/// exactly when it is declared, and a `null` `semantic_type` when the node is
-/// its own type.
-fn structural_node_preimage(package: &Value, node: &Value) -> Option<Value> {
+/// The `quire.structural-node/v1` preimage (QSL FR-092, FR-094) of a node that
+/// is neither nominal nor application-bearing: the node's own members, its
+/// wire `owner` exactly when it carries one, and a `null` `semantic_type`
+/// when the node is its own type.
+fn structural_node_preimage(node: &Value) -> Option<Value> {
     if node.get("nominal_identity_preimage").is_some()
         || node.get("recursion_group").is_some()
         || !application_terms(&node["body"]).is_empty()
@@ -2042,15 +2179,15 @@ fn structural_node_preimage(package: &Value, node: &Value) -> Option<Value> {
         "recursion": null,
         "body": node["body"],
     });
-    if !preimage["declaration"].is_null() {
-        preimage["owner"] = declaring_source_owner(package, node)?;
+    if let Some(owner) = node.get("owner") {
+        preimage["owner"] = owner.clone();
     }
     Some(preimage)
 }
 
 /// Whether a structural node retains the JCS digest of its preimage.
-fn structural_node_key_is_current(package: &Value, node: &Value) -> bool {
-    structural_node_preimage(package, node).is_some_and(|preimage| {
+fn structural_node_key_is_current(node: &Value) -> bool {
+    structural_node_preimage(node).is_some_and(|preimage| {
         node["node_id"]["digest"].as_str() == Some(unqualified_jcs_sha256(&preimage).as_str())
     })
 }
@@ -2078,23 +2215,45 @@ fn is_derived_shape(node: &Value) -> bool {
 /// A derived-shape node is current when its key is its preimage digest and a
 /// scalar or composite node is its own `semantic_type`, which the preimage
 /// records as `null`.
-fn derived_shape_key_is_current(package: &Value, node: &Value) -> bool {
+fn derived_shape_key_is_current(node: &Value) -> bool {
     let self_typed =
         node["node_tag"] == "bounded_domain" || node["semantic_type"] == node["node_id"];
-    self_typed && structural_node_key_is_current(package, node)
+    self_typed && structural_node_key_is_current(node)
+}
+
+/// A model declaration node (QSL FR-094): no `declaration`, the form of an
+/// object type, a systems interface or a relationship.
+fn is_model_declaration(node: &Value) -> bool {
+    node.get("declaration").is_none()
+        && node.get("nominal_identity_preimage").is_none()
+        && matches!(
+            (node["node_tag"].as_str(), node["semantic_form"].as_str()),
+            (Some("model"), Some("object_type" | "systems_interface"))
+                | (Some("relation"), Some("relationship"))
+        )
+}
+
+/// A model declaration node is current only when it is its own type, carries
+/// no `recursion_group`, has the empty aggregate body and retains the digest
+/// of its closed `ModelDeclarationNode` preimage.
+fn model_declaration_key_is_current(node: &Value) -> bool {
+    node["semantic_type"] == node["node_id"]
+        && node.get("recursion_group").is_none()
+        && node["body"] == json!({"term": "aggregate", "members": []})
+        && structural_node_key_is_current(node)
 }
 
 /// A node QSL FR-092 keys by `quire.structural-node/v1` with no input but the
-/// package itself: no nominal preimage, no application in its body, and not a
-/// model declaration node (a `model` or `relation` node with no
-/// `declaration`, keyed with its `ModelOwner` by the "Model-owned members"
-/// steps).
+/// node itself: no nominal preimage, no application in its body, and not a
+/// `correspondence`/`abstraction_relation` node, which FR-451 keys by its own
+/// `quire.abstraction-relation-node/v1` preimage. Model declaration nodes and
+/// clause functions are included: their key is built from their wire `owner`.
 fn is_rekeyed_structural_node(node: &Value) -> bool {
-    let model_declaration = matches!(node["node_tag"].as_str(), Some("model" | "relation"))
-        && node.get("declaration").is_none();
+    let abstraction_relation =
+        node["node_tag"] == "correspondence" && node["semantic_form"] == "abstraction_relation";
     node.get("nominal_identity_preimage").is_none()
         && application_terms(&node["body"]).is_empty()
-        && !model_declaration
+        && !abstraction_relation
 }
 
 /// The members of `label`'s recursion group, in graph order: a member's
@@ -2111,11 +2270,7 @@ fn recursion_group_members<'a>(nodes: &'a [Value], label: &str) -> Vec<&'a Value
 /// at `member`, in which every position naming a member of the group, a body
 /// `reference` or the `semantic_type`, becomes `{term: "group_reference",
 /// ordinal}`. `None` when a declared member has no declaring source.
-fn group_local_structural_preimage(
-    package: &Value,
-    group: &[&Value],
-    member: usize,
-) -> Option<Value> {
+fn group_local_structural_preimage(group: &[&Value], member: usize) -> Option<Value> {
     let ordinal_of = |id: &Value| group.iter().position(|node| node["node_id"] == *id);
     fn in_group(term: &Value, ordinal_of: &dyn Fn(&Value) -> Option<usize>) -> Value {
         match term {
@@ -2158,8 +2313,8 @@ fn group_local_structural_preimage(
         "recursion": {"size": group.len(), "ordinal": member},
         "body": in_group(&node["body"], &ordinal_of),
     });
-    if !preimage["declaration"].is_null() {
-        preimage["owner"] = declaring_source_owner(package, node)?;
+    if let Some(owner) = node.get("owner") {
+        preimage["owner"] = owner.clone();
     }
     Some(preimage)
 }
@@ -2168,13 +2323,13 @@ fn group_local_structural_preimage(
 /// is the digest of the group-local preimage of ordinal `k`, structural or
 /// application (an in-group application node's group-local preimage is its
 /// FR-322 preimage).
-fn recursion_group_digest(package: &Value, nodes: &[Value], group: &[&Value]) -> Option<String> {
+fn recursion_group_digest(nodes: &[Value], group: &[&Value]) -> Option<String> {
     let local_keys = group
         .iter()
         .enumerate()
         .map(|(member, node)| {
             if application_terms(&node["body"]).is_empty() {
-                group_local_structural_preimage(package, group, member)
+                group_local_structural_preimage(group, member)
             } else {
                 application_node_preimage(node, nodes)
             }
@@ -2186,13 +2341,8 @@ fn recursion_group_digest(package: &Value, nodes: &[Value], group: &[&Value]) ->
 
 /// Key of the structural group member at `member` under the group digest
 /// `group_digest`: its group-local preimage with `recursion.group` set.
-fn group_member_key(
-    package: &Value,
-    group: &[&Value],
-    member: usize,
-    group_digest: &str,
-) -> Option<String> {
-    let mut preimage = group_local_structural_preimage(package, group, member)?;
+fn group_member_key(group: &[&Value], member: usize, group_digest: &str) -> Option<String> {
+    let mut preimage = group_local_structural_preimage(group, member)?;
     preimage["recursion"]["group"] = json!(group_digest);
     Some(unqualified_jcs_sha256(&preimage))
 }
@@ -2201,7 +2351,7 @@ fn group_member_key(
 /// `recursion_group` when its key is the digest of its group-local preimage
 /// with that label as `recursion.group`. Whether the label is the group's
 /// digest is the reader's next check.
-fn group_member_key_is_current(package: &Value, nodes: &[Value], node: &Value) -> bool {
+fn group_member_key_is_current(nodes: &[Value], node: &Value) -> bool {
     let Some(label) = node["recursion_group"].as_str() else {
         return false;
     };
@@ -2209,7 +2359,7 @@ fn group_member_key_is_current(package: &Value, nodes: &[Value], node: &Value) -
     group
         .iter()
         .position(|member| member["node_id"] == node["node_id"])
-        .and_then(|member| group_member_key(package, &group, member, label))
+        .and_then(|member| group_member_key(&group, member, label))
         .is_some_and(|key| node["node_id"]["digest"].as_str() == Some(key.as_str()))
 }
 
@@ -2218,7 +2368,7 @@ fn group_member_key_is_current(package: &Value, nodes: &[Value], node: &Value) -
 /// own preimage (a derived shape also self-typed), ascending by node-id
 /// digest; then each recursion group whose retained label is not its
 /// recomputed group digest, reported at its lowest node-id digest member.
-fn stale_derived_shape_node<'a>(package: &Value, nodes: &'a [Value]) -> Option<&'a Value> {
+fn stale_derived_shape_node(nodes: &[Value]) -> Option<&Value> {
     let mut keyed = nodes
         .iter()
         .filter(|node| is_rekeyed_structural_node(node))
@@ -2226,11 +2376,13 @@ fn stale_derived_shape_node<'a>(package: &Value, nodes: &'a [Value]) -> Option<&
     keyed.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
     let stale_member = keyed.into_iter().find(|node| {
         if node.get("recursion_group").is_some() {
-            !group_member_key_is_current(package, nodes, node)
+            !group_member_key_is_current(nodes, node)
+        } else if is_model_declaration(node) {
+            !model_declaration_key_is_current(node)
         } else if is_derived_shape(node) {
-            !derived_shape_key_is_current(package, node)
+            !derived_shape_key_is_current(node)
         } else {
-            !structural_node_key_is_current(package, node)
+            !structural_node_key_is_current(node)
         }
     });
     stale_member.or_else(|| {
@@ -2241,9 +2393,7 @@ fn stale_derived_shape_node<'a>(package: &Value, nodes: &'a [Value]) -> Option<&
             .into_iter()
             .filter_map(|label| {
                 let group = recursion_group_members(nodes, label);
-                if recursion_group_digest(package, nodes, &group)
-                    .is_some_and(|digest| digest == label)
-                {
+                if recursion_group_digest(nodes, &group).is_some_and(|digest| digest == label) {
                     return None;
                 }
                 group
@@ -2252,6 +2402,170 @@ fn stale_derived_shape_node<'a>(package: &Value, nodes: &'a [Value]) -> Option<&
             })
             .min_by_key(|node| node["node_id"]["digest"].as_str())
     })
+}
+
+/// The declarations of the admitted document of the `model_selections` row
+/// selecting `identity`, by FR-322 "Model-owned members" step 1: the
+/// caller-supplied document whose RFC 8785 digest is the row's. The document
+/// is the package's own `model_bindings.domain_package` when it carries one
+/// (already in projection form), else the published `acme/orders` semantic IR
+/// document, whose declarations are the `domain_package` projection the
+/// vectors derive from it.
+fn selected_model_document(package: &Value, identity: &str) -> Option<Value> {
+    let row = package["lock"]["model_selections"]
+        .as_array()?
+        .iter()
+        .find(|row| row["identity"] == identity)?;
+    let selects = |document: &Value| {
+        row["digest_domain"] == "sha256-jcs"
+            && row["digest"].as_str() == Some(unqualified_jcs_sha256(document).as_str())
+    };
+    if let Some(own) = package.pointer("/model_bindings/domain_package")
+        && own["identity"] == identity
+        && selects(own)
+    {
+        return Some(own.clone());
+    }
+    let document = parsed_fixture(DOMAIN_DOCUMENT);
+    (document["package"]["identity"] == identity && selects(&document))
+        .then(|| parsed_fixture(MODEL_MEMBER_TYPE_VECTORS)["domain_package"].clone())
+}
+
+/// A clause function's clause kind: the text literal of the one `clause`
+/// binding of its body (QSL FR-094): `invariant`, `precondition` or `body`.
+/// `None` when the binding is absent, repeated or not a text literal.
+fn clause_kind(node: &Value) -> Option<&str> {
+    let mut bindings = node["body"]["members"]
+        .as_array()?
+        .iter()
+        .filter(|member| member["term"] == "binding" && member["name"] == "clause");
+    let binding = bindings.next().filter(|_| bindings.next().is_none())?;
+    (binding["value"]["term"] == "literal" && binding["value"]["value_kind"] == "text")
+        .then(|| binding["value"]["value"].as_str())
+        .flatten()
+}
+
+/// Whether `document` declares the model-owned node `owner_node` as the kind
+/// the wire node stands for: on a model declaration node, an object type
+/// (`object_type`, no `interfaceFeatures`), an interface (`systems_interface`)
+/// or a relationship; on a clause function, an operation member of an object
+/// type, or an object type itself for an invariant clause.
+fn document_declares_owner(document: &Value, node: &Value, owner_node: &str) -> bool {
+    let object_types = document["object_types"].as_array().into_iter().flatten();
+    let declares_object_type = |interface: bool| {
+        object_types.clone().any(|object| {
+            object["node"] == owner_node && object["interfaceFeatures"].is_null() != interface
+        })
+    };
+    match (node["node_tag"].as_str(), node["semantic_form"].as_str()) {
+        (Some("model"), Some("object_type")) => declares_object_type(false),
+        (Some("model"), Some("systems_interface")) => declares_object_type(true),
+        (Some("relation"), Some("relationship")) => document["relationships"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .any(|relationship| relationship["node"] == owner_node),
+        (Some("function"), _) => match clause_kind(node) {
+            // An invariant clause is owned by its object type.
+            Some("invariant") => object_types.clone().any(|object| {
+                object["node"] == owner_node && object["interfaceFeatures"].is_null()
+            }),
+            // A precondition or body clause is owned by an operation member
+            // of an object type, the operation's context.
+            Some("precondition" | "body") => object_types.clone().any(|object| {
+                object["operations"]
+                    .as_array()
+                    .into_iter()
+                    .flatten()
+                    .any(|operation| {
+                        operation["name"].as_str().is_some_and(|name| {
+                            owner_node
+                                == format!("{}/{name}", object["node"].as_str().unwrap_or_default())
+                        })
+                    })
+            }),
+            _ => false,
+        },
+        _ => false,
+    }
+}
+
+/// FR-322's derived-shape key stage, owner join: every owner-bearing node,
+/// ascending by retained node-id digest. A `SourceOwner` joins a
+/// `lock.sources` entry (`missing-selection` at the node) and agrees with the
+/// source of every region of the node's `declaration` occurrence
+/// (`invalid-value` at that source-map entry); a `ModelOwner` joins a
+/// `model_selections` row whose admitted document declares its `node`
+/// (`missing-selection` at the node).
+fn owner_join_refusal(package: &Value, nodes: &[Value]) -> Result<(), ReadRefusal> {
+    let projection = package["identity_preimage"]["identity_projection"]
+        .as_array()
+        .map(Vec::as_slice)
+        .unwrap_or_default();
+    if let Some(index) = nodes
+        .iter()
+        .zip(projection)
+        .position(|(node, entry)| node.get("owner") != entry.get("owner"))
+    {
+        return Err(ReadRefusal::InvalidOwnerValue(format!(
+            "/identity_preimage/identity_projection/{index}/owner"
+        )));
+    }
+    let mut owned = nodes
+        .iter()
+        .filter(|node| node.get("owner").is_some())
+        .collect::<Vec<_>>();
+    owned.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
+    for node in owned {
+        let owner = &node["owner"];
+        let unjoined = ReadRefusal::OwnerSelection(node["node_id"].clone());
+        match owner["kind"].as_str() {
+            Some("source") => {
+                let same_source = |source: &Value| {
+                    source["authority"] == owner["authority"]
+                        && source["identity"] == owner["identity"]
+                };
+                if !package["lock"]["sources"]
+                    .as_array()
+                    .is_some_and(|sources| sources.iter().any(same_source))
+                {
+                    return Err(unjoined);
+                }
+                let moved = package["source_map"]
+                    .as_array()
+                    .into_iter()
+                    .flatten()
+                    .enumerate()
+                    .find(|(_, entry)| {
+                        entry["node_id"] == node["node_id"]
+                            && entry["role"] == "declaration"
+                            && entry["regions"].as_array().is_some_and(|regions| {
+                                regions.iter().any(|region| !same_source(&region["source"]))
+                            })
+                    });
+                if let Some((index, _)) = moved {
+                    return Err(ReadRefusal::InvalidOwnerValue(format!(
+                        "/source_map/{index}"
+                    )));
+                }
+            }
+            Some("model") => {
+                let declared = owner["identity"]
+                    .as_str()
+                    .zip(owner["node"].as_str())
+                    .is_some_and(|(identity, owner_node)| {
+                        selected_model_document(package, identity).is_some_and(|document| {
+                            document_declares_owner(&document, node, owner_node)
+                        })
+                    });
+                if !declared {
+                    return Err(unjoined);
+                }
+            }
+            _ => return Err(unjoined),
+        }
+    }
+    Ok(())
 }
 
 /// Both cross-field constraints binding an application-bearing node.
@@ -2266,10 +2580,21 @@ fn application_node_is_valid(node: &Value, nodes: &[Value]) -> bool {
 #[derive(Clone, Debug, PartialEq)]
 enum ReadRefusal {
     GraphShape(Value),
+    /// `missing_declaration`/`missing-selection` at a node whose `owner` the
+    /// lock does not select or whose selected document does not declare it.
+    OwnerSelection(Value),
+    /// `invalid_package`/`invalid-value` at a `/source_map/{i}` entry whose
+    /// region names a source other than its declared node's `SourceOwner`, or
+    /// at `/identity_preimage/identity_projection/{i}/owner` when that entry's
+    /// owner differs from its node's.
+    InvalidOwnerValue(String),
     StaleNodeKey(Value),
     Declaration(DeclarationRefusal, Value),
     Frame(FrameRefusal, Value),
     State(StateRefusal, Value),
+    /// `invalid_semantic_graph` at an `abstraction_relation` node whose
+    /// identity step (FR-451, step 1) fails.
+    Abstraction(Value),
     Operation(OperationRefusal),
 }
 
@@ -2320,7 +2645,8 @@ fn read_package_semantics(package: &Value, catalog: &Value) -> Result<(), ReadRe
     {
         return Err(ReadRefusal::StaleNodeKey(node["node_id"].clone()));
     }
-    if let Some(node) = stale_derived_shape_node(package, nodes) {
+    owner_join_refusal(package, nodes)?;
+    if let Some(node) = stale_derived_shape_node(nodes) {
         return Err(ReadRefusal::StaleNodeKey(node["node_id"].clone()));
     }
     package_declaration_refusal(package)
@@ -2329,7 +2655,53 @@ fn read_package_semantics(package: &Value, catalog: &Value) -> Result<(), ReadRe
         .map_err(|(refusal, locus)| ReadRefusal::Frame(refusal, locus))?;
     package_state_refusal(package)
         .map_err(|(refusal, locus)| ReadRefusal::State(refusal, locus))?;
+    abstraction_identity_refusal(nodes).map_err(ReadRefusal::Abstraction)?;
     package_operations_refusal(package, catalog).map_err(ReadRefusal::Operation)
+}
+
+/// FR-451's abstraction step 1 (Identity) over every
+/// `correspondence`/`abstraction_relation` node, ascending by node-id digest:
+/// the node's key is the digest of `{version, body}`, its `semantic_type` is
+/// its own id and its `dependencies` are exactly the unique digest-ascending
+/// `type`, `population` and `context` targets of its body.
+fn abstraction_identity_refusal(nodes: &[Value]) -> Result<(), Value> {
+    let mut relations = nodes
+        .iter()
+        .filter(|node| {
+            node["node_tag"] == "correspondence" && node["semantic_form"] == "abstraction_relation"
+        })
+        .collect::<Vec<_>>();
+    relations.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
+    for node in relations {
+        let body = &node["body"];
+        let key = unqualified_jcs_sha256(&json!({
+            "version": "quire.abstraction-relation-node/v1",
+            "body": body,
+        }));
+        let mut expected = [
+            ("objects", "type"),
+            ("populations", "population"),
+            ("frames", "context"),
+        ]
+        .into_iter()
+        .flat_map(|(list, member)| {
+            body[list]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .map(move |entry| entry[member].clone())
+        })
+        .collect::<Vec<_>>();
+        expected.sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+        expected.dedup();
+        let holds = node["node_id"]["digest"].as_str() == Some(key.as_str())
+            && node["semantic_type"] == node["node_id"]
+            && node["dependencies"].as_array() == Some(&expected);
+        if !holds {
+            return Err(node["node_id"].clone());
+        }
+    }
+    Ok(())
 }
 
 /// Semantic refusal of a package's `declaration` members, in the normative
@@ -3941,7 +4313,7 @@ fn rekey_stale_nodes(package: &mut Value) -> BTreeMap<String, String> {
             }
             let derived = if application_terms(&node["body"]).is_empty() {
                 is_rekeyed_structural_node(node)
-                    .then(|| structural_node_preimage(package, node))
+                    .then(|| structural_node_preimage(node))
                     .flatten()
             } else {
                 application_node_preimage(node, nodes)
@@ -4209,18 +4581,7 @@ fn derive_identity_preimage(package: &Value) -> Value {
 #[test]
 fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
-    for (fixture, bytes) in [
-        ("positive-all-families", POSITIVE_ALL_FAMILIES),
-        ("positive-nominal-identities", POSITIVE_NOMINAL_IDENTITIES),
-        (
-            "positive-operation-identities",
-            POSITIVE_OPERATION_IDENTITIES,
-        ),
-        ("positive-clause-operations", POSITIVE_CLAUSE_OPERATIONS),
-        ("positive-control-operations", POSITIVE_CONTROL_OPERATIONS),
-        ("positive-recursive-records", POSITIVE_RECURSIVE_RECORDS),
-    ] {
-        let package = parsed_fixture(bytes);
+    for (fixture, package) in positive_fixtures() {
         assert_eq!(
             derive_identity_preimage(&package),
             package["identity_preimage"],
@@ -10040,10 +10401,10 @@ fn tc_233_positive_fixtures_carry_derived_structural_keys() {
             .as_array()
             .expect("package nodes are an array")
         {
-            if structural_node_preimage(&package, node).is_some() {
+            if is_rekeyed_structural_node(node) && structural_node_preimage(node).is_some() {
                 structural += 1;
                 assert!(
-                    structural_node_key_is_current(&package, node),
+                    structural_node_key_is_current(node),
                     "{name}: {} {} keeps a key that is not its preimage digest",
                     node["node_tag"],
                     node["semantic_form"]
@@ -10219,12 +10580,12 @@ fn tc_233_recursive_record_fixture_carries_derived_group_keys() {
             .collect::<Vec<_>>();
         // The group label is the digest of the members' group-local keys.
         assert_eq!(
-            recursion_group_digest(&package, nodes, &group).as_deref(),
+            recursion_group_digest(nodes, &group).as_deref(),
             Some(label)
         );
         for (member, node) in group.iter().enumerate() {
             assert_eq!(
-                json!(group_member_key(&package, &group, member, label)),
+                json!(group_member_key(&group, member, label)),
                 node["node_id"]["digest"],
                 "{} {} keys from its group preimage",
                 node["node_tag"],
@@ -10237,8 +10598,7 @@ fn tc_233_recursive_record_fixture_carries_derived_group_keys() {
         .filter(|node| node.get("recursion_group").is_none())
     {
         assert!(
-            application_terms(&node["body"]).is_empty()
-                && structural_node_key_is_current(&package, node),
+            application_terms(&node["body"]).is_empty() && structural_node_key_is_current(node),
             "{} {} is keyed outside every group",
             node["node_tag"],
             node["semantic_form"]
@@ -10281,8 +10641,7 @@ fn tc_233_forged_recursion_group_label_refuses_stale_node_key() {
                 .as_str()
                 .expect("node digest")
                 .to_owned();
-            let new = group_member_key(&package, &group, member, &forged)
-                .expect("structural member keys");
+            let new = group_member_key(&group, member, &forged).expect("structural member keys");
             (old, new)
         })
         .collect::<Vec<_>>();
@@ -10302,7 +10661,7 @@ fn tc_233_forged_recursion_group_label_refuses_stale_node_key() {
     assert_eq!(forged_group.len(), group.len());
     for node in &forged_group {
         assert!(
-            group_member_key_is_current(&candidate, candidate_nodes, node),
+            group_member_key_is_current(candidate_nodes, node),
             "each forged member's key is its own group-local preimage digest"
         );
     }
@@ -10315,4 +10674,745 @@ fn tc_233_forged_recursion_group_label_refuses_stale_node_key() {
         read_package_semantics(&candidate, &catalog),
         Err(ReadRefusal::StaleNodeKey(lowest))
     );
+}
+
+const POSITIVE_TWO_OWNERS_A: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-two-owners-a.json");
+const POSITIVE_TWO_OWNERS_B: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-two-owners-b.json");
+
+/// Every published positive fixture, by name.
+fn positive_fixtures() -> [(&'static str, Value); 9] {
+    [
+        (
+            "positive-nominal-identities",
+            parsed_fixture(POSITIVE_NOMINAL_IDENTITIES),
+        ),
+        (
+            "positive-all-families",
+            parsed_fixture(POSITIVE_ALL_FAMILIES),
+        ),
+        (
+            "positive-clause-operations",
+            parsed_fixture(POSITIVE_CLAUSE_OPERATIONS),
+        ),
+        (
+            "positive-control-operations",
+            parsed_fixture(POSITIVE_CONTROL_OPERATIONS),
+        ),
+        (
+            "positive-operation-identities",
+            parsed_fixture(POSITIVE_OPERATION_IDENTITIES),
+        ),
+        ("positive-union-nodes", parsed_fixture(POSITIVE_UNION_NODES)),
+        (
+            "positive-recursive-records",
+            parsed_fixture(POSITIVE_RECURSIVE_RECORDS),
+        ),
+        (
+            "positive-two-owners-a",
+            parsed_fixture(POSITIVE_TWO_OWNERS_A),
+        ),
+        (
+            "positive-two-owners-b",
+            parsed_fixture(POSITIVE_TWO_OWNERS_B),
+        ),
+    ]
+}
+
+/// The owner kind FR-322's presence rule requires of a node: a structural
+/// node (no nominal preimage, no application at its body root) carries a
+/// `SourceOwner` when declared, and a `ModelOwner` when it is a model
+/// declaration node or a clause function.
+fn required_owner_kind(node: &Value) -> Option<&'static str> {
+    let structural =
+        node.get("nominal_identity_preimage").is_none() && node["body"]["term"] != "application";
+    if !structural {
+        None
+    } else if node.get("declaration").is_some() {
+        Some("source")
+    } else if is_model_declaration(node) || node["node_tag"] == "function" {
+        Some("model")
+    } else {
+        None
+    }
+}
+
+/// Apply `edit` to the node at `index` and to its `identity_projection`
+/// entry, keep the node id, and recompute the package id.
+fn edit_node_and_projection(package: &mut Value, index: usize, edit: impl Fn(&mut Value)) {
+    for prefix in [
+        "/semantic_graph/nodes",
+        "/identity_preimage/identity_projection",
+    ] {
+        edit(
+            package
+                .pointer_mut(&format!("{prefix}/{index}"))
+                .expect("node pointer exists"),
+        );
+    }
+    refresh_package_id(package);
+}
+
+fn source_owner(authority: &str, identity: &str) -> Value {
+    json!({"kind": "source", "authority": authority, "identity": identity})
+}
+
+fn node_index_where(package: &Value, matches: impl Fn(&Value) -> bool) -> usize {
+    package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("package nodes are an array")
+        .iter()
+        .position(matches)
+        .expect("the package holds the node")
+}
+
+fn declared_index(package: &Value, name: &[&str]) -> usize {
+    node_index_where(package, |node| {
+        node["declaration"]["qualified_name"] == json!(name)
+    })
+}
+
+/// Move the regions of `index`'s `declaration` occurrence to `source`.
+fn move_declaration_regions(package: &mut Value, index: usize, source: &Value) {
+    let id = package["semantic_graph"]["nodes"][index]["node_id"].clone();
+    for entry in package["source_map"]
+        .as_array_mut()
+        .expect("source map is an array")
+        .iter_mut()
+        .filter(|entry| entry["node_id"] == id && entry["role"] == "declaration")
+    {
+        for region in entry["regions"].as_array_mut().expect("regions") {
+            region["source"] = source.clone();
+        }
+    }
+}
+
+fn add_lock_source(package: &mut Value, source: &Value) {
+    package["lock"]["sources"]
+        .as_array_mut()
+        .expect("lock sources")
+        .push(source.clone());
+}
+
+/// FR-322-AC-51: a node carries `owner` exactly when its preimage does, and so
+/// does its projection entry; the full reader admits every positive fixture.
+#[trace("TC-233", "FR-322-AC-51", "FR-322-AC-50")]
+#[test]
+fn tc_233_every_positive_fixture_carries_owners_exactly_where_the_rule_requires() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let mut kinds = BTreeSet::new();
+    for (name, package) in positive_fixtures() {
+        assert!(schema.is_valid(&package), "{name} is a V2 package");
+        let nodes = package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes");
+        let projection = package["identity_preimage"]["identity_projection"]
+            .as_array()
+            .expect("projection");
+        for (node, projected) in nodes.iter().zip(projection) {
+            assert_eq!(
+                node["owner"]["kind"].as_str(),
+                required_owner_kind(node),
+                "{name}: {} {} carries an owner exactly when the rule requires one",
+                node["node_tag"],
+                node["semantic_form"]
+            );
+            assert_eq!(
+                projected.get("owner"),
+                node.get("owner"),
+                "{name}: projection owner"
+            );
+            kinds.extend(node["owner"]["kind"].as_str().map(str::to_owned));
+        }
+        assert_eq!(read_package_semantics(&package, &catalog), Ok(()), "{name}");
+    }
+    assert_eq!(
+        kinds,
+        BTreeSet::from(["model".to_owned(), "source".to_owned()])
+    );
+}
+
+/// FR-322-AC-51: each owner mutation fails the V2 schema, which a reader
+/// reports `malformed_wire`.
+#[trace("TC-233", "FR-322-AC-51")]
+#[test]
+fn tc_233_owner_mutations_fail_the_schema_as_malformed_wire() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let bases = positive_fixtures().into_iter().collect::<BTreeMap<_, _>>();
+    let adverse = parsed_fixture(ADVERSE);
+    let mutations = adverse["owner_mutations"]
+        .as_array()
+        .expect("owner mutations");
+    assert_eq!(mutations.len(), 10);
+    for mutation in mutations {
+        let id = mutation["id"].as_str().expect("id");
+        let base = &bases[mutation["base"].as_str().expect("base")];
+        assert!(schema.is_valid(base), "{id}: the base is admitted");
+        let index = node_index_where(base, |node| {
+            node["node_tag"] == mutation["node"]["node_tag"]
+                && node["semantic_form"] == mutation["node"]["semantic_form"]
+        });
+        let mut candidate = base.clone();
+        edit_node_and_projection(&mut candidate, index, |node| {
+            for patch in mutation["patch"].as_array().expect("patch") {
+                apply_authored_patch(node, patch);
+            }
+        });
+        assert_eq!(mutation["outcome"], "refused:malformed_wire", "{id}");
+        assert!(!schema.is_valid(&candidate), "{id}: the schema refuses it");
+    }
+}
+
+/// FR-322-AC-51: a declared record whose owner moves to a second source, with
+/// that source in the lock, the declaration regions moved, the node id kept
+/// and the projection and package id patched, is refused stale-node-key.
+#[trace("TC-233", "FR-322-AC-51")]
+#[test]
+fn tc_233_a_changed_owner_refuses_stale_node_key_at_that_node() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let mut package = parsed_fixture(POSITIVE_TWO_OWNERS_A);
+    let other = parsed_fixture(POSITIVE_TWO_OWNERS_B)["lock"]["sources"][0].clone();
+    let point = declared_index(&package, &["Point"]);
+    let id = package["semantic_graph"]["nodes"][point]["node_id"].clone();
+    add_lock_source(&mut package, &other);
+    move_declaration_regions(&mut package, point, &other);
+    let owner = source_owner("agent-ix", "example-b");
+    edit_node_and_projection(&mut package, point, |node| node["owner"] = owner.clone());
+    assert_eq!(package["semantic_graph"]["nodes"][point]["node_id"], id);
+    assert_eq!(
+        read_package_semantics(&package, &catalog),
+        Err(ReadRefusal::StaleNodeKey(id))
+    );
+}
+
+/// FR-322-AC-52: an owner no lock entry selects refuses missing-selection at
+/// its node, ahead of a stale key at a node of lower node-id digest.
+#[trace("TC-233", "FR-322-AC-52")]
+#[test]
+fn tc_233_an_unjoined_owner_refuses_missing_selection_ahead_of_a_stale_key() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let base = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let nodes = base["semantic_graph"]["nodes"].as_array().expect("nodes");
+    let digest = |node: &Value| {
+        node["node_id"]["digest"]
+            .as_str()
+            .unwrap_or_default()
+            .to_owned()
+    };
+
+    let record = declared_index(&base, &["Example", "Point"]);
+    let mut source = base.clone();
+    let id = nodes[record]["node_id"].clone();
+    edit_node_and_projection(&mut source, record, |node| {
+        node["owner"] = source_owner("agent-ix", "missing");
+    });
+    assert_eq!(
+        read_package_semantics(&source, &catalog),
+        Err(ReadRefusal::OwnerSelection(id))
+    );
+
+    let relationship = node_index_where(&base, |node| node["semantic_form"] == "relationship");
+    let mut model = base.clone();
+    let id = nodes[relationship]["node_id"].clone();
+    edit_node_and_projection(&mut model, relationship, |node| {
+        node["owner"]["identity"] = json!("acme/billing");
+    });
+    assert_eq!(
+        read_package_semantics(&model, &catalog),
+        Err(ReadRefusal::OwnerSelection(id))
+    );
+
+    // The unjoined node is the owner-bearing node of highest digest, and a
+    // body-tampered, owner-free structural node has a lower digest.
+    let owned = (0..nodes.len())
+        .filter(|&index| nodes[index].get("owner").is_some())
+        .max_by_key(|&index| digest(&nodes[index]))
+        .expect("an owner-bearing node");
+    let stale = (0..nodes.len())
+        .filter(|&index| {
+            nodes[index].get("owner").is_none()
+                && is_rekeyed_structural_node(&nodes[index])
+                && nodes[index]["semantic_form"] != "frame"
+        })
+        .min_by_key(|&index| digest(&nodes[index]))
+        .expect("an owner-free structural node");
+    assert!(digest(&nodes[stale]) < digest(&nodes[owned]));
+    let mut both = base.clone();
+    let id = nodes[owned]["node_id"].clone();
+    edit_node_and_projection(&mut both, stale, |node| {
+        node["body"] = json!({"term": "aggregate", "members": [{
+            "term": "binding", "name": "tampered",
+            "value": {"term": "aggregate", "members": []}
+        }]});
+    });
+    edit_node_and_projection(&mut both, owned, |node| {
+        node["owner"] = source_owner("agent-ix", "missing");
+    });
+    assert_eq!(
+        read_package_semantics(&both, &catalog),
+        Err(ReadRefusal::OwnerSelection(id)),
+        "the join is reported before the stale key of the lower-digest node"
+    );
+}
+
+/// FR-322-AC-52: a declared node's owner and its source map agree. Moving the
+/// declaration region to another lock source changes no node id and not the
+/// package id, and is refused invalid-value at that source-map entry.
+#[trace("TC-233", "FR-322-AC-52")]
+#[test]
+fn tc_233_a_moved_declaration_region_refuses_invalid_value_at_its_source_map_entry() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let mut package = parsed_fixture(POSITIVE_TWO_OWNERS_A);
+    let package_id = package["package_id"].clone();
+    let other = parsed_fixture(POSITIVE_TWO_OWNERS_B)["lock"]["sources"][0].clone();
+    let point = declared_index(&package, &["Point"]);
+    let id = package["semantic_graph"]["nodes"][point]["node_id"].clone();
+    add_lock_source(&mut package, &other);
+    move_declaration_regions(&mut package, point, &other);
+    assert_eq!(package["package_id"], package_id);
+    assert_eq!(
+        derive_identity_preimage(&package),
+        package["identity_preimage"]
+    );
+    let entry = package["source_map"]
+        .as_array()
+        .expect("source map")
+        .iter()
+        .position(|entry| entry["node_id"] == id && entry["role"] == "declaration")
+        .expect("Point's declaration entry");
+    assert_eq!(
+        read_package_semantics(&package, &catalog),
+        Err(ReadRefusal::InvalidOwnerValue(format!(
+            "/source_map/{entry}"
+        )))
+    );
+}
+
+/// FR-322-AC-53: the same declarations under two source owners are two
+/// packages; owner-keyed nodes differ, content-keyed nodes do not.
+#[trace("TC-233", "FR-322-AC-53")]
+#[test]
+fn tc_233_two_owners_share_content_keyed_nodes_and_differ_on_owner_keyed_ones() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let a = parsed_fixture(POSITIVE_TWO_OWNERS_A);
+    let b = parsed_fixture(POSITIVE_TWO_OWNERS_B);
+    for (name, package) in [("a", &a), ("b", &b)] {
+        assert!(schema.is_valid(package), "{name} is a V2 package");
+        assert_eq!(read_package_semantics(package, &catalog), Ok(()), "{name}");
+        assert_eq!(
+            derive_identity_preimage(package),
+            package["identity_preimage"],
+            "{name}"
+        );
+        let nodes = package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes");
+        let labels = nodes
+            .iter()
+            .filter_map(|node| node["recursion_group"].as_str())
+            .collect::<BTreeSet<_>>();
+        assert_eq!(labels.len(), 1, "{name}: List is the only group");
+        for label in labels {
+            let group = recursion_group_members(nodes, label);
+            assert_eq!(
+                recursion_group_digest(nodes, &group).as_deref(),
+                Some(label),
+                "{name}"
+            );
+            for (member, node) in group.iter().enumerate() {
+                assert_eq!(
+                    group_member_key(&group, member, label).as_deref(),
+                    node["node_id"]["digest"].as_str(),
+                    "{name}: in-group key recomputes from the package alone"
+                );
+            }
+        }
+    }
+    let ids = |package: &Value, pick: &dyn Fn(&Value) -> bool| -> Vec<Value> {
+        package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .filter(|node| pick(node))
+            .map(|node| node["node_id"].clone())
+            .collect()
+    };
+    let point = |node: &Value| node["declaration"]["qualified_name"] == json!(["Point"]);
+    let three = |node: &Value| node["declaration"]["qualified_name"] == json!(["three"]);
+    let integer = |node: &Value| node["semantic_form"] == "integer";
+    let list = |node: &Value| node.get("recursion_group").is_some();
+    assert_ne!(ids(&a, &point), ids(&b, &point), "Point ids differ");
+    assert_eq!(
+        ids(&a, &integer),
+        ids(&b, &integer),
+        "the builtin Integer node is shared"
+    );
+    assert_eq!(
+        ids(&a, &three),
+        ids(&b, &three),
+        "the application-keyed three is shared"
+    );
+    let (list_a, list_b) = (ids(&a, &list), ids(&b, &list));
+    assert_eq!(list_a.len(), 2, "the List record and its Option node");
+    assert!(
+        list_a
+            .iter()
+            .zip(&list_b)
+            .all(|(left, right)| left != right)
+    );
+    assert_ne!(
+        a["semantic_graph"]["nodes"][0]["recursion_group"],
+        b["semantic_graph"]["nodes"][0]["recursion_group"]
+    );
+    assert_ne!(a["package_id"], b["package_id"]);
+
+    // Package a carrying b's owners, with b's source in the lock and the
+    // declaration regions moved to it, is refused: every key names a's owner.
+    let mut crossed = a.clone();
+    let other = b["lock"]["sources"][0].clone();
+    add_lock_source(&mut crossed, &other);
+    let owned = (0..crossed["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .len())
+        .filter(|&index| {
+            crossed["semantic_graph"]["nodes"][index]
+                .get("owner")
+                .is_some()
+        })
+        .collect::<Vec<_>>();
+    for index in owned {
+        move_declaration_regions(&mut crossed, index, &other);
+        let owner = source_owner("agent-ix", "example-b");
+        edit_node_and_projection(&mut crossed, index, |node| node["owner"] = owner.clone());
+    }
+    assert!(matches!(
+        read_package_semantics(&crossed, &catalog),
+        Err(ReadRefusal::StaleNodeKey(_))
+    ));
+}
+
+/// FR-322-AC-54: the derived-shape key stage leaves the
+/// `correspondence`/`abstraction_relation` node to FR-451, whose identity step
+/// refuses an edited body as invalid_semantic_graph, not stale-node-key.
+#[trace("TC-233", "FR-322-AC-54")]
+#[test]
+fn tc_233_the_key_stage_leaves_an_abstraction_relation_node_to_fr_451() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+    assert!(schema.is_valid(&package));
+    let index = node_index_where(&package, |node| {
+        node["semantic_form"] == "abstraction_relation"
+    });
+    let node = &package["semantic_graph"]["nodes"][index];
+    assert!(node.get("owner").is_none());
+    assert!(
+        !is_rekeyed_structural_node(node),
+        "the key stage does not key it"
+    );
+    assert_eq!(read_package_semantics(&package, &catalog), Ok(()));
+
+    let mut edited = package.clone();
+    let id = node["node_id"].clone();
+    edit_node_and_projection(&mut edited, index, |node| {
+        node["body"]["frames"][0]["function"][1] = json!("attempt_other");
+    });
+    assert!(schema.is_valid(&edited));
+    assert_eq!(edited["semantic_graph"]["nodes"][index]["node_id"], id);
+    assert_eq!(
+        read_package_semantics(&edited, &catalog),
+        Err(ReadRefusal::Abstraction(id))
+    );
+}
+
+/// FR-440-AC-4's arm clauses through the full reader: a case whose arms are
+/// not exactly one per union member in declaration order (swapped, one
+/// dropped, one repeated), whose binder aggregate has another arity than the
+/// member's payload, whose binder is typed other than its payload position, or
+/// whose later arm body has another type than the first, is
+/// operator-ineligible.
+#[trace("TC-395", "FR-440-AC-4")]
+#[test]
+fn tc_395_a_case_must_hold_one_arm_per_union_member_in_order() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = parsed_fixture(POSITIVE_UNION_NODES);
+    assert_eq!(read_package_semantics(&package, &catalog), Ok(()));
+    let case = node_index_where(&package, |node| node["semantic_form"] == "case");
+    let scrutinee = package["semantic_graph"]["nodes"][case]["body"]["arguments"][0].clone();
+    type Edit = fn(&mut Vec<Value>, &Value);
+    let edits: [(&str, Edit); 7] = [
+        ("arms swapped", |arms, _| arms.swap(1, 2)),
+        ("an arm dropped", |arms, _| {
+            arms.pop();
+        }),
+        ("an arm repeated", |arms, _| arms[2] = arms[1].clone()),
+        ("a binder missing", |arms, _| {
+            arms[2]["value"]["members"][0]["members"]
+                .as_array_mut()
+                .expect("binders")
+                .pop();
+        }),
+        ("a binder too many", |arms, _| {
+            let binder = arms[1]["value"]["members"][0]["members"][0].clone();
+            arms[1]["value"]["members"][0]["members"]
+                .as_array_mut()
+                .expect("binders")
+                .push(binder);
+        }),
+        ("a binder of another type", |arms, scrutinee| {
+            arms[1]["value"]["members"][0]["members"][0] = scrutinee.clone();
+        }),
+        ("a later arm body of another type", |arms, scrutinee| {
+            arms[2]["value"]["members"][1] = scrutinee.clone();
+        }),
+    ];
+    for (label, edit) in edits {
+        let mut candidate = package.clone();
+        let mut arguments = candidate["semantic_graph"]["nodes"][case]["body"]["arguments"]
+            .as_array()
+            .expect("case arguments")
+            .clone();
+        edit(&mut arguments, &scrutinee);
+        let arguments = Value::Array(arguments);
+        edit_node_and_projection(&mut candidate, case, |node| {
+            node["body"]["arguments"] = arguments.clone();
+            node["dependencies"] = json!(application_dependencies(&node["body"]));
+        });
+        rekey_stale_nodes(&mut candidate);
+        assert_eq!(
+            read_package_semantics(&candidate, &catalog),
+            Err(ReadRefusal::Operation(OperationRefusal::OperatorIneligible)),
+            "{label}"
+        );
+    }
+}
+
+/// The adverse entry `id` of `list`, with its base package, the index of the
+/// node it names and the node's id.
+fn adverse_case(list: &str, id: &str) -> (Value, Value, usize, Value) {
+    let adverse = parsed_fixture(ADVERSE);
+    let case = adverse[list]
+        .as_array()
+        .expect("adverse list")
+        .iter()
+        .find(|case| case["id"] == id)
+        .unwrap_or_else(|| panic!("{list} holds {id}"))
+        .clone();
+    let base = positive_fixtures()
+        .into_iter()
+        .find(|(name, _)| *name == case["base"].as_str().expect("base"))
+        .expect("a published base")
+        .1;
+    let index = node_index_where(&base, |node| {
+        node["node_tag"] == case["node"]["node_tag"]
+            && node["semantic_form"] == case["node"]["semantic_form"]
+            && case["node"]["owner_node"]
+                .as_str()
+                .is_none_or(|owner| node["owner"]["node"] == owner)
+    });
+    let id = base["semantic_graph"]["nodes"][index]["node_id"].clone();
+    (case, base, index, id)
+}
+
+/// FR-322-AC-55 (owner join, clause kind): the published `clause_owner_cases`.
+/// A precondition clause function owned by the operation member `Order/size`
+/// is admitted by the full reader; a precondition owned by the object type
+/// `Order`, an invariant owned by an operation member, a `postcondition` kind
+/// (not a clause function's), a clause with no kind and one with two each
+/// refuse `missing_declaration`/`missing-selection`
+/// at the clause function's node id.
+#[trace("TC-233", "FR-322-AC-55")]
+#[test]
+fn tc_233_clause_function_owners_follow_their_clause_kind() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let adverse = parsed_fixture(ADVERSE);
+    let cases = adverse["clause_owner_cases"].as_array().expect("cases");
+    assert_eq!(cases.len(), 7);
+    for case in cases {
+        let id = case["id"].as_str().expect("id");
+        let (case, base, index, node_id) = adverse_case("clause_owner_cases", id);
+        let mut candidate = base.clone();
+        edit_node_and_projection(&mut candidate, index, |node| {
+            for patch in case["patch"].as_array().expect("patch") {
+                apply_authored_patch(node, patch);
+            }
+        });
+        let outcome = read_package_semantics(&candidate, &catalog);
+        match case["outcome"].as_str() {
+            Some("admitted") => assert_eq!(outcome, Ok(()), "{id}"),
+            _ => {
+                assert_eq!(case["expected_code"], "missing_declaration", "{id}");
+                assert_eq!(case["expected_cause"], "missing-selection", "{id}");
+                assert_eq!(case["expected_locus"], "node_id", "{id}");
+                assert_eq!(outcome, Err(ReadRefusal::OwnerSelection(node_id)), "{id}");
+            }
+        }
+    }
+}
+
+/// FR-322-AC-51 (projection owner): each published `projection_owner_mutations`
+/// entry gives an `identity_projection` entry an owner that differs from its
+/// node's, with the `package_id` recomputed; the full reader refuses
+/// `invalid_package`/`invalid-value` at that entry's `owner`, ahead of every
+/// other owner refusal.
+#[trace("TC-233", "FR-322-AC-51")]
+#[test]
+fn tc_233_a_projection_owner_that_differs_from_its_node_is_refused() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let adverse = parsed_fixture(ADVERSE);
+    let cases = adverse["projection_owner_mutations"]
+        .as_array()
+        .expect("cases");
+    assert_eq!(cases.len(), 2);
+    for case in cases {
+        let id = case["id"].as_str().expect("id");
+        let (case, base, index, _) = adverse_case("projection_owner_mutations", id);
+        let mut candidate = base.clone();
+        apply_projection_patches(&mut candidate, index, &case["projection_patch"]);
+        assert!(schema.is_valid(&candidate), "{id}: the schema admits it");
+        assert_eq!(case["expected_code"], "invalid_package", "{id}");
+        assert_eq!(case["expected_cause"], "invalid-value", "{id}");
+        let locus = case["expected_locus"]
+            .as_str()
+            .expect("locus")
+            .replace("{index}", &index.to_string());
+        assert_eq!(
+            read_package_semantics(&candidate, &catalog),
+            Err(ReadRefusal::InvalidOwnerValue(locus)),
+            "{id}"
+        );
+    }
+}
+
+/// Apply `patches` to the projection entry at `index` only, then recompute the
+/// package id.
+fn apply_projection_patches(package: &mut Value, index: usize, patches: &Value) {
+    let entry = package
+        .pointer_mut(&format!("/identity_preimage/identity_projection/{index}"))
+        .expect("projection entry");
+    for patch in patches.as_array().expect("patches") {
+        apply_authored_patch(entry, patch);
+    }
+    refresh_package_id(package);
+}
+
+/// FR-322 "Owner member schema": a `state`/`state_clause` node (FR-341) is
+/// application-keyed and carries no `owner`; the schema refuses one that does.
+#[trace("TC-233", "FR-322-AC-51")]
+#[test]
+fn tc_233_a_state_clause_node_carries_no_owner() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+    let clauses = (0..package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .len())
+        .filter(|&index| {
+            package["semantic_graph"]["nodes"][index]["semantic_form"] == "state_clause"
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(clauses.len(), 2);
+    for index in clauses {
+        assert!(
+            package["semantic_graph"]["nodes"][index]
+                .get("owner")
+                .is_none()
+        );
+        let mut owned = package.clone();
+        edit_node_and_projection(&mut owned, index, |node| {
+            node["owner"] = json!({"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order"});
+        });
+        assert!(
+            !schema.is_valid(&owned),
+            "a state_clause node with an owner is refused"
+        );
+    }
+}
+
+/// The JCS SHA-256 of the selected domain package document, the digest every
+/// published model selection of `acme/orders` carries.
+const DOMAIN_DOCUMENT: &str =
+    include_str!("../proposals/checked-package-v2/domain-package-acme-orders.json");
+
+/// FR-322-AC-32: each published package that selects `acme/orders` selects the
+/// semantic IR document by its own `sha256-jcs` digest, in the lock and in the
+/// identity preimage.
+#[trace("TC-233", "FR-322-AC-32")]
+#[test]
+fn tc_233_published_model_selections_name_the_domain_document_by_its_jcs_digest() {
+    let digest = unqualified_jcs_sha256(&parsed_fixture(DOMAIN_DOCUMENT));
+    let mut selecting = 0;
+    for (name, package) in positive_fixtures() {
+        for rows in [
+            &package["lock"]["model_selections"],
+            &package["identity_preimage"]["model_selections"],
+        ] {
+            for row in rows.as_array().into_iter().flatten() {
+                selecting += 1;
+                assert_eq!(row["digest"], digest.as_str(), "{name}");
+                assert_eq!(row["digest_domain"], "sha256-jcs", "{name}");
+            }
+        }
+    }
+    assert_eq!(selecting, 4, "two published packages select it, twice each");
+}
+
+/// FR-322-AC-56 (relationship ends): the published `relationship_end_cases`.
+/// A relationship the document declares without a `targetEnd.role` names one
+/// end, its `sourceEnd.role`; a `relationship_end` naming it is admitted by the
+/// full reader, and one naming the missing inverse refuses
+/// `missing_declaration`/`missing-name`.
+#[trace("TC-233", "FR-322-AC-56")]
+#[test]
+fn tc_233_a_relationship_end_names_only_the_ends_its_relationship_declares() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let adverse = parsed_fixture(ADVERSE);
+    let cases = adverse["relationship_end_cases"].as_array().expect("cases");
+    assert_eq!(cases.len(), 4);
+    for case in cases {
+        let id = case["id"].as_str().expect("id");
+        let mut candidate = positive_fixtures()
+            .into_iter()
+            .find(|(name, _)| *name == case["base"].as_str().expect("base"))
+            .expect("a published base")
+            .1;
+        let relationship = node_index_where(&candidate, |node| {
+            node["node_tag"] == "relation" && node["semantic_form"] == "relationship"
+        });
+        edit_node_and_projection(&mut candidate, relationship, |node| {
+            node["owner"]["node"] = case["relationship_owner_node"].clone();
+        });
+        let applications = (0..candidate["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .len())
+            .filter(|&index| {
+                candidate["semantic_graph"]["nodes"][index]["body"]["operation"]["member"]["kind"]
+                    == "relationship_end"
+            })
+            .collect::<Vec<_>>();
+        assert!(!applications.is_empty(), "{id}");
+        for index in applications {
+            edit_node_and_projection(&mut candidate, index, |node| {
+                node["body"]["operation"]["member"]["name"] = case["member_name"].clone();
+            });
+        }
+        rekey_stale_nodes(&mut candidate);
+        let outcome = read_package_semantics(&candidate, &catalog);
+        match case["outcome"].as_str() {
+            Some("admitted") => assert_eq!(outcome, Ok(()), "{id}"),
+            _ => {
+                let refusal =
+                    OperationRefusal::from_cause(case["expected_cause"].as_str().expect("cause"))
+                        .expect("a published operation cause");
+                assert_eq!(case["expected_code"], refusal.code(), "{id}");
+                assert_eq!(outcome, Err(ReadRefusal::Operation(refusal)), "{id}");
+            }
+        }
+    }
 }
