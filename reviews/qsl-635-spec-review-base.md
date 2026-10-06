@@ -65,3 +65,9 @@ Round 2, reviewed at 9b74bd9 (fix commit 9b74bd9 over 3f8b922). No build was run
 | --- | --- | --- |
 | FND-002 | fixed | 9b74bd9 |
 | FND-003 | fixed | 9b74bd9 |
+
+Round 3, reviewed at 0b7a317 (fix commit 0b7a317 over 9b74bd9, spec and reviews only). No build was run.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-004 | fixed | 0b7a317 |
