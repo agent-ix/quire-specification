@@ -1007,6 +1007,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-322 | FR-322-AC-48 | TC-233 | planned |
 | FR-322 | FR-322-AC-49 | TC-233 | planned |
 | FR-322 | FR-322-AC-50 | TC-233 | planned |
+| FR-322 | FR-322-AC-58 | TC-430 | planned |
 | FR-340 | FR-340-AC-1 | TC-233 | planned |
 | FR-340 | FR-340-AC-2 | TC-233 | planned |
 | FR-340 | FR-340-AC-3 | TC-233 | planned |
@@ -1899,6 +1900,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-427 | The v2 body grammar fixes package depth by schema | Property | P0 | FR-322 | 🚧 Planned |
 | TC-428 | The plugin wire frames, identifies and settles every plugin run | Property | P0 | FR-462 | 🚧 Planned |
 | TC-429 | Value paths root and step through every witness location | Property | P0 | FR-207, FR-351 | 🚧 Planned |
+| TC-430 | Node-key preimage integers keep one exact spelling at every magnitude | Property | P0 | FR-322 | 🚧 Planned |
 | TC-330 | State-graph claim syntax, refusals and routing | Property | P0 | FR-390, FR-290 | 🚧 Planned |
 | TC-331 | Possible claims on the ConfigVersion subject | Property | P0 | FR-390, FR-391, FR-392, FR-393, FR-394 | 🚧 Planned |
 | TC-332 | Always-possible claims on the game subject | Property | P0 | FR-390, FR-391, FR-394 | 🚧 Planned |

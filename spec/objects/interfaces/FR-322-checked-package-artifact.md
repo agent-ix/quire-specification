@@ -966,6 +966,37 @@ package, and infers nothing from its content. Exact selected resource limits are
 one-over-limit input returns an incomplete resource disposition without a
 partial checked package.
 
+**Integers in a node-key preimage.** A node-key preimage
+(`quire.application-node/v1` and QSL FR-092's `quire.structural-node/v1`)
+holds integers in two kinds of place, and each kind has one spelling:
+
+- An integer *value*, meaning a literal's `value` of `value_kind`
+  `integer` and so every range or cardinality bound, is an `IntegerString`,
+  the canonical decimal string, at every magnitude. `Int[0, 9]`'s bounds are
+  `"0"` and `"9"`, and `Int[0, 18446744073709551615]`'s upper bound is
+  `"18446744073709551615"`.
+- A *counter*, meaning `recursion.size`, `recursion.ordinal`, a
+  `group_reference` `ordinal` and an `operation.member` `position`, is a JCS
+  number when its value is at most 2^53-1 (9007199254740991), and its
+  canonical decimal string otherwise. Each counter is decided on its own:
+  `{size: "9007199254740992", ordinal: 9007199254740991}` is one recursion
+  member.
+
+This is the replay wire's rule for an integer that can exceed 2^53 (QSL
+ADR-013 O-09), and it is not a choice: RFC 8785 renders a JSON number
+exactly only up to 2^53-1, so a counter beyond that has no exact number
+form, and its decimal string is the one spelling that keeps the key exact.
+No preimage integer is refused for its magnitude. A counter at most 2^53-1
+written as a string, and a counter beyond it written as a number, are not
+this form: `node-identity-preimage.schema.json` refuses both. A reader
+never reads a counter from the wire: it derives each one from the graph and
+writes it in this form, so a node whose retained key was computed from the
+other spelling differs from the recomputed digest and refuses
+`invalid_package`/`stale-node-key` at that node's `node_id` (the
+application-node key stage, or the derived-shape key stage's first pass for
+an in-group structural node). Every key published before this rule had
+counters below 2^53 and string values, so no published key changes.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -1021,6 +1052,7 @@ partial checked package.
 | FR-322-AC-53 | The two-owner fixtures `positive-two-owners-a.json` and `positive-two-owners-b.json` declare the same records `Point { x: Integer; }` and `List { next?: List; }`, with the qualified names QSL emits for them, `["Point"]` and `["List"]` (QSL FR-092 D1), in both, with identical bodies, under the `SourceOwner`s (`agent-ix`, `example-a`) and (`agent-ix`, `example-b`). Both are admitted. Both also declare `three` (qualified name `["three"]`), a declared `value` whose body root is the application `1 + 2` (`quire.application-node/v1`, no `owner`). Their `Point` node ids differ, their `List` group labels differ and every member of the `List` group (the record and its `Option` node) has a different id in each, while the builtin `Integer` node and the application-keyed `three` node each have one id in both, as intended content addressing; their `package_id`s differ. Each package's in-group keys and group label recompute from that package alone. Package `a` with the `owner` members of `b`, `b`'s source added to `lock.sources`, the declared nodes' `declaration` occurrence regions moved to it, node ids kept, projection patched and `package_id` recomputed, refuses `invalid_package`/`stale-node-key`. | Test (TC-233) |
 | FR-322-AC-54 | The derived-shape key stage leaves every `correspondence`/`abstraction_relation` node untouched: `positive-clause-operations.json`'s `correspondence`/`abstraction_relation` node, keyed by FR-451's `quire.abstraction-relation-node/v1` preimage and so not by any `quire.structural-node/v1` preimage, passes the stage and the full reader admits the package; the same node with one `rust_type` segment of its body changed, canonical order and `dependencies` kept, node id kept, projection entry patched and `package_id` recomputed, refuses `invalid_semantic_graph` at FR-451's abstraction step 1 (Identity) and not `invalid_package`/`stale-node-key`. | Test (TC-233) |
 | FR-322-AC-55 | The owner join resolves every `ModelOwner` against the selected document, whether or not anything reaches the node: a model declaration node whose owner `node` the document does not declare, and a `model`/`object_type` node whose owner names the relationship `billedTo`, each keyed by its own preimage, refuse `missing_declaration`/`missing-selection`; a clause function owned by the operation member `Order/size`, and one owned by the object type `Order` for an invariant, pass the join, while a clause function owned by an undeclared member `Order/missing` and one owned by the field `Order/total` refuse `missing_declaration`/`missing-selection`. | Test (TC-280) |
+| FR-322-AC-58 | Each `integer_encoding_vectors` entry of `node-identity-vectors.json` recomputes its recorded JCS SHA-256 from its preimage: `recursion-size-safe-maximum`, whose `recursion` is `{size: 9007199254740991, ordinal: 9007199254740990}` with both counters JSON numbers, gives `bc6fe35a2c34a7162fe0ed0a20473ffb3284bd70236f96feb75b386c55992874`; `recursion-size-two-pow-53`, whose `size` is the string `"9007199254740992"` and whose `ordinal` is the number 9007199254740991, gives `89ec1ac87a8b82a05d5414f0c3b314f363e49328988ff5d8c3fc9a88014839bc`; and `integer-range-u64-maximum`, the `quire.structural-node/v1` `integer_range` node of `Int[0, 18446744073709551615]` whose `max` is the string `"18446744073709551615"`, gives `f9ea36c52345743ae98ce1c1449610c7e955d986a3ecb08597ca427c6f1b4230`. The two recursion vectors validate against `node-identity-preimage.schema.json`'s `ApplicationNode`, and the same schema refuses the `size` 9007199254740991 written as a string and 9007199254740992 written as a number. Each published `operation_vectors` digest is unchanged. | Test (TC-430) |
 
 ## Dependencies
 
@@ -1042,4 +1074,5 @@ remain tracked separately.
 
 ## References
 
-- Tickets: Linear QSL-290, QSL-638 (the node `owner` member).
+- Tickets: Linear QSL-290, QSL-638 (the node `owner` member), QSL-642
+  (integers in a node-key preimage).
