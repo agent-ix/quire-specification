@@ -52,3 +52,16 @@ so they still reach the frame or state step they test. No build was run.
 | FND | outcome | sha/reason |
 | --- | --- | --- |
 | FND-001 | fixed | 3f8b922 |
+
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | low | Step 2 now says a node carrying a `declaration` or a `recursion_group` "is not a model declaration node" and the derived-shape stage re-keys it. The stage's own definition, the `model_member` definition and `is_rekeyed_structural_node` all leave out every `model`/`relation` node with no `declaration`, grouped or not. So the spec text no longer refuses an undeclared, grouped model node carrying a `ModelOwner` key in either place. FR-322-AC-29 and TC-280's `fixed_members_hold` (tests/model_member_types.rs:128-133) still refuse it at step 2. Fix with one line: keep "or that carries a `recursion_group`" in step 2's refusal list, and limit the "not a model declaration node" sentence to a declared node. | spec/objects/interfaces/FR-322-checked-package-artifact.md:539-546, tests/checked_package_v2.rs:2092-2098 |
+
+Round 2, reviewed at 9b74bd9 (fix commit 9b74bd9 over 3f8b922). No build was run.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-002 | fixed | 9b74bd9 |
+| FND-003 | fixed | 9b74bd9 |

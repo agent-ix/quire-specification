@@ -537,13 +537,14 @@ conformance" below).
    once, so at most one owner matches. A declaring node that no owner
    matches, whether its owner is unselected or its key names another
    declaration, refuses `missing_declaration`/`missing-selection`. A matched
-   node whose `semantic_type` is not its own `node_id`, or whose body is not
+   node whose `semantic_type` is not its own `node_id`, or that carries a
+   `recursion_group`, or whose body is not
    `{term: "aggregate", members: []}`, refuses `invalid_package`/`stale-node-key`,
    because its key is not the digest of its own preimage. A node that carries
-   a `declaration` or a `recursion_group` is not a model declaration node: the
-   derived-shape key stage re-keys it as a structural node, with its
-   `SourceOwner` or as an in-group node, and refuses a `ModelOwner` key on it
-   as `invalid_package`/`stale-node-key` before this step.
+   a `declaration` is not a model declaration node: the derived-shape key
+   stage re-keys it as a structural node with its `SourceOwner` and refuses a
+   `ModelOwner` key on it as `invalid_package`/`stale-node-key` before this
+   step.
 3. **Resolution.** The member resolves among the effective members of `T`
    that name resolution exposes: `T`'s own and those inherited along its
    declared supertypes, less every member a redefinition hides and every
