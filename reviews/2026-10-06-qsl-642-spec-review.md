@@ -43,3 +43,12 @@ Examined:
 ## Verdict
 
 Mergeable after FND-001 is fixed (a renumber). Fix FND-002 in the same round. The rule matches option (a), the vectors reproduce, the schema pattern is exact, the two schemas agree, no published key changes, and validation matches main.
+
+## Dispositions
+
+Round 1, reviewed at 7a12e6bc99034e9540774f4cae4680e8efe3f660. The vectors are unchanged and still reproduce. `quire validate` output is identical to origin/main, except one existing warning that moved line number.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 7a12e6b |
+| FND-002 | fixed | 7a12e6b |
