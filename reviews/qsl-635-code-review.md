@@ -85,3 +85,25 @@ The new tests are also traced to an AC that names a different refusal code
 | FND-002 | medium | The new tamper and key tests carry `#[trace("TC-233", "FR-322-AC-10")]`, but AC-10 says stale-body keys refuse as `invalid_semantic_graph`. The tests assert `invalid_package`/`stale-node-key`. FR-322 also has no normative text for the derived-shape stage: which shapes it covers, its place after the application-key stage, or the in-group case. The reader order exists only in test code, and IR implements against the spec. | spec/objects/interfaces/FR-322-checked-package-artifact.md:845, spec/objects/interfaces/FR-322-checked-package-artifact.md:230-233, tests/checked_package_v2.rs:9758 |
 | FND-003 | medium | all-families `Example::Small` is a `bounded_domain`/`integer_range` with body `aggregate{[]}` (no `min`/`max`) whose `semantic_type` is `Example::Flag`, a boolean. FR-092 gives an integer range bindings `min` and `max` over the Integer node. QSL's emitter cannot produce this node, yet it is rekeyed and published as a conformant positive, which teaches IR to admit a boundless range over Boolean. The shape predates this PR, which re-blesses it. | proposals/checked-package-v2/fixtures/positive-all-families.json:17 |
 | FND-004 | low | The ruling says keys come from QSL's own key function or emitter. The PR body says a throwaway, uncommitted generator computed the non-recursive fixtures' keys. The result is correct: the in-repo test recomputes every structural key, and an independent recomputation matched all of them. Only the method differs from the ruling. | proposals/checked-package-v2/fixtures/positive-operation-identities.json |
+
+## Dispositions
+
+Round 1, reviewed at 4bf7e9c834a6e29695621be5233aec8c19359d67 (fix commits
+9630eb4 and 4bf7e9c over 07cc7cf). The independent Python FR-092
+recomputation was re-run on the head: all-families 24/24, clause-operations
+10/10, control-operations 4/4, operation-identities 39/39, recursive-records
+1/1, union-nodes 12/12, 0 mismatches, and no repeated-byte node id. No build
+was run. The new reader stage was read against FR-322's new text. One new
+defect, an ungrouped declared structural node that no stage re-keys, is
+recorded once in SR-1298 FND-001 because its root is the FR-322 stage text.
+Routed, not raised here: the placeholder nodes QSL cannot emit
+(all-families `Example::Flag` and nodes 5-22 typed at it; the
+operation-identities record at node 39 and nodes 10-12). QSL-638 rebuilds
+those fixtures from emitter output.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 9630eb4 |
+| FND-002 | fixed | 9630eb4 |
+| FND-003 | fixed | 9630eb4 |
+| FND-004 | accepted-no-change | The keys are now cross-checked against QSL's own node_key/group_keys (coder: 89 keys, 0 mismatches) and independently by this review; how the keys were generated does not change their content. |

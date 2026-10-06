@@ -244,28 +244,34 @@ boundary.
   refusal, in the order FR-341's "Reader order" fixes.
 - derived-shape key stage — after the application-node key refusal above and
   before any declaration, frame, state or operation refusal, the reader
-  re-derives the keys of two sets of nodes by QSL FR-092's
-  `quire.structural-node/v1` preimage, so that a consumer reading a range,
-  bound or element type from such a node reads the content its key names. The
-  **derived shapes** are the undeclared nodes outside every recursion group
-  of `scalar_type` `boolean` and `integer`, `composite_type` `reference`,
-  `option`, `set`, `bag`, `sequence` and `ordered_set`, and `bounded_domain`
-  `integer_range` and `collection_bounds`. Such a node is current when its
-  key is the JCS SHA-256 of its preimage (`owner` absent, `recursion` `null`,
-  `semantic_type` `null` exactly when the node is its own type) and, for a
-  `scalar_type` or `composite_type`, when its `semantic_type` is the node
-  itself. The **in-group structural nodes** are every node that carries a
-  `recursion_group`, has no `nominal_identity_preimage` and whose body holds
-  no application, declared or not and of any shape. The members of a group
-  are the nodes carrying its label, and a member's `ordinal` is its position
-  among them in graph order. Such a node is current when its key is the JCS
+  re-derives by QSL FR-092's `quire.structural-node/v1` preimage the key of
+  every **structural node**: a node with no `nominal_identity_preimage`,
+  whose body holds no application, and that is not a model declaration node
+  of `model` or `relation` tag carrying no `declaration` (keyed with its
+  `ModelOwner` by "Model-owned members" step 2). So a consumer reading a
+  range, bound, element type or field type from such a node reads the content
+  its key names. A structural node outside every recursion group, declared or
+  not and of any shape, is current when its key is the JCS SHA-256 of its
+  preimage: `recursion` `null`, `semantic_type` `null` exactly when the node
+  is its own type, and `owner` present exactly when the node carries a
+  `declaration`, taken from its `declaration` source occurrence as
+  `{kind: "source", authority, identity}`. A **derived shape**, an
+  undeclared ungrouped node of `scalar_type` `boolean` and `integer`,
+  `composite_type` `reference`, `option`, `set`, `bag`, `sequence` and
+  `ordered_set`, or `bounded_domain` `integer_range` and
+  `collection_bounds`, is current only when it is also, for a `scalar_type`
+  or `composite_type`, its own `semantic_type`. A structural node that
+  carries a `recursion_group` is an **in-group structural node**. The members
+  of a group are the nodes carrying its label, and a member's `ordinal` is its
+  position among them in graph order. Such a node is current when its key is the JCS
   SHA-256 of its QSL FR-092 group-local preimage (`recursion`
   `{size, ordinal}`, each body `reference` to a member and a `semantic_type`
   naming a member written `{term: "group_reference", ordinal}`, `owner` from
   the node's `declaration` source occurrence when it is declared) with
   `recursion.group` set to its retained `recursion_group`. The stage runs two
-  passes. The first visits both sets together, ascending by retained node-id
-  digest, and refuses the first node that is not current. The second
+  passes. The first visits every structural node, grouped or not, ascending
+  by retained node-id digest, and refuses the first node that is not
+  current. The second
   recomputes each group's digest, the JCS SHA-256 of the array of the digests
   of its members' group-local preimages in ordinal order (an in-group
   application node's group-local preimage is its
@@ -276,8 +282,8 @@ boundary.
   A tampered body or `semantic_type` of an in-group node fails the first
   pass at that node, because the other members' group-local preimages name
   it by ordinal and not by key; a changed graph order of a group's members
-  fails the first pass at a member whose ordinal changed. A conformant package carries
-  on every node of both sets the key QSL's FR-092 key function mints.
+  fails the first pass at a member whose ordinal changed. A conformant package
+  carries on every structural node the key QSL's FR-092 key function mints.
 - `dependency_reference` — a reference to a declaration exported by a
   `dependency_selections` package: `PackageNodeKey{package, node}`, where
   `package` is that dependency's declared `quire.package.semantic/v2`
@@ -912,9 +918,9 @@ partial checked package.
 | FR-322-AC-45 | `quire.op.structural.eq` over two `Label` values of `union Label { Named(Text[0,8;nfc]), Tagged(Integer, Text[0,8;nfc]), Empty }` carries exactly the leaves `["member:Named", "position:0"]` and `["member:Tagged", "position:1"]` in that order, each with the `nfc` text law and mode, and none for `Empty`; both V2 schemas admit the `member:<Ident>` segment. | Test (TC-395) |
 | FR-322-AC-46 | `quire.op.structural.eq` over two values of `union List { Cons(Integer, List), Nil }`, whose cycle names one `recursion_group`, is admitted with empty `leaves`, and a record whose field's type cycles back to the record through a union is likewise admitted; neither refuses `operator-ineligible`. Over `Node`, `Cell`, `Chain` and `Option<Chain>` of the "Structural leaf walk" examples it is admitted with exactly the listed leaves in that order, each recursion leaf with `laws` `[]` and `mode` `null`; both V2 schemas admit the `recursion:<d>` segment. | Test (TC-395) |
 | FR-322-AC-47 | The V2 `Diagnostic` schema admits `type-mismatch` only with `ill_typed`, `missing-selection` only with `missing_import` or `missing_declaration`, and `unsupported-selection` and `wrong-selection-role` only with `unknown_language`, `unknown_edition` or `unknown_profile`. | Test (TC-233) |
-| FR-322-AC-48 | A published package whose undeclared, ungrouped derived-shape node is tampered, with its `node_id` kept, its `identity_projection` entry patched the same way and its `package_id` recomputed, is schema-valid and identity-consistent and refuses `invalid_package`/`stale-node-key` at that node's `node_id`: an `integer_range` `max` narrowed to `2` and widened to `5000`, its `min` raised to `1` and its bounds swapped, a `reference` target re-pointed at the `Integer` node and a `set` element re-pointed at the `Integer` node. The untampered package is admitted. | Test (TC-233) |
+| FR-322-AC-48 | A published package whose ungrouped structural node is tampered, with its `node_id` kept, its `identity_projection` entry patched the same way and its `package_id` recomputed, is schema-valid and identity-consistent and refuses `invalid_package`/`stale-node-key` at that node's `node_id`: an `integer_range` `max` narrowed to `2` and widened to `5000`, its `min` raised to `1` and its bounds swapped, a `reference` target re-pointed at the `Integer` node, a `set` element re-pointed at the `Integer` node, and the declared record `Example::Point`'s field `x` re-pointed from the `Integer` node at the `Int[0, 9]` node. The untampered package is admitted. | Test (TC-233) |
 | FR-322-AC-49 | The recursive-records package (`record List { next?: List; }` and `record Tree { kids: Sequence<Tree>[0, 3]; }`, each one recursion group keyed by QSL FR-092) is admitted. With one in-group node tampered, its `node_id` kept, its `identity_projection` entry patched and its `package_id` recomputed, it refuses `invalid_package`/`stale-node-key` at that node's `node_id`: `Tree`'s `collection_bounds` `max` widened from `3` to `1000` and its `min` raised to `1`, `Tree`'s `Sequence` element re-pointed from the record at the `collection_bounds` node, and `List`'s `Option` re-pointed at the `Integer` node. The `Tree` group relabelled with a label that is not its group digest, each member rekeyed under that label and every reference rewritten, refuses `invalid_package`/`stale-node-key` at the group member with the lowest node-id digest. | Test (TC-233) |
-| FR-322-AC-50 | Every node of every published positive fixture that is a derived shape or an in-group structural node carries the key QSL's FR-092 key function mints for it, and no placeholder key; the recursive-records fixture's group labels are its groups' digests; and the full reader admits every published positive fixture. | Test (TC-233) |
+| FR-322-AC-50 | Every structural node of every published positive fixture, grouped or not, carries the key QSL's FR-092 key function mints for it, and no placeholder key; the recursive-records fixture's group labels are its groups' digests; and the full reader admits every published positive fixture. | Test (TC-233) |
 
 ## Dependencies
 

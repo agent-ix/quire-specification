@@ -2084,12 +2084,17 @@ fn derived_shape_key_is_current(package: &Value, node: &Value) -> bool {
     self_typed && structural_node_key_is_current(package, node)
 }
 
-/// A non-nominal recursion-group member whose body holds no application:
-/// QSL FR-092 keys it by the in-group `quire.structural-node/v1` preimage.
-fn is_structural_group_member(node: &Value) -> bool {
-    node.get("recursion_group").is_some()
-        && node.get("nominal_identity_preimage").is_none()
+/// A node QSL FR-092 keys by `quire.structural-node/v1` with no input but the
+/// package itself: no nominal preimage, no application in its body, and not a
+/// model declaration node (a `model` or `relation` node with no
+/// `declaration`, keyed with its `ModelOwner` by the "Model-owned members"
+/// steps).
+fn is_rekeyed_structural_node(node: &Value) -> bool {
+    let model_declaration = matches!(node["node_tag"].as_str(), Some("model" | "relation"))
+        && node.get("declaration").is_none();
+    node.get("nominal_identity_preimage").is_none()
         && application_terms(&node["body"]).is_empty()
+        && !model_declaration
 }
 
 /// The members of `label`'s recursion group, in graph order: a member's
@@ -2209,21 +2214,23 @@ fn group_member_key_is_current(package: &Value, nodes: &[Value], node: &Value) -
 }
 
 /// The first node of the derived-shape stage whose retained key is stale, in
-/// its two passes: each undeclared, ungrouped derived-shape node and each
-/// structural recursion-group member against its own preimage, ascending by
-/// node-id digest; then each recursion group whose retained label is not its
+/// its two passes: each re-keyed structural node, grouped or not, against its
+/// own preimage (a derived shape also self-typed), ascending by node-id
+/// digest; then each recursion group whose retained label is not its
 /// recomputed group digest, reported at its lowest node-id digest member.
 fn stale_derived_shape_node<'a>(package: &Value, nodes: &'a [Value]) -> Option<&'a Value> {
     let mut keyed = nodes
         .iter()
-        .filter(|node| is_derived_shape(node) || is_structural_group_member(node))
+        .filter(|node| is_rekeyed_structural_node(node))
         .collect::<Vec<_>>();
     keyed.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
     let stale_member = keyed.into_iter().find(|node| {
         if node.get("recursion_group").is_some() {
             !group_member_key_is_current(package, nodes, node)
-        } else {
+        } else if is_derived_shape(node) {
             !derived_shape_key_is_current(package, node)
+        } else {
+            !structural_node_key_is_current(package, node)
         }
     });
     stale_member.or_else(|| {
@@ -3806,6 +3813,9 @@ fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cau
                 .as_str()
                 .expect("expected_locus_digest is a string"),
         );
+        // The edited frame is rekeyed so the read reaches the frame step.
+        let renames = rekey_stale_nodes(&mut candidate);
+        let expected_locus = renamed_locus(&renames, &expected_locus);
         match read_package_semantics(&candidate, &catalog) {
             Err(ReadRefusal::Frame(refusal, locus)) => {
                 assert_eq!(refusal.code(), expected_code, "{name}: code");
@@ -3909,6 +3919,80 @@ fn rekey_application_node(package: &mut Value, node_index: usize) {
     }
     refresh_package_id(package);
 }
+/// Rekey every ungrouped application or structural node whose retained key is
+/// stale, and every node naming it, until every such key is current; rewrite
+/// each renamed digest wherever the package names it, then rebuild the
+/// identity preimage and `package_id`. Returns each original digest's final
+/// digest, so a test that edits a node to reach a later reader stage names
+/// the edited node by its current key.
+fn rekey_stale_nodes(package: &mut Value) -> BTreeMap<String, String> {
+    let mut renames = BTreeMap::<String, String>::new();
+    let limit = package["semantic_graph"]["nodes"]
+        .as_array()
+        .map_or(0, Vec::len)
+        .pow(2);
+    for _ in 0..=limit {
+        let nodes = package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("package nodes are an array");
+        let stale = nodes.iter().find_map(|node| {
+            if node.get("recursion_group").is_some() {
+                return None;
+            }
+            let derived = if application_terms(&node["body"]).is_empty() {
+                is_rekeyed_structural_node(node)
+                    .then(|| structural_node_preimage(package, node))
+                    .flatten()
+            } else {
+                application_node_preimage(node, nodes)
+            }
+            .map(|preimage| unqualified_jcs_sha256(&preimage))?;
+            let retained = node["node_id"]["digest"].as_str()?;
+            (retained != derived).then(|| (retained.to_owned(), derived))
+        });
+        let Some((old, new)) = stale else {
+            package["identity_preimage"] = derive_identity_preimage(package);
+            refresh_package_id(package);
+            return renames;
+        };
+        let text = serde_json::to_string(package)
+            .expect("package serializes")
+            .replace(&old, &new);
+        *package = serde_json::from_str(&text).expect("rekeyed package parses");
+        // A renamed dependency keeps each `dependencies` list digest-ascending.
+        for node in package["semantic_graph"]["nodes"]
+            .as_array_mut()
+            .expect("package nodes are an array")
+        {
+            if let Some(dependencies) = node["dependencies"].as_array_mut()
+                && dependencies
+                    .iter()
+                    .any(|dependency| dependency["digest"] == new.as_str())
+            {
+                dependencies
+                    .sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+            }
+        }
+        for value in renames.values_mut().filter(|value| **value == old) {
+            value.clone_from(&new);
+        }
+        renames.entry(old).or_insert(new);
+    }
+    panic!("rekeying does not settle within {limit} renames");
+}
+
+/// `locus` under `renames`: the node id its digest names after rekeying.
+fn renamed_locus(renames: &BTreeMap<String, String>, locus: &Value) -> Value {
+    let mut renamed = locus.clone();
+    if let Some(new) = locus["digest"]
+        .as_str()
+        .and_then(|digest| renames.get(digest))
+    {
+        renamed["digest"] = json!(new);
+    }
+    renamed
+}
+
 /// Unit node index in `positive-nominal-identities.json`; no other node depends on it.
 const NOMINAL_UNIT_NODE: usize = 2;
 
@@ -7819,7 +7903,11 @@ fn tc_233_state_step_joins_anchors_then_clauses_with_their_recorded_cause() {
     let reference =
         |b: &str| json!({"term": "reference", "target": node_ref_digest(&clause_digest(b))});
     let expect = |candidate: &Value, refusal: StateRefusal, locus: Value, why: &str| {
-        match read_package_semantics(candidate, &catalog) {
+        // Edited nodes are rekeyed so the read reaches the state step.
+        let mut candidate = candidate.clone();
+        let renames = rekey_stale_nodes(&mut candidate);
+        let locus = renamed_locus(&renames, &locus);
+        match read_package_semantics(&candidate, &catalog) {
             Err(ReadRefusal::State(actual, actual_locus)) => {
                 assert_eq!(actual, refusal, "{why}: refusal");
                 assert_eq!(actual_locus, locus, "{why}: locus");
@@ -7986,6 +8074,7 @@ fn tc_233_state_step_joins_anchors_then_clauses_with_their_recorded_cause() {
     let frame = node_index(&package, &clause_digest("frame"));
     let mut wrong = package.clone();
     wrong["semantic_graph"]["nodes"][frame]["semantic_type"] = target("reference");
+    rekey_stale_nodes(&mut wrong);
     assert!(
         matches!(
             read_package_semantics(&wrong, &catalog),
@@ -8112,6 +8201,7 @@ fn tc_233_the_full_reader_resolves_frame_anchor_and_clause_member_names() {
     let mut bad_field = with_model.clone();
     bad_field["semantic_graph"]["nodes"][frame_index]["body"]["modifies"][0]["name"] =
         json!("no_such_field");
+    rekey_stale_nodes(&mut bad_field);
     assert_eq!(
         read_package_semantics(&bad_field, &catalog),
         Err(ReadRefusal::Frame(
@@ -8124,6 +8214,7 @@ fn tc_233_the_full_reader_resolves_frame_anchor_and_clause_member_names() {
     let frame_index = node_index(&bad_field_no_model, &clause_digest("frame"));
     bad_field_no_model["semantic_graph"]["nodes"][frame_index]["body"]["modifies"][0]["name"] =
         json!("no_such_field");
+    rekey_stale_nodes(&mut bad_field_no_model);
     assert_eq!(
         read_package_semantics(&bad_field_no_model, &catalog),
         Ok(()),
@@ -8135,11 +8226,12 @@ fn tc_233_the_full_reader_resolves_frame_anchor_and_clause_member_names() {
     let mut bad_operation = with_model.clone();
     bad_operation["semantic_graph"]["nodes"][anchor_index]["body"]["members"][1]["value"]["value"] =
         json!("doesNotExist");
+    let renames = rekey_stale_nodes(&mut bad_operation);
     assert_eq!(
         read_package_semantics(&bad_operation, &catalog),
         Err(ReadRefusal::State(
             StateRefusal::MissingName,
-            target("anchor")
+            renamed_locus(&renames, &target("anchor"))
         )),
         "an anchor naming an operation the context does not declare refuses missing-name"
     );
@@ -8147,6 +8239,7 @@ fn tc_233_the_full_reader_resolves_frame_anchor_and_clause_member_names() {
     let anchor_index = node_index(&bad_operation_no_model, &clause_digest("anchor"));
     bad_operation_no_model["semantic_graph"]["nodes"][anchor_index]["body"]["members"][1]["value"]
         ["value"] = json!("doesNotExist");
+    rekey_stale_nodes(&mut bad_operation_no_model);
     assert_eq!(
         read_package_semantics(&bad_operation_no_model, &catalog),
         Ok(()),
@@ -8184,8 +8277,9 @@ fn tc_233_duplicate_anchors_and_shared_frames_are_refused() {
 
     let anchor_index = node_index(&package, &clause_digest("anchor"));
     let mut duplicated = package.clone();
-    let mut duplicate_anchor = duplicated["semantic_graph"]["nodes"][anchor_index].clone();
-    duplicate_anchor["node_id"] = node_ref_digest(&repeated_digest("b6"));
+    // The duplicate is the same content, so its current key is the anchor's.
+    let duplicate_anchor = duplicated["semantic_graph"]["nodes"][anchor_index].clone();
+    let anchor_id = duplicate_anchor["node_id"].clone();
     duplicated["semantic_graph"]["nodes"]
         .as_array_mut()
         .expect("nodes")
@@ -8194,7 +8288,7 @@ fn tc_233_duplicate_anchors_and_shared_frames_are_refused() {
         read_package_semantics(&duplicated, &catalog),
         Err(ReadRefusal::State(
             StateRefusal::AmbiguousDeclaration,
-            node_ref_digest(&repeated_digest("b6"))
+            anchor_id.clone()
         )),
         "a second anchor for the same (context, operation) pair is refused, not admitted"
     );
@@ -8207,11 +8301,20 @@ fn tc_233_duplicate_anchors_and_shared_frames_are_refused() {
         .as_array_mut()
         .expect("nodes")
         .push(second_anchor);
+    let renames = rekey_stale_nodes(&mut shared_frame);
+    // The second anchor in node-id order is refused.
+    let later_anchor = [
+        anchor_id,
+        renamed_locus(&renames, &node_ref_digest(&repeated_digest("b7"))),
+    ]
+    .into_iter()
+    .max_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()))
+    .expect("two anchors");
     assert_eq!(
         read_package_semantics(&shared_frame, &catalog),
         Err(ReadRefusal::State(
             StateRefusal::AmbiguousDeclaration,
-            node_ref_digest(&repeated_digest("b7"))
+            later_anchor
         )),
         "a frame node bound by two different anchors is refused, not admitted"
     );
@@ -9955,8 +10058,9 @@ fn tc_233_positive_fixtures_carry_derived_structural_keys() {
 /// projection, recomputed `package_id`) is schema-valid and identity-consistent
 /// yet refused `invalid_package`/`stale-node-key` at its own `node_id`, while
 /// the untampered package is admitted. The rows cover an ungrouped
-/// `integer_range`, `reference` and `set`, and the in-group
-/// `collection_bounds`, `sequence` and `option` of the recursive records.
+/// `integer_range`, `reference` and `set`, the declared record
+/// `Example::Point`, and the in-group `collection_bounds`, `sequence` and
+/// `option` of the recursive records.
 #[trace("TC-233", "FR-322-AC-48", "FR-322-AC-49")]
 #[test]
 fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
@@ -9967,6 +10071,10 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
         .as_array()
         .expect("derived-shape mutations are an array");
     let bases = BTreeMap::from([
+        (
+            "positive-all-families",
+            parsed_fixture(POSITIVE_ALL_FAMILIES),
+        ),
         (
             "positive-operation-identities",
             parsed_fixture(POSITIVE_OPERATION_IDENTITIES),
@@ -9998,6 +10106,7 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
         ),
         (Some("sequence"), Some("positive-recursive-records")),
         (Some("option"), Some("positive-recursive-records")),
+        (Some("record"), Some("positive-all-families")),
     ] {
         assert!(tampered_forms.contains(&form), "{form:?} is tampered");
     }

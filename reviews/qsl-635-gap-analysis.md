@@ -34,3 +34,17 @@ SR-1296 FND-002 for the code mismatch with that AC's text.
 | --- | --- | --- | --- |
 | FND-001 | medium | The recursive fixture is left out of every all-positive-fixtures check. It is not read through `read_package_semantics` (admission), and it is absent from `tc_233_positive_fixtures_carry_derived_structural_keys` and the FR-322-AC-14 package-identity loop. Its own test checks keys and identity, but no test shows the reader admits it. The scope comment's purpose was "so IR's conformance run covers in-group re-derivation", yet nothing refuses an in-group tamper. It should join the admission loop, and it should get a tamper row on an in-group `collection_bounds` (SR-1296 FND-001). | tests/checked_package_v2.rs:9760-9790, tests/checked_package_v2.rs:3971-3982 |
 | FND-002 | low | The tamper rows all patch the one `integer_range` of operation-identities. The reader stage also re-derives `collection_bounds`, `option`, `reference` and the collection composites, but no row tampers any of them, so those branches of `is_derived_shape` have no failing test. | proposals/checked-package-v2/fixtures/adverse.json:17-21 |
+
+## Dispositions
+
+Round 1, reviewed at 4bf7e9c834a6e29695621be5233aec8c19359d67. The recursive
+fixture now sits in the FR-322-AC-14 identity loop, `published_v2_packages`,
+the structural-key loop and the tamper bases, and its own test reads it with
+the full reader. `derived_shape_key_mutations` adds `reference` and `set`
+re-points and in-group `collection_bounds` (max widened, min raised),
+`sequence` and `option` rows. A forged group label test is also new.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 9630eb4 |
+| FND-002 | fixed | 9630eb4 |
