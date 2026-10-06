@@ -185,8 +185,10 @@ lists. `adverse.json` gains `owner_mutations`, each applied to its base
 fixture with the node id kept, the projection entry patched and
 `package_id` recomputed, and `fixtures/` gains `positive-two-owners-a.json`
 and `positive-two-owners-b.json`, whose declarations carry the qualified
-names QSL emits (`["Point"]`, `["List"]`, `["three"]`), so their nodes are
-the nodes QSL FR-093-AC-22 emits.
+names QSL emits (`["Point"]`, `["List"]`, `["three"]`), so their `Point`,
+`List` and `Integer` nodes are the nodes QSL FR-093-AC-22 emits. `three` is
+not in AC-22's source: it is hand authored and keyed by FR-322's
+`quire.application-node/v1` rule.
 
 Validate every node of every positive fixture against the owner presence
 rule and require each owner-bearing node's `owner` to equal its preimage's
