@@ -55,7 +55,7 @@ at the object type that declares it.
 
 The `operation` name resolves among the operation members of `C` by
 [FR-322](FR-322-checked-package-artifact.md)'s "Model-owned members": step
-2 recovers `C`'s `ModelOwner`, and step 3 matches the name against the
+2 looks up the declaration `C`'s `ModelOwner` names, and step 3 matches the name against the
 exposed effective operation members of `C`, own and inherited, with
 redefinitions applied. Field members are not candidates. The resolved
 operation is declared by `C` itself: an operation `C` only inherits is
@@ -80,10 +80,9 @@ the checks run in this order and the first failing check is its defect:
 3. **Types.** The anchor's `semantic_type` and the frame's `semantic_type`
    both equal the `context` target, else `invalid_model_binding`/
    `malformed-declaration` at the anchor node.
-4. **Operation.** The `operation` name resolves as above: an unrecovered
-   owner refuses with step 2's own refusal
-   (`missing_declaration`/`missing-selection` or
-   `invalid_package`/`stale-node-key`); no operation of that name refuses
+4. **Operation.** The `operation` name resolves as above: a context whose
+   owner names no declaration refuses with step 2's own refusal
+   (`missing_declaration`/`missing-selection`); no operation of that name refuses
    `missing_declaration`/`missing-name`; two or more refuse
    `ambiguous_declaration`/`ambiguous-name`; an operation `C` does not
    itself declare refuses `invalid_model_binding`/`malformed-declaration`.

@@ -149,6 +149,44 @@ keep the node id, recompute `package_id`, and read it with the full reader
 a label that is not its group digest, rekey each member under it, rewrite
 every reference and read it (FR-322-AC-49).
 
+The published fixtures carry the node `owner` member (FR-322 "Owner member
+schema"). In every positive fixture each declared structural node carries
+the `SourceOwner` of its fixture's lock source (`agent-ix`/`example`, or
+`a`/`u` in the recursive-records fixture), the owner its key already hashes,
+so its node id is unchanged while its `identity_projection` entry gains the
+member and the fixture's `package_id` is recomputed. The undeclared
+`relation`/`relationship` nodes of `positive-all-families.json` and
+`positive-operation-identities.json` become model declaration nodes: each
+carries M4's `ModelOwner` (`acme/orders`, `ix://acme/orders/billedTo`), is
+its own `semantic_type`, has an empty body and is keyed M4; each fixture's
+lock and identity preimage select `acme/orders` under the digest of
+`model-member-type-vectors.json`'s `domain_package`, and every node and
+vector naming the old key (the all-families frame node, the operation
+fixture's reachability node and the `frame_mutations` and
+`derived_shape_key_mutations` that name them) is rekeyed or rewritten. The
+wire cases of `model-member-type-vectors.json` carry the owners TC-280
+lists. `adverse.json` gains `owner_mutations`, each applied to its base
+fixture with the node id kept, the projection entry patched and
+`package_id` recomputed, and `fixtures/` gains `positive-two-owners-a.json`
+and `positive-two-owners-b.json`.
+
+Validate every node of every positive fixture against the owner presence
+rule and require each owner-bearing node's `owner` to equal its preimage's
+and its projection entry's. Apply each `owner_mutations` schema case (a
+declared record without `owner` and with a `ModelOwner`, a model
+declaration node without `owner` and with a `SourceOwner`, an `owner` on the
+`Integer`, nominal enum and application nodes, a `DefinitionOwner`, a
+`SourceOwner` with an extra member and a `ModelOwner` with `version`) and
+read each with the full reader (FR-322-AC-51). Read the owner-change
+mutation, whose new source is added to `lock.sources`, the unjoined
+`SourceOwner` and `ModelOwner` mutations, the unjoined-owner mutation
+combined with a stale key at a node of lower node-id digest, and the
+source-map edit moving a declaration occurrence's region to another lock
+source (FR-322-AC-51, FR-322-AC-52). Read both two-owner fixtures, compare
+their node ids, group labels and `package_id`s, recompute each one's
+in-group keys and group label from that package alone, and read package `a`
+carrying package `b`'s `owner` members (FR-322-AC-53).
+
 ## Expected Results
 
 Every positive artifact validates and recomputes its recorded identity. Excluded
@@ -193,3 +231,15 @@ published positive fixture. Each structural-node mutation, including the
 declared record `Example::Point`, ungrouped or in-group, refuses `invalid_package`/`stale-node-key` at the tampered node,
 and the relabelled `Tree` group refuses `invalid_package`/`stale-node-key` at
 its member with the lowest node-id digest.
+Every owner-bearing node of every positive fixture carries its preimage's
+`owner`, and so does its projection entry; no other node carries one. Each
+owner schema mutation fails the schema and refuses `malformed_wire`. The
+owner-change mutation refuses `invalid_package`/`stale-node-key` at the
+changed node; each unjoined owner refuses
+`missing_declaration`/`missing-selection` at its node, also when a node of
+lower digest is stale; the source-map edit leaves the package admitted with
+the same node ids and `package_id`. Both two-owner fixtures are admitted;
+their `Point` ids, `List` group labels and `List` group member ids differ,
+their `Integer` id is equal and their `package_id`s differ, each package's
+in-group keys recompute from it alone, and package `a` with package `b`'s
+owners refuses `invalid_package`/`stale-node-key`.

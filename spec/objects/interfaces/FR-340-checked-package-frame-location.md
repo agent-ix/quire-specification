@@ -91,17 +91,18 @@ key. This wire encoding is the V2 carrier of that existing model.
 A field entry's `name` resolves among the fields of its declaring node, by
 the member resolution
 [FR-322](FR-322-checked-package-artifact.md)'s "Model-owned members" gives a
-`field` member: for a `model`/`object_type` node, step 2 recovers the
-node's `ModelOwner` and step 3 matches `name` against the exposed effective
+`field` member: for a `model`/`object_type` node, step 2 looks up the
+declaration the node's `ModelOwner` names and step 3 matches `name` against the exposed effective
 field members of that object type, own and inherited; for a
 `model`/`record_value_type` node, `name` matches the fields its record
 declaration declares. Operation members are not candidates. The field
 entry refuses as follows, and a refusal is that entry's meaning-join
 defect:
 
-- the declaring node's owner is not recovered: step 2's own refusal,
-  `missing_declaration`/`missing-selection` or
-  `invalid_package`/`stale-node-key`;
+- no declaration of the declaring node's owner is found: step 2's own
+  refusal, `missing_declaration`/`missing-selection` (a declaring node that
+  is not its own preimage was refused earlier by FR-322's derived-shape key
+  stage);
 - no field of that name: `missing_declaration`/`missing-name`;
 - two or more exposed fields of that name:
   `ambiguous_declaration`/`ambiguous-name`.
@@ -215,8 +216,8 @@ reports exactly one diagnostic: the one this fixed order, and only this
 order, decides:
 
 1. Any meaning-join defect (a `semantic_type` defect, or an entry's
-   `missing-name`, `missing-selection`, `stale-node-key`, `ambiguous-name`
-   or `malformed-declaration`, in any of the three members) outranks any
+   `missing-name`, `missing-selection`, `ambiguous-name` or
+   `malformed-declaration`, in any of the three members) outranks any
    canonical-order defect.
 2. Ties break by position, in the frame node's own fixed order:
    `semantic_type`, then `modifies`, then `creates`, then `deletes`.
