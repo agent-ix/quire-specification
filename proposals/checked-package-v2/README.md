@@ -32,6 +32,10 @@ structures, but any external consumer receives only the contract.
 - `node-identity-vectors.json` supplies known JCS SHA-256 vectors for those
   preimages, plus `operation_vectors` and `operation_mutations` for
   application-node preimages.
+- `node-identity-vectors.json`'s `integer_encoding_vectors` fix FR-322's
+  spelling of integers in a node-key preimage: counters at 2^53-1 (JSON
+  numbers) and at 2^53 (a decimal string), and an `integer_range` bound
+  above 2^53 (a decimal string, as every integer value is).
 - `node-identity-vectors.json`'s `frame_mutations` are applied to the
   semantic graph and evaluated at the frame step of `read_package_semantics`
   (FR-322, FR-340); identity projection, `package_id` and source-map checks
