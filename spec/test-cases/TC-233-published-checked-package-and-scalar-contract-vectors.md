@@ -151,12 +151,21 @@ keep the node id, recompute `package_id`, and read it with the full reader
 a label that is not its group digest, rekey each member under it, rewrite
 every reference and read it (FR-322-AC-49).
 
-The published fixtures carry the node `owner` member (FR-322 "Owner member
-schema"). In every positive fixture each declared structural node carries
+The positive fixtures are rebuilt in the same change. Every node of a
+kind QSL's v2 emission writes (QSL FR-093-AC-19's classification) is real
+QSL emitter output, with its key cross-checked against QSL's FR-092/FR-094
+key functions; this replaces the non-emittable placeholders, among them
+`positive-all-families.json`'s declared boolean `Example::Flag` and the
+nodes typed at it, and `positive-operation-identities.json`'s undeclared
+record node and its placeholder function `double` and model `Counter`.
+Only a node of a kind QSL never writes (FR-093-AC-19), kept so that the
+all-families fixture carries all 13 node tags (FR-322-AC-13), is hand
+authored, and it is keyed by FR-092/FR-094 exactly as emitter output
+would be. The published fixtures carry the node `owner` member (FR-322
+"Owner member schema"). In every positive fixture each declared structural node carries
 the `SourceOwner` of its fixture's lock source (`agent-ix`/`example`, or
-`a`/`u` in the recursive-records fixture), the owner its key already hashes,
-so its node id is unchanged while its `identity_projection` entry gains the
-member and the fixture's `package_id` is recomputed. The undeclared
+`a`/`u` in the recursive-records fixture); its `identity_projection` entry
+gains the member and the fixture's `package_id` is recomputed. The undeclared
 `relation`/`relationship` nodes of `positive-all-families.json` and
 `positive-operation-identities.json` become model declaration nodes: each
 carries M4's `ModelOwner` (`acme/orders`, `ix://acme/orders/billedTo`), is
@@ -189,8 +198,10 @@ their node ids, group labels and `package_id`s, recompute each one's
 in-group keys and group label from that package alone, and read package `a`
 carrying package `b`'s `owner` members (FR-322-AC-53).
 
-`positive-clause-operations.json` gains one `correspondence`/
-`abstraction_relation` node (FR-451): no `owner`, empty `objects` and
+Only the `correspondence`/`abstraction_relation` form is outside the
+derived-shape key stage; the all-families `correspondence`/`source_locus`
+node stays a structural node the stage keys. `positive-clause-operations.json`
+gains one `correspondence`/`abstraction_relation` node (FR-451): no `owner`, empty `objects` and
 `populations`, and one `frames` entry keyed by the fixture's
 (`ConfigVersion`, `attemptUpdate`) `operation_anchor` pair (FR-451-AC-2),
 its own `semantic_type`, its body targets as `dependencies` and a

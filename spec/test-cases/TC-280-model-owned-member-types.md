@@ -37,6 +37,10 @@ the member type from the resolved record.
   cases, each recorded with its criterion, the wire cases and the selection
   cases. The SHA-256 of the RFC 8785 bytes of its `domain_package` member
   stands for the document's `sha256-jcs` digest.
+- The wire cases are hand authored: each is a single model declaration
+  node, a shape QSL emits only inside a package, keyed by QSL FR-094 exactly
+  as emitter output would be. The model declaration nodes of the positive
+  fixtures are QSL emitter output (TC-233).
 - The lock selects `acme/orders` `1.0.0` only.
 - `node-identity-preimage.schema.json` defines the closed
   `ModelDeclarationNode` preimage.

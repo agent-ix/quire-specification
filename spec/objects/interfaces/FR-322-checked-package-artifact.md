@@ -257,7 +257,10 @@ boundary.
   body}` preimage
   ([FR-451](FR-451-checked-package-abstraction-relation-body.md)), which
   FR-451's abstraction step checks after the state step; this stage neither
-  re-keys nor refuses it. So a consumer reading a range, bound, element type or field
+  re-keys nor refuses it. Only that form is excluded: a `correspondence` node of
+  any other form (`source_locus`, `model_correspondence`, `binding_role`,
+  `profile_correspondence`) whose body holds no application is a structural
+  node and is keyed by this stage. So a consumer reading a range, bound, element type or field
   type from such a node reads the content its key names. The stage first
   joins the `owner` of every owner-bearing node to the lock, ascending by
   retained node-id digest: a `SourceOwner` joins when its
@@ -397,8 +400,10 @@ boundary.
   builtin or anonymous type, an undeclared value, parameter or expression,
   any other undeclared node, a nominal node (its owner is its
   `nominal_identity_preimage`'s) and a node keyed by
-  `quire.application-node/v1` (that preimage has no owner, so two declared
-  application nodes that differ only by owner share one id). A
+  `quire.application-node/v1`. That preimage has no owner by design: an
+  application node is content-addressed, so the same value under two owners
+  is one node, and a re-derivation recomputes it identically from its
+  content, so no owner can be forged into or out of its key. A
   `DefinitionOwner` is never a node `owner`, because a definition-owned
   declaration is a nominal node. `owner` is a member of the node's
   `identity_projection` entry, so it enters `package_id`. A reader reads a
