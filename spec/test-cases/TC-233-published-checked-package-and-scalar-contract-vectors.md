@@ -11,6 +11,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-342
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-451
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-201
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-142
@@ -187,6 +189,17 @@ their node ids, group labels and `package_id`s, recompute each one's
 in-group keys and group label from that package alone, and read package `a`
 carrying package `b`'s `owner` members (FR-322-AC-53).
 
+`positive-clause-operations.json` gains one `correspondence`/
+`abstraction_relation` node (FR-451): no `owner`, empty `objects` and
+`populations`, and one `frames` entry keyed by the fixture's
+(`ConfigVersion`, `attemptUpdate`) `operation_anchor` pair (FR-451-AC-2),
+its own `semantic_type`, its body targets as `dependencies` and a
+`declaration` occurrence, keyed by FR-451's
+`quire.abstraction-relation-node/v1` preimage. Read the package with the
+full reader, and read it again with that node's FR-451 body edited, its
+node id kept, its projection entry patched and `package_id` recomputed
+(FR-322-AC-54).
+
 ## Expected Results
 
 Every positive artifact validates and recomputes its recorded identity. Excluded
@@ -242,4 +255,8 @@ the same node ids and `package_id`. Both two-owner fixtures are admitted;
 their `Point` ids, `List` group labels and `List` group member ids differ,
 their `Integer` id is equal and their `package_id`s differ, each package's
 in-group keys recompute from it alone, and package `a` with package `b`'s
-owners refuses `invalid_package`/`stale-node-key`.
+owners refuses `invalid_package`/`stale-node-key`. The clause-operations
+package with its `correspondence`/`abstraction_relation` node passes the
+derived-shape key stage untouched and is admitted, and the tampered node
+refuses `invalid_semantic_graph` at FR-451's abstraction step, not
+`invalid_package`/`stale-node-key`.
