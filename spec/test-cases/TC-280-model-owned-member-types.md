@@ -20,8 +20,9 @@ relationships:
 Show that a reader derives the type of a `field` or `operation` member whose
 declaring node is a model declaration node from the lock-selected domain
 package, as FR-322's "Model-owned members" states: it admits the selected
-document as evidence, recovers the declaring node's `ModelOwner` by
-recomputing the model declaration node keys, resolves the member name among
+document as evidence, reads the declaring node's `ModelOwner` from its
+`owner` member, checks the node's key against its `ModelDeclarationNode`
+preimage, looks up the declaration that owner names, resolves the member name among
 the declaring type's exposed effective members, own and inherited, and derives
 the member type from the resolved record.
 
@@ -36,6 +37,10 @@ the member type from the resolved record.
   cases, each recorded with its criterion, the wire cases and the selection
   cases. The SHA-256 of the RFC 8785 bytes of its `domain_package` member
   stands for the document's `sha256-jcs` digest.
+- The wire cases are hand authored: each is a single model declaration
+  node, a shape QSL emits only inside a package, keyed by QSL FR-094 exactly
+  as emitter output would be. The model declaration nodes of the positive
+  fixtures are QSL emitter output (TC-233).
 - The lock selects `acme/orders` `1.0.0` only.
 - `node-identity-preimage.schema.json` defines the closed
   `ModelDeclarationNode` preimage.
@@ -43,14 +48,18 @@ the member type from the resolved record.
 ## Test Procedure
 
 Validate each model declaration node vector against the closed preimage schema
-and recompute its JCS SHA-256. Run step 2 over each wire case. For each member
-case, recover the declaring node's owner from the selected domain package,
+and recompute its JCS SHA-256. Run FR-322's owner presence rule, the
+derived-shape key stage's owner join and currency check, and step 2 over
+each wire case; each wire case's node carries the `owner` its row names. For each member
+case, look up the declaration the declaring node's owner names in the
+selected domain package,
 resolve the member and derive its type or refusal, and compare with the
 recorded expectation. An operation case also carries its call's receiver type
 and argument types, and a reference type names its target by the recomputed
 model declaration node key. For each selection case, run FR-322's selection
 admission checks over the supplied documents and compare with the recorded
-result. For each frame field case, recover the declaring node's owner and
+result. For each frame field case, look up the declaration the declaring node's
+owner names and
 resolve the name among its exposed fields (FR-340 "Field entries"). For each
 anchor case, resolve the operation among the context's exposed operations
 and require it to be declared by the context itself (FR-342). For each clause
@@ -80,7 +89,7 @@ compare it with the case's parameter types.
 | MA-02 | `field` `size`, an operation name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-03 | `operation` `total`, a field name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-04 | `field` `total` on M4, the relationship `billedTo` | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
-| MA-05 | `field` `total` on M2, `Order` keyed under version `2.0.0` | `missing_declaration`/`missing-selection` | FR-322-AC-29 |
+| MA-05 | `field` `total` on M2, `Order` owned by the unselected `acme/billing` | `missing_declaration`/`missing-selection` | FR-322-AC-29 |
 | MA-06 | `field` `label`, typed native `Text` with no bounds | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-07 | `field` `backlog`, `[1, unbounded]` | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-08 | `operation` `reset`, with no result | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
@@ -93,12 +102,20 @@ compare it with the case's parameter types.
 | MA-14 | `field` `alias`, typed value type `Inverted`, `Text` bound to `[5, 2; nfc]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
 | MA-15 | `field` `slug`, typed value type `Folded`, `Text` bound to `[0, 64; casefold]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
 | MA-16 | `field` `stub`, typed value type `Negative`, `Text` bound to `[-1, 4; nfc]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
-| MW-01 | A `model`/`object_type` wire node with M1's id, its own id as `semantic_type` and an empty body | Recovers `Order` | FR-322-AC-29 |
+| MW-01 | A `model`/`object_type` wire node with M1's id, M1's owner (`acme/orders`, `ix://acme/orders/Order`), its own id as `semantic_type` and an empty body | Resolves `Order` | FR-322-AC-29 |
 | MW-02 | MW-01 with a body member | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
-| MW-03 | MW-01 with a `declaration` | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
+| MW-03 | MW-01 with a `declaration` | Fails the V2 schema; `malformed_wire` | FR-322-AC-29 |
 | MW-04 | MW-01 with M4's id as `semantic_type` | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
 | MW-05 | MW-01 with a `recursion_group` | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
-| MW-06 | A `model`/`object_type` wire node carrying M4's id | `missing_declaration`/`missing-selection` | FR-322-AC-29 |
+| MW-06 | A `model`/`object_type` wire node carrying M4's id and M4's owner (`acme/orders`, `ix://acme/orders/billedTo`) | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
+| MW-07 | A `model`/`object_type` wire node carrying M4's owner, keyed by its own `model`/`object_type` preimage | `missing_declaration`/`missing-selection` at the owner join: `billedTo` is a relationship | FR-322-AC-29, FR-322-AC-55 |
+| MW-08 | A `model`/`object_type` wire node with M2's id and M2's owner (`acme/billing`, `ix://acme/billing/Order`) | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-29 |
+| MW-09 | MW-01 with no `owner` | Fails the V2 schema; `malformed_wire` | FR-322-AC-29 |
+| MW-10 | A `model`/`object_type` wire node with owner (`acme/orders`, `ix://acme/orders/Nope`), keyed by its own preimage, that no member reaches | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
+| MW-11 | A clause function wire node owned by (`acme/orders`, `ix://acme/orders/Order/size`), keyed by its own preimage (FR-094 C1) | Passes the owner join | FR-322-AC-55 |
+| MW-12 | A clause function wire node owned by (`acme/orders`, `ix://acme/orders/Order`), an invariant clause, keyed by its own preimage | Passes the owner join | FR-322-AC-55 |
+| MW-13 | MW-11 owned by `ix://acme/orders/Order/missing`, rekeyed | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
+| MW-14 | MW-11 owned by `ix://acme/orders/Order/total`, a field, rekeyed | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
 | MS-01 | The document supplied under the selected digest, identity equal | Passes the selection admission checks | FR-322-AC-32 |
 | MS-02 | No document supplied | `missing_import`/`missing-selection` | FR-322-AC-32 |
 | MS-03 | A document with `Digit`'s upper bound changed to 8, supplied under the selected digest, identity equal | `stale_dependency`/`content-mismatch` naming the selected and the recomputed digest | FR-322-AC-43 |
