@@ -65,3 +65,17 @@ The OwnerPresenceRule table agrees with QSL FR-093's emission rule ("exactly whe
 `quire validate` on the six changed files reports the two FR-322 and FR-340 structural errors (a `value_object` `id` and a `fields` record) that main already reports, so this PR did not cause them.
 
 **Mergeable once FND-001 and FND-002 are fixed.** The low findings are fixed in the same PR.
+
+## Dispositions
+
+Round 1, reviewed at caa6b38 (fix range 0b4f873..caa6b38). The owner JSON shape is unchanged: `SourceOwner` `{kind: "source", authority, identity}`, `ModelOwner` `{kind: "model", identity, node}` and `NodeOwner` `oneOf` are untouched, and schema.json is not in the diff.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 605f45f |
+| FND-002 | fixed | 605f45f |
+| FND-003 | fixed | 605f45f |
+| FND-004 | fixed | 605f45f |
+| FND-005 | fixed | 605f45f |
+| FND-006 | fixed | 605f45f (the text is fixed; the coordinator decided not to add the Linear blocking edge, because the dependency is inside QSL-638 and TC-233 now records it) |
+| FND-007 | fixed | 605f45f, with caa6b38 clarifying that `three` is hand-authored |
