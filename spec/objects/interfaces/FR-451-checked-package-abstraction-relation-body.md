@@ -101,8 +101,9 @@ check is its defect:
    `missing_declaration`/`missing-name`; a `type` or `context` target that
    is not `model`/`object_type`, or a `population` target that is not
    `relation`/`population`, refuses `invalid_model_binding`/
-   `malformed-declaration`; an owner the reader cannot recover refuses with
-   FR-322 step 2's own refusal. The locus is the target.
+   `malformed-declaration`; a target whose `ModelOwner` names no selected
+   declaration of its kind was refused earlier by FR-322's derived-shape key
+   stage owner join (`missing_declaration`/`missing-selection`). The locus is the target.
 4. **Members**, entry by entry in the same order: two `fields` entries of
    one object entry with equal `name` refuse `invalid_model_binding`/
    `conflicting-binding` naming both entries and the name; otherwise, a

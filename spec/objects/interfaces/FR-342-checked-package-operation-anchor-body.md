@@ -81,7 +81,7 @@ the checks run in this order and the first failing check is its defect:
    both equal the `context` target, else `invalid_model_binding`/
    `malformed-declaration` at the anchor node.
 4. **Operation.** The `operation` name resolves as above: a context whose
-   owner names no declaration refuses with step 2's own refusal
+   owner names no declaration was refused earlier by FR-322's owner join
    (`missing_declaration`/`missing-selection`); no operation of that name refuses
    `missing_declaration`/`missing-name`; two or more refuse
    `ambiguous_declaration`/`ambiguous-name`; an operation `C` does not

@@ -151,17 +151,22 @@ keep the node id, recompute `package_id`, and read it with the full reader
 a label that is not its group digest, rekey each member under it, rewrite
 every reference and read it (FR-322-AC-49).
 
-The positive fixtures are rebuilt in the same change. Every node of a
-kind QSL's v2 emission writes (QSL FR-093-AC-19's classification) is real
-QSL emitter output, with its key cross-checked against QSL's FR-092/FR-094
-key functions; this replaces the non-emittable placeholders, among them
+The positive fixtures are rebuilt in the same change. Producing them is a
+fixture-production step, not a test step: every node of a kind QSL's v2
+emission writes (QSL FR-093-AC-19's classification) is produced by running
+QSL's emitter, which replaces the non-emittable placeholders, among them
 `positive-all-families.json`'s declared boolean `Example::Flag` and the
 nodes typed at it, and `positive-operation-identities.json`'s undeclared
 record node and its placeholder function `double` and model `Counter`.
 Only a node of a kind QSL never writes (FR-093-AC-19), kept so that the
 all-families fixture carries all 13 node tags (FR-322-AC-13), is hand
-authored, and it is keyed by FR-092/FR-094 exactly as emitter output
-would be. The published fixtures carry the node `owner` member (FR-322
+authored, and it is keyed by FR-092/FR-094's rule: the
+`quire.structural-node/v1` preimage FR-322's derived-shape key stage
+recomputes. The pass/fail oracle for every node, emitted or hand authored,
+is this case's independent key recomputation and the full reader's
+acceptance, never the node's provenance. Regenerating the fixtures needs
+QSL's emitter to write `owner` (QSL FR-093-AC-21, agent-ix/quire-spec-language#648),
+which needs IR's `CheckedSemanticNodeV2` `owner` field (IR-646) first. The published fixtures carry the node `owner` member (FR-322
 "Owner member schema"). In every positive fixture each declared structural node carries
 the `SourceOwner` of its fixture's lock source (`agent-ix`/`example`, or
 `a`/`u` in the recursive-records fixture); its `identity_projection` entry
@@ -179,7 +184,9 @@ wire cases of `model-member-type-vectors.json` carry the owners TC-280
 lists. `adverse.json` gains `owner_mutations`, each applied to its base
 fixture with the node id kept, the projection entry patched and
 `package_id` recomputed, and `fixtures/` gains `positive-two-owners-a.json`
-and `positive-two-owners-b.json`.
+and `positive-two-owners-b.json`, whose declarations carry the qualified
+names QSL emits (`["Point"]`, `["List"]`, `["three"]`), so their nodes are
+the nodes QSL FR-093-AC-22 emits.
 
 Validate every node of every positive fixture against the owner presence
 rule and require each owner-bearing node's `owner` to equal its preimage's
@@ -189,14 +196,17 @@ declaration node without `owner` and with a `SourceOwner`, an `owner` on the
 `Integer`, nominal enum and application nodes, a `DefinitionOwner`, a
 `SourceOwner` with an extra member and a `ModelOwner` with `version`) and
 read each with the full reader (FR-322-AC-51). Read the owner-change
-mutation, whose new source is added to `lock.sources`, the unjoined
+mutation, whose new source is added to `lock.sources` and receives the
+node's `declaration` occurrence regions, the unjoined
 `SourceOwner` and `ModelOwner` mutations, the unjoined-owner mutation
 combined with a stale key at a node of lower node-id digest, and the
 source-map edit moving a declaration occurrence's region to another lock
 source (FR-322-AC-51, FR-322-AC-52). Read both two-owner fixtures, compare
 their node ids, group labels and `package_id`s, recompute each one's
-in-group keys and group label from that package alone, and read package `a`
-carrying package `b`'s `owner` members (FR-322-AC-53).
+in-group keys and group label from that package alone, compare the
+application-keyed `three` node's id across both, and read package
+`a` carrying package `b`'s `owner` members, with `b`'s source added to its
+lock and its declaration regions moved to it (FR-322-AC-53).
 
 Only the `correspondence`/`abstraction_relation` form is outside the
 derived-shape key stage; the all-families `correspondence`/`source_locus`
@@ -207,9 +217,9 @@ gains one `correspondence`/`abstraction_relation` node (FR-451): no `owner`, emp
 its own `semantic_type`, its body targets as `dependencies` and a
 `declaration` occurrence, keyed by FR-451's
 `quire.abstraction-relation-node/v1` preimage. Read the package with the
-full reader, and read it again with that node's FR-451 body edited, its
-node id kept, its projection entry patched and `package_id` recomputed
-(FR-322-AC-54).
+full reader, and read it again with one `rust_type` segment of that node's
+body changed, canonical order and `dependencies` kept, its node id kept, its
+projection entry patched and `package_id` recomputed (FR-322-AC-54).
 
 ## Expected Results
 
@@ -261,13 +271,14 @@ owner schema mutation fails the schema and refuses `malformed_wire`. The
 owner-change mutation refuses `invalid_package`/`stale-node-key` at the
 changed node; each unjoined owner refuses
 `missing_declaration`/`missing-selection` at its node, also when a node of
-lower digest is stale; the source-map edit leaves the package admitted with
-the same node ids and `package_id`. Both two-owner fixtures are admitted;
+lower digest is stale; the source-map edit, which changes no node id and
+not the `package_id`, refuses `invalid_package`/`invalid-value` at the
+moved occurrence's `source_map` entry. Both two-owner fixtures are admitted;
 their `Point` ids, `List` group labels and `List` group member ids differ,
-their `Integer` id is equal and their `package_id`s differ, each package's
+their `Integer` id and their application-keyed `three` id are each equal and their `package_id`s differ, each package's
 in-group keys recompute from it alone, and package `a` with package `b`'s
 owners refuses `invalid_package`/`stale-node-key`. The clause-operations
 package with its `correspondence`/`abstraction_relation` node passes the
-derived-shape key stage untouched and is admitted, and the tampered node
-refuses `invalid_semantic_graph` at FR-451's abstraction step, not
+derived-shape key stage untouched and is admitted, and the body-edited node
+refuses `invalid_semantic_graph` at FR-451's abstraction step 1, not
 `invalid_package`/`stale-node-key`.

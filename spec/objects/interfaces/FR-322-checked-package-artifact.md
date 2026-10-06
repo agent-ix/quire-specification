@@ -262,13 +262,27 @@ boundary.
   `profile_correspondence`) whose body holds no application is a structural
   node and is keyed by this stage. So a consumer reading a range, bound, element type or field
   type from such a node reads the content its key names. The stage first
-  joins the `owner` of every owner-bearing node to the lock, ascending by
-  retained node-id digest: a `SourceOwner` joins when its
-  (`authority`, `identity`) equals a `lock.sources` entry's, and a
-  `ModelOwner` joins when its `identity` equals a `model_selections` row's
-  `identity`. The first owner that joins no entry refuses
-  `missing_declaration`/`missing-selection` at that node's `node_id`, before
-  either pass below. A structural node outside every recursion group,
+  joins the `owner` of every owner-bearing node, ascending by retained
+  node-id digest, and refuses the first owner that fails, before either
+  pass below:
+  - A `SourceOwner` joins when its (`authority`, `identity`) equals a
+    `lock.sources` entry's, else `missing_declaration`/`missing-selection`
+    at that node's `node_id`. It is also coherent with the source map: every
+    region of the node's `declaration` occurrence names a `source` whose
+    (`authority`, `identity`) equals the owner's, else
+    `invalid_package`/`invalid-value` at that occurrence's `source_map`
+    entry, because a declared node's owner is the source unit that declares
+    it.
+  - A `ModelOwner` joins when its `identity` equals a `model_selections`
+    row's `identity` and the admitted document of that selection ("Model-owned
+    members" step 1) declares its `node` as the kind the node stands for: on
+    a model declaration node, a declaration of the kind its
+    `node_tag`/`semantic_form` names (step 2's table), and on a clause
+    function, an operation member, or an object type for an invariant
+    clause. Any other owner refuses `missing_declaration`/`missing-selection`
+    at that node's `node_id`, whether or not any member, frame, anchor or
+    reference reaches the node. Each document lookup charges one validation
+    visit. A structural node outside every recursion group,
   declared or not and of any shape, is current when its key is the JCS
   SHA-256 of its preimage: `recursion` `null`, `semantic_type` `null`
   exactly when the node is its own type, and `owner` present exactly when
@@ -458,10 +472,11 @@ diagnostics catalog lists: step 1 reports the
 FR-154 intake and `quire.model.complete/v1` normalization causes under their
 own codes (`stale_dependency`, `missing_import`, `invalid_model_binding`,
 `missing_declaration`, `unsupported_construct` and `wrong_snapshot`), and
-steps 2 to 4 report `missing_declaration`/`missing-selection`,
-`ambiguous_declaration`/`ambiguous-name` and `ill_typed`/`operator-ineligible`
-(a model declaration node that is not its own preimage, or whose owner joins
-no selection, was refused earlier by the derived-shape key stage).
+steps 3 and 4 report `ambiguous_declaration`/`ambiguous-name` and
+`ill_typed`/`operator-ineligible` (a model declaration node that is not its
+own preimage, or whose owner names no selected declaration of its kind,
+was refused earlier by the derived-shape key stage, and step 2 refuses
+nothing).
 The remaining (code, cause) pairs a V2 reader reports are each the pairing
 [FR-272](../foundation/FR-272-typed-diagnostic-cause.md) lists, and the V2
 `Diagnostic` schema admits each cause only with its code:
@@ -555,7 +570,11 @@ as its own node, so the grammar holds for an expression of any depth.
 further rule, `OwnerPresenceRule`, in their `allOf`. A node is
 **structural** for this rule when it carries no `nominal_identity_preimage`
 and its `body.term` is not `application` (an application stands only at a
-body root, so this is "its body holds no application").
+body root, so this is "its body holds no application"). This includes a
+`correspondence`/`abstraction_relation` node, which the derived-shape key
+stage excludes, but the rule never asks it for an `owner`: `DeclarationTagRules`
+forbids `declaration` on every `correspondence` node and the form is in
+neither model-owned row, so it falls in the last row and carries none.
 
 | Node | `owner` |
 | --- | --- |
@@ -611,10 +630,10 @@ conformance" below).
    object type with `interfaceFeatures` for `model`/`systems_interface` and a
    relationship for `relation`/`relationship`. FR-321 admits one selection
    per `identity` and a document declares each IR node identity once, so at
-   most one declaration matches. The lookup charges one validation visit. A
-   declaring node that no declaration matches, because the document
-   declares no such IR node identity or declares it as another kind,
-   refuses `missing_declaration`/`missing-selection`. A node that carries a
+   most one declaration matches. The derived-shape key stage's owner join
+   has already found `T` for every model declaration node, so step 2 has no
+   refusal of its own: a declaring node whose owner names no declaration of
+   its kind was refused `missing_declaration`/`missing-selection` there. A node that carries a
    `declaration` carries a `SourceOwner` (the V2 schema refuses a
    `ModelOwner` on it), so it is not a model declaration node and has no
    `T`.
@@ -975,7 +994,7 @@ partial checked package.
 | FR-322-AC-26 | A reference to a dependency package's node is carried as `PackageNodeKey{package, node}`, where `node` is a `WireNodeId`; per R-10 it becomes a `NodeKey` only by lookup in a checked package compiled from digest-addressed source, never minted directly from wire bytes in either the dependency's or the importing package's namespace, and a reader resolves it only against the named dependency's admitted package, refusing a `package` absent from `dependency_selections` as `missing_declaration`/`missing-selection`. | Analysis |
 | FR-322-AC-27 | An unrecognized `node_tag` refuses as `unsupported_node_tag`, and QSpec revises the closed `node_tag` set in place. | Analysis |
 | FR-322-AC-28 | A `ModelOwner` node-identity preimage carries the declaring domain package's `identity` beside `node` and no version label, so a node id depends only on content; the published `ModelOwner` vectors validate against the closed preimage schema and recompute their recorded JCS SHA-256, and a `ModelOwner` preimage that carries a `version` member is refused by the closed preimage schema. | Test (TC-279) |
-| FR-322-AC-29 | Each published model declaration node vector validates against the closed `ModelDeclarationNode` preimage schema and recomputes its recorded JCS SHA-256. A model declaration node carrying `Order`'s `ModelOwner` and keyed by its preimage resolves to `Order`. A node whose owner identity is not lock-selected refuses `missing_declaration`/`missing-selection` in the derived-shape key stage, and a current `model`/`object_type` node whose owner names the relationship `billedTo` refuses `missing_declaration`/`missing-selection` at step 2. A node whose key was computed under another tag (the relationship's id on a `model` node), whose `semantic_type` is not its own id, that carries a `recursion_group`, or whose body has members refuses `invalid_package`/`stale-node-key`. A model declaration node that carries a `declaration` beside its `ModelOwner`, or carries no `owner`, fails the V2 schema and refuses `malformed_wire`. | Test (TC-280) |
+| FR-322-AC-29 | Each published model declaration node vector validates against the closed `ModelDeclarationNode` preimage schema and recomputes its recorded JCS SHA-256. A model declaration node carrying `Order`'s `ModelOwner` and keyed by its preimage resolves to `Order`. A node whose owner identity is not lock-selected refuses `missing_declaration`/`missing-selection` in the derived-shape key stage, and a current `model`/`object_type` node whose owner names the relationship `billedTo` refuses `missing_declaration`/`missing-selection` in the owner join. A node whose key was computed under another tag (the relationship's id on a `model` node), whose `semantic_type` is not its own id, that carries a `recursion_group`, or whose body has members refuses `invalid_package`/`stale-node-key`. A model declaration node that carries a `declaration` beside its `ModelOwner`, or carries no `owner`, fails the V2 schema and refuses `malformed_wire`. | Test (TC-280) |
 | FR-322-AC-30 | A model-owned `field` or `operation` member resolves among the declaring type's exposed effective members, own and inherited. A field declared by a supertype resolves on the subtype's node, and a redefined operation resolves to the most derived redefinition. An operation on a `systems_interface` node refuses `ill_typed`/`operator-ineligible`. Two exposed fields of one name refuse `ambiguous_declaration`/`ambiguous-name`. An undeclared name, a name of the other member kind and a relationship declaring node each refuse `ill_typed`/`operator-ineligible`. | Test (TC-280) |
 | FR-322-AC-31 | A resolved model member's type follows the declared-type, multiplicity and presence tables. The derived types are `Int[0, 9]` from an integer value type, `Integer` from a constrained native `Integer`, `Option<Boolean>`, `Set<Integer>[0, 3]`, `Sequence<Integer>[0, 5]`, `Set<Integer>[0, 1]`, `Set<Integer>` for `[0, unbounded]`, `Reference<Invoice>` and an operation's `Integer` result. A `Text` field, a `[1, unbounded]` field and an operation with no result each refuse `ill_typed`/`operator-ineligible`. So does a call whose receiver is not a reference to the declaring node, or whose arguments differ in number or type node from the operation's parameters. | Test (TC-280) |
 | FR-322-AC-32 | A lock-selected domain package document is checked as evidence before graph admission: a document supplied under the selected digest with matching identity passes the selection admission checks, while a digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`, no document refuses `missing_import`/`missing-selection` and a document whose identity differs from the selection `invalid_model_binding`/`wrong-model-selection`. | Test (TC-280) |
@@ -997,10 +1016,11 @@ partial checked package.
 | FR-322-AC-48 | A published package whose ungrouped structural node is tampered, with its `node_id` kept, its `identity_projection` entry patched the same way and its `package_id` recomputed, is schema-valid and identity-consistent and refuses `invalid_package`/`stale-node-key` at that node's `node_id`: an `integer_range` `max` narrowed to `2` and widened to `5000`, its `min` raised to `1` and its bounds swapped, a `reference` target re-pointed at the `Integer` node, a `set` element re-pointed at the `Integer` node, and the declared record `Example::Point`'s field `x` re-pointed from the `Integer` node at the `Int[0, 9]` node. The untampered package is admitted. | Test (TC-233) |
 | FR-322-AC-49 | The recursive-records package (`record List { next?: List; }` and `record Tree { kids: Sequence<Tree>[0, 3]; }`, each one recursion group keyed by QSL FR-092) is admitted. With one in-group node tampered, its `node_id` kept, its `identity_projection` entry patched and its `package_id` recomputed, it refuses `invalid_package`/`stale-node-key` at that node's `node_id`: `Tree`'s `collection_bounds` `max` widened from `3` to `1000` and its `min` raised to `1`, `Tree`'s `Sequence` element re-pointed from the record at the `collection_bounds` node, and `List`'s `Option` re-pointed at the `Integer` node. The `Tree` group relabelled with a label that is not its group digest, each member rekeyed under that label and every reference rewritten, refuses `invalid_package`/`stale-node-key` at the group member with the lowest node-id digest. | Test (TC-233) |
 | FR-322-AC-50 | Every structural node of every published positive fixture, grouped or not, model declaration nodes included, carries the key QSL's FR-092 key function (FR-094's for a model-owned node) mints for it from its own members, its `owner` included, and no placeholder key; the recursive-records fixture's group labels are its groups' digests; and the full reader admits every published positive fixture. | Test (TC-233) |
-| FR-322-AC-51 | Every owner-bearing node of every published V2 package carries `owner` with exactly its identity preimage's `owner` value, a `SourceOwner` on a declared structural node and a `ModelOwner` on a model declaration node or clause function, and its `identity_projection` entry carries the same `owner`; no other node carries one. The V2 schema refuses, and a reader refuses `malformed_wire`: a declared record without `owner`, a declared record with a `ModelOwner`, a model declaration node without `owner` or with a `SourceOwner`, an `owner` on the builtin `Integer` node, on a nominal enum node and on an application node, a `DefinitionOwner`, a `SourceOwner` with an extra member and a `ModelOwner` with `version`. A declared record's `owner` changed to a second source that is added to `lock.sources`, with its node id kept, its projection entry patched the same way and `package_id` recomputed, refuses `invalid_package`/`stale-node-key` at that node. | Test (TC-233) |
-| FR-322-AC-52 | The derived-shape key stage joins each node's `owner` to the lock before either pass: a `SourceOwner` whose (`authority`, `identity`) is no `lock.sources` entry's, and a `ModelOwner` whose `identity` is no `model_selections` row's, refuse `missing_declaration`/`missing-selection` at that node's `node_id`, and are reported ahead of a stale key at a node of lower node-id digest. A reader takes a node's owner from `owner` alone: changing the `source` of the region of a declared node's `declaration` occurrence to another lock source leaves the package admitted with the same node ids and `package_id`. | Test (TC-233) |
-| FR-322-AC-53 | The two-owner fixtures `positive-two-owners-a.json` and `positive-two-owners-b.json` declare the same records `Point { x: Integer; }` and `List { next?: List; }`, as `Example::Point` and `Example::List` in both, with identical bodies, under the `SourceOwner`s (`agent-ix`, `example-a`) and (`agent-ix`, `example-b`). Both are admitted. Their `Point` node ids differ, their `List` group labels differ and every member of the `List` group (the record and its `Option` node) has a different id in each, while the builtin `Integer` node has one id in both; their `package_id`s differ. Each package's in-group keys and group label recompute from that package alone. Package `a` with the `owner` members of `b`, node ids kept, projection patched and `package_id` recomputed, refuses `invalid_package`/`stale-node-key`. | Test (TC-233) |
-| FR-322-AC-54 | The derived-shape key stage leaves every `correspondence`/`abstraction_relation` node untouched: `positive-clause-operations.json`'s `correspondence`/`abstraction_relation` node, keyed by FR-451's `quire.abstraction-relation-node/v1` preimage and so not by any `quire.structural-node/v1` preimage, passes the stage and the full reader admits the package; the same node with its key tampered, node id kept, projection entry patched and `package_id` recomputed, refuses FR-451's `invalid_semantic_graph` at the abstraction step and not `invalid_package`/`stale-node-key`. | Test (TC-233) |
+| FR-322-AC-51 | Every owner-bearing node of every published V2 package carries `owner` with exactly its identity preimage's `owner` value, a `SourceOwner` on a declared structural node and a `ModelOwner` on a model declaration node or clause function, and its `identity_projection` entry carries the same `owner`; no other node carries one. The V2 schema refuses, and a reader refuses `malformed_wire`: a declared record without `owner`, a declared record with a `ModelOwner`, a model declaration node without `owner` or with a `SourceOwner`, an `owner` on the builtin `Integer` node, on a nominal enum node and on an application node, a `DefinitionOwner`, a `SourceOwner` with an extra member and a `ModelOwner` with `version`. A declared record's `owner` changed to a second source that is added to `lock.sources`, with its `declaration` occurrence's regions moved to that source and its node id kept, its projection entry patched the same way and `package_id` recomputed, refuses `invalid_package`/`stale-node-key` at that node. | Test (TC-233) |
+| FR-322-AC-52 | The derived-shape key stage joins each node's `owner` to the lock before either pass: a `SourceOwner` whose (`authority`, `identity`) is no `lock.sources` entry's, and a `ModelOwner` whose `identity` is no `model_selections` row's, refuse `missing_declaration`/`missing-selection` at that node's `node_id`, and are reported ahead of a stale key at a node of lower node-id digest. A declared node's `owner` and its source map agree: changing the `source` of the region of a declared node's `declaration` occurrence to another lock source, which leaves every node id and the `package_id` unchanged, refuses `invalid_package`/`invalid-value` at that occurrence's `source_map` entry. | Test (TC-233) |
+| FR-322-AC-53 | The two-owner fixtures `positive-two-owners-a.json` and `positive-two-owners-b.json` declare the same records `Point { x: Integer; }` and `List { next?: List; }`, with the qualified names QSL emits for them, `["Point"]` and `["List"]` (QSL FR-092 D1), in both, with identical bodies, under the `SourceOwner`s (`agent-ix`, `example-a`) and (`agent-ix`, `example-b`). Both are admitted. Both also declare `three` (qualified name `["three"]`), a declared `value` whose body root is the application `1 + 2` (`quire.application-node/v1`, no `owner`). Their `Point` node ids differ, their `List` group labels differ and every member of the `List` group (the record and its `Option` node) has a different id in each, while the builtin `Integer` node and the application-keyed `three` node each have one id in both, as intended content addressing; their `package_id`s differ. Each package's in-group keys and group label recompute from that package alone. Package `a` with the `owner` members of `b`, `b`'s source added to `lock.sources`, the declared nodes' `declaration` occurrence regions moved to it, node ids kept, projection patched and `package_id` recomputed, refuses `invalid_package`/`stale-node-key`. | Test (TC-233) |
+| FR-322-AC-54 | The derived-shape key stage leaves every `correspondence`/`abstraction_relation` node untouched: `positive-clause-operations.json`'s `correspondence`/`abstraction_relation` node, keyed by FR-451's `quire.abstraction-relation-node/v1` preimage and so not by any `quire.structural-node/v1` preimage, passes the stage and the full reader admits the package; the same node with one `rust_type` segment of its body changed, canonical order and `dependencies` kept, node id kept, projection entry patched and `package_id` recomputed, refuses `invalid_semantic_graph` at FR-451's abstraction step 1 (Identity) and not `invalid_package`/`stale-node-key`. | Test (TC-233) |
+| FR-322-AC-55 | The owner join resolves every `ModelOwner` against the selected document, whether or not anything reaches the node: a model declaration node whose owner `node` the document does not declare, and a `model`/`object_type` node whose owner names the relationship `billedTo`, each keyed by its own preimage, refuse `missing_declaration`/`missing-selection`; a clause function owned by the operation member `Order/size`, and one owned by the object type `Order` for an invariant, pass the join, while a clause function owned by an undeclared member `Order/missing` and one owned by the field `Order/total` refuse `missing_declaration`/`missing-selection`. | Test (TC-280) |
 
 ## Dependencies
 

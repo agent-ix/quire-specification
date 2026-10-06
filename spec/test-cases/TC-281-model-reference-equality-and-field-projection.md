@@ -42,7 +42,7 @@ admits.
 
 For each reference equality case, fit each operand's family to the entry's
 operand position, then decide each constraint the entry names; for
-`conforming_reference`, recover both owners by FR-322 step 2 and decide
+`conforming_reference`, look up both declarations by FR-322 step 2 from the operands' wire owners and decide
 conformance along declared supertypes, for one type node as for two. For each projection case, check a
 `deref` operand against the `deref` entry (a `reference` operand, and a
 declared result equal to the `inner:0` type with a family), fit the

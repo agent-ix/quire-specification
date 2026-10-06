@@ -99,10 +99,10 @@ declaration declares. Operation members are not candidates. The field
 entry refuses as follows, and a refusal is that entry's meaning-join
 defect:
 
-- no declaration of the declaring node's owner is found: step 2's own
-  refusal, `missing_declaration`/`missing-selection` (a declaring node that
-  is not its own preimage was refused earlier by FR-322's derived-shape key
-  stage);
+- a declaring node whose owner names no selected declaration of its kind,
+  or that is not its own preimage, was refused earlier by FR-322's
+  derived-shape key stage (`missing_declaration`/`missing-selection` or
+  `invalid_package`/`stale-node-key`), so it reaches no field entry;
 - no field of that name: `missing_declaration`/`missing-name`;
 - two or more exposed fields of that name:
   `ambiguous_declaration`/`ambiguous-name`.

@@ -150,11 +150,10 @@ to a fairness member. For one member, in this order:
    `semantic_form` `object_type`, else `invalid_model_binding`/
    `malformed-declaration`, located at the target.
 2. **Owner.** FR-322 step 2 looks up the declaration the node's
-   `ModelOwner` names, with that step's own refusal:
-   `missing_declaration`/`missing-selection` for a node no selected
-   declaration of its kind matches. A node that is not its own preimage, or
-   whose owner joins no selection, was refused earlier by FR-322's
-   derived-shape key stage.
+   `ModelOwner` names. A node that is not its own preimage, or whose owner
+   names no selected declaration of its kind, was refused earlier by
+   FR-322's derived-shape key stage (`missing_declaration`/
+   `missing-selection` or `invalid_package`/`stale-node-key`).
 3. **Name.** Exactly one effective operation member matches `name`; two or
    more refuse `ambiguous_declaration`/`ambiguous-name`, and none refuses
    `missing_declaration`/`missing-name`.
