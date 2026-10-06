@@ -11416,23 +11416,3 @@ fn tc_233_a_relationship_end_names_only_the_ends_its_relationship_declares() {
         }
     }
 }
-
-#[test]
-#[ignore]
-fn regen_clause_operations_tmp() {
-    let path = std::path::Path::new("proposals/checked-package-v2/fixtures/positive-clause-operations.json");
-    let original = std::fs::read_to_string(path).expect("fixture");
-    let mut package: Value = serde_json::from_str(&original).expect("json");
-    assert_eq!(serde_json::to_string_pretty(&package).unwrap() + "\n", original);
-    let index = node_index_where(&package, |node| node["semantic_form"] == "abstraction_relation");
-    let node = &package["semantic_graph"]["nodes"][index];
-    let old = node["node_id"]["digest"].as_str().unwrap().to_owned();
-    let new = unqualified_jcs_sha256(&json!({
-        "version": "quire.abstraction-relation-node/v1",
-        "body": node["body"],
-    }));
-    let text = original.replace(&old, &new);
-    package = serde_json::from_str(&text).expect("json");
-    rekey_stale_nodes(&mut package);
-    std::fs::write(path, serde_json::to_string_pretty(&package).unwrap() + "\n").unwrap();
-}

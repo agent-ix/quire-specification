@@ -956,14 +956,14 @@
           }
         ],
         "node_id": {
-          "digest": "02d4114264a9f573ab0ceb2d460b87df5cf87a300cafe3a7216436a836d2c6ae",
+          "digest": "e43e0ce6861b0952ad31d1fb39c8fe143500fd426e65848eec43d6bdcc02b2fd",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "correspondence",
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "abstraction_relation",
         "semantic_type": {
-          "digest": "02d4114264a9f573ab0ceb2d460b87df5cf87a300cafe3a7216436a836d2c6ae",
+          "digest": "e43e0ce6861b0952ad31d1fb39c8fe143500fd426e65848eec43d6bdcc02b2fd",
           "domain": "quire.checked-semantic-node/v1"
         }
       }
@@ -1031,7 +1031,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "f92704f9088a585e2ba63cc35b3531fd3eb14cb9585d6bcc660c5126f6423925",
+    "digest": "76a37b41baef9faa85345d8e155736f66527cb4536c2b1dd1c5668cf879c5fe1",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -2089,7 +2089,7 @@
           }
         ],
         "node_id": {
-          "digest": "02d4114264a9f573ab0ceb2d460b87df5cf87a300cafe3a7216436a836d2c6ae",
+          "digest": "e43e0ce6861b0952ad31d1fb39c8fe143500fd426e65848eec43d6bdcc02b2fd",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "correspondence",
@@ -2102,7 +2102,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "abstraction_relation",
         "semantic_type": {
-          "digest": "02d4114264a9f573ab0ceb2d460b87df5cf87a300cafe3a7216436a836d2c6ae",
+          "digest": "e43e0ce6861b0952ad31d1fb39c8fe143500fd426e65848eec43d6bdcc02b2fd",
           "domain": "quire.checked-semantic-node/v1"
         }
       }
@@ -2511,7 +2511,7 @@
     },
     {
       "node_id": {
-        "digest": "02d4114264a9f573ab0ceb2d460b87df5cf87a300cafe3a7216436a836d2c6ae",
+        "digest": "e43e0ce6861b0952ad31d1fb39c8fe143500fd426e65848eec43d6bdcc02b2fd",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,
