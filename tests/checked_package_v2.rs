@@ -11416,3 +11416,49 @@ fn tc_233_a_relationship_end_names_only_the_ends_its_relationship_declares() {
         }
     }
 }
+
+#[test]
+#[ignore]
+fn regen_operation_identities_tmp() {
+    let path = std::path::Path::new("proposals/checked-package-v2/fixtures/positive-operation-identities.json");
+    let original = std::fs::read_to_string(path).expect("fixture");
+    let mut package: Value = serde_json::from_str(&original).expect("json");
+    let extra: Value = serde_json::from_str(
+        &std::fs::read_to_string(std::env::var("NEWNODES").expect("NEWNODES")).expect("new nodes"),
+    )
+    .expect("json");
+    let reaches = node_index_where(&package, |node| node["semantic_form"] == "reachability");
+    let reaches_id = package["semantic_graph"]["nodes"][reaches]["node_id"].clone();
+    let entry = package["source_map"]
+        .as_array()
+        .expect("map")
+        .iter()
+        .find(|entry| entry["node_id"] == reaches_id)
+        .expect("entry")
+        .clone();
+    let parameter = extra["P"]["node_id"].clone();
+    for (offset, key) in ["M", "R", "P"].into_iter().enumerate() {
+        let node = extra[key].clone();
+        let mut mapped = entry.clone();
+        mapped["node_id"] = node["node_id"].clone();
+        mapped["role"] = node["occurrences"][0]["role"].clone();
+        let start = 100 + 2 * offset as u64;
+        mapped["regions"][0]["start"] = json!(start);
+        mapped["regions"][0]["end"] = json!(start + 1);
+        package["semantic_graph"]["nodes"].as_array_mut().unwrap().push(node);
+        package["source_map"].as_array_mut().unwrap().push(mapped);
+    }
+    {
+        let node = &mut package["semantic_graph"]["nodes"][reaches];
+        node["body"]["arguments"] = json!([
+            {"term": "reference", "target": parameter},
+            {"term": "reference", "target": parameter}
+        ]);
+        let mut dependencies = vec![node["dependencies"][0].clone(), parameter.clone()];
+        dependencies.sort_by(|l, r| l["digest"].as_str().cmp(&r["digest"].as_str()));
+        node["dependencies"] = json!(dependencies);
+    }
+    package["identity_preimage"]["identity_projection"] = json!([]);
+    rekey_stale_nodes(&mut package);
+    std::fs::write(path, serde_json::to_string_pretty(&package).unwrap() + "\n").unwrap();
+}
