@@ -331,9 +331,8 @@ boundary.
   `missing-selection`, then `missing-name`, then `operator-ineligible`.
 - `model_member` — a `field` or `operation` member whose declaring node is a
   model declaration node: a `model` or `relation` node that carries no
-  `declaration` or whose `node_id` equals a model declaration node key of a
-  selected domain package (step 2 below), keyed with a `ModelOwner` (QSL
-  FR-094). Its body is `aggregate{[]}` and names
+  `declaration`, keyed with a `ModelOwner` (QSL FR-094) that step 2 below
+  recovers. Its body is `aggregate{[]}` and names
   no member, so the reader derives the member from the domain package the
   lock selects for its owner, in the four steps of
   "Model-owned members" below.
@@ -538,10 +537,13 @@ conformance" below).
    once, so at most one owner matches. A declaring node that no owner
    matches, whether its owner is unselected or its key names another
    declaration, refuses `missing_declaration`/`missing-selection`. A matched
-   node whose `semantic_type` is not its own `node_id`, or that carries a
-   `declaration` or a `recursion_group`, or whose body is not
+   node whose `semantic_type` is not its own `node_id`, or whose body is not
    `{term: "aggregate", members: []}`, refuses `invalid_package`/`stale-node-key`,
-   because its key is not the digest of its own preimage.
+   because its key is not the digest of its own preimage. A node that carries
+   a `declaration` or a `recursion_group` is not a model declaration node: the
+   derived-shape key stage re-keys it as a structural node, with its
+   `SourceOwner` or as an in-group node, and refuses a `ModelOwner` key on it
+   as `invalid_package`/`stale-node-key` before this step.
 3. **Resolution.** The member resolves among the effective members of `T`
    that name resolution exposes: `T`'s own and those inherited along its
    declared supertypes, less every member a redefinition hides and every

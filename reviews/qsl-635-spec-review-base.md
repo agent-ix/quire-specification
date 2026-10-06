@@ -29,3 +29,26 @@ mismatches.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | high | The stage re-keys in-group structural nodes "declared or not and of any shape", but outside a group it re-keys only the undeclared derived shapes. An ungrouped declared structural node is never re-derived. QSL emits declared records (FR-092 D1), so all-families `Example::Point` qualifies. Re-pointing Point's `x` from `Integer` to the `Int[0, 9]` node, keeping its node id and recomputing projection and `package_id`, is admitted, and a consumer reads a narrowed field type: the IR-627 class one hop away. The test reader mirrors the spec (`is_derived_shape` requires no `declaration`), and no other stage keys a declared non-nominal node. Fix: re-key every ungrouped non-nominal, non-application structural node, owner from its declaration source occurrence, as the in-group set already does. The positive-fixture key test already shows every such fixture node is current. Add a declared-record tamper row. | spec/objects/interfaces/FR-322-checked-package-artifact.md:245-280, tests/checked_package_v2.rs:2061-2084, tests/checked_package_v2.rs:2216, proposals/checked-package-v2/fixtures/positive-all-families.json:16 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | The `declared-record-field-repointed` row re-points `Example::Point`'s `x` at the `Int[0, 9]` node but leaves Point's `dependencies` as `[Integer]`. Every other re-point row also patches `/dependencies/0`. The test reader checks no structural dependency list, so the row refuses `stale-node-key` as intended. A reader that does check dependencies could refuse it on another cause first, so the conformance row is not a clean single-defect tamper. Add a patch that makes the dependencies the digest-ascending set of both targets. | proposals/checked-package-v2/fixtures/adverse.json:28 |
+| FND-003 | low | Overlap between the stage and model declaration nodes. FR-322 defines a model declaration node as a `model`/`relation` node that "carries no `declaration` or whose `node_id` equals a model declaration node key of a selected domain package", and step 2 refuses a matched node that carries a `declaration` as `stale-node-key`. The stage excludes only the first branch, so it re-keys a declared model node with its source owner. The outcome is the same, because a `ModelOwner` preimage never equals a source-owner preimage: such a node refuses `invalid_package`/`stale-node-key` at the same node either way. The stage reports it earlier, before declaration, frame and state refusals, so step 2's "carries a `declaration`" branch can no longer fire through the full reader. The stage should win. The fix is to drop the "or whose `node_id` equals ..." branch from the `model_member` definition, or to say the stage subsumes it, so the two rules do not describe the same refusal at two reader positions. | spec/objects/interfaces/FR-322-checked-package-artifact.md:332-336, spec/objects/interfaces/FR-322-checked-package-artifact.md:538-544, tests/checked_package_v2.rs:2092 |
+
+## Dispositions
+
+Round 1, reviewed at 3f8b9224fe1d19415881f3d068db09de156868d5 (fix commit
+3f8b922 over 4bf7e9c). The stage's first pass now visits every structural
+node: no nominal preimage, no application in its body, and not an
+undeclared `model`/`relation` node. Each node is checked against its
+source-owned preimage, or its group-local preimage when grouped, and a
+derived shape must also be self-typed. FR-322-AC-48 and FR-322-AC-50 now
+cover every ungrouped structural node and add the `Example::Point` row. The
+four reader tests that edit a node now rekey it through `rekey_stale_nodes`,
+so they still reach the frame or state step they test. No build was run.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 3f8b922 |
