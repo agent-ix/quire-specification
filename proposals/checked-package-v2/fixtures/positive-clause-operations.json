@@ -937,7 +937,7 @@
                 "domain": "quire.checked-semantic-node/v1"
               },
               "function": [
-                "crate",
+                "store",
                 "attempt_update"
               ],
               "operation": "attemptUpdate",
@@ -2070,7 +2070,7 @@
                 "domain": "quire.checked-semantic-node/v1"
               },
               "function": [
-                "crate",
+                "store",
                 "attempt_update"
               ],
               "operation": "attemptUpdate",
