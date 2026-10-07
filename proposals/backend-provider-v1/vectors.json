@@ -2741,6 +2741,48 @@
           "path": "/manifest/0/domains"
         }
       ]
+    },
+    {
+      "name": "bounded-descriptor-empty-domains",
+      "base": "kani-hello",
+      "owner": "FR-290",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/domains",
+          "value": []
+        }
+      ]
+    },
+    {
+      "name": "descriptor-unboundable-domain",
+      "base": "kani-hello",
+      "owner": "FR-290",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/domains",
+          "value": [
+            "integer",
+            "quantity"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "descriptor-repeated-domain",
+      "base": "kani-hello",
+      "owner": "FR-290",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/domains",
+          "value": [
+            "integer",
+            "integer"
+          ]
+        }
+      ]
     }
   ]
 }

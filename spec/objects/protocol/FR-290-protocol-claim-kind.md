@@ -145,13 +145,15 @@ table or a mode outside these two, then the registry SHALL refuse that
 registration with `invalid_capability` (`absent-kind`, `unknown-kind` or
 `unknown-mode`), keyed by backend identity.
 
-A registration that advertises any (kind, `bounded`) pair carries a nonempty
-FR-331 `domains`: the ADR-014 domain kinds for which it accepts a finite
-bound, which negotiation compares with a bounded item's proof-bound kinds. If
-such a registration carries no `domains`, then the registry SHALL refuse that
-registration with `invalid_capability`/`absent-domains`, keyed by backend
-identity. A registration that advertises only `unbounded` modes may omit
-`domains`.
+A registration that advertises any (kind, `bounded`) pair carries FR-331
+`domains`: a nonempty set of distinct ADR-014 boundable domain kinds
+(`collection`, `population`, `integer`, `recursive`) for which it accepts a
+finite bound. A registration that advertises only `unbounded` modes may omit
+`domains`. If a registration that advertises a `bounded` pair carries no
+`domains`, or any registration carries a `domains` that is empty, holds a kind
+other than those four or repeats a kind, then the registry SHALL refuse that
+registration with `invalid_capability`/`invalid-domains`, keyed by backend
+identity. The domain-kind check below reads `domains`.
 
 Each requested item carries its claim's extent in the representation that the
 boundedness architecture
@@ -164,9 +166,28 @@ predicate.
 If an item carries no extent classification, then `negotiate_*` SHALL settle it
 `invalid-request` with `invalid_capability`/`absent-extent`.
 
-`negotiate_*` SHALL settle an item with exactly one candidate from the item's
-extent classification and that candidate's advertised modes for the item's
-kind:
+### Single-candidate arm
+
+At the single candidate's arm, `negotiate_*` SHALL run these steps in order:
+
+1. The candidate table below has given the item exactly one candidate that
+   advertises the item's kind.
+2. **Domain-kind check.** The item's domain kinds are compared with the
+   candidate's `domains`. For a `bounded` item they are the `kind` of each
+   FR-331 `extent.bounds` entry; an item with empty `bounds` has none and
+   passes. For an `unbounded` item they are the `kind` of each FR-331
+   `extent.domains` entry, compared only when the candidate does not advertise
+   `unbounded` for the item's kind; a candidate that advertises `unbounded`
+   decides the item without bounds, so it is not compared. An item with a
+   domain kind the candidate's `domains` does not hold settles `unsupported`,
+   warned, `unsupported_projection`/`unsupported-requested-capability`,
+   naming the domain kind and the candidate, whatever its
+   `finite_bound_available` says.
+3. The advertised-mode table below settles every other item.
+
+`negotiate_*` SHALL settle an item with exactly one candidate that passes the
+domain-kind check from the item's extent classification and that candidate's
+advertised modes for the item's kind:
 
 | Extent | Advertised modes for the kind | Disposition |
 | --- | --- | --- |
@@ -265,7 +286,7 @@ extent classification; then the candidate table below, top row first.
 | a candidate absent from the request's manifest, a candidate that does not advertise the item's kind, or a set that disagrees with the named backend | `invalid-request`, `invalid_capability`/`inconsistent-candidates`, naming each offending candidate |
 | empty | `unsupported`, with a warning naming the item's kind and, when the request names one, the named backend; `unsupported_projection`/`unsupported-requested-capability` |
 | more than one, and the request names none | `invalid-request`, `invalid_capability`/`ambiguous-backend`, naming every candidate in candidate order |
-| exactly one | that candidate's negotiation arm settles `supported`, `requires-bound`, `unsupported` (warned) or `invalid-request` under the advertised-mode rules |
+| exactly one | that candidate's negotiation arm settles `supported`, `requires-bound`, `unsupported` (warned) or `invalid-request` under the domain-kind check and then the advertised-mode rules |
 
 `negotiate_*` SHALL NOT select among several candidates. Registration order,
 display names and ambient state never change a candidate set, its order or a
@@ -279,7 +300,7 @@ The item-level causes (`absent-kind`, `unknown-kind`, `absent-extent`,
 `unknown-backend`, `inconsistent-candidates`, `ambiguous-backend`) settle only
 their own item. `unknown-vocabulary` refuses its whole carrier.
 Registration causes `absent-kind`, `unknown-kind`, `unknown-mode`,
-`unknown-evidence-kind` and `absent-domains` refuse only that registration. `duplicate-backend` refuses every registration of its
+`unknown-evidence-kind` and `invalid-domains` refuse only that registration. `duplicate-backend` refuses every registration of its
 identity and no other. Registration refusals are reported ordered bytewise by
 backend identity, then by the manifest's RFC 8785 bytes.
 
@@ -331,6 +352,7 @@ backend identity, then by the manifest's RFC 8785 bytes.
 | FR-290-AC-10 | Admitted registrations of one backend identity with two or more differing manifests are all refused with `invalid_capability`/`duplicate-backend`, one refusal per distinct manifest, ordered by identity and then by the manifest's RFC 8785 bytes; the snapshot holds no registration of that identity, a request naming it receives the unknown-backend mark, and registrations of other identities stand; the snapshot, its refusals and every candidate set are identical under every registration order. | Test (TC-282) |
 | FR-290-AC-11 | A probabilistic claim requires `probabilistic-satisfaction`, a task-set claim `schedulability`, and a timed temporal claim and the time-lock-freedom item `temporal-satisfaction`. | Test (TC-353, TC-370, TC-372) |
 | FR-290-AC-12 | A `probabilistic-satisfaction` item is a candidate only for backends advertising its evidence kind; an `exact` item with only a `statistical` candidate, and the converse, settle `unsupported`, `unsupported-requested-capability`; an item with an absent or unknown evidence kind settles `invalid-request` with its named cause. | Test (TC-353) |
+| FR-290-AC-13 | At the single candidate's arm, the domain-kind check runs after the candidate table and before the advertised-mode table: a bounded item whose `extent.bounds` hold a kind outside the candidate's `domains` settles `unsupported`, `unsupported-requested-capability`, naming the kind; a bounded item with empty `bounds` passes; an unbounded item whose `extent.domains` hold a kind outside `domains` settles `unsupported`, `unsupported-requested-capability`, even with a finite bound available, when the candidate does not advertise `unbounded` for the kind, and is not compared when it does; a registration that advertises a `bounded` pair with an absent, empty, non-boundable or repeated `domains` is refused `invalid_capability`/`invalid-domains`, keyed by backend identity. | Test (TC-271) |
 
 ## Dependencies
 

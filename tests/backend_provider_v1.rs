@@ -490,91 +490,70 @@ fn tc_431_item_level_causes_reach_negotiation() {
     assert!(!validator.is_valid(&missing));
 }
 
-/// Every `ProofBound` in a positive vector: each `extent.bounds` entry and
-/// each temporal subject's `proof_bounds` entry.
-fn proof_bounds(document: &Value) -> Vec<Value> {
-    let mut found = Vec::new();
-    for item in document["request"]["items"]
-        .as_array()
-        .into_iter()
-        .flatten()
-    {
-        found.extend(
-            item["extent"]["bounds"]
-                .as_array()
-                .into_iter()
-                .flatten()
-                .cloned(),
-        );
-        found.extend(
-            item["temporal"]["subject"]["proof_bounds"]
-                .as_array()
-                .into_iter()
-                .flatten()
-                .cloned(),
-        );
+/// The bound kind QSL's `DomainKind::finite_kind` pairs with each ADR-014
+/// domain kind, or `None` for a kind no finite bound stands for.
+fn finite_kind(kind: &str) -> Option<&'static str> {
+    match kind {
+        "collection" | "population" => Some("cardinality"),
+        "integer" => Some("integer-range"),
+        "recursive" => Some("depth"),
+        "quantity" | "loop" | "infinite-trace" => None,
+        other => panic!("unknown domain kind {other}"),
     }
-    found
 }
 
-/// Every `ProofBound` carries its ADR-014 domain kind from the vocabulary an
-/// unbounded extent's `domains[].kind` uses, and the adverse vectors without a
-/// kind, with an unknown or unboundable kind, or with a mismatched bound exist
-/// (their refusal is `tc_431_adverse_vectors_are_refused`).
+/// Each of the seven ADR-014 domain kinds paired with each of the three
+/// bound types: a `ProofBound` is admitted exactly when the bound is the one
+/// its kind takes, and a missing or unknown kind is refused.
 #[trace("TC-431", "FR-331-AC-21")]
 #[test]
-fn tc_431_proof_bounds_carry_their_domain_kind() {
-    let schema = parsed(SCHEMA);
-    let kinds = &schema["$defs"]["DomainKind"]["enum"];
-    let unbounded = &schema["$defs"]["Extent"]["oneOf"][1]["properties"]["domains"]["items"]["properties"]
-        ["kind"];
-    assert_eq!(
-        unbounded["$ref"], "#/$defs/DomainKind",
-        "unbounded domains use the same kind vocabulary"
-    );
-    assert_eq!(
-        schema["$defs"]["ProofBound"]["properties"]["kind"]["$ref"],
-        "#/$defs/DomainKind"
-    );
-    let kind = definition("DomainKind");
-    let mut seen = 0;
-    for vector in positives()
-        .iter()
-        .filter(|vector| vector["stage"] == "request")
-    {
-        for bound in proof_bounds(&composed(vector)) {
-            let value = &bound["kind"];
-            assert!(kind.is_valid(value), "{value} is an ADR-014 domain kind");
-            assert!(
-                kinds.as_array().expect("kinds").contains(value),
-                "{value} is listed"
+fn tc_431_proof_bound_kind_and_bound_pair_as_adr_014_pairs_them() {
+    let proof_bound = definition("ProofBound");
+    let domain = serde_json::json!({"type": "node", "node": {"domain": "quire.checked-semantic-node/v1", "digest": "1c9ac70521e54c69c310ff337b10364e2c3c80c917efb8b29010c97a9534bd14"}, "path": []});
+    let bounds = [
+        (
+            "cardinality",
+            serde_json::json!({"type": "cardinality", "maximum": 4}),
+        ),
+        (
+            "integer-range",
+            serde_json::json!({"type": "integer-range", "lower": "0", "upper": "9"}),
+        ),
+        ("depth", serde_json::json!({"type": "depth", "maximum": 3})),
+    ];
+    let kinds = [
+        "collection",
+        "population",
+        "integer",
+        "recursive",
+        "quantity",
+        "loop",
+        "infinite-trace",
+    ];
+    let mut admitted = 0;
+    for kind in kinds {
+        for (bound_type, bound) in &bounds {
+            let candidate = serde_json::json!({"domain": domain, "kind": kind, "bound": bound});
+            let expected = finite_kind(kind) == Some(*bound_type);
+            assert_eq!(
+                proof_bound.is_valid(&candidate),
+                expected,
+                "{kind} with {bound_type}"
             );
-            seen += 1;
+            admitted += usize::from(expected);
         }
     }
+    assert_eq!(admitted, 4, "exactly four of the 21 pairs are admitted");
+    let (_, bound) = &bounds[1];
+    assert!(!proof_bound.is_valid(&serde_json::json!({"domain": domain, "bound": bound})));
     assert!(
-        seen >= 2,
-        "extent and subject proof bounds are both exercised"
+        !proof_bound
+            .is_valid(&serde_json::json!({"domain": domain, "kind": "string", "bound": bound}))
     );
-    let adverse: BTreeSet<String> = parsed(VECTORS)["adverse"]
-        .as_array()
-        .expect("adverse")
-        .iter()
-        .map(|vector| vector["name"].as_str().expect("name").to_owned())
-        .collect();
-    for name in [
-        "proof-bound-without-kind",
-        "proof-bound-unknown-kind",
-        "proof-bound-kind-bound-mismatch",
-        "proof-bound-unboundable-kind",
-        "subject-proof-bound-without-kind",
-    ] {
-        assert!(adverse.contains(name), "adverse vector {name} exists");
-    }
 }
 
 /// A descriptor that advertises a `bounded` mode carries a nonempty
-/// `domains`; one without it is refused (the FR-290 `absent-domains`
+/// `domains`; one without it is refused (the FR-290 `invalid-domains`
 /// registration refusal), and an unbounded-only descriptor may omit it.
 #[trace("TC-431", "FR-331-AC-22")]
 #[test]
@@ -598,13 +577,6 @@ fn tc_431_bounded_descriptors_carry_domains() {
         }
     }
     assert!(bounded > 0, "a bounded descriptor is exercised");
-    assert!(
-        parsed(VECTORS)["adverse"]
-            .as_array()
-            .expect("adverse")
-            .iter()
-            .any(|vector| vector["name"] == "bounded-descriptor-without-domains")
-    );
     let unbounded_only = serde_json::json!({
         "backend": "qsl-model-check",
         "advertises": [{"kind": "temporal-satisfaction", "mode": "unbounded"}],
