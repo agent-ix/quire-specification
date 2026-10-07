@@ -175,14 +175,18 @@ At the single candidate's arm, `negotiate_*` SHALL run these steps in order:
 2. **Domain-kind check.** The item's domain kinds are compared with the
    candidate's `domains`. For a `bounded` item they are the `kind` of each
    FR-331 `extent.bounds` entry; an item with empty `bounds` has none and
-   passes. For an `unbounded` item they are the `kind` of each FR-331
-   `extent.domains` entry, compared only when the candidate does not advertise
-   `unbounded` for the item's kind; a candidate that advertises `unbounded`
-   decides the item without bounds, so it is not compared. An item with a
-   domain kind the candidate's `domains` does not hold settles `unsupported`,
-   warned, `unsupported_projection`/`unsupported-requested-capability`,
-   naming the domain kind and the candidate, whatever its
-   `finite_bound_available` says.
+   passes. For an `unbounded` item they are the boundable kinds
+   (`collection`, `population`, `integer`, `recursive`) among its FR-331
+   `extent.domains` entries, compared only when the candidate does not
+   advertise `unbounded` for the item's kind; a candidate that advertises
+   `unbounded` decides the item without bounds, so it is not compared. The
+   non-boundable kinds `quantity`, `loop` and `infinite-trace` are never
+   compared: no finite bound stands for them, so they go on to the
+   advertised-mode table, where they make no finite bound available. An item
+   with a compared domain kind the candidate's `domains` does not hold
+   settles `unsupported`, warned,
+   `unsupported_projection`/`unsupported-requested-capability`, naming the
+   domain kind and the candidate, whatever its `finite_bound_available` says.
 3. The advertised-mode table below settles every other item.
 
 `negotiate_*` SHALL settle an item with exactly one candidate that passes the
@@ -352,7 +356,7 @@ backend identity, then by the manifest's RFC 8785 bytes.
 | FR-290-AC-10 | Admitted registrations of one backend identity with two or more differing manifests are all refused with `invalid_capability`/`duplicate-backend`, one refusal per distinct manifest, ordered by identity and then by the manifest's RFC 8785 bytes; the snapshot holds no registration of that identity, a request naming it receives the unknown-backend mark, and registrations of other identities stand; the snapshot, its refusals and every candidate set are identical under every registration order. | Test (TC-282) |
 | FR-290-AC-11 | A probabilistic claim requires `probabilistic-satisfaction`, a task-set claim `schedulability`, and a timed temporal claim and the time-lock-freedom item `temporal-satisfaction`. | Test (TC-353, TC-370, TC-372) |
 | FR-290-AC-12 | A `probabilistic-satisfaction` item is a candidate only for backends advertising its evidence kind; an `exact` item with only a `statistical` candidate, and the converse, settle `unsupported`, `unsupported-requested-capability`; an item with an absent or unknown evidence kind settles `invalid-request` with its named cause. | Test (TC-353) |
-| FR-290-AC-13 | At the single candidate's arm, the domain-kind check runs after the candidate table and before the advertised-mode table: a bounded item whose `extent.bounds` hold a kind outside the candidate's `domains` settles `unsupported`, `unsupported-requested-capability`, naming the kind; a bounded item with empty `bounds` passes; an unbounded item whose `extent.domains` hold a kind outside `domains` settles `unsupported`, `unsupported-requested-capability`, even with a finite bound available, when the candidate does not advertise `unbounded` for the kind, and is not compared when it does; a registration that advertises a `bounded` pair with an absent, empty, non-boundable or repeated `domains` is refused `invalid_capability`/`invalid-domains`, keyed by backend identity. | Test (TC-271) |
+| FR-290-AC-13 | At the single candidate's arm, the domain-kind check runs after the candidate table and before the advertised-mode table: a bounded item whose `extent.bounds` hold a kind outside the candidate's `domains` settles `unsupported`, `unsupported-requested-capability`, naming the kind, and one with empty `bounds` passes. An unbounded item on a candidate that advertises only `bounded` for its kind has only its boundable `extent.domains` kinds compared: when one is outside `domains` it settles `unsupported`, `unsupported-requested-capability`, naming the kind, whatever `finite_bound_available` says; when every boundable kind is in `domains`, the advertised-mode table settles it, `requires-bound` with a finite bound available and `unsupported`, `unbounded-extent` without one, so a `quantity`, `loop` or `infinite-trace` domain never settles `unsupported-requested-capability`. An unbounded item is not compared on a candidate that advertises `unbounded`. A registration that advertises a `bounded` pair with an absent, empty, non-boundable or repeated `domains` is refused `invalid_capability`/`invalid-domains`, keyed by backend identity. | Test (TC-271) |
 
 ## Dependencies
 

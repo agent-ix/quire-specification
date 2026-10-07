@@ -165,9 +165,10 @@ in milliseconds (FR-462).
   it: `cardinality` for `collection` and `population`, `integer-range` for
   `integer`, `depth` for `recursive`; any other pairing, a non-boundable kind
   and an absent `kind` refuse before consumption. FR-290's domain-kind check
-  compares these kinds, and an unbounded extent's `domains[].kind`, with the
-  single candidate's manifest `domains`, so negotiation never reclassifies the
-  package. A bounded extent with empty `bounds` has only finite domains, so
+  compares these kinds, and the boundable kinds among an unbounded extent's
+  `domains[].kind`, with the single candidate's manifest `domains`, so
+  negotiation never reclassifies the package; a non-boundable kind is never
+  compared. A bounded extent with empty `bounds` has only finite domains, so
   it has no kinds and passes that check.
 - `candidates` is `{type: "set", backends}` or
   `{type: "unknown-backend", backend}`.
