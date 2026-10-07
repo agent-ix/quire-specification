@@ -555,6 +555,8 @@ fn tc_431_proof_bound_kind_and_bound_pair_as_adr_014_pairs_them() {
 /// A descriptor that advertises a `bounded` mode carries a nonempty
 /// `domains`; one without it is refused (the FR-290 `invalid-domains`
 /// registration refusal), and an unbounded-only descriptor may omit it.
+/// A present `domains` that is empty, holds a non-boundable or unknown kind
+/// or repeats a kind is refused on every descriptor, unbounded-only included.
 #[trace("TC-431", "FR-331-AC-22")]
 #[test]
 fn tc_431_bounded_descriptors_carry_domains() {
@@ -595,9 +597,22 @@ fn tc_431_bounded_descriptors_carry_domains() {
         !descriptor.is_valid(&bounded_without),
         "a bounded mode requires domains"
     );
-    bounded_without["domains"] = serde_json::json!([]);
-    assert!(
-        !descriptor.is_valid(&bounded_without),
-        "domains is nonempty"
-    );
+    for malformed in [
+        serde_json::json!([]),
+        serde_json::json!(["quantity"]),
+        serde_json::json!(["size"]),
+        serde_json::json!(["integer", "integer"]),
+    ] {
+        bounded_without["domains"] = malformed.clone();
+        assert!(
+            !descriptor.is_valid(&bounded_without),
+            "bounded descriptor with domains {malformed} is refused"
+        );
+        let mut unbounded_malformed = unbounded_only.clone();
+        unbounded_malformed["domains"] = malformed.clone();
+        assert!(
+            !descriptor.is_valid(&unbounded_malformed),
+            "unbounded-only descriptor with domains {malformed} is refused"
+        );
+    }
 }

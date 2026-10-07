@@ -74,9 +74,9 @@ such item `invalid-request` on its own. A present `extent` is closed, so an
 unknown classification or bound kind is refused, as is an item without
 `candidates` (FR-331-AC-4).
 
-A `hello` the manifest stage refuses only for an absent or unknown kind or
-mode, or for missing or unknown evidence kinds, is an FR-290 registration
-refusal keyed by backend identity, not an FR-462 `malformed-body` failure.
+A `hello` the manifest stage refuses only for FR-290 registration causes is
+an FR-290 registration refusal keyed by backend identity, not an FR-462
+`malformed-body` failure. FR-290 owns the list of those causes.
 
 Leaves owned by another requirement stay in that owner's shape: FR-272
 diagnostic payloads (`detail`), FR-407 bounds, FR-412 objectives, FR-413
