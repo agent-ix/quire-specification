@@ -11416,12 +11416,3 @@ fn tc_233_a_relationship_end_names_only_the_ends_its_relationship_declares() {
         }
     }
 }
-
-#[test]
-#[ignore]
-fn regen_operation_identities_tmp() {
-    let path = std::path::Path::new("proposals/checked-package-v2/fixtures/positive-operation-identities.json");
-    let mut package: Value = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
-    rekey_stale_nodes(&mut package);
-    std::fs::write(path, serde_json::to_string_pretty(&package).unwrap() + "\n").unwrap();
-}
