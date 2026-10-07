@@ -46,10 +46,6 @@ the member type from the resolved record.
   The value type `OrderTotal` is the alias FR-095 mints for `Order`'s
   constrained field `total` (`<Name><Field>`), with its constraints under
   `constraint/Order-total-min` and `-max`.
-  Status: the vectors drop the redefined-operation cases (MT-08, MT-09, MT-10,
-  AN-02) and the text-profile cases (MT-15, MA-14, MA-15, MA-16); AGE-2226
-  (filament-core-data: operation `redefines`, text profile, value-type
-  constraint slots) restores them against the next FCD revision.
 - The wire cases are hand authored: each is a single model declaration
   node, a shape QSL emits only inside a package, keyed by QSL FR-094 exactly
   as emitter output would be. The model declaration nodes of the positive
@@ -91,6 +87,9 @@ compare it with the case's parameter types.
 | MT-05 | `field` `history`, `Integer` `[0, 5]`, ordered, not unique | `Sequence<Integer>[0, 5]` | FR-322-AC-31 |
 | MT-06 | `field` `invoice`, typed object type `Invoice` | `Reference<Invoice>` over M3 | FR-322-AC-31 |
 | MT-07 | `operation` `size` on M1, receiver `Reference<Order>` | Resolves `Order/size`; type `Integer` | FR-322-AC-31 |
+| MT-08 | `operation` `size` on M5, which `Sub/size` redefines | Resolves `Sub/size`; type `Integer` | FR-322-AC-30 |
+| MT-09 | `operation` `scaled` on M5, redefined with a renamed parameter, called with an `Integer` argument | Resolves `Sub/scaled`; type `Integer` | FR-322-AC-30 |
+| MT-10 | `operation` `size` on M7 (`SubSub`, under `Sub`), which both `Sub/size` and `SubSub/size` redefine | Resolves the most derived `SubSub/size`; type `Integer` | FR-322-AC-30 |
 | MT-11 | `operation` `scaled` on M1 with an `Integer` argument | Resolves `Order/scaled`; type `Integer` | FR-322-AC-31 |
 | MT-12 | `field` `floor`, native `Integer` carrying a `min` constraint | `Integer` | FR-322-AC-31 |
 | MT-13 | `field` `tags`, `Integer` `[0, unbounded]`, unordered, unique | `Set<Integer>` with no bounds | FR-322-AC-31 |
@@ -108,6 +107,9 @@ compare it with the case's parameter types.
 | MA-11 | `operation` `scaled` on M1 with a `Boolean` argument | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-12 | `operation` `rate` on M8 (`Flow`, a `systems_interface`) | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-13 | `operation` `size` on M1 with receiver `Reference<Invoice>` | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
+| MT-15 | `field` `sku` on M1, typed value type `Code`, `Text` bound to `[0, 64; nfc]` | Resolves `Order/sku`; type `Text[0, 64; nfc]` | FR-322-AC-44 |
+| MA-14 | `field` `alias`, typed value type `Inverted`, `Text` bound to `[5, 2; nfc]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
+| MA-15 | `field` `slug`, typed value type `Folded`, `Text` bound to `[0, 64; casefold]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
 | RE-ends-1 | `relationship_end` `order` on M4, the relationship `Order-order-Order` | Resolves the end `order` | FR-322-AC-56 |
 | RE-ends-2 | `relationship_end` `next` on M4 | Resolves the end `next` (`targetEnd.role`) | FR-322-AC-56 |
 | RE-ends-3 | `relationship_end` `invoiced` on M10, the relationship `Order-invoiced-Invoice` with no `targetEnd.role` | Resolves the end `invoiced` | FR-322-AC-56 |
@@ -151,6 +153,7 @@ compare it with the case's parameter types.
 | FF-05 | Frame field entry `(M6, "code")` | `ambiguous_declaration`/`ambiguous-name` | FR-340-AC-13 |
 | FF-06 | Frame field entry `(M2, "total")` | `missing_declaration`/`missing-selection` | FR-340-AC-13 |
 | AN-01 | Anchor `(M1, "scaled")` | Resolves `Order/scaled` | FR-342-AC-4 |
+| AN-02 | Anchor `(M5, "size")` | Resolves `Sub/size` | FR-342-AC-4 |
 | AN-03 | Anchor `(M5, "reset")`, which `Sub` only inherits | `invalid_model_binding`/`malformed-declaration` | FR-342-AC-4 |
 | AN-04 | Anchor `(M1, "missing")` | `missing_declaration`/`missing-name` | FR-342-AC-4 |
 | AN-05 | Anchor `(M1, "total")`, a field name | `missing_declaration`/`missing-name` | FR-342-AC-4 |
