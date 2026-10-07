@@ -48,58 +48,56 @@ relationships:
 ---
 ## Overview
 
-Draft OB01–03 and consumer-boundary acceptance only. Every case is planned and
-unimplemented; it does not claim qualified replay, production monitoring, codegen
-CLI, or backend conformance.
+Draft OB01–03 and consumer-boundary acceptance only.
 
 ## Functional Requirement Coverage
 
-| Functional Req | Acceptance Criteria | Test Cases | Coverage Status |
+| Functional Req | Acceptance Criteria | Test Cases | Status |
 | --- | --- | --- | --- |
-| FR-110 | FR-110-AC-1, FR-110-AC-2, FR-110-AC-3, FR-110-AC-4, FR-110-AC-5 | TC-140 | 🚧 Planned |
-| FR-111 | FR-111-AC-1, FR-111-AC-2, FR-111-AC-3, FR-111-AC-4, FR-111-AC-5, FR-111-AC-6, FR-111-AC-7 | TC-141 | 🚧 Planned |
-| FR-262 | FR-262-AC-1, FR-262-AC-2, FR-262-AC-3, FR-262-AC-4, FR-262-AC-5, FR-262-AC-6, FR-262-AC-7 | TC-141 | 🚧 Planned |
-| FR-112 | FR-112-AC-1, FR-112-AC-2, FR-112-AC-3, FR-112-AC-4, FR-112-AC-5, FR-112-AC-6, FR-112-AC-7 | TC-142 | 🚧 Planned |
-| FR-113 | FR-113-AC-1, FR-113-AC-2, FR-113-AC-3, FR-113-AC-4, FR-113-AC-5, FR-113-AC-6 | TC-143 | 🚧 Planned |
-| FR-114 | FR-114-AC-1, FR-114-AC-2, FR-114-AC-3 | TC-144 | 🚧 Planned |
-| FR-114 | FR-114-AC-4 | TC-239 | 🚧 Planned |
-| FR-115 | FR-115-AC-1, FR-115-AC-2, FR-115-AC-3, FR-115-AC-4, FR-115-AC-5, FR-115-AC-6, FR-115-AC-7 | TC-145 | 🚧 Planned |
-| FR-116 | FR-116-AC-1, FR-116-AC-2, FR-116-AC-3, FR-116-AC-4, FR-116-AC-5 | TC-146 | 🚧 Planned |
-| FR-285 | FR-285-AC-1, FR-285-AC-2, FR-285-AC-3, FR-285-AC-4 | TC-145 | 🚧 Planned |
-| FR-295 | FR-295-AC-1, FR-295-AC-2, FR-295-AC-3, FR-295-AC-4 | TC-145, TC-116 | 🚧 Planned |
-| FR-296 | FR-296-AC-1, FR-296-AC-2, FR-296-AC-3, FR-296-AC-4, FR-296-AC-5 | TC-140, TC-143 | 🚧 Planned |
-| FR-289 | FR-289-AC-1, FR-289-AC-2, FR-289-AC-3, FR-289-AC-4, FR-289-AC-5 | TC-143, TC-115 | 🚧 Planned |
-| FR-260 | FR-260-AC-1, FR-260-AC-2, FR-260-AC-3, FR-260-AC-4 | TC-140 | 🚧 Planned |
-| FR-261 | FR-261-AC-1, FR-261-AC-2, FR-261-AC-3 | TC-140 | 🚧 Planned |
-| FR-263 | FR-263-AC-1, FR-263-AC-2, FR-263-AC-3, FR-263-AC-4, FR-263-AC-5 | TC-142 | 🚧 Planned |
-| FR-264 | FR-264-AC-1, FR-264-AC-2, FR-264-AC-3, FR-264-AC-4, FR-264-AC-5 | TC-142 | 🚧 Planned |
-| FR-265 | FR-265-AC-1, FR-265-AC-2, FR-265-AC-3, FR-265-AC-4, FR-265-AC-5 | TC-142 | 🚧 Planned |
-| FR-266 | FR-266-AC-1, FR-266-AC-2, FR-266-AC-3, FR-266-AC-4 | TC-142 | 🚧 Planned |
-| FR-267 | FR-267-AC-1, FR-267-AC-2, FR-267-AC-3, FR-267-AC-4, FR-267-AC-5 | TC-143 | 🚧 Planned |
-| FR-268 | FR-268-AC-1, FR-268-AC-2, FR-268-AC-3, FR-268-AC-4, FR-268-AC-5, FR-268-AC-6, FR-268-AC-7 | TC-143 | 🚧 Planned |
-| FR-294 | FR-294-AC-1, FR-294-AC-2, FR-294-AC-3 | TC-143 | 🚧 Planned |
+| FR-110 | FR-110-AC-1, FR-110-AC-2, FR-110-AC-3, FR-110-AC-4, FR-110-AC-5 | TC-140 |  |
+| FR-111 | FR-111-AC-1, FR-111-AC-2, FR-111-AC-3, FR-111-AC-4, FR-111-AC-5, FR-111-AC-6, FR-111-AC-7 | TC-141 |  |
+| FR-262 | FR-262-AC-1, FR-262-AC-2, FR-262-AC-3, FR-262-AC-4, FR-262-AC-5, FR-262-AC-6, FR-262-AC-7 | TC-141 |  |
+| FR-112 | FR-112-AC-1, FR-112-AC-2, FR-112-AC-3, FR-112-AC-4, FR-112-AC-5, FR-112-AC-6, FR-112-AC-7 | TC-142 |  |
+| FR-113 | FR-113-AC-1, FR-113-AC-2, FR-113-AC-3, FR-113-AC-4, FR-113-AC-5, FR-113-AC-6 | TC-143 |  |
+| FR-114 | FR-114-AC-1, FR-114-AC-2, FR-114-AC-3 | TC-144 |  |
+| FR-114 | FR-114-AC-4 | TC-239 |  |
+| FR-115 | FR-115-AC-1, FR-115-AC-2, FR-115-AC-3, FR-115-AC-4, FR-115-AC-5, FR-115-AC-6, FR-115-AC-7 | TC-145 |  |
+| FR-116 | FR-116-AC-1, FR-116-AC-2, FR-116-AC-3, FR-116-AC-4, FR-116-AC-5 | TC-146 |  |
+| FR-285 | FR-285-AC-1, FR-285-AC-2, FR-285-AC-3, FR-285-AC-4 | TC-145 |  |
+| FR-295 | FR-295-AC-1, FR-295-AC-2, FR-295-AC-3, FR-295-AC-4 | TC-145, TC-116 |  |
+| FR-296 | FR-296-AC-1, FR-296-AC-2, FR-296-AC-3, FR-296-AC-4, FR-296-AC-5 | TC-140, TC-143 |  |
+| FR-289 | FR-289-AC-1, FR-289-AC-2, FR-289-AC-3, FR-289-AC-4, FR-289-AC-5 | TC-143, TC-115 |  |
+| FR-260 | FR-260-AC-1, FR-260-AC-2, FR-260-AC-3, FR-260-AC-4 | TC-140 |  |
+| FR-261 | FR-261-AC-1, FR-261-AC-2, FR-261-AC-3 | TC-140 |  |
+| FR-263 | FR-263-AC-1, FR-263-AC-2, FR-263-AC-3, FR-263-AC-4, FR-263-AC-5 | TC-142 |  |
+| FR-264 | FR-264-AC-1, FR-264-AC-2, FR-264-AC-3, FR-264-AC-4, FR-264-AC-5 | TC-142 |  |
+| FR-265 | FR-265-AC-1, FR-265-AC-2, FR-265-AC-3, FR-265-AC-4, FR-265-AC-5 | TC-142 |  |
+| FR-266 | FR-266-AC-1, FR-266-AC-2, FR-266-AC-3, FR-266-AC-4 | TC-142 |  |
+| FR-267 | FR-267-AC-1, FR-267-AC-2, FR-267-AC-3, FR-267-AC-4, FR-267-AC-5 | TC-143 |  |
+| FR-268 | FR-268-AC-1, FR-268-AC-2, FR-268-AC-3, FR-268-AC-4, FR-268-AC-5, FR-268-AC-6, FR-268-AC-7 | TC-143 |  |
+| FR-294 | FR-294-AC-1, FR-294-AC-2, FR-294-AC-3 | TC-143 |  |
 
 ## Test Case Summary
 
 | Test ID | Title | Type | Priority | Traces To | Status |
 | --- | --- | --- | --- | --- | --- |
-| TC-140 | Bind typed observations without implicit values | Integration | P1 | FR-110, FR-260, FR-261, FR-296 | 🚧 Planned |
-| TC-141 | Correlate related instances without heuristics | Integration | P1 | FR-111-AC-1..AC-7, FR-262-AC-1..AC-7 | 🚧 Planned |
-| TC-142 | Declare population and completeness | Integration | P1 | FR-112, FR-263, FR-264, FR-265 | 🚧 Planned |
-| TC-143 | Preserve time, progress, and late-data authority | Integration | P1 | FR-113, FR-267, FR-268, FR-296, FR-289, FR-294 | 🚧 Planned |
-| TC-144 | Agree replay and incremental assessment | Integration | P1 | FR-114 | 🚧 Planned |
-| TC-145 | Report observation adequacy without promotion | Integration | P1 | FR-115-AC-1, FR-115-AC-2, FR-115-AC-3, FR-115-AC-4, FR-115-AC-5, FR-115-AC-6, FR-115-AC-7, FR-285-AC-1, FR-285-AC-2, FR-285-AC-3, FR-285-AC-4 | 🚧 Planned |
-| TC-146 | Map observation results to consumers | Integration | P1 | FR-116 | 🚧 Planned |
-| TC-147 | Audit the observation executable boundary | Static | P1 | NFR-052 | 🚧 Planned |
-| TC-239 | Agree replay and incremental assessment on an unsettled temporal result | Integration | P1 | FR-114-AC-4 | 🚧 Planned |
+| TC-140 | Bind typed observations without implicit values | Integration | P1 | FR-110, FR-260, FR-261, FR-296 | 🚧 |
+| TC-141 | Correlate related instances without heuristics | Integration | P1 | FR-111-AC-1..AC-7, FR-262-AC-1..AC-7 | 🚧 |
+| TC-142 | Declare population and completeness | Integration | P1 | FR-112, FR-263, FR-264, FR-265 | 🚧 |
+| TC-143 | Preserve time, progress, and late-data authority | Integration | P1 | FR-113, FR-267, FR-268, FR-296, FR-289, FR-294 | 🚧 |
+| TC-144 | Agree replay and incremental assessment | Integration | P1 | FR-114 | 🚧 |
+| TC-145 | Report observation adequacy without promotion | Integration | P1 | FR-115-AC-1, FR-115-AC-2, FR-115-AC-3, FR-115-AC-4, FR-115-AC-5, FR-115-AC-6, FR-115-AC-7, FR-285-AC-1, FR-285-AC-2, FR-285-AC-3, FR-285-AC-4 | 🚧 |
+| TC-146 | Map observation results to consumers | Integration | P1 | FR-116 | 🚧 |
+| TC-147 | Audit the observation executable boundary | Static | P1 | NFR-052 | 🚧 |
+| TC-239 | Agree replay and incremental assessment on an unsettled temporal result | Integration | P1 | FR-114-AC-4 | 🚧 |
 
 ## Non-Functional Requirement Coverage
 
 | Non-Functional Req | Verification Method | Evidence/Test Cases | Status |
 | --- | --- | --- | --- |
-| NFR-050 | Test | TC-142, TC-144 | 🚧 Planned |
-| NFR-051 | Test | TC-144, TC-145, TC-146 | 🚧 Planned |
-| NFR-052 | Inspection | TC-147 | 🚧 Planned |
+| NFR-050 | Test | TC-142, TC-144 |  |
+| NFR-051 | Test | TC-144, TC-145, TC-146 |  |
+| NFR-052 | Inspection | TC-147 |  |
 
 ## Integration Test Matrix
 
