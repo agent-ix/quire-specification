@@ -51,3 +51,11 @@ No other place restates the old rule. FR-272 and native-diagnostics list
 the cause name only. The PR's spec prose contains no SHAs.
 
 Mergeable once FND-001 is fixed. It is a one-line README edit.
+
+## Dispositions
+
+Round 1, reviewed at ad9061a (fix range 46dec81..ad9061a; the only spec change is the README sentence). The README now says a `hello` refused only for FR-290 registration causes is an FR-290 registration refusal, and that FR-290 owns the list of those causes. A `domains`-only refusal is therefore covered, and the README no longer keeps a second copy of the cause list.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | ad9061a |
