@@ -55,7 +55,7 @@ When a contract package is submitted to a backend provider, the producer SHALL u
 - `contract_version` — exactly `quire.backend-provider/v1`.
 - `capability_vocabulary` — exactly `quire.capability-kind/v1`; it selects the FR-290 vocabulary for every kind in `manifest`, `request` and `results`.
 - `manifest` — one backend descriptor per registered backend in the registry snapshot: backend identity, advertised (FR-290 kind, mode) pairs, domains, options, bounds, where the backend declares one its obligation-form set (FR-349), the state-space reductions it applies, a subset of `symmetry`, `partial-order` and `constraint` (FR-382), and, for `probabilistic-satisfaction`, its advertised evidence kinds (FR-290). A backend that advertises `temporal-satisfaction` also carries its `fairness_kinds` ([FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md)). Backend identities are unique.
-- `request` — the checked package as `package` and `package_id` ("Package bytes" below), contract-package items, requested claims, domains and limits; for each item, its one required FR-290 kind, its extent and #222 extent classification (`bounded` or `unbounded`), the backend the caller names when it names one, its `candidates`, and for a model-check item its `reductions` selection (FR-382); for a `probabilistic-satisfaction` item, its evidence kind (`statistical` or `exact`) and, for `statistical`, its method (`okamoto`, `sprt` or `regenerative` with `min_cycles`), seed, `max_witnesses`, for a timed subject its grid exponent `q` and `max_sample_steps` (default `2^24`), and `StatisticalLimits{max_samples, max_draws, max_cycle_steps}` ([FR-408](../../functional/analysis/FR-408-settle-probabilistic-claims-statistically.md)), or, for `exact`, `ExactProbLimits` ([FR-411](../../functional/analysis/FR-411-settle-probabilistic-claims-exactly.md)). Every limit has the published default that [FR-461](../../functional/foundation/FR-461-name-the-limit-value-and-setting.md) gives it, and `max_sample_steps` defaults to `2^24`.
+- `request` — the checked package as `package` and `package_id` ("Package bytes" below), the provider deadline `deadline_ms` and the requested items: each item's claim, its proof bounds (the substituted `ProofBound`s of its `extent`, and a temporal item's `subject.proof_bounds`), its `options` and its own limits (`temporal.limits`, `probabilistic.limits`); there is no request-level `domains` or `limits` member. For each item, its one required FR-290 kind, its extent and #222 extent classification (`bounded` or `unbounded`), the backend the caller names when it names one, its `candidates`, and for a model-check item its `reductions` selection (FR-382); for a `probabilistic-satisfaction` item, its evidence kind (`statistical` or `exact`) and, for `statistical`, its method (`okamoto`, `sprt` or `regenerative` with `min_cycles`), seed, `max_witnesses`, for a timed subject its grid exponent `q` and `max_sample_steps` (default `2^24`), and `StatisticalLimits{max_samples, max_draws, max_cycle_steps}` ([FR-408](../../functional/analysis/FR-408-settle-probabilistic-claims-statistically.md)), or, for `exact`, `ExactProbLimits` ([FR-411](../../functional/analysis/FR-411-settle-probabilistic-claims-exactly.md)). Every limit has the published default that [FR-461](../../functional/foundation/FR-461-name-the-limit-value-and-setting.md) gives it, and `max_sample_steps` defaults to `2^24`.
 - `temporal` (per `temporal-satisfaction` request item over a model subject) — the item's `subject` (initial-state references, universes, proof bounds), `item_kind` (`formula` or `deadlock-freedom`), resolved `fairness` set, `max_depth` for a bounded search and `limits`, as [FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md) states. For a state-graph, hyper or step-relation item, `limits` also holds `max_walk_steps` (the step count of one witness-sampling walk; [FR-392](../../functional/analysis/FR-392-sample-possible-witnesses.md)), `max_witness_set` and `max_relation_tuples` ([FR-399](../../functional/analysis/FR-399-settle-hyperproperty-results.md)), with the setting names `model_check.max_walk_steps`, `model_check.max_witness_set` and `model_check.max_relation_tuples` that [FR-461](../../functional/foundation/FR-461-name-the-limit-value-and-setting.md) gives them; the routed provider publishes each default, which applies when the request sets none. `temporal` also holds the sampling settings `witness_samples` and `seed`, which are method parameters with provider-published defaults.
 - `candidates` (per request item) — exactly one of: the set of candidate backend identities that the `quire-spec-language` registry computes under FR-290's candidate-set rule, ordered bytewise by identity; or the unknown-backend mark carrying the unregistered backend identity that the request named.
 - `dispositions` — supported, requires-bound, unsupported or invalid-request per item.
@@ -67,7 +67,9 @@ When a contract package is submitted to a backend provider, the producer SHALL u
 ### Wire spellings of probabilistic, timed and real-time results
 
 Every proof basis and cause below is a closed wire value, spelled exactly as
-written: lower-case words joined by `-`. Its payload members, in braces, are
+written: lower-case words joined by `-`. (AD-016's Kani cause
+`kani_vacuous_proof` is outside this table and keeps its AD-016 spelling; it
+is the one closed cause not spelled with `-`.) Its payload members, in braces, are
 named members of the result entry's `basis` or `cause` object ("Result
 entries" below). A producer SHALL emit no other spelling,
 and a reader SHALL refuse any other spelling of a result cause or proof basis
@@ -149,15 +151,22 @@ in milliseconds (FR-462).
   domain a `DomainKey` with its domain kind, as the boundedness architecture
   (quire-spec-language#222, QSL ADR-014 §4) defines them: a `DomainKey` is
   `{type: "node", node, path}` or `{type: "population", member_type,
-  ordinal}`, and a `FiniteBound` is `cardinality{maximum}`,
-  `integer-range{lower, upper}`, `depth{maximum}` or `variants{members}`.
+  ordinal}` (`path` entries and `ordinal` unsigned 32-bit), and a
+  `FiniteBound` is one of ADR-014's three substitution kinds:
+  `cardinality{maximum}`, `integer-range{lower, upper}` or `depth{maximum}`
+  with `maximum` non-zero. QSL FR-358's `variants` is a harness bound, never
+  a B-4 substitution kind, so it is not an `extent` bound.
 - `candidates` is `{type: "set", backends}` or
   `{type: "unknown-backend", backend}`.
 - `options` is a map of backend option names to string values (FR-196).
-- An item whose `kind`, `extent` or probabilistic evidence kind is absent or
-  outside its vocabulary is admitted on the wire, because FR-290 settles each
-  such item `invalid-request` on its own; an item without `candidates`
-  refuses (FR-331-AC-4).
+- An item with an absent `kind`, a `kind` outside the vocabulary, an absent
+  `extent`, or an absent or unknown probabilistic evidence kind is admitted on
+  the wire, because FR-290 settles each such item `invalid-request` on its
+  own (`absent-kind`, `unknown-kind`, `absent-extent`,
+  `absent-evidence-kind`, `unknown-evidence-kind`). A present `extent` is
+  closed: an unknown classification or bound kind, or an unbounded extent
+  without `finite_bound_available`, refuses before consumption, as does an
+  item without `candidates` (FR-331-AC-4).
 
 A manifest descriptor's `domains` lists the domain kinds (`collection`,
 `population`, `integer`, `recursive`) for which the backend accepts a finite
@@ -212,14 +221,17 @@ table above and of FR-363 (`bound-reached{depth}`,
 (`transfer-not-preserving{reason}` with `reason` `fragment` and its
 `operator`, `fairness` and its `constraint`, or `stutter-closure`;
 `premise-unproved{premise, result}`, `premise` the premise item's
-`request_index`), FR-439 (`memory-bound-reached{limit, value, states,
-setting}`), FR-428 (`instance-bound-reached{value, states}`) and AD-016's
+`request_index`), FR-439 (`memory-bound-reached{limit, value, states}`, `limit` the request
+member that raises the budget, `max_store_buffer` or `max_messages`), FR-428
+(`instance-bound-reached{limit, value, states}`, `limit` always
+`max_live_instances`, the member that raises it) and AD-016's
 `kani_vacuous_proof`. FR-439 adds the unsupported cause
 `weak-access-shape{site, transition, shape}`.
 
 ### Kani results
 
-A Kani run settles exactly one result from its AD-016 `KaniOutcomeKind`:
+A Kani item settles exactly one result: from its AD-016 `KaniOutcomeKind`,
+or from a failure around the run:
 
 | Kind | Result | Cause or basis |
 | --- | --- | --- |
@@ -231,7 +243,11 @@ A Kani run settles exactly one result from its AD-016 `KaniOutcomeKind`:
 | `TimedOut` | `incomplete` | cause `timed-out` |
 | `ResourceExhausted` | `incomplete` | cause `limit-reached{limit, value, setting}`, the setting `kani.<limit>` |
 | `Cancelled` | `incomplete` | cause `cancelled{source}` |
-| `Inconclusive` | `inconclusive` | its typed cause, such as `replay-parity` |
+| `Inconclusive` | `inconclusive` | its typed cause, such as `replay-parity` (a replay disagreement at AD-016 arrow 7) |
+| a backend success that is not proof (AD-016: `tested` keeps its value) | `tested` | none; never proof evidence |
+| a plugin-wire failure (FR-462) | `failed` | cause `tool-failure{defect}` |
+| the tool becomes unavailable after a passing probe (FR-290) | `failed` | diagnostic `unsupported_projection`/`tool-unavailable` naming `kind` and `backend` |
+| an IR invariant breaks while mapping (AD-016) | `failed` | diagnostic `runtime_invariant`/`established-invariant-broken` |
 
 The Kani engine name in FR-461 setting names is `kani`; the exact
 probabilistic engine's is `exact_prob`.
@@ -282,7 +298,7 @@ probabilistic engine's is `exact_prob`.
 
 ## Identity and validation
 
-Request identity includes the capability vocabulary, manifest, package, claim/domain/bounds/options, each item's kind, extent classification, named backend and candidates, each temporal item's subject, item kind, fairness set, `max_depth` and `limits`, the `witness_samples` and `seed` of a state-graph item, and each item's symmetry declarations, partial-order selection and state constraint; the state constraint is also recorded in the item's terminal record. A different temporal horizon or budget can produce a different result, so a result is reused only for a request with the same request identity. Result identity includes artifacts and results.
+Request identity includes the capability vocabulary, manifest, package, each item's claim, extent with its proof bounds, options and limits, each item's kind, extent classification, named backend and candidates, each temporal item's subject, item kind, fairness set, `max_depth` and `limits`, the `witness_samples` and `seed` of a state-graph item, and each item's symmetry declarations, partial-order selection and state constraint; the state constraint is also recorded in the item's terminal record. A different temporal horizon or budget can produce a different result, so a result is reused only for a request with the same request identity. Result identity includes artifacts and results.
 Unknown contract versions, missing required properties, duplicate keys,
 out-of-domain values and non-canonical encodings refuse before consumption. A `capability_vocabulary` other than `quire.capability-kind/v1`, or none, refuses the envelope as `invalid_capability`/`unknown-vocabulary`.
 
@@ -306,9 +322,9 @@ out-of-domain values and non-canonical encodings refuse before consumption. A `c
 | FR-331-AC-15 | A `proved` result with proof basis `exact-value`, `value-bounds` or `zone-certified` carries its certificate, and one with `closed-form` its evidence; each is recorded only after the checker accepts it. | Test (TC-363, TC-371, TC-372) |
 | FR-331-AC-16 | Each proof basis and cause of a probabilistic, timed or real-time result is emitted with exactly its spelling in the wire-spelling table, and a result carrying another spelling is refused `invalid_result`/`unknown-cause`. | Test (TC-358) |
 | FR-331-AC-17 | A state-graph item's `temporal` member carries `witness_samples` and `seed` and its `limits` carry `max_walk_steps`, each taking the provider's published default when the request sets none; two requests differing only in `seed`, `witness_samples` or `max_walk_steps` have different request identities; a hyper item's `limits` carry `max_witness_set` and `max_relation_tuples`. | Test (TC-336, TC-339) |
-| FR-331-AC-18 | A request's `package` is the unpadded base64url spelling of the RFC 8785 bytes of its checked package and decodes to exactly those bytes, whose `package_id` equals the request's `package_id`; a padded or standard-alphabet spelling, nonzero trailing bits, a length of 1 modulo 4, an absent `package` or `package_id`, a `package` that is a JSON value, and a `package_id` outside `quire.package.semantic/v2` each refuse before consumption. | Test |
-| FR-331-AC-19 | Every positive vector of `proposals/backend-provider-v1/vectors.json` is admitted by its schema, each owned member it lists exists, and every adverse vector, a single-member change of a positive one, is refused: an unknown contract version or vocabulary, an extra or missing member, an out-of-vocabulary value, a cause or basis outside its result's closed set, and a counterexample entry naming both or neither arm. | Test |
-| FR-331-AC-20 | The Kani vectors carry an admitted result entry for each row of the Kani results table, so together they hold each of the eight results a Kani run can settle, with the causes `kani_vacuous_proof`, `limit-reached`, `timed-out`, `cancelled` and `tool-failure`, each `declined` cause and the `bounded-proof` basis; changing a row's cause to one outside its result's closed set is refused. | Test |
+| FR-331-AC-18 | A request's `package` is the unpadded base64url spelling of the RFC 8785 bytes of its checked package and decodes to exactly those bytes, whose `package_id` equals the request's `package_id`; a padded or standard-alphabet spelling, nonzero trailing bits, a length of 1 modulo 4, an absent `package` or `package_id`, a `package` that is a JSON value, and a `package_id` outside `quire.package.semantic/v2` each refuse before consumption. | Test (TC-431) |
+| FR-331-AC-19 | Every positive vector of `proposals/backend-provider-v1/vectors.json` is admitted by its schema, each owned member it lists exists, and every adverse vector, a single-member change of a positive one, is refused: an unknown contract version or vocabulary, an extra or missing member, an out-of-vocabulary value, a cause or basis outside its result's closed set, and a counterexample entry naming both or neither arm. | Test (TC-431) |
+| FR-331-AC-20 | The Kani vectors carry an admitted result entry for each of the Kani results table's thirteen rows, each `declined` cause separately, so together they hold each of the eight results a Kani item can settle; changing a row's cause or diagnostic to one outside its result's closed set is refused. | Test (TC-431) |
 
 ## Dependencies
 

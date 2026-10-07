@@ -54,6 +54,7 @@
     "Nonempty": {"type": "string", "minLength": 1},
     "Count": {"description": "An unsigned integer that RFC 8785 serializes exactly.", "type": "integer", "minimum": 0, "maximum": 9007199254740991},
     "PositiveCount": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+    "U32": {"description": "ADR-014: an unsigned 32-bit index.", "type": "integer", "minimum": 0, "maximum": 4294967295},
     "Decimal": {"description": "A non-negative decimal string: 0 or [1-9][0-9]* (FR-392 seed, FR-393 and FR-400 decimals).", "$ref": "urn:quire:checked-package:v2#/$defs/NonNegativeIntegerString"},
     "IntegerString": {"$ref": "urn:quire:checked-package:v2#/$defs/IntegerString"},
     "Rational": {"$ref": "urn:quire:checked-package:v2#/$defs/Rational"},
@@ -182,7 +183,7 @@
       "required": ["backend", "advertises"],
       "properties": {
         "backend": {"description": "FR-290: backend identity.", "$ref": "#/$defs/BackendId"},
-        "advertises": {"description": "FR-290: advertised (kind, mode) pairs.", "type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "object", "required": ["kind", "mode"], "properties": {"kind": {"$ref": "#/$defs/Kind"}, "mode": {"$ref": "#/$defs/Mode"}}, "additionalProperties": false}},
+        "advertises": {"description": "FR-290: advertised (kind, mode) pairs. A hello refused here for an absent or unknown kind or mode, or for missing or unknown evidence kinds, is an FR-290 registration refusal, not an FR-462 wire failure.", "type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "object", "required": ["kind", "mode"], "properties": {"kind": {"$ref": "#/$defs/Kind"}, "mode": {"$ref": "#/$defs/Mode"}}, "additionalProperties": false}},
         "domains": {"description": "FR-331 (defined): the ADR-014 domain kinds for which the backend accepts a finite bound.", "type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["collection", "population", "integer", "recursive"]}},
         "options": {"description": "FR-331 (defined): the backend's published option defaults (FR-196 options).", "$ref": "#/$defs/StringMap"},
         "bounds": {"description": "FR-331 (defined): the published default of each limit the backend applies, keyed by limit name (FR-461, FR-368, FR-392, FR-399).", "$ref": "#/$defs/CountMap"},
@@ -245,19 +246,18 @@
       "type": "object",
       "required": ["type"],
       "oneOf": [
-        {"properties": {"type": {"const": "node"}, "node": {"$ref": "#/$defs/NodeId"}, "path": {"type": "array", "items": {"$ref": "#/$defs/Count"}}}, "required": ["type", "node", "path"], "additionalProperties": false},
-        {"properties": {"type": {"const": "population"}, "member_type": {"$ref": "#/$defs/NodeId"}, "ordinal": {"$ref": "#/$defs/Count"}}, "required": ["type", "member_type", "ordinal"], "additionalProperties": false}
+        {"properties": {"type": {"const": "node"}, "node": {"$ref": "#/$defs/NodeId"}, "path": {"type": "array", "items": {"$ref": "#/$defs/U32"}}}, "required": ["type", "node", "path"], "additionalProperties": false},
+        {"properties": {"type": {"const": "population"}, "member_type": {"$ref": "#/$defs/NodeId"}, "ordinal": {"$ref": "#/$defs/U32"}}, "required": ["type", "member_type", "ordinal"], "additionalProperties": false}
       ]
     },
     "FiniteBound": {
-      "description": "ADR-014 (#222) FiniteBound.",
+      "description": "ADR-014 (#222) FiniteBound: the three B-4 substitution kinds. QSL FR-358's variants is a harness bound, never a substitution kind.",
       "type": "object",
       "required": ["type"],
       "oneOf": [
         {"properties": {"type": {"const": "cardinality"}, "maximum": {"$ref": "#/$defs/Count"}}, "required": ["type", "maximum"], "additionalProperties": false},
         {"properties": {"type": {"const": "integer-range"}, "lower": {"$ref": "#/$defs/IntegerString"}, "upper": {"$ref": "#/$defs/IntegerString"}}, "required": ["type", "lower", "upper"], "additionalProperties": false},
-        {"properties": {"type": {"const": "depth"}, "maximum": {"$ref": "#/$defs/Count"}}, "required": ["type", "maximum"], "additionalProperties": false},
-        {"properties": {"type": {"const": "variants"}, "members": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/Identifier"}}}, "required": ["type", "members"], "additionalProperties": false}
+        {"properties": {"type": {"const": "depth"}, "maximum": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "maximum"], "additionalProperties": false}
       ]
     },
     "ProofBound": {"description": "ADR-014 (#222): one substituted finite bound for one domain.", "type": "object", "required": ["domain", "bound"], "properties": {"domain": {"$ref": "#/$defs/DomainKey"}, "bound": {"$ref": "#/$defs/FiniteBound"}}, "additionalProperties": false},
@@ -646,8 +646,8 @@
         {"properties": {"type": {"const": "mapping-undetermined"}, "row": {"$ref": "#/$defs/Nonempty"}, "state_key": {"$ref": "#/$defs/StateKey"}, "prefix": {"type": "array", "items": {"$ref": "#/$defs/ModelStep"}}}, "required": ["type", "row", "state_key", "prefix"], "additionalProperties": false},
         {"properties": {"type": {"const": "transfer-not-preserving"}, "reason": {"enum": ["fragment", "fairness", "stutter-closure"]}, "operator": {"$ref": "#/$defs/Nonempty"}, "constraint": {"$ref": "#/$defs/Fairness"}}, "required": ["type", "reason"], "additionalProperties": false},
         {"properties": {"type": {"const": "premise-unproved"}, "premise": {"$ref": "#/$defs/Count"}, "result": {"$ref": "#/$defs/ResultValue"}}, "required": ["type", "premise", "result"], "additionalProperties": false},
-        {"properties": {"type": {"const": "memory-bound-reached"}, "limit": {"enum": ["max_store_buffer", "max_messages"]}, "value": {"$ref": "#/$defs/PositiveCount"}, "states": {"$ref": "#/$defs/PositiveCount"}, "setting": {"$ref": "#/$defs/SettingName"}}, "required": ["type", "limit", "value", "states", "setting"], "additionalProperties": false},
-        {"properties": {"type": {"const": "instance-bound-reached"}, "value": {"$ref": "#/$defs/PositiveCount"}, "states": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "value", "states"], "additionalProperties": false}
+        {"description": "FR-439: limit is the request member that raises the budget.", "properties": {"type": {"const": "memory-bound-reached"}, "limit": {"enum": ["max_store_buffer", "max_messages"]}, "value": {"$ref": "#/$defs/PositiveCount"}, "states": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "limit", "value", "states"], "additionalProperties": false},
+        {"description": "FR-428-AC-1: limit names max_live_instances, the member that raises the bound.", "properties": {"type": {"const": "instance-bound-reached"}, "limit": {"const": "max_live_instances"}, "value": {"$ref": "#/$defs/PositiveCount"}, "states": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "limit", "value", "states"], "additionalProperties": false}
       ]
     },
     "IncompleteCause": {
@@ -807,7 +807,7 @@
         "cause": {"type": "object", "required": ["type"]},
         "diagnostic": {"$ref": "#/$defs/DiagnosticCause"},
         "certificate": {"oneOf": [{"$ref": "#/$defs/ProbabilityCertificate"}, {"$ref": "#/$defs/ZoneCertificate"}]},
-        "evidence": {"description": "FR-419 recomputable closed-form evidence, or for well-definedness-unchecked the FR-393 witness arm."},
+        "evidence": {"description": "FR-419 recomputable closed-form evidence (its owner's shape) under basis closed-form, or the FR-393 witness arm under cause well-definedness-unchecked; absent otherwise."},
         "verdict": {"$ref": "#/$defs/StatisticalVerdict"},
         "counterexample": {"description": "the zero-based position of the item's entry in counterexamples", "$ref": "#/$defs/Count"}
       },
@@ -821,6 +821,7 @@
         {"if": {"properties": {"result": {"const": "tested"}}}, "then": {"properties": {"cause": false, "diagnostic": false, "verdict": false, "counterexample": false, "evidence": false}}},
         {"if": {"properties": {"result": {"const": "measured"}}}, "then": {"required": ["verdict"], "properties": {"cause": false, "diagnostic": false, "counterexample": false, "evidence": false}}, "else": {"properties": {"verdict": false}}},
         {"if": {"properties": {"result": {"const": "inconclusive"}}}, "then": {"required": ["cause"], "properties": {"cause": {"$ref": "#/$defs/InconclusiveCause"}, "diagnostic": false, "counterexample": false}}},
+        {"if": {"required": ["result", "cause"], "properties": {"result": {"const": "inconclusive"}, "cause": {"properties": {"type": {"const": "well-definedness-unchecked"}}, "required": ["type"]}}}, "then": {"required": ["evidence"], "properties": {"evidence": {"allOf": [{"$ref": "#/$defs/GraphEvidence"}, {"properties": {"arm": {"const": "witness"}}, "required": ["arm"]}]}}}, "else": {"if": {"properties": {"result": {"const": "inconclusive"}}, "required": ["result"]}, "then": {"properties": {"evidence": false}}}},
         {"if": {"properties": {"result": {"const": "incomplete"}}}, "then": {"required": ["cause"], "properties": {"cause": {"$ref": "#/$defs/IncompleteCause"}, "diagnostic": false, "counterexample": false, "evidence": false}}},
         {"if": {"properties": {"result": {"const": "unsupported"}}}, "then": {"oneOf": [{"required": ["cause"], "properties": {"diagnostic": false}}, {"required": ["diagnostic"], "properties": {"cause": false}}], "properties": {"cause": {"$ref": "#/$defs/UnsupportedCause"}, "counterexample": false, "evidence": false}}},
         {"if": {"properties": {"result": {"const": "declined"}}}, "then": {"required": ["cause", "diagnostic"], "properties": {"cause": {"$ref": "#/$defs/DeclinedCause"}, "counterexample": false, "evidence": false}}},

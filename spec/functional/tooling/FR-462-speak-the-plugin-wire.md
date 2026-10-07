@@ -69,22 +69,36 @@ other before reading the body. The bodies are:
 | `request` | host | the FR-331 request stage: the routed items; the checked package as `package`, the unpadded base64url spelling of its RFC 8785 v2 bytes, with its `package_id`; and the provider limits, including `deadline_ms` |
 | `result` | plugin | the FR-331 outcome stage for the request whose id it names |
 
+| `cancel` | host | the id of the request to cancel |
+| `shutdown` | host | empty |
+| `fault` | plugin | a typed cause with a catalog code |
+
 Each body is one stage of the FR-331 wire schema
 ([`proposals/backend-provider-v1/schema.json`](../../../proposals/backend-provider-v1/schema.json)).
 The bytes travel as a string because a JSON frame cannot hold raw bytes, and
 unpadded base64url with zero trailing bits gives each byte string one
 spelling, so the frame keeps its one RFC 8785 encoding. The plugin decodes
 `package`, admits it with the v2 reader and checks its `package_id` before
-any item runs.
-| `cancel` | host | the id of the request to cancel |
-| `shutdown` | host | empty |
-| `fault` | plugin | a typed cause with a catalog code |
+any item runs. A plugin that refuses a `request` body answers it with one
+`result` that settles every routed item FR-331 `failed` with the refusal as
+its `diagnostic`: `stale_dependency`/`content-mismatch` for a decoded
+package whose `package_id` differs from the body's, and
+`invalid_runtime_input`/`invalid-value` for a `package` that is not the
+canonical spelling. No item runs.
 
 ### Backend identity
 
 The plugin's first frame is `hello`. The plugin's backend identity is the
 backend identity its manifest names, and each terminal record names that
 identity.
+
+A `hello` whose manifest advertises an absent or unknown kind, an unknown
+mode, or `probabilistic-satisfaction` with no or unknown evidence kinds is a
+registration that FR-290 refuses, with `invalid_capability`/`absent-kind`,
+`unknown-kind`, `unknown-mode` or `unknown-evidence-kind` keyed by the backend
+identity. It is not a wire failure: the plugin is not registered, no item is
+routed to it, a request naming its identity receives FR-290's unknown-backend
+mark, and the host sends `shutdown`.
 
 ### Lifecycle
 
@@ -122,7 +136,7 @@ The tool-failure cause is the FR-331 cause `tool-failure{defect}`, with
 | unknown `kind` | `unknown-frame-kind` |
 | missing or extra envelope member | `envelope-member` |
 | `result` naming an id the host did not send | `unknown-request-id` |
-| body that its FR-331 stage schema refuses | `malformed-body` |
+| `request` or `result` body that its FR-331 stage schema refuses, or a `hello` body it refuses for any defect other than an FR-290 registration cause | `malformed-body` |
 | result for an item not routed to the plugin | `unrouted-item` |
 | result for a capability kind the plugin did not advertise | `unadvertised-kind` |
 | missing terminal record at `shutdown` | `missing-terminal-record` |
@@ -137,7 +151,9 @@ The tool-failure cause is the FR-331 cause `tool-failure{defect}`, with
 | FR-462-AC-4 | A crash, a non-zero exit, a result for an item not routed to the plugin, a result for an unadvertised capability kind and a missing terminal record each settle every affected item `failed` with a tool-failure cause, while items routed to other providers keep their own records. | Test (TC-428) |
 | FR-462-AC-5 | Cancelling a run sends `cancel` with the request id; a plugin that answers settles each open item `incomplete` with cause cancelled, and a plugin that does not answer within the grace period is ended with the same settlement. A deadline overrun ends the process and settles each open item `incomplete` with cause `timed-out`. | Test (TC-428) |
 | FR-462-AC-6 | The host starts the plugin only at the path the caller names, and text the plugin writes to standard error changes no settlement. | Test (TC-428) |
-| FR-462-AC-7 | A `request` body carries `package`, the unpadded base64url spelling of the package's RFC 8785 v2 bytes, which decodes to exactly those bytes, and that package's `package_id`; a `request` body whose `package` is padded, uses the standard alphabet or has nonzero trailing bits, or whose decoded package has another `package_id`, is refused before any item runs, and each wire failure settles its items `failed` with `tool-failure` and the `defect` of the failure table. | Test |
+| FR-462-AC-7 | A `request` body carries `package`, the unpadded base64url spelling of the package's RFC 8785 v2 bytes, which decodes to exactly those bytes, and that package's `package_id`; a plugin given a body whose `package` is padded, uses the standard alphabet or has nonzero trailing bits, or whose decoded package has another `package_id`, runs no item and settles every routed item `failed` with the refusal as its diagnostic. | Test (TC-428) |
+| FR-462-AC-8 | Each wire failure of the failure table settles every affected item `failed` with cause `tool-failure` and that row's `defect`. | Test (TC-428) |
+| FR-462-AC-9 | A `hello` whose only defects are FR-290 registration causes is refused as that registration, keyed by backend identity, and settles no item `failed`; a request naming that identity receives the unknown-backend mark. | Test (TC-428) |
 
 ## Dependencies
 

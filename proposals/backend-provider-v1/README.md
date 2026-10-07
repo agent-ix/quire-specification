@@ -26,7 +26,8 @@ consumer holds a copy of this schema.
   (`kani_vacuous_proof`, `replay-parity`), `unsupported`
   (`unsupported_projection`/`tool-unavailable`), `declined` (each refusal
   category), `incomplete` (`limit-reached`, `timed-out`, `cancelled`) and
-  `failed` (`tool-failure`, and `tool-unavailable` after a passing probe).
+  `failed` (`tool-failure`, `tool-unavailable` after a passing probe, and
+  `runtime_invariant` for an IR mapping invariant break).
   Temporal, state-graph, hyperproperty and probabilistic vectors follow.
 - `tests/backend_provider_v1.rs` validates every vector against the schema
   and checks the package-bytes rule (TC-431).
@@ -66,12 +67,19 @@ express: `request_index` values run 0 to n-1 with exactly one disposition and
 one accounting record each; candidates, symmetry classes, provision entries
 and dependencies are in their stated orders; a result's `kind` equals its
 item's; a `counterexample` or `transcript` position names an existing entry;
-and the RFC 8785 canonical form of the frame. The schema admits an item whose
-`kind`, `extent` or probabilistic evidence kind is absent or outside its
-vocabulary, because FR-290 settles each such item `invalid-request` on its
-own; it refuses an item without `candidates` (FR-331-AC-4).
+and the RFC 8785 canonical form of the frame. The schema admits an item with
+an absent `kind`, a `kind` outside the vocabulary, an absent `extent`, or an
+absent or unknown probabilistic evidence kind, because FR-290 settles each
+such item `invalid-request` on its own. A present `extent` is closed, so an
+unknown classification or bound kind is refused, as is an item without
+`candidates` (FR-331-AC-4).
+
+A `hello` the manifest stage refuses only for an absent or unknown kind or
+mode, or for missing or unknown evidence kinds, is an FR-290 registration
+refusal keyed by backend identity, not an FR-462 `malformed-body` failure.
 
 Leaves owned by another requirement stay in that owner's shape: FR-272
 diagnostic payloads (`detail`), FR-407 bounds, FR-412 objectives, FR-413
-scheduler choices, FR-418 component reasons, FR-419 closed-form evidence and
-FR-425 protocol-transition identities.
+scheduler choices, FR-418 component reasons, FR-419 closed-form evidence (the
+only open `evidence`; under `well-definedness-unchecked` it is the FR-393
+witness arm) and FR-425 protocol-transition identities.

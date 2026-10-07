@@ -13,7 +13,7 @@
 use std::collections::BTreeSet;
 
 use ix_trace_rs::trace;
-use quire_verification_contracts::jcs_canonicalize;
+use quire_verification_contracts::{jcs_canonicalize, jcs_sha256};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
@@ -79,21 +79,70 @@ fn package_bytes() -> Vec<u8> {
     jcs_canonicalize(&parsed(PACKAGE_FIXTURE)).expect("fixture canonicalizes")
 }
 
-fn validator() -> jsonschema::Validator {
-    let schema = parsed(SCHEMA);
-    jsonschema::meta::validate(&schema).expect("valid Draft 2020-12 schema");
-    let registry = jsonschema::Registry::new()
+fn registry() -> jsonschema::Registry<'static> {
+    jsonschema::Registry::new()
         .add(
             "urn:quire:checked-package:v2",
             parsed(CHECKED_PACKAGE_SCHEMA),
         )
         .expect("checked-package schema registers")
+        .add("urn:quire:backend-provider:v1", parsed(SCHEMA))
+        .expect("backend-provider schema registers")
         .prepare()
-        .expect("registry prepares");
+        .expect("registry prepares")
+}
+
+fn validator() -> jsonschema::Validator {
+    let schema = parsed(SCHEMA);
+    jsonschema::meta::validate(&schema).expect("valid Draft 2020-12 schema");
+    let registry = registry();
     jsonschema::options()
         .with_registry(&registry)
         .build(&schema)
         .expect("backend-provider schema compiles")
+}
+
+/// A validator for one definition of the backend-provider schema.
+fn definition(name: &str) -> jsonschema::Validator {
+    let registry = registry();
+    jsonschema::options()
+        .with_registry(&registry)
+        .build(&serde_json::json!({"$ref": format!("urn:quire:backend-provider:v1#/$defs/{name}")}))
+        .expect("definition compiles")
+}
+
+fn stage_definition(stage: &str) -> &'static str {
+    match stage {
+        "manifest" => "ManifestStage",
+        "request" => "RequestStage",
+        "outcome" => "OutcomeStage",
+        other => panic!("unknown stage {other}"),
+    }
+}
+
+/// The ids of every FR artifact under `spec/`, read from the file names.
+fn spec_fr_ids() -> BTreeSet<String> {
+    let mut ids = BTreeSet::new();
+    let mut pending = vec![std::path::PathBuf::from(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/spec"
+    ))];
+    while let Some(directory) = pending.pop() {
+        for entry in std::fs::read_dir(&directory).expect("spec directory reads") {
+            let path = entry.expect("spec entry reads").path();
+            if path.is_dir() {
+                pending.push(path);
+            } else if let Some(name) = path.file_name().and_then(|name| name.to_str())
+                && let Some(rest) = name.strip_prefix("FR-")
+            {
+                let digits: String = rest.chars().take_while(char::is_ascii_digit).collect();
+                if !digits.is_empty() && rest[digits.len()..].starts_with('-') {
+                    ids.insert(format!("FR-{digits}"));
+                }
+            }
+        }
+    }
+    ids
 }
 
 /// A positive vector's document; a request-stage vector receives the
@@ -166,12 +215,12 @@ fn errors(validator: &jsonschema::Validator, document: &Value) -> Vec<String> {
 }
 
 /// Every positive vector of every stage is admitted by the schema, and every
-/// member it names an owner for exists and names a QSpec FR.
+/// member it names an owner for exists and names an FR of this specification.
 #[trace("TC-431", "FR-331-AC-19")]
 #[test]
 fn tc_431_positive_vectors_are_admitted_with_owned_members() {
     let validator = validator();
-    let owner = regex_free_fr_id;
+    let frs = spec_fr_ids();
     for vector in positives() {
         let name = vector["name"].as_str().expect("vector name");
         let document = composed(&vector);
@@ -187,26 +236,34 @@ fn tc_431_positive_vectors_are_admitted_with_owned_members() {
                 document.pointer(pointer).is_some(),
                 "{name}: owned member {pointer} exists"
             );
+            let fr = fr.as_str().expect("owner is text");
             assert!(
-                owner(fr.as_str().expect("owner is text")),
-                "{name}: {pointer} names an FR"
+                frs.contains(fr),
+                "{name}: {pointer} names {fr}, an FR of spec/"
             );
         }
     }
 }
 
-fn regex_free_fr_id(text: &str) -> bool {
-    text.strip_prefix("FR-")
-        .is_some_and(|digits| !digits.is_empty() && digits.bytes().all(|b| b.is_ascii_digit()))
+/// Whether a schema error at `error` lies at the patched member: the member
+/// itself, a member under it, or an ancestor other than the document root
+/// (the root only for a patch of a top-level member).
+fn located_at_patch(error: &str, patched: &str) -> bool {
+    let top_level = patched.matches('/').count() == 1;
+    error == patched
+        || error.starts_with(&format!("{patched}/"))
+        || ((!error.is_empty() || top_level) && patched.starts_with(&format!("{error}/")))
 }
 
-/// Every adverse vector, applied to its base, is refused by the schema,
-/// including each Kani row whose cause leaves its result's closed set.
+/// Every adverse vector is one patch of one positive vector and is refused
+/// by its stage's schema at the patched member, including each Kani row whose
+/// cause leaves its result's closed set.
 #[trace("TC-431", "FR-331-AC-19")]
 #[trace("TC-431", "FR-331-AC-20")]
 #[test]
 fn tc_431_adverse_vectors_are_refused() {
-    let validator = validator();
+    let whole = validator();
+    let frs = spec_fr_ids();
     let adverse = parsed(VECTORS)["adverse"]
         .as_array()
         .expect("adverse vectors")
@@ -215,25 +272,36 @@ fn tc_431_adverse_vectors_are_refused() {
     for vector in adverse {
         let name = vector["name"].as_str().expect("vector name");
         assert!(names.insert(name.to_owned()), "{name} is named once");
+        let owner = vector["owner"].as_str().expect("owner");
+        assert!(frs.contains(owner), "{name} names {owner}, an FR of spec/");
+        let base = positive(vector["base"].as_str().expect("adverse base name"));
+        let patch = vector["patch"].as_array().expect("patch list");
+        assert_eq!(patch.len(), 1, "{name} changes one member");
+        let mut document = composed(&base);
+        apply(&mut document, &patch[0]);
         assert!(
-            regex_free_fr_id(vector["owner"].as_str().expect("owner")),
-            "{name} names its owning FR"
-        );
-        let mut document = composed(&positive(
-            vector["base"].as_str().expect("adverse base name"),
-        ));
-        for patch in vector["patch"].as_array().expect("patch list") {
-            apply(&mut document, patch);
-        }
-        assert!(
-            !validator.is_valid(&document),
+            !whole.is_valid(&document),
             "{name} is refused by the schema"
+        );
+        let path = patch[0]["path"].as_str().expect("patch path");
+        let patched = path.strip_suffix("/-").unwrap_or(path);
+        let stage = definition(stage_definition(base["stage"].as_str().expect("stage")));
+        let locations: Vec<String> = stage
+            .iter_errors(&document)
+            .map(|error| error.instance_path().to_string())
+            .collect();
+        assert!(
+            locations
+                .iter()
+                .any(|location| located_at_patch(location, patched)),
+            "{name} is refused at {patched}, not elsewhere: {locations:?}"
         );
     }
 }
 
 /// The request's `package` is the unpadded base64url of the checked package's
-/// RFC 8785 bytes, and decoding it yields the package its `package_id` names.
+/// RFC 8785 bytes, and the package identity recomputed from the decoded bytes
+/// is the request's `package_id`.
 #[trace("TC-431", "FR-331-AC-18")]
 #[test]
 fn tc_431_package_member_carries_the_v2_bytes_of_its_package_id() {
@@ -252,23 +320,44 @@ fn tc_431_package_member_carries_the_v2_bytes_of_its_package_id() {
         "the bytes are already canonical"
     );
     assert_eq!(package["contract_version"], "quire.checked-package/v2");
+    let recomputed = jcs_sha256(&package["identity_preimage"]).expect("preimage canonicalizes");
+    let recomputed = recomputed
+        .strip_prefix("sha256-jcs:")
+        .expect("canonicalizer retains its prefix");
+    let package_id = &request["request"]["package_id"];
+    assert_eq!(package_id["domain"], "quire.package.semantic/v2");
+    assert_eq!(package_id["algorithm"], "sha256");
     assert_eq!(
-        package["package_id"], request["request"]["package_id"],
-        "package_id names the carried package"
+        package_id["digest"], recomputed,
+        "package_id is the identity recomputed from the carried bytes"
     );
 }
 
-/// The strict decoder and the schema's `Base64Url` pattern agree: each
-/// non-canonical spelling of an adverse vector is refused by both.
+/// The strict decoder and the schema's `Base64Url` pattern agree: both refuse
+/// each non-canonical spelling and both admit every encoding.
 #[trace("TC-431", "FR-331-AC-18")]
 #[test]
 fn tc_431_noncanonical_package_spellings_refuse() {
-    for spelling in ["eyJhIjoxfQ==", "+/+/", "eyJhIjoxfR", "eyJhI"] {
-        assert_eq!(decode(spelling), None, "{spelling} refuses");
+    let pattern = definition("Base64Url");
+    for spelling in ["eyJhIjoxfQ==", "+/+/", "eyJhIjoxfR", "eyJhI", "eyJhIjoxfQ="] {
+        assert_eq!(decode(spelling), None, "the decoder refuses {spelling}");
+        assert!(
+            !pattern.is_valid(&Value::String(spelling.into())),
+            "the schema refuses {spelling}"
+        );
     }
-    for bytes in [&b""[..], b"{", b"{}", b"{\"a\"", b"#[kani::proof]"] {
-        let text = encode(bytes);
-        assert_eq!(decode(&text).as_deref(), Some(bytes), "{text} round-trips");
+    let mut samples: Vec<Vec<u8>> = (0..=255_u8).map(|byte| vec![byte]).collect();
+    samples.extend((0..=255_u8).map(|byte| vec![0xff, byte]));
+    samples.extend((0..=255_u8).map(|byte| vec![byte, 0x00, 0xff]));
+    samples.push(Vec::new());
+    samples.push(b"#[kani::proof]".to_vec());
+    for bytes in samples {
+        let text = encode(&bytes);
+        assert_eq!(decode(&text), Some(bytes.clone()), "{text} round-trips");
+        assert!(
+            pattern.is_valid(&Value::String(text.clone())),
+            "the schema admits {text}"
+        );
     }
 }
 
@@ -299,57 +388,89 @@ fn tc_431_vector_byte_members_decode_and_provision_digests_bind() {
     }
 }
 
-/// The Kani vectors carry a result for each row of FR-331's Kani results
-/// table: each of the eight results, the `bounded-proof` basis and each
-/// cause; `measured` comes from the statistical vector.
+/// The row of FR-331's Kani results table a Kani result entry stands for.
+fn kani_row(result: &Value, counterexamples: &[Value]) -> String {
+    let value = result["result"].as_str().expect("result value");
+    if let Some(spelling) = result["basis"]["type"].as_str() {
+        return format!("{value}:{spelling}");
+    }
+    if let Some(position) = result["counterexample"].as_u64() {
+        let entry = &counterexamples[usize::try_from(position).expect("position fits")];
+        let arm = if entry.get("transcript").is_some() {
+            "transcript"
+        } else {
+            "counterexample"
+        };
+        return format!("{value}:{arm}");
+    }
+    let cause = result["cause"]["type"].as_str();
+    let diagnostic = result["diagnostic"]["code"].as_str().map(|code| {
+        let detail = &result["diagnostic"]["detail"];
+        let absent = if detail.get("absent").is_some() {
+            "+absent"
+        } else {
+            ""
+        };
+        format!(
+            "{code}/{}{absent}",
+            result["diagnostic"]["cause"]
+                .as_str()
+                .expect("diagnostic cause")
+        )
+    });
+    match (cause, diagnostic) {
+        (Some("limit-reached"), _) => {
+            let setting = result["cause"]["setting"].as_str().expect("setting");
+            assert!(setting.starts_with("kani."), "Kani setting {setting}");
+            format!("{value}:limit-reached")
+        }
+        (Some(cause), _) => format!("{value}:{cause}"),
+        (None, Some(diagnostic)) => format!("{value}:{diagnostic}"),
+        (None, None) => value.to_owned(),
+    }
+}
+
+/// The Kani vectors carry one result for each row of FR-331's Kani results
+/// table, each `declined` cause separately.
 #[trace("TC-431", "FR-331-AC-20")]
 #[test]
-fn tc_431_kani_vectors_cover_every_terminal_value() {
-    let mut kani = BTreeSet::new();
-    let mut every = BTreeSet::new();
-    let mut causes = BTreeSet::new();
+fn tc_431_kani_vectors_cover_every_table_row() {
+    let mut rows = BTreeSet::new();
     for vector in positives()
         .iter()
         .filter(|vector| vector["stage"] == "outcome")
     {
-        for result in vector["document"]["results"].as_array().expect("results") {
-            let value = result["result"].as_str().expect("result value").to_owned();
-            every.insert(value.clone());
+        let document = &vector["document"];
+        let counterexamples = document["counterexamples"]
+            .as_array()
+            .expect("counterexamples");
+        for result in document["results"].as_array().expect("results") {
             if result["backend"] == "kani" {
-                kani.insert(value);
-                for member in ["cause", "basis"] {
-                    if let Some(spelling) = result[member]["type"].as_str() {
-                        causes.insert(spelling.to_owned());
-                    }
-                }
+                rows.insert(kani_row(result, counterexamples));
             }
         }
     }
-    let terminal = [
-        "declined",
-        "failed",
-        "incomplete",
-        "inconclusive",
-        "proved",
-        "refuted",
+    let table: BTreeSet<String> = [
+        "proved:bounded-proof",
+        "inconclusive:kani_vacuous_proof",
+        "refuted:transcript",
+        "declined:refused",
+        "declined:invalid-input",
+        "declined:incomplete-input",
+        "unsupported:unsupported_projection/tool-unavailable+absent",
+        "incomplete:timed-out",
+        "incomplete:limit-reached",
+        "incomplete:cancelled",
+        "inconclusive:replay-parity",
         "tested",
-        "unsupported",
-    ];
-    assert_eq!(kani, terminal.iter().map(|v| (*v).to_owned()).collect());
-    for cause in [
-        "bounded-proof",
-        "kani_vacuous_proof",
-        "limit-reached",
-        "timed-out",
-        "cancelled",
-        "tool-failure",
-        "refused",
-        "invalid-input",
-        "incomplete-input",
-    ] {
-        assert!(causes.contains(cause), "a Kani vector carries {cause}");
-    }
-    assert!(every.contains("measured"), "a vector carries measured");
+        "failed:tool-failure",
+        "failed:unsupported_projection/tool-unavailable",
+        "failed:runtime_invariant/established-invariant-broken",
+    ]
+    .iter()
+    .map(|row| (*row).to_owned())
+    .collect();
+    assert_eq!(rows, table, "one Kani vector result per table row");
 }
 
 /// The item-level defects FR-290 settles per item (absent kind, unknown
