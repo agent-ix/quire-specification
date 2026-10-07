@@ -78,3 +78,20 @@ to FR-290, which now promises it. FND-002 to FND-004 are small and belong in
 the same round. Once those are fixed it is mergeable. The QSpec suite was not
 rerun at de376ea: the coordinator asked me not to while the build lock is
 busy, and the author reports it green.
+
+## Dispositions
+
+Round 1, reviewed at 3d98a2e (fix range b8a2c42..3d98a2e). The rule now has one copy, in FR-290's "Single-candidate arm" step 2. FR-331:167-171 refers to "FR-290's domain-kind check" and does not restate a disposition or a cause. `absent-domains` no longer appears anywhere in spec/, proposals/ or tests/.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 3d98a2e |
+| FND-002 | fixed | 3d98a2e |
+| FND-003 | fixed | 3d98a2e |
+| FND-004 | fixed | 3d98a2e |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | high | The new domain-kind check makes the advertised-mode table's `unbounded-extent` row unreachable, which contradicts FR-290-AC-6 and TC-271 NG-06. For an unbounded item on a candidate that advertises only `bounded`, step 2 compares every `domains[].kind` with the candidate's `domains`, "whatever its `finite_bound_available` says". By ADR-014 §4, `finite_bound_available` is false exactly when some domain kind is non-boundable (`quantity`, `loop` or `infinite-trace`). A registration's `domains` can never hold those kinds, because `invalid-domains` refuses them. So every item with no finite bound available fails step 2 and settles `unsupported-requested-capability` before the table's `unsupported`/`unbounded-extent` row is reached. FR-290-AC-6 ("for each row of the advertised-mode table, negotiation settles the listed disposition") and NG-06 (`unbounded-extent`) can no longer both hold together with FR-290-AC-13. Fix: have step 2 compare only the boundable kinds of an unbounded item, and leave non-boundable kinds to the mode table's `finite_bound_available` row. Or state that an unbounded item with no finite bound available goes straight to the mode table. Then add an NG row with a `quantity` domain on a bounded-only candidate that expects `unbounded-extent`. | spec/objects/protocol/FR-290-protocol-claim-kind.md:175-184, spec/objects/protocol/FR-290-protocol-claim-kind.md:198, spec/objects/protocol/FR-290-protocol-claim-kind.md:348, spec/test-cases/TC-271-capability-kind-candidate-negotiation.md:51 |

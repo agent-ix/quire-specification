@@ -41,3 +41,12 @@ FND-002 is a redundant name-inventory check. Fix both in this PR. Once they
 are fixed it is mergeable. The suite was not rerun at de376ea, per the
 coordinator, while the build lock is busy. The author reports
 backend_provider_v1 at 9 passed.
+
+## Dispositions
+
+Round 1, reviewed at 3d98a2e (fix range b8a2c42..3d98a2e).
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 3d98a2e |
+| FND-002 | fixed | 3d98a2e |
