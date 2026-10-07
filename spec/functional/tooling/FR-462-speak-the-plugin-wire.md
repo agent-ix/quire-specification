@@ -68,7 +68,6 @@ other before reading the body. The bodies are:
 | `hello` | plugin | the FR-331 `quire.backend-provider/v1` manifest stage, whose one descriptor is the plugin's: its advertised FR-290 (kind, mode) pairs, domains, options and bounds |
 | `request` | host | the FR-331 request stage: the routed items; the checked package as `package`, the unpadded base64url spelling of its RFC 8785 v2 bytes, with its `package_id`; and the provider limits, including `deadline_ms` |
 | `result` | plugin | the FR-331 outcome stage for the request whose id it names |
-
 | `cancel` | host | the id of the request to cancel |
 | `shutdown` | host | empty |
 | `fault` | plugin | a typed cause with a catalog code |
