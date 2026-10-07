@@ -79,3 +79,18 @@ is consistent with nine overall.
 
 Not mergeable as is. Fix FND-001 to FND-005 in this PR. FND-006 to FND-008 are
 cheap and belong to the same text. Once they are fixed it is mergeable.
+
+## Dispositions
+
+Round 1, reviewed at 346fa49 (fix range 276a7e0..346fa49). vectors.json was reformatted, so it was diffed semantically: every original vector is unchanged, and the fix adds 4 positive results and 10 adverse vectors. FND-004 was checked against FR-290, FR-368, FR-408, FR-411 and FR-461. None defines a request-level `domains` or `limits` on the FR-331 request. FR-368 puts proof bounds in the temporal `subject.proof_bounds` and limits in the item's `limits`. FR-411 names the item's `ExactProbLimits`. FR-461's `stage_limits` belongs to the replay request, not this envelope. FND-005 was checked against FR-290 lines 140-145 and 185-191: FR-290 owns the registration refusal and its causes, keyed by backend identity.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 346fa49 |
+| FND-002 | fixed | 346fa49 |
+| FND-003 | fixed | 346fa49 |
+| FND-004 | fixed | 346fa49 |
+| FND-005 | fixed | 346fa49 |
+| FND-006 | fixed | 346fa49 |
+| FND-007 | rejected | Plan ruling: `kani_vacuous_proof` is an existing cross-repo wire value (AD-016, TC-274). The fix adds only a parenthetical stating the exception; the schema, vectors and AD-016 spelling are unchanged. |
+| FND-008 | fixed | 346fa49 |

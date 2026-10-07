@@ -53,3 +53,15 @@ hold on their own in future: FND-001 is a self-referential check, and FND-003
 locks the refusal location. All are low. The test is mergeable once the
 SR-1304 and SR-1305 findings are fixed, and these five belong in the same fix
 round.
+
+## Dispositions
+
+Round 1, reviewed at 346fa49 (fix range 276a7e0..346fa49).
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 346fa49 |
+| FND-002 | fixed | 346fa49 |
+| FND-003 | fixed | 346fa49 |
+| FND-004 | fixed | 346fa49 |
+| FND-005 | fixed | 346fa49 |

@@ -38,3 +38,14 @@ to AC-18, AC-19, AC-20 and AC-4. PW-07 maps to FR-462-AC-7. FR-331's new
 `references` edges point to FRs the text actually cites. FND-001 is a real
 document defect, a broken normative table, and must be fixed before merge.
 FND-002 to FND-004 are small and belong in this PR.
+
+## Dispositions
+
+Round 1, reviewed at 346fa49 (fix range 276a7e0..346fa49).
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | still-open | The paragraph moved below the `fault` row, but a blank line still separates the `result` row (FR-462:70) from the `cancel` row (FR-462:72). A blank line ends a Markdown table, so `cancel`, `shutdown` and `fault` still render as a headerless fragment outside it. Delete the blank line at FR-462:71. |
+| FND-002 | fixed | 346fa49 |
+| FND-003 | fixed | 346fa49 |
+| FND-004 | fixed | 346fa49 |
