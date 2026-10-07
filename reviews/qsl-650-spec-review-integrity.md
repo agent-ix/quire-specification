@@ -49,3 +49,11 @@ Round 1, reviewed at 346fa49 (fix range 276a7e0..346fa49).
 | FND-002 | fixed | 346fa49 |
 | FND-003 | fixed | 346fa49 |
 | FND-004 | fixed | 346fa49 |
+
+## Dispositions (round 2)
+
+Round 2, reviewed at 4ee2007 (fix range cd402a8..4ee2007; the only change deletes one blank line in FR-462). The frame-body table now runs unbroken from its header to the `fault` row, and `quire validate` on FR-462 exits 0.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 4ee2007 |
