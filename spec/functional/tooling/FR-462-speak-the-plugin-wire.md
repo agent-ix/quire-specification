@@ -23,8 +23,8 @@ carrying FR-331 manifests, requests and results.
 ## Inputs
 
 The plugin executable at the path the caller names; the items routed to it;
-the v2 bytes of the package; the caller's frame-length, total-byte, deadline,
-grace-period, memory and CPU-time limits.
+the checked package's v2 bytes and its `package_id`; the caller's
+frame-length, total-byte, deadline, grace-period, memory and CPU-time limits.
 
 ## Outputs
 
@@ -65,9 +65,17 @@ other before reading the body. The bodies are:
 
 | Kind | Sender | Body |
 | --- | --- | --- |
-| `hello` | plugin | the plugin's FR-331 `quire.backend-provider/v1` manifest: its advertised FR-290 (kind, mode) pairs, domains, options and bounds |
-| `request` | host | an FR-331 request: the routed items, the v2 bytes of the package and the provider limits, including the deadline |
-| `result` | plugin | an FR-331 result for the request whose id it names |
+| `hello` | plugin | the FR-331 `quire.backend-provider/v1` manifest stage, whose one descriptor is the plugin's: its advertised FR-290 (kind, mode) pairs, domains, options and bounds |
+| `request` | host | the FR-331 request stage: the routed items; the checked package as `package`, the unpadded base64url spelling of its RFC 8785 v2 bytes, with its `package_id`; and the provider limits, including `deadline_ms` |
+| `result` | plugin | the FR-331 outcome stage for the request whose id it names |
+
+Each body is one stage of the FR-331 wire schema
+([`proposals/backend-provider-v1/schema.json`](../../../proposals/backend-provider-v1/schema.json)).
+The bytes travel as a string because a JSON frame cannot hold raw bytes, and
+unpadded base64url with zero trailing bits gives each byte string one
+spelling, so the frame keeps its one RFC 8785 encoding. The plugin decodes
+`package`, admits it with the v2 reader and checks its `package_id` before
+any item runs.
 | `cancel` | host | the id of the request to cancel |
 | `shutdown` | host | empty |
 | `fault` | plugin | a typed cause with a catalog code |
@@ -99,6 +107,26 @@ missing terminal record at `shutdown`. A deadline overrun ends the process
 and settles each open item `incomplete` with cause `timed-out`. Items routed
 to other providers are unaffected.
 
+The tool-failure cause is the FR-331 cause `tool-failure{defect}`, with
+`defect` naming the failure:
+
+| Failure | `defect` |
+| --- | --- |
+| crash | `crash` |
+| non-zero exit | `nonzero-exit` |
+| frame that is not a length and that many bytes of JSON | `malformed-frame` |
+| value whose bytes differ from its RFC 8785 re-encoding | `noncanonical-frame` |
+| frame above the frame-length limit | `frame-length` |
+| frames above the total-byte limit | `total-bytes` |
+| `protocol` other than `quire.plugin-wire/v1` | `unknown-protocol` |
+| unknown `kind` | `unknown-frame-kind` |
+| missing or extra envelope member | `envelope-member` |
+| `result` naming an id the host did not send | `unknown-request-id` |
+| body that its FR-331 stage schema refuses | `malformed-body` |
+| result for an item not routed to the plugin | `unrouted-item` |
+| result for a capability kind the plugin did not advertise | `unadvertised-kind` |
+| missing terminal record at `shutdown` | `missing-terminal-record` |
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -109,6 +137,7 @@ to other providers are unaffected.
 | FR-462-AC-4 | A crash, a non-zero exit, a result for an item not routed to the plugin, a result for an unadvertised capability kind and a missing terminal record each settle every affected item `failed` with a tool-failure cause, while items routed to other providers keep their own records. | Test (TC-428) |
 | FR-462-AC-5 | Cancelling a run sends `cancel` with the request id; a plugin that answers settles each open item `incomplete` with cause cancelled, and a plugin that does not answer within the grace period is ended with the same settlement. A deadline overrun ends the process and settles each open item `incomplete` with cause `timed-out`. | Test (TC-428) |
 | FR-462-AC-6 | The host starts the plugin only at the path the caller names, and text the plugin writes to standard error changes no settlement. | Test (TC-428) |
+| FR-462-AC-7 | A `request` body carries `package`, the unpadded base64url spelling of the package's RFC 8785 v2 bytes, which decodes to exactly those bytes, and that package's `package_id`; a `request` body whose `package` is padded, uses the standard alphabet or has nonzero trailing bits, or whose decoded package has another `package_id`, is refused before any item runs, and each wire failure settles its items `failed` with `tool-failure` and the `defect` of the failure table. | Test |
 
 ## Dependencies
 

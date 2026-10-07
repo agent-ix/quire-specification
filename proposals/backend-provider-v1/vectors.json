@@ -1,0 +1,591 @@
+{
+  "package_fixture": "positive-all-families.json",
+  "positive": [
+    {
+      "name": "kani-hello",
+      "stage": "manifest",
+      "owners": {
+        "/contract_version": "FR-331",
+        "/capability_vocabulary": "FR-290",
+        "/manifest/0/backend": "FR-290",
+        "/manifest/0/advertises": "FR-290",
+        "/manifest/0/domains": "FR-331",
+        "/manifest/0/bounds": "FR-461"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "manifest": [
+          {
+            "backend": "kani",
+            "advertises": [
+              {"kind": "operation-contract", "mode": "bounded"},
+              {"kind": "value-validity", "mode": "bounded"}
+            ],
+            "domains": ["collection", "integer", "population"],
+            "bounds": {"max_input_bytes": 1048576, "max_objects": 64, "max_references": 256}
+          }
+        ]
+      }
+    },
+    {
+      "name": "kani-request",
+      "stage": "request",
+      "owners": {
+        "/request/package": "FR-462",
+        "/request/package_id": "FR-462",
+        "/request/deadline_ms": "FR-462",
+        "/request/items/0/request_index": "FR-331",
+        "/request/items/0/kind": "FR-290",
+        "/request/items/0/claim": "FR-331",
+        "/request/items/0/extent": "FR-290",
+        "/request/items/0/extent/bounds/0": "FR-290",
+        "/request/items/0/backend": "FR-290",
+        "/request/items/0/candidates": "FR-290",
+        "/request/items/0/options": "FR-196",
+        "/request/items/1/extent/finite_bound_available": "FR-290"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "manifest": [
+          {
+            "backend": "kani",
+            "advertises": [
+              {"kind": "operation-contract", "mode": "bounded"},
+              {"kind": "value-validity", "mode": "bounded"}
+            ],
+            "domains": ["collection", "integer", "population"],
+            "bounds": {"max_input_bytes": 1048576, "max_objects": 64, "max_references": 256}
+          }
+        ],
+        "request": {
+          "deadline_ms": 600000,
+          "items": [
+            {
+              "request_index": 0,
+              "kind": "value-validity",
+              "claim": {"node": {"domain": "quire.checked-semantic-node/v1", "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"}, "occurrence": {"role": "declaration", "ordinal": 0}},
+              "extent": {
+                "classification": "bounded",
+                "bounds": [
+                  {"domain": {"type": "node", "node": {"domain": "quire.checked-semantic-node/v1", "digest": "1c9ac70521e54c69c310ff337b10364e2c3c80c917efb8b29010c97a9534bd14"}, "path": []}, "bound": {"type": "integer-range", "lower": "-128", "upper": "127"}}
+                ]
+              },
+              "backend": "kani",
+              "candidates": {"type": "set", "backends": ["kani"]},
+              "options": {"unwind": "8"}
+            },
+            {
+              "request_index": 1,
+              "kind": "value-validity",
+              "claim": {"node": {"domain": "quire.checked-semantic-node/v1", "digest": "ac15b477899ce4bf720e32ff29a6418e565c693028b4ed4451a4a6f4b2d4b368"}, "occurrence": {"role": "declaration", "ordinal": 0}},
+              "extent": {
+                "classification": "unbounded",
+                "domains": [
+                  {"domain": {"type": "node", "node": {"domain": "quire.checked-semantic-node/v1", "digest": "1c9ac70521e54c69c310ff337b10364e2c3c80c917efb8b29010c97a9534bd14"}, "path": []}, "kind": "integer"}
+                ],
+                "finite_bound_available": true
+              },
+              "backend": "kani",
+              "candidates": {"type": "set", "backends": ["kani"]}
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "request-item-level-defects",
+      "stage": "request",
+      "owners": {
+        "/request/items/0/kind": "FR-290",
+        "/request/items/1/candidates": "FR-290",
+        "/request/items/2/probabilistic/evidence": "FR-290"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "manifest": [{"backend": "kani", "advertises": [{"kind": "value-validity", "mode": "bounded"}]}],
+        "request": {
+          "deadline_ms": 1000,
+          "items": [
+            {"request_index": 0, "kind": null, "claim": {"node": {"domain": "quire.checked-semantic-node/v1", "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"}, "occurrence": {"role": "declaration", "ordinal": 0}}, "candidates": {"type": "set", "backends": []}},
+            {"request_index": 1, "kind": "value-validity", "claim": {"node": {"domain": "quire.checked-semantic-node/v1", "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"}, "occurrence": {"role": "declaration", "ordinal": 0}}, "backend": "cvc5", "candidates": {"type": "unknown-backend", "backend": "cvc5"}},
+            {"request_index": 2, "kind": "probabilistic-satisfaction", "claim": {"node": {"domain": "quire.checked-semantic-node/v1", "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"}, "occurrence": {"role": "declaration", "ordinal": 0}}, "extent": {"classification": "bounded", "bounds": []}, "candidates": {"type": "set", "backends": []}, "probabilistic": {"evidence": "approximate"}}
+          ]
+        }
+      }
+    },
+    {
+      "name": "kani-outcome-proved",
+      "stage": "outcome",
+      "owners": {
+        "/dispositions/0/disposition": "FR-331",
+        "/dispositions/1/disposition": "FR-290",
+        "/artifacts/0/kind": "FR-331",
+        "/artifacts/0/identity": "FR-196",
+        "/results/0/backend": "FR-462",
+        "/results/0/result": "FR-331",
+        "/results/0/basis": "FR-331",
+        "/accounting/0/settled_by": "FR-331",
+        "/accounting/0/tool": "FR-196",
+        "/accounting/1/settled_by": "FR-331"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {"request_index": 0, "disposition": "supported"},
+          {"request_index": 1, "disposition": "requires-bound"}
+        ],
+        "artifacts": [
+          {"request_index": 0, "kind": "kani-harness", "identity": "check_example_safety_0", "bytes": "I1trYW5pOjpwcm9vZl0", "source_map": [{"node": {"domain": "quire.checked-semantic-node/v1", "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"}, "occurrence": {"role": "declaration", "ordinal": 0}, "start": 0, "end": 14}]}
+        ],
+        "results": [
+          {"request_index": 0, "backend": "kani", "kind": "value-validity", "result": "proved", "basis": {"type": "bounded-proof", "checks": 3}}
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {"request_index": 0, "settled_by": "result", "tool": {"name": "kani", "version": "0.67.0", "solver": "cadical", "bounds": {"unwind": 8}}},
+          {"request_index": 1, "settled_by": "disposition"}
+        ]
+      }
+    },
+    {
+      "name": "kani-outcome-refuted-transcript",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/result": "FR-331",
+        "/results/0/counterexample": "FR-331",
+        "/counterexamples/0/transcript": "FR-331",
+        "/artifacts/1/kind": "FR-331"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [{"request_index": 0, "disposition": "supported"}],
+        "artifacts": [
+          {"request_index": 0, "kind": "kani-harness", "identity": "check_example_safety_0", "bytes": "I1trYW5pOjpwcm9vZl0", "source_map": []},
+          {"request_index": 0, "kind": "kani-transcript", "identity": "check_example_safety_0", "bytes": "Q09VTlRFUkVYQU1QTEU", "source_map": []}
+        ],
+        "results": [
+          {"request_index": 0, "backend": "kani", "kind": "value-validity", "result": "refuted", "counterexample": 0}
+        ],
+        "counterexamples": [{"request_index": 0, "backend": "kani", "transcript": 1}],
+        "accounting": [{"request_index": 0, "settled_by": "result", "tool": {"name": "kani", "version": "0.67.0"}}]
+      }
+    },
+    {
+      "name": "plugin-outcome-refuted-assignments",
+      "stage": "outcome",
+      "owners": {
+        "/counterexamples/0/counterexample": "FR-331",
+        "/counterexamples/0/counterexample/values/0/value": "FR-181"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [{"request_index": 0, "disposition": "supported"}],
+        "artifacts": [],
+        "results": [{"request_index": 0, "backend": "acme-smt", "kind": "value-validity", "result": "refuted", "counterexample": 0}],
+        "counterexamples": [
+          {"request_index": 0, "backend": "acme-smt", "counterexample": {"type": "assignments", "values": [{"parameter": {"domain": "quire.checked-semantic-node/v1", "digest": "1c9ac70521e54c69c310ff337b10364e2c3c80c917efb8b29010c97a9534bd14"}, "value": {"type": "integer", "value": "-128"}}]}}
+        ],
+        "accounting": [{"request_index": 0, "settled_by": "result"}]
+      }
+    },
+    {
+      "name": "kani-outcome-tested-and-inconclusive",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/result": "FR-331",
+        "/results/1/cause": "FR-331",
+        "/results/2/cause": "FR-331"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {"request_index": 0, "disposition": "supported"},
+          {"request_index": 1, "disposition": "supported"},
+          {"request_index": 2, "disposition": "supported"}
+        ],
+        "artifacts": [],
+        "results": [
+          {"request_index": 0, "backend": "kani", "kind": "value-validity", "result": "tested"},
+          {"request_index": 1, "backend": "kani", "kind": "value-validity", "result": "inconclusive", "cause": {"type": "kani_vacuous_proof"}},
+          {"request_index": 2, "backend": "kani", "kind": "value-validity", "result": "inconclusive", "cause": {"type": "replay-parity"}}
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {"request_index": 0, "settled_by": "result"},
+          {"request_index": 1, "settled_by": "result"},
+          {"request_index": 2, "settled_by": "result"}
+        ]
+      }
+    },
+    {
+      "name": "kani-outcome-unsupported-and-declined",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/diagnostic": "FR-290",
+        "/results/1/cause": "FR-331",
+        "/results/1/diagnostic": "FR-272",
+        "/results/2/cause": "FR-331",
+        "/results/3/cause": "FR-331"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {"request_index": 0, "disposition": "supported"},
+          {"request_index": 1, "disposition": "supported"},
+          {"request_index": 2, "disposition": "supported"},
+          {"request_index": 3, "disposition": "supported"}
+        ],
+        "artifacts": [],
+        "results": [
+          {"request_index": 0, "backend": "kani", "kind": "value-validity", "result": "unsupported", "diagnostic": {"code": "unsupported_projection", "cause": "tool-unavailable", "detail": {"absent": "cbmc", "backend": "kani", "kind": "value-validity"}}},
+          {"request_index": 1, "backend": "kani", "kind": "value-validity", "result": "declined", "cause": {"type": "refused"}, "diagnostic": {"code": "unsupported_construct", "cause": "expression-form"}},
+          {"request_index": 2, "backend": "kani", "kind": "operation-contract", "result": "declined", "cause": {"type": "invalid-input"}, "diagnostic": {"code": "invalid_runtime_input", "cause": "invalid-value"}},
+          {"request_index": 3, "backend": "kani", "kind": "operation-contract", "result": "declined", "cause": {"type": "incomplete-input"}, "diagnostic": {"code": "incomplete_population", "cause": "incomplete-scope"}}
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {"request_index": 0, "settled_by": "result"},
+          {"request_index": 1, "settled_by": "result"},
+          {"request_index": 2, "settled_by": "result"},
+          {"request_index": 3, "settled_by": "result"}
+        ]
+      }
+    },
+    {
+      "name": "kani-outcome-incomplete-and-failed",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/cause": "FR-461",
+        "/results/1/cause": "FR-462",
+        "/results/2/cause": "FR-331",
+        "/results/3/cause": "FR-462",
+        "/results/4/diagnostic": "FR-290"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {"request_index": 0, "disposition": "supported"},
+          {"request_index": 1, "disposition": "supported"},
+          {"request_index": 2, "disposition": "supported"},
+          {"request_index": 3, "disposition": "supported"},
+          {"request_index": 4, "disposition": "supported"}
+        ],
+        "artifacts": [],
+        "results": [
+          {"request_index": 0, "backend": "kani", "kind": "value-validity", "result": "incomplete", "cause": {"type": "limit-reached", "limit": "max_objects", "value": 64, "setting": "kani.max_objects"}},
+          {"request_index": 1, "backend": "kani", "kind": "value-validity", "result": "incomplete", "cause": {"type": "timed-out"}},
+          {"request_index": 2, "backend": "kani", "kind": "value-validity", "result": "incomplete", "cause": {"type": "cancelled", "source": "caller-cancel-7"}},
+          {"request_index": 3, "backend": "kani", "kind": "value-validity", "result": "failed", "cause": {"type": "tool-failure", "defect": "crash"}},
+          {"request_index": 4, "backend": "kani", "kind": "value-validity", "result": "failed", "diagnostic": {"code": "unsupported_projection", "cause": "tool-unavailable", "detail": {"backend": "kani", "kind": "value-validity"}}}
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {"request_index": 0, "settled_by": "result", "limits": {"max_objects": 64}, "reached": ["max_objects"]},
+          {"request_index": 1, "settled_by": "result"},
+          {"request_index": 2, "settled_by": "result"},
+          {"request_index": 3, "settled_by": "result"},
+          {"request_index": 4, "settled_by": "result"}
+        ]
+      }
+    },
+    {
+      "name": "negotiation-dispositions",
+      "stage": "outcome",
+      "owners": {
+        "/dispositions/0/diagnostic": "FR-290",
+        "/dispositions/1/diagnostic": "FR-290",
+        "/dispositions/2/diagnostic": "FR-290"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {"request_index": 0, "disposition": "invalid-request", "diagnostic": {"code": "invalid_capability", "cause": "absent-kind", "detail": {"request_index": "0"}}},
+          {"request_index": 1, "disposition": "invalid-request", "diagnostic": {"code": "invalid_capability", "cause": "unknown-backend", "detail": {"backend": "cvc5"}}},
+          {"request_index": 2, "disposition": "invalid-request", "diagnostic": {"code": "invalid_capability", "cause": "unknown-evidence-kind", "detail": {"request_index": "2"}}}
+        ],
+        "artifacts": [],
+        "results": [],
+        "counterexamples": [],
+        "accounting": [
+          {"request_index": 0, "settled_by": "disposition"},
+          {"request_index": 1, "settled_by": "disposition"},
+          {"request_index": 2, "settled_by": "disposition"}
+        ]
+      }
+    },
+    {
+      "name": "temporal-request",
+      "stage": "request",
+      "owners": {
+        "/manifest/0/fairness_kinds": "FR-368",
+        "/manifest/0/reductions": "FR-382",
+        "/request/provision": "FR-364",
+        "/request/items/0/temporal/subject": "FR-368",
+        "/request/items/0/temporal/item_kind": "FR-368",
+        "/request/items/0/temporal/fairness": "FR-368",
+        "/request/items/0/temporal/max_depth": "FR-368",
+        "/request/items/0/temporal/limits/max_states": "FR-368",
+        "/request/items/0/temporal/limits/max_walk_steps": "FR-392",
+        "/request/items/0/temporal/witness_samples": "FR-392",
+        "/request/items/0/temporal/seed": "FR-392",
+        "/request/items/0/reductions": "FR-382"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "manifest": [
+          {"backend": "qsl-model-check", "advertises": [{"kind": "temporal-satisfaction", "mode": "bounded"}, {"kind": "temporal-satisfaction", "mode": "unbounded"}], "fairness_kinds": ["strong", "weak"], "reductions": ["constraint", "partial-order", "symmetry"], "bounds": {"max_automaton_states": 100000, "max_states": 1000000, "max_transitions": 10000000}}
+        ],
+        "request": {
+          "deadline_ms": 600000,
+          "provision": [
+            {"digest_domain": "sha256-jcs", "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a", "bytes": "e30"}
+          ],
+          "items": [
+            {
+              "request_index": 0,
+              "kind": "temporal-satisfaction",
+              "claim": {"node": {"domain": "quire.checked-semantic-node/v1", "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"}, "occurrence": {"role": "claim", "ordinal": 0}},
+              "extent": {"classification": "unbounded", "domains": [{"domain": {"type": "node", "node": {"domain": "quire.checked-semantic-node/v1", "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"}, "path": []}, "kind": "infinite-trace"}], "finite_bound_available": false},
+              "candidates": {"type": "set", "backends": ["qsl-model-check"]},
+              "reductions": {"symmetry": [], "partial_order": {"proviso": "breadth-first-revisit"}},
+              "temporal": {
+                "subject": {"initial_states": [{"digest_domain": "sha256-jcs", "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"}], "universes": [], "proof_bounds": []},
+                "item_kind": "formula",
+                "fairness": [{"kind": "weak", "operation": "Example::Session::step", "granularity": "whole"}],
+                "max_depth": 40,
+                "limits": {"max_states": 250000, "max_walk_steps": 64},
+                "witness_samples": 4,
+                "seed": "42"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "temporal-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/counterexample": "FR-364",
+        "/counterexamples/0/counterexample": "FR-364",
+        "/accounting/0/warnings/0": "FR-369",
+        "/results/1/basis": "FR-385",
+        "/accounting/1/certification": "FR-385",
+        "/results/2/cause": "FR-363",
+        "/accounting/2/max_depth": "FR-363"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {"request_index": 0, "disposition": "supported"},
+          {"request_index": 1, "disposition": "supported"},
+          {"request_index": 2, "disposition": "supported"}
+        ],
+        "artifacts": [],
+        "results": [
+          {"request_index": 0, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "refuted", "counterexample": 0},
+          {"request_index": 1, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "proved", "basis": {"type": "reduced", "reductions": [{"reduction": "partial-order", "parameters": {"proviso": "breadth-first-revisit"}, "row": "Liveness, empty fairness set, no interval operator"}]}},
+          {"request_index": 2, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "bound-reached", "depth": 40}}
+        ],
+        "counterexamples": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "counterexample": {
+              "trace": "model",
+              "kind": "formula",
+              "initial_state": 0,
+              "prefix": [{"transition": {"type": "transition", "operation": "Example::Session::open", "receiver": null, "arguments": []}, "post_state": "1111111111111111111111111111111111111111111111111111111111111111"}],
+              "loop": [{"transition": {"type": "terminal-stutter"}, "post_state": "1111111111111111111111111111111111111111111111111111111111111111"}],
+              "over_binding": null,
+              "fairness": [],
+              "interval": null,
+              "trace_position": 0
+            }
+          }
+        ],
+        "accounting": [
+          {"request_index": 0, "settled_by": "result", "method": "exploration", "seed": "42", "witness_samples": 4, "limits": {"max_states": 250000, "max_walk_steps": 64}, "warnings": [{"code": "fairness.strong-would-exclude", "constraint": {"kind": "strong", "operation": "Example::Session::close", "granularity": "whole"}, "identity": null, "position": 1}]},
+          {"request_index": 1, "settled_by": "result", "method": "reduced-exploration", "certification": "uncertified"},
+          {"request_index": 2, "settled_by": "result", "method": "exploration", "max_depth": 40, "limits": {"max_states": 250000}}
+        ]
+      }
+    },
+    {
+      "name": "state-graph-and-hyper-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/basis": "FR-391",
+        "/results/1/counterexample": "FR-393",
+        "/counterexamples/0/counterexample": "FR-393",
+        "/counterexamples/1/counterexample": "FR-400"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {"request_index": 0, "disposition": "supported"},
+          {"request_index": 1, "disposition": "supported"},
+          {"request_index": 2, "disposition": "supported"}
+        ],
+        "artifacts": [],
+        "results": [
+          {"request_index": 0, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "proved", "basis": {"type": "witnessed", "sources": [{"type": "sampled", "seed": "42", "trace_index": "3"}]}},
+          {"request_index": 1, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "refuted", "counterexample": 0},
+          {"request_index": 2, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "refuted", "counterexample": 1}
+        ],
+        "counterexamples": [
+          {"request_index": 1, "backend": "qsl-model-check", "counterexample": {"type": "graph-evidence", "arm": "trap", "instance": {"type": "instance", "parameter": "a", "key": null}, "stem": {"type": "model-path", "initial": "0", "steps": []}}},
+          {"request_index": 2, "backend": "qsl-model-check", "counterexample": {"type": "hyper-counterexample", "kind": "step-tuple", "instance": [], "traces": [{"type": "hyper-trace", "variable": "e1", "alias": "M", "initial": "0", "steps": [{"type": "step", "transition": {"type": "transition", "operation": "M::put", "receiver": null, "arguments": [{"type": "integer", "value": "1"}]}, "post_state": "2222222222222222222222222222222222222222222222222222222222222222"}]}], "trace_position": "1"}}
+        ],
+        "accounting": [
+          {"request_index": 0, "settled_by": "result", "method": "exploration", "seed": "42", "witness_samples": 4},
+          {"request_index": 1, "settled_by": "result", "method": "exploration"},
+          {"request_index": 2, "settled_by": "result", "method": "exploration"}
+        ]
+      }
+    },
+    {
+      "name": "probabilistic-request",
+      "stage": "request",
+      "owners": {
+        "/manifest/0/evidence_kinds": "FR-290",
+        "/request/items/0/probabilistic/method": "FR-408",
+        "/request/items/0/probabilistic/limits": "FR-408",
+        "/request/items/1/probabilistic/limits": "FR-411"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "manifest": [{"backend": "qsl-prob", "advertises": [{"kind": "probabilistic-satisfaction", "mode": "bounded"}], "evidence_kinds": ["exact", "statistical"]}],
+        "request": {
+          "deadline_ms": 600000,
+          "items": [
+            {"request_index": 0, "kind": "probabilistic-satisfaction", "claim": {"node": {"domain": "quire.checked-semantic-node/v1", "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"}, "occurrence": {"role": "declaration", "ordinal": 0}}, "extent": {"classification": "bounded", "bounds": []}, "candidates": {"type": "set", "backends": ["qsl-prob"]}, "backend": "qsl-prob", "probabilistic": {"evidence": "statistical", "method": {"type": "okamoto"}, "seed": "7", "max_witnesses": 3, "limits": {"max_samples": 10000000}}},
+            {"request_index": 1, "kind": "probabilistic-satisfaction", "claim": {"node": {"domain": "quire.checked-semantic-node/v1", "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"}, "occurrence": {"role": "declaration", "ordinal": 0}}, "extent": {"classification": "bounded", "bounds": []}, "candidates": {"type": "set", "backends": ["qsl-prob"]}, "backend": "qsl-prob", "probabilistic": {"evidence": "exact", "limits": {"precision_bits": 64}}}
+          ]
+        }
+      }
+    },
+    {
+      "name": "probabilistic-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/verdict": "FR-410",
+        "/results/0/verdict/decision": "FR-409",
+        "/results/1/basis": "FR-411",
+        "/results/1/certificate": "FR-412"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [{"request_index": 0, "disposition": "supported"}, {"request_index": 1, "disposition": "supported"}],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "measured",
+            "verdict": {
+              "decision": {"type": "accepted"},
+              "estimate": {"value": {"numerator": "9999", "denominator": "10000"}},
+              "interval": {"lower": {"numerator": "9989", "denominator": "10000"}, "upper": {"numerator": "1", "denominator": "1"}},
+              "basis": {"method": {"type": "okamoto"}, "confidence": {"alpha": {"numerator": "1", "denominator": "100"}, "beta": {"numerator": "1", "denominator": "100"}, "iota": {"numerator": "1", "denominator": "1000"}}, "samples": 2302586, "draws": 2302586, "tests": {"m": 1, "alpha": {"numerator": "1", "denominator": "100"}, "beta": {"numerator": "1", "denominator": "100"}}, "coverage": "finite-sample"},
+              "provenance": {"seed": "7", "sampler": "quire.simulation.sampler/v1", "tests": [{"index": 0, "initial_state": 0, "binding": null, "first_trace_index": "0", "last_trace_index": "2302585"}]},
+              "tests": [{"index": 0, "decision": {"type": "accepted"}, "estimate": {"value": {"numerator": "9999", "denominator": "10000"}}, "interval": {"lower": {"numerator": "9989", "denominator": "10000"}, "upper": {"numerator": "1", "denominator": "1"}}, "samples": 2302586, "draws": 2302586}],
+              "witnesses": []
+            }
+          },
+          {
+            "request_index": 1, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "proved",
+            "basis": {"type": "value-bounds", "lower": {"numerator": "99", "denominator": "100"}, "upper": {"numerator": "1", "denominator": "1"}, "method": {"type": "backward-induction", "precision_bits": 64}, "reductions": []},
+            "certificate": {"identity": {"domain": "quire.obligation/v1", "algorithm": "sha256", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}, "objective": {"optimisation": "workload"}, "kind": "lower", "values": [{"state": "4444444444444444444444444444444444444444444444444444444444444444", "value": {"numerator": "99", "denominator": "100"}}], "ranking": [{"state": "4444444444444444444444444444444444444444444444444444444444444444", "rank": 1}]}
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {"request_index": 0, "settled_by": "result", "limits": {"max_samples": 10000000}},
+          {"request_index": 1, "settled_by": "result", "limits": {"precision_bits": 64}}
+        ]
+      }
+    }
+  ],
+  "adverse": [
+    {"name": "unknown-contract-version", "base": "kani-hello", "owner": "FR-331", "patch": [{"op": "replace", "path": "/contract_version", "value": "quire.backend-provider/v2"}]},
+    {"name": "absent-capability-vocabulary", "base": "kani-hello", "owner": "FR-290", "patch": [{"op": "remove", "path": "/capability_vocabulary"}]},
+    {"name": "other-capability-vocabulary", "base": "kani-request", "owner": "FR-290", "patch": [{"op": "replace", "path": "/capability_vocabulary", "value": "quire.capability-kind/v2"}]},
+    {"name": "extra-envelope-member", "base": "kani-hello", "owner": "FR-331", "patch": [{"op": "add", "path": "/request_id", "value": 1}]},
+    {"name": "manifest-unknown-kind", "base": "kani-hello", "owner": "FR-290", "patch": [{"op": "replace", "path": "/manifest/0/advertises/0/kind", "value": "proof"}]},
+    {"name": "manifest-unknown-mode", "base": "kani-hello", "owner": "FR-290", "patch": [{"op": "replace", "path": "/manifest/0/advertises/0/mode", "value": "partial"}]},
+    {"name": "hello-two-backends", "base": "kani-hello", "owner": "FR-462", "patch": [{"op": "add", "path": "/manifest/-", "value": {"backend": "cbmc", "advertises": [{"kind": "value-validity", "mode": "bounded"}]}}]},
+    {"name": "manifest-probabilistic-without-evidence-kinds", "base": "kani-hello", "owner": "FR-290", "patch": [{"op": "add", "path": "/manifest/0/advertises/-", "value": {"kind": "probabilistic-satisfaction", "mode": "bounded"}}]},
+    {"name": "manifest-temporal-without-fairness-kinds", "base": "temporal-request", "owner": "FR-368", "patch": [{"op": "remove", "path": "/manifest/0/fairness_kinds"}]},
+    {"name": "package-padded", "base": "kani-request", "owner": "FR-462", "patch": [{"op": "replace", "path": "/request/package", "value": "eyJhIjoxfQ=="}]},
+    {"name": "package-standard-alphabet", "base": "kani-request", "owner": "FR-462", "patch": [{"op": "replace", "path": "/request/package", "value": "+/+/"}]},
+    {"name": "package-nonzero-trailing-bits", "base": "kani-request", "owner": "FR-462", "patch": [{"op": "replace", "path": "/request/package", "value": "eyJhIjoxfR"}]},
+    {"name": "package-length-one-mod-four", "base": "kani-request", "owner": "FR-462", "patch": [{"op": "replace", "path": "/request/package", "value": "eyJhI"}]},
+    {"name": "package-absent", "base": "kani-request", "owner": "FR-462", "patch": [{"op": "remove", "path": "/request/package"}]},
+    {"name": "package-id-absent", "base": "kani-request", "owner": "FR-462", "patch": [{"op": "remove", "path": "/request/package_id"}]},
+    {"name": "package-id-other-domain", "base": "kani-request", "owner": "FR-462", "patch": [{"op": "replace", "path": "/request/package_id/domain", "value": "sha256-jcs"}]},
+    {"name": "package-as-json-value", "base": "kani-request", "owner": "FR-462", "patch": [{"op": "replace", "path": "/request/package", "value": {"contract_version": "quire.checked-package/v2"}}]},
+    {"name": "deadline-absent", "base": "kani-request", "owner": "FR-462", "patch": [{"op": "remove", "path": "/request/deadline_ms"}]},
+    {"name": "item-without-candidates", "base": "kani-request", "owner": "FR-331", "patch": [{"op": "remove", "path": "/request/items/0/candidates"}]},
+    {"name": "candidates-set-with-mark", "base": "kani-request", "owner": "FR-290", "patch": [{"op": "add", "path": "/request/items/0/candidates/backend", "value": "kani"}]},
+    {"name": "candidates-repeated", "base": "kani-request", "owner": "FR-290", "patch": [{"op": "replace", "path": "/request/items/0/candidates/backends", "value": ["kani", "kani"]}]},
+    {"name": "extent-bound-unknown-kind", "base": "kani-request", "owner": "FR-290", "patch": [{"op": "replace", "path": "/request/items/0/extent/bounds/0/bound", "value": {"type": "width", "maximum": 8}}]},
+    {"name": "unbounded-extent-without-availability", "base": "kani-request", "owner": "FR-290", "patch": [{"op": "remove", "path": "/request/items/1/extent/finite_bound_available"}]},
+    {"name": "empty-options", "base": "kani-request", "owner": "FR-331", "patch": [{"op": "replace", "path": "/request/items/0/options", "value": {}}]},
+    {"name": "temporal-limits-depth", "base": "temporal-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/0/temporal/limits/max_depth", "value": 40}]},
+    {"name": "temporal-unknown-item-kind", "base": "temporal-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/0/temporal/item_kind", "value": "liveness"}]},
+    {"name": "partial-order-other-proviso", "base": "temporal-request", "owner": "FR-382", "patch": [{"op": "replace", "path": "/request/items/0/reductions/partial_order/proviso", "value": "stack"}]},
+    {"name": "statistical-without-seed", "base": "probabilistic-request", "owner": "FR-408", "patch": [{"op": "remove", "path": "/request/items/0/probabilistic/seed"}]},
+    {"name": "statistical-with-exact-limits", "base": "probabilistic-request", "owner": "FR-408", "patch": [{"op": "replace", "path": "/request/items/0/probabilistic/limits", "value": {"precision_bits": 64}}]},
+    {"name": "exact-with-method", "base": "probabilistic-request", "owner": "FR-411", "patch": [{"op": "add", "path": "/request/items/1/probabilistic/method", "value": {"type": "okamoto"}}]},
+    {"name": "disposition-unsupported-without-diagnostic", "base": "negotiation-dispositions", "owner": "FR-290", "patch": [{"op": "replace", "path": "/dispositions/0", "value": {"request_index": 0, "disposition": "unsupported"}}]},
+    {"name": "disposition-supported-with-diagnostic", "base": "kani-outcome-proved", "owner": "FR-331", "patch": [{"op": "add", "path": "/dispositions/0/diagnostic", "value": {"code": "invalid_capability", "cause": "absent-kind"}}]},
+    {"name": "result-unknown-value", "base": "kani-outcome-proved", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/result", "value": "timeout"}]},
+    {"name": "result-unknown-kind-label", "base": "kani-outcome-proved", "owner": "FR-290", "patch": [{"op": "replace", "path": "/results/0/kind", "value": "value_validity"}]},
+    {"name": "proved-without-basis", "base": "kani-outcome-proved", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/0/basis"}]},
+    {"name": "proved-with-cause", "base": "kani-outcome-proved", "owner": "FR-331", "patch": [{"op": "add", "path": "/results/0/cause", "value": {"type": "replay-parity"}}]},
+    {"name": "proved-zero-checks", "base": "kani-outcome-proved", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/basis/checks", "value": 0}]},
+    {"name": "proved-unknown-basis", "base": "kani-outcome-proved", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/basis", "value": {"type": "exhaustive-ish"}}]},
+    {"name": "refuted-without-counterexample", "base": "kani-outcome-refuted-transcript", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/0/counterexample"}]},
+    {"name": "counterexample-transcript-and-assignments", "base": "kani-outcome-refuted-transcript", "owner": "FR-331", "patch": [{"op": "add", "path": "/counterexamples/0/counterexample", "value": {"type": "assignments", "values": []}}]},
+    {"name": "counterexample-neither-arm", "base": "kani-outcome-refuted-transcript", "owner": "FR-331", "patch": [{"op": "remove", "path": "/counterexamples/0/transcript"}]},
+    {"name": "assignment-untyped-value", "base": "plugin-outcome-refuted-assignments", "owner": "FR-181", "patch": [{"op": "replace", "path": "/counterexamples/0/counterexample/values/0/value", "value": -128}]},
+    {"name": "inconclusive-unknown-cause", "base": "kani-outcome-tested-and-inconclusive", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/1/cause/type", "value": "vacuous-proof"}]},
+    {"name": "inconclusive-without-cause", "base": "kani-outcome-tested-and-inconclusive", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/2/cause"}]},
+    {"name": "tested-with-cause", "base": "kani-outcome-tested-and-inconclusive", "owner": "FR-331", "patch": [{"op": "add", "path": "/results/0/cause", "value": {"type": "replay-parity"}}]},
+    {"name": "declined-without-diagnostic", "base": "kani-outcome-unsupported-and-declined", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/1/diagnostic"}]},
+    {"name": "declined-other-cause", "base": "kani-outcome-unsupported-and-declined", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/2/cause/type", "value": "unavailable"}]},
+    {"name": "unsupported-cause-and-diagnostic", "base": "kani-outcome-unsupported-and-declined", "owner": "FR-331", "patch": [{"op": "add", "path": "/results/0/cause", "value": {"type": "stopwatch-required"}}]},
+    {"name": "limit-reached-without-setting", "base": "kani-outcome-incomplete-and-failed", "owner": "FR-461", "patch": [{"op": "remove", "path": "/results/0/cause/setting"}]},
+    {"name": "limit-reached-undotted-setting", "base": "kani-outcome-incomplete-and-failed", "owner": "FR-461", "patch": [{"op": "replace", "path": "/results/0/cause/setting", "value": "max_objects"}]},
+    {"name": "cancelled-without-source", "base": "kani-outcome-incomplete-and-failed", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/2/cause/source"}]},
+    {"name": "incomplete-with-inconclusive-cause", "base": "kani-outcome-incomplete-and-failed", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/1/cause", "value": {"type": "replay-parity"}}]},
+    {"name": "failed-unknown-defect", "base": "kani-outcome-incomplete-and-failed", "owner": "FR-462", "patch": [{"op": "replace", "path": "/results/3/cause/defect", "value": "segfault"}]},
+    {"name": "failed-cause-and-diagnostic", "base": "kani-outcome-incomplete-and-failed", "owner": "FR-462", "patch": [{"op": "add", "path": "/results/3/diagnostic", "value": {"code": "unsupported_projection", "cause": "tool-unavailable"}}]},
+    {"name": "measured-without-verdict", "base": "probabilistic-outcome", "owner": "FR-409", "patch": [{"op": "remove", "path": "/results/0/verdict"}]},
+    {"name": "measured-with-basis", "base": "probabilistic-outcome", "owner": "FR-409", "patch": [{"op": "add", "path": "/results/0/basis", "value": {"type": "exhaustive"}}]},
+    {"name": "value-bounds-without-certificate", "base": "probabilistic-outcome", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/1/certificate"}]},
+    {"name": "certificate-extra-member", "base": "probabilistic-outcome", "owner": "FR-412", "patch": [{"op": "add", "path": "/results/1/certificate/note", "value": "x"}]},
+    {"name": "temporal-counterexample-extra-member", "base": "temporal-outcome", "owner": "FR-364", "patch": [{"op": "add", "path": "/counterexamples/0/counterexample/engine", "value": "bfs"}]},
+    {"name": "temporal-counterexample-missing-interval", "base": "temporal-outcome", "owner": "FR-364", "patch": [{"op": "remove", "path": "/counterexamples/0/counterexample/interval"}]},
+    {"name": "certification-other-value", "base": "temporal-outcome", "owner": "FR-385", "patch": [{"op": "replace", "path": "/accounting/1/certification", "value": "certified"}]},
+    {"name": "graph-evidence-unknown-arm", "base": "state-graph-and-hyper-outcome", "owner": "FR-393", "patch": [{"op": "replace", "path": "/counterexamples/0/counterexample/arm", "value": "cycle"}]},
+    {"name": "hyper-step-tuple-with-loop-entry", "base": "state-graph-and-hyper-outcome", "owner": "FR-400", "patch": [{"op": "add", "path": "/counterexamples/1/counterexample/loop_entry", "value": "0"}]},
+    {"name": "accounting-disposition-with-tool", "base": "kani-outcome-proved", "owner": "FR-331", "patch": [{"op": "add", "path": "/accounting/1/tool", "value": {"name": "kani", "version": "0.67.0"}}]},
+    {"name": "accounting-without-settled-by", "base": "kani-outcome-proved", "owner": "FR-331", "patch": [{"op": "remove", "path": "/accounting/0/settled_by"}]},
+    {"name": "stage-mixture", "base": "kani-outcome-proved", "owner": "FR-331", "patch": [{"op": "add", "path": "/manifest", "value": [{"backend": "kani", "advertises": [{"kind": "value-validity", "mode": "bounded"}]}]}]}
+  ]
+}
