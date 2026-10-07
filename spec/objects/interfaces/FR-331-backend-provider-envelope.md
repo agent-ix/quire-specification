@@ -185,12 +185,8 @@ in milliseconds (FR-462).
 
 A manifest descriptor's `domains` lists the domain kinds (`collection`,
 `population`, `integer`, `recursive`) for which the backend accepts a finite
-bound: a nonempty set of distinct boundable kinds. It is required on every
-descriptor that advertises any `bounded` mode, and optional on a descriptor
-that advertises `unbounded` modes only; a bounded descriptor without it, and
-any descriptor whose `domains` is empty, holds another kind or repeats a kind,
-is an FR-290 registration refusal, `invalid_capability`/`invalid-domains`,
-keyed by backend identity; its `options` are its published option defaults; its `bounds` are the
+bound. FR-290 owns which descriptors carry it and how a missing or malformed
+`domains` is refused; the manifest schema enforces that rule. A descriptor's `options` are its published option defaults; its `bounds` are the
 published default of each limit it applies, keyed by limit name, which an
 item's absent limit takes (FR-461).
 
@@ -346,7 +342,7 @@ out-of-domain values and non-canonical encodings refuse before consumption. A `c
 | FR-331-AC-19 | Every positive vector of `proposals/backend-provider-v1/vectors.json` is admitted by its schema, each owned member it lists exists, and every adverse vector, a single-member change of a positive one, is refused: an unknown contract version or vocabulary, an extra or missing member, an out-of-vocabulary value, a cause or basis outside its result's closed set, and a counterexample entry naming both or neither arm. | Test (TC-431) |
 | FR-331-AC-20 | The Kani vectors carry an admitted result entry for each of the Kani results table's thirteen rows, each `declined` cause separately, so together they hold each of the eight results a Kani item can settle; changing a row's cause or diagnostic to one outside its result's closed set is refused. | Test (TC-431) |
 | FR-331-AC-21 | Every `ProofBound` carries the `kind` of the domain it bounds, from the ADR-014 domain-kind vocabulary shared with an unbounded extent's `domains`, and a bound matching that kind; a `ProofBound` without `kind`, with a kind outside the vocabulary, with a non-boundable kind or with a bound of another kind refuses before consumption: of the seven kinds and three bound types, exactly the pairs `collection` and `population` with `cardinality`, `integer` with `integer-range` and `recursive` with `depth` are admitted. | Test (TC-431) |
-| FR-331-AC-22 | A manifest descriptor that advertises any `bounded` mode carries a nonempty `domains` of distinct boundable kinds; one without it, and any descriptor whose `domains` is empty, holds a non-boundable or unknown kind or repeats a kind, is refused; a descriptor that advertises only `unbounded` modes is admitted without `domains`. | Test (TC-431) |
+| FR-331-AC-22 | The manifest schema applies FR-290's `domains` registration rule to every descriptor: one whose `domains` is present and empty, holds a non-boundable or unknown kind or repeats a kind is refused whatever modes it advertises, one that advertises a `bounded` mode without `domains` is refused, and one that advertises only `unbounded` modes is admitted without `domains`. | Test (TC-431) |
 
 ## Dependencies
 
