@@ -62,7 +62,7 @@ relationships:
 ---
 ## Overview
 
-Shared-foundation requirements and planned conformance controls. FS03 accepts
+Shared-foundation requirements and conformance controls. FS03 accepts
 TC-033, TC-034, TC-038 through TC-046 and TC-048 as portable state-profile
 vectors. Historical
 state/TL tests are not automatically composed-profile evidence. Producer/family

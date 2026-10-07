@@ -18,7 +18,7 @@ relationships:
 ---
 ## Overview
 
-FS06-accepted portable mapping controls, implemented by qcir #55/#56/#57.
+FS06-accepted portable mapping controls.
 
 ## Functional Requirement Coverage
 
