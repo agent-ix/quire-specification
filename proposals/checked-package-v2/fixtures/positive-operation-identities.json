@@ -1466,7 +1466,7 @@
             "digest": "bc0a6c39a41f825ff618b1c046130085607d7003db84df32c4c5059ebf57b297",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "\u00e9",
           "value_kind": "text"
         },
         "dependencies": [],
@@ -1489,7 +1489,7 @@
             "digest": "bc0a6c39a41f825ff618b1c046130085607d7003db84df32c4c5059ebf57b297",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "e\u0301",
           "value_kind": "text"
         },
         "dependencies": [],
@@ -1589,7 +1589,7 @@
             "digest": "da51345b2b7076ec77b4d3e4eb28f872edce1a9237d692f85aaf602b8ed63bdd",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "\u00e9",
           "value_kind": "text"
         },
         "dependencies": [],
@@ -1612,7 +1612,7 @@
             "digest": "da51345b2b7076ec77b4d3e4eb28f872edce1a9237d692f85aaf602b8ed63bdd",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "e\u0301",
           "value_kind": "text"
         },
         "dependencies": [],
@@ -3029,7 +3029,7 @@
                 "domain": "quire.checked-semantic-node/v1"
               },
               "kind": "relationship_end",
-              "name": "next"
+              "name": "order"
             },
             "mode": null
           },
@@ -4217,7 +4217,7 @@
             "digest": "bc0a6c39a41f825ff618b1c046130085607d7003db84df32c4c5059ebf57b297",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "\u00e9",
           "value_kind": "text"
         },
         "dependencies": [],
@@ -4246,7 +4246,7 @@
             "digest": "bc0a6c39a41f825ff618b1c046130085607d7003db84df32c4c5059ebf57b297",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "e\u0301",
           "value_kind": "text"
         },
         "dependencies": [],
@@ -4364,7 +4364,7 @@
             "digest": "da51345b2b7076ec77b4d3e4eb28f872edce1a9237d692f85aaf602b8ed63bdd",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "\u00e9",
           "value_kind": "text"
         },
         "dependencies": [],
@@ -4393,7 +4393,7 @@
             "digest": "da51345b2b7076ec77b4d3e4eb28f872edce1a9237d692f85aaf602b8ed63bdd",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "e\u0301",
           "value_kind": "text"
         },
         "dependencies": [],
