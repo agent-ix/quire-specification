@@ -57,7 +57,8 @@
         "/request/items/0/backend": "FR-290",
         "/request/items/0/candidates": "FR-290",
         "/request/items/0/options": "FR-196",
-        "/request/items/1/extent/finite_bound_available": "FR-290"
+        "/request/items/1/extent/finite_bound_available": "FR-290",
+        "/request/items/0/extent/bounds/0/kind": "FR-331"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -115,6 +116,7 @@
                       },
                       "path": []
                     },
+                    "kind": "integer",
                     "bound": {
                       "type": "integer-range",
                       "lower": "-128",
@@ -868,7 +870,8 @@
         "/request/items/0/temporal/limits/max_walk_steps": "FR-392",
         "/request/items/0/temporal/witness_samples": "FR-392",
         "/request/items/0/temporal/seed": "FR-392",
-        "/request/items/0/reductions": "FR-382"
+        "/request/items/0/reductions": "FR-382",
+        "/request/items/0/temporal/subject/proof_bounds/0/kind": "FR-331"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -963,7 +966,23 @@
                     }
                   ],
                   "universes": [],
-                  "proof_bounds": []
+                  "proof_bounds": [
+                    {
+                      "domain": {
+                        "type": "population",
+                        "member_type": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "dc1dee8382c4d6bf958f84a637db1d2168a3dbef00a3bbd0c14241178860e9b9"
+                        },
+                        "ordinal": 0
+                      },
+                      "kind": "population",
+                      "bound": {
+                        "type": "cardinality",
+                        "maximum": 3
+                      }
+                    }
+                  ]
                 },
                 "item_kind": "formula",
                 "fairness": [
@@ -2516,10 +2535,21 @@
       "patch": [
         {
           "op": "replace",
-          "path": "/request/items/0/extent/bounds/0/bound",
+          "path": "/request/items/0/extent/bounds/0",
           "value": {
-            "type": "depth",
-            "maximum": 0
+            "domain": {
+              "type": "node",
+              "node": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "1c9ac70521e54c69c310ff337b10364e2c3c80c917efb8b29010c97a9534bd14"
+              },
+              "path": []
+            },
+            "kind": "recursive",
+            "bound": {
+              "type": "depth",
+              "maximum": 0
+            }
           }
         }
       ]
@@ -2622,6 +2652,64 @@
             "type": "tool-failure",
             "defect": "crash"
           }
+        }
+      ]
+    },
+    {
+      "name": "proof-bound-without-kind",
+      "base": "kani-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/request/items/0/extent/bounds/0/kind"
+        }
+      ]
+    },
+    {
+      "name": "proof-bound-unknown-kind",
+      "base": "kani-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/extent/bounds/0/kind",
+          "value": "string"
+        }
+      ]
+    },
+    {
+      "name": "proof-bound-kind-bound-mismatch",
+      "base": "kani-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/extent/bounds/0/kind",
+          "value": "collection"
+        }
+      ]
+    },
+    {
+      "name": "proof-bound-unboundable-kind",
+      "base": "kani-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/extent/bounds/0/kind",
+          "value": "quantity"
+        }
+      ]
+    },
+    {
+      "name": "subject-proof-bound-without-kind",
+      "base": "temporal-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/request/items/0/temporal/subject/proof_bounds/0/kind"
         }
       ]
     }

@@ -489,3 +489,86 @@ fn tc_431_item_level_causes_reach_negotiation() {
     );
     assert!(!validator.is_valid(&missing));
 }
+
+/// Every `ProofBound` in a positive vector: each `extent.bounds` entry and
+/// each temporal subject's `proof_bounds` entry.
+fn proof_bounds(document: &Value) -> Vec<Value> {
+    let mut found = Vec::new();
+    for item in document["request"]["items"]
+        .as_array()
+        .into_iter()
+        .flatten()
+    {
+        found.extend(
+            item["extent"]["bounds"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .cloned(),
+        );
+        found.extend(
+            item["temporal"]["subject"]["proof_bounds"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .cloned(),
+        );
+    }
+    found
+}
+
+/// Every `ProofBound` carries its ADR-014 domain kind from the vocabulary an
+/// unbounded extent's `domains[].kind` uses, and the adverse vectors without a
+/// kind, with an unknown or unboundable kind, or with a mismatched bound exist
+/// (their refusal is `tc_431_adverse_vectors_are_refused`).
+#[trace("TC-431", "FR-331-AC-21")]
+#[test]
+fn tc_431_proof_bounds_carry_their_domain_kind() {
+    let schema = parsed(SCHEMA);
+    let kinds = &schema["$defs"]["DomainKind"]["enum"];
+    let unbounded = &schema["$defs"]["Extent"]["oneOf"][1]["properties"]["domains"]["items"]["properties"]
+        ["kind"];
+    assert_eq!(
+        unbounded["$ref"], "#/$defs/DomainKind",
+        "unbounded domains use the same kind vocabulary"
+    );
+    assert_eq!(
+        schema["$defs"]["ProofBound"]["properties"]["kind"]["$ref"],
+        "#/$defs/DomainKind"
+    );
+    let kind = definition("DomainKind");
+    let mut seen = 0;
+    for vector in positives()
+        .iter()
+        .filter(|vector| vector["stage"] == "request")
+    {
+        for bound in proof_bounds(&composed(vector)) {
+            let value = &bound["kind"];
+            assert!(kind.is_valid(value), "{value} is an ADR-014 domain kind");
+            assert!(
+                kinds.as_array().expect("kinds").contains(value),
+                "{value} is listed"
+            );
+            seen += 1;
+        }
+    }
+    assert!(
+        seen >= 2,
+        "extent and subject proof bounds are both exercised"
+    );
+    let adverse: BTreeSet<String> = parsed(VECTORS)["adverse"]
+        .as_array()
+        .expect("adverse")
+        .iter()
+        .map(|vector| vector["name"].as_str().expect("name").to_owned())
+        .collect();
+    for name in [
+        "proof-bound-without-kind",
+        "proof-bound-unknown-kind",
+        "proof-bound-kind-bound-mismatch",
+        "proof-bound-unboundable-kind",
+        "subject-proof-bound-without-kind",
+    ] {
+        assert!(adverse.contains(name), "adverse vector {name} exists");
+    }
+}

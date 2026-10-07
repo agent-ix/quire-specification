@@ -156,6 +156,18 @@ in milliseconds (FR-462).
   `cardinality{maximum}`, `integer-range{lower, upper}` or `depth{maximum}`
   with `maximum` non-zero. QSL FR-358's `variants` is a harness bound, never
   a B-4 substitution kind, so it is not an `extent` bound.
+- Every `ProofBound`, in `extent.bounds` and in a temporal subject's
+  `proof_bounds`, is `{domain, kind, bound}`: `kind` is the bounded domain's
+  ADR-014 domain kind, from the same vocabulary as an unbounded extent's
+  `domains[].kind` (`collection`, `population`, `integer`, `recursive`,
+  `quantity`, `loop`, `infinite-trace`), written by QSL from its own
+  classification. Only a boundable kind takes a bound, and the bound matches
+  it: `cardinality` for `collection` and `population`, `integer-range` for
+  `integer`, `depth` for `recursive`; any other pairing, a non-boundable kind
+  and an absent `kind` refuse before consumption. The kind lets negotiation
+  compare each bounded domain with a candidate's manifest `domains` without
+  reclassifying the package. A bounded extent with empty `bounds` has only
+  finite domains, so it has no kinds to check and routes on its mode alone.
 - `candidates` is `{type: "set", backends}` or
   `{type: "unknown-backend", backend}`.
 - `options` is a map of backend option names to string values (FR-196).
@@ -164,7 +176,8 @@ in milliseconds (FR-462).
   the wire, because FR-290 settles each such item `invalid-request` on its
   own (`absent-kind`, `unknown-kind`, `absent-extent`,
   `absent-evidence-kind`, `unknown-evidence-kind`). A present `extent` is
-  closed: an unknown classification or bound kind, or an unbounded extent
+  closed: an unknown classification, bound kind or domain kind, a
+  `ProofBound` without `kind`, or an unbounded extent
   without `finite_bound_available`, refuses before consumption, as does an
   item without `candidates` (FR-331-AC-4).
 
@@ -325,6 +338,7 @@ out-of-domain values and non-canonical encodings refuse before consumption. A `c
 | FR-331-AC-18 | A request's `package` is the unpadded base64url spelling of the RFC 8785 bytes of its checked package and decodes to exactly those bytes, whose `package_id` equals the request's `package_id`; a padded or standard-alphabet spelling, nonzero trailing bits, a length of 1 modulo 4, an absent `package` or `package_id`, a `package` that is a JSON value, and a `package_id` outside `quire.package.semantic/v2` each refuse before consumption. | Test (TC-431) |
 | FR-331-AC-19 | Every positive vector of `proposals/backend-provider-v1/vectors.json` is admitted by its schema, each owned member it lists exists, and every adverse vector, a single-member change of a positive one, is refused: an unknown contract version or vocabulary, an extra or missing member, an out-of-vocabulary value, a cause or basis outside its result's closed set, and a counterexample entry naming both or neither arm. | Test (TC-431) |
 | FR-331-AC-20 | The Kani vectors carry an admitted result entry for each of the Kani results table's thirteen rows, each `declined` cause separately, so together they hold each of the eight results a Kani item can settle; changing a row's cause or diagnostic to one outside its result's closed set is refused. | Test (TC-431) |
+| FR-331-AC-21 | Every `ProofBound` carries the `kind` of the domain it bounds, from the ADR-014 domain-kind vocabulary shared with an unbounded extent's `domains`, and a bound matching that kind; a `ProofBound` without `kind`, with a kind outside the vocabulary, with a non-boundable kind or with a bound of another kind refuses before consumption, and a bounded extent with empty `bounds` carries no kind. | Test (TC-431) |
 
 ## Dependencies
 

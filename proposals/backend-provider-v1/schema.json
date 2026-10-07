@@ -260,13 +260,26 @@
         {"properties": {"type": {"const": "depth"}, "maximum": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "maximum"], "additionalProperties": false}
       ]
     },
-    "ProofBound": {"description": "ADR-014 (#222): one substituted finite bound for one domain.", "type": "object", "required": ["domain", "bound"], "properties": {"domain": {"$ref": "#/$defs/DomainKey"}, "bound": {"$ref": "#/$defs/FiniteBound"}}, "additionalProperties": false},
+    "DomainKind": {"description": "ADR-014 (#222) section 4: the kind of an unbounded domain, as QSL's classification gives it.", "enum": ["collection", "population", "integer", "recursive", "quantity", "loop", "infinite-trace"]},
+    "ProofBound": {
+      "description": "ADR-014 (#222): one substituted finite bound for one domain, with the domain's kind (FR-331). Only a boundable kind takes a bound, and the bound's variant matches the kind: cardinality for a collection or population, integer-range for an integer, depth for a recursive value type.",
+      "type": "object",
+      "required": ["domain", "kind", "bound"],
+      "properties": {"domain": {"$ref": "#/$defs/DomainKey"}, "kind": {"$ref": "#/$defs/DomainKind"}, "bound": {"$ref": "#/$defs/FiniteBound"}},
+      "allOf": [
+        {"if": {"required": ["kind"], "properties": {"kind": {"enum": ["collection", "population"]}}}, "then": {"properties": {"bound": {"properties": {"type": {"const": "cardinality"}}}}}},
+        {"if": {"required": ["kind"], "properties": {"kind": {"const": "integer"}}}, "then": {"properties": {"bound": {"properties": {"type": {"const": "integer-range"}}}}}},
+        {"if": {"required": ["kind"], "properties": {"kind": {"const": "recursive"}}}, "then": {"properties": {"bound": {"properties": {"type": {"const": "depth"}}}}}},
+        {"if": {"required": ["kind"], "properties": {"kind": {"enum": ["quantity", "loop", "infinite-trace"]}}}, "then": false}
+      ],
+      "additionalProperties": false
+    },
     "Extent": {
       "type": "object",
       "required": ["classification"],
       "oneOf": [
         {"properties": {"classification": {"const": "bounded"}, "bounds": {"description": "the substituted bounds, empty for an item whose domains are all finite", "type": "array", "items": {"$ref": "#/$defs/ProofBound"}}}, "required": ["classification", "bounds"], "additionalProperties": false},
-        {"properties": {"classification": {"const": "unbounded"}, "domains": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["domain", "kind"], "properties": {"domain": {"$ref": "#/$defs/DomainKey"}, "kind": {"enum": ["collection", "population", "integer", "recursive", "quantity", "loop", "infinite-trace"]}}, "additionalProperties": false}}, "finite_bound_available": {"type": "boolean"}}, "required": ["classification", "domains", "finite_bound_available"], "additionalProperties": false}
+        {"properties": {"classification": {"const": "unbounded"}, "domains": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["domain", "kind"], "properties": {"domain": {"$ref": "#/$defs/DomainKey"}, "kind": {"$ref": "#/$defs/DomainKind"}}, "additionalProperties": false}}, "finite_bound_available": {"type": "boolean"}}, "required": ["classification", "domains", "finite_bound_available"], "additionalProperties": false}
       ]
     },
     "SymmetryDeclaration": {
