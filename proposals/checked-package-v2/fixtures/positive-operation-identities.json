@@ -1466,7 +1466,7 @@
             "digest": "bc0a6c39a41f825ff618b1c046130085607d7003db84df32c4c5059ebf57b297",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "\u00e9",
           "value_kind": "text"
         },
         "dependencies": [],
@@ -1489,7 +1489,7 @@
             "digest": "bc0a6c39a41f825ff618b1c046130085607d7003db84df32c4c5059ebf57b297",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "e\u0301",
           "value_kind": "text"
         },
         "dependencies": [],
@@ -1589,7 +1589,7 @@
             "digest": "da51345b2b7076ec77b4d3e4eb28f872edce1a9237d692f85aaf602b8ed63bdd",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "\u00e9",
           "value_kind": "text"
         },
         "dependencies": [],
@@ -1612,7 +1612,7 @@
             "digest": "da51345b2b7076ec77b4d3e4eb28f872edce1a9237d692f85aaf602b8ed63bdd",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "e\u0301",
           "value_kind": "text"
         },
         "dependencies": [],
@@ -4227,7 +4227,7 @@
             "digest": "bc0a6c39a41f825ff618b1c046130085607d7003db84df32c4c5059ebf57b297",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "\u00e9",
           "value_kind": "text"
         },
         "dependencies": [],
@@ -4256,7 +4256,7 @@
             "digest": "bc0a6c39a41f825ff618b1c046130085607d7003db84df32c4c5059ebf57b297",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "e\u0301",
           "value_kind": "text"
         },
         "dependencies": [],
@@ -4374,7 +4374,7 @@
             "digest": "da51345b2b7076ec77b4d3e4eb28f872edce1a9237d692f85aaf602b8ed63bdd",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "\u00e9",
           "value_kind": "text"
         },
         "dependencies": [],
@@ -4403,7 +4403,7 @@
             "digest": "da51345b2b7076ec77b4d3e4eb28f872edce1a9237d692f85aaf602b8ed63bdd",
             "domain": "quire.checked-semantic-node/v1"
           },
-          "value": "é",
+          "value": "e\u0301",
           "value_kind": "text"
         },
         "dependencies": [],
@@ -5452,12 +5452,7 @@
           ],
           "term": "aggregate"
         },
-        "dependencies": [
-          {
-            "digest": "4ef71ea5ddb237ad7518d12d2f277de55bc689798e724e7daa4dd342dc91e417",
-            "domain": "quire.checked-semantic-node/v1"
-          }
-        ],
+        "dependencies": [],
         "node_id": {
           "digest": "6bbdc9c2f2204a52f30370a6c967eac02dc46a05fa1ef57b63f1f1aeac7224fe",
           "domain": "quire.checked-semantic-node/v1"
