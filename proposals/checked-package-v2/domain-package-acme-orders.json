@@ -97,6 +97,79 @@
       "unknownPolicy": "reject"
     },
     {
+      "constraints": [
+        {
+          "appliesTo": "ix://acme/orders/Code",
+          "diagnosticCode": "acme.orders.CODE_MINLENGTH",
+          "identity": "ix://acme/orders/constraint/Code/minLength",
+          "keyword": "minLength",
+          "operands": {
+            "value": 0
+          },
+          "origin": {
+            "source": {
+              "path": "orders/Code.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        },
+        {
+          "appliesTo": "ix://acme/orders/Code",
+          "diagnosticCode": "acme.orders.CODE_MAXLENGTH",
+          "identity": "ix://acme/orders/constraint/Code/maxLength",
+          "keyword": "maxLength",
+          "operands": {
+            "value": 64
+          },
+          "origin": {
+            "source": {
+              "path": "orders/Code.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        },
+        {
+          "appliesTo": "ix://acme/orders/Code",
+          "diagnosticCode": "acme.orders.CODE_PROFILE",
+          "identity": "ix://acme/orders/constraint/Code/format",
+          "keyword": "format",
+          "operands": {
+            "name": "text-profile:nfc"
+          },
+          "origin": {
+            "source": {
+              "path": "orders/Code.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        }
+      ],
+      "displayName": "Code",
+      "extensions": [],
+      "identity": "ix://acme/orders/Code",
+      "kind": {
+        "module": "acme/orders",
+        "name": "value_type"
+      },
+      "origin": {
+        "source": {
+          "path": "orders/Code.md",
+          "sourceIdentity": "ix://acme/orders/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "roles": [],
+      "scalar": "string",
+      "unknownPolicy": "reject"
+    },
+    {
       "constraints": [],
       "displayName": "Coded",
       "extensions": [],
@@ -191,6 +264,152 @@
       "relationships": [],
       "roles": [],
       "supertypes": [],
+      "unknownPolicy": "reject"
+    },
+    {
+      "constraints": [
+        {
+          "appliesTo": "ix://acme/orders/Folded",
+          "diagnosticCode": "acme.orders.FOLDED_MINLENGTH",
+          "identity": "ix://acme/orders/constraint/Folded/minLength",
+          "keyword": "minLength",
+          "operands": {
+            "value": 0
+          },
+          "origin": {
+            "source": {
+              "path": "orders/Folded.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        },
+        {
+          "appliesTo": "ix://acme/orders/Folded",
+          "diagnosticCode": "acme.orders.FOLDED_MAXLENGTH",
+          "identity": "ix://acme/orders/constraint/Folded/maxLength",
+          "keyword": "maxLength",
+          "operands": {
+            "value": 64
+          },
+          "origin": {
+            "source": {
+              "path": "orders/Folded.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        },
+        {
+          "appliesTo": "ix://acme/orders/Folded",
+          "diagnosticCode": "acme.orders.FOLDED_PROFILE",
+          "identity": "ix://acme/orders/constraint/Folded/format",
+          "keyword": "format",
+          "operands": {
+            "name": "text-profile:casefold"
+          },
+          "origin": {
+            "source": {
+              "path": "orders/Folded.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        }
+      ],
+      "displayName": "Folded",
+      "extensions": [],
+      "identity": "ix://acme/orders/Folded",
+      "kind": {
+        "module": "acme/orders",
+        "name": "value_type"
+      },
+      "origin": {
+        "source": {
+          "path": "orders/Folded.md",
+          "sourceIdentity": "ix://acme/orders/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "roles": [],
+      "scalar": "string",
+      "unknownPolicy": "reject"
+    },
+    {
+      "constraints": [
+        {
+          "appliesTo": "ix://acme/orders/Inverted",
+          "diagnosticCode": "acme.orders.INVERTED_MINLENGTH",
+          "identity": "ix://acme/orders/constraint/Inverted/minLength",
+          "keyword": "minLength",
+          "operands": {
+            "value": 5
+          },
+          "origin": {
+            "source": {
+              "path": "orders/Inverted.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        },
+        {
+          "appliesTo": "ix://acme/orders/Inverted",
+          "diagnosticCode": "acme.orders.INVERTED_MAXLENGTH",
+          "identity": "ix://acme/orders/constraint/Inverted/maxLength",
+          "keyword": "maxLength",
+          "operands": {
+            "value": 2
+          },
+          "origin": {
+            "source": {
+              "path": "orders/Inverted.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        },
+        {
+          "appliesTo": "ix://acme/orders/Inverted",
+          "diagnosticCode": "acme.orders.INVERTED_PROFILE",
+          "identity": "ix://acme/orders/constraint/Inverted/format",
+          "keyword": "format",
+          "operands": {
+            "name": "text-profile:nfc"
+          },
+          "origin": {
+            "source": {
+              "path": "orders/Inverted.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        }
+      ],
+      "displayName": "Inverted",
+      "extensions": [],
+      "identity": "ix://acme/orders/Inverted",
+      "kind": {
+        "module": "acme/orders",
+        "name": "value_type"
+      },
+      "origin": {
+        "source": {
+          "path": "orders/Inverted.md",
+          "sourceIdentity": "ix://acme/orders/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "roles": [],
+      "scalar": "string",
       "unknownPolicy": "reject"
     },
     {
@@ -567,6 +786,72 @@
           },
           "presence": "required",
           "typeRef": "ix://acme/orders/Order"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Order/sku",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "sku",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://acme/orders/Code"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Order/alias",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "alias",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://acme/orders/Inverted"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Order/slug",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "slug",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://acme/orders/Folded"
         }
       ],
       "identity": "ix://acme/orders/Order",
@@ -868,14 +1153,106 @@
     {
       "constraints": [],
       "displayName": "Sub",
-      "extensions": [],
+      "extensions": [
+        {
+          "identity": "ix://acme/orders/extension/redefines-operation",
+          "payload": {
+            "redefines": [
+              {
+                "operation": "ix://acme/orders/Sub/size",
+                "target": "ix://acme/orders/Order/size"
+              },
+              {
+                "operation": "ix://acme/orders/Sub/scaled",
+                "target": "ix://acme/orders/Order/scaled"
+              }
+            ]
+          },
+          "required": false,
+          "version": "1.0.0"
+        }
+      ],
       "fields": [],
       "identity": "ix://acme/orders/Sub",
       "kind": {
         "module": "acme/orders",
         "name": "entity"
       },
-      "operations": [],
+      "operations": [
+        {
+          "identity": "ix://acme/orders/Sub/size",
+          "name": "size",
+          "origin": {
+            "source": {
+              "path": "orders/Sub.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "params": [],
+          "post": [],
+          "pre": [],
+          "returns": {
+            "multiplicity": {
+              "lower": 1,
+              "ordered": false,
+              "unique": true,
+              "upper": 1
+            },
+            "nullable": false,
+            "typeRef": "ix://quire/native/Integer"
+          }
+        },
+        {
+          "identity": "ix://acme/orders/Sub/scaled",
+          "name": "scaled",
+          "origin": {
+            "source": {
+              "path": "orders/Sub.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "params": [
+            {
+              "defaultKind": "none",
+              "identity": "ix://acme/orders/Sub/scaled/m",
+              "multiplicity": {
+                "lower": 1,
+                "ordered": false,
+                "unique": true,
+                "upper": 1
+              },
+              "name": "m",
+              "nullable": false,
+              "origin": {
+                "source": {
+                  "path": "orders/Sub.md",
+                  "sourceIdentity": "ix://acme/orders/spec",
+                  "startColumn": 1,
+                  "startLine": 1
+                }
+              },
+              "presence": "required",
+              "typeRef": "ix://quire/native/Integer"
+            }
+          ],
+          "post": [],
+          "pre": [],
+          "returns": {
+            "multiplicity": {
+              "lower": 1,
+              "ordered": false,
+              "unique": true,
+              "upper": 1
+            },
+            "nullable": false,
+            "typeRef": "ix://quire/native/Integer"
+          }
+        }
+      ],
       "origin": {
         "source": {
           "path": "orders/Sub.md",
@@ -894,14 +1271,54 @@
     {
       "constraints": [],
       "displayName": "SubSub",
-      "extensions": [],
+      "extensions": [
+        {
+          "identity": "ix://acme/orders/extension/redefines-operation",
+          "payload": {
+            "redefines": [
+              {
+                "operation": "ix://acme/orders/SubSub/size",
+                "target": "ix://acme/orders/Order/size"
+              }
+            ]
+          },
+          "required": false,
+          "version": "1.0.0"
+        }
+      ],
       "fields": [],
       "identity": "ix://acme/orders/SubSub",
       "kind": {
         "module": "acme/orders",
         "name": "entity"
       },
-      "operations": [],
+      "operations": [
+        {
+          "identity": "ix://acme/orders/SubSub/size",
+          "name": "size",
+          "origin": {
+            "source": {
+              "path": "orders/SubSub.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "params": [],
+          "post": [],
+          "pre": [],
+          "returns": {
+            "multiplicity": {
+              "lower": 1,
+              "ordered": false,
+              "unique": true,
+              "upper": 1
+            },
+            "nullable": false,
+            "typeRef": "ix://quire/native/Integer"
+          }
+        }
+      ],
       "origin": {
         "source": {
           "path": "orders/SubSub.md",

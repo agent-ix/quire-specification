@@ -200,6 +200,17 @@ fn exposed<'a>(package: &'a Value, declared: &'a Value, list: &str) -> Vec<(Stri
         .collect()
 }
 
+/// FR-141's six text profiles, the only profiles a `Text[min, max; profile]`
+/// member type names.
+const TEXT_PROFILES: [&str; 6] = [
+    "unicode-scalars",
+    "nfc",
+    "nfd",
+    "nfkc",
+    "nfkd",
+    "binary-utf8",
+];
+
 /// FR-322 step 4's element type table. A reference target is the model
 /// declaration node key recomputed from the declaration.
 fn element_type(package: &Value, type_ref: &str) -> Option<Value> {
@@ -218,6 +229,16 @@ fn element_type(package: &Value, type_ref: &str) -> Option<Value> {
             "ix://quire/native/Integer" => ordered.then(
                 || json!({"type": "Int", "min": value_type["lower"], "max": value_type["upper"]}),
             ),
+            "ix://quire/native/Text" => {
+                (ordered && TEXT_PROFILES.contains(&text(value_type, "profile"))).then(|| {
+                    json!({
+                        "type": "Text",
+                        "min": value_type["lower"],
+                        "max": value_type["upper"],
+                        "profile": value_type["profile"]
+                    })
+                })
+            }
             _ => None,
         };
     }
@@ -601,6 +622,12 @@ fn tc_280_member_names_resolve_in_exposed_effective_members() {
 #[test]
 fn tc_280_member_types_follow_declared_type_multiplicity_and_presence() {
     assert_member_cases(&parsed(VECTORS), "FR-322-AC-31");
+}
+
+#[trace("TC-280", "FR-322-AC-44")]
+#[test]
+fn tc_280_text_value_type_members_carry_their_bounds_and_profile() {
+    assert_member_cases(&parsed(VECTORS), "FR-322-AC-44");
 }
 
 #[trace("TC-280", "FR-322-AC-32")]
@@ -1246,6 +1273,11 @@ fn project_document(document: &Value) -> Value {
         let node = text(declared, "identity");
         match meaning {
             "quire.meaning.model.object-type/v1" | "quire.meaning.systems.interface/v1" => {
+                let redefined: BTreeMap<&str, &Value> = array(declared, "extensions")
+                    .iter()
+                    .flat_map(|extension| array(&extension["payload"], "redefines"))
+                    .map(|entry| (text(entry, "operation"), &entry["target"]))
+                    .collect();
                 let fields: Vec<Value> = array(declared, "fields")
                     .iter()
                     .map(|field| {
@@ -1282,7 +1314,9 @@ fn project_document(document: &Value) -> Value {
                                 "typeRef": returns["typeRef"],
                                 "multiplicity": projected_multiplicity(&returns["multiplicity"]),
                             })),
-                            "redefines": Value::Null,
+                            "redefines": redefined
+                                .get(text(operation, "identity"))
+                                .map_or(Value::Null, |target| (*target).clone()),
                         })
                     })
                     .collect();
@@ -1315,17 +1349,24 @@ fn project_document(document: &Value) -> Value {
                 }));
             }
             "quire.meaning.model.value-type/v1" => {
-                assert_eq!(
-                    text(declared, "scalar"),
-                    "integer",
-                    "only integer value types are projected"
-                );
-                let projected = json!({
+                let (native, low, high) = match text(declared, "scalar") {
+                    "integer" => ("Integer", "min", "max"),
+                    "string" => ("Text", "minLength", "maxLength"),
+                    other => panic!("unexpected value type scalar {other}"),
+                };
+                let mut projected = json!({
                     "node": node,
-                    "native": "ix://quire/native/Integer",
-                    "lower": operand_text(constraint_of(declared, "min").expect("a lower bound")),
-                    "upper": operand_text(constraint_of(declared, "max").expect("an upper bound")),
+                    "native": format!("ix://quire/native/{native}"),
+                    "lower": operand_text(constraint_of(declared, low).expect("a lower bound")),
+                    "upper": operand_text(constraint_of(declared, high).expect("an upper bound")),
                 });
+                if let Some(format) = constraint_of(declared, "format") {
+                    projected["profile"] = json!(
+                        text(&format["operands"], "name")
+                            .strip_prefix("text-profile:")
+                            .expect("a text profile format")
+                    );
+                }
                 value_types.push(projected);
             }
             other => panic!("unexpected meaning {other}"),

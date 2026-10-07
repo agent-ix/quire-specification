@@ -136,7 +136,10 @@
           {"name": "origin", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
           {"name": "prior", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "3", "ordered": true, "unique": false}, "redefines": null},
           {"name": "peers", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "3", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "trail", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "unbounded", "ordered": true, "unique": false}, "redefines": null}
+          {"name": "trail", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "unbounded", "ordered": true, "unique": false}, "redefines": null},
+          {"name": "sku", "typeRef": "ix://acme/orders/Code", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
+          {"name": "alias", "typeRef": "ix://acme/orders/Inverted", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
+          {"name": "slug", "typeRef": "ix://acme/orders/Folded", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null}
         ],
         "operations": [
           {
@@ -200,7 +203,47 @@
           "ix://acme/orders/Order"
         ],
         "fields": [],
-        "operations": []
+        "operations": [
+          {
+            "name": "size",
+            "parameters": [],
+            "result": {
+              "typeRef": "ix://quire/native/Integer",
+              "multiplicity": {
+                "lower": "1",
+                "upper": "1",
+                "ordered": false,
+                "unique": true
+              }
+            },
+            "redefines": "ix://acme/orders/Order/size"
+          },
+          {
+            "name": "scaled",
+            "parameters": [
+              {
+                "name": "m",
+                "typeRef": "ix://quire/native/Integer",
+                "multiplicity": {
+                  "lower": "1",
+                  "upper": "1",
+                  "ordered": false,
+                  "unique": true
+                }
+              }
+            ],
+            "result": {
+              "typeRef": "ix://quire/native/Integer",
+              "multiplicity": {
+                "lower": "1",
+                "upper": "1",
+                "ordered": false,
+                "unique": true
+              }
+            },
+            "redefines": "ix://acme/orders/Order/scaled"
+          }
+        ]
       },
       {
         "node": "ix://acme/orders/Tagged",
@@ -259,7 +302,22 @@
           "ix://acme/orders/Sub"
         ],
         "fields": [],
-        "operations": []
+        "operations": [
+          {
+            "name": "size",
+            "parameters": [],
+            "result": {
+              "typeRef": "ix://quire/native/Integer",
+              "multiplicity": {
+                "lower": "1",
+                "upper": "1",
+                "ordered": false,
+                "unique": true
+              }
+            },
+            "redefines": "ix://acme/orders/Order/size"
+          }
+        ]
       },
       {
         "node": "ix://acme/orders/Flow",
@@ -290,7 +348,10 @@
         "native": "ix://quire/native/Integer",
         "lower": "0",
         "upper": "9"
-      }
+      },
+      {"node": "ix://acme/orders/Code", "native": "ix://quire/native/Text", "lower": "0", "upper": "64", "profile": "nfc"},
+      {"node": "ix://acme/orders/Inverted", "native": "ix://quire/native/Text", "lower": "5", "upper": "2", "profile": "nfc"},
+      {"node": "ix://acme/orders/Folded", "native": "ix://quire/native/Text", "lower": "0", "upper": "64", "profile": "casefold"}
     ],
     "relationships": [
       {"node": "ix://acme/orders/relationship/Order-order-Order", "direction": "bidirectional", "ends": [{"role": "order", "type": "ix://acme/orders/Order", "end": "source"}, {"role": "next", "type": "ix://acme/orders/Order", "end": "target"}]},
@@ -321,6 +382,9 @@
     {"name": "MT-05", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "history"}, "expected": {"resolves": "ix://acme/orders/Order/history", "member_type": {"type": "Sequence", "min": "0", "max": "5", "element": {"type": "Integer"}}}},
     {"name": "MT-06", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "invoice"}, "expected": {"resolves": "ix://acme/orders/Order/invoice", "member_type": {"type": "Reference", "target": "4b07c3fd269e699bdd4bc1065acc80d2de047cc01e20fcd8bcf27fe404f79583"}}},
     {"name": "MT-07", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "size", "receiver": {"type": "Reference", "target": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "arguments": []}, "expected": {"resolves": "ix://acme/orders/Order/size", "member_type": {"type": "Integer"}}},
+    {"name": "MT-08", "criterion": "FR-322-AC-30", "member": {"kind": "operation", "declaration": "M5", "name": "size", "receiver": {"type": "Reference", "target": "c4df362db09cab29d75d4fda10da8c1ba4fe91e1a285721a78198dbfb1b5429d"}, "arguments": []}, "expected": {"resolves": "ix://acme/orders/Sub/size", "member_type": {"type": "Integer"}}},
+    {"name": "MT-09", "criterion": "FR-322-AC-30", "member": {"kind": "operation", "declaration": "M5", "name": "scaled", "receiver": {"type": "Reference", "target": "c4df362db09cab29d75d4fda10da8c1ba4fe91e1a285721a78198dbfb1b5429d"}, "arguments": [{"type": "Integer"}]}, "expected": {"resolves": "ix://acme/orders/Sub/scaled", "member_type": {"type": "Integer"}}},
+    {"name": "MT-10", "criterion": "FR-322-AC-30", "member": {"kind": "operation", "declaration": "M7", "name": "size", "receiver": {"type": "Reference", "target": "aeffbb97c8c85a4545e04c2739688053231cf3b1ca5ec946b5f5c648301cae28"}, "arguments": []}, "expected": {"resolves": "ix://acme/orders/SubSub/size", "member_type": {"type": "Integer"}}},
     {"name": "MT-11", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "scaled", "receiver": {"type": "Reference", "target": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "arguments": [{"type": "Integer"}]}, "expected": {"resolves": "ix://acme/orders/Order/scaled", "member_type": {"type": "Integer"}}},
     {"name": "MT-12", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "floor"}, "expected": {"resolves": "ix://acme/orders/Order/floor", "member_type": {"type": "Integer"}}},
     {"name": "MT-13", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "tags"}, "expected": {"resolves": "ix://acme/orders/Order/tags", "member_type": {"type": "Set", "element": {"type": "Integer"}}}},
@@ -338,6 +402,9 @@
     {"name": "MA-11", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "scaled", "receiver": {"type": "Reference", "target": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "arguments": [{"type": "Boolean"}]}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
     {"name": "MA-12", "criterion": "FR-322-AC-30", "member": {"kind": "operation", "declaration": "M8", "name": "rate", "receiver": {"type": "Reference", "target": "36d21580d52c7feb25fc4322ce2e0ec34b3fd7637c05f8c201c64a1454d78887"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
     {"name": "MA-13", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "size", "receiver": {"type": "Reference", "target": "4b07c3fd269e699bdd4bc1065acc80d2de047cc01e20fcd8bcf27fe404f79583"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MT-15", "criterion": "FR-322-AC-44", "member": {"kind": "field", "declaration": "M1", "name": "sku"}, "expected": {"resolves": "ix://acme/orders/Order/sku", "member_type": {"type": "Text", "min": "0", "max": "64", "profile": "nfc"}}},
+    {"name": "MA-14", "criterion": "FR-322-AC-44", "member": {"kind": "field", "declaration": "M1", "name": "alias"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MA-15", "criterion": "FR-322-AC-44", "member": {"kind": "field", "declaration": "M1", "name": "slug"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
     {"name": "RE-ends-1", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M4", "name": "order"}, "expected": {"resolves_end": {"relationship": "ix://acme/orders/relationship/Order-order-Order", "role": "order"}}},
     {"name": "RE-ends-2", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M4", "name": "next"}, "expected": {"resolves_end": {"relationship": "ix://acme/orders/relationship/Order-order-Order", "role": "next"}}},
     {"name": "RE-ends-3", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M10", "name": "invoiced"}, "expected": {"resolves_end": {"relationship": "ix://acme/orders/relationship/Order-invoiced-Invoice", "role": "invoiced"}}},
@@ -434,6 +501,7 @@
   ],
   "anchor_cases": [
     {"name": "AN-01", "context": "M1", "operation": "scaled", "expected": {"resolves": "ix://acme/orders/Order/scaled"}},
+    {"name": "AN-02", "context": "M5", "operation": "size", "expected": {"resolves": "ix://acme/orders/Sub/size"}},
     {"name": "AN-03", "context": "M5", "operation": "reset", "expected": {"refused": {"code": "invalid_model_binding", "cause": "malformed-declaration"}}},
     {"name": "AN-04", "context": "M1", "operation": "missing", "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name"}}},
     {"name": "AN-05", "context": "M1", "operation": "total", "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name"}}},
