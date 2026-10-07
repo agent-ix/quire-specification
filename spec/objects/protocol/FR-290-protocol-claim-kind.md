@@ -145,6 +145,14 @@ table or a mode outside these two, then the registry SHALL refuse that
 registration with `invalid_capability` (`absent-kind`, `unknown-kind` or
 `unknown-mode`), keyed by backend identity.
 
+A registration that advertises any (kind, `bounded`) pair carries a nonempty
+FR-331 `domains`: the ADR-014 domain kinds for which it accepts a finite
+bound, which negotiation compares with a bounded item's proof-bound kinds. If
+such a registration carries no `domains`, then the registry SHALL refuse that
+registration with `invalid_capability`/`absent-domains`, keyed by backend
+identity. A registration that advertises only `unbounded` modes may omit
+`domains`.
+
 Each requested item carries its claim's extent in the representation that the
 boundedness architecture
 ([quire-spec-language#222](https://github.com/agent-ix/quire-spec-language/issues/222))
@@ -270,8 +278,8 @@ candidates, and the mode is compared only at the single candidate's arm.
 The item-level causes (`absent-kind`, `unknown-kind`, `absent-extent`,
 `unknown-backend`, `inconsistent-candidates`, `ambiguous-backend`) settle only
 their own item. `unknown-vocabulary` refuses its whole carrier.
-Registration causes `absent-kind`, `unknown-kind` and `unknown-mode` refuse
-only that registration. `duplicate-backend` refuses every registration of its
+Registration causes `absent-kind`, `unknown-kind`, `unknown-mode`,
+`unknown-evidence-kind` and `absent-domains` refuse only that registration. `duplicate-backend` refuses every registration of its
 identity and no other. Registration refusals are reported ordered bytewise by
 backend identity, then by the manifest's RFC 8785 bytes.
 

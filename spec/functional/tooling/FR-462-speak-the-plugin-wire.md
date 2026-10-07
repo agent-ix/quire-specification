@@ -92,10 +92,10 @@ backend identity its manifest names, and each terminal record names that
 identity.
 
 A `hello` whose manifest advertises an absent or unknown kind, an unknown
-mode, or `probabilistic-satisfaction` with no or unknown evidence kinds is a
-registration that FR-290 refuses, with `invalid_capability`/`absent-kind`,
-`unknown-kind`, `unknown-mode` or `unknown-evidence-kind` keyed by the backend
-identity. It is not a wire failure: the plugin is not registered, no item is
+mode, `probabilistic-satisfaction` with no or unknown evidence kinds, or a
+`bounded` mode with no `domains` is a registration that FR-290 refuses, with
+`invalid_capability`/`absent-kind`, `unknown-kind`, `unknown-mode`,
+`unknown-evidence-kind` or `absent-domains` keyed by the backend identity. It is not a wire failure: the plugin is not registered, no item is
 routed to it, a request naming its identity receives FR-290's unknown-backend
 mark, and the host sends `shutdown`.
 

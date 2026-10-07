@@ -572,3 +572,60 @@ fn tc_431_proof_bounds_carry_their_domain_kind() {
         assert!(adverse.contains(name), "adverse vector {name} exists");
     }
 }
+
+/// A descriptor that advertises a `bounded` mode carries a nonempty
+/// `domains`; one without it is refused (the FR-290 `absent-domains`
+/// registration refusal), and an unbounded-only descriptor may omit it.
+#[trace("TC-431", "FR-331-AC-22")]
+#[test]
+fn tc_431_bounded_descriptors_carry_domains() {
+    let descriptor = definition("BackendDescriptor");
+    let mut bounded = 0;
+    for vector in positives() {
+        for entry in vector["document"]["manifest"]
+            .as_array()
+            .into_iter()
+            .flatten()
+        {
+            let advertises = entry["advertises"].as_array().expect("advertises");
+            if advertises.iter().any(|pair| pair["mode"] == "bounded") {
+                let domains = entry["domains"]
+                    .as_array()
+                    .expect("bounded descriptor has domains");
+                assert!(!domains.is_empty(), "domains is nonempty");
+                bounded += 1;
+            }
+        }
+    }
+    assert!(bounded > 0, "a bounded descriptor is exercised");
+    assert!(
+        parsed(VECTORS)["adverse"]
+            .as_array()
+            .expect("adverse")
+            .iter()
+            .any(|vector| vector["name"] == "bounded-descriptor-without-domains")
+    );
+    let unbounded_only = serde_json::json!({
+        "backend": "qsl-model-check",
+        "advertises": [{"kind": "temporal-satisfaction", "mode": "unbounded"}],
+        "fairness_kinds": ["weak"]
+    });
+    assert!(
+        descriptor.is_valid(&unbounded_only),
+        "unbounded-only may omit domains"
+    );
+    let mut bounded_without = unbounded_only.clone();
+    bounded_without["advertises"] = serde_json::json!([
+        {"kind": "temporal-satisfaction", "mode": "unbounded"},
+        {"kind": "temporal-satisfaction", "mode": "bounded"}
+    ]);
+    assert!(
+        !descriptor.is_valid(&bounded_without),
+        "a bounded mode requires domains"
+    );
+    bounded_without["domains"] = serde_json::json!([]);
+    assert!(
+        !descriptor.is_valid(&bounded_without),
+        "domains is nonempty"
+    );
+}

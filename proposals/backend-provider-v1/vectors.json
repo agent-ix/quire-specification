@@ -9,7 +9,7 @@
         "/capability_vocabulary": "FR-290",
         "/manifest/0/backend": "FR-290",
         "/manifest/0/advertises": "FR-290",
-        "/manifest/0/domains": "FR-331",
+        "/manifest/0/domains": "FR-290",
         "/manifest/0/bounds": "FR-461"
       },
       "document": {
@@ -197,6 +197,12 @@
                 "kind": "value-validity",
                 "mode": "bounded"
               }
+            ],
+            "domains": [
+              "collection",
+              "integer",
+              "population",
+              "recursive"
             ]
           }
         ],
@@ -902,7 +908,13 @@
               "max_automaton_states": 100000,
               "max_states": 1000000,
               "max_transitions": 10000000
-            }
+            },
+            "domains": [
+              "collection",
+              "integer",
+              "population",
+              "recursive"
+            ]
           }
         ],
         "request": {
@@ -1407,6 +1419,12 @@
             "evidence_kinds": [
               "exact",
               "statistical"
+            ],
+            "domains": [
+              "collection",
+              "integer",
+              "population",
+              "recursive"
             ]
           }
         ],
@@ -2710,6 +2728,17 @@
         {
           "op": "remove",
           "path": "/request/items/0/temporal/subject/proof_bounds/0/kind"
+        }
+      ]
+    },
+    {
+      "name": "bounded-descriptor-without-domains",
+      "base": "kani-hello",
+      "owner": "FR-290",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/domains"
         }
       ]
     }
