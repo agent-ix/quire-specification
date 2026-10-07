@@ -9119,14 +9119,14 @@ fn tc_427_abstraction_relation_bodies_are_fixed_depth_body_productions() {
         "term": "abstraction_relation",
         "objects": [{
             "type": node,
-            "rust_type": ["crate", "Config"],
+            "rust_type": ["store", "Config"],
             "fields": [{"name": "versionNumber", "rust_field": "version_number"}]
         }],
-        "populations": [{"population": node, "collection": ["crate", "configs"]}],
+        "populations": [{"population": node, "collection": ["store", "configs"]}],
         "frames": [{
             "context": node,
             "operation": "attemptUpdate",
-            "function": ["crate", "attempt_update"],
+            "function": ["store", "attempt_update"],
             "receiver": "self",
             "parameters": [{"name": "next", "rust_parameter": "next"}]
         }]
