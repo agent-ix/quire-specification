@@ -1436,7 +1436,26 @@
         "/results/2/cause/at": "FR-331",
         "/results/3/cause/at": "FR-331",
         "/results/4/cause/at": "FR-331",
-        "/results/5/cause/at": "FR-331"
+        "/results/5/cause/at": "FR-331",
+        "/results/6/cause": "FR-331",
+        "/results/7/cause": "FR-331",
+        "/results/8/cause": "FR-331",
+        "/results/9/cause": "FR-331",
+        "/results/10/cause": "FR-331",
+        "/results/11/cause": "FR-331",
+        "/results/12/cause": "FR-331",
+        "/results/13/cause": "FR-331",
+        "/results/14/cause": "FR-331",
+        "/results/15/cause": "FR-331",
+        "/results/16/cause": "FR-331",
+        "/results/17/cause": "FR-418",
+        "/results/18/cause": "FR-418",
+        "/results/19/cause": "FR-418",
+        "/results/20/cause": "FR-412",
+        "/results/21/cause": "FR-412",
+        "/results/22/cause": "FR-412",
+        "/results/23/cause": "FR-418",
+        "/results/24/cause": "FR-418"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -1464,6 +1483,82 @@
           },
           {
             "request_index": 5,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 6,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 7,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 8,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 9,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 10,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 11,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 12,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 13,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 14,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 15,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 16,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 17,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 18,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 19,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 20,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 21,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 22,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 23,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 24,
             "disposition": "supported"
           }
         ],
@@ -1543,6 +1638,215 @@
                 "index": "18446744073709551615"
               }
             }
+          },
+          {
+            "request_index": 6,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "not-refutation",
+              "at": "base"
+            }
+          },
+          {
+            "request_index": 7,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "malformed",
+              "at": "step"
+            }
+          },
+          {
+            "request_index": 8,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "successor-missing",
+              "at": {"state": "1111111111111111111111111111111111111111111111111111111111111111", "automaton_state": "AQ"}
+            }
+          },
+          {
+            "request_index": 9,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "witness-fails",
+              "at": {"state": "2222222222222222222222222222222222222222222222222222222222222222", "automaton_state": "Ag"}
+            }
+          },
+          {
+            "request_index": 10,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "not-partition",
+              "at": {"states": ["1111111111111111111111111111111111111111111111111111111111111111", "2222222222222222222222222222222222222222222222222222222222222222"], "automaton_state": "Aw"}
+            }
+          },
+          {
+            "request_index": 11,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "violating-member",
+              "at": {"states": ["1111111111111111111111111111111111111111111111111111111111111111", "2222222222222222222222222222222222222222222222222222222222222222"], "automaton_state": "BA", "witness_set": [{"states": ["3333333333333333333333333333333333333333333333333333333333333333"], "automaton_state": "BQ"}]}
+            }
+          },
+          {
+            "request_index": 12,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "successor-missing",
+              "at": {"states": ["3333333333333333333333333333333333333333333333333333333333333333"]}
+            }
+          },
+          {
+            "request_index": 13,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "rank-broken",
+              "at": {"state": "4444444444444444444444444444444444444444444444444444444444444444"}
+            }
+          },
+          {
+            "request_index": 14,
+            "backend": "qsl-model-check",
+            "kind": "refinement",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "initial-mismatch",
+              "at": {"position": "0"}
+            }
+          },
+          {
+            "request_index": 15,
+            "backend": "qsl-model-check",
+            "kind": "refinement",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "post-differs",
+              "at": {"position": "3", "edge": "1"}
+            }
+          },
+          {
+            "request_index": 16,
+            "backend": "qsl-model-check",
+            "kind": "refinement",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "step-fails",
+              "at": {"position": "5", "edge": "0", "verdict": {"kind": "AbstractStepRejected", "position": 4, "transition": {"type": "transition", "operation": "inc", "receiver": null, "arguments": []}, "cause": {"type": "Postcondition"}}}
+            }
+          },
+          {
+            "request_index": 17,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "successor-missing",
+              "at": {"node": 2}
+            }
+          },
+          {
+            "request_index": 18,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "backward-edge",
+              "at": {"edge": 4}
+            }
+          },
+          {
+            "request_index": 19,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "witness-fails",
+              "at": {"component": 1}
+            }
+          },
+          {
+            "request_index": 20,
+            "backend": "qsl-prob",
+            "kind": "probabilistic-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "malformed",
+              "at": {"member": "ranking"}
+            }
+          },
+          {
+            "request_index": 21,
+            "backend": "qsl-prob",
+            "kind": "probabilistic-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "inequality-fails",
+              "at": {"state": "5555555555555555555555555555555555555555555555555555555555555555"}
+            }
+          },
+          {
+            "request_index": 22,
+            "backend": "qsl-prob",
+            "kind": "probabilistic-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "threshold-missed",
+              "at": {"state": "5555555555555555555555555555555555555555555555555555555555555555"}
+            }
+          },
+          {
+            "request_index": 23,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "initial-missing",
+              "at": {"state": "6666666666666666666666666666666666666666666666666666666666666666"}
+            }
+          },
+          {
+            "request_index": 24,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "witness-fails",
+              "at": {"node": 0}
+            }
           }
         ],
         "counterexamples": [],
@@ -1569,6 +1873,82 @@
           },
           {
             "request_index": 5,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 6,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 7,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 8,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 9,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 10,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 11,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 12,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 13,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 14,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 15,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 16,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 17,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 18,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 19,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 20,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 21,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 22,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 23,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 24,
             "settled_by": "result"
           }
         ]
@@ -3028,6 +3408,219 @@
           "op": "replace",
           "path": "/results/4/cause/at/index",
           "value": "041"
+        }
+      ]
+    },
+    {
+      "name": "certificate-rule-unknown",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/8/cause/rule",
+          "value": "state-missing"
+        }
+      ]
+    },
+    {
+      "name": "certificate-rule-variant-name",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/rule",
+          "value": "QueryMismatch"
+        }
+      ]
+    },
+    {
+      "name": "query-rule-at-proof-step",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/3/cause/rule",
+          "value": "query-mismatch"
+        }
+      ]
+    },
+    {
+      "name": "proof-step-rule-at-query",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/rule",
+          "value": "proof-step-invalid"
+        }
+      ]
+    },
+    {
+      "name": "product-state-rule-at-hyper-product-state",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/10/cause/rule",
+          "value": "bad-state"
+        }
+      ]
+    },
+    {
+      "name": "product-state-without-automaton-state",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/9/cause/at/automaton_state"
+        }
+      ]
+    },
+    {
+      "name": "product-state-automaton-state-padded",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/8/cause/at/automaton_state",
+          "value": "AQ=="
+        }
+      ]
+    },
+    {
+      "name": "hyper-product-state-without-states",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/10/cause/at/states",
+          "value": []
+        }
+      ]
+    },
+    {
+      "name": "state-locus-not-a-state-key",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/13/cause/at/state",
+          "value": "(1, 0)"
+        }
+      ]
+    },
+    {
+      "name": "simulation-step-initial-with-edge",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/14/cause/at/edge",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "name": "simulation-step-post-differs-without-edge",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/15/cause/at/edge"
+        }
+      ]
+    },
+    {
+      "name": "simulation-step-fails-without-verdict",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/16/cause/at/verdict"
+        }
+      ]
+    },
+    {
+      "name": "simulation-step-verdict-other-cause",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/16/cause/at/verdict",
+          "value": {"type": "replay-parity"}
+        }
+      ]
+    },
+    {
+      "name": "zone-node-negative",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-418",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/17/cause/at/node",
+          "value": -1
+        }
+      ]
+    },
+    {
+      "name": "state-rule-at-zone-node",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-418",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/17/cause/rule",
+          "value": "rank-broken"
+        }
+      ]
+    },
+    {
+      "name": "zone-component-other-rule",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-418",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/19/cause/rule",
+          "value": "bad-state"
+        }
+      ]
+    },
+    {
+      "name": "certificate-member-unknown",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-412",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/20/cause/at/member",
+          "value": "weights"
+        }
+      ]
+    },
+    {
+      "name": "certificate-member-other-rule",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-412",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/20/cause/rule",
+          "value": "rank-missing"
         }
       ]
     },

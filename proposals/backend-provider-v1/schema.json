@@ -648,12 +648,46 @@
       ]
     },
     "LimitReached": {"description": "FR-331, FR-461: the one limit-stop cause.", "type": "object", "required": ["type", "limit", "value", "setting"], "properties": {"type": {"const": "limit-reached"}, "limit": {"$ref": "#/$defs/LimitName"}, "value": {"$ref": "#/$defs/Count"}, "setting": {"$ref": "#/$defs/SettingName"}}, "additionalProperties": false},
-    "QueryPart": {"description": "FR-331: the SMT query a certificate part carries, QSL FR-314's QueryPart.", "enum": ["unrolling", "base", "step"]},
-    "CertificateLocus": {
-      "description": "FR-331: where a certificate check failed, QSL FR-314's CertificateLocus. A query is its part's name; a proof step is {part, index}, index QSL FR-314's step index.",
+    "QueryPart": {"description": "FR-331: QSL FR-338's QueryPart, the SMT query a certificate part carries (QSL FR-314).", "enum": ["unrolling", "base", "step"]},
+    "ProofStepLocus": {"description": "FR-331: QSL FR-314's ProofStep{part, index}, index QSL FR-314's command number.", "type": "object", "required": ["part", "index"], "properties": {"part": {"$ref": "#/$defs/QueryPart"}, "index": {"$ref": "#/$defs/U64String"}}, "additionalProperties": false},
+    "ProductStateLocus": {"description": "FR-331: QSL FR-338's ProductState(ProductStateRef): the model state's key and the bytes of the automaton state's canonical key.", "type": "object", "required": ["state", "automaton_state"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "automaton_state": {"$ref": "#/$defs/Base64Url"}}, "additionalProperties": false},
+    "HyperProductStateLocus": {
+      "description": "FR-331: QSL FR-163's HyperProductState(ProductStateKey): each component's state key in variable order, the automaton state's canonical key bytes (absent for an HP-1 member, which has none) and, for HP-3, the witness set's sorted (existential tuple, automaton key) pairs.",
+      "type": "object",
+      "required": ["states"],
+      "properties": {
+        "states": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/StateKey"}},
+        "automaton_state": {"$ref": "#/$defs/Base64Url"},
+        "witness_set": {"type": "array", "items": {"type": "object", "required": ["states", "automaton_state"], "properties": {"states": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/StateKey"}}, "automaton_state": {"$ref": "#/$defs/Base64Url"}}, "additionalProperties": false}}
+      },
+      "additionalProperties": false
+    },
+    "StateLocus": {"description": "FR-331: a state named by the key its certificate names it by: QSL FR-169's ModelState, an FR-412 certificate state, an FR-418 initial discrete state.", "type": "object", "required": ["state"], "properties": {"state": {"$ref": "#/$defs/StateKey"}}, "additionalProperties": false},
+    "StepVerdict": {
+      "description": "FR-331: QSL FR-149's StepFails verdict, the QSL FR-141 check_step verdict that is not Passes: an FR-379 RefinementFailure, an undefined evaluation, or mapping-undetermined or undecided-successor.",
       "oneOf": [
-        {"$ref": "#/$defs/QueryPart"},
-        {"type": "object", "required": ["part", "index"], "properties": {"part": {"$ref": "#/$defs/QueryPart"}, "index": {"$ref": "#/$defs/U64String"}}, "additionalProperties": false}
+        {"$ref": "#/$defs/RefinementFailure"},
+        {"$ref": "#/$defs/UndefinedEvaluation"},
+        {"allOf": [{"$ref": "#/$defs/InconclusiveCause"}, {"required": ["type"], "properties": {"type": {"enum": ["mapping-undetermined", "undecided-successor"]}}}]}
+      ]
+    },
+    "CertificateRejected": {
+      "description": "FR-331 certificate-rejected{rule, at}: each branch pairs the rules a core checker rejects with at the locus it names (FR-331 Certification). An unknown rule, an unknown locus and a rule at a locus it is not paired with are refused.",
+      "type": "object",
+      "required": ["type", "rule", "at"],
+      "oneOf": [
+        {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["query-mismatch", "shape-mismatch", "malformed", "not-refutation"]}, "at": {"$ref": "#/$defs/QueryPart"}}, "additionalProperties": false},
+        {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["proof-step-invalid", "not-refutation"]}, "at": {"$ref": "#/$defs/ProofStepLocus"}}, "additionalProperties": false},
+        {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-missing", "successor-missing", "bad-state", "not-partition", "backward-edge", "witness-fails"]}, "at": {"$ref": "#/$defs/ProductStateLocus"}}, "additionalProperties": false},
+        {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-missing", "successor-missing", "not-partition", "backward-edge", "witness-fails", "malformed", "undefined-member", "violating-member"]}, "at": {"$ref": "#/$defs/HyperProductStateLocus"}}, "additionalProperties": false},
+        {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-missing", "successor-missing", "predicate-undefined", "rank-missing", "rank-broken", "order-broken", "count-broken", "inequality-fails", "threshold-missed"]}, "at": {"$ref": "#/$defs/StateLocus"}}, "additionalProperties": false},
+        {"description": "QSL FR-149 SimulationStep{position} for an initial or successors rule.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-mismatch", "successors-differ"]}, "at": {"type": "object", "required": ["position"], "properties": {"position": {"$ref": "#/$defs/U64String"}}, "additionalProperties": false}}, "additionalProperties": false},
+        {"description": "QSL FR-149 SimulationStep{position, edge} for post-differs.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "post-differs"}, "at": {"type": "object", "required": ["position", "edge"], "properties": {"position": {"$ref": "#/$defs/U64String"}, "edge": {"$ref": "#/$defs/U64String"}}, "additionalProperties": false}}, "additionalProperties": false},
+        {"description": "QSL FR-149 SimulationStep{position, edge, verdict} for step-fails.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "step-fails"}, "at": {"type": "object", "required": ["position", "edge", "verdict"], "properties": {"position": {"$ref": "#/$defs/U64String"}, "edge": {"$ref": "#/$defs/U64String"}, "verdict": {"$ref": "#/$defs/StepVerdict"}}, "additionalProperties": false}}, "additionalProperties": false},
+        {"description": "FR-418: a node, its position in the certificate's nodes.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["successor-missing", "bad-state", "witness-fails"]}, "at": {"type": "object", "required": ["node"], "properties": {"node": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
+        {"description": "FR-418: an edge, its position in the certificate's edges.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "backward-edge"}, "at": {"type": "object", "required": ["edge"], "properties": {"edge": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
+        {"description": "FR-418: a component, its index.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "witness-fails"}, "at": {"type": "object", "required": ["component"], "properties": {"component": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
+        {"description": "FR-412, FR-418: a missing certificate member, named as its certificate names it.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "malformed"}, "at": {"type": "object", "required": ["member"], "properties": {"member": {"enum": ["identity", "objective", "kind", "values", "ranking", "policy", "components", "scale", "bounds", "nodes", "edges", "reasons", "divergence"]}}, "additionalProperties": false}}, "additionalProperties": false}
       ]
     },
     "InconclusiveCause": {
@@ -661,7 +695,7 @@
       "type": "object",
       "required": ["type"],
       "oneOf": [
-        {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"$ref": "#/$defs/Nonempty"}, "at": {"$ref": "#/$defs/CertificateLocus"}}, "required": ["type", "rule", "at"], "additionalProperties": false},
+        {"$ref": "#/$defs/CertificateRejected"},
         {"properties": {"type": {"enum": ["undecided-successor", "no-initial-state", "replay-parity", "replay-refused", "sufficient-test-failed", "solver-inconclusive", "lasso-not-concretized", "no-admitted-behaviour", "well-definedness-unchecked", "match-undetermined", "vacuous-match", "kani_vacuous_proof"]}}, "required": ["type"], "additionalProperties": false},
         {"properties": {"type": {"enum": ["bound-reached", "induction-not-closed"]}, "depth": {"$ref": "#/$defs/Count"}}, "required": ["type", "depth"], "additionalProperties": false},
         {"properties": {"type": {"const": "reduction-not-preserving"}, "reduction": {"enum": ["symmetry", "partial-order", "constraint"]}, "form": {"$ref": "#/$defs/Nonempty"}}, "required": ["type", "reduction", "form"], "additionalProperties": false},

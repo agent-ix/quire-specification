@@ -42,6 +42,20 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-272
     type: references
+  - target: ix://agent-ix/quire-spec-language/FR-338
+    type: references
+  - target: ix://agent-ix/quire-spec-language/FR-314
+    type: references
+  - target: ix://agent-ix/quire-spec-language/FR-149
+    type: references
+  - target: ix://agent-ix/quire-spec-language/FR-163
+    type: references
+  - target: ix://agent-ix/quire-spec-language/FR-169
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-412
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-418
+    type: references
 ---
 
 # FR-331: Backend provider request and result envelope
@@ -81,13 +95,33 @@ A certificate a core checker rejects settles the item `inconclusive` with
 cause `certificate-rejected{rule, at}`: `rule` the check rule that failed and
 `at` where it failed, for every core checker.
 
-`at` is QSL FR-314's `CertificateLocus`, written in one of two forms. A
-query locus is its query part's name, `unrolling`, `base` or `step`. A proof
-step locus is `{part, index}`: `part` one of those names, and `index` QSL
-FR-314's step index, written as the canonical decimal string of an unsigned
-64-bit integer, `0` to `18446744073709551615`, so RFC 8785 keeps every index
-exact. No other locus has a wire spelling, so a reader SHALL refuse any
-other `at` before consumption.
+`rule` is a closed value: the name of the check rule, lower-case words
+joined by `-`, so QSL FR-338's `CertificateRule::QueryMismatch` is written
+`query-mismatch`. `at` is the locus the checker names, in its one wire form
+below. The owning requirement states what each locus means and which rule
+each failure takes; this requirement owns the spelling. Each rule is
+admitted only at the loci listed with it, and the schema checks the rule,
+the locus form and their pairing, so a reader SHALL refuse an unknown rule,
+an unknown locus form and a rule at a locus not listed with it before
+consumption. Which checker ran, and so which of a locus's rules apply, comes
+from the item.
+
+| Locus | `at` | Meaning owned by | Rules |
+| --- | --- | --- | --- |
+| Query part | `"unrolling"`, `"base"` or `"step"` | QSL FR-338's `Query { part }`, QSL FR-314 | `query-mismatch`, `shape-mismatch`, `malformed`, `not-refutation` |
+| Proof step | `{part, index}`: `part` a query part name, `index` a `U64String` | QSL FR-314's `ProofStep { part, index }` | `proof-step-invalid`, `not-refutation` |
+| Product state | `{state, automaton_state}`: the model state's `StateKey` and the bytes of the automaton state's canonical key, in the package spelling | QSL FR-338's `ProductState`, QSL FR-339 | `initial-missing`, `successor-missing`, `bad-state`, `not-partition`, `backward-edge`, `witness-fails` |
+| Hyper product state | `{states, automaton_state, witness_set}`: each component's `StateKey` in variable order; the automaton key's bytes, absent for an HP-1 member; for HP-3, the witness set's pairs `{states, automaton_state}` in their sorted order | QSL FR-163's `HyperProductState` | `initial-missing`, `successor-missing`, `not-partition`, `backward-edge`, `witness-fails`, `malformed`, `undefined-member`, `violating-member` |
+| State | `{state}`, the `StateKey` its certificate names the state by | QSL FR-169's `ModelState`; FR-412; FR-418 (the initial discrete state) | `initial-missing`, `successor-missing`, `predicate-undefined`, `rank-missing`, `rank-broken`, `order-broken`, `count-broken`, `inequality-fails`, `threshold-missed` |
+| Simulation step | `{position}` for `initial-mismatch` and `successors-differ`; `{position, edge}` for `post-differs`; `{position, edge, verdict}` for `step-fails`. `position` and `edge` are `U64String`s, and `verdict` is the `check_step` verdict: an FR-379 refinement failure, an undefined evaluation, `mapping-undetermined` or `undecided-successor` | QSL FR-149's `SimulationStep` | `initial-mismatch`, `successors-differ`, `post-differs`, `step-fails` |
+| Zone node | `{node}`, its position in the certificate's `nodes` | FR-418 | `successor-missing`, `bad-state`, `witness-fails` |
+| Zone edge | `{edge}`, its position in the certificate's `edges` | FR-418 | `backward-edge` |
+| Zone component | `{component}`, its component index | FR-418 | `witness-fails` |
+| Certificate member | `{member}`, the name of a member of the FR-412 or FR-418 certificate: `identity`, `objective`, `kind`, `values`, `ranking`, `policy`, `components`, `scale`, `bounds`, `nodes`, `edges`, `reasons` or `divergence` | FR-412, FR-418 | `malformed` |
+
+A `U64String` is the canonical decimal string of an unsigned 64-bit
+integer, `0` to `18446744073709551615`, so RFC 8785 keeps every value
+exact.
 
 ### Wire spellings of probabilistic, timed and real-time results
 
@@ -371,7 +405,8 @@ out-of-domain values and non-canonical encodings refuse before consumption. A `c
 | FR-331-AC-21 | Every `ProofBound` carries the `kind` of the domain it bounds, from the ADR-014 domain-kind vocabulary shared with an unbounded extent's `domains`, and a bound matching that kind; a `ProofBound` without `kind`, with a kind outside the vocabulary, with a non-boundable kind or with a bound of another kind refuses before consumption: of the seven kinds and three bound types, exactly the pairs `collection` and `population` with `cardinality`, `integer` with `integer-range` and `recursive` with `depth` are admitted. | Test (TC-431) |
 | FR-331-AC-22 | The manifest schema applies FR-290's `domains` registration rule to every descriptor: one whose `domains` is present and empty, holds a non-boundable or unknown kind or repeats a kind is refused whatever modes it advertises, one that advertises a `bounded` mode without `domains` is refused, and one that advertises only `unbounded` modes is admitted without `domains`. | Test (TC-431) |
 | FR-331-AC-23 | Every `proved` result entry carries exactly one `certification`, `certified`, `uncertified` or `trusted`: a Kani `bounded-proof`, a checked `value-bounds` and a checked `witnessed` proof, and an SMT `bounded-complete` proof whose certificate the core verified, carry `certified`, a symmetry-`reduced` proof (copy-swap with symmetry), a partial-order-`reduced` proof and an SMT `inductive` proof with no verified certificate `uncertified`, and a plugin proof `trusted`; a `proved` entry without `certification`, a `reduced` proof with a `symmetry` or `partial-order` reduction or a `bounded-solver` proof carrying `certified`, one with another value, and a `certification` on any other result are refused. | Test (TC-431) |
-| FR-331-AC-24 | A `certificate-rejected` cause whose `at` is each query part, `unrolling`, `base` and `step`, or a proof step `{part, index}` with index `"0"`, `"41"` or `"18446744073709551615"`, is admitted. An `at` that is an unknown part, an empty string or an empty object, and a proof step with an unknown part, without `part` or `index`, with another member, or whose `index` is a JSON number, `"-1"`, `"18446744073709551616"` or `"041"`, are each refused. Across every digit position of `18446744073709551615`, and lengths up to 21 digits, an `index` is admitted exactly when it is the canonical decimal spelling of an unsigned 64-bit integer. | Test (TC-431) |
+| FR-331-AC-24 | A `certificate-rejected` cause is admitted with each locus form of the Certification table: each query part, `unrolling`, `base` and `step`; a proof step `{part, index}` with index `"0"`, `"41"` or `"18446744073709551615"`; a product state; a hyper product state with and without its automaton key and with a witness set; a state; each of the three simulation-step forms, `step-fails` carrying an `AbstractStepRejected` verdict; a zone node, edge and component; and a certificate member. An `at` that is an unknown part, an empty string or an empty object; a proof step with an unknown part, without `part` or `index`, with another member, or whose `index` is a JSON number, `"-1"`, `"18446744073709551616"` or `"041"`; a product state whose automaton key is padded; a hyper product state with no states; a state that is not a `StateKey`; a negative zone node; an unknown member; and a `step-fails` verdict that is another inconclusive cause, are each refused. Across every digit position of `18446744073709551615`, and lengths up to 21 digits, an `index` is admitted exactly when it is the canonical decimal spelling of an unsigned 64-bit integer. | Test (TC-431) |
+| FR-331-AC-25 | A `certificate-rejected` cause is admitted with each rule at a locus listed with it, `not-refutation` and `malformed` at a query part included. A rule outside the closed set, such as `state-missing`; a rule written as its variant name, `QueryMismatch`; and a rule at a locus not listed with it are each refused: `query-mismatch` at a proof step, `proof-step-invalid` at a query part, `bad-state` at a hyper product state, `witness-fails` at a state, `rank-broken` at a zone node, `bad-state` at a zone component, `rank-missing` at a certificate member, `initial-mismatch` with an `edge`, `post-differs` without an `edge`, and `step-fails` without a `verdict`. | Test (TC-431) |
 
 ## Dependencies
 

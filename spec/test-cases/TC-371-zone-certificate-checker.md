@@ -34,9 +34,9 @@ The models below are defined here in full; the citation names the QSL design rec
 | Vector | Input | Expected result |
 | --- | --- | --- |
 | ZC-01 | The certificate of `NoLateReply` with `T = 4 ms` | Accepted; the item settles `proved`, `zone-certified` |
-| ZC-02 | A node whose successor is not covered by its named target | `inconclusive`, `certificate-rejected{rule, at}` naming that node |
-| ZC-03 | A node in a rejecting automaton state | `certificate-rejected{rule, at}` naming that node |
-| ZC-04 | A Büchi certificate with an edge to a smaller component index; a component with no valid reason | `certificate-rejected{rule, at}` naming the edge or component |
+| ZC-02 | A node whose successor is not covered by its named target | `inconclusive`, `certificate-rejected` with rule `successor-missing` at `{node}`, that node's position |
+| ZC-03 | A node in a rejecting automaton state | `certificate-rejected` with rule `bad-state` at that node |
+| ZC-04 | A Büchi certificate with an edge to a smaller component index; a component with no valid reason; a Büchi certificate without `reasons` | `certificate-rejected` with rule `backward-edge` at `{edge}`, that edge's position; `witness-fails` at `{component}`; `malformed` at member `reasons` |
 | ZC-05 | ZC-01 with another item's identity | Refused `invalid_runtime_input`/`conflicting-identity` |
 | ZC-06 | A model with constant `rational(123456789123456789, 7) ms` | Constants scale by 7 and DBM bounds hold the exact integers |
 | ZC-07 | The `Rpc` time-lock-freedom certificate | Every node states a reachable time-divergent target, and the checker verifies each |
