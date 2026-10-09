@@ -618,3 +618,52 @@ fn tc_431_bounded_descriptors_carry_domains() {
         );
     }
 }
+
+/// A proof-step locus's `index` admits exactly the canonical decimal
+/// spellings of `u64`: the schema's `U64String` agrees with Rust's `u64`
+/// parse at every digit of `u64::MAX`, at every length up to one past it,
+/// and on each non-canonical spelling.
+#[trace("TC-431", "FR-331-AC-24")]
+#[test]
+fn tc_431_proof_step_index_admits_exactly_the_u64_range() {
+    let pattern = definition("U64String");
+    let maximum = u64::MAX.to_string();
+    let mut samples: Vec<String> = ["", "00", "01", "-0", "-1", "+1", " 1", "1 ", "1.0", "1e3"]
+        .into_iter()
+        .map(str::to_owned)
+        .collect();
+    for length in 1..=maximum.len() + 1 {
+        samples.push(format!("1{}", "0".repeat(length - 1)));
+        samples.push("9".repeat(length));
+    }
+    for prefix in 0..maximum.len() {
+        for digit in '0'..='9' {
+            for fill in ['0', '9'] {
+                let tail = maximum.len() - prefix - 1;
+                samples.push(format!(
+                    "{}{digit}{}",
+                    &maximum[..prefix],
+                    fill.to_string().repeat(tail)
+                ));
+            }
+        }
+    }
+    let mut admitted = 0;
+    for sample in samples {
+        let canonical = sample
+            .parse::<u64>()
+            .is_ok_and(|value| value.to_string() == sample);
+        assert_eq!(
+            pattern.is_valid(&Value::String(sample.clone())),
+            canonical,
+            "U64String admits {sample:?} exactly when it is a canonical u64"
+        );
+        admitted += usize::from(canonical);
+    }
+    assert!(admitted > 0, "some u64 spellings are exercised");
+    assert!(pattern.is_valid(&Value::String(maximum)), "u64::MAX");
+    assert!(
+        !pattern.is_valid(&Value::String("18446744073709551616".into())),
+        "u64::MAX + 1"
+    );
+}

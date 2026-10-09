@@ -1428,6 +1428,153 @@
       }
     },
     {
+      "name": "certificate-rejected-loci",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/cause/at": "FR-331",
+        "/results/1/cause/at": "FR-331",
+        "/results/2/cause/at": "FR-331",
+        "/results/3/cause/at": "FR-331",
+        "/results/4/cause/at": "FR-331",
+        "/results/5/cause/at": "FR-331"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 1,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 2,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 3,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 4,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 5,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "query-mismatch",
+              "at": "unrolling"
+            }
+          },
+          {
+            "request_index": 1,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "shape-mismatch",
+              "at": "base"
+            }
+          },
+          {
+            "request_index": 2,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "query-mismatch",
+              "at": "step"
+            }
+          },
+          {
+            "request_index": 3,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "proof-step-invalid",
+              "at": {
+                "part": "step",
+                "index": "0"
+              }
+            }
+          },
+          {
+            "request_index": 4,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "proof-step-invalid",
+              "at": {
+                "part": "base",
+                "index": "41"
+              }
+            }
+          },
+          {
+            "request_index": 5,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "not-refutation",
+              "at": {
+                "part": "unrolling",
+                "index": "18446744073709551615"
+              }
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 1,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 2,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 3,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 4,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 5,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
       "name": "state-graph-and-hyper-outcome",
       "stage": "outcome",
       "owners": {
@@ -2751,6 +2898,136 @@
         {
           "op": "remove",
           "path": "/results/3/cause/rule"
+        }
+      ]
+    },
+    {
+      "name": "certificate-locus-unknown-query-part",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/at",
+          "value": "loop"
+        }
+      ]
+    },
+    {
+      "name": "certificate-locus-empty-string",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/at",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "certificate-locus-empty-object",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/3/cause/at",
+          "value": {}
+        }
+      ]
+    },
+    {
+      "name": "proof-step-unknown-part",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/3/cause/at/part",
+          "value": "loop"
+        }
+      ]
+    },
+    {
+      "name": "proof-step-without-part",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/3/cause/at/part"
+        }
+      ]
+    },
+    {
+      "name": "proof-step-without-index",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/3/cause/at/index"
+        }
+      ]
+    },
+    {
+      "name": "proof-step-extra-member",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/3/cause/at/type",
+          "value": "proof-step"
+        }
+      ]
+    },
+    {
+      "name": "proof-step-index-number",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/3/cause/at/index",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "proof-step-index-negative",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/3/cause/at/index",
+          "value": "-1"
+        }
+      ]
+    },
+    {
+      "name": "proof-step-index-overflow",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/5/cause/at/index",
+          "value": "18446744073709551616"
+        }
+      ]
+    },
+    {
+      "name": "proof-step-index-leading-zero",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/4/cause/at/index",
+          "value": "041"
         }
       ]
     },

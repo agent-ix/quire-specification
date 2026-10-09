@@ -55,6 +55,7 @@
     "Count": {"description": "An unsigned integer that RFC 8785 serializes exactly.", "type": "integer", "minimum": 0, "maximum": 9007199254740991},
     "PositiveCount": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
     "U32": {"description": "ADR-014: an unsigned 32-bit index.", "type": "integer", "minimum": 0, "maximum": 4294967295},
+    "U64String": {"description": "An unsigned 64-bit integer, 0 to 18446744073709551615, as its canonical decimal string, so RFC 8785 keeps every value exact.", "type": "string", "pattern": "^(0|[1-9][0-9]{0,18}|1[0-7][0-9]{18}|18[0-3][0-9]{17}|184[0-3][0-9]{16}|1844[0-5][0-9]{15}|18446[0-6][0-9]{14}|184467[0-3][0-9]{13}|1844674[0-3][0-9]{12}|184467440[0-6][0-9]{10}|1844674407[0-2][0-9]{9}|18446744073[0-6][0-9]{8}|1844674407370[0-8][0-9]{6}|18446744073709[0-4][0-9]{5}|184467440737095[0-4][0-9]{4}|18446744073709550[0-9]{3}|18446744073709551[0-5][0-9]{2}|1844674407370955160[0-9]|1844674407370955161[0-5])$"},
     "Decimal": {"description": "A non-negative decimal string: 0 or [1-9][0-9]* (FR-392 seed, FR-393 and FR-400 decimals).", "$ref": "urn:quire:checked-package:v2#/$defs/NonNegativeIntegerString"},
     "IntegerString": {"$ref": "urn:quire:checked-package:v2#/$defs/IntegerString"},
     "Rational": {"$ref": "urn:quire:checked-package:v2#/$defs/Rational"},
@@ -647,12 +648,20 @@
       ]
     },
     "LimitReached": {"description": "FR-331, FR-461: the one limit-stop cause.", "type": "object", "required": ["type", "limit", "value", "setting"], "properties": {"type": {"const": "limit-reached"}, "limit": {"$ref": "#/$defs/LimitName"}, "value": {"$ref": "#/$defs/Count"}, "setting": {"$ref": "#/$defs/SettingName"}}, "additionalProperties": false},
+    "QueryPart": {"description": "FR-331: the SMT query a certificate part carries, QSL FR-314's QueryPart.", "enum": ["unrolling", "base", "step"]},
+    "CertificateLocus": {
+      "description": "FR-331: where a certificate check failed, QSL FR-314's CertificateLocus. A query is its part's name; a proof step is {part, index}, index QSL FR-314's step index.",
+      "oneOf": [
+        {"$ref": "#/$defs/QueryPart"},
+        {"type": "object", "required": ["part", "index"], "properties": {"part": {"$ref": "#/$defs/QueryPart"}, "index": {"$ref": "#/$defs/U64String"}}, "additionalProperties": false}
+      ]
+    },
     "InconclusiveCause": {
       "description": "Closed inconclusive causes: FR-331 table, FR-363, FR-385, FR-399, FR-401, FR-379, FR-380, FR-428, FR-439, AD-016 (kani_vacuous_proof).",
       "type": "object",
       "required": ["type"],
       "oneOf": [
-        {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"$ref": "#/$defs/Nonempty"}, "at": {"$ref": "#/$defs/Nonempty"}}, "required": ["type", "rule", "at"], "additionalProperties": false},
+        {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"$ref": "#/$defs/Nonempty"}, "at": {"$ref": "#/$defs/CertificateLocus"}}, "required": ["type", "rule", "at"], "additionalProperties": false},
         {"properties": {"type": {"enum": ["undecided-successor", "no-initial-state", "replay-parity", "replay-refused", "sufficient-test-failed", "solver-inconclusive", "lasso-not-concretized", "no-admitted-behaviour", "well-definedness-unchecked", "match-undetermined", "vacuous-match", "kani_vacuous_proof"]}}, "required": ["type"], "additionalProperties": false},
         {"properties": {"type": {"enum": ["bound-reached", "induction-not-closed"]}, "depth": {"$ref": "#/$defs/Count"}}, "required": ["type", "depth"], "additionalProperties": false},
         {"properties": {"type": {"const": "reduction-not-preserving"}, "reduction": {"enum": ["symmetry", "partial-order", "constraint"]}, "form": {"$ref": "#/$defs/Nonempty"}}, "required": ["type", "reduction", "form"], "additionalProperties": false},
