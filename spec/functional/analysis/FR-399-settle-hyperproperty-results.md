@@ -79,8 +79,8 @@ closed computation that replay repeats.
 | The match was refused or incomplete at a reachable joint step | `inconclusive` | `unsettled` | `match-undetermined` |
 | A vacuous clause ([FR-395](FR-395-analyze-hyperproperties-over-behaviours.md)) | `inconclusive` | `unsettled` | `vacuous-match` |
 | An undecided successor, no initial state, an induction step that does not close, replay disagreement or replay refusal | `inconclusive` | `unsettled` | `undecided-successor`, `no-initial-state`, `induction-not-closed`, `replay-parity` or `replay-refused` |
-| A run limit, meter or time budget stopped the run | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `limit-reached{limit, value, setting}` |
-| The caller cancelled the run | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `cancelled` |
+| A run limit, meter or time budget stopped the run | `incomplete` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `limit-reached{limit, value, setting}` |
+| The caller cancelled the run | `incomplete` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `cancelled{source}` |
 | HP-4, or a clause over `behaviours` under a profile other than infinite-trace | `unsupported` | `unavailable` | `unsupported_projection`/`unsupported-requested-capability` |
 
 An HP-5 item settles by [FR-396](FR-396-classify-hyperproperty-forms.md)'s

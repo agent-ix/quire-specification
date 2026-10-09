@@ -42,8 +42,8 @@ and its backend identity.
 
 The `proved` result with exactly one certification (`certified`,
 `uncertified` or `trusted`), or, for a certificate the checker shows wrong,
-an `inconclusive` result with cause `certificate-rejected` naming the failed
-check rule and where it failed.
+an `inconclusive` result with cause `certificate-rejected{rule, at}` (FR-331),
+`rule` the check rule that failed and `at` where it failed.
 
 ## Behavior
 
@@ -58,7 +58,7 @@ nothing from the solver but the certificate.
 | Every carried query equals the core's, and every proof refutes it with checked rules | `proved`, `certified` |
 | No certificate came with the proof | `proved`, `uncertified` |
 | A step uses a rule outside the checked set and no check fails | `proved`, `uncertified` |
-| A carried query differs from the core's, a step does not follow from its premises, a proof ends short of the empty clause, or the certificate's shape does not match the proof basis | `inconclusive`, cause `certificate-rejected` |
+| A carried query differs from the core's, a step does not follow from its premises, a proof ends short of the empty clause, or the certificate's shape does not match the proof basis | `inconclusive`, cause `certificate-rejected{rule, at}` |
 
 The checker is part of the qualified core, so every SMT certificate that
 arrives is checked. Z3's independent cross-check (FR-349) is a parity signal
@@ -77,7 +77,7 @@ results alone, and a plugin's result carries `trusted` alone.
 | FR-354-AC-1 | Every SMT `proved` result carries exactly one of `certified` or `uncertified`, and every plugin `proved` result carries `trusted`; the certification comes from the checker outcome or the producer, never from the verdict alone. | Test (TC-269) |
 | FR-354-AC-2 | A certificate whose every query equals the core's encoding and whose every proof refutes its query with checked rules settles `proved`, `certified`. | Test (TC-269) |
 | FR-354-AC-3 | A `proved` result with no certificate, and one whose certificate uses a rule outside the checked set and fails no check, settles `proved`, `uncertified`. | Test (TC-269) |
-| FR-354-AC-4 | A certificate whose carried query differs from the core's encoding, including one whose proof is internally valid, settles `inconclusive` with cause `certificate-rejected`; so does one with an invalid step or a proof that ends short of the empty clause. None settles `proved`. | Test (TC-269) |
+| FR-354-AC-4 | A certificate whose carried query differs from the core's encoding, including one whose proof is internally valid, settles `inconclusive` with cause `certificate-rejected{rule, at}` naming the query; so does one with an invalid step, a proof that ends short of the empty clause, or a certificate whose shape does not match the proof basis, each naming its rule and where it failed. None settles `proved`. | Test (TC-269) |
 | FR-354-AC-5 | The Z3 cross-check result is recorded alongside the certification as an independent parity signal and never changes it. | Test (TC-269) |
 | FR-354-AC-6 | A plugin's `proved` result settles `proved` with the certification `trusted` and the plugin's backend identity, the rendered outcome shows `trusted` beside the verdict, and an SMT backend's `proved` result carries `certified` or `uncertified`. | Test (TC-269) |
 

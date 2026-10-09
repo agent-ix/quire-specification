@@ -1216,6 +1216,103 @@
       }
     },
     {
+      "name": "certification-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/certification": "FR-354",
+        "/results/1/certification": "FR-354",
+        "/results/2/certification": "FR-305",
+        "/results/3/cause": "FR-354"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 1,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 2,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 3,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "proved",
+            "certification": "certified",
+            "basis": {
+              "type": "bounded-complete",
+              "depth": 3
+            }
+          },
+          {
+            "request_index": 1,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "proved",
+            "certification": "uncertified",
+            "basis": {
+              "type": "inductive",
+              "depth": 1
+            }
+          },
+          {
+            "request_index": 2,
+            "backend": "example-plugin",
+            "kind": "temporal-satisfaction",
+            "result": "proved",
+            "certification": "trusted",
+            "basis": {
+              "type": "exhaustive"
+            }
+          },
+          {
+            "request_index": 3,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "query-mismatch",
+              "at": "unrolling"
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 1,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 2,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 3,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
       "name": "state-graph-and-hyper-outcome",
       "stage": "outcome",
       "owners": {
@@ -2480,6 +2577,29 @@
           "op": "add",
           "path": "/results/0/certification",
           "value": "certified"
+        }
+      ]
+    },
+    {
+      "name": "certification-reduced-certified",
+      "base": "temporal-outcome",
+      "owner": "FR-385",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/1/certification",
+          "value": "certified"
+        }
+      ]
+    },
+    {
+      "name": "certificate-rejected-without-rule",
+      "base": "certification-outcome",
+      "owner": "FR-354",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/3/cause/rule"
         }
       ]
     },

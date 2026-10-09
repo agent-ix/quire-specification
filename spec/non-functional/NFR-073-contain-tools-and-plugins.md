@@ -27,7 +27,7 @@ All first-party and third-party extension/provider execution paths.
 An installed plugin is a trusted program, like any program the user installs.
 Its output still crosses a typed boundary: it can settle only the items routed
 to it, its counterexamples count only after replay, and its proofs carry the
-`trusted` label (FR-305).
+certification `trusted` (FR-305, FR-331).
 
 ## Measurement and Evaluation
 
