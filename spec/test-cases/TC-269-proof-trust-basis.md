@@ -1,19 +1,21 @@
 ---
 id: TC-269
-title: "Proved settlement trust basis"
+title: "Proved settlement certification"
 type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-354
     type: verifies
 ---
 
-# TC-269: Proved settlement trust basis
+# TC-269: Proved settlement certification
 
 ## Description
 
-Record `certificate-checked` when Carcara passes the cvc5 Alethe certificate
-for the exact settled query, `solver-asserted` otherwise, and `trusted` for a
-plugin's `proved` result, without changing the `proved` verdict.
+Record `certified` when the core's Alethe checker verifies the cvc5
+certificate against the core's own queries, `uncertified` when the
+certificate is absent or unverifiable, `inconclusive` with
+`certificate-rejected{rule, at}` when it is shown wrong, and `trusted` for a plugin's
+`proved` result.
 
 ## Test Procedure
 
@@ -26,26 +28,24 @@ result and artifact accounting with the criterion.
 
 | Vector | Mutation | Expected disposition |
 | --- | --- | --- |
-| TB-01 | Present Carcara with a certificate whose query identity (digest over query bytes plus solver options) does not match the settled claim's query identity, including a certificate that Carcara itself passes as internally valid | Records `solver-asserted`, never `certificate-checked`; the mismatched query identity is named |
-| TB-02 | Run a settlement with Carcara not registered | Records `solver-asserted` with a warning naming the absent certificate-checking capability; the `proved` verdict is unaffected |
-| TB-03 | A plugin returns `proved` for one item; the SMT backend returns `proved` for a second item with no certificate | The first settles `proved` with basis `trusted` and the plugin's backend identity, and its rendered outcome shows `trusted` beside the verdict; the second records `solver-asserted`, never `trusted` |
+| TB-01 | A certificate whose queries equal the core's encoding and whose proofs use checked rules | `proved`, `certified` |
+| TB-02 | The same proof with no certificate; then the certificate with one step's rule replaced by `hole` | `proved`, `uncertified`, both times |
+| TB-03 | The certificate with its query encoded for another depth, internally valid as a proof | `inconclusive`, `certificate-rejected{rule, at}` naming the query mismatch, never `proved` |
+| TB-04 | A plugin returns `proved` for one item; the SMT backend returns `proved` for a second item with no certificate | The first settles `proved` with certification `trusted` and the plugin's backend identity, and its rendered outcome shows `trusted` beside the verdict; the second settles `proved`, `uncertified` |
+| TB-05 | TB-01's certificate with one step's premise replaced by a later step | `inconclusive`, `certificate-rejected{rule, at}` naming the invalid step |
+| TB-06 | TB-01's certificate with its last step removed, so the proof ends short of the empty clause | `inconclusive`, `certificate-rejected{rule, at}` naming the last step |
+| TB-07 | A bounded-complete certificate offered for an `inductive` proof | `inconclusive`, `certificate-rejected{rule, at}` naming the shape mismatch |
+| TB-08 | TB-01 run with the Z3 cross-check agreeing, then disagreeing | Both settle `proved`, `certified`; the cross-check result is recorded beside the certification and never changes it |
+| TB-09 | An inductive certificate whose `Step` proof has an invalid step | `inconclusive`, `certificate-rejected{rule, at}` naming `ProofStepInvalid` at that `Step` step |
+| TB-10 | TB-01's certificate with one step's rule replaced by `lia_generic` and no other defect | `proved`, `uncertified` |
 
 ## Expected Results
 
-Every positive and boundary result matches FR-354; a `proved` settlement
-always carries exactly one of `certificate-checked`, `solver-asserted` or
-`trusted`; a plugin's `proved` result records `trusted` with its backend
-identity;
-`certificate-checked` requires Carcara to have checked the cvc5 Alethe
-certificate for the exact settled query identity (a digest over the query
-bytes plus solver options) and passed it, and retains the Carcara run
-identity; a certificate whose query identity does not match never yields
-`certificate-checked`; a missing certificate, a failing Carcara check or a
-foreign-query certificate records `solver-asserted` without changing the
-`proved` verdict; a recorded basis changes only through a new Carcara check
-run producing its own new record, distinguishing a basis never checked from
-one checked and rejected; Carcara's absence records `solver-asserted` with a
-warning naming the absent capability; the Z3 cross-check result is recorded
-alongside the trust basis as an independent signal; each mutation returns its
-exact typed disposition with source/provenance and preserves independent
-sibling results.
+Every positive and boundary result matches FR-354; every SMT `proved`
+result carries exactly one of `certified` or `uncertified`, and every plugin
+`proved` result carries `trusted` with its backend identity; a certificate
+for another query, an invalid step, a short proof or a shape mismatch settles
+`inconclusive` with `certificate-rejected{rule, at}`; the Z3
+cross-check result is recorded alongside the certification as an
+independent signal; each mutation returns its exact typed disposition and
+preserves independent sibling results.

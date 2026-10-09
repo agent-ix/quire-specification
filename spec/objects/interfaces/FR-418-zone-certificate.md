@@ -85,7 +85,8 @@ checks initial coverage and the badness of every node, checks the component
 numbering and each component's stated reason, and reads no output of the
 search beyond the certificate. It refuses a certificate whose `identity`
 differs from the item's with `invalid_runtime_input`/`conflicting-identity`.
-A rejected certificate settles `inconclusive`, `certificate-rejected`; a
+A rejected certificate settles `inconclusive`, `certificate-rejected{rule,
+at}`, naming the rule that failed and the node where it failed; a
 checker stopped by a budget settles `incomplete`, `limit-reached` naming the
 budget. Its cost is linear in the certificate's edges times the DBM operations.
 
@@ -94,14 +95,14 @@ budget. Its cost is linear in the certificate's edges times the DBM operations.
 - **Identity kind** — *value*, compared componentwise; nodes and edges in
   their stated order.
 - **Absence** — a missing member rejects the certificate,
-  `certificate-rejected`.
+  `certificate-rejected{rule, at}` naming that member.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-418-AC-1 | The checker accepts the certificate of the `Rpc` `NoLateReply` proof at `T = 4 ms` by recomputing every successor and coverage. | Test (TC-371) |
-| FR-418-AC-2 | A certificate with a node whose successor is not covered by its named target, a bad node, an edge that decreases the component index, or a component with no valid reason settles `inconclusive`, `certificate-rejected`. | Test (TC-371) |
+| FR-418-AC-2 | A certificate with a node whose successor is not covered by its named target, a bad node, an edge that decreases the component index, or a component with no valid reason settles `inconclusive`, `certificate-rejected{rule, at}` naming the failed rule and its node or component. | Test (TC-371) |
 | FR-418-AC-3 | A certificate whose identity differs from the item's is refused `invalid_runtime_input`/`conflicting-identity`. | Test (TC-371) |
 | FR-418-AC-4 | Constants are scaled to integers by the least common multiple of their denominators and DBM bounds are arbitrary-precision integers, so a constant of any size checks exactly. | Test (TC-371) |
 | FR-418-AC-5 | A time-lock-freedom certificate states a reachable time-divergent target for every node, and the checker verifies each. | Test (TC-371) |

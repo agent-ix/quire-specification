@@ -33,7 +33,7 @@ The models below are defined here in full; the citation names the QSL design rec
 | RG-03 | A long-run claim from a transient initial state that never recurs | Stops at `max_cycle_steps`; `incomplete`, `limit-reached{limit, value, setting}` naming `max_cycle_steps`, its value and the request setting that raises it; no `measured` value |
 | RG-04 | SC-01 with `max_samples` 1000 | `incomplete`, `limit-reached` naming `max_samples`, value 1000, and the request setting that raises it; no `measured` value |
 | RG-05 | Fixture `Up`: one object `v: Server { up: Boolean }`, initially `up = true`, one operation `Server::tick` with post `up = pre(up)`, `workload Steady on Up { weight Server::tick = 1; }`; claim `long_run_fraction holds(v.up) <= 0.9995` with `alpha 0.01, beta 0.01, indifference 0.0002`, regenerative, `min_cycles` 1000 | Every cycle has length 1 and ratio 1, so `S² = 0` and `Â = 1`; the half-width is `z / n` with `z = z_{0.99} ≈ 2.3263478740`, rounded outward. At `n = 1000` it is about `0.00233`, above `ι`, so the run does not stop at `min_cycles`. It stops at exactly `n = 11632` cycles, the least `n` with `z / n <= 1/5000` (`z / ι ≈ 11631.74`), with the interval above `0.9995`: `measured: rejected`, coverage `asymptotic` |
-| RG-06 | RG-01 cancelled by the caller with cancellation identity `op-17` after 500 cycles | `incomplete`, `cancelled{source: "op-17"}`; not `limit-reached`; no `measured` value |
+| RG-06 | RG-01 cancelled by the caller after 500 cycles | `incomplete`, `cancelled{source: "requested"}`; not `limit-reached`; no `measured` value |
 
 ## Expected Results
 

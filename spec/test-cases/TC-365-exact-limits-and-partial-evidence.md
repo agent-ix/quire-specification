@@ -31,7 +31,7 @@ The models below are defined here in full; the citation names the QSL design rec
 | XL-02 | `Monthly` with `max_states` 1000 | `incomplete`, `limit-reached` naming `max_states`, value 1000, and the request setting that raises it |
 | XL-03 | A `>= θ` claim whose lower certificate on the explored part already passes `θ` when `max_states` stops exploration | `proved` from the partial evidence |
 | XL-04 | A `<= θ` claim whose path set on the explored part already passes `θ` when a limit stops exploration | `refuted` from the partial evidence |
-| XL-05 | `Monthly` cancelled by the caller with cancellation identity `op-17` before its backward induction completes | `incomplete`, `cancelled{source: "op-17"}`; not `limit-reached`; no value |
+| XL-05 | `Monthly` cancelled by the caller before its backward induction completes | `incomplete`, `cancelled{source: "requested"}`; not `limit-reached`; no value |
 
 ## Expected Results
 

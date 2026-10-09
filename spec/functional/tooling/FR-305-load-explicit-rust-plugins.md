@@ -64,8 +64,9 @@ installs, and runs with the user's own authority.
   reproduces it.
 - **Trusted proofs.** A plugin's `proved` result cannot be replayed and has
   no in-core certificate checker. Its terminal record keeps the result
-  `proved`, names the plugin's backend identity and carries the basis label
-  `trusted`. A renderer shows the label beside the verdict.
+  `proved`, names the plugin's backend identity and carries the FR-331
+  certification `trusted`. Its proof basis is the one the plugin reports.
+  A renderer shows the label beside the verdict.
 - **Failures.** A crash, malformed output, an undeclared capability and every
   other FR-462 wire failure settle each affected item FR-331 `failed` with a
   typed tool-failure cause and never a verdict.
@@ -75,7 +76,7 @@ installs, and runs with the user's own authority.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-305-AC-1 | A compile-time provider and a process plugin each register through their FR-331 manifest, receive only the items negotiation routes to them, and return results that the typed FR-331 reader admits; registering either changes no checked package byte. | Test (TC-225) |
-| FR-305-AC-2 | A plugin `proved` result settles `proved` with the plugin's backend identity and the basis label `trusted`, and the rendered outcome shows `trusted` beside the verdict. | Test (TC-225) |
+| FR-305-AC-2 | A plugin `proved` result settles `proved` with the plugin's backend identity and the certification `trusted`, and the rendered outcome shows `trusted` beside the verdict. | Test (TC-225) |
 | FR-305-AC-3 | Malformed, oversized, timed-out or crashing plugin output settles each affected item `failed` or `incomplete` with its typed cause, never a verdict, and items routed elsewhere are unaffected. | Test (TC-225) |
 | FR-305-AC-4 | A plugin counterexample settles `refuted` only when replay reproduces it; a counterexample replay does not reproduce settles `inconclusive`. | Test (TC-225) |
 
