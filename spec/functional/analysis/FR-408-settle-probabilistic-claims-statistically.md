@@ -215,7 +215,7 @@ the request, with the published default FR-461 gives it. Reaching any of them
 stops the run with `incomplete`, `limit-reached{limit, value, setting}`,
 naming the budget, its value and the request setting that raises it. A caller
 cancellation stops the run with `incomplete`, `cancelled{source}`, whose
-`source` is the cancellation cause, `requested` when the caller cancels and `deadline` when the caller's deadline ends the run. Neither records a `measured` value. The method, `min_cycles`, the seed and the
+`source` is the cancellation cause, `requested` when the caller cancels and `deadline` when the caller's deadline ends the run; the backend's own time limit settles `limit-reached` or `timed-out`. Neither records a `measured` value. The method, `min_cycles`, the seed and the
 budgets are recorded in the result and are outside the obligation identity.
 
 ### Reproducibility

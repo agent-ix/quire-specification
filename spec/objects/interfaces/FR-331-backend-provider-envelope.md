@@ -72,7 +72,7 @@ checked, unchecked or taken on trust:
 
 | `certification` | Meaning | Proofs that carry it |
 | --- | --- | --- |
-| `certified` | The qualified core produced or checked the proof: a core checker accepted its certificate, or the core's own prove path produced it | an accepted certificate or recomputed evidence (`exhaustive` with its closure or component certificate, `reduced` with copy-swap as its only reduction and its product-closure certificate ([FR-403](../../functional/analysis/FR-403-reduce-hyperproperty-state-spaces.md)), `bounded-complete` or `inductive` whose SMT certificate the core verified ([FR-354](../../functional/ir-proof/FR-354-record-proof-trust-basis.md)), `exact-value`, `value-bounds`, `zone-certified`, `closed-form`, `witnessed`); a Kani `bounded-proof{checks}` |
+| `certified` | The qualified core produced or checked the proof: a core checker accepted its certificate, or the core's own prove path produced it | an accepted certificate or recomputed evidence (`exhaustive` with no state constraint and its closure or component certificate, `reduced` with copy-swap as its only reduction and its product-closure certificate ([FR-403](../../functional/analysis/FR-403-reduce-hyperproperty-state-spaces.md)), `bounded-complete` or `inductive` whose SMT certificate the core verified ([FR-354](../../functional/ir-proof/FR-354-record-proof-trust-basis.md)), `exact-value`, `value-bounds`, `zone-certified`, `closed-form`, `witnessed`); a Kani `bounded-proof{checks}` |
 | `uncertified` | A first-party engine or solver outside the core proved it, and no core checker re-checked it | `reduced` with a `symmetry` or `partial-order` reduction, and `exhaustive` under a state constraint ([FR-385](../../functional/analysis/FR-385-report-reduced-verdicts.md)); `bounded-solver` ([FR-193](../../functional/analysis/FR-193-analyze-continuous-hybrid-models.md)); an SMT proof whose certificate is absent or cannot be verified (FR-354); any proof whose method has no core certificate checker |
 | `trusted` | A third-party plugin proved it, and the core runs no check of it | every plugin `proved` result ([FR-305](../../functional/tooling/FR-305-load-explicit-rust-plugins.md)) |
 
@@ -275,7 +275,7 @@ or from a failure around the run:
 | `Counterexample` | `refuted` | its `counterexamples` entry names the transcript artifact |
 | `Refused`, `InvalidInput`, `IncompleteInput` | `declined` | cause `refused`, `invalid-input` or `incomplete-input`, with the run's typed `diagnostic` |
 | `Unavailable` | `unsupported` | diagnostic `unsupported_projection`/`tool-unavailable`, `detail` naming `kind`, `backend` and the `absent` solver or backend |
-| `TimedOut` | `incomplete` | cause `timed-out` |
+| `TimedOut` | `incomplete` | cause `timed-out`, the backend's own time limit; a caller's deadline is `cancelled{source}` with `source` `deadline` |
 | `ResourceExhausted` | `incomplete` | cause `limit-reached{limit, value, setting}`, the setting `kani.<limit>` |
 | `Cancelled` | `incomplete` | cause `cancelled{source}` |
 | `Inconclusive` | `inconclusive` | its typed cause, such as `replay-parity` (a replay disagreement at AD-016 arrow 7) |
