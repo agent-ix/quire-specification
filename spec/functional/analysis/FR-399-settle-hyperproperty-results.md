@@ -79,8 +79,8 @@ closed computation that replay repeats.
 | The match was refused or incomplete at a reachable joint step | `inconclusive` | `unsettled` | `match-undetermined` |
 | A vacuous clause ([FR-395](FR-395-analyze-hyperproperties-over-behaviours.md)) | `inconclusive` | `unsettled` | `vacuous-match` |
 | An undecided successor, no initial state, an induction step that does not close, replay disagreement or replay refusal | `inconclusive` | `unsettled` | `undecided-successor`, `no-initial-state`, `induction-not-closed`, `replay-parity` or `replay-refused` |
-| A run limit, meter or time budget stopped the run | `incomplete` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `limit-reached{limit, value, setting}` |
-| The caller cancelled the run | `incomplete` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `cancelled{source}` |
+| A run limit, meter or time budget stopped the run | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `limit-reached{limit, value, setting}` |
+| The caller cancelled the run | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `cancelled{source}` |
 | HP-4, or a clause over `behaviours` under a profile other than infinite-trace | `unsupported` | `unavailable` | `unsupported_projection`/`unsupported-requested-capability` |
 
 An HP-5 item settles by [FR-396](FR-396-classify-hyperproperty-forms.md)'s
@@ -157,7 +157,7 @@ steps and automaton states for hyper items.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-399-AC-1 | Each outcome row settles exactly its listed FR-360 label, FR-243 basis and cause, a stopped run `incomplete` with `limit-reached` and a cancelled run `incomplete` with `cancelled`, and each label matches exactly one FR-360 member with its FR-241, FR-242 and FR-243 combination. | Test (TC-338, TC-339, TC-340, TC-342) |
+| FR-399-AC-1 | Each outcome row settles exactly its listed FR-360 label, FR-243 basis and cause, a stopped run `incomplete` with `limit-reached` and a cancelled run `incomplete` with `cancelled{source}`, and each label matches exactly one FR-360 member with its FR-241, FR-242 and FR-243 combination. | Test (TC-338, TC-339, TC-340, TC-342) |
 | FR-399-AC-2 | An HP-3 clause is refuted exactly when a fair universal tuple reaches an empty witness set; on the leaky vault `X_1` is empty, and on the secure vault every `X` is a singleton and the clause is proved. | Test (TC-339) |
 | FR-399-AC-3 | An HP-3 run whose witness set reaches `max_witness_set` stops and settles `incomplete` with cause `limit-reached` naming `max_witness_set`, its value and its setting; a request that sets none runs under the provider's published default. | Test (TC-339) |
 | FR-399-AC-4 | An HP-1 run that reaches `max_relation_tuples` stops and settles `incomplete` with cause `limit-reached` naming the limit, its value and its setting; a request that sets none runs under the provider's published default. | Test (TC-343) |

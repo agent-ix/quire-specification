@@ -187,7 +187,7 @@ certificate the provider has first checked with the FR-412 checker.
 | The claim evaluates undefined at a product state reached with positive probability, under some scheduler or the workload | `refuted` | `decisive-counterexample` | cause `undefined-evaluation`, with `where` and `cause`, and an FR-413 undefined path that replays |
 | Interval straddles the threshold at the budget | `incomplete`, execution `resource-incomplete` | `unavailable` | `precision-budget{lower, upper}` |
 | A run limit reached first | `incomplete`, execution `resource-incomplete` | `unavailable` | `limit-reached` naming the `ExactProbLimits` member, its value and the request setting that raises it |
-| Certificate rejected; witness replay disagrees | `inconclusive` | `unsettled` | `certificate-rejected`; `replay-parity` |
+| Certificate rejected; witness replay disagrees | `inconclusive` | `unsettled` | `certificate-rejected{rule, at}` naming the failed check and its state; `replay-parity` |
 | `not-markov`, `zero-weight-component`, and the timed causes of [FR-421](../temporal/FR-421-check-probabilistic-timed-claims-exactly.md) | `unsupported` | `unavailable` | that cause |
 
 `reductions` lists the applied state-space reductions, empty when none

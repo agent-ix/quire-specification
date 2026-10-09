@@ -72,13 +72,14 @@ checked, unchecked or taken on trust:
 
 | `certification` | Meaning | Proofs that carry it |
 | --- | --- | --- |
-| `certified` | The qualified core produced or checked the proof: a core checker accepted its certificate, or the core's own prove path produced it | an accepted certificate or recomputed evidence (`exhaustive` with its closure or component certificate, `bounded-complete` or `inductive` whose SMT certificate the core verified ([FR-354](../../functional/ir-proof/FR-354-record-proof-trust-basis.md)), `exact-value`, `value-bounds`, `zone-certified`, `closed-form`, `witnessed`); a Kani `bounded-proof{checks}` |
-| `uncertified` | A first-party engine or solver outside the core proved it, and no core checker re-checked it | `reduced` ([FR-385](../../functional/analysis/FR-385-report-reduced-verdicts.md)); `bounded-solver` ([FR-193](../../functional/analysis/FR-193-analyze-continuous-hybrid-models.md)); an SMT proof whose certificate is absent or cannot be verified (FR-354); any proof whose method has no core certificate checker |
+| `certified` | The qualified core produced or checked the proof: a core checker accepted its certificate, or the core's own prove path produced it | an accepted certificate or recomputed evidence (`exhaustive` with its closure or component certificate, `reduced` with copy-swap as its only reduction and its product-closure certificate ([FR-403](../../functional/analysis/FR-403-reduce-hyperproperty-state-spaces.md)), `bounded-complete` or `inductive` whose SMT certificate the core verified ([FR-354](../../functional/ir-proof/FR-354-record-proof-trust-basis.md)), `exact-value`, `value-bounds`, `zone-certified`, `closed-form`, `witnessed`); a Kani `bounded-proof{checks}` |
+| `uncertified` | A first-party engine or solver outside the core proved it, and no core checker re-checked it | `reduced` with a `symmetry` or `partial-order` reduction ([FR-385](../../functional/analysis/FR-385-report-reduced-verdicts.md)); `bounded-solver` ([FR-193](../../functional/analysis/FR-193-analyze-continuous-hybrid-models.md)); an SMT proof whose certificate is absent or cannot be verified (FR-354); any proof whose method has no core certificate checker |
 | `trusted` | A third-party plugin proved it, and the core runs no check of it | every plugin `proved` result ([FR-305](../../functional/tooling/FR-305-load-explicit-rust-plugins.md)) |
 
 Each value settles `proved`, and `certification` belongs to `proved` alone.
 A certificate a core checker rejects settles the item `inconclusive` with
-cause `certificate-rejected`.
+cause `certificate-rejected{rule, at}`: `rule` the check rule that failed and
+`at` where it failed, for every core checker.
 
 ### Wire spellings of probabilistic, timed and real-time results
 
@@ -96,7 +97,7 @@ for these items with `invalid_result`/`unknown-cause`.
 | `proved` (proof basis) | `exact-value{value, reductions}`, `value-bounds{lower, upper, method, reductions}` with `method` `backward-induction{precision_bits}` or `interval-iteration{precision_bits, sweeps}`, `zone-certified`, `exhaustive`, `closed-form{analysis}` with `analysis` `fixed-priority`, `edf` or `amc-rtb`, `bounded-solver{method, horizon, jumps}` |
 | `refuted` (cause) | `undefined-evaluation{where, cause}` |
 | `measured` (FR-409 cause) | `undefined-evaluation{where, cause}` for `rejected`; `indifference-region` and `undecided-successor` for `undecided` |
-| `inconclusive` (cause) | `certificate-rejected{rule, at}`, `rule` the check rule that failed and `at` where it failed, `replay-parity`, `undecided-successor`, `sufficient-test-failed`, `solver-inconclusive`, `lasso-not-concretized`, `no-admitted-behaviour`, `well-definedness-unchecked` |
+| `inconclusive` (cause) | `certificate-rejected{rule, at}`, `replay-parity`, `undecided-successor`, `sufficient-test-failed`, `solver-inconclusive`, `lasso-not-concretized`, `no-admitted-behaviour`, `well-definedness-unchecked` |
 | `incomplete` (cause) | `limit-reached{limit, value, setting}`, naming the limit, its value and the request setting that raises it, the one limit-stop cause of every engine; `precision-budget{lower, upper}`; `cancelled{source}` for a run stopped by the caller, `source` the cancellation identity the caller supplied, retained exactly |
 | `unsupported` (cause) | `missing-confidence`, `every-scheduler`, `exact-only-form`, `not-markov{state, transition, post_states}`, `not-stochastic{state, identity}`, `time-locked-sample{state}`, `zero-weight-component{component}`, `delay-distribution{operation}`, `strict-clock-constraint{locus}`, `zero-delay-cycle{states}`, `timed-form-shape{locus}`, `punctual-interval{locus}`, `stopwatch-required` |
 
@@ -239,7 +240,7 @@ names, FR-462), `kind` and `result`, and:
 | `inconclusive` | `cause` |
 | `unsupported` | exactly one of `cause` and `diagnostic` |
 | `declined` | `cause` (`refused`, `invalid-input` or `incomplete-input`) and `diagnostic` |
-| `incomplete` | `cause` (`limit-reached`, `precision-budget`, `cancelled` or `timed-out`) |
+| `incomplete` | `cause` (`limit-reached`, `precision-budget`, `cancelled{source}` or `timed-out`) |
 | `failed` | exactly one of `cause` (`tool-failure{defect}`, FR-462) and `diagnostic` |
 
 The closed proof bases are those of FR-363 (`exhaustive`,
@@ -361,7 +362,7 @@ out-of-domain values and non-canonical encodings refuse before consumption. A `c
 | FR-331-AC-20 | The Kani vectors carry an admitted result entry for each of the Kani results table's thirteen rows, each `declined` cause separately, so together they hold each of the eight results a Kani item can settle; changing a row's cause or diagnostic to one outside its result's closed set is refused. | Test (TC-431) |
 | FR-331-AC-21 | Every `ProofBound` carries the `kind` of the domain it bounds, from the ADR-014 domain-kind vocabulary shared with an unbounded extent's `domains`, and a bound matching that kind; a `ProofBound` without `kind`, with a kind outside the vocabulary, with a non-boundable kind or with a bound of another kind refuses before consumption: of the seven kinds and three bound types, exactly the pairs `collection` and `population` with `cardinality`, `integer` with `integer-range` and `recursive` with `depth` are admitted. | Test (TC-431) |
 | FR-331-AC-22 | The manifest schema applies FR-290's `domains` registration rule to every descriptor: one whose `domains` is present and empty, holds a non-boundable or unknown kind or repeats a kind is refused whatever modes it advertises, one that advertises a `bounded` mode without `domains` is refused, and one that advertises only `unbounded` modes is admitted without `domains`. | Test (TC-431) |
-| FR-331-AC-23 | Every `proved` result entry carries exactly one `certification`, `certified`, `uncertified` or `trusted`: a Kani `bounded-proof`, a checked `value-bounds` and a checked `witnessed` proof, and an SMT `bounded-complete` proof whose certificate the core verified, carry `certified`, a `reduced` proof and an SMT `inductive` proof with no verified certificate `uncertified`, and a plugin proof `trusted`; a `proved` entry without `certification`, a `reduced` or `bounded-solver` proof carrying `certified`, one with another value, and a `certification` on any other result are refused. | Test (TC-431) |
+| FR-331-AC-23 | Every `proved` result entry carries exactly one `certification`, `certified`, `uncertified` or `trusted`: a Kani `bounded-proof`, a checked `value-bounds` and a checked `witnessed` proof, and an SMT `bounded-complete` proof whose certificate the core verified, carry `certified`, a symmetry-`reduced` proof and an SMT `inductive` proof with no verified certificate `uncertified`, and a plugin proof `trusted`; a `proved` entry without `certification`, a `reduced` proof with a `symmetry` or `partial-order` reduction or a `bounded-solver` proof carrying `certified`, one with another value, and a `certification` on any other result are refused. | Test (TC-431) |
 
 ## Dependencies
 

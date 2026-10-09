@@ -31,8 +31,8 @@ The models below are defined here in full; the citation names the QSL design rec
 | Vector | Input | Expected result |
 | --- | --- | --- |
 | EC-01 | `Link` `Deliver` at 0.95, `exact` certificate with values `24/25`, `4/5`, 1, 0 | Accepted; the item settles `proved` |
-| EC-02 | EC-01 with the value at the one-loss state raised to `9/10` | `inconclusive`, `certificate-rejected` |
-| EC-03 | A `lower` certificate with one rank missing; one with a non-decreasing rank | `certificate-rejected` |
+| EC-02 | EC-01 with the value at the one-loss state raised to `9/10` | `inconclusive`, `certificate-rejected{rule, at}` naming the one-loss state |
+| EC-03 | A `lower` certificate with one rank missing; one with a non-decreasing rank | `certificate-rejected{rule, at}` naming the rule and the state |
 | EC-04 | EC-01 with another item's identity | Refused `invalid_runtime_input`/`conflicting-identity` |
 | EC-05 | A `lower` certificate naming a subset of states | Checked over the named states and their successors only, unnamed successors at value 0 |
 | EC-06 | `FairTerminates` `exact` certificate whose objective names the fairness set | Accepted after the checker recomputes that no fair end component exists |

@@ -96,7 +96,9 @@ on the checked clause.
   until the concrete tuple closes, at most the permutation's order. The result
   is an ordinary counterexample in quantifier order.
 - **Verdicts.** A proof under copy-swap names copy-swap with its classes among
-  the reductions of its reduced basis. A refutation names no reduction.
+  the reductions of its reduced basis. With copy-swap as its only reduction,
+  the core's product-closure checker checks its certificate and the proof
+  carries the FR-331 certification `certified`. A refutation names no reduction.
 
 ## Acceptance Criteria
 

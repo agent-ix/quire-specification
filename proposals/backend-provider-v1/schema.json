@@ -617,12 +617,13 @@
     },
 
     "AppliedReduction": {
-      "description": "FR-385: one applied reduction with its parameters and preservation row.",
+      "description": "FR-385, FR-403: one applied reduction with its parameters and preservation row.",
       "type": "object",
       "required": ["reduction", "parameters", "row"],
       "oneOf": [
         {"properties": {"reduction": {"const": "symmetry"}, "parameters": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/SymmetryDeclaration"}}, "row": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false},
-        {"properties": {"reduction": {"const": "partial-order"}, "parameters": {"type": "object", "required": ["proviso"], "properties": {"proviso": {"const": "breadth-first-revisit"}}, "additionalProperties": false}, "row": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false}
+        {"properties": {"reduction": {"const": "partial-order"}, "parameters": {"type": "object", "required": ["proviso"], "properties": {"proviso": {"const": "breadth-first-revisit"}}, "additionalProperties": false}, "row": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false},
+        {"properties": {"reduction": {"const": "copy-swap"}, "parameters": {"type": "object", "required": ["classes"], "properties": {"classes": {"type": "array", "minItems": 1, "items": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/Nonempty"}}}}, "additionalProperties": false}, "row": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false}
       ]
     },
     "ReductionNames": {"description": "FR-411: the applied reductions, empty when none applies.", "type": "array", "uniqueItems": true, "items": {"enum": ["symmetry", "partial-order", "constraint"]}},
@@ -833,7 +834,8 @@
         {"if": {"properties": {"basis": {"properties": {"type": {"const": "zone-certified"}}}}, "required": ["basis"]}, "then": {"required": ["certificate"], "properties": {"certificate": {"$ref": "#/$defs/ZoneCertificate"}}}},
         {"if": {"properties": {"basis": {"properties": {"type": {"const": "closed-form"}}}}, "required": ["basis"]}, "then": {"required": ["evidence"]}},
         {"if": {"properties": {"basis": {"properties": {"type": {"enum": ["exhaustive", "bounded-complete", "inductive", "reduced", "bounded-solver", "witnessed", "bounded-proof"]}}}}, "required": ["basis"]}, "then": {"properties": {"certificate": false, "evidence": false}}},
-        {"if": {"properties": {"basis": {"properties": {"type": {"enum": ["reduced", "bounded-solver"]}}}}, "required": ["basis"]}, "then": {"properties": {"certification": {"enum": ["uncertified", "trusted"]}}}},
+        {"if": {"properties": {"basis": {"properties": {"type": {"const": "bounded-solver"}}}}, "required": ["basis"]}, "then": {"properties": {"certification": {"enum": ["uncertified", "trusted"]}}}},
+        {"if": {"properties": {"basis": {"properties": {"type": {"const": "reduced"}, "reductions": {"contains": {"properties": {"reduction": {"enum": ["symmetry", "partial-order"]}}, "required": ["reduction"]}}}, "required": ["type", "reductions"]}}, "required": ["basis"]}, "then": {"properties": {"certification": {"enum": ["uncertified", "trusted"]}}}},
         {"if": {"properties": {"result": {"const": "refuted"}}}, "then": {"required": ["counterexample"], "properties": {"cause": {"$ref": "#/$defs/UndefinedEvaluation"}, "diagnostic": false, "verdict": false, "evidence": false}}},
         {"if": {"properties": {"result": {"const": "tested"}}}, "then": {"properties": {"cause": false, "diagnostic": false, "verdict": false, "counterexample": false, "evidence": false}}},
         {"if": {"properties": {"result": {"const": "measured"}}}, "then": {"required": ["verdict"], "properties": {"cause": false, "diagnostic": false, "counterexample": false, "evidence": false}}, "else": {"properties": {"verdict": false}}},

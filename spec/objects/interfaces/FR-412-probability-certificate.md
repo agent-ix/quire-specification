@@ -80,7 +80,9 @@ initial state's value on the claim's side of the threshold: `lower` for a
 proof of `>= θ` or a refutation of `<= θ`; `upper` for a proof of `<= θ` or a
 refutation of `>= θ`; `exact` for either. It refuses a certificate whose
 `identity` differs from the item's with `invalid_runtime_input`/`conflicting-identity`.
-A rejected certificate settles the item `inconclusive`, `certificate-rejected`;
+A rejected certificate settles the item `inconclusive`,
+`certificate-rejected{rule, at}`, naming the inequality or rule that failed and
+the state where it failed;
 a checker stopped by a budget settles `incomplete`, `limit-reached` naming
 the budget. The checker runs under the request's budgets; its cost is the
 re-enumeration plus one pass over the edges.
@@ -91,7 +93,8 @@ re-enumeration plus one pass over the edges.
 - **Key** — every member above.
 - **Absence** — a `lower` or `exact` certificate without `ranking`, a lower
   bound on a maximum without `policy`, or a `long-run` certificate without
-  `components` is rejected, `certificate-rejected`.
+  `components` is rejected, `certificate-rejected{rule, at}` naming the missing
+  member.
 
 ## Acceptance Criteria
 
@@ -99,7 +102,7 @@ re-enumeration plus one pass over the edges.
 | --- | --- | --- |
 | FR-412-AC-1 | The checker accepts the `Deliver` `exact` certificate (TC-363) (values `24/25`, `4/5`, 1 at delivered states, 0 at the two-loss state) after checking the minimum over both actions at each live state. | Test (TC-363) |
 | FR-412-AC-2 | The checker accepts the `LongRun` `long-run` certificate (TC-362) (gain `1800/1801`, bias 0 at `up` and `−2000/1801` at `down`) by exact equality. | Test (TC-362) |
-| FR-412-AC-3 | A certificate that violates one inequality, a `lower` certificate with a missing rank, or one with a rank that does not decrease, settles `inconclusive`, `certificate-rejected`. | Test (TC-363) |
+| FR-412-AC-3 | A certificate that violates one inequality, a `lower` certificate with a missing rank, or one with a rank that does not decrease, settles `inconclusive`, `certificate-rejected{rule, at}` naming the failed rule and its state. | Test (TC-363) |
 | FR-412-AC-4 | A certificate whose identity differs from the item's is refused `invalid_runtime_input`/`conflicting-identity`. | Test (TC-363) |
 | FR-412-AC-5 | A `lower` certificate is checked over its named states and their successors only, with each unnamed successor at value 0. | Test (TC-363) |
 | FR-412-AC-6 | The checker recomputes every qualitative set and component itself and reads no other output of the provider. | Test (TC-363) |
