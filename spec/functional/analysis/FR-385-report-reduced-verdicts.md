@@ -95,7 +95,7 @@ A claim that evaluates undefined at a reached state settles `refuted` with
 cause `undefined-evaluation` by the FR-363 rule, under any reduction, with a
 concrete counterexample that names no reduction.
 
-A reduced proof carries `certification` `uncertified` in its terminal record
+A reduced proof's result carries `certification` `uncertified`
 ([FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md)): no
 core checker re-checks the reduced graph, so a consumer can tell it from a
 certified proof. A reduced proof is never an exhaustive proof: a consumer that counts proofs

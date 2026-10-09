@@ -223,7 +223,7 @@ with a typed, located outcome.
 | V1-BACK-020 | Emit Verus `requires`/`ensures` and loop invariants from QSL state contracts onto named implementation Rust functions. | Required | V1-006; prose census |
 | V1-BACK-021 | Declare a model-to-implementation abstraction relation from model objects, populations and operation frames to implementation state. | Required | V1-006; prose census |
 | V1-BACK-022 | Refuse emission onto implementation code that references a model element with no bound abstraction relation, naming the element. | Integrity | V1-BACK-021; prose census |
-| V1-BACK-023 | Record a proved settlement's trust basis: `certificate-checked` when the cvc5 Alethe certificate for the exact query passes Carcara, otherwise `solver-asserted`. | Required | V1-BACK-019; prose census |
+| V1-BACK-023 | Record a proved settlement's certification: `certified` when the core's Alethe checker verifies the cvc5 certificate for the core's own query, `uncertified` when the certificate is absent or unverifiable. | Required | V1-BACK-019; prose census |
 | V1-BACK-024 | Return the same verdict from the SMT encoding and the native runtime on a shared differential corpus. | Required | V1-BACK-019; prose census |
 
 ## 8. Evidence, qualification, tooling and ecosystem

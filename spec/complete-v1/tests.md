@@ -1167,8 +1167,6 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-354 | FR-354-AC-4 | TC-269 |  |
 | FR-354 | FR-354-AC-5 | TC-269 |  |
 | FR-354 | FR-354-AC-6 | TC-269 |  |
-| FR-354 | FR-354-AC-7 | TC-269 |  |
-| FR-354 | FR-354-AC-8 | TC-269 |  |
 | FR-355 | FR-355-AC-1 | TC-270 |  |
 | FR-355 | FR-355-AC-2 | TC-270 |  |
 | FR-355 | FR-355-AC-3 | TC-270 |  |
@@ -1807,7 +1805,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-266 | SMT backend registration and capability advertisement | Property | P0 | FR-349, FR-346, FR-347, FR-147 | 🚧 |
 | TC-267 | Verus contract emission from QSL state contracts | Property | P0 | FR-350 | 🚧 |
 | TC-268 | Model-to-implementation abstraction relation binding and refusal | Property | P0 | FR-353 | 🚧 |
-| TC-269 | Proved settlement trust basis | Property | P0 | FR-354 | 🚧 |
+| TC-269 | Proved settlement certification | Property | P0 | FR-354 | 🚧 |
 | TC-270 | SMT/native runtime differential parity corpus | Property | P0 | FR-355 | 🚧 |
 | TC-271 | Capability kinds, advertised modes and candidate-set negotiation | Property | P0 | FR-290, FR-331, FR-272 | 🚧 |
 | TC-272 | Replay source structural separation | Property | P0 | FR-197 | 🚧 |

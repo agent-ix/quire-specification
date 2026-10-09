@@ -31,10 +31,11 @@ contract shape, and further solver or code-generation backends may register
 the same way. cvc5 advertises unbounded quantification, induction,
 composition and mathematical-integer capabilities; Verus emits
 `requires`/`ensures`/loop-invariant clauses onto named implementation Rust
-functions through the FR-353 abstraction relation. Carcara is a certificate
-checker, not a claim-discharging registrant: it checks cvc5's Alethe proof
-certificates, giving a `proved` settlement its `certificate-checked` or
-`solver-asserted` trust basis (FR-354). A claim no registered backend can
+functions through the FR-353 abstraction relation. The qualified core's
+Alethe checker is no registrant: it checks cvc5's Alethe proof certificates
+against the queries the core encodes, giving a `proved` settlement its FR-331
+certification `certified`, or `uncertified` when the certificate is absent
+or cannot be verified (FR-354). A claim no registered backend can
 discharge settles `unsupported` with a warning naming the required
 capability.
 
@@ -51,7 +52,7 @@ flowchart LR
   Q --> M[cvc5 / Z3 cross-check]
   Q --> V2[Verus]
   Q --> S[Other solver/codegen provider]
-  M --> C[Carcara certificate check]
+  M --> C[Core Alethe certificate check]
   O --> R[Typed result and artifact accounting]
   P --> R
   K --> R
@@ -83,8 +84,8 @@ same package and input domain. Backend and runtime verdict disagreement is an ex
 | Negotiate exact support per item before emission | Best-effort lowering | No proof can be claimed over approximated meaning. |
 | Bounds derive from model domains | Backend-invented constants | Kani/property domains correspond to authored semantics. |
 | One replayable counterexample envelope | Backend-specific opaque text | Every proof failure can be checked by the native runtime. |
-| Settle unsupported with a capability-naming warning when no registered backend can discharge a claim | Hold delivery pending a new backend's registration | Solver absence never stalls admitted results; the claim-discharging registrant set (Kani, cvc5/Z3 and Verus) can grow independently of already-admitted claims, and Carcara's certificate-checking role composes with it without adding a second registrant shape. |
-| A proved settlement records `certificate-checked` only when Carcara passes the exact cvc5 Alethe certificate, otherwise `solver-asserted` | Treat every proved settlement as equally trusted | The trusted base is explicit per settlement; certificate absence never hides a weaker basis behind an unqualified `proved`. |
+| Settle unsupported with a capability-naming warning when no registered backend can discharge a claim | Hold delivery pending a new backend's registration | Solver absence never stalls admitted results; the claim-discharging registrant set (Kani, cvc5/Z3 and Verus) can grow independently of already-admitted claims, and the core's certificate-checking role composes with it without adding a second registrant shape. |
+| A proved settlement records `certified` only when the core's Alethe checker verifies the cvc5 certificate for the exact query, otherwise `uncertified` | Treat every proved settlement as equally trusted | The trusted base is explicit per settlement; certificate absence never hides a weaker basis behind an unqualified `proved`. |
 
 ## Risks
 
@@ -93,4 +94,4 @@ same package and input domain. Backend and runtime verdict disagreement is an ex
 | Generated code silently omits a clause | Per-obligation accounting and package-level completeness rule. |
 | Runtime and proof models diverge | Bounded corpus parity plus counterexample replay as qualification gates. |
 | SMT encoding and native runtime disagree on meaning | Differential corpus parity check (FR-355) records every disagreement as an explicit failure. |
-| A `solver-asserted` proof is mistaken for a checked one | The trust basis (FR-354) is a required, distinct field on every `proved` settlement. |
+| An `uncertified` proof is mistaken for a checked one | The FR-331 `certification` is a required member of every `proved` result (FR-354). |

@@ -627,11 +627,11 @@
     },
     "ReductionNames": {"description": "FR-411: the applied reductions, empty when none applies.", "type": "array", "uniqueItems": true, "items": {"enum": ["symmetry", "partial-order", "constraint"]}},
     "ProofBasis": {
-      "description": "The closed proof-basis spellings: FR-363, FR-385, FR-391, FR-411, FR-418, FR-419, FR-193, FR-305 and the FR-331 Kani basis.",
+      "description": "The closed proof-basis spellings: FR-363, FR-385, FR-391, FR-411, FR-418, FR-419, FR-193 and the FR-331 Kani basis.",
       "type": "object",
       "required": ["type"],
       "oneOf": [
-        {"properties": {"type": {"enum": ["exhaustive", "zone-certified", "trusted"]}}, "required": ["type"], "additionalProperties": false},
+        {"properties": {"type": {"enum": ["exhaustive", "zone-certified"]}}, "required": ["type"], "additionalProperties": false},
         {"properties": {"type": {"enum": ["bounded-complete", "inductive"]}, "depth": {"$ref": "#/$defs/Count"}}, "required": ["type", "depth"], "additionalProperties": false},
         {"properties": {"type": {"const": "reduced"}, "reductions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/AppliedReduction"}}}, "required": ["type", "reductions"], "additionalProperties": false},
         {"properties": {"type": {"const": "exact-value"}, "value": {"$ref": "#/$defs/Rational"}, "reductions": {"$ref": "#/$defs/ReductionNames"}}, "required": ["type", "value", "reductions"], "additionalProperties": false},
@@ -809,7 +809,7 @@
     },
 
     "Result": {
-      "description": "FR-331 result entry. basis is the proof basis of proved; cause is the closed cause; diagnostic is an FR-272 typed cause.",
+      "description": "FR-331 result entry. basis and certification belong to proved; cause is the closed cause; diagnostic is an FR-272 typed cause.",
       "type": "object",
       "required": ["request_index", "backend", "kind", "result"],
       "properties": {
@@ -818,6 +818,7 @@
         "kind": {"$ref": "#/$defs/Kind"},
         "result": {"$ref": "#/$defs/ResultValue"},
         "basis": {"$ref": "#/$defs/ProofBasis"},
+        "certification": {"description": "FR-331 Certification: who stands behind a proved result.", "enum": ["certified", "uncertified", "trusted"]},
         "cause": {"type": "object", "required": ["type"]},
         "diagnostic": {"$ref": "#/$defs/DiagnosticCause"},
         "certificate": {"oneOf": [{"$ref": "#/$defs/ProbabilityCertificate"}, {"$ref": "#/$defs/ZoneCertificate"}]},
@@ -826,11 +827,11 @@
         "counterexample": {"description": "the zero-based position of the item's entry in counterexamples", "$ref": "#/$defs/Count"}
       },
       "allOf": [
-        {"if": {"properties": {"result": {"const": "proved"}}}, "then": {"required": ["basis"], "properties": {"cause": false, "diagnostic": false, "verdict": false, "counterexample": false}}, "else": {"properties": {"basis": false, "certificate": false}}},
+        {"if": {"properties": {"result": {"const": "proved"}}}, "then": {"required": ["basis", "certification"], "properties": {"cause": false, "diagnostic": false, "verdict": false, "counterexample": false}}, "else": {"properties": {"basis": false, "certification": false, "certificate": false}}},
         {"if": {"properties": {"basis": {"properties": {"type": {"enum": ["exact-value", "value-bounds"]}}}}, "required": ["basis"]}, "then": {"required": ["certificate"], "properties": {"certificate": {"$ref": "#/$defs/ProbabilityCertificate"}}}},
         {"if": {"properties": {"basis": {"properties": {"type": {"const": "zone-certified"}}}}, "required": ["basis"]}, "then": {"required": ["certificate"], "properties": {"certificate": {"$ref": "#/$defs/ZoneCertificate"}}}},
         {"if": {"properties": {"basis": {"properties": {"type": {"const": "closed-form"}}}}, "required": ["basis"]}, "then": {"required": ["evidence"]}},
-        {"if": {"properties": {"basis": {"properties": {"type": {"enum": ["exhaustive", "bounded-complete", "inductive", "reduced", "bounded-solver", "witnessed", "trusted", "bounded-proof"]}}}}, "required": ["basis"]}, "then": {"properties": {"certificate": false, "evidence": false}}},
+        {"if": {"properties": {"basis": {"properties": {"type": {"enum": ["exhaustive", "bounded-complete", "inductive", "reduced", "bounded-solver", "witnessed", "bounded-proof"]}}}}, "required": ["basis"]}, "then": {"properties": {"certificate": false, "evidence": false}}},
         {"if": {"properties": {"result": {"const": "refuted"}}}, "then": {"required": ["counterexample"], "properties": {"cause": {"$ref": "#/$defs/UndefinedEvaluation"}, "diagnostic": false, "verdict": false, "evidence": false}}},
         {"if": {"properties": {"result": {"const": "tested"}}}, "then": {"properties": {"cause": false, "diagnostic": false, "verdict": false, "counterexample": false, "evidence": false}}},
         {"if": {"properties": {"result": {"const": "measured"}}}, "then": {"required": ["verdict"], "properties": {"cause": false, "diagnostic": false, "counterexample": false, "evidence": false}}, "else": {"properties": {"verdict": false}}},
@@ -881,12 +882,11 @@
         "limits": {"description": "FR-391, FR-392, FR-408, FR-439, FR-428: the effective value of each limit the run used, defaults included.", "$ref": "#/$defs/CountMap"},
         "reached": {"description": "FR-439, FR-428: the limits the run reached.", "type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/LimitName"}},
         "constraint": {"description": "FR-382, FR-385: the state constraint the run used.", "$ref": "#/$defs/NodeId"},
-        "certification": {"description": "FR-331, FR-385: present exactly when no core checker re-checks the proof.", "const": "uncertified"},
         "warnings": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/Warning"}},
         "tool": {"$ref": "#/$defs/ToolRecord"}
       },
       "allOf": [
-        {"if": {"properties": {"settled_by": {"const": "disposition"}}}, "then": {"properties": {"method": false, "max_depth": false, "seed": false, "witness_samples": false, "limits": false, "reached": false, "constraint": false, "certification": false, "warnings": false, "tool": false}}}
+        {"if": {"properties": {"settled_by": {"const": "disposition"}}}, "then": {"properties": {"method": false, "max_depth": false, "seed": false, "witness_samples": false, "limits": false, "reached": false, "constraint": false, "warnings": false, "tool": false}}}
       ],
       "additionalProperties": false
     }

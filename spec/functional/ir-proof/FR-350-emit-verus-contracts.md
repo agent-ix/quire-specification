@@ -55,9 +55,8 @@ replayable counterexample; the evidence names the Verus version and options
 it ran for every emitted function. When Verus itself is not
 registered, emission is not blocked as `unsupported` on that account alone: a
 claim whose model-level obligation the registered SMT backend already
-settled `proved` keeps that settlement's FR-354 trust basis, recorded as
-`solver-asserted` with a warning naming the absent Verus verification
-capability, distinct from a claim whose required capability no registered
+settled `proved` keeps that settlement and its FR-354 certification, and
+records a warning naming the absent Verus verification capability, distinct from a claim whose required capability no registered
 backend advertises at all, which remains `unsupported`.
 
 ## Acceptance Criteria
@@ -69,7 +68,7 @@ backend advertises at all, which remains `unsupported`.
 | FR-350-AC-3 | Verus registers under the same AD-010 provider contract as Kani and the SMT backend, with no second contract shape. | Test (TC-267) |
 | FR-350-AC-4 | A refuted clause returns a replayable counterexample for the emitted function. | Test (TC-267) |
 | FR-350-AC-5 | A claim Verus cannot discharge settles `unsupported` with a warning naming the required capability, or `requires_bound` when a finite bound is missing. | Test (TC-267) |
-| FR-350-AC-6 | When Verus is not registered, a claim the registered SMT backend already settled `proved` keeps its FR-354 `solver-asserted` trust basis and records a warning naming the absent Verus verification capability, rather than settling `unsupported`. | Test (TC-267) |
+| FR-350-AC-6 | When Verus is not registered, a claim the registered SMT backend already settled `proved` keeps that settlement and its FR-354 certification and records a warning naming the absent Verus verification capability, rather than settling `unsupported`. | Test (TC-267) |
 
 ## Dependencies
 
