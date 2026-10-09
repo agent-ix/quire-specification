@@ -14,7 +14,7 @@ relationships:
 Record `certified` when the core's Alethe checker verifies the cvc5
 certificate against the core's own queries, `uncertified` when the
 certificate is absent or unverifiable, `inconclusive` with
-`certificate-rejected` when it is shown wrong, and `trusted` for a plugin's
+`certificate-rejected{rule, at}` when it is shown wrong, and `trusted` for a plugin's
 `proved` result.
 
 ## Test Procedure
@@ -35,9 +35,9 @@ result and artifact accounting with the criterion.
 | TB-05 | TB-01's certificate with one step's premise replaced by a later step | `inconclusive`, `certificate-rejected{rule, at}` naming the invalid step |
 | TB-06 | TB-01's certificate with its last step removed, so the proof ends short of the empty clause | `inconclusive`, `certificate-rejected{rule, at}` naming the last step |
 | TB-07 | A bounded-complete certificate offered for an `inductive` proof | `inconclusive`, `certificate-rejected{rule, at}` naming the shape mismatch |
+| TB-08 | TB-01 run with the Z3 cross-check agreeing, then disagreeing | Both settle `proved`, `certified`; the cross-check result is recorded beside the certification and never changes it |
 | TB-09 | An inductive certificate whose `Step` proof has an invalid step | `inconclusive`, `certificate-rejected{rule, at}` naming `ProofStepInvalid` at that `Step` step |
 | TB-10 | TB-01's certificate with one step's rule replaced by `lia_generic` and no other defect | `proved`, `uncertified` |
-| TB-08 | TB-01 run with the Z3 cross-check agreeing, then disagreeing | Both settle `proved`, `certified`; the cross-check result is recorded beside the certification and never changes it |
 
 ## Expected Results
 

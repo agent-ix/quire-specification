@@ -673,7 +673,7 @@
       "oneOf": [
         {"$ref": "#/$defs/LimitReached"},
         {"properties": {"type": {"const": "precision-budget"}, "lower": {"$ref": "#/$defs/Rational"}, "upper": {"$ref": "#/$defs/Rational"}}, "required": ["type", "lower", "upper"], "additionalProperties": false},
-        {"properties": {"type": {"const": "cancelled"}, "source": {"$ref": "#/$defs/Nonempty"}}, "required": ["type", "source"], "additionalProperties": false},
+        {"properties": {"type": {"const": "cancelled"}, "source": {"enum": ["requested", "deadline"]}}, "required": ["type", "source"], "additionalProperties": false},
         {"properties": {"type": {"const": "timed-out"}}, "required": ["type"], "additionalProperties": false}
       ]
     },

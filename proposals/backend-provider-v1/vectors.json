@@ -724,7 +724,7 @@
             "result": "incomplete",
             "cause": {
               "type": "cancelled",
-              "source": "caller-cancel-7"
+              "source": "requested"
             }
           },
           {
@@ -1225,7 +1225,8 @@
         "/results/3/cause": "FR-354",
         "/results/4/certification": "FR-331",
         "/results/5/basis": "FR-403",
-        "/results/5/certification": "FR-331"
+        "/results/5/certification": "FR-331",
+        "/results/6/certification": "FR-385"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -1253,6 +1254,10 @@
           },
           {
             "request_index": 5,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 6,
             "disposition": "supported"
           }
         ],
@@ -1340,6 +1345,51 @@
                 }
               ]
             }
+          },
+          {
+            "request_index": 6,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "proved",
+            "certification": "uncertified",
+            "basis": {
+              "type": "reduced",
+              "reductions": [
+                {
+                  "reduction": "copy-swap",
+                  "parameters": {
+                    "classes": [
+                      [
+                        "t1",
+                        "t2"
+                      ]
+                    ]
+                  },
+                  "row": "HP-2 or HP-6 with swappable variables (copy-swap)"
+                },
+                {
+                  "reduction": "symmetry",
+                  "parameters": [
+                    {
+                      "population": "servers",
+                      "classes": [
+                        [
+                          {
+                            "type": "integer",
+                            "value": "1"
+                          },
+                          {
+                            "type": "integer",
+                            "value": "2"
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  "row": "Safety, any fairness"
+                }
+              ]
+            }
           }
         ],
         "counterexamples": [],
@@ -1366,6 +1416,11 @@
           },
           {
             "request_index": 5,
+            "settled_by": "result",
+            "method": "reduced-exploration"
+          },
+          {
+            "request_index": 6,
             "settled_by": "result",
             "method": "reduced-exploration"
           }
@@ -2661,6 +2716,30 @@
           "op": "replace",
           "path": "/results/4/certification",
           "value": "certified"
+        }
+      ]
+    },
+    {
+      "name": "certification-symmetry-certified",
+      "base": "certification-outcome",
+      "owner": "FR-385",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/6/certification",
+          "value": "certified"
+        }
+      ]
+    },
+    {
+      "name": "cancelled-source-other-value",
+      "base": "kani-outcome-incomplete-and-failed",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/2/cause/source",
+          "value": "op-17"
         }
       ]
     },

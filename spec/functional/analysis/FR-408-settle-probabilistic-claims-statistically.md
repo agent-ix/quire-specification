@@ -215,7 +215,7 @@ the request, with the published default FR-461 gives it. Reaching any of them
 stops the run with `incomplete`, `limit-reached{limit, value, setting}`,
 naming the budget, its value and the request setting that raises it. A caller
 cancellation stops the run with `incomplete`, `cancelled{source}`, whose
-`source` is the cancellation identity the caller supplied, retained exactly. Neither records a `measured` value. The method, `min_cycles`, the seed and the
+`source` is the cancellation cause, `requested` when the caller cancels and `deadline` when the caller's deadline ends the run. Neither records a `measured` value. The method, `min_cycles`, the seed and the
 budgets are recorded in the result and are outside the obligation identity.
 
 ### Reproducibility
@@ -235,7 +235,7 @@ is a new, independent measurement of the same obligation.
 | FR-408-AC-5 | The regenerative method on the `LongRun` vector (TC-356) settles accepted with coverage `asymptotic`; a run whose cycle does not return to `s0` within `max_cycle_steps` settles `incomplete`, `limit-reached{limit, value, setting}` naming `max_cycle_steps`, its value and the request setting that raises it, with no `measured` value. | Test (TC-356) |
 | FR-408-AC-6 | With two initial states each test runs at `α/2` and `β/2`; a symmetric pair whose workload and distributions are invariant runs one test. | Test (TC-357) |
 | FR-408-AC-7 | Every logarithm, square root and normal quantile is a rational bound within `2^-64`; `N`, the SPRT sums and thresholds and the regenerative half-width round outward toward undecided, so a sum or half-width within the rounding error of a threshold gives undecided; two runs on different platforms with the same inputs give identical counts and decisions. | Test (TC-355) |
-| FR-408-AC-8 | Reaching `max_samples`, `max_draws`, `max_cycle_steps`, time or the clause meter settles `incomplete`, `limit-reached` naming the budget, its value and the request setting that raises it; a caller cancellation settles `incomplete`, `cancelled{source}` naming the cancellation source, never `limit-reached`; neither records a `measured` value. | Test (TC-356) |
+| FR-408-AC-8 | Reaching `max_samples`, `max_draws`, `max_cycle_steps`, time or the clause meter settles `incomplete`, `limit-reached` naming the budget, its value and the request setting that raises it; a caller cancellation settles `incomplete`, `cancelled{source}` with `source` `requested`, never `limit-reached`; neither records a `measured` value. | Test (TC-356) |
 | FR-408-AC-9 | Re-running with the same seed reproduces every sample and the decision; the method, seed and budgets are outside the obligation identity. | Test (TC-355) |
 | FR-408-AC-10 | A request naming the sequential method for a mean of a fraction settles `invalid-request` at negotiation with `invalid_capability`/`not-statistical`, and no sample is drawn. | Test (TC-355) |
 | FR-408-AC-11 | A run in which the claim evaluates undefined on a drawn sample stops at that sample and settles `measured: rejected`, cause `undefined-evaluation` naming the test index, trace index, position, state-key digest, expression locus and catalogued reason, with that sample as its first sampled witness, which replays to the same undefined value. | Test (TC-359) |

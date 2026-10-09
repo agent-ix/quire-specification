@@ -81,7 +81,7 @@ combination applies only when every selected reduction's row reads "yes".
 | Outcome | FR-341 label | FR-241 / FR-243 | Proof basis or cause |
 | --- | --- | --- | --- |
 | Run completed with symmetry or partial-order reduction applied, no counterexample | `proved` | `completed` / `closed-scope` | proof basis `reduced`, listing each applied reduction with its parameters and preservation row, with `certification` `uncertified` |
-| Run with only a state constraint, completed, no boundary state reached, no counterexample | `proved` | `completed` / `closed-scope` | proof basis `exhaustive`; the constraint is in the terminal record's method |
+| Run with only a state constraint, completed, no boundary state reached, no counterexample | `proved` | `completed` / `closed-scope` | proof basis `exhaustive`, with `certification` `uncertified`; the constraint is in the terminal record's method |
 | Counterexample found under any reduction | `refuted` | `completed` / `decisive-counterexample` | none; the record names no reduction |
 | A selected reduction's row reads "no" | `inconclusive` | `completed` / `unsettled` | `reduction-not-preserving{reduction, form}`, settled before expansion |
 | Initial states not closed under a generator | `inconclusive` | `completed` / `unsettled` | `symmetry-broken{population, initial, generator}`, settled before expansion |
@@ -95,7 +95,8 @@ A claim that evaluates undefined at a reached state settles `refuted` with
 cause `undefined-evaluation` by the FR-363 rule, under any reduction, with a
 concrete counterexample that names no reduction.
 
-A reduced proof's result carries `certification` `uncertified`
+A symmetry- or partial-order-reduced proof's result, and a constraint-only
+proof's, carries `certification` `uncertified`
 ([FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md)): no
 core checker re-checks the reduced graph, so a consumer can tell it from a
 certified proof. A reduced proof is never an exhaustive proof: a consumer that counts proofs
@@ -117,7 +118,7 @@ and its basis is `decisive-counterexample` whatever reduction found it.
 | --- | --- | --- |
 | FR-385-AC-1 | Each cell of the preservation table is applied as stated: a "yes" cell runs the reduction, and a "no" cell settles `inconclusive`, cause `reduction-not-preserving` naming the reduction and form, before any expansion. | Test (TC-323, TC-327) |
 | FR-385-AC-2 | A bounded-profile `always[0,2] holds(x.v = 0)` claim with partial-order reduction selected settles `inconclusive`, `reduction-not-preserving{partial-order, bounded}`, before expansion, and never a false pass. | Test (TC-323) |
-| FR-385-AC-3 | A completed symmetry or partial-order run with no counterexample settles `proved`, basis `closed-scope`, proof basis `reduced` listing each applied reduction, its parameters and its row, with `certification` `uncertified`; a constraint-only run with no boundary state settles proof basis `exhaustive` with the constraint in the method. | Test (TC-321, TC-323, TC-324) |
+| FR-385-AC-3 | A completed symmetry or partial-order run with no counterexample settles `proved`, basis `closed-scope`, proof basis `reduced` listing each applied reduction, its parameters and its row, with `certification` `uncertified`; a constraint-only run with no boundary state settles proof basis `exhaustive`, `certification` `uncertified`, with the constraint in the method. | Test (TC-321, TC-323, TC-324) |
 | FR-385-AC-4 | A refutation under any reduction settles `refuted`, basis `decisive-counterexample`, with a concrete replayed counterexample, and its record names no reduction. | Test (TC-321, TC-323) |
 | FR-385-AC-5 | A constrained run that completes with no counterexample and reaches a boundary state settles `inconclusive`, `constraint-reached` with the boundary-state count, ahead of `reduction-horizon` and a horizon bound; a lasso through a boundary state is never reported. | Test (TC-324) |
 | FR-385-AC-6 | A partial-order run that completes to its search horizon `max_depth` with no counterexample settles `inconclusive`, FR-241 `completed`, FR-243 `unsettled`, cause `reduction-horizon` naming the horizon value, and never `failed` or `resource-incomplete`; a symmetry-only run to the same horizon settles `inconclusive` with the cause an unreduced run to that horizon settles with. | Test (TC-323) |

@@ -234,8 +234,7 @@ the proof basis records the reduction.
 `max_witness_paths`, plus time and the clause meter. Each is set by the
 request, with the published default FR-461 gives it, and each is outside the
 obligation identity. A caller cancellation stops the run with `incomplete`,
-`cancelled{source}`, whose `source` is the cancellation identity the caller
-supplied, retained exactly, and records no value. The evidence kind is a request member and is outside the claim's
+`cancelled{source}`, whose `source` is the cancellation cause, `requested` when the caller cancels and `deadline` when the caller's deadline ends the run, and records no value. The evidence kind is a request member and is outside the claim's
 obligation identity; the confidence parameters a claim states are inside it
 and are not read.
 
@@ -257,7 +256,7 @@ and are not read.
 | FR-411-AC-12 | A claim that evaluates undefined at a product state reached with positive probability settles `refuted`, `decisive-counterexample`, cause `undefined-evaluation` naming the pair, the product state key, the expression locus and the catalogued reason, with an undefined path that replays, also when the bound holds on the claim's defined values. | Test (TC-364) |
 | FR-411-AC-13 | `quantile 0.5 of M >= 3` with `M` equal to 1 or 3 with probability `1/2` each settles `refuted`, the exact value `Pr(M < 3) = 1/2` equal to `q` failing the strict bound, both under a workload and, through the zero-maximum second pass, over every scheduler; `quantile 0.5 of M >= 1` settles `proved`. | Test (TC-360) |
 | FR-411-AC-14 | A quantile claim whose activation probability is 0 settles `proved` in both forms, under a workload and over every scheduler. | Test (TC-360) |
-| FR-411-AC-15 | A caller cancellation of an exact run stops it with `incomplete`, `cancelled{source}` naming the supplied cancellation identity, not `limit-reached`, and records no value. | Test (TC-365) |
+| FR-411-AC-15 | A caller cancellation of an exact run stops it with `incomplete`, `cancelled{source}` with `source` `requested`, not `limit-reached`, and records no value. | Test (TC-365) |
 
 ## Dependencies
 

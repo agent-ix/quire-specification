@@ -105,7 +105,7 @@ on the checked clause.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-403-AC-1 | Each form admits symmetry, partial-order reduction and a state constraint exactly as its row reads; a reduction a row rejects settles `inconclusive` with `reduction-not-preserving` before expansion. | Test (TC-347) |
-| FR-403-AC-2 | On the leaky and secure vault noninterference clauses, copy-swap applies without a request selection, the reduced and unreduced runs give the same verdict, and the reduced proof names copy-swap with its class. | Test (TC-347) |
+| FR-403-AC-2 | On the leaky and secure vault noninterference clauses, copy-swap applies without a request selection, the reduced and unreduced runs give the same verdict, and the reduced proof names copy-swap with its class and settles `proved`, certification `certified`. | Test (TC-347) |
 | FR-403-AC-3 | A body that is not unchanged under the swap in normal form, or two variables with different fairness sets, admit no copy-swap. | Test (TC-347) |
 | FR-403-AC-4 | A counterexample found under diagonal symmetry or copy-swap carries no canonical state and replays as an ordinary counterexample. | Test (TC-347) |
 
@@ -115,6 +115,8 @@ on the checked clause.
 - [FR-399](FR-399-settle-hyperproperty-results.md) settles the item.
 - [FR-401](FR-401-replay-hyper-counterexamples.md) replays a concretised
   counterexample.
+- [FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md)
+  owns the `certification` a copy-swap proof carries.
 - [FR-381](../analysis/FR-381-check-symmetric-populations.md), [FR-382](../analysis/FR-382-select-state-space-reductions.md), [FR-383](../analysis/FR-383-explore-under-state-space-reduction.md) and [FR-385](../analysis/FR-385-report-reduced-verdicts.md)
   own symmetry declarations, reduction selection, partial-order reduction and state constraints, and the preservation table these rows extend.
 
