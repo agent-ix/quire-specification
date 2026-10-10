@@ -239,15 +239,22 @@ boundary.
   then `operation-mode-type-mismatch` (`invalid_package`) and
   `operator-ineligible` (arity, operand family, constraint, member or result
   type outside the entry; code `ill_typed`); then the leaves.
-- `application_node_preimage` — every node whose body contains an application
-  is keyed by the JCS SHA-256 of `{version: "quire.application-node/v1",
+- `application_node_preimage` — every `value`/`union_value` node, and every
+  other node whose body contains an application, is keyed by the JCS SHA-256
+  of `{version: "quire.application-node/v1",
   node_tag, semantic_form, semantic_type, declaration, recursion, body}`.
   `declaration` is the node's `declaration` member or `null`; `recursion` is
   `null` or `{size, ordinal}` of the node inside its `recursion_group` in graph
   order, and a body reference to a member of that group becomes
   `{term: "group_reference", ordinal}`. Its operation identity, laws, mode,
   member and leaves therefore participate in its node id and, through the
-  `identity_projection`, in the package id. An `expression` whose body root is
+  `identity_projection`, in the package id. The `union_value` selection
+  applies even to a nullary construction or a payload consisting only of
+  references: its body remains the aggregate
+  [FR-440](FR-440-checked-package-union-and-case-nodes.md) specifies, with
+  no construction application, operator or operation identity added. This
+  exception does not select `record_value` or `tuple_value` nodes whose
+  bodies contain no application. An `expression` whose body root is
   an application has the `semantic_form` fixed by its operator class; the
   node's `dependencies` are exactly the unique digest-ascending `reference`
   term targets and member declarations of its body; a `dependency_reference`
@@ -273,7 +280,9 @@ boundary.
   every **structural node**: a node with no `nominal_identity_preimage` and
   whose body holds no application, model declaration nodes and clause
   functions included (QSL FR-094 keys a model-owned node by the same
-  preimage), except a `correspondence`/`abstraction_relation` node. That
+  preimage), except a `value`/`union_value` node or a
+  `correspondence`/`abstraction_relation` node. A `union_value` is checked
+  at the application-node key stage above. An `abstraction_relation`
   node is keyed by its own `{version: "quire.abstraction-relation-node/v1",
   body}` preimage
   ([FR-451](FR-451-checked-package-abstraction-relation-body.md)), which

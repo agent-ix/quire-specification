@@ -190,8 +190,21 @@ node-id digest order, each node at its place in that order:
    `case` node.
 
 A `case` node and a `union_value` node are keyed by the
-`quire.application-node/v1` preimage and the node identity preimage FR-322
-already defines; a `case` node's arms enter that preimage in member
+`quire.application-node/v1` preimage FR-322 defines. For `union_value`,
+this selection applies regardless of payload arity or whether the body
+contains an application. The exact preimage is
+`{version: "quire.application-node/v1", node_tag: "value",
+semantic_form: "union_value", semantic_type, declaration: null,
+recursion, body}`, with `semantic_type` the union node id and `recursion`
+as FR-322 defines it (`null` outside a recursion group). It has no `owner`.
+Its `body` remains the aggregate of one member-named binding over the
+payload aggregate: `Empty` has an empty payload aggregate, and `Rect` has
+two payload terms in position order. A payload lowered to a separate node
+is a `reference` to that node. No construction application, operator or
+operation identity is introduced by this preimage selection. The reader
+checks the retained union-value key at FR-322's application-node key stage;
+a structural preimage key refuses `invalid_package`/`stale-node-key`.
+A `case` node's arms enter its application preimage in member
 declaration order, so reordering the arms of a source `case` changes no node
 id and no `package_id`.
 
@@ -207,6 +220,8 @@ id and no `package_id`.
 | FR-440-AC-6 | `quire.op.structural.eq` over two `Shape` values is admitted, and over a `Shape` value and a value of another union refuses `ill_typed`/`operator-ineligible` by its `same_type` constraint. | Test (TC-395) |
 | FR-440-AC-7 | A `quire.op.control.case` application as the body root of a `function` node refuses `ill_typed`/`operator-ineligible` at that node, and the same `case` as an `expression`/`case` node referenced from the function body is admitted; the same `case` application nested in another application's arguments refuses `ill_typed`/`operator-ineligible` at that nested application's `operator` member, not `malformed_wire`. | Test (TC-395) |
 | FR-440-AC-8 | `quire.op.structural.eq` over two `Label` values carries the leaves `["member:Named", "position:0"]` and `["member:Tagged", "position:1"]` and none for `Empty`; over two `List` values of `union List { Cons(Integer, List), Nil }` it is admitted with empty `leaves`; and over two `Chain` values of `union Chain { Link(Text[0,8;nfc], Chain), End }` it is admitted with the leaves `["member:Link", "position:0"]` and `["member:Link", "position:1", "recursion:0"]`. | Test (TC-395) |
+| FR-440-AC-9 | For fixed union and payload node ids, nullary `Shape::Empty` and `Shape::Rect` with two reference payloads each select `quire.application-node/v1` with the exact aggregate body, `declaration: null`, no `owner` and `recursion: null` outside a recursion group. The producer and strict reader independently match fixed RFC 8785 preimage bytes and canonical node keys; retaining the structural-preimage key refuses `invalid_package`/`stale-node-key` at the application-node key stage. | Test |
+| FR-440-AC-10 | Fixed `record_value` and `tuple_value` inputs whose bodies contain no application retain their existing `quire.structural-node/v1` preimage bytes and keys. Reordering the source arms of AC-3's `case` retains its declared-order body, node id and package id. | Test |
 
 ## Dependencies
 
