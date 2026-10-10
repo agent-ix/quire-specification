@@ -176,35 +176,111 @@ fn positive(name: &str) -> Value {
         .unwrap_or_else(|| panic!("positive vector {name} exists"))
 }
 
-fn apply(document: &mut Value, patch: &Value) {
-    let path = patch["path"].as_str().expect("patch path");
-    let (parent, member) = path.rsplit_once('/').expect("patch path has a parent");
-    match patch["op"].as_str().expect("patch op") {
-        "replace" => {
-            *document.pointer_mut(path).expect("replace target exists") = patch["value"].clone();
-        }
-        "remove" => {
-            document
-                .pointer_mut(parent)
-                .and_then(Value::as_object_mut)
-                .expect("remove parent is an object")
-                .remove(member)
-                .expect("remove target exists");
-        }
-        "add" => match document.pointer_mut(parent).expect("add parent exists") {
-            Value::Object(object) => {
-                assert!(
-                    object
-                        .insert(member.to_owned(), patch["value"].clone())
-                        .is_none(),
-                    "add creates a new member at {path}"
-                );
-            }
-            Value::Array(array) if member == "-" => array.push(patch["value"].clone()),
-            _ => panic!("add parent at {path} is an object or an array append"),
-        },
-        other => panic!("unsupported patch op {other}"),
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum PatchError {
+    InvalidOperation,
+    InvalidPath,
+    MissingValue,
+    MissingParent,
+    InvalidParent,
+    InvalidArrayIndex,
+    IndexOutOfBounds,
+    MissingTarget,
+    ExistingTarget,
+}
+
+fn patch_token(token: &str) -> Result<String, PatchError> {
+    let mut decoded = String::new();
+    let mut chars = token.chars();
+    while let Some(character) = chars.next() {
+        decoded.push(match character {
+            '~' => match chars.next() {
+                Some('0') => '~',
+                Some('1') => '/',
+                _ => return Err(PatchError::InvalidPath),
+            },
+            other => other,
+        });
     }
+    Ok(decoded)
+}
+
+fn patch_index(member: &str) -> Result<usize, PatchError> {
+    if member.is_empty() || (member.len() > 1 && member.starts_with('0'))
+        || !member.bytes().all(|byte| byte.is_ascii_digit()) {
+        return Err(PatchError::InvalidArrayIndex);
+    }
+    member.parse().map_err(|_| PatchError::InvalidArrayIndex)
+}
+
+/// The fixture protocol supports non-root add/remove/replace JSON pointers;
+/// object adds retain the existing new-member-only invariant. Array adds
+/// insert at a checked index or append at '-'.
+/// Errors are fixture defects, never evidence of schema refusal. No missing
+/// value becomes null; invalid operations leave the document unchanged.
+fn apply(document: &mut Value, patch: &Value) -> Result<(), PatchError> {
+    let op = patch.get("op").and_then(Value::as_str).ok_or(PatchError::InvalidOperation)?;
+    if !matches!(op, "add" | "remove" | "replace") {
+        return Err(PatchError::InvalidOperation);
+    }
+    let path = patch.get("path").and_then(Value::as_str).ok_or(PatchError::InvalidPath)?;
+    let tokens = path.strip_prefix('/').ok_or(PatchError::InvalidPath)?;
+    for token in tokens.split('/') {
+        patch_token(token)?;
+    }
+    let (parent, member) = path.rsplit_once('/').ok_or(PatchError::InvalidPath)?;
+    let member = patch_token(member)?;
+    let value = if op == "remove" {
+        None
+    } else {
+        Some(patch.get("value").ok_or(PatchError::MissingValue)?.clone())
+    };
+    match document.pointer_mut(parent).ok_or(PatchError::MissingParent)? {
+        Value::Object(object) => match op {
+            "remove" => {
+                object.remove(&member).ok_or(PatchError::MissingTarget)?;
+            }
+            "add" => {
+                if object.contains_key(&member) {
+                    return Err(PatchError::ExistingTarget);
+                }
+                object.insert(member, value.ok_or(PatchError::MissingValue)?);
+            }
+            "replace" => {
+                *object.get_mut(&member).ok_or(PatchError::MissingTarget)? =
+                    value.ok_or(PatchError::MissingValue)?;
+            }
+            _ => return Err(PatchError::InvalidOperation),
+        },
+        Value::Array(array) => {
+            let index = if op == "add" && member == "-" {
+                array.len()
+            } else {
+                patch_index(&member)?
+            };
+            match op {
+                "remove" => {
+                    if index >= array.len() {
+                        return Err(PatchError::IndexOutOfBounds);
+                    }
+                    array.remove(index);
+                }
+                "add" => {
+                    if index > array.len() {
+                        return Err(PatchError::IndexOutOfBounds);
+                    }
+                    array.insert(index, value.ok_or(PatchError::MissingValue)?);
+                }
+                "replace" => {
+                    *array.get_mut(index).ok_or(PatchError::IndexOutOfBounds)? =
+                        value.ok_or(PatchError::MissingValue)?;
+                }
+                _ => return Err(PatchError::InvalidOperation),
+            }
+        }
+        _ => return Err(PatchError::InvalidParent),
+    }
+    Ok(())
 }
 
 fn errors(validator: &jsonschema::Validator, document: &Value) -> Vec<String> {
@@ -249,9 +325,6 @@ fn patch_operations_preserve_literal_results() {
             serde_json::json!({"op": "add", "path": "/new", "value": null}),
             serde_json::json!({"keep": 1, "new": null})),
         (serde_json::json!({"keep": 1}),
-            serde_json::json!({"op": "add", "path": "/keep", "value": 2}),
-            serde_json::json!({"keep": 2})),
-        (serde_json::json!({"keep": 1}),
             serde_json::json!({"op": "replace", "path": "/keep", "value": 2}),
             serde_json::json!({"keep": 2})),
         (serde_json::json!({"a/b": {"~key": [10, 20]}}),
@@ -262,8 +335,68 @@ fn patch_operations_preserve_literal_results() {
             serde_json::json!({"~key": 2})),
     ] {
         let mut actual = document;
-        apply(&mut actual, &patch);
+        assert_eq!(apply(&mut actual, &patch), Ok(()), "literal patch applies");
         assert_eq!(actual, expected, "literal patch result for {patch}");
+    }
+}
+
+/// Malformed fixture patches fail explicitly, without partial mutation or
+/// laundering a runner error into an adverse schema-refusal success.
+#[test]
+fn invalid_patches_are_errors_and_leave_the_document_unchanged() {
+    let original = serde_json::json!({"array": [10, 20], "empty": [],
+        "object": {"existing": 1}, "scalar": 7});
+    for (patch, expected) in [
+        (serde_json::json!({"op": "remove", "path": "/object/missing"}), PatchError::MissingTarget),
+        (serde_json::json!({"op": "replace", "path": "/object/missing", "value": 3}), PatchError::MissingTarget),
+        (serde_json::json!({"op": "add", "path": "/object/existing", "value": 2}), PatchError::ExistingTarget),
+        (serde_json::json!({"op": "remove", "path": "/array/2"}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "replace", "path": "/array/2", "value": 3}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "add", "path": "/array/3", "value": 3}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "remove", "path": "/empty/0"}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "replace", "path": "/empty/0", "value": 3}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "add", "path": "/empty/1", "value": 3}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "move", "path": "/array/0"}), PatchError::InvalidOperation),
+        (serde_json::json!({"path": "/array/0"}), PatchError::InvalidOperation),
+        (serde_json::json!({"op": 1, "path": "/array/0"}), PatchError::InvalidOperation),
+        (serde_json::json!({"op": "remove"}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": 1}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": "array/0"}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": ""}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": "/object/~"}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": "/object/~2"}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": "/bad~2/child"}), PatchError::InvalidPath),
+    ] {
+        let mut actual = original.clone();
+        assert_eq!(apply(&mut actual, &patch), Err(expected), "fixture error for {patch}");
+        assert_eq!(actual, original, "failed patch cannot mutate {patch}");
+    }
+    for op in ["add", "remove", "replace"] {
+        for member in ["", "01", "+1", "-1", "one", "184467440737095516160"] {
+            let patch = serde_json::json!({"op": op, "path": format!("/array/{member}"), "value": 3});
+            let mut actual = original.clone();
+            assert_eq!(apply(&mut actual, &patch), Err(PatchError::InvalidArrayIndex));
+            assert_eq!(actual, original);
+        }
+        for (path, expected) in [("/missing/child", PatchError::MissingParent),
+            ("/scalar/child", PatchError::InvalidParent)] {
+            let patch = serde_json::json!({"op": op, "path": path, "value": 3});
+            let mut actual = original.clone();
+            assert_eq!(apply(&mut actual, &patch), Err(expected));
+            assert_eq!(actual, original);
+        }
+    }
+    for op in ["remove", "replace"] {
+        let mut actual = original.clone();
+        assert_eq!(apply(&mut actual, &serde_json::json!({"op": op,
+            "path": "/array/-", "value": 3})), Err(PatchError::InvalidArrayIndex));
+        assert_eq!(actual, original);
+    }
+    for op in ["add", "replace"] {
+        let mut actual = original.clone();
+        assert_eq!(apply(&mut actual, &serde_json::json!({"op": op,
+            "path": "/array/0"})), Err(PatchError::MissingValue));
+        assert_eq!(actual, original);
     }
 }
 
@@ -283,7 +416,7 @@ fn hp3_array_removal_is_refused_and_restoration_is_admitted() {
         {"op": "remove", "path": "/results/4/cause/at/witness_set/0/states/1"}
     ]));
     let mut actual = base.clone();
-    apply(&mut actual, &vector["patch"][0]);
+    assert_eq!(apply(&mut actual, &vector["patch"][0]), Ok(()), "real removal applies");
     assert_eq!(actual["results"][4]["cause"]["at"], serde_json::json!({
         "states": [], "automaton_state": "AQ", "witness_set": [{
             "states": ["1111111111111111111111111111111111111111111111111111111111111111"],
@@ -295,9 +428,10 @@ fn hp3_array_removal_is_refused_and_restoration_is_admitted() {
     assert!(stage.iter_errors(&actual).any(|error| located_at_patch(
         &error.instance_path().to_string(), "/results/4/cause/at/witness_set/0/states/1")),
         "refusal belongs to the changed witness tuple");
-    apply(&mut actual, &serde_json::json!({"op": "add",
+    assert_eq!(apply(&mut actual, &serde_json::json!({"op": "add",
         "path": "/results/4/cause/at/witness_set/0/states/1",
-        "value": "2222222222222222222222222222222222222222222222222222222222222222"}));
+        "value": "2222222222222222222222222222222222222222222222222222222222222222"})),
+        Ok(()), "restoring insertion applies");
     assert_eq!(actual, base, "restoration changes no other component");
     assert!(whole.is_valid(&actual), "restored n=0, m=2 positive is admitted");
 }
@@ -372,7 +506,7 @@ fn tc_431_adverse_vectors_are_refused() {
         let patch = vector["patch"].as_array().expect("patch list");
         assert_eq!(patch.len(), 1, "{name} changes one member");
         let mut document = composed(&base);
-        apply(&mut document, &patch[0]);
+        assert_eq!(apply(&mut document, &patch[0]), Ok(()), "{name}: authored patch applies");
         assert!(
             !whole.is_valid(&document),
             "{name} is refused by the schema"
@@ -577,10 +711,10 @@ fn tc_431_item_level_causes_reach_negotiation() {
     let document = composed(&positive("request-item-level-defects"));
     assert!(validator.is_valid(&document));
     let mut missing = document.clone();
-    apply(
+    assert_eq!(apply(
         &mut missing,
         &serde_json::json!({"op": "remove", "path": "/request/items/0/candidates"}),
-    );
+    ), Ok(()), "candidate removal applies");
     assert!(!validator.is_valid(&missing));
 }
 
