@@ -85,7 +85,7 @@ The checker SHALL retain the exact expanded semantic meaning of every fact,
 including hidden declarations, all input keys, rule identities, ordinals and
 distinct inheritance paths. It SHALL encode each declaration using the selected
 definition's unique literal/prefix normal form and canonical overlapping range
-commitments, and SHALL eagerly compute every effective identity. It SHALL
+commitments. It SHALL eagerly compute every effective identity. It SHALL
 compute the complete digest-ordered declaration-sequence commitment and view
 identity, not a requested-entry subset. Key/block/join helper nodes SHALL NOT
 create extra effective declarations or derivation facts.
@@ -104,8 +104,18 @@ do not satisfy it. The matching selected closure, rule manifest, accounting,
 domain-package edge protocol, strict reader and caller-minted identity domains
 SHALL be adopted atomically before implementation cutover. No mixed-cohort
 default, compatibility reader, digest relabelling or old-digest transport is
-admitted. Operation-edge intake unavailable at a producer/reader boundary
-remains a prerequisite, not a successful normalization claim.
+admitted. Optional operation-edge document schema support and released
+selected-document reader retention are delivered intake capabilities, not
+complete replacement adoption. Before code cutover the actual producer's
+operation edges and origins SHALL survive selected-document admission,
+normalization, full provenance/correspondence re-export and independent
+reconstruction under the same selected reader contract. The owning stages
+retain kind/proper-ancestor, cycle/conflict and signature/contract checks,
+and absent, changed, malformed, dangling and ambiguity controls. An older
+locked reader is not adoption of the released intake. Structural checked-node
+correspondence cannot discharge this full-view round-trip. Bounded sole-writer
+full-provenance export, matched wire/schema/vectors/domains and separately
+admitted reader costs remain prerequisites, not successful qualification.
 
 ## Normalization derivation
 
@@ -122,7 +132,17 @@ supertypes; (4) `quire.model.normalize.subset/v1` and
 (5) `quire.model.normalize.canonicalize/v2`, identity computation. Each derived
 fact records its declaration-key inputs, rule identity and
 ordinal. A later phase may reference but cannot erase an earlier derivation. No
-rule declares an override relation, and no precedence exists between rules.
+rule declares an override relation, and no semantic precedence exists between
+rules. Before normal form, facts compare by phase, then lexicographic inputs,
+then exact rule-identity UTF-8 bytes, retaining identical-fact multiplicity.
+This serialization tie-break never resolves a conflict or changes a rule.
+
+For the existing canonical-expansion acceptance, a field `s` of subtype `D`
+with both `subsets=[t]` and `redefines=t` on proper ancestor `B`'s field `t`
+retains both `[s,t]` facts, redefine before subset at consecutive phase-4
+ordinals. Input/storage permutations produce the same expansion and digest;
+swapped rules, a dropped occurrence, altered multiplicity or refusal solely
+for this valid overlap cannot satisfy that acceptance.
 
 Two phase 4 redefinitions of the same member reaching one effective type
 conflict unless one redefining owner is a proper descendant of every other;
@@ -148,8 +168,19 @@ priced sole-writer JCS byte length before encoding or hashing. Phase-4 conflict
 ordering uses original owner/target keys before identities exist; the effective
 member key's meaning does not change. No preparatory hash occurs in phases 1–4.
 Shared reuse is selection-local under the operation meter and follows the
-exact dependency schedule; lookup/pricing/validation work is not free. Denial
-performs none of its named work, encodes/hashes no denied node and runs no
+exact closed-template Read/Require/Price/Hash and prerequisite ordering/index
+schedule; lookup/pricing/validation work is not free. Metadata reuse is by
+selection-local admitted field occurrence, not equal text or physical interning.
+Equal package text at different original ranks is scanned/charged separately;
+repeat access to the same rank/field keeps its lookup charge without rescanning.
+Every owner/root/universe/dictionary sort uses the prescribed input projection,
+stable comparison, logical move and index admission events. Pricing's retained
+slot reads are covered by its v-priced traversal, not optional extra field
+charges. For the existing exact-bound/denial acceptance, independent layouts
+and search/sort choices SHALL produce the same complete event sequence and
+first unavailable charge, including hits, equal-input facts and ordering
+prerequisites; zero/one-less injections suppress the named and dependent work.
+Denial performs none of its named work, encodes/hashes no denied node and runs no
 dependent work. No second encoder, speculative pricing API, posthoc byte
 reservation or expanded-preimage fallback is permitted. Each normalization phase checks
 exhaustively and reports every refusal it exposes in charge order; a phase that
@@ -158,16 +189,22 @@ reports a refusal ends checking. Exhaustion ends checking as
 
 ## Acceptance Criteria
 
+TC-195 remains the existing verifying procedure through its `verifies`
+relationship; method-only cells below do not erase that relationship or any
+criterion trace. Its superseded selection/vector bytes are not replacement
+qualification evidence. The closed replacement and adverse cases above require
+the matched integration cohort and independent qualification.
+
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-150-AC-1 | An inherited/redefined member links its normalized identity to every contributing original declaration and rule. | Test (TC-195) |
-| FR-150-AC-2 | Two equal effective shapes from distinct original identities remain distinguishable. | Test (TC-195) |
-| FR-150-AC-3 | A wrong digest domain, a stale package digest or a conflicting phase 4 derivation refuses normalization with its named cause. | Test (TC-195) |
-| FR-150-AC-4 | Replaying the ordered derivation from the same domain package reproduces the `quire.model.effective-view/v2` identity, independent of IR node order. | Test (TC-195) |
-| FR-150-AC-5 | Conflicting derivations report both rule paths and expose no chosen effective member. | Test (TC-195) |
-| FR-150-AC-6 | Diamond paths reaching one original declaration collapse to one effective member retaining every path, and each effective identity equals its published vector. | Test (TC-195) |
-| FR-150-AC-7 | Declaration keys are fixed by the domain package identity and IR node identity: two versions of one package with equal nodes yield equal effective declaration identities and different effective views. | Test (TC-195) |
-| FR-150-AC-8 | A normalization run at its exact `ModelNormalizationLimitsV1` bound completes, and the one-less run is incomplete at the named charge point. | Test (TC-195) |
+| FR-150-AC-1 | An inherited/redefined member links its normalized identity to every contributing original declaration and rule. | Test |
+| FR-150-AC-2 | Two equal effective shapes from distinct original identities remain distinguishable. | Test |
+| FR-150-AC-3 | A wrong digest domain, a stale package digest or a conflicting phase 4 derivation refuses normalization with its named cause. | Test |
+| FR-150-AC-4 | Replaying the ordered derivation from the same domain package reproduces the `quire.model.effective-view/v2` identity, independent of IR node order. | Test |
+| FR-150-AC-5 | Conflicting derivations report both rule paths and expose no chosen effective member. | Test |
+| FR-150-AC-6 | Diamond paths reaching one original declaration collapse to one effective member retaining every path, and each effective identity equals its published vector. | Test |
+| FR-150-AC-7 | Declaration keys are fixed by the domain package identity and IR node identity: two versions of one package with equal nodes yield equal effective declaration identities and different effective views. | Test |
+| FR-150-AC-8 | A normalization run at its exact `ModelNormalizationLimitsV1` bound completes, and the one-less run is incomplete at the named charge point. | Test |
 | FR-150-AC-9 | An admitted scalar without a phase-2 qualify rule remains retrievable by its byte-identical original key and origin, with no scalar qualify fact, effective entry or extra effective-declaration/hash charge; all effective/fact-origin keys belong to the retained intake inventory. | Test |
 | FR-150-AC-10 | Transfer from structural normalization to checked-fact admission and conformance preserves the same model counters; a denied next charge follows no work and exposes no validated effective view or unfinished-stage failure, including failures already collected from another selected model. | Test |
 | FR-150-AC-11 | A walk following n supertype edges admits at ancestor_steps=n; at n-1 it returns exactly incomplete(ancestor_steps,n-1,n-1,1,model.ancestor-edge), and zero denies its first edge. An unavailable owning work charge wins before a simultaneous edge denial; previously admitted axis work is never refunded. | Test |

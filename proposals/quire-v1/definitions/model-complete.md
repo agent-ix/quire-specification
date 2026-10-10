@@ -12,9 +12,17 @@ reader and caller-minted identity domains. The linked schema/vector artifacts
 are integration targets; their existing bytes do not satisfy this replacement.
 No consumer may adopt this draft with the superseded selected closure, relabel
 an old digest, accept an old-digest transport, or install a compatibility reader.
-Operation redefinition intake must be admitted by the domain producer and strict
-reader before code cutover. A specification draft establishes neither that
-availability nor qualification. Public API and limit-object names are unchanged.
+Optional operation `redefines` is supported by the producing document schema
+and retained by the released selected-document reader. That intake capability
+is not adoption by every consumer or acceptance of the replacement carrier.
+Before code cutover, actual producer output must survive selected-document
+admission, normalization, full provenance/correspondence re-export and independent
+reconstruction under the SAME selected reader contract. This includes exact
+operation owner/target keys and origins, kind and proper-ancestor checks,
+cycle/conflict and signature/contract checks at their owning stages, and
+absent, changed, malformed, dangling and ambiguous-edge controls. A specification
+draft establishes neither this round-trip nor qualification. Public API and
+limit-object names are unchanged.
 
 ## Always-selected definitions
 
@@ -247,7 +255,24 @@ shapes.
 `normalization_rules`; `inputs` is the ordered array of declaration keys the
 fact consumed; and `ordinal` is the fact's zero-based decimal-string position
 in the array. Facts are ordered by phase, then by `inputs` compared element by
-element in declaration key order, a proper prefix first.
+element in declaration key order, a proper prefix first, then by the selected
+rule identity's exact UTF-8 bytes, a proper prefix first. Thus equal-input
+phase-4 `quire.model.normalize.redefine/v1` facts precede
+`quire.model.normalize.subset/v1` facts. This is serialization order, not
+semantic override or conflict precedence. All occurrences remain: equal phase,
+inputs and rule form a contiguous multiplicity of identical facts, assigned
+consecutive ordinals; neither input/rule equality nor shared storage deduplicates
+them. No producer-generation, manifest-array or allocation order breaks a tie.
+This totally ordered multiset is fixed BEFORE compression or ordinal assignment.
+
+For an admitted field `s` of subtype `D` with both `subsets=[t]` and
+`redefines=t`, where `t` is a field of proper ancestor `B`, retain both `[s,t]`
+facts on `(D,s)`: redefine then subset at their consecutive phase-4 positions.
+Permuting producer/storage order leaves the same facts, ordinals and digest.
+A retained candidate with those two rules swapped, either occurrence removed,
+or the overlap rejected merely because both edges exist cannot be admitted as
+that canonical view. A repeated identical occurrence remains repeated; adding
+or removing one changes the semantic count and cannot pass reconstruction.
 
 The retained declaration inventory is the array of `{effective_id, preimage}`
 for every effective declaration, ascending by the `effective_id` digest hex;
@@ -303,14 +328,16 @@ caller's arbitrary factoring. A prefix segment expands every nonempty prefix
 of its path, shortest first, as a type-inherit fact. Its expansion count is
 its path count; no prefix or fact is omitted.
 
-Normal form is derived from the complete semantic fact array in phase/input
-order. Scan from its first uncovered fact. At a type-inherit fact whose path
-length is one, take the longest contiguous sequence of type-inherit facts of
+Normal form is derived from the complete semantic fact array in phase/input/rule
+order with multiplicity retained. Scan from its first uncovered fact. At a
+type-inherit fact whose path length is one, take the longest contiguous
+sequence of type-inherit facts of
 the same rule with paths of lengths 1,2,..., each extending the preceding
 path by one key. If its length is at least two, emit one prefix segment for
 the last path; otherwise emit a literal. At any other fact emit a literal.
 Resume at the next uncovered fact. This longest-first left-to-right rule is
-the only factoring/tie-break rule, including when several ladders are adjacent.
+the only factoring rule, including when several ladders are adjacent; the
+semantic rule tie-break above has already fixed the array.
 The expanded array position is the exact decimal ordinal, starting at zero;
 the sum of segment expansion counts must equal Derivation.count. Rules are exactly the selected
 manifest's unchanged qualify/inherit/subset/redefine identities. Distinct
@@ -337,6 +364,19 @@ Membership proofs for requested entries do not replace this verification.
 Transport ordering is domain then digest for dictionary records and effective
 digest for declarations; exact duplicate bindings share one record, never a
 second effective entry. No dictionary position enters an identity.
+
+All prerequisite owner/root/universe/sequence/dictionary orders and index or
+proof formation follow the accounting definition's closed logical schedule.
+No choice of physical interning, search or sort changes its charges or denial
+position. A compressed implementation may batch those logical events without
+materializing expanded paths; it cannot omit their logical multiplicity.
+
+Full provenance export requires a bounded sole-writer carrier and independently
+priced reader reconstruction, not just small identity preimages. A writer that
+buffers an open outer object with bounded offsets does not thereby support one
+unbounded dictionary object. The matching closed carrier, selected schema/vectors,
+strict reader and canonical identity domains remain atomic integration
+prerequisites; existing linked artifacts do not prove their availability.
 
 Identity bytes are produced exclusively by the shared canonical writer.
 Analytical prepricing is defined in the accounting definition and must equal

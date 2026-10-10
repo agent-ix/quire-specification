@@ -551,14 +551,14 @@ change family-step or population-admission limits.
 | Charge point | Order | Exact counter amount |
 | --- | --- | --- |
 | kth `normalize.record` | each declaration record that intake builds from a domain package IR node (object type, field, relationship, operation, clause, population, part, port, interface, connection or allocation), ascending declaration key, before the node is read | `declaration_records=k` |
-| kth `normalize.fact` | each derivation fact before it is formed: phase 2, then phase 3, then phase 4, each ascending by (owner declaration key, declaration key, inputs), where a type fact has no owner and sorts before every owned fact | `derivation_facts=k` |
+| kth `normalize.fact` | each derivation fact before it is formed: phase 2, then phase 3, then phase 4, each ascending by (owner declaration key, declaration key, inputs, rule identity), where a type fact has no owner and sorts before every owned fact; rule identity is compared as exact UTF-8 bytes, and identical facts retain their full multiplicity | `derivation_facts=k` |
 | each `normalize.cycle-check` | immediately before the `normalize.fact` of each phase 3 type fact, before testing whether the extended path's new general type already lies on the path | no size-counter change; `work_units += L` instead of one, where `L` is the number of supertype edges in the extended path; a closing extension is charged even when its cycle's edge set was already reported, and each cycle is reported once, at its first closing charge, as `quire.model.complete/v2` states |
 | each `normalize.redefinition-check` | phase 4, before its first `normalize.fact`: each redefining member ascending by declaration key, before testing that its target is a member inherited by its owning type and that no member of the same type checked before it redefines the same target | no size-counter change; `work_units += m + r` instead of one, where `m` is the number of effective members of the owning type and `r` the number of redefining members checked before it |
 | each `normalize.conflict-check` | phase 4, after its last `normalize.fact`: each (effective type, redefined member) reached by `c >= 2` redefining members, ascending by (owner original declaration key, target original declaration key), before its redefining owners are compared pairwise; this preidentity order does not change the later effective member key | no size-counter change; `work_units += Σ (c − 1) × f(o)` instead of one, summed over the `c` redefining owners `o`, where `f(o)` is the number of type derivation facts (qualify and inherit) of `o` that each proper-descendant test of `o` against another owner scans, one work unit per fact |
 | kth `normalize.declaration` | phase 5, before any identity preparation for that entry: all effective types ascending original declaration key, then all effective members ascending (computed owner effective type identity, original declaration key) | `effective_declarations=k` |
-| each `normalize.metadata` | after the owning declaration charge, at first use of each variable key/selection string, before scanning its content for canonical-length metadata; selection-only strings are prepared before their first universe/view hash | no size-counter change; `work_units += 1 + n` instead of one, where n is its admitted UTF-8 byte length |
+| each `normalize.metadata` | after the owning declaration charge, at first use of each semantic key-field occurrence defined below, before scanning its content for canonical-length metadata; the selection identity occurrence is prepared before its first universe/view hash | no size-counter change; `work_units += 1 + n` instead of one, where n is its admitted UTF-8 byte length |
 | each `normalize.normal-form` | after its declaration charge, before forming that entry's canonical derivation descriptor or path index | no size-counter change; `work_units += max(1, f + p + t)` instead of one, where f is its logical fact count and p/t are its logical path/tail key-occurrence counts from the admitted phase-2/3/4 data |
-| each `normalize.identity-work` | before each identity descriptor field lookup, dictionary child/key lookup, range overlap validation, node-price traversal or declaration-digest comparison, in the closed schedule below | no size-counter change; `work_units += a` instead of one, with a defined below for the named event |
+| each `normalize.identity-work` | before each slot/metadata/dependency lookup, range or binding proof, node-price traversal, ordering projection/comparison/move or index admission in the closed schedule below, including reuse hits | no size-counter change; `work_units += a` instead of one, with a defined below for the named event |
 | each `normalize.hash` | phase 5, required key/block dependencies children-before-parent at first use, then the owning declaration; after all entries, each universe ascending first root identity, then the complete declaration-sequence joins left-before-right postorder and the view header; each charge precedes node encoding AND hashing | `hashed_bytes += b`, where b is the exact sole-writer RFC-8785 length from the closed analytical template; one work unit, with no posthoc byte reservation |
 | each `conformance.axis` | each FR-151 axis, redefining members then subsetting fields, each ascending by declaration key, axes in FR-151 order | no size-counter change; a type-conformance axis charges `work_units += f(x)` instead of one, where `x` is the type whose conformance is tested and `f(x)` the number of its type derivation facts (qualify and inherit) that the conformance walk scans, one work unit per fact, or one for a non-object type decided by the FR-149 equality-conversion table: the field value type axis and the subsetting type test use the redefining or subsetting feature's type, parameter type axis `i` uses the redefined parameter `i`'s type (so the parameter type axes together charge the sum of `f` over the parameters), and the result type axis uses the redefining result type, or one when either result is absent; for the operation effect axis, `work_units += max(1, t)` instead of one, where `t` sums, over each redefining frame entry in `modifies`, `creates`, `deletes` order: for a field write, `n × (1 + r)`, with `n` the number of redefined `modifies` entries it is compared against and `r` the number of `redefines` links walked from the written field; for a create or delete, `f(x)` for every redefined `creates` (respectively `deletes`) grant it is tested against, with `f(x)` the number of type derivation facts of the created or deleted type `x` that the conformance test scans; every entry is compared with every grant |
 | each `systems.kind` | each interface, then each part, then each port, then each connection, then each allocation declaration, each group ascending by declaration key, before its FR-152 kind is mapped | no size-counter change |
@@ -607,40 +607,197 @@ still count toward the high-water counters. Shared helper commitments are not
 additional effective declarations or facts. An original without an effective
 derivation rule is retained without a new key hash merely for retention.
 
-The following logical identity-work events, not an implementation's incidental
-allocation/search algorithm, determine a. A field/child/key lookup is one
-event with a=1, before reading that slot; reuse lookup occurs too, even on a
-hit. A range check has a=max(1,L), where L is its admitted path length, before
-checking its block coverage, exact overlap and admitted path; indexed proof
-may do less physical work but does not omit its logical charge. A price
-traversal has a=max(1,v), where v counts every object/array/scalar occurrence
-in the closed compressed preimage (object member names are not extra
-occurrences), before the length arithmetic. Access to previously charged
-metadata uses a field lookup, not a new uncharged string scan.
+#### Semantic handles and metadata occurrences
 
-Derivation normal form is admitted once per declaration. Visit segments in
-their canonical order, each segment's fields in RFC-8785 member-name order,
-and its range first then last and tail keys in array order. For each required
-node, first admit its descriptor/reuse lookup. On a hit perform no second
-encoding/hash; on a miss visit its ordered children left before right before
-pricing and hashing the node. A key leaf reads its key fields in canonical
-member-name order and prepares each variable string's metadata at first use.
-Each field/child lookup and each range validation is charged as above. The
-deterministic reuse table is selection-local and operation-owned, never an
-ambient process cache. Equal key/block content shares one node within that
-selection; actual admitted key/child bindings and lengths, not digest equality
-alone, establish a hit. New selections do not bypass their charges on another
-selection's hits, and the operation meter is never reset between selections.
+Accounting uses the already admitted selection row ordinal and original
+inventory key rank, not allocation addresses, string interning or claimed
+digest equality. Ranks are ordered by the exact DeclarationKey comparison
+already established by intake. They are local scheduling handles only and
+never identity inputs. No phase-5 routine discovers them by an uncharged text
+scan. Admitted immutable lengths/counts are available for charge derivation;
+deriving a new lookup/proof/descriptor is the named work, not charge arithmetic.
 
-For the complete digest order, compare each actual digest pair under a
-prescribed bottom-up stable merge schedule: start with declaration order,
-merge adjacent singleton runs left-to-right, then adjacent runs of lengths
-2,4,...; an unmatched last run carries forward. Before each comparison charge
-one identity-work event with a=1. Equal digest candidates are ordered by
-original owner/key for transport and their exact preimages must agree before
-an identity is admitted; incompatible bindings are refused, never merged by
-hash coincidence. All entries remain counted. Then visit joins in left/right
-postorder, price/hash each unique join, and price/hash the complete view.
+A variable-string metadata occurrence is exactly `(selection row, original
+inventory rank, key field)` for `package` or `node`, or `(selection row,
+selection identity field)` for `DomainPackageRef.identity`. These are different
+occurrences even when their UTF-8 text is equal. Fixed field names, domains,
+rules and versions have literal lengths; hex and decimal scalars use their
+fixed/count-derived lengths, not variable-string scans. Outside the separately
+admitted Price traversal, before every metadata access charge one identity-work
+lookup with a=1 using this numeric handle and
+closed field tag. On a miss charge normalize.metadata with 1+n BEFORE any byte
+is scanned; retain the raw length and S(s). On a hit read only that immutable
+metadata, with no scan and no second normalize.metadata. No content-based
+metadata table or uncharged equality test is allowed. Two different key ranks
+with the same package text of n bytes therefore incur TWO 1+n scans; two metadata
+accesses to one rank/field incur one scan and two lookup events. A key Require
+hit does not access its fields again and hence creates no metadata access.
+Interning the strings
+physically cannot change either trace. A new selection repeats its own charges.
+
+#### Closed template event interpreter
+
+The following interpreter defines the finite logical event stream. Every
+identity-work event charges its stated a BEFORE its named reads, comparisons,
+formation or validation. Its trace is a function of admitted semantics only;
+actual search probes, buffering or retained-slot optimizations add no public
+events and remove none. Physical resource bounds remain separate obligations.
+
+`Read(x)` charges a=1 for the root occurrence of x, including a scalar or
+null. For an object it then recursively Reads each member value in the field
+order below; this child's root event admits that member lookup and value read.
+For an array its root event admits length read, then it Reads each element in
+index order. An object root admits its closed shape; constants and scalar
+discriminators/counts are checked at their scalar event. Member names are
+closed literals, not additional value occurrences. No omitted owner/null,
+original, count, kind, rule, version or header slot is free.
+
+| Closed value | Object member order; recursive child interpretation |
+| --- | --- |
+| Key preimage | key (DeclarationKey), version |
+| DeclarationKey | digest_domain, node, package; node/package use their metadata occurrence after the scalar read |
+| Block preimage | count, left, right, version; left/right are dependency references of the prescribed half length |
+| Range | count, first, last; nonnull references require their prescribed key/block dependencies, first before last |
+| Literal segment | kind, path (Range), rule (Rule), tail (array of key references) |
+| Prefix segment | kind, path (Range), rule (Rule) |
+| Rule | identity |
+| Derivation | count, segments (array of Literal/Prefix values) |
+| Effective declaration preimage | derivation, original (key reference), owner_effective_type (null or EffectiveId), version |
+| EffectiveId | digest, domain; digest performs one admitted-owner/root lookup with a=1, never recursively rehashes the declaration |
+| SequenceChild | count, digest; nonnull digest performs one admitted declaration/join lookup with a=1 |
+| Join preimage | count, left (SequenceChild), right (SequenceChild), version |
+| DomainPackageRef | digest, digest_domain, identity; identity uses the selection metadata occurrence |
+| Universe preimage | model_selection (DomainPackageRef), root_types (array of EffectiveIds), version |
+| View preimage | declarations (SequenceChild), model_selection (DomainPackageRef), rules (Rule), version |
+
+At each key/block reference, after its scalar Read, `Require` charges one
+descriptor lookup with a=1, admitting only the already formed source descriptor
+handle/count read, not a content-based reuse search. It next charges a binding-validation event:
+a=1 for a key's exact inventory-rank binding, a=max(1,L) for a block's exact
+ordered L-key sequence binding. This admits the reuse lookup/equality/proof formation
+against the selection's immutable input, including on a hit. A block reuse
+key is its node kind, count and exact ordered inventory-rank sequence; a key
+reuse key is its inventory rank. An admitted shared path/index may establish
+sequence equality without a physical L-key scan, but neither a digest nor
+an uncharged content-search can establish it. This proof and table admission
+are part of the binding event, independent of the table's physical layout.
+The binding event also admits miss descriptor formation from that exact source,
+before the node's Read. On a hit Require returns the retained digest/price/binding and stops: no child
+walk, price traversal, metadata scan or hash repeats. On a miss Read the node's
+preimage, recursively requiring left then right as encountered, then Price
+and Hash below; successful binding/digest retention is included in Hash.
+Failure does not insert a successful record. No unneeded block is prepared.
+
+After Reading each Range, charge a=max(1,L) once for that Range occurrence,
+even an empty range or a range whose blocks hit. This admits prescribed lengths,
+exact overlap, path coverage and its provenance proof, not a digest-only check.
+Normal form is admitted once per declaration by normalize.normal-form BEFORE
+formation or semantic replay. Its max(1,f+p+t) amount admits all logical fact,
+input, rule and ordinal reads, total semantic phase/input/rule ordering with
+multiplicity, greedy prefix decisions and construction/verification of that
+entry's canonical descriptor and source-path index. It does not admit hashes,
+later Read/Require events or another entry's work. The semantic input is the
+ordered phase-2/3/4 stream, not an arbitrarily ordered expanded list to sort for
+free. Index/proof acceleration never refunds f+p+t or range/binding amounts.
+
+After a complete hash-node Read and all encountered dependencies/checks, Price
+charges a=max(1,v), where v is EVERY object/array/scalar occurrence of that
+node's closed compressed preimage, including root, nulls, constants and
+embedded objects, but excluding dictionary dependencies outside the preimage.
+v and lengths are retained by the admitted formation/Read events; computing
+them cannot require a new uncharged walk. Price traverses the SAME recursive
+field/array order once using retained slots. Its single v charge covers ALL
+those pricing reads, including metadata hits and length arithmetic. There
+are NO additional Read, metadata lookup, Require or range events during Price,
+even if a physical implementation rereads fields. It may not rescan variable
+text. This is the explicit retained-slot pricing policy, not an optional one.
+Then Hash charges normalize.hash with exact b and one work unit before the
+sole writer encodes/hashes the node. Encoder-internal reads are covered by
+Hash, not a second Read stream. Its returned length must equal b. Every
+declaration has its own Read/Price/Hash; no effective-entry hit suppresses it.
+Headers and joins use the same interpreter, with already admitted identity
+lookups rather than recursively hashing their leaves again.
+
+#### Prerequisite ordering and index events
+
+All orders below use one logical bottom-up stable merge schedule. Input
+projection charges a=1 before reading/retaining each record's complete fixed
+comparison tuple; original keys compare by admitted rank, domains/rules by
+their closed literal byte order, digests by their 32 bytes. No variable text
+is compared here. Project records in the prescribed input sequence. Merge
+adjacent singleton runs left-to-right, then adjacent runs of widths 2,4,...;
+an unmatched final run is carried forward. Charge a=1 before each comparison
+of the two run heads' FULL tuples, selecting the left on equality, and a=1
+before each emitted logical record move, including all remainder/carry moves.
+At zero or one record there are no comparison/merge-move events, only its
+projection when present. A physical in-place sort still charges those logical
+moves. No physical algorithm can change the comparison or denial trace.
+After the sort, charge a=1 per output record, in output order, before installing
+its ordering/index slot. No sort, prerequisite index or proof prepass is free.
+
+The schedule within each phase-5 selection is exactly:
+
+1. Project effective types from phase-4 inventory in original-key order;
+   their order key is original rank. Apply the merge/index schedule. Project
+   members in `(owner original rank, original rank)` order for a retained
+   staging index, charging its projection a=1 then a separate a=1 per record
+   before its slot is installed (no sort
+   because this is the already ordered phase-4 stream). These are ordering
+   prerequisites, expressly admitted BEFORE the first normalize.declaration;
+   they compute no identity, metadata or derivation descriptor.
+2. In type order, charge normalize.declaration, then normalize.normal-form,
+   then Read/Price/Hash that declaration and its required dependencies. After
+   every type, charge a=1 before installing its owner-rank-to-EffectiveId slot.
+3. Project members from the staging index, in that input order, charging a=1
+   per owner-ID lookup before the projection event. Sort/index by `(owner
+   effective digest, original rank, owner original rank)`. The final rank is
+   only a deterministic collision tie; it never resolves a semantic ambiguity.
+   In this order charge each member's normalize.declaration, normal-form and
+   Read/Price/Hash. This is the unchanged effective member-key meaning.
+4. Charge a=max(1,T+G) before constructing/verifying the universe component/root
+   index over T admitted object types and G declared supertype edges. Its
+   logical source traversal is types in original rank order and each type's
+   supertype targets in original rank order, retaining each component under its
+   least original type rank. It covers each type/edge visit and root test;
+   prior cycle refusals already prevent this stage. Visit components in least
+   rank order, project their roots in original rank order, then sort/index by
+   `(effective digest, original rank)`. Project the resulting components in
+   least rank order and sort/index by `(first root effective digest, least
+   original rank)`; an empty root list sorts first. Price/hash universe headers
+   by Read in that resulting order. Component/root index formation is not
+   inferred for free from identities or a caller-supplied root list.
+5. Project ALL declarations in the actual declaration-charge order (types
+   then ordered members). Sort/index by `(effective digest, owner original rank
+   with null first, original rank)`. Then build the canonical sequence tree in
+   left-before-right postorder: charge a=1 before forming each join descriptor,
+   followed by its Read/Price/Hash. Form the view descriptor after charge a=1,
+   then Read/Price/Hash it. Empty/singleton sequences create no join event.
+6. Project the reachable key/block dictionary records in their first successful
+   Hash order, children before dependents as above. Sort/index by `(domain byte order,
+   digest, first-success ordinal)`, then visit adjacent records left-to-right.
+   Charge a=1 per adjacent pair before testing domain/digest equality. On equal
+   domain/digest charge a=max(1,v_left+v_right+n_left+n_right) BEFORE comparing
+   exact retained preimages, where n sums variable-string bytes; identical
+   bindings share one transport record, incompatible bindings refuse. Apply
+   the same adjacent-pair and equality-proof events to the sorted declaration
+   inventory, never dropping its effective-entry multiplicity. Dictionary
+   transport slot installation charges a=1 per retained record. Every exact
+   binding comparison includes its retained slots and any necessary text
+   equality; no hash-only collision shortcut or uncharged rescanning is allowed.
+
+Descriptor formation for each universe header is charged a=1 before Read;
+member-owner, root and SequenceChild lookups read only earlier admitted
+identity slots. All component, member and transport ties remain semantic
+rank-based, not physical layout. Dictionary collision verification covers
+each transported key/block binding; declaration bindings are verified separately
+without merging entries. The complete declaration inventory permits deterministic
+join reconstruction; no extra join dictionary or root-only export is implied.
+The reader must
+independently perform this semantic reconstruction and the same logical
+verification events under its own operation admission, not borrow producer
+reuse or accept a caller's precomputed inventory/index. Wire decoding/export
+and any additional reader budget remain owned by the matched carrier contract;
+this definition supplies no free transport proof or speculative carrier API.
 
 Exact analytical pricing emits no bytes. Let S(s) be 2 plus the UTF-8 byte
 length of s, plus one for each quote, backslash or short-escaped C0 control
