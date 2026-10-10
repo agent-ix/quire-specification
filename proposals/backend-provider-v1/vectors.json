@@ -1955,6 +1955,52 @@
       }
     },
     {
+      "name": "certificate-rejected-rule-completion",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/cause": "FR-331",
+        "/results/1/cause": "FR-331",
+        "/results/2/cause": "FR-331",
+        "/results/3/cause": "FR-331",
+        "/results/4/cause": "FR-331",
+        "/results/5/cause": "FR-331",
+        "/results/6/cause": "FR-331"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {"request_index": 0, "disposition": "supported"},
+          {"request_index": 1, "disposition": "supported"},
+          {"request_index": 2, "disposition": "supported"},
+          {"request_index": 3, "disposition": "supported"},
+          {"request_index": 4, "disposition": "supported"},
+          {"request_index": 5, "disposition": "supported"},
+          {"request_index": 6, "disposition": "supported"}
+        ],
+        "artifacts": [],
+        "results": [
+          {"request_index": 0, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "bad-state", "at": {"state": "1111111111111111111111111111111111111111111111111111111111111111", "automaton_state": "AQ"}}},
+          {"request_index": 1, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "undefined-member", "at": {"states": ["1111111111111111111111111111111111111111111111111111111111111111"], "automaton_state": "AQ"}}},
+          {"request_index": 2, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "predicate-undefined", "at": {"state": "1111111111111111111111111111111111111111111111111111111111111111"}}},
+          {"request_index": 3, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "rank-missing", "at": {"state": "1111111111111111111111111111111111111111111111111111111111111111"}}},
+          {"request_index": 4, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "order-broken", "at": {"state": "1111111111111111111111111111111111111111111111111111111111111111"}}},
+          {"request_index": 5, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "count-broken", "at": {"state": "1111111111111111111111111111111111111111111111111111111111111111"}}},
+          {"request_index": 6, "backend": "qsl-refinement", "kind": "refinement", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "successors-differ", "at": {"position": "0"}}}
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {"request_index": 0, "settled_by": "result"},
+          {"request_index": 1, "settled_by": "result"},
+          {"request_index": 2, "settled_by": "result"},
+          {"request_index": 3, "settled_by": "result"},
+          {"request_index": 4, "settled_by": "result"},
+          {"request_index": 5, "settled_by": "result"},
+          {"request_index": 6, "settled_by": "result"}
+        ]
+      }
+    },
+    {
       "name": "state-graph-and-hyper-outcome",
       "stage": "outcome",
       "owners": {

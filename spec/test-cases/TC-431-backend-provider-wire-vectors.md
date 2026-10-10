@@ -36,5 +36,27 @@ bytes against the checked package they carry. Runs as
 
 ## Expected Results
 
+After wire bindings are settled, BP-13 exercises FR-331-AC-26 through the
+actual reader with originating request and checked claim context: an
+`inequality-fails` cause bound to an EN-1 temporal claim, a model-only
+`successor-missing` bound to FR-338, and absent/conflicting/ambiguous
+context all refuse before consumption. Each valid owning context preserves
+the rejection. A global shape-schema run alone cannot discharge BP-13.
+BP-14 exercises FR-331-AC-27 through serialization and the actual reader,
+including HP-3 `n = 0`, missing required tuples/witness sets, labelled HP-1
+edge tuples with shared pre-states and distinct post-states, and repeated
+model states with distinct probabilistic product components.
+
+BP-12 also includes `certificate-rejected-rule-completion`: positives for
+`bad-state`, `undefined-member`, `predicate-undefined`, `rank-missing`,
+`order-broken`, `count-broken` and `successors-differ`. The independent
+finite oracle `tc_431_certificate_rules_have_positive_coverage` enumerates
+all 24 owned rule spellings in Rust, then compares both the schema rule
+set and the positive-vector rule set against it. Neither expected set is
+derived from the schema or vectors. A deletion from both inputs must fail.
+The claim is each rule at a listed locus, not every rule/locus pair or
+semantic checker acceptance. Synthetic state/automaton bytes qualify
+transport shape only.
+
 Every published vector is admitted or refused as stated, and the package
 member carries exactly the checked package its `package_id` names.

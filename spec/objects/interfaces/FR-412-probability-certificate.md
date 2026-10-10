@@ -41,6 +41,15 @@ components}`:
 A certificate names its states and carries no qualitative sets; the checker
 recomputes them.
 
+Every state key in `values`, `ranking`, `policy`, each component's `bias`
+and a state-located rejection SHALL preserve FR-411's complete product key:
+the model state key, monitor state and accumulator, including activation
+and both sums for a weighted fraction. For the intermediate states of QSL
+FR-196 / ADR-028 SCH-2, it SHALL also preserve the pending scheduled
+identity and drawn vector. For an exact-only form, the absent monitor and
+accumulator remain absent. A model-state digest alone SHALL NOT stand for
+a bounded or intermediate product state. No new digest domain is implied.
+
 ## Checker
 
 `check_probability_certificate` recompiles the package, re-admits the subject
@@ -81,8 +90,9 @@ proof of `>= θ` or a refutation of `<= θ`; `upper` for a proof of `<= θ` or a
 refutation of `>= θ`; `exact` for either. It refuses a certificate whose
 `identity` differs from the item's with `invalid_runtime_input`/`conflicting-identity`.
 A rejected certificate settles the item `inconclusive`,
-`certificate-rejected{rule, at}`, `at` the state `{state}` where it failed,
-keyed as the certificate keys it (FR-331): rule `inequality-fails` where an
+`certificate-rejected{rule, at}`, `at` the complete product state key where
+it failed, preserving the same components as the certificate's keys
+(FR-411, FR-331): rule `inequality-fails` where an
 upper, lower, exact or long-run condition above fails; `rank-missing` at a
 named non-target state with `x > 0` and no rank; `rank-broken` at such a state
 with no successor of positive probability, `x > 0` and a smaller rank; and
@@ -112,6 +122,7 @@ re-enumeration plus one pass over the edges.
 | FR-412-AC-5 | A `lower` certificate is checked over its named states and their successors only, with each unnamed successor at value 0. | Test (TC-363) |
 | FR-412-AC-6 | The checker recomputes every qualitative set and component itself and reads no other output of the provider. | Test (TC-363) |
 | FR-412-AC-7 | The checker accepts the `FairTerminates` `exact` certificate, whose objective names the fairness set, after recomputing that no fair end component exists. | Test (TC-363) |
+| FR-412-AC-8 | Two named product states with the same model state but different monitor states or accumulators retain distinct keys in `values`, `ranking`, `policy`, component `bias` and state-located rejections after serialization and reading. Intermediate states that differ only in their pending action or draw also remain distinct; replacing either complete key with the model-state digest fails the comparison. | Test (TC-363) |
 
 ## Dependencies
 

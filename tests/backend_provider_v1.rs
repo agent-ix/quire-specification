@@ -623,6 +623,73 @@ fn tc_431_bounded_descriptors_carry_domains() {
     }
 }
 
+/// The closed rule inventory is authored independently of the schema and
+/// fixture data. Removing a rule from both cannot make this check pass.
+/// This covers every rule at least once, not every rule/locus pair or an
+/// actual checker's context-dependent applicability.
+#[trace("TC-431", "FR-331-AC-25")]
+#[test]
+fn tc_431_certificate_rules_have_positive_coverage() {
+    let expected: BTreeSet<&str> = [
+        "initial-missing",
+        "successor-missing",
+        "bad-state",
+        "not-partition",
+        "backward-edge",
+        "witness-fails",
+        "query-mismatch",
+        "shape-mismatch",
+        "proof-step-invalid",
+        "not-refutation",
+        "initial-mismatch",
+        "successors-differ",
+        "step-fails",
+        "post-differs",
+        "malformed",
+        "undefined-member",
+        "violating-member",
+        "predicate-undefined",
+        "rank-missing",
+        "rank-broken",
+        "order-broken",
+        "count-broken",
+        "inequality-fails",
+        "threshold-missed",
+    ]
+    .into_iter()
+    .collect();
+    let vectors = positives();
+    let mut covered = BTreeSet::new();
+    for vector in &vectors {
+        if let Some(results) = vector["document"]["results"].as_array() {
+            for result in results {
+                let cause = &result["cause"];
+                if cause["type"] == "certificate-rejected" {
+                    covered.insert(cause["rule"].as_str().expect("rejection rule"));
+                }
+            }
+        }
+    }
+    assert_eq!(covered, expected, "every owned rule has a positive vector");
+
+    let schema = parsed(SCHEMA);
+    let branches = schema["$defs"]["CertificateRejected"]["oneOf"]
+        .as_array()
+        .expect("rejection branches");
+    let mut admitted = BTreeSet::new();
+    for branch in branches {
+        let rule = &branch["properties"]["rule"];
+        if let Some(values) = rule["enum"].as_array() {
+            for value in values {
+                admitted.insert(value.as_str().expect("closed rule spelling"));
+            }
+        } else {
+            admitted.insert(rule["const"].as_str().expect("single rule spelling"));
+        }
+    }
+    assert_eq!(admitted, expected, "schema retains the entire owned rule set");
+}
+
 /// A proof-step locus's `index` admits exactly the canonical decimal
 /// spellings of `u64`: the schema's `U64String` agrees with Rust's `u64`
 /// parse at every digit of `u64::MAX`, at every length up to one past it,
