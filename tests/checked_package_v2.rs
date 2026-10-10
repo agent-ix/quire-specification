@@ -2241,12 +2241,9 @@ fn derived_shape_semantic_refusal(nodes: &[Value]) -> Option<&Value> {
                 else {
                     return true;
                 };
-                // The older positive fixture contains a generic record
-                // reference; model-derived references are stricter and must
-                // name a model declaration. Every other target is malformed.
-                !matches!(target["node_tag"].as_str(), Some("model" | "relation"))
-                    && !(target["node_tag"] == "composite_type"
-                        && target["semantic_form"] == "record")
+                // A derived Reference<O> names a model declaration. A record,
+                // scalar, function or value is not a declaration target.
+                !is_model_declaration(target)
             }
             (Some("bounded_domain"), Some("model_population")) => {
                 let set_shaped = node["semantic_type"]
@@ -2302,9 +2299,19 @@ fn derived_shape_semantic_refusal(nodes: &[Value]) -> Option<&Value> {
                     let Some(unit_digest) = unit_target["node_id"]["digest"].as_str() else {
                         return true;
                     };
+                    let nominal_root =
+                        unit_target
+                            .get("nominal_identity_preimage")
+                            .is_some_and(|preimage| {
+                                preimage["version"] == "quire.unit-node/v1"
+                                    && preimage["target_unit_node_id"].is_null()
+                                    && unit_target["body"]
+                                        == json!({"term": "aggregate", "members": []})
+                                    && unit_target["semantic_type"] == preimage["dimension_node_id"]
+                            });
                     let valid_root = unit_target["node_tag"] == "scalar_type"
                         && unit_target["semantic_form"] == "unit"
-                        && unit_target["semantic_type"] == unit_target["node_id"];
+                        && (unit_target["semantic_type"] == unit_target["node_id"] || nominal_root);
                     let valid_exponent = exponent.is_some_and(|member| {
                         member["value"]["term"] == "literal"
                             && member["value"]["value_kind"] == "integer"
@@ -4454,6 +4461,41 @@ fn rekey_stale_nodes(package: &mut Value) -> BTreeMap<String, String> {
         renames.entry(old).or_insert(new);
     }
     panic!("rekeying does not settle within {limit} renames");
+}
+
+/// The operation fixture predates the derived `Reference<O>` rule and points
+/// its generic reference at a record. Rebind that fixture to its published
+/// model declaration before semantic-reader tests, then rekey the complete
+/// dependency closure so the resulting package is an ordinary valid vector.
+fn modelize_legacy_record_reference(package: &mut Value) {
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("fixture nodes are an array");
+    let index = nodes
+        .iter()
+        .position(|node| {
+            node["node_tag"] == "composite_type"
+                && node["semantic_form"] == "reference"
+                && nodes.iter().any(|target| {
+                    target["node_id"] == node["body"]["members"][0]["target"]
+                        && target["node_tag"] == "composite_type"
+                        && target["semantic_form"] == "record"
+                })
+        })
+        .expect("legacy generic record reference");
+    let model_id = nodes
+        .iter()
+        .find(|node| is_model_declaration(node))
+        .expect("fixture model declaration")["node_id"]
+        .clone();
+    replace_node_field_in_graph_and_projection(
+        package,
+        index,
+        "/body/members/0/target",
+        model_id.clone(),
+    );
+    replace_node_field_in_graph_and_projection(package, index, "/dependencies", json!([model_id]));
+    rekey_stale_nodes(package);
 }
 
 /// Append a structural node to a fixture and bind its current key and package
@@ -10569,15 +10611,14 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
     let mutations = adverse["derived_shape_key_mutations"]
         .as_array()
         .expect("derived-shape mutations are an array");
+    let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    modelize_legacy_record_reference(&mut operation);
     let bases = BTreeMap::from([
         (
             "positive-all-families",
             parsed_fixture(POSITIVE_ALL_FAMILIES),
         ),
-        (
-            "positive-operation-identities",
-            parsed_fixture(POSITIVE_OPERATION_IDENTITIES),
-        ),
+        ("positive-operation-identities", operation),
         (
             "positive-recursive-records",
             parsed_fixture(POSITIVE_RECURSIVE_RECORDS),
@@ -10744,7 +10785,8 @@ fn tc_322_derived_form_key_mutations() {
 #[test]
 fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     let catalog = parsed_fixture(OPERATION_CATALOG);
-    let base = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    let mut base = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    modelize_legacy_record_reference(&mut base);
 
     let mut wrong_reference = base.clone();
     let reference_index = wrong_reference["semantic_graph"]["nodes"]
@@ -10901,63 +10943,115 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         "population over an arbitrary set is rejected"
     );
 
-    let mut wrong_compound = base;
-    let mut root_a = wrong_compound["semantic_graph"]["nodes"][16].clone();
-    root_a["semantic_form"] = json!("unit");
-    root_a["body"] = json!({
-        "term": "aggregate",
-        "members": [{"term": "literal", "value": "a", "value_kind": "text"}]
-    });
-    root_a["dependencies"] = json!([]);
-    append_rekeyed_structural_node(&mut wrong_compound, root_a);
-    let root_a_id = wrong_compound["semantic_graph"]["nodes"]
+    // Use the published nominal roots and the exact FR-094 U2 body. Nominal
+    // roots are targetless and carry their dimension key as semantic_type;
+    // they are not self-typed structural unit fixtures.
+    let mut actual_u2 = parsed_fixture(POSITIVE_NOMINAL_IDENTITIES);
+    let metre = actual_u2["semantic_graph"]["nodes"]
         .as_array()
         .unwrap()
-        .last()
-        .unwrap()["node_id"]
+        .iter()
+        .find(|node| {
+            node["node_id"]["digest"]
+                == "79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"
+        })
+        .expect("published unit-metre root")
         .clone();
-    let mut root_b = wrong_compound["semantic_graph"]["nodes"][16].clone();
-    root_b["semantic_form"] = json!("unit");
-    root_b["body"] = json!({
-        "term": "aggregate",
-        "members": [{"term": "literal", "value": "b", "value_kind": "text"}]
-    });
-    root_b["dependencies"] = json!([]);
-    append_rekeyed_structural_node(&mut wrong_compound, root_b);
-    let root_b_id = wrong_compound["semantic_graph"]["nodes"]
-        .as_array()
+    let mut second = metre.clone();
+    second["node_id"]["digest"] =
+        json!("d0f0c5d24d6accb2f1d9afff7c6cdda3143df382e50af4bda0704d48c67ed998");
+    second["semantic_type"]["digest"] =
+        json!("628777f8df3c2700593d56dc20fb110640214dd09bc6cb961d802fdb9b7f6077");
+    second["declaration"]["qualified_name"] = json!(["Example", "second"]);
+    second["nominal_identity_preimage"]["qualified_declaration"] = json!(["Example", "second"]);
+    second["nominal_identity_preimage"]["dimension_node_id"]["digest"] =
+        json!("628777f8df3c2700593d56dc20fb110640214dd09bc6cb961d802fdb9b7f6077");
+    second["dependencies"] = json!([second["semantic_type"].clone()]);
+    let mut second_projection = second.clone();
+    second_projection
+        .as_object_mut()
         .unwrap()
-        .last()
-        .unwrap()["node_id"]
-        .clone();
-    let (first_root, second_root) = if root_a_id["digest"] > root_b_id["digest"] {
-        (root_a_id, root_b_id)
-    } else {
-        (root_b_id, root_a_id)
-    };
-    let mut compound = wrong_compound["semantic_graph"]["nodes"][16].clone();
-    compound["semantic_form"] = json!("compound_unit");
-    compound["body"] = json!({
-        "term": "aggregate",
-        "members": [
+        .remove("occurrences");
+    actual_u2["semantic_graph"]["nodes"]
+        .as_array_mut()
+        .unwrap()
+        .push(second);
+    actual_u2["identity_preimage"]["identity_projection"]
+        .as_array_mut()
+        .unwrap()
+        .push(second_projection);
+    actual_u2["identity_preimage"] = derive_identity_preimage(&actual_u2);
+    refresh_package_id(&mut actual_u2);
+
+    let metre_id = metre["node_id"].clone();
+    let second_id = json!({"domain": "quire.checked-semantic-node/v1", "digest": "d0f0c5d24d6accb2f1d9afff7c6cdda3143df382e50af4bda0704d48c67ed998"});
+    let mut compound = json!({
+        "node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "0000000000000000000000000000000000000000000000000000000000000000"},
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "scalar_type",
+        "semantic_form": "compound_unit",
+        "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "0000000000000000000000000000000000000000000000000000000000000000"},
+        "declaration": null,
+        "dependencies": [metre_id, second_id],
+        "occurrences": [],
+        "body": {"term": "aggregate", "members": [
             {"term": "aggregate", "members": [
-                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": first_root}},
-                {"name": "exponent", "term": "binding", "value": {"term": "literal", "type": wrong_compound["semantic_graph"]["nodes"][16]["node_id"], "value": "1", "value_kind": "integer"}}
+                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": metre["node_id"]}},
+                {"name": "exponent", "term": "binding", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"}, "value": "1", "value_kind": "integer"}}
             ]},
             {"term": "aggregate", "members": [
-                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": second_root}},
-                {"name": "exponent", "term": "binding", "value": {"term": "literal", "type": wrong_compound["semantic_graph"]["nodes"][16]["node_id"], "value": "-1", "value_kind": "integer"}}
+                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": second_id}},
+                {"name": "exponent", "term": "binding", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"}, "value": "-1", "value_kind": "integer"}}
             ]}
-        ]
+        ]},
+        "recursion": null,
+        "version": "quire.structural-node/v1"
     });
-    compound["dependencies"] = json!([]);
-    append_rekeyed_structural_node(&mut wrong_compound, compound);
+    append_rekeyed_structural_node(&mut actual_u2, compound);
+    let actual_u2_id = actual_u2["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap()["node_id"]
+        .clone();
+    assert_eq!(
+        actual_u2_id["digest"], "bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7",
+        "U2 uses the published vector"
+    );
+    assert_eq!(
+        read_package_semantics(&actual_u2, &catalog),
+        Ok(()),
+        "canonical U2 is admitted"
+    );
+
+    let mut wrong_compound = actual_u2.clone();
     let compound_id = wrong_compound["semantic_graph"]["nodes"]
         .as_array()
         .unwrap()
         .last()
         .unwrap()["node_id"]
         .clone();
+    let compound_index = wrong_compound["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .len()
+        - 1;
+    wrong_compound["semantic_graph"]["nodes"][compound_index]["body"]["members"]
+        .as_array_mut()
+        .unwrap()
+        .reverse();
+    wrong_compound["identity_preimage"]["identity_projection"][compound_index]["body"] =
+        wrong_compound["semantic_graph"]["nodes"][compound_index]["body"].clone();
+    let preimage =
+        structural_node_preimage(&wrong_compound["semantic_graph"]["nodes"][compound_index])
+            .unwrap();
+    let digest = unqualified_jcs_sha256(&preimage);
+    wrong_compound["semantic_graph"]["nodes"][compound_index]["node_id"]["digest"] = json!(digest);
+    wrong_compound["identity_preimage"]["identity_projection"][compound_index]["node_id"]["digest"] =
+        json!(digest);
+    wrong_compound["identity_preimage"] = derive_identity_preimage(&wrong_compound);
+    refresh_package_id(&mut wrong_compound);
+    let compound_id = wrong_compound["semantic_graph"]["nodes"][compound_index]["node_id"].clone();
     assert_eq!(
         read_package_semantics(&wrong_compound, &catalog),
         Err(ReadRefusal::GraphShape(compound_id)),
@@ -11169,6 +11263,8 @@ const POSITIVE_TWO_OWNERS_B: &str =
 
 /// Every published positive fixture, by name.
 fn positive_fixtures() -> [(&'static str, Value); 9] {
+    let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    modelize_legacy_record_reference(&mut operation);
     [
         (
             "positive-nominal-identities",
@@ -11186,10 +11282,7 @@ fn positive_fixtures() -> [(&'static str, Value); 9] {
             "positive-control-operations",
             parsed_fixture(POSITIVE_CONTROL_OPERATIONS),
         ),
-        (
-            "positive-operation-identities",
-            parsed_fixture(POSITIVE_OPERATION_IDENTITIES),
-        ),
+        ("positive-operation-identities", operation),
         ("positive-union-nodes", parsed_fixture(POSITIVE_UNION_NODES)),
         (
             "positive-recursive-records",
