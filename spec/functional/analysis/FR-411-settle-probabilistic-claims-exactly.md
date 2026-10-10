@@ -50,15 +50,39 @@ For a form whose event is a bounded formula or a comparison of a bounded
 measure, the provider forms the product of FR-406's process (or, under a
 workload, its Markov chain) with the formula's deterministic finite monitor,
 read at each position. A bounded measure adds to the product state its
-accumulator (steps, reward or weighted sums since activation, saturating one
-unit above the threshold) and the activation flag; rewards are non-negative
-values from finite supports, so the accumulator takes finitely many values.
-The product state key is (model state key, monitor state, accumulator); a
-product edge carries the model edge's action, draw and probability. Every
-product path reaches an accepting or rejecting monitor state, a **decided**
+accumulator and actual activation/control phase. Steps or reward amounts
+above a comparison/quantile threshold SHALL use QSL FR-196 / ADR-028 PR-4's
+single `["above-bound"]` amount, not an arbitrary magnitude or `c + 1`.
+Exact equality, inactive/active zero, completion and `["censored"]` remain
+distinct. Fractions SHALL retain both exact sums through completion, without
+saturation or reduction of the pair to its current ratio. Finite horizons
+and finite non-negative reward supports keep this product finite.
+The complete product key SHALL use QSL FR-196's canonical RFC 8785 UTF-8
+octets of `["quire.probability-product-key/v1", model, monitor, accumulator,
+pending]`: the full typed model form, actual canonical monitor/accumulator,
+and actual pending scheduled identity and declaration-ordered drawn vector.
+All members are present; actual None is null, never a default component.
+Formula monitors retain the full parsed QSL FR-338 automaton array, not a
+local state index. Exact-only forms retain actual None monitor/accumulator;
+digital model forms retain actual clocks, deadline and tail control.
+Equality/order SHALL compare complete decoded unsigned octets, not a
+model digest or local product number. FR-331 owns their transport spelling
+in FR-412 certificates/rejections and FR-413 witnesses; no new digest or
+canonical representation is defined here. A product edge retains QSL
+FR-196's full semantic ProductAction, actual action/draw and probability.
+Every bounded-formula product path reaches an accepting or rejecting monitor state, a **decided**
 state, within `h + 1` positions; decided states are absorbing, and the product
 restricted to undecided states is acyclic. An exact-only form needs no
 monitor: its state predicates label model states and its reward labels edges.
+
+For digital timed objectives, QSL ADR-028 §13a / FR-196/198/201/202 govern
+derived TS-5 observation admissibility and infimum/supremum: actual semantic
+observation edges, original-subject admissible continuations and finite-wait
+components cannot be replaced by goal absorption or unrestricted deterministic
+policy attainment. Exact-rational randomized threshold evidence may be
+required without an authored fairness set. The unbounded methods below apply
+subject to that published amendment; no observation period, default policy
+or public goal key is introduced.
 
 ### Finite-horizon forms
 

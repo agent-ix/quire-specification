@@ -696,6 +696,89 @@ fn tc_431_canonical_key_bindings_are_complete() {
     assert!(definition("AutomatonStateKey").is_valid(&serde_json::json!(spelling)));
 }
 
+/// Independent finite field oracle for FR-413 carriers. AQ/Ag and the
+/// reused model-state sample test transport only, never key-body admission.
+#[trace("TC-431", "FR-331-AC-27", "FR-413-AC-6", "FR-413-AC-8")]
+#[test]
+fn tc_431_probability_witness_bindings_are_complete() {
+    let schema = parsed(SCHEMA);
+    let required = ["transition", "post_state", "random", "action", "post_key", "elapsed"];
+    let expected: BTreeSet<_> = required.into_iter().collect();
+    let authored: BTreeSet<_> = schema["$defs"]["ProbabilisticStep"]["required"]
+        .as_array().expect("required fields").iter()
+        .map(|field| field.as_str().expect("field name")).collect();
+    assert_eq!(authored, expected);
+    assert_eq!(schema["$defs"]["ProbabilisticStep"]["properties"]["action"]["$ref"],
+        "#/$defs/ProbabilityProductAction");
+    assert_eq!(schema["$defs"]["ProbabilisticStep"]["properties"]["post_key"]["$ref"],
+        "#/$defs/ProbabilityProductKey");
+    assert_eq!(schema["$defs"]["ProbabilisticCounterexample"]["properties"]["scheduler"]["$ref"],
+        "#/$defs/ProbabilityWitnessScheduler");
+    let row = &schema["$defs"]["ProbabilityWitnessScheduler"]["properties"]["entries"]["items"];
+    assert_eq!(row["properties"]["state"]["$ref"], "#/$defs/ProbabilityProductKey");
+    assert_eq!(row["properties"]["choice"]["$ref"], "#/$defs/ProbabilityWitnessEntry");
+    let arms = &schema["$defs"]["ProbabilisticCounterexample"]["properties"]["evidence"]["oneOf"];
+    assert_eq!(arms[0]["properties"]["paths"]["items"]["items"]["$ref"],
+        "#/$defs/ProbabilisticStep");
+    assert_eq!(arms[2]["properties"]["path"]["items"]["$ref"],
+        "#/$defs/ProbabilisticStep");
+
+    // Reuse an existing structural StateKey; introduce no content digest.
+    let old = positive("certificate-rejected-loci");
+    let model_state = old["document"]["results"].as_array().expect("results").iter()
+        .find_map(|result| result["cause"]["at"]["state"].as_str())
+        .expect("existing model-state sample");
+    let step = serde_json::json!({"transition": null, "post_state": model_state,
+        "random": null, "action": encode(br#"["idle-observe"]"#), "post_key": "AQ",
+        "elapsed": {"numerator": "0", "denominator": "1"}});
+    let step_reader = definition("ProbabilisticStep");
+    assert!(step_reader.is_valid(&step));
+    let mut empty_draw = step.clone();
+    empty_draw["random"] = serde_json::json!([]);
+    assert!(step_reader.is_valid(&empty_draw));
+    assert_ne!(empty_draw["random"], step["random"], "drawn empty vector is not None");
+    for literal in [br#"["delay"]"#.as_slice(), br#"["enter-idle-delay"]"#.as_slice(),
+        br#"["idle-delay"]"#.as_slice(), br#"["terminal-stutter"]"#.as_slice()] {
+        let spelling = encode(literal);
+        assert_eq!(decode(&spelling), Some(literal.to_vec()));
+        assert!(definition("ProbabilityProductAction").is_valid(&serde_json::json!(spelling)));
+    }
+    let witness_reader = definition("ProbabilisticCounterexample");
+    let shapes = positive("probability-witness-shapes");
+    let witnesses = shapes["document"]["counterexamples"].as_array().expect("witnesses");
+    assert_eq!(witnesses.len(), 2, "path-set and undefined-path independently covered");
+    let mut omissions = 0;
+    for sample in witnesses {
+        let mut filled = sample["counterexample"].clone();
+        let path = if filled["evidence"]["type"] == "path-set" {
+            "/evidence/paths/0"
+        } else {
+            assert_eq!(filled["evidence"]["type"], "undefined-path");
+            "/evidence/path"
+        };
+        *filled.pointer_mut(path).expect("actual path") = serde_json::json!([step.clone()]);
+        assert!(witness_reader.is_valid(&filled));
+        for field in required {
+            let mut missing = filled.clone();
+            missing.pointer_mut(path).expect("path")[0].as_object_mut()
+                .expect("step").remove(field);
+            assert!(!witness_reader.is_valid(&missing), "{path} needs {field}");
+            omissions += 1;
+        }
+        for (field, value) in [("elapsed", serde_json::json!({"numerator": "-1", "denominator": "1"})),
+            ("post_key", serde_json::json!("AQ==")), ("action", serde_json::json!({"operation": "send_b"})),
+            ("random", serde_json::json!({})), ("transition", serde_json::json!({"type": "idle-observe"}))] {
+            let mut malformed = filled.clone();
+            malformed.pointer_mut(path).expect("path")[0][field] = value;
+            assert!(!witness_reader.is_valid(&malformed), "invalid {field} at {path}");
+        }
+        let mut alias = filled;
+        alias.pointer_mut(path).expect("path")[0]["state"] = serde_json::json!("AQ");
+        assert!(!witness_reader.is_valid(&alias), "no extra model-key alias");
+    }
+    assert_eq!(omissions, 12, "six mandatory fields in each of two path arms");
+}
+
 // Normative rule inventory, independent of both schema and vector contents.
 const CERTIFICATE_RULES: [&str; 24] = [
     "initial-missing",

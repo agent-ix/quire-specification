@@ -101,6 +101,18 @@ hyper oracle is unchanged. The canonical deadlock-freedom safety key from
 QSL TC-525 is an independent literal octet oracle for transport round-trip;
 this does not qualify the actual translation or body reader.
 
+BP-16 also binds FR-413's scheduler and both path carriers through
+`tc_431_probability_witness_bindings_are_complete`. An independent literal
+six-field set requires `transition`, `post_state`, `random`, `action`,
+`post_key` and `elapsed`; all twelve single omissions across path-set and
+undefined-path refuse. Full-key/action references, negative elapsed,
+padded post-key, open operation/action aliases and extra model-key aliases
+are checked. Actual None and a drawn empty vector remain distinct.
+`probability-witness-shapes` supplies deterministic and randomized closed
+scheduler structural positives, with adverse key/mode/choice/step omissions.
+Its zero-edge containers, AQ/Ag and the reused model-state sample do not
+assert a real scheduler, canonical product identity or admissible path.
+
 BP-17 is the actual-reader canonical admission control: decode the exact
 TC-525 key in its Counter/deadlock context; compare complete canonical
 octets across materialization orders and through product/hyper/witness
@@ -117,6 +129,14 @@ rank-broken separately from their model-graph uses. No digest or canonical
 meaning is added to its AQ/Ag samples. Policy shape positives/omissions and
 ordinary-transition alias refusal are authored in the Rust oracle; actual
 enabledness, exact mass normalization and admissibility remain EC-10.
+For FR-413 also rederive each complete scheduler key/choice and path
+ProductAction, post-product key, actual operation/draw and exact elapsed
+from the actual origin claim, model and profile. Refuse changed pending
+draw, foreign context, mode loss, full-key projection, double-applied delay
+and inadmissible original-continuation/TS-5 recurrent coverage. Exercise
+actual no-operation/no-draw tails separately from drawn empty vectors;
+never supply a default operation, key or continuation to admit a sample.
+These actual-reader controls are authored obligations and remain UNRUN.
 
 Every published vector is admitted or refused as stated, and the package
 member carries exactly the checked package its `package_id` names.

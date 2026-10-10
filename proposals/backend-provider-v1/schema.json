@@ -552,14 +552,17 @@
       "additionalProperties": false
     },
     "ProbabilisticStep": {
-      "description": "FR-413, FR-410: an FR-181 trace step with its drawn scheduled identity, random values and, over a timed subject, delay.",
+      "description": "FR-331 / FR-413 exact witness step, QSL FR-202: retain actual trace operation/stutter or null for no such projection, actual model post-state content identity, draw or actual None, full semantic ProductAction, full post-product key and exact nonnegative elapsed. Reader rederives all fields in actual context; no fake operation/draw for a tail or model-only key shortcut. SampledWitness remains FR-410's separate contract.",
       "type": "object",
-      "required": ["transition", "post_state", "random"],
+      "required": ["transition", "post_state", "random", "action", "post_key", "elapsed"],
       "properties": {
-        "transition": {"$ref": "#/$defs/TransitionIdentity"},
+        "transition": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TransitionIdentity"}, {"type": "object", "required": ["type"], "properties": {"type": {"const": "terminal-stutter"}}, "additionalProperties": false}]},
         "post_state": {"$ref": "#/$defs/StateKey"},
-        "random": {"type": "array", "items": {"$ref": "#/$defs/TypedValue"}},
-        "delay": {"$ref": "#/$defs/Rational"}
+        "random": {"oneOf": [{"type": "null"}, {"type": "array", "items": {"$ref": "#/$defs/TypedValue"}}]},
+        "action": {"$ref": "#/$defs/ProbabilityProductAction"},
+        "post_key": {"$ref": "#/$defs/ProbabilityProductKey"},
+        "elapsed": {"allOf": [{"$ref": "#/$defs/Rational"}, {"properties": {"numerator": {"$ref": "#/$defs/Decimal"}}}]},
+        "delay": {"description": "FR-181 actual timed trace delay where present, checked against the semantic edge; no default or double delay is inferred.", "allOf": [{"$ref": "#/$defs/Rational"}, {"properties": {"numerator": {"$ref": "#/$defs/Decimal"}}}]}
       },
       "additionalProperties": false
     },
@@ -571,7 +574,7 @@
         "initial_state": {"$ref": "#/$defs/Count"},
         "binding": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TypedValue"}]},
         "bound": {"description": "FR-407 owns the bound and its threshold.", "type": "object", "minProperties": 1},
-        "scheduler": {"description": "FR-413 WitnessScheduler{entries}.", "type": "object", "required": ["entries"], "properties": {"entries": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["state", "choice"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "choice": {"description": "FR-413: a choice, or a distribution over choices with exact rational probabilities under a fairness set."}}, "additionalProperties": false}}}, "additionalProperties": false},
+        "scheduler": {"$ref": "#/$defs/ProbabilityWitnessScheduler"},
         "evidence": {
           "type": "object",
           "required": ["type"],
@@ -857,12 +860,21 @@
       "additionalProperties": false
     },
     "CertificateIdentity": {"description": "FR-201: the canonical identity digest that binds a certificate to the obligation it proves.", "type": "object", "required": ["domain", "algorithm", "digest"], "properties": {"domain": {"$ref": "#/$defs/Nonempty"}, "algorithm": {"const": "sha256"}, "digest": {"$ref": "#/$defs/HexDigest"}}, "additionalProperties": false},
+    "ProbabilityProductAction": {"description": "FR-331 transport of QSL FR-196 complete canonical ProductAction body octets: identity, post-state with parsed full target key, terminal-stutter, delay, enter-idle-delay, idle-delay or idle-observe. Strict reader checks tag/arity, actual enabled action, context and canonical bytes; base64url shape is not semantic admission and FreeDelays is not a ProductAction.", "$ref": "#/$defs/Base64Url"},
+    "ProbabilityWitnessChoice": {"description": "FR-331 transport of QSL FR-202 canonical WitnessChoice body octets: FR-196 ProductAction or FR-202 conditioned FreeDelays. Actual receiver/arguments/support/delay and unsigned choice-octet order are rederived; no identity/index/default aliases or second encoder.", "$ref": "#/$defs/Base64Url"},
+    "ProbabilityWitnessScheduler": {
+      "description": "FR-331 / FR-413, QSL FR-202: entries keyed by complete ProbabilityProductKey with closed WitnessEntry, unique in unsigned decoded key-octet order. Reader checks required/absent scheduler from actual claim/workload, actual deterministic/randomized mode, enabled support and original-subject admissibility; structural admission alone is not proof.",
+      "type": "object",
+      "required": ["entries"],
+      "properties": {"entries": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["state", "choice"], "properties": {"state": {"$ref": "#/$defs/ProbabilityProductKey"}, "choice": {"$ref": "#/$defs/ProbabilityWitnessEntry"}}, "additionalProperties": false}}},
+      "additionalProperties": false
+    },
     "ProbabilityWitnessEntry": {
       "description": "FR-331 transport of QSL FR-201/202 WitnessEntry. Each choice carries complete RFC 8785 canonical choice-body octets (FR-196 ProductAction or FR-202 FreeDelays), not an ordinary transition alias. Reader checks actual enabled choices, mode, unique canonical octet order, positive reduced masses summing to one, conditioned support and admissible continuation/fairness/TS-5.",
       "type": "object",
       "oneOf": [
-        {"required": ["type", "choice"], "properties": {"type": {"const": "choice"}, "choice": {"$ref": "#/$defs/Base64Url"}}, "additionalProperties": false},
-        {"required": ["type", "choices"], "properties": {"type": {"const": "randomized"}, "choices": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["choice", "probability"], "properties": {"choice": {"$ref": "#/$defs/Base64Url"}, "probability": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false}}}, "additionalProperties": false}
+        {"required": ["type", "choice"], "properties": {"type": {"const": "choice"}, "choice": {"$ref": "#/$defs/ProbabilityWitnessChoice"}}, "additionalProperties": false},
+        {"required": ["type", "choices"], "properties": {"type": {"const": "randomized"}, "choices": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["choice", "probability"], "properties": {"choice": {"$ref": "#/$defs/ProbabilityWitnessChoice"}, "probability": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false}}}, "additionalProperties": false}
       ]
     },
     "ProbabilityCertificate": {

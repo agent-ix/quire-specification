@@ -211,6 +211,39 @@ choice-octet order, with positive reduced probabilities summing to one.
 The actual mode, support, admissible continuation, fairness and TS-5
 progress checks remain QSL FR-201/202 obligations, not schema admission.
 
+FR-413's `scheduler.entries` SHALL use the same complete
+`ProbabilityProductKey` in each existing `state` member and the same closed
+WitnessEntry in `choice`, not a model-only key or open choice payload.
+The actual admitted scheduler/workload and checked profile determine when
+the scheduler is required or absent and whether randomized evidence is
+applicable, including derived TS-5 without authored fairness. Entry/support
+uniqueness, decoded octet order, exact positive reduced normalized masses,
+enabledness and original-subject admissible continuation SHALL be checked
+before consumption; no absent scheduler or unlisted state gets a default.
+
+Each FR-413 path-set or undefined-path step SHALL carry exactly the required
+`transition`, `post_state`, `random`, `action`, `post_key` and `elapsed`,
+and optional `delay` only as actual FR-181 timed trace content. `action`
+transports the complete canonical FR-196 ProductAction octets, not a
+FreeDelays policy body or projected TransitionIdentity. `post_key` carries
+the complete ProbabilityProductKey. `post_state` retains the existing
+FR-181 canonical model post-state content identity and is separately
+recomputed/checked; it is not a product-key substitute or new digest use.
+`transition` retains the actual FR-181 transition/terminal-stutter projection
+or null when that semantic edge has no such projection; `random` retains
+the actual typed drawn vector or null for actual no draw. A genuinely drawn
+empty vector remains distinct from null. Required-member omission is never
+that absence. No operation, receiver or drawn vector is synthesized for a
+timed tail. `elapsed` is the actual nonnegative reduced Rational in the
+model time unit, zero for untimed/IdleObserve and 1/scale for each digital
+delay. The reader SHALL rederive all projections, draws, clock/tail/control
+post-keys and elapsed/optional trace delay from the actual semantic edge,
+retaining the full requested property/profile/binding context and applying
+an already-delayed pending resolution exactly once. Missing/extra members,
+model/index/transition aliases, foreign contexts and unsupported choice
+forms SHALL refuse before consumption, not become a root-only admission.
+FR-410 SampledWitness keeps its separate sampled trace contract.
+
 Base64url only transports these owner-defined bytes and does not create a
 digest domain. Padded/aliased transport, non-JCS bodies, unknown tags,
 missing/extra members and contextually invalid components SHALL refuse
@@ -507,7 +540,7 @@ out-of-domain values and non-canonical encodings refuse before consumption. A `c
 | FR-331-AC-24 | A `certificate-rejected` cause is admitted with each locus form of the Certification table: each query part, `unrolling`, `base` and `step`; a proof step `{part, index}` with index `"0"`, `"41"` or `"18446744073709551615"`; a product state; a hyper product state with and without its automaton key and with a witness set; a state; each of the three simulation-step forms, `step-fails` carrying an `AbstractStepRejected` verdict; a zone node, edge and component; and a certificate member. An `at` that is an unknown part, an empty string or an empty object; a proof step with an unknown part, without `part` or `index`, with another member, or whose `index` is a JSON number, `"-1"`, `"18446744073709551616"` or `"041"`; a product state whose automaton key is padded; a hyper product state with no states; a state that is not a `StateKey`; a negative zone node; an unknown member; and a `step-fails` verdict that is another inconclusive cause, are each refused. Across every digit position of `18446744073709551615`, and lengths up to 21 digits, an `index` is admitted exactly when it is the canonical decimal spelling of an unsigned 64-bit integer. | Test (TC-431) |
 | FR-331-AC-25 | A `certificate-rejected` cause is admitted with each rule at a locus listed with it, `not-refutation` and `malformed` at a query part included. An independent finite inventory enumerates all 24 owned rule spellings and equals both the schema's rule set and the positive-vector rule set; removing a rule from both fails that comparison. A rule outside the closed set, such as `state-missing`; a rule written as its variant name, `QueryMismatch`; and a rule at a locus not listed with it are each refused: `query-mismatch` at a proof step, `proof-step-invalid` at a query part, `bad-state` at a hyper product state, `witness-fails` at a state, `rank-broken` at a zone node, `bad-state` at a zone component, `rank-missing` at a certificate member, `initial-mismatch` with an `edge`, `post-differs` without an `edge`, and `step-fails` without a `verdict`. | Test (TC-431) |
 | FR-331-AC-26 | A structurally admitted `inequality-fails` rejection is refused when bound to an EN-1 temporal claim; `successor-missing` at a model-only state is refused for FR-338's product-state checker even if the global schema admits that State locus. A rejection with absent, conflicting or ambiguous request/claim/checker context is refused before consumption. The same rule/locus in its actual owning context is consumed as a certificate rejection, never replaced by a default cause. | Test (TC-431) |
-| FR-331-AC-27 | An HP-3 key for zero universal variables preserves a present empty `states` tuple and both empty and nonempty actual witness sets; absent `states` or absent HP-3 `witness_set` is refused. An HP-1 failing transition tuple preserves every edge's pre-state, transition identity, post-state and result in binding order. An FR-412 rejection preserves the complete probabilistic product key, distinguishing equal model states with different monitor, accumulator or pending components. | Test (TC-431, TC-363) |
+| FR-331-AC-27 | An HP-3 key for zero universal variables preserves a present empty `states` tuple and both empty and nonempty actual witness sets; absent `states` or absent HP-3 `witness_set` is refused. An HP-1 failing transition tuple preserves every edge's pre-state, transition identity, post-state and result in binding order. An FR-412 rejection preserves the complete probabilistic product key, distinguishing equal model states with different monitor, accumulator or pending components. FR-413 scheduler keys and path post-keys preserve that same complete representation; scheduler choice/randomized mode and path semantic action, draw/real absence and exact elapsed survive reading. Missing fields, open choices, projected model/index/action aliases and foreign request/property/profile/binding contexts refuse before consumption. | Test (TC-431, TC-363) |
 
 ## Dependencies
 
