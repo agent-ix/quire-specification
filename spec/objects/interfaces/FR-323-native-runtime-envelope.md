@@ -96,8 +96,10 @@ When a checked package is executed or replayed, the producer SHALL use the immut
   whose name is not a stage-limit setting name refuses before any stage
   runs.
 - `results` — one ordered typed disposition per selected item.
-  A result stopped during supplied conversion/admission carries the typed
-  `supplied` context below, never an evaluated-call limit record.
+  Supplied conversion/admission limit, input, cancellation, storage and
+  capacity stops carry the typed `supplied` context below, never an
+  evaluated-call limit record. An existing pre-call `InternalFault` instead
+  retains the separate native fault route specified below.
 - `replay` — present only on a replay request, and absent otherwise. It
   carries: the originating counterexample identity and expected originating
   verdict; the `ReplaySource` (`Witness` or `Input`, FR-197); the selected
@@ -143,7 +145,9 @@ ceilings do not qualify an unreviewed helper. No numeric fallback is inferred.
 `stage_limits` SHALL continue to carry only FR-460/461 recompile stage settings.
 Neither supplied field is a stage setting; placing it there SHALL refuse
 under the existing unknown-stage-setting rule before stages run. Changing
-either effective supplied ceiling changes request identity, not package
+either effective supplied ceiling SHALL change request identity, not package
+identity, with package/input/selection/options otherwise fixed. Holding
+both effective ceilings and those other inputs fixed SHALL retain request
 identity. Replay/non-replay structural separation is unchanged.
 
 A and H SHALL each retain one cumulative budget across all supplied arguments
@@ -158,8 +162,10 @@ independent and SHALL NOT be renamed or repurposed as A.
 
 ### Pre-call result context
 
-For an observed supplied-phase stop, the affected ordered result SHALL carry
-exactly this closed context in `supplied`:
+For an observed supplied-phase limit, input, cancellation, storage or capacity
+stop, the affected ordered result SHALL carry exactly this closed context
+in `supplied`. Existing `InternalFault` stops are outside this five-arm
+context and SHALL use the separate native fault route below:
 
 `{ phase, parameter, event, locus, consumed, cause }`.
 
@@ -221,6 +227,38 @@ fill its mandatory charge_point with FunctionCall, omit phase provenance or
 count A/H/C as evaluator work. Result identity includes the complete actual
 typed disposition and supplied context when present.
 
+### Existing pre-call fault route
+
+An existing `ReplayRefusal::Fault(InternalFault)` detected during conversion
+SHALL remain a native internal-failure result, not a sixth `supplied.cause`
+arm. Its result SHALL omit `supplied` and preserve the original fault
+diagnostic, stage, invariant identifier and typed provenance. Replay SHALL
+retain its existing `TerminalValue::Failed` classification and unavailable
+replay basis, not an ordinary InputRefusal/Inconclusive settlement. The
+absence of `supplied` does not imply evaluation occurred: the original
+detecting operation and stage SHALL retain its pre-call origin.
+
+This explicitly preserves the converter's QSL-owned `replay` faults naming
+`converted-payload`, `converted-slots`, `converted-elements` or
+`one-converted-argument`. These retain their own identifiers, not a received
+kernel CheckedInvariantCause, an input error, capacity denial or an evaluated
+invariant. The receiving mapping SHALL NOT synthesize a kernel payload or
+replace the detecting stage/invariant. A received typed kernel fault, when
+actually present, retains its distinct original typed provenance under
+QSL FR-096; no blanket conversion to a QSL-owned fault is permitted.
+
+Fault propagation SHALL add no meter event or fault-specific helper debit,
+perform no later conversion/evaluation/result retention, and return no
+partial value or replay agreement. Earlier actual successful helper spend
+SHALL NOT be reset/refunded; semantic evaluation consumption for a
+pre-evaluation conversion fault remains zero. A genuine evaluated fault
+retains its actual prior semantic charges instead. No mandatory evaluated
+charge_point or FunctionCall is fabricated for the pre-call fault.
+The original native typed fault serialization remains its owning reviewed
+contract, not an opaque map or newly invented cause/field here. Qualification
+of that binding is separate from preserving the fault route: inability to
+serialize it cannot justify coercion into one of the five supplied arms.
+
 ### Qualification prerequisites
 
 Every supported supplied path SHALL satisfy QSL FR-277 AC-6 / QSV FR-109
@@ -229,8 +267,14 @@ finite work AND peak temporary storage, original-Cancel response boundary,
 fallible reservation where needed and reviewed native typed mapping. Logical
 event counts alone do not prove these premises. Cold/warm caches retain
 identical counts/first denial for identical input/environment/nonzero incoming
-budget. Checked representation overflow and reservation denial are distinct;
-retry after removed denial preserves membership rules.
+budget. Checked representation overflow and reservation denial are distinct.
+After removing a storage denial, retry SHALL retain the already-successful
+budget prefix and original Cancel, with no reset/refund. Its fresh comparison
+attempt SHALL use identical input/environment and the SAME initial nonzero
+already-spent prefix. Independently enumerated retry/fresh logical sequences
+SHALL agree in cumulative spend and first-denial record at one-less, and
+membership result/spend at exact ceiling; membership equality alone is not
+the oracle. No denied reservation/event is spent and no partial state survives.
 
 Missing proof is an implementation qualification BLOCKER, not any fabricated
 invalid/limit/storage/unsupported result. Decimal requires reviewed IR-718
@@ -276,8 +320,9 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-9 | A replay whose sources recompile to a proved `package_id` other than the request's `package.package_id`, after replay rules 1 to 4 pass, refuses `stale_dependency`/`content-mismatch` (QSL's `PackageIdMismatch`) naming the request's `package_id` and the recompiled one, and yields no result. | Test (TC-277) |
 | FR-323-AC-10 | Applicable replay/non-replay requests carry complete effective u64 `limits.supplied` A/H ceilings, independent of unchanged ScalarLimitsV1, PopulationAdmissionLimitsV1 and per-argument C/occ. Zero permits no event; either changed ceiling changes request identity. Supplied fields in `stage_limits` refuse before stages run. No absent ceiling borrows evaluator/population/stage work or an unselected default; default-request qualification waits for the owning published defaults. | Test |
 | FR-323-AC-11 | A supported fixture's independently enumerated A/H event sequence denies at zero/one-less and completes at exact ceiling when other bounds fit. Its actual pre-call limit result preserves supplied phase, parameter/locus, actual event, configured ceiling, successful prefix, denied amount and checked attempted count/overflow, with zero evaluation consumption and no kernel charge_point/FunctionCall. Its evaluated counterpart retains the unchanged accounting incomplete record without supplied context. | Test |
-| FR-323-AC-12 | Actual supplied invalid input, original caller cancellation, fallible storage denial and checked representation capacity failure preserve their distinct reviewed native typed cause/provenance; storage reports the real request in native bytes/additional-elements, not a work limit. Paired identical input/environment/nonzero-budget cold/warm runs preserve count and first denial; nested/multiple arguments neither reset nor double debit; retry after removal of storage denial matches fresh membership. Malformed/unknown/mixed-origin context refuses interpretation, never a successful or guessed native cause. | Test |
+| FR-323-AC-12 | Actual supplied invalid input, original caller cancellation, fallible storage denial and checked representation capacity failure preserve their distinct reviewed native typed cause/provenance; storage reports the real request in native bytes/additional-elements, not a work limit. Paired identical input/environment/nonzero-budget cold/warm runs preserve count and first denial; nested/multiple arguments neither reset nor double debit. After removal of storage denial, retry retains the successful prefix/original Cancel and matches a fresh attempt with identical input/environment and the same initial nonzero spend: independently expected cumulative spend/result at exact and first-denial record at one-less, without reset/refund or partial state. Malformed/unknown/mixed-origin context refuses interpretation, never a successful or guessed native cause. | Test |
 | FR-323-AC-13 | Qualification of each supplied helper/cause arm identifies actual input/work/peak-storage/Cancel/fallible-route premises and reviewed typed mapping. Omitting any premise blocks qualification without creating a runtime unsupported/error result. Decimal remains a mandatory positive path once IR-718/IR-719 capability and typed integration enable it; its tiny allocation falsifier and future union baseline remain explicit prerequisites, not proof from numerical hypotheses. | Analysis |
+| FR-323-AC-14 | An existing typed replay conversion InternalFault supplied at its owning seam retains Failed/internal-failure classification, actual replay stage/invariant/provenance and unavailable basis, with supplied context absent, no ordinary InputRefusal/Inconclusive coercion, no synthetic kernel payload and zero semantic consumption/no added mapping charge. Compare with an ordinary input refusal and a genuine evaluated fault retaining its earlier charges. A five-arm-only serializer that drops/coerces the pre-call fault fails the control; original successful helper prefix is not reset/refunded. | Test |
 
 ## Dependencies
 
@@ -303,6 +348,6 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 Accepted complete-V1 boundary value contract. Implementation and qualification
 remain tracked separately.
-The QSL-681 supplied-phase amendment and AC-10..13 are PROPOSED,
+The QSL-681 supplied-phase amendment and AC-10..14 are PROPOSED,
 independently unreviewed and UNQUALIFIED. No implementation, new default,
 typed native mapping, helper proof or acceptance execution is claimed.
