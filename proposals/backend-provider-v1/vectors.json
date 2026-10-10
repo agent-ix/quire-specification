@@ -2001,6 +2001,97 @@
       }
     },
     {
+      "name": "certificate-rejected-hyper-identities",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/cause": "FR-331",
+        "/results/1/cause": "FR-331",
+        "/results/2/cause": "FR-331",
+        "/results/3/cause": "FR-331",
+        "/results/4/cause": "FR-331",
+        "/results/5/cause": "FR-331",
+        "/results/6/cause": "FR-331"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {"request_index": 0, "disposition": "supported"},
+          {"request_index": 1, "disposition": "supported"},
+          {"request_index": 2, "disposition": "supported"},
+          {"request_index": 3, "disposition": "supported"},
+          {"request_index": 4, "disposition": "supported"},
+          {"request_index": 5, "disposition": "supported"},
+          {"request_index": 6, "disposition": "supported"}
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "violating-member",
+              "at": {
+                "transitions": [
+                  {"pre_state": "1111111111111111111111111111111111111111111111111111111111111111", "transition": {"type": "transition", "operation": "isZero", "receiver": null, "arguments": []}, "post_state": "1111111111111111111111111111111111111111111111111111111111111111", "result": {"type": "boolean", "value": true}},
+                  {"pre_state": "1111111111111111111111111111111111111111111111111111111111111111", "transition": {"type": "transition", "operation": "isZero", "receiver": null, "arguments": []}, "post_state": "2222222222222222222222222222222222222222222222222222222222222222", "result": {"type": "boolean", "value": false}}
+                ]
+              }
+            }
+          },
+          {
+            "request_index": 1,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "undefined-member",
+              "at": {
+                "transitions": [
+                  {"pre_state": "1111111111111111111111111111111111111111111111111111111111111111", "transition": {"type": "transition", "operation": "set", "receiver": null, "arguments": [{"type": "integer", "value": "0"}]}, "post_state": "1111111111111111111111111111111111111111111111111111111111111111", "result": null},
+                  {"pre_state": "1111111111111111111111111111111111111111111111111111111111111111", "transition": {"type": "transition", "operation": "set", "receiver": null, "arguments": [{"type": "integer", "value": "1"}]}, "post_state": "2222222222222222222222222222222222222222222222222222222222222222", "result": null}
+                ]
+              }
+            }
+          },
+          {
+            "request_index": 2,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "violating-member",
+              "at": {
+                "transitions": [
+                  {"pre_state": "1111111111111111111111111111111111111111111111111111111111111111", "transition": {"type": "transition", "operation": "isZero", "receiver": null, "arguments": []}, "post_state": "2222222222222222222222222222222222222222222222222222222222222222", "result": {"type": "boolean", "value": false}},
+                  {"pre_state": "1111111111111111111111111111111111111111111111111111111111111111", "transition": {"type": "transition", "operation": "isZero", "receiver": null, "arguments": []}, "post_state": "1111111111111111111111111111111111111111111111111111111111111111", "result": {"type": "boolean", "value": true}}
+                ]
+              }
+            }
+          },
+          {"request_index": 3, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "violating-member", "at": {"states": [], "automaton_state": "AQ", "witness_set": []}}},
+          {"request_index": 4, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "successor-missing", "at": {"states": [], "automaton_state": "AQ", "witness_set": [{"states": ["1111111111111111111111111111111111111111111111111111111111111111", "2222222222222222222222222222222222222222222222222222222222222222"], "automaton_state": "Ag"}]}}},
+          {"request_index": 5, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "violating-member", "at": {"states": ["1111111111111111111111111111111111111111111111111111111111111111"], "automaton_state": "AQ", "witness_set": []}}},
+          {"request_index": 6, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "malformed", "at": {"member": "components"}}}
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {"request_index": 0, "settled_by": "result"},
+          {"request_index": 1, "settled_by": "result"},
+          {"request_index": 2, "settled_by": "result"},
+          {"request_index": 3, "settled_by": "result"},
+          {"request_index": 4, "settled_by": "result"},
+          {"request_index": 5, "settled_by": "result"},
+          {"request_index": 6, "settled_by": "result"}
+        ]
+      }
+    },
+    {
       "name": "state-graph-and-hyper-outcome",
       "stage": "outcome",
       "owners": {
@@ -3546,11 +3637,136 @@
       "owner": "FR-331",
       "patch": [
         {
-          "op": "replace",
-          "path": "/results/10/cause/at/states",
-          "value": []
+          "op": "remove",
+          "path": "/results/10/cause/at/states"
         }
       ]
+    },
+    {
+      "name": "hp1-tuple-without-transitions",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "remove", "path": "/results/0/cause/at/transitions"}]
+    },
+    {
+      "name": "hp1-tuple-empty-transitions",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "replace", "path": "/results/0/cause/at/transitions", "value": []}]
+    },
+    {
+      "name": "hp1-edge-without-pre-state",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "remove", "path": "/results/0/cause/at/transitions/0/pre_state"}]
+    },
+    {
+      "name": "hp1-edge-without-transition",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "remove", "path": "/results/0/cause/at/transitions/0/transition"}]
+    },
+    {
+      "name": "hp1-edge-without-post-state",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "remove", "path": "/results/0/cause/at/transitions/0/post_state"}]
+    },
+    {
+      "name": "hp1-edge-without-result",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "remove", "path": "/results/1/cause/at/transitions/0/result"}]
+    },
+    {
+      "name": "hp1-edge-extra-member",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "add", "path": "/results/0/cause/at/transitions/0/extra", "value": true}]
+    },
+    {
+      "name": "hp1-tuple-extra-automaton",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "add", "path": "/results/0/cause/at/automaton_state", "value": "AQ"}]
+    },
+    {
+      "name": "hp1-edge-protocol-transition",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "replace", "path": "/results/0/cause/at/transitions/0/transition", "value": {"type": "protocol-transition"}}]
+    },
+    {
+      "name": "hp1-edge-untyped-result",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "replace", "path": "/results/0/cause/at/transitions/0/result", "value": false}]
+    },
+    {
+      "name": "hp1-tuple-inapplicable-rule",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "replace", "path": "/results/0/cause/rule", "value": "successor-missing"}]
+    },
+    {
+      "name": "hp3-empty-universal-without-states",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "remove", "path": "/results/3/cause/at/states"}]
+    },
+    {
+      "name": "hp3-empty-universal-without-automaton",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "remove", "path": "/results/3/cause/at/automaton_state"}]
+    },
+    {
+      "name": "hp3-empty-universal-without-witness-set",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "remove", "path": "/results/3/cause/at/witness_set"}]
+    },
+    {
+      "name": "hp3-empty-universal-single-existential",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "remove", "path": "/results/4/cause/at/witness_set/0/states/1"}]
+    },
+    {
+      "name": "hp3-witness-without-states",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "remove", "path": "/results/4/cause/at/witness_set/0/states"}]
+    },
+    {
+      "name": "hp3-witness-empty-existentials",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "replace", "path": "/results/4/cause/at/witness_set/0/states", "value": []}]
+    },
+    {
+      "name": "hp3-witness-without-automaton",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "remove", "path": "/results/4/cause/at/witness_set/0/automaton_state"}]
+    },
+    {
+      "name": "hp3-witness-extra-member",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "add", "path": "/results/4/cause/at/witness_set/0/extra", "value": true}]
+    },
+    {
+      "name": "hyper-components-member-extra-state",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "add", "path": "/results/6/cause/at/state", "value": "1111111111111111111111111111111111111111111111111111111111111111"}]
+    },
+    {
+      "name": "hyper-components-member-other-rule",
+      "base": "certificate-rejected-hyper-identities",
+      "owner": "FR-331",
+      "patch": [{"op": "replace", "path": "/results/6/cause/rule", "value": "violating-member"}]
     },
     {
       "name": "state-locus-not-a-state-key",

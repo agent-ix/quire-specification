@@ -623,6 +623,34 @@ fn tc_431_bounded_descriptors_carry_domains() {
     }
 }
 
+// Normative rule inventory, independent of both schema and vector contents.
+const CERTIFICATE_RULES: [&str; 24] = [
+    "initial-missing",
+    "successor-missing",
+    "bad-state",
+    "not-partition",
+    "backward-edge",
+    "witness-fails",
+    "query-mismatch",
+    "shape-mismatch",
+    "proof-step-invalid",
+    "not-refutation",
+    "initial-mismatch",
+    "successors-differ",
+    "step-fails",
+    "post-differs",
+    "malformed",
+    "undefined-member",
+    "violating-member",
+    "predicate-undefined",
+    "rank-missing",
+    "rank-broken",
+    "order-broken",
+    "count-broken",
+    "inequality-fails",
+    "threshold-missed",
+];
+
 /// The closed rule inventory is authored independently of the schema and
 /// fixture data. Removing a rule from both cannot make this check pass.
 /// This covers every rule at least once, not every rule/locus pair or an
@@ -630,34 +658,7 @@ fn tc_431_bounded_descriptors_carry_domains() {
 #[trace("TC-431", "FR-331-AC-25")]
 #[test]
 fn tc_431_certificate_rules_have_positive_coverage() {
-    let expected: BTreeSet<&str> = [
-        "initial-missing",
-        "successor-missing",
-        "bad-state",
-        "not-partition",
-        "backward-edge",
-        "witness-fails",
-        "query-mismatch",
-        "shape-mismatch",
-        "proof-step-invalid",
-        "not-refutation",
-        "initial-mismatch",
-        "successors-differ",
-        "step-fails",
-        "post-differs",
-        "malformed",
-        "undefined-member",
-        "violating-member",
-        "predicate-undefined",
-        "rank-missing",
-        "rank-broken",
-        "order-broken",
-        "count-broken",
-        "inequality-fails",
-        "threshold-missed",
-    ]
-    .into_iter()
-    .collect();
+    let expected: BTreeSet<&str> = CERTIFICATE_RULES.into_iter().collect();
     let vectors = positives();
     let mut covered = BTreeSet::new();
     for vector in &vectors {
@@ -688,6 +689,142 @@ fn tc_431_certificate_rules_have_positive_coverage() {
         }
     }
     assert_eq!(admitted, expected, "schema retains the entire owned rule set");
+}
+
+/// Independent finite rule/shape and required-field controls. These are
+/// schema-only transport samples, not canonical automaton identity evidence
+/// or production-reader/checker qualification.
+#[trace("TC-431", "FR-331-AC-25", "FR-331-AC-27")]
+#[test]
+fn tc_431_hyper_loci_have_closed_shapes_and_rule_pairs() {
+    let rejection = definition("CertificateRejected");
+    let tuple_shape = definition("HyperTransitionTupleLocus");
+    let state_shape = definition("HyperProductStateLocus");
+    let first = "1111111111111111111111111111111111111111111111111111111111111111";
+    let second = "2222222222222222222222222222222222222222222222222222222222222222";
+    let tuple = serde_json::json!({"transitions": [
+        {"pre_state": first, "transition": {"type": "transition", "operation": "set", "receiver": null, "arguments": [{"type": "integer", "value": "0"}]}, "post_state": first, "result": null},
+        {"pre_state": first, "transition": {"type": "transition", "operation": "set", "receiver": null, "arguments": [{"type": "integer", "value": "1"}]}, "post_state": second, "result": null}
+    ]});
+    let empty_witnesses = serde_json::json!({"states": [], "automaton_state": "AQ", "witness_set": []});
+    let nonempty_witnesses = serde_json::json!({"states": [], "automaton_state": "AQ", "witness_set": [
+        {"states": [first, second], "automaton_state": "Ag"}
+    ]});
+    let member = serde_json::json!({"member": "components"});
+    for rule in CERTIFICATE_RULES {
+        let hyper_state_rule = matches!(
+            rule,
+            "initial-missing"
+                | "successor-missing"
+                | "not-partition"
+                | "backward-edge"
+                | "witness-fails"
+                | "malformed"
+                | "undefined-member"
+                | "violating-member"
+        );
+        for (at, expected) in [
+            (
+                &tuple,
+                matches!(rule, "undefined-member" | "violating-member"),
+            ),
+            (&empty_witnesses, hyper_state_rule),
+            (&nonempty_witnesses, hyper_state_rule),
+            (&member, rule == "malformed"),
+        ] {
+            let cause = serde_json::json!({"type": "certificate-rejected", "rule": rule, "at": at});
+            assert_eq!(rejection.is_valid(&cause), expected, "rule {rule} at {at}");
+        }
+    }
+    assert!(tuple_shape.is_valid(&tuple));
+    assert!(!state_shape.is_valid(&tuple), "tuple is not a state locus");
+    for at in [&empty_witnesses, &nonempty_witnesses] {
+        assert!(state_shape.is_valid(at));
+        assert!(!tuple_shape.is_valid(at), "state locus is not a tuple");
+        for field in ["states", "automaton_state", "witness_set"] {
+            let mut missing = at.clone();
+            missing.as_object_mut().expect("state object").remove(field);
+            assert!(
+                !state_shape.is_valid(&missing),
+                "empty universal key requires {field}"
+            );
+        }
+    }
+    for edge in 0..2 {
+        for field in ["pre_state", "transition", "post_state", "result"] {
+            let mut missing = tuple.clone();
+            missing["transitions"][edge]
+                .as_object_mut()
+                .expect("edge object")
+                .remove(field);
+            assert!(
+                !tuple_shape.is_valid(&missing),
+                "edge {edge} requires {field}"
+            );
+        }
+        for field in ["type", "operation", "receiver", "arguments"] {
+            let mut missing = tuple.clone();
+            missing["transitions"][edge]["transition"]
+                .as_object_mut()
+                .expect("transition object")
+                .remove(field);
+            assert!(
+                !tuple_shape.is_valid(&missing),
+                "transition {edge} requires {field}"
+            );
+        }
+    }
+    for result in [
+        serde_json::json!(null),
+        serde_json::json!({"type": "null"}),
+        serde_json::json!({"type": "boolean", "value": true}),
+    ] {
+        let mut with_result = tuple.clone();
+        with_result["transitions"][0]["result"] = result;
+        assert!(
+            tuple_shape.is_valid(&with_result),
+            "none and typed results are distinct admitted shapes"
+        );
+    }
+    for result in [
+        serde_json::json!(false),
+        serde_json::json!(0),
+        serde_json::json!({}),
+    ] {
+        let mut untyped = tuple.clone();
+        untyped["transitions"][0]["result"] = result;
+        assert!(!tuple_shape.is_valid(&untyped), "untyped result is refused");
+    }
+    for existential_count in 0..=2 {
+        let mut candidate = nonempty_witnesses.clone();
+        candidate["witness_set"][0]["states"]
+            .as_array_mut()
+            .expect("existential tuple")
+            .truncate(existential_count);
+        assert_eq!(
+            state_shape.is_valid(&candidate),
+            existential_count == 2,
+            "n=0 requires m>=2"
+        );
+    }
+    let mut protocol = tuple.clone();
+    protocol["transitions"][0]["transition"] = serde_json::json!({"type": "protocol-transition"});
+    assert!(!tuple_shape.is_valid(&protocol));
+    let mut extra_edge = tuple.clone();
+    extra_edge["transitions"][0]["extra"] = serde_json::json!(true);
+    assert!(!tuple_shape.is_valid(&extra_edge));
+    let mut extra_locus = tuple.clone();
+    extra_locus["automaton_state"] = serde_json::json!("AQ");
+    assert!(!tuple_shape.is_valid(&extra_locus));
+    let empty_tuple = serde_json::json!({"transitions": []});
+    assert!(!tuple_shape.is_valid(&empty_tuple));
+    assert!(!tuple_shape.is_valid(&serde_json::json!({})));
+    // A state-only projection can match the global state union, but must
+    // still be refused for an HP-1 body failure by the context-aware reader.
+    // That semantic obligation remains BP-13/14, not asserted by this test.
+    let projection = serde_json::json!({"states": [first, first]});
+    assert!(state_shape.is_valid(&projection));
+    assert!(!tuple_shape.is_valid(&projection));
 }
 
 /// A proof-step locus's `index` admits exactly the canonical decimal

@@ -55,6 +55,32 @@ missing HP-2/HP-3 `components`, include an empty closure and require
 `malformed` at `{member: "components"}`, before recomputation, without
 inventing a state member.
 
+The authored `certificate-rejected-hyper-identities` fixture supplies the
+schema-only portion of BP-14: HP-1 boolean-result tuples with equal source
+states but different post-states/results, an undefined-member tuple with
+typed arguments and no-result markers, HP-3 zero-universal keys with empty
+and nonempty witness sets, a nonzero-universal key with an empty witness
+set, and malformed at `{member: "components"}`. Its adverse patches omit
+each HP-1 edge field, add unknown edge/locus fields, substitute a protocol
+transition or untyped result, use an inapplicable tuple rule, omit HP-3
+required members, break witness-pair shape or n=0 existential arity, or
+borrow a different rule for the components member. The existing
+`hyper-product-state-without-states` patch removes `states`; it does not
+conflate a missing member with the valid empty universal tuple.
+
+BP-15 (`tc_431_hyper_loci_have_closed_shapes_and_rule_pairs`) compares the
+independently authored 24-rule inventory with explicit expectations for
+four shapes: HP-1 tuple, zero-universal HP-3 key with an empty witness set,
+the same with a nonempty witness set, and the components member. Exactly
+two rules pair with the tuple, eight with either hyper state shape, and
+only malformed with the member. Required-field omissions, disjoint locus
+shapes, actual no-result versus typed null/boolean result shapes and the
+n=0 existential minimum are checked independently of the vectors. This
+binds FR-331-AC-25 and the structural portion of FR-331-AC-27 only. Actual
+claim arity, tuple order, member ownership, body-failure state-only
+projection refusal and checker applicability remain BP-13/14 reader
+obligations; synthetic state keys and AQ/Ag never qualify semantic identity.
+
 BP-12 also includes `certificate-rejected-rule-completion`: positives for
 `bad-state`, `undefined-member`, `predicate-undefined`, `rank-missing`,
 `order-broken`, `count-broken` and `successors-differ`. The independent

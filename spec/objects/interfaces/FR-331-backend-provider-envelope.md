@@ -149,6 +149,11 @@ failures have no automaton key. An HP-1 failure on a labelled transition
 tuple SHALL preserve QSL FR-163's complete `HyperTransitionTuple`, not
 project it onto `states`. FR-412 state failures SHALL preserve the complete
 probabilistic product key in every keyed certificate member and rejection.
+For a zero-universal HP-3 claim, every supplied witness tuple has at least
+two existential state keys (`n = 0`, `n + m >= 2`, ADR-023 HC-2). The
+reader SHALL check the exact universal and existential tuple arities,
+variable bindings and required HP-3 witness set against the originating
+checked claim; matching this global shape does not authorize another form.
 
 An HP-1 `HyperTransitionTuple` SHALL carry exactly `transitions`, with one
 edge for each execution-variable binding in binding order. Each edge
@@ -470,9 +475,13 @@ out-of-domain values and non-canonical encodings refuse before consumption. A `c
 
 In AC-24, a hyper product state "with no states" means the required
 `states` member is absent. It does not mean HP-3's valid empty universal
-tuple; AC-27 pins that distinction. The source settlements above still
-need matching schema bindings: the inherited `StateLocus` cannot be used
-for FR-412, nor can inherited `states` `minItems: 1` implement HP-3 `n = 0`.
+tuple; AC-27 pins that distinction. The schema-source proposal binds the
+closed HP-1 transition tuple, admits HP-3's present empty universal tuple
+with its required automaton and witness-set members, and extends FR-163's
+`components` member ownership. These shapes still require checker-context
+and round-trip qualification. The inherited model-only `StateLocus` cannot
+losslessly bind FR-412's complete product key; its replacement awaits the
+deciding canonical forms, not a guessed encoding.
 
 - [interface_013](./interface_013-backend-provider.md) owns the operation boundary.
 - FR-195 owns the behavior that produces or consumes this value.

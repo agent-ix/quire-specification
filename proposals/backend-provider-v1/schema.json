@@ -652,17 +652,49 @@
     "ProofStepLocus": {"description": "FR-331: QSL FR-314's ProofStep{part, index}, index QSL FR-314's command number.", "type": "object", "required": ["part", "index"], "properties": {"part": {"$ref": "#/$defs/QueryPart"}, "index": {"$ref": "#/$defs/U64String"}}, "additionalProperties": false},
     "ProductStateLocus": {"description": "FR-331: QSL FR-338's ProductState(ProductStateRef): the model state's key and the bytes of the automaton state's canonical key.", "type": "object", "required": ["state", "automaton_state"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "automaton_state": {"$ref": "#/$defs/Base64Url"}}, "additionalProperties": false},
     "HyperProductStateLocus": {
-      "description": "FR-331: QSL FR-163's HyperProductState(ProductStateKey): each component's state key in variable order, the automaton state's canonical key bytes (absent for an HP-1 member, which has none) and, for HP-3, the witness set's sorted (existential tuple, automaton key) pairs.",
+      "description": "FR-331, QSL FR-163, ADR-023 HC-2: state keys in variable order; HP-3 states is the universal tuple, which may be present and empty, and witness_set retains the actual sorted existential tuple/automaton-key pairs. An empty universal tuple requires automaton_state and witness_set; every supplied existential tuple then has at least two states (n=0, n+m>=2). Nonempty tuples cover other hyper forms too: the originating checked claim determines form, exact arity, required HP-3 witness_set and key applicability. Absence differs from emptiness. Automaton bytes remain transport-only pending the owning canonical octet definition.",
       "type": "object",
       "required": ["states"],
       "properties": {
-        "states": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/StateKey"}},
+        "states": {"type": "array", "items": {"$ref": "#/$defs/StateKey"}},
         "automaton_state": {"$ref": "#/$defs/Base64Url"},
         "witness_set": {"type": "array", "items": {"type": "object", "required": ["states", "automaton_state"], "properties": {"states": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/StateKey"}}, "automaton_state": {"$ref": "#/$defs/Base64Url"}}, "additionalProperties": false}}
       },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {"required": ["states"], "properties": {"states": {"maxItems": 0}}},
+          "then": {
+            "required": ["automaton_state", "witness_set"],
+            "properties": {"witness_set": {"items": {"properties": {"states": {"minItems": 2}}}}}
+          }
+        }
+      ]
+    },
+    "HyperTransitionTupleLocus": {
+      "description": "FR-331, QSL FR-163/FR-179/FR-120: the actual HP-1 labelled edge tuple in execution-variable binding order, never a state-only projection. The checked claim determines exact arity and operation bindings. Each result is its actual typed value or null for an operation with no result; a typed null value is distinct. No automaton key is invented.",
+      "type": "object",
+      "required": ["transitions"],
+      "properties": {
+        "transitions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["pre_state", "transition", "post_state", "result"],
+            "properties": {
+              "pre_state": {"$ref": "#/$defs/StateKey"},
+              "transition": {"allOf": [{"$ref": "#/$defs/TransitionIdentity"}, {"properties": {"type": {"const": "transition"}}}]},
+              "post_state": {"$ref": "#/$defs/StateKey"},
+              "result": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TypedValue"}]}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
       "additionalProperties": false
     },
-    "StateLocus": {"description": "FR-331: a state named by the key its certificate names it by: QSL FR-169's ModelState, an FR-412 certificate state, an FR-418 initial discrete state.", "type": "object", "required": ["state"], "properties": {"state": {"$ref": "#/$defs/StateKey"}}, "additionalProperties": false},
+    "StateLocus": {"description": "FR-331: QSL FR-169's ModelState or FR-418's initial discrete model state. Inherited FR-412 model-only uses of this shape remain an unresolved losslessness defect: this StateKey does not encode FR-411/QSL FR-196's complete probabilistic product key. The replacement requires the owning canonical forms, not a fabricated digest or default component.", "type": "object", "required": ["state"], "properties": {"state": {"$ref": "#/$defs/StateKey"}}, "additionalProperties": false},
     "StepVerdict": {
       "description": "FR-331: QSL FR-149's StepFails verdict, the QSL FR-141 check_step verdict that is not Passes: an FR-379 RefinementFailure, an undefined evaluation, or mapping-undetermined or undecided-successor.",
       "oneOf": [
@@ -672,7 +704,7 @@
       ]
     },
     "CertificateRejected": {
-      "description": "FR-331 certificate-rejected{rule, at}: each branch pairs the rules a core checker rejects with at the locus it names (FR-331 Certification). An unknown rule, an unknown locus and a rule at a locus it is not paired with are refused.",
+      "description": "FR-331 certificate-rejected{rule, at}: each branch pairs rules with structural loci. Unknown rules, unknown loci and unpaired shapes are refused. The originating request and checked claim select checker/form applicability before consumption (FR-331 AC-26/27); this global union alone does not qualify that context or the unsettled FR-412 product-key binding.",
       "type": "object",
       "required": ["type", "rule", "at"],
       "oneOf": [
@@ -680,6 +712,7 @@
         {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["proof-step-invalid", "not-refutation"]}, "at": {"$ref": "#/$defs/ProofStepLocus"}}, "additionalProperties": false},
         {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-missing", "successor-missing", "bad-state", "not-partition", "backward-edge", "witness-fails"]}, "at": {"$ref": "#/$defs/ProductStateLocus"}}, "additionalProperties": false},
         {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-missing", "successor-missing", "not-partition", "backward-edge", "witness-fails", "malformed", "undefined-member", "violating-member"]}, "at": {"$ref": "#/$defs/HyperProductStateLocus"}}, "additionalProperties": false},
+        {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["undefined-member", "violating-member"]}, "at": {"$ref": "#/$defs/HyperTransitionTupleLocus"}}, "additionalProperties": false},
         {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-missing", "successor-missing", "predicate-undefined", "rank-missing", "rank-broken", "order-broken", "count-broken", "inequality-fails", "threshold-missed"]}, "at": {"$ref": "#/$defs/StateLocus"}}, "additionalProperties": false},
         {"description": "QSL FR-149 SimulationStep{position} for an initial or successors rule.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-mismatch", "successors-differ"]}, "at": {"type": "object", "required": ["position"], "properties": {"position": {"$ref": "#/$defs/U64String"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "QSL FR-149 SimulationStep{position, edge} for post-differs.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "post-differs"}, "at": {"type": "object", "required": ["position", "edge"], "properties": {"position": {"$ref": "#/$defs/U64String"}, "edge": {"$ref": "#/$defs/U64String"}}, "additionalProperties": false}}, "additionalProperties": false},
@@ -687,7 +720,7 @@
         {"description": "FR-418: a node, its position in the certificate's nodes.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["successor-missing", "bad-state", "witness-fails"]}, "at": {"type": "object", "required": ["node"], "properties": {"node": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "FR-418: an edge, its position in the certificate's edges.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "backward-edge"}, "at": {"type": "object", "required": ["edge"], "properties": {"edge": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "FR-418: a component, its index.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "witness-fails"}, "at": {"type": "object", "required": ["component"], "properties": {"component": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
-        {"description": "FR-412, FR-418: a missing certificate member, named as its certificate names it.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "malformed"}, "at": {"type": "object", "required": ["member"], "properties": {"member": {"enum": ["identity", "objective", "kind", "values", "ranking", "policy", "components", "scale", "bounds", "nodes", "edges", "reasons", "divergence"]}}, "additionalProperties": false}}, "additionalProperties": false}
+        {"description": "FR-412, FR-418: a malformed certificate member, named as its certificate names it; QSL FR-163 also owns components for absent HP-2/HP-3 structure, including empty closure, before recomputation. The originating checked claim selects the owning member vocabulary; this branch does not authorize borrowing another checker's members.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "malformed"}, "at": {"type": "object", "required": ["member"], "properties": {"member": {"enum": ["identity", "objective", "kind", "values", "ranking", "policy", "components", "scale", "bounds", "nodes", "edges", "reasons", "divergence"]}}, "additionalProperties": false}}, "additionalProperties": false}
       ]
     },
     "InconclusiveCause": {
