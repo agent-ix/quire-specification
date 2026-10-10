@@ -10531,6 +10531,73 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
     }
 }
 
+/// FR-322-AC-62's three named derived-form mutations.  Each candidate stays
+/// schema-valid and changes only the semantic preimage.  Retaining the old
+/// key therefore names a stale node; replacing it with the recomputed digest
+/// makes the key current and leaves the form-specific semantic checks to the
+/// reader.  The full-package retained-key refusal is exercised by the
+/// `tc_233_tampered_derived_shape_nodes_refuse_stale_node_key` vectors above.
+#[trace("FR-322-AC-62", "TC-233")]
+#[test]
+fn tc_322_derived_form_key_mutations() {
+    let schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
+        .expect("node preimage schema is valid");
+    let cases = [
+        (
+            "RM-REF-TARGET",
+            r#"{"body":{"members":[{"target":{"digest":"6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b","domain":"quire.checked-semantic-node/v1"},"term":"reference"}],"term":"aggregate"},"declaration":null,"node_tag":"composite_type","recursion":null,"semantic_form":"reference","semantic_type":null,"version":"quire.structural-node/v1"}"#,
+            |candidate: &mut Value| {
+                candidate["body"]["members"][0]["target"]["digest"] =
+                    json!("6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596c");
+                candidate["body"]["members"][0]["target"]["domain"] =
+                    json!("quire.checked-semantic-node/v1");
+                candidate["body"]["members"][0]["target"]["digest"] =
+                    json!("b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5");
+            },
+        ),
+        (
+            "RM-POP-MAX",
+            r#"{"body":{"members":[{"name":"max","term":"binding","value":{"term":"literal","type":{"digest":"07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32","domain":"quire.checked-semantic-node/v1"},"value":"3","value_kind":"integer"}}],"term":"aggregate"},"declaration":null,"node_tag":"bounded_domain","recursion":null,"semantic_form":"model_population","semantic_type":{"digest":"b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5","domain":"quire.checked-semantic-node/v1"},"version":"quire.structural-node/v1"}"#,
+            |candidate: &mut Value| {
+                candidate["body"]["members"][0]["value"]["value"] = json!("5");
+            },
+        ),
+        (
+            "RM-CU-ORDER",
+            r#"{"body":{"members":[{"members":[{"name":"unit","term":"binding","value":{"target":{"digest":"79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4","domain":"quire.checked-semantic-node/v1"},"term":"reference"}},{"name":"exponent","term":"binding","value":{"term":"literal","type":{"digest":"07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32","domain":"quire.checked-semantic-node/v1"},"value":"1","value_kind":"integer"}}],"term":"aggregate"},{"members":[{"name":"unit","term":"binding","value":{"target":{"digest":"d0f0c5d24d6accb2f1d9afff7c6cdda3143df382e50af4bda0704d48c67ed998","domain":"quire.checked-semantic-node/v1"},"term":"reference"}},{"name":"exponent","term":"binding","value":{"term":"literal","type":{"digest":"07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32","domain":"quire.checked-semantic-node/v1"},"value":"-1","value_kind":"integer"}}],"term":"aggregate"}],"term":"aggregate"},"declaration":null,"node_tag":"scalar_type","recursion":null,"semantic_form":"compound_unit","semantic_type":null,"version":"quire.structural-node/v1"}"#,
+            |candidate: &mut Value| {
+                candidate["body"]["members"]
+                    .as_array_mut()
+                    .unwrap()
+                    .reverse();
+            },
+        ),
+    ];
+    for (name, source, mutate) in cases {
+        let base = parsed_fixture(source);
+        assert!(schema.is_valid(&base), "{name}: base preimage schema");
+        let base_key = unqualified_jcs_sha256(&base);
+        let mut mutated = base.clone();
+        mutate(&mut mutated);
+        assert!(
+            schema.is_valid(&mutated),
+            "{name}: mutation remains schema-valid"
+        );
+        let recomputed_key = unqualified_jcs_sha256(&mutated);
+        assert_ne!(base_key, recomputed_key, "{name}: mutation changes the key");
+        assert_eq!(
+            base_key,
+            unqualified_jcs_sha256(&base),
+            "{name}: retained key"
+        );
+        assert_eq!(
+            recomputed_key,
+            unqualified_jcs_sha256(&mutated),
+            "{name}: recomputed key"
+        );
+    }
+}
+
 /// The recursive-record fixture (`record List { next?: List; }` through an
 /// `Option` field and `record Tree { kids: Sequence<Tree>[0, 3]; }` through a
 /// bounded collection), as QSL's emitter writes it, is schema-valid, binds its

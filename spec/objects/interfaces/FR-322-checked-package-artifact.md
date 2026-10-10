@@ -761,16 +761,28 @@ preimages. The full preimage bodies are the rows above, and the named keys are
 the corresponding settled structural-node vectors. They are deliberately
 independent of a package version and of a source alias spelling.
 
-The corresponding refusals are closed. A source alias that names no type
-refuses `missing_declaration`/`missing-name` before lowering. A
+The corresponding checks are closed, with the stage that owns each check made
+explicit. A source alias that names no type refuses
+`missing_declaration`/`missing-name` before lowering. The derived-shape key
+stage checks the retained key against the complete body. Its named refusal
+vectors are:
+
+| Mutation vector | Mutation with the original key retained | Recomputed-key case |
+| --- | --- | --- |
+| `RM-REF-TARGET` | Change R1's `reference(M1)` target to another admitted node; the schema remains valid, but the reader refuses `invalid_package`/`stale-node-key` at R1. | Replace R1's key with the digest of the changed preimage before reading; key checking reaches the changed form's semantic/reference checks. |
+| `RM-POP-MAX` | Change PO1's integer `max` from `3` to `5`; the schema remains valid, but the reader refuses `invalid_package`/`stale-node-key` at PO1. | Replace PO1's key with the digest of the changed preimage; the key is current and the population bound is then checked as a population form. |
+| `RM-CU-ORDER` | Swap U2's two unit terms while retaining U2's key; the reader refuses `invalid_package`/`stale-node-key` at U2. | Replace U2's key with the digest of the changed preimage; key checking reaches compound-unit canonical-order validation. |
+
+These vectors distinguish a retained-key mutation from a recomputed-key
+candidate. A recomputed key is not an automatic admission: a
 `composite_type`/`reference` whose body target is not a model declaration
 node, a `bounded_domain`/`model_population` whose `semantic_type` is not the
 `set<reference<T>>` node or whose `max` is absent, negative or not an integer
 literal, and a `scalar_type`/`compound_unit` whose root unit is absent, whose
 exponent is zero, whose terms are duplicated or not in canonical order, or
-whose body is not the stated aggregate refuse `invalid_package`/`stale-node-key`.
-Adding a declaration, owner or nominal preimage to any of these anonymous
-forms fails the V2 schema or the owner/declaration rules before key
+whose body is not the stated aggregate is refused by the semantic shape
+check. Adding a declaration, owner or nominal preimage to any of these
+anonymous forms fails the V2 schema or the owner/declaration rules before key
 recomputation. An alias that resolves to a valid form has no separate refusal
 or identity: its resolved form is checked exactly once.
 
@@ -1201,7 +1213,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-59 | Structural equality and inequality over U1–U7 require exactly their complete ordered leaf lists. U2's member rename, member reorder, payload swap and source arm reorder have exactly the effects stated with the vectors; U2 requires all three text leaves even when both operands select `Empty`. A missing final leaf refuses `invalid_package`/`operation-law-missing`; reordered leaves or a recursion leaf with a text law refuse `invalid_package`/`operation-law-mismatch`. | Test |
 | FR-322-AC-60 | For each `K` of `set`, `bag` and `ordered_set`, equality over `K<Choice>` (U2) requires U2's leaves with one leading `inner` per path; `contains` over that collection (`inner:0`) and a catalogued `result_inner` operation yielding `K<Choice>` require U2's leaves without that prefix. A `result_inner` operation yielding `sequence<Choice>` requires `[]`, while equality over `sequence<Choice>` requires U2's leaves with one leading `inner`. | Test |
 | FR-322-AC-61 | Both V2 schemas admit `member:Right`, `member:_item2`, `position:0`, `position:12`, `recursion:0` and `recursion:12`; they refuse `member:`, `member:1Right`, `position:01`, `position:-1`, `recursion:`, `recursion:01` and `recursion:-1`. The shared catalog includes `union` in `structural_kind`, so equality and inequality admit eligible Union operands under the existing `same_type` constraint and `operand:0` leaf source. | Test |
-| FR-322-AC-62 | The settled derived type forms forward aliases to their resolved node without an `alias` node; key `Reference<Order>` as an anonymous self-typed `composite_type`/`reference` over `Order`'s model node; key `Population<Order>[3]` as an anonymous `bounded_domain`/`model_population` whose `semantic_type` is `Set<Reference<Order>>` and whose body binds integer `max = 3`; and key a formed `metre / second` quantity as an anonymous self-typed `scalar_type`/`compound_unit` with ordered unit/exponent terms. The worked accepted vectors in "Derived type forms and forwarding" are admitted. An unknown alias, wrong reference target, wrong population semantic type or bound, and missing, zero, duplicate or unordered compound-unit term refuses with the specified `missing_declaration`/`missing-name` or `invalid_package`/`stale-node-key` result. | Analysis |
+| FR-322-AC-62 | The settled derived type forms forward aliases to their resolved node without an `alias` node; key `Reference<Order>` as an anonymous self-typed `composite_type`/`reference` over `Order`'s model node; key `Population<Order>[3]` as an anonymous `bounded_domain`/`model_population` whose `semantic_type` is `Set<Reference<Order>>` and whose body binds integer `max = 3`; and key a formed `metre / second` quantity as an anonymous self-typed `scalar_type`/`compound_unit` with ordered unit/exponent terms. The worked accepted vectors in "Derived type forms and forwarding" are admitted. The named `RM-REF-TARGET`, `RM-POP-MAX` and `RM-CU-ORDER` vectors retain the original key and are refused as `invalid_package`/`stale-node-key`; their recomputed-key counterparts reach semantic validation. Unknown aliases and semantically invalid reference, population or compound-unit bodies refuse at their owning stage with the specified `missing_declaration`/`missing-name` or `invalid_package` result. | Test (`tests/checked_package_v2.rs`, `tc_322_derived_form_key_mutations`) |
 
 ## Dependencies
 
