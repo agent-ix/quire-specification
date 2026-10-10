@@ -332,9 +332,10 @@ boundary.
   `node-identity-preimage.schema.json`. A **derived shape**, an
   undeclared ungrouped node of `scalar_type` `boolean` and `integer`,
   `composite_type` `reference`, `option`, `set`, `bag`, `sequence` and
-  `ordered_set`, or `bounded_domain` `integer_range` and
-  `collection_bounds`, is current only when it is also, for a `scalar_type`
-  or `composite_type`, its own `semantic_type`. A structural node that
+  `ordered_set`, `bounded_domain` `integer_range`, `collection_bounds` and
+  `model_population`, or `scalar_type` `compound_unit`, is current only when
+  it is also, for a `scalar_type` or `composite_type`, its own
+  `semantic_type`. A structural node that
   carries a `recursion_group` is an **in-group structural node**. The members
   of a group are the nodes carrying its label, and a member's `ordinal` is its
   position among them in graph order. Such a node is current when its key is the JCS
@@ -739,6 +740,39 @@ conformance" below).
    `declaration`, exactly as QSL FR-092 and FR-094 key it, so the node that
    stands for a type, and every application node id that references it, is
    canonical.
+
+### Derived type forms and forwarding
+
+The following forms are part of the closed V2 semantic vocabulary. They are
+anonymous structural nodes: each has `declaration: null`, no `owner`, no
+`nominal_identity_preimage` and no `recursion_group`. A source type alias
+introduces no node. After resolving an alias, every type annotation and every
+application result type names the resolved type's node, so an alias cannot
+create a second `composite_type`, `bounded_domain` or `scalar_type` identity.
+
+| Source type | Node and semantic type | Body | Worked accepted vector |
+| --- | --- | --- | --- |
+| `Reference<O>` | `composite_type`/`reference`, self-typed | `aggregate{[reference(M_O)]}`, where `M_O` is `O`'s model declaration node | `Ref = Reference<Order>` and a parameter typed `Ref` both name R1 (`249d3baf1f4728325f4b5194d54320ad6d7e11bc88de7a339504ea6582fe1fbb`); R1's only body target is M1 (`6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b`) |
+| `Population<O>[N]` | `bounded_domain`/`model_population`, semantic type `S_O`, where `S_O` is `composite_type`/`set` over `R_O` | `aggregate{[binding "max" = literal integer N]}` | `Bucket = Population<Order>[3]` names PO1 (`859d6b01a132a14711a8a4568e24a7ab54e3255b78bbcc62b14e4293dbf71f9a`); PO1's `semantic_type` is S1 (`b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5`); changing `Bucket` to `Population<Order>[5]` names a different key |
+| a formed quantity over a compound unit | `scalar_type`/`compound_unit`, self-typed | `aggregate` of one `aggregate{[binding "unit" = reference(U), binding "exponent" = literal integer e]}` per root unit, in `quire.value.compound-unit/v1` order; dimensionless is `aggregate{[]}` | `metre / second` names U2 (`bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7`); its first term references `U_metre` with exponent `1`, its second references `U_second` with exponent `-1` |
+
+The accepted vectors above are compact presentations of the exact RFC 8785
+preimages. The full preimage bodies are the rows above, and the named keys are
+the corresponding settled structural-node vectors. They are deliberately
+independent of a package version and of a source alias spelling.
+
+The corresponding refusals are closed. A source alias that names no type
+refuses `missing_declaration`/`missing-name` before lowering. A
+`composite_type`/`reference` whose body target is not a model declaration
+node, a `bounded_domain`/`model_population` whose `semantic_type` is not the
+`set<reference<T>>` node or whose `max` is absent, negative or not an integer
+literal, and a `scalar_type`/`compound_unit` whose root unit is absent, whose
+exponent is zero, whose terms are duplicated or not in canonical order, or
+whose body is not the stated aggregate refuse `invalid_package`/`stale-node-key`.
+Adding a declaration, owner or nominal preimage to any of these anonymous
+forms fails the V2 schema or the owner/declaration rules before key
+recomputation. An alias that resolves to a valid form has no separate refusal
+or identity: its resolved form is checked exactly once.
 
 For a model-owned member, the `member` result form yields the step 4 type,
 and the application's `result_type` is admitted exactly when it names the
@@ -1167,6 +1201,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-59 | Structural equality and inequality over U1–U7 require exactly their complete ordered leaf lists. U2's member rename, member reorder, payload swap and source arm reorder have exactly the effects stated with the vectors; U2 requires all three text leaves even when both operands select `Empty`. A missing final leaf refuses `invalid_package`/`operation-law-missing`; reordered leaves or a recursion leaf with a text law refuse `invalid_package`/`operation-law-mismatch`. | Test |
 | FR-322-AC-60 | For each `K` of `set`, `bag` and `ordered_set`, equality over `K<Choice>` (U2) requires U2's leaves with one leading `inner` per path; `contains` over that collection (`inner:0`) and a catalogued `result_inner` operation yielding `K<Choice>` require U2's leaves without that prefix. A `result_inner` operation yielding `sequence<Choice>` requires `[]`, while equality over `sequence<Choice>` requires U2's leaves with one leading `inner`. | Test |
 | FR-322-AC-61 | Both V2 schemas admit `member:Right`, `member:_item2`, `position:0`, `position:12`, `recursion:0` and `recursion:12`; they refuse `member:`, `member:1Right`, `position:01`, `position:-1`, `recursion:`, `recursion:01` and `recursion:-1`. The shared catalog includes `union` in `structural_kind`, so equality and inequality admit eligible Union operands under the existing `same_type` constraint and `operand:0` leaf source. | Test |
+| FR-322-AC-62 | The settled derived type forms forward aliases to their resolved node without an `alias` node; key `Reference<Order>` as an anonymous self-typed `composite_type`/`reference` over `Order`'s model node; key `Population<Order>[3]` as an anonymous `bounded_domain`/`model_population` whose `semantic_type` is `Set<Reference<Order>>` and whose body binds integer `max = 3`; and key a formed `metre / second` quantity as an anonymous self-typed `scalar_type`/`compound_unit` with ordered unit/exponent terms. The worked accepted vectors in "Derived type forms and forwarding" are admitted. An unknown alias, wrong reference target, wrong population semantic type or bound, and missing, zero, duplicate or unordered compound-unit term refuses with the specified `missing_declaration`/`missing-name` or `invalid_package`/`stale-node-key` result. | Analysis |
 
 ## Dependencies
 
@@ -1189,4 +1224,5 @@ remain tracked separately.
 ## References
 
 - Tickets: Linear QSL-290, QSL-638 (the node `owner` member), QSL-642
-  (integers in a node-key preimage).
+  (integers in a node-key preimage) and QSL-692 (settled derived type forms
+  for StateModel lowering).
