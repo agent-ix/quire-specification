@@ -623,6 +623,79 @@ fn tc_431_bounded_descriptors_carry_domains() {
     }
 }
 
+/// Owner-derived canonical transport bindings, not a substitute for native
+/// key-body admission or checker qualification. Expected references and
+/// rule pairs are independent of the schema/vector inventories.
+#[trace("TC-431", "FR-331-AC-25", "FR-331-AC-27", "FR-412-AC-8")]
+#[test]
+fn tc_431_canonical_key_bindings_are_complete() {
+    let schema = parsed(SCHEMA);
+    let certificate = &schema["$defs"]["ProbabilityCertificate"]["properties"];
+    for field in ["values", "ranking", "policy"] {
+        assert_eq!(certificate[field]["items"]["properties"]["state"]["$ref"],
+            "#/$defs/ProbabilityProductKey", "complete key for {field}");
+    }
+    assert_eq!(certificate["components"]["items"]["properties"]["bias"]
+        ["items"]["properties"]["state"]["$ref"], "#/$defs/ProbabilityProductKey");
+    assert_eq!(certificate["policy"]["items"]["properties"]["choice"]["$ref"],
+        "#/$defs/ProbabilityWitnessEntry");
+    for shape in ["ProductStateLocus", "HyperProductStateLocus"] {
+        assert_eq!(schema["$defs"][shape]["properties"]["automaton_state"]["$ref"],
+            "#/$defs/AutomatonStateKey");
+    }
+    assert_eq!(schema["$defs"]["HyperProductStateLocus"]["properties"]["witness_set"]
+        ["items"]["properties"]["automaton_state"]["$ref"], "#/$defs/AutomatonStateKey");
+
+    let rejection = definition("CertificateRejected");
+    let mut admitted = 0;
+    for rule in CERTIFICATE_RULES {
+        let expected = matches!(rule,
+            "inequality-fails" | "rank-missing" | "rank-broken" | "threshold-missed");
+        let candidate = serde_json::json!({"type": "certificate-rejected", "rule": rule,
+            "at": {"product_key": "AQ"}});
+        assert_eq!(rejection.is_valid(&candidate), expected, "probability locus / {rule}");
+        admitted += usize::from(expected);
+    }
+    assert_eq!(admitted, 4);
+    for rule in ["inequality-fails", "threshold-missed"] {
+        assert!(!rejection.is_valid(&serde_json::json!({"type": "certificate-rejected",
+            "rule": rule, "at": {"state": "1111111111111111111111111111111111111111111111111111111111111111"}})));
+    }
+    let locus = definition("ProbabilityProductStateLocus");
+    for invalid in [serde_json::json!({}), serde_json::json!({"product_key": "AQ=="}),
+        serde_json::json!({"product_key": "AQ", "state": "AQ"})] {
+        assert!(!locus.is_valid(&invalid));
+    }
+    let policy = definition("ProbabilityWitnessEntry");
+    let deterministic = serde_json::json!({"type": "choice", "choice": "AQ"});
+    let randomized = serde_json::json!({"type": "randomized", "choices": [
+        {"choice": "AQ", "probability": {"numerator": "3", "denominator": "4"}},
+        {"choice": "Ag", "probability": {"numerator": "1", "denominator": "4"}}]});
+    for entry in [deterministic, randomized] {
+        assert!(policy.is_valid(&entry));
+        for field in entry.as_object().expect("closed entry").keys() {
+            let mut missing = entry.clone();
+            missing.as_object_mut().expect("closed entry").remove(field);
+            assert!(!policy.is_valid(&missing), "policy needs {field}");
+        }
+        let mut extra = entry;
+        extra["operation"] = serde_json::json!("invented-observe");
+        assert!(!policy.is_valid(&extra));
+    }
+    assert!(!policy.is_valid(&serde_json::json!({"type": "transition",
+        "operation": "inc", "receiver": null, "arguments": []})));
+    assert!(!policy.is_valid(&serde_json::json!({"type": "randomized", "choices": []})));
+
+    // Independent exact octet oracle: QSL TC-525's parameter-free Counter
+    // deadlock-freedom safety key. Codec/JCS checks only, not translation.
+    let octets = br#"["quire.automaton-state-key/v1",[["deadlock-freedom"],"quire.temporal.infinite-trace/v1","infinite",[]],["safety",[[[[[],"positive"]],[],[],[]]]]]"#;
+    assert_eq!(jcs_canonicalize(&serde_json::from_slice::<Value>(octets)
+        .expect("literal canonical key")).expect("JCS"), octets.to_vec());
+    let spelling = encode(octets);
+    assert_eq!(decode(&spelling), Some(octets.to_vec()));
+    assert!(definition("AutomatonStateKey").is_valid(&serde_json::json!(spelling)));
+}
+
 // Normative rule inventory, independent of both schema and vector contents.
 const CERTIFICATE_RULES: [&str; 24] = [
     "initial-missing",

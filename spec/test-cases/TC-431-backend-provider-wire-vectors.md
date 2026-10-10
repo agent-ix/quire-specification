@@ -36,7 +36,7 @@ bytes against the checked package they carry. Runs as
 
 ## Expected Results
 
-After wire bindings are settled, BP-13 exercises FR-331-AC-26 through the
+BP-13 exercises FR-331-AC-26 through the
 actual reader with originating request and checked claim context: an
 `inequality-fails` cause bound to an EN-1 temporal claim, a model-only
 `successor-missing` bound to FR-338, and absent/conflicting/ambiguous
@@ -91,6 +91,32 @@ derived from the schema or vectors. A deletion from both inputs must fail.
 The claim is each rule at a listed locus, not every rule/locus pair or
 semantic checker acceptance. Synthetic state/automaton bytes qualify
 transport shape only.
+
+BP-16 binds the published QSL FR-338/FR-196 norms without duplicating their
+canonicalizer. `tc_431_canonical_key_bindings_are_complete` independently
+checks each certificate row's ProbabilityProductKey reference, the disjoint
+probability locus and all 24 rules against that locus (exactly four pairs),
+plus closed deterministic/randomized policy shapes. The existing 96-shape
+hyper oracle is unchanged. The canonical deadlock-freedom safety key from
+QSL TC-525 is an independent literal octet oracle for transport round-trip;
+this does not qualify the actual translation or body reader.
+
+BP-17 is the actual-reader canonical admission control: decode the exact
+TC-525 key in its Counter/deadlock context; compare complete canonical
+octets across materialization orders and through product/hyper/witness
+carriers. Foreign context, missing/extra members, unknown tags, opaque
+residuals, unsorted/duplicate sets, u32 indices and non-JCS bodies refuse.
+For probability use TC-363 EC-08/09/10, not synthetic AQ/Ag meanings.
+The new model-projection, padding, omission and extra-member patches retain
+the original adverse intent; the old inequality/threshold positive shapes
+now use `{product_key}`. All synthetic byte vectors remain schema-shape
+only. Native reader and runtime qualification for BP-13/14/17 is UNRUN.
+`probability-product-rejections` supplies each of the four probability
+rule/locus pairs as a structural positive, including rank-missing and
+rank-broken separately from their model-graph uses. No digest or canonical
+meaning is added to its AQ/Ag samples. Policy shape positives/omissions and
+ordinary-transition alias refusal are authored in the Rust oracle; actual
+enabledness, exact mass normalization and admissibility remain EC-10.
 
 Every published vector is admitted or refused as stated, and the package
 member carries exactly the checked package its `package_id` names.

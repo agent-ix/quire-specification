@@ -35,7 +35,7 @@ components}`:
 | `kind` | `lower`, `upper`, `exact` or `long-run`. |
 | `values` | One exact rational per product state the certificate names (a dyadic value is an exact rational), keyed by product state key (FR-411). |
 | `ranking` | For `lower` and `exact`: one natural number per named state. |
-| `policy` | For a lower bound on a maximum or an upper bound on a minimum, including `workload-maximum` and `workload-minimum`: one choice per named state, a memoryless deterministic scheduler. |
+| `policy` | For a lower bound on a maximum or an upper bound on a minimum, including `workload-maximum` and `workload-minimum`: one QSL FR-202 WitnessEntry per named complete product key. Deterministic choices and, where the actual fairness/derived TS-5 mode admits them, randomized choices preserve the complete semantic choice and admissible continuation. |
 | `components` | For `long-run`: per component, its value `ρ_C` and a gain–bias pair. |
 
 A certificate names its states and carries no qualitative sets; the checker
@@ -49,6 +49,21 @@ FR-196 / ADR-028 SCH-2, it SHALL also preserve the pending scheduled
 identity and drawn vector. For an exact-only form, the absent monitor and
 accumulator remain absent. A model-state digest alone SHALL NOT stand for
 a bounded or intermediate product state. No new digest domain is implied.
+
+QSL FR-196 / ADR-028 PR-4 now own the complete canonical octet basis:
+`["quire.probability-product-key/v1", model, monitor, accumulator, pending]`
+in RFC 8785 UTF-8, with every component present and actual None as null.
+FR-331 transports those complete octets as `ProbabilityProductKey` in
+each existing `state` row member and at `{product_key}` in a rejection.
+The model is the full canonical simulation-state body, not its digest;
+formula monitors embed the complete parsed FR-338 array. The checker
+SHALL admit every component under the actual subject/claim and compare
+complete decoded canonical octets. Distinct unreduced fraction sum pairs,
+digital tail modes, pending action/draw vectors and genuine empty drawn
+vectors SHALL remain distinct; None is not a fabricated zero component.
+Policy choices SHALL retain FR-196's closed ProductAction or FR-202's
+FreeDelays body, with exact positive normalized randomized masses where
+applicable. FR-331 owns only their transport spelling, not their semantics.
 
 ## Checker
 
@@ -101,6 +116,18 @@ side of the threshold;
 a checker stopped by a budget settles `incomplete`, `limit-reached` naming
 the budget. The checker runs under the request's budgets; its cost is the
 re-enumeration plus one pass over the edges.
+
+For a policy WitnessEntry, the operator SHALL use the actual exact weighted
+choice distribution, not project it to one ordinary transition. Where the
+checked digital timed objective selects derived TS-5 admissibility, QSL
+FR-201 / ADR-028 §13a additionally require independently rederived
+observation edges, original-subject admissible continuations, recurrent
+progress/fairness and finite-wait component checks. A goal observation edge
+can share a public post-key with a pure delay without turning both visits
+into a goal; the checker SHALL retain the owner's edge-goal operator and
+rank rule, not invent a public goal key or default row. All actual graph
+work is budgeted and a stop remains incomplete, never acceptance. This
+consumer binding does not qualify the native checker or change those owners.
 
 ## Identity and comparison
 

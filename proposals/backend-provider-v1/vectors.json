@@ -2,6 +2,25 @@
   "package_fixture": "positive-all-families.json",
   "positive": [
     {
+      "name": "probability-product-rejections",
+      "stage": "outcome",
+      "owners": {"/results/0/cause": "FR-412", "/results/1/cause": "FR-412", "/results/2/cause": "FR-412", "/results/3/cause": "FR-412"},
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [{"request_index": 0, "disposition": "supported"}, {"request_index": 1, "disposition": "supported"}, {"request_index": 2, "disposition": "supported"}, {"request_index": 3, "disposition": "supported"}],
+        "artifacts": [],
+        "results": [
+          {"request_index": 0, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "inequality-fails", "at": {"product_key": "AQ"}}},
+          {"request_index": 1, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "rank-missing", "at": {"product_key": "Ag"}}},
+          {"request_index": 2, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "rank-broken", "at": {"product_key": "AQ"}}},
+          {"request_index": 3, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "threshold-missed", "at": {"product_key": "Ag"}}}
+        ],
+        "counterexamples": [],
+        "accounting": [{"request_index": 0, "settled_by": "result"}, {"request_index": 1, "settled_by": "result"}, {"request_index": 2, "settled_by": "result"}, {"request_index": 3, "settled_by": "result"}]
+      }
+    },
+    {
       "name": "kani-hello",
       "stage": "manifest",
       "owners": {
@@ -1812,7 +1831,7 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "inequality-fails",
-              "at": {"state": "5555555555555555555555555555555555555555555555555555555555555555"}
+              "at": {"product_key": "AQ"}
             }
           },
           {
@@ -1823,7 +1842,7 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "threshold-missed",
-              "at": {"state": "5555555555555555555555555555555555555555555555555555555555555555"}
+              "at": {"product_key": "Ag"}
             }
           },
           {
@@ -2538,7 +2557,7 @@
               "kind": "lower",
               "values": [
                 {
-                  "state": "4444444444444444444444444444444444444444444444444444444444444444",
+                  "state": "AQ",
                   "value": {
                     "numerator": "99",
                     "denominator": "100"
@@ -2547,7 +2566,7 @@
               ],
               "ranking": [
                 {
-                  "state": "4444444444444444444444444444444444444444444444444444444444444444",
+                  "state": "AQ",
                   "rank": 1
                 }
               ]
@@ -2575,6 +2594,11 @@
     }
   ],
   "adverse": [
+    {"name": "probability-inequality-model-projection", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/21/cause/at", "value": {"state": "5555555555555555555555555555555555555555555555555555555555555555"}}]},
+    {"name": "probability-threshold-model-projection", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/22/cause/at", "value": {"state": "5555555555555555555555555555555555555555555555555555555555555555"}}]},
+    {"name": "probability-product-key-padded", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/21/cause/at/product_key", "value": "AQ=="}]},
+    {"name": "probability-product-key-missing", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/21/cause/at/product_key"}]},
+    {"name": "probability-product-key-extra-member", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "add", "path": "/results/21/cause/at/state", "value": "5555555555555555555555555555555555555555555555555555555555555555"}]},
     {
       "name": "unknown-contract-version",
       "base": "kani-hello",

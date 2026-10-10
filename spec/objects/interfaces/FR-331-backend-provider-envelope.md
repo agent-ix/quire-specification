@@ -132,7 +132,7 @@ SHALL NOT invent one to select a checker.
 | Product state | `{state, automaton_state}`: the model state's `StateKey` and the bytes of the automaton state's canonical key, in the package spelling | QSL FR-338's `ProductState`, QSL FR-339 | `initial-missing`, `successor-missing`, `bad-state`, `not-partition`, `backward-edge`, `witness-fails` |
 | Hyper product state | `{states, automaton_state, witness_set}`: each component's `StateKey` in variable order; the automaton key's bytes, absent for an HP-1 member; for HP-3, the witness set's pairs `{states, automaton_state}` in their sorted order | QSL FR-163's `HyperProductState` | `initial-missing`, `successor-missing`, `not-partition`, `backward-edge`, `witness-fails`, `malformed`, `undefined-member`, `violating-member` |
 | State | `{state}`, the model state's `StateKey` | QSL FR-169's `ModelState`; FR-418 (the initial discrete state). FR-412's complete probabilistic product key is a separate identity, not this model key. | `initial-missing`, `successor-missing`, `predicate-undefined`, `rank-missing`, `rank-broken`, `order-broken`, `count-broken` |
-| Probabilistic product state | Complete FR-411 / QSL FR-196 product key; the nested key's wire binding remains unsettled as described below | FR-411, FR-412 | `inequality-fails`, `rank-missing`, `rank-broken`, `threshold-missed` |
+| Probabilistic product state | `{product_key}`, the unpadded base64url spelling of the complete canonical QSL FR-196 product-key octets defined below | FR-411, FR-412 | `inequality-fails`, `rank-missing`, `rank-broken`, `threshold-missed` |
 | Hyper transition tuple | `{transitions}`: the ordered, nonempty tuple of labelled edges `{pre_state, transition, post_state, result}` defined below | QSL FR-163, FR-179, FR-120 | `undefined-member`, `violating-member` |
 | Simulation step | `{position}` for `initial-mismatch` and `successors-differ`; `{position, edge}` for `post-differs`; `{position, edge, verdict}` for `step-fails`. `position` and `edge` are `U64String`s, and `verdict` is the `check_step` verdict: an FR-379 refinement failure, an undefined evaluation, `mapping-undetermined` or `undecided-successor` | QSL FR-149's `SimulationStep` | `initial-mismatch`, `successors-differ`, `post-differs`, `step-fails` |
 | Zone node | `{node}`, its position in the certificate's `nodes` | FR-418 | `successor-missing`, `bad-state`, `witness-fails` |
@@ -169,16 +169,54 @@ variable bindings or reduced to the pre-state tuple; missing edge
 members, protocol transitions and extra members SHALL be refused. No
 automaton key is attached to this HP-1 tuple.
 
-The canonical octet mapping for `AutomatonStateKey` must be supplied by
-QSL's owning `qsl-eval` translation contract (FR-338, ADR-018 PC-3).
-Base64url is its transport, not a definition of that mapping. The current
-sources do not define the mapping; fixture bytes such as `AQ` and `Ag`
-are transport samples only. They SHALL NOT be used as semantic identity
-evidence or derived from materialization order. The complete probabilistic
-key's monitor mapping and `Accumulator` representation also require their
-owning definition (FR-411, QSL FR-196); a schema `StateKey` is not a
-lossless substitute. These missing definitions do not remove any checker's
-required `certificate-rejected` outcome.
+`AutomatonStateKey` SHALL travel as unpadded base64url of exactly QSL
+FR-338 / ADR-018 PC-3's RFC 8785 UTF-8 octets of
+`["quire.automaton-state-key/v1", context, state]`. The reader SHALL check
+the complete closed context and translation-state algebra against the
+originating checked property, including canonical sets, occurrence paths,
+past memory, windows and acceptance obligations. Neither a materialization
+index nor an opaque residual body is a substitute.
+
+`ProbabilityProductKey` SHALL travel as unpadded base64url of exactly QSL
+FR-196 / ADR-028 PR-4's RFC 8785 UTF-8 octets of
+`["quire.probability-product-key/v1", model, monitor, accumulator, pending]`.
+All five members are required. `model` retains the full typed canonical
+simulation state (including digital clock, deadline and tail control when
+applicable), not its digest. The remaining members retain their actual
+FR-196 closed forms, including activation, both unreduced fraction sums,
+actual units, and the complete scheduled identity and declaration-ordered
+drawn vector. Actual None is JSON null in that canonical body, not an
+omitted member or an invented empty/default component. A formula monitor
+embeds the parsed complete FR-338 array, not its base64url spelling.
+
+The certificate's existing row member name `state` in `values`, `ranking`,
+`policy` and each component's `bias` SHALL carry this same
+`ProbabilityProductKey`; a rejection uses `{product_key}` to remain
+disjoint from the model-only `{state}` locus. The reader SHALL decode,
+check the owner's complete algebra in the actual checked claim/model
+context, and require byte equality with canonical re-encoding before
+consumption. Equality and sorting use complete decoded unsigned octets,
+never the base64url text's order, a local index or a digest projection.
+
+Each policy `choice` SHALL carry QSL FR-202's closed WitnessEntry:
+`{type: "choice", choice}` or `{type: "randomized", choices}`, where
+`choice` is unpadded base64url of the RFC 8785 octets of the actual FR-202
+canonical choice body, and each randomized row is `{choice, probability}`.
+An Action body is exactly FR-196's ProductAction body (including a parsed
+complete target product key for `post-state`); FreeDelays is exactly
+FR-202's conditioned support/racing-identity body. No ordinary transition
+identity or action None stands for delay, idle control or observation.
+Randomized rows SHALL be distinct, enabled and in unsigned canonical
+choice-octet order, with positive reduced probabilities summing to one.
+The actual mode, support, admissible continuation, fairness and TS-5
+progress checks remain QSL FR-201/202 obligations, not schema admission.
+
+Base64url only transports these owner-defined bytes and does not create a
+digest domain. Padded/aliased transport, non-JCS bodies, unknown tags,
+missing/extra members and contextually invalid components SHALL refuse
+before consumption. Synthetic fixture bytes such as `AQ` and `Ag` are
+transport-shape samples only, with no canonical meaning or semantic
+admission claimed. All required rejection outcomes remain required.
 
 A `U64String` is the canonical decimal string of an unsigned 64-bit
 integer, `0` to `18446744073709551615`, so RFC 8785 keeps every value
@@ -480,8 +518,10 @@ closed HP-1 transition tuple, admits HP-3's present empty universal tuple
 with its required automaton and witness-set members, and extends FR-163's
 `components` member ownership. These shapes still require checker-context
 and round-trip qualification. The inherited model-only `StateLocus` cannot
-losslessly bind FR-412's complete product key; its replacement awaits the
-deciding canonical forms, not a guessed encoding.
+losslessly bind FR-412's complete product key; the separate
+`ProbabilityProductStateLocus` and certificate row bindings above replace
+that projection using the published QSL FR-196 forms. Actual reader and
+checker qualification remains required; no source amendment closes it.
 
 - [interface_013](./interface_013-backend-provider.md) owns the operation boundary.
 - FR-195 owns the behavior that produces or consumes this value.

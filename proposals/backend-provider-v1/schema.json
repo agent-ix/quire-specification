@@ -650,15 +650,18 @@
     "LimitReached": {"description": "FR-331, FR-461: the one limit-stop cause.", "type": "object", "required": ["type", "limit", "value", "setting"], "properties": {"type": {"const": "limit-reached"}, "limit": {"$ref": "#/$defs/LimitName"}, "value": {"$ref": "#/$defs/Count"}, "setting": {"$ref": "#/$defs/SettingName"}}, "additionalProperties": false},
     "QueryPart": {"description": "FR-331: QSL FR-338's QueryPart, the SMT query a certificate part carries (QSL FR-314).", "enum": ["unrolling", "base", "step"]},
     "ProofStepLocus": {"description": "FR-331: QSL FR-314's ProofStep{part, index}, index QSL FR-314's command number.", "type": "object", "required": ["part", "index"], "properties": {"part": {"$ref": "#/$defs/QueryPart"}, "index": {"$ref": "#/$defs/U64String"}}, "additionalProperties": false},
-    "ProductStateLocus": {"description": "FR-331: QSL FR-338's ProductState(ProductStateRef): the model state's key and the bytes of the automaton state's canonical key.", "type": "object", "required": ["state", "automaton_state"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "automaton_state": {"$ref": "#/$defs/Base64Url"}}, "additionalProperties": false},
+    "AutomatonStateKey": {"description": "FR-331 transport of QSL FR-338 / ADR-018 PC-3 complete RFC 8785 UTF-8 octets: [quire.automaton-state-key/v1, context, state]. Reader admission must check the owner's closed algebra, actual property context and exact canonical bytes; base64url syntax alone is not semantic admission. No index, digest or opaque residual substitute.", "$ref": "#/$defs/Base64Url"},
+    "ProbabilityProductKey": {"description": "FR-331 transport of QSL FR-196 / ADR-028 PR-4 complete RFC 8785 UTF-8 octets: [quire.probability-product-key/v1, model, monitor, accumulator, pending]. All components are present; actual None is null, not omission/default. Full model body, formula monitor array, accumulators including both sums, digital tail/clock data and pending schedule/draw must satisfy the owner algebra in actual context. Reader checks canonical byte equality; no model digest/index substitute.", "$ref": "#/$defs/Base64Url"},
+    "ProbabilityProductStateLocus": {"description": "FR-331 / FR-412: actual complete probabilistic product identity, disjoint from model-only StateLocus.", "type": "object", "required": ["product_key"], "properties": {"product_key": {"$ref": "#/$defs/ProbabilityProductKey"}}, "additionalProperties": false},
+    "ProductStateLocus": {"description": "FR-331: QSL FR-338's ProductState(ProductStateRef): the model state's key and the complete canonical automaton octets.", "type": "object", "required": ["state", "automaton_state"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "automaton_state": {"$ref": "#/$defs/AutomatonStateKey"}}, "additionalProperties": false},
     "HyperProductStateLocus": {
-      "description": "FR-331, QSL FR-163, ADR-023 HC-2: state keys in variable order; HP-3 states is the universal tuple, which may be present and empty, and witness_set retains the actual sorted existential tuple/automaton-key pairs. An empty universal tuple requires automaton_state and witness_set; every supplied existential tuple then has at least two states (n=0, n+m>=2). Nonempty tuples cover other hyper forms too: the originating checked claim determines form, exact arity, required HP-3 witness_set and key applicability. Absence differs from emptiness. Automaton bytes remain transport-only pending the owning canonical octet definition.",
+      "description": "FR-331, QSL FR-163, ADR-023 HC-2: state keys in variable order; HP-3 states is the universal tuple, which may be present and empty, and witness_set retains the actual sorted existential tuple/automaton-key pairs. An empty universal tuple requires automaton_state and witness_set; every supplied existential tuple then has at least two states (n=0, n+m>=2). Nonempty tuples cover other hyper forms too: the originating checked claim determines form, exact arity, required HP-3 witness_set and key applicability. Absence differs from emptiness. Automaton octets follow FR-338; actual translation/claim admission remains a reader obligation.",
       "type": "object",
       "required": ["states"],
       "properties": {
         "states": {"type": "array", "items": {"$ref": "#/$defs/StateKey"}},
-        "automaton_state": {"$ref": "#/$defs/Base64Url"},
-        "witness_set": {"type": "array", "items": {"type": "object", "required": ["states", "automaton_state"], "properties": {"states": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/StateKey"}}, "automaton_state": {"$ref": "#/$defs/Base64Url"}}, "additionalProperties": false}}
+        "automaton_state": {"$ref": "#/$defs/AutomatonStateKey"},
+        "witness_set": {"type": "array", "items": {"type": "object", "required": ["states", "automaton_state"], "properties": {"states": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/StateKey"}}, "automaton_state": {"$ref": "#/$defs/AutomatonStateKey"}}, "additionalProperties": false}}
       },
       "additionalProperties": false,
       "allOf": [
@@ -694,7 +697,7 @@
       },
       "additionalProperties": false
     },
-    "StateLocus": {"description": "FR-331: QSL FR-169's ModelState or FR-418's initial discrete model state. Inherited FR-412 model-only uses of this shape remain an unresolved losslessness defect: this StateKey does not encode FR-411/QSL FR-196's complete probabilistic product key. The replacement requires the owning canonical forms, not a fabricated digest or default component.", "type": "object", "required": ["state"], "properties": {"state": {"$ref": "#/$defs/StateKey"}}, "additionalProperties": false},
+    "StateLocus": {"description": "FR-331: QSL FR-169's ModelState or FR-418's initial discrete model state, never an FR-412 probabilistic product projection.", "type": "object", "required": ["state"], "properties": {"state": {"$ref": "#/$defs/StateKey"}}, "additionalProperties": false},
     "StepVerdict": {
       "description": "FR-331: QSL FR-149's StepFails verdict, the QSL FR-141 check_step verdict that is not Passes: an FR-379 RefinementFailure, an undefined evaluation, or mapping-undetermined or undecided-successor.",
       "oneOf": [
@@ -704,7 +707,7 @@
       ]
     },
     "CertificateRejected": {
-      "description": "FR-331 certificate-rejected{rule, at}: each branch pairs rules with structural loci. Unknown rules, unknown loci and unpaired shapes are refused. The originating request and checked claim select checker/form applicability before consumption (FR-331 AC-26/27); this global union alone does not qualify that context or the unsettled FR-412 product-key binding.",
+      "description": "FR-331 certificate-rejected{rule, at}: closed structural rule/locus pairs. Actual request/claim/checker applicability and full canonical key-body admission are mandatory reader checks (AC-26/27), not established by this global shape union.",
       "type": "object",
       "required": ["type", "rule", "at"],
       "oneOf": [
@@ -713,7 +716,8 @@
         {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-missing", "successor-missing", "bad-state", "not-partition", "backward-edge", "witness-fails"]}, "at": {"$ref": "#/$defs/ProductStateLocus"}}, "additionalProperties": false},
         {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-missing", "successor-missing", "not-partition", "backward-edge", "witness-fails", "malformed", "undefined-member", "violating-member"]}, "at": {"$ref": "#/$defs/HyperProductStateLocus"}}, "additionalProperties": false},
         {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["undefined-member", "violating-member"]}, "at": {"$ref": "#/$defs/HyperTransitionTupleLocus"}}, "additionalProperties": false},
-        {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-missing", "successor-missing", "predicate-undefined", "rank-missing", "rank-broken", "order-broken", "count-broken", "inequality-fails", "threshold-missed"]}, "at": {"$ref": "#/$defs/StateLocus"}}, "additionalProperties": false},
+        {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-missing", "successor-missing", "predicate-undefined", "rank-missing", "rank-broken", "order-broken", "count-broken"]}, "at": {"$ref": "#/$defs/StateLocus"}}, "additionalProperties": false},
+        {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["inequality-fails", "rank-missing", "rank-broken", "threshold-missed"]}, "at": {"$ref": "#/$defs/ProbabilityProductStateLocus"}}, "additionalProperties": false},
         {"description": "QSL FR-149 SimulationStep{position} for an initial or successors rule.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-mismatch", "successors-differ"]}, "at": {"type": "object", "required": ["position"], "properties": {"position": {"$ref": "#/$defs/U64String"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "QSL FR-149 SimulationStep{position, edge} for post-differs.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "post-differs"}, "at": {"type": "object", "required": ["position", "edge"], "properties": {"position": {"$ref": "#/$defs/U64String"}, "edge": {"$ref": "#/$defs/U64String"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "QSL FR-149 SimulationStep{position, edge, verdict} for step-fails.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "step-fails"}, "at": {"type": "object", "required": ["position", "edge", "verdict"], "properties": {"position": {"$ref": "#/$defs/U64String"}, "edge": {"$ref": "#/$defs/U64String"}, "verdict": {"$ref": "#/$defs/StepVerdict"}}, "additionalProperties": false}}, "additionalProperties": false},
@@ -853,6 +857,14 @@
       "additionalProperties": false
     },
     "CertificateIdentity": {"description": "FR-201: the canonical identity digest that binds a certificate to the obligation it proves.", "type": "object", "required": ["domain", "algorithm", "digest"], "properties": {"domain": {"$ref": "#/$defs/Nonempty"}, "algorithm": {"const": "sha256"}, "digest": {"$ref": "#/$defs/HexDigest"}}, "additionalProperties": false},
+    "ProbabilityWitnessEntry": {
+      "description": "FR-331 transport of QSL FR-201/202 WitnessEntry. Each choice carries complete RFC 8785 canonical choice-body octets (FR-196 ProductAction or FR-202 FreeDelays), not an ordinary transition alias. Reader checks actual enabled choices, mode, unique canonical octet order, positive reduced masses summing to one, conditioned support and admissible continuation/fairness/TS-5.",
+      "type": "object",
+      "oneOf": [
+        {"required": ["type", "choice"], "properties": {"type": {"const": "choice"}, "choice": {"$ref": "#/$defs/Base64Url"}}, "additionalProperties": false},
+        {"required": ["type", "choices"], "properties": {"type": {"const": "randomized"}, "choices": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["choice", "probability"], "properties": {"choice": {"$ref": "#/$defs/Base64Url"}, "probability": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false}}}, "additionalProperties": false}
+      ]
+    },
     "ProbabilityCertificate": {
       "description": "FR-412 ProbabilityCertificate{identity, objective, kind, values, ranking, policy, components}.",
       "type": "object",
@@ -861,10 +873,10 @@
         "identity": {"$ref": "#/$defs/CertificateIdentity"},
         "objective": {"description": "FR-412 owns the objective's members.", "type": "object", "minProperties": 1},
         "kind": {"enum": ["lower", "upper", "exact", "long-run"]},
-        "values": {"type": "array", "items": {"type": "object", "required": ["state", "value"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "value": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false}},
-        "ranking": {"type": "array", "items": {"type": "object", "required": ["state", "rank"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "rank": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}},
-        "policy": {"type": "array", "items": {"type": "object", "required": ["state", "choice"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "choice": {"$ref": "#/$defs/TransitionIdentity"}}, "additionalProperties": false}},
-        "components": {"type": "array", "items": {"type": "object", "required": ["value", "gain", "bias"], "properties": {"value": {"$ref": "#/$defs/Rational"}, "gain": {"$ref": "#/$defs/Rational"}, "bias": {"type": "array", "items": {"type": "object", "required": ["state", "value"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "value": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false}}}, "additionalProperties": false}}
+        "values": {"type": "array", "items": {"type": "object", "required": ["state", "value"], "properties": {"state": {"$ref": "#/$defs/ProbabilityProductKey"}, "value": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false}},
+        "ranking": {"type": "array", "items": {"type": "object", "required": ["state", "rank"], "properties": {"state": {"$ref": "#/$defs/ProbabilityProductKey"}, "rank": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}},
+        "policy": {"type": "array", "items": {"type": "object", "required": ["state", "choice"], "properties": {"state": {"$ref": "#/$defs/ProbabilityProductKey"}, "choice": {"$ref": "#/$defs/ProbabilityWitnessEntry"}}, "additionalProperties": false}},
+        "components": {"type": "array", "items": {"type": "object", "required": ["value", "gain", "bias"], "properties": {"value": {"$ref": "#/$defs/Rational"}, "gain": {"$ref": "#/$defs/Rational"}, "bias": {"type": "array", "items": {"type": "object", "required": ["state", "value"], "properties": {"state": {"$ref": "#/$defs/ProbabilityProductKey"}, "value": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false}}}, "additionalProperties": false}}
       },
       "additionalProperties": false
     },
