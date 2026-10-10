@@ -1530,6 +1530,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-461 | FR-461-AC-4 | TC-426 |  |
 | FR-461 | FR-461-AC-5 | TC-426 |  |
 | FR-461 | FR-461-AC-6 | TC-426 |  |
+| FR-461 | FR-461-AC-7 | TC-930 |  |
 | FR-462 | FR-462-AC-1 | TC-428 |  |
 | FR-462 | FR-462-AC-2 | TC-428 |  |
 | FR-462 | FR-462-AC-3 | TC-428 |  |
