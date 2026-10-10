@@ -10534,8 +10534,8 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
 /// FR-322-AC-62's three named derived-form mutations.  Each candidate stays
 /// schema-valid and changes only the semantic preimage.  Retaining the old
 /// key therefore names a stale node; replacing it with the recomputed digest
-/// makes the key current and leaves the form-specific semantic checks to the
-/// reader.  The full-package retained-key refusal is exercised by the
+/// makes the key current; this test does not claim admission of a malformed
+/// recomputed form.  The full-package retained-key refusal is exercised by the
 /// `tc_233_tampered_derived_shape_nodes_refuse_stale_node_key` vectors above.
 #[trace("FR-322-AC-62", "TC-233")]
 #[test]
