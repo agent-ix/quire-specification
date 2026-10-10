@@ -214,6 +214,94 @@ fn errors(validator: &jsonschema::Validator, document: &Value) -> Vec<String> {
         .collect()
 }
 
+/// Literal outputs are independent of the patch runner and its branches.
+#[test]
+fn patch_operations_preserve_literal_results() {
+    for (document, patch, expected) in [
+        (serde_json::json!([10, 20, 30]),
+            serde_json::json!({"op": "remove", "path": "/1"}),
+            serde_json::json!([10, 30])),
+        (serde_json::json!([10, 20, 30]),
+            serde_json::json!({"op": "remove", "path": "/0"}),
+            serde_json::json!([20, 30])),
+        (serde_json::json!([10, 20, 30]),
+            serde_json::json!({"op": "remove", "path": "/2"}),
+            serde_json::json!([10, 20])),
+        (serde_json::json!([10, 30]),
+            serde_json::json!({"op": "add", "path": "/1", "value": 20}),
+            serde_json::json!([10, 20, 30])),
+        (serde_json::json!([20]),
+            serde_json::json!({"op": "add", "path": "/0", "value": 10}),
+            serde_json::json!([10, 20])),
+        (serde_json::json!([10]),
+            serde_json::json!({"op": "add", "path": "/1", "value": 20}),
+            serde_json::json!([10, 20])),
+        (serde_json::json!([]),
+            serde_json::json!({"op": "add", "path": "/-", "value": null}),
+            serde_json::json!([null])),
+        (serde_json::json!([10, 20]),
+            serde_json::json!({"op": "replace", "path": "/1", "value": null}),
+            serde_json::json!([10, null])),
+        (serde_json::json!({"keep": 1, "remove": null}),
+            serde_json::json!({"op": "remove", "path": "/remove"}),
+            serde_json::json!({"keep": 1})),
+        (serde_json::json!({"keep": 1}),
+            serde_json::json!({"op": "add", "path": "/new", "value": null}),
+            serde_json::json!({"keep": 1, "new": null})),
+        (serde_json::json!({"keep": 1}),
+            serde_json::json!({"op": "add", "path": "/keep", "value": 2}),
+            serde_json::json!({"keep": 2})),
+        (serde_json::json!({"keep": 1}),
+            serde_json::json!({"op": "replace", "path": "/keep", "value": 2}),
+            serde_json::json!({"keep": 2})),
+        (serde_json::json!({"a/b": {"~key": [10, 20]}}),
+            serde_json::json!({"op": "remove", "path": "/a~1b/~0key/0"}),
+            serde_json::json!({"a/b": {"~key": [20]}})),
+        (serde_json::json!({"a/b": 1, "~key": 2}),
+            serde_json::json!({"op": "remove", "path": "/a~1b"}),
+            serde_json::json!({"~key": 2})),
+    ] {
+        let mut actual = document;
+        apply(&mut actual, &patch);
+        assert_eq!(actual, expected, "literal patch result for {patch}");
+    }
+}
+
+/// The real adverse vector retains n=0 and changes m=2 to m=1 only.
+#[trace("TC-431", "FR-331-AC-27")]
+#[test]
+fn hp3_array_removal_is_refused_and_restoration_is_admitted() {
+    let base = composed(&positive("certificate-rejected-hyper-identities"));
+    let whole = validator();
+    assert!(whole.is_valid(&base), "original positive is admitted");
+    let adverse = parsed(VECTORS);
+    let vector = adverse["adverse"].as_array().expect("adverse vectors").iter()
+        .find(|vector| vector["name"] == "hp3-empty-universal-single-existential")
+        .expect("original adverse vector retained");
+    assert_eq!(vector["base"], "certificate-rejected-hyper-identities");
+    assert_eq!(vector["patch"], serde_json::json!([
+        {"op": "remove", "path": "/results/4/cause/at/witness_set/0/states/1"}
+    ]));
+    let mut actual = base.clone();
+    apply(&mut actual, &vector["patch"][0]);
+    assert_eq!(actual["results"][4]["cause"]["at"], serde_json::json!({
+        "states": [], "automaton_state": "AQ", "witness_set": [{
+            "states": ["1111111111111111111111111111111111111111111111111111111111111111"],
+            "automaton_state": "Ag"
+        }]
+    }));
+    assert!(!whole.is_valid(&actual), "n=0, m=1 is a real negative");
+    let stage = definition("OutcomeStage");
+    assert!(stage.iter_errors(&actual).any(|error| located_at_patch(
+        &error.instance_path().to_string(), "/results/4/cause/at/witness_set/0/states/1")),
+        "refusal belongs to the changed witness tuple");
+    apply(&mut actual, &serde_json::json!({"op": "add",
+        "path": "/results/4/cause/at/witness_set/0/states/1",
+        "value": "2222222222222222222222222222222222222222222222222222222222222222"}));
+    assert_eq!(actual, base, "restoration changes no other component");
+    assert!(whole.is_valid(&actual), "restored n=0, m=2 positive is admitted");
+}
+
 /// Every positive vector of every stage is admitted by the schema, and every
 /// member it names an owner for exists and names an FR of this specification.
 #[trace("TC-431", "FR-331-AC-19")]
