@@ -203,6 +203,25 @@ identity, which binds the selection.
 Declaration keys compare by `package`, then `node`, as UTF-8 bytes, a proper
 prefix first.
 
+Every phase-1 original declaration and its FCD origin remains available from
+the immutable ModelSelection declaration inventory. That inventory and the
+effective declarations are different sets: a scalar, clause or population
+without a phase-2 qualify rule remains an original, without an invented
+qualify fact or effective declaration. Effective entries and their fact input
+keys reference only that retained inventory. Retention adds no derivation,
+effective-declaration or hash charge and changes no effective identity
+preimage. The fixed `digest_domain: "sha256-jcs"` discriminator in an original
+key is not the selected package's content digest.
+
+After structural normalization, the accounting definition orders systems
+checks, source resolution and structural assembly, checked-fact admission,
+the complete exhaustive conformance stage, then dispatch. Checked-fact
+admission uses one existing checker graph and its actual authored clauses;
+it is a process stage, not an extra normalization rule or derivation fact.
+The rule manifest and effective identity preimages are unchanged. A normalized
+view is internal checking input; a validated package requires completion of
+all these stages without refusal or incompleteness.
+
 The effective member key is `(owner effective type identity, original
 declaration key)`. Paths that reach the same original declaration collapse to
 one effective member that retains a derivation fact for every path. Two

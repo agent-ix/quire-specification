@@ -67,9 +67,12 @@ flowchart TD
   X --> L[FCD extraction-frontend lift]
   L --> D[Domain package: semantic IR, sha256-jcs]
   D --> I[QSL model intake]
-  I --> M[Immutable effective model view]
+  I --> M[Internal structural model view and original inventory]
+  M --> CF[Source resolution and checked-fact admission]
+  CF --> CV[Exhaustive conformance and dispatch]
+  CV --> V[Validated checked-package authority]
   S[Typed runtime state and anchors] --> B[State binder]
-  M --> B
+  V --> B
   B --> E[State and graph evaluator]
   E --> R[Value, violation, incomplete or refusal]
   D --> G[Generated Rust, TypeScript and Python types]
@@ -137,8 +140,12 @@ dispatch sets, parts, ports, connections, allocations, operations and
 relationships. Ambiguous precedence or dispatch refuses at checking rather than
 selecting by source or registration order.
 
-An effective declaration is keyed by (domain package identity, IR node identity,
-digest domain `sha256-jcs`). CheckedPackage `model_selections` name the domain
+An original declaration is keyed by (domain package identity, IR node identity,
+fixed digest domain `sha256-jcs`), not the selected content digest. The immutable
+selection inventory retains every original and its FCD origin; effective
+entries exist only where the selected normalization rules derive them.
+An effective declaration has its own `quire.model.effective-declaration/v1`
+identity over original keys and derivation facts. CheckedPackage `model_selections` name the domain
 package. Runtime subject references in observation and protocol records use
 these declaration keys.
 
@@ -149,6 +156,15 @@ created or deleted identities. Graph traversal declares roots, relationships,
 direction, zero or positive length, closure and work bounds.
 
 ## Decisions
+
+Structural normalization supplies internal checking data. Source resolution
+and structural assembly precede checked-fact admission on the existing checker
+graph; the entire exhaustive conformance stage follows actual clause checking,
+then dispatch. Assembly does not preempt model-owned refinement axes. One
+operation-owned model meter survives all model stages and canonical
+multi-model stage barriers. No partial graph or structural view becomes sealed
+checked-package authority before every stage succeeds. Checked-fact admission
+adds no normalization rule or effective-identity member.
 
 | Decision | Why |
 | --- | --- |

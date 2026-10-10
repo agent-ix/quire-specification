@@ -44,6 +44,39 @@ and no linearization is applied. An abstract type has no direct instances.
 
 ## Conformance rules
 
+### Checked-fact admission and stage ownership
+
+The checker SHALL admit actual authored contract clauses before running the
+entire conformance stage, in the stage order of the selected
+[`value-accounting.md`](../../../proposals/quire-v1/definitions/value-accounting.md).
+It SHALL retain the facts derived once from that admission on the one checker
+graph. It SHALL NOT accept caller-asserted facts, rebuild synthetic clauses,
+call a second checker or expose a public partially checked graph as authority.
+Only successful completion of all admission, conformance and dispatch stages
+can seal the final checked-package authority. Structural normalization alone
+does not establish this authority.
+
+Structural assembly SHALL defer model-owned redefinition value-type,
+multiplicity and refinement verdicts to this conformance stage. Its provisional
+clause environment uses the actual normalized member identities and parent
+projection context below, not a silently accepted narrowed model. In
+particular, R05's incompatible multiplicity and R08(c)'s object-type narrowing
+SHALL reach their FR-151 axes; an earlier generic attribute-flattening or
+reference-field-equality check SHALL NOT replace their causes or suppress
+independent conformance failures. An independent unresolved source name,
+malformed source construct or clause typing failure still ends its earlier
+stage with its actual cause. Missing postconditions are valid absence (`true`),
+not an admission error.
+
+All static and fact-dependent conformance axes SHALL run in one exhaustive
+stage after successful checked-fact admission. When a package has both a
+static variance failure and an unproved refinement, both SHALL be reported in
+the selected member/axis order. No static conformance refusal at intake may
+prevent the refinement axis from running. The one operation-owned model meter,
+multi-selection stage barriers and denial suppression are those of the selected
+accounting definition; a model meter is neither restarted nor charged twice
+at this boundary.
+
 Rule `quire.model.conformance.variance/v1` checks a redefining member against the
 member it redefines on these independent axes, in this order, charging one
 `conformance.axis` before each axis runs and reporting every failing axis in
@@ -109,6 +142,23 @@ obligation. A missing fact is refused
 `field-presence`; a narrowing no FR-146 fact form can express (a narrowed
 object type or an upper bound on a collection) is refused with obligation
 `no-proof-form`. No SMT or external prover is selected.
+
+For this obligation, the projection's parent context SHALL apply during actual
+clause typing as well as fact derivation, including the immediate parent's
+declared presence, multiplicity and value interval. Thus a required narrowed
+leaf does not make `present(self.f)` ill-typed when its parent is optional,
+and the narrowed leaf's own bounds never establish the obligation. Other
+projections retain their ordinary typing context and original observation.
+
+Each obligation belongs to the exposed writer of the owning effective type.
+Only that writer's effective postcondition (its own clauses conjoined with
+clauses on its declared operation-redefinition lineage) may discharge it.
+A sibling's or strict descendant's own clause SHALL NOT discharge its
+ancestor's obligation merely because source names resolve to the same root
+operation. Multi-level field redefinitions SHALL check each immediate-parent
+pair, with its own exposed writer set. If no exposed operation writes the
+field, no writer obligation or `no-proof-form` refusal arises. The field's
+refinement axis still charges once in its existing position after multiplicity.
 
 At runtime, subsetting is checked at binding admission, charged as
 `binding.subset-value` under `PopulationAdmissionLimitsV1` and without an
@@ -184,6 +234,10 @@ type.
 | FR-151-AC-9 | A subsetting feature whose type or multiplicity fails to conform to the subsetted feature refuses `ill_typed` with `subsetting-type` or `multiplicity-narrowing` and names both declarations; a conforming pair retains each declaration's own provenance in the effective view. | Test (TC-196) |
 | FR-151-AC-10 | At binding admission over a closed population, an object whose subsetting-feature values are not a subset of its subsetted-feature values refuses `invalid_runtime_input`/`subsetting-violation`, charged as `binding.subset-value` and with no evaluation charge. | Test (TC-196) |
 | FR-151-AC-11 | The operation effect axis charges `max(1, t)` work units, where each field write compared against `n` redefined `modifies` entries adds `n × (1 + r)` for the `r` `redefines` links walked from the written field; a write that reaches its one redefined entry through one link charges two. | Test (TC-196) |
+| FR-151-AC-12 | With valid clauses, a model containing R03's five static failures and R08(a)'s unproved field-presence reports all six in member/axis order; reversing input declaration order changes neither charges nor failures. | Test |
+| FR-151-AC-13 | R08(b)'s actual present(self.xb) clause types and establishes presence from optional A/x despite required B/xb; R08(e) establishes [0,5] from parent Count [0,9], while R08(f)'s [0,6] refuses. A sibling or descendant-only clause cannot discharge B's obligation. | Test |
+| FR-151-AC-14 | R05's incompatible multiplicity and R08(c)'s narrowed object type reach their original FR-151 refusals, without generic assembly preemption; an independent unresolved clause name instead refuses in the earlier source/checked-fact stage before any conformance.axis charge. | Test |
+| FR-151-AC-15 | Two selected models report every completed conformance failure in canonical selection order independent of alias/source order. Denial in the second model suppresses all failures collected in that unfinished stage, preserves earlier meter consumption and emits exactly the selected incomplete record. | Test |
 
 ## Dependencies
 
