@@ -67,6 +67,38 @@ Fixtures:
 | D07 | `function f using V(r: Reference<M::A>): Integer pure { if r.size() >= 1 then 1 else 0 }` over G and S2 | `refused { code: ill_typed, cause: operator-ineligible }` at `r.size()`: dispatched calls are admitted only in invariant, precondition and postcondition blocks |
 | D08 | D01 plus `pre PS using V on M::A::size { self.size() >= 0 }`; link | `refused { code: invalid_package, cause: definition-cycle }` at link time for the strongly connected component `{PS}`, listing the dispatch edge `PS -> PS`: the call `self.size()` in `PS` has candidates `A/size` and `B/size`, and both effective preconditions contain `PS` (`B/size`'s absent clause disjoined with `PS`); no dispatch table |
 
+### Checked-fact, meter and ancestor controls
+
+For R08(b), (e) and (f), `B/set` explicitly redefines `A/set`, has params=[],
+no return and frame `{modifies: [A/x, A/c], creates: [], deletes: []}`.
+Its six operation axes cost nine work units: arity1, absent-result type1,
+result multiplicity1, effect4 (two writes compared with two parent grants,
+zero redefines links), precondition1 and postcondition1. R08's field axes cost
+three work units in (a), (b), (d), (e), (f), and four in (c) because f(B)=2.
+Thus conformance-only totals are a3, b12, c4, d3, e12, f12. These exclude
+normalization and independent clause-checking budgets. Preserve R02/R03/R04/R09
+totals 10/8/8/10 and R01's cycle uniqueness. Run all these through actual source
+clause checking; caller-stated `PostconditionClause` guards do not qualify.
+
+Let N be actual model work consumed before conformance for the chosen fixture.
+At work_units=N+the row total, collect its complete semantic result; at one
+less, the final axis is denied with exactly
+`incomplete { limit_kind: work_units, limit: N+total-1,
+consumed: N+total-1, next_charge: 1, charge_point: conformance.axis }`.
+No unfinished-stage refusal or validated package is exposed.
+
+| Vector | Input | Expected result/disposition |
+| --- | --- | --- |
+| C01 | Combine R03's operation and R08(a)'s narrowing in one otherwise valid package; then reverse IR node order | All five R03 failures and the field-presence unproved-refinement, ordered by member then axis, with identical accounting; no first-static-failure shortcut |
+| C02 | C01 plus a post clause with an unresolved name; separately a malformed typed clause | Actual earlier source/checked-fact refusal with its source location before any conformance.axis, not a fabricated missing-fact error |
+| C03 | R05 incompatible multiplicity; R08(c) narrowed object type | Original FR-151 multiplicity-narrowing / unproved-refinement no-proof-form, respectively; generic assembly/reference-field-equality does not preempt them |
+| C04 | R08(b) required B/xb over optional A/x; remove the present guard; then provide the guard only on sibling C/set or descendant D/set | Actual clause accepts with parent optional typing and proves B's obligation; removing guard refuses; sibling/descendant-only clauses cannot discharge B |
+| C05 | A/x narrowed by B/xb then C/xc with independent exposed writers | Each immediate-parent pair uses that parent's presence/domain and its owning exposed writer; a root-only comparison or sibling clause cannot discharge both |
+| C06 | Two selected models with distinct identities and conformance failures; reverse source declarations/aliases | Both failure lists in canonical ModelSelection order and identical total counters; all selections finish the same stage before any advances |
+| C07 | C06 with denial during the second selection after the first selection's failure was found | Exactly the selected five-field incomplete record, no failures from that unfinished stage, no reset/refund, no validated view |
+| C08 | A conformance walk following n supertypes edges, limits n and n-1; then zero on a nonempty walk | At n a substantive verdict; at n-1 exactly incomplete(ancestor_steps,n-1,n-1,1,model.ancestor-edge); at zero consumed0/next_charge1 and no followed edge; branching counts edges, never depth |
+| C09 | Owning axis work charge unavailable and first ancestor edge also unavailable | Existing ordered work-unit denial wins before model.ancestor-edge; no edge or counter changes. If the axis succeeds instead, ancestor denial preserves that admitted axis consumption |
+
 ## Expected Results
 
 Every positive and boundary result matches FR-151; each invalid, unsupported or exhausted mutation returns its exact typed disposition with source/provenance, emits no approximation, and preserves independent sibling results.

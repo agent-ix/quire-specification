@@ -30,8 +30,9 @@ package, its ModelSelection (FR-321) and the selected
 
 ## Outputs
 
-An immutable original-to-effective view, carried as one
-`quire.model.effective-view/v1` identity, or a typed refusal.
+An immutable retained-original inventory and a structural effective view,
+carried as one `quire.model.effective-view/v1` identity, or a typed refusal.
+The structural view is checking input, not a validated checked package.
 
 ## Behavior
 
@@ -40,10 +41,19 @@ identity, sha256-jcs)`. Supertypes, subsets and redefines are members of the
 IR nodes, so every edge normalization reads is part of the admitted package.
 QSL derives effective declarations. It never mints, renames or merges a
 declaration key, and never derives an edge the package does not declare.
-Normalization never replaces the original key or source span. Every derived
+Normalization never replaces the original key or actual FCD origin. Every derived
 member records its source declarations and rule. Equal normalized shapes from
 distinct original declarations always remain distinct effective declarations;
 no identity-equivalence declaration exists.
+
+The model checker SHALL retain every phase-1 original declaration and its
+actual FCD origin in the immutable selection inventory, including originals
+whose kinds have no phase-2 qualify rule. It SHALL derive effective entries
+only for the selected rules' kinds. A retained scalar, clause or population
+without such a rule SHALL NOT receive an invented qualify fact, effective
+declaration or additional declaration/hash charge. Effective entries and fact
+inputs reference keys from the exact retained inventory. This inventory is
+existing selection data, not an added effective-identity preimage member.
 
 The effective member key is `(owner effective type identity, original
 declaration key)`. Paths that reach the same original declaration collapse to
@@ -101,7 +111,8 @@ source is refused `unsupported_construct`/`declaration-form`. Canonical ordering
 affects identity bytes only; it never changes a declaration key or resolves
 semantic ambiguity.
 
-Normalization is charged under `ModelNormalizationLimitsV1` of the selected
+Normalization and later conformance share the one operation-owned meter under
+`ModelNormalizationLimitsV1` of the selected
 `quire.value.accounting/v1` definition at its named record, fact, cycle-check,
 redefinition-check, conflict-check, declaration and preimage-hash charge
 points, the last by JCS byte length. Each normalization phase checks
@@ -121,6 +132,9 @@ reports a refusal ends checking. Exhaustion ends checking as
 | FR-150-AC-6 | Diamond paths reaching one original declaration collapse to one effective member retaining every path, and each effective identity equals its published vector. | Test (TC-195) |
 | FR-150-AC-7 | Declaration keys are fixed by the domain package identity and IR node identity: two versions of one package with equal nodes yield equal effective declaration identities and different effective views. | Test (TC-195) |
 | FR-150-AC-8 | A normalization run at its exact `ModelNormalizationLimitsV1` bound completes, and the one-less run is incomplete at the named charge point. | Test (TC-195) |
+| FR-150-AC-9 | An admitted scalar without a phase-2 qualify rule remains retrievable by its byte-identical original key and origin, with no scalar qualify fact, effective entry or extra effective-declaration/hash charge; all effective/fact-origin keys belong to the retained intake inventory. | Test |
+| FR-150-AC-10 | Transfer from structural normalization to checked-fact admission and conformance preserves the same model counters; a denied next charge follows no work and exposes no validated effective view or unfinished-stage failure, including failures already collected from another selected model. | Test |
+| FR-150-AC-11 | A walk following n supertype edges admits at ancestor_steps=n; at n-1 it returns exactly incomplete(ancestor_steps,n-1,n-1,1,model.ancestor-edge), and zero denies its first edge. An unavailable owning work charge wins before a simultaneous edge denial; previously admitted axis work is never refunded. | Test |
 
 ## Dependencies
 

@@ -488,7 +488,7 @@ limit object.
 Checking a package that selects `quire.model.complete/v1` carries
 `ModelNormalizationLimitsV1` with exact `u64` limits for `declaration_records`,
 `derivation_facts`, `effective_declarations`, `dispatch_candidates`,
-`hashed_bytes` and `work_units`, in that field order. Omission is a refused
+`hashed_bytes`, `work_units` and `ancestor_steps`, in that field order. Omission is a refused
 request; zero is a real limit and never means unlimited. These counters are
 independent of `ScalarLimitsV1`. `declaration_records`, `derivation_facts`,
 `effective_declarations` and `dispatch_candidates` are high-water semantic
@@ -496,10 +496,48 @@ sizes; `hashed_bytes` and `work_units` are cumulative. Every row adds one work
 unit unless it states another addition.
 
 Checking runs these stages in order: intake (`normalize.record`) and the
-model feature rules; normalization phases
-2, 3 and 4, each a stage; canonicalization (phase 5); conformance; systems
-kind mapping, connection and allocation checks; source resolution, including
-static navigation; and dispatch linking.
+model feature rules; normalization phases 2, 3 and 4, each a stage;
+canonicalization (phase 5); systems kind mapping, connection and allocation
+checks; source resolution and structural assembly, including static navigation;
+checked-fact admission; the entire conformance stage; and dispatch linking.
+Checked-fact admission checks the actual authored clauses once and retains
+their established FR-146 facts. It forms no normalization derivation fact and
+adds no `conformance.axis` charge. Its existing expression-checking budgets
+remain independent of this model meter. All conformance axes, including static
+variance and fact-dependent refinement, run together after this admission.
+An earlier assembly or clause refusal wins only for an independent defect:
+assembly must not decide the model-owned narrowing/multiplicity/refinement
+conditions of FR-151 early and replace their causes or suppress sibling axes.
+
+One checking operation owns one model meter across all its selected models
+and these stages. The meter is transferred from intake to checking without
+reset, refund, cloning or repeated charges. Selections run in ascending
+(`identity`, `digest_domain`, `digest`) byte order, a proper prefix first;
+FR-321 rejects repeated identities before this order is consumed. Finish each
+stage across all selections before advancing any selection to the next stage.
+Failures of a completed stage are ordered by selection then local charge
+order. High-water sizes count the operation's simultaneously retained records,
+facts, effective declarations and candidates; cumulative counters never reset
+between selections. Structural normalized data is internal input to checking,
+not a validated effective view or a public partially checked package.
+
+`ancestor_steps` is the exact u64 ceiling of the number of supertypes edges
+followed by one walk, not its depth and not cumulative work. Each walk starts
+at zero. Test availability immediately before each edge is followed, after
+any owning axis/fact work charge already admitted. A permitted edge increments
+this walk's count by one but introduces no additional work-unit charge: the
+existing work pricing below is unchanged. Its named point is
+`model.ancestor-edge`; denial returns
+`incomplete { limit_kind: ancestor_steps, limit: A, consumed: k,
+next_charge: 1, charge_point: model.ancestor-edge }` when k = A. A zero limit
+denies the first followed edge; at n edges, n admits and n-1 denies edge n.
+The six existing counters are checked first, in their existing field order,
+at their owning charge; ancestor availability is checked only after that
+charge succeeds. Thus a simultaneous work denial wins before the edge check.
+Neither denial follows an edge, refunds admitted work or returns a semantic
+conformance verdict. This row applies to normalization ancestor expansion,
+conformance, systems conformance and dispatch ancestor walks; it does not
+change family-step or population-admission limits.
 
 | Charge point | Order | Exact counter amount |
 | --- | --- | --- |
@@ -519,7 +557,7 @@ static navigation; and dispatch linking.
 | kth `dispatch.candidate` | after that subtype's `dispatch.subtype`, each family member that has a body ascending by effective member key, before its applicability test | `dispatch_candidates=k`; `work_units += f` instead of one, where `f` is the number of type derivation facts (qualify and inherit) of the subtype, one work unit per fact scanned by the conformance walk |
 | each `dispatch.dominance` | after a subtype's candidate tests, when `c >= 2` candidates are applicable, before the dominance pairs are enumerated | no size-counter change; `work_units += Σ (c − 1) × f(o)` instead of one, summed over the owners `o` of the `c` applicable candidates, where `f(o)` is the number of type derivation facts of `o` that each proper-descendant test of `o` against another candidate's owner scans, one work unit per fact |
 
-Checking is exhaustive within a stage and under these limits. Each row is
+Checking is exhaustive within an operation-wide stage and under these limits. Each row is
 charged before the work it names runs, in the stated order, and every refusal
 that work exposes is reported, in charge order, when its stage ends; a
 refusal decided by an intake admission check before a stage's first charge is reported
@@ -536,7 +574,14 @@ first failure. The first unavailable charge ends checking with
 whose amount is unavailable; a checker surfaces it as `refused { code:
 resource_exhausted, cause: insufficient-next-charge }` at stage
 `model-normalization`, reports no refusal found in the unfinished stage and
-produces no effective view. The qualification seam below applies to these
+produces no validated effective view. This suppression includes failures
+already collected from earlier selections in the same unfinished stage.
+Ancestor denial has the same public `resource_exhausted` /
+`insufficient-next-charge` disposition and five-field incomplete payload;
+retain the owning declaration's actual FCD origin, or an actual source-clause
+location when the walk belongs to that clause, without inventing a source
+span for generated origins. The separate type-environment stage-limit
+contract is unchanged. The qualification seam below applies to these
 points with the `work_units` of this limit object.
 
 ## Incomplete record
