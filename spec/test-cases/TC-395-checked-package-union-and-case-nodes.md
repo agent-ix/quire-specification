@@ -39,7 +39,8 @@ its named code and cause.
 
 Read `union-nodes` through the strict V2 reader, then read each mutation
 below, each made to an otherwise admitted copy with its node keys recomputed so
-that no `stale-node-key` refusal masks the join under test.
+that no `stale-node-key` refusal masks the join under test, except N15,
+which deliberately retains the wrong node key to exercise that refusal.
 
 | Vector | Input | Expected result/disposition |
 | --- | --- | --- |
@@ -56,6 +57,15 @@ that no `stale-node-key` refusal masks the join under test.
 | N11 | `quire.op.structural.eq` over two values of `union Label { Named(Text[0,8;nfc]), Tagged(Integer, Text[0,8;nfc]), Empty }` | admitted with exactly the leaves `["member:Named", "position:0"]` then `["member:Tagged", "position:1"]`, each with the `nfc` text law and mode, and none for `Empty`; both V2 schemas admit the `member:<Ident>` segment (FR-322-AC-45, FR-440-AC-8) |
 | N12 | `quire.op.structural.eq` over two values of `union List { Cons(Integer, List), Nil }` whose cycle names one `recursion_group`; over two values of a record whose field's type cycles back to it through a union | each admitted with empty `leaves`, neither `operator-ineligible` (FR-322-AC-46, FR-440-AC-8) |
 | N13 | `quire.op.structural.eq` over two values of each of FR-322's `Node`, `Cell`, `Chain` and `Option<Chain>` | each admitted with exactly FR-322's listed leaves in order, ending in `recursion:0`, `recursion:0`, `recursion:0` and `recursion:1` with `laws` `[]` and `mode` `null`; both V2 schemas admit the `recursion:<d>` segment (FR-322-AC-46, FR-440-AC-8) |
+| N14 | fixed union and payload node ids for `Shape::Empty` and `Shape::Rect` with two reference payloads, neither body containing an application | producer and strict reader each match independently fixed RFC 8785 bytes and canonical keys for `quire.application-node/v1`; bodies remain the one-binding aggregates, `declaration` and `recursion` are `null`, and `owner` is absent (FR-440-AC-9) |
+| N15 | N14 with a retained `quire.structural-node/v1` key, with package identity rebuilt to expose the node-key check | strict reader refuses `invalid_package`/`stale-node-key` at the application-node key stage (FR-440-AC-9) |
+| N16 | fixed record and tuple value inputs without an application in either body; N04's reordered source arms | record and tuple preimage bytes and keys remain their existing `quire.structural-node/v1` vectors; the case retains its declared-order body, node id and package id (FR-440-AC-10) |
+
+N14's expected bytes and keys are fixed independently of the producer and
+reader under test. QSpec's Rust fixture/schema qualification and the strict
+reader qualification are separate executions; producer agreement alone
+does not establish reader admission. QSL's matching producer obligations
+are [FR-319](ix://agent-ix/quire-spec-language/FR-319) AC-4 and AC-5.
 
 ## Expected Results
 
