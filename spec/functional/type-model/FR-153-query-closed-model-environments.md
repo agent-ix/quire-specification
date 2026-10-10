@@ -42,6 +42,17 @@ grammar and the selected `quire.model.complete/v1` definition (rules
 
 ## Environment key and closure
 
+The native type of an explicit population binding SHALL be spelled
+`Population<T>[N]` when it declares maximum `N`, and `Population<T>` when it
+declares none. `T` SHALL resolve from a qualified name to a model `object`
+type; an admitted name of a non-object type refuses
+`ill_typed`/`type-mismatch`. `N` SHALL use the grammar's unsigned integer
+spelling (`0` or a nonzero digit followed by digits); `0` is an admitted
+maximum. An omitted maximum SHALL NOT infer a finite bound. This type
+spelling does not declare a population artifact or supply its binding,
+closure, anchor or runtime members. The lowercase `population` keyword in
+an abstraction binding is a separate source form, not a type constructor.
+
 A population binding is bound to one population declaration. The population
 declaration is declared by a `population` artifact and lists its member types
 and its extent. Its declaration key must belong to the binding's
@@ -118,8 +129,8 @@ deleted in the post state keeps its pre most-specific type. Charges are the
 | FR-153-AC-5 | All-instances includes closed subtype populations exactly once and emits no partial population when closure is unknown. | Test (TC-198) |
 | FR-153-AC-6 | A subtype object seen through supertype and subtype queries has one reference key whose type component is its most-specific type. | Test (TC-198) |
 | FR-153-AC-7 | `pre(allInstances<T>(p))` in a postcondition reads the pre population, and a deleted object keeps its pre type. | Test (TC-198) |
-| FR-153-AC-8 | `allInstances<T>(p)`'s result is exactly `Set<Reference<T>>[0,N]`, typed to the queried `T` and bounded by `p`'s declared maximum `N`, when `p` declares one. Lookup's present result is `Reference<T>` in the `undefined` and `refused` modes and `Option<Reference<T>>` in the `empty` mode, in every case typed to the queried `T`. | Test (TC-198) |
-| FR-153-AC-9 | When `p` declares no maximum, `allInstances<T>(p)`'s result is exactly the unbounded `Set<Reference<T>>`, admits every selected count, and never returns `cardinality_out_of_bound`. | Test (TC-247) |
+| FR-153-AC-8 | A binding typed `Population<T>[N]` requires a model object target `T` and an unsigned maximum `N`, including zero; an admitted non-object target refuses `ill_typed`/`type-mismatch`. `allInstances<T>(p)`'s result is exactly `Set<Reference<T>>[0,N]`, typed to the queried `T` and bounded by `p`'s declared maximum `N`, when `p` declares one. Lookup's present result is `Reference<T>` in the `undefined` and `refused` modes and `Option<Reference<T>>` in the `empty` mode, in every case typed to the queried `T`; every lookup spells its mandatory `absent` mode. | Test (TC-198) |
+| FR-153-AC-9 | A binding typed `Population<T>` declares no maximum and infers no finite default; `allInstances<T>(p)`'s result is exactly the unbounded `Set<Reference<T>>`, admits every selected count, and never returns `cardinality_out_of_bound`. | Test (TC-247) |
 
 ## Dependencies
 

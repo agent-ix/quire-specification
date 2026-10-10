@@ -70,7 +70,7 @@ This candidate inventory is edition-owned, not an extensible runtime registry.
 The complete-V1 facets additionally reserve `import`, `dimension`, `unit`,
 `ordered`, `enum`, `record`, `tuple`, `union`, `type`, `function`, `pure`, `decreases`,
 `Integer`, `Int`, `Rational`, `Decimal`, `Float32`, `Float64`, `Text`, `Option`,
-`Sequence`, `Set`, `Bag`, `OrderedSet`, `Reference`, `null`, `none`, `decimal`,
+`Sequence`, `Set`, `Bag`, `OrderedSet`, `Reference`, `Population`, `null`, `none`, `decimal`,
 `float32`, `float64`, `bits`, `convert`, `allInstances`, `collect`, `flatMap`,
 `flatten`, `fold`, `reduce`, `identity`, `toward-zero`, `toward-positive`,
 `toward-negative`, `nearest-even`, `nearest-away`, `unicode-scalars`, `nfc`,
@@ -305,7 +305,8 @@ type-ref      = 'Boolean' | 'Integer' | qualified-name
               | 'Option', '<', type-ref, '>'
               | ('Sequence' | 'Set' | 'Bag' | 'OrderedSet'),
                 '<', type-ref, '>', [ '[', uint, ',', uint, ']' ]
-              | 'Reference', '<', qualified-name, '>' ;
+              | 'Reference', '<', qualified-name, '>'
+              | 'Population', '<', qualified-name, '>', [ '[', uint, ']' ] ;
 qualified-name = ident, { '::', member-name } ;
 rounding-mode = 'exact' | 'toward-zero' | 'toward-positive'
               | 'toward-negative' | 'nearest-even' | 'nearest-away' ;
@@ -427,6 +428,19 @@ library: `quire::value::ieee::sqrt(x)`,
 `quire::value::ieee::totalOrder(a,b)` and
 `quire::value::ieee::bitIdentical(a,b)`. User declarations cannot replace or
 shadow those selected definition identities.
+
+`Population<T>[N]` spells an explicit population binding's type, where `T`
+is a qualified name resolving to a model `object` type and `N` is its declared
+maximum. The maximum is optional: `Population<T>` declares no maximum, not a
+default finite bound. The bracketed form has one `uint`, including `0`, rather
+than the two bounds of a collection type; it admits no sign, leading zero,
+fraction, exponent or `*`. Recognition of a qualified name does not prove its
+object kind; FR-153 owns that semantic check and the query result types.
+`Population` is case-sensitive and reserved in complete-V1 native binder
+positions; contextual `member-name` positions still admit it. Lowercase
+`population` remains the distinct contextual abstraction-binding keyword and
+an identifier elsewhere, never an alias for the uppercase type constructor.
+Neither spelling creates a population or supplies an ambient binding.
 
 The selected `quire.model.complete/v1` definition gives the model forms above
 their meaning; FR-150 through FR-153 own it. `lookup<T>(p, r) absent m` reads
