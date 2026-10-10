@@ -4460,10 +4460,11 @@ fn rekey_stale_nodes(package: &mut Value) -> BTreeMap<String, String> {
 /// projection. The caller supplies the complete wire body and cross-fields;
 /// this helper is used only by reader qualification vectors.
 fn append_rekeyed_structural_node(package: &mut Value, mut node: Value) {
-    let self_typed = matches!(
-        node["semantic_form"].as_str(),
-        Some("compound_unit" | "unit")
-    );
+    let self_typed = node["semantic_type"] == node["node_id"]
+        || matches!(
+            node["semantic_form"].as_str(),
+            Some("compound_unit" | "unit")
+        );
     if self_typed {
         node["semantic_type"] = node["node_id"].clone();
     }
@@ -10810,10 +10811,31 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     }
 
     let mut wrong_population = base.clone();
+    let mut population_reference = wrong_population["semantic_graph"]["nodes"][43].clone();
+    population_reference["body"]["members"][0]["target"] =
+        wrong_population["semantic_graph"]["nodes"][58]["node_id"].clone();
+    population_reference["dependencies"] =
+        json!([wrong_population["semantic_graph"]["nodes"][58]["node_id"]]);
+    append_rekeyed_structural_node(&mut wrong_population, population_reference);
+    let population_reference_id = wrong_population["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap()["node_id"]
+        .clone();
+    let mut population_set = wrong_population["semantic_graph"]["nodes"][42].clone();
+    population_set["body"]["members"][0]["target"] = population_reference_id.clone();
+    population_set["dependencies"] = json!([population_reference_id]);
+    append_rekeyed_structural_node(&mut wrong_population, population_set);
+    let population_set_id = wrong_population["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap()["node_id"]
+        .clone();
     let mut population = wrong_population["semantic_graph"]["nodes"][51].clone();
     population["semantic_form"] = json!("model_population");
-    population["semantic_type"] =
-        wrong_population["semantic_graph"]["nodes"][42]["node_id"].clone();
+    population["semantic_type"] = population_set_id.clone();
     population["body"] = json!({
         "term": "aggregate",
         "members": [{
@@ -10829,7 +10851,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     });
     population["dependencies"] = json!([
         wrong_population["semantic_graph"]["nodes"][16]["node_id"],
-        wrong_population["semantic_graph"]["nodes"][42]["node_id"]
+        population_set_id
     ]);
     append_rekeyed_structural_node(&mut wrong_population, population);
     let population_id = wrong_population["semantic_graph"]["nodes"]
