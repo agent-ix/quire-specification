@@ -843,6 +843,25 @@ and visits types in declaration pre-order:
 - Every other type contributes no leaf; a float type makes the comparison
   ineligible, as stated above.
 
+The walk SHALL visit every declared union member independently of the
+active member of any operand value. `member:<identifier>` contains the
+exact declared identifier from FR-440's union binding, followed by a
+separate `position:<n>` segment whose index starts at zero and uses
+canonical decimal spelling. No member sort, name normalization, union
+node key, member ordinal or active-value tag enters the path. The path
+names the payload relative to its enclosing union; the application's
+operand and result types bind that union's identity. Distinct union types
+may therefore have equal leaf lists without becoming the same type.
+
+For the catalog's `operand:0`, `inner:0` and `result_inner` leaf sources,
+the selected type starts at the empty path. Selecting a collection's
+element through `inner:0` or `result_inner` adds no `inner` segment;
+walking the collection type through `operand:0` does. `result_inner`
+walks only a `set`, `bag` or `ordered_set` result's element type and yields
+no leaves for a `sequence` result. Every text leaf carries its declared
+profile and selected text definition, including a leaf beneath a member
+that no operand value selects.
+
 The walk keeps each record, tuple and union type node it is walking on the
 current path as **open**, with `d`, the number of segments the path had
 when the walk entered it. A record, tuple or union type node the walk
@@ -855,8 +874,9 @@ reachable from that node, the walk lists the entry
 `{path: p + ["recursion:<d>"], laws: [], mode: null}` at the current path
 `p`, with `d` written as a canonical decimal string; when no text type is
 reachable from it, the walk lists nothing for it. A text type is reachable
-from a node when some sequence of field, position, member payload and
-element steps leads from it to a text type. This is the recursion leaf of
+from a node when some finite sequence of field, position, member payload and
+element steps, without regard to open nodes, leads from it to a text type.
+This is the recursion leaf of
 QSL FR-093 "Text leaves" rule 3, extended to unions. A recursion leaf
 stands for the leaves of the type entered at the first `d` segments of its
 path, re-rooted at its path. The
@@ -887,6 +907,38 @@ Each of these types reaches text, so its cycle lists a recursion leaf:
   `["inner", "member:Link", "position:1", "recursion:1"]`.
 
 Each recursion leaf carries `laws` `[]` and `mode` `null`.
+
+### Union text-leaf vectors
+
+These vectors settle the same U1–U7 leaf lists as
+[QSL FR-093](ix://agent-ix/quire-spec-language/FR-093). They describe the
+complete ordered leaves independently of node identity preimages. The
+selected text definition is `{authority: "agent-ix", identity:
+"quire.value.text.unicode-17.0.0/v1"}`. `N(p)` denotes exactly
+`{"path":p,"laws":[{"role":"text_profile","definition":{"authority":"agent-ix","identity":"quire.value.text.unicode-17.0.0/v1"}}],"mode":{"kind":"text_profile","value":"nfc"}}`;
+`B(p)` differs only in mode value `"binary-utf8"`; `R(p)` denotes exactly
+`{"path":p,"laws":[],"mode":null}`. Each path is an ordered JSON array of
+literal UTF-8 segment strings, with no normalization, inserted separator
+or escaping of the colon.
+
+| Vector | Declarations and walked type | Complete leaves, in order |
+| --- | --- | --- |
+| U1 | `union Empty { None, Done }`; `Empty` | `[]` |
+| U2 | `union Choice { Right(Text[0, 8; binary-utf8], Text[0, 8; nfc]), Left(Text[0, 8; nfc]), Empty }`; `Choice` | `B(["member:Right","position:0"])`, `N(["member:Right","position:1"])`, `N(["member:Left","position:0"])` |
+| U3 | `union Wrapped { Item(Option<Sequence<Text[0, 8; nfc]>[0, 2]>), Empty }`; `Option<Wrapped>` | `N(["inner","member:Item","position:0","inner","inner"])` |
+| U4 | `union Chain { End(Text[0, 8; nfc]), Next(Option<Chain>) }`; `Chain` | `N(["member:End","position:0"])`, `R(["member:Next","position:0","inner","recursion:0"])` |
+| U5 | U4's `Chain`; `Option<Chain>` | `N(["inner","member:End","position:0"])`, `R(["inner","member:Next","position:0","inner","recursion:1"])` |
+| U6 | `union Silent { End, Next(Option<Silent>) }`; `Silent` | `[]` |
+| U7 | `union Link { End(Text[0, 8; binary-utf8]), More(Cell) }`; `record Cell { tag: Text[0, 8; nfc]; next: Link?; }`; `Link` | `B(["member:End","position:0"])`, `N(["member:More","position:0","field:tag"])`, `R(["member:More","position:0","field:next","inner","recursion:0"])` |
+
+For U2, renaming `Left` to `Other` changes only `member:Left` to
+`member:Other`; declaring `Left` before `Right` moves its leaf before
+both `Right` leaves; swapping `Right`'s payload types exchanges the
+profiles at `position:0` and `position:1`. Source `case` arm order changes
+none of these lists. U4 expands to `End`'s text at every finite chain of
+`Next` payloads with its `nfc` profile; U7 expands both profiles through
+every finite `More`/`next` chain. The record and tuple examples above
+retain their paths, profiles and order.
 
 ## Operation families, groups and constraints
 
@@ -1112,6 +1164,9 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-56 | A `relationship_end` member of a model-owned relationship resolves to one of the relationship's named ends, `sourceEnd.role` or, when the document declares one, `targetEnd.role`, and refuses `missing_declaration`/`missing-name` for any other name. The `Order-invoiced-Invoice` relationship of the published document declares no `targetEnd.role`, so it names only `invoiced`: `invoiced` resolves (`relationship-end-forward-without-inverse` in `adverse.json` `relationship_end_cases`, admitted by the full reader) and `next` refuses (`relationship-end-names-missing-inverse`; RE-ends-4 and RE-ends-5). `Order-order-Order` is `bidirectional` and names `order` and `next`. `Order-follows-Order` is `source-to-target` and names `follows` and `followedBy`: `follows` resolves (RE-ends-7) and `followedBy`, a named inverse traversed from target to source against that direction, refuses `ill_typed`/`operator-ineligible` at `member.name` (`relationship-end-inverse-against-direction`; RE-ends-8). `Order-twin-Order` names `twin` as both its source and its target role, so `twin` refuses `ambiguous_declaration`/`ambiguous-name` at `member.name` (`relationship-end-names-ambiguous-role`; RE-ends-9). A `relationship_end` whose `declaration` is not a relationship refuses `ill_typed`/`operator-ineligible` at `member.declaration`, after owner recovery and before role lookup (RE-ends-6). A missing role refuses at `member.name`. | Test (TC-280, TC-233) |
 | FR-322-AC-57 | `quire.op.model.navigate` and `quire.op.model.reaches` over a model-owned relationship end apply the checks in this order, each refusing at its recorded application pointer: declaration kind (`member.declaration`), role lookup (`member.name`: missing-name, ambiguous-name), receiver effective endpoint (`arguments/0`, and for `reaches` `arguments/1`: an operand conforms to the receiver endpoint type directly or through a supertype, else `ill_typed`/`operator-ineligible`), direction (FR-152; `member.name`), destination multiplicity (an unbounded upper or an ordered destination is `unsupported_construct`/`expression-form` at `member.name`), then the operation's own type comparison (`navigate`: `result_type` equals the canonical `Reference<U>`, `Option<Reference<U>>`, `Set<Reference<U>>[l,u]` or `Bag<Reference<U>>[l,u]` of FR-152, else `ill_typed`/`operator-ineligible` at `result_type`; `reaches`: a `Reference` or `Option` destination of the receiver endpoint's own type, else `ill_typed`/`operator-ineligible` at `member.name`). The published `relationship_navigation_cases` RN-01 to RN-19 record each. | Test (TC-281) |
 | FR-322-AC-58 | Each `integer_encoding_vectors` entry of `node-identity-vectors.json` recomputes its recorded JCS SHA-256 from its preimage: `recursion-size-safe-maximum`, whose `recursion` is `{size: 9007199254740991, ordinal: 9007199254740990}` with both counters JSON numbers, gives `bc6fe35a2c34a7162fe0ed0a20473ffb3284bd70236f96feb75b386c55992874`; `recursion-size-two-pow-53`, whose `size` is the string `"9007199254740992"` and whose `ordinal` is the number 9007199254740991, gives `89ec1ac87a8b82a05d5414f0c3b314f363e49328988ff5d8c3fc9a88014839bc`; and `integer-range-u64-maximum`, the `quire.structural-node/v1` `integer_range` node of `Int[0, 18446744073709551615]` whose `max` is the string `"18446744073709551615"`, gives `f9ea36c52345743ae98ce1c1449610c7e955d986a3ecb08597ca427c6f1b4230`. The two recursion vectors validate against `node-identity-preimage.schema.json`'s `ApplicationNode`, and the same schema refuses the `size` 9007199254740991 written as a string and 9007199254740992 written as a number. Each published `operation_vectors` digest is unchanged. | Test (TC-430) |
+| FR-322-AC-59 | Structural equality and inequality over U1–U7 require exactly their complete ordered leaf lists. U2's member rename, member reorder, payload swap and source arm reorder have exactly the effects stated with the vectors; U2 requires all three text leaves even when both operands select `Empty`. A missing final leaf refuses `invalid_package`/`operation-law-missing`; reordered leaves or a recursion leaf with a text law refuse `invalid_package`/`operation-law-mismatch`. | Test |
+| FR-322-AC-60 | For each `K` of `set`, `bag` and `ordered_set`, equality over `K<Choice>` (U2) requires U2's leaves with one leading `inner` per path; `contains` over that collection (`inner:0`) and a catalogued `result_inner` operation yielding `K<Choice>` require U2's leaves without that prefix. A `result_inner` operation yielding `sequence<Choice>` requires `[]`, while equality over `sequence<Choice>` requires U2's leaves with one leading `inner`. | Test |
+| FR-322-AC-61 | Both V2 schemas admit `member:Right`, `member:_item2`, `position:0`, `position:12`, `recursion:0` and `recursion:12`; they refuse `member:`, `member:1Right`, `position:01`, `position:-1`, `recursion:`, `recursion:01` and `recursion:-1`. The shared catalog includes `union` in `structural_kind`, so equality and inequality admit eligible Union operands under the existing `same_type` constraint and `operand:0` leaf source. | Test |
 
 ## Dependencies
 
