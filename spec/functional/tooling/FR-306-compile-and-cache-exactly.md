@@ -28,7 +28,7 @@ When a checked entry is executed through the interpreter, an ahead-of-time
 interpreter's exact outcome.
 
 When a `prove`, `analyze` or `generate` result is cached, the cache SHALL key
-it by one canonical content identity over every input that can change it.
+it by one canonical content identity over the inputs selected in Cache below.
 
 ## Inputs
 
@@ -101,10 +101,26 @@ emits nothing (FR-331-AC-2).
   occurrence key, the claims, the domains and bounds, the options that
   affect a result, and every deterministic budget that can move a result to
   `incomplete`). `backend` is the provider's `BackendId` identity string
-  alone, unchanged by a change to any other manifest member. `manifest` is
-  the provider manifest's content identity: the same `ManifestDigest` that
-  layer R computes over the FR-331 manifest's RFC 8785 canonical bytes, in
-  `quire.tool-manifest.jcs/v1`, retaining its domain. `target` SHALL be present
+  alone, unchanged by a change to any other admitted manifest member.
+  `manifest` SHALL use the existing digest-record serialization selected by
+  [QSL ADR-013 O-18/C-16](ix://agent-ix/quire-spec-language/ADR-013) and
+  [FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md): the
+  closed object `{domain, algorithm, digest}`, with `domain` exactly
+  `quire.tool-manifest.jcs/v1`, `algorithm` exactly `sha256`, and `digest`
+  the unprefixed, exactly 64 lowercase hexadecimal digits of the provider's
+  `ManifestDigest`, computed by SHA-256 over the RFC 8785 UTF-8 canonical bytes
+  of the complete admitted provider descriptor: the `BackendDescriptor`
+  value defined by FR-331's owning
+  [schema](../../../proposals/backend-provider-v1/schema.json) at
+  `$defs.BackendDescriptor`, selected at `/manifest/0` in the provider's
+  `ManifestStage` hello body. FR-331's Stages selects exactly one descriptor
+  there, and QSL ADR-013 T-7 identifies that descriptor as the provider
+  manifest. The digest preimage SHALL be that complete object, including
+  every admitted member it carries; the enclosing manifest array, hello body, registry snapshot,
+  request and outcome accounting SHALL NOT enter this manifest preimage.
+  This is the domain-labelled manifest identity retained by layer R, not a
+  digest of its implementation-local descriptor representation. No domain
+  SHALL be stripped or defaulted. `target` SHALL be present
   only for `generate` and SHALL hold the generation target and its options;
   it SHALL be absent for `prove` and `analyze`. No other member SHALL occur
   in the key preimage. RFC 8785 orders object members by name.
@@ -112,9 +128,9 @@ emits nothing (FR-331-AC-2).
   version strings and the execution backend that ran.
 - **Invalidation.** Any change to a key input changes the key, so a changed
   input is a miss and nothing else invalidates an entry. The store is the set
-  of entries, each named by its key. A change to any provider manifest member,
-  including a tool version, SHALL change the key and miss even when the
-  provider's `BackendId` stays the same.
+  of entries, each named by its key. A change to any admitted provider
+  manifest member SHALL change the key and miss, including a non-identity
+  member change with the same `BackendId`.
 - **Store and read.** An entry holds the key's RFC 8785 preimage and the
   stored value. A read accepts an entry only when the entry's name, the
   digest of its stored preimage and the requested key are equal and the value
@@ -126,12 +142,20 @@ emits nothing (FR-331-AC-2).
   or deadline result, a time-limited `incomplete`, any member recording wall
   time, and every result a plugin produced (FR-305).
 
+The selected FR-331 descriptor does not admit a tool-version member.
+An external, undeclared tool-version change alone cannot change the digest
+of identical admitted descriptor bytes or their cache key. Outcome accounting
+is not a manifest input, and an option has only its declared option semantics.
+Whole tool-upgrade invalidation is not supplied by this manifest-content rule;
+it requires an owner-admitted provider-manifest content contract before such a
+case can be claimed satisfiable. `BackendId` remains identity-only.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-306-AC-1 | The AOT and JIT backends return the interpreter's outcome, typed cause, location, loss records and `incomplete` charge point for every entry of the conformance corpus and of generated programs, and the outcome names no backend. | Test (TC-226) |
-| FR-306-AC-2 | Changing the operation, the `package_id`, any request member that can change a result, the provider's `BackendId` identity string, any provider manifest member (including a tool version while keeping the same `BackendId`), or, for `generate`, the target or its options changes the `quire.cache-key/v1` key and misses, while changing a path, a timestamp, a wall-clock deadline, the application version string or the execution backend leaves it unchanged. | Test (TC-226) |
+| FR-306-AC-2 | Changing the operation, the `package_id`, any request member that can change a result, the provider's `BackendId` identity string, any admitted provider descriptor member (including a non-identity member with the same `BackendId`), or, for `generate`, the target or its options changes the `quire.cache-key/v1` key and misses. For each of `prove`, `analyze` and `generate`, a manifest-only mutation prevents reuse of the old stored result, and an unchanged admitted descriptor is a hit. Changing a path, a timestamp, a wall-clock deadline, the application version string or the execution backend leaves the key unchanged. | Test |
 | FR-306-AC-3 | An entry whose stored preimage digest, name and requested key are not all equal, or whose value fails the typed reader, is a miss; an internal-failure, cancelled, deadline or time-limited result and every plugin result are never stored. | Test (TC-226) |
 | FR-306-AC-4 | `--engine` outside `interpreter`, `aot` and `jit` refuses as an unknown argument (exit 20); a named backend the binary does not link refuses before any stage as unsupported (exit 21); an entry a backend cannot translate settles `unsupported` for that entry only, and no backend substitutes another. | Test (TC-226) |
 | FR-306-AC-5 | A JIT or AOT internal error is an internal failure (exit 30) and never a verdict, and reaching a preparation limit is a typed limit failure of preparation naming the limit, its value and its setting. | Test (TC-226) |
