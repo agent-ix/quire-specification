@@ -50,8 +50,36 @@ object world instead retains the typed dangling-reference admission
 failure. An unregistered population, wrong maximum, wrong kind or foreign
 model/universe retains its owning admission failure and actual fields.
 
-The Reference-valued completion SHALL retain that exact shared reference
-in the typed result. When serialized as a function value it SHALL use the
+The executor SHALL use QSL FR-100's settled admission order: all name checks
+first, then declared parameter order, checking value shape, actual selected
+model/universe correspondence, selected-model conformance and complete-world
+resolution. Its Reference parameter domain is the real admitted selected
+model's shared QSV `TypeEnvironment::admits`/`conforms` domain: a
+most-specific `S` is admitted to `Reference<T>` when both types are admitted
+there and `S` equals or has a declared supertype path to `T`. The original
+Reference triple SHALL remain unchanged, without retagging or constructing
+an upcast. A same-model unrelated type refuses `WrongValueKind`; a foreign
+model or universe retains its actual owning cause before type conformance.
+If universe and type both fail, then the executor SHALL preserve
+`foreign_reference` / `foreign-universe` with the actual required/supplied
+identities, not substitute wrong-kind or dangling-reference refusal.
+The same rules apply to unused parameters. Population registration and
+declared-maximum guards remain FR-100/FR-089's, not kernel Population
+admission.
+
+Kernel `quire_exact::ValueType::admits` remains exact-type admission for
+References; it does not itself admit proper subtypes. The model-aware QSV
+predicate is the owning conformance rule here, not a change to that kernel
+API or permission for consumers to select different admission semantics.
+TC-792's genuine subtype/unrelated/foreign/combined controls discriminate
+these rules through the single public call boundary.
+
+When a Value function completes with a Reference, the executor SHALL retain
+the actual returned shared reference in the typed result, including its
+universe, most-specific effective type and exact object identity. The
+returned reference need not equal an input; input equality is specific to
+TC-792's present lookup control. When serialized as a function value it
+SHALL use the
 existing canonical typed Reference shape
 `{kind: "reference", universe, type, object_identity}`: two actual
 64-character lowercase hexadecimal universe/type identities and the exact
