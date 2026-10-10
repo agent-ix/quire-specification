@@ -93,11 +93,54 @@ No unfinished-stage refusal or validated package is exposed.
 | C02 | C01 plus a post clause with an unresolved name; separately a malformed typed clause | Actual earlier source/checked-fact refusal with its source location before any conformance.axis, not a fabricated missing-fact error |
 | C03 | R05 incompatible multiplicity; R08(c) narrowed object type | Original FR-151 multiplicity-narrowing / unproved-refinement no-proof-form, respectively; generic assembly/reference-field-equality does not preempt them |
 | C04 | R08(b) required B/xb over optional A/x; remove the present guard; then provide the guard only on sibling C/set or descendant D/set | Actual clause accepts with parent optional typing and proves B's obligation; removing guard refuses; sibling/descendant-only clauses cannot discharge B |
-| C05 | A/x narrowed by B/xb then C/xc with independent exposed writers | Each immediate-parent pair uses that parent's presence/domain and its owning exposed writer; a root-only comparison or sibling clause cannot discharge both |
+| C05 | The concrete immediate-parent chain and writer variants below | C05(a) admits; C05(b) reports exactly C/xc value-type ill_typed/variance-result against B/xb; C05(c) reports exactly B/xb undefined_expression/unproved-refinement, obligation field-domain, writer B/set; a root-only comparison or descendant-only discharge fails these oracles |
 | C06 | Two selected models with distinct identities and conformance failures; reverse source declarations/aliases | Both failure lists in canonical ModelSelection order and identical total counters; all selections finish the same stage before any advances |
 | C07 | C06 with denial during the second selection after the first selection's failure was found | Exactly the selected five-field incomplete record, no failures from that unfinished stage, no reset/refund, no validated view |
 | C08 | A conformance walk following n supertypes edges, limits n and n-1; then zero on a nonempty walk | At n a substantive verdict; at n-1 exactly incomplete(ancestor_steps,n-1,n-1,1,model.ancestor-edge); at zero consumed0/next_charge1 and no followed edge; branching counts edges, never depth |
 | C09 | Owning axis work charge unavailable and first ancestor edge also unavailable | Existing ordered work-unit denial wins before model.ancestor-edge; no edge or counter changes. If the axis succeeds instead, ancestor denial preserves that admitted axis consumption |
+
+For **C05**, use a separate closed domain package `test/parent-chain`, version
+1.0.0, selected by its actual canonical content digest, with object types A, B, C;
+B.supertypes=[A] and C.supertypes=[B]. Declare value-type scalars DA=Int[0,9],
+DB=Int[0,5] and DC=Int[0,3] (exact bounds encoded as decimal strings), each
+with the same value-type construct meaning as R08's Count and Small.
+A/x:DA, B/xb:DB redefines A/x, and C/xc:DC redefines B/xb all have presence
+required and multiplicity {1,1}, ordered=false, unique=true. Declare A/set,
+B/set redefines A/set, and C/set redefines B/set, each with params=[], no
+return, creates=[], deletes=[]; their modifies entries are respectively
+[A/x], [B/xb] and [C/xc]. Each redefining write reaches its immediate parent's
+grant by one declared redefines edge, so the frames pass effect inclusion.
+No other declaration or clause is present. Use the same admitted V profile
+and M model alias as R08, with actual source clauses:
+
+```text
+post QB using V on M::B::set { self.xb <= 5 }
+post QC using V on M::C::set { self.xc <= 3 }
+```
+
+**C05(a), positive:** use that package and those clauses. B's projection is
+typed from parent DA [0,9] and QB establishes [0,5]; C's projection is typed
+from immediate parent DB [0,5] and QC establishes [0,3]. All conformance axes
+pass, including both field-domain obligations and the two operation frames.
+
+**C05(b), immediate-parent discriminator:** change only DC's domain to
+Int[0,7], keeping QC <=3 and every signature/frame/edge unchanged. The C/xc
+value-type axis reports `ill_typed`/`variance-result`, expected parent DB
+[0,5], actual DC [0,7]. B's obligation passes and QC remains a valid checked
+clause; widening DC does not introduce an additional narrowing-domain
+obligation on C. There are no other failures. Comparing C only with root DA [0,9] would
+incorrectly admit this variant and fails the oracle.
+
+**C05(c), owning-writer discriminator:** restore DC=Int[0,3] and change only
+QB's literal from 5 to 6, keeping QC <=3. QB derives [0,6] from DA [0,9],
+which is not contained in B/xb's DB [0,5]. Report
+`undefined_expression`/`unproved-refinement` for B/xb against A/x, writer
+B/set, obligation `field-domain`. C/set's own QC and inherited QB establish
+the conjunction [0,3], so C's obligation passes. QC belongs only to C/set
+and cannot be imported into B/set's postcondition: descendant-only discharge
+would incorrectly erase the one required B refusal. Every independent axis
+still runs and no other failure is expected. Use admitted limits sufficient
+for all stages; these cases test semantic collection, not an exhaustion.
 
 ## Expected Results
 
