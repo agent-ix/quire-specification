@@ -46,6 +46,14 @@ BP-14 exercises FR-331-AC-27 through serialization and the actual reader,
 including HP-3 `n = 0`, missing required tuples/witness sets, labelled HP-1
 edge tuples with shared pre-states and distinct post-states, and repeated
 model states with distinct probabilistic product components.
+For HP-1, round-trip two tuples with the same pre-state tuple and different
+arguments, post-states or results, preserving all four edge members and
+variable binding order. Exercise both a typed boolean result and an actual
+no-result edge (`result: null`); refuse a missing result, missing transition,
+extra edge member, protocol transition and a state-only projection. For
+missing HP-2/HP-3 `components`, include an empty closure and require
+`malformed` at `{member: "components"}`, before recomputation, without
+inventing a state member.
 
 BP-12 also includes `certificate-rejected-rule-completion`: positives for
 `bad-state`, `undefined-member`, `predicate-undefined`, `rank-missing`,

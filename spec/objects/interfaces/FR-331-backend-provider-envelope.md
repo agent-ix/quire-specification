@@ -50,6 +50,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-spec-language/FR-163
     type: references
+  - target: ix://agent-ix/quire-spec-language/FR-120
+    type: references
+  - target: ix://agent-ix/quire-spec-language/FR-179
+    type: references
   - target: ix://agent-ix/quire-spec-language/FR-169
     type: references
   - target: ix://agent-ix/quire-specification/FR-412
@@ -129,7 +133,7 @@ SHALL NOT invent one to select a checker.
 | Hyper product state | `{states, automaton_state, witness_set}`: each component's `StateKey` in variable order; the automaton key's bytes, absent for an HP-1 member; for HP-3, the witness set's pairs `{states, automaton_state}` in their sorted order | QSL FR-163's `HyperProductState` | `initial-missing`, `successor-missing`, `not-partition`, `backward-edge`, `witness-fails`, `malformed`, `undefined-member`, `violating-member` |
 | State | `{state}`, the model state's `StateKey` | QSL FR-169's `ModelState`; FR-418 (the initial discrete state). FR-412's complete probabilistic product key is a separate identity, not this model key. | `initial-missing`, `successor-missing`, `predicate-undefined`, `rank-missing`, `rank-broken`, `order-broken`, `count-broken` |
 | Probabilistic product state | Complete FR-411 / QSL FR-196 product key; the nested key's wire binding remains unsettled as described below | FR-411, FR-412 | `inequality-fails`, `rank-missing`, `rank-broken`, `threshold-missed` |
-| Hyper transition tuple | Complete labelled edge tuple; the tuple's wire binding remains to be authored from FR-163 / FR-179, without state-only projection | QSL FR-163 | `undefined-member`, `violating-member` |
+| Hyper transition tuple | `{transitions}`: the ordered, nonempty tuple of labelled edges `{pre_state, transition, post_state, result}` defined below | QSL FR-163, FR-179, FR-120 | `undefined-member`, `violating-member` |
 | Simulation step | `{position}` for `initial-mismatch` and `successors-differ`; `{position, edge}` for `post-differs`; `{position, edge, verdict}` for `step-fails`. `position` and `edge` are `U64String`s, and `verdict` is the `check_step` verdict: an FR-379 refinement failure, an undefined evaluation, `mapping-undetermined` or `undecided-successor` | QSL FR-149's `SimulationStep` | `initial-mismatch`, `successors-differ`, `post-differs`, `step-fails` |
 | Zone node | `{node}`, its position in the certificate's `nodes` | FR-418 | `successor-missing`, `bad-state`, `witness-fails` |
 | Zone edge | `{edge}`, its position in the certificate's `edges` | FR-418 | `backward-edge` |
@@ -145,6 +149,20 @@ failures have no automaton key. An HP-1 failure on a labelled transition
 tuple SHALL preserve QSL FR-163's complete `HyperTransitionTuple`, not
 project it onto `states`. FR-412 state failures SHALL preserve the complete
 probabilistic product key in every keyed certificate member and rejection.
+
+An HP-1 `HyperTransitionTuple` SHALL carry exactly `transitions`, with one
+edge for each execution-variable binding in binding order. Each edge
+SHALL carry exactly `pre_state` and `post_state` as the actual model
+`StateKey`s, `transition` as the existing ordinary `TransitionIdentity`
+(`type: "transition"`, operation, receiver and typed arguments), and
+`result` as the actual result in the existing typed canonical value form,
+or JSON `null` when the operation has no result. A typed result whose
+value is null is not the absent-result marker. FR-120 owns the result or
+none, FR-179 owns its retained labelled edges, and FR-163 owns this
+rejection identity. The tuple SHALL NOT be sorted independently of the
+variable bindings or reduced to the pre-state tuple; missing edge
+members, protocol transitions and extra members SHALL be refused. No
+automaton key is attached to this HP-1 tuple.
 
 The canonical octet mapping for `AutomatonStateKey` must be supplied by
 QSL's owning `qsl-eval` translation contract (FR-338, ADR-018 PC-3).
