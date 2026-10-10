@@ -1,8 +1,17 @@
 # Complete scalar accounting definition
 
-Definition identity: `quire.value.accounting/v1`.
+Definition identity: `quire.value.accounting/v2`.
 This is a leaf definition selected by `quire.value.complete/v1`; it has no
 reverse dependency on that root.
+
+Replacement draft: the complete-value and complete-model selected closures
+must adopt this accounting artifact with the replacement closed model
+identity schema, vectors and strict reader atomically. Existing closure bytes
+do not select it. Scalar and population charge semantics below are unchanged;
+model identity preparation and phase-4 preidentity order are amended explicitly.
+Public limit-object names, members, incomplete records and API names remain
+unchanged. This draft is not permission for an independently released meter,
+mixed selected closure or implementation cutover.
 
 ## Limit object
 
@@ -380,7 +389,7 @@ membership refusal follows `integer-division.domain` or
 `integer-division.*` point, and `div`/`rem` never charges an
 `integer-modulus.*` point.
 
-Model and graph evaluation follows the selected `quire.model.complete/v1`
+Model and graph evaluation follows the selected `quire.model.complete/v2`
 rules. Static resolution, conformance, kind, direction, closure and foreign
 checks decided at checking make no evaluation charge; they are charged under
 `ModelNormalizationLimitsV1` below. Population binding admission makes no
@@ -485,7 +494,7 @@ limit object.
 
 ## Model normalization limits
 
-Checking a package that selects `quire.model.complete/v1` carries
+Checking a package that selects `quire.model.complete/v2` carries
 `ModelNormalizationLimitsV1` with exact `u64` limits for `declaration_records`,
 `derivation_facts`, `effective_declarations`, `dispatch_candidates`,
 `hashed_bytes`, `work_units` and `ancestor_steps`, in that field order. Omission is a refused
@@ -543,11 +552,14 @@ change family-step or population-admission limits.
 | --- | --- | --- |
 | kth `normalize.record` | each declaration record that intake builds from a domain package IR node (object type, field, relationship, operation, clause, population, part, port, interface, connection or allocation), ascending declaration key, before the node is read | `declaration_records=k` |
 | kth `normalize.fact` | each derivation fact before it is formed: phase 2, then phase 3, then phase 4, each ascending by (owner declaration key, declaration key, inputs), where a type fact has no owner and sorts before every owned fact | `derivation_facts=k` |
-| each `normalize.cycle-check` | immediately before the `normalize.fact` of each phase 3 type fact, before testing whether the extended path's new general type already lies on the path | no size-counter change; `work_units += L` instead of one, where `L` is the number of supertype edges in the extended path; a closing extension is charged even when its cycle's edge set was already reported, and each cycle is reported once, at its first closing charge, as `quire.model.complete/v1` states |
+| each `normalize.cycle-check` | immediately before the `normalize.fact` of each phase 3 type fact, before testing whether the extended path's new general type already lies on the path | no size-counter change; `work_units += L` instead of one, where `L` is the number of supertype edges in the extended path; a closing extension is charged even when its cycle's edge set was already reported, and each cycle is reported once, at its first closing charge, as `quire.model.complete/v2` states |
 | each `normalize.redefinition-check` | phase 4, before its first `normalize.fact`: each redefining member ascending by declaration key, before testing that its target is a member inherited by its owning type and that no member of the same type checked before it redefines the same target | no size-counter change; `work_units += m + r` instead of one, where `m` is the number of effective members of the owning type and `r` the number of redefining members checked before it |
-| each `normalize.conflict-check` | phase 4, after its last `normalize.fact`: each (effective type, redefined member) reached by `c >= 2` redefining members, ascending by effective member key, before its redefining owners are compared pairwise | no size-counter change; `work_units += Σ (c − 1) × f(o)` instead of one, summed over the `c` redefining owners `o`, where `f(o)` is the number of type derivation facts (qualify and inherit) of `o` that each proper-descendant test of `o` against another owner scans, one work unit per fact |
-| kth `normalize.declaration` | each effective declaration before its identity is computed: effective types, then effective members, each ascending by effective member key | `effective_declarations=k` |
-| each `normalize.hash` | before a preimage is hashed: each effective declaration preimage immediately after that declaration's `normalize.declaration`, then each object universe preimage ascending by its first root type identity, then the effective view preimage | `hashed_bytes += b`, where `b` is the RFC 8785 JCS byte length of the preimage |
+| each `normalize.conflict-check` | phase 4, after its last `normalize.fact`: each (effective type, redefined member) reached by `c >= 2` redefining members, ascending by (owner original declaration key, target original declaration key), before its redefining owners are compared pairwise; this preidentity order does not change the later effective member key | no size-counter change; `work_units += Σ (c − 1) × f(o)` instead of one, summed over the `c` redefining owners `o`, where `f(o)` is the number of type derivation facts (qualify and inherit) of `o` that each proper-descendant test of `o` against another owner scans, one work unit per fact |
+| kth `normalize.declaration` | phase 5, before any identity preparation for that entry: all effective types ascending original declaration key, then all effective members ascending (computed owner effective type identity, original declaration key) | `effective_declarations=k` |
+| each `normalize.metadata` | after the owning declaration charge, at first use of each variable key/selection string, before scanning its content for canonical-length metadata; selection-only strings are prepared before their first universe/view hash | no size-counter change; `work_units += 1 + n` instead of one, where n is its admitted UTF-8 byte length |
+| each `normalize.normal-form` | after its declaration charge, before forming that entry's canonical derivation descriptor or path index | no size-counter change; `work_units += max(1, f + p + t)` instead of one, where f is its logical fact count and p/t are its logical path/tail key-occurrence counts from the admitted phase-2/3/4 data |
+| each `normalize.identity-work` | before each identity descriptor field lookup, dictionary child/key lookup, range overlap validation, node-price traversal or declaration-digest comparison, in the closed schedule below | no size-counter change; `work_units += a` instead of one, with a defined below for the named event |
+| each `normalize.hash` | phase 5, required key/block dependencies children-before-parent at first use, then the owning declaration; after all entries, each universe ascending first root identity, then the complete declaration-sequence joins left-before-right postorder and the view header; each charge precedes node encoding AND hashing | `hashed_bytes += b`, where b is the exact sole-writer RFC-8785 length from the closed analytical template; one work unit, with no posthoc byte reservation |
 | each `conformance.axis` | each FR-151 axis, redefining members then subsetting fields, each ascending by declaration key, axes in FR-151 order | no size-counter change; a type-conformance axis charges `work_units += f(x)` instead of one, where `x` is the type whose conformance is tested and `f(x)` the number of its type derivation facts (qualify and inherit) that the conformance walk scans, one work unit per fact, or one for a non-object type decided by the FR-149 equality-conversion table: the field value type axis and the subsetting type test use the redefining or subsetting feature's type, parameter type axis `i` uses the redefined parameter `i`'s type (so the parameter type axes together charge the sum of `f` over the parameters), and the result type axis uses the redefining result type, or one when either result is absent; for the operation effect axis, `work_units += max(1, t)` instead of one, where `t` sums, over each redefining frame entry in `modifies`, `creates`, `deletes` order: for a field write, `n × (1 + r)`, with `n` the number of redefined `modifies` entries it is compared against and `r` the number of `redefines` links walked from the written field; for a create or delete, `f(x)` for every redefined `creates` (respectively `deletes`) grant it is tested against, with `f(x)` the number of type derivation facts of the created or deleted type `x` that the conformance test scans; every entry is compared with every grant |
 | each `systems.kind` | each interface, then each part, then each port, then each connection, then each allocation declaration, each group ascending by declaration key, before its FR-152 kind is mapped | no size-counter change |
 | each `systems.connection-condition` | each Connection ascending by declaration key, then each of its three FR-152 conditions in table order, before that condition is checked | no size-counter change; the interface-type condition charges `work_units += f(x)` instead of one, where `x` is the flow-source port's interface type and `f(x)` the number of its type derivation facts scanned by the conformance walk (for `bidirectional`, the first end's interface type) |
@@ -583,6 +595,86 @@ location when the walk belongs to that clause, without inventing a source
 span for generated origins. The separate type-environment stage-limit
 contract is unchanged. The qualification seam below applies to these
 points with the `work_units` of this limit object.
+
+### Identity preparation, reuse and exact byte pricing
+
+The replacement model commitment grammar is defined by
+[model-complete.md](model-complete.md#closed-ordered-commitment-grammar).
+The semantic stage order and all earlier phase charges are unchanged. No key,
+block or effective-type digest may be computed in phases 1–4. All logical facts
+and effective entries, including hidden entries and expanded run occurrences,
+still count toward the high-water counters. Shared helper commitments are not
+additional effective declarations or facts. An original without an effective
+derivation rule is retained without a new key hash merely for retention.
+
+The following logical identity-work events, not an implementation's incidental
+allocation/search algorithm, determine a. A field/child/key lookup is one
+event with a=1, before reading that slot; reuse lookup occurs too, even on a
+hit. A range check has a=max(1,L), where L is its admitted path length, before
+checking its block coverage, exact overlap and admitted path; indexed proof
+may do less physical work but does not omit its logical charge. A price
+traversal has a=max(1,v), where v counts every object/array/scalar occurrence
+in the closed compressed preimage (object member names are not extra
+occurrences), before the length arithmetic. Access to previously charged
+metadata uses a field lookup, not a new uncharged string scan.
+
+Derivation normal form is admitted once per declaration. Visit segments in
+their canonical order, each segment's fields in RFC-8785 member-name order,
+and its range first then last and tail keys in array order. For each required
+node, first admit its descriptor/reuse lookup. On a hit perform no second
+encoding/hash; on a miss visit its ordered children left before right before
+pricing and hashing the node. A key leaf reads its key fields in canonical
+member-name order and prepares each variable string's metadata at first use.
+Each field/child lookup and each range validation is charged as above. The
+deterministic reuse table is selection-local and operation-owned, never an
+ambient process cache. Equal key/block content shares one node within that
+selection; actual admitted key/child bindings and lengths, not digest equality
+alone, establish a hit. New selections do not bypass their charges on another
+selection's hits, and the operation meter is never reset between selections.
+
+For the complete digest order, compare each actual digest pair under a
+prescribed bottom-up stable merge schedule: start with declaration order,
+merge adjacent singleton runs left-to-right, then adjacent runs of lengths
+2,4,...; an unmatched last run carries forward. Before each comparison charge
+one identity-work event with a=1. Equal digest candidates are ordered by
+original owner/key for transport and their exact preimages must agree before
+an identity is admitted; incompatible bindings are refused, never merged by
+hash coincidence. All entries remain counted. Then visit joins in left/right
+postorder, price/hash each unique join, and price/hash the complete view.
+
+Exact analytical pricing emits no bytes. Let S(s) be 2 plus the UTF-8 byte
+length of s, plus one for each quote, backslash or short-escaped C0 control
+(backspace, tab, LF, form-feed, CR), plus five for each other C0 control. This
+is the RFC-8785 quoted-string length, without Unicode normalization. Metadata
+scanning to obtain it occurs only after normalize.metadata is admitted. For
+an empty array A=2; otherwise A=1+n+sum(element lengths), where n is its
+element count. For an empty object O=2; otherwise
+O=2+sum(S(member name)+1+member value length)+(n−1). Null length is 4,
+a hex digest string length is 66, and a decimal count string length is
+2+digits(count). Apply these equations ONLY to the closed templates in the
+model definition using admitted lengths/counts and fixed discriminators.
+Checked arithmetic must succeed before a narrowed charge or allocation.
+
+These equations price the existing sole canonical writer; they are not an
+alternative serializer or an assumed structural-price API. The admitted
+normalize.hash amount is exact, not an upper reservation. Encoding occurs
+once only after that charge succeeds; its returned byte count must equal the
+analytical amount before its digest can be admitted. A disagreement is an
+internal failure, never success, recharging or an expanded-hash fallback.
+No price pass encodes the node into a sink to discover b. No prefix checkpoint,
+fragment digest or second canonical writer is used.
+
+The owning normalize.declaration must succeed before dependencies are
+prepared for its entry. A denied metadata/normal-form/identity-work event
+does none of its named scan, formation, lookup, comparison or pricing work.
+A denied hash does zero encoding/hash work for that node and zero dependent
+work; earlier admitted preparation remains charged. No partial node/view is
+publicly admitted. Universe/view selection strings are metadata-priced before
+their first hash, with the same work meter. Selection-local reusable metadata
+is charged on first use and each later lookup remains charged. Earlier-stage
+refusals suppress every phase-5 identity event. Later conformance refusals
+cannot replace earlier identity charge denial. Strict-reader replay has its
+own operation admission; producer reuse is not a free reader proof.
 
 ## Incomplete record
 

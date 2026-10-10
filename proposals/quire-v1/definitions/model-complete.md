@@ -1,9 +1,20 @@
 # Complete model definition
 
-Definition identity: `quire.model.complete/v1`.
+Definition identity: `quire.model.complete/v2`.
 Language: `ix:native` / `1-draft`. This definition is the complete-V1 model,
 inheritance, conformance, dispatch, systems-model and closed-environment root.
 Implementation and qualification remain separately reported.
+
+Replacement draft, not an admitted mixed-cohort selection: this definition
+requires one atomic pre-release replacement of its selected closure, closed
+identity schema/vectors, accounting, domain-package edge protocol, strict
+reader and caller-minted identity domains. The linked schema/vector artifacts
+are integration targets; their existing bytes do not satisfy this replacement.
+No consumer may adopt this draft with the superseded selected closure, relabel
+an old digest, accept an old-digest transport, or install a compatibility reader.
+Operation redefinition intake must be admitted by the domain producer and strict
+reader before code cutover. A specification draft establishes neither that
+availability nor qualification. Public API and limit-object names are unchanged.
 
 ## Always-selected definitions
 
@@ -14,16 +25,17 @@ its always-selected closure through
 | Identity | Definition artifact |
 | --- | --- |
 | `quire.state.graph/v1` | [Finite graphs](state-graph.md) |
-| `quire.model.complete.rules/v1` | [Normalization rules](model-complete-rules.json) |
-| `quire.model.effective-declaration.schema/v1` | [Effective identity schema](../../checked-package-v2/model-effective-declaration.schema.json) |
-| `quire.model.effective-declaration.vectors/v1` | [Effective identity vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
+| `quire.model.complete.rules/v2` | [Normalization rules](model-complete-rules.json), replacement closure required |
+| `quire.model.effective-declaration.schema/v2` | [Effective identity schema](../../checked-package-v2/model-effective-declaration.schema.json), replacement closure required |
+| `quire.model.effective-declaration.vectors/v2` | [Effective identity vectors](../../checked-package-v2/model-effective-declaration-vectors.json), replacement closure required |
 
-The accounting role is `quire.value.accounting/v1`, already selected by the
-complete-value root. Its model and graph charge points and its
+The accounting role is `quire.value.accounting/v2`. The complete-value selected
+closure must select this replacement coherently, not its superseded accounting
+artifact. Its model and graph charge points and its
 `ModelNormalizationLimitsV1` object are the only accounting for this root. The
 QSL `quire.state.evaluation-work/1` counter set is not selected: a package
 selecting this root is evaluated and checked only under
-`quire.value.accounting/v1`, and no caller limit is clamped to a default.
+`quire.value.accounting/v2`, and no caller limit is clamped to a default.
 Diagnostics are interpreted by `quire.native.diagnostics/v1`; that catalog is selected by the response, not by this
 root.
 
@@ -171,10 +183,10 @@ than every finite value. `ordered` and `unique` are booleans.
 
 An original declaration key is `{package, node, digest_domain: "sha256-jcs"}`:
 the domain package identity, the IR node identity and the fixed digest domain.
-QSL derives the following identities in its own domains. Their exact preimage
-shapes are
+QSL derives the following identities in its own domains. The closed replacement
+grammar below owns their preimages. Its integration targets are
 [`model-effective-declaration.schema.json`](../../checked-package-v2/model-effective-declaration.schema.json)
-and their known vectors are
+and the corresponding replacement vectors in
 [`model-effective-declaration-vectors.json`](../../checked-package-v2/model-effective-declaration-vectors.json).
 Each identity is SHA-256 over the RFC 8785 JCS bytes of its schema-valid
 preimage, written as `{domain, digest}` with a lowercase 64-hex digest. Each
@@ -184,19 +196,21 @@ digest or an I04 node key, even with equal digest bytes.
 
 | Domain | Preimage | Identifies |
 | --- | --- | --- |
-| `quire.model.effective-declaration/v1` | `{version, owner_effective_type, original, derivation}` | One effective declaration: an effective type (`owner_effective_type` is `null`) or an effective member of an effective type. |
-| `quire.model.effective-view/v1` | `{version, model_selection, rules, declarations}` | One complete effective view of one ModelSelection under one rule manifest. |
-| `quire.model.object-universe/v1` | `{version, model_selection, root_types}` | The object universe shared by a connected generalization component. |
+| `quire.model.key/v2` | `{key, version}` | One exact original declaration key, a commitment leaf, not an additional effective declaration. |
+| `quire.model.key-block/v2` | `{count, left, right, version}` | One perfect ordered block of key leaves. |
+| `quire.model.effective-declaration/v2` | `{version, owner_effective_type, original, derivation}` | One effective declaration: an effective type (`owner_effective_type` is `null`) or an effective member of an effective type. |
+| `quire.model.declaration-sequence/v2` | `{count, left, right, version}` | One ordered internal join of the complete effective-declaration sequence. |
+| `quire.model.effective-view/v2` | `{version, model_selection, rules, declarations}` | One complete effective view of one ModelSelection under one rule manifest. |
+| `quire.model.object-universe/v2` | `{version, model_selection, root_types}` | The object universe shared by a connected generalization component. |
 
 A declaration key carries no digest. An effective declaration identity binds
 declaration keys and derivation facts only. Two domain package documents
 with equal nodes and different digests therefore yield equal effective
 declaration identities, while their effective views and object universes
-differ: the vectors `n01v2-view` and `n01v2-universe` select F1's nodes under
-the digest `n01v2`, carry declarations
-byte-equal to `n01-view`'s, and differ from `n01-view` and `n01-universe`.
-Equal nodes in two different packages under one identity also share effective
-declaration identities, as `n01-type-A` and `n02-type-A` show. Every use that must separate selections pairs the effective
+differ. Replacement vectors must retain these equal-node/different-document
+and equal-node/equal-package-identity controls; superseded literal digests are
+not replacement vectors. Equal nodes in two different packages under one
+identity also share effective declaration identities. Every use that must separate selections pairs the effective
 declaration identity with the ModelSelection or with an object universe
 identity, which binds the selection.
 
@@ -235,18 +249,106 @@ fact consumed; and `ordinal` is the fact's zero-based decimal-string position
 in the array. Facts are ordered by phase, then by `inputs` compared element by
 element in declaration key order, a proper prefix first.
 
-The effective view's `declarations` is the array of `{effective_id, preimage}`
-for every effective declaration, ascending by the `effective_id` digest hex.
+The retained declaration inventory is the array of `{effective_id, preimage}`
+for every effective declaration, ascending by the `effective_id` digest hex;
+the view identity preimage binds its complete sequence commitment below.
 Replaying normalization from the same domain package and rule manifest
 reproduces the effective view byte for byte; replay equality is equality of
-the `quire.model.effective-view/v1` identity. An I04 checked package carries it
+the `quire.model.effective-view/v2` identity. An I04 checked package carries it
 as a `correspondence` node with semantic form `model_correspondence`.
+
+### Closed ordered commitment grammar
+
+The facts above remain the semantic derivation, including every hidden entry,
+every path, rule and zero-based ordinal. The identity preimage encodes their
+unique lossless normal form, not their expanded key occurrences. All following
+objects are closed: an additional member, invalid discriminator, missing
+record, mismatched count or noncanonical shape cannot be admitted. Counts are
+unsigned decimal strings with no leading zero except "0". Every digest is
+64 lowercase hex characters. A digest slot has the node domain fixed below;
+equal bytes in different node domains are not interchangeable.
+
+| Value | Exact shape and meaning |
+| --- | --- |
+| Key preimage | `{key: DeclarationKey, version: "quire.model.key/v2"}`; the DeclarationKey is the unchanged admitted `{package, node, digest_domain: "sha256-jcs"}`. |
+| Block preimage | `{count, left, right, version: "quire.model.key-block/v2"}`; count is a power of two at least 2. Each child spans half that count, ordered left then right. For a child count of 1 its digest is a key leaf; otherwise it is a block. |
+| Range | `{count, first, last}`; first/last are block-or-key digests of lengths prescribed below, or null in the prescribed empty/power-of-two cases. A range is embedded, not separately hashed. |
+| Literal segment | `{kind: "literal", path: Range, rule: {identity}, tail: [key digests]}`. |
+| Prefix segment | `{kind: "prefixes", path: Range, rule: {identity}}`; only the type-inherit rule, path count at least 2. |
+| Derivation | `{count, segments: [segment values]}`; count is the total expanded fact count, not segment count. |
+| Effective declaration preimage | `{derivation: Derivation, original: key digest, owner_effective_type: null or {domain: "quire.model.effective-declaration/v2", digest}, version: "quire.model.effective-declaration/v2"}`. |
+| Sequence child | `{count, digest}`; count 1 means an effective-declaration digest, count at least 2 a declaration-sequence digest. Only an empty view root has count "0" and digest null. |
+| Join preimage | `{count, left: SequenceChild, right: SequenceChild, version: "quire.model.declaration-sequence/v2"}`. |
+| Universe preimage | `{model_selection: DomainPackageRef, root_types: [EffectiveId], version: "quire.model.object-universe/v2"}`; DomainPackageRef is exactly `{identity, digest_domain: "sha256-jcs", digest}`. |
+| View preimage | `{declarations: SequenceChild, model_selection: DomainPackageRef, rules: {identity: "quire.model.complete.rules/v2"}, version: "quire.model.effective-view/v2"}`. |
+
+A length-one perfect block is the key leaf itself, not another hash. For a
+nonempty ordered path of length L let P be the largest power of two <= L.
+`first` commits its first P keys. If L=P, `last` is null; otherwise `last`
+commits its last P keys. An empty path has count "0" and both null. The two
+non-null blocks overlap in exactly 2P−L keys; their overlap must agree on
+the exact admitted keys. Expansion is the first block followed by the last
+block after its overlapping prefix. No alternative split, redundant last,
+global alignment, ambient graph root or storage index is allowed. Block
+counts/child domains must validate before their use. Equal content produces
+equal commitments independently of block placement or construction history.
+
+Literal expansion concatenates its path keys and tail keys. Qualify has an
+empty path and exactly its original declaration key as the one-key tail.
+Type inherit has the whole ancestor path and empty tail; member inherit has
+the ancestor path and its one-key member tail. Subset/redefine have the exact
+rule-prescribed ancestor path and two-key tail in source/target order. These
+splits are determined by the rule and admitted declaration kind, never by a
+caller's arbitrary factoring. A prefix segment expands every nonempty prefix
+of its path, shortest first, as a type-inherit fact. Its expansion count is
+its path count; no prefix or fact is omitted.
+
+Normal form is derived from the complete semantic fact array in phase/input
+order. Scan from its first uncovered fact. At a type-inherit fact whose path
+length is one, take the longest contiguous sequence of type-inherit facts of
+the same rule with paths of lengths 1,2,..., each extending the preceding
+path by one key. If its length is at least two, emit one prefix segment for
+the last path; otherwise emit a literal. At any other fact emit a literal.
+Resume at the next uncovered fact. This longest-first left-to-right rule is
+the only factoring/tie-break rule, including when several ladders are adjacent.
+The expanded array position is the exact decimal ordinal, starting at zero;
+the sum of segment expansion counts must equal Derivation.count. Rules are exactly the selected
+manifest's unchanged qualify/inherit/subset/redefine identities. Distinct
+inheritance paths remain distinct fact occurrences even when sharing blocks.
+
+For E declarations in ascending effective-digest order, the sequence root
+has count E. E=0 uses the null root, E=1 the declaration leaf. For E>=2,
+split at the largest power of two strictly less than E and recursively join
+the ordered halves, left before right. Child counts/digests must agree with
+that split. This gives E−1 joins, not E additional leaf hashes. It commits
+every eagerly computed declaration; requested-only hashing is forbidden.
+
+Retain the complete immutable original inventory and actual FCD origins,
+all effective declarations' compressed preimages, and every reachable exact
+key/block record. Dictionary records identify their domain, digest and exact
+preimage; conflicting bindings, missing children or cycles cannot be admitted.
+Original inventory entries without a selected qualify rule acquire no extra
+effective entry or identity charge. Unused helper records are not part of the
+canonical commitment transport. A digest root alone is not a complete view.
+The strict reader independently verifies selection admission, dictionary
+commitments, exact overlap, canonical expansion, owner links, semantic facts,
+ALL effective identities and complete inventory against admitted normalization.
+Membership proofs for requested entries do not replace this verification.
+Transport ordering is domain then digest for dictionary records and effective
+digest for declarations; exact duplicate bindings share one record, never a
+second effective entry. No dictionary position enters an identity.
+
+Identity bytes are produced exclusively by the shared canonical writer.
+Analytical prepricing is defined in the accounting definition and must equal
+its actual encoded length. No second encoder, hash-prefix resumption or
+expanded-preimage fallback is part of this contract. Logical counters continue
+to count all facts and entries, including those represented by shared runs.
 
 ### Object universe
 
 The object universe of an object type `T` is the connected component of `T` in
 the supertype graph restricted to object types. Its identity is
-`quire.model.object-universe/v1` over the ModelSelection and the ascending
+`quire.model.object-universe/v2` over the ModelSelection and the ascending
 array of effective type identities in that component that have no supertype.
 A population is a membership view inside a universe, never a universe. Its
 declaration key never contributes to a universe identity. Every type that
@@ -279,7 +381,10 @@ Each manifest `normalization_rules` entry names a rule identity,
 `null`) and the artifact that defines it. Normalization applies the manifest's
 `normalization_rules` in phase order. No rule declares an override relation.
 Every refusal lists each contributing declaration key and derivation path in
-effective-member order.
+the accounting definition's owning stage order. Before identities exist,
+phase-4 conflict order uses original owner/target declaration keys, not an
+uncomputed effective member key. After identity computation the effective
+member key retains its meaning unchanged.
 
 | Phase | Rule | Derivation |
 | --- | --- | --- |
@@ -288,7 +393,7 @@ effective-member order.
 | 3 | `quire.model.normalize.inherit/v1` | For each type `T` and each supertype path `T -> P1 -> ... -> A`: one fact on `T` with inputs `[P1, ..., A]`; then, for each member `m` whose owner is `A`, one fact on the effective member `(T, m)` with inputs `[P1, ..., A, m]`. |
 | 4 | `quire.model.normalize.subset/v1` | For each field `s` whose `subsets[]` names `t`, where the owner of `s` is `T` or a supertype of `T`: one fact on `(T, s)` with inputs `[path types..., s, t]`. |
 | 4 | `quire.model.normalize.redefine/v1` | For each member `r` whose `redefines` names `t`, where the owner of `r` is `T` or a supertype of `T`: one fact on `(T, r)` and one on `(T, t)`, each with inputs `[path types..., r, t]`. The redefined member stays in the view and is hidden from name resolution, lookup and dispatch candidacy. When several non-conflicting members redefine one member reaching `T`, only the redefining member of the most derived owner is exposed; every other redefining member keeps its facts and is hidden in `T` the same way. |
-| 5 | `quire.model.normalize.canonicalize/v1` | Compute every effective identity and the effective view. No derivation fact; ordering never changes a declaration key or resolves ambiguity. |
+| 5 | `quire.model.normalize.canonicalize/v2` | Under the replacement accounting schedule, compute every effective identity, every object universe and the complete effective view using the closed commitments above. No derivation fact; ordering never changes a declaration key or resolves ambiguity. |
 
 `path types` is the list of supertypes from the specific type `T` to the owner,
 excluding `T`. It is empty when `T` is the owner.
