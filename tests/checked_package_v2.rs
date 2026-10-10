@@ -10904,7 +10904,10 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     let mut wrong_compound = base;
     let mut root_a = wrong_compound["semantic_graph"]["nodes"][16].clone();
     root_a["semantic_form"] = json!("unit");
-    root_a["body"] = json!({"term": "aggregate", "members": []});
+    root_a["body"] = json!({
+        "term": "aggregate",
+        "members": [{"term": "literal", "value": "a", "value_kind": "text"}]
+    });
     root_a["dependencies"] = json!([]);
     append_rekeyed_structural_node(&mut wrong_compound, root_a);
     let root_a_id = wrong_compound["semantic_graph"]["nodes"]
@@ -10915,7 +10918,10 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         .clone();
     let mut root_b = wrong_compound["semantic_graph"]["nodes"][16].clone();
     root_b["semantic_form"] = json!("unit");
-    root_b["body"] = json!({"term": "aggregate", "members": []});
+    root_b["body"] = json!({
+        "term": "aggregate",
+        "members": [{"term": "literal", "value": "b", "value_kind": "text"}]
+    });
     root_b["dependencies"] = json!([]);
     append_rekeyed_structural_node(&mut wrong_compound, root_b);
     let root_b_id = wrong_compound["semantic_graph"]["nodes"]
@@ -10924,17 +10930,22 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         .last()
         .unwrap()["node_id"]
         .clone();
+    let (first_root, second_root) = if root_a_id["digest"] > root_b_id["digest"] {
+        (root_a_id, root_b_id)
+    } else {
+        (root_b_id, root_a_id)
+    };
     let mut compound = wrong_compound["semantic_graph"]["nodes"][16].clone();
     compound["semantic_form"] = json!("compound_unit");
     compound["body"] = json!({
         "term": "aggregate",
         "members": [
             {"term": "aggregate", "members": [
-                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": root_b_id}},
+                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": first_root}},
                 {"name": "exponent", "term": "binding", "value": {"term": "literal", "type": wrong_compound["semantic_graph"]["nodes"][16]["node_id"], "value": "1", "value_kind": "integer"}}
             ]},
             {"term": "aggregate", "members": [
-                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": root_a_id}},
+                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": second_root}},
                 {"name": "exponent", "term": "binding", "value": {"term": "literal", "type": wrong_compound["semantic_graph"]["nodes"][16]["node_id"], "value": "-1", "value_kind": "integer"}}
             ]}
         ]
