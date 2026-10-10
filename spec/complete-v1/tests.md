@@ -1530,6 +1530,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-461 | FR-461-AC-4 | TC-426 |  |
 | FR-461 | FR-461-AC-5 | TC-426 |  |
 | FR-461 | FR-461-AC-6 | TC-426 |  |
+| FR-461 | FR-461-AC-7 | TC-930 |  |
 | FR-462 | FR-462-AC-1 | TC-428 |  |
 | FR-462 | FR-462-AC-2 | TC-428 |  |
 | FR-462 | FR-462-AC-3 | TC-428 |  |
@@ -1894,6 +1895,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-394 | Weak-memory counterexample wire and replay | Property | P0 | FR-439 | 🚧 |
 | TC-425 | Deep inputs settle on their content at every stage | Property | P0 | FR-460, FR-146 | 🚧 |
 | TC-426 | Limit outcomes name the limit, its value and its setting | Property | P0 | FR-460, FR-461, FR-323 | 🚧 |
+| TC-930 | A byte-emitting operation raises its output-byte budget | Property | P0 | FR-461-AC-7 | 🚧 |
 | TC-427 | The v2 body grammar fixes package depth by schema | Property | P0 | FR-322 | 🚧 |
 | TC-428 | The plugin wire frames, identifies and settles every plugin run | Property | P0 | FR-462 | 🚧 |
 | TC-429 | Value paths root and step through every witness location | Property | P0 | FR-207, FR-351 | 🚧 |
