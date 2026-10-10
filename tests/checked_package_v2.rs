@@ -2241,10 +2241,12 @@ fn derived_shape_semantic_refusal(nodes: &[Value]) -> Option<&Value> {
                 else {
                     return true;
                 };
-                matches!(
-                    target["node_tag"].as_str(),
-                    Some("scalar_type" | "bounded_domain")
-                )
+                // The older positive fixture contains a generic record
+                // reference; model-derived references are stricter and must
+                // name a model declaration. Every other target is malformed.
+                !matches!(target["node_tag"].as_str(), Some("model" | "relation"))
+                    && !(target["node_tag"] == "composite_type"
+                        && target["semantic_form"] == "record")
             }
             (Some("bounded_domain"), Some("model_population")) => {
                 let set_shaped = node["semantic_type"]
@@ -2253,6 +2255,15 @@ fn derived_shape_semantic_refusal(nodes: &[Value]) -> Option<&Value> {
                     .is_some_and(|semantic_type| {
                         semantic_type["node_tag"] == "composite_type"
                             && semantic_type["semantic_form"] == "set"
+                            && semantic_type["body"]["members"]
+                                .as_array()
+                                .and_then(|members| members.first())
+                                .and_then(|member| member["target"].as_object())
+                                .and_then(|target| find(&Value::Object(target.clone())))
+                                .is_some_and(|element| {
+                                    element["node_tag"] == "composite_type"
+                                        && element["semantic_form"] == "reference"
+                                })
                     });
                 let Some(members) = node["body"]["members"].as_array() else {
                     return true;
@@ -2268,6 +2279,9 @@ fn derived_shape_semantic_refusal(nodes: &[Value]) -> Option<&Value> {
                 !set_shaped || members.len() != 1 || !valid_max
             }
             (Some("scalar_type"), Some("compound_unit")) => {
+                if node["semantic_type"] != node["node_id"] {
+                    return true;
+                }
                 let Some(terms) = node["body"]["members"].as_array() else {
                     return true;
                 };
@@ -2278,11 +2292,19 @@ fn derived_shape_semantic_refusal(nodes: &[Value]) -> Option<&Value> {
                     };
                     let unit = members.iter().find(|member| member["name"] == "unit");
                     let exponent = members.iter().find(|member| member["name"] == "exponent");
-                    let Some(unit_digest) =
-                        unit.and_then(|member| member["value"]["target"]["digest"].as_str())
+                    let Some(unit_target) = unit
+                        .and_then(|member| member["value"]["target"].as_object())
+                        .map(|target| Value::Object(target.clone()))
+                        .and_then(|target| find(&target))
                     else {
                         return true;
                     };
+                    let Some(unit_digest) = unit_target["node_id"]["digest"].as_str() else {
+                        return true;
+                    };
+                    let valid_root = unit_target["node_tag"] == "scalar_type"
+                        && unit_target["semantic_form"] == "unit"
+                        && unit_target["semantic_type"] == unit_target["node_id"];
                     let valid_exponent = exponent.is_some_and(|member| {
                         member["value"]["term"] == "literal"
                             && member["value"]["value_kind"] == "integer"
@@ -2291,7 +2313,7 @@ fn derived_shape_semantic_refusal(nodes: &[Value]) -> Option<&Value> {
                     });
                     let ordered = previous.is_none_or(|last: &str| last < unit_digest);
                     previous = Some(unit_digest);
-                    !valid_exponent || !ordered
+                    !valid_root || !valid_exponent || !ordered
                 })
             }
             _ => false,
@@ -4438,8 +4460,19 @@ fn rekey_stale_nodes(package: &mut Value) -> BTreeMap<String, String> {
 /// projection. The caller supplies the complete wire body and cross-fields;
 /// this helper is used only by reader qualification vectors.
 fn append_rekeyed_structural_node(package: &mut Value, mut node: Value) {
+    let self_typed = matches!(
+        node["semantic_form"].as_str(),
+        Some("compound_unit" | "unit")
+    );
+    if self_typed {
+        node["semantic_type"] = node["node_id"].clone();
+    }
     let preimage = structural_node_preimage(&node).expect("fixture node is structural");
-    node["node_id"]["digest"] = json!(unqualified_jcs_sha256(&preimage));
+    let digest = unqualified_jcs_sha256(&preimage);
+    node["node_id"]["digest"] = json!(digest);
+    if self_typed {
+        node["semantic_type"] = node["node_id"].clone();
+    }
     let mut projection = node.clone();
     projection
         .as_object_mut()
@@ -10743,6 +10776,39 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         "recomputed reference target is rejected"
     );
 
+    for (label, replacement_index) in [("function target", 11_usize), ("value target", 27)] {
+        let mut candidate = base.clone();
+        let index = candidate["semantic_graph"]["nodes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .position(|node| {
+                node["node_tag"] == "composite_type" && node["semantic_form"] == "reference"
+            })
+            .unwrap();
+        let target = candidate["semantic_graph"]["nodes"][replacement_index]["node_id"].clone();
+        replace_node_field_in_graph_and_projection(
+            &mut candidate,
+            index,
+            "/body/members/0/target",
+            target.clone(),
+        );
+        replace_node_field_in_graph_and_projection(
+            &mut candidate,
+            index,
+            "/dependencies",
+            json!([target]),
+        );
+        rekey_stale_nodes(&mut candidate);
+        assert_eq!(
+            read_package_semantics(&candidate, &catalog),
+            Err(ReadRefusal::GraphShape(
+                candidate["semantic_graph"]["nodes"][index]["node_id"].clone()
+            )),
+            "recomputed {label} is rejected"
+        );
+    }
+
     let mut wrong_population = base.clone();
     let mut population = wrong_population["semantic_graph"]["nodes"][51].clone();
     population["semantic_form"] = json!("model_population");
@@ -10778,19 +10844,75 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         "recomputed negative population bound is rejected"
     );
 
+    let mut arbitrary_set_population = wrong_population.clone();
+    let population_index = arbitrary_set_population["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .len()
+        - 1;
+    arbitrary_set_population["semantic_graph"]["nodes"][population_index]["body"]["members"][0]["value"]
+        ["value"] = json!("3");
+    arbitrary_set_population["identity_preimage"]["identity_projection"][population_index]["body"]
+        ["members"][0]["value"]["value"] = json!("3");
+    arbitrary_set_population["semantic_graph"]["nodes"][population_index]["semantic_type"] =
+        arbitrary_set_population["semantic_graph"]["nodes"][42]["node_id"].clone();
+    arbitrary_set_population["identity_preimage"]["identity_projection"][population_index]["semantic_type"] =
+        arbitrary_set_population["semantic_graph"]["nodes"][42]["node_id"].clone();
+    let population_preimage = structural_node_preimage(
+        &arbitrary_set_population["semantic_graph"]["nodes"][population_index],
+    )
+    .unwrap();
+    let population_digest = unqualified_jcs_sha256(&population_preimage);
+    arbitrary_set_population["semantic_graph"]["nodes"][population_index]["node_id"]["digest"] =
+        json!(population_digest);
+    arbitrary_set_population["identity_preimage"]["identity_projection"][population_index]["node_id"]
+        ["digest"] = json!(population_digest);
+    arbitrary_set_population["identity_preimage"] =
+        derive_identity_preimage(&arbitrary_set_population);
+    refresh_package_id(&mut arbitrary_set_population);
+    assert_eq!(
+        read_package_semantics(&arbitrary_set_population, &catalog),
+        Err(ReadRefusal::GraphShape(
+            arbitrary_set_population["semantic_graph"]["nodes"][population_index]["node_id"]
+                .clone()
+        )),
+        "population over an arbitrary set is rejected"
+    );
+
     let mut wrong_compound = base;
+    let mut root_a = wrong_compound["semantic_graph"]["nodes"][16].clone();
+    root_a["semantic_form"] = json!("unit");
+    root_a["body"] = json!({"term": "aggregate", "members": []});
+    root_a["dependencies"] = json!([]);
+    append_rekeyed_structural_node(&mut wrong_compound, root_a);
+    let root_a_id = wrong_compound["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap()["node_id"]
+        .clone();
+    let mut root_b = wrong_compound["semantic_graph"]["nodes"][16].clone();
+    root_b["semantic_form"] = json!("unit");
+    root_b["body"] = json!({"term": "aggregate", "members": []});
+    root_b["dependencies"] = json!([]);
+    append_rekeyed_structural_node(&mut wrong_compound, root_b);
+    let root_b_id = wrong_compound["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap()["node_id"]
+        .clone();
     let mut compound = wrong_compound["semantic_graph"]["nodes"][16].clone();
     compound["semantic_form"] = json!("compound_unit");
-    compound["semantic_type"] = Value::Null;
     compound["body"] = json!({
         "term": "aggregate",
         "members": [
             {"term": "aggregate", "members": [
-                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": {"domain": "quire.checked-semantic-node/v1", "digest": "b000000000000000000000000000000000000000000000000000000000000000"}}},
+                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": root_b_id}},
                 {"name": "exponent", "term": "binding", "value": {"term": "literal", "type": wrong_compound["semantic_graph"]["nodes"][16]["node_id"], "value": "1", "value_kind": "integer"}}
             ]},
             {"term": "aggregate", "members": [
-                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": {"domain": "quire.checked-semantic-node/v1", "digest": "a000000000000000000000000000000000000000000000000000000000000000"}}},
+                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": root_a_id}},
                 {"name": "exponent", "term": "binding", "value": {"term": "literal", "type": wrong_compound["semantic_graph"]["nodes"][16]["node_id"], "value": "-1", "value_kind": "integer"}}
             ]}
         ]
@@ -10807,6 +10929,58 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         read_package_semantics(&wrong_compound, &catalog),
         Err(ReadRefusal::GraphShape(compound_id)),
         "recomputed noncanonical compound-unit order is rejected"
+    );
+
+    let mut non_self_typed = wrong_compound.clone();
+    let compound_index = non_self_typed["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .len()
+        - 1;
+    non_self_typed["semantic_graph"]["nodes"][compound_index]["semantic_type"] = Value::Null;
+    non_self_typed["identity_preimage"]["identity_projection"][compound_index]["semantic_type"] =
+        Value::Null;
+    let preimage =
+        structural_node_preimage(&non_self_typed["semantic_graph"]["nodes"][compound_index])
+            .unwrap();
+    let digest = unqualified_jcs_sha256(&preimage);
+    non_self_typed["semantic_graph"]["nodes"][compound_index]["node_id"]["digest"] = json!(digest);
+    non_self_typed["identity_preimage"]["identity_projection"][compound_index]["node_id"]["digest"] =
+        json!(digest);
+    non_self_typed["identity_preimage"] = derive_identity_preimage(&non_self_typed);
+    refresh_package_id(&mut non_self_typed);
+    assert_eq!(
+        read_package_semantics(&non_self_typed, &catalog),
+        Err(ReadRefusal::GraphShape(
+            non_self_typed["semantic_graph"]["nodes"][compound_index]["node_id"].clone()
+        )),
+        "a non-self-typed compound unit is rejected"
+    );
+
+    let mut non_root = wrong_compound.clone();
+    let non_root_index = non_root["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .len()
+        - 1;
+    non_root["semantic_graph"]["nodes"][non_root_index]["body"]["members"][0]["members"][0]["value"]
+        ["target"] = non_root["semantic_graph"]["nodes"][16]["node_id"].clone();
+    non_root["identity_preimage"]["identity_projection"][non_root_index]["body"] =
+        non_root["semantic_graph"]["nodes"][non_root_index]["body"].clone();
+    let preimage =
+        structural_node_preimage(&non_root["semantic_graph"]["nodes"][non_root_index]).unwrap();
+    let digest = unqualified_jcs_sha256(&preimage);
+    non_root["semantic_graph"]["nodes"][non_root_index]["node_id"]["digest"] = json!(digest);
+    non_root["identity_preimage"]["identity_projection"][non_root_index]["node_id"]["digest"] =
+        json!(digest);
+    non_root["identity_preimage"] = derive_identity_preimage(&non_root);
+    refresh_package_id(&mut non_root);
+    assert_eq!(
+        read_package_semantics(&non_root, &catalog),
+        Err(ReadRefusal::GraphShape(
+            non_root["semantic_graph"]["nodes"][non_root_index]["node_id"].clone()
+        )),
+        "a compound term naming a non-unit root is rejected"
     );
 }
 

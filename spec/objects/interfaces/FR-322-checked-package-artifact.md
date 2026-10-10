@@ -773,6 +773,14 @@ vectors are:
 | `RM-POP-MAX` | Change PO1's integer `max` to negative `-1`; the schema remains valid, but the reader refuses `invalid_package`/`invalid-derived-shape` at PO1. | Replace PO1's key with the digest of the changed preimage before reading; the reader still refuses the negative bound. |
 | `RM-CU-ORDER` | Swap U2's two unit terms while retaining U2's key; the schema remains valid, but the reader refuses `invalid_package`/`invalid-derived-shape` at U2. | Replace U2's key with the digest of the changed preimage before reading; the reader still refuses noncanonical term order. |
 
+The executable reader matrix covers the accepted and refused cells below:
+
+| Derived shape | Accepted form | Refusal mutations exercised after key recomputation |
+| --- | --- | --- |
+| `composite_type`/`reference` | body target is a model declaration node | scalar, function and value targets |
+| `bounded_domain`/`model_population` | `semantic_type` is `set<reference<T>>`, one canonical nonnegative integer `max` binding | negative `max`; arbitrary set element |
+| `scalar_type`/`compound_unit` | self-typed node, admitted self-typed root units, nonzero exponents in strict digest order | non-self-typed node; non-unit root; reordered terms |
+
 These vectors distinguish a retained-key mutation from a recomputed-key
 candidate. The reader checks both the key and the semantic shape: a
 `composite_type`/`reference` whose body target is not a model declaration
