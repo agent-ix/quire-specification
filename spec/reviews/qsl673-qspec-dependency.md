@@ -36,3 +36,7 @@ scope:
 The cross-repository QSL owner is stated in FR-461 and the QSL change adds the
 corresponding FR-255/FR-003 dependencies. This is a spec-only dependency read;
 no implementation ordering or lock/build work was performed.
+
+## Dispositions
+
+Round 1 disposition reviewed at `69ad57b14312517f777a1a899f7cdcdb53899af5`. This artifact's review was clean and had no defect findings; its placeholder row is not a finding.

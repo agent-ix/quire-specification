@@ -37,3 +37,7 @@ scope:
 documents reported 3/3 grammar-clean and no EARS warnings. The full repository
 contains unrelated baseline warnings and failures and was not used as a
 changed-file EARS verdict.
+
+## Dispositions
+
+Round 1 disposition reviewed at `69ad57b14312517f777a1a899f7cdcdb53899af5`. This artifact's review was clean and had no defect findings; its placeholder row is not a finding.

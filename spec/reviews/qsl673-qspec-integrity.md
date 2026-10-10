@@ -40,3 +40,13 @@ Targeted Quire validation passed for all three changed QSpec documents. The
 computed matrix completed with exit 0 but reports the repository's many
 existing untagged criteria; this review records the new hand-authored matrix
 omission specifically and makes no full-repository coverage claim.
+
+## Dispositions
+
+Round 1 disposition reviewed at `69ad57b14312517f777a1a899f7cdcdb53899af5`.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 69ad57b14312517f777a1a899f7cdcdb53899af5 |
+
+The complete-V1 matrix now contains `FR-461 | FR-461-AC-7 | TC-930`; the traceability omission is resolved.

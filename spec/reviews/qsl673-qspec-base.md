@@ -43,3 +43,17 @@ criteria property-extractable. Full-scope validation remains blocked by 137
 pre-existing structural failures in the frozen repository. `quire matrix`
 completed with exit 0; the repository-wide matrix has many inherited untagged
 criteria, so no full-coverage claim is made.
+
+## Dispositions
+
+Round 1 disposition reviewed at `69ad57b14312517f777a1a899f7cdcdb53899af5`.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 69ad57b14312517f777a1a899f7cdcdb53899af5 |
+
+The complete-V1 matrix now contains `FR-461 | FR-461-AC-7 | TC-930`; the traceability omission is resolved.
+
+### Fixed excerpts
+
+- `spec/complete-v1/tests.md`: `| FR-461 | FR-461-AC-7 | TC-930 |  |`
