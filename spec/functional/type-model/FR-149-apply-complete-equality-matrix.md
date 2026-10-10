@@ -23,6 +23,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-204
     type: references
+  - target: ix://agent-ix/quire-spec-language/FR-056
+    type: references
 ---
 
 # FR-149: Apply the complete typed equality matrix
@@ -53,6 +55,8 @@ implicit conversion or local-name equality creates a common type.
 | Value kind | Equality relation |
 | --- | --- |
 | Boolean | identical truth value |
+| UUID | identical canonical UUID payload content under QSL FR-056's K2 canonical native payload contract; a distinct native type, not text |
+| Timestamp | identical canonical Timestamp payload content under QSL FR-056's K2 canonical native payload contract; a distinct native type, not `Int` |
 | Integer, rational and decimal | exact mathematical value; operands of different numeric types first require an admitted [equality conversion](#equality-conversions) |
 | Quantity | identical unit and exact value equality; a top-level quantity equality expression uses the FR-142 root-value comparison schedule, while a quantity leaf inside a composite equality plan compares by exact value in its identical unit and charges only its `equality.pair`; distinct units require an explicit prior FR-142 conversion |
 | Text | the FR-141 relation under the same pinned profile: normalized scalar sequence for scalar profiles and original UTF-8 bytes for `binary-utf8` |
@@ -72,6 +76,28 @@ checking returns `refused { code: ill_typed }`; it never produces Boolean
 `false`. Conversion creates a comparison value but
 does not rewrite the source value's declaration or object identity.
 
+For K2, the kernel SHALL admit reflexive equality of `UUID` with `UUID`
+and `Timestamp` with `Timestamp`, with distinct canonical payloads of one
+kind comparing unequal. The representation and admission contract is
+[QSL FR-056](ix://agent-ix/quire-spec-language/FR-056), "K2 canonical native
+payloads". Each kind's total canonical key is its canonical payload string,
+compared unsigned ASCII bytewise with a proper prefix first; equal keys
+are equivalent to equality within that kind. This extends
+[FR-144](FR-144-preserve-complete-collection-algebra.md)'s type-owned key
+invariant for these two K2 natives. No enclosing JSON object-member order
+or JSON string escape spelling enters the key.
+
+UUID and Timestamp have no common equality type with each other or with
+`Int`, `Integer`, `Text`, `String` or `Boolean`; there is no equality
+conversion between these kinds. Such comparisons SHALL refuse at type
+checking with `ill_typed`/`type-mismatch` before any equality charge, never
+return Boolean `false`. A direct kernel call that violates the checked
+same-kind precondition retains the kernel's typed checked-invariant refusal,
+and key comparison has no cross-kind key. Their keys define only canonical
+representation order, not `<`, `<=`, `>` or `>=`; those operators SHALL refuse
+`ill_typed`/`operator-ineligible` before any charge. No timestamp arithmetic,
+timezone, calendar conversion or precision operation is selected here.
+
 The same holds for ordering. The grammar's `<`, `<=`, `>` and `>=` with a
 `Float32` or `Float64` operand select no IEEE predicate and are
 `refused { code: ill_typed, cause: operator-ineligible }` before any charge;
@@ -87,7 +113,7 @@ admitted conversion; `!=` uses the same schedule and retains the negated
 Boolean. A top-level text operand pair uses the FR-141 text schedule, an
 enumeration pair `enum.*` and a quantity pair the FR-142 top-level comparison
 schedule. Every other common type (Boolean, `Integer`, `Int[..]`, `Rational[..]`,
-`Decimal[..]`, `Reference<T>`, `Option<T>`, record, tuple and every collection
+`Decimal[..]`, `UUID`, `Timestamp`, `Reference<T>`, `Option<T>`, record, tuple and every collection
 kind) uses the equality schedule `equality.plan-form`, `equality.plan`, one
 `equality.pair` per planned pair and `equality.result-retain`.
 `equality.plan-form` charges `occ(left) + occ(right)` work units before plan
@@ -176,7 +202,7 @@ The plan is the tree of occurrence-path pairs rooted at `$`, formed from the
 two completed operands of one type after `equality.plan-form` has charged the
 walk:
 
-- A Boolean, numeric, text, enumeration, quantity or reference pair is a
+- A Boolean, numeric, UUID, Timestamp, text, enumeration, quantity or reference pair is a
   terminal leaf.
 - An option pair of two `none` values is one terminal equal pair; `none` with
   `present` is one terminal unequal pair; two `present` values add one child
@@ -243,6 +269,9 @@ collection and object-reference rows of this requirement.
 | FR-149-AC-11 | Plan pair counts follow the structural-mismatch, keyed-rank and cardinality short-circuit rules exactly, every plan walk is charged by `equality.plan-form` before it happens, and a foreign-universe reference pair refuses after that charge and before `equality.plan`. | Test (TC-194) |
 | FR-149-AC-12 | Under `quire.model.complete/v1`, `Reference<Sub>` compares with `Reference<Super>` through the upcast row with no charge and unchanged identity, and a non-conforming reference pair is `ill_typed`. | Test (TC-198) |
 | FR-149-AC-13 | `<`, `<=`, `>` and `>=` with a `Float32` or `Float64` operand are `ill_typed` with cause `operator-ineligible` before any charge, while `totalOrder` orders the same operands. | Test (TC-194) |
+| FR-149-AC-14 | Independently admitted UUID values with payload `00112233-4455-6677-8899-aabbccddeeff` compare equal and have equal keys; changing the final digit to `e` compares unequal. Independently admitted Timestamp values with payload `0` compare equal and have equal keys; `0` versus `1` compares unequal. Each comparison is one terminal pair under the existing equality schedule. | Test |
+| FR-149-AC-15 | UUID versus Timestamp, either kind versus `Int`, `Integer`, `Text`, `String` or `Boolean`, and any attempted equality conversion between these kinds refuse `ill_typed`/`type-mismatch` before an equality charge and produce no Boolean. Direct kernel mixed-kind comparisons return the typed checked-invariant refusal and key comparison returns no key relation. | Test |
+| FR-149-AC-16 | Same-kind keys compare canonical payload content unsigned ASCII bytewise with a proper prefix first: Timestamp `10` orders before `2`, and `-1` before `-2`, while equal payloads have equal keys. The four ordering operators on either native refuse `ill_typed`/`operator-ineligible` before any charge; key availability creates no ordering or arithmetic capability. | Test |
 
 ## Dependencies
 
