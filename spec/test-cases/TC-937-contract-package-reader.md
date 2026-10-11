@@ -23,7 +23,8 @@ Read one independently constructed valid canonical ContractPackage. Repeat
 with one mutation per case: wrong FR-330 contract version; a checked-package
 version substituted in the outer tag; missing, duplicate or unknown member;
 wrong member kind; unresolved or incompatible graph reference;
-missing source-map entry; accounting/request mismatch; stale identity; wrong
+missing source-map entry; accounting/request mismatch; an `identity.digest`
+that differs from the recomputed projection; wrong
 identity domain; and a semantically equivalent but noncanonical wire encoding
 with reordered members or insignificant whitespace. For the last case, preserve
 the original digest so the only defect is noncanonical bytes. For unresolved
@@ -47,10 +48,11 @@ at `u64::MAX`. Recompute each identity from the string-encoded projection.
 Do not recompute identity for malformed counter values; the reader must reject
 them before identity validation. Also test a valid
 `body_incomplete` with `limit_kind: "bytes"` and no `path`, then mutate it to
-add `path`; test a non-byte kind with `path`, then remove that member. For
+add `path` and to add `path: null`; test a non-byte kind with `path`, then
+remove that member. For
 `invalid_body.refusal`, test a missing
 `contract_version` for `unknown_contract_version` and a present
-`contract_version` for a different `code`. Also construct a valid
+`contract_version` (including `null`) for a different `code`. Also construct a valid
 ContractPackage whose source lock has one `dependency_selections` entry and
 whose graph has a `dependency_reference` to that selected package. Supply the
 matching admitted dependency package keyed by its library identity, then repeat
@@ -79,15 +81,19 @@ Counter strings with leading zeros, a sign, empty content, or a value above
 place of a required decimal string is refused as
 `invalid_package`/`wrong-value-kind`; non-ASCII digits are also
 `invalid_package`/`invalid-value`. A bytes incomplete record with `path` is
-`invalid_package`/`unknown-member`, while a non-byte record without `path` is
+`invalid_package`/`unknown-member`, even when its value is `null`, while a non-byte record without `path` is
 `invalid_package`/`missing-member`. `unknown_contract_version` without its
 required member is `invalid_package`/`missing-member`; a different refusal
-code with `contract_version` is `invalid_package`/`unknown-member`. The valid
-Both valid `failed` controls (`0`/`0` and `u64::MAX`/`u64::MAX`) are admitted.
+code with `contract_version` is `invalid_package`/`unknown-member`, even when
+its value is `null`. Both valid
+`failed` controls (`0`/`0` and `u64::MAX`/`u64::MAX`) are admitted.
 The wrong identity domain is refused as
 `invalid_package`/`invalid-value` at `/identity/domain`, using FR-322's
 existing typed pair; `digest_domain_mismatch` remains for a wrong domain on an
 input `PackageId`.
+The declared identity mismatch refuses `stale_dependency`/`content-mismatch`
+at `/identity/digest`, with the declared and recomputed digests as
+`expected` and `actual`.
 The correctly supplied dependency admits the ContractPackage, and its
 reference resolves only against that package. Omitting the selected dependency
 or supplying an admitted value under the selected key with a different library

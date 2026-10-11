@@ -31,14 +31,14 @@ producer record against the independent expected value and injected typed
 refusal/incomplete value; check exact field names, types, values, and omitted
 optional members. Then pass the unmodified wire through the FR-330 reader and
 inspect graph roots and sibling records. Write each valid-JSON mutation back
-as canonical RFC 8785 bytes; keep the existing stale-identity case distinct.
+as canonical RFC 8785 bytes.
 Exercise nested closed-shape
 mutations by omitting a required member, adding an unknown member, writing
 `null` for an omitted optional member, and changing a member's kind. Do not
 recompute identity for these invalid shapes: the reader checks nested schema
 before identity. Separately mutate the accounting array by omitting its
 `unsupported` record and its matching `source_map.refusals` entry, duplicating
-the `unsupported` record, changing `failed` to `invalid_input` while retaining
+the `lowered` record, changing `failed` to `invalid_input` while retaining
 the `failed` payload and changing its matching `source_map.refusals`
 disposition, and adding a `node` member to an `unsupported` record; do
 not recompute identity because accounting consistency and variant shape are
@@ -69,7 +69,7 @@ payload is refused as `invalid_package`/`unknown-member`; attaching an emitted
 node to an `unsupported` record is refused as `invalid_package`/`unknown-member`
 because non-lowered variants forbid node payloads. A well-shaped `path`
 mutation with the old identity is refused as FR-330 specifies:
-`stale_dependency`/`content-mismatch`, with the declared identity as
+`stale_dependency`/`content-mismatch` at `/identity/digest`, with the declared identity as
 `expected` and recomputed identity as `actual`; recomputing identity for that
 new value is outside this test because the reader checks canonical structure
 and identity, not the truth of a producer's accounting. The two successful
