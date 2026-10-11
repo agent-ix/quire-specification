@@ -26,9 +26,11 @@ items, one unsupported item, one item requiring a bound, one `CheckedNodeId`
 absent from the checked package, one item whose lowering reaches a typed
 failure, one item whose body re-validation returns a typed refusal, and one
 item whose body re-validation stops at a limit. Use fault-injection inputs for
-the last two defensive cases. In separate runs, inject a typed refusal with
-both `path` and `document_pointer` equal to the empty root pointer, and inject
-one with each optional pointer absent. Also inject a non-byte incomplete value
+the last two defensive cases. In separate runs, inject one typed refusal with
+`path` equal to the empty root pointer and `document_pointer` absent, and
+another with `document_pointer` equal to the empty root pointer and `path` set
+to `/lock/model_selections/0/digest`. Also inject refusals with each optional
+pointer absent. Inject a non-byte incomplete value
 whose typed path is the empty root pointer, and a byte-limit value whose typed
 path is absent. Before reading the emitted wire, compare each
 producer record against the independent expected value and injected typed

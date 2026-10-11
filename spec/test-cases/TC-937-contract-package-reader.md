@@ -59,10 +59,12 @@ remove that member. For
 `refusal.code` a wrong JSON kind and an unknown string while
 `contract_version` is present, and give `incomplete.limit_kind` a wrong JSON
 kind and an unknown string while `path` is present.
-Also admit a valid typed refusal whose `path` and `document_pointer` are both
-the empty string (the root pointer), and a valid non-byte incomplete value
-whose typed `path` is the empty string; this is distinct from TC-933's
-producer check for omitted typed pointers.
+Also admit separate valid typed refusals: one with `path` equal to the empty
+string (the root pointer) and `document_pointer` absent, and one with
+`document_pointer` equal to the empty string and `path` set to
+`/lock/model_selections/0/digest`. Admit a valid non-byte incomplete value
+whose typed `path` is the empty string; this is distinct from TC-933's producer
+check for omitted typed pointers.
 For cause validation, test an unknown cause string, a known FR-322 cause paired
 with a code that does not admit it, and a wrong-kind cause value.
 Also construct a valid
