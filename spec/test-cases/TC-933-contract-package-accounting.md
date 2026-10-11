@@ -26,9 +26,17 @@ items, one unsupported item, one item requiring a bound, one `CheckedNodeId`
 absent from the checked package, one item whose lowering reaches a typed
 failure, one item whose body re-validation returns a typed refusal, and one
 item whose body re-validation stops at a limit. Use fault-injection inputs for
-the last two defensive cases. Inspect `feature_accounting`, graph roots and
-sibling records. Mutate the result by omitting one record, duplicating one
-item, changing one outcome tag, and attaching a node to a non-`lowered` record.
+the last two defensive cases. Before reading the emitted wire, compare each
+producer record against the independent expected value and injected typed
+refusal/incomplete value; check exact field names, types, values, and omitted
+optional members. Then pass the unmodified wire through the FR-330 reader and
+inspect graph roots and sibling records. Exercise closed-shape mutations by
+omitting a required member, adding an unknown member, writing `null` for an
+omitted optional member, changing a member's kind, omitting one accounting
+record, duplicating one item, changing one outcome tag, and attaching a node
+to a non-`lowered` record. Recompute identity for shape-only mutations so the
+reader reaches the nested schema check. Separately change one typed payload
+value without updating identity.
 
 ## Expected Results
 
@@ -37,12 +45,16 @@ There are exactly eight records in request order, each naming its exact
 and graph root; the remaining records exercise exactly one each of
 `unsupported`, `requires_bound`, `invalid_input`, `failed`, `invalid_body`, and
 `body_incomplete`, with their specified payloads and no substitute node. The
-`invalid_body.refusal` is a closed object with the exact typed `code`, `path`,
-`cause`, `locus`, `contract_version`, and `document_pointer` members that
-apply, omitting inapplicable optional members. `body_incomplete.incomplete`
-is a closed object with the exact `limit_kind`, `limit`, `consumed`, and
-`path` (except that byte exhaustion omits `path`). Mutations that add `null`
-where a member must be omitted, add an unknown nested member, change a field's
-kind, or change an exact nested value are refused as accounting errors.
-The two successful sibling records remain unchanged. Every mutation is
-refused as a typed accounting error before consumption.
+producer emits the exact fault-injected typed values using FR-330's nested
+wire forms. Its `invalid_body.refusal` is a closed object with typed `code`,
+optional `path`, `cause`, `locus`, `contract_version`, and `document_pointer`;
+each optional member is present exactly when its typed value is present. Its
+`body_incomplete.incomplete` is a closed object with typed `limit_kind`,
+canonical decimal-string `limit` and `consumed`, and `path` exactly when the
+typed value has one. The unmodified ContractPackage is admitted. Shape
+mutations with recomputed identity are refused with the FR-330 nested-schema
+cause corresponding to the defect. A payload-value mutation with the old
+identity is refused for identity mismatch; recomputing identity for that new
+value is outside this test because the reader checks canonical structure and
+identity, not the truth of a producer's accounting. The two successful
+sibling records remain unchanged.
