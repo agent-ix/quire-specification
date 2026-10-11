@@ -8,7 +8,7 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-330-AC-4
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-22
-    type: verifies
+    type: references
 ---
 
 # TC-931: ContractPackage has one identity-keyed semantic graph
