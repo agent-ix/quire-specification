@@ -93,6 +93,13 @@ structures, but any external consumer receives only the contract.
 - The checked semantic graph is a closed `quire.checked-semantic-graph/v2`
   tagged union. It is source-language-neutral transport, not Contract IR and
   not an alternative language semantic authority.
+- The structural type forms used by QSL's StateModel lowering are settled by
+  FR-322: a source type alias forwards to the node of its resolved type and
+  creates no `alias` node; `Reference<T>` is an anonymous
+  `composite_type`/`reference`; `Population<T>[N]` is an anonymous
+  `bounded_domain`/`model_population`; and a formed compound quantity unit is
+  an anonymous `scalar_type`/`compound_unit`. Their bodies and refusal rules
+  are specified by FR-322's derived type forms section.
 
 ## Identity rules
 

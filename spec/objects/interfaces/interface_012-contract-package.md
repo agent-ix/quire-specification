@@ -15,6 +15,12 @@ relationships:
 
 # [interface_012] I12 target-neutral contract package
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| lower | operation |
+
 ## Contract
 
 ```yaml
