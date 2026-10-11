@@ -17,6 +17,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-contract-ir/FR-038
     type: references
+  - target: ix://agent-ix/quire-spec-language/FR-096
+    type: references
 ---
 
 # FR-330: Target-neutral contract package
@@ -98,15 +100,16 @@ others:
   Contract IR FR-038 `CheckedPackageRefusal` carried by FR-322, with path
   semantics constrained by QSL FR-096.
 - `body_incomplete`: the requested `node_id`, stopped `body_node_id`, and
-  exact Contract IR FR-038 `CheckedPackageIncomplete` carried by FR-322, with
-  limit and path semantics constrained by QSL FR-096.
+  exact Contract IR FR-038 `CheckedPackageIncomplete` carried by FR-322. Its
+  closed `limit_kind` vocabulary comes from Contract IR FR-038; QSL FR-096
+  constrains the producer's measured-counter and path semantics.
 
 The two defensive payloads have closed serialized shapes. The `invalid_body`
 record carries `refusal`, a closed object with required string `code` and
 optional members `path`, `cause`, `locus`, `contract_version`, and
 `document_pointer`. Their field names and types are those of Contract IR
-FR-038's `CheckedPackageRefusal`, carried by FR-322 and constrained by QSL
-FR-096:
+FR-038's `CheckedPackageRefusal`, carried by FR-322; QSL FR-096 constrains the
+QSL producer's path semantics:
 `code` uses the exact FR-322 code spelling;
 `path` is its RFC 6901 pointer into the checked-package document; `cause` uses
 the FR-272 spelling paired by FR-322; `locus` is its exact closed
@@ -119,11 +122,12 @@ empty string, the RFC 6901 pointer to the document root. A pointer is never
 replaced with `null` or a fabricated location. Before checking conditional
 members, the reader validates the required discriminator fields:
 `refusal.code` must be a known FR-322 code and
-`incomplete.limit_kind` must be one of its six listed values. A wrong type is
+`incomplete.limit_kind` must be one of its six Contract IR FR-038 values. A
+wrong type is
 `wrong-value-kind`; an unknown string is `invalid-value`, each at the
 discriminator's pointer. `path`, `cause`, `locus`, and `document_pointer` are
 optional for every recognized refusal code; when present, each must have its
-specified type. A `cause` string must be a known FR-322 cause and its
+specified type. A `cause` string must be a known FR-272 cause and its
 `(code, cause)` pair must be admitted by FR-322; an unknown cause or an
 unpaired cause is `invalid-value` at the cause member's pointer. A cause of a
 wrong JSON kind is `wrong-value-kind` at that pointer.
@@ -138,8 +142,9 @@ that required member uses `missing-member`, and presence for another code uses
 
 The `body_incomplete` record carries `incomplete`, a closed object with
 required `limit_kind`, `limit`, and `consumed`, plus optional `path`, matching
-the typed fields of Contract IR FR-038's `CheckedPackageIncomplete`, as
-constrained by QSL FR-096. The typed FR-322 `ReadResult` has no serialized
+the typed fields of Contract IR FR-038's `CheckedPackageIncomplete`; QSL
+FR-096 constrains the producer's measured-counter and path semantics. The
+typed FR-322 `ReadResult` has no serialized
 counter wire form; this ContractPackage projection is the sole JSON encoding
 of these nested values. It encodes the exact IR `u64` values as canonical
 decimal strings so RFC 8785 identity does not round values above the exact
@@ -267,9 +272,13 @@ prefixed to the hashed bytes.
 The digest uses FR-201's `quire.contract-ir.semantic/v1` domain, not the
 checked package's `quire.package.semantic/v2` identity. A mismatch between
 this ContractPackage's declared digest and its recomputed projection is an
-`invalid_package`/`invalid-value` at `/identity/digest`; it is not FR-322's
-`stale_dependency`/`content-mismatch`, which applies to a supplied selected
-dependency whose recomputed package identity differs from the lock selection.
+`invalid_package`/`invalid-value` at `/identity/digest`. FR-272's
+`content-mismatch` cases compare an identity retained by a request or selection
+with the supplied or recomputed identity of its subject; this self-digest is
+instead a malformed value read by this ContractPackage reader. It is not
+FR-322's `stale_dependency`/`content-mismatch`, which applies to a supplied
+selected dependency whose recomputed package identity differs from the lock
+selection.
 
 The ContractPackage reader is the single owner of outer wire admission. It
 first applies only the generic wire checks reused from FR-322: strict JSON
@@ -360,6 +369,9 @@ lock alone is not evidence that a selected package was supplied or admitted.
   six-property outer shape; Contract IR [FR-038](ix://agent-ix/quire-contract-ir/FR-038)
   consumes its seven-member disposition vocabulary, including defensive
   records. Neither defines a competing QSL wire schema.
+- [QSL FR-096](ix://agent-ix/quire-spec-language/FR-096) constrains the QSL
+  producer's stage-limit counter and path semantics carried in defensive
+  outcomes; it does not define a competing ContractPackage wire enum.
 - [FR-201](../foundation/FR-201-canonical-identity-domain.md) owns exact
   identity-domain separation; this requirement selects its existing
   `quire.contract-ir.semantic/v1` domain for the ContractPackage projection.
