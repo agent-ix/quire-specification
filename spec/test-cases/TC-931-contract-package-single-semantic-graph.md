@@ -7,6 +7,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-330-AC-4
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-22
+    type: verifies
 ---
 
 # TC-931: ContractPackage has one identity-keyed semantic graph
@@ -14,8 +16,8 @@ relationships:
 ## Description
 
 Check that the ContractPackage representation uses the I04 node-tag, key and
-reference rules and does not serialize separate graph collections or a second
-protocol-reference form.
+reference rules and does not serialize separate graph collections or a separate
+`protocol_references` collection.
 
 ## Test Procedure
 
