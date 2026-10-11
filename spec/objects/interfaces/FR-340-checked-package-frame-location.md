@@ -94,8 +94,9 @@ the member resolution
 `field` member: for a `model`/`object_type` node, step 2 looks up the
 declaration the node's `ModelOwner` names and step 3 matches `name` against the exposed effective
 field members of that object type, own and inherited; for a
-`model`/`record_value_type` node, `name` matches the fields its record
-declaration declares. Operation members are not candidates. The field
+`model`/`record_value_type` node, `name` matches its exposed effective fields,
+own and inherited, under the same resolution rule. Operation members are not
+candidates. The field
 entry refuses as follows, and a refusal is that entry's meaning-join
 defect:
 

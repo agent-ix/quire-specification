@@ -30,6 +30,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-154
     type: references
+  - target: ix://agent-ix/quire-specification/FR-208
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-340
+    type: references
   - target: ix://agent-ix/quire-specification/FR-149
     type: references
   - target: ix://agent-ix/quire-specification/FR-151
@@ -315,7 +319,8 @@ boundary.
     FR-341's `state`/`state_clause` node, an application-keyed node that
     carries no `owner`. An `invariant` clause function is owned by an object
     type with no `interfaceFeatures` (`model`/`object_type`, never a systems
-    interface), and a `precondition` or `body` clause function by an operation
+    interface) or by a record value type (`model`/`record_value_type`);
+    a `precondition` or `body` clause function is owned by an operation
     member of an object type, the operation's context; a clause function with
     no, a repeated, a non-text or another `clause` binding has no owner kind it can join. Any
     other owner refuses `missing_declaration`/`missing-selection`
@@ -443,7 +448,8 @@ boundary.
   structural node (no `nominal_identity_preimage`, and a body whose root is
   not an `application`) that either carries a `declaration` or is a
   **model-owned node** (QSL FR-094) carrying none: a model declaration node
-  (`model`/`object_type`, `model`/`systems_interface` or
+  (`model`/`object_type`, `model`/`record_value_type`,
+  `model`/`systems_interface` or
   `relation`/`relationship`) or a clause function (`function`). A declared
   owner-bearing node carries the `SourceOwner` of the source unit that
   declares it, `{kind: "source", authority, identity}`; a model-owned node
@@ -624,7 +630,7 @@ neither model-owned row, so it falls in the last row and carries none.
 | Node | `owner` |
 | --- | --- |
 | structural, carries `declaration` | required, `SourceOwner` |
-| structural, no `declaration`, `node_tag`/`semantic_form` `model`/`object_type`, `model`/`systems_interface` or `relation`/`relationship` | required, `ModelOwner` |
+| structural, no `declaration`, `node_tag`/`semantic_form` `model`/`object_type`, `model`/`record_value_type`, `model`/`systems_interface` or `relation`/`relationship` | required, `ModelOwner` |
 | structural, no `declaration`, `node_tag` `function` | required, `ModelOwner` |
 | every other node | absent |
 
@@ -684,7 +690,9 @@ conformance" below).
    admitted document of the selection whose `identity` equals the owner's
    `identity` declares under the IR node identity equal to the owner's
    `node`, and of the kind the node's `node_tag`/`semantic_form` names: an
-   object type with no `interfaceFeatures` for `model`/`object_type`, an
+   object type with no `interfaceFeatures` for `model`/`object_type`, a
+   record value type of FR-208's `quire.meaning.model.record-value-type/v1`
+   for `model`/`record_value_type`, an
    object type with `interfaceFeatures` for `model`/`systems_interface` and a
    relationship for `relation`/`relationship`. FR-321 admits one selection
    per `identity` and a document declares each IR node identity once, so at
@@ -717,6 +725,7 @@ conformance" below).
    | `ix://quire/native/Integer` | `Integer` | `scalar_type`/`integer` |
    | a value type (FR-208 `quire.meaning.model.value-type/v1`) of the same domain package bound as `Int[lo, hi]`, `lo <= hi`, as TC-196's `Count` and `Small` and TC-197's `Count` are | `Int[lo, hi]` | `bounded_domain`/`integer_range` with bounds `lo` and `hi` over the `Integer` node |
    | a value type of the same domain package bound as `Text[min, max; profile]`, `0 <= min <= max`, with `profile` one of FR-141's `unicode-scalars`, `nfc`, `nfd`, `nfkc`, `nfkd` and `binary-utf8` | `Text[min, max; profile]`, whose length, bounds and comparison are FR-141's under `profile` | `bounded_domain`/`text_bounds` with bounds `min` and `max` and `text_profile` `profile` over the `scalar_type`/`text` node |
+   | a record value type `R` of the same domain package, admitted under FR-208 | `R`, a value with no object identity | the self-typed `model`/`record_value_type` declaration node owned by `R`; no `composite_type`/`reference` is introduced |
    | an object type `O` of the same domain package | `Reference<O>` | `composite_type`/`reference` over `O`'s model declaration node |
 
    The multiplicity `{lower, upper, ordered, unique}` then gives the type.
@@ -736,8 +745,9 @@ conformance" below).
    give the member no type, and the application refuses
    `ill_typed`/`operator-ineligible`.
 
-   Each node the tables name is the anonymous structural node, with no
-   `declaration`, exactly as QSL FR-092 and FR-094 key it, so the node that
+   Each node the tables name has no `declaration`; the record value type is
+   model-owned, while the other derived types are anonymous structural nodes,
+   exactly as QSL FR-092 and FR-094 key them. The node that
    stands for a type, and every application node id that references it, is
    canonical.
 
@@ -1010,7 +1020,8 @@ A type node's **family** is read from the type the node resolves to through its
 `unit` is `quantity`, an enum is `ordered_enum` when its nominal preimage is
 ordered and `enum` otherwise; `composite_type` forms `option`, `record`,
 `tuple`, `union`, `sequence`, `set`, `bag`, `ordered_set` and `reference` are
-their own family, and a model declaration node whose `semantic_form` is `object_type` or
+their own family; a `model`/`record_value_type` declaration is `record`, and
+a model declaration node whose `semantic_form` is `object_type` or
 `systems_interface` is `object`. A `relation` node and a `model` node of any
 other form have no family, so a term they type fits no operand position. An
 `object` term is admitted only at a `field_owner` operand position and at
@@ -1227,6 +1238,9 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-60 | For each `K` of `set`, `bag` and `ordered_set`, equality over `K<Choice>` (U2) requires U2's leaves with one leading `inner` per path; `contains` over that collection (`inner:0`) and a catalogued `result_inner` operation yielding `K<Choice>` require U2's leaves without that prefix. A `result_inner` operation yielding `sequence<Choice>` requires `[]`, while equality over `sequence<Choice>` requires U2's leaves with one leading `inner`. | Test |
 | FR-322-AC-61 | Both V2 schemas admit `member:Right`, `member:_item2`, `position:0`, `position:12`, `recursion:0` and `recursion:12`; they refuse `member:`, `member:1Right`, `position:01`, `position:-1`, `recursion:`, `recursion:01` and `recursion:-1`. The shared catalog includes `union` in `structural_kind`, so equality and inequality admit eligible Union operands under the existing `same_type` constraint and `operand:0` leaf source. | Test |
 | FR-322-AC-62 | The settled derived type forms forward aliases to their resolved node without an `alias` node; key `Reference<Order>` as an anonymous self-typed `composite_type`/`reference` over `Order`'s model declaration; key `Population<Order>[3]` as an anonymous `bounded_domain`/`model_population` whose `semantic_type` is `Set<Reference<Order>>` and whose body binds integer `max = 3`; and key a formed `metre / second` quantity as an anonymous self-typed `scalar_type`/`compound_unit` with ordered unit/exponent terms over targetless canonical nominal unit roots whose semantic type is their dimension key. The worked accepted vectors are admitted, including the exact U2 vector. The `RM-REF-TARGET`, `RM-POP-MAX` and `RM-CU-ORDER` exact preimages bind their keys; the corresponding public wire nodes satisfy the `SemanticNode` schema. Retaining each original key exercises stale-key detection, and recomputing each key exercises semantic-shape refusal for a non-model reference target, negative bound, arbitrary set element type and noncanonical term order as `invalid_package`/`invalid-derived-shape`. | Test (`tests/checked_package_v2.rs`, `tc_322_derived_form_key_mutations`, `tc_322_recomputed_derived_forms_refuse_semantic_mutations`) |
+| FR-322-AC-63 | A selected domain package with `Address { street: Text[0, 64; nfc] }` and object `Account { address: Address }` admits a self-typed `model`/`record_value_type` declaration node owned by `Address`; `Account.address` derives the `Address` node as its type and a `field` projection on an `Address` value resolves `street` to `Text[0, 64; nfc]`. The record node has family `record`, and an invariant clause function owned by `Address` passes the owner join. | Test |
+| FR-322-AC-64 | A record field typed as another record, including an inherited field, and a field typed `Option<Address>` or `Sequence<Address>[0, 3]` derive the declared record node at the innermost element; a finite recursive record reached through `Option` retains the same record declaration node at every level. No record field derives `Reference<Address>` or an object identity. | Test |
+| FR-322-AC-65 | A `model`/`record_value_type` node owned by a selected object type or a node absent from the selected document refuses `missing_declaration`/`missing-selection` in the owner join; one with a missing `owner` refuses `malformed_wire`. A record field whose `typeRef` names an event type, state machine, process, persistence interface or namespace refuses `invalid_model_binding`/`malformed-declaration` at FR-154 intake before member derivation; a record node used as an object reference target refuses `invalid_package`/`invalid-derived-shape`. | Test |
 
 ## Dependencies
 
@@ -1249,5 +1263,5 @@ remain tracked separately.
 ## References
 
 - Tickets: Linear QSL-290, QSL-638 (the node `owner` member), QSL-642
-  (integers in a node-key preimage) and QSL-692 (settled derived type forms
-  for StateModel lowering).
+  (integers in a node-key preimage), QSL-659 (record-valued model fields) and
+  QSL-692 (settled derived type forms for StateModel lowering).
