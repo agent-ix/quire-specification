@@ -1,15 +1,15 @@
 ---
-id: SR-624
+id: SR-5658
 title: "Base review of the ContractPackage value contract"
 type: SpecReview
 analysis: base
-scope: "FR-330; FR-195-AC-6; TC-932 through TC-937"
+scope: "agent-ix/quire-specification@b96f2064015e7f6d20b70686c36830c11f8a45ac; FR-330; FR-195-AC-6; TC-932 through TC-937"
 review_set: base
 ---
 
 ## Summary
 
-The author addressed the reader-vector and user-story-link findings. Criterion-to-vector links and complete-V1 test-matrix rows are now present, although the computed Quire matrix still reports the criteria untagged because this spec-only change has no source trace binders; I accept that as implementation trace debt for this PR, with trace binding still required before code qualification. The requested semantic digest remains an explicit conflict with the base checklist's digest antipattern and is retained per the user's QSL-701 scope, not cleared by this review.
+The author addressed the reader-vector and user-story-link findings. Criterion-to-vector links and complete-V1 test-matrix rows are present, although the computed Quire matrix still reports the criteria untagged because this spec-only change has no source trace binders; trace binding remains required before code qualification. On final head `b96f206`, independent Opus review rejected FND-5953: the requested digest is a canonical identity over semantic content, not file or version tracking, and it does not replace provenance checks. FND-5954 is deferred as implementation trace debt.
 
 ## Findings
 
@@ -22,8 +22,43 @@ The author addressed the reader-vector and user-story-link findings. Criterion-t
 
 ## Checks
 
-- ID formats and uniqueness: FR-330, FR-195, FR-330-AC-1..9, FR-195-AC-1..6, and TC-932..937 conform and are unique in this branch. The new TC range follows TC-931 on fresh `origin/main`; no other open PR adds these IDs. Review SR-624 is beyond the fresh-main maximum SR-623 and does not collide with another open PR's review ID.
-- Links and structural validation: the changed FR-330, FR-195, and six TC documents passed targeted `quire validate` (exit 0). Repository-wide `quire validate --scope "$PWD" "spec/**/*.md"` exited 3 with 135 documents failing; failures are in unchanged legacy documents. The validator also reported existing module-catalog duplicate-archetype/inverse-edge warnings.
+- ID formats and uniqueness: FR-330, FR-195, FR-330-AC-1..9, FR-195-AC-1..6, and TC-932..937 conform and are unique in this branch. The new TC range follows TC-931 on fresh `origin/main`; no other open PR adds these IDs. A repository-wide scan of main and fetched remote branches found SR-5657 as the maximum; SR-5658 is unused.
+- Links and structural validation: the changed FR-330, FR-195, and six TC documents passed targeted `quire validate` (exit 0). On current main `c385e69a` and final PR head `b96f206`, repository-wide `quire validate --scope . 'spec/**/*.md' 'plan/**/*.md' --summary` exited 3 on both trees: main 142 failed documents, PR 141. The PR has no PR-only failed names; main-only is `spec/objects/interfaces/interface_012-contract-package.md`, whose duplicate `Features` table the PR removes. The validator also reports existing module-catalog duplicate-archetype/inverse-edge warnings.
 - Coverage: `quire matrix --scope "$PWD" --format tsv` still reports FR-330-AC-1..9 and FR-195-AC-6 `untagged`; its source-trace model has no binders in this spec-only worktree. The authored criterion-to-vector edges and complete-V1 test rows now exist, as recorded in FND-5954; implementation must add source trace tags.
 - Hash/digest check: the FR-330 SHA-256 identity is recorded in FND-5953.
 - The six checklist coverage rules were checked: there are no option sets or explicit boundary constraints; error-path coverage is incomplete as recorded in FND-5955; per-item and absent-key edge cases are represented in TC-933/TC-934; no state transition applies. Criterion trace coverage remains open under FND-5954.
+
+## Dispositions
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-5953 | rejected | The canonical semantic identity binds a proof to the exact semantic content proved. It contains no file path, commit SHA, or tool version; provenance remains separately checked. |
+| FND-5954 | deferred | Source trace binding requires implementation tests and is outside this spec-only PR; it remains required before code qualification. |
+| FND-5955 | fixed | b58bcd2 |
+| FND-5956 | fixed | b58bcd2 |
+
+```yaml
+dispositions:
+  - fnd: FND-5953
+    outcome: rejected
+    reason: "The RFC 8785 digest identifies the exact semantic ContractPackage projection; it does not track files or versions, and FR-330 separately validates source provenance."
+  - fnd: FND-5954
+    outcome: deferred
+    reason: "Source trace binding requires implementation tests and is outside this spec-only PR; it remains required before code qualification."
+  - fnd: FND-5955
+    outcome: fixed
+    fix_sha: b58bcd2
+    after_excerpt: |-
+      The wrong identity domain is refused as `invalid_package`/`invalid-value` at `/identity/domain`, using FR-322's existing typed pair; `digest_domain_mismatch` remains for a wrong domain on an input `PackageId`. Noncanonical wire bytes are refused as `noncanonical_wire` at `package_read`, with no cause or pointer, before identity recomputation.
+  - fnd: FND-5956
+    outcome: fixed
+    fix_sha: b58bcd2
+    after_excerpt: |-
+      relationships:
+        - target: ix://agent-ix/quire-specification/US-011
+          type: implements
+```
+
+## Rebase review
+
+Independent Opus review of the rebased branch and final I12 cleanup found no new defect. The original six PR patches were preserved on current main `c385e69a`; the only additional source change removes the duplicate `Features` table added by main, retaining the single `lower` operation feature.
