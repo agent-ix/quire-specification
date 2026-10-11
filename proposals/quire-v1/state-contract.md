@@ -68,6 +68,12 @@ own checked meaning and imports a compatible typed interface into its caller.
 | Statically defined Boolean clause root; no partial/nullable truthiness | Retained across shared predicates and state clauses. Monitor status is not a Boolean. |
 | Exact source authority and invocation anchors | Retained with the explicit alias/composite pre-state rules below. |
 
+This table and the numeric rules below govern the composed state profiles
+without `quire.value.complete/v1`. Selecting the complete-value facet does not
+change their state-only admission: it adds FR-147's `div`/`rem`/`mod` meaning and
+FR-149's exact integer-operand promotion for rational `/` only to declarations
+that select that facet.
+
 The imported domain package supplies named type/field/operation declaration
 keys, numeric/text/collection bounds, units, presence and reference roles, as
 the spec's artifacts declare them. The checker preserves

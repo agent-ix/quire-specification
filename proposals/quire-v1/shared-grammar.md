@@ -1066,10 +1066,22 @@ Resource exhaustion is incomplete execution/admission, not a false predicate.
 punctuation. Under the carried-forward admission it requires two values of one
 named dimensionless rational type, a proved nonzero divisor and a normalized
 result inside that same domain. `rational(1,2) / rational(1,2)` can therefore
-denote 1/1 under an appropriate explicit type. Bare `1/2` cannot introduce a
-rational value: ordinary integer literals do not implicitly convert to rational.
-Integer slash, `div`, `rem` and `mod` are recognized but refused even in
-unreachable syntax. Historical `0-draft` arithmetic retains its original meaning.
+denote 1/1 under an appropriate explicit type. Under a declaration selecting
+`quire.state.core/v1` without `quire.value.complete/v1`, `/` still requires
+operands of that same named rational type: integer operands refuse even when a
+rational result type is expected. Under `quire.value.complete/v1`, bare `1/2`
+cannot introduce a rational value without an expected rational type; with one,
+[FR-149](../../spec/functional/type-model/FR-149-apply-complete-equality-matrix.md)
+promotes integer operands exactly to `n/1` for rational `/`. `/` never denotes
+integer division. `div`, `rem` and `mod` are
+recognized at product precedence. When a declaration selects
+`quire.value.complete/v1`, integer `div` and `rem` are admitted only with exactly
+one checked integer-division definition, and `mod` has the independent
+Euclidean meaning specified by [FR-147](../../spec/functional/expressions/FR-147-evaluate-integer-division-domains.md).
+Without that facet, each integer operator receives a located profile refusal,
+including when its expression is unreachable. Recognition alone never supplies
+a missing definition or changes a selected law. Historical `0-draft` arithmetic
+retains its original meaning.
 
 ## Protocol expressions and bindings
 

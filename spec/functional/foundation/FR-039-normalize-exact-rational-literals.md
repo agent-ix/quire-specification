@@ -7,6 +7,10 @@ relationships:
     type: implements
   - target: ix://agent-ix/quire-specification/FR-205
     type: references
+  - target: ix://agent-ix/quire-specification/FR-147
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-149
+    type: references
 ---
 ## Description
 
@@ -22,7 +26,7 @@ An exact normalized value in its authored domain, or a typed zero-denominator, d
 
 ## Behavior
 
-Reject denominator zero before normalization. Move the sign to the numerator, divide both components by their greatest common divisor, and normalize any zero numerator to 0/1. Only normalized components are checked against the authored numerator/denominator bounds. The literal is not a runtime conversion or a user-defined function; no floating point or implicit integer-to-rational conversion occurs. Equivalent values preserve distinct original source spellings/identities. Where `quire.state.core/v1` is selected without `quire.value.complete/v1`, integer slash/div/rem/mod remain recognized refusals; where `quire.value.complete/v1` is selected, the integer operators and their definedness rules are specified by [FR-147](../expressions/FR-147-evaluate-integer-division-domains.md).
+Reject denominator zero before normalization. Move the sign to the numerator, divide both components by their greatest common divisor, and normalize any zero numerator to 0/1. Only normalized components are checked against the authored numerator/denominator bounds. The literal is not a runtime conversion or a user-defined function; no floating point or implicit integer-to-rational conversion occurs within the literal. Equivalent values preserve distinct original source spellings/identities. `/` never denotes integer division: typed rational `/` follows FR-044. Only where `quire.value.complete/v1` is selected does FR-149 permit exact `n/1` promotion of integer operands under an expected rational result type. Where `quire.state.core/v1` is selected without that facet, integer operands to `/` and integer `div`/`rem`/`mod` remain recognized profile refusals, including in unreachable syntax. Where `quire.value.complete/v1` is selected, admission and definedness of `div`/`rem`/`mod` follow [FR-147](../expressions/FR-147-evaluate-integer-division-domains.md).
 
 ## Acceptance Criteria
 
