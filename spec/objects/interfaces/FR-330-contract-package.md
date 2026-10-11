@@ -141,15 +141,18 @@ exactly `quire.contract-ir.semantic/v1`, algorithm `sha256`, and digest exactly
     "graph_version": "quire.checked-semantic-graph/v2",
     "nodes": "<exact key-ordered node array>"
   },
-  "source_map": "<exact total source correspondence>",
   "feature_accounting": "<exact ordered per-item records>"
 }
 ```
 
 The quoted placeholders above denote values themselves, not strings in the
 preimage. `identity` is excluded to avoid recursion. The originating package
-identity and lock, lowering profile, every graph node, source correspondence,
-and every terminal accounting result are included. Caller limits are not
+identity and lock, lowering profile, every graph node, and every terminal
+accounting result are included. `source_map` is strictly validated but excluded
+from the semantic digest because occurrence coordinates establish provenance,
+not semantic meaning. A change only to valid source occurrence/region data
+therefore leaves identity unchanged; corruption or incompleteness still refuses
+admission. Caller limits are not
 copied as separate package settings; where a `failed` accounting record names
 the exact failed `limit_kind`, limit and consumed count, those result fields
 are part of that record and therefore the projection. A limit change that
@@ -164,15 +167,19 @@ The digest uses FR-201's `quire.contract-ir.semantic/v1` domain, not the
 checked package's `quire.package.semantic/v2` identity.
 
 The ContractPackage reader is the single owner of outer wire admission. It
-first applies FR-322 strict syntax, duplicate-member, canonical-byte and
-version checks, then checks the exact top-level and nested closed shapes,
+first applies only the generic wire checks reused from FR-322: strict syntax,
+duplicate-member rejection, and canonical-byte validation. It then validates
+FR-330's own exact `quire.contract-package/v1` version (it MUST NOT apply
+FR-322's `quire.checked-package/v2` version predicate to this output), and
+checks the exact top-level and nested closed shapes,
 typed node keys and references, package provenance, profile selection,
 source-map totality, feature-accounting/request bijection, and recomputed
-identity before exposing an admitted typed value to a consumer. It returns the
-existing FR-322 typed `admitted`, `refused`, or `incomplete` result envelope;
-refusals use the existing FR-322 code/cause pairings and FR-272 catalogued
-diagnostics at `package_read`, while limit stops retain the exact incomplete
-kind, bound and consumed count. A consumer SHALL receive only an admitted
+identity before exposing an admitted typed value to a consumer. It returns the existing typed `admitted`, `refused`, or `incomplete` result
+envelope shape, with FR-330 validation failures mapped to the existing FR-322
+code/cause pairings and FR-272 catalogued diagnostics at `package_read`; limit
+stops retain the exact incomplete kind, bound and consumed count. These are
+FR-330 reader results, not a claim that the output value is an FR-322 checked
+package. A consumer SHALL receive only an admitted
 typed ContractPackage and SHALL NOT reparse the wire or reinterpret a refusal.
 Unknown version, missing, duplicate, extra, wrong-kind, out-of-domain or
 noncanonical data refuses before consumption. Limits remain caller inputs to
@@ -184,13 +191,13 @@ reading and lowering; they are not package data or identity inputs.
 | --- | --- | --- |
 | FR-330-AC-1 | Every represented node has identical native meaning under its explicit selected lowering profile. | Analysis |
 | FR-330-AC-2 | An unrepresentable item has no substitute node and retains exactly one typed terminal refusal with every available source locus (or its exact requested identity when no source key exists), while independent sibling records remain unchanged. | Analysis |
-| FR-330-AC-3 | Equivalent construction orders produce the same canonical package identity, and a change to any included semantic projection member changes that identity. | Test |
+| FR-330-AC-3 | When two packages have the same included semantic projection, their canonical identities are equal; when any included projection member differs, their identities differ. | Test |
 | FR-330-AC-4 | A package has exactly one semantic node collection ordered by the FR-322 typed node key; each node occurs once, local references resolve to compatible nodes, dependency references retain FR-322 selection semantics, protocol references name protocol-tagged nodes, and recursion is represented only by permitted keyed references. | Test |
 | FR-330-AC-5 | The embedded source `package_id` and lock exactly equal those of the originating admitted checked package; the explicit lowering profile is separate from lock profile selections, and any semantic-profile disagreement produces `invalid_input` before node emission without replacing the locked meaning. | Test |
 | FR-330-AC-6 | `feature_accounting` has one ordered record for each requested item and exactly one disposition from the seven-member vocabulary; non-`lowered` records have no substitute node, and the defensive variants preserve the exact FR-322 refusal or incomplete value. | Test |
 | FR-330-AC-7 | `source_map` has an entry for every semantic node, requested item, and refusal; an absent `CheckedNodeId` remains an explicitly mapped `invalid_input` with no fabricated region, while every available occurrence and region matches FR-322 exactly. | Test |
-| FR-330-AC-8 | The identity recomputes from the specified RFC 8785 projection under `quire.contract-ir.semantic/v1`; changing package provenance, lowering profile, graph, source correspondence, or an accounting result changes it, while a caller-limit change that leaves every serialized member unchanged, rendering-only change, or JSON-layout change does not. | Test |
-| FR-330-AC-9 | The sole reader admits a valid canonical value and refuses each wrong version, missing/duplicate/unknown member, wrong kind, invalid reference, incomplete source map, accounting mismatch, or identity mismatch with a typed FR-322/FR-272 result before any consumer sees a value. | Test |
+| FR-330-AC-8 | The identity recomputes from the specified RFC 8785 projection under `quire.contract-ir.semantic/v1`; changing package provenance, lowering profile, graph, or an accounting result changes it, while changing only valid source locations, caller limits that leave serialized members unchanged, rendering, or JSON layout does not. Source-map corruption still refuses admission. | Test |
+| FR-330-AC-9 | The sole reader admits a valid canonical value and refuses each wrong version, missing/duplicate/unknown member, wrong kind, invalid reference, incomplete source map, accounting mismatch, or identity mismatch with a typed FR-330 reader result using FR-322 code/cause and FR-272 diagnostic mappings before any consumer sees a value. | Test |
 
 ## Dependencies
 
