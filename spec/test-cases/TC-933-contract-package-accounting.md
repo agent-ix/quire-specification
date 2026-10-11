@@ -37,6 +37,12 @@ There are exactly eight records in request order, each naming its exact
 and graph root; the remaining records exercise exactly one each of
 `unsupported`, `requires_bound`, `invalid_input`, `failed`, `invalid_body`, and
 `body_incomplete`, with their specified payloads and no substitute node. The
-two defensive records retain the exact FR-322 refusal and incomplete value.
+`invalid_body.refusal` is a closed object with the exact typed `code`, `path`,
+`cause`, `locus`, `contract_version`, and `document_pointer` members that
+apply, omitting inapplicable optional members. `body_incomplete.incomplete`
+is a closed object with the exact `limit_kind`, `limit`, `consumed`, and
+`path` (except that byte exhaustion omits `path`). Mutations that add `null`
+where a member must be omitted, add an unknown nested member, change a field's
+kind, or change an exact nested value are refused as accounting errors.
 The two successful sibling records remain unchanged. Every mutation is
 refused as a typed accounting error before consumption.

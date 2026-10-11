@@ -93,6 +93,55 @@ others:
 - `body_incomplete`: the requested `node_id`, stopped `body_node_id`, and
   exact FR-322 `CheckedPackageIncomplete`.
 
+The two defensive payloads have closed serialized shapes. The `invalid_body`
+record carries `refusal`, a closed object with required string `code` and
+optional members `path`, `cause`, `locus`, `contract_version`, and
+`document_pointer`. `code` uses the exact FR-322 code spelling. `path` is the
+RFC 6901 pointer into the originating checked-package document and is absent
+only for a refusal about its byte stream. `cause` is present exactly when
+FR-322 determined the paired cause, using its exact FR-272 spelling. `locus`
+is present whenever FR-322 located the refusal at a graph node and has the
+exact closed `CheckedNodeId` shape `{domain, digest}`. `contract_version` is
+present exactly for `unknown_contract_version` and is the string read.
+`document_pointer` is present only when FR-322 reports a pointer into a
+supplied domain-package document. Optional members are omitted when
+inapplicable, never written as `null`, empty strings, or fabricated locations.
+The
+`body_incomplete` record carries `incomplete`, a closed object with required
+`limit_kind`, `limit`, and `consumed`, and optional `path`. `limit_kind` is one
+of `bytes`, `nodes`, `edges`, `occurrences`, `diagnostics`, or `work`; `limit`
+and `consumed` are non-negative JSON integers, with `consumed` the counter at
+the denied charge. `path` is the RFC 6901 pointer into the originating
+checked-package document and is omitted only for `bytes`, which is charged
+before a value is read. The members retain the corresponding FR-322 typed
+values exactly; they do not use FR-322's outer `ReadResult` envelope or add a
+second diagnostic vocabulary.
+
+For example, the serialized shape of a defensive body limit result is:
+
+```json
+{
+  "node_id": {
+    "domain": "quire.checked-semantic-node/v1",
+    "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "disposition": "body_incomplete",
+  "body_node_id": {
+    "domain": "quire.checked-semantic-node/v1",
+    "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "incomplete": {
+    "limit_kind": "work",
+    "limit": 8,
+    "consumed": 8,
+    "path": "/semantic_graph/nodes/3/body"
+  }
+}
+```
+
+This example specifies field names, types, omission, and pointer domains; its
+node digests are shape placeholders, not valid identities.
+
 The record's variant determines its required payload; payloads for other
 variants are forbidden. `invalid_body` and `body_incomplete` are defensive
 records: a package admitted by FR-322 should not produce them, but the closed
@@ -187,6 +236,16 @@ Unknown version, missing, duplicate, extra, wrong-kind, out-of-domain or
 noncanonical data refuses before consumption. Limits remain caller inputs to
 reading and lowering; they are not package data or identity inputs.
 
+The reader input also includes one admitted FR-322 dependency package for every
+entry of `package.source.lock.dependency_selections`, keyed by that entry's
+library `identity`. It SHALL require each input, confirm that the admitted
+package has that selection's identity and `package_id`, and resolve each
+`dependency_reference` only against the matching admitted package. The lock
+alone is not evidence that a selected package was supplied or admitted. A
+missing input refuses `missing_import`/`missing-selection` at that selection
+before any dependent node reference is checked, following FR-322's
+`dependency_selections` rule.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -196,10 +255,10 @@ reading and lowering; they are not package data or identity inputs.
 | FR-330-AC-3 | When two packages have the same included semantic projection, their canonical identities are equal; when any included projection member differs, their identities differ. | Test (TC-936) |
 | FR-330-AC-4 | A package has exactly one semantic node collection ordered by the FR-322 typed node key; each node occurs once, local references resolve to compatible nodes, dependency references retain FR-322 selection semantics, protocol references name protocol-tagged nodes, and recursion is represented only by permitted keyed references. | Test (TC-931, TC-937) |
 | FR-330-AC-5 | The embedded source `package_id` and lock exactly equal those of the originating admitted checked package; the explicit lowering profile is separate from lock profile selections, and any semantic-profile disagreement produces `invalid_input` before node emission without replacing the locked meaning. | Test (TC-932, TC-935) |
-| FR-330-AC-6 | `feature_accounting` has one ordered record for each requested item and exactly one disposition from the seven-member vocabulary; non-`lowered` records have no substitute node, and the defensive variants preserve the exact FR-322 refusal or incomplete value. | Test (TC-933) |
+| FR-330-AC-6 | `feature_accounting` has one ordered record for each requested item and exactly one disposition from the seven-member vocabulary; non-`lowered` records have no substitute node, and `invalid_body.refusal` and `body_incomplete.incomplete` use the exact closed nested shapes and omission rules above. | Test (TC-933) |
 | FR-330-AC-7 | `source_map` has an entry for every semantic node, requested item, and refusal; an absent `CheckedNodeId` remains an explicitly mapped `invalid_input` with no fabricated region, while every available occurrence and region matches FR-322 exactly. | Test (TC-934) |
 | FR-330-AC-8 | The identity recomputes from the specified RFC 8785 projection under `quire.contract-ir.semantic/v1`; changing package provenance, lowering profile, graph, or an accounting result changes it, while changing only valid source locations, caller limits that leave serialized members unchanged, rendering, or JSON layout does not. Source-map corruption still refuses admission. | Test (TC-936) |
-| FR-330-AC-9 | The sole reader admits a valid canonical value and refuses each wrong version, missing/duplicate/unknown member, wrong kind, invalid reference, incomplete source map, accounting mismatch, or identity mismatch with a typed FR-330 reader result using FR-322 code/cause and FR-272 diagnostic mappings before any consumer sees a value. | Test (TC-937) |
+| FR-330-AC-9 | The sole reader admits a valid canonical value only with every lock-selected admitted dependency package supplied and matching its selection; it refuses a missing dependency as `missing_import`/`missing-selection` before dependent-reference checks, and refuses each wrong version, missing/duplicate/unknown member, wrong kind, invalid reference, incomplete source map, accounting mismatch, or identity mismatch with a typed FR-330 reader result using FR-322 code/cause and FR-272 diagnostic mappings before any consumer sees a value. | Test (TC-937) |
 
 ## Dependencies
 

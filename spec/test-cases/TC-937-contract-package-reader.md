@@ -27,7 +27,12 @@ missing source-map entry; accounting/request mismatch; stale identity; wrong
 identity domain; and a semantically equivalent but noncanonical wire encoding
 with reordered members or insignificant whitespace. For the last case, preserve
 the original digest so the only defect is noncanonical bytes. For every refusal,
-capture the typed result before invoking a consumer.
+capture the typed result before invoking a consumer. Also construct a valid
+ContractPackage whose source lock has one `dependency_selections` entry and
+whose graph has a `dependency_reference` to that selected package. Supply the
+matching admitted dependency package keyed by its library identity, then repeat
+with that input omitted and with an admitted package whose identity matches but
+whose `package_id` differs from the selection.
 
 ## Expected Results
 
@@ -39,4 +44,11 @@ stage and available loci. The wrong identity domain is refused as
 `invalid_package`/`invalid-value` at `/identity/domain`, using FR-322's
 existing typed pair; `digest_domain_mismatch` remains for a wrong domain on an
 input `PackageId`. Noncanonical wire bytes are refused as `noncanonical_wire`
-at `package_read`, with no cause or pointer, before identity recomputation. No consumer receives or reparses that value. No alternate reader accepts a value refused by the owner.
+at `package_read`, with no cause or pointer, before identity recomputation.
+The correctly supplied dependency is admitted and its reference resolves only
+against that package. Omitting the selected dependency refuses
+`missing_import`/`missing-selection` at the lock selection before the reference
+is checked; supplying the wrong package id refuses
+`stale_dependency`/`content-mismatch` with the selected and recomputed package
+identities. No consumer receives or reparses a refused value. No alternate
+reader accepts a value refused by the owner.
