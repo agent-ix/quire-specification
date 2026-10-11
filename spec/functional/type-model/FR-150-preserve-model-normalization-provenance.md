@@ -100,9 +100,9 @@ Structural checked-node correspondence and model effective-declaration
 identities remain different domains; this change does not redefine I04 NodeKeys.
 
 This is a pre-release replacement draft. The old closed schema/vector bytes
-do not satisfy it. The matching selected closure, rule manifest, accounting,
-domain-package edge protocol, strict reader and caller-minted identity domains
-SHALL be adopted atomically before implementation cutover. No mixed-cohort
+do not satisfy it. QSL SHALL atomically adopt the matching selected closure,
+rule manifest, accounting, domain-package edge protocol, strict reader and
+caller-minted identity domains as its implementation cutover. No mixed-cohort
 default, compatibility reader, digest relabelling or old-digest transport is
 admitted. Optional operation-edge document schema support and released
 selected-document reader retention are delivered intake capabilities, not
@@ -116,6 +116,12 @@ locked reader is not adoption of the released intake. Structural checked-node
 correspondence cannot discharge this full-view round-trip. Bounded sole-writer
 full-provenance export, matched wire/schema/vectors/domains and separately
 admitted reader costs remain prerequisites, not successful qualification.
+
+The system owner of that atomic adoption is QSL as the consumer/implementation
+of this contract. The selected closure, transport, sole writer, strict reader
+and accounting must cut over together in QSL; this assigns ownership to the
+system, not to an individual. QSpec specifies the contract and does not claim
+that QSL has adopted or qualified it.
 
 ## Normalization derivation
 
@@ -225,7 +231,7 @@ the matched integration cohort and independent qualification.
 | FR-150-AC-13 | Every effective identity and the complete view/universe identities are computed eagerly; a transport missing any effective preimage or reachable key/block record, or supplying only a root/requested membership proofs, cannot be admitted as a complete view. | Test |
 | FR-150-AC-14 | Each admitted template's analytical price equals the sole canonical writer's returned length, including escaped admitted keys; exact-bound/one-less/zero denial at metadata, normal-form, identity-work or hash performs none of that event's named work and no dependent work, with zero node encoding/hashing on hash denial. Shared hits do not rehash a node but retain their prescribed lookup charges. | Test |
 | FR-150-AC-15 | The replacement selected closure, schema/vectors, edge protocol, strict reader, accounting and identity domains agree on one contract; an old or mixed selection and an old digest relabelled into the replacement domain are not admitted through a compatibility path. | Inspection |
-| FR-150-AC-16 | For an admitted single-inheritance chain of E edges, all E+1 effective type identities and the complete view are computed with every logical inheritance fact retained; shared-prefix-specific charges are at most `12 × (E + 1)`, the exact v2 preimage bytes and published vectors are unchanged, and the 10,000-edge/512-KiB case completes when its semantic fact limit admits 50,015,001 facts. | Test |
+| FR-150-AC-16 | For an admitted single-inheritance chain of E edges, all E+1 effective type identities and the complete view are computed with every logical inheritance fact retained; shared-prefix-specific charges are at most `12 × (E + 1)`, exact v2 preimage bytes and published vectors are unchanged, and the 10,000-edge/512-KiB case completes under `hashed_bytes ≤ 268435456`, `work_units ≤ 16777216`, `derivation_facts = 50015001`, and peak resident memory ≤ 21474836480 bytes. Elapsed-time qualification is separate and remains unclaimed pending owner decision e11 on a ceiling and reference hardware. | Test |
 
 ## Dependencies
 

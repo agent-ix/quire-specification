@@ -15,16 +15,28 @@ Normalize inherited/redefined declarations and mutate identity, digest and rule-
 
 ## Test Procedure
 
-Use the subject and inputs named by FR-150. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
+For N01–N10, use the v1 authority below and execute the existing cases at the
+available v1 Rust boundary. N11–N13 are proposed v2 QSL adoption and
+qualification procedures: execute them only against the atomically selected
+v2 producer/strict-reader cohort described by FR-150. Their specification and
+contract-audit bindings do not claim that this repository implements those
+runtime procedures or that they have passed.
 
-Rows N01–N10 below remain the published `quire.model.complete/v1` regression
-vectors and MUST remain byte-for-byte unchanged. N11 is the new v2 shared-prefix
-accounting acceptance case; it does not rewrite or relabel those vectors.
+N01–N10 are historical `quire.model.complete/v1` cases, authorized only by
+[`complete-model-lock.json`](../../proposals/quire-v1/definitions/complete-model-lock.json)
+and the published v1 vector bytes. Their fixture selections, preimages, writer
+bytes and expected identities remain unchanged; they are regression evidence
+for v1, not v2 qualification. N11–N13 select the proposed
+`quire.model.complete/v2` replacement closure and its v2 rule manifest under
+FR-150. They are not authorized by, nor may be relabelled into, the v1 lock.
+The v2 transport and strict-reader acceptance uses the complete v2 closure,
+including every reachable exact key/block record; an old or mixed cohort is a
+refusal, not fallback.
 
-Select `quire.model.complete/v1` through
+For N01–N10 only, select `quire.model.complete/v1` through
 [`complete-model-lock.json`](../../proposals/quire-v1/definitions/complete-model-lock.json),
-which also selects the `quire.value.complete/v1` lock. Every fixture is a domain
-package with identity `test/orders`. A node written `X` has IR
+which also selects the `quire.value.complete/v1` lock. Each N01–N10 fixture is
+a domain package with identity `test/orders`. A node written `X` has IR
 node identity `ix://test/orders/X`, and its declaration key is
 `{package: test/orders, node: ix://test/orders/X, digest_domain: sha256-jcs}`.
 Object type `A` is declared by the artifact with id `A` and title `Alpha`, `B`
@@ -65,7 +77,9 @@ Fixtures:
 | N08 | F1 with `A/x.presence` set to `maybe` and `B.supertypes` set to `[Z]` | after three `normalize.record` charges, two refusals in node order and no effective view: `refused { code: invalid_model_binding, cause: malformed-declaration }` naming `ix://test/orders/A/x`, member path `presence` and its `origin`; then `refused { code: missing_declaration, cause: missing-name }` naming `ix://test/orders/B`, absent node `ix://test/orders/Z` and its `origin` |
 | N09 | F1 under its placeholder ModelSelection; then the N01 identities compared with the F1 selection digest and with the I04 node key of the `model_correspondence` node; then F1's nodes under the placeholder selection `n01v2` | ModelSelection `{identity: test/orders, digest_domain: sha256-jcs, digest: <SHA-256 of n01>}`, exactly the `model_selection` of the `n01-view` vector; no effective, view or universe identity equals the F1 selection digest or the I04 node key, because their domains differ; the `n01v2` run yields declarations byte-equal to `n01-view`'s, view `c478fa11` and universe `0b675aaf`, because only its ModelSelection differs |
 | N10 | Each mutation in `invalid_mutations` of the vectors file applied to its base preimage | `absent-node` refuses as a stale key; `cross-domain-declaration-key` and `owner-as-declaration-key` are refused by the schema; `unsorted-derivation`, `duplicate-path` and `unsorted-view` are refused by the semantic check; none exposes its retained digest as a valid identity |
-| N11 | Normalize a deterministic single-inheritance chain of 10,000 edges (10,001 object types), with canonical package bytes no larger than 512 KiB, under explicit limits admitting `declaration_records: 10001`, `derivation_facts: 50015001`, `effective_declarations: 10001`, `hashed_bytes: 268435456` and `work_units: 16777216` | all 10,001 type identities, every logical qualify/inherit fact (50,015,001 facts total), and the complete universe/view are produced; the shared-prefix fact-run, cycle-check, normal-form segment/link, and range/binding-proof charges total at most `12 × 10001`; exact v2 preimage bytes are emitted through the sole writer and all digests verify; the existing N01–N10 published vector bytes remain unchanged. Independently expand and compare smaller ladders including shared tails/diamonds to prove exact fact order, path multiplicity and ordinals. Record actual full-size elapsed time and peak memory as qualification evidence; the acceptance contract does not claim those measurements before execution. |
+| N11 | Under the v2 selected closure, normalize a deterministic single-inheritance chain of 10,000 edges (10,001 object types), canonical package bytes ≤ 524288, and limits `declaration_records: 10001`, `derivation_facts: 50015001`, `effective_declarations: 10001`, `hashed_bytes: 268435456`, `work_units: 16777216` | Produce all 10,001 type identities, every logical qualify/inherit fact (50,015,001 facts), and the complete universe/view. Shared-prefix fact-run, cycle-check, normal-form segment/link, and range/binding-proof charges total ≤ `12 × 10001`; total exact identity hashing is bounded by 268435456 bytes and total work by 16777216 units. Emit and verify the unchanged exact v2 preimage bytes through the sole writer. Peak resident memory must be ≤ 21474836480 bytes. The N01–N10 v1 vector bytes remain unchanged. Independently expand smaller ladders including shared tails/diamonds to verify exact fact order, multiplicity and ordinals. Record actual full-size elapsed time and peak memory; do not infer elapsed time from an extrapolation or claim runtime/memory qualification before measurement. Elapsed-time acceptance remains unclaimed pending owner decision e11 on the ceiling and reference hardware. | FR-150-AC-16 |
+| N12 | Under the v2 selected closure, have the sole writer emit the complete retained-provenance transport for a fixture with inherited prefixes, a shared tail/diamond and a hidden redefinition; feed those exact bytes to an independent strict reader. Mutate separate copies by omitting a reachable exact key, a reachable block, an effective preimage, an eager effective identity, and a non-root effective declaration; also submit a root-only/requested-membership proof and a v1 or mixed-cohort selection. | Writer output round-trips with byte-exact preimages and all expanded facts, inputs, rules, ordinals, multiplicity, hidden declarations and origins; reader independently recomputes every eager identity and the complete ordered view before admission. Each omission, partial proof, old lock or mixed selection is refused with no admitted view and no digest relabelling/fallback. | FR-150-AC-12, FR-150-AC-13, FR-150-AC-15 |
+| N13 | On a small v2 fixture, separately inject the exact limit, one unit less and zero for (a) shared-prefix/normal-form work, (b) identity-work, and (c) analytically priced preimage-hash bytes; make the next charge coincide with a dependent operation in each denied run. Include a template with escaped admitted key bytes. | Exact-bound runs complete. Each one-less/zero run reports the first unavailable named charge deterministically; denial performs none of that event's work, encodes/hashes no denied node, and runs no dependent operation. For every admitted template, the analytical price equals the sole writer's returned length including escaped keys. Shared hits retain prescribed lookup charges and do not rehash. | FR-150-AC-14 |
 
 ## Expected Results
 
