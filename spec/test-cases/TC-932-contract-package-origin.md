@@ -5,6 +5,8 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-330
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-330-AC-5
+    type: verifies
 ---
 # TC-932: ContractPackage retains the exact checked package identity and lock
 

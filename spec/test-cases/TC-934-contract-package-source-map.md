@@ -5,6 +5,10 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-330
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-330-AC-2
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-330-AC-7
+    type: verifies
 ---
 # TC-934: ContractPackage source map is total for nodes, requests and refusals
 

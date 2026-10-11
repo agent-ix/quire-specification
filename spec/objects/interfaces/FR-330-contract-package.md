@@ -3,6 +3,8 @@ id: FR-330
 title: "Target-neutral contract package"
 type: FR
 relationships:
+  - target: ix://agent-ix/quire-specification/US-011
+    type: implements
   - target: ix://agent-ix/quire-specification/interface_012
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-322
@@ -189,15 +191,15 @@ reading and lowering; they are not package data or identity inputs.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-330-AC-1 | Every represented node has identical native meaning under its explicit selected lowering profile. | Analysis |
-| FR-330-AC-2 | An unrepresentable item has no substitute node and retains exactly one typed terminal refusal with every available source locus (or its exact requested identity when no source key exists), while independent sibling records remain unchanged. | Analysis |
-| FR-330-AC-3 | When two packages have the same included semantic projection, their canonical identities are equal; when any included projection member differs, their identities differ. | Test |
-| FR-330-AC-4 | A package has exactly one semantic node collection ordered by the FR-322 typed node key; each node occurs once, local references resolve to compatible nodes, dependency references retain FR-322 selection semantics, protocol references name protocol-tagged nodes, and recursion is represented only by permitted keyed references. | Test |
-| FR-330-AC-5 | The embedded source `package_id` and lock exactly equal those of the originating admitted checked package; the explicit lowering profile is separate from lock profile selections, and any semantic-profile disagreement produces `invalid_input` before node emission without replacing the locked meaning. | Test |
-| FR-330-AC-6 | `feature_accounting` has one ordered record for each requested item and exactly one disposition from the seven-member vocabulary; non-`lowered` records have no substitute node, and the defensive variants preserve the exact FR-322 refusal or incomplete value. | Test |
-| FR-330-AC-7 | `source_map` has an entry for every semantic node, requested item, and refusal; an absent `CheckedNodeId` remains an explicitly mapped `invalid_input` with no fabricated region, while every available occurrence and region matches FR-322 exactly. | Test |
-| FR-330-AC-8 | The identity recomputes from the specified RFC 8785 projection under `quire.contract-ir.semantic/v1`; changing package provenance, lowering profile, graph, or an accounting result changes it, while changing only valid source locations, caller limits that leave serialized members unchanged, rendering, or JSON layout does not. Source-map corruption still refuses admission. | Test |
-| FR-330-AC-9 | The sole reader admits a valid canonical value and refuses each wrong version, missing/duplicate/unknown member, wrong kind, invalid reference, incomplete source map, accounting mismatch, or identity mismatch with a typed FR-330 reader result using FR-322 code/cause and FR-272 diagnostic mappings before any consumer sees a value. | Test |
+| FR-330-AC-1 | Every represented node has identical native meaning under its explicit selected lowering profile. | Test (TC-935) |
+| FR-330-AC-2 | An unrepresentable item has no substitute node and retains exactly one typed terminal refusal with every available source locus (or its exact requested identity when no source key exists), while independent sibling records remain unchanged. | Test (TC-933, TC-934) |
+| FR-330-AC-3 | When two packages have the same included semantic projection, their canonical identities are equal; when any included projection member differs, their identities differ. | Test (TC-936) |
+| FR-330-AC-4 | A package has exactly one semantic node collection ordered by the FR-322 typed node key; each node occurs once, local references resolve to compatible nodes, dependency references retain FR-322 selection semantics, protocol references name protocol-tagged nodes, and recursion is represented only by permitted keyed references. | Test (TC-931, TC-937) |
+| FR-330-AC-5 | The embedded source `package_id` and lock exactly equal those of the originating admitted checked package; the explicit lowering profile is separate from lock profile selections, and any semantic-profile disagreement produces `invalid_input` before node emission without replacing the locked meaning. | Test (TC-932, TC-935) |
+| FR-330-AC-6 | `feature_accounting` has one ordered record for each requested item and exactly one disposition from the seven-member vocabulary; non-`lowered` records have no substitute node, and the defensive variants preserve the exact FR-322 refusal or incomplete value. | Test (TC-933) |
+| FR-330-AC-7 | `source_map` has an entry for every semantic node, requested item, and refusal; an absent `CheckedNodeId` remains an explicitly mapped `invalid_input` with no fabricated region, while every available occurrence and region matches FR-322 exactly. | Test (TC-934) |
+| FR-330-AC-8 | The identity recomputes from the specified RFC 8785 projection under `quire.contract-ir.semantic/v1`; changing package provenance, lowering profile, graph, or an accounting result changes it, while changing only valid source locations, caller limits that leave serialized members unchanged, rendering, or JSON layout does not. Source-map corruption still refuses admission. | Test (TC-936) |
+| FR-330-AC-9 | The sole reader admits a valid canonical value and refuses each wrong version, missing/duplicate/unknown member, wrong kind, invalid reference, incomplete source map, accounting mismatch, or identity mismatch with a typed FR-330 reader result using FR-322 code/cause and FR-272 diagnostic mappings before any consumer sees a value. | Test (TC-937) |
 
 ## Dependencies
 

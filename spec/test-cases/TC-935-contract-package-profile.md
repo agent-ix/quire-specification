@@ -5,6 +5,10 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-330
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-330-AC-1
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-330-AC-5
+    type: verifies
 ---
 # TC-935: ContractPackage binds meaning to the selected lowering profile
 
