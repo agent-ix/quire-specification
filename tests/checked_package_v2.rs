@@ -10720,9 +10720,10 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
 #[trace("FR-322-AC-62", "TC-233")]
 #[test]
 fn tc_322_derived_form_key_mutations() {
-    let schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
-        .expect("node preimage schema is valid");
-    let cases: [(&str, &str, fn(&mut Value)); 3] = [
+    type KeyMutation = (&'static str, &'static str, fn(&mut Value));
+
+    let schema = schema_for_def(&parsed_fixture(SCHEMA), "SemanticNode");
+    let cases: [KeyMutation; 3] = [
         (
             "RM-REF-TARGET",
             r#"{"body":{"members":[{"target":{"digest":"6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b","domain":"quire.checked-semantic-node/v1"},"term":"reference"}],"term":"aggregate"},"declaration":null,"node_tag":"composite_type","recursion":null,"semantic_form":"reference","semantic_type":null,"version":"quire.structural-node/v1"}"#,
@@ -10755,125 +10756,50 @@ fn tc_322_derived_form_key_mutations() {
     ];
     for (name, source, mutate) in cases {
         let base = parsed_fixture(source);
-        assert!(schema.is_valid(&base), "{name}: base preimage schema");
         let base_key = unqualified_jcs_sha256(&base);
+        let wire_node = |preimage: &Value, key: &str| {
+            let node_id = json!({
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": key
+            });
+            json!({
+                "node_id": node_id,
+                "schema_version": "quire.checked-semantic-graph/v2",
+                "node_tag": preimage["node_tag"],
+                "semantic_form": preimage["semantic_form"],
+                "semantic_type": if preimage["semantic_type"].is_null() {
+                    node_id
+                } else {
+                    preimage["semantic_type"].clone()
+                },
+                "dependencies": [],
+                "occurrences": [{"role": "type", "ordinal": 0}],
+                "body": preimage["body"]
+            })
+        };
+        assert!(
+            schema.is_valid(&wire_node(&base, &base_key)),
+            "{name}: base wire node schema"
+        );
         let mut mutated = base.clone();
         mutate(&mut mutated);
+        let mutated_key = unqualified_jcs_sha256(&mutated);
         assert!(
-            schema.is_valid(&mutated),
-            "{name}: mutation remains schema-valid"
+            schema.is_valid(&wire_node(&mutated, &mutated_key)),
+            "{name}: mutated wire node schema"
         );
-        let recomputed_key = unqualified_jcs_sha256(&mutated);
-        assert_ne!(base_key, recomputed_key, "{name}: mutation changes the key");
+        assert_ne!(base_key, mutated_key, "{name}: mutation changes the key");
         assert_eq!(
             base_key,
             unqualified_jcs_sha256(&base),
             "{name}: retained key"
         );
         assert_eq!(
-            recomputed_key,
+            mutated_key,
             unqualified_jcs_sha256(&mutated),
             "{name}: recomputed key"
         );
     }
-}
-
-/// Recomputed keys must still pass the reader's semantic shape stage.  These
-/// candidates are schema-valid and have current structural keys, but the
-/// changed reference target, negative population bound and noncanonical unit
-/// order are rejected by `read_package_semantics`.
-#[trace("FR-322-AC-63", "TC-233")]
-#[test]
-fn tc_322_compound_unit_admits_a_self_typed_structural_unit_root() {
-    let catalog = parsed_fixture(OPERATION_CATALOG);
-    let mut package = parsed_fixture(POSITIVE_NOMINAL_IDENTITIES);
-    let nominal_root = package["semantic_graph"]["nodes"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .find(|node| {
-            node["node_tag"] == "scalar_type"
-                && node["semantic_form"] == "unit"
-                && node["node_id"]["digest"]
-                    == "79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"
-        })
-        .expect("published metre root exists");
-    let mut structural_root = nominal_root.clone();
-    structural_root["node_id"]["digest"] = json!("0".repeat(64));
-    structural_root["semantic_type"] = structural_root["node_id"].clone();
-    structural_root["declaration"] = Value::Null;
-    structural_root["occurrences"] = json!([]);
-    structural_root
-        .as_object_mut()
-        .unwrap()
-        .remove("nominal_identity_preimage");
-    structural_root["dependencies"] = json!([]);
-    append_rekeyed_structural_node(&mut package, structural_root);
-    let root = package["semantic_graph"]["nodes"]
-        .as_array()
-        .unwrap()
-        .last()
-        .unwrap()
-        .clone();
-    let root_preimage = structural_node_preimage(&root).unwrap();
-    assert_eq!(
-        root_preimage,
-        json!({
-            "version": "quire.structural-node/v1",
-            "node_tag": "scalar_type",
-            "semantic_form": "unit",
-            "semantic_type": null,
-            "declaration": null,
-            "recursion": null,
-            "body": {"term": "aggregate", "members": []}
-        }),
-        "self-typed structural root has the exact structural-node preimage"
-    );
-    assert_eq!(
-        root["node_id"]["digest"],
-        unqualified_jcs_sha256(&root_preimage),
-        "structural root key is the JCS SHA-256 of its preimage"
-    );
-    let integer = json!({
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
-    });
-    let compound = json!({
-        "node_id": root["node_id"],
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "node_tag": "scalar_type",
-        "semantic_form": "compound_unit",
-        "semantic_type": root["node_id"],
-        "declaration": null,
-        "dependencies": [root["node_id"]],
-        "occurrences": [],
-        "body": {"term": "aggregate", "members": [{
-            "term": "aggregate",
-            "members": [
-                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": root["node_id"]}},
-                {"name": "exponent", "term": "binding", "value": {"term": "literal", "type": integer, "value": "1", "value_kind": "integer"}}
-            ]
-        }]},
-        "recursion": null,
-        "version": "quire.structural-node/v1"
-    });
-    append_rekeyed_structural_node(&mut package, compound);
-    let compound_node = package["semantic_graph"]["nodes"]
-        .as_array()
-        .unwrap()
-        .last()
-        .unwrap();
-    let compound_preimage = structural_node_preimage(compound_node).unwrap();
-    assert_eq!(
-        compound_node["node_id"]["digest"],
-        unqualified_jcs_sha256(&compound_preimage),
-        "compound key binds its exact ordered structural-root body"
-    );
-    assert_eq!(
-        read_package_semantics(&package, &catalog),
-        Ok(()),
-        "reader admits a compound unit over a structural root"
-    );
 }
 
 #[trace("FR-322-AC-62", "TC-233")]
@@ -11003,6 +10929,32 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         "recomputed negative population bound is rejected"
     );
 
+    let mut positive_population = wrong_population.clone();
+    let positive_index = positive_population["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .len()
+        - 1;
+    positive_population["semantic_graph"]["nodes"][positive_index]["body"]["members"][0]["value"]
+        ["value"] = json!("3");
+    positive_population["identity_preimage"]["identity_projection"][positive_index]["body"]["members"]
+        [0]["value"]["value"] = json!("3");
+    let positive_preimage =
+        structural_node_preimage(&positive_population["semantic_graph"]["nodes"][positive_index])
+            .unwrap();
+    let positive_digest = unqualified_jcs_sha256(&positive_preimage);
+    positive_population["semantic_graph"]["nodes"][positive_index]["node_id"]["digest"] =
+        json!(positive_digest);
+    positive_population["identity_preimage"]["identity_projection"][positive_index]["node_id"]["digest"] =
+        json!(positive_digest);
+    positive_population["identity_preimage"] = derive_identity_preimage(&positive_population);
+    refresh_package_id(&mut positive_population);
+    assert_eq!(
+        read_package_semantics(&positive_population, &catalog),
+        Ok(()),
+        "Set<Reference<Model>> population with nonnegative max is admitted"
+    );
+
     let mut arbitrary_set_population = wrong_population.clone();
     let population_index = arbitrary_set_population["semantic_graph"]["nodes"]
         .as_array()
@@ -11013,10 +10965,27 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         ["value"] = json!("3");
     arbitrary_set_population["identity_preimage"]["identity_projection"][population_index]["body"]
         ["members"][0]["value"]["value"] = json!("3");
+    let integer_set = arbitrary_set_population["semantic_graph"]["nodes"][42].clone();
+    let integer_id = arbitrary_set_population["semantic_graph"]["nodes"][16]["node_id"].clone();
+    let mut integer_set = integer_set;
+    integer_set["body"]["members"][0]["target"] = integer_id.clone();
+    integer_set["dependencies"] = json!([integer_id.clone()]);
+    append_rekeyed_structural_node(&mut arbitrary_set_population, integer_set);
+    let integer_set_id = arbitrary_set_population["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap()["node_id"]
+        .clone();
     arbitrary_set_population["semantic_graph"]["nodes"][population_index]["semantic_type"] =
-        arbitrary_set_population["semantic_graph"]["nodes"][42]["node_id"].clone();
+        integer_set_id.clone();
     arbitrary_set_population["identity_preimage"]["identity_projection"][population_index]["semantic_type"] =
-        arbitrary_set_population["semantic_graph"]["nodes"][42]["node_id"].clone();
+        integer_set_id;
+    arbitrary_set_population["semantic_graph"]["nodes"][population_index]["dependencies"] =
+        json!([integer_id]);
+    arbitrary_set_population["identity_preimage"]["identity_projection"][population_index]["dependencies"] =
+        arbitrary_set_population["semantic_graph"]["nodes"][population_index]["dependencies"]
+            .clone();
     let population_preimage = structural_node_preimage(
         &arbitrary_set_population["semantic_graph"]["nodes"][population_index],
     )
@@ -11070,25 +11039,37 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     actual_u2["semantic_graph"]["nodes"]
         .as_array_mut()
         .unwrap()
-        .push(second);
+        .push(second.clone());
     actual_u2["identity_preimage"]["identity_projection"]
         .as_array_mut()
         .unwrap()
         .push(second_projection);
+    let metre_source_map = actual_u2["source_map"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["node_id"] == metre["node_id"])
+        .expect("metre declaration has a source-map row")
+        .clone();
+    let mut second_source_map = metre_source_map.clone();
+    second_source_map["node_id"] = second["node_id"].clone();
+    actual_u2["source_map"]
+        .as_array_mut()
+        .unwrap()
+        .push(second_source_map);
     actual_u2["identity_preimage"] = derive_identity_preimage(&actual_u2);
     refresh_package_id(&mut actual_u2);
 
     let metre_id = metre["node_id"].clone();
     let second_id = json!({"domain": "quire.checked-semantic-node/v1", "digest": "d0f0c5d24d6accb2f1d9afff7c6cdda3143df382e50af4bda0704d48c67ed998"});
-    let mut compound = json!({
+    let compound = json!({
         "node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "0000000000000000000000000000000000000000000000000000000000000000"},
         "schema_version": "quire.checked-semantic-graph/v2",
         "node_tag": "scalar_type",
         "semantic_form": "compound_unit",
         "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "0000000000000000000000000000000000000000000000000000000000000000"},
-        "declaration": null,
         "dependencies": [metre_id, second_id],
-        "occurrences": [],
+        "occurrences": [{"role": "type", "ordinal": 0}],
         "body": {"term": "aggregate", "members": [
             {"term": "aggregate", "members": [
                 {"name": "unit", "term": "binding", "value": {"term": "reference", "target": metre["node_id"]}},
@@ -11099,8 +11080,6 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
                 {"name": "exponent", "term": "binding", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"}, "value": "-1", "value_kind": "integer"}}
             ]}
         ]},
-        "recursion": null,
-        "version": "quire.structural-node/v1"
     });
     append_rekeyed_structural_node(&mut actual_u2, compound);
     let actual_u2_id = actual_u2["semantic_graph"]["nodes"]
@@ -11109,10 +11088,44 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         .last()
         .unwrap()["node_id"]
         .clone();
+    let mut compound_source_map = metre_source_map;
+    compound_source_map["node_id"] = actual_u2_id.clone();
+    compound_source_map["role"] = json!("type");
+    actual_u2["source_map"]
+        .as_array_mut()
+        .unwrap()
+        .push(compound_source_map);
+    for node in actual_u2["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .rev()
+        .take(2)
+    {
+        let occurrence = &node["occurrences"][0];
+        assert!(
+            actual_u2["source_map"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|entry| {
+                    entry["node_id"] == node["node_id"]
+                        && entry["role"] == occurrence["role"]
+                        && entry["ordinal"] == occurrence["ordinal"]
+                }),
+            "every added nominal U2 occurrence has an exact source-map entry"
+        );
+    }
     assert_eq!(
         actual_u2_id["digest"], "bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7",
         "U2 uses the published vector"
     );
+    jsonschema::validator_for(&parsed_fixture(SCHEMA))
+        .expect("V2 schema is valid")
+        .validate(&actual_u2)
+        .unwrap_or_else(|error| {
+            panic!("nominal-root U2 package fails the full public schema: {error}")
+        });
     assert_eq!(
         read_package_semantics(&actual_u2, &catalog),
         Ok(()),
@@ -11120,12 +11133,6 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     );
 
     let mut wrong_compound = actual_u2.clone();
-    let compound_id = wrong_compound["semantic_graph"]["nodes"]
-        .as_array()
-        .unwrap()
-        .last()
-        .unwrap()["node_id"]
-        .clone();
     let compound_index = wrong_compound["semantic_graph"]["nodes"]
         .as_array()
         .unwrap()
@@ -11142,8 +11149,13 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
             .unwrap();
     let digest = unqualified_jcs_sha256(&preimage);
     wrong_compound["semantic_graph"]["nodes"][compound_index]["node_id"]["digest"] = json!(digest);
+    let compound_id = wrong_compound["semantic_graph"]["nodes"][compound_index]["node_id"].clone();
+    wrong_compound["semantic_graph"]["nodes"][compound_index]["semantic_type"] =
+        compound_id.clone();
     wrong_compound["identity_preimage"]["identity_projection"][compound_index]["node_id"]["digest"] =
         json!(digest);
+    wrong_compound["identity_preimage"]["identity_projection"][compound_index]["semantic_type"] =
+        compound_id;
     wrong_compound["identity_preimage"] = derive_identity_preimage(&wrong_compound);
     refresh_package_id(&mut wrong_compound);
     let compound_id = wrong_compound["semantic_graph"]["nodes"][compound_index]["node_id"].clone();
@@ -11159,9 +11171,11 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         .unwrap()
         .len()
         - 1;
-    non_self_typed["semantic_graph"]["nodes"][compound_index]["semantic_type"] = Value::Null;
+    let integer_type = non_self_typed["semantic_graph"]["nodes"][16]["node_id"].clone();
+    non_self_typed["semantic_graph"]["nodes"][compound_index]["semantic_type"] =
+        integer_type.clone();
     non_self_typed["identity_preimage"]["identity_projection"][compound_index]["semantic_type"] =
-        Value::Null;
+        integer_type;
     let preimage =
         structural_node_preimage(&non_self_typed["semantic_graph"]["nodes"][compound_index])
             .unwrap();
@@ -11193,8 +11207,12 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         structural_node_preimage(&non_root["semantic_graph"]["nodes"][non_root_index]).unwrap();
     let digest = unqualified_jcs_sha256(&preimage);
     non_root["semantic_graph"]["nodes"][non_root_index]["node_id"]["digest"] = json!(digest);
+    let non_root_id = non_root["semantic_graph"]["nodes"][non_root_index]["node_id"].clone();
+    non_root["semantic_graph"]["nodes"][non_root_index]["semantic_type"] = non_root_id.clone();
     non_root["identity_preimage"]["identity_projection"][non_root_index]["node_id"]["digest"] =
         json!(digest);
+    non_root["identity_preimage"]["identity_projection"][non_root_index]["semantic_type"] =
+        non_root_id;
     non_root["identity_preimage"] = derive_identity_preimage(&non_root);
     refresh_package_id(&mut non_root);
     assert_eq!(

@@ -754,12 +754,16 @@ create a second `composite_type`, `bounded_domain` or `scalar_type` identity.
 | --- | --- | --- | --- |
 | `Reference<O>` | `composite_type`/`reference`, self-typed | `aggregate{[reference(M_O)]}`, where `M_O` is `O`'s model declaration node. A derived reference target SHALL be a `model`/`object_type`, `model`/`systems_interface` or `relation`/`relationship` declaration; scalar, value, function and other composite nodes are refused. | `Ref = Reference<Order>` and a parameter typed `Ref` both name R1 (`249d3baf1f4728325f4b5194d54320ad6d7e11bc88de7a339504ea6582fe1fbb`); R1's only body target is M1 (`6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b`) |
 | `Population<O>[N]` | `bounded_domain`/`model_population`, semantic type `S_O`, where `S_O` is `composite_type`/`set` over `R_O` | `aggregate{[binding "max" = literal integer N]}` | `Bucket = Population<Order>[3]` names PO1 (`859d6b01a132a14711a8a4568e24a7ab54e3255b78bbcc62b14e4293dbf71f9a`); PO1's `semantic_type` is S1 (`b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5`); changing `Bucket` to `Population<Order>[5]` names a different key |
-| a formed quantity over a compound unit | `scalar_type`/`compound_unit`, self-typed | `aggregate` of one `aggregate{[binding "unit" = reference(U), binding "exponent" = literal integer e]}` per root unit, in `quire.value.compound-unit/v1` order; dimensionless is `aggregate{[]}`. Each `U` is either a targetless canonical nominal root with `nominal_identity_preimage.version = quire.unit-node/v1`, empty body and `semantic_type` equal to its dimension node, or a self-typed structural unit root. | `metre / second` names U2 (`bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7`); its first term references `U_metre` with exponent `1`, its second references `U_second` with exponent `-1` |
+| a formed quantity over a compound unit | `scalar_type`/`compound_unit`, self-typed | `aggregate` of one `aggregate{[binding "unit" = reference(U), binding "exponent" = literal integer e]}` per root unit, in `quire.value.compound-unit/v1` order; dimensionless is `aggregate{[]}`. Each `U` is a targetless canonical nominal root with `nominal_identity_preimage.version = quire.unit-node/v1`, empty body and `semantic_type` equal to its dimension node. | `metre / second` names U2 (`bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7`); its first term references `U_metre` with exponent `1`, its second references `U_second` with exponent `-1` |
 
 The accepted vectors above are compact presentations of the exact RFC 8785
 preimages. The full preimage bodies are the rows above, and the named keys are
 the corresponding settled structural-node vectors. They are deliberately
 independent of a package version and of a source alias spelling.
+
+A self-typed structural `scalar_type`/`unit` is not an alternative root: the
+published V2 schema requires `nominal_identity_preimage` for this node form,
+with a `UnitPreimage`, and therefore does not admit a structural unit node.
 
 The corresponding checks are closed, with the stage that owns each check made
 explicit. A source alias that names no type refuses
@@ -779,18 +783,18 @@ The executable reader matrix covers the accepted and refused cells below:
 | --- | --- | --- |
 | `composite_type`/`reference` | body target is a model declaration node | scalar, function and value targets |
 | `bounded_domain`/`model_population` | `semantic_type` is `set<reference<T>>`, one canonical nonnegative integer `max` binding | negative `max`; arbitrary set element |
-| `scalar_type`/`compound_unit` | self-typed node; targetless canonical nominal roots whose semantic type is the dimension key or self-typed structural unit roots; nonzero exponents in strict digest order | non-self-typed node; non-unit root; reordered terms |
+| `scalar_type`/`compound_unit` | self-typed node; targetless canonical nominal unit roots whose semantic type is the dimension key; nonzero exponents in strict digest order | non-self-typed node; non-unit root; reordered terms |
 
 These vectors distinguish a retained-key mutation from a recomputed-key
 candidate. The reader checks both the key and the semantic shape: a
 `composite_type`/`reference` whose body target is not a model declaration
 node, a `bounded_domain`/`model_population` whose `semantic_type` is not the
 `set<reference<T>>` node or whose `max` is absent, negative or not an integer
-literal, and a `scalar_type`/`compound_unit` whose root is neither a
-self-typed structural unit nor a targetless canonical nominal unit, whose
-exponent is zero, whose terms are duplicated or not in canonical order, or
-whose body is not the stated aggregate is refused by the semantic shape
-check. Adding a declaration, owner or nominal preimage to any of these
+literal, and a `scalar_type`/`compound_unit` whose root is not a
+targetless canonical nominal unit, whose exponent is zero, whose terms are
+duplicated or not in canonical order, or whose body is not the stated
+aggregate is refused by the semantic shape check. Adding a declaration, owner
+or nominal preimage to any of these
 anonymous forms fails the V2 schema or the owner/declaration rules before key
 recomputation. An alias that resolves to a valid form has no separate refusal
 or identity: its resolved form is checked exactly once.
@@ -1222,8 +1226,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-59 | Structural equality and inequality over U1–U7 require exactly their complete ordered leaf lists. U2's member rename, member reorder, payload swap and source arm reorder have exactly the effects stated with the vectors; U2 requires all three text leaves even when both operands select `Empty`. A missing final leaf refuses `invalid_package`/`operation-law-missing`; reordered leaves or a recursion leaf with a text law refuse `invalid_package`/`operation-law-mismatch`. | Test |
 | FR-322-AC-60 | For each `K` of `set`, `bag` and `ordered_set`, equality over `K<Choice>` (U2) requires U2's leaves with one leading `inner` per path; `contains` over that collection (`inner:0`) and a catalogued `result_inner` operation yielding `K<Choice>` require U2's leaves without that prefix. A `result_inner` operation yielding `sequence<Choice>` requires `[]`, while equality over `sequence<Choice>` requires U2's leaves with one leading `inner`. | Test |
 | FR-322-AC-61 | Both V2 schemas admit `member:Right`, `member:_item2`, `position:0`, `position:12`, `recursion:0` and `recursion:12`; they refuse `member:`, `member:1Right`, `position:01`, `position:-1`, `recursion:`, `recursion:01` and `recursion:-1`. The shared catalog includes `union` in `structural_kind`, so equality and inequality admit eligible Union operands under the existing `same_type` constraint and `operand:0` leaf source. | Test |
-| FR-322-AC-62 | The settled derived type forms forward aliases to their resolved node without an `alias` node; key `Reference<Order>` as an anonymous self-typed `composite_type`/`reference` over `Order`'s model declaration; key `Population<Order>[3]` as an anonymous `bounded_domain`/`model_population` whose `semantic_type` is `Set<Reference<Order>>` and whose body binds integer `max = 3`; and key a formed `metre / second` quantity as an anonymous self-typed `scalar_type`/`compound_unit` with ordered unit/exponent terms over canonical roots, each either a targetless nominal root whose semantic type is its dimension key or a self-typed structural unit root. The worked accepted vectors are admitted, including the exact U2 vector and the structural-root vector specified by FR-322-AC-63. The `RM-REF-TARGET`, `RM-POP-MAX` and `RM-CU-ORDER` vectors are schema-valid, retain their original keys for the stale-key check, and then recompute keys before the reader's semantic-shape check, which refuses a non-model reference target, negative bound, arbitrary set element type and noncanonical term order as `invalid_package`/`invalid-derived-shape`. | Test (`tests/checked_package_v2.rs`, `tc_322_derived_form_key_mutations`, `tc_322_recomputed_derived_forms_refuse_semantic_mutations`) |
-| FR-322-AC-63 | A compound-unit vector that references a self-typed structural `scalar_type`/`unit` root is admitted; the root key is the RFC 8785 JCS SHA-256 of its exact `quire.structural-node/v1` preimage with `semantic_type: null`, and the compound-unit key is the RFC 8785 JCS SHA-256 of its exact ordered body preimage. | Test (TC-233) |
+| FR-322-AC-62 | The settled derived type forms forward aliases to their resolved node without an `alias` node; key `Reference<Order>` as an anonymous self-typed `composite_type`/`reference` over `Order`'s model declaration; key `Population<Order>[3]` as an anonymous `bounded_domain`/`model_population` whose `semantic_type` is `Set<Reference<Order>>` and whose body binds integer `max = 3`; and key a formed `metre / second` quantity as an anonymous self-typed `scalar_type`/`compound_unit` with ordered unit/exponent terms over targetless canonical nominal unit roots whose semantic type is their dimension key. The worked accepted vectors are admitted, including the exact U2 vector. The `RM-REF-TARGET`, `RM-POP-MAX` and `RM-CU-ORDER` exact preimages bind their keys; the corresponding public wire nodes satisfy the `SemanticNode` schema. Retaining each original key exercises stale-key detection, and recomputing each key exercises semantic-shape refusal for a non-model reference target, negative bound, arbitrary set element type and noncanonical term order as `invalid_package`/`invalid-derived-shape`. | Test (`tests/checked_package_v2.rs`, `tc_322_derived_form_key_mutations`, `tc_322_recomputed_derived_forms_refuse_semantic_mutations`) |
 
 ## Dependencies
 
