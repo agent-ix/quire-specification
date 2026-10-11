@@ -78,3 +78,7 @@ refuse before consumption.
 - [FR-195](../../functional/ir-proof/FR-195-lower-complete-contract-ir.md)
   owns the lowering behavior that produces this value; Contract IR FR-035
   consumes it as one flat key-ordered node set with stable-identity references.
+  IR FR-035's statement that every reference resolves inside the package
+  applies to local semantic-node references; it preserves FR-322's
+  `dependency_reference` resolution through the selected admitted dependency
+  package for function-call callees.

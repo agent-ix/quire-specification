@@ -21,7 +21,7 @@ relationships:
 name: ContractPackage
 associated_types: [ContractPackageId, SourceMap]
 operations:
-  - { name: lower, inputs: [checked_package, lowering_profile, requested_items], output: ContractPackage and per-item accounting, semantics: exact representation or per-item refusal }
+  - { name: lower, inputs: [checked_package, lowering_profile, requested_items, limits], output: ContractPackage and per-item accounting, semantics: exact representation or per-item refusal }
 invariants:
   - the representation is not authored or semantic authority
   - unsupported meaning produces no substitute node
@@ -43,6 +43,7 @@ exact semantic meaning or a typed per-item refusal.
 | checked_package | CheckedPackage | 1..1 | admitted immutable package |
 | lowering_profile | LoweringProfile | 1..1 | explicitly selected |
 | requested_items | RequestedItem | 0..* | each retains its own disposition |
+| limits | caller-supplied limits (FR-195) | 1..1 | bounds lowering work and output |
 
 Returns: ContractPackage and per-item accounting
 
