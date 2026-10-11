@@ -5,7 +5,11 @@ type: interface
 relationships:
   - target: ix://agent-ix/quire-specification/FR-330
     type: references
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: references
   - target: ix://agent-ix/quire-contract-ir/FR-019
+    type: references
+  - target: ix://agent-ix/quire-contract-ir/FR-035
     type: references
 ---
 
@@ -15,10 +19,36 @@ relationships:
 
 ```yaml
 name: ContractPackage
-associated_types: [ContractPackageId, TypeGraph, ExpressionGraph, ClauseGraph, ProtocolReference, SourceMap]
+associated_types: [ContractPackageId, SourceMap]
 operations:
-  - { name: lower, inputs: [CheckedPackage, lowering profile, requested items], output: cycle-free contract package and accounting, semantics: exact representation or per-item refusal }
+  - { name: lower, inputs: [checked_package, lowering_profile, requested_items, limits], output: ContractPackage and per-item accounting, semantics: exact representation or per-item refusal }
 invariants:
   - the representation is not authored or semantic authority
   - unsupported meaning produces no substitute node
+  - one key-ordered semantic graph is the sole owner of semantic nodes
+  - semantic node references use stable node identity, never array position or display name
+  - dependency references retain FR-322 dependency-selection semantics and are not rewritten as local nodes
+  - a protocol reference is the node identity of a protocol-tagged node
 ```
+
+## Operations
+
+### lower
+
+Lower a checked package for the selected profile and requested items, preserving
+exact semantic meaning or a typed per-item refusal.
+
+| Param | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| checked_package | CheckedPackage | 1..1 | admitted immutable package |
+| lowering_profile | LoweringProfile | 1..1 | explicitly selected |
+| requested_items | RequestedItem | 0..* | each retains its own disposition |
+| limits | caller-supplied limits (FR-195) | 1..1 | bounds lowering work and output |
+
+Returns: ContractPackage and per-item accounting
+
+## Features
+
+| Feature | Kind |
+|---|---|
+| lower | operation |
