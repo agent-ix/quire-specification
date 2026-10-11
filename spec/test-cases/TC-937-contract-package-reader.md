@@ -26,18 +26,28 @@ wrong member kind; unresolved or incompatible graph reference;
 missing source-map entry; accounting/request mismatch; stale identity; wrong
 identity domain; and a semantically equivalent but noncanonical wire encoding
 with reordered members or insignificant whitespace. For the last case, preserve
-the original digest so the only defect is noncanonical bytes. For every refusal,
+the original digest so the only defect is noncanonical bytes. Also combine a
+wrong outer version with a duplicate nested member. For every refusal,
+serialize every valid-JSON mutation as canonical RFC 8785 bytes before reading;
 capture the typed result before invoking a consumer. For each nested defensive
 payload, repeat with a missing required member, unknown member, wrong member
-kind, and `null` in place of an omitted optional member; recompute identity for
-these valid-JSON shape mutations so the reader reaches nested-schema
-validation. Separately submit a raw nested object with a duplicate member name;
-do not recompute identity for that input. For `failed` and `body_incomplete`
-counter strings, test `"08"`, `"-1"`, `""`, and
+kind, and `null` in place of an omitted optional member; do not recompute
+identity for these shape mutations because nested schema is validated first.
+Separately submit a raw nested object with a duplicate member name;
+do not canonicalize or recompute identity for that input. For each `limit` and
+`consumed` field in `failed` and `body_incomplete`, test `"08"`, `"+1"`,
+`"-1"`, `""`, `"١"`, and
 `"18446744073709551616"`; also replace a counter string with the JSON number
-`8`, and verify `"18446744073709551615"` is accepted as the `u64::MAX` value.
-Do not recompute identity for malformed counter values; compute it from the
-string-encoded projection for the well-shaped `u64::MAX` control. Also construct a valid
+`8`, and verify a valid `failed` value carrying `"18446744073709551615"` is
+accepted when FR-038 produces that `u64::MAX` counter.
+Do not recompute identity for malformed counter values; the reader must reject
+them before identity validation. Compute identity from the string-encoded
+projection for the well-shaped `u64::MAX` control. Also test a valid
+`body_incomplete` with `limit_kind: "bytes"` and no `path`, then mutate it to
+add `path`; test a non-byte kind with `path`, then remove that member. For
+`invalid_body.refusal`, test a missing
+`contract_version` for `unknown_contract_version` and a present
+`contract_version` for a different `code`. Also construct a valid
 ContractPackage whose source lock has one `dependency_selections` entry and
 whose graph has a `dependency_reference` to that selected package. Supply the
 matching admitted dependency package keyed by its library identity, then repeat
@@ -56,14 +66,21 @@ applicable FR-322 code/cause mapping and FR-272 diagnostic identifying its
 stage and available loci. Malformed nested payloads are refused as
 `invalid_package` with the applicable `missing-member`, `unknown-member`,
 `wrong-value-kind`, or `invalid-value` cause and the ContractPackage pointer.
-A duplicate nested JSON member is refused as `invalid_package`/`duplicate-member`
-during strict nested-member parsing, before canonical-byte comparison or
-identity validation. Noncanonical wire bytes are refused as `noncanonical_wire`
+A duplicate nested JSON member, including with a wrong outer version, is
+refused as `invalid_package`/`duplicate-member` during strict JSON parsing,
+before version checking, canonical-byte comparison, or identity validation.
+Noncanonical wire bytes are refused as `noncanonical_wire`
 at `package_read`, with no cause or pointer, before identity recomputation.
 Counter strings with leading zeros, a sign, empty content, or a value above
 `u64::MAX` are refused as `invalid_package`/`invalid-value`; a JSON number in
 place of a required decimal string is refused as
-`invalid_package`/`wrong-value-kind`. The wrong identity domain is refused as
+`invalid_package`/`wrong-value-kind`; non-ASCII digits are also
+`invalid_package`/`invalid-value`. A bytes incomplete record with `path` is
+`invalid_package`/`unknown-member`, while a non-byte record without `path` is
+`invalid_package`/`missing-member`. `unknown_contract_version` without its
+required member is `invalid_package`/`missing-member`; a different refusal
+code with `contract_version` is `invalid_package`/`unknown-member`. The valid
+`u64::MAX` `failed` control is admitted. The wrong identity domain is refused as
 `invalid_package`/`invalid-value` at `/identity/domain`, using FR-322's
 existing typed pair; `digest_domain_mismatch` remains for a wrong domain on an
 input `PackageId`.

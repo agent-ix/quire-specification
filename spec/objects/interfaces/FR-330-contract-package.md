@@ -106,11 +106,15 @@ FR-038's `CheckedPackageRefusal`: `code` uses the exact FR-322 code spelling;
 `path` is its RFC 6901 pointer into the checked-package document; `cause` uses
 the FR-272 spelling paired by FR-322; `locus` is its exact closed
 `CheckedNodeId` object `{domain, digest}`; `contract_version` is the string
-read for `unknown_contract_version`; and `document_pointer` is its RFC 6901
+read for `unknown_contract_version` and is forbidden for every other code; and
+`document_pointer` is its RFC 6901
 pointer into a supplied domain-package document. Each optional JSON member is
 present exactly when the corresponding FR-322 typed field is present and is
 omitted otherwise, never written as `null`, empty text, or a fabricated
-location.
+location. The reader requires `contract_version` for
+`unknown_contract_version` and forbids it otherwise; absence of a required
+member uses `missing-member`, and presence of a forbidden member uses
+`unknown-member`.
 
 The `body_incomplete` record carries `incomplete`, a closed object with
 required `limit_kind`, `limit`, and `consumed`, plus optional `path`, matching
@@ -121,8 +125,9 @@ the typed fields of Contract IR FR-038's `CheckedPackageIncomplete`.
 decimal strings with the same grammar as the `failed` record and parse exactly
 to their typed FR-038 `u64` values; `consumed` is the counter value at the
 failed charge, as defined by FR-038. `path` is the FR-038 RFC 6901 pointer into
-the checked-package document and is present exactly when that typed field is
-present (FR-038 specifies it absent for `bytes`). The nested records do not use
+the checked-package document. FR-038 requires it for every limit kind except
+`bytes`; the reader requires it for non-byte kinds and forbids it for `bytes`,
+using `missing-member` and `unknown-member`, respectively. The nested records do not use
 FR-322's outer `ReadResult` envelope or add a second diagnostic vocabulary.
 
 For example, this illustrative serialized shape of a defensive body limit
@@ -231,8 +236,9 @@ The digest uses FR-201's `quire.contract-ir.semantic/v1` domain, not the
 checked package's `quire.package.semantic/v2` identity.
 
 The ContractPackage reader is the single owner of outer wire admission. It
-first applies only the generic wire checks reused from FR-322: strict syntax,
-duplicate-member rejection, and canonical-byte validation. It then validates
+first applies only the generic wire checks reused from FR-322: strict JSON
+parsing including duplicate-member rejection, then canonical-byte validation.
+It then validates
 FR-330's own exact `quire.contract-package/v1` version (it MUST NOT apply
 FR-322's `quire.checked-package/v2` version predicate to this output), and
 checks the exact top-level and nested closed shapes,
@@ -240,8 +246,9 @@ typed node keys and references, package provenance, profile selection,
 source-map totality, feature-accounting/request bijection, and recomputed
 identity before exposing an admitted typed value to a consumer. The order
 after generic wire checks is: outer version, all top-level and nested closed
-shapes and typed values (including accounting/request consistency), identity
-recomputation, dependency inputs in lock order, then graph references. Thus a
+shapes and typed values, package and profile validity, source-map totality, and
+accounting/request consistency, then identity recomputation, dependency inputs
+in lock order, then graph references. Thus a
 malformed nested payload is refused before identity is recomputed, while a
 well-shaped changed value with a stale identity is refused at identity
 validation. It returns the existing typed `admitted`, `refused`, or `incomplete` result
@@ -260,17 +267,17 @@ duplicate, unknown, wrong-kind, or out-of-domain member uses FR-322's
 `invalid_package` code with its corresponding `missing-member`,
 `duplicate-member`, `unknown-member`, `wrong-value-kind`, or `invalid-value`
 cause and the pointer into the ContractPackage document. A null optional
-member is `wrong-value-kind`. Limits remain caller inputs to reading and
-lowering;
-they are not package data or identity inputs.
+member is `wrong-value-kind`. A payload member forbidden by its selected
+disposition is `unknown-member`. Limits remain caller inputs to reading and
+lowering; they are not package data or identity inputs.
 
 The reader input also includes one admitted FR-322 dependency package for every
 entry of `package.source.lock.dependency_selections`, keyed by that entry's
 library `identity`, as FR-322's `dependency_selections` rule requires. These
 admitted values are inputs, not ContractPackage members, and do not enter its
 identity; their selected `package_id` values remain in `package.source.lock`.
-After the FR-330 outer version and closed-shape checks, the reader checks
-dependency inputs in lock order before checking graph references. It requires
+After identity validation in the order above, the reader checks dependency
+inputs in lock order before checking graph references. It requires
 each selected input and confirms both its library `identity` and admitted
 `package_id` equal the selection. The admitted input has already had its own
 `package_id` verified by FR-322. A missing input, including a value supplied

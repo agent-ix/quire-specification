@@ -30,7 +30,9 @@ the last two defensive cases. Before reading the emitted wire, compare each
 producer record against the independent expected value and injected typed
 refusal/incomplete value; check exact field names, types, values, and omitted
 optional members. Then pass the unmodified wire through the FR-330 reader and
-inspect graph roots and sibling records. Exercise nested closed-shape
+inspect graph roots and sibling records. Write each valid-JSON mutation back
+as canonical RFC 8785 bytes; keep the existing stale-identity case distinct.
+Exercise nested closed-shape
 mutations by omitting a required member, adding an unknown member, writing
 `null` for an omitted optional member, and changing a member's kind. Do not
 recompute identity for these invalid shapes: the reader checks nested schema
@@ -38,7 +40,8 @@ before identity. Separately mutate the accounting array by omitting one record,
 duplicating one item, changing `failed` to `invalid_input` while retaining the
 `failed` payload, and adding a `node` member to an `unsupported` record; do
 not recompute identity because accounting consistency and variant shape are
-checked before identity. Separately change one well-shaped typed payload value
+checked before identity. Separately change `invalid_body.refusal.path` to
+another valid RFC 6901 pointer, preserving shape and request correspondence,
 without updating identity.
 
 ## Expected Results
@@ -62,9 +65,10 @@ mutations are refused as `invalid_package` with the FR-322 `missing-member`,
 identity validation. Changing `failed` to `invalid_input` while retaining its
 payload is refused as `invalid_package`/`unknown-member`; attaching an emitted
 node to an `unsupported` record is refused as `invalid_package`/`unknown-member`
-because non-lowered variants forbid node payloads. A well-shaped payload-value
-mutation with the old
-identity is refused for identity mismatch; recomputing identity for that new
-value is outside this test because the reader checks canonical structure and
-identity, not the truth of a producer's accounting. The two successful
+because non-lowered variants forbid node payloads. A well-shaped `path`
+mutation with the old identity is refused as
+`stale_dependency`/`content-mismatch`, with the declared identity as
+`expected` and recomputed identity as `actual`; recomputing identity for that
+new value is outside this test because the reader checks canonical structure
+and identity, not the truth of a producer's accounting. The two successful
 sibling records remain unchanged.
