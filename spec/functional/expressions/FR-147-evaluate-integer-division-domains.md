@@ -13,6 +13,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-349
     type: references
+  - target: ix://agent-ix/quire-specification/FR-149
+    type: references
 ---
 
 # FR-147: Evaluate mathematical and bounded integer division
@@ -113,7 +115,7 @@ precedes the arithmetic charge; an undefined outcome makes no later charge.
 | FR-147-AC-8 | In that same locked run, the corpus settles at least one integer-division obligation `refuted` through that backend via the I13 negotiation path; the AC-3 `requires-bound` finite-backend negotiation disposition is unchanged in a locked run with no such backend registered. | Test (TC-192, TC-266) |
 | FR-147-AC-9 | Under each profile, a bounded consumer's `div` whose quotient is outside its domain returns `refused { code: division_out_of_domain, cause: quotient-outside-domain }`, a `rem` whose remainder is outside it returns `refused { code: division_out_of_domain, cause: remainder-outside-domain }`, and a `mod` whose Euclidean remainder is outside it returns `refused { code: modulo_out_of_domain, cause: outside-domain }`; no refusal exposes a member. | Test (TC-192) |
 | FR-147-AC-10 | The unexposed member never refuses: over the consumer domain `Int[1,10]`, `10 div y` at `y = 5` returns `2` although the remainder `0` is outside the domain, and over `Int[-10,5]`, `x rem -1` at `x = -10` returns `0` although the quotient `10` is outside the domain. | Test (TC-192) |
-| FR-147-AC-11 | In the shared grammar, `div`, `rem` and `mod` parse at product precedence in both a complete-value declaration and a declaration without `quire.value.complete/v1`; semantic admission accepts each well-typed complete-value form under its selected law, but returns a located `unsupported_construct` for each occurrence without that facet, including in an unreachable branch. `/` never becomes integer division; a rational `/` with an expected rational result type may promote integer operands exactly under FR-149. | Test (TC-192) |
+| FR-147-AC-11 | In the shared grammar, `div`, `rem` and `mod` parse at product precedence in both a complete-value declaration and a declaration without `quire.value.complete/v1`; semantic admission accepts each well-typed complete-value form under its selected law, but returns a located `unsupported_construct` for each occurrence without that facet, including in an unreachable branch. `/` never becomes integer division; only under complete value may a rational `/` with an expected rational result type promote integer operands exactly under FR-149. | Test |
 
 ## Dependencies
 
