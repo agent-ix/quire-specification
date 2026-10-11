@@ -36,7 +36,7 @@ become integer division. An ambient integer value used as a rational argument
 outside this `/` operation still refuses without explicit conversion.
 
 Tag the state-only and complete-value `1 / 2` controls with
-`#[trace("FR-044-AC-3", "FR-044-AC-9", "TC-044")]` when implemented.
+`#[trace("FR-044-AC-3", "FR-044-AC-9")]` when implemented.
 
 ## Expected Results
 

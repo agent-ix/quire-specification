@@ -57,8 +57,8 @@ member. Then execute:
 | DIV-18 | Place each of `div`, `rem` and `mod` in the dead branch of `if true then 1 else (7 <operator> 3)` under the state-only facet; separately use `7 / 3` with and without expected result type `Rational[0,7;1,3]` under state-only and complete-value selections | Each dead-branch integer operator is still a located `unsupported_construct`; `/` never performs integer division. State-only refuses integer operands even with a rational expectation. Complete value refuses without that expectation; with it, FR-149 promotes the operands to `7/1` and `3/1` and FR-044 admits exact result `7/3` after nonzero/domain checks. No expression is silently reinterpreted as `div`. |
 
 Tag the profile-admission vectors DIV-17 and DIV-18 with
-`#[trace("FR-147-AC-11", "TC-192")]`; DIV-18 additionally carries
-`#[trace("FR-044-AC-3", "FR-044-AC-9", "TC-192")]` when implemented. These
+`#[trace("FR-147-AC-11")]`; DIV-18 additionally carries
+`#[trace("FR-044-AC-3", "FR-044-AC-9")]` when implemented. These
 are planned test bindings, not executed results.
 
 Generate bounded signed operand pairs for all three laws, emphasizing zero,
