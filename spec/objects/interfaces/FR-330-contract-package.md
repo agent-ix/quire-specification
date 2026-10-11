@@ -55,8 +55,10 @@ The ContractPackage is a closed object with exactly six required members:
   `quire.checked-semantic-graph/v2`. The node array uses FR-322's closed
   node-tag vocabulary, typed-node-key order, stable references,
   dependency-reference and recursion-group rules. Each node occurs once.
-  `types`, `expressions`, `clauses`, and `protocol_references` are not separate
-  graph properties or alternate reference forms.
+  `types`, `expressions`, `clauses`, and `protocol_references` are not graph
+  properties or separate reference forms. FR-322 defines no protocol-reference
+  carrier or slot, so this contract makes no protocol-target binding or
+  validation claim.
 - `source_map`: the total source correspondence defined below.
 - `feature_accounting`: exactly one lowering record for every requested item,
   in the caller's request order, using the seven-member typed disposition

@@ -26,9 +26,13 @@ callee `dependency_reference` to the exported function and an unrelated
 lowered sibling. Inspect the ContractPackage and compare its node collection,
 identities, references, and source correspondence with FR-322 and FR-330.
 Include an explicit recursion group and verify its keyed references remain
-finite serialized values. Repeat after changing construction order. Inspect the
-protocol node and confirm its body uses the existing catalogued
-`quire.op.protocol.control` application and selected `protocol_profile` law.
+finite serialized values. Repeat after changing construction order. In the
+fixture, use the existing `protocol_clause` control application from
+`proposals/checked-package-v2/fixtures/positive-all-families.json`; verify its
+`quire.op.protocol.control` application carries the selected
+`protocol_profile` law and catalogued `profile_operator` member, as FR-322-AC-22
+requires. This is fixture setup, not a claim that every protocol node has that
+body.
 The current FR-322 contract defines no protocol-reference carrier or slot, so
 this case does not synthesize a protocol target edge or mutate one. In a
 separate admission attempt, supply a dependency package
@@ -45,11 +49,11 @@ in a finite value. The dependency-package mutation refuses
 `stale_dependency`/`content-mismatch` naming the selection identity and both
 package ids during package admission, before lowering begins, so no
 ContractPackage is emitted for that attempt. In the valid admitted mixed-request
-case, the unrelated lowered sibling retains its disposition. The package has no separate
-`types`, `expressions`, or `clauses` graph collections. The protocol reference
-target-validation relation is not asserted: the package has no separate
-`protocol_references` collection, and TC-931 verifies the existing
-protocol-tagged node and its catalogued body. The package identity and source
-correspondence remain equivalent under canonical ordering. A future FR-322
-contract must define a carrier and slot before a protocol-target mutation case
-can be specified.
+case, the unrelated lowered sibling retains its disposition. The package has no
+separate `types`, `expressions`, `clauses`, or `protocol_references` graph
+collections. The protocol clause is present once as a protocol-tagged node and
+preserves the fixture's catalogued control application, selected
+`protocol_profile` law and `profile_operator`. No protocol-reference
+target-validation relation is asserted because FR-322 defines no carrier or
+slot. The package identity and source correspondence remain equivalent under
+canonical ordering.
