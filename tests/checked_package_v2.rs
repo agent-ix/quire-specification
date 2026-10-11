@@ -10762,14 +10762,19 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
 /// schema-valid and changes only the semantic preimage.  Retaining the old
 /// key therefore names a stale node; replacing it with the recomputed digest
 /// makes the key current; this test does not claim admission of a malformed
-/// recomputed form.  The full-package retained-key refusal is exercised by the
-/// `tc_233_tampered_derived_shape_nodes_refuse_stale_node_key` vectors above.
+/// recomputed form.  Full-package retained-key refusals for `reference` are
+/// exercised by `tc_233_tampered_derived_shape_nodes_refuse_stale_node_key`;
+/// this test sends the `model_population` and `compound_unit` cases through
+/// that reader as well.
 #[trace("FR-322-AC-62", "TC-233")]
 #[test]
 fn tc_322_derived_form_key_mutations() {
     type KeyMutation = (&'static str, &'static str, fn(&mut Value));
 
     let schema = schema_for_def(&parsed_fixture(SCHEMA), "SemanticNode");
+    let package_schema =
+        jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let catalog = parsed_fixture(OPERATION_CATALOG);
     let cases: [KeyMutation; 3] = [
         (
             "RM-REF-TARGET",
@@ -10846,6 +10851,41 @@ fn tc_322_derived_form_key_mutations() {
             unqualified_jcs_sha256(&mutated),
             "{name}: recomputed key"
         );
+
+        if matches!(name, "RM-POP-MAX" | "RM-CU-ORDER") {
+            let mut package = parsed_fixture(POSITIVE_ALL_FAMILIES);
+            assert_eq!(
+                read_package_semantics(&package, &catalog),
+                Ok(()),
+                "{name}: reader admits the unmodified package"
+            );
+            append_rekeyed_structural_node(&mut package, wire_node(&mutated, &mutated_key));
+            let node_index = package["semantic_graph"]["nodes"]
+                .as_array()
+                .expect("reader fixture nodes are an array")
+                .len()
+                - 1;
+            replace_node_field_in_graph_and_projection(
+                &mut package,
+                node_index,
+                "/node_id/digest",
+                json!(base_key),
+            );
+            package["identity_preimage"] = derive_identity_preimage(&package);
+            refresh_package_id(&mut package);
+
+            let retained_node_id = package["semantic_graph"]["nodes"][node_index]["node_id"]
+                .clone();
+            assert!(
+                package_schema.is_valid(&package),
+                "{name}: retained-key package remains schema-valid"
+            );
+            assert_eq!(
+                read_package_semantics(&package, &catalog),
+                Err(ReadRefusal::StaleNodeKey(retained_node_id)),
+                "{name}: the package reader refuses the retained key"
+            );
+        }
     }
 }
 
