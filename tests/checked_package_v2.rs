@@ -7083,6 +7083,17 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
                 );
             }
             Some("semantic") => {
+                if let Some(rekeyed_as) = mutation["rekeyed_as"].as_str() {
+                    let counterpart = operation_vector(&vectors, rekeyed_as);
+                    assert_eq!(
+                        candidate_node["node_id"]["digest"], counterpart["sha256"],
+                        "{name} rekeys to exactly its counterpart vector"
+                    );
+                    assert_ne!(
+                        candidate["package_id"], package["package_id"],
+                        "{name} changes the package id"
+                    );
+                }
                 let expected = OperationRefusal::from_cause(
                     mutation["expected_cause"].as_str().expect("expected cause"),
                 )
