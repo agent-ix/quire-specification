@@ -86,40 +86,51 @@ others:
   `unbounded_type` in ascending typed-key order.
 - `invalid_input`: no additional payload; `node_id` may be absent from the
   originating checked package.
-- `failed`: the requested `node_id`, exact FR-038 `limit_kind`, caller's
-`limit`, and `consumed` count at the failed charge. In this ContractPackage
-JSON wire representation, both counters are canonical unsigned decimal
+- `failed`: the requested `node_id`, exact Contract IR FR-038 `limit_kind`,
+  caller's `limit`, and `consumed` count at the failed charge. In this ContractPackage
+  JSON wire representation, both counters are canonical unsigned decimal
   strings (`0`, or an ASCII digit
   `1`–`9` followed by zero or more ASCII digits `0`–`9`, with no sign or leading
-  zero); each parses exactly to the corresponding FR-038 `u64` value. This
-  preserves the full typed range in the RFC 8785 identity without IEEE-754
-  rounding.
+  zero); each parses exactly to the corresponding Contract IR FR-038 `u64`
+  value. This preserves the full typed range in the RFC 8785 identity without
+  IEEE-754 rounding.
 - `invalid_body`: the requested `node_id`, offending `body_node_id`, and exact
-  FR-322 `CheckedPackageRefusal`.
+  Contract IR FR-038 `CheckedPackageRefusal` carried by FR-322, with path
+  semantics constrained by QSL FR-096.
 - `body_incomplete`: the requested `node_id`, stopped `body_node_id`, and
-  exact FR-322 `CheckedPackageIncomplete`.
+  exact Contract IR FR-038 `CheckedPackageIncomplete` carried by FR-322, with
+  limit and path semantics constrained by QSL FR-096.
 
 The two defensive payloads have closed serialized shapes. The `invalid_body`
 record carries `refusal`, a closed object with required string `code` and
 optional members `path`, `cause`, `locus`, `contract_version`, and
-`document_pointer`. The field names and types are those of Contract IR
-FR-038's `CheckedPackageRefusal`: `code` uses the exact FR-322 code spelling;
+`document_pointer`. Their field names and types are those of Contract IR
+FR-038's `CheckedPackageRefusal`, carried by FR-322 and constrained by QSL
+FR-096:
+`code` uses the exact FR-322 code spelling;
 `path` is its RFC 6901 pointer into the checked-package document; `cause` uses
 the FR-272 spelling paired by FR-322; `locus` is its exact closed
 `CheckedNodeId` object `{domain, digest}`; `contract_version` is the string
 read for `unknown_contract_version`; and
-`document_pointer` is its RFC 6901
-pointer into a supplied domain-package document. Each optional JSON member is
-present exactly when the corresponding FR-322 typed field is present and is
-omitted otherwise, never written as `null`, empty text, or a fabricated
-location. Before checking conditional members, the reader validates the
-required discriminator fields: `refusal.code` must be a known FR-322 code and
+`document_pointer` is its RFC 6901 pointer into a supplied domain-package
+document. Each optional JSON member is present exactly when the corresponding
+typed field is present and is omitted otherwise; a present pointer may be the
+empty string, the RFC 6901 pointer to the document root. A pointer is never
+replaced with `null` or a fabricated location. Before checking conditional
+members, the reader validates the required discriminator fields:
+`refusal.code` must be a known FR-322 code and
 `incomplete.limit_kind` must be one of its six listed values. A wrong type is
 `wrong-value-kind`; an unknown string is `invalid-value`, each at the
-discriminator's pointer. The reader then checks whether an optional member is
-allowed for the selected refusal code or limit kind before checking that
-member's value type; a forbidden member is `unknown-member`, even if its value
-is `null`. For an allowed optional member, `null` is `wrong-value-kind`. The
+discriminator's pointer. `path`, `cause`, `locus`, and `document_pointer` are
+optional for every recognized refusal code; when present, each must have its
+specified type. A `cause` string must be a known FR-322 cause and its
+`(code, cause)` pair must be admitted by FR-322; an unknown cause or an
+unpaired cause is `invalid-value` at the cause member's pointer. A cause of a
+wrong JSON kind is `wrong-value-kind` at that pointer.
+The reader does not infer whether these members were present in the originating
+typed refusal; exact presence remains the producer's Contract IR FR-038
+conformance obligation. A `null` for an allowed optional member is
+`wrong-value-kind`. The
 reader requires `contract_version` for
 `unknown_contract_version` and forbids it for every other `code`; absence of
 that required member uses `missing-member`, and presence for another code uses
@@ -127,26 +138,32 @@ that required member uses `missing-member`, and presence for another code uses
 
 The `body_incomplete` record carries `incomplete`, a closed object with
 required `limit_kind`, `limit`, and `consumed`, plus optional `path`, matching
-the typed fields of Contract IR FR-038's `CheckedPackageIncomplete`.
+the typed fields of Contract IR FR-038's `CheckedPackageIncomplete`, as
+constrained by QSL FR-096. The typed FR-322 `ReadResult` has no serialized
+counter wire form; this ContractPackage projection is the sole JSON encoding
+of these nested values. It encodes the exact IR `u64` values as canonical
+decimal strings so RFC 8785 identity does not round values above the exact
+integer range of JSON numbers.
 `limit_kind` uses exactly one of the lowercase values `bytes`, `nodes`, `edges`,
 `occurrences`,
 `diagnostics`, or `work`. `limit` and `consumed` are canonical unsigned
 decimal strings with the same grammar as the `failed` record and parse exactly
-to their typed FR-038 `u64` values; `consumed` is the counter value at the
-failed charge, as defined by FR-038. `path` is the FR-038 RFC 6901 pointer into
-the checked-package document. FR-038 requires it for every limit kind except
-`bytes`; the reader requires it for non-byte kinds and forbids it for `bytes`,
+to their typed Contract IR FR-038 `u64` values; `consumed` is the counter value
+at the failed charge, as defined by Contract IR FR-038 and QSL FR-096. `path` is the
+Contract IR FR-038 RFC 6901 pointer into the checked-package document.
+Contract IR FR-038 requires it for every limit kind except `bytes`; the reader
+requires it for non-byte kinds and forbids it for `bytes`,
 using `missing-member` and `unknown-member`, respectively. The nested records
 do not use FR-322's outer `ReadResult` envelope or add a second diagnostic
 vocabulary. The reader validates each counter's spelling and `u64` range but
 does not infer whether `consumed` could have resulted from a charge against
-`limit`; that relationship is producer accounting truth owned by FR-038 and
-is checked against the originating typed outcome when emitted.
+`limit`; that relationship is producer accounting truth owned by Contract IR
+FR-038 and is checked against the originating typed outcome by the producer,
+as TC-933 asserts.
 
-For example, this illustrative serialized shape of a defensive body limit
-result uses illustrative node-ID domains, placeholder node digests, and an
-illustrative checked-package pointer; member names and field types are
-normative:
+For example, this illustrates the serialized shape of a defensive body-limit
+result. Node-ID domains, digests, and pointer are illustrative; member names
+and field types are normative.
 
 ```json
 {
@@ -168,8 +185,9 @@ normative:
 }
 ```
 
-The example shows the present `path` form. An absent typed path is omitted,
-never encoded as `null` or an empty string.
+The example shows a present non-root `path`. An absent typed path is omitted,
+never encoded as `null`; the empty string remains valid when the typed path
+identifies the document root.
 
 The record's variant determines its required payload; payloads for other
 variants are forbidden. `invalid_body` and `body_incomplete` are defensive
@@ -247,10 +265,11 @@ array order follows FR-322 and the request-order rules above. The domain label
 is outside the preimage and is compared exactly as FR-201 requires; it is not
 prefixed to the hashed bytes.
 The digest uses FR-201's `quire.contract-ir.semantic/v1` domain, not the
-checked package's `quire.package.semantic/v2` identity.
-After validating the typed projection, a declared digest that differs from
-the recomputed digest refuses `invalid_package`/`invalid-value` at
-`/identity/digest`.
+checked package's `quire.package.semantic/v2` identity. A mismatch between
+this ContractPackage's declared digest and its recomputed projection is an
+`invalid_package`/`invalid-value` at `/identity/digest`; it is not FR-322's
+`stale_dependency`/`content-mismatch`, which applies to a supplied selected
+dependency whose recomputed package identity differs from the lock selection.
 
 The ContractPackage reader is the single owner of outer wire admission. It
 first applies only the generic wire checks reused from FR-322: strict JSON

@@ -31,7 +31,9 @@ the original digest so the only defect is noncanonical bytes. For unresolved
 or incompatible graph references, recompute identity so the reader reaches
 graph-reference validation after identity. Also combine a
 wrong outer version with a duplicate nested member. For every refusal,
-serialize every valid-JSON mutation as canonical RFC 8785 bytes before reading;
+except for duplicate-member and noncanonical-wire cases, submit each valid-JSON
+mutation as canonical RFC 8785 bytes before reading; submit those two cases as
+raw bytes;
 capture the typed result before invoking a consumer. For each nested defensive
 payload, repeat with a missing required member, unknown member, wrong member
 kind, and `null` in place of an omitted optional member; do not recompute
@@ -54,9 +56,15 @@ remove that member. For
 `invalid_body.refusal`, test a missing
 `contract_version` for `unknown_contract_version` and a present
 `contract_version` (including `null`) for a different `code`. Also give
-`refusal.code` a wrong JSON kind and an unknown string while that member is
-present, and give `incomplete.limit_kind` a wrong JSON kind and an unknown
-string while `path` is present.
+`refusal.code` a wrong JSON kind and an unknown string while
+`contract_version` is present, and give `incomplete.limit_kind` a wrong JSON
+kind and an unknown string while `path` is present.
+Also admit a valid typed refusal whose `path` and `document_pointer` are both
+the empty string (the root pointer), and a valid non-byte incomplete value
+whose typed `path` is the empty string; this is distinct from TC-933's
+producer check for omitted typed pointers.
+For cause validation, test an unknown cause string, a known FR-322 cause paired
+with a code that does not admit it, and a wrong-kind cause value.
 Also construct a valid
 ContractPackage whose source lock has one `dependency_selections` entry and
 whose graph has a `dependency_reference` to that selected package. Supply the
@@ -93,14 +101,21 @@ code with `contract_version` is `invalid_package`/`unknown-member`, even when
 its value is `null`. A wrong-kind discriminator is
 `invalid_package`/`wrong-value-kind`, and an unknown-string discriminator is
 `invalid_package`/`invalid-value` at the discriminator before conditional
-members are checked. Both valid
+members are checked. An unknown cause string and a known but unpaired
+`(code, cause)` combination are refused as `invalid_package`/`invalid-value`
+at the cause pointer; a wrong-kind cause is `invalid_package`/`wrong-value-kind`
+at that pointer. Empty-string root pointers are admitted as present pointer
+values when the identity matches; omission of an optional pointer is checked
+against its typed source only at emission, as TC-933 specifies. Both valid
 `failed` controls (`0`/`0` and `u64::MAX`/`u64::MAX`) are admitted.
 The wrong identity domain is refused as
 `invalid_package`/`invalid-value` at `/identity/domain`, using FR-322's
 existing typed pair; `digest_domain_mismatch` remains for a wrong domain on an
 input `PackageId`.
 The declared identity mismatch refuses `invalid_package`/`invalid-value` at
-`/identity/digest`.
+`/identity/digest`; this tests the ContractPackage's own recomputed identity.
+It is distinct from the selected-dependency case below, whose different
+`package_id` is `stale_dependency`/`content-mismatch` under FR-322 AC-43.
 The correctly supplied dependency admits the ContractPackage, and its
 reference resolves only against that package. Omitting the selected dependency
 or supplying an admitted value under the selected key with a different library
