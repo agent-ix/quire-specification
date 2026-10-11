@@ -315,13 +315,30 @@ Unknown version, missing, duplicate, extra, wrong-kind, out-of-domain or
 noncanonical data refuses before consumption. Strict nested-member parsing
 detects a duplicate JSON member before canonical-byte comparison or identity
 validation; it uses FR-322's `invalid_package` code and `duplicate-member`
-cause at that member's ContractPackage pointer. A nested payload's missing,
-duplicate, unknown, wrong-kind, or out-of-domain member uses FR-322's
-`invalid_package` code with its corresponding `missing-member`,
-`duplicate-member`, `unknown-member`, `wrong-value-kind`, or `invalid-value`
-cause and the pointer into the ContractPackage document. A `null` value for an
-allowed optional member is `wrong-value-kind`. A payload member forbidden by its selected
-disposition is `unknown-member`. Limits remain caller inputs to reading and
+cause at that member's ContractPackage pointer. A missing, duplicate, unknown,
+wrong-kind, or out-of-domain member uses FR-322's `invalid_package` code with
+its corresponding `missing-member`, `duplicate-member`, `unknown-member`,
+`wrong-value-kind`, or `invalid-value` cause. The pointer for `missing-member`
+and `unknown-member` is the containing closed object whose member set was
+violated, including the ContractPackage root (the empty pointer `""`). The
+pointer for `duplicate-member`, `wrong-value-kind`, and `invalid-value` is the
+offending member itself. For example, an extra root `settings` member is
+reported at `""`, while an extra `settings` member in
+`package.lowering_profile` is reported at `/package/lowering_profile`. A
+`null` value for an allowed optional member is `wrong-value-kind` at that
+member's pointer. A payload member forbidden by its selected disposition is
+`unknown-member` at the containing record's pointer. Accounting/request
+bijection failures use `invalid_package`/`invalid-value` at `/feature_accounting`
+(the array value). Source-map totality failures use
+`invalid_package`/`invalid-value` at `/source_map` (the containing closed
+object, whose three collections jointly establish totality). This difference
+is intentional. A malformed or non-corresponding source-map member uses
+`invalid_package`/`invalid-value` at the offending member. A source region whose
+`start` is not less than `end` is reported at its `start` member. Other
+malformed members follow the code/cause rules above.
+FR-322-AC-35's "at the mutated entry" describes schema
+validation; FR-330 defines the distinct typed reader-refusal pointer here.
+Limits remain caller inputs to reading and
 lowering; they are not package data or identity inputs.
 
 The reader input also includes one admitted FR-322 dependency package for every
