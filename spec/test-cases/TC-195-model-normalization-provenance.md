@@ -17,6 +17,10 @@ Normalize inherited/redefined declarations and mutate identity, digest and rule-
 
 Use the subject and inputs named by FR-150. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
+Rows N01–N10 below remain the published `quire.model.complete/v1` regression
+vectors and MUST remain byte-for-byte unchanged. N11 is the new v2 shared-prefix
+accounting acceptance case; it does not rewrite or relabel those vectors.
+
 Select `quire.model.complete/v1` through
 [`complete-model-lock.json`](../../proposals/quire-v1/definitions/complete-model-lock.json),
 which also selects the `quire.value.complete/v1` lock. Every fixture is a domain
@@ -61,6 +65,7 @@ Fixtures:
 | N08 | F1 with `A/x.presence` set to `maybe` and `B.supertypes` set to `[Z]` | after three `normalize.record` charges, two refusals in node order and no effective view: `refused { code: invalid_model_binding, cause: malformed-declaration }` naming `ix://test/orders/A/x`, member path `presence` and its `origin`; then `refused { code: missing_declaration, cause: missing-name }` naming `ix://test/orders/B`, absent node `ix://test/orders/Z` and its `origin` |
 | N09 | F1 under its placeholder ModelSelection; then the N01 identities compared with the F1 selection digest and with the I04 node key of the `model_correspondence` node; then F1's nodes under the placeholder selection `n01v2` | ModelSelection `{identity: test/orders, digest_domain: sha256-jcs, digest: <SHA-256 of n01>}`, exactly the `model_selection` of the `n01-view` vector; no effective, view or universe identity equals the F1 selection digest or the I04 node key, because their domains differ; the `n01v2` run yields declarations byte-equal to `n01-view`'s, view `c478fa11` and universe `0b675aaf`, because only its ModelSelection differs |
 | N10 | Each mutation in `invalid_mutations` of the vectors file applied to its base preimage | `absent-node` refuses as a stale key; `cross-domain-declaration-key` and `owner-as-declaration-key` are refused by the schema; `unsorted-derivation`, `duplicate-path` and `unsorted-view` are refused by the semantic check; none exposes its retained digest as a valid identity |
+| N11 | Normalize a deterministic single-inheritance chain of 10,000 edges (10,001 object types), with canonical package bytes no larger than 512 KiB, under explicit limits admitting `declaration_records: 10001`, `derivation_facts: 50015001`, `effective_declarations: 10001`, `hashed_bytes: 268435456` and `work_units: 16777216` | all 10,001 type identities, every logical qualify/inherit fact (50,015,001 facts total), and the complete universe/view are produced; the shared-prefix fact-run, cycle-check, normal-form segment/link, and range/binding-proof charges total at most `12 × 10001`; exact v2 preimage bytes are emitted through the sole writer and all digests verify; the existing N01–N10 published vector bytes remain unchanged. Independently expand and compare smaller ladders including shared tails/diamonds to prove exact fact order, path multiplicity and ordinals. Record actual full-size elapsed time and peak memory as qualification evidence; the acceptance contract does not claim those measurements before execution. |
 
 ## Expected Results
 

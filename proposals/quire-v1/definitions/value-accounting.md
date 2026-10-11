@@ -501,8 +501,9 @@ Checking a package that selects `quire.model.complete/v2` carries
 request; zero is a real limit and never means unlimited. These counters are
 independent of `ScalarLimitsV1`. `declaration_records`, `derivation_facts`,
 `effective_declarations` and `dispatch_candidates` are high-water semantic
-sizes; `hashed_bytes` and `work_units` are cumulative. Every row adds one work
-unit unless it states another addition.
+sizes; `hashed_bytes` and `work_units` are cumulative. Work is charged for
+admitted representation and computation, not for virtual logical occurrences
+that a canonical shared-prefix run represents.
 
 Checking runs these stages in order: intake (`normalize.record`) and the
 model feature rules; normalization phases 2, 3 and 4, each a stage;
@@ -551,13 +552,13 @@ change family-step or population-admission limits.
 | Charge point | Order | Exact counter amount |
 | --- | --- | --- |
 | kth `normalize.record` | each declaration record that intake builds from a domain package IR node (object type, field, relationship, operation, clause, population, part, port, interface, connection or allocation), ascending declaration key, before the node is read | `declaration_records=k` |
-| kth `normalize.fact` | each derivation fact before it is formed: phase 2, then phase 3, then phase 4, each ascending by (owner declaration key, declaration key, inputs, rule identity), where a type fact has no owner and sorts before every owned fact; rule identity is compared as exact UTF-8 bytes, and identical facts retain their full multiplicity | `derivation_facts=k` |
-| each `normalize.cycle-check` | immediately before the `normalize.fact` of each phase 3 type fact, before testing whether the extended path's new general type already lies on the path | no size-counter change; `work_units += L` instead of one, where `L` is the number of supertype edges in the extended path; a closing extension is charged even when its cycle's edge set was already reported, and each cycle is reported once, at its first closing charge, as `quire.model.complete/v2` states |
+| each `normalize.fact` | phase 2 and phase 4: each fact before formation; phase 3: each maximal canonical type-inherit prefix run before formation, ordered by owner and the run's first input under the same full-key order; `q` is the exact number of logical facts expanded by the run, including multiplicity | `derivation_facts += q`; `work_units += 1` per ordinary fact or prefix run; each input-edge extension is charged once at its first admission to the shared-prefix index |
+| each `normalize.cycle-check` | phase 3, at first visit to each declared supertype edge in deterministic source-key/target-key order, before cycle classification; later visits through logical inheritance paths use the admitted edge result | no size-counter change; `work_units += 1` per distinct edge. Every edge is checked, cycles are reported once by exact edge set, and diagnostics follow the canonical order and paths specified by `quire.model.complete/v2` |
 | each `normalize.redefinition-check` | phase 4, before its first `normalize.fact`: each redefining member ascending by declaration key, before testing that its target is a member inherited by its owning type and that no member of the same type checked before it redefines the same target | no size-counter change; `work_units += m + r` instead of one, where `m` is the number of effective members of the owning type and `r` the number of redefining members checked before it |
 | each `normalize.conflict-check` | phase 4, after its last `normalize.fact`: each (effective type, redefined member) reached by `c >= 2` redefining members, ascending by (owner original declaration key, target original declaration key), before its redefining owners are compared pairwise; this preidentity order does not change the later effective member key | no size-counter change; `work_units += Σ (c − 1) × f(o)` instead of one, summed over the `c` redefining owners `o`, where `f(o)` is the number of type derivation facts (qualify and inherit) of `o` that each proper-descendant test of `o` against another owner scans, one work unit per fact |
 | kth `normalize.declaration` | phase 5, before any identity preparation for that entry: all effective types ascending original declaration key, then all effective members ascending (computed owner effective type identity, original declaration key) | `effective_declarations=k` |
 | each `normalize.metadata` | after the owning declaration charge, at first use of each semantic key-field occurrence defined below, before scanning its content for canonical-length metadata; the selection identity occurrence is prepared before its first universe/view hash | no size-counter change; `work_units += 1 + n` instead of one, where n is its admitted UTF-8 byte length |
-| each `normalize.normal-form` | after its declaration charge, before forming that entry's canonical derivation descriptor or path index | no size-counter change; `work_units += max(1, f + p + t)` instead of one, where f is its logical fact count and p/t are its logical path/tail key-occurrence counts from the admitted phase-2/3/4 data |
+| each `normalize.normal-form` | after its declaration charge, before forming that entry's canonical derivation descriptor or path index | no size-counter change; `work_units += max(1, s + u)`, where `s` is the number of canonical literal/prefix segments formed for the entry and `u` is the number of new selection-local path-index links admitted by this entry; logical fact and path/tail occurrence counts do not multiply this work charge |
 | each `normalize.identity-work` | before each slot/metadata/dependency lookup, range or binding proof, node-price traversal, ordering projection/comparison/move or index admission in the closed schedule below, including reuse hits | no size-counter change; `work_units += a` instead of one, with a defined below for the named event |
 | each `normalize.hash` | phase 5, required key/block dependencies children-before-parent at first use, then the owning declaration; after all entries, each universe ascending first root identity, then the complete declaration-sequence joins left-before-right postorder and the view header; each charge precedes node encoding AND hashing | `hashed_bytes += b`, where b is the exact sole-writer RFC-8785 length from the closed analytical template; one work unit, with no posthoc byte reservation |
 | each `conformance.axis` | each FR-151 axis, redefining members then subsetting fields, each ascending by declaration key, axes in FR-151 order | no size-counter change; a type-conformance axis charges `work_units += f(x)` instead of one, where `x` is the type whose conformance is tested and `f(x)` the number of its type derivation facts (qualify and inherit) that the conformance walk scans, one work unit per fact, or one for a non-object type decided by the FR-149 equality-conversion table: the field value type axis and the subsetting type test use the redefining or subsetting feature's type, parameter type axis `i` uses the redefined parameter `i`'s type (so the parameter type axes together charge the sum of `f` over the parameters), and the result type axis uses the redefining result type, or one when either result is absent; for the operation effect axis, `work_units += max(1, t)` instead of one, where `t` sums, over each redefining frame entry in `modifies`, `creates`, `deletes` order: for a field write, `n × (1 + r)`, with `n` the number of redefined `modifies` entries it is compared against and `r` the number of `redefines` links walked from the written field; for a create or delete, `f(x)` for every redefined `creates` (respectively `deletes`) grant it is tested against, with `f(x)` the number of type derivation facts of the created or deleted type `x` that the conformance test scans; every entry is compared with every grant |
@@ -672,15 +673,16 @@ original, count, kind, rule, version or header slot is free.
 
 At each key/block reference, after its scalar Read, `Require` charges one
 descriptor lookup with a=1, admitting only the already formed source descriptor
-handle/count read, not a content-based reuse search. It next charges a binding-validation event:
-a=1 for a key's exact inventory-rank binding, a=max(1,L) for a block's exact
-ordered L-key sequence binding. This admits the reuse lookup/equality/proof formation
-against the selection's immutable input, including on a hit. A block reuse
-key is its node kind, count and exact ordered inventory-rank sequence; a key
-reuse key is its inventory rank. An admitted shared path/index may establish
-sequence equality without a physical L-key scan, but neither a digest nor
-an uncharged content-search can establish it. This proof and table admission
-are part of the binding event, independent of the table's physical layout.
+handle/count read, not a content-based reuse search. It next charges one
+binding-validation event with a=1 for both keys and blocks. A block binding
+uses its exact selection-local path-index handle, count and ordered child
+handles; it MUST NOT scan the represented L keys on a hit or miss. The index
+admits a new child link only after its exact parent handle and next inventory
+rank are known. Handle equality therefore proves the exact ordered sequence;
+a digest alone or an uncharged content search never proves a binding. This
+proof and table admission are part of the binding event, independent of the
+table's physical layout. Reuse remains selection-local and every lookup is
+charged, including hits.
 The binding event also admits miss descriptor formation from that exact source,
 before the node's Read. On a hit Require returns the retained digest/price/binding and stops: no child
 walk, price traversal, metadata scan or hash repeats. On a miss Read the node's
@@ -688,17 +690,20 @@ preimage, recursively requiring left then right as encountered, then Price
 and Hash below; successful binding/digest retention is included in Hash.
 Failure does not insert a successful record. No unneeded block is prepared.
 
-After Reading each Range, charge a=max(1,L) once for that Range occurrence,
-even an empty range or a range whose blocks hit. This admits prescribed lengths,
-exact overlap, path coverage and its provenance proof, not a digest-only check.
+After Reading each Range, charge a=1 once for that Range occurrence, even an
+empty range or a range whose blocks hit. The canonical path-index handles
+admit prescribed lengths, exact overlap, path coverage and provenance proof
+without rescanning the represented range. An invalid overlap is still refused;
+the indexed proof is exact-key evidence, not a digest-only check.
 Normal form is admitted once per declaration by normalize.normal-form BEFORE
-formation or semantic replay. Its max(1,f+p+t) amount admits all logical fact,
-input, rule and ordinal reads, total semantic phase/input/rule ordering with
-multiplicity, greedy prefix decisions and construction/verification of that
-entry's canonical descriptor and source-path index. It does not admit hashes,
-later Read/Require events or another entry's work. The semantic input is the
-ordered phase-2/3/4 stream, not an arbitrarily ordered expanded list to sort for
-free. Index/proof acceleration never refunds f+p+t or range/binding amounts.
+formation or semantic replay. Its max(1,s+u) amount admits the canonical
+literal/prefix segment decisions and new path-index links for that entry. The
+phase/input/rule ordering and ordinal assignment are obtained from the ordered
+fact/run stream; a prefix run denotes every exact expanded fact and ordinal
+without allocating or visiting each path occurrence. `derivation_facts`
+continues to count every expanded fact exactly. Reusing a path-index link is
+one charged lookup and never recharges or rescans its ancestors. This event
+does not admit hashes, later Read/Require events or another entry's work.
 
 After a complete hash-node Read and all encountered dependencies/checks, Price
 charges a=max(1,v), where v is EVERY object/array/scalar occurrence of that
@@ -734,6 +739,19 @@ projection when present. A physical in-place sort still charges those logical
 moves. No physical algorithm can change the comparison or denial trace.
 After the sort, charge a=1 per output record, in output order, before installing
 its ordering/index slot. No sort, prerequisite index or proof prepass is free.
+
+The shared-prefix work is linear in the admitted inheritance input and the
+number of canonical prefix runs: each declared edge creates one path-index
+link and is cycle-checked once; each prefix run creates one fact-run event;
+each range creates one constant-cost range proof; and every repeated link or
+block reference costs one lookup regardless of represented path length.
+Consequently, for a single-inheritance chain with E edges and E+1 effective
+types, the sum of `normalize.cycle-check`, phase-3 `normalize.fact`,
+`normalize.normal-form` segment/link work and range/binding proof charges is
+at most `12 × (E + 1)`. This bound excludes the exact `normalize.hash` byte
+charges and the separately specified ordering/index events; those remain
+charged. No charge or shortcut changes the closed identity templates or their
+canonical writer bytes.
 
 The schedule within each phase-5 selection is exactly:
 

@@ -169,20 +169,33 @@ ordering uses original owner/target keys before identities exist; the effective
 member key's meaning does not change. No preparatory hash occurs in phases 1–4.
 Shared reuse is selection-local under the operation meter and follows the
 exact closed-template Read/Require/Price/Hash and prerequisite ordering/index
-schedule; lookup/pricing/validation work is not free. Metadata reuse is by
-selection-local admitted field occurrence, not equal text or physical interning.
-Equal package text at different original ranks is scanned/charged separately;
-repeat access to the same rank/field keeps its lookup charge without rescanning.
-Every owner/root/universe/dictionary sort uses the prescribed input projection,
-stable comparison, logical move and index admission events. Pricing's retained
-slot reads are covered by its v-priced traversal, not optional extra field
-charges. For the existing exact-bound/denial acceptance, independent layouts
-and search/sort choices SHALL produce the same complete event sequence and
-first unavailable charge, including hits, equal-input facts and ordering
-prerequisites; zero/one-less injections suppress the named and dependent work.
-Denial performs none of its named work, encodes/hashes no denied node and runs no
-dependent work. No second encoder, speculative pricing API, posthoc byte
-reservation or expanded-preimage fallback is permitted. Each normalization phase checks
+schedule; lookup/pricing/validation work is not free. A phase-3 inheritance
+ladder SHALL be admitted as a canonical prefix run: its `derivation_facts`
+charge SHALL count every expanded logical fact and preserve its exact ordinal,
+but shared path indexing, cycle classification, range overlap and binding
+proofs SHALL charge each distinct input edge once and each reuse lookup a
+constant one work unit, independent of the expanded path length. For a
+single-inheritance chain with E edges, phase-3 fact runs, cycle checks,
+normal-form segment/link work and range/binding proofs SHALL total no more
+than `12 × (E + 1)` work units. The exact closed identity preimage bytes,
+canonical writer output, digest domains and published identity vectors SHALL
+remain unchanged by this accounting rule; every effective identity and the
+complete view remain eagerly computed.
+
+Metadata reuse is by selection-local admitted field occurrence, not equal
+text or physical interning. Equal package text at different original ranks is
+scanned/charged separately; repeat access to the same rank/field keeps its
+lookup charge without rescanning. Every owner/root/universe/dictionary sort
+uses the prescribed input projection, stable comparison, logical move and
+index admission events. Pricing's retained-slot reads are covered by its
+v-priced traversal, not optional extra field charges. For exact-bound/denial
+acceptance, independent layouts and search/sort choices SHALL produce the same
+complete event sequence and first unavailable charge, including hits,
+equal-input facts and ordering prerequisites; zero/one-less injections
+suppress the named and dependent work. Denial performs none of its named
+work, encodes/hashes no denied node and runs no dependent work. No second
+encoder, speculative pricing API, posthoc byte reservation or
+expanded-preimage fallback is permitted. Each normalization phase checks
 exhaustively and reports every refusal it exposes in charge order; a phase that
 reports a refusal ends checking. Exhaustion ends checking as
 `resource_exhausted`/`insufficient-next-charge` with no effective view.
@@ -212,6 +225,7 @@ the matched integration cohort and independent qualification.
 | FR-150-AC-13 | Every effective identity and the complete view/universe identities are computed eagerly; a transport missing any effective preimage or reachable key/block record, or supplying only a root/requested membership proofs, cannot be admitted as a complete view. | Test |
 | FR-150-AC-14 | Each admitted template's analytical price equals the sole canonical writer's returned length, including escaped admitted keys; exact-bound/one-less/zero denial at metadata, normal-form, identity-work or hash performs none of that event's named work and no dependent work, with zero node encoding/hashing on hash denial. Shared hits do not rehash a node but retain their prescribed lookup charges. | Test |
 | FR-150-AC-15 | The replacement selected closure, schema/vectors, edge protocol, strict reader, accounting and identity domains agree on one contract; an old or mixed selection and an old digest relabelled into the replacement domain are not admitted through a compatibility path. | Inspection |
+| FR-150-AC-16 | For an admitted single-inheritance chain of E edges, all E+1 effective type identities and the complete view are computed with every logical inheritance fact retained; shared-prefix-specific charges are at most `12 × (E + 1)`, the exact v2 preimage bytes and published vectors are unchanged, and the 10,000-edge/512-KiB case completes when its semantic fact limit admits 50,015,001 facts. | Test |
 
 ## Dependencies
 

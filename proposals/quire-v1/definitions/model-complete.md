@@ -338,6 +338,15 @@ the last path; otherwise emit a literal. At any other fact emit a literal.
 Resume at the next uncovered fact. This longest-first left-to-right rule is
 the only factoring rule, including when several ladders are adjacent; the
 semantic rule tie-break above has already fixed the array.
+
+The semantic array is a logical sequence: a canonical prefix run may represent
+its complete consecutive type-inherit ladder without materializing one path
+array per logical fact. The retained v2 declaration, key, block, range,
+sequence, universe and view preimage templates remain exactly those specified
+above. Shared-prefix indexing changes only how those exact template bytes are
+prepared and verified; it does not change member order, JCS bytes, digest
+domains, resulting identity bytes or any published vector.
+
 The expanded array position is the exact decimal ordinal, starting at zero;
 the sum of segment expansion counts must equal Derivation.count. Rules are exactly the selected
 manifest's unchanged qualify/inherit/subset/redefine identities. Distinct
@@ -453,13 +462,15 @@ declaration key)`; a clause names the construct by its artifact id, never
 through its owner.
 
 A phase 3 extension that would revisit a type already on the current path
-closes a cycle. Each cycle is `refused { code: invalid_model_binding, cause:
-specialization-cycle }` exactly once, keyed by the set of its supertype edges:
-it is reported at the first extension, in `normalize.cycle-check` charge order,
-that closes it, and a later extension closing a cycle with the same edge set is
-charged but not reported again. The refusal lists the cycle's type keys in
-cycle order (path order from the revisited type), rotated to start at the least
-key. A redefinition whose target is not a member inherited by its owning type,
+closes a cycle. The checker classifies each declared supertype edge once in
+deterministic source-key/target-key order and reuses that result when the edge
+appears in multiple logical paths. Each cycle is
+`refused { code: invalid_model_binding, cause: specialization-cycle }` exactly
+once, keyed by the set of its supertype edges. Its refusal lists the cycle's
+type keys in cycle order (path order from the revisited type), rotated to start
+at the least key; multiple cycle diagnostics follow that edge-set order. This
+linear edge classification does not prune any acyclic inheritance path or
+fact. A redefinition whose target is not a member inherited by its owning type,
 or two members of one type that redefine one target, is
 `refused { code: invalid_model_binding, cause: redefinition-target }` listing
 every such redefining member. Two phase 4 redefinitions of one member reaching `T`
