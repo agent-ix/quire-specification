@@ -25,7 +25,7 @@ relationships:
 
 ```yaml
 name: ContractPackage
-associated_types: [ContractPackageId, SourceMap, LoweringProfileRef]
+associated_types: [ContractPackageId, SourceMap, LoweringProfileRef, CompleteLoweringProfileV2]
 operations:
   - { name: lower, inputs: [checked_package, lowering_profile, requested_items, limits], output: ContractPackage and per-item accounting, semantics: exact representation or per-item refusal }
 invariants:
@@ -46,14 +46,24 @@ exact semantic meaning or a typed per-item refusal.
 | Param | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | checked_package | CheckedPackage | 1..1 | admitted immutable package |
-| lowering_profile | LoweringProfileRef | 1..1 | explicitly selected; closed `{authority, identity}` value |
+| lowering_profile | CompleteLoweringProfileV2 | 1..1 | explicitly selected resolved profile; owns `reference` and typed `required_source_selections` |
 | requested_items | RequestedItem | 0..* | each retains its own disposition |
 | limits | caller-supplied limits (FR-195) | 1..1 | bounds lowering work and output |
 
 Returns: ContractPackage and per-item accounting
 
-`LoweringProfileRef` has the same closed `{authority, identity}` value form as
-FR-322 `DefinitionRef`. It identifies the caller's explicit lowering-profile
-choice. I12 defines no profile registry and no mapping from this reference to
-required source semantic selections; the reference is carried as identity, not
-used to infer a source-selection compatibility result.
+`CompleteLoweringProfileV2` is the resolved lowering-operation input owned by
+Contract IR FR-035. Its `reference: LoweringProfileRef` identifies the explicitly
+selected profile; its `required_source_selections: Vec<CheckedSelection>` carries
+that profile's authoritative source-selection requirements. Each row reuses
+FR-322's `Selection` value `{role, definition}` and `DefinitionRef`
+`{authority, identity}` without another representation. The profile producer
+supplies the requirements when constructing the resolved profile, together with
+its existing supported tags, bounds requirement and work limit; a reference alone
+is insufficient input. There is no ambient registry or identifier parsing.
+
+The lowerer SHALL apply FR-330's exact row-membership predicate to those typed
+requirements and the admitted checked package's `lock.profile_selections` before
+emitting semantic nodes. The output's `package.lowering_profile` remains only
+`lowering_profile.reference`; the requirements are operation input, not additional
+wire members or an amendment to source meaning.
