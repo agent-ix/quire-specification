@@ -21,8 +21,9 @@ contract before returning a typed value to any consumer.
 
 Read one independently constructed valid canonical ContractPackage. Repeat
 with one mutation per case: wrong FR-330 contract version; a checked-package
-version substituted in the outer tag; missing, duplicate or unknown member;
-wrong member kind; unresolved or incompatible graph reference;
+version substituted in the outer tag; missing and duplicate root
+`contract_version` member; an unknown `extra` member at the ContractPackage root; wrong
+kind for `package.lowering_profile`; unresolved or incompatible graph reference;
 missing source-map entry; accounting/request mismatch; an `identity.digest`
 that differs from the recomputed projection; wrong
 identity domain; and a semantically equivalent but noncanonical wire encoding
@@ -30,17 +31,25 @@ with reordered members or insignificant whitespace. For the last case, preserve
 the original digest so the only defect is noncanonical bytes. For unresolved
 or incompatible graph references, recompute identity so the reader reaches
 graph-reference validation after identity. Also combine a
-wrong outer version with a duplicate nested member. For every refusal,
+wrong outer version with duplicate `refusal.code` in a one-record
+`feature_accounting` array (index 0). For every refusal,
 except for duplicate-member and noncanonical-wire cases, submit each valid-JSON
 mutation as canonical RFC 8785 bytes before reading; submit those two cases as
 raw bytes;
-capture the typed result before invoking a consumer. For each nested defensive
-payload, repeat with a missing required member, unknown member, wrong member
-kind, and `null` in place of an omitted optional member; do not recompute
+capture the typed result before invoking a consumer. Every one-record
+`feature_accounting` vector begins from an otherwise valid canonical package
+with exactly one requested item, its matching accounting record, and matching
+`source_map`; apply only the stated mutation to that baseline. In separate
+one-record `feature_accounting` cases (index 0), for `invalid_body.refusal` and
+`body_incomplete.incomplete`, repeat with a missing required member
+(`refusal.code` or `incomplete.limit_kind`), unknown member, wrong member kind,
+and `null` in place of an omitted optional member. Do not recompute
 identity for these shape mutations because nested schema is validated first.
-Separately submit a raw nested object with a duplicate member name;
+Separately submit a raw `invalid_body.refusal` object with a duplicate `code`
+member;
 do not canonicalize or recompute identity for that input. For each `limit` and
-`consumed` field in `failed` and `body_incomplete`, test `"08"`, `"+1"`,
+`consumed` field in `failed` and `body_incomplete` (each in a one-record array
+at index 0), test `"08"`, `"+1"`,
 `"-1"`, `""`, `"١"`, and
 `"18446744073709551616"`; also replace a counter string with the JSON number
 `8`. Construct two valid `failed` controls: one with `limit` and `consumed`
@@ -80,13 +89,41 @@ reference; it must not satisfy or redirect the reference.
 
 ## Expected Results
 
-The valid value returns the existing typed `admitted` envelope. Each mutated
+The valid value returns the existing typed `admitted` envelope. A missing root
+`contract_version` member is `invalid_package`/`missing-member` at `""`; a duplicate
+root `contract_version` member is `invalid_package`/`duplicate-member` at `/contract_version`;
+an unknown root member is `invalid_package`/`unknown-member` at `""`; a
+wrong-kind `package.lowering_profile` is `invalid_package`/`wrong-value-kind`
+at `/package/lowering_profile`. Each mutated
 value returns the FR-330 typed `refused` result using FR-322's generic
 wire/canonical checks and FR-330's own contract-version rule, with the
 applicable FR-322 code/cause mapping and FR-272 diagnostic identifying its
 stage and available loci. Malformed nested payloads are refused as
 `invalid_package` with the applicable `missing-member`, `unknown-member`,
-`wrong-value-kind`, or `invalid-value` cause and the ContractPackage pointer.
+`wrong-value-kind`, or `invalid-value` cause. `missing-member` and
+`unknown-member` use the containing object's pointer: for the one-record cases,
+an unknown member in `invalid_body.refusal` is at `/feature_accounting/0/refusal`,
+and one in `body_incomplete.incomplete` is at `/feature_accounting/0/incomplete`.
+Missing `refusal.contract_version` for `unknown_contract_version` is at
+`/feature_accounting/0/refusal`; missing non-byte `incomplete.path` is at
+`/feature_accounting/0/incomplete`. Wrong-kind and invalid-value causes use the offending member
+pointer, including `/feature_accounting/0/refusal/code`,
+`/feature_accounting/0/incomplete/limit_kind`, and
+`/feature_accounting/0/refusal/cause`. A bytes incomplete record's forbidden `path` member,
+including `path: null`, is `unknown-member` at
+`/feature_accounting/0/incomplete`; a different refusal code's
+forbidden `contract_version`, including `null`, is `unknown-member` at
+`/feature_accounting/0/refusal`. Wrong counter spellings and
+ranges are `invalid-value` at the specific `limit` or `consumed` member;
+JSON-number counters are `wrong-value-kind` there, including
+`/feature_accounting/0/limit` and `/feature_accounting/0/consumed` for `failed`,
+and `/feature_accounting/0/incomplete/limit` and
+`/feature_accounting/0/incomplete/consumed` for `body_incomplete`. The raw duplicate
+`code` member is `duplicate-member` at
+`/feature_accounting/0/refusal/code`. A missing source-map entry is refused as
+`invalid_package`/`invalid-value` at `/source_map`; an accounting/request
+mismatch is refused as `invalid_package`/`invalid-value` at
+`/feature_accounting`.
 A duplicate nested JSON member, including with a wrong outer version, is
 refused as `invalid_package`/`duplicate-member` during strict JSON parsing,
 before version checking, canonical-byte comparison, or identity validation.

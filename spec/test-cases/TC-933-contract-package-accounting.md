@@ -39,10 +39,11 @@ refusal/incomplete value; check exact field names, types, values, and omitted
 optional members. Then pass the unmodified wire through the FR-330 reader and
 inspect graph roots and sibling records. Write each valid-JSON mutation back
 as canonical RFC 8785 bytes.
-Exercise nested closed-shape
-mutations by omitting a required member, adding an unknown member, setting
-`invalid_body.refusal.path` to `null` when the injected typed refusal omits it,
-and changing an allowed member's kind. Do not
+Exercise nested closed-shape mutations by omitting the required `code` member
+from `invalid_body.refusal` in array index 6, adding `extra: true` to that
+object, setting `invalid_body.refusal.path` to `null` when the injected typed
+refusal omits it, and setting the allowed `refusal.code` member to a JSON
+number. Do not
 recompute identity for these invalid shapes: the reader checks nested schema
 before identity. Separately mutate the accounting array by omitting its
 `unsupported` record and its matching `source_map.refusals` entry while
@@ -76,11 +77,19 @@ the allowed `path` member is `wrong-value-kind`. The mutation that removes the
 `unsupported` accounting and refusal rows still has a total requested-item
 source map; it is refused for the missing accounting/request bijection, not
 for missing requested-item provenance. Omitting a record or duplicating an item is refused as
-`invalid_package`/`invalid-value` for request/accounting mismatch before
-identity validation. Changing `failed` to `invalid_input` while retaining its
-payload is refused as `invalid_package`/`unknown-member`; attaching an emitted
-node to an `unsupported` record is refused as `invalid_package`/`unknown-member`
-because non-lowered variants forbid node payloads. A well-shaped `path`
+`invalid_package`/`invalid-value` at `/feature_accounting` for
+request/accounting mismatch before identity validation. The missing `code`
+member is refused as `invalid_package`/`missing-member` at
+`/feature_accounting/6/refusal`; the extra `refusal.extra` is refused as
+`invalid_package`/`unknown-member` at `/feature_accounting/6/refusal`;
+the null `path` is refused as `wrong-value-kind` at
+`/feature_accounting/6/refusal/path`; the numeric `code` is refused as
+`wrong-value-kind` at `/feature_accounting/6/refusal/code`. Changing `failed` to
+`invalid_input` while retaining its payload is refused as
+`invalid_package`/`unknown-member` at `/feature_accounting/5`; attaching an
+emitted node to an `unsupported` record is refused as
+`invalid_package`/`unknown-member` at `/feature_accounting/2` because
+non-lowered variants forbid node payloads. A well-shaped `path`
 mutation with the old identity is refused as
 `invalid_package`/`invalid-value` at `/identity/digest`; recomputing identity for that
 new value is outside this test because the reader checks canonical structure
