@@ -34,7 +34,6 @@ invariants:
   - one key-ordered semantic graph is the sole owner of semantic nodes
   - semantic node references use stable node identity, never array position or display name
   - dependency references retain FR-322 dependency-selection semantics and are not rewritten as local nodes
-  - a protocol reference is the node identity of a protocol-tagged node
 ```
 
 ## Operations
