@@ -936,6 +936,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-194 | FR-194-AC-5 | TC-216 |  |
 | FR-195 | FR-195-AC-4 | TC-217 |  |
 | FR-195 | FR-195-AC-5 | TC-217 |  |
+| FR-195 | FR-195-AC-6 | TC-933 |  |
 | FR-196 | FR-196-AC-4 | TC-218 |  |
 | FR-196 | FR-196-AC-5 | TC-218 |  |
 | FR-197 | FR-197-AC-4 | TC-219 |  |
@@ -1077,9 +1078,15 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-329 | FR-329-AC-1 | TC-231 |  |
 | FR-329 | FR-329-AC-2 | TC-231 |  |
 | FR-329 | FR-329-AC-3 | TC-231 |  |
-| FR-330 | FR-330-AC-1 | TC-231 |  |
-| FR-330 | FR-330-AC-2 | TC-231 |  |
-| FR-330 | FR-330-AC-3 | TC-231 |  |
+| FR-330 | FR-330-AC-1 | TC-935 |  |
+| FR-330 | FR-330-AC-2 | TC-933, TC-934 |  |
+| FR-330 | FR-330-AC-3 | TC-936 |  |
+| FR-330 | FR-330-AC-4 | TC-931, TC-937 |  |
+| FR-330 | FR-330-AC-5 | TC-932, TC-935 |  |
+| FR-330 | FR-330-AC-6 | TC-933 |  |
+| FR-330 | FR-330-AC-7 | TC-934 |  |
+| FR-330 | FR-330-AC-8 | TC-936 |  |
+| FR-330 | FR-330-AC-9 | TC-937 |  |
 | FR-331 | FR-331-AC-1 | TC-231 |  |
 | FR-331 | FR-331-AC-2 | TC-231 |  |
 | FR-331 | FR-331-AC-3 | TC-231 |  |
