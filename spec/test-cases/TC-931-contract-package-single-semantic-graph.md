@@ -26,9 +26,9 @@ identities, references, and source correspondence with FR-322 and FR-330.
 Include an explicit recursion group and verify its keyed references remain
 finite serialized values. Repeat after changing construction order, then
 mutate a protocol reference to an absent key and to the key of an existing
-non-protocol node. Finally, supply a dependency package whose recomputed
-`package_id` differs from the selected row while keeping the reference and
-lock unchanged.
+non-protocol node. In a separate admission attempt, supply a dependency package
+whose recomputed `package_id` differs from the selected row while keeping the
+reference and lock unchanged.
 
 ## Expected Results
 
@@ -38,7 +38,9 @@ references resolve locally, the dependency function call resolves through the
 selected admitted package, and recursion-group cycles remain keyed references
 in a finite value. The dependency-package mutation refuses
 `stale_dependency`/`content-mismatch` naming the selection identity and both
-package ids; the unrelated lowered sibling retains its disposition. It has no separate
+package ids during package admission, before lowering begins, so no
+ContractPackage is emitted for that attempt. In the valid admitted mixed-request
+case, the unrelated lowered sibling retains its disposition. The package has no separate
 `types`, `expressions`, or `clauses` graph collections. The protocol reference
 is the stable node key of the protocol-tagged node in that collection, and the
 package identity and source correspondence remain equivalent under canonical
