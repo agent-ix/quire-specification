@@ -258,6 +258,7 @@ The frame step runs before the state step of
 | FR-340-AC-15 | No `model` node stands for a field, an operation or a clause member on its own: `ModelNode.semantic_form` names only FR-208's business type kinds, `model_import` and FR-208's five systems meanings. | Test (TC-233) |
 | FR-340-AC-16 | A field entry carries `scope` exactly `receiver` or `every-object`; an entry without it or with another value fails the schema, two entries for one field with different scopes refuse `invalid_model_binding`/`conflicting-binding`, and changing an entry's scope changes the frame node id and the `package_id`. | Test (TC-326) |
 | FR-340-AC-17 | A frame body carries `deletes_scoped`, possibly empty; `deletes self` encodes as `{kind: "receiver"}` and `deletes p` as `{kind: "parameter", name: "p"}`; a body without the member fails the schema, a `parameter` entry naming no reference parameter refuses `missing_declaration`/`missing-name`, and a misordered array refuses `invalid_semantic_graph`. | Test (TC-326) |
+| FR-340-AC-18 | For record value type `Address` with inherited field `street`, a `modifies` field entry naming (`Address`, `street`) resolves that exposed effective field. An entry naming an operation or an undeclared field refuses `missing_declaration`/`missing-name`; two exposed fields of that name refuse `ambiguous_declaration`/`ambiguous-name`. | Test |
 
 ## Dependencies
 
