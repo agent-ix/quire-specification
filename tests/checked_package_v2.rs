@@ -681,6 +681,14 @@ fn application_terms(term: &Value) -> Vec<&Value> {
     found
 }
 
+/// Nodes with an application-node identity under FR-322: every node whose
+/// body contains an application, plus every `value`/`union_value` node,
+/// including a nullary aggregate construction.
+fn is_application_node(node: &Value) -> bool {
+    !application_terms(&node["body"]).is_empty()
+        || (node["node_tag"] == "value" && node["semantic_form"] == "union_value")
+}
+
 /// Exact dependency list of an application-bearing node: every reference
 /// target and every operation member declaration of its body, unique and
 /// ascending by digest.
@@ -2100,10 +2108,9 @@ fn preimage_term(term: &Value, group: &[&Value]) -> Value {
     }
 }
 
-/// The `quire.application-node/v1` preimage of any node whose body contains
-/// an application.
+/// The `quire.application-node/v1` preimage of every FR-322 application node.
 fn application_node_preimage(node: &Value, nodes: &[Value]) -> Option<Value> {
-    if application_terms(&node["body"]).is_empty() {
+    if !is_application_node(node) {
         return None;
     }
     let group = node.get("recursion_group").map_or_else(Vec::new, |label| {
@@ -2139,7 +2146,7 @@ fn application_node_shape_is_valid(node: &Value) -> bool {
             .as_str()
             .and_then(expression_form_for_class)
             == node["semantic_form"].as_str();
-    !application_terms(body).is_empty()
+    is_application_node(node)
         && form_fits
         && node["dependencies"]
             .as_array()
@@ -2160,7 +2167,7 @@ fn application_node_key_is_current(node: &Value, nodes: &[Value]) -> bool {
 fn structural_node_preimage(node: &Value) -> Option<Value> {
     if node.get("nominal_identity_preimage").is_some()
         || node.get("recursion_group").is_some()
-        || !application_terms(&node["body"]).is_empty()
+        || is_application_node(node)
     {
         return None;
     }
@@ -2359,7 +2366,7 @@ fn is_rekeyed_structural_node(node: &Value) -> bool {
     let abstraction_relation =
         node["node_tag"] == "correspondence" && node["semantic_form"] == "abstraction_relation";
     node.get("nominal_identity_preimage").is_none()
-        && application_terms(&node["body"]).is_empty()
+        && !is_application_node(node)
         && !abstraction_relation
 }
 
@@ -2435,7 +2442,7 @@ fn recursion_group_digest(nodes: &[Value], group: &[&Value]) -> Option<String> {
         .iter()
         .enumerate()
         .map(|(member, node)| {
-            if application_terms(&node["body"]).is_empty() {
+            if !is_application_node(node) {
                 group_local_structural_preimage(group, member)
             } else {
                 application_node_preimage(node, nodes)
@@ -2750,7 +2757,7 @@ fn read_package_semantics(package: &Value, catalog: &Value) -> Result<(), ReadRe
         .expect("package nodes are an array");
     let mut ordered = nodes
         .iter()
-        .filter(|node| !application_terms(&node["body"]).is_empty())
+        .filter(|node| is_application_node(node))
         .collect::<Vec<_>>();
     ordered.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
     if let Some(node) = ordered
@@ -4435,7 +4442,7 @@ fn rekey_stale_nodes(package: &mut Value) -> BTreeMap<String, String> {
             if node.get("recursion_group").is_some() {
                 return None;
             }
-            let derived = if application_terms(&node["body"]).is_empty() {
+            let derived = if !is_application_node(node) {
                 is_rekeyed_structural_node(node)
                     .then(|| structural_node_preimage(node))
                     .flatten()
@@ -6534,10 +6541,7 @@ fn tc_233_operation_vectors_key_every_application_node_of_the_published_packages
     let nodes = package["semantic_graph"]["nodes"]
         .as_array()
         .expect("package nodes are an array");
-    for node in nodes
-        .iter()
-        .filter(|node| !application_terms(&node["body"]).is_empty())
-    {
+    for node in nodes.iter().filter(|node| is_application_node(node)) {
         assert!(
             application_node_is_valid(node, nodes),
             "{} is keyed by its application-node preimage",
@@ -6685,14 +6689,9 @@ fn tc_233_operation_vectors_key_every_application_node_of_the_published_packages
         .expect("nodes");
     let call = family_nodes
         .iter()
-        .position(|node| {
-            node["node_tag"] == "function" && !application_terms(&node["body"]).is_empty()
-        })
+        .position(|node| node["node_tag"] == "function" && is_application_node(node))
         .expect("all-families publishes a function whose body is a call");
-    for node in family_nodes
-        .iter()
-        .filter(|node| !application_terms(&node["body"]).is_empty())
-    {
+    for node in family_nodes.iter().filter(|node| is_application_node(node)) {
         assert!(
             application_node_is_valid(node, family_nodes),
             "all-families application nodes are keyed"
@@ -7854,10 +7853,7 @@ fn tc_233_a_stale_node_key_precedes_declaration_refusals() {
     ));
     let other = nodes
         .iter()
-        .position(|node| {
-            node["node_id"] != nodes[call]["node_id"]
-                && !application_terms(&node["body"]).is_empty()
-        })
+        .position(|node| node["node_id"] != nodes[call]["node_id"] && is_application_node(node))
         .expect("a second application-bearing node is published");
     assert_ne!(other, call);
     ambiguous["semantic_graph"]["nodes"][other]["semantic_type"]["digest"] = json!("a0".repeat(32));
@@ -9072,10 +9068,7 @@ fn tc_395_union_nodes_fixture_is_a_closed_v2_package_with_member_ordered_arms() 
     let nodes = package["semantic_graph"]["nodes"]
         .as_array()
         .expect("semantic graph nodes are an array");
-    for node in nodes
-        .iter()
-        .filter(|node| !application_terms(&node["body"]).is_empty())
-    {
+    for node in nodes.iter().filter(|node| is_application_node(node)) {
         assert!(
             application_node_is_valid(node, nodes),
             "{} keys its application preimage and lists exactly its references",
@@ -9117,6 +9110,72 @@ fn tc_395_union_nodes_fixture_is_a_closed_v2_package_with_member_ordered_arms() 
         arms, shape,
         "a case's arms follow the union's member declaration order and payload arities"
     );
+}
+
+#[trace("TC-395")]
+#[test]
+fn tc_395_value_and_nullary_union_values_use_application_node_keys() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = parsed_fixture(POSITIVE_UNION_NODES);
+    let indexes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("semantic graph nodes are an array")
+        .iter()
+        .enumerate()
+        .filter_map(|(index, node)| {
+            (node["node_tag"] == "value" && node["semantic_form"] == "union_value").then_some(index)
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(
+        indexes.len(),
+        2,
+        "the authentic fixture has payload and nullary union values"
+    );
+
+    let mut current = package.clone();
+    for &index in &indexes {
+        rekey_application_node(&mut current, index);
+    }
+    assert_eq!(
+        read_package_semantics(&current, &catalog),
+        Ok(()),
+        "payload and nullary union values are admitted after graph/projection rekey"
+    );
+    for &index in &indexes {
+        let current_digest = current["semantic_graph"]["nodes"][index]["node_id"]["digest"]
+            .as_str()
+            .expect("current node key is a digest");
+        let stale_digest =
+            match current["semantic_graph"]["nodes"][index]["body"]["members"][0]["name"]
+                .as_str()
+                .expect("union member name is a string")
+            {
+                "Rect" => "e50bf8e0e17f7cf14ce559bdfe07c5a6f7baafb0820b0b2fdc2db02ed34c385f",
+                "Empty" => "d09135f93f7eaef2b22d256039978e7dcff7133bc85710b2bdceba5777bb9a60",
+                member => panic!("unexpected union member {member}"),
+            };
+        assert_ne!(
+            current_digest, stale_digest,
+            "the prior fixture key is stale under FR-322"
+        );
+        let mut stale = serde_json::from_str::<Value>(
+            &serde_json::to_string(&current)
+                .expect("current package serializes")
+                .replace(current_digest, stale_digest),
+        )
+        .expect("stale package parses");
+        refresh_package_id(&mut stale);
+        let expected = stale["semantic_graph"]["nodes"][index]["node_id"].clone();
+        assert_eq!(
+            stale["identity_preimage"]["identity_projection"][index]["node_id"], expected,
+            "the stale candidate also rekeys its identity projection"
+        );
+        assert_eq!(
+            read_package_semantics(&stale, &catalog),
+            Err(ReadRefusal::StaleNodeKey(expected)),
+            "a stale payload or nullary union value key is refused with stale-node-key"
+        );
+    }
 }
 
 #[trace("TC-395", "FR-440-AC-1")]
@@ -11377,7 +11436,7 @@ fn tc_233_recursive_record_fixture_carries_derived_group_keys() {
         .filter(|node| node.get("recursion_group").is_none())
     {
         assert!(
-            application_terms(&node["body"]).is_empty() && structural_node_key_is_current(node),
+            !is_application_node(node) && structural_node_key_is_current(node),
             "{} {} is keyed outside every group",
             node["node_tag"],
             node["semantic_form"]
