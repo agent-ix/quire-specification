@@ -6960,8 +6960,7 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
         let index = node_index_by_digest(&package, current_base_digest)
             .unwrap_or_else(|| panic!("{name} base vector remains in the modelized package"));
         assert_eq!(
-            package["semantic_graph"]["nodes"][index]["node_id"]["digest"],
-            current_base_digest,
+            package["semantic_graph"]["nodes"][index]["node_id"]["digest"], current_base_digest,
             "{name} starts from the current key of its base vector"
         );
         let mut node = package["semantic_graph"]["nodes"][index].clone();
@@ -10874,8 +10873,8 @@ fn tc_322_derived_form_key_mutations() {
             package["identity_preimage"] = derive_identity_preimage(&package);
             refresh_package_id(&mut package);
 
-            let retained_node_id = package["semantic_graph"]["nodes"][node_index]["node_id"]
-                .clone();
+            let retained_node_id =
+                package["semantic_graph"]["nodes"][node_index]["node_id"].clone();
             assert!(
                 package_schema.is_valid(&package),
                 "{name}: retained-key package remains schema-valid"
