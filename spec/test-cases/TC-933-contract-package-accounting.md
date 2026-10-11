@@ -32,13 +32,14 @@ refusal/incomplete value; check exact field names, types, values, and omitted
 optional members. Then pass the unmodified wire through the FR-330 reader and
 inspect graph roots and sibling records. Exercise nested closed-shape
 mutations by omitting a required member, adding an unknown member, writing
-`null` for an omitted optional member, and changing a member's kind. Recompute
-identity for valid JSON shape mutations so the reader reaches nested schema
-validation. Separately mutate the accounting array by omitting one record,
-duplicating one item, changing one outcome tag while leaving its old payload,
-and attaching a node to a non-`lowered` record; recompute identity for each so
-the reader reaches the accounting/request or variant-shape check. Separately
-change one typed payload value without updating identity.
+`null` for an omitted optional member, and changing a member's kind. Do not
+recompute identity for these invalid shapes: the reader checks nested schema
+before identity. Separately mutate the accounting array by omitting one record,
+duplicating one item, changing `failed` to `invalid_input` while retaining the
+`failed` payload, and adding a `node` member to an `unsupported` record; do
+not recompute identity because accounting consistency and variant shape are
+checked before identity. Separately change one well-shaped typed payload value
+without updating identity.
 
 ## Expected Results
 
@@ -54,13 +55,15 @@ each optional member is present exactly when its typed value is present. Its
 `body_incomplete.incomplete` is a closed object with typed `limit_kind`,
 canonical decimal-string `limit` and `consumed`, and `path` exactly when the
 typed value has one. The unmodified ContractPackage is admitted. Nested shape
-mutations with recomputed identity are refused as `invalid_package` with the
-FR-322 `missing-member`, `unknown-member`, or `wrong-value-kind` cause matching
-the defect; `null` is `wrong-value-kind`. Each accounting-array mutation with
-recomputed identity is refused as `invalid_package`/`invalid-value` for
-request/accounting mismatch before consumption; the tag-only mutation is
-rejected because its retained payload does not match the selected
-disposition's closed shape. A payload-value mutation with the old
+mutations are refused as `invalid_package` with the FR-322 `missing-member`,
+`unknown-member`, or `wrong-value-kind` cause matching the defect; `null` is
+`wrong-value-kind`. Omitting a record or duplicating an item is refused as
+`invalid_package`/`invalid-value` for request/accounting mismatch before
+identity validation. Changing `failed` to `invalid_input` while retaining its
+payload is refused as `invalid_package`/`unknown-member`; attaching an emitted
+node to an `unsupported` record is refused as `invalid_package`/`unknown-member`
+because non-lowered variants forbid node payloads. A well-shaped payload-value
+mutation with the old
 identity is refused for identity mismatch; recomputing identity for that new
 value is outside this test because the reader checks canonical structure and
 identity, not the truth of a producer's accounting. The two successful

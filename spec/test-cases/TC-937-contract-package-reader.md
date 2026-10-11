@@ -36,7 +36,8 @@ do not recompute identity for that input. For `failed` and `body_incomplete`
 counter strings, test `"08"`, `"-1"`, `""`, and
 `"18446744073709551616"`; also replace a counter string with the JSON number
 `8`, and verify `"18446744073709551615"` is accepted as the `u64::MAX` value.
-Also construct a valid
+Do not recompute identity for malformed counter values; compute it from the
+string-encoded projection for the well-shaped `u64::MAX` control. Also construct a valid
 ContractPackage whose source lock has one `dependency_selections` entry and
 whose graph has a `dependency_reference` to that selected package. Supply the
 matching admitted dependency package keyed by its library identity, then repeat

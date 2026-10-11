@@ -207,8 +207,11 @@ exactly `quire.contract-ir.semantic/v1`, algorithm `sha256`, and digest exactly
 ```
 
 The quoted placeholders above denote values themselves, not strings in the
-preimage. `identity` is excluded to avoid recursion. The originating package
-identity and lock, lowering profile, every graph node, and every terminal
+preimage. `identity` is excluded to avoid recursion. The projection contains
+the parsed JSON values of the named serialized wire members, including
+decimal-string counters exactly as strings; it does not convert them to JSON
+numbers before hashing. The originating package identity and lock, lowering
+profile, every graph node, and every terminal
 accounting result are included. `source_map` is strictly validated but excluded
 from the semantic digest because occurrence coordinates establish provenance,
 not semantic meaning. A change only to valid source occurrence/region data
@@ -235,7 +238,13 @@ FR-322's `quire.checked-package/v2` version predicate to this output), and
 checks the exact top-level and nested closed shapes,
 typed node keys and references, package provenance, profile selection,
 source-map totality, feature-accounting/request bijection, and recomputed
-identity before exposing an admitted typed value to a consumer. It returns the existing typed `admitted`, `refused`, or `incomplete` result
+identity before exposing an admitted typed value to a consumer. The order
+after generic wire checks is: outer version, all top-level and nested closed
+shapes and typed values (including accounting/request consistency), identity
+recomputation, dependency inputs in lock order, then graph references. Thus a
+malformed nested payload is refused before identity is recomputed, while a
+well-shaped changed value with a stale identity is refused at identity
+validation. It returns the existing typed `admitted`, `refused`, or `incomplete` result
 envelope shape, with FR-330 validation failures mapped to the existing FR-322
 code/cause pairings and FR-272 catalogued diagnostics at `package_read`; limit
 stops retain the exact incomplete kind, bound and consumed count. These are
