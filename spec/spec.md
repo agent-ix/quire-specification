@@ -974,6 +974,7 @@ The requirement artifacts are indexed below.
 | [Complete-V1 subsystem index](subsystems/index.md) | Architecture index | Ten subsystems and I01–I21 interface ownership |
 | [TM-009](complete-v1/tests.md) | Test Matrix | Every atomic capability and complete-V1 qualification case |
 | [FR-339](functional/source-package/FR-339-define-complete-native-grammar.md) | FR | Normative complete native V1 lexical and syntactic contract |
+| [FR-322](objects/interfaces/FR-322-checked-package-artifact.md) | FR (value_object) | Checked-package V2 boundary, including model-owned record value type fields |
 | [FR-340](objects/interfaces/FR-340-checked-package-frame-location.md) | FR | Checked-package `state`/`frame` body: relationship and (declaring node, field name) entries |
 | [FR-341](objects/interfaces/FR-341-checked-package-state-clause-body.md) | FR | Checked-package `state`/`state_clause` body: `quire.op.state.clause` application and state node body roots |
 | [FR-342](objects/interfaces/FR-342-checked-package-operation-anchor-body.md) | FR | Checked-package `state`/`operation_anchor` body: context, operation and frame bindings |
