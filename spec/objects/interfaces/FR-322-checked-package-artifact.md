@@ -128,14 +128,6 @@ boundary.
   [FR-341](FR-341-checked-package-state-clause-body.md) specifies, and one
   with `semantic_form: "operation_anchor"` the binding aggregate
   [FR-342](FR-342-checked-package-operation-anchor-body.md) specifies. A
-  protocol reference is carried by the existing `reference` body leaf
-  `{term: "reference", target: NodeRef}` in a `protocol`/`protocol_clause`
-  node. Its `target` SHALL equal the `node_id` of exactly one node in this
-  package's `semantic_graph.nodes`, and that target node SHALL have
-  `node_tag: "protocol"`. The leaf itself is the carrier: no separate
-  `protocol_references` collection, display-name lookup, array-position lookup,
-  or `dependency_reference` is used for this local edge. The leaf and target
-  remain subject to the existing body and node-identity rules. A
   `composite_type` node with `semantic_form: "union"`, a `value` node with
   `semantic_form: "union_value"` and an `expression` node with
   `semantic_form: "case"` carry the bodies
@@ -557,14 +549,6 @@ of every package
 A node's `body` is drawn from a closed grammar of five strata. No production
 names itself or a higher stratum, so the JSON depth of every V2 package is
 fixed by the schema, whatever the model's size.
-
-In the protocol-reference slot of a `protocol`/`protocol_clause` node, the Body
-is the Leaf `{term: "reference", target: NodeRef}`. For example, a
-`protocol_clause` node P0 with `body: {term: "reference", target: P1.node_id}`
-references protocol node P1. The target is P1's exact node key, not its
-declaration name or array index. Replacing `P1.node_id` with an absent key or
-with the key of a present `model` node is invalid. This uses the existing
-`reference` term; it adds neither a term variant nor a graph collection.
 
 | Stratum | Productions |
 | --- | --- |
@@ -1243,7 +1227,6 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-60 | For each `K` of `set`, `bag` and `ordered_set`, equality over `K<Choice>` (U2) requires U2's leaves with one leading `inner` per path; `contains` over that collection (`inner:0`) and a catalogued `result_inner` operation yielding `K<Choice>` require U2's leaves without that prefix. A `result_inner` operation yielding `sequence<Choice>` requires `[]`, while equality over `sequence<Choice>` requires U2's leaves with one leading `inner`. | Test |
 | FR-322-AC-61 | Both V2 schemas admit `member:Right`, `member:_item2`, `position:0`, `position:12`, `recursion:0` and `recursion:12`; they refuse `member:`, `member:1Right`, `position:01`, `position:-1`, `recursion:`, `recursion:01` and `recursion:-1`. The shared catalog includes `union` in `structural_kind`, so equality and inequality admit eligible Union operands under the existing `same_type` constraint and `operand:0` leaf source. | Test |
 | FR-322-AC-62 | The settled derived type forms forward aliases to their resolved node without an `alias` node; key `Reference<Order>` as an anonymous self-typed `composite_type`/`reference` over `Order`'s model declaration; key `Population<Order>[3]` as an anonymous `bounded_domain`/`model_population` whose `semantic_type` is `Set<Reference<Order>>` and whose body binds integer `max = 3`; and key a formed `metre / second` quantity as an anonymous self-typed `scalar_type`/`compound_unit` with ordered unit/exponent terms over targetless canonical nominal unit roots whose semantic type is their dimension key. The worked accepted vectors are admitted, including the exact U2 vector. The `RM-REF-TARGET`, `RM-POP-MAX` and `RM-CU-ORDER` exact preimages bind their keys; the corresponding public wire nodes satisfy the `SemanticNode` schema. Retaining each original key exercises stale-key detection, and recomputing each key exercises semantic-shape refusal for a non-model reference target, negative bound, arbitrary set element type and noncanonical term order as `invalid_package`/`invalid-derived-shape`. | Test (`tests/checked_package_v2.rs`, `tc_322_derived_form_key_mutations`, `tc_322_recomputed_derived_forms_refuse_semantic_mutations`) |
-| FR-322-AC-63 | A `protocol`/`protocol_clause` node's protocol-reference Body Leaf `{term: "reference", target: NodeRef}` is admitted only when `target` equals the `node_id` of exactly one `protocol`-tagged node in the same `semantic_graph.nodes`; changing the target to an absent NodeRef or to an existing non-`protocol` node refuses as an invalid semantic graph. The accepted and both refused cases preserve the existing term grammar and identity preimage. | Test (TC-931) |
 
 ## Dependencies
 
