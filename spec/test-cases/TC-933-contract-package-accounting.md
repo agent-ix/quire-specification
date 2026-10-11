@@ -36,9 +36,10 @@ Exercise nested closed-shape
 mutations by omitting a required member, adding an unknown member, writing
 `null` for an omitted optional member, and changing a member's kind. Do not
 recompute identity for these invalid shapes: the reader checks nested schema
-before identity. Separately mutate the accounting array by omitting one record,
-duplicating one item, changing `failed` to `invalid_input` while retaining the
-`failed` payload, and adding a `node` member to an `unsupported` record; do
+before identity. Separately mutate the accounting array by omitting its
+`unsupported` record, duplicating one item, changing `failed` to `invalid_input`
+while retaining the `failed` payload, and adding a `node` member to an
+`unsupported` record; do
 not recompute identity because accounting consistency and variant shape are
 checked before identity. Separately change `invalid_body.refusal.path` to
 another valid RFC 6901 pointer, preserving shape and request correspondence,
@@ -66,7 +67,7 @@ identity validation. Changing `failed` to `invalid_input` while retaining its
 payload is refused as `invalid_package`/`unknown-member`; attaching an emitted
 node to an `unsupported` record is refused as `invalid_package`/`unknown-member`
 because non-lowered variants forbid node payloads. A well-shaped `path`
-mutation with the old identity is refused as
+mutation with the old identity is refused as FR-330 specifies:
 `stale_dependency`/`content-mismatch`, with the declared identity as
 `expected` and recomputed identity as `actual`; recomputing identity for that
 new value is outside this test because the reader checks canonical structure

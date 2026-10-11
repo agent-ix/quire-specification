@@ -26,7 +26,9 @@ wrong member kind; unresolved or incompatible graph reference;
 missing source-map entry; accounting/request mismatch; stale identity; wrong
 identity domain; and a semantically equivalent but noncanonical wire encoding
 with reordered members or insignificant whitespace. For the last case, preserve
-the original digest so the only defect is noncanonical bytes. Also combine a
+the original digest so the only defect is noncanonical bytes. For unresolved
+or incompatible graph references, recompute identity so the reader reaches
+graph-reference validation after identity. Also combine a
 wrong outer version with a duplicate nested member. For every refusal,
 serialize every valid-JSON mutation as canonical RFC 8785 bytes before reading;
 capture the typed result before invoking a consumer. For each nested defensive
@@ -38,11 +40,11 @@ do not canonicalize or recompute identity for that input. For each `limit` and
 `consumed` field in `failed` and `body_incomplete`, test `"08"`, `"+1"`,
 `"-1"`, `""`, `"١"`, and
 `"18446744073709551616"`; also replace a counter string with the JSON number
-`8`, and verify a valid `failed` value carrying `"18446744073709551615"` is
-accepted when FR-038 produces that `u64::MAX` counter.
+`8`. Construct a valid `failed` control with `limit` and `consumed` both equal
+to `"18446744073709551615"` at the failed charge, and recompute identity from
+the string-encoded projection.
 Do not recompute identity for malformed counter values; the reader must reject
-them before identity validation. Compute identity from the string-encoded
-projection for the well-shaped `u64::MAX` control. Also test a valid
+them before identity validation. Also test a valid
 `body_incomplete` with `limit_kind: "bytes"` and no `path`, then mutate it to
 add `path`; test a non-byte kind with `path`, then remove that member. For
 `invalid_body.refusal`, test a missing

@@ -106,14 +106,14 @@ FR-038's `CheckedPackageRefusal`: `code` uses the exact FR-322 code spelling;
 `path` is its RFC 6901 pointer into the checked-package document; `cause` uses
 the FR-272 spelling paired by FR-322; `locus` is its exact closed
 `CheckedNodeId` object `{domain, digest}`; `contract_version` is the string
-read for `unknown_contract_version` and is forbidden for every other code; and
+read for `unknown_contract_version`; and
 `document_pointer` is its RFC 6901
 pointer into a supplied domain-package document. Each optional JSON member is
 present exactly when the corresponding FR-322 typed field is present and is
 omitted otherwise, never written as `null`, empty text, or a fabricated
 location. The reader requires `contract_version` for
-`unknown_contract_version` and forbids it otherwise; absence of a required
-member uses `missing-member`, and presence of a forbidden member uses
+`unknown_contract_version` and forbids it for every other `code`; absence of
+that required member uses `missing-member`, and presence for another code uses
 `unknown-member`.
 
 The `body_incomplete` record carries `incomplete`, a closed object with
@@ -234,6 +234,10 @@ is outside the preimage and is compared exactly as FR-201 requires; it is not
 prefixed to the hashed bytes.
 The digest uses FR-201's `quire.contract-ir.semantic/v1` domain, not the
 checked package's `quire.package.semantic/v2` identity.
+After validating the typed projection, a declared digest that differs from
+the recomputed digest refuses `stale_dependency`/`content-mismatch`; the FR-272
+diagnostic carries the declared digest as `expected` and the recomputed digest
+as `actual`.
 
 The ContractPackage reader is the single owner of outer wire admission. It
 first applies only the generic wire checks reused from FR-322: strict JSON
