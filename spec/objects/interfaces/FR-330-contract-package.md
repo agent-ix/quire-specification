@@ -2,7 +2,6 @@
 id: FR-330
 title: "Target-neutral contract package"
 type: FR
-object: value_object
 relationships:
   - target: ix://agent-ix/quire-specification/interface_012
     type: specifies
