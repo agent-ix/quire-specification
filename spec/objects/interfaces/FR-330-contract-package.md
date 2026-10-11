@@ -273,9 +273,11 @@ The digest uses FR-201's `quire.contract-ir.semantic/v1` domain, not the
 checked package's `quire.package.semantic/v2` identity. A mismatch between
 this ContractPackage's declared digest and its recomputed projection is an
 `invalid_package`/`invalid-value` at `/identity/digest`. FR-272's
-`content-mismatch` cases compare an identity retained by a request or selection
-with the supplied or recomputed identity of its subject; this self-digest is
-instead a malformed value read by this ContractPackage reader. It is not
+`content-mismatch` cases compare the identity retained by a request or
+selection with its supplied or recomputed subject identity, including a
+declared `package_id` compared with one recomputed from compiled source. This
+self-digest is recomputed by the reader from the wire projection, so a mismatch
+is a malformed value rather than that compile-time content mismatch. It is not
 FR-322's `stale_dependency`/`content-mismatch`, which applies to a supplied
 selected dependency whose recomputed package identity differs from the lock
 selection.
