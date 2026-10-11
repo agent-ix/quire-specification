@@ -47,11 +47,16 @@ properties; those meanings occur as tagged nodes in `semantic_graph.nodes`.
 The graph uses the closed node-tag vocabulary, key order and reference rules
 defined by [FR-322](FR-322-checked-package-artifact.md), while retaining this
 package's own `contract_version` and semantic identity domain.
-Every reference resolves by the stable node key to a compatible node in the
-same package. A protocol reference is the node key of a `protocol`-tagged node;
+Every semantic-node reference resolves by stable node key to a compatible node
+in this package. Dependency references retain FR-322's selected-package
+identity and admitted-dependency resolution rules; they are not flattened into
+local nodes. A protocol reference is the node key of a `protocol`-tagged node;
 it is not a display name, array position, or separately encoded reference
-type. The package identity covers every semantic graph node, profile and source
-correspondence. It never becomes native source or semantic authority.
+type. Explicit recursion groups permitted by FR-322 remain graph semantics;
+the package is cycle-free as a serialized value, with references represented
+by keys rather than recursive object embedding. The package identity covers
+every semantic graph node, profile and source correspondence. It never becomes
+native source or semantic authority.
 A document whose `contract_version` is not that identifier, missing required
 properties, duplicate keys, out-of-domain values and non-canonical encodings
 refuse before consumption.
@@ -63,7 +68,7 @@ refuse before consumption.
 | FR-330-AC-1 | Every represented node has identical native meaning under its selected profile. | Analysis |
 | FR-330-AC-2 | An unrepresentable item has no substitute node and retains a located refusal. | Analysis |
 | FR-330-AC-3 | Package ordering and identity are deterministic across equivalent construction order. | Analysis |
-| FR-330-AC-4 | A package has exactly one semantic node collection ordered by the FR-322 typed node key; each node occurs once, all references resolve to compatible same-package nodes, and every protocol reference targets a `protocol`-tagged node. No separate type, expression, clause, or protocol-reference graph is serialized. | Test |
+| FR-330-AC-4 | A package has exactly one semantic node collection ordered by the FR-322 typed node key; each node occurs once, intra-package semantic references resolve to compatible nodes, dependency references resolve under FR-322's selected-package rules, and every protocol reference targets a `protocol`-tagged node. Explicit FR-322 recursion groups remain permitted; no recursive object embedding or separate type, expression, clause, or protocol-reference graph is serialized. | Test |
 
 ## Dependencies
 
