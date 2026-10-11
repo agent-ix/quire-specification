@@ -87,8 +87,8 @@ others:
 - `invalid_input`: no additional payload; `node_id` may be absent from the
   originating checked package.
 - `failed`: the requested `node_id`, exact FR-038 `limit_kind`, caller's
-  `limit`, and `consumed` count at the failed charge. In this ContractPackage
-  JSON wire representation, both counters are canonical unsigned decimal
+`limit`, and `consumed` count at the failed charge. In this ContractPackage
+JSON wire representation, both counters are canonical unsigned decimal
   strings (`0`, or an ASCII digit
   `1`–`9` followed by zero or more ASCII digits `0`–`9`, with no sign or leading
   zero); each parses exactly to the corresponding FR-038 `u64` value. This
@@ -112,10 +112,15 @@ read for `unknown_contract_version`; and
 pointer into a supplied domain-package document. Each optional JSON member is
 present exactly when the corresponding FR-322 typed field is present and is
 omitted otherwise, never written as `null`, empty text, or a fabricated
-location. The reader checks whether an optional member is allowed for the
-selected refusal code before checking that member's value type; a forbidden
-member is `unknown-member`, even if its value is `null`. For an allowed
-optional member, `null` is `wrong-value-kind`. The reader requires `contract_version` for
+location. Before checking conditional members, the reader validates the
+required discriminator fields: `refusal.code` must be a known FR-322 code and
+`incomplete.limit_kind` must be one of its six listed values. A wrong type is
+`wrong-value-kind`; an unknown string is `invalid-value`, each at the
+discriminator's pointer. The reader then checks whether an optional member is
+allowed for the selected refusal code or limit kind before checking that
+member's value type; a forbidden member is `unknown-member`, even if its value
+is `null`. For an allowed optional member, `null` is `wrong-value-kind`. The
+reader requires `contract_version` for
 `unknown_contract_version` and forbids it for every other `code`; absence of
 that required member uses `missing-member`, and presence for another code uses
 `unknown-member`.
@@ -244,9 +249,8 @@ prefixed to the hashed bytes.
 The digest uses FR-201's `quire.contract-ir.semantic/v1` domain, not the
 checked package's `quire.package.semantic/v2` identity.
 After validating the typed projection, a declared digest that differs from
-the recomputed digest refuses `stale_dependency`/`content-mismatch` at
-`/identity/digest`; the FR-272 diagnostic carries the declared digest as
-`expected` and the recomputed digest as `actual`.
+the recomputed digest refuses `invalid_package`/`invalid-value` at
+`/identity/digest`.
 
 The ContractPackage reader is the single owner of outer wire admission. It
 first applies only the generic wire checks reused from FR-322: strict JSON
@@ -279,8 +283,8 @@ cause at that member's ContractPackage pointer. A nested payload's missing,
 duplicate, unknown, wrong-kind, or out-of-domain member uses FR-322's
 `invalid_package` code with its corresponding `missing-member`,
 `duplicate-member`, `unknown-member`, `wrong-value-kind`, or `invalid-value`
-cause and the pointer into the ContractPackage document. A null optional
-member is `wrong-value-kind`. A payload member forbidden by its selected
+cause and the pointer into the ContractPackage document. A `null` value for an
+allowed optional member is `wrong-value-kind`. A payload member forbidden by its selected
 disposition is `unknown-member`. Limits remain caller inputs to reading and
 lowering; they are not package data or identity inputs.
 
@@ -321,7 +325,7 @@ lock alone is not evidence that a selected package was supplied or admitted.
 | FR-330-AC-6 | `feature_accounting` has one ordered record for each requested item and exactly one disposition from the seven-member vocabulary; non-`lowered` records have no substitute node, and `invalid_body.refusal` and `body_incomplete.incomplete` use the exact closed nested shapes and omission rules above. | Test (TC-933) |
 | FR-330-AC-7 | `source_map` has an entry for every semantic node, requested item, and refusal; an absent `CheckedNodeId` remains an explicitly mapped `invalid_input` with no fabricated region, while every available occurrence and region matches FR-322 exactly. | Test (TC-934) |
 | FR-330-AC-8 | The identity recomputes from the specified RFC 8785 projection under `quire.contract-ir.semantic/v1`; changing package provenance, lowering profile, graph, or an accounting result changes it, while changing only valid source locations, caller limits that leave serialized members unchanged, rendering, or JSON layout does not. Source-map corruption still refuses admission. | Test (TC-936) |
-| FR-330-AC-9 | The sole reader admits a valid canonical value only with every lock-selected admitted dependency package supplied and matching its selection; it ignores extra unselected inputs, refuses a missing or wrong-identity dependency as `missing_import`/`missing-selection` and a same-identity admitted package with a different `package_id` as `stale_dependency`/`content-mismatch` at the selected lock pointer, all before dependent-reference checks. It refuses a mismatched own identity as `stale_dependency`/`content-mismatch` at `/identity/digest`; malformed nested payloads use `invalid_package` with FR-322's `missing-member`, `duplicate-member`, `unknown-member`, `wrong-value-kind`, or `invalid-value` cause as applicable. Wrong versions, invalid references, incomplete source maps, and accounting mismatches also refuse with a typed FR-330 reader result and FR-272 diagnostic mapping before any consumer sees a value. | Test (TC-937) |
+| FR-330-AC-9 | The sole reader admits a valid canonical value only with every lock-selected admitted dependency package supplied and matching its selection; it ignores extra unselected inputs, refuses a missing or wrong-identity dependency as `missing_import`/`missing-selection` and a same-identity admitted package with a different `package_id` as `stale_dependency`/`content-mismatch` at the selected lock pointer, all before dependent-reference checks. It refuses a mismatched own identity as `invalid_package`/`invalid-value` at `/identity/digest`; malformed nested payloads use `invalid_package` with FR-322's `missing-member`, `duplicate-member`, `unknown-member`, `wrong-value-kind`, or `invalid-value` cause as applicable. Wrong versions, invalid references, incomplete source maps, and accounting mismatches also refuse with a typed FR-330 reader result and FR-272 diagnostic mapping before any consumer sees a value. | Test (TC-937) |
 
 ## Dependencies
 

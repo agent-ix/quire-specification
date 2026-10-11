@@ -43,8 +43,9 @@ do not canonicalize or recompute identity for that input. For each `limit` and
 `"18446744073709551616"`; also replace a counter string with the JSON number
 `8`. Construct two valid `failed` controls: one with `limit` and `consumed`
 both `"0"` at a denied zero-limit charge, and one with both
-`"18446744073709551615"` at a failed work charge whose counter is saturated
-at `u64::MAX`. Recompute each identity from the string-encoded projection.
+`"18446744073709551615"`. These are reader wire-acceptance controls, not claims
+that the values are produced by a particular measured charge. Recompute each
+identity from the string-encoded projection.
 Do not recompute identity for malformed counter values; the reader must reject
 them before identity validation. Also test a valid
 `body_incomplete` with `limit_kind: "bytes"` and no `path`, then mutate it to
@@ -52,7 +53,11 @@ add `path` and to add `path: null`; test a non-byte kind with `path`, then
 remove that member. For
 `invalid_body.refusal`, test a missing
 `contract_version` for `unknown_contract_version` and a present
-`contract_version` (including `null`) for a different `code`. Also construct a valid
+`contract_version` (including `null`) for a different `code`. Also give
+`refusal.code` a wrong JSON kind and an unknown string while that member is
+present, and give `incomplete.limit_kind` a wrong JSON kind and an unknown
+string while `path` is present.
+Also construct a valid
 ContractPackage whose source lock has one `dependency_selections` entry and
 whose graph has a `dependency_reference` to that selected package. Supply the
 matching admitted dependency package keyed by its library identity, then repeat
@@ -85,15 +90,17 @@ place of a required decimal string is refused as
 `invalid_package`/`missing-member`. `unknown_contract_version` without its
 required member is `invalid_package`/`missing-member`; a different refusal
 code with `contract_version` is `invalid_package`/`unknown-member`, even when
-its value is `null`. Both valid
+its value is `null`. A wrong-kind discriminator is
+`invalid_package`/`wrong-value-kind`, and an unknown-string discriminator is
+`invalid_package`/`invalid-value` at the discriminator before conditional
+members are checked. Both valid
 `failed` controls (`0`/`0` and `u64::MAX`/`u64::MAX`) are admitted.
 The wrong identity domain is refused as
 `invalid_package`/`invalid-value` at `/identity/domain`, using FR-322's
 existing typed pair; `digest_domain_mismatch` remains for a wrong domain on an
 input `PackageId`.
-The declared identity mismatch refuses `stale_dependency`/`content-mismatch`
-at `/identity/digest`, with the declared and recomputed digests as
-`expected` and `actual`.
+The declared identity mismatch refuses `invalid_package`/`invalid-value` at
+`/identity/digest`.
 The correctly supplied dependency admits the ContractPackage, and its
 reference resolves only against that package. Omitting the selected dependency
 or supplying an admitted value under the selected key with a different library
