@@ -2243,7 +2243,7 @@ fn derived_shape_semantic_refusal(nodes: &[Value]) -> Option<&Value> {
                 };
                 // A derived Reference<O> names a model declaration. A record,
                 // scalar, function or value is not a declaration target.
-                !is_model_declaration(target)
+                !is_model_reference_target(target)
             }
             (Some("bounded_domain"), Some("model_population")) => {
                 let set_shaped = node["semantic_type"]
@@ -2595,6 +2595,19 @@ fn document_declares_owner(document: &Value, node: &Value, owner_node: &str) -> 
         },
         _ => false,
     }
+}
+
+/// A derived `Reference<O>` target (QSL FR-322): a declared model form,
+/// whether source-declared in this package or resolved through a `ModelOwner`.
+fn is_model_reference_target(node: &Value) -> bool {
+    node.get("nominal_identity_preimage").is_none()
+        && matches!(
+            (node["node_tag"].as_str(), node["semantic_form"].as_str()),
+            (Some("model"), Some("object_type" | "systems_interface"))
+                | (Some("relation"), Some("relationship"))
+        )
+        && ((node.get("declaration").is_some() && node["owner"]["kind"] == "source")
+            || (node.get("declaration").is_none() && node["owner"]["kind"] == "model"))
 }
 
 /// FR-322's derived-shape key stage, owner join: every owner-bearing node,
@@ -6910,7 +6923,8 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
     let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
     let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
     let mutations = &vectors["operation_mutations"];
-    let package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    let mut package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    modelize_legacy_record_reference(&mut package);
     let causes = mutations
         .as_array()
         .expect("mutations are an array")
@@ -7234,11 +7248,10 @@ fn tc_233_operation_and_declaration_causes_pair_with_one_catalogued_code() {
 }
 
 fn published_v2_packages() -> [(&'static str, Value); 6] {
+    let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    modelize_legacy_record_reference(&mut operation);
     [
-        (
-            "operation-identities",
-            parsed_fixture(POSITIVE_OPERATION_IDENTITIES),
-        ),
+        ("operation-identities", operation),
         ("all-families", parsed_fixture(POSITIVE_ALL_FAMILIES)),
         (
             "clause-operations",
