@@ -90,3 +90,31 @@ cause/pointer is added. Compare the entire emitted source lock and originating
 package id against the retained expected values on every successful and refused
 run, not merely the row used by the predicate. These are producer controls; the
 ContractPackage reader is not given or assumed to reconstruct requirements.
+
+## Compatibility work boundaries
+
+For the missing case `[T]` against `[]` and for one existing requested key,
+compatibility's completed mismatch costs exactly two units: the first request
+charge and the requirement-row visit. At `work_limit = 2`, expect `invalid_input`;
+at `1`, expect `failed` for `work`, limit `1`, consumed `2`. For the differing
+case `[T]` against `[D]`, the total is exactly three units: first request,
+requirement visit, candidate comparison. At `3`, expect `invalid_input`; at `2`,
+expect `failed`, limit `2`, consumed `3`. Repeat both with `work_limit = 0`:
+expect `failed`, limit `0`, consumed `1`, even for an absent requested key.
+At sufficient work an absent key is `invalid_input` immediately after the first
+charge, with no comparison work or invented source region. Repeat a mismatch
+with `[b, a]`: both records retain request order and the same independently
+expected counters, proving there is no shared global or cached comparison budget.
+
+For the matching `[T]` against `[T]` case, choose one existing requested root
+with a finite independently walked closure and retained bytes high enough for
+encoding. Let `C` be the independently counted FR-038 node/body-term/successor-edge
+charges for that closure, excluding the initial request charge. The exact total
+is `W = 1 + 1 + 1 + C`, including request, requirement and candidate visits.
+At `work_limit = W`, expect `lowered`; at `W - 1`, expect `failed` for `work`
+with limit `W - 1`, consumed `W`, no returned node and no substitute artifact.
+This binds comparison and traversal to one meter: restarting at the closure
+would incorrectly admit the one-under run. Independently derive `C` from the
+fixture's graph/body structure rather than from a previous implementation count.
+Every emitted result still preserves the entire originating lock and package id;
+its `failed` counters retain the existing canonical unsigned-decimal wire form.
