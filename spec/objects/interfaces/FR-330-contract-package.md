@@ -127,8 +127,12 @@ to their typed FR-038 `u64` values; `consumed` is the counter value at the
 failed charge, as defined by FR-038. `path` is the FR-038 RFC 6901 pointer into
 the checked-package document. FR-038 requires it for every limit kind except
 `bytes`; the reader requires it for non-byte kinds and forbids it for `bytes`,
-using `missing-member` and `unknown-member`, respectively. The nested records do not use
-FR-322's outer `ReadResult` envelope or add a second diagnostic vocabulary.
+using `missing-member` and `unknown-member`, respectively. The nested records
+do not use FR-322's outer `ReadResult` envelope or add a second diagnostic
+vocabulary. The reader validates each counter's spelling and `u64` range but
+does not infer whether `consumed` could have resulted from a charge against
+`limit`; that relationship is producer accounting truth owned by FR-038 and
+is checked against the originating typed outcome when emitted.
 
 For example, this illustrative serialized shape of a defensive body limit
 result uses placeholder node digests and an illustrative checked-package

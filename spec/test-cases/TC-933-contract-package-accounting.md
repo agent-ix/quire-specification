@@ -37,7 +37,8 @@ mutations by omitting a required member, adding an unknown member, writing
 `null` for an omitted optional member, and changing a member's kind. Do not
 recompute identity for these invalid shapes: the reader checks nested schema
 before identity. Separately mutate the accounting array by omitting its
-`unsupported` record, duplicating one item, changing `failed` to `invalid_input`
+`unsupported` record and its matching `source_map.refusals` entry, duplicating
+one item, changing `failed` to `invalid_input`
 while retaining the `failed` payload, and adding a `node` member to an
 `unsupported` record; do
 not recompute identity because accounting consistency and variant shape are

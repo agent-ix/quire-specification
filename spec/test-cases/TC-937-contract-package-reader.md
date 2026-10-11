@@ -40,9 +40,10 @@ do not canonicalize or recompute identity for that input. For each `limit` and
 `consumed` field in `failed` and `body_incomplete`, test `"08"`, `"+1"`,
 `"-1"`, `""`, `"١"`, and
 `"18446744073709551616"`; also replace a counter string with the JSON number
-`8`. Construct a valid `failed` control with `limit` and `consumed` both equal
-to `"18446744073709551615"` at the failed charge, and recompute identity from
-the string-encoded projection.
+`8`. Construct two valid `failed` controls: one with `limit` and `consumed`
+both `"0"` at a denied zero-limit charge, and one with both
+`"18446744073709551615"` at a failed work charge whose counter is saturated
+at `u64::MAX`. Recompute each identity from the string-encoded projection.
 Do not recompute identity for malformed counter values; the reader must reject
 them before identity validation. Also test a valid
 `body_incomplete` with `limit_kind: "bytes"` and no `path`, then mutate it to
@@ -82,7 +83,8 @@ place of a required decimal string is refused as
 `invalid_package`/`missing-member`. `unknown_contract_version` without its
 required member is `invalid_package`/`missing-member`; a different refusal
 code with `contract_version` is `invalid_package`/`unknown-member`. The valid
-`u64::MAX` `failed` control is admitted. The wrong identity domain is refused as
+Both valid `failed` controls (`0`/`0` and `u64::MAX`/`u64::MAX`) are admitted.
+The wrong identity domain is refused as
 `invalid_package`/`invalid-value` at `/identity/domain`, using FR-322's
 existing typed pair; `digest_domain_mismatch` remains for a wrong domain on an
 input `PackageId`.
