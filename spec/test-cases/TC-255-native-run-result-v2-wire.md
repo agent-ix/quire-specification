@@ -34,6 +34,7 @@ and the identifier refusal. Planned.
 | NR-07 | NR-01's record with a required `usage` member removed, an unknown top-level member added, an unknown disposition member added, and an absent `package_id` encoded as `null`, each independently | Each refuses with a located wire diagnostic; the unchanged record reads | FR-352-AC-8 |
 | NR-08 | A clause run whose evaluation refuses with an FR-096 record containing `code`, `cause`, `fields`, `locus` and `location`; then independently remove each assigned member or replace the refused outcome with only its `kind` | The original reads with every assigned field intact; each edit refuses with a located wire diagnostic | FR-352-AC-8 |
 | NR-09 | A clause run ending in an FR-100 `InternalFault` with stage and invariant in `disposition.internal_fault`; then remove either identifier or add a fabricated `outcome` | The original reads as internal failure with its identifiers; each edit refuses with a located wire diagnostic | FR-352-AC-8 |
+| NR-10 | QSL FR-115's forbidden-parent-change Frame report, followed by edits independently removing its `disposition.refusal.frame_witness`, deleting a required frame-witness member, and adding that member to a non-Frame result | The original reads with the complete typed FR-115 witness, `basis: closed-scope` and no top-level `witness`; each edit refuses with a located wire diagnostic | FR-352-AC-9 |
 
 ## Expected Results
 

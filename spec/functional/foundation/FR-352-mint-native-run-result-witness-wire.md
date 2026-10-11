@@ -13,6 +13,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-207
     type: references
+  - target: ix://agent-ix/quire-spec-language/FR-115
+    type: references
 ---
 # FR-352: Produce and read the native-run-result/2 wire
 
@@ -64,6 +66,17 @@ contracts determine which of these members are present for each category;
 the `/2` writer and reader SHALL preserve them and SHALL NOT replace an
 assigned member with `null`, a default or a generic refusal tag.
 
+For an evaluated QSL FR-115 `Frame` violation, `disposition.refusal`
+additionally carries `frame_witness`: the complete FR-115 `FrameWitness`
+in QSL FR-267's closed encoding. This member is present exactly for that
+case, even though the disposition category is `violation`; the enclosing
+refusal's code and cause remain `frame_violation`/`unauthorized-change`.
+The frame witness is distinct from the top-level FR-351 `witness`, which
+is absent when the frame verdict has `basis: closed-scope`. The strict
+reader SHALL restore the FR-115 witness without losing any member and
+SHALL refuse a missing, malformed or misplaced `frame_witness`. FR-115
+owns its fields and change variants; this requirement adds none.
+
 `usage` is a closed object with `admission` (a closed object of unsigned
 `document_bytes`, `objects` and `values`), unsigned
 `evaluation_admissions`, and `evaluation_consumed` (an array of closed
@@ -107,6 +120,7 @@ the table, or substituting a default for an absent component.
 | FR-352-AC-6 | Every `native-run-result/2` clause-run result carries `basis`: `decisive-counterexample` with a `witness` for a state `forall` refuted at an element, `decisive-witness` with a `witness` for an `exists` satisfied at an element, `closed-scope` with no `witness` for a truth decided elsewhere, and `unavailable` with no `witness` for a refused, undefined, incomplete, cancelled or unsupported result. | Test |
 | FR-352-AC-7 | A `witness` serializes with exactly the members `quantifier`, `deciding_element`, `index`, `value_path` and `trace_position` its family assigns; a reader refuses an unknown `basis`, a `witness` whose presence disagrees with the basis, a missing assigned member, an extra member, and a `null` or default standing for an absent member. | Test |
 | FR-352-AC-8 | A clause-run document with the declared top-level members and the FR-100/FR-109 disposition and usage reads. A refused outcome retains its assigned `code`, `cause`, `fields`, `locus` and `location`; an internal failure carries `internal_fault` with stage and invariant and no outcome. Independently dropping an assigned member, adding an unknown member, or encoding an absent optional member as `null` refuses with a located wire diagnostic. | Test |
+| FR-352-AC-9 | A QSL FR-115 Frame violation carries `disposition.refusal.frame_witness`, retaining its complete typed invocation, pre and post selections, population, change and checked permission under QSL FR-267's encoding; it has `basis: closed-scope` and no top-level FR-351 `witness`. The strict reader restores it, and refuses a missing, malformed or misplaced `frame_witness` with a located wire diagnostic. | Test |
 
 ## Dependencies
 
@@ -120,6 +134,8 @@ the table, or substituting a default for an absent component.
   path.
 - [US-011](../../usecase/US-011-analyze-complete-models.md) supplies the
   replay/comparability need this wire serves.
+- QSL FR-115 owns the evaluated frame witness; QSL FR-267 owns its closed
+  serialization inside the clause-run disposition.
 
 ## References
 
