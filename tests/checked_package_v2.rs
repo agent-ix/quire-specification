@@ -7083,11 +7083,24 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
                 );
             }
             Some("semantic") => {
-                if let Some(rekeyed_as) = mutation["rekeyed_as"].as_str() {
-                    let counterpart = operation_vector(&vectors, rekeyed_as);
+                if let Some(rekeyed_sha256) = mutation["rekeyed_sha256"].as_str() {
+                    let nodes = candidate["semantic_graph"]["nodes"]
+                        .as_array()
+                        .expect("candidate nodes are an array");
+                    let preimage = application_node_preimage(candidate_node, nodes)
+                        .unwrap_or_else(|| panic!("{name} has an application-node preimage"));
                     assert_eq!(
-                        candidate_node["node_id"]["digest"], counterpart["sha256"],
-                        "{name} rekeys to exactly its counterpart vector"
+                        preimage, mutation["rekeyed_preimage"],
+                        "{name} rekeys from the exact expected application-node preimage"
+                    );
+                    assert_eq!(
+                        unqualified_jcs_sha256(&preimage),
+                        rekeyed_sha256,
+                        "{name} expected preimage has its recorded JCS digest"
+                    );
+                    assert_eq!(
+                        candidate_node["node_id"]["digest"], rekeyed_sha256,
+                        "{name} rekeys to exactly its expected identity digest"
                     );
                     assert_ne!(
                         candidate["package_id"], package["package_id"],
