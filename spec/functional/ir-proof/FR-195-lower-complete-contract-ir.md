@@ -13,6 +13,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-contract-ir/FR-028
     type: references
+  - target: ix://agent-ix/quire-contract-ir/FR-038
+    type: references
   - target: ix://agent-ix/quire-contract-ir/AD-003
     type: references
 ---
@@ -48,10 +50,18 @@ typed expressions, functions, model identities/relations, state frames and
 transitions, temporal formulas, protocol control/queues/obligations, claims and
 source maps. Every node carries its schema version, semantic type and stable
 node identity; references are by identity, never array position. Lowering is
-per requested item and returns exactly one of `lowered`, `unsupported`,
-`requires_bound`, `invalid_input` or `failed`. A lowered item includes all
-reachable dependencies and a canonical semantic digest. The complete-V1
-lowerer consumes an admitted `quire.checked-package/v2` package through the I04
+per requested item and normally returns exactly one of `lowered`, `unsupported`,
+`requires_bound`, `invalid_input` or `failed`. If a body unexpectedly refuses
+re-validation during the lowering walk, the lowerer returns the defensive
+`invalid_body` disposition with the exact body key and FR-322 refusal. If a
+body's validation stops at a limit during the walk, it returns the defensive
+`body_incomplete` disposition with the exact body key and FR-322 incomplete
+value. These two defensive dispositions emit no substitute node and preserve
+the failed body's source correspondence; they do not replace ordinary reader
+refusal or incomplete results. FR-330's serialized `feature_accounting` admits
+all seven dispositions under the exact payloads FR-038 consumes. A lowered
+item includes all reachable dependencies and a canonical semantic digest.
+The complete-V1 lowerer consumes an admitted `quire.checked-package/v2` package through the I04
 V2 reader and requires the nominal identity evidence carried by that contract.
 The V2 reader refuses an unknown member or node tag before admission.
 
@@ -64,6 +74,7 @@ The V2 reader refuses an unknown member or node tag before admission.
 | FR-195-AC-3 | No lowerer approximates an unsupported construct, drops an obligation or changes sibling results. | Test (TC-217) |
 | FR-195-AC-4 | Every reference resolves by stable identity to a reachable node and every node maps to exact source loci. | Test (TC-217) |
 | FR-195-AC-5 | Mixed supported and unsupported requests preserve independent per-item dispositions and emit no placeholder semantics. | Test (TC-217) |
+| FR-195-AC-6 | If lowering-walk body re-validation refuses or reaches a validation limit, the item retains exactly one defensive `invalid_body` or `body_incomplete` disposition with its body key and exact FR-322 result, no substitute node, and its source correspondence. | Test (TC-933) |
 
 ## Dependencies
 

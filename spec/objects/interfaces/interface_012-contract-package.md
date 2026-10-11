@@ -52,9 +52,3 @@ exact semantic meaning or a typed per-item refusal.
 | limits | caller-supplied limits (FR-195) | 1..1 | bounds lowering work and output |
 
 Returns: ContractPackage and per-item accounting
-
-## Features
-
-| Feature | Kind |
-|---|---|
-| lower | operation |
