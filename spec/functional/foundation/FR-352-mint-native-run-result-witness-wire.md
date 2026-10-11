@@ -19,13 +19,14 @@ relationships:
 ## Description
 
 When a native run result is produced or read, the producer and the strict
-reader SHALL use the closed `native-run-result/2` wire: the FR-014 run-result
-members plus the FR-243 settlement `basis` and the FR-351 separating witness
-record.
+reader SHALL use the closed `native-run-result/2` clause-run wire: the base
+members below plus the FR-243 settlement `basis` and the FR-351 separating
+witness record. FR-014 supplies the exact-version and closed-wire reading
+rules; it does not define run-result members.
 
 ## Inputs
 
-A clause run's FR-014 run-result members, its FR-243 settlement basis and,
+A clause run's disposition, package identity and usage, its FR-243 settlement basis and,
 where the basis is `decisive-witness` or `decisive-counterexample`, its
 FR-351 separating witness record.
 
@@ -44,8 +45,31 @@ infers the identifier from payload content.
 
 ## Members
 
-Beside the FR-014 run-result members, a `native-run-result/2` record carries
-exactly two members:
+A clause-run record has exactly these top-level members: `format`
+(`native-run-result/2`), `disposition`, `usage` and `basis`, plus
+`package_id` when compilation completed and `witness` under the condition
+below. Absent optional members are omitted, never `null`.
+
+`disposition` carries QSL FR-109's clause-run disposition without loss. Its
+`stage` and `category` are required; its applicable `truth` and refusal
+record are retained. A `compile`, `select` or `admit` refusal retains its
+FR-109 `RefusalRecord`, including `code`, `cause` and `locus`. An `evaluate`
+refusal, unsupported or incomplete result retains FR-100's exact `outcome`
+vocabulary, including `code`, `cause`, `fields`, `locus` and `location` when
+that outcome assigns them; its `refused` form is not an empty tag. An
+`evaluate` internal failure carries `internal_fault` as a closed object
+with the FR-100 `InternalFault`'s string `stage` and `invariant`, and no
+`outcome` member. The QSL FR-100 and FR-109
+contracts determine which of these members are present for each category;
+the `/2` writer and reader SHALL preserve them and SHALL NOT replace an
+assigned member with `null`, a default or a generic refusal tag.
+
+`usage` is a closed object with `admission` (a closed object of unsigned
+`document_bytes`, `objects` and `values`), unsigned
+`evaluation_admissions`, and `evaluation_consumed` (an array of closed
+objects each holding string `kind` and unsigned `consumed`).
+
+The two settlement members are:
 
 - `basis` — the [FR-243](../../objects/protocol/FR-243-settlement-basis.md)
   settlement basis label, on every clause-run result, as every other verdict
@@ -77,11 +101,12 @@ the table, or substituting a default for an absent component.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-352-AC-1 | A clause run's result is written as `native-run-result/2` carrying the FR-014 run-result members, `basis` and, with a decisive basis, `witness`, and the strict reader admits it. | Test (TC-255) |
-| FR-352-AC-2 | A document whose identifier is not exactly `native-run-result/2`, including a document with no identifier, refuses before consumption (FR-014 `unsupported-version`), whatever its payload holds. | Test (TC-255) |
-| FR-352-AC-3 | `witness` is present exactly when `basis` is `decisive-witness` or `decisive-counterexample`, and absent otherwise. | Test (TC-255) |
-| FR-352-AC-6 | Every `native-run-result/2` clause-run result carries `basis`: `decisive-counterexample` with a `witness` for a state `forall` refuted at an element, `decisive-witness` with a `witness` for an `exists` satisfied at an element, `closed-scope` with no `witness` for a truth decided elsewhere, and `unavailable` with no `witness` for a refused, undefined, incomplete, cancelled or unsupported result. | Test (TC-255) |
-| FR-352-AC-7 | A `witness` serializes with exactly the members `quantifier`, `deciding_element`, `index`, `value_path` and `trace_position` its family assigns; a reader refuses an unknown `basis`, a `witness` whose presence disagrees with the basis, a missing assigned member, an extra member, and a `null` or default standing for an absent member. | Test (TC-255) |
+| FR-352-AC-1 | A clause run's result is written as `native-run-result/2` carrying the base members defined here, `basis` and, with a decisive basis, `witness`, and the strict reader admits it. | Test |
+| FR-352-AC-2 | A document whose identifier is not exactly `native-run-result/2`, including a document with no identifier, refuses before consumption (FR-014 `unsupported-version`), whatever its payload holds. | Test |
+| FR-352-AC-3 | `witness` is present exactly when `basis` is `decisive-witness` or `decisive-counterexample`, and absent otherwise. | Test |
+| FR-352-AC-6 | Every `native-run-result/2` clause-run result carries `basis`: `decisive-counterexample` with a `witness` for a state `forall` refuted at an element, `decisive-witness` with a `witness` for an `exists` satisfied at an element, `closed-scope` with no `witness` for a truth decided elsewhere, and `unavailable` with no `witness` for a refused, undefined, incomplete, cancelled or unsupported result. | Test |
+| FR-352-AC-7 | A `witness` serializes with exactly the members `quantifier`, `deciding_element`, `index`, `value_path` and `trace_position` its family assigns; a reader refuses an unknown `basis`, a `witness` whose presence disagrees with the basis, a missing assigned member, an extra member, and a `null` or default standing for an absent member. | Test |
+| FR-352-AC-8 | A clause-run document with the declared top-level members and the FR-100/FR-109 disposition and usage reads. A refused outcome retains its assigned `code`, `cause`, `fields`, `locus` and `location`; an internal failure carries `internal_fault` with stage and invariant and no outcome. Independently dropping an assigned member, adding an unknown member, or encoding an absent optional member as `null` refuses with a located wire diagnostic. | Test |
 
 ## Dependencies
 
@@ -99,3 +124,4 @@ the table, or substituting a default for an absent component.
 ## References
 
 - Linear STD-144; QSL ADR-031 SW-10, SW-11, R-1 to R-4.
+- TC-255 exercises the native run-result wire.
