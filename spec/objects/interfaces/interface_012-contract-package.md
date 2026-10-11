@@ -25,7 +25,7 @@ relationships:
 
 ```yaml
 name: ContractPackage
-associated_types: [ContractPackageId, SourceMap]
+associated_types: [ContractPackageId, SourceMap, LoweringProfileRef]
 operations:
   - { name: lower, inputs: [checked_package, lowering_profile, requested_items, limits], output: ContractPackage and per-item accounting, semantics: exact representation or per-item refusal }
 invariants:
@@ -46,8 +46,14 @@ exact semantic meaning or a typed per-item refusal.
 | Param | Type | Multiplicity | Constraints |
 |---|---|---|---|
 | checked_package | CheckedPackage | 1..1 | admitted immutable package |
-| lowering_profile | LoweringProfile | 1..1 | explicitly selected |
+| lowering_profile | LoweringProfileRef | 1..1 | explicitly selected; closed `{authority, identity}` value |
 | requested_items | RequestedItem | 0..* | each retains its own disposition |
 | limits | caller-supplied limits (FR-195) | 1..1 | bounds lowering work and output |
 
 Returns: ContractPackage and per-item accounting
+
+`LoweringProfileRef` has the same closed `{authority, identity}` value form as
+FR-322 `DefinitionRef`. It identifies the caller's explicit lowering-profile
+choice. I12 defines no profile registry and no mapping from this reference to
+required source semantic selections; the reference is carried as identity, not
+used to infer a source-selection compatibility result.
