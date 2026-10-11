@@ -38,9 +38,9 @@ mutations by omitting a required member, adding an unknown member, writing
 recompute identity for these invalid shapes: the reader checks nested schema
 before identity. Separately mutate the accounting array by omitting its
 `unsupported` record and its matching `source_map.refusals` entry, duplicating
-one item, changing `failed` to `invalid_input`
-while retaining the `failed` payload, and adding a `node` member to an
-`unsupported` record; do
+the `unsupported` record, changing `failed` to `invalid_input` while retaining
+the `failed` payload and changing its matching `source_map.refusals`
+disposition, and adding a `node` member to an `unsupported` record; do
 not recompute identity because accounting consistency and variant shape are
 checked before identity. Separately change `invalid_body.refusal.path` to
 another valid RFC 6901 pointer, preserving shape and request correspondence,
