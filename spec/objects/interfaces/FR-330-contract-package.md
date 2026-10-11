@@ -142,8 +142,7 @@ exception: it fails every record if even the refusal package cannot be encoded.
 A completed mismatch is not a reader `invalid_package` diagnostic and gains no
 invented pointer/cause.
 
-On either match or mismatch, the emitted refusal or represented package SHALL
-retain the originating `package.source.package_id` and exact `source.lock`,
+The lowerer SHALL retain the originating `package.source.package_id` and exact `source.lock`,
 including every row and its order, without sorting, filtering, adding or
 substituting selections. The resolved requirements are not serialized into
 `package.lowering_profile` or another ContractPackage member. A strict reader
