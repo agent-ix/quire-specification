@@ -50,16 +50,19 @@ A clause-run record has exactly these top-level members: `format`
 `package_id` when compilation completed and `witness` under the condition
 below. Absent optional members are omitted, never `null`.
 
-`disposition` is a closed object with required `stage` (`compile`, `select`,
-`admit` or `evaluate`) and `category`, and the applicable optional `truth`,
-`code`, `cause`, `fields`, `message` and `outcome` members. `truth` is a
-Boolean; `code` and `cause` are catalog strings; `fields` maps diagnostic
-field names to strings; `message` is a string. `outcome`, when present, is
-one closed object tagged by `kind`: `completed_boolean` with Boolean
-`value`, `completed_integer` with decimal-string `decimal`, `refused` with
-no other member, `undefined` with string `reason`, or `incomplete` with
-string `limit`. The applicable members and disposition categories follow
-the clause-run report contract (QSL FR-109).
+`disposition` carries QSL FR-109's clause-run disposition without loss. Its
+`stage` and `category` are required; its applicable `truth` and refusal
+record are retained. A `compile`, `select` or `admit` refusal retains its
+FR-109 `RefusalRecord`, including `code`, `cause` and `locus`. An `evaluate`
+refusal, unsupported or incomplete result retains FR-100's exact `outcome`
+vocabulary, including `code`, `cause`, `fields`, `locus` and `location` when
+that outcome assigns them; its `refused` form is not an empty tag. An
+`evaluate` internal failure carries `internal_fault` as a closed object
+with the FR-100 `InternalFault`'s string `stage` and `invariant`, and no
+`outcome` member. The QSL FR-100 and FR-109
+contracts determine which of these members are present for each category;
+the `/2` writer and reader SHALL preserve them and SHALL NOT replace an
+assigned member with `null`, a default or a generic refusal tag.
 
 `usage` is a closed object with `admission` (a closed object of unsigned
 `document_bytes`, `objects` and `values`), unsigned
@@ -103,7 +106,7 @@ the table, or substituting a default for an absent component.
 | FR-352-AC-3 | `witness` is present exactly when `basis` is `decisive-witness` or `decisive-counterexample`, and absent otherwise. | Test |
 | FR-352-AC-6 | Every `native-run-result/2` clause-run result carries `basis`: `decisive-counterexample` with a `witness` for a state `forall` refuted at an element, `decisive-witness` with a `witness` for an `exists` satisfied at an element, `closed-scope` with no `witness` for a truth decided elsewhere, and `unavailable` with no `witness` for a refused, undefined, incomplete, cancelled or unsupported result. | Test |
 | FR-352-AC-7 | A `witness` serializes with exactly the members `quantifier`, `deciding_element`, `index`, `value_path` and `trace_position` its family assigns; a reader refuses an unknown `basis`, a `witness` whose presence disagrees with the basis, a missing assigned member, an extra member, and a `null` or default standing for an absent member. | Test |
-| FR-352-AC-8 | A clause-run document with the declared closed top-level, disposition and usage members reads; independently omitting a required member, adding an unknown member at any level, or encoding an absent optional member as `null` refuses with a located wire diagnostic. | Test |
+| FR-352-AC-8 | A clause-run document with the declared top-level members and the FR-100/FR-109 disposition and usage reads. A refused outcome retains its assigned `code`, `cause`, `fields`, `locus` and `location`; an internal failure carries `internal_fault` with stage and invariant and no outcome. Independently dropping an assigned member, adding an unknown member, or encoding an absent optional member as `null` refuses with a located wire diagnostic. | Test |
 
 ## Dependencies
 
