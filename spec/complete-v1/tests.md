@@ -1007,6 +1007,8 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-322 | FR-322-AC-49 | TC-233 |  |
 | FR-322 | FR-322-AC-50 | TC-233 |  |
 | FR-322 | FR-322-AC-58 | TC-430 |  |
+| FR-322 | FR-322-AC-62 | TC-233 |  |
+| FR-322 | FR-322-AC-63 | TC-233 |  |
 | FR-340 | FR-340-AC-1 | TC-233 |  |
 | FR-340 | FR-340-AC-2 | TC-233 |  |
 | FR-340 | FR-340-AC-3 | TC-233 |  |

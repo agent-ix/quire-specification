@@ -2882,6 +2882,7 @@ fn package_declaration_refusal(package: &Value) -> Result<(), (DeclarationRefusa
     for node in nodes {
         if let Some(name) = node
             .get("declaration")
+            .filter(|declaration| !declaration.is_null())
             .map(|d| d["qualified_name"].to_string())
             && !seen.insert(name)
         {
@@ -10721,7 +10722,7 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
 fn tc_322_derived_form_key_mutations() {
     let schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
         .expect("node preimage schema is valid");
-    let cases = [
+    let cases: [(&str, &str, fn(&mut Value)); 3] = [
         (
             "RM-REF-TARGET",
             r#"{"body":{"members":[{"target":{"digest":"6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b","domain":"quire.checked-semantic-node/v1"},"term":"reference"}],"term":"aggregate"},"declaration":null,"node_tag":"composite_type","recursion":null,"semantic_form":"reference","semantic_type":null,"version":"quire.structural-node/v1"}"#,
@@ -10781,6 +10782,100 @@ fn tc_322_derived_form_key_mutations() {
 /// candidates are schema-valid and have current structural keys, but the
 /// changed reference target, negative population bound and noncanonical unit
 /// order are rejected by `read_package_semantics`.
+#[trace("FR-322-AC-63", "TC-233")]
+#[test]
+fn tc_322_compound_unit_admits_a_self_typed_structural_unit_root() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let mut package = parsed_fixture(POSITIVE_NOMINAL_IDENTITIES);
+    let nominal_root = package["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|node| {
+            node["node_tag"] == "scalar_type"
+                && node["semantic_form"] == "unit"
+                && node["node_id"]["digest"]
+                    == "79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"
+        })
+        .expect("published metre root exists");
+    let mut structural_root = nominal_root.clone();
+    structural_root["node_id"]["digest"] = json!("0".repeat(64));
+    structural_root["semantic_type"] = structural_root["node_id"].clone();
+    structural_root["declaration"] = Value::Null;
+    structural_root["occurrences"] = json!([]);
+    structural_root
+        .as_object_mut()
+        .unwrap()
+        .remove("nominal_identity_preimage");
+    structural_root["dependencies"] = json!([]);
+    append_rekeyed_structural_node(&mut package, structural_root);
+    let root = package["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap()
+        .clone();
+    let root_preimage = structural_node_preimage(&root).unwrap();
+    assert_eq!(
+        root_preimage,
+        json!({
+            "version": "quire.structural-node/v1",
+            "node_tag": "scalar_type",
+            "semantic_form": "unit",
+            "semantic_type": null,
+            "declaration": null,
+            "recursion": null,
+            "body": {"term": "aggregate", "members": []}
+        }),
+        "self-typed structural root has the exact structural-node preimage"
+    );
+    assert_eq!(
+        root["node_id"]["digest"],
+        unqualified_jcs_sha256(&root_preimage),
+        "structural root key is the JCS SHA-256 of its preimage"
+    );
+    let integer = json!({
+        "domain": "quire.checked-semantic-node/v1",
+        "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+    });
+    let compound = json!({
+        "node_id": root["node_id"],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "scalar_type",
+        "semantic_form": "compound_unit",
+        "semantic_type": root["node_id"],
+        "declaration": null,
+        "dependencies": [root["node_id"]],
+        "occurrences": [],
+        "body": {"term": "aggregate", "members": [{
+            "term": "aggregate",
+            "members": [
+                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": root["node_id"]}},
+                {"name": "exponent", "term": "binding", "value": {"term": "literal", "type": integer, "value": "1", "value_kind": "integer"}}
+            ]
+        }]},
+        "recursion": null,
+        "version": "quire.structural-node/v1"
+    });
+    append_rekeyed_structural_node(&mut package, compound);
+    let compound_node = package["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap();
+    let compound_preimage = structural_node_preimage(compound_node).unwrap();
+    assert_eq!(
+        compound_node["node_id"]["digest"],
+        unqualified_jcs_sha256(&compound_preimage),
+        "compound key binds its exact ordered structural-root body"
+    );
+    assert_eq!(
+        read_package_semantics(&package, &catalog),
+        Ok(()),
+        "reader admits a compound unit over a structural root"
+    );
+}
+
 #[trace("FR-322-AC-62", "TC-233")]
 #[test]
 fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
