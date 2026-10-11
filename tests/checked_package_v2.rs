@@ -4481,7 +4481,7 @@ fn rekey_stale_nodes(package: &mut Value) -> BTreeMap<String, String> {
 /// its generic reference at a record. Rebind that fixture to its published
 /// model declaration before semantic-reader tests, then rekey the complete
 /// dependency closure so the resulting package is an ordinary valid vector.
-fn modelize_legacy_record_reference(package: &mut Value) {
+fn modelize_legacy_record_reference(package: &mut Value) -> BTreeMap<String, String> {
     let nodes = package["semantic_graph"]["nodes"]
         .as_array()
         .expect("fixture nodes are an array");
@@ -4509,7 +4509,7 @@ fn modelize_legacy_record_reference(package: &mut Value) {
         model_id.clone(),
     );
     replace_node_field_in_graph_and_projection(package, index, "/dependencies", json!([model_id]));
-    rekey_stale_nodes(package);
+    rekey_stale_nodes(package)
 }
 
 /// Append a structural node to a fixture and bind its current key and package
@@ -6924,7 +6924,7 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
     let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
     let mutations = &vectors["operation_mutations"];
     let mut package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    modelize_legacy_record_reference(&mut package);
+    let renames = modelize_legacy_record_reference(&mut package);
     let causes = mutations
         .as_array()
         .expect("mutations are an array")
@@ -6948,11 +6948,21 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
         let base = mutation["base"]
             .as_str()
             .expect("mutation base is a string");
-        let index = operation_vector_node(&package, &vectors, base);
+        let base_digest = operation_vector(&vectors, base)["sha256"]
+            .as_str()
+            .expect("base vector digest is a string");
+        assert_eq!(
+            Some(base_digest),
+            mutation["retained_sha256"].as_str(),
+            "{name} records exactly its base vector key"
+        );
+        let current_base_digest = renames.get(base_digest).map_or(base_digest, String::as_str);
+        let index = node_index_by_digest(&package, current_base_digest)
+            .unwrap_or_else(|| panic!("{name} base vector remains in the modelized package"));
         assert_eq!(
             package["semantic_graph"]["nodes"][index]["node_id"]["digest"],
-            mutation["retained_sha256"],
-            "{name} retains exactly its base key"
+            current_base_digest,
+            "{name} starts from the current key of its base vector"
         );
         let mut node = package["semantic_graph"]["nodes"][index].clone();
         for patch in mutation["patch"]
