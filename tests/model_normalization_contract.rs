@@ -64,6 +64,8 @@ fn tc_195_contract_requires_writer_price_and_prework_denial() {
         .contains("analytically priced sole-writer JCS byte length before encoding or hashing"));
     assert!(TC_195.contains("analytical price equals the sole writer's returned length"));
     assert!(TC_195.contains("encodes/hashes no denied node"));
+    assert!(TC_195.contains("first `normalize.metadata` work charge"));
+    assert!(TC_195.contains("before scanning that occurrence"));
 }
 
 #[trace("TC-195", "FR-150-AC-16")]
