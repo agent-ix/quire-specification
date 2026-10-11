@@ -42,14 +42,15 @@ The ContractPackage is a closed object with exactly six required members:
   `source.lock` is that value's exact FR-322 lock, with the same members,
   selected identities, and ordering. It is provenance, not a second package
   or authority; the producer SHALL NOT reconstruct, normalize, or silently
-  amend it. `lowering_profile` is the exact FR-322 `DefinitionRef` selected by
-  the caller for this lowering operation. It is distinct from, and does not
-  duplicate or amend, the source-language `profile_selections` in
-  `source.lock`. It SHALL be explicit; no default profile is inferred. It
-  cannot reinterpret a semantic profile selected by the lock: if the
-  requested lowering profile requires a different semantic selection, each
-  affected request is `invalid_input` and emits no graph node. Neither profile
-  takes precedence over or silently replaces the other.
+  amend it. `lowering_profile` is the explicit I12 `LoweringProfileRef`
+  supplied to `lower`; it has the same closed `{authority, identity}` value
+  form as FR-322 `DefinitionRef`. This output records that selected reference
+  only; it does not define a profile registry or map the reference to required
+  source semantic selections. It is distinct from, and does not duplicate or
+  amend, the source-language `profile_selections` in `source.lock`. It SHALL be
+  explicit; no default profile is inferred. Neither value replaces or amends
+  the other, and no `invalid_input` follows solely from comparing the reference
+  with the lock's source selections.
 - `semantic_graph`: the closed object `{graph_version, nodes}` with exactly
   one `nodes` array. `graph_version` is exactly
   `quire.checked-semantic-graph/v2`. The node array uses FR-322's closed
@@ -65,15 +66,17 @@ The ContractPackage is a closed object with exactly six required members:
   vocabulary consumed by Contract IR FR-038.
 - `identity`: the canonical semantic identity defined below.
 
-The selected profile's semantic settings are not a seventh top-level property
-or a second caller-controlled map. Their authoritative representation is the
-exact source-profile selections in `package.source.lock`, together with typed
-setting values carried by the semantic graph under FR-322. A value that can
-change meaning SHALL be represented there. Display labels, ambient settings,
-backend installation, and caller resource limits are not semantic settings and
-are not added to the ContractPackage. `package.lowering_profile` records the
-separate, explicit FR-195 lowering choice; its compatibility check cannot
-change the lock's selected source meaning.
+The selected source profile's semantic settings are not a seventh top-level
+property or a second caller-controlled map. Their authoritative representation
+is the exact source-profile selections in `package.source.lock`, together with
+typed setting values carried by the semantic graph under FR-322. A value that
+can change meaning SHALL be represented there. Display labels, ambient
+settings, backend installation, caller resource limits, and the lowering
+profile's capability settings are not added to the ContractPackage.
+`package.lowering_profile` records only the explicit I12 profile reference; it
+does not amend the lock's selected source meaning. This contract defines no
+compatibility predicate between that reference and the lock's source-profile
+selections.
 
 Each `feature_accounting` record is a closed object with exactly the common
 members `node_id` and `disposition`; `node_id` is the requested exact
@@ -240,7 +243,7 @@ exactly `quire.contract-ir.semantic/v1`, algorithm `sha256`, and digest exactly
   "contract_version": "quire.contract-package/v1",
   "package": {
     "source": {"package_id": "<exact PackageId>", "lock": "<exact FR-322 lock>"},
-    "lowering_profile": "<exact DefinitionRef>"
+    "lowering_profile": "<exact LoweringProfileRef>"
   },
   "semantic_graph": {
     "graph_version": "quire.checked-semantic-graph/v2",
@@ -290,13 +293,14 @@ parsing including duplicate-member rejection, then canonical-byte validation.
 It then validates
 FR-330's own exact `quire.contract-package/v1` version (it MUST NOT apply
 FR-322's `quire.checked-package/v2` version predicate to this output), and
-checks the exact top-level and nested closed shapes,
-typed node keys and references, package provenance, profile selection,
+checks the exact top-level and nested closed shapes, typed node keys and
+references, package provenance, the closed lowering-profile reference shape,
 source-map totality, feature-accounting/request bijection, and recomputed
 identity before exposing an admitted typed value to a consumer. The order
 after generic wire checks is: outer version, all top-level and nested closed
-shapes and typed values, package and profile validity, source-map totality, and
-accounting/request consistency, then identity recomputation, dependency inputs
+shapes and typed values, package provenance and lowering-profile reference
+shape, source-map totality, accounting/request consistency, then identity
+recomputation, dependency inputs
 in lock order, then graph references. Thus a
 malformed nested payload is refused before identity is recomputed, while a
 well-shaped changed value with a stale identity is refused at identity
@@ -349,11 +353,11 @@ lock alone is not evidence that a selected package was supplied or admitted.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-330-AC-1 | Every represented node has identical native meaning under its explicit selected lowering profile. | Test (TC-935) |
+| FR-330-AC-1 | Every represented node has identical native meaning to its originating checked-package node under the source profiles selected by the exact FR-322 lock. | Test (TC-935) |
 | FR-330-AC-2 | An unrepresentable item has no substitute node and retains exactly one typed terminal refusal with every available source locus (or its exact requested identity when no source key exists), while independent sibling records remain unchanged. | Test (TC-933, TC-934) |
 | FR-330-AC-3 | When two packages have the same included semantic projection, their canonical identities are equal; when any included projection member differs, their identities differ. | Test (TC-936) |
 | FR-330-AC-4 | A package has exactly one semantic node collection ordered by the FR-322 typed node key; each node occurs once, local references resolve to compatible nodes, dependency references retain FR-322 selection semantics, protocol-tagged nodes remain in that collection, and recursion is represented only by permitted keyed references. | Test (TC-931, TC-937) |
-| FR-330-AC-5 | The embedded source `package_id` and lock exactly equal those of the originating admitted checked package; the explicit lowering profile is separate from lock profile selections, and any semantic-profile disagreement produces `invalid_input` before node emission without replacing the locked meaning. | Test (TC-932, TC-935) |
+| FR-330-AC-5 | The embedded source `package_id` and lock exactly equal those of the originating admitted checked package, and the explicit lowering-profile reference is retained in its closed `{authority, identity}` form separately from the lock's source-profile selections. | Test (TC-932, TC-935) |
 | FR-330-AC-6 | `feature_accounting` has one ordered record for each requested item and exactly one disposition from the seven-member vocabulary; non-`lowered` records have no substitute node, and `invalid_body.refusal` and `body_incomplete.incomplete` use the exact closed nested shapes and omission rules above. | Test (TC-933) |
 | FR-330-AC-7 | `source_map` has an entry for every semantic node, requested item, and refusal; an absent `CheckedNodeId` remains an explicitly mapped `invalid_input` with no fabricated region, while every available occurrence and region matches FR-322 exactly. | Test (TC-934) |
 | FR-330-AC-8 | The identity recomputes from the specified RFC 8785 projection under `quire.contract-ir.semantic/v1`; changing package provenance, lowering profile, graph, or an accounting result changes it, while changing only valid source locations, caller limits that leave serialized members unchanged, rendering, or JSON layout does not. Source-map corruption still refuses admission. | Test (TC-936) |
