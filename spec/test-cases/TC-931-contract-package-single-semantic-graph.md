@@ -26,9 +26,12 @@ callee `dependency_reference` to the exported function and an unrelated
 lowered sibling. Inspect the ContractPackage and compare its node collection,
 identities, references, and source correspondence with FR-322 and FR-330.
 Include an explicit recursion group and verify its keyed references remain
-finite serialized values. Repeat after changing construction order, then
-mutate a protocol reference to an absent key and to the key of an existing
-non-protocol node. In a separate admission attempt, supply a dependency package
+finite serialized values. Repeat after changing construction order. Exercise
+the protocol-reference carrier from FR-322: a `protocol_clause` node P0 has
+`body: {term: "reference", target: P1.node_id}`, where P1 is a
+`protocol`/`role` node in the same `semantic_graph.nodes` array. Mutate that
+`target` first to an absent NodeRef and then to the key of an existing
+`model`-tagged node. In a separate admission attempt, supply a dependency package
 whose recomputed `package_id` differs from the selected row while keeping the
 reference and lock unchanged.
 
@@ -46,5 +49,7 @@ case, the unrelated lowered sibling retains its disposition. The package has no 
 `types`, `expressions`, or `clauses` graph collections. The protocol reference
 is the stable node key of the protocol-tagged node in that collection, and the
 package identity and source correspondence remain equivalent under canonical
-ordering. The absent and wrong-tag targets are refused before any consumer
-artifact is emitted.
+ordering. The protocol-reference example is admitted because the `reference`
+leaf's `target` is exactly P1's node key and P1 has `node_tag: "protocol"`; the
+absent key and present `model` target are each refused as an invalid semantic
+graph before any consumer artifact is emitted.
