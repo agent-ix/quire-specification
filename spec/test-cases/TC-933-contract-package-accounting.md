@@ -30,13 +30,15 @@ the last two defensive cases. Before reading the emitted wire, compare each
 producer record against the independent expected value and injected typed
 refusal/incomplete value; check exact field names, types, values, and omitted
 optional members. Then pass the unmodified wire through the FR-330 reader and
-inspect graph roots and sibling records. Exercise closed-shape mutations by
-omitting a required member, adding an unknown member, writing `null` for an
-omitted optional member, changing a member's kind, omitting one accounting
-record, duplicating one item, changing one outcome tag, and attaching a node
-to a non-`lowered` record. Recompute identity for shape-only mutations so the
-reader reaches the nested schema check. Separately change one typed payload
-value without updating identity.
+inspect graph roots and sibling records. Exercise nested closed-shape
+mutations by omitting a required member, adding an unknown member, writing
+`null` for an omitted optional member, and changing a member's kind. Recompute
+identity for valid JSON shape mutations so the reader reaches nested schema
+validation. Separately mutate the accounting array by omitting one record,
+duplicating one item, changing one outcome tag while leaving its old payload,
+and attaching a node to a non-`lowered` record; recompute identity for each so
+the reader reaches the accounting/request or variant-shape check. Separately
+change one typed payload value without updating identity.
 
 ## Expected Results
 
@@ -51,9 +53,14 @@ optional `path`, `cause`, `locus`, `contract_version`, and `document_pointer`;
 each optional member is present exactly when its typed value is present. Its
 `body_incomplete.incomplete` is a closed object with typed `limit_kind`,
 canonical decimal-string `limit` and `consumed`, and `path` exactly when the
-typed value has one. The unmodified ContractPackage is admitted. Shape
-mutations with recomputed identity are refused with the FR-330 nested-schema
-cause corresponding to the defect. A payload-value mutation with the old
+typed value has one. The unmodified ContractPackage is admitted. Nested shape
+mutations with recomputed identity are refused as `invalid_package` with the
+FR-322 `missing-member`, `unknown-member`, or `wrong-value-kind` cause matching
+the defect; `null` is `wrong-value-kind`. Each accounting-array mutation with
+recomputed identity is refused as `invalid_package`/`invalid-value` for
+request/accounting mismatch before consumption; the tag-only mutation is
+rejected because its retained payload does not match the selected
+disposition's closed shape. A payload-value mutation with the old
 identity is refused for identity mismatch; recomputing identity for that new
 value is outside this test because the reader checks canonical structure and
 identity, not the truth of a producer's accounting. The two successful

@@ -87,7 +87,8 @@ others:
 - `invalid_input`: no additional payload; `node_id` may be absent from the
   originating checked package.
 - `failed`: the requested `node_id`, exact FR-038 `limit_kind`, caller's
-  `limit`, and `consumed` count at the failed charge. On the JSON wire, both
+  `limit`, and `consumed` count at the failed charge. In this ContractPackage
+  JSON wire representation, both
   counters are canonical unsigned decimal strings (`0` or a nonzero digit
   followed by digits, with no sign or leading zero); each parses exactly to
   the corresponding FR-038 `u64` value. This preserves the full typed range in
@@ -113,15 +114,16 @@ location.
 
 The `body_incomplete` record carries `incomplete`, a closed object with
 required `limit_kind`, `limit`, and `consumed`, plus optional `path`, matching
-Contract IR FR-038's `CheckedPackageIncomplete`. `limit_kind` uses exactly one
-of the lowercase values `bytes`, `nodes`, `edges`, `occurrences`,
+the typed fields of Contract IR FR-038's `CheckedPackageIncomplete`.
+`limit_kind` uses exactly one of the lowercase values `bytes`, `nodes`, `edges`,
+`occurrences`,
 `diagnostics`, or `work`. `limit` and `consumed` are canonical unsigned
 decimal strings with the same grammar as the `failed` record and parse exactly
 to their typed FR-038 `u64` values; `consumed` is the counter value at the
-failed charge, as defined by FR-038. `path` is the FR-038 RFC 6901 pointer into the checked-package
-document and is present exactly when that typed field is present (FR-038
-specifies it absent for `bytes`). The nested records do not use FR-322's outer
-`ReadResult` envelope or add a second diagnostic vocabulary.
+failed charge, as defined by FR-038. `path` is the FR-038 RFC 6901 pointer into
+the checked-package document and is present exactly when that typed field is
+present (FR-038 specifies it absent for `bytes`). The nested records do not use
+FR-322's outer `ReadResult` envelope or add a second diagnostic vocabulary.
 
 For example, this illustrative serialized shape of a defensive body limit
 result uses placeholder node digests and an illustrative checked-package
@@ -241,11 +243,16 @@ FR-330 reader results, not a claim that the output value is an FR-322 checked
 package. A consumer SHALL receive only an admitted
 typed ContractPackage and SHALL NOT reparse the wire or reinterpret a refusal.
 Unknown version, missing, duplicate, extra, wrong-kind, out-of-domain or
-noncanonical data refuses before consumption. A nested payload's missing,
+noncanonical data refuses before consumption. Strict nested-member parsing
+detects a duplicate JSON member before canonical-byte comparison or identity
+validation; it uses FR-322's `invalid_package` code and `duplicate-member`
+cause at that member's ContractPackage pointer. A nested payload's missing,
 duplicate, unknown, wrong-kind, or out-of-domain member uses FR-322's
 `invalid_package` code with its corresponding `missing-member`,
 `duplicate-member`, `unknown-member`, `wrong-value-kind`, or `invalid-value`
-cause and the pointer into the ContractPackage document. Limits remain caller inputs to reading and lowering;
+cause and the pointer into the ContractPackage document. A null optional
+member is `wrong-value-kind`. Limits remain caller inputs to reading and
+lowering;
 they are not package data or identity inputs.
 
 The reader input also includes one admitted FR-322 dependency package for every
@@ -257,13 +264,16 @@ After the FR-330 outer version and closed-shape checks, the reader checks
 dependency inputs in lock order before checking graph references. It requires
 each selected input and confirms both its library `identity` and admitted
 `package_id` equal the selection. The admitted input has already had its own
-`package_id` verified by FR-322. A missing input, including a supplied value
-with a different library identity, refuses `missing_import`/`missing-selection` at the
-corresponding ContractPackage pointer
+`package_id` verified by FR-322. A missing input, including a value supplied
+under the selected key with a different library identity, refuses
+`missing_import`/`missing-selection` at the corresponding ContractPackage
+pointer
 `/package/source/lock/dependency_selections/{i}`. A supplied admitted package
 with the selected identity but a different `package_id` refuses
-`stale_dependency`/`content-mismatch` at that same pointer and retains the
-selected and supplied package identities.
+`stale_dependency`/`content-mismatch` at that same pointer. Its FR-272
+diagnostic carries the selected `package_id` as `expected` and the supplied
+`package_id` as `actual`, as required for a typed content-mismatch; the library
+identity is the selected lock entry at that pointer.
 An extra input keyed by an identity absent from the lock is ignored and cannot
 satisfy or redirect a selected reference. Only after these checks does the
 reader resolve each `dependency_reference`, and it resolves it only against
