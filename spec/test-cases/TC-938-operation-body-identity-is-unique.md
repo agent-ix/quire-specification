@@ -10,23 +10,33 @@ relationships:
 
 ## Description
 
-Verify that one body per operation identity succeeds, while a second body
-resolving to the same identity is refused regardless of its local label.
+Verify that body uniqueness is enforced across source units after local model
+aliases resolve, while distinct operation identities succeed together.
 Scope: FR-151-AC-16.
 
 ## Test Procedure
 
 1. Use TC-196's valid model fixture G with operations `A/size` and `B/size`,
-   where `B/size` redefines `A/size`, and its unit fixture S2 with one body
-   targeting each operation identity.
-2. Compile S2 as the single-body-per-identity control.
-3. Add `body secondSizeA using V on M::A::size() { 3 }` to S2, retaining its
-   existing `sizeA` body and all other inputs, then compile again.
+   where `B/size` redefines `A/size`. Form one linked package from two
+   complete-V1 source units. The first uses TC-195's profile selection under
+   local alias `V`, model declaration `M` for G, and
+   `body sizeA using V on M::A::size() { 1 }`, and retains S2's
+   `invariant I using V on M::A at current { self.size() >= 1 }`. The second selects
+   the same profile and exact same model identity/digest under local aliases
+   `W` and `N`, and has `body sizeB using W on N::B::size() { 2 }`.
+2. Compile those two units together as the single-body-per-operation-identity
+   control.
+3. Add `body secondSizeA using W on N::A::size() { 3 }` to the second unit,
+   retaining the first unit's `sizeA` body and all other inputs, then compile
+   the linked package again.
 
 ## Expected Results
 
-The control compiles and links the two distinct operation identities. The
-second compile refuses with
-`conflicting_declaration`/`duplicate-declaration` for the two bodies
-resolving to `A/size`; changing their declaration order or local labels does
-not change the refusal. No dispatch table is produced for the refused link.
+The control compiles and links the bodies for the two distinct operation
+identities, `A/size` and `B/size`; the invariant's dispatched call links as
+in TC-196 D01. In the second compile, `M` and `N` resolve to the same model
+identity, so the bodies in the distinct source units resolve to the same
+`A/size` identity. Compilation refuses with
+`conflicting_declaration`/`duplicate-declaration`, identifying both body
+declarations; changing source-unit order or local alias spellings does not
+change the refusal. No partial linked package or dispatch table is produced.
