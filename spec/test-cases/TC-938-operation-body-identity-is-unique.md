@@ -29,6 +29,8 @@ Scope: FR-151-AC-16.
 3. Add `body secondSizeA using W on N::A::size() { 3 }` to the second unit,
    retaining the first unit's `sizeA` body and all other inputs, then compile
    the linked package again.
+4. Keep the duplicate bodies and reverse the two source units from step 3;
+   compile the linked package again.
 
 ## Expected Results
 
@@ -40,3 +42,6 @@ identity, so the bodies in the distinct source units resolve to the same
 `conflicting_declaration`/`duplicate-declaration`, identifying both body
 declarations; changing source-unit order or local alias spellings does not
 change the refusal. No partial linked package or dispatch table is produced.
+The reversed-unit compile in step 4 returns the same refusal and identifies
+the same two resolved body identities; it also produces no partial linked
+package or dispatch table.
