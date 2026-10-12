@@ -13,6 +13,13 @@ relationships:
 
 # [interface_005] I05 native runtime input and result
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| execute | operation |
+| replay | operation |
+
 ## Contract
 
 ```yaml
