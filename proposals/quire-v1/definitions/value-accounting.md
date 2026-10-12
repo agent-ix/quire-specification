@@ -412,17 +412,22 @@ FR-043-AC-2 requires.
 decides the foreign-universe check and then key presence without a charge, and
 charges `lookup.result-retain` only when it returns a value; `absent undefined`
 and `absent refused` make no later charge. `allInstances<T>(p)` has its object
-and subtype closure decided at binding admission; it walks every admitted
-member of `p` in canonical reference-key order, charging one `population.visit`
-before each member walked whether or not its most-specific type conforms to
-`T`. Its per-`T` subtype-coverage test is a lookup in the normalized
-`GeneralizationClosure` fixed at binding admission, not a type-catalog
-traversal or a conformance recomputation; the lookup makes no charge. It then
-selects the member, without a charge, exactly when that type conforms to `T`.
-It then charges `collection.bound` with `value_occurrences=n` for the `n`
-selected members, decides the declared maximum without a charge, and charges
-`collection.result-retain`. A dispatched call evaluates the
-receiver and then its arguments left to right, charges `dispatch.select`,
+and the generalization graph's closure decided at binding admission. The
+normalized view retains the phase-3 type derivation facts for each supertype
+path (see `model-complete.md`, Normalization rules) and provides a lookup keyed
+by an ancestor type that returns that type and the effective types whose
+retained paths end at it. Before the query's first charge, subtype coverage
+for this `T` is decided by looking up `T` in that relation; it is not decided
+at binding admission, by traversing the type catalog, or by recomputing
+conformance. This lookup makes no charge. The query then walks
+every admitted member of `p` in canonical reference-key order, charging one
+`population.visit` before each member walked whether or not its most-specific
+type conforms to `T`, and selects the member, without a charge, exactly when
+that type conforms to `T`. It then charges `collection.bound` with
+`value_occurrences=n` for the `n` selected members, decides the declared
+maximum without a charge, and charges `collection.result-retain`. A dispatched
+call evaluates the receiver and then its arguments left to right, charges
+`dispatch.select`,
 selects the linked method for the receiver's most-specific type without a
 charge, decides the selected method's effective precondition (its own
 evaluation charges apply), and then charges `function.call` before binding the
@@ -463,12 +468,13 @@ means unlimited. These counters are independent of `ScalarLimitsV1` and of
 `ModelNormalizationLimitsV1`. `population_members` is a high-water semantic
 size; `work_units` is cumulative. Binding admission first decides, without a
 charge and in this order, the FR-153 model-selection check, object closure and
-subtype closure; each is read from the population declaration and the effective
-view. The effective view's `GeneralizationClosure` retains the ancestor-path
-relation already computed and charged during normalization; each later
-per-`T` subtype-coverage check reads the descendants of `T` from that retained
-relation, without traversing the type catalog or recomputing conformance. It
-then charges:
+whether the effective view's generalization graph is closed; each is read from
+the population declaration and the effective view. Normalization has already
+computed and charged the phase-3 type derivation facts for every supertype
+path. The normalized view provides the ancestor-keyed lookup specified above;
+a query's per-`T` subtype-coverage decision occurs before its first charge and
+uses that lookup. It does not traverse the type catalog or recompute
+conformance. Binding admission then charges:
 
 | Charge point | Order | Exact counter amount |
 | --- | --- | --- |
