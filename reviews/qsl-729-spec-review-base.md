@@ -1,18 +1,30 @@
 ---
 id: SR-7838
-title: "Base spec review of QSL-729 native diagnostic catalog addition"
+title: "Base spec review of QSL-729 native allocation diagnostics"
 type: SpecReview
 analysis: base
-scope: "agent-ix/quire-specification@0c7135aeccc4c64e2f3e123b28f2257001859e6a; proposals/quire-v1/definitions/native-diagnostics.md; QSL FR-082-AC-10..11 and TC-914 steps 2, 4–5"
+scope: "agent-ix/quire-specification@00ab825082ca541527beaf02dfc35aba72a92680; proposals/quire-v1/definitions/native-diagnostics.md resource_exhausted row; QSL FR-082-AC-10/11, FR-259-AC-5, TC-914 steps 2/4/5"
 review_set: base
 ---
 
 ## Summary
 
-Base checklist only, on PR #234's exact head. The changed catalog row is internally consistent with QSL FR-082-AC-11 and TC-914 steps 2 and 4–5: reservation arithmetic/representation overflow retains the upstream request amount and unit and its reason, while remaining distinct from allocator denial and its measured request. The edited definition has no local US/FR/AC/TC identifiers or test-coverage matrix, so ID-format, uniqueness, and criterion-coverage checks are not applicable; its cross-references identify the intended QSL criterion and test case. No base-checklist defects found.
+The changed `resource_exhausted` row preserves the distinction between measured allocator denial, reservation-size overflow and insufficient next charge, including the native requested unit required by FR-082 and the bytes-only `quire-canonical` allocation required by FR-259-AC-5. One low-severity wording defect remains: the reservation-overflow context is repeated at the end of the row, creating redundant wording that can drift from the preceding definition.
 
 ## Findings
 
-| ID      | Severity | Summary                   | Refs |
-| ------- | -------- | ------------------------- | ---- |
-| FND-001 | low      | No findings (placeholder) | -    |
+| ID      | Severity | Summary                                                     | Refs |
+| ------- | -------- | ----------------------------------------------------------- | ---- |
+| FND-001 | low      | Reservation overflow semantics are stated twice in the row | proposals/quire-v1/definitions/native-diagnostics.md:82 |
+
+## Dispositions
+
+Round 2, reviewed at `f9f830736cfea7f7811743145e22bf5f9570854f`. The fix commit `6611f923654009120922e52b892c1b267aac2086` is an ancestor of the reviewed head and consolidates the overflow payload and distinction into one clause.
+
+| FND     | outcome | sha/reason                                      |
+| ------- | ------- | ----------------------------------------------- |
+| FND-001 | fixed   | 6611f923654009120922e52b892c1b267aac2086      |
+
+FND-001 `after_excerpt` (proposals/quire-v1/definitions/native-diagnostics.md:82):
+
+> For `reservation-size-overflow`, retain `upstream`: the exact upstream `StorageRequest` amount and unit and its original capacity/size arithmetic or representation overflow reason; this is not a measured allocator-denied request, and no such measurement is fabricated.
