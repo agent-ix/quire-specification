@@ -413,8 +413,11 @@ decides the foreign-universe check and then key presence without a charge, and
 charges `lookup.result-retain` only when it returns a value; `absent undefined`
 and `absent refused` make no later charge. `allInstances<T>(p)` has its object
 and the generalization graph's closure decided at binding admission. The
-normalized view retains the phase-3 type derivation facts for each supertype
-path (see `model-complete.md`, Normalization rules) and provides a lookup keyed
+per-`T` subtype-coverage check reads the closure facts established by that
+admission, through the normalized view's retained phase-3 type derivation; it
+does not add a charge point or charge row. The normalized view retains the
+phase-3 type derivation facts for each supertype path (see
+`model-complete.md`, Normalization rules) and provides a lookup keyed
 by an ancestor type that returns that type and the effective types whose
 retained paths end at it. Before the query's first charge, subtype coverage
 for this `T` is decided by looking up `T` in that relation; it is not decided
