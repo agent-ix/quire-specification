@@ -416,13 +416,12 @@ and the generalization graph's closure decided at binding admission. This
 establishes graph-level closure, not subtype coverage for any queried `T`.
 Normalization computes and charges the phase-3 type derivation facts for each
 supertype path (see
-`model-complete.md`, Normalization rules) and provides a lookup keyed
-by an ancestor type that returns that type and the effective types whose
-retained paths end at it. Binding admission establishes the admitted object's
-membership and graph closure. Before its first charge, each query reads
-per-`T` subtype coverage from the admission-time closure's retained relation.
-It does not traverse the type catalog or recompute conformance; this lookup
-adds no charge point or charge row. The query then walks
+`model-complete.md`, Normalization rules). Binding admission establishes the
+admitted object's membership and graph closure. Before its first charge, each
+query decides whether its `T` conforms to at least one declared population
+member type using the effective view; this decision makes no charge. FR-151
+defines conformance for the same effective type, so `T` conforms to itself.
+The query then walks
 every admitted member of `p` in canonical reference-key order, charging one
 `population.visit` before each member walked whether or not its most-specific
 type conforms to `T`, and selects the member, without a charge, exactly when
