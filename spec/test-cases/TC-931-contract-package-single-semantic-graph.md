@@ -42,11 +42,18 @@ single `reference` body target equal to the clause's exact local `node_id`,
 the same `semantic_type`, one `expression` occurrence and the target as its
 sole dependency. Recompute the carrier's structural node key, graph identity
 projection and package id, and keep source correspondence total. Admit that
-worked package. In separate controls, change the body target to an absent
-local key and to a present non-protocol node, recomputing affected identities;
-also try a `dependency_reference` body, an extra body member, an unequal
-semantic type and an extra dependency. In a
-separate admission attempt, supply a dependency package
+worked package. In separate controls, change both the body target and its
+sole `dependencies` entry to the same absent local key, then to the same
+present non-protocol node key (the fixture's Boolean node has the clause's
+semantic type). Recompute the carrier node key, identity projection and
+package id for each control. For the absent-key control, also select and
+supply an admitted dependency package containing a protocol node `D` whose
+typed key is absent from the local graph; set both carrier fields to `D`'s
+key, keep its semantic type locally available, and recompute the lock and
+identities. Do not add `D` to the local graph. Separately try a
+`dependency_reference` body, an extra body member, an unequal semantic type
+with the original target and dependency intact, and an extra dependency.
+In a separate admission attempt, supply a dependency package
 whose recomputed `package_id` differs from the selected row while keeping the
 reference and lock unchanged.
 
@@ -66,8 +73,10 @@ collections. The protocol clause is present once as a protocol-tagged node and
 preserves the fixture's catalogued control application, selected
 `protocol_profile` law and `profile_operator`. No protocol-reference
 collection exists. The carrier is present once in the same node array and its
-exact body target resolves to the protocol clause. The absent target refuses
-`missing_declaration`/`missing-name`; the non-protocol target and unequal
+exact body target resolves to the protocol clause. Both absent-local target
+controls refuse `missing_declaration`/`missing-name` at the carrier's
+`/body/target`, including when the selected dependency contains that key;
+the non-protocol target and unequal
 semantic type refuse `ill_typed`/`operator-ineligible`; the
 `dependency_reference` body and extra body member fail the closed V2 schema;
 the extra dependency refuses `invalid_semantic_graph`. The package identity

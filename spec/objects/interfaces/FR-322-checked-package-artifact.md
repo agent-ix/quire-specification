@@ -152,9 +152,11 @@ boundary.
   unequal `semantic_type` refuses `ill_typed`/`operator-ineligible`, at the
   carrier's `/body/target` pointer. Carriers are checked in ascending node-id
   digest order at the declaration step, before frame and operation checks.
-  A dependency list unequal to the
-  one target is `invalid_semantic_graph` at `/dependencies` in the earlier
-  graph-shape step. The carrier has no package selector: a key absent locally
+  The earlier graph-shape step compares `dependencies` with the body target
+  without resolving that target; an unequal list is
+  `invalid_semantic_graph` at `/dependencies`. Target existence, tag and type
+  are checked only at the later carrier join. The carrier has no package
+  selector: a key absent locally
   fails this join even if a selected dependency contains that key.
   For a worked admitted example, take the protocol clause node `P` in
   `proposals/checked-package-v2/fixtures/positive-all-families.json`
@@ -170,8 +172,9 @@ boundary.
   Include `R` in the graph, identity
   projection and source map in canonical order, then recompute `package_id`;
   the reader admits this package and resolves `R` to `P`. Replacing
-  `R.body.target` with a local non-protocol node's key, or with a key absent
-  from the graph, while recomputing the carrier and package identities,
+  `R.body.target` and its sole dependency together with a local non-protocol
+  node's key, or with a key absent from the graph, while recomputing the
+  carrier and package identities,
   gives the respective typed refusals above.
   A `composite_type` node with `semantic_form: "union"`, a `value` node with
   `semantic_form: "union_value"` and an `expression` node with
@@ -1282,7 +1285,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-63 | A selected domain package with `Address { street: Text[0, 64; nfc] }` and object `Account { address: Address }` admits a self-typed `model`/`record_value_type` declaration node owned by `Address`; `Account.address` derives the `Address` node as its type and a `field` projection on an `Address` value resolves `street` to `Text[0, 64; nfc]`. The record node has family `record`, and an invariant clause function owned by `Address` passes the owner join. | Test |
 | FR-322-AC-64 | A record field whose `typeRef` names another record, including a field inherited by a record subtype, derives the named record node. A record-typed field with `optional` presence derives `Option<Address>`, and one with multiplicity `[0, 3]`, ordered and non-unique, derives `Sequence<Address>[0, 3]`; both retain the declared record node at their innermost element. A finite recursive record reached through an optional field retains the same record declaration node at every level. None derives `Reference<Address>` or an object identity. | Test |
 | FR-322-AC-65 | A `model`/`record_value_type` node owned by a selected object type or a node absent from the selected document refuses `missing_declaration`/`missing-selection` in the owner join; one with a missing `owner` refuses `malformed_wire`. An unknown field name on a valid record node refuses `ill_typed`/`operator-ineligible`. A record field whose `typeRef` names an event type, state machine, process, persistence interface or namespace refuses `invalid_model_binding`/`malformed-declaration` at FR-154 intake before member derivation; a record node used as an object reference target refuses `invalid_package`/`invalid-derived-shape`. | Test |
-| FR-322-AC-66 | The worked package with a `protocol`/`protocol_reference` carrier to its local `protocol_clause` target is admitted with one graph collection; its body target, sole dependency and semantic type bind that exact protocol node and its recomputed key changes when the target changes. A missing local target refuses `missing_declaration`/`missing-name`, a non-protocol target or unequal semantic type refuses `ill_typed`/`operator-ineligible`, and a non-reference body or extra carrier member fails the V2 schema. A dependency target is not admitted as a protocol reference. | Test |
+| FR-322-AC-66 | The worked package with a `protocol`/`protocol_reference` carrier to its local `protocol_clause` target is admitted with one graph collection; its body target, sole dependency and semantic type bind that exact protocol node and its recomputed key changes when the target changes. With the body target and sole dependency changed together and identities recomputed, a missing local target refuses `missing_declaration`/`missing-name` even when a selected dependency contains that key, and a present non-protocol target or unequal semantic type refuses `ill_typed`/`operator-ineligible`. A non-reference body or extra carrier member fails the V2 schema; a dependency target is not admitted as a protocol reference. | Test |
 
 ## Dependencies
 
