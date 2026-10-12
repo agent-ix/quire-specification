@@ -1009,6 +1009,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-322 | FR-322-AC-50 | TC-233 |  |
 | FR-322 | FR-322-AC-58 | TC-430 |  |
 | FR-322 | FR-322-AC-62 | TC-233 |  |
+| FR-322 | FR-322-AC-66 | TC-931 |  |
 | FR-340 | FR-340-AC-1 | TC-233 |  |
 | FR-340 | FR-340-AC-2 | TC-233 |  |
 | FR-340 | FR-340-AC-3 | TC-233 |  |
@@ -1904,6 +1905,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-425 | Deep inputs settle on their content at every stage | Property | P0 | FR-460, FR-146 | 🚧 |
 | TC-426 | Limit outcomes name the limit, its value and its setting | Property | P0 | FR-460, FR-461, FR-323 | 🚧 |
 | TC-930 | A byte-emitting operation raises its output-byte budget | Property | P0 | FR-461-AC-7 | 🚧 |
+| TC-931 | ContractPackage has one identity-keyed semantic graph | Property | P0 | FR-330-AC-4, FR-322-AC-66 | 🚧 |
 | TC-427 | The v2 body grammar fixes package depth by schema | Property | P0 | FR-322 | 🚧 |
 | TC-428 | The plugin wire frames, identifies and settles every plugin run | Property | P0 | FR-462 | 🚧 |
 | TC-429 | Value paths root and step through every witness location | Property | P0 | FR-207, FR-351 | 🚧 |
