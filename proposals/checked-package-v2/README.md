@@ -93,6 +93,10 @@ structures, but any external consumer receives only the contract.
 - The checked semantic graph is a closed `quire.checked-semantic-graph/v2`
   tagged union. It is source-language-neutral transport, not Contract IR and
   not an alternative language semantic authority.
+- A protocol reference is a `protocol`/`protocol_reference` node in that graph,
+  with one closed `{term: "reference", target: NodeRef}` body. FR-322 binds its
+  target to a local protocol node by exact typed key; no extra graph collection
+  or dependency-package target lookup is defined.
 - The structural type forms used by QSL's StateModel lowering are settled by
   FR-322: a source type alias forwards to the node of its resolved type and
   creates no `alias` node; `Reference<T>` is an anonymous

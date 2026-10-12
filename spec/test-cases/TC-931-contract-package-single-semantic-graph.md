@@ -9,6 +9,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-22
     type: references
+  - target: ix://agent-ix/quire-specification/FR-322-AC-66
+    type: verifies
 ---
 
 # TC-931: ContractPackage has one identity-keyed semantic graph
@@ -35,8 +37,15 @@ fixture, use the existing `protocol_clause` control application from
 `protocol_profile` law and catalogued `profile_operator` member, as FR-322-AC-22
 requires. This is fixture setup, not a claim that every protocol node has that
 body.
-The current FR-322 contract defines no protocol-reference carrier or slot, so
-this case does not synthesize a protocol target edge or mutate one. In a
+Add FR-322's `protocol`/`protocol_reference` carrier to that clause, with a
+single `reference` body target equal to the clause's exact local `node_id`,
+the same `semantic_type`, one `expression` occurrence and the target as its
+sole dependency. Recompute the carrier's structural node key, graph identity
+projection and package id, and keep source correspondence total. Admit that
+worked package. In separate controls, change the body target to an absent
+local key and to a present non-protocol node, recomputing affected identities;
+also try a `dependency_reference` body, an extra body member, an unequal
+semantic type and an extra dependency. In a
 separate admission attempt, supply a dependency package
 whose recomputed `package_id` differs from the selected row while keeping the
 reference and lock unchanged.
@@ -56,6 +65,10 @@ separate `types`, `expressions`, `clauses`, or `protocol_references` graph
 collections. The protocol clause is present once as a protocol-tagged node and
 preserves the fixture's catalogued control application, selected
 `protocol_profile` law and `profile_operator`. No protocol-reference
-target-validation relation is asserted because FR-322 defines no carrier or
-slot. The package identity and source correspondence remain equivalent under
-canonical ordering.
+collection exists. The carrier is present once in the same node array and its
+exact body target resolves to the protocol clause. The absent target refuses
+`missing_declaration`/`missing-name`; the non-protocol target and unequal
+semantic type refuse `ill_typed`/`operator-ineligible`; the
+`dependency_reference` body and extra body member fail the closed V2 schema;
+the extra dependency refuses `invalid_semantic_graph`. The package identity
+and source correspondence remain equivalent under canonical ordering.

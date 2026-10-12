@@ -57,9 +57,12 @@ The ContractPackage is a closed object with exactly six required members:
   node-tag vocabulary, typed-node-key order, stable references,
   dependency-reference and recursion-group rules. Each node occurs once.
   `types`, `expressions`, `clauses`, and `protocol_references` are not graph
-  properties or separate reference forms. FR-322 defines no protocol-reference
-  carrier or slot, so this contract makes no protocol-target binding or
-  validation claim.
+  properties or separate reference forms. A protocol reference is FR-322's
+  `protocol`/`protocol_reference` node in this array, with its body target
+  bound by exact local typed node key to a `protocol` node. Its body,
+  dependency and semantic-type joins retain FR-322's validation and identity
+  rules; no separate protocol-reference collection or implicit target lookup
+  is introduced.
 - `source_map`: the total source correspondence defined below.
 - `feature_accounting`: exactly one lowering record for every requested item,
   in the caller's request order, using the seven-member typed disposition
@@ -373,7 +376,7 @@ lock alone is not evidence that a selected package was supplied or admitted.
 | FR-330-AC-1 | Every represented node has identical native meaning to its originating checked-package node under the source profiles selected by the exact FR-322 lock. | Test (TC-935) |
 | FR-330-AC-2 | An unrepresentable item has no substitute node and retains exactly one typed terminal refusal with every available source locus (or its exact requested identity when no source key exists), while independent sibling records remain unchanged. | Test (TC-933, TC-934) |
 | FR-330-AC-3 | When two packages have the same included semantic projection, their canonical identities are equal; when any included projection member differs, their identities differ. | Test (TC-936) |
-| FR-330-AC-4 | A package has exactly one semantic node collection ordered by the FR-322 typed node key; each node occurs once, local references resolve to compatible nodes, dependency references retain FR-322 selection semantics, protocol-tagged nodes remain in that collection, and recursion is represented only by permitted keyed references. | Test (TC-931, TC-937) |
+| FR-330-AC-4 | A package has exactly one semantic node collection ordered by the FR-322 typed node key; each node occurs once, local references resolve to compatible nodes, dependency references retain FR-322 selection semantics, a `protocol`/`protocol_reference` carrier binds by its body target to a local `protocol` node under FR-322-AC-66, and recursion is represented only by permitted keyed references. | Test |
 | FR-330-AC-5 | The embedded source `package_id` and lock exactly equal those of the originating admitted checked package, and the explicit lowering-profile reference is retained in its closed `{authority, identity}` form separately from the lock's source-profile selections. | Test (TC-932, TC-935) |
 | FR-330-AC-6 | `feature_accounting` has one ordered record for each requested item and exactly one disposition from the seven-member vocabulary; non-`lowered` records have no substitute node, and `invalid_body.refusal` and `body_incomplete.incomplete` use the exact closed nested shapes and omission rules above. | Test (TC-933) |
 | FR-330-AC-7 | `source_map` has an entry for every semantic node, requested item, and refusal; an absent `CheckedNodeId` remains an explicitly mapped `invalid_input` with no fabricated region, while every available occurrence and region matches FR-322 exactly. | Test (TC-934) |
