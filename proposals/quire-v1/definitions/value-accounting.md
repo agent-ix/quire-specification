@@ -473,10 +473,11 @@ charge and in this order, the FR-153 model-selection check, object closure and
 whether the effective view's generalization graph is closed; each is read from
 the population declaration and the effective view. Normalization has already
 computed and charged the phase-3 type derivation facts for every supertype
-path. The normalized view provides the ancestor-keyed lookup specified above;
-a query's per-`T` subtype-coverage decision occurs before its first charge and
-uses that lookup. It does not traverse the type catalog or recompute
-conformance. Binding admission then charges:
+path. The normalized/effective view supplies its shared conformance operation
+for the query's pre-first-charge decision whether `T` conforms to at least one
+declared population member type. This decision adds no charge point or charge
+row and requires no separate retained descendants map. Binding admission then
+charges:
 
 | Charge point | Order | Exact counter amount |
 | --- | --- | --- |

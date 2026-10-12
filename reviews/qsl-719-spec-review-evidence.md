@@ -1,24 +1,27 @@
 ---
 id: SR-7837
-title: "Evidence analysis of allInstances coverage accounting"
+title: "Evidence analysis of QSpec PR #233 allInstances accounting"
 type: SpecReview
 analysis: evidence
-scope: "agent-ix/quire-specification@2923f8a0debaee0102d8889aed52925c9174bf2f; proposals/quire-v1/definitions/value-accounting.md"
+scope: "agent-ix/quire-specification@103dcc0707c26521a7628fb8611e30b15b2079e6; FR-151; FR-153; proposals/quire-v1/definitions/value-accounting.md"
 review_set: subset
 ---
 
 ## Summary
 
-Ran the declared-method advisor for FR-153 and FR-151 obligations. FR-153-AC-1 through AC-9 and FR-151-AC-1 through AC-16 author `Test`; the advisor reports no authored-method mismatch or inconclusive recommendation for these criteria. FR-153-AC-5 directly covers complete subtype populations and withholding partial results. No evidence-method defect found for this prose clarification.
+Ran the declared-method advisor for FR-151 and FR-153, the requirements supporting the changed prose. All examined criteria author `Test`; the advisor found no mismatch or inconclusive recommendation. No evidence-method defect found.
 
 ## Findings
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | low | No issues found | - |
+| FND-001 | low | No findings (placeholder) | - |
 
-## Scope
+## Verdict
 
-- {id: FR-153-AC-1..9, path: "spec/functional/type-model/FR-153-query-closed-model-environments.md", role: examined, excerpt: "Each FR-153 acceptance criterion authors Test; quoin advise reports no mismatch or inconclusive recommendation for AC-1 through AC-9."}
-- {id: FR-151-AC-1..16, path: "spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md", role: examined, excerpt: "Each FR-151 acceptance criterion authors Test; quoin advise reports no mismatch or inconclusive recommendation for AC-1 through AC-16."}
-- {id: FR-153-AC-5, path: "spec/functional/type-model/FR-153-query-closed-model-environments.md", lines: "97-99", role: examined, excerpt: "All-instances includes closed subtype populations exactly once and emits no partial population when closure is unknown."}
+PASS, clean on exact PR head `103dcc0707c26521a7628fb8611e30b15b2079e6`. `quoin advise --json --repo <qspec checkout>` returned recommendations for FR-151-AC-1 through AC-16 and FR-153-AC-1 through AC-9; each authored method is `Test`, and every criterion had `mismatch: false` and `inconclusive: false`. The changed paragraph is an accounting-method clarification, not a new FR/AC; the existing FR-153 test obligations still govern implementation verification.
+
+## Checks
+
+- Ran deterministic `quoin advise --json` on the QSpec repository; filtered the exact FR-151 and FR-153 criterion records and checked authored method, mismatch, and inconclusive fields.
+- No additional evidence method was needed for this prose-only change; no new criterion or test claim was added.
