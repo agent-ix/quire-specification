@@ -854,6 +854,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-151 | FR-151-AC-9 | TC-196 |  |
 | FR-151 | FR-151-AC-10 | TC-196 |  |
 | FR-151 | FR-151-AC-11 | TC-196 |  |
+| FR-151 | FR-151-AC-16 | TC-938 |  |
 | FR-152 | FR-152-AC-6 | TC-197 |  |
 | FR-152 | FR-152-AC-7 | TC-197 |  |
 | FR-152 | FR-152-AC-8 | TC-197 |  |
@@ -1760,6 +1761,7 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | TC-194 | Complete equality matrix | Property | P0 | FR-149 | 🚧 |
 | TC-195 | Model normalization provenance | Property | P0 | FR-150 | 🚧 |
 | TC-196 | Conformance redefinition and dispatch | Property | P0 | FR-151 | 🚧 |
+| TC-938 | Operation bodies are unique by resolved operation identity | Property | P0 | FR-151-AC-16 | 🚧 |
 | TC-197 | Systems-model typed binding | Property | P0 | FR-152, FR-208 | 🚧 |
 | TC-198 | Closed model lookup | Property | P0 | FR-153 | 🚧 |
 | TC-199 | Uncertain revisioned temporal evaluation | Property | P0 | FR-160 | 🚧 |
