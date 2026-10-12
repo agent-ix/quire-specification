@@ -16,3 +16,15 @@ The changed `resource_exhausted` row preserves the distinction between measured 
 | ID      | Severity | Summary                                                     | Refs |
 | ------- | -------- | ----------------------------------------------------------- | ---- |
 | FND-001 | low      | Reservation overflow semantics are stated twice in the row | proposals/quire-v1/definitions/native-diagnostics.md:82 |
+
+## Dispositions
+
+Round 2, reviewed at `f9f830736cfea7f7811743145e22bf5f9570854f`. The fix commit `6611f923654009120922e52b892c1b267aac2086` is an ancestor of the reviewed head and consolidates the overflow payload and distinction into one clause.
+
+| FND     | outcome | sha/reason                                      |
+| ------- | ------- | ----------------------------------------------- |
+| FND-001 | fixed   | 6611f923654009120922e52b892c1b267aac2086      |
+
+FND-001 `after_excerpt` (proposals/quire-v1/definitions/native-diagnostics.md:82):
+
+> For `reservation-size-overflow`, retain `upstream`: the exact upstream `StorageRequest` amount and unit and its original capacity/size arithmetic or representation overflow reason; this is not a measured allocator-denied request, and no such measurement is fabricated.
