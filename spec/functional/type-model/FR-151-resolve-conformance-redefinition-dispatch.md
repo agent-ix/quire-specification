@@ -178,6 +178,13 @@ Only query operations, whose result is present and whose effect set is empty,
 may be called, and only inside invariant, precondition and postcondition
 blocks; a call in a function or operation body is `ill_typed`/`operator-ineligible`.
 A body is supplied by an `operation-body` declaration.
+Across all source units linked into one package, at most one
+`operation-body` declaration SHALL resolve to a given operation identity.
+This uniqueness check SHALL use the resolved operation identity after each
+unit's local model or import alias is resolved, not the alias spelling. A
+second body resolving to an identity already targeted by a body in any linked
+unit SHALL be refused by a QSL implementation as
+`conflicting_declaration`/`duplicate-declaration`.
 
 At link time, the family of `o` is `o`'s original declaration together with
 every redefining operation reaching a subtype of `T`; its members that have a
@@ -238,6 +245,7 @@ type.
 | FR-151-AC-13 | R08(b)'s actual present(self.xb) clause types and establishes presence from optional A/x despite required B/xb; R08(e) establishes [0,5] from parent Count [0,9], while R08(f)'s [0,6] refuses. A sibling or descendant-only clause cannot discharge B's obligation. | Test |
 | FR-151-AC-14 | R05's incompatible multiplicity and R08(c)'s narrowed object type reach their original FR-151 refusals, without generic assembly preemption; an independent unresolved clause name instead refuses in the earlier source/checked-fact stage before any conformance.axis charge. | Test |
 | FR-151-AC-15 | Two selected models report every completed conformance failure in canonical selection order independent of alias/source order. Denial in the second model suppresses all failures collected in that unfinished stage, preserves earlier meter consumption and emits exactly the selected incomplete record. | Test |
+| FR-151-AC-16 | Two linked source units using different local aliases for the same model identity may each target a distinct operation identity and link successfully; if the second unit instead targets the first unit's operation identity, linking refuses as `conflicting_declaration`/`duplicate-declaration` with no partial result. | Test |
 
 ## Dependencies
 
