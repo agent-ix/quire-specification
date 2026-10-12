@@ -412,17 +412,17 @@ FR-043-AC-2 requires.
 decides the foreign-universe check and then key presence without a charge, and
 charges `lookup.result-retain` only when it returns a value; `absent undefined`
 and `absent refused` make no later charge. `allInstances<T>(p)` has its object
-and the generalization graph's closure decided at binding admission. The
-per-`T` subtype-coverage check reads the closure facts established by that
-admission, through the normalized view's retained phase-3 type derivation; it
-does not add a charge point or charge row. The normalized view retains the
-phase-3 type derivation facts for each supertype path (see
+and the generalization graph's closure decided at binding admission. This
+establishes graph-level closure, not subtype coverage for any queried `T`.
+Normalization computes and charges the phase-3 type derivation facts for each
+supertype path (see
 `model-complete.md`, Normalization rules) and provides a lookup keyed
 by an ancestor type that returns that type and the effective types whose
-retained paths end at it. Before the query's first charge, subtype coverage
-for this `T` is decided by looking up `T` in that relation; it is not decided
-at binding admission, by traversing the type catalog, or by recomputing
-conformance. This lookup makes no charge. The query then walks
+retained paths end at it. Binding admission establishes the admitted object's
+membership and graph closure. Before its first charge, each query decides
+subtype coverage for its `T` by looking up `T` in that retained relation; it
+does not decide that coverage at binding admission, traverse the type
+catalog, or recompute conformance. This lookup makes no charge. The query then walks
 every admitted member of `p` in canonical reference-key order, charging one
 `population.visit` before each member walked whether or not its most-specific
 type conforms to `T`, and selects the member, without a charge, exactly when
