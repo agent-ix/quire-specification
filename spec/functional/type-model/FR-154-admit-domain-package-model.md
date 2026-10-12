@@ -86,6 +86,16 @@ Declaration refusals:
 | Two nodes share one identity, including two states or two steps of one owner with one name, or two transitions of one state machine with equal `from`, `to` and `trigger` | `invalid_model_binding`/`conflicting-binding` |
 | A multiplicity has `lower > upper` | `invalid_model_binding`/`unpreserved-model-meaning` |
 
+When FCD extraction reports one of the following semantic diagnostics, the
+FR-154 intake projection SHALL preserve the affected IR node and `origin` and
+map it to the QSL refusal pair used by TC-235:
+
+| FCD diagnostic | QSL refusal pair | Scope |
+| --- | --- | --- |
+| `UNRESOLVED_CONSTRUCT_REF` | `missing_declaration`/`missing-name` | A construct member reference names no declared node or member, including an occurrence field, transition state or trigger, or emitted/consumed type. |
+| `DANGLING_CLAUSE_REF` | `missing_declaration`/`missing-name` | A transition guard names no clause of its owning type. |
+| `INVALID_OCCURRENCE_FIELD` | `invalid_model_binding`/`malformed-declaration` | An occurrence field resolves to a field whose type, including aliases, is not scalar `datetime`; a missing target remains `UNRESOLVED_CONSTRUCT_REF`. |
+
 Every declaration refusal retains the IR node identity and the node's FCD
 `origin` verbatim (filament-core-data `schema/semantic/v1/common.schema.json`,
 `$defs.origin`): a source origin gives `sourceIdentity`, `path`, `startLine`,
