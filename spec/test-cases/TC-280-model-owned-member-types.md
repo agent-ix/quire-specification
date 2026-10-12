@@ -94,6 +94,9 @@ compare it with the case's parameter types.
 | MT-12 | `field` `floor`, native `Integer` carrying a `min` constraint | `Integer` | FR-322-AC-31 |
 | MT-13 | `field` `tags`, `Integer` `[0, unbounded]`, unordered, unique | `Set<Integer>` with no bounds | FR-322-AC-31 |
 | MT-14 | `field` `pick`, `Integer` `[0, 1]`, unordered, unique | `Set<Integer>[0, 1]` | FR-322-AC-31 |
+| MT-16 | `field` `code`, native `String` | `String` over `scalar_type`/`string`, distinct from `Text` | FR-322-AC-31 |
+| MT-17 | `field` `ref`, native `UUID` | `UUID` over `scalar_type`/`uuid` | FR-322-AC-31 |
+| MT-18 | `field` `at`, native `Timestamp` | `Timestamp` over `scalar_type`/`timestamp` | FR-322-AC-31 |
 | MA-01 | `field` `missing` on M1 | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-02 | `field` `size`, an operation name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-03 | `operation` `total`, a field name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |

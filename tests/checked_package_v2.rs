@@ -978,6 +978,9 @@ impl<'a> OperationOracle<'a> {
                 ("scalar_type", "float32") => "float32",
                 ("scalar_type", "float64") => "float64",
                 ("scalar_type", "text") => "text",
+                ("scalar_type", "string") => "string",
+                ("scalar_type", "uuid") => "uuid",
+                ("scalar_type", "timestamp") => "timestamp",
                 ("scalar_type", "unit") => "quantity",
                 ("scalar_type", "enum") => {
                     if node["nominal_identity_preimage"]["ordered"].as_bool() == Some(true) {
