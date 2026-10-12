@@ -419,10 +419,10 @@ supertype path (see
 `model-complete.md`, Normalization rules) and provides a lookup keyed
 by an ancestor type that returns that type and the effective types whose
 retained paths end at it. Binding admission establishes the admitted object's
-membership and graph closure. Before its first charge, each query decides
-subtype coverage for its `T` by looking up `T` in that retained relation; it
-does not decide that coverage at binding admission, traverse the type
-catalog, or recompute conformance. This lookup makes no charge. The query then walks
+membership and graph closure. Before its first charge, each query reads
+per-`T` subtype coverage from the admission-time closure's retained relation.
+It does not traverse the type catalog or recompute conformance; this lookup
+adds no charge point or charge row. The query then walks
 every admitted member of `p` in canonical reference-key order, charging one
 `population.visit` before each member walked whether or not its most-specific
 type conforms to `T`, and selects the member, without a charge, exactly when
