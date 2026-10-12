@@ -415,10 +415,13 @@ and `absent refused` make no later charge. `allInstances<T>(p)` has its object
 and subtype closure decided at binding admission; it walks every admitted
 member of `p` in canonical reference-key order, charging one `population.visit`
 before each member walked whether or not its most-specific type conforms to
-`T`, and then selects the member, without a charge, exactly when that type
-conforms to `T`. It then charges `collection.bound` with `value_occurrences=n`
-for the `n` selected members, decides the declared maximum without a charge,
-and charges `collection.result-retain`. A dispatched call evaluates the
+`T`. Its per-`T` subtype-coverage test is a lookup in the normalized
+`GeneralizationClosure` fixed at binding admission, not a type-catalog
+traversal or a conformance recomputation; the lookup makes no charge. It then
+selects the member, without a charge, exactly when that type conforms to `T`.
+It then charges `collection.bound` with `value_occurrences=n` for the `n`
+selected members, decides the declared maximum without a charge, and charges
+`collection.result-retain`. A dispatched call evaluates the
 receiver and then its arguments left to right, charges `dispatch.select`,
 selects the linked method for the receiver's most-specific type without a
 charge, decides the selected method's effective precondition (its own
@@ -461,7 +464,11 @@ means unlimited. These counters are independent of `ScalarLimitsV1` and of
 size; `work_units` is cumulative. Binding admission first decides, without a
 charge and in this order, the FR-153 model-selection check, object closure and
 subtype closure; each is read from the population declaration and the effective
-view. It then charges:
+view. The effective view's `GeneralizationClosure` retains the ancestor-path
+relation already computed and charged during normalization; each later
+per-`T` subtype-coverage check reads the descendants of `T` from that retained
+relation, without traversing the type catalog or recomputing conformance. It
+then charges:
 
 | Charge point | Order | Exact counter amount |
 | --- | --- | --- |
