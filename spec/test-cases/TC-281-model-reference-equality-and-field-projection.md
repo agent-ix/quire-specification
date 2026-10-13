@@ -136,6 +136,7 @@ text field `note`; `Money` declares `amount_minor`. These vectors are a referenc
 | RCF-09 | A union value of a member with a `Money` payload and a `TaxedMoney` term; with a `Money` term at a `TaxedMoney` payload | Admitted; `ill_typed`/`type-mismatch` | FR-322-AC-69 |
 | RCF-10 | `structural.eq` and `structural.ne` over two `Money` operands with the leaves of `Money`, where the values are `TaxedMoney` values whose `note` has no listed leaf | Admitted: the leaf check reads `Money`'s walk only | FR-322-AC-69 |
 | RCF-11 | A `function` typed `Money` whose body root is an application typed `TaxedMoney`; a `function` typed `TaxedMoney` whose body is typed `Money` | Admitted; `ill_typed`/`operator-ineligible` | FR-322-AC-69 |
+| RCF-13 | A `function` typed `Money` whose `body` binding references a root expression typed `TaxedMoney`; typed `Money` with a `Voucher`-typed root (an unrelated record); typed `TaxedMoney` with a `Money` root | Admitted; `ill_typed`/`operator-ineligible`; `ill_typed`/`operator-ineligible` | FR-322-AC-69 |
 | RCF-12 | A `case` with result type `Money` whose arm bodies are typed `Money` and `TaxedMoney`; with arm bodies `TaxedMoney` and `Other` | Admitted; `ill_typed`/`operator-ineligible` | FR-322-AC-69 |
 
 ## Expected Results

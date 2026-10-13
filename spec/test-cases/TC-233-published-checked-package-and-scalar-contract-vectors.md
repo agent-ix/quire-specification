@@ -287,12 +287,6 @@ The owner join, projection and equality behaviour of an event type (FR-322-AC-68
 | ET-03 | ET-01 with a `SourceOwner` and no `declaration` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
 | ET-04 | ET-01 with a `declaration` and a `ModelOwner` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
 
-### Function parameter binding vectors
-
-| Vector | Input | Expected result | Criteria |
-| --- | --- | --- | --- |
-| PB-01 | A `function` node of `positive-all-families.json` whose body is an `aggregate` with a first binding `parameters` of `reference` terms to `value`/`parameter` nodes, including a parameter the body never reads | Admitted by the V2 schema | FR-322-AC-70 |
-
 ## Expected Results
 
 Each event type vector gives exactly its recorded result.

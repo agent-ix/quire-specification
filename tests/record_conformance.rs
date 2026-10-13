@@ -418,6 +418,7 @@ fn tc_281_event_type_joins_its_owner_projects_and_refuses_equality() {
 }
 
 #[trace("TC-281", "FR-322-AC-69")]
+#[trace("TC-281", "FR-322-AC-70")]
 #[test]
 fn tc_281_record_conformance_decides_projection_calls_and_slots() {
     let (catalog, doc) = (catalog(), document());
@@ -519,6 +520,9 @@ fn tc_281_record_conformance_decides_projection_calls_and_slots() {
         ),
         Outcome::Ineligible
     );
+    // RCF-13
+    let voucher = model("Other");
+    assert_eq!(result_admits(&doc, &money, &voucher), Outcome::Ineligible);
     // RCF-11, RCF-12
     assert_eq!(result_admits(&doc, &money, &taxed), Outcome::Admitted);
     assert_eq!(result_admits(&doc, &taxed, &money), Outcome::Ineligible);

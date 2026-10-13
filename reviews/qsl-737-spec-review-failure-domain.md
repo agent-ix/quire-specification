@@ -76,3 +76,9 @@ Round 2, reviewed at agent-ix/quire-specification@3713ea827bb7118792208a79f15851
 | --- | --- | --- |
 | FND-004 | fixed | bfe731b |
 | FND-005 | fixed | bfe731b |
+
+Round 3, reviewed at agent-ix/quire-specification@d2ec448dcdf6829020e30c0594d5f7dec728f803.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-006 | fixed | d2ec448 |

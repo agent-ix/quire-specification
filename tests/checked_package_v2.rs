@@ -12669,31 +12669,3 @@ fn tc_233_event_type_is_a_model_declaration_node_with_a_model_owner() {
         );
     }
 }
-
-/// PB-01 (FR-322-AC-70): a `function` node whose body is an `aggregate` with a
-/// first binding `parameters`, `reference` terms to parameter nodes in
-/// parameter order, is a valid V2 node; this is the layout QSL FR-092 builds,
-/// not a new member.
-#[trace("TC-233", "FR-322-AC-70")]
-#[test]
-fn tc_233_a_function_body_parameters_binding_validates() {
-    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
-    let base = parsed_fixture(POSITIVE_ALL_FAMILIES);
-    let helper = declared_index(&base, &["Example", "helper"]);
-    let target = base["semantic_graph"]["nodes"][helper]["semantic_type"].clone();
-    let mut candidate = base.clone();
-    edit_node_and_projection(&mut candidate, helper, |node| {
-        node["body"] = json!({"term": "aggregate", "members": [{
-            "term": "binding", "name": "parameters",
-            "value": {"term": "aggregate", "members": [
-                {"term": "reference", "target": target.clone()},
-                {"term": "reference", "target": target.clone()}
-            ]}
-        }]});
-    });
-    assert!(schema.is_valid(&base));
-    assert!(
-        schema.is_valid(&candidate),
-        "a function body with a parameters binding is a V2 node"
-    );
-}

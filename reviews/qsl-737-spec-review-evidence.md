@@ -57,6 +57,12 @@ Findings to fix in this PR before merge.
 | --- | --- | --- | --- |
 | FND-004 | low | PF-05 and PF-06 assert that adding `parameters` changes the digest of the repo's own `application_node_preimage` and `structural_node_preimage`. Those functions were edited in this commit to copy the member in, so the two assert_ne checks only test that edit, and the structural one checks no published schema. The real evidence is PF-01..PF-04 (V2 schema), the preimage-schema admit/refuse checks and PF-07 (dependency shape). Pin PF-05/06 to a recorded preimage digest, or drop the inequality asserts. No published structural-preimage schema exists to check PF-06 against. | tests/checked_package_v2.rs:12695-12779 |
 
+## New findings (disposition pass 3)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | low | PB-01's test cannot fail. The V2 schema does not constrain binding names or body layout, and the unmodified base fixture already validates, so the assertion would hold before this PR and under any FR-322 wording. The test also does not build what PB-01 describes. Its `parameters` references target `helper`'s `semantic_type` (a type node), not `value`/`parameter` nodes, and the node id is kept, not recomputed. FR-322-AC-70's first clause ('is admitted by the V2 schema') is likewise vacuous. Its operative clause, arguments counted and typed against the binding, is covered only by record_conformance.rs's reference oracle. Drop PB-01, the test and that clause, or make PB-01 build real `value`/`parameter` nodes and check something the schema or a reader rule could refuse. | tests/checked_package_v2.rs:12672-12699 |
+
 ## Dispositions
 
 Round 1, reviewed at agent-ix/quire-specification@6fa92f760058a4654ed5122d81d9dc8eec980647.
@@ -71,3 +77,9 @@ Round 2, reviewed at agent-ix/quire-specification@3713ea827bb7118792208a79f15851
 | FND | outcome | sha/reason |
 | --- | --- | --- |
 | FND-003 | deferred | TC-281 now says the EV/RCF vectors are a reference oracle applied by tests/record_conformance.rs over inline data and not yet published as a data file; publishing them as vector data is left to a follow-up (no ticket named yet). Low severity; not blocking. |
+
+Round 3, reviewed at agent-ix/quire-specification@d2ec448dcdf6829020e30c0594d5f7dec728f803.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-004 | fixed | d2ec448 |

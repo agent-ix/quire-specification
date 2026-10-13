@@ -70,6 +70,12 @@ Findings to fix in this PR before merge.
 | FND-009 | low | The `application_node_preimage` definition still lists exactly `{version, node_tag, semantic_form, semantic_type, declaration, recursion, body}`. The optional `parameters` member that line 126 says enters this preimage, and that the preimage schema and the test oracle add, is missing from the list that defines it. Add 'and `parameters` when the node carries it'. | spec/objects/interfaces/FR-322-checked-package-artifact.md:301-305 |
 | FND-010 | low | FR-143-AC-9 now admits a model record value from another package when its key is 'a declaration key of the evaluating package's selected document'. The body still admits only keys 'of that package's graph'. A `TaxedMoney` value for a model record the evaluating package never emitted a node for satisfies the AC and fails the body (TC-188 R14). Use one test in both places. | spec/functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md:114-117 |
 
+## New findings (disposition pass 3)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-011 | low | FR-322-AC-69 states the `case` admission twice: 'A `case` whose arm bodies are `Money` and `TaxedMoney` with result type `Money` is admitted (FR-440-AC-4)', then again inside the next sentence ('... and a `case` whose arm bodies are typed `Money` and `TaxedMoney` with result type `Money`, are admitted'). Delete one. | spec/objects/interfaces/FR-322-checked-package-artifact.md:1436 |
+
 ## Dispositions
 
 Round 1, reviewed at agent-ix/quire-specification@6fa92f760058a4654ed5122d81d9dc8eec980647.
@@ -88,3 +94,11 @@ Round 2, reviewed at agent-ix/quire-specification@3713ea827bb7118792208a79f15851
 | --- | --- | --- |
 | FND-006 | fixed | 3713ea8 |
 | FND-007 | fixed | bfe731b |
+
+Round 3, reviewed at agent-ix/quire-specification@d2ec448dcdf6829020e30c0594d5f7dec728f803.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-008 | fixed | d2ec448 |
+| FND-009 | fixed | d2ec448 |
+| FND-010 | fixed | d2ec448 |
