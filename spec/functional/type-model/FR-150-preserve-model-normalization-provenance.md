@@ -49,9 +49,9 @@ no identity-equivalence declaration exists.
 The model checker SHALL retain every phase-1 original declaration and its
 actual FCD origin in the immutable selection inventory, including originals
 whose kinds have no phase-2 qualify rule. It SHALL derive effective entries
-only for the selected rules' kinds. A retained scalar, clause or population
+only for the selected rules' kinds. A retained scalar, population, namespace, or non-`quire` clause
 without such a rule SHALL NOT receive an invented qualify fact, effective
-declaration or additional declaration/hash charge. Effective entries and fact
+declaration or additional declaration/hash charge. An operation's `Pre:` or `Post:` contract clause is not a declaration, so it is neither retained nor qualified. Effective entries and fact
 inputs reference keys from the exact retained inventory. This inventory is
 existing selection data, not an added effective-identity preimage member.
 
@@ -85,9 +85,12 @@ The model checker applies the manifest's rules in this fixed phase order:
 (1) `quire.model.normalize.intake/v1` and `quire.model.features/v1`, domain
 package admission, declaration building and feature checks (FR-154);
 (2) `quire.model.normalize.qualify/v1`, qualified-identity formation for
-object types, interfaces, fields, relationships, operations, parts, ports
-(owned by their part's owning type), connections and allocations (owned by each
-end's end-owner type);
+object types, record value types, event types, state machines, processes,
+persistence interfaces, variant types, interfaces, variant cases (owned by
+their variant type), fields, relationships, operations (owned by a type,
+interface or persistence interface), `quire` invariant clauses owned by a type,
+parts, ports (owned by their part's owning type), connections and allocations
+(owned by each end's end-owner type);
 (3) `quire.model.normalize.inherit/v1`, inheritance expansion along declared
 supertypes; (4) `quire.model.normalize.subset/v1` and
 `quire.model.normalize.redefine/v1`, declared subsetting and redefinition; and
