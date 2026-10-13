@@ -43,14 +43,12 @@ The ContractPackage is a closed object with exactly six required members:
   selected identities, and ordering. It is provenance, not a second package
   or authority; the producer SHALL NOT reconstruct, normalize, or silently
   amend it. `lowering_profile` is the explicit I12 `LoweringProfileRef`
-  supplied to `lower`; it has the same closed `{authority, identity}` value
-  form as FR-322 `DefinitionRef`. This output records that selected reference
-  only; it does not define a profile registry or map the reference to required
-  source semantic selections. It is distinct from, and does not duplicate or
+  supplied as the resolved profile's `reference` to `lower`; it has the same
+  closed `{authority, identity}` value form as FR-322 `DefinitionRef`. This
+  output records that reference only, separately from the authoritative typed
+  requirements described below. It is distinct from, and does not duplicate or
   amend, the source-language `profile_selections` in `source.lock`. It SHALL be
-  explicit; no default profile is inferred. Neither value replaces or amends
-  the other, and no `invalid_input` follows solely from comparing the reference
-  with the lock's source selections.
+  explicit; no default profile is inferred. Neither value replaces the other.
 - `semantic_graph`: the closed object `{graph_version, nodes}` with exactly
   one `nodes` array. `graph_version` is exactly
   `quire.checked-semantic-graph/v2`. The node array uses FR-322's closed
@@ -77,9 +75,82 @@ can change meaning SHALL be represented there. Display labels, ambient
 settings, backend installation, caller resource limits, and the lowering
 profile's capability settings are not added to the ContractPackage.
 `package.lowering_profile` records only the explicit I12 profile reference; it
-does not amend the lock's selected source meaning. This contract defines no
-compatibility predicate between that reference and the lock's source-profile
-selections.
+does not amend the lock's selected source meaning. Compatibility is checked
+against the resolved profile's typed requirements, never the reference alone.
+
+### Typed source-selection compatibility
+
+The I12 lowering input is the resolved Contract IR FR-035
+`CompleteLoweringProfileV2`, whose `required_source_selections` field is a
+`Vec<CheckedSelection>` of exact FR-322 `Selection` rows. The owner of those
+requirements is the producer of that resolved profile, not the checked-package
+producer, the ContractPackage reader, or a backend display label. A caller SHALL
+supply the requirements declared by the selected resolved profile without
+replacing them with requirements derived from its reference. No registry lookup,
+parsed identifier, inferred default, or untyped settings map supplies them.
+
+For each required row, the lowerer SHALL require a row in the admitted input's
+`lock.profile_selections` with equal `role`, `definition.authority`, and
+`definition.identity`. Equality is exact enum/string equality, including case;
+there is no alias, version, prefix, subtype, or digest comparison. The predicate
+is conjunction of exact row membership, not array equality or lookup by role
+alone. Extra lock rows, including other definitions of the same role, do not
+invalidate a match. Repeated identical requirements are idempotent; requirement
+order and lock order do not change the predicate. Different requirements sharing
+one role require each exact row. An empty requirement vector imposes no
+source-selection restriction; it does not infer requirements from `reference`.
+This comparison does not re-admit or repair the already admitted lock.
+
+For each requested item, the lowerer SHALL use that request's existing FR-038
+work meter and `CompleteLoweringProfileV2.work_limit`. Its counter starts once
+at zero for that request. The FR-038 per-request work unit is charged first;
+if it exceeds the ceiling the record is `failed` for `work`, with the requested
+`node_id`, caller's limit and consumed counter at that failed charge. Thus zero
+work yields `failed` with consumed `1` before key lookup or compatibility.
+An absent requested key still returns `invalid_input` after that first charge,
+without running compatibility, as FR-038 requires.
+
+For an existing requested key, the lowerer SHALL check compatibility before
+visiting its semantic-node closure. The charged procedure visits requirement
+rows in their supplied order, charging one work unit before each requirement-row
+visit, then scans lock profile-selection rows in their original order, charging
+one work unit before each candidate-row comparison. The comparison tests the
+whole typed row defined above and stops that scan at the first equal row. A
+requirement whose scan finds no equal row stops compatibility as a mismatch;
+otherwise the procedure continues to the next requirement. Empty requirements
+have no compatibility charges. Repeated requirements are checked and charged
+again; there is no uncharged normalization, sorting, index construction or
+cross-request memoization. Requirement and lock order do not change the
+unlimited-budget membership predicate but can change the number of candidate
+visits and therefore a resource-limited outcome.
+
+The lowerer SHALL charge before the visited work proceeds and stop immediately
+at the first charge exceeding the existing ceiling, returning the existing
+`failed`/`work` record with that exact limit and consumed count and no node.
+A successful comparison continues node, body-term and successor-edge charges
+on this same meter, without resetting or replacing it, adding a second budget,
+or dropping the request/comparison charges. Each sibling request retains its
+own existing FR-038 meter and request order; compatibility is charged per
+request, not as an unmetered global pre-pass.
+
+When a completed check finds a required row absent, including when only a
+different authority or identity occurs for its role, the lowerer SHALL return
+the existing `invalid_input` disposition for that request with its exact
+requested `node_id` and no additional payload, before unsupported-tag, bounds
+or body checks. With sufficient work every present request receives that same
+mismatch result. The result retains its available source occurrences; an absent
+key retains an empty occurrence array. This path emits no semantic node or
+backend artifact. The FR-038 package byte ceiling remains the existing global
+exception: it fails every record if even the refusal package cannot be encoded.
+A completed mismatch is not a reader `invalid_package` diagnostic and gains no
+invented pointer/cause.
+
+The lowerer SHALL retain the originating `package.source.package_id` and exact `source.lock`,
+including every row and its order, without sorting, filtering, adding or
+substituting selections. The resolved requirements are not serialized into
+`package.lowering_profile` or another ContractPackage member. A strict reader
+cannot re-check compatibility from the emitted reference alone; this is the
+lowerer's producer obligation, verified against its typed operation input.
 
 Each `feature_accounting` record is a closed object with exactly the common
 members `node_id` and `disposition`; `node_id` is the requested exact
@@ -382,6 +453,7 @@ lock alone is not evidence that a selected package was supplied or admitted.
 | FR-330-AC-7 | `source_map` has an entry for every semantic node, requested item, and refusal; an absent `CheckedNodeId` remains an explicitly mapped `invalid_input` with no fabricated region, while every available occurrence and region matches FR-322 exactly. | Test (TC-934) |
 | FR-330-AC-8 | The identity recomputes from the specified RFC 8785 projection under `quire.contract-ir.semantic/v1`; changing package provenance, lowering profile, graph, or an accounting result changes it, while changing only valid source locations, caller limits that leave serialized members unchanged, rendering, or JSON layout does not. Source-map corruption still refuses admission. | Test (TC-936) |
 | FR-330-AC-9 | The sole reader admits a valid canonical value only with every lock-selected admitted dependency package supplied and matching its selection; it ignores extra unselected inputs, refuses a missing or wrong-identity dependency as `missing_import`/`missing-selection` and a same-identity admitted package with a different `package_id` as `stale_dependency`/`content-mismatch` at the selected lock pointer, all before dependent-reference checks. It refuses a mismatched own identity as `invalid_package`/`invalid-value` at `/identity/digest`; malformed nested payloads use `invalid_package` with FR-322's `missing-member`, `duplicate-member`, `unknown-member`, `wrong-value-kind`, or `invalid-value` cause as applicable. Wrong versions, invalid references, incomplete source maps, and accounting mismatches also refuse with a typed FR-330 reader result and FR-272 diagnostic mapping before any consumer sees a value. | Test (TC-937) |
+| FR-330-AC-10 | The resolved profile carries authoritative typed `required_source_selections`; exact role/authority/identity matches admit lowering, empty requirements impose no restriction, and unrelated lock rows or reordered/repeated requirements do not change compatibility. Per-request compatibility uses the existing first-charge meter and stated row-visit charges without reset; zero-work and an unpayable comparison charge yield `failed` before compatibility refusal. With sufficient work a missing or different required row yields one request-ordered `invalid_input` per item before node traversal, with no extra payload, no nodes and exact available source occurrences; both success and refusal retain the exact originating lock and package id. | Test |
 
 ## Dependencies
 
