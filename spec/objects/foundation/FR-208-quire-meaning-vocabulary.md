@@ -82,7 +82,7 @@ Rules common to the six meanings:
   process may be a population member, a `creates` or `deletes` frame entry or
   a relationship end. No node of the other five meanings is any of these.
   Naming one there is `invalid_model_binding`/`malformed-declaration`.
-- **Field types.** A field or parameter `typeRef` may name a record value
+- **Field types.** A field, parameter or result `typeRef` may name a record value
   type. Naming an event type, state machine, process, persistence interface
   or namespace is `invalid_model_binding`/`malformed-declaration`.
   Naming a variant type is also `invalid_model_binding`/`malformed-declaration`
@@ -315,7 +315,10 @@ that the meaning states, `fields`, `identityFields`, `occurrenceField` or
   is `invalid_model_binding`/`malformed-declaration`. A namespace yields no
   effective type.
 
-- **`variant-type/v1`.** A type definition whose construct has shape
+## Variant types
+
+`quire.meaning.model.variant-type/v1` is not one of the six business model
+meanings. A type definition whose construct has shape
   `enumeration`, with one or more cases in `variants`, each with a name, a
   source span and the identity `variant/<Name>-<value>` of its owner and name
   (FR-154). A case has no payload: a case with a `payloadType` is
