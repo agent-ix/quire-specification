@@ -576,17 +576,19 @@ Neither denial follows an edge, refunds admitted work or returns a semantic
 conformance verdict. This row applies to normalization ancestor expansion,
 conformance, systems conformance and dispatch ancestor walks.
 
-`family_steps` is the exact u64 ceiling of the number of `redefines` edges
-followed by all the dispatch-family walks of one dispatch link together: the
-redefinition-family walk and the effective-precondition walk up each linked
-candidate's `redefines` chain. It is an edge count, not a chain depth. Test
+`family_steps` is the exact u64 ceiling of the number of distinct `redefines`
+edges followed by all the dispatch-family walks of one dispatch link together:
+the redefinition-family walk and the effective-precondition walk up each linked
+candidate's `redefines` chain. An edge is charged once, however many of those
+walks follow it; a re-followed edge is neither charged nor denied, so the count
+does not depend on walk order. It is an edge count, not a chain depth. Test
 availability immediately before each edge is followed, after any owning
-work-unit charge already admitted; a permitted edge increments the count by
+work-unit charge already admitted; a permitted new edge increments the count by
 one and introduces no work-unit charge. Its named point is
 `model.family-edge`; denial returns
 `incomplete { limit_kind: family_steps, limit: F, consumed: k,
 next_charge: 1, charge_point: model.family-edge }` when k = F. A zero limit
-denies the first followed edge, and at n edges, n admits and n-1 denies edge n.
+denies the first followed edge, and with n distinct edges, n admits and n-1 denies edge n.
 A simultaneous denial of an earlier counter wins before the family check, and
 neither denial follows an edge, refunds admitted work or returns a dispatch
 table or ambiguity result.
