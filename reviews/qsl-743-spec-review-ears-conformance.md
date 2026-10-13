@@ -25,3 +25,9 @@ convention, so it is not a finding. One ambiguity was found.
 The text is otherwise clear. "keyed by the case node's own declaration key,
 never the `variant` export key" and "changes no effective identity, entry or
 position" are precise and match FR-056 word for word.
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 17ffad9 |

@@ -102,9 +102,9 @@ id `Order` in domain package `acme/orders` has IR node identity
 `ix://acme/orders/Order`, and a port declared by the artifact with id
 `pump_out` has `ix://acme/orders/pump_out`. A member's identity appends its
 member name to its owner's identity: field `total` of `Order` is
-`ix://acme/orders/Order/total`. Fields, relationships, operations and clauses
-are the only members, and a variant type's cases are its members, each
-identified by its own node `ix://acme/orders/variant/<Name>-<value>` (FR-154). The owner of a part or port and the ends of a connection
+`ix://acme/orders/Order/total`. The only members are fields, relationships, operations and clauses, and the cases of a
+variant type, each identified by its own node
+`ix://acme/orders/variant/<Name>-<value>` (FR-154). The owner of a part or port and the ends of a connection
 or allocation are references, not members, and never part of an identity. The
 artifact title is the declaration's
 `displayName`, used for presentation only; it is never part of an identity and
@@ -207,7 +207,7 @@ prefix first.
 
 Every phase-1 original declaration and its FCD origin remains available from
 the immutable ModelSelection declaration inventory. That inventory and the
-effective declarations are different sets: a scalar, a population, a clause
+effective declarations are different sets: a scalar, a population, a namespace, a clause
 in a language other than `quire` and a clause owned by an operation have no
 phase-2 qualify rule and remain originals, without an invented qualify fact or
 effective declaration. Effective entries and their fact input
@@ -302,8 +302,11 @@ declares no supertype (a non-empty `supertypes` is refused), so it has a
 qualify fact and its operations are its members, with no inherit fact. A
 `quire` invariant clause owned by a type is a member of that type, qualified
 and inherited like a field. A variant type has no inherit fact and no object
-universe: its `supertypes` list is not read, because intake builds its record
-from the type's key, artifact id and cases alone (QSL `read_variant_type`). Reordering its
+universe. A variant type's `supertypes` list is admitted only when it is
+acyclic and every entry names another variant type; it is then ignored, so the
+type's declarations are those it has without the list. An entry that names no
+type, names a type of another kind, or closes a cycle is refused
+`unsupported_construct`/`declaration-form` at `supertypes`. Reordering its
 `variants` list changes no effective identity, entry or position, and its
 effective identity depends on declaration keys alone.
 

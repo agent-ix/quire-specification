@@ -45,3 +45,19 @@ The divergence behind FND-004 predates this PR. QSL's phase-3 member pass
 (`normalize.rs`, comment "An inherited effective member starts with its own
 qualify fact") contradicts QSpec's published N01 vector; no QSL test checks
 the `(B, A/x)` digest. That belongs to QSL, not QSpec.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | medium | The new rule "its `supertypes` list is not read" holds only when the reader admits the list. A variant `supertypes` entry that names no type, names a type of another kind, or closes a cycle raises a semantic-ir reader diagnostic, and QSL then refuses `unsupported_construct`/`declaration-form` at `supertypes` (intake `business_generalization_refusal`, where a variant type is not a same-meaning-supertype kind). N14 step 3 names no entries, so its "the run equals the first" is unverifiable. The rationale also cites a QSL function, where the spec should state the rule | model-complete.md:303-306; TC-195:64 |
+| FND-006 | high | N17's fixture is refused under FR-208 and the built code, so the admission it expects cannot happen: `S` declares no operation (FR-208 state-machine: one or more operations, and a transition's trigger names one), `S2` declares no state, transition or operation of its own (QSL checks each machine's own), `P` declares no `identityFields`, and `PI` has no `persists` list (FR-208-AC-7) | TC-195:67; FR-208 |
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 17ffad9 |
+| FND-002 | fixed | 17ffad9 |
+| FND-003 | fixed | 17ffad9 |
+| FND-004 | fixed | 17ffad9 |

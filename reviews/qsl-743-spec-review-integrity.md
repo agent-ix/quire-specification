@@ -34,3 +34,18 @@ Consistent and clean: the new paragraph agrees with model-complete.md:163 (no
 object universe outside processes), the Supertypes row (record and event types
 generalize their own meaning) and FR-056's "Effective identity of a variant
 type" (case keyed by its case node, never the `variant` export key).
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | low | The list of kinds with no phase-2 qualify rule (model-complete.md:210-213 and FR-150's SHALL NOT sentence) omits namespaces, which are type definitions the normalizer never qualifies (`is_namespace`: "never normalizable types") | model-complete.md:210-213; FR-150:52 |
+| FND-005 | low | "Fields, relationships, operations and clauses are the only members, and a variant type's cases are its members" contradicts itself: the second clause adds a member kind to a list the first clause declares closed | model-complete.md:105-107 |
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 17ffad9 |
+| FND-002 | fixed | 17ffad9 |
+| FND-003 | fixed | 17ffad9 |

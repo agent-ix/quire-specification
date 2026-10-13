@@ -49,7 +49,8 @@ no identity-equivalence declaration exists.
 The model checker SHALL retain every phase-1 original declaration and its
 actual FCD origin in the immutable selection inventory, including originals
 whose kinds have no phase-2 qualify rule. It SHALL derive effective entries
-only for the selected rules' kinds. A retained scalar, population, non-`quire` clause or operation-owned clause
+only for the selected rules' kinds. A retained scalar, population, namespace, non-`quire` clause or
+operation-owned clause
 without such a rule SHALL NOT receive an invented qualify fact, effective
 declaration or additional declaration/hash charge. Effective entries and fact
 inputs reference keys from the exact retained inventory. This inventory is
