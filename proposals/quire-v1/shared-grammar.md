@@ -264,7 +264,10 @@ import is part of the package identity. Clauses name domain types by qualified
 name through the model alias, for example `Orders::Order` after
 `model Orders = "acme/orders" digest "…";`. A qualified name
 resolves to one effective declaration key (domain package identity, IR node
-identity, `sha256-jcs`). A name absent from the domain package refuses.
+identity, `sha256-jcs`). A name absent from the domain package refuses. The
+three-segment name `Orders::Tier::Gold` names the case `Gold` of the variant
+type `Tier` (the grammar is unchanged; resolution is in
+[model-complete](definitions/model-complete.md)).
 The [package contract](package-contract.md) defines the closed source inventory,
 domain package import, exact definition dependencies and typed binding roles.
 The explicit compiler inventory supplies the edition definition matching the
