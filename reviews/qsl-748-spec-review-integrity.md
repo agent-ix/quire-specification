@@ -76,3 +76,6 @@ FND-005.
 | FND-006 | fixed | 5a72cdc: model-complete.md states the `Alias::Tier::Gold` exception with both refusals, shared-grammar.md points to it, and FR-208 cites it |
 | FND-007 | fixed | 5a72cdc: the FR-141 recompute paragraph is scoped to `scalar_type`/`enum`, and the variant key names no case |
 | FND-008 | fixed | 5a72cdc: FR-154 prose restores the `Field.typeRef`, `Operation.params[i].typeRef` and `Operation.returns.typeRef` paths for the still-refused meanings |
+| FND-009 | fixed | 30132f5: FR-141-AC-8 and TC-942 step 4 name `invalid_semantic_graph` at the `enum_value` node (case not among the declaration's members) |
+| FND-010 | fixed | 30132f5: FR-141-AC-8 states the `Set` order `2x`, `Café`, `Gold`, `Gold Plus` (ascending UTF-8 bytes), so TC-942 step 3 traces to it |
+| FND-011 | fixed | 30132f5: FR-322 reader rule says "the `ModelOwner` selection of its `semantic_type` node" |
