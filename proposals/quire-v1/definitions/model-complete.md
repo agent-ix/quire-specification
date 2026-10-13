@@ -284,11 +284,18 @@ effective-member order.
 | Phase | Rule | Derivation |
 | --- | --- | --- |
 | 1 | `quire.model.normalize.intake/v1` | Admit the domain package and build one original declaration per IR node, then apply `quire.model.features/v1`. No derivation fact. |
-| 2 | `quire.model.normalize.qualify/v1` | One fact per original declaration and owner, with inputs `[declaration]`: an object type or an interface (owner `null`); a field, relationship or operation, owned by its type or interface; a part, owned by its owning type; a port, owned by the owning type of its part; and a connection or allocation, owned by the end-owner type of each end, source end first. |
+| 2 | `quire.model.normalize.qualify/v1` | One fact per original declaration and owner, with inputs `[declaration]`: an object type, a record value type, an event type, a variant type or an interface (owner `null`); a variant type's case, owned by its variant type and keyed by the case node's own declaration key, never the `variant` export key; a field, relationship or operation, owned by its type or interface; a part, owned by its owning type; a port, owned by the owning type of its part; and a connection or allocation, owned by the end-owner type of each end, source end first. |
 | 3 | `quire.model.normalize.inherit/v1` | For each type `T` and each supertype path `T -> P1 -> ... -> A`: one fact on `T` with inputs `[P1, ..., A]`; then, for each member `m` whose owner is `A`, one fact on the effective member `(T, m)` with inputs `[P1, ..., A, m]`. |
 | 4 | `quire.model.normalize.subset/v1` | For each field `s` whose `subsets[]` names `t`, where the owner of `s` is `T` or a supertype of `T`: one fact on `(T, s)` with inputs `[path types..., s, t]`. |
 | 4 | `quire.model.normalize.redefine/v1` | For each member `r` whose `redefines` names `t`, where the owner of `r` is `T` or a supertype of `T`: one fact on `(T, r)` and one on `(T, t)`, each with inputs `[path types..., r, t]`. The redefined member stays in the view and is hidden from name resolution, lookup and dispatch candidacy. When several non-conflicting members redefine one member reaching `T`, only the redefining member of the most derived owner is exposed; every other redefining member keeps its facts and is hidden in `T` the same way. |
 | 5 | `quire.model.normalize.canonicalize/v1` | Compute every effective identity and the effective view. No derivation fact; ordering never changes a declaration key or resolves ambiguity. |
+
+A record value type and an event type are qualified like an object type: one
+owner-less fact, then the phase 3 inherit facts for each supertype path, and
+their fields are members owned by the type. A variant type declares no
+supertype, so it has no inherit fact and no object universe. Reordering its
+`variants` list changes no effective identity, entry or position, and its
+effective identity depends on declaration keys alone.
 
 `path types` is the list of supertypes from the specific type `T` to the owner,
 excluding `T`. It is empty when `T` is the owner.
