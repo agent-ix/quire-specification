@@ -51,3 +51,4 @@ allocation and the global-slot spelling sweep are clean.
 | FND-001 | fixed | e8163084787a91ef8e80c45ac07d5584ba4f26f5 |
 | FND-002 | fixed | e8163084787a91ef8e80c45ac07d5584ba4f26f5 |
 | FND-003 | fixed | e8163084787a91ef8e80c45ac07d5584ba4f26f5 |
+| FND-004 | fixed | 86baf67f368a578aa8534dff10317a0a6aa484ff |
