@@ -122,7 +122,8 @@ exactly its code's row and the Diagnostic schema pairing. Parse the
 `stage_limit_exceeded` and `duplicate_selection` rows of both native-diagnostics
 and FR-272 and require each to list exactly FR-272-AC-10's causes. Parse
 the `resource_exhausted` and `cancelled` rows of both and require each to list
-exactly FR-272-AC-16's causes and payload keys. Parse
+exactly FR-272-AC-16's causes and payload keys, and the `conflicting_declaration`
+rows to list exactly FR-272-AC-17's cause and payload keys. Parse
 the rows of FR-272-AC-11's eleven codes in both documents and require each to
 list exactly that criterion's causes and payload keys, and require FR-272's
 canonical payload-name list to hold every one of those keys. A payload key is
@@ -318,7 +319,8 @@ defect set sorted from two different collection orders yields the identical
 diagnostic; and the `stage_limit_exceeded` and `duplicate_selection` rows of
 native-diagnostics and FR-272 each list exactly FR-272-AC-10's causes, and
 the `resource_exhausted` and `cancelled` rows of both each list exactly
-FR-272-AC-16's causes and payload keys; the rows of FR-272-AC-11's eleven codes each list exactly that criterion's
+FR-272-AC-16's causes and payload keys; the `conflicting_declaration` rows each list
+exactly FR-272-AC-17's cause and payload keys; the rows of FR-272-AC-11's eleven codes each list exactly that criterion's
 causes and payload keys, every one of them a canonical FR-272 payload name;
 FR-270's Revision cell quotes the header's revision; FR-271 has one row
 for each FR-271-AC-6 code; both `invalid_source_identity` rows state the

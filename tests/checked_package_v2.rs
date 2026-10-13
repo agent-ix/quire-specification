@@ -7976,13 +7976,19 @@ fn tc_233_stage_limit_and_duplicate_selection_cause_sets_are_closed() {
     }
 }
 
-/// The `resource_exhausted` and `cancelled` rows of native-diagnostics and
+/// The `resource_exhausted`, `cancelled` and `conflicting_declaration` rows of
+/// native-diagnostics and
 /// FR-272 list exactly the same closed causes and the same payload keys, every
 /// key a canonical FR-272 payload name (FR-272-AC-16).
-#[trace("TC-233", "FR-272-AC-16")]
+#[trace("TC-233", "FR-272-AC-16", "FR-272-AC-17")]
 #[test]
 fn tc_233_resource_exhausted_and_cancelled_rows_agree() {
-    let expected: [(&str, &[&str], &[&str]); 2] = [
+    let expected: [(&str, &[&str], &[&str]); 3] = [
+        (
+            "conflicting_declaration",
+            &["duplicate-declaration"],
+            &["subject", "related"],
+        ),
         (
             "resource_exhausted",
             &[
@@ -8011,6 +8017,7 @@ fn tc_233_resource_exhausted_and_cancelled_rows_agree() {
             &["stage", "definition", "related", "consumed", "subject"],
         ),
     ];
+    diagnostic_row(DIAGNOSTIC_CODE_VOCABULARY, "conflicting_declaration");
     let canonical = canonical_payload_names();
     for (code, causes, keys) in expected {
         let causes = causes
