@@ -83,6 +83,17 @@ text and source loci are excluded from both preimages. The enum-value node has
 that declaration as its sole dependency and its enum literal body carries the
 same case; the strict reader joins all three fields to the preimage.
 
+An enumeration declared by a model package is a `model`/`variant_type` node
+(FR-322), not a `scalar_type`/`enum` node: its declaration identity is that
+node's key, the JCS SHA-256 of its `ModelDeclarationNode` preimage, a function of
+the selected document's identity and the declaration node alone, never of a
+model alias. Its member identity is the key of the `value`/`enum_value` node
+whose `semantic_type` references it, with the preimage
+`{ version: quire.enum-member-node/v1, declaration_node_id, case }` over that
+node's key and the case name. Two units that select one package under different
+aliases therefore assign equal keys, and the same case built in either is
+equal.
+
 The strict I04 reader recomputes those enum node digests from the admitted
 semantic graph. Retaining a key while changing owner, declaration membership,
 case meaning or ordered position is `invalid_semantic_graph`. Recomputing after
@@ -104,6 +115,7 @@ incomplete, not a truncated string.
 | FR-141-AC-4 | Each text profile applies its exact length and lexicographic comparison domain, with scalar length measured after the profile's normalization and the length-bound refusal, `text_length_out_of_domain`/`outside-domain`, after that profile's last size charge and before `text.result-retain`; equal display text under different profiles remains differently typed. | Test (TC-186) |
 | FR-141-AC-5 | An unordered enumeration comparison other than equality, or any cross-declaration enumeration comparison, refuses with `ill_typed` before any charge, while an ordered enumeration follows declaration order only. | Test (TC-186) |
 | FR-141-AC-6 | Exact-bound accounting succeeds and denial of a named next text or enum charge returns incomplete without a truncated value or Boolean. | Test (TC-186) |
+| FR-141-AC-7 | The `enum_value` node of a case of a model variant type, `Tier` with `Gold`, has the key of the preimage `{ version: quire.enum-member-node/v1, declaration_node_id, case }` with `declaration_node_id` the `model`/`variant_type` node key of `Tier` and `case` `Gold`; two units that select the package as `Config` and as `Cfg` derive equal keys for `Tier` and for `Gold`, and `Gold` of one equals `Gold` of the other. A case name changed in the package yields a new key, and `Tier::Gold` and `Level::Gold` are unequal. | Test (TC-940) |
 
 ## Dependencies
 
