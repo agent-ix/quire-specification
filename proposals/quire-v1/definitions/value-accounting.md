@@ -469,8 +469,11 @@ with exact `u64` limits for `population_members`, `work_units` and
 means unlimited. These counters are independent of `ScalarLimitsV1` and of
 `ModelNormalizationLimitsV1`. `population_members` is a high-water semantic
 size; `work_units` is cumulative; `ancestor_steps` is the exact u64 ceiling of
-the supertypes edges one member-type coverage walk follows, counted as for
-`ModelNormalizationLimitsV1`'s `ancestor_steps`. Binding admission first decides, without a
+the supertypes edges one conformance walk follows, counted as for
+`ModelNormalizationLimitsV1`'s `ancestor_steps`; every conformance walk of
+population admission and of the queries over the admitted binding is bounded
+by it (see the walk list below). The stage label of every
+`PopulationAdmissionLimitsV1` charge is `population-admission`. Binding admission first decides, without a
 charge and in this order, the FR-153 model-selection check, object closure and
 whether the effective view's generalization graph is closed; each is read from
 the population declaration and the effective view. Normalization has already
@@ -488,7 +491,8 @@ charges:
 
 After each `binding.member` charge, admission decides, in this order,
 `foreign_reference`/`foreign-type` for a member type not covered
-by the population declaration's member types (the coverage walk follows the
+by the population declaration's member types (a type covers itself, decided
+before any edge is followed; otherwise the coverage walk follows the
 member type's supertypes edges, each charged `admission.ancestor-edge` before
 it is followed, with no work-unit charge and no size-counter change; denial
 returns `incomplete { limit_kind: ancestor_steps, limit: A, consumed: k,
@@ -506,6 +510,16 @@ where `limit_kind` is the first `PopulationAdmissionLimitsV1` field, in field
 order, whose amount is unavailable, and admits no population. The
 qualification seam below applies to these points with the `work_units` of this
 limit object.
+
+The conformance walks bounded by `ancestor_steps`, each charging
+`admission.ancestor-edge` as the coverage walk does, are: the member-type
+coverage walk; the walk testing whether a subsetting field applies to an
+object's most-specific type, before `binding.subset-value`; the frame check's
+test of an object's type against a grant; and, over the admitted binding, the
+walk of each member's type against `T` in `allInstances<T>(p)` and the walk of
+the key's static type against `T` in `lookup`. Each walk starts its count at
+zero, and the binding carries the `ancestor_steps` it was admitted under for
+the queries.
 
 ## Model normalization limits
 
@@ -613,11 +627,13 @@ whose amount is unavailable; a checker surfaces it as `refused { code:
 resource_exhausted, cause: insufficient-next-charge }` at stage
 `model-normalization`, reports no refusal found in the unfinished stage and
 produces no validated effective view. The `stage` of a denial is the stage
-label the denying accounting contract assigns to the denying counter, here
-`model-normalization` for every `ModelNormalizationLimitsV1` counter,
-`family_steps` and `ancestor_steps` included; it is not the compiler stage
-(S1-S4) or the checking sub-stage (conformance, dispatch linking) in which the
-charge occurs. This suppression includes failures
+label that the denying limits type assigns to all its counters: `model-normalization`
+for every `ModelNormalizationLimitsV1` counter (`family_steps` and `ancestor_steps`
+included) and `population-admission` for every `PopulationAdmissionLimitsV1`
+counter. It is not the compiler stage (S1-S4) or the checking sub-stage
+(conformance, dispatch linking) in which the charge occurs. It is the one stage
+value of the diagnostic (FR-273), whose producer interface lists these labels in
+its closed vocabulary; the cause retains no second stage. This suppression includes failures
 already collected from earlier selections in the same unfinished stage.
 Ancestor denial has the same public `resource_exhausted` /
 `insufficient-next-charge` disposition and five-field incomplete payload;
