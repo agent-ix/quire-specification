@@ -273,6 +273,8 @@ projection entry patched and `package_id` recomputed (FR-322-AC-54).
 | SE-16 | literal of `value_kind` `uuid` with an uppercase value, no hyphens or 35 characters | `invalid_package`/`invalid-value` | FR-322-AC-67 |
 | SE-17 | literal of `value_kind` `timestamp` with value `-0`, `+1`, `01`, empty text or `170141183460469231731687303715884105728` | `invalid_package`/`invalid-value` | FR-322-AC-67 |
 | SE-18 | `quire.op.text.eq` over two `string` operands with a `text_profile` law and mode | `invalid_package`/`operation-mode-type-mismatch` | FR-322-AC-67 |
+| SE-19 | literal of `value_kind` `string` whose `value` is a number, `null` or an array | `invalid_package`/`invalid-value` | FR-322-AC-67 |
+| SE-20 | literal of `value_kind` `uuid` typed by a `string` type with an uppercase value; literal of `value_kind` `timestamp` typed by an `integer` type with value `01` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-67 |
 ## Expected Results
 
 Every positive artifact validates and recomputes its recorded identity. Excluded

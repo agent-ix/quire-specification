@@ -1154,9 +1154,12 @@ impl<'a> OperationOracle<'a> {
                         bound: Some(Box::new(bound)),
                     }))
             }
-            Some("literal") if !literal_value_is_canonical(term) => {
-                Err(OperationRefusal::InvalidValue)
-            }
+            // The literal's family is decided first; the value spelling is read
+            // only for a literal whose type its kind admits.
+            Some("literal") => match self.descriptor(term) {
+                Some(_) if !literal_value_is_canonical(term) => Err(OperationRefusal::InvalidValue),
+                descriptor => Ok(descriptor),
+            },
             _ => Ok(self.descriptor(term)),
         }
     }
@@ -12522,6 +12525,26 @@ fn tc_233_scalar_literals_need_their_family_and_canonical_value() {
             literal_refusal(kind, ty, value),
             Ok(false),
             "a {kind} literal typed {ty} is not admitted by the literal rule"
+        );
+    }
+    // A literal failing both checks reports the family refusal first.
+    for (kind, ty, value) in [
+        ("uuid", "String", "00112233-4455-6677-8899-AABBCCDDEEFF"),
+        ("timestamp", "Integer", "01"),
+    ] {
+        assert_eq!(
+            literal_refusal(kind, ty, value),
+            Ok(false),
+            "a {kind} literal typed {ty} with a non-canonical value reports the family refusal"
+        );
+    }
+    // A string literal whose value is not a JSON string is not canonical.
+    for value in [json!(7), json!(null), json!(["a"])] {
+        let literal = json!({"term": "literal", "type": walk_id("String"), "value_kind": "string", "value": value});
+        assert_eq!(
+            oracle.argument_descriptor(&literal).map(|d| d.is_some()),
+            Err(OperationRefusal::InvalidValue),
+            "string literal value {value} is not a JSON string"
         );
     }
     for (kind, ty, value) in [

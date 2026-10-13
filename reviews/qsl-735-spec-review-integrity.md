@@ -33,3 +33,10 @@ merge-ordering defect in the lockfile.
 | --- | --- | --- | --- | --- |
 | FND-001 | medium | The diff turned the `same_family` row of the two-column constraint table into three cells (`\| same_family \| \| The two named operands have equal families. \|`). GFM drops the extra cell, so the rendered decision rule for `same_family` is empty. The edit is unrelated to the PR's purpose. | spec/objects/interfaces/FR-322-checked-package-artifact.md:1135 | wrong-requirement |
 | FND-002 | medium | The PR body says `tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lock` stays red until the catalog PR lands. quire-verification-contracts#16 has merged (e4195bd), but Cargo.lock on both the PR head and main still pins `quire-verification-contracts` at 41bb306. The test stays red after merge until the lock is bumped. The bump belongs in this PR (`cargo update -p quire-verification-contracts`). It also pulls 6 other upstream commits; their `src/lib.rs` change is a doc comment, and this repo uses only `jcs_*` and `operation_catalog`. A full gate is still needed on the bumped head. | Cargo.lock:499-501; Cargo.toml:17; tests/checked_package_v2.rs:6070 | implementation-bug-despite-evidence |
+
+## Dispositions
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 0166c7a: the `same_family` row has two cells again. |
+| FND-002 | fixed | 3575132: Cargo.lock pins quire-verification-contracts at e4195bd (#16 merge). A full gate on the bumped head is still owed and was not run by the reviewer. |
