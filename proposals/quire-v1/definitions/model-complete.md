@@ -103,7 +103,8 @@ id `Order` in domain package `acme/orders` has IR node identity
 `pump_out` has `ix://acme/orders/pump_out`. A member's identity appends its
 member name to its owner's identity: field `total` of `Order` is
 `ix://acme/orders/Order/total`. Fields, relationships, operations and clauses
-are the only members. The owner of a part or port and the ends of a connection
+are the only members, and a variant type's cases are its members, each
+identified by its own node `ix://acme/orders/variant/<Name>-<value>` (FR-154). The owner of a part or port and the ends of a connection
 or allocation are references, not members, and never part of an identity. The
 artifact title is the declaration's
 `displayName`, used for presentation only; it is never part of an identity and
@@ -132,6 +133,7 @@ and `origin`.
 | Value type | `TypeDefinition` whose construct meaning is `quire.meaning.model.value-type/v1` | none |
 | Variant type | `TypeDefinition` whose construct meaning is `quire.meaning.model.variant-type/v1` | none |
 | Record value type, event type, state machine, process, persistence interface, namespace | the `TypeDefinition` whose construct meaning is `quire.meaning.model.record-value-type/v1`, `quire.meaning.model.event-type/v1`, `quire.meaning.model.state-machine/v1`, `quire.meaning.model.process/v1`, `quire.meaning.model.persistence-interface/v1` or `quire.meaning.model.namespace/v1`, valid as FR-208 defines that meaning | none |
+| Variant case | the `variant` node of a variant type's case, `ix://<package identity>/variant/<Name>-<value>` | its variant type |
 | Field | `TypeDefinition.fields[]` entry | its type |
 | Relationship | `TypeDefinition.relationships[]` entry | its type |
 | Operation | `Operation` | its receiver type |
@@ -205,9 +207,10 @@ prefix first.
 
 Every phase-1 original declaration and its FCD origin remains available from
 the immutable ModelSelection declaration inventory. That inventory and the
-effective declarations are different sets: a scalar, clause or population
-without a phase-2 qualify rule remains an original, without an invented
-qualify fact or effective declaration. Effective entries and their fact input
+effective declarations are different sets: a scalar, a population, a clause
+in a language other than `quire` and a clause owned by an operation have no
+phase-2 qualify rule and remain originals, without an invented qualify fact or
+effective declaration. Effective entries and their fact input
 keys reference only that retained inventory. Retention adds no derivation,
 effective-declaration or hash charge and changes no effective identity
 preimage. The fixed `digest_domain: "sha256-jcs"` discriminator in an original
@@ -284,16 +287,23 @@ effective-member order.
 | Phase | Rule | Derivation |
 | --- | --- | --- |
 | 1 | `quire.model.normalize.intake/v1` | Admit the domain package and build one original declaration per IR node, then apply `quire.model.features/v1`. No derivation fact. |
-| 2 | `quire.model.normalize.qualify/v1` | One fact per original declaration and owner, with inputs `[declaration]`: an object type, a record value type, an event type, a variant type or an interface (owner `null`); a variant type's case, owned by its variant type and keyed by the case node's own declaration key, never the `variant` export key; a field, relationship or operation, owned by its type or interface; a part, owned by its owning type; a port, owned by the owning type of its part; and a connection or allocation, owned by the end-owner type of each end, source end first. |
+| 2 | `quire.model.normalize.qualify/v1` | One fact per original declaration and owner, with inputs `[declaration]`: an object type, a record value type, an event type, a state machine, a process, a persistence interface, a variant type or an interface (owner `null`); a variant type's case, owned by its variant type and keyed by the case node's own declaration key, never the `variant` export key; a field, relationship or operation, owned by its type, interface or persistence interface; an invariant clause in language `quire`, owned by its type; a part, owned by its owning type; a port, owned by the owning type of its part; and a connection or allocation, owned by the end-owner type of each end, source end first. |
 | 3 | `quire.model.normalize.inherit/v1` | For each type `T` and each supertype path `T -> P1 -> ... -> A`: one fact on `T` with inputs `[P1, ..., A]`; then, for each member `m` whose owner is `A`, one fact on the effective member `(T, m)` with inputs `[P1, ..., A, m]`. |
 | 4 | `quire.model.normalize.subset/v1` | For each field `s` whose `subsets[]` names `t`, where the owner of `s` is `T` or a supertype of `T`: one fact on `(T, s)` with inputs `[path types..., s, t]`. |
 | 4 | `quire.model.normalize.redefine/v1` | For each member `r` whose `redefines` names `t`, where the owner of `r` is `T` or a supertype of `T`: one fact on `(T, r)` and one on `(T, t)`, each with inputs `[path types..., r, t]`. The redefined member stays in the view and is hidden from name resolution, lookup and dispatch candidacy. When several non-conflicting members redefine one member reaching `T`, only the redefining member of the most derived owner is exposed; every other redefining member keeps its facts and is hidden in `T` the same way. |
 | 5 | `quire.model.normalize.canonicalize/v1` | Compute every effective identity and the effective view. No derivation fact; ordering never changes a declaration key or resolves ambiguity. |
 
-A record value type and an event type are qualified like an object type: one
-owner-less fact, then the phase 3 inherit facts for each supertype path, and
-their fields are members owned by the type. A variant type declares no
-supertype, so it has no inherit fact and no object universe. Reordering its
+A record value type, an event type, a state machine and a process are
+qualified like an object type: one owner-less fact, then the phase 3 inherit
+facts for each supertype path, with their fields, operations and `quire`
+invariant clauses as members owned by the type. A process also has an object
+universe of runs; no other kind named here does. A persistence interface
+declares no supertype (a non-empty `supertypes` is refused), so it has a
+qualify fact and its operations are its members, with no inherit fact. A
+`quire` invariant clause owned by a type is a member of that type, qualified
+and inherited like a field. A variant type has no inherit fact and no object
+universe: its `supertypes` list is not read, because intake builds its record
+from the type's key, artifact id and cases alone (QSL `read_variant_type`). Reordering its
 `variants` list changes no effective identity, entry or position, and its
 effective identity depends on declaration keys alone.
 
