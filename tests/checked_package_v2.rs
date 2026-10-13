@@ -6063,6 +6063,12 @@ fn canonical_payload_names() -> BTreeSet<String> {
 /// name written `key`: after its cause list (the rest of the second cell after
 /// its first `;`, and every later cell), whether or not it is canonical.
 fn diagnostic_row_payload_keys(document: &str, code: &str) -> BTreeSet<String> {
+    payload_keys_in(&diagnostic_row_payload_text(document, code))
+}
+
+/// The payload text of the `code` row: the rest of its second cell after the
+/// first `;`, and every later cell.
+fn diagnostic_row_payload_text(document: &str, code: &str) -> String {
     let cells = diagnostic_row(document, code)
         .split('|')
         .skip(2)
@@ -6074,6 +6080,11 @@ fn diagnostic_row_payload_keys(document: &str, code: &str) -> BTreeSet<String> {
     for cell in &cells[1..] {
         payload.push_str(cell);
     }
+    payload
+}
+
+/// Every backticked name in `payload` written `key`:.
+fn payload_keys_in(payload: &str) -> BTreeSet<String> {
     let pieces = payload.split('`').collect::<Vec<_>>();
     pieces
         .iter()
@@ -6087,6 +6098,30 @@ fn diagnostic_row_payload_keys(document: &str, code: &str) -> BTreeSet<String> {
         })
         .map(|(_, name)| (*name).to_owned())
         .collect()
+}
+
+/// The payload keys the `code` row names for one `cause`: the stretch of its
+/// payload text from `or `cause`,` (as in "For `cause`, ...") to the next
+/// cause's; a row of one cause has the whole payload text.
+fn diagnostic_row_cause_payload_keys(
+    document: &str,
+    code: &str,
+    cause: &str,
+    causes: &[&str],
+) -> BTreeSet<String> {
+    let payload = diagnostic_row_payload_text(document, code);
+    if causes.len() == 1 {
+        return payload_keys_in(&payload);
+    }
+    let start_of = |name: &str| payload.find(&format!("or `{name}`,"));
+    let start = start_of(cause).unwrap_or_else(|| panic!("`{code}` payload introduces `{cause}`"));
+    let end = causes
+        .iter()
+        .filter_map(|other| start_of(other))
+        .filter(|at| *at > start)
+        .min()
+        .unwrap_or(payload.len());
+    payload_keys_in(&payload[start..end])
 }
 
 /// `text` with every run of whitespace, line breaks included, made one space.
@@ -7970,63 +8005,77 @@ fn tc_233_stage_limit_and_duplicate_selection_cause_sets_are_closed() {
         (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
     ] {
         assert!(
-            diagnostic_row_payload_keys(document, "stage_limit_exceeded").contains("setting"),
-            "{label} `stage_limit_exceeded` row names the `setting` payload key"
+            ["kind", "bound", "actual", "setting"]
+                .iter()
+                .all(
+                    |key| diagnostic_row_payload_keys(document, "stage_limit_exceeded")
+                        .contains(*key)
+                ),
+            "{label} `stage_limit_exceeded` row names `kind`, `bound`, `actual` and `setting`"
         );
     }
 }
 
 /// The `resource_exhausted`, `cancelled` and `conflicting_declaration` rows of
-/// native-diagnostics and
-/// FR-272 list exactly the same closed causes and the same payload keys, every
-/// key a canonical FR-272 payload name (FR-272-AC-16).
+/// native-diagnostics and FR-272 list exactly the same closed causes, and each
+/// cause names exactly its payload keys in both, every key a canonical FR-272
+/// payload name (FR-272-AC-16, FR-272-AC-17).
 #[trace("TC-233", "FR-272-AC-16", "FR-272-AC-17")]
 #[test]
 fn tc_233_resource_exhausted_and_cancelled_rows_agree() {
-    let expected: [(&str, &[&str], &[&str]); 3] = [
+    type CauseKeys = (&'static str, &'static [&'static str]);
+    let expected: [(&str, &[CauseKeys]); 3] = [
         (
             "conflicting_declaration",
-            &["duplicate-declaration"],
-            &["subject", "related"],
+            &[("duplicate-declaration", &["subject", "related"])],
         ),
         (
             "resource_exhausted",
             &[
-                "insufficient-next-charge",
-                "allocation-failed",
-                "reservation-size-overflow",
-                "intake-limit-exceeded",
-            ],
-            &[
-                "stage",
-                "definition",
-                "limit",
-                "consumed",
-                "subject",
-                "requested",
-                "upstream",
-                "kind",
-                "bound",
-                "actual",
-                "setting",
+                (
+                    "insufficient-next-charge",
+                    &[
+                        "stage",
+                        "accounting_contract",
+                        "limit",
+                        "consumed",
+                        "next_charge",
+                        "charge_point",
+                    ],
+                ),
+                ("allocation-failed", &["requested"]),
+                ("reservation-size-overflow", &["upstream"]),
+                (
+                    "intake-limit-exceeded",
+                    &["kind", "bound", "actual", "setting"],
+                ),
+                (
+                    "input-bytes-exceeded",
+                    &["kind", "bound", "actual", "setting"],
+                ),
             ],
         ),
         (
             "cancelled",
-            &["caller-cancelled"],
-            &["stage", "definition", "related", "consumed", "subject"],
+            &[(
+                "caller-cancelled",
+                &[
+                    "stage",
+                    "accounting_contract",
+                    "consumed",
+                    "charge_point",
+                    "related",
+                ],
+            )],
         ),
     ];
     diagnostic_row(DIAGNOSTIC_CODE_VOCABULARY, "conflicting_declaration");
     let canonical = canonical_payload_names();
-    for (code, causes, keys) in expected {
-        let causes = causes
+    for (code, per_cause) in expected {
+        let names = per_cause.iter().map(|(c, _)| *c).collect::<Vec<_>>();
+        let causes = names
             .iter()
             .map(|c| (*c).to_owned())
-            .collect::<BTreeSet<_>>();
-        let keys = keys
-            .iter()
-            .map(|k| (*k).to_owned())
             .collect::<BTreeSet<_>>();
         for (document, label) in [
             (NATIVE_DIAGNOSTICS, "native-diagnostics"),
@@ -8037,27 +8086,21 @@ fn tc_233_resource_exhausted_and_cancelled_rows_agree() {
                 causes,
                 "{label} `{code}` row lists exactly its causes"
             );
-            assert_eq!(
-                diagnostic_row_payload_keys(document, code),
-                keys,
-                "{label} `{code}` row names exactly its payload keys"
-            );
-        }
-        assert!(
-            keys.is_subset(&canonical),
-            "`{code}` payload keys are canonical FR-272 payload names"
-        );
-    }
-    for (document, label) in [
-        (NATIVE_DIAGNOSTICS, "native-diagnostics"),
-        (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
-    ] {
-        let keys = diagnostic_row_payload_keys(document, "stage_limit_exceeded");
-        for key in ["kind", "bound", "actual", "setting"] {
-            assert!(
-                keys.contains(key),
-                "{label} `stage_limit_exceeded` row names `{key}`"
-            );
+            for (cause, keys) in per_cause {
+                let keys = keys
+                    .iter()
+                    .map(|k| (*k).to_owned())
+                    .collect::<BTreeSet<_>>();
+                assert_eq!(
+                    diagnostic_row_cause_payload_keys(document, code, cause, &names),
+                    keys,
+                    "{label} `{code}` row names exactly the payload keys of `{cause}`"
+                );
+                assert!(
+                    keys.is_subset(&canonical),
+                    "`{cause}` payload keys are canonical FR-272 payload names"
+                );
+            }
         }
     }
 }

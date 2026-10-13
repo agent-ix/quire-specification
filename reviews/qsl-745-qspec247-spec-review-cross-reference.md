@@ -26,3 +26,19 @@ native-diagnostics row carries no QSL source for the new cause.
 | --- | --- | --- | --- | --- |
 | FND-001 | high | `intake-limit-exceeded` payload is pinned as `setting`, `limit`, `actual`, but QSL FR-255 Behavior 1 and FR-255-AC-1 require intake's `resource_exhausted`/`intake-limit-exceeded` catalog record to carry `kind`, `bound`, `actual` and `setting`, and QSL's `LimitExceeded::catalog_fields` emits `kind`/`bound`/`actual`/`setting`; QSL-745's AC "QSpec catalog and QSL spec agree" fails. Planner must pick one spelling: adopt `kind`+`bound` in QSpec (add to the canonical list, matching shipped QSL code and every FR-255 row) or rename QSL's `bound`→`limit` and drop/justify `kind` across QSL FR-255 and code. | FR-272-AC-16, spec/objects/foundation/FR-272-typed-diagnostic-cause.md:77, proposals/quire-v1/definitions/native-diagnostics.md:82, QSL spec/functional/FR-255:141-153,210 | wrong-requirement |
 | FND-002 | low | The native-diagnostics `resource_exhausted` row adds `intake-limit-exceeded` with no QSL source citation, while the FR-272 row now cites QSL FR-260 item 5 / FR-260-AC-4 and the row's only citation (QSL FR-082-AC-10..11) is about allocation. | proposals/quire-v1/definitions/native-diagnostics.md:82 | wrong-requirement |
+
+## New findings (disposition pass 1)
+
+Reviewed at agent-ix/quire-specification@9c5d7871bb6f7e22aa7d7489703b2ed30cbd1b78; unchanged by a66831b7893692135acb60a65e0074f2510f5cc4.
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-003 | high | The new `insufficient-next-charge` keys `stage`, `definition`, `limit`, `consumed`, `subject` disagree with QSpec's own charge record (FR-150-AC-11 `incomplete(limit_kind, limit, consumed, next_charge, charge_point)`) and with the record QSL emits on #811 (`stage`, `accounting_contract`, `consumed`, `next_charge`, `charge_point`, qsl-semantics/src/model/intake/unit.rs and observation.rs; QSL FR-255 Behavior 1): the accounting contract is `definition` instead of `accounting_contract`, the work item is `subject` instead of `charge_point`, and `next_charge` is dropped. The `cancelled` row copies the same choice. | FR-272-AC-16, spec/objects/foundation/FR-272-typed-diagnostic-cause.md:77-78, proposals/quire-v1/definitions/native-diagnostics.md:82-83, spec/functional/type-model/FR-150-preserve-model-normalization-provenance.md:140 | wrong-requirement |
+| FND-004 | high | FR-272-AC-16 closes `resource_exhausted` to exactly four causes, but QSL specifies and emits `resource_exhausted`/`input-bytes-exceeded` for the formatter's `format.output_bytes` ceiling (QSL FR-255 Behavior 1 table and FR-255-AC-1, qsl-cst/src/format.rs `OutputBudgetExhausted`, on QSL main and #811). QSpec has no such cause, so the two catalogs still disagree on this code. | FR-272-AC-16, proposals/quire-v1/definitions/native-diagnostics.md:82 | missing-requirement |
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 9c5d787 |
+| FND-002 | fixed | 9c5d787 |
