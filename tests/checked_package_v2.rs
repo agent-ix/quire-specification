@@ -8037,6 +8037,7 @@ fn tc_233_resource_exhausted_and_cancelled_rows_agree() {
                     &[
                         "stage",
                         "accounting_contract",
+                        "limit_kind",
                         "limit",
                         "consumed",
                         "next_charge",

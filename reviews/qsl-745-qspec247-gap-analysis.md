@@ -36,3 +36,5 @@ Reviewed at agent-ix/quire-specification@9c5d7871bb6f7e22aa7d7489703b2ed30cbd1b7
 | FND | outcome | sha/reason |
 | --- | --- | --- |
 | FND-001 | fixed | 9c5d787 |
+| FND-002 | fixed | 8827157 |
+| FND-003 | fixed | 8827157 |

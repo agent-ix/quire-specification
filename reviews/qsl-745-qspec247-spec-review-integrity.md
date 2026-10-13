@@ -36,9 +36,20 @@ Reviewed at agent-ix/quire-specification@9c5d7871bb6f7e22aa7d7489703b2ed30cbd1b7
 | FND-003 | medium | The new `kind` definition ("a limit's kind as QSL FR-255's setting table lists it (for example input bytes, node count…)") gives the value as the table's prose ("input bytes"), while QSL's `LimitExceeded::catalog_fields` emits `kind` as the cause tag (`input-bytes-exceeded`). FR-272-AC-13 requires each payload value to be one exact ASCII string, and no spelling is pinned, so two implementers write different values. | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:190-191, FR-272-AC-13 | wrong-requirement |
 | FND-004 | low | The new `conflicting_declaration` rows define `subject` only as "the operation identity or `DeclarationKey` that both declarations resolve to", but FR-271's new row (and QSL FR-246) also apply the code to two tasks with one name, which is neither. The task case has no `subject` definition (reviewed at a66831b). | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:80, proposals/quire-v1/definitions/native-diagnostics.md:85, spec/objects/foundation/FR-271-diagnostic-code-vocabulary.md:83 | wrong-requirement |
 
+## New findings (disposition pass 2)
+
+Reviewed at agent-ix/quire-specification@88271576e42fbf1b20b53301fbc996a83902e386.
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-005 | medium | The `insufficient-next-charge` record drops `limit_kind`, and both rows say "no second key carries its name". That is not one thing under two names: the record now cannot say which counter was denied. A charge point can be denied by different counters (TC-185 D13: `decimal.arithmetic` under `integer_bits` vs `work_units`), and `limit` alone does not identify one. Recommend retaining `limit_kind` (FR-150-AC-11 / FR-330 vocabulary) as a canonical key on the charge record. | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:77, proposals/quire-v1/definitions/native-diagnostics.md:82, FR-150-AC-11, spec/test-cases/TC-185-exact-decimal-semantics.md:39 | wrong-requirement |
+| FND-006 | medium | The new `input-bytes-exceeded` cause is scoped to "the format and intake byte budgets", but intake's byte budget already carries `intake-limit-exceeded` (FR-272 row; QSL FR-260-AC-4; QSL FR-255 Behavior 1 table gives format → `input-bytes-exceeded`, intake → `intake-limit-exceeded`). An over-long intake document now has two catalogued causes. Recommend scoping `input-bytes-exceeded` to the format output budget (non-intake byte budgets). | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:77, proposals/quire-v1/definitions/native-diagnostics.md:82 | wrong-requirement |
+
 ## Dispositions
 
 | FND | outcome | sha/reason |
 | --- | --- | --- |
 | FND-001 | fixed | 9c5d787 |
 | FND-002 | fixed | 9c5d787 |
+| FND-003 | fixed | 8827157 |
+| FND-004 | fixed | 8827157 |
