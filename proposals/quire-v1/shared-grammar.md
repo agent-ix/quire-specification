@@ -459,7 +459,10 @@ selects a declared profile alias, as for every native declaration;
 its identifiers bind the receiver-less operation parameters positionally, in
 signature order, and the body reads the receiver as `self`. A package that does
 not select `quire.model.complete/v1` receives `unsupported_construct` for each
-of these forms.
+of `lookup`, a dispatched call and an `operation-body`. This sentence does not
+gate `Population<T>[N]`, `allInstances<T>(p)` or the field and relationship-end
+navigation: they are not refused as `unsupported_construct`, and are admitted
+or refused by the package's layer selection, not by this gate.
 
 ### Complete temporal, choreography and analysis forms
 

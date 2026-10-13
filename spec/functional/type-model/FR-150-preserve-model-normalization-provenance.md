@@ -138,6 +138,7 @@ reports a refusal ends checking. Exhaustion ends checking as
 | FR-150-AC-9 | An admitted scalar without a phase-2 qualify rule remains retrievable by its byte-identical original key and origin, with no scalar qualify fact, effective entry or extra effective-declaration/hash charge; all effective/fact-origin keys belong to the retained intake inventory. | Test |
 | FR-150-AC-10 | Transfer from structural normalization to checked-fact admission and conformance preserves the same model counters; a denied next charge follows no work and exposes no validated effective view or unfinished-stage failure, including failures already collected from another selected model. | Test |
 | FR-150-AC-11 | A walk following n supertype edges admits at ancestor_steps=n; at n-1 it returns exactly incomplete(ancestor_steps,n-1,n-1,1,model.ancestor-edge), and zero denies its first edge. An unavailable owning work charge wins before a simultaneous edge denial; previously admitted axis work is never refunded. | Test |
+| FR-150-AC-18 | A dispatch link whose family walks (the redefinition-family walk and every effective-precondition walk, together) follow n distinct `redefines` edges, each charged once however many walks follow it, admits at `family_steps = n`; at n-1 it returns exactly `incomplete(family_steps, n-1, n-1, 1, model.family-edge)` and no dispatch table or ambiguity result, and zero denies its first edge. An unavailable earlier counter's charge wins before a simultaneous edge denial. | Test |
 
 ## Dependencies
 

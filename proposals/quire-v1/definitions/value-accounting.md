@@ -464,11 +464,16 @@ seed charges nothing.
 ## Population admission limits
 
 A request that binds a population binding carries `PopulationAdmissionLimitsV1`
-with exact `u64` limits for `population_members` and `work_units`, in that
-field order. Omission is a refused request; zero is a real limit and never
+with exact `u64` limits for `population_members`, `work_units` and
+`ancestor_steps`, in that field order. Omission is a refused request; zero is a real limit and never
 means unlimited. These counters are independent of `ScalarLimitsV1` and of
 `ModelNormalizationLimitsV1`. `population_members` is a high-water semantic
-size; `work_units` is cumulative. Binding admission first decides, without a
+size; `work_units` is cumulative; `ancestor_steps` is the exact u64 ceiling of
+the supertypes edges one conformance walk follows, counted as for
+`ModelNormalizationLimitsV1`'s `ancestor_steps`; every conformance walk of
+population admission and of the queries over the admitted binding is bounded
+by it (see the walk list below). The stage label of every
+`PopulationAdmissionLimitsV1` charge is `population-admission`. Binding admission first decides, without a
 charge and in this order, the FR-153 model-selection check, object closure and
 whether the effective view's generalization graph is closed; each is read from
 the population declaration and the effective view. Normalization has already
@@ -484,9 +489,16 @@ charges:
 | kth `binding.member` | each runtime member record of the population binding, in input order, before its key is formed | `population_members=k`; `work_units += 1` |
 | each `binding.subset-value` | after the last `binding.member`: objects in canonical reference-key order, then each subsetting field reaching the object's most-specific type ascending by declaration key, then each value of the subsetting feature in its value order, before that value is tested | no size-counter change; `work_units += max(1, n)`, where `n` is the number of values of the subsetted feature of that object, which the test scans |
 
-After each `binding.member` charge, admission decides without a further charge,
-in this order, `foreign_reference`/`foreign-type` for a member type not covered
-by the population declaration's member types, then
+After each `binding.member` charge, admission decides, in this order,
+`foreign_reference`/`foreign-type` for a member type not covered
+by the population declaration's member types (a type covers itself, decided
+before any edge is followed; otherwise the coverage walk follows the
+member type's supertypes edges, each charged `admission.ancestor-edge` before
+it is followed, with no work-unit charge and no size-counter change; denial
+returns `incomplete { limit_kind: ancestor_steps, limit: A, consumed: k,
+next_charge: 1, charge_point: admission.ancestor-edge }` when k = A, a zero
+limit denies the first followed edge, and a simultaneous `population_members`
+or `work_units` denial of the member's `binding.member` charge wins first), then
 `invalid_runtime_input`/`abstract-instance` for an abstract most-specific type,
 and then, against the members admitted before it, duplicate
 collapse or `invalid_runtime_input`/`conflicting-identity`. After each
@@ -499,12 +511,22 @@ order, whose amount is unavailable, and admits no population. The
 qualification seam below applies to these points with the `work_units` of this
 limit object.
 
+The conformance walks bounded by `ancestor_steps`, each charging
+`admission.ancestor-edge` as the coverage walk does, are: the member-type
+coverage walk; the walk testing whether a subsetting field applies to an
+object's most-specific type, before `binding.subset-value`; the frame check's
+test of an object's type against a grant; and, over the admitted binding, the
+walk of each member's type against `T` in `allInstances<T>(p)` and the walk of
+the key's static type against `T` in `lookup`. Each walk starts its count at
+zero, and the binding carries the `ancestor_steps` it was admitted under for
+the queries.
+
 ## Model normalization limits
 
 Checking a package that selects `quire.model.complete/v1` carries
 `ModelNormalizationLimitsV1` with exact `u64` limits for `declaration_records`,
 `derivation_facts`, `effective_declarations`, `dispatch_candidates`,
-`hashed_bytes`, `work_units` and `ancestor_steps`, in that field order. Omission is a refused
+`hashed_bytes`, `work_units`, `ancestor_steps` and `family_steps`, in that field order. Omission is a refused
 request; zero is a real limit and never means unlimited. These counters are
 independent of `ScalarLimitsV1`. `declaration_records`, `derivation_facts`,
 `effective_declarations` and `dispatch_candidates` are high-water semantic
@@ -552,8 +574,24 @@ at their owning charge; ancestor availability is checked only after that
 charge succeeds. Thus a simultaneous work denial wins before the edge check.
 Neither denial follows an edge, refunds admitted work or returns a semantic
 conformance verdict. This row applies to normalization ancestor expansion,
-conformance, systems conformance and dispatch ancestor walks; it does not
-change family-step or population-admission limits.
+conformance, systems conformance and dispatch ancestor walks.
+
+`family_steps` is the exact u64 ceiling of the number of distinct `redefines`
+edges followed by all the dispatch-family walks of one dispatch link together:
+the redefinition-family walk and the effective-precondition walk up each linked
+candidate's `redefines` chain. An edge is charged once, however many of those
+walks follow it; a re-followed edge is neither charged nor denied, so the count
+does not depend on walk order. It is an edge count, not a chain depth. Test
+availability immediately before each edge is followed, after any owning
+work-unit charge already admitted; a permitted new edge increments the count by
+one and introduces no work-unit charge. Its named point is
+`model.family-edge`; denial returns
+`incomplete { limit_kind: family_steps, limit: F, consumed: k,
+next_charge: 1, charge_point: model.family-edge }` when k = F. A zero limit
+denies the first followed edge, and with n distinct edges, n admits and n-1 denies edge n.
+A simultaneous denial of an earlier counter wins before the family check, and
+neither denial follows an edge, refunds admitted work or returns a dispatch
+table or ambiguity result.
 
 | Charge point | Order | Exact counter amount |
 | --- | --- | --- |
@@ -590,7 +628,13 @@ first failure. The first unavailable charge ends checking with
 whose amount is unavailable; a checker surfaces it as `refused { code:
 resource_exhausted, cause: insufficient-next-charge }` at stage
 `model-normalization`, reports no refusal found in the unfinished stage and
-produces no validated effective view. This suppression includes failures
+produces no validated effective view. The `stage` of a denial is the stage
+label that the denying limits type assigns to all its counters: `model-normalization`
+for every `ModelNormalizationLimitsV1` counter (`family_steps` and `ancestor_steps`
+included) and `population-admission` for every `PopulationAdmissionLimitsV1`
+counter. It is not the compiler stage (S1-S4) or the checking sub-stage
+(conformance, dispatch linking) in which the charge occurs. This `stage` is the
+charge record's own label, a payload field independent of the diagnostic's FR-273 producer stage. This suppression includes failures
 already collected from earlier selections in the same unfinished stage.
 Ancestor denial has the same public `resource_exhausted` /
 `insufficient-next-charge` disposition and five-field incomplete payload;

@@ -71,10 +71,18 @@ abstract is `invalid_runtime_input`/`abstract-instance`.
 After the uncharged model-selection and closure checks, binding admission is
 metered by `PopulationAdmissionLimitsV1` of `quire.value.accounting/v1`: each
 member in input order is charged `binding.member` and then checked for
-foreign type, abstract type and for duplicate collapse or conflicting identity, and each
+foreign type (each supertypes edge its coverage walk follows is charged
+`admission.ancestor-edge` against `ancestor_steps` before it is followed),
+abstract type and for duplicate collapse or conflicting identity, and each
 subsetting value set is charged `binding.subset-value` before its FR-151 check.
 Admission stops at the first refusal, and a denied charge is incomplete with no
 binding.
+
+The model-profile gate of the shared grammar covers `lookup`, a dispatched call
+and an `operation-body` (an `abstraction-decl` by FR-450). It does not cover
+`Population<T>[N]`, `allInstances<T>(p)` or navigation, which the package's layer selection
+alone admits or refuses, not this gate; a record-field navigation is also a
+value-layer form.
 
 Object closure holds exactly when the population declaration's extent is
 `closed`; otherwise `incomplete_population`/`incomplete-scope`. Subtype closure
@@ -131,6 +139,8 @@ deleted in the post state keeps its pre most-specific type. Charges are the
 | FR-153-AC-7 | `pre(allInstances<T>(p))` in a postcondition reads the pre population, and a deleted object keeps its pre type. | Test (TC-198) |
 | FR-153-AC-8 | A binding typed `Population<T>[N]` requires a model object target `T` and an unsigned maximum `N`, including zero; an admitted non-object target refuses `ill_typed`/`type-mismatch`. `allInstances<T>(p)`'s result is exactly `Set<Reference<T>>[0,N]`, typed to the queried `T` and bounded by `p`'s declared maximum `N`, when `p` declares one. Lookup's present result is `Reference<T>` in the `undefined` and `refused` modes and `Option<Reference<T>>` in the `empty` mode, in every case typed to the queried `T`; every lookup spells its mandatory `absent` mode. | Test |
 | FR-153-AC-9 | A binding typed `Population<T>` declares no maximum and infers no finite default; `allInstances<T>(p)`'s result is exactly the unbounded `Set<Reference<T>>`, admits every selected count, and never returns `cardinality_out_of_bound`. | Test |
+| FR-153-AC-10 | Admitting a member whose most-specific type is `n` supertypes edges from a covering population member type completes at `ancestor_steps = n` and, at `n - 1`, returns exactly `incomplete(ancestor_steps, n-1, n-1, 1, admission.ancestor-edge)` with no population admitted; a zero limit denies the first followed edge; an unavailable `binding.member` charge wins before a simultaneous edge denial. | Test (TC-198) |
+| FR-153-AC-11 | A package that does not select `quire.model.complete/v1` refuses `unsupported_construct` for `lookup`, a dispatched call and an `operation-body`, and for no `Population<T>[N]` type, `allInstances<T>(p)` call or field or relationship-end navigation. | Test (TC-198) |
 
 ## Dependencies
 

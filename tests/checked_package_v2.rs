@@ -8106,6 +8106,71 @@ fn tc_233_resource_exhausted_and_cancelled_rows_agree() {
     }
 }
 
+/// The `runtime_invariant` rows of native-diagnostics and FR-272 list exactly
+/// `established-invariant-broken` and name `kind`, `bound` and `required` for
+/// the `identity-byte-bound-reached` invariant (FR-272-AC-18); the `stage`
+/// rule names a label per limits type in the `resource_exhausted` and
+/// `cancelled` rows and in value-accounting (FR-272-AC-19).
+#[trace("TC-233", "FR-272-AC-18", "FR-272-AC-19")]
+#[test]
+fn tc_233_runtime_invariant_payload_and_stage_rule() {
+    let canonical = canonical_payload_names();
+    for (document, label) in [
+        (NATIVE_DIAGNOSTICS, "native-diagnostics"),
+        (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
+    ] {
+        assert_eq!(
+            diagnostic_row_causes(document, "runtime_invariant"),
+            BTreeSet::from(["established-invariant-broken".to_owned()]),
+            "{label} `runtime_invariant` row lists exactly its cause"
+        );
+        let keys = diagnostic_row_payload_keys(document, "runtime_invariant");
+        let expected = ["kind", "bound", "required"]
+            .iter()
+            .map(|k| (*k).to_owned())
+            .collect::<BTreeSet<_>>();
+        assert_eq!(
+            keys, expected,
+            "{label} row names exactly the identity payload keys"
+        );
+        assert!(
+            keys.is_subset(&canonical),
+            "the keys are canonical payload names"
+        );
+        let invariant_text = diagnostic_row_payload_text(document, "runtime_invariant");
+        for kind in ["`canonical-bytes`", "`input-bytes`", "`object-bytes`"] {
+            assert!(
+                invariant_text.contains(kind),
+                "{label} lists the encoder limit kind {kind}"
+            );
+        }
+        assert!(
+            diagnostic_row_payload_text(document, "runtime_invariant")
+                .contains("`identity-byte-bound-reached`"),
+            "{label} ties the keys to the `identity-byte-bound-reached` invariant"
+        );
+        for code in ["resource_exhausted", "cancelled"] {
+            let payload = diagnostic_row_payload_text(document, code);
+            assert!(
+                payload.contains("limits type assigns"),
+                "{label} `{code}` row takes `stage` from the limits type"
+            );
+        }
+        let payload = diagnostic_row_payload_text(document, "resource_exhausted");
+        for label_value in ["`model-normalization`", "`population-admission`"] {
+            assert!(payload.contains(label_value), "{label} names {label_value}");
+        }
+    }
+    let accounting = one_line(VALUE_ACCOUNTING);
+    for label_value in ["`model-normalization`", "`population-admission`"] {
+        assert!(
+            accounting.contains(&format!("{label_value} for every"))
+                || accounting.contains(&format!("and {label_value} for every")),
+            "value-accounting assigns {label_value} to a limits type"
+        );
+    }
+}
+
 /// The eleven value-refusal and source-identity codes with their closed causes
 /// and payload keys (FR-272-AC-11).
 const VALUE_REFUSAL_ROWS: [(&str, &[&str], &[&str]); 11] = [

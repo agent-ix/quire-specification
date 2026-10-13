@@ -57,7 +57,7 @@ catalog).
 | `dangling_reference` | A reference absent from a population admitted as complete. "Without that complete population, use the incomplete-population outcome instead." |
 | `population_delta_mismatch` | A declared delta disagreeing with the observed pre/post change. |
 | `frame_violation` | A change to an object, field or State root not permitted by the declared frame. |
-| `resource_exhausted` | A work item that could not proceed under the effective limit and accounting contract. "A semantic maximum is not a caller work budget." |
+| `resource_exhausted` | A work item that could not proceed under the effective limit and accounting contract. "A maximum fixed by the language is not a caller work budget." |
 | `cancelled` | A work item stopped by a caller cancellation source. |
 | `unsupported_projection` | A requested capability kind with an empty candidate set (no registrant advertises it, or the named backend does not), an obligation form the one candidate's negotiation arm does not discharge, or an unbounded extent on a bounded-only advertisement with no finite bound or a routed backend whose tool is unavailable. "It cannot reclassify a valid source as malformed." |
 | `projection_binding` | An upstream refusal carried with its originating structured IR/mapping cause. |
@@ -81,7 +81,7 @@ catalog).
 | `invalid_capability` | A requested or advertised capability selection that names no FR-290 kind, an unknown kind or mode, an unsupported vocabulary identity, a duplicate registered backend, no extent classification, an unregistered or arm-less backend, candidates inconsistent with the manifest or named backend, or several candidate backends with none named. |
 | `duplicate_selection` | A second domain-package model selection of an already-selected identity. A package selects at most one version of a domain-package identity. |
 | `conflicting_declaration` | Two declarations at the S3 compile or link that must be unique resolving to one identity: two `operation-body` declarations resolving to one operation identity (FR-151), or two tasks with one name. |
-| `stage_limit_exceeded` | A compiler stage S1-S4, the I2 reader, a family `check`, `replay` or `route` reached one of its own stage limits. "A semantic maximum is not a caller work budget": this is distinct from `resource_exhausted`. |
+| `stage_limit_exceeded` | A compiler stage S1-S4, the I2 reader, a family `check`, `replay` or `route` reached one of its own stage limits. Its limits are caller-configured FR-461 settings carried by the stage limits (FR-323), not the work-budget meter of `resource_exhausted`; the two are distinct. |
 | `noncanonical_wire` | A JSON wire document that its RFC 8785 encoding does not carry as written: a number whose exact value that encoding loses, with cause `inexact-integer` or `inexact-number` at its `document_pointer`, or, for a reader that requires canonical bytes as the checked-package V2 reader does (FR-322), any other bytes, as a refusal about the byte stream. |
 | `inexact_decimal` | Strict `exact` met a decimal rounding step: a nonzero digit would be discarded. |
 | `decimal_out_of_domain` | A decimal result outside its target `Decimal[..]` domain. |
