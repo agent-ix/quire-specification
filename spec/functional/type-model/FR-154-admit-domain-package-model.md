@@ -106,18 +106,21 @@ variants refusals name these members:
   not that identity names the case node, as given, and `Variant.identity`.
 - A case with a `payloadType` names the case node and `Variant.payloadType`.
 - A field `typeRef` that names a variant type names the field node and
-  `Field.typeRef`. An operation parameter or result that names one is refused
-  once each, naming the operation node and, in the diagnostic, the parameter or
-  the result; it carries no member path.
+  `Field.typeRef`. An operation parameter that names one names the operation node and
+  `Operation.params[i].typeRef`, `i` the parameter's index; an operation result
+  that names one names the operation node and `Operation.returns.typeRef`.
 - Two cases of one type compare by exact UTF-8 byte sequence of their name. The
   later case in the `variants` list is the one refused, naming the type node and
   `TypeDefinition.variants[i]`, `i` the later case's index, and its identity,
   origin and payload checks are skipped. The list order has no other meaning.
 
-The failures of a variant type and its cases report in this order, which
-replaces table order for the variant rows: the construct shape, the empty
-`variants` list, then each case in `variants` order, a repeated name first and
-then identity, source span and payload.
+Within one node, the failures of a variant type report in this order: the
+construct shape, then the empty `variants` list, then each case's repeated
+name, in `variants` order, and then the source span of each case, in
+`variants` order (these name the type node). A case node reports its identity
+and then its payload. Nodes report in node order as above, so the type node's
+refusals come first and each case node's follow in `variants` order. This order
+replaces table order for the variant rows.
 
 A package whose cases carry equal names under one identity is refused before
 intake by the reader or the lift, and no declaration is built.
@@ -211,7 +214,7 @@ Admission checks are decided before the first charge.
 | FR-154-AC-8 | A type definition or population node declared by an artifact whose id does not match `^[A-Za-z][A-Za-z0-9_]*$`, such as `sys-pump`, refuses `invalid_model_binding`/`malformed-declaration` with the IR node identity and its `origin`, a reference to that node reports no `missing_declaration`/`missing-name`, and a second failing check on the same node reports after the id refusal; the artifact id `sys_pump` is admitted and a clause names its declaration `M::sys_pump`. | Test (TC-234) |
 | FR-154-AC-9 | The published domain package document of `acme/orders` (`domain-package-acme-orders.json`) carries exactly FR-095's identity forms: types `ix://acme/orders/<artifact id>`, fields, operations and parameters nested under their owner, and relationships `ix://acme/orders/relationship/<Name>-<verb>-<TargetName>` (`Order-order-Order`, `Order-invoiced-Invoice`, `Order-follows-Order`, `Order-twin-Order`), the constrained-field alias `ix://acme/orders/OrderTotal`, none of them owner-nested. | Test (TC-280) |
 | FR-154-AC-10 | A relationship declaration of the selected document refuses at the selection row (`/lock/model_selections/<i>`), in node order and, within a node, in the order malformed declaration, unresolved end type, duplicate identity, reversed multiplicity: an identity outside the package's global `relationship` slot (owner-nested, foreign-package or wrong-slot), a missing or invalid `direction`, `category`, `composite` or `origin`, a missing, null, empty or non-string `sourceEnd.role`, a present null, empty or non-string `targetEnd.role` (an absent `targetEnd.role` is valid), a source end naming another owning type, a malformed end or multiplicity, and an end type naming a relationship or another declaration of the wrong meaning each refuse `invalid_model_binding`/`malformed-declaration`; an end type naming no declaration refuses `missing_declaration`/`missing-name`; a repeated relationship identity, including under two owners, refuses `invalid_model_binding`/`conflicting-binding`, and two missing identities are malformed declarations, not conflicting ones; `lower > upper` alone refuses `invalid_model_binding`/`unpreserved-model-meaning`. The published `adverse.json` `relationship_document_cases` hold one entry per refusal and three admitted entries. Each refusal retains the relationship's IR identity and its `origin` verbatim: `declaration_origin_cases` `refusal-retains-source-origin` (a source origin with its `sourceIdentity`, `path` and span) `refusal-retains-generated-origin` (a generated origin with its members and no span) and `refusal-retains-no-malformed-origin` (a malformed origin, refused `malformed-declaration`, retained as none). | Test (TC-280) |
-| FR-154-AC-11 | A variant type with no case, a case with no source span, a case whose identity is not `variant/<Name>-<value>` of its owner and name, a construct of a shape other than `enumeration`, a field `typeRef` naming a variant type and an operation parameter or result naming one each refuse `invalid_model_binding`/`malformed-declaration`, at the node and member path FR-154 names (`TypeDefinition.kind`, `TypeDefinition.variants`, `TypeDefinition.variants[i].origin`, `Variant.identity`, `Field.typeRef`; the operation node for a parameter or result); a case with a resolving `payloadType` refuses `unsupported_construct`/`declaration-form` at its case node and `Variant.payloadType`, never `invalid_model_binding`; two cases with equal names and distinct identities refuse the later case `invalid_model_binding`/`conflicting-binding` at the type node and `TypeDefinition.variants[i]` and raise no other refusal for it; the failures of one variant type report in the order shape, empty list, then per case repeated name, identity, source span, payload; reordering the `variants` list of an admitted type changes no declaration key. | Test (TC-235) |
+| FR-154-AC-11 | A variant type with no case, a case with no source span, a case whose identity is not `variant/<Name>-<value>` of its owner and name, a construct of a shape other than `enumeration`, a field `typeRef` naming a variant type and an operation parameter or result naming one each refuse `invalid_model_binding`/`malformed-declaration`, at the node and member path FR-154 names (`TypeDefinition.kind`, `TypeDefinition.variants`, `TypeDefinition.variants[i].origin`, `Variant.identity`, `Field.typeRef`; `Operation.params[i].typeRef` and `Operation.returns.typeRef`, each at the operation node); a case with a resolving `payloadType` refuses `unsupported_construct`/`declaration-form` at its case node and `Variant.payloadType`, never `invalid_model_binding`; two cases with equal names and distinct identities refuse the later case `invalid_model_binding`/`conflicting-binding` at the type node and `TypeDefinition.variants[i]` and raise no other refusal for it; within the type node the failures report in the order shape, empty list, repeated names, source spans, and each case node then reports identity and payload after the type node's refusals; reordering the `variants` list of an admitted type changes no declaration key. | Test (TC-235) |
 
 ## Dependencies
 

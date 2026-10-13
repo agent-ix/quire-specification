@@ -52,3 +52,24 @@ effective-identity statement (QSL-740 owns it). Author question 1: stating the f
 SHALL and calls it a placeholder only in prose. Leaving the QSL-738 note in the PR body
 is fine, apart from FND-003's scope. Author question 2: the spanless-case path matches
 TC-996 step 2 and the QSL code exactly.
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 763efef: M26 run 3 now keeps the cases (24 charges, one refusal at `TypeDefinition.kind`); new run 4 (shape and empty list, 22 charges) expects `TypeDefinition.kind` then `TypeDefinition.variants`, as QSL `an_empty_and_mis_shaped_variant_type_reports_both` |
+| FND-002 | fixed | 763efef: the payload row reads "a `payloadType` that resolves", and the prose states that the reader refuses an unresolved payload before intake |
+| FND-003 | fixed | 763efef: the FR-154 row, prose and AC-11 cover a field `typeRef`, an operation parameter and an operation result, and M29 tests them; how the new text names those refusals is FND-008 |
+| FND-004 | fixed | 763efef: the prose names `TypeDefinition.kind` at the type node, and AC-11 lists the shape case |
+| FND-005 | fixed | 763efef: an order statement replaces table order for the variant rows; M25 run 3 (identity then payload on one case node) matches QSL; the order across nodes is FND-009 |
+| FND-006 | fixed | 763efef: variant-type moved to its own `## Variant types` section, which says it is not one of the six business model meanings |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-007 | high | M29 expects 26 charges, but the correct count is 25 (K2 21 + `Tier` 1 + 2 cases + operation `setTier` 1). A parameter and a result are not charged IR nodes. M13 (26 = 21 + clause + 3 fields + operation, parameter `amount` not counted) and M22 set the precedent. QSL `source_record_count` counts only types, populations, and their fields, operations, relationships, clauses and variants. | spec/test-cases/TC-235-business-construct-meaning-binding.md:108 | wrong-requirement |
+| FND-008 | medium | The new text says a parameter or result naming a variant type is refused "naming the operation node and, in the diagnostic, the parameter or the result; it carries no member path", and M29 asserts "no member path". This describes QSL's current gap, not the target. QSL `signature_type_refusal` returns a bare `ModelRefusalCause::MalformedDeclaration` with no node at all (`refusal_node` returns None), so even "naming the operation node" is not typed. Both break FR-154's rule that every declaration refusal retains the IR node identity and origin, and an assertion over typed fields cannot tell parameter from result. Fix: state a typed node and member path, for example the parameter node `<operation identity>/<param>` or the operation node with a parameter path and a result path (AD-006 already uses `Operation.params` and `returns`), and open a QSL ticket to carry them typed. | spec/functional/type-model/FR-154-admit-domain-package-model.md:109-111 | wrong-requirement |
+| FND-009 | medium | The new statement orders each case's failures as "identity, source span and payload", but the identity and payload refusals name the case node while the source-span refusal names the type node. FR-154 reports in node order, and QSL stable-sorts intake refusals by node (`refusal_node` in normalize `build`). So `ix://.../Tier` (span, conflict, shape, empty) reports before any `ix://.../variant/...` case-node refusal, whatever the case order. For a case with a wrong identity and no span, QSL reports the span first; the text says identity first. Fix: say the order applies within one node and node order still applies across nodes. M25 run 3 and M27 run 3 stay correct either way. | spec/functional/type-model/FR-154-admit-domain-package-model.md:117-120 | wrong-requirement |
+| FND-010 | low | FR-208's new `## Variant types` section has two problems. Its second sentence is a fragment ("A type definition whose construct has shape `enumeration`, with ... (FR-154).") with stray two-space indentation left over from the bullet. It also does not carry the round-1 fixes: it still says any case with a `payloadType` is `declaration-form`, without "that resolves", and FR-208-AC-15 still names only a field `typeRef`, not a parameter or result. | spec/objects/foundation/FR-208-quire-meaning-vocabulary.md:318-330 | wrong-requirement |
+| FND-011 | low | M27 run 3 appends a fourth case `Silver` with no source span but does not state its identity. The expected "two refusals" holds only if the identity is the minted `ix://test/orders/variant/Tier-Silver`; any other identity adds a `Variant.identity` refusal. State the identity. | spec/test-cases/TC-235-business-construct-meaning-binding.md:106 | wrong-requirement |

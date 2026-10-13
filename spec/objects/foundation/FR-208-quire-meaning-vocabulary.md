@@ -318,16 +318,16 @@ that the meaning states, `fields`, `identityFields`, `occurrenceField` or
 ## Variant types
 
 `quire.meaning.model.variant-type/v1` is not one of the six business model
-meanings. A type definition whose construct has shape
-  `enumeration`, with one or more cases in `variants`, each with a name, a
-  source span and the identity `variant/<Name>-<value>` of its owner and name
-  (FR-154). A case has no payload: a case with a `payloadType` is
-  `unsupported_construct`/`declaration-form`. No case, a case with no source
-  span, a case whose identity is not that identity or a construct of another
-  shape is `invalid_model_binding`/`malformed-declaration`, and two cases
-  with one name and distinct identities are
-  `invalid_model_binding`/`conflicting-binding` at the later case. The order
-  of `variants` carries no meaning.
+meanings. A type definition bound to it has a construct of shape `enumeration`
+and one or more cases in `variants`, each with a name, a source span and the
+identity `variant/<Name>-<value>` of its owner and name (FR-154). A case has no
+payload: a case with a resolving `payloadType` is
+`unsupported_construct`/`declaration-form`. No case, a case with no source
+span, a case whose identity is not that identity, a construct of another shape
+and a field, parameter or result `typeRef` naming the variant type are
+`invalid_model_binding`/`malformed-declaration`, and two cases with one name
+and distinct identities are `invalid_model_binding`/`conflicting-binding` at
+the later case. The order of `variants` carries no meaning.
 
 ## Identity and comparison
 
@@ -365,7 +365,7 @@ meanings. A type definition whose construct has shape
 | FR-208-AC-12 | A record value type, event type, state machine or process specializing a node of its own meaning inherits its fields, invariants and operations, an event type its occurrence field, and a state machine its states and transitions, and conforms to each ancestor; a process inherits no steps; a supertype of another meaning is `invalid_model_binding`/`malformed-declaration`; a state or transition declared by two owners, or an ancestor occurrence field the subtype's neither is nor redefines, is `invalid_model_binding`/`derivation-conflict`; a subtype transition whose guard names an ancestor's invariant is `invalid_model_binding`/`malformed-declaration` at that guard; a persistence interface or namespace with supertypes is `unsupported_construct`/`declaration-form`. | Test (TC-235) |
 | FR-208-AC-13 | A state-machine operation's precondition over a pre-call observation holding one machine context, with no post observation, evaluates over that context and the call's parameters; the same pre-call observation with no context of the machine is `invalid_model_binding`/`wrong-context`. | Test (TC-401) |
 | FR-208-AC-14 | With `Money` and its subtype `TaxedMoney` adding `tax_minor`, a `TaxedMoney` value is admitted at a `Money` field, parameter or result, as the payload of an `Option<Money>`, as an element of a `Sequence<Money>`, `Set<Money>`, `Bag<Money>` or `OrderedSet<Money>`, at a tuple position typed `Money` and as a union member payload typed `Money`, and keeps its most-specific type and its `tax_minor`. A `Money` value is not admitted at a `TaxedMoney` slot, and a `Sequence<TaxedMoney>` is not a `Sequence<Money>`. A `TaxedMoney` value and a `Money` value with equal shared fields are unequal. | Test (TC-235) |
-| FR-208-AC-15 | A type definition whose construct names `quire.meaning.model.variant-type/v1` binds its cases and no payload. A case with a `payloadType` is `unsupported_construct`/`declaration-form`; no case, a case with no source span, a case whose identity is not the variant slot identity of its owner and name, a construct of a shape other than `enumeration` and a field `typeRef` naming the variant type are `invalid_model_binding`/`malformed-declaration`; two cases with equal names and distinct identities are `invalid_model_binding`/`conflicting-binding`. | Test (TC-235) |
+| FR-208-AC-15 | A type definition whose construct names `quire.meaning.model.variant-type/v1` binds its cases and no payload. A case with a resolving `payloadType` is `unsupported_construct`/`declaration-form`; no case, a case with no source span, a case whose identity is not the variant slot identity of its owner and name, a construct of a shape other than `enumeration` and a field, parameter or result `typeRef` naming the variant type are `invalid_model_binding`/`malformed-declaration`; two cases with equal names and distinct identities are `invalid_model_binding`/`conflicting-binding`. | Test (TC-235) |
 
 ## Dependencies
 
