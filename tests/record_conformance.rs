@@ -345,13 +345,23 @@ fn construct(
     }
 }
 
-/// A result position: a declared result `R` against the type node of the
+/// A function or expression result: a declared result `R` against the type node of the
 /// body root or arm body that produces it.
+/// A `case` arm body against the case result type (FR-440): the application's
+/// `operator-ineligible` check.
+fn arm_admits(doc: &BTreeMap<&str, Declared>, result: &Ty, arm: &Ty) -> Outcome {
+    if slot_admits(doc, result, arm) {
+        Outcome::Admitted
+    } else {
+        Outcome::Ineligible
+    }
+}
+
 fn result_admits(doc: &BTreeMap<&str, Declared>, declared: &Ty, body: &Ty) -> Outcome {
     if slot_admits(doc, declared, body) {
         Outcome::Admitted
     } else {
-        Outcome::Ineligible
+        Outcome::TypeMismatch
     }
 }
 
@@ -522,12 +532,13 @@ fn tc_281_record_conformance_decides_projection_calls_and_slots() {
     );
     // RCF-13
     let voucher = model("Other");
-    assert_eq!(result_admits(&doc, &money, &voucher), Outcome::Ineligible);
+    assert_eq!(result_admits(&doc, &money, &voucher), Outcome::TypeMismatch);
     // RCF-11, RCF-12
     assert_eq!(result_admits(&doc, &money, &taxed), Outcome::Admitted);
-    assert_eq!(result_admits(&doc, &taxed, &money), Outcome::Ineligible);
+    assert_eq!(result_admits(&doc, &taxed, &money), Outcome::TypeMismatch);
     assert_eq!(result_admits(&doc, &money, &money), Outcome::Admitted);
-    assert_eq!(result_admits(&doc, &money, &other), Outcome::Ineligible);
+    assert_eq!(arm_admits(&doc, &money, &other), Outcome::Ineligible);
+    assert_eq!(arm_admits(&doc, &money, &taxed), Outcome::Admitted);
     // RCF-09
     assert_eq!(union_value(&doc, &money, &taxed), Outcome::Admitted);
     assert_eq!(union_value(&doc, &taxed, &money), Outcome::TypeMismatch);
