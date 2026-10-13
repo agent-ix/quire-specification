@@ -117,10 +117,18 @@ when they are FR-149 equal.
 | enumeration | declaration position for an `ordered enum`; otherwise the case identifier's ASCII bytes, lexicographically, never its declaration position |
 | `Reference<T>` | the FR-204 identity triple (universe identity, object-type declaration identity, object identity), compared component by component, each component lexicographically by its canonical identity bytes; under `quire.model.complete/v1` the universe and type bytes are the UTF-8 domain string followed by the 32 digest bytes, and the object bytes are the exact producer UTF-8 object identity, all compared unsigned bytewise with a proper prefix first |
 | `Option<T>` | `none` before a present value, then the key of the payload |
-| record, tuple | lexicographic over fields in declaration order or positions in order; a slot orders `absent` before `null` before a present value, and present values by key |
+| record, tuple | for two records of distinct declarations, the ascending byte order of their 32-byte declaration node keys, compared before any slot; otherwise lexicographic over fields in declaration order or positions in order; a slot orders `absent` before `null` before a present value, and present values by key |
 | union | the active member's identifier ASCII bytes, lexicographically, never its declaration position; then, for two values of one member, lexicographic over the payload values' keys in position order |
 | `Sequence<T>`, `OrderedSet<T>` | lexicographic over element keys; a proper prefix comes first |
 | `Set<T>`, `Bag<T>` | lexicographic over the ascending element-key list, with a bag occurrence listed once per multiplicity |
+
+Records of distinct declarations meet in one collection when a record subtype
+value is held at an ancestor-typed element (FR-208): `Set<Money>` can hold a
+`Money` and a `TaxedMoney`. The declaration comparison is a total order that is
+unrelated to ancestry, which no collection order needs. Two records have equal
+keys exactly when they have one declaration and equal fields, which is when they
+are FR-149 equal, so a `Money` and a `TaxedMoney` with equal shared fields are
+two members of a `Set<Money>`.
 
 A recursive record or union type has a key because every finite value of it
 does. A union admits `=` exactly when every payload type of every member
@@ -218,6 +226,7 @@ FR-146 and FR-307; otherwise it is
 | FR-144-AC-12 | A collection type with no declared bound admits every occurrence count at construction and traversal and never returns `cardinality_out_of_bound`. | Test (TC-246) |
 | FR-144-AC-13 | A collection type with an absent bound and one with a present bound, same kind and same element type, are different types; equality between them is `refused { code: ill_typed, cause: type-mismatch }`, and moving a value between them requires an explicit FR-145 `convert` whose present-bound direction is checked at run time. | Test (TC-246) |
 | FR-144-AC-14 | For `union Shape { Rect(Integer, Integer), Circle(Integer), Empty }`, `set[Shape::Rect(2, 3), Shape::Empty, Shape::Circle(5), Shape::Circle(1), Shape::Rect(2, 3)]` holds four members visited in the order `Circle(1)`, `Circle(5)`, `Empty`, `Rect(2, 3)`, the same order after the members are declared in another order; a `Bag<Shape>` of the same elements holds `Rect(2, 3)` with multiplicity two; and a `Set<U>` whose union `U` has a `Float64` payload is `ill_typed` with cause `operator-ineligible`. | Test (TC-397) |
+| FR-144-AC-15 | A `Set<Money>`, `Bag<Money>` or `OrderedSet<Money>` holding a `Money` and a `TaxedMoney` of equal shared fields holds two distinct members. A `Set<Money>` or `Bag<Money>` visits them in ascending byte order of their declaration node keys in either source order, and construction does not refuse for want of a canonical key. Two `TaxedMoney` values with equal fields are one member, and two that differ in `tax_minor` are two. | Test (TC-189) |
 
 ## Dependencies
 

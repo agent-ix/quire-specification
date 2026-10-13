@@ -2383,8 +2383,10 @@ fn is_model_declaration(node: &Value) -> bool {
         && node.get("nominal_identity_preimage").is_none()
         && matches!(
             (node["node_tag"].as_str(), node["semantic_form"].as_str()),
-            (Some("model"), Some("object_type" | "systems_interface"))
-                | (Some("relation"), Some("relationship"))
+            (
+                Some("model"),
+                Some("object_type" | "event_type" | "systems_interface")
+            ) | (Some("relation"), Some("relationship"))
         )
 }
 
@@ -12591,4 +12593,81 @@ fn tc_233_scalar_literals_need_their_family_and_canonical_value() {
     }
     assert_eq!(OperationRefusal::InvalidValue.code(), "invalid_package");
     assert_eq!(OperationRefusal::InvalidValue.cause(), "invalid-value");
+}
+
+/// ET-01 to ET-04 (FR-322-AC-68): a `model`/`event_type` node is a model
+/// declaration node. With a `ModelOwner` and no `declaration` the V2 schema
+/// admits it; with no `owner`, with a `SourceOwner` and no `declaration`, or
+/// with a `declaration` beside a `ModelOwner` it fails the schema. The closed
+/// `ModelDeclarationNode` preimage admits the form too.
+#[trace("TC-233", "FR-322-AC-68")]
+#[test]
+fn tc_233_event_type_is_a_model_declaration_node_with_a_model_owner() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let base = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let index = node_index_where(&base, |node| {
+        node["node_tag"] == "model" && node["semantic_form"] == "record_value_type"
+    });
+    let model_owner =
+        json!({"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/OrderPlaced"});
+    let with = |edit: &dyn Fn(&mut Value)| {
+        let mut candidate = base.clone();
+        edit_node_and_projection(&mut candidate, index, |node| {
+            node["semantic_form"] = json!("event_type");
+            node.as_object_mut().expect("node").remove("declaration");
+            // The graph node carries occurrences; its projection entry does not.
+            if node.get("occurrences").is_some() {
+                node["occurrences"] = json!([{"ordinal": 0, "role": "generated"}]);
+            }
+            node["semantic_type"] = node["node_id"].clone();
+            node["owner"] = model_owner.clone();
+            edit(node);
+        });
+        candidate
+    };
+
+    let admitted = with(&|_| {});
+    assert!(
+        schema.is_valid(&admitted),
+        "ET-01: a model-owned event_type node is a V2 node"
+    );
+    for (name, edit) in [
+        (
+            "ET-02",
+            (&|node: &mut Value| {
+                node.as_object_mut().expect("node").remove("owner");
+            }) as &dyn Fn(&mut Value),
+        ),
+        ("ET-03", &|node: &mut Value| {
+            node["owner"] =
+                json!({"kind": "source", "authority": "agent-ix", "identity": "example"});
+        }),
+        ("ET-04", &|node: &mut Value| {
+            node["declaration"] = json!({"qualified_name": ["Example", "OrderPlaced"]});
+        }),
+    ] {
+        assert!(
+            !schema.is_valid(&with(edit)),
+            "{name}: the V2 schema refuses it"
+        );
+    }
+
+    let preimage_schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
+        .expect("node-identity preimage schema is valid");
+    for form in ["record_value_type", "event_type"] {
+        let preimage = json!({
+            "version": "quire.structural-node/v1",
+            "node_tag": "model",
+            "semantic_form": form,
+            "semantic_type": null,
+            "declaration": null,
+            "recursion": null,
+            "owner": model_owner,
+            "body": {"term": "aggregate", "members": []}
+        });
+        assert!(
+            preimage_schema.is_valid(&preimage),
+            "the ModelDeclarationNode preimage admits {form}"
+        );
+    }
 }

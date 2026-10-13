@@ -275,7 +275,29 @@ projection entry patched and `package_id` recomputed (FR-322-AC-54).
 | SE-18 | `quire.op.text.eq` over two `string` operands with a `text_profile` law and mode | `invalid_package`/`operation-mode-type-mismatch` | FR-322-AC-67 |
 | SE-19 | literal of `value_kind` `string` whose `value` is a number, `null` or an array | `invalid_package`/`invalid-value` | FR-322-AC-67 |
 | SE-20 | literal of `value_kind` `uuid` typed by a `string` type with an uppercase value; literal of `value_kind` `timestamp` typed by an `integer` type with value `01` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-67 |
+
+### Event type and record conformance vectors
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| ET-01 | A `model`/`event_type` node with a `ModelOwner`, no `declaration`, its own id as `semantic_type` and an empty aggregate body, in a package | Admitted by the V2 schema; its `ModelDeclarationNode` preimage validates against the node-identity preimage schema | FR-322-AC-68 |
+| ET-02 | ET-01 with no `owner` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
+| ET-03 | ET-01 with a `SourceOwner` and no `declaration` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
+| ET-04 | ET-01 with a `declaration` and a `ModelOwner` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
+| ET-05 | ET-01 owned by a node that the selected document declares as a record value type, an object type or nothing | `missing_declaration`/`missing-selection` in the owner join | FR-322-AC-68 |
+| ET-06 | `quire.op.record.project` over a value typed by ET-01's node, `field` member naming that node | Resolves the field on the event type's declaration; family `record` | FR-322-AC-68 |
+| ET-07 | `quire.op.structural.eq` over two values typed by ET-01's node | `ill_typed`/`operator-ineligible` | FR-322-AC-68 |
+| RC-01 | `quire.op.function.call` with a `TaxedMoney` argument at a `Money` parameter, then a `GiftTaxedMoney` argument | Admitted; the argument is a `ref`, no conversion node | FR-322-AC-69 |
+| RC-02 | RC-01 with a `Money` argument at a `TaxedMoney` parameter; an unrelated record at a `Money` parameter | `ill_typed`/`operator-ineligible` | FR-322-AC-69 |
+| RC-03 | RC-01 with a `Sequence<TaxedMoney>` argument at a `Sequence<Money>` parameter; an `Option<TaxedMoney>` at an `Option<Money>` | `ill_typed`/`operator-ineligible` | FR-322-AC-69 |
+| RC-04 | An operation call (`dispatch_call`) with a `TaxedMoney` argument at a `Money` parameter | Admitted | FR-322-AC-69 |
+| RC-05 | `quire.op.record.project` over a `GiftTaxedMoney` operand, `field` member `{declaration: Money's node, name: amount_minor}` | Resolves `Money/amount_minor`; `result_type` is the type `Money` gives it | FR-322-AC-69 |
+| RC-06 | RC-05 over a `TaxedMoney` operand with `declaration` `GiftTaxedMoney`'s node | `ill_typed`/`operator-ineligible` | FR-322-AC-69 |
+| RC-07 | `quire.op.structural.eq` over two `Money` operands | Admitted with `Money`'s leaves | FR-322-AC-69 |
+
 ## Expected Results
+
+Each event type and record conformance vector gives exactly its recorded result.
 
 Every positive artifact validates and recomputes its recorded identity. Excluded
 edits leave the package id unchanged and named edits change it. Every mutation

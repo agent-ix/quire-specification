@@ -42,7 +42,11 @@ A typed finite value/equality result, refusal or incomplete traversal outcome.
 
 Record fields use declaration-owned identities; tuple positions are ordered.
 Structural equality recursively compares the same declared value type and does
-not compare object-reference targets structurally. Recursive definitions are
+not compare object-reference targets structurally. When two record operands
+have one static type but different most-specific declarations, because one holds
+a record subtype value at an ancestor-typed slot (FR-208), they are unequal and
+the comparison is the Boolean `false`; it is not a refusal, and no field is
+compared. Recursive definitions are
 allowed, but each runtime value must be finite and cycles require explicit
 object identity rather than value containment.
 
@@ -232,7 +236,7 @@ and equality.
 | FR-143-AC-2 | Equal field shapes from different declared types do not become interchangeable. | Test (TC-188) |
 | FR-143-AC-3 | Cyclic value containment refuses, while bounded recursive construction and object-reference cycles remain distinct. | Test (TC-188) |
 | FR-143-AC-4 | Missing/extra record fields, wrong tuple arity and absence/null substitution each refuse at the originating component. | Test (TC-188) |
-| FR-143-AC-5 | Canonical field ordering does not make equal-shaped values of different declared record types equal. | Test (TC-188) |
+| FR-143-AC-5 | Canonical field ordering does not make equal-shaped values of different declared record types equal. Two operands of one static record type whose most-specific declarations differ, such as a `TaxedMoney` and a `Money` with equal shared fields at `Money`, are unequal: `=` is `false` and `!=` is `true`, in either operand order, and neither is a refusal. | Test (TC-188) |
 | FR-143-AC-6 | Declaration identity is the producer-assigned record/tuple/union node key compared only within one checked package. | Test (TC-188) |
 | FR-143-AC-7 | The recursion rule admits exactly the declaration graphs whose unnamed-edge and non-escaping-edge subgraphs are both acyclic, and names each refused cycle. | Test (TC-188) |
 | FR-143-AC-8 | Record fields are evaluated in declaration order, the first stopped field propagates its outcome with no later field evaluated or charged, and a completed construction charges `composite.result-retain`. | Test (TC-188) |

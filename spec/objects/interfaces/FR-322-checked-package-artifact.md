@@ -363,7 +363,8 @@ boundary.
     FR-341's `state`/`state_clause` node, an application-keyed node that
     carries no `owner`. An `invariant` clause function is owned by an object
     type with no `interfaceFeatures` (`model`/`object_type`, never a systems
-    interface) or by a record value type (`model`/`record_value_type`);
+    interface), by a record value type (`model`/`record_value_type`) or by an
+    event type (`model`/`event_type`);
     a `precondition` or `body` clause function is owned by an operation
     member of an object type, the operation's context; a clause function with
     no, a repeated, a non-text or another `clause` binding has no owner kind it can join. Any
@@ -492,7 +493,7 @@ boundary.
   structural node (no `nominal_identity_preimage`, and a body whose root is
   not an `application`) that either carries a `declaration` or is a
   **model-owned node** (QSL FR-094) carrying none: a model declaration node
-  (`model`/`object_type`, `model`/`record_value_type`,
+  (`model`/`object_type`, `model`/`record_value_type`, `model`/`event_type`,
   `model`/`systems_interface` or
   `relation`/`relationship`) or a clause function (`function`). A declared
   owner-bearing node carries the `SourceOwner` of the source unit that
@@ -674,7 +675,7 @@ neither model-owned row, so it falls in the last row and carries none.
 | Node | `owner` |
 | --- | --- |
 | structural, carries `declaration` | required, `SourceOwner` |
-| structural, no `declaration`, `node_tag`/`semantic_form` `model`/`object_type`, `model`/`record_value_type`, `model`/`systems_interface` or `relation`/`relationship` | required, `ModelOwner` |
+| structural, no `declaration`, `node_tag`/`semantic_form` `model`/`object_type`, `model`/`record_value_type`, `model`/`event_type`, `model`/`systems_interface` or `relation`/`relationship` | required, `ModelOwner` |
 | structural, no `declaration`, `node_tag` `function` | required, `ModelOwner` |
 | every other node | absent |
 
@@ -736,7 +737,8 @@ conformance" below).
    `node`, and of the kind the node's `node_tag`/`semantic_form` names: an
    object type with no `interfaceFeatures` for `model`/`object_type`, a
    record value type of FR-208's `quire.meaning.model.record-value-type/v1`
-   for `model`/`record_value_type`, an
+   for `model`/`record_value_type`, an event type of FR-208's
+   `quire.meaning.model.event-type/v1` for `model`/`event_type`, an
    object type with `interfaceFeatures` for `model`/`systems_interface` and a
    relationship for `relation`/`relationship`. FR-321 admits one selection
    per `identity` and a document declares each IR node identity once, so at
@@ -863,8 +865,10 @@ declaring node and step 3 resolves the name to a field member of `T`. For a
 `dispatch_call`, operand 0 has type `Reference<X>`, where `X`'s model
 declaration node is the declaring node; the arguments after the receiver
 equal the resolved operation's parameters in number; and the type node of
-each argument is the node of its parameter's type. Any other receiver,
-argument count or argument type refuses `ill_typed`/`operator-ineligible`.
+each argument is the node of its parameter's type, or, for a record-typed
+parameter, a record type that conforms to it ("Record conformance"). Any other
+receiver, argument count or argument type refuses
+`ill_typed`/`operator-ineligible`.
 The declaring node's body stays `aggregate{[]}`, and the member's type is
 the step 4 type.
 
@@ -910,6 +914,53 @@ a relationship declaration, refuse `ill_typed`/`operator-ineligible`. That
 is the cause of every catalog operand check; FR-149-AC-12 and TC-198 L08
 report the same pair, found while checking source, as
 `ill_typed`/`type-mismatch`.
+
+### Record conformance
+
+A record value type and an event type are `model` declaration nodes of family
+`record` ("Operation families, groups and constraints"). A value of a record
+subtype is a value of each ancestor
+([FR-208](../foundation/FR-208-quire-meaning-vocabulary.md)), and it stays the
+subtype's own value: the lowered form carries it by `ref`, with no conversion
+node between the value and the position that takes it. The reader decides
+whether a record type node `A` **conforms** to a record type node `P` exactly
+when `A` and `P` are one node, or both are `model` declaration nodes of one
+form (`record_value_type` or `event_type`) and the declaration step 2 finds for
+`P` is among the declared supertypes, at any depth, of the declaration it finds
+for `A` in that document's `quire.model.complete/v1` normalization. Each lookup
+carries step 2's refusal. Conformance is not symmetric: an ancestor does not
+conform to a descendant, a record of no supertype chain with `P` does not
+conform to `P`, and declarations of two documents never conform. It applies
+only to a record type node itself. A `K<A>` or `Option<A>` type node does not
+conform to `K<P>` or `Option<P>`, because a collection's or option's type
+identity includes its element type node.
+
+Three positions decide record operands by conformance:
+
+- **Calls.** An argument of a `quire.op.function.call` application and of an
+  operation call (`dispatch_call`) whose parameter type is a record type node
+  `P` is admitted when the argument's type node is `P` or conforms to `P`.
+  Every other argument type node equals its parameter's, as before.
+- **Projection.** `quire.op.record.project` over an operand of record type node
+  `A` carries a `field` member whose `declaration` names a record type node
+  `D` that `A` conforms to, so a field `D` declares or inherits is read from a
+  value of `A` or of any descendant of `D`. Step 3 resolves `name` on `D`, and
+  the application's `result_type` is the step 4 type that `D` gives the field,
+  whichever descendant redefines the field with a narrower type. A
+  `declaration` naming a node `A` does not conform to refuses
+  `ill_typed`/`operator-ineligible`.
+- **Equality.** `quire.op.structural.eq` takes two operands of one record type
+  node `P`, and either may hold a subtype value; the operands are then equal
+  exactly as FR-149 and FR-143 state, and two values of different
+  declarations are unequal, a Boolean. The leaves are those of `P`, as
+  "Structural leaf walk" states. An operand whose type node is a
+  `model`/`event_type` node refuses `ill_typed`/`operator-ineligible`, because
+  FR-208 gives an event type no equality.
+
+A call argument, a projection declaration or an equality operand that fails
+its rule refuses `ill_typed`/`operator-ineligible` at the application, the
+cause of every catalog operand check; QSL FR-359 reports the same case, found
+while checking source, as `ill_typed`/`type-mismatch`.
 
 ### Reaches over a field
 
@@ -1067,7 +1118,8 @@ A type node's **family** is read from the type the node resolves to through its
 `unit` is `quantity`, an enum is `ordered_enum` when its nominal preimage is
 ordered and `enum` otherwise; `composite_type` forms `option`, `record`,
 `tuple`, `union`, `sequence`, `set`, `bag`, `ordered_set` and `reference` are
-their own family; a `model`/`record_value_type` declaration is `record`, and
+their own family; a `model`/`record_value_type` or `model`/`event_type`
+declaration is `record`, and
 a model declaration node whose `semantic_form` is `object_type` or
 `systems_interface` is `object`. A `relation` node and a `model` node of any
 other form have no family, so a term they type fits no operand position. An
@@ -1289,7 +1341,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-28 | A `ModelOwner` node-identity preimage carries the declaring domain package's `identity` beside `node` and no version label, so a node id depends only on content; the published `ModelOwner` vectors validate against the closed preimage schema and recompute their recorded JCS SHA-256, and a `ModelOwner` preimage that carries a `version` member is refused by the closed preimage schema. | Test |
 | FR-322-AC-29 | Each published model declaration node vector validates against the closed `ModelDeclarationNode` preimage schema and recomputes its recorded JCS SHA-256. A model declaration node carrying `Order`'s `ModelOwner` and keyed by its preimage resolves to `Order`. A node whose owner identity is not lock-selected refuses `missing_declaration`/`missing-selection` in the derived-shape key stage, and a current `model`/`object_type` node whose owner names the relationship `Order-order-Order` refuses `missing_declaration`/`missing-selection` in the owner join. A node whose key was computed under another tag (the relationship's id on a `model` node whose owner names an object type; one whose owner names the relationship is refused by the owner join first, as the second refusal above), whose `semantic_type` is not its own id, that carries a `recursion_group`, or whose body has members refuses `invalid_package`/`stale-node-key` (MW-02, MW-04, MW-05, MW-15: the relationship's id on a `model`/`object_type` node owned by `Order`). A model declaration node that carries a `declaration` beside its `ModelOwner`, or carries no `owner`, fails the V2 schema and refuses `malformed_wire`. | Test |
 | FR-322-AC-30 | A model-owned `field` or `operation` member resolves among the declaring type's exposed effective members, own and inherited. A field declared by a supertype resolves on the subtype's node, and a redefined operation resolves to the most derived redefinition. An operation on a `systems_interface` node refuses `ill_typed`/`operator-ineligible`. Two exposed fields of one name refuse `ambiguous_declaration`/`ambiguous-name`. An undeclared name, a name of the other member kind and a relationship declaring node each refuse `ill_typed`/`operator-ineligible`. | Test |
-| FR-322-AC-31 | A resolved model member's type follows the declared-type, multiplicity and presence tables. The derived types are `Int[0, 9]` from an integer value type, `Integer` from a constrained native `Integer`, `Option<Boolean>`, `Set<Integer>[0, 3]`, `Sequence<Integer>[0, 5]`, `Set<Integer>[0, 1]`, `Set<Integer>` for `[0, unbounded]`, `String`, `UUID` and `Timestamp` from their native declared types (`String` distinct from `Text`), `Reference<Invoice>` and an operation's `Integer` result. A bare `Text` field (no `Text[min, max; profile]` value type), a `[1, unbounded]` field and an operation with no result each refuse `ill_typed`/`operator-ineligible`. So does a call whose receiver is not a reference to the declaring node, or whose arguments differ in number or type node from the operation's parameters. | Test |
+| FR-322-AC-31 | A resolved model member's type follows the declared-type, multiplicity and presence tables. The derived types are `Int[0, 9]` from an integer value type, `Integer` from a constrained native `Integer`, `Option<Boolean>`, `Set<Integer>[0, 3]`, `Sequence<Integer>[0, 5]`, `Set<Integer>[0, 1]`, `Set<Integer>` for `[0, unbounded]`, `String`, `UUID` and `Timestamp` from their native declared types (`String` distinct from `Text`), `Reference<Invoice>` and an operation's `Integer` result. A bare `Text` field (no `Text[min, max; profile]` value type), a `[1, unbounded]` field and an operation with no result each refuse `ill_typed`/`operator-ineligible`. So does a call whose receiver is not a reference to the declaring node, or whose arguments differ in number from the operation's parameters or in type node from them, unless a record argument conforms to its record parameter ("Record conformance"). | Test |
 | FR-322-AC-32 | A lock-selected domain package document is checked as evidence before graph admission: a document supplied under the selected digest with matching identity passes the selection admission checks, while a digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`, no document refuses `missing_import`/`missing-selection` and a document whose identity differs from the selection `invalid_model_binding`/`wrong-model-selection`. | Test |
 | FR-322-AC-33 | `quire.op.reference.eq` and `quire.op.reference.ne` admit two references to selected object types of which one conforms to the other along declared supertypes: two of one type, a subtype and its supertype in either operand order, a subtype two levels down, and a type with two supertypes against either. A systems interface with no declared supertype against an unrelated object type, two unrelated object types, a reference to a relationship, even compared with itself, and an operand of family `object` refuse `ill_typed`/`operator-ineligible`. An operand whose owner is not selected refuses `missing_declaration`/`missing-selection`, even compared with itself. | Test |
 | FR-322-AC-34 | `quire.op.record.project` over a `quire.op.model.deref` result reads a field of a model object: the `deref` result has family `object`, the projection resolves the field on the declaring object type, own or inherited, and its result is the field's member type. A projection over a reference that is not dereferenced, a `field` member naming a node other than the operand's object type, a `deref` whose `result_type` is not the operand's object type, a `deref` result of a relationship, and a projection whose `result_type` is not the field's member type refuse `ill_typed`/`operator-ineligible`. | Test |
@@ -1326,6 +1378,8 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-65 | A `model`/`record_value_type` node owned by a selected object type or a node absent from the selected document refuses `missing_declaration`/`missing-selection` in the owner join; one with a missing `owner` refuses `malformed_wire`. An unknown field name on a valid record node refuses `ill_typed`/`operator-ineligible`. A record field whose `typeRef` names an event type, state machine, process, persistence interface or namespace refuses `invalid_model_binding`/`malformed-declaration` at FR-154 intake before member derivation; a record node used as an object reference target refuses `invalid_package`/`invalid-derived-shape`. | Test |
 | FR-322-AC-66 | The worked package with a `protocol`/`protocol_reference` carrier to its local `protocol_clause` target is admitted with one graph collection; its body target, sole dependency and semantic type bind that exact protocol node and its recomputed key changes when the target changes. With the body target and sole dependency changed together and identities recomputed, a missing local target refuses `missing_declaration`/`missing-name` even when a selected dependency contains that key, and a present non-protocol target or unequal semantic type refuses `ill_typed`/`operator-ineligible`. A non-reference body or extra carrier member fails the V2 schema; a dependency target is not admitted as a protocol reference. | Test |
 | FR-322-AC-67 | The six identities `quire.op.string.eq`, `quire.op.string.ne`, `quire.op.uuid.eq`, `quire.op.uuid.ne`, `quire.op.timestamp.eq` and `quire.op.timestamp.ne` are enumerated by both V2 schemas and catalogued as binary `boolean` comparisons with no law or mode, and both schemas admit `string`, `uuid` and `timestamp` as a literal `value_kind`. An application of each identity over two operands of its own family, with result `boolean`, no law, no mode and no member, is admitted. An operand of another family (`string` against `text`, `uuid` against `string`, `timestamp` against `uuid`) and an ordering or arithmetic identity over these families (`quire.op.integer.lt` and `quire.op.integer.add` over `uuid` operands) each refuse `ill_typed`/`operator-ineligible`. A `text_profile` law on a `string`, `uuid` or `timestamp` identity refuses `invalid_package`/`operation-law-mismatch`, a `text_profile` mode `invalid_package`/`operation-mode-mismatch`, and a `string` operand of `quire.op.text.eq` `invalid_package`/`operation-mode-type-mismatch`. A literal of `value_kind` `string`, `uuid` or `timestamp` whose `type` is not its own family refuses `ill_typed`/`operator-ineligible`, and a `string`, `uuid` or `timestamp` literal `value` in a non-canonical spelling, on a literal of the right family, refuses `invalid_package`/`invalid-value`. | Test |
+| FR-322-AC-68 | A selected domain package whose document declares the event type `OrderPlaced` (`quire.meaning.model.event-type/v1`, with fields `order_id` and `occurred_at`) admits a self-typed `model`/`event_type` declaration node owned by `OrderPlaced`, with a `ModelOwner` and the closed `ModelDeclarationNode` preimage. The node has family `record`, a `quire.op.record.project` over a value of its type resolves a field of `OrderPlaced` (own or inherited) to its step 4 type, and an invariant clause function owned by `OrderPlaced` passes the owner join. A `quire.op.structural.eq` over two `OrderPlaced` operands refuses `ill_typed`/`operator-ineligible`. A `model`/`event_type` node owned by a record value type, an object type or a node absent from the selected document refuses `missing_declaration`/`missing-selection` in the owner join, one with no `owner` or with a `SourceOwner` and no `declaration` fails the V2 schema (`malformed_wire`), and both V2 schemas enumerate the form in the owner-presence rule, the model forms and the `ModelDeclarationNode` preimage. | Test |
+| FR-322-AC-69 | With record value types `Money` and `TaxedMoney` (supertype `Money`) and `GiftTaxedMoney` (supertype `TaxedMoney`) of one selected document, a `quire.op.function.call` or operation-call argument of type `TaxedMoney` or `GiftTaxedMoney` at a `Money` parameter is admitted with the argument taken by `ref` and no conversion node; a `Money` argument at a `TaxedMoney` parameter, an argument of an unrelated record, and a `Sequence<TaxedMoney>` argument at a `Sequence<Money>` parameter each refuse `ill_typed`/`operator-ineligible`. A `quire.op.record.project` over a `TaxedMoney` operand whose `field` member names `Money` as `declaration` reads `Money`'s field with the type `Money` gives it, and one naming `GiftTaxedMoney` over a `TaxedMoney` operand refuses `ill_typed`/`operator-ineligible`. A `quire.op.structural.eq` over two `Money` operands is admitted with `Money`'s leaves. | Test |
 
 ## Dependencies
 
