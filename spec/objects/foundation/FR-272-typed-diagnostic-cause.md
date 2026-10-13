@@ -191,7 +191,7 @@ Cause payload fields use these exact ordered names when applicable:
 `subject`, `stage`, `definition`, `capability`, `label`, `expected`, `actual`,
 `flags`, `path`, `document_pointer`, `related`, `kind`, `bound`, `limit`, `setting`, `consumed`,
 `upstream`, `requested`, `required`, `accounting_contract`, `next_charge`, `charge_point`, `limit_kind`. `setting`
-names the FR-461 setting that raises a limit. `kind` names a limit's kind as one exact ASCII string, the cause-tag spelling QSL emits for it (for example `input-bytes-exceeded`, `node-count-exceeded`), never prose; `bound` its configured value, or for `identity-byte-bound-reached` the byte bound derived from the population's members; `required` the amount a failed encoding needed; `limit` is the effective limit of an `insufficient-next-charge` charge record. `label` names which
+names the FR-461 setting that raises a limit. `kind` names a limit's kind as one exact ASCII string, the cause-tag spelling QSL emits for it (for example `input-bytes-exceeded`, `node-count-exceeded`) or, for `identity-byte-bound-reached`, the encoder limit kind as the `runtime_invariant` row spells it, never prose; `bound` its configured value, or for `identity-byte-bound-reached` the byte bound derived from the population's members; `required` the amount a failed encoding needed; `limit` is the effective limit of an `insufficient-next-charge` charge record. `label` names which
 source label a refusal concerns and `flags` a would-be IEEE flag set.
 `document_pointer` is the RFC 6901 pointer of a value in a JSON document. Absent inapplicable fields are
 omitted, never encoded as empty placeholders. Collections inside a field use

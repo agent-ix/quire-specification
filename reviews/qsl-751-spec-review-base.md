@@ -69,3 +69,5 @@ Reviewed at agent-ix/quire-specification@b82a677422ff63b1fa8c07e29f809c37887829a
 | FND-005 | fixed | 18c2112 |
 | FND-006 | fixed | 18c2112 (the ambiguity is resolved; the replacement text raises FND-008) |
 | FND-007 | fixed | 18c2112 |
+| FND-008 | fixed | bf9cbc3 |
+| FND-009 | still-open | Reviewed at bf9cbc3. The `runtime_invariant` rows now fix `kind` to exactly `canonical-bytes`, `input-bytes` or `object-bytes`, one each for quire_canonical's `CanonicalBytes`, `InputBytes` and `ObjectBytes`, so FR-272-AC-13's exact-ASCII requirement is met. The canonical definition at FR-272:194 still says `kind` is "the cause-tag spelling QSL emits for it (for example `input-bytes-exceeded`...)". QSL emits no tag for an encoder limit, and `input-bytes` is not a cause-tag spelling, so the two FR-272 statements still disagree on what `kind` holds. Fix: add to :194 "or, for `identity-byte-bound-reached`, the encoder limit kind as the `runtime_invariant` row spells it". |
