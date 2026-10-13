@@ -137,7 +137,7 @@ and `origin`.
 | Field | `TypeDefinition.fields[]` entry | its type |
 | Relationship | `TypeDefinition.relationships[]` entry | its type |
 | Operation | `Operation` | its receiver type |
-| Invariant | `Clause` with `language: quire` | its type or operation |
+| Invariant | `Clause` with `language: quire` | its type |
 | Population | Population node whose construct meaning is `quire.meaning.model.population/v1` | none |
 | Part, Port, Interface, Connection, Allocation | the `TypeDefinition` whose construct meaning is that kind's `quire.meaning.systems.*` id | none; the `owner` and end references place it in the effective view as below |
 
