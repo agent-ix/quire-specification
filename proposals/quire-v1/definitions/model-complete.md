@@ -338,13 +338,17 @@ declaration key)`; a clause names the construct by its artifact id, never
 through its owner.
 
 A phase 3 extension that would revisit a type already on the current path
-closes a cycle. Every declaration on a cycle is `refused { code: invalid_model_binding, cause:
-specialization-cycle }` once, at its own declaration, in declaration-key order:
-the cycle is detected at the first extension, in `normalize.cycle-check` charge
-order, that closes it, and a later extension closing a cycle with the same edge
-set is charged but not reported again. Each refusal lists the cycle's type keys in
-cycle order (path order from the revisited type), rotated to start at the least
-key. A redefinition whose target is not a member inherited by its owning type,
+closes a cycle. A cycle is identified by the set of its supertype edges, so
+two directed cycles over the same nodes with different edges are two cycles.
+Every declaration on a cycle is `refused { code: invalid_model_binding, cause:
+specialization-cycle }` once per cycle it lies on, at its own declaration: a
+declaration on two cycles is refused twice, once listing each cycle. A cycle is
+detected at the first extension, in `normalize.cycle-check` charge order, that
+closes it, and a later extension closing a cycle with the same edge set is
+charged but not reported again. The refusals follow cycle detection order, and
+within one cycle declaration-key order. Each refusal lists the cycle's type
+keys in cycle order (path order from the revisited type), rotated to start at
+the least key. A redefinition whose target is not a member inherited by its owning type,
 or two members of one type that redefine one target, is
 `refused { code: invalid_model_binding, cause: redefinition-target }` listing
 every such redefining member. Two phase 4 redefinitions of one member reaching `T`

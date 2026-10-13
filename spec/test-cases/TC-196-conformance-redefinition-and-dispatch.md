@@ -77,7 +77,7 @@ zero redefines links), precondition1 and postcondition1. R08's field axes cost
 three work units in (a), (b), (d), (e), (f), and four in (c) because f(B)=2.
 Thus conformance-only totals are a3, b12, c4, d3, e12, f12. These exclude
 normalization and independent clause-checking budgets. Preserve R02/R03/R04/R09
-totals 10/8/8/10 and R01's cycle uniqueness. Run all these through actual source
+totals 10/8/8/10 and R01's cycle reporting (detected and reported at the first closing extension only; later closings charged, not reported). Run all these through actual source
 clause checking; caller-stated `PostconditionClause` guards do not qualify.
 
 Let N be actual model work consumed before conformance for the chosen fixture.
