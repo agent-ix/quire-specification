@@ -1114,12 +1114,25 @@ is declared `boolean`. An `expression` or `function` whose body root is the
 application has `semantic_type` equal to that `result_type`. A `literal` term's
 `type` must have a family its `value_kind` admits (`boolean`, `integer`,
 `rational`, `decimal`, `float32_bits`→`float32`, `float64_bits`→`float64`,
-`text`, `enum`→`enum` or `ordered_enum`, `none`→`option`). Any failure is
+`text`, `string`, `uuid`, `timestamp`, `enum`→`enum` or `ordered_enum`, `none`→`option`). Any failure is
 `operator-ineligible`.
+
+The native scalar families `string`, `uuid` and `timestamp` each have the
+identities `quire.op.<family>.eq` and `quire.op.<family>.ne`:
+`quire.op.string.eq`, `quire.op.string.ne`, `quire.op.uuid.eq`,
+`quire.op.uuid.ne`, `quire.op.timestamp.eq` and `quire.op.timestamp.ne`. Each
+takes two operands of its own family, has result `boolean`, carries no law, no
+mode, no member and no leaves, and decides equality by the canonical payload
+under FR-149's row for that native (FR-149-AC-14), so equality is reflexive,
+symmetric and transitive and `ne` is its negation. `string` is not `text`: it
+has no text profile, no `text_profile` law or mode, and `quire.op.text.*` does
+not admit it. These families have no ordering, no arithmetic and no other
+operation identity: an ordering or arithmetic application over them has no
+identity to name and refuses `ill_typed`/`operator-ineligible` (FR-149-AC-16).
 
 | Constraint | Decision rule |
 | --- | --- |
-| `same_family` | The two named operands have equal families. |
+| `same_family` | | The two named operands have equal families. |
 | `same_type` | The two named operands resolve to the same type node. |
 | `conforming_reference` | The two named `reference` operands conform: they resolve to the same type node, or their object types conform one to the other as "Reference conformance" below decides. |
 | `reference_edge` | The `field` member is a reference edge between the two named `reference` operands, as "Reaches over a field" above decides. |
@@ -1289,6 +1302,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-64 | A record field whose `typeRef` names another record, including a field inherited by a record subtype, derives the named record node. A record-typed field with `optional` presence derives `Option<Address>`, and one with multiplicity `[0, 3]`, ordered and non-unique, derives `Sequence<Address>[0, 3]`; both retain the declared record node at their innermost element. A finite recursive record reached through an optional field retains the same record declaration node at every level. None derives `Reference<Address>` or an object identity. | Test |
 | FR-322-AC-65 | A `model`/`record_value_type` node owned by a selected object type or a node absent from the selected document refuses `missing_declaration`/`missing-selection` in the owner join; one with a missing `owner` refuses `malformed_wire`. An unknown field name on a valid record node refuses `ill_typed`/`operator-ineligible`. A record field whose `typeRef` names an event type, state machine, process, persistence interface or namespace refuses `invalid_model_binding`/`malformed-declaration` at FR-154 intake before member derivation; a record node used as an object reference target refuses `invalid_package`/`invalid-derived-shape`. | Test |
 | FR-322-AC-66 | The worked package with a `protocol`/`protocol_reference` carrier to its local `protocol_clause` target is admitted with one graph collection; its body target, sole dependency and semantic type bind that exact protocol node and its recomputed key changes when the target changes. With the body target and sole dependency changed together and identities recomputed, a missing local target refuses `missing_declaration`/`missing-name` even when a selected dependency contains that key, and a present non-protocol target or unequal semantic type refuses `ill_typed`/`operator-ineligible`. A non-reference body or extra carrier member fails the V2 schema; a dependency target is not admitted as a protocol reference. | Test |
+| FR-322-AC-67 | The six identities `quire.op.string.eq`, `quire.op.string.ne`, `quire.op.uuid.eq`, `quire.op.uuid.ne`, `quire.op.timestamp.eq` and `quire.op.timestamp.ne` are enumerated by both V2 schemas, and both schemas admit `string`, `uuid` and `timestamp` as a literal `value_kind`. An application of each identity over two operands of its own family with result `boolean`, no law, no mode and no member is admitted. An operand of another family (including `string` against `text`, and `uuid` against `string`), a `text_profile` law or mode, and an ordering or arithmetic identity over these families (`quire.op.integer.lt` over `uuid` operands) each refuse `operator-ineligible`. A literal of `value_kind` `uuid` whose `type` is not family `uuid` refuses `operator-ineligible`. | Test |
 
 ## Dependencies
 
