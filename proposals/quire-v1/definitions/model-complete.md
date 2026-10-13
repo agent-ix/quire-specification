@@ -208,9 +208,10 @@ prefix first.
 Every phase-1 original declaration and its FCD origin remains available from
 the immutable ModelSelection declaration inventory. That inventory and the
 effective declarations are different sets: a scalar, a population, a namespace, a clause
-in a language other than `quire` and a clause owned by an operation have no
+in a language other than `quire` have no
 phase-2 qualify rule and remain originals, without an invented qualify fact or
-effective declaration. Effective entries and their fact input
+effective declaration. An operation's `Pre:` and `Post:` contract clause is not a
+declaration: it is not retained and is never qualified. Effective entries and their fact input
 keys reference only that retained inventory. Retention adds no derivation,
 effective-declaration or hash charge and changes no effective identity
 preimage. The fixed `digest_domain: "sha256-jcs"` discriminator in an original

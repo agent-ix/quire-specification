@@ -61,3 +61,13 @@ the `(B, A/x)` digest. That belongs to QSL, not QSpec.
 | FND-002 | fixed | 17ffad9 |
 | FND-003 | fixed | 17ffad9 |
 | FND-004 | fixed | 17ffad9 |
+| FND-005 | fixed | aa8d139 |
+| FND-006 | fixed | aa8d139 |
+
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | medium | An operation-owned clause has no original declaration, so the claim that it "remains an original" can't hold. In the IR an operation's `pre`/`post` item is either a clauseId string naming a type clause (a type-owned `Clause` node, which is qualified) or an identity-less inline clause. QSL keeps nothing from either (`read_operation_member`: "nothing is kept from it"), yet model-complete.md, FR-150 and N18 ("stay originals in the retained inventory") all say it is retained | TC-195:68; model-complete.md:209-213; FR-150:52-53 |
+| FND-008 | low | N14's cycle run (`V1.supertypes = [V2]`, `V2.supertypes = [V1]`) yields two refusals, at `V1` and at `V2` (the reader flags every type on the cycle, and QSL keeps one per node), but the vector says only "each refused at supertypes" and names no node or count | TC-195:64 |
+| FND-009 | low | N17's parenthetical "a state or transition name reached from two owners is a derivation conflict" misstates the rule: model-complete.md and QSL compare a transition by its `from`, `to` and `trigger`, not by its name, and only a state conflicts by name | TC-195:67; model-complete.md:347-349 |

@@ -49,3 +49,5 @@ type" (case keyed by its case node, never the `variant` export key).
 | FND-001 | fixed | 17ffad9 |
 | FND-002 | fixed | 17ffad9 |
 | FND-003 | fixed | 17ffad9 |
+| FND-004 | fixed | aa8d139 |
+| FND-005 | fixed | aa8d139 |
