@@ -739,6 +739,9 @@ enum OperationRefusal {
     /// `ambiguous_declaration`/`ambiguous-name`: a `relationship_end` member
     /// names a role both ends of its relationship carry.
     AmbiguousName,
+    /// `invalid_package`/`invalid-value`: a `string`, `uuid` or `timestamp`
+    /// literal whose `value` is not the canonical payload spelling.
+    InvalidValue,
 }
 
 impl OperationRefusal {
@@ -767,6 +770,7 @@ impl OperationRefusal {
             Self::OperatorIneligible => "operator-ineligible",
             Self::MissingName => "missing-name",
             Self::AmbiguousName => "ambiguous-name",
+            Self::InvalidValue => "invalid-value",
         }
     }
 
@@ -782,14 +786,15 @@ impl OperationRefusal {
             | Self::LawUnselected
             | Self::ModeMismatch
             | Self::MemberMismatch
-            | Self::ModeTypeMismatch => "invalid_package",
+            | Self::ModeTypeMismatch
+            | Self::InvalidValue => "invalid_package",
         }
     }
 
     fn from_cause(cause: &str) -> Option<Self> {
         // `MissingName` and `AmbiguousName` are the relationship-end refusals, outside the nine
         // operation causes whose pairing and mutations the tests enumerate.
-        for outside in [Self::MissingName, Self::AmbiguousName] {
+        for outside in [Self::MissingName, Self::AmbiguousName, Self::InvalidValue] {
             if cause == outside.cause() {
                 return Some(outside);
             }
@@ -888,6 +893,30 @@ impl ExpectedLeaf {
         match self {
             Self::Text(path, _) | Self::Recursion(path) => path,
         }
+    }
+}
+
+/// Whether a `string`, `uuid` or `timestamp` literal's `value` is its canonical
+/// payload spelling (FR-322 "Scalar literal values"): a UUID as 32 lowercase
+/// hexadecimal digits grouped `8-4-4-4-12`, a Timestamp as the canonical decimal
+/// text of a signed 128-bit nanosecond count, a String as any scalar sequence.
+/// Every other literal kind is outside this rule.
+fn literal_value_is_canonical(literal: &Value) -> bool {
+    let value = literal["value"].as_str();
+    match literal["value_kind"].as_str() {
+        Some("string") => value.is_some(),
+        Some("uuid") => value.is_some_and(|text| {
+            text.len() == 36
+                && text.bytes().enumerate().all(|(index, byte)| match index {
+                    8 | 13 | 18 | 23 => byte == b'-',
+                    _ => byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte),
+                })
+        }),
+        Some("timestamp") => value.is_some_and(|text| {
+            text.parse::<i128>()
+                .is_ok_and(|count| count.to_string() == text)
+        }),
+        _ => true,
     }
 }
 
@@ -1066,6 +1095,9 @@ impl<'a> OperationOracle<'a> {
                     "float32_bits" => &["float32"],
                     "float64_bits" => &["float64"],
                     "text" => &["text"],
+                    "string" => &["string"],
+                    "uuid" => &["uuid"],
+                    "timestamp" => &["timestamp"],
                     "enum" => &["enum", "ordered_enum"],
                     "none" => &["option"],
                     _ => return None,
@@ -1121,6 +1153,9 @@ impl<'a> OperationOracle<'a> {
                         ty: None,
                         bound: Some(Box::new(bound)),
                     }))
+            }
+            Some("literal") if !literal_value_is_canonical(term) => {
+                Err(OperationRefusal::InvalidValue)
             }
             _ => Ok(self.descriptor(term)),
         }
@@ -12255,4 +12290,282 @@ fn tc_233_a_relationship_end_names_only_the_ends_its_relationship_declares() {
             }
         }
     }
+}
+
+/// A package of the native scalar types, two operand values of each, and
+/// a Boolean result type, whose lock selects the text law.
+fn scalar_equality_package(catalog: &Value) -> Value {
+    let mut types = vec![
+        walk_scalar("String", "string"),
+        walk_scalar("UUID", "uuid"),
+        walk_scalar("Timestamp", "timestamp"),
+        walk_scalar("Integer", "integer"),
+        walk_text("Short", "nfc"),
+        walk_scalar("Bool", "boolean"),
+    ];
+    for (prefix, ty) in [
+        ("s", "String"),
+        ("u", "UUID"),
+        ("t", "Timestamp"),
+        ("x", "Short"),
+    ] {
+        for side in ["1", "2"] {
+            types.push(json!({
+                "node_id": walk_id(&format!("{prefix}{side}")),
+                "node_tag": "value",
+                "semantic_form": "parameter",
+                "semantic_type": walk_id(ty),
+                "body": {"term": "aggregate", "members": []}
+            }));
+        }
+    }
+    json!({
+        "lock": {"profile_selections": [], "definition_selections": [walk_text_law(catalog)]},
+        "semantic_graph": {"nodes": types}
+    })
+}
+
+fn scalar_application(identity: &str, laws: Value, mode: Value, left: &str, right: &str) -> Value {
+    json!({
+        "term": "application",
+        "operator": "binary",
+        "operation": {"identity": identity, "laws": laws, "mode": mode, "member": null, "leaves": []},
+        "result_type": walk_id("Bool"),
+        "arguments": [walk_ref(left), walk_ref(right)]
+    })
+}
+
+fn scalar_literal(kind: &str, ty: &str, value: &str) -> Value {
+    json!({"term": "literal", "type": walk_id(ty), "value_kind": kind, "value": value})
+}
+
+fn collect_value_kind_enums<'a>(schema: &'a Value, found: &mut Vec<&'a Value>) {
+    match schema {
+        Value::Object(map) => {
+            for (key, child) in map {
+                if key == "value_kind" && child.get("enum").is_some() {
+                    found.push(&child["enum"]);
+                } else {
+                    collect_value_kind_enums(child, found);
+                }
+            }
+        }
+        Value::Array(items) => items
+            .iter()
+            .for_each(|child| collect_value_kind_enums(child, found)),
+        _ => {}
+    }
+}
+
+/// SE-01 to SE-06 and SE-09: both schemas enumerate the six identities and the
+/// three literal kinds, the catalog defines each identity as a plain binary
+/// boolean comparison, and each identity over two operands of its family is admitted.
+#[trace("FR-322-AC-67", "TC-233")]
+#[test]
+fn tc_233_scalar_equality_identities_and_literal_kinds_are_enumerated_and_admitted() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = scalar_equality_package(&catalog);
+    let oracle = OperationOracle::for_package(&catalog, &package);
+    for (family, prefix) in [("string", "s"), ("uuid", "u"), ("timestamp", "t")] {
+        for operation in ["eq", "ne"] {
+            let identity = format!("quire.op.{family}.{operation}");
+            for schema in [parsed_fixture(SCHEMA), parsed_fixture(NODE_PREIMAGE_SCHEMA)] {
+                assert!(
+                    string_set(&schema["$defs"]["OperationIdentity"]["enum"], "identities")
+                        .contains(identity.as_str()),
+                    "{identity} is enumerated"
+                );
+            }
+            let entry = catalog["operations"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|entry| entry["identity"] == identity.as_str())
+                .unwrap_or_else(|| panic!("{identity} is catalogued"));
+            assert_eq!(entry["operands"], json!([family, family]));
+            assert_eq!(entry["result"], "boolean");
+            assert_eq!(entry["laws"], json!([]));
+            assert_eq!(entry["mode"], Value::Null);
+            assert_eq!(
+                oracle
+                    .classify(&scalar_application(
+                        &identity,
+                        json!([]),
+                        Value::Null,
+                        &format!("{prefix}1"),
+                        &format!("{prefix}2"),
+                    ))
+                    .map(|result| result.family),
+                Ok("boolean".to_owned()),
+                "{identity} over two {family} operands is admitted"
+            );
+        }
+    }
+    for schema in [parsed_fixture(SCHEMA), parsed_fixture(NODE_PREIMAGE_SCHEMA)] {
+        let mut enums = vec![];
+        collect_value_kind_enums(&schema, &mut enums);
+        assert!(!enums.is_empty());
+        for kinds in enums {
+            let kinds = string_set(kinds, "value kinds");
+            for kind in ["string", "uuid", "timestamp"] {
+                assert!(kinds.contains(kind), "{kind} is a literal value_kind");
+            }
+        }
+    }
+    for (kind, ty, value) in [
+        ("string", "String", "a\u{e9}"),
+        ("uuid", "UUID", "00112233-4455-6677-8899-aabbccddeeff"),
+        ("timestamp", "Timestamp", "-1"),
+    ] {
+        let literal = scalar_literal(kind, ty, value);
+        assert!(
+            oracle
+                .argument_descriptor(&literal)
+                .is_ok_and(|d| d.is_some()),
+            "a {kind} literal typed by its own family is admitted"
+        );
+    }
+}
+
+/// SE-07, SE-08 and SE-11 to SE-13: a cross-family operand pair, an
+/// ordering or arithmetic identity over these families, a stray `text_profile`
+/// law and a stray `text_profile` mode are each refused by exactly their step.
+#[trace("FR-322-AC-67", "TC-233")]
+#[test]
+fn tc_233_scalar_equality_refuses_cross_family_laws_modes_ordering_and_arithmetic() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = scalar_equality_package(&catalog);
+    let oracle = OperationOracle::for_package(&catalog, &package);
+    let refusal = |identity: &str, laws: Value, mode: Value, left: &str, right: &str| {
+        oracle
+            .classify(&scalar_application(identity, laws, mode, left, right))
+            .err()
+    };
+    for (identity, left, right) in [
+        ("quire.op.string.eq", "s1", "x1"),
+        ("quire.op.uuid.eq", "u1", "s1"),
+        ("quire.op.string.ne", "s1", "u1"),
+        ("quire.op.timestamp.eq", "t1", "u1"),
+        ("quire.op.integer.lt", "u1", "u2"),
+        ("quire.op.integer.add", "u1", "u2"),
+        ("quire.op.integer.lt", "t1", "t2"),
+        ("quire.op.integer.add", "s1", "s2"),
+    ] {
+        assert_eq!(
+            refusal(identity, json!([]), Value::Null, left, right),
+            Some(OperationRefusal::OperatorIneligible),
+            "{identity} over {left} and {right} refuses ill_typed/operator-ineligible"
+        );
+    }
+    assert_eq!(
+        refusal(
+            "quire.op.text.eq",
+            json!([{"role": "text_profile", "definition": walk_text_law(&catalog)}]),
+            json!({"kind": "text_profile", "value": "nfc"}),
+            "s1",
+            "s2"
+        ),
+        Some(OperationRefusal::ModeTypeMismatch),
+        "a string operand of quire.op.text.eq pins no text profile and refuses operation-mode-type-mismatch"
+    );
+    assert_eq!(
+        refusal(
+            "quire.op.string.eq",
+            json!([{"role": "text_profile", "definition": walk_text_law(&catalog)}]),
+            Value::Null,
+            "s1",
+            "s2"
+        ),
+        Some(OperationRefusal::LawMismatch),
+        "a text_profile law on string equality refuses operation-law-mismatch"
+    );
+    assert_eq!(
+        refusal(
+            "quire.op.uuid.eq",
+            json!([]),
+            json!({"kind": "text_profile", "value": "nfc"}),
+            "u1",
+            "u2"
+        ),
+        Some(OperationRefusal::ModeMismatch),
+        "a text_profile mode on uuid equality refuses operation-mode-mismatch"
+    );
+    assert_eq!(OperationRefusal::LawMismatch.code(), "invalid_package");
+    assert_eq!(OperationRefusal::ModeMismatch.code(), "invalid_package");
+    assert_eq!(OperationRefusal::OperatorIneligible.code(), "ill_typed");
+}
+
+/// SE-10 and SE-14 to SE-18: a literal whose type is not its kind's family
+/// refuses `operator-ineligible`, and a non-canonical `uuid`, `timestamp` or
+/// `string` value refuses `invalid_package`/`invalid-value`.
+#[trace("FR-322-AC-67", "TC-233")]
+#[test]
+fn tc_233_scalar_literals_need_their_family_and_canonical_value() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = scalar_equality_package(&catalog);
+    let oracle = OperationOracle::for_package(&catalog, &package);
+    let uuid = "00112233-4455-6677-8899-aabbccddeeff";
+    let literal_refusal = |kind: &str, ty: &str, value: &str| {
+        oracle
+            .argument_descriptor(&scalar_literal(kind, ty, value))
+            .map(|descriptor| descriptor.is_some())
+    };
+    for (kind, ty, value) in [
+        ("uuid", "String", uuid),
+        ("string", "UUID", "abc"),
+        ("string", "Short", "abc"),
+        ("timestamp", "Integer", "0"),
+        ("timestamp", "UUID", "0"),
+        ("uuid", "Timestamp", uuid),
+    ] {
+        assert_eq!(
+            literal_refusal(kind, ty, value),
+            Ok(false),
+            "a {kind} literal typed {ty} is not admitted by the literal rule"
+        );
+    }
+    for (kind, ty, value) in [
+        ("uuid", "UUID", "00112233-4455-6677-8899-AABBCCDDEEFF"),
+        ("uuid", "UUID", "00112233445566778899aabbccddeeff"),
+        ("uuid", "UUID", "00112233-4455-6677-8899-aabbccddeef"),
+        ("timestamp", "Timestamp", "-0"),
+        ("timestamp", "Timestamp", "+1"),
+        ("timestamp", "Timestamp", "01"),
+        ("timestamp", "Timestamp", ""),
+        (
+            "timestamp",
+            "Timestamp",
+            "170141183460469231731687303715884105728",
+        ),
+    ] {
+        assert_eq!(
+            literal_refusal(kind, ty, value),
+            Err(OperationRefusal::InvalidValue),
+            "{kind} value {value:?} is not canonical"
+        );
+    }
+    for (kind, ty, value) in [
+        ("uuid", "UUID", uuid),
+        ("timestamp", "Timestamp", "0"),
+        (
+            "timestamp",
+            "Timestamp",
+            "-170141183460469231731687303715884105728",
+        ),
+        (
+            "timestamp",
+            "Timestamp",
+            "170141183460469231731687303715884105727",
+        ),
+        ("string", "String", ""),
+        ("string", "String", "Caf\u{e9} and cafe\u{301}"),
+    ] {
+        assert_eq!(
+            literal_refusal(kind, ty, value),
+            Ok(true),
+            "{kind} value {value:?} is canonical"
+        );
+    }
+    assert_eq!(OperationRefusal::InvalidValue.code(), "invalid_package");
+    assert_eq!(OperationRefusal::InvalidValue.cause(), "invalid-value");
 }

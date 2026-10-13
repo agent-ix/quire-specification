@@ -263,9 +263,16 @@ projection entry patched and `package_id` recomputed (FR-322-AC-54).
 | SE-06 | `quire.op.timestamp.ne` over two `timestamp` operands | Identity enumerated by both schemas; application admitted | FR-322-AC-67 |
 | SE-07 | `quire.op.string.eq` over a `string` and a `text` operand | `ill_typed`/`operator-ineligible` | FR-322-AC-67 |
 | SE-08 | `quire.op.integer.lt` over two `uuid` operands | `ill_typed`/`operator-ineligible` | FR-322-AC-67 |
-| SE-09 | literal of `value_kind` `string`, `uuid` and `timestamp`, each typed by its own family | Admitted by both schemas and the literal rule | FR-322-AC-67 |
+| SE-09 | literal of `value_kind` `string`, `uuid` and `timestamp`, each typed by its own family with a canonical value | Admitted by both schemas and the literal rule | FR-322-AC-67 |
 | SE-10 | literal of `value_kind` `uuid` typed by a `string` type | `ill_typed`/`operator-ineligible` | FR-322-AC-67 |
-
+| SE-11 | `quire.op.uuid.eq` over a `uuid` and a `string` operand; `quire.op.timestamp.eq` over a `timestamp` and a `uuid` operand | `ill_typed`/`operator-ineligible` | FR-322-AC-67 |
+| SE-12 | `quire.op.string.eq` carrying a `text_profile` law | `invalid_package`/`operation-law-mismatch` | FR-322-AC-67 |
+| SE-13 | `quire.op.uuid.eq` carrying a `text_profile` mode | `invalid_package`/`operation-mode-mismatch` | FR-322-AC-67 |
+| SE-14 | `quire.op.integer.add` over two `uuid` operands; `quire.op.integer.lt` over two `timestamp` operands | `ill_typed`/`operator-ineligible` | FR-322-AC-67 |
+| SE-15 | literal of `value_kind` `string` typed by `uuid` or `text`; literal of `value_kind` `timestamp` typed by `integer` | `ill_typed`/`operator-ineligible` | FR-322-AC-67 |
+| SE-16 | literal of `value_kind` `uuid` with an uppercase value, no hyphens or 35 characters | `invalid_package`/`invalid-value` | FR-322-AC-67 |
+| SE-17 | literal of `value_kind` `timestamp` with value `-0`, `+1`, `01`, empty text or `170141183460469231731687303715884105728` | `invalid_package`/`invalid-value` | FR-322-AC-67 |
+| SE-18 | `quire.op.text.eq` over two `string` operands with a `text_profile` law and mode | `invalid_package`/`operation-mode-type-mismatch` | FR-322-AC-67 |
 ## Expected Results
 
 Every positive artifact validates and recomputes its recorded identity. Excluded
