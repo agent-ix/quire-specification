@@ -44,3 +44,18 @@ Verification evidence for the new and amended criteria. The new test `tc_233_eve
 ## Verdict
 
 Findings to fix in this PR before merge.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | low | The three new tests rebuild FR-322's rules in Rust (`conforms`, `slot_admits`, the event check) over a hard-coded document and assert inline expectations. They do not apply a published vector document. Reverting the FR-322 prose would leave them green; only the catalog-shape asserts (the constraint kinds of each entry, `leaves: operand:0`) read an external artifact. Unlike TC-281's other cases in `model-member-type-vectors.json`, which run against the real acme-orders document and its recomputed keys, the EV/RCF vectors are not published as data, so the IR reader (quire-contract-ir) cannot consume them. The tests are acceptable as a reference oracle for this PR. Publish EV/RCF as vector data in a follow-up so the reader implementation is checked against them. | tests/record_conformance.rs:1-495 |
+
+## Dispositions
+
+Round 1, reviewed at agent-ix/quire-specification@6fa92f760058a4654ed5122d81d9dc8eec980647.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 6fa92f7 |
+| FND-002 | fixed | 6fa92f7 |

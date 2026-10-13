@@ -939,14 +939,18 @@ identity includes its element type node: a child **value** is admitted at a
 
 Conformance decides these positions:
 
-- **Calls.** The arguments of a `quire.op.function.call` application after its
-  callee, and of an operation call (`dispatch_call`) after its receiver, equal
-  the callee's parameters in number, and each argument's type node equals the
-  type node of the parameter at its position, or, when that parameter's type is
-  a record type node `P`, is a record type node that conforms to `P`. A callee's
-  parameter types are those its declaration gives; the catalog entry of
-  `quire.op.function.call` carries no constraint for them, so the reader
-  checks this at the application's `operator-ineligible` check.
+- **Calls.** The arguments of an operation call (`dispatch_call`) after its
+  receiver equal the resolved operation's parameters in number, and each
+  argument's type node equals the type node of the parameter at its position,
+  or, when that parameter's type is a record type node `P`, is a record type
+  node that conforms to `P`; the parameters come from the selected document
+  (step 4). **Open item for the spec owner:** a `quire.op.function.call`
+  application is typed by family only today. Its catalog entry has
+  `rest: any_term` and no constraint, and a checked-package `function` node
+  carries no parameter list a reader can read by position (its `semantic_type`
+  is the result type), so the reader cannot decide argument conformance at a
+  `function.call` parameter. Conformance there needs the package to carry a
+  parameter list; this artifact does not invent one.
 - **Projection.** `quire.op.record.project` over an operand of record type node
   `A` carries a `field` member whose `declaration` names a record type node
   `D` that `A` conforms to (`member_of`), so a field `D` declares or inherits is
@@ -966,6 +970,15 @@ Conformance decides these positions:
   "Union value") and a record field. The family checks (`uniform_rest`, the
   operand groups) are unchanged: a child and its ancestor both have family
   `record`.
+- **Results.** A result position compares the type node of a term with a
+  declared result: the `semantic_type` of a `function` or `expression` node
+  whose body root is an application is the application's `result_type`, or, when
+  it is a record type node `R`, any record type node that conforms to `R`; and
+  the `arm_body` result of a `case` application is the case result type, or any
+  arm-body type node that conforms to it when that type is a record type node.
+  So `f(): Money { make_taxed() }` and a `case` whose arms yield `Money` and
+  `TaxedMoney` are admitted. The `return:0` result form is unchanged: a call is
+  typed at the callee's declared result, whatever descendant value it returns.
 - **Equality.** `quire.op.structural.eq` and `quire.op.structural.ne` take two
   operands of one type node (`same_type`), and a record, or a record inside an
   option, tuple, union or collection of that type, may hold a subtype value;
@@ -1414,7 +1427,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-66 | The worked package with a `protocol`/`protocol_reference` carrier to its local `protocol_clause` target is admitted with one graph collection; its body target, sole dependency and semantic type bind that exact protocol node and its recomputed key changes when the target changes. With the body target and sole dependency changed together and identities recomputed, a missing local target refuses `missing_declaration`/`missing-name` even when a selected dependency contains that key, and a present non-protocol target or unequal semantic type refuses `ill_typed`/`operator-ineligible`. A non-reference body or extra carrier member fails the V2 schema; a dependency target is not admitted as a protocol reference. | Test |
 | FR-322-AC-67 | The six identities `quire.op.string.eq`, `quire.op.string.ne`, `quire.op.uuid.eq`, `quire.op.uuid.ne`, `quire.op.timestamp.eq` and `quire.op.timestamp.ne` are enumerated by both V2 schemas and catalogued as binary `boolean` comparisons with no law or mode, and both schemas admit `string`, `uuid` and `timestamp` as a literal `value_kind`. An application of each identity over two operands of its own family, with result `boolean`, no law, no mode and no member, is admitted. An operand of another family (`string` against `text`, `uuid` against `string`, `timestamp` against `uuid`) and an ordering or arithmetic identity over these families (`quire.op.integer.lt` and `quire.op.integer.add` over `uuid` operands) each refuse `ill_typed`/`operator-ineligible`. A `text_profile` law on a `string`, `uuid` or `timestamp` identity refuses `invalid_package`/`operation-law-mismatch`, a `text_profile` mode `invalid_package`/`operation-mode-mismatch`, and a `string` operand of `quire.op.text.eq` `invalid_package`/`operation-mode-type-mismatch`. A literal of `value_kind` `string`, `uuid` or `timestamp` whose `type` is not its own family refuses `ill_typed`/`operator-ineligible`, and a `string`, `uuid` or `timestamp` literal `value` in a non-canonical spelling, on a literal of the right family, refuses `invalid_package`/`invalid-value`. | Test |
 | FR-322-AC-68 | A selected domain package whose document declares the event type `OrderPlaced` (`quire.meaning.model.event-type/v1`, with fields `order_id` and `occurred_at`) admits a self-typed `model`/`event_type` declaration node owned by `OrderPlaced`, with a `ModelOwner` and the closed `ModelDeclarationNode` preimage. The node has family `record`, a `quire.op.record.project` over a value of its type resolves a field of `OrderPlaced` (own or inherited) to its step 4 type, and an invariant clause function owned by `OrderPlaced` passes the owner join. A `quire.op.structural.eq` or `quire.op.structural.ne` over two `OrderPlaced` operands, or over two `Option<OrderPlaced>`, tuple-holding-`OrderPlaced` or `Set<OrderPlaced>` operands, refuses `ill_typed`/`operator-ineligible`; the same applications over `Money` operands are admitted. A `model`/`event_type` node owned by a record value type, an object type or a node absent from the selected document refuses `missing_declaration`/`missing-selection` in the owner join, one with no `owner` or with a `SourceOwner` and no `declaration` fails the V2 schema (`malformed_wire`), and both V2 schemas enumerate the form in the owner-presence rule, the model forms and the `ModelDeclarationNode` preimage. | Test |
-| FR-322-AC-69 | With record value types `Money` and `TaxedMoney` (supertype `Money`) and `GiftTaxedMoney` (supertype `TaxedMoney`) of one selected document, a `quire.op.function.call` or operation-call argument of type `TaxedMoney` or `GiftTaxedMoney` at a `Money` parameter is admitted with the argument taken by `ref` and no conversion node; a `Money` argument at a `TaxedMoney` parameter, an argument of an unrelated record, and a `Sequence<TaxedMoney>` argument at a `Sequence<Money>` parameter each refuse `ill_typed`/`operator-ineligible`, as does an argument whose count differs from the parameters'. A `quire.op.record.project` over a `GiftTaxedMoney` or `TaxedMoney` operand whose `field` member names `Money` as `declaration` reads `Money`'s field with the type `Money` gives it, and one naming `GiftTaxedMoney` over a `TaxedMoney` operand refuses `ill_typed`/`operator-ineligible`. `quire.op.collection.contains` over a `Set<Money>` and a `TaxedMoney` operand, and `quire.op.collection.set` over `TaxedMoney` rest arguments with a `Set<Money>` result, are admitted, and a `Set<TaxedMoney>` operand of a `Set<Money>` slot refuses. A `value`/`union_value` node whose `Money` payload position holds a `TaxedMoney` term is admitted. A `quire.op.structural.eq` or `quire.op.structural.ne` over two `Money` operands is admitted with `Money`'s leaves, including when the values are `TaxedMoney` values whose subtype-only text field has no listed leaf. | Test |
+| FR-322-AC-69 | With record value types `Money` and `TaxedMoney` (supertype `Money`) and `GiftTaxedMoney` (supertype `TaxedMoney`) of one selected document, an operation-call argument of type `TaxedMoney` or `GiftTaxedMoney` at a `Money` parameter is admitted with the argument taken by `ref` and no conversion node; a `Money` argument at a `TaxedMoney` parameter, an argument of an unrelated record, and a `Sequence<TaxedMoney>` argument at a `Sequence<Money>` parameter each refuse `ill_typed`/`operator-ineligible`, as does an argument whose count differs from the parameters'. A `function` node typed `Money` whose body root is an application typed `TaxedMoney`, and a `case` whose arm bodies are typed `Money` and `TaxedMoney` with result type `Money`, are admitted; a `Money` body at a `TaxedMoney` function is refused. A `quire.op.record.project` over a `GiftTaxedMoney` or `TaxedMoney` operand whose `field` member names `Money` as `declaration` reads `Money`'s field with the type `Money` gives it, and one naming `GiftTaxedMoney` over a `TaxedMoney` operand refuses `ill_typed`/`operator-ineligible`. `quire.op.collection.contains` over a `Set<Money>` and a `TaxedMoney` operand, and `quire.op.collection.set` over `TaxedMoney` rest arguments with a `Set<Money>` result, are admitted, and a `Set<TaxedMoney>` operand of a `Set<Money>` slot refuses. A `value`/`union_value` node whose `Money` payload position holds a `TaxedMoney` term is admitted. A `quire.op.structural.eq` or `quire.op.structural.ne` over two `Money` operands is admitted with `Money`'s leaves, including when the values are `TaxedMoney` values whose subtype-only text field has no listed leaf. | Test |
 
 ## Dependencies
 

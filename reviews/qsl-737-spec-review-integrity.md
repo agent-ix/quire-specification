@@ -54,3 +54,22 @@ Consistency of the FR-143/144/149/208/322 edits, the two V2 schema enum addition
 ## Verdict
 
 Findings to fix in this PR before merge.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-006 | medium | The Calls rule checks each `quire.op.function.call` argument against 'the type node of the parameter at its position' and says the parameter types are 'those its declaration gives'. A checked-package `function` node carries no parameter list: its `semantic_type` is the result type, its `declaration` is a qualified name, and the parameter nodes (`value`/`parameter`) are not linked to it by position (positive-all-families.json). A reader therefore cannot apply the count or type check for a `function.call`. The test hands `params` in directly (record_conformance.rs `call`), so it cannot catch this. The gap predates this PR: line 444's 'signature type nodes' already assume a signature. Either state where a callee's ordered parameter types are read in the package, or defer to a ticket that adds that structure. dispatch_call is decidable, because it reads the operation's parameters from the selected document. | spec/objects/interfaces/FR-322-checked-package-artifact.md:942-949, 443-446 |
+| FND-007 | low | FR-143 now makes a model record's key stable and equal across checked packages that select one document. That makes 'a runtime composite value from another checked package is invalid_runtime_input' false for model records: such a value carries a key of this package's graph and is admitted under the key-membership rule (lines 114-116). Scope AC-9 to source-declared composites, or say a model record value from another package that selects the same document is admitted. | spec/functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md:252 |
+
+## Dispositions
+
+Round 1, reviewed at agent-ix/quire-specification@6fa92f760058a4654ed5122d81d9dc8eec980647.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 6fa92f7 |
+| FND-002 | fixed | 6fa92f7 |
+| FND-003 | fixed | 6fa92f7 |
+| FND-004 | fixed | 6fa92f7 |
+| FND-005 | fixed | 6fa92f7 |

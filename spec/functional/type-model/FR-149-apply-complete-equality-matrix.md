@@ -63,6 +63,7 @@ implicit conversion or local-name equality creates a common type.
 | Enumeration | the same qualified enumeration declaration and identical case; different declarations have no implicit common type |
 | Presence, absence and null | same declared type and state; two absent values are equal, two explicit null values are equal, and two present values recursively compare their payload; absent and explicit null are distinct |
 | Record and tuple | same FR-143 declaration key and recursively equal fields in declaration order or positions in order; two records of one static type whose most-specific declaration keys differ (a record subtype value and an ancestor value, FR-208) are unequal, and `=` is `false`, not a refusal |
+| Event type (FR-208) | no equality: `=` and `!=` over an event type, or over a type containing one at any depth, is `refused { code: ill_typed, cause: operator-ineligible }` |
 | Sequence | equal length and recursively equal values at every index |
 | Set | equal member count and recursively equal members independent of iteration order |
 | Bag | equal occurrence count and recursively equal members with equal multiplicity |
@@ -275,6 +276,7 @@ collection and object-reference rows of this requirement.
 | FR-149-AC-15 | UUID versus Timestamp, either kind versus `Int`, `Integer`, `Text`, `String` or `Boolean`, and any attempted equality conversion between these kinds refuse `ill_typed`/`type-mismatch` before an equality charge and produce no Boolean. Direct kernel mixed-kind comparisons return the typed checked-invariant refusal and key comparison returns no key relation. | Test |
 | FR-149-AC-16 | Same-kind keys compare canonical payload content unsigned ASCII bytewise with a proper prefix first: Timestamp `10` orders before `2`, and `-1` before `-2`, while equal payloads have equal keys. The four ordering operators on either native refuse `ill_typed`/`operator-ineligible` before any charge; key availability creates no ordering or arithmetic capability. | Test |
 | FR-149-AC-17 | Two operands of static type `Money`, one holding a `TaxedMoney` and one a `Money` of equal shared fields, give `=` `false` and `!=` `true` in either order as one terminal unequal pair; the same holds for the record as a field, an `Option` payload, a collection element, a tuple position and a union payload. A `Child == Parent` over two different static types stays `ill_typed`/`type-mismatch`. | Test (TC-194) |
+| FR-149-AC-18 | `=` and `!=` over two event-type operands, and over `Option`, tuple or union values containing one, are `ill_typed`/`operator-ineligible` before any charge; a `Set`, `Bag` or `OrderedSet` of an event type is refused for the same reason (FR-144). | Test (TC-194) |
 
 ## Dependencies
 

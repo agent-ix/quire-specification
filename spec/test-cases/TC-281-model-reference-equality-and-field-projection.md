@@ -116,7 +116,7 @@ selected document for them declares the record value types `Money`,
 `TaxedMoney` (supertype `Money`), `GiftTaxedMoney` (supertype `TaxedMoney`) and
 `Other`, the event types `OrderPlaced` and `ExpressOrderPlaced` (supertype
 `OrderPlaced`) and the object type `Order`. `TaxedMoney` adds `tax_minor` and a
-text field `note`; `Money` declares `amount_minor`.
+text field `note`; `Money` declares `amount_minor`. These vectors are a reference oracle: `tests/record_conformance.rs` applies the prose rules over inline data, and the vectors are not yet published as a data file.
 
 | Vector | Input | Expected result | Criteria |
 | --- | --- | --- | --- |
@@ -128,14 +128,15 @@ text field `note`; `Money` declares `amount_minor`.
 | EV-06 | `structural.eq` and `structural.ne` over two `Money` operands, and over two `Option<Money>` operands | Admitted | FR-322-AC-68 |
 | RCF-01 | `record.project` of `amount_minor` with `declaration` `Money` over `Money`, `TaxedMoney` and `GiftTaxedMoney` operands | Admitted; type is the one `Money` gives the field | FR-322-AC-69 |
 | RCF-02 | `record.project` with `declaration` `GiftTaxedMoney` over a `TaxedMoney` operand; with `declaration` `TaxedMoney` over a `Money` operand; with `declaration` `Other` over a `Money` operand | `ill_typed`/`operator-ineligible`: `member_of` fails | FR-322-AC-69 |
-| RCF-03 | `function.call` with one parameter `Money` and a `TaxedMoney` argument, then a `GiftTaxedMoney` argument | Admitted | FR-322-AC-69 |
-| RCF-04 | `function.call` with one parameter `TaxedMoney` and a `Money` argument; with one parameter `Money` and an `Other` argument; with two arguments for one parameter | `ill_typed`/`operator-ineligible` | FR-322-AC-69 |
-| RCF-05 | `function.call` with one parameter `Sequence<Money>` and a `Sequence<TaxedMoney>` argument; with `Option<Money>` and `Option<TaxedMoney>` | `ill_typed`/`operator-ineligible`: a `K<child>` type is not a `K<parent>` type | FR-322-AC-69 |
-| RCF-06 | `dispatch_call` of an operation with a `Money` parameter and a `TaxedMoney` argument | Admitted | FR-322-AC-31, FR-322-AC-69 |
+| RCF-03 | `dispatch_call` of an operation with a `Money` parameter and a `TaxedMoney` argument, then a `GiftTaxedMoney` argument | Admitted | FR-322-AC-31, FR-322-AC-69 |
+| RCF-04 | `dispatch_call` with a `TaxedMoney` parameter and a `Money` argument; with a `Money` parameter and an `Other` argument; with two arguments for one parameter | `ill_typed`/`operator-ineligible` | FR-322-AC-31, FR-322-AC-69 |
+| RCF-05 | `dispatch_call` with a `Sequence<Money>` parameter and a `Sequence<TaxedMoney>` argument; with `Option<Money>` and `Option<TaxedMoney>`; and `function.call` over any arguments | `ill_typed`/`operator-ineligible`: a `K<child>` type is not a `K<parent>` type; `function.call` is typed by family only (open item, no parameter list in the package) | FR-322-AC-69 |
 | RCF-07 | `collection.contains` over a `Set<Money>` and a `TaxedMoney` operand; over a `Set<TaxedMoney>` and a `Money` operand | Admitted; `ill_typed`/`operator-ineligible` | FR-322-AC-69 |
 | RCF-08 | `collection.set` and `collection.sequence` with `result_type` `Set<Money>` and `Sequence<Money>` and rest arguments `Money` and `TaxedMoney`; with a `Set<TaxedMoney>` result and a `Money` rest argument | Admitted; `ill_typed`/`operator-ineligible` | FR-322-AC-69 |
 | RCF-09 | A union value of a member with a `Money` payload and a `TaxedMoney` term; with a `Money` term at a `TaxedMoney` payload | Admitted; `ill_typed`/`type-mismatch` | FR-322-AC-69 |
 | RCF-10 | `structural.eq` and `structural.ne` over two `Money` operands with the leaves of `Money`, where the values are `TaxedMoney` values whose `note` has no listed leaf | Admitted: the leaf check reads `Money`'s walk only | FR-322-AC-69 |
+| RCF-11 | A `function` typed `Money` whose body root is an application typed `TaxedMoney`; a `function` typed `TaxedMoney` whose body is typed `Money` | Admitted; `ill_typed`/`operator-ineligible` | FR-322-AC-69 |
+| RCF-12 | A `case` with result type `Money` whose arm bodies are typed `Money` and `TaxedMoney`; with arm bodies `TaxedMoney` and `Other` | Admitted; `ill_typed`/`operator-ineligible` | FR-322-AC-69 |
 
 ## Expected Results
 

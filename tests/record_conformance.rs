@@ -276,6 +276,16 @@ fn construct(
     }
 }
 
+/// A result position: a declared result `R` against the type node of the
+/// body root or arm body that produces it.
+fn result_admits(doc: &BTreeMap<&str, Declared>, declared: &Ty, body: &Ty) -> Outcome {
+    if slot_admits(doc, declared, body) {
+        Outcome::Admitted
+    } else {
+        Outcome::Ineligible
+    }
+}
+
 /// FR-440 "Union value": a payload term against the member's payload type.
 fn union_value(doc: &BTreeMap<&str, Declared>, payload: &Ty, term: &Ty) -> Outcome {
     if slot_admits(doc, payload, term) {
@@ -366,8 +376,9 @@ fn tc_281_record_conformance_decides_projection_calls_and_slots() {
         );
     }
     // RCF-03 to RCF-05
-    let call_of =
-        |params: &[Ty], args: &[Ty]| call(&catalog, &doc, "quire.op.function.call", params, args);
+    let call_of = |params: &[Ty], args: &[Ty]| {
+        call(&catalog, &doc, "quire.op.model.dispatch_call", params, args)
+    };
     assert_eq!(
         call_of(std::slice::from_ref(&money), std::slice::from_ref(&taxed)),
         Outcome::Admitted
@@ -455,6 +466,17 @@ fn tc_281_record_conformance_decides_projection_calls_and_slots() {
         ),
         Outcome::Ineligible
     );
+    // RCF-05, open item: `function.call` is typed by family only. The catalog
+    // entry carries no constraint and the package carries no parameter list,
+    // so conformance at a `function.call` parameter is not decidable here.
+    let function_call = entry(&catalog, "quire.op.function.call");
+    assert!(constraint_kinds(&function_call).is_empty());
+    assert_eq!(function_call["rest"], "any_term");
+    // RCF-11, RCF-12
+    assert_eq!(result_admits(&doc, &money, &taxed), Outcome::Admitted);
+    assert_eq!(result_admits(&doc, &taxed, &money), Outcome::Ineligible);
+    assert_eq!(result_admits(&doc, &money, &money), Outcome::Admitted);
+    assert_eq!(result_admits(&doc, &money, &other), Outcome::Ineligible);
     // RCF-09
     assert_eq!(union_value(&doc, &money, &taxed), Outcome::Admitted);
     assert_eq!(union_value(&doc, &taxed, &money), Outcome::TypeMismatch);

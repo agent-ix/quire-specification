@@ -100,7 +100,7 @@ an absent bound admits every constructed count.
 
 The element type of `Set`, `Bag` and `OrderedSet` must admit FR-149 `=`,
 because uniqueness and multiplicity are decided by that relation. An element
-type that contains `Float32` or `Float64` at any depth admits no `=`, so such a
+type that contains `Float32` or `Float64`, or an event type (FR-149), at any depth admits no `=`, so such a
 collection type is `refused { code: ill_typed, cause: operator-ineligible }`.
 `Sequence<T>` admits every complete-V1 element type.
 
