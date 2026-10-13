@@ -287,6 +287,18 @@ The owner join, projection and equality behaviour of an event type (FR-322-AC-68
 | ET-03 | ET-01 with a `SourceOwner` and no `declaration` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
 | ET-04 | ET-01 with a `declaration` and a `ModelOwner` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
 
+### Function parameter vectors
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| PF-01 | The `helper` function node of `positive-all-families.json` with `parameters` holding one type node key, in the node and its projection entry | Admitted by the V2 schema | FR-322-AC-70 |
+| PF-02 | PF-01 with `parameters` an empty array | Fails the V2 schema; `malformed_wire` | FR-322-AC-70 |
+| PF-03 | PF-01 with a `parameters` entry that is not a node key | Fails the V2 schema; `malformed_wire` | FR-322-AC-70 |
+| PF-04 | A `scalar_type` node carrying `parameters` | Fails the V2 schema; `malformed_wire` | FR-322-AC-70 |
+| PF-05 | The `run` function node (application-bearing) with `parameters` added: its `quire.application-node/v1` preimage with and without the member; the same preimage on a non-`function` node | The preimage schema admits the first two and refuses the third; the two function preimages key differently | FR-322-AC-70 |
+| PF-06 | `helper` (structural) with and without `parameters` | The structural preimages key differently | FR-322-AC-70 |
+| PF-07 | `run` with `parameters` whose entry is absent from `dependencies`; then present | The application-node shape check refuses the first and admits the second | FR-322-AC-70 |
+
 ## Expected Results
 
 Each event type vector gives exactly its recorded result.

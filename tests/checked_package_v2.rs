@@ -689,6 +689,19 @@ fn is_application_node(node: &Value) -> bool {
         || (node["node_tag"] == "value" && node["semantic_form"] == "union_value")
 }
 
+/// A node's exact dependency list: its body's targets and declarations
+/// together with a function node's parameter type nodes, unique and ascending.
+fn node_dependencies(node: &Value) -> Vec<Value> {
+    let mut all = application_dependencies(&node["body"]);
+    for parameter in node["parameters"].as_array().into_iter().flatten() {
+        if !all.contains(parameter) {
+            all.push(parameter.clone());
+        }
+    }
+    all.sort_by(|a, b| a["digest"].as_str().cmp(&b["digest"].as_str()));
+    all
+}
+
 /// Exact dependency list of an application-bearing node: every reference
 /// target and every operation member declaration of its body, unique and
 /// ascending by digest.
@@ -2165,7 +2178,7 @@ fn application_node_preimage(node: &Value, nodes: &[Value]) -> Option<Value> {
         Value::Null,
         |ordinal| json!({"size": group.len(), "ordinal": ordinal}),
     );
-    Some(json!({
+    let mut preimage = json!({
         "version": "quire.application-node/v1",
         "node_tag": node["node_tag"],
         "semantic_form": node["semantic_form"],
@@ -2173,7 +2186,11 @@ fn application_node_preimage(node: &Value, nodes: &[Value]) -> Option<Value> {
         "declaration": node.get("declaration").cloned().unwrap_or(Value::Null),
         "recursion": recursion,
         "body": preimage_term(&node["body"], &group),
-    }))
+    });
+    if let Some(parameters) = node.get("parameters") {
+        preimage["parameters"] = parameters.clone();
+    }
+    Some(preimage)
 }
 
 /// Graph-shape constraints of an application-bearing node: an expression
@@ -2191,7 +2208,7 @@ fn application_node_shape_is_valid(node: &Value) -> bool {
         && form_fits
         && node["dependencies"]
             .as_array()
-            .is_some_and(|actual| *actual == application_dependencies(body))
+            .is_some_and(|actual| *actual == node_dependencies(node))
 }
 
 /// Whether an application-bearing node retains the JCS digest of its preimage.
@@ -2229,6 +2246,9 @@ fn structural_node_preimage(node: &Value) -> Option<Value> {
     });
     if let Some(owner) = node.get("owner") {
         preimage["owner"] = owner.clone();
+    }
+    if let Some(parameters) = node.get("parameters") {
+        preimage["parameters"] = parameters.clone();
     }
     Some(preimage)
 }
@@ -12668,4 +12688,92 @@ fn tc_233_event_type_is_a_model_declaration_node_with_a_model_owner() {
             "the ModelDeclarationNode preimage admits {form}"
         );
     }
+}
+
+/// PF-01 to PF-07 (FR-322-AC-70): a `function` node declares its parameter
+/// type nodes in `parameters`. The V2 schema admits a non-empty array of node
+/// keys on a `function` node only, the member enters both node preimages, and
+/// the application-bearing node's dependencies include it.
+#[trace("TC-233", "FR-322-AC-70")]
+#[test]
+fn tc_233_function_nodes_declare_their_parameter_type_nodes() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let preimage_schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
+        .expect("node-identity preimage schema is valid");
+    let base = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let helper = declared_index(&base, &["Example", "helper"]);
+    let run = declared_index(&base, &["Example", "run"]);
+    let parameter = base["semantic_graph"]["nodes"][helper]["semantic_type"].clone();
+    let with = |index: usize, parameters: Value| {
+        let mut candidate = base.clone();
+        edit_node_and_projection(&mut candidate, index, |node| {
+            node["parameters"] = parameters.clone();
+        });
+        candidate
+    };
+
+    // PF-01 to PF-04
+    assert!(
+        schema.is_valid(&with(helper, json!([parameter]))),
+        "PF-01: parameters on a function node"
+    );
+    assert!(
+        !schema.is_valid(&with(helper, json!([]))),
+        "PF-02: an empty parameters array"
+    );
+    assert!(
+        !schema.is_valid(&with(helper, json!(["not-a-node-key"]))),
+        "PF-03: an entry that is not a node key"
+    );
+    let scalar = node_index_where(&base, |node| node["node_tag"] == "scalar_type");
+    assert!(
+        !schema.is_valid(&with(scalar, json!([parameter]))),
+        "PF-04: parameters on a non-function node"
+    );
+
+    // PF-05, PF-06
+    let nodes = base["semantic_graph"]["nodes"].as_array().expect("nodes");
+    let run_node = &nodes[run];
+    let plain = application_node_preimage(run_node, nodes).expect("run is application-bearing");
+    let mut with_parameters = run_node.clone();
+    with_parameters["parameters"] = json!([parameter]);
+    let parameterized =
+        application_node_preimage(&with_parameters, nodes).expect("application-bearing");
+    assert!(preimage_schema.is_valid(&plain));
+    assert!(preimage_schema.is_valid(&parameterized));
+    assert_ne!(
+        unqualified_jcs_sha256(&plain),
+        unqualified_jcs_sha256(&parameterized),
+        "parameters enter the application-node preimage"
+    );
+    let mut on_scalar = parameterized.clone();
+    on_scalar["node_tag"] = json!("scalar_type");
+    assert!(
+        !preimage_schema.is_valid(&on_scalar),
+        "the preimage schema refuses parameters on a non-function node"
+    );
+    let helper_node = &nodes[helper];
+    let mut helper_with = helper_node.clone();
+    helper_with["parameters"] = json!([parameter]);
+    assert_ne!(
+        unqualified_jcs_sha256(&structural_node_preimage(helper_node).expect("structural")),
+        unqualified_jcs_sha256(&structural_node_preimage(&helper_with).expect("structural")),
+        "parameters enter the structural preimage"
+    );
+
+    // PF-07
+    let mut unlisted = run_node.clone();
+    unlisted["parameters"] = json!([parameter]);
+    assert!(
+        !application_node_shape_is_valid(&unlisted),
+        "a parameter type node outside dependencies is refused"
+    );
+    let mut listed = unlisted.clone();
+    let mut dependencies = node_dependencies(&listed);
+    dependencies.sort_by(|a, b| a["digest"].as_str().cmp(&b["digest"].as_str()));
+    listed["dependencies"] = json!(dependencies);
+    assert!(
+        application_node_shape_is_valid(&listed),
+        "listed in dependencies, the node shape is admitted"
+    );
 }

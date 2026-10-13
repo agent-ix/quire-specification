@@ -217,12 +217,32 @@ fn equality(
     Outcome::Admitted
 }
 
-/// A call: each argument equals its parameter, or conforms to a record one.
+/// The `function` nodes of the package: the `parameters` member of each, in
+/// declaration order (a function with none carries no member).
+fn function_nodes() -> BTreeMap<&'static str, Vec<Ty>> {
+    let money = || model("Money");
+    BTreeMap::from([
+        ("take_money", vec![money()]),
+        ("take_taxed", vec![model("TaxedMoney")]),
+        ("take_seq_money", vec![Ty::Sequence(Box::new(money()))]),
+        ("take_opt_money", vec![Ty::Option(Box::new(money()))]),
+        ("nullary", vec![]),
+    ])
+}
+
+/// The operations of the selected document: parameters by operation name.
+fn operations() -> BTreeMap<&'static str, Vec<Ty>> {
+    function_nodes()
+}
+
+/// A call to `callee`: the parameters come from the callee's `parameters`
+/// member (`function.call`) or the selected document (`dispatch_call`); each
+/// argument equals its parameter or conforms to a record one.
 fn call(
     catalog: &Value,
     doc: &BTreeMap<&str, Declared>,
     identity: &str,
-    params: &[Ty],
+    callee: &str,
     args: &[Ty],
 ) -> Outcome {
     let entry = entry(catalog, identity);
@@ -230,6 +250,12 @@ fn call(
         constraint_kinds(&entry).is_empty(),
         "{identity} carries no constraint"
     );
+    let params = match identity {
+        "quire.op.function.call" => function_nodes(),
+        "quire.op.model.dispatch_call" => operations(),
+        other => panic!("{other} is not a call"),
+    };
+    let params = &params[callee];
     if params.len() != args.len() || !params.iter().zip(args).all(|(p, a)| slot_admits(doc, p, a)) {
         return Outcome::Ineligible;
     }
@@ -375,58 +401,42 @@ fn tc_281_record_conformance_decides_projection_calls_and_slots() {
             Outcome::Ineligible
         );
     }
-    // RCF-03 to RCF-05
-    let call_of = |params: &[Ty], args: &[Ty]| {
-        call(&catalog, &doc, "quire.op.model.dispatch_call", params, args)
-    };
-    assert_eq!(
-        call_of(std::slice::from_ref(&money), std::slice::from_ref(&taxed)),
-        Outcome::Admitted
-    );
-    assert_eq!(
-        call_of(std::slice::from_ref(&money), std::slice::from_ref(&gift)),
-        Outcome::Admitted
-    );
-    assert_eq!(
-        call_of(std::slice::from_ref(&taxed), std::slice::from_ref(&money)),
-        Outcome::Ineligible
-    );
-    assert_eq!(
-        call_of(std::slice::from_ref(&money), std::slice::from_ref(&other)),
-        Outcome::Ineligible
-    );
-    assert_eq!(
-        call_of(
-            std::slice::from_ref(&money),
-            &[taxed.clone(), taxed.clone()]
-        ),
-        Outcome::Ineligible
-    );
-    assert_eq!(
-        call_of(
-            &[Ty::Sequence(Box::new(money.clone()))],
-            &[Ty::Sequence(Box::new(taxed.clone()))]
-        ),
-        Outcome::Ineligible
-    );
-    assert_eq!(
-        call_of(
-            &[Ty::Option(Box::new(money.clone()))],
-            &[Ty::Option(Box::new(taxed.clone()))]
-        ),
-        Outcome::Ineligible
-    );
-    // RCF-06 (FR-322-AC-31 clause)
-    assert_eq!(
-        call(
-            &catalog,
-            &doc,
-            "quire.op.model.dispatch_call",
-            std::slice::from_ref(&money),
-            std::slice::from_ref(&taxed)
-        ),
-        Outcome::Admitted
-    );
+    // RCF-03 to RCF-05, for both call forms
+    for identity in ["quire.op.function.call", "quire.op.model.dispatch_call"] {
+        let call_of = |callee: &str, args: &[Ty]| call(&catalog, &doc, identity, callee, args);
+        assert_eq!(
+            call_of("take_money", std::slice::from_ref(&taxed)),
+            Outcome::Admitted
+        );
+        assert_eq!(
+            call_of("take_money", std::slice::from_ref(&gift)),
+            Outcome::Admitted
+        );
+        assert_eq!(
+            call_of("take_taxed", std::slice::from_ref(&money)),
+            Outcome::Ineligible
+        );
+        assert_eq!(
+            call_of("take_money", std::slice::from_ref(&other)),
+            Outcome::Ineligible
+        );
+        assert_eq!(
+            call_of("take_money", &[taxed.clone(), taxed.clone()]),
+            Outcome::Ineligible
+        );
+        assert_eq!(
+            call_of("nullary", std::slice::from_ref(&money)),
+            Outcome::Ineligible
+        );
+        assert_eq!(
+            call_of("take_seq_money", &[Ty::Sequence(Box::new(taxed.clone()))]),
+            Outcome::Ineligible
+        );
+        assert_eq!(
+            call_of("take_opt_money", &[Ty::Option(Box::new(taxed.clone()))]),
+            Outcome::Ineligible
+        );
+    }
     // RCF-07
     let set_money = Ty::Set(Box::new(money.clone()));
     let set_taxed = Ty::Set(Box::new(taxed.clone()));
@@ -466,12 +476,6 @@ fn tc_281_record_conformance_decides_projection_calls_and_slots() {
         ),
         Outcome::Ineligible
     );
-    // RCF-05, open item: `function.call` is typed by family only. The catalog
-    // entry carries no constraint and the package carries no parameter list,
-    // so conformance at a `function.call` parameter is not decidable here.
-    let function_call = entry(&catalog, "quire.op.function.call");
-    assert!(constraint_kinds(&function_call).is_empty());
-    assert_eq!(function_call["rest"], "any_term");
     // RCF-11, RCF-12
     assert_eq!(result_admits(&doc, &money, &taxed), Outcome::Admitted);
     assert_eq!(result_admits(&doc, &taxed, &money), Outcome::Ineligible);
@@ -498,17 +502,17 @@ fn tc_281_record_conformance_decides_projection_calls_and_slots() {
 #[test]
 fn tc_281_an_operation_call_takes_a_conforming_record_argument() {
     let (catalog, doc) = (catalog(), document());
-    for (param, arg, expected) in [
-        ("Money", "TaxedMoney", Outcome::Admitted),
-        ("TaxedMoney", "Money", Outcome::Ineligible),
-        ("Money", "Other", Outcome::Ineligible),
+    for (callee, arg, expected) in [
+        ("take_money", "TaxedMoney", Outcome::Admitted),
+        ("take_taxed", "Money", Outcome::Ineligible),
+        ("take_money", "Other", Outcome::Ineligible),
     ] {
         assert_eq!(
             call(
                 &catalog,
                 &doc,
                 "quire.op.model.dispatch_call",
-                &[model(param)],
+                callee,
                 &[model(arg)]
             ),
             expected
