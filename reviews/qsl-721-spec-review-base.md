@@ -78,3 +78,9 @@ gaps follow from this PR and need a QSL ticket: normalize.rs per-edge-set
 dedup (M20 run 4, TC-196 R01), the typed cause without a cycle-key list, the
 unrotated record-path detail, and M17 run 2 refused at the reader without
 charges. They are recorded in the summary, not as findings against this spec.
+
+## Dispositions
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | d69d51507ffd0a3843d4d9f91c6d7ba8e2bdebee: model-complete.md:340-351 now identifies a cycle by its supertype-edge set, refuses a declaration once per cycle it lies on with each refusal listing that cycle's keys, and orders refusals by cycle detection order, then declaration key. QSL supports the edge-set identity (normalize.rs dedups by directed edge set; distinct_directed_cycles_with_the_same_nodes_are_not_deduplicated expects both A,B,C and A,C,B listings). The once-per-cycle cardinality and the cross-cycle order are not settled by QSL FR-082 or TC-195 N14; the planner ruled option A, and the QSL statement and multi-cycle vector go to QSL-756. |

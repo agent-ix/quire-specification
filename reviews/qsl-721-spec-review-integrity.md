@@ -47,3 +47,10 @@ contradicts the edited R01. One low: the TC-235 cycle runs trace to an AC that
 does not state the cycle rule. The IDs are unchanged and the sweep is otherwise
 clean. The model-complete validate failure is the pre-existing missing
 frontmatter type.
+
+## Dispositions
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | d69d51507ffd0a3843d4d9f91c6d7ba8e2bdebee: TC-196:80 now preserves "R01's cycle reporting (detected and reported at the first closing extension only; later closings charged, not reported)", which agrees with the edited R01 and model-complete. |
+| FND-002 | fixed | d69d51507ffd0a3843d4d9f91c6d7ba8e2bdebee: FR-208-AC-12 now states that a supertypes cycle among these meanings is refused specialization-cycle once per declaration on the cycle, each refusal listing the cycle's keys. This changes the AC's content, not a matrix row, and it agrees with model-complete. The TC-235 M17 and M20 citations now trace to an AC that states the rule. The FR-208 validate output is identical to main's. |
