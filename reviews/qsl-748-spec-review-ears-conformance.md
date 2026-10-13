@@ -29,3 +29,10 @@ Two low findings. FR-208-AC-16 and FR-208-AC-17, FR-322-AC-71 (apart from SR-900
 FND-001) and FR-141-AC-7 are direct, falsifiable assertions with named codes, causes and
 paths. The unwritable-case bullet is stated as an outcome, "admitted with its type but has
 no spelling in source", rather than a deferral, which is acceptable.
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 5a72cdc: "and" restored in FR-208-AC-15 and FR-154-AC-11 |
+| FND-002 | fixed | 5a72cdc: the admission sentence moved out of the refusal-locus list into prose |

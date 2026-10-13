@@ -55,3 +55,24 @@ only rule beyond them is the unordered and equality restatement, and FR-141 alre
 it. Leaving the unwritable case name to QSL is acceptable: the shared grammar's
 `member-name` is an identifier, so such a case does not parse. Its identity gap is
 FND-005.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-009 | medium | FR-141-AC-8 and TC-942 step 4 say an ordinary `scalar_type`/`enum` member whose case is not an identifier "is refused", with no code, cause or locus. Now that `EnumMemberPreimage.case` is any non-empty string, the schema no longer refuses it. The refusal comes from the membership join: `EnumDeclarationPreimage.members` stays `Identifier`, so the case is in no declaration's members, and that is `invalid_semantic_graph` at the `enum_value` node, as in FR-322. Name that code and node in the AC and the TC. As written, a test could pass on `malformed_wire` or any other refusal. | spec/functional/type-model/FR-141-evaluate-text-and-enumerations.md:126; spec/test-cases/TC-942-variant-case-names-are-any-non-empty-string.md:40 | wrong-requirement |
+| FND-010 | low | TC-942 step 3 (the set orders model-enum cases by the UTF-8 bytes of their names: `2x`, `Café`, `Gold`, `Gold Plus`) traces to no acceptance criterion. FR-141-AC-8 states keys and distinctness only, TC-942 names FR-144 with no AC, and no FR-144 AC states the model-enum order. Add the order to FR-141-AC-8 or to an FR-144 AC. | spec/test-cases/TC-942-variant-case-names-are-any-non-empty-string.md:37-39; spec/functional/type-model/FR-144-preserve-complete-collection-algebra.md:117 | correct-requirement-no-evidence |
+| FND-011 | low | FR-322's new reader rule requires the case to be "a case of the variant type that the node's owner selection declares". An `enum_value` node carries no `owner`. The rule means the `ModelOwner` selection of its `semantic_type` node, so say that. | spec/objects/interfaces/FR-322-checked-package-artifact.md:534-537 | wrong-requirement |
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 5a72cdc: FR-322-AC-71 and TC-940 step 2 admit `quire.op.enum.eq`/`ne`; `quire.op.structural.eq` and `quire.op.enum.lt` refuse `operator-ineligible` |
+| FND-002 | fixed | 5a72cdc: `variant_type` added to `OwnerPresenceRule`, to `ModelDeclarationNode.semantic_form` and to its else-branch enum; AC-71 gains the "both V2 schemas enumerate" clause; the test `tc_940_variant_type_is_a_model_declaration_node_with_a_model_owner` covers VT-01 to VT-04, and VT-01 and VT-02 would both fail against the old schema |
+| FND-003 | fixed | 5a72cdc: TC-195 N04 run 2 now expects `M::V1` admitted in the record field |
+| FND-004 | fixed | 5a72cdc: FR-322 adds the `enum_value` join, a case not declared by the selected variant type is `invalid_semantic_graph` at the node, and AC-71 and TC-940 assert it (wording nit: FND-011) |
+| FND-005 | fixed | 5a72cdc: member `case` is any non-empty string for `model`/`variant_type` (both schemas, FR-141, FR-322), the set key is the UTF-8 bytes (FR-144), plus FR-141-AC-8 and TC-942 (follow-ups: FND-009, FND-010) |
+| FND-006 | fixed | 5a72cdc: model-complete.md states the `Alias::Tier::Gold` exception with both refusals, shared-grammar.md points to it, and FR-208 cites it |
+| FND-007 | fixed | 5a72cdc: the FR-141 recompute paragraph is scoped to `scalar_type`/`enum`, and the variant key names no case |
+| FND-008 | fixed | 5a72cdc: FR-154 prose restores the `Field.typeRef`, `Operation.params[i].typeRef` and `Operation.returns.typeRef` paths for the still-refused meanings |

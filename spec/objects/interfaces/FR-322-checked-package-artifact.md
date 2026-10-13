@@ -533,7 +533,7 @@ boundary.
   `semantic_type`/dependencies. A valid preimage cannot authorize contradictory
   semantic fields. An `enum_value` node whose `semantic_type` is a
   `model`/`variant_type` node joins the same way, and its `case` SHALL be a case
-  of the variant type that the node's owner selection declares (the cases of
+  of the variant type that the `ModelOwner` selection of its `semantic_type` node declares (the cases of
   `quire.meaning.model.variant-type/v1` in the admitted document, FR-208), else
   the reader refuses `invalid_semantic_graph` at the `enum_value` node, as it
   does for a scalar enum whose case is not among its declaration's members.

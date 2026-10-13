@@ -34,3 +34,11 @@ already lacked FR-208-AC-14 and AC-15, FR-154-AC-9 to AC-11 and FR-322-AC-68 to 
 before this PR. This PR needs no rows there. The computed matrix (`quire matrix`) is the
 traceability source. A hand-written copy is tracking ceremony that drifts, so it should be
 deleted under its own ticket rather than kept up to date.
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 5a72cdc: TC-939 uses K2's `Order` and `Money` |
+| FND-002 | fixed | 5a72cdc: TC-940 declares `Level` as a second variant type |
+| FND-003 | fixed | 5a72cdc: TC-939 step 5 clause is `self.tier = M::Tier::Gold` |

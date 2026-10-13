@@ -28,7 +28,8 @@ Use the M24 package with variant type `Tier` given cases `Gold`, `Gold Plus`,
 2. Compare `Gold` with `Gold Plus`.
 3. Build the set `{Gold Plus, Café, Gold, 2x}` and read its canonical element
    order.
-4. Give an ordinary `scalar_type`/`enum` node a member whose case is `Gold Plus`.
+4. Give an `enum_value` node of an ordinary `scalar_type`/`enum` the case
+   `Gold Plus`, which is not among its declaration's members.
 
 ## Expected Results
 
@@ -37,4 +38,5 @@ Use the M24 package with variant type `Tier` given cases `Gold`, `Gold Plus`,
 3. The order is `2x`, `Café`, `Gold`, `Gold Plus`: ascending UTF-8 bytes, with
    `2` (0x32) before `C` (0x43) before `G` (0x47), and `Gold` before `Gold Plus`
    as a proper prefix.
-4. Refused: an ordinary enum member's case must be an identifier.
+4. `invalid_semantic_graph` at the `enum_value` node: the case is not among the
+   declaration's members.
