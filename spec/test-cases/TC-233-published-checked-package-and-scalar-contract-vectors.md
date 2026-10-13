@@ -275,7 +275,21 @@ projection entry patched and `package_id` recomputed (FR-322-AC-54).
 | SE-18 | `quire.op.text.eq` over two `string` operands with a `text_profile` law and mode | `invalid_package`/`operation-mode-type-mismatch` | FR-322-AC-67 |
 | SE-19 | literal of `value_kind` `string` whose `value` is a number, `null` or an array | `invalid_package`/`invalid-value` | FR-322-AC-67 |
 | SE-20 | literal of `value_kind` `uuid` typed by a `string` type with an uppercase value; literal of `value_kind` `timestamp` typed by an `integer` type with value `01` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-67 |
+
+### Event type vectors
+
+The owner join, projection and equality behaviour of an event type (FR-322-AC-68) and record conformance (FR-322-AC-69) are decided by TC-281's `EV-` and `RCF-` vectors.
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| ET-01 | A `model`/`event_type` node with a `ModelOwner`, no `declaration`, its own id as `semantic_type` and an empty aggregate body, in a package | Admitted by the V2 schema; its `ModelDeclarationNode` preimage validates against the node-identity preimage schema | FR-322-AC-68 |
+| ET-02 | ET-01 with no `owner` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
+| ET-03 | ET-01 with a `SourceOwner` and no `declaration` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
+| ET-04 | ET-01 with a `declaration` and a `ModelOwner` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
+
 ## Expected Results
+
+Each event type vector gives exactly its recorded result.
 
 Every positive artifact validates and recomputes its recorded identity. Excluded
 edits leave the package id unchanged and named edits change it. Every mutation

@@ -236,9 +236,13 @@ that the meaning states, `fields`, `identityFields`, `occurrenceField` or
 
 - **Record value type.** A subtype inherits every field and invariant and may
   add fields. A value of the subtype is a value of each ancestor wherever a
-  field, parameter or result names the ancestor. Equality compares the
-  most-specific type and every effective field, so a subtype value never equals
-  a value of a proper ancestor.
+  field, parameter or result names the ancestor, and equally wherever an
+  `Option` payload, a collection element, a tuple position or a union member
+  payload names it. The value stays the subtype value, with its own
+  most-specific type and every effective field; it is never copied into a value
+  of the ancestor. Equality compares the most-specific type and every effective
+  field, so a subtype value never equals a value of a proper ancestor, and the
+  comparison of two such values is `false`, not a refusal.
 - **Event type.** A subtype inherits every field, invariant and the occurrence
   field. Its own `occurrenceField` names a field of the type or of an ancestor.
   Each ancestor's occurrence field is the subtype's occurrence field or a field
@@ -344,6 +348,7 @@ that the meaning states, `fields`, `identityFields`, `occurrenceField` or
 | FR-208-AC-11 | A `Pre:` precondition of a state-machine or process operation reads the call's pre-call observation and a `Post:` postcondition the invocation's pre and post observations, with `self` the machine context or the run; a `pre` read in a precondition is `wrong_snapshot`/`forbidden-pre-read`, and neither is related to a transition's guard, `from` or `to`. | Test (TC-235) |
 | FR-208-AC-12 | A record value type, event type, state machine or process specializing a node of its own meaning inherits its fields, invariants and operations, an event type its occurrence field, and a state machine its states and transitions, and conforms to each ancestor; a process inherits no steps; a supertype of another meaning is `invalid_model_binding`/`malformed-declaration`; a state or transition declared by two owners, or an ancestor occurrence field the subtype's neither is nor redefines, is `invalid_model_binding`/`derivation-conflict`; a subtype transition whose guard names an ancestor's invariant is `invalid_model_binding`/`malformed-declaration` at that guard; a persistence interface or namespace with supertypes is `unsupported_construct`/`declaration-form`. | Test (TC-235) |
 | FR-208-AC-13 | A state-machine operation's precondition over a pre-call observation holding one machine context, with no post observation, evaluates over that context and the call's parameters; the same pre-call observation with no context of the machine is `invalid_model_binding`/`wrong-context`. | Test (TC-401) |
+| FR-208-AC-14 | With `Money` and its subtype `TaxedMoney` adding `tax_minor`, a `TaxedMoney` value is admitted at a `Money` field, parameter or result, as the payload of an `Option<Money>`, as an element of a `Sequence<Money>`, `Set<Money>`, `Bag<Money>` or `OrderedSet<Money>`, at a tuple position typed `Money` and as a union member payload typed `Money`, and keeps its most-specific type and its `tax_minor`. A `Money` value is not admitted at a `TaxedMoney` slot, and a `Sequence<TaxedMoney>` is not a `Sequence<Money>`. A `TaxedMoney` value and a `Money` value with equal shared fields are unequal. | Test (TC-235) |
 
 ## Dependencies
 
