@@ -37,3 +37,17 @@ global slot, so both remain correct. The stale statements are listed below.
 
 Three medium findings. All three are statements this change left stale. ID
 allocation and the global-slot spelling sweep are clean.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-004 | low | FR-154's split shared-identity row ends with "(the shared identity names the node)". The row also covers "two steps of one owner with one name". For that case TC-235 M07 run 3 and QSL name the process `ix://test/orders/Fulfilment`, not the shared step identity (process.rs and `duplicate_process_step_refusal`). Scope the parenthetical to the member-kind collision, or state the step exception. | spec/functional/type-model/FR-154-admit-domain-package-model.md:88 | wrong-requirement |
+
+## Dispositions
+
+| FND | Outcome | Sha/Reason |
+| --- | --- | --- |
+| FND-001 | fixed | e8163084787a91ef8e80c45ac07d5584ba4f26f5 |
+| FND-002 | fixed | e8163084787a91ef8e80c45ac07d5584ba4f26f5 |
+| FND-003 | fixed | e8163084787a91ef8e80c45ac07d5584ba4f26f5 |

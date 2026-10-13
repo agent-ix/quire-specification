@@ -28,3 +28,17 @@ exercises. They are listed below.
 
 Two medium and one low coverage gaps. The ticket's AC 3 (a collision row) is
 met by M30 run 1.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-004 | medium | FR-154-AC-12 now says a state, clause, step or transition whose member name is also a field or operation of its owner refuses `conflicting-binding`. M31 run 5 tests only the state. The untested kinds are where QSL differs today. The FCD reader reports a clause collision at `/clauses/j/identity`, which `duplicate_process_step_refusal` does not handle, so QSL's generic mapping (intake.rs ~1450-1471) gives `malformed-declaration`. A step collision is classified as `conflicting-binding` but names the process. A transition collision matches the spec. The AC claims four kinds and one is verified. | FR-154-AC-12, spec/test-cases/TC-235-business-construct-meaning-binding.md:110 (M31) | correct-requirement-no-evidence |
+
+## Dispositions
+
+| FND | Outcome | Sha/Reason |
+| --- | --- | --- |
+| FND-001 | fixed | e8163084787a91ef8e80c45ac07d5584ba4f26f5 |
+| FND-002 | fixed | e8163084787a91ef8e80c45ac07d5584ba4f26f5 |
+| FND-003 | fixed | e8163084787a91ef8e80c45ac07d5584ba4f26f5 |

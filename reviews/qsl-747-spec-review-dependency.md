@@ -29,3 +29,9 @@ nested form.
 One high finding: an upstream contract contradiction across repos. The
 QSpec-internal direction (nested wins) is the planner's ruling and is not
 disputed here.
+
+## Dispositions
+
+| FND | Outcome | Sha/Reason |
+| --- | --- | --- |
+| FND-001 | fixed | e8163084787a91ef8e80c45ac07d5584ba4f26f5 |
