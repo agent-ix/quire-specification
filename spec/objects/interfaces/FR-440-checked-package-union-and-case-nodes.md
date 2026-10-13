@@ -190,7 +190,10 @@ node-id digest order, each node at its place in that order:
 3. **Union value.** The `semantic_type` of a `union_value` node is a union
    type node, its binding names a member of that union, its payload count
    equals that member's payload arity, and each payload term's type is the
-   member's payload type at its position; otherwise the node refuses
+   member's payload type at its position, or, for a record-typed payload, a
+   record type that conforms to it
+   ([FR-322](FR-322-checked-package-artifact.md) "Record conformance");
+   otherwise the node refuses
    `ill_typed`/`type-mismatch`, as FR-143 refuses the same construction at
    type checking.
 4. **Case.** The `case` application's operand family, its `union_arms`

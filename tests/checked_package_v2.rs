@@ -2383,10 +2383,8 @@ fn is_model_declaration(node: &Value) -> bool {
         && node.get("nominal_identity_preimage").is_none()
         && matches!(
             (node["node_tag"].as_str(), node["semantic_form"].as_str()),
-            (
-                Some("model"),
-                Some("object_type" | "event_type" | "systems_interface")
-            ) | (Some("relation"), Some("relationship"))
+            (Some("model"), Some("object_type" | "systems_interface"))
+                | (Some("relation"), Some("relationship"))
         )
 }
 
