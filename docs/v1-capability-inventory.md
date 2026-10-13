@@ -1,8 +1,6 @@
 # Quire V1 atomic capability inventory
 
 This is the master list of capabilities that Quire V1 specifies. The
-[complete V1 atomic capability and requirement matrix](../spec/complete-v1/tests.md)
-(TM-009) names the owning requirement and the test cases for each row. The
 older 51-row matrix in `proposals/quire-v1/capabilities.md` is a historical
 crosswalk; it does not remove or combine a row from this inventory.
 
