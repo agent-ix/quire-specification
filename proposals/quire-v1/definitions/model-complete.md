@@ -52,7 +52,14 @@ package identity. QSL model intake admits the domain package and builds the
 Quire model declarations from its IR nodes. Quire owns the meaning of every
 declaration. Clauses name a declaration by qualified name: the model alias,
 then the segments of its IR node identity after the package identity, such as
-`Orders::Order` for IR node `ix://acme/orders/Order`.
+`Orders::Order` for IR node `ix://acme/orders/Order`. One form is an
+exception: a case of a variant type is named `Alias::Tier::Gold`, the alias, the
+variant type's artifact id and the case name matched byte for byte, and not by
+its IR identity `variant/Tier-Gold`. In a type position `Alias::Tier` names the
+variant type. A variant type name that resolves to no variant type of the alias
+is `missing_declaration`/`missing-name`, and a case the type does not declare is
+`ill_typed`/`type-mismatch`. FR-208 "Naming a variant type and its cases" states
+the rule.
 
 ### Intake
 

@@ -78,7 +78,11 @@ and `members` is the declaration-ordered list of semantic case names
 (sorted by case name for an unordered enum). Member identity is the opaque key
 of an I04 `value`/`enum_value` node whose `semantic_type` references that
 declaration; its digest preimage is
-`{ version: quire.enum-member-node/v1, declaration_node_id, case }`. Display
+`{ version: quire.enum-member-node/v1, declaration_node_id, case }`. For an ordinary `scalar_type`/`enum` node `case` is an identifier
+(`^[A-Za-z_][A-Za-z0-9_]*$`). For a member of a `model`/`variant_type` node,
+`case` is the declared case name, any non-empty string (`Gold Plus`, `2x`,
+`Café`), compared byte for byte as UTF-8 and never altered to fit an
+identifier; its key is the digest over that name. Display
 text and source loci are excluded from both preimages. The enum-value node has
 that declaration as its sole dependency and its enum literal body carries the
 same case; the strict reader joins all three fields to the preimage.
@@ -94,9 +98,12 @@ node's key and the case name. Two units that select one package under different
 aliases therefore assign equal keys, and the same case built in either is
 equal.
 
-The strict I04 reader recomputes those enum node digests from the admitted
-semantic graph. Retaining a key while changing owner, declaration membership,
-case meaning or ordered position is `invalid_semantic_graph`. Recomputing after
+The strict I04 reader recomputes the enum node digests of `scalar_type`/`enum`
+nodes from the admitted semantic graph. Retaining a key while changing owner,
+declaration membership, case meaning or ordered position of such a node is
+`invalid_semantic_graph`. For a `model`/`variant_type` node the declaration key
+is the node preimage's, which names no case, so adding, renaming or removing a
+case leaves it unchanged (FR-322). Recomputing after
 such a change yields a new declaration/member identity. The same exact imported
 owner and declaration retain the same keys across otherwise different packages;
 an unrelated package edit cannot rename them. Neither key is a local name,
@@ -116,6 +123,7 @@ incomplete, not a truncated string.
 | FR-141-AC-5 | An unordered enumeration comparison other than equality, or any cross-declaration enumeration comparison, refuses with `ill_typed` before any charge, while an ordered enumeration follows declaration order only. | Test (TC-186) |
 | FR-141-AC-6 | Exact-bound accounting succeeds and denial of a named next text or enum charge returns incomplete without a truncated value or Boolean. | Test (TC-186) |
 | FR-141-AC-7 | The `enum_value` node of a case of a model variant type, `Tier` with `Gold`, has the key of the preimage `{ version: quire.enum-member-node/v1, declaration_node_id, case }` with `declaration_node_id` the `model`/`variant_type` node key of `Tier` and `case` `Gold`; two units that select the package as `Config` and as `Cfg` derive equal keys for `Tier` and for `Gold`, and `Gold` of one equals `Gold` of the other. A case name changed in the package yields a new key, and `Tier::Gold` and `Level::Gold` are unequal. | Test (TC-940) |
+| FR-141-AC-8 | A variant type with cases `Gold`, `Gold Plus`, `2x` and `Café` is admitted, each case has its own member key over its exact name, the four keys are pairwise distinct, and `Gold` and `Gold Plus` are unequal. An ordinary `scalar_type`/`enum` member whose case is not an identifier is refused. | Test (TC-942) |
 
 ## Dependencies
 

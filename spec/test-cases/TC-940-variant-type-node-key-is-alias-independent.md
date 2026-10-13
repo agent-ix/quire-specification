@@ -18,14 +18,15 @@ FR-322-AC-71, FR-141-AC-7.
 
 ## Test Procedure
 
-Use the M24 package extended with object `Account` (field `tier: Tier`,
+Use the M24 package extended with object `Order` (field `tier: Tier`,
 optional field `maybe: Tier`, ordered non-unique `[0, 3]` field `many: Tier`)
-and record value type `Level` with cases `Gold` and `Silver`.
+and a second variant type `Level` with cases `Gold` and `Silver`.
 
 1. Select the package into one checked package under alias `Config` and read
-   the type of each `Account` field, and of the `Tier` node and each case.
-2. Apply `quire.op.structural.eq` to two `Tier` operands, then an ordering
-   application to them.
+   the type of each `Order` field, and of the `Tier` node and each case.
+2. Apply `quire.op.enum.eq` and `quire.op.enum.ne` to two `Tier` operands, then
+   `quire.op.structural.eq` and `quire.op.enum.lt` to them. Read an `enum_value`
+   node of `Tier` whose case is `Gold`, then one whose case is `Silver`.
 3. Select the same package into a second checked package under alias `Cfg` and
    compare the key of the `Tier` node, of `Gold` and of `Standard` with step 1.
 4. Rename the case `Standard` to `Basic` in the package and recompute the keys.
@@ -35,12 +36,13 @@ and record value type `Level` with cases `Gold` and `Silver`.
 
 ## Expected Results
 
-1. `Account.tier` is the `Tier` node, `maybe` is `Option<Tier>` and `many` is
+1. `Order.tier` is the `Tier` node, `maybe` is `Option<Tier>` and `many` is
    `Sequence<Tier>[0, 3]`; none is `Reference<Tier>`. The `Tier` node has a
    `ModelOwner`, family `enum` and no `scalar_type`/`enum` unit-owned
    counterpart.
-2. The equality is admitted; the ordering application refuses
-   `ill_typed`/`operator-ineligible`.
+2. The enum equality and inequality are admitted; `quire.op.structural.eq` and
+   the ordering application refuse `ill_typed`/`operator-ineligible`. The `Gold`
+   node is admitted; the `Silver` node refuses `invalid_semantic_graph`.
 3. The three keys equal those of step 1, and `Gold` of one package equals
    `Gold` of the other. The key of the `Gold` node of `Tier` differs from the
    key of the `Gold` node of `Level`.

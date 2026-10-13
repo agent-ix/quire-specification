@@ -22,16 +22,17 @@ FR-154-AC-11.
 Use TC-235's fixture K2 with the M24 package (variant type `Tier`, cases `Gold`
 and `Standard`).
 
-1. Give object `Account` the field `tier: Tier`, record value type `Settings`
-   the field `tier: Tier`, state machine `OrderLifecycle` a context field
-   `tier: Tier`, process `Fulfilment` a field `tier: Tier`, and `Account` the
+1. Give object `Order` the field `tier: Tier`, record value type `Money` the
+   field `tier: Tier`, state machine `OrderLifecycle` a context field
+   `tier: Tier`, process `Fulfilment` a field `tier: Tier`, and `Order` the
    operation `setTier` with parameter `t: Tier` and result `Tier`, no contract.
 2. Give event type `OrderPlaced` a non-occurrence field `tier: Tier`; then
    name `Tier` as its `occurrenceField`.
 3. Empty `Tier.variants`, keeping the field of step 1 naming `Tier`.
-4. Give `Account` a field `ref` typed, in turn, `OrderPlaced`, `OrderLifecycle`,
+4. Give `Order` a field `ref` typed, in turn, `OrderPlaced`, `OrderLifecycle`,
    `Fulfilment`, `OrderStore` and `OrderManagement`.
-5. Name `Tier` in a `quire` clause of `Settings` (`self.tier = self.tier`).
+5. Add to `Money` a `quire` clause that names the variant type and a case
+   literal: `self.tier = M::Tier::Gold`.
 
 ## Expected Results
 
@@ -45,4 +46,5 @@ and `Standard`).
    its own.
 4. Each of the five fields keeps `invalid_model_binding`/`malformed-declaration`
    at `Field.typeRef`.
-5. Admitted, with no `unsupported_construct`/`declaration-form`.
+5. Admitted, with no `unsupported_construct`/`declaration-form`: the clause names
+   `Tier` and its case `Gold`.
