@@ -96,10 +96,11 @@ Rules common to the six meanings:
 - **References.** A reference below that names no node of the package is
   `missing_declaration`/`missing-name`. A reference that names a node of the
   wrong meaning is `invalid_model_binding`/`malformed-declaration`.
-- **Names.** Two states of one state machine, two transitions of one state
-  machine with equal `from`, `to` and `trigger`, or two steps of one process
-  with one name have one IR identity, and are
-  `invalid_model_binding`/`conflicting-binding`.
+- **Names.** Two states of one state machine, or two steps of one process
+  with one name, have one IR identity, and are
+  `invalid_model_binding`/`conflicting-binding`. Two transitions of one state
+  machine with equal `from`, `to` and `trigger` are the same
+  `conflicting-binding` by shape, although their identities differ (FR-154).
 - **Clauses in other languages.** A clause in a language other than `quire` is
   kept with its span and never evaluated.
 

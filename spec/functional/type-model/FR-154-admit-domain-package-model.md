@@ -85,7 +85,8 @@ Declaration refusals:
 | A node of a business model meaning (FR-208) declares a form that meaning does not support: a non-empty `supertypes` or a `quire` clause of a persistence interface or namespace, an operation of a record value type, or an operation contract of a persistence interface | `unsupported_construct`/`declaration-form` |
 | A case of a variant type (FR-208) has a `payloadType` that resolves | `unsupported_construct`/`declaration-form` |
 | A variant type (FR-208) declares no case, a case has no source span, a case's identity is not the variant slot identity of its owner and its name, or its construct's shape is not `enumeration` | `invalid_model_binding`/`malformed-declaration` |
-| Two nodes share one identity, including two states or two steps of one owner with one name, or two transitions of one state machine with equal `from`, `to` and `trigger` | `invalid_model_binding`/`conflicting-binding` |
+| Two nodes share one identity, including two states of one owner with one name (the refusal names the shared identity at `TypeDefinition.states[i]`), two steps of one owner with one name (the refusal names the process at `TypeDefinition.steps[i]`), or a clause, state, transition or step whose member name is also the name of a field or operation of its owner (a state or transition names its own identity at `TypeDefinition.states[i]` or `TypeDefinition.transitions[i]`, the later declaration in document order, operations before states) | `invalid_model_binding`/`conflicting-binding` |
+| Two transitions of one state machine have equal `from`, `to` and `trigger`, whatever their identities: the refusal names the later transition's identity at `TypeDefinition.transitions[i]` | `invalid_model_binding`/`conflicting-binding` |
 | Two cases of one variant type have equal names and distinct identities | `invalid_model_binding`/`conflicting-binding` |
 | A multiplicity has `lower > upper` | `invalid_model_binding`/`unpreserved-model-meaning` |
 
@@ -166,23 +167,41 @@ Artifact-type ids such as `FR-100` declare no model node and are outside this
 rule.
 
 A declaration's IR node identity is the identity filament-core-data FR-095
-mints (the closed slot list of its "Node identities" section), rooted at
+mints (the closed slot list of its "Node identities" section), except for the
+four kinds below, rooted at
 `ix://<package identity>/`, with `<Name>` the declaring artifact's id passed
 through verbatim and every other part slugged. A type's identity is
 `ix://<package identity>/<artifact id>`, and the alias of a constrained
 field is `ix://<package identity>/<Name><Field>` (`<Field>` slugged with its
 first character upper-cased), which names no slot segment of its own. A field, an operation and an operation
 parameter nest under their owner: `<owner identity>/<field>`,
-`<owner identity>/<operation>` and `<operation identity>/<param>`. Every other
-node kind mints under its own slot and is not owner-nested: a relationship is
+`<owner identity>/<operation>` and `<operation identity>/<param>`. A clause, a
+state, a transition and a step nest under their owner too: each is exactly
+`<owner identity>/<member name>`, the owner being the identity of the type that
+declares it and the member name matching `^[A-Za-z][A-Za-z0-9_]*$`. A clause's
+`clauseId`, a state's `name` and a step's `name` equal the member name of its
+identity; a transition has no name of its own and its member name is any such
+identifier not used by another member of its owner (a field, operation, clause,
+state, transition or step), chosen by the producer of the document and never
+derived from `from`, `to` and `trigger`. This departs from filament-core-data
+FR-095, which mints these four kinds as global slots
+(`clause/<Name>-<clauseId>`, `state/<Name>-<state>`,
+`transition/<Name>-<from>-<to>-<trigger>`, `step/<Name>-<step>`): FR-095 and
+its minter must mint the nested form, with a member name for each transition,
+before a lifted package that declares a clause, state machine or process is
+admitted. A mismatch between `clauseId`, a state's `name` or a step's `name` and
+the member name of its identity is `invalid_model_binding`/`malformed-declaration`
+at `TypeDefinition.clauses[i].clauseId`, `TypeDefinition.states[i].name` and
+`TypeDefinition.steps[i].identity` respectively. An identity that is not
+exactly the owner's identity, `/` and one such member name, or whose owner is
+not the declaring type, is `invalid_model_binding`/`malformed-declaration`, so
+the same member name under two owners names two nodes. Every other node kind
+mints under its own slot and is not owner-nested: a relationship is
 `ix://<package identity>/relationship/<Name>-<verb>-<TargetName>` with
-`<TargetName>` the target artifact's id, a clause is
-`ix://<package identity>/clause/<Name>-<clauseId>`, a constraint is
-`ix://<package identity>/constraint/<Name>-<field>-<keyword>`, an enumeration
-variant is `ix://<package identity>/variant/<Name>-<value>`, and a state,
-transition and step are `state/<Name>-<state>`,
-`transition/<Name>-<from>-<to>-<trigger>` and `step/<Name>-<step>` under the
-same root. A relationship is declared in its source type's `relationships`
+`<TargetName>` the target artifact's id, a constraint is
+`ix://<package identity>/constraint/<Name>-<field>-<keyword>`, and an enumeration
+variant is `ix://<package identity>/variant/<Name>-<value>`.
+A relationship is declared in its source type's `relationships`
 list (with `sourceEnd` and `targetEnd`), not under the source type's identity. The artifact title is the declaration's
 `displayName`, used for presentation only and never part of a key or a name
 lookup. Retitling an artifact keeps the declaration keys of the type it declares
@@ -220,6 +239,7 @@ Admission checks are decided before the first charge.
 | FR-154-AC-9 | The published domain package document of `acme/orders` (`domain-package-acme-orders.json`) carries exactly FR-095's identity forms: types `ix://acme/orders/<artifact id>`, fields, operations and parameters nested under their owner, and relationships `ix://acme/orders/relationship/<Name>-<verb>-<TargetName>` (`Order-order-Order`, `Order-invoiced-Invoice`, `Order-follows-Order`, `Order-twin-Order`), the constrained-field alias `ix://acme/orders/OrderTotal`, none of them owner-nested. | Test (TC-280) |
 | FR-154-AC-10 | A relationship declaration of the selected document refuses at the selection row (`/lock/model_selections/<i>`), in node order and, within a node, in the order malformed declaration, unresolved end type, duplicate identity, reversed multiplicity: an identity outside the package's global `relationship` slot (owner-nested, foreign-package or wrong-slot), a missing or invalid `direction`, `category`, `composite` or `origin`, a missing, null, empty or non-string `sourceEnd.role`, a present null, empty or non-string `targetEnd.role` (an absent `targetEnd.role` is valid), a source end naming another owning type, a malformed end or multiplicity, and an end type naming a relationship or another declaration of the wrong meaning each refuse `invalid_model_binding`/`malformed-declaration`; an end type naming no declaration refuses `missing_declaration`/`missing-name`; a repeated relationship identity, including under two owners, refuses `invalid_model_binding`/`conflicting-binding`, and two missing identities are malformed declarations, not conflicting ones; `lower > upper` alone refuses `invalid_model_binding`/`unpreserved-model-meaning`. The published `adverse.json` `relationship_document_cases` hold one entry per refusal and three admitted entries. Each refusal retains the relationship's IR identity and its `origin` verbatim: `declaration_origin_cases` `refusal-retains-source-origin` (a source origin with its `sourceIdentity`, `path` and span) `refusal-retains-generated-origin` (a generated origin with its members and no span) and `refusal-retains-no-malformed-origin` (a malformed origin, refused `malformed-declaration`, retained as none). | Test (TC-280) |
 | FR-154-AC-11 | A variant type with no case, a case with no source span, a case whose identity is not `variant/<Name>-<value>` of its owner and name, and a construct of a shape other than `enumeration` each refuse `invalid_model_binding`/`malformed-declaration`, at the node and member path FR-154 names (`TypeDefinition.kind`, `TypeDefinition.variants`, `TypeDefinition.variants[i].origin`, `Variant.identity`); a field `typeRef`, an operation parameter and an operation result naming a variant type are admitted and raise no refusal; a case with a resolving `payloadType` refuses `unsupported_construct`/`declaration-form` at its case node and `Variant.payloadType`, never `invalid_model_binding`; two cases with equal names and distinct identities refuse the later case `invalid_model_binding`/`conflicting-binding` at the type node and `TypeDefinition.variants[i]` and raise no other refusal for it; within the type node the failures report in the order shape, empty list, repeated names, source spans, and each case node then reports identity and payload after the type node's refusals; reordering the `variants` list of an admitted type changes no declaration key. | Test (TC-235, TC-939) |
+| FR-154-AC-12 | A clause, state, transition and step identity is exactly `<owner identity>/<member name>`: `ix://test/orders/OrderLifecycle/NotYetPlaced`, `.../OrderLifecycle/Draft`, `.../OrderLifecycle/<transition member name>` and `.../Fulfilment/receive_order` are admitted, a clause, state or step whose `clauseId` or `name` differs from the member name of its identity refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.clauses[i].clauseId`, `TypeDefinition.states[i].name` and `TypeDefinition.steps[i].identity`, a state of `OrderLifecycle` with the identity `.../Fulfilment/Draft` (the wrong owner) refuses `malformed-declaration` at `TypeDefinition.states[i].identity`, a state, clause, step or transition whose member name is also a field or operation of its owner (state `cancel` beside operation `cancel`) refuses `invalid_model_binding`/`conflicting-binding`, and the global-slot spellings `clause/<Name>-<clauseId>`, `state/<Name>-<state>`, `transition/<Name>-<from>-<to>-<trigger>` and `step/<Name>-<step>` each refuse `invalid_model_binding`/`malformed-declaration` at the member's `identity`. Two transitions of one machine whose slugged global spellings would be equal (`a_b → c` and `a → b_c` on one trigger) are two distinct nodes with distinct keys. | Test (TC-235) |
 
 ## Dependencies
 
