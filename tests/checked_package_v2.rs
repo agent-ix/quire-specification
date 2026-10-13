@@ -7976,6 +7976,85 @@ fn tc_233_stage_limit_and_duplicate_selection_cause_sets_are_closed() {
     }
 }
 
+/// The `resource_exhausted` and `cancelled` rows of native-diagnostics and
+/// FR-272 list exactly the same closed causes and the same payload keys, every
+/// key a canonical FR-272 payload name (FR-272-AC-16).
+#[trace("TC-233", "FR-272-AC-16")]
+#[test]
+fn tc_233_resource_exhausted_and_cancelled_rows_agree() {
+    let expected: [(&str, &[&str], &[&str]); 2] = [
+        (
+            "resource_exhausted",
+            &[
+                "insufficient-next-charge",
+                "allocation-failed",
+                "reservation-size-overflow",
+                "intake-limit-exceeded",
+            ],
+            &[
+                "stage",
+                "definition",
+                "limit",
+                "consumed",
+                "subject",
+                "requested",
+                "upstream",
+                "kind",
+                "bound",
+                "actual",
+                "setting",
+            ],
+        ),
+        (
+            "cancelled",
+            &["caller-cancelled"],
+            &["stage", "definition", "related", "consumed", "subject"],
+        ),
+    ];
+    let canonical = canonical_payload_names();
+    for (code, causes, keys) in expected {
+        let causes = causes
+            .iter()
+            .map(|c| (*c).to_owned())
+            .collect::<BTreeSet<_>>();
+        let keys = keys
+            .iter()
+            .map(|k| (*k).to_owned())
+            .collect::<BTreeSet<_>>();
+        for (document, label) in [
+            (NATIVE_DIAGNOSTICS, "native-diagnostics"),
+            (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
+        ] {
+            assert_eq!(
+                diagnostic_row_causes(document, code),
+                causes,
+                "{label} `{code}` row lists exactly its causes"
+            );
+            assert_eq!(
+                diagnostic_row_payload_keys(document, code),
+                keys,
+                "{label} `{code}` row names exactly its payload keys"
+            );
+        }
+        assert!(
+            keys.is_subset(&canonical),
+            "`{code}` payload keys are canonical FR-272 payload names"
+        );
+    }
+    for (document, label) in [
+        (NATIVE_DIAGNOSTICS, "native-diagnostics"),
+        (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
+    ] {
+        let keys = diagnostic_row_payload_keys(document, "stage_limit_exceeded");
+        for key in ["kind", "bound", "actual", "setting"] {
+            assert!(
+                keys.contains(key),
+                "{label} `stage_limit_exceeded` row names `{key}`"
+            );
+        }
+    }
+}
+
 /// The eleven value-refusal and source-identity codes with their closed causes
 /// and payload keys (FR-272-AC-11).
 const VALUE_REFUSAL_ROWS: [(&str, &[&str], &[&str]); 11] = [
