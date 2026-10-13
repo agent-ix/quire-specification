@@ -40,7 +40,7 @@ package (agent-ix/filament-core-data#172) embeds that construct in its
 | --- | --- |
 | `quire.meaning.model.object-type/v1` | An object type: an identified type with fields, relationships, operations and invariants. It takes part in generalization, conformance, redefinition and dispatch (FR-150, FR-151) and has an object universe (FR-204). |
 | `quire.meaning.model.value-type/v1` | A value type: a named type bound to a native value type, with no object identity. Fields may name it as their `typeRef` (FR-154). |
-| `quire.meaning.model.variant-type/v1` | A variant type: a closed set of named cases. Normalization admits it as an effective type; a clause naming it is `unsupported_construct`/`declaration-form` (FR-150). |
+| `quire.meaning.model.variant-type/v1` | A variant type: a closed set of named cases. Normalization admits it as an effective type, and a field, parameter, result or clause may name it (Variant types below). |
 | `quire.meaning.model.record-value-type/v1` | A record value type: a named record of one or more fields, none an identity field, equal to another value exactly when both have one most-specific type and every field is equal. Its invariants hold for every value of the type. |
 | `quire.meaning.model.event-type/v1` | An event type: a record of one occurrence, with no identity field and one occurrence field whose type resolves to `Timestamp`. It has no equality rule, and its invariants hold for every value of the type. |
 | `quire.meaning.model.state-machine/v1` | A state machine: context fields, operations with preconditions and postconditions, invariants over its context, a closed set of states and a transition relation of `from` state, `to` state, `trigger` operation, optional guard clause and emitted event types. No firing or current state is bound. |
@@ -83,10 +83,9 @@ Rules common to the six meanings:
   a relationship end. No node of the other five meanings is any of these.
   Naming one there is `invalid_model_binding`/`malformed-declaration`.
 - **Field types.** A field, parameter or result `typeRef` may name a record value
-  type. Naming an event type, state machine, process, persistence interface
-  or namespace is `invalid_model_binding`/`malformed-declaration`.
-  Naming a variant type is also `invalid_model_binding`/`malformed-declaration`
-  (FR-154).
+  type or a variant type (Variant types below). Naming an event type, state
+  machine, process, persistence interface or namespace is
+  `invalid_model_binding`/`malformed-declaration`.
 - **Relationships.** A process's `relationships[]` entries have object-type
   relationship meaning over its runs (FR-150, FR-151): each is one relationship
   declaration, its ends name object types or processes, and it is navigated in
@@ -323,11 +322,51 @@ and one or more cases in `variants`, each with a name, a source span and the
 identity `variant/<Name>-<value>` of its owner and name (FR-154). A case has no
 payload: a case with a resolving `payloadType` is
 `unsupported_construct`/`declaration-form`. No case, a case with no source
-span, a case whose identity is not that identity, a construct of another shape
-and a field, parameter or result `typeRef` naming the variant type are
-`invalid_model_binding`/`malformed-declaration`, and two cases with one name
-and distinct identities are `invalid_model_binding`/`conflicting-binding` at
+span, a case whose identity is not that identity and a construct of another
+shape are `invalid_model_binding`/`malformed-declaration`, and two cases with
+one name and distinct identities are `invalid_model_binding`/`conflicting-binding` at
 the later case. The order of `variants` carries no meaning.
+
+When a field, an operation parameter or an operation result has a `typeRef`
+that names a variant type, the binder SHALL admit the member, and it SHALL
+raise no refusal of its own for it, including when the variant type's own
+declaration is refused. This holds for a field of every meaning that carries
+fields. The member's other refusals are unchanged: an event type's occurrence
+field must still resolve to `Timestamp`, so a variant-typed occurrence field is
+`invalid_model_binding`/`malformed-declaration`. A clause may name a variant
+type and a case of it. The refusals of a variant `typeRef` and of a clause
+naming a variant type are removed for the variant type and for no other
+meaning.
+
+A variant type is **unordered**: an ordering comparison over it is refused
+`ill_typed`/`operator-ineligible` at check, and an equality comparison is true
+exactly when both operands are the same case of the same variant type (FR-141).
+
+### Naming a variant type and its cases
+
+The naming rule of [model-complete](../../../proposals/quire-v1/definitions/model-complete.md)
+makes `Alias::Tier::Gold` an exception to naming by IR identity segments, and
+applies as follows.
+
+In a type position, `Alias::Tier` names the variant type `Tier` of the package
+that the `model Alias` declaration selects, as `Alias::Widget` names an object
+type. A case is written `Alias::Tier::Gold`, three segments of the shared
+grammar's qualified name, with no grammar change. `Gold` matches the case name
+byte for byte, so `gold` is another case. The checker SHALL give a case literal
+the static type `Alias::Tier` and the value of that case. No other literal has a
+variant type: a Text literal, an Integer literal and a bare `Gold` at a variant
+slot are not variant values. The resolution depends on the selected document and
+the names alone, never on the spelling of `Alias`.
+
+- A variant type name that resolves to no variant type of the alias, in a type
+  position or as the qualifier of a case, is `missing_declaration`/`missing-name`
+  at the name.
+- A case that the resolved variant type does not declare is
+  `ill_typed`/`type-mismatch` at the name, naming the type and the case, as an
+  undeclared union member is.
+- A case whose name is not a source identifier is admitted with its type but
+  has no spelling in source; a value of it still arises from a field read, a
+  call result and replay.
 
 ## Identity and comparison
 
@@ -365,7 +404,9 @@ the later case. The order of `variants` carries no meaning.
 | FR-208-AC-12 | A record value type, event type, state machine or process specializing a node of its own meaning inherits its fields, invariants and operations, an event type its occurrence field, and a state machine its states and transitions, and conforms to each ancestor; a process inherits no steps; a supertype of another meaning is `invalid_model_binding`/`malformed-declaration`; a state or transition declared by two owners, or an ancestor occurrence field the subtype's neither is nor redefines, is `invalid_model_binding`/`derivation-conflict`; a subtype transition whose guard names an ancestor's invariant is `invalid_model_binding`/`malformed-declaration` at that guard; a persistence interface or namespace with supertypes is `unsupported_construct`/`declaration-form`. | Test (TC-235) |
 | FR-208-AC-13 | A state-machine operation's precondition over a pre-call observation holding one machine context, with no post observation, evaluates over that context and the call's parameters; the same pre-call observation with no context of the machine is `invalid_model_binding`/`wrong-context`. | Test (TC-401) |
 | FR-208-AC-14 | With `Money` and its subtype `TaxedMoney` adding `tax_minor`, a `TaxedMoney` value is admitted at a `Money` field, parameter or result, as the payload of an `Option<Money>`, as an element of a `Sequence<Money>`, `Set<Money>`, `Bag<Money>` or `OrderedSet<Money>`, at a tuple position typed `Money` and as a union member payload typed `Money`, and keeps its most-specific type and its `tax_minor`. A `Money` value is not admitted at a `TaxedMoney` slot, and a `Sequence<TaxedMoney>` is not a `Sequence<Money>`. A `TaxedMoney` value and a `Money` value with equal shared fields are unequal. | Test (TC-235) |
-| FR-208-AC-15 | A type definition whose construct names `quire.meaning.model.variant-type/v1` binds its cases and no payload. A case with a resolving `payloadType` is `unsupported_construct`/`declaration-form`; no case, a case with no source span, a case whose identity is not the variant slot identity of its owner and name, a construct of a shape other than `enumeration` and a field, parameter or result `typeRef` naming the variant type are `invalid_model_binding`/`malformed-declaration`; two cases with equal names and distinct identities are `invalid_model_binding`/`conflicting-binding`. | Test (TC-235) |
+| FR-208-AC-15 | A type definition whose construct names `quire.meaning.model.variant-type/v1` binds its cases and no payload. A case with a resolving `payloadType` is `unsupported_construct`/`declaration-form`; no case, a case with no source span, a case whose identity is not the variant slot identity of its owner and name, and a construct of a shape other than `enumeration` are `invalid_model_binding`/`malformed-declaration`; two cases with equal names and distinct identities are `invalid_model_binding`/`conflicting-binding`. A field, parameter or result `typeRef` naming the variant type is admitted and raises no refusal, and a clause naming the variant type raises no `unsupported_construct`/`declaration-form`. | Test (TC-235, TC-939) |
+| FR-208-AC-16 | An admitted package with variant type `Tier` (cases `Gold`, `Standard`), object `Account` with field `tier: Tier`, record value type `Settings` with field `tier: Tier`, a state machine with context field `tier: Tier`, a process with field `tier: Tier` and an operation with parameter `t: Tier` and result `Tier` is admitted with no refusal. An event type whose occurrence field is `Tier` is `invalid_model_binding`/`malformed-declaration` at the event type node, path `TypeDefinition.occurrenceField`, while a non-occurrence event field `tier: Tier` is admitted. A variant type with no case refuses once at the variant type, path `TypeDefinition.variants`, and the field naming it raises no refusal of its own. A field `typeRef` naming an event type, state machine, process, persistence interface or namespace keeps its refusal. | Test (TC-939) |
+| FR-208-AC-17 | `Alias::Tier::Gold` has static type `Alias::Tier` and the value of the case `Gold`; the Text literal `"Gold"`, the Integer literal `0` and a bare `Gold` at an `Alias::Tier` slot are `ill_typed`/`type-mismatch`. `Alias::Tier::Silver` (a case `Tier` does not declare) and `Alias::Tier::gold` are `ill_typed`/`type-mismatch` naming the type and the case. `Alias::Nope::Gold` and `Alias::Nope` in a type position are `missing_declaration`/`missing-name`. An ordering comparison over `Alias::Tier` is `ill_typed`/`operator-ineligible`, and an equality of `Alias::Level::Gold` with `Alias::Tier::Gold` is `ill_typed`/`type-mismatch`. A unit that selects the package under another alias resolves the same type and case. | Test (TC-941) |
 
 ## Dependencies
 

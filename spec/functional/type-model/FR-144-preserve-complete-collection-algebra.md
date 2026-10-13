@@ -114,7 +114,7 @@ when they are FR-149 equal.
 | `Integer`, `Int[..]`, `Rational[..]`, `Decimal[..]` | exact mathematical value, ascending |
 | Quantity of one unit | exact value in that unit, ascending |
 | `Text[..]` | the FR-141 compared form under the type's profile (the normalized scalar sequence, or the UTF-8 bytes for `binary-utf8`), ordered lexicographically by scalar value or byte |
-| enumeration | declaration position for an `ordered enum`; otherwise the case identifier's ASCII bytes, lexicographically, never its declaration position |
+| enumeration | declaration position for an `ordered enum`; otherwise the case identifier's ASCII bytes, lexicographically, never its declaration position; for an enumeration declared by a `model`/`variant_type` node, the UTF-8 bytes of the case name, lexicographically, which may be any non-empty string (FR-141) |
 | `Reference<T>` | the FR-204 identity triple (universe identity, object-type declaration identity, object identity), compared component by component, each component lexicographically by its canonical identity bytes; under `quire.model.complete/v1` the universe and type bytes are the UTF-8 domain string followed by the 32 digest bytes, and the object bytes are the exact producer UTF-8 object identity, all compared unsigned bytewise with a proper prefix first |
 | `Option<T>` | `none` before a present value, then the key of the payload |
 | record, tuple | for two records of distinct declarations, the ascending byte order of their 32-byte declaration node keys, compared before any slot; otherwise lexicographic over fields in declaration order or positions in order; a slot orders `absent` before `null` before a present value, and present values by key |
