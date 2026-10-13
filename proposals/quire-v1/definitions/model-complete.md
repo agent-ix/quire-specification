@@ -109,9 +109,11 @@ id `Order` in domain package `acme/orders` has IR node identity
 `ix://acme/orders/Order`, and a port declared by the artifact with id
 `pump_out` has `ix://acme/orders/pump_out`. A member's identity appends its
 member name to its owner's identity: field `total` of `Order` is
-`ix://acme/orders/Order/total`. The only members are fields, relationships, operations and clauses, and the cases of a
+`ix://acme/orders/Order/total`. The members are fields, operations, clauses, states, transitions and steps, each identified by
+`<owner identity>/<member name>`, and relationships and the cases of a
 variant type, each identified by its own node
-`ix://acme/orders/variant/<Name>-<value>` (FR-154). The owner of a part or port and the ends of a connection
+(`ix://acme/orders/relationship/<Name>-<verb>-<TargetName>`,
+`ix://acme/orders/variant/<Name>-<value>`; FR-154). The owner of a part or port and the ends of a connection
 or allocation are references, not members, and never part of an identity. The
 artifact title is the declaration's
 `displayName`, used for presentation only; it is never part of an identity and
@@ -159,7 +161,7 @@ Every refusal names the IR node identity and its FCD `origin`.
 
 | Feature | Rule | Refusal |
 | --- | --- | --- |
-| Identity | A type definition's identity, including a population's and a systems construct's, is `ix://<package identity>/<artifact id>`. A field, an operation, an operation parameter, a clause, a state, a transition and a step nest under their owner (`<owner identity>/<member name>`, `<operation identity>/<param>`); a relationship and every other node kind take their own global slot, as FR-154 states from FCD FR-095 (`relationship/<Name>-<verb>-<TargetName>`). The artifact title is `displayName`, for presentation only, and the declaration's `origin` is not part of any identity. Two nodes with one identity are not allowed. | `invalid_model_binding`/`conflicting-binding` |
+| Identity | A type definition's identity, including a population's and a systems construct's, is `ix://<package identity>/<artifact id>`. A field, an operation, an operation parameter, a clause, a state, a transition and a step nest under their owner (`<owner identity>/<member name>`, `<operation identity>/<param>`); a relationship and every other node kind take their own global slot, as FR-154 states from FCD FR-095, departing from it for the four nested kinds (`relationship/<Name>-<verb>-<TargetName>`). The artifact title is `displayName`, for presentation only, and the declaration's `origin` is not part of any identity. Two nodes with one identity are not allowed. | `invalid_model_binding`/`conflicting-binding` |
 | Supertypes | Every `supertypes[]` entry of an object type names an object type of the package, and every entry of a record value type, event type, state machine or process names a node of its own meaning (FR-208); an entry naming a node of another meaning is refused. The supertype graph is acyclic; phase 3 checks it. A persistence interface or namespace with a non-empty `supertypes` is refused and its entries are not checked further. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `unsupported_construct`/`declaration-form`; `invalid_model_binding`/`specialization-cycle` in phase 3 |
 | Abstract | An abstract type has no direct instances. A population member whose most-specific type is abstract is refused. Dispatch covers only concrete subtypes. | `invalid_runtime_input`/`abstract-instance` |
 | Fields | `typeRef` names a native value type, or a type of the package; a `typeRef` naming an event type, state machine, process, persistence interface or namespace (FR-208) is refused. `multiplicity` has `lower <= upper`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `invalid_model_binding`/`unpreserved-model-meaning` |
