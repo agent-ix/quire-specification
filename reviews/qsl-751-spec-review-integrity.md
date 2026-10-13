@@ -41,3 +41,11 @@ enumeration is TC-195 N01 (FND-002).
 Findings: one medium and two low. ID allocation, the wording sweep and the
 canonical-name list are clean. The pre-existing validation failures are
 confirmed against origin/main.
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 18c2112 |
+| FND-002 | fixed | 18c2112 |
+| FND-003 | fixed | 18c2112 |

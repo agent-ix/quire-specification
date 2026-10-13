@@ -48,3 +48,24 @@ admission itself", but the coverage walk does charge it. QSL FR-083 says
 "every `redefines` edge it follows" while its code dedups (FND-001 needs one
 ruling for both repos). QSL's diagnostic.rs still says "a semantic maximum is
 not a work budget".
+
+## New findings (disposition pass 1)
+
+Reviewed at agent-ix/quire-specification@b82a677422ff63b1fa8c07e29f809c37887829a5.
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-008 | medium | The fix for FND-006 makes the cause's `stage` "the one stage value of the diagnostic (FR-273), whose producer interface lists these labels in its closed vocabulary; the cause retains no second stage". No QSpec producer interface lists `model-normalization` or `population-admission`. FR-273's ruling quotes the native compiler interface's labels (`source` ... `evaluate`), and these two are not among them. FR-273-AC-4 refuses any label outside the selected vocabulary. QSL keeps two stages: FR-302 refuses a `family_steps` denial "at S3" while the cause field carries `model-normalization` (checked_dispatch.rs `assert_family_steps_refusal_with`). This was the planner's ruling, so the fix is either to name the producer interface whose closed vocabulary holds the two labels, or to drop the "one stage, no second value" clause. | proposals/quire-v1/definitions/value-accounting.md:631-634, spec/objects/foundation/FR-272-typed-diagnostic-cause.md:77, proposals/quire-v1/definitions/native-diagnostics.md:82, FR-273-AC-4 | wrong-requirement |
+| FND-009 | low | For `identity-byte-bound-reached`, `kind` is "the exceeded canonical-encoding limit kind". The canonical definition says `kind` is "the cause-tag spelling QSL emits for it", but QSL renders no catalog field for this limit: `EncoderLimit` is kept only on the internal fault. So no exact ASCII spelling is fixed, which FR-272-AC-13 requires. | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:101,194, FR-272-AC-13 | wrong-requirement |
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | b82a677 |
+| FND-002 | fixed | 18c2112 |
+| FND-003 | fixed | 18c2112 |
+| FND-004 | fixed | 18c2112 |
+| FND-005 | fixed | 18c2112 |
+| FND-006 | fixed | 18c2112 (the ambiguity is resolved; the replacement text raises FND-008) |
+| FND-007 | fixed | 18c2112 |

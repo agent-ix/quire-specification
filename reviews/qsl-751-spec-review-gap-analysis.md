@@ -27,3 +27,9 @@ test). No build or test was run, because this is a reviewer-only pass.
 
 One medium finding. All other new criteria have a TC row and an owning
 verifier.
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 18c2112 |

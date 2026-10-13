@@ -8137,6 +8137,13 @@ fn tc_233_runtime_invariant_payload_and_stage_rule() {
             keys.is_subset(&canonical),
             "the keys are canonical payload names"
         );
+        let invariant_text = diagnostic_row_payload_text(document, "runtime_invariant");
+        for kind in ["`canonical-bytes`", "`input-bytes`", "`object-bytes`"] {
+            assert!(
+                invariant_text.contains(kind),
+                "{label} lists the encoder limit kind {kind}"
+            );
+        }
         assert!(
             diagnostic_row_payload_text(document, "runtime_invariant")
                 .contains("`identity-byte-bound-reached`"),

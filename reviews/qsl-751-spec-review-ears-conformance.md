@@ -24,3 +24,9 @@ FR-272-AC-19 each state one observable outcome with its boundary.
 ## Verdict
 
 One low finding. The other new criteria conform.
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 18c2112 |

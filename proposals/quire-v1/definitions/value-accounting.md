@@ -633,9 +633,8 @@ label that the denying limits type assigns to all its counters: `model-normaliza
 for every `ModelNormalizationLimitsV1` counter (`family_steps` and `ancestor_steps`
 included) and `population-admission` for every `PopulationAdmissionLimitsV1`
 counter. It is not the compiler stage (S1-S4) or the checking sub-stage
-(conformance, dispatch linking) in which the charge occurs. It is the one stage
-value of the diagnostic (FR-273), whose producer interface lists these labels in
-its closed vocabulary; the cause retains no second stage. This suppression includes failures
+(conformance, dispatch linking) in which the charge occurs. This `stage` is the
+charge record's own label, a payload field independent of the diagnostic's FR-273 producer stage. This suppression includes failures
 already collected from earlier selections in the same unfinished stage.
 Ancestor denial has the same public `resource_exhausted` /
 `insufficient-next-charge` disposition and five-field incomplete payload;
