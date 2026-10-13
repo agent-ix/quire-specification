@@ -83,8 +83,11 @@ whose joins below do not hold with the refusal this requirement names, in
   `quire.op.control.case` with operator class `case`, operands `["union"]`, rest `binder`, result
   form `arm_body`, no laws, no mode, no member kind, no leaf source and the
   one constraint `{kind: "union_arms", operands: [0]}`. The `arm_body` result
-  form derives the type every arm body has; the application's `result_type`
-  must be that type node. The `union_arms` constraint holds when the rest
+  form derives the case result type; the application's `result_type` must be
+  that type node, and each arm body's type is that type node or, when it is a
+  record type node, a record type node that conforms to it
+  ([FR-322](FR-322-checked-package-artifact.md) "Record conformance"; a
+  `K<child>` type is not a `K<parent>` type). The `union_arms` constraint holds when the rest
   arguments are exactly one arm per member of operand 0's union, in member
   declaration order, each named by its member, each binder aggregate holding
   as many references as that member's payload arity, and each binder's
@@ -214,7 +217,7 @@ id and no `package_id`.
 | FR-440-AC-1 | `union Shape { Circle(Integer), Rect(Integer, Integer), Empty }` is a `composite_type`/`union` node carrying `declaration`, whose body is an `aggregate` of the bindings `Circle`, `Rect` and `Empty` in that order, holding one, two and zero `reference` terms to the `Integer` node; a duplicated member name refuses `invalid_package`/`duplicate-member` and a payload reference to a non-type node `ill_typed`/`operator-ineligible`, each at the union node. | Test (TC-395) |
 | FR-440-AC-2 | `Shape::Rect(2, 3)` is a `value`/`union_value` node whose `semantic_type` is the `Shape` node and whose body is one binding `Rect` over the two payload terms in order, and `Shape::Empty` is one binding `Empty` over the empty `aggregate`; a binding naming `Triangle`, a `Rect` binding with one payload term and a `Circle` binding whose payload term is `Text` each refuse `ill_typed`/`type-mismatch` at the node. | Test (TC-395) |
 | FR-440-AC-3 | `case s { Empty: 0; Rect(w, h): w * h; Circle(r): r }` is an `expression`/`case` node whose body is a `quire.op.control.case` application over the scrutinee and the arms `Circle`, `Rect` and `Empty` in member declaration order, each arm an `aggregate` of its binder aggregate and its body, with the binders `r`, `w` and `h` as `value`/`parameter` nodes typed `Integer`; the same `case` with its source arms in another order has the same node id. | Test (TC-395) |
-| FR-440-AC-4 | A `case` application whose arms are out of member order, omit or repeat a member, carry a binder aggregate whose count differs from the member's payload arity, type a binder other than its payload position, or carry an arm body of a type other than the `result_type` refuses `ill_typed`/`operator-ineligible` at the `case` node. | Test (TC-395) |
+| FR-440-AC-4 | A `case` application whose arms are out of member order, omit or repeat a member, carry a binder aggregate whose count differs from the member's payload arity, type a binder other than its payload position, or carry an arm body whose type is neither the `result_type` nor, for a record `result_type`, a record type that conforms to it, refuses `ill_typed`/`operator-ineligible` at the `case` node. | Test (TC-395) |
 | FR-440-AC-5 | In the "Binder levels" worked vector, `t`, `w`, `h`, `r` and `x` carry the levels `3`, `4`, `5`, `4` and `5`; with `let t = k in` removed (and `t` replaced by `k`), `w`, `h`, `r` and `x` carry `3`, `4`, `3` and `4`. | Test (TC-395) |
 | FR-440-AC-6 | `quire.op.structural.eq` over two `Shape` values is admitted, and over a `Shape` value and a value of another union refuses `ill_typed`/`operator-ineligible` by its `same_type` constraint. | Test (TC-395) |
 | FR-440-AC-7 | A `quire.op.control.case` application as the body root of a `function` node refuses `ill_typed`/`operator-ineligible` at that node, and the same `case` as an `expression`/`case` node referenced from the function body is admitted; the same `case` application nested in another application's arguments refuses `ill_typed`/`operator-ineligible` at that nested application's `operator` member, not `malformed_wire`. | Test (TC-395) |

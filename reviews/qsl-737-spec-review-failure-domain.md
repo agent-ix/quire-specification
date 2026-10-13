@@ -54,6 +54,12 @@ Findings to fix in this PR before merge.
 | FND-004 | medium | The Slots list leaves out result positions. A function or expression whose body root is an application must have `semantic_type` equal to that `result_type`, and `return:0` and `arm_body` fix the result type exactly. So `function f(): Money { make_taxed() }` (body root a `function.call` with `result_type` `TaxedMoney`) and a `case` with a `Money` arm and a `TaxedMoney` arm are refused. FR-208 says a subtype value is a value of the ancestor wherever a result names it, and QSL FR-359 item 6 requires a P-typed result to admit a child. Add the result positions (a function or expression `semantic_type` against its body root's type, a `case`'s arm bodies against its result) to the Slots list, with a vector. | spec/objects/interfaces/FR-322-checked-package-artifact.md:1186-1189, 957-968 |
 | FND-005 | low | Event equality is refused only for `structural.eq`/`ne`. The author says keyed constructors and `contains` over event elements are refused upstream by FR-144, but that refusal holds only if FR-149 says an event type admits no `=`. Neither FR-149 nor FR-144 mentions event types, and FR-149's record row gives every family-`record` type equality. A package with `quire.op.collection.set` over `OrderPlaced` rest arguments, or `contains` over a `Set<OrderPlaced>`, is admitted and decides membership by an equality FR-208 withholds. Fix: one FR-149 sentence (an event type, or a type that contains one, admits no `=`), and extend the exception to `contains` and the keyed constructors. It only arises in event-invariant bodies, so it is low. | spec/objects/interfaces/FR-322-checked-package-artifact.md:1196-1206 |
 
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-006 | medium | FR-322's Results bullet admits a `case` whose arm bodies are typed `Money` and `TaxedMoney` with result type `Money` (RCF-12). FR-440 still says the `arm_body` form 'derives the type every arm body has' and the `result_type` 'must be that type node'. FR-440-AC-4 still refuses 'an arm body of a type other than the `result_type`'. The PR amended FR-440 item 3 ('Union value') but not the case rule, so the two FRs contradict for RCF-12. Amend FR-440's `arm_body` sentence and AC-4 with the record-conformance exception, as item 3 was. | spec/objects/interfaces/FR-440-checked-package-union-and-case-nodes.md:84-88, 217 |
+
 ## Dispositions
 
 Round 1, reviewed at agent-ix/quire-specification@6fa92f760058a4654ed5122d81d9dc8eec980647.
@@ -63,3 +69,10 @@ Round 1, reviewed at agent-ix/quire-specification@6fa92f760058a4654ed5122d81d9dc
 | FND-001 | fixed | 6fa92f7 |
 | FND-002 | fixed | 6fa92f7 |
 | FND-003 | fixed | 6fa92f7 |
+
+Round 2, reviewed at agent-ix/quire-specification@3713ea827bb7118792208a79f1585176d617baa6 (commits bfe731b and 3713ea8).
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-004 | fixed | bfe731b |
+| FND-005 | fixed | bfe731b |

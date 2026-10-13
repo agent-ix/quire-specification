@@ -111,8 +111,9 @@ Mixing is impossible at check time, because every type named in one checked
 package, imported ones included, resolves to that package's own keys, so no
 source expression can denote a composite type of another package. Values meet
 evaluation only through runtime inputs and snapshots validated against the
-evaluating package. A supplied composite value whose declaration key is not a
-key of that package's graph is
+evaluating package. A supplied composite value whose declaration key is neither a
+key of that package's graph nor, for a model record value type or event type, a
+declaration key of the evaluating package's selected document is
 `refused { code: invalid_runtime_input, cause: wrong-value-kind }` during input
 validation, before any evaluation or charge. A supplied union value names its
 union by declaration key, its active member by that member's

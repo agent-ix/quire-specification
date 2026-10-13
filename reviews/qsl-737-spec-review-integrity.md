@@ -62,6 +62,14 @@ Findings to fix in this PR before merge.
 | FND-006 | medium | The Calls rule checks each `quire.op.function.call` argument against 'the type node of the parameter at its position' and says the parameter types are 'those its declaration gives'. A checked-package `function` node carries no parameter list: its `semantic_type` is the result type, its `declaration` is a qualified name, and the parameter nodes (`value`/`parameter`) are not linked to it by position (positive-all-families.json). A reader therefore cannot apply the count or type check for a `function.call`. The test hands `params` in directly (record_conformance.rs `call`), so it cannot catch this. The gap predates this PR: line 444's 'signature type nodes' already assume a signature. Either state where a callee's ordered parameter types are read in the package, or defer to a ticket that adds that structure. dispatch_call is decidable, because it reads the operation's parameters from the selected document. | spec/objects/interfaces/FR-322-checked-package-artifact.md:942-949, 443-446 |
 | FND-007 | low | FR-143 now makes a model record's key stable and equal across checked packages that select one document. That makes 'a runtime composite value from another checked package is invalid_runtime_input' false for model records: such a value carries a key of this package's graph and is admitted under the key-membership rule (lines 114-116). Scope AC-9 to source-declared composites, or say a model record value from another package that selects the same document is admitted. | spec/functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md:252 |
 
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-008 | high | The new `parameters` member repeats a parameter list the package already carries. QSL FR-092 'Function nodes' builds every function node's body as an aggregate whose first binding is `parameters = aggregate{[reference(p0), ..., reference(pn-1)]}`: the `value`/`parameter` nodes in parameter order, each with `semantic_type` its type. A QSL-emitted function node will now carry its parameter types twice, as `parameters` and as the semantic_types of its body's parameter references. No rule says the two agree. The Calls rule reads the member while evaluation binds the body. FR-322 also says the member enters 'the structural preimage', which QSL FR-092 owns and whose member table has no `parameters`. That is a cross-repo change to QSL FR-092 that QSL-737's cross-repo requirement list does not contain. Reviewer correction: round-1 FND-006 said a function node 'carries no parameter list'. That is true of QSpec's own text and fixtures (FR-322 never states the function body layout, and positive-all-families' `helper` body is an empty aggregate), but QSL FR-092 does carry one. The planner ruling rested on that incomplete premise. Recommended fix, for the planner to re-rule: either (a) drop the wire member and have FR-322 state the function body layout of QSL FR-092 and read the parameter types from the body's `parameters` binding, or (b) keep the member, require it to equal the body binding's parameter-node types in order, and add the QSL FR-092 preimage and emitter amendment to QSL-737's cross-repo list. Either way, say whether clause functions (`self` and operation parameters) carry it. | spec/objects/interfaces/FR-322-checked-package-artifact.md:120-131, 973-985 |
+| FND-009 | low | The `application_node_preimage` definition still lists exactly `{version, node_tag, semantic_form, semantic_type, declaration, recursion, body}`. The optional `parameters` member that line 126 says enters this preimage, and that the preimage schema and the test oracle add, is missing from the list that defines it. Add 'and `parameters` when the node carries it'. | spec/objects/interfaces/FR-322-checked-package-artifact.md:301-305 |
+| FND-010 | low | FR-143-AC-9 now admits a model record value from another package when its key is 'a declaration key of the evaluating package's selected document'. The body still admits only keys 'of that package's graph'. A `TaxedMoney` value for a model record the evaluating package never emitted a node for satisfies the AC and fails the body (TC-188 R14). Use one test in both places. | spec/functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md:114-117 |
+
 ## Dispositions
 
 Round 1, reviewed at agent-ix/quire-specification@6fa92f760058a4654ed5122d81d9dc8eec980647.
@@ -73,3 +81,10 @@ Round 1, reviewed at agent-ix/quire-specification@6fa92f760058a4654ed5122d81d9dc
 | FND-003 | fixed | 6fa92f7 |
 | FND-004 | fixed | 6fa92f7 |
 | FND-005 | fixed | 6fa92f7 |
+
+Round 2, reviewed at agent-ix/quire-specification@3713ea827bb7118792208a79f1585176d617baa6 (commits bfe731b and 3713ea8).
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-006 | fixed | 3713ea8 |
+| FND-007 | fixed | bfe731b |

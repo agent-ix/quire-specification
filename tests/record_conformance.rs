@@ -10,7 +10,7 @@
 
 use ix_trace_rs::trace;
 use quire_verification_contracts::operation_catalog::CHECKED_OPERATION_CATALOG_V1;
-use serde_json::Value;
+use serde_json::{Value, json};
 use std::collections::BTreeMap;
 
 /// A model declaration of the selected document.
@@ -217,22 +217,65 @@ fn equality(
     Outcome::Admitted
 }
 
-/// The `function` nodes of the package: the `parameters` member of each, in
-/// declaration order (a function with none carries no member).
-fn function_nodes() -> BTreeMap<&'static str, Vec<Ty>> {
-    let money = || model("Money");
+/// The `value`/`parameter` nodes of the package: node key to its
+/// `semantic_type`.
+fn parameter_nodes() -> BTreeMap<&'static str, Ty> {
     BTreeMap::from([
-        ("take_money", vec![money()]),
-        ("take_taxed", vec![model("TaxedMoney")]),
-        ("take_seq_money", vec![Ty::Sequence(Box::new(money()))]),
-        ("take_opt_money", vec![Ty::Option(Box::new(money()))]),
-        ("nullary", vec![]),
+        ("p-money", model("Money")),
+        ("p-taxed", model("TaxedMoney")),
+        ("p-seq-money", Ty::Sequence(Box::new(model("Money")))),
+        ("p-opt-money", Ty::Option(Box::new(model("Money")))),
     ])
+}
+
+/// The `function` nodes of the package as wire bodies (QSL FR-092 "Function
+/// nodes"): the first binding of the body is `parameters`, an `aggregate` of
+/// `reference` terms to the parameter nodes in parameter order; a function
+/// without parameters has no such binding.
+fn function_bodies() -> BTreeMap<&'static str, Value> {
+    let parameters = |targets: &[&str]| {
+        json!({"term": "aggregate", "members": [{
+            "term": "binding", "name": "parameters",
+            "value": {"term": "aggregate", "members": targets.iter()
+                .map(|target| json!({"term": "reference", "target": target}))
+                .collect::<Vec<_>>()}
+        }]})
+    };
+    BTreeMap::from([
+        ("take_money", parameters(&["p-money"])),
+        ("take_taxed", parameters(&["p-taxed"])),
+        ("take_seq_money", parameters(&["p-seq-money"])),
+        ("take_opt_money", parameters(&["p-opt-money"])),
+        ("nullary", json!({"term": "aggregate", "members": []})),
+    ])
+}
+
+/// The declared parameter types of a function node, read from its body's
+/// `parameters` binding; a body without the binding takes none.
+fn declared_parameters(body: &Value) -> Vec<Ty> {
+    let nodes = parameter_nodes();
+    body["members"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .find(|member| member["name"] == "parameters")
+        .map(|binding| {
+            binding["value"]["members"]
+                .as_array()
+                .expect("parameters is an aggregate")
+                .iter()
+                .map(|reference| nodes[reference["target"].as_str().expect("target")].clone())
+                .collect()
+        })
+        .unwrap_or_default()
 }
 
 /// The operations of the selected document: parameters by operation name.
 fn operations() -> BTreeMap<&'static str, Vec<Ty>> {
-    function_nodes()
+    function_bodies()
+        .into_iter()
+        .map(|(name, body)| (name, declared_parameters(&body)))
+        .collect()
 }
 
 /// A call to `callee`: the parameters come from the callee's `parameters`
@@ -251,7 +294,7 @@ fn call(
         "{identity} carries no constraint"
     );
     let params = match identity {
-        "quire.op.function.call" => function_nodes(),
+        "quire.op.function.call" => operations(),
         "quire.op.model.dispatch_call" => operations(),
         other => panic!("{other} is not a call"),
     };

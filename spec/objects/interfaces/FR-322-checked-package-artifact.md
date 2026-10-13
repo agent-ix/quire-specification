@@ -117,18 +117,7 @@ boundary.
   refuses `missing_import`/`missing-selection` at that entry's pointer,
   before any `dependency_reference` check.
 - `semantic_graph` — one `quire.checked-semantic-graph/v2` closed tagged-node
-  union. A `function` node declares its parameters in an optional `parameters`
-  member: a non-empty array of node keys, the type node of each parameter in
-  declaration order. A function with no parameter carries no `parameters`
-  member, so there is one form for it and an empty array is not a package
-  (the V2 schema refuses it, as it refuses `parameters` on any node that is not
-  a `function`). The member is part of the node's identity preimage whenever it
-  is present, in the application-node preimage (`quire.application-node/v1`) and
-  in the structural preimage, and it is a member of the node's
-  `identity_projection` entry, so changing a parameter type changes the node id
-  and the `package_id`. Each entry is a type node of the graph and is listed in
-  the node's `dependencies`; a `function` node's result type is its
-  `semantic_type`. Its current tags are `scalar_type`, `composite_type`,
+  union. Its current tags are `scalar_type`, `composite_type`,
   `bounded_domain`, `value`, `expression`, `function`, `model`, `relation`,
   `state`, `temporal`, `protocol`, `claim` and `correspondence`. A node key is
   (`node_id.domain`, `node_id.digest`); node identifiers are unique within the
@@ -316,8 +305,8 @@ boundary.
   bodies contain no application. An `expression` whose body root is
   an application has the `semantic_form` fixed by its operator class; the
   node's `dependencies` are exactly the unique digest-ascending `reference`
-  term targets and member declarations of its body, together with a function
-  node's `parameters`; a `dependency_reference` contributes none. A contradictory form or
+  term targets and member declarations of its body; a `dependency_reference`
+  contributes none. A contradictory form or
   dependency list is `invalid_semantic_graph`. A node whose retained key differs
   from the digest of its preimage refuses as `invalid_package` with cause
   `stale-node-key`, after every graph-shape refusal and before any declaration,
@@ -951,17 +940,23 @@ identity includes its element type node: a child **value** is admitted at a
 Conformance decides these positions:
 
 - **Calls.** The arguments of a `quire.op.function.call` application after
-  its callee equal the callee `function` node's `parameters` in number (a
-  callee with no `parameters` member takes none), and the arguments of an
+  its callee equal the callee's parameters in number, and the arguments of an
   operation call (`dispatch_call`) after its receiver equal the resolved
-  operation's parameters in number, which come from the selected document
-  (step 4). Each argument's type node equals the type node of the parameter at
-  its position, or, when that parameter's type is a record type node `P`, is a
-  record type node that conforms to `P`. A `dependency_reference` callee
-  contributes the `parameters` of the named dependency node, whose parameter
-  type nodes are package-independent. The catalog entry of
-  `quire.op.function.call` carries no constraint for this, so the reader checks
-  it at the application's `operator-ineligible` check.
+  operation's parameters in number; the count is checked first. The parameters
+  of a `dispatch_call` come from the selected document (step 4). The parameters
+  of a `function.call` come from the callee `function` node's body: its first
+  binding, named `parameters`, is an `aggregate` of `reference` terms to the
+  `value`/`parameter` nodes in parameter order, each typed by its
+  `semantic_type`, including a parameter the body never reads (QSL FR-092
+  "Function nodes"). A callee whose body has no `parameters` binding takes no
+  parameter, and a `dependency_reference` callee uses the same binding of the
+  named dependency node. That binding is the one source of a function's
+  declared parameter types; no other member carries them. Each argument's type
+  node equals the type node of the parameter at its position, or, when that
+  parameter's type is a record type node `P`, is a record type node that
+  conforms to `P`. The catalog entry of `quire.op.function.call` carries no
+  constraint for this, so the reader checks it at the application's
+  `operator-ineligible` check.
 - **Projection.** `quire.op.record.project` over an operand of record type node
   `A` carries a `field` member whose `declaration` names a record type node
   `D` that `A` conforms to (`member_of`), so a field `D` declares or inherits is
@@ -1438,8 +1433,8 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-66 | The worked package with a `protocol`/`protocol_reference` carrier to its local `protocol_clause` target is admitted with one graph collection; its body target, sole dependency and semantic type bind that exact protocol node and its recomputed key changes when the target changes. With the body target and sole dependency changed together and identities recomputed, a missing local target refuses `missing_declaration`/`missing-name` even when a selected dependency contains that key, and a present non-protocol target or unequal semantic type refuses `ill_typed`/`operator-ineligible`. A non-reference body or extra carrier member fails the V2 schema; a dependency target is not admitted as a protocol reference. | Test |
 | FR-322-AC-67 | The six identities `quire.op.string.eq`, `quire.op.string.ne`, `quire.op.uuid.eq`, `quire.op.uuid.ne`, `quire.op.timestamp.eq` and `quire.op.timestamp.ne` are enumerated by both V2 schemas and catalogued as binary `boolean` comparisons with no law or mode, and both schemas admit `string`, `uuid` and `timestamp` as a literal `value_kind`. An application of each identity over two operands of its own family, with result `boolean`, no law, no mode and no member, is admitted. An operand of another family (`string` against `text`, `uuid` against `string`, `timestamp` against `uuid`) and an ordering or arithmetic identity over these families (`quire.op.integer.lt` and `quire.op.integer.add` over `uuid` operands) each refuse `ill_typed`/`operator-ineligible`. A `text_profile` law on a `string`, `uuid` or `timestamp` identity refuses `invalid_package`/`operation-law-mismatch`, a `text_profile` mode `invalid_package`/`operation-mode-mismatch`, and a `string` operand of `quire.op.text.eq` `invalid_package`/`operation-mode-type-mismatch`. A literal of `value_kind` `string`, `uuid` or `timestamp` whose `type` is not its own family refuses `ill_typed`/`operator-ineligible`, and a `string`, `uuid` or `timestamp` literal `value` in a non-canonical spelling, on a literal of the right family, refuses `invalid_package`/`invalid-value`. | Test |
 | FR-322-AC-68 | A selected domain package whose document declares the event type `OrderPlaced` (`quire.meaning.model.event-type/v1`, with fields `order_id` and `occurred_at`) admits a self-typed `model`/`event_type` declaration node owned by `OrderPlaced`, with a `ModelOwner` and the closed `ModelDeclarationNode` preimage. The node has family `record`, a `quire.op.record.project` over a value of its type resolves a field of `OrderPlaced` (own or inherited) to its step 4 type, and an invariant clause function owned by `OrderPlaced` passes the owner join. A `quire.op.structural.eq` or `quire.op.structural.ne` over two `OrderPlaced` operands, or over two `Option<OrderPlaced>`, tuple-holding-`OrderPlaced` or `Set<OrderPlaced>` operands, refuses `ill_typed`/`operator-ineligible`; the same applications over `Money` operands are admitted. A `model`/`event_type` node owned by a record value type, an object type or a node absent from the selected document refuses `missing_declaration`/`missing-selection` in the owner join, one with no `owner` or with a `SourceOwner` and no `declaration` fails the V2 schema (`malformed_wire`), and both V2 schemas enumerate the form in the owner-presence rule, the model forms and the `ModelDeclarationNode` preimage. | Test |
-| FR-322-AC-69 | With record value types `Money` and `TaxedMoney` (supertype `Money`) and `GiftTaxedMoney` (supertype `TaxedMoney`) of one selected document, a `quire.op.function.call` argument, or an operation-call argument, of type `TaxedMoney` or `GiftTaxedMoney` at a `Money` parameter (a `function` node whose `parameters` list `Money`) is admitted with the argument taken by `ref` and no conversion node; a `Money` argument at a `TaxedMoney` parameter, an argument of an unrelated record, and a `Sequence<TaxedMoney>` argument at a `Sequence<Money>` parameter each refuse `ill_typed`/`operator-ineligible`, as does an argument whose count differs from the parameters' (a callee with no `parameters` member takes none). A `function` node typed `Money` whose body root is an application typed `TaxedMoney`, and a `case` whose arm bodies are typed `Money` and `TaxedMoney` with result type `Money`, are admitted; a `Money` body at a `TaxedMoney` function is refused. A `quire.op.record.project` over a `GiftTaxedMoney` or `TaxedMoney` operand whose `field` member names `Money` as `declaration` reads `Money`'s field with the type `Money` gives it, and one naming `GiftTaxedMoney` over a `TaxedMoney` operand refuses `ill_typed`/`operator-ineligible`. `quire.op.collection.contains` over a `Set<Money>` and a `TaxedMoney` operand, and `quire.op.collection.set` over `TaxedMoney` rest arguments with a `Set<Money>` result, are admitted, and a `Set<TaxedMoney>` operand of a `Set<Money>` slot refuses. A `value`/`union_value` node whose `Money` payload position holds a `TaxedMoney` term is admitted. A `quire.op.structural.eq` or `quire.op.structural.ne` over two `Money` operands is admitted with `Money`'s leaves, including when the values are `TaxedMoney` values whose subtype-only text field has no listed leaf. | Test |
-| FR-322-AC-70 | A `function` node carrying `parameters`, a non-empty array of node keys, is admitted by the V2 schema with its parameter type nodes in `dependencies`; the same node with an empty `parameters` array, with a `parameters` entry that is not a node key, or a non-`function` node carrying `parameters` fails the schema (`malformed_wire`). The `parameters` member enters the node's `quire.application-node/v1` preimage (checked by the node-identity preimage schema, which refuses it on a non-`function` node) and its structural preimage, so changing a parameter type node changes the node id; a function without parameters has no member, and its published node ids are unchanged. | Test |
+| FR-322-AC-69 | With record value types `Money` and `TaxedMoney` (supertype `Money`) and `GiftTaxedMoney` (supertype `TaxedMoney`) of one selected document, a `quire.op.function.call` argument (the parameter read from the callee's body `parameters` binding) or an operation-call argument of type `TaxedMoney` or `GiftTaxedMoney` at a `Money` parameter is admitted with the argument taken by `ref` and no conversion node; a `Money` argument at a `TaxedMoney` parameter, an argument of an unrelated record, and a `Sequence<TaxedMoney>` argument at a `Sequence<Money>` parameter each refuse `ill_typed`/`operator-ineligible`, as does an argument whose count differs from the parameters' (a callee with no `parameters` binding takes none). A `case` whose arm bodies are `Money` and `TaxedMoney` with result type `Money` is admitted (FR-440-AC-4). A `function` node typed `Money` whose body root is an application typed `TaxedMoney`, and a `case` whose arm bodies are typed `Money` and `TaxedMoney` with result type `Money`, are admitted; a `Money` body at a `TaxedMoney` function is refused. A `quire.op.record.project` over a `GiftTaxedMoney` or `TaxedMoney` operand whose `field` member names `Money` as `declaration` reads `Money`'s field with the type `Money` gives it, and one naming `GiftTaxedMoney` over a `TaxedMoney` operand refuses `ill_typed`/`operator-ineligible`. `quire.op.collection.contains` over a `Set<Money>` and a `TaxedMoney` operand, and `quire.op.collection.set` over `TaxedMoney` rest arguments with a `Set<Money>` result, are admitted, and a `Set<TaxedMoney>` operand of a `Set<Money>` slot refuses. A `value`/`union_value` node whose `Money` payload position holds a `TaxedMoney` term is admitted. A `quire.op.structural.eq` or `quire.op.structural.ne` over two `Money` operands is admitted with `Money`'s leaves, including when the values are `TaxedMoney` values whose subtype-only text field has no listed leaf. | Test |
+| FR-322-AC-70 | A `function` node whose body is an `aggregate` with the first binding `parameters`, an `aggregate` of `reference` terms to `value`/`parameter` nodes in parameter order, is admitted by the V2 schema, including a parameter the body never reads. A `function.call` application over that callee has arguments counted against that binding and typed against the `semantic_type` of its referenced parameter nodes; a callee without the binding takes none. | Test |
 
 ## Dependencies
 

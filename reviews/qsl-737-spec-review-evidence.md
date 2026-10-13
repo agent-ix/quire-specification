@@ -51,6 +51,12 @@ Findings to fix in this PR before merge.
 | --- | --- | --- | --- |
 | FND-003 | low | The three new tests rebuild FR-322's rules in Rust (`conforms`, `slot_admits`, the event check) over a hard-coded document and assert inline expectations. They do not apply a published vector document. Reverting the FR-322 prose would leave them green; only the catalog-shape asserts (the constraint kinds of each entry, `leaves: operand:0`) read an external artifact. Unlike TC-281's other cases in `model-member-type-vectors.json`, which run against the real acme-orders document and its recomputed keys, the EV/RCF vectors are not published as data, so the IR reader (quire-contract-ir) cannot consume them. The tests are acceptable as a reference oracle for this PR. Publish EV/RCF as vector data in a follow-up so the reader implementation is checked against them. | tests/record_conformance.rs:1-495 |
 
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | low | PF-05 and PF-06 assert that adding `parameters` changes the digest of the repo's own `application_node_preimage` and `structural_node_preimage`. Those functions were edited in this commit to copy the member in, so the two assert_ne checks only test that edit, and the structural one checks no published schema. The real evidence is PF-01..PF-04 (V2 schema), the preimage-schema admit/refuse checks and PF-07 (dependency shape). Pin PF-05/06 to a recorded preimage digest, or drop the inequality asserts. No published structural-preimage schema exists to check PF-06 against. | tests/checked_package_v2.rs:12695-12779 |
+
 ## Dispositions
 
 Round 1, reviewed at agent-ix/quire-specification@6fa92f760058a4654ed5122d81d9dc8eec980647.
@@ -59,3 +65,9 @@ Round 1, reviewed at agent-ix/quire-specification@6fa92f760058a4654ed5122d81d9dc
 | --- | --- | --- |
 | FND-001 | fixed | 6fa92f7 |
 | FND-002 | fixed | 6fa92f7 |
+
+Round 2, reviewed at agent-ix/quire-specification@3713ea827bb7118792208a79f1585176d617baa6 (commits bfe731b and 3713ea8).
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-003 | deferred | TC-281 now says the EV/RCF vectors are a reference oracle applied by tests/record_conformance.rs over inline data and not yet published as a data file; publishing them as vector data is left to a follow-up (no ticket named yet). Low severity; not blocking. |
