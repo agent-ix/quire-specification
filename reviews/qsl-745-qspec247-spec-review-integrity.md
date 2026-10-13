@@ -45,6 +45,14 @@ Reviewed at agent-ix/quire-specification@88271576e42fbf1b20b53301fbc996a83902e38
 | FND-005 | medium | The `insufficient-next-charge` record drops `limit_kind`, and both rows say "no second key carries its name". That is not one thing under two names: the record now cannot say which counter was denied. A charge point can be denied by different counters (TC-185 D13: `decimal.arithmetic` under `integer_bits` vs `work_units`), and `limit` alone does not identify one. Recommend retaining `limit_kind` (FR-150-AC-11 / FR-330 vocabulary) as a canonical key on the charge record. | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:77, proposals/quire-v1/definitions/native-diagnostics.md:82, FR-150-AC-11, spec/test-cases/TC-185-exact-decimal-semantics.md:39 | wrong-requirement |
 | FND-006 | medium | The new `input-bytes-exceeded` cause is scoped to "the format and intake byte budgets", but intake's byte budget already carries `intake-limit-exceeded` (FR-272 row; QSL FR-260-AC-4; QSL FR-255 Behavior 1 table gives format → `input-bytes-exceeded`, intake → `intake-limit-exceeded`). An over-long intake document now has two catalogued causes. Recommend scoping `input-bytes-exceeded` to the format output budget (non-intake byte budgets). | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:77, proposals/quire-v1/definitions/native-diagnostics.md:82 | wrong-requirement |
 
+## New findings (disposition pass 3)
+
+Reviewed at agent-ix/quire-specification@d22e232446f5ac4b92fe9193c8e2b78a498f3217.
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-007 | low | The restored `limit_kind` is described as "the accounted counter that denied the charge (the FR-150-AC-11 and FR-330 vocabulary)", which names two disjoint value sets: the accounting counters of FR-150-AC-11 and TC-185 (`ancestor_steps`, `work_units`, `integer_bits`) and FR-330's six Contract IR values (`bytes`, `nodes`, `edges`, `occurrences`, `diagnostics`, `work`). A model-walk denial's `ancestor_steps` is not an FR-330 value, and FR-272-AC-13 requires one exact string. Recommend: "the denying record's own `limit_kind`, unchanged" (or name only the accounting-contract counter names). | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:77, proposals/quire-v1/definitions/native-diagnostics.md:82, spec/objects/interfaces/FR-330-contract-package.md:160 | wrong-requirement |
+
 ## Dispositions
 
 | FND | outcome | sha/reason |
@@ -53,3 +61,5 @@ Reviewed at agent-ix/quire-specification@88271576e42fbf1b20b53301fbc996a83902e38
 | FND-002 | fixed | 9c5d787 |
 | FND-003 | fixed | 8827157 |
 | FND-004 | fixed | 8827157 |
+| FND-005 | fixed | d22e232 |
+| FND-006 | fixed | d22e232 |

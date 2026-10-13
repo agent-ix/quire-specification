@@ -52,3 +52,4 @@ Reviewed at agent-ix/quire-specification@88271576e42fbf1b20b53301fbc996a83902e38
 | FND-002 | fixed | 9c5d787 |
 | FND-003 | fixed | 8827157 |
 | FND-004 | fixed | 8827157 |
+| FND-005 | deferred | QSL-side: routed to the QSL-745 work in agent-ix/quire-spec-language#811; no QSpec change in #247 |
