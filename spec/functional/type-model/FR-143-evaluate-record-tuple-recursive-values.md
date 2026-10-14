@@ -232,7 +232,7 @@ also arrive through a parameter, `let` binding or composite field that carries
 such a value. Its identity is the snapshot-supplied FR-009/FR-204 triple
 (universe, object-type declaration identity, declared object identity). Under
 the selected `quire.model.complete/v1` definition the universe is the
-`quire.model.object-universe/v1` identity, the type is the effective
+`quire.model.object-universe/v2` identity, the type is the effective
 declaration identity of the object's most-specific type, never the static `T`,
 and `Reference<S>` converts to `Reference<T>` only by the FR-149 upcast row. Its retained observation is
 not part of identity. `Reference<T>` is terminal in containment, construction

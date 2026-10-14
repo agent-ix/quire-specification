@@ -13,7 +13,7 @@ const EFFECTIVE_DECLARATION_VECTORS: &str =
 const EFFECTIVE_DECLARATION_SCHEMA: &str =
     include_str!("../proposals/checked-package-v2/model-effective-declaration.schema.json");
 
-const EFFECTIVE_DECLARATION_DOMAIN: &str = "quire.model.effective-declaration/v1";
+const EFFECTIVE_DECLARATION_DOMAIN: &str = "quire.model.effective-declaration/v2";
 
 fn parsed_fixture(bytes: &str) -> Value {
     serde_json::from_str(bytes).expect("authored fixture is valid JSON")
@@ -119,6 +119,69 @@ fn tc_195_effective_declaration_vectors_recompute_their_digests() {
             str_at(base, "/sha256"),
             "{name} retains exactly its base vector {base_name}'s digest"
         );
+    }
+}
+
+/// Every inherit fact links to the one-edge parent it names: a type fact to
+/// the type of its direct supertype, a member fact to the same original
+/// member in that supertype. A qualify fact links nothing, and no two inherit
+/// facts of one declaration share a parent.
+#[trace("TC-195", "FR-150-AC-12")]
+#[test]
+fn tc_195_inherit_links_name_one_edge_parents() {
+    let file = parsed_fixture(EFFECTIVE_DECLARATION_VECTORS);
+    let vectors = file["vectors"].as_array().expect("vectors is an array");
+    for view in ["n01-view", "n02-view", "n01v2-view"] {
+        let declarations = vector_named(vectors, view)["preimage"]["declarations"]
+            .as_array()
+            .expect("view declarations are an array");
+        let by_id = declarations
+            .iter()
+            .map(|entry| (str_at(entry, "/effective_id/digest"), &entry["preimage"]))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        let type_id = |node: &str| {
+            declarations
+                .iter()
+                .find(|entry| {
+                    entry["preimage"]["owner_effective_type"].is_null()
+                        && str_at(&entry["preimage"], "/original/node") == node
+                })
+                .map(|entry| str_at(entry, "/effective_id/digest"))
+                .unwrap_or_else(|| panic!("{view} holds type {node}"))
+        };
+        for entry in declarations {
+            let preimage = &entry["preimage"];
+            let mut parents = BTreeSet::new();
+            for fact in preimage["derivation"].as_array().expect("derivation") {
+                let rule = str_at(fact, "/rule/identity");
+                if rule != "quire.model.normalize.inherit/v2" {
+                    assert!(fact["parent"].is_null(), "{view} {rule} links nothing");
+                    continue;
+                }
+                assert_eq!(
+                    str_at(fact, "/parent/domain"),
+                    EFFECTIVE_DECLARATION_DOMAIN
+                );
+                let parent_id = str_at(fact, "/parent/digest");
+                assert!(parents.insert(parent_id), "{view} parents are distinct");
+                let parent = by_id
+                    .get(parent_id)
+                    .unwrap_or_else(|| panic!("{view} parent is in the view"));
+                let inputs = fact["inputs"].as_array().expect("fact inputs");
+                let (supertype, original) = (&inputs[0], &inputs[inputs.len() - 1]);
+                assert_eq!(&parent["original"], original, "{view} link keeps its original");
+                if preimage["owner_effective_type"].is_null() {
+                    assert_eq!(inputs.len(), 1, "a type link names one supertype");
+                } else {
+                    assert_eq!(inputs.len(), 2, "a member link names supertype and member");
+                    assert_eq!(
+                        str_at(&parent["owner_effective_type"], "/digest"),
+                        type_id(str_at(supertype, "/node")),
+                        "{view} member link lands in the named supertype"
+                    );
+                }
+            }
+        }
     }
 }
 

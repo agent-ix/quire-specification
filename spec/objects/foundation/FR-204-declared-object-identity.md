@@ -22,7 +22,7 @@ When identity-bearing objects are compared, the evaluator SHALL compare their un
 ## Properties
 
 - **universe** (identity component) — the declared universe the object belongs
-  to. Under `quire.model.complete/v1` it is the `quire.model.object-universe/v1`
+  to. Under `quire.model.complete/v1` it is the `quire.model.object-universe/v2`
   identity of the object type's generalization component, not a population. Identity comparison across pre and post states is permitted only within
   one declared universe
   ([FR-009](../../functional/foundation/FR-009-preserve-object-identity.md)).
@@ -60,7 +60,7 @@ When identity-bearing objects are compared, the evaluator SHALL compare their un
 - **Digest domain** — not applicable to `object_identity`; a declared object
   identity is authored, not digested. Under `quire.model.complete/v1` the
   universe and type components are QSL-derived identities in the
-  `quire.model.object-universe/v1` and `quire.model.effective-declaration/v1`
+  `quire.model.object-universe/v2` and `quire.model.effective-declaration/v2`
   domains; their key bytes are the domain string followed by the digest bytes. Where a derived identity is digested instead, its domain is
   selected under [FR-201](FR-201-canonical-identity-domain.md).
 

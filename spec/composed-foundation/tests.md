@@ -194,6 +194,7 @@ executable cases.
 | FR-046 | FR-046-AC-5 | TC-046 |  |
 | FR-046 | FR-046-AC-6 | TC-046 |  |
 | FR-046 | FR-046-AC-7 | TC-401 |  |
+| FR-046 | FR-046-AC-8 | TC-046 |  |
 | FR-047 | FR-047-AC-1 | TC-047 |  |
 | FR-047 | FR-047-AC-2 | TC-047 |  |
 | FR-047 | FR-047-AC-3 | TC-047 |  |
@@ -256,7 +257,7 @@ executable cases.
 | TC-043 | Evaluate identity and reachability in explicit finite graphs | Integration | P1 | FR-043-AC-1, FR-043-AC-2, FR-043-AC-3, FR-043-AC-4, FR-043-AC-5 | 🚧 |
 | TC-044 | Establish exact numeric definedness in the selected domain | Integration | P1 | FR-044-AC-1, FR-044-AC-2, FR-044-AC-3, FR-044-AC-4, FR-044-AC-5, FR-044-AC-6, FR-044-AC-7 | 🚧 |
 | TC-045 | Preserve conditional evaluation and exact optional-value facts | Integration | P1 | FR-045-AC-1, FR-045-AC-2, FR-045-AC-3, FR-045-AC-4, FR-045-AC-5 | 🚧 |
-| TC-046 | Validate state invocation inputs before clause evaluation | Integration | P1 | FR-046-AC-1, FR-046-AC-2, FR-046-AC-3, FR-046-AC-4, FR-046-AC-5, FR-046-AC-6 | 🚧 |
+| TC-046 | Validate state invocation inputs before clause evaluation | Integration | P1 | FR-046-AC-1, FR-046-AC-2, FR-046-AC-3, FR-046-AC-4, FR-046-AC-5, FR-046-AC-6, FR-046-AC-8 | 🚧 |
 | TC-047 | Classify producer diagnostics from typed causes | Integration | P1 | FR-047-AC-1, FR-047-AC-2, FR-047-AC-3, FR-047-AC-4, FR-047-AC-5, FR-047-AC-6, FR-047-AC-7, FR-047-AC-8, FR-271-AC-1, FR-271-AC-2, FR-271-AC-3, FR-271-AC-4, FR-271-AC-5, FR-273-AC-1, FR-273-AC-2, FR-273-AC-3, FR-273-AC-4 | 🚧 |
 | TC-048 | Stop work at its resource boundary | Integration | P1 | NFR-010 | 🚧 |
 | TC-049 | Retain typed temporal syntax and activation bindings | Integration | P1 | FR-048-AC-1, FR-048-AC-2, FR-048-AC-3, FR-048-AC-4, FR-048-AC-5, FR-048-AC-6, FR-048-AC-7, FR-048-AC-8 | 🚧 |
