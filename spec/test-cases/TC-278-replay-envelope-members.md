@@ -28,8 +28,8 @@ request/result amendment, binding FR-323-AC-10..14 without a new TC id.
   `QualifiedName` against the recompiled package's declarations.
 - Supplied vectors require the reviewed real QSV FR-109 / QSL FR-277
   bounded path and actual QSL-675 typed native mapping before execution is
-  qualified. Default vectors additionally require owning published A/H
-  defaults; this case selects none. Decimal waits for IR-718/IR-719 and typed
+  qualified. Default vectors use the published A/H default 16777216 units each
+  (QSL FR-277). Decimal waits for IR-718/IR-719 and typed
   integration, while its positive requirement remains mandatory once enabled.
 
 ## Test Procedure
@@ -76,8 +76,8 @@ and additional spend must be observed, not inferred from equal Booleans.
 | RE-10 | The same request with its trace position member removed | Refused before consumption | FR-323-AC-6 |
 | RE-11 | A non-replay `NativeRuntimeEnvelope` request | Carries no `replay` property | FR-323-AC-6 |
 | RE-12 | Equivalent applicable replay/non-replay requests with explicit complete `limits.supplied` A/H; hold package/input/selection/options fixed and vary A alone then H alone; also hold both fixed | Either changed effective ceiling changes request identity, not package identity; both fixed with other inputs fixed retains request identity; existing scalar/population fields and per-argument C/occ units unchanged | FR-323-AC-10 |
-| RE-13 | Move either supplied ceiling into replay `stage_limits`; omit an effective supplied ceiling, add an unknown member or use an out-of-u64 value | Misplaced stage setting refuses before stages; incomplete/malformed typed supplied object refuses before consumption; no evaluator/stage/population/unselected-default fallback | FR-323-AC-10 |
-| RE-14 | Request with no supplied phase, and applicable API-default request after owning defaults are reviewed | No-phase existing request shape remains usable without supplied object; applicable default request normalizes actual own published defaults into effective ceilings/identity, never 262144/524288 by assumption; if defaults are not approved, this vector remains qualification-blocked | FR-323-AC-10 |
+| RE-13 | Move either supplied ceiling into replay `stage_limits`; omit an effective supplied ceiling, add an unknown member or use an out-of-u64 value | Misplaced stage setting refuses before stages; incomplete/malformed typed supplied object refuses before consumption; no evaluator/stage/population/default-borrowing fallback | FR-323-AC-10 |
+| RE-14 | Request with no supplied phase, and applicable API-default request | No-phase existing request shape remains usable without supplied object; applicable default request normalizes `supplied.admission_work_units` and `supplied.conversion_work_units` to 16777216 each into effective ceilings/identity | FR-323-AC-10 |
 | RE-15 | Qualified supplied fixture at zero, actual N-1 and N in each A/H counter with all other bounds permitting progress | Zero denies first event; one-less denies actual last event unperformed/unspent with correct phase/parameter/event/locus, limit, successful prefix, next amount and checked counter; exact permits that phase; no evaluation consumed by pre-call stop | FR-323-AC-11 |
 | RE-16 | Checked pre-call counter overflow; then actual evaluated accounting denial after pre-call bounds permit entry | Pre-call overflow is explicit without wrapping; denied event is not performed or spent and successful prefix is unchanged; evaluated counterpart retains exactly the original accounting limit record/real charge_point, no supplied context; no fabricated FunctionCall | FR-323-AC-11 |
 | RE-17 | Identical supplied inputs/environment and same nonzero incoming budget, multiple arguments/nested helper, paired cold/warm caches | Same logical count and complete first-denial record; original caller budget/Cancel persists, one initiating owner, no cache/entry/argument reset or double debit | FR-323-AC-12 |
@@ -100,8 +100,8 @@ closed evaluated accounting record, byte provision/dependency precedence
 and zero semantic consumption for pre-call stops. Actual input/cancel/
 storage/capacity causes remain native typed causes, not messages or invented
 catalog variants. RE-21 is Analysis evidence bound to FR-323-AC-13, not a
-claimed runnable unsupported-result trace. Default/capability/mapping
-prerequisites are not discharged by authored shapes or hypothetical totals.
+claimed runnable unsupported-result trace. Capability/mapping
+prerequisites are not discharged by authored shapes.
 The unchanged QSL-503 full Tree and evaluator parity controls remain owned
 by QSL TC-830/831/906 and cannot be replaced by this envelope case.
 RE-22 verifies the existing native fault route OUTSIDE the five supplied
@@ -114,4 +114,4 @@ binding; a missing binding blocks qualification, not a fabricated outcome.
 
 The supplied-phase extension RE-12..22 is PROPOSED, PLANNED/UNRUN and
 independently unreviewed. No new fixture implementation, native helper,
-reader qualification, default selection or test pass is claimed.
+reader qualification or test pass is claimed.

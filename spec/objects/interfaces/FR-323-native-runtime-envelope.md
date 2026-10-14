@@ -133,14 +133,15 @@ and may omit `supplied`; a supplied-value request lacking an effective
 applicable ceiling SHALL NOT be admitted with an unbounded or evaluator-derived
 fallback. Zero admits zero logical units.
 
-QSL FR-277 owns A/H fields, units and published default selection. Caller API
-omission SHALL be resolved only from each field's own reviewed published
-default into this complete effective wire object before consumption and
-request identity calculation. Existing ScalarLimitsV1 and population
-omission/default rules SHALL NOT change. This proposal selects NO A/H
-default: 262,144/524,288 are unselected hypotheses. Until owning defaults
-are approved, default-request qualification is blocked; explicit effective
-ceilings do not qualify an unreviewed helper. No numeric fallback is inferred.
+QSL FR-277 owns the A/H units and defaults; QSL FR-098 and FR-255 carry the
+same names. The members are `supplied.admission_work_units` (A) and
+`supplied.conversion_work_units` (H), each with the published default
+16777216 units. Caller API omission SHALL be resolved from each field's own
+published default into this complete effective wire object before
+consumption and request identity calculation. Existing ScalarLimitsV1 and
+population omission/default rules SHALL NOT change. A default is never
+derived from the evaluation allowance, the population admission ceiling or
+any stage setting.
 
 `stage_limits` SHALL continue to carry only FR-460/461 recompile stage settings.
 Neither supplied field is a stage setting; placing it there SHALL refuse
@@ -207,7 +208,8 @@ blocks qualification of that dependent cause arm; it is not a new runtime
 unsupported or unavailable-mapping error. This amendment supplies envelope
 placement, not a private export or an invented source API.
 
-A limit has disposition `incomplete`; invalid supplied input retains its
+A limit has disposition `incomplete` (replay: `inconclusive`/`NoValue`
+with the phase-marked pre-call limit record); invalid supplied input retains its
 existing typed refusal; actual cancellation/storage/capacity retain the
 owning operation's existing typed failure classification, with this phase
 context. No new blanket `failed` classification is selected for those causes.
@@ -318,7 +320,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-7 | A replay request's `package` reference names the proved package's own `sources` and one `dependencies` entry per `dependency_selections` entry, in its order, each carrying that selection's `identity` and `package_id` and the dependency's own lock `sources`. The executor refuses by the first rule of its order: swapped or repeated entries `invalid_package`/`invalid-value` at `/package/dependencies` before any recompile; an entry whose source shares the authority and identity of another source `invalid_package`/`conflicting-definition` naming both; a removed entry `missing_import`/`missing-selection`; an entry no import reaches `invalid_package`/`invalid-value`; an entry whose sources are edited, by an edit the recompile admits, so that they recompile to a `package_id` other than the entry's, and an entry whose `package_id` alone is changed, each `stale_dependency`/`content-mismatch` naming its `identity`, its `package_id` and the recompiled one, before the proved package's `package_id` is compared. An edit removing an export the proved package calls instead refuses in the recompile, `missing_declaration`/`missing-name`. None yields a result. | Test (TC-277) |
 | FR-323-AC-8 | A replay request's `stage_limits` entry raises its named stage limit for the replay recompile, a stage limit the request does not name runs at its published default, and an entry naming no stage-limit setting refuses before any stage runs. | Test (TC-426) |
 | FR-323-AC-9 | A replay whose sources recompile to a proved `package_id` other than the request's `package.package_id`, after replay rules 1 to 4 pass, refuses `stale_dependency`/`content-mismatch` (QSL's `PackageIdMismatch`) naming the request's `package_id` and the recompiled one, and yields no result. | Test (TC-277) |
-| FR-323-AC-10 | Applicable replay/non-replay requests carry complete effective u64 `limits.supplied` A/H ceilings, independent of unchanged ScalarLimitsV1, PopulationAdmissionLimitsV1 and per-argument C/occ. Zero permits no event; either changed ceiling changes request identity. Supplied fields in `stage_limits` refuse before stages run. No absent ceiling borrows evaluator/population/stage work or an unselected default; default-request qualification waits for the owning published defaults. | Test |
+| FR-323-AC-10 | Applicable replay/non-replay requests carry complete effective u64 `limits.supplied` A/H ceilings, independent of unchanged ScalarLimitsV1, PopulationAdmissionLimitsV1 and per-argument C/occ. Zero permits no event; either changed ceiling changes request identity. Supplied fields in `stage_limits` refuse before stages run. No absent ceiling borrows evaluator/population/stage work; an omitted ceiling resolves to its own published default 16777216. | Test |
 | FR-323-AC-11 | A supported fixture's independently enumerated A/H event sequence denies at zero/one-less and completes at exact ceiling when other bounds fit. Its actual pre-call limit result preserves supplied phase, parameter/locus, actual event, configured ceiling, successful prefix, denied amount and checked attempted count/overflow, with zero evaluation consumption and no kernel charge_point/FunctionCall. Its evaluated counterpart retains the unchanged accounting incomplete record without supplied context. | Test |
 | FR-323-AC-12 | Actual supplied invalid input, original caller cancellation, fallible storage denial and checked representation capacity failure preserve their distinct reviewed native typed cause/provenance; storage reports the real request in native bytes/additional-elements, not a work limit. Paired identical input/environment/nonzero-budget cold/warm runs preserve count and first denial; nested/multiple arguments neither reset nor double debit. After removal of storage denial, retry retains the successful prefix/original Cancel and matches a fresh attempt with identical input/environment and the same initial nonzero spend: independently expected cumulative spend/result at exact and first-denial record at one-less, without reset/refund or partial state. Malformed/unknown/mixed-origin context refuses interpretation, never a successful or guessed native cause. | Test |
 | FR-323-AC-13 | Qualification of each supplied helper/cause arm identifies actual input/work/peak-storage/Cancel/fallible-route premises and reviewed typed mapping. Omitting any premise blocks qualification without creating a runtime unsupported/error result. Decimal remains a mandatory positive path once IR-718/IR-719 capability and typed integration enable it; its tiny allocation falsifier and future union baseline remain explicit prerequisites, not proof from numerical hypotheses. | Analysis |
@@ -349,5 +351,5 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 Accepted complete-V1 boundary value contract. Implementation and qualification
 remain tracked separately.
 The QSL-681 supplied-phase amendment and AC-10..14 are PROPOSED,
-independently unreviewed and UNQUALIFIED. No implementation, new default,
-typed native mapping, helper proof or acceptance execution is claimed.
+independently unreviewed and UNQUALIFIED. No implementation, typed native
+mapping, helper proof or acceptance execution is claimed.
