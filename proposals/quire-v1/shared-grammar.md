@@ -354,9 +354,11 @@ primary       = 'true' | 'false' | 'null' | 'none' | 'self' | 'result'
               | 'convert', '<', type-ref, '>', '(', expr, ')'
               | 'allInstances', '<', type-ref, '>', '(', expr, ')'
               | collection-call
+              | protocol-reference
               | 'reaches', '(', expr, ',', expr, ',', qualified-name, ')'
               | 'lookup', '<', type-ref, '>', '(', expr, ',', expr, ')',
                 'absent', absence-mode ;
+protocol-reference = 'protocol', qualified-name ;
 absence-mode  = 'undefined' | 'empty' | 'refused' ;
 operation-body = 'body', ident, 'using', ident, 'on', qualified-name,
                  '(', [ ident, { ',', ident } ], ')', block ;
@@ -836,6 +838,17 @@ the task set. A clock read in `clock-bound` or in an operation's precondition
 compares a `Clock` field with a `quantity-literal` of the time dimension. In
 `task`, `wcet` is `C`, or `C(LO)` for a `hi` task whose `wcet_hi` is `C(HI)`.
 A form whose facet is not selected receives `unsupported_construct`.
+
+### Protocol reference expression
+
+`protocol-reference` is a `primary` alternative of the complete-V1 grammar
+under `quire.protocol.complete/v1`. Its target is a `qualified-name` naming one
+protocol declared in the same unit; the expression carries no package
+selector, alias or key. `protocol` leads a reference only in expression
+position, where no declaration can begin, so it never changes how a
+`protocol-clause` declaration parses. A target that is not a `qualified-name`
+is `invalid_syntax`. [FR-463](../../spec/functional/protocol/FR-463-refer-to-a-declared-protocol-in-an-expression.md)
+owns the meaning.
 
 ## Precedence and bindings
 
