@@ -65,3 +65,15 @@ incomplete wire object; and make RE-14 assert that an API-default request and
 an explicit 16777216/16777216 request have equal request identity. Nothing
 else blocks: QSL agreement, AC binding, id uniqueness and validation (the
 failures are pre-existing on main) pass.
+
+## Dispositions
+
+Round 1, reviewed at agent-ix/quire-specification@461620c41064ad02961b4f5b5ecdf0da46beb518. QSL pair 694 tip is unchanged at 86628e9f1. Its uncommitted fix round still uses the same names, defaults, `limits.supplied` carriage and phase-marked projection.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 461620c |
+| FND-002 | fixed | 461620c |
+| FND-003 | fixed | 461620c |
+| FND-004 | fixed | 461620c |
+| FND-005 | fixed | 461620c |
