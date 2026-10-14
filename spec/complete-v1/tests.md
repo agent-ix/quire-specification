@@ -848,6 +848,11 @@ otherwise TC-231 owns the criterion in the complete-V1 qualification corpus.
 | FR-150 | FR-150-AC-6 | TC-195 |  |
 | FR-150 | FR-150-AC-7 | TC-195 |  |
 | FR-150 | FR-150-AC-8 | TC-195 |  |
+| FR-150 | FR-150-AC-12 | TC-195 |  |
+| FR-150 | FR-150-AC-13 | TC-195 |  |
+| FR-150 | FR-150-AC-14 | TC-195 |  |
+| FR-150 | FR-150-AC-15 | TC-195 |  |
+| FR-150 | FR-150-AC-16 | TC-195 |  |
 | FR-151 | FR-151-AC-6 | TC-196 |  |
 | FR-151 | FR-151-AC-7 | TC-196 |  |
 | FR-151 | FR-151-AC-8 | TC-196 |  |

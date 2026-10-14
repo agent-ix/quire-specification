@@ -144,8 +144,8 @@ An original declaration is keyed by (domain package identity, IR node identity,
 fixed digest domain `sha256-jcs`), not the selected content digest. The immutable
 selection inventory retains every original and its FCD origin; effective
 entries exist only where the selected normalization rules derive them.
-An effective declaration has its own `quire.model.effective-declaration/v1`
-identity over original keys and derivation facts. CheckedPackage `model_selections` name the domain
+An effective declaration has its own `quire.model.effective-declaration/v2`
+identity over original keys, derivation facts and the identities of its direct parents. CheckedPackage `model_selections` name the domain
 package. Runtime subject references in observation and protocol records use
 these declaration keys.
 

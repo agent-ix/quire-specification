@@ -78,8 +78,8 @@ structures, but any external consumer receives only the contract.
   not claim them complete.
 - `model-effective-declaration.schema.json` and
   `model-effective-declaration-vectors.json` define the QSL-derived
-  `quire.model.effective-declaration/v1`, `quire.model.effective-view/v1` and
-  `quire.model.object-universe/v1` preimages selected by
+  `quire.model.effective-declaration/v2`, `quire.model.effective-view/v2` and
+  `quire.model.object-universe/v2` preimages selected by
   `quire.model.complete/v1`, with JCS SHA-256 vectors, the reference key order
   and invalid mutations. They add no CheckedPackage V2 wire member.
 - `model-member-type-vectors.json` carries a domain package as a projection
