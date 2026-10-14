@@ -53,9 +53,10 @@ the checked reference to that declaration's `protocol`/`protocol_clause` node
 key. A name offered only by an import does not resolve: a reference binds a
 local protocol only.
 
-**Type.** The checked type of the reference is the target protocol's semantic
-type. A consumer that accepts no protocol-typed operand refuses it with its own
-operand-type cause; this requirement adds no consumer.
+**Type and value.** The checked type of the reference is the target's semantic
+type (today the Boolean type node the protocol clause carries). The value of the
+reference is the value of the target protocol clause: a pure reference denotes
+the clause it names and is evaluated exactly as that clause is.
 
 **Carrier.** The checked package carries the reference as one
 `protocol`/`protocol_reference` node whose body is exactly
