@@ -68,3 +68,20 @@ Recorded, not blocking:
   declares a single `ident`. It always refuses `missing_declaration`.
 - QSL FR-308 says QSpec's shared grammar has no `protocol-reference`
   production. That sentence becomes stale when this PR merges.
+
+## Dispositions
+
+Round 1 at agent-ix/quire-specification@2ef84742d1a92d6524f38779874926b15e6fefa1,
+paired with quire-spec-language #840 at 05373eedb07d9c1f72b3294f8673d55d9751b874.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 2ef84742: FR-463's "Type and value" paragraph removes the "protocol-typed operand" sentence and gives the reference the target protocol clause's value. The reference keeps the target's semantic type, so FR-322-AC-66 and the IR reader's equal-type join are unchanged. QSL FR-308 and FR-218 carry the same rule. No text that was removed survives in either repo. |
+
+Recorded, not blocking: a protocol clause's value is a verdict over a run (its
+`over` and activation), so a reference inside a state-point expression takes
+that whole-run verdict. shared-grammar.md:237 says common value-expression
+productions carry no protocol semantics. `protocol-reference` is a
+complete-V1 production, so the two do not formally conflict. The other
+recorded difference is wording only: QSL FR-308 says "a pure reference that
+denotes" where QSpec says "a pure reference denotes".
