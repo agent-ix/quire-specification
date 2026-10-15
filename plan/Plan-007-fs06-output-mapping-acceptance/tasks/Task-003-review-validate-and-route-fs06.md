@@ -33,6 +33,6 @@ executable exporter evidence.
 
 ## Deliverables
 
-- TM-008 and IT-060 remain Planned until executable evidence exists.
+- IT-060 remains Planned until executable evidence exists.
 - SR-552–SR-558 review/gap artifacts.
 - One FS06-closing PR and exact downstream implementation pins.

@@ -9,7 +9,7 @@ relationships:
 ## Description
 
 Accepted portable controls for [FR-042](../functional/foundation/FR-042-select-pre-state-reads.md).
-The matrix remains Planned; no executable test or observed coverage is claimed.
+No executable test or observed coverage is claimed.
 
 ## Test Procedure
 

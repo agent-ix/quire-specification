@@ -104,7 +104,6 @@ lexicographic key order as causal order.
 - [Temporal clock selection](../temporal/FR-090-select-temporal-profile-and-clock.md).
 - [Typed observation binding](../observation/FR-110-bind-typed-observations.md).
 - [Qualified protocol-definition identity](../../objects/protocol/FR-288-qualified-protocol-definition-identity.md).
-- [Planned common matrix](../../composed-foundation/tests.md).
 
 This source-integration requirement does not discharge the producer contracts,
 family consumer requirements or complete baseline review. D's exact model and

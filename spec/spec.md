@@ -774,8 +774,6 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-385
     type: contains
-  - target: ix://agent-ix/quire-specification/TM-009
-    type: contains
   - target: ix://agent-ix/quire-specification/FR-434
     type: contains
   - target: ix://agent-ix/quire-specification/FR-435
@@ -972,7 +970,6 @@ The requirement artifacts are indexed below.
 | [ADR-005](decisions/ADR-005-kani-generation-ownership.md) | ADR | Proposed; open question: ownership of Kani harness generation |
 | [ADR-006](decisions/ADR-006-protocol-bounded-control-profile.md) | ADR | Decided: one protocol profile; a repeat needs only a progress edge, with an optional maximum and optional invariant and variant |
 | [Complete-V1 subsystem index](subsystems/index.md) | Architecture index | Ten subsystems and I01–I21 interface ownership |
-| [TM-009](complete-v1/tests.md) | Test Matrix | Every atomic capability and complete-V1 qualification case |
 | [FR-339](functional/source-package/FR-339-define-complete-native-grammar.md) | FR | Normative complete native V1 lexical and syntactic contract |
 | [FR-322](objects/interfaces/FR-322-checked-package-artifact.md) | FR (value_object) | Checked-package V2 boundary, including model-owned record value type fields |
 | [FR-340](objects/interfaces/FR-340-checked-package-frame-location.md) | FR | Checked-package `state`/`frame` body: relationship and (declaring node, field name) entries |

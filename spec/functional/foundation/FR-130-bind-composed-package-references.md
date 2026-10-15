@@ -53,7 +53,6 @@ their original meanings and do not migrate to this candidate implicitly.
 
 - [Exact package linking](FR-030-bind-composed-definitions.md).
 - [Language/wire evolution](FR-032-preserve-language-evolution.md).
-- [Planned shared matrix](../../composed-foundation/tests.md).
 
 Accepted by FS05 as the composed linked-package reference interpretation. The
 requirement and definition do not implement or qualify a strict package reader.

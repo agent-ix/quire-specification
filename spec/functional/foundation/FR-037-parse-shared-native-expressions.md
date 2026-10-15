@@ -37,7 +37,6 @@ The proposed common grammar defines all three native families, predicate declara
 
 - [Proposed shared grammar](../../../proposals/quire-v1/shared-grammar.md).
 - [Shared drafting foundation](../../../proposals/quire-v1/shared-foundation.md).
-- [Planned matrix](../../composed-foundation/tests.md).
 
 This contribution remains proposed until the integrated baseline review. It does
 not change historical definition bytes or claim current compiler support.

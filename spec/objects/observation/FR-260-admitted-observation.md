@@ -69,10 +69,10 @@ and visibility provenance."
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-260-AC-1 | A signal name, endpoint, trace ID or compatible-looking field supplied for a declared entity, trigger, unit or valuation does not resolve. | Test |
-| FR-260-AC-2 | A required absent valuation compares only to absence and does not compare equal to false or to an option-none. | Test |
-| FR-260-AC-3 | An internally recorded and an externally observed record remain distinguishable after admission. | Test |
-| FR-260-AC-4 | Observation identity is derived exactly under FR-296; same identity on unequal canonical bytes and any authored/default identity are refused. | Test |
+| FR-260-AC-1 | A signal name, endpoint, trace ID or compatible-looking field supplied for a declared entity, trigger, unit or valuation does not resolve. | Test (TC-140) |
+| FR-260-AC-2 | A required absent valuation compares only to absence and does not compare equal to false or to an option-none. | Test (TC-140) |
+| FR-260-AC-3 | An internally recorded and an externally observed record remain distinguishable after admission. | Test (TC-140) |
+| FR-260-AC-4 | Observation identity is derived exactly under FR-296; same identity on unequal canonical bytes and any authored/default identity are refused. | Test (TC-140) |
 
 ## Dependencies
 

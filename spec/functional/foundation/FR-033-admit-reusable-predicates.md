@@ -44,7 +44,6 @@ no-user-call profile is unchanged.
 
 - [Shared drafting foundation](../../../proposals/quire-v1/shared-foundation.md).
 - [Composed architecture](../../assurance/AD-001-composed-native-language.md).
-- [Planned acceptance matrix](../../composed-foundation/tests.md).
 
 Accepted by FS03 for the composed state query/graph closure. It does not amend
 historical accepted definitions or establish implementation coverage.

@@ -95,13 +95,13 @@ half-open end/watermark and the inclusive deadline is insufficient.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-268-AC-1 | A quiet deadline not covered by a declared progress authority compares unequal to a settled deadline and to a violated one. | Test |
-| FR-268-AC-2 | Two authorities differing in definition identity compare unequal. | Test |
-| FR-268-AC-3 | An event classified late against the selected cutoff leaves the previously settled result's bytes unchanged. | Test |
-| FR-268-AC-4 | A mismatched assertion definition, scope, clock, source set or restoration basis compares only to absence for settlement purposes and does not restart an assessment. | Test |
-| FR-268-AC-5 | A native inclusive deadline is covered only through an exact FR-289 mapping; equality of a half-open end/watermark with that deadline cannot settle it. | Test |
-| FR-268-AC-6 | Any authority scope, clock, required-source set, boundary or restoration-basis mutation changes the authority identity; any cutoff clock, instant or rule-identity mutation changes the cutoff identity. | Test |
-| FR-268-AC-7 | Missing, foreign-domain, duplicate or unbounded authority/cutoff inputs refuse before settlement or timing classification. | Test |
+| FR-268-AC-1 | A quiet deadline not covered by a declared progress authority compares unequal to a settled deadline and to a violated one. | Test (TC-143) |
+| FR-268-AC-2 | Two authorities differing in definition identity compare unequal. | Test (TC-143) |
+| FR-268-AC-3 | An event classified late against the selected cutoff leaves the previously settled result's bytes unchanged. | Test (TC-143) |
+| FR-268-AC-4 | A mismatched assertion definition, scope, clock, source set or restoration basis compares only to absence for settlement purposes and does not restart an assessment. | Test (TC-143) |
+| FR-268-AC-5 | A native inclusive deadline is covered only through an exact FR-289 mapping; equality of a half-open end/watermark with that deadline cannot settle it. | Test (TC-143) |
+| FR-268-AC-6 | Any authority scope, clock, required-source set, boundary or restoration-basis mutation changes the authority identity; any cutoff clock, instant or rule-identity mutation changes the cutoff identity. | Test (TC-143) |
+| FR-268-AC-7 | Missing, foreign-domain, duplicate or unbounded authority/cutoff inputs refuse before settlement or timing classification. | Test (TC-143) |
 
 ## Dependencies
 

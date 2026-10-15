@@ -141,4 +141,4 @@ govern its admission, completeness, replay, result, and output effects.
 Planned controls use concurrent O1/O2, split shipments, a payment attempt/effect,
 a refund, a duplicate receipt, missing provider evidence, cross-bound progress,
 quiet deadline, late record, missing history, and exhausted retention. They are
-specified in [TM-007](../../spec/observation/tests.md), not executed evidence.
+specified, not executed evidence.

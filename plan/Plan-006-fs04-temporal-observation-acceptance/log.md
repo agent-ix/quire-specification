@@ -12,7 +12,7 @@ description: "Chronological log of changes to the Plan-006 bundle."
 * **2026-09-14** — Verified QSL temporal admission PR #82 (`c4ce237`), QObs
   Plan-001 / PR #19 (`9ac80e9`), qcir predicate/correspondence PRs #67/#68/#77
   (`202210c`) and the merged public TL owner APIs.
-* **2026-09-14** — Kept qcir #71, QObs #18/#13, TM-004/TM-007 and the
+* **2026-09-14** — Kept qcir #71, QObs #18/#13 and the
   temporal/observation integration tests open as distinct implementation and
   executable-evidence work.
 * **2026-09-14** — Ran scoped `/specify`, then base/dependency/EARS self

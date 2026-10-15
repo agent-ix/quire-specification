@@ -17,8 +17,7 @@ relationships:
 ## Description
 
 Accepted FS04 portable property, fault, transition and integration controls for
-temporal work and retained state, including forbidden Boolean fallbacks. TM-004
-remains Planned.
+temporal work and retained state, including forbidden Boolean fallbacks.
 
 ## Test Procedure
 

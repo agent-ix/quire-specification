@@ -151,16 +151,16 @@ selection. Equal display labels or implementation names establish none of them.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-240-AC-1 | Every canonical protocol result carries `contractVersion` equal to `quire.protocol.result/v1-draft.1` and kind `ProtocolResult`. | Test |
-| FR-240-AC-2 | The enclosing artifact reference's digest is computed over the complete canonical result bytes and does not appear as a field inside those bytes. | Test |
-| FR-240-AC-3 | The five progress and closure axes remain independently readable; no axis is populated from completeness or assessment execution. | Test |
-| FR-240-AC-6 | Each of the four decision-scope and surrounding-execution axes carries exactly one FR-284 member, and the complete-global-conformance axis carries exactly one FR-247 member. | Test |
-| FR-240-AC-4 | Two results are compared over the result identity alone; equal display names or implementations establish neither equality nor independence. | Test |
-| FR-240-AC-5 | No result-identity ordering is asserted by this artifact or inferred by a reader. | Test |
-| FR-240-AC-7 | `resultId` is derived under FR-286; same identity with different canonical result bytes and any reader-supplied default identity are refused. | Test |
-| FR-240-AC-8 | Participation carries exactly one FR-285 value object and never an E02 target status label. | Test |
-| FR-240-AC-9 | Completeness carries exactly one FR-295 state derived from its exact population and remains independent from the five progress/closure facts. | Test |
-| FR-240-AC-10 | Claim kind, strength, admitted fragment and backend retain their exact FR-290/281/291/292 shapes and compatible membership. | Test |
+| FR-240-AC-1 | Every canonical protocol result carries `contractVersion` equal to `quire.protocol.result/v1-draft.1` and kind `ProtocolResult`. | Test (TC-061) |
+| FR-240-AC-2 | The enclosing artifact reference's digest is computed over the complete canonical result bytes and does not appear as a field inside those bytes. | Test (TC-061) |
+| FR-240-AC-3 | The five progress and closure axes remain independently readable; no axis is populated from completeness or assessment execution. | Test (TC-061) |
+| FR-240-AC-6 | Each of the four decision-scope and surrounding-execution axes carries exactly one FR-284 member, and the complete-global-conformance axis carries exactly one FR-247 member. | Test (TC-061) |
+| FR-240-AC-4 | Two results are compared over the result identity alone; equal display names or implementations establish neither equality nor independence. | Test (TC-061) |
+| FR-240-AC-5 | No result-identity ordering is asserted by this artifact or inferred by a reader. | Test (TC-061) |
+| FR-240-AC-7 | `resultId` is derived under FR-286; same identity with different canonical result bytes and any reader-supplied default identity are refused. | Test (TC-061) |
+| FR-240-AC-8 | Participation carries exactly one FR-285 value object and never an E02 target status label. | Test (TC-061) |
+| FR-240-AC-9 | Completeness carries exactly one FR-295 state derived from its exact population and remains independent from the five progress/closure facts. | Test (TC-061) |
+| FR-240-AC-10 | Claim kind, strength, admitted fragment and backend retain their exact FR-290/281/291/292 shapes and compatible membership. | Test (TC-061) |
 
 ## Dependencies
 

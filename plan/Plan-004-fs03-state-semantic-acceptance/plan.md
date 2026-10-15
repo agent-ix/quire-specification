@@ -56,7 +56,6 @@ Concrete observation/protocol consumers are independent downstream work. They ar
 
 This plan accepts existing standard rules and portable expected vectors. It does
 not modify Rust, Cargo, historical profile bytes or executable fixture status.
-TM-003 rows remain Planned until real evidence is bound.
 
 ## Test Plan
 

@@ -49,7 +49,7 @@ retains native/TL composition. FS06 owns target-specific result mappings.
 
 This plan accepts standard meanings and portable controls. It changes no Rust,
 Cargo, schema, historical fixture, released tag or executable evidence status.
-TM-004/TM-007 and the temporal/observation integration tests remain Planned.
+The temporal/observation integration tests remain Planned.
 
 ## Test Plan
 
@@ -92,7 +92,7 @@ continues owning TL-* libraries; this plan changes no TL repository.
 
 ## Coordination Rules
 
-- Do not mark TM-004/TM-007 or integration tests passed from portable semantic
+- Do not mark integration tests passed from portable semantic
   controls or external component evidence.
 - Do not close qcir #71 or QObs #18/#13 through FS04.
 - After merge, close FS04 #5 and immediately update QS #1, ledger #9, qcir #71

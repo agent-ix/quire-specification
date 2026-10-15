@@ -32,13 +32,23 @@ unproved definedness versus runtime logical violation."
 
 ## Properties
 
-| Property | Source | Note |
-| --- | --- | --- |
-| Code family | [FR-271](FR-271-diagnostic-code-vocabulary.md) | The code family whose closed variant set the cause is drawn from. |
-| Variant tag | Proposed catalog, "Required distinguishing causes" | The selected variant, one of the closed set for that family. "Serialization emits its stable tag." |
-| Required payload | Proposed catalog, per-family row | The payload "required by its selected variant". Values are "typed selections, kinds, domains or locations, not English summaries". |
-| Location, where known | [FR-274](FR-274-diagnostic-location-kind.md), FR-047-AC-4 | "Original source/model/clause loci and identities remain attached where available." |
-| Referenced identities | Proposed catalog | "Related declarations and upstream diagnostics retain their own exact source/catalog identities rather than being flattened into a string." |
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| code_family | String | 1..1 | |
+| variant_tag | String | 1..1 | |
+| required_payload | String | 1..1 | |
+| location | String | 0..1 | |
+| referenced_identities | String | 0..* | |
+
+## Where the fields come from
+
+| Field | Source and note |
+|---|---|
+| `code_family` | [FR-271](FR-271-diagnostic-code-vocabulary.md). The code family whose closed variant set the cause is drawn from. |
+| `variant_tag` | proposed catalog, "Required distinguishing causes". The selected variant, one of the closed set for that family. "Serialization emits its stable tag." |
+| `required_payload` | proposed catalog, per-family row. The payload "required by its selected variant". Values are "typed selections, kinds, domains or locations, not English summaries". |
+| `location` | [FR-274](FR-274-diagnostic-location-kind.md), FR-047-AC-4. "Original source/model/clause loci and identities remain attached where available." |
+| `referenced_identities` | proposed catalog. "Related declarations and upstream diagnostics retain their own exact source/catalog identities rather than being flattened into a string." |
 
 The variant sets are **closed and mandatory**: "These are mandatory refinements
 when the named failure occurs. A producer cannot choose a broader listed

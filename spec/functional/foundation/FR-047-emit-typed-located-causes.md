@@ -86,7 +86,6 @@ authority on the wire.
 
 - [Detailed draft contract](../../../proposals/quire-v1/shared-foundation.md).
 - [Shared grammar](../../../proposals/quire-v1/shared-grammar.md).
-- [Planned acceptance matrix](../../composed-foundation/tests.md).
 - [FR-207](../../objects/foundation/FR-207-runtime-value-path.md) types the runtime
   object or value path this requirement defines.
 

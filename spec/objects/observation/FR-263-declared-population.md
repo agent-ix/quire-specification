@@ -83,11 +83,11 @@ configuration, or closure input".
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-263-AC-1 | Changing the declared snapshot, window or membership rule yields a different assessment subject. | Test |
-| FR-263-AC-2 | A population with unknown required membership compares unequal to both an empty population and a complete one. | Test |
-| FR-263-AC-3 | A mismatched declaration key, identity, membership digest, configuration digest or closure digest does not resolve and receives no ambient default. | Test |
-| FR-263-AC-4 | Independent derivation over the exact versioned preimage yields the population identity; mutation of any semantic key component changes it and presentation permutation does not. | Test |
-| FR-263-AC-5 | A population with neither or both snapshot/window selections, duplicate or unbounded set members, or a foreign/missing digest domain is refused before identity derivation. | Test |
+| FR-263-AC-1 | Changing the declared snapshot, window or membership rule yields a different assessment subject. | Test (TC-142) |
+| FR-263-AC-2 | A population with unknown required membership compares unequal to both an empty population and a complete one. | Test (TC-142) |
+| FR-263-AC-3 | A mismatched declaration key, identity, membership digest, configuration digest or closure digest does not resolve and receives no ambient default. | Test (TC-142) |
+| FR-263-AC-4 | Independent derivation over the exact versioned preimage yields the population identity; mutation of any semantic key component changes it and presentation permutation does not. | Test (TC-142) |
+| FR-263-AC-5 | A population with neither or both snapshot/window selections, duplicate or unbounded set members, or a foreign/missing digest domain is refused before identity derivation. | Test (TC-142) |
 
 ## Dependencies
 

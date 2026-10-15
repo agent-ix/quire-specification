@@ -9,8 +9,7 @@ relationships:
 ## Description
 
 Accepted FS04 portable static control for
-[NFR-052](../non-functional/NFR-052-contain-observation-executables.md). TM-007
-remains Planned; implementation-specific execution and evidence stay separate.
+[NFR-052](../non-functional/NFR-052-contain-observation-executables.md). Implementation-specific execution and evidence stay separate.
 
 ## Test Procedure
 

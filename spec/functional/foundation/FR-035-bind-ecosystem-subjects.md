@@ -81,7 +81,6 @@ arrival order.
 
 - [Shared drafting foundation](../../../proposals/quire-v1/shared-foundation.md).
 - [Composed architecture](../../assurance/AD-001-composed-native-language.md).
-- [Planned acceptance matrix](../../composed-foundation/tests.md).
 - [FR-287](../../objects/protocol/FR-287-authority-qualified-runtime-subject-reference.md)
   extracts the common runtime identity value and comparison rule.
 
