@@ -52,11 +52,14 @@ Fixture **Y** (domain package `test/orders`, version `y`):
 - operation `Pump/run` with no params, no returns and an empty frame;
 - Allocation: artifact `pump_alloc`, source end `Pump/run`, target end
   `sys_pump`;
-- navigation: relationship `Sys/composition` with source end role `owner`
-  (`Sys`, `{1,1}`), target end role `parts` (`Pump`, `{0,3}`), direction
+- navigation: relationship `Sys/composition` with source end role `parts`
+  (`Sys`, `{1,1}`), target end role `owner` (`Pump`, `{0,3}`), direction
   `source-to-target`; and relationship `Pump/housing` with source end role
-  `pump` (`Pump`, `{1,1}`), target end role `home` (`Tank`, `{1,1}`), direction
-  `source-to-target`.
+  `home` (`Pump`, `{1,1}`), target end role `pump` (`Tank`, `{1,1}`), direction
+  `source-to-target`. A role names the end nearest the receiver (FR-152
+  "Navigation"): `self.parts` navigates from a `Sys` to the `Pump` end and
+  `self.home` from a `Pump` to the `Tank` end, and the inverse names `owner`
+  and `pump` navigate from a `Pump` and a `Tank`.
 
 Population **Q**: population declaration from artifact `Q` (kind `population`) with member types `[Sys, Pump, Tank]`
 and extent `closed`; runtime object `s1` of type `Sys` whose `parts` instances
