@@ -124,7 +124,7 @@ implement and qualify this amended shape before claiming it is supported.
 
 For a request that supplies function arguments, the effective typed `limits`
 SHALL additionally carry `supplied: { admission_work_units,
-conversion_work_units }`. Both members SHALL be exact unsigned 64-bit
+conversion_work_units, numeric_magnitude_bits }`. All three members SHALL be exact unsigned 64-bit
 ceilings, with no other members in this object. Admission bounds A; conversion
 bounds H when witness/input conversion occurs. A direct call over already
 constructed values does not consume H merely because its ceiling is carried.
@@ -161,6 +161,117 @@ converted-node C and semantic occurrence limits remain per argument with
 their original units and zero call-meter debit. Population admission is
 independent and SHALL NOT be renamed or repurposed as A.
 
+### Numeric magnitude bound
+
+The `limits.supplied` object carries a third member,
+`numeric_magnitude_bits` (B): an exact unsigned 64-bit count of bits, the
+caller-owned finite magnitude bound for supplied Integer and Rational
+admission, with the published default 4096 bits. It is the only carrier of B.
+B is not `integer_bits` of `ScalarLimitsV1` (an evaluation counter that keeps
+its own meaning and its `u64::MAX` default), is not a QSL family check
+constant, and is not declared per type or per argument. The effective wire
+object is complete: `admission_work_units`, `conversion_work_units` and
+`numeric_magnitude_bits` are its only members and all three are required on
+the wire.
+
+1. **Default.** B has the published default 4096, like A and H each has its
+   own. Caller API omission SHALL resolve to 4096 in the complete effective
+   wire object before consumption and request identity calculation. Nothing
+   else derives B: not `integer_bits`, A, H, the evaluation allowance, the
+   population ceiling, a stage setting, a declared type, or `u64::MAX`. A
+   stated B, including 0, overrides the default exactly.
+2. **Identity.** B is part of the effective `limits.supplied` object. A
+   request that omits B and a request that states 4096 have the SAME request
+   identity; a request stating any other B (4095, 4097) has a different
+   request identity, not a different package identity. Two requests that state
+   the same B with the other inputs fixed have the same identity.
+3. **Malformed B.** On the wire, a missing `numeric_magnitude_bits`, or one
+   that is not an exact JSON unsigned integer in u64 range (negative,
+   fractional, above the u64 range, `null`, a string or any other type), or
+   that appears in `stage_limits`, is a typed input refusal before
+   consumption, as an incomplete or malformed `limits.supplied` object is.
+4. **Omitted B.** An omitted B means the published default 4096; there is no
+   separate unsupported outcome in this envelope. (A QSV-level caller that
+   passes NO B to QSV supplied admission still receives QSV's typed
+   `UnsupportedHelper { family: NumericDomain }`; that is QSV's own contract,
+   outside this envelope.)
+5. **Coverage, value-in-domain.** Every Integer or
+   Rational operand of one value-in-domain comparison is checked against B
+   after the initiating event is charged and before that comparison runs, in
+   this order, the first operand over B deciding. Integer: `value`, `lower`,
+   `upper` (3 operands). Rational (a numerator interval plus a denominator
+   interval, QSV `RationalDomain`): `value-numerator`, `value-denominator`,
+   `numerator-lower`, `numerator-upper`, `denominator-lower`,
+   `denominator-upper` (6 operands). An operand's size is the bit length of
+   its absolute value, with zero counted as ONE bit (QSpec
+   `proposals/quire-v1/definitions/value-accounting.md`, `bits(x)`, "zero is
+   one"; quire-exact FR-380 Inputs: zero has magnitude length one). Every value
+   therefore has bit length at least 1: B = 0 admits no operand and B >= 1
+   admits zero. An operand is within B when its bit length is at most B; at
+   the default, a value of 4096 bits is admitted and a value of 4097 bits is
+   refused. B applies in whichever phase initiates the comparison, and a
+   declared endpoint is checked against B like a supplied value. The bounded kernel helper
+   exists under quire-exact FR-380; the QSV caller is pending.
+6. **Coverage, type-link comparison (NORM, NOT YET IMPLEMENTATION-QUALIFIED).**
+   QSV FR-109 "Nested retained type": type-link comparisons carry input-sized
+   numeric data. The `type-comparison` event (one compared pair of chain
+   links) is charged first; then, before the endpoint equality runs, every
+   numeric endpoint of the pair is checked against B by the same bit-length
+   rule (zero is one bit). For an Integer type-to-type comparison there are 4
+   operands: `type-link-expected-lower`, `type-link-expected-upper`,
+   `type-link-actual-lower`, `type-link-actual-upper`. For a Rational pair
+   there are 8: each of those four names with a `-numerator` and
+   `-denominator` suffix on the matching interval, checked in the order
+   expected, then actual, numerator interval before denominator interval,
+   lower before upper. The first over B stops ON the charged `type-comparison`
+   event with the same `limit` cause below, `event: type-comparison`. This
+   part depends on the IR type-link follow-up: the bounded cancellable
+   type-to-type equality helper and its QSV caller are not built, so it is
+   not yet implementation-qualified and no implementation is claimed.
+7. **Over B.** An operand above B yields the `limit` cause below with
+   `field: supplied.numeric_magnitude_bits`, `limit_kind:
+   numeric_magnitude_bits`, `limit` = B, and an `operand` member naming the
+   operand from the lists above (type-link operands carry the `type-link-`
+   prefix). The row's definitions hold unchanged. B is a per-operand
+   magnitude bound with no cumulative counter, so its owning counter's
+   successful prefix is the context member `consumed` = 0, `next_charge` = the operand's bit
+   length (the denied amount) and `counter` = consumed + next_charge = the
+   same bit length. The stopping event is reported in `event`
+   (`value-visit` or `type-comparison`) and the initiating owner in `phase`.
+   The disposition is that of an A/H limit denial (`incomplete`; replay
+   `inconclusive`/`NoValue`). The numeric comparison is not performed, so no
+   operand is compared, truncated or widened and no unbounded continuation
+   exists.
+8. **Budgets and order.** The size checks charge no A or H unit of their own
+   and the evaluator Meter nothing. The initiating event is charged first
+   (QSV FR-109: poll and request one unit when ValueVisit, or the type
+   comparison, is requested; only after a successful charge perform it), then
+   the qualified helper runs under that one logical event (quire-exact FR-380
+   Behavior 6 / AC-6). For the value path the comparison is at most two
+   Integer comparisons (Integer) or four (Rational) of at most B bits. An
+   over-B operand stops on that charged event: the A (or H) budget spend of
+   the initiating phase INCLUDES that one event, and no separate preflight
+   seam exists and the helper never runs before the event's charge. Neither
+   budget resets or is refunded.
+
+Qualification: a B check discharges the "actual finite operand bounds" premise
+of QSL FR-277 AC-6 and QSV FR-109 AC-7 for Integer and Rational value-in-domain
+membership once its QSV caller and reviewed typed mapping exist, and for type-link comparison once the type-link follow-up
+above exists. It does not qualify Decimal, temporary storage, cancellation
+response or typed mapping.
+
+Rationale: B lives beside A and H because `limits.supplied` is the closed
+caller-owned pre-call carrier that never derives from evaluation limits;
+`integer_bits` is an evaluator counter whose default is `u64::MAX`, so reusing
+it would inherit that default or let evaluation limits bound admission. B has
+a published default because QSL FR-277 requires every enforced bound to be a
+caller limits field with a published default; omission therefore normalizes
+into request identity as for A and H. An over-B operand reuses the catalogued
+`limit` cause with a new field name and an `operand` locator instead of a new
+cause arm or code, and reports the stopping event and magnitude in the fields
+the row already defines. Conversion-time numeric leaf materialization is not
+bounded by B here.
+
 ### Pre-call result context
 
 For an observed supplied-phase limit, input, cancellation, storage or capacity
@@ -191,7 +302,7 @@ context and SHALL use the separate native fault route below:
 
 | Cause form | Required meaning and payload |
 | --- | --- |
-| `{ kind: limit, limit_kind, field, limit, next_charge, counter }` | Actual pre-call bound denial. `field` names the actual owning caller field; `limit_kind` is its counter, `limit` its configured u64 ceiling, `next_charge` the exact nonnegative denied amount. For A/H it is one. `counter` is the checked attempted count, or the explicit tagged value `{overflow: true}` when counter representation overflows. No narrowing/wrapping; the denied event is unperformed/unspent. |
+| `{ kind: limit, limit_kind, field, limit, next_charge, counter }` | Actual pre-call bound denial. `field` names the actual owning caller field; `limit_kind` is its counter, `limit` its configured u64 ceiling, `next_charge` the exact nonnegative denied amount. For A/H it is one. For `supplied.numeric_magnitude_bits` the cause also carries `operand` and no other limit cause does; the supplied-context member `consumed` (not a cause field) is 0 and `next_charge` and `counter` are the operand's bit length (see Numeric magnitude bound rule 7). `counter` is the checked attempted count, or the explicit tagged value `{overflow: true}` when counter representation overflows. No narrowing/wrapping; the denied A/H event is unperformed/unspent (an over-B numeric operand instead stops on its charged initiating event, see Numeric magnitude bound rule 8). |
 | `{ kind: input, native }` | Actual invalid kind/domain/member input with original QSL InputRefusal/QSV membership cause and provenance, never a fabricated limit or failed predicate. |
 | `{ kind: cancelled, native }` | Original caller Cancel cause and provenance, including Requested vs Deadline where observed; never a fresh token or work exhaustion. |
 | `{ kind: storage, native, requested, unit }` | Actual allocator denial at fallible reservation before mutation. Preserve the measured request exactly and its native `bytes` or `additional-elements` unit; do not convert the amount into work units. |
@@ -320,11 +431,13 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-7 | A replay request's `package` reference names the proved package's own `sources` and one `dependencies` entry per `dependency_selections` entry, in its order, each carrying that selection's `identity` and `package_id` and the dependency's own lock `sources`. The executor refuses by the first rule of its order: swapped or repeated entries `invalid_package`/`invalid-value` at `/package/dependencies` before any recompile; an entry whose source shares the authority and identity of another source `invalid_package`/`conflicting-definition` naming both; a removed entry `missing_import`/`missing-selection`; an entry no import reaches `invalid_package`/`invalid-value`; an entry whose sources are edited, by an edit the recompile admits, so that they recompile to a `package_id` other than the entry's, and an entry whose `package_id` alone is changed, each `stale_dependency`/`content-mismatch` naming its `identity`, its `package_id` and the recompiled one, before the proved package's `package_id` is compared. An edit removing an export the proved package calls instead refuses in the recompile, `missing_declaration`/`missing-name`. None yields a result. | Test (TC-277) |
 | FR-323-AC-8 | A replay request's `stage_limits` entry raises its named stage limit for the replay recompile, a stage limit the request does not name runs at its published default, and an entry naming no stage-limit setting refuses before any stage runs. | Test (TC-426) |
 | FR-323-AC-9 | A replay whose sources recompile to a proved `package_id` other than the request's `package.package_id`, after replay rules 1 to 4 pass, refuses `stale_dependency`/`content-mismatch` (QSL's `PackageIdMismatch`) naming the request's `package_id` and the recompiled one, and yields no result. | Test (TC-277) |
-| FR-323-AC-10 | Applicable replay/non-replay requests carry complete effective u64 `limits.supplied` A/H ceilings, independent of unchanged ScalarLimitsV1, PopulationAdmissionLimitsV1 and per-argument C/occ. Zero permits no event; either changed ceiling changes request identity. Supplied fields in `stage_limits` refuse before stages run. No absent ceiling borrows evaluator/population/stage work; a ceiling omitted at the caller API resolves to its own published default 16777216, while a wire `limits.supplied` object that is incomplete or malformed refuses before consumption. | Test (TC-278) |
+| FR-323-AC-10 | Applicable replay/non-replay requests carry complete effective u64 `limits.supplied` A/H ceilings and B (AC-15), independent of unchanged ScalarLimitsV1, PopulationAdmissionLimitsV1 and per-argument C/occ. Zero permits no event; either changed ceiling changes request identity. Supplied fields in `stage_limits` refuse before stages run. No absent ceiling borrows evaluator/population/stage work; a ceiling omitted at the caller API resolves to its own published default 16777216, while a wire `limits.supplied` object that is incomplete or malformed refuses before consumption. | Test (TC-278) |
 | FR-323-AC-11 | A supported fixture's independently enumerated A/H event sequence denies at zero/one-less and completes at exact ceiling when other bounds fit. Its actual pre-call limit result preserves supplied phase, parameter/locus, actual event, configured ceiling, successful prefix, denied amount and checked attempted count/overflow, with zero evaluation consumption and no kernel charge_point/FunctionCall. Its evaluated counterpart retains the unchanged accounting incomplete record without supplied context. | Test (TC-278) |
 | FR-323-AC-12 | Actual supplied invalid input, original caller cancellation, fallible storage denial and checked representation capacity failure preserve their distinct reviewed native typed cause/provenance; storage reports the real request in native bytes/additional-elements, not a work limit. Paired identical input/environment/nonzero-budget cold/warm runs preserve count and first denial; nested/multiple arguments neither reset nor double debit. After removal of storage denial, retry retains the successful prefix/original Cancel and matches a fresh attempt with identical input/environment and the same initial nonzero spend: independently expected cumulative spend/result at exact and first-denial record at one-less, without reset/refund or partial state. Malformed/unknown/mixed-origin context refuses interpretation, never a successful or guessed native cause. | Test (TC-278) |
 | FR-323-AC-13 | Qualification of each supplied helper/cause arm identifies actual input/work/peak-storage/Cancel/fallible-route premises and reviewed typed mapping. Omitting any premise blocks qualification without creating a runtime unsupported/error result. Decimal remains a mandatory positive path once IR-718/IR-719 capability and typed integration enable it; its tiny allocation falsifier and future union baseline remain explicit prerequisites, not proof from numerical hypotheses. | Analysis (TC-278 RE-21) |
 | FR-323-AC-14 | An existing typed replay conversion InternalFault supplied at its owning seam retains Failed/internal-failure classification, actual replay stage/invariant/provenance and unavailable basis, with supplied context absent, no ordinary InputRefusal/Inconclusive coercion, no synthetic kernel payload and zero semantic consumption/no added mapping charge. Compare with an ordinary input refusal and a genuine evaluated fault retaining its earlier charges. A five-arm-only serializer that drops/coerces the pre-call fault fails the control; original successful helper prefix is not reset/refunded. | Test (TC-278) |
+| FR-323-AC-15 | A request's `limits.supplied.numeric_magnitude_bits` B (published default 4096; omitted resolves to it, so omitted and stated 4096 have the same request identity and 4095 or 4097 differ) admits a supplied Integer and Rational whose value and every value-in-domain operand (3 Integer, 6 Rational) have bit length at most B, with zero counted as one bit, so B = 0 admits nothing; at the default a 4096-bit operand admits and a 4097-bit operand refuses. An operand at B+1 bits refuses by the `limit` cause with field `supplied.numeric_magnitude_bits`, `limit` B, `consumed` 0, `next_charge` and `counter` its bit length, the named `operand` and `event: value-visit`, stopping on the charged initiating event (the A or H spend includes that one event) before any comparison, with no further unit charged and zero evaluation consumption. A malformed B, a B missing from the wire object, a B above the u64 range or a B in `stage_limits` is a typed input refusal before consumption. | Test (TC-278) |
+| FR-323-AC-16 | NORM, not yet implementation-qualified (depends on the IR type-link follow-up; the bounded cancellable type-to-type equality helper and its QSV caller are not built): for a nested retained type link comparison, the `type-comparison` event is charged first and then every numeric endpoint (4 Integer, 8 Rational) is checked against B by the AC-15 bit-length rule; the first endpoint over B refuses by the same `limit` cause with `event: type-comparison` and a `type-link-` `operand`, before the endpoint equality runs, and an endpoint at exactly B admits. | Test (TC-278) |
 
 ## Dependencies
 
@@ -338,6 +451,9 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 - QSL-675 [FR-090](ix://agent-ix/quire-spec-language/FR-090) /
   [FR-096](ix://agent-ix/quire-spec-language/FR-096) own native fault/context
   mapping. Their reviewed serialized native payload is an integration gate.
+- QSL [FR-277](ix://agent-ix/quire-spec-language/FR-277) AC-6 and QSV
+  FR-109 AC-7 own the operand-bound qualification premise that B discharges
+  for Integer and Rational membership.
 - [Accounting definition](../../../proposals/quire-v1/definitions/value-accounting.md)
   owns the unchanged scalar/population objects and closed evaluated incomplete.
 - [IR-718 SPEC](https://linear.app/agent-ix/issue/IR-718/spec-quire-exact-bounded-fallible-decimal-membership-for-supplied) /
@@ -350,6 +466,6 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 Accepted complete-V1 boundary value contract. Implementation and qualification
 remain tracked separately.
-The QSL-681 supplied-phase amendment and AC-10..14 are PROPOSED,
+The QSL-681 supplied-phase amendment and AC-10..16 are PROPOSED,
 independently unreviewed and UNQUALIFIED. No implementation, typed native
 mapping, helper proof or acceptance execution is claimed.
