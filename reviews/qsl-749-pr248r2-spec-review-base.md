@@ -73,3 +73,17 @@ Lows, recorded and not blocking:
   historical records, not instructions.
 - The second QSL-753 AC (the report to the module owner) is outside the PR and
   is not verified here.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-004 | medium | Two of the 88 filled Verification cells name a TC whose procedure does not exercise the criterion, so the cell now asserts a trace that cannot fail. FR-001-AC-2 (unknown profile receives `unknown_profile`) reads `Test (TC-005)`, but TC-005 selects only the unavailable superseded candidate and an adopted composed definition; no unknown profile is offered. FR-322-AC-24 (FR-149 conversion classification from declared bounds) reads `Test (TC-233)`, but TC-233 has no conversion or narrowing case, and its own description limits it to producer-side schema, digest and identity closure. Both mappings were wrong in the deleted matrix and were carried over. Fix each cell: name a TC that exercises it, add the case to the TC's procedure, or leave the cell as bare `Test`. Recorded, not blocking: FR-261-AC-3 (TC-140 has no equal-local-role-name case) and FR-322-AC-23 (TC-233 covers the literal-type half, not root `result_type`) are only partly exercised. | spec/functional/foundation/FR-001-select-native-profile.md; spec/test-cases/TC-005-native-definition-selection.md; spec/objects/interfaces/FR-322-checked-package-artifact.md; spec/test-cases/TC-233-published-checked-package-and-scalar-contract-vectors.md | wrong-requirement |
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 584680e: 88 Verification cells in 15 FR files now read `Test (TC-nnn)`, and only that cell changed in each row. Every cell matches the mapping in this review. FR-322-AC-62 is correctly skipped because its cell already names concrete tests. One spot-check per FR group against the TC procedures holds for 13 groups; the two wrong cells are FND-004. |
+| FND-002 | fixed | 584680e: the "The matrix remains Planned" clause is removed from TC-033, TC-034, TC-038 to TC-046 and TC-048, and the next word is capitalised. No live file outside reviews/ still says "matrix remains" or names TM-00x. |
+| FND-003 | fixed | PR body edited at head 584680e. It now states the 88 moved traces and the FR-322-AC-62 skip, and says FR-046-AC-8 was never at risk. |
