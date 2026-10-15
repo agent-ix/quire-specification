@@ -205,8 +205,8 @@ per type or per argument.
    endpoint (3 operands); for a Rational, `value-numerator`,
    `value-denominator`, `lower-numerator`, `lower-denominator`,
    `upper-numerator`, `upper-denominator` (6 operands). An operand's size is the
-   bit length of its absolute value, with zero counted as ONE bit (QSL FR-380;
-   the kernel's magnitude measure). Every value therefore has bit length at
+   bit length of its absolute value, with zero counted as ONE bit (quire-exact FR-380
+   Inputs: zero has magnitude length one). Every value therefore has bit length at
    least 1: B = 0 admits no operand and B >= 1 admits zero. An operand is
    within B when its bit length is at most B. The helper reads a size from the
    stored value without performing the comparison, after the initiating
@@ -223,8 +223,10 @@ per type or per argument.
    widened and no unbounded continuation exists.
 7. **Budgets.** The size checks charge no A or H unit of their own and the
    evaluator Meter nothing. The initiating `value-visit` event is charged
-   FIRST, as for any value visit, and only then does the helper run. The
-   comparison is part of that one event, with at most two Integer comparisons
+   first (QSV FR-109: poll and request one unit when ValueVisit is requested;
+   only after a successful charge perform the visit), then the qualified helper
+   runs under that one logical event (quire-exact FR-380 Behavior 6 / AC-6).
+   The comparison is part of that one event, with at most two Integer comparisons
    (Integer) or four (Rational) of at most B bits, so its cost is bounded by B
    inside it. An over-B operand stops ON that event: the event was charged, so
    `consumed` is the cumulative A or H prefix INCLUDING that one event. There
