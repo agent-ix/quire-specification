@@ -69,8 +69,10 @@ target end names. Parts, ports, connections and allocations are qualified into
 the FR-150 effective view as effective members `(owner effective type,
 construct declaration key)` under those owners; an interface is an effective
 type. Changing an `owner` or an end changes the effective member, never the
-construct's declaration key. An end `e` of type `T` exists exactly when `T` has the
-relationship member and `r.name` matches `e`'s role name. A relationship whose
+construct's declaration key. A relationship end is navigable from type `T` exactly
+when `T` conforms (FR-082) to the type of the end whose role `r.name` matches,
+the source end for the source role and the target end for the target role;
+ownership of the relationship plays no part. A relationship whose
 two ends both name object types is a navigation relationship with no kind.
 
 Kind mapping runs over interfaces, then parts, then ports, then connections,
@@ -117,12 +119,23 @@ qualified name whose alias names another ModelSelection than the one that owns
 the navigated declaration is refused at checking as
 `foreign_reference`/`foreign-model-selection`. Runtime navigation `r.name` over
 `r: Reference<T>` resolves statically to exactly one field or relationship end
-of `T` in the effective view; a name matching both is
-`ambiguous_declaration`/`ambiguous-name`. Traversal from source to target
+of `T` in the effective view. A relationship end is named by the role of the
+end nearest the receiver: the source end's role is the forward member,
+navigable from receivers conforming to the source end's type and reaching the
+target end, and the target end's role, when declared, is the inverse member,
+navigable from receivers conforming to the target end's type and reaching the
+source end; the destination end supplies the multiplicity and the result type.
+A name matching both a field and an end is
+`ambiguous_declaration`/`ambiguous-name`. A name that is no field of `T` and
+the role of no end navigable from `T` (a far-end role among them) finds no
+candidate: checking source refuses it `ill_typed`/`type-mismatch` at the form,
+as for an undeclared field (QSL FR-363), and the IR member check of a
+`relationship_end` naming a role the relationship does not name refuses
+`missing_declaration`/`missing-name` at `member.name` (FR-322-AC-56). Traversal from source to target
 requires declared direction `source-to-target`, `bidirectional` or
 `undirected`, and traversal from target to source requires `target-to-source`,
 `bidirectional` or `undirected`; any other traversal is
-`ill_typed`/`operator-ineligible`. The static result type follows the end's
+`ill_typed`/`operator-ineligible`. The static result type follows the destination end's
 typed multiplicity: `[0,1]` gives `Option<Reference<U>>`; `[1,1]` gives
 `Reference<U>`; any other finite `[l,u]` gives `Set<Reference<U>>[l,u]` when
 `unique` is true and `Bag<Reference<U>>[l,u]` otherwise, in canonical
@@ -146,6 +159,7 @@ outside the bound is `cardinality_out_of_bound`/`below-minimum` or
 | FR-152-AC-6 | Each declared relationship direction admits exactly the port-direction pairs and traversals stated above, and every other pair or traversal refuses with its named cause. | Test (TC-197) |
 | FR-152-AC-7 | Runtime navigation returns the multiplicity-determined type in canonical reference-key order and charges exactly the `model.navigate` schedule. | Test (TC-197) |
 | FR-152-AC-8 | A node whose construct meaning is not a systems meaning has no systems kind even when its kind name is `port`: a binder request for a Port and a connection end naming it each refuse `invalid_model_binding`/`wrong-export` with required kind `Port` and actual kind `none`. | Test (TC-197) |
+| FR-152-AC-9 | A relationship end is navigable by the role of the end nearest the receiver: `r.name` names the source end's role from a source-typed receiver and the target end's role from a target-typed receiver, a far-end role finds no candidate and refuses `ill_typed`/`type-mismatch` at checking, and the destination end supplies the multiplicity and result type. | Test (TC-197) |
 
 ## Dependencies
 

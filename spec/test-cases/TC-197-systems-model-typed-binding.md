@@ -7,6 +7,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-208
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: verifies
 ---
 
 # TC-197: Systems-model typed binding
@@ -52,11 +54,14 @@ Fixture **Y** (domain package `test/orders`, version `y`):
 - operation `Pump/run` with no params, no returns and an empty frame;
 - Allocation: artifact `pump_alloc`, source end `Pump/run`, target end
   `sys_pump`;
-- navigation: relationship `Sys/composition` with source end role `owner`
-  (`Sys`, `{1,1}`), target end role `parts` (`Pump`, `{0,3}`), direction
+- navigation: relationship `Sys/composition` with source end role `parts`
+  (`Sys`, `{1,1}`), target end role `owner` (`Pump`, `{0,3}`), direction
   `source-to-target`; and relationship `Pump/housing` with source end role
-  `pump` (`Pump`, `{1,1}`), target end role `home` (`Tank`, `{1,1}`), direction
-  `source-to-target`.
+  `home` (`Pump`, `{1,1}`), target end role `pump` (`Tank`, `{1,1}`), direction
+  `source-to-target`. A role names the end nearest the receiver (FR-152
+  "Navigation"): `self.parts` navigates from a `Sys` to the `Pump` end and
+  `self.home` from a `Pump` to the `Tank` end, and the inverse names `owner`
+  and `pump` navigate from a `Pump` and a `Tank`.
 
 Population **Q**: population declaration from artifact `Q` (kind `population`) with member types `[Sys, Pump, Tank]`
 and extent `closed`; runtime object `s1` of type `Sys` whose `parts` instances
@@ -82,6 +87,8 @@ construct's identity.
 | Y08 | `self.home` with `self` = `p1`; `self.pump` with `self` = `t1` in an invariant on `M::Tank`; Y with `Pump/housing` direction `undirected`, then `self.pump` again; Y with an added field `Pump/home` typed `Tank`, then `self.home` | `Reference<M::Tank>` equal to `t1` after one `model.navigate`: one work unit and no result unit; `refused { code: ill_typed, cause: operator-ineligible }`, the traversal running target to source against `source-to-target`; the navigation checks, `undirected` admitting both traversals, and evaluating it for `t1` is `refused { code: cardinality_out_of_bound, cause: above-maximum }` with bound `[1,1]` and count 2 (`p1` and `p2`) after one `model.navigate`; `refused { code: ambiguous_declaration, cause: ambiguous-name }` listing the field and the relationship end |
 | Y09 | Y with `Sys/composition` target end `{0,unbounded}`; then `{0,3}` with `ordered: true`; then Q with `p2`'s `home` targeting `t9` absent from the closed population; then Y with `Pump/housing`'s target end naming `ix://test/other/Tank`, a node of another domain package | `refused { code: unsupported_construct, cause: expression-form }` at `self.parts`; the same refusal; `refused { code: dangling_reference, cause: absent-target-in-complete-population }` for `t9`; `refused { code: missing_declaration, cause: missing-name }` at intake naming `Pump/housing`, the absent node `ix://test/other/Tank` and the referring node's `origin`, with no effective view |
 | Y10 | Y plus a `constructs` entry for kind `{module: test/other, name: port}` with meaning `quire.meaning.model.object-type/v1`, an entry for kind `{module: test/other, name: socket}` with meaning `quire.meaning.systems.port/v1`, and object type `Probe` (artifact `Probe`) of kind `{module: test/other, name: port}`; `resolve(Port, M::Probe)`; then that package with `pipe`'s target end replaced by `Probe`; then Y plus those two `constructs` entries and `Probe`, with `pipe` unchanged and `tank_in`'s kind changed to `{module: test/other, name: socket}`, whose meaning is the same Port meaning | `Probe` has no systems kind and no `systems.kind` charge; `refused { code: invalid_model_binding, cause: wrong-export }` with required `Port` and actual `none`; kind mapping refuses the target end of `pipe` with `wrong-export`, required `Port`, actual `none`, so `pipe` has no kind; the renamed node maps to Port exactly as in Y01, with the same charges and declaration keys |
+| Y11 | `self.owner` with `self` = `s1` in an invariant on `M::Sys`; `self.parts` with `self` = `p1` in an invariant on `M::Pump`; `self.pump` with `self` = `p1` in an invariant on `M::Pump` | each `refused { code: ill_typed, cause: type-mismatch }` at the form with no evaluation charge: `owner` is the target end's role, navigable only from a `Pump`; `parts` is the source end's role, navigable only from a `Sys`; `pump` is a target-end role navigable only from a `Tank`. Checking source reports the cause an undeclared field gets; a `relationship_end` member naming one of these roles on the wrong endpoint is refused by the IR checks of FR-322-AC-56 and AC-57 instead |
+| Y12 | Y07's `self.parts` lowered to a checked package | the `quire.op.model.navigate` application has operator class `query`, member kind `relationship_end` naming `Sys/composition` and role `parts`, one operand of type `Reference<M::Sys>` and `result_type` `Set<Reference<M::Pump>>[0,3]` |
 
 ## Expected Results
 

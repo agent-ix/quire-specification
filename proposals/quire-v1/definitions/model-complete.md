@@ -426,9 +426,11 @@ an interface; the owning type for a field, relationship or operation; the type
 a part's `owner` names; and, for a port, the element owner of the part its
 `owner` names. The *end-owner type* of
 a connection or allocation end is the element owner of the declaration that
-the end names. A relationship end `e` is an end of effective type `T` exactly
-when `T` has the effective member for the relationship; `r.name` over
-`Reference<T>` navigates to `e` when `name` is `e`'s role. The effective
+the end names. A relationship end is navigable from effective type `T` exactly
+when `T` conforms to the type of the end whose role `name` is, ownership of the
+relationship being irrelevant; `r.name` over `Reference<T>` navigates from that
+end to the destination end when `name` is the role of the end nearest `T` (the source end's role is the forward
+member and the target end's role the inverse member). The effective
 declaration of a Connection or Allocation, as returned by a binder request, is
 the effective member owned by the end-owner type of its source end. Every
 systems effective member is keyed by `(owner effective type, construct

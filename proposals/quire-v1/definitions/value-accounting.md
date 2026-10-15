@@ -40,7 +40,7 @@ completed result. That record is closed; its members are defined under
 | rational arithmetic | `rational-arithmetic.operands`, `rational-arithmetic.arithmetic`, `rational-arithmetic.normalize`, `rational-arithmetic.result-retain` for each `Rational[..]` `+`, `-`, `*`, `/` and unary `-`, and each `Integer` or `Int[..]` `/` producing a `Rational[..]` |
 | numeric ordering | `ordering.operands`, `ordering.arithmetic`, `ordering.result-retain` for each `Integer`, `Int[..]`, `Rational[..]` or `Decimal[..]` `<`, `<=`, `>` and `>=` |
 | Boolean connective | `boolean.result-retain` for each `and`, `or`, `implies` and `not` |
-| model reference | `model.deref` for each `deref(...)`; `model.navigate` for each runtime `.name` field or relationship-end navigation, followed for a multi-valued end by one `collection.visit` per target, `collection.bound` and `collection.result-retain` |
+| model reference | `model.deref` for each `deref(...)`; `model.navigate` for each runtime `.name` field or relationship-end navigation, followed for a multi-valued destination end by one `collection.visit` per target, `collection.bound` and `collection.result-retain` |
 | graph | `graph.expand` before each node is discovered (the start included), one `graph.edge` before each edge target is tested, then `graph.result-retain` for each `reaches(...)` |
 | lookup | `lookup.key`, then `lookup.result-retain` when a value is returned, for each `lookup<T>(p, r) absent m` |
 | population | one `population.visit` before each member walked by `allInstances<T>(p)`, conforming or not, then `collection.bound` and `collection.result-retain` |
@@ -388,11 +388,11 @@ evaluation charge; it is charged under `PopulationAdmissionLimitsV1` below.
 Evaluation stops at its first undefined, refused or incomplete outcome.
 `deref(r)` evaluates `r`, charges `model.deref`, then decides a dangling
 reference without a charge. A field or relationship-end navigation `r.name`
-evaluates `r`, charges `model.navigate` and takes the end's targets in
-canonical reference-key order. A single-valued end then decides, without a
-charge, every target's dangling check in that order and after them the end's
+evaluates `r`, charges `model.navigate` and takes the destination end's targets (the end opposite the role `name` names) in
+canonical reference-key order. A single-valued destination end then decides, without a
+charge, every target's dangling check in that order and after them the destination end's
 count bound, and returns the `Reference<T>` or `Option<Reference<T>>` with no
-further charge. A multi-valued end decides each target's dangling check without
+further charge. A multi-valued destination end decides each target's dangling check without
 a charge and then charges one `collection.visit` for that target; after the
 last target it charges `collection.bound`, decides the FR-144 bound check
 without a charge, and charges `collection.result-retain`. A dangling target
