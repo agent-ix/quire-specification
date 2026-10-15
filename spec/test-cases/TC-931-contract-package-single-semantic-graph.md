@@ -93,10 +93,10 @@ recomputes identities where it changes the graph.
 | Vector | Setup | Expected |
 |---|---|---|
 | V1 positive: two references to one protocol | `R` carries `expression` occurrences with ordinals 0 and 1; `source_map` has two entries (`R`, `expression`, 0) and (`R`, `expression`, 1) naming different source regions. The graph holds no second carrier. | Admitted. One carrier node for `P`; `R.node_id.digest` and `package_id` equal those of the one-occurrence package; the reader resolves `R` to `P` once. |
-| V2 positive: occurrence order | The two entries of V1 listed in the opposite order in the package. | Admitted; identity unchanged (occurrences and `source_map` are outside identity). |
+| V2 positive: occurrences outside identity | V1 with each occurrence's regions changed, or with a third `expression` occurrence and `source_map` entry added. | Admitted; carrier `node_id` and `package_id` unchanged (occurrences and `source_map` are outside identity, FR-322-AC-14). |
 | V3 negative: no occurrence | `R.occurrences` is empty (its `source_map` entries removed). | Fails the closed V2 schema. |
 | V4 negative: wrong role | One of `R`'s occurrences has role `declaration` (or `type`, `anchor`, `claim`, `generated`), with its `source_map` entry changed to match. | Fails the closed V2 schema. |
-| V5 negative: duplicate ordinal | `R` carries two `expression` occurrences with ordinal 0, or two `source_map` entries keyed (`R`, `expression`, 0). | Refuses `invalid_source_map` at the later `source_map` entry. |
-| V6 negative: two nodes, one key | The graph holds `R` twice (each with one occurrence), or two carriers to `P` whose preimages are equal. | Refuses `invalid_semantic_graph`; node identifiers are unique. |
+| V5 negative: duplicate ordinal | `R` carries two `expression` occurrences with ordinal 0, or two `source_map` entries keyed (`R`, `expression`, 0). | Refuses `invalid_source_map`: for the `occurrences` variant at the later occurrence's `/semantic_graph/nodes/{n}/occurrences/{j}` pointer (the `source_map` holds one entry (`R`, `expression`, 0)); for the `source_map` variant at the later entry's `/source_map/{i}` pointer. |
+| V6 negative: two nodes, one key | The graph holds `R` twice (each with one occurrence ordinal 0, and the `source_map` holding one entry (`R`, `expression`, 0), so V5 cannot fire first), or two carriers to `P` whose preimages are equal. | Refuses `invalid_semantic_graph`; node identifiers are unique. |
 
 Assertions compare typed fields, causes and keys, never message text.
