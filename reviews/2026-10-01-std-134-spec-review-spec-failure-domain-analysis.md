@@ -5,7 +5,6 @@ type: SpecReview
 analysis: failure-domain
 scope: "agent-ix/quire-specification@6a46fe220e02d93679279e2fef7f390fd57d448a; spec/functional/analysis/FR-383-explore-under-state-space-reduction.md, spec/test-cases/TC-323, TC-325, TC-326; design input quire-spec-language ADR-021 at spec/368-por 1e48e7a7 (POR-1 to POR-11, §2, §7.4, §7.5)"
 review_set: all
-evaluated_revision: "6a46fe220e02d93679279e2fef7f390fd57d448a"
 review_date: "2026-10-01"
 ---
 

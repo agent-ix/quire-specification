@@ -21,7 +21,7 @@ consumer adoption, execution and full-standard acceptance are not claimed.
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | low | No amended method-class mismatch; implementation evidence remains explicitly planned. | TM-001; IT-003 |
+| FND-001 | low | No amended method-class mismatch; implementation evidence remains explicitly planned. | data/advice.json; TM-001; IT-003 |
 
 ## Provenance
 

@@ -35,7 +35,7 @@ or dependency closure. The original language/core assignment remains active.
 
 ## Current evidence
 
-| Repository | Current finding |
+| Repository | Inspected revision and current finding |
 |---|---|
 | quire-research | Maintained docs and JSON task/issue maps inspected; no shared planning edits |
 | quire-specification | Private shell; no preexisting implementation or open PR at claim |
@@ -140,8 +140,9 @@ those method and result expectations.
 
 1. FS01 owner-reviewed admission and per-artifact license decision; then LC01
    native lexer/parser/formatter, source diagnostics, malformed/unsupported
-   controls, reproducible workspace, lint/test/fixture CI. Parser
-   starts with std only.
+   controls, reproducible workspace, lint/test/fixture CI. Proposed baseline is
+   the installed Rust 1.94.1; pin the exact toolchain when implementing. Parser
+   starts with std only; any new dependency gets a pinned rights inventory.
 2. FS02/FS03/FS05 reviewed contracts; LC02 deterministic linking,
    source-revision bridge and strict linked packages.
 3. LC03 independent finite-population evaluator, guards, collections, frames,
@@ -209,7 +210,7 @@ formatter. The compiler review records remaining linker/evidence boundaries.
 C's concrete operation fixture identity findings are corrected: 7 case-scoped
 invocations bind 13 exact snapshot files and 3 exact proposed frame files. Each
 reference includes authority, identity, revision namespace/value, byte digest
-and fixture profile; each payload exists once.
+and fixture profile; each payload exists once. SHA256SUMS covers the full set.
 The producer audit in the language workspace verified 23 artifact files and six
 negative controls for stale bytes and same-identity changed content. This is
 observed fixture validation, not execution of the seven logical expectations.

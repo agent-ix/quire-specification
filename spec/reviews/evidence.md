@@ -20,18 +20,20 @@ The mandatory advisor and catalog commands ran successfully. Uncatalogued NFR la
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | medium | NFR-001-M-1: authored `Byte comparison` is uncatalogued. Advisor: `performance-benchmarking`. Reviewer proposes `golden-approval-testing`; Compare selected historical bytes; latency is not the obligation. | NFR-001-M-1 |
-| FND-002 | medium | NFR-001-M-2: authored `Adverse consumer tests` is uncatalogued. Advisor: `performance-benchmarking`. Reviewer proposes `contract-testing`; Independent readers reject an unselected cross-version mapping. | NFR-001-M-2 |
-| FND-003 | medium | NFR-002-M-1: authored `Budget-boundary tests` is uncatalogued. Advisor: `performance-benchmarking`. Reviewer proposes `fault-injection`; Exhaust each phase budget and assert incomplete with no Boolean. | NFR-002-M-1 |
-| FND-004 | medium | NFR-002-M-2: authored `Validation-budget tests` is uncatalogued. Advisor: `performance-benchmarking`. Reviewer proposes `negative-abuse-testing`; Interrupt population validation and reject partial acceptance. | NFR-002-M-2 |
-| FND-005 | medium | NFR-003-M-1: authored `Digest mutation tests` is uncatalogued. Advisor: `performance-benchmarking`. Reviewer proposes `negative-abuse-testing`; Mutate bytes under a stale digest and assert refusal. | NFR-003-M-1 |
-| FND-006 | medium | NFR-003-M-2: authored `Independent reference-join tests` is uncatalogued. Advisor: `performance-benchmarking`. Reviewer proposes `contract-testing`; Independent joiner rejects immutable-key content conflicts after digest recomputation. | NFR-003-M-2 |
+| FND-001 | medium | NFR-001-M-1: authored `Byte comparison` is uncatalogued. Advisor: `performance-benchmarking`. Reviewer proposes `golden-approval-testing`; Compare selected historical bytes; latency is not the obligation. | NFR-001-M-1; [raw advice](data/advice.json) |
+| FND-002 | medium | NFR-001-M-2: authored `Adverse consumer tests` is uncatalogued. Advisor: `performance-benchmarking`. Reviewer proposes `contract-testing`; Independent readers reject an unselected cross-version mapping. | NFR-001-M-2; [raw advice](data/advice.json) |
+| FND-003 | medium | NFR-002-M-1: authored `Budget-boundary tests` is uncatalogued. Advisor: `performance-benchmarking`. Reviewer proposes `fault-injection`; Exhaust each phase budget and assert incomplete with no Boolean. | NFR-002-M-1; [raw advice](data/advice.json) |
+| FND-004 | medium | NFR-002-M-2: authored `Validation-budget tests` is uncatalogued. Advisor: `performance-benchmarking`. Reviewer proposes `negative-abuse-testing`; Interrupt population validation and reject partial acceptance. | NFR-002-M-2; [raw advice](data/advice.json) |
+| FND-005 | medium | NFR-003-M-1: authored `Digest mutation tests` is uncatalogued. Advisor: `performance-benchmarking`. Reviewer proposes `negative-abuse-testing`; Mutate bytes under a stale digest and assert refusal. | NFR-003-M-1; [raw advice](data/advice.json) |
+| FND-006 | medium | NFR-003-M-2: authored `Independent reference-join tests` is uncatalogued. Advisor: `performance-benchmarking`. Reviewer proposes `contract-testing`; Independent joiner rejects immutable-key content conflicts after digest recomputation. | NFR-003-M-2; [raw advice](data/advice.json) |
+| FND-007 | medium | NFR-004-M-1: authored `Rights inventory inspection` is uncatalogued. Advisor: `performance-benchmarking`. Reviewer proposes `inspection`; Review an included-artifact rights inventory and promotion record. | NFR-004-M-1; [raw advice](data/advice.json) |
+| FND-008 | medium | NFR-004-M-2: authored `Requirement and issue audit` is uncatalogued. Advisor: `performance-benchmarking`. Reviewer proposes `inspection`; Audit review/implementation status on the owning requirements and tickets. | NFR-004-M-2; [raw advice](data/advice.json) |
 
 ## Scope and provenance
 
 Reviewed quire-specification. The owner selected base plus all seven Quoin analyses, and declined the optional intent↔test↔code semantic step in `/gap-analysis`. Ordinary requirements consistency, EARS conformance, and the separate current-code review remain in scope. The assignment prohibits spawning additional agents, so these analyses were performed sequentially by Agent A; no independent reviewer acceptance is implied.
 
-The installed Quoin 0.20.0 `spec-review/SKILL.md` and its analysis skills govern these artifacts. The SpecReview authoring pack was fetched once for this repository and its process skeleton/schema was used. IDs in this report are local to this repository unless qualified.
+The installed Quoin 0.20.0 `spec-review/SKILL.md` and its analysis skills govern these artifacts. The SpecReview authoring pack was fetched once for this repository and its process skeleton/schema was used. [Provenance](data/provenance.json), [coverage output](data/coverage.json), [advisor output](data/advice.json), and [actual method catalog](data/verification-methods.json) preserve the deterministic inputs. IDs in this report are local to this repository unless qualified.
 
 These are new repositories. Missing formal plans, TC records, suites, and matrices are workflow setup/readiness debt. Unimplemented LC02–LC05 stages and unqualified shared consumers are known remaining work; they are not reported as regressions or hidden stubs. No completion status is fabricated.
 
@@ -53,6 +55,8 @@ Coverage counts 79 criteria targets, including two stakeholder validation criter
 | NFR-002-M-2 | negative-abuse-testing | Interrupt population validation and reject partial acceptance. | Proposed review disposition; not recorded as human-confirmed discharge |
 | NFR-003-M-1 | negative-abuse-testing | Mutate bytes under a stale digest and assert refusal. | Proposed review disposition; not recorded as human-confirmed discharge |
 | NFR-003-M-2 | contract-testing | Independent joiner rejects immutable-key content conflicts after digest recomputation. | Proposed review disposition; not recorded as human-confirmed discharge |
+| NFR-004-M-1 | inspection | Review an included-artifact rights inventory and promotion record. | Proposed review disposition; not recorded as human-confirmed discharge |
+| NFR-004-M-2 | inspection | Audit review/implementation status on the owning requirements and tickets. | Proposed review disposition; not recorded as human-confirmed discharge |
 
 ## Suites warranted by the risks
 

@@ -15,7 +15,7 @@ Ticket: none found (branch `task/nfr061-drop-observer-tracking`, title
 PR #164 spec diff.
 
 The removals are clean. No version, invocation, dependency-identity, licence or
-rights wording and no Rust version pin remains in NFR-061, TC-155, the NFR-061
+rights wording and no Rust 1.98.1 pin remains in NFR-061, TC-155, the NFR-061
 rows of `spec/output-mapping/tests.md` and `spec/spec.md`, or the NFR-061
 lines of AD-004. FR-122/123/124 and TC-151/152/153 carry no such wording
 ("revision `1-draft.1`" there is profile selection, not tracking). The kept

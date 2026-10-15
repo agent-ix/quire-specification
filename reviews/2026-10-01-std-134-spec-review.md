@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "agent-ix/quire-specification@6a46fe220e02d93679279e2fef7f390fd57d448a; FR-375 to FR-385, amended FR-013, FR-161, FR-177, FR-181, FR-271, FR-272, FR-290, FR-331, FR-340, native-diagnostics, TC-310 to TC-328, spec/spec.md, spec/complete-v1/tests.md"
 review_set: all
-evaluated_revision: "6a46fe220e02d93679279e2fef7f390fd57d448a"
 review_date: "2026-10-01"
 ---
 

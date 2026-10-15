@@ -424,8 +424,6 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/NFR-003
     type: contains
-  - target: ix://agent-ix/quire-specification/NFR-004
-    type: contains
   - target: ix://agent-ix/quire-specification/IT-002
     type: contains
   - target: ix://agent-ix/quire-specification/AD-005
@@ -1111,7 +1109,6 @@ The requirement artifacts are indexed below.
 | [StR-001](stakeholder/StR-001-native-assessment-trust.md) | StR | Draft |
 | [NFR-002](non-functional/NFR-002-classify-resource-incompleteness.md) | NFR | Accepted by FS05 for interchange work limits |
 | [NFR-003](non-functional/NFR-003-qualify-reference-bindings.md) | NFR | Accepted by FS05 for strict reference binding |
-| [NFR-004](non-functional/NFR-004-retain-review-and-rights.md) | NFR | Draft |
 | [IT-002](integration/IT-002-independent-reference-consumer.md) | IT | Draft |
 | [IT-003](integration/IT-003-verification-reference-amendment.md) | IT | Planned |
 | [IT-010](integration/IT-010-bind-linked-package-assessments.md) | IT | Planned composed package/binding boundary |

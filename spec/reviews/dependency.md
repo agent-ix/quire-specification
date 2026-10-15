@@ -26,7 +26,7 @@ The proposed prerequisite DAG is acyclic and classifies every FR/StR/NFR. It exp
 
 Reviewed quire-specification. The owner selected base plus all seven Quoin analyses, and declined the optional intent↔test↔code semantic step in `/gap-analysis`. Ordinary requirements consistency, EARS conformance, and the separate current-code review remain in scope. The assignment prohibits spawning additional agents, so these analyses were performed sequentially by Agent A; no independent reviewer acceptance is implied.
 
-The installed Quoin 0.20.0 `spec-review/SKILL.md` and its analysis skills govern these artifacts. The SpecReview authoring pack was fetched once for this repository and its process skeleton/schema was used. IDs in this report are local to this repository unless qualified.
+The installed Quoin 0.20.0 `spec-review/SKILL.md` and its analysis skills govern these artifacts. The SpecReview authoring pack was fetched once for this repository and its process skeleton/schema was used. [Provenance](data/provenance.json), [coverage output](data/coverage.json), [advisor output](data/advice.json), and [actual method catalog](data/verification-methods.json) preserve the deterministic inputs. IDs in this report are local to this repository unless qualified.
 
 These are new repositories. Missing formal plans, TC records, suites, and matrices are workflow setup/readiness debt. Unimplemented LC02–LC05 stages and unqualified shared consumers are known remaining work; they are not reported as regressions or hidden stubs. No completion status is fabricated.
 
@@ -53,6 +53,7 @@ These are new repositories. Missing formal plans, TC records, suites, and matric
 | [NFR-001](../non-functional/NFR-001-preserve-versioned-meaning.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
 | [NFR-002](../non-functional/NFR-002-classify-resource-incompleteness.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
 | [NFR-003](../non-functional/NFR-003-qualify-reference-bindings.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
+| [NFR-004](../non-functional/NFR-004-retain-review-and-rights.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
 | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | feature | States observable native behavior or an operator-facing quality/acceptance guarantee. |
 
 ## Explicit prerequisite edges
@@ -99,6 +100,7 @@ graph TD
   NFR-001["NFR-001"]
   NFR-002["NFR-002"]
   NFR-003["NFR-003"]
+  NFR-004["NFR-004"]
   StR-001["StR-001"]
   FR-004 --> FR-002
   FR-004 --> FR-003
@@ -118,7 +120,7 @@ graph TD
 
 ## Topological order
 
-1. FR-001, FR-004, FR-006, FR-015, NFR-001, NFR-002, NFR-003, StR-001.
+1. FR-001, FR-004, FR-006, FR-015, NFR-001, NFR-002, NFR-003, NFR-004, StR-001.
 2. FR-002, FR-003, FR-014.
 3. FR-005, FR-007, FR-008, FR-009, FR-011, FR-016.
 4. FR-010, FR-012.

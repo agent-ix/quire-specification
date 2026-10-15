@@ -16,7 +16,6 @@ New findings (disposition pass 3):
 dispositions:
 - fnd: FND-004
   outcome: fixed
-  fix_sha: d2ec448
   after_excerpt: PF-01..PF-07 and tc_233_function_nodes_declare_their_parameter_type_nodes are removed with the `parameters` member; the tautological digest-inequality asserts no longer exist.
 new_findings:
 - fnd: FND-005
