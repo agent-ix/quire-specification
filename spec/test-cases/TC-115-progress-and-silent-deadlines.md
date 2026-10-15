@@ -11,7 +11,7 @@ relationships:
 ## Description
 
 Accepted FS04 portable progress controls for timestamped, fixed-sample and
-event-position obligations, including a silent refund deadline. TM-004 remains Planned.
+event-position obligations, including a silent refund deadline..
 
 ## Test Procedure
 

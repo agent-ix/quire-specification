@@ -35,7 +35,6 @@ A dependency-closed supported request can execute when another independent reque
 
 - [Shared drafting foundation](../../../proposals/quire-v1/shared-foundation.md).
 - [Composed architecture](../../assurance/AD-001-composed-native-language.md).
-- [Planned acceptance matrix](../../composed-foundation/tests.md).
 
 Proposed requirement for the composed profile; it does not amend historical
 accepted definitions or establish an implemented capability.

@@ -97,7 +97,6 @@ selected profile, as the interval-less form does.
 - [Bridge correspondence](../temporal/FR-095-preserve-native-tl-correspondence.md).
 - [AD-012](../../assurance/AD-012-unbounded-temporal-operator-grammar.md) accepts
   the unbounded temporal operator grammar edition this requirement admits.
-- [Planned shared matrix](../../composed-foundation/tests.md).
 
 This is A's source integration contribution. E owns temporal meaning; spec artifacts declare
 the domain model and F owns observation binding contracts. Exact definition artifacts and complete

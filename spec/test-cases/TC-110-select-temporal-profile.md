@@ -9,7 +9,7 @@ relationships:
 ## Description
 
 Accepted FS04 portable admission controls for exact temporal profile and clock
-selection. TM-004 remains Planned; no parser, evaluator or bridge coverage is claimed.
+selection. No parser, evaluator or bridge coverage is claimed.
 
 ## Test Procedure
 

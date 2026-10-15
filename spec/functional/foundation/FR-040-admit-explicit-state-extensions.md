@@ -35,7 +35,6 @@ The state contract explicitly proposes reusable-predicate/query and finite-graph
 
 - [Detailed draft contract](../../../proposals/quire-v1/state-contract.md).
 - [Shared grammar](../../../proposals/quire-v1/shared-grammar.md).
-- [Planned acceptance matrix](../../composed-foundation/tests.md).
 
 Accepted by FS03. Historical definitions and their acceptance remain separate;
 this artifact does not establish implementation coverage.

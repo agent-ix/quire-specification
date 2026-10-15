@@ -15,7 +15,7 @@ relationships:
 ## Description
 
 Accepted FS06 portable controls for common profile selection and complete
-per-obligation loss accounting. TM-008 remains Planned; no executable standard
+per-obligation loss accounting. No executable standard
 coverage is claimed.
 
 ## Test Procedure

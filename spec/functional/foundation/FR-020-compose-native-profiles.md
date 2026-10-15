@@ -59,5 +59,4 @@ cannot remove a capability from the required V1 inventory.
 - [Complete V1 capability inventory](../../../docs/v1-capability-inventory.md).
 - [Exact definition binding](FR-030-bind-composed-definitions.md).
 - [Per-request capability results](FR-031-report-requested-capabilities.md).
-- [Planned matrix](../../composed-foundation/tests.md).
 

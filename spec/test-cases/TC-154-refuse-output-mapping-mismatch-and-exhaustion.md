@@ -14,7 +14,7 @@ relationships:
 ---
 ## Description
 
-Accepted FS06 portable adverse/resource controls. TM-008 remains Planned.
+Accepted FS06 portable adverse/resource controls..
 
 ## Test Procedure
 

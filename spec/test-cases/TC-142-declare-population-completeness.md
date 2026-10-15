@@ -16,7 +16,7 @@ relationships:
 ---
 ## Description
 
-Accepted FS04 portable OB01 population controls. TM-007 remains Planned; no
+Accepted FS04 portable OB01 population controls. No
 executable standard coverage is claimed.
 
 ## Test Procedure

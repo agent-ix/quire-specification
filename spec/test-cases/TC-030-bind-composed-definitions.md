@@ -11,8 +11,7 @@ relationships:
 ## Description
 
 Accepted FS05 portable controls for FR-130 and the reference/evolution portion
-of [FR-030](../functional/foundation/FR-030-bind-composed-definitions.md).
-TM-003 remains Planned; no executable test or completed coverage is claimed.
+of [FR-030](../functional/foundation/FR-030-bind-composed-definitions.md). No executable test or completed coverage is claimed.
 
 ## Test Procedure
 

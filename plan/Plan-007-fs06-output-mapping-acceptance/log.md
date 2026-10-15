@@ -22,8 +22,8 @@ description: "Chronological log of changes to the Plan-007 bundle."
   inherited installed-catalog `Status` versus `Coverage Status` assertions.
 * **2026-09-14** — Local qualification passed: 5/5 Rust tests, formatting and
   strict offline all-target/all-feature Clippy with `target-codex-backends`.
-* **2026-09-14** — Coverage remains 0/950 backed. TM-008's six rows and IT-060
-  remain explicitly Planned; the installed validation/coverage header mismatch
+* **2026-09-14** — Coverage remains 0/950 backed. IT-060
+  remains explicitly Planned; the installed validation/coverage header mismatch
   is recorded rather than hidden or used to infer a status.
 * **2026-09-14** — SR-558 gap analysis passes Plan-007. Rust review is not
   applicable because no Rust, Cargo, workflow, schema or executable fixture changed.

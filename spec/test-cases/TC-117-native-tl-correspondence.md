@@ -13,7 +13,7 @@ relationships:
 ## Description
 
 Accepted FS04 portable differential and identity-mutation controls for the
-native temporal bridge. TM-004 remains Planned; qcir #71 owns execution.
+native temporal bridge. Qcir #71 owns execution.
 
 ## Test Procedure
 

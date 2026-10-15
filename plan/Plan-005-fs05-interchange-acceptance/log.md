@@ -13,7 +13,7 @@ description: "Chronological log of changes to the Plan-005 bundle."
   strict producer/reader and digest-domain controls, and protocol #48 / PR #52's
   independent `/2` consumer at `5ce7978`.
 * **2026-09-14** — Kept protocol #11 open for its distinct `/1` regression and
-  retained IT-002/003, TM-001 and TM-003 as Planned.
+  retained IT-002/003 as Planned.
 * **2026-09-14** — Ran scoped `/specify`, then base/dependency/EARS self
   `/spec-review`; SR-544–SR-546 pass after reconciling status and dependency
   boundaries.

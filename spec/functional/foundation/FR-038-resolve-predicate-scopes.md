@@ -36,7 +36,6 @@ Aliases are source-unit scoped; native predicate declaration names are unique in
 
 - [Proposed shared grammar](../../../proposals/quire-v1/shared-grammar.md).
 - [Shared drafting foundation](../../../proposals/quire-v1/shared-foundation.md).
-- [Planned matrix](../../composed-foundation/tests.md).
 
 Accepted by FS03 for the composed state query/graph closure. It does not change
 historical definition bytes or claim complete compiler/backend coverage.
