@@ -109,3 +109,22 @@ and has no QSL carrier, so a paired QSL FR-277 amendment (field, setting
 name, default policy) must land with this one. Failure-domain finding is in
 SR-9130. Both rulings match their oracles in substance. Identity, malformed
 handling, bit math, AC binding and the value-visit cost model are clean.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-005 | high | Rule 5's heading and closing sentence say the value-in-domain part is "implemented-qualified by quire-exact f8e05771...". FR-323's own Status says AC-10..16 are "UNQUALIFIED. No implementation, typed native mapping, helper proof or acceptance execution is claimed". FR-323-AC-13 and QSL FR-277-AC-6 qualify a supplied path only with the consumer caller and the reviewed typed mapping. Only the kernel helper is landed (quire-exact `src/numeric_membership.rs` `try_contains_bounded`). QSV `origin/main` has no caller of it, and the QSV caller is quire-exact FR-380-AC-6 / IR-792, which is still pending. The sentence also adds a commit SHA pin, which this repo's CLAUDE.md bars. | spec/objects/interfaces/FR-323-native-runtime-envelope.md:199, :214-215, :470-472 | wrong-requirement |
+| FND-006 | medium | Recorded, not blocking. The published B default of 4096 sits against quire-exact FR-380 Behavior 6 ("a convenient default ... is not qualification") and FR-380-AC-6 ("no numeric default is added"). Read as written, the default resolved at the caller API into the request's caller-owned B is consistent with FR-380, but FR-380's wording should be aligned in the paired amendments. | spec/objects/interfaces/FR-323-native-runtime-envelope.md:178-183 | wrong-requirement |
+| FND-007 | low | Recorded, not blocking. "Both members SHALL be exact unsigned 64-bit ceilings" is stale now that there are three members. `consumed` 0 is listed among the limit cause fields (cause row, AC-15), but it is a context member. RE-29's "at exactly B all admit" needs expected and actual endpoints widened as a pair, or the type comparison mismatches. RE-27's 4096-bit admit needs a fixture whose endpoints are at least 4096 bits (QSL's current integer bounds are i128). | spec/objects/interfaces/FR-323-native-runtime-envelope.md:127, :305, :440; spec/test-cases/TC-278-replay-envelope-members.md:93, :95 | correct-requirement-no-evidence |
+
+## Dispositions
+
+Round 1, reviewed at agent-ix/quire-specification@582b2e3b4 (commits 52f89db and 582b2e3 on top of 2a04a47). Oracles: QSL FR-277 and QSV FR-109 on origin/main, quire-exact FR-380 and `src/numeric_membership.rs` on origin/main.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 582b2e3 |
+| FND-002 | deferred | Fixed on the QSpec side in 582b2e3: B now has a published default of 4096, so the FR-277 published-default rule holds. The remaining gaps are FR-277's "these two fields" sentence and the missing QSL carrier and setting for B. They close with the planner's paired QSL FR-277 amendment under QSL-779, which the dispatcher ruled out of scope for this PR. |
+| FND-003 | fixed | 582b2e3 |
+| FND-004 | deferred | Fixed in 52f89db and 582b2e3: the FR-380 citation now names quire-exact FR-380, RE-23 uses the same fixture, and the Rational operand names match the numerator/denominator intervals. TM-009 `spec/complete-v1/tests.md` still stops at AC-9. That gap predates this PR (AC-10..14 since QSL-681), and the hand-maintained matrix is a tracking antipattern to delete separately. |

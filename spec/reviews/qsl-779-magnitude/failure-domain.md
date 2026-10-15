@@ -43,3 +43,11 @@ event placement, AC-15 and a TC-278 vector to the type-comparison numeric
 path: the expected and retained interval endpoints, checked on the charged
 `type-comparison` event before the comparison, with their own `operand`
 names. Alternatively, state where that path is stopped.
+
+## Dispositions
+
+Round 1, reviewed at agent-ix/quire-specification@582b2e3b4.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 582b2e3 |

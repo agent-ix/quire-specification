@@ -124,9 +124,8 @@ implement and qualify this amended shape before claiming it is supported.
 
 For a request that supplies function arguments, the effective typed `limits`
 SHALL additionally carry `supplied: { admission_work_units,
-conversion_work_units, numeric_magnitude_bits }`. Both members SHALL be exact unsigned 64-bit
-ceilings, with no other members in this object except the
-`numeric_magnitude_bits` below. Admission bounds A; conversion
+conversion_work_units, numeric_magnitude_bits }`. All three members SHALL be exact unsigned 64-bit
+ceilings, with no other members in this object. Admission bounds A; conversion
 bounds H when witness/input conversion occurs. A direct call over already
 constructed values does not consume H merely because its ceiling is carried.
 Requests with no supplied-value phase retain their existing limit objects
@@ -196,7 +195,7 @@ the wire.
    passes NO B to QSV supplied admission still receives QSV's typed
    `UnsupportedHelper { family: NumericDomain }`; that is QSV's own contract,
    outside this envelope.)
-5. **Coverage, value-in-domain (implemented-qualified).** Every Integer or
+5. **Coverage, value-in-domain.** Every Integer or
    Rational operand of one value-in-domain comparison is checked against B
    after the initiating event is charged and before that comparison runs, in
    this order, the first operand over B deciding. Integer: `value`, `lower`,
@@ -211,8 +210,8 @@ the wire.
    admits zero. An operand is within B when its bit length is at most B; at
    the default, a value of 4096 bits is admitted and a value of 4097 bits is
    refused. B applies in whichever phase initiates the comparison, and a
-   declared endpoint is checked against B like a supplied value. This part is
-   implemented-qualified by quire-exact f8e05771804cb0c2e0166d5afa8c19532d602577.
+   declared endpoint is checked against B like a supplied value. The bounded kernel helper
+   exists under quire-exact FR-380; the QSV caller is pending.
 6. **Coverage, type-link comparison (NORM, NOT YET IMPLEMENTATION-QUALIFIED).**
    QSV FR-109 "Nested retained type": type-link comparisons carry input-sized
    numeric data. The `type-comparison` event (one compared pair of chain
@@ -235,7 +234,7 @@ the wire.
    operand from the lists above (type-link operands carry the `type-link-`
    prefix). The row's definitions hold unchanged. B is a per-operand
    magnitude bound with no cumulative counter, so its owning counter's
-   successful prefix is `consumed` = 0, `next_charge` = the operand's bit
+   successful prefix is the context member `consumed` = 0, `next_charge` = the operand's bit
    length (the denied amount) and `counter` = consumed + next_charge = the
    same bit length. The stopping event is reported in `event`
    (`value-visit` or `type-comparison`) and the initiating owner in `phase`.
@@ -257,7 +256,7 @@ the wire.
 
 Qualification: a B check discharges the "actual finite operand bounds" premise
 of QSL FR-277 AC-6 and QSV FR-109 AC-7 for Integer and Rational value-in-domain
-membership now, and for type-link comparison once the type-link follow-up
+membership once its QSV caller and reviewed typed mapping exist, and for type-link comparison once the type-link follow-up
 above exists. It does not qualify Decimal, temporary storage, cancellation
 response or typed mapping.
 
@@ -303,7 +302,7 @@ context and SHALL use the separate native fault route below:
 
 | Cause form | Required meaning and payload |
 | --- | --- |
-| `{ kind: limit, limit_kind, field, limit, next_charge, counter }` | Actual pre-call bound denial. `field` names the actual owning caller field; `limit_kind` is its counter, `limit` its configured u64 ceiling, `next_charge` the exact nonnegative denied amount. For A/H it is one. For `supplied.numeric_magnitude_bits` the cause also carries `operand` and no other limit cause does; `consumed` is 0 and `next_charge` and `counter` are the operand's bit length (see Numeric magnitude bound rule 7). `counter` is the checked attempted count, or the explicit tagged value `{overflow: true}` when counter representation overflows. No narrowing/wrapping; the denied A/H event is unperformed/unspent (an over-B numeric operand instead stops on its charged initiating event, see Numeric magnitude bound rule 8). |
+| `{ kind: limit, limit_kind, field, limit, next_charge, counter }` | Actual pre-call bound denial. `field` names the actual owning caller field; `limit_kind` is its counter, `limit` its configured u64 ceiling, `next_charge` the exact nonnegative denied amount. For A/H it is one. For `supplied.numeric_magnitude_bits` the cause also carries `operand` and no other limit cause does; the supplied-context member `consumed` (not a cause field) is 0 and `next_charge` and `counter` are the operand's bit length (see Numeric magnitude bound rule 7). `counter` is the checked attempted count, or the explicit tagged value `{overflow: true}` when counter representation overflows. No narrowing/wrapping; the denied A/H event is unperformed/unspent (an over-B numeric operand instead stops on its charged initiating event, see Numeric magnitude bound rule 8). |
 | `{ kind: input, native }` | Actual invalid kind/domain/member input with original QSL InputRefusal/QSV membership cause and provenance, never a fabricated limit or failed predicate. |
 | `{ kind: cancelled, native }` | Original caller Cancel cause and provenance, including Requested vs Deadline where observed; never a fresh token or work exhaustion. |
 | `{ kind: storage, native, requested, unit }` | Actual allocator denial at fallible reservation before mutation. Preserve the measured request exactly and its native `bytes` or `additional-elements` unit; do not convert the amount into work units. |
