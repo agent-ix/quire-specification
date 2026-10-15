@@ -18,7 +18,7 @@ occurrence key, the proof bounds and declared domains, the trace position
 and the `backend` member, and that a non-replay request carries no `replay`
 property, per QSL ADR-013 O-25, O-26 and QC-8.
 Extend the same owning envelope case for the proposed supplied-phase
-request/result amendment, binding FR-323-AC-10..14 without a new TC id.
+request/result amendment, binding FR-323-AC-10..15 without a new TC id.
 
 ## Preconditions
 
@@ -86,6 +86,12 @@ and additional spend must be observed, not inferred from equal Booleans.
 | RE-20 | Mutate supplied context with fake charge_point/FunctionCall, wrong phase/event/prefix/next metadata, unknown cause, fabricated native selection or mixed evaluated/pre-call origins | Strict interpretation refuses malformed context; no omission or reinterpretation produces successful admission or a guessed native cause | FR-323-AC-11, FR-323-AC-12 |
 | RE-21 | Analyze each helper/cause qualification record, omitting one input/work/peak-storage/Cancel/fallible-route/typed-mapping premise at a time; include tiny Decimal [0,100], 1@0, min/max scale 2 and unpublished union negative controls | Missing premise blocks implementation qualification, not a runtime unsupported/invalid/limit/storage error; IR-718/IR-719 plus reviewed typed integration enable mandatory Decimal positive replay, future union needs its owning public baseline | FR-323-AC-13 |
 | RE-22 | Supply the existing typed ReplayRefusal::Fault/InternalFault at the conversion stop seam for replay stage and each existing converted-payload/converted-slots/converted-elements/one-converted-argument invariant; pair with ordinary input refusal and genuine evaluated fault | Native Failed/internal-failure result with original stage/invariant/provenance and unavailable replay basis, supplied absent, no fake kernel payload/FunctionCall/charge_point; pre-call semantic spend zero and no mapping/helper debit or refund of earlier prefix; evaluated control retains its actual prior charges, ordinary input control retains refusal/Inconclusive and its supplied input context. Five-arm-only drop/coercion or evaluated-fault relabelling fails | FR-323-AC-14 |
+| RE-23 | Integer-typed supplied fixture with domain endpoints and value at bit length exactly B (use B = 64 and a value 2^64-1, and B = 0 with value 0), request states `limits.supplied.numeric_magnitude_bits` B; hold A/H and all other bounds sufficient | Admitted; membership result is the independently expected one; A and H spend equal the independently enumerated event totals, the same as a request without B for a type that needs no numeric comparison | FR-323-AC-15 |
+| RE-24 | Same fixture with the supplied value at bit length B+1 (2^64), then separately the lower endpoint, then the upper endpoint at B+1 with the value within B | Each refuses by the `limit` cause with field `supplied.numeric_magnitude_bits`, `limit` B, `next_charge` and `counter` B+1 and `operand` `value`, `lower`, `upper` respectively, in that checking order when several exceed; the comparison is unperformed, `consumed` is the unchanged A prefix, no unit charged by the check, zero evaluation consumption, replay `inconclusive`/`NoValue` | FR-323-AC-15 |
+| RE-25 | Rational fixture, B stated: each of the six operands (`value-numerator`, `value-denominator`, `lower-numerator`, `lower-denominator`, `upper-numerator`, `upper-denominator`) in turn at exactly B bits, then in turn at B+1 bits with the other five within B | At exactly B all six admit; at B+1 each refuses by the same `limit` cause naming that `operand`, `next_charge` the B+1 bit length, before any comparison; a negative numerator is measured by absolute value; zero has bit length 0 | FR-323-AC-15 |
+| RE-26 | Equivalent requests with the same package/input/selection/options: B omitted; B stated 64; B stated 64 again; B stated 65; A and H explicit 16777216 in all | Omitted and stated B have different request identities and no default B is filled in; the two requests stating 64 have the same identity; 65 differs from 64; package identity is the same in every case | FR-323-AC-15 |
+| RE-27 | B omitted on a request whose supplied type needs an Integer interval, then a Rational domain comparison; and B omitted on a request whose supplied type needs neither | The numeric requests retain the typed `UnsupportedHelper { family: NumericDomain }` stop before the comparison, with no default or `u64::MAX` bound, no unbounded comparison and no limit/input/storage result; the request needing no numeric comparison is unaffected and completes | FR-323-AC-15 |
+| RE-28 | Malformed B: -1, 1.5, 18446744073709551616, `null`, "64", true; and B moved into replay `stage_limits` | Each refuses before consumption (the misplaced B under the unknown-stage-setting rule before stages run); no fallback to an omitted B, a default or `integer_bits`; A, H and `integer_bits` settings are unchanged by a stated B | FR-323-AC-15 |
 
 ## Expected Results
 
@@ -94,7 +100,7 @@ request. RE-02 through RE-10 find each of the nine named `replay` members
 refused before consumption when it is missing or malformed, in turn. RE-11
 finds the `replay` property entirely absent from a non-replay request.
 
-RE-12..20 require the complete typed request/result forms and distinct
+RE-12..20 and RE-23..28 require the complete typed request/result forms and distinct
 pre-call provenance of FR-323, with unchanged canonical contract_version,
 closed evaluated accounting record, byte provision/dependency precedence
 and zero semantic consumption for pre-call stops. Actual input/cancel/
@@ -112,6 +118,6 @@ binding; a missing binding blocks qualification, not a fabricated outcome.
 
 ## Status
 
-The supplied-phase extension RE-12..22 is PROPOSED, PLANNED/UNRUN and
+The supplied-phase extension RE-12..28 is PROPOSED, PLANNED/UNRUN and
 independently unreviewed. No new fixture implementation, native helper,
 reader qualification or test pass is claimed.
