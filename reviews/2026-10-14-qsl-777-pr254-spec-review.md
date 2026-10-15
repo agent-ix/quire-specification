@@ -70,3 +70,19 @@ first variant at that locus, or drop that variant.
 
 FND-002 is not a defect in this PR. It is the scope of the QSL follow-up.
 FND-003, FND-004 and FND-005 are recorded and do not block.
+
+## Dispositions
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 82d0fef31493a7d0e28d0a30c4b14ca28875d199 |
+| FND-002 | deferred | QSL follow-up that drops the FR-218 repeated-reference refusal must also amend QSL FR-092 (occurrences bullet) and FR-218 rationale and add a two-reference FR-092 criterion with a TC-1021 step; no QSpec change needed |
+| FND-003 | fixed | 82d0fef31493a7d0e28d0a30c4b14ca28875d199 |
+| FND-004 | fixed | 82d0fef31493a7d0e28d0a30c4b14ca28875d199 |
+| FND-005 | accepted-no-change | Low, recorded per one-pass rule; invalid_source_map is a valid V2 code for a structural source-map key defect and AC-52 covers a different defect class |
+
+Disposition round 1 at 82d0fef: AC-66 now gives both loci; the
+`/semantic_graph/nodes/{n}/occurrences/{j}` pointer matches FR-322's
+`/semantic_graph/nodes/{i}/owner` and FR-370's `/semantic_graph/nodes/{n}/...`
+shapes. V1..V6, AC-66 and the carrier text agree; schema.json unchanged since
+80cf2fb. Verdict: mergeable.
