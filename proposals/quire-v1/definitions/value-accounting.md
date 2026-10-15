@@ -388,11 +388,11 @@ evaluation charge; it is charged under `PopulationAdmissionLimitsV1` below.
 Evaluation stops at its first undefined, refused or incomplete outcome.
 `deref(r)` evaluates `r`, charges `model.deref`, then decides a dangling
 reference without a charge. A field or relationship-end navigation `r.name`
-evaluates `r`, charges `model.navigate` and takes the end's targets in
-canonical reference-key order. A single-valued end then decides, without a
-charge, every target's dangling check in that order and after them the end's
+evaluates `r`, charges `model.navigate` and takes the destination end's targets (the end opposite the role `name` names) in
+canonical reference-key order. A single-valued destination end then decides, without a
+charge, every target's dangling check in that order and after them the destination end's
 count bound, and returns the `Reference<T>` or `Option<Reference<T>>` with no
-further charge. A multi-valued end decides each target's dangling check without
+further charge. A multi-valued destination end decides each target's dangling check without
 a charge and then charges one `collection.visit` for that target; after the
 last target it charges `collection.bound`, decides the FR-144 bound check
 without a charge, and charges `collection.result-retain`. A dangling target
