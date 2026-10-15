@@ -40,7 +40,7 @@ completed result. That record is closed; its members are defined under
 | rational arithmetic | `rational-arithmetic.operands`, `rational-arithmetic.arithmetic`, `rational-arithmetic.normalize`, `rational-arithmetic.result-retain` for each `Rational[..]` `+`, `-`, `*`, `/` and unary `-`, and each `Integer` or `Int[..]` `/` producing a `Rational[..]` |
 | numeric ordering | `ordering.operands`, `ordering.arithmetic`, `ordering.result-retain` for each `Integer`, `Int[..]`, `Rational[..]` or `Decimal[..]` `<`, `<=`, `>` and `>=` |
 | Boolean connective | `boolean.result-retain` for each `and`, `or`, `implies` and `not` |
-| model reference | `model.deref` for each `deref(...)`; `model.navigate` for each runtime `.name` field or relationship-end navigation, followed for a multi-valued end by one `collection.visit` per target, `collection.bound` and `collection.result-retain` |
+| model reference | `model.deref` for each `deref(...)`; `model.navigate` for each runtime `.name` field or relationship-end navigation, followed for a multi-valued destination end by one `collection.visit` per target, `collection.bound` and `collection.result-retain` |
 | graph | `graph.expand` before each node is discovered (the start included), one `graph.edge` before each edge target is tested, then `graph.result-retain` for each `reaches(...)` |
 | lookup | `lookup.key`, then `lookup.result-retain` when a value is returned, for each `lookup<T>(p, r) absent m` |
 | population | one `population.visit` before each member walked by `allInstances<T>(p)`, conforming or not, then `collection.bound` and `collection.result-retain` |

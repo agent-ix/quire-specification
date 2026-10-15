@@ -7,6 +7,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-208
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: verifies
 ---
 
 # TC-197: Systems-model typed binding

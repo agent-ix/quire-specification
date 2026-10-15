@@ -54,3 +54,23 @@ Recorded (medium/low, not blocking):
 - Medium: no vector records navigate's operator class (FR-322-AC-57's new sentence). The RN cases carry no `operator`.
 - Low: M21 run 2 states no direction for `Fulfilment/order`. This is pre-existing, and forward navigation needs one of three directions.
 - Low: FR-152 says "the target end's role, when declared", but model-complete row "Relationships" says "Each end has a role". This tension is pre-existing.
+
+## Dispositions
+
+Round 1, reviewed at 363a893a52e1f4a811087e321ac3805cb4deeff5.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed 363a893 | FR-152 lines 72-75 and model-complete.md lines 429-433 now base navigability on `T` conforming (FR-082) to the type of the end whose role `name` is, and state that ownership plays no part. Y08 run 3 (`self.pump` from `t1`): `pump` is the target role, `Tank` conforms to the target end's type, and `undirected` admits the inverse, so it checks. FR-150 phase 2 and phase-table row 2 still qualify a relationship under its owner only, which no longer conflicts. FR-322-AC-56/57 (endpoint conformance) and TC-281 RN-01 to RN-19 agree. |
+| FND-002 | fixed 363a893 | value-accounting.md lines 390-397 now take the destination end's targets (the end opposite the named role), and the single-/multi-valued schedule and count bound follow it. Y07's `self.parts` destination is `Pump` `{0,3}`: 1 navigate + 2 visit + bound + retain = 5 work units, 3 result units; the limit-4 run stops at `collection.result-retain`; 4 targets give navigate + 4 visit + bound = 6; `p4` dangling gives navigate + 3 visit = 4. All are consistent. |
+| FND-003 | fixed 363a893 | FR-152 Navigation now states the no-candidate refusal by layer: `ill_typed`/`type-mismatch` at the form at checking (agrees with QSL FR-363), and `missing_declaration`/`missing-name` at `member.name` for an IR `relationship_end` naming a role the relationship does not have (FR-322-AC-56). FR-152-AC-9 names `type-mismatch`. New TC-197 Y11, traced against the swapped fixture: `self.owner` from `s1` (`owner` is the target role on the `Pump` end, and `Sys` does not conform to `Pump`), `self.parts` from `p1` (`parts` is the source role on the `Sys` end), and `self.pump` from `p1` (`pump` is the target role on the `Tank` end of `Pump/housing`; `Pump` conforms only to the source end). No `Sys` or `Pump` field has these names, so each has no candidate and is refused `type-mismatch`. The vector is reachable and can fail. |
+
+Recorded medium (no vector for navigate's operator class): resolved at 363a893 by TC-197 Y12. It asserts `query`, member `relationship_end` `Sys/composition`/`parts`, operand `Reference<M::Sys>` and `result_type` `Set<Reference<M::Pump>>[0,3]` on the lowered Y07 navigation. It is reachable through TC-197's compiled source S1 and fails on any other operator class.
+
+New mediums/lows from round 1 (recorded, not blocking):
+- Medium: value-accounting.md line 43, the charge-table summary row, still says "a multi-valued end" without "destination". The governing paragraph at lines 390-397 is now explicit.
+- Low: Y12 asserts an FR-322-AC-57 fact, but TC-197's relationships verify only FR-152 and FR-208.
+
+M21 is untouched by the fix round (no TC-235 change), so its 25 charges stand.
+
+**Round 1 verdict: PASS. All three findings are fixed and there are no new blocking findings.**
