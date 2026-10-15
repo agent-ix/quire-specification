@@ -1,0 +1,106 @@
+{
+  "lock_version": "quire.model.definition-lock/v1",
+  "language_edition": "1-draft",
+  "requires": [
+    {"role": "complete_value_lock", "artifact_path": "complete-value-lock.json", "definition": {"authority":"agent-ix","identity":"quire.value.definition-lock/v1"}}
+  ],
+  "trigger_vocabulary": [],
+  "selection_refusal_codes": ["selection_alternative_conflict", "selection_duplicate_role", "selection_duplicate_trigger", "selection_required_missing", "selection_trigger_unsatisfied", "selection_unknown_role", "selection_unknown_trigger", "selection_untriggered_profile"],
+  "qualification_catalog": [
+    {
+      "role": "root",
+      "artifact_path": "model-complete.md",
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete/v1"}
+    },
+    {
+      "role": "state_graph",
+      "artifact_path": "state-graph.md",
+      "definition": {"authority":"agent-ix","identity":"quire.state.graph/v1"}
+    },
+    {
+      "role": "rule_manifest",
+      "artifact_path": "model-complete-rules.json",
+      "definition": {"authority":"agent-ix","identity":"quire.model.complete.rules/v1"}
+    },
+    {
+      "role": "effective_declaration_schema",
+      "artifact_path": "../../checked-package-v2/model-effective-declaration.schema.json",
+      "definition": {"authority":"agent-ix","identity":"quire.model.effective-declaration.schema/v1"}
+    },
+    {
+      "role": "effective_declaration_vectors",
+      "artifact_path": "../../checked-package-v2/model-effective-declaration-vectors.json",
+      "definition": {"authority":"agent-ix","identity":"quire.model.effective-declaration.vectors/v1"}
+    },
+    {
+      "role": "rule_ad_006",
+      "artifact_path": "../../../spec/assurance/AD-006-model-graph-state-contracts.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.ad-006/v1"}
+    },
+    {
+      "role": "rule_fr_043",
+      "artifact_path": "../../../spec/functional/foundation/FR-043-evaluate-finite-graph-relations.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-043/v1"}
+    },
+    {
+      "role": "rule_fr_143",
+      "artifact_path": "../../../spec/functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-143/v1"}
+    },
+    {
+      "role": "rule_fr_144",
+      "artifact_path": "../../../spec/functional/type-model/FR-144-preserve-complete-collection-algebra.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-144/v1"}
+    },
+    {
+      "role": "rule_fr_150",
+      "artifact_path": "../../../spec/functional/type-model/FR-150-preserve-model-normalization-provenance.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-150/v1"}
+    },
+    {
+      "role": "rule_fr_151",
+      "artifact_path": "../../../spec/functional/type-model/FR-151-resolve-conformance-redefinition-dispatch.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-151/v1"}
+    },
+    {
+      "role": "rule_fr_152",
+      "artifact_path": "../../../spec/functional/type-model/FR-152-bind-systems-model-structures.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-152/v1"}
+    },
+    {
+      "role": "rule_fr_153",
+      "artifact_path": "../../../spec/functional/type-model/FR-153-query-closed-model-environments.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-153/v1"}
+    },
+    {
+      "role": "rule_fr_154",
+      "artifact_path": "../../../spec/functional/type-model/FR-154-admit-domain-package-model.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-154/v1"}
+    },
+    {
+      "role": "rule_fr_204",
+      "artifact_path": "../../../spec/objects/foundation/FR-204-declared-object-identity.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-204/v1"}
+    },
+    {
+      "role": "rule_fr_208",
+      "artifact_path": "../../../spec/objects/foundation/FR-208-quire-meaning-vocabulary.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-208/v1"}
+    },
+    {
+      "role": "rule_fr_321",
+      "artifact_path": "../../../spec/objects/interfaces/FR-321-model-selection-artifact.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-321/v1"}
+    },
+    {
+      "role": "rule_interface_003",
+      "artifact_path": "../../../spec/objects/interfaces/interface_003-model-selection.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.interface_003/v1"}
+    }
+  ],
+  "package_selection": {
+    "always": ["root", "state_graph", "rule_manifest", "effective_declaration_schema", "effective_declaration_vectors", "rule_ad_006", "rule_fr_043", "rule_fr_143", "rule_fr_144", "rule_fr_150", "rule_fr_151", "rule_fr_152", "rule_fr_153", "rule_fr_154", "rule_fr_204", "rule_fr_208", "rule_fr_321", "rule_interface_003"],
+    "conditional": [],
+    "exactly_one": []
+  }
+}
