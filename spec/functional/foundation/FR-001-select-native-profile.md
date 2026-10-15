@@ -73,9 +73,9 @@ definition and the FR-290 kind and extent its witness requests.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-001-AC-1 | A unit selecting the admitted initial definition receives that exact definition identity. | Test |
-| FR-001-AC-2 | A unit selecting an unknown profile receives unknown_profile. | Test |
-| FR-001-AC-4 | An unavailable selected profile receives a located refusal; selecting it cannot execute under another profile or reuse that profile's semantic subject. | Test |
+| FR-001-AC-1 | A unit selecting the admitted initial definition receives that exact definition identity. | Test (TC-005) |
+| FR-001-AC-2 | A unit selecting an unknown profile receives unknown_profile. | Test (TC-005) |
+| FR-001-AC-4 | An unavailable selected profile receives a located refusal; selecting it cannot execute under another profile or reuse that profile's semantic subject. | Test (TC-005) |
 | FR-001-AC-5 | For each of the five layers, a unit whose `profile` declaration names the layer and whose declarations use only that layer's forms is admitted, and its selected definitions are the layer and its `requires` closure and no layer that requires it; a state-layer unit selects the `edition` row and no other qualification row, and a complete-value or complete-model unit selects the rows the `package_selection` rules select. | Test (TC-005) |
 | FR-001-AC-6 | A unit selecting `quire.state.core/v1` that declares a named predicate refuses `unsupported_construct`/`declaration-form` at the declaration, and one that calls `filter` refuses `unsupported_construct`/`expression-form` at the call, each naming `quire.state.core/v1`; both units selecting `quire.state.queries/v1` are admitted. | Test (TC-005) |
 

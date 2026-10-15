@@ -9,7 +9,7 @@ relationships:
 ## Description
 
 Accepted portable controls for [FR-040](../functional/foundation/FR-040-admit-explicit-state-extensions.md).
-The matrix remains Planned; no executable test or observed coverage is claimed.
+No executable test or observed coverage is claimed.
 
 ## Test Procedure
 

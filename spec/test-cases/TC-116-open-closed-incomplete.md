@@ -15,7 +15,7 @@ relationships:
 ## Description
 
 Accepted FS04 portable lifecycle controls for activation, pending future,
-complete closure and incomplete input..
+complete closure and incomplete input.
 
 ## Test Procedure
 

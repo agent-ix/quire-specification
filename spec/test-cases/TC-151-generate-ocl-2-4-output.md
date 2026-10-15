@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Accepted FS06 portable OCL profile controls..
+Accepted FS06 portable OCL profile controls.
 
 ## Test Procedure
 

@@ -9,7 +9,7 @@ relationships:
 ## Description
 
 Accepted FS04 portable activation and capture controls using two concurrent
-order failures and their related payment/refund effects..
+order failures and their related payment/refund effects.
 
 ## Test Procedure
 

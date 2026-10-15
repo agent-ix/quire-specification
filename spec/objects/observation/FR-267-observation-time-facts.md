@@ -71,11 +71,11 @@ axis and cannot supply a missing clock selection.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-267-AC-1 | Event time, ingestion time, causal relation and clock uncertainty are readable independently of one another for the same observation. | Test |
-| FR-267-AC-2 | Ordering two observations by either time fact does not establish a causal relation between them. | Test |
-| FR-267-AC-3 | An absent clock interpretation compares only to absence and does not resolve to a default clock. | Test |
-| FR-267-AC-4 | The four exact labels are `event-time`, `ingestion-time`, `causal-relation`, and `clock-uncertainty`; aliases and unknown labels are refused. | Test |
-| FR-267-AC-5 | Clock uncertainty is interpreted only under the exact selected clock and never supplies or replaces that selection. | Test |
+| FR-267-AC-1 | Event time, ingestion time, causal relation and clock uncertainty are readable independently of one another for the same observation. | Test (TC-143) |
+| FR-267-AC-2 | Ordering two observations by either time fact does not establish a causal relation between them. | Test (TC-143) |
+| FR-267-AC-3 | An absent clock interpretation compares only to absence and does not resolve to a default clock. | Test (TC-143) |
+| FR-267-AC-4 | The four exact labels are `event-time`, `ingestion-time`, `causal-relation`, and `clock-uncertainty`; aliases and unknown labels are refused. | Test (TC-143) |
+| FR-267-AC-5 | Clock uncertainty is interpreted only under the exact selected clock and never supplies or replaces that selection. | Test (TC-143) |
 
 ## Dependencies
 

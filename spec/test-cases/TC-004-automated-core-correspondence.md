@@ -12,7 +12,7 @@ relationships:
 
 Accepted portable contract control for FR-018-AC-5. The fixture core and
 disposition are explicitly synthetic correspondence inputs, not a B report or
-actual external human evidence..
+actual external human evidence.
 
 ## Test Procedure
 

@@ -13,7 +13,7 @@ relationships:
 ## Description
 
 Accepted FS04 portable vectors for false-extension versus finite-window closure
-and authoritative origin versus missing history..
+and authoritative origin versus missing history.
 
 ## Test Procedure
 

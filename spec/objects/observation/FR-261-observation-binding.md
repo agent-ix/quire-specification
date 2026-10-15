@@ -61,9 +61,9 @@ roles".
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-261-AC-1 | Two bindings differing in definition identity compare unequal and link different subjects. | Test |
-| FR-261-AC-2 | Two bindings differing only in concrete mapping or admitted record set compare equal on the key and retain the same static subject. | Test |
-| FR-261-AC-3 | Equal local role names do not merge two roles, and a local name does not participate in the key. | Test |
+| FR-261-AC-1 | Two bindings differing in definition identity compare unequal and link different subjects. | Test (TC-140) |
+| FR-261-AC-2 | Two bindings differing only in concrete mapping or admitted record set compare equal on the key and retain the same static subject. | Test (TC-140) |
+| FR-261-AC-3 | Equal local role names do not merge two roles, and a local name does not participate in the key. | Test (TC-140) |
 
 ## Dependencies
 

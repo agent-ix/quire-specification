@@ -9,7 +9,7 @@ relationships:
 ## Description
 
 Accepted portable controls for [FR-041](../functional/foundation/FR-041-evaluate-ordered-queries.md).
-The matrix remains Planned; no executable test or observed coverage is claimed.
+No executable test or observed coverage is claimed.
 
 ## Test Procedure
 

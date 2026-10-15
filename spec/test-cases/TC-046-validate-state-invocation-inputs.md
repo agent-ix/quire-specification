@@ -9,7 +9,7 @@ relationships:
 ## Description
 
 Accepted portable controls for [FR-046](../functional/foundation/FR-046-validate-state-invocation-inputs.md).
-The matrix remains Planned; no executable test or observed coverage is claimed.
+No executable test or observed coverage is claimed.
 
 ## Test Procedure
 

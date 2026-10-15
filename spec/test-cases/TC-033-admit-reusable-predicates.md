@@ -9,7 +9,7 @@ relationships:
 ## Description
 
 Accepted portable controls for [FR-033](../functional/foundation/FR-033-admit-reusable-predicates.md).
-The matrix remains Planned; no executable test or completed coverage is claimed
+No executable test or completed coverage is claimed
 by this artifact.
 
 ## Test Procedure

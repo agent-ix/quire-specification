@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Accepted FS06 portable FRETish profile controls..
+Accepted FS06 portable FRETish profile controls.
 
 ## Test Procedure
 

@@ -16,7 +16,7 @@ relationships:
 ---
 ## Description
 
-Accepted FS06 portable determinism, source-authority and observer controls..
+Accepted FS06 portable determinism, source-authority and observer controls.
 
 ## Test Procedure
 

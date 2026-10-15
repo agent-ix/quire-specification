@@ -14,7 +14,7 @@ relationships:
 ---
 ## Description
 
-Accepted FS06 portable adverse/resource controls..
+Accepted FS06 portable adverse/resource controls.
 
 ## Test Procedure
 
