@@ -140,7 +140,18 @@ typed multiplicity: `[0,1]` gives `Option<Reference<U>>`; `[1,1]` gives
 `Reference<U>`; any other finite `[l,u]` gives `Set<Reference<U>>[l,u]` when
 `unique` is true and `Bag<Reference<U>>[l,u]` otherwise, in canonical
 reference-key order. An `unbounded` upper bound or `ordered: true` is
-`unsupported_construct`/`expression-form`. At runtime, targets are taken in
+`unsupported_construct`/`expression-form`. At runtime, navigation
+reads the relationship instances (the links) of the relationship that the
+observation holds. A listed relationship extent is complete or incomplete; an
+unlisted extent says nothing about the relationship's links. When the extent is
+unlisted or incomplete, navigation returns `incomplete_population`/
+`incomplete-scope` retaining the relationship and the receiver, after charging
+`model.navigate` and with no later charge. Admission never decides this,
+because it cannot know which relationships a clause reads. A complete extent
+with no link states that the relationship has no links, and navigation returns
+the empty result of the destination end's type per its multiplicity: `none`
+for `[0,1]`, the empty `Set` or `Bag` for another finite `[l,u]`, and a count
+below `l` is then `cardinality_out_of_bound`/`below-minimum`. Otherwise, targets are taken in
 canonical reference-key order and a target absent from a complete population is
 `dangling_reference`, decided before the count bound; then a target count
 outside the bound is `cardinality_out_of_bound`/`below-minimum` or
@@ -160,6 +171,7 @@ outside the bound is `cardinality_out_of_bound`/`below-minimum` or
 | FR-152-AC-7 | Runtime navigation returns the multiplicity-determined type in canonical reference-key order and charges exactly the `model.navigate` schedule. | Test (TC-197) |
 | FR-152-AC-8 | A node whose construct meaning is not a systems meaning has no systems kind even when its kind name is `port`: a binder request for a Port and a connection end naming it each refuse `invalid_model_binding`/`wrong-export` with required kind `Port` and actual kind `none`. | Test (TC-197) |
 | FR-152-AC-9 | A relationship end is navigable by the role of the end nearest the receiver: `r.name` names the source end's role from a source-typed receiver and the target end's role from a target-typed receiver, a far-end role finds no candidate and refuses `ill_typed`/`type-mismatch` at checking, and the destination end supplies the multiplicity and result type. | Test (TC-197) |
+| FR-152-AC-10 | Navigating a relationship whose extent is unlisted, and one whose extent is listed incomplete, each return `incomplete_population`/`incomplete-scope` after `model.navigate` and no later charge, while a complete extent with no links returns `none` or the empty collection of the destination end's type after the charges of the multiplicity, or `cardinality_out_of_bound`/`below-minimum` when the destination end's lower bound is above 0. | Test (TC-197) |
 
 ## Dependencies
 

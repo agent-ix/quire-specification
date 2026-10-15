@@ -134,7 +134,10 @@ A `modifies` entry naming a relationship grants every link of that
 relationship, observed from each end: a write is covered by the grant
 whether it is read through the end whose object type declares the
 relationship or through the relationship's other end, because the entry
-names one node key that stands for the relationship as a whole.
+names one node key that stands for the relationship as a whole. The grant is for
+the relationship's instances: it covers an added or removed link whether or not
+an end of the link is a created object, because `creates` grants only the new
+object and not what the object at the link's other end navigates to.
 [interface_004](interface_004-checked-package.md)'s Declaration section
 already fixes this node key's own shape: a `relation` node is not among the
 node tags that carry `declaration: {qualified_name}`, so a relationship's
@@ -251,7 +254,7 @@ The frame step runs before the state step of
 | FR-340-AC-8 | `ModelNode.semantic_form` names each of FR-208's five systems meanings -- `systems_part`, `systems_port`, `systems_interface`, `systems_connection` and `systems_allocation`, one per `quire.meaning.systems.<x>/v1` value -- and none of the five is admitted as a field entry's declaring node or as a `creates` or `deletes` entry. | Test (TC-233) |
 | FR-340-AC-9 | When a package publishes more than one `state`/`frame` node, the reader reports the first defect found while checking frame nodes in ascending `node_id` digest order; a lower-digest frame node's own canonical-order defect is reported even when a higher-digest frame node carries a meaning-join defect that would otherwise outrank it. | Test (TC-233) |
 | FR-340-AC-10 | A field entry on an object type for a field typed with a record value type, and a field entry on that record value type's node for one of its own fields, are distinct entries; a frame body naming both is admitted with no defect. | Test (TC-233) |
-| FR-340-AC-11 | A `modifies` entry naming a relationship is one node key, and a `relation`/`relationship` node carries no `declaration`; that single key is the whole grant, covering every link of the relationship observed from each end. | Test (TC-233) |
+| FR-340-AC-11 | A `modifies` entry naming a relationship is one node key, and a `relation`/`relationship` node carries no `declaration`; that single key is the whole grant, covering every link of the relationship observed from each end, including a link with an end at an object the same invocation creates. | Test (TC-233) |
 | FR-340-AC-12 | A frame node's `semantic_type` is the `model`/`object_type` node declaring its operation, and a `semantic_type` naming any other node refuses `invalid_model_binding`/`malformed-declaration` before any entry defect. | Test (TC-233) |
 | FR-340-AC-13 | A field entry's name resolves among the exposed effective fields of its declaring object type, own and inherited: `(Order, "total")` and `(Sub, "total")` resolve to `Order`'s field; an undeclared name and an operation's name refuse `missing_declaration`/`missing-name`, a name two supertypes both expose refuses `ambiguous_declaration`/`ambiguous-name`, and a declaring node keyed under an unselected domain package version refuses `missing_declaration`/`missing-selection`. | Test |
 | FR-340-AC-14 | A frame occurrence with a role other than `generated` fails the schema. | Test (TC-233) |

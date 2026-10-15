@@ -66,7 +66,9 @@ Fixture **Y** (domain package `test/orders`, version `y`):
 Population **Q**: population declaration from artifact `Q` (kind `population`) with member types `[Sys, Pump, Tank]`
 and extent `closed`; runtime object `s1` of type `Sys` whose `parts` instances
 target `p2` and `p1`, objects `p1`, `p2` of type `Pump` whose `home` targets
-`t1` of type `Tank`.
+`t1` of type `Tank`. Q's observation lists `Sys/composition` as a complete extent
+with the instances `s1`-`p2` and `s1`-`p1`, and `Pump/housing` as a complete
+extent with `p1`-`t1` and `p2`-`t1`; a vector that names another extent states it.
 
 Ownership: the Parts, both Ports and the Connection `pipe` (both ends owned by
 `Sys`) are effective members of `Sys`, keyed `(Sys, <construct key>)`; the
@@ -89,6 +91,7 @@ construct's identity.
 | Y10 | Y plus a `constructs` entry for kind `{module: test/other, name: port}` with meaning `quire.meaning.model.object-type/v1`, an entry for kind `{module: test/other, name: socket}` with meaning `quire.meaning.systems.port/v1`, and object type `Probe` (artifact `Probe`) of kind `{module: test/other, name: port}`; `resolve(Port, M::Probe)`; then that package with `pipe`'s target end replaced by `Probe`; then Y plus those two `constructs` entries and `Probe`, with `pipe` unchanged and `tank_in`'s kind changed to `{module: test/other, name: socket}`, whose meaning is the same Port meaning | `Probe` has no systems kind and no `systems.kind` charge; `refused { code: invalid_model_binding, cause: wrong-export }` with required `Port` and actual `none`; kind mapping refuses the target end of `pipe` with `wrong-export`, required `Port`, actual `none`, so `pipe` has no kind; the renamed node maps to Port exactly as in Y01, with the same charges and declaration keys |
 | Y11 | `self.owner` with `self` = `s1` in an invariant on `M::Sys`; `self.parts` with `self` = `p1` in an invariant on `M::Pump`; `self.pump` with `self` = `p1` in an invariant on `M::Pump` | each `refused { code: ill_typed, cause: type-mismatch }` at the form with no evaluation charge: `owner` is the target end's role, navigable only from a `Pump`; `parts` is the source end's role, navigable only from a `Sys`; `pump` is a target-end role navigable only from a `Tank`. Checking source reports the cause an undeclared field gets; a `relationship_end` member naming one of these roles on the wrong endpoint is refused by the IR checks of FR-322-AC-56 and AC-57 instead |
 | Y12 | Y07's `self.parts` lowered to a checked package | the `quire.op.model.navigate` application has operator class `query`, member kind `relationship_end` naming `Sys/composition` and role `parts`, one operand of type `Reference<M::Sys>` and `result_type` `Set<Reference<M::Pump>>[0,3]` |
+| Y13 | `self.parts` with `self` = `s1`, over Q with the `Sys/composition` extent unlisted; then listed `"complete": false` with the instances `s1`-`p1` and `s1`-`p2`; then listed complete with no instance; then `self.home` with `self` = `p1` over Q with `Pump/housing` listed complete with no instance | the first two each `incomplete { code: incomplete_population, cause: incomplete-scope }` retaining `Sys/composition` and `s1`, after `model.navigate` alone: one work unit, no `collection.visit`, `collection.bound` or `collection.result-retain`, and no value; the complete empty extent returns the empty `Set<Reference<M::Pump>>[0,3]` after `model.navigate`, `collection.bound` and `collection.result-retain`: three work units, the bound `[0,3]` holding for count 0; `refused { code: cardinality_out_of_bound, cause: below-minimum }` with bound `[1,1]` and count 0 after `model.navigate` alone |
 
 ## Expected Results
 
