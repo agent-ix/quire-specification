@@ -61,7 +61,9 @@ the clause it names and is evaluated exactly as that clause is.
 **Carrier.** The checked package carries the reference as one
 `protocol`/`protocol_reference` node whose body is exactly
 `{term: "reference", target}`, as FR-322-AC-66 and FR-330-AC-4 specify. The
-node's key follows its bound target.
+node's key follows its bound target. Occurrences are not part of the key, so
+several references to one protocol share one node carrying one `expression`
+occurrence, with its own source-map entry, for each reference.
 
 **Refusals.** A name that resolves to no local declaration, or only to an
 imported one, refuses `missing_declaration`/`missing-name` at the reference. A

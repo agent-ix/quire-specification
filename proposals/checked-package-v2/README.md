@@ -94,7 +94,8 @@ structures, but any external consumer receives only the contract.
   tagged union. It is source-language-neutral transport, not Contract IR and
   not an alternative language semantic authority.
 - A protocol reference is a `protocol`/`protocol_reference` node in that graph,
-  with one closed `{term: "reference", target: NodeRef}` body. FR-322 binds its
+  with one closed `{term: "reference", target: NodeRef}` body and one or more
+  `expression` occurrences, one per source reference to the target. FR-322 binds its
   target to a local protocol node by exact typed key; no extra graph collection
   or dependency-package target lookup is defined.
 - The structural type forms used by QSL's StateModel lowering are settled by
