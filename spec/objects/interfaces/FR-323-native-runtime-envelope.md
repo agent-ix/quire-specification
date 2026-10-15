@@ -210,8 +210,8 @@ the wire.
    admits zero. An operand is within B when its bit length is at most B; at
    the default, a value of 4096 bits is admitted and a value of 4097 bits is
    refused. B applies in whichever phase initiates the comparison, and a
-   declared endpoint is checked against B like a supplied value. The bounded kernel helper
-   exists under quire-exact FR-380; the QSV caller is pending.
+   declared endpoint is checked against B like a supplied value. The bounded
+   kernel helper exists under quire-exact FR-380, and the QSV caller exists.
 6. **Coverage, type-link comparison (NORM).**
    QSV FR-109 "Nested retained type": type-link comparisons carry input-sized
    numeric data. The `type-comparison` event (one compared pair of chain
@@ -263,9 +263,10 @@ the wire.
 
 Qualification: a B check discharges the "actual finite operand bounds" premise
 of QSL FR-277 AC-6 and QSV FR-109 AC-7 for Integer and Rational value-in-domain
-membership once its QSV caller and reviewed typed mapping exist, and for type-link comparison, which the type-link helper and
-its QSV caller now provide. It does not qualify Decimal value-in-domain
-membership, temporary storage, cancellation response or typed mapping.
+membership once its reviewed typed mapping exists, and for type-link
+comparison, which the type-link helper and its QSV caller now provide. It does
+not qualify Decimal value-in-domain membership, temporary storage,
+cancellation response or typed mapping.
 
 Rationale: B lives beside A and H because `limits.supplied` is the closed
 caller-owned pre-call carrier that never derives from evaluation limits;

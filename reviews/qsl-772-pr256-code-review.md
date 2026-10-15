@@ -40,3 +40,9 @@ Charge order: the QSV test
 
 The operand names, the count of four, the check order and the scale exclusion
 all match the code. One stale status claim stays in the edited rows.
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 4001c8ea0dd1b81994ed4d031eb04f30623c0986 |

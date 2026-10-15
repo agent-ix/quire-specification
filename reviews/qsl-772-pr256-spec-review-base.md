@@ -33,3 +33,9 @@ B" carries over through "likewise".
 
 The count, the operand list and the RE-29 vector are consistent across FR-323
 and TC-278. One sentence in the Qualification paragraph now contradicts item 6.
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 4001c8ea0dd1b81994ed4d031eb04f30623c0986 |
