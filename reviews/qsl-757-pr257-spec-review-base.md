@@ -41,3 +41,11 @@ Two blocking contradictions with the FR text (FND-001, FND-002). Otherwise sound
   added operation and parameter). That gives 21+1=22, 21, 24+1=25 and 21+4=25, all correct.
 - M33 and the new M27 run 2 state no charge count. QSL refuses these at the reader stage.
   That is acceptable but differs from the neighbouring rows.
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | bdb19a2 (FR-154 sentence now says equal names under one identity are refused once as that collision, `conflicting-binding` at the shared identity, with no declaration) |
+| FND-002 | fixed | bdb19a2 (the variants bullet says the collision refuses before the per-case checks and suppresses the identity, origin and payload checks of both colliding cases, naming the `[Silver, Gold]` case; FR-154-AC-11, FR-154-AC-13 and FR-208-AC-15 carry the same minimal exception, which applies only to a case already refused by a collision) |
+| FND-003 | fixed | bdb19a2 (M33 run 1 and M34 run 1 now say "a third field") |
