@@ -78,8 +78,7 @@ capability and must not become a clause authority, recreate B's result/evidence
 family, infer missing observations, or replace D/E-owned mapping semantics.
 Exporters may emit OCL, SysML v2/KerML, or FRETish text as outputs, but no
 foreign runtime is required for generation or qualification. Every first-party
-executable adapter, reader, loss reporter, fixture audit, and test path is Rust
-1.98.1.
+executable adapter, reader, loss reporter, fixture audit, and test path is Rust.
 
 The existing codegen `analyze_bound_coverage` output is an immutable,
 `provenance: unqualified` domain observation over an already bound generated

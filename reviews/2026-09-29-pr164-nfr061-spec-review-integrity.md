@@ -3,7 +3,7 @@ id: SR-727
 title: "Spec review — PR #164 NFR-061 drop observer tracking"
 type: SpecReview
 analysis: integrity
-scope: "agent-ix/quire-specification@3dcefcf070a0b182a19b853932d3c725b25742d2; PR #164 diff against origin/main e56756f: NFR-061, AD-004, TC-155, spec/output-mapping/tests.md, spec/spec.md; cross-checked FR-120, FR-122, FR-123, FR-124, FR-297, TC-151, TC-152, TC-153, plan/Plan-007"
+scope: "agent-ix/quire-specification; PR #164 diff against origin/main e56756f: NFR-061, AD-004, TC-155, spec/output-mapping/tests.md, spec/spec.md; cross-checked FR-120, FR-122, FR-123, FR-124, FR-297, TC-151, TC-152, TC-153, plan/Plan-007"
 review_set: subset
 ---
 # Spec review — PR #164 NFR-061 drop observer tracking

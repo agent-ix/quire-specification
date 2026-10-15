@@ -3,7 +3,7 @@ id: SR-719
 title: "Spec review (integrity, delta) — STD-110 catalog 1-draft.8 fix round"
 type: SpecReview
 analysis: integrity
-scope: "agent-ix/quire-specification@6389506c88d3b6eab02efe917afb1adeca7f7d19; PR #162 delta 05f6e311..6389506c"
+scope: "agent-ix/quire-specification; PR #162 delta 05f6e311..6389506c"
 review_set: subset
 ---
 # Spec review (integrity, delta) — STD-110 catalog 1-draft.8 fix round
@@ -24,7 +24,7 @@ Delta review of the fix round (`05f6e311..6389506c`): only findings the fix intr
 
 ## Reviewer comment (verbatim)
 
-<!-- reviewer repo=agent-ix/quire-specification visibility=private quoin=0.24.1 module=spec-artifacts-process@v0.26.0 id=SR-719 method=spec-review/integrity lang=spec pr=quire-specification#162 reviewed=6389506c88d3b6eab02efe917afb1adeca7f7d19 date=2026-09-26 -->
+<!-- reviewer repo=agent-ix/quire-specification visibility=private quoin=0.24.1 module=spec-artifacts-process@v0.26.0 id=SR-719 method=spec-review/integrity lang=spec pr=quire-specification#162 date=2026-09-26 -->
 
 Delta review of the fix round (`05f6e311..6389506c`): only findings the fix introduced or left exposed. The SR-719 file does not exist yet. Following the reviewer skill's step 6, the coder adds `reviews/2026-09-26-std-110-spec-review-integrity-delta.md` with id SR-719 in the next fix commit.
 
@@ -129,7 +129,7 @@ Transcribed verbatim from https://linear.app/agent-ix/issue/STD-110/catalog-1-dr
 
 <!-- reviewer-dispositions repo=agent-ix/quire-specification visibility=private quoin=0.24.1 module=spec-artifacts-process@v0.26.0 id=SR-719 date=2026-09-26 -->
 
-Verified at b894ba82eb2e9d99452ed05da79d342d861e0a85 (fix commits 2cff3d9 and b894ba8).
+
 
 | FND | Outcome | sha/reason |
 | --- | --- | --- |
@@ -140,12 +140,9 @@ Verified at b894ba82eb2e9d99452ed05da79d342d861e0a85 (fix commits 2cff3d9 and b8
 +++ [reviewer data]
 
 ```yaml
-reviewed: b894ba82eb2e9d99452ed05da79d342d861e0a85
-prior_reviewed: 6389506c88d3b6eab02efe917afb1adeca7f7d19
 dispositions:
   - fnd: FND-001
     outcome: fixed
-    fix_sha: 2cff3d9
     path: spec/functional/foundation/FR-044-check-composed-numeric-definedness.md
     lines: "40-52"
     after_excerpt: |-
@@ -159,7 +156,6 @@ dispositions:
     verification: "Mutation: remove 'other than a `sum` seed or prefix,' from FR-044 -> tc_233_arithmetic_domain_refusals_leave_sum_prefixes_undefined panics at tests/checked_package_v2.rs:6872."
   - fnd: FND-002
     outcome: fixed
-    fix_sha: 2cff3d9
     path: spec/objects/foundation/FR-272-typed-diagnostic-cause.md; spec/functional/foundation/FR-044-check-composed-numeric-definedness.md
     lines: "FR-272:173-174; FR-044:67"
     after_excerpt: |-
@@ -168,7 +164,6 @@ dispositions:
     verification: "Mutation: swap `invalid` and `inexact` in the catalog flag-set order -> tc_233_payload_values_have_one_spelling fails at tests/checked_package_v2.rs:7014 (left [inexact,...,invalid], right [invalid,...,inexact])."
   - fnd: FND-003
     outcome: fixed
-    fix_sha: 2cff3d9
     path: tests/checked_package_v2.rs
     lines: "4921-4950"
     after_excerpt: |-

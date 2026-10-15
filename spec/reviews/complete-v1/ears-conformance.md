@@ -5,7 +5,6 @@ type: SpecReview
 analysis: ears-conformance
 scope: "all complete V1 FR, NFR, stakeholder and integration criteria"
 review_set: all
-evaluated_revision: "cbd13b2 plus Task-008 remediation"
 review_date: "2026-09-15"
 ---
 

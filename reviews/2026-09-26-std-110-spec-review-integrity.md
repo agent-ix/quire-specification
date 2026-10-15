@@ -3,7 +3,7 @@ id: SR-714
 title: "Spec review (integrity) — STD-110 catalog 1-draft.8 value-refusal codes"
 type: SpecReview
 analysis: integrity
-scope: "agent-ix/quire-specification@05f6e31144250e4d2ca5898b2f1284075ced297f; PR #162 diff against origin/main 0d53cf2: proposals/quire-v1/definitions/native-diagnostics.md, FR-270, FR-271, FR-272, TC-233, spec/complete-v1/tests.md; cross-checked against FR-044, FR-140, FR-141, FR-142, FR-146, FR-147, FR-148, TC-191, TC-193, value-accounting.md"
+scope: "agent-ix/quire-specification; PR #162 diff against origin/main 0d53cf2: proposals/quire-v1/definitions/native-diagnostics.md, FR-270, FR-271, FR-272, TC-233, spec/complete-v1/tests.md; cross-checked against FR-044, FR-140, FR-141, FR-142, FR-146, FR-147, FR-148, TC-191, TC-193, value-accounting.md"
 review_set: subset
 ---
 # Spec review (integrity) — STD-110 catalog 1-draft.8 value-refusal codes
@@ -41,17 +41,12 @@ Transcribed verbatim from https://linear.app/agent-ix/issue/STD-110/catalog-1-dr
 | FND-001 | fixed | 6389506c: the catalog paragraph cites FR-142 for `integer_out_of_domain` (integer-target unit conversion) and FR-044 for both codes. FR-044 Behavior and value-accounting now state an evaluation-time refusal after normalization, before result-retain. That decision point already existed in value-accounting ("decide any FR-044 result-bound membership without a charge"), so the rule is not dangling, and `rational_out_of_domain` now has a real source: evaluating an expression that did not pass the static check (direct kernel evaluation). **But** the chosen outcome contradicts FR-145 and TC-190 Q12, which call the same FR-044 decision a located undefined outcome. See SR-719 FND-001. |
 | FND-002 | fixed | 6389506c: FR-148 (x2), FR-146, TC-191 P10, TC-193 F25/F27 and value-accounting now write `cause: payload-exceeds-target` / `cause: outside-domain`. No bare `refused { code: ieee_* }` is left. |
 
-Delta scope: `git diff 05f6e311..6389506c`. Verified at 6389506c88d3b6eab02efe917afb1adeca7f7d19.
-
 +++ [reviewer data]
 
 ```yaml
-reviewed: 6389506c88d3b6eab02efe917afb1adeca7f7d19
-prior_reviewed: 05f6e311
 dispositions:
   - fnd: FND-001
     outcome: fixed
-    fix_sha: 6389506c
     path: spec/functional/foundation/FR-044-check-composed-numeric-definedness.md
     lines: "40-48"
     after_excerpt: |-
@@ -67,7 +62,6 @@ dispositions:
     note: "Owner now exists and matches value-accounting.md:209-217. The FR-142 citation is carried by value-accounting.md:276-278 and native-diagnostics.md:211, not by the FR-142 file itself. The outcome conflicts with FR-145:94-97 and TC-190 Q12 (located undefined); tracked as SR-719 FND-001."
   - fnd: FND-002
     outcome: fixed
-    fix_sha: 6389506c
     path: spec/functional/expressions/FR-148-evaluate-ieee-floating-profiles.md
     lines: "120-121,133-134"
     after_excerpt: |-

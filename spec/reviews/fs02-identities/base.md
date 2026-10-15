@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "quire-specification #28; FR-035, FR-049, FR-050, FR-051, FR-057, FR-058 and protocol identity objects FR-210 through FR-238, FR-287 and FR-288 changed by the ticket"
 review_set: subset
-evaluated_revision: "task/28 working tree based on 6a50ab6"
 review_date: "2026-09-13"
 ---
 # Base review of FS02 protocol identity rulings

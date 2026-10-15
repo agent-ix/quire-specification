@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "FR-059, FR-061, FR-062, TC-059, TC-061, TC-064, IT-021, TM-004 and proposals/quire-v1/protocol-contract.md"
 review_set: base
-evaluated_revision: "c70a9c51cb3619144dae831f582b235d5afddd30"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-059, type: reviews }

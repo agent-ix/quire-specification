@@ -5,7 +5,6 @@ type: SpecReview
 analysis: evidence
 scope: "quire-specification #134 diff 818f555..5d3aa25: FR-290-AC-1..8, FR-331-AC-4..6, FR-272-AC-9, FR-349-AC-2/5, FR-355-AC-6, TC-060, TC-061, TC-266, TC-270, TC-271, spec/protocol/tests.md, spec/complete-v1/tests.md"
 review_set: all
-evaluated_revision: "5d3aa25+wt"
 review_date: "2026-09-19"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-290, type: references }

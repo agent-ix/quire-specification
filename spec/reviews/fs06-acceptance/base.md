@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "FS06 #7; common output mapping, three target profiles, portable controls and qcir handoff"
 review_set: subset
-evaluated_revision: "task/7 working tree based on 0dd4384; qcir #55/#56/#57 open"
 review_date: "2026-09-14"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-120, type: reviews }

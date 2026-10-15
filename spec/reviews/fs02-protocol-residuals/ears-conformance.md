@@ -5,7 +5,6 @@ type: SpecReview
 analysis: ears-conformance
 scope: "Changed normative statements for quire-specification #31"
 review_set: subset
-evaluated_revision: "task/31 working tree based on dcc22bd"
 review_date: "2026-09-13"
 ---
 # EARS review of FS02 protocol residual rulings

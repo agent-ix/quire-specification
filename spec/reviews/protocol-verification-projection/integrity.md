@@ -5,7 +5,6 @@ type: SpecReview
 analysis: integrity
 scope: "US-006, FR-061, FR-062, TC-061, TC-064, TM-004 and IT-021"
 review_set: all
-evaluated_revision: "07da6927202719c81a348b7c0e09677d8810f1a2"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-061, type: reviews }

@@ -5,7 +5,6 @@ type: SpecReview
 analysis: scope-boundary
 scope: "AD-004, common mapping boundary, target mappers and optional structural observers"
 review_set: subset
-evaluated_revision: "task/7 working tree based on 0dd4384"
 review_date: "2026-09-14"
 relationships:
   - { target: ix://agent-ix/quire-specification/AD-004, type: reviews }

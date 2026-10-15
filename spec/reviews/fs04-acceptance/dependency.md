@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "FS04 #5 prerequisites, implemented owner boundaries and downstream qcir/QObs/FS06 routing"
 review_set: subset
-evaluated_revision: "task/5 working tree based on c3f4306; QSL PR82 c4ce237; QObs PR19 9ac80e9; qcir PR77 202210c"
 review_date: "2026-09-14"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-090, type: reviews }

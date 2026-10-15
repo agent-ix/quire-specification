@@ -5,7 +5,6 @@ type: SpecReview
 analysis: gap-analysis
 scope: "plan/Plan-002-native-temporal-vertical-slice/, spec/temporal/tests.md, external implementation owners"
 review_set: subset
-evaluated_revision: "feda22f"
 review_date: "2026-09-13"
 relationships:
   - { target: ix://agent-ix/quire-specification/Plan-002, type: reviews }

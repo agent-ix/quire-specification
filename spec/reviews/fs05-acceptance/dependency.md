@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "FS05 #6 prerequisites, exact version closure and downstream qcir #69 routing"
 review_set: subset
-evaluated_revision: "task/6 working tree based on 9f9be2e; QSpec PR8 8ab058b; QSL PR69 bd673cd; protocol PR52 5ce7978"
 review_date: "2026-09-14"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-014, type: reviews }

@@ -75,14 +75,12 @@ The first Cargo run may fetch the exact private B dependency; subsequent runs
 can add --offline. All tests must execute locally; no hosted workflow exists.
 The crate's only library API is `quire_specification`: dependency-free
 constants carrying the authored bytes of `complete-value-lock.json`,
-`complete-value-selection-vectors.json` and `native-diagnostics.md`, so consumers read them by reference. The
-qualification tests' dev-dependencies and their licence grants are recorded
-in [Dependency rights](docs/qualification-dependencies.md). TC completion and independent
+`complete-value-selection-vectors.json` and `native-diagnostics.md`, so consumers read them by reference. TC completion and independent
 consumer adoption remain separate from the five producer qualification tests.
 
-The dated review glob selects the typed SpecReview artifacts. The two historical
-agent-a review notes predate the artifact workflow and have no type frontmatter;
-an unrestricted reviews glob reports those two existing structural errors.
+The dated review glob selects the typed SpecReview artifacts. The historical
+agent-a review note predates the artifact workflow and has no type frontmatter;
+an unrestricted reviews glob reports that existing structural error.
 
 ## Required language
 

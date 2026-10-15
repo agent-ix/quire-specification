@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "quire-specification FR-061/TC-061 and quire-verification FR-007/e02-draft-2 TechniqueResult"
 review_set: subset
-evaluated_revision: "d104cf9b4dcf29515f9d4a830108dc86e9b11ea0"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-061, type: reviews }

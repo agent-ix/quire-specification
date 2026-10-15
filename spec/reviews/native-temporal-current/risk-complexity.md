@@ -5,7 +5,6 @@ type: SpecReview
 analysis: risk-complexity
 scope: "Native temporal clocks, history, settlement, bridge correspondence and bounded resource behavior"
 review_set: all
-evaluated_revision: "2f347b8"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/NFR-040, type: reviews }

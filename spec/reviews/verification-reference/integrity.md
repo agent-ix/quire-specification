@@ -5,7 +5,6 @@ type: SpecReview
 analysis: integrity
 scope: "FR-017, FR-018, IT-003, TC-001–004, TM-001 and proposals/shared-reference-2-draft"
 review_set: all
-evaluated_revision: "9244dcc96c8f0d68ae4213d7d2e6bdebe4d8311b"
 review_date: "2026-09-08"
 ---
 

@@ -134,7 +134,6 @@ Round 1 reviewed `8042b09868674c46d6a694aa890091425faf1b9c`. The original findin
 dispositions:
 - fnd: FND-001
   outcome: fixed
-  fix_sha: 8042b09868674c46d6a694aa890091425faf1b9c
   after_excerpt: 'For each requested item, the lowerer SHALL use that request''s existing
     FR-038
 
@@ -177,7 +176,6 @@ Reviewed `5f41aec6bdf96a19814e763524af1f1c46c99c1e`. Only the requested wording 
 dispositions:
 - fnd: FND-002
   outcome: fixed
-  fix_sha: 5f41aec6bdf96a19814e763524af1f1c46c99c1e
   after_excerpt: 'The lowerer SHALL retain the originating `package.source.package_id`
     and exact `source.lock`,
 

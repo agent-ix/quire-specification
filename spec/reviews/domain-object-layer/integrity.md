@@ -5,7 +5,6 @@ type: SpecReview
 analysis: integrity
 scope: "spec/objects/** at d6e19a5: FR-200..FR-206, FR-210..FR-217, FR-220..FR-228, FR-230..FR-239, FR-240..FR-249, FR-250..FR-259, FR-260..FR-269, FR-270..FR-274, FR-280..FR-283, and the behavioral requirements they extract from"
 review_set: subset
-evaluated_revision: "d6e19a5"
 review_date: "2026-09-11"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-200, type: reviews }

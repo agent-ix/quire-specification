@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "quire-specification #116 residuals; FR-290; AD-010; AD-016"
 review_set: subset
-evaluated_revision: "3a79dce plus FR-290/AD-010 negotiation-point diff"
 review_date: "2026-09-19"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-290, type: references }

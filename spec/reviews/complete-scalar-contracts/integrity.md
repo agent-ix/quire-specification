@@ -5,7 +5,6 @@ type: SpecReview
 analysis: integrity
 scope: "QSpec #68 consistency, atomicity, definition closure and matrix traceability"
 review_set: all
-evaluated_revision: "cd4c0a0 plus QSpec #68 working-tree remediation"
 review_date: "2026-09-15"
 relationships:
   - target: ix://agent-ix/quire-specification/issues/68

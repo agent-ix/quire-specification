@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "spec/objects/ FR-200 through FR-283, the 38 behavioral FRs given references back-edges, and spec/spec.md registration"
 review_set: subset
-evaluated_revision: "d6e19a5"
 review_date: "2026-09-11"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-200, type: reviews }

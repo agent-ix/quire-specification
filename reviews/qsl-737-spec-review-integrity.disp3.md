@@ -18,15 +18,12 @@ New findings (disposition pass 3):
 dispositions:
 - fnd: FND-008
   outcome: fixed
-  fix_sha: d2ec448
   after_excerpt: 'The parameters of a `function.call` come from the callee `function` node''s body: its first binding, named `parameters`, is an `aggregate` of `reference` terms to the `value`/`parameter` nodes in parameter order, each typed by its `semantic_type`, including a parameter the body never reads (QSL FR-092 "Function nodes"). A callee whose body has no `parameters` binding takes no parameter, and a `dependency_reference` callee uses the same binding of the named dependency node. That binding is the one source of a function''s declared parameter types; no other member carries them.'
 - fnd: FND-009
   outcome: fixed
-  fix_sha: d2ec448
   after_excerpt: 'of `{version: "quire.application-node/v1", node_tag, semantic_form, semantic_type, declaration, recursion, body}`.  (the `parameters` wire member is removed; schema.json and node-identity-preimage.schema.json differ from main only by the `event_type` enum entries)'
 - fnd: FND-010
   outcome: fixed
-  fix_sha: d2ec448
   after_excerpt: 'A supplied composite value whose declaration key is neither a key of that package''s graph nor, for a model record value type or event type, a declaration key of the evaluating package''s selected document is `refused { code: invalid_runtime_input, cause: wrong-value-kind }` during input validation, before any evaluation or charge.'
 new_findings:
 - fnd: FND-011

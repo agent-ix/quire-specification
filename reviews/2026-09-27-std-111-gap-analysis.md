@@ -3,7 +3,7 @@ id: SR-725
 title: "Gap analysis — STD-111 state clause, operation anchor, frame and reaches_field"
 type: SpecReview
 analysis: gap-analysis
-scope: "agent-ix/quire-specification@7160d58dcf7a7182ca64c6f61c5aa10df336869d; PR #163 diff: FR-322 (Reaches over a field, AC-17, AC-38), FR-340, FR-341, FR-342, TC-233, TC-280, TC-281, spec/complete-v1/tests.md, tests/checked_package_v2.rs, tests/model_member_types.rs, proposals/checked-package-v2"
+scope: "agent-ix/quire-specification; PR #163 diff: FR-322 (Reaches over a field, AC-17, AC-38), FR-340, FR-341, FR-342, TC-233, TC-280, TC-281, spec/complete-v1/tests.md, tests/checked_package_v2.rs, tests/model_member_types.rs, proposals/checked-package-v2"
 review_set: subset
 ---
 # Gap analysis — STD-111 state clause, operation anchor, frame and reaches_field

@@ -5,7 +5,6 @@ type: SpecReview
 analysis: integrity
 scope: "every id, acceptance criterion id and Test Matrix criterion row in spec/"
 review_set: subset
-evaluated_revision: "fc5434b on task/63-full-v1-specification"
 review_date: "2026-09-17"
 ---
 

@@ -3,7 +3,7 @@ id: SR-724
 title: "Code review (rust lane) — STD-111 state clause, operation anchor, frame and reaches_field tests"
 type: SpecReview
 analysis: code-review
-scope: "agent-ix/quire-specification@7160d58dcf7a7182ca64c6f61c5aa10df336869d; PR #163 diff against origin/main: tests/checked_package_v2.rs, tests/model_member_types.rs, Cargo.toml, Cargo.lock, proposals/checked-package-v2 fixtures, vectors and schemas"
+scope: "agent-ix/quire-specification; PR #163 diff against origin/main: tests/checked_package_v2.rs, tests/model_member_types.rs, Cargo.toml, Cargo.lock, proposals/checked-package-v2 fixtures, vectors and schemas"
 review_set: subset
 ---
 # Code review (rust lane) — STD-111 state clause, operation anchor, frame and reaches_field tests

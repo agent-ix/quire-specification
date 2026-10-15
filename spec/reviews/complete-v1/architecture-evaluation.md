@@ -5,7 +5,6 @@ type: SpecReview
 analysis: architecture-evaluation
 scope: "implemented specification architecture against complete V1 boundaries and scenarios"
 review_set: all
-evaluated_revision: "cbd13b2 plus Task-008 remediation"
 review_date: "2026-09-15"
 ---
 

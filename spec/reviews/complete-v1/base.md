@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "the complete 176-capability V1 architecture, requirements, interfaces and test matrices"
 review_set: all
-evaluated_revision: "cbd13b2 plus Task-008 remediation"
 review_date: "2026-09-15"
 ---
 

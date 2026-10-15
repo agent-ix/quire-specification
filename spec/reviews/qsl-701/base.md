@@ -47,12 +47,10 @@ dispositions:
     reason: "Source trace binding requires implementation tests and is outside this spec-only PR; it remains required before code qualification."
   - fnd: FND-5955
     outcome: fixed
-    fix_sha: b58bcd2
     after_excerpt: |-
       The wrong identity domain is refused as `invalid_package`/`invalid-value` at `/identity/domain`, using FR-322's existing typed pair; `digest_domain_mismatch` remains for a wrong domain on an input `PackageId`. Noncanonical wire bytes are refused as `noncanonical_wire` at `package_read`, with no cause or pointer, before identity recomputation.
   - fnd: FND-5956
     outcome: fixed
-    fix_sha: b58bcd2
     after_excerpt: |-
       relationships:
         - target: ix://agent-ix/quire-specification/US-011

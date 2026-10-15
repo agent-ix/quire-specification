@@ -5,7 +5,6 @@ type: SpecReview
 analysis: ears-conformance
 scope: "Changed FR-001 and FR-019 normative statements"
 review_set: subset
-evaluated_revision: "task/2 working tree based on 96fc29d"
 review_date: "2026-09-13"
 ---
 # EARS review of FS01 language charter ratification
