@@ -27,7 +27,7 @@ All stories and FRs have a resolved stakeholder/verification lineage, and all NF
 
 Reviewed quire-specification. The owner selected base plus all seven Quoin analyses, and declined the optional intent↔test↔code semantic step in `/gap-analysis`. Ordinary requirements consistency, EARS conformance, and the separate current-code review remain in scope. The assignment prohibits spawning additional agents, so these analyses were performed sequentially by Agent A; no independent reviewer acceptance is implied.
 
-The installed Quoin 0.20.0 `spec-review/SKILL.md` and its analysis skills govern these artifacts. The SpecReview authoring pack was fetched once for this repository and its process skeleton/schema was used. [Provenance](data/provenance.json), [coverage output](data/coverage.json), [advisor output](data/advice.json), and [actual method catalog](data/verification-methods.json) preserve the deterministic inputs. IDs in this report are local to this repository unless qualified.
+The installed Quoin 0.20.0 `spec-review/SKILL.md` and its analysis skills govern these artifacts. The SpecReview authoring pack was fetched once for this repository and its process skeleton/schema was used. Provenance, coverage output, advisor output, and actual method catalog preserve the deterministic inputs. IDs in this report are local to this repository unless qualified.
 
 These are new repositories. Missing formal plans, TC records, suites, and matrices are workflow setup/readiness debt. Unimplemented LC02–LC05 stages and unqualified shared consumers are known remaining work; they are not reported as regressions or hidden stubs. No completion status is fabricated.
 
@@ -59,7 +59,7 @@ These are new repositories. Missing formal plans, TC records, suites, and matric
 | [NFR-001](../non-functional/NFR-001-preserve-versioned-meaning.md) | FR-001, FR-014, FR-015, FR-016 | Explicit NFR scope and constrains edges; affected FR Dependencies sections do not link back |
 | [NFR-002](../non-functional/NFR-002-classify-resource-incompleteness.md) | FR-005, FR-010, FR-011, FR-015 | Explicit NFR scope and constrains edges; affected FR Dependencies sections do not link back |
 | [NFR-003](../non-functional/NFR-003-qualify-reference-bindings.md) | FR-002, FR-003, FR-004 | Explicit NFR scope and constrains edges; affected FR Dependencies sections do not link back |
-| [NFR-004](../non-functional/NFR-004-retain-review-and-rights.md) | FR-001, FR-015, FR-016 | Explicit NFR scope and constrains edges; affected FR Dependencies sections do not link back |
+| NFR-004 | FR-001, FR-015, FR-016 | Explicit NFR scope and constrains edges; affected FR Dependencies sections do not link back |
 
 ## Consistency, atomicity and assumption probes
 

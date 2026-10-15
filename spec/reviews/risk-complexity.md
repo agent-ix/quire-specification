@@ -26,7 +26,7 @@ Every FR/StR/NFR has a technical-risk and volatility assessment with concrete mi
 
 Reviewed quire-specification. The owner selected base plus all seven Quoin analyses, and declined the optional intent↔test↔code semantic step in `/gap-analysis`. Ordinary requirements consistency, EARS conformance, and the separate current-code review remain in scope. The assignment prohibits spawning additional agents, so these analyses were performed sequentially by Agent A; no independent reviewer acceptance is implied.
 
-The installed Quoin 0.20.0 `spec-review/SKILL.md` and its analysis skills govern these artifacts. The SpecReview authoring pack was fetched once for this repository and its process skeleton/schema was used. [Provenance](data/provenance.json), [coverage output](data/coverage.json), [advisor output](data/advice.json), and [actual method catalog](data/verification-methods.json) preserve the deterministic inputs. IDs in this report are local to this repository unless qualified.
+The installed Quoin 0.20.0 `spec-review/SKILL.md` and its analysis skills govern these artifacts. The SpecReview authoring pack was fetched once for this repository and its process skeleton/schema was used. Provenance, coverage output, advisor output, and actual method catalog preserve the deterministic inputs. IDs in this report are local to this repository unless qualified.
 
 These are new repositories. Missing formal plans, TC records, suites, and matrices are workflow setup/readiness debt. Unimplemented LC02–LC05 stages and unqualified shared consumers are known remaining work; they are not reported as regressions or hidden stubs. No completion status is fabricated.
 
@@ -53,7 +53,7 @@ These are new repositories. Missing formal plans, TC records, suites, and matric
 | [NFR-001](../non-functional/NFR-001-preserve-versioned-meaning.md) | high | medium | Compatibility and historical interpretation are evidence-sensitive. | Immutable reviewed golden fixtures and mutation controls. |
 | [NFR-002](../non-functional/NFR-002-classify-resource-incompleteness.md) | high | medium | Every new phase must propagate incomplete work correctly. | Budget/cancellation fault injection in each implemented phase. |
 | [NFR-003](../non-functional/NFR-003-qualify-reference-bindings.md) | high | high | Accepted authority/content binding is security-sensitive. | Independent negative joins with recomputed digests. |
-| [NFR-004](../non-functional/NFR-004-retain-review-and-rights.md) | high | high | Standard artifact terms and promotion policy remain unsettled. | Keep private; require included-artifact rights/acceptance records. |
+| NFR-004 | high | high | Standard artifact terms and promotion policy remain unsettled. | Keep private; require included-artifact rights/acceptance records. |
 | [StR-001](../stakeholder/StR-001-native-assessment-trust.md) | high | high | Full native workflow spans unsettled shared interfaces. | Retain a real healthy/violating/refused acceptance slice and exact evidence bindings. |
 
 ## Top hazards

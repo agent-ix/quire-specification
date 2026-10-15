@@ -44,3 +44,18 @@ Clean:
 - `quire validate` over spec/**, plan/** and reviews/** gives the same 145-document failure set on main and head once line numbers are ignored.
 - complete-model-lock.json now holds no digests. It contains the `requires` value-lock edge, the closed selection refusal codes, the role-to-artifact qualification catalog and package_selection. model-complete.md "Qualification catalog and package selection" defines it normatively. TC-195 to TC-198, TC-234 and TC-235 use it as the selection input for `quire.model.complete/v1`. It is content.
 - The NFR-020/TC-065 removal is the inventory reconciliation, and the NFR-020 bounding statement stays.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | medium | The restored review lines keep Markdown links to files this PR deletes. Eight "Scope and provenance" paragraphs link data/provenance.json, coverage.json, advice.json and verification-methods.json; spec/reviews/base.md FND-001 and evidence.md FND-001 to FND-008 link data/ files; five NFR-004 rows link the deleted NFR-004 file. No data-link removal remains in the diff, so the body's claim that the PR deletes "links to raw tool-output data files" is false. It does not block the merge. Unlink the targets and keep the text, or correct the body sentence. | spec/reviews/{base,dependency,ears-conformance,evidence,failure-domain,integrity,risk-complexity,scope-boundary}.md |
+
+## Dispositions
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 02c2eab |
+| FND-002 | fixed | 02c2eab |
+| FND-003 | fixed | 02c2eab |
+| FND-004 | fixed | 02c2eab |
