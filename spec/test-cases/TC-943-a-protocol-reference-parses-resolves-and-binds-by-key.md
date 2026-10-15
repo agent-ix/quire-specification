@@ -37,7 +37,9 @@ FR-463-AC-1 to FR-463-AC-5.
 2. Each refuses `invalid_syntax` at the token that is not a `qualified-name`.
 3. The reference binds `Fill`'s `protocol`/`protocol_clause` node key and has
    its semantic type. The package holds one `protocol`/`protocol_reference` node
-   with body exactly `{term: "reference", target: <Fill key>}`.
+   with body exactly `{term: "reference", target: <Fill key>}`. A unit that
+   holds `protocol Fill` twice still yields one such node, with two
+   `expression` occurrences (FR-322-AC-66, TC-931 vectors V1 to V5).
 4. `protocol Missing` and the import-only name refuse
    `missing_declaration`/`missing-name`; the function refuses
    `ill_typed`/`operator-ineligible`. No refusal produces a package.
