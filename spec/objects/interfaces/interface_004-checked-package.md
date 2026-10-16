@@ -126,8 +126,9 @@ the nodes' `declaration` members, and then, at the first `state`/`frame` node
 in ascending node-id digest order carrying a defect
 ([FR-340](./FR-340-checked-package-frame-location.md)), that node's own
 defect: a `missing-name`/`missing_declaration` or `malformed-declaration`/
-`invalid_model_binding` meaning-join defect outranks that same frame node's
-own `invalid_semantic_graph` canonical-order defect; and then the state
+`invalid_model_binding` meaning-join defect, or a
+`conflicting-binding`/`invalid_model_binding` defect, outranks that same frame
+node's own `invalid_semantic_graph` canonical-order defect; and then the state
 step ([FR-341](./FR-341-checked-package-state-clause-body.md)): the
 placement of every `quire.op.state.clause` application, then each
 `state`/`operation_anchor` node's joins

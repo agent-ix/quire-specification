@@ -40,7 +40,7 @@ node key. This wire encoding is the V2 carrier of that existing model.
 ## Properties
 
 - **semantic_type** (`NodeRef`) — the `model`/`object_type` node declaring
-  the operation whose frame this is: the `context` of the
+  the operations that share this frame: the `context` of every
   `state`/`operation_anchor` node that binds the frame
   ([FR-342](FR-342-checked-package-operation-anchor-body.md)).
 - **occurrences** — every occurrence has role `generated`: a frame is
@@ -71,8 +71,13 @@ node key. This wire encoding is the V2 carrier of that existing model.
   `deletes` entry: `{kind: "receiver"}` for `deletes self`, or
   `{kind: "parameter", name}` for `deletes p`, `name` being the reference
   parameter's name. The member is required and may be empty; a `parameter`
-  entry whose name is not a reference parameter of the operation refuses
-  `missing_declaration`/`missing-name`. Entries are sorted with `receiver`
+  entry whose name is not a reference parameter of every operation whose
+  anchor references the frame refuses `missing_declaration`/`missing-name`.
+  The frame step cannot know those operations, so it checks the entries'
+  shape and order only; the state step makes this check at each anchor, after
+  the anchor's operation resolves
+  ([FR-342](FR-342-checked-package-operation-anchor-body.md) check 5), with
+  the frame node as the locus. Entries are sorted with `receiver`
   first, then `parameter` entries by name as UTF-8 bytes, with no duplicate;
   a misordered array refuses `invalid_semantic_graph`.
 - Every entry's node key (a `modifies` entry's `declaration`, a `creates`
@@ -197,12 +202,16 @@ same `declaration` and `name` and different scopes refuse
 ## Canonical ordering and reader precedence
 
 Each entry has an order key: for a `modifies` entry, its `declaration`
-digest (compared as unsigned bytes) and then its `name` as UTF-8 bytes,
-with a relationship entry's name empty; for a `creates` or `deletes` entry,
-its digest. Each of `modifies`, `creates` and `deletes` is independently
+digest (compared as unsigned bytes), then its `name` as UTF-8 bytes, then
+its `scope`, `every-object` before `receiver`, with a relationship entry's
+name empty and no scope; for a `creates` or `deletes` entry, its digest. Each of `modifies`, `creates` and `deletes` is independently
 sorted ascending by that key, following the ascending-digest ordering
 [FR-322](FR-322-checked-package-artifact.md) already uses for the
-dependency lists of application-node preimages. A member array that is not
+dependency lists of application-node preimages. No admitted frame holds two field entries with equal declaration and name:
+one scope twice is a duplicate, which fails the schema, and two scopes are
+`conflicting-binding`. The scope component therefore places no admitted
+entry; it fixes only the order in which the two entries of a conflict are
+named. A member array that is not
 in this order refuses `invalid_semantic_graph`, the same code
 [FR-322-AC-10](FR-322-checked-package-artifact.md) uses for every other
 noncanonical member/term order.
@@ -227,7 +236,12 @@ order, decides:
 1. Any meaning-join defect (a `semantic_type` defect, or an entry's
    `missing-name`, `missing-selection`, `ambiguous-name` or
    `malformed-declaration`, in any of the three members) outranks any
-   canonical-order defect.
+   canonical-order defect. A `conflicting-binding` defect, two field entries
+   of one declaration and name with different scopes, is a meaning-join
+   defect that ranks after every other one: it is reported only when the
+   frame holds no other meaning-join defect, and it outranks any
+   canonical-order defect, so a frame whose entries conflict is never reported
+   as misordered, whichever order the two entries are listed in.
 2. Ties break by position, in the frame node's own fixed order:
    `semantic_type`, then `modifies`, then `creates`, then `deletes`.
 3. Remaining ties, among multiple meaning-join defects in the same
@@ -252,7 +266,7 @@ The frame step runs before the state step of
 | FR-340-AC-1 | `modifies`, `creates` and `deletes` may each independently be the empty array; an all-empty frame body and the published fixture's fully-populated frame body are both admitted with no defect. | Test (TC-233) |
 | FR-340-AC-2 | Every relationship entry of `modifies` names a declared dependency of the frame node that is a `relation`/`relationship` node; every field entry's `declaration` names a declared dependency that is a `model`/`object_type` or `model`/`record_value_type` node; every `creates`/`deletes` entry names a declared dependency that is a `model`/`object_type` or `model`/`process` node. | Test (TC-233) |
 | FR-340-AC-3 | An entry naming no node of the package, or no declared dependency of the frame node, refuses `missing_declaration`/`missing-name`; an entry naming a declared dependency of any other meaning -- a relationship entry naming an object type or a literal, a field entry on a process, a relationship or a systems node, a `creates` entry naming a relationship, and every `model`/`*_type`, `model`/`namespace`, `model`/`state_machine` or `model`/`persistence_interface` form an entry cannot carry -- refuses `invalid_model_binding`/`malformed-declaration`, with the entry's declaring node key as the locus. | Test (TC-233) |
-| FR-340-AC-4 | Each of `modifies`, `creates` and `deletes` is duplicate-free and sorted ascending by entry order key (declaring node digest, then field name as UTF-8 bytes); a duplicated entry fails the schema, and a misordered array, including two field entries of one declaring node in descending name order, refuses `invalid_semantic_graph`. | Test (TC-233) |
+| FR-340-AC-4 | Each of `modifies`, `creates` and `deletes` is duplicate-free and sorted ascending by entry order key (declaring node digest, then field name as UTF-8 bytes, then scope with `every-object` first); a duplicated entry fails the schema, and a misordered array, including two field entries of one declaring node in descending name order, refuses `invalid_semantic_graph`. | Test (TC-233) |
 | FR-340-AC-5 | The frame body shape validates only as a `state`/`frame` node's `body`; a `value` node's `body` carrying this shape, and a `state`/`frame` node's `body` carrying an ordinary `SemanticTerm` shape, both fail the published schema. | Test (TC-233) |
 | FR-340-AC-6 | When one frame node carries a meaning-join defect and a canonical-order defect at once, the reported diagnostic is the meaning-join refusal the precedence rule selects, with its exact code, cause and locus, regardless of which member carries which defect; two field entries of one declaring node tie on the digest and break by field name; the same frame node reports that same selected diagnostic regardless of collection or scan order. | Test (TC-233) |
 | FR-340-AC-7 | A frame body missing any of `modifies`, `creates` or `deletes` fails the schema; every published fixture's frame node is admitted with no defect by the same reader rule `read_package_semantics` applies. | Test (TC-233) |
@@ -264,8 +278,8 @@ The frame step runs before the state step of
 | FR-340-AC-13 | A field entry's name resolves among the exposed effective fields of its declaring object type, own and inherited: `(Order, "total")` and `(Sub, "total")` resolve to `Order`'s field; an undeclared name and an operation's name refuse `missing_declaration`/`missing-name`, a name two supertypes both expose refuses `ambiguous_declaration`/`ambiguous-name`, and a declaring node keyed under an unselected domain package version refuses `missing_declaration`/`missing-selection`. | Test |
 | FR-340-AC-14 | A frame occurrence with a role other than `generated` fails the schema. | Test (TC-233) |
 | FR-340-AC-15 | No `model` node stands for a field, an operation or a clause member on its own: `ModelNode.semantic_form` names only FR-208's business type kinds, `model_import` and FR-208's five systems meanings. | Test (TC-233) |
-| FR-340-AC-16 | A field entry carries `scope` exactly `receiver` or `every-object`; an entry without it or with another value fails the schema, two entries for one field with different scopes refuse `invalid_model_binding`/`conflicting-binding`, and changing an entry's scope changes the frame node id and the `package_id`. | Test |
-| FR-340-AC-17 | A frame body carries `deletes_scoped`, possibly empty; `deletes self` encodes as `{kind: "receiver"}` and `deletes p` as `{kind: "parameter", name: "p"}`; a body without the member fails the schema, a `parameter` entry naming no reference parameter refuses `missing_declaration`/`missing-name`, and a misordered array refuses `invalid_semantic_graph`. | Test |
+| FR-340-AC-16 | A field entry carries `scope` exactly `receiver` or `every-object`; an entry without it or with another value fails the schema, two entries for one field with different scopes refuse `invalid_model_binding`/`conflicting-binding` whichever order they are listed in, and that refusal outranks the `invalid_semantic_graph` of a misordered array in the same frame but not any other meaning-join defect, and changing an entry's scope changes the frame node id and the `package_id`. | Test |
+| FR-340-AC-17 | A frame body carries `deletes_scoped`, possibly empty; `deletes self` encodes as `{kind: "receiver"}` and `deletes p` as `{kind: "parameter", name: "p"}`; a body without the member fails the schema, a `parameter` entry naming no reference parameter of an operation whose anchor references the frame refuses `missing_declaration`/`missing-name` in the state step, and a misordered array refuses `invalid_semantic_graph`. | Test |
 | FR-340-AC-18 | For record value type `Address` with inherited field `street`, a `modifies` field entry naming (`Address`, `street`) resolves that exposed effective field. An entry naming an operation or an undeclared field refuses `missing_declaration`/`missing-name`; two exposed fields of that name refuse `ambiguous_declaration`/`ambiguous-name`. | Test |
 
 ## Dependencies

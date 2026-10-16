@@ -3557,15 +3557,14 @@ fn package_state_refusal(package: &Value) -> Result<(), (StateRefusal, Value)> {
     Ok(())
 }
 
-/// FR-342: one `operation_anchor` node and one `frame` node stand for one
-/// (declaring object type, operation name); no two anchors share a
-/// `context`/`operation` pair, and no `frame` target is bound by two
-/// different anchors. Checked only once every anchor's own joins already
-/// hold (`anchor_refusal`), in ascending anchor node-id digest order; the
-/// second anchor to claim a pair or a frame is the offending node.
+/// FR-342: one `operation_anchor` node stands for one (declaring object type,
+/// operation name); no two anchors share a `context`/`operation` pair. Two
+/// anchors of one context may reference one `frame` node. Checked only once
+/// every anchor's own joins already hold (`anchor_refusal`), in ascending
+/// anchor node-id digest order; the second anchor to claim a pair is the
+/// offending node.
 fn anchor_uniqueness_refusal(anchors: &[&Value]) -> Result<(), (StateRefusal, Value)> {
     let mut pairs = BTreeSet::new();
-    let mut frames = BTreeSet::new();
     for anchor in anchors {
         let context = anchor_binding(anchor, "context")["target"]["digest"]
             .as_str()
@@ -3575,11 +3574,7 @@ fn anchor_uniqueness_refusal(anchors: &[&Value]) -> Result<(), (StateRefusal, Va
             .as_str()
             .unwrap_or_default()
             .to_owned();
-        let frame = anchor_binding(anchor, "frame")["target"]["digest"]
-            .as_str()
-            .unwrap_or_default()
-            .to_owned();
-        if !pairs.insert((context, operation)) || !frames.insert(frame) {
+        if !pairs.insert((context, operation)) {
             return Err((
                 StateRefusal::AmbiguousDeclaration,
                 anchor["node_id"].clone(),
@@ -9084,13 +9079,12 @@ fn tc_233_the_full_reader_resolves_frame_anchor_and_clause_member_names() {
     );
 }
 
-/// FR-342: one `operation_anchor` node and one `frame` node stand for one
-/// (declaring object type, operation name) (FR-342-AC-6); a duplicate
-/// anchor for the same pair, and a frame bound by two different anchors,
-/// are refused, not admitted.
+/// FR-342-AC-6: a duplicate anchor for the same (declaring object type,
+/// operation name) pair is refused; two anchors of one context whose declared
+/// operations have equal frames reference one frame node and are admitted.
 #[trace("TC-233", "FR-342-AC-6")]
 #[test]
-fn tc_233_duplicate_anchors_and_shared_frames_are_refused() {
+fn tc_233_duplicate_anchors_are_refused_and_a_shared_frame_is_admitted() {
     let catalog = parsed_fixture(OPERATION_CATALOG);
     let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
     assert_eq!(read_package_semantics(&package, &catalog), Ok(()));
@@ -9113,7 +9107,17 @@ fn tc_233_duplicate_anchors_and_shared_frames_are_refused() {
         "a second anchor for the same (context, operation) pair is refused, not admitted"
     );
 
+    // A second operation of the same context, declared by the model, with an
+    // anchor that references the same frame node: admitted.
     let mut shared_frame = package.clone();
+    let mut bindings = clause_model_bindings(0);
+    let operations = bindings["domain_package"]["object_types"][0]["operations"]
+        .as_array_mut()
+        .expect("operations");
+    let mut other = operations[0].clone();
+    other["name"] = json!("otherAttempt");
+    operations.push(other);
+    shared_frame["model_bindings"] = bindings;
     let mut second_anchor = shared_frame["semantic_graph"]["nodes"][anchor_index].clone();
     second_anchor["node_id"] = node_ref_digest(&repeated_digest("b7"));
     second_anchor["body"]["members"][1]["value"]["value"] = json!("otherAttempt");
@@ -9121,22 +9125,11 @@ fn tc_233_duplicate_anchors_and_shared_frames_are_refused() {
         .as_array_mut()
         .expect("nodes")
         .push(second_anchor);
-    let renames = rekey_stale_nodes(&mut shared_frame);
-    // The second anchor in node-id order is refused.
-    let later_anchor = [
-        anchor_id,
-        renamed_locus(&renames, &node_ref_digest(&repeated_digest("b7"))),
-    ]
-    .into_iter()
-    .max_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()))
-    .expect("two anchors");
+    rekey_stale_nodes(&mut shared_frame);
     assert_eq!(
         read_package_semantics(&shared_frame, &catalog),
-        Err(ReadRefusal::State(
-            StateRefusal::AmbiguousDeclaration,
-            later_anchor
-        )),
-        "a frame node bound by two different anchors is refused, not admitted"
+        Ok(()),
+        "two anchors of one context that reference one frame node are admitted"
     );
 }
 

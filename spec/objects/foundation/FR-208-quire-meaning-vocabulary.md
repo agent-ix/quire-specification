@@ -206,7 +206,9 @@ model's `Operation.pre` and `Operation.post`.
   observation, the same inputs and the declared result, and may read the pre
   observation through `pre(...)`. For a state machine `self` is the one context
   of the observation, bound by the State-machine context anchors; for a process `self` is the run. Frame entries follow
-  the object-type Frames rule. Redefinition follows FR-151: the effective
+  the object-type Frames rule, except that the receiver-scoped members
+  (`modifies_receiver`, `deletes_receiver: true`) are refused on these
+  operations ([FR-013](../../functional/foundation/FR-013-validate-operation-frames.md)). Redefinition follows FR-151: the effective
   precondition is the disjunction and the effective postcondition the
   conjunction over redefined members.
 - **Transitions.** An operation's contract is the same in every transition it
