@@ -3048,7 +3048,10 @@ fn frame_entry_admits(kind: FrameEntryKind, node: &Value) -> bool {
 
 /// The entries of one frame member as (declaring node digest, field name,
 /// kind); a relationship or `creates`/`deletes` entry has the empty name.
-fn frame_entries(frame_node: &Value, group: FrameGroup) -> Vec<(String, String, FrameEntryKind)> {
+fn frame_entries(
+    frame_node: &Value,
+    group: FrameGroup,
+) -> Vec<(String, String, FrameEntryKind, u8)> {
     frame_node["body"][group.key()]
         .as_array()
         .into_iter()
@@ -3057,12 +3060,16 @@ fn frame_entries(frame_node: &Value, group: FrameGroup) -> Vec<(String, String, 
             FrameGroup::Modifies => {
                 let digest = entry["declaration"]["digest"].as_str()?.to_owned();
                 match entry["kind"].as_str()? {
+                    // The scope enters the order key, `every-object` first.
                     "field" => Some((
                         digest,
                         entry["name"].as_str()?.to_owned(),
                         FrameEntryKind::Field,
+                        u8::from(entry["scope"] == "receiver"),
                     )),
-                    "relationship" => Some((digest, String::new(), FrameEntryKind::Relationship)),
+                    "relationship" => {
+                        Some((digest, String::new(), FrameEntryKind::Relationship, 0))
+                    }
                     _ => None,
                 }
             }
@@ -3070,6 +3077,7 @@ fn frame_entries(frame_node: &Value, group: FrameGroup) -> Vec<(String, String, 
                 entry["digest"].as_str()?.to_owned(),
                 String::new(),
                 FrameEntryKind::Instance,
+                0,
             )),
         })
         .collect()
@@ -3106,6 +3114,13 @@ enum FrameDefect {
         digest: String,
         name: String,
         cause: FrameJoinCause,
+    },
+    /// Two field entries of one declaration and name with different scopes
+    /// (`conflicting-binding`): a meaning-join defect that ranks after every
+    /// other one and before any canonical-order defect, by its place here.
+    ConflictingBinding {
+        digest: String,
+        name: String,
     },
     CanonicalOrder {
         group: FrameGroup,
@@ -3252,14 +3267,28 @@ fn frame_body_defects(
         let entries = frame_entries(frame_node, group);
         let keys = entries
             .iter()
-            .map(|(digest, name, _)| (digest.clone(), name.clone()))
+            .map(|(digest, name, _, scope)| (digest.clone(), name.clone(), *scope))
             .collect::<Vec<_>>();
+        let mut scopes = BTreeMap::<(String, String), BTreeSet<u8>>::new();
+        for (digest, name, kind, scope) in &entries {
+            if *kind == FrameEntryKind::Field {
+                scopes
+                    .entry((digest.clone(), name.clone()))
+                    .or_default()
+                    .insert(*scope);
+            }
+        }
+        for ((digest, name), kinds) in scopes {
+            if kinds.len() > 1 {
+                defects.push(FrameDefect::ConflictingBinding { digest, name });
+            }
+        }
         let mut ascending = keys.clone();
         ascending.sort();
         if ascending != keys {
             defects.push(FrameDefect::CanonicalOrder { group });
         }
-        for (digest, name, kind) in entries {
+        for (digest, name, kind, _) in entries {
             let resolved = node_by_digest(nodes, &digest);
             let is_dependency = dependencies.contains(digest.as_str());
             let meaning_ok = resolved.is_some_and(|node| frame_entry_admits(kind, node));
@@ -3300,6 +3329,26 @@ fn frame_body_defects(
             });
         }
     }
+    // `deletes_scoped` is ordered `receiver` first, then `parameter` entries by
+    // name as UTF-8 bytes (FR-340-AC-17).
+    let scoped = frame_node["body"]["deletes_scoped"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .map(|entry| {
+            (
+                u8::from(entry["kind"] == "parameter"),
+                entry["name"].as_str().unwrap_or_default().to_owned(),
+            )
+        })
+        .collect::<Vec<_>>();
+    let mut ordered = scoped.clone();
+    ordered.sort();
+    if ordered != scoped {
+        defects.push(FrameDefect::CanonicalOrder {
+            group: FrameGroup::DeletesScoped,
+        });
+    }
     defects
 }
 
@@ -3324,18 +3373,24 @@ fn reported_frame_defect(
 enum FrameRefusal {
     MissingName,
     MalformedDeclaration,
+    ConflictingBinding,
     CanonicalOrder,
 }
 
 impl FrameRefusal {
     /// The two wire-paired causes; `CanonicalOrder` is deliberately excluded,
     /// as it is not a `Diagnostic.cause_tag`/`code` pair.
-    const ALL: [Self; 2] = [Self::MissingName, Self::MalformedDeclaration];
+    const ALL: [Self; 3] = [
+        Self::MissingName,
+        Self::MalformedDeclaration,
+        Self::ConflictingBinding,
+    ];
 
     fn cause(self) -> &'static str {
         match self {
             Self::MissingName => "missing-name",
             Self::MalformedDeclaration => "malformed-declaration",
+            Self::ConflictingBinding => "conflicting-binding",
             // `invalid_semantic_graph` is one of FR-322's bare v2 refusal
             // codes: of the sixteen codes the v2 refusal vocabulary names,
             // only `invalid_package`, `ill_typed`, `ambiguous_declaration`,
@@ -3353,7 +3408,7 @@ impl FrameRefusal {
     fn code(self) -> &'static str {
         match self {
             Self::MissingName => "missing_declaration",
-            Self::MalformedDeclaration => "invalid_model_binding",
+            Self::MalformedDeclaration | Self::ConflictingBinding => "invalid_model_binding",
             Self::CanonicalOrder => "invalid_semantic_graph",
         }
     }
@@ -3370,6 +3425,7 @@ impl From<FrameDefect> for FrameRefusal {
                 cause: FrameJoinCause::MalformedDeclaration,
                 ..
             } => Self::MalformedDeclaration,
+            FrameDefect::ConflictingBinding { .. } => Self::ConflictingBinding,
             FrameDefect::CanonicalOrder { .. } => Self::CanonicalOrder,
         }
     }
@@ -3397,7 +3453,8 @@ fn package_frame_refusal(package: &Value) -> Result<(), (FrameRefusal, Value)> {
     for frame in frames {
         if let Some(defect) = reported_frame_defect(frame, nodes, model.as_ref()) {
             let locus = match &defect {
-                FrameDefect::MeaningJoin { digest, .. } => json!({
+                FrameDefect::MeaningJoin { digest, .. }
+                | FrameDefect::ConflictingBinding { digest, .. } => json!({
                     "domain": "quire.checked-semantic-node/v1",
                     "digest": digest,
                 }),
@@ -3515,6 +3572,38 @@ fn anchor_refusal(
         });
         if !resolves {
             return Err((StateRefusal::MissingName, anchor["node_id"].clone()));
+        }
+        // Check 5 (FR-340-AC-17): every `parameter` entry of the frame's
+        // `deletes_scoped` names a reference parameter of the resolved
+        // operation; the locus is the frame node.
+        let reference_parameter = |name: &str| {
+            owner_node
+                .and_then(|node| {
+                    mm_declared_member(model.domain_package, node, "operations", operation)
+                        .filter(|_| !node.is_empty())
+                })
+                .and_then(|record| record["parameters"].as_array())
+                .into_iter()
+                .flatten()
+                .any(|parameter| {
+                    parameter["name"] == name
+                        && ["object_types", "processes"]
+                            .into_iter()
+                            .filter_map(|list| model.domain_package[list].as_array())
+                            .flatten()
+                            .any(|declared| declared["node"] == parameter["typeRef"])
+                })
+        };
+        for entry in frame["body"]["deletes_scoped"]
+            .as_array()
+            .into_iter()
+            .flatten()
+        {
+            if entry["kind"] == "parameter"
+                && !reference_parameter(entry["name"].as_str().unwrap_or_default())
+            {
+                return Err((StateRefusal::MissingName, frame["node_id"].clone()));
+            }
         }
     }
     Ok(())
@@ -4405,6 +4494,8 @@ fn tc_233_frame_body_outputs_are_exactly_the_schemas_required_members() {
 #[trace("TC-233", "FR-340-AC-6")]
 #[trace("TC-233", "FR-340-AC-8")]
 #[trace("TC-233", "FR-340-AC-9")]
+#[trace("TC-233", "FR-340-AC-16")]
+#[trace("TC-233", "FR-340-AC-17")]
 #[test]
 fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cause() {
     let catalog = parsed_fixture(OPERATION_CATALOG);
@@ -4414,8 +4505,8 @@ fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cau
         .expect("frame_mutations is an array");
     assert_eq!(
         mutations.len(),
-        30,
-        "frame_mutations covers all thirty authored vectors"
+        37,
+        "frame_mutations covers all thirty-seven authored vectors"
     );
 
     let causes = mutations
@@ -4490,6 +4581,9 @@ fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cau
             .collect();
         frame["body"]["creates"] = json!(digests(mutation, "creates"));
         frame["body"]["deletes"] = json!(digests(mutation, "deletes"));
+        if let Some(scoped) = mutation.get("deletes_scoped") {
+            frame["body"]["deletes_scoped"] = scoped.clone();
+        }
 
         // A vector's `second_frame`, when present, is a complete
         // `state`/`frame` node object -- every member a real
@@ -13361,6 +13455,60 @@ fn tc_233_a_process_or_state_machine_frame_holds_no_receiver_scoped_member() {
                 json!({"refused": {"code": refusal.code(), "cause": refusal.cause(), "locus": at}})
             }
             other => panic!("{name}: unexpected {other:?}"),
+        };
+        assert_eq!(decided, case["expected"], "{name}");
+    }
+}
+
+/// FR-340-AC-17 state step: every `parameter` entry of a frame's
+/// `deletes_scoped` names a reference parameter of the operation its anchor
+/// resolves, else `missing_declaration`/`missing-name` at the frame node; a
+/// `receiver` entry needs no parameter.
+#[trace("TC-233", "FR-340-AC-17")]
+#[test]
+fn tc_233_deletes_scoped_parameter_entries_name_a_reference_parameter() {
+    let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let cases = vectors["deletes_scoped_parameter_cases"]
+        .as_array()
+        .expect("cases");
+    assert!(cases.len() >= 5, "the vectors cover each outcome");
+    for case in cases {
+        let name = case["name"].as_str().expect("case name");
+        let mut package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+        let mut bindings = clause_model_bindings(0);
+        bindings["domain_package"]["object_types"][0]["operations"][0]["parameters"] = json!([{
+            "name": case["parameter"]["name"],
+            "typeRef": case["parameter"]["typeRef"],
+            "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true},
+        }]);
+        package["model_bindings"] = bindings;
+        let frame = node_index(&package, &clause_digest("frame"));
+        package["semantic_graph"]["nodes"][frame]["body"]["deletes_scoped"] =
+            case["entries"].clone();
+        let renames = rekey_stale_nodes(&mut package);
+        let frame_id = renamed_locus(&renames, &node_ref_digest(&clause_digest("frame")));
+        // The frame step admits the body; the anchor join then decides the
+        // parameter entries. The precondition clause is not read here: the
+        // test operation gains a parameter that the published clause does not
+        // bind.
+        assert_eq!(
+            package_frame_refusal(&package),
+            Ok(()),
+            "{name}: frame step"
+        );
+        let nodes = package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes");
+        let anchor = nodes
+            .iter()
+            .find(|node| node["node_tag"] == "state" && node["semantic_form"] == "operation_anchor")
+            .expect("an anchor is published");
+        let decided = match anchor_refusal(anchor, nodes, model_index(&package).as_ref()) {
+            Ok(()) => json!({"admitted": true}),
+            Err((refusal, locus)) => {
+                assert_eq!(locus, frame_id, "{name}: locus is the frame node");
+                json!({"refused": {"code": refusal.code(), "cause": refusal.cause(), "locus": "frame"}})
+            }
         };
         assert_eq!(decided, case["expected"], "{name}");
     }

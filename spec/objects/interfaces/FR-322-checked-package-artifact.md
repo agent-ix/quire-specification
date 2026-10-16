@@ -806,7 +806,7 @@ conformance" below).
    | a value type of the same domain package bound as `Text[min, max; profile]`, `0 <= min <= max`, with `profile` one of FR-141's `unicode-scalars`, `nfc`, `nfd`, `nfkc`, `nfkd` and `binary-utf8` | `Text[min, max; profile]`, whose length, bounds and comparison are FR-141's under `profile` | `bounded_domain`/`text_bounds` with bounds `min` and `max` and `text_profile` `profile` over the `scalar_type`/`text` node |
    | a record value type `R` of the same domain package, admitted under FR-208 | `R`, a value with no object identity | the self-typed `model`/`record_value_type` declaration node owned by `R`; no `composite_type`/`reference` is introduced |
    | a variant type `V` of the same domain package, admitted under FR-208 | `V`, an unordered enumeration whose cases are the case names of `V` | the self-typed `model`/`variant_type` declaration node owned by `V`; no `composite_type`/`reference` and no unit-owned `scalar_type`/`enum` node is introduced |
-   | an object type `O`, a process `O` or a state machine `O` of the same domain package | `Reference<O>` | `composite_type`/`reference` over `O`'s model declaration node |
+   | an object type `O` of the same domain package | `Reference<O>` | `composite_type`/`reference` over `O`'s model declaration node |
 
    The multiplicity `{lower, upper, ordered, unique}` then gives the type.
    `[1, 1]` gives the element type `E`. Any other finite `[l, u]` gives

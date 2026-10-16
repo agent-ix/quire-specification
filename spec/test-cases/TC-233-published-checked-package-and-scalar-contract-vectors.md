@@ -124,7 +124,7 @@ type, a process or a state machine, requiring a `receiver` field entry and a
 `receiver` `deletes_scoped` entry to be admitted in the object type's frame and
 refused `invalid_model_binding`/`malformed-declaration` in a process's or a
 state machine's frame, at the entry's declaring node and at the frame node
-respectively (FR-340-AC-19, FR-340-AC-20); validate the clause-operations package's `state`/`state_clause`,
+respectively (FR-340-AC-19, FR-340-AC-20); splice the `frame_mutations` vectors that carry two scopes of one field and a misordered `deletes_scoped` into the all-families frame, requiring `invalid_model_binding`/`conflicting-binding` at the declaring node for two scopes of one field whichever order they are listed in (outranking a `deletes_scoped` or `modifies` order defect but not another meaning-join defect), and `invalid_semantic_graph` at the frame node for a `deletes_scoped` array that is not `receiver` first and then parameters by name (FR-340-AC-16, FR-340-AC-17); read each `deletes_scoped_parameter_cases` vector with a model attached, requiring a `parameter` entry that names no reference parameter of the anchor's operation to refuse `missing_declaration`/`missing-name` at the frame node in the state step, after the frame step (FR-340-AC-17); validate the clause-operations package's `state`/`state_clause`,
 `state`/`operation_anchor`, `state`/`frame` and `state`/`transition` nodes
 against the schema's node-form body rules and occurrence roles, and apply
 each authored body, member, argument-shape and role mutation, requiring the
