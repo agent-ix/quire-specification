@@ -23,7 +23,7 @@ FR-013-AC-14.
 Fixture: a domain package with object type `Counter` (fields `value` and
 `step`), object type `Sub` specializing `Counter`, object type `Gauge` with
 field `d`, a relationship `Supersedes` between `Counter` objects, and an
-operation `t(n: Integer, a: Reference<Counter>)` of `Counter`, process `Flow` (identity field `id`, field `x`, one step `begin` of kind `command` consuming and emitting nothing, as TC-235's `reserve_stock`) with an operation `go(a: Reference<Counter>)`, state machine `Lamp` (field `on: Boolean`, states `Off` and `On`, transition `[0]` `Off → On` on its operation `flip`, as TC-235's `OrderLifecycle`), and the operations of step 2, `bump` and `merge(a: Reference<Counter>, b: Reference<Counter>)`, both of `Counter`. Each of `bump` and `merge` is named by its own postcondition clause (`DoneBump`, `DoneMerge`, each `{ true }`) so that the package holds its frame node; an operation no clause names has no frame node. Node identity
+operation `t(n: Integer, a: Reference<Counter>)` of `Counter`, process `Flow` (identity field `id` and field `x`, both `Integer`, one step `begin` of kind `command` consuming and emitting nothing, as TC-235's `reserve_stock`) with an operation `go(a: Reference<Counter>)`, state machine `Lamp` (field `on: Boolean`, states `Off` and `On`, transition `[0]` `Off → On` on its operation `flip`, as TC-235's `OrderLifecycle`), where `go`, `flip` and `t` start with the empty frame `{"modifies":[],"creates":[],"deletes":[]}`, and the operations of step 2, `bump` and `merge(a: Reference<Counter>, b: Reference<Counter>)`, both of `Counter`. Each of `bump` and `merge` is named by its own postcondition clause (`DoneBump`, `DoneMerge`, each `{ true }`) so that the package holds its frame node; an operation no clause names has no frame node. Node identity
 strings are written with the prefix `ix://test/counters/` as `Counter/value`,
 `Counter/step`, `Gauge/d`, `Flow/x`, `Counter` and `Supersedes`.
 
@@ -58,6 +58,12 @@ strings are written with the prefix `ix://test/counters/` as `Counter/value`,
    `{"modifies":[],"creates":[],"deletes":["Counter"],"deletes_parameters":["b","a"],"deletes_receiver":true}`,
    and read each `state`/`frame` node body. `<Counter>` stands for the NodeRef
    object of the `Counter` object type node.
+
+The filament-core-data semantic-IR frame schema validates the model document
+before intake and must admit the scoped members. Rows R1 to R11, R13 and R15
+to R20 use a scoped member or a member the rule does not name, so they depend
+on that schema change, as does step 2 (its fixture holds scoped operations);
+only R12 and R14, which use the three arrays alone, are reachable without it.
 
 ## Expected Results
 

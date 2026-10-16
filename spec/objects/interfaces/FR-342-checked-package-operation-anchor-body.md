@@ -90,6 +90,11 @@ the checks run in this order and the first failing check is its defect:
    `missing_declaration`/`missing-name`; two or more refuse
    `ambiguous_declaration`/`ambiguous-name`; an operation `C` does not
    itself declare refuses `invalid_model_binding`/`malformed-declaration`.
+5. **Scoped deletes.** Every `parameter` entry of the `frame` target's
+   `deletes_scoped` names a reference parameter of the resolved operation,
+   else `missing_declaration`/`missing-name` with the frame node as the
+   locus ([FR-340](FR-340-checked-package-frame-location.md)). A frame shared
+   by several anchors is checked against each anchor's operation.
 
 Once every anchor's own joins (1-3) hold, the reader checks the package-wide
 uniqueness this artifact's "One `operation_anchor` node stands for..." rule

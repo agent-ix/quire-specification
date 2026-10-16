@@ -40,7 +40,7 @@ node key. This wire encoding is the V2 carrier of that existing model.
 ## Properties
 
 - **semantic_type** (`NodeRef`) — the `model`/`object_type` node declaring
-  the operation whose frame this is: the `context` of the
+  the operations that share this frame: the `context` of every
   `state`/`operation_anchor` node that binds the frame
   ([FR-342](FR-342-checked-package-operation-anchor-body.md)).
 - **occurrences** — every occurrence has role `generated`: a frame is
@@ -71,8 +71,13 @@ node key. This wire encoding is the V2 carrier of that existing model.
   `deletes` entry: `{kind: "receiver"}` for `deletes self`, or
   `{kind: "parameter", name}` for `deletes p`, `name` being the reference
   parameter's name. The member is required and may be empty; a `parameter`
-  entry whose name is not a reference parameter of the operation refuses
-  `missing_declaration`/`missing-name`. Entries are sorted with `receiver`
+  entry whose name is not a reference parameter of every operation whose
+  anchor references the frame refuses `missing_declaration`/`missing-name`.
+  The frame step cannot know those operations, so it checks the entries'
+  shape and order only; the state step makes this check at each anchor, after
+  the anchor's operation resolves
+  ([FR-342](FR-342-checked-package-operation-anchor-body.md) check 5), with
+  the frame node as the locus. Entries are sorted with `receiver`
   first, then `parameter` entries by name as UTF-8 bytes, with no duplicate;
   a misordered array refuses `invalid_semantic_graph`.
 - Every entry's node key (a `modifies` entry's `declaration`, a `creates`
@@ -274,7 +279,7 @@ The frame step runs before the state step of
 | FR-340-AC-14 | A frame occurrence with a role other than `generated` fails the schema. | Test (TC-233) |
 | FR-340-AC-15 | No `model` node stands for a field, an operation or a clause member on its own: `ModelNode.semantic_form` names only FR-208's business type kinds, `model_import` and FR-208's five systems meanings. | Test (TC-233) |
 | FR-340-AC-16 | A field entry carries `scope` exactly `receiver` or `every-object`; an entry without it or with another value fails the schema, two entries for one field with different scopes refuse `invalid_model_binding`/`conflicting-binding` whichever order they are listed in, and that refusal outranks the `invalid_semantic_graph` of a misordered array in the same frame but not any other meaning-join defect, and changing an entry's scope changes the frame node id and the `package_id`. | Test |
-| FR-340-AC-17 | A frame body carries `deletes_scoped`, possibly empty; `deletes self` encodes as `{kind: "receiver"}` and `deletes p` as `{kind: "parameter", name: "p"}`; a body without the member fails the schema, a `parameter` entry naming no reference parameter refuses `missing_declaration`/`missing-name`, and a misordered array refuses `invalid_semantic_graph`. | Test |
+| FR-340-AC-17 | A frame body carries `deletes_scoped`, possibly empty; `deletes self` encodes as `{kind: "receiver"}` and `deletes p` as `{kind: "parameter", name: "p"}`; a body without the member fails the schema, a `parameter` entry naming no reference parameter of an operation whose anchor references the frame refuses `missing_declaration`/`missing-name` in the state step, and a misordered array refuses `invalid_semantic_graph`. | Test |
 | FR-340-AC-18 | For record value type `Address` with inherited field `street`, a `modifies` field entry naming (`Address`, `street`) resolves that exposed effective field. An entry naming an operation or an undeclared field refuses `missing_declaration`/`missing-name`; two exposed fields of that name refuse `ambiguous_declaration`/`ambiguous-name`. | Test |
 
 ## Dependencies
