@@ -98,3 +98,4 @@ Recorded, not blocking:
 | FND-002 | fixed | 6b0df8ec18cbfe84c0be36fac8c6f516988ded78 |
 | FND-003 | rejected | QSL never intakes a state-machine operation: merged QSL FR-103 declares operations only on object types and processes, and #889 FR-154 now says so. No QSL path admits what QSpec TC-944 R19 refuses. QSpec's Frames row, FR-013, FR-013-AC-14, FR-208 and TC-944 R19 agree with one another. |
 | FND-004 | fixed | 6b0df8ec18cbfe84c0be36fac8c6f516988ded78 |
+| FND-005 | fixed | 0ae750b21e307a2b2e94932d99d3caaf88c938f5 |
