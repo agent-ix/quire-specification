@@ -189,7 +189,11 @@ above `u` or below `l` refuses nothing, because an observation is evidence of a
 state and the form does not count neighbours. An extent that is unlisted or
 listed incomplete gives `incomplete_population`/`incomplete-scope` retaining the
 relationship and `a`, after the `graph.expand` for `a` and with no later
-charge; a Boolean comes only from a complete extent. A neighbour absent from a
+charge; a Boolean comes only from a complete extent. The start `a` is decided first, before any charge: `a` absent from a complete
+population is `dangling_reference`/`absent-target-in-complete-population`, and
+`a` undecidable (absent from a population that is not known complete) is
+`incomplete_population`/`incomplete-scope`, each retaining `a` and the
+relationship, with no `graph.expand` and no later charge. A neighbour absent from a
 complete population is `dangling_reference`, decided before that neighbour's
 `graph.edge`, and the first neighbour in order that is not present decides.
 
@@ -208,7 +212,7 @@ complete population is `dangling_reference`, decided before that neighbour's
 | FR-152-AC-9 | A relationship end is navigable by the role of the end nearest the receiver: `r.name` names the source end's role from a source-typed receiver and the target end's role from a target-typed receiver, a far-end role finds no candidate and refuses `ill_typed`/`type-mismatch` at checking, and the destination end supplies the multiplicity and result type. | Test (TC-197) |
 | FR-152-AC-10 | Navigating a relationship whose extent is unlisted, and one whose extent is listed incomplete, each return `incomplete_population`/`incomplete-scope` after `model.navigate` and no later charge, while a complete extent with no links returns `none` or the empty collection of the destination end's type after the charges of the multiplicity, or `cardinality_out_of_bound`/`below-minimum` when the destination end's lower bound is above 0. | Test (TC-197) |
 | FR-152-AC-11 | `reaches(a, b, name)` over a relationship end admits a single-valued and a finite multi-valued destination end of the receiver endpoint's own type, and over a multi-valued end the frontier expands every neighbour in reference-key order, charging `graph.expand` per newly discovered object, `graph.edge` per link occurrence including repeats, and one `graph.result-retain`, with exact required counters completing and one fewer incomplete at the stated charge point. | Test (TC-197) |
-| FR-152-AC-12 | An `unbounded` or `ordered` destination end, a destination end of another type and a traversal against the declared direction each refuse with the cause and order stated above; a neighbour count outside the destination bound refuses nothing; an unlisted or incomplete extent gives `incomplete_population`/`incomplete-scope` after the start's `graph.expand`; a dangling neighbour refuses `dangling_reference` before its `graph.edge`. | Test (TC-197) |
+| FR-152-AC-12 | An `unbounded` or `ordered` destination end, a destination end of another type and a traversal against the declared direction each refuse with the cause and order stated above; a neighbour count outside the destination bound refuses nothing; an unlisted or incomplete extent gives `incomplete_population`/`incomplete-scope` after the start's `graph.expand`; a dangling neighbour refuses `dangling_reference` before its `graph.edge`; a dangling or undecidable start decides before any charge. | Test (TC-197) |
 
 ## Dependencies
 
