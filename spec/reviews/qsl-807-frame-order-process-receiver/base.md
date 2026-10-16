@@ -83,3 +83,18 @@ Recorded, not blocking:
 - low: TC-944 does not give the frames of `go` and `flip` in rows R1 to R14.
 - low: the FR-340 Properties `semantic_type` text still says "the
   operation" and "the anchor" in the singular.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | high | The fix round's TC-944 dependency note says R12 and R14 "are reachable without" the FCD frame-schema change. R14 is. R12 is not: it omits `deletes`, and today's filament-core-data reader (`frame_schema`, `require_members` over `modifies`/`creates`/`deletes`, plus `forbid_extra`) refuses it before intake. `deletes` stays required after the planned change, so R12 never reaches the intake refusal it expects. QSL FR-056-AC-19 keeps the reader's diagnostic and subsumes an intake diagnostic on that member. R10, R11 and R13 have the same problem: a wrong JSON type, an unnamed member and a non-string element fail the same schema both before and after the change, so the change does not make them reachable. Fix: say that R10 to R13 are member-shape rows the FCD frame schema itself refuses before intake, and that only R14 is reachable today. | spec/test-cases/TC-944-scoped-members-of-a-model-document-operation-frame.md:62-66 |
+
+## Dispositions
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 6b0df8ec18cbfe84c0be36fac8c6f516988ded78 |
+| FND-002 | fixed | 6b0df8ec18cbfe84c0be36fac8c6f516988ded78 |
+| FND-003 | rejected | QSL never intakes a state-machine operation: merged QSL FR-103 declares operations only on object types and processes, and #889 FR-154 now says so. No QSL path admits what QSpec TC-944 R19 refuses. QSpec's Frames row, FR-013, FR-013-AC-14, FR-208 and TC-944 R19 agree with one another. |
+| FND-004 | fixed | 6b0df8ec18cbfe84c0be36fac8c6f516988ded78 |

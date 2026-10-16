@@ -60,10 +60,14 @@ strings are written with the prefix `ix://test/counters/` as `Counter/value`,
    object of the `Counter` object type node.
 
 The filament-core-data semantic-IR frame schema validates the model document
-before intake and must admit the scoped members. Rows R1 to R11, R13 and R15
-to R20 use a scoped member or a member the rule does not name, so they depend
-on that schema change, as does step 2 (its fixture holds scoped operations);
-only R12 and R14, which use the three arrays alone, are reachable without it.
+before intake and must admit the scoped members. Rows R1 to R9, R15 to R20 and
+step 2 use a scoped member, so they depend on that schema change. Rows R10 to
+R13 are member-shape rows: the schema, before and after that change, refuses a
+wrong-typed member, an unnamed member and a non-string element at the member,
+and refuses a frame with no `deletes` (required before and after), each with
+its own schema diagnostic before intake; the `malformed-declaration` stated
+for them is the intake reader's contract where the schema has not run. Only
+R14, which uses the three arrays alone, is reachable today.
 
 ## Expected Results
 
