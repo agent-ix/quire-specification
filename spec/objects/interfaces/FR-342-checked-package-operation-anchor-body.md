@@ -47,9 +47,13 @@ below.
   names the operation.
 - **dependencies** — `C` and `F`, the two nodes the body references.
 
-One `operation_anchor` node and one `frame` node stand for one (declaring
-object type, operation name). An operation a subtype inherits is anchored
-at the object type that declares it.
+One `operation_anchor` node stands for one (declaring object type, operation
+name), and its `frame` target is the node of that operation's frame. A frame
+node's key hashes its body and its `semantic_type`, so operations of one
+declaring object type whose frames are equal share one frame node, each
+through its own anchor; an anchor of another object type cannot share it,
+because the frame's `semantic_type` equals the anchor's `context`. An
+operation a subtype inherits is anchored at the object type that declares it.
 
 ## Operation resolution
 
@@ -88,12 +92,11 @@ the checks run in this order and the first failing check is its defect:
    itself declare refuses `invalid_model_binding`/`malformed-declaration`.
 
 Once every anchor's own joins (1-3) hold, the reader checks the package-wide
-uniqueness this artifact's "One `operation_anchor` node and one `frame`
-node..." rule states, over every anchor in the same ascending node-id
-digest order: no two anchors join to the same (`context`, `operation`)
-pair, and no `frame` target is the `frame` of two different anchors. The
-second anchor to claim a pair or a `frame` target refuses
-`ambiguous_declaration`/`ambiguous-name` at that anchor.
+uniqueness this artifact's "One `operation_anchor` node stands for..." rule
+states, over every anchor in the same ascending node-id digest order: no two
+anchors join to the same (`context`, `operation`) pair. The second anchor to
+claim a pair refuses `ambiguous_declaration`/`ambiguous-name` at that anchor.
+Two anchors of one `context` that reference one `frame` node are admitted.
 
 ## Acceptance Criteria
 
@@ -104,7 +107,7 @@ second anchor to claim a pair or a `frame` target refuses
 | FR-342-AC-3 | The anchor's `semantic_type` is its `context` object type; an anchor whose `semantic_type` names another node refuses `invalid_model_binding`/`malformed-declaration` at the anchor. | Test (TC-233) |
 | FR-342-AC-4 | The `operation` name resolves among the context's exposed operation members to one the context declares: `(Order, "scaled")` resolves to `Order`'s operation and `(Sub, "size")` to `Sub`'s redefinition; `(Sub, "reset")`, which `Sub` only inherits, and an operation on a `systems_interface` node refuse `invalid_model_binding`/`malformed-declaration`; an undeclared name and a field's name refuse `missing_declaration`/`missing-name`; a context keyed under an unselected domain package version refuses `missing_declaration`/`missing-selection`. | Test (TC-280) |
 | FR-342-AC-5 | The state step checks every `operation_anchor` node before any `state_clause` node: a package carrying an anchor defect and a clause defect reports the anchor defect. | Test (TC-233) |
-| FR-342-AC-6 | No two `state`/`operation_anchor` nodes join to the same (`context`, `operation`) pair, and no `state`/`frame` node is the `frame` target of two different anchors; a duplicate pair and a shared frame each refuse `ambiguous_declaration`/`ambiguous-name` at the second anchor in ascending node-id digest order. | Test (TC-233) |
+| FR-342-AC-6 | No two `state`/`operation_anchor` nodes join to the same (`context`, `operation`) pair; a duplicate pair refuses `ambiguous_declaration`/`ambiguous-name` at the second anchor in ascending node-id digest order. Two anchors of one `context` whose operations have equal frames reference one `state`/`frame` node and are both admitted. | Test (TC-233) |
 
 ## Dependencies
 
