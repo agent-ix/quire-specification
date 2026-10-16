@@ -23,14 +23,19 @@ relationships:
 ## Description
 
 When a `quire.checked-semantic-graph/v2` node has `node_tag: "state"` and
-`semantic_form: "frame"`, the producer SHALL encode its `body` as exactly
-the business-model frame `model-complete.md`'s Frames rule and
-[FR-013](../../functional/foundation/FR-013-validate-operation-frames.md)
-already state: three named members, `modifies`, `creates` and `deletes`.
-A `modifies` entry names a relationship by its node key, or a field by the
-node key of the declaration that declares it plus the field's name; a
-`creates` or `deletes` entry names an object type or process by its node
-key. This wire encoding is the V2 carrier of that existing model.
+`semantic_form: "frame"`, the producer SHALL encode its `body` as exactly four members,
+`modifies`, `creates`, `deletes` and `deletes_scoped`, lifted from the model
+contract's operation frame (`model-complete.md`'s Frames rule and
+[FR-013](../../functional/foundation/FR-013-validate-operation-frames.md)).
+The model document's `modifies` field entries lift to `modifies` field entries
+with scope `every-object`; its `modifies_receiver` entries lift to `modifies`
+field entries with scope `receiver`; its `deletes_receiver: true` lifts to the
+`deletes_scoped` entry `{kind: "receiver"}` and each name of its
+`deletes_parameters` to `{kind: "parameter", name}`; `creates` and `deletes`
+lift unchanged. A `modifies` entry names a relationship by its node key, or a
+field by the node key of the declaration that declares it plus the field's
+name; a `creates` or `deletes` entry names an object type or process by its
+node key. This wire encoding is the V2 carrier of that existing model.
 
 ## Properties
 
@@ -281,8 +286,8 @@ The frame step runs before the state step of
   `Creates:`, `Deletes:` lines lowering to `Operation.frame`); this
   artifact is the checked-package V2 carrier of that same feature.
 - `proposals/quire-v1/definitions/model-complete.md`'s Frames row is the
-  business-model rule this artifact's `modifies`/`creates`/`deletes` shape
-  and refusal causes carry unchanged onto the V2 wire.
+  business-model rule this artifact lifts from: its members and refusal causes
+  map onto the V2 wire as the Description states.
 - [FR-208](../foundation/FR-208-quire-meaning-vocabulary.md) fixes which
   business-model meanings (field, relationship, object type, process) are
   eligible frame-entry targets.
