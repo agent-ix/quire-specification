@@ -629,6 +629,7 @@
               "domain": "quire.checked-semantic-node/v1"
             }
           ],
+          "deletes_scoped": [],
           "modifies": [
             {
               "declaration": {
@@ -643,7 +644,8 @@
                 "domain": "quire.checked-semantic-node/v1"
               },
               "kind": "field",
-              "name": "balance"
+              "name": "balance",
+              "scope": "every-object"
             }
           ],
           "term": "frame"
@@ -663,7 +665,7 @@
           }
         ],
         "node_id": {
-          "digest": "2e06805e81c1bfe8b1f7b30b25fadc125768b6ab037498e5c6da83cde1f5aa24",
+          "digest": "77ea72c860c1416530612dce453a7bd2eb304bf5c12f9d88996222fbf49c11dd",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "state",
@@ -1223,7 +1225,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "ee0f99f33f311e928203eca30f335877b6f34f1ce83b3396cde39dec25b2d5cb",
+    "digest": "09e949d62fc722502cbbc63bcfbb5658b923e16ff4730ea95d4e75030bd67bb8",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -1924,6 +1926,7 @@
               "domain": "quire.checked-semantic-node/v1"
             }
           ],
+          "deletes_scoped": [],
           "modifies": [
             {
               "declaration": {
@@ -1938,7 +1941,8 @@
                 "domain": "quire.checked-semantic-node/v1"
               },
               "kind": "field",
-              "name": "balance"
+              "name": "balance",
+              "scope": "every-object"
             }
           ],
           "term": "frame"
@@ -1958,7 +1962,7 @@
           }
         ],
         "node_id": {
-          "digest": "2e06805e81c1bfe8b1f7b30b25fadc125768b6ab037498e5c6da83cde1f5aa24",
+          "digest": "77ea72c860c1416530612dce453a7bd2eb304bf5c12f9d88996222fbf49c11dd",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "state",
@@ -2843,7 +2847,7 @@
     },
     {
       "node_id": {
-        "digest": "2e06805e81c1bfe8b1f7b30b25fadc125768b6ab037498e5c6da83cde1f5aa24",
+        "digest": "77ea72c860c1416530612dce453a7bd2eb304bf5c12f9d88996222fbf49c11dd",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,

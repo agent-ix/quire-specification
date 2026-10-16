@@ -39,10 +39,13 @@ node key. This wire encoding is the V2 carrier of that existing model.
 
 ## Properties
 
-- **semantic_type** (`NodeRef`) — the `model`/`object_type` node declaring
-  the operations that share this frame: the `context` of every
-  `state`/`operation_anchor` node that binds the frame
-  ([FR-342](FR-342-checked-package-operation-anchor-body.md)).
+- **semantic_type** (`NodeRef`) — the `model`/`object_type`, `model`/`process`
+  or `model`/`state_machine` node declaring the operations that share this
+  frame: the `context` of every `state`/`operation_anchor` node that binds the
+  frame ([FR-342](FR-342-checked-package-operation-anchor-body.md)). A
+  process operation's frame and a state-machine operation's frame are built
+  and read as an object type's is; only their receiver-scoped members differ
+  ("Frames of a process or a state machine" below).
 - **occurrences** — every occurrence has role `generated`: a frame is
   derived from its operation's authored `Modifies:`, `Creates:` and
   `Deletes:` lines, never declared on its own.
@@ -51,8 +54,9 @@ node key. This wire encoding is the V2 carrier of that existing model.
   - `{kind: "relationship", declaration}`: `declaration` is the node key of
     a declared `relation`/`relationship` node;
   - `{kind: "field", declaration, name, scope}`: `declaration` is the node
-    key of the `model`/`object_type` or `model`/`record_value_type` node that
-    declares, or inherits, the field, and `name` is the field's name. This
+    key of the `model`/`object_type`, `model`/`record_value_type`,
+    `model`/`process` or `model`/`state_machine` node that declares, or
+    inherits, the field, and `name` is the field's name. This
     is the same pair a `field` operation member carries
     ([FR-322](FR-322-checked-package-artifact.md) "Model-owned members").
     `scope` is exactly `receiver` or `every-object`, the entry's
@@ -89,12 +93,14 @@ node key. This wire encoding is the V2 carrier of that existing model.
   dependency of any other meaning refuses `invalid_model_binding`/
   `malformed-declaration`: a relationship entry naming a node that is not
   `relation`/`relationship`; a field entry whose `declaration` is not
-  `model`/`object_type` or `model`/`record_value_type`; a `creates` or
-  `deletes` entry naming a node that is not `model`/`object_type` or
-  `model`/`process`. A `value` literal, an `expression`, and every other
-  `model` form (`value_type`, `variant_type`, `event_type`,
-  `state_machine`, `persistence_interface`, `namespace`, `model_import` and
-  the five systems forms) has no frame meaning at all.
+  `model`/`object_type`, `model`/`record_value_type`, `model`/`process` or
+  `model`/`state_machine`; a `creates` or `deletes` entry naming a node that
+  is not `model`/`object_type` or `model`/`process`. A `value` literal, an
+  `expression`, and every other `model` form (`value_type`, `variant_type`,
+  `event_type`, `persistence_interface`, `namespace`, `model_import` and the
+  five systems forms) has no frame meaning at all. A state machine is a field
+  entry's declaring node but never a `creates` or `deletes` entry: it has no
+  object universe ([FR-208](../foundation/FR-208-quire-meaning-vocabulary.md)).
 
 ## Field entries
 
@@ -105,7 +111,12 @@ the member resolution
 declaration the node's `ModelOwner` names and step 3 matches `name` against the exposed effective
 field members of that object type, own and inherited; for a
 `model`/`record_value_type` node, `name` matches its exposed effective fields,
-own and inherited, under the same resolution rule. Operation members are not
+own and inherited, under the same resolution rule; for a `model`/`process` or
+`model`/`state_machine` node, step 2 looks up the process or state machine its
+`ModelOwner` names and step 3 matches `name` against that declaration's
+exposed effective field members, own and inherited along its supertypes of the
+same meaning (a process's fields include its identity fields; a state
+machine's are its context fields). Operation members are not
 candidates. The field
 entry refuses as follows, and a refusal is that entry's meaning-join
 defect:
@@ -154,11 +165,36 @@ node tags that carry `declaration: {qualified_name}`, so a relationship's
 wire encoding names no end as its own, and there is no qualified name for a
 reader to resolve as the declaring end apart from the other.
 
+## Frames of a process or a state machine
+
+A frame whose `semantic_type` is a `model`/`process` or a
+`model`/`state_machine` node is the frame of an operation whose receiver is a
+run, or a machine context, and not an object of an object type
+([FR-013](../../functional/foundation/FR-013-validate-operation-frames.md):
+the receiver-scoped members belong to operations of object types). Such a
+frame holds no receiver-scoped member, so the reader refuses, as a
+meaning-join defect, `invalid_model_binding`/`malformed-declaration`:
+
+- a `modifies` field entry whose `scope` is `receiver`, with that entry's
+  `declaration` node key as the locus, and
+- a `deletes_scoped` entry `{kind: "receiver"}`, with the frame node as the
+  locus (a `deletes_scoped` entry names no node).
+
+The frame still admits `every-object` field entries (of the process or state
+machine, or of any other declaring node a field entry admits), relationship
+entries, `creates` and `deletes` entries, and `deletes_scoped` entries of kind
+`parameter`. The refusal stands whether or not the producer refused the same
+forms at its own intake (the model document's `modifies_receiver` and
+`deletes_receiver: true` on a process or state-machine operation, FR-013), so a
+package from another producer is read by the same rule. A frame whose
+`semantic_type` is a `model`/`object_type` node admits the receiver forms.
+
 ## Outputs
 
 Reading an admitted frame node yields exactly:
 
-- the declaring object type of the operation (`semantic_type`);
+- the declaring object type, process or state machine of the operation
+  (`semantic_type`);
 - the set of declared fields and relationships the operation may write
   (`modifies`, membership-checked against every declared dependency's
   meaning and, for a field, resolved to one field);
@@ -218,8 +254,9 @@ noncanonical member/term order.
 
 A frame node whose `semantic_type` names no node of the package refuses
 `missing_declaration`/`missing-name`, and one naming a node that is not
-`model`/`object_type` refuses `invalid_model_binding`/
-`malformed-declaration`, with that `semantic_type` as the locus. An entry
+`model`/`object_type`, `model`/`process` or `model`/`state_machine` refuses
+`invalid_model_binding`/`malformed-declaration`, with that `semantic_type` as
+the locus. An entry
 reference outside the graph, or naming no declared dependency of the frame
 node, refuses `missing_declaration`/`missing-name`. An entry reference
 naming a declared dependency of a meaning the entry cannot carry refuses
@@ -235,7 +272,8 @@ order, decides:
 
 1. Any meaning-join defect (a `semantic_type` defect, or an entry's
    `missing-name`, `missing-selection`, `ambiguous-name` or
-   `malformed-declaration`, in any of the three members) outranks any
+   `malformed-declaration`, in any of the three members, including a
+   receiver form in a process or state-machine frame) outranks any
    canonical-order defect. A `conflicting-binding` defect, two field entries
    of one declaration and name with different scopes, is a meaning-join
    defect that ranks after every other one: it is reported only when the
@@ -243,7 +281,8 @@ order, decides:
    canonical-order defect, so a frame whose entries conflict is never reported
    as misordered, whichever order the two entries are listed in.
 2. Ties break by position, in the frame node's own fixed order:
-   `semantic_type`, then `modifies`, then `creates`, then `deletes`.
+   `semantic_type`, then `modifies`, then `creates`, then `deletes`, then
+   `deletes_scoped`.
 3. Remaining ties, among multiple meaning-join defects in the same
    member, break by the ascending order key of the offending entry, the
    same order rule the member array itself must satisfy.
@@ -265,22 +304,24 @@ The frame step runs before the state step of
 | --- | --- | --- |
 | FR-340-AC-1 | `modifies`, `creates` and `deletes` may each independently be the empty array; an all-empty frame body and the published fixture's fully-populated frame body are both admitted with no defect. | Test (TC-233) |
 | FR-340-AC-2 | Every relationship entry of `modifies` names a declared dependency of the frame node that is a `relation`/`relationship` node; every field entry's `declaration` names a declared dependency that is a `model`/`object_type` or `model`/`record_value_type` node; every `creates`/`deletes` entry names a declared dependency that is a `model`/`object_type` or `model`/`process` node. | Test (TC-233) |
-| FR-340-AC-3 | An entry naming no node of the package, or no declared dependency of the frame node, refuses `missing_declaration`/`missing-name`; an entry naming a declared dependency of any other meaning -- a relationship entry naming an object type or a literal, a field entry on a process, a relationship or a systems node, a `creates` entry naming a relationship, and every `model`/`*_type`, `model`/`namespace`, `model`/`state_machine` or `model`/`persistence_interface` form an entry cannot carry -- refuses `invalid_model_binding`/`malformed-declaration`, with the entry's declaring node key as the locus. | Test (TC-233) |
+| FR-340-AC-3 | An entry naming no node of the package, or no declared dependency of the frame node, refuses `missing_declaration`/`missing-name`; an entry naming a declared dependency of any other meaning -- a relationship entry naming an object type or a literal, a field entry on a relationship, a persistence interface or a systems node, a `creates` entry naming a relationship, and every `model`/`*_type`, `model`/`namespace` or `model`/`persistence_interface` form an entry cannot carry, and a `creates` or `deletes` entry naming a `model`/`state_machine` -- refuses `invalid_model_binding`/`malformed-declaration`, with the entry's declaring node key as the locus. | Test (TC-233) |
 | FR-340-AC-4 | Each of `modifies`, `creates` and `deletes` is duplicate-free and sorted ascending by entry order key (declaring node digest, then field name as UTF-8 bytes, then scope with `every-object` first); a duplicated entry fails the schema, and a misordered array, including two field entries of one declaring node in descending name order, refuses `invalid_semantic_graph`. | Test (TC-233) |
 | FR-340-AC-5 | The frame body shape validates only as a `state`/`frame` node's `body`; a `value` node's `body` carrying this shape, and a `state`/`frame` node's `body` carrying an ordinary `SemanticTerm` shape, both fail the published schema. | Test (TC-233) |
 | FR-340-AC-6 | When one frame node carries a meaning-join defect and a canonical-order defect at once, the reported diagnostic is the meaning-join refusal the precedence rule selects, with its exact code, cause and locus, regardless of which member carries which defect; two field entries of one declaring node tie on the digest and break by field name; the same frame node reports that same selected diagnostic regardless of collection or scan order. | Test (TC-233) |
-| FR-340-AC-7 | A frame body missing any of `modifies`, `creates` or `deletes` fails the schema; every published fixture's frame node is admitted with no defect by the same reader rule `read_package_semantics` applies. | Test (TC-233) |
+| FR-340-AC-7 | A frame body missing any of its four members `modifies`, `creates`, `deletes` or `deletes_scoped` fails the schema, and so does a `modifies` field entry with no `scope`; every published fixture's frame node carries all four members and a `scope` on every field entry, and is admitted with no defect by the same reader rule `read_package_semantics` applies. | Test (TC-233) |
 | FR-340-AC-8 | `ModelNode.semantic_form` names each of FR-208's five systems meanings -- `systems_part`, `systems_port`, `systems_interface`, `systems_connection` and `systems_allocation`, one per `quire.meaning.systems.<x>/v1` value -- and none of the five is admitted as a field entry's declaring node or as a `creates` or `deletes` entry. | Test (TC-233) |
 | FR-340-AC-9 | When a package publishes more than one `state`/`frame` node, the reader reports the first defect found while checking frame nodes in ascending `node_id` digest order; a lower-digest frame node's own canonical-order defect is reported even when a higher-digest frame node carries a meaning-join defect that would otherwise outrank it. | Test (TC-233) |
 | FR-340-AC-10 | A field entry on an object type for a field typed with a record value type, and a field entry on that record value type's node for one of its own fields, are distinct entries; a frame body naming both is admitted with no defect. | Test (TC-233) |
 | FR-340-AC-11 | A `modifies` entry naming a relationship is one node key, and a `relation`/`relationship` node carries no `declaration`; that single key is the whole grant, covering every link of the relationship observed from each end, including a link with an end at an object the same invocation creates. | Test (TC-233) |
-| FR-340-AC-12 | A frame node's `semantic_type` is the `model`/`object_type` node declaring its operation, and a `semantic_type` naming any other node refuses `invalid_model_binding`/`malformed-declaration` before any entry defect. | Test (TC-233) |
+| FR-340-AC-12 | A frame node's `semantic_type` is the `model`/`object_type`, `model`/`process` or `model`/`state_machine` node declaring its operation, and a `semantic_type` naming any other node (a record value type, an event type, a persistence interface, a systems interface, a `relation`/`relationship`) refuses `invalid_model_binding`/`malformed-declaration` before any entry defect. | Test (TC-233) |
 | FR-340-AC-13 | A field entry's name resolves among the exposed effective fields of its declaring object type, own and inherited: `(Order, "total")` and `(Sub, "total")` resolve to `Order`'s field; an undeclared name and an operation's name refuse `missing_declaration`/`missing-name`, a name two supertypes both expose refuses `ambiguous_declaration`/`ambiguous-name`, and a declaring node keyed under an unselected domain package version refuses `missing_declaration`/`missing-selection`. | Test |
 | FR-340-AC-14 | A frame occurrence with a role other than `generated` fails the schema. | Test (TC-233) |
 | FR-340-AC-15 | No `model` node stands for a field, an operation or a clause member on its own: `ModelNode.semantic_form` names only FR-208's business type kinds, `model_import` and FR-208's five systems meanings. | Test (TC-233) |
 | FR-340-AC-16 | A field entry carries `scope` exactly `receiver` or `every-object`; an entry without it or with another value fails the schema, two entries for one field with different scopes refuse `invalid_model_binding`/`conflicting-binding` whichever order they are listed in, and that refusal outranks the `invalid_semantic_graph` of a misordered array in the same frame but not any other meaning-join defect, and changing an entry's scope changes the frame node id and the `package_id`. | Test |
 | FR-340-AC-17 | A frame body carries `deletes_scoped`, possibly empty; `deletes self` encodes as `{kind: "receiver"}` and `deletes p` as `{kind: "parameter", name: "p"}`; a body without the member fails the schema, a `parameter` entry naming no reference parameter of an operation whose anchor references the frame refuses `missing_declaration`/`missing-name` in the state step, and a misordered array refuses `invalid_semantic_graph`. | Test |
 | FR-340-AC-18 | For record value type `Address` with inherited field `street`, a `modifies` field entry naming (`Address`, `street`) resolves that exposed effective field. An entry naming an operation or an undeclared field refuses `missing_declaration`/`missing-name`; two exposed fields of that name refuse `ambiguous_declaration`/`ambiguous-name`. | Test |
+| FR-340-AC-19 | A frame whose `semantic_type` is a `model`/`process` node, and one whose `semantic_type` is a `model`/`state_machine` node, are admitted with `every-object` field entries naming the process's or the state machine's own fields and an inherited field, and a `parameter` `deletes_scoped` entry; the process frame also admits a `creates` and a `deletes` entry naming the process. A field entry whose `declaration` is a process or a state machine is admitted in an object type's frame too. A `creates` or `deletes` entry naming a state machine refuses `invalid_model_binding`/`malformed-declaration`, and a field entry naming no field of its process or state machine refuses `missing_declaration`/`missing-name`. | Test (TC-233, TC-280) |
+| FR-340-AC-20 | On a frame whose `semantic_type` is a `model`/`process` or `model`/`state_machine` node, a field entry with `scope` `receiver` refuses `invalid_model_binding`/`malformed-declaration` at the entry's `declaration` node key, and a `deletes_scoped` entry `{kind: "receiver"}` refuses the same at the frame node; the same two forms are admitted on a frame whose `semantic_type` is a `model`/`object_type` node. The refusal is a meaning-join defect and takes its place in the precedence of "Canonical ordering and reader precedence". | Test (TC-233) |
 
 ## Dependencies
 

@@ -81,8 +81,8 @@ recompute every operation vector and application node key; classify every
 operation mutation, ordering case and declaration mutation with an
 independent operation and declaration oracle; check the published fixture's
 `state`/`frame` node body against an independent frame oracle, requiring the
-frame's `semantic_type` to be a `model`/`object_type` node, each
-`modifies` relationship entry, field entry (declaring node plus field name)
+frame's `semantic_type` to be a `model`/`object_type`, `model`/`process` or
+`model`/`state_machine` node, each `modifies` relationship entry, field entry (declaring node plus field name)
 and `creates`/`deletes` entry to join a declared dependency of the entry's
 own required meaning, each member to be duplicate-free and sorted
 ascending by entry order key (declaring node digest, then field name), and
@@ -94,7 +94,7 @@ normative reader (`read_package_semantics`, not the standalone frame oracle
 alone), evaluated at the reader's frame step, where identity projection,
 `package_id` and source-map checks are outside what any vector's
 expectation covers; requiring each vector's exact code, locus and (where
-the vector states one) cause, including a field entry on a process, a
+the vector states one) cause, including a field entry on an event type, a
 relationship or a systems node, a relationship entry naming an object type,
 a `model`/`record_value_type` or `model`/`event_type` entry misdirected into
 `creates` or `deletes`, an undeclared field entry, two field entries of one
@@ -106,7 +106,25 @@ verbatim alongside the mutated published frame node, requiring the
 lower-node-id-digest frame's own defect to be reported over the
 higher-digest frame's own defect; check that the identical defect set
 sorted from two different collection orders yields the identical
-diagnostic; validate the clause-operations package's `state`/`state_clause`,
+diagnostic; require every published fixture's frame node to carry the four
+members `modifies`, `creates`, `deletes` and `deletes_scoped` and a `scope` on
+each field entry, and the schema to refuse a frame body missing any of the four
+members and a field entry without a `scope` (FR-340-AC-7); rewrite the
+clause-operations package with its declaring type as a `model`/`process` and
+then as a `model`/`state_machine` node and read each with the full reader,
+requiring the frame, the anchor, the invariant and the precondition to be
+admitted with the declaring node as their context and the type of `self` a
+reference over it (FR-342-AC-7, FR-342-AC-8, FR-341-AC-11), and rewrite its
+declaring node, or the anchor's `context`, as a record value type, an event
+type, a persistence interface or a systems interface, requiring the frame step
+or the anchor step to refuse it (FR-340-AC-12, FR-342-AC-9); read each
+`receiver_frame_cases` vector of `model-owner-form-vectors.json` through the
+full reader over the all-families package with the frame typed by an object
+type, a process or a state machine, requiring a `receiver` field entry and a
+`receiver` `deletes_scoped` entry to be admitted in the object type's frame and
+refused `invalid_model_binding`/`malformed-declaration` in a process's or a
+state machine's frame, at the entry's declaring node and at the frame node
+respectively (FR-340-AC-19, FR-340-AC-20); validate the clause-operations package's `state`/`state_clause`,
 `state`/`operation_anchor`, `state`/`frame` and `state`/`transition` nodes
 against the schema's node-form body rules and occurrence roles, and apply
 each authored body, member, argument-shape and role mutation, requiring the
@@ -317,7 +335,9 @@ refuses through the full normative reader with exactly its recorded code,
 locus and cause, including every wrong-meaning frame entry, both
 two-simultaneous-meaning-join-defect precedence vectors, and the
 two-frame-node vector, whose lower-node-id-digest frame's own defect is
-reported ahead of the higher-digest frame's own defect; the identical
+reported ahead of the higher-digest frame's own defect; a process or state
+machine as the declaring type is admitted with its frame, anchor and clauses,
+and a frame of either refuses each receiver-scoped member; the identical
 defect set sorted from two different collection orders yields the identical
 diagnostic; and the `stage_limit_exceeded` and `duplicate_selection` rows of
 native-diagnostics and FR-272 each list exactly FR-272-AC-10's causes, and
