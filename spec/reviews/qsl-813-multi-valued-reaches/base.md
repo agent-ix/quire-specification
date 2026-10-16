@@ -53,3 +53,12 @@ sound: (1) RN-18 flipping is the intended change and no consumer reads it;
 (5) `reaches_field` unchanged. No textual conflict with PR 265 (a simulated
 merge gives none; its FR-322 hunks are at 1198-1215 and 1472, this PR's at
 1043 and 1457). No roadmap language and no ticket ids in spec text.
+
+## Dispositions
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | deferred | The IR reader change belongs to quire-contract-ir; the planner routes the IR follow-up to the IR lead, outside this QSpec PR |
+| FND-002 | fixed | 21489bac27fb62a7f6a996362877cfd6c52ca09d |
+| FND-003 | fixed | 21489bac27fb62a7f6a996362877cfd6c52ca09d |
+| FND-004 | fixed | 21489bac27fb62a7f6a996362877cfd6c52ca09d |

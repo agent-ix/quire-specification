@@ -30,3 +30,9 @@ PASS with one medium gap. FR-152-AC-11 and AC-12 are TC-197 rows, as FR-152
 AC-1 to AC-10 already are; no test in this repo is tagged to TC-197, which is
 the existing pattern for FR-152 and not new here. FR-322-AC-57 is run by the
 TC-281 test over all 27 cases.
+
+## Dispositions
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 21489bac27fb62a7f6a996362877cfd6c52ca09d |
