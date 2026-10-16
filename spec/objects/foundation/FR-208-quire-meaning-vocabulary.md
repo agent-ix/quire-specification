@@ -132,7 +132,9 @@ is the conjunction of its own invariants with those of every ancestor
   subject the object identity, the invocation's parameter or result binding,
   or, for a value reached through a state-machine context, the invocation's
   receiver binding `self`,
-  then one `field` step per field, one `index` step per collection element and
+  then one `member` step for each field selected from an object, one `field`
+  step for each field selected from a record value or from a state-machine
+  context, one `index` step per collection element and
   one `option_value` step per present optional. The result depends only on the
   value, so equal values give equal results. An object-type invariant instead ranges over
   the objects of an object universe at a named observation and depends on
