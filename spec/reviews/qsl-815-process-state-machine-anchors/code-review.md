@@ -42,3 +42,9 @@ as revised. No tautological assertion: every new test checks recorded
 expectations, or a specific node, against the reader. The re-keyed data comes
 from repo tooling, and the three values I recomputed match. Panics are limited
 to test `expect`s on authored fixtures.
+
+## Dispositions
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | accepted-no-change | Low, pre-existing, recorded only. No wire vector exercises an inherited-only operation through `anchor_refusal`, and the TC-280 oracle decides it correctly. Re-checked at 281e94e: the new check 5 uses the same `mm_declared_member` lookup, which only matters once the operation has resolved. |

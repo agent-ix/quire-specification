@@ -35,3 +35,11 @@ One blocking finding: FND-001, a pre-existing AC with no test in the FR this PR
 revises. Every new AC (FR-322-AC-72, FR-340-AC-19/20, FR-341-AC-11, FR-342-AC-7/8/9)
 and every revised AC (FR-340-AC-3/7/12) has a tagged test that can fail. The
 exception is the FR-341-AC-12 and FR-342-AC-8 parts recorded above.
+
+## Dispositions
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed 281e94e | `frame_body_defects` now pushes `ConflictingBinding` (it sorts after every `MeaningJoin` and before `CanonicalOrder`), adds the scope to the field order key, and checks `deletes_scoped` order. `anchor_refusal` check 5 decides the parameter entries. There are seven new `frame_mutations` vectors and DS-01..DS-05, and both tests carry the FR-340-AC-16 and AC-17 trace. Focused run at 281e94e: 19 passed, EXIT=0. |
+| FND-002 | accepted-no-change | Medium, recorded only, as the review pass said. The rest of FR-341-AC-12 is a coverage gap, not a wrong result. |
+| FND-003 | accepted-no-change | Low, recorded only. The frame-sharing check does not depend on the form, and FR-342-AC-6 covers it. |

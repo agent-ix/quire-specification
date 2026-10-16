@@ -80,3 +80,18 @@ already did. The quire-contract-ir main reader still accepts only
 `QSPEC_DIR`-gated frame conformance test builds field entries without `scope`.
 After this merges, QSL `make conformance` against QSpec main refuses the
 published fixtures until IR-816 lands and QSL adapts.
+
+## New findings (disposition pass 1)
+
+Reviewed at agent-ix/quire-specification@281e94e04e6b8b464657d335fa503f569cab1565.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | high | FR-340-AC-2 still says "every field entry's `declaration` names a declared dependency that is a `model`/`object_type` or `model`/`record_value_type` node". This PR widened the field-entry declaring node to `model`/`process` and `model`/`state_machine` (Properties, Field entries, AC-3, AC-19: "A field entry whose `declaration` is a process or a state machine is admitted in an object type's frame too"), but left AC-2 unchanged. AC-2 and AC-19 now contradict each other. Add `model`/`process` and `model`/`state_machine` to AC-2's field-entry clause. | spec/objects/interfaces/FR-340-checked-package-frame-location.md:306, 323 |
+
+## Dispositions
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed 281e94e | FR-322 step 4's `Reference<O>` row reads "an object type `O` of the same domain package" again; the "Derived type forms" `Reference<O>` target row keeps process and state machine, which is where `self` takes its type. This agrees with FR-154 and FR-322-AC-65. |
+| FND-002 | deferred: QSL-side wording | QSL FR-105's node-table text belongs to quire-spec-language, not this repo. QSpec FR-340 is correct. |
