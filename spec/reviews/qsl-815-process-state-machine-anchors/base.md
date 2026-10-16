@@ -95,3 +95,4 @@ Reviewed at agent-ix/quire-specification@281e94e04e6b8b464657d335fa503f569cab156
 | --- | --- | --- |
 | FND-001 | fixed 281e94e | FR-322 step 4's `Reference<O>` row reads "an object type `O` of the same domain package" again; the "Derived type forms" `Reference<O>` target row keeps process and state machine, which is where `self` takes its type. This agrees with FR-154 and FR-322-AC-65. |
 | FND-002 | deferred: QSL-side wording | QSL FR-105's node-table text belongs to quire-spec-language, not this repo. QSpec FR-340 is correct. |
+| FND-003 | fixed b4f1bbb | Disposition pass 2. FR-340-AC-2's field-entry clause now reads "a `model`/`object_type`, `model`/`record_value_type`, `model`/`process` or `model`/`state_machine` node", which agrees with AC-3, AC-19 and the Properties. Pass 2 found nothing new in `281e94e..b4f1bbb`. |
