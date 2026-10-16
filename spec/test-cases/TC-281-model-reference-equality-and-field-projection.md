@@ -170,5 +170,13 @@ multiplicity edits the selected document before it is read.
 | RN-15 | `reaches` `order` on M4, operands M1, M1 | Admitted | FR-322-AC-57 |
 | RN-16 | `reaches` `order` on M4, operands M1, M3 | `ill_typed`/`operator-ineligible` at `arguments/1` | FR-322-AC-57 |
 | RN-17 | `reaches` `order` on M4, operands M1, M1, with the end multiplicity patched | Admitted | FR-322-AC-57 |
-| RN-18 | `reaches` `order` on M4, operands M1, M1, with the end multiplicity patched | `ill_typed`/`operator-ineligible` at `member.name` | FR-322-AC-57 |
+| RN-18 | `reaches` `order` on M4, operands M1, M1, with the end multiplicity patched to `{0,3}` unique | Admitted | FR-322-AC-57 |
 | RN-19 | `reaches` `invoiced` on M10, operands M1, M1 | `ill_typed`/`operator-ineligible` at `member.name` | FR-322-AC-57 |
+| RN-20 | `reaches` `order` on M4, operands M1, M1, with the end multiplicity patched to `{0,3}` and `unique` false | Admitted: a `Bag`-shaped destination | FR-322-AC-57 |
+| RN-21 | `reaches` `order` on M4, operands M1, M5, with the end multiplicity patched to `{0,3}` | Admitted: a subtype operand | FR-322-AC-57 |
+| RN-22 | `reaches` `order` on M4, operands M1, M3, with the end multiplicity patched to `{0,3}` | `ill_typed`/`operator-ineligible` at `arguments/1` | FR-322-AC-57 |
+| RN-23 | `reaches` `order` on M4, operands M1, M1, with the end multiplicity patched to `{0,unbounded}` | `unsupported_construct`/`expression-form` at `member.name` | FR-322-AC-57 |
+| RN-24 | `reaches` `order` on M4, operands M1, M1, with the end multiplicity patched to `{0,3}` and `ordered` true | `unsupported_construct`/`expression-form` at `member.name` | FR-322-AC-57 |
+| RN-25 | `reaches` `invoiced` on M10, operands M1, M1, with the end multiplicity upper bound patched to 3 | `ill_typed`/`operator-ineligible` at `member.name`: a multi-valued destination of another type | FR-322-AC-57 |
+| RN-26 | `reaches` `invoiced` on M10, operands M1, M1, with the end multiplicity patched to `{0,unbounded}` | `unsupported_construct`/`expression-form` at `member.name`: multiplicity is decided before type | FR-322-AC-57 |
+| RN-27 | `reaches` `followedBy` on M11, operands M1, M1, with the end multiplicity patched to `{0,unbounded}` | `ill_typed`/`operator-ineligible` at `member.name`: direction is decided before multiplicity | FR-322-AC-57 |

@@ -1876,8 +1876,10 @@ fn relationship_navigation(projection: &Value, nodes: &[Value], case: &Value) ->
         Err(refusal) => return refusal,
     };
     if text(case, "operation") == "reaches" {
-        let edge = ["Reference", "Option"].contains(&text(&derived, "kind"));
-        if !edge || destination != endpoint {
+        // Any finite destination multiplicity of the endpoint's own type
+        // is reachable; the `Reference`, `Option`, `Set` and `Bag` result
+        // shapes all admit.
+        if destination != endpoint {
             return refused_at("ill_typed", "operator-ineligible", "member.name");
         }
     } else if derived != case["result"] {
@@ -1895,7 +1897,7 @@ fn tc_281_relationship_ends_navigate_by_role_receiver_direction_and_destination(
     let vectors = parsed(VECTORS);
     let nodes = array(&vectors, "model_declaration_nodes");
     let cases = array(&vectors, "relationship_navigation_cases");
-    assert_eq!(cases.len(), 19);
+    assert_eq!(cases.len(), 27);
     for case in cases {
         assert_eq!(
             relationship_navigation(&vectors["domain_package"], nodes, case),

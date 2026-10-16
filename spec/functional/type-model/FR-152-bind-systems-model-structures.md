@@ -158,6 +158,41 @@ outside the bound is `cardinality_out_of_bound`/`below-minimum` or
 `above-maximum`. Charges are the `model.navigate` schedule of
 `quire.value.accounting/v1`.
 
+## Reachability over a relationship end
+
+`reaches(a, b, name)` where `name` is a relationship end is the Boolean
+`quire.op.model.reaches` application (FR-322-AC-57). The end is navigated as
+above, and checking admits a destination end of the receiver endpoint's own
+type `E` with any finite multiplicity, single-valued (`[0,1]`, `[1,1]`) or
+multi-valued (`Set` or `Bag` shaped, unique or not). An `unbounded` upper bound
+or `ordered: true` is `unsupported_construct`/`expression-form`, and a
+destination end of another type is `ill_typed`/`operator-ineligible`, each at
+`member.name`; direction is decided before multiplicity and multiplicity before
+type. The result is `Boolean` for every multiplicity.
+
+Reachability is one or more links: an object does not reach itself without a
+cycle or a self-loop. The neighbours of an object are the targets of its links
+in the relationship's extent, taken in canonical reference-key order, the
+repeats of one reference adjacent. A single-valued end gives at most one
+neighbour and a multi-valued end gives each of them: the search is breadth-first
+in discovery order, and the frontier expands every neighbour of a dequeued
+object in that order. The charges are the `graph` rows of
+`quire.value.accounting/v1`: `graph.expand` for `a` and then once for each
+object when it is first discovered (`value_occurrences` the number of distinct
+objects discovered, `a` included), one `graph.edge` for each link occurrence
+examined, including a repeat of a neighbour already discovered, and one
+`graph.result-retain`. The search stops at the first neighbour equal to `b`.
+`model.navigate` and the `collection` rows are not charged.
+
+The destination end's bound is not a reachability refusal: a neighbour count
+above `u` or below `l` refuses nothing, because an observation is evidence of a
+state and the form does not count neighbours. An extent that is unlisted or
+listed incomplete gives `incomplete_population`/`incomplete-scope` retaining the
+relationship and `a`, after the `graph.expand` for `a` and with no later
+charge; a Boolean comes only from a complete extent. A neighbour absent from a
+complete population is `dangling_reference`, decided before that neighbour's
+`graph.edge`, and the first neighbour in order that is not present decides.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -172,6 +207,8 @@ outside the bound is `cardinality_out_of_bound`/`below-minimum` or
 | FR-152-AC-8 | A node whose construct meaning is not a systems meaning has no systems kind even when its kind name is `port`: a binder request for a Port and a connection end naming it each refuse `invalid_model_binding`/`wrong-export` with required kind `Port` and actual kind `none`. | Test (TC-197) |
 | FR-152-AC-9 | A relationship end is navigable by the role of the end nearest the receiver: `r.name` names the source end's role from a source-typed receiver and the target end's role from a target-typed receiver, a far-end role finds no candidate and refuses `ill_typed`/`type-mismatch` at checking, and the destination end supplies the multiplicity and result type. | Test (TC-197) |
 | FR-152-AC-10 | Navigating a relationship whose extent is unlisted, and one whose extent is listed incomplete, each return `incomplete_population`/`incomplete-scope` after `model.navigate` and no later charge, while a complete extent with no links returns `none` or the empty collection of the destination end's type after the charges of the multiplicity, or `cardinality_out_of_bound`/`below-minimum` when the destination end's lower bound is above 0. | Test (TC-197) |
+| FR-152-AC-11 | `reaches(a, b, name)` over a relationship end admits a single-valued and a finite multi-valued destination end of the receiver endpoint's own type, and over a multi-valued end the frontier expands every neighbour in reference-key order, charging `graph.expand` per newly discovered object, `graph.edge` per link occurrence including repeats, and one `graph.result-retain`, with exact required counters completing and one fewer incomplete at the stated charge point. | Test (TC-197) |
+| FR-152-AC-12 | An `unbounded` or `ordered` destination end, a destination end of another type and a traversal against the declared direction each refuse with the cause and order stated above; a neighbour count outside the destination bound refuses nothing; an unlisted or incomplete extent gives `incomplete_population`/`incomplete-scope` after the start's `graph.expand`; a dangling neighbour refuses `dangling_reference` before its `graph.edge`. | Test (TC-197) |
 
 ## Dependencies
 
