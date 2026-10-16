@@ -202,7 +202,7 @@ artifact defines only the runtime kind.
 | FR-207-AC-9 | A path to an element of a population query result is rooted at a `population` subject naming the population's universe, and a path to an element of a collection built inside the claim is rooted at a `built` subject naming the building expression's occurrence key, with an index step for the element's position in that collection; each serializes with exactly its tagged members and an extra or missing member refuses. | Test (TC-429) |
 | FR-207-AC-10 | A path that follows a reference value carries a `reference` step naming the referenced object's FR-204 identity, compares unequal to a path with a field or member step at that position, and orders after a map-key step at that position. | Test (TC-429) |
 | FR-207-AC-11 | A path to an element of a collection computed by `filter` or `map` names the stored source collection the element was bound from and the element's index in it, never the position in the computed collection. | Test (TC-429) |
-| FR-207-AC-12 | A selection of the member `level` on the result of a relationship navigation that returns the object `t1` of type `Tank` is located at the declared object identity of `t1` with the single step `[member level]`, and the navigation itself records no path and no step. | Test (TC-429) |
+| FR-207-AC-12 | A selection of the member `level` on the result of a relationship navigation that returns the object `t1` of type `Tank` is located at the declared object identity of `t1` under the observation the navigation read, with the single step `[member level]`, and the navigation itself records no path and no step. | Test (TC-429) |
 
 ## Resolved path boundary
 
