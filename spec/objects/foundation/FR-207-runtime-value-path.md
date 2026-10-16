@@ -64,12 +64,18 @@ Each traversal step is exactly one of six kinds:
 
 | Step kind | Carries | Selects |
 | --- | --- | --- |
-| field selection | the exact declared field spelling | a declared field of the current value |
+| field selection | the exact declared field spelling | a declared field of a record value, or of a state-machine context ([FR-208](FR-208-quire-meaning-vocabulary.md)) |
 | option-value selection | no name | the contained value of an option |
-| member selection | the exact declared member spelling | a declared model member |
+| member selection | the exact declared member spelling | a declared member of a declared object, selected from a declared object identity or from the object a reference names |
 | index selection | an unsigned integer position | the element at that zero-based position of a collection value |
 | map-key selection | a canonical typed key value | the value stored under that key of a map value |
 | object-reference selection | the declared object identity the reference names ([FR-204](FR-204-declared-object-identity.md)) | the object a reference value refers to |
+
+A selection from a declared object is always a member selection and never a
+field selection, so a path from a declared object identity subject has a member
+step where it first selects from that object, and a field step only after the
+path has passed into a record value; a selection from a state-machine context
+receiver is a field selection.
 
 A field selection and a member selection carrying the same name are never equal
 to one another, and an option-value selection is never a field of the option it
@@ -85,6 +91,22 @@ guard justifies only "the same immutable optional value/field/observation"
 ([FR-045](../../functional/foundation/FR-045-preserve-control-and-presence-facts.md)).
 A path therefore records where a value was sought; it does not assert that the
 value was present.
+
+## Relationship-end navigation
+
+A runtime value path has no step kind for a relationship end. A navigation
+over a declared relationship end (`e.end`,
+[FR-152](../../functional/type-model/FR-152-bind-systems-model-structures.md)
+"Navigation") is not a read of a stored value and is recorded as no path of its
+own: the producer records no entry and no step for it, and the route taken is
+never part of a path. A selection on the result of a navigation is located by a
+path rooted at the declared object identity of the referenced object the
+navigation returned, in the observation the navigation read, with a single
+member step naming the selected member and no `reference` step, because that
+identity is already the root subject. The destination end supplies the targets,
+so a selection on a navigation that returns several objects is located once for
+each referenced object, each at its own identity. The path locates the stored
+value, not the route that reached it.
 
 ## Computed collections
 
@@ -180,6 +202,7 @@ artifact defines only the runtime kind.
 | FR-207-AC-9 | A path to an element of a population query result is rooted at a `population` subject naming the population's universe, and a path to an element of a collection built inside the claim is rooted at a `built` subject naming the building expression's occurrence key, with an index step for the element's position in that collection; each serializes with exactly its tagged members and an extra or missing member refuses. | Test (TC-429) |
 | FR-207-AC-10 | A path that follows a reference value carries a `reference` step naming the referenced object's FR-204 identity, compares unequal to a path with a field or member step at that position, and orders after a map-key step at that position. | Test (TC-429) |
 | FR-207-AC-11 | A path to an element of a collection computed by `filter` or `map` names the stored source collection the element was bound from and the element's index in it, never the position in the computed collection. | Test (TC-429) |
+| FR-207-AC-12 | A selection of the member `level` on the result of a relationship navigation that returns the object `t1` of type `Tank` is located at the declared object identity of `t1` with the single step `[member level]`, and the navigation itself records no path and no step. | Test (TC-429) |
 
 ## Resolved path boundary
 
