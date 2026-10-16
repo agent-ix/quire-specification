@@ -23,12 +23,12 @@ FR-013-AC-13.
 Fixture: a domain package with object type `Counter` (fields `value` and
 `step`), object type `Sub` specializing `Counter`, object type `Gauge` with
 field `d`, a relationship `Supersedes` between `Counter` objects, and an
-operation `t(n: Integer, a: Reference<Counter>)` of `Counter`. Node identity
+operation `t(n: Integer, a: Reference<Counter>)` of `Counter`, and the operations of step 2, `bump` and `merge(a: Reference<Counter>, b: Reference<Counter>)`, both of `Counter`. Each of `bump` and `merge` is named by its own postcondition clause (`DoneBump`, `DoneMerge`, each `{ true }`) so that the package holds its frame node; an operation no clause names has no frame node. Node identity
 strings are written with the prefix `ix://test/counters/` as `Counter/value`,
 `Counter/step`, `Gauge/d`, `Counter` and `Supersedes`.
 
 1. Intake the package once per row, each row replacing the `frame` of `t` (of
-   `Sub` in R7):
+   `Sub` in R7, where `Sub` declares its own `t` with the same parameters and `Counter.t` stays as it is):
 
    | Row | `frame` |
    | --- | --- |
@@ -47,8 +47,8 @@ strings are written with the prefix `ix://test/counters/` as `Counter/value`,
    | R13 | `{"modifies":[],"creates":[],"deletes":[],"modifies_receiver":[7]}` |
    | R14 | `{"modifies":[],"creates":[],"deletes":[]}` |
 
-2. Emit the checked package for an operation `bump` of `Counter` whose frame is
-   `{"modifies":["Counter/value"],"creates":[],"deletes":[],"modifies_receiver":["Counter/step"],"deletes_receiver":true}`, and for an operation `merge(a: Reference<Counter>, b: Reference<Counter>)` whose frame is
+2. Emit the checked package for `bump` of `Counter`, whose frame is
+   `{"modifies":["Counter/value"],"creates":[],"deletes":[],"modifies_receiver":["Counter/step"],"deletes_receiver":true}`, and for `merge`, whose frame is
    `{"modifies":[],"creates":[],"deletes":["Counter"],"deletes_parameters":["b","a"],"deletes_receiver":true}`,
    and read each `state`/`frame` node body. `<Counter>` stands for the NodeRef
    object of the `Counter` object type node.
@@ -72,8 +72,8 @@ strings are written with the prefix `ix://test/counters/` as `Counter/value`,
   order.
 - R10 refuses `invalid_model_binding`/`malformed-declaration` at
   `deletes_receiver` (a string is not a boolean), R11 at `modifies_self` (a
-  member the rule does not name), R12 at the absent `deletes`, and R13 at the
-  `modifies_receiver` element (a number is not a string), each before any entry
+  member the rule does not name), R12 at the absent `deletes`, and R13 at
+  `modifies_receiver` (a number is not a string), each before any entry
   is read (FR-013-AC-11).
 - R14, a frame with only the three required arrays, admits: the three optional
   members are absent, so empty or false.

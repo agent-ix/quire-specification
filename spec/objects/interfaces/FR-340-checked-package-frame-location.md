@@ -286,8 +286,8 @@ The frame step runs before the state step of
   `Creates:`, `Deletes:` lines lowering to `Operation.frame`); this
   artifact is the checked-package V2 carrier of that same feature.
 - `proposals/quire-v1/definitions/model-complete.md`'s Frames row is the
-  business-model rule this artifact's `modifies`/`creates`/`deletes` shape
-  and refusal causes carry unchanged onto the V2 wire.
+  business-model rule this artifact lifts from: its members and refusal causes
+  map onto the V2 wire as the Description states.
 - [FR-208](../foundation/FR-208-quire-meaning-vocabulary.md) fixes which
   business-model meanings (field, relationship, object type, process) are
   eligible frame-entry targets.
