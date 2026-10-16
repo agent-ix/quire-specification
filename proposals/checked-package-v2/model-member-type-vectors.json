@@ -193,7 +193,20 @@
         "node": "ix://acme/orders/Invoice",
         "interfaceFeatures": null,
         "supertypes": [],
-        "fields": [],
+        "fields": [
+          {
+            "name": "number",
+            "typeRef": "ix://quire/native/Integer",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          }
+        ],
         "operations": []
       },
       {
