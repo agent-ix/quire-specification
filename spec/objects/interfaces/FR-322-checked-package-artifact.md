@@ -506,7 +506,8 @@ boundary.
   not an `application`) that either carries a `declaration` or is a
   **model-owned node** (QSL FR-094) carrying none: a model declaration node
   (`model`/`object_type`, `model`/`record_value_type`, `model`/`event_type`,
-  `model`/`variant_type`, `model`/`systems_interface` or
+  `model`/`variant_type`, `model`/`state_machine`, `model`/`process`,
+  `model`/`persistence_interface`, `model`/`systems_interface` or
   `relation`/`relationship`) or a clause function (`function`). A declared
   owner-bearing node carries the `SourceOwner` of the source unit that
   declares it, `{kind: "source", authority, identity}`; a model-owned node
@@ -696,7 +697,7 @@ neither model-owned row, so it falls in the last row and carries none.
 | Node | `owner` |
 | --- | --- |
 | structural, carries `declaration` | required, `SourceOwner` |
-| structural, no `declaration`, `node_tag`/`semantic_form` `model`/`object_type`, `model`/`record_value_type`, `model`/`event_type`, `model`/`variant_type`, `model`/`systems_interface` or `relation`/`relationship` | required, `ModelOwner` |
+| structural, no `declaration`, `node_tag`/`semantic_form` `model`/`object_type`, `model`/`record_value_type`, `model`/`event_type`, `model`/`variant_type`, `model`/`state_machine`, `model`/`process`, `model`/`persistence_interface`, `model`/`systems_interface` or `relation`/`relationship` | required, `ModelOwner` |
 | structural, no `declaration`, `node_tag` `function` | required, `ModelOwner` |
 | every other node | absent |
 
@@ -760,9 +761,16 @@ conformance" below).
    record value type of FR-208's `quire.meaning.model.record-value-type/v1`
    for `model`/`record_value_type`, an event type of FR-208's
    `quire.meaning.model.event-type/v1` for `model`/`event_type`, a variant type of
-   FR-208's `quire.meaning.model.variant-type/v1` for `model`/`variant_type`, an
-   object type with `interfaceFeatures` for `model`/`systems_interface` and a
-   relationship for `relation`/`relationship`. FR-321 admits one selection
+   FR-208's `quire.meaning.model.variant-type/v1` for `model`/`variant_type`, a
+   state machine of FR-208's `quire.meaning.model.state-machine/v1` for
+   `model`/`state_machine`, a process of FR-208's
+   `quire.meaning.model.process/v1` for `model`/`process`, a persistence
+   interface of FR-208's `quire.meaning.model.persistence-interface/v1` for
+   `model`/`persistence_interface`, an object type with `interfaceFeatures` for
+   `model`/`systems_interface` and a relationship for `relation`/`relationship`.
+   A process and a state machine declare fields, supertypes of their own meaning
+   and operations, so step 3 resolves their members as it does an object
+   type's. FR-321 admits one selection
    per `identity` and a document declares each IR node identity once, so at
    most one declaration matches. The derived-shape key stage's owner join
    has already found `T` for every model declaration node, so step 2 has no
@@ -834,7 +842,7 @@ create a second `composite_type`, `bounded_domain` or `scalar_type` identity.
 
 | Source type | Node and semantic type | Body | Worked accepted vector |
 | --- | --- | --- | --- |
-| `Reference<O>` | `composite_type`/`reference`, self-typed | `aggregate{[reference(M_O)]}`, where `M_O` is `O`'s model declaration node. A derived reference target SHALL be a `model`/`object_type`, `model`/`systems_interface` or `relation`/`relationship` declaration; scalar, value, function and other composite nodes are refused. | `Ref = Reference<Order>` and a parameter typed `Ref` both name R1 (`249d3baf1f4728325f4b5194d54320ad6d7e11bc88de7a339504ea6582fe1fbb`); R1's only body target is M1 (`6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b`) |
+| `Reference<O>` | `composite_type`/`reference`, self-typed | `aggregate{[reference(M_O)]}`, where `M_O` is `O`'s model declaration node. A derived reference target SHALL be a `model`/`object_type`, `model`/`process`, `model`/`state_machine`, `model`/`systems_interface` or `relation`/`relationship` declaration; scalar, value, function and other composite nodes are refused. | `Ref = Reference<Order>` and a parameter typed `Ref` both name R1 (`249d3baf1f4728325f4b5194d54320ad6d7e11bc88de7a339504ea6582fe1fbb`); R1's only body target is M1 (`6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b`) |
 | `Population<O>[N]` | `bounded_domain`/`model_population`, semantic type `S_O`, where `S_O` is `composite_type`/`set` over `R_O` | `aggregate{[binding "max" = literal integer N]}` | `Bucket = Population<Order>[3]` names PO1 (`859d6b01a132a14711a8a4568e24a7ab54e3255b78bbcc62b14e4293dbf71f9a`); PO1's `semantic_type` is S1 (`b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5`); changing `Bucket` to `Population<Order>[5]` names a different key |
 | a formed quantity over a compound unit | `scalar_type`/`compound_unit`, self-typed | `aggregate` of one `aggregate{[binding "unit" = reference(U), binding "exponent" = literal integer e]}` per root unit, in `quire.value.compound-unit/v1` order; dimensionless is `aggregate{[]}`. Each `U` is a targetless canonical nominal root with `nominal_identity_preimage.version = quire.unit-node/v1`, empty body and `semantic_type` equal to its dimension node. | `metre / second` names U2 (`bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7`); its first term references `U_metre` with exponent `1`, its second references `U_second` with exponent `-1` |
 
@@ -1205,8 +1213,8 @@ ordered and `enum` otherwise; `composite_type` forms `option`, `record`,
 their own family; a `model`/`record_value_type` or `model`/`event_type`
 declaration is `record`, a `model`/`variant_type` declaration is `enum` (never
 `ordered_enum`), and
-a model declaration node whose `semantic_form` is `object_type` or
-`systems_interface` is `object`. A `relation` node and a `model` node of any
+a model declaration node whose `semantic_form` is `object_type`, `process`,
+`state_machine` or `systems_interface` is `object`. A `relation` node and a `model` node of any
 other form have no family, so a term they type fits no operand position. An
 `object` term is admitted only at a `field_owner` operand position and at
 the `object` anchor position of `quire.op.state.clause`: `object` is a
@@ -1214,7 +1222,9 @@ member of no other group, so the `inner:0` result of
 `quire.op.model.deref` is read only through a field projection ("Model-owned
 members"), and a reference to an object type or to a `state`/
 `operation_anchor` node (whose `semantic_type` is its context object type)
-is admitted only as a state clause's anchor. The `type_argument` member of `quire.op.reference.upcast` names a
+is admitted only as a state clause's anchor. The same holds for the node of a
+process or a state machine, and for an anchor whose context is one.
+The `type_argument` member of `quire.op.reference.upcast` names a
 `Reference<T>` node, whose family is `reference`. A term's family is its
 type's family, except that a function reference is `function`, a relation reference is `population`,
 a `dependency_reference` callee has family `function`,
@@ -1479,6 +1489,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-69 | With record value types `Money` and `TaxedMoney` (supertype `Money`) and `GiftTaxedMoney` (supertype `TaxedMoney`) of one selected document, a `quire.op.function.call` argument (the parameter read from the callee's body `parameters` binding) or an operation-call argument of type `TaxedMoney` or `GiftTaxedMoney` at a `Money` parameter is admitted with the argument taken by `ref` and no conversion node; a `Money` argument at a `TaxedMoney` parameter, an argument of an unrelated record, and a `Sequence<TaxedMoney>` argument at a `Sequence<Money>` parameter each refuse `ill_typed`/`operator-ineligible`, as does an argument whose count differs from the parameters' (a callee with no `parameters` binding takes none). A `function` node typed `Money` whose `body` binding references a root expression node typed `TaxedMoney`, and a `case` whose arm bodies are typed `Money` and `TaxedMoney` with result type `Money` (FR-440-AC-4), are admitted; a `Money` body root at a `TaxedMoney` function, and an unrelated record (`Voucher`) body root at a `Money` function, each refuse `ill_typed`/`type-mismatch` at the function node. A `quire.op.record.project` over a `GiftTaxedMoney` or `TaxedMoney` operand whose `field` member names `Money` as `declaration` reads `Money`'s field with the type `Money` gives it, and one naming `GiftTaxedMoney` over a `TaxedMoney` operand refuses `ill_typed`/`operator-ineligible`. `quire.op.collection.contains` over a `Set<Money>` and a `TaxedMoney` operand, and `quire.op.collection.set` over `TaxedMoney` rest arguments with a `Set<Money>` result, are admitted, and a `Set<TaxedMoney>` operand of a `Set<Money>` slot refuses. A `value`/`union_value` node whose `Money` payload position holds a `TaxedMoney` term is admitted. A `quire.op.structural.eq` or `quire.op.structural.ne` over two `Money` operands is admitted with `Money`'s leaves, including when the values are `TaxedMoney` values whose subtype-only text field has no listed leaf. | Test |
 | FR-322-AC-70 | A `function` node whose body is an `aggregate` with the first binding `parameters`, an `aggregate` of `reference` terms to `value`/`parameter` nodes in parameter order, (QSL FR-092 builds it, including a parameter the body never reads). A `function.call` application over that callee has arguments counted against that binding and typed against the `semantic_type` of its referenced parameter nodes; a callee without the binding takes none. | Test |
 | FR-322-AC-71 | A selected domain package that declares the variant type `Tier` (cases `Gold`, `Standard`) and the object `Account` with field `tier: Tier` admits a self-typed `model`/`variant_type` declaration node owned by `Tier`, with a `ModelOwner` and the closed `ModelDeclarationNode` preimage, family `enum`. `Account.tier` derives the `Tier` node as its type, an `optional` field `Option<Tier>` and an ordered non-unique `[0, 3]` field `Sequence<Tier>[0, 3]`, never `Reference<Tier>`. `quire.op.enum.eq` and `quire.op.enum.ne` over two `Tier` operands are admitted; `quire.op.structural.eq` over them, and an ordering application (`quire.op.enum.lt`, `le`, `gt` or `ge`), refuse `ill_typed`/`operator-ineligible`. An `enum_value` node whose `semantic_type` is the `Tier` node and whose case is `Gold` or `Standard` is admitted, and one whose case is not a case of `Tier` in the selected document refuses `invalid_semantic_graph`. The node key is a function of the selected document and the node alone: two units that select the package under different model aliases derive one `Tier` node key and one key for each case. A `model`/`variant_type` node owned by a record value type, an object type or a node absent from the selected document refuses `missing_declaration`/`missing-selection` in the owner join, and one with no `owner` or with a `SourceOwner` and no `declaration` fails the V2 schema (`malformed_wire`); both V2 schemas enumerate the form in the owner-presence rule, the model forms and the `ModelDeclarationNode` preimage. | Test (TC-940) |
+| FR-322-AC-72 | A selected domain package that declares the process `Flow` (`quire.meaning.model.process/v1`, field `n`, operation `go`) and the state machine `Gate` (`quire.meaning.model.state-machine/v1`, field `open`, operation `toggle`) admits a self-typed `model`/`process` declaration node owned by `Flow` and a self-typed `model`/`state_machine` declaration node owned by `Gate`, each with a `ModelOwner` and the closed `ModelDeclarationNode` preimage, family `object`; `Flow.n` and `Flow.go` resolve through step 3 as an object type's members do, and `Reference<Flow>` and `Reference<Gate>` derive `composite_type`/`reference` nodes over the two declaration nodes. A `model`/`persistence_interface` node owned by a declared persistence interface passes the owner join. A process node owned by an object type, a state machine owned by a process, or either owned by a node absent from the selected document refuses `missing_declaration`/`missing-selection` in the owner join, and either carrying no `owner` fails the V2 schema (`malformed_wire`); both V2 schemas enumerate the three forms in the owner-presence rule and the `ModelDeclarationNode` preimage. | Test (TC-233, TC-280) |
 
 ## Dependencies
 

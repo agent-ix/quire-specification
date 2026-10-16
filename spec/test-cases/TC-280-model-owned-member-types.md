@@ -50,6 +50,22 @@ the member type from the resolved record.
   node, a shape QSL emits only inside a package, keyed by QSL FR-094 exactly
   as emitter output would be. The model declaration nodes of the positive
   fixtures are QSL emitter output (TC-233).
+- `proposals/checked-package-v2/model-owner-form-vectors.json` carries a
+  second projection, `acme/runs`, in the same shape and with the lists
+  `processes`, `state_machines` and `persistence_interfaces` beside
+  `object_types` (each declaration has `node`, `supertypes`, `fields` and
+  `operations`). It declares the object type `Counter` (field `value`,
+  operation `bump`), the systems interface `Plug`, the process `Flow` (field
+  `n`, operation `go(step: Integer): Integer`), the process `SubFlow`
+  specializing `Flow` (field `m`), the state machine `Gate` (field `open`,
+  operations `toggle` and `check(): Boolean`) and the persistence interface
+  `Store` (operation `save`). Its model declaration node vectors `P1` to `P6`
+  name them in that order (`Counter`, `Flow`, `SubFlow`, `Gate`, `Store`,
+  `Plug`; `P2` is `Flow`). The tests recompute each node's key from its
+  preimage, and build each wire node of its owner cases from the case. The
+  owner, frame field, anchor and clause signature cases below are read
+  against this projection, and the receiver frame cases against the published
+  packages (FR-340-AC-19, FR-340-AC-20).
 - The lock selects `acme/orders` `1.0.0` only.
 - `node-identity-preimage.schema.json` defines the closed
   `ModelDeclarationNode` preimage.
@@ -75,6 +91,16 @@ and require it to be declared by the context itself (FR-342). For each clause
 signature case, derive the list `self`, then the result for a postcondition
 of an operation with one, then the operation's parameters (FR-341), and
 compare it with the case's parameter types.
+
+For the `acme/runs` projection, run the owner join over each owner case's
+wire node (a process, a state machine or a persistence interface owned by the
+named declaration), resolve each frame field case among the exposed fields of
+its declaring process or state machine and refuse a persistence interface or
+systems interface as a frame field declaration, resolve each anchor case's
+operation among the operations its context declares itself and refuse a
+context that is none of an object type, a process and a state machine, and
+derive each clause signature case with `self` as `Reference<C>` over the
+process or state machine.
 
 ## Vectors
 
@@ -171,12 +197,46 @@ compare it with the case's parameter types.
 | CS-07 | Precondition of `Order.scaled` binding `[Reference<Order>, Boolean]` | `ill_typed`/`operator-ineligible` | FR-341-AC-5 |
 | CS-08 | Invariant of `Order` binding `[Reference<Order>]` | Admitted | FR-341-AC-5 |
 | CS-09 | Invariant of `Order` binding `[Reference<Order>, Integer]` | `ill_typed`/`operator-ineligible` | FR-341-AC-5 |
+| OF-01 | A `model`/`process` wire node owned by `Flow`, keyed by its own preimage | Recovers `Flow` | FR-322-AC-72 |
+| OF-02 | A `model`/`state_machine` wire node owned by `Gate`, keyed by its own preimage | Recovers `Gate` | FR-322-AC-72 |
+| OF-03 | A `model`/`persistence_interface` wire node owned by `Store`, keyed by its own preimage | Recovers `Store` | FR-322-AC-72 |
+| OF-04 | A `model`/`process` wire node owned by `Counter`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
+| OF-05 | A `model`/`state_machine` wire node owned by `Flow`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
+| OF-06 | A `model`/`object_type` wire node owned by `Flow`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
+| OF-07 | A `model`/`process` wire node owned by `Nope`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
+| OF-08 | A `model`/`persistence_interface` wire node owned by `Gate`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
+| FP-01 | Frame field entry `(P2, "n")`, `P2` being `Flow` | Resolves `Flow/n` | FR-340-AC-19 |
+| FP-02 | Frame field entry `(P3, "n")`, `P3` being `SubFlow` | Resolves `Flow/n` | FR-340-AC-19 |
+| FP-03 | Frame field entry `(P4, "open")`, `P4` being `Gate` | Resolves `Gate/open` | FR-340-AC-19 |
+| FP-04 | Frame field entry `(P2, "go")`, `P2` being `Flow` | `missing_declaration`/`missing-name` | FR-340-AC-19 |
+| FP-05 | Frame field entry `(P2, "missing")`, `P2` being `Flow` | `missing_declaration`/`missing-name` | FR-340-AC-19 |
+| FP-06 | Frame field entry `(P5, "x")`, `P5` being `Store` | `invalid_model_binding`/`malformed-declaration` | FR-340-AC-19 |
+| FP-07 | Frame field entry `(P6, "x")`, `P6` being `Plug` | `invalid_model_binding`/`malformed-declaration` | FR-340-AC-19 |
+| AP-01 | Anchor `(P1, "bump")`, `P1` being `Counter` | Resolves `Counter/bump` | FR-342-AC-4 |
+| AP-02 | Anchor `(P2, "go")`, `P2` being `Flow` | Resolves `Flow/go` | FR-342-AC-7 |
+| AP-03 | Anchor `(P3, "go")`, `P3` being `SubFlow` | `invalid_model_binding`/`malformed-declaration` | FR-342-AC-7 |
+| AP-04 | Anchor `(P2, "missing")`, `P2` being `Flow` | `missing_declaration`/`missing-name` | FR-342-AC-7 |
+| AP-05 | Anchor `(P2, "n")`, `P2` being `Flow` | `missing_declaration`/`missing-name` | FR-342-AC-7 |
+| AP-06 | Anchor `(P4, "toggle")`, `P4` being `Gate` | Resolves `Gate/toggle` | FR-342-AC-8 |
+| AP-07 | Anchor `(P4, "open")`, `P4` being `Gate` | `missing_declaration`/`missing-name` | FR-342-AC-8 |
+| AP-08 | Anchor `(P5, "save")`, `P5` being `Store` | `invalid_model_binding`/`malformed-declaration` | FR-342-AC-9 |
+| AP-09 | Anchor `(P6, "rate")`, `P6` being `Plug` | `invalid_model_binding`/`malformed-declaration` | FR-342-AC-9 |
+| CP-01 | Invariant of `Flow` binding `[Reference<Flow>]` | Admitted | FR-341-AC-11 |
+| CP-02 | Precondition of `Flow.go` binding `[Reference<Flow>, Integer]` | Admitted | FR-341-AC-11 |
+| CP-03 | Postcondition of `Flow.go` binding `[Reference<Flow>, Integer, Integer]` | Admitted | FR-341-AC-11 |
+| CP-04 | Postcondition of `Flow.go` binding `[Reference<Flow>, Integer]` | `ill_typed`/`operator-ineligible` | FR-341-AC-12 |
+| CP-05 | Precondition of `Flow.go` binding `[Reference<Counter>, Integer]` | `ill_typed`/`operator-ineligible` | FR-341-AC-12 |
+| CP-06 | Invariant of `Gate` binding `[Reference<Gate>]` | Admitted | FR-341-AC-11 |
+| CP-07 | Postcondition of `Gate.check` binding `[Reference<Gate>, Boolean]` | Admitted | FR-341-AC-11 |
+| CP-08 | Precondition of `Gate.toggle` binding `[Reference<Gate>]` | Admitted | FR-341-AC-11 |
+| CP-09 | Precondition of `Gate.toggle` binding `[Reference<Flow>]` | `ill_typed`/`operator-ineligible` | FR-341-AC-12 |
+| CP-10 | Invariant of `Flow` binding `[Reference<Flow>, Integer]` | `ill_typed`/`operator-ineligible` | FR-341-AC-12 |
 
 ## Expected Results
 
-M1 to M12 validate and recompute their digests. Every wire, member,
-selection, frame field, anchor and clause signature case gives exactly its
-recorded result.
+M1 to M12 and P1 to P6 validate and recompute their digests. Every wire,
+member, selection, frame field, anchor, clause signature and owner case gives
+exactly its recorded result.
 
 ## Relationship declaration cases
 

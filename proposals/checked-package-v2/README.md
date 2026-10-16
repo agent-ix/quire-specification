@@ -26,9 +26,15 @@ structures, but any external consumer receives only the contract.
   same package carries an invariant and a precondition as
   `state`/`state_clause` nodes whose `quire.op.state.clause` applications
   carry a `state_clause` member and no law, the precondition's
-  `state`/`operation_anchor` node, its `state`/`frame` node with a field
-  entry, and the `value`/`parameter` node for `self` (FR-340, FR-341,
-  FR-342).
+  `state`/`operation_anchor` node, its `state`/`frame` node with a scoped
+  field entry and the four frame members, and the `value`/`parameter` node
+  for `self` (FR-340, FR-341, FR-342).
+- `model-owner-form-vectors.json` supplies a domain package projection that
+  also declares processes, state machines and a persistence interface, with
+  the owner-join, frame-field, anchor, clause-signature and receiver-frame
+  cases over them (FR-322-AC-72, FR-340-AC-19/AC-20, FR-341-AC-11/AC-12,
+  FR-342-AC-7 to AC-9). Its model declaration node keys are recomputed by the
+  tests from each preimage.
 - `node-identity-vectors.json` supplies known JCS SHA-256 vectors for those
   preimages, plus `operation_vectors` and `operation_mutations` for
   application-node preimages.
@@ -44,7 +50,7 @@ structures, but any external consumer receives only the contract.
   `modifies`/`creates`/`deletes` in place: each `dependencies`, `creates`
   and `deletes` entry is a bare digest string, and each `modifies` entry is
   a `FrameModifiesEntry` (`{kind: "relationship", declaration}` or
-  `{kind: "field", declaration, name}`) whose `declaration` is a bare digest
+  `{kind: "field", declaration, name, scope}`) whose `declaration` is a bare digest
   string; every bare digest is substituted into the node as the `NodeRef`
   `{domain: "quire.checked-semantic-node/v1", digest}` (`schema.json`'s
   `NodeId`). One vector additionally carries a

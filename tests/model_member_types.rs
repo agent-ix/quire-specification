@@ -27,6 +27,11 @@ const OPERATION_CATALOG: &str = CHECKED_OPERATION_CATALOG_V1;
 /// FR-154 intake reads, derived from it by `project_document`.
 const DOCUMENT: &str =
     include_str!("../proposals/checked-package-v2/domain-package-acme-orders.json");
+/// The owner-form vectors: a projection that also declares processes, state
+/// machines and a persistence interface, with the owner, member, anchor,
+/// clause-signature and receiver-frame cases over them.
+const OWNER_FORMS: &str =
+    include_str!("../proposals/checked-package-v2/model-owner-form-vectors.json");
 const ADVERSE: &str = include_str!("../proposals/checked-package-v2/fixtures/adverse.json");
 const SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json");
 const NODE_DOMAIN: &str = "quire.checked-semantic-node/v1";
@@ -117,7 +122,23 @@ fn declarations(package: &Value) -> Vec<Declared<'_>> {
             node: text(relationship, "node"),
             object_type: None,
         });
-    objects.chain(relationships).collect()
+    let owned = [
+        ("processes", "process"),
+        ("state_machines", "state_machine"),
+        ("persistence_interfaces", "persistence_interface"),
+    ]
+    .into_iter()
+    .flat_map(|(list, form)| {
+        array_or_empty(package, list)
+            .iter()
+            .map(move |declared| Declared {
+                tag: "model",
+                form,
+                node: text(declared, "node"),
+                object_type: Some(declared),
+            })
+    });
+    objects.chain(relationships).chain(owned).collect()
 }
 
 fn declaration_key(package: &Value, declared: &Declared<'_>) -> String {
@@ -137,10 +158,19 @@ fn recover<'a>(package: &'a Value, key: &str, tag: &str, form: &str) -> Option<D
     })
 }
 
+/// The declaration of an object type, process, state machine or persistence
+/// interface with this node identity: the kinds that declare fields,
+/// operations and supertypes.
 fn object_type<'a>(package: &'a Value, node: &str) -> Option<&'a Value> {
-    array(package, "object_types")
-        .iter()
-        .find(|object_type| text(object_type, "node") == node)
+    [
+        "object_types",
+        "processes",
+        "state_machines",
+        "persistence_interfaces",
+    ]
+    .into_iter()
+    .flat_map(|list| array_or_empty(package, list))
+    .find(|object_type| text(object_type, "node") == node)
 }
 
 /// The proper ancestors of `declared` along its declared supertypes.
@@ -400,6 +430,11 @@ fn owner_declares(package: &Value, node: &Value, owner_node: &str) -> bool {
     match (text(node, "node_tag"), text(node, "semantic_form")) {
         ("model", "object_type") => object_type(false),
         ("model", "systems_interface") => object_type(true),
+        ("model", "process") => declares_in(package, "processes", owner_node),
+        ("model", "state_machine") => declares_in(package, "state_machines", owner_node),
+        ("model", "persistence_interface") => {
+            declares_in(package, "persistence_interfaces", owner_node)
+        }
         ("relation", "relationship") => array(package, "relationships")
             .iter()
             .any(|relationship| relationship["node"] == owner_node),
@@ -420,6 +455,13 @@ fn owner_declares(package: &Value, node: &Value, owner_node: &str) -> bool {
         },
         _ => false,
     }
+}
+
+/// Whether the projection's `list` declares the node identity `owner_node`.
+fn declares_in(package: &Value, list: &str, owner_node: &str) -> bool {
+    array_or_empty(package, list)
+        .iter()
+        .any(|declared| declared["node"] == owner_node)
 }
 
 /// A clause function's clause kind: the text literal of the one `clause`
@@ -730,7 +772,10 @@ impl<'a> Operand<'a> {
             Self::Object(name) => {
                 let preimage = &node_vector(nodes, name)["preimage"];
                 match (text(preimage, "node_tag"), text(preimage, "semantic_form")) {
-                    ("model", "object_type" | "systems_interface") => Some("object"),
+                    (
+                        "model",
+                        "object_type" | "process" | "state_machine" | "systems_interface",
+                    ) => Some("object"),
                     _ => None,
                 }
             }
@@ -1112,12 +1157,12 @@ fn tc_280_frame_field_entries_resolve_among_exposed_fields() {
     }
 }
 
-/// FR-342-AC-4 over one anchor case: the context is an object type, and
-/// the operation resolves among its exposed operation members to one the
+/// FR-342-AC-4 over one anchor case: the context is an object type, a process
+/// or a state machine, and the operation resolves among its exposed operation members to one the
 /// context itself declares.
 fn anchor_operation(package: &Value, nodes: &[Value], context: &str, operation: &str) -> Value {
     let form = text(&node_vector(nodes, context)["preimage"], "semantic_form");
-    if form != "object_type" {
+    if !matches!(form, "object_type" | "process" | "state_machine") {
         return refused("invalid_model_binding", "malformed-declaration");
     }
     let resolved = resolve_member(
@@ -1187,6 +1232,25 @@ fn clause_signature(package: &Value, nodes: &[Value], case: &Value) -> Option<Ve
     Some(signature)
 }
 
+/// The decision of one clause signature case: admitted exactly when the
+/// supplied parameter list is the one FR-341 derives.
+fn clause_decision(package: &Value, nodes: &[Value], case: &Value) -> Value {
+    let supplied: Vec<Value> = array(case, "parameters")
+        .iter()
+        .map(|parameter| match parameter["reference"].as_str() {
+            Some(name) => {
+                json!({"type": "Reference", "target": node_vector(nodes, name)["sha256"]})
+            }
+            None => parameter.clone(),
+        })
+        .collect();
+    if clause_signature(package, nodes, case).as_ref() == Some(&supplied) {
+        json!({"admitted": true})
+    } else {
+        ineligible()
+    }
+}
+
 #[trace("TC-280", "FR-341-AC-5")]
 #[test]
 fn tc_280_a_clause_binds_self_result_and_parameters_of_its_operation() {
@@ -1194,21 +1258,12 @@ fn tc_280_a_clause_binds_self_result_and_parameters_of_its_operation() {
     let package = &vectors["domain_package"];
     let nodes = array(&vectors, "model_declaration_nodes");
     for case in array(&vectors, "clause_signature_cases") {
-        let supplied: Vec<Value> = array(case, "parameters")
-            .iter()
-            .map(|parameter| match parameter["reference"].as_str() {
-                Some(name) => {
-                    json!({"type": "Reference", "target": node_vector(nodes, name)["sha256"]})
-                }
-                None => parameter.clone(),
-            })
-            .collect();
-        let decided = if clause_signature(package, nodes, case).as_ref() == Some(&supplied) {
-            json!({"admitted": true})
-        } else {
-            ineligible()
-        };
-        assert_eq!(decided, case["expected"], "{}", text(case, "name"));
+        assert_eq!(
+            clause_decision(package, nodes, case),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
     }
 }
 
@@ -1937,4 +1992,153 @@ fn tc_280_a_declaration_refusal_retains_the_nodes_origin_verbatim() {
     }])));
     let (_, _, _, origin) = read_relationships_retaining(&document).expect_err("a missing origin");
     assert_eq!(origin, None);
+}
+
+/// A `model` wire node of `form` owned by `owner_node` of the selected
+/// package, keyed by its own preimage as QSL FR-094 keys a model declaration
+/// node.
+fn owner_form_node(package: &Value, case: &Value) -> Value {
+    let id = |digest: &str| json!({"domain": NODE_DOMAIN, "digest": digest});
+    let mut node = json!({
+        "node_id": id(""),
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": case["node_tag"],
+        "semantic_form": case["semantic_form"],
+        "semantic_type": id(""),
+        "dependencies": [],
+        "occurrences": [{"role": "generated", "ordinal": 0}],
+        "body": {"term": "aggregate", "members": []},
+        "owner": {
+            "kind": "model",
+            "identity": package["identity"],
+            "node": case["owner_node"],
+        },
+    });
+    let key = wire_key(&node);
+    node["node_id"] = id(&key);
+    node["semantic_type"] = id(&key);
+    node
+}
+
+/// FR-322-AC-72: a process, a state machine and a persistence interface are
+/// model declaration nodes. Each preimage validates against the closed
+/// `ModelDeclarationNode` schema and recovers its declaration, and the owner
+/// join admits a node exactly when the selected document declares its owner as
+/// the node's own kind.
+#[trace("TC-280", "FR-322-AC-72")]
+#[test]
+fn tc_280_process_state_machine_and_persistence_owners_join_the_selected_document() {
+    let vectors = parsed(OWNER_FORMS);
+    let schema =
+        jsonschema::validator_for(&parsed(PREIMAGE_SCHEMA)).expect("node preimage schema is valid");
+    let package = &vectors["domain_package"];
+    for vector in array(&vectors, "model_declaration_nodes") {
+        let name = text(vector, "name");
+        let preimage = &vector["preimage"];
+        schema
+            .validate(preimage)
+            .unwrap_or_else(|error| panic!("{name} validates: {error}"));
+        assert_eq!(digest(preimage), text(vector, "sha256"), "{name} digest");
+        assert!(
+            recover(
+                package,
+                text(vector, "sha256"),
+                text(preimage, "node_tag"),
+                text(preimage, "semantic_form"),
+            )
+            .is_some(),
+            "{name} recovers its declaration"
+        );
+    }
+    for case in array(&vectors, "owner_cases") {
+        assert_eq!(
+            read_wire(package, &owner_form_node(package, case)),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
+    }
+}
+
+/// FR-340-AC-19: a frame field entry resolves among the exposed fields of a
+/// process or a state machine, own and inherited; a persistence interface and
+/// a systems interface are not field-declaring frame entries.
+#[trace("TC-280", "FR-340-AC-19")]
+#[test]
+fn tc_280_frame_field_entries_resolve_among_the_fields_of_a_process_or_state_machine() {
+    let vectors = parsed(OWNER_FORMS);
+    let package = &vectors["domain_package"];
+    let nodes = array(&vectors, "model_declaration_nodes");
+    for case in array(&vectors, "frame_field_cases") {
+        let declaration = text(case, "declaration");
+        let form = text(
+            &node_vector(nodes, declaration)["preimage"],
+            "semantic_form",
+        );
+        let decided = if matches!(
+            form,
+            "object_type" | "record_value_type" | "process" | "state_machine"
+        ) {
+            match resolve_member(
+                package,
+                nodes,
+                declaration,
+                "fields",
+                text(case, "field"),
+                refused("missing_declaration", "missing-name"),
+            ) {
+                Ok((_, identity, _)) => json!({"resolves": identity}),
+                Err(refusal) => refusal,
+            }
+        } else {
+            refused("invalid_model_binding", "malformed-declaration")
+        };
+        assert_eq!(decided, case["expected"], "{}", text(case, "name"));
+    }
+}
+
+/// FR-342-AC-7 to FR-342-AC-9: an anchor's operation resolves among the
+/// operations its object type, process or state machine declares itself; a
+/// persistence interface and a systems interface are not contexts.
+#[trace("TC-280", "FR-342-AC-7")]
+#[trace("TC-280", "FR-342-AC-8")]
+#[trace("TC-280", "FR-342-AC-9")]
+#[test]
+fn tc_280_an_anchor_context_is_an_object_type_a_process_or_a_state_machine() {
+    let vectors = parsed(OWNER_FORMS);
+    let package = &vectors["domain_package"];
+    let nodes = array(&vectors, "model_declaration_nodes");
+    for case in array(&vectors, "anchor_cases") {
+        assert_eq!(
+            anchor_operation(
+                package,
+                nodes,
+                text(case, "context"),
+                text(case, "operation")
+            ),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
+    }
+}
+
+/// FR-341-AC-11 and FR-341-AC-12: `self` is `Reference<C>` for a process and a
+/// state machine as for an object type, and the clause binds the operation's
+/// result and parameters in the same order.
+#[trace("TC-280", "FR-341-AC-11")]
+#[trace("TC-280", "FR-341-AC-12")]
+#[test]
+fn tc_280_a_clause_on_a_process_or_state_machine_binds_self_result_and_parameters() {
+    let vectors = parsed(OWNER_FORMS);
+    let package = &vectors["domain_package"];
+    let nodes = array(&vectors, "model_declaration_nodes");
+    for case in array(&vectors, "clause_signature_cases") {
+        assert_eq!(
+            clause_decision(package, nodes, case),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
+    }
 }
