@@ -77,17 +77,17 @@ The reader checks, for one role, in this order:
    `record_value_type`, `event_type`, `variant_type` or any node that is not
    a `model` node is not a role's model. The locus is the target.
 2. **Replication shape.** `until` is present exactly when `lifetime` is
-   `until`, else the published schema is violated. `max` is at least 1, else
-   `invalid_package`/`invalid-value` at `max`.
+   `until`, else the layout is violated (`malformed_wire`). `max` is at least 1, else
+   `ill_typed`/`type-mismatch` at `max`, retaining `expected` and `actual`.
 3. **Binder.** The `binder` target is a declared dependency, else
    `missing_declaration`/`missing-name`, and a `value`/`parameter` node, else
    `invalid_model_binding`/`malformed-declaration`; its `semantic_type` is the
    `composite_type`/`reference` node over the `model` target, else
-   `ill_typed`/`operator-ineligible` at the role node.
+   `ill_typed`/`type-mismatch` at the role node, retaining `expected` and
+   `actual`.
 4. **Lifetime.** The `until` term is a Boolean term, else
-   `ill_typed`/`operator-ineligible` at the role node, and reads at most the
-   binders of the `role-lifetime` stage (FR-464), else
-   `missing_declaration`/`missing-name`.
+   `ill_typed`/`non-boolean-root` at the role node. Its reads are a slot
+   check (FR-464 step 6, stage `role-lifetime`).
 
 A role has no internality member: neither the source nor this body spells
 `internal` or `external`, so a role carries none.
@@ -131,16 +131,16 @@ The reader checks, for one channel, in this order:
    `event_type` or `variant_type`, else `invalid_model_binding`/
    `malformed-declaration`.
 3. **Ordering.** For `fifo`, `binder` and `key` are present, else the
-   published schema is violated; `binder` is a declared `value`/`parameter`
+   layout is violated (`malformed_wire`); `binder` is a declared `value`/`parameter`
    dependency whose `semantic_type` is the `carries` target, else
-   `ill_typed`/`operator-ineligible` at the channel node. `key` is
-   *binders-only* at the `channel-key` stage: it reads the message binder and
-   constants and nothing else, else `missing_declaration`/`missing-name`
-   (FR-464), and no model state, else `ill_typed`/`operator-ineligible` at the
-   read, naming the key. The type of `key` is equality-stable (FR-322
-   "Equality-stable types"), else `ill_typed`/`operator-ineligible` at the
-   channel node, retaining the operator `=` and the type. For `unordered`,
-   `binder` and `key` are absent.
+   `ill_typed`/`type-mismatch` at the channel node, retaining `expected` and
+   `actual`. The type of `key` is equality-stable (FR-322 "Equality-stable
+   types"), else `ill_typed`/`operator-ineligible` at the key, retaining the
+   operator `=` and the type. `key` is a slot that bars model state at the
+   `channel-key` stage (FR-464 step 6): it reads the message binder and
+   constants, so a read of a capture is `missing_declaration`/`missing-name`
+   and a read of `over` or of model state `ill_typed`/`operator-ineligible`.
+   For `unordered`, `binder` and `key` are absent.
 
 ## Queue
 
@@ -169,7 +169,7 @@ dependency, else `missing_declaration`/`missing-name`, and a
 `protocol`/`channel` node of the same clause, else
 `invalid_model_binding`/`malformed-declaration`; then `capacity` has `value`
 for `literal` and `name` for `symbolic` and no other member, else the
-published schema is violated. The one-queue-per-channel rule is FR-464's
+layout is violated (`malformed_wire`). The one-queue-per-channel rule is FR-464's
 membership check.
 
 ## Finish
@@ -190,13 +190,14 @@ predicate and has two arguments, in this order:
   absence of a violation does not meet it.
 - **Readable binders.** `constraint` reads the binders readable after the
   root control ([FR-466](FR-466-checked-package-protocol-control-bodies.md)
-  "Binder scope") and `binder`.
+  "Binder scope") and `binder`; it may read `over`. The closing record's
+  type is the type the source declares and no check constrains it.
 
 The reader checks that `binder` is a declared `value`/`parameter`
 dependency, else `missing_declaration`/`missing-name` or
-`invalid_model_binding`/`malformed-declaration`; that `constraint` is a
-Boolean term, else `ill_typed`/`operator-ineligible` at the node; and the
-readable binders, else `missing_declaration`/`missing-name`. A clause names
+`invalid_model_binding`/`malformed-declaration`; and that `constraint` is a
+Boolean term, else `ill_typed`/`non-boolean-root` at the node. Its reads are
+a slot check (FR-464 step 6, stage `finish`). A clause names
 exactly one `finish` node, in its `finish` argument.
 
 ## Terminal
@@ -219,9 +220,13 @@ intended terminal states and has two arguments, in this order:
   `ambiguous-name`, as FR-464 refuses equal declarations.
 
 The reader checks that `condition` is present exactly when `mode` is `when`,
-else the published schema is violated; that it is a Boolean term, else
-`ill_typed`/`operator-ineligible` at the node; and that it reads at most
-`C0`, else `missing_declaration`/`missing-name`.
+else the layout is violated (`malformed_wire`); and that
+it is a Boolean term, else `ill_typed`/`non-boolean-root` at the node. Its reads
+are a slot check (FR-464 step 6, stage `terminal`): it reads constants and the
+model observation and no protocol binder or capture, so a read of one
+refuses `missing_declaration`/`missing-name`. Under `activation on each` a
+terminal state can have no live instance, which is why no instance binder is
+readable there.
 
 ## Runtime subjects
 
@@ -253,13 +258,13 @@ runtime dimension of the control's key and are not a member of any node.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-465-AC-1 | A static role is admitted with an empty `replication` Group and a `model` target that is an object type, process, state machine, systems interface or persistence interface; a role on a `record_value_type`, `event_type`, `variant_type` or non-`model` node refuses `invalid_model_binding`/`malformed-declaration` at the target, and an absent target `missing_declaration`/`missing-name`. | Test (TC-947) |
-| FR-465-AC-2 | A replicated role is admitted with `population`, `max` of at least 1, a `binder` of type `Reference<model>` and each lifetime; `until` is present exactly with `lifetime: until`; `max: 0` refuses `invalid_package`/`invalid-value`, a binder of another type `ill_typed`/`operator-ineligible`, and an `until` term reading a run-tree binder `missing_declaration`/`missing-name`. | Test (TC-947) |
-| FR-465-AC-3 | A channel is admitted with two roles of its clause, a message type, `unordered` or `fifo` with its message binder and key, and one of the four delivery premises; an endpoint that is not a role of the clause, a message type that is not a type node, a FIFO binder of a type other than `carries`, a key that reads a capture, `over` or model state, a key of a type without stable equality (a float or a type holding one or an event) such as a `float64`, a `fifo` without `key` and an `unordered` with one refuse as the reader order states. | Test (TC-947) |
-| FR-465-AC-4 | No channel premise defaults: a channel missing `delivery`, `ordering`, `from`, `to` or `carries` fails the published schema; `exactly-once-premise` and `unknown` are distinct admitted spellings, and another delivery spelling fails the schema. | Test (TC-947) |
-| FR-465-AC-5 | A queue is admitted with a `literal` capacity and a `symbolic` capacity and each overflow policy, carries occurrences of role `generated` and no `declaration`, and depends only on its channel; a `literal` capacity with `name`, a `symbolic` capacity with `value`, an unknown overflow spelling and a negative capacity fail the published schema; a `channel` target that is not a channel of the clause refuses as the reader order states. | Test (TC-947) |
-| FR-465-AC-6 | A `finish` node is admitted with a closing-record binder and a Boolean constraint that reads the binders readable after the root control; a non-Boolean constraint refuses `ill_typed`/`operator-ineligible` and a read of a binder of an unjoined branch `missing_declaration`/`missing-name`; a clause's `finish` argument naming a `terminal` node refuses `invalid_model_binding`/`malformed-declaration` at the target, and a `finish` node the clause does not name refuses `invalid_semantic_graph`. | Test (TC-947) |
-| FR-465-AC-7 | A `terminal` node is admitted as `when` with a condition and as `any` with none; a `when` without a condition and an `any` with one fail the published schema; a second `terminal` node of one clause refuses `ambiguous_declaration`/`ambiguous-name`. | Test (TC-947) |
-| FR-465-AC-8 | The package carries no instance, ordinal, delivery, observation or internality member: the runtime subject kinds of the "Runtime subjects" table are a function of the operators, an added `internal`/`external` member fails the published schema, and the package compiles with no workflow instance, delivery or clock observation. | Test (TC-947) |
+| FR-465-AC-2 | A replicated role is admitted with `population`, `max` of at least 1, a `binder` of type `Reference<model>` and each lifetime; `until` is present exactly with `lifetime: until`; `max: 0` refuses `ill_typed`/`type-mismatch`, a binder of another type `ill_typed`/`type-mismatch`, a non-Boolean `until` `ill_typed`/`non-boolean-root`, and an `until` term reading a run-tree binder `missing_declaration`/`missing-name`. | Test (TC-947) |
+| FR-465-AC-3 | A channel is admitted with two roles of its clause, a message type, `unordered` or `fifo` with its message binder and key, and one of the four delivery premises; an endpoint that is not a role of the clause, a message type that is not a type node, a FIFO binder of a type other than `carries` (`ill_typed`/`type-mismatch`), a key that reads a capture (`missing_declaration`/`missing-name`), `over` or model state (`ill_typed`/`operator-ineligible`), a key of a type without stable equality (a float or a type holding one or an event) such as a `float64`, a `fifo` without `key` and an `unordered` with one refuse as the reader order states. | Test (TC-947) |
+| FR-465-AC-4 | No channel premise defaults: a channel missing `delivery`, `ordering`, `from`, `to` or `carries` refuses `malformed_wire`; `exactly-once-premise` and `unknown` are distinct admitted spellings, and another delivery spelling refuses `malformed_wire`. | Test (TC-947) |
+| FR-465-AC-5 | A queue is admitted with a `literal` capacity and a `symbolic` capacity and each overflow policy, carries occurrences of role `generated` and no `declaration`, and depends only on its channel; a `literal` capacity with `name`, a `symbolic` capacity with `value`, an unknown overflow spelling and a negative capacity refuse `malformed_wire`; a `channel` target that is not a channel of the clause refuses as the reader order states. | Test (TC-947) |
+| FR-465-AC-6 | A `finish` node is admitted with a closing-record binder and a Boolean constraint that reads the binders readable after the root control; a non-Boolean constraint refuses `ill_typed`/`non-boolean-root` and a read of a binder of an unjoined branch `missing_declaration`/`missing-name`; a clause's `finish` argument naming a `terminal` node refuses `invalid_model_binding`/`malformed-declaration` at the target, and a `finish` node the clause does not name refuses `invalid_semantic_graph`. | Test (TC-947) |
+| FR-465-AC-7 | A `terminal` node is admitted as `when` with a condition and as `any` with none; a `when` without a condition and an `any` with one refuse `malformed_wire`; a second `terminal` node of one clause refuses `ambiguous_declaration`/`ambiguous-name`. | Test (TC-947) |
+| FR-465-AC-8 | The package carries no instance, ordinal, delivery, observation or internality member: the runtime subject kinds of the "Runtime subjects" table are a function of the operators, an added `internal`/`external` member refuses `malformed_wire`, and the package compiles with no workflow instance, delivery or clock observation. | Test (TC-947) |
 
 ## Dependencies
 

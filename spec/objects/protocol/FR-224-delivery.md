@@ -30,8 +30,7 @@ satisfy and from the receipt records that provide observation provenance.
   delivery cardinality this delivery counts against. FR-054 binds "delivery
   cardinality" as an explicit conformance premise of the channel, and the
   [choreography surface](../../../proposals/quire-v1/choreography-surface.md)
-  states that "Channel `delivery [a,b]` declares inclusive per-send delivery
-  cardinality with `0 <= a <= b` and finite b".
+  states the channel's delivery policy.
 - **channel** ([FR-215](FR-215-protocol-channel.md)) — the channel whose sender,
   receiver, message types, ordering policy, delivery cardinality and duplication
   premises ([FR-216](FR-216-channel-premise.md)) are bound by FR-054.

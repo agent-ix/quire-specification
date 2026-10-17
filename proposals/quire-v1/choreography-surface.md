@@ -34,10 +34,11 @@ model declaration kinds. The imported domain package supplies those
 declarations, as the spec's artifacts declare them; the compiler refuses a kind
 mismatch or a name absent from the domain package instead of inventing a model.
 
-Channel `delivery [a,b]` declares inclusive per-send delivery cardinality with
-`0 <= a <= b` and finite b. `[0,3]` permits loss and bounded duplicate delivery;
-`[1,3]` requires at least one delivery on a complete assessed history; `[1,1]`
-states an exactly-one-delivery premise. None promises exactly one business effect.
+Channel `delivery` declares the delivery policy: `unknown`, `at-most-once`,
+`at-least-once` or `exactly-once-premise` (an authored premise, never a
+transport guarantee). `capacity` and `overflow` bound the channel's queue.
+`unknown` permits loss and duplication; `at-least-once` permits duplication;
+`at-most-once` permits loss. None promises exactly one business effect.
 `unordered` adds no FIFO edge. `fifo by (m: M::Message) { m.key }` declares FIFO
 only within that channel and exact typed key. The key expression is total and
 read-only; its result must admit stable equality under the selected model type.
@@ -204,7 +205,7 @@ protocol OrderFlow using P
   relationship ShipmentOwner = M::OrderShipment;
   channel Charges from Orders to Payments carries M::ChargeRequest
       ordering fifo by (message: M::ChargeRequest) { message.order }
-      delivery [0,3];
+      delivery unknown capacity 4 overflow reject;
   requires temporal OrderClosureBounded;
 
   compensate Refund for Main::Applied as (forward: M::ChargeEffect)

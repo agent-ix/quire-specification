@@ -87,34 +87,35 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | V3 | the `Orders` role node's operator is `channel` | `ill_typed`/`operator-ineligible` at the node (operator of another form) |
 | V4 | the `Orders` node's `semantic_form` is `control` with the `role` operator | `ill_typed`/`operator-ineligible` at the node |
 | V5 | a `quire.op.protocol.control` application nested as an argument of `Main` | `malformed_wire` at the nested application (strict wire validation) |
-| V6 | a `protocol_reference` carrier's body is a `quire.op.protocol.control` application | fails the V2 schema (`malformed_wire`) |
+| V6 | a `protocol_reference` carrier's body is a `quire.op.protocol.control` application | refuses `malformed_wire` (`malformed_wire`) |
 | V7 | `Requested`'s member operator is `jump` | `invalid_package`/`operation-member-mismatch` at the application |
 | V8 | `Requested`'s member is `null` | `invalid_package`/`operation-member-mismatch` |
 | V9 | `Requested`'s `laws` is empty | `invalid_package`/`operation-law-missing` |
 | V10 | `Requested`'s law names the package's `temporal_profile` definition | `invalid_package`/`operation-law-mismatch` |
 | V11 | the lock has no `protocol_profile` row | `invalid_package`/`operation-law-unselected` |
-| V12 | `Requested` has two laws | fails the V2 schema (`malformed_wire`) |
+| V12 | `Requested` has two laws | refuses `malformed_wire` (`malformed_wire`) |
 | V13 | `Requested`'s `result_type` and `semantic_type` are the integer node | `ill_typed`/`operator-ineligible` at the operation step (a clause result is Boolean) |
 | V14 | a state clause's condition references `Requested` | `ill_typed`/`operator-ineligible` at the state clause node |
 | V15 | a diagnostic's `details` references a `role` node | `ill_typed`/`operator-ineligible` at `/diagnostics/entries/{e}/details/{d}` |
-| V16 | the lock selects no `temporal_profile`; the package keeps `Shipments`' sibling `await` and the `Refund` template | `missing_declaration`/`missing-selection` at the first such node in ascending digest order |
+| V16 | the lock selects no `temporal_profile` (the base's `Refund` template reads a clock role) | `missing_declaration`/`missing-selection` at the `Refund` node |
 
 ## Keys and declarations
 
 | Vector | Edit to the base | Expected |
 | --- | --- | --- |
-| K1 | reformat the source; add a comment; add a second source reference to the protocol | every node key and the `package_id` unchanged; the carrier gains one `expression` occurrence |
+| K1 | reformat the source; add a comment; add a second source reference to the protocol; declare the roles in another source order | every node key and the `package_id` unchanged; the carrier gains one `expression` occurrence |
 | K2 | rename role `Fulfillment` to `Shipping` | the role's node key, every node that references it and the `package_id` change |
-| K3 | swap `Orders` and `Payments` in the clause's `roles` list | the clause node key and the `package_id` change; no role node key changes |
+| K3 | swap `Orders` and `Payments` in the clause's `roles` set | `invalid_semantic_graph` at the clause node (a set out of ascending digest order); no role node key changes |
+| K13 | list `Outcome.cases` with `shipped` before `failed`'s sorted position; and, separately, swap two independent `children` of `Finalized`'s holder | the unsorted `cases` is `invalid_semantic_graph` at `Outcome`; swapping two `children` of a `sequence` changes the sequence's key and the `package_id` |
 | K4 | change `max 3` to `max 4` | `Poll`'s node key, its ancestors' keys and the `package_id` change |
 | K5 | retarget `Applied`'s `of` from `Charged` to `Requested` | `Applied`'s node key changes and the reader refuses `invalid_model_binding`/`malformed-declaration` at the target (not an `attempt`) |
 | K6 | a role `Main`, a channel `Main`, a template `Main` and the root control `Main` | admitted: four distinct declarations (`role`, `channel`, `compensate`, `run` segments) |
 | K7 | two roles named `Orders` | `ambiguous_declaration`/`ambiguous-name` naming both node keys |
 | K8 | two controls on one path named `Done` | `ambiguous_declaration`/`ambiguous-name` naming both node keys |
 | K9 | a node's retained key differs from the digest of its preimage | `invalid_package`/`stale-node-key` at the node, before any protocol check |
-| K10 | a protocol node carries a `recursion_group` | fails the V2 schema (`malformed_wire`) |
-| K11 | a `queue` node carries a `declaration` | fails the V2 schema (a `generated`-only node carries no declaration) |
-| K12 | a `role` node has no `declaration` occurrence | fails the V2 schema (`declaration` is present exactly with a `declaration` occurrence) |
+| K10 | a protocol node carries a `recursion_group` | refuses `malformed_wire` (`malformed_wire`) |
+| K11 | a `queue` node carries a `declaration` | refuses `malformed_wire` (a `generated`-only node carries no declaration) |
+| K12 | a `role` node has no `declaration` occurrence | refuses `malformed_wire` (`declaration` is present exactly with a `declaration` occurrence) |
 
 ## Clause body
 
@@ -124,11 +125,11 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | C2 | `activation on origin` | `activation` is `{kind: origin}`; admitted |
 | C3 | a protocol with no relationship, requirement, compensation, `terminal` or `scheduling` | empty lists and absent optionals; admitted |
 | C4 | `scheduling` removed from the base | the clause node key and the `package_id` change |
-| C5 | `roles` and `channels` swapped in the body | fails the V2 schema (binding names out of order) |
-| C6 | the `finish` binding missing | fails the V2 schema |
-| C7 | `over` is a `literal` | fails the V2 schema |
-| C8 | `activation.kind` is `always` | fails the V2 schema |
-| C9 | `activation` is `origin` and carries `trigger` | fails the V2 schema |
+| C5 | `roles` and `channels` swapped in the body | refuses `malformed_wire` (binding names out of order) |
+| C6 | the `finish` binding missing | refuses `malformed_wire` |
+| C7 | `over` is a `literal` | refuses `malformed_wire` |
+| C8 | `activation.kind` is `always` | refuses `malformed_wire` |
+| C9 | `activation` is `origin` and carries `trigger` | refuses `malformed_wire` |
 | C10 | `requirements` names a `state`/`state_clause` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | C11 | `relationships` names a `protocol`/`role` node | `invalid_model_binding`/`wrong-export` at the target, retaining required kind `relationship`, the actual kind and both keys |
 | C12 | `run` names a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
@@ -155,11 +156,17 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | --- | --- | --- |
 | B1 | none | `view` level 0, `opened` 1, `order` 2, `sent` 3, `got` 4, `charge` 5, `paid` 6 |
 | B2 | `opened`'s `level` is 0 | `invalid_semantic_graph` at the binder (level is the entry count) |
-| B3 | `got`'s `body` has a third binding | fails the V2 schema (the FR-341 binder body is exactly `name`, `level`) |
-| B4 | `got`'s occurrence has role `declaration` | fails the V2 schema (binder occurrences are `expression`) |
+| B3 | `got`'s `body` has a third binding | refuses `malformed_wire` (the FR-341 binder body is exactly `name`, `level`) |
+| B4 | `got`'s occurrence has role `declaration` | refuses `malformed_wire` (binder occurrences are `expression`) |
 | B5 | two binders named `order` readable at one place | `ambiguous_declaration`/`ambiguous-name` at the second binder's introducing node |
 | B6 | the activation guard references capture `order` | `missing_declaration`/`missing-name` at the clause node, `stage` `protocol-activation`, `read` `stage` (the guard reads the activation binder only) |
-| B20 | the activation guard references `view` (`over`) | `missing_declaration`/`missing-name`, `read` `stage` |
+| B20 | the activation guard references `view` (`over`) | `ill_typed`/`operator-ineligible` at the read, naming the guard (`over` is model state; the refusal precedes the stage table) |
+| B21 | the `Poll` guard references `view` | `ill_typed`/`operator-ineligible` at the read, naming the guard |
+| B22 | the `Poll` guard references the capture `order` | admitted (a guard may read a protocol capture without listing it) |
+| B23 | a protocol capture initializer reads `view` and the activation binder | admitted |
+| B24 | a `check` condition reads `view` | `ill_typed`/`operator-ineligible` at the read |
+| B25 | an event constraint and a `related` end read `view` | admitted |
+| B26 | the `Poll` guard is an integer term | `ill_typed`/`non-boolean-root` at the guard |
 | B7 | the capture initializer references a later capture | `missing_declaration`/`missing-name` at the clause node, `read` `forward` |
 | B8 | `Received`'s constraint reads `sent` | admitted (a successor reads its predecessor's binder) |
 | B9 | `East`'s constraint reads `westRes` | `missing_declaration`/`missing-name` at `East` (sibling branches read nothing of each other) |
@@ -201,10 +208,13 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | O4 | `M2` and `B6` | the membership defect `M2` is reported |
 | O5 | `R2` and `B9` | the cycle `R2` is reported (the causal relation precedes binder scope) |
 | O6 | `V7` and an operation-step defect on another node | `invalid_package`/`operation-member-mismatch` (protocol step) is reported before the operation-step defect |
+| O7 | `R2` (cycle) and `B14` (a model-state read in a guard) | the cycle `R2` is reported (cycle and progress precede the slot checks) |
+| O8 | one guard that reads `view` and an unlisted fact `eastRes.ok` | `ill_typed`/`operator-ineligible` (the `over` refusal precedes the decision-fact check) |
+| O9 | one guard that reads an out-of-scope binder and an unlisted fact | `missing_declaration`/`missing-name` (the scope refusal precedes the decision-fact check) |
 
 ## Expected Results
 
-1. V1 is admitted, as are K1, K6, B1, B8, B10, B12, B17, B18, R1, R3, R6 and
+1. V1 is admitted, as are K1, K6, B1, B22, B23, B25, B8, B10, B12, B17, B18, R1, R3, R6 and
    R10 to R12; their keys and identities are as stated (FR-464-AC-1,
    FR-464-AC-3, FR-464-AC-5, FR-464-AC-9, FR-464-AC-10).
 2. V2 to V6, V15 and the placement vectors refuse as listed; V7 to V13 refuse
@@ -214,9 +224,9 @@ node and the `value`/`parameter` binder nodes. The binders have levels
    (FR-464-AC-3, FR-464-AC-4).
 4. C1 to C13 hold (FR-464-AC-5, FR-464-AC-6).
 5. M1 to M10 refuse as listed (FR-464-AC-4, FR-464-AC-6).
-6. B2 to B19 behave as listed (FR-464-AC-7, FR-464-AC-8).
+6. B2 to B26 behave as listed (FR-464-AC-7, FR-464-AC-8).
 7. R2, R4, R5 refuse `definition-cycle`; R7 to R9 refuse `declaration-form`;
    R1, R3, R6 and R10 to R12 are admitted (FR-464-AC-9, FR-464-AC-10).
-8. O1 to O6 report the first defect in the reader order of FR-464
+8. O1 to O9 report the first defect in the reader order of FR-464
    (FR-464-AC-12).
 Assertions compare typed fields, causes and pointers, never message text.

@@ -192,7 +192,12 @@ boundary.
   Include `R` in the graph and identity
   projection in typed-key order and in the source map (for the example, `R`'s
   occurrences in ascending ordinal, which is not a requirement), then recompute `package_id`;
-  the reader admits this package and resolves `R` to `P`. Replacing
+  the reader admits this package and resolves `R` to `P`. `P` here is the
+  clause node published before
+  [FR-464](FR-464-checked-package-protocol-node-bodies.md) fixed the clause
+  body; the carrier's rules read `P`'s tag, form and type and not its body, so
+  the example stands, and regenerating `P` with an FR-464 body changes `P`'s key
+  and the carrier's digest and nothing else about the example. Replacing
   `R.body.target` and its sole dependency together with a local non-protocol
   node's key, or with a key absent from the graph, while recomputing the
   carrier and package identities,

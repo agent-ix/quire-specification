@@ -42,7 +42,7 @@ occurrence identity and FIFO key. `send` appends when capacity permits;
 creates a new occurrence linked to its source only when duplication is allowed;
 and `lose` removes an occurrence only when loss is allowed. At full capacity,
 `reject` leaves state unchanged with a rejected send, `block` leaves a pending
-send, and `loss` applies the declared head/tail/new-message loss selector.
+send, and `loss` admits the send and loses the new message: the queue is unchanged and the send's binder records the loss.
 At-most-once prohibits duplication, at-least-once requires eventual delivery or
 an explicit nonprogress result, and exactly-once requires both plus stable
 message identity. Unknown premises support none of those conclusions.

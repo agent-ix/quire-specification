@@ -182,7 +182,9 @@ role         = 'role', ident, 'on', model-name, ';' ;
 relationship = 'relationship', ident, '=', model-name, ';' ;
 channel      = 'channel', ident, 'from', ident, 'to', ident,
                'carries', type-name, 'ordering', ordering,
-               'delivery', interval, ';' ;
+               'delivery', delivery-policy,
+               'capacity', capacity,
+               'overflow', overflow-policy, ';' ;
 ordering     = 'unordered'
              | 'fifo', 'by', '(', parameter, ')', block ;
 protocol-requirement = 'requires', 'temporal', ident, ';' ;

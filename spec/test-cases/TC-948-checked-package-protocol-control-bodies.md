@@ -16,7 +16,7 @@ relationships:
 Schema and reader vectors for the thirteen `protocol`/`control` operators and
 the `protocol`/`compensation` node: argument layouts, labels, joins,
 progress, binder scope and the compensation checks. Scope: FR-466-AC-1 to
-FR-466-AC-13.
+FR-466-AC-14.
 
 ## Test Procedure
 
@@ -44,15 +44,15 @@ FR-466-AC-13.
 | L7 | `fence` with `ordering` each of `acquire`, `release`, `acq_rel`, `seq_cst` | admitted: four distinct node keys |
 | L8 | `repeat` with `maximum` and `exhausted`; with `proof`; with both; with neither | admitted |
 | L9 | `event` with and without a `compensation`; `commit`; `check` | admitted |
-| L10 | `Requested`'s two top-level arguments swapped | fails the V2 schema (binding names out of order) |
-| L11 | a binding missing from `Charged`; a surplus binding on `Applied` | fails the V2 schema |
-| L12 | `fence` with `ordering: relaxed` | fails the V2 schema |
-| L13 | `attempt` `ordering: strong` | fails the V2 schema |
-| L14 | `parallel` `memory: pso` | fails the V2 schema |
-| L15 | `parallel` `outstanding: abort` | fails the V2 schema |
-| L16 | `parallel` `join.policy: majority` | fails the V2 schema |
-| L17 | a `join` with `policy: all` carrying a `count` | fails the V2 schema |
-| L18 | a `join` with `policy: quorum` and no `count`; with `policy: predicate` and no `predicate` | fails the V2 schema |
+| L10 | `Requested`'s two top-level arguments swapped | refuses `malformed_wire` (binding names out of order) |
+| L11 | a binding missing from `Charged`; a surplus binding on `Applied` | refuses `malformed_wire` |
+| L12 | `fence` with `ordering: relaxed` | refuses `malformed_wire` |
+| L13 | `attempt` `ordering: strong` | refuses `malformed_wire` |
+| L14 | `parallel` `memory: pso` | refuses `malformed_wire` |
+| L15 | `parallel` `outstanding: abort` | refuses `malformed_wire` |
+| L16 | `parallel` `join.policy: majority` | refuses `malformed_wire` |
+| L17 | a `join` with `policy: all` carrying a `count` | refuses `malformed_wire` |
+| L18 | a `join` with `policy: quorum` and no `count`; with `policy: predicate` and no `predicate` | refuses `malformed_wire` |
 | L19 | `Requested`'s member operator is `jump` | `invalid_package`/`operation-member-mismatch` |
 
 ## Sequence, choice and parallel
@@ -62,14 +62,19 @@ FR-466-AC-13.
 | S1 | swap `Requested` and `Charged` in `Main`'s `children` | `Main`'s node key and the `package_id` change; the reader refuses `definition-cycle` for the `receive`/`send` edge (`Requested` and `Received`) |
 | S2 | a child of `Main` that is a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | S3 | a child of `Main` that is absent from `dependencies` | `missing_declaration`/`missing-name` at the target |
-| CE1 | `Outcome` with one case | fails the V2 schema (at least two cases) |
+| CE1 | `Outcome` with one case | refuses `malformed_wire` (at least two cases) |
 | CE2 | two cases labelled `shipped` | `ambiguous_declaration`/`ambiguous-name` at `Outcome`, naming the label |
 | CE3 | the `shipped` guard dereferences a model object | `ill_typed`/`operator-ineligible` at the read |
-| CE4 | the `shipped` guard is an integer term | `ill_typed`/`operator-ineligible` at `Outcome` |
+| CE4 | the `shipped` guard is an integer term | `ill_typed`/`non-boolean-root` at `Outcome` |
 | CE5 | `owner` names a channel | `invalid_model_binding`/`malformed-declaration` at the target |
-| CE6 | `visible` empty | admitted |
+| CE6 | `visible` empty, guards over constants and the capture `order` only | admitted |
+| CE6b | `visible` empty, a guard reads `eastRes.ok` | `wrong_snapshot`/`wrong-observation`, `reason` `unlisted` |
+| CE8 | `cases` listed `shipped`, `failed` (not in ascending label order) | `invalid_semantic_graph` |
+| CE9 | `visible` entries out of digest order; a repeated entry | `invalid_semantic_graph` |
+| CE10 | `contracts` out of digest order; `related` out of order; a repeated `related` entry | `invalid_semantic_graph` |
+| CE11 | the same `eastRes.ok` node listed in `Outcome.visible` and `Poll.visible` | admitted (a shared expression node is not a duplicate declaration) |
 | CE7 | the two guards overlap (`eastRes.ok` and `eastRes.ok or true`) | admitted: the reader does not re-prove exhaustiveness or exclusiveness |
-| PA1 | `Shipments` with one branch | fails the V2 schema (at least two branches) |
+| PA1 | `Shipments` with one branch | refuses `malformed_wire` (at least two branches) |
 | PA2 | two branches labelled `east` | `ambiguous_declaration`/`ambiguous-name` at `Shipments`, naming the label |
 | PA3 | `joined` is `[east, middle]` | `missing_declaration`/`missing-name` at `middle` |
 | PA4 | `join all [east]` | `invalid_package`/`invalid-value` at `joined` |
@@ -86,11 +91,11 @@ FR-466-AC-13.
 | Vector | Edit | Expected |
 | --- | --- | --- |
 | RP1 | `Poll` with `maximum` 3 and `exhausted` | admitted |
-| RP2 | `Poll` with `maximum` and no `exhausted` | fails the V2 schema |
-| RP3 | `Poll` with `exhausted` and no `maximum` | fails the V2 schema |
-| RP4 | `Poll` with `proof` of `invariant` only | fails the V2 schema |
+| RP2 | `Poll` with `maximum` and no `exhausted` | refuses `malformed_wire` |
+| RP3 | `Poll` with `exhausted` and no `maximum` | refuses `malformed_wire` |
+| RP4 | `Poll` with `proof` of `invariant` only | refuses `malformed_wire` |
 | RP5 | `Poll` with `maximum: 0` | admitted |
-| RP6 | `Poll`'s guard is an integer term | `ill_typed`/`operator-ineligible` at `Poll` |
+| RP6 | `Poll`'s guard is an integer term | `ill_typed`/`non-boolean-root` at `Poll` |
 | RP7 | `Poll`'s guard reads model state | `ill_typed`/`operator-ineligible` at the read |
 | RP8 | `Poll` body is a `check` | `unsupported_construct`/`declaration-form` at `Poll` |
 | AW1 | `await ResponseWindow after Requested within [0,30] match Reply then ... timeout ...` with `Reply` a `receive` | admitted |
@@ -101,7 +106,7 @@ FR-466-AC-13.
 | AW6 | `after` `kind: compensation` names `Refund` | admitted; the `await` reads `Refund`'s activation |
 | AW7 | `after` `kind: compensation` names a control | `invalid_model_binding`/`malformed-declaration` at the target |
 | AW8 | the anchor is a control that follows the `await` | `invalid_package`/`definition-cycle` naming the `await` and its anchor |
-| AW9 | `within` is `{lower: 5, upper: 1}` | `unsupported_construct`/`declaration-form` at the interval |
+| AW9 | `within` is `{lower: 5, upper: 1}` | `ill_typed`/`type-mismatch` at the interval, member `within` |
 | AW10 | `then` reads the matched event's binder | admitted |
 | AW11 | `timeout` reads the matched event's binder | `missing_declaration`/`missing-name` at the `await` |
 | AW12 | the `await` was written with no temporal profile in the lock | `missing_declaration`/`missing-selection` |
@@ -111,7 +116,7 @@ FR-466-AC-13.
 | Vector | Edit | Expected |
 | --- | --- | --- |
 | E1 | `Requested` and `Received` over `Charges`, binders typed `M::ChargeRequest` | admitted |
-| E2 | `sent` has type `M::ChargeResponse` | `ill_typed`/`operator-ineligible` at `Requested` |
+| E2 | `sent` has type `M::ChargeResponse` | `ill_typed`/`type-mismatch` at `Requested`, retaining expected and actual |
 | E3 | `Received` receives `Requested` on another channel | `ill_typed`/`operator-ineligible` at `Received` |
 | E4 | `Received.of` names `Charged` (an `attempt`) | `invalid_model_binding`/`malformed-declaration` at the target |
 | E5 | `Received.channel` names a queue node | `invalid_model_binding`/`malformed-declaration` at the target |
@@ -129,7 +134,7 @@ FR-466-AC-13.
 | E17 | `event Compensated by Payments for Refund` | admitted |
 | E18 | the `event`'s `compensation` names a template of another protocol | `invalid_model_binding`/`malformed-declaration` at the target |
 | E19 | `Finalized` is a `commit` by `Orders` | admitted |
-| E20 | a constraint is an integer term | `ill_typed`/`operator-ineligible` at the control |
+| E20 | a constraint is an integer term | `ill_typed`/`non-boolean-root` at the slot |
 | E21 | `Finalized`'s constraint reads `done` | admitted |
 | E22 | `Requested`'s constraint reads `got` (a later control's binder) | `missing_declaration`/`missing-name` at `Requested` |
 
@@ -146,7 +151,8 @@ FR-466-AC-13.
 | BS7 | `Limit` reads `polled` | `missing_declaration`/`missing-name` at `Limit` |
 | BS8 | `Polled` reads `charge` | admitted |
 | BS9 | levels: `sent` is `size(In(Requested))` and `got` is `size(In(Received))`, one greater | admitted; a `got` of the same level as `sent` is `invalid_semantic_graph` |
-| BS10 | a `repeat` and a `choice` guard read `order` and `view` | admitted (binders-only: binders and constants) |
+| BS10 | a `repeat` and a `choice` guard read the capture `order` | admitted (binders-only: binders, captures and constants) |
+| BS11 | a `repeat` and a `choice` guard read `view` | `ill_typed`/`operator-ineligible` at the read (`over` is model state) |
 
 ## Decision facts
 
@@ -158,7 +164,9 @@ FR-466-AC-13.
 | DF4 | the same, owned by `Orders` | `wrong_snapshot`/`wrong-observation`, `reason` `other-role` |
 | DF5 | a guard reads a field of `sent` (a `send` record) | `wrong_snapshot`/`wrong-observation`, `reason` `ineligible-kind` |
 | DF6 | a guard reads a field of `paid` (an `effect` record); of the commit binder; of the finish binder | each `wrong_snapshot`/`wrong-observation`, `reason` `ineligible-kind` |
-| DF7 | a guard reads `view.ready` (the protocol input) | `wrong_snapshot`/`wrong-observation`, `reason` `ineligible-kind` |
+| DF7 | a guard reads `view.ready` (the protocol input) | `ill_typed`/`operator-ineligible` at the read, naming the guard (before the decision-fact table) |
+| DF7b | a guard reads a field of the protocol activation binder `opened` | `wrong_snapshot`/`wrong-observation`, `reason` `ineligible-kind` |
+| DF7c | a guard and a `visible` entry read the capture `order` | admitted without listing |
 | DF8 | a guard reads `eastRes.ok` that no `visible` entry lists individually | `wrong_snapshot`/`wrong-observation`, `reason` `unlisted` |
 | DF9 | `visible` lists the composite `eastRes.ok and westRes.ok` and a guard reads `eastRes.ok` | `wrong_snapshot`/`wrong-observation`, `reason` `unlisted` |
 | DF10 | a `visible` entry reads `sent.ok` | `wrong_snapshot`/`wrong-observation` at the entry, `reason` `ineligible-kind` |
@@ -173,19 +181,20 @@ FR-466-AC-13.
 | CP1 | the base `Refund`: `commit Finalized`, `attempts 3 of M::RefundAttempt` | admitted; thirteen bindings in order |
 | CP2 | `Refund` with `commit never` | admitted; `commit` is an empty optional; the node key differs from CP1's |
 | CP3 | `forward` names `Charged` (an `attempt`) | `invalid_model_binding`/`malformed-declaration` at the target |
-| CP4 | `forward_binder` has a type other than `Applied`'s own binder | `ill_typed`/`operator-ineligible` at the template |
+| CP4 | `forward_binder` has a type other than `Applied`'s own binder | `ill_typed`/`type-mismatch` at the template, retaining expected and actual |
 | CP5 | `role` names a role of another protocol | `invalid_model_binding`/`malformed-declaration` at the target |
 | CP6 | `operation` names a `state`/`state_clause` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | CP7 | `record_type` names a `scalar_type` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | CP8 | `commit` names `Charged` | `invalid_model_binding`/`malformed-declaration` at the target |
-| CP9 | `commit` names an extra `commit` control placed before `Charged` in `Main` | `unsupported_construct`/`declaration-form` at `commit`, reason `commit-precedes-effect` |
-| CP10 | `commit` names a `commit` control on a branch unordered with `Applied` | admitted |
-| CP11 | `attempts.maximum` is `0` | `unsupported_construct`/`declaration-form` at `maximum`, member `attempts`, value `0` |
+| CP9 | `Applied` is moved after `Outcome` and `commit` names an extra `commit` control placed before `Applied` in `Main` (on every path to it) | `unsupported_construct`/`declaration-form` at `commit`, retaining the selected profile and reason `commit-precedes-effect` |
+| CP10 | `commit` names a `commit` control on a new branch of `Shipments` with no edge to `Applied` | admitted |
+| CP10b | `commit` names a `commit` control in one case of a `choice` that precedes `Applied` | admitted (it does not dominate the effect) |
+| CP11 | `attempts.maximum` is `0` | `ill_typed`/`type-mismatch` at `maximum`, member `attempts`, expected a count of at least one, actual `0` |
 | CP12 | `attempts.maximum` is `1` | admitted |
-| CP13 | `within` is `{lower: 31, upper: 30}` | `unsupported_construct`/`declaration-form` at the interval, member `within` |
-| CP14 | `earlier` has type `M::RefundAttempt`, `later` has type `M::Other` | `ill_typed`/`operator-ineligible` at the template |
-| CP15 | `retry.relation` is an integer term | `ill_typed`/`operator-ineligible` at the template |
-| CP16 | the trigger guard reads `forward` | `missing_declaration`/`missing-name` at the template, stage `activation-guard`, `read` `stage` |
+| CP13 | `within` is `{lower: 31, upper: 30}` | `ill_typed`/`type-mismatch` at the interval, member `within`, expected a closed interval with `lower <= upper` |
+| CP14 | `earlier` has type `M::RefundAttempt`, `later` has type `M::Other` | `ill_typed`/`type-mismatch` at the template, retaining expected and actual |
+| CP15 | `retry.relation` is an integer term | `ill_typed`/`non-boolean-root` at the slot |
+| CP16 | the trigger guard reads `forward` | `missing_declaration`/`missing-name` at the template, stage `trigger-guard`, `read` `stage` |
 | CP17 | the trigger guard reads `order` (a clause capture) and the trigger binder | admitted |
 | CP18 | the activation capture reads the trigger and a registration capture | admitted |
 | CP19 | an activation capture reads a later activation capture | `missing_declaration`/`missing-name` at the template |
@@ -198,11 +207,11 @@ FR-466-AC-13.
 | CP26 | two templates named `Refund` | `ambiguous_declaration`/`ambiguous-name` naming both node keys |
 | CP27 | a template that no clause lists | `invalid_semantic_graph` at the template |
 | CP28 | the lock selects no `temporal_profile` | `missing_declaration`/`missing-selection` at the template |
-| CP29 | the trigger guard reads `view` (`over`) | `missing_declaration`/`missing-name`, stage `activation-guard`, `read` `stage` |
-| CP30 | the trigger guard reads the protocol activation binder `opened` | `missing_declaration`/`missing-name`, stage `activation-guard`, `read` `stage` |
-| CP31 | an activation capture reads `view` | `missing_declaration`/`missing-name`, stage `activation-capture` |
-| CP32 | the retry relation reads `view` | `missing_declaration`/`missing-name`, stage `retry` |
-| CP33 | the recovery predicate reads `view` | `missing_declaration`/`missing-name`, stage `recovery` |
+| CP29 | the trigger guard reads `view` (`over`) | `ill_typed`/`operator-ineligible` at the read, naming the guard |
+| CP30 | the trigger guard reads the protocol activation binder `opened` | `missing_declaration`/`missing-name`, stage `trigger-guard`, `read` `stage` |
+| CP31 | an activation capture reads `view` | admitted (an activation capture may read `over`) |
+| CP32 | the retry relation reads `view` | `ill_typed`/`operator-ineligible` at the read, naming the retry relation |
+| CP33 | the recovery predicate reads `view` | `ill_typed`/`operator-ineligible` at the read, naming the recovery predicate |
 | CP34 | a registration capture reads `view`, the activation binder `opened` and a protocol capture | admitted |
 | CP35 | the trigger guard holds a `quire.op.model.deref` | `ill_typed`/`operator-ineligible` at the read, naming the guard |
 | CP36 | a registration capture reads a capture of another template `Other` | `missing_declaration`/`missing-name`, `read` `foreign` |
@@ -210,19 +219,18 @@ FR-466-AC-13.
 
 ## Expected Results
 
-1. L1 to L9 are admitted with the keys stated; L10 to L18 fail the published
-   schema; L19 refuses `operation-member-mismatch` (FR-466-AC-1).
+1. L1 to L9 are admitted with the keys stated; L10 to L18 refuse `malformed_wire`; L19 refuses `operation-member-mismatch` (FR-466-AC-1).
 2. S1 changes the keys stated and refuses `definition-cycle`; S2 and S3
    refuse as listed (FR-466-AC-2).
-3. CE1 to CE5 and CE7 behave as listed; CE6 and CE7 are admitted
+3. CE1 to CE11 behave as listed; CE6, CE7 and CE11 are admitted
    (FR-466-AC-3).
 4. PA1 to PA11 behave as listed (FR-466-AC-4).
 5. RP1 to RP8 behave as listed (FR-466-AC-5, FR-464-AC-10).
 6. AW1 to AW12 behave as listed (FR-466-AC-6).
 7. E1 to E22 behave as listed (FR-466-AC-7, FR-466-AC-8, FR-466-AC-9).
-8. BS1 to BS10 behave as listed (FR-466-AC-10).
-9. CP1 to CP37 behave as listed (FR-466-AC-11, FR-466-AC-12).
-10. DF1 to DF13 behave as listed (FR-466-AC-14).
+8. BS1 to BS11 behave as listed (FR-466-AC-10).
+9. CP1 to CP37 (with CP10b) behave as listed (FR-466-AC-11, FR-466-AC-12).
+10. DF1 to DF13 (with DF7b and DF7c) behave as listed (FR-466-AC-14).
 11. Every admitted vector's node keys are unchanged by reformatting the source
     and by a second reference to the protocol, and change with any retargeted
     reference, renamed control, reordered child or changed literal

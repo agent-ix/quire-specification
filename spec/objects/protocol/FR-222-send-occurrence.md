@@ -40,8 +40,7 @@ When a communication is bound to a protocol instance, the protocol binder SHALL 
 A send is the per-send unit that channel delivery cardinality is stated against:
 FR-054 binds "delivery cardinality" as a channel premise, and the
 [choreography surface](../../../proposals/quire-v1/choreography-surface.md)
-states that "Channel `delivery [a,b]` declares inclusive per-send delivery
-cardinality".
+states the channel's delivery policy.
 
 ## Identity and comparison
 
