@@ -70,11 +70,11 @@ complete-history rule. An unbounded operator has the meaning
 A lower-bounded operator has the offset meaning with no upper bound. At
 position `i`: `eventually[a,*] p` holds when `p` holds at some `j >= i + a`;
 `always[a,*] p` when `p` holds at every `j >= i + a`; `p until[a,*] q` when `q`
-holds at some `j >= i + a` and `p` at every `k` with `i <= k < j`;
+holds at some `j >= i + a` and `p` at every `k` with `i + a <= k < j`;
 `p release[a,*] q` is `not (not p until[a,*] not q)`. `once[a,*] p` holds when
 `p` holds at some `j` with `0 <= j <= i - a`, and is false when `i < a`;
 `historically[a,*] p` is `not once[a,*] not p`; `p since[a,*] q` holds when `q`
-holds at some `j <= i - a` and `p` at every `k` with `j < k <= i`;
+holds at some `j <= i - a` and `p` at every `k` with `j < k <= i - a`;
 `p triggered[a,*] q` is `not (not p since[a,*] not q)`. `[0,*]` has the meaning
 of the unbounded operator. Under a bounded profile `[a,*]` is not admitted
 ([FR-048](../foundation/FR-048-bind-native-temporal-syntax.md)).
@@ -131,7 +131,7 @@ bounds.
 | FR-367-AC-4 | Inserting one repeated state into a trace changes the truth of `always (holds(p) implies once[1,1] holds(q))` and of an `eventually[0,1]` formula, and leaves the truth of a formula with only unbounded operators unchanged. | Test (TC-298) |
 | FR-367-AC-5 | An analysis whose property automaton exceeds `max_automaton_states` settles FR-331 `incomplete`, FR-360 `failed`, execution `resource-incomplete`, naming the limit, its value and the request member that raises it; the same request with the limit raised completes. | Test (TC-298) |
 | FR-367-AC-6 | A past interval reaching before position 0 reads atomic predicates there as false, and an interval operator under infinite-trace never compares equal to the same numeric interval under a bounded profile. | Test (TC-298) |
-| FR-367-AC-7 | Under the infinite-trace profile, `eventually[2,*] holds(p)` is true at position 0 of a lasso whose `p` holds only at position 3 and false at position 0 of a lasso whose `p` holds only at position 1, `once[2,*] holds(p)` is false at position 1, `eventually[0,*] holds(p)` equals `eventually holds(p)`, and `always eventually[2,*] holds(p)` classifies as liveness; under the event-position profile `eventually[2,*] holds(p)` receives `unsupported_construct`. | Test (TC-298, TC-238) |
+| FR-367-AC-7 | Under the infinite-trace profile, `eventually[2,*] holds(p)` is true at position 0 of a lasso whose `p` holds only at position 3 and false at position 0 of a lasso whose `p` holds only at position 1, `once[2,*] holds(p)` is false at position 1, `eventually[0,*] holds(p)` equals `eventually holds(p)`, and `always eventually[2,*] holds(p)` classifies as liveness; `holds(p) until[2,*] holds(q)` is true at position 0 of a lasso whose `q` holds only at position 3 and whose `p` holds only at position 2, and false when `p` fails at position 2; `holds(p) since[2,*] holds(q)` is true at position 4 of a trace whose `q` holds only at position 1 and whose `p` holds only at position 2, and false when `p` fails at position 2; under the event-position profile `eventually[2,*] holds(p)` receives `unsupported_construct`. | Test (TC-298, TC-238) |
 
 ## Dependencies
 
