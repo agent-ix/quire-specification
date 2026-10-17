@@ -58,7 +58,7 @@ order FR-090 requires of order-sensitive operators.
 
 ### Pointwise meaning
 
-This reading applies to the `quire.temporal.timed/v1` profile; the integer-position profiles, infinite-trace, event-position and fixed-sample, read an interval as position offsets with the meaning of [FR-091](FR-091-evaluate-bounded-future.md), [FR-092](FR-092-evaluate-bounded-past.md) and [FR-367](FR-367-evaluate-interval-operators-under-infinite-trace.md).
+This reading applies to the `quire.temporal.timed/v1` and `quire.temporal.timestamped-event.finite-window/v1` profiles; the integer-position profiles, infinite-trace, event-position and fixed-sample, read an interval as position offsets with the meaning of [FR-091](FR-091-evaluate-bounded-future.md), [FR-092](FR-092-evaluate-bounded-past.md) and [FR-367](FR-367-evaluate-interval-operators-under-infinite-trace.md).
 
 `eventually_I p` holds at position `i` when some `j >= i` has `τ_j − τ_i` in
 `I` and `p` at `j`; `p until_I q` holds when some such `j` has `q` and every
