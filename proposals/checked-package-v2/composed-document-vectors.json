@@ -37,14 +37,15 @@
       "declares_node": false
     },
     {
-      "case": "object-type-without-object-member",
+      "case": "object-type-equal-to-its-own-object-a",
       "id": "Order",
       "type": "entity",
+      "object": "entity",
       "declares_node": true,
       "node_identity": "ix://test/orders/Order"
     },
     {
-      "case": "object-type-with-object-member",
+      "case": "object-type-equal-to-its-own-object-b",
       "id": "Money",
       "type": "value_object",
       "object": "value_object",

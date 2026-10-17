@@ -42,12 +42,12 @@ fn is_object_id(id: &str) -> bool {
         && chars.all(|c| c.is_ascii_alphanumeric() || c == '_')
 }
 
-/// The lift: one node per document whose `type` is an object type. The
-/// `object:` member and the `id` shape are never consulted.
+/// The lift: one node per document whose `type` is a loaded object type equal
+/// to its own `object`. Any other document is composed and skipped.
 fn lifted_identity(document: &Value, package: &str, types: &BTreeSet<&str>) -> Option<String> {
-    types
-        .contains(text(document, "type"))
-        .then(|| format!("ix://{package}/{}", text(document, "id")))
+    (types.contains(text(document, "type"))
+        && document["object"].as_str() == Some(text(document, "type")))
+    .then(|| format!("ix://{package}/{}", text(document, "id")))
 }
 
 fn name_segment<'a>(identity: &'a str, package: &str) -> &'a str {
@@ -83,7 +83,7 @@ fn no_document_of_an_artifact_type_is_lifted_and_no_lifted_name_has_a_hyphen() {
     let docs = array(&v, "documents");
     let all: Vec<String> =
         docs.iter().filter_map(|d| lifted_identity(d, package, &types)).collect();
-    for document in docs.iter().filter(|d| !types.contains(text(d, "type"))) {
+    for document in docs.iter().filter(|d| lifted_identity(d, package, &types).is_none()) {
         let id = format!("ix://{package}/{}", text(document, "id"));
         assert!(!all.contains(&id), "{}", text(document, "case"));
     }
