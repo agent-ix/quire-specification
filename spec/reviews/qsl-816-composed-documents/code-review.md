@@ -33,3 +33,9 @@ reference test does not connect to the documents at all.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | medium | `a_reference_to_a_composed_document_is_a_missing_declaration` restates set membership over a hand-written `package_nodes: ["ix://test/orders/Order"]` instead of the nodes lifted from `documents`. It passes whatever the lift does: if `lifted_identity` emitted FR-204, the reference cases would still refuse missing-name. The list also disagrees with the documents, which lift both `Order` and `Money`. So the C05 claim ("a reference to a composed document refuses because it is not lifted") is never computed. Derive the reference cases' node set from `lifted_identity` over `documents` and drop `package_nodes`. | tests/composed_documents.rs:93-111; proposals/checked-package-v2/composed-document-vectors.json:50-67 |
+
+## Dispositions
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed 99a7875 | Round 2, reviewed 99a7875. The reference test now builds its node set from `lifted_identity` over `documents`, and `package_nodes` is gone from the vectors. |

@@ -11,7 +11,7 @@ relationships:
 ## Description
 
 Verify FR-154's composed document rule: a document whose `type` is an artifact
-type and that also carries `object:` is skipped by extraction because its `type` is an artifact-type id, is never
+type and that also carries `object:` is skipped by extraction because its `type` is an artifact type, is never
 lifted, and is never named by a model reference. Scope: FR-154-AC-14.
 
 ## Test Procedure
