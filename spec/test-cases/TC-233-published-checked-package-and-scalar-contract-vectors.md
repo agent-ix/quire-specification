@@ -255,6 +255,13 @@ recomputed), each admitted; `reaches-population-names-integer-range`,
 `reaches-population-names-absent-node` and `reaches-population-over-another-model-declaration`
 (`ill_typed`/`operator-ineligible`); and `reaches-population-omitted-from-dependencies`
 (`invalid_semantic_graph`), all FR-322-AC-73.
+`adverse.json` `unbounded_population_cases` holds `population-without-max-is-unbounded` and
+`population-max-3-stays-bounded` (a `model_population` node over `Set<Reference<Order>>` with no
+`max` member, and with `max` `3`, each named by the `population` key of the `Order-order-Order`
+`reaches` application), admitted; and `population-max-negative-refused`,
+`population-max-not-an-integer-refused` and `population-max-with-a-second-member-refused`
+(`invalid_package`/`invalid-derived-shape`), all FR-322-AC-74. The bounded populations PO1 (`max` 3) and `max` 0 and the unbounded population PO0 are also
+recomputed from their hand-written RFC 8785 preimages to the keys FR-322 publishes.
 `adverse.json` gains `clause_owner_cases`
 (`clause-precondition-operation-owner` admitted;
 `clause-precondition-owned-by-object-type`,

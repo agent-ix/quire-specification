@@ -845,7 +845,7 @@ create a second `composite_type`, `bounded_domain` or `scalar_type` identity.
 | Source type | Node and semantic type | Body | Worked accepted vector |
 | --- | --- | --- | --- |
 | `Reference<O>` | `composite_type`/`reference`, self-typed | `aggregate{[reference(M_O)]}`, where `M_O` is `O`'s model declaration node. A derived reference target SHALL be a `model`/`object_type`, `model`/`process`, `model`/`state_machine`, `model`/`systems_interface` or `relation`/`relationship` declaration; scalar, value, function and other composite nodes are refused. | `Ref = Reference<Order>` and a parameter typed `Ref` both name R1 (`249d3baf1f4728325f4b5194d54320ad6d7e11bc88de7a339504ea6582fe1fbb`); R1's only body target is M1 (`6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b`) |
-| `Population<O>[N]` | `bounded_domain`/`model_population`, semantic type `S_O`, where `S_O` is `composite_type`/`set` over `R_O` | `aggregate{[binding "max" = literal integer N]}` | `Bucket = Population<Order>[3]` names PO1 (`859d6b01a132a14711a8a4568e24a7ab54e3255b78bbcc62b14e4293dbf71f9a`); PO1's `semantic_type` is S1 (`b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5`); changing `Bucket` to `Population<Order>[5]` names a different key |
+| `Population<O>[N]`; `Population<O>` with no maximum | `bounded_domain`/`model_population`, semantic type `S_O`, where `S_O` is `composite_type`/`set` over `R_O` | `aggregate{[binding "max" = literal integer N]}`; for `Population<O>` with no maximum, `aggregate{[]}`, the `max` member absent | `Bucket = Population<Order>[3]` names PO1 (`859d6b01a132a14711a8a4568e24a7ab54e3255b78bbcc62b14e4293dbf71f9a`); PO1's `semantic_type` is S1 (`b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5`); changing `Bucket` to `Population<Order>[5]` names a different key; `Open = Population<Order>` names PO0 (`f65a8239f4fbc1b6e75bfeed4a578e1c219a27f155a82ddfb7aeeb22657c3b8b`), whose `semantic_type` is also S1 |
 | a formed quantity over a compound unit | `scalar_type`/`compound_unit`, self-typed | `aggregate` of one `aggregate{[binding "unit" = reference(U), binding "exponent" = literal integer e]}` per root unit, in `quire.value.compound-unit/v1` order; dimensionless is `aggregate{[]}`. Each `U` is a targetless canonical nominal root with `nominal_identity_preimage.version = quire.unit-node/v1`, empty body and `semantic_type` equal to its dimension node. | `metre / second` names U2 (`bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7`); its first term references `U_metre` with exponent `1`, its second references `U_second` with exponent `-1` |
 
 The accepted vectors above are compact presentations of the exact RFC 8785
@@ -874,15 +874,32 @@ The executable reader matrix covers the accepted and refused cells below:
 | Derived shape | Accepted form | Refusal mutations exercised after key recomputation |
 | --- | --- | --- |
 | `composite_type`/`reference` | body target is a model declaration node | scalar, function and value targets |
-| `bounded_domain`/`model_population` | `semantic_type` is `set<reference<T>>`, one canonical nonnegative integer `max` binding | negative `max`; arbitrary set element |
+| `bounded_domain`/`model_population` | `semantic_type` is `set<reference<T>>`; either one canonical nonnegative integer `max` binding (a bounded population) or no member (the unbounded population) | negative `max`; non-integer `max`; a member beside `max`; arbitrary set element |
 | `scalar_type`/`compound_unit` | self-typed node; targetless canonical nominal unit roots whose semantic type is the dimension key; nonzero exponents in strict digest order | non-self-typed node; non-unit root; reordered terms |
+
+The required-`max` rule applies to a bounded population only. A
+`model_population` node whose `max` member is absent is the unbounded
+population, the node a source `Population<O>` with no maximum derives. It is
+admitted, with the same `semantic_type` rule and the empty `aggregate` body, and
+its key is a function of that body, so it differs from the key of every bounded
+`Population<O>[N]` and from the key of the unbounded `Set<Reference<O>>`
+(`composite_type`/`set` alone, with no `collection_bounds`). Its worked accepted
+vector is PO0 (`f65a8239f4fbc1b6e75bfeed4a578e1c219a27f155a82ddfb7aeeb22657c3b8b`):
+the preimage of PO1 with the `max` member removed, so the same S1 as
+`semantic_type` and the body `{"members":[],"term":"aggregate"}`. No `max` is
+invented for the unbounded node: the absent `max` is not `0` (its key differs
+from the key of the node with `max` `0`) and is not any other bound, and a `max` that is present is a bounded population read
+as before. A `population` link of a `quire.op.model.reaches` application that
+names an unbounded population node is admitted and states no bound for the
+application.
 
 These vectors distinguish a retained-key mutation from a recomputed-key
 candidate. The reader checks both the key and the semantic shape: a
 `composite_type`/`reference` whose body target is not a model declaration
 node, a `bounded_domain`/`model_population` whose `semantic_type` is not the
-`set<reference<T>>` node or whose `max` is absent, negative or not an integer
-literal, and a `scalar_type`/`compound_unit` whose root is not a
+`set<reference<T>>` node or whose `max` is negative or not an integer
+literal, or which has any member other than a single `max`, and a
+`scalar_type`/`compound_unit` whose root is not a
 targetless canonical nominal unit, whose exponent is zero, whose terms are
 duplicated or not in canonical order, or whose body is not the stated
 aggregate is refused by the semantic shape check. Adding a declaration, owner
@@ -1108,8 +1125,9 @@ destination-type check of FR-322-AC-57 in that order, and refuses at
 `model_population` node, or whose `T` is not `E` refuses
 `ill_typed`/`operator-ineligible`. The node's `max` is read as for any
 `model_population` node and a negative `max` refuses as it does there; `max` `0`
-is admitted. The application's `dependencies` contain the `population` node, so
-a list that omits it is `invalid_semantic_graph` at `/dependencies`. The reader
+is admitted, and an absent `max` is the unbounded population (FR-322-AC-74),
+which is admitted and states no bound. The application's `dependencies` contain
+the `population` node, so a list that omits it is `invalid_semantic_graph` at `/dependencies`. The reader
 does not choose an occurrence of the population node: a reader that selects the
 population by occurrence takes the `Type` occurrence with the least ordinal.
 
@@ -1521,6 +1539,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-71 | A selected domain package that declares the variant type `Tier` (cases `Gold`, `Standard`) and the object `Account` with field `tier: Tier` admits a self-typed `model`/`variant_type` declaration node owned by `Tier`, with a `ModelOwner` and the closed `ModelDeclarationNode` preimage, family `enum`. `Account.tier` derives the `Tier` node as its type, an `optional` field `Option<Tier>` and an ordered non-unique `[0, 3]` field `Sequence<Tier>[0, 3]`, never `Reference<Tier>`. `quire.op.enum.eq` and `quire.op.enum.ne` over two `Tier` operands are admitted; `quire.op.structural.eq` over them, and an ordering application (`quire.op.enum.lt`, `le`, `gt` or `ge`), refuse `ill_typed`/`operator-ineligible`. An `enum_value` node whose `semantic_type` is the `Tier` node and whose case is `Gold` or `Standard` is admitted, and one whose case is not a case of `Tier` in the selected document refuses `invalid_semantic_graph`. The node key is a function of the selected document and the node alone: two units that select the package under different model aliases derive one `Tier` node key and one key for each case. A `model`/`variant_type` node owned by a record value type, an object type or a node absent from the selected document refuses `missing_declaration`/`missing-selection` in the owner join, and one with no `owner` or with a `SourceOwner` and no `declaration` fails the V2 schema (`malformed_wire`); both V2 schemas enumerate the form in the owner-presence rule, the model forms and the `ModelDeclarationNode` preimage. | Test (TC-940) |
 | FR-322-AC-72 | A selected domain package that declares the process `Flow` (`quire.meaning.model.process/v1`, field `n`, operation `go`) and the state machine `Gate` (`quire.meaning.model.state-machine/v1`, field `open`, operation `toggle`) admits a self-typed `model`/`process` declaration node owned by `Flow` and a self-typed `model`/`state_machine` declaration node owned by `Gate`, each with a `ModelOwner` and the closed `ModelDeclarationNode` preimage, family `object`; `Flow.n` and `Flow.go` resolve through step 3 as an object type's members do, and `Reference<Flow>` and `Reference<Gate>` derive `composite_type`/`reference` nodes over the two declaration nodes. A `model`/`persistence_interface` node owned by a declared persistence interface passes the owner join. A process node owned by an object type, a state machine owned by a process, or either owned by a node absent from the selected document refuses `missing_declaration`/`missing-selection` in the owner join, and either carrying no `owner` fails the V2 schema (`malformed_wire`); both V2 schemas enumerate the three forms in the owner-presence rule and the `ModelDeclarationNode` preimage. | Test (TC-233, TC-280) |
 | FR-322-AC-73 | A `quire.op.model.reaches` application whose `relationship_end` member carries `population`, the id of a `bounded_domain`/`model_population` node over `Set<Reference<Order>>` where `Order` is the type of the end the member's role names, validates against both V2 schemas, is keyed by an application preimage that includes the key, lists the population node in its `dependencies`, and is admitted by the full reader, for a `max` of `3` and of `0`. The same application without the key keeps the node id it has in `positive-operation-identities.json`. `population` naming a `bounded_domain`/`integer_range` node, a node absent from the graph, or a `model_population` node over another model declaration refuses `ill_typed`/`operator-ineligible`; a `dependencies` list without the population node is refused `invalid_semantic_graph`; the published `adverse.json` `reaches_population_cases` record each. | Test |
+| FR-322-AC-74 | A `bounded_domain`/`model_population` node over `Set<Reference<Order>>` whose body is the empty `aggregate`, with the `max` member absent, is the unbounded population: it validates against the V2 schema and is admitted by the full reader, as the `population` of a `quire.op.model.reaches` application, with the key PO0 (`f65a8239f4fbc1b6e75bfeed4a578e1c219a27f155a82ddfb7aeeb22657c3b8b`) recomputed from its hand-written RFC 8785 preimage and distinct from the key PO1 of the same node with `max` `3`; the node with `max` `3` stays admitted as a bounded population. A `max` of `-1`, a `max` that is not an integer, and a second member beside `max` each refuse `invalid_package`/`invalid-derived-shape` at the population node, and the key PO0 differs from the key (`0ade8ed9baf129e82dee28096d64f5a0deabca6f3aa06874a4a7e76bb9688e34`) of the same node with `max` `0`. The published `adverse.json` `unbounded_population_cases` record each. | Test |
 
 ## Dependencies
 

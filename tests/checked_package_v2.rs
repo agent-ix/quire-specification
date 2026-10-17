@@ -1224,8 +1224,7 @@ impl<'a> OperationOracle<'a> {
         let object_type = || {
             let population = model_declared(population, "bounded_domain", "model_population")?;
             let set = model_declared(&population["semantic_type"], "composite_type", "set")?;
-            let reference =
-                model_declared(&first_target(set), "composite_type", "reference")?;
+            let reference = model_declared(&first_target(set), "composite_type", "reference")?;
             self.node(&first_target(reference))
         };
         let near_end_type = || {
@@ -2359,15 +2358,23 @@ fn derived_shape_semantic_refusal(nodes: &[Value]) -> Option<&Value> {
                 let Some(members) = node["body"]["members"].as_array() else {
                     return true;
                 };
-                let max = members.iter().find(|member| member["name"] == "max");
-                let valid_max = max.is_some_and(|member| {
-                    member["term"] == "binding"
+                // FR-322 "Derived type forms and forwarding": a population with
+                // no `max` member is the unbounded population; a bounded one
+                // carries exactly one canonical nonnegative integer `max`.
+                let valid_max = |member: &Value| {
+                    member["name"] == "max"
+                        && member["term"] == "binding"
                         && member["value"]["term"] == "literal"
                         && member["value"]["value_kind"] == "integer"
                         && integer(&member["value"]["value"])
                             .is_some_and(|value| value >= BigInt::from(0))
-                });
-                !set_shaped || members.len() != 1 || !valid_max
+                };
+                let valid_body = match members.as_slice() {
+                    [] => true,
+                    [member] => valid_max(member),
+                    _ => false,
+                };
+                !set_shaped || !valid_body
             }
             (Some("scalar_type"), Some("compound_unit")) => {
                 if node["semantic_type"] != node["node_id"] {
@@ -12784,7 +12791,7 @@ fn tc_233_a_relationship_end_names_only_the_ends_its_relationship_declares() {
 /// `object`: its `Reference<T>`, `Set<Reference<T>>` and the
 /// `bounded_domain`/`model_population` node, each cloned from a node of the
 /// package and rekeyed. Returns the population node's id.
-fn append_population_chain(package: &mut Value, object: &Value, max: &str) -> Value {
+fn append_population_chain(package: &mut Value, object: &Value, max: Option<&str>) -> Value {
     let template = |tag: &str, form: &str| {
         let index = node_index_where(package, |node| {
             node["node_tag"] == tag && node["semantic_form"] == form
@@ -12812,9 +12819,8 @@ fn append_population_chain(package: &mut Value, object: &Value, max: &str) -> Va
     let set_id = last_id(package);
     population["semantic_form"] = json!("model_population");
     population["semantic_type"] = set_id.clone();
-    population["body"] = json!({
-        "term": "aggregate",
-        "members": [{
+    let members = max.map_or_else(Vec::new, |max| {
+        vec![json!({
             "name": "max",
             "term": "binding",
             "value": {
@@ -12823,13 +12829,166 @@ fn append_population_chain(package: &mut Value, object: &Value, max: &str) -> Va
                 "value": max,
                 "value_kind": "integer"
             }
-        }]
+        })]
     });
-    let mut dependencies = vec![integer, set_id];
+    population["body"] = json!({"term": "aggregate", "members": members});
+    let mut dependencies = vec![set_id];
+    if max.is_some() {
+        dependencies.push(integer);
+    }
     dependencies.sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
     population["dependencies"] = json!(dependencies);
     append_rekeyed_structural_node(package, population);
     last_id(package)
+}
+
+/// FR-322-AC-74 (unbounded population node): the published
+/// `unbounded_population_cases`. A `model_population` node with no `max`
+/// member is the unbounded population and is admitted by the full reader, and
+/// the bounded node with `max` `3` is unchanged; a `max` that is negative or
+/// not an integer, and a node with a second member beside `max`, are still
+/// refused. Each node is reached as the `population` of the `Order-order-Order`
+/// `reaches` application, which the reader walks as in AC-73.
+#[trace("TC-233", "FR-322-AC-74")]
+#[test]
+fn tc_233_a_model_population_with_no_max_is_the_unbounded_population() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let adverse = parsed_fixture(ADVERSE);
+    let cases = adverse["unbounded_population_cases"]
+        .as_array()
+        .expect("cases");
+    assert_eq!(cases.len(), 5);
+    for case in cases {
+        let id = case["id"].as_str().expect("id");
+        let mut candidate = positive_fixtures()
+            .into_iter()
+            .find(|(name, _)| *name == case["base"].as_str().expect("base"))
+            .expect("a published base")
+            .1;
+        let application = node_index_where(&candidate, |node| {
+            node["body"]["operation"]["member"]["kind"] == "relationship_end"
+                && node["body"]["operation"]["identity"] == "quire.op.model.reaches"
+        });
+        let order = node_index_where(&candidate, |node| {
+            node["node_tag"] == "model" && node["owner"]["node"] == "ix://acme/orders/Order"
+        });
+        let object = candidate["semantic_graph"]["nodes"][order]["node_id"].clone();
+        let link = append_population_chain(&mut candidate, &object, case["max"].as_str());
+        if case["extra_member"] == true {
+            let index = node_index_where(&candidate, |node| node["node_id"] == link);
+            let extra = json!({
+                "name": "min",
+                "term": "binding",
+                "value": {
+                    "term": "literal",
+                    "type": candidate["semantic_graph"]["nodes"][index]["body"]["members"][0]
+                        ["value"]["type"],
+                    "value": "0",
+                    "value_kind": "integer"
+                }
+            });
+            edit_node_and_projection(&mut candidate, index, |node| {
+                node["body"]["members"]
+                    .as_array_mut()
+                    .expect("members")
+                    .push(extra.clone());
+            });
+        }
+        edit_node_and_projection(&mut candidate, application, |node| {
+            node["body"]["operation"]["member"]["population"] = link.clone();
+            node["dependencies"] = json!(application_dependencies(&node["body"]));
+        });
+        rekey_stale_nodes(&mut candidate);
+        assert!(
+            v2.is_valid(&candidate),
+            "{id}: validates against the V2 schema"
+        );
+        let population =
+            &candidate["semantic_graph"]["nodes"][node_index_where(&candidate, |node| {
+                node["semantic_form"] == "model_population"
+            })];
+        assert_eq!(
+            population["body"]["members"].as_array().map(Vec::len),
+            Some(usize::from(case["max"].is_string()) + usize::from(case["extra_member"] == true)),
+            "{id}: the node carries exactly the members the case names"
+        );
+        let outcome = read_package_semantics(&candidate, &catalog);
+        match case["outcome"].as_str() {
+            Some("admitted") => assert_eq!(outcome, Ok(()), "{id}"),
+            _ => {
+                // The derived-shape refusal is `GraphShape` at the node it names.
+                assert_eq!(
+                    (
+                        case["expected_code"].as_str(),
+                        case["expected_cause"].as_str()
+                    ),
+                    (Some("invalid_package"), Some("invalid-derived-shape")),
+                    "{id}: the fixture records the derived-shape code and cause"
+                );
+                assert_eq!(
+                    outcome,
+                    Err(ReadRefusal::GraphShape(population["node_id"].clone())),
+                    "{id}: refused at the population node"
+                );
+            }
+        }
+    }
+}
+
+/// FR-322-AC-74: the hand-written RFC 8785 preimages of the bounded population
+/// PO1 and the unbounded population PO0 recompute to the published keys. PO0
+/// is PO1's preimage with the `max` member removed.
+#[trace("TC-233", "FR-322-AC-74")]
+#[test]
+fn tc_233_unbounded_population_preimage_vectors() {
+    const PO1: &str = r#"{"body":{"members":[{"name":"max","term":"binding","value":{"term":"literal","type":{"digest":"07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32","domain":"quire.checked-semantic-node/v1"},"value":"3","value_kind":"integer"}}],"term":"aggregate"},"declaration":null,"node_tag":"bounded_domain","recursion":null,"semantic_form":"model_population","semantic_type":{"digest":"b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5","domain":"quire.checked-semantic-node/v1"},"version":"quire.structural-node/v1"}"#;
+    const PO_MAX_0: &str = r#"{"body":{"members":[{"name":"max","term":"binding","value":{"term":"literal","type":{"digest":"07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32","domain":"quire.checked-semantic-node/v1"},"value":"0","value_kind":"integer"}}],"term":"aggregate"},"declaration":null,"node_tag":"bounded_domain","recursion":null,"semantic_form":"model_population","semantic_type":{"digest":"b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5","domain":"quire.checked-semantic-node/v1"},"version":"quire.structural-node/v1"}"#;
+    const PO0: &str = r#"{"body":{"members":[],"term":"aggregate"},"declaration":null,"node_tag":"bounded_domain","recursion":null,"semantic_form":"model_population","semantic_type":{"digest":"b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5","domain":"quire.checked-semantic-node/v1"},"version":"quire.structural-node/v1"}"#;
+    let schema = schema_for_def(&parsed_fixture(SCHEMA), "SemanticNode");
+    let mut keys = Vec::new();
+    for (name, source, key) in [
+        (
+            "PO1",
+            PO1,
+            "859d6b01a132a14711a8a4568e24a7ab54e3255b78bbcc62b14e4293dbf71f9a",
+        ),
+        (
+            "PO0",
+            PO0,
+            "f65a8239f4fbc1b6e75bfeed4a578e1c219a27f155a82ddfb7aeeb22657c3b8b",
+        ),
+        (
+            "PO_MAX_0",
+            PO_MAX_0,
+            "0ade8ed9baf129e82dee28096d64f5a0deabca6f3aa06874a4a7e76bb9688e34",
+        ),
+    ] {
+        let preimage = parsed_fixture(source);
+        assert_eq!(unqualified_jcs_sha256(&preimage), key, "{name}: key");
+        let node_id = json!({"domain": "quire.checked-semantic-node/v1", "digest": key});
+        let wire = json!({
+            "node_id": node_id,
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "node_tag": preimage["node_tag"],
+            "semantic_form": preimage["semantic_form"],
+            "semantic_type": preimage["semantic_type"],
+            "dependencies": [],
+            "occurrences": [{"role": "type", "ordinal": 0}],
+            "body": preimage["body"]
+        });
+        assert!(schema.is_valid(&wire), "{name}: wire node schema");
+        keys.push(key);
+    }
+    assert_ne!(keys[0], keys[1], "bounded and unbounded keys differ");
+    assert_ne!(
+        keys[1], keys[2],
+        "the unbounded population is not the population with max 0"
+    );
+    assert_ne!(
+        keys[1], "b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5",
+        "the unbounded population is not its Set<Reference<Order>>"
+    );
 }
 
 /// FR-322-AC-73 (population link of a `reaches`): the published
@@ -12887,7 +13046,7 @@ fn tc_233_a_reaches_population_link_names_a_population_over_its_role_end_type() 
             Some(append_population_chain(
                 &mut candidate,
                 &object,
-                population["max"].as_str().expect("max"),
+                Some(population["max"].as_str().expect("max")),
             ))
         } else {
             let target = node_index_where(&candidate, |node| {
@@ -12903,8 +13062,8 @@ fn tc_233_a_reaches_population_link_names_a_population_over_its_role_end_type() 
                 node["dependencies"] = json!(application_dependencies(&node["body"]));
             });
             rekey_stale_nodes(&mut candidate);
-            let member = &candidate["semantic_graph"]["nodes"][application]["body"]["operation"]
-                ["member"];
+            let member =
+                &candidate["semantic_graph"]["nodes"][application]["body"]["operation"]["member"];
             assert!(member["population"].is_object(), "{id}");
             assert!(
                 v2.is_valid(&candidate),
