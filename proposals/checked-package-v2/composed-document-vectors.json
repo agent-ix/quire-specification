@@ -1,0 +1,85 @@
+{
+  "rule": "FR-154 composed documents: a document is model-declaring if and only if its type is an object type; an object: member never selects, names or lifts a document",
+  "package_identity": "test/orders",
+  "object_types": ["entity", "value_object", "enumeration", "process", "state_machine"],
+  "documents": [
+    {
+      "case": "composed-value-object",
+      "id": "FR-204",
+      "type": "FR",
+      "object": "value_object",
+      "declares_node": false
+    },
+    {
+      "case": "composed-enumeration",
+      "id": "FR-271",
+      "type": "FR",
+      "object": "enumeration",
+      "declares_node": false
+    },
+    {
+      "case": "composed-object-names-an-object-type-id",
+      "id": "Invoice",
+      "type": "FR",
+      "object": "entity",
+      "declares_node": false
+    },
+    {
+      "case": "artifact-type-alone",
+      "id": "FR-100",
+      "type": "FR",
+      "declares_node": false
+    },
+    {
+      "case": "object-type-without-object-member",
+      "id": "Order",
+      "type": "entity",
+      "declares_node": true,
+      "node_identity": "ix://test/orders/Order"
+    },
+    {
+      "case": "object-type-with-object-member",
+      "id": "Money",
+      "type": "value_object",
+      "object": "value_object",
+      "declares_node": true,
+      "node_identity": "ix://test/orders/Money"
+    }
+  ],
+  "reference_cases": [
+    {
+      "case": "relationship-end-names-composed-document",
+      "package_nodes": ["ix://test/orders/Order"],
+      "reference": "ix://test/orders/FR-204",
+      "expected": { "code": "missing_declaration", "cause": "missing-name" }
+    },
+    {
+      "case": "supertype-names-composed-document",
+      "package_nodes": ["ix://test/orders/Order"],
+      "reference": "ix://test/orders/FR-271",
+      "expected": { "code": "missing_declaration", "cause": "missing-name" }
+    },
+    {
+      "case": "reference-names-lifted-object",
+      "package_nodes": ["ix://test/orders/Order"],
+      "reference": "ix://test/orders/Order",
+      "expected": null
+    }
+  ],
+  "node_cases": [
+    {
+      "case": "frontend-lifted-artifact-type-id",
+      "node_identity": "ix://test/orders/FR-204",
+      "expected": {
+        "code": "invalid_model_binding",
+        "cause": "malformed-declaration",
+        "member_path": "TypeDefinition.identity"
+      }
+    },
+    {
+      "case": "underscore-object-id",
+      "node_identity": "ix://test/orders/sys_pump",
+      "expected": null
+    }
+  ]
+}
