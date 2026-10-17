@@ -12916,10 +12916,22 @@ fn tc_233_a_model_population_with_no_max_is_the_unbounded_population() {
         let outcome = read_package_semantics(&candidate, &catalog);
         match case["outcome"].as_str() {
             Some("admitted") => assert_eq!(outcome, Ok(()), "{id}"),
-            _ => assert!(
-                matches!(outcome, Err(ReadRefusal::GraphShape(_))),
-                "{id}: a malformed population refuses as a derived shape: {outcome:?}"
-            ),
+            _ => {
+                // The derived-shape refusal is `GraphShape` at the node it names.
+                assert_eq!(
+                    (
+                        case["expected_code"].as_str(),
+                        case["expected_cause"].as_str()
+                    ),
+                    (Some("invalid_package"), Some("invalid-derived-shape")),
+                    "{id}: the fixture records the derived-shape code and cause"
+                );
+                assert_eq!(
+                    outcome,
+                    Err(ReadRefusal::GraphShape(population["node_id"].clone())),
+                    "{id}: refused at the population node"
+                );
+            }
         }
     }
 }
@@ -12931,6 +12943,7 @@ fn tc_233_a_model_population_with_no_max_is_the_unbounded_population() {
 #[test]
 fn tc_233_unbounded_population_preimage_vectors() {
     const PO1: &str = r#"{"body":{"members":[{"name":"max","term":"binding","value":{"term":"literal","type":{"digest":"07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32","domain":"quire.checked-semantic-node/v1"},"value":"3","value_kind":"integer"}}],"term":"aggregate"},"declaration":null,"node_tag":"bounded_domain","recursion":null,"semantic_form":"model_population","semantic_type":{"digest":"b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5","domain":"quire.checked-semantic-node/v1"},"version":"quire.structural-node/v1"}"#;
+    const PO_MAX_0: &str = r#"{"body":{"members":[{"name":"max","term":"binding","value":{"term":"literal","type":{"digest":"07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32","domain":"quire.checked-semantic-node/v1"},"value":"0","value_kind":"integer"}}],"term":"aggregate"},"declaration":null,"node_tag":"bounded_domain","recursion":null,"semantic_form":"model_population","semantic_type":{"digest":"b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5","domain":"quire.checked-semantic-node/v1"},"version":"quire.structural-node/v1"}"#;
     const PO0: &str = r#"{"body":{"members":[],"term":"aggregate"},"declaration":null,"node_tag":"bounded_domain","recursion":null,"semantic_form":"model_population","semantic_type":{"digest":"b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5","domain":"quire.checked-semantic-node/v1"},"version":"quire.structural-node/v1"}"#;
     let schema = schema_for_def(&parsed_fixture(SCHEMA), "SemanticNode");
     let mut keys = Vec::new();
@@ -12944,6 +12957,11 @@ fn tc_233_unbounded_population_preimage_vectors() {
             "PO0",
             PO0,
             "f65a8239f4fbc1b6e75bfeed4a578e1c219a27f155a82ddfb7aeeb22657c3b8b",
+        ),
+        (
+            "PO_MAX_0",
+            PO_MAX_0,
+            "0ade8ed9baf129e82dee28096d64f5a0deabca6f3aa06874a4a7e76bb9688e34",
         ),
     ] {
         let preimage = parsed_fixture(source);
@@ -12963,6 +12981,10 @@ fn tc_233_unbounded_population_preimage_vectors() {
         keys.push(key);
     }
     assert_ne!(keys[0], keys[1], "bounded and unbounded keys differ");
+    assert_ne!(
+        keys[1], keys[2],
+        "the unbounded population is not the population with max 0"
+    );
     assert_ne!(
         keys[1], "b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5",
         "the unbounded population is not its Set<Reference<Order>>"

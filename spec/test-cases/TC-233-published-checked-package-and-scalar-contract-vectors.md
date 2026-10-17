@@ -260,7 +260,7 @@ recomputed), each admitted; `reaches-population-names-integer-range`,
 `max` member, and with `max` `3`, each named by the `population` key of the `Order-order-Order`
 `reaches` application), admitted; and `population-max-negative-refused`,
 `population-max-not-an-integer-refused` and `population-max-with-a-second-member-refused`
-(`invalid_package`/`invalid-derived-shape`), all FR-322-AC-74. The bounded population PO1 and the unbounded population PO0 are also
+(`invalid_package`/`invalid-derived-shape`), all FR-322-AC-74. The bounded populations PO1 (`max` 3) and `max` 0 and the unbounded population PO0 are also
 recomputed from their hand-written RFC 8785 preimages to the keys FR-322 publishes.
 `adverse.json` gains `clause_owner_cases`
 (`clause-precondition-operation-owner` admitted;
