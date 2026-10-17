@@ -67,6 +67,13 @@
     {"id":"reaches-population-over-another-model-declaration","base":"positive-operation-identities","population":{"model_population_over":"ix://acme/orders/Invoice","max":"3"},"expected_code":"ill_typed","expected_cause":"operator-ineligible"},
     {"id":"reaches-population-omitted-from-dependencies","base":"positive-operation-identities","population":{"model_population_over":"ix://acme/orders/Order","max":"3"},"dependencies":"without-population","expected_code":"invalid_semantic_graph"}
   ],
+  "unbounded_population_cases": [
+    {"id":"population-without-max-is-unbounded","base":"positive-operation-identities","max":null,"outcome":"admitted"},
+    {"id":"population-max-3-stays-bounded","base":"positive-operation-identities","max":"3","outcome":"admitted"},
+    {"id":"population-max-negative-refused","base":"positive-operation-identities","max":"-1","expected_code":"invalid_package","expected_cause":"invalid-derived-shape"},
+    {"id":"population-max-not-an-integer-refused","base":"positive-operation-identities","max":"three","expected_code":"invalid_package","expected_cause":"invalid-derived-shape"},
+    {"id":"population-max-with-a-second-member-refused","base":"positive-operation-identities","max":"3","extra_member":true,"expected_code":"invalid_package","expected_cause":"invalid-derived-shape"}
+  ],
   "relationship_document_cases": [
     {"id":"relationship-document-admitted","patch":[],"outcome":"admitted"},
     {"id":"relationship-without-target-role-admitted","patch":[{"op":"remove","path":"/types/@Order/relationships/@Order-order-Order/targetEnd/role"}],"outcome":"admitted"},
