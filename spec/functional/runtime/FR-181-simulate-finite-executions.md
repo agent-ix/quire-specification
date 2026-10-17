@@ -105,6 +105,13 @@ object, `{"type": <tag>, ...}`:
   an empty array for a nullary member.
 - `Reference<T>` — the reference triple defined above.
 
+The `sequence`, `set`, `bag` and `ordered-set` forms are also the wire value
+form of a supplied snapshot or input collection value; its admission (bounds,
+duplicate refusal, element order on input) is
+[FR-144](../type-model/FR-144-preserve-complete-collection-algebra.md)
+"Supplied collection values". A bag is always repeated elements, never
+element-count pairs.
+
 An alias encodes as its target type. A domain-object value is held in state
 as `Reference<T>`. A unit-bearing quantity encodes as its underlying exact
 rational or decimal value with an added `"unit":"<qualified-name>"` naming

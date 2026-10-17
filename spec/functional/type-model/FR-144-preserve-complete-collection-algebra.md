@@ -15,6 +15,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-143
     type: references
+  - target: ix://agent-ix/quire-specification/FR-181
+    type: references
 ---
 
 # FR-144: Preserve complete collection-kind semantics
@@ -58,9 +60,11 @@ sets/ordered sets.
 
 The canonical representation is an order, not a byte encoding. The canonical
 order of a set or bag is exactly the ascending typed total key order below, and
-Complete V1 defines no collection byte encoding, sort-key bytes or hash. A
-consumer that serializes a collection value uses its own owning serialization
-contract over this order.
+Complete V1 defines no collection byte encoding, sort-key bytes or hash. The
+one QSpec-owned serialization of a collection value is the FR-181 typed
+canonical form, which orders set and bag elements by their encoded bytes, not
+by this key order; any other consumer that serializes a collection value uses
+its own owning serialization contract.
 
 ## Bound and type identity
 
@@ -164,6 +168,43 @@ materialization, with the collection type, the bound and the formed count. An
 unbounded type admits every formed count and makes no `cardinality_out_of_bound`
 refusal.
 
+## Supplied collection values
+
+A snapshot or runtime input may supply a field, member or parameter value of
+type `Sequence<T>`, `Set<T>`, `Bag<T>` or `OrderedSet<T>`. Its wire form is
+the FR-181 typed canonical form of that kind: `{"type":"sequence"|"set"|"bag"|"ordered-set","elements":[<encoded-value>, ...]}`.
+A bag is written as repeated elements, one array entry per occurrence, and
+never as element-count pairs. The `type` tag must match the declared kind, and
+an object with a missing or extra member, or a tag of another kind, is
+`refused { code: invalid_runtime_input, cause: wrong-value-kind }`.
+
+Admission is a validation of data, not a construction expression, and it runs
+before any evaluation or charge in this order:
+
+1. The `elements` length is checked against the declared inclusive bound, as an
+   occurrence count for a sequence or bag and as a member count for a set or
+   ordered set, before any element is decoded. A length outside `min..max` is
+   `refused { code: cardinality_out_of_bound, cause: below-minimum | above-maximum }`
+   with the collection type, the bound, the supplied count and the input path
+   of the collection. A type with no declared bound makes no such refusal.
+2. Each element is validated, in array order, as a value of `T` exactly as a
+   standalone supplied value of `T` is; the first refusal stops admission and no
+   partial collection exists.
+3. For a set or ordered set, each element after the first is compared with the
+   earlier elements by FR-149 `=`, and an element equal to an earlier one is
+   `refused { code: invalid_runtime_input, cause: duplicate-member }` at the
+   input path of the later element, adding the input path of the earlier equal
+   element. A supplied set or ordered set is never silently deduplicated;
+   deduplication belongs only to the construction expressions above. A
+   comparison FR-149 refuses, such as a `foreign_reference` pair, refuses with
+   that outcome. A bag and a sequence admit equal elements.
+
+Element order is not part of the value of a set or bag: two supplied sets, or
+two supplied bags, whose elements differ only in array order are one value, and
+a producer writes them in the FR-181 order. The array order of an ordered set
+is its first-occurrence order and the array order of a sequence is its order;
+both are retained.
+
 ## Collection charges
 
 Every collection construction, membership comparison and result retention is
@@ -227,6 +268,10 @@ FR-146 and FR-307; otherwise it is
 | FR-144-AC-13 | A collection type with an absent bound and one with a present bound, same kind and same element type, are different types; equality between them is `refused { code: ill_typed, cause: type-mismatch }`, and moving a value between them requires an explicit FR-145 `convert` whose present-bound direction is checked at run time. | Test (TC-246) |
 | FR-144-AC-14 | For `union Shape { Rect(Integer, Integer), Circle(Integer), Empty }`, `set[Shape::Rect(2, 3), Shape::Empty, Shape::Circle(5), Shape::Circle(1), Shape::Rect(2, 3)]` holds four members visited in the order `Circle(1)`, `Circle(5)`, `Empty`, `Rect(2, 3)`, the same order after the members are declared in another order; a `Bag<Shape>` of the same elements holds `Rect(2, 3)` with multiplicity two; and a `Set<U>` whose union `U` has a `Float64` payload is `ill_typed` with cause `operator-ineligible`. | Test (TC-397) |
 | FR-144-AC-15 | A `Set<Money>`, `Bag<Money>` or `OrderedSet<Money>` holding a `Money` and a `TaxedMoney` of equal shared fields holds two distinct members. A `Set<Money>` or `Bag<Money>` visits them in ascending byte order of their declaration node keys in either source order, and construction does not refuse for want of a canonical key. Two `TaxedMoney` values with equal fields are one member, and two that differ in `tax_minor` are two. | Test (TC-189) |
+| FR-144-AC-16 | A supplied `Set`, `Bag` or `OrderedSet` value is read from its FR-181 tagged `elements` form (`set`, `bag` or `ordered-set`), a bag as repeated elements; a missing or extra member or a tag of another kind is `invalid_runtime_input`/`wrong-value-kind`. | Test (TC-189) |
+| FR-144-AC-17 | A supplied set or ordered set holding an element FR-149-equal to an earlier element is `invalid_runtime_input`/`duplicate-member` at the later element's input path, naming the earlier element's path, and is never deduplicated; a supplied bag or sequence holding equal elements is admitted. | Test (TC-189) |
+| FR-144-AC-18 | A supplied collection whose `elements` length is below the minimum or above the maximum of its declared bound is `cardinality_out_of_bound` with `below-minimum` or `above-maximum`, naming the type, bound, supplied count and input path, before any element is validated; a bag counts occurrences and a set or ordered set counts supplied entries. | Test (TC-189) |
+| FR-144-AC-19 | Two supplied sets, or two supplied bags, whose elements differ only in array order are equal; two supplied ordered sets or sequences that differ in array order are unequal; a producer writes a set or bag in FR-181 order. | Test (TC-189) |
 
 ## Dependencies
 
