@@ -86,3 +86,69 @@ The scoped files were read in full at 4f3e2b8. The comparison reads used origin/
 | FND-006 | Fixed. `attempts 0` and an inverted `within` are `ill_typed`/`type-mismatch`; the commit check is dominance and retains the profile. |
 | M1-M5, M7, M8, L1-L6 | Fixed. |
 | M6 | Fixed: the terminal condition reads no protocol binder or capture. |
+
+## New findings (disposition pass 1)
+
+Reviewed at 9dcf158068dc91c441598d6eb06b8ee74e050f26 (delta `git diff 4f3e2b8..9dcf158`), read-only. The only build was `quire validate`.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | high | The `queues` argument has two different canonical orders. The "Term shapes" set shape requires its members to be in strictly ascending node-id digest order. The clause-body row says the order is "the ascending digest order of the channel nodes they name". A queue's digest is not its channel's digest, so a queues list in one order is refused as `invalid_semantic_graph` under the other order. As a result, two conforming readers disagree on admission and on the key. | spec/objects/interfaces/FR-464-checked-package-protocol-node-bodies.md "Term shapes" (set), "Clause body" row 7 |
+| FND-008 | high | The `terminal` condition now contradicts FR-429 and contradicts itself. (a) FR-429 states that `terminal when { P }` reads "the model observation and the protocol's captures", but FR-465 refuses a capture read (TM10, `missing-name`). (b) FR-464's "Slots that bar model state" list includes "the terminal condition's binders" and refuses `over` and model-state operations there, while the stage table, FR-465 and TM11 admit the model observation and `view`. | FR-465 "Terminal"; FR-464 "Readable binders" table row `terminal` and "Slots that bar model state"; TC-947 TM10, TM11; FR-429 "The `terminal` member" |
+
+## Reviewer dispositions
+
+Round 1, at 9dcf158. The author's table above records the author's claims. The rows below are the reviewer's outcomes, checked against the delta.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | still-open | "Published artifacts" now describes the head truthfully. But it adds a transitional case, which the planner's ruling rules out: "until then the example and the published packages are exempt from the clause body rules", together with "until the schemas encode them". That exemption contradicts TC-233, which says "the full reader admits every published positive fixture", and FR-322-AC-66, which says the worked package is admitted, because a conforming reader refuses the stub P. FR-322 also gains history text ("published before FR-464 fixed the clause body"), a plan ("follow-up work for the IR owner"), and keeps the stub digests 12432a66… and e761cf…. To fix: state only the target, drop the exemption, history, plan and stale digests, and file the fixture regeneration as a ticket. |
+| FND-002 | fixed 9dcf158 | Sets are strictly ascending by digest, cases are sorted by label, `related` uses sorted records, and a misordered or repeated set is `invalid_semantic_graph`, per FR-322-AC-10, FR-340 and FR-451. Duplicate listing is scoped to declarations, and CE11 admits the shared `visible` node. K1, K3 and K13 are consistent. The `queues` order defect is FND-007. Medium M9: `branches` stays an ordered list although FR-052 gives branch order no meaning. |
+| FND-003 | fixed 9dcf158 | `over` is model state: `ill_typed`/`operator-ineligible` before the stage table. Captures can be read without being listed, and the stage table now uses `trigger-guard` with `over` readable in protocol, registration and activation captures. This matches SP-A FR-381 and FR-218 on quire-spec-language main a612f3fc4 row for row. The B20–B26, BS10, BS11, CE6, CE6b, DF7, DF7b, DF7c, CP29 and CP31–CP33 vectors agree. |
+| FND-004 | fixed 9dcf158 | FR-464 now has one reader order. The member sections defer binder scope, model-state and decision-fact checks to step 6, which orders them cycle, then progress, then the slots, and within a slot `over`/model state, then scope, then decision facts. O5 and O7–O9 agree. |
+| FND-005 | fixed 9dcf158 | The interval and loss selector are replaced consistently in FR-054, FR-216, FR-170, FR-426, TC-054, TC-378, the shared-grammar production and the choreography surface, so no contradiction remains on the premise. The loss definition the author chose (the new message is lost, the queue is unchanged, and the binder records the loss) is acceptable as the single consistent rule. It differs from `reject` only in what the sender observes, and it narrows the head/tail/new choice that FR-170 had, so the planner should confirm it. Residual mediums: M10 and M12. |
+| FND-006 | fixed 9dcf158 | `attempts 0` and an inverted `within` (compensation and `await`) are `ill_typed`/`type-mismatch` with member, expected and actual. The commit check is now dominance and retains the profile. CP9, CP10b, CP11 and CP13 agree, and so does SP-A FR-381 on main. Medium M13 records a dominance-under-`parallel` concern that applies to both specs. |
+| FND-007 | still-open | New in this round, introduced by the FND-002 fix. |
+| FND-008 | still-open | New in this round, introduced by the M6 fix. |
+
+Mediums and lows from the first pass, at 9dcf158:
+
+- M1 fixed (FR-326 now says the edges are derived and maps `bounds`).
+- M2 fixed (Sharing paragraph).
+- M3 still-open, residual: FR-466 check 5 makes a `related` end of the wrong type `ill_typed`/`type-mismatch` at the end, but FR-466-AC-9 and TC-948 E16 still say `ill_typed`/`operator-ineligible` at the control. The same situation has two different pairs.
+- M4 fixed (V16 and CP10 were restated). Low: CP10's commit, "on a new branch of `Shipments` with no edge to `Applied`", follows `Applied` in `Main`, so the vector tests the "follows" case and not the "unordered" one.
+- M5 fixed.
+- M6 led to FND-008.
+- M7 and M8 fixed.
+- L1–L6 fixed.
+
+New mediums:
+
+- M9: `branches` is an ordered list with no meaning to its order (FR-052), so reordering two branches re-keys the same protocol. Sort the branches by label, as the cases are.
+- M10: FR-214, FR-215, FR-222 and FR-224 still say "delivery cardinality and duplication premises". FR-222 and FR-224 quote FR-054 as binding "delivery cardinality", a phrase FR-054 no longer contains.
+- M11: Negative bounds and capacities refuse `malformed_wire` here (QU7, FR-466 check 6), whereas FR-370 refuses a negative bound as `invalid_package`/`invalid-value` at strict wire validation.
+- M12: `at-least-once` prohibits loss (FR-054), but an `at-least-once` channel with overflow `loss` loses the new message at capacity. Nothing states whether that combination is refused.
+- M13: Path dominance treats a `parallel` as alternative paths. A commit in branch A of a `join all` parallel ahead of the effect is taken on every execution, yet it is admitted. This is the same in SP-A FR-381, so it is the planner's call.
+- Low: the step 4 local-check classes (references, shapes, types, bounds) do not name FR-466's awaited-event, label and join checks.
+
+Validation at 9dcf158:
+
+- `quire validate` exits 0 on FR-464/465/466, TC-946/947/948, spec.md, FR-054, FR-170, FR-426, TC-054, TC-378 and this review file.
+- FR-216, FR-222 and FR-224 exit 3 with the existing `value_object`/`entity` frontmatter (`id`/`fields`) failure, which is the same baseline class as FR-322 and FR-326 and not introduced by the delta.
+- Every layout violation as `malformed_wire` is consistent with FR-322's reader vocabulary (FR-322: "refuses a body outside the grammar as `malformed_wire`"), apart from M11.
+
+Verdict for the disposition pass: FIX. FND-001 is still open, and two new high findings (FND-007, FND-008) remain. Each is a small text fix.
+
+## Author dispositions, round 2
+
+| ID | Disposition |
+| --- | --- |
+| FND-001 | Fixed. FR-464 "Published artifacts" states only the target. FR-322 drops the stub digests, the history and the plan, and the worked example and FR-322-AC-66 are stated over a conforming clause node; TC-931 setup uses an FR-464 clause body. |
+| FND-007 | Fixed. `queues` is ascending by each queue's own node-id digest like every other set. |
+| FND-008 | Fixed. The terminal condition reads `over` (the model observation) and the protocol captures and no protocol binder; the bar list no longer names it; TM10 admits a capture read, TM12 refuses the activation binder. |
+| M3 | Fixed. A `related` end of the wrong type is `ill_typed`/`type-mismatch` (FR-466-AC-9, E16). |
+| M4 | CP10 restated: `Applied` and the commit sit in different branches of a new `parallel`. |
+| M10 | FR-214, FR-215, FR-222 and FR-224 name the delivery policy. |
+| M11 | Aligned with FR-370: a negative bound or capacity is `invalid_package`/`invalid-value` at strict wire validation (QU7, FR-466 check 6). |
+| M12 | Stated: an `at-least-once` channel with overflow `loss` is admitted; overflow governs a full queue, delivery policy governs transport loss (QU11). |
+| M9, M13 | Left for the planner. |

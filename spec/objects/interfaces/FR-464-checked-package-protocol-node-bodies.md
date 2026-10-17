@@ -157,7 +157,7 @@ with thirteen arguments, in this order:
 | 4 | `roles` | a set of `protocol`/`role` nodes |
 | 5 | `relationships` | a set of `relation`/`relationship` nodes: the model relationship each `relationship` declaration of the protocol names; a target of another tag or form refuses `invalid_model_binding`/`wrong-export` |
 | 6 | `channels` | a set of `protocol`/`channel` nodes |
-| 7 | `queues` | a set of `protocol`/`queue` nodes, one per channel; the queues are generated, so their order is the ascending digest order of the channel nodes they name, not a source order |
+| 7 | `queues` | a set of `protocol`/`queue` nodes, one per channel; the queues are generated and have no source order, so the set is ascending by each queue's own node-id digest like every other set |
 | 8 | `requirements` | a set of `temporal`/`temporal_clause` nodes: the temporal clauses the protocol requires |
 | 9 | `compensations` | a set of `protocol`/`compensation` nodes |
 | 10 | `terminal` | optional: a reference to the protocol's `terminal` `obligation` node |
@@ -274,7 +274,7 @@ when present, and every protocol capture binder.
 | `channel-key` | a FIFO channel's `key` | the channel's message binder |
 | `run` | a slot in the `run` tree | FR-466 "Binder scope" |
 | `finish` | `finish.constraint` | the binders readable after the root control, and the finish binder |
-| `terminal` | `terminal.condition` | none: constants and the model observation only |
+| `terminal` | `terminal.condition` | `over` and the protocol captures; no other binder |
 | `registration-capture`, `trigger-guard`, `activation-capture`, `retry`, `recovery` | the slots of a compensation | FR-466 "Compensation scope" |
 
 Every `run` slot and `finish` may also read the protocol captures through
@@ -291,8 +291,7 @@ reachable from the expression node through `dependencies`, stopping at a
 
 **Slots that bar model state.** The activation guard, the trigger guard, the
 retry relation, the recovery predicate, a choice or repeat guard, a `visible`
-entry, a `check` condition, a FIFO `key` and the terminal condition's
-binders read binders, captures and constants, never model state. They refuse,
+entry, a `check` condition, a FIFO `key` read binders, captures and constants, never model state. They refuse,
 at the read and naming the slot, `ill_typed`/`operator-ineligible` when the
 closure holds an application of `quire.op.state.pre`, `quire.op.model.deref`,
 `quire.op.model.navigate`, `quire.op.model.reaches`,
@@ -430,33 +429,21 @@ operation step.
 
 ## Published artifacts and the operation catalog
 
-What is true at the head that adds this requirement:
-
 - The operation catalog `quire.checked-operation-catalog/v1`, owned by
-  quire-verification-contracts, keeps its `quire.op.protocol.control` entry
-  unchanged: operator class `protocol_control`, no operand position, rest
-  `any_term`, result `clause`, law role `protocol_profile`, member kind
-  `profile_operator`. The entry admits every argument list this requirement
-  fixes, so it needs no new entry.
+  quire-verification-contracts, keeps its `quire.op.protocol.control` entry:
+  operator class `protocol_control`, no operand position, rest `any_term`,
+  result `clause`, law role `protocol_profile`, member kind `profile_operator`.
+  The entry admits every argument list this requirement fixes, so it needs no
+  new entry.
 - `proposals/checked-package-v2/schema.json` and
   `node-identity-preimage.schema.json` enumerate the `protocol` node forms and
-  the `quire.op.protocol.control` identity. They do not yet fix the per-operator
-  argument layouts, enumerated texts or term shapes, and this requirement adds
-  none of them. A reader enforces the layouts itself and refuses a violation as
-  `malformed_wire` until the schemas encode them.
-- The published packages `positive-all-families.json` and
-  `positive-clause-operations.json` carry a `protocol_clause` node that applies
-  `sequence` with no arguments. That node predates this requirement and is not
-  a conforming clause body: a reader implementing this requirement refuses it.
-  FR-322-AC-66's worked example uses that node only as the target of a
-  `protocol_reference` carrier, and the carrier's rules depend on its tag, form
-  and type, not its body. Regenerating the published packages with conforming
-  clause bodies (new node keys and `package_id`s) is follow-up work for the
-  IR owner; until then the example and the published packages are exempt from
-  the clause body rules of this requirement and the vectors of TC-946 to TC-948
-  are the conformance reference.
+  the `quire.op.protocol.control` identity, and fix, per operator, the
+  argument layout, the enumerated texts and the term shapes this requirement
+  lists. A layout violation is `malformed_wire`.
+- Every published package that carries a `protocol_clause` node encodes it in
+  the clause body above.
 - The set of `profile_operator` operators the protocol profile defines is the
-  operator catalog above. FR-322 names that set.
+  operator catalog above.
 
 ## Dependencies
 

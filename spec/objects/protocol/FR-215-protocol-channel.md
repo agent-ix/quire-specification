@@ -17,7 +17,7 @@ relationships:
 
 ## Description
 
-When the protocol linker admits a protocol channel, the linker SHALL bind its sender, receiver, message types, ordering policy, delivery cardinality and duplication premises as explicit conformance assumptions rather than inferring exactly-once delivery, FIFO order across channels, reliable delivery or synchronized clocks.
+When the protocol linker admits a protocol channel, the linker SHALL bind its sender, receiver, message types, ordering policy and delivery policy premises as explicit conformance assumptions rather than inferring exactly-once delivery, FIFO order across channels, reliable delivery or synchronized clocks.
 
 ## Properties
 
@@ -27,7 +27,7 @@ When the protocol linker admits a protocol channel, the linker SHALL bind its se
 | Receiver | FR-054 | A bound premise; a missing or conflicting receiver premise refuses admission (FR-054-AC-3). |
 | Message types | FR-054 | A bound premise; see [FR-214](FR-214-protocol-message.md). |
 | Ordering policy | FR-054, FR-054-AC-2 | "A FIFO premise orders messages only within its declared channel and key scope." |
-| Delivery cardinality | FR-054, FR-054-AC-1 | "At-least-once delivery admits a duplicate receipt while retaining the single authored message/effect obligation." |
+| Delivery policy | FR-054, FR-054-AC-1 | "At-least-once delivery admits a duplicate receipt while retaining the single authored message/effect obligation." |
 | Duplication premise | FR-054 | Whether duplication can occur is authored, never inferred. |
 | Typed declaration | FR-050 | Every channel reference is bound "to its exact typed declaration and configuration identity before conformance evaluation." |
 | Channel contract | FR-054 | The output is "A channel contract bound into protocol identity, or a located typed refusal." |
@@ -95,7 +95,7 @@ channel/component reference rather than becoming a participant role" (FR-054).
 The FIFO scope key is the ordered tuple (`workflow instance`, `channel`,
 `sender role instance`, `receiver role instance`, `message type`, optional
 `conversation partition`). FIFO compares only deliveries with equal complete
-keys. Ordering, delivery-cardinality and duplication premises are all required;
+keys. Ordering and delivery-policy premises are all required;
 a missing premise yields unavailable/incomplete protocol analysis and a
 conflicting premise refuses admission. No missing premise defaults to reliable,
 ordered or exactly-once delivery.

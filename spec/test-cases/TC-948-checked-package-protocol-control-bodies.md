@@ -130,7 +130,7 @@ FR-466-AC-14.
 | E13 | `Applied.of` names `Requested` | `invalid_model_binding`/`malformed-declaration` at the target |
 | E14 | `related by ShipmentOwner(order, eastRes.shipment)` on `East`, with the relationship in the clause's list | admitted |
 | E15 | `related` names a relationship the clause does not list | `missing_declaration`/`missing-name` at the target |
-| E16 | `related` end term of a type other than the relationship's endpoint | `ill_typed`/`operator-ineligible` at the control |
+| E16 | `related` end term of a type other than the relationship's endpoint | `ill_typed`/`type-mismatch` at the end |
 | E17 | `event Compensated by Payments for Refund` | admitted |
 | E18 | the `event`'s `compensation` names a template of another protocol | `invalid_model_binding`/`malformed-declaration` at the target |
 | E19 | `Finalized` is a `commit` by `Orders` | admitted |
@@ -187,7 +187,7 @@ FR-466-AC-14.
 | CP7 | `record_type` names a `scalar_type` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | CP8 | `commit` names `Charged` | `invalid_model_binding`/`malformed-declaration` at the target |
 | CP9 | `Applied` is moved after `Outcome` and `commit` names an extra `commit` control placed before `Applied` in `Main` (on every path to it) | `unsupported_construct`/`declaration-form` at `commit`, retaining the selected profile and reason `commit-precedes-effect` |
-| CP10 | `commit` names a `commit` control on a new branch of `Shipments` with no edge to `Applied` | admitted |
+| CP10 | `Applied` and a `commit` control are placed in different branches of a new `parallel`, and `commit` names that control | admitted (no edge orders it against `Applied`) |
 | CP10b | `commit` names a `commit` control in one case of a `choice` that precedes `Applied` | admitted (it does not dominate the effect) |
 | CP11 | `attempts.maximum` is `0` | `ill_typed`/`type-mismatch` at `maximum`, member `attempts`, expected a count of at least one, actual `0` |
 | CP12 | `attempts.maximum` is `1` | admitted |

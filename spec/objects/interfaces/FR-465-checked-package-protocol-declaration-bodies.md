@@ -162,7 +162,10 @@ behaviour of one channel and has three arguments, in this order:
   package carries the name and no value. At full capacity `reject` leaves
   the queue unchanged and records a rejected send, `block` leaves a pending
   send, and `loss` applies the loss behaviour ([FR-170](../../functional/protocol/FR-170-evaluate-channel-queue-semantics.md)).
-  There is one queue per channel and no queue without a channel.
+  There is one queue per channel and no queue without a channel. The delivery
+  policy governs transport duplication and loss and the overflow policy governs
+  a full queue, so a channel with `at-least-once` delivery and overflow `loss`
+  is admitted: an overflow loss is not a transport loss.
 
 The reader checks, for one queue: the `channel` target is a declared
 dependency, else `missing_declaration`/`missing-name`, and a
@@ -222,11 +225,13 @@ intended terminal states and has two arguments, in this order:
 The reader checks that `condition` is present exactly when `mode` is `when`,
 else the layout is violated (`malformed_wire`); and that
 it is a Boolean term, else `ill_typed`/`non-boolean-root` at the node. Its reads
-are a slot check (FR-464 step 6, stage `terminal`): it reads constants and the
-model observation and no protocol binder or capture, so a read of one
-refuses `missing_declaration`/`missing-name`. Under `activation on each` a
-terminal state can have no live instance, which is why no instance binder is
-readable there.
+are a slot check (FR-464 step 6, stage `terminal`): it reads the model
+observation (`over`), the protocol captures and constants, as
+[FR-429](../../functional/protocol/FR-429-report-protocol-deadlocks.md) states,
+and no protocol binder, so a read of the activation binder or of a `run`
+binder refuses `missing_declaration`/`missing-name`. Under `activation on
+each` a terminal state can have no live instance, which is why no instance
+binder is readable there.
 
 ## Runtime subjects
 
