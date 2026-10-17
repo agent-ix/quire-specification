@@ -86,11 +86,13 @@ FR-465-AC-8.
 | Vector | Edit | Expected |
 | --- | --- | --- |
 | QU1 | none: `literal 4`, `reject` | admitted; occurrence role `generated`, no `declaration`, `dependencies` the channel only |
-| QU2 | each of `reject`, `block`, `loss` with `literal` and with `symbolic(bound)` | admitted: six distinct node keys |
+| QU2 | each of `reject`, `block`, `loss head`, `loss tail`, `loss new` with `literal` and with `symbolic(bound)` | admitted: ten distinct node keys (the selector enters the node key) |
 | QU3 | `literal` capacity `0` | admitted |
 | QU4 | `literal` capacity with a `name` binding | refuses `malformed_wire` |
 | QU5 | `symbolic` capacity with a `value` binding | refuses `malformed_wire` |
 | QU6 | `overflow` is `drop` | refuses `malformed_wire` |
+| QU6a | `overflow` is `loss` with the `loss` member absent; with `middle` | refuses `malformed_wire` |
+| QU6b | `overflow` is `reject` or `block` with a `loss` member | refuses `malformed_wire` |
 | QU7 | `literal` capacity `-1` | `invalid_package`/`invalid-value` at the value, at strict wire validation |
 | QU8 | `channel` names a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | QU9 | `channel` absent from `dependencies` | `missing_declaration`/`missing-name` at the target |
@@ -140,7 +142,7 @@ FR-465-AC-8.
    `invalid_model_binding`/`malformed-declaration` or `missing_declaration`/
    `missing-name` at the target, as listed (FR-465-AC-1, FR-465-AC-3,
    FR-465-AC-5, FR-465-AC-6, FR-465-AC-7).
-3. RL9, RL10, RL17 to RL19, CH3, CH4, CH14 to CH16, QU4 to QU6, QU10, TM3, TM4
+3. RL9, RL10, RL17 to RL19, CH3, CH4, CH14 to CH16, QU4 to QU6b, QU10, TM3, TM4
    and RT2 refuse `malformed_wire` (FR-465-AC-2, FR-465-AC-4,
    FR-465-AC-5, FR-465-AC-7, FR-465-AC-8).
 4. QU7 refuses `invalid_package`/`invalid-value`; RL11, RL12, RL15, RL16, CH5, CH6, CH7a to CH7c, CH7e, FN2, FN4, TM6, TM7, TM12 and FN7 refuse as

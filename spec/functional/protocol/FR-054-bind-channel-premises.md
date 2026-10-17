@@ -50,7 +50,7 @@ delivery or an explicit nonprogress result; `exactly-once-premise` is an
 authored environment premise that prohibits both. None establishes a second
 message, attempt or effect. The queue's capacity is a literal bound or a
 symbolic name with a discharged bound, and its overflow policy is `reject`,
-`block` or `loss` ([FR-170](FR-170-evaluate-channel-queue-semantics.md)).
+`block` or `loss` with a `head`, `tail` or `new` selector ([FR-170](FR-170-evaluate-channel-queue-semantics.md)).
 
 The linker SHALL NOT infer exactly-once delivery, FIFO, reliable delivery or
 synchronized clocks from another premise. A queue or endpoint SHALL remain a

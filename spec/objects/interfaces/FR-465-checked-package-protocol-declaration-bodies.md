@@ -145,13 +145,14 @@ The reader checks, for one channel, in this order:
 ## Queue
 
 A `protocol`/`queue` node (operator `queue`) states the bound and overflow
-behaviour of one channel and has three arguments, in this order:
+behaviour of one channel and has four arguments, in this order:
 
 | # | Binding | Value |
 | --- | --- | --- |
 | 1 | `channel` | a reference to the `protocol`/`channel` node it bounds |
 | 2 | `capacity` | a Group: `kind`, a text `literal` or `symbolic`; `value`, a non-negative integer for `literal`; `name`, a text for `symbolic` |
 | 3 | `overflow` | a text: `reject`, `block` or `loss` |
+| 4 | `loss` | optional: the text `head`, `tail` or `new`, present exactly when `overflow` is `loss` |
 
 - **declaration** — none: a queue is declared by its channel's `capacity` and
   `overflow` text, so its occurrences have role `generated`.
@@ -161,7 +162,7 @@ behaviour of one channel and has three arguments, in this order:
   capacity names a bound that execution discharges before a finite run: the
   package carries the name and no value. At full capacity `reject` leaves
   the queue unchanged and records a rejected send, `block` leaves a pending
-  send, and `loss` applies the loss behaviour ([FR-170](../../functional/protocol/FR-170-evaluate-channel-queue-semantics.md)).
+  send, and `loss` applies the loss selector: `head` drops the oldest queued message, `tail` the newest queued message and `new` the arriving message, the queue otherwise unchanged ([FR-170](../../functional/protocol/FR-170-evaluate-channel-queue-semantics.md)); the grammar spells the selector after `loss`.
   There is one queue per channel and no queue without a channel. The delivery
   policy governs transport duplication and loss and the overflow policy governs
   a full queue, so a channel with `at-least-once` delivery and overflow `loss`
@@ -266,7 +267,7 @@ runtime dimension of the control's key and are not a member of any node.
 | FR-465-AC-2 | A replicated role is admitted with `population`, `max` of at least 1, a `binder` of type `Reference<model>` and each lifetime; `until` is present exactly with `lifetime: until`; `max: 0` refuses `ill_typed`/`type-mismatch`, a binder of another type `ill_typed`/`type-mismatch`, a non-Boolean `until` `ill_typed`/`non-boolean-root`, and an `until` term reading a run-tree binder `missing_declaration`/`missing-name`. | Test (TC-947) |
 | FR-465-AC-3 | A channel is admitted with two roles of its clause, a message type, `unordered` or `fifo` with its message binder and key, and one of the four delivery premises; an endpoint that is not a role of the clause, a message type that is not a type node, a FIFO binder of a type other than `carries` (`ill_typed`/`type-mismatch`), a key that reads a capture (`missing_declaration`/`missing-name`), `over` or model state (`ill_typed`/`operator-ineligible`), a key of a type without stable equality (a float or a type holding one or an event) such as a `float64`, a `fifo` without `key` and an `unordered` with one refuse as the reader order states. | Test (TC-947) |
 | FR-465-AC-4 | No channel premise defaults: a channel missing `delivery`, `ordering`, `from`, `to` or `carries` refuses `malformed_wire`; `exactly-once-premise` and `unknown` are distinct admitted spellings, and another delivery spelling refuses `malformed_wire`. | Test (TC-947) |
-| FR-465-AC-5 | A queue is admitted with a `literal` capacity and a `symbolic` capacity and each overflow policy, carries occurrences of role `generated` and no `declaration`, and depends only on its channel; a `literal` capacity with `name`, a `symbolic` capacity with `value`, an unknown overflow spelling and a negative capacity refuse `malformed_wire`; a `channel` target that is not a channel of the clause refuses as the reader order states. | Test (TC-947) |
+| FR-465-AC-5 | A queue is admitted with a `literal` capacity and a `symbolic` capacity and each overflow policy (with each loss selector), carries occurrences of role `generated` and no `declaration`, and depends only on its channel; a `literal` capacity with `name`, a `symbolic` capacity with `value`, an unknown overflow spelling, a `loss` selector absent for overflow `loss`, present for `reject` or `block`, or spelled other than `head`, `tail` or `new`, refuse `malformed_wire`, and a negative capacity `invalid_package`/`invalid-value`; a `channel` target that is not a channel of the clause refuses as the reader order states. | Test (TC-947) |
 | FR-465-AC-6 | A `finish` node is admitted with a closing-record binder and a Boolean constraint that reads the binders readable after the root control; a non-Boolean constraint refuses `ill_typed`/`non-boolean-root` and a read of a binder of an unjoined branch `missing_declaration`/`missing-name`; a clause's `finish` argument naming a `terminal` node refuses `invalid_model_binding`/`malformed-declaration` at the target, and a `finish` node the clause does not name refuses `invalid_semantic_graph`. | Test (TC-947) |
 | FR-465-AC-7 | A `terminal` node is admitted as `when` with a condition and as `any` with none; a `when` without a condition and an `any` with one refuse `malformed_wire`; a second `terminal` node of one clause refuses `ambiguous_declaration`/`ambiguous-name`. | Test (TC-947) |
 | FR-465-AC-8 | The package carries no instance, ordinal, delivery, observation or internality member: the runtime subject kinds of the "Runtime subjects" table are a function of the operators, an added `internal`/`external` member refuses `malformed_wire`, and the package compiles with no workflow instance, delivery or clock observation. | Test (TC-947) |

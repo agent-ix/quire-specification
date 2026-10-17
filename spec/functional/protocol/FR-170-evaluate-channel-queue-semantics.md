@@ -32,7 +32,7 @@ Checked channel/queue transitions, incomplete premise result or located refusal.
 FIFO ordering applies only within the declared role/workflow/channel/message key.
 Duplication, loss and delivery guarantees default to unknown, never reliable.
 Capacity may be concrete or symbolic with a discharged bound. Overflow behavior
-is reject, block or declared loss and remains visible to conformance.
+is reject, block or declared loss (with its head, tail or new selector) and remains visible to conformance.
 
 ## Queue transition system
 
@@ -42,7 +42,7 @@ occurrence identity and FIFO key. `send` appends when capacity permits;
 creates a new occurrence linked to its source only when duplication is allowed;
 and `lose` removes an occurrence only when loss is allowed. At full capacity,
 `reject` leaves state unchanged with a rejected send, `block` leaves a pending
-send, and `loss` admits the send and loses the new message: the queue is unchanged and the send's binder records the loss.
+send, and `loss` admits the send and loses one message chosen by the declared loss selector: `head` drops the oldest queued message, `tail` drops the newest queued message and `new` drops the arriving message. The queue is otherwise unchanged and the send's binder records the loss.
 At-most-once prohibits duplication, at-least-once requires eventual delivery or
 an explicit nonprogress result, and exactly-once requires both plus stable
 message identity. Unknown premises support none of those conclusions.

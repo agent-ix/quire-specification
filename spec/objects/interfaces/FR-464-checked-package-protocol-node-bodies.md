@@ -123,7 +123,7 @@ names a node of the stated tag and form by node key.
 | **integer** | a `literal` with `value_kind: "integer"`, whose `type` is a `scalar_type` of family `integer` |
 | **Boolean term** | a `literal` with `value_kind: "boolean"`, or a `reference` to a node whose `semantic_type` is the `scalar_type`/`boolean` node |
 | **term** | any Leaf |
-| **ordered list** | a Group `aggregate` whose members are `reference` terms in an order that carries meaning: execution order or branch order |
+| **ordered list** | a Group `aggregate` whose members are `reference` terms in an order that carries meaning: execution order, or branch order, which is meaning because a `parallel`'s `joined` list maps to its branches by position |
 | **set** | a Group `aggregate` whose members are `reference` terms in strictly ascending node-id digest order (unsigned bytes of the digest); the list means a set, so one set has one encoding |
 | **optional** | a Group `aggregate` with no member (absent) or exactly one member (present) |
 | **interval** | a Group `aggregate` of the bindings `lower` and `upper`, two non-negative integers with `lower <= upper`; the upper bound is always present |

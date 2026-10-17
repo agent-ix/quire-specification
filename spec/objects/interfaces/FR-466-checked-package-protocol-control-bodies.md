@@ -57,7 +57,7 @@ that reads binders, protocol captures and constants and never model state, `over
 | --- | --- |
 | `sequence` | `children`: an ordered list of `protocol`/`control` nodes, in execution order; may be empty |
 | `choice` | `owner`: a reference to the owning `protocol`/`role` node; `visible`: a set of the `expression` nodes whose values the owner sees at the decision; `cases`: sorted records of `label` (a text), `guard` (a Boolean term, binders-only) and `body` (a reference to a control), sorted by `label` as UTF-8 bytes, at least two |
-| `parallel` | `memory`: optional text `sc`, `tso` or `ra`; `branches`: ordered records of `label` (a text) and `body` (a reference to a control), in branch order, at least two; `join`: a Group, `policy` a text `all`, `any`, `quorum` or `predicate`, `count` an integer exactly for `quorum`, `predicate` a reference to a `function` node exactly for `predicate`; `joined`: a Group of texts, the branch labels the join awaits; `outstanding`: optional text `continue` or `cancel` |
+| `parallel` | `memory`: optional text `sc`, `tso` or `ra`; `branches`: ordered records of `label` (a text) and `body` (a reference to a control), in branch order, at least two (branch order is meaning: the `joined` list maps to branches by position); `join`: a Group, `policy` a text `all`, `any`, `quorum` or `predicate`, `count` an integer exactly for `quorum`, `predicate` a reference to a `function` node exactly for `predicate`; `joined`: a Group of texts, the branch labels the join awaits; `outstanding`: optional text `continue` or `cancel` |
 | `repeat` | `owner`: a reference to a role; `visible`: a set; `maximum`: optional integer, at least 0; `proof`: a Group, empty or the bindings `invariant` (a Boolean term) and `variant` (a term); `guard`: a Boolean term, binders-only; `body`: a reference to a control; `exhausted`: optional reference to a control, present exactly when `maximum` is present |
 | `await` | `after`: a Group, `kind` a text `event` or `compensation`, `target` a reference; `clock`: a text; `within`: an interval; `event`: a reference to the awaited control; `then`: a reference to a control; `timeout`: a reference to a control |
 | `check` | `condition`: a Boolean term, binders-only |
@@ -280,15 +280,25 @@ checks at FR-464 step 6):
    `lower <= upper`, else `ill_typed`/`type-mismatch` at the interval
    retaining `member` (`within`), `expected` and `actual`.
 4. **Commit position.** A present `commit` control that *dominates* the
-   forward effect in the derived causal relation (FR-464), that is, lies on
-   every path from the enter of the root control to the enter of the forward
-   effect, refuses `unsupported_construct`/`declaration-form` at `commit`,
-   retaining the selected protocol profile, `member` (`commit`), the commit,
-   the effect and `reason` `commit-precedes-effect`: every execution would
-   take it before the effect registers the obligation. A commit that follows
-   the effect, one the relation leaves unordered against it (a parallel
-   branch with no edge to it), and one in a single case of a `choice` before
-   the effect, are admitted.
+   forward effect refuses `unsupported_construct`/`declaration-form` at
+   `commit`, retaining the selected protocol profile, `member` (`commit`), the
+   commit, the effect and `reason` `commit-precedes-effect`: every execution
+   would take it before the effect registers the obligation. A commit that
+   follows the effect, one in a sibling branch of the effect (unordered against
+   it), and one in a single case of a `choice` or a single branch of a
+   non-`all` join before the effect, are admitted.
+
+   *Dominance.* The set `taken(n)` of commits every execution of control `n`
+   takes is: for a leaf, itself if it is a `commit`, else empty; for a
+   `sequence`, the union over its children; for a `parallel` with policy `all`,
+   the union over every branch (every branch executes, so a commit in any one of
+   them is taken); for a `parallel` with any other policy and for a `choice`,
+   the intersection over its branches or cases; for an `await`, the intersection
+   over its `then` and `timeout`; for a `repeat`, empty (the body may not run).
+   A commit `C` dominates the forward effect `E` when some ancestor `sequence`
+   of `E` holds, before the child that holds `E`, a child `X` with `C` in
+   `taken(X)`. A commit in one branch and `E` in a sibling branch has no such
+   sequence, so it is unordered.
 
 ## Acceptance Criteria
 

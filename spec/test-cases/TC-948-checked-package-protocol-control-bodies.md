@@ -188,6 +188,10 @@ FR-466-AC-14.
 | CP8 | `commit` names `Charged` | `invalid_model_binding`/`malformed-declaration` at the target |
 | CP9 | `Applied` is moved after `Outcome` and `commit` names an extra `commit` control placed before `Applied` in `Main` (on every path to it) | `unsupported_construct`/`declaration-form` at `commit`, retaining the selected profile and reason `commit-precedes-effect` |
 | CP10 | `Applied` and a `commit` control are placed in different branches of a new `parallel`, and `commit` names that control | admitted (no edge orders it against `Applied`) |
+| CP9b | `Applied` after a `parallel` with `join all`; `commit` names a `commit` control in one of its branches | `unsupported_construct`/`declaration-form` at `commit`, profile and reason `commit-precedes-effect` (`taken` of a `join all` is the union over its branches) |
+| CP9c | as CP9b with `join any [east]` | admitted (`taken` is the intersection over the branches) |
+| CP9d | `Applied` after a `choice`; `commit` names a `commit` control in both cases | `unsupported_construct`/`declaration-form` at `commit`, reason `commit-precedes-effect` |
+| CP9e | `Applied` and the `commit` in sibling branches of one `parallel` | admitted (unordered) |
 | CP10b | `commit` names a `commit` control in one case of a `choice` that precedes `Applied` | admitted (it does not dominate the effect) |
 | CP11 | `attempts.maximum` is `0` | `ill_typed`/`type-mismatch` at `maximum`, member `attempts`, expected a count of at least one, actual `0` |
 | CP12 | `attempts.maximum` is `1` | admitted |
@@ -229,7 +233,7 @@ FR-466-AC-14.
 6. AW1 to AW12 behave as listed (FR-466-AC-6).
 7. E1 to E22 behave as listed (FR-466-AC-7, FR-466-AC-8, FR-466-AC-9).
 8. BS1 to BS11 behave as listed (FR-466-AC-10).
-9. CP1 to CP37 (with CP10b) behave as listed (FR-466-AC-11, FR-466-AC-12).
+9. CP1 to CP37 (with CP9b to CP9e and CP10b) behave as listed (FR-466-AC-11, FR-466-AC-12).
 10. DF1 to DF13 (with DF7b and DF7c) behave as listed (FR-466-AC-14).
 11. Every admitted vector's node keys are unchanged by reformatting the source
     and by a second reference to the protocol, and change with any retargeted

@@ -36,7 +36,9 @@ mismatch or a name absent from the domain package instead of inventing a model.
 
 Channel `delivery` declares the delivery policy: `unknown`, `at-most-once`,
 `at-least-once` or `exactly-once-premise` (an authored premise, never a
-transport guarantee). `capacity` and `overflow` bound the channel's queue.
+transport guarantee). `capacity` and `overflow` bound the channel's queue; overflow `loss` names
+which message is lost at a full queue: `loss head` the oldest queued message,
+`loss tail` the newest queued message, `loss new` the arriving message.
 `unknown` permits loss and duplication; `at-least-once` permits duplication;
 `at-most-once` permits loss. None promises exactly one business effect.
 `unordered` adds no FIFO edge. `fifo by (m: M::Message) { m.key }` declares FIFO
