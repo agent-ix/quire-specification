@@ -132,7 +132,7 @@ kinds are not canonical as defined above and are canonical here:
   FR-141 compared form. Text under `unicode-scalars` or `binary-utf8` is
   canonical as written.
 
-A reader accepts any encoding of a value and normalizes it.
+A reader accepts any encoding of a set or bag element and normalizes it.
 
 An alias encodes as its target type. A domain-object value is held in state
 as `Reference<T>`. A unit-bearing quantity encodes as its underlying exact

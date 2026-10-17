@@ -98,12 +98,33 @@ saying the paths are relative to the field would remove the ambiguity.
 FR-181's OrderedSet bullet admits "no duplicate encoded element", which is
 weaker than FR-144's FR-149 rule. The two agree, because FR-144 refuses first.
 
+## New findings (disposition pass 1)
+
+Reviewed at 3cc54e1c5ddf72dd1aca19a70b68359ed3d33f03 (fix commit 3cc54e1). Scope: the new FR-181 "Canonical element encoding" subsection, the FR-144 cause table, the uuid/timestamp/string sentence, AC-16 and AC-19..21, and TC-189 C15, C20, C22 and C23. No existing FR-181 or state-key vector holds a decimal or normalizing-text Set/Bag element, so normalizing those elements breaks no recorded vector.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-006 | high | FR-144 now says `uuid`, `timestamp` and `string` "have no FR-144 canonical key either and are not admitted collection element types". FR-149 gives `UUID` and `Timestamp` a total canonical key (the canonical payload string) that "extends FR-144's type-owned key invariant", and FR-149-AC-14 asserts equal keys. FR-144's own rule admits every `=`-admitting element type. So `Set<UUID>` is admitted by FR-144 and FR-149 and denied by this sentence, and no refusal is named for a supplied collection of such elements. | spec/functional/type-model/FR-144-preserve-complete-collection-algebra.md:193-195 |
+| FND-007 | medium | Row 1 of the cause table maps "the value is not a JSON object" to `missing-member`. A JSON string or number where an object is required is a wrong JSON kind, which row 5 of the same table and FR-330 map to `wrong-value-kind`. | spec/functional/type-model/FR-144-preserve-complete-collection-algebra.md:186 |
+| FND-008 | medium | FR-181 "A reader accepts any encoding of a value and normalizes it." has no scope. Read as written, it normalizes every decimal and normalizing-profile text that is read, including a scalar field in a state key. That contradicts the sentence above it ("applies only to the element of a set or bag, so the retained representation elsewhere is unchanged"). FR-144's version is scoped to an element. | spec/functional/runtime/FR-181-simulate-finite-executions.md:135 |
+
 ## Dispositions
 
-| FND | Outcome | Reason |
+| FND | outcome | sha/reason |
 | --- | --- | --- |
-| FND-001 | Fixed | Each element is now the FR-181 typed canonical form of its element type, by reference; a cause table (missing-member, wrong-value-kind, unknown-member, invalid-value) defines reading against a declared type. No second grammar. Kinds without an FR-181 form (`uuid`, `timestamp`, `string`) are named and not admitted as elements. |
-| FND-002 | Fixed | Absent `type`/`elements` is `missing-member`, extra member `unknown-member`; AC-16 and C15/C20 follow. |
-| FND-003 | Replaced by planner ruling | The "first admitted occurrence" wording is not used. A producer writes set/bag elements in their canonical encoding (decimal normalized, normalizing-profile text in compared form) before byte ordering; readers normalize and decide duplicates by FR-149 equality. FR-144-AC-21 and C23. |
-| FND-004 | Fixed | The contradiction is removed; the paragraph no longer denies a collection byte encoding and names FR-181 as the one QSpec-owned serialization. |
-| FND-005 | Fixed | FR-144-AC-20 states elements are read before duplicates are decided; vector C22. |
+| FND-001 | fixed | 3cc54e1 |
+| FND-002 | fixed | 3cc54e1 |
+| FND-003 | fixed | 3cc54e1 |
+| FND-004 | fixed | 3cc54e1 |
+| FND-005 | fixed | 3cc54e1 |
+| FND-006 | open | awaiting planner choice between (a) and (b); not yet fixed |
+| FND-007 | fixed | cause table row 1 split: not a JSON object is `wrong-value-kind`, an object with no `type` member is `missing-member` |
+| FND-008 | fixed | FR-181 sentence scoped to "a set or bag element" |
+
+Round 1 verdict: **FIX** on FND-006. Minimal fixes:
+
+- FND-006, two options. (a) Drop "they have no FR-144 canonical key either". State that FR-181 has no wire form for these kinds, so a supplied collection whose element type is one of them is refused with a named cause, while construction is unchanged. (b) Add FR-181 forms `{"type":"uuid"|"timestamp","value":"<canonical payload>"}`, which are canonical as written.
+- FND-007: change row 1 to "the value is not a JSON object → `wrong-value-kind`; it has no `type` member → `missing-member`".
+- FND-008: scope the sentence: "A reader accepts any encoding of a set or bag element and normalizes it."
+
+Recorded, not blocking: the C23 written outputs show decimal members in the order `type, coefficient, scale`. FR-181 is JCS, which orders members `coefficient, scale, type`. This does not change the element order here, but a byte-exact comparison of the vector would fail.

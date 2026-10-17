@@ -183,7 +183,8 @@ object and for every element, refuses with these causes:
 
 | Condition | Refusal |
 | --- | --- |
-| the value is not a JSON object, or has no `type` member | `invalid_runtime_input`/`missing-member` |
+| the value is not a JSON object | `invalid_runtime_input`/`wrong-value-kind` |
+| the value is an object with no `type` member | `invalid_runtime_input`/`missing-member` |
 | `type` is not the FR-181 tag of the declared type | `invalid_runtime_input`/`wrong-value-kind` |
 | a member FR-181 requires for that tag is absent (for a collection, `elements`) | `invalid_runtime_input`/`missing-member` |
 | a member FR-181 does not define for that tag is present | `invalid_runtime_input`/`unknown-member` |
