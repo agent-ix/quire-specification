@@ -247,6 +247,14 @@ with the one end `invoiced` (no `targetEnd.role`, `source-to-target`) and
 (admitted), `relationship-end-inverse-against-direction` (`ill_typed`/`operator-ineligible`,
 FR-152) and `relationship-end-names-missing-inverse`
 (`missing_declaration`/`missing-name`), all FR-322-AC-56.
+`adverse.json` `reaches_population_cases` holds `reaches-without-population-keeps-its-member`,
+`reaches-population-max-3-admitted` and `reaches-population-max-0-admitted` (a
+`model_population` node over `Set<Reference<Order>>` named by the `population` key of the
+`Order-order-Order` `reaches` application, whose `dependencies` hold it and whose key is
+recomputed), each admitted; `reaches-population-names-integer-range`,
+`reaches-population-names-absent-node` and `reaches-population-over-another-model-declaration`
+(`ill_typed`/`operator-ineligible`); and `reaches-population-omitted-from-dependencies`
+(`invalid_semantic_graph`), all FR-322-AC-73.
 `adverse.json` gains `clause_owner_cases`
 (`clause-precondition-operation-owner` admitted;
 `clause-precondition-owned-by-object-type`,
