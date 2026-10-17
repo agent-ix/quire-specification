@@ -18,7 +18,6 @@ When a protocol declaration completes static checking, the producer SHALL use th
 
 ## Properties
 
-- `contract_version` — exactly `quire.checked-protocol/v1`.
 - `definition` — package-qualified protocol declaration identity.
 - `roles` — definitions and runtime-binding requirements.
 - `messages_channels` — typed messages, channel/queue policies and cardinality premises.
@@ -27,12 +26,17 @@ When a protocol declaration completes static checking, the producer SHALL use th
 - `compensations` — registration, retry, commit and recovery definitions.
 - `bounds` — participant, queue, loop, attempt, population and analysis bounds.
 
-## Identity and validation
+## Carriage
 
-The key is (`contract_version`, `definition`, canonical checked content). Occurrence identities and runtime observations are excluded.
-A document whose `contract_version` is not that identifier, missing required
-properties, duplicate keys, out-of-domain values and non-canonical encodings
-refuse before consumption.
+The value is carried by the `protocol` nodes of a `quire.checked-semantic-graph/v2`
+checked package ([FR-464](FR-464-checked-package-protocol-node-bodies.md),
+[FR-465](FR-465-checked-package-protocol-declaration-bodies.md),
+[FR-466](FR-466-checked-package-protocol-control-bodies.md)) and by nothing
+else: no separate `quire.checked-protocol/v1` document is emitted or read. The
+`definition` is the `protocol_clause` node; `roles`, `messages_channels`,
+`control_graph`, `guards_obligations` and `compensations` are its role,
+channel, queue, control, obligation and compensation nodes. Occurrence
+identities and runtime observations are excluded from node keys.
 
 ## Acceptance Criteria
 

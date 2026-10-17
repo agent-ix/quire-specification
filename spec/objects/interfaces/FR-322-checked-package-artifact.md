@@ -20,6 +20,12 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-342
     type: references
+  - target: ix://agent-ix/quire-specification/FR-464
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-465
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-466
+    type: references
   - target: ix://agent-ix/quire-specification/FR-440
     type: references
   - target: ix://agent-ix/quire-specification/FR-441
@@ -132,6 +138,10 @@ boundary.
   [FR-341](FR-341-checked-package-state-clause-body.md) specifies, and one
   with `semantic_form: "operation_anchor"` the binding aggregate
   [FR-342](FR-342-checked-package-operation-anchor-body.md) specifies. A
+  `protocol` node whose `semantic_form` is not `protocol_reference` carries the body
+  [FR-464](FR-464-checked-package-protocol-node-bodies.md),
+  [FR-465](FR-465-checked-package-protocol-declaration-bodies.md) and
+  [FR-466](FR-466-checked-package-protocol-control-bodies.md) specify. A
   `protocol` node with `semantic_form: "protocol_reference"` is the sole
   protocol-reference carrier. Its body is exactly
   `{term: "reference", target: NodeRef}`: `target` is the local
@@ -234,8 +244,11 @@ boundary.
   of "Model-owned members"), or
   for a `quire.op.protocol.control`, `quire.op.state.transition` or
   `quire.op.claim.clause` application the `{kind: "profile_operator", operator}`
-  member naming one operator the law's profile defines (the FR-052 bounded
-  control constructs, or for a claim the temporal operator it applies), or for
+  member naming one operator the law's profile defines (for a
+  `quire.op.protocol.control` application the operators of
+  [FR-464](FR-464-checked-package-protocol-node-bodies.md)'s catalog: the
+  protocol clause, its declarations and its controls; or for a claim the
+  temporal operator it applies), or for
   `quire.op.temporal.clause` no member: a temporal clause's body, its
   `quire.op.temporal.*` operator identities and their `temporal_interval` and
   `fairness` members are
@@ -1324,6 +1337,20 @@ the law and mode steps of the reader order above, and a `string` operand of a
 ordering, no arithmetic and no other operation identity: an ordering or
 arithmetic identity over them refuses `ill_typed`/`operator-ineligible`
 (FR-149-AC-16 for UUID and Timestamp).
+
+**Equality-stable types.** A type is *equality-stable* when an equality
+application is admitted over two operands of it: a type of family `boolean`,
+`integer`, `rational`, `decimal`, `text`, `string`, `uuid`, `timestamp`,
+`enum`, `ordered_enum`, `quantity` or `reference` (each through its own
+`eq` identity), and a type of a `structural_kind` family through
+`quire.op.structural.eq` when no leaf at any depth is `float32`, `float64`
+or a `model`/`event_type` node. IEEE values have no `eq`
+(`quire.op.ieee.numeric_equal`, `total_order` and `bit_identical` are three
+distinct identities), and a `function`, `population`, `object` or
+`aggregate` term is not a value type. A requirement that a key, a comparison
+or a map position needs a type "over which `=` is admitted" (the FIFO key of
+[FR-465](FR-465-checked-package-protocol-declaration-bodies.md)) means
+exactly an equality-stable type.
 
 **Scalar literal values.** The `value` of a `string`, `uuid` or `timestamp`
 literal enters the node-key preimage, so it has one spelling, the canonical
