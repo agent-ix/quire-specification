@@ -73,7 +73,7 @@ catalog).
 | `invalid_quire_context` | A lifecycle request supplied an incompatible package, stage or semantic context. |
 | `invalid_source_identity` | A required source label (authority or identity) is empty or only whitespace, or the source path is empty. Its causes are `blank-label` and `empty-path`. |
 | `invalid_source_map` | A source map was non-monotone, out of bounds or split a UTF-8 scalar. |
-| `cardinality_out_of_bound` | A constructed or converted collection whose occurrence or member count lies outside its type's inclusive cardinality bound (FR-144). |
+| `cardinality_out_of_bound` | A constructed, converted or supplied collection whose occurrence or member count lies outside its type's inclusive cardinality bound (FR-144). |
 | `foreign_reference` | A supplied identity belongs to a different authority, universe, model or subject domain than the position requires. Its causes are `foreign-universe`, `foreign-model-selection` and `foreign-type`. |
 | `ambiguous_dispatch` | A dispatched operation call for which some closed subtype of the receiver's static type has no applicable method or several undominated methods. No source or registration order resolves it. |
 | `unimplemented_capability` | Valid complete-V1 meaning is not implemented by the selected producer; distinct from prohibited source and unsupported backend projection. |

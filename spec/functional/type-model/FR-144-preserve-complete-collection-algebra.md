@@ -15,6 +15,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-143
     type: references
+  - target: ix://agent-ix/quire-specification/FR-181
+    type: references
 ---
 
 # FR-144: Preserve complete collection-kind semantics
@@ -57,10 +59,12 @@ materialization, and count occurrences for sequences/bags and members for
 sets/ordered sets.
 
 The canonical representation is an order, not a byte encoding. The canonical
-order of a set or bag is exactly the ascending typed total key order below, and
-Complete V1 defines no collection byte encoding, sort-key bytes or hash. A
-consumer that serializes a collection value uses its own owning serialization
-contract over this order.
+order of a set or bag is exactly the ascending typed total key order below;
+this requirement defines no byte encoding, sort-key bytes or hash. The one
+QSpec-owned collection serialization is the FR-181 typed canonical form, which
+orders set and bag elements by their encoded bytes, not by this key order; any
+other consumer that serializes a collection value uses its own owning
+serialization contract.
 
 ## Bound and type identity
 
@@ -164,6 +168,77 @@ materialization, with the collection type, the bound and the formed count. An
 unbounded type admits every formed count and makes no `cardinality_out_of_bound`
 refusal.
 
+## Supplied collection values
+
+A snapshot or runtime input may supply a field, member or parameter value of
+type `Sequence<T>`, `Set<T>`, `Bag<T>` or `OrderedSet<T>`. Its wire form is
+the FR-181 typed canonical form of that kind, `{"type": <tag>, "elements": [...]}`
+with `<tag>` one of `sequence`, `set`, `bag` and `ordered-set`. Each entry of
+`elements` is itself the FR-181 typed canonical form of the element type `T`,
+nested, with no second grammar. A bag is written as repeated elements, one array
+entry per occurrence, and never as element-count pairs.
+
+Reading a typed canonical form against a declared type, for the collection
+object and for every element, refuses with these causes:
+
+| Condition | Refusal |
+| --- | --- |
+| the value is not a JSON object | `invalid_runtime_input`/`wrong-value-kind` |
+| the value is an object with no `type` member | `invalid_runtime_input`/`missing-member` |
+| `type` is not the FR-181 tag of the declared type | `invalid_runtime_input`/`wrong-value-kind` |
+| a member FR-181 requires for that tag is absent (for a collection, `elements`) | `invalid_runtime_input`/`missing-member` |
+| a member FR-181 does not define for that tag is present | `invalid_runtime_input`/`unknown-member` |
+| a member has the wrong JSON kind (for a collection, `elements` not an array) | `invalid_runtime_input`/`wrong-value-kind` |
+| a member is outside its FR-181 grammar or the declared type's domain, such as a non-decimal integer string | `invalid_runtime_input`/`invalid-value` |
+
+FR-181 has no form for `uuid`, `timestamp` or `string`, which FR-322 names in
+its value vocabulary. A collection of such an element type remains legal in
+construction. A supplied collection whose element type is, or contains at any
+depth, a type with no FR-181 form is
+`refused { code: unknown_required_feature, cause: unsupported-feature }`
+naming the element type as the feature and the supplied collection as the scope,
+before any element is read. QSL-831 lifts this by adding the wire forms.
+
+Admission is a validation of data, not a construction expression, and it runs
+before any evaluation or charge in this order:
+
+1. The collection object is read as above. The `elements` length is then
+   checked against the declared inclusive bound, as an occurrence count for a
+   sequence or bag and as a member count for a set or ordered set, before any
+   element is read. A length outside `min..max` is
+   `refused { code: cardinality_out_of_bound, cause: below-minimum | above-maximum }`
+   with the collection type, the bound, the supplied count and the input path
+   of the collection. A type with no declared bound makes no such refusal.
+2. Every element is read, in array order, as the FR-181 typed canonical form of
+   `T` by the table above; the first refusal stops admission and no partial
+   collection exists. All elements are read before any duplicate is decided.
+3. For a set or ordered set, each element after the first is compared with the
+   earlier elements by FR-149 `=`, never by encoded bytes, and an element equal
+   to an earlier one is
+   `refused { code: invalid_runtime_input, cause: duplicate-member }` at the
+   input path of the later element, adding the input path of the earlier equal
+   element. A supplied set or ordered set is never silently deduplicated;
+   deduplication belongs only to the construction expressions above. A
+   comparison FR-149 refuses, such as a `foreign_reference` pair, refuses with
+   that outcome. A bag and a sequence admit equal elements; a bag groups
+   FR-149-equal elements into one member whose multiplicity is their number.
+
+Input paths are relative to the supplied collection value. A reader accepts an
+element in any FR-181 encoding of its value, including a non-canonical one
+below, and normalizes it.
+
+Element order is not part of the value of a set or bag: two supplied sets, or
+two supplied bags, whose elements differ only in array order are one value. The
+array order of an ordered set is its first-occurrence order and the array order
+of a sequence is its order; both are retained.
+
+A producer writes each element of a set or bag in the element's canonical
+encoding, so that FR-149-equal values encode identically, and only then orders
+the elements ascending by encoded bytes (FR-181). The canonical set or bag wire
+is therefore unique for a value, and the occurrences of one bag member are
+byte-identical and adjacent. FR-181 "Canonical element encoding" defines the
+canonical encoding of each kind.
+
 ## Collection charges
 
 Every collection construction, membership comparison and result retention is
@@ -227,6 +302,13 @@ FR-146 and FR-307; otherwise it is
 | FR-144-AC-13 | A collection type with an absent bound and one with a present bound, same kind and same element type, are different types; equality between them is `refused { code: ill_typed, cause: type-mismatch }`, and moving a value between them requires an explicit FR-145 `convert` whose present-bound direction is checked at run time. | Test (TC-246) |
 | FR-144-AC-14 | For `union Shape { Rect(Integer, Integer), Circle(Integer), Empty }`, `set[Shape::Rect(2, 3), Shape::Empty, Shape::Circle(5), Shape::Circle(1), Shape::Rect(2, 3)]` holds four members visited in the order `Circle(1)`, `Circle(5)`, `Empty`, `Rect(2, 3)`, the same order after the members are declared in another order; a `Bag<Shape>` of the same elements holds `Rect(2, 3)` with multiplicity two; and a `Set<U>` whose union `U` has a `Float64` payload is `ill_typed` with cause `operator-ineligible`. | Test (TC-397) |
 | FR-144-AC-15 | A `Set<Money>`, `Bag<Money>` or `OrderedSet<Money>` holding a `Money` and a `TaxedMoney` of equal shared fields holds two distinct members. A `Set<Money>` or `Bag<Money>` visits them in ascending byte order of their declaration node keys in either source order, and construction does not refuse for want of a canonical key. Two `TaxedMoney` values with equal fields are one member, and two that differ in `tax_minor` are two. | Test (TC-189) |
+| FR-144-AC-16 | A supplied `Set`, `Bag` or `OrderedSet` value is read from its FR-181 tagged `elements` form (`set`, `bag` or `ordered-set`) whose entries are FR-181 typed forms of the element type, a bag as repeated elements; an absent `type` or `elements` member is `invalid_runtime_input`/`missing-member`, an extra member is `unknown-member`, a tag of another kind or a non-array `elements` is `wrong-value-kind`, and a member outside its grammar is `invalid-value`. | Test (TC-189) |
+| FR-144-AC-17 | A supplied set or ordered set holding an element FR-149-equal to an earlier element is `invalid_runtime_input`/`duplicate-member` at the later element's input path, naming the earlier element's path, and is never deduplicated; a supplied bag or sequence holding equal elements is admitted. | Test (TC-189) |
+| FR-144-AC-18 | A supplied collection whose `elements` length is below the minimum or above the maximum of its declared bound is `cardinality_out_of_bound` with `below-minimum` or `above-maximum`, naming the type, bound, supplied count and input path, before any element is validated; a bag counts occurrences and a set or ordered set counts supplied entries. | Test (TC-189) |
+| FR-144-AC-19 | Two supplied sets, or two supplied bags, whose elements differ only in array order are equal; two supplied ordered sets or sequences that differ in array order are unequal. | Test (TC-189) |
+| FR-144-AC-20 | A supplied collection's elements are all read before any duplicate is decided: a `Set<Integer>[0,3]` supplied with elements `1`, `1` and an invalid integer is `invalid-value` at the invalid element's path, not `duplicate-member`. | Test (TC-189) |
+| FR-144-AC-21 | A producer writes each set or bag element in its canonical encoding before ordering by encoded bytes, and a reader accepts non-canonical encodings, normalizes them and decides duplicates by FR-149 equality: a `Bag<Decimal>` supplied `1.0` and `1.00` is one member of multiplicity 2 written as two identical canonical elements, and a `Set<Decimal>` supplied `1.0` and `1.00` is `duplicate-member`. | Test (TC-189) |
+| FR-144-AC-22 | A supplied `Set<UUID>`, `Set<Timestamp>` or collection of `string` is `unknown_required_feature`/`unsupported-feature` naming the element type, never `wrong-value-kind` or `invalid-value`, while the same type constructed by `set[...]` is unchanged; lifted by QSL-831. | Test (TC-189) |
 
 ## Dependencies
 
