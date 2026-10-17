@@ -1,7 +1,13 @@
 {
   "rule": "FR-154 composed documents: a document is model-declaring if and only if its type is an object type; an object: member never selects, names or lifts a document",
   "package_identity": "test/orders",
-  "object_types": ["entity", "value_object", "enumeration", "process", "state_machine"],
+  "object_types": [
+    "entity",
+    "value_object",
+    "enumeration",
+    "process",
+    "state_machine"
+  ],
   "documents": [
     {
       "case": "composed-value-object",
@@ -49,19 +55,22 @@
   "reference_cases": [
     {
       "case": "relationship-end-names-composed-document",
-      "package_nodes": ["ix://test/orders/Order"],
       "reference": "ix://test/orders/FR-204",
-      "expected": { "code": "missing_declaration", "cause": "missing-name" }
+      "expected": {
+        "code": "missing_declaration",
+        "cause": "missing-name"
+      }
     },
     {
       "case": "supertype-names-composed-document",
-      "package_nodes": ["ix://test/orders/Order"],
       "reference": "ix://test/orders/FR-271",
-      "expected": { "code": "missing_declaration", "cause": "missing-name" }
+      "expected": {
+        "code": "missing_declaration",
+        "cause": "missing-name"
+      }
     },
     {
       "case": "reference-names-lifted-object",
-      "package_nodes": ["ix://test/orders/Order"],
       "reference": "ix://test/orders/Order",
       "expected": null
     }

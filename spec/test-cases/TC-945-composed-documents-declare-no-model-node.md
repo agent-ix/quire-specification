@@ -11,7 +11,7 @@ relationships:
 ## Description
 
 Verify FR-154's composed document rule: a document whose `type` is an artifact
-type and that also carries `object:` is classified by `type` alone, is never
+type and that also carries `object:` is skipped by extraction because its `type` is an artifact-type id, is never
 lifted, and is never named by a model reference. Scope: FR-154-AC-14.
 
 ## Test Procedure
@@ -23,7 +23,7 @@ over package `test/orders` with object types `entity`, `value_object`,
 | Vector | Input | Expected result/disposition |
 | --- | --- | --- |
 | C01 | `FR-204` (`type: FR`, `object: value_object`) and `FR-271` (`type: FR`, `object: enumeration`) | no node; no declaration key; the lifted package equals the one lifted without them |
-| C02 | `Invoice` with `type: FR` and `object: entity` | no node: `type` alone decides, `object:` never selects an object type |
+| C02 | `Invoice` with `type: FR` and `object: entity` | no node: extraction decides by `type` alone, `object:` never selects an object type |
 | C03 | `FR-100` with `type: FR` and no `object:` | no node |
 | C04 | `Order` with `type: entity`, and `Money` with `type: value_object` and `object: value_object` | one node each, `ix://test/orders/Order` and `ix://test/orders/Money`; `object:` changes nothing |
 | C05 | a relationship end naming `ix://test/orders/FR-204`; a supertype naming `ix://test/orders/FR-271` | each `refused { code: missing_declaration, cause: missing-name }`; a reference to `ix://test/orders/Order` is admitted |

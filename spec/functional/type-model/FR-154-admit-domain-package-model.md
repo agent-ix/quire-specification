@@ -179,21 +179,25 @@ rule.
 
 A composed document is a document whose `type` is an artifact type (`FR`,
 `NFR`, `TC`, ...) and that also carries an `object:` member, such as a
-requirement `FR-204` with `object: value_object`. Intake classifies a document
-by its `type` alone and never by `object:`. A composed document is therefore
-not a model-declaring artifact: the lift emits no IR node for it, it has no
-declaration key and no `<Name>` segment, and its hyphenated artifact id never
-meets the object id rule. Its `object:` member is descriptive classification
-for the reader; no model name is derived from it, from the document's `id` or
-from any other member, and there is no explicit-name member. A document whose
-`type` is an object type is model-declaring whether or not it carries `object:`,
-and its node is declared once, by its `type` and its object id. A reference to
-a composed document as a model declaration is a reference to a node no package
-carries: a relationship end, supertype, field type or other IR reference naming
-`ix://<package identity>/FR-204` refuses `missing_declaration`/`missing-name`,
-and a clause cannot spell `M::FR-204` because `FR-204` is not a `member-name`.
-A document link to the composed document (`ix://agent-ix/<repo>/FR-204` in
-frontmatter relationships) is a document link and never a model reference. A
+requirement `FR-204` with `object: value_object`. The rule sits on extraction
+(step 2) and the lift (step 3), which produce the domain package intake reads:
+extraction skips a document whose `type` is an artifact-type id even if it
+carries `object:`, and classifies a document by its `type` alone, never by
+`object:`. The lift therefore emits no IR node for a composed document, so the
+package has no declaration key and no `<Name>` segment for it, and its
+hyphenated artifact id never meets the object id rule. Its `object:` member is
+descriptive classification for the reader; no model name is derived from it,
+from the document's `id` or from any other member, and there is no
+explicit-name member. A document whose `type` is an object type is extracted
+whether or not it carries `object:`, and its node is declared once, by its
+`type` and its object id. Intake reads package bytes only and does not
+classify documents. A reference to a composed document as a model declaration
+is a reference to a node no package carries: a relationship end, supertype,
+field type or other IR reference naming `ix://<package identity>/FR-204`
+refuses `missing_declaration`/`missing-name`, and a clause cannot spell
+`M::FR-204` because `FR-204` is not a `member-name`. A document link to the
+composed document (`ix://agent-ix/<repo>/FR-204` in frontmatter
+relationships) is a document link and never a model reference. A
 package that nevertheless carries a node whose `<Name>` segment is an
 artifact-type id is refused by the object id rule above,
 `invalid_model_binding`/`malformed-declaration`, as a frontend defect.
@@ -273,7 +277,7 @@ Admission checks are decided before the first charge.
 | FR-154-AC-11 | A variant type with no case, a case with no source span, a case whose identity is not `variant/<Name>-<value>` of its owner and name, and a construct of a shape other than `enumeration` each refuse `invalid_model_binding`/`malformed-declaration` (except a case already refused by a same-identity collision, FR-154-AC-13), at the node and member path FR-154 names (`TypeDefinition.kind`, `TypeDefinition.variants`, `TypeDefinition.variants[i].origin`, `Variant.identity`); a field `typeRef`, an operation parameter and an operation result naming a variant type are admitted and raise no refusal; a case with a resolving `payloadType` refuses `unsupported_construct`/`declaration-form` at its case node and `Variant.payloadType`, never `invalid_model_binding`; two cases with equal names and distinct identities refuse the later case `invalid_model_binding`/`conflicting-binding` at the type node and `TypeDefinition.variants[i]` and raise no other refusal for it; within the type node the failures report in the order shape, empty list, repeated names, source spans, and each case node then reports identity and payload after the type node's refusals; reordering the `variants` list of an admitted type changes no declaration key. | Test (TC-235, TC-939) |
 | FR-154-AC-12 | A clause, state, transition and step identity is exactly `<owner identity>/<member name>`: `ix://test/orders/OrderLifecycle/NotYetPlaced`, `.../OrderLifecycle/Draft`, `.../OrderLifecycle/<transition member name>` and `.../Fulfilment/receive_order` are admitted, a clause, state or step whose `clauseId` or `name` differs from the member name of its identity refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.clauses[i].clauseId`, `TypeDefinition.states[i].name` and `TypeDefinition.steps[i].identity`, a state of `OrderLifecycle` with the identity `.../Fulfilment/Draft` (the wrong owner) refuses `malformed-declaration` at `TypeDefinition.states[i].identity`, a state, clause, step or transition whose member name is also a field or operation of its owner (state `cancel` beside operation `cancel`) refuses `invalid_model_binding`/`conflicting-binding`, and the global-slot spellings `clause/<Name>-<clauseId>`, `state/<Name>-<state>`, `transition/<Name>-<from>-<to>-<trigger>` and `step/<Name>-<step>` each refuse `invalid_model_binding`/`malformed-declaration` at the member's `identity`. Two transitions of one machine whose slugged global spellings would be equal (`a_b → c` and `a → b_c` on one trigger) are two distinct nodes with distinct keys. | Test (TC-235) |
 | FR-154-AC-13 | Two fields of one owner, two operations of one owner, a field and an operation of one owner, two parameters of one operation and two variant cases of one type that share one identity each refuse once, `invalid_model_binding`/`conflicting-binding`, naming the shared identity at the later member's path: `TypeDefinition.fields[j]`, `TypeDefinition.operations[k]` (the operation, for a field and an operation), `TypeDefinition.operations[k].params[s]` and `TypeDefinition.variants[i]`; the refusal carries the code, cause, shared identity and path only, and the collision suppresses the identity, origin and payload checks of both colliding cases (FR-154-AC-11 and FR-208-AC-15 apply to a case not already refused by a collision), so exactly one refusal is reported whichever of the two cases carries the correctly minted identity, and no declaration of the package is admitted. The same members with distinct identities are admitted, and one member name used in two different owners is two distinct identities and no collision. | Test (TC-235) |
-| FR-154-AC-14 | A composed document (`type: FR` with `object: value_object`, or with `object: enumeration`, as `FR-204` and `FR-271`) declares no model node: the lift emits none, intake classifies it by `type` alone, and a package built from a bundle that holds it equals the package built without it. A document of an object type declares one node whether or not it carries `object:`. A relationship end or supertype naming `ix://<package identity>/FR-204` refuses `missing_declaration`/`missing-name`, a node carrying `FR-204` as its `<Name>` segment refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.identity`, and no composed document is ever lifted under a name derived from its id. | Test (TC-234, TC-945) |
+| FR-154-AC-14 | A composed document (`type: FR` with `object: value_object`, or with `object: enumeration`, as `FR-204` and `FR-271`) declares no model node: extraction skips it because its `type` is an artifact-type id even though it carries `object:`, the lift emits none, and a package built from a bundle that holds it equals the package built without it. A document of an object type declares one node whether or not it carries `object:`. A relationship end or supertype naming `ix://<package identity>/FR-204` refuses `missing_declaration`/`missing-name`, a node carrying `FR-204` as its `<Name>` segment refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.identity`, and no composed document is ever lifted under a name derived from its id. | Test (TC-234, TC-945) |
 
 ## Dependencies
 

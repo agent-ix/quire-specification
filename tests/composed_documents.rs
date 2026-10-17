@@ -94,11 +94,13 @@ fn no_document_of_an_artifact_type_is_lifted_and_no_lifted_name_has_a_hyphen() {
 #[trace("TC-945", "FR-154-AC-14")]
 fn a_reference_to_a_composed_document_is_a_missing_declaration() {
     let v = vectors();
+    let package = text(&v, "package_identity");
+    let types = object_types(&v);
+    let nodes: BTreeSet<String> = array(&v, "documents")
+        .iter()
+        .filter_map(|d| lifted_identity(d, package, &types))
+        .collect();
     for case in array(&v, "reference_cases") {
-        let nodes: BTreeSet<&str> = array(case, "package_nodes")
-            .iter()
-            .map(|n| n.as_str().expect("node is a string"))
-            .collect();
         let refusal = (!nodes.contains(text(case, "reference")))
             .then(|| ("missing_declaration", "missing-name"));
         let expected = &case["expected"];
