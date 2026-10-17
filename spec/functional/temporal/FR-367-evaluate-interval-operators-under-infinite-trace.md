@@ -67,7 +67,7 @@ that reaches before position 0 reads atomic predicates there as false, FR-092's
 complete-history rule. An unbounded operator has the meaning
 [FR-161](FR-161-analyze-infinite-trace-properties.md) states.
 
-The offset reading above applies to the integer-position profiles, the infinite-trace, event-position and fixed-sample profiles; the `quire.temporal.timed/v1` profile reads an interval over time stamps with the meaning of [FR-416](FR-416-evaluate-timed-temporal-claims.md).
+The offset reading above applies to the integer-position profiles, the infinite-trace, event-position and fixed-sample profiles; the `quire.temporal.timed/v1` profile reads an interval over time stamps with the meaning of [FR-416](FR-416-evaluate-timed-temporal-claims.md), and the `quire.temporal.timestamped-event.finite-window/v1` profile follows the timestamped rule of FR-091 and FR-092.
 
 A lower-bounded operator has the offset meaning with no upper bound. At
 position `i`: `eventually[a,*] p` holds when `p` holds at some `j >= i + a`;
