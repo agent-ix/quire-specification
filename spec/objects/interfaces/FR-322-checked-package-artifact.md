@@ -266,7 +266,9 @@ boundary.
   name, the missing inverse included, refuses `missing_declaration`/`missing-name`
   (FR-322-AC-56); no name is synthesized for an absent inverse. A reader checks
   only that a present role is a non-empty string. The wire member names the
-  relationship node as its `declaration` and the end's role as its `name`;
+  relationship node as its `declaration` and the end's role as its `name`; the
+  optional `population` key and its checks are "Population link of a
+  `reaches`" below;
   [FR-152](../../functional/type-model/FR-152-bind-systems-model-structures.md)'s
   runtime navigation `r.name` over `r: Reference<T>` is the source lookup that
   produces it. Traversing the named end obeys FR-152's direction rule, even
@@ -317,8 +319,8 @@ boundary.
   bodies contain no application. An `expression` whose body root is
   an application has the `semantic_form` fixed by its operator class; the
   node's `dependencies` are exactly the unique digest-ascending `reference`
-  term targets and member declarations of its body; a `dependency_reference`
-  contributes none. A contradictory form or
+  term targets, member declarations and member `population` nodes of its body;
+  a `dependency_reference` contributes none. A contradictory form or
   dependency list is `invalid_semantic_graph`. A node whose retained key differs
   from the digest of its preimage refuses as `invalid_package` with cause
   `stale-node-key`, after every graph-shape refusal and before any declaration,
@@ -1083,6 +1085,34 @@ unbounded sequence, a reference to another object type, or a non-reference
 type), refuses `ill_typed`/`operator-ineligible`. Traversal follows
 [FR-043](../../functional/foundation/FR-043-evaluate-finite-graph-relations.md).
 
+### Population link of a `reaches`
+
+The `relationship_end` member of a `quire.op.model.reaches` application MAY
+carry one further key, `population`, the `NodeId` of a population node. The
+key is absent when the application names no population, never `null`, so an
+application without it keeps the member, the preimage and the node id it had
+before the key existed; the key is part of the application's identity preimage
+when present. No other member kind carries `population`, and neither does
+`quire.op.model.navigate`: a `population` on a `navigate` application refuses
+`ill_typed`/`operator-ineligible` at `member.population`, and on any other
+member kind the schema refuses it.
+
+The `population` node SHALL resolve in the package to a `bounded_domain`/
+`model_population` node (the `Population<O>[N]` row of "Derived type forms and
+forwarding"), whose `semantic_type` is a `Set<Reference<T>>` node over a
+`Reference<T>` node over a model declaration node `T`, and `T` SHALL be the
+declaration of the type of the end the member's role names (the receiver's end
+type `E` in the sense of "Reaches over a field"). The check follows the
+destination-type check of FR-322-AC-57 in that order, and refuses at
+`member.population`: a `population` that does not resolve, that is not a
+`model_population` node, or whose `T` is not `E` refuses
+`ill_typed`/`operator-ineligible`. The node's `max` is read as for any
+`model_population` node and a negative `max` refuses as it does there; `max` `0`
+is admitted. The application's `dependencies` contain the `population` node, so
+a list that omits it is `invalid_semantic_graph` at `/dependencies`. The reader
+does not choose an occurrence of the population node: a reader that selects the
+population by occurrence takes the `Type` occurrence with the least ordinal.
+
 ## Structural leaf walk
 
 The leaf walk of a compared type starts at that type with the empty path
@@ -1490,6 +1520,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-70 | A `function` node whose body is an `aggregate` with the first binding `parameters`, an `aggregate` of `reference` terms to `value`/`parameter` nodes in parameter order, (QSL FR-092 builds it, including a parameter the body never reads). A `function.call` application over that callee has arguments counted against that binding and typed against the `semantic_type` of its referenced parameter nodes; a callee without the binding takes none. | Test |
 | FR-322-AC-71 | A selected domain package that declares the variant type `Tier` (cases `Gold`, `Standard`) and the object `Account` with field `tier: Tier` admits a self-typed `model`/`variant_type` declaration node owned by `Tier`, with a `ModelOwner` and the closed `ModelDeclarationNode` preimage, family `enum`. `Account.tier` derives the `Tier` node as its type, an `optional` field `Option<Tier>` and an ordered non-unique `[0, 3]` field `Sequence<Tier>[0, 3]`, never `Reference<Tier>`. `quire.op.enum.eq` and `quire.op.enum.ne` over two `Tier` operands are admitted; `quire.op.structural.eq` over them, and an ordering application (`quire.op.enum.lt`, `le`, `gt` or `ge`), refuse `ill_typed`/`operator-ineligible`. An `enum_value` node whose `semantic_type` is the `Tier` node and whose case is `Gold` or `Standard` is admitted, and one whose case is not a case of `Tier` in the selected document refuses `invalid_semantic_graph`. The node key is a function of the selected document and the node alone: two units that select the package under different model aliases derive one `Tier` node key and one key for each case. A `model`/`variant_type` node owned by a record value type, an object type or a node absent from the selected document refuses `missing_declaration`/`missing-selection` in the owner join, and one with no `owner` or with a `SourceOwner` and no `declaration` fails the V2 schema (`malformed_wire`); both V2 schemas enumerate the form in the owner-presence rule, the model forms and the `ModelDeclarationNode` preimage. | Test (TC-940) |
 | FR-322-AC-72 | A selected domain package that declares the process `Flow` (`quire.meaning.model.process/v1`, field `n`, operation `go`) and the state machine `Gate` (`quire.meaning.model.state-machine/v1`, field `open`, operation `toggle`) admits a self-typed `model`/`process` declaration node owned by `Flow` and a self-typed `model`/`state_machine` declaration node owned by `Gate`, each with a `ModelOwner` and the closed `ModelDeclarationNode` preimage, family `object`; `Flow.n` and `Flow.go` resolve through step 3 as an object type's members do, and `Reference<Flow>` and `Reference<Gate>` derive `composite_type`/`reference` nodes over the two declaration nodes. A `model`/`persistence_interface` node owned by a declared persistence interface passes the owner join. A process node owned by an object type, a state machine owned by a process, or either owned by a node absent from the selected document refuses `missing_declaration`/`missing-selection` in the owner join, and either carrying no `owner` fails the V2 schema (`malformed_wire`); both V2 schemas enumerate the three forms in the owner-presence rule and the `ModelDeclarationNode` preimage. | Test (TC-233, TC-280) |
+| FR-322-AC-73 | A `quire.op.model.reaches` application whose `relationship_end` member carries `population`, the id of a `bounded_domain`/`model_population` node over `Set<Reference<Order>>` where `Order` is the type of the end the member's role names, validates against both V2 schemas, is keyed by an application preimage that includes the key, lists the population node in its `dependencies`, and is admitted by the full reader, for a `max` of `3` and of `0`. The same application without the key keeps the node id it has in `positive-operation-identities.json`. `population` naming a `bounded_domain`/`integer_range` node, a node absent from the graph, or a `model_population` node over another model declaration refuses `ill_typed`/`operator-ineligible`; a `dependencies` list without the population node is refused `invalid_semantic_graph`; the published `adverse.json` `reaches_population_cases` record each. | Test |
 
 ## Dependencies
 

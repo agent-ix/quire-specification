@@ -58,6 +58,15 @@
     {"id":"relationship-end-names-missing-inverse","base":"positive-operation-identities","relationship_owner_node":"ix://acme/orders/relationship/Order-invoiced-Invoice","member_name":"next","expected_code":"missing_declaration","expected_cause":"missing-name"},
     {"id":"relationship-end-names-ambiguous-role","base":"positive-operation-identities","relationship_owner_node":"ix://acme/orders/relationship/Order-twin-Order","member_name":"twin","expected_code":"ambiguous_declaration","expected_cause":"ambiguous-name"}
   ],
+  "reaches_population_cases": [
+    {"id":"reaches-without-population-keeps-its-member","base":"positive-operation-identities","population":null,"outcome":"admitted"},
+    {"id":"reaches-population-max-3-admitted","base":"positive-operation-identities","population":{"model_population_over":"ix://acme/orders/Order","max":"3"},"outcome":"admitted"},
+    {"id":"reaches-population-max-0-admitted","base":"positive-operation-identities","population":{"model_population_over":"ix://acme/orders/Order","max":"0"},"outcome":"admitted"},
+    {"id":"reaches-population-names-integer-range","base":"positive-operation-identities","population":{"node_tag":"bounded_domain","semantic_form":"integer_range"},"expected_code":"ill_typed","expected_cause":"operator-ineligible"},
+    {"id":"reaches-population-names-absent-node","base":"positive-operation-identities","population":{"absent":true},"expected_code":"ill_typed","expected_cause":"operator-ineligible"},
+    {"id":"reaches-population-over-another-model-declaration","base":"positive-operation-identities","population":{"model_population_over":"ix://acme/orders/Invoice","max":"3"},"expected_code":"ill_typed","expected_cause":"operator-ineligible"},
+    {"id":"reaches-population-omitted-from-dependencies","base":"positive-operation-identities","population":{"model_population_over":"ix://acme/orders/Order","max":"3"},"dependencies":"without-population","expected_code":"invalid_semantic_graph"}
+  ],
   "relationship_document_cases": [
     {"id":"relationship-document-admitted","patch":[],"outcome":"admitted"},
     {"id":"relationship-without-target-role-admitted","patch":[{"op":"remove","path":"/types/@Order/relationships/@Order-order-Order/targetEnd/role"}],"outcome":"admitted"},

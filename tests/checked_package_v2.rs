@@ -690,8 +690,8 @@ fn is_application_node(node: &Value) -> bool {
 }
 
 /// Exact dependency list of an application-bearing node: every reference
-/// target and every operation member declaration of its body, unique and
-/// ascending by digest.
+/// target, every operation member declaration and every `reaches` member
+/// `population` node of its body, unique and ascending by digest.
 fn application_dependencies(term: &Value) -> Vec<Value> {
     let mut targets = BTreeMap::new();
     let mut pending = vec![term];
@@ -703,9 +703,11 @@ fn application_dependencies(term: &Value) -> Vec<Value> {
                 }
             }
             Some("application") => {
-                let declaration = &current["operation"]["member"]["declaration"];
-                if let Some(digest) = declaration["digest"].as_str() {
-                    targets.insert(digest, declaration);
+                let member = &current["operation"]["member"];
+                for link in [&member["declaration"], &member["population"]] {
+                    if let Some(digest) = link["digest"].as_str() {
+                        targets.insert(digest, link);
+                    }
                 }
                 pending.extend(current["arguments"].as_array().into_iter().flatten());
             }
@@ -1203,6 +1205,46 @@ impl<'a> OperationOracle<'a> {
             1 => None,
             _ => Some(OperationRefusal::AmbiguousName),
         }
+    }
+
+    /// FR-322 "Population link of a `reaches`": whether a `relationship_end`
+    /// member's optional `population` is admissible. An absent key is. A present
+    /// one is only on a `reaches` application and names a
+    /// `bounded_domain`/`model_population` node over `Set<Reference<T>>` whose
+    /// model declaration `T` is the type of the end the member's role names.
+    fn population_link_holds(&self, entry: &Value, member: &Value) -> bool {
+        let Some(population) = member.get("population") else {
+            return true;
+        };
+        let model_declared = |id: &Value, tag: &str, form: &str| {
+            self.node(id)
+                .filter(|node| node["node_tag"] == tag && node["semantic_form"] == form)
+        };
+        let first_target = |node: &'a Value| node["body"]["members"][0]["target"].clone();
+        let object_type = || {
+            let population = model_declared(population, "bounded_domain", "model_population")?;
+            let set = model_declared(&population["semantic_type"], "composite_type", "set")?;
+            let reference =
+                model_declared(&first_target(set), "composite_type", "reference")?;
+            self.node(&first_target(reference))
+        };
+        let near_end_type = || {
+            let relationship = self.node(&member["declaration"])?;
+            let declared = self.model_relationship(relationship)?;
+            let name = member["name"].as_str()?;
+            declared["ends"]
+                .as_array()?
+                .iter()
+                .find(|end| end["role"] == name)
+                .map(|end| end["type"].clone())
+        };
+        entry["operator"] == "reaches"
+            && member["kind"] == "relationship_end"
+            && matches!(
+                (object_type(), near_end_type()),
+                (Some(object), Some(end))
+                    if is_model_declaration(object) && object["owner"]["node"] == end
+            )
     }
 
     /// Result descriptor of a member selection, resolved against its declaration.
@@ -1848,6 +1890,7 @@ impl<'a> OperationOracle<'a> {
             || entry["member"] == "temporal_interval"
             || entry["member"] == "fairness"
             || self.member_descriptor(member).is_some();
+        let population_links = self.population_link_holds(entry, member);
         let constraints_hold = entry["constraints"]
             .as_array()
             .expect("catalog constraints are an array")
@@ -1877,10 +1920,11 @@ impl<'a> OperationOracle<'a> {
                 compared.and_then(|id| self.expected_leaves(&id))
             }
         };
-        let (true, true, true, true, Some(expected)) = (
+        let (true, true, true, true, true, Some(expected)) = (
             arity_fits,
             families_fit,
             member_resolves,
+            population_links,
             constraints_hold,
             expected_leaves,
         ) else {
@@ -12725,6 +12769,175 @@ fn tc_233_a_relationship_end_names_only_the_ends_its_relationship_declares() {
         let outcome = read_package_semantics(&candidate, &catalog);
         match case["outcome"].as_str() {
             Some("admitted") => assert_eq!(outcome, Ok(()), "{id}"),
+            _ => {
+                let refusal =
+                    OperationRefusal::from_cause(case["expected_cause"].as_str().expect("cause"))
+                        .expect("a published operation cause");
+                assert_eq!(case["expected_code"], refusal.code(), "{id}");
+                assert_eq!(outcome, Err(ReadRefusal::Operation(refusal)), "{id}");
+            }
+        }
+    }
+}
+
+/// Append the nodes of `Population<T>[max]` for the model declaration node
+/// `object`: its `Reference<T>`, `Set<Reference<T>>` and the
+/// `bounded_domain`/`model_population` node, each cloned from a node of the
+/// package and rekeyed. Returns the population node's id.
+fn append_population_chain(package: &mut Value, object: &Value, max: &str) -> Value {
+    let template = |tag: &str, form: &str| {
+        let index = node_index_where(package, |node| {
+            node["node_tag"] == tag && node["semantic_form"] == form
+        });
+        package["semantic_graph"]["nodes"][index].clone()
+    };
+    let integer = template("scalar_type", "integer")["node_id"].clone();
+    let mut reference = template("composite_type", "reference");
+    let mut set = template("composite_type", "set");
+    let mut population = template("bounded_domain", "integer_range");
+    reference["body"]["members"][0]["target"] = object.clone();
+    reference["dependencies"] = json!([object]);
+    let last_id = |package: &Value| {
+        package["semantic_graph"]["nodes"]
+            .as_array()
+            .and_then(|nodes| nodes.last())
+            .expect("package nodes are not empty")["node_id"]
+            .clone()
+    };
+    append_rekeyed_structural_node(package, reference);
+    let reference_id = last_id(package);
+    set["body"]["members"][0]["target"] = reference_id.clone();
+    set["dependencies"] = json!([reference_id]);
+    append_rekeyed_structural_node(package, set);
+    let set_id = last_id(package);
+    population["semantic_form"] = json!("model_population");
+    population["semantic_type"] = set_id.clone();
+    population["body"] = json!({
+        "term": "aggregate",
+        "members": [{
+            "name": "max",
+            "term": "binding",
+            "value": {
+                "term": "literal",
+                "type": integer,
+                "value": max,
+                "value_kind": "integer"
+            }
+        }]
+    });
+    let mut dependencies = vec![integer, set_id];
+    dependencies.sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+    population["dependencies"] = json!(dependencies);
+    append_rekeyed_structural_node(package, population);
+    last_id(package)
+}
+
+/// FR-322-AC-73 (population link of a `reaches`): the published
+/// `reaches_population_cases`. A `quire.op.model.reaches` application whose
+/// `relationship_end` member names a `model_population` node over the type of
+/// its role's end is admitted, for a `max` of `3` and of `0`; the key is part
+/// of the application's key and its dependencies; a `population` that is an
+/// `integer_range` node, an absent node or a population over another model
+/// declaration refuses `ill_typed`/`operator-ineligible`; a dependencies list
+/// without the population node is `invalid_semantic_graph`. The application
+/// without the key keeps the member, and the node id, of the published fixture.
+#[trace("TC-233", "FR-322-AC-73")]
+#[test]
+fn tc_233_a_reaches_population_link_names_a_population_over_its_role_end_type() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let adverse = parsed_fixture(ADVERSE);
+    let cases = adverse["reaches_population_cases"]
+        .as_array()
+        .expect("cases");
+    assert_eq!(cases.len(), 7);
+    for case in cases {
+        let id = case["id"].as_str().expect("id");
+        let mut candidate = positive_fixtures()
+            .into_iter()
+            .find(|(name, _)| *name == case["base"].as_str().expect("base"))
+            .expect("a published base")
+            .1;
+        let published = candidate.clone();
+        let application = node_index_where(&candidate, |node| {
+            node["body"]["operation"]["member"]["kind"] == "relationship_end"
+                && node["body"]["operation"]["identity"] == "quire.op.model.reaches"
+        });
+        let population = &case["population"];
+        let link = if population.is_null() {
+            None
+        } else if population["absent"] == true {
+            Some(json!({"domain": "quire.checked-semantic-node/v1", "digest": "f".repeat(64)}))
+        } else if let Some(owner_node) = population["model_population_over"].as_str() {
+            let order = node_index_where(&candidate, |node| {
+                node["node_tag"] == "model" && node["owner"]["node"] == "ix://acme/orders/Order"
+            });
+            let object = if owner_node == "ix://acme/orders/Order" {
+                candidate["semantic_graph"]["nodes"][order]["node_id"].clone()
+            } else {
+                let mut other = candidate["semantic_graph"]["nodes"][order].clone();
+                other["owner"]["node"] = json!(owner_node);
+                append_rekeyed_structural_node(&mut candidate, other);
+                candidate["semantic_graph"]["nodes"]
+                    .as_array()
+                    .and_then(|nodes| nodes.last())
+                    .expect("appended")["node_id"]
+                    .clone()
+            };
+            Some(append_population_chain(
+                &mut candidate,
+                &object,
+                population["max"].as_str().expect("max"),
+            ))
+        } else {
+            let target = node_index_where(&candidate, |node| {
+                node["node_tag"] == population["node_tag"]
+                    && node["semantic_form"] == population["semantic_form"]
+            });
+            Some(candidate["semantic_graph"]["nodes"][target]["node_id"].clone())
+        };
+        if let Some(link) = &link {
+            let without_dependency = case["dependencies"] == "without-population";
+            edit_node_and_projection(&mut candidate, application, |node| {
+                node["body"]["operation"]["member"]["population"] = link.clone();
+                node["dependencies"] = json!(application_dependencies(&node["body"]));
+            });
+            rekey_stale_nodes(&mut candidate);
+            let member = &candidate["semantic_graph"]["nodes"][application]["body"]["operation"]
+                ["member"];
+            assert!(member["population"].is_object(), "{id}");
+            assert!(
+                v2.is_valid(&candidate),
+                "{id}: the member with a population validates against the V2 schema"
+            );
+            if without_dependency {
+                let kept = application_dependencies(
+                    &published["semantic_graph"]["nodes"][application]["body"],
+                );
+                edit_node_and_projection(&mut candidate, application, |node| {
+                    node["dependencies"] = json!(kept);
+                });
+            }
+        } else {
+            assert_eq!(
+                published["semantic_graph"]["nodes"][application]["body"]["operation"]["member"]
+                    .as_object()
+                    .map(|member| member.keys().cloned().collect::<BTreeSet<_>>()),
+                Some(BTreeSet::from([
+                    "declaration".to_owned(),
+                    "kind".to_owned(),
+                    "name".to_owned()
+                ])),
+                "{id}: the published member names exactly kind, declaration and name"
+            );
+        }
+        let outcome = read_package_semantics(&candidate, &catalog);
+        match case["outcome"].as_str() {
+            Some("admitted") => assert_eq!(outcome, Ok(()), "{id}"),
+            _ if case["expected_code"] == "invalid_semantic_graph" => assert!(
+                matches!(outcome, Err(ReadRefusal::GraphShape(_))),
+                "{id}: {outcome:?}"
+            ),
             _ => {
                 let refusal =
                     OperationRefusal::from_cause(case["expected_cause"].as_str().expect("cause"))
