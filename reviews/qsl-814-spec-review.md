@@ -117,7 +117,7 @@ Reviewed at 3cc54e1c5ddf72dd1aca19a70b68359ed3d33f03 (fix commit 3cc54e1). Scope
 | FND-003 | fixed | 3cc54e1 |
 | FND-004 | fixed | 3cc54e1 |
 | FND-005 | fixed | 3cc54e1 |
-| FND-006 | open | awaiting planner choice between (a) and (b); not yet fixed |
+| FND-006 | fixed | planner ruled (a): the no-key claim is dropped; a supplied collection with an element type that has no FR-181 form is `unknown_required_feature`/`unsupported-feature`; FR-144-AC-22 and C24 |
 | FND-007 | fixed | cause table row 1 split: not a JSON object is `wrong-value-kind`, an object with no `type` member is `missing-member` |
 | FND-008 | fixed | FR-181 sentence scoped to "a set or bag element" |
 
