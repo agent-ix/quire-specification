@@ -194,3 +194,24 @@ New medium: under `activation on each`, a terminal state can have no live instan
 Validation at 3db1cb0: `quire validate` exits 0 on FR-464, FR-465, FR-466, TC-946, TC-947, TC-948, spec.md, TC-233, TC-378, TC-931, FR-054, FR-170 and FR-426. FR-322, FR-214 and FR-215 exit 3 with the existing `value_object`/`entity` frontmatter (`id`/`fields`) failure; that baseline is unchanged.
 
 Verdict for disposition pass 2: FIX on one high finding, FND-009, which is a single vector row in TC-948. Every original finding FND-001 to FND-008 is fixed. Once CP9d is restated the PR passes. M9 and the QSL selector adoption go to the planner.
+
+## Reviewer dispositions, round 3
+
+Round 3, at b92baaef775e54a727ce234ef24646091779406f. The author's delta is 731963a, bfcf371 and b92baae, plus a merge of main with #272, whose FR-367, FR-416 and TC-298 edits are out of scope. Read-only; the only build was `quire validate`. No new major findings.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-009 | fixed bfcf371 | CP9d now has two separate commits C1 and C2 in the two cases, with `commit` naming C1, and expects admitted. `taken` is {C1} ∩ {C2} = ∅, so admitted is right. The new CP9f puts a commit as a sequence child before the choice, with `Applied` after the choice. The ancestor sequence holds that commit before the child that holds `Applied`, so the commit dominates and refuses with `commit-precedes-effect`, which is right. |
+
+Mediums and lows at b92baae:
+
+- **M9 fixed, bfcf371.** Branches are sorted records by `label` (UTF-8 bytes), `joined` is in ascending label order, and the FR-464 canonical-order text lists branches among the sets. "Ordered list" and "ordered records" no longer name branch order. A grep finds no "by position" left in FR-464–466 or TC-946–948. Recomputed: PA12 lists `west, east`; `east` sorts before `west`, so the order is wrong and `invalid_semantic_graph` is right. PA13 writes `west` then `east` in the source; it encodes as `east, west`, with the same keys as the base, which is right. PA5 (`joined` `[west, east]` → `invalid_semantic_graph`) is consistent.
+  - Low: FR-466 check 4 still says "in branch order" (which now means ascending label). FR-466-AC-4 does not mention the branch sort. TC-948 Expected Results item 4 says "PA1 to PA11", which omits PA12 and PA13.
+- **FR-170 loss low: fixed, bfcf371.** Under `head` and `tail` the arriving message is appended; under `new` it is not. This agrees with CH-08, CH-08h and CH-08t.
+- **FR-215 Duplication-premise low: fixed, bfcf371.** The row is removed.
+- **Terminal-captures medium: fixed, b92baae.** FR-429, the FR-464 stage table and FR-465 now agree. The condition reads `over` and constants, plus the protocol captures only for an `on origin` protocol. Under `on each`, a capture read or the activation binder refuses with `missing_declaration`/`missing-name`. Recomputed: TM10 (capture of the `on each` base → `missing-name`) and TM13 (`on origin` with capture `order` → admitted) are right.
+  - Low: TM13 does not state the `on origin` capture's initializer. The base's `order` reads `opened`, which has no binder under `on origin`.
+
+Validation at b92baae: `quire validate` exits 0 on FR-429, FR-464, FR-465, FR-466, TC-947, TC-948 and spec.md.
+
+Final verdict: PASS. Every finding from FND-001 to FND-009 is fixed, and every medium is fixed. What remains are three lows, plus two items for the planner that are not blockers: a tracking ticket for regenerating the published fixtures and schema (TC-233), and QSL FR-218-AC-13 adopting the loss selector.

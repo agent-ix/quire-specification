@@ -119,7 +119,7 @@ FR-465-AC-8.
 | TM6 | the condition is an integer term | `ill_typed`/`non-boolean-root` at the node |
 | TM7 | the condition reads `sent` | `missing_declaration`/`missing-name` at the node, stage `terminal` |
 | TM10 | the condition reads the capture `order` of the `on each` base protocol | `missing_declaration`/`missing-name` at the node, stage `terminal` |
-| TM13 | the same condition in a protocol activated `on origin` with the capture `order` | admitted |
+| TM13 | the same condition in a protocol activated `on origin` (no trigger, so no `opened` binder), whose capture `order` is initialized from a model constant instead of `opened.order` | admitted |
 | TM12 | the condition reads the activation binder `opened` | `missing_declaration`/`missing-name` at the node, stage `terminal` |
 | TM11 | the condition reads `view` (`over`, the model observation) | admitted |
 | TM8 | the clause's `terminal` names the `finish` node | `invalid_model_binding`/`malformed-declaration` at the target |

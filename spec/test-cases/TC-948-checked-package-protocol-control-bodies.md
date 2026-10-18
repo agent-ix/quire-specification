@@ -231,7 +231,7 @@ FR-466-AC-14.
    refuse as listed (FR-466-AC-2).
 3. CE1 to CE11 behave as listed; CE6, CE7 and CE11 are admitted
    (FR-466-AC-3).
-4. PA1 to PA11 behave as listed (FR-466-AC-4).
+4. PA1 to PA13 behave as listed (FR-466-AC-4).
 5. RP1 to RP8 behave as listed (FR-466-AC-5, FR-464-AC-10).
 6. AW1 to AW12 behave as listed (FR-466-AC-6).
 7. E1 to E22 behave as listed (FR-466-AC-7, FR-466-AC-8, FR-466-AC-9).
