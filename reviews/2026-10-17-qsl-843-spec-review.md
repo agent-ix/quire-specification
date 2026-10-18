@@ -152,3 +152,45 @@ Verdict for the disposition pass: FIX. FND-001 is still open, and two new high f
 | M11 | Aligned with FR-370: a negative bound or capacity is `invalid_package`/`invalid-value` at strict wire validation (QU7, FR-466 check 6). |
 | M12 | Stated: an `at-least-once` channel with overflow `loss` is admitted; overflow governs a full queue, delivery policy governs transport loss (QU11). |
 | M9, M13 | Left for the planner. |
+
+## New findings (disposition pass 2)
+
+Reviewed at 3db1cb010f2e2d0a40c9e3bf5fbeb7d11ca3f1d1. The author's delta is 18e07bb and 502b6fa over 9dcf158, plus the merge of main with #270. Read-only; the only build was `quire validate`.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-009 | high | Vector CP9d cannot hold under FR-466's own rules. It says "`commit` names a `commit` control in both cases" of a `choice`, and expects `commit-precedes-effect`. The containment rule holds a control in exactly one position, so one commit node cannot sit in both cases; a node held twice is refused as `invalid_semantic_graph`. With two distinct commit nodes C1 and C2, `taken(choice)` is {C1} ∩ {C2} = ∅, so the template's `commit` is admitted. Either way the expected refusal never occurs. Restate CP9d with a result the rule yields: the held-twice refusal, or admitted for two distinct commits. If the intent is "every case commits", that needs a different rule. | spec/test-cases/TC-948-checked-package-protocol-control-bodies.md CP9d; FR-466 "Compensation" check 4 *Dominance*; FR-464 "Membership and containment" |
+
+## Reviewer dispositions, round 2
+
+Round 2, at 3db1cb0. The latest outcome is stated for every finding whose last reviewer row was still-open.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed 18e07bb | FR-322 and FR-464 now state only the target. The FR-322 worked example and AC-66 are written over a conforming clause node, and TC-931 sets up an FR-464 clause body. The terms exempt, "until the schemas", "published before FR-464", 12432a66 and e761cf no longer appear in FR-322, FR-464–466, TC-233, TC-931 or TC-946–948. The one remaining "published before" at FR-322:1490 is the older key-counter sentence and is unrelated. Under the planner's target-state ruling, the published fixtures and schema that do not yet carry the layouts are an implementation gap. That gap needs a tracking ticket (fixtures plus schema), because TC-233 ("the full reader admits every published positive fixture") fails against the current fixtures until they are regenerated. |
+| FND-007 | fixed 18e07bb | Clause-body row 7 now says the queues are ascending by each queue's own node-id digest, like every other set. Nothing else orders them. |
+| FND-008 | fixed 18e07bb | Terminal reads `over`, the protocol captures and constants, and no protocol binder. This is consistent across the FR-464 stage table, FR-465 "Terminal", TM10 (capture, admitted), TM11 (`view`, admitted), TM12 (activation binder, `missing-name`) and FR-429. The FR-464 list of slots that bar model state no longer names the terminal. |
+| FND-009 | still-open | New in this round, introduced by 502b6fa. |
+
+Mediums at 3db1cb0:
+
+- M3 fixed, 18e07bb (FR-466-AC-9 and E16 are now `type-mismatch`).
+- M4 fixed (CP10 places the effect and the commit in sibling branches).
+- M10 fixed (FR-214, FR-215, FR-222 and FR-224 now name the delivery policy). Low: the FR-215 table keeps a separate "Duplication premise" row, which FR-216-AC-6 ("no separate duplication premise") does not allow.
+- M11 fixed: a negative bound is `invalid_package`/`invalid-value` (QU7, FR-466 check 6), as in FR-370.
+- M12 fixed: QU11 admits it, and FR-465 states why.
+- M13 fixed, 502b6fa: `taken(n)` makes a `join all` the union over its branches. I recomputed CP9 (refuse), CP9b (refuse: the union holds C), CP9c (`join any`, admitted: the intersection is ∅), CP9e and CP10 (siblings, admitted: no ancestor sequence holds C before E's child) and CP10b (one case, admitted: ∅). All are correct; CP9d is FND-009.
+- M9 still-open: the rationale given is "the `joined` list maps to branches by position". But FR-466 check 4 matches `joined` texts to branch labels, and position only fixes the order of `joined`. Reordering two branches still re-keys a protocol with the same meaning. Branches could be sorted by label, as cases are. Medium, left with the planner.
+
+Loss selector, 502b6fa: the production `overflow-policy = 'reject' | 'block' | 'loss', loss-selector` with `loss-selector = 'head' | 'tail' | 'new'` agrees with FR-170, FR-426, FR-054, the choreography surface and FR-465. FR-465 adds an optional fourth argument `loss`, present exactly when `overflow` is `loss`, and that argument enters the node key. I recomputed QU2: 2 capacities × (reject, block, loss head, loss tail, loss new) = 10 keys, which is right. QU6a and QU6b refuse `malformed_wire`. CH-08, CH-08h and CH-08t are consistent.
+
+Two notes on the loss selector:
+
+- Low: FR-170 "loses one message ... The queue is otherwise unchanged" does not say whether the arriving message is appended under `head` and `tail`. CH-08h and CH-08t say it is. State it in FR-170 and FR-465.
+- For the planner: QSL main FR-218-AC-13 still writes `overflow loss` with no selector, so the QSL side must adopt the selector.
+
+New medium: under `activation on each`, a terminal state can have no live instance. The text gives that as the reason no instance binder is readable, but the protocol captures read there are per-instance values too. FR-429 states it this way, so it is FR-429's call.
+
+Validation at 3db1cb0: `quire validate` exits 0 on FR-464, FR-465, FR-466, TC-946, TC-947, TC-948, spec.md, TC-233, TC-378, TC-931, FR-054, FR-170 and FR-426. FR-322, FR-214 and FR-215 exit 3 with the existing `value_object`/`entity` frontmatter (`id`/`fields`) failure; that baseline is unchanged.
+
+Verdict for disposition pass 2: FIX on one high finding, FND-009, which is a single vector row in TC-948. Every original finding FND-001 to FND-008 is fixed. Once CP9d is restated the PR passes. M9 and the QSL selector adoption go to the planner.
