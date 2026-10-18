@@ -182,7 +182,9 @@ role         = 'role', ident, 'on', model-name, ';' ;
 relationship = 'relationship', ident, '=', model-name, ';' ;
 channel      = 'channel', ident, 'from', ident, 'to', ident,
                'carries', type-name, 'ordering', ordering,
-               'delivery', interval, ';' ;
+               'delivery', delivery-policy,
+               'capacity', capacity,
+               'overflow', overflow-policy, ';' ;
 ordering     = 'unordered'
              | 'fifo', 'by', '(', parameter, ')', block ;
 protocol-requirement = 'requires', 'temporal', ident, ';' ;
@@ -499,7 +501,8 @@ channel       = 'channel', ident, 'from', ident, 'to', ident,
 delivery-policy = 'unknown' | 'at-most-once' | 'at-least-once'
                 | 'exactly-once-premise' ;
 capacity      = uint | 'symbolic', '(', ident, ')' ;
-overflow-policy = 'reject' | 'block' | 'loss' ;
+overflow-policy = 'reject' | 'block' | 'loss', loss-selector ;
+loss-selector = 'head' | 'tail' | 'new' ;
 parallel      = 'parallel', ident, [ memory-clause ],
                 '{', branch, branch, { branch }, '}',
                 'join', join-policy, '[', ident, { ',', ident }, ']',

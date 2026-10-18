@@ -688,6 +688,12 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-453
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-464
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-465
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-466
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-390
     type: contains
   - target: ix://agent-ix/quire-specification/FR-391
@@ -977,6 +983,9 @@ The requirement artifacts are indexed below.
 | [FR-451](objects/interfaces/FR-451-checked-package-abstraction-relation-body.md) | FR | Checked-package `correspondence`/`abstraction_relation` body, keys and reader order |
 | [FR-452](functional/tooling/FR-452-preserve-admission-across-specification-revisions.md) | FR | Spec-versioning refinement gate: a superseding revision admits what its prior admitted |
 | [FR-453](functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md) | FR | Profile-layering refinement gate: the five AD-003 layering edges, refusal preservation and per-layer user subsets |
+| [FR-464](objects/interfaces/FR-464-checked-package-protocol-node-bodies.md) | FR | Checked-package `protocol` node family: operation, operator catalog, keys, clause body, binders, causal relation and reader order |
+| [FR-465](objects/interfaces/FR-465-checked-package-protocol-declaration-bodies.md) | FR | Checked-package protocol `role`, `channel`, `queue` and `obligation` (`finish`, `terminal`) bodies |
+| [FR-466](objects/interfaces/FR-466-checked-package-protocol-control-bodies.md) | FR | Checked-package protocol `control` (thirteen operators) and `compensation` bodies, binder scope and decision facts |
 | [FR-405](functional/analysis/FR-405-declare-probabilistic-models.md) | FR | Declare random parameters, workloads and rewards |
 | [FR-406](functional/analysis/FR-406-interpret-probabilistic-models.md) | FR | Interpret probabilistic models under a workload or every scheduler |
 | [FR-407](functional/analysis/FR-407-state-probabilistic-claims.md) | FR | State probabilistic claims over events and measures |

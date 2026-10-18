@@ -31,12 +31,10 @@ lowered sibling. Inspect the ContractPackage and compare its node collection,
 identities, references, and source correspondence with FR-322 and FR-330.
 Include an explicit recursion group and verify its keyed references remain
 finite serialized values. Repeat after changing construction order. In the
-fixture, use the existing `protocol_clause` control application from
-`proposals/checked-package-v2/fixtures/positive-all-families.json`; verify its
+fixture, use a `protocol_clause` node with the FR-464 clause body; verify its
 `quire.op.protocol.control` application carries the selected
 `protocol_profile` law and catalogued `profile_operator` member, as FR-322-AC-22
-requires. This is fixture setup, not a claim that every protocol node has that
-body.
+requires.
 Add FR-322's `protocol`/`protocol_reference` carrier to that clause, with a
 single `reference` body target equal to the clause's exact local `node_id`,
 the same `semantic_type`, one `expression` occurrence and the target as its

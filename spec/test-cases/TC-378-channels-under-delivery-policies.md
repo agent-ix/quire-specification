@@ -34,7 +34,9 @@ contents and the enabled channel steps.
 | CH-05 | `unordered`, `unknown`, capacity 2 | both `duplicate` (below capacity) and `lose` are enabled |
 | CH-06 | `fifo`, `exactly-once-premise`, capacity 1, overflow `block` | With `m1` queued, the second `send` is not enabled until the receiver takes `m1` |
 | CH-07 | as CH-06 with overflow `reject` | With `m1` queued, the second `send` is enabled, leaves the queue unchanged and records the rejection in its binder |
-| CH-08 | as CH-06 with overflow `loss` | With `m1` queued, the second `send` applies the declared loss selector |
+| CH-08 | as CH-06 with overflow `loss new` | With `m1` queued, the second `send` is enabled, drops the arriving message, leaves `m1` queued and records the loss in its binder |
+| CH-08h | as CH-06 with overflow `loss head` | With `m1` queued, the second `send` drops `m1`, queues the arriving message and records the loss |
+| CH-08t | as CH-06 with overflow `loss tail` | With `m1` queued (capacity 1, so `m1` is also the newest), the second `send` drops `m1`, queues the arriving message and records the loss; with capacity 2 and `m1`, `m2` queued the oldest stays and `m2` is dropped |
 | CH-09 | `await W after S within [0, 5] match receive R … then … timeout …` with no sender | `timeout(W)` is enabled at every state where `W` waits; no clock value appears in any state key |
 
 ## Expected Results
