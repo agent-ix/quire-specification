@@ -118,7 +118,8 @@ FR-465-AC-8.
 | TM5 | a second `terminal` node of the same clause | `ambiguous_declaration`/`ambiguous-name` naming both node keys |
 | TM6 | the condition is an integer term | `ill_typed`/`non-boolean-root` at the node |
 | TM7 | the condition reads `sent` | `missing_declaration`/`missing-name` at the node, stage `terminal` |
-| TM10 | the condition reads the capture `order` | admitted |
+| TM10 | the condition reads the capture `order` of the `on each` base protocol | `missing_declaration`/`missing-name` at the node, stage `terminal` |
+| TM13 | the same condition in a protocol activated `on origin` with the capture `order` | admitted |
 | TM12 | the condition reads the activation binder `opened` | `missing_declaration`/`missing-name` at the node, stage `terminal` |
 | TM11 | the condition reads `view` (`over`, the model observation) | admitted |
 | TM8 | the clause's `terminal` names the `finish` node | `invalid_model_binding`/`malformed-declaration` at the target |
@@ -136,7 +137,7 @@ FR-465-AC-8.
 ## Expected Results
 
 1. RL1, RL2, RL8, RL14, CH1, CH2, CH7, CH7d, CH11, CH13, QU1 to QU3, QU11, FN1, FN3, FN3b, TM1, TM11,
-   TM2, TM9, TM10, RT1 and RT4 are admitted with the stated keys (FR-465-AC-1 to
+   TM2, TM9, TM13, RT1 and RT4 are admitted with the stated keys (FR-465-AC-1 to
    FR-465-AC-8).
 2. RL3 to RL7, RL13, CH8 to CH10, CH12, QU8, QU9, FN5, FN6 and TM8 refuse
    `invalid_model_binding`/`malformed-declaration` or `missing_declaration`/
@@ -145,7 +146,7 @@ FR-465-AC-8.
 3. RL9, RL10, RL17 to RL19, CH3, CH4, CH14 to CH16, QU4 to QU6b, QU10, TM3, TM4
    and RT2 refuse `malformed_wire` (FR-465-AC-2, FR-465-AC-4,
    FR-465-AC-5, FR-465-AC-7, FR-465-AC-8).
-4. QU7 refuses `invalid_package`/`invalid-value`; RL11, RL12, RL15, RL16, CH5, CH6, CH7a to CH7c, CH7e, FN2, FN4, TM6, TM7, TM12 and FN7 refuse as
+4. QU7 refuses `invalid_package`/`invalid-value`; RL11, RL12, RL15, RL16, CH5, CH6, CH7a to CH7c, CH7e, FN2, FN4, TM6, TM7, TM10, TM12 and FN7 refuse as
    listed (FR-465-AC-2, FR-465-AC-3, FR-465-AC-6, FR-465-AC-7).
 5. CH17 changes the keys stated; TM5 refuses `ambiguous-name` (FR-465-AC-4,
    FR-465-AC-7).

@@ -63,7 +63,11 @@ A protocol clause carries at most one `terminal` member, by the [shared grammar]
 `protocol-terminal` production:
 
 - `terminal when { P };` — `P` is a Boolean predicate over the model
-  observation and the protocol's captures, read through the one clause
+  observation and, for a protocol activated `on origin`, the protocol's
+  captures. Under `activation on each` the predicate is package-level and has no
+  instance binder, so it cannot read a per-instance capture: a read of a capture
+  of an `on each` protocol, or of the activation binder, refuses
+  `missing_declaration`/`missing-name` at the read. `P` is read through the one clause
   evaluator at a terminal state. An undefined `P` settles `refuted` with cause
   `undefined-evaluation` by the model-side undefined rule
   ([FR-366](../temporal/FR-366-check-deadlock-freedom.md),

@@ -274,7 +274,7 @@ when present, and every protocol capture binder.
 | `channel-key` | a FIFO channel's `key` | the channel's message binder |
 | `run` | a slot in the `run` tree | FR-466 "Binder scope" |
 | `finish` | `finish.constraint` | the binders readable after the root control, and the finish binder |
-| `terminal` | `terminal.condition` | `over` and the protocol captures; no other binder |
+| `terminal` | `terminal.condition` | `over`, and the protocol captures when the activation is `origin`; under `each` no capture and no binder |
 | `registration-capture`, `trigger-guard`, `activation-capture`, `retry`, `recovery` | the slots of a compensation | FR-466 "Compensation scope" |
 
 Every `run` slot and `finish` may also read the protocol captures through

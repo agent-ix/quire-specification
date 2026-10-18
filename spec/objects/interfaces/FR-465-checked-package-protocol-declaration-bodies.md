@@ -227,10 +227,12 @@ The reader checks that `condition` is present exactly when `mode` is `when`,
 else the layout is violated (`malformed_wire`); and that
 it is a Boolean term, else `ill_typed`/`non-boolean-root` at the node. Its reads
 are a slot check (FR-464 step 6, stage `terminal`): it reads the model
-observation (`over`), the protocol captures and constants, as
+observation (`over`), constants and, for an `origin` activation, the protocol
+captures, as
 [FR-429](../../functional/protocol/FR-429-report-protocol-deadlocks.md) states,
-and no protocol binder, so a read of the activation binder or of a `run`
-binder refuses `missing_declaration`/`missing-name`. Under `activation on
+and no protocol binder, so a read of the activation binder, of a `run` binder
+or of a capture of an `each` protocol (a per-instance value the package-level
+condition has no binder for) refuses `missing_declaration`/`missing-name`. Under `activation on
 each` a terminal state can have no live instance, which is why no instance
 binder is readable there.
 
