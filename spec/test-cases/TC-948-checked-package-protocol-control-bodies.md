@@ -78,6 +78,8 @@ FR-466-AC-14.
 | PA2 | two branches labelled `east` | `ambiguous_declaration`/`ambiguous-name` at `Shipments`, naming the label |
 | PA3 | `joined` is `[east, middle]` | `missing_declaration`/`missing-name` at `middle` |
 | PA4 | `join all [east]` | `invalid_package`/`invalid-value` at `joined` |
+| PA12 | `branches` listed `west`, `east` | `invalid_semantic_graph` (branches sorted by label) |
+| PA13 | the same protocol declared with branches `west` then `east` in the source | one encoding, `east` then `west`: the same node keys as the base |
 | PA5 | `joined` is `[west, east]` (branch order reversed) | `invalid_semantic_graph` |
 | PA6 | `joined` is `[east, east, west]` | `invalid_semantic_graph` |
 | PA7 | `quorum` with `count` 0, and with `count` 3 over two joined branches | `invalid_package`/`invalid-value` at `count` |
@@ -190,7 +192,8 @@ FR-466-AC-14.
 | CP10 | `Applied` and a `commit` control are placed in different branches of a new `parallel`, and `commit` names that control | admitted (no edge orders it against `Applied`) |
 | CP9b | `Applied` after a `parallel` with `join all`; `commit` names a `commit` control in one of its branches | `unsupported_construct`/`declaration-form` at `commit`, profile and reason `commit-precedes-effect` (`taken` of a `join all` is the union over its branches) |
 | CP9c | as CP9b with `join any [east]` | admitted (`taken` is the intersection over the branches) |
-| CP9d | `Applied` after a `choice`; `commit` names a `commit` control in both cases | `unsupported_construct`/`declaration-form` at `commit`, reason `commit-precedes-effect` |
+| CP9d | `Applied` after a `choice` whose two cases hold separate `commit` controls `C1` and `C2`; `commit` names `C1` | admitted (`taken` is `{C1}` intersected with `{C2}`, empty) |
+| CP9f | a `commit` control that is a sequence child before that `choice`, `Applied` after it | `unsupported_construct`/`declaration-form` at `commit`, reason `commit-precedes-effect` |
 | CP9e | `Applied` and the `commit` in sibling branches of one `parallel` | admitted (unordered) |
 | CP10b | `commit` names a `commit` control in one case of a `choice` that precedes `Applied` | admitted (it does not dominate the effect) |
 | CP11 | `attempts.maximum` is `0` | `ill_typed`/`type-mismatch` at `maximum`, member `attempts`, expected a count of at least one, actual `0` |
@@ -233,7 +236,7 @@ FR-466-AC-14.
 6. AW1 to AW12 behave as listed (FR-466-AC-6).
 7. E1 to E22 behave as listed (FR-466-AC-7, FR-466-AC-8, FR-466-AC-9).
 8. BS1 to BS11 behave as listed (FR-466-AC-10).
-9. CP1 to CP37 (with CP9b to CP9e and CP10b) behave as listed (FR-466-AC-11, FR-466-AC-12).
+9. CP1 to CP37 (with CP9b to CP9f and CP10b) behave as listed (FR-466-AC-11, FR-466-AC-12).
 10. DF1 to DF13 (with DF7b and DF7c) behave as listed (FR-466-AC-14).
 11. Every admitted vector's node keys are unchanged by reformatting the source
     and by a second reference to the protocol, and change with any retargeted

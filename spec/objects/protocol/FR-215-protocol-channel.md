@@ -28,7 +28,6 @@ When the protocol linker admits a protocol channel, the linker SHALL bind its se
 | Message types | FR-054 | A bound premise; see [FR-214](FR-214-protocol-message.md). |
 | Ordering policy | FR-054, FR-054-AC-2 | "A FIFO premise orders messages only within its declared channel and key scope." |
 | Delivery policy | FR-054, FR-054-AC-1 | "At-least-once delivery admits a duplicate receipt while retaining the single authored message/effect obligation." |
-| Duplication premise | FR-054 | Whether duplication can occur is authored, never inferred. |
 | Typed declaration | FR-050 | Every channel reference is bound "to its exact typed declaration and configuration identity before conformance evaluation." |
 | Channel contract | FR-054 | The output is "A channel contract bound into protocol identity, or a located typed refusal." |
 

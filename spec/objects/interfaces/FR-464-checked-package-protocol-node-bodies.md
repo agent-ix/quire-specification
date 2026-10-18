@@ -123,11 +123,11 @@ names a node of the stated tag and form by node key.
 | **integer** | a `literal` with `value_kind: "integer"`, whose `type` is a `scalar_type` of family `integer` |
 | **Boolean term** | a `literal` with `value_kind: "boolean"`, or a `reference` to a node whose `semantic_type` is the `scalar_type`/`boolean` node |
 | **term** | any Leaf |
-| **ordered list** | a Group `aggregate` whose members are `reference` terms in an order that carries meaning: execution order, or branch order, which is meaning because a `parallel`'s `joined` list maps to its branches by position |
+| **ordered list** | a Group `aggregate` whose members are `reference` terms in an order that carries meaning: execution order |
 | **set** | a Group `aggregate` whose members are `reference` terms in strictly ascending node-id digest order (unsigned bytes of the digest); the list means a set, so one set has one encoding |
 | **optional** | a Group `aggregate` with no member (absent) or exactly one member (present) |
 | **interval** | a Group `aggregate` of the bindings `lower` and `upper`, two non-negative integers with `lower <= upper`; the upper bound is always present |
-| **ordered records** | a Tuple `aggregate` of Groups, one Group per entry, in an order that carries meaning (capture evaluation order, branch order) |
+| **ordered records** | a Tuple `aggregate` of Groups, one Group per entry, in an order that carries meaning (capture evaluation order) |
 | **sorted records** | a Tuple `aggregate` of Groups, one Group per entry, in strictly ascending order of the entry's sort key, which its layout states |
 
 An enumerated text value (`origin`, `each`, `adversarial` and the values
@@ -139,9 +139,9 @@ canonical order, or that repeats an entry, refuses `invalid_semantic_graph`
 at the node, as FR-322-AC-10 refuses every noncanonical order. An ordered
 list is in the order its layout states, and reordering it changes the node
 key. So the sets of one protocol (roles, relationships, channels, queues,
-requirements, compensations, `visible`, `contracts`, `related`, case guards)
+requirements, compensations, `visible`, `contracts`, `related`, cases, branches)
 have one encoding whatever order the source declares them in, and only the
-lists where order is meaning (a sequence's children, captures, branches)
+lists where order is meaning (a sequence's children, captures)
 distinguish two protocols by order.
 
 ## Clause body
