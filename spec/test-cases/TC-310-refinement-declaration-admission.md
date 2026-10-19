@@ -45,8 +45,14 @@ Mutations, each applied alone to the positive unit:
    granularity;
 9. change the object row expression to `self.value + 0`, and separately
    reorder the step rows in source;
-10. write the initial literal of `history Impl::Counter.commits:
-    Int[0, 4] = …` as `0`, then as `true`, then as `5`;
+10. write the initial literal of a history row on a type that admits it:
+    `-3` for `Int[-5, 4]`, `true` and `false` for `Boolean`, `none` for
+    `Option<Int[0, 4]>`, `"a"` for a `Text` type, `rational(1, 2)` for a
+    matching `Rational` type, and `Impl::Mode::idle` for the enum `Impl::Mode`;
+    then, each alone, `5` and `true` for `Int[0, 4]`, `0` for `Boolean`, `none`
+    for `Int[0, 4]`, `Impl::Other::idle` for `Impl::Mode`, `idle` and
+    `Impl::Mode::missing` for `Impl::Mode`, and `[1]` and `float64(bits:
+    0x0000000000000000)` for `Int[0, 4]`;
 11. request the whole declaration and one per-step obligation for the
     `commitA` row.
 
@@ -64,7 +70,12 @@ row of TC-314 appears in no concrete clause, frame or successor relation
 the two misplaced rows, and the unmarked row's emitted granularity is `whole`
 (FR-375-AC-6). In mutation 9 the expression change changes the node id, the
 `package_id` and the obligation identity of the refinement item, and the
-source reorder changes none of them (FR-375-AC-7). In mutation 10 the literal `0` is admitted and `true` and `5` each refuse
-`ill_typed`/`type-mismatch` at the literal (FR-375-AC-9). In step 11 the whole
+source reorder changes none of them (FR-375-AC-7). In mutation 10 every literal on a type that admits it is admitted;
+`5`, `true`, `0` for `Boolean`, `none` for `Int[0, 4]` and
+`Impl::Other::idle` each refuse `ill_typed`/`type-mismatch` at the literal;
+`idle` and `Impl::Mode::missing` refuse `missing_declaration`/`missing-name`;
+`[1]` and the float spelling refuse `invalid_syntax`/`unexpected-token`
+(FR-375-AC-9). A parser that admits only integer literals fails this case.
+In step 11 the whole
 declaration requires `temporal-satisfaction` and the step obligation
 `operation-contract` (FR-375-AC-8).
