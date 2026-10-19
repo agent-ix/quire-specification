@@ -38,3 +38,12 @@ in SR-12894 and SR-12895.
 | --- | --- | --- | --- |
 | FND-001 | low | The VS-05 row has four cells (a trailing `FR-399-AC-11`) in a three-column table, Vector, Input and Expected result. GFM drops the extra cell, so the AC tag never renders, and no other row carries one. Also, HB-01 already has `behaviours (v: V::Vault)` (TC-337:28), so "HB-01 with `behaviours (v: V::Vault)`" restates it. | spec/test-cases/TC-340-hyper-vacuity-and-stutter.md:30 |
 | FND-002 | low | "has one instance per universe key and so none" reads as a contradiction. Say "has one instance per key of the product of its parameters' universes, so here none". | spec/functional/analysis/FR-399-settle-hyperproperty-results.md:86-88 |
+
+## Dispositions
+
+Round 1, reviewed at 7ab523498b59f4e8fb5a5fade21a1c46b9a8bb82.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |

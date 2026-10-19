@@ -37,3 +37,17 @@ low finding.
 | --- | --- | --- | --- |
 | FND-001 | medium | FR-395 now says a clause over several aliases has zero instances when any one parameter ranges over an empty universe. That is the product rule. FR-399-AC-11 and VS-05 use only the single-alias HB-01. An analyzer that takes the first parameter's universe, or the union of the universes, passes VS-05 and still explores HB-02 (`d: S::Device, e: N::Device`) with `N`'s universe empty. Add a two-alias case (HB-02 with one empty factor) to AC-11 and VS-05. | spec/functional/analysis/FR-395-analyze-hyperproperties-over-behaviours.md:68-75; spec/functional/analysis/FR-399-settle-hyperproperty-results.md:178; spec/test-cases/TC-340-hyper-vacuity-and-stutter.md:30 |
 | FND-002 | low | The new FR-399 paragraph links to FR-361 Instancing as normative, but FR-399's `relationships` has no FR-361 edge (FR-395 has one). | spec/functional/analysis/FR-399-settle-hyperproperty-results.md:89-90 |
+
+## Dispositions
+
+Round 1, reviewed at 7ab523498b59f4e8fb5a5fade21a1c46b9a8bb82. Hand check of
+the new VS-05 two-alias rows (HB-02, TC-337:29): with `S::Device` empty and
+`N::Device` of 3 keys, an engine that reads only the first parameter finds
+no instance and passes. With `N::Device` empty and `S::Device` of 2 keys, the
+same engine finds 2 instances, explores, and fails. An engine that takes the
+union of the universes fails both rows.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
