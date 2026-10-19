@@ -9,6 +9,8 @@ relationships:
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-425
     type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-375
+    type: references
   - target: ix://agent-ix/quire-specification/FR-426
     type: depends_on
 ---
@@ -82,7 +84,10 @@ A declaration selects an abstract protocol subject in its header, by
 the protocol clause's name, joined by `::`. A header with the alias alone
 selects the model subject, and this section does not apply. The parser
 distinguishes the two by the `::` and resolves neither; selection resolves
-the protocol and refuses an unknown one as FR-375 states.
+the protocol and refuses an unknown one as FR-375 states. Under a model
+subject header, a step row whose right side names an abstract protocol node
+refuses `invalid_model_binding`/`malformed-declaration` at the node: the
+node exists, but the declaration did not select its protocol.
 
 An abstract protocol subject's state is (model state, protocol state). The
 refinement mapping defines its visible model fields; its rest points,
@@ -115,7 +120,7 @@ FR-177 over the same product.
 | FR-432-AC-3 | A concrete protocol under `tso` with no `step memory flush` row refuses naming the `flush` kind; with the row it is admitted. | Test (TC-386) |
 | FR-432-AC-4 | A concrete step mapped by `stutter` that changes a mapped visible field refutes the refinement; one mapped to an abstract send whose label no enabled abstract step carries, after abstract internal steps, refutes it; with the matching abstract step enabled it passes. | Test (TC-386) |
 | FR-432-AC-5 | An abstract step absent from the profile's internal list is visible: a concrete internal step cannot match it. | Test (TC-386) |
-| FR-432-AC-6 | A declaration headed `abstract Spec::Req` over the abstract model alias `Spec` selects its protocol clause `Req`, and its step rows may name that protocol's nodes; the same rows under the header `abstract Spec` select a model subject and a row naming `node Spec::Req::Ask` refuses `missing_declaration`/`missing-name`. | Test (TC-386) |
+| FR-432-AC-6 | A declaration headed `abstract Spec::Req` over the abstract model alias `Spec` selects its protocol clause `Req`, and its step rows may name that protocol's nodes; the same rows under the header `abstract Spec` select a model subject and a row naming `node Spec::Req::Ask` refuses `invalid_model_binding`/`malformed-declaration` at that node. | Test (TC-386) |
 
 ## Dependencies
 
