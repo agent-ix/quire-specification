@@ -36,7 +36,7 @@
         {"identity": "test/b", "base": "fixtures/positive-clause-operations.json", "dependency_selections": [{"identity": "test/leaf", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "8f969c06d2e274431929ab7ee538ad21e12d45a3d807f3474d3c8489d35f590a"}}]}
       ],
       "outcome": "refused:invalid_package/conflicting-definition",
-      "loci": [["test/a", "test/leaf"], ["test/b", "test/leaf"]]
+      "loci": ["/lock/dependency_selections/0/lock/dependency_selections/0", "/lock/dependency_selections/1/lock/dependency_selections/0"]
     },
     {
       "id": "transitive-only-dependency-reference",

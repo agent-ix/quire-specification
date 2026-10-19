@@ -5327,6 +5327,93 @@ fn with_dependency_selections(entries: &Value) -> Value {
 }
 
 #[test]
+#[trace("TC-233", "FR-322-AC-76")]
+fn tc_233_closure_vectors_bind_real_dependency_identities() {
+    let vectors = parsed_fixture(DEPENDENCY_SELECTION_VECTORS);
+    let closure_vectors = vectors["closure_vectors"]
+        .as_array()
+        .expect("closure vectors are an array");
+    assert_eq!(closure_vectors.len(), 2);
+
+    for vector in closure_vectors {
+        let direct = vector["direct_dependencies"]
+            .as_array()
+            .expect("direct dependencies are an array");
+        let locks = vector["dependency_locks"]
+            .as_array()
+            .expect("dependency locks are an array");
+        assert_eq!(direct.len(), locks.len());
+        for (entry, lock) in direct.iter().zip(locks) {
+            assert_eq!(entry["identity"], lock["identity"]);
+            let base = match lock["base"].as_str().expect("base path is a string") {
+                "fixtures/positive-all-families.json" => parsed_fixture(POSITIVE_ALL_FAMILIES),
+                "fixtures/positive-clause-operations.json" => {
+                    parsed_fixture(POSITIVE_CLAUSE_OPERATIONS)
+                }
+                other => panic!("unknown closure vector base: {other}"),
+            };
+            let selections = lock["dependency_selections"]
+                .as_array()
+                .expect("dependency selections are an array");
+            for selected in selections {
+                assert_eq!(
+                    selected["package_id"]["digest"],
+                    unqualified_jcs_sha256(&base["identity_preimage"]),
+                    "the selected leaf id is the real base package id"
+                );
+            }
+            let mut preimage = base["identity_preimage"].clone();
+            preimage["dependency_selections"] = lock["dependency_selections"].clone();
+            assert_eq!(
+                entry["package_id"]["digest"],
+                unqualified_jcs_sha256(&preimage),
+                "a direct dependency id binds its own direct lock entries"
+            );
+        }
+    }
+
+    let diamond = &closure_vectors[0];
+    assert_eq!(diamond["id"], "diamond-conflict-across-dependency-locks");
+    assert_eq!(
+        diamond["dependency_locks"][0]["dependency_selections"][0]["identity"],
+        diamond["dependency_locks"][1]["dependency_selections"][0]["identity"]
+    );
+    assert_ne!(
+        diamond["dependency_locks"][0]["dependency_selections"][0]["package_id"],
+        diamond["dependency_locks"][1]["dependency_selections"][0]["package_id"]
+    );
+    assert_eq!(
+        diamond["loci"],
+        json!([
+            "/lock/dependency_selections/0/lock/dependency_selections/0",
+            "/lock/dependency_selections/1/lock/dependency_selections/0"
+        ])
+    );
+
+    let reference = &closure_vectors[1];
+    assert_eq!(reference["id"], "transitive-only-dependency-reference");
+    let referenced_id = &reference["dependency_reference"]["package"];
+    assert!(
+        reference["dependency_locks"]
+            .as_array()
+            .expect("dependency locks are an array")
+            .iter()
+            .flat_map(|lock| lock["dependency_selections"]
+                .as_array()
+                .expect("selections are an array"))
+            .any(|selected| &selected["package_id"] == referenced_id)
+    );
+    assert!(
+        reference["direct_dependencies"]
+            .as_array()
+            .expect("direct dependencies are an array")
+            .iter()
+            .all(|direct| &direct["package_id"] != referenced_id)
+    );
+}
+
+#[test]
+#[trace("TC-233", "FR-322-AC-35")]
 fn tc_233_dependency_selections_carry_each_dependency_package_identity() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
     let vectors = parsed_fixture(DEPENDENCY_SELECTION_VECTORS);

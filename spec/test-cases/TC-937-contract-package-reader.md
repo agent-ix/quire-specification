@@ -86,6 +86,10 @@ key but carrying a different library identity, and with an admitted package whos
 identity matches but whose `package_id` differs from the selection. Add a
 second, unselected admitted dependency input that contains a node matching the
 reference; it must not satisfy or redirect the reference.
+In a planned reader case, supply two valid direct dependency packages whose
+locks each select the same transitive library identity at different
+`package_id`s. Require `invalid_package`/`conflicting-definition` with the two
+importer-rooted selection-path JSON pointers as loci before graph references.
 
 ## Expected Results
 

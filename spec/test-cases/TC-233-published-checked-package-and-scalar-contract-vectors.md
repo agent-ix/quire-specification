@@ -61,6 +61,10 @@ apply each order vector's selections to require its recorded order outcome.
 Apply the published closure vectors to two direct dependencies whose own locks
 select the same transitive identity at different package IDs; require
 `invalid_package`/`conflicting-definition` with both dependency paths as loci.
+Recompute each direct dependency's recorded `package_id` from its base
+`identity_preimage` with that lock's selections substituted. Check that the
+diamond reaches one identity at distinct real IDs, and that the reference's
+package is in the derived closure but absent from the importer's direct entries.
 With one direct dependency, name its transitive-only selection in a
 `dependency_reference` and require `missing_declaration`/`missing-selection`,
 even though the named package is in the derived closure. Validate a `dependency_reference` term against both schemas, and its bare-digest, other-domain, missing-`node` and extra-member mutations; place it as the callee of the `function-call` operation vector and recompute the application-node id after changing only its `package` digest, then only its `node` (FR-322-AC-36). Read

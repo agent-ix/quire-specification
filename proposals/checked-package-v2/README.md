@@ -71,6 +71,14 @@ structures, but any external consumer receives only the contract.
   order (where UTF-16 order differs) are admitted, a repeated identity
   refuses `invalid_package`/`conflicting-definition` and a misordered entry
   `invalid_package`/`invalid-value`, each with its loci.
+  Its `closure_vectors` contain `direct_dependencies` of the importer and
+  `dependency_locks` for those direct packages; each dependency lock names a
+  fixture `base` and its own `dependency_selections`. The diamond vector
+  carries two importer-rooted selection-path JSON-pointer `loci` and a
+  conflicting-definition `outcome`. The transitive-only vector carries a
+  `dependency_reference` and its call `use`, with an expected missing-selection
+  `outcome`. The reader outcomes remain planned; QSpec checks the recorded
+  package IDs and the producer-side closure relationships.
 - Both schemas carry the `dependency_reference` term
   `{term: "dependency_reference", package, node}` (FR-322): `package` is a
   `PackageId` naming a `dependency_selections` entry and `node` a `NodeId`
