@@ -59,6 +59,29 @@ Checked and clean:
 | FND-008 | low | E33 declares an inline `Int[0,3]` field rather than QSL fixture R's named `Tally = Int[0,3]`, so the alias path QSL actually exercises is not covered. | spec/test-cases/TC-194-complete-equality-matrix.md:68 |
 | FND-009 | low | "Adds no charge beyond the equality schedule" does not say that the `+` still charges its own integer-arithmetic schedule (TC-190 Q12). AC-19 and E33 can be read as a five-unit total for the whole relation. | spec/functional/type-model/FR-149-apply-complete-equality-matrix.md:186-187,309 |
 
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-010 | medium | E34 gives `a * 1 + 1` the interval `[1,3]` under `a < 2`. The guard refines `a` (`Tally`, `[0,3]`) to `[0,1]`, so `a * 1` is `[0,1]` and `a * 1 + 1` is `[1,2]`. A correct implementation that reports or asserts `[1,2]` fails the vector as written. | spec/test-cases/TC-194-complete-equality-matrix.md:69 |
+| FND-011 | medium | The ordering case asserts no observable outcome. With no expected type, `earlier.tally + 1` takes its operands' type `Tally` and its own range obligation, so the unguarded form gives `unproved-range` whether or not `<=` wrongly supplies an expected type. An implementation that over-extends the rule to ordering passes. A case that can fail: `n + 1 <= later.tally` with `n` of `Integer`. Without an expected type it is `Integer` against `Int[0,3]`, which must be `ill_typed`/`type-mismatch` (state-semantics section 3, equal comparison types). Over-extension turns it into `unproved-range`. AC-21's "`<` ... supplies no expected type" needs the same observable outcome. | spec/test-cases/TC-194-complete-equality-matrix.md:70 |
+| FND-012 | low | The declared-position sentence cites FR-146, which states expected-type typing only for `case`, not for arithmetic. TC-191 P09 covers only a function result. "Parameter" (does it include call arguments, which the previous revision excluded?) and "capture type" (a QSL construct) have no QSpec owner. State-semantics section 3 is the closer citation. | spec/functional/type-model/FR-149-apply-complete-equality-matrix.md:178-187 |
+| FND-013 | low | FR-146 lists a `convert` target as a position that supplies an expected type (for `case`). If that extends to arithmetic, `n + 1` is typed `Tally` inside `convert<Tally>(...)` and the conversion becomes the identity row, which is admitted with an `unproved-range` obligation, not `ill_typed`. The FR does not say whether a `convert` target supplies an expected type to arithmetic. | spec/test-cases/TC-194-complete-equality-matrix.md:71 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The false "FR-146 types `Integer`" premise is gone. The node now takes its type from its operands, consistent with FR-044/FR-206 and state-semantics section 3. The E34 ordering case was re-derived, but its new form asserts no observable outcome (FND-011). |
+| FND-002 | fixed | Unary `-` was removed and stated typed `Integer`. E35 `later.tally = -x` now expects `ill_typed`/`type-mismatch`, matching QSL's `NodeKind::Negate`. |
+| FND-003 | fixed | E34/E35 now cover `-`, `*`, `!=`, arithmetic on the left, the parenthesized form, and the `rem`, `count`, `Decimal[..]` and `Rational[..]` exclusions. One stated interval in E34 is wrong (FND-010). |
+| FND-004 | fixed | The checked-package form is stated. |
+| FND-005 | fixed | The annotated `let` behaviour is stated and E36 tests it. |
+| FND-006 | fixed | The explicit spelling is now correct. |
+| FND-007 | fixed | The cause is now asserted. |
+| FND-008 | fixed | E33 now uses the named `Tally` alias, as QSL fixture R does. |
+| FND-009 | fixed | The arithmetic schedule is now named in the FR, AC-19 and E33. |
+
 ## Verdict
 
 Not mergeable as written. The integrity contradiction (SR-12105 FND-001)
@@ -68,3 +91,16 @@ expected-type rule that does not contradict them. FND-001 (the typing
 premise) and FND-002 (unary `-` against QSL) decide whether the spec actually
 matches QSL. FND-003 to FND-005 are real gaps that should be fixed in the same
 round. The lows are optional.
+
+## Verdict (disposition pass 1)
+
+Every review-pass finding (FND-001 to FND-009) is fixed at a291b4d. The
+expected-type rule is coherent with FR-044, FR-206 and TC-191 P09, and it does
+not over-broaden: only a binary `+`, `-` or `*` directly under `=`/`!=` against
+`Int[..]` is retyped, and the obligation is kept. Not mergeable until the two
+new mediums are fixed:
+
+- FND-010: the wrong interval in E34.
+- FND-011: the E35 ordering case cannot fail.
+
+Both are small text edits. FND-012 and FND-013 are optional.
