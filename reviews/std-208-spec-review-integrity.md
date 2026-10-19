@@ -68,3 +68,4 @@ Round 1, against head 5a9fc8d.
 | --- | --- | --- |
 | FND-001 | fixed | 5a9fc8d: FR-306 Outside the key gives the CA-2 reason |
 | FND-002 | fixed | 5a9fc8d: AC-29 and HY-07 name `limit-reached{limit: max_solver_time}`; `unknown-cause` kept, which the catalog defines as retaining the received spelling |
+| FND-003 | fixed | 607417f: PositiveCount for both budgets, minProperties 1 on limits, Hybrid requires limits; FR-193 and FR-331 now say positive and never empty |

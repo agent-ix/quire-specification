@@ -70,3 +70,4 @@ Round 1, against head 5a9fc8d.
 | --- | --- | --- |
 | FND-001 | fixed | 5a9fc8d: budgets moved to hybrid.limits with descriptor bounds defaults and FR-461 setting names; schema gains Hybrid |
 | FND-002 | fixed | 5a9fc8d: FR-193 now names descriptor bounds as the default source (wording issue raised as FND-003) |
+| FND-003 | fixed | 607417f: request writer omits an unset member, provider applies descriptor bounds, a present value always applies, QSL's numbers are its own descriptor bounds |

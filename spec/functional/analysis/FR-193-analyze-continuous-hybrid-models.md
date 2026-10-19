@@ -100,7 +100,7 @@ defaulting a limit apply to both. Their setting names are
   positive integer (FR-331's `PositiveCount`), and a provider SHALL refuse a
   fractional or otherwise non-canonical value before consumption, as FR-331
   refuses any out-of-domain value.
-- When the caller sets a budget none, the request writer SHALL omit the
+- When the caller sets no value for a budget, the request writer SHALL omit the
   member and the provider SHALL apply its descriptor `bounds` (FR-331,
   FR-461); a value present in the request SHALL always apply. QSL's 60
   seconds and 1,000,000 steps (QSL FR-250) are the descriptor bounds of its

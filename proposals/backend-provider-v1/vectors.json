@@ -1957,93 +1957,59 @@
         "capability_vocabulary": "quire.capability-kind/v1",
         "manifest": [
           {
-            "backend": "kani",
+            "backend": "qsl-model-check",
             "advertises": [
               {
-                "kind": "operation-contract",
+                "kind": "temporal-satisfaction",
                 "mode": "bounded"
               },
               {
-                "kind": "value-validity",
-                "mode": "bounded"
+                "kind": "temporal-satisfaction",
+                "mode": "unbounded"
               }
             ],
+            "fairness_kinds": [
+              "strong",
+              "weak"
+            ],
+            "reductions": [
+              "constraint",
+              "partial-order",
+              "symmetry"
+            ],
+            "bounds": {
+              "max_automaton_states": 100000,
+              "max_states": 1000000,
+              "max_transitions": 10000000
+            },
             "domains": [
               "collection",
               "integer",
-              "population"
-            ],
-            "bounds": {
-              "max_input_bytes": 1048576,
-              "max_objects": 64,
-              "max_references": 256
-            }
+              "population",
+              "recursive"
+            ]
           }
         ],
         "request": {
           "deadline_ms": 600000,
+          "provision": [
+            {
+              "digest_domain": "sha256-jcs",
+              "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "bytes": "e30"
+            }
+          ],
           "items": [
             {
               "request_index": 0,
-              "kind": "value-validity",
+              "kind": "temporal-satisfaction",
               "claim": {
                 "node": {
                   "domain": "quire.checked-semantic-node/v1",
-                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                  "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
                 },
                 "occurrence": {
-                  "role": "declaration",
-                  "ordinal": 0
-                }
-              },
-              "extent": {
-                "classification": "bounded",
-                "bounds": [
-                  {
-                    "domain": {
-                      "type": "node",
-                      "node": {
-                        "domain": "quire.checked-semantic-node/v1",
-                        "digest": "1c9ac70521e54c69c310ff337b10364e2c3c80c917efb8b29010c97a9534bd14"
-                      },
-                      "path": []
-                    },
-                    "kind": "integer",
-                    "bound": {
-                      "type": "integer-range",
-                      "lower": "-128",
-                      "upper": "127"
-                    }
-                  }
-                ]
-              },
-              "backend": "kani",
-              "candidates": {
-                "type": "set",
-                "backends": [
-                  "kani"
-                ]
-              },
-              "options": {
-                "unwind": "8"
-              },
-              "hybrid": {
-                "limits": {
-                  "max_solver_steps": 1000,
-                  "max_solver_time": 2
-                }
-              }
-            },
-            {
-              "request_index": 1,
-              "kind": "value-validity",
-              "claim": {
-                "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "ac15b477899ce4bf720e32ff29a6418e565c693028b4ed4451a4a6f4b2d4b368"
-                },
-                "occurrence": {
-                  "role": "declaration",
+                  "role": "claim",
                   "ordinal": 0
                 }
               },
@@ -2055,21 +2021,75 @@
                       "type": "node",
                       "node": {
                         "domain": "quire.checked-semantic-node/v1",
-                        "digest": "1c9ac70521e54c69c310ff337b10364e2c3c80c917efb8b29010c97a9534bd14"
+                        "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
                       },
                       "path": []
                     },
-                    "kind": "integer"
+                    "kind": "infinite-trace"
                   }
                 ],
-                "finite_bound_available": true
+                "finite_bound_available": false
               },
-              "backend": "kani",
               "candidates": {
                 "type": "set",
                 "backends": [
-                  "kani"
+                  "qsl-model-check"
                 ]
+              },
+              "reductions": {
+                "symmetry": [],
+                "partial_order": {
+                  "proviso": "breadth-first-revisit"
+                }
+              },
+              "temporal": {
+                "subject": {
+                  "initial_states": [
+                    {
+                      "digest_domain": "sha256-jcs",
+                      "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+                    }
+                  ],
+                  "universes": [],
+                  "proof_bounds": [
+                    {
+                      "domain": {
+                        "type": "population",
+                        "member_type": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "dc1dee8382c4d6bf958f84a637db1d2168a3dbef00a3bbd0c14241178860e9b9"
+                        },
+                        "ordinal": 0
+                      },
+                      "kind": "population",
+                      "bound": {
+                        "type": "cardinality",
+                        "maximum": 3
+                      }
+                    }
+                  ]
+                },
+                "item_kind": "formula",
+                "fairness": [
+                  {
+                    "kind": "weak",
+                    "operation": "Example::Session::step",
+                    "granularity": "whole"
+                  }
+                ],
+                "max_depth": 40,
+                "limits": {
+                  "max_states": 250000,
+                  "max_walk_steps": 64
+                },
+                "witness_samples": 4,
+                "seed": "42"
+              },
+              "hybrid": {
+                "limits": {
+                  "max_solver_steps": 1000,
+                  "max_solver_time": 2
+                }
               }
             }
           ]

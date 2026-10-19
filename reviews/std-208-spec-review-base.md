@@ -58,6 +58,14 @@ Against head 5a9fc8d.
 | --- | --- | --- | --- |
 | FND-002 | low | The new `Hybrid` schema definition is exercised by no vector: `proposals/backend-provider-v1/vectors.json` and `tests/backend_provider_v1.rs` contain no `hybrid` member, so the re-run `cargo test --test backend_provider_v1` (9 pass at 5a9fc8d) checks nothing this PR added. FR-331-AC-29's "a fractional `max_solver_time` on the wire is refused before consumption" is exactly a schema property. Add one positive TC-431 vector with `hybrid.limits` and adverse vectors with `max_solver_time: 1.5` and an unknown `hybrid.limits` member. | proposals/backend-provider-v1/schema.json:387-401 |
 
+## New findings (disposition pass 2)
+
+Against head 607417f.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | low | The positive `hybrid-request` vector puts `hybrid.limits` on a Kani `value-validity` item (request_index 0, backend `kani`), but FR-290 (spec/objects/protocol/FR-290-protocol-claim-kind.md:130) maps a hybrid-model claim to `temporal-satisfaction`. The vector proves the `hybrid.limits` shape but models an item that cannot occur, and the schema does not tie `hybrid` to any kind (as with `temporal` and `probabilistic`). Move the member onto a `temporal-satisfaction` item, or add a note that the host item is a placeholder. | proposals/backend-provider-v1/vectors.json:1988-2035 |
+
 ## Dispositions
 
 Round 1, against head 5a9fc8d.
@@ -65,3 +73,4 @@ Round 1, against head 5a9fc8d.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-001 | fixed | 5a9fc8d: HY-08 now cites FR-331-AC-29 |
+| FND-002 | fixed | 607417f: positive vector hybrid-request and five adverse vectors; cargo test --test backend_provider_v1 9/9 pass; each adverse vector is killed by the schema mutation that removes its rule (Count, number, no minProperties, no required, open limits) |

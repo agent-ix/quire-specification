@@ -35,6 +35,14 @@ Ticket: STD-208. PR: quire-specification#288 at 07eb2ff. Requirement-statement g
 
 One low EARS finding on the rounding sentence; the remaining new bullets are well-formed SHALL statements.
 
+## New findings (disposition pass 2)
+
+Against head 607417f.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | The new defaults bullet opens with a garbled trigger: "When the caller sets a budget none". Write it as "When the caller sets no value for a budget, the request writer SHALL omit the member ...". | spec/functional/analysis/FR-193-analyze-continuous-hybrid-models.md:103-108 |
+
 ## Dispositions
 
 Round 1, against head 5a9fc8d.
