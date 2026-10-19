@@ -53,3 +53,15 @@ Ticket: STD-199. Base checklist (ID formats, duplicates, AC-to-TC coverage) over
 ## Verdict
 
 Not mergeable until FND-001 (three criteria the matrix cannot see) and FND-002 (id collision with #283) are fixed. The other new criteria (FR-432-AC-7..10, FR-322-AC-75, FR-323-AC-17, FR-272-AC-20) parse, each names a TC that carries a matching vector, and TC-047, TC-233, TC-277 and TC-310 rows cite their criteria. FND-003..005 are coverage and wording gaps.
+
+## Dispositions
+
+Round 1, against head 986087c.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 986087c: blank line removed; `quire matrix --scope .` now lists FR-375-AC-12, AC-13 and AC-14 |
+| FND-002 | fixed | 986087c: renumbered to FR-322-AC-77 and TC-277 BP-15; #283 (head 3bd59b5) still adds only FR-322-AC-75/76 and BP-14, and no open PR adds AC-77, BP-15 or the other new ids. The FR-323 replay paragraph both PRs edit will still need a textual rebase |
+| FND-003 | fixed | 986087c: IL-01 adds event `ev`, timeout `to`, fence `fe`; IL-02 names each (17 classes, count checked) |
+| FND-004 | fixed | 986087c: IL-03 adds the non-string `refinement` vector and the count is updated to five; FR-432-AC-9 names it |
+| FND-005 | fixed | 986087c: SR-08 reworded |

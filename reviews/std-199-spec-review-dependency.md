@@ -35,3 +35,12 @@ Ticket: STD-199. Checks the edges the new internal-list input creates (FR-375 to
 ## Verdict
 
 Mergeable on this lens after FND-001; FND-002 is bookkeeping. QSL consistency: the shape, the pointer loci, absent-is-empty, byte ordering, the list-vs-row `conflicting-binding` rule, the three support-set feature names and their spans all match QSL FR-147/FR-135. Follow-ups for the QSL lane once this merges (not defects of this PR): QSL FR-147's spelling table lacks timeout and fence nodes, the `cattempt` template path and fork/join/cend/spawn/retire/activate, and FR-147-AC-6 still expects `spawn Spec::Twice::r` to be `malformed-declaration` where QSpec now spells `spawn` (it becomes `missing-name` when no role `r` exists); FR-147's "Remaining work" (host, node member, lock/replay) and FR-135's "QSL-proposed pending QSpec" become settled; FR-147's "not by a binding refusal" rule for a model-side list holds only while `refinement-internal-list` is unbuilt, since QSpec refuses a model-side list `malformed-declaration` once the feature exists.
+
+## Dispositions
+
+Round 1, against head 986087c.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 986087c: FR-307 amended and given an FR-375 edge |
+| FND-002 | fixed | 986087c: edges and Dependencies/References entries added |

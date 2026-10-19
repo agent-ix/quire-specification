@@ -159,15 +159,15 @@ class spellings, resolution and refusals are
 [FR-432](../protocol/FR-432-map-every-protocol-step-in-refinements.md)'s.
 An absent value is the empty list, every abstract step visible.
 
-The loci of FR-432's refusals are RFC 6901 pointers into the request, with the
-list's own pointer after this prefix: `/refinement_internals` for the unit's
-value, `/libraries/<identity>/refinement_internals` for a supplied library's
-(the identity written with `~0` for `~` and `~1` for `/`), and, in a replay
-request, `/package/refinement_internals` for the proved package's value and
-`/package/dependencies/<n>/refinement_internals` for the `n`th dependency
-entry's (zero-based). A refusal from a supplied library's value refuses the
-whole compilation: the unit is not admitted, whether or not it imports that
-library.
+The locus of each of FR-432's refusals is a pair: the **input** (the unit's
+`refinement_internals` value, or the value of a named supplied library) and an
+RFC 6901 pointer within that value. This requirement names no member of the
+compile request that carries them. In a replay request the value is located
+by the request's own members: `/package/refinement_internals` for the proved
+package's value and `/package/dependencies/<n>/refinement_internals` for the
+`n`th dependency entry's (zero-based). A refusal from a supplied library's
+value refuses the whole compilation: the unit is not admitted, whether or not
+it imports that library.
 
 The list changes what a declaration means, so it is recorded in the lock
 ([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)) and
@@ -200,7 +200,12 @@ support set says. Only a **non-empty resolved** list then refuses for
 (a value that is not an array of objects, `{}`, an object whose `refinement`
 is not a string or names no refinement of the compiled source) is a
 resolution defect and gets no support-set refusal, since no refinement
-exists to locate it at. An empty list never refuses for the feature.
+exists to locate it at. An empty list never refuses for the feature. For a
+non-empty list on a refinement whose abstract subject is a model, a producer
+whose support set lacks `refinement-internal-list` reports only the
+not-yet-built refusal at `Spec`; the model-subject refusal
+`invalid_model_binding`/`malformed-declaration` (FR-432) applies once the
+feature is built.
 
 The refusal is an implementation gap, not a source defect (FR-452 classes it
 `unsupported`), which is why it is not `unknown_required_feature`; and it is
@@ -338,7 +343,7 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
 | FR-375-AC-9 | A history row with an initial `history-literal` written as a negative or non-negative integer, `true`/`false`, `none`, a string, an exact number or a full-path enum member is admitted when its value is in the declared bounded type's value set; a literal of the right kind outside the value set or of the wrong kind (`5` or `true` for `Int[0, 4]`, `none` for a non-`Option` type) refuses `ill_typed`/`type-mismatch` at the literal; an unresolved enum path refuses `missing_declaration`/`missing-name`; a collection, record or float spelling refuses `invalid_syntax`/`unexpected-token`. | Test (TC-310) |
 | FR-375-AC-10 | An `assume` or `ensure` fairness row written `fair strong` is admitted with or without `each` or `whole`, and its emitted entry carries kind `strong`; the same row written `fair weak` carries kind `weak`, and the two rows give different refinement node ids; `fair` with no kind, or any kind other than `weak` or `strong`, refuses `invalid_syntax`/`unexpected-token` at the token, because a refinement row has no default kind. | Test (TC-310) |
 | FR-375-AC-11 | `abstract Spec` selects a model subject; `abstract Spec::Twice` and `abstract Spec::Twice2`, two protocol clauses of the abstract package with identical operation-target rows, are each admitted, and the three declarations (`Spec`, `Spec::Twice`, `Spec::Twice2`) have three distinct node ids, the protocol subjects carrying `protocol` and listing the clause among `dependencies`. `abstract Spec::Thrice` (no such clause), `abstract Spec::Counter` (a type), `abstract Spec::counters` (a population) and `abstract Nope::Twice` (no such alias) refuse `missing_declaration`/`missing-name` at the unresolved segment (`Thrice`, `Counter`, `counters`, `Nope`); a clause of the abstract package that acts only on another model refuses `invalid_model_binding`/`malformed-declaration` at the name. Syntax refusals are `invalid_syntax`/`unexpected-token` at these tokens: `abstract Spec::Twice::finish concrete Impl` at the second `::`; `abstract ::Twice` at the `::`; `abstract Spec:: concrete Impl` at `Impl` (`concrete` is read as the name); `abstract Spec:: {` at the `{`; `abstract Spec::1` at the `1`. | Test (TC-310) |
-| FR-375-AC-12 | The `refinement_internals` input is the only host of the internal list: `abstract Spec::Twice` with no row naming internals and the unit value `[{"refinement": "R", "internal": ["Spec::Twice::finish"]}]` is admitted with `abstract_internal` `["Twice::finish"]`; the same source with the value absent, `[]` or naming another refinement is admitted with no `abstract_internal` entry. A supplied library declaring its own refinement and given its own value is admitted with that value affecting only the library's node and `package_id` and the importer's selection of it; a value naming a refinement the library does not declare refuses `missing_declaration`/`missing-name` at `/libraries/<identity>/refinement_internals/0/refinement` and the compilation, the unit included, is not admitted. | Test (TC-310) |
+| FR-375-AC-12 | The `refinement_internals` input is the only host of the internal list: `abstract Spec::Twice` with no row naming internals and the unit value `[{"refinement": "R", "internal": ["Spec::Twice::finish"]}]` is admitted with `abstract_internal` `["Twice::finish"]`; the same source with the value absent, `[]` or naming another refinement is admitted with no `abstract_internal` entry. A supplied library declaring its own refinement and given its own value is admitted with that value affecting only the library's node and `package_id` and the importer's selection of it; a value naming a refinement the library does not declare refuses `missing_declaration`/`missing-name` at (that library's value, `/0/refinement`) and the compilation, the unit included, is not admitted. | Test (TC-310) |
 | FR-375-AC-13 | The two lists `["Spec::Twice::finish"]` and none give refinement nodes with different ids, `package_id`s and obligation identities for an item citing the node; reordering the value's objects and entries changes none of them; renaming the abstract alias from `Spec` to `S`, with the value's spellings renamed to match, changes none of them. | Test (TC-310) |
 | FR-375-AC-14 | For each feature a producer's support set omits, a declaration using it refuses `unsupported_construct`/`not-yet-implemented` as the Unbuilt features paragraph states: two `history` rows give two refusals at their keywords naming `history-row`; `abstract Spec::Twice` one at `Twice` naming `protocol-abstract-side`; a non-empty resolved list one at `Spec` naming `refinement-internal-list`, both together giving two refusals for the one declaration; each names the refinement and the profile identity and produces no node. A list with a resolution defect (`missing-name`, `conflicting-binding`, malformed) reports that defect and no support-set refusal for the list, and a value attributable to no refinement reports its defect alone. A producer that has built a feature is checked by that feature's own criteria, and this criterion places no test on it. | Test (TC-310) |
 

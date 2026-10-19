@@ -35,3 +35,18 @@ Ticket: STD-199. Checks where the list, its identity effect and the support set 
 ## Verdict
 
 Mergeable on this lens after FND-001 and FND-002 are ruled on. Clean: hosting the list as a compilation input (no grammar row, no profile parameter), recording it as a lock-only member outside the identity preimage, and carrying it on replay are consistent allocations; the identity effect enters through the node, as QSL asked.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | medium | Owner decision needed. The compile-time prefixes `/refinement_internals` and `/libraries/<identity>/refinement_internals` name members of a compile request that no QSpec requirement defines: QSpec has no compile-request wire object (FR-307 speaks only of "supplied libraries"; the replay request in FR-323 is the only request with a defined shape). These pointers create that request shape by implication: a top-level member, a `libraries` object keyed by identity rather than an array, and the library's list nested under its identity. QSL's compile API must match it. The replay prefixes are grounded in FR-323. Either the spec owner confirms this request shape (and it is declared where a compile request is specified), or the compile-time locus is stated without inventing members, e.g. as (input, pointer) pairs naming the unit or the library identity. | spec/functional/analysis/FR-375-declare-model-refinement.md:162-170 |
+
+## Dispositions
+
+Round 1, against head 986087c.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 986087c: alias-free node entry; FR-375-AC-13 and TC-310 mutation 15 test the alias rename |
+| FND-002 | fixed | 986087c: AC-14 and TC-310 mutation 17 now apply only to the producer under test's actual support set, as QSL FR-135-AC-5 does; no test seam is needed |

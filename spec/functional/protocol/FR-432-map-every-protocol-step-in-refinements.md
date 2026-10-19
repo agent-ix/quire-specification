@@ -158,8 +158,8 @@ exists only for a class the right side can name.
 
 **Defects.** Each refusal carries as its locus the RFC 6901 JSON Pointer of the
 offending value inside the `refinement_internals` value (such as
-`/0/internal/1`), since a JSON value has no source span; the request
-prefixes its own location, which FR-375 states. A refusal naming two values carries both pointers.
+`/0/internal/1`), since a JSON value has no source span; FR-375 states how a
+refusal is located in its input. A refusal naming two values carries both pointers.
 
 | Defect | Refusal |
 | --- | --- |
@@ -172,9 +172,11 @@ prefixes its own location, which FR-375 states. A refusal naming two values carr
 A defect of a value attributable to no refinement (not an array of objects,
 `{}`, a non-string or unresolved `refinement`) is reported by this table
 alone. Each refusal yields no admitted refinement node. While a producer has
-not built `refinement-internal-list`, FR-375 states which of these refusals
-the support set then replaces: the defects above are still reported, and only
-a non-empty resolved list is refused for the feature.
+not built `refinement-internal-list` (FR-375), every defect above is still
+reported except the last: a non-empty list on a model-subject refinement is
+then refused only as not yet built, at the name after `abstract`, and the
+`invalid_model_binding`/`malformed-declaration` of that row applies once the
+feature is built.
 
 Each concrete initial protocol state pairs with an abstract initial model
 state, with the abstract root thread settled from its `run`. Divergence,

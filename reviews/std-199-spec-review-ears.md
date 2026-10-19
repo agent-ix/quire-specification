@@ -34,3 +34,11 @@ Ticket: STD-199. The PR edits no FR statement sentence; it adds normative body p
 ## Verdict
 
 Mergeable on this lens; FND-001 is wording. The internal-list rules in FR-432 and the lock and replay rules in FR-322/FR-323 are stated as determinate behaviour with named codes and loci.
+
+## Dispositions
+
+Round 1, against head 986087c.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 986087c: rewritten in EARS optional-feature form |

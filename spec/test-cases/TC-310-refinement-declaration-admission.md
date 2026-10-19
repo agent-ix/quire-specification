@@ -155,7 +155,7 @@ library given its list is admitted, with a node, a `package_id` and an
 importer selection that differ from the library given none, and the unit
 admitted; the value naming a refinement `lib` does not declare refuses
 `missing_declaration`/`missing-name` at
-`/libraries/lib/refinement_internals/0/refinement`, and the compilation is
+(`lib`'s value, `/0/refinement`), and the compilation is
 not admitted whether or not the unit imports `lib` (FR-375-AC-12). In
 mutation 17 each omitted feature gives `unsupported_construct`/
 `not-yet-implemented` as FR-375-AC-14 states: two refusals at the `history`

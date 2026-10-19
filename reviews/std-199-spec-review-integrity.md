@@ -46,3 +46,15 @@ Ticket: STD-199. Checks internal consistency of the lock schema, FR-322/FR-323 s
 ## Verdict
 
 Not mergeable on this lens until FND-001 (schema contradicts AC-75) and FND-002 (closed replay shapes omit the new member) are fixed. The lock member's other rules are consistent: `minItems: 1` matches "absent, never `[]`", the outer array correctly omits `uniqueItems` so a repeated `refinement` reaches the reader, the member stays out of `IdentityPreimage`, and FR-272-AC-20 matches the native-diagnostics and FR-272 rows.
+
+## Dispositions
+
+Round 1, against head 986087c.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 986087c: `uniqueItems` dropped from `internal`, so a repeated spelling reaches the reader's `conflicting-definition` as FR-322-AC-77 and TC-233 expect |
+| FND-002 | fixed | 986087c: both closed shapes and FR-323-AC-17 updated; TC-277 BP-15 covers the dependency pointer |
+| FND-003 | fixed | 986087c: FR-271 states the split (source form or declaration input vs other producer capability); FR-271, FR-272 and native-diagnostics now use one description; FR-375 cites the rule |
+| FND-004 | fixed | 986087c: the ordering rule is scoped to the row arrays |
+| FND-005 | fixed | 986087c: FR-322-AC-77 reworded |
