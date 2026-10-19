@@ -88,3 +88,13 @@ QSpec.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-004 | fixed | - |
+
+Round 3, reviewed at 22d4d32ccfdacd0c02077ad6dbdf60ea05d92de2. The doubled
+phrase is gone, and FR-390's temporal-operator bullet now places the refusal at
+the first operator in source order, which matches SG-R18's expected first
+`until`.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-005 | fixed | - |
+| FND-006 | fixed | - |
