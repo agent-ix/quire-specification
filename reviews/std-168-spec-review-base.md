@@ -63,3 +63,28 @@ Round 1, reviewed at ffabc35ab74cccd2837bfb9fff5b1da310be72cc.
 | FND-001 | fixed | The History literals paragraph states the value-set rule, range included, decided statically as `ill_typed`/`type-mismatch` and contrasted with FR-149 unproved-range. Aligning QSL FR-138 belongs to the QSL repo and is not part of this PR. |
 | FND-002 | fixed | Mutation 10 now admits every literal kind (negative integer, true, false, none, string, rational, enum) and covers each refusal code, including `invalid_syntax`/`unexpected-token`. FND-004 is the remaining fixture gap. |
 | FND-003 | still-open | The rewrap is partial. FR-375:138 (92 chars), FR-375:144 (94) and TC-310:73 (117) are new or edited lines that are still unwrapped. Low; does not block merge. |
+
+Round 2, reviewed at 76b0432b4651b44b7f3f608fd236d53a09569556. I checked
+every mutation 10 vector against the declared Subject and found that each
+one reaches its stated outcome:
+
+- Admitted: `-3` is in `Int[-5, 4]`. `true` and `false` are `Boolean`.
+  `none` fits `Option<Int[0, 4]>`. `"a"` fits `Text[0, 4; nfc]` (length 1).
+  `rational(1, 2)` fits `Rational[0, 1; 1, 2]`, since numerator 1 is in
+  [0, 1] and denominator 2 is in [1, 2] per FR-149's `[n1,n2;d1,d2]`
+  reading. `Impl::Mode::idle` resolves through the concrete enum
+  `Mode { idle, busy }`.
+- Refused `type-mismatch`: `5` and `true` for `Int[0, 4]`, `0` for
+  `Boolean`, `none` for `Int[0, 4]`, and `Impl::Other::idle` (it resolves,
+  to the other enum).
+- Refused `missing-name`: bare `idle` and `Impl::Mode::missing`.
+- Refused `unexpected-token`: `sequence[1]` and `float64(bits: …)`, whose
+  first tokens are reserved words that start no `history-literal`.
+
+The changed files and both reviews/ files validate clean.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-003 | accepted-no-change | The TC-310 and most FR-375 prose is rewrapped. The AC table rows stay wide, as table rows do across the repo (the author's choice), and one prose line, FR-375:140 at 89 chars, remains. That is cosmetic and not worth another round. |
+| FND-004 | fixed | - |
+| FND-005 | fixed | - |
