@@ -42,3 +42,23 @@ implementer unable to derive the same type QSL derives. There is one low.
 | FND-002 | medium | "U is the population's member object type" assumes one member type, but a population declaration lists member types. TC-198's PA has [A, B] and L14 expects Population<M::A> without saying why. QSL FR-391 Outputs defines U as the canonical member type: the least of the declared member types in ascending DeclarationKey order (QSL FR-104 Requirements). QSpec has no such rule, so a QSpec implementer could pick B, the first listed type, or refuse. State the rule. | spec/functional/type-model/FR-153-query-closed-model-environments.md:129-131; spec/test-cases/TC-198-closed-model-lookup.md:72 |
 | FND-003 | medium | FR-383-AC-13 writes allInstances<Counter>(M::counters) with the type argument unqualified. QSL FR-155-AC-2 and FR-391-AC-1 write allInstances<M::Counter>(M::counters), and FR-153 requires T to resolve from a qualified name. The two specifications this PR is meant to align now spell the same example differently, and the QSpec spelling does not resolve under QSpec's own rule. | spec/functional/analysis/FR-383-explore-under-state-space-reduction.md:307 |
 | FND-004 | low | Shared-grammar.md:408-412 still says static resolution classifies a bare qualified reference "as an enum member or other declared value". A population operand is now a third outcome, and it is not a value. The new sentence at line 450 does not update that classification. | proposals/quire-v1/shared-grammar.md:408-412; proposals/quire-v1/shared-grammar.md:450 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | medium | FR-153 now takes N from "the maximum the unit authors for P with a bound declaration". QSpec defines no such declaration: shared-grammar.md has bound only as a reserved word and in verification-step [ 'bound', uint ], and no production `bound <label> on M::P [N]`. FR-153's own Dependencies say the complete-V1 grammar "owns every source form used by this requirement". The form is QSL FR-380's (S1 parses it there). So a QSpec-only reader cannot find the form that supplies N. Cite QSL FR-380 as the source of the authored maximum, or add the production. | spec/functional/type-model/FR-153-query-closed-model-environments.md:140-143; spec/functional/type-model/FR-153-query-closed-model-environments.md:193-194; proposals/quire-v1/shared-grammar.md:602 |
+| FND-006 | low | L14 justifies U = A by "4531dd9e precedes c5264509". Those are effective type identities, but FR-153 orders by declaration key (package, then node, as UTF-8 bytes), here ix://test/orders/A before ix://test/orders/B. The result is the same, but the stated reason teaches the wrong key. | spec/test-cases/TC-198-closed-model-lookup.md:72 |
+
+## Dispositions
+
+Round 1, reviewed at 561f23fcf64f179b9632072134dd9d7574abdfb0. The canonical
+member type rule matches QSL FR-104 Requirements: the least declared member
+type in ascending DeclarationKey order, package then node, as UTF-8 bytes.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |
+| FND-004 | fixed | - |

@@ -31,3 +31,15 @@ No high findings. Two medium findings and one low.
 | FND-001 | medium | The paragraph says how a state clause names a population, but not what M::P means outside one. QSL FR-391 Resolution and AC-3 say that in a function body it names no population and refuses missing_declaration/missing-name. QSpec only says that a function names one through a parameter. A QSpec implementer could resolve allInstances<M::A>(M::PA) in a function body, which has no observation, so it would need an ambient binding, which FR-153 forbids; or it could refuse with a different code. Two engines then disagree on a function body that QSL refuses. State the outside-a-state-clause outcome, and add a TC-198 L14 case for it. | spec/functional/type-model/FR-153-query-closed-model-environments.md:122-126; spec/functional/type-model/FR-153-query-closed-model-environments.md:164 |
 | FND-002 | medium | Identity confusion: M::P can resolve both as a population and as an enum member (an enum named M with a member P, beside a model alias M). QSL FR-391 refuses this ambiguous_declaration/ambiguous-name, naming both. QSpec's resolution rule (shared-grammar.md:408-412) classifies a bare qualified reference as an enum member first, so a QSpec engine could silently take the enum value and then refuse operator-ineligible, or type-mismatch, at the allInstances call instead of reporting the ambiguity. State the ambiguity refusal in FR-153, or give the precedence rule. | spec/functional/type-model/FR-153-query-closed-model-environments.md:124-127; proposals/quire-v1/shared-grammar.md:408-412 |
 | FND-003 | low | The phrase "a population that is not admitted as closed gives incomplete_population/incomplete-scope" can be read as covering every admission failure. The rules above make conflicting-identity and foreign-type refusals, and subtype non-closure unclosed-subtypes. The paragraph also does not say what happens when the observation has no row for P at all; the catalog offers incomplete_population/missing-required-artifact, and FR-046-AC-4 calls it unavailable. Say "whose extent is not closed", and name the missing-row outcome. | spec/functional/type-model/FR-153-query-closed-model-environments.md:135-137; proposals/quire-v1/definitions/native-diagnostics.md:78 |
+
+## Dispositions
+
+Round 1, reviewed at 561f23fcf64f179b9632072134dd9d7574abdfb0. The new causes
+exist in native-diagnostics.md:78: incomplete_population with
+missing-required-artifact, incomplete-scope or unclosed-subtypes.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |

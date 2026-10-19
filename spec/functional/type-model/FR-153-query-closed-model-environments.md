@@ -138,9 +138,10 @@ population when `M` is a model alias and `P` a population of its package.
   ascending declaration-key order (package, then node, each as UTF-8 bytes),
   of the population declaration's member types, whichever member type the
   clause's context or the queried `T` is. `N` is not part of the population
-  declaration, which states none: it is the maximum the unit authors for `P`
-  with a `bound` declaration, and a population with no `bound` has no
-  bracket and no inferred finite bound. The queried `T` need not be `U`; it
+  declaration, which states none: it is whatever maximum the unit's source
+  authors for `P`, and a population with none has no bracket and no inferred
+  finite bound. The authoring form (`bound <label> on M::P [N]`) is the
+  source-language's (quire-spec-language FR-380), not this grammar's. The queried `T` need not be `U`; it
   is checked against the population's member types as above.
 - The name selects the declaration; the binding is not ambient. It is the
   population row of the clause's observation: `current` in an invariant,
@@ -191,7 +192,9 @@ deleted in the post state keeps its pre most-specific type. Charges are the
 ## Dependencies
 
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
-  source form used by this requirement.
+  source form used by this requirement, except the unit-authored maximum
+  of a population named in a state clause, whose form is quire-spec-language
+  FR-380's.
 - [Subsystem and interface index](../../subsystems/index.md) identifies the
   typed producer/consumer boundary and dependency direction.
 - Every requirement linked in frontmatter is a normative prerequisite.
