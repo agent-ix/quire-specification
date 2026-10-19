@@ -75,3 +75,4 @@ AC-24 to what the vector shows. The low findings are optional.
 | FND-002 | fixed | Round 1: the heading is now "Wire spellings of result causes and proof bases". |
 | FND-003 | fixed | Round 1: TC-294 step 7 names `config_history` with an empty universe list, and adds a second subject with no universe that expects `requires-bound`. |
 | FND-004 | fixed | Round 1: renumbered FR-331-AC-28 and BP-18, past draft #200's FR-331-AC-24..27 and BP-11..17. Whichever of #200 and #280 lands second rebases vectors.json. |
+| FND-005 | fixed | Round 2 (f2199b1): the adverse vector `temporal-cause-no-initial-state-underscore` opens with the 4-space array indent; layout only, vectors.json parses and TC-431 passes 9/9. |
