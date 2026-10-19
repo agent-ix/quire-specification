@@ -39,3 +39,12 @@ Ticket: STD-210. Base checklist over `git diff origin/main...HEAD` (2c2918b..5f2
 ## Verdict
 
 Mergeable; both findings are low and need not block. The rule now reads the same in the FR-149 prose, FR-149-AC-21, TC-194 E35, QSL FR-104 and FR-381, and the QSL checker. The STD-157 `=`/`!=` expected-type rule and its negative cases (AC-19, AC-20, the first eight E35 vectors, E36) are unchanged. AC-21's `Test (TC-194)` link resolves to E35. The Float ordering refusal (AC-13, E30) is unaffected, because the acceptance covers only integer operands.
+
+## Dispositions
+
+Round 1, against head b2aebb1.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | b2aebb1: E35 now reads "`earlier.tally + 1` is typed `Integer` too, since integer arithmetic with no expected type is `Integer`", and the FR-149 ordering sentence adds "an arithmetic operand with no expected type being typed `Integer`" |
+| FND-002 | fixed | b2aebb1: E35 adds the vector `later.tally > n`, which also covers `Int[..]` on the left |

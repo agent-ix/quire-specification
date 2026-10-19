@@ -34,3 +34,17 @@ Ticket: STD-210. Checks that every QSpec statement of the ordering rule agrees a
 ## Verdict
 
 Mergeable on this lens. The prose, AC-21 and E35 agree on all four operators, both operand orders and the absence of coercion. AC-21's new acceptance clause matches the prose sentence it restates, and E35's count ("the four ordering comparisons") matches its four added vectors.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | b2aebb1 adds a fifth ordering vector (`later.tally > n`) to E35's input, but the expected result still says "the four ordering comparisons are accepted". The input now lists five (`n + 1 <= later.tally`, `earlier.tally + 1 <= later.tally`, `n < later.tally`, `n >= later.tally`, `later.tally > n`). Change "four" to "five". | spec/test-cases/TC-194-complete-equality-matrix.md:70 |
+
+## Dispositions
+
+Round 1, against head b2aebb1.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | b2aebb1: E35 now says the over-extension "would give `unproved-range` for the two arithmetic vectors and `ill_typed`/`type-mismatch` for the path vectors `n < later.tally`, `n >= later.tally` and `later.tally > n`" |
