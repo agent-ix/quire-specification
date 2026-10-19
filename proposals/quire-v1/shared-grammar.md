@@ -721,15 +721,22 @@ rules only.
   and `to` operands) are `graph-predicate`s: a clause expression in which the
   unary and binary temporal operators of the temporal facet stand at any
   operand position, each with an optional `interval`, and in which `fairness`
-  constraints may stand at the start of a `graph-body`. A parenthesised group
-  is read as a `comparison` operand when it is one and as a `graph-predicate`
-  otherwise, so `(eventually x)` and `not eventually x` both parse. The
-  production is recognition only: it carries no profile selection, and a
-  temporal operator or a fairness constraint inside a state-graph claim is
-  parsed and then refused by
+  constraints may stand at the start of a `graph-body`. One rule resolves
+  every overlap between `graph-predicate` and `expr`: a predicate or
+  parenthesised group that derives as an `expr` is read as that `expr`, and
+  the `not`, `(` and temporal alternatives of `graph-unary` apply only to a
+  phrase that does not. So `not c.n = 2` is the `expr` `(not c.n) = 2`, as in
+  any expression, and `not eventually c.n = 2` and `(eventually c.n = 2)` are
+  read through `graph-unary`. The production is recognition only: it carries
+  no profile selection, and a temporal operator or a fairness constraint that
+  a production recognizes is parsed and then refused by
   [FR-390](../../spec/functional/analysis/FR-390-analyze-state-graph-claims.md)
-  at admission, never as a syntax error. `over` is optional in all three
-  clauses.
+  at admission. Everything else is a syntax error: a fairness constraint
+  anywhere but the start of a `graph-body` (so none in a `from` or `to`
+  operand, and none on a `unique path` clause, which has no body), and a
+  temporal operator in an `if` condition, a `let` binding, or an operand of
+  a primary such as a call argument or a `holds`-style argument. `over` is
+  optional in all three clauses.
 - The keywords of the state-graph clauses are distinct from the `reaches`
   primary: `reaches` reads one state's object graph and the state-graph
   clauses read the model's state graph.
@@ -749,6 +756,9 @@ rules only.
 | `always possible Rec using v from (always c.ok) { c.done }` | Parses: a temporal operator in a `from` operand; refused at admission at `always` (FR-390-AC-2). |
 | `always possible Rec using v { fair weak M::Cfg::step; c.done }` | Parses: a fairness constraint at the start of the body; refused at admission at the constraint (FR-390-AC-2). |
 | `possible P using v { c.done; fair weak M::Cfg::step }` | Syntax error: a fairness constraint is admitted only at the start of a body. |
+| `possible N using v over (c: C::Cfg) { not c.n = 2 }` | Parses as the `expr` `(not c.n) = 2`, as in any expression; a type error at the checker, not a grammar case. |
+| `possible W using v over (c: C::Cfg) { eventually[1,*] c.done }` | Parses; the interval is recognized and FR-390 refuses at `eventually` (`expression-form`); no profile refusal applies, since a state-graph claim selects no temporal profile. |
+| `possible B using v over (c: C::Cfg) { if eventually c.a then c.b else c.c }` and `unique path One using v from (c.a) to (c.d); fair weak M::Cfg::step` | Syntax errors: a temporal operator in an `if` condition, and a fairness constraint on a clause with no body. |
 
 ### Probabilistic, timed and real-time forms
 

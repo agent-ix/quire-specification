@@ -122,9 +122,16 @@ temporal atom over a model subject reads an absent `over` object.
   constraint.
 
 The shared grammar's `graph-predicate` and `graph-body` productions recognize
-both constructs, so each reaches this admission step as parsed source and is
-never a syntax error; the refusals above are the only place a state-graph
-claim rejects them.
+a temporal operator at any operand position of a body, `from` or `to`
+predicate, and a fairness constraint at the start of a body. Exactly those
+cases reach this admission step as parsed source and are refused here. A
+fairness constraint elsewhere (after the predicate, in a `from` or `to`
+operand, or on `unique path`, which has no body), and a temporal operator in
+an `if` condition, a `let` binding or a primary's operand, are syntax errors
+and never reach admission. The fairness refusal therefore applies to
+`possible` and `always possible` only. An interval, including `[a,*]`, does not
+change which refusal applies: the operator is refused as written, and no
+temporal profile is consulted.
 
 ## Routing
 
