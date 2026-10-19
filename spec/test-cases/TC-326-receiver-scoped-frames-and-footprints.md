@@ -21,7 +21,8 @@ footprints partial-order reduction uses.
 
 ## Test Procedure
 
-Subject: TC-323's counters, plus an operation `copy(p: Reference<Counter>)`
+Subject: TC-323's counters imported from the domain package as model
+alias `M` (`M::Counter`, population `M::counters`), plus an operation `copy(p: Reference<Counter>)`
 with frame `modifies self.v` and postcondition `self.v = p.v`, and an
 operation `reset()` with frame `modifies self.v` whose postcondition reads
 `deref(self.peer).v` through a field `peer: Option<Reference<Counter>>`.
@@ -39,7 +40,7 @@ operation `reset()` with frame `modifies self.v` whose postcondition reads
    restricted to a read footprint that omits the `peer` target's `v`.
 
 7. Add an operation `check()` with frame `modifies self.v` and pre
-   `forall o in counters: o.v < 2`; derive its read footprint and decide its
+   `forall(o in allInstances<M::Counter>(M::counters) : o.v < 2)`; derive its read footprint and decide its
    dependence with `bump(b)`, with `spawn()` (frame `creates Counter`) and
    with `drop()` (frame `deletes self`) on `c`.
 8. Frame `deletes self` on `drop()`: observe an invocation on `a` that
