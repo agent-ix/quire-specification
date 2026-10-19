@@ -68,3 +68,9 @@ Round 3, against head 7e85fb7.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-003 | still-open | 7e85fb7: the edges are restored and added (FR-375 to FR-001, FR-147, FR-090, FR-250; FR-001 to FR-090, FR-250), but FR-001's Dependencies still reads "how their rows obtain complete-value and complete-model layers is pending an owner ruling stated there" (FR-001:107-109), which A2 settled |
+
+Round 4, against head 73aad4e.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-003 | fixed | 73aad4e: FR-001's Dependencies now states the A2 ruling (rows admitted under the layers the governing infinite-trace profile requires, FR-090/FR-250, counted for the lock selection); the edges were restored in round 3 |

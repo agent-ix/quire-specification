@@ -70,6 +70,12 @@ Not mergeable on this lens until FND-001 and FND-002 give FR-377-AC-9 and AC-11 
 | --- | --- | --- | --- |
 | FND-006 | medium | The chosen out-of-layer example cannot reach the layer check. A field row is `member-name '=' expr`, and `eventually` is a reserved word that appears only in the temporal-clause productions (`temporal-unary-unbounded` and the bounded temporal grammar), not in `expr` or `primary`. A row `items = eventually ...` is therefore a syntax error, `invalid_syntax`/`unexpected-token` at `eventually`, before any `unsupported_construct`/`expression-form` refusal naming `quire.model.complete/v1`. FR-375-AC-18, FR-001-AC-7, FR-090-AC-10 and TC-310 mutation 21 all expect the latter. Use a form that `primary` admits but the model.complete closure does not, for example the protocol reference `protocol Spec::Twice`, a `primary` admitted only under `quire.protocol.complete/v1` (shared-grammar.md:941). | spec/functional/analysis/FR-375-declare-model-refinement.md:284-287,428; spec/functional/foundation/FR-001-select-native-profile.md:98; spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md:121; spec/test-cases/TC-310-refinement-declaration-admission.md:127-132,218-220; proposals/quire-v1/shared-grammar.md:161-175,352-365,939-943 |
 
+## New findings (disposition pass 4)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | medium | `protocol Spec::Twice` now parses (`protocol-reference` is a `primary`), but in mutation 21's unit it does not resolve, and no text puts the layer check before resolution. Mutation 21 uses the ring-buffer unit (aliases `Q` and `R`); `Twice` is a protocol clause of the CasRefinesCounter fixture's abstract package (TC-310 mutation 13), and there is no `Spec` alias in the ring-buffer unit at all. FR-463 resolves a reference "in the unit's own declaration scope, to a protocol declaration of the unit"; "a name offered only by an import does not resolve" and refuses `missing_declaration`/`missing-name` at the reference (FR-463-AC-4). The reference also types as the clause's Boolean, so in a non-Boolean row it would add `ill_typed`/`type-mismatch`. Either declare a local protocol in the mutation 21 unit (for example `protocol Fill`), write it in a Boolean position, and use `protocol Fill`; or state in FR-375 or FR-001 that the `expression-form` facet refusal is decided before name resolution and typing, so no other diagnostic is reported for the row. | spec/functional/analysis/FR-375-declare-model-refinement.md:285-287,428; spec/functional/foundation/FR-001-select-native-profile.md:98; spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md:121; spec/test-cases/TC-310-refinement-declaration-admission.md:75-78,127-134,215-222; spec/functional/protocol/FR-463-refer-to-a-declared-protocol-in-an-expression.md (Resolution, Refusals, AC-4); proposals/quire-v1/shared-grammar.md:941-944 |
+
 ## Dispositions
 
 Round 1, against head 5a66bf9.
@@ -91,3 +97,9 @@ Round 3, against head 7e85fb7.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-005 | fixed | 7e85fb7: AC-18, FR-001-AC-7, FR-090-AC-10 and TC-310 mutation 21 now name the form (`eventually`) and the layer (`quire.model.complete/v1`). The chosen form cannot reach the layer check: see new FND-006 |
+
+Round 4, against head 73aad4e.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-006 | fixed | 73aad4e: the example is now `protocol Spec::Twice`, a `primary` the grammar admits only under `quire.protocol.complete/v1`, so the row parses and the form is outside the model.complete closure. The name does not resolve in the mutation 21 unit: see new FND-007 |

@@ -97,3 +97,10 @@ Round 3, against head 7e85fb7.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-008 | fixed | 7e85fb7: the row layers now count toward the unit's selected layers for `package_selection` (FR-001 lock bullet and refinement bullet, FR-375 Row layers, FR-453); FR-375-AC-18, FR-001-AC-7 and TC-310 mutation 21 add an `a div b` row and read the lock. The missing-law code is wrong and the package-id clause is vacuous: see new FND-009 and FND-010 |
+
+Round 4, against head 73aad4e.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-009 | fixed | 73aad4e: the code is `selection_trigger_unsatisfied` in FR-375-AC-18, FR-001-AC-7 and TC-310; the none run (trigger `integer_div_rem`, no alternative role, every `always` role present) matches the canonical `division-missing-for-div-rem` vector, whose first failing check in the contract's order is `selection_trigger_unsatisfied`; the unit supplies its choice as the lock selection's alternative role |
+| FND-010 | fixed | 73aad4e: the vacuous package-id clause is replaced by a direct `definition_selections` assertion: floor and Euclidean runs differ exactly in the division-law role |
