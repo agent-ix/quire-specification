@@ -3129,7 +3129,7 @@
         }
       ]
     },
-{
+    {
       "name": "temporal-cause-no-initial-state-underscore",
       "base": "temporal-outcome",
       "owner": "FR-363",
