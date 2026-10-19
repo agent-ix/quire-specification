@@ -5,6 +5,12 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-375
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-001
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-090
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-250
+    type: verifies
 ---
 
 # TC-310: Refinement declaration admission
@@ -117,7 +123,11 @@ Mutations, each applied alone to the positive unit:
     `self.value` and by `self.f` over a concrete `?` field; map an
     `Option<Int[0, 2]>` abstract field by `none`; map a field by `none` as a
     call argument; write `Some(1)` in a state clause with no function `Some`
-    declared, and with one declared.
+    declared, and with one declared;
+21. with the ring-buffer rows `s.ring = self` and `(self.head + i) mod 2`
+    under `quire.temporal.infinite-trace/v1` and a unit whose own declarations
+    select no layer; then a row using a form outside `quire.model.complete/v1`
+    and its `requires` closure.
 
 ## Expected Results
 
@@ -197,4 +207,6 @@ the `?` field, `self.value` and `self.f` refuse `ill_typed`/`type-mismatch`,
 the `Option<Int[0, 2]>` field takes `none` as an explicit `none`, `none` as a
 call argument refuses `ill_typed`/`type-mismatch`, and `Some(1)` refuses
 `missing_declaration`/`missing-name` at `Some` with no function declared and is
-a call to it with one declared (FR-375-AC-17).
+a call to it with one declared (FR-375-AC-17). In mutation 21 the ring-buffer rows are admitted, and the form outside the
+layers refuses `unsupported_construct`/`expression-form` at the expression,
+naming the layer (FR-375-AC-18, FR-001-AC-7, FR-090-AC-10, FR-250-AC-8).
