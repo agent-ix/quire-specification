@@ -406,8 +406,9 @@ float conversion is an explicit library function under a selected rounding
 profile, not a literal shortcut.
 
 The one qualified reference/call production is syntactically canonical. Static
-resolution classifies a bare qualified reference as an enum member or other
-declared value and a qualified call as a tuple constructor, union member
+resolution classifies a bare qualified reference as an enum member, a
+domain-package population (inside a state clause, as the operand of
+`allInstances` or `lookup`; FR-153) or other declared value and a qualified call as a tuple constructor, union member
 constructor or pure function; the parser does not duplicate those token
 strings into `enum-value`, `tuple-value`, `union-value` and call alternatives.
 
