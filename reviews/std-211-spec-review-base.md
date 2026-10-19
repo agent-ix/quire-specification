@@ -76,6 +76,12 @@ Not mergeable on this lens until FND-001 and FND-002 give FR-377-AC-9 and AC-11 
 | --- | --- | --- | --- |
 | FND-007 | medium | `protocol Spec::Twice` now parses (`protocol-reference` is a `primary`), but in mutation 21's unit it does not resolve, and no text puts the layer check before resolution. Mutation 21 uses the ring-buffer unit (aliases `Q` and `R`); `Twice` is a protocol clause of the CasRefinesCounter fixture's abstract package (TC-310 mutation 13), and there is no `Spec` alias in the ring-buffer unit at all. FR-463 resolves a reference "in the unit's own declaration scope, to a protocol declaration of the unit"; "a name offered only by an import does not resolve" and refuses `missing_declaration`/`missing-name` at the reference (FR-463-AC-4). The reference also types as the clause's Boolean, so in a non-Boolean row it would add `ill_typed`/`type-mismatch`. Either declare a local protocol in the mutation 21 unit (for example `protocol Fill`), write it in a Boolean position, and use `protocol Fill`; or state in FR-375 or FR-001 that the `expression-form` facet refusal is decided before name resolution and typing, so no other diagnostic is reported for the row. | spec/functional/analysis/FR-375-declare-model-refinement.md:285-287,428; spec/functional/foundation/FR-001-select-native-profile.md:98; spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md:121; spec/test-cases/TC-310-refinement-declaration-admission.md:75-78,127-134,215-222; spec/functional/protocol/FR-463-refer-to-a-declared-protocol-in-an-expression.md (Resolution, Refusals, AC-4); proposals/quire-v1/shared-grammar.md:941-944 |
 
+## New findings (disposition pass 5)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-008 | medium | The local `Fill` cannot be built from "the body of TC-376's `Fill`, over the unit's own model `R`". TC-376's body names `M::Cell`, its operations `M::Cell::inc` and `M::Cell::setTwo`, the contract clauses `IncPre`, `IncPost`, `TwoPre` and `TwoPost`, a role `on M` and a protocol profile alias `p`. The ring-buffer model `R` (TC-311, TC-316) has types `Ring` and `Slot` with operations `put` and `take`, no `Cell`, no `inc` or `setTwo`, no such contract clauses, and the mutation 21 unit declares no protocol profile alias. Rewritten over `R`, every one of those names refuses `missing_declaration`/`missing-name` in `Fill` itself, so the unit carries refusals besides the expected `expression-form` one at the row and the vector cannot tell them apart. The rest is sound: the row now names a local protocol, which FR-463 resolves; a protocol reference types as the clause's Boolean, so `ready = protocol Fill` conforms to `ready: Boolean`; and adding `ready` with its row leaves the other rows, the hidden-field set and the step rows unchanged. Write `Fill` out over `R` (for example one `attempt` of `R::Slot::put` with its own named pre/post clauses and a protocol profile alias selecting `quire.protocol.complete/v1`), or point at a fixture that already declares a protocol over `R`. | spec/test-cases/TC-310-refinement-declaration-admission.md:130-135,220-223; spec/test-cases/TC-376-two-branch-join-worked-example.md:22-38; spec/test-cases/TC-316-ring-buffer-data-refinement.md:22-40; spec/functional/protocol/FR-463-refer-to-a-declared-protocol-in-an-expression.md (Resolution; Type and value) |
+
 ## Dispositions
 
 Round 1, against head 5a66bf9.
@@ -103,3 +109,9 @@ Round 4, against head 73aad4e.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-006 | fixed | 73aad4e: the example is now `protocol Spec::Twice`, a `primary` the grammar admits only under `quire.protocol.complete/v1`, so the row parses and the form is outside the model.complete closure. The name does not resolve in the mutation 21 unit: see new FND-007 |
+
+Round 5, against head f52e145.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-007 | fixed | f52e145: the row is now `ready = protocol Fill`, naming a protocol the unit declares, in a Boolean field, so FR-463 resolution and typing no longer produce their own refusals. The `Fill` body itself is not constructible over `R`: see new FND-008 |
