@@ -735,7 +735,10 @@ rules only.
   anywhere but the start of a `graph-body` (so none in a `from` or `to`
   operand, and none on a `unique path` clause, which has no body), and a
   temporal operator in an `if` condition, a `let` binding, or an operand of
-  a primary such as a call argument or a `holds`-style argument. `over` is
+  an operand of a primary, such as a call argument or a quantifier body.
+  A `graph-relation` admits at most one binary temporal operator, as the
+  temporal clause's `temporal-relation` does, so `c.a until c.b until c.c` is
+  a syntax error and a chain is written `(c.a until c.b) until c.c`. `over` is
   optional in all three clauses.
 - The keywords of the state-graph clauses are distinct from the `reaches`
   primary: `reaches` reads one state's object graph and the state-graph
