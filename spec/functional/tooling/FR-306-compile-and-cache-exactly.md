@@ -99,7 +99,8 @@ emits nothing (FR-331-AC-2).
   affect a result, and every deterministic budget that can move a result to
   `incomplete`); the provider's backend identity; and, for
   `generate`, the generation target and its options.
-- **Outside the key.** Paths, timestamps, wall-clock deadlines, application
+- **Outside the key.** Paths, timestamps, wall-clock deadlines and budgets (a
+  hybrid solver's `max_solver_time`, FR-193), application
   version strings and the execution backend that ran.
 - **Invalidation.** Any change to a key input changes the key, so a changed
   input is a miss and nothing else invalidates an entry. The store is the set

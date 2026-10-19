@@ -98,7 +98,7 @@ for these items with `invalid_result`/`unknown-cause`.
 | `refuted` (cause) | `undefined-evaluation{where, cause}` |
 | `measured` (FR-409 cause) | `undefined-evaluation{where, cause}` for `rejected`; `indifference-region` and `undecided-successor` for `undecided` |
 | `inconclusive` (cause) | `certificate-rejected{rule, at}`, `replay-parity`, `undecided-successor`, `no-initial-state`, `no-instance`, `sufficient-test-failed`, `solver-inconclusive`, `lasso-not-concretized`, `no-admitted-behaviour`, `well-definedness-unchecked` |
-| `incomplete` (cause) | `limit-reached{limit, value, setting}`, naming the limit, its value and the request setting that raises it, the one limit-stop cause of every engine; `precision-budget{lower, upper}`; `cancelled{source}` for a cancelled run, `source` the cancellation cause, `requested` when the caller cancels and `deadline` when the caller's deadline ends the run |
+| `incomplete` (cause) | `limit-reached{limit, value, setting}`, naming the limit, its value and the request setting that raises it, the one limit-stop cause of every engine; `timed-out`, the backend's own wall-clock limit, as a hybrid solver's `max_solver_time` ("Hybrid solver budgets" below); `precision-budget{lower, upper}`; `cancelled{source}` for a cancelled run, `source` the cancellation cause, `requested` when the caller cancels and `deadline` when the caller's deadline ends the run |
 | `unsupported` (cause) | `missing-confidence`, `every-scheduler`, `exact-only-form`, `not-markov{state, transition, post_states}`, `not-stochastic{state, identity}`, `time-locked-sample{state}`, `zero-weight-component{component}`, `delay-distribution{operation}`, `strict-clock-constraint{locus}`, `zero-delay-cycle{states}`, `timed-form-shape{locus}`, `punctual-interval{locus}`, `stopwatch-required` |
 
 A disposition `invalid-request` with `invalid_capability`/`not-statistical`
@@ -206,6 +206,19 @@ bound. FR-290 owns which descriptors carry it and how a missing or malformed
 `domains` is refused; the manifest schema enforces that rule. A descriptor's `options` are its published option defaults; its `bounds` are the
 published default of each limit it applies, keyed by limit name, which an
 item's absent limit takes (FR-461).
+
+### Hybrid solver budgets
+
+A hybrid item (FR-193) carries two budgets in its `options`: `max_solver_steps`,
+a whole non-negative count of solver steps as the provider counts them, and
+`max_solver_time`, whole seconds of wall-clock time. A solver that exhausts
+the step budget records `incomplete` with `limit-reached{limit, value,
+setting}` whose `limit` is `max_solver_steps` and whose `setting` is
+`hybrid.max_solver_steps`; one that exhausts the time budget records
+`incomplete` with `timed-out`, never `limit-reached`. A fractional time
+budget is rounded up to the next whole second when the request is admitted.
+`max_solver_steps` is part of request identity; `max_solver_time` is a
+wall-clock setting and is outside it (FR-306).
 
 ### Result entries
 
@@ -333,7 +346,7 @@ probabilistic engine's is `exact_prob`.
 
 ## Identity and validation
 
-Request identity includes the capability vocabulary, manifest, package, each item's claim, extent with its proof bounds, options and limits, each item's kind, extent classification, named backend and candidates, each temporal item's subject, item kind, fairness set, `max_depth` and `limits`, the `witness_samples` and `seed` of a state-graph item, and each item's symmetry declarations, partial-order selection and state constraint; the state constraint is also recorded in the item's terminal record. A different temporal horizon or budget can produce a different result, so a result is reused only for a request with the same request identity. Result identity includes artifacts and results.
+Request identity includes the capability vocabulary, manifest, package, each item's claim, extent with its proof bounds, options and limits, each item's kind, extent classification, named backend and candidates, each temporal item's subject, item kind, fairness set, `max_depth` and `limits`, the `witness_samples` and `seed` of a state-graph item, and each item's symmetry declarations, partial-order selection and state constraint; the state constraint is also recorded in the item's terminal record. A different temporal horizon or deterministic budget can produce a different result, so a result is reused only for a request with the same request identity; a wall-clock setting, a hybrid item's `max_solver_time`, is outside it. Result identity includes artifacts and results.
 Unknown contract versions, missing required properties, duplicate keys,
 out-of-domain values and non-canonical encodings refuse before consumption. A `capability_vocabulary` other than `quire.capability-kind/v1`, or none, refuses the envelope as `invalid_capability`/`unknown-vocabulary`.
 
@@ -364,6 +377,7 @@ out-of-domain values and non-canonical encodings refuse before consumption. A `c
 | FR-331-AC-22 | The manifest schema applies FR-290's `domains` registration rule to every descriptor: one whose `domains` is present and empty, holds a non-boundable or unknown kind or repeats a kind is refused whatever modes it advertises, one that advertises a `bounded` mode without `domains` is refused, and one that advertises only `unbounded` modes is admitted without `domains`. | Test (TC-431) |
 | FR-331-AC-23 | Every `proved` result entry carries exactly one `certification`, `certified`, `uncertified` or `trusted`: a Kani `bounded-proof`, a checked `value-bounds` and a checked `witnessed` proof, and an SMT `bounded-complete` proof whose certificate the core verified, carry `certified`, a symmetry-`reduced` proof (copy-swap with symmetry), a partial-order-`reduced` proof and an SMT `inductive` proof with no verified certificate `uncertified`, and a plugin proof `trusted`; a `proved` entry without `certification`, a `reduced` proof with a `symmetry` or `partial-order` reduction or a `bounded-solver` proof carrying `certified`, one with another value, and a `certification` on any other result are refused. | Test (TC-431) |
 | FR-331-AC-28 | A model-subject item with no initial state, and one with zero instances, each record `inconclusive` with the cause `no-initial-state` and `no-instance` respectively, spelled exactly so; the temporal-outcome vector carries a result entry of each, and a `no-instances` spelling is refused. | Test (TC-431) |
+| FR-331-AC-29 | A hybrid item's solver that exhausts `max_solver_steps` records `incomplete` with `limit-reached` whose `limit` is `max_solver_steps` and whose `setting` is `hybrid.max_solver_steps`; one that exhausts `max_solver_time` records `incomplete` with `timed-out`; a time stop spelled `limit-reached` or `time-limit` is refused `invalid_result`/`unknown-cause`; two requests differing only in `max_solver_time` have equal request identity. | Test (TC-373) |
 
 ## Dependencies
 
