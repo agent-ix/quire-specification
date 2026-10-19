@@ -102,7 +102,20 @@ Mutations, each applied alone to the positive unit:
     then the lists `["Spec::Twice::zz"]` (no such node), a repeated
     spelling, `{}`, `[{"refinement": "Nope", "internal": []}]` and
     `[{"refinement": 7, "internal": []}]`, each with `refinement-internal-list`
-    omitted.
+    omitted;
+18. against a producer whose support set omits `nested-reference-row`, change
+    the positive unit so a `Sequence<Reference<Queue>>[0, 2]` abstract field
+    is mapped by a row of type `Sequence<Reference<Ring>>[0, 2]`, twice (two
+    such fields), and separately map a whole-population reference row and a
+    plain `Reference<Ring>` row to `Reference<Queue>` fields;
+19. against a producer whose support set omits `abstract-relationships`,
+    give the abstract `Queue` of the ring-buffer pair a relationship;
+20. map a `?` abstract field by `none`, by `Some(self.value)`, by `self.value`
+    and by `if present(self.f) then Some(value(self.f)) else none` over a
+    concrete `?` field; map an `Option<Int[0, 2]>` abstract field by `none`;
+    write `Some(1)` in a state clause;
+21. declare the positive refinement in a unit that does not select
+    `quire.value.complete/v1`.
 
 ## Expected Results
 
@@ -169,3 +182,16 @@ is produced and no other diagnostic is reported for the refused row. With
 `missing_declaration`/`missing-name` at `/0/refinement` and the number
 `malformed-declaration` at `/0/refinement`, with no support-set refusal for
 any of them.
+
+In mutation 18 each nested-reference field row refuses
+`unsupported_construct`/`not-yet-implemented` naming `nested-reference-row` at
+its expression, so two refusals and no node, while the population-reference and
+plain-reference rows are admitted (FR-375-AC-15). In mutation 19 the
+declaration refuses the same pair naming `abstract-relationships` at the
+abstract alias of the header, once, with no node (FR-375-AC-16). In mutation
+20 `none` and `Some(self.value)` and the `if present` form are admitted for
+the `?` field, `self.value` refuses `ill_typed`/`type-mismatch`, the
+`Option<Int[0, 2]>` field takes `none` as an explicit `none`, and `Some(1)` in
+a state clause is an ordinary call that resolves as any other (FR-375-AC-17).
+Mutation 21 refuses `unsupported_construct` at the `refinement` keyword with no
+node (FR-375-AC-18).

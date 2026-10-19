@@ -9,6 +9,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-377
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-375
+    type: verifies
 ---
 
 # TC-315: Refinement undetermined mappings and replay
@@ -39,6 +41,16 @@ parity mismatch.
 6. **Undefined history update.** In TC-314 case 1 make the history update
    `2 div self.tmpA`, undefined at the first reachable commit step where
    `tmpA = 0`.
+7. **Failure precedence.** At one state of the ring-buffer refinement hold
+   an earlier row that is incomplete (budget zero) and a later `items` row
+   whose `only` is undefined; then the same state with the earlier row
+   refused instead; then with an unmapped subtype object whose key sorts
+   first; then with an evaluator stop injected in the earlier row; then write
+   the same rows in the opposite source order.
+8. **Optional and null rows.** Map a `?` abstract field by a row that is
+   `none` at one state and `Some(1)` at another, an `Option<Int[0, 2]>` field
+   by `none`, and a field by a row that evaluates to explicit `null` while a
+   later row is undefined.
 
 ## Expected Results
 
@@ -57,3 +69,9 @@ position 4, and settles `reproduced-with-evaluated-witness` with the item
 settles `refuted`, cause `undefined-evaluation`, with an `Undefined`
 counterexample ending at that commit step that replays, and the step stays a
 concrete step (FR-378-AC-3).
+Case 7 refutes with the later undefined row in the first three runs, reports
+the stop with `map` undetermined in the fourth, and gives the same reported row
+in the fifth (FR-377-AC-9, FR-377-AC-11). Case 8 leaves the `?` field absent
+then set to `1`, keeps the explicit `none`, and makes `map` undetermined with
+the refused `null` row yet still refutes on the later undefined row
+(FR-375-AC-17, FR-377-AC-10).

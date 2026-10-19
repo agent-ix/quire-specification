@@ -232,6 +232,7 @@ a refusal code or cause and does not make the outcome refused.
 | Reason | Required payload |
 | --- | --- |
 | `absent-key` | the population binding, the requested reference key and the `lookup` locus, for `lookup<T>(p, r) absent undefined` with no member of that key (FR-153) |
+| `only-not-one` | the population binding, the `only` form's locus and the enclosing refinement row, for an `only(x in P where c: e)` whose matching set is empty or holds two or more objects (FR-376); the reason is the same for both, and the payload carries no match count |
 | `precondition-false` | the called effective operation, the selected method's effective identity, the receiver reference and the call locus, for a dispatched call whose selected effective precondition is false (FR-151) |
 
 ## Outcomes and delivery boundary

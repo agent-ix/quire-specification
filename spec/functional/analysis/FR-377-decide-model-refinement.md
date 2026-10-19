@@ -72,6 +72,33 @@ with a fresh meter. A row that is refused or incomplete at `s` makes `map`
 refinement claim evaluate undefined there, which refutes it
 ([FR-379](FR-379-report-and-replay-refinement-counterexamples.md)).
 
+A mapped abstract field declared with `?` is set to `v` when its row is
+`Some(v)` and left absent when it is `none`; a field declared `Option<T>` takes
+the row's option value unchanged ([FR-375](FR-375-declare-model-refinement.md),
+Option rows). A row that evaluates to explicit `null` is a refused row,
+`unsupported_construct`/`not-yet-implemented`, so `map` is undetermined there.
+The mapped state holds no relationship extent. A concrete object whose
+most-specific type no object row names, and a reference to such an object,
+make `map` undetermined at that state; `map` never drops an object it cannot
+map.
+
+**Failure precedence.** The rows of one `map(s, h)` are read in the order of
+the admitted node: populations, within each population its objects in
+ascending key order, and per object the object row of its type and then that
+type's field rows, each array in the node's own order
+([FR-375](FR-375-declare-model-refinement.md)), so the order never depends on
+the order the rows were written in. When several rows fail at one state:
+
+- an evaluator stop on a broken invariant ends the reading at once and `map`
+  is undetermined with that stop, even after an earlier undefined row, because
+  the observation the other rows read can no longer be trusted;
+- otherwise an undefined row outranks every undetermined row, so the claim is
+  refuted at that state even when an earlier row is refused, incomplete or
+  unmapped, and the first undefined row in the order is the one reported;
+- otherwise the first undetermined row in the order is the one reported.
+
+The reported row, object and cause are the same in a verdict and its replay.
+
 **Step rules.** Each concrete step `(s, h) -t-> (s', h')` passes or fails by
 the row of `t`'s operation, with `a = map(s, h)` and `a' = map(s', h')`:
 
@@ -160,6 +187,9 @@ until and since are non-strict ([FR-161](../temporal/FR-161-analyze-infinite-tra
 | FR-377-AC-6 | A concrete state where only `stutter`-mapped operations are enabled is not a deadlock of the concrete model, and a request with a refinement item over the concrete subject also carries the concrete model's deadlock-freedom item as a separate item. | Test (TC-313) |
 | FR-377-AC-7 | A per-step simulation obligation is one `operation-contract` item per step row and one for the initial-state rule; it is never routed for a declaration with a hidden field, a history field or an `any` row. | Test (TC-312) |
 | FR-377-AC-8 | The compare-and-set counter refines the abstract counter (28 reachable concrete states, every edge passing the step function, no fair stutter SCC below `value` 2); the same refinement under a concrete `terminal when` member written from the abstract predicate has its concrete deadlock-freedom item proved. | Test (TC-312, TC-313) |
+| FR-377-AC-9 | When several rows fail at one state, an evaluator stop ends the reading at once with `map` undetermined even after an earlier undefined row; otherwise the first undefined row in the node's row order is reported and refutes the claim even when an earlier row is refused, incomplete or unmapped; otherwise the first undetermined row is reported; writing the rows in another source order changes neither the order nor the reported row. | Test (TC-315) |
+| FR-377-AC-10 | A mapped field declared `?` is absent for the row `none` and set to `v` for `Some(v)`; a field declared `Option<T>` keeps an explicit `none`; a row that evaluates to explicit `null` makes `map` undetermined with a refused `unsupported_construct`/`not-yet-implemented` row, without stopping the reading of the other rows. | Test (TC-315) |
+| FR-377-AC-11 | A concrete object of a most-specific type no object row names, and a reference to one, make `map` undetermined at that state, and the mapped state is never built without the object; the mapped state holds no relationship extent. | Test (TC-315) |
 
 ## Dependencies
 

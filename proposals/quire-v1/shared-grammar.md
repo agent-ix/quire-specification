@@ -45,7 +45,9 @@ changing the token's original span. No punctuation, Unicode normalization or
 implicit model-name repair is admitted by this contextual rule.
 
 An unsigned integer spelling is `0` or `[1-9][0-9]*`. A minus is a separate unary
-token. Leading zeros and malformed exponent/string forms are syntax errors.
+token. `..` is one two-character punctuation token, scanned by longest match, and
+only the refinement `seq` form uses it (FR-376); `.` stays member selection, so
+`0 .. 1`, `0..1` and `a.b` scan as `uint` `..` `uint` and `ident` `.` `member-name`. Leading zeros and malformed exponent/string forms are syntax errors.
 Decimal/exponent number forms may be recognized for an unsupported numeric-form
 diagnostic; recognition does not admit floating point. Numeric value/range
 checking follows syntax and the selected scalar domain.
@@ -661,6 +663,33 @@ clause of that model, as in `abstract Spec::Twice`. The parser tells the two
 apart by the `::` only, and the token after `::` is always the name (reserved words included); it resolves neither name, and the checker resolves the
 alias and the protocol (FR-375, FR-432). The `concrete` side stays one
 `ident`.
+
+#### Refinement population and option forms
+
+Inside a refinement declaration, and only there, `primary` additionally admits:
+
+```ebnf
+primary   =/ model-name
+           | 'count', '(', binder, ')'
+           | 'sum', '(', binder, ':', expr, ')'
+           | ('exists' | 'all'), '(', binder, ')'
+           | 'only', '(', binder, ':', expr, ')'
+           | 'seq', '(', ident, 'in', expr, '..', expr, ':', expr, ')'
+           | 'Some', '(', expr, ')' ;
+binder    = ident, 'in', model-name, [ 'where', expr ] ;
+```
+
+A `model-name` in `primary` position names a concrete population. `count`,
+`sum`, `exists` and `all` are reserved words already; the population forms
+differ from the state-clause quantifiers and `count<T>`/`sum<T>` aggregates
+by what follows the binder's `model-name`: `where` or `)` reads the
+population form, `:` reads the quantifier over a collection expression, and a
+`<` after `count` or `sum` reads the typed aggregate. `only`, `seq`, `where`
+and `Some` are matched as keyword spellings only in these productions and
+remain identifiers elsewhere. `FR-376` owns the typing and value of the six
+population forms and the `..` bounds; `FR-375` owns `Some` and the rows it
+appears in. A state-clause body outside a refinement declaration that uses
+a population name or one of the six population forms refuses `unsupported_construct`/`expression-form`.
 
 ### Abstraction relation declaration
 
