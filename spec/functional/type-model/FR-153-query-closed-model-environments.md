@@ -119,6 +119,26 @@ query and is never inferred from the result type:
 | `empty` | `Option<Reference<T>>` | the present option | `none` |
 | `refused` | `Reference<T>` | the member reference | `refused { code: invalid_runtime_input, cause: absent-key }` |
 
+A function names a population binding through a `Population<T>[N]` or
+`Population<T>` parameter. A state clause (an invariant, precondition or
+postcondition) has no parameters and names one by the qualified name `M::P`,
+where `M` is a model alias of the unit and `P` is a population declared by
+`M`'s admitted domain package. The name is an ordinary `qualified-name`
+`primary`; it adds no production and no implicit `allInstances()`. It
+denotes the population only as the population operand `p` of
+`allInstances<T>(p)` or `lookup<T>(p, r)`: it types as `Population<U>[N]`
+(or `Population<U>` when the declaration states no maximum), where `U` is
+the population's member object type, and it is no value, `let` initializer
+or operand of any other operator. The name selects the declaration; the
+binding is not ambient. It is the population row of the clause's observation
+(`current` in an invariant, `pre` in a precondition, `post` in a
+postcondition and `pre` inside `pre(e)`), which is admitted and closed under
+the rules above, so a population that is not admitted as closed gives
+`incomplete_population`/`incomplete-scope` and no collection. A name that
+resolves to no population of `M`'s domain package is
+`missing_declaration`/`missing-name`, and a population used as a value is
+`ill_typed`/`operator-ineligible`.
+
 A population binding carries its anchor: in a postcondition,
 `allInstances<T>(p)` and `lookup` read the post population, and
 `pre(allInstances<T>(p))` reads the invocation's pre population. An object
@@ -141,6 +161,7 @@ deleted in the post state keeps its pre most-specific type. Charges are the
 | FR-153-AC-9 | A binding typed `Population<T>` declares no maximum and infers no finite default; `allInstances<T>(p)`'s result is exactly the unbounded `Set<Reference<T>>`, admits every selected count, and never returns `cardinality_out_of_bound`. | Test |
 | FR-153-AC-10 | Admitting a member whose most-specific type is `n` supertypes edges from a covering population member type completes at `ancestor_steps = n` and, at `n - 1`, returns exactly `incomplete(ancestor_steps, n-1, n-1, 1, admission.ancestor-edge)` with no population admitted; a zero limit denies the first followed edge; an unavailable `binding.member` charge wins before a simultaneous edge denial. | Test (TC-198) |
 | FR-153-AC-11 | A package that does not select `quire.model.complete/v1` refuses `unsupported_construct` for `lookup`, a dispatched call and an `operation-body`, and for no `Population<T>[N]` type, `allInstances<T>(p)` call or field or relationship-end navigation. | Test (TC-198) |
+| FR-153-AC-12 | In a state clause, `allInstances<T>(M::P)` and `lookup<T>(M::P, r) absent m` name the population `P` of `M`'s domain package: the operand types as `Population<U>[N]` (`Population<U>` with no declared maximum), the result types as in AC-8 and AC-9, and the binding is the population row of the clause's observation (`current`, `pre` or `post`, and `pre` under `pre(e)`). An unknown `P` refuses `missing_declaration`/`missing-name`, `M::P` used as a value refuses `ill_typed`/`operator-ineligible`, and a population not admitted as closed returns `incomplete_population`/`incomplete-scope`. | Test (TC-198) |
 
 ## Dependencies
 

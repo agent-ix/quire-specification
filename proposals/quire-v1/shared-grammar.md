@@ -447,7 +447,7 @@ object kind; FR-153 owns that semantic check and the query result types.
 positions; contextual `member-name` positions still admit it. Lowercase
 `population` remains the distinct contextual abstraction-binding keyword and
 an identifier elsewhere, never an alias for the uppercase type constructor.
-Neither spelling creates a population or supplies an ambient binding.
+Neither spelling creates a population or supplies an ambient binding. A state clause names a domain-package population by the qualified name `M::P` as the operand of `allInstances` or `lookup` (FR-153); that name selects a declaration and takes its binding from the clause's observation.
 
 The selected `quire.model.complete/v1` definition gives the model forms above
 their meaning; FR-150 through FR-153 own it. `lookup<T>(p, r) absent m` reads

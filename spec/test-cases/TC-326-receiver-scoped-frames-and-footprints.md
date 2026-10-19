@@ -39,7 +39,7 @@ operation `reset()` with frame `modifies self.v` whose postcondition reads
    restricted to a read footprint that omits the `peer` target's `v`.
 
 7. Add an operation `check()` with frame `modifies self.v` and pre
-   `forall o in counters: o.v < 2`; derive its read footprint and decide its
+   `forall(o in allInstances<Counter>(M::counters) : o.v < 2)`; derive its read footprint and decide its
    dependence with `bump(b)`, with `spawn()` (frame `creates Counter`) and
    with `drop()` (frame `deletes self`) on `c`.
 8. Frame `deletes self` on `drop()`: observe an invocation on `a` that
