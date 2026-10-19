@@ -82,3 +82,32 @@ Disposition pass 2, against head ccf90a2a988731c971bae7886ca0861716354544 (fix c
 | --- | --- | --- |
 | FND-009 | fixed | The schema.json `dependencies` description now reads "the v2 bytes of each package in the proved package's recursively derived dependency closure, including transitive-only packages, ordered by package_id digest" |
 | FND-010 | fixed | BP-07 now names the entry's "declared `package_id`", not the proved package's lock pin, and BP-10 adds a row for the selecting-lock refusal. Whether that refusal can actually occur is a separate defect, FND-011 |
+
+## New findings (disposition pass 3)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-012 | low | The new FR-323-AC-7 sentence and TC-277 BP-14 leave out a qualifier that the neighbouring clause and BP-07 both carry: the edit to C must be one that B's recompile admits. Without it, an edit that removes or retypes an export B uses makes B's recompile refuse at rule 2 (`missing_declaration`/`ill_typed`) instead of the stale-B refusal at rule 4. A vector author could pick such an edit and BP-14 would then fail for the wrong reason | spec/objects/interfaces/FR-323-native-runtime-envelope.md:442; spec/test-cases/TC-277-replay-byte-provision.md:50 |
+
+Disposition pass 3, against head 91bdfaaed8014184c4c6697716ada089b72fe808 (fix commit d5613b2).
+
+Walking chain A->B->C (BP-06: A selects B and D, B imports C) with C edited to C' and entry C declared C':
+- Rule 1 passes; the order is unchanged.
+- Rule 2: every recompile is admitted, given an admitted edit. B's recompiled lock selects C', since C is supplied under its identity.
+- Rule 3 passes.
+- Rule 4, in entry order: C recompiles to C', equal to its entry, so it passes. B recompiles to B', not equal to B's entry, so it is refused `stale_dependency`/`content-mismatch` naming B's identity, B and B'. D passes.
+
+The stale-B refusal is the first refusal whatever the identity order, and rule 5 is never reached. It is producible from the request as specified.
+
+Other checks:
+- No text anywhere still mentions the removed selecting-lock clause or pointer. Rule 2's "each import binds to the entry named by its selecting package's own direct lock" is a binding statement with no refusal.
+- BP-10 is retired again, not reused. The expected-results range "BP-07 through BP-09 and BP-11 through BP-14" matches the rows.
+- BP-06 is unchanged.
+- The committed reviews/ SR-13050 equals the reviewer's round-2 file.
+- No proposal, test, schema or vector file changed, so `cargo test` was not rerun.
+- `quire validate` gives only the pre-existing FR-322, FR-323 and FR-331 errors (3 documents, as on main).
+- The matrix is unchanged (132 / 1817).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-011 | fixed | The selecting-lock clause is removed from FR-323 rule 4 and from AC-7. AC-7 now says the directly importing package's entry refuses by the same rule, and BP-14 expects stale-B naming B's identity, declared and recompiled id, which the chain walk shows is producible. BP-10 is removed |

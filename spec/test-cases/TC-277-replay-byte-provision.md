@@ -47,7 +47,7 @@ recompilation outcome.
 | BP-11 | BP-06 with one entry's `package_id` changed and its sources intact | Refused `stale_dependency`/`content-mismatch` naming that entry's `identity`, its `package_id` and the recompiled one; no result | FR-323-AC-7 |
 | BP-12 | BP-06 with a second entry whose source has the authority and identity of the first entry's source | Refused `invalid_package`/`conflicting-definition` naming both entries, before any recompile | FR-323-AC-7 |
 | BP-13 | A `byte_provision` domain-package entry under `sha256-jcs` whose document canonicalises to a digest other than the one it is keyed by | Refused `stale_dependency`/`content-mismatch` naming the selected and the recomputed digest, before recompilation | FR-323-AC-5 |
-| BP-14 | BP-06 with the transitive-only entry C's sources edited so they recompile to a new `package_id`, and C's declared `package_id` updated to match, while the selecting dependency B's sources and declared `package_id` stay unchanged | B recompiles against the edited C to a `package_id` different from B's declared `package_id`; refused `stale_dependency`/`content-mismatch` naming B's `identity`, B's declared `package_id` and its recompiled one; no result | FR-323-AC-7 |
+| BP-14 | BP-06 with the transitive-only entry C's sources edited by an edit B's recompile admits so they recompile to a new `package_id`, and C's declared `package_id` updated to match, while the selecting dependency B's sources and declared `package_id` stay unchanged | B recompiles against the edited C to a `package_id` different from B's declared `package_id`; refused `stale_dependency`/`content-mismatch` naming B's `identity`, B's declared `package_id` and its recompiled one; no result | FR-323-AC-7 |
 
 ## Expected Results
 
