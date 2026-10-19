@@ -77,7 +77,32 @@ Mutations, each applied alone to the positive unit:
     model of that package, `Other`;
     then the parse vectors `abstract Spec::Twice::finish concrete Impl`,
     `abstract ::Twice concrete Impl`, `abstract Spec:: concrete Impl`,
-    `abstract Spec:: {` and `abstract Spec::1`.
+    `abstract Spec:: {` and `abstract Spec::1`;
+14. with mutation 13's `abstract Spec::Twice` unit and no internal row, supply
+    the `refinement_internals` value `[{"refinement": "CasTwice", "internal":
+    ["Spec::Twice::finish"]}]` to the compilation; then the value absent, `[]`
+    and an object for another refinement;
+15. compare the node of mutation 14 with the non-empty value against the node
+    with the value absent; with the value's object and entries reordered; and
+    with the abstract alias renamed `S` throughout (the value written
+    `S::Twice::finish`);
+16. a supplied library `lib` that declares its own refinement `LibR`: supply
+    it with `[{"refinement": "LibR", "internal": ["A::Twice::finish"]}]`
+    and compare its `package_id` and the unit's selection of it with those
+    of the same library given no value; then supply the value
+    `[{"refinement": "CasTwice", "internal": []}]` to the library, which does
+    not declare `CasTwice`, with a unit that imports `lib` and with a unit
+    that does not;
+17. run against the producer under test, for each feature its support set
+    omits (a producer that has built all three has nothing to run here):
+    a declaration with two `history` rows; `abstract Spec::Twice` with no
+    list; the list of mutation 14 under `abstract Spec` and under `abstract
+    Spec::Twice`, and, when both `protocol-abstract-side` and
+    `refinement-internal-list` are omitted, under `abstract Spec::Twice`;
+    then the lists `["Spec::Twice::zz"]` (no such node), a repeated
+    spelling, `{}`, `[{"refinement": "Nope", "internal": []}]` and
+    `[{"refinement": 7, "internal": []}]`, each with `refinement-internal-list`
+    omitted.
 
 ## Expected Results
 
@@ -120,3 +145,27 @@ the clause is found in the abstract package but does not act on `Spec`'s model. 
 vectors each refuse `invalid_syntax`/`unexpected-token` before any name is
 resolved: at the second `::`, at the leading `::`, at `Impl` (`concrete` read
 as the protocol name), at `{` and at `1` respectively (FR-375-AC-11).
+In mutation 14 the non-empty value admits the declaration with
+`abstract_internal` `["Twice::finish"]` (alias-free) and the three empty
+variants admit it with no `abstract_internal` entry (FR-375-AC-12). In
+mutation 15 the node ids, `package_id`s and obligation identities differ
+between the non-empty and the absent value and are equal across the
+reordering and across the alias rename (FR-375-AC-13). In mutation 16 the
+library given its list is admitted, with a node, a `package_id` and an
+importer selection that differ from the library given none, and the unit
+admitted; the value naming a refinement `lib` does not declare refuses
+`missing_declaration`/`missing-name` at
+(`lib`'s value, `/0/refinement`), and the compilation is
+not admitted whether or not the unit imports `lib` (FR-375-AC-12). In
+mutation 17 each omitted feature gives `unsupported_construct`/
+`not-yet-implemented` as FR-375-AC-14 states: two refusals at the `history`
+keywords naming `history-row`; one at `Twice` naming `protocol-abstract-side`;
+one at `Spec` naming `refinement-internal-list` under each header, so two
+refusals under `abstract Spec::Twice` when both features are omitted; no node
+is produced and no other diagnostic is reported for the refused row. With
+`refinement-internal-list` omitted, the `zz` list reports
+`missing_declaration`/`missing-name` at `/0/internal/0`, the repeated spelling
+`conflicting-binding` and `{}` `malformed-declaration`, `Nope`
+`missing_declaration`/`missing-name` at `/0/refinement` and the number
+`malformed-declaration` at `/0/refinement`, with no support-set refusal for
+any of them.

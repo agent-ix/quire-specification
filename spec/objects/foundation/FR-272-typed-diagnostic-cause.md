@@ -64,7 +64,7 @@ distinguishing causes" table. It is proposed, not adopted.
 | Code or code family | Closed variants | Required payload |
 | --- | --- | --- |
 | `invalid_syntax` | `unexpected-token`, `unexpected-end`, `invalid-token`, `invalid-escape` | The actual token/source span when available and the expected syntactic category. |
-| `unsupported_construct` | `declaration-form`, `expression-form` | The recognized form, owning declaration and exact selected profile that prohibits it. |
+| `unsupported_construct` | `declaration-form`, `expression-form`, `not-yet-implemented` | For the first two, the recognized form, owning declaration and exact selected profile that prohibits it. For `not-yet-implemented` (a valid complete-V1 source form or declaration input that the producer's support set does not build; the source is not wrong), the unbuilt feature's name, its owning declaration and the exact selected profile. |
 | `unknown_language`, `unknown_edition`, `unknown_profile` | `unsupported-selection`, `wrong-selection-role` | The supplied selection and required role. |
 | `unknown_wire` | `unsupported-wire` | The actual selected wire and expected artifact role. |
 | `unknown_required_feature` | `unknown-feature`, `unsupported-feature` | The feature and selected consumer/profile scope. |
@@ -194,6 +194,7 @@ predicate" (`runtime_invariant`).
 | FR-272-AC-17 | The native-diagnostics row and this requirement's row of `conflicting_declaration` each list exactly `duplicate-declaration` and name `subject` and `related`, and FR-271 holds one `conflicting_declaration` row. | Test (TC-233) |
 | FR-272-AC-18 | The native-diagnostics row and this requirement's row of `runtime_invariant` each list exactly `established-invariant-broken` and, for the invariant `identity-byte-bound-reached` (originating context `population.identity`), name `kind`, `bound` and `required`, each a canonical payload name below. | Test (TC-233) |
 | FR-272-AC-19 | The `stage` an `insufficient-next-charge` cause retains is the stage label the denying accounting contract assigns to the denying counter: the native-diagnostics and FR-272 `resource_exhausted` rows and `value-accounting.md` state `model-normalization` for every `ModelNormalizationLimitsV1` counter (including `ancestor_steps` and `family_steps`), whichever checking stage charges it, and `population-admission` for every `PopulationAdmissionLimitsV1` counter; the `cancelled` row names the same rule; this `stage` is a charge-record payload field independent of the diagnostic's FR-273 producer stage. | Test (TC-233) |
+| FR-272-AC-20 | The native-diagnostics row and this requirement's row of `unsupported_construct` each list exactly `declaration-form`, `expression-form` and `not-yet-implemented`; a refinement declaration using a feature its producer has not built (FR-375-AC-14) refuses `unsupported_construct`/`not-yet-implemented` retaining the feature name, the owning declaration and the selected profile identity, and the same refusal with another feature name compares unequal (FR-272-AC-2). | Test (TC-047) |
 
 ## Canonical cause payload contract
 

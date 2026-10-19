@@ -11,6 +11,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-322
     type: references
+  - target: ix://agent-ix/quire-specification/FR-375
+    type: references
 ---
 
 # FR-307: Package reusable semantic and domain libraries
@@ -54,7 +56,11 @@ token after the identity string, a `version` or `digest` token included, is
 `refused { code: invalid_syntax, cause: unexpected-token }` at that token.
 `L` is the FR-322 library identity: a non-empty string compared byte for
 byte, with no segment structure. A supplied library is one library's
-source, offered under its identity `L` alone, with no version string. The
+source, offered under its identity `L` alone, with no version string, and
+optionally its own `refinement_internals` value, the library's internal step
+lists ([FR-375](../analysis/FR-375-declare-model-refinement.md)); the value
+changes the library's refinement nodes and so its `package_id`, and a refusal
+of it refuses the whole compilation. The
 import selects the library supplied under `L`. The linker compiles it
 through the same stages as the importing unit, resolving its own imports
 against the same supplied libraries, and its `package_id` is the one that

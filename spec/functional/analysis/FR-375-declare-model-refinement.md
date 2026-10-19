@@ -21,6 +21,12 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-432
     type: references
+  - target: ix://agent-ix/quire-specification/FR-272
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-307
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-323
+    type: references
 ---
 
 # FR-375: Declare a refinement between two state models
@@ -141,6 +147,73 @@ model under two protocol names, or under none, gives different refinement
 nodes. The selected protocol clause's node is also one of the node's
 `dependencies`, beside the nodes its rows name.
 
+**Internal list.** Which abstract protocol steps are internal is not part of
+the declaration's source: a profile selection carries an identity and nothing
+else, and the refinement grammar has no `internal` row. The list is the
+compilation's optional `refinement_internals` input, supplied with the source
+beside the supplied libraries of the compile request: one value for the unit
+and, for each supplied library, that library's own value
+([FR-307](../tooling/FR-307-package-reusable-semantic-libraries.md)). A list
+names only refinements declared in the source it is supplied with. Its shape,
+class spellings, resolution and refusals are
+[FR-432](../protocol/FR-432-map-every-protocol-step-in-refinements.md)'s.
+An absent value is the empty list, every abstract step visible.
+
+The locus of each of FR-432's refusals is a pair: the **input** (the unit's
+`refinement_internals` value, or the value of a named supplied library) and an
+RFC 6901 pointer within that value. This requirement names no member of the
+compile request that carries them. In a replay request the value is located
+by the request's own members: `/package/refinement_internals` for the proved
+package's value and `/package/dependencies/<n>/refinement_internals` for the
+`n`th dependency entry's (zero-based). A refusal from a supplied library's
+value refuses the whole compilation: the unit is not admitted, whether or not
+it imports that library.
+
+The list changes what a declaration means, so it is recorded in the lock
+([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)) and
+carried by a replay request ([FR-323](../../objects/interfaces/FR-323-native-runtime-envelope.md));
+a replay that dropped it would recompile with an empty list and a different
+`package_id`.
+
+**Unbuilt features.** A producer holds a closed support set of the
+refinement features it has built, a capability of the producer and not a
+request parameter. The feature names are `history-row` (a `history` row),
+`protocol-abstract-side` (a protocol abstract subject, `abstract
+<A>::<protocol>`) and `refinement-internal-list` (a non-empty resolved
+internal list for a refinement). Where a producer's support set omits a
+feature, the checker SHALL refuse a declaration that uses it
+`unsupported_construct`/`not-yet-implemented`, naming the feature, the
+refinement and the exact selected profile identity: once for each `history`
+row (at its `history` keyword), once per refinement for a protocol abstract
+subject (at the protocol name) and once per refinement for a non-empty
+resolved list (at the first token of the name written after `abstract`,
+which both subject forms have). The refusals are independent, so a
+non-empty list under `abstract Spec::Twice` in a producer omitting both
+features gives two. Each refusal produces no refinement node and is decided
+before the feature's own checks, so no other diagnostic is reported for that
+row; the rest of the declaration is checked as usual.
+
+The internal list is resolved first (FR-432), and its defects (shape,
+spelling, `missing-name`, `conflicting-binding`) are reported whatever the
+support set says. Only a **non-empty resolved** list then refuses for
+`refinement-internal-list`. An object or entry attributable to no refinement
+(a value that is not an array of objects, `{}`, an object whose `refinement`
+is not a string or names no refinement of the compiled source) is a
+resolution defect and gets no support-set refusal, since no refinement
+exists to locate it at. An empty list never refuses for the feature. For a
+non-empty list on a refinement whose abstract subject is a model, a producer
+whose support set lacks `refinement-internal-list` reports only the
+not-yet-built refusal at `Spec`; the model-subject refusal
+`invalid_model_binding`/`malformed-declaration` (FR-432) applies once the
+feature is built.
+
+The refusal is an implementation gap, not a source defect (FR-452 classes it
+`unsupported`), which is why it is not `unknown_required_feature`; and it is
+`unsupported_construct`/`not-yet-implemented`, not `unimplemented_capability`,
+because a feature is a source form or declaration input
+([FR-271](../../objects/foundation/FR-271-diagnostic-code-vocabulary.md)'s
+rule). A feature in the support set is checked by its own requirement.
+
 **Population rows.** Each abstract population has exactly one row naming one
 concrete population as its source. An abstract population with no row
 refuses `missing_declaration`/`missing-name`; one with two rows refuses
@@ -235,11 +308,21 @@ expressions as `SemanticTerm`s; a step entry's `target` is
 `{"term": "open"}` term for each `_`, or `{"kind": "stutter"}`, or
 `{"kind": "any"}`; `assume` and `ensure` hold `{operation, kind, granularity}`
 entries with `kind` exactly `weak` or `strong` and `granularity` exactly
-`each` or `whole`. Every array is sorted
-ascending by the node-key digest of its first named declaration, then by
+`each` or `whole`. A protocol subject whose resolved internal list is
+non-empty also carries `abstract_internal`, the resolved classes as
+**alias-free spellings** (a class's FR-432 spelling with `<A>::` removed, such
+as `Twice::finish`, `lose Twice::ch`, `activate Twice`, `memory flush`) in
+ascending UTF-8 byte order; the abstract model and the protocol clause are
+identified by `abstract` and `protocol`, so the entry does not depend on the
+local abstract alias, and renaming the alias, with the list renamed to
+match, leaves the node id unchanged. It is absent for an empty list, as
+`protocol` is absent for a model subject, and never null. Every other array
+of the body (`populations`, `objects`, `steps`, `histories`, `assume`,
+`ensure`) is sorted ascending by the node-key digest of its first named declaration, then by
 member name as UTF-8 bytes. The node enters the identity projection, so it
 enters the `package_id` and the obligation identity of every item that
-cites it.
+cites it; the internal list is therefore part of both identities through
+`abstract_internal`, and needs no member of its own in the identity preimage.
 
 **Claim kinds.** A request to check the whole declaration is one item of
 kind `temporal-satisfaction`; each per-step simulation obligation is one item
@@ -260,6 +343,9 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
 | FR-375-AC-9 | A history row with an initial `history-literal` written as a negative or non-negative integer, `true`/`false`, `none`, a string, an exact number or a full-path enum member is admitted when its value is in the declared bounded type's value set; a literal of the right kind outside the value set or of the wrong kind (`5` or `true` for `Int[0, 4]`, `none` for a non-`Option` type) refuses `ill_typed`/`type-mismatch` at the literal; an unresolved enum path refuses `missing_declaration`/`missing-name`; a collection, record or float spelling refuses `invalid_syntax`/`unexpected-token`. | Test (TC-310) |
 | FR-375-AC-10 | An `assume` or `ensure` fairness row written `fair strong` is admitted with or without `each` or `whole`, and its emitted entry carries kind `strong`; the same row written `fair weak` carries kind `weak`, and the two rows give different refinement node ids; `fair` with no kind, or any kind other than `weak` or `strong`, refuses `invalid_syntax`/`unexpected-token` at the token, because a refinement row has no default kind. | Test (TC-310) |
 | FR-375-AC-11 | `abstract Spec` selects a model subject; `abstract Spec::Twice` and `abstract Spec::Twice2`, two protocol clauses of the abstract package with identical operation-target rows, are each admitted, and the three declarations (`Spec`, `Spec::Twice`, `Spec::Twice2`) have three distinct node ids, the protocol subjects carrying `protocol` and listing the clause among `dependencies`. `abstract Spec::Thrice` (no such clause), `abstract Spec::Counter` (a type), `abstract Spec::counters` (a population) and `abstract Nope::Twice` (no such alias) refuse `missing_declaration`/`missing-name` at the unresolved segment (`Thrice`, `Counter`, `counters`, `Nope`); a clause of the abstract package that acts only on another model refuses `invalid_model_binding`/`malformed-declaration` at the name. Syntax refusals are `invalid_syntax`/`unexpected-token` at these tokens: `abstract Spec::Twice::finish concrete Impl` at the second `::`; `abstract ::Twice` at the `::`; `abstract Spec:: concrete Impl` at `Impl` (`concrete` is read as the name); `abstract Spec:: {` at the `{`; `abstract Spec::1` at the `1`. | Test (TC-310) |
+| FR-375-AC-12 | The `refinement_internals` input is the only host of the internal list: `abstract Spec::Twice` with no row naming internals and the unit value `[{"refinement": "R", "internal": ["Spec::Twice::finish"]}]` is admitted with `abstract_internal` `["Twice::finish"]`; the same source with the value absent, `[]` or naming another refinement is admitted with no `abstract_internal` entry. A supplied library declaring its own refinement and given its own value is admitted with that value affecting only the library's node and `package_id` and the importer's selection of it; a value naming a refinement the library does not declare refuses `missing_declaration`/`missing-name` at (that library's value, `/0/refinement`) and the compilation, the unit included, is not admitted. | Test (TC-310) |
+| FR-375-AC-13 | The two lists `["Spec::Twice::finish"]` and none give refinement nodes with different ids, `package_id`s and obligation identities for an item citing the node; reordering the value's objects and entries changes none of them; renaming the abstract alias from `Spec` to `S`, with the value's spellings renamed to match, changes none of them. | Test (TC-310) |
+| FR-375-AC-14 | For each feature a producer's support set omits, a declaration using it refuses `unsupported_construct`/`not-yet-implemented` as the Unbuilt features paragraph states: two `history` rows give two refusals at their keywords naming `history-row`; `abstract Spec::Twice` one at `Twice` naming `protocol-abstract-side`; a non-empty resolved list one at `Spec` naming `refinement-internal-list`, both together giving two refusals for the one declaration; each names the refinement and the profile identity and produces no node. A list with a resolution defect (`missing-name`, `conflicting-binding`, malformed) reports that defect and no support-set refusal for the list, and a value attributable to no refinement reports its defect alone. A producer that has built a feature is checked by that feature's own criteria, and this criterion places no test on it. | Test (TC-310) |
 
 ## Dependencies
 
@@ -276,7 +362,9 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
   claim-kind vocabulary.
 - [FR-432](../protocol/FR-432-map-every-protocol-step-in-refinements.md)
   owns the step rows of a refinement whose abstract or concrete subject is a
-  protocol.
+  protocol, and the shape, spellings and resolution of its internal list.
+- [FR-272](../../objects/foundation/FR-272-typed-diagnostic-cause.md) owns the
+  `not-yet-implemented` cause.
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns
   the productions this requirement extends.
 
@@ -285,4 +373,4 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
 - Design: quire-spec-language ADR-020 (RM-1 to RM-7, AX-1, QS-1, QS-4,
   QS-5, RU-1).
 - Tickets: Linear STD-133; paired QSL-367; Linear STD-182 (protocol abstract
-  subject).
+  subject); Linear STD-199 (internal step list, unbuilt-feature refusal).
