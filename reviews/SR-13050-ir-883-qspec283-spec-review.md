@@ -47,3 +47,25 @@ The defects are in how the derivation is worded, in the locus form, and in two n
 ## Verdict
 
 **FAIL as-is (draft): medium findings open.** The decision is carried through faithfully at the FR-322/FR-307 core, and BP-06 is not weakened. FND-001..FND-006 should be fixed in this PR before the IR implementation is coded against it. FND-003 and FND-004 are stale or missing in neighbour interfaces that use `dependency_selections` and fall within the decision's blast radius.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-009 | low | FR-331 now says `request.dependencies` carries the recursively derived closure, but the published backend-provider schema's `dependencies` description still reads "the v2 bytes of each package the lock's dependency_selections names", the old direct-only wording the FR-331 fix replaced | proposals/backend-provider-v1/schema.json:210 |
+| FND-010 | low | FR-323 rule 4 and FR-323-AC-7 add a refusal: a mismatch between an entry and the selecting package's direct lock refuses `stale_dependency`/`content-mismatch` naming the selecting lock pointer. No TC-277 BP row exercises it. BP-07 still says the entry's `package_id` is "the one the proved package's lock pinned", which is false when the edited entry is the transitive-only one | spec/test-cases/TC-277-replay-byte-provision.md:45; spec/objects/interfaces/FR-323-native-runtime-envelope.md:62-68 |
+
+## Dispositions
+
+Disposition pass 1, against head 78abc809a95ca92c2e426e0d78569566d1f81aec (fix commit 73aec7e).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-322 now derives the closure "recursively from its direct entries and each selected dependency's derived closure", says an admitted dependency exposes that closure, and says no lock records closure entries |
+| FND-002 | fixed | FR-322 defines each locus as one importer-rooted JSON pointer, `/lock/dependency_selections/{i}` then `/lock/dependency_selections/{j}` per hop, with the final entry the conflicting one. The vector loci are now `/lock/dependency_selections/0/lock/dependency_selections/0` and `/lock/dependency_selections/1/lock/dependency_selections/0`, which match. FR-330 roots the same form at `/package/source/lock/...` |
+| FND-003 | fixed | FR-331 `request.dependencies` now carries every package in the recursively derived closure, transitive-only ones included (the schema description residue is FND-009) |
+| FND-004 | fixed | FR-330 adds the recursive diamond check with importer-rooted JSON-pointer loci before graph references, plus FR-330-AC-11 (Test (TC-937, planned)) and a planned TC-937 case |
+| FND-005 | fixed | Rule 2 now states only the binding ("each import binds to the entry named by its selecting package's own direct lock"). Rule 4 drops "pinned by the proved package's lock" and gives the selecting-lock mismatch an explicit `stale_dependency`/`content-mismatch`. BP-06 still requires every transitive source (residue is FND-010) |
+| FND-006 | fixed | FR-307 gets producer prose and FR-307-AC-7 (chain A->B->C: A emits exactly B, and recompiling does not certify an A lock that also lists C), with TC-227 L10 planned. The AC can fail: a closure-listing producer violates it |
+| FND-007 | fixed | The "iff" is gone. Depth is defined in edges, and the text says importers change recursively when a direct dependency's id changes |
+| FND-008 | fixed | BP-08 now swaps the first and second entries, with the third left in place |

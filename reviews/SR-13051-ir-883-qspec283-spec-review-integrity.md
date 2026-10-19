@@ -31,3 +31,12 @@ A grep for stale "closure" and `dependency_selections` uses found two neighbour 
 ## Verdict
 
 **PASS with low findings.** No new structural validation errors. The FR-322/FR-323 errors are pre-existing and identical on origin/main. The "planned" statuses in TC-233 and TC-277 are honest.
+
+## Dispositions
+
+Disposition pass 1, against head 78abc809a95ca92c2e426e0d78569566d1f81aec (fix commit 73aec7e). `quire validate` on the nine changed spec files reports the same structural errors as origin/main a2230e1 (FR-322, FR-323, FR-331: `[value_object] required 'id'` and `semantic.record-invalid "fields"`; 3 documents on both). No new errors.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The README now describes `closure_vectors`: `direct_dependencies`, `dependency_locks` with `base` and `dependency_selections`, the JSON-pointer `loci`, `dependency_reference`, `use`, the planned reader outcomes, and the producer facts QSpec checks |
+| FND-002 | fixed | AC-35 is restored to its schema/order clauses. The reader clauses move to FR-322-AC-75 (Test (TC-233, planned)), and the producer facts to FR-322-AC-76 (Test (TC-233)) |

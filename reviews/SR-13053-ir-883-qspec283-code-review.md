@@ -24,3 +24,11 @@ Ticket: IR-883. The only code change is the deletion of `#[trace("TC-233", "FR-3
 ## Verdict
 
 **FAIL as-is: medium trace regression.** The code is otherwise correct.
+
+## Dispositions
+
+Disposition pass 1, against head 78abc809a95ca92c2e426e0d78569566d1f81aec (fix commit 73aec7e).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | `#[trace("TC-233", "FR-322-AC-35")]` is restored on `tc_233_dependency_selections_carry_each_dependency_package_identity`, and `quire matrix` shows FR-322-AC-35 tagged at tests/checked_package_v2.rs:5417 |

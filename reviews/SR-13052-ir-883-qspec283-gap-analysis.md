@@ -41,3 +41,11 @@ So the diamond really has two direct dependencies reaching one identity, `test/l
 ## Verdict
 
 **PASS with a medium finding.** The vectors are real and reproduce, the existing vectors are unchanged, and the statuses are honest. The new vectors still need a QSpec-side consumer.
+
+## Dispositions
+
+Disposition pass 1, against head 78abc809a95ca92c2e426e0d78569566d1f81aec (fix commit 73aec7e). The reviewer's own recomputation still gives c7ff6307... and fcb75a50..., so the package IDs are unchanged. quire-contract-ir d7bf519 `conformance_qspec` against this head gives 14 passed, 1 ignored (IR-630). QSpec `cargo test` passes (106 in checked_package_v2), and clippy `-D warnings` passes. `cargo fmt --check` fails only in tests/checked_package_model.rs, as on main. Matrix: 132 tagged / 1817 untagged, against 131 / 1814 on main. The changes are +1 tagged (FR-322-AC-76) and +3 untagged planned rows (FR-307-AC-7, FR-322-AC-75, FR-330-AC-11). The repo has no tests.md.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The new test `tc_233_closure_vectors_bind_real_dependency_identities` (#[trace TC-233, FR-322-AC-76]) recomputes each direct dependency's id from its base preimage plus selections, checks each leaf is a real base package id, checks the diamond shares an identity at distinct ids with the exact pointer loci, and checks the reference is closure-only. Mutation check in the reviewer's worktree: renaming test/b's leaf identity failed the recompute assertion, and pointing the reference at the direct package failed the closure-only assertion. The file was restored byte-identical |
