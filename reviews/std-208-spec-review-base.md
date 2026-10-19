@@ -74,3 +74,4 @@ Round 1, against head 5a9fc8d.
 | --- | --- | --- |
 | FND-001 | fixed | 5a9fc8d: HY-08 now cites FR-331-AC-29 |
 | FND-002 | fixed | 607417f: positive vector hybrid-request and five adverse vectors; cargo test --test backend_provider_v1 9/9 pass; each adverse vector is killed by the schema mutation that removes its rule (Count, number, no minProperties, no required, open limits) |
+| FND-003 | fixed | fbab2f2: hybrid-request is temporal-request plus hybrid.limits on its temporal-satisfaction item (checked: equal once hybrid is removed); 9/9 pass; each adverse vector still fails under its rule's mutation |

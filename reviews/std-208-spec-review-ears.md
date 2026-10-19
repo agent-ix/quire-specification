@@ -50,3 +50,4 @@ Round 1, against head 5a9fc8d.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-001 | fixed | 5a9fc8d: event-driven SHALL naming the request writer; identity sentence uses SHALL |
+| FND-002 | fixed | fbab2f2: trigger reads "When the caller sets no value for a budget" |
