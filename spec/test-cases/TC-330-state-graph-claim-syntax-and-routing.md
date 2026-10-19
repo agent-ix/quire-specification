@@ -40,6 +40,8 @@ Compile each source vector through the real local Rust boundary under the comple
 | SG-R14 | `possible W using v over (c: C::Cfg) { eventually[1,*] c.done }` | parses; `expression-form` at `eventually`, with no profile refusal |
 | SG-R15 | `possible B using v over (c: C::Cfg) { if eventually c.a then c.b else c.c }`, `always possible F using v over (c: C::Cfg) from (c.a; fair weak C::Cfg::step) { c.done }` and `unique path One using v from (c.a) to (c.d); fair weak C::Cfg::step` | each a syntax error: a temporal operator in an `if` condition, a fairness constraint in a `from` operand, and a fairness constraint after a bodiless clause |
 | SG-R16 | `possible N using v over (c: C::Cfg) { not c.n = 2 }` | parses as the `expr` `(not c.n) = 2`; no grammar refusal |
+| SG-R17 | `possible B using v over (c: C::Cfg) { if c.a then eventually c.b else c.c }` | parses; `unsupported_construct`/`expression-form` at `eventually` |
+| SG-R18 | `possible C using v over (c: C::Cfg) { c.a until c.b until c.c }`; then `possible C using v over (c: C::Cfg) { (c.a until c.b) until c.c }` | syntax error at the second `until`; the parenthesised form parses and is refused `unsupported_construct`/`expression-form` at the first `until` |
 | SG-R05 | a request whose only items over subject `G` are SG-S01 and SG-S02 | one deadlock-freedom item for `G`, and no second one |
 | SG-R06 | each admitted vector | kind `temporal-satisfaction`, extent unbounded, form recorded as an obligation form |
 | SG-R07 | SG-S02 against a single candidate whose arm discharges `possible` only | `unsupported`, warned, `unsupported_projection`/`unsupported-requested-capability` |

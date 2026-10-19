@@ -127,8 +127,10 @@ predicate, and a fairness constraint at the start of a body. Exactly those
 cases reach this admission step as parsed source and are refused here. A
 fairness constraint elsewhere (after the predicate, in a `from` or `to`
 operand, or on `unique path`, which has no body), and a temporal operator in
-an `if` condition, a `let` binding or a primary's operand, are syntax errors
-and never reach admission. The fairness refusal therefore applies to
+an `if` condition, a `let` binding or a primary's operand, and a chain of
+binary temporal operators without parentheses (`c.a until c.b until c.c`; the
+parenthesised `(c.a until c.b) until c.c` parses and is refused), are syntax
+errors and never reach admission. The fairness refusal therefore applies to
 `possible` and `always possible` only. An interval, including `[a,*]`, does not
 change which refusal applies: the operator is refused as written, and no
 temporal profile is consulted.
