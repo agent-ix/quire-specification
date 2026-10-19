@@ -31,7 +31,11 @@ over the abstract counter subject:
    the concrete subject.
 4. Case 1's clause under `F_P = fair weak each Spec::Counter::dec` for an
    added abstract operation `dec` not in `F_A`; then under
-   `F_P = fair weak whole Spec::Counter::inc`.
+   `F_P = fair weak whole Spec::Counter::inc`; then `F_A` holding
+   `fair strong each Spec::Counter::inc` under `F_P = fair weak each` and
+   under `F_P = fair weak whole` of `inc`, and `F_A` holding `fair weak each
+   Spec::Counter::inc` under `F_P = fair strong each` and under `F_P = fair
+   strong whole` of `inc`.
 5. `eventually holds(c.value = 2)` under empty `F_P`, proved over maximal
    abstract behaviours and refuted over the abstract stutter closure; request
    its transfer from the maximal-behaviour premise, then from a premise over
@@ -54,8 +58,11 @@ the concrete subject and both premise identities in its record
 `transfer-not-preserving`, naming `always[0,10]` and `previous`; checked
 directly, case 3's clause is refuted on the concrete subject at the first
 `peek` after `commitA`, where `previous` reads `value = 1` (FR-380-AC-2). In
-case 4 the `dec` constraint settles `transfer-not-preserving` naming it, and
-the `whole` form transfers (FR-380-AC-3). Case 5 settles
+case 4 the `dec` constraint settles `transfer-not-preserving` naming it, the
+`whole` form transfers, the weak `F_P` constraints transfer from the strong
+`F_A` constraint, and both strong `F_P` constraints settle
+`transfer-not-preserving` naming them against the weak `F_A` constraint
+(FR-380-AC-3). Case 5 settles
 `transfer-not-preserving` naming the missing stutter closure, and transfers
 from the stutter-closure premise (FR-380-AC-4). Both runs of case 6 settle
 `inconclusive`, cause `premise-unproved`, naming the premise; no case
