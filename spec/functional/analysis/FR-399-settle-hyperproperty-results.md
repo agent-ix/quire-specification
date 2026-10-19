@@ -78,10 +78,18 @@ closed computation that replay repeats.
 | Every depth up to the maximum completed with no violation | `inconclusive` | `unsettled` | `bound-reached` naming the depth |
 | The match was refused or incomplete at a reachable joint step | `inconclusive` | `unsettled` | `match-undetermined` |
 | A vacuous clause ([FR-395](FR-395-analyze-hyperproperties-over-behaviours.md)) | `inconclusive` | `unsettled` | `vacuous-match` |
-| An undecided successor, no initial state, an induction step that does not close, replay disagreement or replay refusal | `inconclusive` | `unsettled` | `undecided-successor`, `no-initial-state`, `induction-not-closed`, `replay-parity` or `replay-refused` |
+| An undecided successor, no initial state, an item with zero instances, an induction step that does not close, replay disagreement or replay refusal | `inconclusive` | `unsettled` | `undecided-successor`, `no-initial-state`, `no-instance`, `induction-not-closed`, `replay-parity` or `replay-refused` |
 | A run limit, meter or time budget stopped the run | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `limit-reached{limit, value, setting}` |
 | The caller cancelled the run | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `cancelled{source}` |
 | HP-4, or a clause over `behaviours` under a profile other than infinite-trace | `unsupported` | `unavailable` | `unsupported_projection`/`unsupported-requested-capability` |
+
+An item whose object parameter ranges over an empty universe, or over a type
+that no object of the universes conforms to, has one instance per universe key
+and so none ([FR-395](FR-395-analyze-hyperproperties-over-behaviours.md)). The
+analyzer SHALL settle it `inconclusive` with cause `no-instance` before it
+explores any state, as [FR-361](../temporal/FR-361-read-model-behaviours-as-temporal-traces.md)
+does for other items, after the `requires-bound` classification: a parameter
+over a population with no universe is `requires-bound`, never `no-instance`.
 
 An HP-5 item settles by [FR-396](FR-396-classify-hyperproperty-forms.md)'s
 single-existential rows.
@@ -167,6 +175,7 @@ steps and automaton states for hyper items.
 | FR-399-AC-8 | A body that evaluates undefined at a reachable joint step settles `refuted`, basis `decisive-counterexample`, cause `undefined-evaluation` whose `where` names the variable tuple, the joint position, each component's state-key digest and the expression's locus and whose `cause` names the catalogued reason, after its `undefined` counterexample replays to the same undefined value. | Test (TC-348) |
 | FR-399-AC-9 | With a violation and an undefined evaluation both reachable, the reported refutation is the first in canonical order: the first false or undefined tuple in the product of canonical edge orders for HP-1, and the first violating or undefined product state in canonical breadth-first order for HP-2, HP-3 and HP-6. | Test (TC-348) |
 | FR-399-AC-10 | A guard, the `terminal when` predicate or a state constraint of a component's subject that evaluates undefined at a component state of a reachable joint step settles the item `refuted`, `decisive-counterexample`, cause `undefined-evaluation` whose `where` names that component's variable and alias, the joint position, its state-key digest and the expression's locus, plus the FR-181 transition identity for a guard, after its `undefined` counterexample replays to the same undefined value. | Test (TC-348) |
+| FR-399-AC-11 | A hyperproperty item whose object parameter ranges over an empty universe, or over a type that no object of the universes conforms to, settles `inconclusive`, basis `unsettled`, cause `no-instance` before any state is explored, and never `proved` or `refuted`; the same item over a population with no universe returns `requires-bound`, not `no-instance`. | Test (TC-340) |
 
 ## Dependencies
 
