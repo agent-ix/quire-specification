@@ -56,3 +56,9 @@ Round 1, against head 986087c.
 | FND-002 | fixed | 986087c: prefixes stated in FR-375 and FR-432 points at them. The compile-request member names are the author's own; see SR-13070 new FND-003 |
 | FND-003 | fixed | 986087c: whole-compilation rule stated in FR-375 and FR-307; positive library vector added as TC-310 mutation 16; AC-12 updated |
 | FND-004 | fixed | 986087c: combined case stated in FR-375 and AC-14 and tested in TC-310 mutation 17 |
+
+Round 2, against head fa190b6.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-005 | fixed | fa190b6: FR-432 names the model-subject row as the one exception and FR-375's Unbuilt features paragraph states the same rule, so both agree with FR-375-AC-14, TC-310 mutation 17 and QSL FR-147-AC-7 |

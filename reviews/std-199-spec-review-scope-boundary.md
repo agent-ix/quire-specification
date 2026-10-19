@@ -50,3 +50,9 @@ Round 1, against head 986087c.
 | --- | --- | --- |
 | FND-001 | fixed | 986087c: alias-free node entry; FR-375-AC-13 and TC-310 mutation 15 test the alias rename |
 | FND-002 | fixed | 986087c: AC-14 and TC-310 mutation 17 now apply only to the producer under test's actual support set, as QSL FR-135-AC-5 does; no test seam is needed |
+
+Round 2, against head fa190b6.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-003 | fixed | fa190b6: the compile-time locus is now an (input, pointer) pair with no invented request members; FR-375-AC-12, FR-432 and TC-310 mutation 16 follow it, and no `/libraries/` pointer remains in spec/ or proposals/. No owner decision is needed now |
