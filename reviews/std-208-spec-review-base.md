@@ -49,3 +49,19 @@ Ticket: STD-208. PR: quire-specification#288 at 07eb2ff. Base checklist (id form
 ## Verdict
 
 One low trace gap. ID allocation, AC-to-TC links and validation are otherwise clean; the FR-331 validation failures are pre-existing and identical on main, as the author reported.
+
+## New findings (disposition pass 1)
+
+Against head 5a9fc8d.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | The new `Hybrid` schema definition is exercised by no vector: `proposals/backend-provider-v1/vectors.json` and `tests/backend_provider_v1.rs` contain no `hybrid` member, so the re-run `cargo test --test backend_provider_v1` (9 pass at 5a9fc8d) checks nothing this PR added. FR-331-AC-29's "a fractional `max_solver_time` on the wire is refused before consumption" is exactly a schema property. Add one positive TC-431 vector with `hybrid.limits` and adverse vectors with `max_solver_time: 1.5` and an unknown `hybrid.limits` member. | proposals/backend-provider-v1/schema.json:387-401 |
+
+## Dispositions
+
+Round 1, against head 5a9fc8d.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 5a9fc8d: HY-08 now cites FR-331-AC-29 |

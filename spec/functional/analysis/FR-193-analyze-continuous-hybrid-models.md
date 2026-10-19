@@ -87,7 +87,7 @@ A hybrid item carries its two budgets as `hybrid.limits.max_solver_steps` and
 defaulting a limit apply to both. Their setting names are
 `hybrid.max_solver_steps` and `hybrid.max_solver_time`.
 
-- `max_solver_steps` SHALL be a whole, non-negative count of solver steps as
+- `max_solver_steps` SHALL be a whole, positive count of solver steps as
   the provider counts its own steps. A report of it SHALL state the count as
   the provider counts it and SHALL NOT convert it to time. It is
   deterministic, so it SHALL be part of the request identity and the cache
@@ -97,16 +97,15 @@ defaulting a limit apply to both. Their setting names are
   request writer writes a request for a caller that supplied a fractional
   duration, it SHALL round the duration up to the next whole second, never
   down, and write the whole number; the wire carries a canonical whole
-  non-negative integer (FR-331's `Count`), and a provider SHALL refuse a
+  positive integer (FR-331's `PositiveCount`), and a provider SHALL refuse a
   fractional or otherwise non-canonical value before consumption, as FR-331
   refuses any out-of-domain value.
-- Each budget's default, when the caller sets none, SHALL be the published
-  default of the provider's descriptor `bounds` (FR-331, FR-461). A request
-  writer that fills a value for its own built-in hybrid solver, as QSL does
-  (QSL FR-250 publishes 60 seconds and 1,000,000 steps for that solver), is
-  that provider's descriptor; where a descriptor and a request writer's
-  number conflict, the descriptor's published default SHALL win. This
-  requirement states no number.
+- When the caller sets a budget none, the request writer SHALL omit the
+  member and the provider SHALL apply its descriptor `bounds` (FR-331,
+  FR-461); a value present in the request SHALL always apply. QSL's 60
+  seconds and 1,000,000 steps (QSL FR-250) are the descriptor bounds of its
+  own built-in hybrid solver, owned by QSL; this requirement states no
+  number.
 - `max_solver_time` is a wall-clock setting. The request identity and the
   cache key SHALL exclude it, no member of a stored record SHALL record wall
   time, and a result it limits (`timed-out`) SHALL NOT be cached or stored

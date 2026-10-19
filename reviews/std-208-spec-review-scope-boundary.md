@@ -53,3 +53,20 @@ Ticket: STD-208. PR: quire-specification#288 at 07eb2ff. Allocation of the two b
 ## Verdict
 
 Wire spelling: the PR's `limit: max_solver_steps, setting: hybrid.max_solver_steps` is right against the schema, and QSL FR-250 (behavior bullet, verdict-map row, AC-2, AC-3), TC-705 step 3 and the merged QSL code must change to it. FND-001 (budgets in `options`) is the main boundary issue: the schema-conformant setting name points at a limit that the `options` placement does not create.
+
+## New findings (disposition pass 1)
+
+Against head 5a9fc8d.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | medium | The new defaults bullet says a request writer that fills a value for its built-in solver "is that provider's descriptor" (a request writer is not a descriptor), and that "where a descriptor and a request writer's number conflict, the descriptor's published default SHALL win". Read literally, a value the request writer writes into `hybrid.limits` loses to the descriptor default, which breaks FR-461 (a request value raises the limit). QSL FR-250-AC-3 ("a request that sets none uses 60") can then be implemented two incompatible ways. Say it directly: when the caller sets none, the request writer SHALL omit the member and the provider applies its descriptor `bounds`; QSL's 60 s and 1,000,000 are the `bounds` its built-in solver's descriptor publishes; a value present in the request always applies. | spec/functional/analysis/FR-193-analyze-continuous-hybrid-models.md:103-109 |
+
+## Dispositions
+
+Round 1, against head 5a9fc8d.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 5a9fc8d: budgets moved to hybrid.limits with descriptor bounds defaults and FR-461 setting names; schema gains Hybrid |
+| FND-002 | fixed | 5a9fc8d: FR-193 now names descriptor bounds as the default source (wording issue raised as FND-003) |

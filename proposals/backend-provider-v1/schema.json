@@ -391,12 +391,14 @@
         "limits": {
           "type": "object",
           "properties": {
-            "max_solver_steps": {"$ref": "#/$defs/Count"},
-            "max_solver_time": {"$ref": "#/$defs/Count"}
+            "max_solver_steps": {"$ref": "#/$defs/PositiveCount"},
+            "max_solver_time": {"$ref": "#/$defs/PositiveCount"}
           },
+          "minProperties": 1,
           "additionalProperties": false
         }
       },
+      "required": ["limits"],
       "additionalProperties": false
     },
     "Probabilistic": {

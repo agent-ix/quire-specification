@@ -214,8 +214,8 @@ item's absent limit takes (FR-461).
 ### Hybrid solver budgets
 
 A hybrid item (FR-193) carries its budgets in `hybrid.limits`: `max_solver_steps`,
-a whole non-negative count of solver steps as the provider counts them, and
-`max_solver_time`, whole seconds of wall-clock time, each a `Count`. Their
+a whole positive count of solver steps as the provider counts them, and
+`max_solver_time`, whole seconds of wall-clock time, each a `PositiveCount`; `hybrid` and its `limits` are never empty. Their
 setting names are `hybrid.max_solver_steps` and `hybrid.max_solver_time`, and
 their defaults are the descriptor's `bounds` keyed by limit name (FR-461). A
 solver that exhausts the step budget records `incomplete` with
@@ -386,7 +386,7 @@ out-of-domain values and non-canonical encodings refuse before consumption. A `c
 | FR-331-AC-22 | The manifest schema applies FR-290's `domains` registration rule to every descriptor: one whose `domains` is present and empty, holds a non-boundable or unknown kind or repeats a kind is refused whatever modes it advertises, one that advertises a `bounded` mode without `domains` is refused, and one that advertises only `unbounded` modes is admitted without `domains`. | Test (TC-431) |
 | FR-331-AC-23 | Every `proved` result entry carries exactly one `certification`, `certified`, `uncertified` or `trusted`: a Kani `bounded-proof`, a checked `value-bounds` and a checked `witnessed` proof, and an SMT `bounded-complete` proof whose certificate the core verified, carry `certified`, a symmetry-`reduced` proof (copy-swap with symmetry), a partial-order-`reduced` proof and an SMT `inductive` proof with no verified certificate `uncertified`, and a plugin proof `trusted`; a `proved` entry without `certification`, a `reduced` proof with a `symmetry` or `partial-order` reduction or a `bounded-solver` proof carrying `certified`, one with another value, and a `certification` on any other result are refused. | Test (TC-431) |
 | FR-331-AC-28 | A model-subject item with no initial state, and one with zero instances, each record `inconclusive` with the cause `no-initial-state` and `no-instance` respectively, spelled exactly so; the temporal-outcome vector carries a result entry of each, and a `no-instances` spelling is refused. | Test (TC-431) |
-| FR-331-AC-29 | A hybrid item's solver that exhausts `hybrid.limits.max_solver_steps` records `incomplete` with `limit-reached` whose `limit` is `max_solver_steps` and whose `setting` is `hybrid.max_solver_steps`; one that exhausts `max_solver_time` records `incomplete` with `timed-out`; a `limit-reached{limit: max_solver_time}` or a `time-limit` cause on a hybrid item is refused `invalid_result`/`unknown-cause`; a fractional `max_solver_time` on the wire is refused before consumption; two requests differing only in `max_solver_time` have equal request identity. | Test (TC-373) |
+| FR-331-AC-29 | A hybrid item's solver that exhausts `hybrid.limits.max_solver_steps` records `incomplete` with `limit-reached` whose `limit` is `max_solver_steps` and whose `setting` is `hybrid.max_solver_steps`; one that exhausts `max_solver_time` records `incomplete` with `timed-out`; a `limit-reached{limit: max_solver_time}` or a `time-limit` cause on a hybrid item is refused `invalid_result`/`unknown-cause`; a fractional `max_solver_time`, a zero budget, an unknown `hybrid.limits` member and an empty `hybrid` or `limits` are refused before consumption; two requests differing only in `max_solver_time` have equal request identity. | Test (TC-373) |
 
 ## Dependencies
 

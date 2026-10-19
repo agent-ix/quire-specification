@@ -36,3 +36,11 @@ Ticket: STD-208. PR: quire-specification#288 at 07eb2ff. Relationship edges adde
 ## Verdict
 
 One low finding: missing `references` edges for citations the PR adds. No dependency cycle or enablement/feature mixing.
+
+## Dispositions
+
+Round 1, against head 5a9fc8d.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 5a9fc8d: edges FR-331 -> FR-193, FR-306; FR-193 -> FR-461; FR-306 -> FR-193 added |

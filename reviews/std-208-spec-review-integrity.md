@@ -51,3 +51,20 @@ Ticket: STD-208. PR: quire-specification#288 at 07eb2ff. Internal consistency of
 ## Verdict
 
 Two low findings. Otherwise internally consistent, and consistent with QSL FR-292/FR-293 and ADR-029 CA-2/CA-5 (wall-clock budget outside the key, time-limited result never stored, no wall-time member in a stored record).
+
+## New findings (disposition pass 1)
+
+Against head 5a9fc8d.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | low | `Hybrid.limits` types both budgets as `Count` (minimum 0) and has no `minProperties`, whereas every sibling limits type (`TemporalLimits`, `StatisticalLimits`, `ExactProbLimits`) uses `PositiveCount` and `minProperties: 1`, and `deadline_ms` is `PositiveCount`. So `max_solver_steps: 0`, `max_solver_time: 0`, and an empty `hybrid: {}` or `limits: {}`, are admitted. FR-193 also says "whole, non-negative". Either use `PositiveCount` and `minProperties: 1` like the siblings, or state what a zero budget settles. | proposals/backend-provider-v1/schema.json:387-401 |
+
+## Dispositions
+
+Round 1, against head 5a9fc8d.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 5a9fc8d: FR-306 Outside the key gives the CA-2 reason |
+| FND-002 | fixed | 5a9fc8d: AC-29 and HY-07 name `limit-reached{limit: max_solver_time}`; `unknown-cause` kept, which the catalog defines as retaining the received spelling |

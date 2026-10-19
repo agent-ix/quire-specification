@@ -1944,6 +1944,137 @@
           }
         ]
       }
+    },
+    {
+      "name": "hybrid-request",
+      "stage": "request",
+      "owners": {
+        "/request/items/0/hybrid/limits/max_solver_steps": "FR-193",
+        "/request/items/0/hybrid/limits/max_solver_time": "FR-193"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "manifest": [
+          {
+            "backend": "kani",
+            "advertises": [
+              {
+                "kind": "operation-contract",
+                "mode": "bounded"
+              },
+              {
+                "kind": "value-validity",
+                "mode": "bounded"
+              }
+            ],
+            "domains": [
+              "collection",
+              "integer",
+              "population"
+            ],
+            "bounds": {
+              "max_input_bytes": 1048576,
+              "max_objects": 64,
+              "max_references": 256
+            }
+          }
+        ],
+        "request": {
+          "deadline_ms": 600000,
+          "items": [
+            {
+              "request_index": 0,
+              "kind": "value-validity",
+              "claim": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                },
+                "occurrence": {
+                  "role": "declaration",
+                  "ordinal": 0
+                }
+              },
+              "extent": {
+                "classification": "bounded",
+                "bounds": [
+                  {
+                    "domain": {
+                      "type": "node",
+                      "node": {
+                        "domain": "quire.checked-semantic-node/v1",
+                        "digest": "1c9ac70521e54c69c310ff337b10364e2c3c80c917efb8b29010c97a9534bd14"
+                      },
+                      "path": []
+                    },
+                    "kind": "integer",
+                    "bound": {
+                      "type": "integer-range",
+                      "lower": "-128",
+                      "upper": "127"
+                    }
+                  }
+                ]
+              },
+              "backend": "kani",
+              "candidates": {
+                "type": "set",
+                "backends": [
+                  "kani"
+                ]
+              },
+              "options": {
+                "unwind": "8"
+              },
+              "hybrid": {
+                "limits": {
+                  "max_solver_steps": 1000,
+                  "max_solver_time": 2
+                }
+              }
+            },
+            {
+              "request_index": 1,
+              "kind": "value-validity",
+              "claim": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "ac15b477899ce4bf720e32ff29a6418e565c693028b4ed4451a4a6f4b2d4b368"
+                },
+                "occurrence": {
+                  "role": "declaration",
+                  "ordinal": 0
+                }
+              },
+              "extent": {
+                "classification": "unbounded",
+                "domains": [
+                  {
+                    "domain": {
+                      "type": "node",
+                      "node": {
+                        "domain": "quire.checked-semantic-node/v1",
+                        "digest": "1c9ac70521e54c69c310ff337b10364e2c3c80c917efb8b29010c97a9534bd14"
+                      },
+                      "path": []
+                    },
+                    "kind": "integer"
+                  }
+                ],
+                "finite_bound_available": true
+              },
+              "backend": "kani",
+              "candidates": {
+                "type": "set",
+                "backends": [
+                  "kani"
+                ]
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "adverse": [
@@ -3138,6 +3269,66 @@
           "op": "replace",
           "path": "/results/6/cause/type",
           "value": "no_initial_state"
+        }
+      ]
+    },
+    {
+      "name": "hybrid-time-fractional",
+      "base": "hybrid-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/hybrid/limits/max_solver_time",
+          "value": 1.5
+        }
+      ]
+    },
+    {
+      "name": "hybrid-steps-zero",
+      "base": "hybrid-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/hybrid/limits/max_solver_steps",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "hybrid-limits-unknown-member",
+      "base": "hybrid-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/0/hybrid/limits/max_solver_memory",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "name": "hybrid-empty",
+      "base": "hybrid-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/hybrid",
+          "value": {}
+        }
+      ]
+    },
+    {
+      "name": "hybrid-limits-empty",
+      "base": "hybrid-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/hybrid/limits",
+          "value": {}
         }
       ]
     }

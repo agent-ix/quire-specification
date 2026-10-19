@@ -52,3 +52,12 @@ Ticket: STD-208. PR: quire-specification#288 at 07eb2ff. Unstated failure modes 
 ## Verdict
 
 Not mergeable: FND-001 is a direct contradiction with FR-462 for plugin-served hybrid solvers. FND-002 leaves AC-9 without a testable boundary. The step/time split itself is sound: steps are deterministic and in identity, wall time is outside identity and never stored.
+
+## Dispositions
+
+Round 1, against head 5a9fc8d.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 5a9fc8d: deadline_ms overrun settles timed-out (matches FR-462-AC-5); only a frontend-owned deadline settles cancelled{source: deadline} |
+| FND-002 | fixed | 5a9fc8d: request writer rounds; wire is a JSON integer Count; fractional value refused before consumption |
