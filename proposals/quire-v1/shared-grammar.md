@@ -573,13 +573,31 @@ indexed-read  = postfix, '@', ident ;
 state-graph-clause = possible-clause | always-possible-clause
                    | unique-path-clause ;
 possible-clause = 'possible', ident, 'using', ident,
-                  [ graph-over ], block ;
+                  [ graph-over ], graph-body ;
 always-possible-clause = 'always', 'possible', ident, 'using', ident,
-                         [ graph-over ], [ 'from', '(', expr, ')' ],
-                         block ;
+                         [ graph-over ],
+                         [ 'from', '(', graph-predicate, ')' ],
+                         graph-body ;
 unique-path-clause = 'unique', 'path', ident, 'using', ident,
-                     [ graph-over ], 'from', '(', expr, ')',
-                     'to', '(', expr, ')', ';' ;
+                     [ graph-over ], 'from', '(', graph-predicate, ')',
+                     'to', '(', graph-predicate, ')', ';' ;
+graph-body    = '{', { fairness }, graph-predicate, '}' ;
+graph-predicate = 'let', ident, '=', expr, 'in', graph-predicate
+                | 'if', expr, 'then', graph-predicate,
+                  'else', graph-predicate
+                | graph-implication ;
+graph-implication = graph-disjunction,
+                    [ 'implies', graph-implication ] ;
+graph-disjunction = graph-conjunction, { 'or', graph-conjunction } ;
+graph-conjunction = graph-relation, { 'and', graph-relation } ;
+graph-relation = graph-unary,
+                 [ ('until' | 'release' | 'since' | 'triggered'),
+                   [ interval ], graph-unary ] ;
+graph-unary   = 'not', graph-unary
+              | ('eventually' | 'always' | 'once' | 'historically'),
+                [ interval ], graph-unary
+              | comparison
+              | '(', graph-predicate, ')' ;
 graph-over    = 'over', '(', parameter, ')' ;
 hybrid-decl   = 'hybrid', ident, 'using', ident, '{', hybrid-mode,
                 { hybrid-mode }, '}' ;
@@ -699,6 +717,29 @@ rules only.
 - An `align-skip` entry and a model-operation execution binding each name an
   operation as `qualified-name`, whose first segment is a model alias the
   clause binds.
+- The predicate positions of a state-graph clause (its body and its `from`
+  and `to` operands) are `graph-predicate`s: a clause expression in which the
+  unary and binary temporal operators of the temporal facet stand at any
+  operand position, each with an optional `interval`, and in which `fairness`
+  constraints may stand at the start of a `graph-body`. One rule resolves
+  every overlap between `graph-predicate` and `expr`: a predicate or
+  parenthesised group that derives as an `expr` is read as that `expr`, and
+  the `not`, `(` and temporal alternatives of `graph-unary` apply only to a
+  phrase that does not. So `not c.n = 2` is the `expr` `(not c.n) = 2`, as in
+  any expression, and `not eventually c.n = 2` and `(eventually c.n = 2)` are
+  read through `graph-unary`. The production is recognition only: it carries
+  no profile selection, and a temporal operator or a fairness constraint that
+  a production recognizes is parsed and then refused by
+  [FR-390](../../spec/functional/analysis/FR-390-analyze-state-graph-claims.md)
+  at admission. Everything else is a syntax error: a fairness constraint
+  anywhere but the start of a `graph-body` (so none in a `from` or `to`
+  operand, and none on a `unique path` clause, which has no body), and a
+  temporal operator in an `if` condition, a `let` binding, or an operand of
+  a primary, such as a call argument or a quantifier body.
+  A `graph-relation` admits at most one binary temporal operator, as the
+  temporal clause's `temporal-relation` does, so `c.a until c.b until c.c` is
+  a syntax error and a chain is written `(c.a until c.b) until c.c`. `over` is
+  optional in all three clauses.
 - The keywords of the state-graph clauses are distinct from the `reaches`
   primary: `reaches` reads one state's object graph and the state-graph
   clauses read the model's state graph.
@@ -712,6 +753,15 @@ rules only.
 | `possible Win using v over (g: G::Game) { g.phase = G::Phase::Won }` | One `possible` state-graph clause with one `over` parameter. |
 | `always possible Rec using v from (not x.lost) { x.ok }` | One `always possible` clause with no `over` parameter and one `from` predicate. |
 | `unique path One using v over (j: M::Job) from (not j.a) to (j.done);` | One `unique path` clause with its two predicates. |
+| `possible R using v over (c: C::Cfg) { c.n = 1 and eventually c.n = 2 }` | Parses: a conjunction whose second operand is an unbounded `eventually`. Refused at admission, `unsupported_construct`/`expression-form` at `eventually` (FR-390-AC-2). |
+| `possible N using v { not eventually[0,5] c.n = 2 }` and `possible P using v { (eventually c.n = 2) }` | Both parse, with an interval operator and a parenthesised temporal operand; each is refused at admission at the operator (FR-390-AC-2). |
+| `possible U using v { a until b }` | Parses as a binary temporal operator with no interval; refused at admission at `until` (FR-390-AC-2). |
+| `always possible Rec using v from (always c.ok) { c.done }` | Parses: a temporal operator in a `from` operand; refused at admission at `always` (FR-390-AC-2). |
+| `always possible Rec using v { fair weak M::Cfg::step; c.done }` | Parses: a fairness constraint at the start of the body; refused at admission at the constraint (FR-390-AC-2). |
+| `possible P using v { c.done; fair weak M::Cfg::step }` | Syntax error: a fairness constraint is admitted only at the start of a body. |
+| `possible N using v over (c: C::Cfg) { not c.n = 2 }` | Parses as the `expr` `(not c.n) = 2`, as in any expression; a type error at the checker, not a grammar case. |
+| `possible W using v over (c: C::Cfg) { eventually[1,*] c.done }` | Parses; the interval is recognized and FR-390 refuses at `eventually` (`expression-form`); no profile refusal applies, since a state-graph claim selects no temporal profile. |
+| `possible B using v over (c: C::Cfg) { if eventually c.a then c.b else c.c }` and `unique path One using v from (c.a) to (c.d); fair weak M::Cfg::step` | Syntax errors: a temporal operator in an `if` condition, and a fairness constraint on a clause with no body. |
 
 ### Probabilistic, timed and real-time forms
 
