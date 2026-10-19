@@ -44,8 +44,8 @@ naming the offending row.
 
 The declaration extends the shared grammar's `declaration` production. The
 productions below use the shared grammar's EBNF conventions and its `ident`,
-`member-name`, `type-name`, `operation-name`, `model-name`, `expr` and
-`literal` productions.
+`member-name`, `type-name`, `operation-name`, `model-name`, `type-ref`,
+`signed-int`, `exact-number`, `qualified-name` and `expr` productions.
 
 ```ebnf
 declaration    = … | refinement ;
@@ -64,8 +64,10 @@ step-target    = operation-name, '(', expr, { ',', step-argument }, ')'
                | 'any' ;
 step-argument  = expr | '_' ;
 history-row    = 'history', type-name, '.', member-name, ':',
-                 type-name, '=', literal,
+                 type-ref, '=', history-literal,
                  '{', { 'on', operation-name, ':', expr, ';' }, '}' ;
+history-literal = signed-int | 'true' | 'false' | 'none' | string
+                | exact-number | qualified-name ;
 fairness-row   = ('assume' | 'ensure'), 'fair', 'weak',
                  [ 'each' | 'whole' ], operation-name, ';' ;
 ```
@@ -74,7 +76,13 @@ The first `ident` after `using` names an infinite-trace profile alias; the
 idents after `abstract` and `concrete` name model aliases. In a step target
 the first expression is the abstract receiver and each further argument is
 one per declared abstract parameter, in parameter order. A `fairness-row`
-with no granularity is `whole`. Inside a refinement declaration the
+with no granularity is `whole`. The shared grammar has no general `literal`
+production; the initial value of a history row is a `history-literal`, a
+closed list of constant spellings: an integer, `true`, `false`, `none`, a
+string, an `exact-number`, or a `qualified-name` that names an enum member.
+Collection, record and float values are not initial literals; any other
+spelling in that position refuses `invalid_syntax`/`unexpected-token` at its
+first token. Inside a refinement declaration the
 expression grammar also admits the population-valued forms of
 [FR-376](FR-376-evaluate-population-valued-mapping-expressions.md).
 
@@ -126,14 +134,31 @@ reference lifting, or the row refuses `ill_typed`/`type-mismatch`.
 
 **History rows.** A history row names a concrete object type, a new field
 name that the type does not declare, a bounded declared type and an initial
-literal of that type, and at most one update per concrete operation of that
-type. An update expression reads the step's receiver as `self` (post-state
-fields), `pre(...)` of pre-state fields and of the history field, and the
-step's arguments; it is typed against the history field's type. A name the
+`history-literal` of that type, and at most one update per concrete
+operation of that type. An update expression reads the step's receiver as
+`self` (post-state fields), `pre(...)` of pre-state fields and of the history
+field, and the step's arguments; it is typed against the history field's type. A name the
 concrete type already declares refuses `invalid_model_binding`/
 `conflicting-binding`; an unbounded type refuses `ill_typed`/`type-mismatch`;
 two updates for one operation refuse `invalid_model_binding`/
 `conflicting-binding`.
+
+**History literals.** A `history-literal` conforms to the declared type only
+when its value is a member of that type's value set, range included.
+A literal's value is statically known, so a non-member is decided at the
+literal and refuses `ill_typed`/`type-mismatch` there: `5` for `Int[0, 4]`,
+`true` for `Int[0, 4]`, `0` for `Boolean`, a string longer than a `Text`
+bound. This differs from the unproved-range case of
+[FR-149](../type-model/FR-149-apply-complete-equality-matrix.md), which
+concerns computed expressions whose range is not statically decided. `none`
+conforms only to an `Option<T>` type, and `true`/`false` only to `Boolean`.
+An enum member is written with its full path, the enum type's
+`qualified-name` followed by `::` and the member, so `Impl::Mode::idle` is
+three segments; a `qualified-name` that does not resolve to an enum member
+(a bare `ident`, a path of too few segments, or a name that is not an enum
+member) refuses `missing_declaration`/`missing-name` at the name, and a
+member of an enum other than the declared type refuses
+`ill_typed`/`type-mismatch`.
 
 **Fairness rows.** `assume` rows form the concrete fairness set `F_C` and
 name concrete operations; `ensure` rows form the abstract fairness set `F_A`
@@ -175,6 +200,7 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
 | FR-375-AC-6 | A fairness row with no granularity is read as `whole`; an `assume` row naming an abstract operation, or an `ensure` row naming a concrete operation, refuses `missing_declaration`/`missing-name`. | Test (TC-310) |
 | FR-375-AC-7 | Changing any row of an admitted declaration changes the refinement node's id, the `package_id` and the obligation identity of an item that cites it; reordering rows in source does not. | Test (TC-310) |
 | FR-375-AC-8 | A request to check the whole declaration requires `temporal-satisfaction`, each per-step simulation obligation requires `operation-contract`, and neither requires `refinement`. | Test (TC-310) |
+| FR-375-AC-9 | A history row with an initial `history-literal` written as a negative or non-negative integer, `true`/`false`, `none`, a string, an exact number or a full-path enum member is admitted when its value is in the declared bounded type's value set; a literal of the right kind outside the value set or of the wrong kind (`5` or `true` for `Int[0, 4]`, `none` for a non-`Option` type) refuses `ill_typed`/`type-mismatch` at the literal; an unresolved enum path refuses `missing_declaration`/`missing-name`; a collection, record or float spelling refuses `invalid_syntax`/`unexpected-token`. | Test (TC-310) |
 
 ## Dependencies
 
