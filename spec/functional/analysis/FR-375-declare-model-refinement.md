@@ -135,14 +135,16 @@ reference lifting, or the row refuses `ill_typed`/`type-mismatch`.
 **History rows.** A history row names a concrete object type, a new field
 name that the type does not declare, a bounded declared type and an initial
 `history-literal` of that type, and at most one update per concrete
-operation of that type. An update expression reads the step's receiver as `self` (post-state
-fields), `pre(...)` of pre-state fields and of the history field, and the
-step's arguments; it is typed against the history field's type. A name the
+operation of that type. An update expression reads the step's receiver as
+`self` (post-state fields), `pre(...)` of pre-state fields and of the history
+field, and the step's arguments; it is typed against the history field's type. A name the
 concrete type already declares refuses `invalid_model_binding`/
 `conflicting-binding`; an unbounded type refuses `ill_typed`/`type-mismatch`;
 two updates for one operation refuse `invalid_model_binding`/
-`conflicting-binding`. **History literals.** A `history-literal` conforms to the declared type
-only when its value is a member of that type's value set, range included.
+`conflicting-binding`.
+
+**History literals.** A `history-literal` conforms to the declared type only
+when its value is a member of that type's value set, range included.
 A literal's value is statically known, so a non-member is decided at the
 literal and refuses `ill_typed`/`type-mismatch` there: `5` for `Int[0, 4]`,
 `true` for `Int[0, 4]`, `0` for `Boolean`, a string longer than a `Text`

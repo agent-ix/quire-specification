@@ -34,3 +34,16 @@ One medium finding (`none`) and two lows.
 | FND-001 | medium | `history-literal` leaves out `none`. The shared grammar's complete `primary` has `'none'`, QSL `LiteralValue::None` exists, and `Option<T>` over a bounded `T` is a finite-domain type that `type-ref` admits. Without `none`, an `Option` history field cannot be declared. One example is "the previous write, absent before the first write", which is the register-prev pattern of FR-138 with no fake initial value. Every such row refuses `type-mismatch`. Add `'none'` (it conforms to any `Option<T>`), or state that `Option` history types are excluded and why. | spec/functional/analysis/FR-375-declare-model-refinement.md:69-70; spec/functional/analysis/FR-375-declare-model-refinement.md:79-83; proposals/quire-v1/shared-grammar.md:350 |
 | FND-002 | low | "The declared `type-ref` is checked against the bounded-type rule below" points at a rule that does not exist. The History rows paragraph says only "an unbounded type refuses". Either define bounded there (finite value domain, as QSL FR-138 says), or drop the forward reference. | spec/functional/analysis/FR-375-declare-model-refinement.md:83-84 |
 | FND-003 | low | `qualified-name` also matches a bare `ident` and any non-enum path, such as `Impl::Counter`. The prose says it "names an enum member" but gives no refusal for a name that resolves to something else or to nothing. Presumably that is `missing_declaration`/`missing-name` or `type-mismatch`; name it. The AC's `Type::member` example may also read as two segments where the shared grammar resolves a case as `Model::Type::Member` (three segments); say which. | spec/functional/analysis/FR-375-declare-model-refinement.md:70; spec/functional/analysis/FR-375-declare-model-refinement.md:82; spec/functional/analysis/FR-375-declare-model-refinement.md:188 |
+
+## Dispositions
+
+Round 1, reviewed at ffabc35ab74cccd2837bfb9fff5b1da310be72cc. The enum
+code pairing is sound. A name that does not resolve to a member gives
+`missing-name`; a member that resolves but has the wrong type gives
+`type-mismatch`. This matches FR-138's resolution-then-conformance order.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |
