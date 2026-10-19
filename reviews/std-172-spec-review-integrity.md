@@ -69,3 +69,5 @@ Round 2, reviewed at e8958629d320a4f782260e6c521e1fb1baf212be. The FND-005 and
 FND-006 rows above are round 2's. FR-153 now cites quire-spec-language FR-380
 for the authored maximum, and the Dependencies bullet makes the exception.
 L14 orders by declaration key.
+
+Round 3 (final record pass), reviewed at 2b006cd52014ce6dc331bf6bc429eaeb9a182a35. No finding was open in this lens, so there are no new rows.

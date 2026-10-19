@@ -57,6 +57,22 @@ FND-005 rows above are round 2's; FND-001 to FND-003 needed no new row. The
 named-population unclosed-subtypes case FND-005 asked for is present. Its
 expected result is new finding FND-007.
 
+Round 3 (final record pass), reviewed at 2b006cd52014ce6dc331bf6bc429eaeb9a182a35.
+`lookup<M::A>(M::PA, r2) absent refused = r2` is valid. `lookup ... absent
+absence-mode` is a single `primary` (shared-grammar.md:361-363), so `= r2` compares
+the refused-mode `Reference<M::A>` with `r2`, the same pattern L08 uses.
+`absent empty = none` compares the `empty`-mode `Option<Reference<M::A>>` with the
+`none` primary (shared-grammar.md:350). FR-149 makes two `none` values one equal pair,
+so R's lookup over the post population, where `a2` is deleted, is `true`. The `[B]`
+case with `b1` only now holds. `b1` is admitted because `B` covers itself. `A`
+conforms to `M::A` and `[B]` does not cover it, so `unclosed-subtypes` names `A`
+(FR-153:89-92). L02 is corrected the same way. Changed spec files validate.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-006 | fixed | - |
+| FND-007 | fixed | - |
+
 ## New findings (disposition pass 2)
 
 | ID | Severity | Summary | Refs |

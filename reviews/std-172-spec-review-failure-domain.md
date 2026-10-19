@@ -46,3 +46,5 @@ missing-required-artifact, incomplete-scope or unclosed-subtypes.
 
 Round 2, reviewed at e8958629d320a4f782260e6c521e1fb1baf212be. No finding was
 open, so there are no round-2 rows and no new findings in this lens.
+
+Round 3 (final record pass), reviewed at 2b006cd52014ce6dc331bf6bc429eaeb9a182a35. No finding was open in this lens, so there are no new rows.
