@@ -44,15 +44,15 @@ recompilation outcome.
 | BP-07 | BP-06 with one dependency entry's source bytes replaced by an edit to the body of a declaration the proved package does not call, which changes that dependency's `package_id` and leaves the recompile admitted (digests updated to match the new bytes); then an edit removing the export the proved package calls | Refused `stale_dependency`/`content-mismatch` naming that entry's `identity`, its declared `package_id` and the recompiled one, before the proved package's `package_id` is compared; no result. The removal instead refuses in the recompile, `missing_declaration`/`missing-name` at the call in the proved source, before that rule; no result | FR-323-AC-7 |
 | BP-08 | BP-06 with its first and second `dependencies` entries swapped (the third stays in place); then with one entry repeated; then with an extra entry no import reaches | Refused `invalid_package`/`invalid-value` at `/package/dependencies`, the first two before any recompile | FR-323-AC-7 |
 | BP-09 | BP-06 with one `dependencies` entry removed | Refused `missing_import`/`missing-selection` at the import the entry supplied | FR-323-AC-7 |
-| BP-10 | BP-06 with the transitive-only entry's sources edited so they recompile to a new `package_id`, and that entry's declared `package_id` updated to match the recompile, while the selecting dependency package's direct lock still selects its original `package_id` | Refused `stale_dependency`/`content-mismatch` naming the selecting dependency package's direct-lock pointer, the transitive entry's `identity`, the selected `package_id` and the entry's new `package_id`; no result | FR-323-AC-7 |
 | BP-11 | BP-06 with one entry's `package_id` changed and its sources intact | Refused `stale_dependency`/`content-mismatch` naming that entry's `identity`, its `package_id` and the recompiled one; no result | FR-323-AC-7 |
 | BP-12 | BP-06 with a second entry whose source has the authority and identity of the first entry's source | Refused `invalid_package`/`conflicting-definition` naming both entries, before any recompile | FR-323-AC-7 |
 | BP-13 | A `byte_provision` domain-package entry under `sha256-jcs` whose document canonicalises to a digest other than the one it is keyed by | Refused `stale_dependency`/`content-mismatch` naming the selected and the recomputed digest, before recompilation | FR-323-AC-5 |
+| BP-14 | BP-06 with the transitive-only entry C's sources edited so they recompile to a new `package_id`, and C's declared `package_id` updated to match, while the selecting dependency B's sources and declared `package_id` stay unchanged | B recompiles against the edited C to a `package_id` different from B's declared `package_id`; refused `stale_dependency`/`content-mismatch` naming B's `identity`, B's declared `package_id` and its recompiled one; no result | FR-323-AC-7 |
 
 ## Expected Results
 
 BP-01 and BP-06 find a complete provision admitted. BP-02 through BP-05 and
-BP-07 through BP-13 find each incomplete, mismatched or stale provision refused with its
+BP-07 through BP-09 and BP-11 through BP-14 find each incomplete, mismatched or stale replay request refused with its
 named typed cause before any recompilation result is produced.
 BP-06's transitive source coverage remains planned until the QSL replay
 follow-up lands.
