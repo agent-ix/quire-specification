@@ -219,7 +219,7 @@ annotation and any other `Integer` operand against an `Int[..]` operand remain
 `convert`, as does an arithmetic operand against a `Rational[..]` or
 `Decimal[..]` operand. An integer literal is typed by the other operand under
 FR-144 literal typing and is not affected. `<`, `<=`, `>` and `>=` supply no
-expected type to their operands. A `convert<T>` target supplies no expected type to its operand: the operand is typed from its own operands, so `convert<Int[lo,hi]>(n + 1)` converts an `Integer` and is refused under `=` by the equality conversion table. Call arguments supply none either.
+expected type to their operands and need none: an ordering comparison between an `Integer` operand and an `Int[..]` operand, or between two `Int[..]` operands, is accepted and orders the exact integer values, so `n + 1 <= later.tally` for `n` of `Integer` is well typed. A `convert<T>` target supplies no expected type to its operand: the operand is typed from its own operands, so `convert<Int[lo,hi]>(n + 1)` converts an `Integer` and is refused under `=` by the equality conversion table. Call arguments supply none either.
 
 ## Conversion classes
 
@@ -331,7 +331,7 @@ collection and object-reference rows of this requirement.
 | FR-149-AC-18 | `=` and `!=` over two event-type operands, and over `Option`, tuple or union values containing one, are `ill_typed`/`operator-ineligible` before any charge; a `Set`, `Bag` or `OrderedSet` of an event type is refused for the same reason (FR-144). | Test (TC-194) |
 | FR-149-AC-19 | With `tally` of `Int[0,3]` and the guard `earlier.tally < 3`, the relation `earlier.tally < 3 and later.tally = earlier.tally + 1` checks: the sum's interval `[1,3]` lies inside `Int[0,3]`, the sum is typed `Int[0,3]` by the expected-type rule, and the relation charges the sum's own integer-arithmetic schedule plus the equality's one-pair schedule. | Test (TC-194) |
 | FR-149-AC-20 | With the guard removed, `later.tally = earlier.tally + 1` over `tally` of `Int[0,3]` refuses `undefined_expression`/`unproved-range` at `earlier.tally + 1`, because the sum's interval `[1,4]` exceeds `Int[0,3]`; `recovered.tally = recovered.tally + 1` refuses the same way at its sum. No Boolean is produced and the value is not clamped. | Test (TC-194) |
-| FR-149-AC-21 | The rule applies only to a binary `+`, `-` or `*` operand of `=` or `!=` against an `Int[..]` operand, on either side and parenthesized: an `Integer` path, a call, `div`, `rem`, `count`, an unannotated `let`-bound name or unary `-` against `Int[0,3]` is `ill_typed`/`type-mismatch` without `convert`, an arithmetic operand against a `Rational[..]` or `Decimal[..]` operand is `ill_typed`, and `<` over the same operands supplies no expected type, so `n + 1 <= later.tally` for `n` of `Integer` is `ill_typed`/`type-mismatch`. | Test (TC-194) |
+| FR-149-AC-21 | The rule applies only to a binary `+`, `-` or `*` operand of `=` or `!=` against an `Int[..]` operand, on either side and parenthesized: an `Integer` path, a call, `div`, `rem`, `count`, an unannotated `let`-bound name or unary `-` against `Int[0,3]` is `ill_typed`/`type-mismatch` without `convert`, an arithmetic operand against a `Rational[..]` or `Decimal[..]` operand is `ill_typed`, and `<`, `<=`, `>` and `>=` over the same operands supply no expected type and are accepted, so `n + 1 <= later.tally` for `n` of `Integer` and `earlier.tally + 1 <= later.tally` are well typed. | Test (TC-194) |
 
 ## Dependencies
 
