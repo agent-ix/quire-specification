@@ -141,7 +141,8 @@ limit stopped settles FR-331 result `incomplete` with cause `limit-reached{limit
 `bound-reached` naming the search horizon, except that under partial-order
 reduction such a run settles as [FR-385](FR-385-report-reduced-verdicts.md)
 states for a run with open nodes; a subject with no initial state settles
-`inconclusive` with `no-initial-state`; a selected reduction the form does not
+`inconclusive` with `no-initial-state`; an item with zero instances settles
+`inconclusive` with `no-instance` before expansion; a selected reduction the form does not
 admit settles `inconclusive` with `reduction-not-preserving` before expansion
 (FR-385). A search bounded by its horizon that found no refuting evidence and
 not every initial state's witness is `inconclusive`, never `proved` or
@@ -218,7 +219,7 @@ is concrete and carries no canonical state or permutation, so a witnessed
 | FR-391-AC-2 | A reachable trap where the form requires reaching the target settles `refuted`, `closed-scope`, also when the run reached its maximum depth elsewhere. | Test (TC-331, TC-332, TC-334) |
 | FR-391-AC-3 | A known node where `X` holds that counts 2 settles `unique path` `refuted`, `decisive-counterexample`, with a path pair. | Test (TC-333) |
 | FR-391-AC-4 | `always possible` and `unique path` settle `proved`, `closed-scope`, only from a completed exploration with no open node. | Test (TC-332, TC-333, TC-334) |
-| FR-391-AC-5 | A run with no decisive evidence settles by the model-subject verdict map: `bound-reached`, `constraint-reached`, `undecided-successor` or `no-initial-state` as `inconclusive`, a stopped run as `incomplete` with cause `limit-reached{limit, value, setting}`, a cancelled run as `incomplete` with cause `cancelled{source}`; it never settles `proved` or `refuted`. | Test (TC-334) |
+| FR-391-AC-5 | A run with no decisive evidence settles by the model-subject verdict map: `bound-reached`, `constraint-reached`, `undecided-successor`, `no-initial-state` or `no-instance` as `inconclusive`, a stopped run as `incomplete` with cause `limit-reached{limit, value, setting}`, a cancelled run as `incomplete` with cause `cancelled{source}`; it never settles `proved` or `refuted`. | Test (TC-334) |
 | FR-391-AC-6 | Every result states its settlement method: per-initial-state witness sources with seed and trace index for a sampled witness, exhaustive or reduced exploration, or the limits used. | Test (TC-331, TC-336) |
 | FR-391-AC-7 | Each state-graph result label matches exactly one FR-360 member with its exact FR-241, FR-242 and FR-243 combination. | Test (TC-334) |
 | FR-391-AC-8 | Each form admits symmetry, partial-order reduction and a state constraint exactly as its reductions row reads; a reduction it does not admit settles `inconclusive` with `reduction-not-preserving` before expansion. | Test (TC-334) |

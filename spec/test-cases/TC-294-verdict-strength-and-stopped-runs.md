@@ -29,6 +29,8 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
 4. Run the subject with an empty list of initial states.
 5. Run a subject whose population `config_history` has no universe.
 6. Check the claim under `quire.temporal.timestamped-event.finite-window/v1`.
+7. Check a claim `over (c: Config::ConfigVersion)` against a subject whose
+   universe is empty.
 
 ## Expected Results
 
@@ -44,6 +46,8 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
 4. `inconclusive`, cause `no-initial-state` (FR-361-AC-7).
 5. `requires-bound` before expansion (FR-361-AC-7).
 6. `unsupported`, `unsupported-requested-capability`, basis `unavailable`.
+7. `inconclusive`, basis `unsettled`, cause `no-instance`, before any state is
+   explored (FR-361-AC-8).
 
 No row carries a proof basis, and each row's label, basis and result equal the
 FR-363 verdict table (FR-363-AC-1).

@@ -1030,7 +1030,8 @@
         "/results/2/cause": "FR-363",
         "/accounting/2/max_depth": "FR-363",
         "/results/3/cause": "FR-428",
-        "/results/4/cause": "FR-439"
+        "/results/4/cause": "FR-439",
+        "/results/5/cause": "FR-363"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -1054,6 +1055,10 @@
           },
           {
             "request_index": 4,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 5,
             "disposition": "supported"
           }
         ],
@@ -1117,6 +1122,15 @@
               "limit": "max_store_buffer",
               "value": 2,
               "states": 3
+            }
+          },
+          {
+            "request_index": 5,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "no-instance"
             }
           }
         ],
@@ -1211,6 +1225,10 @@
             "reached": [
               "max_store_buffer"
             ]
+          },
+          {
+            "request_index": 5,
+            "settled_by": "result"
           }
         ]
       }
