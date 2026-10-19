@@ -262,6 +262,7 @@ so every timed refutation has a counterexample with exact rational delays.
 | FR-181-AC-10 | Sample `i` of test `j` among `m` tests uses trace index `i · m + j`. | Test (TC-354) |
 | FR-181-AC-11 | Timed replay checks each delay's admissibility, the guard at the delayed state, the post-state digest over the discrete state and exact clock valuation, and the target's time invariants in exact rationals; a violated delay or guard refuses `invalid_runtime_input`/`invalid-value`. | Test (TC-369) |
 | FR-181-AC-12 | Under `time tick O period p` a position's time stamp is `p` times the number of `O` steps up to it. | Test (TC-369) |
+| FR-181-AC-14 | A weighted or uniform choice whose integer total `n` exceeds `2^256` refuses `invalid_runtime_input`/`total-above-draw-range` before any draw, because the acceptance bound `n · ⌊2^256 / n⌋` is 0; a total of exactly `2^256` selects normally. | Test (TC-354) |
 
 ## Dependencies
 
