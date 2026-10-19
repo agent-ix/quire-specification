@@ -73,6 +73,12 @@ Not mergeable on this lens until FND-001 and FND-003 are ruled on and FND-002, F
 | FND-009 | medium | The missing division law is given the wrong code. FR-375-AC-18, FR-001-AC-7 and TC-310 mutation 21 expect `selection_required_missing` when an `a div b` row has no division-law selector. In the complete-value lock contract `selection_required_missing` is a missing `always` role; a present `integer_div_rem` trigger with no alternative selected is `selection_trigger_unsatisfied`, and the canonical vector `division-missing-for-div-rem` in complete-value-selection-vectors.json expects exactly that. TC-310 also does not say how the unit supplies `integer_division_profile` (the selector the lock names), so the floor half of the vector has no stated input. Use `selection_trigger_unsatisfied` and name how the selector is given. | spec/functional/analysis/FR-375-declare-model-refinement.md:428; spec/functional/foundation/FR-001-select-native-profile.md:98; spec/test-cases/TC-310-refinement-declaration-admission.md:127-132,215-217; proposals/quire-v1/definitions/value-complete.md:56-65; proposals/quire-v1/definitions/complete-value-selection-vectors.json (refused: division-missing-for-div-rem) |
 | FND-010 | low | "its package identity differs from the same unit without the refinement" cannot fail for the reason it is there: the refinement node itself enters the identity projection (FR-375, Checked-package node), so the `package_id` differs whether or not the lock gains any row. To test that the rows' layers reach the lock, compare the same refinement unit with the floor and with the Euclidean law (different `package_id`s), or assert the lock's `definition_selections` directly (which TC-310 mutation 21 already reads). `cargo test --test checked_package_v2` at 7e85fb7 passes 105/105: no existing fixture or vector has a refinement-governed unit, so the new lock rule changes no published vector. | spec/functional/foundation/FR-001-select-native-profile.md:98; spec/test-cases/TC-310-refinement-declaration-admission.md:127-132,215-218; spec/functional/analysis/FR-375-declare-model-refinement.md:390-400 |
 
+## New findings (disposition pass 7)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-011 | low | The refusal now names `quire.protocol.complete/v1`, "the layer that admits the form and that the rows' layer set lacks". But `quire.protocol.complete/v1` is not one of FR-001's five header-selectable layers, and FR-001's `expression-form` bullet names "the selected layer". The refinement-specific rule (name the facet that admits the form) is not stated in FR-001, so FR-001's generic wording and FR-375-AC-18, FR-001-AC-7 and FR-090-AC-10 read differently. Non-blocking (planner cap). | spec/functional/analysis/FR-375-declare-model-refinement.md:285-287,430; spec/functional/foundation/FR-001-select-native-profile.md:83-85,98; spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md:121 |
+
 ## Dispositions
 
 Round 1, against head 5a66bf9.
@@ -104,3 +110,9 @@ Round 4, against head 73aad4e.
 | --- | --- | --- |
 | FND-009 | fixed | 73aad4e: the code is `selection_trigger_unsatisfied` in FR-375-AC-18, FR-001-AC-7 and TC-310; the none run (trigger `integer_div_rem`, no alternative role, every `always` role present) matches the canonical `division-missing-for-div-rem` vector, whose first failing check in the contract's order is `selection_trigger_unsatisfied`; the unit supplies its choice as the lock selection's alternative role |
 | FND-010 | fixed | 73aad4e: the vacuous package-id clause is replaced by a direct `definition_selections` assertion: floor and Euclidean runs differ exactly in the division-law role |
+
+Round 7, against head 8c6e179.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-011 | deferred | 8c6e179: planner capped PR #287 at round 7; medium and low findings go to the planner's fixture ticket and do not hold the merge |

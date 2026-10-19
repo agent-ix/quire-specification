@@ -121,3 +121,9 @@ Round 6, against head b28038b.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-008 | still-open | b28038b: `Fill` is now written out over `R`, and its names exist in `R` (`R::Ring`, `R::Slot::put`, `PutPre`/`PutPost`, alias `p`). But the run is still not admissible as written, so the claim "the other declarations listed are each admitted" fails. (1) `as (a)` and `as (d)` give no type, and the grammar's attempt and finish productions take `'as', '(', parameter, ')'` with `parameter = ident, ':', type-ref` (shared-grammar.md:224-234, 537-544). QSL origin/main a44e86daf S1 parses the fixture verbatim to `invalid_syntax`/`unexpected-token` "expected `:`" at `(a)`. With `as (a: R::Ring)` and `as (d: R::Ring)` the same unit passes S1, S2 and S3. (2) `PutPre` and `PutPost` name no `using` alias, and the run adds no layer profile. `PutPre` reads `self.ring.size`, which is reference navigation and is admitted only under the complete-V1 facets (FR-019, FR-143-AC-11). A state clause needs an alias naming such a layer, and "add exactly these declarations" names none. Type the two bindings and give the clauses an alias, for example `profile m = "quire.model.complete/v1";` with `pre PutPre using m on R::Slot::put { ... }`, adding that profile to the run's list. That changes the run's lock selection, which this run does not read. |
+
+Round 7, against head 8c6e179.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-008 | fixed | 8c6e179: the bindings are typed (`as (a: R::Ring)`, `as (d: R::Ring)`), the role names a type (`role w on R::Ring`), and `PutPre`/`PutPost` use the new `profile m = "quire.model.complete/v1"`. Re-probed on QSL origin/main a44e86daf with these declarations, profiles `p` and `m`, and the ring fixture with `Queue.ready: Boolean`: S1, S2 and S3 admit the unit. QSL does not yet refuse the `ready = protocol Fill` row, because it has not implemented row layers; that is a QSL follow-up |
