@@ -66,8 +66,8 @@ One result per clause instance, classified by
   that key in every trace of that alias: objects are correlated across traces
   by universe key, never by local name. A clause over two aliases names one
   parameter per alias it reads, and its instances range over the product of
-  their universes. A clause one of whose parameters ranges over an empty
-  universe, or over a type that no object of the universes conforms to, has
+  their universes. A clause one of whose parameters' populations has an empty
+  universe has no key to instantiate, so the product is empty and the clause has
   zero instances: the item is a `NoInstance` item of
   [FR-361](../temporal/FR-361-read-model-behaviours-as-temporal-traces.md)
   Instancing and settles by [FR-399](FR-399-settle-hyperproperty-results.md),
