@@ -65,7 +65,19 @@ Mutations, each applied alone to the positive unit:
     `assume fair each Impl::Counter::beginA;` (no kind) and
     `assume fair always Impl::Counter::beginA;`;
 12. request the whole declaration and one per-step obligation for the
-    `commitA` row.
+    `commitA` row;
+13. give the abstract package two protocol clauses `Twice` and `Twice2` with
+    identical bodies, and write the header `abstract Spec::Twice` with
+    operation-target step rows only; then the same rows under `abstract
+    Spec::Twice2` and under `abstract Spec`; then, each alone, the header
+    changed to `abstract Spec::Thrice` (no such clause), `abstract
+    Spec::Counter` (a type), `abstract Spec::counters` (a population),
+    `abstract Nope::Twice` (no such alias) and `abstract Spec::Wrong`, where
+    `Wrong` is a clause of `example/counter-spec` that acts only on a second
+    model of that package, `Other`;
+    then the parse vectors `abstract Spec::Twice::finish concrete Impl`,
+    `abstract ::Twice concrete Impl`, `abstract Spec:: concrete Impl`,
+    `abstract Spec:: {` and `abstract Spec::1`.
 
 ## Expected Results
 
@@ -97,3 +109,14 @@ at the token after `fair` (FR-375-AC-10); the identical pairs, including the
 `conflicting-binding` naming both rows (FR-375-AC-3). In step 12 the whole
 declaration requires `temporal-satisfaction` and the step obligation
 `operation-contract` (FR-375-AC-8).
+In mutation 13 the three declarations (`Spec::Twice`, `Spec::Twice2`, `Spec`)
+use identical rows and are each admitted with three distinct node ids; the
+two protocol subjects carry `protocol` and list the clause in `dependencies`,
+and the `abstract Spec` node has neither. `Spec::Thrice`, `Spec::Counter`,
+`Spec::counters` and `Nope::Twice` each refuse `missing_declaration`/
+`missing-name` at `Thrice`, `Counter`, `counters` and `Nope`; `Spec::Wrong`
+refuses `invalid_model_binding`/`malformed-declaration` at `Wrong`, since
+the clause is found in the abstract package but does not act on `Spec`'s model. The parse
+vectors each refuse `invalid_syntax`/`unexpected-token` before any name is
+resolved: at the second `::`, at the leading `::`, at `Impl` (`concrete` read
+as the protocol name), at `{` and at `1` respectively (FR-375-AC-11).

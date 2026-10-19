@@ -654,6 +654,14 @@ declaration admits a step row, and its first `qualified-name` names a
 concrete protocol node, template, channel, role or protocol. `step-target`
 and `step-argument` are the refinement declaration's productions (FR-375).
 
+The refinement header selects its abstract subject with
+`abstract-subject = ident, [ '::', member-name ] ;` (FR-375): a lone `ident`
+is a model alias and `ident '::' name` is a model alias with one protocol
+clause of that model, as in `abstract Spec::Twice`. The parser tells the two
+apart by the `::` only, and the token after `::` is always the name (reserved words included); it resolves neither name, and the checker resolves the
+alias and the protocol (FR-375, FR-432). The `concrete` side stays one
+`ident`.
+
 ### Abstraction relation declaration
 
 An `abstraction-decl` spells the model-to-implementation abstraction relation
