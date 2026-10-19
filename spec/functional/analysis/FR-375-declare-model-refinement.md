@@ -31,6 +31,14 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-149
     type: references
+  - target: ix://agent-ix/quire-specification/FR-001
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-147
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-090
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-250
+    type: references
 ---
 
 # FR-375: Declare a refinement between two state models
@@ -274,8 +282,12 @@ whatever the unit's other declarations select, and under no other layer. So
 `Reference` comparison such as `s.ring = self`
 ([FR-149](../type-model/FR-149-apply-complete-equality-matrix.md)) and the
 undefined reasons of the native diagnostics check in a row. A row using a form
-outside that set refuses `unsupported_construct`/`expression-form` at the
-expression, naming the layer ([FR-001](../foundation/FR-001-select-native-profile.md)).
+outside that set, for example the temporal operator `eventually`, refuses
+`unsupported_construct`/`expression-form` at that token, naming
+`quire.model.complete/v1` ([FR-001](../foundation/FR-001-select-native-profile.md)).
+These layers count toward the unit's selected layers for the complete-value
+lock, so a row using `div` or `rem` brings the lock's integer-division law and
+the package identity names the definitions the rows run under (FR-001).
 The profile alias carries no layer list and a refinement has no second `using`.
 
 **Abstract relationships.** No row maps a relationship, so the abstract
@@ -413,7 +425,7 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
 | FR-375-AC-15 | A field row of type `Sequence<Reference<T_C>>[0, 2]` for an abstract `Sequence<Reference<T_A>>[0, 2]` field, and the row `Some(self.ring)` for an abstract `?` field of type `Reference<T_A>`, each use `nested-reference-row`: where the support set omits it, each refuses `unsupported_construct`/`not-yet-implemented` naming the feature at the row's expression, once per such row, and no node is produced; a whole-population reference row and a plain `Reference<T_C>` row for a `Reference<T_A>` field are admitted; a `Sequence<Reference<T_C>>` step argument for a `Sequence<Reference<T_A>>` parameter refuses `ill_typed`/`type-mismatch`. | Test (TC-310) |
 | FR-375-AC-16 | A refinement whose abstract model declares a relationship refuses `unsupported_construct`/`declaration-form` at the abstract alias of the header, once per refinement, naming the form, the refinement and the selected profile identity, whatever the producer's support set, and produces no node. | Test (TC-310) |
 | FR-375-AC-17 | `Some(e)` for `e` of type `E` is typed `Option<E>`; over an abstract `?` field of type `T`, the row `none` leaves the field absent and `Some(v)` sets it, and a row that is not `Option<T>`, including a bare `self.f` of a concrete `?` field, refuses `ill_typed`/`type-mismatch`; over an abstract `Option<T>` field the row's option value is taken unchanged; `none` with no field type or other `if` arm refuses `ill_typed`/`type-mismatch`; outside a refinement declaration `Some` is an ordinary identifier, so `Some(1)` in a state clause refuses `missing_declaration`/`missing-name` at `Some` when no function `Some` is declared and is a call to it when one is. | Test (TC-310) |
-| FR-375-AC-18 | In a refinement governed by `quire.temporal.infinite-trace/v1`, the ring-buffer rows `s.ring = self` and `(self.head + i) mod 2` are admitted even when the unit's own declarations select no layer; a row using a form outside `quire.model.complete/v1` and its `requires` closure refuses `unsupported_construct`/`expression-form` at the expression, naming the layer. | Test (TC-310) |
+| FR-375-AC-18 | In a refinement governed by `quire.temporal.infinite-trace/v1`, the ring-buffer rows `s.ring = self`, `(self.head + i) mod 2` and an `a div b` row are admitted even when the unit's own declarations select no layer, the lock selection counts the rows' layers (the `always` rows and exactly one integer-division law, `selection_required_missing` when absent), and a row using the temporal operator `eventually` refuses `unsupported_construct`/`expression-form` at the `eventually` token naming `quire.model.complete/v1`. | Test (TC-310) |
 
 ## Dependencies
 

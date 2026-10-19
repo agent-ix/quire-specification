@@ -7,6 +7,10 @@ relationships:
     type: traces_to
   - target: "ix://agent-ix/quire-specification/FR-375"
     type: references
+  - target: "ix://agent-ix/quire-specification/FR-090"
+    type: references
+  - target: "ix://agent-ix/quire-specification/FR-250"
+    type: references
 ---
 # FR-001: Select an explicit native language profile
 
@@ -57,7 +61,8 @@ definition and the FR-290 kind and extent its witness requests.
   select that layer and every layer its `requires` closure names, and no
   layer that requires it.
 - When the unit's selected layers include the lock's `package_selection`
-  `layer` (`quire.value.complete/v1`), the frontend shall select the
+  `layer` (`quire.value.complete/v1`), counting the layers a governing
+  infinite-trace profile requires for a refinement's rows (below), the frontend shall select the
   qualification rows the lock's `always`, `conditional` and `exactly_one`
   rules select for the unit; otherwise it shall select exactly the
   `without_layer` rows (`edition`).
@@ -67,9 +72,13 @@ definition and the FR-290 kind and extent its witness requests.
 - When a refinement declaration's `using` names the infinite-trace profile
   alias, the frontend shall admit its row expressions under exactly
   `quire.value.complete/v1`, `quire.model.complete/v1` and their `requires`
-  closure, which that profile requires when it governs a refinement; a row
-  expression form outside that set is refused as the expression-form bullet
-  below states.
+  closure, which that profile requires when it governs a refinement. Those
+  layers count toward the unit's selected layers for the lock's
+  `package_selection`: the unit then receives the lock's `always` rows and, for
+  a row using `div` or `rem`, the `integer_div_rem` trigger and its exactly-one
+  integer-division law, so the package identity names the definitions the rows
+  run under. A row expression form outside that set is refused as the
+  expression-form bullet below states.
 - If such a declaration uses a declaration form outside that set, then the
   frontend shall refuse it with `unsupported_construct`, cause
   `declaration-form`, at the declaration, naming the selected layer.
@@ -86,7 +95,7 @@ definition and the FR-290 kind and extent its witness requests.
 | FR-001-AC-4 | An unavailable selected profile receives a located refusal; selecting it cannot execute under another profile or reuse that profile's semantic subject. | Test (TC-005) |
 | FR-001-AC-5 | For each of the five layers, a unit whose `profile` declaration names the layer and whose declarations use only that layer's forms is admitted, and its selected definitions are the layer and its `requires` closure and no layer that requires it; a state-layer unit selects the `edition` row and no other qualification row, and a complete-value or complete-model unit selects the rows the `package_selection` rules select. | Test (TC-005) |
 | FR-001-AC-6 | A unit selecting `quire.state.core/v1` that declares a named predicate refuses `unsupported_construct`/`declaration-form` at the declaration, and one that calls `filter` refuses `unsupported_construct`/`expression-form` at the call, each naming `quire.state.core/v1`; both units selecting `quire.state.queries/v1` are admitted. | Test (TC-005) |
-| FR-001-AC-7 | A refinement governed by the infinite-trace profile admits a `mod` row in a unit whose own declarations select no layer; a row form outside `quire.model.complete/v1` and its `requires` closure refuses `unsupported_construct`/`expression-form` at the expression, naming the layer. | Test (TC-310) |
+| FR-001-AC-7 | A refinement governed by the infinite-trace profile admits a `mod` row and an `a div b` row in a unit whose own declarations select no layer; the unit's lock selection then holds the lock's `always` rows and exactly one integer-division law (`selection_required_missing` when the law's selector is absent), and its package identity differs from the same unit without the refinement; a row that uses the temporal operator `eventually` refuses `unsupported_construct`/`expression-form` at the `eventually` token, naming `quire.model.complete/v1`. | Test (TC-310) |
 
 ## Dependencies
 
