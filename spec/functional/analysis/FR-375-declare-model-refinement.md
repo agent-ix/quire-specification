@@ -27,6 +27,18 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-323
     type: references
+  - target: ix://agent-ix/quire-specification/FR-143
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-149
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-001
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-147
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-090
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-250
+    type: references
 ---
 
 # FR-375: Declare a refinement between two state models
@@ -113,7 +125,9 @@ Collection, record and float values are not initial literals; any other
 spelling in that position refuses `invalid_syntax`/`unexpected-token` at its
 first token. Inside a refinement declaration the
 expression grammar also admits the population-valued forms of
-[FR-376](FR-376-evaluate-population-valued-mapping-expressions.md).
+[FR-376](FR-376-evaluate-population-valued-mapping-expressions.md) and the
+option constructor `Some(e)` (**Option rows**, below); the shared grammar owns
+their spellings.
 
 ## Behavior
 
@@ -179,15 +193,18 @@ a replay that dropped it would recompile with an empty list and a different
 refinement features it has built, a capability of the producer and not a
 request parameter. The feature names are `history-row` (a `history` row),
 `protocol-abstract-side` (a protocol abstract subject, `abstract
-<A>::<protocol>`) and `refinement-internal-list` (a non-empty resolved
-internal list for a refinement). Where a producer's support set omits a
+<A>::<protocol>`), `refinement-internal-list` (a non-empty resolved
+internal list for a refinement), and `nested-reference-row` (a field row whose type
+nests a reference, see Typing and reference lifting).
+This list is the closed set of feature names. Where a producer's support set omits a
 feature, the checker SHALL refuse a declaration that uses it
 `unsupported_construct`/`not-yet-implemented`, naming the feature, the
 refinement and the exact selected profile identity: once for each `history`
 row (at its `history` keyword), once per refinement for a protocol abstract
 subject (at the protocol name) and once per refinement for a non-empty
 resolved list (at the first token of the name written after `abstract`,
-which both subject forms have). The refusals are independent, so a
+which both subject forms have) and once for each field row of nested-reference
+type (at the row's expression). The refusals are independent, so a
 non-empty list under `abstract Spec::Twice` in a producer omitting both
 features gives two. Each refusal produces no refinement node and is decided
 before the feature's own checks, so no other diagnostic is reported for that
@@ -213,6 +230,9 @@ The refusal is an implementation gap, not a source defect (FR-452 classes it
 because a feature is a source form or declaration input
 ([FR-271](../../objects/foundation/FR-271-diagnostic-code-vocabulary.md)'s
 rule). A feature in the support set is checked by its own requirement.
+`nested-reference-row` has no such requirement yet: this requirement states no
+meaning for a nested reference, so a producer's support set holds it only when
+a requirement states one.
 
 **Population rows.** Each abstract population has exactly one row naming one
 concrete population as its source. An abstract population with no row
@@ -238,6 +258,63 @@ denotes the abstract object with the same key, so `Reference<T_C>` conforms
 to `Reference<T_A>` exactly when an object row maps `T_A` from `T_C`. A row
 that does not conform refuses `ill_typed`/`type-mismatch` at the row's
 expression.
+
+A reference is lifted only as the whole type of a row's expression, or as the
+element of a whole-population reference row (`Set<Reference<T_C>>[0, n]`,
+[FR-376](FR-376-evaluate-population-valued-mapping-expressions.md)), where each
+element is lifted by key. A field row whose type holds a `Reference<T_C>`
+nested inside an option, record, union or collection type that is not such a
+population reference (for example `Sequence<Reference<T_C>>`, or the
+`Option<Reference<T_C>>` of `Some(self.ring)`) uses the feature
+`nested-reference-row`: lifting inside a nested value is not defined here. In a
+step argument or a history update a nested reference is not lifted either, so
+it does not conform and refuses `ill_typed`/`type-mismatch` there.
+
+**Row layers.** The infinite-trace profile a refinement's `using` names
+requires `quire.value.complete/v1` and `quire.model.complete/v1` for the
+refinement's rows when it governs the refinement
+([FR-090](../temporal/FR-090-select-temporal-profile-and-clock.md),
+[FR-250](../../objects/temporal/FR-250-temporal-semantic-profile.md)). The rows
+are admitted under exactly those two layers and their `requires` closure
+(`quire.state.core/v1`, `quire.state.queries/v1`, `quire.state.graph/v1`),
+whatever the unit's other declarations select, and under no other layer. So
+`mod` ([FR-147](../expressions/FR-147-evaluate-integer-division-domains.md)),
+`Reference` comparison such as `s.ring = self`
+([FR-149](../type-model/FR-149-apply-complete-equality-matrix.md)) and the
+undefined reasons of the native diagnostics check in a row. A row using a form
+outside that set, for example the protocol reference `protocol Fill` naming a protocol declared in the unit, refuses
+`unsupported_construct`/`expression-form` at the `protocol` token, naming
+`quire.protocol.complete/v1`, the layer that admits the form and that the rows' layer set lacks ([FR-001](../foundation/FR-001-select-native-profile.md)).
+These layers count toward the unit's selected layers for the complete-value
+lock, so a row using `div` or `rem` brings the lock's integer-division law and
+the package identity names the definitions the rows run under (FR-001).
+A profile the unit declares for other declarations, such as the one a protocol
+uses, does not widen the layers of a refinement's rows. The profile alias
+carries no layer list and a refinement has no second `using`.
+
+**Abstract relationships.** No row maps a relationship, so the abstract
+model's relationship links could never hold in a mapped state and an abstract
+clause reading one would pass or refute by accident. This is a gap in the
+language, not a feature a producer has left unbuilt. A refinement whose
+abstract model declares a relationship refuses
+`unsupported_construct`/`declaration-form` at the abstract alias of the header,
+once per refinement, naming the form (a refinement of a model that declares a
+relationship), the refinement and the exact selected profile identity, and
+produces no node; the refusal is independent of every support set, and no profile admits the form yet, so the profile identity named is the selected one and not a profile that prohibits it ([FR-452](../tooling/FR-452-preserve-admission-across-specification-revisions.md) classes the refusal `prohibited`). The mapped
+state ([FR-377](FR-377-decide-model-refinement.md)) holds no relationship extent.
+
+**Option rows.** `Some(e)` has type `Option<E>` for `e` of type `E`. `none`
+takes its option type from the abstract field's type at a field row, or from
+the other arm of an enclosing `if`; where neither supplies one (an argument, a
+comparison operand, an `if` against `Some(e)` with no field type) it refuses
+`ill_typed`/`type-mismatch`. An abstract field declared with `?` takes a row of
+type `Option<T>`: the row `none` leaves the field absent and `Some(v)` sets it
+to `v`. An abstract field declared `Option<T>` takes the row's option value
+unchanged, so `none` is an explicit `none` and the field is set. A row reads a
+concrete `?` field only through `present` and `value`
+([FR-143](../type-model/FR-143-evaluate-record-tuple-recursive-values.md)); a
+bare `self.f` of a `?` field is `ill_typed`/`type-mismatch` in a row as
+anywhere else.
 
 **Step rows.** Each concrete operation has exactly one step row. An operation
 with no row refuses `missing_declaration`/`missing-name`, naming the
@@ -319,7 +396,8 @@ match, leaves the node id unchanged. It is absent for an empty list, as
 `protocol` is absent for a model subject, and never null. Every other array
 of the body (`populations`, `objects`, `steps`, `histories`, `assume`,
 `ensure`) is sorted ascending by the node-key digest of its first named declaration, then by
-member name as UTF-8 bytes. The node enters the identity projection, so it
+member name as UTF-8 bytes; within an `objects` entry the field rows are sorted
+ascending by field name as UTF-8 bytes. The node enters the identity projection, so it
 enters the `package_id` and the obligation identity of every item that
 cites it; the internal list is therefore part of both identities through
 `abstract_internal`, and needs no member of its own in the identity preimage.
@@ -346,6 +424,10 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
 | FR-375-AC-12 | The `refinement_internals` input is the only host of the internal list: `abstract Spec::Twice` with no row naming internals and the unit value `[{"refinement": "R", "internal": ["Spec::Twice::finish"]}]` is admitted with `abstract_internal` `["Twice::finish"]`; the same source with the value absent, `[]` or naming another refinement is admitted with no `abstract_internal` entry. A supplied library declaring its own refinement and given its own value is admitted with that value affecting only the library's node and `package_id` and the importer's selection of it; a value naming a refinement the library does not declare refuses `missing_declaration`/`missing-name` at (that library's value, `/0/refinement`) and the compilation, the unit included, is not admitted. | Test (TC-310) |
 | FR-375-AC-13 | The two lists `["Spec::Twice::finish"]` and none give refinement nodes with different ids, `package_id`s and obligation identities for an item citing the node; reordering the value's objects and entries changes none of them; renaming the abstract alias from `Spec` to `S`, with the value's spellings renamed to match, changes none of them. | Test (TC-310) |
 | FR-375-AC-14 | For each feature a producer's support set omits, a declaration using it refuses `unsupported_construct`/`not-yet-implemented` as the Unbuilt features paragraph states: two `history` rows give two refusals at their keywords naming `history-row`; `abstract Spec::Twice` one at `Twice` naming `protocol-abstract-side`; a non-empty resolved list one at `Spec` naming `refinement-internal-list`, both together giving two refusals for the one declaration; each names the refinement and the profile identity and produces no node. A list with a resolution defect (`missing-name`, `conflicting-binding`, malformed) reports that defect and no support-set refusal for the list, and a value attributable to no refinement reports its defect alone. A producer that has built a feature is checked by that feature's own criteria, and this criterion places no test on it. | Test (TC-310) |
+| FR-375-AC-15 | A field row of type `Sequence<Reference<T_C>>[0, 2]` for an abstract `Sequence<Reference<T_A>>[0, 2]` field, and the row `Some(self.ring)` for an abstract `?` field of type `Reference<T_A>`, each use `nested-reference-row`: where the support set omits it, each refuses `unsupported_construct`/`not-yet-implemented` naming the feature at the row's expression, once per such row, and no node is produced; a whole-population reference row and a plain `Reference<T_C>` row for a `Reference<T_A>` field are admitted; a `Sequence<Reference<T_C>>` step argument for a `Sequence<Reference<T_A>>` parameter refuses `ill_typed`/`type-mismatch`. | Test (TC-310) |
+| FR-375-AC-16 | A refinement whose abstract model declares a relationship refuses `unsupported_construct`/`declaration-form` at the abstract alias of the header, once per refinement, naming the form, the refinement and the selected profile identity, whatever the producer's support set, and produces no node. | Test (TC-310) |
+| FR-375-AC-17 | `Some(e)` for `e` of type `E` is typed `Option<E>`; over an abstract `?` field of type `T`, the row `none` leaves the field absent and `Some(v)` sets it, and a row that is not `Option<T>`, including a bare `self.f` of a concrete `?` field, refuses `ill_typed`/`type-mismatch`; over an abstract `Option<T>` field the row's option value is taken unchanged; `none` with no field type or other `if` arm refuses `ill_typed`/`type-mismatch`; outside a refinement declaration `Some` is an ordinary identifier, so `Some(1)` in a state clause refuses `missing_declaration`/`missing-name` at `Some` when no function `Some` is declared and is a call to it when one is. | Test (TC-310) |
+| FR-375-AC-18 | In a refinement governed by `quire.temporal.infinite-trace/v1`, the ring-buffer rows `s.ring = self`, `(self.head + i) mod 2` and an `a div b` row are admitted even when the unit's own declarations select no layer, the lock selection counts the rows' layers (the `always` rows and exactly one integer-division law, `selection_trigger_unsatisfied` when none is selected), and a Boolean field row `ready = protocol Fill` naming a local protocol refuses `unsupported_construct`/`expression-form` at the `protocol` token naming `quire.protocol.complete/v1`, the layer that admits the form and that the rows' layer set lacks. | Test (TC-310) |
 
 ## Dependencies
 

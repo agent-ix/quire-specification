@@ -5,6 +5,12 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-375
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-001
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-090
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-250
+    type: verifies
 ---
 
 # TC-310: Refinement declaration admission
@@ -102,7 +108,53 @@ Mutations, each applied alone to the positive unit:
     then the lists `["Spec::Twice::zz"]` (no such node), a repeated
     spelling, `{}`, `[{"refinement": "Nope", "internal": []}]` and
     `[{"refinement": 7, "internal": []}]`, each with `refinement-internal-list`
-    omitted.
+    omitted;
+18. against a producer whose support set omits `nested-reference-row`, change
+    the positive unit so a `Sequence<Reference<Queue>>[0, 2]` abstract field
+    is mapped by a row of type `Sequence<Reference<Ring>>[0, 2]`, so an
+    abstract `?` field of type `Reference<Queue>` is mapped by
+    `Some(self.ring)`, and so a `Sequence<Reference<Ring>>` step argument is
+    given for a `Sequence<Reference<Queue>>` parameter; separately map a
+    whole-population reference row and a plain `Reference<Ring>` row to
+    `Reference<Queue>` fields;
+19. give the abstract `Queue` of the ring-buffer pair a relationship, under a
+    producer whose support set holds every feature;
+20. map a `?` abstract field by `none`, by `Some(self.value)`, by
+    `self.value` and by `self.f` over a concrete `?` field; map an
+    `Option<Int[0, 2]>` abstract field by `none`; map a field by `none` as a
+    call argument; write `Some(1)` in a state clause with no function `Some`
+    declared, and with one declared;
+21. under `quire.temporal.infinite-trace/v1` and a unit whose own declarations
+    select no layer, with the ring-buffer rows `s.ring = self` and
+    `(self.head + i) mod 2`, add a row `a div b`; supply the unit's
+    `integer_division_profile` choice as the lock selection's alternative
+    role, three times: floor, Euclidean and none; read the unit's lock
+    selection and `definition_selections` each time; then, in a separate run
+    on the floor-law unit, add exactly these declarations: the profiles
+    `profile p = "quire.protocol.complete/v1";` and
+    `profile m = "quire.model.complete/v1";` (the unit-level profile `m`
+    admits the clauses below and changes that run's lock selection, which the
+    run does not read; it does not widen the refinement's row layers); the
+    clauses `pre PutPre using m on R::Slot::put { self.ring.size < 2 }` and
+    `post PutPost using m on R::Slot::put { self.value = x }`; the protocol
+
+    ```text
+    protocol Fill using p over (k: R::Ring) on origin {
+      role w on R::Ring;
+      run sequence Main {
+        attempt A by w on R::Slot::put contracts [PutPre, PutPost] as (a: R::Ring) { true };
+      }
+      finish Done as (d: R::Ring) { true };
+    }
+    ```
+
+    (the shape of TC-376's `Fill`, written over the unit's own model `R`, with
+    typed bindings as the protocol grammar requires); the abstract `Queue`
+    field `ready: Boolean`; and the row `ready = protocol Fill`. The
+    refinement stays `using inf`, the infinite-trace alias, and the protocol
+    has its own alias `p`;
+22. a plain temporal clause under `quire.temporal.infinite-trace/v1`, with no
+    refinement, in a unit that selects no value layer.
 
 ## Expected Results
 
@@ -169,3 +221,26 @@ is produced and no other diagnostic is reported for the refused row. With
 `missing_declaration`/`missing-name` at `/0/refinement` and the number
 `malformed-declaration` at `/0/refinement`, with no support-set refusal for
 any of them.
+
+In mutation 18 each of the first three changes refuses
+`unsupported_construct`/`not-yet-implemented` naming `nested-reference-row` at
+its expression, except the step argument, which refuses `ill_typed`/
+`type-mismatch`, with no node, while the population-reference and
+plain-reference rows are admitted (FR-375-AC-15). In mutation 19 the
+declaration refuses `unsupported_construct`/`declaration-form` at the
+abstract alias of the header, once, naming the selected profile, with no node
+(FR-375-AC-16). In mutation 20 `none` and `Some(self.value)` are admitted for
+the `?` field, `self.value` and `self.f` refuse `ill_typed`/`type-mismatch`,
+the `Option<Int[0, 2]>` field takes `none` as an explicit `none`, `none` as a
+call argument refuses `ill_typed`/`type-mismatch`, and `Some(1)` refuses
+`missing_declaration`/`missing-name` at `Some` with no function declared and is
+a call to it with one declared (FR-375-AC-17). In mutation 21 the ring-buffer rows and the
+`a div b` row are admitted; the lock selection holds the lock's `always` rows
+and the floor law for the first run and the Euclidean law for the second, so
+`definition_selections` differ exactly in that role, and the third run refuses
+`selection_trigger_unsatisfied` (the canonical `division-missing-for-div-rem`
+vector); the `ready = protocol Fill` row, in the separate run, is the only refusal of that run (the other declarations listed are each admitted) and refuses `unsupported_construct`/
+`expression-form` at the `protocol` token naming `quire.protocol.complete/v1`, the layer that admits the form and that the rows' layer set lacks
+(FR-375-AC-18, FR-001-AC-7, FR-090-AC-10, FR-250-AC-8). In mutation 22 the
+clause is admitted and the unit's selection gains no value layer or lock row
+(FR-090-AC-10).

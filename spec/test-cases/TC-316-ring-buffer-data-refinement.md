@@ -33,7 +33,7 @@ refinement RingIsQueue using inf abstract Q concrete R {
   population Q::queues from R::rings;
   object Q::Queue from R::Ring {
     items = seq(i in 0 .. self.size - 1:
-              only(s in R::slots where s.ring = self and s.index = (self.head + i) mod 2: s.value));
+              only(s in R::slots where s.ring = self and convert<Integer>(s.index) = (self.head + i) mod 2: s.value));
   }
   step R::Slot::put  -> Q::Queue::enq(self.ring, x);
   step R::Slot::take -> Q::Queue::deq(self.ring);

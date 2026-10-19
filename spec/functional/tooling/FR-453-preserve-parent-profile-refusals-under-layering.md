@@ -84,7 +84,7 @@ refuses with a typed refusal stays refused under the child.
   a tool failure naming the case.
 - Each side's selected definitions follow FR-001: its layer and the layer's
   `requires` closure, plus the qualification rows the complete-value lock's
-  `package_selection` gives for those layers.
+  `package_selection` gives for those layers, counting the layers an infinite-trace profile requires for a refinement's rows (FR-001).
 - A case naming a pair of layers that is not one of E1 to E5 is a tool
   failure naming the case.
 - Each side compiles in the running build. No outcome is recorded or

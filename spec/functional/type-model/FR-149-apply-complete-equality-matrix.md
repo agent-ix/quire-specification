@@ -154,7 +154,7 @@ converts with no rounding step, loss, undefined or refused outcome.
 | `Decimal[c1,c2;s1,s2;m]` | `Decimal[c3,c4;s3,s4;m2]` | `s3 <= s1`, `s2 <= s4`, and either `s3 = s1` with `c3 <= c1` and `c2 <= c4`, or `s3 < s1` with `c3 <= min(c1,0)` and `max(c2,0) <= c4` |
 | `Decimal[c1,c2;0,0;m]` | `Integer` or `Int[..]` | the row for source `Int[c1,c2]` admits it |
 | quantity in unit `U` | quantity in unit `V` with an exact rational value | FR-142 admits the conversion |
-| `Reference<S>` | `Reference<T>` | the package selects `quire.model.complete/v1` and `S` conforms to `T` in the closed FR-151 effective view |
+| `Reference<S>` | `Reference<T>` | the package, or for a refinement row the governing infinite-trace profile, selects `quire.model.complete/v1` and `S` conforms to `T` in the closed FR-151 effective view |
 
 An unbounded `Integer` source converts only to `Integer`. No conversion to or
 from `Float32` or `Float64`, and no text-profile, enumeration, record, tuple,
