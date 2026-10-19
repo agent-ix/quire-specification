@@ -115,3 +115,9 @@ Round 5, against head f52e145.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-007 | fixed | f52e145: the row is now `ready = protocol Fill`, naming a protocol the unit declares, in a Boolean field, so FR-463 resolution and typing no longer produce their own refusals. The `Fill` body itself is not constructible over `R`: see new FND-008 |
+
+Round 6, against head b28038b.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-008 | still-open | b28038b: `Fill` is now written out over `R`, and its names exist in `R` (`R::Ring`, `R::Slot::put`, `PutPre`/`PutPost`, alias `p`). But the run is still not admissible as written, so the claim "the other declarations listed are each admitted" fails. (1) `as (a)` and `as (d)` give no type, and the grammar's attempt and finish productions take `'as', '(', parameter, ')'` with `parameter = ident, ':', type-ref` (shared-grammar.md:224-234, 537-544). QSL origin/main a44e86daf S1 parses the fixture verbatim to `invalid_syntax`/`unexpected-token` "expected `:`" at `(a)`. With `as (a: R::Ring)` and `as (d: R::Ring)` the same unit passes S1, S2 and S3. (2) `PutPre` and `PutPost` name no `using` alias, and the run adds no layer profile. `PutPre` reads `self.ring.size`, which is reference navigation and is admitted only under the complete-V1 facets (FR-019, FR-143-AC-11). A state clause needs an alias naming such a layer, and "add exactly these declarations" names none. Type the two bindings and give the clauses an alias, for example `profile m = "quire.model.complete/v1";` with `pre PutPre using m on R::Slot::put { ... }`, adding that profile to the run's list. That changes the run's lock selection, which this run does not read. |

@@ -130,25 +130,29 @@ Mutations, each applied alone to the positive unit:
     `integer_division_profile` choice as the lock selection's alternative
     role, three times: floor, Euclidean and none; read the unit's lock
     selection and `definition_selections` each time; then, in a separate run
-    on the floor-law unit, add exactly these declarations: the profile
-    `profile p = "quire.protocol.complete/v1";`; the clauses `PutPre` (a
-    precondition of `R::Slot::put`, `self.ring.size < 2`) and `PutPost` (its
-    postcondition, `self.value = x`); the protocol
+    on the floor-law unit, add exactly these declarations: the profiles
+    `profile p = "quire.protocol.complete/v1";` and
+    `profile m = "quire.model.complete/v1";` (the unit-level profile `m`
+    admits the clauses below and changes that run's lock selection, which the
+    run does not read; it does not widen the refinement's row layers); the
+    clauses `pre PutPre using m on R::Slot::put { self.ring.size < 2 }` and
+    `post PutPost using m on R::Slot::put { self.value = x }`; the protocol
 
     ```text
     protocol Fill using p over (k: R::Ring) on origin {
-      role w on R;
+      role w on R::Ring;
       run sequence Main {
-        attempt A by w on R::Slot::put contracts [PutPre, PutPost] as (a) { true };
+        attempt A by w on R::Slot::put contracts [PutPre, PutPost] as (a: R::Ring) { true };
       }
-      finish Done as (d) { true };
+      finish Done as (d: R::Ring) { true };
     }
     ```
 
-    (the shape of TC-376's `Fill`, written over the unit's own model `R`);
-    the abstract `Queue` field `ready: Boolean`; and the row `ready = protocol
-    Fill`. The refinement stays `using inf`, the infinite-trace alias, and
-    the protocol has its own alias `p`;
+    (the shape of TC-376's `Fill`, written over the unit's own model `R`, with
+    typed bindings as the protocol grammar requires); the abstract `Queue`
+    field `ready: Boolean`; and the row `ready = protocol Fill`. The
+    refinement stays `using inf`, the infinite-trace alias, and the protocol
+    has its own alias `p`;
 22. a plain temporal clause under `quire.temporal.infinite-trace/v1`, with no
     refinement, in a unit that selects no value layer.
 
@@ -236,7 +240,7 @@ and the floor law for the first run and the Euclidean law for the second, so
 `definition_selections` differ exactly in that role, and the third run refuses
 `selection_trigger_unsatisfied` (the canonical `division-missing-for-div-rem`
 vector); the `ready = protocol Fill` row, in the separate run, is the only refusal of that run (the other declarations listed are each admitted) and refuses `unsupported_construct`/
-`expression-form` at the `protocol` token naming `quire.model.complete/v1`
+`expression-form` at the `protocol` token naming `quire.protocol.complete/v1`, the layer that admits the form and that the rows' layer set lacks
 (FR-375-AC-18, FR-001-AC-7, FR-090-AC-10, FR-250-AC-8). In mutation 22 the
 clause is admitted and the unit's selection gains no value layer or lock row
 (FR-090-AC-10).
