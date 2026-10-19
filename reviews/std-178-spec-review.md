@@ -36,3 +36,10 @@ the token after `fair`), TC-310 mutation 11 traces it, and the old step 11 is
 renumbered consistently (the Expected Results say "step 12"). The weak and
 strong forms get different node ids both by AC-7 (any row change changes the
 id) and by AC-10 directly.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 847b7a2 adds `assume fair strong whole Impl::Counter::retryA;` and the unmarked strong row to TC-310 mutation 11. The expected results give both kind `strong`, granularity `whole`, and the same entry. |
+| FND-002 | fixed | 847b7a2 adds an `ix://agent-ix/quire-specification/FR-362` `references` relationship to FR-375's frontmatter. |

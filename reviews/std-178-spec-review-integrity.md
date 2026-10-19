@@ -44,3 +44,10 @@ tracked follow-up. Outside the diff, and not this PR's to fix: FR-375's
 header is `'abstract', ident`, a model alias only, but FR-432 admits an
 abstract protocol subject. QSpec does not spell how a declaration selects
 one. See the QSL scope-boundary review SR-12901 FND-002.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 847b7a2 rewrites FR-380's Fairness implication to work on kind, operation and granularity: strong in `F_A` implies weak or strong in `F_P`, weak implies only weak, and the `whole`-from-`each` rule keeps the kind rule. FR-380-AC-3 now covers strong-from-weak refusal and weak-from-strong transfer, and TC-317 case 4 adds all four vectors. QSL ADR-020 CO-3 was changed to match in quire-spec-language aea8326f7. |
+| FND-002 | fixed | 847b7a2 adds FR-375's reason for having no default kind: a refinement row is a fairness-set member that FR-380 compares by kind, so a silent `weak` would let a strong row that lost its keyword pass as a weaker constraint. AC-10 repeats it. |

@@ -32,3 +32,9 @@ the operation's node key. The refusal location for a kindless or unknown kind
 is pinned to the token after `fair`. Mutation 11 places a strong `whole` row
 on `retryA` beside the positive unit's weak `each` row; FR-362 keeps both
 kinds on one operation, so that is admitted.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 847b7a2 identifies a fairness row by its (kind, operation, granularity) triple, with an unwritten granularity read as `whole`. Two rows of one set with the same triple refuse `invalid_model_binding`/`conflicting-binding` naming both, and FR-375-AC-3 lists this. TC-310 mutation 11 adds the identical-pair and `weak`/`weak whole` vectors. QSL FR-137 was changed to the same refusal in aea8326f7. |
