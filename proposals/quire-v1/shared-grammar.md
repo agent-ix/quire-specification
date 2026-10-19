@@ -735,7 +735,7 @@ rules only.
   anywhere but the start of a `graph-body` (so none in a `from` or `to`
   operand, and none on a `unique path` clause, which has no body), and a
   temporal operator in an `if` condition, a `let` binding, or an operand of
-  an operand of a primary, such as a call argument or a quantifier body.
+  a primary, such as a call argument or a quantifier body.
   A `graph-relation` admits at most one binary temporal operator, as the
   temporal clause's `temporal-relation` does, so `c.a until c.b until c.c` is
   a syntax error and a chain is written `(c.a until c.b) until c.c`. `over` is
