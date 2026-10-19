@@ -19,6 +19,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-378
     type: references
+  - target: ix://agent-ix/quire-specification/FR-432
+    type: references
 ---
 
 # FR-375: Declare a refinement between two state models
@@ -52,8 +54,9 @@ productions below use the shared grammar's EBNF conventions and its `ident`,
 ```ebnf
 declaration    = … | refinement ;
 refinement     = 'refinement', ident, 'using', ident,
-                 'abstract', ident, 'concrete', ident,
+                 'abstract', abstract-subject, 'concrete', ident,
                  '{', { refinement-row }, '}' ;
+abstract-subject = ident, [ '::', member-name ] ;
 refinement-row = population-row | object-row | step-row
                | history-row | fairness-row ;
 population-row = 'population', model-name, 'from', model-name, ';' ;
@@ -75,7 +78,14 @@ fairness-row   = ('assume' | 'ensure'), 'fair', ( 'weak' | 'strong' ),
 ```
 
 The first `ident` after `using` names an infinite-trace profile alias; the
-idents after `abstract` and `concrete` name model aliases. In a step target
+`ident` after `concrete` names a model alias. The `abstract-subject` is
+either one `ident`, a model alias (a model subject), or `ident '::' name`, a
+model alias and the name of a protocol clause of that model (a protocol
+subject, for example `abstract Spec::Twice`). The parser recognizes the two
+spellings by the presence of `::` alone and never resolves either name; the
+checker resolves them at selection (below). A third segment, a leading or
+trailing `::` and a protocol name that is not a `member-name` refuse
+`invalid_syntax`/`unexpected-token` at the offending token. In a step target
 the first expression is the abstract receiver and each further argument is
 one per declared abstract parameter, in parameter order. A `fairness-row`
 with no granularity is `whole`, and its kind is written: `weak` or `strong`,
@@ -104,6 +114,20 @@ dependency package selected in the unit's `dependency_selections`. The
 contract clauses; the **concrete subject** is the declaring package. A
 profile alias that does not select `quire.temporal.infinite-trace/v1`
 refuses `unknown_profile`/`wrong-selection-role` at the alias.
+
+**Protocol subject.** When the `abstract-subject` is `alias::name`, `alias`
+resolves as above and `name` resolves to a checked protocol clause of the
+abstract model; the abstract subject is then a protocol subject
+([FR-425](../protocol/FR-425-define-protocol-subjects-and-state-keys.md)) and
+its step rows follow [FR-432](../protocol/FR-432-map-every-protocol-step-in-refinements.md).
+An alias that is not a model alias of the unit or a selected dependency, or a
+name that is not a protocol clause of that model (including a name that is an
+operation, a type or an unrelated declaration), refuses
+`missing_declaration`/`missing-name` at the unresolved segment. A single
+`ident` is always read as a model alias, so a protocol is never selected
+without its model alias. The protocol is part of the declaration's meaning,
+so the same model under two protocol names, or under none, gives different
+refinement nodes.
 
 **Population rows.** Each abstract population has exactly one row naming one
 concrete population as its source. An abstract population with no row
@@ -190,7 +214,9 @@ Its `semantic_type` is the concrete model declaration node, and its
 `dependencies` hold every node its rows name. Its body is
 `{"term": "refinement", "abstract", "profile", "populations", "objects",
 "steps", "histories", "assume", "ensure"}`: `abstract` is the abstract
-model's `PackageNodeKey`; `populations`, `objects`, `steps` and `histories`
+model's `PackageNodeKey`, and a protocol subject adds `protocol`, the
+selected protocol clause's `PackageNodeKey` (the entry is absent for a model
+subject); `populations`, `objects`, `steps` and `histories`
 hold one entry per row, each carrying its names as node keys and its
 expressions as `SemanticTerm`s; a step entry's `target` is
 `{"kind": "operation", "operation", "receiver", "arguments"}` with a
@@ -221,6 +247,7 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
 | FR-375-AC-8 | A request to check the whole declaration requires `temporal-satisfaction`, each per-step simulation obligation requires `operation-contract`, and neither requires `refinement`. | Test (TC-310) |
 | FR-375-AC-9 | A history row with an initial `history-literal` written as a negative or non-negative integer, `true`/`false`, `none`, a string, an exact number or a full-path enum member is admitted when its value is in the declared bounded type's value set; a literal of the right kind outside the value set or of the wrong kind (`5` or `true` for `Int[0, 4]`, `none` for a non-`Option` type) refuses `ill_typed`/`type-mismatch` at the literal; an unresolved enum path refuses `missing_declaration`/`missing-name`; a collection, record or float spelling refuses `invalid_syntax`/`unexpected-token`. | Test (TC-310) |
 | FR-375-AC-10 | An `assume` or `ensure` fairness row written `fair strong` is admitted with or without `each` or `whole`, and its emitted entry carries kind `strong`; the same row written `fair weak` carries kind `weak`, and the two rows give different refinement node ids; `fair` with no kind, or any kind other than `weak` or `strong`, refuses `invalid_syntax`/`unexpected-token` at the token, because a refinement row has no default kind. | Test (TC-310) |
+| FR-375-AC-11 | `abstract Spec` selects a model subject and `abstract Spec::Twice` selects the protocol clause `Twice` of `Spec`; the second is admitted and its node carries `protocol` beside `abstract`, and the same declaration with the protocol name changed or removed has a different node id. `abstract Spec::Thrice` (no such protocol), `abstract Spec::inc` (an operation) and `abstract Nope::Twice` (no such alias) refuse `missing_declaration`/`missing-name` at the unresolved segment; `abstract Spec::Twice::finish`, `abstract ::Twice`, `abstract Spec::` and `abstract Spec::1` refuse `invalid_syntax`/`unexpected-token` at the offending token. | Test (TC-310) |
 
 ## Dependencies
 
@@ -235,6 +262,9 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
   owns history and hidden fields.
 - [FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md) owns the
   claim-kind vocabulary.
+- [FR-432](../protocol/FR-432-map-every-protocol-step-in-refinements.md)
+  owns the step rows of a refinement whose abstract or concrete subject is a
+  protocol.
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns
   the productions this requirement extends.
 
@@ -242,4 +272,5 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
 
 - Design: quire-spec-language ADR-020 (RM-1 to RM-7, AX-1, QS-1, QS-4,
   QS-5, RU-1).
-- Tickets: Linear STD-133; paired QSL-367.
+- Tickets: Linear STD-133; paired QSL-367; Linear STD-182 (protocol abstract
+  subject).

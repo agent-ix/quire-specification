@@ -65,7 +65,14 @@ Mutations, each applied alone to the positive unit:
     `assume fair each Impl::Counter::beginA;` (no kind) and
     `assume fair always Impl::Counter::beginA;`;
 12. request the whole declaration and one per-step obligation for the
-    `commitA` row.
+    `commitA` row;
+13. give the abstract package a protocol clause `Twice` and write the header
+    `abstract Spec::Twice` (with the step rows FR-432 requires); then, each
+    alone, the same header changed to `abstract Spec::Thrice` (no such
+    protocol), `abstract Spec::inc` (an operation), `abstract Nope::Twice`
+    (no such alias), `abstract Spec::Twice::finish`, `abstract ::Twice`,
+    `abstract Spec::` and `abstract Spec::1`; and the plain header
+    `abstract Spec` for comparison.
 
 ## Expected Results
 
@@ -97,3 +104,11 @@ at the token after `fair` (FR-375-AC-10); the identical pairs, including the
 `conflicting-binding` naming both rows (FR-375-AC-3). In step 12 the whole
 declaration requires `temporal-satisfaction` and the step obligation
 `operation-contract` (FR-375-AC-8).
+In mutation 13 the `abstract Spec::Twice` header is admitted with a node
+that carries `protocol` beside `abstract`, and its node id differs from the
+plain `abstract Spec` header's node, which has no `protocol` entry;
+`Spec::Thrice`, `Spec::inc` and `Nope::Twice` each refuse
+`missing_declaration`/`missing-name` at the unresolved segment, while the
+three-segment, leading `::`, trailing `::` and `Spec::1` headers each refuse
+`invalid_syntax`/`unexpected-token` at the offending token, before any name
+is resolved (FR-375-AC-11).

@@ -76,6 +76,14 @@ both.
 
 ### A protocol on the abstract side
 
+A declaration selects an abstract protocol subject in its header, by
+`abstract <A>::<protocol>`, the `abstract-subject` production of
+[FR-375](../analysis/FR-375-declare-model-refinement.md): the model alias and
+the protocol clause's name, joined by `::`. A header with the alias alone
+selects the model subject, and this section does not apply. The parser
+distinguishes the two by the `::` and resolves neither; selection resolves
+the protocol and refuses an unknown one as FR-375 states.
+
 An abstract protocol subject's state is (model state, protocol state). The
 refinement mapping defines its visible model fields; its rest points,
 binders, queues and instances are hidden fields, tracked by the set of
@@ -107,6 +115,7 @@ FR-177 over the same product.
 | FR-432-AC-3 | A concrete protocol under `tso` with no `step memory flush` row refuses naming the `flush` kind; with the row it is admitted. | Test (TC-386) |
 | FR-432-AC-4 | A concrete step mapped by `stutter` that changes a mapped visible field refutes the refinement; one mapped to an abstract send whose label no enabled abstract step carries, after abstract internal steps, refutes it; with the matching abstract step enabled it passes. | Test (TC-386) |
 | FR-432-AC-5 | An abstract step absent from the profile's internal list is visible: a concrete internal step cannot match it. | Test (TC-386) |
+| FR-432-AC-6 | A declaration headed `abstract Spec::Req` over the abstract model alias `Spec` selects its protocol clause `Req`, and its step rows may name that protocol's nodes; the same rows under the header `abstract Spec` select a model subject and a row naming `node Spec::Req::Ask` refuses `missing_declaration`/`missing-name`. | Test (TC-386) |
 
 ## Dependencies
 
@@ -121,4 +130,4 @@ FR-177 over the same product.
 - Design: quire-spec-language ADR-027 PR-1 to PR-3 and RU-5; the refinement
   step rows of ADR-020 RU-1.
 - Tickets: Linear STD-140; paired QSL-396 (with STD-133 and QSL-367 for model
-  refinement).
+  refinement); Linear STD-182 for the abstract protocol subject header.

@@ -36,6 +36,7 @@ local Rust boundary.
 | SR-06 | SR-02 with `step Impl::P::a::S -> node Req::Ask;` | refuted: after `S`, `Ask` is enabled once, and the later `Do` step's label `Ask` has no enabled abstract step |
 | SR-07 | the concrete parallel `memory tso`, SR-02's rows | refuses `missing_declaration`/`missing-name` naming the memory step kind `flush`; with `step memory flush -> stutter;` admitted |
 | SR-08 | an abstract protocol whose profile's internal list is empty, and a concrete `stutter` row | the concrete internal step does not match any abstract step, since every abstract step is visible |
+| SR-09 | SR-02 headed `abstract Spec::Req` (`Spec` the abstract model alias, `Req` its protocol); then the same rows headed `abstract Spec` | the first selects the protocol and its `node Spec::Req::…` rows are admitted; the second is a model subject and those rows refuse `missing_declaration`/`missing-name` |
 
 ## Expected Results
 
