@@ -43,3 +43,14 @@ Ticket: STD-211. Looks for unstated failure orders, undefined failure kinds and 
 ## Verdict
 
 Not mergeable on this lens until FND-001 and FND-002 are fixed, since they leave the reported row and the settled verdict implementation-defined. Clean and consistent with QSL #1038: undefined outranks every undetermined row; the first undefined row in order is reported; an unmapped concrete subtype object or reference makes `map` undetermined and no object is dropped; the mapped state holds no relationship extent; the spans of the two new support-set refusals (the row's expression; the abstract alias) match QSL FR-135-AC-6/7.
+
+## Dispositions
+
+Round 1, against head 5a66bf9.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 5a66bf9: the evaluator stop is removed from the precedence; an internal fault settles the item `failed` per FR-383 (planner ruling); AC-9 states it |
+| FND-002 | fixed | 5a66bf9: FR-375's node now sorts field rows within an `objects` entry by field name bytes and FR-377 reads them in that order, so the reported row is fixed and FR-375-AC-7 holds for field rows. QSL #1038 (head 7a40570, open) still says "declaration order", returns at once on `Stopped`, keeps the `null` row and lists `abstract-relationships` as a support-set feature; those need a QSL revision |
+| FND-003 | fixed | 5a66bf9: `Option<Reference<T_C>>` (`Some(self.ring)`) is named as using `nested-reference-row`, with an AC-15 clause and a TC-310 mutation 18 vector |
+| FND-004 | fixed | 5a66bf9: a nested reference in a step argument or history update is not lifted and refuses `ill_typed`/`type-mismatch`; AC-15 and TC-310 mutation 18 cover the step argument |

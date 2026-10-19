@@ -5,8 +5,6 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-375
     type: verifies
-  - target: ix://agent-ix/quire-specification/FR-001
-    type: verifies
 ---
 
 # TC-310: Refinement declaration admission
@@ -119,11 +117,7 @@ Mutations, each applied alone to the positive unit:
     `self.value` and by `self.f` over a concrete `?` field; map an
     `Option<Int[0, 2]>` abstract field by `none`; map a field by `none` as a
     call argument; write `Some(1)` in a state clause with no function `Some`
-    declared, and with one declared;
-21. with the ring-buffer rows `s.ring = self` and `(self.head + i) mod 2`,
-    give the refinement's `using` alias a profile declaration that names
-    `quire.value.complete/v1` and `quire.model.complete/v1` while the unit's
-    own declarations select no layer; then an alias naming no layer.
+    declared, and with one declared.
 
 ## Expected Results
 
@@ -203,7 +197,4 @@ the `?` field, `self.value` and `self.f` refuse `ill_typed`/`type-mismatch`,
 the `Option<Int[0, 2]>` field takes `none` as an explicit `none`, `none` as a
 call argument refuses `ill_typed`/`type-mismatch`, and `Some(1)` refuses
 `missing_declaration`/`missing-name` at `Some` with no function declared and is
-a call to it with one declared (FR-375-AC-17). In mutation 21 the rows are
-admitted under the alias naming the layers, and under the alias naming none
-each refuses `unsupported_construct`/`expression-form` naming the selected
-layer, at the `mod` and at the comparison (FR-375-AC-18, FR-001-AC-7).
+a call to it with one declared (FR-375-AC-17).

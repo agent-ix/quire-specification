@@ -7,6 +7,8 @@ relationships:
     type: implements
   - target: ix://agent-ix/quire-specification/FR-375
     type: references
+  - target: ix://agent-ix/quire-specification/FR-383
+    type: references
   - target: ix://agent-ix/quire-specification/FR-376
     type: references
   - target: ix://agent-ix/quire-specification/FR-378

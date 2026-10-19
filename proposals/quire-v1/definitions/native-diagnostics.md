@@ -225,8 +225,7 @@ upstream meaning cannot establish a native semantic result.
 
 ## Undefined reasons
 
-An `undefined` evaluation outcome of a package selecting `quire.model.complete/v1`,
-or of a refinement row admitted under that layer (FR-375, Row layers),
+An `undefined` evaluation outcome of a package selecting `quire.model.complete/v1`
 that names a reason carries exactly one of these closed reasons. A reason is not
 a refusal code or cause and does not make the outcome refused.
 

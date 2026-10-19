@@ -39,3 +39,12 @@ Ticket: STD-211. The PR edits no FR statement sentence; it adds normative body p
 ## Verdict
 
 Mergeable on this lens after FND-001; FND-002 is a precision gap. Clean: the support-set refusal sentence ("the checker SHALL refuse ... once for each field row of nested-reference type (at the row's expression) and once per refinement that has an abstract relationship (at the abstract alias of the header)") is determinate with code, cause, locus and count; FR-377's failure precedence is stated as ordered, exclusive conditions; FR-376's sum bound and `only-not-one` sentence are determinate.
+
+## Dispositions
+
+Round 1, against head 5a66bf9.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 5a66bf9: the implicit-reading sentence is replaced by "A row reads a concrete `?` field only through `present` and `value` (FR-143); a bare `self.f` of a `?` field is `ill_typed`/`type-mismatch` in a row as anywhere else" |
+| FND-002 | fixed | 5a66bf9: `none` takes its type from the abstract field at a field row or the other `if` arm, and refuses `ill_typed`/`type-mismatch` otherwise; `Option<Reference<T_C>>` from `Some(self.ring)` is placed under `nested-reference-row` |

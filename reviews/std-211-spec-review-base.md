@@ -51,3 +51,19 @@ Ticket: STD-211. Base checklist (ID formats, duplicates, AC-to-TC coverage, matr
 ## Verdict
 
 Not mergeable on this lens until FND-001 and FND-002 give FR-377-AC-9 and AC-11 constructible vectors. Every other new criterion parses, names a TC, and that TC carries a matching step: FR-375-AC-15/16 (TC-310 mutations 18/19), AC-18 (mutation 21), FR-376-AC-5 (TC-311 step 2, TC-316), AC-6/7/8 (TC-311 steps 6/7/8), FR-377-AC-10 (TC-315 case 8). The `convert<Integer>` spelling is applied in all three copies of the ring row (FR-376-AC-5, TC-311, TC-316), no stale `s.index = (self.head` copy remains, and it matches QSL #1038's ADR-020 §8 text. The sum bound matches QSL FR-139 (#1038).
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | medium | The rewritten case 7 fixture puts the `also` row in the variant used by every run, but `also = only(s in R::slots where s.ring = self: s.value)` matches both slots of `r` and is undefined at the held state. Read that way, `also` (the lower field name) is the reported undefined row in (a), (b) refutes instead of being undetermined for `SubRing`, and (d) refutes instead of being undetermined for the `next` row, so the expected results for (a), (b) and (d) are wrong. Only (c) says "with the `also` row". Run (d)'s ring `a` (type `Ring`) also has no stated `head`/`size`, so whether its `items` row is defined is unstated. Say that `also` is added only in (c), and give ring `a`'s state in (d). | spec/test-cases/TC-315-refinement-undetermined-and-replay.md:44-57,78-84 |
+
+## Dispositions
+
+Round 1, against head 5a66bf9.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 5a66bf9: the fixture now declares `SubRing` and `next: Reference<Ring>`; case 7 (d) covers a reference to an unmapped object and (e) reads the relationship extent; expected results cite FR-377-AC-11 |
+| FND-002 | fixed | 5a66bf9: the zero-budget run and the injected evaluator stop are gone; each run now uses an `only` that is undefined at the held state and the `SubRing` object. The `also` row's scope across the runs is now ambiguous: see new FND-004 |
+| FND-003 | fixed | 5a66bf9: AC-17 and TC-310 mutation 20 now expect `missing_declaration`/`missing-name` at `Some` with no function declared and a call with one |
