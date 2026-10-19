@@ -36,7 +36,7 @@ item's settlement.
 | AC-07 | a choice guard reading `x.v` directly, under `memory tso`, under `memory sc`, and under source `sc` with a `tso` selection; then the guard rewritten over the binder of a load attempt of `x.v` | each direct read refuses `ill_typed`/`operator-ineligible` at the read naming `(x, v)`; the rewritten guard is admitted |
 | AC-08 | under `tso`, a load `L` with precondition `x.v = 1` after the other thread's buffered store `x := 1` | `L` is not enabled until the store is flushed |
 | AC-09 | under `tso`, an RMW `cas(0, 1)` on `x` whose post-state leaves `x` unchanged because `x = 1` | a load with the read part of its ordering: no locked write occurs |
-| AC-10 | `fence F ordering relaxed;` | refuses `ill_typed`/`operator-ineligible` |
+| AC-10 | `fence F ordering relaxed;` | `refused { code: invalid_syntax, cause: unexpected-token }` at `relaxed` |
 | AC-11 | `fence F ordering seq_cst;` | a `fence` step with transition identity members `thread`, `node` and `ordering`, uncounted for intervals |
 
 ## Expected Results
