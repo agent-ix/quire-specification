@@ -36,3 +36,9 @@ Ticket: STD-173. This review checks the author's scope decisions.
 
 The scope decisions hold. FND-001 should go to a follow-up ticket and does
 not block this PR.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | deferred | The zero-instance hyperproperty outcome in QSpec FR-399 and QSL FR-172 is tracked as STD-175 (Backlog), outside STD-173. |

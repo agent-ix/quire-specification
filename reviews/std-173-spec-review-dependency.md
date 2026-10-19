@@ -41,3 +41,10 @@ without `NoInstance`.
 No HIGH findings. FND-001 is a one-sentence ordering fix in FR-361 that keeps
 it aligned with merged QSL FR-125. FND-002 is a QSL ADR follow-up and does not
 block this PR.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 (2ab5425). FR-361 now runs `requires-bound` classification first, decides zero instances only over bounded universes, and says a matching population with no universe is `requires-bound`, never `no-instance`. This matches QSL FR-125. FR-361-AC-8 and TC-294 step 7 test both subjects. |
+| FND-002 | deferred | QSL-side ADR-018 amendment, tracked as STD-174 (Backlog). |

@@ -60,3 +60,18 @@ schema and vectors are consistent and pass TC-431. FND-001 should be fixed
 before merge: add a TC-431 row and a trace tag for AC-24, and add a
 `no-initial-state` result and a misspelled-cause adverse vector, or narrow
 AC-24 to what the vector shows. The low findings are optional.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-005 | low | The new adverse vector `temporal-cause-no-initial-state-underscore` opens with `{` at column 0 instead of the file's 4-space array indent. It is the only such line besides the root brace. The JSON is valid, so this is layout only. | proposals/backend-provider-v1/vectors.json:3132 | wrong-requirement |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 (2ab5425). The criterion is renumbered FR-331-AC-28. TC-431 row BP-18 cites it, and `#[trace("TC-431","FR-331-AC-28")]` is on the positive and adverse tests; quoin matrix reports it tagged. The `temporal-outcome` vector carries result 6 `no-initial-state` beside result 5 `no-instance`. Adverse vectors `temporal-cause-no-instances` and `temporal-cause-no-initial-state-underscore` are refused. cargo test backend_provider_v1: 9/9 pass. Dispositions, results and accounting all run 0..6. |
+| FND-002 | fixed | Round 1: the heading is now "Wire spellings of result causes and proof bases". |
+| FND-003 | fixed | Round 1: TC-294 step 7 names `config_history` with an empty universe list, and adds a second subject with no universe that expects `requires-bound`. |
+| FND-004 | fixed | Round 1: renumbered FR-331-AC-28 and BP-18, past draft #200's FR-331-AC-24..27 and BP-11..17. Whichever of #200 and #280 lands second rebases vectors.json. |
