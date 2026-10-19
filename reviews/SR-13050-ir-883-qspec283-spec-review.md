@@ -69,3 +69,16 @@ Disposition pass 1, against head 78abc809a95ca92c2e426e0d78569566d1f81aec (fix c
 | FND-006 | fixed | FR-307 gets producer prose and FR-307-AC-7 (chain A->B->C: A emits exactly B, and recompiling does not certify an A lock that also lists C), with TC-227 L10 planned. The AC can fail: a closure-listing producer violates it |
 | FND-007 | fixed | The "iff" is gone. Depth is defined in edges, and the text says importers change recursively when a direct dependency's id changes |
 | FND-008 | fixed | BP-08 now swaps the first and second entries, with the third left in place |
+
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-011 | medium | The selecting-lock clause added to FR-323 rule 4 in round 1 cannot be evaluated from a replay request. Each `dependencies` entry carries only `{identity, package_id, sources}`, and `byte_provision` carries sources, definitions and domain packages, so the selecting package's original lock is never supplied. The executor sees only the lock it recompiles, and that lock selects the supplied entry by construction. So in the new BP-10, recompiling the selecting dependency B against the edited C gives a `package_id` other than B's entry, and rule 4's main clause refuses B's entry (naming B's identity, declared and recompiled ids). It never refuses at a "selecting dependency package's direct-lock pointer" naming C, which also points into no document. Round 1 disposed FND-005 as fixed without catching this. Suggested fix: drop the selecting-lock clause (rules 4 and 5 already catch the case), and make BP-10 expect the stale-B refusal; or add the selecting packages' locks to the request | spec/objects/interfaces/FR-323-native-runtime-envelope.md:62-68; spec/test-cases/TC-277-replay-byte-provision.md:48 |
+
+Disposition pass 2, against head ccf90a2a988731c971bae7886ca0861716354544 (fix commit c544705). The committed reviews/ copies equal the reviewer's round-1 files. The vectors are unchanged since round 1. `quire validate` gives only the pre-existing FR-322, FR-323 and FR-331 structural errors (3 documents, as on main). `cargo test` and clippy pass. The matrix is unchanged from round 1 (132 tagged / 1817 untagged). A grep of schemas, proposals and READMEs finds no remaining text saying the lock's `dependency_selections` names every package to supply. BP-06 is unchanged and not weakened. BP-10 reuses an id retired in d07b11f (a former `version` vector), which is harmless here.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-009 | fixed | The schema.json `dependencies` description now reads "the v2 bytes of each package in the proved package's recursively derived dependency closure, including transitive-only packages, ordered by package_id digest" |
+| FND-010 | fixed | BP-07 now names the entry's "declared `package_id`", not the proved package's lock pin, and BP-10 adds a row for the selecting-lock refusal. Whether that refusal can actually occur is a separate defect, FND-011 |
