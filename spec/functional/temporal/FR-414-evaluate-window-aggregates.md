@@ -86,7 +86,7 @@ predicate is undefined at a position the filter admits (for example a
 division by zero), the atom evaluates `Undefined` with the cause of the first
 such position, and the evaluator stops there. This is an undefined evaluation
 of the clause: the result is `UndefinedEvaluation{where, cause}`, `where` the
-position at which the clause is evaluated, in the O-16 category violation,
+first position at which the atom is undefined (QSL FR-327), in the O-16 category violation,
 as for the same expression in a plain `holds` atom. The evaluator never skips
 the position, so a window result never improves by the loss of a position it
 could not evaluate. A value expression is read only at admitted positions.
