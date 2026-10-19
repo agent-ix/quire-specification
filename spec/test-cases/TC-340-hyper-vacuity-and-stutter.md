@@ -27,6 +27,7 @@ Run each vector through the real local Rust boundary with the explicit-state eng
 | VS-02 | a model where one run reaches a terminal state after one step and another after two, with `match { a.step.op = b.step.op }` and a body comparing a field | the one-step run's component stutters with label `stutter` and is paired only with a stuttering component; the verdict and any counterexample replay |
 | VS-03 | HB-01 with the match conjunct `a.step.receiver = b.step.receiver` added, on the secure vault whose `step` also requires `self.l = 0`, so both components of a matched pair reach a terminal state and then take their terminal-stutter step; then a match conjunct whose argument read is refused at a reachable joint step | both receivers are none at the stutter steps, the conjunct holds, and the clause is `proved`, `closed-scope`, with no undefined evaluation; `inconclusive`, `match-undetermined` |
 | VS-04 | a request with HB-02 over aliases `S` and `N` | exactly two deadlock-freedom items, one per subject; the hyper item reports no deadlock |
+| VS-05 | HB-01's clause under universes where `Vault` has no object; then HB-02's clause with the `S::Device` universe empty and `N::Device` of 3 keys, then with `N::Device` empty and `S::Device` of 2 keys; then HB-01's clause with the `Vault` population given no universe | the first three settle `inconclusive`, `unsettled`, `no-instance` before any state is explored (FR-399-AC-11); the last returns `requires-bound` |
 
 ## Expected Results
 
