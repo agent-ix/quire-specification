@@ -33,7 +33,7 @@ the run limit `max_window_values`.
 ## Outputs
 
 A Boolean value of each aggregate atom at each position, or the kernel's
-no value with cause `insufficient-data{count, min_count}` when the window lacks data, or the kernel's no value carrying the cause of the first undefined window position, or `incomplete`, `limit-reached` naming the limit.
+no value with cause `insufficient-data{count, min_count}` when the window lacks data, or `Undefined` carrying the cause of the first undefined window position (an `UndefinedEvaluation`), or `incomplete`, `limit-reached` naming the limit.
 
 ## Behavior
 
@@ -83,16 +83,17 @@ violation nor a holding result for that position.
 The evaluator visits the window's positions oldest first. When the filter is
 undefined at a visited position, or the value expression or the `fraction`
 predicate is undefined at a position the filter admits (for example a
-division by zero), the atom has no value, carrying the cause of the first such
-position unchanged (`division-by-zero` in the example), and the evaluator
-stops there. The monitor clause at that position settles in the O-16 category
-`undefined` with that cause. The evaluator never skips the position, so a
-window result never improves by the loss of a position it could not evaluate.
-A value expression is read only at admitted positions. Later positions are not
-visited, so a later overflow of `max_window_values` is not reached. The cause
-is distinct from `insufficient-data`; when the window is also short of
-`min_count`, the atom carries the undefined position's cause, the first fault
-found.
+division by zero), the atom evaluates `Undefined` with the cause of the first
+such position, and the evaluator stops there. This is an undefined evaluation
+of the clause: the result is `UndefinedEvaluation{where, cause}`, `where` the
+position at which the clause is evaluated, in the O-16 category violation,
+as for the same expression in a plain `holds` atom. The evaluator never skips
+the position, so a window result never improves by the loss of a position it
+could not evaluate. A value expression is read only at admitted positions.
+Later positions are not visited, so a later overflow of `max_window_values`
+is not reached. `insufficient-data` is not this case: it stays O-16
+`undefined` and is never `UndefinedEvaluation`. When the window is also short
+of `min_count`, the undefined position's cause wins, the first fault found.
 
 ### Memory
 
@@ -122,7 +123,7 @@ consumes the derived signal unchanged.
 | FR-414-AC-4 | A threshold in another unit of the value's dimension converts exactly; a dimension mismatch refuses `ill_typed`/`unit-mismatch`. | Test (TC-366) |
 | FR-414-AC-5 | A window exceeding `max_window_values` yields `incomplete`, `limit-reached` naming the limit, its value and how to raise it. | Test (TC-366) |
 | FR-414-AC-6 | An aggregate atom over a model subject refuses `unsupported_construct`/`expression-form`; a holding monitor result is `tested`. | Test (TC-366) |
-| FR-414-AC-7 | The atom has no value, carrying the cause of the first undefined window position oldest first, when the filter is undefined at a position or the value expression or `fraction` predicate is undefined at an admitted position; a position is never skipped, positions after it are not visited, and a guard filter that rejects the position keeps the atom defined. | Test (TC-366) |
+| FR-414-AC-7 | The atom is `Undefined` with the cause of the first undefined window position oldest first, when the filter is undefined at a position or the value expression or `fraction` predicate is undefined at an admitted position; the clause result is `UndefinedEvaluation` in the O-16 category violation, never `undefined` and never a holding result; a position is never skipped, positions after it are not visited, and a guard filter that rejects the position keeps the atom defined. | Test (TC-366) |
 | FR-414-AC-8 | One evaluation charges one unit of clause work per window position visited, including positions the filter rejects, and up to and including the first undefined position. | Test (TC-366) |
 
 ## Dependencies
