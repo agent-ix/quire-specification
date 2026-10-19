@@ -122,12 +122,11 @@ refuses `unknown_profile`/`wrong-selection-role` at the alias.
 resolves as above and `name` resolves among the protocol clauses of the
 abstract subject package, the package that holds the abstract model
 ([FR-425](../protocol/FR-425-define-protocol-subjects-and-state-keys.md) makes
-a clause a member of its package). When the unit has two `model` imports and
-the abstract model is the unit's own, the abstract subject package is the
-declaring package, and a clause of that package is selectable only if it
-acts on the aliased abstract model; a clause whose roles act only on the
-concrete model alias, or on another model, refuses
-`invalid_model_binding`/`malformed-declaration` at the name. The abstract
+a clause a member of its package). A clause is selectable only if it
+acts on the aliased abstract model, in every case: a clause of a dependency
+package that imports several models, or of the declaring package when the
+unit imports both models itself, whose roles act only on another model
+refuses `invalid_model_binding`/`malformed-declaration` at the name. The abstract
 subject is then a protocol subject and its step rows follow
 [FR-432](../protocol/FR-432-map-every-protocol-step-in-refinements.md). An
 alias that is not a model alias of the unit or a selected dependency, or a
@@ -260,7 +259,7 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
 | FR-375-AC-8 | A request to check the whole declaration requires `temporal-satisfaction`, each per-step simulation obligation requires `operation-contract`, and neither requires `refinement`. | Test (TC-310) |
 | FR-375-AC-9 | A history row with an initial `history-literal` written as a negative or non-negative integer, `true`/`false`, `none`, a string, an exact number or a full-path enum member is admitted when its value is in the declared bounded type's value set; a literal of the right kind outside the value set or of the wrong kind (`5` or `true` for `Int[0, 4]`, `none` for a non-`Option` type) refuses `ill_typed`/`type-mismatch` at the literal; an unresolved enum path refuses `missing_declaration`/`missing-name`; a collection, record or float spelling refuses `invalid_syntax`/`unexpected-token`. | Test (TC-310) |
 | FR-375-AC-10 | An `assume` or `ensure` fairness row written `fair strong` is admitted with or without `each` or `whole`, and its emitted entry carries kind `strong`; the same row written `fair weak` carries kind `weak`, and the two rows give different refinement node ids; `fair` with no kind, or any kind other than `weak` or `strong`, refuses `invalid_syntax`/`unexpected-token` at the token, because a refinement row has no default kind. | Test (TC-310) |
-| FR-375-AC-11 | `abstract Spec` selects a model subject; `abstract Spec::Twice` and `abstract Spec::Twice2`, two protocol clauses of the abstract package with identical operation-target rows, are each admitted, and the three declarations (`Spec`, `Spec::Twice`, `Spec::Twice2`) have three distinct node ids, the protocol subjects carrying `protocol` and listing the clause among `dependencies`. `abstract Spec::Thrice` (no such clause), `abstract Spec::Counter` (a type), `abstract Spec::counters` (a population) and `abstract Nope::Twice` (no such alias) refuse `missing_declaration`/`missing-name` at the unresolved segment (`Thrice`, `Counter`, `counters`, `Nope`); a clause of the declaring package that acts only on the concrete alias refuses `invalid_model_binding`/`malformed-declaration` at the name. Syntax refusals are `invalid_syntax`/`unexpected-token` at these tokens: `abstract Spec::Twice::finish concrete Impl` at the second `::`; `abstract ::Twice` at the `::`; `abstract Spec:: concrete Impl` at `Impl` (`concrete` is read as the name); `abstract Spec:: {` at the `{`; `abstract Spec::1` at the `1`. | Test (TC-310) |
+| FR-375-AC-11 | `abstract Spec` selects a model subject; `abstract Spec::Twice` and `abstract Spec::Twice2`, two protocol clauses of the abstract package with identical operation-target rows, are each admitted, and the three declarations (`Spec`, `Spec::Twice`, `Spec::Twice2`) have three distinct node ids, the protocol subjects carrying `protocol` and listing the clause among `dependencies`. `abstract Spec::Thrice` (no such clause), `abstract Spec::Counter` (a type), `abstract Spec::counters` (a population) and `abstract Nope::Twice` (no such alias) refuse `missing_declaration`/`missing-name` at the unresolved segment (`Thrice`, `Counter`, `counters`, `Nope`); a clause of the abstract package that acts only on another model refuses `invalid_model_binding`/`malformed-declaration` at the name. Syntax refusals are `invalid_syntax`/`unexpected-token` at these tokens: `abstract Spec::Twice::finish concrete Impl` at the second `::`; `abstract ::Twice` at the `::`; `abstract Spec:: concrete Impl` at `Impl` (`concrete` is read as the name); `abstract Spec:: {` at the `{`; `abstract Spec::1` at the `1`. | Test (TC-310) |
 
 ## Dependencies
 

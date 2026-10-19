@@ -54,3 +54,17 @@ fixtures). No AC, TC vector or file collides with open QSpec PRs #283, #274,
 QSL `internal`/`visible` rows is stale: QSL #992 (merged) already removed
 them from FR-147, FR-148, TC-552 and ADR-020 RM-9/QS-11; nothing in the diff
 depends on that note.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | medium | The new `Spec::Wrong` vector expects `invalid_model_binding`/`malformed-declaration` for "a clause of the declaring package that acts only on `Impl`", but FR-375 gives that refusal only "when the unit has two `model` imports and the abstract model is the unit's own". TC-310's subject puts the abstract model in a separate abstract package (`example/counter-spec`), and AC-11 states the vector without the precondition. Under that setup the lookup runs among the abstract package's clauses, finds no `Wrong`, and FR-375 gives `missing_declaration`/`missing-name`. Either state that this vector uses a unit importing both models directly, or make `Wrong` a clause of the abstract package that acts only on another model. | spec/functional/analysis/FR-375-declare-model-refinement.md:121-130,263; spec/test-cases/TC-310-refinement-declaration-admission.md:20-23,75-76,116-117 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 262aae1 changes FR-432-AC-6, a new FR-432 Behavior sentence and TC-386 SR-09 to `invalid_model_binding`/`malformed-declaration` at the node, matching QSL FR-147 Behavior and AC-2. |
+| FND-002 | fixed | 262aae1 rewrites TC-310 mutation 13 and AC-11: clauses `Twice` and `Twice2` with identical bodies, identical operation-target rows under `Spec::Twice`, `Spec::Twice2` and `Spec`, all admitted with three distinct node ids. |
+| FND-003 | fixed | 262aae1 drops `Spec::inc` and adds `Spec::Counter` (a type) and `Spec::counters` (a population) to AC-11 and TC-310, and FR-375 states that a two-segment name is looked up among protocol clauses only. |

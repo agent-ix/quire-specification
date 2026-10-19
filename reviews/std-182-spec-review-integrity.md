@@ -35,3 +35,11 @@ vectors ambiguous to a test author. FND-003 is a one-clause fix.
 AC ids are fresh (FR-375-AC-11, FR-432-AC-6), each AC is traced to a TC
 that verifies its FR, and TC-310 mutation 13 and TC-386 SR-09 follow their
 files' numbering.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 262aae1 states the header `abstract Spec::Req` for every TC-386 vector except SR-09's second half, and spells SR-02 and SR-06 as `node Spec::Req::Ask` and `node Spec::Req::Done`. |
+| FND-002 | fixed | 262aae1 names the refusal token for each syntax vector in AC-11 and TC-310 (second `::`, leading `::`, `Impl`, `{`, `1`), and FR-375 and the shared grammar state that the token after `::` is always read as the name. |
+| FND-003 | fixed | 262aae1 adds to FR-375 that the selected protocol clause's node is one of the node's `dependencies`; AC-11 and TC-310 check it. |

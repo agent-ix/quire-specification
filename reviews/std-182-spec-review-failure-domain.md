@@ -29,3 +29,15 @@ model under two protocols, or under none, gives different ids; a model
 subject omits the key rather than writing `null`, matching FR-322; parse
 refusals come before any resolution, so a syntax error never depends on
 which names exist.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | The fix requires a selected clause to act on the aliased abstract model only when the abstract model is the unit's own. When the abstract model comes from a dependency package that imports more than one model, a clause of that package whose roles act only on another of its models is still selectable as `Spec::P`. The same identity confusion remains on that path. Stating the "acts on the aliased model" rule for every abstract subject package closes it. | spec/functional/analysis/FR-375-declare-model-refinement.md:121-130 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 262aae1 scopes the lookup to the abstract subject package (citing FR-425) and refuses `invalid_model_binding`/`malformed-declaration` for a declaring-package clause that acts only on the concrete or another model. The dependency-package path is FND-002. |

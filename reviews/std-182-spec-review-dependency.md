@@ -32,3 +32,9 @@ ADR-020 QS-11) points at QSpec FR-375, which now owns the production.
 Follow-ups outside this diff: QSL FR-310's note that the protocol side "has
 no QSpec production yet" and ADR-020 QS-11's owner list ("QSpec FR-375 and
 FR-177", no FR-432) go stale once this merges.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 262aae1 adds an `ix://agent-ix/quire-specification/FR-375` `references` relationship to FR-432's frontmatter. |
