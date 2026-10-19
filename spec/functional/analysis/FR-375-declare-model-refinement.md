@@ -11,6 +11,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-151
     type: references
+  - target: ix://agent-ix/quire-specification/FR-362
+    type: references
   - target: ix://agent-ix/quire-specification/FR-376
     type: references
   - target: ix://agent-ix/quire-specification/FR-377
@@ -68,7 +70,7 @@ history-row    = 'history', type-name, '.', member-name, ':',
                  '{', { 'on', operation-name, ':', expr, ';' }, '}' ;
 history-literal = signed-int | 'true' | 'false' | 'none' | string
                 | exact-number | qualified-name ;
-fairness-row   = ('assume' | 'ensure'), 'fair', 'weak',
+fairness-row   = ('assume' | 'ensure'), 'fair', ( 'weak' | 'strong' ),
                  [ 'each' | 'whole' ], operation-name, ';' ;
 ```
 
@@ -76,7 +78,15 @@ The first `ident` after `using` names an infinite-trace profile alias; the
 idents after `abstract` and `concrete` name model aliases. In a step target
 the first expression is the abstract receiver and each further argument is
 one per declared abstract parameter, in parameter order. A `fairness-row`
-with no granularity is `whole`. The shared grammar has no general `literal`
+with no granularity is `whole`, and its kind is written: `weak` or `strong`,
+with the meaning of [FR-362](../temporal/FR-362-apply-fairness-constraints.md).
+The kind has no default here. [FR-362](../temporal/FR-362-apply-fairness-constraints.md)
+reads an unwritten kind as `weak` in a temporal clause, where `fair` is one
+word of a clause that already states its subject; a refinement row is a
+member of a fairness set that a transfer later compares by kind
+([FR-380](FR-380-transfer-claims-through-refinement.md)), and a silent
+`weak` would let a strong row that lost its keyword pass as a weaker
+constraint, so a kindless `fair` refuses. The shared grammar has no general `literal`
 production; the initial value of a history row is a `history-literal`, a
 closed list of constant spellings: an integer, `true`, `false`, `none`, a
 string, an `exact-number`, or a `qualified-name` that names an enum member.
@@ -162,8 +172,16 @@ member of an enum other than the declared type refuses
 
 **Fairness rows.** `assume` rows form the concrete fairness set `F_C` and
 name concrete operations; `ensure` rows form the abstract fairness set `F_A`
-and name abstract operations. A row naming an operation of the other model
-refuses `missing_declaration`/`missing-name`. Either set may be empty.
+and name abstract operations. Each row is a weak or a strong constraint of its
+operation and granularity, so a strong row constrains the set as FR-362
+states; the kind is part of the row, and `fair weak each op` and
+`fair strong each op` are different rows. A row is identified by its
+triple of kind, operation and granularity, with an unwritten granularity
+read as `whole`; two rows of one set with the same triple, written alike or
+not (`fair weak op` and `fair weak whole op`), refuse
+`invalid_model_binding`/`conflicting-binding`, naming both rows. A row naming an operation of the
+other model refuses `missing_declaration`/`missing-name`. Either set may be
+empty.
 
 **Checked-package node.** An admitted declaration is one
 `quire.checked-semantic-graph/v2` node with `node_tag: "relation"` and
@@ -177,8 +195,9 @@ hold one entry per row, each carrying its names as node keys and its
 expressions as `SemanticTerm`s; a step entry's `target` is
 `{"kind": "operation", "operation", "receiver", "arguments"}` with a
 `{"term": "open"}` term for each `_`, or `{"kind": "stutter"}`, or
-`{"kind": "any"}`; `assume` and `ensure` hold `{operation, granularity}`
-entries with `granularity` exactly `each` or `whole`. Every array is sorted
+`{"kind": "any"}`; `assume` and `ensure` hold `{operation, kind, granularity}`
+entries with `kind` exactly `weak` or `strong` and `granularity` exactly
+`each` or `whole`. Every array is sorted
 ascending by the node-key digest of its first named declaration, then by
 member name as UTF-8 bytes. The node enters the identity projection, so it
 enters the `package_id` and the obligation identity of every item that
@@ -194,13 +213,14 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
 | --- | --- | --- |
 | FR-375-AC-1 | A declaration with one population row per abstract population, one well-typed object row per admitted abstract type, one step row per concrete operation and well-typed history and fairness rows is admitted and emitted as one `relation`/`refinement` node whose body carries every row. | Test (TC-310) |
 | FR-375-AC-2 | A concrete operation with no step row refuses `missing_declaration`/`missing-name` naming the operation, and the declaration is not admitted with any default target; the same declaration with `step … -> any;` written for it is admitted. | Test (TC-310) |
-| FR-375-AC-3 | An abstract population with no row refuses `missing_declaration`/`missing-name`; a second row for one population, a field named twice, a second step row for one operation and a second history update for one operation each refuse `invalid_model_binding`/`conflicting-binding` naming both rows. | Test (TC-310) |
+| FR-375-AC-3 | An abstract population with no row refuses `missing_declaration`/`missing-name`; a second row for one population, a field named twice, a second step row for one operation, a second history update for one operation and two fairness rows of one set with the same kind, operation and granularity each refuse `invalid_model_binding`/`conflicting-binding` naming both rows. | Test (TC-310) |
 | FR-375-AC-4 | A field-row or step-argument expression whose type does not conform to the abstract type after reference lifting refuses `ill_typed`/`type-mismatch` at that expression; a `Reference<T_C>` expression for a `Reference<T_A>` field is admitted exactly when an object row maps `T_A` from `T_C`. | Test (TC-310) |
 | FR-375-AC-5 | A history row whose name the concrete type already declares, whose type is unbounded, or whose update is ill-typed refuses with its named cause; an admitted history field appears in no concrete clause, frame or successor relation. | Test (TC-310) |
 | FR-375-AC-6 | A fairness row with no granularity is read as `whole`; an `assume` row naming an abstract operation, or an `ensure` row naming a concrete operation, refuses `missing_declaration`/`missing-name`. | Test (TC-310) |
 | FR-375-AC-7 | Changing any row of an admitted declaration changes the refinement node's id, the `package_id` and the obligation identity of an item that cites it; reordering rows in source does not. | Test (TC-310) |
 | FR-375-AC-8 | A request to check the whole declaration requires `temporal-satisfaction`, each per-step simulation obligation requires `operation-contract`, and neither requires `refinement`. | Test (TC-310) |
 | FR-375-AC-9 | A history row with an initial `history-literal` written as a negative or non-negative integer, `true`/`false`, `none`, a string, an exact number or a full-path enum member is admitted when its value is in the declared bounded type's value set; a literal of the right kind outside the value set or of the wrong kind (`5` or `true` for `Int[0, 4]`, `none` for a non-`Option` type) refuses `ill_typed`/`type-mismatch` at the literal; an unresolved enum path refuses `missing_declaration`/`missing-name`; a collection, record or float spelling refuses `invalid_syntax`/`unexpected-token`. | Test (TC-310) |
+| FR-375-AC-10 | An `assume` or `ensure` fairness row written `fair strong` is admitted with or without `each` or `whole`, and its emitted entry carries kind `strong`; the same row written `fair weak` carries kind `weak`, and the two rows give different refinement node ids; `fair` with no kind, or any kind other than `weak` or `strong`, refuses `invalid_syntax`/`unexpected-token` at the token, because a refinement row has no default kind. | Test (TC-310) |
 
 ## Dependencies
 

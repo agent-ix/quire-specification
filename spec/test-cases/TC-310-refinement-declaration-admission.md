@@ -54,7 +54,17 @@ Mutations, each applied alone to the positive unit:
     `Int[0, 4]`, `Impl::Other::idle` for `Impl::Mode`, `idle` and
     `Impl::Mode::missing` for `Impl::Mode`, and `sequence[1]` and
     `float64(bits: 0x0000000000000000)` for `Int[0, 4]`;
-11. request the whole declaration and one per-step obligation for the
+11. write `ensure fair strong each Spec::Counter::inc;` in place of the
+    positive unit's `ensure` row, and separately `assume fair strong
+    whole Impl::Counter::retryA;` beside the weak rows, and separately
+    `assume fair strong Impl::Counter::retryA;` in its place; then each alone,
+    both of those two rows together, `assume fair weak
+    Impl::Counter::beginA;` twice, `assume fair weak whole
+    Impl::Counter::beginA;` beside `assume fair weak
+    Impl::Counter::beginA;`,
+    `assume fair each Impl::Counter::beginA;` (no kind) and
+    `assume fair always Impl::Counter::beginA;`;
+12. request the whole declaration and one per-step obligation for the
     `commitA` row.
 
 ## Expected Results
@@ -77,6 +87,13 @@ literal on a type that admits it is admitted; `5`, `true`, `0` for `Boolean`,
 `ill_typed`/`type-mismatch` at the literal; `idle` and `Impl::Mode::missing`
 refuse `missing_declaration`/`missing-name`; `sequence[1]` and the float
 spelling refuse `invalid_syntax`/`unexpected-token` (FR-375-AC-9). A parser
-that admits only integer literals fails this case. In step 11 the whole
+that admits only integer literals fails this case. In mutation 11 the strong `each` row and the explicit `strong whole` row
+are admitted with entries of kind `strong` (granularity `each` and `whole`),
+the unmarked strong row gives the same entry as the explicit `whole` row, the
+weak rows keep kind `weak`, the node id differs from the positive unit's, and
+the kindless and `always` rows each refuse `invalid_syntax`/`unexpected-token`
+at the token after `fair` (FR-375-AC-10); the identical pairs, including the
+`weak` and `weak whole` pair, each refuse `invalid_model_binding`/
+`conflicting-binding` naming both rows (FR-375-AC-3). In step 12 the whole
 declaration requires `temporal-satisfaction` and the step obligation
 `operation-contract` (FR-375-AC-8).
