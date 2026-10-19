@@ -1030,7 +1030,9 @@
         "/results/2/cause": "FR-363",
         "/accounting/2/max_depth": "FR-363",
         "/results/3/cause": "FR-428",
-        "/results/4/cause": "FR-439"
+        "/results/4/cause": "FR-439",
+        "/results/5/cause": "FR-363",
+        "/results/6/cause": "FR-363"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -1054,6 +1056,14 @@
           },
           {
             "request_index": 4,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 5,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 6,
             "disposition": "supported"
           }
         ],
@@ -1117,6 +1127,24 @@
               "limit": "max_store_buffer",
               "value": 2,
               "states": 3
+            }
+          },
+          {
+            "request_index": 5,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "no-instance"
+            }
+          },
+          {
+            "request_index": 6,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "no-initial-state"
             }
           }
         ],
@@ -1211,6 +1239,14 @@
             "reached": [
               "max_store_buffer"
             ]
+          },
+          {
+            "request_index": 5,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 6,
+            "settled_by": "result"
           }
         ]
       }
@@ -3078,6 +3114,30 @@
             "integer",
             "integer"
           ]
+        }
+      ]
+    },
+    {
+      "name": "temporal-cause-no-instances",
+      "base": "temporal-outcome",
+      "owner": "FR-363",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/5/cause/type",
+          "value": "no-instances"
+        }
+      ]
+    },
+    {
+      "name": "temporal-cause-no-initial-state-underscore",
+      "base": "temporal-outcome",
+      "owner": "FR-363",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/6/cause/type",
+          "value": "no_initial_state"
         }
       ]
     }

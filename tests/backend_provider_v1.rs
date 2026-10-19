@@ -218,6 +218,7 @@ fn errors(validator: &jsonschema::Validator, document: &Value) -> Vec<String> {
 /// member it names an owner for exists and names an FR of this specification.
 #[trace("TC-431", "FR-331-AC-19")]
 #[trace("TC-431", "FR-331-AC-23")]
+#[trace("TC-431", "FR-331-AC-28")]
 #[test]
 fn tc_431_positive_vectors_are_admitted_with_owned_members() {
     let validator = validator();
@@ -262,6 +263,7 @@ fn located_at_patch(error: &str, patched: &str) -> bool {
 #[trace("TC-431", "FR-331-AC-19")]
 #[trace("TC-431", "FR-331-AC-20")]
 #[trace("TC-431", "FR-331-AC-23")]
+#[trace("TC-431", "FR-331-AC-28")]
 #[test]
 fn tc_431_adverse_vectors_are_refused() {
     let whole = validator();

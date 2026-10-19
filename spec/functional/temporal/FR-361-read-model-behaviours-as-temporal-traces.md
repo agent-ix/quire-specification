@@ -42,7 +42,8 @@ The subject's behaviours as temporal traces, each with its positions and
 their anchors; or `unsupported` for a profile the model subject does not
 admit; or `requires-bound` for an unbounded root; or the FR-363 verdict
 `inconclusive` with cause `no-initial-state` when the list of initial states
-is empty.
+is empty; or the FR-363 verdict `inconclusive` with cause `no-instance` for an
+item with zero instances.
 
 ## Behavior
 
@@ -59,6 +60,15 @@ its postcondition. Each transition carries its FR-181 transition identity,
 which names the operation, the receiver and the argument vector. The subject is
 part of every verdict's scope and of every obligation identity that reads it
 ([FR-368](FR-368-negotiate-temporal-model-check-items.md)).
+
+The `requires-bound` classification below runs first. Only over bounded
+universes is an item whose `over` parameter ranges over a type that no object
+of the universes conforms to (an empty universe included) found to have zero
+instances; a matching population with no universe is `requires-bound`, never
+`no-instance`. The
+analyzer SHALL settle it `inconclusive` with cause `no-instance` before it
+explores any state, so an item that was never evaluated is never read as
+holding.
 
 Before any expansion, the analyzer SHALL classify every root of the subject
 under the request's universes. An unbounded population root, parameter domain,
@@ -137,6 +147,7 @@ defined Boolean, so a clause guards such reads with it.
 | FR-361-AC-5 | A clause `over (x: T)` over a universe of two objects of `T` is checked once per object; it holds for the subject only when both checks hold, and its refutation names the refuted object. | Test (TC-290) |
 | FR-361-AC-6 | An unguarded read through the bound object at a reachable position where that object is absent settles the item `refuted` with cause `undefined-evaluation` naming the binding, the position and the read's locus, the same outcome as the `lookup ... absent undefined` spelling of that read; the same read guarded by population membership evaluates. | Test (TC-290, TC-305) |
 | FR-361-AC-7 | A subject with an unbounded population root and no universe returns `requires-bound` before expansion; a subject with an empty list of initial states settles `inconclusive` with cause `no-initial-state`. | Test (TC-294) |
+| FR-361-AC-8 | An item with zero instances, over a type that no object of the universes conforms to or over an empty universe, settles `inconclusive` with cause `no-instance` before any state is explored, and never `proved` or `refuted`; the same item over a population with no universe returns `requires-bound`, not `no-instance`. | Test (TC-294) |
 
 ## Dependencies
 
