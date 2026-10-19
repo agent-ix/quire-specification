@@ -43,7 +43,8 @@ profile, seed/enumeration mode and bounds.
 ## Outputs
 
 Typed execution traces/results with coverage and replay provenance, or
-requires-bound/incomplete/refused outcomes.
+requires-bound/incomplete/refused outcomes, or an `unsupported` result with its
+typed cause.
 
 ## Behavior
 
