@@ -29,8 +29,8 @@ Register a fixture solver backend through the real local Rust boundary that retu
 | HY-04 | A solver stopped by its step budget at `max_solver_steps` 1,000 | `incomplete`, `resource-incomplete`, `limit-reached{limit: max_solver_steps, value: 1000, setting: hybrid.max_solver_steps}`; FR-193-AC-8, FR-331-AC-29 |
 | HY-05 | A hybrid item with no registered candidate | `unsupported`, `unsupported_projection`/`unsupported-requested-capability` |
 | HY-06 | A `hybrid-decl` whose only continuous variable has rate 1 in every mode | `invalid_timed_model`/`rate-one-hybrid` |
-| HY-07 | A solver stopped by its time budget; a run ended by the caller's `deadline_ms`; a result spelled `limit-reached` for the time budget, or `time-limit` | `incomplete`, `resource-incomplete`, `timed-out`; `incomplete`, `cancelled{source: deadline}`; the last two spellings refused `invalid_result`/`unknown-cause`; FR-193-AC-8, FR-331-AC-29 |
-| HY-08 | `max_solver_time` 1.5 s, 2 s and 0.2 s; two requests differing only in `max_solver_time`, and two differing only in `max_solver_steps`; a `timed-out` result offered to the cache | 2 s, 2 s, 1 s; equal request identity and cache key bytes, then different ones; stored by neither request, with no wall-time member; FR-193-AC-9 |
+| HY-07 | A solver that exhausts `max_solver_time`; a plugin provider that overruns `deadline_ms`; a run the caller's frontend ends at its own deadline; a `limit-reached{limit: max_solver_time}` or `time-limit` cause on a hybrid item | `incomplete`, `resource-incomplete`, `timed-out`; the same, `timed-out`; `incomplete`, `cancelled{source: deadline}`; the last two refused `invalid_result`/`unknown-cause`; FR-193-AC-8, FR-331-AC-29 |
+| HY-08 | A caller's `max_solver_time` of 1.5 s, 2 s and 0.2 s written as wire values, then a wire value of 1.5; two requests differing only in `max_solver_time`, and two differing only in `max_solver_steps`; a `timed-out` result offered to the cache | wire 2, 2, 1; 1.5 refused before consumption; equal request identity and cache key bytes, then different ones; stored by neither request, with no wall-time member; FR-193-AC-9, FR-331-AC-29 |
 
 ## Expected Results
 

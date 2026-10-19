@@ -13,6 +13,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-331
     type: references
+  - target: ix://agent-ix/quire-specification/FR-461
+    type: references
 ---
 
 # FR-193: Analyze continuous and hybrid models soundly
@@ -73,27 +75,42 @@ the timed model form that declares it.
 | A result the solver's method makes sound for the claim, such as an `unsat` from a δ-complete solver for bounded unreachability, or a flowpipe enclosure computed with outward rounding that satisfies the property | `proved`, basis `closed-scope` | `bounded-solver{method, horizon, jumps}`; the proof holds for the claim within that time horizon and jump bound |
 | `δ-sat`, a flowpipe meeting the unsafe set, `unknown`, or a method without sound rounding | `inconclusive` | `solver-inconclusive`, retaining any reported trace as unverified evidence |
 | A solver stopped by its step budget | `incomplete`, execution `resource-incomplete` | `limit-reached{limit: max_solver_steps, value, setting: hybrid.max_solver_steps}` |
-| A solver stopped by its time budget | `incomplete`, execution `resource-incomplete` | `timed-out`, the solver's own wall-clock limit; the caller's deadline is `cancelled{source}` with `source` `deadline`, never `timed-out` |
+| A solver that exhausts `max_solver_time`, or a provider that overruns the provider deadline `deadline_ms` (FR-462) | `incomplete`, execution `resource-incomplete` | `timed-out`, the backend's own wall-clock limit |
+| A run the caller's frontend ends at the caller's own deadline (a frontend-owned timer that cancels the run, QSL FR-276) | `incomplete`, execution `resource-incomplete` | `cancelled{source: deadline}`, never `timed-out` |
 | No registered candidate | `unsupported` | `unsupported_projection`/`unsupported-requested-capability` |
 
 ### Solver budgets
 
-- `max_solver_steps` SHALL be a count of solver steps, whole and
-  non-negative, as the provider counts its own steps; its default is the
-  provider's published default (FR-331, FR-461). A report of it SHALL state
-  the count as the provider counts it and SHALL NOT convert it to time. It is
-  deterministic, so it is part of the request identity and the cache key
-  (FR-306).
+A hybrid item carries its two budgets as `hybrid.limits.max_solver_steps` and
+`hybrid.limits.max_solver_time`, beside `temporal.limits` and
+`probabilistic.limits` (FR-331), so FR-461's rules for naming, raising and
+defaulting a limit apply to both. Their setting names are
+`hybrid.max_solver_steps` and `hybrid.max_solver_time`.
+
+- `max_solver_steps` SHALL be a whole, non-negative count of solver steps as
+  the provider counts its own steps. A report of it SHALL state the count as
+  the provider counts it and SHALL NOT convert it to time. It is
+  deterministic, so it SHALL be part of the request identity and the cache
+  key (FR-306).
 - `max_solver_time` SHALL be a wall-clock budget for the solver's run, in
-  whole seconds, independent of the provider deadline `deadline_ms`. A caller
-  that supplies a fractional duration has it rounded up to the next whole
-  second when the request is admitted, never down, and the request and the
-  solver receive the whole-second value. Its default is the provider's
-  published default.
-- `max_solver_time` is a wall-clock setting, so it SHALL be outside the
-  request identity and the cache key (FR-306), no member of a stored record
-  SHALL record wall time, and a `timed-out` result SHALL NOT be cached or
-  stored (FR-306). Two requests that differ only in `max_solver_time` have
+  whole seconds, independent of the provider deadline `deadline_ms`. When the
+  request writer writes a request for a caller that supplied a fractional
+  duration, it SHALL round the duration up to the next whole second, never
+  down, and write the whole number; the wire carries a canonical whole
+  non-negative integer (FR-331's `Count`), and a provider SHALL refuse a
+  fractional or otherwise non-canonical value before consumption, as FR-331
+  refuses any out-of-domain value.
+- Each budget's default, when the caller sets none, SHALL be the published
+  default of the provider's descriptor `bounds` (FR-331, FR-461). A request
+  writer that fills a value for its own built-in hybrid solver, as QSL does
+  (QSL FR-250 publishes 60 seconds and 1,000,000 steps for that solver), is
+  that provider's descriptor; where a descriptor and a request writer's
+  number conflict, the descriptor's published default SHALL win. This
+  requirement states no number.
+- `max_solver_time` is a wall-clock setting. The request identity and the
+  cache key SHALL exclude it, no member of a stored record SHALL record wall
+  time, and a result it limits (`timed-out`) SHALL NOT be cached or stored
+  (FR-306). Two requests that differ only in `max_solver_time` SHALL have
   equal request identity.
 
 A solver result settles only `proved`, `inconclusive`, incomplete or
@@ -111,8 +128,8 @@ replays exactly.
 | FR-193-AC-5 | A point estimate or enclosure intersecting both satisfying and violating regions cannot establish satisfaction. | Test (TC-215) |
 | FR-193-AC-6 | Each row of the verdict map settles its listed value and basis or cause; a sound solver result settles `proved` with `bounded-solver{method, horizon, jumps}`, and no solver result settles `refuted`. | Test (TC-373) |
 | FR-193-AC-7 | A `hybrid-decl` whose every continuous variable has rate 1 refuses `invalid_timed_model`/`rate-one-hybrid`; a hybrid item with no registered candidate settles `unsupported`. | Test (TC-373) |
-| FR-193-AC-8 | A solver stopped after 1,000 steps by a `max_solver_steps` of 1,000 settles `incomplete`, execution `resource-incomplete`, `limit-reached{limit: max_solver_steps, value: 1000, setting: hybrid.max_solver_steps}`, in steps and unconverted; a solver stopped by its time budget settles `incomplete`, `resource-incomplete`, `timed-out`, and one ended by the caller's `deadline_ms` settles `incomplete`, `cancelled{source: deadline}`. | Test (TC-373) |
-| FR-193-AC-9 | A `max_solver_time` of 1.5 s is admitted as 2 s, 2 s stays 2 s and 0.2 s becomes 1 s; two requests that differ only in `max_solver_time` have equal request identity and cache key bytes, two that differ only in `max_solver_steps` differ, and a `timed-out` result is stored by neither request and holds no wall-time member. | Test (TC-373) |
+| FR-193-AC-8 | A solver stopped after 1,000 steps by a `max_solver_steps` of 1,000 settles `incomplete`, execution `resource-incomplete`, `limit-reached{limit: max_solver_steps, value: 1000, setting: hybrid.max_solver_steps}`, in steps and unconverted; a solver that exhausts `max_solver_time`, and a plugin provider that overruns `deadline_ms`, each settle `incomplete`, `resource-incomplete`, `timed-out`; a run the caller's frontend ends at the caller's own deadline settles `incomplete`, `cancelled{source: deadline}`, so no event has two causes. | Test (TC-373) |
+| FR-193-AC-9 | A caller's `max_solver_time` of 1.5 s is written as the wire integer 2, 2 s as 2 and 0.2 s as 1, and a wire value of 1.5 is refused before consumption; two requests that differ only in `max_solver_time` have equal request identity and cache key bytes, two that differ only in `max_solver_steps` differ, and a `timed-out` result is stored by neither request and holds no wall-time member. | Test (TC-373) |
 
 ## Dependencies
 
