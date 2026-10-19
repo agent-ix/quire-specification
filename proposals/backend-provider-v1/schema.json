@@ -704,6 +704,7 @@
         {"properties": {"type": {"const": "not-markov"}, "state": {"$ref": "#/$defs/StateKey"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "post_states": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/StateKey"}}}, "required": ["type", "state", "transition", "post_states"], "additionalProperties": false},
         {"properties": {"type": {"const": "not-stochastic"}, "state": {"$ref": "#/$defs/StateKey"}, "identity": {"$ref": "#/$defs/TransitionIdentity"}}, "required": ["type", "state", "identity"], "additionalProperties": false},
         {"properties": {"type": {"const": "time-locked-sample"}, "state": {"$ref": "#/$defs/StateKey"}}, "required": ["type", "state"], "additionalProperties": false},
+        {"properties": {"type": {"const": "total-above-draw-range"}, "total": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"}}, "required": ["type", "total"], "additionalProperties": false},
         {"properties": {"type": {"const": "zero-weight-component"}, "component": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/StateKey"}}}, "required": ["type", "component"], "additionalProperties": false},
         {"properties": {"type": {"const": "delay-distribution"}, "operation": {"$ref": "#/$defs/Nonempty"}}, "required": ["type", "operation"], "additionalProperties": false},
         {"properties": {"type": {"enum": ["strict-clock-constraint", "timed-form-shape", "punctual-interval"]}, "locus": {"$ref": "#/$defs/Locus"}}, "required": ["type", "locus"], "additionalProperties": false},
