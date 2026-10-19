@@ -48,3 +48,9 @@ Round 1, against head b2aebb1.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-001 | fixed | b2aebb1: E35 now says the over-extension "would give `unproved-range` for the two arithmetic vectors and `ill_typed`/`type-mismatch` for the path vectors `n < later.tally`, `n >= later.tally` and `later.tally > n`" |
+
+Round 2, against head 3826de1.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-002 | fixed | 3826de1: E35's expected result now reads "the five ordering comparisons are accepted", matching its five ordering vectors; the commit changes only that word in the spec |
