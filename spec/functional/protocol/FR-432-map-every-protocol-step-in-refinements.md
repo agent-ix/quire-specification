@@ -158,8 +158,8 @@ exists only for a class the right side can name.
 
 **Defects.** Each refusal carries as its locus the RFC 6901 JSON Pointer of the
 offending value inside the `refinement_internals` value (such as
-`/0/internal/1`), since a JSON value has no source span; the host prefixes
-its own location (FR-375). A refusal naming two values carries both pointers.
+`/0/internal/1`), since a JSON value has no source span; the request
+prefixes its own location, which FR-375 states. A refusal naming two values carries both pointers.
 
 | Defect | Refusal |
 | --- | --- |
@@ -169,7 +169,12 @@ its own location (FR-375). A refusal naming two values carries both pointers.
 | two objects naming one refinement; one canonical spelling twice in one `internal` array | `invalid_model_binding`/`conflicting-binding` |
 | a non-empty list for a refinement whose abstract subject is a model | `invalid_model_binding`/`malformed-declaration` at the object's pointer |
 
-Each refusal yields no admitted refinement node.
+A defect of a value attributable to no refinement (not an array of objects,
+`{}`, a non-string or unresolved `refinement`) is reported by this table
+alone. Each refusal yields no admitted refinement node. While a producer has
+not built `refinement-internal-list`, FR-375 states which of these refusals
+the support set then replaces: the defects above are still reported, and only
+a non-empty resolved list is refused for the feature.
 
 Each concrete initial protocol state pairs with an abstract initial model
 state, with the abstract root thread settled from its `run`. Divergence,
@@ -188,7 +193,7 @@ FR-177 over the same product.
 | FR-432-AC-6 | A declaration headed `abstract Spec::Req` over the abstract model alias `Spec` selects its protocol clause `Req`, and its step rows may name that protocol's nodes; the same rows under the header `abstract Spec` select a model subject and a row naming `node Spec::Req::Ask` refuses `invalid_model_binding`/`malformed-declaration` at that node. | Test (TC-386) |
 | FR-432-AC-7 | The value `[{"refinement": "R", "internal": ["Spec::Full::fin", "lose Spec::Full::ch"]}]`, its permutations and the same entries in two arrays swapped resolve `R` to the same list, `Spec::Full::fin` then `lose Spec::Full::ch` in UTF-8 byte order; the value absent, `[]` and an object for another refinement each resolve `R` to the empty list with no refusal. | Test (TC-386) |
 | FR-432-AC-8 | Each abstract step class spells and resolves: a node path for an attempt, event, send, receive, timeout, finish and fence node and a template path for a `cattempt`, and `fork`, `join`, `cend`, `duplicate`, `lose`, `spawn`, `retire`, `activate` and `memory` entries as the table states, each making exactly its class internal; the bare path of the `parallel` node refuses `missing_declaration`/`missing-name`. | Test (TC-386) |
-| FR-432-AC-9 | Each defect row of the list's table refuses with its code and cause at the pointer of the offending value, with no admitted node: a non-array value, an object with a missing, extra or mistyped key and a non-string entry, an unspelled entry, an unresolved refinement, alias, protocol, node, channel, role, kind or `parallel` bare path, a repeated object and a repeated spelling (both pointers), and a non-empty list on a refinement headed `abstract Spec`. | Test (TC-386) |
+| FR-432-AC-9 | Each defect row of the list's table refuses with its code and cause at the pointer of the offending value, with no admitted node: a non-array value, `{}`, an object with a missing, extra or mistyped key (`"refinement": 7` and `"internal": "x"` included) and a non-string entry, an unspelled entry, an unresolved refinement, alias, protocol, node, channel, role, kind or `parallel` bare path, a repeated object and a repeated spelling (both pointers), and a non-empty list on a refinement headed `abstract Spec`. | Test (TC-386) |
 | FR-432-AC-10 | A list naming `Spec::Full::a1` beside a row `step … -> node Spec::Full::a1(self)` refuses `invalid_model_binding`/`conflicting-binding` naming the row and the entry; the same list with the row's right side `-> node Spec::Full::a2(self)` is admitted; a list naming `lose Spec::Full::ch` beside any rows is admitted. | Test (TC-386) |
 
 ## Dependencies
@@ -196,6 +201,11 @@ FR-177 over the same product.
 - [FR-177](FR-177-check-protocol-refinement.md) owns protocol refinement and
   its divergence, refusal, terminal-success and assumption checks.
 - [FR-426](FR-426-apply-protocol-steps.md) owns the step classes.
+- [FR-375](../analysis/FR-375-declare-model-refinement.md) owns where the
+  internal list is hosted, its request pointers, its effect on the node and
+  the unbuilt-feature refusal; [FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)
+  and [FR-323](../../objects/interfaces/FR-323-native-runtime-envelope.md)
+  own its lock and replay.
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns the
   `protocol-step-row` production.
 
@@ -204,4 +214,5 @@ FR-177 over the same product.
 - Design: quire-spec-language ADR-027 PR-1 to PR-3 and RU-5; the refinement
   step rows of ADR-020 RU-1.
 - Tickets: Linear STD-140; paired QSL-396 (with STD-133 and QSL-367 for model
-  refinement); Linear STD-182 for the abstract protocol subject header.
+  refinement); Linear STD-182 for the abstract protocol subject header; Linear STD-199 for
+the internal list.

@@ -406,4 +406,4 @@ in no identity preimage; its absence validates too. The `[]`, `null`,
 empty-`internal` and third-key mutations fail the schema at that value; the
 two out-of-order mutations refuse `invalid_package`/`invalid-value` at the later
 entry's pointer and the two repeats refuse `invalid_package`/`conflicting-definition`
-with both entries as loci (FR-322-AC-75).
+with both entries as loci (FR-322-AC-77).

@@ -64,7 +64,7 @@ distinguishing causes" table. It is proposed, not adopted.
 | Code or code family | Closed variants | Required payload |
 | --- | --- | --- |
 | `invalid_syntax` | `unexpected-token`, `unexpected-end`, `invalid-token`, `invalid-escape` | The actual token/source span when available and the expected syntactic category. |
-| `unsupported_construct` | `declaration-form`, `expression-form`, `not-yet-implemented` | For the first two, the recognized form, owning declaration and exact selected profile that prohibits it. For `not-yet-implemented`, the name of the valid complete-V1 feature the producer has not built, its owning declaration and the exact selected profile; the source is not wrong, the producer is incomplete. |
+| `unsupported_construct` | `declaration-form`, `expression-form`, `not-yet-implemented` | For the first two, the recognized form, owning declaration and exact selected profile that prohibits it. For `not-yet-implemented` (a valid complete-V1 source form or declaration input that the producer's support set does not build; the source is not wrong), the unbuilt feature's name, its owning declaration and the exact selected profile. |
 | `unknown_language`, `unknown_edition`, `unknown_profile` | `unsupported-selection`, `wrong-selection-role` | The supplied selection and required role. |
 | `unknown_wire` | `unsupported-wire` | The actual selected wire and expected artifact role. |
 | `unknown_required_feature` | `unknown-feature`, `unsupported-feature` | The feature and selected consumer/profile scope. |

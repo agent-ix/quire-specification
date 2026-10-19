@@ -35,7 +35,7 @@ catalog).
 | Value | Description |
 | --- | --- |
 | `invalid_syntax` | Ungrammatical source. "An ungrammatical index/slice is not a recognized profile extension." |
-| `unsupported_construct` | A recognized form prohibited by the exact selected profile, or (cause `not-yet-implemented`) a recognized declaration form the producer has not built, which FR-452 classes as an implementation gap. "Presence in unreachable syntax does not erase the refusal." |
+| `unsupported_construct` | A recognized form prohibited by the exact selected profile, or (cause `not-yet-implemented`) a valid complete-V1 source form or declaration input that the producer's support set does not build; the source is not wrong, which FR-452 classes as an implementation gap. A source form or declaration input is refused this way; `unimplemented_capability` is for a valid complete-V1 meaning that is not a source form or declaration input (a capability of the selected producer). "Presence in unreachable syntax does not erase the refusal." |
 | `unknown_language` | An unrecognized or wrongly-roled language selection. |
 | `unknown_edition` | An unrecognized or wrongly-roled edition selection. |
 | `unknown_profile` | An unrecognized or wrongly-roled profile selection. "A known package/diagnostic interpretation used as a clause profile" is a wrong selection role. |
@@ -76,7 +76,7 @@ catalog).
 | `cardinality_out_of_bound` | A constructed, converted or supplied collection whose occurrence or member count lies outside its type's inclusive cardinality bound (FR-144). |
 | `foreign_reference` | A supplied identity belongs to a different authority, universe, model or subject domain than the position requires. Its causes are `foreign-universe`, `foreign-model-selection` and `foreign-type`. |
 | `ambiguous_dispatch` | A dispatched operation call for which some closed subtype of the receiver's static type has no applicable method or several undominated methods. No source or registration order resolves it. |
-| `unimplemented_capability` | Valid complete-V1 meaning is not implemented by the selected producer; distinct from prohibited source and unsupported backend projection. |
+| `unimplemented_capability` | Valid complete-V1 meaning that is not a source form or declaration input is not implemented by the selected producer; distinct from prohibited source, unsupported backend projection and `unsupported_construct`/`not-yet-implemented`. |
 | `parity_failure` | Two implementations required to agree produced different typed verdicts or values for the same subject/input. |
 | `invalid_capability` | A requested or advertised capability selection that names no FR-290 kind, an unknown kind or mode, an unsupported vocabulary identity, a duplicate registered backend, no extent classification, an unregistered or arm-less backend, candidates inconsistent with the manifest or named backend, or several candidate backends with none named. |
 | `duplicate_selection` | A second domain-package model selection of an already-selected identity. A package selects at most one version of a domain-package identity. |
