@@ -9,6 +9,14 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-330-AC-4
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-330-AC-11
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-330-AC-12
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272-AC-21
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-271-AC-7
+    type: verifies
 ---
 # TC-937: ContractPackage reader admits only a complete canonical value
 
@@ -169,3 +177,24 @@ names the selected `package_id` as `expected` and the supplied `package_id` as
 `actual`. The extra unselected input is ignored. No consumer
 receives or reparses a refused value. No alternate
 reader accepts a value refused by the owner.
+
+## Diagnostic mapping vectors (FR-330-AC-11, AC-12, FR-272-AC-21, FR-271-AC-7)
+
+For each reader `refused` result of the cases above, map it to its FR-272
+diagnostic and require stage `package_read`, category refusal, and the
+reader's code and cause unchanged. Include one case for each reader-layer code
+`unknown_contract_version` (retaining the received `contract_version`),
+`malformed_wire`, `duplicate_member`, `unknown_member`,
+`digest_domain_mismatch`, `unknown_required_capability`,
+`invalid_semantic_graph` and `unsupported_node_tag`, and require that none
+resolves to an FR-271 row.
+
+For each of the six limits (`bytes`, `nodes`, `edges`, `occurrences`,
+`diagnostics`, `work`), read an input one over the limit and one at it. The
+at-limit input is admitted. The one-over input maps to `stage_limit_exceeded`
+at stage `package_read`, category incomplete, with the cause `input-bytes-exceeded`,
+`node-count-exceeded`, `edge-count-exceeded`, `occurrence-count-exceeded`,
+`diagnostic-count-exceeded` or `work-budget-exceeded` respectively, `bound` the
+limit, `actual` the consumed count, the location the `path`, and `setting`
+`contract_package.input_bytes`, `.nodes`, `.edges`, `.occurrences`,
+`.diagnostics` or `.work_units`. Require that `locus` appears in no payload.

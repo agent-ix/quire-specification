@@ -440,6 +440,37 @@ reader resolve each `dependency_reference`, and it resolves it only against
 the admitted package keyed by that reference's selected library identity. The
 lock alone is not evidence that a selected package was supplied or admitted.
 
+### Reader results as FR-272 diagnostics
+
+The reader's `refused` result is a diagnostic at stage `package_read`, category
+refusal, whose code and cause are the reader's own, carried verbatim and
+unchanged. The code set is FR-322's reader vocabulary; eight of its codes
+(`unknown_contract_version`, `malformed_wire`, `duplicate_member`,
+`unknown_member`, `digest_domain_mismatch`, `unknown_required_capability`,
+`invalid_semantic_graph` and `unsupported_node_tag`) are reader-layer codes
+with no FR-271 row (FR-271, "Reader-layer codes"), and the other twelve are
+FR-271 members; the reader mints no code outside FR-322's vocabulary. The
+reader's locus is the diagnostic's FR-274 location.
+
+The reader's `incomplete` result is `stage_limit_exceeded` at stage
+`package_read`, category incomplete. Its cause follows the incomplete
+`limit_kind` one-to-one, and its payload and setting follow the table:
+
+| `limit_kind` | Cause | `setting` |
+| --- | --- | --- |
+| `bytes` | `input-bytes-exceeded` | `contract_package.input_bytes` |
+| `nodes` | `node-count-exceeded` | `contract_package.nodes` |
+| `edges` | `edge-count-exceeded` | `contract_package.edges` |
+| `occurrences` | `occurrence-count-exceeded` | `contract_package.occurrences` |
+| `diagnostics` | `diagnostic-count-exceeded` | `contract_package.diagnostics` |
+| `work` | `work-budget-exceeded` | `contract_package.work_units` |
+
+The cause's `kind` is the cause tag, `bound` is the incomplete `limit`,
+`actual` is its `consumed`, and the diagnostic's location is its `path`. The
+driver derives `setting` from `limit_kind` through this fixed table, and the
+reader does not carry it. These limits are raised through the reader's limits
+argument (interface_012) under these names (FR-461).
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -454,6 +485,8 @@ lock alone is not evidence that a selected package was supplied or admitted.
 | FR-330-AC-8 | The identity recomputes from the specified RFC 8785 projection under `quire.contract-ir.semantic/v1`; changing package provenance, lowering profile, graph, or an accounting result changes it, while changing only valid source locations, caller limits that leave serialized members unchanged, rendering, or JSON layout does not. Source-map corruption still refuses admission. | Test (TC-936) |
 | FR-330-AC-9 | The sole reader admits a valid canonical value only with every lock-selected admitted dependency package supplied and matching its selection; it ignores extra unselected inputs, refuses a missing or wrong-identity dependency as `missing_import`/`missing-selection` and a same-identity admitted package with a different `package_id` as `stale_dependency`/`content-mismatch` at the selected lock pointer, all before dependent-reference checks. It refuses a mismatched own identity as `invalid_package`/`invalid-value` at `/identity/digest`; malformed nested payloads use `invalid_package` with FR-322's `missing-member`, `duplicate-member`, `unknown-member`, `wrong-value-kind`, or `invalid-value` cause as applicable. Wrong versions, invalid references, incomplete source maps, and accounting mismatches also refuse with a typed FR-330 reader result and FR-272 diagnostic mapping before any consumer sees a value. | Test (TC-937) |
 | FR-330-AC-10 | The resolved profile carries authoritative typed `required_source_selections`; exact role/authority/identity matches admit lowering, empty requirements impose no restriction, and unrelated lock rows or reordered/repeated requirements do not change compatibility. Per-request compatibility uses the existing first-charge meter and stated row-visit charges without reset; zero-work and an unpayable comparison charge yield `failed` before compatibility refusal. With sufficient work a missing or different required row yields one request-ordered `invalid_input` per item before node traversal, with no extra payload, no nodes and exact available source occurrences; both success and refusal retain the exact originating lock and package id. | Test |
+| FR-330-AC-11 | A reader `refused` result is a diagnostic at stage `package_read`, category refusal, carrying the reader's FR-322 code and cause unchanged; the eight reader-layer codes `unknown_contract_version`, `malformed_wire`, `duplicate_member`, `unknown_member`, `digest_domain_mismatch`, `unknown_required_capability`, `invalid_semantic_graph` and `unsupported_node_tag` resolve to no FR-271 row and are carried verbatim, and the reader mints no code outside FR-322's vocabulary. | Test (TC-937) |
+| FR-330-AC-12 | A reader `incomplete` result is `stage_limit_exceeded` at stage `package_read`, category incomplete, with the cause and `setting` the table gives for its `limit_kind` (`bytes`, `nodes`, `edges`, `occurrences`, `diagnostics`, `work`), `bound` its `limit`, `actual` its `consumed` and the diagnostic location its `path`; an exact-limit input is admitted. | Test (TC-937) |
 
 ## Dependencies
 

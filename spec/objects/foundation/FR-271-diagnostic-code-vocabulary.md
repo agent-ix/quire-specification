@@ -81,7 +81,7 @@ catalog).
 | `invalid_capability` | A requested or advertised capability selection that names no FR-290 kind, an unknown kind or mode, an unsupported vocabulary identity, a duplicate registered backend, no extent classification, an unregistered or arm-less backend, candidates inconsistent with the manifest or named backend, or several candidate backends with none named. |
 | `duplicate_selection` | A second domain-package model selection of an already-selected identity. A package selects at most one version of a domain-package identity. |
 | `conflicting_declaration` | Two declarations at the S3 compile or link that must be unique resolving to one identity: two `operation-body` declarations resolving to one operation identity (FR-151), or two tasks with one name. |
-| `stage_limit_exceeded` | A compiler stage S1-S4, the I2 reader, a family `check`, `replay` or `route` reached one of its own stage limits. Its limits are caller-configured FR-461 settings carried by the stage limits (FR-323), not the work-budget meter of `resource_exhausted`; the two are distinct. |
+| `stage_limit_exceeded` | A compiler stage S1-S4, the I2 reader, the FR-330 ContractPackage reader, a family `check`, `replay` or `route` reached one of its own stage limits. Its limits are caller-configured FR-461 settings carried by the stage limits (FR-323), not the work-budget meter of `resource_exhausted`; the two are distinct. |
 | `noncanonical_wire` | A JSON wire document that its RFC 8785 encoding does not carry as written: a number whose exact value that encoding loses, with cause `inexact-integer` or `inexact-number` at its `document_pointer`, or, for a reader that requires canonical bytes as the checked-package V2 reader does (FR-322), any other bytes, as a refusal about the byte stream. |
 | `inexact_decimal` | Strict `exact` met a decimal rounding step: a nonzero digit would be discarded. |
 | `decimal_out_of_domain` | A decimal result outside its target `Decimal[..]` domain. |
@@ -147,6 +147,19 @@ for a different meaning produces two codes that read alike and resolve
 differently, which is exactly the hazard the catalog's "not normalized aliases"
 rule guards against.
 
+**Reader-layer codes.** The FR-322 reader vocabulary names twenty codes. Twelve
+are members of the table above: `noncanonical_wire`, `stale_dependency`,
+`invalid_source_map`, `invalid_package`, `ill_typed`, `ambiguous_declaration`,
+`missing_declaration`, `invalid_model_binding`, `missing_import`,
+`unknown_profile`, `unsupported_construct` and `wrong_snapshot`. The other
+eight, `unknown_contract_version`, `malformed_wire`, `duplicate_member`,
+`unknown_member`, `digest_domain_mismatch`, `unknown_required_capability`,
+`invalid_semantic_graph` and `unsupported_node_tag`, are reader-layer codes:
+a checked-package or ContractPackage reader reports them about the wire it
+reads, and FR-322 and FR-330 own their spellings. A diagnostic that carries
+one is carried verbatim; this table gains no row for it and no second
+catalogue holds it (FR-271-AC-7, FR-330-AC-11).
+
 FR-283 now selects the separate projection-refusal catalog and its exact
 kebab-case spellings. That resolves the cross-namespace question without
 settling unselected native literals or treating spelling as a global convention.
@@ -161,6 +174,7 @@ settling unselected native literals or treating spelling as a global convention.
 | FR-271-AC-4 | Localizing the message accompanying a diagnostic leaves its code unchanged. | Analysis |
 | FR-271-AC-5 | A code minted by a consumer for its own refusal does not resolve to a member of this table, even when its spelling equals a member spelling. | Analysis |
 | FR-271-AC-6 | The values table has exactly one row for each of `invalid_source_identity` and the ten evaluator value-refusal codes: `inexact_decimal`, `decimal_out_of_domain`, `division_out_of_domain`, `modulo_out_of_domain`, `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`, `ieee_not_exact`, `ieee_nan_payload_not_representable` and `ieee_rational_out_of_domain`. | Test (TC-233) |
+| FR-271-AC-7 | The values table holds no row for `unknown_contract_version`, `malformed_wire`, `duplicate_member`, `unknown_member`, `digest_domain_mismatch`, `unknown_required_capability`, `invalid_semantic_graph` or `unsupported_node_tag`; each is a reader-layer code of the FR-322 reader vocabulary, carried verbatim by the diagnostic that reports it. | Inspection |
 
 ## Resolved catalog namespaces
 
