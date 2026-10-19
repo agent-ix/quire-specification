@@ -57,7 +57,13 @@ the all-families package's lock and identity preimage, require the schema to
 admit it and its recorded package id to recompute, require each authored
 entry mutation, and each `model_entry_mutations` entry placed in
 `model_selections`, to fail the schema in either member at the mutated entry, and
-apply each order vector's selections to require its recorded order outcome. Validate a `dependency_reference` term against both schemas, and its bare-digest, other-domain, missing-`node` and extra-member mutations; place it as the callee of the `function-call` operation vector and recompute the application-node id after changing only its `package` digest, then only its `node` (FR-322-AC-36). Read
+apply each order vector's selections to require its recorded order outcome.
+Apply the published closure vectors to two direct dependencies whose own locks
+select the same transitive identity at different package IDs; require
+`invalid_package`/`conflicting-definition` with both dependency paths as loci.
+With one direct dependency, name its transitive-only selection in a
+`dependency_reference` and require `missing_declaration`/`missing-selection`,
+even though the named package is in the derived closure. Validate a `dependency_reference` term against both schemas, and its bare-digest, other-domain, missing-`node` and extra-member mutations; place it as the callee of the `function-call` operation vector and recompute the application-node id after changing only its `package` digest, then only its `node` (FR-322-AC-36). Read
 a package whose function calls a dependency `function` returning `Boolean`
 through a `dependency_reference` callee, with its dependency package supplied,
 and then its FR-322-AC-37 mutations: no dependency package supplied, a
@@ -336,7 +342,11 @@ is refused by exactly its named check. Each dependency-selection entry mutation 
 schema at the mutated entry; its `outcome` is the reader refusal a strict
 reader reports for it. Each dependency-selection order vector is admitted by
 the schema and admitted or refused by the order rule with exactly its
-recorded outcome and loci. A `dependency_reference` term is admitted by both schemas and each of its four mutations fails both; as a call's callee it keys a valid application-node preimage, and changing its `package` or its `node` each gives a new, distinct id. The dependency call package is admitted, and its
+recorded outcome and loci. The new closure vectors record the diamond's two
+dependency paths and its `invalid_package`/`conflicting-definition` refusal,
+and the transitive-only reference's `missing_declaration`/`missing-selection`
+refusal. Their reader outcomes remain planned until the IR implementation
+lands. A `dependency_reference` term is admitted by both schemas and each of its four mutations fails both; as a call's callee it keys a valid application-node preimage, and changing its `package` or its `node` each gives a new, distinct id. The dependency call package is admitted, and its
 mutations refuse `missing_import`/`missing-selection`,
 `missing_declaration`/`missing-selection`, `missing_declaration`/`missing-name`,
 `ill_typed`/`operator-ineligible` (seven times) and `invalid_semantic_graph`. Every catalog entry names an authored

@@ -5326,7 +5326,6 @@ fn with_dependency_selections(entries: &Value) -> Value {
     package
 }
 
-#[trace("TC-233", "FR-322-AC-35")]
 #[test]
 fn tc_233_dependency_selections_carry_each_dependency_package_identity() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");

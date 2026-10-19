@@ -18,8 +18,8 @@ relationships:
 ## Description
 
 When importing a reusable Quire library, the linker SHALL resolve its exported
-declarations, semantic definitions and model dependencies, and record the
-resolved closure in the package lock.
+declarations, semantic definitions and model dependencies, and record its
+direct library selections in the package lock.
 
 ## Inputs
 
@@ -113,10 +113,14 @@ two dependency paths reach library identity `L` through the selections their
 packages' locks record, and they unify only when those selections name the
 same `package_id`. Any other combination is
 `refused { code: invalid_package, cause: conflicting-definition }`, and the
-refusal lists both dependency paths. Distinct `package_id`s never unify. An import
+refusal lists both dependency paths, including paths through the dependency
+packages' own locks. Distinct `package_id`s never unify. An import
 cycle is `refused { code: invalid_package, cause: definition-cycle }`, whose
-dependency-edge payload lists the cycle path. A resolved closure is recorded in the importing package lock as one
-selection per library identity, in ascending identity order.
+dependency-edge payload lists the cycle path. The importing package lock records
+only libraries the unit imports directly, one selection per identity in ascending
+identity order. Its closure is derived from those entries and each admitted
+dependency package's own lock; a transitive-only identity needs no entry in the
+importer's lock.
 
 Because `package_id` is the digest of the package's identity preimage, a reader
 recomputes it before resolution. A package whose retained `package_id`
