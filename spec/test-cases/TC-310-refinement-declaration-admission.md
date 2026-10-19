@@ -45,7 +45,9 @@ Mutations, each applied alone to the positive unit:
    granularity;
 9. change the object row expression to `self.value + 0`, and separately
    reorder the step rows in source;
-10. request the whole declaration and one per-step obligation for the
+10. write the initial literal of `history Impl::Counter.commits:
+    Int[0, 4] = …` as `0`, then as `true`, then as `5`;
+11. request the whole declaration and one per-step obligation for the
     `commitA` row.
 
 ## Expected Results
@@ -62,6 +64,7 @@ row of TC-314 appears in no concrete clause, frame or successor relation
 the two misplaced rows, and the unmarked row's emitted granularity is `whole`
 (FR-375-AC-6). In mutation 9 the expression change changes the node id, the
 `package_id` and the obligation identity of the refinement item, and the
-source reorder changes none of them (FR-375-AC-7). In step 10 the whole
+source reorder changes none of them (FR-375-AC-7). In mutation 10 the literal `0` is admitted and `true` and `5` each refuse
+`ill_typed`/`type-mismatch` at the literal (FR-375-AC-9). In step 11 the whole
 declaration requires `temporal-satisfaction` and the step obligation
 `operation-contract` (FR-375-AC-8).
