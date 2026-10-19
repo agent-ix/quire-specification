@@ -48,6 +48,13 @@ wording fix in this PR.
 | --- | --- | --- | --- |
 | FND-004 | low | "a `holds`-style argument" names nothing in a `graph-predicate`. `holds(...)` is a `temporal-primary` of the temporal clause, not a primary of `expr`, so no state-graph predicate can contain one. Say "an operand of a primary, such as a call argument or a quantifier body" instead. | proposals/quire-v1/shared-grammar.md:737-738 |
 
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | low | The FND-004 rewording doubled a phrase. The sentence now reads "a temporal operator in an `if` condition, a `let` binding, or an operand of an operand of a primary, such as a call argument or a quantifier body". Delete one "an operand of". | proposals/quire-v1/shared-grammar.md:737-738 |
+| FND-006 | low | SG-R18's parenthesised chain `(c.a until c.b) until c.c` has two temporal operators, and the vector expects the refusal at the first `until`. FR-390 says only "located at the operator" and states no rule for a predicate with several operators. A checker that refuses at the outer (root) operator, the second `until`, also follows FR-390 and fails the vector. Fix: state in FR-390 that the refusal is located at the first temporal operator in source order, or make the vector accept either locus. | spec/test-cases/TC-330-state-graph-claim-syntax-and-routing.md:44; spec/functional/analysis/FR-390-analyze-state-graph-claims.md:116-119 |
+
 ## Dispositions
 
 Round 1, reviewed at fad2cd29132c763e218b918230ed71c48a210a0c. Against
@@ -66,3 +73,18 @@ would need an associativity rule that neither facet has. #968's flat
 | FND-001 | fixed | - |
 | FND-002 | deferred | Planner ruled QSpec's `graph-predicate` normative; QSL-535 aligns #968 to it. #968 at b82b29b still reads `let`/`if` only through `Expression` (so `if c.a then eventually c.b else c.c` is an S1 error there), chains binary operators flatly, and reads a parenthesised group as `StateGraphFormula`. TC-330 still has no vector for a temporal operator in an `if` branch or for a chained binary operator; adding those two would make the alignment testable from QSpec. |
 | FND-003 | fixed | - |
+
+Round 2, reviewed at 3b8d62b923cc38b8a14913efe63671ce1ed6a537. The chain
+decision is now stated in the grammar prose (shared-grammar.md:739-741) and in
+FR-390, and it matches the EBNF: `graph-relation` takes one optional binary
+operator. SG-R17 (`if c.a then eventually c.b else c.c` parses through
+`graph-predicate`'s `if` alternative, refused at `eventually`) and SG-R18's
+flat chain (the error falls at the second `until`, where `graph-relation` has
+ended and `graph-body` expects `}`) both match the grammar. FND-002's round-1
+deferral (QSL-535 aligns #968; planner ruling: QSpec's grammar is normative)
+stands as recorded, and SG-R17 and SG-R18 now make that alignment testable from
+QSpec.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-004 | fixed | - |

@@ -116,7 +116,8 @@ temporal atom over a model subject reads an absent `over` object.
 - When a state-graph claim contains a temporal operator, at any operand
   position of its body, `from` or `to` predicate and with or without an
   interval, the checker SHALL refuse it as
-  `unsupported_construct`/`expression-form`, located at the operator.
+  `unsupported_construct`/`expression-form`, located at the operator; where a predicate contains several temporal operators,
+  the refusal is located at the first one in source order.
 - When a state-graph claim carries a fairness constraint, the checker SHALL
   refuse it as `unsupported_construct`/`expression-form`, located at the
   constraint.
