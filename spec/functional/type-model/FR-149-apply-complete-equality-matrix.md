@@ -48,7 +48,10 @@ Static type-check refusal and I13 dispositions remain staged separately.
 The matrix distinguishes scalar numeric rules, enum declaration identity, text
 profile, structural records/tuples, collection algebra, object-reference
 identity and IEEE numeric/total/bitwise relations. No structural resemblance,
-implicit conversion or local-name equality creates a common type.
+implicit conversion or local-name equality creates a common type; the one
+expected-type rule for an arithmetic operand in
+[Arithmetic operand against a bounded integer](#arithmetic-operand-against-a-bounded-integer)
+retypes that operand and creates no common type.
 
 ## Equality matrix
 
@@ -72,7 +75,8 @@ implicit conversion or local-name equality creates a common type.
 | IEEE binary32/binary64 | the explicitly selected FR-148 `numericEqual`, `totalOrder` equivalence or `bitIdentical` intrinsic; the grammar's `=` and `!=` select none of them and are `ill_typed` for any operand type containing `Float32` or `Float64` at any depth |
 
 Operands of different types are comparable only after an explicit conversion
-declares a common type. If conversion is lossy, undefined or absent, type
+declares a common type, except that a binary `+`, `-` or `*` operand takes the
+other operand's `Int[..]` type as its expected type. If conversion is lossy, undefined or absent, type
 checking returns `refused { code: ill_typed }`; it never produces Boolean
 `false`. Conversion creates a comparison value but
 does not rewrite the source value's declaration or object identity.
@@ -171,32 +175,51 @@ magnitude, has no charge point and produces only the comparison value.
 
 ## Arithmetic operand against a bounded integer
 
-A relation such as `later.tally = earlier.tally + 1` compares a stable path of
-type `Int[lo,hi]` with a sum that FR-146 types `Integer`. Writing `convert` around
-every such sum would restate what the interval analysis already decides, so
-one exception to the explicit-conversion rule applies.
+An arithmetic node (`+`, `-` or `*`) takes its type from its operands, and from
+an expected type when a declared position supplies one: a declared field,
+parameter, function result, capture type or annotated `let` that is `Int[lo,hi]`
+types the node as `Int[lo,hi]` and carries a range obligation (FR-146, TC-191
+P09; `let x: Int[0,3] = y + 1` is range-checked at the sum and refuses
+`undefined_expression`/`unproved-range` when the sum is not proved inside
+`[0,3]`). An operand of `=` or `!=` is one more such position. This is not a
+conversion: it adds no `convert` node of the equality conversion table, creates
+no common type between operands of different types, and is the second
+operation-scoped exception named in FR-044 after the exact `n/1` promotion for
+rational `/`.
 
 When one operand of `=` or `!=` has static type `Int[lo,hi]` and the other
-operand, ignoring parentheses, is a binary `+`, `-`, `*` or unary `-` form whose
-operands are `Integer` or `Int[..]`, the arithmetic operand is coerced to
-`Int[lo,hi]` as a range narrowing (`quire.op.numeric.narrow`, class "range
-narrowing" above). The obligation is that the FR-146 interval of the arithmetic
-expression, under the facts that hold where it executes, lies inside
-`[lo,hi]`. A proved obligation makes the equality a comparison of two
-`Int[lo,hi]` operands. It is decided statically, so it adds no charge beyond
-the equality schedule. An unproved obligation is
+operand, ignoring parentheses, is a binary `+`, `-` or `*` node whose operands
+are `Integer` or `Int[..]` (on either side of the operator, either operand
+order), the `Int[lo,hi]` operand supplies the expected type of the arithmetic
+node. The node is typed `Int[lo,hi]` with the obligation that its FR-146
+interval, under the facts that hold where it executes, lies inside `[lo,hi]`.
+A proved obligation makes the equality a comparison of two `Int[lo,hi]`
+operands and adds no charge beyond the arithmetic's own integer-arithmetic
+schedule plus the one-pair equality schedule. An unproved obligation is
 `refused { code: undefined_expression, cause: unproved-range }` located at the
-arithmetic expression, never at the equality, and the value is never clamped,
-wrapped or widened.
+arithmetic node, not at the equality, and the value is never clamped, wrapped
+or widened.
 
-The coercion is deliberately narrow. It applies only to a `+`, `-`, `*` or unary
-`-` node directly under `=` or `!=` whose other operand is `Int[..]`. A path,
-call, `div`, `rem`, `count`, `let`-bound name or any other `Integer` operand
-against an `Int[..]` operand remains `refused { code: ill_typed }` without an
-explicit `convert`, as does an arithmetic operand against a `Rational[..]` or
+The checked package records the typed node as one `quire.op.numeric.narrow`
+application with member `Int[lo,hi]`, located at the arithmetic expression. It
+is the node a range-narrowing conversion into `Int[lo,hi]` produces, but the
+source carries no `convert`: `convert<Int[lo,hi]>` of an unbounded `Integer`
+operand is still not an admitted equality conversion (table above), and the
+only explicit spelling is `convert<Integer>` on the `Int[..]` operand, which
+compares as `Integer` and carries no range obligation. A consumer reads the
+`narrow` node's member type as the expected type that was supplied and its
+obligation as the unproved-range check; it does not infer that the source
+wrote a conversion.
+
+The rule is narrow. Only a binary `+`, `-` or `*` node that is directly an
+operand of `=` or `!=` is typed this way. Unary `-` (typed `Integer`), a path,
+a call, `div`, `rem`, `count`, `sum`, a `let`-bound name without its own
+annotation and any other `Integer` operand against an `Int[..]` operand remain
+`refused { code: ill_typed, cause: type-mismatch }` without an explicit
+`convert`, as does an arithmetic operand against a `Rational[..]` or
 `Decimal[..]` operand. An integer literal is typed by the other operand under
-FR-144 literal typing and is not affected. The exception does not extend to
-`<`, `<=`, `>` or `>=`, to function arguments, or to bindings.
+FR-144 literal typing and is not affected. `<`, `<=`, `>` and `>=` supply no
+expected type to their operands.
 
 ## Conversion classes
 
@@ -306,9 +329,9 @@ collection and object-reference rows of this requirement.
 | FR-149-AC-16 | Same-kind keys compare canonical payload content unsigned ASCII bytewise with a proper prefix first: Timestamp `10` orders before `2`, and `-1` before `-2`, while equal payloads have equal keys. The four ordering operators on either native refuse `ill_typed`/`operator-ineligible` before any charge; key availability creates no ordering or arithmetic capability. | Test |
 | FR-149-AC-17 | Two operands of static type `Money`, one holding a `TaxedMoney` and one a `Money` of equal shared fields, give `=` `false` and `!=` `true` in either order as one terminal unequal pair; the same holds for the record as a field, an `Option` payload, a collection element, a tuple position and a union payload. A `Child == Parent` over two different static types stays `ill_typed`/`type-mismatch`. | Test (TC-194) |
 | FR-149-AC-18 | `=` and `!=` over two event-type operands, and over `Option`, tuple or union values containing one, are `ill_typed`/`operator-ineligible` before any charge; a `Set`, `Bag` or `OrderedSet` of an event type is refused for the same reason (FR-144). | Test (TC-194) |
-| FR-149-AC-19 | With `tally` of `Int[0,3]` and the guard `earlier.tally < 3`, the relation `earlier.tally < 3 and later.tally = earlier.tally + 1` checks: the sum's interval `[1,3]` lies inside `Int[0,3]`, the sum is coerced to `Int[0,3]`, and the equality adds no charge beyond its one-pair schedule. | Test (TC-194) |
+| FR-149-AC-19 | With `tally` of `Int[0,3]` and the guard `earlier.tally < 3`, the relation `earlier.tally < 3 and later.tally = earlier.tally + 1` checks: the sum's interval `[1,3]` lies inside `Int[0,3]`, the sum is typed `Int[0,3]` by the expected-type rule, and the relation charges the sum's own integer-arithmetic schedule plus the equality's one-pair schedule. | Test (TC-194) |
 | FR-149-AC-20 | With the guard removed, `later.tally = earlier.tally + 1` over `tally` of `Int[0,3]` refuses `undefined_expression`/`unproved-range` at `earlier.tally + 1`, because the sum's interval `[1,4]` exceeds `Int[0,3]`; `recovered.tally = recovered.tally + 1` refuses the same way at its sum. No Boolean is produced and the value is not clamped. | Test (TC-194) |
-| FR-149-AC-21 | The coercion applies only to a `+`, `-`, `*` or unary `-` operand against an `Int[..]` operand: an `Integer` path, a call, a `div` or a `let`-bound name against `Int[0,3]` is `ill_typed` without `convert`, an arithmetic operand against a `Rational[..]` or `Decimal[..]` operand is `ill_typed`, and `<` over the same operands gains no coercion. | Test (TC-194) |
+| FR-149-AC-21 | The rule applies only to a binary `+`, `-` or `*` operand of `=` or `!=` against an `Int[..]` operand, on either side and parenthesized: an `Integer` path, a call, `div`, `rem`, `count`, an unannotated `let`-bound name or unary `-` against `Int[0,3]` is `ill_typed`/`type-mismatch` without `convert`, an arithmetic operand against a `Rational[..]` or `Decimal[..]` operand is `ill_typed`, and `<` over the same operands supplies no expected type. | Test (TC-194) |
 
 ## Dependencies
 
