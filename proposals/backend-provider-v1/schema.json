@@ -229,7 +229,8 @@
         "options": {"description": "FR-331, FR-196: backend options for this item.", "$ref": "#/$defs/StringMap"},
         "reductions": {"$ref": "#/$defs/Reductions"},
         "temporal": {"$ref": "#/$defs/Temporal"},
-        "probabilistic": {"$ref": "#/$defs/Probabilistic"}
+        "probabilistic": {"$ref": "#/$defs/Probabilistic"},
+        "hybrid": {"$ref": "#/$defs/Hybrid"}
       },
       "additionalProperties": false
     },
@@ -382,6 +383,23 @@
         {"properties": {"type": {"enum": ["okamoto", "sprt"]}}, "required": ["type"], "additionalProperties": false},
         {"properties": {"type": {"const": "regenerative"}, "min_cycles": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "min_cycles"], "additionalProperties": false}
       ]
+    },
+    "Hybrid": {
+      "description": "FR-331, FR-193, FR-461: the limits of a hybrid item. max_solver_steps is a count of the provider's solver steps; max_solver_time is whole seconds of wall-clock time and is outside request identity (FR-306).",
+      "type": "object",
+      "properties": {
+        "limits": {
+          "type": "object",
+          "properties": {
+            "max_solver_steps": {"$ref": "#/$defs/PositiveCount"},
+            "max_solver_time": {"$ref": "#/$defs/PositiveCount"}
+          },
+          "minProperties": 1,
+          "additionalProperties": false
+        }
+      },
+      "required": ["limits"],
+      "additionalProperties": false
     },
     "Probabilistic": {
       "description": "FR-331, FR-290, FR-408, FR-411: the evidence kind and the settings and limits of that kind. An absent or unknown evidence kind is admitted on the wire and settles invalid-request (FR-290).",
