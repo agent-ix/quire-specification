@@ -38,3 +38,10 @@ Ticket: STD-223. Checks the new refusal against the diagnostic cause catalog (FR
 ## Verdict
 
 Not mergeable on this lens: FND-001 makes the PR contradict FR-272-AC-1. The sampler-level rule itself is consistent with the QSL half: same refusal point (before any digest, no choice index), same `2^256` boundary, and refusal rather than widening the draw.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | 42d2008: the condition is no longer an `invalid_runtime_input` cause; it is the `unsupported` result cause `total-above-draw-range{total}`, listed in FR-331's `unsupported` row and added to backend-provider-v1 `UnsupportedCause` with `total` a `PositiveIntegerString`. FR-272 and native-diagnostics list diagnostic-code causes only; no `unsupported` result cause (`not-markov`, `time-locked-sample`, …) appears in either, so FR-272-AC-1 is no longer touched and no registration there is needed. `cargo test --test checked_package_v2 --test backend_provider_v1` passes (105, 9). |
+| FND-002 | fixed | 42d2008: FR-408 "While sampling" gains `total-above-draw-range{total}` at the first such choice, matching QSL #1061 FR-189 `Unsupported(TotalAboveDrawRange{total})`. No vectors.json entry was added; no sibling `unsupported` sampling cause (`not-markov`, `not-stochastic`, `time-locked-sample`) has one either. The FR-331 `quire validate` failures (missing `id`, `semantic.record-invalid` on `fields`) are identical on origin/main 96e8fd7 and pre-exist. |

@@ -29,3 +29,9 @@ Ticket: STD-223. EARS conformance of the one requirement-grammar statement the d
 ## Verdict
 
 Minor wording only; no EARS defect blocks merge.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | 42d2008: split into FR-181-AC-14 (the stop above `2^256`) and FR-181-AC-15 (exactly `2^256` accepts the draw-0 digest and selects the least index `i` with `v mod n < w_0 + … + w_i`). |

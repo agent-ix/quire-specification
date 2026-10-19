@@ -35,3 +35,16 @@ Ticket: STD-223. Base checklist over the sampler-definition paragraph, FR-181-AC
 ## Verdict
 
 Not mergeable as-is together with SR-13347 FND-001 (high). On this lens the rule is right in substance: refusal before any digest, no choice index, `n = 2^256` selecting with bound `2^256`, and no widening. The self-authored SR-13328 should be replaced by the independent reviewer artifacts (SR-13344 to SR-13347).
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | 42d2008: the sampler, FR-181-AC-14, FR-408 and TC-354 SM-09 now settle `unsupported` with cause `total-above-draw-range{total}`; `invalid_runtime_input` is no longer used for this generated condition. |
+| FND-002 | fixed | 42d2008: the sampler states the stop applies to the whole sampling run, not only the current trace, and retains `total` only, naming no trace, step or choice position. |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | low | FR-181-AC-14 now has a plain simulation run "settle `unsupported`", but FR-181's Outputs still lists only "requires-bound/incomplete/refused outcomes". Add `unsupported` (with its typed cause) to the Outputs line so the AC's outcome is one FR-181 declares. | spec/functional/runtime/FR-181-simulate-finite-executions.md:45-46,265 |

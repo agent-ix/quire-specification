@@ -31,3 +31,9 @@ Ticket: STD-223. Spec-only diff; no Rust, schema or vector JSON changed. Recompu
 ## Verdict
 
 Mergeable on this lens after the wording nit; both vectors are correct.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | 42d2008: SM-08 now states acceptance at `draw = 0` with digest `d5160380…95f2` and selects index `0`. |
