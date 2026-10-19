@@ -49,3 +49,17 @@ Round 1, reviewed at 561f23fcf64f179b9632072134dd9d7574abdfb0. Changed spec file
 | FND-001 | fixed | - |
 | FND-002 | fixed | - |
 | FND-003 | fixed | - |
+| FND-004 | fixed | - |
+| FND-005 | fixed | - |
+
+Round 2, reviewed at e8958629d320a4f782260e6c521e1fb1baf212be. The FND-004 and
+FND-005 rows above are round 2's; FND-001 to FND-003 needed no new row. The
+named-population unclosed-subtypes case FND-005 asked for is present. Its
+expected result is new finding FND-007.
+
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-006 | medium | L14's Q and R bodies compare the lookup with some(r2), but QSpec has no some form. shared-grammar.md:350 has 'none' as a primary and no some constructor, and the only some( in spec/ and proposals/ is this vector. So some(r2) resolves as a call to an undeclared function, missing_declaration/missing-name, and Q and R refuse instead of evaluating true. Write the present case as QSpec does elsewhere: present(lookup<M::A>(M::PA, r2) absent empty) and value(lookup<M::A>(M::PA, r2) absent empty) = r2, or use the refused mode, lookup<M::A>(M::PA, r2) absent refused = r2, as L08 does. | spec/test-cases/TC-198-closed-model-lookup.md:72; proposals/quire-v1/shared-grammar.md:350 |
+| FND-007 | medium | The new L14 case, PA with member types [A] and P1 without b1, querying allInstances<M::A>(M::PA), expects unclosed-subtypes naming the uncovered type B. FR-153 says "A member type covers itself and every type that conforms to it", and B conforms to A, so [A] covers B and subtype closure holds for M::A. L12 relies on that same coverage, admitting b1 under [A] through one ancestor edge. A correct engine therefore returns the set [a1, a2] and fails the vector. L02's second case already has this expectation on main and needs the same fix. For an uncovered subtype, use member types that do not cover the queried type, for example PA with member types [B] queried as allInstances<M::A>(M::PA), where A itself is uncovered. | spec/test-cases/TC-198-closed-model-lookup.md:72; spec/test-cases/TC-198-closed-model-lookup.md:60; spec/functional/type-model/FR-153-query-closed-model-environments.md:89-92 |

@@ -43,3 +43,6 @@ missing-required-artifact, incomplete-scope or unclosed-subtypes.
 | FND-001 | fixed | - |
 | FND-002 | fixed | - |
 | FND-003 | fixed | - |
+
+Round 2, reviewed at e8958629d320a4f782260e6c521e1fb1baf212be. No finding was
+open, so there are no round-2 rows and no new findings in this lens.
