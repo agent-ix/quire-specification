@@ -51,7 +51,14 @@ weights by the least common multiple of their denominators to positive
 integers `w_0, …, w_{k−1}` with sum `n`; a uniform choice over `k` items has
 `w_i = 1` and `n = k`. `v` is accepted when `v < n · ⌊2^256 / n⌋`, and the
 choice selects the least index `i` with `v mod n < w_0 + … + w_i`; a rejected
-`v` increments `draw` and recomputes the digest. `n = 1` selects index 0 with
+`v` increments `draw` and recomputes the digest. A total `n > 2^256` leaves no
+accepted `v` (the bound `n · ⌊2^256 / n⌋` is 0), so the run stops at the first such
+choice, before any draw and with no digest or choice index taken, and settles
+`unsupported` with cause `total-above-draw-range{total}`, `total` being `n` as a
+decimal string. The stop applies to the whole sampling run, not only to the
+current trace, and retains `total` only; the cause names no trace, step or choice
+position. A total of exactly `2^256` is in range: its bound is `2^256`, so the
+draw-0 digest is accepted. The sampler never widens the draw. `n = 1` selects index 0 with
 no digest and no choice index. An empty item set ends the trace without a draw.
 
 ## Grid draws for delays
