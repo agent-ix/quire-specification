@@ -57,7 +57,7 @@ implicit conversion or local-name equality creates a common type.
 | Boolean | identical truth value |
 | UUID | identical canonical UUID payload content under QSL FR-056's K2 canonical native payload contract; a distinct native type, not text |
 | Timestamp | identical canonical Timestamp payload content under QSL FR-056's K2 canonical native payload contract; a distinct native type, not `Int` |
-| Integer, rational and decimal | exact mathematical value; operands of different numeric types first require an admitted [equality conversion](#equality-conversions) |
+| Integer, rational and decimal | exact mathematical value; operands of different numeric types first require an admitted [equality conversion](#equality-conversions), or the [arithmetic operand exception](#arithmetic-operand-against-a-bounded-integer) |
 | Quantity | identical unit and exact value equality; a top-level quantity equality expression uses the FR-142 root-value comparison schedule, while a quantity leaf inside a composite equality plan compares by exact value in its identical unit and charges only its `equality.pair`; distinct units require an explicit prior FR-142 conversion |
 | Text | the FR-141 relation under the same pinned profile: normalized scalar sequence for scalar profiles and original UTF-8 bytes for `binary-utf8` |
 | Enumeration | the same qualified enumeration declaration and identical case; different declarations have no implicit common type |
@@ -169,6 +169,35 @@ schedule for that conversion, with `scale_expansion` and `integer_bits` sized
 from operand bit lengths. Every other admitted equality conversion keeps the source
 magnitude, has no charge point and produces only the comparison value.
 
+## Arithmetic operand against a bounded integer
+
+A relation such as `later.tally = earlier.tally + 1` compares a stable path of
+type `Int[lo,hi]` with a sum that FR-146 types `Integer`. Writing `convert` around
+every such sum would restate what the interval analysis already decides, so
+one exception to the explicit-conversion rule applies.
+
+When one operand of `=` or `!=` has static type `Int[lo,hi]` and the other
+operand, ignoring parentheses, is a binary `+`, `-`, `*` or unary `-` form whose
+operands are `Integer` or `Int[..]`, the arithmetic operand is coerced to
+`Int[lo,hi]` as a range narrowing (`quire.op.numeric.narrow`, class "range
+narrowing" above). The obligation is that the FR-146 interval of the arithmetic
+expression, under the facts that hold where it executes, lies inside
+`[lo,hi]`. A proved obligation makes the equality a comparison of two
+`Int[lo,hi]` operands. It is decided statically, so it adds no charge beyond
+the equality schedule. An unproved obligation is
+`refused { code: undefined_expression, cause: unproved-range }` located at the
+arithmetic expression, never at the equality, and the value is never clamped,
+wrapped or widened.
+
+The coercion is deliberately narrow. It applies only to a `+`, `-`, `*` or unary
+`-` node directly under `=` or `!=` whose other operand is `Int[..]`. A path,
+call, `div`, `rem`, `count`, `let`-bound name or any other `Integer` operand
+against an `Int[..]` operand remains `refused { code: ill_typed }` without an
+explicit `convert`, as does an arithmetic operand against a `Rational[..]` or
+`Decimal[..]` operand. An integer literal is typed by the other operand under
+FR-144 literal typing and is not affected. The exception does not extend to
+`<`, `<=`, `>` or `>=`, to function arguments, or to bindings.
+
 ## Conversion classes
 
 Every explicit exact-numeric `convert<T>(e)` from static type `S` of `e`, inside
@@ -277,6 +306,9 @@ collection and object-reference rows of this requirement.
 | FR-149-AC-16 | Same-kind keys compare canonical payload content unsigned ASCII bytewise with a proper prefix first: Timestamp `10` orders before `2`, and `-1` before `-2`, while equal payloads have equal keys. The four ordering operators on either native refuse `ill_typed`/`operator-ineligible` before any charge; key availability creates no ordering or arithmetic capability. | Test |
 | FR-149-AC-17 | Two operands of static type `Money`, one holding a `TaxedMoney` and one a `Money` of equal shared fields, give `=` `false` and `!=` `true` in either order as one terminal unequal pair; the same holds for the record as a field, an `Option` payload, a collection element, a tuple position and a union payload. A `Child == Parent` over two different static types stays `ill_typed`/`type-mismatch`. | Test (TC-194) |
 | FR-149-AC-18 | `=` and `!=` over two event-type operands, and over `Option`, tuple or union values containing one, are `ill_typed`/`operator-ineligible` before any charge; a `Set`, `Bag` or `OrderedSet` of an event type is refused for the same reason (FR-144). | Test (TC-194) |
+| FR-149-AC-19 | With `tally` of `Int[0,3]` and the guard `earlier.tally < 3`, the relation `earlier.tally < 3 and later.tally = earlier.tally + 1` checks: the sum's interval `[1,3]` lies inside `Int[0,3]`, the sum is coerced to `Int[0,3]`, and the equality adds no charge beyond its one-pair schedule. | Test (TC-194) |
+| FR-149-AC-20 | With the guard removed, `later.tally = earlier.tally + 1` over `tally` of `Int[0,3]` refuses `undefined_expression`/`unproved-range` at `earlier.tally + 1`, because the sum's interval `[1,4]` exceeds `Int[0,3]`; `recovered.tally = recovered.tally + 1` refuses the same way at its sum. No Boolean is produced and the value is not clamped. | Test (TC-194) |
+| FR-149-AC-21 | The coercion applies only to a `+`, `-`, `*` or unary `-` operand against an `Int[..]` operand: an `Integer` path, a call, a `div` or a `let`-bound name against `Int[0,3]` is `ill_typed` without `convert`, an arithmetic operand against a `Rational[..]` or `Decimal[..]` operand is `ill_typed`, and `<` over the same operands gains no coercion. | Test (TC-194) |
 
 ## Dependencies
 
