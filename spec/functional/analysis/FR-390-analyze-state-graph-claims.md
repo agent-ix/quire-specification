@@ -113,12 +113,18 @@ temporal atom over a model subject reads an absent `over` object.
 - When a predicate of a state-graph claim reads an operation anchor or a
   pre-state, the checker SHALL refuse it as
   `unsupported_construct`/`expression-form`, located at the read.
-- When a state-graph claim contains a temporal operator, the checker SHALL
-  refuse it as `unsupported_construct`/`expression-form`, located at the
-  operator.
+- When a state-graph claim contains a temporal operator, at any operand
+  position of its body, `from` or `to` predicate and with or without an
+  interval, the checker SHALL refuse it as
+  `unsupported_construct`/`expression-form`, located at the operator.
 - When a state-graph claim carries a fairness constraint, the checker SHALL
   refuse it as `unsupported_construct`/`expression-form`, located at the
   constraint.
+
+The shared grammar's `graph-predicate` and `graph-body` productions recognize
+both constructs, so each reaches this admission step as parsed source and is
+never a syntax error; the refusals above are the only place a state-graph
+claim rejects them.
 
 ## Routing
 
@@ -134,8 +140,8 @@ A trace monitor evaluates no state-graph claim.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-390-AC-1 | Each of the three state-graph clauses parses to its form, with its predicates, its optional `over` parameter and, for `always possible`, its optional `from` predicate; an `always possible` clause without `from` reads `Q` as `true`. | Test (TC-330) |
-| FR-390-AC-2 | A state-graph predicate that reads an operation anchor or a pre-state, a temporal operator in a state-graph claim, and a fairness constraint on one each refuse as `unsupported_construct`/`expression-form` located at the offending construct. | Test (TC-330) |
+| FR-390-AC-1 | Each of the three state-graph clauses parses to its form, with its predicates (each a `graph-predicate`), its optional `over` parameter and, for `always possible`, its optional `from` predicate; an `always possible` clause without `from` reads `Q` as `true`. | Test (TC-330) |
+| FR-390-AC-2 | A state-graph predicate that reads an operation anchor or a pre-state, a temporal operator in a state-graph claim (unary or binary, with or without an interval, in a body, `from` or `to` operand, including `c.n = 1 and eventually c.n = 2`), and a fairness constraint at the start of a claim body each parse and then refuse as `unsupported_construct`/`expression-form` located at the offending construct. | Test (TC-330) |
 | FR-390-AC-3 | `possible` holds exactly when every initial state is in `E(P)`, and `always possible` exactly when every reachable node where `Q` holds is in `E(P)`, on the ConfigVersion and game vectors. | Test (TC-331, TC-332) |
 | FR-390-AC-4 | `unique path` counts paths per reachable node where `X` holds: two interleavings of independent steps give one such node two paths, a sequenced model gives one, and a cycle on a path to `Y` gives more than one. | Test (TC-333) |
 | FR-390-AC-5 | A reachable terminal node where `Q` holds and `P` does not refutes `always possible`; declaring a `terminal when` predicate that holds there changes no state-graph verdict and settles the subject's deadlock-freedom item `proved`. | Test (TC-332) |

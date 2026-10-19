@@ -32,6 +32,11 @@ Compile each source vector through the real local Rust boundary under the comple
 | SG-R02 | a `possible` predicate that reads an operation anchor | `unsupported_construct`/`expression-form` at the anchor read |
 | SG-R03 | a `possible` claim whose predicate holds `eventually` | `unsupported_construct`/`expression-form` at the operator |
 | SG-R04 | an `always possible` claim with a weak fairness constraint | `unsupported_construct`/`expression-form` at the constraint |
+| SG-R09 | `possible R using v over (c: C::Cfg) { c.n = 1 and eventually c.n = 2 }` | parses; `unsupported_construct`/`expression-form` at `eventually`, not a syntax error |
+| SG-R10 | `possible N using v { not eventually[0,5] c.n = 2 }`, `possible P using v { (eventually c.n = 2) }` and `possible U using v { a until b }` | each parses; `unsupported_construct`/`expression-form` at `eventually`, `eventually` and `until` |
+| SG-R11 | `always possible Rec using v from (always c.ok) { c.done }` and `unique path One using v from (c.a) to (eventually c.done);` | each parses; `unsupported_construct`/`expression-form` at `always` and at `eventually` |
+| SG-R12 | `always possible Rec using v { fair weak M::Cfg::step; c.done }` | parses; `unsupported_construct`/`expression-form` at the constraint |
+| SG-R13 | `possible P using v { c.done; fair weak M::Cfg::step }` | syntax error at `fair`: a fairness constraint is admitted only at the start of a body |
 | SG-R05 | a request whose only items over subject `G` are SG-S01 and SG-S02 | one deadlock-freedom item for `G`, and no second one |
 | SG-R06 | each admitted vector | kind `temporal-satisfaction`, extent unbounded, form recorded as an obligation form |
 | SG-R07 | SG-S02 against a single candidate whose arm discharges `possible` only | `unsupported`, warned, `unsupported_projection`/`unsupported-requested-capability` |

@@ -573,13 +573,31 @@ indexed-read  = postfix, '@', ident ;
 state-graph-clause = possible-clause | always-possible-clause
                    | unique-path-clause ;
 possible-clause = 'possible', ident, 'using', ident,
-                  [ graph-over ], block ;
+                  [ graph-over ], graph-body ;
 always-possible-clause = 'always', 'possible', ident, 'using', ident,
-                         [ graph-over ], [ 'from', '(', expr, ')' ],
-                         block ;
+                         [ graph-over ],
+                         [ 'from', '(', graph-predicate, ')' ],
+                         graph-body ;
 unique-path-clause = 'unique', 'path', ident, 'using', ident,
-                     [ graph-over ], 'from', '(', expr, ')',
-                     'to', '(', expr, ')', ';' ;
+                     [ graph-over ], 'from', '(', graph-predicate, ')',
+                     'to', '(', graph-predicate, ')', ';' ;
+graph-body    = '{', { fairness }, graph-predicate, '}' ;
+graph-predicate = 'let', ident, '=', expr, 'in', graph-predicate
+                | 'if', expr, 'then', graph-predicate,
+                  'else', graph-predicate
+                | graph-implication ;
+graph-implication = graph-disjunction,
+                    [ 'implies', graph-implication ] ;
+graph-disjunction = graph-conjunction, { 'or', graph-conjunction } ;
+graph-conjunction = graph-relation, { 'and', graph-relation } ;
+graph-relation = graph-unary,
+                 [ ('until' | 'release' | 'since' | 'triggered'),
+                   [ interval ], graph-unary ] ;
+graph-unary   = 'not', graph-unary
+              | ('eventually' | 'always' | 'once' | 'historically'),
+                [ interval ], graph-unary
+              | comparison
+              | '(', graph-predicate, ')' ;
 graph-over    = 'over', '(', parameter, ')' ;
 hybrid-decl   = 'hybrid', ident, 'using', ident, '{', hybrid-mode,
                 { hybrid-mode }, '}' ;
@@ -699,6 +717,19 @@ rules only.
 - An `align-skip` entry and a model-operation execution binding each name an
   operation as `qualified-name`, whose first segment is a model alias the
   clause binds.
+- The predicate positions of a state-graph clause (its body and its `from`
+  and `to` operands) are `graph-predicate`s: a clause expression in which the
+  unary and binary temporal operators of the temporal facet stand at any
+  operand position, each with an optional `interval`, and in which `fairness`
+  constraints may stand at the start of a `graph-body`. A parenthesised group
+  is read as a `comparison` operand when it is one and as a `graph-predicate`
+  otherwise, so `(eventually x)` and `not eventually x` both parse. The
+  production is recognition only: it carries no profile selection, and a
+  temporal operator or a fairness constraint inside a state-graph claim is
+  parsed and then refused by
+  [FR-390](../../spec/functional/analysis/FR-390-analyze-state-graph-claims.md)
+  at admission, never as a syntax error. `over` is optional in all three
+  clauses.
 - The keywords of the state-graph clauses are distinct from the `reaches`
   primary: `reaches` reads one state's object graph and the state-graph
   clauses read the model's state graph.
@@ -712,6 +743,12 @@ rules only.
 | `possible Win using v over (g: G::Game) { g.phase = G::Phase::Won }` | One `possible` state-graph clause with one `over` parameter. |
 | `always possible Rec using v from (not x.lost) { x.ok }` | One `always possible` clause with no `over` parameter and one `from` predicate. |
 | `unique path One using v over (j: M::Job) from (not j.a) to (j.done);` | One `unique path` clause with its two predicates. |
+| `possible R using v over (c: C::Cfg) { c.n = 1 and eventually c.n = 2 }` | Parses: a conjunction whose second operand is an unbounded `eventually`. Refused at admission, `unsupported_construct`/`expression-form` at `eventually` (FR-390-AC-2). |
+| `possible N using v { not eventually[0,5] c.n = 2 }` and `possible P using v { (eventually c.n = 2) }` | Both parse, with an interval operator and a parenthesised temporal operand; each is refused at admission at the operator (FR-390-AC-2). |
+| `possible U using v { a until b }` | Parses as a binary temporal operator with no interval; refused at admission at `until` (FR-390-AC-2). |
+| `always possible Rec using v from (always c.ok) { c.done }` | Parses: a temporal operator in a `from` operand; refused at admission at `always` (FR-390-AC-2). |
+| `always possible Rec using v { fair weak M::Cfg::step; c.done }` | Parses: a fairness constraint at the start of the body; refused at admission at the constraint (FR-390-AC-2). |
+| `possible P using v { c.done; fair weak M::Cfg::step }` | Syntax error: a fairness constraint is admitted only at the start of a body. |
 
 ### Probabilistic, timed and real-time forms
 
