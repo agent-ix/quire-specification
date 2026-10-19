@@ -5,6 +5,8 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-375
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-001
+    type: verifies
 ---
 
 # TC-310: Refinement declaration admission
@@ -105,17 +107,23 @@ Mutations, each applied alone to the positive unit:
     omitted;
 18. against a producer whose support set omits `nested-reference-row`, change
     the positive unit so a `Sequence<Reference<Queue>>[0, 2]` abstract field
-    is mapped by a row of type `Sequence<Reference<Ring>>[0, 2]`, twice (two
-    such fields), and separately map a whole-population reference row and a
-    plain `Reference<Ring>` row to `Reference<Queue>` fields;
-19. against a producer whose support set omits `abstract-relationships`,
-    give the abstract `Queue` of the ring-buffer pair a relationship;
-20. map a `?` abstract field by `none`, by `Some(self.value)`, by `self.value`
-    and by `if present(self.f) then Some(value(self.f)) else none` over a
-    concrete `?` field; map an `Option<Int[0, 2]>` abstract field by `none`;
-    write `Some(1)` in a state clause;
-21. declare the positive refinement in a unit that does not select
-    `quire.value.complete/v1`.
+    is mapped by a row of type `Sequence<Reference<Ring>>[0, 2]`, so an
+    abstract `?` field of type `Reference<Queue>` is mapped by
+    `Some(self.ring)`, and so a `Sequence<Reference<Ring>>` step argument is
+    given for a `Sequence<Reference<Queue>>` parameter; separately map a
+    whole-population reference row and a plain `Reference<Ring>` row to
+    `Reference<Queue>` fields;
+19. give the abstract `Queue` of the ring-buffer pair a relationship, under a
+    producer whose support set holds every feature;
+20. map a `?` abstract field by `none`, by `Some(self.value)`, by
+    `self.value` and by `self.f` over a concrete `?` field; map an
+    `Option<Int[0, 2]>` abstract field by `none`; map a field by `none` as a
+    call argument; write `Some(1)` in a state clause with no function `Some`
+    declared, and with one declared;
+21. with the ring-buffer rows `s.ring = self` and `(self.head + i) mod 2`,
+    give the refinement's `using` alias a profile declaration that names
+    `quire.value.complete/v1` and `quire.model.complete/v1` while the unit's
+    own declarations select no layer; then an alias naming no layer.
 
 ## Expected Results
 
@@ -183,15 +191,19 @@ is produced and no other diagnostic is reported for the refused row. With
 `malformed-declaration` at `/0/refinement`, with no support-set refusal for
 any of them.
 
-In mutation 18 each nested-reference field row refuses
+In mutation 18 each of the first three changes refuses
 `unsupported_construct`/`not-yet-implemented` naming `nested-reference-row` at
-its expression, so two refusals and no node, while the population-reference and
+its expression, except the step argument, which refuses `ill_typed`/
+`type-mismatch`, with no node, while the population-reference and
 plain-reference rows are admitted (FR-375-AC-15). In mutation 19 the
-declaration refuses the same pair naming `abstract-relationships` at the
-abstract alias of the header, once, with no node (FR-375-AC-16). In mutation
-20 `none` and `Some(self.value)` and the `if present` form are admitted for
-the `?` field, `self.value` refuses `ill_typed`/`type-mismatch`, the
-`Option<Int[0, 2]>` field takes `none` as an explicit `none`, and `Some(1)` in
-a state clause is an ordinary call that resolves as any other (FR-375-AC-17).
-Mutation 21 refuses `unsupported_construct` at the `refinement` keyword with no
-node (FR-375-AC-18).
+declaration refuses `unsupported_construct`/`declaration-form` at the
+abstract alias of the header, once, naming the selected profile, with no node
+(FR-375-AC-16). In mutation 20 `none` and `Some(self.value)` are admitted for
+the `?` field, `self.value` and `self.f` refuse `ill_typed`/`type-mismatch`,
+the `Option<Int[0, 2]>` field takes `none` as an explicit `none`, `none` as a
+call argument refuses `ill_typed`/`type-mismatch`, and `Some(1)` refuses
+`missing_declaration`/`missing-name` at `Some` with no function declared and is
+a call to it with one declared (FR-375-AC-17). In mutation 21 the rows are
+admitted under the alias naming the layers, and under the alias naming none
+each refuses `unsupported_construct`/`expression-form` naming the selected
+layer, at the `mod` and at the comparison (FR-375-AC-18, FR-001-AC-7).

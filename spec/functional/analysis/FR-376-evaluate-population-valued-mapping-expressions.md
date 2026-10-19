@@ -11,6 +11,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-145
     type: references
+  - target: ix://agent-ix/quire-specification/FR-149
+    type: references
 ---
 
 # FR-376: Evaluate population-valued expressions in refinement mappings
@@ -100,7 +102,7 @@ sub-expression makes `map` undetermined at that state (FR-377).
 | FR-376-AC-5 | Under the ring-buffer mapping `items = seq(i in 0 .. self.size - 1: only(s in R::slots where s.ring = self and convert<Integer>(s.index) = (self.head + i) mod 2: s.value))`, the state with `head = 1`, `size = 2`, `s1.value = 1`, `s0.value = 0` maps to `items = [1, 0]`, and renaming the slot keys leaves every mapped value unchanged; the comparison is written with `convert<Integer>(s.index)` because `mod` yields an `Integer` and an `Integer` against an `Int[..]` under `=` is `ill_typed`/`type-mismatch` ([FR-149](../type-model/FR-149-apply-complete-equality-matrix.md)). | Test (TC-311, TC-316) |
 | FR-376-AC-6 | `sum(x in P where c: e)` over a universe of `n` objects with `e` bounded by `[lo, hi]` has the bound `[min(0, n·lo), max(0, n·hi)]`: a summand in `[1, 2]` over two objects has the bound `[0, 4]`, not `[2, 4]`, a row of it into `Int[0, 4]` is admitted and into `Int[2, 4]` refuses `ill_typed`/`type-mismatch`, and an empty `S` sums to `0`. | Test (TC-311) |
 | FR-376-AC-7 | An `only` whose matching set is empty and one whose matching set holds two objects each give an undefined evaluation with the reason `only-not-one` and a payload naming the population binding, the `only` locus and the enclosing row; a counterexample's cause carries that reason. | Test (TC-311) |
-| FR-376-AC-8 | The shared grammar parses `count(x in P)`, `count(x in P where c)`, `sum(x in P where c: e)`, `exists(x in P)`, `all(x in P where c)`, `only(x in P where c: e)` and `seq(i in lo .. hi: e)` inside a refinement row, scans `0..1` and `0 .. 1` as the same three tokens, reads `exists(x in P: e)` as the state-clause quantifier, and refuses the six forms and a bare population name outside a refinement declaration with `unsupported_construct`/`expression-form`; `only`, `seq`, `where` and `Some` remain identifiers outside these productions. | Test (TC-311) |
+| FR-376-AC-8 | The shared grammar parses `count(x in P)`, `count(x in P where c)`, `sum(x in P where c: e)`, `exists(x in P)`, `all(x in P where c)`, `only(x in P where c: e)` and `seq(i in lo .. hi: e)` inside a refinement row, and scans `0..1` and `0 .. 1` as the same three tokens. Outside a refinement declaration a bare population name and the `count`, `sum`, `exists` and `all` population forms refuse `unsupported_construct`/`expression-form`, `exists(x in P: e)` is the state-clause quantifier, and `only(x in P where c: e)` and `seq(i in lo .. hi: e)` are syntax errors, `invalid_syntax`/`unexpected-token` at the `in` token, because `only` and `seq` are ordinary identifiers there. Inside a refinement row `only(`, `seq(` and `Some(` always read as the forms, so a pure function of one of those names cannot be called from a row. | Test (TC-311) |
 
 ## Dependencies
 

@@ -41,16 +41,22 @@ parity mismatch.
 6. **Undefined history update.** In TC-314 case 1 make the history update
    `2 div self.tmpA`, undefined at the first reachable commit step where
    `tmpA = 0`.
-7. **Failure precedence.** At one state of the ring-buffer refinement hold
-   an earlier row that is incomplete (budget zero) and a later `items` row
-   whose `only` is undefined; then the same state with the earlier row
-   refused instead; then with an unmapped subtype object whose key sorts
-   first; then with an evaluator stop injected in the earlier row; then write
-   the same rows in the opposite source order.
-8. **Optional and null rows.** Map a `?` abstract field by a row that is
-   `none` at one state and `Some(1)` at another, an `Option<Int[0, 2]>` field
-   by `none`, and a field by a row that evaluates to explicit `null` while a
-   later row is undefined.
+7. **Failure precedence.** Use TC-316's ring-buffer refinement over a fixture
+   variant: `Ring` also has `next: Reference<Ring>` and `Queue` has
+   `next: Reference<Queue>` with the row `next = self.next`; `Ring` has a
+   subtype `SubRing` that `rings` admits and no object row names; `Queue`
+   has a second field `also: Int[0, 1]` with the row `also = only(s in
+   R::slots where s.ring = self: s.value)`. Hold the state `head = 1`,
+   `size = 2`, `s0.value = 0`, `s1.value = 1`, and run: (a) the `items` row
+   changed to `only(s in R::slots where s.ring = self: s.value)` (undefined),
+   with a `SubRing` object `a` whose key sorts before `r`; (b) the original
+   `items` row with the same `SubRing` object; (c) the `items` row of (a)
+   with the `also` row, which is also undefined, and again with the two rows
+   written in the opposite source order; (d) ring `a` of type `Ring` with
+   `next` = `q` of type `SubRing`, then with `q` of type `Ring`; (e) read the
+   relationship extent of the mapped state of the plain fixture.
+8. **Optional rows.** Map a `?` abstract field by a row that is `none` at one
+   state and `Some(1)` at another, and an `Option<Int[0, 2]>` field by `none`.
 
 ## Expected Results
 
@@ -69,9 +75,11 @@ position 4, and settles `reproduced-with-evaluated-witness` with the item
 settles `refuted`, cause `undefined-evaluation`, with an `Undefined`
 counterexample ending at that commit step that replays, and the step stays a
 concrete step (FR-378-AC-3).
-Case 7 refutes with the later undefined row in the first three runs, reports
-the stop with `map` undetermined in the fourth, and gives the same reported row
-in the fifth (FR-377-AC-9, FR-377-AC-11). Case 8 leaves the `?` field absent
-then set to `1`, keeps the explicit `none`, and makes `map` undetermined with
-the refused `null` row yet still refutes on the later undefined row
-(FR-375-AC-17, FR-377-AC-10).
+Case 7: (a) refutes, reporting the undefined `items` row, because the undefined
+row outranks the unmapped type; (b) is undetermined for the `SubRing` object
+`a` naming its object row; (c) reports the `also` row first, being the lower
+field name, in both source orders; (d) is undetermined naming the `next` row
+and object `a` with `q` of type `SubRing` and maps `next` to the `Queue`
+reference with key `q` with `q` of type `Ring`; (e) lists no relationship
+extent (FR-377-AC-9, FR-377-AC-11). Case 8 leaves the `?` field absent then
+set to `1` and keeps the explicit `none` (FR-375-AC-17, FR-377-AC-10).

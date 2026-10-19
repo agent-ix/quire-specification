@@ -48,8 +48,10 @@ package `example/queue-spec`: type `Queue` with
 7. Read the undefined reason and payload of step 4's two `only` rows.
 8. Parse `count(s in R::slots)`, `exists(s in R::slots)`,
    `seq(i in 0..1: i)` and `seq(i in 0 .. 1: i)` in a field row, parse
-   `exists(s in R::slots: s.value = 1)` in a state clause, and use `only`,
-   `seq`, `where` and `Some` as ordinary identifiers outside a refinement.
+   `exists(s in R::slots: s.value = 1)` in a state clause, write
+   `count(s in R::slots)` in a state clause, and write
+   `only(s in R::slots where s.value = 1: s.value)` and
+   `seq(i in 0 .. 1: i)` in a state clause.
 
 ## Expected Results
 
@@ -67,5 +69,7 @@ Step 7 reads the reason `only-not-one` with the population binding, the `only`
 locus and the row, identical for no match and for two (FR-376-AC-7). Step 8
 parses the four field-row spellings as the productions of the shared grammar,
 reads the state-clause `exists` as the quantifier, scans `0..1` and `0 .. 1`
-alike and keeps the four words identifiers outside a refinement
-(FR-376-AC-8).
+alike, refuses the state-clause `count(s in R::slots)` with
+`unsupported_construct`/`expression-form`, and refuses the state-clause `only`
+and `seq` spellings with `invalid_syntax`/`unexpected-token` at their `in`
+token (FR-376-AC-8).

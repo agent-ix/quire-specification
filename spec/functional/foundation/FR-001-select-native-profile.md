@@ -62,6 +62,10 @@ definition and the FR-290 kind and extent its witness requests.
 - When a declaration's `using` names that profile's alias, the frontend
   shall admit the declaration under exactly the selected layer's
   admitted-form set, which includes the sets of the layers it requires.
+- When a refinement declaration's `using` names an infinite-trace profile
+  alias whose `profile` declaration also names layers, the frontend shall
+  admit the refinement's row expressions under exactly those layers and their
+  `requires` closure, not under the unit's other declarations' layers.
 - If such a declaration uses a declaration form outside that set, then the
   frontend shall refuse it with `unsupported_construct`, cause
   `declaration-form`, at the declaration, naming the selected layer.
@@ -78,6 +82,7 @@ definition and the FR-290 kind and extent its witness requests.
 | FR-001-AC-4 | An unavailable selected profile receives a located refusal; selecting it cannot execute under another profile or reuse that profile's semantic subject. | Test (TC-005) |
 | FR-001-AC-5 | For each of the five layers, a unit whose `profile` declaration names the layer and whose declarations use only that layer's forms is admitted, and its selected definitions are the layer and its `requires` closure and no layer that requires it; a state-layer unit selects the `edition` row and no other qualification row, and a complete-value or complete-model unit selects the rows the `package_selection` rules select. | Test (TC-005) |
 | FR-001-AC-6 | A unit selecting `quire.state.core/v1` that declares a named predicate refuses `unsupported_construct`/`declaration-form` at the declaration, and one that calls `filter` refuses `unsupported_construct`/`expression-form` at the call, each naming `quire.state.core/v1`; both units selecting `quire.state.queries/v1` are admitted. | Test (TC-005) |
+| FR-001-AC-7 | A refinement whose `using` alias names a profile declaration that also names `quire.value.complete/v1` admits a `mod` row under that layer even when no other declaration of the unit selects it; with an alias naming no layer the same row refuses `unsupported_construct`/`expression-form` at the `mod`, naming the selected layer. | Test (TC-310) |
 
 ## Dependencies
 

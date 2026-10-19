@@ -680,16 +680,22 @@ binder    = ident, 'in', model-name, [ 'where', expr ] ;
 ```
 
 A `model-name` in `primary` position names a concrete population. `count`,
-`sum`, `exists` and `all` are reserved words already; the population forms
-differ from the state-clause quantifiers and `count<T>`/`sum<T>` aggregates
-by what follows the binder's `model-name`: `where` or `)` reads the
-population form, `:` reads the quantifier over a collection expression, and a
-`<` after `count` or `sum` reads the typed aggregate. `only`, `seq`, `where`
-and `Some` are matched as keyword spellings only in these productions and
-remain identifiers elsewhere. `FR-376` owns the typing and value of the six
+`sum`, `exists` and `all` are reserved words already. The population forms
+differ from the existing forms by what follows: `count` and `sum` read the
+population form when no `<` follows the word (the typed aggregates are
+`count<T>(` and `sum<T>(`), and `exists(binder)` reads the population form
+when `where` or `)` follows the binder's `model-name`, while `:` reads the
+state-clause quantifier over a collection expression. `only`, `seq` and `Some`
+are matched as keyword spellings only in these productions and remain
+identifiers elsewhere; inside a refinement row `only(`, `seq(` and `Some(`
+always read as the forms and so hide a pure function of the same name. `where`
+is matched as a keyword in `binder`, as it already is in the temporal
+`aggregate-term`, and is an identifier in other positions. `FR-376` owns the typing and value of the six
 population forms and the `..` bounds; `FR-375` owns `Some` and the rows it
 appears in. A state-clause body outside a refinement declaration that uses
-a population name or one of the six population forms refuses `unsupported_construct`/`expression-form`.
+a population name or the `count`, `sum`, `exists` or `all` population form refuses
+`unsupported_construct`/`expression-form`; `only` and `seq` spelled as forms there
+are syntax errors (`invalid_syntax`/`unexpected-token`) at their `in` token.
 
 ### Abstraction relation declaration
 
