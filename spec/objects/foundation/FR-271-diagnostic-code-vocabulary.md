@@ -35,7 +35,7 @@ catalog).
 | Value | Description |
 | --- | --- |
 | `invalid_syntax` | Ungrammatical source. "An ungrammatical index/slice is not a recognized profile extension." |
-| `unsupported_construct` | A recognized form prohibited by the exact selected profile. "Presence in unreachable syntax does not erase the refusal." |
+| `unsupported_construct` | A recognized form prohibited by the exact selected profile, or (cause `not-yet-implemented`) a recognized declaration form the producer has not built, which FR-452 classes as an implementation gap. "Presence in unreachable syntax does not erase the refusal." |
 | `unknown_language` | An unrecognized or wrongly-roled language selection. |
 | `unknown_edition` | An unrecognized or wrongly-roled edition selection. |
 | `unknown_profile` | An unrecognized or wrongly-roled profile selection. "A known package/diagnostic interpretation used as a clause profile" is a wrong selection role. |

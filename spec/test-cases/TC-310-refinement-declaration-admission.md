@@ -77,7 +77,18 @@ Mutations, each applied alone to the positive unit:
     model of that package, `Other`;
     then the parse vectors `abstract Spec::Twice::finish concrete Impl`,
     `abstract ::Twice concrete Impl`, `abstract Spec:: concrete Impl`,
-    `abstract Spec:: {` and `abstract Spec::1`.
+    `abstract Spec:: {` and `abstract Spec::1`;
+14. with mutation 13's `abstract Spec::Twice` unit and no internal row, supply
+    the `refinement_internals` value `[{"refinement": "CasTwice", "internal":
+    ["Spec::Twice::finish"]}]` to the compilation; then the value absent, `[]`
+    and an object for another refinement; then the same non-empty value
+    supplied to a supplied library that declares no `CasTwice`;
+15. compare the node of mutation 14 with the non-empty value against the node
+    with the value absent, and the non-empty value with its object and entries
+    reordered;
+16. in a producer whose support set omits one feature at a time, compile a
+    declaration with two `history` rows; `abstract Spec::Twice`; and a
+    non-empty list under `abstract Spec` and under `abstract Spec::Twice`.
 
 ## Expected Results
 
@@ -120,3 +131,16 @@ the clause is found in the abstract package but does not act on `Spec`'s model. 
 vectors each refuse `invalid_syntax`/`unexpected-token` before any name is
 resolved: at the second `::`, at the leading `::`, at `Impl` (`concrete` read
 as the protocol name), at `{` and at `1` respectively (FR-375-AC-11).
+In mutation 14 the non-empty value admits the declaration with
+`abstract_internal` `["Spec::Twice::finish"]` and the three empty variants
+admit it with no `abstract_internal` entry; the value supplied to a library
+that declares no `CasTwice` refuses `missing_declaration`/`missing-name` at
+`/0/refinement` in that library and does not change the unit (FR-375-AC-12).
+In mutation 15 the node ids, `package_id`s and obligation identities differ
+between the non-empty and the absent value and are equal across the
+reordering (FR-375-AC-13). In mutation 16 each omitted feature gives
+`unsupported_construct`/`not-yet-implemented` as FR-375-AC-14 states: two
+refusals at the `history` keywords naming `history-row`; one at `Twice`
+naming `protocol-abstract-side`; one at `Spec` naming
+`refinement-internal-list` for each of the two headers; no node is produced
+and no other diagnostic is reported for the refused row.

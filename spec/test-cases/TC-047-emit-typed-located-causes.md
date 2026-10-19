@@ -35,6 +35,7 @@ response wire. Compare these paired failures independently:
 | Failure to prove a rational divisor nonzero versus a valid predicate evaluating false | Definedness refusal versus ordinary logical violation, without error-code substitution. |
 | Missing package member versus duplicate member versus wrong value kind | Distinct typed structural cause with the actual field/index path, independent of Serde's wording. |
 | Wrong extraction mode versus conflicting selected package versus wrong binding count | The three retained codes and their distinct typed payloads; deleting one guard must fail that case. |
+| A refinement using a feature the producer has not built (`history-row`, `protocol-abstract-side`, `refinement-internal-list`) versus a declaration form the selected profile prohibits | `unsupported_construct`/`not-yet-implemented` retaining the feature name, declaration and profile identity, versus `declaration-form` retaining the prohibited form; one feature name against another compares unequal (FR-272-AC-20). |
 | Sequence declaration without a declared maximum versus a valid model exceeding a caller work budget | Invalid source/model admission versus resource incompleteness; no invented bound or shared generic limit cause. |
 
 Supply each valid diagnostic to its strict consumer, then remove a required cause

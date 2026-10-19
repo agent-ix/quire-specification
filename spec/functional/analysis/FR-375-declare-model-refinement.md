@@ -141,6 +141,39 @@ model under two protocol names, or under none, gives different refinement
 nodes. The selected protocol clause's node is also one of the node's
 `dependencies`, beside the nodes its rows name.
 
+**Internal list.** Which abstract protocol steps are internal is not part of
+the declaration's source: a profile selection carries an identity and nothing
+else, and the refinement grammar has no `internal` row. The list is the
+compilation's optional `refinement_internals` input, supplied with the source
+beside the supplied libraries of the compile request, one value for the unit
+and one for each supplied library. Its shape, class spellings, resolution and
+refusals are [FR-432](../protocol/FR-432-map-every-protocol-step-in-refinements.md)'s.
+An absent value is the empty list, every abstract step visible. The list
+changes what a declaration means, so it is recorded in the lock
+([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)) and
+carried by a replay request ([FR-323](../../objects/interfaces/FR-323-native-runtime-envelope.md));
+a replay that dropped it would recompile with an empty list and a different
+`package_id`.
+
+**Unbuilt features.** A producer may not have built every form this
+requirement and its protocol neighbours specify. It holds a closed support
+set of feature names, a capability of the producer and not a request
+parameter: `history-row` (a `history` row), `protocol-abstract-side` (a
+protocol abstract subject, `abstract <A>::<protocol>`) and
+`refinement-internal-list` (a non-empty internal list for the refinement). A
+declaration that uses a feature outside the support set refuses
+`unsupported_construct`/`not-yet-implemented` naming the feature, the
+refinement and the exact selected profile identity, once for each `history`
+row (at its `history` keyword), once per refinement for a protocol abstract
+subject (at the protocol name) and once per refinement for a non-empty list
+(at the first token of the name written after `abstract`, which both subject
+forms have). It produces no refinement node, is decided before the feature's
+own checks so no other diagnostic is reported for it, and leaves the rest of
+the declaration checked as usual. The refusal is an implementation gap, not a
+source defect (FR-452 classes it `unsupported`), which is why it is not
+`unknown_required_feature`. A feature in the support set is checked by its own
+requirement.
+
 **Population rows.** Each abstract population has exactly one row naming one
 concrete population as its source. An abstract population with no row
 refuses `missing_declaration`/`missing-name`; one with two rows refuses
@@ -235,11 +268,15 @@ expressions as `SemanticTerm`s; a step entry's `target` is
 `{"term": "open"}` term for each `_`, or `{"kind": "stutter"}`, or
 `{"kind": "any"}`; `assume` and `ensure` hold `{operation, kind, granularity}`
 entries with `kind` exactly `weak` or `strong` and `granularity` exactly
-`each` or `whole`. Every array is sorted
+`each` or `whole`. A protocol subject whose resolved internal list is
+non-empty also carries `abstract_internal`, the canonical spellings of the
+resolved classes in ascending UTF-8 byte order (absent for an empty list, as
+`protocol` is absent for a model subject; the list is never null). Every array is sorted
 ascending by the node-key digest of its first named declaration, then by
 member name as UTF-8 bytes. The node enters the identity projection, so it
 enters the `package_id` and the obligation identity of every item that
-cites it.
+cites it; the internal list is therefore part of both identities through
+`abstract_internal`, and needs no member of its own in the identity preimage.
 
 **Claim kinds.** A request to check the whole declaration is one item of
 kind `temporal-satisfaction`; each per-step simulation obligation is one item
@@ -261,6 +298,10 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
 | FR-375-AC-10 | An `assume` or `ensure` fairness row written `fair strong` is admitted with or without `each` or `whole`, and its emitted entry carries kind `strong`; the same row written `fair weak` carries kind `weak`, and the two rows give different refinement node ids; `fair` with no kind, or any kind other than `weak` or `strong`, refuses `invalid_syntax`/`unexpected-token` at the token, because a refinement row has no default kind. | Test (TC-310) |
 | FR-375-AC-11 | `abstract Spec` selects a model subject; `abstract Spec::Twice` and `abstract Spec::Twice2`, two protocol clauses of the abstract package with identical operation-target rows, are each admitted, and the three declarations (`Spec`, `Spec::Twice`, `Spec::Twice2`) have three distinct node ids, the protocol subjects carrying `protocol` and listing the clause among `dependencies`. `abstract Spec::Thrice` (no such clause), `abstract Spec::Counter` (a type), `abstract Spec::counters` (a population) and `abstract Nope::Twice` (no such alias) refuse `missing_declaration`/`missing-name` at the unresolved segment (`Thrice`, `Counter`, `counters`, `Nope`); a clause of the abstract package that acts only on another model refuses `invalid_model_binding`/`malformed-declaration` at the name. Syntax refusals are `invalid_syntax`/`unexpected-token` at these tokens: `abstract Spec::Twice::finish concrete Impl` at the second `::`; `abstract ::Twice` at the `::`; `abstract Spec:: concrete Impl` at `Impl` (`concrete` is read as the name); `abstract Spec:: {` at the `{`; `abstract Spec::1` at the `1`. | Test (TC-310) |
 
+| FR-375-AC-12 | The unit's `refinement_internals` value is the only host of the internal list: the declaration for `abstract Spec::Twice` with no row naming internals and the value `[{"refinement": "R", "internal": ["Spec::Twice::finish"]}]` is admitted with `abstract_internal` `["Spec::Twice::finish"]`; the same source with the value absent, `[]` or naming another refinement is admitted with no `abstract_internal` entry; a supplied library's list affects only that library's refinements. | Test (TC-310) |
+| FR-375-AC-13 | The two lists `["Spec::Twice::finish"]` and none give refinement nodes with different ids, different `package_id`s and different obligation identities for an item citing the node; the order of objects and entries in the value does not change either. | Test (TC-310) |
+| FR-375-AC-14 | In a producer whose support set omits `history-row`, a declaration with two `history` rows refuses `unsupported_construct`/`not-yet-implemented` twice, each at its `history` keyword naming `history-row`; omitting `protocol-abstract-side`, `abstract Spec::Twice` refuses once at `Twice`; omitting `refinement-internal-list`, a non-empty list for a refinement headed `abstract Spec` or `abstract Spec::Twice` refuses once at `Spec` naming `refinement-internal-list`; each refusal names the refinement and the profile identity, produces no node, and a refinement using none of the features is admitted as FR-375-AC-1 states. | Test (TC-310) |
+
 ## Dependencies
 
 - [FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md) owns
@@ -276,7 +317,9 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
   claim-kind vocabulary.
 - [FR-432](../protocol/FR-432-map-every-protocol-step-in-refinements.md)
   owns the step rows of a refinement whose abstract or concrete subject is a
-  protocol.
+  protocol, and the shape, spellings and resolution of its internal list.
+- [FR-272](../../objects/foundation/FR-272-typed-diagnostic-cause.md) owns the
+  `not-yet-implemented` cause.
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns
   the productions this requirement extends.
 
@@ -285,4 +328,4 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
 - Design: quire-spec-language ADR-020 (RM-1 to RM-7, AX-1, QS-1, QS-4,
   QS-5, RU-1).
 - Tickets: Linear STD-133; paired QSL-367; Linear STD-182 (protocol abstract
-  subject).
+  subject); Linear STD-199 (internal step list, unbuilt-feature refusal).

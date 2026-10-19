@@ -326,6 +326,12 @@ The owner join, projection and equality behaviour of an event type (FR-322-AC-68
 | ET-03 | ET-01 with a `SourceOwner` and no `declaration` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
 | ET-04 | ET-01 with a `declaration` and a `ModelOwner` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
 
+Add the lock's `refinement_internals` member to the all-families package: one
+object for `R` with two spellings in canonical order, and the package with the
+member absent; then the mutations `[]`, `null`, an object with `"internal": []`,
+an object with a third key, objects out of byte order, spellings out of byte
+order, a repeated `refinement` and a repeated spelling.
+
 ## Expected Results
 
 Each event type vector gives exactly its recorded result.
@@ -394,3 +400,10 @@ package with its `correspondence`/`abstraction_relation` node passes the
 derived-shape key stage untouched and is admitted, and the body-edited node
 refuses `invalid_semantic_graph` at FR-451's abstraction step 1, not
 `invalid_package`/`stale-node-key`.
+
+The canonical `refinement_internals` member validates against the schema and is
+in no identity preimage; its absence validates too. The `[]`, `null`,
+empty-`internal` and third-key mutations fail the schema at that value; the
+two out-of-order mutations refuse `invalid_package`/`invalid-value` at the later
+entry's pointer and the two repeats refuse `invalid_package`/`conflicting-definition`
+with both entries as loci (FR-322-AC-75).
