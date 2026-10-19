@@ -66,3 +66,9 @@ Round 2, against head 1f15551.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-003 | fixed | 1f15551: FR-375 now says no profile admits the form yet, so the named identity is the selected profile and not one that prohibits it, citing FR-452's `prohibited` class |
+
+Round 3, against head 7e85fb7.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-004 | fixed | 7e85fb7: AD-003's row states the edge conditionally ("when it governs a refinement ... a plain temporal clause requires neither"); TC-310 mutation 22 and FR-090-AC-10 guard that a plain infinite-trace temporal clause gains no value layer or lock row |

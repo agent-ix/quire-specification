@@ -62,3 +62,9 @@ Round 2, against head 1f15551.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-002 | fixed | 1f15551: the three requested edges are added; the same commit drops FR-375's FR-001 and FR-147 edges: see new FND-003 |
+
+Round 3, against head 7e85fb7.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-003 | still-open | 7e85fb7: the edges are restored and added (FR-375 to FR-001, FR-147, FR-090, FR-250; FR-001 to FR-090, FR-250), but FR-001's Dependencies still reads "how their rows obtain complete-value and complete-model layers is pending an owner ruling stated there" (FR-001:107-109), which A2 settled |

@@ -64,6 +64,12 @@ Not mergeable on this lens until FND-001 and FND-002 give FR-377-AC-9 and AC-11 
 | --- | --- | --- | --- |
 | FND-005 | low | The refusing half of FR-375-AC-18 (and FR-001-AC-7, FR-090-AC-10) and TC-310 mutation 21 say "a row using a form outside `quire.model.complete/v1` and its `requires` closure" without naming one, and expect "naming the layer" without saying which. Name the form (for example a `protocol` reference or a temporal operator in a row) and the layer the refusal names. | spec/test-cases/TC-310-refinement-declaration-admission.md:127-130,210-212; spec/functional/analysis/FR-375-declare-model-refinement.md:416 |
 
+## New findings (disposition pass 3)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-006 | medium | The chosen out-of-layer example cannot reach the layer check. A field row is `member-name '=' expr`, and `eventually` is a reserved word that appears only in the temporal-clause productions (`temporal-unary-unbounded` and the bounded temporal grammar), not in `expr` or `primary`. A row `items = eventually ...` is therefore a syntax error, `invalid_syntax`/`unexpected-token` at `eventually`, before any `unsupported_construct`/`expression-form` refusal naming `quire.model.complete/v1`. FR-375-AC-18, FR-001-AC-7, FR-090-AC-10 and TC-310 mutation 21 all expect the latter. Use a form that `primary` admits but the model.complete closure does not, for example the protocol reference `protocol Spec::Twice`, a `primary` admitted only under `quire.protocol.complete/v1` (shared-grammar.md:941). | spec/functional/analysis/FR-375-declare-model-refinement.md:284-287,428; spec/functional/foundation/FR-001-select-native-profile.md:98; spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md:121; spec/test-cases/TC-310-refinement-declaration-admission.md:127-132,218-220; proposals/quire-v1/shared-grammar.md:161-175,352-365,939-943 |
+
 ## Dispositions
 
 Round 1, against head 5a66bf9.
@@ -79,3 +85,9 @@ Round 2, against head 1f15551.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-004 | fixed | 1f15551: `also` is now added only in run (c), which drops the `SubRing` object; ring `a` and `q` in (d) have `head = 0`, `size = 0`; expected results for (c) name object `r` |
+
+Round 3, against head 7e85fb7.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-005 | fixed | 7e85fb7: AC-18, FR-001-AC-7, FR-090-AC-10 and TC-310 mutation 21 now name the form (`eventually`) and the layer (`quire.model.complete/v1`). The chosen form cannot reach the layer check: see new FND-006 |

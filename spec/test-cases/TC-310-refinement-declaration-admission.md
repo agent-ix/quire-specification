@@ -126,10 +126,11 @@ Mutations, each applied alone to the positive unit:
     declared, and with one declared;
 21. under `quire.temporal.infinite-trace/v1` and a unit whose own declarations
     select no layer, with the ring-buffer rows `s.ring = self` and
-    `(self.head + i) mod 2`, add a row `a div b`, once with the unit's
-    `integer_division_profile` selecting the floor law and once with no
-    selector, and read the unit's lock selection and `package_id`; then a row
-    using the temporal operator `eventually`;
+    `(self.head + i) mod 2`, add a row `a div b`; supply the unit's
+    `integer_division_profile` choice as the lock selection's alternative
+    role, three times: floor, Euclidean and none; read the unit's lock
+    selection and `definition_selections` each time; then a row using
+    `protocol Spec::Twice`;
 22. a plain temporal clause under `quire.temporal.infinite-trace/v1`, with no
     refinement, in a unit that selects no value layer.
 
@@ -212,11 +213,12 @@ the `Option<Int[0, 2]>` field takes `none` as an explicit `none`, `none` as a
 call argument refuses `ill_typed`/`type-mismatch`, and `Some(1)` refuses
 `missing_declaration`/`missing-name` at `Some` with no function declared and is
 a call to it with one declared (FR-375-AC-17). In mutation 21 the ring-buffer rows and the
-`a div b` row are admitted; with the floor selector the lock selection holds the
-lock's `always` rows and the floor law, and with none it refuses
-`selection_required_missing`; the `package_id` differs from the same unit
-without the refinement; the `eventually` row refuses `unsupported_construct`/
-`expression-form` at the `eventually` token naming `quire.model.complete/v1`
+`a div b` row are admitted; the lock selection holds the lock's `always` rows
+and the floor law for the first run and the Euclidean law for the second, so
+`definition_selections` differ exactly in that role, and the third run refuses
+`selection_trigger_unsatisfied` (the canonical `division-missing-for-div-rem`
+vector); the `protocol Spec::Twice` row refuses `unsupported_construct`/
+`expression-form` at the `protocol` token naming `quire.model.complete/v1`
 (FR-375-AC-18, FR-001-AC-7, FR-090-AC-10, FR-250-AC-8). In mutation 22 the
 clause is admitted and the unit's selection gains no value layer or lock row
 (FR-090-AC-10).
