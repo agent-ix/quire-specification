@@ -219,7 +219,7 @@ annotation and any other `Integer` operand against an `Int[..]` operand remain
 `convert`, as does an arithmetic operand against a `Rational[..]` or
 `Decimal[..]` operand. An integer literal is typed by the other operand under
 FR-144 literal typing and is not affected. `<`, `<=`, `>` and `>=` supply no
-expected type to their operands and need none: an ordering comparison between an `Integer` operand and an `Int[..]` operand, or between two `Int[..]` operands, is accepted and orders the exact integer values, so `n + 1 <= later.tally` for `n` of `Integer` is well typed. A `convert<T>` target supplies no expected type to its operand: the operand is typed from its own operands, so `convert<Int[lo,hi]>(n + 1)` converts an `Integer` and is refused under `=` by the equality conversion table. Call arguments supply none either.
+expected type to their operands and need none: an ordering comparison between an `Integer` operand and an `Int[..]` operand, or between two `Int[..]` operands, is accepted and orders the exact integer values, an arithmetic operand with no expected type being typed `Integer`, so `n + 1 <= later.tally` for `n` of `Integer` is well typed. A `convert<T>` target supplies no expected type to its operand: the operand is typed from its own operands, so `convert<Int[lo,hi]>(n + 1)` converts an `Integer` and is refused under `=` by the equality conversion table. Call arguments supply none either.
 
 ## Conversion classes
 
