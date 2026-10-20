@@ -51,6 +51,14 @@ Against head ad420fd (ad420fd80fc30c73df63e284475534604291b157). The fix commit 
 | --- | --- | --- | --- |
 | FND-003 | medium | FR-365-AC-8 cites TC-300, but TC-300 does not cover it. TC-300 is the Ladder model subject with two strong constraints. It has no `ra` subject, no visibility pair and no step or expected result for AC-8. The AC's second clause, "an SCC that fails both a strong constraint and a visibility pair", names no concrete graph, so a test author has to invent one. Its first clause says "Over an `ra` subject whose SCC `{p, q, r}` ...", but TC-391 now says, correctly, that this graph has no protocol form unless a stale load leaves the state unchanged and the protocol uses `scheduling adversarial;`. So AC-8 should say "a synthesized SCC", as AC-7 does. Fix: add a TC-300 step (or a new TC) that passes synthesized SCCs to the search. One is AC-7's graph. Another fails one strong constraint and one pair at once, for example: states 0-3, `s` enabled only at 0 and never taken, edges 0→1, 1→0, 1→2 (a stale load), 2→3, 3→1 and 3→3, with 3 accepting. One refinement step removes state 0 and the edge 1→2, and the first passing component is `{3}` with the loop 3→3. Give that step its expected first component and loop. Also, FR-365 jumps from AC-6 to AC-8 with no AC-7, so renumber AC-8 as AC-7 unless the number is reserved. | spec/functional/temporal/FR-365-build-canonical-temporal-counterexample.md:138 |
 
+## New findings (disposition pass 2)
+
+Against head 0999f8e (0999f8edd53014325161ec4ca21186be6ceb33ed), scoped to `git diff refs/remotes/origin/main...0999f8edd` with origin/main now at 9d72c48 (PR #293 merged and merged into the branch). The scope is the same eight files as before: FR-437, FR-430, FR-365, TC-300, TC-391 and the three review files. The committed review files equal the reviewer's round-1 copies. `quire validate --scope .` exits 0 on every touched file, with output identical to main for the five spec files. `cargo test --test backend_provider_v1 --test checked_package_v2` passes 11 and 108. `quire matrix` lists FR-365-AC-7 and FR-437-AC-7 as untagged, like every other AC of both FRs. No `FR-365-AC-8` reference is left outside `reviews/`. The oracle on the TC-300 synthesized SCC: one-step, strong-first and visibility-first refinement all give the first passing component `{3}` with the kept edge `3 → 3`, and brute force confirms a fair accepting loop. The random suites still give 0 mismatches, 0 order differences and 0 obligation failures over 4,000 and 20,000 graphs.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | low | The last clause of FR-365-AC-7, "the loop visits a fresh-load edge for each visibility pair the component loads", cannot fail on its own graph. The passing component `{3}` keeps only `3 → 3`, which loads no pair, so the clause holds whether or not the walk takes visibility obligations. No other FR-365 AC covers that obligation, because AC-2 names only weak and strong obligations. The vector I suggested in round 1 caused this. Fix: give the passing component a pair it loads, with its fresh-load edge off the shortest loop, so the walk has to detour. For example, add a state 4 with `3 → 4` a fresh load of a second pair `p2`, `4 → 3`, and `3 → 3` a stale load of `p2`. The loop must then take `3 → 4 → 3`. Or extend AC-2 to name the visibility obligations, and add a TC-296 or TC-300 row for it. | spec/functional/temporal/FR-365-build-canonical-temporal-counterexample.md:138 |
+
 ## Dispositions
 
 Round 1, against head ad420fd.
@@ -59,3 +67,9 @@ Round 1, against head ad420fd.
 | --- | --- | --- |
 | FND-001 | fixed | - |
 | FND-002 | fixed | - |
+
+Round 2, against head 0999f8e.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-003 | fixed | - |

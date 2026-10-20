@@ -51,4 +51,4 @@ Then pass the synthesized SCC of FR-365-AC-7 (strong constraint, visibility pair
 2. The first component passes the weak filter with no refinement, and the item
    settles `refuted` with a reproducing lasso.
 
-The synthesized SCC is refined in one step removing state 0 and the edge `1 → 2`; the first passing component is `{3}` with the loop `3 → 3` (FR-365-AC-7).
+The synthesized SCC is refined in one step removing state 0 and the edge `1 → 2`; the first passing component is `{3, 4}` with the loop `3 → 4 → 3` (FR-365-AC-7).

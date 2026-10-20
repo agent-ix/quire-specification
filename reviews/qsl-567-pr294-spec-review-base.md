@@ -58,3 +58,9 @@ Round 1, against head ad420fd.
 | FND-001 | fixed | - |
 | FND-002 | fixed | - |
 | FND-003 | fixed | - |
+
+Round 2, against head 0999f8e. Against head 0999f8e (0999f8edd53014325161ec4ca21186be6ceb33ed), scoped to `git diff refs/remotes/origin/main...0999f8edd` with origin/main now at 9d72c48 (PR #293 merged and merged into the branch). The scope is the same eight files as before: FR-437, FR-430, FR-365, TC-300, TC-391 and the three review files. The committed review files equal the reviewer's round-1 copies. `quire validate --scope .` exits 0 on every touched file, with output identical to main for the five spec files. `cargo test --test backend_provider_v1 --test checked_package_v2` passes 11 and 108. `quire matrix` lists FR-365-AC-7 and FR-437-AC-7 as untagged, like every other AC of both FRs. No `FR-365-AC-8` reference is left outside `reviews/`. The oracle on the TC-300 synthesized SCC: one-step, strong-first and visibility-first refinement all give the first passing component `{3}` with the kept edge `3 → 3`, and brute force confirms a fair accepting loop. The random suites still give 0 mismatches, 0 order differences and 0 obligation failures over 4,000 and 20,000 graphs.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-004 | fixed | - |
