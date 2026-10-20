@@ -334,6 +334,14 @@
         "supertypes": []
       }
     ],
+    "populations": [
+      {
+        "node": "ix://acme/runs/counters"
+      },
+      {
+        "node": "ix://acme/runs/archive"
+      }
+    ],
     "processes": [
       {
         "fields": [
@@ -644,6 +652,48 @@
         "version": "quire.structural-node/v1"
       },
       "sha256": "8cea4f1407b1390d4f91bf7a880a6f80486fcb9627aa4a87e9bc182be6fc9102"
+    },
+    {
+      "name": "P7",
+      "preimage": {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "declaration": null,
+        "node_tag": "relation",
+        "owner": {
+          "identity": "acme/runs",
+          "kind": "model",
+          "node": "ix://acme/runs/counters"
+        },
+        "recursion": null,
+        "semantic_form": "population",
+        "semantic_type": null,
+        "version": "quire.structural-node/v1"
+      },
+      "sha256": "15ed74b124665e2fb9375dc02e715243dce2eb0d7d63d1f36c52f5fa1241a91a"
+    },
+    {
+      "name": "P8",
+      "preimage": {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "declaration": null,
+        "node_tag": "relation",
+        "owner": {
+          "identity": "acme/runs",
+          "kind": "model",
+          "node": "ix://acme/runs/archive"
+        },
+        "recursion": null,
+        "semantic_form": "population",
+        "semantic_type": null,
+        "version": "quire.structural-node/v1"
+      },
+      "sha256": "cc575f3d64f43a4bf787f5febdc73fbc9f2212617393877fa00371611204be24"
     }
   ],
   "owner_cases": [
@@ -733,6 +783,72 @@
       "node_tag": "model",
       "owner_node": "ix://acme/runs/Gate",
       "semantic_form": "persistence_interface"
+    },
+    {
+      "expected": {
+        "recovers": "ix://acme/runs/counters"
+      },
+      "name": "PR-01",
+      "node_tag": "relation",
+      "owner_node": "ix://acme/runs/counters",
+      "semantic_form": "population"
+    },
+    {
+      "expected": {
+        "recovers": "ix://acme/runs/archive"
+      },
+      "name": "PR-02",
+      "node_tag": "relation",
+      "owner_node": "ix://acme/runs/archive",
+      "semantic_form": "population"
+    },
+    {
+      "expected": {
+        "refused": {
+          "cause": "missing-selection",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "PR-03",
+      "node_tag": "relation",
+      "owner_node": "ix://acme/runs/Counter",
+      "semantic_form": "population"
+    },
+    {
+      "expected": {
+        "refused": {
+          "cause": "missing-selection",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "PR-04",
+      "node_tag": "model",
+      "owner_node": "ix://acme/runs/counters",
+      "semantic_form": "object_type"
+    },
+    {
+      "expected": {
+        "refused": {
+          "cause": "missing-selection",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "PR-05",
+      "node_tag": "relation",
+      "owner_node": "ix://acme/runs/Nope",
+      "semantic_form": "population"
+    },
+    {
+      "expected": {
+        "refused": {
+          "cause": "missing-selection",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "PR-06",
+      "node_tag": "relation",
+      "owner_node": "ix://acme/runs/counters",
+      "semantic_form": "relationship"
     }
   ],
   "receiver_frame_cases": [

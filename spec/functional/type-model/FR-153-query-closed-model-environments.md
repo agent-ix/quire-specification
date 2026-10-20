@@ -148,6 +148,11 @@ population when `M` is a model alias and `P` a population of its package.
   `pre` in a precondition, `post` in a postcondition, and `pre` inside
   `pre(e)`. `pre(e)` is written only where the clause has a pre observation
   (a postcondition).
+- In a checked package the name is the population reference of
+  [FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)
+  ("Population references"), the node that carries the population's
+  declaration key, so two populations of one member type are two nodes and
+  `M::counters` and `M::archive` check to different terms.
 - If `M` is a model alias and `P` names no population of its package, the
   name is `missing_declaration`/`missing-name` at `P`. If the first segment
   names both a model alias and an enum of the unit, the name is

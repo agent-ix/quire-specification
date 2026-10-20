@@ -58,6 +58,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-spec-language/FR-094
     type: references
+  - target: ix://agent-ix/quire-spec-language/FR-391
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-451
+    type: references
   - target: ix://agent-ix/quire-specification/FR-307
     type: references
   - target: ix://agent-ix/quire-specification/FR-460
@@ -564,8 +568,9 @@ boundary.
   **model-owned node** (QSL FR-094) carrying none: a model declaration node
   (`model`/`object_type`, `model`/`record_value_type`, `model`/`event_type`,
   `model`/`variant_type`, `model`/`state_machine`, `model`/`process`,
-  `model`/`persistence_interface`, `model`/`systems_interface` or
-  `relation`/`relationship`) or a clause function (`function`). A declared
+  `model`/`persistence_interface`, `model`/`systems_interface`,
+  `relation`/`relationship` or `relation`/`population`) or a clause function
+  (`function`). A declared
   owner-bearing node carries the `SourceOwner` of the source unit that
   declares it, `{kind: "source", authority, identity}`; a model-owned node
   carries its `ModelOwner`, `{kind: "model", identity, node}`, with no
@@ -760,7 +765,7 @@ neither model-owned row, so it falls in the last row and carries none.
 | Node | `owner` |
 | --- | --- |
 | structural, carries `declaration` | required, `SourceOwner` |
-| structural, no `declaration`, `node_tag`/`semantic_form` `model`/`object_type`, `model`/`record_value_type`, `model`/`event_type`, `model`/`variant_type`, `model`/`state_machine`, `model`/`process`, `model`/`persistence_interface`, `model`/`systems_interface` or `relation`/`relationship` | required, `ModelOwner` |
+| structural, no `declaration`, `node_tag`/`semantic_form` `model`/`object_type`, `model`/`record_value_type`, `model`/`event_type`, `model`/`variant_type`, `model`/`state_machine`, `model`/`process`, `model`/`persistence_interface`, `model`/`systems_interface`, `relation`/`relationship` or `relation`/`population` | required, `ModelOwner` |
 | structural, no `declaration`, `node_tag` `function` | required, `ModelOwner` |
 | every other node | absent |
 
@@ -830,7 +835,9 @@ conformance" below).
    `quire.meaning.model.process/v1` for `model`/`process`, a persistence
    interface of FR-208's `quire.meaning.model.persistence-interface/v1` for
    `model`/`persistence_interface`, an object type with `interfaceFeatures` for
-   `model`/`systems_interface` and a relationship for `relation`/`relationship`.
+   `model`/`systems_interface`, a relationship for `relation`/`relationship` and
+   a population of FR-208's `quire.meaning.model.population/v1` for
+   `relation`/`population` ("Population references").
    A process and a state machine declare fields, supertypes of their own meaning
    and operations, so step 3 resolves their members as it does an object
    type's. FR-321 admits one selection
@@ -1200,6 +1207,93 @@ the `population` node, so a list that omits it is `invalid_semantic_graph` at `/
 does not choose an occurrence of the population node: a reader that selects the
 population by occurrence takes the `Type` occurrence with the least ordinal.
 
+### Population references
+
+A state clause names a population its domain package declares by the
+qualified name `M::P` and reads it only as the population operand of
+`allInstances<T>(M::P)` or `lookup<T>(M::P, r)` (QSL FR-391,
+[FR-153](../../functional/type-model/FR-153-query-closed-model-environments.md)).
+The clause has no binder to reference, and the `Population<O>[N]` type node of
+"Derived type forms and forwarding" is keyed by its member type and bound
+alone, so with populations `counters` and `archive` of `Counter` the two reads
+would check to one node. A **population reference** is the node that carries
+the declared population itself.
+
+- **Node.** `node_tag: "relation"`, `semantic_form: "population"`. It is a
+  model declaration node ("Model-owned members" step 2): no `declaration`,
+  `nominal_identity_preimage` or `recursion_group`; `semantic_type` its own
+  `node_id`; the body `{term: "aggregate", members: []}`; empty
+  `dependencies`; and an `owner`, a `ModelOwner` `{kind: "model", identity,
+  node}` whose `identity` is the `model_selections` identity of the domain
+  package that declares the population and whose `node` is the population's IR
+  node identity. A `relation`/`population` node with no `owner` fails the V2
+  schema (`malformed_wire`).
+- **Declaration key.** The node's `owner` is the population's declaration key
+  (FR-154): `identity` (package) then `node`, each as UTF-8 bytes, and it
+  carries no digest. The node holds nothing else of the declaration: no member
+  types, no extent, no maximum and no observation.
+- **Identity.** The node key is the JCS SHA-256 of the closed
+  `ModelDeclarationNode` preimage `{version: "quire.structural-node/v1",
+  node_tag: "relation", semantic_form: "population", semantic_type: null,
+  declaration: null, recursion: null, owner, body: {term: "aggregate",
+  members: []}}`, so `node-identity-preimage.schema.json` enumerates
+  `population` under `relation` beside `relationship`. The key is a function
+  of the declaration key alone. It does not depend on the domain package's
+  version label or digest, on the member type `U`, on a maximum, on the clause
+  or on the operation that reads it. The populations `ix://acme/runs/counters`
+  and `ix://acme/runs/archive` of package `acme/runs` have the keys P7
+  (`15ed74b124665e2fb9375dc02e715243dce2eb0d7d63d1f36c52f5fa1241a91a`) and P8
+  (`cc575f3d64f43a4bf787f5febdc73fbc9f2212617393877fa00371611204be24`), which
+  differ; every read of `counters` in a package, by an `allInstances` or a
+  `lookup` in any clause, references its one node.
+- **Owner join.** The owner join of the derived-shape key stage admits the node
+  when its `identity` equals a `model_selections` row and that row's admitted
+  document declares `owner.node` as a population
+  (`quire.meaning.model.population/v1`,
+  [FR-208](../foundation/FR-208-quire-meaning-vocabulary.md)); otherwise it
+  refuses `missing_declaration`/`missing-selection` at the node's `node_id`.
+  That covers a population owned by a node the document declares as another
+  kind or does not declare, and a node of another model form owned by a
+  population. A population declares no field, operation or relationship end,
+  so a `field`, `operation` or `relationship_end` member whose declaring node
+  is a population reference refuses `ill_typed`/`operator-ineligible`.
+- **Use.** The node has family `population`. A `reference` term to it is
+  operand 0 of `quire.op.model.all_instances` and `quire.op.model.lookup`,
+  the positions the operation catalog gives the family, and the application
+  lists the node in its `dependencies` as for any reference target. The
+  application is otherwise as for a parameter operand: the `type_argument`
+  member names the queried `T`, and the `result_type` is `Set<Reference<T>>`,
+  or the `collection_bounds` `[0, N]` node over it when the unit authors a
+  maximum `N` for the population (QSL FR-380). `N` belongs to the unit and not
+  to the declaration, so it enters the package through the `result_type` and
+  never through the population reference; two units that bound one population
+  differently share its one reference node. `U`, the population's canonical
+  member type (FR-153), is read from the selected document and is not carried.
+- **Quantifier domain.** A population is a binding and not a collection. The
+  `collection_kind` operand of `quire.op.collection.forall`, `exists`,
+  `count`, `filter` and every other operation, and every other operand
+  position, refuses a population-family term `ill_typed`/`operator-ineligible`.
+  A clause `forall(o in allInstances<T>(M::P) : c)` is therefore three nodes:
+  the population reference, the `all_instances` application over it, and the
+  quantifier application whose operand 0 references that application's node;
+  the domain of the quantifier is the set the application returns.
+- **Relation to `Population<O>[N]`.** The anonymous type form of
+  FR-322-AC-62 stays. It types a population *binding*, a `value`/`parameter`
+  node that a binder introduces and a caller supplies, and it names no
+  declaration; it is also the node the `population` link of a
+  `quire.op.model.reaches` application names, and a population reference
+  there refuses `ill_typed`/`operator-ineligible` at `member.population`. A
+  population reference is the operand when a clause names a declared
+  population. Both have family `population` and fit the same operand
+  position; the reader tells them by the referenced node, a
+  `relation`/`population` node or a `value`/`parameter` node typed by a
+  `bounded_domain`/`model_population`. Neither form replaces the other and
+  AC-62's keys and shapes are unchanged.
+- **Abstraction relations.** A `populations` entry of an
+  `abstraction_relation` body
+  ([FR-451](FR-451-checked-package-abstraction-relation-body.md)) targets this
+  node, so the entry's key is the declaration key.
+
 ## Structural leaf walk
 
 The leaf walk of a compared type starts at that type with the empty path
@@ -1343,7 +1437,7 @@ is admitted only as a state clause's anchor. The same holds for the node of a
 process or a state machine, and for an anchor whose context is one.
 The `type_argument` member of `quire.op.reference.upcast` names a
 `Reference<T>` node, whose family is `reference`. A term's family is its
-type's family, except that a function reference is `function`, a relation reference is `population`,
+type's family, except that a function reference is `function`, a reference to a `relation`/`population` node is `population`,
 a `dependency_reference` callee has family `function`,
 an aggregate is `aggregate`, a binding is `binder` (whose *bound* is the
 descriptor of its value), a clause application is `clause`, a temporal
@@ -1614,7 +1708,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-59 | Structural equality and inequality over U1–U7 require exactly their complete ordered leaf lists. U2's member rename, member reorder, payload swap and source arm reorder have exactly the effects stated with the vectors; U2 requires all three text leaves even when both operands select `Empty`. A missing final leaf refuses `invalid_package`/`operation-law-missing`; reordered leaves or a recursion leaf with a text law refuse `invalid_package`/`operation-law-mismatch`. | Test |
 | FR-322-AC-60 | For each `K` of `set`, `bag` and `ordered_set`, equality over `K<Choice>` (U2) requires U2's leaves with one leading `inner` per path; `contains` over that collection (`inner:0`) and a catalogued `result_inner` operation yielding `K<Choice>` require U2's leaves without that prefix. A `result_inner` operation yielding `sequence<Choice>` requires `[]`, while equality over `sequence<Choice>` requires U2's leaves with one leading `inner`. | Test |
 | FR-322-AC-61 | Both V2 schemas admit `member:Right`, `member:_item2`, `position:0`, `position:12`, `recursion:0` and `recursion:12`; they refuse `member:`, `member:1Right`, `position:01`, `position:-1`, `recursion:`, `recursion:01` and `recursion:-1`. The shared catalog includes `union` in `structural_kind`, so equality and inequality admit eligible Union operands under the existing `same_type` constraint and `operand:0` leaf source. | Test |
-| FR-322-AC-62 | The settled derived type forms forward aliases to their resolved node without an `alias` node; key `Reference<Order>` as an anonymous self-typed `composite_type`/`reference` over `Order`'s model declaration; key `Population<Order>[3]` as an anonymous `bounded_domain`/`model_population` whose `semantic_type` is `Set<Reference<Order>>` and whose body binds integer `max = 3`; and key a formed `metre / second` quantity as an anonymous self-typed `scalar_type`/`compound_unit` with ordered unit/exponent terms over targetless canonical nominal unit roots whose semantic type is their dimension key. The worked accepted vectors are admitted, including the exact U2 vector. The `RM-REF-TARGET`, `RM-POP-MAX` and `RM-CU-ORDER` exact preimages bind their keys; the corresponding public wire nodes satisfy the `SemanticNode` schema. Retaining each original key exercises stale-key detection, and recomputing each key exercises semantic-shape refusal for a non-model reference target, negative bound, arbitrary set element type and noncanonical term order as `invalid_package`/`invalid-derived-shape`. | Test (`tests/checked_package_v2.rs`, `tc_322_derived_form_key_mutations`, `tc_322_recomputed_derived_forms_refuse_semantic_mutations`) |
+| FR-322-AC-62 | The settled derived type forms forward aliases to their resolved node without an `alias` node; key `Reference<Order>` as an anonymous self-typed `composite_type`/`reference` over `Order`'s model declaration; key `Population<Order>[3]` as an anonymous `bounded_domain`/`model_population` whose `semantic_type` is `Set<Reference<Order>>` and whose body binds integer `max = 3`; and key a formed `metre / second` quantity as an anonymous self-typed `scalar_type`/`compound_unit` with ordered unit/exponent terms over targetless canonical nominal unit roots whose semantic type is their dimension key. The worked accepted vectors are admitted, including the exact U2 vector. The `RM-REF-TARGET`, `RM-POP-MAX` and `RM-CU-ORDER` exact preimages bind their keys; the corresponding public wire nodes satisfy the `SemanticNode` schema. Retaining each original key exercises stale-key detection, and recomputing each key exercises semantic-shape refusal for a non-model reference target, negative bound, arbitrary set element type and noncanonical term order as `invalid_package`/`invalid-derived-shape`. The `Population<Order>[3]` form types a population binding and names no declaration; a declared population is a population reference (FR-322-AC-82). | Test (`tests/checked_package_v2.rs`, `tc_322_derived_form_key_mutations`, `tc_322_recomputed_derived_forms_refuse_semantic_mutations`) |
 | FR-322-AC-63 | A selected domain package with `Address { street: Text[0, 64; nfc] }` and object `Account { address: Address }` admits a self-typed `model`/`record_value_type` declaration node owned by `Address`; `Account.address` derives the `Address` node as its type and a `field` projection on an `Address` value resolves `street` to `Text[0, 64; nfc]`. The record node has family `record`, and an invariant clause function owned by `Address` passes the owner join. | Test |
 | FR-322-AC-64 | A record field whose `typeRef` names another record, including a field inherited by a record subtype, derives the named record node. A record-typed field with `optional` presence derives `Option<Address>`, and one with multiplicity `[0, 3]`, ordered and non-unique, derives `Sequence<Address>[0, 3]`; both retain the declared record node at their innermost element. A finite recursive record reached through an optional field retains the same record declaration node at every level. None derives `Reference<Address>` or an object identity. | Test |
 | FR-322-AC-65 | A `model`/`record_value_type` node owned by a selected object type or a node absent from the selected document refuses `missing_declaration`/`missing-selection` in the owner join; one with a missing `owner` refuses `malformed_wire`. An unknown field name on a valid record node refuses `ill_typed`/`operator-ineligible`. A record field whose `typeRef` names an event type, state machine, process, persistence interface or namespace refuses `invalid_model_binding`/`malformed-declaration` at FR-154 intake before member derivation; a record node used as an object reference target refuses `invalid_package`/`invalid-derived-shape`. | Test |
@@ -1634,6 +1728,8 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-79 | A `literal` of `value_kind` `quantity` typed by a `scalar_type`/`unit` node is admitted with family `quantity`, both V2 schemas enumerate `quantity` as a literal `value_kind`, a quantity literal typed by another family and an integer literal typed by a unit node each refuse `ill_typed`/`operator-ineligible`, and a magnitude not in the canonical spelling refuses `invalid_package`/`invalid-value`. | Test (TC-233) |
 | FR-322-AC-80 | A field, operation parameter or operation result `typeRef` of the form `ix://quire/unit/<name>` has the type of the named unit of the checked package, under the multiplicity and presence tables; a name that matches no unit refuses `missing_declaration`/`missing-name`, and an argument of another unit or family refuses `ill_typed`/`operator-ineligible`. | Test (TC-280) |
 | FR-322-AC-81 | A unit, a dimension and a record that carry one `declaration` name are admitted, and two units, or two types, that carry one name refuse `ambiguous_declaration`/`ambiguous-name` at the later node in node-id order. | Test (TC-233) |
+| FR-322-AC-82 | A selected domain package that declares the populations `counters` and `archive` (`quire.meaning.model.population/v1`) admits a self-typed `relation`/`population` declaration node owned by each, with a `ModelOwner`, an empty `aggregate` body and the closed `ModelDeclarationNode` preimage; the two keys, P7 (`15ed74b124665e2fb9375dc02e715243dce2eb0d7d63d1f36c52f5fa1241a91a`) and P8 (`cc575f3d64f43a4bf787f5febdc73fbc9f2212617393877fa00371611204be24`), recompute from the published preimages and differ, and a changed `owner.identity` changes the key. The owner join admits the node when the document declares `owner.node` as a population and refuses `missing_declaration`/`missing-selection` for a population owned by an object type, by an undeclared node, and for a `model`/`object_type` or `relation`/`relationship` node owned by a population. A `relation`/`population` node with no `owner` fails the V2 schema (`malformed_wire`), and a preimage with a `semantic_type`, a `declaration`, a body member or another form under `relation` fails the closed preimage schema. Both V2 schemas enumerate `population` in the owner-presence rule and the `ModelDeclarationNode` preimage. | Test (TC-233, TC-280) |
+| FR-322-AC-83 | A `quire.op.model.all_instances` and a `quire.op.model.lookup` application whose operand 0 references a population reference are admitted by the full reader, list the node in their `dependencies` and carry no maximum or member type of the population; the reads of `counters` and of `archive` have different population keys, application keys and package ids, and one population read by both operations is one node. A population reference as the `collection_kind` operand of `quire.op.collection.contains` and as the declaring node and as the `population` link of a `quire.op.model.reaches` `relationship_end` member each refuse `ill_typed`/`operator-ineligible`. The `Population<O>[N]` binding operand of the published operation fixture is admitted unchanged and the keys of AC-62 do not change. The published `adverse.json` `population_reference_cases` record each case. | Test (TC-233) |
 
 ## Dependencies
 
@@ -1647,6 +1743,9 @@ counters below 2^53 and string values, so no published key changes.
   owns domain package admission, and
   [FR-150](../../functional/type-model/FR-150-preserve-model-normalization-provenance.md)
   owns the effective view a model-owned member resolves in.
+- [FR-153](../../functional/type-model/FR-153-query-closed-model-environments.md)
+  owns the population binding a population reference names, and QSL FR-391
+  the state-clause population name that lowers to it.
 
 ## Status
 
