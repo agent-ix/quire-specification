@@ -910,7 +910,7 @@
             }
           },
           "presence": "required",
-          "typeRef": "ix://quire/unit/Time/ms"
+          "typeRef": "ix://quire/unit/ms"
         },
         {
           "defaultKind": "none",
@@ -931,7 +931,7 @@
             }
           },
           "presence": "required",
-          "typeRef": "ix://quire/unit/Time/ms"
+          "typeRef": "ix://quire/unit/ms"
         },
         {
           "defaultKind": "none",
@@ -953,7 +953,7 @@
             }
           },
           "presence": "required",
-          "typeRef": "ix://quire/unit/Time/ghost"
+          "typeRef": "ix://quire/unit/ghost"
         }
       ],
       "identity": "ix://acme/orders/Order",
@@ -1085,7 +1085,7 @@
                 }
               },
               "presence": "required",
-              "typeRef": "ix://quire/unit/Time/ms"
+              "typeRef": "ix://quire/unit/ms"
             }
           ],
           "post": [],

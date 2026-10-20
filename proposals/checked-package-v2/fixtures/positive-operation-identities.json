@@ -2534,7 +2534,7 @@
     ],
     "model_selections": [
       {
-        "digest": "2c09129eedacd789e3bf491d3635e36f5d5242aa2847e8ea28c00e74e4c35ecc",
+        "digest": "b17e9ff1a1c1cf7ff253ba4ed6431a59b0aba3db601db9b2ce3e351406db97f5",
         "digest_domain": "sha256-jcs",
         "identity": "acme/orders"
       }
@@ -2570,7 +2570,7 @@
     },
     "model_selections": [
       {
-        "digest": "2c09129eedacd789e3bf491d3635e36f5d5242aa2847e8ea28c00e74e4c35ecc",
+        "digest": "b17e9ff1a1c1cf7ff253ba4ed6431a59b0aba3db601db9b2ce3e351406db97f5",
         "digest_domain": "sha256-jcs",
         "identity": "acme/orders"
       }
