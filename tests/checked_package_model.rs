@@ -158,7 +158,10 @@ fn tc_195_inherit_links_name_one_edge_parents() {
                     assert!(fact["parent"].is_null(), "{view} {rule} links nothing");
                     continue;
                 }
-                assert_eq!(str_at(fact, "/parent/domain"), EFFECTIVE_DECLARATION_DOMAIN);
+                assert_eq!(
+                    str_at(fact, "/parent/domain"),
+                    EFFECTIVE_DECLARATION_DOMAIN
+                );
                 let parent_id = str_at(fact, "/parent/digest");
                 assert!(parents.insert(parent_id), "{view} parents are distinct");
                 let parent = by_id
@@ -166,10 +169,7 @@ fn tc_195_inherit_links_name_one_edge_parents() {
                     .unwrap_or_else(|| panic!("{view} parent is in the view"));
                 let inputs = fact["inputs"].as_array().expect("fact inputs");
                 let (supertype, original) = (&inputs[0], &inputs[inputs.len() - 1]);
-                assert_eq!(
-                    &parent["original"], original,
-                    "{view} link keeps its original"
-                );
+                assert_eq!(&parent["original"], original, "{view} link keeps its original");
                 if preimage["owner_effective_type"].is_null() {
                     assert_eq!(inputs.len(), 1, "a type link names one supertype");
                 } else {
