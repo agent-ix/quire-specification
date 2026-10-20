@@ -8564,6 +8564,63 @@ fn tc_233_code_vocabulary_follows_the_catalog() {
     }
 }
 
+/// The FR-322 reader codes that FR-271-AC-7 and FR-272-AC-22 catalogue.
+const READER_CODES: [&str; 8] = [
+    "unknown_contract_version",
+    "malformed_wire",
+    "duplicate_member",
+    "unknown_member",
+    "digest_domain_mismatch",
+    "unknown_required_capability",
+    "invalid_semantic_graph",
+    "unsupported_node_tag",
+];
+
+/// FR-271-AC-7: the values table has exactly one row for each reader code.
+#[trace("TC-233", "FR-271-AC-7")]
+#[test]
+fn tc_233_reader_codes_have_one_vocabulary_row_each() {
+    for code in READER_CODES {
+        diagnostic_row(DIAGNOSTIC_CODE_VOCABULARY, code);
+    }
+}
+
+/// FR-272-AC-22: the native-diagnostics row and the FR-272 row of each reader
+/// code list no cause variant and name `locus` and `document_pointer`;
+/// `unknown_contract_version` also names `contract_version`; `locus` and
+/// `contract_version` are canonical payload names.
+#[trace("TC-233", "FR-272-AC-22")]
+#[test]
+fn tc_233_reader_code_rows_list_no_cause_and_name_their_payload() {
+    let payload_names = canonical_payload_names();
+    assert!(payload_names.contains("locus"), "`locus` is canonical");
+    assert!(
+        payload_names.contains("contract_version"),
+        "`contract_version` is canonical"
+    );
+    for code in READER_CODES {
+        for (document, name) in [
+            (NATIVE_DIAGNOSTICS, "native-diagnostics"),
+            (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
+        ] {
+            assert!(
+                diagnostic_row_causes(document, code).is_empty(),
+                "{name} `{code}` row lists no cause variant"
+            );
+            let row = diagnostic_row(document, code);
+            assert!(
+                row.contains("`locus`") && row.contains("`document_pointer`"),
+                "{name} `{code}` row names `locus` and `document_pointer`"
+            );
+            assert_eq!(
+                row.contains("`contract_version`"),
+                code == "unknown_contract_version",
+                "{name} `{code}` row names `contract_version` only for unknown_contract_version"
+            );
+        }
+    }
+}
+
 const EXACT_NUMERIC_DEFINEDNESS: &str =
     include_str!("../spec/functional/foundation/FR-044-check-composed-numeric-definedness.md");
 const COLLECTION_QUERIES: &str =

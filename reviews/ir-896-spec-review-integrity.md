@@ -45,3 +45,21 @@ Ticket: IR-896. PR: quire-specification#290 at 595b874, scoped to `git diff refs
 ## Verdict
 
 Findings: one medium, two low. The medium is that the native-diagnostics file contradicts itself on whether the ContractPackage reader is a T-4 `LimitExceeded` producer. Every other surface list is consistent; the new ids are unique and traced; TC-937's targets resolve.
+
+## New findings (disposition pass 1)
+
+Against head 6c9a7ea. Checked against FR-273-AC-4: the stage label `package_read` belongs to the closed `Diagnostic.stage` enum of interface_004's normative schema (proposals/checked-package-v2/schema.json), and FR-330 now names interface_004 as the vocabulary owner. The stage pair is therefore (interface_004, `package_read`), whose label is a member of that interface's vocabulary, so AC-4 is satisfied. The ContractPackage interface (interface_012) states no stage vocabulary.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | low | The FR-271 `stage_limit_exceeded` row still lists the FR-330 ContractPackage reader and says "Its limits are caller-configured FR-461 settings carried by the stage limits (FR-323)". FR-330 now says this reader's limits are `CheckedPackageReadLimits` members that are not registered FR-461 settings and have no replay entry point. Qualify the row for this reader, or drop the FR-323 clause for it. | spec/objects/foundation/FR-271-diagnostic-code-vocabulary.md:84 |
+
+## Dispositions
+
+Round 1, against head 6c9a7ea.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |

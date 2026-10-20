@@ -180,14 +180,13 @@ reader accepts a value refused by the owner.
 
 For each reader `refused` result of the cases above, map it to its FR-272
 diagnostic and require stage `package_read`, the reader's code and cause
-unchanged, the code's FR-271 row, and the category its code and cause map to
-(including an `unsupported_construct`/`not-yet-implemented` case, unsupported).
-Include one case for each reader code `unknown_contract_version` (retaining the
-received `contract_version`), `malformed_wire`, `duplicate_member`,
-`unknown_member`, `digest_domain_mismatch`, `unknown_required_capability`,
-`invalid_semantic_graph` and `unsupported_node_tag`, and a refusal at a node,
-requiring its `locus` node id in the `locus` payload and its `path` as the
-`json_path` location.
+unchanged, the code's FR-271 row and category refusal. Cover each code the
+reader returns: `invalid_package` (with `missing-member`, `duplicate-member`,
+`unknown-member`, `wrong-value-kind` and `invalid-value`), `noncanonical_wire`,
+`stale_dependency`/`content-mismatch` and `missing_import`/`missing-selection`.
+Require that no case yields the code `duplicate_member`, `unknown_member` or
+`unknown_required_capability`, and that the `path` is the `json_path`
+location.
 
 For each of the five limits the reader charges (`bytes`, `nodes`, `edges`,
 `occurrences`, `work`), read an input one over the limit and one at it. The
@@ -195,5 +194,6 @@ at-limit input is admitted. The one-over input maps to `stage_limit_exceeded`
 at stage `package_read`, category incomplete, with the cause `input-bytes-exceeded`,
 `node-count-exceeded`, `edge-count-exceeded`, `occurrence-count-exceeded` or
 `work-budget-exceeded` respectively, `bound` the limit, `actual` the consumed
-count, `setting` the `CheckedPackageReadLimits` member for that kind, and the
-location the `path` (none for `bytes`). No input yields a `diagnostics` stop.
+count, `setting` `CheckedPackageReadLimits.bytes`, `.nodes`, `.edges`,
+`.occurrences` or `.work`, and the location the `path` (none for `bytes`). No
+input yields a `diagnostics` stop.

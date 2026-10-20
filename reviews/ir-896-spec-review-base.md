@@ -63,3 +63,27 @@ Gates: `cargo test --test checked_package_v2 --test backend_provider_v1` passes 
 ## Verdict
 
 Not mergeable. Two high findings: the reader-layer codes resolve in no catalog, against FR-047-AC-2 and FR-271, and `locus` is mapped as if it were a pointer. Three medium: blanket category refusal against FR-285, unstated FR-461 entry points and defaults, and an unbuildable `diagnostics` vector. Two low. Sound: the 20-code count and 12/8 split, the six-row limit_kind/cause table, the bound/actual/path mapping for incomplete, the at-limit/one-over semantics, the unchanged FR-272-AC-1/AC-10 closed sets, the incomplete 22 / refusal 20 exit alignment, and the pre-existing validation failures.
+
+## New findings (disposition pass 1)
+
+Against head 6c9a7ea. Every claim of the fix was re-checked against the sources. FR-322's schema `DiagnosticCausePairing` (proposals/checked-package-v2/schema.json) maps every cause to a code, and none of those codes is one of the eight. The Diagnostic `code` enum holds none of the eight either. CG's emitters build all eight with `cause: None` (`common.rs` `refused`, `unknown_contract_version`). So "no cause variant" holds for FR-322. CG's defensive nested-refusal validator (`v2/contract_package.rs`:1416-1417) does admit `unknown_contract_version`/`unsupported-wire` and `unknown_required_capability`/`unsupported-feature`, which FR-322 pairs with `unknown_wire` and `unknown_required_feature`. That divergence is on the CG side and outside this PR. `cargo test --test checked_package_v2 --test backend_provider_v1`: 9 and 105 pass at 6c9a7ea. `quire validate` on every changed file reports only the failures that already exist on main (FR-271 id and extraction cells, FR-272 id, native-diagnostics type). `quire matrix`: FR-271-AC-7 and FR-272-AC-22 are untagged.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-008 | medium | FR-272-AC-22 and FR-271-AC-7 are `Test (TC-233)`, and TC-233 now describes parsing the eight rows. But no test carries their tags: `quire matrix --scope .` reports both untagged, while the sibling row checks FR-271-AC-6 and FR-272-AC-10 are tagged in `tests/checked_package_v2.rs`, at 8561 and 8270. QSpec runs TC-233 in its own Rust tests, so the claim that they are "tested in TC-233" does not hold yet. Add `#[trace("TC-233", ...)]` row-parse tests beside the AC-6 and AC-10 tests. | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:207 |
+| FND-009 | medium | Some TC-937 refusal vectors cannot be built for the ContractPackage reader, and some contradict FR-330: - FR-330 (lines 389-396) says the reader reports a duplicate or unknown member as `invalid_package` with cause `duplicate-member` or `unknown-member`. CG does the same: `admit()` remaps the `DuplicateMember` code, and line 1044 refuses unknown members as `invalid_package`. So the `duplicate_member` and `unknown_member` code cases cannot come from this reader. - FR-330 has no capability check, so `unknown_required_capability` cannot come from it either. - The required `unsupported_construct`/`not-yet-implemented` case, also in FR-330-AC-11 and the FR-330 prose, names a pair FR-322 never admits: `not-yet-implemented` is in neither the FR-322 schema's cause enum nor CG's `CheckedPackageRefusalCause`. Limit the vectors to the codes this reader can return, and use a reachable pair, or none, in the category example. | spec/test-cases/TC-937-contract-package-reader.md:183-190 |
+| FND-010 | low | The `setting` is "the `CheckedPackageReadLimits` member for bytes" (and so on), with no exact string given. One implementer may write `bytes` and another `CheckedPackageReadLimits.bytes`. FR-272's payload contract and both `stage_limit_exceeded` rows still define `setting` as the FR-461 setting name "that raises the limit at every entry point". Give the exact spellings (`bytes`, `nodes`, `edges`, `occurrences`, `work`), and say in the FR-272 row that this reader's `setting` is a limits-member name pending FR-461 registration. | spec/objects/interfaces/FR-330-contract-package.md:467-482 |
+
+## Dispositions
+
+Round 1, against head 6c9a7ea.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |
+| FND-004 | deferred | FR-461 registration (CLI and replay entry points, FR-460 defaults) of the shared CheckedPackageReadLimits members, for this reader and the I2 reader together, is out of scope by owner decision and is the IR-896 follow-up. The PR removed the invented contract_package.* names and the FR-461 edit, and states the exclusion in FR-330. FND-010 covers the residual spelling ambiguity. |
+| FND-005 | fixed | - |
+| FND-006 | fixed | - |
+| FND-007 | fixed | - |
