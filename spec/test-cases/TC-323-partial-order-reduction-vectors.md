@@ -171,4 +171,4 @@ with a replaying prefix, storing 6 states each. Without the call rule the
 reduced run would expand only `{disarm}` and report `proved` over 3 states
 (FR-383-AC-16).
 
-The directional meet (FR-383-AC-17): a field write against a membership read is independent, a written membership against a field read or a membership read is dependent, and two writes meet in either direction; the counter subject's reduced and unreduced verdicts agree.
+The directional meet (FR-383-AC-17): a field write against a membership read is independent, a written membership against a field read or a membership read is dependent, and two writes meet in either direction; in AC-5's `Gate` under `fair weak go`, `toggle` stays invisible and the ample set at the initial state is `{toggle}`, with reduced and unreduced verdicts equal.

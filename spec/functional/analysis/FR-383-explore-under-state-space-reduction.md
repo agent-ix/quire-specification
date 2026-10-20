@@ -205,11 +205,10 @@ internal fault that settles the item `failed`, never a value.
 **Independence and visibility.** `t` and `u` are independent when
 no location of `W(t)` affects a location of `R(u)`, no location of `W(u)`
 affects a location of `R(t)`, and no location of `W(t)` meets a location of
-`W(u)`. The relation is directional because the symmetric one makes every
-transition that reads a receiver's membership dependent on every write to that
-receiver's fields, which leaves no ample set smaller than the enabled set for
-the subjects of FR-383-AC-1 to AC-5; the directional relation agrees with
-unreduced exploration on a 22,000-model comparison. So deleting an object is dependent on
+`W(u)`. The relation is directional because a field write does not change whether an
+object exists: under a symmetric relation every transition that reads a
+receiver's membership would depend on every write to that receiver's fields,
+and the same-object operations of FR-383-AC-5's `Gate` would have no reduction. So deleting an object is dependent on
 every transition whose receiver or reference argument is that object, and on
 every transition that writes a reference field that could name it. A transition is visible when its write footprint affects a
 location some atom of the claim reads or a location the state constraint
@@ -323,7 +322,7 @@ settles different labels is a conformance failure of the engine.
 | FR-383-AC-14 | A postcondition that reads a field through a reference-valued `result` reads `AnyField{T, f}` and the result population's `AnyMembership`, so a transition that writes that field on any object is in the candidate of the disabled operation, and the reduced search reaches the violation the unreduced search reaches. | Test (TC-323) |
 | FR-383-AC-15 | For every model-check case of the FR-336 conformance corpus and every selection of symmetry, partial-order reduction or both that FR-385's preservation table admits for the case, the reduced run and the unreduced run settle the same FR-341 label, and every counterexample from either run replays; the vectors of TC-321 to TC-325 are such cases, and each settles the same label reduced and unreduced. | Test (TC-329) |
 | FR-383-AC-16 | A precondition `self.armed and hot(self.cell)`, with `hot` a pure function whose body reads `deref(c).v`, reads `Field{receiver, cell}` and `AnyField{Cell, v}`; a call's reads include its callee's body reads transitively and a dispatched call's reads every candidate's, so a reduced run refutes wherever the unreduced run refutes. | Test (TC-323) |
-| FR-383-AC-17 | Locations affect directionally: `bump(a)` (a field write) is independent of a transition that only reads `Membership{counters, a}`; a written `Membership{counters, a}` (a `deletes self`) affects a read of `Field{a, v}` and of `Membership{counters, a}`; two writes meet when either affects the other; and the reduced run of the counter subject (FR-383-AC-1) returns the verdict of the unreduced run. | Test (TC-323) |
+| FR-383-AC-17 | Locations affect directionally: `bump(a)` (a field write) is independent of a transition that only reads `Membership{counters, a}`; a written `Membership{counters, a}` (a `deletes self`) affects a read of `Field{a, v}` and of `Membership{counters, a}`; two writes meet when either affects the other; and FR-383-AC-5's `Gate` under `fair weak go` keeps `toggle` invisible, so `A = {toggle}` at the initial state and the reduced run returns the unreduced run's verdict. | Test (TC-323) |
 
 ## Dependencies
 
