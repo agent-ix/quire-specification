@@ -41,16 +41,18 @@ protocol Pay using p over (k: M::Acct) on origin {
     recover (r: M::RecoveryView) { r.bal = 0 };
   }
   run sequence Main {
-    attempt C by w on M::Acct::charge contracts [ChargePre, ChargePost] as (c) { true };
+    attempt C by w on M::Acct::charge contracts [ChargePre, ChargePost] as (c: M::Acct) { true };
     effect Paid of Main::C as (pd: M::ChargeEffect) { true };
     event Fail by w as (f: M::Failure) { true };
   }
-  finish Done as (d) { true };
+  finish Done as (d: M::Acct) { true };
 }
 ```
 
 Explore exhaustively under `sc` through the real local Rust boundary and
 record every state, registration status and enabled step.
+
+Parse the protocol text above at S1 under the `quire.value.complete/v1` profile and require it admissible with no diagnostic (every protocol fixture of the test cases parses).
 
 ## Vectors
 

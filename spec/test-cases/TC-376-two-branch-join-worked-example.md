@@ -30,11 +30,11 @@ protocol Fill using p over (k: M::Cell) on origin {
   role w on M;
   run sequence Main {
     parallel Both {
-      branch left  attempt A by w on M::Cell::inc    contracts [IncPre, IncPost] as (a) { true };
-      branch right attempt B by w on M::Cell::setTwo contracts [TwoPre, TwoPost] as (b) { true };
+      branch left  attempt A by w on M::Cell::inc    contracts [IncPre, IncPost] as (a: M::Cell) { true };
+      branch right attempt B by w on M::Cell::setTwo contracts [TwoPre, TwoPost] as (b: M::Cell) { true };
     } join all [left, right];
   }
-  finish Done as (d) { true };
+  finish Done as (d: M::Cell) { true };
 }
 ```
 
@@ -42,6 +42,8 @@ Bind `k` to `c`. Explore exhaustively under `sc` through the real local Rust
 boundary, recording every state, enabled step and transition identity. Check
 the deadlock-freedom item, the claim `eventually holds(k.v = 3)` under
 infinite-trace, and the same with `TwoPre: self.v <= 1`.
+
+Parse the protocol text above at S1 under the `quire.value.complete/v1` profile and require it admissible with no diagnostic (every protocol fixture of the test cases parses).
 
 ## Vectors
 
