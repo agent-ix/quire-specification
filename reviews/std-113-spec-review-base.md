@@ -104,3 +104,15 @@ Checked at head 267b2d0 (fix commits 4112320 and 267b2d0 over the main merge 983
 | FND-004 | fixed | `Quantity` added to the complete-V1 reserved words; no QSpec or QSL source identifier named `Quantity` exists |
 | FND-005 | fixed | FR-142 "Where the form is written" states `convert<Quantity<u>>(e)` and every type-ref position |
 | FND-006 | fixed | AC-11/U30 now use `f(3 ms)` and `f(3 s)` with the refusal at the argument |
+| FND-007 | fixed | 38148f0: FR-322 `declaration` makes name uniqueness per namespace (dimensions, units, every other declared node), FR-322-AC-81 with TC-233 NS-01..03, and the reader oracle keys names by namespace (tagged, passes). FR-142-AC-13/U32's unit-plus-record case is now admitted. |
+| FND-008 | fixed | 38148f0: the unit-typed members moved to an inline `acme/timing` package (vectors MU-01..06, its own declaration node T1 whose key recomputes). acme/orders, every fixture and the dependency-selection vectors are byte-identical to origin/main 240faeb. QSL main 469f8b4 `cargo test -p qsl-package --lib` with QSPEC_DIR at the head: 202 passed, 0 failed. |
+| FND-009 | fixed | 38148f0: the cascade is reverted with the fixture move; every fixtures/*.json `package_id` recomputes and is identical to main |
+| FND-010 | fixed | 38148f0 restores the three-space indent on the object-type row |
+
+## New findings (disposition pass 2)
+
+Checked at head 38148f0.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-011 | low | The type namespace has two definitions. FR-142 "Namespaces" and shared-grammar.md:962-964 define it as records, tuples, unions, enums and aliases. FR-322 `declaration` (and the reader oracle) defines it as "every other declared node", which also covers functions, predicates, protocols, claims and declared values. The source rules therefore do not say which namespace a function or predicate name lives in, or whether a function `ms` may coexist with a record `ms` (FR-322 refuses it) or with a unit `ms` (FR-322 admits it). Name the remaining declaration kinds in FR-142 and the grammar, or say that every non-dimension, non-unit declaration is in the type namespace. | spec/functional/type-model/FR-142-evaluate-quantities-and-units.md:161-168; proposals/quire-v1/shared-grammar.md:962-964; spec/objects/interfaces/FR-322-checked-package-artifact.md:550-555 |

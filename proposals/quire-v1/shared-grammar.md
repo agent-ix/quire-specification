@@ -959,8 +959,9 @@ authors write `not (a = b)` for negating a comparison.
 
 Model and profile aliases are unique within their source unit; they do not
 pollute another source unit's alias scope. Native declaration names are unique
-within the linked package, per namespace: types (records, tuples, unions,
-enums and aliases), dimensions and units are three namespaces, so a unit may
+within the linked package, per namespace: dimensions, units and every other declaration (records, tuples, unions, enums,
+aliases, functions, predicates, protocols, claims and declared values, the type
+namespace) are three namespaces, so a unit may
 share its name with a dimension or with a type. Ambiguous cross-unit
 declarations refuse. A bare `type-ref` looks up the type namespace only, and
 `Quantity<u>` is the one `type-ref` that looks up the unit namespace. A unit

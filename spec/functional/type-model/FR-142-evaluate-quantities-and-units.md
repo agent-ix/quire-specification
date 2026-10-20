@@ -158,8 +158,11 @@ Complete-V1 source names the type of a quantity in a declared unit as
 word of the complete-V1 facets, so a declaration named `Quantity` is
 `invalid_syntax`.
 
-**Namespaces.** Types (records, tuples, unions, enums and aliases), dimensions
-and units are three namespaces; a name is unique within its namespace in the
+**Namespaces.** Dimensions, units and everything else a unit of compilation
+declares are three namespaces. The third, the type namespace, holds records,
+tuples, unions, enums, aliases, functions, predicates, protocols, claims and
+declared values, which FR-322 carries as every declared node but a dimension
+or a unit; a name is unique within its namespace in the
 linked package, and two units of one name in the linked package refuse
 `ambiguous_declaration`/`ambiguous-name` at the use. A bare `type-ref` looks up
 the type namespace only, and `Quantity<...>` is the one `type-ref` that looks up

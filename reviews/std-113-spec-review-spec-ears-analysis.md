@@ -47,3 +47,4 @@ checker. `quire validate` reports no grammar warning on FR-142 at head.
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-001 | fixed | 4112320 recasts each bullet on "The checker SHALL ..." with When-clauses for the accept and refuse cases |
+| FND-002 | fixed | 38148f0 splits the bullet into two "The checker SHALL ..." statements |
