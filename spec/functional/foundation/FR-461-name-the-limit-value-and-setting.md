@@ -51,7 +51,6 @@ setting.
    `s1.tokens`, `s3.nodes`, `s3.work_units` or `intake.input_bytes`. The
    counter names a resource (bytes, tokens, nodes, edges, occurrences,
    diagnostics or work units), never a depth (FR-460).
-   The FR-330 ContractPackage reader's limits use the stage `contract_package`: `contract_package.input_bytes`, `.nodes`, `.edges`, `.occurrences`, `.diagnostics` and `.work_units`; they are raised through the reader's limits argument.
    A byte-emitting lifecycle operation names its output-byte budget with the
    operation name and the `output_bytes` counter, for example
    `format.output_bytes`. The budget counts every byte the operation would
