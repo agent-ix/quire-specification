@@ -27,8 +27,8 @@ postcondition `self.v = 1`, frame `modifies self.v`. Trigger record type
 ```text
 protocol Once using p over (k: M::Gate) on each (t: M::Tick) when (true) {
   role w on M;
-  run attempt Take by w on M::Gate::take contracts [TakePre] as (a) { true };
-  finish Done as (d) { true };
+  run attempt Take by w on M::Gate::take contracts [TakePre] as (a: M::Gate) { true };
+  finish Done as (d: M::Gate) { true };
 }
 ```
 
@@ -37,6 +37,8 @@ The first instance takes the gate and finishes; every later instance waits at
 `always holds(true)` over this subject and check its derived deadlock-freedom
 item through the real local Rust boundary under each budget below, recording the
 verdict, cause, counterexample and terminal accounting record.
+
+Parse the protocol text above at S1 under the `quire.value.complete/v1` profile and require it admissible with no diagnostic.
 
 ## Vectors
 
