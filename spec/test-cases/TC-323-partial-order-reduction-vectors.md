@@ -3,6 +3,8 @@ id: TC-323
 title: "Partial-order reduction vectors"
 type: TC
 relationships:
+  - target: ix://agent-ix/quire-specification/FR-383-AC-17
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-383
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-385
@@ -168,3 +170,5 @@ state is fully expanded, and both runs settle `refuted` through `set`, `boom`
 with a replaying prefix, storing 6 states each. Without the call rule the
 reduced run would expand only `{disarm}` and report `proved` over 3 states
 (FR-383-AC-16).
+
+The directional meet (FR-383-AC-17): a field write against a membership read is independent, a written membership against a field read or a membership read is dependent, and two writes meet in either direction; the counter subject's reduced and unreduced verdicts agree.

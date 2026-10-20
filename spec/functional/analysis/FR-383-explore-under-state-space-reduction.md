@@ -83,14 +83,24 @@ partial-order reduction has a write footprint `W(t)` and a read footprint
   population `P`;
 - `AnyMembership{P}`: the membership of any object of population `P`.
 
-Two locations **meet** when they are equal; when one is `AnyField{T, f}` and
-the other is `AnyField{T', f}` or `Field{o, f}` over a type related to `T` by
-conformance; when one is `Membership{P, k}` and the other is
-`AnyMembership{P}`, any `Field{k, f}`, or `AnyField{T, f}` for a field `f`
-of `P`'s member type; or when one is `AnyMembership{P}` and the other is any
-`Membership{P, _}`, or any `Field` or `AnyField` of a field of `P`'s member
-type. A protocol transition system supplies its own protocol locations and
-their meets.
+A location stands for the **cells** it covers: an (object, field) pair, or a
+(population, key) membership. A **read** location covers: `Field{o, f}` the
+cell of `o.f`; `AnyField{T, f}` the cells of `f` on every object of `T` or a
+type conforming to it; `Membership{P, k}` the membership cell of `k` in `P`
+only; `AnyMembership{P}` the membership cells of every object of `P`. A
+**written** location **affects** the cells it covers and more: a written
+`Membership{P, k}` affects the membership cell and every field cell of `k`,
+because creating or deleting `k` changes its fields as well as its membership;
+a written `AnyMembership{P}` affects every membership cell of `P` and every
+field cell of `P`'s member type; a written `Field{o, f}` or `AnyField{T, f}`
+affects the field cells it covers and no membership cell, because writing a
+field does not change whether an object exists. A written location therefore
+affects a read location when they share a cell it affects, and a field write
+does not affect a membership read.
+
+Two written locations **meet** when either affects the other; this keeps the
+plain symmetric relation for write/write pairs, which is conservative. A
+protocol transition system supplies its own protocol locations and their meets.
 
 **Write footprint.** `W(t)` is the frame of `t`'s operation
 ([FR-013](../foundation/FR-013-validate-operation-frames.md)), at each
@@ -193,14 +203,19 @@ the engine over an observation restricted to `R(t)`; a read outside it is an
 internal fault that settles the item `failed`, never a value.
 
 **Independence and visibility.** `t` and `u` are independent when
-no location of `W(t)` meets a location of `R(u) ∪ W(u)` and no location of
-`W(u)` meets a location of `R(t)`. So deleting an object is dependent on
+no location of `W(t)` affects a location of `R(u)`, no location of `W(u)`
+affects a location of `R(t)`, and no location of `W(t)` meets a location of
+`W(u)`. The relation is directional because the symmetric one makes every
+transition that reads a receiver's membership dependent on every write to that
+receiver's fields, which leaves no ample set smaller than the enabled set for
+the subjects of FR-383-AC-1 to AC-5; the directional relation agrees with
+unreduced exploration on a 22,000-model comparison. So deleting an object is dependent on
 every transition whose receiver or reference argument is that object, and on
-every transition that writes a reference field that could name it. A transition is visible when its write footprint meets a
+every transition that writes a reference field that could name it. A transition is visible when its write footprint affects a
 location some atom of the claim reads or a location the state constraint
 reads, or when an atom reads the operation anchor of its position and names
 its operation. Under a non-empty fairness set a transition is also visible
-when its write footprint meets the enabling footprint of a member of a
+when its write footprint affects the enabling footprint of a member of a
 fairness class it does not belong to; a `creates` that adds a member to a
 `whole` class is therefore visible. The deadlock-freedom item's predicate
 makes no transition visible.
@@ -218,7 +233,7 @@ makes no transition visible.
 For each enabled `t` in canonical transition order, the candidate seeded by
 `t` is the least set containing `t` that holds, for each enabled member,
 every transition identity dependent on it, and for each disabled member,
-every transition identity whose write footprint meets that member's enabling
+every transition identity whose write footprint affects that member's enabling
 footprint. `A(s)` is the enabled part of the candidate with the fewest
 enabled members that satisfies C2 and C3, ties broken by the seed's canonical
 order, or `E(s)` when none does. A visible transition is never a member of
@@ -301,13 +316,14 @@ settles different labels is a conformance failure of the engine.
 | FR-383-AC-7 | Every counterexample from a reduced search is a concrete model trace with no canonical state, permutation or reduction, and replays through the model's successor relation; a symmetry lasso whose loop closes only after more than one repetition is repeated until the concrete state equals the entry state. | Test (TC-321, TC-322) |
 | FR-383-AC-8 | A simulation request over the same subject reports every reachable state, unaffected by any reduction selected on a model-check item. | Test (TC-327) |
 | FR-383-AC-9 | A model transition's enabling footprint is its whole read footprint, including the postcondition's pre-state reads, its post-state reads outside the write footprint, and its receiver's and reference arguments' membership; a writer that enables a transition only through its postcondition is in the candidate of that disabled transition, so the reduced search reaches the violation the unreduced search reaches. | Test (TC-323) |
-| FR-383-AC-10 | `deletes self` writes the receiver's membership and `deletes p` the argument's; a type-wide `deletes T` and every `creates T` write `AnyMembership{P}`, which meets every membership and field location of `P`'s member type; each is dependent on every transition whose receiver or reference argument is an object it may delete, and no ample set drops that object's visible transition. | Test (TC-323) |
+| FR-383-AC-10 | `deletes self` writes the receiver's membership and `deletes p` the argument's; a type-wide `deletes T` and every `creates T` write `AnyMembership{P}`, which affects every membership and field location of `P`'s member type; each is dependent on every transition whose receiver or reference argument is an object it may delete, and no ample set drops that object's visible transition. | Test (TC-323) |
 | FR-383-AC-11 | A navigation read `self.cell.v` reads `Field{receiver, cell}` as well as `AnyField{Cell, v}`, so a transition that rewrites `cell` is in the candidate of a disabled transition whose precondition navigates through it, and the reduced search reaches the violation the unreduced search reaches. | Test (TC-323) |
 | FR-383-AC-12 | A `deletes` entry reads `AnyField{U, g}` for every reference-valued field `g` whose referenced type the deleted type conforms to, so a transition that clears a reference to an object is in the candidate of the disabled delete of that object, and the reduced search reaches the violation the unreduced search reaches. | Test (TC-323) |
-| FR-383-AC-13 | A field read on a quantified variable, a `filter` or `map` binder or a collection element reads `AnyField{T, f}`, a quantification or aggregation over a population reads `AnyMembership{P}`, a `creates` and a granted write to a reference field read the target populations' `AnyMembership`, and `Membership{P, k}` meets `AnyField{T, f}` for a field of `P`'s member type: `forall(o in allInstances<M::Counter>(M::counters) : o.v < 2)` in a state clause reads `AnyField{Counter, v}` and `AnyMembership{counters}`, and is dependent with every `bump` and every delete of a counter. | Test (TC-326) |
+| FR-383-AC-13 | A field read on a quantified variable, a `filter` or `map` binder or a collection element reads `AnyField{T, f}`, a quantification or aggregation over a population reads `AnyMembership{P}`, a `creates` and a granted write to a reference field read the target populations' `AnyMembership`, and a written `Membership{P, k}` affects `AnyField{T, f}` for a field of `P`'s member type, while a field write affects no membership read: `forall(o in allInstances<M::Counter>(M::counters) : o.v < 2)` in a state clause reads `AnyField{Counter, v}` and `AnyMembership{counters}`, and is dependent with every `bump` and every delete of a counter. | Test (TC-326) |
 | FR-383-AC-14 | A postcondition that reads a field through a reference-valued `result` reads `AnyField{T, f}` and the result population's `AnyMembership`, so a transition that writes that field on any object is in the candidate of the disabled operation, and the reduced search reaches the violation the unreduced search reaches. | Test (TC-323) |
 | FR-383-AC-15 | For every model-check case of the FR-336 conformance corpus and every selection of symmetry, partial-order reduction or both that FR-385's preservation table admits for the case, the reduced run and the unreduced run settle the same FR-341 label, and every counterexample from either run replays; the vectors of TC-321 to TC-325 are such cases, and each settles the same label reduced and unreduced. | Test (TC-329) |
 | FR-383-AC-16 | A precondition `self.armed and hot(self.cell)`, with `hot` a pure function whose body reads `deref(c).v`, reads `Field{receiver, cell}` and `AnyField{Cell, v}`; a call's reads include its callee's body reads transitively and a dispatched call's reads every candidate's, so a reduced run refutes wherever the unreduced run refutes. | Test (TC-323) |
+| FR-383-AC-17 | Locations affect directionally: `bump(a)` (a field write) is independent of a transition that only reads `Membership{counters, a}`; a written `Membership{counters, a}` (a `deletes self`) affects a read of `Field{a, v}` and of `Membership{counters, a}`; two writes meet when either affects the other; and the reduced run of the counter subject (FR-383-AC-1) returns the verdict of the unreduced run. | Test (TC-323) |
 
 ## Dependencies
 
