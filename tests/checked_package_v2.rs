@@ -10353,7 +10353,7 @@ fn tc_395_cycles_through_records_tuples_and_unions_are_recursion_leaves() {
 }
 
 /// The V2 Diagnostic schema admits each #181 cause only with its codes.
-#[trace("TC-233", "FR-322-AC-47")]
+#[trace("TC-233", "FR-322-AC-47", "FR-322-AC-78")]
 #[test]
 fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes() {
     let schema = parsed_fixture(SCHEMA);
@@ -10362,7 +10362,7 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
         &schema["$defs"]["Diagnostic"]["properties"]["code"]["enum"],
         "diagnostic codes",
     );
-    let pairings: [(&str, &[&str]); 4] = [
+    let pairings: [(&str, &[&str]); 6] = [
         ("type-mismatch", &["ill_typed"]),
         (
             "missing-selection",
@@ -10376,6 +10376,8 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
             "wrong-selection-role",
             &["unknown_language", "unknown_edition", "unknown_profile"],
         ),
+        ("unsupported-wire", &["unknown_wire"]),
+        ("unsupported-feature", &["unknown_required_feature"]),
     ];
     for (cause, admitted) in pairings {
         for code in &codes {
@@ -10389,45 +10391,28 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
     }
 }
 
-/// FR-322-AC-78: `unsupported-wire` and `unsupported-feature` pair only with
-/// `unknown_wire` and `unknown_required_feature`, in the FR-272 rows and the
-/// Diagnostic schema; the two reader codes that would otherwise carry them
-/// have no cause.
+/// FR-322-AC-78: the FR-272 rows pair `unsupported-wire` and
+/// `unsupported-feature` with `unknown_wire` and `unknown_required_feature`
+/// only, and list no cause for `unknown_contract_version` and
+/// `unknown_required_capability`. The schema half of the pairing is checked by
+/// the FR-322-AC-47 test above.
 #[trace("TC-233", "FR-322-AC-78")]
 #[test]
-fn tc_233_unsupported_wire_and_feature_causes_have_one_pairing() {
-    let schema = parsed_fixture(SCHEMA);
-    let diagnostic = schema_for_def(&schema, "Diagnostic");
-    let codes = string_list(
-        &schema["$defs"]["Diagnostic"]["properties"]["code"]["enum"],
-        "diagnostic codes",
-    );
+fn tc_233_unsupported_wire_and_feature_causes_pair_with_one_code_each() {
     for (cause, owner) in [
         ("unsupported-wire", "unknown_wire"),
         ("unsupported-feature", "unknown_required_feature"),
     ] {
-        for code in &codes {
-            let entry = json!({"stage": "package_read", "code": code, "cause_tag": cause, "details": [], "loci": []});
-            assert_eq!(
-                diagnostic.is_valid(&entry),
-                *code == owner,
-                "the Diagnostic schema pairs {cause} with `{code}` only when it is `{owner}`"
-            );
-        }
         assert!(
             diagnostic_row_causes(TYPED_DIAGNOSTIC_CAUSE, owner).contains(cause),
             "the FR-272 `{owner}` row lists {cause}"
         );
-        for reader in ["unknown_contract_version", "unknown_required_capability"] {
-            assert!(
-                diagnostic_row_causes(TYPED_DIAGNOSTIC_CAUSE, reader).is_empty(),
-                "the FR-272 `{reader}` row lists no cause"
-            );
-            assert!(
-                !codes.iter().any(|code| *code == reader),
-                "`{reader}` is no Diagnostic code, so the schema pairs it with no cause"
-            );
-        }
+    }
+    for reader in ["unknown_contract_version", "unknown_required_capability"] {
+        assert!(
+            diagnostic_row_causes(TYPED_DIAGNOSTIC_CAUSE, reader).is_empty(),
+            "the FR-272 `{reader}` row lists no cause"
+        );
     }
 }
 
