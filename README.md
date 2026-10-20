@@ -1,16 +1,14 @@
 # quire-specification
 
-A formal language is only useful if two programs that read the same rule agree
-on what it means. This repository is where Quire writes that agreement down: the
-semantics of the Quire language, the profiles that select parts of it, the
+quire-specification is the written standard for the Quire language. It holds
+the semantics of the language, the profiles that select parts of it, the
 interchange formats programs use to hand each other checked results, and the
 test cases an implementation has to pass.
 
-It exists so the layers above it do not each invent their own reading. The
-compiler ([quire-spec-language](https://github.com/agent-ix/quire-spec-language)),
-the proof and code-generation backends and the verification tools all read the
-same requirements, the same JSON schemas and the same vectors, instead of
-copying them into their own repositories.
+The compiler ([quire-spec-language](https://github.com/agent-ix/quire-spec-language)),
+the proof and code-generation backends and the verification tools read the same
+requirements, JSON schemas and vectors from this repository. Implementers and
+tool authors use it as the shared reference.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/hero-dark.svg">
@@ -24,7 +22,7 @@ copying them into their own repositories.
 > compiler. Compiler acceptance of the written test cases is planned and lives in
 > quire-spec-language.
 
-## What is in the repository
+## Contents
 
 | Path | What it holds |
 | --- | --- |
@@ -53,7 +51,7 @@ The proposals are:
 | [`checked-package-v2`](proposals/checked-package-v2/README.md) | The checked-package schema and its identity, model and operation vectors. |
 | [`backend-provider-v1`](proposals/backend-provider-v1/README.md) | The schema and vectors for how a backend advertises what it can check. |
 
-## A first conformance case
+## Example conformance case
 
 A case is an input and the answer an implementation must give. The state-core
 proposal ships a rule and a set of snapshots to run it on. The rule is
@@ -82,15 +80,14 @@ each must produce. The cases from that file:
 | `duplicate-object` | refused, `duplicate_object` |
 | `incomplete-population` | incomplete, `incomplete_population` |
 
-The file says of itself that its status is
-`manually-authored-expectations-not-evaluator-output`, and the fixture's model
-digest is deliberately unresolved. Treat these as the draft's authored
-expectations, not as results any program has produced yet.
+The file's status is `manually-authored-expectations-not-evaluator-output`, and
+the fixture's model digest is unresolved. These are the draft's authored
+expectations; no program has produced them as results yet.
 
-## Using the authored documents from Rust
+## Rust library
 
 The library crate is named `quire_specification`. A consumer reads the
-documents by reference instead of holding a copy. From
+documents by reference. From
 `tests/checked_package_v2.rs`:
 
 ```rust
@@ -102,7 +99,7 @@ use quire_specification::{
 The same file's test checks that each constant holds exactly the bytes of the
 file under `proposals/quire-v1/definitions/`. The crate does no parsing.
 
-## How the tests qualify the drafts
+## Tests
 
 | Test file | What it checks |
 | --- | --- |
@@ -114,12 +111,12 @@ file under `proposals/quire-v1/definitions/`. The crate does no parsing.
 | `tests/shared_reference.rs` | The producer structure of the verification-reference fixtures, and that Quire's canonicalizer gives the same identities. |
 
 These are producer checks. They do not show that an independent reader accepts
-the same data, and they do not discharge the written test cases under
+the same data. They do not discharge the written test cases under
 `spec/test-cases/`, which describe compiler acceptance and are planned.
 
 ## The Quire ecosystem
 
-This repository is the language standard: it starts the main chain, ahead of
+This repository is the language standard. It starts the main chain, ahead of
 the compiler and the backends that implement and consume it.
 
 <picture>
@@ -127,7 +124,7 @@ the compiler and the backends that implement and consume it.
   <img alt="The Quire repositories. The main chain runs from the standard, quire-specification, to the compiler, quire-spec-language, then quire-contract-ir, quire-contract-codegen and quire-contract-runtime. quire-spec-language also feeds quire-protocol, and quire-contract-ir feeds quire-analyze. quire-observation feeds quire-protocol and quire-mltl. Above the chain, quire-driver runs it, quire-integration tests it and quire-verification plans verification. Below it, shared libraries used throughout: quire-exact, quire-semantic-value, quire-walk, quire-canonical and quire-verification-contracts." src="docs/images/ecosystem-light.svg">
 </picture>
 
-Its only dependencies are for the tests: the public
+Its dependencies are for the tests only: the public
 [quire-verification-contracts](https://github.com/agent-ix/quire-verification-contracts)
 crate (canonical JSON identity and the operation catalog) and ix-trace-rs, which
 ties each test to the criterion it verifies. The library itself has no
@@ -136,7 +133,7 @@ dependencies. The compiler that implements the standard is
 
 ## Building and testing
 
-No hosted workflow exists on purpose; every check runs locally.
+There is no hosted workflow; every check runs locally.
 
 ```sh
 cargo test --locked
@@ -146,14 +143,13 @@ quire validate --scope . 'spec/**/*.md' 'plan/**/*.md' 'reviews/2026-*.md' --sum
 ```
 
 The first Cargo run fetches the git dependencies; later runs can add
-`--offline`. The dated review glob selects the typed review artifacts, because
-the older review note has no type frontmatter and an unrestricted glob reports
-that structural error.
+`--offline`. The dated review glob selects the typed review artifacts. The older review note
+has no type frontmatter, and an unrestricted glob reports that structural error.
 
 To regenerate the figures, run the docs-figures skill from
 [dev-tools](https://github.com/agent-ix/dev-tools) on `docs/images/figures.py`.
 
-## Contributing and licence
+## Contributing and license
 
 Every contribution needs a signed contributor agreement: read
 [CONTRIBUTING.md](CONTRIBUTING.md) and [CLA.md](CLA.md) first. Executable code
