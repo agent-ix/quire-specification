@@ -58,3 +58,26 @@ Changes requested: two medium findings. The rule itself is correct.
 | --- | --- | --- | --- |
 | FND-001 | medium | Part of the new rationale in "Independence and visibility" is false, and part records the review rather than the system. "The symmetric one ... leaves no ample set smaller than the enabled set for the subjects of FR-383-AC-1 to AC-5" fails three ways. AC-1 and AC-2 are symmetry vectors. AC-4's counters reduce from 27 to 7 states under the symmetric relation too: `bump(a)` and `bump(b)` touch different objects, and the QSL tests stayed green with `affects` replaced by `meets`. Only AC-5's `Gate`, with its same-object operations, has no reduction under the symmetric meet. "The directional relation agrees with unreduced exploration on a 22,000-model comparison" is reviewer evidence that nobody can reproduce from this repository. Keep the reason (a field write does not change whether an object exists) and drop the evidence count. | spec/functional/analysis/FR-383-explore-under-state-space-reduction.md:206-212 |
 | FND-002 | medium | FR-383-AC-17 cites "the reduced run of the counter subject (FR-383-AC-1)", but FR-383-AC-1 is the sort canonicaliser (symmetry). The partial-order counter subject is FR-383-AC-4. That clause also cannot fail under the old symmetric relation, because the counters reduce under either relation. The clause that tells the two apart is AC-5's `Gate` (`toggle` invisible under `fair weak go`, `A = {toggle}`). Cite AC-4, and add the `Gate` expectation, or a pointer to AC-5, to AC-17 and to TC-323's new paragraph. | spec/functional/analysis/FR-383-explore-under-state-space-reduction.md:326; spec/test-cases/TC-323-partial-order-reduction-vectors.md:174 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | low | Four TC-323 paragraphs still use "meets" for a write against a read location: case 7's `AnyMembership{jobs}` "which meets the membership of `j`", `unlink(j)`'s `Field{j, peer}` "which meets it", and `set`'s `Field{a, v}` "which meets it" (twice). Each pair is one where the two relations agree, so the meaning holds. But FR-383 now says "affects" for write/read pairs. Case 7 also says "both storing 4 states" without saying which states are counted. | spec/test-cases/TC-323-partial-order-reduction-vectors.md:138-139; spec/test-cases/TC-323-partial-order-reduction-vectors.md:146; spec/test-cases/TC-323-partial-order-reduction-vectors.md:158; spec/test-cases/TC-323-partial-order-reduction-vectors.md:167 |
+
+## Dispositions
+
+Round 1, reviewed at `9e31dc272adcf54b4a1f9211a85467a683f2b39c`.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | 9e31dc2: the rationale names only FR-383-AC-5's same-object Gate operations, and the 22,000-model count is gone. |
+| FND-002 | fixed | 9e31dc2: FR-383-AC-17 and TC-323 now assert AC-5's Gate case (`toggle` invisible, `A = {toggle}`, equal verdicts) in place of the AC-1 counter citation. |
+
+Gates at 9e31dc2:
+
+- `quire validate --scope . "spec/**/*.md"`: 134 documents fail, with
+  diagnostics identical to main's (330 lines), so none are new. FR-383 and
+  TC-323 have no diagnostics.
+- `cargo test`: green (111, 22, 11, 7, 4 and 3 passed).
+- The committed copy of this file passes `quire validate`.

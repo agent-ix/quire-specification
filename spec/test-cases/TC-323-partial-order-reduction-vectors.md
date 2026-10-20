@@ -132,42 +132,42 @@ In case 5 `boom`'s enabling footprint holds `Field{g, armed}`,
 `Field{g, cell}`, `AnyField{Cell, v}` and the membership of `g`, so `set` is in the candidate seeded by `disarm` through the
 disabled `boom`; the reduced run reaches the violation through `set`, `boom`
 and settles `refuted` with a replaying prefix, as the unreduced run does, both
-storing 6 states (FR-383-AC-9). In case 6 `cancel(j)` writes the membership of
+storing 6 states (model states stored by the run's search) (FR-383-AC-9). In case 6 `cancel(j)` writes the membership of
 `j`, which `boom(j)` reads, so the two are dependent; `{cancel(j)}` is no ample
 set, the reduced run reaches `boom(j)` and settles `refuted`, as the unreduced
-run does, both storing 4 states (FR-383-AC-10).
-In case 7 `W(cancel(m))` holds `AnyMembership{jobs}`, which meets
+run does, both storing 4 states (model states stored by the run's search) (FR-383-AC-10).
+In case 7 `W(cancel(m))` holds `AnyMembership{jobs}`, which affects
 the membership of `j` that `boom(j)` reads, so the two are dependent and
 `{cancel(m)}` is no ample set; the reduced run reaches `boom(j)` and settles
-`refuted`, as the unreduced run does, both storing 4 states (FR-383-AC-10).
+`refuted`, as the unreduced run does, both storing 4 states (model states stored by the run's search) (FR-383-AC-10).
 In case 8 a post-state of `cancel(k)` is admissible only while no reference
 names `k`, so its enabling footprint holds `AnyField{Job, peer}` beside
 `Field{k, cancellable}` and the membership of `k`; `unlink(j)` writes
-`Field{j, peer}`, which meets it, so the candidate seeded by `lock(k)` holds
+`Field{j, peer}`, which affects it, so the candidate seeded by `lock(k)` holds
 the disabled `cancel(k)` and `unlink(j)`, the initial state is fully
 expanded, and the reduced run reaches `unlink(j)`, `cancel(k)`, where
 `k.x = 0` evaluates undefined; both runs settle `refuted`, cause
-`undefined-evaluation`, storing 5 states each (FR-383-AC-12). In case 9
+`undefined-evaluation`, storing 5 states each (model states stored by the run's search) (FR-383-AC-12). In case 9
 `boom`'s enabling footprint holds `Field{g, armed}`, `Field{g, cell}` and
 `AnyField{Cell, v}`; `point()` writes `Field{g, cell}`, so it is in the
 candidate seeded by `disarm` through the disabled `boom`, the initial state
 is fully expanded, and both runs settle `refuted` through `point`, `boom`,
-storing 6 states each (FR-383-AC-11).
+storing 6 states each (model states stored by the run's search) (FR-383-AC-11).
 In case 10 `pick` is enabled only when some Cell has `v = 1`, so its
 enabling footprint holds `AnyField{Cell, v}` and `AnyMembership{cells}`
-beside `Field{g, armed}`; `set` writes `Field{a, v}`, which meets it, so the
+beside `Field{g, armed}`; `set` writes `Field{a, v}`, which affects it, so the
 initial state is fully expanded, and both runs settle `refuted` through
-`set`, `pick`, storing 6 states each (FR-383-AC-14).
+`set`, `pick`, storing 6 states each (model states stored by the run's search) (FR-383-AC-14).
 
 In case 11 the run stops at its third stored state before completing its
 method and settles `incomplete`, FR-241 `resource-incomplete`, cause `limit-reached{limit: max_states, value: 3, setting}`, never `failed` (FR-385-AC-9).
 
 In case 12 `boom`'s enabling footprint holds `Field{g, armed}`,
 `Field{g, cell}`, `AnyField{Cell, v}` (read through `hot`'s body) and the
-membership of `g`; `set` writes `Field{a, v}`, which meets it, so `set` is in
+membership of `g`; `set` writes `Field{a, v}`, which affects it, so `set` is in
 the candidate seeded by `disarm` through the disabled `boom`, the initial
 state is fully expanded, and both runs settle `refuted` through `set`, `boom`
-with a replaying prefix, storing 6 states each. Without the call rule the
+with a replaying prefix, storing 6 states each (model states stored by the run's search). Without the call rule the
 reduced run would expand only `{disarm}` and report `proved` over 3 states
 (FR-383-AC-16).
 
