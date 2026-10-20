@@ -69,3 +69,34 @@ repos disagreeing.
 
 Examined and clean: the keyword reading, the facet clause, and agreement
 with FR-230's "Timed facet gate" and FR-361 item 8.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | medium | "`Clock` is not admitted as a declared name" is broader than the rule that follows it ("a declaration that would introduce an unqualified type named `Clock`") and broader than QSL. Probe (`qsl_cst::parse`, QSL main 469f8b49c): `record`/`type`/`enum`/`tuple`/`union Clock` refuse at S1, but `predicate Clock using p (x: Integer): Boolean { … }`, a record field `Clock: Integer`, a parameter `Clock: Integer` and an enum member `Clock` are all admissible. Say "is not admitted as a declared type name". | proposals/quire-v1/shared-grammar.md:943-945 |
+| FND-005 | medium | The note ties `Clock` to "the temporal facet" ("a keyword of the temporal facet's type forms", "whether or not the unit selects the temporal facet"). The section it sits in says these productions extend `declaration` "when the package selects the complete facets" (line 813), and no other text in the section names one facet for the timed forms. QSL PR #1088 at c6ad506f8 says the opposite of the note: "the grammar names no single facet for these forms, so the identity is QSL's reading". Either name the facet the timed forms require in the section intro (and let QSL cite it), or say "the facet that admits the timed forms". | proposals/quire-v1/shared-grammar.md:940-943; proposals/quire-v1/shared-grammar.md:813 |
+
+## Dispositions
+
+Round 1, at head 2104b290f. The note is now at lines 940-945, in the prose
+after the timed-forms fence. It says an unqualified `Clock` is always the
+clock type, and that a declaration introducing a type named `Clock` is
+refused `invalid_syntax` at the name. That refusal matches QSL FR-393 Behavior
+bullet 2, FR-393-AC-7 and the S1 probe. QSL PR #1088 at c6ad506f8 keeps FR-393
+unchanged and gates the source-written timed forms at S3, which agrees with
+the note's `unsupported_construct` clause. Gates: `quire validate` on the
+committed SR exits 0; `shared-grammar.md` fails the same way as on main (no
+frontmatter `type:`). The cargo tests pass (11 + 111). `quire matrix` is
+identical to main.
+
+Decision flag, not a defect: the round-0 brief recorded the owner decision as
+"keyword (not a reserved-word refusal of a declaration named Clock)". The note
+now makes a type declaration named `Clock` a refusal. FND-002 and FND-003 are
+fixed on the text, but the owner has to confirm this reversal before merge.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |

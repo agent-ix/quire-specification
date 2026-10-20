@@ -937,12 +937,13 @@ compares a `Clock` field with a `quantity-literal` of the time dimension. In
 `task`, `wcet` is `C`, or `C(LO)` for a `hi` task whose `wcet_hi` is `C(HI)`.
 A form whose facet is not selected receives `unsupported_construct`.
 
-`Clock` in a `type-ref` is a keyword of the temporal facet's type forms, not a
-`qualified-name`: an unqualified `Clock` in a type position is always read as the
-clock type, whether or not the unit selects the temporal facet (a unit that does
+`Clock` in a `type-ref` is a keyword of the facet that admits the timed forms,
+not a `qualified-name`: an unqualified `Clock` in a type position is always read
+as the clock type, whether or not the unit selects that facet (a unit that does
 not select it receives `unsupported_construct` for the form). `Clock` is not
-admitted as a declared name: a declaration that would introduce an unqualified
-type named `Clock` is refused `invalid_syntax` at the name.
+admitted as a declared type name: a declaration of a record, type alias, enum,
+tuple or union that would introduce an unqualified type named `Clock` is refused
+`invalid_syntax` at the name.
 
 ### Protocol reference expression
 
