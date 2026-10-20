@@ -620,3 +620,42 @@ fn tc_431_bounded_descriptors_carry_domains() {
         );
     }
 }
+
+/// FR-331-AC-30: `memory_models` is a nonempty, duplicate-free subset of
+/// `sc`, `tso` and `ra`, carried only by a `temporal-satisfaction` descriptor.
+#[trace("TC-431", "FR-331-AC-30")]
+#[test]
+fn tc_431_memory_models_is_a_nonempty_unique_subset_on_temporal_descriptors() {
+    let descriptor = definition("BackendDescriptor");
+    let base = serde_json::json!({
+        "backend": "qsl-model-check",
+        "advertises": [{"kind": "temporal-satisfaction", "mode": "unbounded"}],
+        "fairness_kinds": ["weak"]
+    });
+    let with = |models: Value| {
+        let mut entry = base.clone();
+        entry["memory_models"] = models;
+        entry
+    };
+    assert!(descriptor.is_valid(&base), "memory_models may be omitted");
+    assert!(descriptor.is_valid(&with(serde_json::json!(["sc", "tso", "ra"]))));
+    assert!(descriptor.is_valid(&with(serde_json::json!(["ra"]))));
+    assert!(!descriptor.is_valid(&with(serde_json::json!([]))), "empty");
+    assert!(
+        !descriptor.is_valid(&with(serde_json::json!(["sc", "sc"]))),
+        "repeated"
+    );
+    assert!(
+        !descriptor.is_valid(&with(serde_json::json!(["arm"]))),
+        "unknown"
+    );
+    let other = serde_json::json!({
+        "backend": "smt",
+        "advertises": [{"kind": "state-satisfaction", "mode": "unbounded"}],
+        "memory_models": ["sc"]
+    });
+    assert!(
+        !descriptor.is_valid(&other),
+        "not a temporal-satisfaction descriptor"
+    );
+}
