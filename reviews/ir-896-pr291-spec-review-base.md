@@ -58,3 +58,21 @@ Mutation runs of the new test (each reverted after): widening the schema's `unsu
 ## Verdict
 
 Not mergeable as is: one high, two medium, two low. There is no spec contradiction. FR-322, FR-272, native-diagnostics and the schema agree, and the divergence is Contract IR code. AC-78's pairing halves are true and are guarded by a test that fails when the pairing is wrong. The high finding is AC-78's refusal clause: it has no test, and it states its outcome without the code `invalid_package` in an FR that does not read refusal records. Dropping that clause, or moving it to FR-330 in full, clears FND-001 and FND-002.
+
+## New findings (disposition pass 1)
+
+Against head f82969b (fix commit f82969b on top of 866c90d). `cargo test --test checked_package_v2 --test backend_provider_v1` passes (9, 108). `quire validate` on FR-322 and TC-233 gives the same output as origin/main 9d7268c once line numbers are ignored. `quire matrix`: the only change from main is the new row FR-322-AC-78, `tagged` at tests/checked_package_v2.rs:10358 and :10401. Value check, run as mutations on main and on the head: on origin/main, widening or deleting the schema's `unsupported-wire`/`unsupported-feature` pairing, and removing `unsupported-wire` from FR-272's `unknown_wire` row, each pass the whole checked_package_v2 suite. On the head, the first two fail the extended AC-47 test and the third fails the new test. Listing `unsupported-wire` in FR-272's `unknown_contract_version` row fails both the new test and the existing FR-272-AC-22 test, so that half was already guarded. So the PR protects something real but small: the schema pairing of two causes and their FR-272 owner rows, which no test guarded before. It does not touch the Contract IR divergence, which Contract IR's own tests must catch.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-006 | medium | The statement's refusal requirement ('the reader SHALL refuse a refusal record that pairs either with a cause') cites FR-322-AC-78, but AC-78 now states only the pairing and the empty FR-272 rows. No AC holds the refusal and no test checks it, so the citation points at an AC that does not contain the requirement it is attached to. Fixing FND-002 by citing FR-330 instead of restating the rule also fixes this; otherwise move the citation onto the pairing clause only. | spec/objects/interfaces/FR-322-checked-package-artifact.md:613-618 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | fixed in f82969b: The cause `unsupported-wire` is paired only with `unknown_wire` and `unsupported-feature` only with `unknown_required_feature`, in the FR-272 rows and the `Diagnostic` schema alike, and the FR-272 rows of `unknown_contract_version` and `unknown_required_capability` list no cause. |
+| FND-002 | still-open | The refusal clause left the AC but moved into the statement (:617-618) as 'the reader SHALL refuse a refusal record that pairs either with a cause'. 'The reader' is FR-322's V2 reader, which reads no refusal records; the nested `invalid_body.refusal` records belong to FR-330's ContractPackage reader (FR-330 :186-193, :389-393). The outcome still has no code and no locus. Replace the clause with a citation of FR-330 that names the ContractPackage reader and its `invalid_package`/`invalid-value` refusal at the nested `cause` pointer, or drop it. |
+| FND-003 | fixed | fixed in f82969b: A V2 reader SHALL pair the cause `unsupported-wire` only with `unknown_wire` and `unsupported-feature` only with `unknown_required_feature`, as FR-272 and the `Diagnostic` schema's `DiagnosticCausePairing` do; `unknown_contract_version` and `unknown_required_capability` carry no cause (FR-272), so t |
+| FND-004 | fixed | fixed in f82969b: Parse the FR-272 rows of `unknown_wire`, `unknown_required_feature`, `unknown_contract_version` and `unknown_required_capability` and the `Diagnostic` schema's pairing of `unsupported-wire` and `unsupported-feature`, and require FR-322-AC-78's one pairing. |
+| FND-005 | fixed | fixed in f82969b: A V2 reader SHALL pair the cause `unsupported-wire` only with `unknown_wire` and `unsupported-feature` only with `unknown_required_feature`, as FR-272 and the `Diagnostic` schema's `DiagnosticCausePairing` do; `unknown_contract_version` and `unknown_required_capability` carry no cause (FR-272), so t |

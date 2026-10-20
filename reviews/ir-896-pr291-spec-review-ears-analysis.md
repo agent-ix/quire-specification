@@ -30,3 +30,11 @@ Ticket: IR-896. PR: quire-specification#291 at 866c90d. EARS check of the two un
 ## Verdict
 
 One low finding. AC-78 is well formed. The 'is unpaired' clause in the statement names no actor and no response; recast it as an unwanted-behaviour requirement on the ContractPackage reader (see SR-13368 FND-002).
+
+## Dispositions
+
+Against head f82969b (fix commit f82969b on top of 866c90d). `cargo test --test checked_package_v2 --test backend_provider_v1` passes (9, 108). `quire validate` on FR-322 and TC-233 gives the same output as origin/main 9d7268c once line numbers are ignored. `quire matrix`: the only change from main is the new row FR-322-AC-78, `tagged` at tests/checked_package_v2.rs:10358 and :10401. Value check, run as mutations on main and on the head: on origin/main, widening or deleting the schema's `unsupported-wire`/`unsupported-feature` pairing, and removing `unsupported-wire` from FR-272's `unknown_wire` row, each pass the whole checked_package_v2 suite. On the head, the first two fail the extended AC-47 test and the third fails the new test. Listing `unsupported-wire` in FR-272's `unknown_contract_version` row fails both the new test and the existing FR-272-AC-22 test, so that half was already guarded. So the PR protects something real but small: the schema pairing of two causes and their FR-272 owner rows, which no test guarded before. It does not touch the Contract IR divergence, which Contract IR's own tests must catch.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | fixed in f82969b: A V2 reader SHALL pair the cause `unsupported-wire` only with `unknown_wire` and `unsupported-feature` only with `unknown_required_feature`, as FR-272 and the `Diagnostic` schema's `DiagnosticCausePairing` do; `unknown_contract_version` and `unknown_required_capability` carry no cause (FR-272), so t |

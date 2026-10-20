@@ -10391,22 +10391,33 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
     }
 }
 
-/// FR-322-AC-78: the FR-272 rows pair `unsupported-wire` and
-/// `unsupported-feature` with `unknown_wire` and `unknown_required_feature`
-/// only, and list no cause for `unknown_contract_version` and
-/// `unknown_required_capability`. The schema half of the pairing is checked by
-/// the FR-322-AC-47 test above.
+/// FR-322-AC-78: `unsupported-wire` and `unsupported-feature` appear in the
+/// FR-272 row of `unknown_wire` and `unknown_required_feature` respectively and
+/// in no other FR-272 row, and `unknown_contract_version` and
+/// `unknown_required_capability` list no cause. The schema half of the pairing
+/// is checked by the FR-322-AC-47 test above.
 #[trace("TC-233", "FR-322-AC-78")]
 #[test]
-fn tc_233_unsupported_wire_and_feature_causes_pair_with_one_code_each() {
+fn tc_233_unsupported_wire_and_feature_causes_appear_in_their_owner_row_only() {
+    let codes: Vec<String> = TYPED_DIAGNOSTIC_CAUSE
+        .lines()
+        .filter_map(|line| line.split('|').nth(1))
+        .map(str::trim)
+        .filter(|cell| cell.starts_with('`') && cell.ends_with('`') && cell.len() > 2)
+        .map(|cell| cell.trim_matches('`').to_owned())
+        .collect();
     for (cause, owner) in [
         ("unsupported-wire", "unknown_wire"),
         ("unsupported-feature", "unknown_required_feature"),
     ] {
-        assert!(
-            diagnostic_row_causes(TYPED_DIAGNOSTIC_CAUSE, owner).contains(cause),
-            "the FR-272 `{owner}` row lists {cause}"
-        );
+        for code in &codes {
+            let lists = diagnostic_row_causes(TYPED_DIAGNOSTIC_CAUSE, code).contains(cause);
+            assert_eq!(
+                lists,
+                code == owner,
+                "the FR-272 `{code}` row lists {cause} only when it is `{owner}`"
+            );
+        }
     }
     for reader in ["unknown_contract_version", "unknown_required_capability"] {
         assert!(

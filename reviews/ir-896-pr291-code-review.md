@@ -33,3 +33,18 @@ Mutation runs of the new test (each reverted after): widening the schema's `unsu
 ## Verdict
 
 Two low findings. The test is sound for what it asserts: four of the five mutations fail it, and the one that passes is outside what AC-78 claims. Its coverage gap against AC-78's refusal clause is recorded as SR-13368 FND-001.
+
+## New findings (disposition pass 1)
+
+Against head f82969b (fix commit f82969b on top of 866c90d). `cargo test --test checked_package_v2 --test backend_provider_v1` passes (9, 108). `quire validate` on FR-322 and TC-233 gives the same output as origin/main 9d7268c once line numbers are ignored. `quire matrix`: the only change from main is the new row FR-322-AC-78, `tagged` at tests/checked_package_v2.rs:10358 and :10401. Value check, run as mutations on main and on the head: on origin/main, widening or deleting the schema's `unsupported-wire`/`unsupported-feature` pairing, and removing `unsupported-wire` from FR-272's `unknown_wire` row, each pass the whole checked_package_v2 suite. On the head, the first two fail the extended AC-47 test and the third fails the new test. Listing `unsupported-wire` in FR-272's `unknown_contract_version` row fails both the new test and the existing FR-272-AC-22 test, so that half was already guarded. So the PR protects something real but small: the schema pairing of two causes and their FR-272 owner rows, which no test guarded before. It does not touch the Contract IR divergence, which Contract IR's own tests must catch.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | medium | The FR-272 half of AC-78 says each cause is paired 'only' with its owner, but the test checks only that the owner row contains the cause. A mutation adding `unsupported-wire` to FR-272's `unknown_language`, `unknown_edition`, `unknown_profile` row passes the whole checked_package_v2 suite. The function name ('pair_with_one_code_each') claims the exclusivity the test does not check. Fix: collect every FR-272 cause row (or reuse the native-diagnostics 'each cause in exactly its code's row' check against FR-272) and assert that each cause appears in its owner row and no other. | tests/checked_package_v2.rs:10401-10417 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | fixed in f82969b:     for (cause, owner) in [...] {         assert!(diagnostic_row_causes(TYPED_DIAGNOSTIC_CAUSE, owner).contains(cause), ...);     }     for reader in ["unknown_contract_version", "unknown_required_capability"] {         assert!(diagnostic_row_causes(TYPED_DIAGNOSTIC_CAUSE, reader).is_empty(), ...);  |
+| FND-002 | fixed | fixed in f82969b: #[trace("TC-233", "FR-322-AC-47", "FR-322-AC-78")] ... let pairings: [(&str, &[&str]); 6] = [ ... ("unsupported-wire", &["unknown_wire"]), ("unsupported-feature", &["unknown_required_feature"]), ]; |

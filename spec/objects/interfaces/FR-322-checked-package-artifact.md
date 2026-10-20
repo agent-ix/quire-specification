@@ -614,8 +614,9 @@ vocabulary is `unknown_contract_version`, `malformed_wire`, `duplicate_member`,
 `unsupported-wire` only with `unknown_wire` and `unsupported-feature` only
 with `unknown_required_feature`, as FR-272 and the `Diagnostic` schema's
 `DiagnosticCausePairing` do; `unknown_contract_version` and
-`unknown_required_capability` carry no cause (FR-272), so the reader SHALL
-refuse a refusal record that pairs either with a cause (FR-322-AC-78). The `stale-node-key`, operation and declaration causes
+`unknown_required_capability` carry no cause (FR-272); the ContractPackage
+reader refuses a nested refusal record that pairs either with a cause, as
+FR-330 states (FR-322-AC-78 covers the pairing). The `stale-node-key`, operation and declaration causes
 above, and the `missing-name` and `malformed-declaration` frame-entry causes
 [FR-340](FR-340-checked-package-frame-location.md) defines, are carried by
 `invalid_package`, `ill_typed`, `ambiguous_declaration`,
