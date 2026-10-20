@@ -38,6 +38,8 @@ bound-limited state count and method.
 | MB-07 | TC-390's `SB` under `ra`, and a variant in which both threads load `x` after `Sx` | in the variant, `x0` is removed in the step after which no view, message views included, points at it; after `join all` each location keeps one message; the run states `max_messages` 4, not reached |
 | MB-08 | TC-390 SB-02 | `proved` verdicts and refutations both state the budget used and whether it was reached |
 | MB-09 | MB-01 with an empty population `extras` and the claim `always (holds(x.v = 1) implies holds(lookup<M::Cell>(extras, x) absent undefined .v = 0))`, while the run also reaches bound-limited states | `refuted`, cause `undefined-evaluation`, not `inconclusive` with `memory-bound-reached`; the counterexample carries the memory component and replays |
+| MB-10 | the load-buffering litmus (TC-391 LT-06) as an item resolved to `ra`, then to `sc`, then to `tso`; a variant with the load made `acquire` | under `ra` the terminal record `warnings` hold one `memory.load-buffering-shape{load, store}` for the one shape, and the value, label, basis, counterexample and obligation identity equal the same request settled without the warning; under `sc` and `tso` and in the `acquire` variant no warning (FR-439-AC-9) |
+| MB-11 | `SB` (TC-390) resolved to `sc`, `tso` and `ra` with one registered temporal candidate whose descriptor has no `memory_models`, and one whose descriptor has `memory_models` [`sc`, `tso`, `ra`] | the first candidate is a candidate for the `sc` item only; the second for all three (FR-439-AC-9) |
 
 ## Expected Results
 

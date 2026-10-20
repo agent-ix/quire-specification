@@ -47,3 +47,26 @@ Ticket: QSL-567. PR: quire-specification#293 at c5f1e93 (c5f1e93cbe3fed6a7f5c453
 ## Verdict
 
 Not mergeable. One high finding: the prose adds a `memory.load-buffering-shape{load, store}` warning that the closed `Warning` schema refuses, and its members have no type. Two medium: no QSpec rule says when a provider emits that warning, and the rule the PR cites (QSL FR-226) puts it in S3; and the routing meaning of an absent `memory_models` is left open. Three low: "advertises another kind" is wider than AC-30, the FR-439, FR-290 and FR-331 cross-references disagree on the owner, and TC-431 has no row for AC-30. Sound as written: the `memory_models` member mirrors `fairness_kinds` where it should and differs only in the two stated ways; it is optional, so every existing backend and vector stays valid; the model names match QSL; AC-30 is one schema rule with its refusals, like AC-22.
+
+## New findings (disposition pass 1)
+
+Against head 48428b7 (48428b7c037c3d8070b5ff99b320d1bac9015eb1). The fix commit changes the schema (a third `Warning` arm and the `memory_models` description), FR-331 (the manifest wording, the warnings bullet, an FR-439 relationship and AC-31), FR-439 (routing by the FR-331 member, "absent means `sc` only", the load-buffering warning rule and a new AC), TC-431 (row BP-19) and the test file. It also commits the three round-0 review files under `reviews/`, each byte-identical to the reviewer's round-0 copy. `cargo test --test backend_provider_v1 --test checked_package_v2`: 11 and 108 pass. Mutations, each run and reverted: M1 drop `minItems`, M2 drop `uniqueItems`, M3 admit `arm`, M4 delete the non-temporal `else` clause, M7 drop the new `Warning` arm, M8 make `store` optional, M9 open the arm (`additionalProperties`), and M10 let `load` be anything. Each fails the suite (exit 101), so M4 is now killed. `quire validate --scope .`: FR-331 has the same two errors as on main, and the legacy-properties warning only moves from line 59 to line 61. FR-439 and TC-431 exit 0, the same as main, and the three review files exit 0. `quire matrix`: FR-331-AC-30 is tagged at tests/backend_provider_v1.rs:628 and FR-331-AC-31 at :681. FR-439 lists two rows with the id FR-439-AC-7.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | medium | The new FR-439 criterion reuses the id FR-439-AC-7, which the `flush`-position criterion already has (line 152, "A `flush` position carries the `memory` anchor ..."). `quire matrix` lists two FR-439-AC-7 rows, and `quire validate` does not catch it. A `#[trace(..., "FR-439-AC-7")]` tag, a TC row or a ticket citing FR-439-AC-7 can no longer say which criterion it means. Number the new row FR-439-AC-9. | spec/functional/memory/FR-439-bound-replay-and-report-weak-memory-runs.md:152-154 |
+| FND-008 | medium | The new criterion's fixture has no load-buffering shape, and the test case it names has no row for it. The AC asks for "an item over `SB` with a load-buffering shape". But TC-390's `SB` is store buffering: each branch stores, then loads (`Sx` then `Ly`, `Sy` then `Lx`). A load-buffering shape is a load followed by a store to another location, so `SB` yields no warning under any model, and the `ra` case cannot pass. The Verification column says TC-393, but TC-393 has no row for the warning or for routing to a descriptor without `memory_models`. Use the LB litmus (TC-391 LT-06, whose branches have QSL FR-226-AC-1's shape `r1 := x (relaxed); y := 1 (relaxed)`) for the warning cases and `SB` for the routing case, and add the rows to TC-393 or TC-394. | spec/functional/memory/FR-439-bound-replay-and-report-weak-memory-runs.md:154 |
+| FND-009 | low | "So it receives only items resolved to `sc`" is wider than FR-439's routing rule. FR-439 reads `memory_models` only when it routes an item over a subject with a weak `parallel`. A temporal descriptor without the member still receives temporal items whose subject has no `parallel`, and those have no resolved model. Write "so, of the items over a subject with a weak `parallel`, it receives only those resolved to `sc`". | spec/objects/interfaces/FR-331-backend-provider-envelope.md:63 |
+
+## Dispositions
+
+Round 1, against head 48428b7 (48428b7c037c3d8070b5ff99b320d1bac9015eb1).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |
+| FND-004 | fixed | - |
+| FND-005 | fixed | - |
+| FND-006 | fixed | - |

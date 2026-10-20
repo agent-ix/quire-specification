@@ -34,3 +34,11 @@ Ticket: QSL-567. PR: quire-specification#293 at c5f1e93 (c5f1e93cbe3fed6a7f5c453
 ## Verdict
 
 Not mergeable. One high finding: the non-temporal refusal case uses the kind `state-satisfaction`, which is not in the vocabulary, so it passes vacuously, and deleting the new `else` clause (M4) passes the suite. The empty, repeated and unknown cases each catch their mutation (M1-M3), the positive cases pin the admitted sets, and the test is idiomatic: a closure builds each variant, and each assertion has a message.
+
+## Dispositions
+
+Round 1, against head 48428b7 (48428b7c037c3d8070b5ff99b320d1bac9015eb1). Against head 48428b7 (48428b7c037c3d8070b5ff99b320d1bac9015eb1). The fix commit changes the schema (a third `Warning` arm and the `memory_models` description), FR-331 (the manifest wording, the warnings bullet, an FR-439 relationship and AC-31), FR-439 (routing by the FR-331 member, "absent means `sc` only", the load-buffering warning rule and a new AC), TC-431 (row BP-19) and the test file. It also commits the three round-0 review files under `reviews/`, each byte-identical to the reviewer's round-0 copy. `cargo test --test backend_provider_v1 --test checked_package_v2`: 11 and 108 pass. Mutations, each run and reverted: M1 drop `minItems`, M2 drop `uniqueItems`, M3 admit `arm`, M4 delete the non-temporal `else` clause, M7 drop the new `Warning` arm, M8 make `store` optional, M9 open the arm (`additionalProperties`), and M10 let `load` be anything. Each fails the suite (exit 101), so M4 is now killed. `quire validate --scope .`: FR-331 has the same two errors as on main, and the legacy-properties warning only moves from line 59 to line 61. FR-439 and TC-431 exit 0, the same as main, and the three review files exit 0. `quire matrix`: FR-331-AC-30 is tagged at tests/backend_provider_v1.rs:628 and FR-331-AC-31 at :681. FR-439 lists two rows with the id FR-439-AC-7.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
