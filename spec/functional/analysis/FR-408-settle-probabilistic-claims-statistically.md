@@ -41,7 +41,7 @@ workload, with its confidence parameters; the request's method, seed,
 
 A `measured` result ([FR-409](../../objects/protocol/FR-409-measured-decision.md),
 [FR-410](../../objects/interfaces/FR-410-statistical-verdict.md)), or an
-incomplete or unsupported result with its typed cause.
+incomplete or unsupported result with its typed cause, among them `confidence-beyond-precision`.
 
 ## Behavior
 
@@ -53,7 +53,10 @@ At negotiation, before any sample is drawn, the provider settles the item
 - `missing-confidence` when the claim states no confidence parameters;
 - `every-scheduler` when the claim's scheduler clause is `under every
   scheduler`, with or without a fairness set;
-- `exact-only-form` when the claim's form is an exact-only form (FR-407).
+- `exact-only-form` when the claim's form is an exact-only form (FR-407);
+- `confidence-beyond-precision` when a regenerative request's `min(α', β')` has
+  no quantile bound, that is, when the lower `Φ` bound at 16 is below
+  `1 − min(α', β')` (about `min(α', β') < 10^-57`).
 
 At negotiation the provider also settles `invalid-request` with
 `invalid_capability`/`not-statistical` a request that names the sequential
@@ -187,19 +190,24 @@ The bounds are computed as follows, all in integer arithmetic:
   bound on `ln x` is within `2^-64`.
 - `√x`: the integer square root of `⌊x · 2^140⌋` and its successor, scaled by
   `2^-70`, give the lower and upper bounds.
-- the standard normal quantile `z_{1−δ}`: bisection over rationals on
-  `Φ(z) = 1/2 + (1/√(2π)) Σ (−1)^n z^(2n+1) / (2^n n! (2n + 1))`, each `Φ`
-  evaluation bounded by the alternating series' next term and `π` bounded by
-  Machin's formula, until the bracket is narrower than `2^-65`; the upper end
-  is used and is within `2^-64` of the quantile. A `Φ` bound of width `W` places
-  the bracket's end within `W / φ(z)` of the quantile, and `φ` falls as `z`
-  grows (`log2(1 / φ(z)) < 3z²/4 + 2`), so a fixed `2^-70` tail meets `2^-64`
-  only where `φ` is large (it misses by a factor near `4 · 10^6` at
-  `δ = 10^-10`). The `Φ`, `π` and `1/√(2π)` series therefore take the tail
-  bound `2^-(72 + ⌈3u²/4⌉)`, capped at `2^-328`, where `u` is the upper end of
-  the current bracket, so `W / φ(z)` stays at most `2^-65`. A `δ` whose quantile
-  lies above 16 (`1 − Φ(16) < 10^-57`) has no bound and is refused as beyond
-  precision.
+- the standard normal quantile `z_{1−δ}`: the search starts at the bracket
+  `[0, 1]` and doubles its upper end (1, 2, 4, 8, 16) until the lower `Φ`
+  bound at the upper end reaches `1 − δ`; it then bisects at midpoints, with
+  `Φ` evaluated at the precision of the last doubling's upper end `u`, until the
+  bracket is narrower than `2^-65`, and the upper end is used. `Φ(z) = 1/2 +
+  (1/√(2π)) Σ (−1)^n z^(2n+1) / (2^n n! (2n + 1))`, each `Φ` evaluation is
+  bounded by the alternating series' next term, `π` by Machin's formula, and
+  `1/√(2π)` by the square roots of the bounds on `2π`. A `Φ` bound of width `W`
+  places the bracket's end within `W / φ(z)` of the quantile, and `φ` falls as
+  `z` grows (`log2(1 / φ(z)) < 3z²/4 + 2`), so a fixed `2^-70` tail meets
+  `2^-64` only where `φ` is large (it misses by a factor near `4 · 10^6` at
+  `δ = 10^-10`). The `Φ` and `π` series therefore stop at the tail bound
+  `2^-(72 + ⌈3u²/4⌉)`, and the square roots of `2π` are taken at the scale
+  `2^-B` with `B = 72 + ⌈3u²/4⌉` (the integer square root of `⌊2π · 2^(2B)⌋`
+  and its successor, scaled by `2^-B`), so `W / φ(z)` stays at most `2^-65`.
+  For `δ <= 1/2` the upper end is at least `z_{1−δ}` and within `2^-64` of it;
+  for `δ > 1/2` the search returns an upper bound near 0, which is outward-safe
+  and not within `2^-64` of the negative quantile.
 
 The decision is a function of the counts alone and is identical on every
 platform.
@@ -247,7 +255,7 @@ is a new, independent measurement of the same obligation.
 | FR-408-AC-4 | A not-activated sample advances the trace index and counts toward `max_draws` only. | Test (TC-355) |
 | FR-408-AC-5 | The regenerative method on the `LongRun` vector (TC-356) settles accepted with coverage `asymptotic`; a run whose cycle does not return to `s0` within `max_cycle_steps` settles `incomplete`, `limit-reached{limit, value, setting}` naming `max_cycle_steps`, its value and the request setting that raises it, with no `measured` value. | Test (TC-356) |
 | FR-408-AC-6 | With two initial states each test runs at `α/2` and `β/2`; a symmetric pair whose workload and distributions are invariant runs one test. | Test (TC-357) |
-| FR-408-AC-7 | Every logarithm, square root and normal quantile is a rational bound within `2^-64`; `N`, the SPRT sums and thresholds and the regenerative half-width round outward toward undecided, so a sum or half-width within the rounding error of a threshold gives undecided; two runs on different platforms with the same inputs give identical counts and decisions. | Test (TC-355) |
+| FR-408-AC-7 | Every logarithm and square root, and every normal quantile for `δ <= 1/2`, is a rational bound within `2^-64`; `N`, the SPRT sums and thresholds and the regenerative half-width round outward toward undecided, so a sum or half-width within the rounding error of a threshold gives undecided; two runs on different platforms with the same inputs give identical counts and decisions. | Test (TC-355) |
 | FR-408-AC-8 | Reaching `max_samples`, `max_draws`, `max_cycle_steps`, time or the clause meter settles `incomplete`, `limit-reached` naming the budget, its value and the request setting that raises it; a caller cancellation settles `incomplete`, `cancelled{source}` with `source` `requested`, never `limit-reached`; neither records a `measured` value. | Test (TC-356) |
 | FR-408-AC-9 | Re-running with the same seed reproduces every sample and the decision; the method, seed and budgets are outside the obligation identity. | Test (TC-355) |
 | FR-408-AC-10 | A request naming the sequential method for a mean of a fraction settles `invalid-request` at negotiation with `invalid_capability`/`not-statistical`, and no sample is drawn. | Test (TC-355) |
