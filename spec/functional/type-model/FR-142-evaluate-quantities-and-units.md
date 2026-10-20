@@ -151,6 +151,63 @@ checks and result retention use the named points in
 the runtime undefined conditions, then every edge charge, then the rational
 events, then the target domain and result retention.
 
+## Quantity type reference
+
+Complete-V1 source names the type of a quantity in a declared unit as
+`Quantity<u>`, where `u` is a qualified unit name. `Quantity` is a reserved
+word of the complete-V1 facets, so a declaration named `Quantity` is
+`invalid_syntax`.
+
+**Namespaces.** Dimensions, units and everything else a unit of compilation
+declares are three namespaces. The third, the type namespace, holds records,
+tuples, unions, enums, aliases, functions, predicates, protocols, claims and
+declared values, which FR-322 carries as every declared node but a dimension
+or a unit; a name is unique within its namespace in the
+linked package, and two units of one name in the linked package refuse
+`ambiguous_declaration`/`ambiguous-name` at the use. A bare `type-ref` looks up
+the type namespace only, and `Quantity<...>` is the one `type-ref` that looks up
+the unit namespace. A source that writes a unit name where a type is required
+(`d: ms`) therefore refuses `missing_declaration`/`missing-name` at the name,
+unless a type of that name is declared, and then it means that type.
+
+**Where the form is written.** `Quantity<u>` is a `type-ref`, so it appears in
+every position that takes one: a function, predicate or operation parameter and
+result, a record field, a tuple member, a union payload, a type alias target,
+the element of `Option` and of the collection types, and the target of
+`convert<...>(e)`. A conversion into a unit is written `convert<Quantity<u>>(e)`.
+
+**Behavior.**
+
+- The checker SHALL read `Quantity<u>` as the type of the quantities whose unit
+  is `u`: the kernel quantities with an exact rational magnitude and the unit id
+  of `u`.
+- The checker SHALL resolve `Quantity<u>` to the unit's own nominal
+  `scalar_type`/`unit` node, which is the type of a quantity in that unit
+  (family `quantity`, FR-322). It SHALL introduce no node of its own, so the
+  type's key is the unit's declaration key.
+- The checker SHALL type a quantity literal `n u` as `Quantity<u>`.
+- When an expression of type `Quantity<u>` stands where `Quantity<u>` is
+  required, the checker SHALL accept it.
+- When an expression of any other type stands where `Quantity<u>` is required,
+  including a quantity in another unit of the same dimension, the checker SHALL
+  refuse `ill_typed`/`type-mismatch` at the expression. Conversion between
+  units is explicit only (see Behavior), never implied by a type annotation. A
+  declared random-parameter support is the exception: FR-405-AC-3's
+  `value-outside-type` at the value refuses a support that is not a
+  `Quantity<u>` value.
+- When the qualified name of `Quantity<u>` names no unit in the unit namespace,
+  a dimension name included, the checker SHALL refuse
+  `missing_declaration`/`missing-name` at the name.
+- The checker SHALL admit under `Quantity<u>` every quantity of the unit and no
+  bound on the magnitude; a bounded magnitude is not a complete-V1 type form.
+- The checker SHALL NOT admit `Quantity<D>` over a dimension `D` as a type
+  form; a source that wants it declares a unit of `D` and writes `Quantity<u>`.
+- The checker SHALL lower a quantity literal to a checked-package `literal` term
+  of `value_kind` `quantity` typed by the unit's node.
+- The checker SHALL read a unit `typeRef` of a domain-package member as FR-322
+  "Model-owned members" step 4 says, so an operation parameter of a domain
+  package has type `Quantity<u>`.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -165,6 +222,10 @@ events, then the target domain and result retention.
 | FR-142-AC-8 | The published `quire.value.compound-unit/v1` schema and vectors fix the compound-unit identity preimage: each vector is schema-valid, its RFC 8785 JCS SHA-256 equals its recorded identity, and its terms name admitted root-unit node keys with nonzero exponents in strictly ascending key order; each authored stale-key mutation changes the identity and each authored noncanonical mutation, including a `-0` exponent, is refused by exactly its named schema or semantic check. | Test (TC-233) |
 | FR-142-AC-9 | Equality or ordering of quantities in distinct units refuses `ill_typed` before any charge, while identical-unit equality and ordering compare exact root values after the left and then the right root path. | Test (TC-187) |
 | FR-142-AC-10 | A conversion with a compound side compares normalized base-dimension maps, traverses only the declared side's root path, and admits a declared-to-compound-to-declared pivot in two explicit steps. | Test (TC-187) |
+| FR-142-AC-11 | With the dimension `T`, the unit `s` (root of `T`) and the unit `ms` (target `s`, scale `1/1000`), a function `f(d: Quantity<ms>)` called as `f(3 ms)` admits the argument `3 ms` and refuses `f(3 s)` with `ill_typed`/`type-mismatch` at the argument; `d: Quantity<T>` (a dimension) and `d: Quantity<nothing>` each refuse `missing_declaration`/`missing-name` at the name, and a bare `d: ms` refuses `missing_declaration`/`missing-name` at `ms`. | Test (TC-187) |
+| FR-142-AC-12 | A function `f(d: Quantity<ms>): Quantity<ms>` returning `d` checks; returning `convert<Quantity<s>>(d)` refuses `ill_typed`/`type-mismatch` at the returned expression; and `Quantity<ms>` annotations introduce no checked-package node, naming the node of `ms`. | Test (TC-187) |
+| FR-142-AC-13 | A unit and a record of one name coexist, and a use of the name in a type position means the record while `Quantity<name>` means the unit; two units of one name in the linked package refuse `ambiguous_declaration`/`ambiguous-name` at `Quantity<name>`; and a declaration named `Quantity` refuses `invalid_syntax`. | Test (TC-187) |
+| FR-142-AC-14 | A quantity literal in a lowered body is a checked-package `literal` of `value_kind` `quantity` typed by its unit's node, and a domain-package operation parameter whose `typeRef` names a unit has the unit's type; FR-322-AC-79 and FR-322-AC-80 own the wire checks. | Test (TC-187, TC-233, TC-280) |
 
 ## Dependencies
 
