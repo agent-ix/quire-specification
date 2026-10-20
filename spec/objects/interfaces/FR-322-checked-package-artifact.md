@@ -547,9 +547,12 @@ boundary.
   packages applies. It enters the node identity preimage. On a node carrying a
   `nominal_identity_preimage` it equals that preimage's
   `qualified_declaration`, else the reader refuses as `invalid_package` with
-  cause `declaration-nominal-mismatch`; two nodes carrying the same name refuse
+  cause `declaration-nominal-mismatch`; two nodes carrying the same name in one namespace refuse
   as `ambiguous_declaration` with cause `ambiguous-name`, both before any
-  operation refusal; a model-owned member's `ambiguous-name` is the operation
+  operation refusal. The namespaces are three: dimensions
+  (`scalar_type`/`dimension`), units (`scalar_type`/`unit`) and types (every
+  other declared node), so a unit, a dimension and a record may carry one name
+  (FR-322-AC-81); a model-owned member's `ambiguous-name` is the operation
   refusal of step 3 of "Model-owned members". Library exports resolve only through this member; a
   consumer never recovers a name from source occurrences, display text or a
   node's position.
@@ -866,6 +869,7 @@ conformance" below).
    | a value type of the same domain package bound as `Text[min, max; profile]`, `0 <= min <= max`, with `profile` one of FR-141's `unicode-scalars`, `nfc`, `nfd`, `nfkc`, `nfkd` and `binary-utf8` | `Text[min, max; profile]`, whose length, bounds and comparison are FR-141's under `profile` | `bounded_domain`/`text_bounds` with bounds `min` and `max` and `text_profile` `profile` over the `scalar_type`/`text` node |
    | a record value type `R` of the same domain package, admitted under FR-208 | `R`, a value with no object identity | the self-typed `model`/`record_value_type` declaration node owned by `R`; no `composite_type`/`reference` is introduced |
    | a variant type `V` of the same domain package, admitted under FR-208 | `V`, an unordered enumeration whose cases are the case names of `V` | the self-typed `model`/`variant_type` declaration node owned by `V`; no `composite_type`/`reference` and no unit-owned `scalar_type`/`enum` node is introduced |
+   | `ix://quire/unit/<name>`, where `<name>` is the qualified declaration name of a unit of the checked package, its segments joined by `/`, and never a dimension segment: the unit `ms` declared as `unit ms : Time` is `ix://quire/unit/ms` | `Quantity<u>`, the type of a quantity in unit `u`; the declaring unit of compilation supplies the unit, not the domain package | the `scalar_type`/`unit` node of `u` (family `quantity`); no node is introduced |
    | an object type `O` of the same domain package | `Reference<O>` | `composite_type`/`reference` over `O`'s model declaration node |
 
    The multiplicity `{lower, upper, ordered, unique}` then gives the type.
@@ -880,7 +884,8 @@ conformance" below).
    (`quire.model.complete/v1` Presence row), so `[0, 1]` gives `K<E>[0, 1]`
    and a field whose presence is `optional` has `Option<X>`, the
    `composite_type`/`option` node over the node of the type `X` the
-   multiplicity gives. A declared type outside the table, an `unbounded`
+   multiplicity gives. A unit `typeRef` that names no unit of the checked package refuses
+   `missing_declaration`/`missing-name`. A declared type outside the table, an `unbounded`
    upper bound with a lower bound above `0` and an operation with no result
    give the member no type, and the application refuses
    `ill_typed`/`operator-ineligible`.
@@ -898,7 +903,13 @@ anonymous structural nodes: each has `declaration: null`, no `owner`, no
 `nominal_identity_preimage` and no `recursion_group`. A source type alias
 introduces no node. After resolving an alias, every type annotation and every
 application result type names the resolved type's node, so an alias cannot
-create a second `composite_type`, `bounded_domain` or `scalar_type` identity.
+create a second `composite_type`, `bounded_domain` or `scalar_type` identity. A
+`Quantity<u>` annotation likewise introduces no node: it names the
+`scalar_type`/`unit` node of `u`, the type of a quantity in that unit (family
+`quantity`), under the same id in every package that holds that unit (FR-142).
+A quantity literal `n u` lowers to a `literal` term of `value_kind` `quantity`
+whose `type` is that node and whose `value` is the magnitude spelled as "Scalar
+literal values" says.
 
 | Source type | Node and semantic type | Body | Worked accepted vector |
 | --- | --- | --- | --- |
@@ -1367,7 +1378,7 @@ is declared `boolean`. An `expression` or `function` whose body root is the
 application has `semantic_type` equal to that `result_type`. A `literal` term's
 `type` must have a family its `value_kind` admits (`boolean`, `integer`,
 `rational`, `decimal`, `float32_bits`→`float32`, `float64_bits`→`float64`,
-`text`, `string`, `uuid`, `timestamp`, `enum`→`enum` or `ordered_enum`, `none`→`option`). Any failure is
+`text`, `string`, `uuid`, `timestamp`, `enum`→`enum` or `ordered_enum`, `none`→`option`, `quantity`→`quantity`). Any failure is
 `operator-ineligible`.
 
 The fit rule has one exception besides record conformance ("Record
@@ -1415,8 +1426,8 @@ or a map position needs a type "over which `=` is admitted" (the FIFO key of
 [FR-465](FR-465-checked-package-protocol-declaration-bodies.md)) means
 exactly an equality-stable type.
 
-**Scalar literal values.** The `value` of a `string`, `uuid` or `timestamp`
-literal enters the node-key preimage, so it has one spelling, the canonical
+**Scalar literal values.** The `value` of a `string`, `uuid`, `timestamp` or
+`quantity` literal enters the node-key preimage, so it has one spelling, the canonical
 payload of its native, as [QSL FR-056](ix://agent-ix/quire-spec-language/FR-056)
 "K2 canonical native payloads" defines it: a `uuid` is 32 lowercase ASCII
 hexadecimal digits grouped `8-4-4-4-12` with four hyphens; a `timestamp` is the
@@ -1428,7 +1439,11 @@ scalar sequence as a JSON string, with no normalization. A `value` in any other
 spelling (a `uuid` with uppercase digits or no hyphens, a `timestamp` of `-0`,
 `+1`, `01`, empty text or outside the range, a `string` whose `value` is not a
 JSON string) refuses `invalid_package`/`invalid-value` at the literal's
-`value`. The spelling is read after the literal's family check, so a literal
+`value`. A `quantity` literal's `type` is the `scalar_type`/`unit` node of its
+unit (family `quantity`) and its `value` is the exact rational magnitude: the
+canonical decimal integer when the denominator is 1, otherwise
+`numerator/denominator` in lowest terms with a denominator above 1 and a sign
+only on the numerator (`3`, `-5`, `1/1000`; not `03`, `+3`, `2/4`, `3/1`, `2.5`). The spelling is read after the literal's family check, so a literal
 whose `type` is not its kind's family refuses `ill_typed`/`operator-ineligible`
 even when its value is also non-canonical.
 
@@ -1616,6 +1631,9 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-76 | In the published closure vectors, each direct dependency's recorded `package_id` recomputes by JCS SHA-256 from its base fixture's `identity_preimage` with that dependency's direct selections substituted; the diamond's two locks select the same transitive identity with distinct recorded package IDs, and the reference vector names a package in the derived closure absent from the importer's direct selections. | Test (TC-233) |
 | FR-322-AC-77 | The lock of a package whose unit has a non-empty refinement internal list carries `refinement_internals` in canonical order and the member is absent when every list is empty; the member is in no identity preimage, and two compilations of the same sources, one with a non-empty list and one without, recompile to different `package_id`s through the refinement nodes' `abstract_internal` alone. A member that is `[]` or `null`, an object with an empty `internal` or a third key fails the schema at that value; objects or spellings out of byte order refuse `invalid_package`/`invalid-value` at the later entry's pointer; a repeated `refinement` or spelling refuses `invalid_package`/`conflicting-definition` with both entries as loci. | Test (TC-233) |
 | FR-322-AC-78 | The cause `unsupported-wire` is paired only with `unknown_wire` and `unsupported-feature` only with `unknown_required_feature`, in the FR-272 rows and the `Diagnostic` schema alike, and the FR-272 rows of `unknown_contract_version` and `unknown_required_capability` list no cause. | Test (TC-233) |
+| FR-322-AC-79 | A `literal` of `value_kind` `quantity` typed by a `scalar_type`/`unit` node is admitted with family `quantity`, both V2 schemas enumerate `quantity` as a literal `value_kind`, a quantity literal typed by another family and an integer literal typed by a unit node each refuse `ill_typed`/`operator-ineligible`, and a magnitude not in the canonical spelling refuses `invalid_package`/`invalid-value`. | Test (TC-233) |
+| FR-322-AC-80 | A field, operation parameter or operation result `typeRef` of the form `ix://quire/unit/<name>` has the type of the named unit of the checked package, under the multiplicity and presence tables; a name that matches no unit refuses `missing_declaration`/`missing-name`, and an argument of another unit or family refuses `ill_typed`/`operator-ineligible`. | Test (TC-280) |
+| FR-322-AC-81 | A unit, a dimension and a record that carry one `declaration` name are admitted, and two units, or two types, that carry one name refuse `ambiguous_declaration`/`ambiguous-name` at the later node in node-id order. | Test (TC-233) |
 
 ## Dependencies
 

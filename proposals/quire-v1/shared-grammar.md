@@ -72,7 +72,7 @@ This candidate inventory is edition-owned, not an extensible runtime registry.
 The complete-V1 facets additionally reserve `import`, `dimension`, `unit`,
 `ordered`, `enum`, `record`, `tuple`, `union`, `type`, `function`, `pure`, `decreases`,
 `Integer`, `Int`, `Rational`, `Decimal`, `Float32`, `Float64`, `Text`, `Option`,
-`Sequence`, `Set`, `Bag`, `OrderedSet`, `Reference`, `Population`, `null`, `none`, `decimal`,
+`Sequence`, `Set`, `Bag`, `OrderedSet`, `Reference`, `Quantity`, `Population`, `null`, `none`, `decimal`,
 `float32`, `float64`, `bits`, `convert`, `allInstances`, `collect`, `flatMap`,
 `flatten`, `fold`, `reduce`, `identity`, `toward-zero`, `toward-positive`,
 `toward-negative`, `nearest-even`, `nearest-away`, `unicode-scalars`, `nfc`,
@@ -313,6 +313,7 @@ type-ref      = 'Boolean' | 'Integer' | qualified-name
               | ('Sequence' | 'Set' | 'Bag' | 'OrderedSet'),
                 '<', type-ref, '>', [ '[', uint, ',', uint, ']' ]
               | 'Reference', '<', qualified-name, '>'
+              | 'Quantity', '<', qualified-name, '>'
               | 'Population', '<', qualified-name, '>', [ '[', uint, ']' ] ;
 qualified-name = ident, { '::', member-name } ;
 rounding-mode = 'exact' | 'toward-zero' | 'toward-positive'
@@ -965,7 +966,12 @@ authors write `not (a = b)` for negating a comparison.
 
 Model and profile aliases are unique within their source unit; they do not
 pollute another source unit's alias scope. Native declaration names are unique
-within the linked package; ambiguous cross-unit declarations refuse. A unit
+within the linked package, per namespace: dimensions, units and every other declaration (records, tuples, unions, enums,
+aliases, functions, predicates, protocols, claims and declared values, the type
+namespace) are three namespaces, so a unit may
+share its name with a dimension or with a type. Ambiguous cross-unit
+declarations refuse. A bare `type-ref` looks up the type namespace only, and
+`Quantity<u>` is the one `type-ref` that looks up the unit namespace. A unit
 containing only model-independent Boolean predicates needs no dummy model import.
 Any referenced model declaration still requires an exact explicit import. Predicate
 parameters and lexical binders are unique in their enclosing declaration and
