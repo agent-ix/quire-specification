@@ -37,6 +37,8 @@ State 4 is terminal. Check `always eventually holds(l.pos = 4)` under
 1. with `fair strong Lad::L::a; fair strong Lad::L::b;`
 2. with `fair weak Lad::L::a; fair weak Lad::L::b;`
 
+Then pass the synthesized SCC of FR-365-AC-7 (strong constraint, visibility pair and the edges listed there) to the SCC search.
+
 ## Expected Results
 
 1. The accepting component `{0, 1, 2, 3}` takes `b` (`0 -b-> 1`) but has no
@@ -48,3 +50,5 @@ State 4 is terminal. Check `always eventually holds(l.pos = 4)` under
    reproduces and is fair under both strong constraints (FR-365-AC-4).
 2. The first component passes the weak filter with no refinement, and the item
    settles `refuted` with a reproducing lasso.
+
+The synthesized SCC is refined in one step removing state 0 and the edge `1 → 2`; the first passing component is `{3, 4}` with the loop `3 → 4 → 3` (FR-365-AC-7).

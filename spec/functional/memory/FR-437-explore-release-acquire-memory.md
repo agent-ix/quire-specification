@@ -119,10 +119,26 @@ location keeps one message.
 ### Visibility fairness
 
 Every infinite-trace clause over a subject with an `ra` `parallel` carries
-visibility fairness, origin `memory`, target `{"type":"visibility","model":"ra"}`:
-for each thread `b` and location `ℓ` that `b` loads on some edge of an SCC,
-the SCC contains an edge on which `b` loads `ℓ` from its mo-last message. On a
-lasso, the loop contains such a load for every pair the loop loads. It is
+one visibility fairness member, `{"kind":"strong","target":{"type":"visibility","model":"ra"},"granularity":"whole","origin":"memory"}`.
+Its kind is `strong`: for each pair, "infinitely often an edge of `R` implies
+infinitely often an edge of `G`" is the strong-fairness form, so FR-368 routes
+an `ra` item only to a candidate whose `fairness_kinds` holds `strong`. The
+member's (thread, location) pairs are derived from the resolved program, one
+for each location a thread loads. The goal of a pair (`b`, `ℓ`) is that thread
+`b` does not keep reading a stale message of `ℓ` forever. On a lasso, the loop
+contains a load of `ℓ` by `b` from `ℓ`'s mo-last message for every pair
+(`b`, `ℓ`) the loop loads. On an SCC it is an edge Streett condition. For each
+pair, `R` is the set of edges on which `b` loads `ℓ` and `G ⊆ R` the set of
+edges on which `b` loads `ℓ` from its mo-last message; a **loop** (a closed
+walk, which may repeat states) is visibility-fair when, for every pair, it
+contains no edge of `R` or an edge of `G`. The edges of an SCC `C` are the
+edges of the current subgraph with both ends in `C`. `C` holds a
+visibility-fair loop when every pair has no edge of `R` among the edges of `C`
+or an edge of `G` among them; otherwise, for a pair with an edge of `R` in `C`
+and none of `G`, every loop of `C` that loads `ℓ` by `b` is unfair, so the
+edges of `R` in `C` are removed and the rest decomposed into SCCs, each tested
+the same way. An SCC is therefore never rejected for a stale load alone: a
+load-free sub-loop of an SCC that holds a stale load edge is fair. It is
 machine-closed.
 
 ### What it admits
@@ -142,6 +158,7 @@ RC11.
 | FR-437-AC-4 | Once every view points at or after a location's mo-last message, every earlier message of that location is removed in the same step; after an outermost `join all` each location keeps one message; and two histories that admit the same futures share one state key. | Test (TC-393) |
 | FR-437-AC-5 | A lasso on which a thread keeps loading a stale message of a location without ever loading its mo-last message is rejected by visibility fairness. | Test (TC-391) |
 | FR-437-AC-6 | The litmus vectors' outcomes under `ra` agree with an independent RC11 execution-graph checker run on the same tests. | Test (TC-391) |
+| FR-437-AC-7 | On an accepting SCC with states `p`, `q`, `r` and the edges `p → q`, `q → p` and `r → q` (thread `a`, which loads nothing), and `q → r` (thread `b` loads `ℓ` from a message that is not mo-last), with `p` the only accepting state, visibility fairness removes the edge `q → r`, decomposes the SCC into `{r}` and `{p, q}`, and passes `{p, q}`, whose loop `p q p q …` is visibility-fair. | Test (TC-391) |
 
 ## Dependencies
 
