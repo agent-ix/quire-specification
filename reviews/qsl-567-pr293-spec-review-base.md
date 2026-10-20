@@ -58,6 +58,14 @@ Against head 48428b7 (48428b7c037c3d8070b5ff99b320d1bac9015eb1). The fix commit 
 | FND-008 | medium | The new criterion's fixture has no load-buffering shape, and the test case it names has no row for it. The AC asks for "an item over `SB` with a load-buffering shape". But TC-390's `SB` is store buffering: each branch stores, then loads (`Sx` then `Ly`, `Sy` then `Lx`). A load-buffering shape is a load followed by a store to another location, so `SB` yields no warning under any model, and the `ra` case cannot pass. The Verification column says TC-393, but TC-393 has no row for the warning or for routing to a descriptor without `memory_models`. Use the LB litmus (TC-391 LT-06, whose branches have QSL FR-226-AC-1's shape `r1 := x (relaxed); y := 1 (relaxed)`) for the warning cases and `SB` for the routing case, and add the rows to TC-393 or TC-394. | spec/functional/memory/FR-439-bound-replay-and-report-weak-memory-runs.md:154 |
 | FND-009 | low | "So it receives only items resolved to `sc`" is wider than FR-439's routing rule. FR-439 reads `memory_models` only when it routes an item over a subject with a weak `parallel`. A temporal descriptor without the member still receives temporal items whose subject has no `parallel`, and those have no resolved model. Write "so, of the items over a subject with a weak `parallel`, it receives only those resolved to `sc`". | spec/objects/interfaces/FR-331-backend-provider-envelope.md:63 |
 
+## New findings (disposition pass 2)
+
+Against head 11741c6 (11741c6f308edd83cb0099987ebd75cfc53779f9). The fix commit renumbers the warning criterion to FR-439-AC-9 on the LB litmus, keeps `SB` for routing, adds TC-393 rows MB-10 and MB-11, and rewords FR-331's routing sentence; the schema and tests are unchanged and the committed review files equal the reviewer's round-1 copies. `cargo test --test backend_provider_v1 --test checked_package_v2`: 11 and 108 pass. Mutations M1-M4 and M7-M10, each run and reverted, each fail the suite (exit 101). `quire validate --scope .` on FR-331, FR-439, TC-431 and TC-393 is identical to main after line-number normalisation (FR-331's two pre-existing errors; the others exit 0). `quire matrix`: FR-331-AC-30/31 tagged (:628, :681); FR-439-AC-1..9 each listed once, untagged as AC-1..8 are on main, since FR-439's implementation tests live in QSL; no reference to the old duplicate FR-439-AC-7 remains.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-010 | medium | MB-10 expects one warning where the LB litmus has two shapes. TC-391 LT-06 is load buffering, "each load reads the other thread's later store": each of its two branches loads one location and then stores the other, so each branch is a distinct (load, store) shape, and FR-439's rule (one warning per distinct shape) gives two warnings under `ra`. MB-10's "one ... for the one shape" therefore fails a correct provider. The `acquire` variant is also ambiguous: "the load made `acquire`" names one load of two, and with only one load `acquire` the other branch's shape still warns. Expect two warnings, one per branch, each naming that branch's load and store; make both loads `acquire` in the no-warning variant (or add a one-load-acquire variant expecting one warning). | spec/test-cases/TC-393-memory-budgets-and-verdicts.md:41 |
+
 ## Dispositions
 
 Round 1, against head 48428b7 (48428b7c037c3d8070b5ff99b320d1bac9015eb1).
@@ -70,3 +78,11 @@ Round 1, against head 48428b7 (48428b7c037c3d8070b5ff99b320d1bac9015eb1).
 | FND-004 | fixed | - |
 | FND-005 | fixed | - |
 | FND-006 | fixed | - |
+
+Round 2, against head 11741c6 (11741c6f308edd83cb0099987ebd75cfc53779f9).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-007 | fixed | - |
+| FND-008 | fixed | - |
+| FND-009 | fixed | - |
