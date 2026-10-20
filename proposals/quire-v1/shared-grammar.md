@@ -45,7 +45,9 @@ changing the token's original span. No punctuation, Unicode normalization or
 implicit model-name repair is admitted by this contextual rule.
 
 An unsigned integer spelling is `0` or `[1-9][0-9]*`. A minus is a separate unary
-token. Leading zeros and malformed exponent/string forms are syntax errors.
+token. `..` is one two-character punctuation token, scanned by longest match, and
+only the refinement `seq` form uses it (FR-376); `.` stays member selection, so
+`0 .. 1`, `0..1` and `a.b` scan as `uint` `..` `uint` and `ident` `.` `member-name`. Leading zeros and malformed exponent/string forms are syntax errors.
 Decimal/exponent number forms may be recognized for an unsupported numeric-form
 diagnostic; recognition does not admit floating point. Numeric value/range
 checking follows syntax and the selected scalar domain.
@@ -653,6 +655,47 @@ concrete side is a protocol subject (FR-432); it is admitted wherever that
 declaration admits a step row, and its first `qualified-name` names a
 concrete protocol node, template, channel, role or protocol. `step-target`
 and `step-argument` are the refinement declaration's productions (FR-375).
+
+The refinement header selects its abstract subject with
+`abstract-subject = ident, [ '::', member-name ] ;` (FR-375): a lone `ident`
+is a model alias and `ident '::' name` is a model alias with one protocol
+clause of that model, as in `abstract Spec::Twice`. The parser tells the two
+apart by the `::` only, and the token after `::` is always the name (reserved words included); it resolves neither name, and the checker resolves the
+alias and the protocol (FR-375, FR-432). The `concrete` side stays one
+`ident`.
+
+#### Refinement population and option forms
+
+Inside a refinement declaration, and only there, `primary` additionally admits:
+
+```ebnf
+primary   =/ model-name
+           | 'count', '(', binder, ')'
+           | 'sum', '(', binder, ':', expr, ')'
+           | ('exists' | 'all'), '(', binder, ')'
+           | 'only', '(', binder, ':', expr, ')'
+           | 'seq', '(', ident, 'in', expr, '..', expr, ':', expr, ')'
+           | 'Some', '(', expr, ')' ;
+binder    = ident, 'in', model-name, [ 'where', expr ] ;
+```
+
+A `model-name` in `primary` position names a concrete population. `count`,
+`sum`, `exists` and `all` are reserved words already. The population forms
+differ from the existing forms by what follows: `count` and `sum` read the
+population form when no `<` follows the word (the typed aggregates are
+`count<T>(` and `sum<T>(`), and `exists(binder)` reads the population form
+when `where` or `)` follows the binder's `model-name`, while `:` reads the
+state-clause quantifier over a collection expression. `only`, `seq` and `Some`
+are matched as keyword spellings only in these productions and remain
+identifiers elsewhere; inside a refinement row `only(`, `seq(` and `Some(`
+always read as the forms and so hide a pure function of the same name. `where`
+is matched as a keyword in `binder`, as it already is in the temporal
+`aggregate-term`, and is an identifier in other positions. `FR-376` owns the typing and value of the six
+population forms and the `..` bounds; `FR-375` owns `Some` and the rows it
+appears in. A state-clause body outside a refinement declaration that uses
+a population name or the `count`, `sum`, `exists` or `all` population form refuses
+`unsupported_construct`/`expression-form`; `only` and `seq` spelled as forms there
+are syntax errors (`invalid_syntax`/`unexpected-token`) at their `in` token.
 
 ### Abstraction relation declaration
 

@@ -7,6 +7,8 @@ relationships:
     type: implements
   - target: ix://agent-ix/quire-specification/FR-375
     type: references
+  - target: ix://agent-ix/quire-specification/FR-383
+    type: references
   - target: ix://agent-ix/quire-specification/FR-376
     type: references
   - target: ix://agent-ix/quire-specification/FR-378
@@ -71,6 +73,71 @@ with a fresh meter. A row that is refused or incomplete at `s` makes `map`
 **undetermined** there. A row that evaluates undefined at `s` makes the
 refinement claim evaluate undefined there, which refutes it
 ([FR-379](FR-379-report-and-replay-refinement-counterexamples.md)).
+
+A mapped abstract field declared with `?` is set to `v` when its row is
+`Some(v)` and left absent when it is `none`; a field declared `Option<T>` takes
+the row's option value unchanged ([FR-375](FR-375-declare-model-refinement.md),
+Option rows). The mapped state holds no relationship extent. A concrete object
+whose most-specific type no object row names, and a reference to such an
+object, make `map` undetermined at that state; `map` never drops an object it
+cannot map.
+
+**Failure precedence.** The rows of one `map(s, h)` are read in a fixed order
+that does not depend on the order the rows were written in: the populations in
+the node's order, within each population its objects in ascending key order,
+and per object the object row of its type and then that type's field rows in
+ascending field name as UTF-8 bytes ([FR-375](FR-375-declare-model-refinement.md),
+Checked-package node). When several rows fail at one state:
+
+- an undefined row outranks every undetermined row, so the claim is refuted at
+  that state even when an earlier row is refused, incomplete or unmapped, and
+  the first undefined row in the order is the one reported;
+- otherwise the first undetermined row in the order is the one reported;
+- an internal fault while evaluating a row, such as a broken evaluator
+  invariant, is not an outcome of the row: the item settles `failed`, never a
+  value, and the reading takes no part in the order
+  ([FR-383](FR-383-explore-under-state-space-reduction.md)).
+
+The reported row, object and cause are the same in a verdict and its replay.
+
+**Failure precedence across a step.** A concrete step reads, at its
+position, the receiver of its row, each argument of its row, the post history
+`h'` and the rows of `map(s', h')`, in that order: the arguments in the order
+the row writes them, the post-state rows in the order above. When several
+reads do not return a value:
+
+- an internal fault in any read settles the item `failed` whatever the other
+  reads return, and takes no part in the order
+  ([FR-383](FR-383-explore-under-state-space-reduction.md));
+- otherwise an undefined read outranks every undetermined read, so the claim
+  is refuted even when an earlier read is refused, incomplete, out of its
+  declared type or of an unmapped type, and the first undefined read in the
+  order is the one reported;
+- otherwise the first undetermined read in the order is the one reported:
+  refused, incomplete, a history update whose result leaves its declared
+  type, or a read of an unmapped type.
+
+The reported read and cause are the same in a verdict and its replay.
+
+**Abstract budget stop.** The step rules are decided only when every read
+returned a value. Every clause evaluation of either subject gets a fresh
+meter of one budget. If an evaluation that the abstract subject runs to
+decide the step (a precondition, a frame decision or a postcondition)
+exhausts its meter, the run stops: it settles `incomplete`, execution
+`resource-incomplete`, cause `limit-reached{limit, value, setting}` with the
+limit that bounds one clause evaluation, its configured bound and its
+FR-461 `model_check.*` setting
+([FR-379](FR-379-report-and-replay-refinement-counterexamples.md)), never
+`failed`, `refuted`, `mapping-undetermined` or `undecided-successor`. A fault,
+an undefined read or an undetermined read in the same step settles as above
+instead, because the step rules are not reached. Which side ran out decides
+the outcome: a concrete row, argument or history update that exhausts its
+meter makes that read incomplete, hence undetermined, since it is a property
+of that one expression at that state, whereas the abstract subject's
+exhaustion limits the run. An abstract contract that the clause evaluator
+refuses or leaves incomplete without exhausting its meter is an undecided
+successor
+([FR-363](../temporal/FR-363-settle-every-behaviour-temporal-verdicts.md)).
 
 **Step rules.** Each concrete step `(s, h) -t-> (s', h')` passes or fails by
 the row of `t`'s operation, with `a = map(s, h)` and `a' = map(s', h')`:
@@ -160,6 +227,11 @@ until and since are non-strict ([FR-161](../temporal/FR-161-analyze-infinite-tra
 | FR-377-AC-6 | A concrete state where only `stutter`-mapped operations are enabled is not a deadlock of the concrete model, and a request with a refinement item over the concrete subject also carries the concrete model's deadlock-freedom item as a separate item. | Test (TC-313) |
 | FR-377-AC-7 | A per-step simulation obligation is one `operation-contract` item per step row and one for the initial-state rule; it is never routed for a declaration with a hidden field, a history field or an `any` row. | Test (TC-312) |
 | FR-377-AC-8 | The compare-and-set counter refines the abstract counter (28 reachable concrete states, every edge passing the step function, no fair stutter SCC below `value` 2); the same refinement under a concrete `terminal when` member written from the abstract predicate has its concrete deadlock-freedom item proved. | Test (TC-312, TC-313) |
+| FR-377-AC-9 | Among several rows that fail at one state, the first undefined row in the order (object key, then field name bytes) is reported and refutes the claim even when an earlier row is refused, incomplete or unmapped; otherwise the first undetermined row is reported; writing the rows in another source order changes neither the order nor the reported row; an internal fault settles the item `failed` and is never a row value. | Test (TC-315) |
+| FR-377-AC-10 | A mapped field declared `?` is absent for the row `none` and set to `v` for `Some(v)`, and a field declared `Option<T>` keeps an explicit `none`. | Test (TC-315) |
+| FR-377-AC-11 | A concrete object of a most-specific type no object row names makes `map` undetermined at that state and is never dropped from the mapped state; a reference to such an object makes `map` undetermined naming the row that holds it; the mapped state of a refinement holds no relationship extent. | Test (TC-315) |
+| FR-377-AC-12 | Among the receiver, arguments, post history and post-state rows of one step, an internal fault settles the item `failed` whatever the other reads return; otherwise the first undefined read in the order receiver, arguments as written, post history, post-state rows is reported and refutes the claim even when an earlier read is refused, incomplete, out of type or of an unmapped type; otherwise the first undetermined read is reported; an undefined receiver is reported before an undefined argument, an undefined argument before an undefined post-state row, an undefined post history before an undefined post-state row, and an incomplete argument before an out-of-type post history; the reported read is the same in the verdict and its replay. | Test (TC-315) |
+| FR-377-AC-13 | A meter the abstract subject exhausts while deciding a step whose reads all returned values settles `incomplete`, execution `resource-incomplete`, cause `limit-reached{limit, value, setting}` for the limit bounding one clause evaluation, never `failed`, `refuted`, `mapping-undetermined` or `undecided-successor`; an undefined read, an undetermined read or a fault in the same step settles by AC-12 instead of the stop; an abstract contract left incomplete without exhausting its meter is `undecided-successor`. | Test (TC-315) |
 
 ## Dependencies
 

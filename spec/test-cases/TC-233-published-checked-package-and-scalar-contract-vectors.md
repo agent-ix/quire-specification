@@ -7,6 +7,12 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-340
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-271-AC-7
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272-AC-22
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-78
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-341
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-342
@@ -148,7 +154,7 @@ nested application;
 and parse the native-diagnostics rows to require each cause in
 exactly its code's row and the Diagnostic schema pairing. Parse the
 `stage_limit_exceeded` and `duplicate_selection` rows of both native-diagnostics
-and FR-272 and require each to list exactly FR-272-AC-10's causes. Parse
+and FR-272 and require each to list exactly FR-272-AC-10's causes. Parse the FR-272 rows of `unknown_wire`, `unknown_required_feature`, `unknown_contract_version` and `unknown_required_capability` and the `Diagnostic` schema's pairing of `unsupported-wire` and `unsupported-feature`, and require FR-322-AC-78's one pairing. Parse the rows of the eight FR-322 reader codes in both and require FR-272-AC-22's causes and payload names, and FR-271 to hold one row for each (FR-271-AC-7). Parse
 the `resource_exhausted` and `cancelled` rows of both and require each to list
 exactly FR-272-AC-16's causes and payload keys, and the `conflicting_declaration`
 rows to list exactly FR-272-AC-17's cause and payload keys. Parse the
@@ -336,6 +342,12 @@ The owner join, projection and equality behaviour of an event type (FR-322-AC-68
 | ET-03 | ET-01 with a `SourceOwner` and no `declaration` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
 | ET-04 | ET-01 with a `declaration` and a `ModelOwner` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
 
+Add the lock's `refinement_internals` member to the all-families package: one
+object for `R` with two spellings in canonical order, and the package with the
+member absent; then the mutations `[]`, `null`, an object with `"internal": []`,
+an object with a third key, objects out of byte order, spellings out of byte
+order, a repeated `refinement` and a repeated spelling.
+
 ## Expected Results
 
 Each event type vector gives exactly its recorded result.
@@ -408,3 +420,10 @@ package with its `correspondence`/`abstraction_relation` node passes the
 derived-shape key stage untouched and is admitted, and the body-edited node
 refuses `invalid_semantic_graph` at FR-451's abstraction step 1, not
 `invalid_package`/`stale-node-key`.
+
+The canonical `refinement_internals` member validates against the schema and is
+in no identity preimage; its absence validates too. The `[]`, `null`,
+empty-`internal` and third-key mutations fail the schema at that value; the
+two out-of-order mutations refuse `invalid_package`/`invalid-value` at the later
+entry's pointer and the two repeats refuse `invalid_package`/`conflicting-definition`
+with both entries as loci (FR-322-AC-77).

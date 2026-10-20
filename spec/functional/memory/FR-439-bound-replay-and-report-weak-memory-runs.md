@@ -83,10 +83,21 @@ settles `unsupported`, cause `weak-access-shape`, carrying `site`,
 An item whose resolved model no candidate advertises settles `unsupported`,
 `unsupported_projection`/`unsupported-requested-capability`. A candidate
 advertises the memory models it decides, by the names `sc`, `tso` and `ra`,
-in its capability advertisement
-([FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md)); negotiation
-routes an item only to a candidate advertising its resolved model and never
-weakens the model to fit a candidate.
+in the `memory_models` member of its manifest descriptor
+([FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md); a
+descriptor with no `memory_models` advertises `sc` only); negotiation routes
+an item over a subject with a weak `parallel` only to a candidate advertising
+its resolved model and never weakens the model to fit a candidate.
+
+**Load-buffering warning.** When an item's resolved model is `ra` and the
+subject has a load-buffering shape (a `relaxed` or non-atomic load followed in
+program order by a store to another shared location, with no `acquire` or
+`seq_cst` load and no `acquire` fence between them), the provider SHALL add
+one `memory.load-buffering-shape{load, store}` warning to the item's terminal
+record for each distinct (load, store) shape, each member a transition
+identity (FR-331). The warning is outside the result, the counterexample, its
+replay identity and the obligation identity, and it changes no verdict. Under
+`sc` and `tso` the provider adds none.
 
 ### Positions
 
@@ -140,6 +151,7 @@ race` ([FR-438](FR-438-report-data-races.md)).
 | FR-439-AC-6 | An item over a `tso` subject routed to a candidate that advertises only `sc` settles `unsupported`, `unsupported-requested-capability`; an item with a two-location access under a selected weak model settles `unsupported`, cause `weak-access-shape`, with its site, transition and shape. | Test (TC-389, TC-394) |
 | FR-439-AC-7 | A `flush` position carries the `memory` anchor and does not advance interval distance. | Test (TC-394) |
 | FR-439-AC-8 | A claim whose atom reads `lookup<T>(p, r) absent undefined` at an absent key at a reachable state, in a run that also reaches bound-limited states, settles `refuted`, cause `undefined-evaluation`, not `inconclusive` with `memory-bound-reached`, and its counterexample carries the memory component and replays. | Test (TC-393) |
+| FR-439-AC-9 | An item over the load-buffering litmus (TC-391 LT-06) resolved to `ra` has the terminal record `warnings` hold two `memory.load-buffering-shape{load, store}` warnings, one per branch's distinct (load, store) shape, with the result, counterexample and obligation identity equal to the settlement without it; the same item resolved to `sc` or `tso` carries none; a candidate whose descriptor has no `memory_models` receives `SB` (TC-390) resolved to `sc` and not `SB` resolved to `tso` or `ra`. | Test (TC-393) |
 
 ## Dependencies
 
@@ -148,8 +160,9 @@ race` ([FR-438](FR-438-report-data-races.md)).
 - [FR-436](FR-436-explore-total-store-order.md) and
   [FR-437](FR-437-explore-release-acquire-memory.md) own the memory
   components bounded here.
-- [FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md) owns the
-  capability advertisement that carries the memory models.
+- [FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) owns
+  the manifest `memory_models` member that carries the memory models and the
+  warning's wire form.
 
 ## References
 

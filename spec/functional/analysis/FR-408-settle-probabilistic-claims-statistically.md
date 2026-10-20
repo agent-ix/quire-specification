@@ -69,7 +69,9 @@ with:
   declares no `delay` member, at the first state where it races
   ([FR-420](FR-420-sample-stochastic-timed-models.md));
 - `time-locked-sample{state}` over a timed subject when a sample reaches a
-  time-locked state before its horizon (FR-420).
+  time-locked state before its horizon (FR-420);
+- `total-above-draw-range{total}` when a sampled choice's integer total exceeds
+  `2^256`, at the first such choice (the sampler definition).
 
 ### Tests and Bonferroni
 

@@ -9,6 +9,12 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-377
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-375
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-377-AC-12
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-377-AC-13
+    type: verifies
 ---
 
 # TC-315: Refinement undetermined mappings and replay
@@ -39,6 +45,53 @@ parity mismatch.
 6. **Undefined history update.** In TC-314 case 1 make the history update
    `2 div self.tmpA`, undefined at the first reachable commit step where
    `tmpA = 0`.
+7. **Failure precedence.** Use TC-316's ring-buffer refinement over a fixture
+   variant: `Ring` also has `next: Reference<Ring>` and `Queue` has
+   `next: Reference<Queue>` with the row `next = self.next`; `Ring` has a
+   subtype `SubRing` that `rings` admits and no object row names. Hold the
+   state `head = 1`, `size = 2`, `s0.value = 0`, `s1.value = 1` for ring `r`,
+   and run: (a) the `items` row changed to `only(s in R::slots where
+   s.ring = self: s.value)` (undefined at `r`), with a `SubRing` object `a`
+   whose key sorts before `r`; (b) the original `items` row (defined at `r`)
+   with the same `SubRing` object; (c) the variant of (a) without the
+   `SubRing` object and with `Queue` also declaring `also: Int[0, 1]` and the
+   row `also = only(s in R::slots where s.ring = self: s.value)` (also
+   undefined at `r`), then again with the `also` and `items` rows written in
+   the opposite source order; (d) ring `a` of type `Ring` with `head = 0`,
+   `size = 0` and `next` = `q`, `q` of type `SubRing` (also `head = 0`,
+   `size = 0`), with the original `items` row, then with `q` of type `Ring`;
+   (e) read the relationship extent of the mapped state of the plain fixture.
+8. **Optional rows.** Map a `?` abstract field by a row that is `none` at one
+   state and `Some(1)` at another, and an `Option<Int[0, 2]>` field by `none`.
+9. **Failure precedence across a step.** Fixture `Reads`: abstract
+   `Spec::Reg` with `v: Int[0, 3]` and `set(x: Int[0, 3], y: Int[0, 3])`;
+   concrete `Impl::Reg` with `v: Int[0, 3]` starting 0, a history field
+   `h: Int[0, 2]` starting 0, a reference field `target`, and an operation
+   `store()` that sets `v` to 1. Rows: the one field row `v = p(self)`
+   with `p(self) = if self.v = 0 then 0 else <post>`, the step row
+   `store -> Spec::Reg::set(R, A1, A2)` with receiver `R = r(self)` and
+   arguments `A1 = a1(self)`, `A2 = a2(self)`, and the history update
+   `H`. So the field row `P` is read at every state and fails only at the
+   post-state after `store`, and `R`, `A1`, `A2` are read at the pre-state. Each is set per case to one of:
+   defined (`<post>` is `self.v`, `H` is `pre(self.h)`); incomplete (it costs more
+   than its fresh meter, which every other expression fits in); undefined
+   (`<post>` is `1 div (1 - self.v)`, which divides by zero at `v = 1`; `H`
+   is `1 div pre(self.h)`, which divides by zero at `h = 0`; `R`, `A1`, `A2` divide by
+   zero); out of type (`H` is `pre(self.h) + 3`, outside `Int[0, 2]`). Case (e) alone
+   adds to `store()` the creation of an `Extra` object, of a subtype of
+   `Impl::Reg` that no object row names, so `map` cannot map it. Run (a)
+   `R` incomplete, `A1` undefined; (b) `A1` incomplete, `P` undefined; (c)
+   `A1` and `A2` undefined; (d) `H` out of type, `P` incomplete; (e) the
+   `Extra` object with every read defined; (f) `A1` undefined and a broken
+   evaluator invariant in `P`; (g) every read defined and the abstract `set`
+   postcondition exhausting the abstract subject's fresh meter of bound M;
+   (h) as (g) with `A1` undefined; (i) as (g) with `A1` incomplete; (j) as
+   (g) with a broken evaluator invariant in `P`; (k) `R` and `A1` both
+   undefined; (l) `A1` and `P` both undefined; (m) `A1` incomplete and `H`
+   out of type; (n) `H` and `P` both undefined; (o) every read defined, the
+   abstract `set` postcondition cheap (not (g)'s) and its precondition left
+   incomplete because an observation it reads is unavailable, without
+   exhausting the meter.
 
 ## Expected Results
 
@@ -57,3 +110,23 @@ position 4, and settles `reproduced-with-evaluated-witness` with the item
 settles `refuted`, cause `undefined-evaluation`, with an `Undefined`
 counterexample ending at that commit step that replays, and the step stays a
 concrete step (FR-378-AC-3).
+Case 7: (a) refutes, reporting the undefined `items` row, because the undefined
+row outranks the unmapped type; (b) is undetermined for the `SubRing` object
+`a` naming its object row; (c) reports the `also` row first, being the lower
+field name, in both source orders, for object `r`; (d) is undetermined naming the `next` row
+and object `a` with `q` of type `SubRing` and maps `next` to the `Queue`
+reference with key `q` with `q` of type `Ring`; (e) lists no relationship
+extent (FR-377-AC-9, FR-377-AC-11). Case 8 leaves the `?` field absent then
+set to `1` and keeps the explicit `none` (FR-375-AC-17, FR-377-AC-10).
+
+Case 9: (a) refutes, reporting `A1`; (b) refutes, reporting `P`; (c) refutes,
+reporting `A1`; (d) settles `inconclusive`, `mapping-undetermined`, reporting
+`H`; (e) settles `inconclusive`, `mapping-undetermined`, reporting the row of
+the `Extra` object; (f) settles `failed`; (g) settles `incomplete`,
+`resource-incomplete`, `limit-reached{limit, M, setting}` with the limit
+bounding one clause evaluation and its `model_check.*` setting; (h) refutes,
+reporting `A1`; (i) settles `inconclusive`, `mapping-undetermined`, reporting
+`A1`; (j) settles `failed`; (k) refutes, reporting `R`; (l) refutes,
+reporting `A1`; (m) settles `inconclusive`, `mapping-undetermined`, reporting
+`A1`; (n) refutes, reporting `H`; (o) settles `inconclusive`,
+`undecided-successor` (FR-377-AC-12, FR-377-AC-13).

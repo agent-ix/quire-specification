@@ -1944,6 +1944,157 @@
           }
         ]
       }
+    },
+    {
+      "name": "hybrid-request",
+      "stage": "request",
+      "owners": {
+        "/request/items/0/hybrid/limits/max_solver_steps": "FR-193",
+        "/request/items/0/hybrid/limits/max_solver_time": "FR-193"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "manifest": [
+          {
+            "backend": "qsl-model-check",
+            "advertises": [
+              {
+                "kind": "temporal-satisfaction",
+                "mode": "bounded"
+              },
+              {
+                "kind": "temporal-satisfaction",
+                "mode": "unbounded"
+              }
+            ],
+            "fairness_kinds": [
+              "strong",
+              "weak"
+            ],
+            "reductions": [
+              "constraint",
+              "partial-order",
+              "symmetry"
+            ],
+            "bounds": {
+              "max_automaton_states": 100000,
+              "max_states": 1000000,
+              "max_transitions": 10000000
+            },
+            "domains": [
+              "collection",
+              "integer",
+              "population",
+              "recursive"
+            ]
+          }
+        ],
+        "request": {
+          "deadline_ms": 600000,
+          "provision": [
+            {
+              "digest_domain": "sha256-jcs",
+              "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "bytes": "e30"
+            }
+          ],
+          "items": [
+            {
+              "request_index": 0,
+              "kind": "temporal-satisfaction",
+              "claim": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                },
+                "occurrence": {
+                  "role": "claim",
+                  "ordinal": 0
+                }
+              },
+              "extent": {
+                "classification": "unbounded",
+                "domains": [
+                  {
+                    "domain": {
+                      "type": "node",
+                      "node": {
+                        "domain": "quire.checked-semantic-node/v1",
+                        "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                      },
+                      "path": []
+                    },
+                    "kind": "infinite-trace"
+                  }
+                ],
+                "finite_bound_available": false
+              },
+              "candidates": {
+                "type": "set",
+                "backends": [
+                  "qsl-model-check"
+                ]
+              },
+              "reductions": {
+                "symmetry": [],
+                "partial_order": {
+                  "proviso": "breadth-first-revisit"
+                }
+              },
+              "temporal": {
+                "subject": {
+                  "initial_states": [
+                    {
+                      "digest_domain": "sha256-jcs",
+                      "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+                    }
+                  ],
+                  "universes": [],
+                  "proof_bounds": [
+                    {
+                      "domain": {
+                        "type": "population",
+                        "member_type": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "dc1dee8382c4d6bf958f84a637db1d2168a3dbef00a3bbd0c14241178860e9b9"
+                        },
+                        "ordinal": 0
+                      },
+                      "kind": "population",
+                      "bound": {
+                        "type": "cardinality",
+                        "maximum": 3
+                      }
+                    }
+                  ]
+                },
+                "item_kind": "formula",
+                "fairness": [
+                  {
+                    "kind": "weak",
+                    "operation": "Example::Session::step",
+                    "granularity": "whole"
+                  }
+                ],
+                "max_depth": 40,
+                "limits": {
+                  "max_states": 250000,
+                  "max_walk_steps": 64
+                },
+                "witness_samples": 4,
+                "seed": "42"
+              },
+              "hybrid": {
+                "limits": {
+                  "max_solver_steps": 1000,
+                  "max_solver_time": 2
+                }
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "adverse": [
@@ -3138,6 +3289,66 @@
           "op": "replace",
           "path": "/results/6/cause/type",
           "value": "no_initial_state"
+        }
+      ]
+    },
+    {
+      "name": "hybrid-time-fractional",
+      "base": "hybrid-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/hybrid/limits/max_solver_time",
+          "value": 1.5
+        }
+      ]
+    },
+    {
+      "name": "hybrid-steps-zero",
+      "base": "hybrid-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/hybrid/limits/max_solver_steps",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "hybrid-limits-unknown-member",
+      "base": "hybrid-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/0/hybrid/limits/max_solver_memory",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "name": "hybrid-empty",
+      "base": "hybrid-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/hybrid",
+          "value": {}
+        }
+      ]
+    },
+    {
+      "name": "hybrid-limits-empty",
+      "base": "hybrid-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/hybrid/limits",
+          "value": {}
         }
       ]
     }

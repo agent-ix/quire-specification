@@ -52,8 +52,8 @@ result.
 | Per-step simulation: every step obligation and the initial-state obligation proved | `proved` | `decisive-witness` |
 | Explicit-state or unrolling run found a failure that replays | `refuted` | `decisive-counterexample` |
 | A step obligation fails from a pre-state that satisfies the concrete invariants | `inconclusive`, cause induction not closed | `unsettled` |
-| A field row, a step-row argument or a history update evaluates undefined at a reachable state, and its `Undefined` counterexample replays | `refuted`, cause `undefined-evaluation` | `decisive-counterexample` |
-| `map`, an argument or a history update undetermined at a reachable state | `inconclusive`, cause `mapping-undetermined` | `unsettled` |
+| A field row, a step-row receiver or argument or a history update evaluates undefined at a reachable state, and its `Undefined` counterexample replays | `refuted`, cause `undefined-evaluation` | `decisive-counterexample` |
+| `map`, a receiver, an argument or a history update undetermined at a reachable state | `inconclusive`, cause `mapping-undetermined` | `unsettled` |
 | An undecided contract conjunction of either subject during expansion or a step check | `inconclusive`, cause undecided successor | `unsettled` |
 | Replay recomputes a different failure kind or position | `inconclusive`, cause `replay-parity` | `unsettled` |
 | Liveness half with a hidden field (FR-378) | `unsupported` | `unavailable` |
@@ -66,7 +66,7 @@ unreachable; every refutation comes from an explicit-state or unrolling run
 and is replayed.
 
 **Undefined evaluation.** The mapping is part of the refinement claim. A
-claim, field row, step-row argument or history update that evaluates
+claim, field row, step-row receiver or argument or history update that evaluates
 undefined at a reachable concrete state settles the item `refuted` by the
 FR-363 rule, with cause `undefined-evaluation` whose `where` names the row or
 update, the position, the concrete state key and the locus of the expression
@@ -75,8 +75,8 @@ reason. Its counterexample carries `refinement_failure` `Undefined` and ends
 at that state, and replay reproduces the undefined value there.
 
 **`mapping-undetermined`.** A new infinite-trace inconclusive cause: a field
-row, a step-row argument or a history update was refused or incomplete, or a
-history update left its declared type, at a reachable state. It names the
+row, a step-row receiver or argument or a history update was refused or incomplete, a
+history update left its declared type, or an object or reference of a type no object row names was mapped (an unmapped type), at a reachable state. It names the
 row, the state and the concrete prefix reaching it.
 
 **Counterexample.** A refinement counterexample is a model-subject temporal
@@ -91,7 +91,7 @@ of:
 | `AbstractStepRejected` | `position`, `transition`, `cause` (`Precondition{clause}`, `Frame{code}` or `Postcondition`) | abstract-operation step |
 | `NoAbstractMatch` | `position` | `any` step, or an emptied candidate set |
 | `Divergence` | `constraint` | an `F_A` constraint violated by a lasso whose loop has only `stutter` steps, including the concrete terminal stutter |
-| `Undefined` | `position`, `row` | a field row, step-row argument or history update evaluated undefined at `position`; `row` names it |
+| `Undefined` | `position`, `row` | a field row, step-row receiver or argument or history update evaluated undefined at `position`; `row` names it |
 | `AbstractUnfair` | `constraint` | an `F_A` constraint violated by a lasso whose loop takes abstract steps |
 
 A safety failure is a finite prefix ending at its failing step. A liveness

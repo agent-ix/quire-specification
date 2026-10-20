@@ -48,7 +48,10 @@ Static type-check refusal and I13 dispositions remain staged separately.
 The matrix distinguishes scalar numeric rules, enum declaration identity, text
 profile, structural records/tuples, collection algebra, object-reference
 identity and IEEE numeric/total/bitwise relations. No structural resemblance,
-implicit conversion or local-name equality creates a common type.
+implicit conversion or local-name equality creates a common type; the one
+expected-type rule for an arithmetic operand in
+[Arithmetic operand against a bounded integer](#arithmetic-operand-against-a-bounded-integer)
+retypes that operand and creates no common type.
 
 ## Equality matrix
 
@@ -57,7 +60,7 @@ implicit conversion or local-name equality creates a common type.
 | Boolean | identical truth value |
 | UUID | identical canonical UUID payload content under QSL FR-056's K2 canonical native payload contract; a distinct native type, not text |
 | Timestamp | identical canonical Timestamp payload content under QSL FR-056's K2 canonical native payload contract; a distinct native type, not `Int` |
-| Integer, rational and decimal | exact mathematical value; operands of different numeric types first require an admitted [equality conversion](#equality-conversions) |
+| Integer, rational and decimal | exact mathematical value; operands of different numeric types first require an admitted [equality conversion](#equality-conversions), or the [arithmetic operand exception](#arithmetic-operand-against-a-bounded-integer) |
 | Quantity | identical unit and exact value equality; a top-level quantity equality expression uses the FR-142 root-value comparison schedule, while a quantity leaf inside a composite equality plan compares by exact value in its identical unit and charges only its `equality.pair`; distinct units require an explicit prior FR-142 conversion |
 | Text | the FR-141 relation under the same pinned profile: normalized scalar sequence for scalar profiles and original UTF-8 bytes for `binary-utf8` |
 | Enumeration | the same qualified enumeration declaration and identical case; different declarations have no implicit common type |
@@ -72,7 +75,8 @@ implicit conversion or local-name equality creates a common type.
 | IEEE binary32/binary64 | the explicitly selected FR-148 `numericEqual`, `totalOrder` equivalence or `bitIdentical` intrinsic; the grammar's `=` and `!=` select none of them and are `ill_typed` for any operand type containing `Float32` or `Float64` at any depth |
 
 Operands of different types are comparable only after an explicit conversion
-declares a common type. If conversion is lossy, undefined or absent, type
+declares a common type, except that a binary `+`, `-` or `*` operand takes the
+other operand's `Int[..]` type as its expected type. If conversion is lossy, undefined or absent, type
 checking returns `refused { code: ill_typed }`; it never produces Boolean
 `false`. Conversion creates a comparison value but
 does not rewrite the source value's declaration or object identity.
@@ -150,7 +154,7 @@ converts with no rounding step, loss, undefined or refused outcome.
 | `Decimal[c1,c2;s1,s2;m]` | `Decimal[c3,c4;s3,s4;m2]` | `s3 <= s1`, `s2 <= s4`, and either `s3 = s1` with `c3 <= c1` and `c2 <= c4`, or `s3 < s1` with `c3 <= min(c1,0)` and `max(c2,0) <= c4` |
 | `Decimal[c1,c2;0,0;m]` | `Integer` or `Int[..]` | the row for source `Int[c1,c2]` admits it |
 | quantity in unit `U` | quantity in unit `V` with an exact rational value | FR-142 admits the conversion |
-| `Reference<S>` | `Reference<T>` | the package selects `quire.model.complete/v1` and `S` conforms to `T` in the closed FR-151 effective view |
+| `Reference<S>` | `Reference<T>` | the package, or for a refinement row the governing infinite-trace profile, selects `quire.model.complete/v1` and `S` conforms to `T` in the closed FR-151 effective view |
 
 An unbounded `Integer` source converts only to `Integer`. No conversion to or
 from `Float32` or `Float64`, and no text-profile, enumeration, record, tuple,
@@ -168,6 +172,54 @@ admitted `Int[..]`-to-`Decimal[..]`, `Rational[..;d,1]`-to-`Decimal[..]` or
 schedule for that conversion, with `scale_expansion` and `integer_bits` sized
 from operand bit lengths. Every other admitted equality conversion keeps the source
 magnitude, has no charge point and produces only the comparison value.
+
+## Arithmetic operand against a bounded integer
+
+An arithmetic node (`+`, `-` or `*`) takes its type from its operands, and from
+an expected type when a declared position supplies one: a declared function
+result or an annotated `let` that is `Int[lo,hi]` types the node as
+`Int[lo,hi]` and carries a range obligation (TC-191 P09 and the state-semantics
+section 3 typing rule; `let x: Int[0,3] = y + 1` is range-checked at the sum and refuses
+`undefined_expression`/`unproved-range` when the sum is not proved inside
+`[0,3]`). An operand of `=` or `!=` is one more such position. This is not a
+conversion: it adds no `convert` node of the equality conversion table, creates
+no common type between operands of different types, and is the second
+operation-scoped exception named in FR-044 after the exact `n/1` promotion for
+rational `/`.
+
+When one operand of `=` or `!=` has static type `Int[lo,hi]` and the other
+operand, ignoring parentheses, is a binary `+`, `-` or `*` node whose operands
+are `Integer` or `Int[..]` (on either side of the operator, either operand
+order), the `Int[lo,hi]` operand supplies the expected type of the arithmetic
+node. The node is typed `Int[lo,hi]` with the obligation that its FR-146
+interval, under the facts that hold where it executes, lies inside `[lo,hi]`.
+A proved obligation makes the equality a comparison of two `Int[lo,hi]`
+operands and adds no charge beyond the arithmetic's own integer-arithmetic
+schedule plus the one-pair equality schedule. An unproved obligation is
+`refused { code: undefined_expression, cause: unproved-range }` located at the
+arithmetic node, not at the equality, and the value is never clamped, wrapped
+or widened.
+
+The checked package records the typed node as one `quire.op.numeric.narrow`
+application with member `Int[lo,hi]`, located at the arithmetic expression. It
+is the node a range-narrowing conversion into `Int[lo,hi]` produces, but the
+source carries no `convert`: `convert<Int[lo,hi]>` of an unbounded `Integer`
+operand is still not an admitted equality conversion (table above), and the
+only explicit spelling is `convert<Integer>` on the `Int[..]` operand, which
+compares as `Integer` and carries no range obligation. A consumer reads the
+`narrow` node's member type as the expected type that was supplied and its
+obligation as the unproved-range check; it does not infer that the source
+wrote a conversion.
+
+The rule is narrow. Only a binary `+`, `-` or `*` node that is directly an
+operand of `=` or `!=` is typed this way. Unary `-` (typed `Integer`), a path,
+a call, `div`, `rem`, `count`, `sum`, a `let`-bound name without its own
+annotation and any other `Integer` operand against an `Int[..]` operand remain
+`refused { code: ill_typed, cause: type-mismatch }` without an explicit
+`convert`, as does an arithmetic operand against a `Rational[..]` or
+`Decimal[..]` operand. An integer literal is typed by the other operand under
+FR-144 literal typing and is not affected. `<`, `<=`, `>` and `>=` supply no
+expected type to their operands and need none: an ordering comparison between an `Integer` operand and an `Int[..]` operand, or between two `Int[..]` operands, is accepted and orders the exact integer values, an arithmetic operand with no expected type being typed `Integer`, so `n + 1 <= later.tally` for `n` of `Integer` is well typed. A `convert<T>` target supplies no expected type to its operand: the operand is typed from its own operands, so `convert<Int[lo,hi]>(n + 1)` converts an `Integer` and is refused under `=` by the equality conversion table. Call arguments supply none either.
 
 ## Conversion classes
 
@@ -277,6 +329,9 @@ collection and object-reference rows of this requirement.
 | FR-149-AC-16 | Same-kind keys compare canonical payload content unsigned ASCII bytewise with a proper prefix first: Timestamp `10` orders before `2`, and `-1` before `-2`, while equal payloads have equal keys. The four ordering operators on either native refuse `ill_typed`/`operator-ineligible` before any charge; key availability creates no ordering or arithmetic capability. | Test |
 | FR-149-AC-17 | Two operands of static type `Money`, one holding a `TaxedMoney` and one a `Money` of equal shared fields, give `=` `false` and `!=` `true` in either order as one terminal unequal pair; the same holds for the record as a field, an `Option` payload, a collection element, a tuple position and a union payload. A `Child == Parent` over two different static types stays `ill_typed`/`type-mismatch`. | Test (TC-194) |
 | FR-149-AC-18 | `=` and `!=` over two event-type operands, and over `Option`, tuple or union values containing one, are `ill_typed`/`operator-ineligible` before any charge; a `Set`, `Bag` or `OrderedSet` of an event type is refused for the same reason (FR-144). | Test (TC-194) |
+| FR-149-AC-19 | With `tally` of `Int[0,3]` and the guard `earlier.tally < 3`, the relation `earlier.tally < 3 and later.tally = earlier.tally + 1` checks: the sum's interval `[1,3]` lies inside `Int[0,3]`, the sum is typed `Int[0,3]` by the expected-type rule, and the relation charges the sum's own integer-arithmetic schedule plus the equality's one-pair schedule. | Test (TC-194) |
+| FR-149-AC-20 | With the guard removed, `later.tally = earlier.tally + 1` over `tally` of `Int[0,3]` refuses `undefined_expression`/`unproved-range` at `earlier.tally + 1`, because the sum's interval `[1,4]` exceeds `Int[0,3]`; `recovered.tally = recovered.tally + 1` refuses the same way at its sum. No Boolean is produced and the value is not clamped. | Test (TC-194) |
+| FR-149-AC-21 | The rule applies only to a binary `+`, `-` or `*` operand of `=` or `!=` against an `Int[..]` operand, on either side and parenthesized: an `Integer` path, a call, `div`, `rem`, `count`, an unannotated `let`-bound name or unary `-` against `Int[0,3]` is `ill_typed`/`type-mismatch` without `convert`, an arithmetic operand against a `Rational[..]` or `Decimal[..]` operand is `ill_typed`, and `<`, `<=`, `>` and `>=` over the same operands supply no expected type and are accepted, so `n + 1 <= later.tally` for `n` of `Integer` and `earlier.tally + 1 <= later.tally` are well typed. | Test (TC-194) |
 
 ## Dependencies
 

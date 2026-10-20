@@ -28,6 +28,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-440
     type: references
+  - target: ix://agent-ix/quire-specification/FR-375
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-432
+    type: references
   - target: ix://agent-ix/quire-specification/FR-441
     type: references
   - target: ix://agent-ix/quire-specification/FR-043
@@ -142,6 +146,22 @@ boundary.
   package's identity preimage. A package's `package_id` can also change when
   a direct dependency's `package_id` changes; all affected importers' identity
   preimages and bytes are recomputed recursively.
+- `refinement_internals` — the compilation's refinement internal list
+  ([FR-432](../../functional/protocol/FR-432-map-every-protocol-step-in-refinements.md);
+  [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md)),
+  a lock member only: an array of closed `{refinement, internal}` objects,
+  present only when some refinement's list is non-empty and absent otherwise
+  (absent is the empty list, never `null` or `[]`). It is canonical: objects
+  ascend by `refinement` and each `internal` array ascends by class spelling,
+  both in UTF-8 byte order, with no empty `internal` and no repeated
+  `refinement` or spelling. An object or spelling not strictly after its
+  predecessor refuses `invalid_package`/`invalid-value` at its pointer, and a
+  repeated one `invalid_package`/`conflicting-definition` with both entries as
+  loci. A reader checks only this shape; whether each spelling resolves is
+  decided by the recompile (FR-432). The member is not in `identity_preimage`:
+  its effect on meaning is already in the refinement nodes' `abstract_internal`
+  (FR-375), and a lock that disagrees with the nodes recompiles to another
+  `package_id`, which replay refuses (FR-323).
 - `semantic_graph` — one `quire.checked-semantic-graph/v2` closed tagged-node
   union. Its current tags are `scalar_type`, `composite_type`,
   `bounded_domain`, `value`, `expression`, `function`, `model`, `relation`,
@@ -612,7 +632,13 @@ vocabulary is `unknown_contract_version`, `malformed_wire`, `duplicate_member`,
 `invalid_semantic_graph`, `invalid_source_map`, `unsupported_node_tag`,
 `invalid_package`, `ill_typed`, `ambiguous_declaration`, `missing_declaration`,
 `invalid_model_binding`, `missing_import`, `unknown_profile`,
-`unsupported_construct` and `wrong_snapshot`. The `stale-node-key`, operation and declaration causes
+`unsupported_construct` and `wrong_snapshot`. A V2 reader SHALL pair the cause
+`unsupported-wire` only with `unknown_wire` and `unsupported-feature` only
+with `unknown_required_feature`, as FR-272 and the `Diagnostic` schema's
+`DiagnosticCausePairing` do; `unknown_contract_version` and
+`unknown_required_capability` carry no cause (FR-272); the ContractPackage
+reader refuses a nested refusal record that pairs either with a cause, as
+FR-330 states (FR-322-AC-78 covers the pairing). The `stale-node-key`, operation and declaration causes
 above, and the `missing-name` and `malformed-declaration` frame-entry causes
 [FR-340](FR-340-checked-package-frame-location.md) defines, are carried by
 `invalid_package`, `ill_typed`, `ambiguous_declaration`,
@@ -1588,6 +1614,8 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-74 | A `bounded_domain`/`model_population` node over `Set<Reference<Order>>` whose body is the empty `aggregate`, with the `max` member absent, is the unbounded population: it validates against the V2 schema and is admitted by the full reader, as the `population` of a `quire.op.model.reaches` application, with the key PO0 (`f65a8239f4fbc1b6e75bfeed4a578e1c219a27f155a82ddfb7aeeb22657c3b8b`) recomputed from its hand-written RFC 8785 preimage and distinct from the key PO1 of the same node with `max` `3`; the node with `max` `3` stays admitted as a bounded population. A `max` of `-1`, a `max` that is not an integer, and a second member beside `max` each refuse `invalid_package`/`invalid-derived-shape` at the population node, and the key PO0 differs from the key (`0ade8ed9baf129e82dee28096d64f5a0deabca6f3aa06874a4a7e76bb9688e34`) of the same node with `max` `0`. The published `adverse.json` `unbounded_population_cases` record each. | Test |
 | FR-322-AC-75 | A diamond with two direct dependencies whose recursively derived closures reach one library identity at different `package_id`s refuses `invalid_package`/`conflicting-definition`, with both importer-rooted selection-path JSON pointers as loci. A `dependency_reference` naming a transitive-only package refuses `missing_declaration`/`missing-selection` even when that package is in the derived closure. | Test (TC-233, planned) |
 | FR-322-AC-76 | In the published closure vectors, each direct dependency's recorded `package_id` recomputes by JCS SHA-256 from its base fixture's `identity_preimage` with that dependency's direct selections substituted; the diamond's two locks select the same transitive identity with distinct recorded package IDs, and the reference vector names a package in the derived closure absent from the importer's direct selections. | Test (TC-233) |
+| FR-322-AC-77 | The lock of a package whose unit has a non-empty refinement internal list carries `refinement_internals` in canonical order and the member is absent when every list is empty; the member is in no identity preimage, and two compilations of the same sources, one with a non-empty list and one without, recompile to different `package_id`s through the refinement nodes' `abstract_internal` alone. A member that is `[]` or `null`, an object with an empty `internal` or a third key fails the schema at that value; objects or spellings out of byte order refuse `invalid_package`/`invalid-value` at the later entry's pointer; a repeated `refinement` or spelling refuses `invalid_package`/`conflicting-definition` with both entries as loci. | Test (TC-233) |
+| FR-322-AC-78 | The cause `unsupported-wire` is paired only with `unknown_wire` and `unsupported-feature` only with `unknown_required_feature`, in the FR-272 rows and the `Diagnostic` schema alike, and the FR-272 rows of `unknown_contract_version` and `unknown_required_capability` list no cause. | Test (TC-233) |
 
 ## Dependencies
 

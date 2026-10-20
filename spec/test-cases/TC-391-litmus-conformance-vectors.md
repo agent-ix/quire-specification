@@ -47,7 +47,16 @@ and compare its `ra` column.
 | LT-10 | CoRR | the second read returns an mo-earlier value | forbidden | forbidden | forbidden |
 | LT-11 | visibility fairness, `ra`: a reader spinning on a flag the writer sets, in a `repeat` with no maximum whose guard stays true until the flag is read as 1, liveness claim `eventually holds(r = 1)` | — | `proved` | `proved` | `proved`: a loop that keeps reading the stale flag is rejected by visibility fairness |
 
+Separately, pass the synthesized SCC of FR-437-AC-7 straight to the visibility
+filter (no protocol is run): states `p`, `q`, `r`, edges `p → q`, `q → p` and
+`r → q` by thread `a` (loading nothing), `q → r` a stale load of `ℓ` by thread
+`b`, and `p` the only accepting state. A protocol form of this graph needs a
+stale `b` load that leaves the state unchanged and `scheduling adversarial;`,
+since the default scheduler constraint for `b` would reject `{p, q}` where `b`
+is enabled.
 ## Expected Results
 
 Every cell matches the table; no run reaches a memory budget; the `ra`
 column agrees with the independent RC11 checker on every test.
+
+The synthesized SCC of FR-437-AC-7 is decomposed to `{r}` then `{p, q}` and `{p, q}` passes; no memory budget applies and no RC11 comparison does.

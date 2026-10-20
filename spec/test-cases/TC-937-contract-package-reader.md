@@ -9,6 +9,14 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-330-AC-4
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-330-AC-11
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-330-AC-12
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-330-AC-13
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272-AC-21
+    type: verifies
 ---
 # TC-937: ContractPackage reader admits only a complete canonical value
 
@@ -173,3 +181,26 @@ names the selected `package_id` as `expected` and the supplied `package_id` as
 `actual`. The extra unselected input is ignored. No consumer
 receives or reparses a refused value. No alternate
 reader accepts a value refused by the owner.
+
+## Diagnostic mapping vectors (FR-330-AC-11, AC-12, FR-272-AC-21)
+
+For each reader `refused` result of the cases above, map it to its FR-272
+diagnostic and require stage `package_read`, the reader's code and cause
+unchanged, the code's FR-271 row and the category its code and cause map to.
+Cover `unknown_contract_version` (a wrong outer contract version),
+`malformed_wire` (bytes that are not well-formed JSON), `invalid_package` (with
+`missing-member`, `duplicate-member`, `unknown-member`, `wrong-value-kind` and
+`invalid-value`), `noncanonical_wire`, `stale_dependency`/`content-mismatch`
+and `missing_import`/`missing-selection`. Require that no case yields the code
+`duplicate_member`, `unknown_member` or `unknown_required_capability`, and that
+the `path` is the `json_path` location.
+
+For each of the five limits the reader charges (`bytes`, `nodes`, `edges`,
+`occurrences`, `work`), read an input one over the limit and one at it. The
+at-limit input is admitted. The one-over input maps to `stage_limit_exceeded`
+at stage `package_read`, category incomplete, with the cause `input-bytes-exceeded`,
+`node-count-exceeded`, `edge-count-exceeded`, `occurrence-count-exceeded` or
+`work-budget-exceeded` respectively, `bound` the limit, `actual` the consumed
+count, `setting` `CheckedPackageReadLimits.bytes`, `.nodes`, `.edges`,
+`.occurrences` or `.work`, and the location the `path` (none for `bytes`). No
+input yields a `diagnostics` stop.

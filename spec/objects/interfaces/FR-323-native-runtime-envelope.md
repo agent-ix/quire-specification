@@ -8,6 +8,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-180
     type: references
+  - target: ix://agent-ix/quire-specification/FR-375
+    type: references
 ---
 
 # FR-323: Native runtime request and result envelope
@@ -23,21 +25,27 @@ When a checked package is executed or replayed, the producer SHALL use the immut
 - `package` — exact FR-322 checked-package reference; a non-replay request
   carries the reference alone, and a replay request adds the `sources` and
   `dependencies` members below, as
-  `{package_id, contract_version, sources, dependencies}`. Definition and
+  `{package_id, contract_version, sources, dependencies}` plus the optional
+  `refinement_internals` below. Definition and
   domain-package bytes are reached through `byte_provision` by the digests
   the recompiled sources name.
   `sources` is the proved package's own FR-322 lock `sources`.
   `dependencies` holds one entry per library identity in the proved package's
   derived closure (its direct selections plus the closure of every selected
   dependency), in ascending UTF-8 byte order of `identity`, each
-  `{identity, package_id, sources}`: `identity` and `package_id` are that
+  `{identity, package_id, sources}` plus the optional `refinement_internals`
+  below: `identity` and `package_id` are that
   library's, and `sources` is that dependency package's own FR-322 lock
-  `sources`. The producer obtains these from the proved package and the
-  admitted packages recursively, including transitive-only packages, and
-  invents none. The executor recompiles each dependency from its entry's
-  `sources` and supplies it under the entry's `identity` to every direct or
-  transitive import of that identity
-  (FR-307). It refuses with the first of these, each rule
+  `sources`. A replay request also carries `refinement_internals`, on
+  `package` and on each `dependencies` entry, when and only when the
+  corresponding lock has one (FR-322); it is that lock's value, since a
+  recompile with the list dropped would compile its refinements with an
+  empty list and reach another `package_id`. The producer obtains these from
+  the proved package and the admitted packages recursively, including
+  transitive-only packages, and invents none. The executor recompiles each
+  dependency from its entry's `sources` and supplies it under the entry's
+  `identity` to every direct or transitive import of that identity (FR-307).
+  It refuses with the first of these, each rule
   applied over all entries, in entry order, before the next rule, and
   yields no result:
   1. before any recompile, entries not in strictly ascending UTF-8 byte
@@ -449,6 +457,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-14 | An existing typed replay conversion InternalFault supplied at its owning seam retains Failed/internal-failure classification, actual replay stage/invariant/provenance and unavailable basis, with supplied context absent, no ordinary InputRefusal/Inconclusive coercion, no synthetic kernel payload and zero semantic consumption/no added mapping charge. Compare with an ordinary input refusal and a genuine evaluated fault retaining its earlier charges. A five-arm-only serializer that drops/coerces the pre-call fault fails the control; original successful helper prefix is not reset/refunded. | Test (TC-278) |
 | FR-323-AC-15 | A request's `limits.supplied.numeric_magnitude_bits` B (published default 4096; omitted resolves to it, so omitted and stated 4096 have the same request identity and 4095 or 4097 differ) admits a supplied Integer and Rational whose value and every value-in-domain operand (3 Integer, 6 Rational) have bit length at most B, with zero counted as one bit, so B = 0 admits nothing; at the default a 4096-bit operand admits and a 4097-bit operand refuses. An operand at B+1 bits refuses by the `limit` cause with field `supplied.numeric_magnitude_bits`, `limit` B, `consumed` 0, `next_charge` and `counter` its bit length, the named `operand` and `event: value-visit`, stopping on the charged initiating event (the A or H spend includes that one event) before any comparison, with no further unit charged and zero evaluation consumption. A malformed B, a B missing from the wire object, a B above the u64 range or a B in `stage_limits` is a typed input refusal before consumption. | Test (TC-278) |
 | FR-323-AC-16 | NORM: for a nested retained type link comparison, the `type-comparison` event is charged first and then every numeric endpoint (4 Integer, 8 Rational, 4 Decimal) is checked against B by the AC-15 bit-length rule; the first endpoint over B refuses by the same `limit` cause with `event: type-comparison` and a `type-link-` `operand`, before the endpoint equality runs, and an endpoint at exactly B admits. | Test (TC-278) |
+| FR-323-AC-17 | A replay request for a proved package whose lock carries `refinement_internals`, with the member copied onto `package` (and a dependency's own onto its `dependencies` entry), recompiles each refinement with its list and reaches the proved `package_id`; the same request with the member removed, or with a spelling changed to another class that resolves, recompiles to another `package_id` and refuses `stale_dependency`/`content-mismatch` naming the request's `package_id` and the recompiled one (for a dependency, that entry's `identity`, its `package_id` and the recompiled one); a spelling that resolves to no class refuses `missing_declaration`/`missing-name` in the recompile, located at `/package/refinement_internals/<pointer>` for the proved package's value and at `/package/dependencies/<n>/refinement_internals/<pointer>` for the `n`th dependency entry's. None yields a result. | Test (TC-277) |
 
 ## Dependencies
 

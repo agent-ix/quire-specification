@@ -48,11 +48,14 @@ recompilation outcome.
 | BP-12 | BP-06 with a second entry whose source has the authority and identity of the first entry's source | Refused `invalid_package`/`conflicting-definition` naming both entries, before any recompile | FR-323-AC-7 |
 | BP-13 | A `byte_provision` domain-package entry under `sha256-jcs` whose document canonicalises to a digest other than the one it is keyed by | Refused `stale_dependency`/`content-mismatch` naming the selected and the recomputed digest, before recompilation | FR-323-AC-5 |
 | BP-14 | BP-06 with the transitive-only entry C's sources edited by an edit B's recompile admits so they recompile to a new `package_id`, and C's declared `package_id` updated to match, while the selecting dependency B's sources and declared `package_id` stay unchanged | B recompiles against the edited C to a `package_id` different from B's declared `package_id`; refused `stale_dependency`/`content-mismatch` naming B's `identity`, B's declared `package_id` and its recompiled one; no result | FR-323-AC-7 |
+| BP-15 | BP-06 with the proved package a unit whose lock carries `refinement_internals` (`R`: `Spec::Twice::finish`) and one dependency whose own lock carries one; the `package` reference and that `dependencies` entry carry the lock values; then each of: `package.refinement_internals` removed; the dependency entry's member removed; a spelling changed to another resolving class; a spelling naming no node; then the same in the dependency's own member | The first replay reaches the proved `package_id`. The removed unit member and the changed spelling each refuse `stale_dependency`/`content-mismatch` naming the request's `package_id` and the recompiled one; the removed dependency member names that entry's `identity`, `package_id` and the recompiled one; the unresolving spelling refuses `missing_declaration`/`missing-name` in the recompile at `/package/refinement_internals/<pointer>`, and in the dependency's member at `/package/dependencies/<n>/refinement_internals/<pointer>`; no result | FR-323-AC-17 |
 
 ## Expected Results
 
-BP-01 and BP-06 find a complete provision admitted. BP-02 through BP-05 and
-BP-07 through BP-09 and BP-11 through BP-14 find each incomplete, mismatched or stale replay request refused with its
-named typed cause before any recompilation result is produced.
+BP-01 and BP-06 find a complete provision admitted. BP-15's unmodified
+request is admitted. BP-02 through BP-05, BP-07 through BP-09, BP-11 through
+BP-14, and BP-15's mutations find each incomplete, mismatched or stale
+provision refused with its named typed cause before any recompilation result
+is produced.
 BP-06's transitive source coverage remains planned until the QSL replay
 follow-up lands.
