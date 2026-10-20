@@ -35,6 +35,14 @@ Ticket: QSL-567 (follow-up of quire-specification#294; the branch and title carr
 
 Not mergeable: one medium finding. The AC's stated result is correct. One step removes `0 → 1`, `0 → 2` and `1 → 0`, and the first passing component is `{0}` under either ordering of sub-components. But the contrast the vector exists for, `{1}` under B-first, holds only in Tarjan completion order, not in the breadth-first discovery order FR-365 states, so the test cannot fail the implementation it is meant to reject. AC-8 agrees with AC-7 and FR-365's one-step refinement text. Its TC-300 step and expected result are placed as AC-7's are. It needs no change to the refinement rule. `quire validate --scope .` exits 0 on both files, with output identical to main. `quire matrix` lists FR-365-AC-8 as untagged, like every FR-365 AC.
 
+## New findings (disposition pass 2)
+
+Against head 85383b3 (85383b39b712d5a12cc7705fd59c7e2bbd9e021f), with origin/main at fbb9636. The committed `reviews/` copies equal the reviewer's round-1 files. `quire validate --scope .` exits 0 on all four touched files, and for FR-365 and TC-300 the output is identical to main. `cargo test --test backend_provider_v1 --test checked_package_v2` passes 11 and 108. `quire matrix` lists FR-365-AC-8 as untagged, like every FR-365 AC. Oracle (`pr295-r2-oracle.log`) with breadth-first discovery from 0, successors in `e`-label order (which gives discovery 0, 1, 2, matching the AC): one step `{1}`, A first `{2}`, B first `{1}`.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | TC-300's rationale for AC-8, "refining pair A alone first would pass `{2}`, so only the one-step rule gives `{1}`", is not quite right. Refining pair B alone first also gives `{1}`: removing `e4`, `e5` and `e6` leaves `{0}`, `{1}` and `{2}`, and `{1}` passes. So the vector catches a one-pair-at-a-time implementation only when it takes A first. Write "refining pair A alone first would pass `{2}`" and drop "so only the one-step rule gives `{1}`", or note that the B-first order also gives `{1}`. The expected result `{1}` itself is correct. | spec/test-cases/TC-300-strong-fairness-refinement-depth.md:58 |
+
 ## Dispositions
 
 Round 1. Against head 320c05e (320c05e5022afce739664267de8632366c5f23ac), with origin/main still at fbb9636. `quire validate --scope .` exits 0 on FR-365 and TC-300, with output identical to main. `cargo test --test backend_provider_v1 --test checked_package_v2` passes 11 and 108. `quire matrix` lists FR-365-AC-8 as untagged, like every FR-365 AC. Oracle on the new vector (multigraph, `e7` a second `2 → 2`): with ranks by state number or by breadth-first discovery with successors by target, one step gives `{1}`, A first `{2}` and B first `{1}`. With breadth-first discovery and successors in `e`-label order, every mode gives `{2}`. In Tarjan completion order, every mode gives `{1}`.
@@ -42,3 +50,9 @@ Round 1. Against head 320c05e (320c05e5022afce739664267de8632366c5f23ac), with o
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-001 | still-open | Partly fixed. The ordering rule (earliest-discovered state, not completion order) is now stated, and the new vector separates the two rules when state 1 is discovered before state 2. But the AC's own edge labels put `e2` `0 → 2` before `e3` `0 → 1`. Under FR-181, a state's successors are visited in canonical transition order, so a reader who takes the `e`-numbers as that order discovers 2 before 1. Then one step, A first and B first all give `{2}` (oracle, `pr295-r1-oracle.log`): the test expects `{1}` and fails a correct implementation, and the two rules are not separated. If ranks follow state numbers or targets, one step gives `{1}` and A first `{2}`, as the AC states. Remaining: (1) make the discovery order unambiguous, for example by swapping the labels so that `e2` is `0 → 1` and `e3` is `0 → 2`, or by stating that the transition order from 0 visits `0 → 1` first. (2) The ordering rule lives only in an AC. Put it in FR-365's Components and order paragraph (sub-components ranked by their earliest-discovered state in FR-181 canonical breadth-first order), and have the AC test it. (3) "Whereas refining pair A alone first would pass `{2}`" still describes a rule the system does not have. Move it to the TC as rationale. |
+
+Round 2, against head 85383b3.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
