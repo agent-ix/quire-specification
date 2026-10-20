@@ -239,7 +239,7 @@ kind for the other: an item naming `exact` with no candidate advertising
 `statistical` candidate's negotiation arm settles `unsupported` an item whose
 claim states no confidence parameters (`missing-confidence`), whose scheduler
 clause is `under every scheduler` (`every-scheduler`), or whose form is an
-exact-only form (`exact-only-form`) (FR-408). One claim may be
+exact-only form (`exact-only-form`), or whose regenerative method has no quantile bound for its confidence (`confidence-beyond-precision`) (FR-408). One claim may be
 requested twice, once per evidence kind; the two items have separate terminal
 records.
 

@@ -32,3 +32,11 @@ Ticket: QSL-570. PR: quire-specification#300 (private), head 7a61910f0, scoped t
 ## Verdict
 
 One low EARS finding (the refusal sentence); the rest of the change is method prose and needs no EARS form. No status wording. The substantive findings are in SR-13550.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 at 9e6be51ec: At negotiation, before any sample is drawn, the provider settles the item `unsupported` with: - `missing-confidence` when the claim states no confidence parameters; - `every-scheduler` when the claim's scheduler clause is `under every scheduler`, with or without a fairness set; - `exact-only-form... |
+
+Round 1: FND-001 is fixed. The refusal is now an Admission bullet in the same 'the provider settles the item `unsupported` with <cause> when ...' form as its siblings. No new EARS finding. Gates on 9e6be51ec: quire validate --scope . on FR-408 exits 0 with output identical to main (module notices only); both SR files under reviews/ validate and are byte-identical to the reviewer's round-0 files; cargo test --locked 158 passed, 0 failed.
