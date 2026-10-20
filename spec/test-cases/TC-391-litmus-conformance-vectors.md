@@ -46,6 +46,7 @@ and compare its `ra` column.
 | LT-09 | 2+2W, `release` stores | each location ends with its first-written value | forbidden | forbidden | allowed |
 | LT-10 | CoRR | the second read returns an mo-earlier value | forbidden | forbidden | forbidden |
 | LT-11 | visibility fairness, `ra`: a reader spinning on a flag the writer sets, in a `repeat` with no maximum whose guard stays true until the flag is read as 1, liveness claim `eventually holds(r = 1)` | — | `proved` | `proved` | `proved`: a loop that keeps reading the stale flag is rejected by visibility fairness |
+| LT-12 | visibility fairness, `ra`, an SCC with a load-free sub-cycle (FR-437-AC-7): states `p`, `q`, `r`, edges `p → q`, `q → p` (thread `a`), `q → r` (thread `b` loads `ℓ` from a non-mo-last message), `r → q` (thread `a`), `p` accepting | — | — | — | the SCC is decomposed to `{p, q}` and accepted; the lasso `p q` is fair and accepting |
 
 ## Expected Results
 

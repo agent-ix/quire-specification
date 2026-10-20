@@ -120,9 +120,18 @@ location keeps one message.
 
 Every infinite-trace clause over a subject with an `ra` `parallel` carries
 visibility fairness, origin `memory`, target `{"type":"visibility","model":"ra"}`:
-for each thread `b` and location `ℓ` that `b` loads on some edge of an SCC,
-the SCC contains an edge on which `b` loads `ℓ` from its mo-last message. On a
-lasso, the loop contains such a load for every pair the loop loads. It is
+no thread keeps reading a stale message of a location forever. On a lasso,
+the loop contains a load of `ℓ` by `b` from its mo-last message for every pair
+(`b`, `ℓ`) the loop loads. On an SCC it is an edge Streett condition. For each
+thread `b` and location `ℓ`, `R` is the set of edges on which `b` loads `ℓ`
+and `G ⊆ R` the set of edges on which `b` loads `ℓ` from its mo-last
+message; a cycle is visibility-fair when, for every pair, it contains no edge
+of `R` or an edge of `G`. An SCC `C` holds a visibility-fair cycle when every
+pair has `R ∩ C = ∅` or `G ∩ C ≠ ∅`; otherwise, for a pair with `R ∩ C ≠ ∅`
+and `G ∩ C = ∅`, every cycle of `C` that loads `ℓ` by `b` is unfair, so the
+edges of `R` are removed and the rest decomposed into SCCs, each tested the
+same way. An SCC is therefore never rejected for a stale load alone: a
+load-free sub-cycle of an SCC that holds a stale load edge is fair. It is
 machine-closed.
 
 ### What it admits
@@ -142,6 +151,7 @@ RC11.
 | FR-437-AC-4 | Once every view points at or after a location's mo-last message, every earlier message of that location is removed in the same step; after an outermost `join all` each location keeps one message; and two histories that admit the same futures share one state key. | Test (TC-393) |
 | FR-437-AC-5 | A lasso on which a thread keeps loading a stale message of a location without ever loading its mo-last message is rejected by visibility fairness. | Test (TC-391) |
 | FR-437-AC-6 | The litmus vectors' outcomes under `ra` agree with an independent RC11 execution-graph checker run on the same tests. | Test (TC-391) |
+| FR-437-AC-7 | On an accepting SCC with states `p`, `q`, `r` and the edges `p → q` and `q → p` (thread `a`, no load by `b`), `q → r` (thread `b` loads `ℓ` from a message that is not mo-last) and `r → q` (thread `a`), with `p` accepting, visibility fairness removes the load edge `q → r`, decomposes the SCC into `{p, q}` and `{r}`, accepts `{p, q}`, and the lasso `p q p q …` is a visibility-fair accepting cycle; a rule that rejected the SCC for the stale load would miss it. | Test (TC-391) |
 
 ## Dependencies
 
