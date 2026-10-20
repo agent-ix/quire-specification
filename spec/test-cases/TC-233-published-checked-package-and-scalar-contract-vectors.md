@@ -7,6 +7,10 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-340
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-271-AC-7
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272-AC-22
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-341
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-342
@@ -138,7 +142,7 @@ nested application;
 and parse the native-diagnostics rows to require each cause in
 exactly its code's row and the Diagnostic schema pairing. Parse the
 `stage_limit_exceeded` and `duplicate_selection` rows of both native-diagnostics
-and FR-272 and require each to list exactly FR-272-AC-10's causes. Parse
+and FR-272 and require each to list exactly FR-272-AC-10's causes. Parse the rows of the eight FR-322 reader codes in both and require FR-272-AC-22's causes and payload names, and FR-271 to hold one row for each (FR-271-AC-7). Parse
 the `resource_exhausted` and `cancelled` rows of both and require each to list
 exactly FR-272-AC-16's causes and payload keys, and the `conflicting_declaration`
 rows to list exactly FR-272-AC-17's cause and payload keys. Parse the
