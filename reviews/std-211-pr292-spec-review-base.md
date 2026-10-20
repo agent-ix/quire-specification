@@ -57,6 +57,15 @@ Against head 7a78721 (7a787210427712f969a0ef1f88f9aa133156ba22). `cargo test --t
 | FND-006 | high | `store()` always creates the `Extra` object of an unmapped subtype, because the fixture states it unconditionally. Then every case's post-state `map(s', h')` holds an unmapped-type read (FR-377-AC-11), and that read is undetermined. So the step rules are never decided in any case. Cases (g) and (o) cannot reach the abstract `set` contract: (g) settles `inconclusive`/`mapping-undetermined` (naming the `Extra` object row), not `limit-reached`, and (o) settles `mapping-undetermined`, not `undecided-successor`. The other cases still give the expected result, because each has an earlier or an undefined read. The wording also gets the unmapped read wrong: `map` reads the `Extra` object's object row, not `P` "evaluated on" it. The fixture also does not say which type `Extra` subtypes, or that the source population admits it. Fix: create `Extra` only in case (e), for example with a variant of `store`; name its supertype `Impl::Reg` in the population; and describe the unmapped read as the `Extra` object's object-row read. | spec/test-cases/TC-315-refinement-undetermined-and-replay.md:66-88 |
 | FND-007 | low | The fixture text has three loose ends. (1) It writes "rows `v = self.v`" and also "the field row `P` (`v = p(self)`)". Two rows for `v` refuse `invalid_model_binding`/`conflicting-binding`, so say that `P` is the `v` row. (2) "`H` set to 3" reads as a literal update `3`, which FR-151 conformance may refuse statically against `Int[0, 2]`. Write an update whose value reaches 3, for example `pre(self.h) + 3`, as TC-315 case 2 does. (3) Case (o) is "as (g)", so it keeps (g)'s meter-exhausting postcondition, and neither spec says whether an undecided precondition is reported before the postcondition runs. Say "as (g) but with the postcondition cheap". | spec/test-cases/TC-315-refinement-undetermined-and-replay.md:66-88 |
 
+
+## New findings (disposition pass 2)
+
+Against head 377969c (377969c91bdc4b945f723d5de8649a1309f17439). Main's SR-13322/13323 files are byte-identical to origin/main again. The diff against main adds only the two `std-211-pr292-*` review files, and they equal the round-1 reviewer copies. `cargo test --test checked_package_v2 --test backend_provider_v1`: 9 and 108 pass. `quire validate --scope .` exits 0 on FR-377, FR-379, TC-315 and both review files, with no errors once the known warnings are filtered out. The whole-tree validate is byte-identical to main after path normalisation. `quire matrix` lists FR-377-AC-12/13 as untagged, the same as main. Type rules, checked by hand against FR-375 and FR-149: the `v` row is now the only row; its `if` has arms `0` and `<post>`, an integer expression over `Int[0, 3]`, which is admitted as TC-315 case 1's `2 div self.tmpA` is. `h + 3` is decided at run time, since FR-149's static unproved-range rule covers only `=`/`!=` operands and FR-375 decides statically only for literals, so it leaves `Int[0, 2]` at run time. The step row has one receiver and two arguments for `set(x, y)`. With `v` starting at 0 and `store` setting it to 1, `P` takes its `0` arm at the pre-state and `<post>` only at the post-state. Every one of the fifteen cases holds by hand: (a) `A1`; (b) `P`; (c) `A1`; (d) `H`, `mapping-undetermined`; (e) the `Extra` object row, `mapping-undetermined`, since `Extra` exists only in (e) and every read is defined; (f) `failed`; (g) `limit-reached{limit, M, setting}`, since nothing else fails; (h) `A1`; (i) `A1`, `mapping-undetermined`; (j) `failed`; (k) `R`; (l) `A1`; (m) `A1`, `mapping-undetermined`; (n) `H` (`1 div pre(h)` at `h = 0`) before `P` (`1 div 0` at `v = 1`); (o) `undecided-successor`, with a cheap postcondition and the precondition incomplete without meter exhaustion. The budget paragraph now gives every clause evaluation of either subject a fresh meter of one budget and decides the outcome by which side ran out, which matches QSL FR-120 and FR-141-AC-7/9. The limit is named in QSpec terms (`limit-reached{limit, value, setting}`, an FR-461 `model_check.*` setting), and no setting name is invented.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-008 | low | Two wording slips in the fixture. Neither changes a result. (1) "`P` (the field row after `store`) is read only at the post-state" is false: the `v` row is read at every state, the pre-state included, where it takes the `0` arm. What holds is that `P` fails only at the post-state. (2) "`H` is `h`", "`1 div h`" and "`h + 3`" use a bare `h`, but FR-375 has an update read the history field's prior value as `pre(self.h)`. Write `pre(self.h)`, `1 div pre(self.h)` and `pre(self.h) + 3`. | spec/test-cases/TC-315-refinement-undetermined-and-replay.md:74-80 |
+
 ## Dispositions
 
 Round 1, against head 7a78721.
@@ -67,3 +76,12 @@ Round 1, against head 7a78721.
 | FND-002 | fixed | - |
 | FND-003 | fixed | - |
 | FND-004 | fixed | - |
+
+Round 2, against head 377969c.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-005 | fixed | - |
+| FND-006 | fixed | - |
+| FND-007 | fixed | - |

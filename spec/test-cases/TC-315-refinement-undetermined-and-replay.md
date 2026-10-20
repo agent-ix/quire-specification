@@ -71,13 +71,13 @@ parity mismatch.
    with `p(self) = if self.v = 0 then 0 else <post>`, the step row
    `store -> Spec::Reg::set(R, A1, A2)` with receiver `R = r(self)` and
    arguments `A1 = a1(self)`, `A2 = a2(self)`, and the history update
-   `H`. So `P` (the field row after `store`) is read only at the post-state,
-   and `R`, `A1`, `A2` at the pre-state. Each is set per case to one of:
-   defined (`<post>` is `self.v`, `H` is `h`); incomplete (it costs more
+   `H`. So the field row `P` is read at every state and fails only at the
+   post-state after `store`, and `R`, `A1`, `A2` are read at the pre-state. Each is set per case to one of:
+   defined (`<post>` is `self.v`, `H` is `pre(self.h)`); incomplete (it costs more
    than its fresh meter, which every other expression fits in); undefined
    (`<post>` is `1 div (1 - self.v)`, which divides by zero at `v = 1`; `H`
-   is `1 div h`, which divides by zero at `h = 0`; `R`, `A1`, `A2` divide by
-   zero); out of type (`H` is `h + 3`, outside `Int[0, 2]`). Case (e) alone
+   is `1 div pre(self.h)`, which divides by zero at `h = 0`; `R`, `A1`, `A2` divide by
+   zero); out of type (`H` is `pre(self.h) + 3`, outside `Int[0, 2]`). Case (e) alone
    adds to `store()` the creation of an `Extra` object, of a subtype of
    `Impl::Reg` that no object row names, so `map` cannot map it. Run (a)
    `R` incomplete, `A1` undefined; (b) `A1` incomplete, `P` undefined; (c)
