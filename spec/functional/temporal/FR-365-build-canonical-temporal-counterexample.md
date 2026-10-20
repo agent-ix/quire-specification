@@ -42,7 +42,9 @@ function of the subject, the clause and the limits.
 A product state is (model state, automaton state). The analyzer SHALL
 enumerate product states, strongly connected components (SCCs) and their
 sub-components in discovery order under FR-181 canonical breadth-first order,
-never in hash-map iteration order.
+never in hash-map iteration order. A component is ranked by its earliest-discovered
+state, not by the order in which a search completes it, and the search starts
+at the first state in that order.
 
 A non-trivial SCC is a **passing component** when it holds a state of every
 acceptance set of the automaton and meets every fairness constraint:
@@ -136,6 +138,7 @@ undefined state.
 | FR-365-AC-5 | The canonical deadlock counterexample is the canonical breadth-first path to the first deadlocked state. | Test (TC-297) |
 | FR-365-AC-6 | An undefined state ranks as a first-phase violation: the canonical counterexample is the shortest prefix to an undefined, rejecting or deadlocked state, ties broken by canonical breadth-first discovery order, and a winning undefined state yields the canonical breadth-first path to it with the undefined-evaluation envelope as its kind; a state that is both undefined and rejecting yields the undefined-evaluation counterexample; a liveness item with a reachable undefined state is refuted by that state and its liveness phase never runs, even when a passing component's stem is shorter. | Test (TC-305) |
 | FR-365-AC-7 | A synthesized accepting SCC on states 0 to 4, with a strong constraint `s` enabled only at state 0 and taken by no edge, a visibility pair `p1` with the stale load edge `1 → 2` and no fresh load, a second pair `p2` with the stale load edge `3 → 3` and the fresh load edge `3 → 4`, and the edges `0 → 1`, `1 → 0`, `1 → 2`, `2 → 3`, `3 → 1`, `3 → 3`, `3 → 4` and `4 → 3`, state 3 accepting, is refined in one step that removes state 0 and the edge `1 → 2`; the first passing component is `{3, 4}`, and the loop is `3 → 4 → 3`, since it must take the fresh load edge `3 → 4` of `p2` and `3 → 3` is stale. | Test (TC-300) |
+| FR-365-AC-8 | A synthesized SCC searched from state 0 (discovery order 0, 1, 2), with states 1 and 2 accepting, and the edges `e0` `1 → 1`, `e1` `2 → 2`, `e2` `0 → 1`, `e3` `0 → 2`, `e4` `2 → 0`, `e5` `2 → 1`, `e6` `1 → 2` and `e7` `2 → 2` (a second, stale self-loop), and two visibility pairs with no fresh load, pair A with stale load edges `e5`, `e6`, `e7` and pair B with stale load edges `e4`, `e5`, `e6`, is refined in one step that removes the edges of both pairs; the first passing component is `{1}`. | Test (TC-300) |
 
 ## Dependencies
 
