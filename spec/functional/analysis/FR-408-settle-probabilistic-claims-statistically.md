@@ -181,14 +181,25 @@ The bounds are computed as follows, all in integer arithmetic:
   `ln x = k · ln 2 + 2 · atanh((y − 1) / (y + 1))`, `ln 2 = 2 · atanh(1/3)`,
   and `atanh(u) = Σ u^(2n+1) / (2n + 1)` summed until the geometric tail bound
   `|u|^(2n+3) / ((2n + 3)(1 − u²))` is below `2^-70`; the partial sum and the
-  tail bound give a lower and an upper rational bound.
+  tail bound give a lower and an upper rational bound. The series for `ln 2`
+  stops at the tail bound `2^-(71 + b)`, with `b` the bit length of `|k|`, so
+  that `k · ln 2` adds at most `2^-70` to the width whatever `k` is, and the
+  bound on `ln x` is within `2^-64`.
 - `√x`: the integer square root of `⌊x · 2^140⌋` and its successor, scaled by
   `2^-70`, give the lower and upper bounds.
 - the standard normal quantile `z_{1−δ}`: bisection over rationals on
   `Φ(z) = 1/2 + (1/√(2π)) Σ (−1)^n z^(2n+1) / (2^n n! (2n + 1))`, each `Φ`
   evaluation bounded by the alternating series' next term and `π` bounded by
-  Machin's formula with the same tail rule, until the bracket is narrower than
-  `2^-64`; the upper end is used.
+  Machin's formula, until the bracket is narrower than `2^-65`; the upper end
+  is used and is within `2^-64` of the quantile. A `Φ` bound of width `W` places
+  the bracket's end within `W / φ(z)` of the quantile, and `φ` falls as `z`
+  grows (`log2(1 / φ(z)) < 3z²/4 + 2`), so a fixed `2^-70` tail meets `2^-64`
+  only where `φ` is large (it misses by a factor near `4 · 10^6` at
+  `δ = 10^-10`). The `Φ`, `π` and `1/√(2π)` series therefore take the tail
+  bound `2^-(72 + ⌈3u²/4⌉)`, capped at `2^-328`, where `u` is the upper end of
+  the current bracket, so `W / φ(z)` stays at most `2^-65`. A `δ` whose quantile
+  lies above 16 (`1 − Φ(16) < 10^-57`) has no bound and is refused as beyond
+  precision.
 
 The decision is a function of the counts alone and is identical on every
 platform.
