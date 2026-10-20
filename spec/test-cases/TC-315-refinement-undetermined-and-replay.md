@@ -11,6 +11,10 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-375
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-377-AC-12
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-377-AC-13
+    type: verifies
 ---
 
 # TC-315: Refinement undetermined mappings and replay
@@ -59,6 +63,17 @@ parity mismatch.
    (e) read the relationship extent of the mapped state of the plain fixture.
 8. **Optional rows.** Map a `?` abstract field by a row that is `none` at one
    state and `Some(1)` at another, and an `Option<Int[0, 2]>` field by `none`.
+9. **Failure precedence across a step.** Use TC-316's ring-buffer refinement
+   with the row `put -> enq(self.ring, A1, A2)` and, for each case, choose
+   the receiver `R`, the arguments `A1` and `A2`, the history update `H` and
+   a post-state row `P` from: defined, incomplete (an expression exceeding
+   its fresh meter), undefined, out of type (`H` only) or of an unmapped type
+   (`P` only). Run (a) `R` incomplete, `A1` undefined; (b) `A1` incomplete,
+   `P` undefined; (c) `A1` and `A2` undefined; (d) `H` out of type, `P`
+   incomplete; (e) `P` of an unmapped type, nothing undefined; (f) `A1`
+   undefined and a broken evaluator invariant in `P`; (g) every read defined
+   and the abstract subject's postcondition exceeding its per-evaluation
+   meter; (h) as (g) with `A1` undefined.
 
 ## Expected Results
 
@@ -85,3 +100,9 @@ and object `a` with `q` of type `SubRing` and maps `next` to the `Queue`
 reference with key `q` with `q` of type `Ring`; (e) lists no relationship
 extent (FR-377-AC-9, FR-377-AC-11). Case 8 leaves the `?` field absent then
 set to `1` and keeps the explicit `none` (FR-375-AC-17, FR-377-AC-10).
+
+Case 9: (a) refutes, reporting `A1`; (b) refutes, reporting `P`; (c) refutes,
+reporting `A1`; (d) settles `inconclusive`, `mapping-undetermined`, reporting
+`H`; (e) settles `inconclusive`, `mapping-undetermined`, reporting `P`; (f)
+settles `failed`; (g) settles `incomplete`, `resource-incomplete`,
+`limit-reached`; (h) refutes, reporting `A1` (FR-377-AC-12, FR-377-AC-13).
