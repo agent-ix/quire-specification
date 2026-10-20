@@ -13,6 +13,10 @@ relationships:
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-428
     type: references
+  - target: ix://agent-ix/quire-specification/FR-050
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-170
+    type: references
   - target: ix://agent-ix/quire-specification/FR-433
     type: references
 ---
@@ -103,17 +107,50 @@ changes no authored claim's verdict.
 
 A deadlock counterexample carries, for its last state, a list of every
 waiting thread, in ascending JCS bytes of its path:
-`{"thread":<thread path>,"rest":<rest>,"cause":<cause>}`, with `cause` one of:
+`{"thread":<thread path>,"rest":<rest>,"cause":<cause>}`, with `cause` one of
+the following. The list of causes is closed. Every `channel` is the channel's
+**qualified name**: the qualified protocol-definition identity followed by the
+channel's declaration-local handle
+([FR-050](FR-050-bind-protocol-instances.md)), so two protocols that each
+declare a channel `Pay` give two different channels, queues and causes.
 
 | Cause | Meaning |
 | --- | --- |
 | `{"type":"precondition","clause":"<qualified-name>"}` | an attempt whose first false selected precondition clause, in clause order, is the one named |
 | `{"type":"no-post-state"}` | an attempt whose preconditions hold and no post-state satisfies its postconditions within the frame |
-| `{"type":"constraint"}` | an event, attempt or finish whose constraint no record satisfies |
-| `{"type":"empty-queue","channel":"<qualified-name>"}` | a receive with no deliverable entry |
+| `{"type":"constraint"}` | an event, attempt or finish whose constraint no record satisfies; a receive that has a deliverable entry from the send node it names and no such entry's payload satisfies the receive's constraint; a send whose constraint no payload satisfies |
+| `{"type":"empty-queue","channel":"<qualified-name>"}` | a receive with no deliverable entry, no entry from the send node it names on the channel, and no loss to account for the absence (the `displaced` rule below) |
+| `{"type":"head-blocked","channel":"<qualified-name>"}` | a receive whose queue holds an entry from the send node it names, none of which is deliverable because the head of each FIFO key holding one is an entry from another send node |
+| `{"type":"full-queue","channel":"<qualified-name>"}` | a send under overflow `block` whose channel queue is at capacity |
+| `{"type":"displaced","channel":"<qualified-name>"}` | a receive for which no entry from the send node it names is queued on the channel, because a loss removed it |
 | `{"type":"join-waiting","threads":[<thread path>, ...]}` | a join, naming the branch threads its policy still needs |
 | `{"type":"check-false","node":"<node>"}` | a false `check` |
 | `{"type":"gate"}` | a step disabled only by its memory model's gate |
+
+**One cause per thread.** A waiting thread has exactly one cause: `gate` when
+its memory model's gate alone disables its step, and otherwise the first that
+applies in this order for its rest point:
+
+- an `attempt`: `precondition`, `no-post-state`, `constraint`;
+- a `receive`: `constraint`, `head-blocked`, `displaced`, `empty-queue`;
+- a `send`: `constraint` when no payload satisfies its constraint, else
+  `full-queue` when `block` finds the queue at capacity.
+
+A `receive` is `constraint` only when an entry from its send node is
+deliverable (the head of its FIFO key, or any entry of an `unordered`
+channel) and none satisfies its constraint. It is `head-blocked` only on a
+`fifo` channel: an `unordered` channel has no head and is never
+`head-blocked`. It is `displaced` when no entry from its send node is queued
+on the channel and the last event on the reported prefix that removed or
+dropped an entry from that send node on that channel, in any FIFO-key queue,
+was a loss (a `lose` step, an overflow loss selector displacing the entry, or
+a send that was `lost`) and not a `receive`; otherwise it is `empty-queue`.
+
+`displaced` is a property of the reported replay prefix, not of the state: two
+counterexamples that end in one state can carry different causes. Replay
+([FR-433](FR-433-replay-protocol-counterexamples.md)) recomputes the blocked
+list from the prefix. The list is data for the reader and does not enter the
+state key.
 
 ## Acceptance Criteria
 
@@ -123,15 +160,23 @@ waiting thread, in ascending JCS bytes of its path:
 | FR-429-AC-2 | The repaired `Fill` protocol with `TwoPre: self.v <= 1` reaches ten states and nine transitions, both terminal states finished, and settles the item `proved`, basis `exhaustive`. | Test (TC-376) |
 | FR-429-AC-3 | A protocol with `terminal when { P }` where `P` holds at its only unfinished terminal state settles the item `proved`; the same protocol with `terminal any` adds no deadlock-freedom item, and its authored claims' verdicts are unchanged. | Test (TC-383) |
 | FR-429-AC-4 | An `on each` protocol whose live instance waits on a step only a new trigger could enable, with `activate` still enabled, reports that state as a deadlock; the same state with an instance-limited `activate` is a boundary state and no deadlock. | Test (TC-381, TC-383) |
-| FR-429-AC-5 | Each wait cause is reported for a thread blocked by exactly that condition, and the blocked list is ordered by thread path. | Test (TC-383) |
+| FR-429-AC-5 | Each wait cause is reported for a thread blocked by exactly that condition, each thread carries exactly one cause, and the blocked list is ordered by thread path. | Test (TC-383) |
 | FR-429-AC-6 | A second `terminal` member in one protocol clause refuses `ambiguous_declaration`/`ambiguous-name` naming both. | Test (TC-383) |
 | FR-429-AC-7 | A `terminal when { P }` whose `P` evaluates undefined at a reachable terminal state settles the deadlock-freedom item and every other item over the subject `refuted` with cause `undefined-evaluation`, a prefix ending at that state, and `where` naming `P`'s locus. | Test (TC-383) |
+| FR-429-AC-8 | On a `fifo` channel of capacity 2 with delivery `exactly-once-premise`, a sender that sends `P` then `Q` and a receive of `Q` reached while the queue is `[P, Q]` is reported with cause `head-blocked` naming the channel's qualified name. The same receive on an `unordered` channel is not blocked, and a receive of `P` with a constraint no payload of `P` satisfies is reported `constraint`, on the `fifo` channel and on the `unordered` one. | Test (TC-383) |
+| FR-429-AC-9 | On a channel of capacity 1 with overflow `block` and delivery `exactly-once-premise`, a sender at `send Q` while the queue holds `P` is reported `full-queue` naming the channel. The same send with a constraint no payload satisfies is reported `constraint` although the queue is full. | Test (TC-383) |
+| FR-429-AC-10 | Each source of loss gives `displaced` at a receive whose entry is gone: with capacity 1 and `overflow loss head`, `send P; send Q; receive` of `P` reports `displaced` with the queue `[Q]`; with `overflow loss new`, `send P; send Q; receive` of `Q` reports `displaced` with the queue `[P]`; with delivery `at-most-once`, `send P; lose; receive` of `P` reports `displaced`. | Test (TC-383) |
+| FR-429-AC-11 | `displaced` follows the reported prefix: with capacity 1, `overflow loss head`, `repeat maximum 2 { send P }; receive R1 of P; receive R2 of P`, the receive `R2` at an empty queue is reported `empty-queue`, because the last removal of an entry from that send node was a `receive`; a receive on a channel nothing has sent to is reported `empty-queue`. Two counterexamples ending in one state through a loss and through a `receive` carry `displaced` and `empty-queue` respectively. | Test (TC-383) |
+| FR-429-AC-12 | Two protocols of one package that each declare a channel `Pay` give blocked-thread causes whose `channel` members are the two different qualified names. | Test (TC-383) |
 
 ## Dependencies
 
 - [FR-425](FR-425-define-protocol-subjects-and-state-keys.md) and
   [FR-426](FR-426-apply-protocol-steps.md) own the protocol state and
   enabledness.
+- [FR-050](FR-050-bind-protocol-instances.md) owns the qualified channel
+  identity, and [FR-170](FR-170-evaluate-channel-queue-semantics.md) the
+  queue, capacity and overflow meaning the causes read.
 - [FR-433](FR-433-replay-protocol-counterexamples.md) owns the
   counterexample wire and its replay.
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns the

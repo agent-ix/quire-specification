@@ -32,7 +32,14 @@ blocked-thread list of every deadlock counterexample.
 | TD-05 | One branch at an attempt whose second selected precondition clause is false | blocked cause `precondition` naming that clause |
 | TD-06 | One branch at an attempt whose preconditions hold and whose postcondition no frame post-state satisfies | `no-post-state` |
 | TD-07 | One branch at an event whose constraint is `false` | `constraint` |
-| TD-08 | One branch at a receive whose channel is empty and whose sender has finished | `empty-queue` naming the channel |
+| TD-08 | One branch at a receive whose channel is empty and no entry from its send node was ever lost | `empty-queue` naming the channel's qualified name |
+| TD-08a | `fifo` channel, capacity 2, `exactly-once-premise`: `send P; send Q; receive RQ of Q` | `head-blocked` at `RQ` with the queue `[P, Q]`; the same on an `unordered` channel is not a deadlock |
+| TD-08b | `fifo` and `unordered` channels, `receive RP of P as (x) { false }` after `send P; send Q` | `constraint` at `RP` on both, since an entry from `P`'s send node is deliverable and none satisfies the constraint |
+| TD-08c | Capacity 1, `block`, `exactly-once-premise`: `send P; send Q`; and the same with `send Q … as (q) { false }` | `full-queue` at the second send; `constraint` for the variant, although the queue is full |
+| TD-08d | Capacity 1, `loss head`: `send P; send Q; receive RP of P`; capacity 1, `loss new`: `send P; send Q; receive RQ of Q`; `at-most-once`: `send P; lose; receive RP of P` | `displaced` at the receive in each, with the queue `[Q]`, `[P]` and empty |
+| TD-08e | Capacity 1, `loss head`: `repeat maximum 2 { send P }; receive R1 of P; receive R2 of P`; a receive on a channel nothing sends to | `empty-queue` at `R2` (the last removal was a `receive`); `empty-queue` |
+| TD-08f | A state with an empty queue and a receive of `P` waiting, reached by one prefix whose last removal of a `P` entry was a loss and by another whose last was a `receive` | `displaced` and `empty-queue`: the cause follows the reported prefix, and replay recomputes it |
+| TD-08g | Two protocols of one package each declaring `channel Pay`, each blocked at a receive | the two causes name the two different qualified channel names |
 | TD-09 | Root at a join `all [a, b]` with `a` completed and `b` blocked | root `join-waiting` `[b]`, and `b` with its own cause |
 | TD-10 | One branch at `check C using p { false };` | `check-false` naming `C` |
 | TD-11 | A `tso` `parallel` whose branch holds a buffered store at its `join`, with `max_store_buffer` reached elsewhere | the join waits only on the buffer, and the state is not reported as a deadlock, since `flush` is enabled |
