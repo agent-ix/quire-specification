@@ -91,3 +91,16 @@ semantic findings, including the one high.
 | FND-004 | fixed | FR-426-AC-14 now states only cases a test can observe. CH-12 is a concrete `block` deadlock, and FL-09 covers a fence that waits while `flush` is enabled. |
 | FND-005 | fixed | PK-14 covers the second sentence of FR-425-AC-9. |
 | FND-006 | fixed | CH-08t now reads outcome `accepted` with `displaced` the entry of `m1`. |
+
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-009 | medium | TC-387 now has two vectors with the id `RP-10`: the new `send_record` vector and the existing TC-380 CP-09 vector. A test tagged `RP-10`, and FR-433-AC-8's trace, cannot tell the two apart. Give the new vector an unused id, for example `RP-11`. | spec/test-cases/TC-387-protocol-counterexample-replay.md:38-39 |
+
+## Dispositions (round 2)
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-007 | fixed | FR-425-AC-11 and PK-15 now put the reader of `x` after the binding, in `x`'s own branch of `Inner`, so FR-466 admits the protocol and the reader stays inside the `repeat` body (b8e9d97). |
+| FND-008 | fixed | FR-429-AC-15 and TD-08j now say that the clause is an evaluation of the cause function at a `tso` state, and they keep the observable consequence: `flush` is enabled, the state is not terminal, and no deadlock report shows it. |

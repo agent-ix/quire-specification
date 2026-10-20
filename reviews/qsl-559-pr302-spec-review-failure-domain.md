@@ -53,3 +53,9 @@ Changes requested: two medium findings and one low.
 | FND-001 | fixed | FR-429 adds `finish-waiting`, `commit-closed` and `no-role-instance`, with FR-429-AC-13 and AC-14 and TD-08h and TD-08i. The closed list now covers both waits this finding named. ADR-027 PD-4 and QSL FR-211's `WaitCause` do not have these causes, so QSL needs a matching amendment. FND-004 records the precedence gap. |
 | FND-002 | fixed | The `all`-join addition is now limited to the joined branches' FR-466 `Out` (FR-425:144-152), and the reach extension uses the same set. FR-425-AC-11 and PK-15 test it inside a `repeat`, but their fixture is invalid (SR-13586 FND-007). ADR-027 PS-5 still says "or a thread below it" and needs the same narrowing. |
 | FND-003 | fixed | FR-426's **Waiting** paragraph now covers an event, send or finish whose constraint no record satisfies, as well as `finish-waiting`, a replicated role with no instance, and a commit-closed attempt. |
+
+## Dispositions (round 2)
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-004 | fixed | FR-429's order now puts `no-role-instance` first for any role-owned `attempt`, `event`, `send` or `receive` node, or compensation attempt, and adds the line `cattempt`: `commit-closed`, `precondition`, `no-post-state`, `constraint`. The `no-role-instance` row names send and receive nodes too. |

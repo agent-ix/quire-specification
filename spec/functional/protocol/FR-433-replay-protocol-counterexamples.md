@@ -74,8 +74,9 @@ memory models and instance budget, and re-execute each step:
 2. A step whose identity has no successor with the recorded `post_state`
    refuses `stale_dependency`/`revision-mismatch`. For a `send` step, replay
    recomputes the send record from the pre-state and the step, and a recorded
-   `send_record` that differs from it, or a `send` step without one, or any
-   other step with one, refuses the same way.
+   `send_record` that differs from it refuses the same way. A `send` step
+   without a `send_record`, or any other step with one, is a wire-shape defect
+   and refuses before replay, like any missing or extra member.
 3. A lasso is checked against the fairness set over the protocol step
    classes; an unfair loop refuses `invalid_runtime_input`/`invalid-value`.
 4. For `kind: formula`, the formula is evaluated over the replayed behaviour,
@@ -114,7 +115,7 @@ counterexamples for one item both replay.
 | FR-433-AC-5 | A counterexample with a missing `subject`, an extra member or a mistyped transition identity refuses before replay. | Test (TC-387) |
 | FR-433-AC-6 | Every refutation vector of TC-376 to TC-386 replays to `reproduced-with-evaluated-witness`. | Test (TC-387) |
 | FR-433-AC-7 | The `undefined-evaluation` counterexample of an undefined recovery predicate replays to `reproduced-with-evaluated-witness` and the item `refuted`, cause `undefined-evaluation`; the same counterexample with its last step changed so that the predicate is defined at `trace_position` settles `inconclusive`, cause `replay-parity`. | Test (TC-387) |
-| FR-433-AC-8 | Each `send` step of a counterexample carries a `send_record` that replay recomputes and compares: a step whose recorded `outcome` or `displaced` differs, a `send` step without a `send_record` and a non-`send` step with one each refuse `stale_dependency`/`revision-mismatch`. | Test (TC-387) |
+| FR-433-AC-8 | Each `send` step of a counterexample carries a `send_record` that replay recomputes and compares: a step whose recorded `outcome` or `displaced` differs refuses `stale_dependency`/`revision-mismatch`; a `send` step without a `send_record` and a non-`send` step with one refuse before replay as a missing or extra member. | Test (TC-387) |
 
 ## Dependencies
 

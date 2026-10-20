@@ -84,3 +84,16 @@ repositories.
 | FND-005 | fixed | The send record is out of the state key, and FR-426 gives its form: `{"type":"send-record",...}` with `outcome` as text and `displaced` as a `queue-entry` or `null`. FND-008 records that it has no carrier. |
 | FND-006 | fixed | FR-425's list of rest points now includes `fence`. |
 | FND-007 | fixed | FR-425 now says the environment is keyed in `observations` by (binder node, thread path), not in the thread's `control` entry. |
+
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-010 | medium | Two rules now give different outcomes for a missing or extra `send_record`. FR-433's wire section says "a missing, extra or mistyped member refuses before replay" (FR-433-AC-5). The new replay step 2 says that a `send` step without a `send_record`, or another step with one, refuses `stale_dependency`/`revision-mismatch` during replay, and FR-433-AC-8 and the new TC-387 vector assert that code. Whether a step is a `send` can be read from its transition identity without replaying, so a missing or extra record is a wire-shape defect. Keep `stale_dependency`/`revision-mismatch` for a recorded record that differs from the recomputed one, which parallels the `post_state` digest mismatch and is acceptable. Route a missing or extra member to the existing pre-replay refusal, and align AC-8 and the vector with that. | spec/functional/protocol/FR-433-replay-protocol-counterexamples.md:63; spec/functional/protocol/FR-433-replay-protocol-counterexamples.md:75-78 |
+
+## Dispositions (round 2)
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-008 | fixed | The send record is now the `send_record` member of a `send` step in FR-433's counterexample wire, and replay recomputes and compares it (FR-426:121-125, FR-433:56 and step 2, FR-433-AC-8, TC-387). FND-010 records the conflict between refusal codes for a missing or extra record. |
+| FND-009 | fixed | FR-170-AC-6 now says that `displaced` is "the oldest queue entry" or "the newest queue entry". |
