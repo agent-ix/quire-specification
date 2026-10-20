@@ -55,4 +55,4 @@ Then pass the synthesized SCC of FR-365-AC-8 (two visibility pairs A and B) to t
 
 The synthesized SCC is refined in one step removing state 0 and the edge `1 → 2`; the first passing component is `{3, 4}` with the loop `3 → 4 → 3` (FR-365-AC-7).
 
-The SCC of FR-365-AC-8 is refined in one step removing the edges of both pairs; components ranked by earliest-discovered state, the first passing component is `{1}`, not `{2}`.
+The SCC of FR-365-AC-8, searched from state 0, is refined in one step removing the edges of both pairs; components ranked by earliest-discovered state, the first passing component is `{1}`. Rationale: refining pair A alone first would pass `{2}`, so only the one-step rule gives `{1}`.
