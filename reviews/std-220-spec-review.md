@@ -96,3 +96,13 @@ but it names the wrong binder.
 | FND-001 | fixed | - |
 | FND-002 | fixed | - |
 | FND-003 | still-open | The new sentence says "the finish binder `k: M::Acct`". `k` is the protocol's `over` binder; the finish binder is `d` (`finish Done as (d: M::Acct)`). The one-value reasoning is right and CP-01's counts hold under it, but the sentence names the wrong binder. Write `d: M::Acct`. |
+
+Round 2, at head e9d67fd2b. The only spec change is TC-380 line 29, which now
+names the finish binder `d: M::Acct`, as the fixture does. The fixtures are
+byte-identical to round 1, so the parse probe still passes. Gates: `quire
+validate` exits 0; cargo tests pass (11 + 111); `quire matrix` is identical to
+main.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-003 | fixed | - |
