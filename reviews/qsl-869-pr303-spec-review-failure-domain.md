@@ -37,3 +37,11 @@ Ticket: QSL-869. PR: quire-specification#303, head ab6ff70. Failure-domain lens:
 ## Verdict
 
 One medium finding: the owner join reads a document member that FR-322's own definition of the selected document does not have (FND-001). This can be deferred to a follow-up with the FCD owner if the spec says the projection member is the interim input. Nothing else found: identity, refusal coverage and operand disambiguation hold.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | deferred | The owner-join bullet now names its interim input, the step-1 projection's `populations: [{node}]` member, and says FR-154 and FCD own the IR location. The FCD-owner question is written up in the PR body's 'Open follow-up for the planner'. Still open for that follow-up: step 1 (F322:802-812) still lists only `contractVersion`/`package`/`constructs`/`types` and says the projection holds no member the document does not, and the meaning id is not checked. The planner should file this as a Linear ticket, which has no id yet. It does not block this PR. |
+
+Round 1 at c58cd9f: FND-001 deferred to the FCD-owner follow-up. The interim join input is now stated.

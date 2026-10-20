@@ -43,3 +43,12 @@ Ticket: QSL-869. PR: quire-specification#303, head ab6ff70. Integrity lens over 
 ## Verdict
 
 No blocking integrity defects. Two low findings: a definitional sentence was added to AC-62 (FND-001), and FR-153 is missing its frontmatter edge to FR-322 (FND-002). The cross-document enumeration of the new form is complete and consistent.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 at c58cd9f: Node` schema. Retaining each original key exercises stale-key detection, and recomputing each key exercises semantic-shape refusal for a non-model reference target, negative bound, arbitrary set element type and noncanonical term order as `invalid_package`/`invalid-derived-shape`. \| Test (`tests/checked_package_v2.rs`, `tc_322_derived_form_key_mutations`, `tc_322_recomputed_derived_forms_refuse_semantic_mutations`) \| |
+| FND-002 | fixed | Round 1 at c58cd9f: relationships: ... - target: ix://agent-ix/quire-specification/AD-006 type: references - target: ix://agent-ix/quire-specification/FR-322 type: references |
+
+Round 1 at c58cd9f: both fixed. AC-62 ends at its semantic-shape refusals again, and the definition lives only in the 'Relation to' bullet. FR-153's frontmatter has a `references` edge to FR-322.

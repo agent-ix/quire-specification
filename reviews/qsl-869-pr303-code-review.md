@@ -34,3 +34,11 @@ Ticket: QSL-869. PR: quire-specification#303, head ab6ff70. Code review with the
 ## Verdict
 
 Mergeable from the code side. One low test-intent finding: AC-83's 'one node for both operations' is only shown by key determinism across two packages (FND-001).
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 at c58cd9f: if let Some(also) = case["also"].as_str() { // One package where both operations read the one population. ... assert_eq!(reading, 2, "{id}: both operations read the one node"); ... .filter(\|node\| node["semantic_form"] == "population") .count(); assert_eq!(population_nodes, 1, "{id}: one population is one node"); } |
+
+Round 1 at c58cd9f: fixed. `counters-all-instances-admitted` (`also: model.lookup`) repoints both operands in one package. It asserts that the full reader admits it, that two applications read the node, and that the package holds exactly one population node. The cross-package assertion is gone. Note, not a finding: the new field and operation declaring-node cases cannot tell the population rule apart from the general rule that a field or operation member must name the operand's own type (AC-34). The spec gives the same refusal on both grounds, so the test asserts the specified outcome.
