@@ -26,7 +26,7 @@ Model: object type `Acct` with `bal: Int[0, 1]`, universe `{x}`, initial
 postcondition `ChargePost: self.bal = 1`; operation `refund()`, precondition
 `self.bal = 1`, postcondition `self.bal = 0`; both with frame `modifies
 self.bal`. Record type `Failure` with field `failed: Boolean`. The effect record
-type has one value, and the finish binder `k: M::Acct` ranges over the one
+type has one value, and the finish binder `d: M::Acct` ranges over the one
 `Acct` object of the single-object universe.
 
 ```text

@@ -74,3 +74,25 @@ one-line wording fixes, or can be deferred.
 Examined and clean: the four rewritten fixtures, TC-384 procedure prose and
 SF-06, and the added step's parse instruction itself. Also clean: TC-310's
 fixture, which parses on main and at the head.
+
+## Dispositions
+
+Round 1, at head 971dae20b. I re-ran the `qsl_cst::parse` probe on every
+protocol fixture under `spec/test-cases/` (TC-310, 376, 380, 381, 384): all
+five are admissible with no diagnostic. `quire validate` on the touched files
+exits 0. The cargo tests pass (11 + 111). `quire matrix` is identical to main.
+
+I hand-counted CP-01 with the finish binder ranging over the one `Acct` object
+(universe `{x}`). The attempt `C` has one application (receiver `x`, no
+arguments), `ChargeEffect` has one value, `Failure` has two (`failed`
+false/true), and `finish` has one record. That gives t0 to t8 (nine states) and
+eight transitions, so CP-01 holds. If the binder were read as a record of
+Acct's fields, it would have two values: t5 and t8 would split, giving eleven
+states and ten transitions. The reworded sentence fixes the object reading,
+but it names the wrong binder.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | still-open | The new sentence says "the finish binder `k: M::Acct`". `k` is the protocol's `over` binder; the finish binder is `d` (`finish Done as (d: M::Acct)`). The one-value reasoning is right and CP-01's counts hold under it, but the sentence names the wrong binder. Write `d: M::Acct`. |
