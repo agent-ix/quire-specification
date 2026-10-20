@@ -336,8 +336,9 @@ probabilistic engine's is `exact_prob`.
   record adds the run's `method` (`exploration`, `reduced-exploration` or
   `induction`), `max_depth`, `seed`, `witness_samples`, the effective
   `limits` it ran under, the limits it `reached`, its state `constraint`,
-  `warnings` (FR-369 `fairness.strong-would-exclude`, and
-  `cross-check-absent{tool}` for FR-349's absent cross-check) and the FR-196
+  `warnings` (FR-369 `fairness.strong-would-exclude`,
+  `memory.load-buffering-shape{load, store}` for a weak-memory item, QSL
+  FR-226, and `cross-check-absent{tool}` for FR-349's absent cross-check) and the FR-196
   `tool` record (name, version, target, solver, bounds, options).
 - An `unsupported` or `invalid-request` disposition carries its FR-272
   `diagnostic`; the warning an unsupported disposition shows is that
