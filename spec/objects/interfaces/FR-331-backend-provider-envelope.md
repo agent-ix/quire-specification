@@ -153,7 +153,8 @@ byte limits itself, and FR-305's IR reader revalidates the `package_id` of
 exactly the bytes it was given.
 
 `request.dependencies` carries, in the same spelling, the v2 bytes of each
-package the lock's `dependency_selections` names, with its `package_id`,
+package in the proved package's recursively derived dependency closure,
+including transitive-only packages, with each package's `package_id`,
 ordered by `package_id` digest. `request.provision` is the byte provision
 FR-364 and FR-368 read: each document with its `sha256-jcs` digest, ordered
 by digest, each digest once. `request.deadline_ms` is the provider deadline

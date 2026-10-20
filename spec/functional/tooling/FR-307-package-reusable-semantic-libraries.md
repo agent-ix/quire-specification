@@ -20,8 +20,8 @@ relationships:
 ## Description
 
 When importing a reusable Quire library, the linker SHALL resolve its exported
-declarations, semantic definitions and model dependencies, and record the
-resolved closure in the package lock.
+declarations, semantic definitions and model dependencies, and record its
+direct library selections in the package lock.
 
 ## Inputs
 
@@ -119,10 +119,18 @@ two dependency paths reach library identity `L` through the selections their
 packages' locks record, and they unify only when those selections name the
 same `package_id`. Any other combination is
 `refused { code: invalid_package, cause: conflicting-definition }`, and the
-refusal lists both dependency paths. Distinct `package_id`s never unify. An import
+refusal lists both dependency paths, including paths through the dependency
+packages' own locks. Distinct `package_id`s never unify. An import
 cycle is `refused { code: invalid_package, cause: definition-cycle }`, whose
-dependency-edge payload lists the cycle path. A resolved closure is recorded in the importing package lock as one
-selection per library identity, in ascending identity order.
+dependency-edge payload lists the cycle path. The importing package lock records
+only libraries the unit imports directly, one selection per identity in ascending
+identity order. Its closure is derived from those entries and each admitted
+dependency package's own lock; a transitive-only identity needs no entry in the
+importer's lock. The producer emits exactly those direct imports in its
+`dependency_selections`; recompiling from the unit's source checks that
+canonical form. A transitive-only identity listed by the importer makes the
+recompiled lock differ and cannot be certified as canonical producer output,
+even if its `package_id` matches the derived closure. The reader does not infer which imports were direct from the lock.
 
 Because `package_id` is the digest of the package's identity preimage, a reader
 recomputes it before resolution. A package whose retained `package_id`
@@ -139,6 +147,7 @@ differs from the digest of its identity preimage is
 | FR-307-AC-4 | An import binds the `package_id` its supplied library compiles to, recorded as the lock selection of its identity; a conflicting diamond or import cycle is `invalid_package` with its paths, and a duplicate qualifier is `ambiguous_declaration`; an import cycle uses cause `definition-cycle`, and a name from an import without `as` is `missing_declaration`. | Test (TC-227) |
 | FR-307-AC-5 | A package whose retained `package_id` differs from the digest of its identity preimage is `invalid_package` with cause `invalid-value` at `/package_id`. | Test (TC-227) |
 | FR-307-AC-6 | `import "test/geometry" as g;` binds to the library supplied under the identity `test/geometry` and no other, and the lock selection of `test/geometry` is the `package_id` that library's source compiles to; an import carrying a `version` or `digest` token after its identity string is `invalid_syntax`/`unexpected-token` at that token; two libraries supplied under one identity, whether or not they differ, are `invalid_package`/`conflicting-definition` before any compile, naming both by their identity; an import of an identity no library is supplied under is `missing_import`/`missing-selection` at its identity string; and with `test/geometry` exporting a record `R` and a function `f` over builtin types, `g::f(x)` is admitted and a use `g::R` is `ill_typed`/`operator-ineligible` at the use. | Test (TC-227) |
+| FR-307-AC-7 | For a chain A imports B and B imports C, producing A emits exactly B in A's `dependency_selections`, while B emits exactly C in its own lock; A's derived closure includes B and C. Recompiling A from its source produces a different lock and does not certify an A lock that also lists C as canonical producer output, although a reader does not enforce direct-only form from the lock alone. | Test (TC-227, planned) |
 
 ## Dependencies
 

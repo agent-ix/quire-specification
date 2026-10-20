@@ -434,6 +434,14 @@ with the selected identity but a different `package_id` refuses
 diagnostic carries the selected `package_id` as `expected` and the supplied
 `package_id` as `actual`, as required for a typed content-mismatch; the library
 identity is the selected lock entry at that pointer.
+The reader then derives the selected packages' closures recursively as FR-322
+defines. If two paths from this ContractPackage through their locks reach one
+library identity at different `package_id`s, it refuses
+`invalid_package`/`conflicting-definition` with both paths as JSON-pointer
+loci. Each pointer starts at `/package/source/lock/dependency_selections/{i}`
+and each further `/lock/dependency_selections/{j}` traverses the admitted
+package selected by the preceding entry. This check precedes graph-reference
+resolution.
 An extra input keyed by an identity absent from the lock is ignored and cannot
 satisfy or redirect a selected reference. Only after these checks does the
 reader resolve each `dependency_reference`, and it resolves it only against
@@ -498,6 +506,7 @@ this reader and the I2 reader together, is outside this requirement.
 | FR-330-AC-10 | The resolved profile carries authoritative typed `required_source_selections`; exact role/authority/identity matches admit lowering, empty requirements impose no restriction, and unrelated lock rows or reordered/repeated requirements do not change compatibility. Per-request compatibility uses the existing first-charge meter and stated row-visit charges without reset; zero-work and an unpayable comparison charge yield `failed` before compatibility refusal. With sufficient work a missing or different required row yields one request-ordered `invalid_input` per item before node traversal, with no extra payload, no nodes and exact available source occurrences; both success and refusal retain the exact originating lock and package id. | Test |
 | FR-330-AC-11 | A reader `refused` result is a diagnostic at stage `package_read` carrying the reader's code and cause unchanged, every returned code having an FR-271 row and the category its code and cause map to; its `path` is the FR-274 `json_path` location and a node-level refusal carries the `locus` payload. A wrong outer contract version is `unknown_contract_version` and bytes that are not well-formed JSON are `malformed_wire`; a member outside the closed schema is `invalid_package`. A duplicate or unknown member is `invalid_package` with cause `duplicate-member` or `unknown-member`, never the code `duplicate_member` or `unknown_member`, and the reader never returns `unknown_required_capability`. | Test (TC-937) |
 | FR-330-AC-12 | A reader `incomplete` result is `stage_limit_exceeded` at stage `package_read`, category incomplete, with the cause the table gives for its `limit_kind` (`bytes`, `nodes`, `edges`, `occurrences`, `work`), `bound` its `limit`, `actual` its `consumed`, the location its `path` (none for `bytes`) and `setting` the value `CheckedPackageReadLimits.<limit_kind>`; an exact-limit input is admitted and the reader reports no `diagnostics` stop. | Test (TC-937) |
+| FR-330-AC-13 | The ContractPackage reader derives every direct input's closure recursively and refuses a diamond that reaches one library identity at two different `package_id`s as `invalid_package`/`conflicting-definition` with both selection-path JSON pointers rooted at `/package/source/lock/dependency_selections` as loci, before graph-reference checks. | Test (TC-937, planned) |
 
 ## Dependencies
 
