@@ -622,18 +622,26 @@ fn cases_for<'a>(vectors: &'a Value, criterion: &str) -> Vec<&'a Value> {
 }
 
 /// The domain package value with the checked package's units attached, the
-/// context FR-322 step 4's unit row resolves a unit `typeRef` against.
-fn with_checked_units(vectors: &Value) -> Value {
-    let mut package = vectors["domain_package"].clone();
+/// context FR-322 step 4's unit row resolves a unit `typeRef` against. The
+/// unit-typed members live in the `acme/timing` package, which no checked
+/// package fixture selects.
+fn with_checked_units(vectors: &Value, case: &Value) -> (Value, Value) {
+    if case["package"] != "timing" {
+        return (
+            vectors["domain_package"].clone(),
+            vectors["model_declaration_nodes"].clone(),
+        );
+    }
+    let mut package = vectors["timing_package"].clone();
     package["checked_units"] = vectors["checked_units"].clone();
-    package
+    (package, vectors["timing_declaration_nodes"].clone())
 }
 
 fn assert_member_cases(vectors: &Value, criterion: &str) {
-    let nodes = array(vectors, "model_declaration_nodes");
     for case in cases_for(vectors, criterion) {
+        let (package, nodes) = with_checked_units(vectors, case);
         assert_eq!(
-            derive(&with_checked_units(vectors), nodes, &case["member"]),
+            derive(&package, nodes.as_array().unwrap(), &case["member"]),
             case["expected"],
             "{}",
             text(case, "name")

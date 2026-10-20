@@ -82,3 +82,25 @@ today, while claiming no wire change. One high and four medium findings.
 
 - quire validate head/main: /private/tmp/claude-501/-Users-peter-dev/be6a486a-dbff-4734-b40c-5d7654187d9c/scratchpad/r296 (per-file runs; identical results)
 - matrix: /private/tmp/claude-501/-Users-peter-dev/be6a486a-dbff-4734-b40c-5d7654187d9c/scratchpad/r296/m-head.tsv vs m-main.tsv
+
+## New findings (disposition pass 1)
+
+Checked at head 267b2d0 (fix commits 4112320 and 267b2d0 over the main merge 983bf0e).
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | high | The three-namespace rule contradicts the checked-package reader. FR-142 now says types, dimensions and units are separate namespaces, and AC-13/U32 say a unit `ms` and a record `ms` coexist and check. FR-322 `declaration` says "two nodes carrying the same name refuse as `ambiguous_declaration` with cause `ambiguous-name`", and that rule does not look at node form. A unit `ms` and a record `ms` lower to a `scalar_type`/`unit` node and a `composite_type` node that both carry `declaration: {qualified_name: ["ms"]}`, so the reader refuses the package AC-13 admits. Either scope FR-322's name-uniqueness rule by namespace, with a vector, or drop the coexistence clause from FR-142, AC-13, U32 and shared-grammar.md:961-967. | spec/functional/type-model/FR-142-evaluate-quantities-and-units.md:161-168,223; spec/objects/interfaces/FR-322-checked-package-artifact.md:534-552; proposals/quire-v1/shared-grammar.md:961-967 |
+| FND-008 | high | Merging turns QSL's conformance gate red. The acme/orders domain package that every positive fixture selects now carries `ix://quire/unit/...` typeRefs, and QSL main (812c954) refuses that package `missing_declaration`/`missing-name` at `/lock/model_selections/0`. QSL's conformance tests read QSpec from the sibling `QSPEC_DIR` checkout with no pin. `cargo test -p qsl-package --lib` passes 202/202 with main QSpec and fails four conformance tests at head: `conformance_c14_source_map_lookup_over_qspec_positive_fixtures`, `conformance_i2_read_over_qspec_checked_package_v2_fixtures`, `conformance_dependency_selection_vectors` and `conformance_fr340_frame_mutations_match_qspec_vectors`. Either land QSL intake support for unit typeRefs first, or move the unit-typed members (`window`, `waits`, `ghost`, `wait`) into a domain package of their own that no positive fixture selects. | proposals/checked-package-v2/domain-package-acme-orders.json; proposals/checked-package-v2/fixtures/positive-all-families.json |
+| FND-009 | high | The cascade left one stale `package_id`. In `positive-operation-identities.json` the acme/orders `model_selections` digest changed inside `identity_preimage` (6e19217... to b17e9ff...), but the recorded `package_id` is still `aaa9911766d2e6d07b01dc91d65e1b2f0af43fb484290b800bd425eccf8813fa`. The JCS SHA-256 of the preimage is now `cbda6ab357fc5d213117864d95c6984271c7c73b383811ce0c37b286d970524c`. At main 983bf0e the same check matches, and every other `fixtures/*.json` recomputes. No QSpec test caught it. | proposals/checked-package-v2/fixtures/positive-operation-identities.json:2593 |
+| FND-010 | low | Inserting the unit row in the FR-322 step-4 table removed the three-space list indent from the next row, `an object type O of the same domain package`. That row now sits at column 0 and falls out of the table nested in list item 4. | spec/objects/interfaces/FR-322-checked-package-artifact.md:870 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 4112320: `quantity` value_kind in both V2 schemas, FR-322 family admission `quantity`->`quantity`, canonical magnitude spelling, reader oracle (tests/checked_package_v2.rs), QL-01..04 under FR-322-AC-79 (tagged) |
+| FND-002 | fixed | 4112320/267b2d0: FR-322 step-4 row `ix://quire/unit/<qualified name>`, FR-208 binder rule, MT-16..18/MA-16..18 under FR-322-AC-80 (tagged); 267b2d0 drops the dimension segment, matching the unit's own qualified name (QSL emits single-segment names such as `["List"]`) |
+| FND-003 | fixed | namespaces, collisions and a bare `d: ms` are now stated (FR-142 Namespaces, shared-grammar.md:961-967); the rule now contradicts the reader (FND-007) |
+| FND-004 | fixed | `Quantity` added to the complete-V1 reserved words; no QSpec or QSL source identifier named `Quantity` exists |
+| FND-005 | fixed | FR-142 "Where the form is written" states `convert<Quantity<u>>(e)` and every type-ref position |
+| FND-006 | fixed | AC-11/U30 now use `f(3 ms)` and `f(3 s)` with the refusal at the argument |

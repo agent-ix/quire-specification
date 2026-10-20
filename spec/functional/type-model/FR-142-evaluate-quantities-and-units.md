@@ -200,9 +200,10 @@ the element of `Option` and of the collection types, and the target of
 - The checker SHALL NOT admit `Quantity<D>` over a dimension `D` as a type
   form; a source that wants it declares a unit of `D` and writes `Quantity<u>`.
 - The checker SHALL lower a quantity literal to a checked-package `literal` term
-  of `value_kind` `quantity` typed by the unit's node, and SHALL read a unit
-  `typeRef` of a domain-package member as FR-322 "Model-owned members" step 4
-  says, so an operation parameter of a domain package has type `Quantity<u>`.
+  of `value_kind` `quantity` typed by the unit's node.
+- The checker SHALL read a unit `typeRef` of a domain-package member as FR-322
+  "Model-owned members" step 4 says, so an operation parameter of a domain
+  package has type `Quantity<u>`.
 
 ## Acceptance Criteria
 

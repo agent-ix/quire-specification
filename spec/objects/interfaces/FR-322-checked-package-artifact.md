@@ -547,9 +547,12 @@ boundary.
   packages applies. It enters the node identity preimage. On a node carrying a
   `nominal_identity_preimage` it equals that preimage's
   `qualified_declaration`, else the reader refuses as `invalid_package` with
-  cause `declaration-nominal-mismatch`; two nodes carrying the same name refuse
+  cause `declaration-nominal-mismatch`; two nodes carrying the same name in one namespace refuse
   as `ambiguous_declaration` with cause `ambiguous-name`, both before any
-  operation refusal; a model-owned member's `ambiguous-name` is the operation
+  operation refusal. The namespaces are three: dimensions
+  (`scalar_type`/`dimension`), units (`scalar_type`/`unit`) and types (every
+  other declared node), so a unit, a dimension and a record may carry one name
+  (FR-322-AC-81); a model-owned member's `ambiguous-name` is the operation
   refusal of step 3 of "Model-owned members". Library exports resolve only through this member; a
   consumer never recovers a name from source occurrences, display text or a
   node's position.
@@ -867,7 +870,7 @@ conformance" below).
    | a record value type `R` of the same domain package, admitted under FR-208 | `R`, a value with no object identity | the self-typed `model`/`record_value_type` declaration node owned by `R`; no `composite_type`/`reference` is introduced |
    | a variant type `V` of the same domain package, admitted under FR-208 | `V`, an unordered enumeration whose cases are the case names of `V` | the self-typed `model`/`variant_type` declaration node owned by `V`; no `composite_type`/`reference` and no unit-owned `scalar_type`/`enum` node is introduced |
    | `ix://quire/unit/<name>`, where `<name>` is the qualified declaration name of a unit of the checked package, its segments joined by `/`, and never a dimension segment: the unit `ms` declared as `unit ms : Time` is `ix://quire/unit/ms` | `Quantity<u>`, the type of a quantity in unit `u`; the declaring unit of compilation supplies the unit, not the domain package | the `scalar_type`/`unit` node of `u` (family `quantity`); no node is introduced |
-| an object type `O` of the same domain package | `Reference<O>` | `composite_type`/`reference` over `O`'s model declaration node |
+   | an object type `O` of the same domain package | `Reference<O>` | `composite_type`/`reference` over `O`'s model declaration node |
 
    The multiplicity `{lower, upper, ordered, unique}` then gives the type.
    `[1, 1]` gives the element type `E`. Any other finite `[l, u]` gives
@@ -1630,6 +1633,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-78 | The cause `unsupported-wire` is paired only with `unknown_wire` and `unsupported-feature` only with `unknown_required_feature`, in the FR-272 rows and the `Diagnostic` schema alike, and the FR-272 rows of `unknown_contract_version` and `unknown_required_capability` list no cause. | Test (TC-233) |
 | FR-322-AC-79 | A `literal` of `value_kind` `quantity` typed by a `scalar_type`/`unit` node is admitted with family `quantity`, both V2 schemas enumerate `quantity` as a literal `value_kind`, a quantity literal typed by another family and an integer literal typed by a unit node each refuse `ill_typed`/`operator-ineligible`, and a magnitude not in the canonical spelling refuses `invalid_package`/`invalid-value`. | Test (TC-233) |
 | FR-322-AC-80 | A field, operation parameter or operation result `typeRef` of the form `ix://quire/unit/<name>` has the type of the named unit of the checked package, under the multiplicity and presence tables; a name that matches no unit refuses `missing_declaration`/`missing-name`, and an argument of another unit or family refuses `ill_typed`/`operator-ineligible`. | Test (TC-280) |
+| FR-322-AC-81 | A unit, a dimension and a record that carry one `declaration` name are admitted, and two units, or two types, that carry one name refuse `ambiguous_declaration`/`ambiguous-name` at the later node in node-id order. | Test (TC-233) |
 
 ## Dependencies
 

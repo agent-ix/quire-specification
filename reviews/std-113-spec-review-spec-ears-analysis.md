@@ -35,3 +35,15 @@ checker. `quire validate` reports no grammar warning on FR-142 at head.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | Bullets 1, 2 and 4 put the obligation on a type, a literal, an expression or a parameter ("The type `Quantity<u>` SHALL denote", "A quantity literal ... SHALL have type", "An expression ... SHALL refuse", "A parameter ... SHALL admit"), not on the system that must act. Bullet 2 also joins three obligations. Recast them on the checker, as bullet 3 already does, for example "The checker SHALL type a quantity literal `n u` as `Quantity<u>`" and "When an expression whose type is not `Quantity<u>` stands where `Quantity<u>` is required, the checker SHALL refuse `ill_typed`/`type-mismatch` at the expression". | spec/functional/type-model/FR-142-evaluate-quantities-and-units.md:161-178 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | The last Behavior bullet joins two obligations: "SHALL lower a quantity literal ... and SHALL read a unit `typeRef` of a domain-package member ...". Split it into two statements. | spec/functional/type-model/FR-142-evaluate-quantities-and-units.md:202-205 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 4112320 recasts each bullet on "The checker SHALL ..." with When-clauses for the accept and refuse cases |

@@ -39,3 +39,11 @@ and it now contradicts FR-142.
 | FND-001 | medium | TC-350 PD-01 and PD-03 still type a parameter `Quantity<Time>`, a type over the dimension `Time`. FR-142's new bullet says `Quantity<D>` over a dimension "is not a type form", and AC-11 refuses it `missing_declaration`/`missing-name`. The repo now holds two contradictory vectors. Update PD-01/PD-03 to declare a unit of `Time` and write `Quantity<ms>`. | spec/test-cases/TC-350-probabilistic-declarations.md:26,28; spec/functional/type-model/FR-142-evaluate-quantities-and-units.md:179-181 |
 | FND-002 | low | TC-187's Test Procedure declares time dimension `T` with root `s` only, yet U30 and U31 use `ms`. AC-11 declares `ms` (target `s`, scale `1/1000`) but the TC does not, so a test author has to copy it in from the FR. Add `ms` to the procedure's unit list. | spec/test-cases/TC-187-quantity-and-unit-conversion.md:19-33,69-70 |
 | FND-003 | low | Normative FR text carries build-log and provenance phrasing. "no checked-package wire form, schema or vector changes" describes this PR, not the system. "the prose `Quantity<Time>` of ADR-024 §7.2" cites a planner's prose through an unqualified ADR id, but ADR-024 is QSL's: QSpec has no ADR-024, and other QSpec files say "QSL ADR-024". Describe the behaviour only, for example "its key is the unit's declaration key", and qualify or drop the citation. | spec/functional/type-model/FR-142-evaluate-quantities-and-units.md:164-166,179-181 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 4112320: TC-350 PD-01/PD-03 now type the parameter `Quantity<ms>` over a declared unit `ms` of `Time` |
+| FND-002 | fixed | 4112320: TC-187's procedure declares millisecond `ms` targeting `s` with scale `1/1000` |
+| FND-003 | fixed | 4112320: the "no ... changes" clause and the ADR-024 citation are gone from FR-142 |

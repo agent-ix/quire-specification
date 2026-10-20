@@ -889,71 +889,6 @@
           },
           "presence": "required",
           "typeRef": "ix://acme/orders/Folded"
-        },
-        {
-          "defaultKind": "none",
-          "identity": "ix://acme/orders/Order/window",
-          "multiplicity": {
-            "lower": 1,
-            "ordered": false,
-            "unique": true,
-            "upper": 1
-          },
-          "name": "window",
-          "nullable": false,
-          "origin": {
-            "source": {
-              "path": "orders/Order.md",
-              "sourceIdentity": "ix://acme/orders/spec",
-              "startColumn": 1,
-              "startLine": 1
-            }
-          },
-          "presence": "required",
-          "typeRef": "ix://quire/unit/ms"
-        },
-        {
-          "defaultKind": "none",
-          "identity": "ix://acme/orders/Order/waits",
-          "multiplicity": {
-            "lower": 0,
-            "ordered": false,
-            "unique": true
-          },
-          "name": "waits",
-          "nullable": false,
-          "origin": {
-            "source": {
-              "path": "orders/Order.md",
-              "sourceIdentity": "ix://acme/orders/spec",
-              "startColumn": 1,
-              "startLine": 1
-            }
-          },
-          "presence": "required",
-          "typeRef": "ix://quire/unit/ms"
-        },
-        {
-          "defaultKind": "none",
-          "identity": "ix://acme/orders/Order/ghost",
-          "multiplicity": {
-            "lower": 1,
-            "ordered": false,
-            "unique": true,
-            "upper": 1
-          },
-          "name": "ghost",
-          "nullable": false,
-          "origin": {
-            "source": {
-              "path": "orders/Order.md",
-              "sourceIdentity": "ix://acme/orders/spec",
-              "startColumn": 1,
-              "startLine": 1
-            }
-          },
-          "presence": "required",
-          "typeRef": "ix://quire/unit/ghost"
         }
       ],
       "identity": "ix://acme/orders/Order",
@@ -1052,54 +987,6 @@
           "params": [],
           "post": [],
           "pre": []
-        },
-        {
-          "identity": "ix://acme/orders/Order/wait",
-          "name": "wait",
-          "origin": {
-            "source": {
-              "path": "orders/Order.md",
-              "sourceIdentity": "ix://acme/orders/spec",
-              "startColumn": 1,
-              "startLine": 1
-            }
-          },
-          "params": [
-            {
-              "defaultKind": "none",
-              "identity": "ix://acme/orders/Order/wait/d",
-              "multiplicity": {
-                "lower": 1,
-                "ordered": false,
-                "unique": true,
-                "upper": 1
-              },
-              "name": "d",
-              "nullable": false,
-              "origin": {
-                "source": {
-                  "path": "orders/Order.md",
-                  "sourceIdentity": "ix://acme/orders/spec",
-                  "startColumn": 1,
-                  "startLine": 1
-                }
-              },
-              "presence": "required",
-              "typeRef": "ix://quire/unit/ms"
-            }
-          ],
-          "post": [],
-          "pre": [],
-          "returns": {
-            "multiplicity": {
-              "lower": 1,
-              "ordered": false,
-              "unique": true,
-              "upper": 1
-            },
-            "nullable": false,
-            "typeRef": "ix://quire/native/Integer"
-          }
         }
       ],
       "origin": {
