@@ -182,7 +182,7 @@ For each reader `refused` result of the cases above, map it to its FR-272
 diagnostic and require stage `package_read`, the reader's code and cause
 unchanged, the code's FR-271 row and the category its code and cause map to.
 Cover `unknown_contract_version` (a wrong outer contract version),
-`malformed_wire` (a wire outside the closed schema), `invalid_package` (with
+`malformed_wire` (bytes that are not well-formed JSON), `invalid_package` (with
 `missing-member`, `duplicate-member`, `unknown-member`, `wrong-value-kind` and
 `invalid-value`), `noncanonical_wire`, `stale_dependency`/`content-mismatch`
 and `missing_import`/`missing-selection`. Require that no case yields the code

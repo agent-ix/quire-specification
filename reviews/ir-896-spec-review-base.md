@@ -84,6 +84,14 @@ Against head 307b176. I checked the four codes the fix lists against CG main 000
 | FND-012 | medium | "`CheckedPackageReadLimits` also has `depth` and `diagnostics` members" is false. CG's `CheckedPackageReadLimits` (`shared.rs`:12-29) has `bytes`, `nodes`, `edges`, `occurrences`, `diagnostics` and `work`, and its doc says "There is no depth limit". FR-460 Behavior 1 and AC-4 forbid a depth limit kind or setting, and FR-322 and interface_004 say the reader has no depth limit. Drop `depth`. | spec/objects/interfaces/FR-330-contract-package.md:480-482 |
 | FND-013 | low | The eight new FR-272 rows have two cells in the three-column table (Code or code family \| Closed variants \| Required payload). The "no cause variant" text and the retained payload (`locus`, `document_pointer`, `contract_version`) all sit in the Closed variants cell, and Required payload is empty. Put "none" in Closed variants and the payload in Required payload. The TC-233 parser reads column 2 up to the first `;`, so it still passes either way. | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:93-100 |
 
+## New findings (disposition pass 3)
+
+Against head 8a08c29. I compared `quire validate --scope .` on every touched spec file (native-diagnostics, FR-271, FR-272, FR-330, TC-233, TC-937, FR-461) between this head and origin/main 9542172. With only the duplicate-archetype/inverse-edge/inline-schema warnings filtered out, the full error lists are byte-identical: native-diagnostics is missing `type`; FR-271 is missing `id` and has three `extraction-*` Identifier cells at lines 65-67; FR-272 is missing `id`; the other four files pass. No new validation error. `cargo test --test checked_package_v2 --test backend_provider_v1`: 9 and 107 pass. `quire matrix`: FR-271-AC-7 (:8582) and FR-272-AC-22 (:8594) are tagged. The eight FR-272 rows now have three cells.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-014 | medium | FR-330-AC-11 (and TC-937's matching "`malformed_wire` (a wire outside the closed schema)") says a wire outside the closed schema is `malformed_wire`. For this reader, though, closed-schema violations are `invalid_package`: FR-330 says "A missing, duplicate, unknown, wrong-kind, or out-of-domain member uses FR-322's `invalid_package` code", TC-937 line 101 expects an unknown root member to be `invalid_package`/`unknown-member` at `""`, and AC-11's next sentence agrees. In CG, this reader returns `malformed_wire` only for bytes that are not well-formed JSON (`common.rs` `finish`, `read_typed_prefix`) and for a malformed `protocol_reference` body (`v2/mod.rs` `validate_body`). Say "bytes that are not well-formed JSON are `malformed_wire`", in both AC-11 and TC-937. | spec/objects/interfaces/FR-330-contract-package.md:499 |
+
 ## Dispositions
 
 Round 1, against head 6c9a7ea.
@@ -105,3 +113,11 @@ Round 2, against head 307b176.
 | FND-008 | fixed | - |
 | FND-009 | fixed | - |
 | FND-010 | fixed | - |
+
+Round 3, against head 8a08c29.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-011 | fixed | - |
+| FND-012 | fixed | - |
+| FND-013 | fixed | - |
