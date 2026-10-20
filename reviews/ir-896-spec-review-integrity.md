@@ -63,3 +63,9 @@ Round 1, against head 6c9a7ea.
 | FND-001 | fixed | - |
 | FND-002 | fixed | - |
 | FND-003 | fixed | - |
+
+Round 2, against head 307b176.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-004 | fixed | - |

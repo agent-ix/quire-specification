@@ -180,13 +180,14 @@ reader accepts a value refused by the owner.
 
 For each reader `refused` result of the cases above, map it to its FR-272
 diagnostic and require stage `package_read`, the reader's code and cause
-unchanged, the code's FR-271 row and category refusal. Cover each code the
-reader returns: `invalid_package` (with `missing-member`, `duplicate-member`,
-`unknown-member`, `wrong-value-kind` and `invalid-value`), `noncanonical_wire`,
-`stale_dependency`/`content-mismatch` and `missing_import`/`missing-selection`.
-Require that no case yields the code `duplicate_member`, `unknown_member` or
-`unknown_required_capability`, and that the `path` is the `json_path`
-location.
+unchanged, the code's FR-271 row and the category its code and cause map to.
+Cover `unknown_contract_version` (a wrong outer contract version),
+`malformed_wire` (a wire outside the closed schema), `invalid_package` (with
+`missing-member`, `duplicate-member`, `unknown-member`, `wrong-value-kind` and
+`invalid-value`), `noncanonical_wire`, `stale_dependency`/`content-mismatch`
+and `missing_import`/`missing-selection`. Require that no case yields the code
+`duplicate_member`, `unknown_member` or `unknown_required_capability`, and that
+the `path` is the `json_path` location.
 
 For each of the five limits the reader charges (`bytes`, `nodes`, `edges`,
 `occurrences`, `work`), read an input one over the limit and one at it. The

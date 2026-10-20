@@ -449,20 +449,13 @@ vocabulary, which this reader reuses deliberately because it reuses FR-322's
 generic wire checks and codes (FR-273-AC-4); the ContractPackage interface
 defines no stage vocabulary of its own.
 
-The reader's `refused` result carries the reader's code and cause unchanged. The
-codes this reader returns are `invalid_package` (every missing, duplicate,
-unknown, wrong-kind or out-of-domain member, and every shape, source-map,
-accounting and graph-reference failure, with the causes above),
-`noncanonical_wire`, `stale_dependency` and `missing_import`; it mints no other
-code. It returns `duplicate_member` and `unknown_member` as the causes
-`duplicate-member` and `unknown-member` of `invalid_package`, and it checks no
-required capability, so FR-322's other reader codes (`unknown_contract_version`,
-`malformed_wire`, `duplicate_member`, `unknown_member`,
-`digest_domain_mismatch`, `unknown_required_capability`,
-`invalid_semantic_graph`, `unsupported_node_tag`) stay catalogued in FR-271 for
-the readers that return them. Every code this reader returns has an FR-271 row
-and refuses; the category is the one the code and cause map to (FR-285: a
-refused outcome takes the category of its cause). The refusal's `path` is the
+The reader's `refused` result carries the reader's code and cause unchanged.
+Every code it returns has an FR-271 row, and the category is the one the code
+and cause map to (FR-285: a refused outcome takes the category of its cause).
+The reader returns a missing, duplicate, unknown, wrong-kind or out-of-domain
+member as `invalid_package` with the causes above, never as the codes
+`duplicate_member` or `unknown_member`, and it checks no required capability,
+so it never returns `unknown_required_capability`. The refusal's `path` is the
 FR-274 `json_path` location, and the `locus` payload (a `CheckedNodeId`)
 accompanies a refusal the reader reports at a node.
 
@@ -478,8 +471,7 @@ incomplete. Its cause follows the incomplete `limit_kind` one-to-one:
 | `work` | `work-budget-exceeded` | `CheckedPackageReadLimits.work` |
 
 The `setting` value is the member name of the reader's limits argument, not an
-FR-461 dotted setting; `CheckedPackageReadLimits` also has `depth` and
-`diagnostics` members, which this reader never reports as a stop.
+FR-461 dotted setting; `CheckedPackageReadLimits` also has a `diagnostics` member, which this reader never reports as a stop; no member bounds depth (FR-460).
 
 The cause's `kind` is the cause tag, `bound` is the incomplete `limit`,
 `actual` is its `consumed`, and the location is its `path`; the `bytes` record
@@ -504,7 +496,7 @@ this reader and the I2 reader together, is outside this requirement.
 | FR-330-AC-8 | The identity recomputes from the specified RFC 8785 projection under `quire.contract-ir.semantic/v1`; changing package provenance, lowering profile, graph, or an accounting result changes it, while changing only valid source locations, caller limits that leave serialized members unchanged, rendering, or JSON layout does not. Source-map corruption still refuses admission. | Test (TC-936) |
 | FR-330-AC-9 | The sole reader admits a valid canonical value only with every lock-selected admitted dependency package supplied and matching its selection; it ignores extra unselected inputs, refuses a missing or wrong-identity dependency as `missing_import`/`missing-selection` and a same-identity admitted package with a different `package_id` as `stale_dependency`/`content-mismatch` at the selected lock pointer, all before dependent-reference checks. It refuses a mismatched own identity as `invalid_package`/`invalid-value` at `/identity/digest`; malformed nested payloads use `invalid_package` with FR-322's `missing-member`, `duplicate-member`, `unknown-member`, `wrong-value-kind`, or `invalid-value` cause as applicable. Wrong versions, invalid references, incomplete source maps, and accounting mismatches also refuse with a typed FR-330 reader result and FR-272 diagnostic mapping before any consumer sees a value. | Test (TC-937) |
 | FR-330-AC-10 | The resolved profile carries authoritative typed `required_source_selections`; exact role/authority/identity matches admit lowering, empty requirements impose no restriction, and unrelated lock rows or reordered/repeated requirements do not change compatibility. Per-request compatibility uses the existing first-charge meter and stated row-visit charges without reset; zero-work and an unpayable comparison charge yield `failed` before compatibility refusal. With sufficient work a missing or different required row yields one request-ordered `invalid_input` per item before node traversal, with no extra payload, no nodes and exact available source occurrences; both success and refusal retain the exact originating lock and package id. | Test |
-| FR-330-AC-11 | A reader `refused` result is a diagnostic at stage `package_read` carrying the reader's code and cause unchanged, the code being one of `invalid_package`, `noncanonical_wire`, `stale_dependency` and `missing_import`, each with its FR-271 row and category refusal; its `path` is the FR-274 `json_path` location and a node-level refusal carries the `locus` payload. A duplicate or unknown member is `invalid_package` with cause `duplicate-member` or `unknown-member`, never the code `duplicate_member` or `unknown_member`. | Test (TC-937) |
+| FR-330-AC-11 | A reader `refused` result is a diagnostic at stage `package_read` carrying the reader's code and cause unchanged, every returned code having an FR-271 row and the category its code and cause map to; its `path` is the FR-274 `json_path` location and a node-level refusal carries the `locus` payload. A wrong outer contract version is `unknown_contract_version` and a wire outside the closed schema `malformed_wire`. A duplicate or unknown member is `invalid_package` with cause `duplicate-member` or `unknown-member`, never the code `duplicate_member` or `unknown_member`, and the reader never returns `unknown_required_capability`. | Test (TC-937) |
 | FR-330-AC-12 | A reader `incomplete` result is `stage_limit_exceeded` at stage `package_read`, category incomplete, with the cause the table gives for its `limit_kind` (`bytes`, `nodes`, `edges`, `occurrences`, `work`), `bound` its `limit`, `actual` its `consumed`, the location its `path` (none for `bytes`) and `setting` the value `CheckedPackageReadLimits.<limit_kind>`; an exact-limit input is admitted and the reader reports no `diagnostics` stop. | Test (TC-937) |
 
 ## Dependencies
