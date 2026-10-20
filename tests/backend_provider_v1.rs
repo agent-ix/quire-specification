@@ -620,3 +620,87 @@ fn tc_431_bounded_descriptors_carry_domains() {
         );
     }
 }
+
+/// FR-331-AC-30: `memory_models` is a nonempty, duplicate-free subset of
+/// `sc`, `tso` and `ra`, carried only by a `temporal-satisfaction` descriptor.
+#[trace("TC-431", "FR-331-AC-30")]
+#[test]
+fn tc_431_memory_models_is_a_nonempty_unique_subset_on_temporal_descriptors() {
+    let descriptor = definition("BackendDescriptor");
+    let base = serde_json::json!({
+        "backend": "qsl-model-check",
+        "advertises": [{"kind": "temporal-satisfaction", "mode": "unbounded"}],
+        "fairness_kinds": ["weak"]
+    });
+    let with = |models: Value| {
+        let mut entry = base.clone();
+        entry["memory_models"] = models;
+        entry
+    };
+    assert!(descriptor.is_valid(&base), "memory_models may be omitted");
+    assert!(descriptor.is_valid(&with(serde_json::json!(["sc", "tso", "ra"]))));
+    assert!(descriptor.is_valid(&with(serde_json::json!(["ra"]))));
+    assert!(!descriptor.is_valid(&with(serde_json::json!([]))), "empty");
+    assert!(
+        !descriptor.is_valid(&with(serde_json::json!(["sc", "sc"]))),
+        "repeated"
+    );
+    assert!(
+        !descriptor.is_valid(&with(serde_json::json!(["arm"]))),
+        "unknown"
+    );
+    let mut other = serde_json::json!({
+        "backend": "smt",
+        "advertises": [{"kind": "operation-contract", "mode": "unbounded"}]
+    });
+    assert!(
+        descriptor.is_valid(&other),
+        "an operation-contract descriptor is valid without memory_models"
+    );
+    other["memory_models"] = serde_json::json!(["sc"]);
+    assert!(
+        !descriptor.is_valid(&other),
+        "not a temporal-satisfaction descriptor"
+    );
+    let mut mixed = other.clone();
+    mixed["advertises"] = serde_json::json!([
+        {"kind": "operation-contract", "mode": "unbounded"},
+        {"kind": "temporal-satisfaction", "mode": "unbounded"}
+    ]);
+    mixed["fairness_kinds"] = serde_json::json!(["weak"]);
+    assert!(
+        descriptor.is_valid(&mixed),
+        "a descriptor that also advertises temporal-satisfaction may carry it"
+    );
+}
+
+/// FR-331-AC-31: the `memory.load-buffering-shape` warning carries a `load`
+/// and a `store` transition identity and nothing else.
+#[trace("TC-431", "FR-331-AC-31")]
+#[test]
+fn tc_431_load_buffering_warning_carries_two_transition_identities() {
+    let warning = definition("Warning");
+    let identity = |operation: &str| {
+        serde_json::json!({
+            "type": "transition",
+            "operation": operation,
+            "receiver": null,
+            "arguments": []
+        })
+    };
+    let good = serde_json::json!({
+        "code": "memory.load-buffering-shape",
+        "load": identity("Reader::read"),
+        "store": identity("Writer::write")
+    });
+    assert!(warning.is_valid(&good), "a well-formed warning is admitted");
+    let mut missing = good.clone();
+    missing.as_object_mut().unwrap().remove("store");
+    assert!(!warning.is_valid(&missing), "store is required");
+    let mut extra = good.clone();
+    extra["site"] = serde_json::json!("x");
+    assert!(!warning.is_valid(&extra), "no extra member");
+    let mut bad = good.clone();
+    bad["load"] = serde_json::json!("Reader::read");
+    assert!(!warning.is_valid(&bad), "load is a transition identity");
+}
