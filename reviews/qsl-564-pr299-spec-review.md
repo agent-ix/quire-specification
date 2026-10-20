@@ -81,3 +81,13 @@ Gates at 9e31dc2:
   TC-323 have no diagnostics.
 - `cargo test`: green (111, 22, 11, 7, 4 and 3 passed).
 - The committed copy of this file passes `quire validate`.
+
+Round 2, reviewed at `f8ac00022fe3ab32002e79f5b8a0d3eaf70d20bb`.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-003 | fixed | f8ac00022: the four TC-323 write/read pairs now say "affects". Every count in the file now reads "N states (model states stored by the run's search)". No "meets" for a write/read pair remains in FR-383 or TC-323. TC-323:174's heading "the directional meet" is a label for the rule, not a relation claim. One caveat, not reopened: these counts (4, 5, 6) match a complete model-level search. A safety run that stops at the first violation stores fewer states; QSL's `check_model` stores 2 for the deleting-the-receiver vector. QSL #1096 words the same count as "in the model-level reduced search", which is the more exact reading. |
+
+Gates at f8ac00022: `quire validate --scope . "spec/**/*.md"` reports 134
+failing documents, the same diagnostics as main, and none on FR-383 or
+TC-323.
