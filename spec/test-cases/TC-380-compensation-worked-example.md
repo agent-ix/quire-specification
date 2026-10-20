@@ -25,8 +25,9 @@ Model: object type `Acct` with `bal: Int[0, 1]`, universe `{x}`, initial
 `x.bal = 0`. Operation `charge()`, precondition `ChargePre: self.bal = 0`,
 postcondition `ChargePost: self.bal = 1`; operation `refund()`, precondition
 `self.bal = 1`, postcondition `self.bal = 0`; both with frame `modifies
-self.bal`. Record type `Failure` with field `failed: Boolean`. The effect and
-finish record types have one value each.
+self.bal`. Record type `Failure` with field `failed: Boolean`. The effect record
+type has one value, and the finish binder `k: M::Acct` ranges over the one
+`Acct` object of the single-object universe.
 
 ```text
 protocol Pay using p over (k: M::Acct) on origin {
@@ -52,7 +53,7 @@ protocol Pay using p over (k: M::Acct) on origin {
 Explore exhaustively under `sc` through the real local Rust boundary and
 record every state, registration status and enabled step.
 
-Parse the protocol text above at S1 under the `quire.value.complete/v1` profile and require it admissible with no diagnostic (every protocol fixture of the test cases parses).
+Parse the protocol text above at S1 under the `quire.value.complete/v1` profile and require it admissible with no diagnostic.
 
 ## Vectors
 

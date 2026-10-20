@@ -42,13 +42,13 @@ holds(k.done)` under infinite-trace through the real local Rust boundary, with
 and without `scheduling adversarial;`, and record the resolved fairness set,
 the obligation identity, the verdict and the counterexample.
 
-Parse the protocol text above at S1 under the `quire.value.complete/v1` profile and require it admissible with no diagnostic (every protocol fixture of the test cases parses).
+Parse the protocol text above at S1 under the `quire.value.complete/v1` profile and require it admissible with no diagnostic.
 
 ## Vectors
 
 | Vector | Variant | Expected result |
 | --- | --- | --- |
-| SF-01 | as built | Fairness set: three members, weak `whole`, origin `scheduler`, targets `noisy`, `quiet` and the root; the claim settles `proved`, since the duplicate/lose loop starves `quiet` while `Set` stays enabled and is unfair |
+| SF-01 | as built | Fairness set: three members, weak `whole`, origin `scheduler`, targets `noisy`, `quiet` and the root; the claim settles `proved`, since the duplicate/lose loop starves `quiet` while `Raise` stays enabled and is unfair |
 | SF-02 | with `scheduling adversarial;` | Fairness set empty; the claim settles `refuted` with a lasso whose loop is `duplicate`, `lose` on `h` and whose positions never set `done`; the counterexample replays |
 | SF-03 | SF-02's counterexample replayed against the SF-01 subject | refuses `invalid_runtime_input`/`invalid-value`: the loop is unfair under the scheduler constraint on `quiet` |
 | SF-04 | identities | SF-01 and SF-02 carry different obligation identities; the safety claim `always holds(true)` settles `proved` under both |

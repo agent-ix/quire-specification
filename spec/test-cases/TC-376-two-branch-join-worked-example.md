@@ -43,7 +43,7 @@ boundary, recording every state, enabled step and transition identity. Check
 the deadlock-freedom item, the claim `eventually holds(k.v = 3)` under
 infinite-trace, and the same with `TwoPre: self.v <= 1`.
 
-Parse the protocol text above at S1 under the `quire.value.complete/v1` profile and require it admissible with no diagnostic (every protocol fixture of the test cases parses).
+Parse the protocol text above at S1 under the `quire.value.complete/v1` profile and require it admissible with no diagnostic.
 
 ## Vectors
 

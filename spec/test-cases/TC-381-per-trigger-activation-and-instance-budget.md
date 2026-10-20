@@ -38,7 +38,7 @@ The first instance takes the gate and finishes; every later instance waits at
 item through the real local Rust boundary under each budget below, recording the
 verdict, cause, counterexample and terminal accounting record.
 
-Parse the protocol text above at S1 under the `quire.value.complete/v1` profile and require it admissible with no diagnostic (every protocol fixture of the test cases parses).
+Parse the protocol text above at S1 under the `quire.value.complete/v1` profile and require it admissible with no diagnostic.
 
 ## Vectors
 
