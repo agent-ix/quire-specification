@@ -5,6 +5,8 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-322-AC-80
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-82
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-340
@@ -61,9 +63,12 @@ the member type from the resolved record.
   `n`, operation `go(step: Integer): Integer`), the process `SubFlow`
   specializing `Flow` (field `m`), the state machine `Gate` (field `open`,
   operations `toggle` and `check(): Boolean`) and the persistence interface
-  `Store` (operation `save`). Its model declaration node vectors `P1` to `P6`
-  name them in that order (`Counter`, `Flow`, `SubFlow`, `Gate`, `Store`,
-  `Plug`; `P2` is `Flow`). The tests recompute each node's key from its
+  `Store` (operation `save`), and the `populations` list, whose entries carry
+  only a `node`: the populations `counters` and `archive`. Its model
+  declaration node vectors `P1` to `P6`
+  name the declarations in that order (`Counter`, `Flow`, `SubFlow`, `Gate`, `Store`,
+  `Plug`; `P2` is `Flow`), and `P7` and `P8` the populations `counters` and
+  `archive`. The tests recompute each node's key from its
   preimage, and build each wire node of its owner cases from the case. The
   owner, frame field, anchor and clause signature cases below are read
   against this projection, and the receiver frame cases against the published
@@ -213,6 +218,12 @@ process or state machine.
 | OF-06 | A `model`/`object_type` wire node owned by `Flow`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
 | OF-07 | A `model`/`process` wire node owned by `Nope`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
 | OF-08 | A `model`/`persistence_interface` wire node owned by `Gate`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
+| PR-01 | A `relation`/`population` wire node owned by `counters`, keyed by its own preimage (`P7`) | Recovers `counters` | FR-322-AC-82 |
+| PR-02 | A `relation`/`population` wire node owned by `archive`, keyed by its own preimage (`P8`) | Recovers `archive`; its key differs from `P7` | FR-322-AC-82 |
+| PR-03 | A `relation`/`population` wire node owned by `Counter`, an object type | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-82 |
+| PR-04 | A `model`/`object_type` wire node owned by `counters`, a population | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-82 |
+| PR-05 | A `relation`/`population` wire node owned by `Nope`, which the document does not declare | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-82 |
+| PR-06 | A `relation`/`relationship` wire node owned by `counters`, a population | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-82 |
 | FP-01 | Frame field entry `(P2, "n")`, `P2` being `Flow` | Resolves `Flow/n` | FR-340-AC-19 |
 | FP-02 | Frame field entry `(P3, "n")`, `P3` being `SubFlow` | Resolves `Flow/n` | FR-340-AC-19 |
 | FP-03 | Frame field entry `(P4, "open")`, `P4` being `Gate` | Resolves `Gate/open` | FR-340-AC-19 |

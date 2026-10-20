@@ -1142,7 +1142,7 @@ impl<'a> OperationOracle<'a> {
                         ty: Some(target["semantic_type"].clone()),
                         bound: None,
                     }),
-                    "relation" => Some(Descriptor {
+                    "relation" if target["semantic_form"] == "population" => Some(Descriptor {
                         family: "population".to_owned(),
                         ty: Some(target["node_id"].clone()),
                         bound: None,
@@ -2457,7 +2457,7 @@ fn derived_shape_semantic_refusal(nodes: &[Value]) -> Option<&Value> {
 
 /// A model declaration node (QSL FR-094): no `declaration`, the form of an
 /// object type, a process, a state machine, a persistence interface, a
-/// systems interface or a relationship.
+/// systems interface, a relationship or a population.
 fn is_model_declaration(node: &Value) -> bool {
     node.get("declaration").is_none()
         && node.get("nominal_identity_preimage").is_none()
@@ -2472,7 +2472,7 @@ fn is_model_declaration(node: &Value) -> bool {
                         | "persistence_interface"
                         | "systems_interface"
                 )
-            ) | (Some("relation"), Some("relationship"))
+            ) | (Some("relation"), Some("relationship" | "population"))
         )
 }
 
@@ -2719,6 +2719,7 @@ fn document_declares_owner(document: &Value, node: &Value, owner_node: &str) -> 
             .into_iter()
             .flatten()
             .any(|relationship| relationship["node"] == owner_node),
+        (Some("relation"), Some("population")) => declares_in("populations"),
         (Some("function"), _) => match clause_kind(node) {
             // An invariant clause is owned by its object type.
             Some("invariant") => object_types.clone().any(|object| {
@@ -12985,6 +12986,203 @@ fn tc_233_published_model_selections_name_the_domain_document_by_its_jcs_digest(
     assert_eq!(selecting, 4, "two published packages select it, twice each");
 }
 
+/// FR-322-AC-82 and FR-322-AC-83: the published `population_reference_cases`.
+/// A `relation`/`population` node owned by a population the selected document
+/// declares is the operand of `quire.op.model.all_instances` and
+/// `quire.op.model.lookup`; two populations key and read differently; a
+/// population owned by anything else is refused at the owner join, one without
+/// an owner fails the V2 schema, and the node is no `collection_kind` operand.
+/// The published fixture's operand 0 is a `Population<Order>[2]` binding, which
+/// the full reader admits.
+#[trace("TC-233", "FR-322-AC-82")]
+#[trace("TC-233", "FR-322-AC-83")]
+#[test]
+fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let preimage_schema = jsonschema::validator_for(&json!({
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$ref": "#/$defs/ModelDeclarationNode",
+        "$defs": parsed_fixture(NODE_PREIMAGE_SCHEMA)["$defs"],
+    }))
+    .expect("ModelDeclarationNode is a valid schema definition");
+    let adverse = parsed_fixture(ADVERSE);
+    let cases = adverse["population_reference_cases"]
+        .as_array()
+        .expect("cases");
+    assert_eq!(cases.len(), 12);
+    let mut admitted = BTreeMap::<String, (Value, Value, Value)>::new();
+    for case in cases {
+        let id = case["id"].as_str().expect("id");
+        let mut candidate = positive_fixtures()
+            .into_iter()
+            .find(|(name, _)| *name == case["base"].as_str().expect("base"))
+            .expect("a published base")
+            .1;
+        let operation = case["operation"].as_str().expect("operation");
+        let mut population_id = Value::Null;
+        if operation != "published" {
+            let mut document = parsed_fixture(MODEL_MEMBER_TYPE_VECTORS)["domain_package"].clone();
+            document["populations"] = json!([
+                {"node": "ix://acme/orders/counters"},
+                {"node": "ix://acme/orders/archive"}
+            ]);
+            let selection = json!([{
+                "identity": "acme/orders",
+                "digest_domain": "sha256-jcs",
+                "digest": unqualified_jcs_sha256(&document),
+            }]);
+            candidate["model_bindings"] = json!({"domain_package": document});
+            replace_selection_consistently(&mut candidate, "/model_selections", selection);
+            let placeholder =
+                json!({"domain": "quire.checked-semantic-node/v1", "digest": "0".repeat(64)});
+            let mut node = json!({
+                "node_id": placeholder,
+                "schema_version": "quire.checked-semantic-graph/v2",
+                "node_tag": "relation",
+                "semantic_form": "population",
+                "semantic_type": placeholder,
+                "dependencies": [],
+                "occurrences": [{"ordinal": 0, "role": "generated"}],
+                "body": {"term": "aggregate", "members": []},
+            });
+            if let Some(owner_node) = case["owner_node"].as_str() {
+                node["owner"] =
+                    json!({"kind": "model", "identity": "acme/orders", "node": owner_node});
+            }
+            append_rekeyed_structural_node(&mut candidate, node);
+            population_id = candidate["semantic_graph"]["nodes"]
+                .as_array()
+                .and_then(|nodes| nodes.last())
+                .expect("appended")["node_id"]
+                .clone();
+            let application = node_index_where(&candidate, |node| {
+                node["body"]["operation"]["identity"] == format!("quire.op.{operation}").as_str()
+            });
+            let as_declaration = case["member_declaration"] == true;
+            let as_link = case["member_population"] == true;
+            edit_node_and_projection(&mut candidate, application, |node| {
+                if as_declaration {
+                    node["body"]["operation"]["member"]["declaration"] = population_id.clone();
+                } else if as_link {
+                    node["body"]["operation"]["member"]["population"] = population_id.clone();
+                } else {
+                    node["body"]["arguments"][0]["target"] = population_id.clone();
+                }
+                node["dependencies"] = json!(application_dependencies(&node["body"]));
+            });
+            if let Some(also) = case["also"].as_str() {
+                let second = node_index_where(&candidate, |node| {
+                    node["body"]["operation"]["identity"] == format!("quire.op.{also}").as_str()
+                });
+                edit_node_and_projection(&mut candidate, second, |node| {
+                    node["body"]["arguments"][0]["target"] = population_id.clone();
+                    node["dependencies"] = json!(application_dependencies(&node["body"]));
+                });
+            }
+            rekey_stale_nodes(&mut candidate);
+        }
+        // `model_bindings` is a test-only field outside the closed wire shape.
+        let mut wire = candidate.clone();
+        wire.as_object_mut()
+            .expect("a package")
+            .remove("model_bindings");
+        if case["expected_code"] == "malformed_wire" {
+            assert!(!v2.is_valid(&wire), "{id}: the node needs its owner");
+            continue;
+        }
+        assert!(v2.is_valid(&wire), "{id}: validates against the V2 schema");
+        let outcome = read_package_semantics(&candidate, &catalog);
+        if case["outcome"] == "admitted" {
+            assert_eq!(outcome, Ok(()), "{id}");
+            if operation == "published" {
+                continue;
+            }
+            let population = &candidate["semantic_graph"]["nodes"]
+                [node_index_where(&candidate, |node| node["node_id"] == population_id)];
+            assert_eq!(population["semantic_type"], population["node_id"], "{id}");
+            let owner = &population["owner"];
+            let preimage = json!({
+                "version": "quire.structural-node/v1",
+                "node_tag": "relation",
+                "semantic_form": "population",
+                "semantic_type": null,
+                "declaration": null,
+                "recursion": null,
+                "owner": owner,
+                "body": {"term": "aggregate", "members": []},
+            });
+            assert!(preimage_schema.is_valid(&preimage), "{id}: closed preimage");
+            assert_eq!(
+                population["node_id"]["digest"],
+                unqualified_jcs_sha256(&preimage).as_str(),
+                "{id}: the key is the digest of the declaration-key preimage"
+            );
+            let application =
+                &candidate["semantic_graph"]["nodes"][node_index_where(&candidate, |node| {
+                    node["body"]["operation"]["identity"]
+                        == format!("quire.op.{operation}").as_str()
+                })];
+            assert!(
+                application["dependencies"]
+                    .as_array()
+                    .is_some_and(|dependencies| dependencies.contains(&population_id)),
+                "{id}: the application depends on the population node"
+            );
+            if let Some(also) = case["also"].as_str() {
+                // One package where both operations read the one population.
+                let reading = candidate["semantic_graph"]["nodes"]
+                    .as_array()
+                    .expect("nodes")
+                    .iter()
+                    .filter(|node| {
+                        node["body"]["arguments"][0]["target"] == population_id
+                            && [operation, also].iter().any(|name| {
+                                node["body"]["operation"]["identity"]
+                                    == format!("quire.op.{name}").as_str()
+                            })
+                    })
+                    .count();
+                assert_eq!(reading, 2, "{id}: both operations read the one node");
+                let population_nodes = candidate["semantic_graph"]["nodes"]
+                    .as_array()
+                    .expect("nodes")
+                    .iter()
+                    .filter(|node| node["semantic_form"] == "population")
+                    .count();
+                assert_eq!(population_nodes, 1, "{id}: one population is one node");
+            }
+            admitted.insert(
+                format!(
+                    "{}/{operation}",
+                    case["population"].as_str().expect("population")
+                ),
+                (
+                    population_id.clone(),
+                    application["node_id"].clone(),
+                    candidate["package_id"].clone(),
+                ),
+            );
+        } else {
+            let (code, cause) = match outcome {
+                Err(ReadRefusal::OwnerSelection(node)) => {
+                    assert_eq!(node, population_id, "{id}: refused at the population node");
+                    ("missing_declaration", "missing-selection")
+                }
+                Err(ReadRefusal::Operation(refusal)) => (refusal.code(), refusal.cause()),
+                other => panic!("{id}: unexpected {other:?}"),
+            };
+            assert_eq!(case["expected_code"], code, "{id}");
+            assert_eq!(case["expected_cause"], cause, "{id}");
+        }
+    }
+    let counters = &admitted["counters/model.all_instances"];
+    let archive = &admitted["archive/model.all_instances"];
+    assert_ne!(counters.0, archive.0, "two populations key differently");
+    assert_ne!(counters.1, archive.1, "so do the reads of them");
+    assert_ne!(counters.2, archive.2, "and the packages that hold them");
+}
+
 /// FR-322-AC-56 (relationship ends): the published `relationship_end_cases`.
 /// A relationship the document declares without a `targetEnd.role` names one
 /// end, its `sourceEnd.role`; a `relationship_end` naming it is admitted by the
@@ -13157,10 +13355,16 @@ fn tc_233_a_model_population_with_no_max_is_the_unbounded_population() {
             v2.is_valid(&candidate),
             "{id}: validates against the V2 schema"
         );
-        let population =
-            &candidate["semantic_graph"]["nodes"][node_index_where(&candidate, |node| {
-                node["semantic_form"] == "model_population"
-            })];
+        // The fixture's own `Population<Order>[2]` binding type precedes the
+        // appended chain, whose population node is the last one.
+        let population = candidate["semantic_graph"]["nodes"]
+            .as_array()
+            .and_then(|nodes| {
+                nodes
+                    .iter()
+                    .rfind(|node| node["semantic_form"] == "model_population")
+            })
+            .expect("the appended population node");
         assert_eq!(
             population["body"]["members"].as_array().map(Vec::len),
             Some(usize::from(case["max"].is_string()) + usize::from(case["extra_member"] == true)),

@@ -17,6 +17,10 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-81
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-82
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-83
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-341
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-342
@@ -282,6 +286,19 @@ recomputed), each admitted; `reaches-population-names-integer-range`,
 `population-max-not-an-integer-refused` and `population-max-with-a-second-member-refused`
 (`invalid_package`/`invalid-derived-shape`), all FR-322-AC-74. The bounded populations PO1 (`max` 3) and `max` 0 and the unbounded population PO0 are also
 recomputed from their hand-written RFC 8785 preimages to the keys FR-322 publishes.
+`adverse.json` `population_reference_cases` holds `parameter-operand-admitted`
+(the published fixture's `Population<Order>[2]` binding operand),
+`counters-all-instances-admitted`, `counters-lookup-admitted` and `archive-all-instances-admitted`
+(a `relation`/`population` node owned by a population of the selected document, referenced as
+operand 0, with its key and its application's key recomputed; the `counters` and `archive`
+nodes, applications and package ids differ and `counters` is one node for both operations),
+each admitted; `population-owned-by-an-object-type` and `population-owned-by-an-undeclared-node`
+(`missing_declaration`/`missing-selection` at the population node);
+`population-without-an-owner` (`malformed_wire`); and
+`population-as-a-relationship-declaration`, `population-as-a-field-declaration`,
+`population-as-an-operation-declaration`, `population-as-a-reaches-population-link` and
+`population-as-a-collection-operand`
+(`ill_typed`/`operator-ineligible`), all FR-322-AC-82 and FR-322-AC-83.
 `adverse.json` gains `clause_owner_cases`
 (`clause-precondition-operation-owner` admitted;
 `clause-precondition-owned-by-object-type`,

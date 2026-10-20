@@ -119,6 +119,17 @@ structures, but any external consumer receives only the contract.
   `bounded_domain`/`model_population`; and a formed compound quantity unit is
   an anonymous `scalar_type`/`compound_unit`. Their bodies and refusal rules
   are specified by FR-322's derived type forms section.
+- A population a domain package declares and a state clause names (`M::P`) is
+  a `relation`/`population` model declaration node (FR-322 "Population
+  references"): self-typed, with an empty body and a `ModelOwner` that is the
+  population's declaration key, keyed like every model declaration node by the
+  closed `ModelDeclarationNode` preimage of `node-identity-preimage.schema.json`.
+  It is operand 0 of `quire.op.model.all_instances` and `quire.op.model.lookup`
+  and carries no member type or maximum. `fixtures/adverse.json`'s
+  `population_reference_cases` read it through the full reader, and
+  `model-owner-form-vectors.json` carries the `populations` list of its
+  `acme/runs` projection, the node vectors `P7` and `P8` and the owner cases
+  `PR-01` to `PR-06`.
 
 ## Identity rules
 

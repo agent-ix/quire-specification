@@ -138,7 +138,19 @@ fn declarations(package: &Value) -> Vec<Declared<'_>> {
                 object_type: Some(declared),
             })
     });
-    objects.chain(relationships).chain(owned).collect()
+    let populations = array_or_empty(package, "populations")
+        .iter()
+        .map(|population| Declared {
+            tag: "relation",
+            form: "population",
+            node: text(population, "node"),
+            object_type: None,
+        });
+    objects
+        .chain(relationships)
+        .chain(owned)
+        .chain(populations)
+        .collect()
 }
 
 fn declaration_key(package: &Value, declared: &Declared<'_>) -> String {
@@ -476,6 +488,7 @@ fn owner_declares(package: &Value, node: &Value, owner_node: &str) -> bool {
         ("relation", "relationship") => array(package, "relationships")
             .iter()
             .any(|relationship| relationship["node"] == owner_node),
+        ("relation", "population") => declares_in(package, "populations", owner_node),
         ("function", _) => match clause_kind(node) {
             // An invariant clause is owned by its object type; a
             // precondition or body clause by an operation member of an
@@ -2111,6 +2124,100 @@ fn tc_280_process_state_machine_and_persistence_owners_join_the_selected_documen
         );
     }
     for case in array(&vectors, "owner_cases") {
+        assert_eq!(
+            read_wire(package, &owner_form_node(package, case)),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
+    }
+}
+
+/// FR-322-AC-82: a declared population is a self-typed `relation`/`population`
+/// model declaration node whose `ModelOwner` is the population's declaration
+/// key (package, then node). Two populations of one package key differently,
+/// the closed preimage refuses every other form and shape, the owner join
+/// admits the node exactly when the selected document declares the owner as a
+/// population, and an ownerless node fails the V2 schema.
+#[trace("TC-280", "FR-322-AC-82")]
+#[test]
+fn tc_280_a_population_reference_node_is_keyed_by_its_declaration_key_alone() {
+    let vectors = parsed(OWNER_FORMS);
+    let schema =
+        jsonschema::validator_for(&parsed(PREIMAGE_SCHEMA)).expect("node preimage schema is valid");
+    let package = &vectors["domain_package"];
+    let nodes = array(&vectors, "model_declaration_nodes");
+    let counters = node_vector(nodes, "P7");
+    let archive = node_vector(nodes, "P8");
+    for vector in [counters, archive] {
+        assert_eq!(vector["preimage"]["node_tag"], "relation");
+        assert_eq!(vector["preimage"]["semantic_form"], "population");
+        assert!(
+            schema.is_valid(&vector["preimage"]),
+            "{}",
+            text(vector, "name")
+        );
+    }
+    assert_ne!(
+        text(counters, "sha256"),
+        text(archive, "sha256"),
+        "two populations of one package carry different declaration keys and so different node keys"
+    );
+    let mut other_package = counters["preimage"].clone();
+    other_package["owner"]["identity"] = json!("acme/other");
+    assert_ne!(digest(&other_package), text(counters, "sha256"));
+    for (mutation, change) in [
+        ("a model-tagged population", ("node_tag", json!("model"))),
+        (
+            "a relation-tagged object type",
+            ("semantic_form", json!("object_type")),
+        ),
+        (
+            "a typed population",
+            (
+                "semantic_type",
+                json!({"domain": NODE_DOMAIN, "digest": "0".repeat(64)}),
+            ),
+        ),
+        (
+            "a declared population",
+            ("declaration", json!({"qualified_name": ["counters"]})),
+        ),
+        (
+            "a population with a body",
+            (
+                "body",
+                json!({"term": "aggregate", "members": [{"term": "reference"}]}),
+            ),
+        ),
+    ] {
+        let mut candidate = counters["preimage"].clone();
+        candidate[change.0] = change.1;
+        assert!(
+            !schema.is_valid(&candidate),
+            "{mutation} fails the closed preimage"
+        );
+    }
+    let mut ownerless = owner_form_node(
+        package,
+        &json!({
+            "node_tag": "relation", "semantic_form": "population", "owner_node": "ix://acme/runs/counters"
+        }),
+    );
+    assert_eq!(
+        read_wire(package, &ownerless),
+        json!({"recovers": "ix://acme/runs/counters"})
+    );
+    ownerless.as_object_mut().expect("a node").remove("owner");
+    assert_eq!(
+        read_wire(package, &ownerless),
+        json!({"refused": {"code": "malformed_wire"}}),
+        "a population node without its owner fails the V2 schema"
+    );
+    for case in array(&vectors, "owner_cases")
+        .iter()
+        .filter(|case| text(case, "name").starts_with("PR-"))
+    {
         assert_eq!(
             read_wire(package, &owner_form_node(package, case)),
             case["expected"],
