@@ -139,7 +139,7 @@ transition identity, send record or cause is this string.
 | `{"type":"join-waiting","threads":[<thread path>, ...]}` | a join, naming the branch threads its policy still needs |
 | `{"type":"finish-waiting","threads":[<thread path>, ...]}` | the root thread at `finish` while another thread of its instance, a compensation thread included, is still `running`, naming those threads |
 | `{"type":"commit-closed","template":"<qualified-name>"}` | a compensation thread of the named template at its first compensation attempt after a step of the template's commit node has occurred in its instance: no further `cattempt` is enabled ([FR-427](FR-427-check-protocol-compensation.md)) and `cend` is enabled only at a retry point |
-| `{"type":"no-role-instance","role":"<ident>"}` | a thread at an event, attempt or compensation-attempt node owned by replicated role `r` when `r` has no live instance and no `spawn` step for it is enabled ([FR-428](FR-428-check-replicated-roles-and-per-trigger-activation.md)) |
+| `{"type":"no-role-instance","role":"<ident>"}` | a thread at an event, attempt, send, receive or compensation-attempt node owned by replicated role `r` when `r` has no live instance and no `spawn` step for it is enabled ([FR-428](FR-428-check-replicated-roles-and-per-trigger-activation.md)) |
 | `{"type":"check-false","node":"<node>"}` | a false `check` |
 | `{"type":"gate"}` | a step disabled only by its memory model's gate, which for a `fence` is the memory model's fence rule ([FR-434](../memory/FR-434-select-memory-models-for-parallel.md)) |
 
