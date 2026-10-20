@@ -85,7 +85,10 @@ Rules common to the six meanings:
 - **Field types.** A field, parameter or result `typeRef` may name a record value
   type or a variant type (Variant types below). Naming an event type, state
   machine, process, persistence interface or namespace is
-  `invalid_model_binding`/`malformed-declaration`.
+  `invalid_model_binding`/`malformed-declaration`. A `typeRef` of the form
+  `ix://quire/unit/<name>` names a unit of the checked package, not a
+  declaration of the domain package; the binder SHALL admit it without
+  resolving it, and FR-322 "Model-owned members" step 4 resolves it.
 - **Relationships.** A process's `relationships[]` entries have object-type
   relationship meaning over its runs (FR-150, FR-151): each is one relationship
   declaration, its ends name object types or processes, and it is navigated in

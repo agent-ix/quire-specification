@@ -23,9 +23,9 @@ Run each vector through the real local Rust boundary of the frontend or provider
 
 | Vector | Input | Expected result |
 | --- | --- | --- |
-| PD-01 | `random Server::attempt(d) ~ { 1 ms: 90, 3 ms: 7, 12 ms: 3 }` on a `Quantity<Time>` parameter | Admitted; probabilities `9/10`, `7/100`, `3/100`; the support `{1 ms, 3 ms, 12 ms}` is the FR-181 domain of `d` |
+| PD-01 | `random Server::attempt(d) ~ { 1 ms: 90, 3 ms: 7, 12 ms: 3 }` on a `Quantity<ms>` parameter of the domain package, where the checked package declares the dimension `Time` and the unit `ms` of `Time` | Admitted; probabilities `9/10`, `7/100`, `3/100`; the support `{1 ms, 3 ms, 12 ms}` is the FR-181 domain of `d` |
 | PD-02 | A precondition `pre d > 1 ms` on the operation with random `d` | `invalid_probabilistic_model`/`random-read-in-precondition` at the read's locus |
-| PD-03 | A distribution repeating `1 ms`; a weight `0`; a value `true` for a `Quantity<Time>` parameter | `repeated-support-value`, `invalid-weight`, `value-outside-type` respectively, each at the value's locus |
+| PD-03 | A distribution repeating `1 ms`; a weight `0`; a value `true` for a `Quantity<ms>` parameter | `repeated-support-value`, `invalid-weight`, `value-outside-type` respectively, each at the value's locus |
 | PD-04 | `reward refund on Shop::buy = n - 3` with `n: Int[0, 5]` | `invalid_probabilistic_model`/`negative-reward` naming `Shop::buy`, `refund` and `n = 0` |
 | PD-05 | A reward reading `self.balance`; a reward of type `Boolean` | `state-read-in-reward` at the read; `reward-type` |
 | PD-06 | `workload Steady on Service` weighting `request` and `attempt` but not `reset`; one weighting `reset` twice; one naming `Other::op`; one with weight `-1` | `incomplete-workload`, `duplicate-weight`, `unknown-operation`, `invalid-weight` under `invalid_probabilistic_model` |

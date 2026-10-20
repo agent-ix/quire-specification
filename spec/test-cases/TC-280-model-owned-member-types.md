@@ -3,6 +3,8 @@ id: TC-280
 title: "Model-owned member types"
 type: TC
 relationships:
+  - target: ix://agent-ix/quire-specification/FR-322-AC-80
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-340
@@ -139,6 +141,12 @@ process or state machine.
 | MT-15 | `field` `sku` on M1, typed value type `Code`, `Text` bound to `[0, 64; nfc]` | Resolves `Order/sku`; type `Text[0, 64; nfc]` | FR-322-AC-44 |
 | MA-14 | `field` `alias`, typed value type `Inverted`, `Text` bound to `[5, 2; nfc]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
 | MA-15 | `field` `slug`, typed value type `Folded`, `Text` bound to `[0, 64; casefold]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
+| MU-01 | `field` `window` on T1 (`Timer` of the `acme/timing` domain package, which no checked-package fixture selects), `typeRef` `ix://quire/unit/ms`, checked units `ms` and `s` | Resolves `Timer/window`; type `Quantity<ms>` | FR-322-AC-80 |
+| MU-02 | `field` `waits` on T1, the same `typeRef`, `[0, unbounded]`, unordered, unique | `Set<Quantity<ms>>` | FR-322-AC-80 |
+| MU-03 | `operation` `wait` on T1 with a `Quantity<ms>` argument | Resolves `Timer/wait`; result `Integer` | FR-322-AC-80 |
+| MU-04 | `field` `ghost` on T1, `typeRef` `ix://quire/unit/ghost` | `missing_declaration`/`missing-name` | FR-322-AC-80 |
+| MU-05 | `operation` `wait` on T1 with a `Quantity<s>` argument | `ill_typed`/`operator-ineligible` | FR-322-AC-80 |
+| MU-06 | `operation` `wait` on T1 with an `Integer` argument | `ill_typed`/`operator-ineligible` | FR-322-AC-80 |
 | RE-ends-1 | `relationship_end` `order` on M4, the relationship `Order-order-Order` | Resolves the end `order` | FR-322-AC-56 |
 | RE-ends-2 | `relationship_end` `next` on M4 | Resolves the end `next` (`targetEnd.role`) | FR-322-AC-56 |
 | RE-ends-3 | `relationship_end` `invoiced` on M10, the relationship `Order-invoiced-Invoice` with no `targetEnd.role` | Resolves the end `invoiced` | FR-322-AC-56 |
