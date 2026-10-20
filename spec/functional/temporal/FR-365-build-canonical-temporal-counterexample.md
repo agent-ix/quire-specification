@@ -50,12 +50,17 @@ acceptance set of the automaton and meets every fairness constraint:
 - for a weak constraint, it has an edge that takes the constraint or a state
   that does not enable it;
 - for a strong constraint, it has an edge that takes the constraint or no
-  state that enables it.
+  state that enables it;
+- for the visibility fairness member (FR-437), every (thread, location) pair
+  that an edge of it loads has an edge of it on which the thread loads the
+  location from its mo-last message.
 
 An SCC that meets the acceptance and weak conditions and fails the strong
-condition for a set `B` of strong constraints is refined: its states that
-enable some member of `B` are removed and the remainder is decomposed and
-tested again. Enabledness is read from the model state's enabled transition
+condition for a set `B` of strong constraints, or the visibility condition for
+a set `V` of pairs, is refined in one step: its states that enable some member
+of `B` are removed, the edges of every pair in `V` on which the thread loads
+the location are removed, and the remainder is decomposed and tested again.
+The component is its states with the edges that remain. Enabledness is read from the model state's enabled transition
 identities, never from the product's edges. The first passing component is the
 first in discovery order, depth-first through refinement.
 
@@ -70,8 +75,10 @@ component's **entry state** `e`.
 The obligations of the passing component `C` are: one state of each acceptance
 set; for each weak constraint, an edge of `C` that takes it or a state of `C`
 that does not enable it; and for each strong constraint that some state of `C`
-enables, an edge of `C` that takes it. A strong constraint that no state of `C`
-enables has no obligation.
+enables, an edge of `C` that takes it; and for each visibility pair that an
+edge of `C` loads, an edge of `C` on which the thread loads the location from
+its mo-last message. A strong constraint that no state of `C` enables has no
+obligation, and the walk uses only the edges `C` kept.
 
 Starting at `e`, with the obligations `e` itself discharges removed, the
 analyzer SHALL repeat:
@@ -128,6 +135,7 @@ undefined state.
 | FR-365-AC-4 | An SCC that fails a strong constraint is refined by removing every state at which it is enabled, and a fair accepting cycle in the remainder is found, past more than one level of refinement. | Test (TC-300) |
 | FR-365-AC-5 | The canonical deadlock counterexample is the canonical breadth-first path to the first deadlocked state. | Test (TC-297) |
 | FR-365-AC-6 | An undefined state ranks as a first-phase violation: the canonical counterexample is the shortest prefix to an undefined, rejecting or deadlocked state, ties broken by canonical breadth-first discovery order, and a winning undefined state yields the canonical breadth-first path to it with the undefined-evaluation envelope as its kind; a state that is both undefined and rejecting yields the undefined-evaluation counterexample; a liveness item with a reachable undefined state is refuted by that state and its liveness phase never runs, even when a passing component's stem is shorter. | Test (TC-305) |
+| FR-365-AC-8 | Over an `ra` subject whose SCC `{p, q, r}` has the load-free sub-loop `p q` and a stale load edge `q → r` by thread `b`, the first passing component is `{p, q}` after one refinement step that removes `q → r`; an SCC that fails both a strong constraint and a visibility pair is refined by both removals in one step, so the first passing component is the same under every registration order, and the loop visits a `G` edge for each pair the component loads. | Test (TC-300) |
 
 ## Dependencies
 
