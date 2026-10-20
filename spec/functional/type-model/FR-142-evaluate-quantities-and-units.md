@@ -151,6 +151,35 @@ checks and result retention use the named points in
 the runtime undefined conditions, then every edge charge, then the rational
 events, then the target domain and result retention.
 
+## Quantity type reference
+
+Complete-V1 source names the type of a quantity in a declared unit as
+`Quantity<u>`, where `u` is a qualified unit name. Units and dimensions are two
+namespaces, and `Quantity<...>` is the one type form that looks up the unit
+namespace.
+
+- The type `Quantity<u>` SHALL denote the quantities whose unit is `u`: its
+  values are the kernel quantities with an exact rational magnitude and the
+  unit id of `u`. It introduces no node of its own: it names the unit's own
+  nominal `scalar_type`/`unit` node, the type of a quantity in that unit
+  (family `quantity`, FR-322), so its key is the unit's declaration key and
+  no checked-package wire form, schema or vector changes.
+- A quantity literal `n u` SHALL have type `Quantity<u>`, and an expression of
+  type `Quantity<u>` SHALL be accepted where `Quantity<u>` is required. An
+  expression of any other type, including a quantity in another unit of the
+  same dimension, SHALL refuse `ill_typed`/`type-mismatch` at the expression;
+  conversion between units is explicit only (FR-142 Behavior), never implied by
+  a type annotation.
+- If the qualified name of `Quantity<u>` names no unit visible to the unit of
+  compilation (a dimension name included), then the checker SHALL refuse
+  `missing_declaration`/`missing-name` at the name.
+- A parameter, field or result of type `Quantity<u>` SHALL admit exactly the
+  values above and no bound on the magnitude: a bounded magnitude is not a
+  complete-V1 type form.
+- `Quantity<D>` over a dimension `D` (for example the prose `Quantity<Time>` of
+  ADR-024 §7.2) is not a type form; a source that wants it declares a unit of
+  `D` and writes `Quantity<u>`.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -165,6 +194,8 @@ events, then the target domain and result retention.
 | FR-142-AC-8 | The published `quire.value.compound-unit/v1` schema and vectors fix the compound-unit identity preimage: each vector is schema-valid, its RFC 8785 JCS SHA-256 equals its recorded identity, and its terms name admitted root-unit node keys with nonzero exponents in strictly ascending key order; each authored stale-key mutation changes the identity and each authored noncanonical mutation, including a `-0` exponent, is refused by exactly its named schema or semantic check. | Test (TC-233) |
 | FR-142-AC-9 | Equality or ordering of quantities in distinct units refuses `ill_typed` before any charge, while identical-unit equality and ordering compare exact root values after the left and then the right root path. | Test (TC-187) |
 | FR-142-AC-10 | A conversion with a compound side compares normalized base-dimension maps, traverses only the declared side's root path, and admits a declared-to-compound-to-declared pivot in two explicit steps. | Test (TC-187) |
+| FR-142-AC-11 | With the dimension `T` and units `s` (root) and `ms` (target `s`, scale `1/1000`), a parameter `d: Quantity<ms>` admits the literal `3 ms` and refuses `3 s` with `ill_typed`/`type-mismatch` at the literal; `d: Quantity<T>` and `d: Quantity<nothing>` each refuse `missing_declaration`/`missing-name` at the name. | Test (TC-187) |
+| FR-142-AC-12 | A function `f(d: Quantity<ms>): Quantity<ms>` returning `d` checks; returning `d` converted to `s` as `Quantity<ms>` refuses `ill_typed`/`type-mismatch`; and `Quantity<ms>` annotations introduce no checked-package node, naming the node of `ms`. | Test (TC-187) |
 
 ## Dependencies
 

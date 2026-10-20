@@ -876,7 +876,10 @@ anonymous structural nodes: each has `declaration: null`, no `owner`, no
 `nominal_identity_preimage` and no `recursion_group`. A source type alias
 introduces no node. After resolving an alias, every type annotation and every
 application result type names the resolved type's node, so an alias cannot
-create a second `composite_type`, `bounded_domain` or `scalar_type` identity.
+create a second `composite_type`, `bounded_domain` or `scalar_type` identity. A
+`Quantity<u>` annotation likewise introduces no node: it names the
+`scalar_type`/`unit` node of `u`, the type of a quantity in that unit (family
+`quantity`), under the same id in every package that holds that unit (FR-142).
 
 | Source type | Node and semantic type | Body | Worked accepted vector |
 | --- | --- | --- | --- |

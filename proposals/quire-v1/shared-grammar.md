@@ -313,6 +313,7 @@ type-ref      = 'Boolean' | 'Integer' | qualified-name
               | ('Sequence' | 'Set' | 'Bag' | 'OrderedSet'),
                 '<', type-ref, '>', [ '[', uint, ',', uint, ']' ]
               | 'Reference', '<', qualified-name, '>'
+              | 'Quantity', '<', qualified-name, '>'
               | 'Population', '<', qualified-name, '>', [ '[', uint, ']' ] ;
 qualified-name = ident, { '::', member-name } ;
 rounding-mode = 'exact' | 'toward-zero' | 'toward-positive'
