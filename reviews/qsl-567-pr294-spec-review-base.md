@@ -40,3 +40,21 @@ Ticket: QSL-567. PR: quire-specification#294 at cb8f1d8 (cb8f1d8f612c067ee9c1202
 ## Verdict
 
 Not mergeable as is: one medium finding (LT-12 cannot be run by TC-391's procedure and its graph is not one a protocol can produce) and two low wording findings. The rule itself is sound, and I checked it by hand. SCC `{p, q, r}`: for the pair (`b`, `ℓ`), `R = {q → r}` and `G = ∅`, so `q → r` is removed. The remaining edges `p → q`, `q → p` and `r → q` split into `{p, q}` and the trivial `{r}`, which has no cycle. `{p, q}` has no `R` edge, so it passes, and `p` is accepting, so `p q p q …` is a fair accepting lasso. The whole-SCC rule would reject `{p, q, r}` and miss it, which is the false `proved`. The pass condition is right: when every pair with an `R` edge also has a `G` edge, a cycle covering every edge of a strongly connected `C` is fair and visits the accepting state. The lasso rule and AC-5 are unchanged and agree with the cycle definition. LT-11 still settles `proved`: the stale-read loop's SCC holds only `R` edges for (reader, flag), and removing them leaves no cycle. Machine closure still holds, because the mo-last message is always an allowed load choice. The paragraph follows QSL ADR-025 MF-2 at 0455abe almost word for word: the same `R`/`G`, the same fair-cycle and pass conditions, and the same "never rejected for a stale load alone". QSpec leaves out MF-2's termination sentence and its "together with every other constraint" (see SR-13406). EARS: the diff adds no SHALL statement, and the new prose and AC are concrete and testable apart from FND-003, so EARS conformance is folded into this review, not a separate artifact. Traceability: `quire matrix` lists FR-437-AC-7 as untagged, as AC-1 to AC-6 are on main. The tests live outside this repo. `quire validate` passes both touched files on the head and on main, with the same output.
+
+## New findings (disposition pass 1)
+
+Against head ad420fd (ad420fd80fc30c73df63e284475534604291b157). The fix commit touches FR-437, FR-365, FR-430 and TC-391, and commits this review's round-0 SR files unchanged under `reviews/`. `quire validate --scope .` exits 0 on every touched file, with output identical to main for the four spec files. `cargo test --test backend_provider_v1 --test checked_package_v2` passes 9 and 108. `quire matrix` lists FR-437-AC-7 and FR-365-AC-8 as untagged, as are every other FR-437 and FR-365 AC on main. Refinement oracle (`oracle.py`, `oracle_big.py` in the reviewer scratchpad): over 4,000 random graphs (2-5 states, up to 9 edges, 0-2 strong constraints, 1-2 visibility pairs) the one-step refinement finds a passing component exactly when a brute-force search over strongly connected edge sets finds a fair accepting closed walk (0 mismatches, 1,967 fair). Over those graphs and 20,000 larger ones (3-8 states, up to 16 edges, 1-3 of each), every permutation of the strong-constraint and pair order gives the same first passing component (0 differences), and every passing component's kept edges hold a `G` edge for each pair they load (0 failures). Sequential refinement (strong first, or visibility first) also never gave a different first component, so the one-step rule is a sufficient way to make the order fixed, not the only one.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | low | One new sentence mixes the pair's definition with the informal goal: "The member's (thread, location) pairs are derived from the resolved program, one for each location a thread loads: for thread `b` and location `ℓ`, no thread keeps reading a stale message of a location forever." After the colon it names a pair (`b`, `ℓ`) and then says "no thread" and "a location", so it does not say what the pair is. Split it: the member has one pair (`b`, `ℓ`) for each thread `b` and each location `ℓ` that `b` loads in the resolved program, and it states that no thread keeps reading a stale message of a location forever. | spec/functional/memory/FR-437-explore-release-acquire-memory.md:122-129 |
+
+## Dispositions
+
+Round 1, against head ad420fd.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |

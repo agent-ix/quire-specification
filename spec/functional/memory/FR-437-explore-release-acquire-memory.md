@@ -124,8 +124,8 @@ Its kind is `strong`: for each pair, "infinitely often an edge of `R` implies
 infinitely often an edge of `G`" is the strong-fairness form, so FR-368 routes
 an `ra` item only to a candidate whose `fairness_kinds` holds `strong`. The
 member's (thread, location) pairs are derived from the resolved program, one
-for each location a thread loads: for thread `b` and location `ℓ`, no thread
-keeps reading a stale message of a location forever. On a lasso, the loop
+for each location a thread loads. The goal of a pair (`b`, `ℓ`) is that thread
+`b` does not keep reading a stale message of `ℓ` forever. On a lasso, the loop
 contains a load of `ℓ` by `b` from `ℓ`'s mo-last message for every pair
 (`b`, `ℓ`) the loop loads. On an SCC it is an edge Streett condition. For each
 pair, `R` is the set of edges on which `b` loads `ℓ` and `G ⊆ R` the set of
