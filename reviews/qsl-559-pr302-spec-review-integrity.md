@@ -97,3 +97,9 @@ repositories.
 | --- | --- | --- |
 | FND-008 | fixed | The send record is now the `send_record` member of a `send` step in FR-433's counterexample wire, and replay recomputes and compares it (FR-426:121-125, FR-433:56 and step 2, FR-433-AC-8, TC-387). FND-010 records the conflict between refusal codes for a missing or extra record. |
 | FND-009 | fixed | FR-170-AC-6 now says that `displaced` is "the oldest queue entry" or "the newest queue entry". |
+
+## Dispositions (round 3)
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-010 | fixed | FR-433 step 2 now refuses `stale_dependency`/`revision-mismatch` only for a recorded `send_record` that differs from the recomputed one. A missing `send_record` on a `send` step, or one present on any other step, is a wire-shape defect and refuses before replay, as FR-433-AC-5 requires. FR-433-AC-8 and TC-387 RP-11 now assert the same codes. |

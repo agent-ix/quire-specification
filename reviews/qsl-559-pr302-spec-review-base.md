@@ -104,3 +104,9 @@ semantic findings, including the one high.
 | --- | --- | --- |
 | FND-007 | fixed | FR-425-AC-11 and PK-15 now put the reader of `x` after the binding, in `x`'s own branch of `Inner`, so FR-466 admits the protocol and the reader stays inside the `repeat` body (b8e9d97). |
 | FND-008 | fixed | FR-429-AC-15 and TD-08j now say that the clause is an evaluation of the cause function at a `tso` state, and they keep the observable consequence: `flush` is enabled, the state is not terminal, and no deadlock report shows it. |
+
+## Dispositions (round 3)
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-009 | fixed | The new `send_record` vector is renumbered `RP-11`, and the TC-380 CP-09 vector keeps `RP-10`. Each id now occurs once in TC-387 (f60002b). |
