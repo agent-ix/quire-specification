@@ -86,3 +86,9 @@ Round 2, against head 11741c6 (11741c6f308edd83cb0099987ebd75cfc53779f9).
 | FND-007 | fixed | - |
 | FND-008 | fixed | - |
 | FND-009 | fixed | - |
+
+Round 3, against head b2b158c (b2b158c5ba41bd8712f98c99be6d0c65bef833da). The fix commit changes only FR-439-AC-9, TC-393 MB-10 and the committed SR-13398 file, which equals the reviewer's round-2 copy. I re-derived MB-10 by hand from LT-06 (branch 1 `r1 := x; y := 1`, branch 2 `r2 := y; x := 1`, all `relaxed`). `x` and `y` are each written by one branch and read by the other, so both are shared. Each branch has a load followed by a store to the other location with no `acquire` between, so there are two distinct shapes and two warnings under `ra`. FR-439 adds none under `sc` and `tso`. With both loads `acquire` neither branch qualifies, so there is no warning. With one load `acquire` only the other branch qualifies, so there is one warning. The result and identities stay unchanged, as the warning rule states. FR-439-AC-9 now agrees. Gates: `cargo test --test backend_provider_v1 --test checked_package_v2` 11 and 108 pass; `quire validate --scope .` on FR-439 and TC-393 exits 0, identical to main; `quire matrix` lists FR-439-AC-1..9 once each (untagged, as on main) and FR-331-AC-30/31 tagged at :628/:681. No finding is open.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-010 | fixed | - |
