@@ -10389,6 +10389,48 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
     }
 }
 
+/// FR-322-AC-78: `unsupported-wire` and `unsupported-feature` pair only with
+/// `unknown_wire` and `unknown_required_feature`, in the FR-272 rows and the
+/// Diagnostic schema; the two reader codes that would otherwise carry them
+/// have no cause.
+#[trace("TC-233", "FR-322-AC-78")]
+#[test]
+fn tc_233_unsupported_wire_and_feature_causes_have_one_pairing() {
+    let schema = parsed_fixture(SCHEMA);
+    let diagnostic = schema_for_def(&schema, "Diagnostic");
+    let codes = string_list(
+        &schema["$defs"]["Diagnostic"]["properties"]["code"]["enum"],
+        "diagnostic codes",
+    );
+    for (cause, owner) in [
+        ("unsupported-wire", "unknown_wire"),
+        ("unsupported-feature", "unknown_required_feature"),
+    ] {
+        for code in &codes {
+            let entry = json!({"stage": "package_read", "code": code, "cause_tag": cause, "details": [], "loci": []});
+            assert_eq!(
+                diagnostic.is_valid(&entry),
+                *code == owner,
+                "the Diagnostic schema pairs {cause} with `{code}` only when it is `{owner}`"
+            );
+        }
+        assert!(
+            diagnostic_row_causes(TYPED_DIAGNOSTIC_CAUSE, owner).contains(cause),
+            "the FR-272 `{owner}` row lists {cause}"
+        );
+        for reader in ["unknown_contract_version", "unknown_required_capability"] {
+            assert!(
+                diagnostic_row_causes(TYPED_DIAGNOSTIC_CAUSE, reader).is_empty(),
+                "the FR-272 `{reader}` row lists no cause"
+            );
+            assert!(
+                !codes.iter().any(|code| *code == reader),
+                "`{reader}` is no Diagnostic code, so the schema pairs it with no cause"
+            );
+        }
+    }
+}
+
 /// A temporal-step refusal of FR-370 (or the wire or graph check that
 /// precedes the step), with its FR-272 code and cause.
 #[derive(Clone, Debug, PartialEq, Eq)]

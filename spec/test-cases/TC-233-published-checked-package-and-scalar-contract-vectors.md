@@ -11,6 +11,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-272-AC-22
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-78
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-341
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-342
