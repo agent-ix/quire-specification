@@ -272,10 +272,39 @@ fn element_type(package: &Value, type_ref: &str) -> Option<Value> {
             _ => None,
         };
     }
+    if let Some(name) = type_ref.strip_prefix("ix://quire/unit/") {
+        return unit_element_type(package, name);
+    }
     let target = declarations(package)
         .into_iter()
         .find(|declared| declared.form == "object_type" && declared.node == type_ref)?;
     Some(json!({"type": "Reference", "target": declaration_key(package, &target)}))
+}
+
+/// FR-322 step 4's unit row: a `typeRef` of the form `ix://quire/unit/<name>`
+/// names the `scalar_type`/`unit` node of the checked package whose qualified
+/// declaration name is the `/`-joined `<name>`. The vectors list the checked
+/// package's units as `checked_units`, which the test carries on the package
+/// value it passes down. A name that matches no unit is
+/// `missing_declaration`/`missing-name`, so it has no element type here.
+fn unit_element_type(package: &Value, name: &str) -> Option<Value> {
+    array(package, "checked_units")
+        .iter()
+        .any(|unit| {
+            unit.as_array().is_some_and(|segments| {
+                segments.iter().filter_map(Value::as_str).collect::<Vec<_>>().join("/") == name
+            })
+        })
+        .then(|| json!({"type": "Quantity", "unit": name}))
+}
+
+/// The refusal for a declared type whose unit `typeRef` names no unit of the
+/// checked package, or `None` for any other declared type.
+fn unresolved_unit(package: &Value, declared: &Value) -> Option<Value> {
+    let name = text(declared, "typeRef").strip_prefix("ix://quire/unit/")?;
+    unit_element_type(package, name)
+        .is_none()
+        .then(|| refused("missing_declaration", "missing-name"))
 }
 
 /// FR-322 step 4's multiplicity rule.
@@ -391,6 +420,12 @@ fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
         if member["receiver"] != receiver {
             return ineligible();
         }
+        if let Some(missing) = array(record, "parameters")
+            .iter()
+            .find_map(|parameter| unresolved_unit(package, parameter))
+        {
+            return missing;
+        }
         let parameters: Option<Vec<Value>> = array(record, "parameters")
             .iter()
             .map(|parameter| declared_type_of(package, parameter))
@@ -403,6 +438,9 @@ fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
         }
         &record["result"]
     };
+    if let Some(missing) = unresolved_unit(package, declared_type) {
+        return missing;
+    }
     let member_type = declared_type_of(package, declared_type).map(|value| {
         if record["presence"] == "optional" {
             json!({"type": "Option", "inner": value})
@@ -583,11 +621,19 @@ fn cases_for<'a>(vectors: &'a Value, criterion: &str) -> Vec<&'a Value> {
     cases
 }
 
+/// The domain package value with the checked package's units attached, the
+/// context FR-322 step 4's unit row resolves a unit `typeRef` against.
+fn with_checked_units(vectors: &Value) -> Value {
+    let mut package = vectors["domain_package"].clone();
+    package["checked_units"] = vectors["checked_units"].clone();
+    package
+}
+
 fn assert_member_cases(vectors: &Value, criterion: &str) {
     let nodes = array(vectors, "model_declaration_nodes");
     for case in cases_for(vectors, criterion) {
         assert_eq!(
-            derive(&vectors["domain_package"], nodes, &case["member"]),
+            derive(&with_checked_units(vectors), nodes, &case["member"]),
             case["expected"],
             "{}",
             text(case, "name")
@@ -664,6 +710,12 @@ fn tc_280_member_names_resolve_in_exposed_effective_members() {
 #[test]
 fn tc_280_member_types_follow_declared_type_multiplicity_and_presence() {
     assert_member_cases(&parsed(VECTORS), "FR-322-AC-31");
+}
+
+#[trace("TC-280", "FR-322-AC-80")]
+#[test]
+fn tc_280_unit_type_references_resolve_against_the_checked_packages_units() {
+    assert_member_cases(&parsed(VECTORS), "FR-322-AC-80");
 }
 
 #[trace("TC-280", "FR-322-AC-44")]

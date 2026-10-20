@@ -139,7 +139,10 @@
           {"name": "trail", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "unbounded", "ordered": true, "unique": false}, "redefines": null},
           {"name": "sku", "typeRef": "ix://acme/orders/Code", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
           {"name": "alias", "typeRef": "ix://acme/orders/Inverted", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "slug", "typeRef": "ix://acme/orders/Folded", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null}
+          {"name": "slug", "typeRef": "ix://acme/orders/Folded", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
+          {"name": "window", "typeRef": "ix://quire/unit/Time/ms", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
+          {"name": "waits", "typeRef": "ix://quire/unit/Time/ms", "presence": "required", "multiplicity": {"lower": "0", "upper": "unbounded", "ordered": false, "unique": true}, "redefines": null},
+          {"name": "ghost", "typeRef": "ix://quire/unit/Time/ghost", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null}
         ],
         "operations": [
           {
@@ -185,6 +188,14 @@
             "name": "reset",
             "parameters": [],
             "result": null,
+            "redefines": null
+          },
+          {
+            "name": "wait",
+            "parameters": [
+              {"name": "d", "typeRef": "ix://quire/unit/Time/ms", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}}
+            ],
+            "result": {"typeRef": "ix://quire/native/Integer", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}},
             "redefines": null
           }
         ]
@@ -373,6 +384,7 @@
       {"node": "ix://acme/orders/relationship/Order-twin-Order", "direction": "bidirectional", "ends": [{"role": "twin", "type": "ix://acme/orders/Order", "end": "source"}, {"role": "twin", "type": "ix://acme/orders/Order", "end": "target"}]}
     ]
   },
+  "checked_units": [["Time", "ms"], ["Time", "s"]],
   "model_declaration_nodes": [
     {"name": "M1", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/Order"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"},
     {"name": "M2", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/billing", "kind": "model", "node": "ix://acme/billing/Order"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "d4940a1a4f70ced5672eaaec2b62fe2b97c7c0b1c886777d85043cdbbcd5abc7"},
@@ -418,6 +430,12 @@
     {"name": "MT-15", "criterion": "FR-322-AC-44", "member": {"kind": "field", "declaration": "M1", "name": "sku"}, "expected": {"resolves": "ix://acme/orders/Order/sku", "member_type": {"type": "Text", "min": "0", "max": "64", "profile": "nfc"}}},
     {"name": "MA-14", "criterion": "FR-322-AC-44", "member": {"kind": "field", "declaration": "M1", "name": "alias"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
     {"name": "MA-15", "criterion": "FR-322-AC-44", "member": {"kind": "field", "declaration": "M1", "name": "slug"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MT-16", "criterion": "FR-322-AC-80", "member": {"kind": "field", "declaration": "M1", "name": "window"}, "expected": {"resolves": "ix://acme/orders/Order/window", "member_type": {"type": "Quantity", "unit": "Time/ms"}}},
+    {"name": "MT-17", "criterion": "FR-322-AC-80", "member": {"kind": "field", "declaration": "M1", "name": "waits"}, "expected": {"resolves": "ix://acme/orders/Order/waits", "member_type": {"type": "Set", "element": {"type": "Quantity", "unit": "Time/ms"}}}},
+    {"name": "MT-18", "criterion": "FR-322-AC-80", "member": {"kind": "operation", "declaration": "M1", "name": "wait", "receiver": {"type": "Reference", "target": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "arguments": [{"type": "Quantity", "unit": "Time/ms"}]}, "expected": {"resolves": "ix://acme/orders/Order/wait", "member_type": {"type": "Integer"}}},
+    {"name": "MA-16", "criterion": "FR-322-AC-80", "member": {"kind": "field", "declaration": "M1", "name": "ghost"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name"}}},
+    {"name": "MA-17", "criterion": "FR-322-AC-80", "member": {"kind": "operation", "declaration": "M1", "name": "wait", "receiver": {"type": "Reference", "target": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "arguments": [{"type": "Quantity", "unit": "Time/s"}]}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MA-18", "criterion": "FR-322-AC-80", "member": {"kind": "operation", "declaration": "M1", "name": "wait", "receiver": {"type": "Reference", "target": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "arguments": [{"type": "Integer"}]}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
     {"name": "RE-ends-1", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M4", "name": "order"}, "expected": {"resolves_end": {"relationship": "ix://acme/orders/relationship/Order-order-Order", "role": "order"}}},
     {"name": "RE-ends-2", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M4", "name": "next"}, "expected": {"resolves_end": {"relationship": "ix://acme/orders/relationship/Order-order-Order", "role": "next"}}},
     {"name": "RE-ends-3", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M10", "name": "invoiced"}, "expected": {"resolves_end": {"relationship": "ix://acme/orders/relationship/Order-invoiced-Invoice", "role": "invoiced"}}},

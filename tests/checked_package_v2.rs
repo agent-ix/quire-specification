@@ -918,7 +918,32 @@ fn literal_value_is_canonical(literal: &Value) -> bool {
             text.parse::<i128>()
                 .is_ok_and(|count| count.to_string() == text)
         }),
+        Some("quantity") => value.is_some_and(quantity_magnitude_is_canonical),
         _ => true,
+    }
+}
+
+/// Whether a `quantity` literal's `value` is the canonical spelling of its
+/// exact rational magnitude (FR-322 "Scalar literal values"): the canonical
+/// decimal integer when the denominator is 1, otherwise `numerator/denominator`
+/// in lowest terms with a denominator above 1 and a sign only on the numerator.
+fn quantity_magnitude_is_canonical(text: &str) -> bool {
+    fn gcd(a: u128, b: u128) -> u128 {
+        if b == 0 { a } else { gcd(b, a % b) }
+    }
+    let integer = |part: &str| part.parse::<i128>().is_ok_and(|n| n.to_string() == part);
+    match text.split_once('/') {
+        None => integer(text),
+        Some((numerator, denominator)) => {
+            let (Ok(n), Ok(d)) = (numerator.parse::<i128>(), denominator.parse::<u128>()) else {
+                return false;
+            };
+            integer(numerator)
+                && d.to_string() == denominator
+                && d > 1
+                && n != 0
+                && gcd(n.unsigned_abs(), d) == 1
+        }
     }
 }
 
@@ -1104,6 +1129,7 @@ impl<'a> OperationOracle<'a> {
                     "timestamp" => &["timestamp"],
                     "enum" => &["enum", "ordered_enum"],
                     "none" => &["option"],
+                    "quantity" => &["quantity"],
                     _ => return None,
                 };
                 admitted.contains(&typed.family.as_str()).then_some(typed)
@@ -13422,6 +13448,57 @@ fn tc_233_scalar_equality_identities_and_literal_kinds_are_enumerated_and_admitt
             "a {kind} literal typed by its own family is admitted"
         );
     }
+}
+
+/// QL-01 to QL-04 (FR-322-AC-79): a `quantity` literal typed by a unit node is
+/// admitted, both schemas enumerate the kind, and a literal typed by another
+/// family or carrying a non-canonical magnitude is refused by exactly its step.
+#[trace("FR-322-AC-79", "TC-233")]
+#[test]
+fn tc_233_quantity_literals_are_typed_by_a_unit_node_and_spell_canonical_magnitudes() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let mut package = scalar_equality_package(&catalog);
+    package["semantic_graph"]["nodes"]
+        .as_array_mut()
+        .unwrap()
+        .push(walk_scalar("Ms", "unit"));
+    let oracle = OperationOracle::for_package(&catalog, &package);
+    for schema in [parsed_fixture(SCHEMA), parsed_fixture(NODE_PREIMAGE_SCHEMA)] {
+        let mut enums = vec![];
+        collect_value_kind_enums(&schema, &mut enums);
+        assert!(!enums.is_empty());
+        for kinds in enums {
+            assert!(string_set(kinds, "value kinds").contains("quantity"));
+        }
+    }
+    for value in ["3", "0", "-5", "1/1000", "-7/2"] {
+        let literal = scalar_literal("quantity", "Ms", value);
+        assert!(
+            oracle.argument_descriptor(&literal).is_ok_and(|d| d.is_some_and(|d| d.family == "quantity")),
+            "QL: a quantity literal {value} typed by a unit node is admitted"
+        );
+    }
+    for value in ["03", "+3", "2/4", "4/2", "1/0", "0/5", "3/1", "1/-2", " 3", "2.5", ""] {
+        assert_eq!(
+            oracle.argument_descriptor(&scalar_literal("quantity", "Ms", value)).err(),
+            Some(OperationRefusal::InvalidValue),
+            "QL: the magnitude {value:?} is not canonical"
+        );
+    }
+    for ty in ["Integer", "String", "Bool"] {
+        assert!(
+            oracle
+                .argument_descriptor(&scalar_literal("quantity", ty, "3"))
+                .is_ok_and(|d| d.is_none()),
+            "QL: a quantity literal typed by {ty} is outside the kind's family"
+        );
+    }
+    assert!(
+        oracle
+            .argument_descriptor(&scalar_literal("integer", "Ms", "3"))
+            .is_ok_and(|d| d.is_none()),
+        "QL: an integer literal typed by a unit node is outside the kind's family"
+    );
 }
 
 /// SE-07, SE-08 and SE-11 to SE-13: a cross-family operand pair, an
