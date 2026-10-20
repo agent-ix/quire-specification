@@ -12992,8 +12992,8 @@ fn tc_233_published_model_selections_name_the_domain_document_by_its_jcs_digest(
 /// `quire.op.model.lookup`; two populations key and read differently; a
 /// population owned by anything else is refused at the owner join, one without
 /// an owner fails the V2 schema, and the node is no `collection_kind` operand.
-/// The anonymous `Population<O>[N]` binding the published fixture reads is
-/// admitted unchanged.
+/// The published fixture's operand 0 is a `Population<Order>[2]` binding, which
+/// the full reader admits.
 #[trace("TC-233", "FR-322-AC-82")]
 #[trace("TC-233", "FR-322-AC-83")]
 #[test]
@@ -13010,7 +13010,7 @@ fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
     let cases = adverse["population_reference_cases"]
         .as_array()
         .expect("cases");
-    assert_eq!(cases.len(), 10);
+    assert_eq!(cases.len(), 12);
     let mut admitted = BTreeMap::<String, (Value, Value, Value)>::new();
     for case in cases {
         let id = case["id"].as_str().expect("id");
@@ -13071,6 +13071,15 @@ fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
                 }
                 node["dependencies"] = json!(application_dependencies(&node["body"]));
             });
+            if let Some(also) = case["also"].as_str() {
+                let second = node_index_where(&candidate, |node| {
+                    node["body"]["operation"]["identity"] == format!("quire.op.{also}").as_str()
+                });
+                edit_node_and_projection(&mut candidate, second, |node| {
+                    node["body"]["arguments"][0]["target"] = population_id.clone();
+                    node["dependencies"] = json!(application_dependencies(&node["body"]));
+                });
+            }
             rekey_stale_nodes(&mut candidate);
         }
         // `model_bindings` is a test-only field outside the closed wire shape.
@@ -13120,6 +13129,29 @@ fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
                     .is_some_and(|dependencies| dependencies.contains(&population_id)),
                 "{id}: the application depends on the population node"
             );
+            if let Some(also) = case["also"].as_str() {
+                // One package where both operations read the one population.
+                let reading = candidate["semantic_graph"]["nodes"]
+                    .as_array()
+                    .expect("nodes")
+                    .iter()
+                    .filter(|node| {
+                        node["body"]["arguments"][0]["target"] == population_id
+                            && [operation, also].iter().any(|name| {
+                                node["body"]["operation"]["identity"]
+                                    == format!("quire.op.{name}").as_str()
+                            })
+                    })
+                    .count();
+                assert_eq!(reading, 2, "{id}: both operations read the one node");
+                let population_nodes = candidate["semantic_graph"]["nodes"]
+                    .as_array()
+                    .expect("nodes")
+                    .iter()
+                    .filter(|node| node["semantic_form"] == "population")
+                    .count();
+                assert_eq!(population_nodes, 1, "{id}: one population is one node");
+            }
             admitted.insert(
                 format!(
                     "{}/{operation}",
@@ -13149,10 +13181,6 @@ fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
     assert_ne!(counters.0, archive.0, "two populations key differently");
     assert_ne!(counters.1, archive.1, "so do the reads of them");
     assert_ne!(counters.2, archive.2, "and the packages that hold them");
-    assert_eq!(
-        counters.0, admitted["counters/model.lookup"].0,
-        "one population is one node, whichever operation reads it"
-    );
 }
 
 /// FR-322-AC-56 (relationship ends): the published `relationship_end_cases`.

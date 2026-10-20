@@ -75,14 +75,16 @@
     {"id":"population-max-with-a-second-member-refused","base":"positive-operation-identities","max":"3","extra_member":true,"expected_code":"invalid_package","expected_cause":"invalid-derived-shape"}
   ],
   "population_reference_cases": [
-    {"id":"published-parameter-operand-keeps-its-form","base":"positive-operation-identities","operation":"published","outcome":"admitted"},
-    {"id":"counters-all-instances-admitted","base":"positive-operation-identities","operation":"model.all_instances","owner_node":"ix://acme/orders/counters","population":"counters","outcome":"admitted"},
+    {"id":"parameter-operand-admitted","base":"positive-operation-identities","operation":"published","outcome":"admitted"},
+    {"id":"counters-all-instances-admitted","also":"model.lookup","base":"positive-operation-identities","operation":"model.all_instances","owner_node":"ix://acme/orders/counters","population":"counters","outcome":"admitted"},
     {"id":"counters-lookup-admitted","base":"positive-operation-identities","operation":"model.lookup","owner_node":"ix://acme/orders/counters","population":"counters","outcome":"admitted"},
     {"id":"archive-all-instances-admitted","base":"positive-operation-identities","operation":"model.all_instances","owner_node":"ix://acme/orders/archive","population":"archive","outcome":"admitted"},
     {"id":"population-owned-by-an-object-type","base":"positive-operation-identities","operation":"model.all_instances","owner_node":"ix://acme/orders/Order","expected_code":"missing_declaration","expected_cause":"missing-selection"},
     {"id":"population-owned-by-an-undeclared-node","base":"positive-operation-identities","operation":"model.all_instances","owner_node":"ix://acme/orders/nope","expected_code":"missing_declaration","expected_cause":"missing-selection"},
     {"id":"population-without-an-owner","base":"positive-operation-identities","operation":"model.all_instances","owner_node":null,"expected_code":"malformed_wire"},
     {"id":"population-as-a-relationship-declaration","base":"positive-operation-identities","operation":"model.reaches","member_declaration":true,"owner_node":"ix://acme/orders/counters","expected_code":"ill_typed","expected_cause":"operator-ineligible"},
+    {"id":"population-as-a-field-declaration","base":"positive-operation-identities","operation":"record.project","member_declaration":true,"owner_node":"ix://acme/orders/counters","expected_code":"ill_typed","expected_cause":"operator-ineligible"},
+    {"id":"population-as-an-operation-declaration","base":"positive-operation-identities","operation":"model.dispatch_call","member_declaration":true,"owner_node":"ix://acme/orders/counters","expected_code":"ill_typed","expected_cause":"operator-ineligible"},
     {"id":"population-as-a-reaches-population-link","base":"positive-operation-identities","operation":"model.reaches","member_population":true,"owner_node":"ix://acme/orders/counters","expected_code":"ill_typed","expected_cause":"operator-ineligible"},
     {"id":"population-as-a-collection-operand","base":"positive-operation-identities","operation":"collection.contains","owner_node":"ix://acme/orders/counters","expected_code":"ill_typed","expected_cause":"operator-ineligible"}
   ],

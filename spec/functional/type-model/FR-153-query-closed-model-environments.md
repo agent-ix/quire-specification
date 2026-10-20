@@ -9,6 +9,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/AD-006
     type: references
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: references
 ---
 
 # FR-153: Query explicit closed model environments
