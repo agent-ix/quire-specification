@@ -17,6 +17,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-170
     type: references
+  - target: ix://agent-ix/quire-specification/FR-427
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-434
+    type: references
   - target: ix://agent-ix/quire-specification/FR-433
     type: references
 ---
@@ -108,11 +112,20 @@ changes no authored claim's verdict.
 A deadlock counterexample carries, for its last state, a list of every
 waiting thread, in ascending JCS bytes of its path:
 `{"thread":<thread path>,"rest":<rest>,"cause":<cause>}`, with `cause` one of
-the following. The list of causes is closed. Every `channel` is the channel's
-**qualified name**: the qualified protocol-definition identity followed by the
-channel's declaration-local handle
-([FR-050](FR-050-bind-protocol-instances.md)), so two protocols that each
-declare a channel `Pay` give two different channels, queues and causes.
+the following. The list of causes is closed: every waiting thread has one of
+them.
+
+**Qualified channel name.** The `<qualified-name>` of a channel is the
+qualified name of the protocol that declares it (the rendering the
+counterexample's `protocol` member uses,
+[FR-433](FR-433-replay-protocol-counterexamples.md)), then `::`, then the
+channel's declaration-local handle. The protocol's qualified name renders the
+structured protocol-definition identity of
+[FR-288](../../objects/protocol/FR-288-qualified-protocol-definition-identity.md)
+that [FR-050](FR-050-bind-protocol-instances.md) keys a static channel by.
+Two protocols that each declare a channel `Pay` give two different qualified
+names, queues, identities and causes. Every `channel` member of a key,
+transition identity, send record or cause is this string.
 
 | Cause | Meaning |
 | --- | --- |
@@ -124,17 +137,22 @@ declare a channel `Pay` give two different channels, queues and causes.
 | `{"type":"full-queue","channel":"<qualified-name>"}` | a send under overflow `block` whose channel queue is at capacity |
 | `{"type":"displaced","channel":"<qualified-name>"}` | a receive for which no entry from the send node it names is queued on the channel, because a loss removed it |
 | `{"type":"join-waiting","threads":[<thread path>, ...]}` | a join, naming the branch threads its policy still needs |
+| `{"type":"finish-waiting","threads":[<thread path>, ...]}` | the root thread at `finish` while another thread of its instance, a compensation thread included, is still `running`, naming those threads |
+| `{"type":"commit-closed","template":"<qualified-name>"}` | a compensation thread of the named template at its first compensation attempt after a step of the template's commit node has occurred in its instance: no further `cattempt` is enabled ([FR-427](FR-427-check-protocol-compensation.md)) and `cend` is enabled only at a retry point |
+| `{"type":"no-role-instance","role":"<ident>"}` | a thread at an event, attempt or compensation-attempt node owned by replicated role `r` when `r` has no live instance and no `spawn` step for it is enabled ([FR-428](FR-428-check-replicated-roles-and-per-trigger-activation.md)) |
 | `{"type":"check-false","node":"<node>"}` | a false `check` |
-| `{"type":"gate"}` | a step disabled only by its memory model's gate |
+| `{"type":"gate"}` | a step disabled only by its memory model's gate, which for a `fence` is the memory model's fence rule ([FR-434](../memory/FR-434-select-memory-models-for-parallel.md)) |
 
 **One cause per thread.** A waiting thread has exactly one cause: `gate` when
 its memory model's gate alone disables its step, and otherwise the first that
 applies in this order for its rest point:
 
+- an `attempt` or an `event` owned by a replicated role: `no-role-instance`;
 - an `attempt`: `precondition`, `no-post-state`, `constraint`;
 - a `receive`: `constraint`, `head-blocked`, `displaced`, `empty-queue`;
 - a `send`: `constraint` when no payload satisfies its constraint, else
-  `full-queue` when `block` finds the queue at capacity.
+  `full-queue` when `block` finds the queue at capacity;
+- `finish`: `finish-waiting`, else `constraint`.
 
 A `receive` is `constraint` only when an entry from its send node is
 deliverable (the head of its FIFO key, or any entry of an `unordered`
@@ -165,9 +183,12 @@ state key.
 | FR-429-AC-7 | A `terminal when { P }` whose `P` evaluates undefined at a reachable terminal state settles the deadlock-freedom item and every other item over the subject `refuted` with cause `undefined-evaluation`, a prefix ending at that state, and `where` naming `P`'s locus. | Test (TC-383) |
 | FR-429-AC-8 | On a `fifo` channel of capacity 2 with delivery `exactly-once-premise`, a sender that sends `P` then `Q` and a receive of `Q` reached while the queue is `[P, Q]` is reported with cause `head-blocked` naming the channel's qualified name. The same receive on an `unordered` channel is not blocked, and a receive of `P` with a constraint no payload of `P` satisfies is reported `constraint`, on the `fifo` channel and on the `unordered` one. | Test (TC-383) |
 | FR-429-AC-9 | On a channel of capacity 1 with overflow `block` and delivery `exactly-once-premise`, a sender at `send Q` while the queue holds `P` is reported `full-queue` naming the channel. The same send with a constraint no payload satisfies is reported `constraint` although the queue is full. | Test (TC-383) |
-| FR-429-AC-10 | Each source of loss gives `displaced` at a receive whose entry is gone: with capacity 1 and `overflow loss head`, `send P; send Q; receive` of `P` reports `displaced` with the queue `[Q]`; with `overflow loss new`, `send P; send Q; receive` of `Q` reports `displaced` with the queue `[P]`; with delivery `at-most-once`, `send P; lose; receive` of `P` reports `displaced`. | Test (TC-383) |
-| FR-429-AC-11 | `displaced` follows the reported prefix: with capacity 1, `overflow loss head`, `repeat maximum 2 { send P }; receive R1 of P; receive R2 of P`, the receive `R2` at an empty queue is reported `empty-queue`, because the last removal of an entry from that send node was a `receive`; a receive on a channel nothing has sent to is reported `empty-queue`. Two counterexamples ending in one state through a loss and through a `receive` carry `displaced` and `empty-queue` respectively. | Test (TC-383) |
-| FR-429-AC-12 | Two protocols of one package that each declare a channel `Pay` give blocked-thread causes whose `channel` members are the two different qualified names. | Test (TC-383) |
+| FR-429-AC-10 | Every channel below has delivery `exactly-once-premise` unless stated, so neither `lose` nor `duplicate` is enabled. With capacity 1 and `overflow loss head`, `send P; send Q; receive` of `P` deadlocks with the queue `[Q]` and cause `displaced`; with `overflow loss new`, `send P; send Q; receive` of `Q` deadlocks with the queue `[P]` and cause `displaced`; with delivery `at-most-once`, `send P; receive` of `P` has a deadlock reached by the `send` and `lose` steps, with cause `displaced`. | Test (TC-383) |
+| FR-429-AC-11 | With capacity 1, `overflow loss head` and delivery `exactly-once-premise`, `repeat maximum 2 { send P }; receive R1 of P; receive R2 of P` deadlocks at `R2` with an empty queue and cause `empty-queue`, because the last removal of an entry from that send node was a `receive`; a receive on a channel nothing has sent to is reported `empty-queue`. With capacity 1, `overflow loss head`, delivery `at-most-once`, branch `s` `repeat maximum 2 { send S of P }` and branch `r` `receive R1 of S; receive R2 of S`, the prefix send, send (displacing), `R1` and the prefix send, `R1`, send, `lose` both end in one state at `R2`; replaying each ([FR-433](FR-433-replay-protocol-counterexamples.md)) gives `empty-queue` for the first and `displaced` for the second. | Test (TC-383) |
+| FR-429-AC-12 | Two protocols of one package that each declare a channel `Pay` give blocked-thread causes whose `channel` members are the two different qualified names, each the declaring protocol's qualified name, `::` and `Pay`. | Test (TC-383) |
+| FR-429-AC-13 | A protocol whose compensation template has a step of its commit node occur after the compensation thread was created, with the thread still at its first compensation attempt and a finish record available, deadlocks with the compensation thread `commit-closed` naming the template and the root at `finish` `finish-waiting` naming that thread. | Test (TC-383) |
+| FR-429-AC-14 | A node owned by a replicated role `r` whose population universe is empty, or whose every object is retired, so that `r` has no live instance and no `spawn` is enabled, deadlocks with the thread `no-role-instance` naming `r`; when a `spawn` is enabled the thread is not waiting on the role. | Test (TC-383) |
+| FR-429-AC-15 | A thread at a `fence` whose memory model's fence rule is false (a `seq_cst` fence under `tso` with a non-empty buffer) has cause `gate` where the blocked list is computed, and no other cause. A deadlock cannot contain such a thread under the built-in models, because `flush` is enabled while the buffer is non-empty. | Test (TC-383) |
 
 ## Dependencies
 

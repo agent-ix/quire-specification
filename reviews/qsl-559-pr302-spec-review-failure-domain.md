@@ -1,0 +1,41 @@
+---
+id: SR-13588
+title: "Spec review (failure-domain) of quire-specification PR #302: wait causes and binder environments"
+type: SpecReview
+analysis: failure-domain
+scope: "agent-ix/quire-specification@cf0af5ff8eb2a11406f410cb1bdcb49ad358ea22; PR #302, git diff origin/main...cf0af5f: spec/functional/protocol/FR-425 (binder environments), FR-426 (Waiting), FR-429 (closed cause list); read against FR-427, FR-428 and FR-466"
+review_set: subset
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-425
+    type: reviews
+  - target: ix://agent-ix/quire-specification/FR-426
+    type: reviews
+  - target: ix://agent-ix/quire-specification/FR-429
+    type: reviews
+---
+# Spec review (failure-domain) of quire-specification PR #302
+
+## Summary
+
+Tickets: QSL-559, QSL-562. This pass looked for rest points the closed cause
+list does not cover, and for edge cases where the binder-environment rule and
+FR-466's scope give different answers.
+
+**Covered:** every channel case. That includes FIFO-key queues, `unordered`
+channels, a `lost` send, and `displaced` versus `empty-queue` across repeated
+sends.
+
+Both findings with medium severity come from ADR-027 PD-4 and PS-5. QSpec
+copies those rules word for word, so fixing them needs a matching QSL change.
+
+## Verdict
+
+Changes requested: two medium findings and one low.
+
+## Findings
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-001 | medium | FR-429 now says "The list of causes is closed", but some reachable waits fit no cause. (a) A compensation thread at its first compensation attempt after the commit node has run (FR-427: no further `cattempt`, and `cend` needs the retry point). The root then waits at `finish` on that `running` thread, with a finish record available. (b) A thread at an event node `by r` when `r` has no live instance and cannot spawn one. Neither is `constraint`, `join-waiting` or `gate`, so the deadlock's blocked list cannot be built. Add a cause for each of these, or bound "closed" to the rest points the table names. ADR-027 PD-4 has the same gap. | spec/functional/protocol/FR-429-report-protocol-deadlocks.md:111; spec/functional/protocol/FR-427-check-protocol-compensation.md:78-83 |
+| FND-002 | medium | The `all`-join rule adds entries "that each joined branch thread, or a thread below it, bound after the fork". That includes entries bound below the branch under an inner join that is not `all`, and FR-466's `Out` leaves those out (the citation in the same bullet). The reach rule normally drops them. Inside a `repeat`, though, the back edge widens the joiner's reach to the whole repeat body, which contains the inner reader, so `observations` keeps an entry FR-466 says is not readable there. Coalescing then depends on whether an implementation follows the literal rule or FR-466. Limit the copy to entries in the joined branches' `Out` (inner `all` joins only). ADR-027 PS-5 has the same wording. | spec/functional/protocol/FR-425-define-protocol-subjects-and-state-keys.md:142-145; spec/objects/interfaces/FR-466-checked-package-protocol-control-bodies.md:192 |
+| FND-003 | low | FR-426's **Waiting** paragraph now lists a `block` send at capacity and a fence. It still leaves out a `send`, `event` or `finish` whose constraint no record satisfies, which FR-429 reports as `constraint`. The paragraph reads as a complete list. | spec/functional/protocol/FR-426-apply-protocol-steps.md:115-118 |

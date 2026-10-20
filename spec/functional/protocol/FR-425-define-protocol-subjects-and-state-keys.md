@@ -117,7 +117,7 @@ budget of FR-428 bound a run.
 
 Each live thread has one **rest point**: an event node, a `parallel` waiting
 to fork, the join of a `parallel` it forked, an `await`, a `check` whose value
-is false, the `finish` node (root thread only), a compensation attempt or
+is false, a `fence`, the `finish` node (root thread only), a compensation attempt or
 compensation retry point (compensation threads only), or **end**. Each live
 thread has a **disposition**: `running`, `completed` or `cancelled`. A thread
 is live while it is `running`, or while its parallel instance's join has not
@@ -131,19 +131,25 @@ removed once its join has settled and every branch thread has left
 ### Binders, counters, queues and roles
 
 - An event step binds its binder to the event's record. A binder value is
-  immutable. A `send` binds its binder to the send record
-  ([FR-426](FR-426-apply-protocol-steps.md)).
-- Each live thread's control state holds a **binder environment**: a map from
-  each binder node the thread may read to the bound value. A thread reads a
-  node's binder as its own environment's value.
+  immutable. A `send` binds its binder to the sent payload, of the
+  channel's `carries` type; the send record is the step's recorded result and
+  not a binder value ([FR-426](FR-426-apply-protocol-steps.md)).
+- Each live thread has a **binder environment**: a map from each binder node
+  the thread may read to the bound value, keyed in `observations` by (binder
+  node, the thread's path) and not in the thread's `control` entry. A thread
+  reads a node's binder as its own environment's value.
   - An event step adds its binder to its thread's environment, replacing an
     earlier entry for the node.
   - A `fork` copies the parent's environment into each new branch thread.
   - A `join` with policy `all` adds to the joining thread's environment the
-    entries that each joined branch thread, or a thread below it, bound after
-    the fork, so a branch binder stays readable after an `all` join
+    entries in each joined branch's `Out`
     ([FR-466](../../objects/interfaces/FR-466-checked-package-protocol-control-bodies.md)'s
-    `Out` of an `all`-joined `parallel`).
+    `Out` of an `all`-joined `parallel`): the binders the branch itself bound
+    after the fork and, recursively, those of an inner `parallel` joined by
+    `all`. So a branch binder stays readable after an `all` join. An entry
+    bound below an inner join of any other policy, inside a `choice` case, an
+    `await` match outside its `then` path, or a `repeat` body is not in `Out`
+    and is not added, even where the reach rule below would otherwise keep it.
   - A compensation thread starts with an empty environment
     ([FR-427](FR-427-check-protocol-compensation.md)).
   - Each thread holds its own copy of a value, so a rebinding, a re-fork or an
@@ -155,8 +161,8 @@ removed once its join has settled and every branch thread has left
   thread), nested branch bodies included. The interval is empty for a rest at
   or before the node's binding node, and a `repeat`'s back edge widens it to the
   whole body of the enclosing `repeat`. A branch thread of an `all` join also
-  reaches on into everything its joiner reaches, for the entries it bound or
-  that threads below it bound, so an entry of a branch of an inner `all`-joined
+  reaches on into everything its joiner reaches, for the entries in its
+  branch's `Out`, so an entry of a branch of an inner `all`-joined
   `parallel` is kept through the enclosing branch and up to the outermost
   joiner; and a joining thread keeps an entry through a later fork whose
   branches read it, because that fork copies it. So a branch of a later
@@ -170,11 +176,12 @@ removed once its join has settled and every branch thread has left
 - Each channel has one queue per protocol instance: a sequence in delivery
   order per FIFO key for `fifo` ordering, and a bag for `unordered`. An entry
   is (send node, sending thread path, payload). A queue is bounded only by the
-  channel's authored capacity. A channel is named by its **qualified name**,
-  the qualified protocol-definition identity
-  ([FR-050](FR-050-bind-protocol-instances.md)) followed by the channel's
-  declaration-local handle, so two protocols that each declare a channel `Pay`
-  have different channels, queues, transition identities and wait causes.
+  channel's authored capacity. A channel is named by its **qualified name**, the
+  declaring protocol's qualified name, `::` and the channel's handle, as
+  [FR-429](FR-429-report-protocol-deadlocks.md) defines it over the
+  [FR-050](FR-050-bind-protocol-instances.md) identity, so two protocols that
+  each declare a channel `Pay` have different channels, queues, transition
+  identities and wait causes.
 
 ### State and key
 
@@ -233,6 +240,7 @@ state holds the model state and no instance.
 | FR-425-AC-8 | In a `repeat` of maximum 2, `parallel P` with an `all` join binds `a` in a branch, then `parallel Q` with branches `u` (`attempt U1`, then a `check` reading `a`) and `v`, `join any … outstanding continue`: after `join(P)` the forking thread's environment holds `a`, and `fork(Q)` copies it into `u` and `v`. In iteration 2, with `Q`'s first instance still live, `fork(Q)` takes ordinal 1 and gives its `u` an environment holding iteration 2's `a`; iteration 1's `u` still evaluates its `check` over iteration 1's `a`, no state refuses, and when iteration 1's `u` completes its entry is dropped from `observations`. | Test (TC-375) |
 | FR-425-AC-9 | An entry bound in a branch of an inner `all`-joined `parallel` and read after the outermost join is held by the inner branch, then by the enclosing branch, then by the outermost joiner, and is absent from `observations` in the step after the reading node's step. A joining thread whose entry is read only by branches of a later `parallel` keeps it through that fork, which copies it into each branch; a thread resting at or before the node's binding node holds no entry for it. | Test (TC-375) |
 | FR-425-AC-10 | Two protocol definitions of one package that each declare `channel Pay` give subjects whose `queues` entries and `duplicate` and `lose` identities hold channel names in each protocol's own qualified name; no key or identity of one names the other's channel. | Test (TC-375) |
+| FR-425-AC-11 | Inside a `repeat`, a `parallel Outer` with an `all` join has a branch holding an inner `parallel Inner` joined `any` whose branch binds `x`, and a reader of `x` inside `Inner`'s other branch in the loop body. After `join(Outer)` the joiner's environment holds no entry for `x`, and `observations` holds none under the joiner's path, although the `repeat` back edge widens the joiner's reach to the whole body; the same with `Inner` joined `all` holds `x` after `join(Outer)` for as long as the reach rule keeps it. | Test (TC-375) |
 
 ## Dependencies
 

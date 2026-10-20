@@ -25,6 +25,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-435
     type: references
+  - target: ix://agent-ix/quire-specification/FR-466
+    type: references
   - target: ix://agent-ix/quire-specification/FR-436
     type: references
   - target: ix://agent-ix/quire-specification/FR-363
@@ -90,7 +92,7 @@ in [FR-427](FR-427-check-protocol-compensation.md) and
 | --- | --- | --- | --- |
 | `attempt` | thread at attempt node `n` | for one FR-181 application of `n`'s operation (receiver and argument vector from the finite domains), the effective precondition over the contract clauses `n` selects is true over the thread's observation; some post-state within the frame satisfies the selected postconditions; the binder record (receiver, arguments, result) satisfies `n`'s constraint; the gate holds | the post-state delta is written through the memory model, in place under `sc`; the binder is bound. One step per (application, post-state, result) |
 | `event` | thread at an `effect`, domain `event` or `commit` node `n` | some record of `n`'s record type satisfies `n`'s constraint; for an `effect`, its attempt's binder is bound | the binder is bound; the model state is unchanged. One step per satisfying record |
-| `send` | thread at send node `n` | some payload satisfies `n`'s constraint; the channel's capacity and overflow policy admit the send ([FR-170](FR-170-evaluate-channel-queue-semantics.md): under `block`, not while the queue is at capacity); the gate holds | per FR-170: append the entry, or under `reject` at capacity leave the queue unchanged, or under `loss` apply the loss selector (`head` removes the oldest queued entry and appends the arriving one, `tail` removes the newest and appends the arriving one, `new` drops the arriving one and leaves the queue unchanged); the binder is bound to the **send record** described below |
+| `send` | thread at send node `n` | some payload satisfies `n`'s constraint; the channel's capacity and overflow policy admit the send ([FR-170](FR-170-evaluate-channel-queue-semantics.md): under `block`, not while the queue is at capacity); the gate holds | per FR-170: append the entry, or under `reject` at capacity leave the queue unchanged, or under `loss` apply the loss selector (`head` removes the oldest queued entry and appends the arriving one, `tail` removes the newest and appends the arriving one, `new` drops the arriving one and leaves the queue unchanged); the binder is bound to the payload and the **send record** described below is recorded |
 | `receive` | thread at receive node `n` | the queue holds a deliverable entry from the send node `n` names (`fifo`: the head of its key; `unordered`: any entry) whose payload satisfies `n`'s constraint; the gate holds | the entry is removed and the binder bound. One step per distinct deliverable entry |
 | `duplicate`, `lose` | channel `h` | the delivery policy admits duplication (`unknown`, `at-least-once`) or loss (`unknown`, `at-most-once`) and entry `e` is queued; the channel's protocol instance is not finished; for `duplicate`, capacity admits one more entry | add a copy of `e`, or remove `e` |
 | `fork` | thread at `parallel` `p` | the gate holds | creates the parallel instance and one `running` branch thread per branch, each settled from its branch start; the owner rests at `p`'s join; the memory model splits its component |
@@ -103,19 +105,30 @@ in [FR-427](FR-427-check-protocol-compensation.md) and
 An await's match is its event node's own step, after which the owner settles
 into `then`.
 
-The **send record** is `{channel, payload, outcome, displaced}`. `channel` is
-the channel's qualified name ([FR-425](FR-425-define-protocol-subjects-and-state-keys.md));
-`payload` is the sent payload; `outcome` is `accepted` when the entry was
-appended, `rejected` when `reject` refused the send at capacity, and `lost`
-when a `loss new` selector dropped the arriving payload; `displaced` is the
-queued entry that a `loss head` or `loss tail` selector removed to admit the
-arriving one, and is none otherwise. A `rejected` or `lost` send leaves no
-entry. A send that displaces an entry also appends its own.
+The binder of a `send` holds the sent payload, of the channel's `carries`
+type, as the checked package types it
+([FR-466](../../objects/interfaces/FR-466-checked-package-protocol-control-bodies.md)).
+The step also records a **send record**, its result: `{"type":"send-record",
+"channel":"<qualified-name>","payload":<encoded>,"outcome":"accepted"|
+"rejected"|"lost","displaced":<queue-entry>|null}`. `channel` is the channel's
+qualified name ([FR-429](FR-429-report-protocol-deadlocks.md)); `payload` is the
+sent payload; `outcome` is `accepted` when the entry was appended, `rejected`
+when `reject` refused the send at capacity, and `lost` when a `loss new`
+selector dropped the arriving payload; `displaced` is the queue entry (the
+`queue-entry` form of FR-425) that a `loss head` or `loss tail` selector
+removed to admit the arriving one, and `null` otherwise. A `rejected` or `lost`
+send leaves no entry. A send that displaces an entry also appends its own. The
+send record is data for the reader, like the blocked-thread list: the state key
+holds the binder's payload, and the queue the outcome left.
 
-**Waiting.** A thread at an attempt with no enabled application, at a receive
-with no deliverable entry, at a `block` send whose channel is at capacity, at
-a `fence` whose memory model's fence rule is false, at an unsatisfied join or
-at a false `check` has no enabled step and waits. A `cancelled` thread takes
+**Waiting.** A thread at an attempt with no enabled application, at an event,
+send or finish no record or payload of which satisfies its constraint, at a
+receive with no deliverable entry, at a `block` send whose channel is at
+capacity, at a `fence` whose memory model's fence rule is false, at an
+unsatisfied join, at `finish` while another thread of its instance is
+`running`, at a node owned by a replicated role with no live instance, at a
+compensation attempt that a commit step has closed, or at a false `check` has
+no enabled step and waits. A `cancelled` thread takes
 no step. A false `check` never becomes true. The protocol
 system reads no clock: `timeout` is enabled for as long as its `await` waits,
 which admits every behaviour some deadline admits, and a compensation's
@@ -200,10 +213,10 @@ JCS bytes of the identity, as FR-181 states for model transition identities.
 | FR-426-AC-8 | A repeat with no maximum keeps no counter in `bounds`, re-enters its body while its guard is true and leaves it when the guard is false; a loop whose guard stays true closes a cycle through the state key, so its reachable state set is finite when its body's states are. | Test (TC-376) |
 | FR-426-AC-9 | `finish` is not enabled while a branch thread under `outstanding continue` or a compensation thread of the instance is `running`, even when a record satisfies the finish constraint; it is enabled once every such thread has left `running`. | Test (TC-377, TC-380) |
 | FR-426-AC-10 | An attempt constraint that reads `lookup<T>(p, r) absent undefined` at a key the population does not hold, at a reachable state, settles every item over the subject `refuted` with cause `undefined-evaluation`, a prefix ending at that state, and `where` naming the constraint's locus; the step is not treated as disabled. | Test (TC-376) |
-| FR-426-AC-11 | Over a `fifo` channel of capacity 2, each `send` binds a send record `{channel, payload, outcome, displaced}` with `channel` in the qualified name. On an empty queue `outcome` is `accepted` and `displaced` is none. With the queue holding `P1` then `P2`, `overflow reject` gives `rejected` and `overflow loss new` gives `lost`, each leaving the queue `[P1, P2]`; `overflow loss head` gives `accepted` with `displaced` `P1` and the queue `[P2, new]`; `overflow loss tail` gives `accepted` with `displaced` `P2` and the queue `[P1, new]`. | Test (TC-378) |
+| FR-426-AC-11 | Over a `fifo` channel of capacity 2, each `send` binds its binder to the payload and records a send record `{channel, payload, outcome, displaced}` with `channel` in the qualified name. On an empty queue `outcome` is `accepted` and `displaced` is none. With the queue holding `P1` then `P2`, `overflow reject` gives `rejected` and `overflow loss new` gives `lost`, each leaving the queue `[P1, P2]`; `overflow loss head` gives `accepted` with `displaced` `P1` and the queue `[P2, new]`; `overflow loss tail` gives `accepted` with `displaced` `P2` and the queue `[P1, new]`. | Test (TC-378) |
 | FR-426-AC-12 | A thread at `fence F ordering seq_cst;` has one `fence` step, which changes no model state and moves the thread to its next sibling. Under `sc` it is enabled in every state. Under `tso` the `seq_cst` fence is enabled exactly when its thread's buffer is empty and waits otherwise, and an `acquire` fence is enabled in every state. Two branches that each hold a fence reach no deadlock under `sc` that the same protocol without the fences does not reach. | Test (TC-376) |
 | FR-426-AC-13 | `parallel Outer { branch a attempt Fast; branch b sequence { parallel Inner { branch x attempt X1; branch y attempt Y1 } join any [x, y] outstanding continue; attempt After } } join any [a] outstanding cancel`, every attempt always enabled: in a state where `a` has completed, `b` rests at `Inner`'s join and `x` and `y` are `running`, the `join(Outer)` step makes `b`, `x` and `y` `cancelled`, settles and removes `Inner`'s instance, and none of them takes a step in any later state; `Y1` and `After` are enabled in no state after that join. | Test (TC-377) |
-| FR-426-AC-14 | A `block` send at capacity, a `fence` whose rule is false and a `cancelled` thread each have no enabled step: the first and second wait and are reported by their causes ([FR-429](FR-429-report-protocol-deadlocks.md)), and the third never takes a step. | Test (TC-378, TC-377) |
+| FR-426-AC-14 | A `block` send at capacity has no enabled step and waits, and a deadlock at it reports `full-queue` ([FR-429](FR-429-report-protocol-deadlocks.md)); a thread at a `fence` whose memory model's rule is false (a `seq_cst` fence under `tso` with a non-empty buffer) has no enabled step while its `flush` step is enabled; a `cancelled` thread never takes a step. | Test (TC-378, TC-376, TC-377) |
 
 ## Dependencies
 
