@@ -120,19 +120,23 @@ reads do not return a value:
 The reported read and cause are the same in a verdict and its replay.
 
 **Abstract budget stop.** The step rules are decided only when every read
-returned a value. If the abstract subject exhausts the run's evaluation meter
-(the `EvaluationMeter` limit of the model-checking request, FR-126) while it
-decides the step, the run stops: it settles `incomplete`, execution
-`resource-incomplete`, cause `limit-reached{EvaluationMeter, value, setting}`
+returned a value. Every clause evaluation of either subject gets a fresh
+meter of one budget. If an evaluation that the abstract subject runs to
+decide the step (a precondition, a frame decision or a postcondition)
+exhausts its meter, the run stops: it settles `incomplete`, execution
+`resource-incomplete`, cause `limit-reached{limit, value, setting}` with the
+limit that bounds one clause evaluation, its configured bound and its
+FR-461 `model_check.*` setting
 ([FR-379](FR-379-report-and-replay-refinement-counterexamples.md)), never
 `failed`, `refuted`, `mapping-undetermined` or `undecided-successor`. A fault,
 an undefined read or an undetermined read in the same step settles as above
-instead, because the step rules are not reached. A concrete row, argument or
-history update is different: it is read with a fresh meter of its own
-(above), so its exhaustion is a property of that one expression at that
-state and makes the read incomplete, hence undetermined. An abstract contract
-that the clause evaluator refuses or leaves incomplete without exhausting the
-run's evaluation meter is an undecided successor
+instead, because the step rules are not reached. Which side ran out decides
+the outcome: a concrete row, argument or history update that exhausts its
+meter makes that read incomplete, hence undetermined, since it is a property
+of that one expression at that state, whereas the abstract subject's
+exhaustion limits the run. An abstract contract that the clause evaluator
+refuses or leaves incomplete without exhausting its meter is an undecided
+successor
 ([FR-363](../temporal/FR-363-settle-every-behaviour-temporal-verdicts.md)).
 
 **Step rules.** Each concrete step `(s, h) -t-> (s', h')` passes or fails by
@@ -227,7 +231,7 @@ until and since are non-strict ([FR-161](../temporal/FR-161-analyze-infinite-tra
 | FR-377-AC-10 | A mapped field declared `?` is absent for the row `none` and set to `v` for `Some(v)`, and a field declared `Option<T>` keeps an explicit `none`. | Test (TC-315) |
 | FR-377-AC-11 | A concrete object of a most-specific type no object row names makes `map` undetermined at that state and is never dropped from the mapped state; a reference to such an object makes `map` undetermined naming the row that holds it; the mapped state of a refinement holds no relationship extent. | Test (TC-315) |
 | FR-377-AC-12 | Among the receiver, arguments, post history and post-state rows of one step, an internal fault settles the item `failed` whatever the other reads return; otherwise the first undefined read in the order receiver, arguments as written, post history, post-state rows is reported and refutes the claim even when an earlier read is refused, incomplete, out of type or of an unmapped type; otherwise the first undetermined read is reported; an undefined receiver is reported before an undefined argument, an undefined argument before an undefined post-state row, an undefined post history before an undefined post-state row, and an incomplete argument before an out-of-type post history; the reported read is the same in the verdict and its replay. | Test (TC-315) |
-| FR-377-AC-13 | A budget the abstract subject exhausts while deciding a step whose reads all returned values settles `incomplete`, execution `resource-incomplete`, cause `limit-reached{EvaluationMeter, value, setting}`, never `failed`, `refuted`, `mapping-undetermined` or `undecided-successor`; an undefined read, an undetermined read or a fault in the same step settles by AC-12 instead of the stop; an abstract contract left incomplete without exhausting the meter is `undecided-successor`. | Test (TC-315) |
+| FR-377-AC-13 | A meter the abstract subject exhausts while deciding a step whose reads all returned values settles `incomplete`, execution `resource-incomplete`, cause `limit-reached{limit, value, setting}` for the limit bounding one clause evaluation, never `failed`, `refuted`, `mapping-undetermined` or `undecided-successor`; an undefined read, an undetermined read or a fault in the same step settles by AC-12 instead of the stop; an abstract contract left incomplete without exhausting its meter is `undecided-successor`. | Test (TC-315) |
 
 ## Dependencies
 

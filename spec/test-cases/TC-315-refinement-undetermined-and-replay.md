@@ -65,26 +65,32 @@ parity mismatch.
    state and `Some(1)` at another, and an `Option<Int[0, 2]>` field by `none`.
 9. **Failure precedence across a step.** Fixture `Reads`: abstract
    `Spec::Reg` with `v: Int[0, 3]` and `set(x: Int[0, 3], y: Int[0, 3])`;
-   concrete `Impl::Reg` with `v`, a history field `h: Int[0, 2]` (FR-375
-   history), a reference field `target: Reference<Reg>` and an operation
-   `store()` that sets `v` and, in its post-state, creates an `Extra` object
-   of a subtype that no object row names; rows `v = self.v`, the step row
+   concrete `Impl::Reg` with `v: Int[0, 3]` starting 0, a history field
+   `h: Int[0, 2]` starting 0, a reference field `target`, and an operation
+   `store()` that sets `v` to 1. Rows: the one field row `v = p(self)`
+   with `p(self) = if self.v = 0 then 0 else <post>`, the step row
    `store -> Spec::Reg::set(R, A1, A2)` with receiver `R = r(self)` and
-   arguments `A1 = a1(self)`, `A2 = a2(self)`, and the history update `H`.
-   Each of `R`, `A1`, `A2`, `H` and the field row `P` (`v = p(self)`) is set
-   per case to one of: defined; incomplete (it costs more than its fresh
-   meter, which every other expression fits in); undefined (a `div` by
-   zero); out of type (`H` set to 3); unmapped (`P` evaluated on the `Extra`
-   object, which `map` cannot map). Run (a) `R` incomplete, `A1` undefined;
-   (b) `A1` incomplete, `P` undefined; (c) `A1` and `A2` undefined; (d) `H`
-   out of type, `P` incomplete; (e) `P` unmapped, nothing undefined; (f) `A1`
-   undefined and a broken evaluator invariant in `P`; (g) every read defined
-   and the abstract `set` postcondition exhausting the abstract subject's
-   evaluation meter at value M; (h) as (g) with `A1` undefined; (i) as (g)
-   with `A1` incomplete; (j) as (g) with a broken evaluator invariant in
-   `P`; (k) `R` and `A1` both undefined; (l) `A1` and `P` both undefined;
-   (m) `A1` incomplete and `H` out of type; (n) `H` and `P` both undefined;
-   (o) as (g) with the abstract `set` precondition left incomplete without
+   arguments `A1 = a1(self)`, `A2 = a2(self)`, and the history update
+   `H`. So `P` (the field row after `store`) is read only at the post-state,
+   and `R`, `A1`, `A2` at the pre-state. Each is set per case to one of:
+   defined (`<post>` is `self.v`, `H` is `h`); incomplete (it costs more
+   than its fresh meter, which every other expression fits in); undefined
+   (`<post>` is `1 div (1 - self.v)`, which divides by zero at `v = 1`; `H`
+   is `1 div h`, which divides by zero at `h = 0`; `R`, `A1`, `A2` divide by
+   zero); out of type (`H` is `h + 3`, outside `Int[0, 2]`). Case (e) alone
+   adds to `store()` the creation of an `Extra` object, of a subtype of
+   `Impl::Reg` that no object row names, so `map` cannot map it. Run (a)
+   `R` incomplete, `A1` undefined; (b) `A1` incomplete, `P` undefined; (c)
+   `A1` and `A2` undefined; (d) `H` out of type, `P` incomplete; (e) the
+   `Extra` object with every read defined; (f) `A1` undefined and a broken
+   evaluator invariant in `P`; (g) every read defined and the abstract `set`
+   postcondition exhausting the abstract subject's fresh meter of bound M;
+   (h) as (g) with `A1` undefined; (i) as (g) with `A1` incomplete; (j) as
+   (g) with a broken evaluator invariant in `P`; (k) `R` and `A1` both
+   undefined; (l) `A1` and `P` both undefined; (m) `A1` incomplete and `H`
+   out of type; (n) `H` and `P` both undefined; (o) every read defined, the
+   abstract `set` postcondition cheap (not (g)'s) and its precondition left
+   incomplete because an observation it reads is unavailable, without
    exhausting the meter.
 
 ## Expected Results
@@ -115,11 +121,12 @@ set to `1` and keeps the explicit `none` (FR-375-AC-17, FR-377-AC-10).
 
 Case 9: (a) refutes, reporting `A1`; (b) refutes, reporting `P`; (c) refutes,
 reporting `A1`; (d) settles `inconclusive`, `mapping-undetermined`, reporting
-`H`; (e) settles `inconclusive`, `mapping-undetermined`, reporting `P`; (f)
-settles `failed`; (g) settles `incomplete`, `resource-incomplete`,
-`limit-reached{EvaluationMeter, M, setting}`; (h) refutes, reporting `A1`;
-(i) settles `inconclusive`, `mapping-undetermined`, reporting `A1`; (j)
-settles `failed`; (k) refutes, reporting `R`; (l) refutes, reporting `A1`; (m)
-settles `inconclusive`, `mapping-undetermined`, reporting `A1`; (n) refutes,
-reporting `H`; (o) settles `inconclusive`, `undecided-successor`
-(FR-377-AC-12, FR-377-AC-13).
+`H`; (e) settles `inconclusive`, `mapping-undetermined`, reporting the row of
+the `Extra` object; (f) settles `failed`; (g) settles `incomplete`,
+`resource-incomplete`, `limit-reached{limit, M, setting}` with the limit
+bounding one clause evaluation and its `model_check.*` setting; (h) refutes,
+reporting `A1`; (i) settles `inconclusive`, `mapping-undetermined`, reporting
+`A1`; (j) settles `failed`; (k) refutes, reporting `R`; (l) refutes,
+reporting `A1`; (m) settles `inconclusive`, `mapping-undetermined`, reporting
+`A1`; (n) refutes, reporting `H`; (o) settles `inconclusive`,
+`undecided-successor` (FR-377-AC-12, FR-377-AC-13).

@@ -1,48 +1,129 @@
 ---
-id: SR-13372
-title: "Base review of QSpec PR #292 (STD-211): failure precedence across a refinement step"
+id: SR-13322
+title: "Base checklist review of QSpec PR #287 (STD-211)"
 type: SpecReview
 analysis: base
-scope: "agent-ix/quire-specification@e78332c; spec/functional/analysis/FR-377-decide-model-refinement.md, spec/test-cases/TC-315-refinement-undetermined-and-replay.md; ticket STD-211"
+scope: "agent-ix/quire-specification@1e274e7; spec/functional/analysis/FR-375-declare-model-refinement.md, spec/functional/analysis/FR-376-evaluate-population-valued-mapping-expressions.md, spec/functional/analysis/FR-377-decide-model-refinement.md, proposals/quire-v1/shared-grammar.md, proposals/quire-v1/definitions/native-diagnostics.md, spec/test-cases/TC-310-refinement-declaration-admission.md, spec/test-cases/TC-311-population-valued-mapping-expressions.md, spec/test-cases/TC-315-refinement-undetermined-and-replay.md, spec/test-cases/TC-316-ring-buffer-data-refinement.md"
 review_set: subset
 relationships:
-  - target: ix://agent-ix/quire-specification/FR-377
+  - target: ix://agent-ix/quire-specification/FR-375
     type: reviews
-  - target: ix://agent-ix/quire-specification/TC-315
+  - target: ix://agent-ix/quire-specification/FR-376
+    type: reviews
+  - target: ix://agent-ix/quire-specification/FR-377
     type: reviews
 ---
 
 ## Summary
 
-Ticket: STD-211. PR: quire-specification#292 at e78332c (e78332ce731d91e077cc66b834bbee948eda0926), scoped to `git diff refs/remotes/origin/main...e78332ce7` (origin/main d053fb2). The diff is spec-only, over two files: FR-377 gains "Failure precedence across a step" and the budget paragraph, FR-377-AC-12/13 are added, and TC-315 gains step 9 with cases (a) to (h) and verifies edges to AC-12/13. Base review: I checked each case of step 9 by hand against the new rules, and checked the rules against QSpec FR-375, FR-377-AC-9, FR-379, FR-363 and FR-383, and against QSL main 9567ed6 (FR-141-AC-9/10/11 and FR-142/144/145). EARS: the FR-377 requirement statement is unchanged and stays event-driven ("When a refinement item is checked, the analyzer SHALL ..."). The new Behavior prose describes the system rather than the change, and each new AC is a single checkable outcome. A separate `spec-ears-analysis` was not run, because no requirement statement changed. Gates: `cargo test --test checked_package_v2 --test backend_provider_v1` passes on the head (9 and 108). `quire validate --scope .` (quire 0.36.2, engine 0.50.2; the rollout note names 0.36.1/0.50.1, so the binary is newer, not older) exits 0 on FR-377 and on TC-315, with only the duplicate-archetype, duplicate-inverse-edge and inline-schema warnings, the same as on main. A whole-tree `quire validate --scope . 'spec/**/*.md'`, with paths normalised, is byte-identical between the head and main (134 failing documents, all already on main). `quire matrix` lists FR-377-AC-12/13 `untagged`, as AC-1..11 are on main too, because QSpec tags no Rust test for FR-377 and its implementation tests live in QSL. Method `code-review` was not run, because no code or test file changed; the Cargo gates stand in for it.
+Ticket: STD-211. Base checklist (ID formats, duplicates, AC-to-TC coverage, matrix visibility) over `git diff origin/main...1e274e7`. `quire validate` exits 0 on the three FRs and four TCs (the two proposal files have no frontmatter, as on main). `quire matrix --scope .` lists every new criterion (FR-375-AC-15..18, FR-376-AC-6..8, FR-377-AC-9..11). No id collides with merged #285 (FR-375-AC-12..14, TC-310 mutations 14-17) or with open #283 (FR-322-AC-75/76, TC-277 BP-14), #286 (FR-149-AC-21, TC-194 E35 only) or #288.
 
 ## Scope
 
 | Unit | Path | Role |
 | --- | --- | --- |
-| FR-377-failure-precedence-across-a-step | spec/functional/analysis/FR-377-decide-model-refinement.md | examined |
-| FR-377-step-budget-paragraph | spec/functional/analysis/FR-377-decide-model-refinement.md | examined |
-| FR-377-AC-12 | spec/functional/analysis/FR-377-decide-model-refinement.md | examined |
-| FR-377-AC-13 | spec/functional/analysis/FR-377-decide-model-refinement.md | examined |
-| TC-315-step-9 | spec/test-cases/TC-315-refinement-undetermined-and-replay.md | examined |
-| TC-315-case-9-expected | spec/test-cases/TC-315-refinement-undetermined-and-replay.md | examined |
-| TC-315-relationships | spec/test-cases/TC-315-refinement-undetermined-and-replay.md | examined |
-| FR-377-AC-9 | spec/functional/analysis/FR-377-decide-model-refinement.md | context_only |
-| FR-377 | spec/functional/analysis/FR-377-decide-model-refinement.md | context_only |
-| TC-316-declaration | spec/test-cases/TC-316-ring-buffer-data-refinement.md | context_only |
-| FR-363-undecided-successor | spec/functional/temporal/FR-363-settle-every-behaviour-temporal-verdicts.md | context_only |
-| QSL-FR-141-AC-9 | quire-spec-language:spec/functional/FR-141-decide-one-concrete-step-against-the-abstract-model.md | context_only |
-| QSL-FR-141-AC-10 | quire-spec-language:spec/functional/FR-141-decide-one-concrete-step-against-the-abstract-model.md | context_only |
+| FR-375-AC-15 | spec/functional/analysis/FR-375-declare-model-refinement.md | examined |
+| FR-375-AC-16 | spec/functional/analysis/FR-375-declare-model-refinement.md | examined |
+| FR-375-AC-17 | spec/functional/analysis/FR-375-declare-model-refinement.md | examined |
+| FR-375-AC-18 | spec/functional/analysis/FR-375-declare-model-refinement.md | examined |
+| FR-376-AC-5 | spec/functional/analysis/FR-376-evaluate-population-valued-mapping-expressions.md | examined |
+| FR-376-AC-6 | spec/functional/analysis/FR-376-evaluate-population-valued-mapping-expressions.md | examined |
+| FR-376-AC-7 | spec/functional/analysis/FR-376-evaluate-population-valued-mapping-expressions.md | examined |
+| FR-376-AC-8 | spec/functional/analysis/FR-376-evaluate-population-valued-mapping-expressions.md | examined |
+| FR-377-AC-9 | spec/functional/analysis/FR-377-decide-model-refinement.md | examined |
+| FR-377-AC-10 | spec/functional/analysis/FR-377-decide-model-refinement.md | examined |
+| FR-377-AC-11 | spec/functional/analysis/FR-377-decide-model-refinement.md | examined |
+| TC-310-m20 | spec/test-cases/TC-310-refinement-declaration-admission.md | examined |
+| TC-310-m21 | spec/test-cases/TC-310-refinement-declaration-admission.md | examined |
+| TC-311-steps | spec/test-cases/TC-311-population-valued-mapping-expressions.md | examined |
+| TC-315-c7 | spec/test-cases/TC-315-refinement-undetermined-and-replay.md | examined |
+| TC-315-c8 | spec/test-cases/TC-315-refinement-undetermined-and-replay.md | examined |
+| TC-316-row | spec/test-cases/TC-316-ring-buffer-data-refinement.md | examined |
 
 ## Findings
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | high | The step-9 fixture is refused before it runs. TC-316's abstract `enq(x: Int[0, 1])` has one parameter, so the row `put -> enq(self.ring, A1, A2)` has one argument too many, and FR-375 refuses a wrong argument count `ill_typed`/`operator-ineligible` (FR-375 line 326). The row also fixes the receiver as `self.ring`, but the procedure asks for `R` to be chosen as incomplete or undefined. TC-316 has no history field for `H` and no unmapped subtype for `P`. Nothing says the step must create the `P` object, or make `P` fail only at `s'`. Without that, `map(s, h)` already fails at the pre-state, and the failure is reported one position earlier than at this step. Every case of step 9 is therefore unbuildable as written. Give step 9 its own fixture, as QSL FR-141-AC-10's `Reads` does: an abstract operation with two parameters, a receiver expression that can be chosen, a bounded history field with an update on `put`, and a post-state row or object that fails only after `put`. | spec/test-cases/TC-315-refinement-undetermined-and-replay.md:66-76 |
-| FND-002 | medium | Cases (a) to (h) never test the order between the read groups. Only `A1` before `A2` (c) and `H` before `P` (d) are observable. Every other case has exactly one undefined read, or ranks undefined over undetermined, which holds in any order. An implementation that reads post history and post-state rows before the receiver and arguments (order H, P, R, A1, A2) passes all eight cases, although it breaks AC-12's "order receiver, arguments as written, post history, post-state rows". Add cross-group cases, for example: `R` and `A1` both undefined, reporting `R`; `A1` and `P` both undefined, reporting `A1`; `A1` incomplete and `H` out of type, reporting `A1`. QSL FR-141-AC-10 has the same six outcomes and the same gap. | spec/functional/analysis/FR-377-decide-model-refinement.md:218 |
-| FND-003 | medium | The new text does not separate a budget stop from an undecided contract. FR-363 "Undecided successor" calls an abstract postcondition over a candidate post-state undecided when its evaluation "returns an incomplete outcome". That settles `inconclusive`/`undecided-successor`, and FR-379 applies the rule "during expansion or a step check" for either subject. The PR instead makes a budget the abstract subject exhausts while deciding a step a stop of the run, and "therefore" derives this from the read order. The read order does not imply it: it only says when the step rules run. Meanwhile a concrete row that exceeds its fresh meter is incomplete, so undetermined. So two meter exhaustions are classified differently, and no rule says why. TC case (g) uses "per-evaluation meter", which is a QSL term that QSpec never defines (QSpec says "fresh meter", and FR-363's Stopped row says "work meter"). AC-13's exclusions also leave out `undecided-successor`. State the rule as a rule, not as a consequence: exhausting the abstract subject's evaluation meter or candidate limit while deciding a step is a budget stop (the FR-363 Stopped row), not an incomplete outcome of a contract, and an incomplete mapping read stays `mapping-undetermined`. QSL FR-141 already states this. Add `undecided-successor` to AC-13's never-list. | spec/functional/analysis/FR-377-decide-model-refinement.md:120-125 |
-| FND-004 | low | AC-13 and cases (g)/(h) cover only an undefined read outranking the budget. The body says that "a failed read outranks it", which also covers an undetermined read (expect `mapping-undetermined`) and a faulted read (expect `failed`). Neither is in the AC or the TC. Case (g) also expects bare `limit-reached`, although FR-379 spells the cause `limit-reached{limit, value, setting}`. A stop on a different limit, such as `max_states`, would still pass, whereas QSL FR-141-AC-9 pins `EvaluationMeter` and B. Name the limit and its value in (g), and add an undetermined-read-plus-budget case. | spec/functional/analysis/FR-377-decide-model-refinement.md:219 |
+| FND-001 | medium | FR-377-AC-11 has three clauses but TC-315 covers one. Case 7 holds "an unmapped subtype object whose key sorts first" (the object clause); no case maps a reference to an unmapped object, and no case reads the mapped state's relationship extent (the expected results cite AC-11 only for case 7). The ring-buffer fixture also declares no subtype of `Ring`, and TC-315 does not add one. Add the subtype to the fixture (QSL TC-1086 uses `SubRing` and a `next: Reference<Ring>` field) and vectors for the reference clause and the extent clause. | spec/functional/analysis/FR-377-decide-model-refinement.md:192; spec/test-cases/TC-315-refinement-undetermined-and-replay.md:44-49,72-74 |
+| FND-002 | medium | Case 7's first run cannot be built as written. The ring-buffer `Queue` has one field row (`items`), so there is no "earlier row"; and a per-evaluation meter budget of zero (the TC-555 / QSL FR-140-AC-5 device) applies to every row, so the `items` row is itself incomplete and its `only` is never reached. The fourth run ("an evaluator stop injected in the earlier row") is fault injection that a black-box vector cannot perform. Name a fixture variant with a second field row, a way to make only that row refused or incomplete (for example a refused form in it), and drop or re-scope the injected stop. | spec/test-cases/TC-315-refinement-undetermined-and-replay.md:44-49,72-74 |
+| FND-003 | low | The last clause of FR-375-AC-17 and TC-310 mutation 20 expect `Some(1)` in a state clause to be "an ordinary call that resolves as any other", which states no outcome. Say what the vector expects (for example `missing_declaration`/`missing-name` at `Some` when no function `Some` is declared, and a call when one is). | spec/functional/analysis/FR-375-declare-model-refinement.md:398; spec/test-cases/TC-310-refinement-declaration-admission.md:113-116,192-195 |
 
 ## Verdict
 
-Not mergeable. One high finding: the step-9 fixture is refused at admission (wrong argument count against TC-316's one-parameter `enq`), and its `R`, `H` and `P` have nothing to bind to. Two medium: the cross-group read order of AC-12 is never observable in (a) to (h), and the budget-stop rule is derived rather than stated, which leaves it in tension with FR-363 and FR-379's undecided-successor rule. One low: AC-13 and case (g) are under-pinned. Correct by hand, once a buildable fixture exists: (a) A1, (b) P, (c) A1, (d) H mapping-undetermined, (e) P mapping-undetermined, (f) failed, (g) incomplete/resource-incomplete/limit-reached, and (h) A1. Each of these follows from the new body and from AC-12/13, and each matches QSL FR-141-AC-9/10. The verifies edges and the Verification column agree.
+Not mergeable on this lens until FND-001 and FND-002 give FR-377-AC-9 and AC-11 constructible vectors. Every other new criterion parses, names a TC, and that TC carries a matching step: FR-375-AC-15/16 (TC-310 mutations 18/19), AC-18 (mutation 21), FR-376-AC-5 (TC-311 step 2, TC-316), AC-6/7/8 (TC-311 steps 6/7/8), FR-377-AC-10 (TC-315 case 8). The `convert<Integer>` spelling is applied in all three copies of the ring row (FR-376-AC-5, TC-311, TC-316), no stale `s.index = (self.head` copy remains, and it matches QSL #1038's ADR-020 §8 text. The sum bound matches QSL FR-139 (#1038).
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | medium | The rewritten case 7 fixture puts the `also` row in the variant used by every run, but `also = only(s in R::slots where s.ring = self: s.value)` matches both slots of `r` and is undefined at the held state. Read that way, `also` (the lower field name) is the reported undefined row in (a), (b) refutes instead of being undetermined for `SubRing`, and (d) refutes instead of being undetermined for the `next` row, so the expected results for (a), (b) and (d) are wrong. Only (c) says "with the `also` row". Run (d)'s ring `a` (type `Ring`) also has no stated `head`/`size`, so whether its `items` row is defined is unstated. Say that `also` is added only in (c), and give ring `a`'s state in (d). | spec/test-cases/TC-315-refinement-undetermined-and-replay.md:44-57,78-84 |
+
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | low | The refusing half of FR-375-AC-18 (and FR-001-AC-7, FR-090-AC-10) and TC-310 mutation 21 say "a row using a form outside `quire.model.complete/v1` and its `requires` closure" without naming one, and expect "naming the layer" without saying which. Name the form (for example a `protocol` reference or a temporal operator in a row) and the layer the refusal names. | spec/test-cases/TC-310-refinement-declaration-admission.md:127-130,210-212; spec/functional/analysis/FR-375-declare-model-refinement.md:416 |
+
+## New findings (disposition pass 3)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-006 | medium | The chosen out-of-layer example cannot reach the layer check. A field row is `member-name '=' expr`, and `eventually` is a reserved word that appears only in the temporal-clause productions (`temporal-unary-unbounded` and the bounded temporal grammar), not in `expr` or `primary`. A row `items = eventually ...` is therefore a syntax error, `invalid_syntax`/`unexpected-token` at `eventually`, before any `unsupported_construct`/`expression-form` refusal naming `quire.model.complete/v1`. FR-375-AC-18, FR-001-AC-7, FR-090-AC-10 and TC-310 mutation 21 all expect the latter. Use a form that `primary` admits but the model.complete closure does not, for example the protocol reference `protocol Spec::Twice`, a `primary` admitted only under `quire.protocol.complete/v1` (shared-grammar.md:941). | spec/functional/analysis/FR-375-declare-model-refinement.md:284-287,428; spec/functional/foundation/FR-001-select-native-profile.md:98; spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md:121; spec/test-cases/TC-310-refinement-declaration-admission.md:127-132,218-220; proposals/quire-v1/shared-grammar.md:161-175,352-365,939-943 |
+
+## New findings (disposition pass 4)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | medium | `protocol Spec::Twice` now parses (`protocol-reference` is a `primary`), but in mutation 21's unit it does not resolve, and no text puts the layer check before resolution. Mutation 21 uses the ring-buffer unit (aliases `Q` and `R`); `Twice` is a protocol clause of the CasRefinesCounter fixture's abstract package (TC-310 mutation 13), and there is no `Spec` alias in the ring-buffer unit at all. FR-463 resolves a reference "in the unit's own declaration scope, to a protocol declaration of the unit"; "a name offered only by an import does not resolve" and refuses `missing_declaration`/`missing-name` at the reference (FR-463-AC-4). The reference also types as the clause's Boolean, so in a non-Boolean row it would add `ill_typed`/`type-mismatch`. Either declare a local protocol in the mutation 21 unit (for example `protocol Fill`), write it in a Boolean position, and use `protocol Fill`; or state in FR-375 or FR-001 that the `expression-form` facet refusal is decided before name resolution and typing, so no other diagnostic is reported for the row. | spec/functional/analysis/FR-375-declare-model-refinement.md:285-287,428; spec/functional/foundation/FR-001-select-native-profile.md:98; spec/functional/temporal/FR-090-select-temporal-profile-and-clock.md:121; spec/test-cases/TC-310-refinement-declaration-admission.md:75-78,127-134,215-222; spec/functional/protocol/FR-463-refer-to-a-declared-protocol-in-an-expression.md (Resolution, Refusals, AC-4); proposals/quire-v1/shared-grammar.md:941-944 |
+
+## New findings (disposition pass 5)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-008 | medium | The local `Fill` cannot be built from "the body of TC-376's `Fill`, over the unit's own model `R`". TC-376's body names `M::Cell`, its operations `M::Cell::inc` and `M::Cell::setTwo`, the contract clauses `IncPre`, `IncPost`, `TwoPre` and `TwoPost`, a role `on M` and a protocol profile alias `p`. The ring-buffer model `R` (TC-311, TC-316) has types `Ring` and `Slot` with operations `put` and `take`, no `Cell`, no `inc` or `setTwo`, no such contract clauses, and the mutation 21 unit declares no protocol profile alias. Rewritten over `R`, every one of those names refuses `missing_declaration`/`missing-name` in `Fill` itself, so the unit carries refusals besides the expected `expression-form` one at the row and the vector cannot tell them apart. The rest is sound: the row now names a local protocol, which FR-463 resolves; a protocol reference types as the clause's Boolean, so `ready = protocol Fill` conforms to `ready: Boolean`; and adding `ready` with its row leaves the other rows, the hidden-field set and the step rows unchanged. Write `Fill` out over `R` (for example one `attempt` of `R::Slot::put` with its own named pre/post clauses and a protocol profile alias selecting `quire.protocol.complete/v1`), or point at a fixture that already declares a protocol over `R`. | spec/test-cases/TC-310-refinement-declaration-admission.md:130-135,220-223; spec/test-cases/TC-376-two-branch-join-worked-example.md:22-38; spec/test-cases/TC-316-ring-buffer-data-refinement.md:22-40; spec/functional/protocol/FR-463-refer-to-a-declared-protocol-in-an-expression.md (Resolution; Type and value) |
+
+## Dispositions
+
+Round 1, against head 5a66bf9.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 5a66bf9: the fixture now declares `SubRing` and `next: Reference<Ring>`; case 7 (d) covers a reference to an unmapped object and (e) reads the relationship extent; expected results cite FR-377-AC-11 |
+| FND-002 | fixed | 5a66bf9: the zero-budget run and the injected evaluator stop are gone; each run now uses an `only` that is undefined at the held state and the `SubRing` object. The `also` row's scope across the runs is now ambiguous: see new FND-004 |
+| FND-003 | fixed | 5a66bf9: AC-17 and TC-310 mutation 20 now expect `missing_declaration`/`missing-name` at `Some` with no function declared and a call with one |
+
+Round 2, against head 1f15551.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-004 | fixed | 1f15551: `also` is now added only in run (c), which drops the `SubRing` object; ring `a` and `q` in (d) have `head = 0`, `size = 0`; expected results for (c) name object `r` |
+
+Round 3, against head 7e85fb7.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-005 | fixed | 7e85fb7: AC-18, FR-001-AC-7, FR-090-AC-10 and TC-310 mutation 21 now name the form (`eventually`) and the layer (`quire.model.complete/v1`). The chosen form cannot reach the layer check: see new FND-006 |
+
+Round 4, against head 73aad4e.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-006 | fixed | 73aad4e: the example is now `protocol Spec::Twice`, a `primary` the grammar admits only under `quire.protocol.complete/v1`, so the row parses and the form is outside the model.complete closure. The name does not resolve in the mutation 21 unit: see new FND-007 |
+
+Round 5, against head f52e145.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-007 | fixed | f52e145: the row is now `ready = protocol Fill`, naming a protocol the unit declares, in a Boolean field, so FR-463 resolution and typing no longer produce their own refusals. The `Fill` body itself is not constructible over `R`: see new FND-008 |
+
+Round 6, against head b28038b.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-008 | still-open | b28038b: `Fill` is now written out over `R`, and its names exist in `R` (`R::Ring`, `R::Slot::put`, `PutPre`/`PutPost`, alias `p`). But the run is still not admissible as written, so the claim "the other declarations listed are each admitted" fails. (1) `as (a)` and `as (d)` give no type, and the grammar's attempt and finish productions take `'as', '(', parameter, ')'` with `parameter = ident, ':', type-ref` (shared-grammar.md:224-234, 537-544). QSL origin/main a44e86daf S1 parses the fixture verbatim to `invalid_syntax`/`unexpected-token` "expected `:`" at `(a)`. With `as (a: R::Ring)` and `as (d: R::Ring)` the same unit passes S1, S2 and S3. (2) `PutPre` and `PutPost` name no `using` alias, and the run adds no layer profile. `PutPre` reads `self.ring.size`, which is reference navigation and is admitted only under the complete-V1 facets (FR-019, FR-143-AC-11). A state clause needs an alias naming such a layer, and "add exactly these declarations" names none. Type the two bindings and give the clauses an alias, for example `profile m = "quire.model.complete/v1";` with `pre PutPre using m on R::Slot::put { ... }`, adding that profile to the run's list. That changes the run's lock selection, which this run does not read. |
+
+Round 7, against head 8c6e179.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-008 | fixed | 8c6e179: the bindings are typed (`as (a: R::Ring)`, `as (d: R::Ring)`), the role names a type (`role w on R::Ring`), and `PutPre`/`PutPost` use the new `profile m = "quire.model.complete/v1"`. Re-probed on QSL origin/main a44e86daf with these declarations, profiles `p` and `m`, and the ring fixture with `Queue.ready: Boolean`: S1, S2 and S3 admit the unit. QSL does not yet refuse the `ready = protocol Fill` row, because it has not implemented row layers; that is a QSL follow-up |
