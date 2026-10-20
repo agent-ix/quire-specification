@@ -231,6 +231,30 @@ fn tc_431_positive_vectors_are_admitted_with_owned_members() {
             Vec::<String>::new(),
             "{name} is admitted"
         );
+        // FR-331: exactly one disposition and one accounting record per item.
+        if let (Some(dispositions), Some(accounting)) = (
+            document["dispositions"].as_array(),
+            document["accounting"].as_array(),
+        ) {
+            if !dispositions.is_empty() && !accounting.is_empty() {
+                let indices = |records: &[Value]| -> Vec<u64> {
+                    let mut found: Vec<u64> = records
+                        .iter()
+                        .map(|record| record["request_index"].as_u64().expect("request index"))
+                        .collect();
+                    found.sort_unstable();
+                    found
+                };
+                let (dispositions, accounting) = (indices(dispositions), indices(accounting));
+                let mut unique = accounting.clone();
+                unique.dedup();
+                assert_eq!(unique, accounting, "{name}: one accounting record per item");
+                assert_eq!(
+                    accounting, dispositions,
+                    "{name}: accounting covers exactly the dispositions' items"
+                );
+            }
+        }
         let owners = vector["owners"].as_object().expect("owners map");
         assert!(!owners.is_empty(), "{name} names member owners");
         for (pointer, fr) in owners {

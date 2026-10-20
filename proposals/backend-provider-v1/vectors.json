@@ -1759,7 +1759,8 @@
         "/results/0/verdict": "FR-410",
         "/results/0/verdict/decision": "FR-409",
         "/results/1/basis": "FR-411",
-        "/results/1/certificate": "FR-412"
+        "/results/1/certificate": "FR-412",
+        "/results/2/cause": "FR-331"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -1771,6 +1772,10 @@
           },
           {
             "request_index": 1,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 2,
             "disposition": "supported"
           }
         ],
@@ -1924,6 +1929,15 @@
                 }
               ]
             }
+          },
+          {
+            "request_index": 2,
+            "backend": "qsl-prob",
+            "kind": "probabilistic-satisfaction",
+            "result": "unsupported",
+            "cause": {
+              "type": "confidence-beyond-precision"
+            }
           }
         ],
         "counterexamples": [],
@@ -1941,6 +1955,10 @@
             "limits": {
               "precision_bits": 64
             }
+          },
+          {
+            "request_index": 2,
+            "settled_by": "result"
           }
         ]
       }
@@ -3349,6 +3367,18 @@
           "op": "replace",
           "path": "/request/items/0/hybrid/limits",
           "value": {}
+        }
+      ]
+    },
+    {
+      "name": "unsupported-cause-unlisted-spelling",
+      "base": "probabilistic-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/2/cause/type",
+          "value": "confidence-beyond-precisions"
         }
       ]
     }
