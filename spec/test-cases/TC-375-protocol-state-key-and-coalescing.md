@@ -41,7 +41,7 @@ results.
 | PK-12 | A binder bound in a branch of an inner `all`-joined `parallel`, read by a node after the outermost join | The entry is held under the inner branch, the enclosing branch and then the outermost joiner's path, and absent after the reading node's step |
 | PK-13 | Two protocols of one package, each declaring `channel Pay` | Every `queues` entry and `duplicate` or `lose` identity holds the channel in its own protocol's qualified name |
 | PK-14 | A joining thread whose entry is read only by branches of a later `parallel`, and a thread resting at or before the entry's binding node | The joiner keeps the entry through the later fork, which copies it into each branch; the thread at or before the binding node holds no entry for the node |
-| PK-15 | The FR-425-AC-11 protocol inside a `repeat`, once with `Inner` joined `any` and once `all` | With `any`, the joiner's environment and `observations` hold no `x` after `join(Outer)`, the back edge notwithstanding; with `all` they hold it while the reach rule keeps it |
+| PK-15 | The FR-425-AC-11 protocol inside a `repeat`, the reader of `x` after the binding in `x`'s own branch of `Inner`, once with `Inner` joined `any` and once `all` | With `any`, the joiner's environment and `observations` hold no `x` after `join(Outer)`, the back edge notwithstanding; with `all` they hold it while the reach rule keeps it |
 
 ## Expected Results
 

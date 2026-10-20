@@ -42,7 +42,7 @@ blocked-thread list of every deadlock counterexample.
 | TD-08g | Two protocols of one package each declaring `channel Pay`, each blocked at a receive | the two causes name two different qualified channel names, each the protocol's qualified name, `::` and `Pay` |
 | TD-08h | A compensation template whose commit node steps after its thread is created and before its first `cattempt`, with a finish record available | the compensation thread `commit-closed` naming the template and the root at `finish` `finish-waiting` naming that thread |
 | TD-08i | A node `by r` for a replicated role with an empty population universe, and the same with every object retired | `no-role-instance` naming `r`; with a `spawn` enabled the thread is not so reported |
-| TD-08j | A `tso` state with a non-empty buffer and a thread at a `seq_cst` fence, passed to the blocked-list computation | cause `gate`; no deadlock counterexample contains the thread, since `flush` is enabled |
+| TD-08j | A `tso` state with a non-empty buffer and a thread at a `seq_cst` fence, passed to the cause function directly | cause `gate`; the state enables `flush`, is not terminal, and appears in no deadlock report |
 | TD-09 | Root at a join `all [a, b]` with `a` completed and `b` blocked | root `join-waiting` `[b]`, and `b` with its own cause |
 | TD-10 | One branch at `check C using p { false };` | `check-false` naming `C` |
 | TD-11 | A `tso` `parallel` whose branch holds a buffered store at its `join`, with `max_store_buffer` reached elsewhere | the join waits only on the buffer, and the state is not reported as a deadlock, since `flush` is enabled |

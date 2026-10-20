@@ -53,7 +53,7 @@ members:
 | Member | Value |
 | --- | --- |
 | `subject` | `{"type":"protocol-subject","protocol":"<qualified-name>","over":<encoded>,"roles":<map from role ident to binding>}` |
-| `prefix`, `loop` steps | `{transition, post_state}`, `transition` the step's protocol transition identity ([FR-426](FR-426-apply-protocol-steps.md)) or the terminal-stutter identity, `post_state` the `quire.simulation.state-key/v1` digest of its post-state |
+| `prefix`, `loop` steps | `{transition, post_state}` with, for a `send` step only, `send_record`; `transition` is the step's protocol transition identity ([FR-426](FR-426-apply-protocol-steps.md)) or the terminal-stutter identity, `post_state` the `quire.simulation.state-key/v1` digest of its post-state, and `send_record` the step's send record in the form FR-426 gives |
 | `fairness` | the resolved fairness set over the protocol subject, each member with its target and origin ([FR-430](FR-430-apply-protocol-fairness.md)) |
 | `blocked` | for `kind: deadlock`, the last state's blocked-thread list ([FR-429](FR-429-report-protocol-deadlocks.md)); absent otherwise |
 | `max_live_instances` | for an `on each` subject, the instance budget the run used |
@@ -72,7 +72,10 @@ memory models and instance budget, and re-execute each step:
    loop whose last post-state is not its entry state, refuses
    `invalid_runtime_input`/`invalid-value`.
 2. A step whose identity has no successor with the recorded `post_state`
-   refuses `stale_dependency`/`revision-mismatch`.
+   refuses `stale_dependency`/`revision-mismatch`. For a `send` step, replay
+   recomputes the send record from the pre-state and the step, and a recorded
+   `send_record` that differs from it, or a `send` step without one, or any
+   other step with one, refuses the same way.
 3. A lasso is checked against the fairness set over the protocol step
    classes; an unfair loop refuses `invalid_runtime_input`/`invalid-value`.
 4. For `kind: formula`, the formula is evaluated over the replayed behaviour,
@@ -111,6 +114,7 @@ counterexamples for one item both replay.
 | FR-433-AC-5 | A counterexample with a missing `subject`, an extra member or a mistyped transition identity refuses before replay. | Test (TC-387) |
 | FR-433-AC-6 | Every refutation vector of TC-376 to TC-386 replays to `reproduced-with-evaluated-witness`. | Test (TC-387) |
 | FR-433-AC-7 | The `undefined-evaluation` counterexample of an undefined recovery predicate replays to `reproduced-with-evaluated-witness` and the item `refuted`, cause `undefined-evaluation`; the same counterexample with its last step changed so that the predicate is defined at `trace_position` settles `inconclusive`, cause `replay-parity`. | Test (TC-387) |
+| FR-433-AC-8 | Each `send` step of a counterexample carries a `send_record` that replay recomputes and compares: a step whose recorded `outcome` or `displaced` differs, a `send` step without a `send_record` and a non-`send` step with one each refuse `stale_dependency`/`revision-mismatch`. | Test (TC-387) |
 
 ## Dependencies
 

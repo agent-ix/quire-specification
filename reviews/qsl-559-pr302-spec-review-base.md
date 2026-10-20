@@ -73,3 +73,21 @@ semantic findings, including the one high.
 | FND-004 | medium | FR-426-AC-14 says that a `block` send and a `fence` whose rule is false "wait and are reported by their causes (FR-429)". No deadlock can contain such a fence: under `tso`, `flush` is enabled while the buffer is non-empty (FR-436 "Terminal states"), and under `sc` and `ra` every fence is enabled. So the blocked list never shows a fence cause, and FR-429 names none (SR-13587 FND-002). The TC side is thin as well: CH-12 is a one-line generic row that checks no cause and is filed under channels, and TC-377, the other TC the cell names, has no row for AC-14. Restate the fence clause as "has no enabled step" only, and give CH-12 concrete protocols. | spec/functional/protocol/FR-426-apply-protocol-steps.md:206; spec/test-cases/TC-378-channels-under-delivery-policies.md:42 |
 | FND-005 | low | No TC-375 vector covers FR-425-AC-9's second sentence: a joining thread keeps an entry through a later fork that copies it, and a thread resting at or before the binding node holds no entry. PK-12 covers only the first sentence. | spec/functional/protocol/FR-425-define-protocol-subjects-and-state-keys.md:234; spec/test-cases/TC-375-protocol-state-key-and-coalescing.md:41 |
 | FND-006 | low | CH-08t's first clause still says the send "records the loss". In the send-record vocabulary that send has outcome `accepted` with `displaced` `m1`, as CH-08h says. | spec/test-cases/TC-378-channels-under-delivery-policies.md:39 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | medium | No implementation can build the fixture for FR-425-AC-11 and PK-15. It places "a reader of `x` inside `Inner`'s other branch", but FR-466's binder scope says that "sibling branches read nothing of each other" (FR-466-AC-10), so S3 refuses the protocol with `missing_declaration`/`missing-name` before anything is explored, under both the `any` and the `all` join. Put the reader after the binding in `x`'s own branch, for example `sequence { attempt X binding x; check C { x.f } }`. That reader is still inside the `repeat` body, so the back edge still widens the joiner's reach to it, which is the case the AC is meant to test. | spec/functional/protocol/FR-425-define-protocol-subjects-and-state-keys.md:243; spec/test-cases/TC-375-protocol-state-key-and-coalescing.md:44 |
+| FND-008 | low | No test can observe the first clause of FR-429-AC-15 ("has cause `gate` where the blocked list is computed") through the public boundary. The blocked list exists only on a deadlock counterexample, and the second clause of the same AC says no deadlock contains such a thread. TD-08j has to "pass a state to the blocked-list computation", which is an internal function. Either keep only the observable clause (FL-09 already covers it) or state the cause as a rule with no AC of its own. | spec/functional/protocol/FR-429-report-protocol-deadlocks.md:191; spec/test-cases/TC-383-protocol-terminal-member-and-wait-causes.md:45 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-170-AC-6 now traces to TC-378 only, and TC-378 declares `verifies` FR-170 (0825a54). |
+| FND-002 | fixed | FR-429-AC-10 and AC-11 and TD-08b, TD-08d and TD-08e now state `delivery exactly-once-premise`, and give `at-most-once` only where the AC relies on `lose`. |
+| FND-003 | fixed | TD-08f and FR-429-AC-11 now give the concrete two-branch fixture and replay both prefixes through FR-433. |
+| FND-004 | fixed | FR-426-AC-14 now states only cases a test can observe. CH-12 is a concrete `block` deadlock, and FL-09 covers a fence that waits while `flush` is enabled. |
+| FND-005 | fixed | PK-14 covers the second sentence of FR-425-AC-9. |
+| FND-006 | fixed | CH-08t now reads outcome `accepted` with `displaced` the entry of `m1`. |

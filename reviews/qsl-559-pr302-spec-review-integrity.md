@@ -65,3 +65,22 @@ repositories.
 | FND-005 | medium | The send record has no state-key encoding. `observations` holds "the binder's record", which FR-181 encodes as `{"type":"record","name":"<qualified-name>",...}`. Neither the record's name, nor the encoding of `outcome` (enum member or text), nor the value of a `displaced` that is none (null, or an absent field) is stated. These bytes enter the key and decide which states coalesce. | spec/functional/protocol/FR-425-define-protocol-subjects-and-state-keys.md:193; spec/functional/protocol/FR-426-apply-protocol-steps.md:106-113 |
 | FND-006 | low | FR-425's list of rest points leaves out `fence` (ADR-027 PS-3 includes it), while FR-426 now has a thread that waits at a fence whose rule is false. | spec/functional/protocol/FR-425-define-protocol-subjects-and-state-keys.md:118-122 |
 | FND-007 | low | "Each live thread's control state holds a binder environment" can be read as putting the environment in the key's `control` member. The key actually carries environments in `observations`, and `thread-state` has no environment field. Say "the thread's binder environment, keyed in `observations`". | spec/functional/protocol/FR-425-define-protocol-subjects-and-state-keys.md:136-138 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-008 | medium | The send record is "recorded" as the step's result, but no output defines where it goes. It is not in the state key, by design. It is not a member of FR-426's transition identity, and it is not in FR-433's counterexample wire, which lists the post-state digest, blocked threads, rest points, binders, queues and memory, but no send record. "Data for the reader, like the blocked-thread list" does not hold, because the blocked list is a named member of the deadlock counterexample. FR-170-AC-6, FR-426-AC-11 and CH-07 to CH-10 all assert on the outcome and on `displaced`, and none of them has a place to read it. Name a carrier, for example a per-step `send_record` member in FR-433 that replay recomputes from the pre-state and post-state, or say that it is derived from those states and give the derivation. | spec/functional/protocol/FR-426-apply-protocol-steps.md:111-122; spec/functional/protocol/FR-433-replay-protocol-counterexamples.md |
+| FND-009 | low | FR-170-AC-6 still says "`displaced` the oldest queued message" and "the newest", while the FR-170 statement and FR-426 now define `displaced` as the queue entry (send node, sending thread path and payload). | spec/functional/protocol/FR-170-evaluate-channel-queue-semantics.md:62 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The send binder now holds the payload of the `carries` type that FR-466 rule 5 gives it. The send record is the step's result and is not a binder value (FR-425:134-136, FR-426:108-122). This now differs from ADR-027 ST-3 and QSL FR-206, which bind the binder to the record, so QSL needs a matching amendment. |
+| FND-002 | fixed | FR-434's gate row now covers `fence` ("for a `fence` it is the model's fence rule"), and FR-429's `gate` row says the same. Reporting `gate`, rather than a separate fence cause, is acceptable: ADR-027 SE-1(e) defines the fence rule as the gate for `fence`, and the fence has no other enabling condition. |
+| FND-003 | fixed | FR-170 and FR-426 both define `displaced` as the queue entry. FND-009 records the residual wording in AC-6. |
+| FND-004 | fixed | FR-429 now defines the qualified channel name once: the declaring protocol's qualified name, `::`, then the handle, rendered as FR-433's `protocol` member is. FR-425 and FR-170 refer to that definition. |
+| FND-005 | fixed | The send record is out of the state key, and FR-426 gives its form: `{"type":"send-record",...}` with `outcome` as text and `displaced` as a `queue-entry` or `null`. FND-008 records that it has no carrier. |
+| FND-006 | fixed | FR-425's list of rest points now includes `fence`. |
+| FND-007 | fixed | FR-425 now says the environment is keyed in `observations` by (binder node, thread path), not in the thread's `control` entry. |
