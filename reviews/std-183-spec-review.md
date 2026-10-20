@@ -100,3 +100,21 @@ fixed on the text, but the owner has to confirm this reversal before merge.
 | FND-001 | fixed | - |
 | FND-002 | fixed | - |
 | FND-003 | fixed | - |
+
+Round 2, at head 586d4b002. The note now says `Clock` is "a keyword of the
+facet that admits the timed forms", and that it "is not admitted as a declared
+type name: a declaration of a record, type alias, enum, tuple or union that
+would introduce an unqualified type named `Clock` is refused `invalid_syntax`
+at the name". That list is the FR-393-AC-7 set, and the S1 probe agrees: those
+five refuse, while `predicate Clock`, a field, a parameter, an enum member and
+`dimension Clock` parse. The note no longer contradicts the section intro
+(line 813, "when the package selects the complete facets"). It also agrees
+with QSL #1088 at c6ad506f8 ("the grammar names no single facet for these
+forms"). The note stays outside the fence (819-902). Gates: `quire validate`
+exits 0 on the committed SR; cargo tests pass (11 + 111); `quire matrix` is
+identical to main. The owner-decision flag from round 1 still stands.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-004 | fixed | - |
+| FND-005 | fixed | - |
