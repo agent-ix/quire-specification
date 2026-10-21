@@ -2159,6 +2159,137 @@
           }
         ]
       }
+    },
+    {
+      "name": "observed-counterexample-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/counterexamples/0/counterexample": "FR-364"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "refuted",
+            "counterexample": 0
+          }
+        ],
+        "counterexamples": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "counterexample": {
+              "trace": "observed",
+              "kind": "formula",
+              "initial_state": null,
+              "prefix": [
+                {
+                  "document": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                {
+                  "document": "3333333333333333333333333333333333333333333333333333333333333333"
+                }
+              ],
+              "loop": [],
+              "over_binding": null,
+              "fairness": [],
+              "interval": null,
+              "trace_position": 0
+            }
+          }
+        ],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "name": "observed-undefined-evaluation-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/counterexamples/0/counterexample": "FR-364"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "refuted",
+            "counterexample": 0
+          }
+        ],
+        "counterexamples": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "counterexample": {
+              "trace": "observed",
+              "kind": {
+                "type": "undefined-evaluation",
+                "where": {
+                  "position": 1,
+                  "document": "3333333333333333333333333333333333333333333333333333333333333333",
+                  "locus": {
+                    "node": {
+                      "domain": "quire.checked-semantic-node/v1",
+                      "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                    },
+                    "occurrence": {
+                      "role": "claim",
+                      "ordinal": 0
+                    }
+                  }
+                },
+                "cause": "absent-key"
+              },
+              "initial_state": null,
+              "prefix": [
+                {
+                  "document": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                {
+                  "document": "3333333333333333333333333333333333333333333333333333333333333333"
+                }
+              ],
+              "loop": [],
+              "over_binding": null,
+              "fairness": [],
+              "interval": null,
+              "trace_position": 1
+            }
+          }
+        ],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
     }
   ],
   "adverse": [
@@ -3505,6 +3636,245 @@
           "value": [
             "weak"
           ]
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-names-an-initial-state",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/initial_state",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-with-a-model-step-in-the-prefix",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/prefix/0",
+          "value": {
+            "transition": {
+              "type": "terminal-stutter"
+            },
+            "post_state": "2222222222222222222222222222222222222222222222222222222222222222"
+          }
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-with-a-model-step-in-the-loop",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/loop",
+          "value": [
+            {
+              "transition": {
+                "type": "terminal-stutter"
+              },
+              "post_state": "2222222222222222222222222222222222222222222222222222222222222222"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-deadlock-kind",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/kind",
+          "value": "deadlock"
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-time-lock-with-final-delay",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample",
+          "value": {
+            "trace": "observed",
+            "kind": "time-lock",
+            "initial_state": null,
+            "prefix": [
+              {
+                "document": "2222222222222222222222222222222222222222222222222222222222222222"
+              },
+              {
+                "document": "3333333333333333333333333333333333333333333333333333333333333333"
+              }
+            ],
+            "loop": [],
+            "over_binding": null,
+            "fairness": [],
+            "interval": null,
+            "trace_position": 0,
+            "final_delay": {
+              "numerator": "1",
+              "denominator": "1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-over-binding",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/over_binding",
+          "value": {
+            "type": "null"
+          }
+        }
+      ]
+    },
+    {
+      "name": "observed-undefined-evaluation-with-a-state-key",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/kind",
+          "value": {
+            "type": "undefined-evaluation",
+            "where": {
+              "position": 1,
+              "state_key": "2222222222222222222222222222222222222222222222222222222222222222",
+              "locus": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                },
+                "occurrence": {
+                  "role": "claim",
+                  "ordinal": 0
+                }
+              }
+            },
+            "cause": "absent-key"
+          }
+        }
+      ]
+    },
+    {
+      "name": "model-counterexample-with-a-document-step-in-the-prefix",
+      "base": "temporal-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/prefix/0",
+          "value": {
+            "document": "2222222222222222222222222222222222222222222222222222222222222222"
+          }
+        }
+      ]
+    },
+    {
+      "name": "model-counterexample-with-a-document-step-in-the-loop",
+      "base": "temporal-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/loop/0",
+          "value": {
+            "document": "2222222222222222222222222222222222222222222222222222222222222222"
+          }
+        }
+      ]
+    },
+    {
+      "name": "model-counterexample-without-an-initial-state",
+      "base": "temporal-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/initial_state",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "model-undefined-evaluation-with-a-document",
+      "base": "temporal-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/kind",
+          "value": {
+            "type": "undefined-evaluation",
+            "where": {
+              "position": 1,
+              "document": "2222222222222222222222222222222222222222222222222222222222222222",
+              "locus": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                },
+                "occurrence": {
+                  "role": "claim",
+                  "ordinal": 0
+                }
+              }
+            },
+            "cause": "absent-key"
+          }
+        }
+      ]
+    },
+    {
+      "name": "observed-undefined-evaluation-with-state-keys",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/kind",
+          "value": {
+            "type": "undefined-evaluation",
+            "where": {
+              "positions": [
+                0,
+                1
+              ],
+              "state_keys": [
+                "2222222222222222222222222222222222222222222222222222222222222222"
+              ],
+              "locus": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                },
+                "occurrence": {
+                  "role": "claim",
+                  "ordinal": 0
+                }
+              }
+            },
+            "cause": "absent-key"
+          }
         }
       ]
     }
