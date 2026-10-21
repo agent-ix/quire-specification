@@ -3451,6 +3451,62 @@
           "value": 0
         }
       ]
+    },
+    {
+      "name": "manifest-fairness-kinds-not-a-list",
+      "base": "temporal-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/fairness_kinds",
+          "value": "weak"
+        }
+      ]
+    },
+    {
+      "name": "manifest-fairness-kinds-unknown-label",
+      "base": "temporal-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/fairness_kinds",
+          "value": [
+            "weak",
+            "fair"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "manifest-fairness-kinds-duplicate-label",
+      "base": "temporal-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/fairness_kinds",
+          "value": [
+            "weak",
+            "weak"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "manifest-fairness-kinds-on-non-temporal-descriptor",
+      "base": "kani-hello",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/manifest/0/fairness_kinds",
+          "value": [
+            "weak"
+          ]
+        }
+      ]
     }
   ],
   "universe_provision_vectors": [
