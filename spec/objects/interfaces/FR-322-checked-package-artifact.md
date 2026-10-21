@@ -129,7 +129,12 @@ boundary.
   admitting a package with a non-empty `dependency_selections` is supplied
   each selected dependency's admitted package; an entry with none supplied
   refuses `missing_import`/`missing-selection` at that entry's pointer,
-  before any `dependency_reference` check. The importing package's library
+  before any `dependency_reference` check. Supply is checked entry by entry in
+  lock order (ascending identity, as above): for each entry, first that a
+  package is supplied (`missing_import`/`missing-selection`), then that it
+  binds (`stale_dependency`/`content-mismatch`). The reader reports the first
+  failing entry in lock order and no later one, so one refusal names one
+  entry. The importing package's library
   closure is derived recursively from its direct entries and each selected
   dependency's derived closure. A dependency's derived closure is its own
   direct lock entries plus the derived closures of its supplied dependencies;
@@ -511,8 +516,12 @@ boundary.
   `declaration` in the named dependency's admitted package refuses
   `missing_declaration`/`missing-name`. A `dependency_reference` names a
   `function` declaration whose parameter and result types are
-  package-independent: no node in the transitive closure of the signature
-  type nodes' `dependencies` carries a
+  package-independent. The *signature type nodes* of a function are the
+  `semantic_type` of each `value`/`parameter` node its `parameters` binding
+  references (the one source of its declared parameter types) and the
+  function's own `semantic_type` (its result type); the function's body
+  references and its own `dependencies` list are not signature nodes. No node
+  in the transitive closure of the signature type nodes' `dependencies` carries a
   `declaration` or a `ModelOwner`. Such types (builtin, bounded-domain and anonymous
   structural types over them) have the same node id in every package. The
   application's `return:0` result is that function's result type; the
@@ -527,7 +536,11 @@ boundary.
   `dependency_reference` in step 7 of the first-refusal order, at its place
   in its node's pre-order term walk wherever it stands (an application
   argument, a binding value, an aggregate member or the body root):
-  `missing-selection`, then `missing-name`, then `operator-ineligible`.
+  `missing-selection`, then `missing-name`, then `operator-ineligible`. Each
+  refusal's locus is an RFC 6901 pointer into the importing package document:
+  `missing-selection` at the term's `package` member, `missing-name` at the
+  term's `node` member, and `operator-ineligible` at the term itself, each under the pointer of the term
+  in its node's `body`.
 - `model_member` — a `field` or `operation` member whose declaring node is a
   model declaration node: a `model` or `relation` node that carries no
   `declaration` and carries its `ModelOwner` (QSL FR-094) as `owner`. Its
@@ -620,7 +633,13 @@ boundary.
   mapping. An occurrence key is (`node_id`, `role`, `ordinal`), where role is
   `declaration`, `type`, `expression`, `anchor`, `claim` or `generated`; a
   source region is a half-open UTF-8 byte interval `[start,end)` under one exact
-  source-document identity/raw-byte digest. An occurrence may name
+  source-document identity/raw-byte digest. The role `generated` is the role
+  of every occurrence of a *compiler-derived node*, a node the compiler adds
+  that no source text declares and that derives from exactly one declaration
+  node, its *owner*. Its ordinal is the node's position among the derived
+  nodes of that owner, in the owner's total order (for a refinement owner
+  deriving one node per step row, FR-375's `steps` order), and its source
+  region, when it has one, is the region of the source row it derives from. An occurrence may name
   multiple ordered regions; regions for that one occurrence/document cannot
   overlap, while regions belonging to different occurrences may nest or
   overlap. A path, display name or search result is not a source identity.
@@ -1736,6 +1755,10 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-81 | A unit, a dimension and a record that carry one `declaration` name are admitted, and two units, or two types, that carry one name refuse `ambiguous_declaration`/`ambiguous-name` at the later node in node-id order. | Test (TC-233) |
 | FR-322-AC-82 | A selected domain package that declares the populations `counters` and `archive` (`quire.meaning.model.population/v1`) admits a self-typed `relation`/`population` declaration node owned by each, with a `ModelOwner`, an empty `aggregate` body and the closed `ModelDeclarationNode` preimage; the two keys, P7 (`15ed74b124665e2fb9375dc02e715243dce2eb0d7d63d1f36c52f5fa1241a91a`) and P8 (`cc575f3d64f43a4bf787f5febdc73fbc9f2212617393877fa00371611204be24`), recompute from the published preimages and differ, and a changed `owner.identity` changes the key. The owner join admits the node when the document declares `owner.node` as a population and refuses `missing_declaration`/`missing-selection` for a population owned by an object type, by an undeclared node, and for a `model`/`object_type` or `relation`/`relationship` node owned by a population. A `relation`/`population` node with no `owner` fails the V2 schema (`malformed_wire`), and a preimage with a `semantic_type`, a `declaration`, a body member or another form under `relation` fails the closed preimage schema. Both V2 schemas enumerate `population` in the owner-presence rule and the `ModelDeclarationNode` preimage. | Test (TC-233, TC-280) |
 | FR-322-AC-83 | A `quire.op.model.all_instances` and a `quire.op.model.lookup` application whose operand 0 references a population reference are admitted by the full reader, list the node in their `dependencies` and carry no maximum or member type of the population; the reads of `counters` and of `archive` have different population keys, application keys and package ids, and one population read by both operations is one node. A population reference as the `collection_kind` operand of `quire.op.collection.contains` and as the declaring node and as the `population` link of a `quire.op.model.reaches` `relationship_end` member each refuse `ill_typed`/`operator-ineligible`. The published operation fixture's operand 0 is a `value`/`parameter` binding typed by `Population<Order>[2]`, and the full reader admits it. A population reference as the declaring node of a `quire.op.record.project` `field` member and of a `quire.op.model.dispatch_call` `operation` member each refuse `ill_typed`/`operator-ineligible`. The published `adverse.json` `population_reference_cases` record each case. | Test (TC-233) |
+| FR-322-AC-84 | Supply of `dependency_selections` is checked entry by entry in lock order, presence then binding, and the first failing entry is reported alone: two unsupplied entries refuse `missing_import`/`missing-selection` at entry 0; entry 0 supplied and entry 1 unsupplied refuse at entry 1; entry 0 supplied but stale and entry 1 unsupplied refuse `stale_dependency`/`content-mismatch` at entry 0, not `missing-selection` at entry 1. | Test (TC-233) |
+| FR-322-AC-85 | A `dependency_reference` refusal's locus is the term's `package` member for `missing-selection`, its `node` member for `missing-name` and the term itself for `operator-ineligible`, each under the pointer of the term in its node's `body`. | Inspection (TC-233) |
+| FR-322-AC-86 | The signature type nodes of a dependency function are the `semantic_type` of each node its `parameters` binding references and the function's own `semantic_type`: a dependency function with a parameter of a declared record type is ineligible (`ill_typed`/`operator-ineligible`), while one whose body only references a declared record is eligible. | Inspection (TC-233) |
+| FR-322-AC-87 | A refinement owner with step rows `R0`, `R1` (in `steps` order) from which the compiler derives one node per row has, for the node derived from `R1`, an occurrence with role `generated`, ordinal 1 and a `source_map` region equal to the region of `R1`'s source row; swapping the source order of the two rows leaves the `steps` order, and so each ordinal, unchanged. | Test (TC-233) |
 
 ## Dependencies
 

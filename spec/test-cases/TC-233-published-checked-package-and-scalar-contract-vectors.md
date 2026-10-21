@@ -72,6 +72,7 @@ admit it and its recorded package id to recompute, require each authored
 entry mutation, and each `model_entry_mutations` entry placed in
 `model_selections`, to fail the schema in either member at the mutated entry, and
 apply each order vector's selections to require its recorded order outcome.
+Treat the members the vectors file lists in `schema_only` as schema and order vectors only, not as supplied packages. Check supply order with the `supply_vectors`: neither entry supplied refuses the first; the first supplied and the second not refuses the second; the first supplied but stale and the second not refuses `stale_dependency`/`content-mismatch` at the first, not `missing-selection` at the second (FR-322-AC-84). Check a `dependency_reference` refusal's locus: `missing-selection` at the term's `package` member, `missing-name` at its `node` member and `operator-ineligible` at the term, under the term's pointer in its node's `body`. Check a function whose parameter is of a declared record type, and one whose body only references a declared record, to decide the signature type nodes: only the first is ineligible.
 Apply the published closure vectors to two direct dependencies whose own locks
 select the same transitive identity at different package IDs; require
 `invalid_package`/`conflicting-definition` with both dependency paths as loci.
@@ -375,6 +376,8 @@ object for `R` with two spellings in canonical order, and the package with the
 member absent; then the mutations `[]`, `null`, an object with `"internal": []`,
 an object with a third key, objects out of byte order, spellings out of byte
 order, a repeated `refinement` and a repeated spelling.
+
+Check a compiler-derived node: a refinement owner with step rows `R0` and `R1` from which one node per row is derived; require the node derived from `R1` to have an occurrence of role `generated`, ordinal 1 and the region of `R1`'s source row, and the same after swapping the source order of the rows (FR-322-AC-87).
 
 ## Expected Results
 
