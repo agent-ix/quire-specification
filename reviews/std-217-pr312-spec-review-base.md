@@ -90,3 +90,9 @@ Round 1, head a56c80c5c.
 | FND-004 | fixed | Fixed in a56c80c5c: PR #312 description: Owner ruling recorded: the inductive certificate is **per-row step parts, not a disjunction**: a base part (the initial query's refutation) and one step part per row in FR-375 `steps` order, so a failure names its row. QSL FR-314's `Inductive{base, step}` carries a single step query, so QSL FR-314 needs a follow-up to carry a step part per row. |
 | FND-005 | fixed | Fixed in a56c80c5c: A refinement of a model with seven step rows and no hidden field, history field or `any` row has one initial query and seven step queries, each its own `operation-contract` item, the step queries in `steps` order; the same declaration with one row changed to `any`, with a hidden abstract field, or with a history field has no per-step query. |
 | FND-006 | still-open | New this round; not yet fixed. |
+
+Round 2, head ac1f71dcb (proposals/backend-provider-v1/schema.json, vectors.json, TC-431 BP-21).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-006 | fixed | Fixed in ac1f71dcb: {"description": "FR-468: hypothesis is the invariant clause's checked-package node; result is the result of its unproved item.", "properties": {"type": {"const": "hypotheses-not-established"}, "hypothesis": {"$ref": "#/$defs/NodeId"}, "result": {"$ref": "#/$defs/ResultValue"}}, "required": ["type", "hypothesis", "result"], "additionalProperties": false} |
