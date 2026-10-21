@@ -71,3 +71,16 @@ Round 1, head f9118b199.
 | FND-003 | fixed | Fixed in f9118b199: The provision form is now FR-361's own closed {universe, identity} key, with FR-181 cited only for the hex spelling; vectors recomputed without type. |
 | FND-004 | fixed | Fixed in f9118b199: Step 7 now states its universes (counters = [c, d], all = [c, e], specials = [s]), names the refuted claim and the permuted list; AC-9 matches. |
 | FND-005 | fixed | Fixed in f9118b199: Binding and matching are now SHALL statements. |
+
+Round 2, head bb0e3d947.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-006 | fixed | Fixed in bb0e3d947: Zero instances is now 'no population overlaps the over type, or every overlapping population has an empty universe'; a non-conforming key is still an instance; AC-8 adds the all: Entity = [e] case; TC-294 step 7 adds the unrelated-population subject and TC-290 step 7 the all = [e] subject, both consistent with the fixtures (TC-293 ConfigVersion; TC-290 Counter/Entity). Re-checked AC-8, AC-9, AC-11 for supertype, subtype-only, mixed and empty-universe populations: consistent, apart from FND-007 and FND-008. |
+
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | low | The zero-instance sentence now defines everything by overlap, but its requires-bound clause still says 'a matching population with no universe'. 'Matching' is no longer defined anywhere. Fix: 'an overlapping population with no universe'. | spec/functional/temporal/FR-361-read-model-behaviours-as-temporal-traces.md:67-69 |
+| FND-008 | medium | FR-361 names `lookup<T>(p, x)` being `some` as the guard, with `p` the instance's population, but a clause cannot name the instance's population when its instances span several overlapping populations. TC-290 step 7 / AC-11 guard with `lookup<Counter>(all, x)`: for (`counters`, `d`) and (`specials`, `s`) that lookup is `none`, so the guarded `always holds(x.value >= 0)` holds for them without ever reading their value. The expected 'the guarded one holds' is true but is reached vacuously, so a negative `d.value` would also be reported as holding. Fix: state that over several overlapping populations the guard is the disjunction of `lookup<T>(p_i, x)` over every overlapping population (or add a population-free membership form), and make TC-290's guarded check use it. | spec/functional/temporal/FR-361-read-model-behaviours-as-temporal-traces.md:175-179 |
