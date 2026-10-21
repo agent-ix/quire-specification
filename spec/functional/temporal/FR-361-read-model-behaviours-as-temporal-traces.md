@@ -127,7 +127,7 @@ deadlock ([FR-366](FR-366-check-deadlock-freedom.md)).
 
 A *universe* of a population is an ordered list of object keys, each a
 (universe component, object identity) pair of the FR-204 triple with no type:
-a key has no type until a state holds its object. The `universes` of a subject
+a key has no type until a member record admits it. The `universes` of a subject
 (FR-368) are these lists, one per population.
 
 A universe provision is the RFC 8785 canonical form of a JSON array of the
@@ -177,6 +177,8 @@ population lists the key or on the population order, and reference equality
 (FR-204) holds between `x` and the same object reached from any population. A
 key has no type until a member record admits it, so the instance itself names
 none. A refutation names the instance, its key, that it refutes.
+
+Every temporal clause names an `over` parameter, so the clause is checked once for each of its instances (one per admitted key, above); a claim that reads no one object still names one, and each check evaluates the same formula. The cost of that rule is that such a claim's decidability depends on the admitted keys of the named type: when the item has no admitted key (no population overlaps the named type, every overlapping population has an empty universe, or no member record of an initial state admits a key of their universes), FR-361-AC-8 settles it `inconclusive`/`no-instance` before any exploration although the formula never reads the parameter, so an author names a type for which the subject has at least one admitted key.
 
 FR-153 checks one type per key within one population binding, so the analyzer
 SHALL check it across populations: after the `requires-bound`

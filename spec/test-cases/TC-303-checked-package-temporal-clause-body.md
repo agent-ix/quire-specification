@@ -65,6 +65,8 @@ Encode as V2 packages:
     `case` argument; a `details` aggregate of a `temporal_formula`
     application and then a `case` application.
 
+11. A `quire.op.temporal.clause` body whose argument 1 is removed, one whose argument 1 is replaced by a `null` literal, and one whose argument 1 is replaced by the clause's clock text literal.
+
 ## Expected Results
 
 1. Both are admitted: each body is a `quire.op.temporal.clause` application
@@ -121,3 +123,4 @@ Encode as V2 packages:
     nested `case` at `/diagnostics/entries/{e}/details/{d}/operator`, the
     aggregate at `/diagnostics/entries/{e}/details/{d}/members/0/operator`,
     and the union and union-value references are admitted (FR-370-AC-12).
+11. All three fail the schema (FR-370-AC-13).
