@@ -23,8 +23,8 @@ FR-465-AC-8.
    `Orders`, `Payments` and `Fulfillment`; its channel `Charges` is `fifo` by
    `message.order` with delivery `at-least-once` and a `literal 4` queue with
    overflow `reject`; it has `finish Closed` and `terminal any`. Add a
-   replicated role `Worker each M::Worker from workers max 2 lifetime
-   until({w.done})` for the role vectors.
+   replicated role `w each M::Worker from workers max 2 lifetime
+   until(w.done)` for the role vectors.
 2. Apply each vector below to the base package, recompute node and package
    identities after each edit, and run the full reader.
 3. Compile the base package with no workflow instance, delivery, clock
@@ -41,7 +41,7 @@ FR-465-AC-8.
 | RL5 | a role on a `model`/`variant_type` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | RL6 | `model` names a `value` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | RL7 | `model` names a node absent from `dependencies` | `missing_declaration`/`missing-name` at the target |
-| RL8 | the replicated role with `lifetime` `workflow`, `scope` and `until` | admitted; `binder` is a `value`/`parameter` node of type `Reference<M::Worker>` |
+| RL8 | the replicated role with `lifetime` `workflow`, `scope` and `until` | admitted; `binder` is the `value`/`parameter` node named `w`, of type `Reference<M::Worker>` |
 | RL9 | `until` present with `lifetime: workflow` | refuses `malformed_wire` |
 | RL10 | `until` absent with `lifetime: until` | refuses `malformed_wire` |
 | RL11 | `max` is `0` | `ill_typed`/`type-mismatch` at `max` |
