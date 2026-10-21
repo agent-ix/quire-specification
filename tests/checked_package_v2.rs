@@ -14524,15 +14524,33 @@ fn tc_303_a_clause_application_has_no_absent_or_null_over_argument() {
 const REFINEMENT_STEP_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/refinement-step-occurrence-vectors.json");
 
-/// FR-322 "Refinement step occurrences": the refusal of a refinement owner's
-/// `source_map` entries, as `(source_map pointer)`, or `None` when admitted.
-/// `rows` are the step rows' regions in `steps` order, `declaration` the
-/// node's `declaration` region.
+/// FR-322 "Refinement step occurrences": the refusal pointer over a
+/// refinement owner's `source_map` entries, or `None` when admitted.
 fn refinement_step_refusal(case: &Value) -> Option<String> {
-    let rows = case["rows"].as_array().expect("rows");
-    let entries = case["source_map"].as_array().expect("source map");
+    let refinement = &case["refinement"];
+    let owner = &refinement["node_id"];
+    let eligible = refinement["hidden"] == false
+        && refinement["histories"] == 0
+        && refinement["any_row"] == false;
+    // The region of the row at each `steps` position, whatever the written order.
+    let steps: Vec<&Value> = refinement["steps"]
+        .as_array()
+        .expect("steps")
+        .iter()
+        .map(|name| {
+            &refinement["rows"]
+                .as_array()
+                .expect("rows")
+                .iter()
+                .find(|row| row["name"] == *name)
+                .expect("a named row")["region"]
+        })
+        .collect();
     let mut seen = std::collections::BTreeSet::new();
-    for (index, entry) in entries.iter().enumerate() {
+    for (index, entry) in case["source_map"].as_array().expect("source map").iter().enumerate() {
+        if entry["node_id"] != *owner {
+            continue;
+        }
         let role = entry["role"].as_str().expect("role");
         let ordinal = entry["ordinal"].as_u64().expect("ordinal") as usize;
         let at = format!("/source_map/{index}");
@@ -14540,8 +14558,9 @@ fn refinement_step_refusal(case: &Value) -> Option<String> {
             return Some(at);
         }
         let required = match (role, ordinal) {
-            ("declaration", 0) | ("generated", 0) => Some(&case["declaration"]),
-            ("generated", n) if (1..=rows.len()).contains(&n) => Some(&rows[n - 1]),
+            ("declaration", 0) => Some(&refinement["declaration"]),
+            ("generated", 0) if eligible => Some(&refinement["declaration"]),
+            ("generated", n) if eligible && (1..=steps.len()).contains(&n) => Some(steps[n - 1]),
             _ => None,
         };
         match required {
@@ -14549,17 +14568,23 @@ fn refinement_step_refusal(case: &Value) -> Option<String> {
             _ => return Some(at),
         }
     }
-    (1..=rows.len())
-        .find(|ordinal| !seen.contains(&("generated".to_owned(), *ordinal)))
-        .map(|_| "/source_map".to_owned())
+    let required = std::iter::once(("declaration".to_owned(), 0)).chain(
+        (0..=steps.len())
+            .filter(|_| eligible)
+            .map(|ordinal| ("generated".to_owned(), ordinal)),
+    );
+    required
+        .into_iter()
+        .any(|key| !seen.contains(&key))
+        .then(|| "/source_map".to_owned())
 }
 
-#[trace("TC-233", "FR-322-AC-88", "FR-322-AC-89")]
+#[trace("TC-233", "FR-322-AC-88", "FR-322-AC-89", "FR-322-AC-90", "FR-322-AC-91")]
 #[test]
 fn tc_233_a_refinement_owner_carries_one_generated_occurrence_per_proof_obligation() {
     let vectors = parsed_fixture(REFINEMENT_STEP_VECTORS);
     let cases = vectors["cases"].as_array().expect("cases");
-    assert_eq!(cases.len(), 8);
+    assert_eq!(cases.len(), 15);
     for case in cases {
         let name = case["name"].as_str().expect("name");
         let refusal = refinement_step_refusal(case);

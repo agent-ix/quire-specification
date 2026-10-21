@@ -1,58 +1,155 @@
 {
   "cases": [
     {
-      "declaration": {
-        "end": 50,
-        "start": 0
-      },
       "expected": "admitted",
       "name": "RS-01",
-      "rows": [
-        {
-          "end": 20,
-          "start": 10
+      "refinement": {
+        "any_row": false,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
         },
-        {
-          "end": 40,
-          "start": 30
-        }
-      ],
+        "hidden": false,
+        "histories": 0,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "rows": [
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          },
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
       "source_map": [
         {
+          "node_id": {
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
-              "end": 50,
+              "end": 5,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "declaration"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
               "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "generated"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 1,
           "regions": [
             {
               "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 10
             }
           ],
           "role": "generated"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 2,
           "regions": [
             {
               "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 30
             }
           ],
@@ -61,59 +158,136 @@
       ]
     },
     {
-      "declaration": {
-        "end": 50,
-        "start": 0
-      },
       "expected": "admitted",
       "name": "RS-02",
-      "rows": [
-        {
-          "end": 40,
-          "start": 30
+      "refinement": {
+        "any_row": false,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
         },
-        {
-          "end": 20,
-          "start": 10
-        }
-      ],
+        "hidden": false,
+        "histories": 0,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "rows": [
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          },
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
       "source_map": [
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
               "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "declaration"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
               "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "generated"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 1,
           "regions": [
             {
-              "end": 40,
-              "start": 30
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
             }
           ],
           "role": "generated"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 2,
           "regions": [
             {
-              "end": 20,
-              "start": 10
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
             }
           ],
           "role": "generated"
@@ -121,10 +295,6 @@
       ]
     },
     {
-      "declaration": {
-        "end": 50,
-        "start": 0
-      },
       "expected": {
         "refused": {
           "at": "/source_map/4",
@@ -133,62 +303,153 @@
         }
       },
       "name": "RS-03",
-      "rows": [
-        {
-          "end": 20,
-          "start": 10
+      "refinement": {
+        "any_row": false,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
         },
-        {
-          "end": 40,
-          "start": 30
-        }
-      ],
+        "hidden": false,
+        "histories": 0,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "rows": [
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          },
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
       "source_map": [
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
               "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "declaration"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
               "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "generated"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 1,
           "regions": [
             {
               "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 10
             }
           ],
           "role": "generated"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 2,
           "regions": [
             {
               "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 30
             }
           ],
           "role": "generated"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 3,
           "regions": [
             {
               "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 10
             }
           ],
@@ -197,10 +458,6 @@
       ]
     },
     {
-      "declaration": {
-        "end": 50,
-        "start": 0
-      },
       "expected": {
         "refused": {
           "at": "/source_map/4",
@@ -209,62 +466,153 @@
         }
       },
       "name": "RS-04",
-      "rows": [
-        {
-          "end": 20,
-          "start": 10
+      "refinement": {
+        "any_row": false,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
         },
-        {
-          "end": 40,
-          "start": 30
-        }
-      ],
+        "hidden": false,
+        "histories": 0,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "rows": [
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          },
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
       "source_map": [
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
               "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "declaration"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
               "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "generated"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 1,
           "regions": [
             {
               "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 10
             }
           ],
           "role": "generated"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 2,
           "regions": [
             {
               "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 30
             }
           ],
           "role": "generated"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 1,
           "regions": [
             {
               "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 10
             }
           ],
@@ -273,10 +621,6 @@
       ]
     },
     {
-      "declaration": {
-        "end": 50,
-        "start": 0
-      },
       "expected": {
         "refused": {
           "at": "/source_map/2",
@@ -285,52 +629,133 @@
         }
       },
       "name": "RS-05",
-      "rows": [
-        {
-          "end": 20,
-          "start": 10
+      "refinement": {
+        "any_row": false,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
         },
-        {
-          "end": 40,
-          "start": 30
-        }
-      ],
+        "hidden": false,
+        "histories": 0,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "rows": [
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          },
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
       "source_map": [
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
               "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "declaration"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
               "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "generated"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 1,
           "regions": [
             {
               "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 30
             }
           ],
           "role": "generated"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 2,
           "regions": [
             {
               "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 30
             }
           ],
@@ -339,10 +764,6 @@
       ]
     },
     {
-      "declaration": {
-        "end": 50,
-        "start": 0
-      },
       "expected": {
         "refused": {
           "at": "/source_map/2",
@@ -351,52 +772,133 @@
         }
       },
       "name": "RS-06",
-      "rows": [
-        {
-          "end": 20,
-          "start": 10
+      "refinement": {
+        "any_row": false,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
         },
-        {
-          "end": 40,
-          "start": 30
-        }
-      ],
+        "hidden": false,
+        "histories": 0,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "rows": [
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          },
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
       "source_map": [
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
               "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "declaration"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
               "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "generated"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 1,
           "regions": [
             {
               "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 10
             }
           ],
           "role": "expression"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 2,
           "regions": [
             {
               "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 30
             }
           ],
@@ -405,10 +907,6 @@
       ]
     },
     {
-      "declaration": {
-        "end": 50,
-        "start": 0
-      },
       "expected": {
         "refused": {
           "at": "/source_map/2",
@@ -417,52 +915,133 @@
         }
       },
       "name": "RS-07",
-      "rows": [
-        {
-          "end": 20,
-          "start": 10
+      "refinement": {
+        "any_row": false,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
         },
-        {
-          "end": 40,
-          "start": 30
-        }
-      ],
+        "hidden": false,
+        "histories": 0,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "rows": [
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          },
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
       "source_map": [
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
               "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "declaration"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
               "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "generated"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 1,
           "regions": [
             {
               "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 10
             }
           ],
           "role": "declaration"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 2,
           "regions": [
             {
               "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 30
             }
           ],
@@ -471,10 +1050,6 @@
       ]
     },
     {
-      "declaration": {
-        "end": 50,
-        "start": 0
-      },
       "expected": {
         "refused": {
           "at": "/source_map",
@@ -483,50 +1058,915 @@
         }
       },
       "name": "RS-08",
-      "rows": [
-        {
-          "end": 20,
-          "start": 10
+      "refinement": {
+        "any_row": false,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
         },
-        {
-          "end": 40,
-          "start": 30
-        }
-      ],
+        "hidden": false,
+        "histories": 0,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "rows": [
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          },
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
       "source_map": [
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
               "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "declaration"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 0,
           "regions": [
             {
               "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 0
             }
           ],
           "role": "generated"
         },
         {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
           "ordinal": 1,
           "regions": [
             {
               "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
               "start": 10
             }
           ],
           "role": "generated"
         }
       ]
+    },
+    {
+      "expected": {
+        "refused": {
+          "at": "/source_map",
+          "cause": "invalid-value",
+          "code": "invalid_package"
+        }
+      },
+      "name": "RS-09",
+      "refinement": {
+        "any_row": false,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
+        },
+        "hidden": false,
+        "histories": 0,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "rows": [
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          },
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
+      "source_map": [
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 0
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 1,
+          "regions": [
+            {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 2,
+          "regions": [
+            {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          ],
+          "role": "generated"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "refused": {
+          "at": "/source_map",
+          "cause": "invalid-value",
+          "code": "invalid_package"
+        }
+      },
+      "name": "RS-10",
+      "refinement": {
+        "any_row": false,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
+        },
+        "hidden": false,
+        "histories": 0,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "rows": [
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          },
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
+      "source_map": [
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 1,
+          "regions": [
+            {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 2,
+          "regions": [
+            {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          ],
+          "role": "generated"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "refused": {
+          "at": "/source_map",
+          "cause": "invalid-value",
+          "code": "invalid_package"
+        }
+      },
+      "name": "RS-11",
+      "refinement": {
+        "any_row": false,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
+        },
+        "hidden": false,
+        "histories": 0,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "rows": [
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          },
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
+      "source_map": [
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 0
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 2,
+          "regions": [
+            {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          ],
+          "role": "generated"
+        }
+      ]
+    },
+    {
+      "expected": "admitted",
+      "name": "RS-12",
+      "refinement": {
+        "any_row": false,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
+        },
+        "hidden": false,
+        "histories": 1,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "rows": [
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          },
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
+      "source_map": [
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "refused": {
+          "at": "/source_map/1",
+          "cause": "invalid-value",
+          "code": "invalid_package"
+        }
+      },
+      "name": "RS-13",
+      "refinement": {
+        "any_row": true,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
+        },
+        "hidden": false,
+        "histories": 0,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "rows": [
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          },
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
+      "source_map": [
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 0
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 1,
+          "regions": [
+            {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 2,
+          "regions": [
+            {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          ],
+          "role": "generated"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "refused": {
+          "at": "/source_map/1",
+          "cause": "invalid-value",
+          "code": "invalid_package"
+        }
+      },
+      "name": "RS-14",
+      "refinement": {
+        "any_row": false,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
+        },
+        "hidden": true,
+        "histories": 0,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "rows": [
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          },
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
+      "source_map": [
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 0
+            }
+          ],
+          "role": "generated"
+        }
+      ]
+    },
+    {
+      "expected": {
+        "refused": {
+          "at": "/source_map/0",
+          "cause": "invalid-value",
+          "code": "invalid_package"
+        }
+      },
+      "name": "RS-15",
+      "refinement": {
+        "any_row": false,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
+        },
+        "hidden": false,
+        "histories": 2,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "rows": [
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          },
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
+      "source_map": [
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 0
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        }
+      ]
     }
   ],
-  "note_regions": "half-open byte intervals under one source",
   "version": "quire.refinement-step-occurrences/v1"
 }
