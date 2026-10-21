@@ -78,9 +78,9 @@ pre-state proves not to be terminal is a refused step here.
 - An `undefined` counterexample whose paths differ in step count (that of an
   `align skip` clause, which holds its skipped steps unmarked and whose
   position counts visible steps, and that of an HP-3 clause whose undefined
-  `μ_U` leaves the existential paths one step short) has no state at
-  `trace_position` on every path, so the row's state-key check cannot read it
-  against one position. The replay boundary SHALL refuse it as
+  `μ_U` leaves the existential paths one step short) has a path with no state at
+  `trace_position`, so the row's state-key check cannot read every path at one
+  position. The replay boundary SHALL refuse it as
   `unsupported_construct`/`not-yet-implemented`, SHALL settle no result from it
   and SHALL NOT read it in lockstep, which would pair a skipped step of one path
   with a visible step of another.

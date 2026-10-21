@@ -42,3 +42,13 @@ Tickets: QSL-553, QSL-554, QSL-555, QSL-573, QSL-883. PR: quire-specification#30
 ## Verdict
 
 One medium finding: the HP-3 short existential path has no defined `state_keys` entry and no replay check, so UE-12's 'replay reproduces it' cannot be tested as written, and QSL's replay refuses the shape today. Fix it with base FND-002 before merge.
+
+## Dispositions
+
+Round 1, at 469fa12.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | After: of its steps. A `state_keys` entry is the key of the last state of its component's path, so for an existential path that ends one step short its entry is the key of its pre-state, the state at `trace_position` minus 1. \| FR-401: - An `undefined` counterexample whose paths differ in step count (that of an `align skip` clause, which holds its skipped steps unmarked and whose position counts visible steps, and that of an HP-3 clause whose undefined `μ_U` leaves the existential paths one step short) has no state at `trace_position` on every path, so the row's state-key check cannot read it against one position. The replay boundary SHALL refuse it as `unsupported_construct`/`not-yet-implemented`, SHALL settle no result from it and SHALL NOT read it in lockstep, which would pair a skipped step of one path with a visible ste |
+
+Round 1 at 469fa12: fixed by the PR's judgment call. FR-400 defines the short path's `state_keys` entry (its pre-state's key), and FR-401 and AC-10 refuse every `undefined` counterexample whose paths differ in step count, HP-3 short existential paths included, as `unsupported_construct`/`not-yet-implemented`, with HR-12 and UE-12 following. This is coherent with FR-400, which now admits that shape on the wire (AC-3 scoped, AC-5), so a refusal on the replay side is correct. QSL code is behind and needs a follow-up: qsl-replay hyper_replay.rs `shape()` refuses unequal step counts as `HyperShape`, which replay.rs maps to `invalid_runtime_input`/`invalid-value`, not `unsupported_construct`/`not-yet-implemented`, and QSL FR-183 says nothing about the HP-3 case. The PR body states this. Gates at 469fa12: `quire validate --scope . 'spec/**/*.md'` gives 134 failed documents, the same set as round 0 and main. The five copied SR files under spec/reviews/ validate and are byte-identical to the round-0 records. `cargo test --test checked_package_v2 --test backend_provider_v1` passes 112 and 11.

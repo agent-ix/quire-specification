@@ -47,3 +47,20 @@ Tickets: QSL-553, QSL-554, QSL-555, QSL-573, QSL-883. PR: quire-specification#30
 ## Verdict
 
 Two low EARS findings: the FR-403 V-8 paragraph and the FR-399 count rule should be split into SHALL statements. Neither blocks the merge by itself. The blocking issues are in the base review.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | low | The new trigger clause says the counterexample 'has no state at `trace_position` on every path'. That can be read as 'no path has a state at `trace_position`', which is false, since the universal paths do have one. The intended reading is 'not every path has a state at `trace_position`'. Fix: 'some path has no state at `trace_position`, so the row's state-key check cannot read every path at one position.' | spec/functional/analysis/FR-401-replay-hyper-counterexamples.md:78-86 |
+
+## Dispositions
+
+Round 1, at 469fa12.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | After: - Where a selected reduction is admitted by its cell and the provider does not build it for the item's form, the analyzer SHALL settle the item `unsupported`, `unsupported_projection`/`unsupported-requested-capability` before expansion, naming the reduction. The rule is evaluated for each selection on its own, for the key symmetry of every form (the orbit representatives of HP-1 and the diagonal action of HP-2, HP-3 and HP-6) and for the state constraint of HP-1, HP-2 and HP-6. - The analyzer SHALL NOT ignore a selected reduction. - When several reductions are selected, the analyzer SHALL deci |
+| FND-002 | fixed | After: `max_witness_set` or `max_relation_tuples`, the engine's stop record SHALL expose that count, the value plus 1, since the run stops at the first member or tuple that would pass the limit and counts that one. The stop records of the other model-check limits (`max_states`, `max_transitions`, |
+
+Round 1 at 469fa12: both fixed. New FND-003 (low): the FR-401 trigger clause is ambiguous. Gates at 469fa12: `quire validate --scope . 'spec/**/*.md'` gives 134 failed documents, the same set as round 0 and main. The five copied SR files under spec/reviews/ validate and are byte-identical to the round-0 records. `cargo test --test checked_package_v2 --test backend_provider_v1` passes 112 and 11.
