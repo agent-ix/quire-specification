@@ -2159,6 +2159,82 @@
           }
         ]
       }
+    },
+    {
+      "name": "observed-counterexample-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/counterexamples/0/counterexample": "FR-364"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "refuted",
+            "counterexample": 0
+          }
+        ],
+        "counterexamples": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "counterexample": {
+              "trace": "observed",
+              "kind": "formula",
+              "initial_state": null,
+              "prefix": [
+                {
+                  "document": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                {
+                  "document": "3333333333333333333333333333333333333333333333333333333333333333"
+                }
+              ],
+              "loop": [],
+              "over_binding": null,
+              "fairness": [],
+              "interval": null,
+              "trace_position": 0
+            }
+          }
+        ],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result",
+            "method": "exploration",
+            "seed": "42",
+            "witness_samples": 4,
+            "limits": {
+              "max_states": 250000,
+              "max_walk_steps": 64
+            },
+            "warnings": [
+              {
+                "code": "fairness.strong-would-exclude",
+                "constraint": {
+                  "kind": "strong",
+                  "operation": "Example::Session::close",
+                  "granularity": "whole"
+                },
+                "identity": null,
+                "position": 1
+              }
+            ]
+          }
+        ]
+      }
     }
   ],
   "adverse": [
@@ -3505,6 +3581,75 @@
           "value": [
             "weak"
           ]
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-names-an-initial-state",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/initial_state",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-with-a-model-step",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/prefix/0",
+          "value": {
+            "transition": {
+              "type": "terminal-stutter"
+            },
+            "post_state": "2222222222222222222222222222222222222222222222222222222222222222"
+          }
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-deadlock-kind",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/kind",
+          "value": "deadlock"
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-over-binding",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/over_binding",
+          "value": {
+            "type": "null"
+          }
+        }
+      ]
+    },
+    {
+      "name": "model-counterexample-with-a-document-step",
+      "base": "temporal-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/prefix/0",
+          "value": {
+            "document": "2222222222222222222222222222222222222222222222222222222222222222"
+          }
         }
       ]
     }

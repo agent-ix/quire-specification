@@ -7,6 +7,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-368
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-364
+    type: verifies
 ---
 
 # TC-431: The backend provider wire schema admits its positive vectors and refuses its adverse ones
@@ -38,6 +40,7 @@ bytes against the checked package they carry. Runs as
 | BP-20 | The `temporal-request` vector, whose item has an `unbounded` `infinite-trace` extent and a `population` bound in `subject.proof_bounds`; then the same item with `subject.proof_bounds` emptied | Both are admitted; the extent is `unbounded` with an `infinite-trace` domain, `finite_bound_available` false and no `bounds` | FR-331-AC-32 |
 | BP-21 | The `refinement-hypotheses-outcome` vector, whose result is `inconclusive` with cause `hypotheses-not-established{hypothesis, result}`; then its adverse patches: `hypothesis` as a bare digest string, and an extra `premise` member | The vector is admitted; both patches are refused at the cause | FR-468-AC-6 |
 | BP-22 | The existing adverse vector `manifest-temporal-without-fairness-kinds` (member removed) and the four adverse vectors `manifest-fairness-kinds-not-a-list` (`"weak"`), `-unknown-label` ([`weak`, `fair`]), `-duplicate-label` ([`weak`, `weak`]) and `-on-non-temporal-descriptor` (`kani-hello` with [`weak`]); the positive `temporal-request` and `hybrid-request` descriptors carry [`strong`, `weak`] | Each adverse vector is refused at the descriptor's `fairness_kinds` member (or at the descriptor for the non-temporal one); the positive descriptors are admitted | FR-368-AC-10 |
+| BP-23 | The positive `observed-counterexample-outcome` vector (an observed-arm formula counterexample with two `document` steps); then its adverse patches `observed-counterexample-names-an-initial-state`, `-with-a-model-step`, `-deadlock-kind`, `-over-binding`, and `model-counterexample-with-a-document-step` over `temporal-outcome` | The vector is admitted; each patch is refused at the counterexample | FR-364-AC-10 |
 
 ## Expected Results
 

@@ -488,7 +488,22 @@
         "refinement_failure": {"$ref": "#/$defs/RefinementFailure"}
       },
       "allOf": [
-        {"if": {"properties": {"kind": {"const": "time-lock"}}, "required": ["kind"]}, "then": {"required": ["final_delay"]}, "else": {"not": {"required": ["final_delay"]}}}
+        {"if": {"properties": {"kind": {"const": "time-lock"}}, "required": ["kind"]}, "then": {"required": ["final_delay"]}, "else": {"not": {"required": ["final_delay"]}}},
+        {
+          "description": "FR-364: the observed arm names no initial state or over binding, carries document steps and has no deadlock or time-lock kind; the model arm carries model steps.",
+          "if": {"properties": {"trace": {"const": "observed"}}, "required": ["trace"]},
+          "then": {"properties": {
+            "initial_state": {"type": "null"},
+            "over_binding": {"type": "null"},
+            "kind": {"oneOf": [{"const": "formula"}, {"$ref": "#/$defs/UndefinedEvaluation"}]},
+            "prefix": {"items": {"required": ["document"]}},
+            "loop": {"items": {"required": ["document"]}}
+          }},
+          "else": {"properties": {
+            "prefix": {"items": {"required": ["transition", "post_state"]}},
+            "loop": {"items": {"required": ["transition", "post_state"]}}
+          }}
+        }
       ],
       "additionalProperties": false
     },
