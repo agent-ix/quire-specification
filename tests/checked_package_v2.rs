@@ -8438,6 +8438,7 @@ fn tc_233_stage_limit_and_duplicate_selection_cause_sets_are_closed() {
                 "occurrence-count-exceeded",
                 "diagnostic-count-exceeded",
                 "work-budget-exceeded",
+                "rational-bits-exceeded",
             ],
         ),
         ("duplicate_selection", &["duplicate-identity"]),

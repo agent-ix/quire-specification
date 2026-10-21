@@ -23,14 +23,17 @@ Run each vector reduced and unreduced through the real local Rust boundary with 
 
 | Vector | Input | Expected result |
 | --- | --- | --- |
-| RD-01 | TC-338 NI-01 and NI-02 with no reduction selected | copy-swap applies; leaky stores 9 classes, secure 6; verdicts equal to the unreduced runs; the secure proof names copy-swap with class `{a, b}` |
+| RD-01 | TC-338 NI-01 and NI-02 with no reduction selected | copy-swap applies; leaky stores 7 classes, secure 6; verdicts equal to the unreduced runs; the secure proof names copy-swap with class `{a, b}` |
 | RD-02 | NI-01 found under copy-swap | an ordinary `lockstep` counterexample in quantifier order that replays |
 | RD-03 | a clause whose body `always holds(v.l @ a <= v.l @ b)` is not unchanged under the swap | no copy-swap applied |
 | RD-04 | HB-01 with `a` and `b` carrying different fairness sets | no copy-swap applied |
 | RD-05 | HB-01 with partial-order reduction selected | `inconclusive`, `reduction-not-preserving`, before expansion |
 | RD-06 | `Opaque` of TC-339 with a state constraint selected | `inconclusive`, `reduction-not-preserving`, before expansion |
 | RD-07 | HB-02 over two subjects with a diagonal symmetry selected | `inconclusive`, `reduction-not-preserving`, before expansion |
-| RD-08 | HB-11 with an admitted symmetry over one subject | the same verdict as unreduced; a refutation names no reduction |
+| RD-08 | HB-11 with a symmetry over one subject selected, then HB-01 with a symmetry or a state constraint selected | each settles `unsupported`, `unsupported-requested-capability` before expansion, since the preservation row reads "yes" and the analyzer builds neither the diagonal action of a key symmetry nor a state constraint for a hyper product; no verdict is returned |
+| RD-09 | a clause with `fair weak V::Vault::reset` on both `a` and `b` of an otherwise swappable pair; then the same with a second pair `c`, `d` carrying no fairness | the fair class is stored whole and named in no reduction, with the unreduced stored-state count and the unreduced verdict; the second run names copy-swap with class `{c, d}` alone |
+| RD-10 | a swappable pair whose body is `always holds(v.l @ a = 0) and always holds(v.l @ b = 0)`, so that the swap exchanges two acceptance sets; then `eventually holds(v.l @ a = 1) and eventually holds(v.l @ b = 1)`, whose swap fixes the acceptance condition | the first is stored whole and names no reduction; the second names copy-swap; a clause with one passing class and one failing class is stored whole and names no reduction |
+| RD-11 | an HP-6 clause whose pair is swappable | stored whole as its projected product and names no copy-swap; a refutation names no reduction |
 
 ## Expected Results
 

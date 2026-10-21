@@ -27,8 +27,9 @@ Run each vector through the real local Rust boundary with the explicit-state eng
 | --- | --- | --- |
 | PA-01 | noninterference matching only `step` arguments, in lockstep | `refuted`: lockstep pairs `a`'s second `step` with `b`'s `mix` |
 | PA-02 | PA-01 with `align skip { V::Vault::mix }` | HP-6; `proved`, `closed-scope` |
-| PA-03 | PA-02 on a leaky variant whose `step` sets `l = (i + h) mod 2` | `refuted`; a `projected` counterexample with per-step marks, equal visible counts and unequal total lengths; replay evaluates the three-valued prefix false |
+| PA-03 | PA-02 on a leaky variant whose `step` sets `l = (i + h) mod 2` | `refuted`; a `projected` counterexample with per-step marks and equal visible counts, with total lengths free (fixture-dependent: see PA-05); replay evaluates the three-valued prefix false |
 | PA-04 | two paths with the same visible steps and different numbers of `mix` steps | the same projected prefix and the same match values |
+| PA-05 | PA-03 with the secret-1 run caught mid-operation at `(h, l, busy) = (1, 0, true)` and the other run idle at `(0, 0, false)`; then both runs idle, the secret-1 run at `(1, 0, false)` | the first: `refuted`, `projected` counterexample at projected position 1 with one visible step per trace and total lengths 1 and 2 (the mid-operation run takes a skipped `mix` first); the second: `refuted` by one visible step of each trace, total lengths 1 and 1; both replay |
 
 ## Expected Results
 
