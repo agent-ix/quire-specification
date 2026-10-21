@@ -71,10 +71,18 @@ instances of `r` at once, part of the checked package.
 - The `roles` entry of a replicated role is a map from each object reference
   to `"live"` or `"retired"`. A retired instance stays in the map, so it is
   never spawned again in that protocol instance.
+- The instance binder of `r` is the role name `r`: inside `until(p)`, `r`
+  names one instance, typed `Reference<T>`. The binder is readable only in
+  that role's own `until(p)`; a role name used as a value anywhere else (a
+  choice guard, a node constraint, another role's `until`) SHALL refuse
+  `missing_declaration`/`missing-name` at the name, because it names no value
+  there.
 - Lifetime `workflow`: the instance retires when its protocol instance
   finishes. Lifetime `scope`: it retires in the step after which no live
-  thread can reach any node `by r` inside the smallest control holding every
-  such node. Lifetime `until(p)`: the `retire` step. Retirement under
+  thread can reach any node `by r` inside the *scope region*, the closest
+  control node that is an ancestor of every node `by r` (a control is never
+  one of those nodes, so the region contains them strictly); when no control
+  other than the root `run` holds every such node, the region is the root. Lifetime `until(p)`: the `retire` step. Retirement under
   `workflow` and `scope` is folded into the step that ends the lifetime.
 
 ### Steps
@@ -125,6 +133,9 @@ obligation identity.
 | FR-428-AC-5 | Two behaviours that spawn the same objects in different orders reach byte-identical `roles` entries, while their traces carry distinct FR-171 spawn ordinals. | Test (TC-382) |
 | FR-428-AC-6 | An event node `by r` with two live instances gives two steps, each naming its acting instance in the `actor` member. | Test (TC-382) |
 | FR-428-AC-7 | An `on each` activation guard, or an `until(p)` retire predicate, that evaluates undefined at a reachable state settles every item over the subject `refuted` with cause `undefined-evaluation` naming that predicate's locus, never a disabled `activate` or `retire` step. | Test (TC-381, TC-382) |
+| FR-428-AC-8 | In `role w each M::Worker from workers max 2 lifetime until(w.done)`, `w` names one instance of type `Reference<M::Worker>` inside the `until` expression, and the same role written with a brace-delimited `until({w.done})` refuses `invalid_syntax`/`unexpected-token` at the `{`, while an `until` expression naming a binder other than `w` (`z`) refuses `missing_declaration`/`missing-name` at `z`. | Test (TC-382, TC-947) |
+| FR-428-AC-9 | With `Work` by `r` as the only node inside a `repeat`, a `scope` instance is not retired while the `repeat` can iterate again and retires in the step that leaves it; with `Work` nodes inside two sibling `sequence`s of one `parallel`, the region is the `parallel`, and the instance retires only after no live thread can reach either `Work`; with every `Work` directly in the root `run`, the region is the root. | Test (TC-382) |
+| FR-428-AC-10 | A role name used as a value outside its own `until(p)` refuses `missing_declaration`/`missing-name` at the name: `w` read in a `choice` guard of the protocol, in a node constraint, and in another replicated role's `until`, each refuse and none is read as the acting instance. | Test (TC-382) |
 
 ## Dependencies
 

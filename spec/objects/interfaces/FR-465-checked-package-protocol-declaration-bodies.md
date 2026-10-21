@@ -59,7 +59,7 @@ is a template of role instances, one per object of a population, and its
 | --- | --- |
 | `population` | a text: the name of the population the instances are drawn from |
 | `max` | an integer, at least 1: the authored limit on live instances at once |
-| `binder` | a reference to the `value`/`parameter` node that stands for one instance |
+| `binder` | a reference to the `value`/`parameter` node that stands for one instance; the node is named by the role's own name (FR-428) |
 | `lifetime` | a text, `workflow`, `scope` or `until` |
 | `until` | a Boolean term, present exactly when `lifetime` is `until` |
 
