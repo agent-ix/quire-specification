@@ -2860,7 +2860,8 @@ enum ReadRefusal {
     GraphShape(Value),
     /// `invalid_model_binding`/`malformed-declaration` at `package_read`: a
     /// `populations` entry of the selected document that is no FCD population.
-    PopulationRecord,
+    /// The locus is the selection row (`/lock/model_selections/<i>`).
+    PopulationRecord(String),
     /// `missing_declaration`/`missing-selection` at a node whose `owner` the
     /// lock does not select or whose selected document does not declare it.
     OwnerSelection(Value),
@@ -2917,7 +2918,13 @@ fn read_package_semantics(package: &Value, catalog: &Value) -> Result<(), ReadRe
             })
         })
     {
-        return Err(ReadRefusal::PopulationRecord);
+        let row = package["lock"]["model_selections"]
+            .as_array()
+            .and_then(|rows| rows.iter().position(|row| row["identity"] == "acme/orders"))
+            .expect("the selection row of the read document");
+        return Err(ReadRefusal::PopulationRecord(format!(
+            "/lock/model_selections/{row}"
+        )));
     }
     let nodes = package["semantic_graph"]["nodes"]
         .as_array()
@@ -13035,7 +13042,7 @@ fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
     let cases = adverse["population_reference_cases"]
         .as_array()
         .expect("cases");
-    assert_eq!(cases.len(), 13);
+    assert_eq!(cases.len(), 15);
     let mut admitted = BTreeMap::<String, (Value, Value, Value)>::new();
     for case in cases {
         let id = case["id"].as_str().expect("id");
@@ -13048,14 +13055,28 @@ fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
         let mut population_id = Value::Null;
         if operation != "published" {
             let mut document = parsed_fixture(MODEL_MEMBER_TYPE_VECTORS)["domain_package"].clone();
-            document["populations"] = if case["document_populations"] == "node-only" {
-                json!([
-                    {"node": "ix://acme/orders/counters"},
-                    {"node": "ix://acme/orders/archive"}
-                ])
-            } else {
-                adverse["selected_document_populations"].clone()
-            };
+            document["populations"] = adverse["selected_document_populations"].clone();
+            // Each malformed shape alone: a `node` member and no `identity`
+            // (the old shape), a `node` member beside an `identity`, an entry
+            // with only its `identity` removed.
+            match case["document_populations"].as_str() {
+                Some("node-only") => {
+                    document["populations"] = json!([
+                        {"node": "ix://acme/orders/counters"},
+                        {"node": "ix://acme/orders/archive"}
+                    ]);
+                }
+                Some("with-node-member") => {
+                    document["populations"][0]["node"] = json!("ix://acme/orders/counters");
+                }
+                Some("without-identity") => {
+                    document["populations"][0]
+                        .as_object_mut()
+                        .expect("a population")
+                        .remove("identity");
+                }
+                _ => {}
+            }
             let selection = json!([{
                 "identity": "acme/orders",
                 "digest_domain": "sha256-jcs",
@@ -13200,7 +13221,8 @@ fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
                 }
                 Err(ReadRefusal::Operation(refusal)) => (refusal.code(), refusal.cause()),
                 // FR-154 step 1 refuses the document before any graph check.
-                Err(ReadRefusal::PopulationRecord) => {
+                Err(ReadRefusal::PopulationRecord(locus)) => {
+                    assert_eq!(locus, "/lock/model_selections/0", "{id}: the selection row");
                     ("invalid_model_binding", "malformed-declaration")
                 }
                 other => panic!("{id}: unexpected {other:?}"),
@@ -13757,19 +13779,13 @@ fn tc_233_quantity_literals_are_typed_by_a_unit_node_and_spell_canonical_magnitu
     for value in ["3", "0", "-5", "1/1000", "-7/2"] {
         let literal = scalar_literal("quantity", "Ms", value);
         assert!(
-            oracle
-                .argument_descriptor(&literal)
-                .is_ok_and(|d| d.is_some_and(|d| d.family == "quantity")),
+            oracle.argument_descriptor(&literal).is_ok_and(|d| d.is_some_and(|d| d.family == "quantity")),
             "QL: a quantity literal {value} typed by a unit node is admitted"
         );
     }
-    for value in [
-        "03", "+3", "2/4", "4/2", "1/0", "0/5", "3/1", "1/-2", " 3", "2.5", "",
-    ] {
+    for value in ["03", "+3", "2/4", "4/2", "1/0", "0/5", "3/1", "1/-2", " 3", "2.5", ""] {
         assert_eq!(
-            oracle
-                .argument_descriptor(&scalar_literal("quantity", "Ms", value))
-                .err(),
+            oracle.argument_descriptor(&scalar_literal("quantity", "Ms", value)).err(),
             Some(OperationRefusal::InvalidValue),
             "QL: the magnitude {value:?} is not canonical"
         );
@@ -14439,10 +14455,7 @@ fn tc_233_deletes_scoped_parameter_entries_name_a_reference_parameter() {
 #[test]
 fn tc_233_supply_refuses_the_first_failing_entry_in_lock_order() {
     let vectors = parsed_fixture(DEPENDENCY_SELECTION_VECTORS);
-    for vector in vectors["supply_vectors"]
-        .as_array()
-        .expect("supply vectors")
-    {
+    for vector in vectors["supply_vectors"].as_array().expect("supply vectors") {
         let id = vector["id"].as_str().expect("id");
         let mut outcome = "admitted".to_owned();
         for (index, entry) in vector["entries"]

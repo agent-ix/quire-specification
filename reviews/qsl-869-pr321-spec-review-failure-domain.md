@@ -37,3 +37,15 @@ Ticket: QSL-869. Failure modes and reachability of the new 'an entry with `node`
 ## Verdict
 
 Not mergeable: FND-001 (high) puts AC-82 in conflict with FR-154. The fix is wording plus the PR-07 description.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | The new refusal pins its code, cause and stage but no locus, and neither the harness (ReadRefusal::PopulationRecord carries nothing) nor the case checks one. FR-154's population refusals name 'the IR node identity and its `origin`' (FR-154-AC-7/AC-8), which an entry with no `identity` lacks. FR-322 step 1 says only 'with its own code, cause and loci'. QSL and IR both report at `/lock/model_selections/0`. Two readers could choose different loci and both pass. Fix: state the locus, for example the `model_selections` row (`/lock/model_selections/<i>`) with the entry's `origin` when present, and record it in the case. | spec/objects/interfaces/FR-322-checked-package-artifact.md:1284-1288 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 at 85df168: The owner join SHALL compare `owner.node` with the `identity` of each `populations` entry of the selected document. The reader SHALL build the population's node from that `identity`, and the node key SHALL be the one "Identity" above derives from the declaration key. A selected document whose `populations` entry lacks an `identity` string, or carries a `node` member, SHALL refuse at step 1 as `invalid_model_binding`/`malformed-declaration` at stage `package_read` (FR-154), before the owner join runs. AC-82: A selected document whose `populations` entry carries a `node` member and no `identity` refuses `invalid_model_binding`/`malformed-declaration` at `package_read` before any graph check, and no population of it is joined (`population-entry-without-an-identity-refused`). The published `adverse.json` `selected_document_populations` holds the `counters` and `archive` e |

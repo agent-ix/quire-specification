@@ -45,3 +45,10 @@ Ticket: QSL-869 (related STD-217, STD-165). PR: quire-specification#321 (private
 ## Verdict
 
 Not mergeable as is. The core change is correct, and QSL and a one-line IR fix both conform to it (reproduced 132 -> 0 qsl-analyze failures). Before merging: fix the full-reader harness and publish the population records its cases read (SR-13677 FND-001, FND-001 here), and resolve the PR-07 / FR-154 conflict (SR-13681 FND-001). The other findings are wording fixes.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 at 85df168: adverse.json:77-80 `selected_document_populations`: [{displayName: counters, extent: closed, identity: ix://acme/orders/counters, kind: {module: acme/orders, name: population}, members: [ix://acme/orders/Order], origin: {source: {...}}}, {... archive ...}]; TC-233:293: whose `counters` and `archive` entries `adverse.json` publishes as `selected_document_populations` (FCD populations keyed by `identity`) |
+| FND-002 | fixed | Round 1 at 85df168: README:141-144 `population_reference_cases` read it through the full reader against the FCD populations of its `selected_document_populations`, and `model-owner-form-vectors.json` carries [...] the owner cases `PR-01` to `PR-06`. (PR-07 is withdrawn, so PR-01 to PR-06 is now the full set.) |

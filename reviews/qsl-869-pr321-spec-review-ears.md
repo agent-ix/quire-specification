@@ -32,3 +32,10 @@ Ticket: QSL-869. EARS conformance of the requirement text changed by PR #321: th
 ## Verdict
 
 Mergeable with respect to EARS once the two low findings are fixed; neither blocks on its own.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 at 85df168: The owner join SHALL compare `owner.node` with the `identity` of each `populations` entry of the selected document. The reader SHALL build the population's node from that `identity`, and the node key SHALL be the one "Identity" above derives from the declaration key. A selected document whose `populations` entry lacks an `identity` string, or carries a `node` member, SHALL refuse at step 1 as `invalid_model_binding`/`malformed-declaration` at stage `package_read` (FR-154), before the owner join runs. |
+| FND-002 | fixed | Round 1 at 85df168: FR-322: the `populations` member lists one FCD semantic IR 2.0.0 population per declared population: `identity`, `displayName`, `kind`, `members`, `extent`, `origin` and, optionally, `symmetric` [...]; TC-280:66-69: whose entries are FCD populations (`identity`, `displayName`, `kind`, `members`, `extent`, `origin`): the populations `counters` and `archive`, whose `identity` is the IR node identity. |

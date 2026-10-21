@@ -295,7 +295,7 @@ operand 0, with its key and its application's key recomputed; the `counters` and
 nodes, applications and package ids differ and `counters` is one node for both operations),
 each admitted; `population-owned-by-an-object-type` and `population-owned-by-an-undeclared-node`
 (`missing_declaration`/`missing-selection` at the population node);
-`population-without-an-owner` (`malformed_wire`); `population-entry-without-an-identity-refused` (the document's `populations` entries carry a `node` and no `identity`: `invalid_model_binding`/`malformed-declaration` at `package_read`, before the owner join, FR-322-AC-82); and
+`population-without-an-owner` (`malformed_wire`); `population-entry-without-an-identity-refused` (entries that carry a `node` and no `identity`), `population-entry-with-a-node-member-refused` (the published entries plus a `node` member) and `population-entry-lacking-only-an-identity-refused` (the published entries with one `identity` removed), each `invalid_model_binding`/`malformed-declaration` at `package_read`, at `/lock/model_selections/0`, before the owner join (FR-322-AC-82); and
 `population-as-a-relationship-declaration`, `population-as-a-field-declaration`,
 `population-as-an-operation-declaration`, `population-as-a-reaches-population-link` and
 `population-as-a-collection-operand`

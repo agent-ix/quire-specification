@@ -41,3 +41,18 @@ Ticket: QSL-869. Consistency of the changed text with FR-154, FCD's population s
 ## Verdict
 
 Mergeable for integrity once FND-001 is fixed (medium, wording); FND-002 to FND-004 are low.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | low | The member list cites 'filament-core-data FR-091 and FR-095', but neither defines a population. FR-091 reads a spec bundle through the extraction contract, and FR-095 mints identities. FCD specifies the document-level `populations` in FR-141 ('Carry the model members in the semantic IR', table row `populations`: `kind`, `members`, `extent`), and the exact member set is crates/semantic-ir/src/schema.rs:818-827 (POPULATION_MEMBERS, plus POPULATION_OPTIONAL_MEMBERS `symmetric`). No FCD FR states `symmetric`. The member list itself is correct; I checked it against FCD main a684329, the rev QSL pins (the ~/dev/filament-core-data checkout is stale at 7242b68 and predates populations). Fix: cite 'filament-core-data FR-141 and its semantic-ir population schema'. FR-095 is right for the identity sentence. | spec/objects/interfaces/FR-322-checked-package-artifact.md:1276-1279 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 at 85df168: whose `populations` member lists one FCD semantic IR 2.0.0 population per declared population: `identity`, `displayName`, `kind`, `members`, `extent`, `origin` and, optionally, `symmetric` (filament-core-data FR-091 and FR-095). A population's `identity` is its IR node identity, as FR-154 takes a declaration's IR node identity from FCD (FR-095). |
+| FND-002 | still-open | Round 1 at 85df168: The FR statement and the criterion still name different classes. FR-322:1284-1287 refuses an entry that 'lacks an `identity` string, or carries a `node` member'; AC-82 refuses one that 'carries a `node` member and no `identity`', which is only the overlap of the two. Fix: AC-82 'a `populations` entry that lacks an `identity` string, and one that carries a `node` member, each refuse ...', with one case for each (SR-13677 FND-003). |
+| FND-003 | fixed | Round 1 at 85df168: A population's `identity` is its IR node identity, as FR-154 takes a declaration's IR node identity from FCD (FR-095). |
+| FND-004 | fixed | Round 1 at 85df168: FR-322:822-825: `contractVersion`, `package`, `constructs`, `types` and `populations`, each type carrying its `fields`, `operations`, `supertypes` and `relationships`, and each population its members of "Population references" ("Owner join"). |

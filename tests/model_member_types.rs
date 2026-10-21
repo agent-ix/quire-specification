@@ -304,12 +304,7 @@ fn unit_element_type(package: &Value, name: &str) -> Option<Value> {
         .iter()
         .any(|unit| {
             unit.as_array().is_some_and(|segments| {
-                segments
-                    .iter()
-                    .filter_map(Value::as_str)
-                    .collect::<Vec<_>>()
-                    .join("/")
-                    == name
+                segments.iter().filter_map(Value::as_str).collect::<Vec<_>>().join("/") == name
             })
         })
         .then(|| json!({"type": "Quantity", "unit": name}))
