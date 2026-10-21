@@ -74,6 +74,10 @@
     {"id":"population-max-not-an-integer-refused","base":"positive-operation-identities","max":"three","expected_code":"invalid_package","expected_cause":"invalid-derived-shape"},
     {"id":"population-max-with-a-second-member-refused","base":"positive-operation-identities","max":"3","extra_member":true,"expected_code":"invalid_package","expected_cause":"invalid-derived-shape"}
   ],
+  "selected_document_populations": [
+    {"displayName":"counters","extent":"closed","identity":"ix://acme/orders/counters","kind":{"module":"acme/orders","name":"population"},"members":["ix://acme/orders/Order"],"origin":{"source":{"path":"orders/counters.md","sourceIdentity":"ix://acme/orders/spec","startColumn":1,"startLine":1}}},
+    {"displayName":"archive","extent":"closed","identity":"ix://acme/orders/archive","kind":{"module":"acme/orders","name":"population"},"members":["ix://acme/orders/Order"],"origin":{"source":{"path":"orders/archive.md","sourceIdentity":"ix://acme/orders/spec","startColumn":1,"startLine":1}}}
+  ],
   "population_reference_cases": [
     {"id":"parameter-operand-admitted","base":"positive-operation-identities","operation":"published","outcome":"admitted"},
     {"id":"counters-all-instances-admitted","also":"model.lookup","base":"positive-operation-identities","operation":"model.all_instances","owner_node":"ix://acme/orders/counters","population":"counters","outcome":"admitted"},
@@ -82,6 +86,7 @@
     {"id":"population-owned-by-an-object-type","base":"positive-operation-identities","operation":"model.all_instances","owner_node":"ix://acme/orders/Order","expected_code":"missing_declaration","expected_cause":"missing-selection"},
     {"id":"population-owned-by-an-undeclared-node","base":"positive-operation-identities","operation":"model.all_instances","owner_node":"ix://acme/orders/nope","expected_code":"missing_declaration","expected_cause":"missing-selection"},
     {"id":"population-without-an-owner","base":"positive-operation-identities","operation":"model.all_instances","owner_node":null,"expected_code":"malformed_wire"},
+    {"id":"population-entry-without-an-identity-refused","base":"positive-operation-identities","operation":"model.all_instances","owner_node":"ix://acme/orders/counters","document_populations":"node-only","expected_code":"invalid_model_binding","expected_cause":"malformed-declaration"},
     {"id":"population-as-a-relationship-declaration","base":"positive-operation-identities","operation":"model.reaches","member_declaration":true,"owner_node":"ix://acme/orders/counters","expected_code":"ill_typed","expected_cause":"operator-ineligible"},
     {"id":"population-as-a-field-declaration","base":"positive-operation-identities","operation":"record.project","member_declaration":true,"owner_node":"ix://acme/orders/counters","expected_code":"ill_typed","expected_cause":"operator-ineligible"},
     {"id":"population-as-an-operation-declaration","base":"positive-operation-identities","operation":"model.dispatch_call","member_declaration":true,"owner_node":"ix://acme/orders/counters","expected_code":"ill_typed","expected_cause":"operator-ineligible"},

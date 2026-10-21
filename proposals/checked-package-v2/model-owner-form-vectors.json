@@ -883,28 +883,6 @@
       "node_tag": "relation",
       "owner_node": "ix://acme/runs/counters",
       "semantic_form": "relationship"
-    },
-    {
-      "expected": {
-        "refused": {
-          "cause": "missing-selection",
-          "code": "missing_declaration"
-        }
-      },
-      "name": "PR-07",
-      "node_tag": "relation",
-      "owner_node": "ix://acme/runs/counters",
-      "projection_override": {
-        "populations": [
-          {
-            "node": "ix://acme/runs/counters"
-          },
-          {
-            "node": "ix://acme/runs/archive"
-          }
-        ]
-      },
-      "semantic_form": "population"
     }
   ],
   "receiver_frame_cases": [

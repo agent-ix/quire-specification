@@ -304,7 +304,12 @@ fn unit_element_type(package: &Value, name: &str) -> Option<Value> {
         .iter()
         .any(|unit| {
             unit.as_array().is_some_and(|segments| {
-                segments.iter().filter_map(Value::as_str).collect::<Vec<_>>().join("/") == name
+                segments
+                    .iter()
+                    .filter_map(Value::as_str)
+                    .collect::<Vec<_>>()
+                    .join("/")
+                    == name
             })
         })
         .then(|| json!({"type": "Quantity", "unit": name}))
@@ -2221,27 +2226,13 @@ fn tc_280_process_state_machine_and_persistence_owners_join_the_selected_documen
         );
     }
     for case in array(&vectors, "owner_cases") {
-        let projected = case_projection(package, case);
         assert_eq!(
-            read_wire(&projected, &owner_form_node(&projected, case)),
+            read_wire(package, &owner_form_node(package, case)),
             case["expected"],
             "{}",
             text(case, "name")
         );
     }
-}
-
-/// The projection a case reads: the vectors' own, with the members the case's
-/// `projection_override` replaces (PR-07: populations that carry a `node`
-/// member and no `identity`).
-fn case_projection(package: &Value, case: &Value) -> Value {
-    let mut projected = package.clone();
-    if let Some(overrides) = case["projection_override"].as_object() {
-        for (member, value) in overrides {
-            projected[member] = value.clone();
-        }
-    }
-    projected
 }
 
 /// FR-322-AC-82: a declared population is a self-typed `relation`/`population`
@@ -2329,18 +2320,53 @@ fn tc_280_a_population_reference_node_is_keyed_by_its_declaration_key_alone() {
         .iter()
         .filter(|case| text(case, "name").starts_with("PR-"))
     {
-        let projected = case_projection(package, case);
         assert_eq!(
-            read_wire(&projected, &owner_form_node(&projected, case)),
+            read_wire(package, &owner_form_node(package, case)),
             case["expected"],
             "{}",
             text(case, "name")
         );
     }
+    // Each projected population is an FCD semantic IR 2.0.0 population: the six
+    // required members and the optional `symmetric`, and nothing else.
     for population in array(package, "populations") {
+        let members: std::collections::BTreeSet<&str> = population
+            .as_object()
+            .expect("a population is an object")
+            .keys()
+            .map(String::as_str)
+            .collect();
+        let required = [
+            "displayName",
+            "extent",
+            "identity",
+            "kind",
+            "members",
+            "origin",
+        ];
         assert!(
-            population.get("node").is_none() && population["identity"].is_string(),
-            "the projection carries the raw PopulationRecord, keyed by identity"
+            required.iter().all(|member| members.contains(member)),
+            "a population carries {required:?}"
+        );
+        assert!(
+            members
+                .iter()
+                .all(|member| required.contains(member) || *member == "symmetric"),
+            "a population carries no member beyond the six and `symmetric`: {members:?}"
+        );
+        assert!(text(population, "identity").starts_with("ix://"));
+        assert!(matches!(text(population, "extent"), "closed" | "open"));
+        text(&population["kind"], "module");
+        text(&population["kind"], "name");
+        assert!(array(population, "members").iter().all(Value::is_string));
+        let origin = population["origin"].as_object().expect("an origin object");
+        assert_eq!(
+            origin
+                .keys()
+                .filter(|key| *key == "source" || *key == "generated")
+                .count(),
+            1,
+            "an origin is exactly one of `source` or `generated`"
         );
     }
 }
