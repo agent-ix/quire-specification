@@ -63,7 +63,7 @@ the dimension that names them; unit targets name any unit. When the checker
 admits a package's unit and dimension declarations, the checker SHALL refuse a
 topology defect before any quantity value exists, with these FR-272 causes;
 each refusal names the dimension node and the unit or units shown. The checker
-SHALL process the dimension nodes in source order and, for each node in turn:
+SHALL process the dimension nodes in turn-list order (below) and, for each node in turn:
 (-1) check its terms, then (0) for a base dimension with no unit apply the
 base-dimension rule below; otherwise (a) check each of its local units in
 source order against rows 1 to 3, (b) then check the node against rows 4 to 6,
@@ -80,7 +80,7 @@ The checker SHALL build the list of turns by walking the package's declarations
 in source order. A local dimension takes its turn at its own declaration. For
 every declaration, the dimension nodes it mentions are visited in mention
 order: a local dimension's terms; a local unit's type, then the type of its
-target. Each mentioned node is expanded depth-first through its own terms,
+target. Each mentioned node is expanded once, depth-first through its own terms,
 following an imported dimension's terms transitively, and a node that is not a
 local dimension takes its turn the first time it is reached, before the
 declaration that reached it and before the nodes reached through its terms. An

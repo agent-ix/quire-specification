@@ -91,6 +91,13 @@ Not mergeable: the stated order is uncomputable for the graphs it must order (FN
 | FND-017 | medium | Two imported nodes first referenced by one local declaration have no order between their turns. Both are placed 'at the position of the first such local declaration in source order, before that declaration's own turn'. With `dimension X = P.L * Q.T; unit x : X = 1;` and a later `unit t : Q.T = 0 * Q.s;`, where `P.L` has no unit in either package, `P.L`'s turn refuses `missing-name` and `Q.T`'s turn refuses `invalid-value` at `t`, and which runs first is not stated. Also, when that first declaration is a unit, it has no 'own turn' (units are checked at their dimension's turn). Fix: order tied imported nodes by their order of mention in that declaration (terms left to right; for a unit, its dimension and then its target's dimension), and say 'before the turn at which that declaration is checked'. | spec/functional/type-model/FR-142-evaluate-quantities-and-units.md:79-84 |
 | FND-018 | low | Some TC-187 rows are stale or untraced after the AC split. U11r still says 'the imported dimension takes no turn', which contradicts the new rule: `L` takes a turn at `cm`, and the result (admitted) is unchanged. U11g1 is tagged '(FR-142-AC-15) (FR-142-AC-16)' although AC-15 does not list it. U11b to U11f and U11h to U11l carry no AC tag, despite the PR's 'every TC-187 vector carries its AC'. Fix: change U11r to 'L takes its turn at cm', drop AC-15 from U11g1, and tag the untagged rows with FR-142-AC-15. | spec/test-cases/TC-187-quantity-and-unit-conversion.md:50-76 |
 
+## New findings (disposition pass 5)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-019 | low | The first paragraph still says the checker 'SHALL process the dimension nodes in source order', but the turn-list paragraph (lines 79-97) defines a different order: imported nodes have no source position and take their turn before the declaration that reaches them. The turn list is unambiguous, so no implementer is misled, but the two SHALLs state different orders. Fix: 'SHALL process the dimension nodes in turn-list order (below)'. | spec/functional/type-model/FR-142-evaluate-quantities-and-units.md:66-71, 79-80 |
+| FND-020 | low | 'Each mentioned node is expanded depth-first through its own terms' does not say that each node is expanded at most once. Through a local dimension cycle (`dimension X = A; dimension A = B; dimension B = A;`) the walk as written does not terminate. 'the first time it is reached' bounds only turns, not expansion. The intended reading (visit once) is obvious, and step (-1) refuses the cycle anyway. Fix: add 'each node is expanded once'. | spec/functional/type-model/FR-142-evaluate-quantities-and-units.md:82-85 |
+
 ## Dispositions
 
 Round 1, bdacb1420 (head 8ba797093).
@@ -139,3 +146,14 @@ Round 4, d72b199d8.
 | FND-016 | still-open | New this round; not yet fixed. |
 | FND-017 | still-open | New this round; not yet fixed. |
 | FND-018 | still-open | New this round; not yet fixed. |
+
+Round 5, 9e83fcb4a.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-015 | fixed | Fixed in 9e83fcb4a: The checker SHALL build the list of turns by walking the package's declarations in source order. A local dimension takes its turn at its own declaration. For every declaration, the dimension nodes it mentions are visited in mention order: a local dimension's terms; a local unit's type, then the type / U11z1 / Imported package P declares `dimension L;` and `dimension Area = L ^ 2;` with no unit; local `unit m2 : P.Area = 1;` / `P.Area` takes its turn (reached by the unit's type) and passes; `P.L` takes its turn next (reached through `Area`'s terms): `missing_declaration`/`missing-na... |
+| FND-016 | fixed | Fixed in 9e83fcb4a: Step (-1) runs at a local dimension's own turn, before step (0), over that dimension's own terms only, in this order. First, a term naming no dimension is refused `missing_declaration`/`missing-name`, retaining the dimension that owns the term and the term; a term of another dimension reached through a derived dimension is not examined, and that dimension's own turn reports it. Second, when the dimension is itself a member of a dimension cycle, or has a self-term (`dimension A = B; dimension B = A ^ 2;` for `A` and `B`; `dimension D = D * L;` for `D`), it is refused `invalid_package`/`defin... |
+| FND-017 | fixed | Fixed in 9e83fcb4a: / U11z2 / `dimension X = P.L * Q.T;` `unit x : X = 1;` and, declared later, `unit t : Q.T = 0 * Q.s;`, with `P.L` unitless in P, `Q.T` a dimension of Q with unit `Q.s` / the walk reaches `P.L` then `Q.T` at `X`'s declaration, before the later unit: `P.L`'s turn comes first, `missing_declaration`/`missing-name` retaining `P.L` and `x`; the zero scale of `t` is not reported (FR-142-AC-18) / |
+| FND-018 | fixed | Fixed in 9e83fcb4a: / U11r / `dimension L;` imported from package P (with `unit m : L = 1;` there) and local `unit cm : L = 1/100 * m;` / admitted: the imported `m` is a terminal root in the same node; the imported dimension `L` takes its turn before `cm` (rule of the turn list), where `cm` is the only local unit and passes rows 1 to 6 (FR-142-AC-18) / |
+| FND-019 | still-open | New this round, low; acceptable to merge with it or fix in passing. |
+| FND-020 | still-open | New this round, low; acceptable to merge with it or fix in passing. |
