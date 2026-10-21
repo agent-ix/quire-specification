@@ -36,3 +36,21 @@ Ticket: STD-118. Refusal order, identity confusion and edge cases of the new sel
 ## Verdict
 
 0 high and 3 medium finding(s) in this lens; not mergeable until the medium findings are fixed or dispositioned.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | medium | Step 2, "the byte-provision refusals above, then dependency rules 1 to 5", newly orders two existing rules that FR-323 states only as "before any recompile": a request whose `dependencies` are misordered and whose provision lacks an entry now refuses `missing_import`/`missing-selection`, while QSL FR-098 checks dependency order "before it checks any source count or builds any dependency input", and TC-277 has no vector combining the two. Either keep step 2 as "the existing byte-provision and dependency rules, in their own order" or state the order and add the TC-277 vector. | spec/objects/interfaces/FR-323-native-runtime-envelope.md:153 |
+| FND-005 | medium | A frame request that carries `arguments` or an occurrence key has no stated outcome: AC-18 says a frame request carries neither, but the refusal list names no refusal for one that does, so an executor may ignore the extra member, which is the second carrier PF-4 removes. Refuse it at decode (for example `invalid_runtime_input`/`unknown-member` at `/replay/arguments` and at the occurrence key's pointer) and add a TC-278 row. | spec/objects/interfaces/FR-323-native-runtime-envelope.md:139-141, 503 |
+| FND-006 | low | RE-35's second case, "an operation no clause or attempt names (no frame node)", relies on QSL's rule that frame and anchor nodes exist only for an operation a clause or attempt names (QSL FR-105, ADR-017). QSpec FR-340 and FR-342 do not say when a frame node is emitted, so QSpec alone cannot build the case. Cite QSL FR-105 in the row or state the emission rule in FR-340. | spec/test-cases/TC-278-replay-envelope-members.md:102 |
+
+## Dispositions
+
+Round 1, head c0543ce (3470fee, c0543ce).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |

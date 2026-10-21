@@ -34,3 +34,12 @@ Ticket: STD-118. EARS conformance of the two requirement statements the diff add
 ## Verdict
 
 0 high and 0 medium finding(s) in this lens; minor wording only; no defect in this lens blocks merge.
+
+## Dispositions
+
+Round 1, head c0543ce (3470fee, c0543ce).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |

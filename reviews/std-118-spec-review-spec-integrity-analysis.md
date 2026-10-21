@@ -39,3 +39,20 @@ Ticket: STD-118. Completeness, atomicity and verifiability of FR-323-AC-6, FR-32
 ## Verdict
 
 0 high and 3 medium finding(s) in this lens; not mergeable until the medium findings are fixed or dispositioned.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | medium | The member refusals use the package layer for a runtime-request member. FR-271 gives `invalid_package` to "a malformed, incomplete, conflicting or cyclic package definition" and `invalid_runtime_input` to "malformed, incomplete, conflicting or wrongly-mapped runtime input"; both pairs exist in FR-272 for either code. FR-323 uses `invalid_package` only for the `/package` reference (`/package/dependencies`), and QSL FR-098 refuses a replay request member as `invalid_runtime_input` (`object_environment`, `invalid_runtime_input`/`unknown-member`, FR-098 l.351 and AC-17). Use `invalid_runtime_input`/`missing-member` at `/replay` and `invalid_runtime_input`/`invalid-value` at `/replay/frame_operation` in the statement, AC-19 and RE-31..RE-33, or state why `/replay` is a package-layer member. | spec/objects/interfaces/FR-323-native-runtime-envelope.md:150-152, 504 |
+
+## Dispositions
+
+Round 1, head c0543ce (3470fee, c0543ce).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |
+| FND-004 | fixed | - |

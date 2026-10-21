@@ -12,8 +12,8 @@ relationships:
 ## Description
 
 Show that an FR-323 replay request's `replay` property carries the
-`ReplaySource`, the replay target (a function's `QualifiedName` or a frame operation), arguments keyed by
-parameter node id, the semantic profile selections, the failing node's
+`ReplaySource`, the replay target (a function's `QualifiedName` or a frame operation), for a function request arguments keyed by
+parameter node id, the semantic profile selections, for a function request the failing node's
 occurrence key, the proof bounds and declared domains, the trace position
 and the `backend` member, and that a non-replay request carries no `replay`
 property, per QSL ADR-013 O-25, O-26 and QC-8.
@@ -95,11 +95,12 @@ and additional spend must be observed, not inferred from equal Booleans.
 | RE-28 | Malformed B: -1, 1.5, 18446744073709551616 (above the u64 range), `null`, "64", true, and a missing `numeric_magnitude_bits` in an otherwise complete wire object; and B moved into replay `stage_limits` | Each is a typed input refusal before consumption (the misplaced B under the unknown-stage-setting rule before stages run); no fallback to a default or `integer_bits`; A, H and `integer_bits` settings are unchanged by a stated B | FR-323-AC-15 |
 | RE-29 | NORM. Nested type links `Option<Int[0,9]>` and `Sequence<Int[0,9]>`: with the expected and actual endpoint set widened in turn, each of the four Integer endpoints (`type-link-expected-lower`, `type-link-expected-upper`, `type-link-actual-lower`, `type-link-actual-upper`) at exactly B bits, then in turn at B+1 bits with the other three within B; a Rational pair with each of the eight endpoints (the four names with `-numerator`/`-denominator`) likewise, and a Decimal pair with each of the four coefficients (`type-link-expected-lower-coefficient`, `type-link-expected-upper-coefficient`, `type-link-actual-lower-coefficient`, `type-link-actual-upper-coefficient`) likewise | At exactly B all admit; at B+1 each refuses by the `limit` cause with that `type-link-` `operand`, `limit` B, `consumed` 0, `next_charge` and `counter` the B+1 bit length and `event` `type-comparison`, stopping on the charged `type-comparison` event (phase spend includes that one event) before the endpoint equality runs; the first over-B endpoint in the stated order decides; the type-link helper and its QSV caller exist, so the vector is runnable | FR-323-AC-16 |
 | RE-30 | A frame counterexample's replay request carrying `frame_operation` `{object, operation}`, no `function`, no `arguments` and no occurrence key | Admitted; the replay target resolves by `object` and `operation` | FR-323-AC-18 |
-| RE-31 | RE-30's request with `frame_operation` removed | `invalid_package`/`missing-member` at `/replay` | FR-323-AC-19 |
-| RE-32 | RE-30's request with a `function` member added | `invalid_package`/`invalid-value` at `/replay/frame_operation` | FR-323-AC-19 |
-| RE-33 | RE-32's request with a byte-provision entry removed | `invalid_package`/`invalid-value` at `/replay/frame_operation`, not the provision refusal | FR-323-AC-19 |
+| RE-31 | RE-30's request with `frame_operation` removed | `invalid_runtime_input`/`missing-member` at `/replay` | FR-323-AC-19 |
+| RE-32 | RE-30's request with a `function` member added | `invalid_runtime_input`/`invalid-value` at `/replay/frame_operation` | FR-323-AC-19 |
+| RE-33 | RE-32's request with a byte-provision entry removed | `invalid_runtime_input`/`invalid-value` at `/replay/frame_operation`, not the provision refusal | FR-323-AC-19 |
 | RE-34 | RE-30's request with a stale proved `package_id`, and `operation` naming an undeclared operation | `stale_dependency`/`content-mismatch` (rule 5), not `missing-name` | FR-323-AC-20 |
-| RE-35 | RE-30's request with a current `package_id` and: `operation` undeclared; `operation` naming an operation no clause or attempt names (no frame node); `object` naming a record value type; `object` naming a subtype that only inherits `operation`; `operation` exposed by two supertypes | `missing_declaration`/`missing-name`; `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `invalid_model_binding`/`malformed-declaration`; `ambiguous_declaration`/`ambiguous-name`, each naming the target | FR-323-AC-20 |
+| RE-35 | RE-30's request with a current `package_id` and: `operation` undeclared; `operation` naming an operation no clause or attempt names (no frame node is emitted for it, QSL FR-105, ADR-017); `object` naming a record value type; `object` naming a subtype that only inherits `operation`; `operation` exposed by two supertypes | `missing_declaration`/`missing-name`; `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `invalid_model_binding`/`malformed-declaration`; `ambiguous_declaration`/`ambiguous-name`, each naming the target | FR-323-AC-20 |
+| RE-36 | RE-30's request with `arguments` added; then with an occurrence key added | `invalid_runtime_input`/`unknown-member` at `/replay/arguments`; at the occurrence-key member's pointer | FR-323-AC-19 |
 
 ## Expected Results
 
@@ -107,6 +108,8 @@ RE-01 finds every QC-8 replay member present on a well-formed replay
 request. RE-02 through RE-10 find each of the nine named `replay` members
 refused before consumption when it is missing or malformed, in turn. RE-11
 finds the `replay` property entirely absent from a non-replay request.
+
+RE-30 is admitted; RE-31, RE-32 and RE-36 refuse the member shape with their stated code and locus, RE-33 shows the member refusal before the byte-provision rule, RE-34 the `package_id` rule before the resolution, and RE-35 each resolution outcome of FR-323-AC-20.
 
 RE-12..20 and RE-23..29 require the complete typed request/result forms and distinct
 pre-call provenance of FR-323, with unchanged canonical contract_version,
@@ -129,5 +132,3 @@ binding; a missing binding blocks qualification, not a fabricated outcome.
 The supplied-phase extension RE-12..29 is PROPOSED, PLANNED/UNRUN and
 independently unreviewed. No new fixture implementation, native helper,
 reader qualification or test pass is claimed.
-
-RE-30 is admitted; RE-31 and RE-32 refuse the member shape with their stated code and locus, RE-33 shows the member refusal before the byte-provision rule, RE-34 the `package_id` rule before the resolution, and RE-35 each resolution outcome of FR-323-AC-20.

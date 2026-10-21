@@ -47,3 +47,23 @@ Ticket: STD-118 (CG packet member split to STD-245). Base checklist over the FR-
 ## Verdict
 
 Not mergeable: two high findings (the mismatch refusal has no carrier for the counterexample's kind; the frame request's argument keys do not exist uniquely) and two medium. Correct as written: the two-member split keeps the function request's spelling, the absent-not-null rule, AC-6's edit, the RE-30..RE-32 binding to AC-18, the `generated` occurrence matching QSL ADR-017 PF-4 and FR-116, and `missing_declaration`/`missing-name` being an FR-272 pair. Outside this PR: QSL ADR-013 O-26 (l.893), T-8 and FR-070/FR-098 still say "the selected function's `QualifiedName`"; QSL-331 should follow once this lands.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-008 | medium | Leftover of the dropped frame members: the `replay` property bullet (l.121-122) still lists "the failing node's occurrence key" for every replay request, and FR-323-AC-6 still lists arguments and the occurrence key unconditionally, while the new paragraph and FR-323-AC-18 say a frame request carries neither. TC-278's Description (l.15-17) repeats AC-6. Condition both members on a function request in the bullet, AC-6 and the TC-278 Description. | spec/objects/interfaces/FR-323-native-runtime-envelope.md:121-122, 491 |
+
+## Dispositions
+
+Round 1, head c0543ce (3470fee, c0543ce).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |
+| FND-004 | fixed | - |
+| FND-005 | fixed | - |
+| FND-006 | still-open | The RE-30..RE-35 sentence was appended under `## Status` (TC-278 l.133), not `## Expected Results`, which still describes RE-01..RE-29 only. Move it into Expected Results. |
+| FND-007 | fixed | - |
