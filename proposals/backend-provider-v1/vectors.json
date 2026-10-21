@@ -3843,6 +3843,40 @@
           }
         }
       ]
+    },
+    {
+      "name": "observed-undefined-evaluation-with-state-keys",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/kind",
+          "value": {
+            "type": "undefined-evaluation",
+            "where": {
+              "positions": [
+                0,
+                1
+              ],
+              "state_keys": [
+                "2222222222222222222222222222222222222222222222222222222222222222"
+              ],
+              "locus": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                },
+                "occurrence": {
+                  "role": "claim",
+                  "ordinal": 0
+                }
+              }
+            },
+            "cause": "absent-key"
+          }
+        }
+      ]
     }
   ],
   "universe_provision_vectors": [

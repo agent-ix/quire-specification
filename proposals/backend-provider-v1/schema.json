@@ -506,7 +506,7 @@
             "initial_state": {"$ref": "#/$defs/Count"},
             "kind": {"oneOf": [
               {"enum": ["formula", "deadlock", "time-lock"]},
-              {"allOf": [{"$ref": "#/$defs/UndefinedEvaluation"}, {"properties": {"where": {"not": {"anyOf": [{"required": ["document"]}, {"required": ["documents"]}]}}}}]}
+              {"allOf": [{"$ref": "#/$defs/UndefinedEvaluation"}, {"properties": {"where": {"not": {"required": ["document"]}}}}]}
             ]},
             "prefix": {"items": {"required": ["transition", "post_state"]}},
             "loop": {"items": {"required": ["transition", "post_state"]}}

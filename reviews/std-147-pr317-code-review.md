@@ -47,3 +47,20 @@ I removed each new schema clause separately and ran the suite, plus a throwaway 
 ## Verdict
 
 Not mergeable as is, because of FND-001: two of the seven new schema clauses can be deleted without any test noticing. Apart from that, the five adverse patches each discriminate their own clause, and the test change is a tag only.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | low | The refusal half of FR-364-AC-10 is now traced only to `tc_431_the_arm_coupling_vectors_are_present`. Its doc comment says "the coupling vectors are refused", but it only checks that the names exist. The test that does assert refusal, `tc_431_adverse_vectors_are_refused`, lost its `FR-364-AC-10` tag in this round. Fix: restore the tag on `tc_431_adverse_vectors_are_refused` (keeping it on the presence test is fine), or make the presence test validate each named adverse vector, and correct the doc comment. | tests/backend_provider_v1.rs:812-816; tests/backend_provider_v1.rs:287-294 |
+| FND-005 | low | No vector exercises the observed branch's plural `state_keys` exclusion. Removing `{"required": ["state_keys"]}` from the observed branch's `where` clause leaves the suite green. A probe confirms that an observed envelope with `where.state_keys` is then admitted. Fix: add an adverse vector `observed-undefined-evaluation-with-state-keys`, and name it in AC-10 and BP-23. | proposals/backend-provider-v1/schema.json:500 |
+
+## Dispositions
+
+Round 1, head 0f1cba012.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | `observed-counterexample-with-a-model-step-in-the-loop` and `model-counterexample-with-a-document-step-in-the-loop` were added. Removing `then.loop` or `else.loop` now fails `tc_431_adverse_vectors_are_refused`, and each vector is admitted only when its own clause is removed (verified). |
+| FND-002 | fixed | `observed-counterexample-time-lock-with-final-delay` replaces the whole counterexample in one op, so the `final_delay` conditional is satisfied and only `then.kind` refuses it (verified admitted with `then.kind` removed). The positive `observed-undefined-evaluation-outcome` is admitted. AC-10 now names both. |
+| FND-003 | fixed | `tc_431_positive_vectors_are_admitted_with_owned_members` carries FR-364-AC-10, and the new `tc_431_the_arm_coupling_vectors_are_present` asserts the two positive and eleven adverse vectors by name. The tag moved off the refusal test, which is FND-004. |

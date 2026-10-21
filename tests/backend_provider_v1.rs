@@ -290,6 +290,7 @@ fn located_at_patch(error: &str, patched: &str) -> bool {
 #[trace("TC-431", "FR-331-AC-23")]
 #[trace("TC-431", "FR-331-AC-28")]
 #[trace("TC-431", "FR-368-AC-10")]
+#[trace("TC-431", "FR-364-AC-10")]
 #[test]
 fn tc_431_adverse_vectors_are_refused() {
     let whole = validator();
@@ -809,8 +810,9 @@ fn tc_290_universe_provisions_are_canonical_arrays_of_keys() {
     assert_eq!(digests.len(), cases.len(), "list order changes the digest");
 }
 
-/// FR-364-AC-10: the observed-arm vectors exist, by name, and the coupling
-/// vectors are refused; deleting any of them fails this test.
+/// FR-364-AC-10: the observed-arm positive and the coupling adverse vectors
+/// exist, by name, so deleting any of them fails this test; their admission
+/// and refusal are checked by the positive and adverse vector tests.
 #[trace("TC-431", "FR-364-AC-10")]
 #[test]
 fn tc_431_the_arm_coupling_vectors_are_present() {
@@ -843,6 +845,7 @@ fn tc_431_the_arm_coupling_vectors_are_present() {
         "model-counterexample-with-a-document-step-in-the-loop",
         "model-counterexample-without-an-initial-state",
         "model-undefined-evaluation-with-a-document",
+        "observed-undefined-evaluation-with-state-keys",
     ] {
         assert!(adverse.contains(name), "adverse vector {name}");
     }

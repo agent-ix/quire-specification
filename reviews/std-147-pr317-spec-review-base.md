@@ -57,3 +57,25 @@ The claim that deadlock and time-lock are model-only holds. FR-364 on main marks
 ## Verdict
 
 Not mergeable as is. FND-001 and FND-002 are gaps in the coupling the PR sets out to state: each admits a counterexample that the wire table assigns to the other arm. FND-003 makes the new positive vector something a conforming backend could produce. All three are small schema or vector edits inside this PR. The rest is sound: the observed-branch rules for `initial_state`, `over_binding`, `kind` and `prefix` and the model-branch rule for `prefix` each match FR-364's table, keeping a non-empty observed `fairness` as a replay outcome (`unsupported`) agrees with AC-9 and FR-362, and TC-431 now correctly verifies FR-364.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | low | The new `refinement_failure` row links `[FR-379](FR-379-report-and-replay-refinement-counterexamples.md)` relative to `spec/functional/temporal/`, but FR-379 lives in `spec/functional/analysis/`, so the link is broken. Fix: `../analysis/FR-379-report-and-replay-refinement-counterexamples.md`. | spec/functional/temporal/FR-364-replay-temporal-counterexamples.md:79 |
+| FND-008 | low | FR-364-AC-2 still says a counterexample carries "exactly the members `trace`, `kind`, `initial_state`, `prefix`, `loop`, `over_binding`, `fairness`, `interval` and `trace_position`" and that an extra member refuses. The table now also lists `final_delay` and `refinement_failure`, so by AC-2 a time-lock counterexample carrying its required `final_delay` refuses. Fix: name the two conditional members in AC-2 (present only for `kind: time-lock` and for a refinement item respectively). | spec/functional/temporal/FR-364-replay-temporal-counterexamples.md:203 |
+| FND-009 | low | The new SHALL (and the schema's model branch) refuses a model-arm envelope whose `where` carries `documents`, but `documents` is not a `where` key. FR-364 names only `positions` and `state_keys` as plural forms, and the schema's `Where` is closed (`additionalProperties: false`) with no `documents` member. So the prose names a key that cannot occur, and the schema clause can never fire. Fix: drop `documents` from the SHALL and the schema, or define a `documents` plural key in the `where` table and in `Where` if an observed engine needs one. | spec/functional/temporal/FR-364-replay-temporal-counterexamples.md:82-91 |
+| FND-010 | low | The `final_delay` row calls it "the delay of the time-locked sample". FR-417 and FR-331 define it as "the exact rational delay that reaches the time-locked state". "Sample" is the word of FR-331's unrelated stochastic cause `time-locked-sample{state}`. Fix: "the exact rational delay that reaches the time-locked state (FR-417)". | spec/functional/temporal/FR-364-replay-temporal-counterexamples.md:78 |
+
+## Dispositions
+
+Round 1, head 0f1cba012.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The model branch now requires `initial_state` to be a Count. The SHALL lists every refused condition for both arms and defines a mix as failing any of them. `model-counterexample-without-an-initial-state` is refused, and admitted once `else.initial_state` is removed (mutation verified). |
+| FND-002 | fixed | Both branches now constrain the envelope's `where` keys, and the SHALL states the rule. `observed-undefined-evaluation-with-a-state-key` and `model-undefined-evaluation-with-a-document` each fail only when their own clause is removed (verified). Residuals are FND-009 here and FND-005 in SR-13660. |
+| FND-003 | fixed | The observed accounting record is now `{request_index: 0, settled_by: result}`, with no FR-369 warning and no exploration members. That is consistent with FR-369 (warnings only for a reproduced lasso, from model enabledness) and FR-362 (no enabledness on an observed trace). The schema admits it. |
+| FND-004 | fixed | The `kind` row now lists `time-lock` (FR-417, model arm only), and the table adds `final_delay` and `refinement_failure`. New defects in those rows are FND-007, FND-008 and FND-010. |
+| FND-005 | fixed | The replayer is now the subject, and the refusal is `malformed_wire`. FR-271 defines that as a wire whose closed structure the reader's schema refuses. |
+| FND-006 | fixed | FR-331:70 now reads "A temporal refutation over a model subject or a supplied trace is an FR-364 `TemporalCounterexample`". |
