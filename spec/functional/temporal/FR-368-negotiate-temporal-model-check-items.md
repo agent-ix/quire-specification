@@ -117,7 +117,8 @@ identity, when its `fairness_kinds` is absent, is not a list, holds a value
 that is not exactly `weak` or `strong` (a non-string included) or repeats a
 label. One cause covers the four defects, as `invalid-domains` covers its own;
 the refusal retains the defect (`absent`, `not-a-list`, `unknown-label` or
-`duplicate-label`) and, for the last two, the offending value. When several
+`duplicate-label`) and, for `not-a-list`, the member as supplied (such as
+`null`), and for `unknown-label` and `duplicate-label` the offending element. When several
 defects hold the registry SHALL report the first in that order, and within
 `unknown-label` or `duplicate-label` the first offending element in member
 order. The registry SHALL NOT read or validate the `fairness_kinds` of a
@@ -126,7 +127,10 @@ schema separately refuses such a member on a manifest descriptor, and its
 `enum`, `uniqueItems` and `array` types refuse a defective or non-list
 `fairness_kinds` of a temporal descriptor on the wire before consumption, so
 the registry check serves registrations that do not arrive on the wire. The
-refusal removes only that registration.
+registry judges `fairness_kinds` after every advertised pair and the
+`domains` member, so a registration that also has a pair or `domains` defect
+is refused with that earlier cause. The refusal removes only that
+registration.
 
 Negotiation never drops or weakens a fairness constraint to fit a candidate: it
 never reads a `strong` constraint as `weak`, an `each` constraint as `whole`,
