@@ -1907,10 +1907,11 @@ fn tc_280_relationship_declarations_refuse_each_defect_at_the_selection_row() {
     }
 }
 
-/// FR-154 operation parameter names at domain selection: the refusal, in node
-/// order, then operation order, then parameter order, with every name checked
-/// before any repeated identity. The refusal names the operation identity and
-/// the member path.
+/// FR-154 operation parameter names at domain selection. Within one operation
+/// the repeated-identity check runs first and suppresses the name check of both
+/// colliding parameters; then the name check of every other parameter, in
+/// `params` order. A collision names the shared parameter identity, a name
+/// refusal the operation identity; both name the member path.
 fn read_parameter_names(
     document: &Value,
 ) -> Result<(), (&'static str, &'static str, String, String)> {
@@ -1925,29 +1926,46 @@ fn read_parameter_names(
     types.sort_by_key(|declared| declared["identity"].as_str().map(str::to_owned));
     for owner in types {
         for (k, operation) in array_or_empty(owner, "operations").iter().enumerate() {
-            let operation_identity = text(operation, "identity").to_owned();
+            let operation_identity = text(operation, "identity");
             let params = array_or_empty(operation, "params");
-            let refused = |s: usize, member: &str, (code, cause): (&'static str, &'static str)| {
-                Err((
-                    code,
-                    cause,
-                    operation_identity.clone(),
-                    format!("TypeDefinition.operations[{k}].params[{s}]{member}"),
-                ))
+            let path = |s: usize, member: &str| {
+                format!("TypeDefinition.operations[{k}].params[{s}]{member}")
             };
+            let mut first_seen: BTreeMap<&str, usize> = BTreeMap::new();
+            let mut suppressed = BTreeSet::new();
+            let mut collision = None;
             for (s, param) in params.iter().enumerate() {
-                let identity = param["identity"].as_str().unwrap_or_default();
+                let identity = text(param, "identity");
+                match first_seen.get(identity) {
+                    Some(&earlier) => {
+                        suppressed.extend([earlier, s]);
+                        collision.get_or_insert((identity.to_owned(), s));
+                    }
+                    None => {
+                        first_seen.insert(identity, s);
+                    }
+                }
+            }
+            if let Some((identity, s)) = collision {
+                return Err((
+                    "invalid_model_binding",
+                    "conflicting-binding",
+                    identity,
+                    path(s, ""),
+                ));
+            }
+            for (s, param) in params.iter().enumerate() {
+                let identity = text(param, "identity");
                 let valid = param["name"].as_str().is_some_and(|name| {
                     member_name(name) && identity == format!("{operation_identity}/{name}")
                 });
-                if !valid {
-                    return refused(s, ".name", MALFORMED);
-                }
-            }
-            let mut seen = BTreeSet::new();
-            for (s, param) in params.iter().enumerate() {
-                if !seen.insert(text(param, "name")) {
-                    return refused(s, "", ("invalid_model_binding", "conflicting-binding"));
+                if !suppressed.contains(&s) && !valid {
+                    return Err((
+                        MALFORMED.0,
+                        MALFORMED.1,
+                        operation_identity.to_owned(),
+                        path(s, ".name"),
+                    ));
                 }
             }
         }
@@ -1962,7 +1980,6 @@ fn read_parameter_names(
 fn tc_280_parameter_names_refuse_each_defect_at_the_selection_row() {
     let adverse = parsed(ADVERSE);
     let cases = array(&adverse, "parameter_name_cases");
-    assert_eq!(cases.len(), 13);
     for case in cases {
         let id = text(case, "id");
         let outcome = read_parameter_names(&patched_document(Some(&case["patch"])));

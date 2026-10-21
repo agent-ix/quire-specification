@@ -261,8 +261,10 @@ exactly its recorded result.
 
 `fixtures/adverse.json` `parameter_name_cases` patch the `Order/scaled`
 operation of the selected document and are read under FR-154's parameter-name
-row (FR-154-AC-14); each refusal is reported at the selection row with the
-operation's identity and member path. Ids: `parameter-names-base-admitted`,
+row (FR-154-AC-14); each refusal is reported at the selection row with its member path, naming
+the shared parameter identity for a repeated identity and the operation's
+identity for a name refusal; a repeated identity is checked first and
+suppresses the name check of both colliding parameters. Ids: `parameter-names-base-admitted`,
 `parameter-names-distinct-admitted`, `parameter-names-case-distinct-admitted`,
 `parameter-name-absent`, `parameter-name-not-a-string`, `parameter-name-null`,
 `parameter-name-empty`, `parameter-name-leading-digit`,
