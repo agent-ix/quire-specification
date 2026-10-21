@@ -155,7 +155,7 @@ Mutations, each applied alone to the positive unit:
     has its own alias `p`;
 22. a plain temporal clause under `quire.temporal.infinite-trace/v1`, with no
     refinement, in a unit that selects no value layer.
-23. a protocol-subject refinement whose rows include `step duplicate`, `step lose`, `step spawn`, `step retire` and `step memory flush` rows, written in each of two orders.
+23. a protocol-subject refinement whose rows include `step duplicate`, `step lose`, `step spawn`, `step retire`, `step fork`, `step join`, a template's `cattempt` and `cend` rows, `step memory flush` and `step memory drain`, written in one order and then in the exact reverse of it, so every tied pair and the two memory rows swap their relative order.
 
 ## Expected Results
 
@@ -244,4 +244,4 @@ vector); the `ready = protocol Fill` row, in the separate run, is the only refus
 `expression-form` at the `protocol` token naming `quire.protocol.complete/v1`, the layer that admits the form and that the rows' layer set lacks
 (FR-375-AC-18, FR-001-AC-7, FR-090-AC-10, FR-250-AC-8). In mutation 22 the
 clause is admitted and the unit's selection gains no value layer or lock row
-(FR-090-AC-10). In mutation 23 the node's `steps` array is identical for the two source orders, the tied rows ordered by alias-free class spelling in UTF-8 byte order (FR-375-AC-19).
+(FR-090-AC-10). In mutation 23 the node's `steps` array is identical for the two source orders, the tied rows ordered by alias-free class spelling in UTF-8 byte order and the two `memory` rows after every declaration-naming row, `drain` before `flush` (FR-375-AC-19).
