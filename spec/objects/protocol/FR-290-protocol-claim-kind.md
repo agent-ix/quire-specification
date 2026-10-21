@@ -312,7 +312,7 @@ The item-level causes (`absent-kind`, `unknown-kind`, `absent-extent`,
 `unknown-backend`, `inconsistent-candidates`, `ambiguous-backend`) settle only
 their own item. `unknown-vocabulary` refuses its whole carrier.
 Registration causes `absent-kind`, `unknown-kind`, `unknown-mode`,
-`unknown-evidence-kind` and `invalid-domains` refuse only that registration. `duplicate-backend` refuses every registration of its
+`unknown-evidence-kind`, `invalid-domains` and `invalid-fairness-kinds` (FR-368) refuse only that registration. `duplicate-backend` refuses every registration of its
 identity and no other. Registration refusals are reported ordered bytewise by
 backend identity, then by the manifest's RFC 8785 bytes.
 

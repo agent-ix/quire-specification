@@ -31,8 +31,9 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
 6. Check the claim under `quire.temporal.timestamped-event.finite-window/v1`.
 7. Check a claim `over (c: Config::ConfigVersion)` against a subject whose
    population `config_history` has an empty universe list, so the population is
-   bounded and holds no object; then check the same claim against a subject
-   whose `config_history` has no universe.
+   bounded and holds no key; then against a subject whose only populations are
+   unrelated to `ConfigVersion`; then against a subject whose
+   `config_history` has no universe.
 
 ## Expected Results
 
@@ -49,7 +50,7 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
 5. `requires-bound` before expansion (FR-361-AC-7).
 6. `unsupported`, `unsupported-requested-capability`, basis `unavailable`.
 7. `inconclusive`, basis `unsettled`, cause `no-instance`, before any state is
-   explored (FR-361-AC-8); the second subject returns `requires-bound` before
+   explored, for the empty-universe subject and for the unrelated-population subject (FR-361-AC-8); the third subject returns `requires-bound` before
    instantiation, never `no-instance` (FR-361-AC-8).
 
 No row carries a proof basis, and each row's label, basis and result equal the

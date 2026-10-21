@@ -111,6 +111,27 @@ naming the capability kind `temporal-satisfaction`, the mode, the missing
 fairness kind and the first constraint of that kind. The check runs after
 FR-290's candidate and mode tables, at the single candidate's arm.
 
+A registration that advertises (`temporal-satisfaction`, any mode) SHALL
+be refused `invalid_capability`/`invalid-fairness-kinds`, keyed by backend
+identity, when its `fairness_kinds` is absent, is not a list, holds a value
+that is not exactly `weak` or `strong` (a non-string included) or repeats a
+label. One cause covers the four defects, as `invalid-domains` covers its own;
+the refusal retains the defect (`absent`, `not-a-list`, `unknown-label` or
+`duplicate-label`) and, for `not-a-list`, the member as supplied (such as
+`null`), and for `unknown-label` and `duplicate-label` the offending element. When several
+defects hold the registry SHALL report the first in that order, and within
+`unknown-label` or `duplicate-label` the first offending element in member
+order. The registry SHALL NOT read or validate the `fairness_kinds` of a
+registration that advertises no `temporal-satisfaction` pair; the FR-331 wire
+schema separately refuses such a member on a manifest descriptor, and its
+`enum`, `uniqueItems` and `array` types refuse a defective or non-list
+`fairness_kinds` of a temporal descriptor on the wire before consumption, so
+the registry check serves registrations that do not arrive on the wire. The
+registry judges `fairness_kinds` after every advertised pair and the
+`domains` member, so a registration that also has a pair or `domains` defect
+is refused with that earlier cause. The refusal removes only that
+registration.
+
 Negotiation never drops or weakens a fairness constraint to fit a candidate: it
 never reads a `strong` constraint as `weak`, an `each` constraint as `whole`,
 or omits a constraint.
@@ -133,6 +154,9 @@ infinite-trace formula that no registered candidate decides.
 | FR-368-AC-5 | An infinite-trace item with an empty candidate set settles `unsupported` with a warning naming `temporal-satisfaction`, and never holds or blocks. | Test (TC-200, TC-301) |
 | FR-368-AC-6 | A candidate advertising (`temporal-satisfaction`, `unbounded`) returns one FR-363 verdict per routed item, and a bound-reached `inconclusive` from it is an accepted result, not a provider failure. | Test (TC-301) |
 | FR-368-AC-7 | A request omitting `max_automaton_states` runs under the routed provider's published default, and the terminal record of a stopped run names the limit and its effective value. | Test (TC-298, TC-302) |
+| FR-368-AC-8 | A registration advertising `temporal-satisfaction` whose `fairness_kinds` is absent, is `"weak"` or `null`, holds `"fair"`, `1` or `null` as an element, or is [`weak`, `weak`] is refused `invalid_capability`/`invalid-fairness-kinds` retaining `absent`, `not-a-list` (for the non-list forms), `unknown-label` (naming the element) or `duplicate-label` (naming `weak`), keyed by backend identity; [`weak`, `strong`] and [] (a backend that decides no kind) are admitted. | Test (TC-301) |
+| FR-368-AC-9 | A registration holding both an unknown label and a repeated label reports `unknown-label`, naming the first unknown element in member order; a registration advertising only `value-validity` is admitted whatever its `fairness_kinds` holds, since the registry does not read it. | Test (TC-301) |
+| FR-368-AC-10 | A manifest descriptor on the wire whose temporal `fairness_kinds` is absent, not a list, holds an unknown label or repeats a label fails the FR-331 schema, and so does a `fairness_kinds` member on a descriptor advertising no `temporal-satisfaction`. | Test (TC-431) |
 
 ## Dependencies
 

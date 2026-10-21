@@ -33,3 +33,11 @@ The new test was mutation-checked against proposals/checked-package-v2/schema.js
 ## Verdict
 
 Fix FND-001 before merge: as written the test is a regression lock on the term shape and arity, not on FR-370-AC-13's argument-1 rule.
+
+## Dispositions
+
+Round 1, head 13bd4aa05.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fixed in 13bd4aa05: Test adds a clock-literal-in-argument-1 probe. Re-mutated: prefixItems[0] = {} and prefixItems[0] = anyOf(reference, null, literal) both now fail the test (panic at tests/checked_package_v2.rs:14464). |

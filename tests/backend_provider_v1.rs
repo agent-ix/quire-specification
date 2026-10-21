@@ -288,6 +288,7 @@ fn located_at_patch(error: &str, patched: &str) -> bool {
 #[trace("TC-431", "FR-331-AC-20")]
 #[trace("TC-431", "FR-331-AC-23")]
 #[trace("TC-431", "FR-331-AC-28")]
+#[trace("TC-431", "FR-368-AC-10")]
 #[test]
 fn tc_431_adverse_vectors_are_refused() {
     let whole = validator();
@@ -754,4 +755,55 @@ fn tc_431_load_buffering_warning_carries_two_transition_identities() {
     let mut bad = good.clone();
     bad["load"] = serde_json::json!("Reader::read");
     assert!(!warning.is_valid(&bad), "load is a transition identity");
+}
+
+/// FR-361-AC-13: a universe provision is the RFC 8785 array of keys in list
+/// order, each exactly `universe` (64 lowercase hex) and `identity` (lowercase
+/// hex), named by its `sha256-jcs` digest.
+#[trace("TC-290", "FR-361-AC-13")]
+#[test]
+fn tc_290_universe_provisions_are_canonical_arrays_of_keys() {
+    let is_hex = |text: &str| {
+        text.bytes()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    };
+    let vectors = parsed(VECTORS);
+    let cases = vectors["universe_provision_vectors"]
+        .as_array()
+        .expect("universe provision vectors");
+    let mut digests = BTreeSet::new();
+    for case in cases {
+        let name = case["name"].as_str().expect("name");
+        let keys = &case["keys"];
+        for key in keys.as_array().expect("keys") {
+            let members: BTreeSet<&str> = key
+                .as_object()
+                .expect("a key is an object")
+                .keys()
+                .map(String::as_str)
+                .collect();
+            assert_eq!(members, BTreeSet::from(["identity", "universe"]), "{name}");
+            let universe = key["universe"].as_str().expect("universe");
+            let identity = key["identity"].as_str().expect("identity");
+            assert!(universe.len() == 64 && is_hex(universe), "{name}: universe");
+            assert!(
+                !identity.is_empty() && identity.len() % 2 == 0 && is_hex(identity),
+                "{name}: identity"
+            );
+        }
+        let canonical = jcs_canonicalize(keys).expect("canonical keys");
+        assert_eq!(
+            canonical,
+            case["jcs"].as_str().expect("jcs").as_bytes(),
+            "{name}"
+        );
+        let digest = jcs_sha256(keys).expect("digest");
+        assert_eq!(
+            digest.strip_prefix("sha256-jcs:").unwrap_or(&digest),
+            case["digest"].as_str().expect("digest"),
+            "{name}"
+        );
+        digests.insert(digest);
+    }
+    assert_eq!(digests.len(), cases.len(), "list order changes the digest");
 }

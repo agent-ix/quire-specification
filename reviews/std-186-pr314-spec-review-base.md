@@ -47,3 +47,13 @@ Base lens with EARS and integrity folded in. Gates: cargo tests pass (12 + 114);
 ## Verdict
 
 Mergeable after FND-001 is coordinated with #315 (and SR-13652 FND-001 fixed); FND-002 and FND-003 are small. The (b) choice is correctly flagged as owner-level in the PR body.
+
+## Dispositions
+
+Round 1, head 13bd4aa05.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fixed in 13bd4aa05: The added FR-361 text is now in #315's instance terms. The textual conflict with #315 remains by design (#315 lands first, #314 rebases); trial merge #315 then #314 conflicts in FR-361 and must be resolved by keeping #315's paragraph and inserting only #314's new sentences; so resolved it reads consistently, apart from the inherited no-instance wording (SR-13653 FND-006). |
+| FND-002 | fixed | Fixed in 13bd4aa05: TC-180 now verifies FR-370. |
+| FND-003 | fixed | Fixed in 13bd4aa05: The paragraph now follows the first temporal-clause production and names the complete-V1 form too. |

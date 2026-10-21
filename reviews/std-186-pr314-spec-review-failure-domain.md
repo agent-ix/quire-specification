@@ -33,3 +33,11 @@ Failure-domain lens on option (b): what a model-wide claim becomes when it must 
 ## Verdict
 
 One medium failure-domain gap; it informs the owner-level (a)/(b) choice and does not block if recorded.
+
+## Dispositions
+
+Round 1, head 13bd4aa05.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fixed in 13bd4aa05: FR-361 now records the no-instance cost of option (b). |

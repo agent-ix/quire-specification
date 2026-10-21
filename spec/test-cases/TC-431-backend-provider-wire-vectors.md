@@ -5,6 +5,8 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-331
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-368
+    type: verifies
 ---
 
 # TC-431: The backend provider wire schema admits its positive vectors and refuses its adverse ones
@@ -35,6 +37,7 @@ bytes against the checked package they carry. Runs as
 | BP-19 | A temporal descriptor with `memory_models` [`sc`, `tso`, `ra`] and [`ra`]; then [], [`sc`, `sc`], [`arm`], and an `operation-contract`-only descriptor with [`sc`] (and the same without `memory_models`); then an accounting record with a `memory.load-buffering-shape` warning of two transition identities, one missing `store`, one with an extra member and one with a non-identity `load` | the first two admitted; the next three and the non-temporal descriptor refused; the descriptor without the member admitted; the record admitted, the three malformed ones refused | FR-331-AC-30, FR-331-AC-31 |
 | BP-20 | The `temporal-request` vector, whose item has an `unbounded` `infinite-trace` extent and a `population` bound in `subject.proof_bounds`; then the same item with `subject.proof_bounds` emptied | Both are admitted; the extent is `unbounded` with an `infinite-trace` domain, `finite_bound_available` false and no `bounds` | FR-331-AC-32 |
 | BP-21 | The `refinement-hypotheses-outcome` vector, whose result is `inconclusive` with cause `hypotheses-not-established{hypothesis, result}`; then its adverse patches: `hypothesis` as a bare digest string, and an extra `premise` member | The vector is admitted; both patches are refused at the cause | FR-468-AC-6 |
+| BP-22 | The existing adverse vector `manifest-temporal-without-fairness-kinds` (member removed) and the four adverse vectors `manifest-fairness-kinds-not-a-list` (`"weak"`), `-unknown-label` ([`weak`, `fair`]), `-duplicate-label` ([`weak`, `weak`]) and `-on-non-temporal-descriptor` (`kani-hello` with [`weak`]); the positive `temporal-request` and `hybrid-request` descriptors carry [`strong`, `weak`] | Each adverse vector is refused at the descriptor's `fairness_kinds` member (or at the descriptor for the non-temporal one); the positive descriptors are admitted | FR-368-AC-10 |
 
 ## Expected Results
 
