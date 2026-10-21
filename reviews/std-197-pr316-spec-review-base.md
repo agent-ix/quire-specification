@@ -67,3 +67,11 @@ Round 1, head dedf57a4a.
 | FND-001 | fixed | Fixed in dedf57a4a: RR-08 declares the Boolean field done on M::Worker and uses until(w.done), matching AC-8. |
 | FND-002 | fixed | Fixed in dedf57a4a: FR-428 and shared-grammar now say the binder is readable only in that role's own until(p), and a role name used as a value elsewhere refuses missing_declaration/missing-name. |
 | FND-003 | still-open | The commit message says 'paragraph placement' but the binder paragraph is still at shared-grammar.md:626, after verification-step (619), not next to the role production (495-499); only one sentence was appended to it. |
+
+Round 2, head 03b8b0902.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-003 | fixed | Fixed in 03b8b0902: The binder paragraph now follows the role/role-lifetime productions (the ebnf block is split there) and is removed from after verification-step. |
+| FND-004 | fixed | Fixed in 03b8b0902: New FR-428-AC-10 states the role-name-as-value refusal (choice guard, node constraint, another role's until), tested by the new TC-382 RR-09; RR-08 now cites only AC-8's cases. |
+| FND-005 | fixed | Fixed in 03b8b0902: RR-08 now says 'the Worker of this test case's model gains it'. |
