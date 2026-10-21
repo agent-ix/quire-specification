@@ -58,3 +58,13 @@ Base checklist over the FR-142 unit-graph refusal rule, FR-142-AC-5, the new AC 
 ## Verdict
 
 Not mergeable as a set (see integrity FND-001 and failure-domain FND-001 and FND-002). This method's findings are one coverage gap and two wording nits. What passes: the reuse of existing causes, `incompatible-definition` for a cross-dimension target, and dropping the topology cases from AC-5. U06, U11b, U11d and U11e can be built and give the stated cause under any reading of the order.
+
+## Dispositions
+
+Round 1, bdacb1420 (head 8ba797093).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fixed in bdacb1420: / U11h / `unit z : L = 0 * nothing;` / `invalid_package`/`invalid-value` (row 1 before row 2 within one unit) / / U11i / In dimension `L`, `unit a : L = 1 * nothing;` declared before `unit b : L = 0 * m;` / `missing_declaration`/`missing-name` naming `a` (the earliest unit is processed first) / |
+| FND-002 | fixed | Fixed in bdacb1420: When the checker admits a package's unit and dimension declarations, the checker SHALL refuse a topology defect before any quantity value exists, with these FR-272 causes; each refusal names the dimension node and the unit or |
+| FND-003 | fixed | Fixed in bdacb1420: U11 row removed; TC-187 now goes from U10 to U11a: / U11a / Add `unit m_alt : L = 1;` beside `unit m : L = 1;` / `invalid_package`/`conflicting-definition` naming `L`, `m` and `m_alt` (FR-142-AC-15) / |

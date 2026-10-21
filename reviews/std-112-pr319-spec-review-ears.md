@@ -47,3 +47,12 @@ EARS conformance of the new FR-142 obligations: the refusal statement, the check
 ## Verdict
 
 Two low findings. The SHALL statements are otherwise singular per obligation, and the new AC row is testable.
+
+## Dispositions
+
+Round 1, bdacb1420 (head 8ba797093).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fixed in bdacb1420: When the checker admits a package's unit and dimension declarations, the checker SHALL refuse a topology defect before any quantity value exists, with |
+| FND-002 | fixed | Fixed in bdacb1420: The checker SHALL admit no unit mapping of a refused dimension. A refusal refuses the package, as every other refusal of this requirement does, and the `quire.checked-package/v2` strict reader refuses the same shapes, as an already-built package, with `invalid_semantic_graph` (FR-322 |

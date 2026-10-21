@@ -53,3 +53,13 @@ Integrity of the PR against the rest of QSpec and the QSL consumer: id uniquenes
 ## Verdict
 
 Not mergeable: FND-001 is a duplicate AC id. The cause names, codes and pairing match FR-272 and native-diagnostics, and QSL already maps a unit cycle to `definition-cycle` and an unresolved name to `missing-name`, so those two rulings agree with the consumer.
+
+## Dispositions
+
+Round 1, bdacb1420 (head 8ba797093).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fixed in bdacb1420: / FR-142-AC-15 / Over the `L` unit graph of TC-187, each single defect of TC-187 U06 and U11a to U11g refuses with its row's code and cause naming the dimension and units shown, and exposes no conversion value; the orderings are fixed by the vectors U11h to U11k: a unit that has scale zero and an unknown target is `invalid-value`; unit `a` with an unknown target before unit `b` with scale zero is `missing-name`; a self-target beside a second targetless unit in one dimension is `conflicting-definition`; and dimension `L` with a self-target before dimension `T` with a zero scale is `definitio... |
+| FND-002 | fixed | Fixed in bdacb1420: The checker SHALL admit no unit mapping of a refused dimension. A refusal refuses the package, as every other refusal of this requirement does, and the `quire.checked-package/v2` strict reader refuses the same shapes, as an already-built package, with `invalid_semantic_graph` (FR-322 |
+| FND-003 | fixed | Fixed in bdacb1420: / 6 / the target edges form a cycle (a unit targeting itself included) / `invalid_package`/`definition-cycle` / the cycle's dependency edges, `unit -> target`, in order from the cycle's least unit by declaration order; when the dimension has several cycles, the one that contains the least unit / |
