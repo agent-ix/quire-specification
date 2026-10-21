@@ -86,12 +86,12 @@ closed computation that replay repeats.
 | HP-4, or a clause over `behaviours` under a profile other than infinite-trace | `unsupported` | `unavailable` | `unsupported_projection`/`unsupported-requested-capability` |
 
 An item has one instance per key of the universe of each population overlapping its parameter's type (FR-361), so an
-item with an empty universe for any one of its parameters has no instance to
+item with no key in any overlapping population for any one of its parameters has no instance to
 evaluate ([FR-395](FR-395-analyze-hyperproperties-over-behaviours.md)). The
 analyzer SHALL settle it `inconclusive` with cause `no-instance` before it
 explores any state, as [FR-361](../temporal/FR-361-read-model-behaviours-as-temporal-traces.md)
 does for other items, after the `requires-bound` classification: a parameter
-over a population with no universe is `requires-bound`, never `no-instance`.
+with an overlapping population that has no universe is `requires-bound`, never `no-instance`.
 
 An HP-5 item settles by [FR-396](FR-396-classify-hyperproperty-forms.md)'s
 single-existential rows.
@@ -186,7 +186,7 @@ steps and automaton states for hyper items.
 | FR-399-AC-8 | A body that evaluates undefined at a reachable joint step settles `refuted`, basis `decisive-counterexample`, cause `undefined-evaluation` whose `where` names the variable tuple, the joint position, each component's state-key digest and the expression's locus and whose `cause` names the catalogued reason, after its `undefined` counterexample replays to the same undefined value. | Test (TC-348) |
 | FR-399-AC-9 | With a violation and an undefined evaluation both reachable, the reported refutation is the first in canonical order: the first false or undefined tuple in the product of canonical edge orders for HP-1, and the first violating or undefined product state in canonical breadth-first order for HP-2, HP-3 and HP-6. | Test (TC-348) |
 | FR-399-AC-10 | A guard, the `terminal when` predicate or a state constraint of a component's subject that evaluates undefined at a component state of a reachable joint step settles the item `refuted`, `decisive-counterexample`, cause `undefined-evaluation` whose `where` names that component's variable and alias, the joint position, its state-key digest and the expression's locus, plus the FR-181 transition identity for a guard, after its `undefined` counterexample replays to the same undefined value. | Test (TC-348) |
-| FR-399-AC-11 | A hyperproperty item with an empty universe for its object parameter settles `inconclusive`, basis `unsettled`, cause `no-instance` before any state is explored, and never `proved` or `refuted`; a two-alias item (HB-02's `(d: S::Device, e: N::Device)`) with one empty universe and the other non-empty settles the same way, so the product rule does not read only the first parameter; the same item over a population with no universe returns `requires-bound`, not `no-instance`. | Test (TC-340) |
+| FR-399-AC-11 | A hyperproperty item with no key in any population overlapping its object parameter's type settles `inconclusive`, basis `unsettled`, cause `no-instance` before any state is explored, and never `proved` or `refuted`; a two-alias item (HB-02's `(d: S::Device, e: N::Device)`) with no key for one parameter and keys for the other settles the same way, so the product rule does not read only the first parameter; the same item with an overlapping population that has no universe returns `requires-bound`, not `no-instance`. | Test (TC-340) |
 
 ## Dependencies
 

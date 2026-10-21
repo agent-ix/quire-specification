@@ -141,51 +141,58 @@ document is `[{"identity":"63","universe":"11…11"},{"identity":"64","universe"
 spelled in full in the published vector `counters-c-d`; the list `[d, c]` is a
 different document with a different digest.
 
-A clause `over (x: T)` over a model subject has one *instance* for each pair
-(`p`, `k`) of a population `p` and a key `k` of `p`'s universe, for every
-population `p` that overlaps `T`: some member type of `p` conforms to `T`, or
-`T` conforms to some member type of `p`. A population whose member types are
+A clause `over (x: T)` over a model subject has one *instance* for each
+distinct key that occurs in the universe of at least one population that
+overlaps `T`: some member type of the population conforms to `T`, or `T`
+conforms to some member type of it. A population whose member types are
 subtypes of `T` only, and one whose member type is a supertype of `T`, each
-overlap `T`; one whose member types are unrelated to `T` does not. The
-analyzer SHALL order the instances by the UTF-8 bytes of the population's
-declaration identity text, then by the order of the universe list. The
-reported instance of a refuted item is the first refuted instance in that
-order, and the counterexample, the basis and the cause are those of that
-instance ([FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md)). The
-item is `refuted` exactly when some instance is refuted, whatever the order,
-and the clause holds exactly when every instance holds; but when instances
-refute by different causes, the cause follows the order, so the order is
-normative and enters the request identity through the universe lists the
-subject carries.
+overlap `T`; one whose member types are unrelated to `T` does not. A key listed
+by several overlapping populations is one instance, the object `x` denotes
+being the object with that universe and identity. The analyzer SHALL order the
+instances by first occurrence in the sequence that lists the overlapping
+populations by the UTF-8 bytes of their declaration identity text and each
+universe in its list order. The reported instance of a refuted item is the
+first refuted instance in that order, and the counterexample, the basis and
+the cause are those of that instance
+([FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md)). The item is
+`refuted` exactly when some instance is refuted, whatever the order, and the
+clause holds exactly when every instance holds; but when instances refute by
+different causes, the cause follows the order, so the order is normative and
+enters the request identity through the universe lists the subject carries.
+An instance is identified by its key alone, which is why the wire forms that
+name an instance by parameter and key (the replay `over_binding`, the evidence
+`Instance` and the obligation identity) need no population member.
 
 The analyzer SHALL bind `x` for each instance to the reference (`universe`,
-`object_type`, `identity`) whose `object_type` is the population's canonical
-member type, the first member type of its declaration, and SHALL NOT compare
-the type component. The analyzer SHALL match a state's object to the binding by
-universe and identity alone. A refutation names the instance it refutes.
+`object_type`, `identity`) whose `object_type` is the canonical member type of
+the first overlapping population, in the order above, that lists the key (that
+population's first member type in declaration order), and SHALL NOT compare the
+type component. The analyzer SHALL match a state's object to the binding by
+universe and identity alone. A refutation names the instance, its key, that it
+refutes.
 
-At a position where `p` holds no object under the instance's key, or holds one
-whose most-specific type does not conform to `T`, a read through `x` SHALL
-return the kernel's undefined value with reason `absent-key`, the same value
-`lookup<T>(p, x) absent undefined` returns for that binding. For a binding
-that `over` introduces, `lookup<T>(p, x)` is present exactly when `p` holds an
-object under that key whose most-specific type conforms to `T`. The claim
-evaluates undefined at that position, and the item settles `refuted` with
-cause `undefined-evaluation` ([FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md)),
-naming the instance, the position and the locus of the read.
+At a position where no overlapping population holds an object under the
+instance's key, or the object it holds does not conform to `T`, a read through
+`x` SHALL return the kernel's undefined value with reason `absent-key`, the
+same value `lookup<T>(p, x) absent undefined` returns for that binding. For a
+binding that `over` introduces, `lookup<T>(p, x)` is present exactly when `p`
+holds an object under that key whose most-specific type conforms to `T`. The
+claim evaluates undefined at that position, and the item settles `refuted`
+with cause `undefined-evaluation`
+([FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md)), naming the
+instance, the position and the locus of the read.
 
-A clause cannot name the population an instance belongs to, so the guard is
-the disjunction over every population that overlaps `T`: `lookup<T>(p1, x)`
-being `some` or `lookup<T>(p2, x)` being `some` or ... for each overlapping
+A clause cannot name the population an object is found in, so the guard is the
+disjunction over every population that overlaps `T`: `lookup<T>(p1, x)` being
+`some` or `lookup<T>(p2, x)` being `some` or ... for each overlapping
 population `p1`, `p2`, ... The guard is true for an instance exactly when some
-overlapping population holds a conforming object under its key, and the
-instance's own population is among them, so a guarded read still evaluates the
-instance's own object. A guard naming only one overlapping population is false
-for the instances of the others and keeps their reads from ever evaluating,
-which is not a guard against `absent-key` but a vacuous hold; the rule adds no
-type-test operator and no population-free membership form, so over a
-population that holds a key whose object does not conform to `T` an unguarded
-read refutes the item whatever the property.
+overlapping population holds a conforming object under its key, which is
+exactly when a read through `x` evaluates. A guard naming only one overlapping
+population is false for the keys the others alone list and keeps their reads
+from ever evaluating, which is not a guard against `absent-key` but a vacuous
+hold; the rule adds no type-test operator and no population-free membership
+form, so a key whose object does not conform to `T` refutes the item under an
+unguarded read, whatever the property.
 
 ## Acceptance Criteria
 
@@ -199,9 +206,9 @@ read refutes the item whatever the property.
 | FR-361-AC-6 | An unguarded read through the bound object at a reachable position where that object is absent settles the item `refuted` with cause `undefined-evaluation` naming the binding, the position and the read's locus, the same outcome as the `lookup ... absent undefined` spelling of that read; the same read guarded by population membership evaluates. | Test (TC-290, TC-305) |
 | FR-361-AC-7 | A subject with an unbounded population root and no universe returns `requires-bound` before expansion; a subject with an empty list of initial states settles `inconclusive` with cause `no-initial-state`. | Test (TC-294) |
 | FR-361-AC-8 | An item with zero instances, because no population overlaps its `over` type or every overlapping population has an empty universe, settles `inconclusive` with cause `no-instance` before any state is explored, and never `proved` or `refuted`; the same item over a population with no universe returns `requires-bound`, not `no-instance`; an item over `Counter` whose only population is `all: Entity = [e]` with `e` not a `Counter` has the instance (`all`, `e`) and is not `no-instance`. | Test (TC-294, TC-290) |
-| FR-361-AC-9 | A clause `over (x: Counter)` over a subject with populations `counters` (member type `Counter`) and `all` (member type `Entity`, a supertype of `Counter`), universes `counters = [c, d]` and `all = [c, e]`, has instances (`all`, `c`), (`all`, `e`), (`counters`, `c`), (`counters`, `d`) in that order: population declaration identity text, then universe order; a population `specials` whose only member type is `SpecialCounter`, a subtype of `Counter`, also yields instances, and a population of an unrelated type yields none. | Test (TC-290) |
-| FR-361-AC-10 | The item is `refuted` exactly when some instance is refuted, for every permutation of the universe lists; the reported instance, counterexample, basis and cause are those of the first refuted instance in the instance order: with `all = [c, e]` and the unguarded claim `always holds(x.value <= 0)`, where (`all`, `c`) refutes by a false evaluation after `inc` and (`all`, `e`) by an undefined read, the cause is none and the counterexample names (`all`, `c`), and with `all = [e, c]` the cause is `undefined-evaluation` and it names (`all`, `e`); permuting a universe list changes the request identity. | Test (TC-290) |
-| FR-361-AC-11 | Over `Counter` instances of `all`, the instance (`all`, `e`), whose key holds an `Entity` that is not a `Counter`, reads `absent-key` through `x`: an unguarded `holds(x.value >= 0)` refutes with `undefined-evaluation` naming (`all`, `e`), while the same read guarded by the disjunction of `lookup<Counter>(p, x)` being `some` over `all`, `counters` and `specials` evaluates for every instance; with `inc` disabled, `c.value = 1`, `s.value = 1` and `d.value = 0`, the claim `always holds(x.value >= 1)` guarded by the disjunction is refuted at (`counters`, `d`), while a guard naming only `all` holds it vacuously at (`counters`, `d`) and the item is `proved`. | Test (TC-290) |
+| FR-361-AC-9 | A clause `over (x: Counter)` over a subject with populations `counters` (member type `Counter`) and `all` (member type `Entity`, a supertype of `Counter`), universes `counters = [c, d]` and `all = [c, e]`, and `specials` (only member type `SpecialCounter`, a subtype of `Counter`) with `[s]`, has the instances `c`, `e`, `d`, `s` in that order, the key `c` listed by `all` and `counters` being one instance; a population of an unrelated type adds none. | Test (TC-290) |
+| FR-361-AC-10 | The item is `refuted` exactly when some instance is refuted, for every permutation of the universe lists; the reported instance, counterexample, basis and cause are those of the first refuted instance in the instance order: with `all = [c, e]` and the unguarded claim `always holds(x.value <= 0)`, where `c` refutes by a false evaluation after `inc` and `e` by an undefined read, the cause is none and the counterexample names `c`, and with `all = [e, c]` the cause is `undefined-evaluation` and it names `e`; permuting a universe list changes the request identity. | Test (TC-290) |
+| FR-361-AC-11 | Over `Counter` instances, the instance `e`, whose key holds an `Entity` that is not a `Counter`, reads `absent-key` through `x`: an unguarded `holds(x.value >= 0)` refutes with `undefined-evaluation` naming `e`, while the same read guarded by the disjunction of `lookup<Counter>(p, x)` being `some` over `all`, `counters` and `specials` evaluates for every instance; with `inc` disabled, `c.value = 1`, `s.value = 1` and `d.value = 0`, the claim `always holds(x.value >= 1)` guarded by the disjunction is refuted at `d`, while a guard naming only `all` holds it vacuously at `d` and the item is `proved`. | Test (TC-290) |
 | FR-361-AC-12 | A binding's `object_type` is the population's canonical member type and is not compared: an object held under the key whose most-specific type is a subtype of that member type is matched, and reference equality of `x` with `allInstances` members of that object holds. | Test (TC-290) |
 | FR-361-AC-13 | The universe provision of population `counters` with list `[c, d]` is the RFC 8785 canonical array of its two keys in list order, each exactly `universe` and `identity`, whose `sha256-jcs` digest is the published `counters-c-d` digest; the list `[d, c]` gives a different document and digest; a key with a missing, extra (`object_type` included) or non-hex member is not a universe key. | Test (TC-290) |
 

@@ -62,18 +62,19 @@ One result per clause instance, classified by
   subject per distinct alias.
 - **Object parameters.** `behaviours (v: V::T)` binds an object of a
   population of alias `V`'s model. The clause has one instance per key of the
-  universe of every population of that model that overlaps `T`, as FR-361
-  defines an instance. Within an instance, `v` denotes the object with
+  universe of every population of that model that overlaps `T`, a key listed by
+  several of them being one instance, as FR-361 defines an instance. Within an instance, `v` denotes the object with
   that key in every trace of that alias: objects are correlated across traces
   by universe key, never by local name. A clause over two aliases names one
   parameter per alias it reads, and its instances range over the product of
-  their universes. A clause one of whose parameters' populations has an empty
-  universe has no key to instantiate, so the product is empty and the clause has
-  zero instances: the item is a `NoInstance` item of
+  their universes. A clause one of whose parameters has no key in any
+  overlapping population (no population overlaps its type, or every overlapping
+  population has an empty universe), as FR-361 states zero instances, has an
+  empty product and zero instances: the item is a `NoInstance` item of
   [FR-361](../temporal/FR-361-read-model-behaviours-as-temporal-traces.md)
   Instancing and settles by [FR-399](FR-399-settle-hyperproperty-results.md),
-  never `proved`, since no instance was ever evaluated. A parameter whose
-  population has no universe is `requires-bound` first.
+  never `proved`, since no instance was ever evaluated. A parameter with an
+  overlapping population that has no universe is `requires-bound` first.
 - **Indexed reads.** Every model member read in the body carries exactly one
   trace variable, written `e @ a`; one atom may read several variables.
 - **Step labels.** Inside `match`, `a.step.op` is the operation of the step
