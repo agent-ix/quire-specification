@@ -4,6 +4,12 @@
       "expected": "admitted",
       "name": "RS-01",
       "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
         "any_row": false,
         "declaration": {
           "end": 50,
@@ -15,12 +21,20 @@
           },
           "start": 0
         },
-        "hidden": false,
         "histories": 0,
         "node_id": {
           "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "domain": "quire.checked-semantic-node/v1"
         },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "total",
+              "value"
+            ]
+          }
+        ],
         "rows": [
           {
             "name": "R0",
@@ -161,6 +175,12 @@
       "expected": "admitted",
       "name": "RS-02",
       "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
         "any_row": false,
         "declaration": {
           "end": 50,
@@ -172,12 +192,20 @@
           },
           "start": 0
         },
-        "hidden": false,
         "histories": 0,
         "node_id": {
           "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "domain": "quire.checked-semantic-node/v1"
         },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "total",
+              "value"
+            ]
+          }
+        ],
         "rows": [
           {
             "name": "R1",
@@ -304,6 +332,12 @@
       },
       "name": "RS-03",
       "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
         "any_row": false,
         "declaration": {
           "end": 50,
@@ -315,12 +349,20 @@
           },
           "start": 0
         },
-        "hidden": false,
         "histories": 0,
         "node_id": {
           "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "domain": "quire.checked-semantic-node/v1"
         },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "total",
+              "value"
+            ]
+          }
+        ],
         "rows": [
           {
             "name": "R0",
@@ -467,6 +509,12 @@
       },
       "name": "RS-04",
       "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
         "any_row": false,
         "declaration": {
           "end": 50,
@@ -478,12 +526,20 @@
           },
           "start": 0
         },
-        "hidden": false,
         "histories": 0,
         "node_id": {
           "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "domain": "quire.checked-semantic-node/v1"
         },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "total",
+              "value"
+            ]
+          }
+        ],
         "rows": [
           {
             "name": "R0",
@@ -630,6 +686,12 @@
       },
       "name": "RS-05",
       "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
         "any_row": false,
         "declaration": {
           "end": 50,
@@ -641,12 +703,20 @@
           },
           "start": 0
         },
-        "hidden": false,
         "histories": 0,
         "node_id": {
           "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "domain": "quire.checked-semantic-node/v1"
         },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "total",
+              "value"
+            ]
+          }
+        ],
         "rows": [
           {
             "name": "R0",
@@ -773,6 +843,12 @@
       },
       "name": "RS-06",
       "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
         "any_row": false,
         "declaration": {
           "end": 50,
@@ -784,12 +860,20 @@
           },
           "start": 0
         },
-        "hidden": false,
         "histories": 0,
         "node_id": {
           "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "domain": "quire.checked-semantic-node/v1"
         },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "total",
+              "value"
+            ]
+          }
+        ],
         "rows": [
           {
             "name": "R0",
@@ -916,6 +1000,12 @@
       },
       "name": "RS-07",
       "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
         "any_row": false,
         "declaration": {
           "end": 50,
@@ -927,12 +1017,20 @@
           },
           "start": 0
         },
-        "hidden": false,
         "histories": 0,
         "node_id": {
           "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "domain": "quire.checked-semantic-node/v1"
         },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "total",
+              "value"
+            ]
+          }
+        ],
         "rows": [
           {
             "name": "R0",
@@ -1059,6 +1157,12 @@
       },
       "name": "RS-08",
       "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
         "any_row": false,
         "declaration": {
           "end": 50,
@@ -1070,12 +1174,20 @@
           },
           "start": 0
         },
-        "hidden": false,
         "histories": 0,
         "node_id": {
           "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "domain": "quire.checked-semantic-node/v1"
         },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "total",
+              "value"
+            ]
+          }
+        ],
         "rows": [
           {
             "name": "R0",
@@ -1182,6 +1294,12 @@
       },
       "name": "RS-09",
       "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
         "any_row": false,
         "declaration": {
           "end": 50,
@@ -1193,12 +1311,20 @@
           },
           "start": 0
         },
-        "hidden": false,
         "histories": 0,
         "node_id": {
           "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "domain": "quire.checked-semantic-node/v1"
         },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "total",
+              "value"
+            ]
+          }
+        ],
         "rows": [
           {
             "name": "R0",
@@ -1305,6 +1431,12 @@
       },
       "name": "RS-10",
       "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
         "any_row": false,
         "declaration": {
           "end": 50,
@@ -1316,12 +1448,20 @@
           },
           "start": 0
         },
-        "hidden": false,
         "histories": 0,
         "node_id": {
           "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "domain": "quire.checked-semantic-node/v1"
         },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "total",
+              "value"
+            ]
+          }
+        ],
         "rows": [
           {
             "name": "R0",
@@ -1428,6 +1568,12 @@
       },
       "name": "RS-11",
       "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
         "any_row": false,
         "declaration": {
           "end": 50,
@@ -1439,12 +1585,20 @@
           },
           "start": 0
         },
-        "hidden": false,
         "histories": 0,
         "node_id": {
           "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "domain": "quire.checked-semantic-node/v1"
         },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "total",
+              "value"
+            ]
+          }
+        ],
         "rows": [
           {
             "name": "R0",
@@ -1545,6 +1699,12 @@
       "expected": "admitted",
       "name": "RS-12",
       "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
         "any_row": false,
         "declaration": {
           "end": 50,
@@ -1556,12 +1716,20 @@
           },
           "start": 0
         },
-        "hidden": false,
         "histories": 1,
         "node_id": {
           "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "domain": "quire.checked-semantic-node/v1"
         },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "total",
+              "value"
+            ]
+          }
+        ],
         "rows": [
           {
             "name": "R0",
@@ -1628,6 +1796,12 @@
       },
       "name": "RS-13",
       "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
         "any_row": true,
         "declaration": {
           "end": 50,
@@ -1639,12 +1813,20 @@
           },
           "start": 0
         },
-        "hidden": false,
         "histories": 0,
         "node_id": {
           "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "domain": "quire.checked-semantic-node/v1"
         },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "total",
+              "value"
+            ]
+          }
+        ],
         "rows": [
           {
             "name": "R0",
@@ -1771,6 +1953,12 @@
       },
       "name": "RS-14",
       "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
         "any_row": false,
         "declaration": {
           "end": 50,
@@ -1782,12 +1970,19 @@
           },
           "start": 0
         },
-        "hidden": true,
         "histories": 0,
         "node_id": {
           "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "domain": "quire.checked-semantic-node/v1"
         },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "value"
+            ]
+          }
+        ],
         "rows": [
           {
             "name": "R0",
@@ -1874,6 +2069,12 @@
       },
       "name": "RS-15",
       "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
         "any_row": false,
         "declaration": {
           "end": 50,
@@ -1885,12 +2086,20 @@
           },
           "start": 0
         },
-        "hidden": false,
         "histories": 2,
         "node_id": {
           "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "domain": "quire.checked-semantic-node/v1"
         },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "total",
+              "value"
+            ]
+          }
+        ],
         "rows": [
           {
             "name": "R0",
@@ -1964,6 +2173,177 @@
             }
           ],
           "role": "declaration"
+        }
+      ]
+    },
+    {
+      "expected": "admitted",
+      "name": "RS-16",
+      "refinement": {
+        "abstract_fields": {
+          "Counter": [
+            "total",
+            "value"
+          ]
+        },
+        "any_row": false,
+        "declaration": {
+          "end": 50,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
+        },
+        "histories": 0,
+        "node_id": {
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "objects": [
+          {
+            "abstract_type": "Counter",
+            "fields": [
+              "value",
+              "total"
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "name": "R0",
+            "region": {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          },
+          {
+            "name": "R1",
+            "region": {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          }
+        ],
+        "steps": [
+          "R0",
+          "R1"
+        ]
+      },
+      "source_map": [
+        {
+          "node_id": {
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 5,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 0
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 1,
+          "regions": [
+            {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 10
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "node_id": {
+            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "ordinal": 2,
+          "regions": [
+            {
+              "end": 40,
+              "source": {
+                "authority": "agent-ix",
+                "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                "digest_domain": "quire.source.bytes/v1",
+                "identity": "example"
+              },
+              "start": 30
+            }
+          ],
+          "role": "generated"
         }
       ]
     }

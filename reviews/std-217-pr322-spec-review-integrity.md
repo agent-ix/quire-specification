@@ -35,3 +35,10 @@ Ticket: STD-217 (PR #322, head dcc70c07d1a0905407a5242fbbbb5620727aae33). FR-322
 ## Verdict
 
 Medium FND-001; fix in this PR. Ids, trace tags and validation are otherwise clean.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | fe8930c: AC-89 now states a concrete written order (`R1`, `R0`) against the `steps` order (`R0`, `R1`); the oracle maps each `steps` name to its row by name, and an oracle using written order fails RS-02. |
+| FND-002 | fixed | fe8930c: README lists the vector file. |

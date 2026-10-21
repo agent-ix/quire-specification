@@ -32,3 +32,10 @@ Ticket: STD-217 (PR #322, head dcc70c07d1a0905407a5242fbbbb5620727aae33). Checks
 ## Verdict
 
 Two medium findings; fix in this PR.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | fe8930c: stage (after AC-52's owner/source-map agreement) and owner order (ascending retained node-id digest) stated. |
+| FND-002 | fixed | fe8930c: the declaration occurrence is required and refused at `/source_map` when missing (FR-322-AC-90, RS-09). |

@@ -31,3 +31,9 @@ Ticket: STD-217 (PR #322, head dcc70c07d1a0905407a5242fbbbb5620727aae33). EARS c
 ## Verdict
 
 Mergeable on this lens; low wording finding only.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | fe8930c: the rule is split into one SHALL per bullet, the examination order included. |

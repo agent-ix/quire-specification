@@ -31,3 +31,9 @@ Ticket: STD-217 (PR #322, head dcc70c07d1a0905407a5242fbbbb5620727aae33). The ne
 ## Verdict
 
 Mergeable on this lens; low finding only.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | fe8930c: FR-468 added to relationships and Dependencies. |

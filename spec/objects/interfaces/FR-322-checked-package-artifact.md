@@ -654,8 +654,13 @@ boundary.
   `node_id`, one for each obligation of its per-step simulation proof
   ([FR-468](../../functional/analysis/FR-468-certify-per-step-refinement-obligations.md)).
   A refinement is proof-eligible exactly when FR-468's proof applies to it: it
-  has no hidden field (FR-378), no history field (its `histories` is empty) and
-  no `any` step target. The initial obligation is at ordinal 0, and the
+  has no hidden field, no history field (its `histories` is empty) and no `any`
+  step target. A hidden field (FR-375 "Object rows", FR-378) is an abstract
+  field with no row: for an entry of the body's `objects`, the abstract fields
+  are the fields of its abstract object type in the abstract model node that
+  the body's `abstract` key selects in its dependency package, and the field is
+  hidden when the entry has no field row of that name. A refinement with an
+  abstract field that is hidden in any `objects` entry is not proof-eligible. The initial obligation is at ordinal 0, and the
   obligation of the step row at zero-based position `i` of the node's `steps`
   order (FR-375-AC-19) is at ordinal `i + 1`. The ordinal is the obligation's
   position in the certificate's order, the base part and then the step parts.
@@ -670,8 +675,10 @@ boundary.
   - The reader SHALL admit on a proof-eligible refinement owner only a
     `declaration` occurrence at ordinal 0 and `generated` occurrences at
     ordinals 0 to `n` for `n` step rows.
-  - The reader SHALL require the `declaration` occurrence at ordinal 0 and one
-    `generated` occurrence for each ordinal 0 to `n`.
+  - The reader SHALL require the `declaration` occurrence at ordinal 0 on every
+    refinement owner.
+  - The reader SHALL require one `generated` occurrence for each ordinal 0 to
+    `n` on a proof-eligible refinement owner only.
   - The reader SHALL admit on a refinement that is not proof-eligible only the
     `declaration` occurrence at ordinal 0, and no `generated` occurrence.
   - The reader SHALL refuse as `invalid_package`/`invalid-value` at the
@@ -1819,7 +1826,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-88 | A proof-eligible refinement owner with step rows `R0` and `R1` in `steps` order, whose source regions are `[10,20)` and `[30,40)` and whose `declaration` region is `[0,50)`, is admitted when its `source_map` holds a `declaration` occurrence at ordinal 0 and `generated` occurrences on its own node at ordinal 0 with region `[0,50)`, at ordinal 1 with region `[10,20)` and at ordinal 2 with region `[30,40)`, and entries of other nodes do not affect it (`RS-01`). | Test (TC-233) |
 | FR-322-AC-89 | With the rows written in the order `R1`, `R0` and the `steps` order `R0`, `R1`, ordinal 1 holds `R0`'s region and ordinal 2 `R1`'s (`RS-02`). | Test (TC-233) |
 | FR-322-AC-90 | A proof-eligible refinement owner with two step rows refuses `invalid_package`/`invalid-value` at the offending `source_map` entry for a `generated` occurrence at ordinal 3, for a second entry with the key of an existing occurrence, for a `generated` occurrence at ordinal 1 that carries `R1`'s region, for an `expression` occurrence at ordinal 1 and for a `declaration` occurrence at ordinal 1; and at `/source_map` for a package that omits the `declaration` occurrence, the `generated` ordinal 0 or the `generated` ordinal 2. | Test (TC-233) |
-| FR-322-AC-91 | A refinement owner that is not proof-eligible, with a history field, with an `any` step target or with a hidden field, is admitted with its `declaration` occurrence alone and refuses `invalid_package`/`invalid-value` at the first `generated` entry on its node when one is present (`RS-12` to `RS-15`). | Test (TC-233) |
+| FR-322-AC-91 | A refinement owner that is not proof-eligible, with a history field, with an `any` step target or with an abstract field that has no field row, is admitted with its `declaration` occurrence alone and refuses `invalid_package`/`invalid-value` at the first `generated` entry on its node when one is present (`RS-12` to `RS-15`). | Test (TC-233) | The hidden field is derived from the abstract model's fields against the `objects` entries' field rows, whatever their order (`RS-14`, `RS-16`).
 
 ## Dependencies
 

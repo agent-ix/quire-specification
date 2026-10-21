@@ -42,3 +42,19 @@ Ticket: STD-217 (PR #322, head dcc70c07d1a0905407a5242fbbbb5620727aae33; context
 ## Verdict
 
 Not mergeable: FND-001 (high) and FND-002 (medium) must be resolved first. QSL PR #1157 should not adopt the rule until FND-001 decides which refinements carry the occurrences. The ordinal convention itself is sound and consistent with FR-468, FR-375-AC-19, FR-322-AC-87 and QSV FR-123.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | fe8930c: occurrences only on a proof-eligible owner (no hidden field, no history field, no `any` target, the FR-468 / QSL FR-146 predicate); a non-eligible owner carries the declaration alone; FR-322-AC-91 with RS-12..RS-15. |
+| FND-002 | fixed | fe8930c: the `generated` definition now names the per-obligation occurrences of a refinement owner. |
+| FND-003 | fixed | fe8930c: the ordinal-above-n case is folded into the outside-admitted-pairs item. |
+| FND-004 | fixed | fe8930c: "exactly the one region" of the row and of the declaration. |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | medium | Proof-eligibility hinges on "no hidden field (FR-378)", which FR-378 defines at source level ("An abstract field with no row is hidden"). FR-322 does not say which wire members the reader compares: the abstract model's fields from the supplied abstract package, reached through the body's `abstract` key, against the `objects` entries' field rows. Every vector takes eligibility from a precomputed `hidden` boolean, so no vector tests that derivation. `histories` and the `any` target are body members and are fine. State the wire-level predicate, for example a field of an abstract type `T_A` that no field row of the `objects` entry for `T_A` names, read from the supplied package selected by `abstract`, and add one vector that derives `hidden` from those members. The predicate itself matches FR-468 and QSL FR-146. | spec/objects/interfaces/FR-322-checked-package-artifact.md:656-658; proposals/checked-package-v2/refinement-step-occurrence-vectors.json |
+| FND-006 | low | The second reader bullet ("SHALL require the `declaration` occurrence at ordinal 0 and one `generated` occurrence for each ordinal 0 to `n`") is not limited to proof-eligible owners. Read on its own, it requires `generated` occurrences on a non-eligible owner, which the third bullet forbids. Split it: require the `declaration` occurrence on every refinement owner, and require the `generated` ordinals on a proof-eligible owner only. | spec/objects/interfaces/FR-322-checked-package-artifact.md:673-674 |

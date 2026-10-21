@@ -33,3 +33,10 @@ Ticket: STD-217 (PR #322, head dcc70c07d1a0905407a5242fbbbb5620727aae33; context
 ## Verdict
 
 Not mergeable on this lens until FND-001 is fixed. Changing the range to `0..=rows.len()` keeps every current vector passing, so it can be fixed together with the two new vectors.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | fe8930c: the required set is the declaration plus generated 0..=n for an eligible owner; RS-09 (no declaration), RS-10 (no generated 0), RS-11 (no generated 1) added. Deleting the generated-0 or declaration entry from RS-01 now fails the test. |
+| FND-002 | fixed | fe8930c: every vector entry carries `node_id` and every region a `source`; RS-01 holds another node's entry, which the oracle skips, so pointers index the whole `source_map`. |

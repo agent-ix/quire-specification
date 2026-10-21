@@ -14529,9 +14529,20 @@ const REFINEMENT_STEP_VECTORS: &str =
 fn refinement_step_refusal(case: &Value) -> Option<String> {
     let refinement = &case["refinement"];
     let owner = &refinement["node_id"];
-    let eligible = refinement["hidden"] == false
-        && refinement["histories"] == 0
-        && refinement["any_row"] == false;
+    // A hidden field: an abstract field of the entry's object type with no field row.
+    let hidden = refinement["objects"]
+        .as_array()
+        .expect("objects")
+        .iter()
+        .any(|entry| {
+            let rows = entry["fields"].as_array().expect("field rows");
+            refinement["abstract_fields"][entry["abstract_type"].as_str().expect("type")]
+                .as_array()
+                .expect("abstract fields")
+                .iter()
+                .any(|field| !rows.contains(field))
+        });
+    let eligible = !hidden && refinement["histories"] == 0 && refinement["any_row"] == false;
     // The region of the row at each `steps` position, whatever the written order.
     let steps: Vec<&Value> = refinement["steps"]
         .as_array()
@@ -14584,7 +14595,7 @@ fn refinement_step_refusal(case: &Value) -> Option<String> {
 fn tc_233_a_refinement_owner_carries_one_generated_occurrence_per_proof_obligation() {
     let vectors = parsed_fixture(REFINEMENT_STEP_VECTORS);
     let cases = vectors["cases"].as_array().expect("cases");
-    assert_eq!(cases.len(), 15);
+    assert_eq!(cases.len(), 16);
     for case in cases {
         let name = case["name"].as_str().expect("name");
         let refusal = refinement_step_refusal(case);
