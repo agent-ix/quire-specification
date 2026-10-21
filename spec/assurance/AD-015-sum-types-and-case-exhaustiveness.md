@@ -88,9 +88,9 @@ cause per obligation.
 
 ## Tracked separately
 
-The dead cardinality-decrease grammar element noted during this design is not
-a `union`/`case` grammar change and is out of scope here; it is tracked in the
-`quire-specification#115` thread pending its own ticket.
+The cardinality element of a `decreases` measure (FR-146) has no source form
+that strictly decreases it, so it can never discharge a `decrease` obligation.
+It is independent of `union` and `case` and this decision does not change it.
 
 ## Status
 
