@@ -36,6 +36,8 @@ every `spawn`, `retire` and `by r` step.
 | RR-04 | `max 2 lifetime workflow` | The state after `spawn(w1)` then `spawn(w2)` and the state after `spawn(w2)` then `spawn(w1)` have byte-identical `roles` entries and coalesce; their traces carry distinct spawn ordinals |
 | RR-05 | `max 2 lifetime workflow`, both live | `Work` has two enabled steps, one per instance, each with its `actor` member naming the acting object |
 | RR-06 | `max 1 lifetime until(p)` with `p` reading `lookup<T>(p, r) absent undefined` at a key the population does not hold | every item settles `refuted`, cause `undefined-evaluation`, with the prefix to the first state at which `p` is evaluated and `where` naming `p` |
+| RR-07 | `max 1 lifetime scope`, `Work` as the only node inside a `repeat` followed by a node outside it; then `Work` nodes in two sibling `sequence`s of one `parallel`; then `Work` directly in the root `run` | The instance is not retired while the `repeat` can iterate and retires in the step that leaves it; the region of the second is the `parallel`; the region of the third is the root (FR-428-AC-9) |
+| RR-08 | `role w each M::Worker from workers max 1 lifetime until(w.done = 1)` over the `Worker` model with a `done` field; then the same with `until({w.done = 1})` and with `until(z.done = 1)` | the first is admitted and `w` is one instance of type `Reference<M::Worker>`; the brace form refuses `invalid_syntax`/`unexpected-token` at the `{` and the `z` form `missing_declaration`/`missing-name` at `z` (FR-428-AC-8) |
 
 ## Expected Results
 
