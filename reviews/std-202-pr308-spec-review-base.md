@@ -45,3 +45,14 @@ Ticket: STD-202 (PR #308, head b9d097109bddaa4843fc8a425152ba2f69f9db7a). The th
 ## Verdict
 
 Not mergeable as-is: FND-001 and FND-002 (TC-386 IL-05) are medium. The FR-432 text itself is sound and agrees with QSL FR-147.
+
+## Dispositions
+
+Disposition pass 1, against head 2d36bd89cd04354984efa21c81a7df2ff2f4c159.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | verified at 2d36bd89cd04 |
+| FND-002 | fixed | verified at 2d36bd89cd04 |
+| FND-003 | fixed | verified at 2d36bd89cd04 |
+| FND-004 | fixed | verified at 2d36bd89cd04 |

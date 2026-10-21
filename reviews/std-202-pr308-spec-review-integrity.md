@@ -37,3 +37,12 @@ Ticket: STD-202 (PR #308, head b9d097109bddaa4843fc8a425152ba2f69f9db7a). New AC
 ## Verdict
 
 Low findings only.
+
+## Dispositions
+
+Disposition pass 1, against head 2d36bd89cd04354984efa21c81a7df2ff2f4c159.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | verified at 2d36bd89cd04 |
+| FND-002 | fixed | verified at 2d36bd89cd04 |
