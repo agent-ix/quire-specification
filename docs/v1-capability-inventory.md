@@ -29,6 +29,7 @@ with a typed, located outcome.
 | V1-SRC-013 | Discover edition, profile, declaration-family and consumer features exactly. | Required | V1-051 |
 | V1-SRC-014 | Extend a typed declaration or semantic family through an explicit extension boundary. | Required | V1-051 |
 | V1-SRC-015 | Reject unknown syntax, profiles and feature spellings with a located typed cause. | Integrity | V1-005, V1-051 |
+| V1-SRC-016 | Define an extension definition's grammar schema and typed-node schema, and refuse a missing member, a keyword or node-kind collision and a dependency cycle. | Integrity | V1-051 |
 
 ## 2. Type and model system
 

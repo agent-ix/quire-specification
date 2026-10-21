@@ -694,6 +694,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-466
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-467
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-390
     type: contains
   - target: ix://agent-ix/quire-specification/FR-391
@@ -986,6 +988,7 @@ The requirement artifacts are indexed below.
 | [FR-464](objects/interfaces/FR-464-checked-package-protocol-node-bodies.md) | FR | Checked-package `protocol` node family: operation, operator catalog, keys, clause body, binders, causal relation and reader order |
 | [FR-465](objects/interfaces/FR-465-checked-package-protocol-declaration-bodies.md) | FR | Checked-package protocol `role`, `channel`, `queue` and `obligation` (`finish`, `terminal`) bodies |
 | [FR-466](objects/interfaces/FR-466-checked-package-protocol-control-bodies.md) | FR | Checked-package protocol `control` (thirteen operators) and `compensation` bodies, binder scope and decision facts |
+| [FR-467](functional/source-package/FR-467-define-extension-definition-members.md) | FR | Extension definition members: grammar schema, typed-node schema, and their keyword, node-kind and cycle refusals |
 | [FR-405](functional/analysis/FR-405-declare-probabilistic-models.md) | FR | Declare random parameters, workloads and rewards |
 | [FR-406](functional/analysis/FR-406-interpret-probabilistic-models.md) | FR | Interpret probabilistic models under a workload or every scheduler |
 | [FR-407](functional/analysis/FR-407-state-probabilistic-claims.md) | FR | State probabilistic claims over events and measures |
