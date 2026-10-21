@@ -379,6 +379,8 @@ order, a repeated `refinement` and a repeated spelling.
 
 Check a compiler-derived node: a refinement owner with step rows `R0` and `R1` from which one node per row is derived; require the node derived from `R1` to have an occurrence of role `generated`, ordinal 1 and the region of `R1`'s source row, and the same after swapping the source order of the rows (FR-322-AC-87).
 
+Check the refinement step occurrences of `refinement-step-occurrence-vectors.json`: `RS-01` and `RS-02` (rows written in either source order) are admitted with ordinal 0 at the `declaration` region and ordinal `i + 1` at the region of row `i` in `steps` order (FR-322-AC-88); `RS-03` (ordinal 3), `RS-04` (a repeated key), `RS-05` (ordinal 1 with the other row's region), `RS-06` (an `expression` occurrence at ordinal 1) and `RS-07` (a `declaration` occurrence at ordinal 1) are each refused `invalid_package`/`invalid-value` at the offending `source_map` entry, and `RS-08` (ordinal 2 omitted) at `/source_map` (FR-322-AC-89).
+
 ## Expected Results
 
 Each event type vector gives exactly its recorded result.

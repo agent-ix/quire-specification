@@ -643,6 +643,33 @@ boundary.
   multiple ordered regions; regions for that one occurrence/document cannot
   overlap, while regions belonging to different occurrences may nest or
   overlap. A path, display name or search result is not a source identity.
+
+  **Refinement step occurrences.** A refinement owner node
+  (`node_tag: "relation"`, `semantic_form: "refinement"`,
+  [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md)) also
+  carries occurrences of role `generated` on its own `node_id`, one for each
+  obligation of its per-step simulation proof
+  ([FR-468](../../functional/analysis/FR-468-certify-per-step-refinement-obligations.md)):
+  the initial obligation at ordinal 0, and the obligation of the step row at
+  zero-based position `i` of the node's `steps` order (FR-375-AC-19) at ordinal
+  `i + 1`. The ordinal is the obligation's position in the certificate's order,
+  the base part and then the step parts. The `steps` order does not depend on
+  the order the rows were written, so each ordinal is the same under any source
+  order. The step occurrence's region is the region of the source row of its
+  step row, and the initial occurrence's region is the region of the node's
+  `declaration` occurrence. This ordinal is the position of an obligation of
+  the owner itself, and differs from the ordinal of a node derived from a step
+  row (FR-322-AC-87), which counts the owner's derived nodes alone. The reader
+  SHALL admit on a refinement owner node only the `declaration` occurrence at
+  ordinal 0 and the `generated` occurrences at ordinals 0 to `n` for `n`
+  step rows, SHALL require one `generated` occurrence for each of those
+  ordinals, and SHALL refuse each of the following as `invalid_package`/
+  `invalid-value` at the offending `source_map` entry: a `generated` ordinal
+  greater than `n`; a second entry with one (`node_id`, role, ordinal) key,
+  reported at the second; a role and ordinal pair other than the two above; a
+  region that is not the region its ordinal requires. The reader examines the
+  owner's entries in `source_map` order and refuses the first that fails; a
+  missing ordinal is refused at `/source_map` only when every entry passes.
 - `capability_report` — one closed disposition for every required feature and
   selected model capability. Backend/provider installation is absent.
 - `diagnostics` — catalog-qualified, stage-qualified typed causes and exact
@@ -1773,6 +1800,8 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-85 | A `dependency_reference` refusal's locus is the term's `package` member for `missing-selection`, its `node` member for `missing-name` and the term itself for `operator-ineligible`, each under the pointer of the term in its node's `body`. | Inspection (TC-233) |
 | FR-322-AC-86 | The signature type nodes of a dependency function are the `semantic_type` of each node its `parameters` binding references and the function's own `semantic_type`: a dependency function with a parameter of a declared record type is ineligible (`ill_typed`/`operator-ineligible`), while one whose body only references a declared record is eligible. | Inspection (TC-233) |
 | FR-322-AC-87 | A refinement owner with step rows `R0`, `R1` (in `steps` order) from which the compiler derives one node per row has, for the node derived from `R1`, an occurrence with role `generated`, ordinal 1 and a `source_map` region equal to the region of `R1`'s source row; swapping the source order of the two rows leaves the `steps` order, and so each ordinal, unchanged. | Test (TC-233) |
+| FR-322-AC-88 | A refinement owner with step rows `R0` and `R1` (in `steps` order) whose source regions are `[10,20)` and `[30,40)`, and whose `declaration` region is `[0,50)`, is admitted when its `source_map` holds `generated` occurrences on its own node at ordinal 0 with region `[0,50)`, at ordinal 1 with region `[10,20)` and at ordinal 2 with region `[30,40)`; with the rows written in the other source order, `steps` order and so each ordinal are unchanged, and ordinal 1 holds `R0`'s region. | Test (TC-233) |
+| FR-322-AC-89 | A refinement owner with two step rows refuses `invalid_package`/`invalid-value` at the offending `source_map` entry for a `generated` occurrence at ordinal 3, for a second entry with the key of an existing occurrence, for a `generated` occurrence at ordinal 1 that carries `R1`'s region, for an `expression` occurrence at ordinal 1 and for a `declaration` occurrence at ordinal 1; and at `/source_map` for a package that omits ordinal 2. | Test (TC-233) |
 
 ## Dependencies
 

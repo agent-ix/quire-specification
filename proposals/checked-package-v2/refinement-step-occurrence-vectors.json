@@ -1,0 +1,532 @@
+{
+  "cases": [
+    {
+      "declaration": {
+        "end": 50,
+        "start": 0
+      },
+      "expected": "admitted",
+      "name": "RS-01",
+      "rows": [
+        {
+          "end": 20,
+          "start": 10
+        },
+        {
+          "end": 40,
+          "start": 30
+        }
+      ],
+      "source_map": [
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "ordinal": 1,
+          "regions": [
+            {
+              "end": 20,
+              "start": 10
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "ordinal": 2,
+          "regions": [
+            {
+              "end": 40,
+              "start": 30
+            }
+          ],
+          "role": "generated"
+        }
+      ]
+    },
+    {
+      "declaration": {
+        "end": 50,
+        "start": 0
+      },
+      "expected": "admitted",
+      "name": "RS-02",
+      "rows": [
+        {
+          "end": 40,
+          "start": 30
+        },
+        {
+          "end": 20,
+          "start": 10
+        }
+      ],
+      "source_map": [
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "ordinal": 1,
+          "regions": [
+            {
+              "end": 40,
+              "start": 30
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "ordinal": 2,
+          "regions": [
+            {
+              "end": 20,
+              "start": 10
+            }
+          ],
+          "role": "generated"
+        }
+      ]
+    },
+    {
+      "declaration": {
+        "end": 50,
+        "start": 0
+      },
+      "expected": {
+        "refused": {
+          "at": "/source_map/4",
+          "cause": "invalid-value",
+          "code": "invalid_package"
+        }
+      },
+      "name": "RS-03",
+      "rows": [
+        {
+          "end": 20,
+          "start": 10
+        },
+        {
+          "end": 40,
+          "start": 30
+        }
+      ],
+      "source_map": [
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "ordinal": 1,
+          "regions": [
+            {
+              "end": 20,
+              "start": 10
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "ordinal": 2,
+          "regions": [
+            {
+              "end": 40,
+              "start": 30
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "ordinal": 3,
+          "regions": [
+            {
+              "end": 20,
+              "start": 10
+            }
+          ],
+          "role": "generated"
+        }
+      ]
+    },
+    {
+      "declaration": {
+        "end": 50,
+        "start": 0
+      },
+      "expected": {
+        "refused": {
+          "at": "/source_map/4",
+          "cause": "invalid-value",
+          "code": "invalid_package"
+        }
+      },
+      "name": "RS-04",
+      "rows": [
+        {
+          "end": 20,
+          "start": 10
+        },
+        {
+          "end": 40,
+          "start": 30
+        }
+      ],
+      "source_map": [
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "ordinal": 1,
+          "regions": [
+            {
+              "end": 20,
+              "start": 10
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "ordinal": 2,
+          "regions": [
+            {
+              "end": 40,
+              "start": 30
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "ordinal": 1,
+          "regions": [
+            {
+              "end": 20,
+              "start": 10
+            }
+          ],
+          "role": "generated"
+        }
+      ]
+    },
+    {
+      "declaration": {
+        "end": 50,
+        "start": 0
+      },
+      "expected": {
+        "refused": {
+          "at": "/source_map/2",
+          "cause": "invalid-value",
+          "code": "invalid_package"
+        }
+      },
+      "name": "RS-05",
+      "rows": [
+        {
+          "end": 20,
+          "start": 10
+        },
+        {
+          "end": 40,
+          "start": 30
+        }
+      ],
+      "source_map": [
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "ordinal": 1,
+          "regions": [
+            {
+              "end": 40,
+              "start": 30
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "ordinal": 2,
+          "regions": [
+            {
+              "end": 40,
+              "start": 30
+            }
+          ],
+          "role": "generated"
+        }
+      ]
+    },
+    {
+      "declaration": {
+        "end": 50,
+        "start": 0
+      },
+      "expected": {
+        "refused": {
+          "at": "/source_map/2",
+          "cause": "invalid-value",
+          "code": "invalid_package"
+        }
+      },
+      "name": "RS-06",
+      "rows": [
+        {
+          "end": 20,
+          "start": 10
+        },
+        {
+          "end": 40,
+          "start": 30
+        }
+      ],
+      "source_map": [
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "ordinal": 1,
+          "regions": [
+            {
+              "end": 20,
+              "start": 10
+            }
+          ],
+          "role": "expression"
+        },
+        {
+          "ordinal": 2,
+          "regions": [
+            {
+              "end": 40,
+              "start": 30
+            }
+          ],
+          "role": "generated"
+        }
+      ]
+    },
+    {
+      "declaration": {
+        "end": 50,
+        "start": 0
+      },
+      "expected": {
+        "refused": {
+          "at": "/source_map/2",
+          "cause": "invalid-value",
+          "code": "invalid_package"
+        }
+      },
+      "name": "RS-07",
+      "rows": [
+        {
+          "end": 20,
+          "start": 10
+        },
+        {
+          "end": 40,
+          "start": 30
+        }
+      ],
+      "source_map": [
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "ordinal": 1,
+          "regions": [
+            {
+              "end": 20,
+              "start": 10
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "ordinal": 2,
+          "regions": [
+            {
+              "end": 40,
+              "start": 30
+            }
+          ],
+          "role": "generated"
+        }
+      ]
+    },
+    {
+      "declaration": {
+        "end": 50,
+        "start": 0
+      },
+      "expected": {
+        "refused": {
+          "at": "/source_map",
+          "cause": "invalid-value",
+          "code": "invalid_package"
+        }
+      },
+      "name": "RS-08",
+      "rows": [
+        {
+          "end": 20,
+          "start": 10
+        },
+        {
+          "end": 40,
+          "start": 30
+        }
+      ],
+      "source_map": [
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "declaration"
+        },
+        {
+          "ordinal": 0,
+          "regions": [
+            {
+              "end": 50,
+              "start": 0
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "ordinal": 1,
+          "regions": [
+            {
+              "end": 20,
+              "start": 10
+            }
+          ],
+          "role": "generated"
+        }
+      ]
+    }
+  ],
+  "note_regions": "half-open byte intervals under one source",
+  "version": "quire.refinement-step-occurrences/v1"
+}

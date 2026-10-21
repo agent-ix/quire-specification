@@ -14520,3 +14520,58 @@ fn tc_303_a_clause_application_has_no_absent_or_null_over_argument() {
         "a non-reference over argument fails"
     );
 }
+
+const REFINEMENT_STEP_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/refinement-step-occurrence-vectors.json");
+
+/// FR-322 "Refinement step occurrences": the refusal of a refinement owner's
+/// `source_map` entries, as `(source_map pointer)`, or `None` when admitted.
+/// `rows` are the step rows' regions in `steps` order, `declaration` the
+/// node's `declaration` region.
+fn refinement_step_refusal(case: &Value) -> Option<String> {
+    let rows = case["rows"].as_array().expect("rows");
+    let entries = case["source_map"].as_array().expect("source map");
+    let mut seen = std::collections::BTreeSet::new();
+    for (index, entry) in entries.iter().enumerate() {
+        let role = entry["role"].as_str().expect("role");
+        let ordinal = entry["ordinal"].as_u64().expect("ordinal") as usize;
+        let at = format!("/source_map/{index}");
+        if !seen.insert((role.to_owned(), ordinal)) {
+            return Some(at);
+        }
+        let required = match (role, ordinal) {
+            ("declaration", 0) | ("generated", 0) => Some(&case["declaration"]),
+            ("generated", n) if (1..=rows.len()).contains(&n) => Some(&rows[n - 1]),
+            _ => None,
+        };
+        match required {
+            Some(region) if entry["regions"] == json!([region]) => {}
+            _ => return Some(at),
+        }
+    }
+    (1..=rows.len())
+        .find(|ordinal| !seen.contains(&("generated".to_owned(), *ordinal)))
+        .map(|_| "/source_map".to_owned())
+}
+
+#[trace("TC-233", "FR-322-AC-88", "FR-322-AC-89")]
+#[test]
+fn tc_233_a_refinement_owner_carries_one_generated_occurrence_per_proof_obligation() {
+    let vectors = parsed_fixture(REFINEMENT_STEP_VECTORS);
+    let cases = vectors["cases"].as_array().expect("cases");
+    assert_eq!(cases.len(), 8);
+    for case in cases {
+        let name = case["name"].as_str().expect("name");
+        let refusal = refinement_step_refusal(case);
+        match (&case["expected"], refusal) {
+            (Value::String(admitted), None) => assert_eq!(admitted, "admitted", "{name}"),
+            (expected, Some(at)) => {
+                let refused = &expected["refused"];
+                assert_eq!(refused["code"], "invalid_package", "{name}");
+                assert_eq!(refused["cause"], "invalid-value", "{name}");
+                assert_eq!(refused["at"], at.as_str(), "{name}");
+            }
+            (expected, outcome) => panic!("{name}: expected {expected}, got {outcome:?}"),
+        }
+    }
+}
