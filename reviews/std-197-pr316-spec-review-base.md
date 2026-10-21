@@ -50,3 +50,20 @@ Base lens with EARS and integrity folded in. Gates: cargo tests pass (12 + 113);
 ## Verdict
 
 Mergeable; the three findings are low and can be fixed in this PR. The binder rule and the scope region match QSL FR-218 and ADR-027.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | low | The new SHALL (a role name used as a value outside its own until(p) refuses missing_declaration/missing-name) has no acceptance criterion. TC-382 RR-08 tests it with a `w` choice guard and cites FR-428-AC-8, but AC-8 covers only the until binder, the brace form and an unknown binder `z`. Fix: extend AC-8 (or add AC-10) with the choice-guard case. | spec/functional/protocol/FR-428-check-replicated-roles-and-per-trigger-activation.md:75-79 |
+| FND-005 | low | RR-08 says '(the Counter model's `Worker` gains it)', but TC-382's model is the Worker/Job model of its Test Procedure; 'Counter model' is TC-290's subject. Fix: say 'the model's `Worker` gains a Boolean field `done`'. | spec/test-cases/TC-382-replicated-role-lifetimes.md:40 |
+
+## Dispositions
+
+Round 1, head dedf57a4a.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fixed in dedf57a4a: RR-08 declares the Boolean field done on M::Worker and uses until(w.done), matching AC-8. |
+| FND-002 | fixed | Fixed in dedf57a4a: FR-428 and shared-grammar now say the binder is readable only in that role's own until(p), and a role name used as a value elsewhere refuses missing_declaration/missing-name. |
+| FND-003 | still-open | The commit message says 'paragraph placement' but the binder paragraph is still at shared-grammar.md:626, after verification-step (619), not next to the role production (495-499); only one sentence was appended to it. |

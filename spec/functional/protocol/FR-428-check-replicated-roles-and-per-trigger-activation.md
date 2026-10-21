@@ -135,6 +135,7 @@ obligation identity.
 | FR-428-AC-7 | An `on each` activation guard, or an `until(p)` retire predicate, that evaluates undefined at a reachable state settles every item over the subject `refuted` with cause `undefined-evaluation` naming that predicate's locus, never a disabled `activate` or `retire` step. | Test (TC-381, TC-382) |
 | FR-428-AC-8 | In `role w each M::Worker from workers max 2 lifetime until(w.done)`, `w` names one instance of type `Reference<M::Worker>` inside the `until` expression, and the same role written with a brace-delimited `until({w.done})` refuses `invalid_syntax`/`unexpected-token` at the `{`, while an `until` expression naming a binder other than `w` (`z`) refuses `missing_declaration`/`missing-name` at `z`. | Test (TC-382, TC-947) |
 | FR-428-AC-9 | With `Work` by `r` as the only node inside a `repeat`, a `scope` instance is not retired while the `repeat` can iterate again and retires in the step that leaves it; with `Work` nodes inside two sibling `sequence`s of one `parallel`, the region is the `parallel`, and the instance retires only after no live thread can reach either `Work`; with every `Work` directly in the root `run`, the region is the root. | Test (TC-382) |
+| FR-428-AC-10 | A role name used as a value outside its own `until(p)` refuses `missing_declaration`/`missing-name` at the name: `w` read in a `choice` guard of the protocol, in a node constraint, and in another replicated role's `until`, each refuse and none is read as the acting instance. | Test (TC-382) |
 
 ## Dependencies
 
