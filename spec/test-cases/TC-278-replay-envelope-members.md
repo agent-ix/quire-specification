@@ -12,7 +12,7 @@ relationships:
 ## Description
 
 Show that an FR-323 replay request's `replay` property carries the
-`ReplaySource`, the selected function's `QualifiedName`, arguments keyed by
+`ReplaySource`, the selected item (a function's `QualifiedName` or a frame operation), arguments keyed by
 parameter node id, the semantic profile selections, the failing node's
 occurrence key, the proof bounds and declared domains, the trace position
 and the `backend` member, and that a non-replay request carries no `replay`
@@ -25,7 +25,8 @@ request/result amendment, binding FR-323-AC-10..16 without a new TC id.
 - FR-197's `ReplaySource` structural separation (`Witness`/`Input`) exists.
 - FR-322 owns the `source_map` occurrence key (`node_id`, `role`, `ordinal`).
 - QSL ADR-011 E9: the `replay` facade resolves the selected function by
-  `QualifiedName` against the recompiled package's declarations.
+  `QualifiedName`, or the selected frame operation by `object` and `operation`,
+  against the recompiled package's declarations.
 - Supplied vectors require the reviewed real QSV FR-109 / QSL FR-277
   bounded path and actual QSL-675 typed native mapping before execution is
   qualified. Default vectors use the published A/H default 16777216 units each
@@ -93,6 +94,9 @@ and additional spend must be observed, not inferred from equal Booleans.
 | RE-27 | B omitted at the caller API with an Integer interval type, a Rational domain type, and a type needing neither; compare with B stated 4096 | Omitted B behaves exactly as B = 4096 for all three types: a 4096-bit value admits and a 4097-bit value refuses by the AC-15 `limit` cause with `limit` 4096; the type needing no numeric comparison is unaffected. No unsupported outcome exists in the envelope | FR-323-AC-15 |
 | RE-28 | Malformed B: -1, 1.5, 18446744073709551616 (above the u64 range), `null`, "64", true, and a missing `numeric_magnitude_bits` in an otherwise complete wire object; and B moved into replay `stage_limits` | Each is a typed input refusal before consumption (the misplaced B under the unknown-stage-setting rule before stages run); no fallback to a default or `integer_bits`; A, H and `integer_bits` settings are unchanged by a stated B | FR-323-AC-15 |
 | RE-29 | NORM. Nested type links `Option<Int[0,9]>` and `Sequence<Int[0,9]>`: with the expected and actual endpoint set widened in turn, each of the four Integer endpoints (`type-link-expected-lower`, `type-link-expected-upper`, `type-link-actual-lower`, `type-link-actual-upper`) at exactly B bits, then in turn at B+1 bits with the other three within B; a Rational pair with each of the eight endpoints (the four names with `-numerator`/`-denominator`) likewise, and a Decimal pair with each of the four coefficients (`type-link-expected-lower-coefficient`, `type-link-expected-upper-coefficient`, `type-link-actual-lower-coefficient`, `type-link-actual-upper-coefficient`) likewise | At exactly B all admit; at B+1 each refuses by the `limit` cause with that `type-link-` `operand`, `limit` B, `consumed` 0, `next_charge` and `counter` the B+1 bit length and `event` `type-comparison`, stopping on the charged `type-comparison` event (phase spend includes that one event) before the endpoint equality runs; the first over-B endpoint in the stated order decides; the type-link helper and its QSV caller exist, so the vector is runnable | FR-323-AC-16 |
+| RE-30 | A frame counterexample's replay request carrying `frame_operation` `{object, operation}`, no `function`, the frame node's `generated` occurrence key and arguments keyed by the operation's parameter node ids | Admitted; the selected item resolves by `object` and `operation` | FR-323-AC-18 |
+| RE-31 | RE-30's request with a `function` member added; then with `frame_operation` removed; then a function counterexample's RE-01 request with `frame_operation` in place of `function` | Each refused before consumption | FR-323-AC-18 |
+| RE-32 | RE-30's request with `operation` naming an operation the package does not declare | `missing_declaration`/`missing-name` naming it | FR-323-AC-18 |
 
 ## Expected Results
 
