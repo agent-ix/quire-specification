@@ -14611,3 +14611,187 @@ fn tc_233_a_refinement_owner_carries_one_generated_occurrence_per_proof_obligati
         }
     }
 }
+
+/// The operator identities FR-322 "Integer literal operands" lists, read from
+/// the requirement text.
+fn integer_literal_operand_operators() -> Vec<String> {
+    let text = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
+    let start = text
+        .find("**Integer literal operands.**")
+        .expect("FR-322 states the rule");
+    let paragraph = &text[start..start + text[start..].find("\n\n").expect("paragraph end")];
+    let mut operators = Vec::new();
+    let mut rest = paragraph;
+    while let Some(at) = rest.find("`quire.op.integer.") {
+        let tail = &rest[at + 1..];
+        let end = tail.find('`').expect("closing backtick");
+        operators.push(tail[..end].to_owned());
+        rest = &tail[end..];
+    }
+    operators
+}
+
+/// FR-322 "Integer literal operands": the integer operators' integer literal
+/// operands, typed at the builtin Integer node, are inline `literal` terms in
+/// every published producer-output package (`positive_fixtures()`, which omits
+/// the reader-admission fixture `positive-integer-literal-references.json`), and each listed operator has a recorded inline
+/// application vector.
+#[trace("TC-233", "FR-322-AC-92")]
+#[test]
+fn tc_233_integer_operator_literal_operands_are_inline_in_the_published_packages() {
+    let operators = integer_literal_operand_operators();
+    assert_eq!(operators.len(), 6, "{operators:?}");
+    let mut inline = BTreeMap::<String, usize>::new();
+    for (name, package) in positive_fixtures() {
+        let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
+        let integer = nodes
+            .iter()
+            .find(|node| node["node_tag"] == "scalar_type" && node["semantic_form"] == "integer")
+            .map(|node| node["node_id"].clone());
+        for node in nodes.iter().filter(|node| is_application_node(node)) {
+            let operation = node["body"]["operation"]["identity"].as_str().unwrap_or_default();
+            if !operators.iter().any(|listed| listed == operation) {
+                continue;
+            }
+            for operand in node["body"]["arguments"].as_array().expect("arguments") {
+                if operand["term"] == "literal" {
+                    assert_eq!(operand["value_kind"], "integer", "{name}");
+                    assert_eq!(Some(&operand["type"]), integer.as_ref(), "{name}");
+                    *inline.entry(name.to_owned()).or_default() += 1;
+                    if node["declaration"]["qualified_name"] == json!(["three"]) {
+                        assert_eq!(node["dependencies"], json!([]), "{name}: no operand node");
+                    }
+                } else if operand["term"] == "reference" {
+                    let target = nodes
+                        .iter()
+                        .find(|candidate| candidate["node_id"] == operand["target"])
+                        .expect("a reference names a node");
+                    let integer_literal = target["node_tag"] == "value"
+                        && target["semantic_form"] == "literal"
+                        && target["body"]["value_kind"] == "integer";
+                    assert!(!integer_literal, "{name}: {operation} references an integer literal node");
+                }
+            }
+        }
+    }
+    assert_eq!(inline["positive-two-owners-a"], 2);
+    assert_eq!(inline["positive-two-owners-b"], 2);
+    assert_eq!(inline["positive-operation-identities"], 4);
+    // The literal nodes for 7 and -2 stay for the operands that reference them.
+    let operation_package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    for value in ["7", "-2"] {
+        assert!(
+            operation_package["semantic_graph"]["nodes"]
+                .as_array()
+                .expect("nodes")
+                .iter()
+                .any(|node| node["semantic_form"] == "literal"
+                    && node["body"]["value_kind"] == "integer"
+                    && node["body"]["value"] == value),
+            "the {value} literal node is present"
+        );
+    }
+    // One recorded inline application per listed operator, and none beyond.
+    let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let application_schema =
+        schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "ApplicationNode");
+    let cases = vectors["inline_literal_cases"].as_array().expect("cases");
+    let recorded: BTreeSet<&str> = cases
+        .iter()
+        .map(|case| case["operation"].as_str().expect("operation"))
+        .collect();
+    let listed: BTreeSet<&str> = operators.iter().map(String::as_str).collect();
+    assert_eq!(recorded, listed, "one case per listed operator");
+    for case in cases {
+        let name = case["name"].as_str().expect("name");
+        application_schema
+            .validate(&case["preimage"])
+            .unwrap_or_else(|error| panic!("{name} preimage is closed: {error}"));
+        assert_eq!(
+            unqualified_jcs_sha256(&case["preimage"]),
+            case["sha256"].as_str().expect("digest"),
+            "{name}"
+        );
+        assert_eq!(
+            case["preimage"]["body"]["operation"]["identity"], case["operation"],
+            "{name}: the case names its preimage's operation"
+        );
+        // The reference form of the same application: each inline operand
+        // replaced by a reference to the published literal node of its value.
+        let integer = operation_package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .find(|node| node["node_tag"] == "scalar_type" && node["semantic_form"] == "integer")
+            .expect("the Integer node")["node_id"]
+            .clone();
+        let mut by_reference = case["preimage"].clone();
+        for operand in by_reference["body"]["arguments"]
+            .as_array_mut()
+            .expect("arguments")
+        {
+            assert_eq!(operand["term"], "literal", "{name}: operands are inline");
+            assert_eq!(operand["value_kind"], "integer", "{name}");
+            assert_eq!(operand["type"], integer, "{name}: typed at the Integer node");
+            let node = operation_package["semantic_graph"]["nodes"]
+                .as_array()
+                .expect("nodes")
+                .iter()
+                .find(|node| {
+                    node["semantic_form"] == "literal"
+                        && node["body"]["value_kind"] == "integer"
+                        && node["body"]["value"] == operand["value"]
+                })
+                .unwrap_or_else(|| panic!("{name}: a published literal node of the value"));
+            *operand = json!({"term": "reference", "target": node["node_id"]});
+        }
+        assert_eq!(
+            unqualified_jcs_sha256(&by_reference),
+            case["reference_form_sha256"].as_str().expect("digest"),
+            "{name}: the reference form's recorded key"
+        );
+        assert_ne!(case["sha256"], case["reference_form_sha256"], "{name}");
+    }
+}
+
+const POSITIVE_INTEGER_LITERAL_REFERENCES: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-integer-literal-references.json");
+
+/// FR-322 "Integer literal operands": the rule binds the producer. A package
+/// whose `quire.op.integer.add` application references literal nodes is
+/// admitted by the reader, under its own node identity.
+#[trace("TC-233", "FR-322-AC-93")]
+#[test]
+fn tc_233_a_reader_admits_the_reference_form_of_an_integer_literal_operand() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let references = parsed_fixture(POSITIVE_INTEGER_LITERAL_REFERENCES);
+    v2.validate(&references)
+        .unwrap_or_else(|error| panic!("the reference form has the closed V2 shape: {error}"));
+    assert_eq!(read_package_semantics(&references, &catalog), Ok(()));
+    let application = |package: &Value| {
+        package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .find(|node| node["declaration"]["qualified_name"] == json!(["three"]))
+            .expect("the `three` application")
+            .clone()
+    };
+    let referenced = application(&references);
+    assert_eq!(referenced["body"]["operation"]["identity"], "quire.op.integer.add");
+    assert!(
+        referenced["body"]["arguments"]
+            .as_array()
+            .expect("arguments")
+            .iter()
+            .all(|operand| operand["term"] == "reference"),
+        "the published operands are references"
+    );
+    let inline = application(&parsed_fixture(POSITIVE_TWO_OWNERS_A));
+    assert_ne!(
+        referenced["node_id"], inline["node_id"],
+        "the reference form has a different node identity"
+    );
+    assert_ne!(references["package_id"], parsed_fixture(POSITIVE_TWO_OWNERS_A)["package_id"]);
+}
