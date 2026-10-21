@@ -2113,6 +2113,52 @@
           ]
         }
       }
+    },
+    {
+      "name": "refinement-hypotheses-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/cause": "FR-468"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "hypotheses-not-established",
+              "hypothesis": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "dc1dee8382c4d6bf958f84a637db1d2168a3dbef00a3bbd0c14241178860e9b9"
+              },
+              "result": "refuted"
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result",
+            "method": "exploration",
+            "max_depth": 40,
+            "limits": {
+              "max_states": 250000
+            }
+          }
+        ]
+      }
     }
   ],
   "adverse": [
@@ -3379,6 +3425,30 @@
           "op": "replace",
           "path": "/results/2/cause/type",
           "value": "confidence-beyond-precisions"
+        }
+      ]
+    },
+    {
+      "name": "hypotheses-not-established-bare-hypothesis",
+      "base": "refinement-hypotheses-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/hypothesis",
+          "value": "dc1dee8382c4d6bf958f84a637db1d2168a3dbef00a3bbd0c14241178860e9b9"
+        }
+      ]
+    },
+    {
+      "name": "hypotheses-not-established-extra-member",
+      "base": "refinement-hypotheses-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/0/cause/premise",
+          "value": 0
         }
       ]
     }

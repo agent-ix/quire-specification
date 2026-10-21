@@ -50,3 +50,12 @@ EARS lens over FR-468's requirement statement, Behavior rules and ACs. The Descr
 ## Verdict
 
 Mergeable on this lens alone after FND-001 (an undefined term that decides between two results); FND-002 is wording.
+
+## Dispositions
+
+Round 1, head a56c80c5c.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fixed in a56c80c5c: The checker SHALL check the certificate as FR-354 does, so a certificate that arrives without its base part, without a row's step part, with a step part in the base position, or with a part whose carried query differs from the core's encoding, settles `inconclusive`, cause `certificate-rejected{rule, at}` with `at` naming the part (FR-354's shape and query mismatch cases). A proof that arrives with no certificate at all, and a part using a rule outside the checked set with no failed check, are not rejected: the corresponding query settles `proved` with certification `uncert |
+| FND-002 | fixed | Fixed in a56c80c5c: The checker SHALL settle the safety half by the following rules, taking the first that applies in the order initial query, hypothesis items, then step queries in `steps` order: - **Initial counterexample.** A backend counterexample to the initial query is a concrete initial state whose image is no a |

@@ -44,3 +44,13 @@ Integrity lens: consistency of FR-468 with FR-377 Engines, FR-375's `steps` orde
 ## Verdict
 
 Mergeable on this lens alone; three low wording and link findings.
+
+## Dispositions
+
+Round 1, head a56c80c5c.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fixed in a56c80c5c: An admitted refinement declaration ([FR-375](FR-375-declare-model-refinement.md)) with no hidden field, history field or `any` row, the invariant clauses whose context is an object type of the concrete model, and a proof backend's outcome and refutation certificates for the queries. ## Outputs For e |
+| FND-002 | fixed | Fixed in a56c80c5c: relationships: ... - target: ix://agent-ix/quire-specification/FR-468 type: references |
+| FND-003 | fixed | Fixed in a56c80c5c: Every query carries the *hypotheses*: the invariant clauses whose context is an object type of the concrete model (the abstract model's invariants are not hypotheses), the same list the per-step simulation record carries (quire-semantic-value FR-123). - **Initial query.** The negation of: for every concrete initial state satisfying the hypotheses, the state maps to an abstract initial state. It ca |
