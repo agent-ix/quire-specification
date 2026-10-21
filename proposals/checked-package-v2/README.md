@@ -138,7 +138,7 @@ structures, but any external consumer receives only the contract.
   closed `ModelDeclarationNode` preimage of `node-identity-preimage.schema.json`.
   It is operand 0 of `quire.op.model.all_instances` and `quire.op.model.lookup`
   and carries no member type or maximum. `fixtures/adverse.json`'s
-  `population_reference_cases` read it through the full reader, and
+  `population_reference_cases` read it through the full reader against the FCD populations of its `selected_document_populations`, and
   `model-owner-form-vectors.json` carries the `populations` list of its
   `acme/runs` projection, the node vectors `P7` and `P8` and the owner cases
   `PR-01` to `PR-06`.

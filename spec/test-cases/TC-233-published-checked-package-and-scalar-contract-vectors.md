@@ -290,12 +290,12 @@ recomputed from their hand-written RFC 8785 preimages to the keys FR-322 publish
 `adverse.json` `population_reference_cases` holds `parameter-operand-admitted`
 (the published fixture's `Population<Order>[2]` binding operand),
 `counters-all-instances-admitted`, `counters-lookup-admitted` and `archive-all-instances-admitted`
-(a `relation`/`population` node owned by a population of the selected document, referenced as
+(a `relation`/`population` node owned by a population of the selected document, whose `counters` and `archive` entries `adverse.json` publishes as `selected_document_populations` (FCD populations keyed by `identity`), referenced as
 operand 0, with its key and its application's key recomputed; the `counters` and `archive`
 nodes, applications and package ids differ and `counters` is one node for both operations),
 each admitted; `population-owned-by-an-object-type` and `population-owned-by-an-undeclared-node`
 (`missing_declaration`/`missing-selection` at the population node);
-`population-without-an-owner` (`malformed_wire`); and
+`population-without-an-owner` (`malformed_wire`); `population-entry-without-an-identity-refused` (entries that carry a `node` and no `identity`), `population-entry-with-a-node-member-refused` (the published entries plus a `node` member) and `population-entry-lacking-only-an-identity-refused` (the published entries with one `identity` removed), each `invalid_model_binding`/`malformed-declaration` at `package_read`, at `/lock/model_selections/0`, before the owner join (FR-322-AC-82); and
 `population-as-a-relationship-declaration`, `population-as-a-field-declaration`,
 `population-as-an-operation-declaration`, `population-as-a-reaches-population-link` and
 `population-as-a-collection-operand`

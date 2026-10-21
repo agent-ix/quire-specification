@@ -336,10 +336,44 @@
     ],
     "populations": [
       {
-        "node": "ix://acme/runs/counters"
+        "displayName": "counters",
+        "extent": "closed",
+        "identity": "ix://acme/runs/counters",
+        "kind": {
+          "module": "acme/runs",
+          "name": "population"
+        },
+        "members": [
+          "ix://acme/runs/Counter"
+        ],
+        "origin": {
+          "source": {
+            "path": "runs/counters.md",
+            "sourceIdentity": "ix://acme/runs/spec",
+            "startColumn": 1,
+            "startLine": 1
+          }
+        }
       },
       {
-        "node": "ix://acme/runs/archive"
+        "displayName": "archive",
+        "extent": "closed",
+        "identity": "ix://acme/runs/archive",
+        "kind": {
+          "module": "acme/runs",
+          "name": "population"
+        },
+        "members": [
+          "ix://acme/runs/Counter"
+        ],
+        "origin": {
+          "source": {
+            "path": "runs/archive.md",
+            "sourceIdentity": "ix://acme/runs/spec",
+            "startColumn": 1,
+            "startLine": 1
+          }
+        }
       }
     ],
     "processes": [

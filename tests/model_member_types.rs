@@ -143,7 +143,7 @@ fn declarations(package: &Value) -> Vec<Declared<'_>> {
         .map(|population| Declared {
             tag: "relation",
             form: "population",
-            node: text(population, "node"),
+            node: text(population, "identity"),
             object_type: None,
         });
     objects
@@ -488,7 +488,11 @@ fn owner_declares(package: &Value, node: &Value, owner_node: &str) -> bool {
         ("relation", "relationship") => array(package, "relationships")
             .iter()
             .any(|relationship| relationship["node"] == owner_node),
-        ("relation", "population") => declares_in(package, "populations", owner_node),
+        // A population is declared by its raw `PopulationRecord`, keyed by
+        // `identity`; the reader reads no `node` member of it (FR-322 owner join).
+        ("relation", "population") => array_or_empty(package, "populations")
+            .iter()
+            .any(|population| population["identity"] == owner_node),
         ("function", _) => match clause_kind(node) {
             // An invariant clause is owned by its object type; a
             // precondition or body clause by an operation member of an
@@ -2316,6 +2320,48 @@ fn tc_280_a_population_reference_node_is_keyed_by_its_declaration_key_alone() {
             case["expected"],
             "{}",
             text(case, "name")
+        );
+    }
+    // Each projected population is an FCD semantic IR 2.0.0 population: the six
+    // required members and the optional `symmetric`, and nothing else.
+    for population in array(package, "populations") {
+        let members: std::collections::BTreeSet<&str> = population
+            .as_object()
+            .expect("a population is an object")
+            .keys()
+            .map(String::as_str)
+            .collect();
+        let required = [
+            "displayName",
+            "extent",
+            "identity",
+            "kind",
+            "members",
+            "origin",
+        ];
+        assert!(
+            required.iter().all(|member| members.contains(member)),
+            "a population carries {required:?}"
+        );
+        assert!(
+            members
+                .iter()
+                .all(|member| required.contains(member) || *member == "symmetric"),
+            "a population carries no member beyond the six and `symmetric`: {members:?}"
+        );
+        assert!(text(population, "identity").starts_with("ix://"));
+        assert!(matches!(text(population, "extent"), "closed" | "open"));
+        text(&population["kind"], "module");
+        text(&population["kind"], "name");
+        assert!(array(population, "members").iter().all(Value::is_string));
+        let origin = population["origin"].as_object().expect("an origin object");
+        assert_eq!(
+            origin
+                .keys()
+                .filter(|key| *key == "source" || *key == "generated")
+                .count(),
+            1,
+            "an origin is exactly one of `source` or `generated`"
         );
     }
 }

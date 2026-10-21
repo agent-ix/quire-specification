@@ -2703,6 +2703,14 @@ fn document_declares_owner(document: &Value, node: &Value, owner_node: &str) -> 
             .flatten()
             .any(|declared| declared["node"] == owner_node)
     };
+    // A population is declared by its FCD record, keyed by `identity`.
+    let declares_population = || {
+        document["populations"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .any(|population| population["identity"] == owner_node)
+    };
     let declares_object_type = |interface: bool| {
         object_types.clone().any(|object| {
             object["node"] == owner_node && object["interfaceFeatures"].is_null() != interface
@@ -2719,7 +2727,7 @@ fn document_declares_owner(document: &Value, node: &Value, owner_node: &str) -> 
             .into_iter()
             .flatten()
             .any(|relationship| relationship["node"] == owner_node),
-        (Some("relation"), Some("population")) => declares_in("populations"),
+        (Some("relation"), Some("population")) => declares_population(),
         (Some("function"), _) => match clause_kind(node) {
             // An invariant clause is owned by its object type.
             Some("invariant") => object_types.clone().any(|object| {
@@ -2850,6 +2858,10 @@ fn application_node_is_valid(node: &Value, nodes: &[Value]) -> bool {
 #[derive(Clone, Debug, PartialEq)]
 enum ReadRefusal {
     GraphShape(Value),
+    /// `invalid_model_binding`/`malformed-declaration` at `package_read`: a
+    /// `populations` entry of the selected document that is no FCD population.
+    /// The locus is the selection row (`/lock/model_selections/<i>`).
+    PopulationRecord(String),
     /// `missing_declaration`/`missing-selection` at a node whose `owner` the
     /// lock does not select or whose selected document does not declare it.
     OwnerSelection(Value),
@@ -2895,6 +2907,25 @@ fn package_cause_code(cause: &str) -> Option<&'static str> {
 }
 
 fn read_package_semantics(package: &Value, catalog: &Value) -> Result<(), ReadRefusal> {
+    // FR-322 "Model-owned members" step 1 reads the selected document before
+    // graph admission; an entry that is no FCD population refuses it.
+    if package
+        .pointer("/model_bindings/domain_package/populations")
+        .and_then(Value::as_array)
+        .is_some_and(|populations| {
+            populations.iter().any(|population| {
+                !population["identity"].is_string() || population.get("node").is_some()
+            })
+        })
+    {
+        let row = package["lock"]["model_selections"]
+            .as_array()
+            .and_then(|rows| rows.iter().position(|row| row["identity"] == "acme/orders"))
+            .expect("the selection row of the read document");
+        return Err(ReadRefusal::PopulationRecord(format!(
+            "/lock/model_selections/{row}"
+        )));
+    }
     let nodes = package["semantic_graph"]["nodes"]
         .as_array()
         .expect("package nodes are an array");
@@ -13011,7 +13042,7 @@ fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
     let cases = adverse["population_reference_cases"]
         .as_array()
         .expect("cases");
-    assert_eq!(cases.len(), 12);
+    assert_eq!(cases.len(), 15);
     let mut admitted = BTreeMap::<String, (Value, Value, Value)>::new();
     for case in cases {
         let id = case["id"].as_str().expect("id");
@@ -13024,10 +13055,28 @@ fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
         let mut population_id = Value::Null;
         if operation != "published" {
             let mut document = parsed_fixture(MODEL_MEMBER_TYPE_VECTORS)["domain_package"].clone();
-            document["populations"] = json!([
-                {"node": "ix://acme/orders/counters"},
-                {"node": "ix://acme/orders/archive"}
-            ]);
+            document["populations"] = adverse["selected_document_populations"].clone();
+            // Each malformed shape alone: a `node` member and no `identity`
+            // (the old shape), a `node` member beside an `identity`, an entry
+            // with only its `identity` removed.
+            match case["document_populations"].as_str() {
+                Some("node-only") => {
+                    document["populations"] = json!([
+                        {"node": "ix://acme/orders/counters"},
+                        {"node": "ix://acme/orders/archive"}
+                    ]);
+                }
+                Some("with-node-member") => {
+                    document["populations"][0]["node"] = json!("ix://acme/orders/counters");
+                }
+                Some("without-identity") => {
+                    document["populations"][0]
+                        .as_object_mut()
+                        .expect("a population")
+                        .remove("identity");
+                }
+                _ => {}
+            }
             let selection = json!([{
                 "identity": "acme/orders",
                 "digest_domain": "sha256-jcs",
@@ -13171,6 +13220,11 @@ fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
                     ("missing_declaration", "missing-selection")
                 }
                 Err(ReadRefusal::Operation(refusal)) => (refusal.code(), refusal.cause()),
+                // FR-154 step 1 refuses the document before any graph check.
+                Err(ReadRefusal::PopulationRecord(locus)) => {
+                    assert_eq!(locus, "/lock/model_selections/0", "{id}: the selection row");
+                    ("invalid_model_binding", "malformed-declaration")
+                }
                 other => panic!("{id}: unexpected {other:?}"),
             };
             assert_eq!(case["expected_code"], code, "{id}");

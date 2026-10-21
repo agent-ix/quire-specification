@@ -63,8 +63,10 @@ the member type from the resolved record.
   `n`, operation `go(step: Integer): Integer`), the process `SubFlow`
   specializing `Flow` (field `m`), the state machine `Gate` (field `open`,
   operations `toggle` and `check(): Boolean`) and the persistence interface
-  `Store` (operation `save`), and the `populations` list, whose entries carry
-  only a `node`: the populations `counters` and `archive`. Its model
+  `Store` (operation `save`), and the `populations` list, whose entries are FCD populations
+  (`identity`, `displayName`, `kind`, `members`, `extent`, `origin`): the
+  populations `counters` and `archive`, whose `identity` is the IR node
+  identity. Its model
   declaration node vectors `P1` to `P6`
   name the declarations in that order (`Counter`, `Flow`, `SubFlow`, `Gate`, `Store`,
   `Plug`; `P2` is `Flow`), and `P7` and `P8` the populations `counters` and
