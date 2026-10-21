@@ -36,3 +36,10 @@ Units examined:
 ## Verdict
 
 Mergeable. Two low findings: the section heading and the untouched Status section still read as tracking/status notes. Neither is a wrong statement.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
