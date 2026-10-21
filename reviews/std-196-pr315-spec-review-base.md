@@ -53,3 +53,21 @@ Base lens with EARS, integrity and failure-domain folded in. Gates: cargo tests 
 ## Verdict
 
 Not mergeable: FND-001 and FND-002 are internal contradictions with FR-153 and FR-363. FND-003 should be fixed here because the provision encoding is what this push added. FND-004 makes TC-290 step 7 buildable. The design choices (conservative mixed-population refutation, no type-test operator) are flagged as judgment calls in the PR body and are not findings.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-006 | high | FR-361:64-67 and FR-361-AC-8 still say an item has zero instances, and settles `no-instance`, when no object of the universes conforms to T. Under the new overlap rule an item has one instance per key of every overlapping population, whatever the object under the key, and keys are untyped. Example: `over (x: Counter)` with only `all: Entity = [e]`, e not a Counter: the instance rule gives instance (`all`, `e`), which an unguarded read refutes `undefined-evaluation` (as AC-11 does), while AC-8 says `inconclusive`/`no-instance`. This was already latent at round 0 (supertype populations), and #314's no-instance sentence repeats the 'no conforming object' wording. Fix: restate zero instances as 'no overlapping population has a key' in the paragraph and in AC-8, and have #314's rebase use that wording. | spec/functional/temporal/FR-361-read-model-behaviours-as-temporal-traces.md:64-67 |
+
+## Dispositions
+
+Round 1, head f9118b199.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fixed in f9118b199: Instances now come from populations that overlap T (either direction of conformance), defined in FR-361 itself, with a subtype-only population in AC-9. |
+| FND-002 | fixed | Fixed in f9118b199: The first refuted instance now decides reported instance, counterexample, basis and cause; AC-10 adds the mixed-cause vector (cause none at (all, c) under [c, e], undefined-evaluation at (all, e) under [e, c]), which I checked against TC-290's fixture. |
+| FND-003 | fixed | Fixed in f9118b199: The provision form is now FR-361's own closed {universe, identity} key, with FR-181 cited only for the hex spelling; vectors recomputed without type. |
+| FND-004 | fixed | Fixed in f9118b199: Step 7 now states its universes (counters = [c, d], all = [c, e], specials = [s]), names the refuted claim and the permuted list; AC-9 matches. |
+| FND-005 | fixed | Fixed in f9118b199: Binding and matching are now SHALL statements. |

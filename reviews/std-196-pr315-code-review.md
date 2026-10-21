@@ -34,3 +34,12 @@ Mutations of `universe_provision_vectors`: adding `object_type` to a key, changi
 ## Verdict
 
 FND-001 should be fixed with the provision encoding; FND-002 is cosmetic.
+
+## Dispositions
+
+Round 1, head f9118b199.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fixed in f9118b199: Test now asserts the exact member set and the hex patterns. Re-mutated with jcs and digest recomputed: dropping universe, adding type: key, an uppercase identity and a 2-digit universe each fail the test. |
+| FND-002 | fixed | Fixed in f9118b199: vectors.json ends with a newline; the trailing blank line in tests/backend_provider_v1.rs is gone. |

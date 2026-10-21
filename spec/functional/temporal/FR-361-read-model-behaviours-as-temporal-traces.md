@@ -62,10 +62,12 @@ part of every verdict's scope and of every obligation identity that reads it
 ([FR-368](FR-368-negotiate-temporal-model-check-items.md)).
 
 The `requires-bound` classification below runs first. Only over bounded
-universes is an item whose `over` parameter ranges over a type that no object
-of the universes conforms to (an empty universe included) found to have zero
-instances; a matching population with no universe is `requires-bound`, never
-`no-instance`. The
+universes is an item with zero instances found, an item having zero
+instances when no population overlaps its `over` type or every overlapping
+population has an empty universe (no overlapping population has a key); a
+matching population with no universe is `requires-bound`, never
+`no-instance`. A key whose object does not conform to the type is still an
+instance (below), so it never makes the item `no-instance`. The
 analyzer SHALL settle it `inconclusive` with cause `no-instance` before it
 explores any state, so an item that was never evaluated is never read as
 holding.
@@ -187,7 +189,7 @@ added: over a population that holds a key whose object does not conform to
 | FR-361-AC-5 | A clause `over (x: T)` over a universe of two objects of `T` is checked once per object; it holds for the subject only when both checks hold, and its refutation names the refuted object. | Test (TC-290) |
 | FR-361-AC-6 | An unguarded read through the bound object at a reachable position where that object is absent settles the item `refuted` with cause `undefined-evaluation` naming the binding, the position and the read's locus, the same outcome as the `lookup ... absent undefined` spelling of that read; the same read guarded by population membership evaluates. | Test (TC-290, TC-305) |
 | FR-361-AC-7 | A subject with an unbounded population root and no universe returns `requires-bound` before expansion; a subject with an empty list of initial states settles `inconclusive` with cause `no-initial-state`. | Test (TC-294) |
-| FR-361-AC-8 | An item with zero instances, over a type that no object of the universes conforms to or over an empty universe, settles `inconclusive` with cause `no-instance` before any state is explored, and never `proved` or `refuted`; the same item over a population with no universe returns `requires-bound`, not `no-instance`. | Test (TC-294) |
+| FR-361-AC-8 | An item with zero instances, because no population overlaps its `over` type or every overlapping population has an empty universe, settles `inconclusive` with cause `no-instance` before any state is explored, and never `proved` or `refuted`; the same item over a population with no universe returns `requires-bound`, not `no-instance`; an item over `Counter` whose only population is `all: Entity = [e]` with `e` not a `Counter` has the instance (`all`, `e`) and is not `no-instance`. | Test (TC-294, TC-290) |
 | FR-361-AC-9 | A clause `over (x: Counter)` over a subject with populations `counters` (member type `Counter`) and `all` (member type `Entity`, a supertype of `Counter`), universes `counters = [c, d]` and `all = [c, e]`, has instances (`all`, `c`), (`all`, `e`), (`counters`, `c`), (`counters`, `d`) in that order: population declaration identity text, then universe order; a population `specials` whose only member type is `SpecialCounter`, a subtype of `Counter`, also yields instances, and a population of an unrelated type yields none. | Test (TC-290) |
 | FR-361-AC-10 | The item is `refuted` exactly when some instance is refuted, for every permutation of the universe lists; the reported instance, counterexample, basis and cause are those of the first refuted instance in the instance order: with `all = [c, e]` and the unguarded claim `always holds(x.value <= 0)`, where (`all`, `c`) refutes by a false evaluation after `inc` and (`all`, `e`) by an undefined read, the cause is none and the counterexample names (`all`, `c`), and with `all = [e, c]` the cause is `undefined-evaluation` and it names (`all`, `e`); permuting a universe list changes the request identity. | Test (TC-290) |
 | FR-361-AC-11 | Over `Counter` instances of `all`, the instance (`all`, `e`), whose key holds an `Entity` that is not a `Counter`, reads `absent-key` through `x`: an unguarded `holds(x.value >= 0)` refutes with `undefined-evaluation` naming (`all`, `e`), while the same read guarded by `lookup<Counter>(all, x)` being `some` evaluates and the instance holds. | Test (TC-290) |
