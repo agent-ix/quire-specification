@@ -336,10 +336,44 @@
     ],
     "populations": [
       {
-        "node": "ix://acme/runs/counters"
+        "displayName": "counters",
+        "extent": "closed",
+        "identity": "ix://acme/runs/counters",
+        "kind": {
+          "module": "acme/runs",
+          "name": "population"
+        },
+        "members": [
+          "ix://acme/runs/Counter"
+        ],
+        "origin": {
+          "source": {
+            "path": "runs/counters.md",
+            "sourceIdentity": "ix://acme/runs/spec",
+            "startColumn": 1,
+            "startLine": 1
+          }
+        }
       },
       {
-        "node": "ix://acme/runs/archive"
+        "displayName": "archive",
+        "extent": "closed",
+        "identity": "ix://acme/runs/archive",
+        "kind": {
+          "module": "acme/runs",
+          "name": "population"
+        },
+        "members": [
+          "ix://acme/runs/Counter"
+        ],
+        "origin": {
+          "source": {
+            "path": "runs/archive.md",
+            "sourceIdentity": "ix://acme/runs/spec",
+            "startColumn": 1,
+            "startLine": 1
+          }
+        }
       }
     ],
     "processes": [
@@ -849,6 +883,28 @@
       "node_tag": "relation",
       "owner_node": "ix://acme/runs/counters",
       "semantic_form": "relationship"
+    },
+    {
+      "expected": {
+        "refused": {
+          "cause": "missing-selection",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "PR-07",
+      "node_tag": "relation",
+      "owner_node": "ix://acme/runs/counters",
+      "projection_override": {
+        "populations": [
+          {
+            "node": "ix://acme/runs/counters"
+          },
+          {
+            "node": "ix://acme/runs/archive"
+          }
+        ]
+      },
+      "semantic_form": "population"
     }
   ],
   "receiver_frame_cases": [

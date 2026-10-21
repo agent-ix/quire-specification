@@ -143,7 +143,7 @@ fn declarations(package: &Value) -> Vec<Declared<'_>> {
         .map(|population| Declared {
             tag: "relation",
             form: "population",
-            node: text(population, "node"),
+            node: text(population, "identity"),
             object_type: None,
         });
     objects
@@ -488,7 +488,11 @@ fn owner_declares(package: &Value, node: &Value, owner_node: &str) -> bool {
         ("relation", "relationship") => array(package, "relationships")
             .iter()
             .any(|relationship| relationship["node"] == owner_node),
-        ("relation", "population") => declares_in(package, "populations", owner_node),
+        // A population is declared by its raw `PopulationRecord`, keyed by
+        // `identity`; the reader reads no `node` member of it (FR-322 owner join).
+        ("relation", "population") => array_or_empty(package, "populations")
+            .iter()
+            .any(|population| population["identity"] == owner_node),
         ("function", _) => match clause_kind(node) {
             // An invariant clause is owned by its object type; a
             // precondition or body clause by an operation member of an
@@ -2217,13 +2221,27 @@ fn tc_280_process_state_machine_and_persistence_owners_join_the_selected_documen
         );
     }
     for case in array(&vectors, "owner_cases") {
+        let projected = case_projection(package, case);
         assert_eq!(
-            read_wire(package, &owner_form_node(package, case)),
+            read_wire(&projected, &owner_form_node(&projected, case)),
             case["expected"],
             "{}",
             text(case, "name")
         );
     }
+}
+
+/// The projection a case reads: the vectors' own, with the members the case's
+/// `projection_override` replaces (PR-07: populations that carry a `node`
+/// member and no `identity`).
+fn case_projection(package: &Value, case: &Value) -> Value {
+    let mut projected = package.clone();
+    if let Some(overrides) = case["projection_override"].as_object() {
+        for (member, value) in overrides {
+            projected[member] = value.clone();
+        }
+    }
+    projected
 }
 
 /// FR-322-AC-82: a declared population is a self-typed `relation`/`population`
@@ -2311,11 +2329,18 @@ fn tc_280_a_population_reference_node_is_keyed_by_its_declaration_key_alone() {
         .iter()
         .filter(|case| text(case, "name").starts_with("PR-"))
     {
+        let projected = case_projection(package, case);
         assert_eq!(
-            read_wire(package, &owner_form_node(package, case)),
+            read_wire(&projected, &owner_form_node(&projected, case)),
             case["expected"],
             "{}",
             text(case, "name")
+        );
+    }
+    for population in array(package, "populations") {
+        assert!(
+            population.get("node").is_none() && population["identity"].is_string(),
+            "the projection carries the raw PopulationRecord, keyed by identity"
         );
     }
 }

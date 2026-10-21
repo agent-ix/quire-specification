@@ -63,8 +63,10 @@ the member type from the resolved record.
   `n`, operation `go(step: Integer): Integer`), the process `SubFlow`
   specializing `Flow` (field `m`), the state machine `Gate` (field `open`,
   operations `toggle` and `check(): Boolean`) and the persistence interface
-  `Store` (operation `save`), and the `populations` list, whose entries carry
-  only a `node`: the populations `counters` and `archive`. Its model
+  `Store` (operation `save`), and the `populations` list, whose entries are the raw
+  `PopulationRecord`s `{identity, displayName, kind, members, extent, origin}`
+  and carry no `node`: the populations `counters` and `archive`, whose
+  `identity` is the IR node identity. Its model
   declaration node vectors `P1` to `P6`
   name the declarations in that order (`Counter`, `Flow`, `SubFlow`, `Gate`, `Store`,
   `Plug`; `P2` is `Flow`), and `P7` and `P8` the populations `counters` and
@@ -224,6 +226,7 @@ process or state machine.
 | PR-04 | A `model`/`object_type` wire node owned by `counters`, a population | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-82 |
 | PR-05 | A `relation`/`population` wire node owned by `Nope`, which the document does not declare | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-82 |
 | PR-06 | A `relation`/`relationship` wire node owned by `counters`, a population | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-82 |
+| PR-07 | The PR-01 node against a projection whose `populations` entries carry a `node` member and no `identity` (`projection_override`) | `missing_declaration`/`missing-selection` at the owner join: an entry without `identity` declares no population | FR-322-AC-82 |
 | FP-01 | Frame field entry `(P2, "n")`, `P2` being `Flow` | Resolves `Flow/n` | FR-340-AC-19 |
 | FP-02 | Frame field entry `(P3, "n")`, `P3` being `SubFlow` | Resolves `Flow/n` | FR-340-AC-19 |
 | FP-03 | Frame field entry `(P4, "open")`, `P4` being `Gate` | Resolves `Gate/open` | FR-340-AC-19 |
