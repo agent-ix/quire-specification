@@ -771,12 +771,14 @@ fixed by the schema, whatever the model's size.
 **Integer literal operands.** The producer SHALL write an integer literal
 operand of `quire.op.integer.add`, `quire.op.integer.sub`,
 `quire.op.integer.mul`, `quire.op.integer.negate`, `quire.op.integer.eq` and
-`quire.op.integer.ne` as an inline `literal` term, a singleton domain with
-`value_kind` `integer`, whose `type` is the builtin Integer node, and no
-`value`/`literal` node stands for it. A literal under a narrowing conversion
-(`quire.op.numeric.narrow`), a literal in any other position, and an operand of
-composite, Boolean or non-integer equality are graph children, each its own
-node reached by `reference`.
+`quire.op.integer.ne` as an inline `literal` term `{term, type, value,
+value_kind}` with `value_kind` `integer` and `type` the builtin Integer node,
+and no `value`/`literal` node SHALL stand for it. A literal under a narrowing
+conversion (`quire.op.numeric.narrow`), a literal in any other position, and
+an operand of composite or non-integer equality SHALL be a graph child, its own
+node reached by `reference`. The rule binds the producer: a reader SHALL admit
+the reference form of such an operand as well, which yields a different node
+identity, and SHALL NOT refuse it for that form.
 
 Every composite subterm is its own node, reached by `reference`: an
 application never stands inside another application's arguments, an
@@ -1837,7 +1839,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-89 | With the rows written in the order `R1`, `R0` and the `steps` order `R0`, `R1`, ordinal 1 holds `R0`'s region and ordinal 2 `R1`'s (`RS-02`). | Test (TC-233) |
 | FR-322-AC-90 | A proof-eligible refinement owner with two step rows refuses `invalid_package`/`invalid-value` at the offending `source_map` entry for a `generated` occurrence at ordinal 3, for a second entry with the key of an existing occurrence, for a `generated` occurrence at ordinal 1 that carries `R1`'s region, for an `expression` occurrence at ordinal 1 and for a `declaration` occurrence at ordinal 1; and at `/source_map` for a package that omits the `declaration` occurrence, the `generated` ordinal 0 or the `generated` ordinal 2. | Test (TC-233) |
 | FR-322-AC-91 | A refinement owner that is not proof-eligible, with a history field, with an `any` step target or with an abstract field that has no field row, is admitted with its `declaration` occurrence alone and refuses `invalid_package`/`invalid-value` at the first `generated` entry on its node when one is present (`RS-12` to `RS-15`). The hidden field is derived from the abstract model's fields against the `objects` entries' field rows, whatever their order (`RS-14`, `RS-16`, `RS-17`). | Test (TC-233) |
-| FR-322-AC-92 | In every published package, each operand of a `quire.op.integer.add`, `sub`, `mul`, `negate`, `eq` or `ne` application that is an integer literal typed at the builtin Integer node is an inline `literal` term with `value_kind` `integer` and that type, and none is a `reference` to a `value`/`literal` node; in `positive-two-owners-a.json` and `-b.json` the `three` application holds the inline operands `1` and `2` with empty `dependencies`, and in `positive-operation-identities.json` the `integer.mul` and `integer.add` hold `7` and `-2` inline while the literal nodes for `7` and `-2` remain for the operands that reference them. | Test (TC-233) |
+| FR-322-AC-92 | In every published package, each operand of a `quire.op.integer.add`, `sub`, `mul`, `negate`, `eq` or `ne` application that is an integer literal typed at the builtin Integer node is an inline `literal` term with `value_kind` `integer` and that type, and no such operand is a `reference` to a `value`/`literal` node of `value_kind` `integer`, whatever the node's type. In `positive-two-owners-a.json` and `-b.json` the `three` application holds the inline operands `1` and `2` and has empty `dependencies`; in `positive-operation-identities.json` the `integer.mul` and `integer.add` hold `7` and `-2` inline, and the `value`/`literal` nodes `7` and `-2` are present for the nodes that reference them. For each of the six operators, `inline_literal_cases` in `node-identity-vectors.json` records an application over inline integer literal operands with its JCS SHA-256, which differs from the key of the same application over references to literal nodes. | Test (TC-233) |
 
 ## Dependencies
 

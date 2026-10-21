@@ -14612,20 +14612,34 @@ fn tc_233_a_refinement_owner_carries_one_generated_occurrence_per_proof_obligati
     }
 }
 
+/// The operator identities FR-322 "Integer literal operands" lists, read from
+/// the requirement text.
+fn integer_literal_operand_operators() -> Vec<String> {
+    let text = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
+    let start = text
+        .find("**Integer literal operands.**")
+        .expect("FR-322 states the rule");
+    let paragraph = &text[start..start + text[start..].find("\n\n").expect("paragraph end")];
+    let mut operators = Vec::new();
+    let mut rest = paragraph;
+    while let Some(at) = rest.find("`quire.op.integer.") {
+        let tail = &rest[at + 1..];
+        let end = tail.find('`').expect("closing backtick");
+        operators.push(tail[..end].to_owned());
+        rest = &tail[end..];
+    }
+    operators
+}
+
 /// FR-322 "Integer literal operands": the integer operators' integer literal
 /// operands, typed at the builtin Integer node, are inline `literal` terms in
-/// every published package.
+/// every published package, and each listed operator has a recorded inline
+/// application vector.
 #[trace("TC-233", "FR-322-AC-92")]
 #[test]
 fn tc_233_integer_operator_literal_operands_are_inline_in_the_published_packages() {
-    const OPERATORS: [&str; 6] = [
-        "quire.op.integer.add",
-        "quire.op.integer.sub",
-        "quire.op.integer.mul",
-        "quire.op.integer.negate",
-        "quire.op.integer.eq",
-        "quire.op.integer.ne",
-    ];
+    let operators = integer_literal_operand_operators();
+    assert_eq!(operators.len(), 6, "{operators:?}");
     let mut inline = BTreeMap::<String, usize>::new();
     for (name, package) in positive_fixtures() {
         let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
@@ -14635,7 +14649,7 @@ fn tc_233_integer_operator_literal_operands_are_inline_in_the_published_packages
             .map(|node| node["node_id"].clone());
         for node in nodes.iter().filter(|node| is_application_node(node)) {
             let operation = node["body"]["operation"]["identity"].as_str().unwrap_or_default();
-            if !OPERATORS.contains(&operation) {
+            if !operators.iter().any(|listed| listed == operation) {
                 continue;
             }
             for operand in node["body"]["arguments"].as_array().expect("arguments") {
@@ -14653,8 +14667,7 @@ fn tc_233_integer_operator_literal_operands_are_inline_in_the_published_packages
                         .expect("a reference names a node");
                     let integer_literal = target["node_tag"] == "value"
                         && target["semantic_form"] == "literal"
-                        && target["body"]["value_kind"] == "integer"
-                        && Some(&target["body"]["type"]) == integer.as_ref();
+                        && target["body"]["value_kind"] == "integer";
                     assert!(!integer_literal, "{name}: {operation} references an integer literal node");
                 }
             }
@@ -14663,4 +14676,44 @@ fn tc_233_integer_operator_literal_operands_are_inline_in_the_published_packages
     assert_eq!(inline["positive-two-owners-a"], 2);
     assert_eq!(inline["positive-two-owners-b"], 2);
     assert_eq!(inline["positive-operation-identities"], 4);
+    // The literal nodes for 7 and -2 stay for the operands that reference them.
+    let operation_package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    for value in ["7", "-2"] {
+        assert!(
+            operation_package["semantic_graph"]["nodes"]
+                .as_array()
+                .expect("nodes")
+                .iter()
+                .any(|node| node["semantic_form"] == "literal"
+                    && node["body"]["value_kind"] == "integer"
+                    && node["body"]["value"] == value),
+            "the {value} literal node is present"
+        );
+    }
+    // One recorded inline application per listed operator, and none beyond.
+    let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let application_schema =
+        schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "ApplicationNode");
+    let cases = vectors["inline_literal_cases"].as_array().expect("cases");
+    let recorded: BTreeSet<&str> = cases
+        .iter()
+        .map(|case| case["operation"].as_str().expect("operation"))
+        .collect();
+    let listed: BTreeSet<&str> = operators.iter().map(String::as_str).collect();
+    assert_eq!(recorded, listed, "one case per listed operator");
+    for case in cases {
+        let name = case["name"].as_str().expect("name");
+        application_schema
+            .validate(&case["preimage"])
+            .unwrap_or_else(|error| panic!("{name} preimage is closed: {error}"));
+        assert_eq!(
+            unqualified_jcs_sha256(&case["preimage"]),
+            case["sha256"].as_str().expect("digest"),
+            "{name}"
+        );
+        assert_ne!(case["sha256"], case["reference_form_sha256"], "{name}");
+        for operand in case["preimage"]["body"]["arguments"].as_array().expect("arguments") {
+            assert_eq!(operand["term"], "literal", "{name}: operands are inline");
+        }
+    }
 }
