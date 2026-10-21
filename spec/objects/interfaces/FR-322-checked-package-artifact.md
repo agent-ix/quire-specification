@@ -768,6 +768,16 @@ fixed by the schema, whatever the model's size.
 | Member | a Leaf, a Group, or a `binding` whose value is a Leaf, a Group or a Tuple |
 | Body | a Leaf; an `application` whose `arguments` are each a Member; an `aggregate` whose members are each a Member; a `frame` body ([FR-340](FR-340-checked-package-frame-location.md)); or an `abstraction_relation` body ([FR-451](FR-451-checked-package-abstraction-relation-body.md)) |
 
+**Integer literal operands.** The producer SHALL write an integer literal
+operand of `quire.op.integer.add`, `quire.op.integer.sub`,
+`quire.op.integer.mul`, `quire.op.integer.negate`, `quire.op.integer.eq` and
+`quire.op.integer.ne` as an inline `literal` term, a singleton domain with
+`value_kind` `integer`, whose `type` is the builtin Integer node, and no
+`value`/`literal` node stands for it. A literal under a narrowing conversion
+(`quire.op.numeric.narrow`), a literal in any other position, and an operand of
+composite, Boolean or non-integer equality are graph children, each its own
+node reached by `reference`.
+
 Every composite subterm is its own node, reached by `reference`: an
 application never stands inside another application's arguments, an
 aggregate's members or a binding's value. The `state_clause`
@@ -1827,6 +1837,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-89 | With the rows written in the order `R1`, `R0` and the `steps` order `R0`, `R1`, ordinal 1 holds `R0`'s region and ordinal 2 `R1`'s (`RS-02`). | Test (TC-233) |
 | FR-322-AC-90 | A proof-eligible refinement owner with two step rows refuses `invalid_package`/`invalid-value` at the offending `source_map` entry for a `generated` occurrence at ordinal 3, for a second entry with the key of an existing occurrence, for a `generated` occurrence at ordinal 1 that carries `R1`'s region, for an `expression` occurrence at ordinal 1 and for a `declaration` occurrence at ordinal 1; and at `/source_map` for a package that omits the `declaration` occurrence, the `generated` ordinal 0 or the `generated` ordinal 2. | Test (TC-233) |
 | FR-322-AC-91 | A refinement owner that is not proof-eligible, with a history field, with an `any` step target or with an abstract field that has no field row, is admitted with its `declaration` occurrence alone and refuses `invalid_package`/`invalid-value` at the first `generated` entry on its node when one is present (`RS-12` to `RS-15`). The hidden field is derived from the abstract model's fields against the `objects` entries' field rows, whatever their order (`RS-14`, `RS-16`, `RS-17`). | Test (TC-233) |
+| FR-322-AC-92 | In every published package, each operand of a `quire.op.integer.add`, `sub`, `mul`, `negate`, `eq` or `ne` application that is an integer literal typed at the builtin Integer node is an inline `literal` term with `value_kind` `integer` and that type, and none is a `reference` to a `value`/`literal` node; in `positive-two-owners-a.json` and `-b.json` the `three` application holds the inline operands `1` and `2` with empty `dependencies`, and in `positive-operation-identities.json` the `integer.mul` and `integer.add` hold `7` and `-2` inline while the literal nodes for `7` and `-2` remain for the operands that reference them. | Test (TC-233) |
 
 ## Dependencies
 

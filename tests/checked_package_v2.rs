@@ -14611,3 +14611,56 @@ fn tc_233_a_refinement_owner_carries_one_generated_occurrence_per_proof_obligati
         }
     }
 }
+
+/// FR-322 "Integer literal operands": the integer operators' integer literal
+/// operands, typed at the builtin Integer node, are inline `literal` terms in
+/// every published package.
+#[trace("TC-233", "FR-322-AC-92")]
+#[test]
+fn tc_233_integer_operator_literal_operands_are_inline_in_the_published_packages() {
+    const OPERATORS: [&str; 6] = [
+        "quire.op.integer.add",
+        "quire.op.integer.sub",
+        "quire.op.integer.mul",
+        "quire.op.integer.negate",
+        "quire.op.integer.eq",
+        "quire.op.integer.ne",
+    ];
+    let mut inline = BTreeMap::<String, usize>::new();
+    for (name, package) in positive_fixtures() {
+        let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
+        let integer = nodes
+            .iter()
+            .find(|node| node["node_tag"] == "scalar_type" && node["semantic_form"] == "integer")
+            .map(|node| node["node_id"].clone());
+        for node in nodes.iter().filter(|node| is_application_node(node)) {
+            let operation = node["body"]["operation"]["identity"].as_str().unwrap_or_default();
+            if !OPERATORS.contains(&operation) {
+                continue;
+            }
+            for operand in node["body"]["arguments"].as_array().expect("arguments") {
+                if operand["term"] == "literal" {
+                    assert_eq!(operand["value_kind"], "integer", "{name}");
+                    assert_eq!(Some(&operand["type"]), integer.as_ref(), "{name}");
+                    *inline.entry(name.to_owned()).or_default() += 1;
+                    if node["declaration"]["qualified_name"] == json!(["three"]) {
+                        assert_eq!(node["dependencies"], json!([]), "{name}: no operand node");
+                    }
+                } else if operand["term"] == "reference" {
+                    let target = nodes
+                        .iter()
+                        .find(|candidate| candidate["node_id"] == operand["target"])
+                        .expect("a reference names a node");
+                    let integer_literal = target["node_tag"] == "value"
+                        && target["semantic_form"] == "literal"
+                        && target["body"]["value_kind"] == "integer"
+                        && Some(&target["body"]["type"]) == integer.as_ref();
+                    assert!(!integer_literal, "{name}: {operation} references an integer literal node");
+                }
+            }
+        }
+    }
+    assert_eq!(inline["positive-two-owners-a"], 2);
+    assert_eq!(inline["positive-two-owners-b"], 2);
+    assert_eq!(inline["positive-operation-identities"], 4);
+}
