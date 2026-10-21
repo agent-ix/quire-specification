@@ -27,45 +27,57 @@ An extension definition, the core grammar ([FR-339](FR-339-define-complete-nativ
 
 ## Outputs
 
-A validated extension definition that [FR-133](FR-133-extend-language-uniformly.md) can make selectable, or a refusal naming the definitions involved.
+A validated extension definition that [FR-133](FR-133-extend-language-uniformly.md) can make selectable, or an `invalid_package` refusal naming the definitions involved.
 
 ## Behavior
 
-### Grammar schema
+### Production
 
-The grammar schema lists one or more declaration-form productions over the declarative token vocabulary: the identifiers, quoted strings, numeric literals and punctuation of the [complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) lexical contract, and the core `type-ref` production. A production introduces no token class of its own.
+A *production* is one declaration form of an extension. Every production has exactly this shape over the [complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) lexical contract:
 
-Each production begins with one keyword, its *leading keyword*. A leading keyword is recognised as a keyword only as the first token of a declaration. Anywhere else the same spelling remains an ordinary identifier, so selecting an extension changes the meaning of no source that already parses.
+```ebnf
+extension-decl = leading-keyword, ident, '{', [ clause, { ',', clause } ], '}' ;
+clause         = ident, ':', expr ;
+```
 
-### Typed-node schema
+The `ident` after the leading keyword is the declared name of the form. A clause binds its `ident` to an `expr` of the common expression grammar, whose value is checked against the clause's type. Clauses are separated by `,` with no trailing separator, and appear in the order the production lists them. A production introduces no token class and no other punctuation. `retention Audit { subject: "audit", days: 30 }` is a form of the production with leading keyword `retention` and clauses `subject` and `days`.
 
-The typed-node schema gives each production exactly one node kind and one typed subnode per clause of the production. A subnode names the checked type or the node kind its clause must check against. A node kind is unique among the core node kinds and the node kinds of every extension a subject selects.
+A leading keyword is recognised as a keyword only as the first token of a top-level `declaration` of the unit. It is not recognised as a keyword in a member declaration inside a model, record, state or protocol body or in an expression. Anywhere else the same spelling remains an ordinary identifier, so selecting an extension changes the meaning of no source that already parses.
+
+### Members
+
+The definition's exact document holds the two members as JSON values:
+
+- `grammar_schema`: `{"productions": [ {"keyword": K, "clauses": [N, ...]} , ... ]}`, with `K` the leading keyword and each `N` a clause name, in source order, at least one production.
+- `typed_node_schema`: `{"nodes": [ {"keyword": K, "node_kind": D, "clauses": [ {"name": N, "type": T} , ... ]} , ... ]}`, one node entry per production, matched to it by `K`, with `D` the node kind and `T` the spelling of a core `type-ref` or of a node kind the clause's value must check against. The entry lists the production's clause names in the production's order.
 
 ### Validation
 
-The members are validated before the extension is selectable, in this order, and the first violation is reported:
+When an extension definition is validated, the definition reader SHALL report the first violated rule below and SHALL report no later one, each as `invalid_package` with the stated cause:
 
-1. `missing-member`: the definition has no grammar schema, no typed-node schema, a production the typed-node schema does not cover, or a production with no node kind.
-2. `conflicting-definition`: a leading keyword equals a core keyword or another selected extension's leading keyword; or a node kind equals a core node kind or another selected extension's node kind.
-3. `definition-cycle`: the extension's dependency edges, together with those of the extensions a subject selects, contain a cycle.
+1. `missing-member`: the definition has no `grammar_schema`, no `typed_node_schema`, no production, a production with no node entry, a node entry with no `node_kind`, a production clause with no entry in its node entry, a clause entry with no `type`, or a node-entry clause the production does not list. The refusal names the definition and the missing member; for a clause it names the production keyword and the clause.
+2. `conflicting-definition`: a leading keyword equals a *core keyword*, another production's leading keyword in the same definition or in another selected extension; or a node kind equals a core node kind, another node entry's node kind in the same definition or in another selected extension. A *core keyword* is a reserved or contextual keyword of the grammar edition in force for the unit, as the grammar's lexical contract selects it. The refusal names the keyword or node kind, the definition, and the other definition or, for a core keyword, the core grammar; for a collision within one definition it names that definition and both production indices.
+3. `definition-cycle`: the dependency edges of the extension, together with those of the extensions the subject selects, contain a cycle. The refusal names every definition of the cycle in path order.
 
-Each refusal names every definition involved, the offending member and, for a collision, the keyword or node kind. A consumer reads the two members and nothing else of the extension to admit its forms; it does not infer a member from the definition's bytes, name or position.
+The definition reader SHALL read the two members and the dependency edges of the extension and nothing else; it SHALL NOT infer a member from the definition's bytes, name or position.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-467-AC-1 | An extension definition with a grammar schema whose one production begins with the keyword `retention` and has clauses `subject: Text` and `days: Int[1, 3650]`, and a typed-node schema giving it a node kind not held by the core, validates and is selectable. | Test (TC-949) |
-| FR-467-AC-2 | A definition missing its grammar schema, its typed-node schema, the node-kind entry of a production, or a subnode type for a clause refuses `missing-member` naming the definition and the missing member. | Test (TC-949) |
-| FR-467-AC-3 | A production whose leading keyword is `function`, or equals another selected extension's leading keyword, refuses `conflicting-definition` naming both definitions and the keyword. | Test (TC-949) |
-| FR-467-AC-4 | A node kind equal to a core node kind, or to another selected extension's node kind, refuses `conflicting-definition` naming both definitions and the node kind. | Test (TC-949) |
-| FR-467-AC-5 | Two extensions that depend on each other refuse `definition-cycle` naming both in path order. | Test (TC-949) |
+| FR-467-AC-1 | An extension definition whose `grammar_schema` has one production with leading keyword `retention` and clauses `subject` and `days`, and whose `typed_node_schema` gives it node kind `retention` with `subject: Text` and `days: Int[1, 3650]`, validates and is selectable, and the unit `retention Audit { subject: "audit", days: 30 }` parses as one form of that production. | Test (TC-949) |
+| FR-467-AC-2 | A definition missing `grammar_schema`, missing `typed_node_schema`, a production's node entry, a node entry's `node_kind`, a clause's entry or a clause's `type`, or a node entry listing a clause the production does not, refuses `invalid_package`/`missing-member` naming the definition and the missing member. | Test (TC-949) |
+| FR-467-AC-3 | A production whose leading keyword is the core keyword `function` refuses `invalid_package`/`conflicting-definition` naming the extension, the core grammar and `function`; a production whose leading keyword equals another selected extension's refuses the same naming both definitions and the keyword. | Test (TC-949) |
+| FR-467-AC-4 | A node kind equal to a core node kind, or to another selected extension's node kind, refuses `invalid_package`/`conflicting-definition` naming the definition or definitions and the node kind. | Test (TC-949) |
+| FR-467-AC-5 | Two extensions that depend on each other refuse `invalid_package`/`definition-cycle` naming both in path order. | Test (TC-949) |
 | FR-467-AC-6 | A definition violating both a missing member and a keyword collision reports `missing-member` only, and one violating both a collision and a cycle reports `conflicting-definition` only. | Test (TC-949) |
-| FR-467-AC-7 | Source that uses the word `retention` as an identifier outside a declaration's first token parses identically with and without the extension selected. | Test (TC-949) |
+| FR-467-AC-7 | Source that uses the word `retention` as an identifier outside the first token of a top-level declaration, including as a member declaration name inside a model body, parses identically with and without the extension selected. | Test (TC-949) |
+| FR-467-AC-8 | Two productions of one definition with the same leading keyword, or two node entries with the same node kind, refuse `invalid_package`/`conflicting-definition` naming the definition and both production indices. | Test (TC-949) |
+| FR-467-AC-9 | `retention Audit { subject: "audit", days: 30 }` is a form of the production, while `retention { subject: "audit" }` (no declared name), `retention Audit subject: "audit"` (no braces) and `retention Audit { subject: "audit", }` (trailing separator) are not. | Test (TC-949) |
 
 ## Dependencies
 
 - [FR-133](FR-133-extend-language-uniformly.md) owns what an extension may change; this requirement owns the definition members that carry its forms.
 - [FR-339](FR-339-define-complete-native-grammar.md) owns the core keywords and token vocabulary.
-- [FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md) owns the core node kinds.
+- [FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md) owns the core node kinds. The checked-package carrier for an extension's node kind is not defined by this requirement; it is tracked as STD-236.
 - [FR-131](FR-131-compose-complete-profile-bundle.md) owns the bundle in which the definitions are selected.
