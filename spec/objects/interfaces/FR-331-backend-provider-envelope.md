@@ -287,7 +287,9 @@ witness source of each initial state) and the Kani basis
 table above and of FR-363 (`bound-reached{depth}`,
 `induction-not-closed{depth}`), FR-385, FR-399 (`match-undetermined`,
 `vacuous-match`, `replay-refused`), FR-379
-(`mapping-undetermined{row, state_key, prefix}`), FR-380
+(`mapping-undetermined{row, state_key, prefix}`), FR-468
+(`hypotheses-not-established{hypothesis, result}`, `hypothesis` the invariant
+clause's node and `result` the result of its unproved item), FR-380
 (`transfer-not-preserving{reason}` with `reason` `fragment` and its
 `operator`, `fairness` and its `constraint`, or `stutter-closure`;
 `premise-unproved{premise, result}`, `premise` the premise item's
