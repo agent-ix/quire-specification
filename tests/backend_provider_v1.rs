@@ -698,6 +698,27 @@ fn tc_431_memory_models_is_a_nonempty_unique_subset_on_temporal_descriptors() {
     );
 }
 
+/// FR-331-AC-32: a temporal item's subject may carry a population bound while
+/// its extent stays unbounded; the bound moves nothing into the extent.
+#[trace("TC-431", "FR-331-AC-32")]
+#[test]
+fn tc_431_a_subject_bound_leaves_the_extent_unbounded() {
+    let validator = validator();
+    let vector = positive("temporal-request");
+    let document = composed(&vector);
+    let item = &document["request"]["items"][0];
+    assert_eq!(item["extent"]["classification"], "unbounded");
+    assert!(item["extent"].get("bounds").is_none());
+    let bounds = item["temporal"]["subject"]["proof_bounds"]
+        .as_array()
+        .expect("subject proof bounds");
+    assert!(bounds.iter().any(|bound| bound["kind"] == "population"));
+    assert_eq!(errors(&validator, &document), Vec::<String>::new());
+    let mut emptied = document.clone();
+    emptied["request"]["items"][0]["temporal"]["subject"]["proof_bounds"] = serde_json::json!([]);
+    assert_eq!(errors(&validator, &emptied), Vec::<String>::new());
+}
+
 /// FR-331-AC-31: the `memory.load-buffering-shape` warning carries a `load`
 /// and a `store` transition identity and nothing else.
 #[trace("TC-431", "FR-331-AC-31")]
