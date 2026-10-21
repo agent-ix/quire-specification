@@ -118,9 +118,13 @@ refusal per entry. The same inclusion governs FR-013 frames under inheritance.
 
 Rule `quire.model.conformance.refinement/v1` makes contracts Liskov-correct by
 construction, so no implication between authored expressions is proved. The
-effective precondition of an operation member is the disjunction of its own
-precondition clauses with the effective preconditions of the members it
-redefines; the effective postcondition is the conjunction of its own
+effective precondition of an operation member `m` is
+`(own(m)) or (eff(r1)) or ... or (eff(rn))`, where `own(m)` is the
+conjunction of `m`'s own precondition clauses (`true` when it has none) and
+`r1` to `rn` are the members `m` redefines, whose effective preconditions
+`eff(r)` are formed the same way; the clauses of one member are conjoined
+before any disjunction with an inherited precondition, never thrown into one flat
+disjunction. The effective postcondition is the conjunction of its own
 postcondition clauses with theirs; and the effective invariant of a type is the
 conjunction of its own invariant clauses with those of every ancestor. An
 absent precondition is `true`, and an absent postcondition or invariant is
@@ -246,6 +250,7 @@ type.
 | FR-151-AC-14 | R05's incompatible multiplicity and R08(c)'s narrowed object type reach their original FR-151 refusals, without generic assembly preemption; an independent unresolved clause name instead refuses in the earlier source/checked-fact stage before any conformance.axis charge. | Test |
 | FR-151-AC-15 | Two selected models report every completed conformance failure in canonical selection order independent of alias/source order. Denial in the second model suppresses all failures collected in that unfinished stage, preserves earlier meter consumption and emits exactly the selected incomplete record. | Test |
 | FR-151-AC-16 | Two linked source units using different local aliases for the same model identity may each target a distinct operation identity and link successfully; if the second unit instead targets the first unit's operation identity, linking refuses as `conflicting_declaration`/`duplicate-declaration` with no partial result. | Test |
+| FR-151-AC-17 | An operation member `B/size` redefining `A/size` has the effective precondition `(PB1 and PB2) or PA` for its own clauses `PB1`, `PB2` and the redefined member's `PA`: with `PB1` true, `PB2` false and `PA` true the call proceeds, and with `PA` false it is `undefined` with reason `precondition-false`, which a flat disjunction of the three clauses would not give; a member with no own clause has the effective precondition `true`. | Test (TC-196) |
 
 ## Dependencies
 

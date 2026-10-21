@@ -66,6 +66,7 @@ Fixtures:
 | D06 | D01 plus `pre PA using V on M::A::size { false }` and `pre PB using V on M::B::size { false }`, evaluating `I` for `d1`; then without `PB` | the call is `undefined` with the catalogued reason `precondition-false` after `dispatch.select`, with no `function.call` and without selecting `A/size`; `true` through `B/size`, whose effective precondition is its absent (true) clause disjoined with `PA` |
 | D07 | `function f using V(r: Reference<M::A>): Integer pure { if r.size() >= 1 then 1 else 0 }` over G and S2 | `refused { code: ill_typed, cause: operator-ineligible }` at `r.size()`: dispatched calls are admitted only in invariant, precondition and postcondition blocks |
 | D08 | D01 plus `pre PS using V on M::A::size { self.size() >= 0 }`; link | `refused { code: invalid_package, cause: definition-cycle }` at link time for the strongly connected component `{PS}`, listing the dispatch edge `PS -> PS`: the call `self.size()` in `PS` has candidates `A/size` and `B/size`, and both effective preconditions contain `PS` (`B/size`'s absent clause disjoined with `PS`); no dispatch table |
+| D09 | D01 plus `pre PB1 using V on M::B::size { true }`, `pre PB2 using V on M::B::size { false }` and `pre PA using V on M::A::size { true }`, evaluating `I` for `d1`; then with `PA` `{ false }` | the first call proceeds through `B/size` (`(PB1 and PB2) or PA` is true); the second is `undefined` with the catalogued reason `precondition-false` after `dispatch.select`, with no `function.call` (FR-151-AC-17) |
 
 ### Checked-fact, meter and ancestor controls
 
