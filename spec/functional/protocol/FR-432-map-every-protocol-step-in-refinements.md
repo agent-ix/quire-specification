@@ -71,9 +71,10 @@ record's fields in declaration order, `_` leaving one open; `stutter`; or
 `any`. A right side naming an abstract protocol node resolves to an `attempt`,
 `event`, `send`, `receive` or `finish` node of the selected abstract protocol;
 a `timeout`, `fence`, `parallel` or other node, or a name that is no node of that
-protocol, refuses `missing_declaration`/`missing-name` at the node, so such a
-node has no step row of its own to target and is mapped on the concrete side
-only. Nothing defaults: a concrete
+protocol, refuses `missing_declaration`/`missing-name` at the node. No right
+side can therefore name an abstract `timeout`, `fence` or `parallel` node: those
+abstract classes are either listed as internal (the refinement's internal list)
+or visible and matched by no concrete row. Nothing defaults: a concrete
 step class with no row refuses at check time
 `missing_declaration`/`missing-name`, naming the node, template, channel,
 role, trigger or memory step kind; two node rows for one node, two template
@@ -200,13 +201,13 @@ FR-177 over the same product.
 | FR-432-AC-4 | A concrete step mapped by `stutter` that changes a mapped visible field refutes the refinement; one mapped to an abstract send whose label no enabled abstract step carries, after abstract internal steps, refutes it; with the matching abstract step enabled it passes. | Test (TC-386) |
 | FR-432-AC-5 | An abstract step absent from the refinement's internal list is visible: a concrete internal step cannot match it. | Test (TC-386) |
 | FR-432-AC-6 | A declaration headed `abstract Spec::Req` over the abstract model alias `Spec` selects its protocol clause `Req`, and its step rows may name that protocol's nodes; the same rows under the header `abstract Spec` select a model subject and a row naming `node Spec::Req::Ask` refuses `invalid_model_binding`/`malformed-declaration` at that node. | Test (TC-386) |
-| FR-432-AC-7 | The value `[{"refinement": "R", "internal": ["Spec::Full::fin", "lose Spec::Full::ch"]}]`, its permutations and the same entries in two arrays swapped resolve `R` to the same list, `Spec::Full::fin` then `lose Spec::Full::ch` in UTF-8 byte order; the value absent, `[]` and an object for another refinement each resolve `R` to the empty list with no refusal. | Test (TC-386) |
+| FR-432-AC-7 | The value `[{"refinement": "R", "internal": ["Spec::Full::fin", "lose Spec::Full::ch"]}]`, its permutations and the same entries in two arrays swapped resolve `R` to the same list of classes, written alias-free `Full::fin` then `lose Full::ch` in UTF-8 byte order; the value absent, `[]` and an object for another refinement each resolve `R` to the empty list with no refusal. | Test (TC-386) |
 | FR-432-AC-8 | Each abstract step class spells and resolves: a node path for an attempt, event, send, receive, timeout, finish and fence node and a template path for a `cattempt`, and `fork`, `join`, `cend`, `duplicate`, `lose`, `spawn`, `retire`, `activate` and `memory` entries as the table states, each making exactly its class internal; the bare path of the `parallel` node refuses `missing_declaration`/`missing-name`. | Test (TC-386) |
 | FR-432-AC-9 | Each defect row of the list's table refuses with its code and cause at the pointer of the offending value, with no admitted node: a non-array value, `{}`, an object with a missing, extra or mistyped key (`"refinement": 7` and `"internal": "x"` included) and a non-string entry, an unspelled entry, an unresolved refinement, alias, protocol, node, channel, role, kind or `parallel` bare path, a repeated object and a repeated spelling (both pointers), and a non-empty list on a refinement headed `abstract Spec`. | Test (TC-386) |
-| FR-432-AC-11 | Renaming the abstract alias `Spec` to `Abs` with the list's entries renamed to match gives the same resolved list in the same order, including for a lower-case alias or protocol name whose alias-including spellings order differently from their alias-free ones. | Test (TC-386) |
-| FR-432-AC-12 | A refinement headed `abstract Spec` with a non-empty list reports only the last defect row (or only the not-yet-built refusal), never `missing_declaration`/`missing-name` for an entry naming a protocol. | Test (TC-386) |
-| FR-432-AC-13 | A step row whose right side is `node Spec::Full::to` (a `timeout`), `node Spec::Full::fe` (a `fence`), `node Spec::Full::par` (a `parallel`) or a node of no such name refuses `missing_declaration`/`missing-name` at the node; the same row naming an attempt, event, send, receive or finish node is admitted. | Test (TC-386) |
 | FR-432-AC-10 | A list naming `Spec::Full::a1` beside a row `step … -> node Spec::Full::a1(self)` refuses `invalid_model_binding`/`conflicting-binding` naming the row and the entry; the same list with the row's right side `-> node Spec::Full::a2(self)` is admitted; a list naming `lose Spec::Full::ch` beside any rows is admitted. | Test (TC-386) |
+| FR-432-AC-11 | Renaming the abstract alias `Spec` to `spec` with the list's entries renamed to match gives the same resolved list in the same order and the same node id: the alias-free order puts `Full::fin` before `lose Full::ch`, while the alias-including spellings `spec::Full::fin` and `lose spec::Full::ch` order the other way, so the rename discriminates the two orders. | Test (TC-386) |
+| FR-432-AC-12 | A refinement headed `abstract Spec` with a non-empty list reports only the last defect row (or only the not-yet-built refusal), never `missing_declaration`/`missing-name` for an entry naming a protocol. | Test (TC-386) |
+| FR-432-AC-13 | Over the abstract protocol `Full` of TC-386 IL-01, a step row whose right side is `node Spec::Full::to` (a `timeout`), `node Spec::Full::fe` (a `fence`), `node Spec::Full::par` (a `parallel`) or `node Spec::Full::Ghost` (no node) refuses `missing_declaration`/`missing-name` at the node; the same row naming an attempt, event, send, receive or finish node is admitted. | Test (TC-386) |
 
 ## Dependencies
 
