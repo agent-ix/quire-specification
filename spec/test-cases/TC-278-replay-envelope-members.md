@@ -12,7 +12,7 @@ relationships:
 ## Description
 
 Show that an FR-323 replay request's `replay` property carries the
-`ReplaySource`, the selected item (a function's `QualifiedName` or a frame operation), arguments keyed by
+`ReplaySource`, the replay target (a function's `QualifiedName` or a frame operation), arguments keyed by
 parameter node id, the semantic profile selections, the failing node's
 occurrence key, the proof bounds and declared domains, the trace position
 and the `backend` member, and that a non-replay request carries no `replay`
