@@ -53,6 +53,9 @@ Not mergeable: FND-001 (high) and FND-002 (medium) must be resolved first. QSL P
 | FND-004 | fixed | fe8930c: "exactly the one region" of the row and of the declaration. |
 | FND-005 | fixed | 1c7b69e: FR-322 now defines a hidden field in package terms: the fields of the abstract type in the abstract model node that `abstract` selects, compared with the field rows of the `objects` entry. The `hidden` flag is gone and the test derives it; RS-14 (no `total` row) is refused and RS-16 (rows in the other order) is admitted. Mutations that ignore the derivation or make it order-sensitive fail. |
 | FND-006 | fixed | 1c7b69e: the bullet is split; the declaration is required on every owner, the generated ordinals on proof-eligible owners only. |
+| FND-007 | fixed | fc16786: the derivation clause is in AC-91's Criteria cell; AC-88 to AC-91 each have three cells and a closing pipe. |
+| FND-008 | fixed | fc16786: the vector `note` and the README entry say the refinement members are illustrative and that real entries are compared by node key. |
+| FND-009 | fixed | fc16786: RS-17 has two `objects` entries and only the second hides a field. Limiting the hidden-field derivation to the first entry (`.take(1)` on `refinement["objects"]`) fails the test at fc16786 and passes at 1c7b69e. |
 
 ## New findings (disposition pass 1)
 
@@ -68,3 +71,9 @@ Not mergeable: FND-001 (high) and FND-002 (medium) must be resolved first. QSL P
 | FND-007 | medium | The FR-322-AC-91 row has a fourth cell after `Test (TC-233)` ("The hidden field is derived ... (`RS-14`, `RS-16`)."), but the Acceptance Criteria table has three columns. Markdown renderers and table parsers drop that cell, so the derivation clause and RS-16 belong to no criterion. quire validate does not flag it. Move the sentence into the Criteria cell, or make it its own AC row. | spec/objects/interfaces/FR-322-checked-package-artifact.md:1829 |
 | FND-008 | low | The author asked for this to be verified. The V2 schema has no refinement body definition, and no published package contains a refinement node. FR-375 states only that an `objects` entry carries its names as node keys and its field rows sorted by field name; it defines no `abstract_type`/`fields` members. The vector's member names and its plain-string type and field names (`Counter`, `total`, `value`) are therefore illustrative, not the wire shape. Their substance matches FR-375 (one entry per object row, field rows by field name). Say in the README entry or the file that the refinement members are a projection, and that real entries are compared by node key. | proposals/checked-package-v2/refinement-step-occurrence-vectors.json |
 | FND-009 | low | Every case has exactly one `objects` entry, so the "hidden in any `objects` entry" clause is not exercised. A checking function that inspects only the first entry (`.take(1)`) still passes the test. Add a case with two entries where only the second has a hidden field. | proposals/checked-package-v2/refinement-step-occurrence-vectors.json |
+
+## New findings (disposition pass 3)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-010 | low | The TC-233 step's FR-322-AC-91 clause no longer parses: `RS-13`, `RS-14` and `RS-17` are joined by "and", followed by "is refused at its first `generated` entry" and then "and `RS-15` (a history field) are refused at their first `generated` entry". It no longer says plainly that RS-16 is admitted and that RS-13, RS-14, RS-15 and RS-17 are each refused at their first `generated` entry. Rewrite it as one list: "RS-12 and RS-16 are admitted; RS-13, RS-14, RS-15 and RS-17 are each refused at their first `generated` entry". | spec/test-cases/TC-233-published-checked-package-and-scalar-contract-vectors.md:382 |
