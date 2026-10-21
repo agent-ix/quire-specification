@@ -755,3 +755,34 @@ fn tc_431_load_buffering_warning_carries_two_transition_identities() {
     bad["load"] = serde_json::json!("Reader::read");
     assert!(!warning.is_valid(&bad), "load is a transition identity");
 }
+
+/// FR-361-AC-13: a universe provision is the RFC 8785 array of typed keys in
+/// list order, named by its `sha256-jcs` digest.
+#[trace("TC-290", "FR-361-AC-13")]
+#[test]
+fn tc_290_universe_provisions_are_canonical_arrays_of_typed_keys() {
+    let vectors = parsed(VECTORS);
+    let cases = vectors["universe_provision_vectors"]
+        .as_array()
+        .expect("universe provision vectors");
+    let mut digests = BTreeSet::new();
+    for case in cases {
+        let name = case["name"].as_str().expect("name");
+        let keys = &case["keys"];
+        for key in keys.as_array().expect("keys") {
+            assert_eq!(key["type"], "key", "{name}");
+            assert!(key.get("object_type").is_none(), "{name}: a key has no type");
+        }
+        let canonical = jcs_canonicalize(keys).expect("canonical keys");
+        assert_eq!(canonical, case["jcs"].as_str().expect("jcs").as_bytes(), "{name}");
+        let digest = jcs_sha256(keys).expect("digest");
+        assert_eq!(
+            digest.strip_prefix("sha256-jcs:").unwrap_or(&digest),
+            case["digest"].as_str().expect("digest"),
+            "{name}"
+        );
+        digests.insert(digest);
+    }
+    assert_eq!(digests.len(), cases.len(), "list order changes the digest");
+}
+

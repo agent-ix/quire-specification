@@ -127,6 +127,17 @@ A *universe* of a population is an ordered list of object keys, each a
 a key has no type until a state holds its object. The `universes` of a subject
 (FR-368) are these lists, one per population.
 
+A universe provision is the RFC 8785 canonical form of a JSON array holding the
+population's keys in list order, each key in the FR-181 typed canonical form
+of the pair, `{"type":"key","universe":"<64 lowercase hex>","identity":"<lowercase hex of the
+identity bytes>"}`: the reference form of FR-181 without its `object_type`
+member. The provision is named by the `sha256-jcs` digest of that document.
+For the population `counters` with the universe list `[c, d]` in one universe
+`11…11` (64 hex digits `11` repeated), the document is
+`[{"identity":"63","type":"key","universe":"11…11"},{"identity":"64","type":"key","universe":"11…11"}]` with the full universe spelled in the
+published vector `counters-c-d`; the list `[d, c]` is a different document with a different
+digest.
+
 A clause `over (x: T)` over a model subject has one *instance* for each pair
 (`p`, `k`) of a population `p` and a key `k` of `p`'s universe, for every
 population `p` whose member types cover `T` ([FR-153](../type-model/FR-153-query-closed-model-environments.md):
@@ -176,6 +187,7 @@ added: over a population that holds a key whose object does not conform to
 | FR-361-AC-10 | The verdict of an item is the same for the instance order above and for any permutation of the universe list, while the counterexample of a refuted item names the first refuted instance in the order; permuting a universe list changes the request identity. | Test (TC-290) |
 | FR-361-AC-11 | Over `Counter` instances of `all`, the instance (`all`, `e`), whose key holds an `Entity` that is not a `Counter`, reads `absent-key` through `x`: an unguarded `holds(x.value >= 0)` refutes with `undefined-evaluation` naming (`all`, `e`), while the same read guarded by `lookup<Counter>(all, x)` being `some` evaluates and the instance holds. | Test (TC-290) |
 | FR-361-AC-12 | A binding's `object_type` is the population's canonical member type and is not compared: an object held under the key whose most-specific type is a subtype of that member type is matched, and reference equality of `x` with `allInstances` members of that object holds. | Test (TC-290) |
+| FR-361-AC-13 | The universe provision of population `counters` with list `[c, d]` is the RFC 8785 canonical array of the two typed keys in list order, whose `sha256-jcs` digest is the published `counters-c-d` digest; the list `[d, c]` gives a different document and digest; no key carries an `object_type` member. | Test (TC-290) |
 
 ## Dependencies
 
