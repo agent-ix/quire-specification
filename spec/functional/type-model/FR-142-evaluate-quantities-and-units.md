@@ -63,15 +63,35 @@ the dimension that names them; unit targets name any unit. When the checker
 admits a package's unit and dimension declarations, the checker SHALL refuse a
 topology defect before any quantity value exists, with these FR-272 causes;
 each refusal names the dimension node and the unit or units shown. The checker
-SHALL process the dimensions in source order (the position of each
-declaration in the source, since a unit's node key is not computable before the
-target chain is known to be acyclic) and, for each dimension in turn: (0) for a
-base dimension with no unit, apply the base-dimension rule below; otherwise
-(a) check each of its units in source order against rows 1 to 3, (b) then check
-the dimension against rows 4 to 6, and (c) report the first defect found. A
-dimension is therefore refused by the earliest row that applies to its
-earliest unit, and a later dimension is not examined once an earlier one is
-refused.
+SHALL process the dimensions of the package in source order and, for each
+dimension in turn: (-1) check its terms, then (0) for a base dimension with no
+unit apply the base-dimension rule below; otherwise (a) check each of its units
+in source order against rows 1 to 3, (b) then check the dimension against rows
+4 to 6, and (c) report the first defect found. A dimension is therefore
+refused by the earliest row that applies to its earliest unit, and a later
+dimension is not examined once an earlier one is refused.
+
+Source order is the order of the package's source documents as the checked
+request lists them, then the byte offset of the declaration within its
+document; a unit's node key is not computable before its target chain is known
+to be acyclic, so no key order is used. Step (-1) runs at the dimension's own
+turn, before step (0), over the dimensions reachable from it through terms
+(itself included, in source order): a term naming no dimension is refused
+`missing_declaration`/`missing-name`, retaining the dimension and the term; and
+when the dimension's terms reach a dimension cycle (`dimension A = B;
+dimension B = A ^ 2;`, or a self-term `dimension D = D * L;`) it is refused
+`invalid_package`/`definition-cycle`, retaining the term edges
+`dimension -> term` of that cycle in order from the cycle's dimension declared
+first. A dimension with such a defect has no normalized map, so steps (0) and
+(a) to (c) do not run for it. A dimension or unit declaration that resolves
+into another package (a qualified name through an import) is resolved by name
+and is not re-checked: it takes no turn, because its own graph defects belong
+to its package. A term naming an imported dimension uses that dimension's
+admitted normalized map; a unit target naming an imported unit whose dimension
+node is another node than the unit's own is row 3, and one in the same node is
+a terminal root of the chain (it adds no cycle and no targetless unit). Rows 4
+to 6 apply to a local dimension; for a local unit typed by an imported
+dimension only rows 1 to 3 apply.
 
 | Row | Defect | Code and cause | Retains |
 | --- | --- | --- | --- |
@@ -271,7 +291,7 @@ the element of `Option` and of the collection types, and the target of
 | FR-142-AC-12 | A function `f(d: Quantity<ms>): Quantity<ms>` returning `d` checks; returning `convert<Quantity<s>>(d)` refuses `ill_typed`/`type-mismatch` at the returned expression; and `Quantity<ms>` annotations introduce no checked-package node, naming the node of `ms`. | Test (TC-187) |
 | FR-142-AC-13 | A unit and a record of one name coexist, and a use of the name in a type position means the record while `Quantity<name>` means the unit; two units of one name in the linked package refuse `ambiguous_declaration`/`ambiguous-name` at `Quantity<name>`; and a declaration named `Quantity` refuses `invalid_syntax`. | Test (TC-187) |
 | FR-142-AC-14 | A quantity literal in a lowered body is a checked-package `literal` of `value_kind` `quantity` typed by its unit's node, and a domain-package operation parameter whose `typeRef` names a unit has the unit's type; FR-322-AC-79 and FR-322-AC-80 own the wire checks. | Test (TC-187, TC-233, TC-280) |
-| FR-142-AC-15 | Over the `L` unit graph of TC-187, each single defect of TC-187 U06 and U11a to U11f refuses with its row's code and cause naming the dimension and units shown, and exposes no conversion value; the cycle of U11b and U11l is retained from the least unit by source position, which differs from name order; the base-dimension rule refuses `L` in U11g1, U11g2 and U11g4 and admits U11g3 (`N = L / L` with `unit one : N = 1;`); and the orderings of U11h to U11k and U11m fix the first-defect rule: scale zero before an unknown target in one unit, the earlier unit before a later one, duplicate root before a self-cycle, the earlier dimension before a later one, and a cycle in an earlier-declared dimension before a unitless base dimension declared after it (the reverse order refuses the base dimension). | Test (TC-187) |
+| FR-142-AC-15 | Over the `L` unit graph of TC-187, each single defect of TC-187 U06 and U11a to U11f refuses with its row's code and cause naming the dimension and units shown, and exposes no conversion value; the cycle of U11b and U11l is retained from the least unit by source position, which differs from name order; the base-dimension rule refuses `L` in U11g1, U11g2 and U11g4 and admits U11g3 (`N = L / L` with `unit one : N = 1;`); and the orderings of U11h to U11k and U11m fix the first-defect rule: scale zero before an unknown target in one unit, the earlier unit before a later one, duplicate root before a self-cycle, the earlier dimension before a later one, and a cycle in an earlier-declared dimension before a unitless base dimension declared after it (the reverse order refuses the base dimension).; the dimension-term checks refuse in source order the cycle of two, the self-cycle and the unknown term of U11n to U11p, and the document order of U11q fixes which declaration is first across two documents | Test (TC-187) |
 
 ## Dependencies
 

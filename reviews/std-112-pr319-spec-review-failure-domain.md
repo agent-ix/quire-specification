@@ -67,6 +67,13 @@ Not mergeable: the stated order is uncomputable for the graphs it must order (FN
 | FND-008 | medium | 'SHALL refuse it before the rows above' does not place the empty-dimension check in the dimension loop. Take `dimension Area = L ^ 2; unit m2 : Area = 1 * m2b; unit m2b : Area = 1 * m2; dimension L;`. `Area` comes first by name and has a cycle, and `L` has no unit and is named by `Area`. If the check runs at `L`'s turn in the loop, the result is `definition-cycle` at `Area`; if it runs for every dimension before the loop, the result is `missing-name` at `L`. U11g has a single defect, so it does not decide this. Fix: say the empty-dimension check runs over every dimension, in order, before the per-dimension loop (or as step (0) of each dimension's own turn), and add this two-defect vector. | spec/functional/type-model/FR-142-evaluate-quantities-and-units.md:83-87 |
 | FND-009 | low | In the dimensionless sentence, 'it needs a canonical root unit only when a unit or a quantity names it' says nothing. A quantity names a unit, not a dimension (`Quantity<D>` is refused, FR-142 'Quantity type reference'), and a unit that names `N` is part of `N`'s graph, which the rows already govern. Fix: drop the clause, or say that a dimensionless dimension's units follow rows 1 to 6 like any other dimension's. | spec/functional/type-model/FR-142-evaluate-quantities-and-units.md:92-95 |
 
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-010 | medium | Nothing refuses a dimension cycle, although FR-142 now says 'Dimension terms name any dimension of the package, declared before or after', and the base-dimension rule and step (0) depend on each dimension's normalized map. `dimension A = B; dimension B = A ^ 2; unit a : A = 1;` and `dimension D = D * L;` have no normalized map, so it is undefined whether `L` is 'carried' and which row applies. A term that names no dimension has no stated cause either. QSL FR-091 already refuses a dimension cycle as `invalid_package`/`definition-cycle` with its edges. Fix: before step (0), refuse a dimension whose terms reach it again, `invalid_package`/`definition-cycle`, retaining the term edges from the least dimension by source position, and a term naming no dimension, `missing_declaration`/`missing-name`. Say whether this runs for every dimension before the loop or at the dimension's own turn, and add a vector. | spec/functional/type-model/FR-142-evaluate-quantities-and-units.md:61-62, 85-94 |
+| FND-011 | medium | 'source order (the position of each declaration in the source)' is undefined across documents. A linked package spans more than one unit of compilation (FR-142 'two units of one name in the linked package'), and dimension terms and unit targets are qualified names that can name an imported declaration (`import-decl`). Which of two documents comes first, and whether an imported dimension or unit (already admitted in its own package) takes a turn here, is not stated. So the start of a cycle edge list and the first defect differ between implementations. Fix: define the order as the package's document order (name the list that fixes it), then the byte offset, and say that imported declarations are not re-checked, or where their turn falls. | spec/functional/type-model/FR-142-evaluate-quantities-and-units.md:65-67 |
+
 ## Dispositions
 
 Round 1, bdacb1420 (head 8ba797093).
@@ -82,3 +89,14 @@ Round 1, bdacb1420 (head 8ba797093).
 | FND-007 | still-open | New this round; not yet fixed. |
 | FND-008 | still-open | New this round; not yet fixed. |
 | FND-009 | still-open | New this round; not yet fixed. |
+
+Round 2, abe176f9e.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-006 | fixed | Fixed in abe176f9e: / U11b / Declare `unit m : L = 1 * cm;` and `unit cm : L = 1/100 * m;` (no unit is targetless) / `invalid_package`/`definition-cycle` retaining the edges `m -> cm`, `cm -> m`, starting at `m`, the least unit by source position (name order would start at `cm`); there is no missing-root cause for a no / U11l / The U11b cycle with `unit cm : L = 1/100 * m;` declared before `unit m : L = 1 * cm;` / `invalid_package`/`definition-cycle` retaining `cm -> m`, `m -> cm` from the least unit by source position, `cm` / |
+| FND-007 | fixed | Fixed in abe176f9e: The base-dimension rule: a base dimension (declared with no terms) that has no unit has no canonical root for a compound result to rest on when a dimension that has a unit carries it in its normalized map. At the base dimension's own turn the checker SHALL refuse it, `missing_declaration`/`missing-name`, retaining the base dimension and the first unit, in source order, whose dimension has a nonzero exponent of it in its normalized map; a derived dimension without a unit is not refused, since only base dimensions anchor a compound result. For a nonempty dimension no separate missing-root cau... |
+| FND-008 | fixed | Fixed in abe176f9e: / U11m / `dimension Area = L ^ 2;` `dimension L;` `unit a : Area = 1 * b;` `unit b : Area = 1 * a;`; then `dimension L;` `dimension Area = L ^ 2;` and the same units / `invalid_package`/`definition-cycle` at `Area` retaining `a -> b`, `b -> a` (`Area` is processed first, `L` is not examined); then `missing_declaration`/`missing-name` at `L` (`L` is processed first) / |
+| FND-009 | fixed | Fixed in abe176f9e: A derived dimension whose normalized map is empty, such as `dimension N = L / L;`, is the dimensionless dimension: the checker SHALL admit it. Its units form N's own graph under rows 1 to 6, and its empty map names no base dimension, so it creates no base-dimension obligation. |
+| FND-010 | still-open | New this round; not yet fixed. |
+| FND-011 | still-open | New this round; not yet fixed. |
