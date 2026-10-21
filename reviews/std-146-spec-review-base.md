@@ -47,3 +47,18 @@ Units examined:
 ## Verdict
 
 Not mergeable. FR-467 says what the two members must satisfy but not what a production is or how the members are written, so QSL-604 cannot implement a reader from it (FND-001). It also names no refusal code (FND-002). The causes match FR-354, and the ACs are testable once the member shape exists.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | low | TC-949 Expected Results still says steps 3 and 4 refuse "naming both definitions". AC-3 and AC-4 now name the extension and the core grammar in the core-keyword and core-node-kind cases. Align the expected result. | spec/test-cases/TC-949-extension-definition-members.md:30 |
+| FND-004 | low | A node entry whose `keyword` matches no production, and two node entries with one `keyword` but different node kinds, fit neither item 1 nor item 2. Matching entries to productions by `K` is then undefined. Add both to `missing-member` or `conflicting-definition`. | spec/functional/source-package/FR-467-define-extension-definition-members.md:58 |
+| FND-005 | low | AC-9 says three sources "are not" forms, and TC-949 step 9 says they are refused, but no code or cause is named. A clause out of production order and an unknown clause have no stated outcome either. QSL FR-354's table has no row for these. Name the refusal (for example `invalid_syntax`/`unexpected-token`) or point to the owning rule. TC-949 also says "Every refusal is `invalid_package`", which would wrongly cover these source refusals. | spec/functional/source-package/FR-467-define-extension-definition-members.md:76 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |

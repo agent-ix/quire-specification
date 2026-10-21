@@ -31,3 +31,9 @@ Units examined:
 ## Verdict
 
 Mergeable on this lens. The statement is a well-formed ubiquitous requirement with one SHALL. One low finding: the validation and refusal behaviour, which is the core of the requirement, has no SHALL statement.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |

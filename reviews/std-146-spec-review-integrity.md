@@ -41,3 +41,10 @@ Units examined:
 ## Verdict
 
 Not mergeable until FND-001 is fixed: AC-2 refuses a case that Behavior does not list. FND-002 is a wording nit. TC-949 covers AC-1..7 step for step. FR-133's new sentence and Dependencies bullet agree with FR-467.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |

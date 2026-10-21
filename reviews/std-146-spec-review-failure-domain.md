@@ -37,3 +37,11 @@ Units examined:
 ## Verdict
 
 Two collision and edge gaps that QSL-604 would have to guess at (FND-001, FND-002). One downstream carrier gap that can be deferred to its own ticket (FND-003). The cycle refusal and the cause order are sound.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | deferred | STD-236 (FR-322: checked-package carrier for extension node kinds), linked from FR-467 Dependencies. |
