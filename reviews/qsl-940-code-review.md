@@ -53,3 +53,33 @@ Evidence, all from an independent Python recomputation (RFC 8785 for these ASCII
 ## Verdict
 
 Not clean, but every changed identity is correct. An independent recomputation confirms every rekeyed node key, its preimage, its `dependencies`, each `identity_projection` and each `package_id`, and the same algorithm reproduces QSL #1161's E12 and E13. The inline operand shape is QSL E12's. The removed literal nodes leave no dangling reference, projection entry or `source_map` entry, and the retained `7`/`-2` nodes are still referenced by `div`/`rem`. The test can fail. Restoring the reference form in any of the three packages, a non-Integer inline type, or dropping `add` or `mul` each fails it. The rest of the gate catches a value change without a rekey. FND-001 is the one gap worth closing: four of the six operators have no published vector. FND-002 to FND-004 are small.
+
+## New findings (disposition pass 1)
+
+Head 406c078b5. Evidence for this round:
+
+- The independent script recomputes all six `inline_literal_cases` digests. It rebuilds each `reference_form_sha256` from the same preimage with references to the `7` (`9f42fd25...`) and `-2` (`f4fe653e...`) literal nodes. Each case's `operation` equals its preimage's operation identity. The `eq`/`ne` cases are typed at the Boolean node `99643906...`, with operator class `binary` as the `text.eq` vectors use.
+- The fixture recheck over all nine positive packages is unchanged and clean.
+- Mutations, new test / full gate:
+  - Remove `sub`, `negate`, `eq` or `ne` from the FR-322 paragraph: each fails / 1 fails.
+  - Delete the `inline-sub`, `-negate`, `-eq` or `-ne` case: each fails / 1 fails.
+  - Delete the `7` literal node: fails.
+  - Reference an `integer_range` literal node from `integer.add`: fails at the reference check.
+  - Three mutants survive (FND-006): relabel `inline-sub`'s preimage as `integer.add` and rekey it; set `reference_form_sha256` to `00..00`; type an inline operand at Boolean and rekey it.
+- Every reader of `node-identity-vectors.json` in this suite and in QSL indexes a named section. QSL's `deny_unknown_fields` applies only to the preimage structs, so the new top-level `inline_literal_cases` key breaks no consumer.
+- QSL conformance at ca37b7138 with `QSPEC_DIR` at this head fails two tests that pass against QSpec origin/main (FND-005). The control run against main fails only the two known tests, c14 and i2.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | medium | Landing this PR breaks two QSL conformance tests at QSL #1161 head ca37b7138 that pass against QSpec main. `conformance_fr322_application_keys_match_qspec_operation_vectors` fails with "integer-add: preimage does not decode: data did not match any variant of untagged enum BodyTerm". `conformance_emitted_application_nodes_match_qspec_positive_fixtures` fails because QSL's `integer.mul` golden case emits reference operands where the fixture now has literals. Both already fail at de9af077e. QSL needs a matching change, or a landing order that keeps `make conformance` green. | proposals/checked-package-v2/node-identity-vectors.json:110-111; proposals/checked-package-v2/fixtures/positive-operation-identities.json; quire-spec-language qsl-semantics/src/check/node_key/tests.rs:833; qsl-package/src/emit/tests/golden.rs:402 |
+| FND-006 | low | The `inline_literal_cases` checks do not tie a case to its operator or to its reference form. The test never compares `operation` with the preimage's `body.operation.identity`, so six relabelled copies of one application would pass. It checks `reference_form_sha256` only for inequality and never recomputes it. It checks inline operands for `term: literal` but not for `value_kind` or type. One surviving mutant each. | tests/checked_package_v2.rs:14694-14718 |
+| FND-007 | low | The PR body no longer says that the FR-322 rule and its reader-admission sentence are lead defaults. The "Normative owner" section was dropped and nothing replaced it. The body also does not describe `inline_literal_cases` or the operator list the test reads from FR-322. | quire-specification#323 description |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |
+| FND-004 | fixed | - |

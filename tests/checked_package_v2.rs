@@ -14711,9 +14711,86 @@ fn tc_233_integer_operator_literal_operands_are_inline_in_the_published_packages
             case["sha256"].as_str().expect("digest"),
             "{name}"
         );
-        assert_ne!(case["sha256"], case["reference_form_sha256"], "{name}");
-        for operand in case["preimage"]["body"]["arguments"].as_array().expect("arguments") {
+        assert_eq!(
+            case["preimage"]["body"]["operation"]["identity"], case["operation"],
+            "{name}: the case names its preimage's operation"
+        );
+        // The reference form of the same application: each inline operand
+        // replaced by a reference to the published literal node of its value.
+        let integer = operation_package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .find(|node| node["node_tag"] == "scalar_type" && node["semantic_form"] == "integer")
+            .expect("the Integer node")["node_id"]
+            .clone();
+        let mut by_reference = case["preimage"].clone();
+        for operand in by_reference["body"]["arguments"]
+            .as_array_mut()
+            .expect("arguments")
+        {
             assert_eq!(operand["term"], "literal", "{name}: operands are inline");
+            assert_eq!(operand["value_kind"], "integer", "{name}");
+            assert_eq!(operand["type"], integer, "{name}: typed at the Integer node");
+            let node = operation_package["semantic_graph"]["nodes"]
+                .as_array()
+                .expect("nodes")
+                .iter()
+                .find(|node| {
+                    node["semantic_form"] == "literal"
+                        && node["body"]["value_kind"] == "integer"
+                        && node["body"]["value"] == operand["value"]
+                })
+                .unwrap_or_else(|| panic!("{name}: a published literal node of the value"));
+            *operand = json!({"term": "reference", "target": node["node_id"]});
         }
+        assert_eq!(
+            unqualified_jcs_sha256(&by_reference),
+            case["reference_form_sha256"].as_str().expect("digest"),
+            "{name}: the reference form's recorded key"
+        );
+        assert_ne!(case["sha256"], case["reference_form_sha256"], "{name}");
     }
+}
+
+const POSITIVE_INTEGER_LITERAL_REFERENCES: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-integer-literal-references.json");
+
+/// FR-322 "Integer literal operands": the rule binds the producer. A package
+/// whose `quire.op.integer.add` application references literal nodes is
+/// admitted by the reader, under its own node identity.
+#[trace("TC-233", "FR-322-AC-93")]
+#[test]
+fn tc_233_a_reader_admits_the_reference_form_of_an_integer_literal_operand() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let references = parsed_fixture(POSITIVE_INTEGER_LITERAL_REFERENCES);
+    v2.validate(&references)
+        .unwrap_or_else(|error| panic!("the reference form has the closed V2 shape: {error}"));
+    assert_eq!(read_package_semantics(&references, &catalog), Ok(()));
+    let application = |package: &Value| {
+        package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .find(|node| node["declaration"]["qualified_name"] == json!(["three"]))
+            .expect("the `three` application")
+            .clone()
+    };
+    let referenced = application(&references);
+    assert_eq!(referenced["body"]["operation"]["identity"], "quire.op.integer.add");
+    assert!(
+        referenced["body"]["arguments"]
+            .as_array()
+            .expect("arguments")
+            .iter()
+            .all(|operand| operand["term"] == "reference"),
+        "the published operands are references"
+    );
+    let inline = application(&parsed_fixture(POSITIVE_TWO_OWNERS_A));
+    assert_ne!(
+        referenced["node_id"], inline["node_id"],
+        "the reference form has a different node identity"
+    );
+    assert_ne!(references["package_id"], parsed_fixture(POSITIVE_TWO_OWNERS_A)["package_id"]);
 }

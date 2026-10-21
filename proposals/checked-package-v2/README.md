@@ -351,3 +351,4 @@ part of the node identity. On a nominal node it equals the nominal
 `qualified_declaration` (else `declaration-nominal-mismatch`, `invalid_package`),
 and two nodes declaring one name refuse as `ambiguous-name`
 (`ambiguous_declaration`). Library exports resolve only through this member.
+- `fixtures/positive-integer-literal-references.json` is the reference form of the `three` application of `positive-two-owners-a.json` (its integer literal operands are references to `value`/`literal` nodes); the reader admits it under a node identity different from the inline form's.

@@ -47,3 +47,19 @@ Cross-check against QSL at ca37b7138:
 ## Verdict
 
 Not clean, but consistent with the language spec. FR-322's paragraph matches QSL FR-093's Literal row, FR-357's operand check and FR-358 step 6, including the narrowed-literal and non-integer-equality exceptions. No stale QSpec statement says these operands are references. The touched files add no validation failure. FND-001 is the gap that matters: the paragraph does not say whether a reader refuses the reference form. FND-002 and FND-003 are wording fixes to AC-92.
+
+## New findings (disposition pass 1)
+
+Head 406c078b5. `quire validate --scope . 'spec/**/*.md'` still fails 134 documents, the same set as the merge base, with only one FR-322 warning line moving from 1757 to 1769.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | medium | The new sentence "a reader SHALL admit the reference form of such an operand as well ... and SHALL NOT refuse it for that form" has no acceptance criterion and no test. AC-92 covers only the producer form of the published packages. No published package or vector now carries the reference form under one of the six operators, so a reader that refused it would fail nothing. | spec/objects/interfaces/FR-322-checked-package-artifact.md:779-782,1842 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |

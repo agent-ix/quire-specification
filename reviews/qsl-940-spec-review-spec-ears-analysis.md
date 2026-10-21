@@ -32,3 +32,10 @@ Ticket: QSL-940. PR: quire-specification#323, head de9af077e. Method: spec-revie
 ## Verdict
 
 The statement is well formed. It has one subject, one modal and six named operators, and the exceptions are stated. Two wording nits, both low.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
