@@ -71,6 +71,13 @@ structures, but any external consumer receives only the contract.
   order (where UTF-16 order differs) are admitted, a repeated identity
   refuses `invalid_package`/`conflicting-definition` and a misordered entry
   `invalid_package`/`invalid-value`, each with its loci.
+  The members its top-level `schema_only` lists (`dependency_selections` and
+  `order_vectors`) carry placeholder `package_id` digests that name no admitted
+  package: they exercise the schema and the order rule only, and a reader that
+  requires every entry's package to be supplied refuses them
+  `missing_import`/`missing-selection` at entry 0 by design. Only
+  `closure_vectors`, whose digests are recomputed from real packages, name
+  packages a reader can be supplied.
   Its `closure_vectors` contain `direct_dependencies` of the importer and
   `dependency_locks` for those direct packages; each dependency lock names a
   fixture `base` and its own `dependency_selections`. The diamond vector

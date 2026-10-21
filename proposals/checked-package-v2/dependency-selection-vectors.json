@@ -1,4 +1,5 @@
 {
+  "schema_only": ["dependency_selections", "order_vectors"],
   "base": "fixtures/positive-all-families.json",
   "dependency_selections": [
     {"identity": "test/geometry", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}},
