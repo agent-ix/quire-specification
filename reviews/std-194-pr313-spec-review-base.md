@@ -56,3 +56,16 @@ One review pass with the base lens and the EARS, integrity and failure-domain le
 ## Verdict
 
 Not mergeable as is: FND-001 (does not merge into main) and FND-002 (AC-10 untagged) block. FND-003 should be settled in this PR because QSL FR-134 is about to copy the retention rule. The vectors discriminate (mutation evidence in Summary), the single cause is consistent with QSL FR-134's open question, and the non-temporal 'not read' rule matches QSL.
+
+## Dispositions
+
+Round 1, head 648d2d082.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fixed in 648d2d082: Main merged into the branch; it merges cleanly into main fd7a694 (and with #315 and #316); BP-21 and BP-22 both present; gates re-run green. |
+| FND-002 | fixed | Fixed in 648d2d082: tc_431_adverse_vectors_are_refused now carries #[trace("TC-431", "FR-368-AC-10")] and TC-431 verifies FR-368. |
+| FND-003 | fixed | Fixed in 648d2d082: FR-368, FR-272 and native-diagnostics now agree: member as supplied for not-a-list, offending element for unknown-label/duplicate-label (matches QSL FR-134). |
+| FND-004 | fixed | Fixed in 648d2d082: BP-22 now names the existing manifest-temporal-without-fairness-kinds vector, the four new vectors and the [strong, weak] positives (temporal-request and hybrid-request verified). |
+| FND-005 | fixed | Fixed in 648d2d082: FR-368 now judges fairness_kinds after the pair and domains checks, as QSL FR-134-AC-6 does. |
+| FND-006 | fixed | Fixed in 648d2d082: vectors.json ends with a newline again. |
