@@ -1909,7 +1909,7 @@ fn tc_280_relationship_declarations_refuse_each_defect_at_the_selection_row() {
 
 /// FR-154 operation parameter names at domain selection. Within one operation
 /// the repeated-identity check runs first and suppresses the name check of both
-/// colliding parameters; then the name check of every other parameter, in
+/// colliding parameters (a collision is reported alone); then the name check of every parameter, in
 /// `params` order. A collision names the shared parameter identity, a name
 /// refusal the operation identity; both name the member path.
 fn read_parameter_names(
@@ -1932,13 +1932,11 @@ fn read_parameter_names(
                 format!("TypeDefinition.operations[{k}].params[{s}]{member}")
             };
             let mut first_seen: BTreeMap<&str, usize> = BTreeMap::new();
-            let mut suppressed = BTreeSet::new();
             let mut collision = None;
             for (s, param) in params.iter().enumerate() {
                 let identity = text(param, "identity");
                 match first_seen.get(identity) {
-                    Some(&earlier) => {
-                        suppressed.extend([earlier, s]);
+                    Some(_) => {
                         collision.get_or_insert((identity.to_owned(), s));
                     }
                     None => {
@@ -1959,7 +1957,7 @@ fn read_parameter_names(
                 let valid = param["name"].as_str().is_some_and(|name| {
                     member_name(name) && identity == format!("{operation_identity}/{name}")
                 });
-                if !suppressed.contains(&s) && !valid {
+                if !valid {
                     return Err((
                         MALFORMED.0,
                         MALFORMED.1,

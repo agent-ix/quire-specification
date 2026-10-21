@@ -39,3 +39,10 @@ Units examined:
 ## Verdict
 
 Not mergeable. One published vector names the wrong identity (FND-001), and AC-14 counts fixture entries (FND-002). The rule itself is sound, and the model-complete.md row agrees with FR-154.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |

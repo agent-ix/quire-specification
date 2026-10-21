@@ -30,3 +30,15 @@ Units examined:
 ## Verdict
 
 Not mergeable while the reader encodes the wrong identity for the repeated-name branch (FND-001, same root as SR-13632 FND-001).
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | `suppressed` is dead state: any collision returns before the name loop, so `!suppressed.contains(&s)` never excludes a parameter, and deleting it changes no outcome. Drop it, or make the name loop actually depend on it. No behaviour is wrong. | tests/model_member_types.rs:1935,1962 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |

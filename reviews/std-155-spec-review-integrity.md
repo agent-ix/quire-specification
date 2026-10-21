@@ -38,3 +38,10 @@ Units examined:
 ## Verdict
 
 Not mergeable. Checking names first contradicts the existing parameter-collision rule and vector (FND-001). The table-order argument behind the precedence is not supported by FR-154 (FND-002).
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
