@@ -768,6 +768,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-379
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-468
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-380
     type: contains
   - target: ix://agent-ix/quire-specification/FR-381
@@ -1235,6 +1237,7 @@ The requirement artifacts are indexed below.
 | [FR-377](functional/analysis/FR-377-decide-model-refinement.md) | FR | Draft; Refinement between two model subjects: step rules, abstract progress, terminal states |
 | [FR-378](functional/analysis/FR-378-check-refinement-auxiliary-state.md) | FR | Draft; Refinement history fields and hidden abstract fields |
 | [FR-379](functional/analysis/FR-379-report-and-replay-refinement-counterexamples.md) | FR | Draft; Refinement verdicts, counterexample wire and replay |
+| [FR-468](functional/analysis/FR-468-certify-per-step-refinement-obligations.md) | FR | Per-step refinement queries: initial and step queries and the base-and-step certificate |
 | [FR-380](functional/analysis/FR-380-transfer-claims-through-refinement.md) | FR | Draft; Claim transfer through a refinement (vertical composition) |
 | [FR-381](functional/analysis/FR-381-check-symmetric-populations.md) | FR | Draft; Symmetric population annotation and identity transparency |
 | [FR-382](functional/analysis/FR-382-select-state-space-reductions.md) | FR | Draft; Reduction request members, admission, identity and negotiation |
