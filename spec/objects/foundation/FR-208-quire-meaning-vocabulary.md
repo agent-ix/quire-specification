@@ -211,9 +211,9 @@ model's `Operation.pre` and `Operation.post`.
   of the observation, bound by the State-machine context anchors; for a process `self` is the run. Frame entries follow
   the object-type Frames rule, except that the receiver-scoped members
   (`modifies_receiver`, `deletes_receiver: true`) are refused on these
-  operations ([FR-013](../../functional/foundation/FR-013-validate-operation-frames.md)). Redefinition follows FR-151: the effective
-  precondition is the disjunction and the effective postcondition the
-  conjunction over redefined members.
+  operations ([FR-013](../../functional/foundation/FR-013-validate-operation-frames.md)). Redefinition follows FR-151 for the effective
+  precondition (own clauses conjoined, then disjoined with the redefined
+  member's) and for the effective postcondition.
 - **Transitions.** An operation's contract is the same in every transition it
   triggers. A transition's guard is not conjoined to the trigger's
   precondition. A transition's `from` and `to` are not related to the
