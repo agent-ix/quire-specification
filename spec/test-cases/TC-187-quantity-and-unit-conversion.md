@@ -41,19 +41,23 @@ result_units: r }`. Execute:
 | U03 | Add `1 m` to `1 s` where `s` has time dimension `T` | `refused { code: ill_typed }` for incompatible dimensions before arithmetic |
 | U04 | Convert `0 degC` and `32 degF` to `K` | both equal exact `5463/20 K` |
 | U05 | Add, subtract, multiply, divide or raise a `degC`/`degF` value to a power | `refused { code: ill_typed }` because nonzero-offset points have no implicit difference-unit arithmetic |
-| U06 | Admit a unit `zero` under `L` with scale zero | `invalid_package`/`invalid-value` naming `zero` and its scale, before any conversion value is exposed (FR-142-AC-13) |
+| U06 | Add to the `L` graph `unit zero : L = 0 * m;` | `invalid_package`/`invalid-value` naming `zero` and its scale, before any conversion value is exposed (FR-142-AC-15) |
 | U07 | Convert `1 in` to decimal metres at scale two | `exact`: refused; `nearest-even`: `(3,2) m` plus `{ exact_numerator: 127, exact_denominator: 5000, rounded_coefficient: 3, rounded_scale: 2, mode: nearest-even }` |
 | U08 | Convert `-2 m`, `2 m`, `-3 m`, `3 m` into target Decimal coefficient domain `[-2,2]`, scale zero | `-2` and `2` succeed; one-below/one-over refuse atomically |
 | U09 | Use a base-dimension name/shape equal to `L` but a different I04 semantic-node key | `refused { code: ill_typed }` as incompatible despite structural resemblance |
 | U09b | Declare a distinct unit key under `L` with scale one and convert it to `m` | conversion succeeds exactly while source and target unit identities remain distinct |
 | U10 | Convert `100 cm` to `m` with `ScalarLimitsV1 { integer_bits: 8, decimal_digits: 0, scale_expansion: 0, text_input_bytes: 0, text_scalars: 0, normalized_scalars: 0, unit_edges: 1, value_occurrences: 1, work_units: 6, result_units: 1 }`; then deny `unit.result-retain` | the exact tuple returns `1 m`, with the largest amount `max(bits(100) + bits(1), bits(1) + bits(100)) = 8` at the multiply event; the denied named final charge returns incomplete without a partial quantity |
-| U11 | Mutate the `L` unit graph to have two targetless roots, no root, a target cycle, an unknown target or a target under time dimension `T`, as U11a to U11f state | each topology is refused by its U11 row's code and cause before a quantity value exists |
-| U11a | Add to `L` a second targetless unit `m_alt` | `invalid_package`/`conflicting-definition` naming `L`, `m` and `m_alt` (FR-142-AC-13) |
-| U11b | Give `m` the target `cm` (so `m` and `cm` target each other and no unit is targetless) | `invalid_package`/`definition-cycle` naming `m` and `cm` in path order; there is no missing-root cause |
-| U11c | Add to `L` a unit `x` with target `nothing` | `missing_declaration`/`missing-name` naming `x` and `nothing` |
-| U11d | Give `cm` the target `s` of dimension `T` | `invalid_package`/`incompatible-definition` naming `cm`, `s` and the two dimension nodes |
-| U11e | Give `m` scale two; then offset one | each `invalid_package`/`invalid-value` naming `m` with its scale and offset |
-| U11f | Add to `L` a unit `u_self` targeting itself | `invalid_package`/`definition-cycle` naming `u_self` |
+| U11a | Add `unit m_alt : L = 1;` beside `unit m : L = 1;` | `invalid_package`/`conflicting-definition` naming `L`, `m` and `m_alt` (FR-142-AC-15) |
+| U11b | Declare `unit m : L = 1 * cm;` and `unit cm : L = 1/100 * m;` (no unit is targetless) | `invalid_package`/`definition-cycle` retaining the edges `m -> cm`, `cm -> m`, starting at the least unit `m`; there is no missing-root cause for a nonempty dimension |
+| U11c | Add `unit x : L = 1 * nothing;` | `missing_declaration`/`missing-name` naming `x` and `nothing` |
+| U11d | Declare `unit cm : L = 1/100 * s;` with `s` a unit of `T` | `invalid_package`/`incompatible-definition` naming `cm`, `s` and the two dimension nodes |
+| U11e | Declare `unit m : L = 2;`; then `unit m : L = 1 + 1;` | each `invalid_package`/`invalid-value` naming `m` with its scale and offset |
+| U11f | Add `unit u_self : L = 1 * u_self;` | `invalid_package`/`definition-cycle` retaining the edge `u_self -> u_self` |
+| U11g | `dimension L;` with no unit, `dimension Area = L ^ 2;` and `unit m2 : Area = 1;`; then `dimension L;` with `unit m : L = 1;`, `dimension N = L / L;` | the first `missing_declaration`/`missing-name` naming `L` and `Area`; the second admits `N` as the dimensionless dimension with the empty normalized map (FR-142-AC-15) |
+| U11h | `unit z : L = 0 * nothing;` | `invalid_package`/`invalid-value` (row 1 before row 2 within one unit) |
+| U11i | In dimension `L`, `unit a : L = 1 * nothing;` declared before `unit b : L = 0 * m;` | `missing_declaration`/`missing-name` naming `a` (the earliest unit is processed first) |
+| U11j | In dimension `L`, `unit m_alt : L = 1;` and `unit u_self : L = 1 * u_self;` beside `unit m : L = 1;` | `invalid_package`/`conflicting-definition` (row 4 before row 6) |
+| U11k | Dimension `L` declared before `T`: in `L`, `unit u_self : L = 1 * u_self;` with no other unit; in `T`, `unit z : T = 0;` | `invalid_package`/`definition-cycle` for `L`; `T` is not examined |
 | U12 | Multiply `2 m * 3 s`, divide `6 m / 2 s`, square `2 m`, and divide `5 m / 5 m` | exact values `6`, `3`, `4`, `1` under canonical compound units `m*s`, `m*s^-1`, `m^2`, and the empty dimensionless unit respectively |
 | U13 | Raise `2 m` to integer power `18446744073709551616` with `ScalarLimitsV1 { integer_bits: 64, decimal_digits: 0, scale_expansion: 0, text_input_bytes: 0, text_scalars: 0, normalized_scalars: 0, unit_edges: 0, value_occurrences: 1, work_units: 5, result_units: 1 }` | `incomplete { limit_kind: integer_bits, limit: 64, consumed: 2, next_charge: 36893488147419103232, charge_point: unit.rational-arithmetic }` before the power is computed, since the amount is `abs(n) × maxparts(2) = 2^64 × 2`; `next_charge` exceeds `u64::MAX` and is reported exactly |
 | U14 | Under `L(0,0,0,0,0,0)`, add `1 m + 1 s`, add `1 degC + 1 s`, add `1 degC + 1 degC`, divide `1 degC / 0 degC`, and add `1 cm + 1 m` | each returns `refused { code: ill_typed }` with no charge; the static order among incompatible dimensions, affine arithmetic and distinct units is informative only, while `1 degC / 0 degC` is refused statically as affine arithmetic rather than reaching the runtime zero divisor |

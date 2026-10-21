@@ -58,27 +58,47 @@ reaches the root. Composing the edges yields
 each unit's exact mapping to the canonical unit; conversion applies the source
 mapping then the inverse target mapping.
 
-The admission of a unit graph SHALL refuse a topology defect before any
-quantity value exists, with these causes, none of which needs a catalog
-revision (FR-272); each refusal names the dimension node and the unit or units
-shown:
+When the checker admits a package's unit and dimension declarations, the
+checker SHALL refuse a topology defect before any quantity value exists, with
+these FR-272 causes; each refusal names the dimension node and the unit or
+units shown. The order of the defects is the order of the table: the checker
+SHALL process the dimensions in declaration order (qualified declaration name,
+then source position, since a unit's node key is not computable before the
+target chain is known to be acyclic), and for each dimension SHALL (a) check
+each of its units in declaration order against the first three rows, (b) then
+check the dimension against the next three rows, and (c) report the first
+defect found, so a dimension is refused by the earliest row that applies to
+its earliest unit, and a later dimension is not examined once an earlier one
+is refused.
 
-| Defect | Code and cause | Retains |
-| --- | --- | --- |
-| a unit's scale is zero | `invalid_package`/`invalid-value` | the unit and its scale |
-| the canonical root's scale is not one or its offset is not zero | `invalid_package`/`invalid-value` | the root, its scale and its offset |
-| a unit names a target that is no unit of the checked package | `missing_declaration`/`missing-name` | the unit and the target name |
-| a unit's target belongs to another dimension node | `invalid_package`/`incompatible-definition` | the unit, its target and both dimension nodes |
-| the dimension has two or more targetless units | `invalid_package`/`conflicting-definition` | the dimension and every targetless unit, in ascending identity order |
-| the target edges form a cycle (a unit targeting itself included) | `invalid_package`/`definition-cycle` | the units of the cycle in path order |
+| Row | Defect | Code and cause | Retains |
+| --- | --- | --- | --- |
+| 1 | a unit's scale is zero | `invalid_package`/`invalid-value` | the unit and its scale |
+| 2 | a unit names a target that is no unit of the package | `missing_declaration`/`missing-name` | the unit and the target name |
+| 3 | a unit's target belongs to another dimension node | `invalid_package`/`incompatible-definition` | the unit, its target and both dimension nodes |
+| 4 | the dimension has two or more targetless units | `invalid_package`/`conflicting-definition` | the dimension and every targetless unit, in declaration order |
+| 5 | the dimension's one targetless unit (its canonical root) has a scale other than one or an offset other than zero | `invalid_package`/`invalid-value` | the root, its scale and its offset |
+| 6 | the target edges form a cycle (a unit targeting itself included) | `invalid_package`/`definition-cycle` | the cycle's dependency edges, `unit -> target`, in order from the cycle's least unit by declaration order; when the dimension has several cycles, the one that contains the least unit |
 
-A dimension whose units include no targetless unit has an unknown target, a
-cross-dimension target or a cycle, since a finite graph in which every unit
-names a target within the dimension is cyclic; it is refused by the cause of
-the first such defect, and no separate missing-root cause exists. The admission
-SHALL check the defects in the table's order, for each dimension in ascending
-dimension identity and each unit in ascending unit identity, and SHALL report
-the first. A refused dimension yields no unit mapping.
+A dimension that has no unit, and that a unit's type or a term of a derived
+dimension names where that derived dimension has a unit, has no canonical
+root for a compound result to rest on; the checker SHALL refuse it before the
+rows above, `missing_declaration`/`missing-name`, retaining the dimension and
+the declaration that names it. For a nonempty dimension no separate
+missing-root cause exists: a finite graph in which every unit names a known
+target within the dimension is cyclic, so such a dimension is refused by row 2,
+3 or 6.
+
+A derived dimension whose normalized terms cancel to nothing, such as
+`dimension N = L / L;`, is the dimensionless dimension: the checker SHALL
+admit it with the empty normalized map, and it needs a canonical root unit
+only when a unit or a quantity names it.
+
+The checker SHALL admit no unit mapping of a refused dimension. A refusal
+refuses the package, as every other refusal of this requirement does, and the
+`quire.checked-package/v2` strict reader refuses the same shapes, as an
+already-built package, with `invalid_semantic_graph` (FR-322
+`nominal_identity_preimage`), not with these causes.
 
 A unit is affine exactly when the offset of its composed mapping to the
 canonical root is nonzero; a declared edge offset alone does not decide it, so a
@@ -245,9 +265,9 @@ the element of `Option` and of the collection types, and the target of
 | FR-142-AC-10 | A conversion with a compound side compares normalized base-dimension maps, traverses only the declared side's root path, and admits a declared-to-compound-to-declared pivot in two explicit steps. | Test (TC-187) |
 | FR-142-AC-11 | With the dimension `T`, the unit `s` (root of `T`) and the unit `ms` (target `s`, scale `1/1000`), a function `f(d: Quantity<ms>)` called as `f(3 ms)` admits the argument `3 ms` and refuses `f(3 s)` with `ill_typed`/`type-mismatch` at the argument; `d: Quantity<T>` (a dimension) and `d: Quantity<nothing>` each refuse `missing_declaration`/`missing-name` at the name, and a bare `d: ms` refuses `missing_declaration`/`missing-name` at `ms`. | Test (TC-187) |
 | FR-142-AC-12 | A function `f(d: Quantity<ms>): Quantity<ms>` returning `d` checks; returning `convert<Quantity<s>>(d)` refuses `ill_typed`/`type-mismatch` at the returned expression; and `Quantity<ms>` annotations introduce no checked-package node, naming the node of `ms`. | Test (TC-187) |
-| FR-142-AC-13 | Over the `L` unit graph of TC-187, a unit `zero` with scale zero, the root `m` with scale two, and the root `m` with offset one each refuse `invalid_package`/`invalid-value`; a unit `x` with target `nothing` refuses `missing_declaration`/`missing-name`; `cm` with target `s` of dimension `T` refuses `invalid_package`/`incompatible-definition`; a second targetless unit `m_alt` refuses `invalid_package`/`conflicting-definition` naming `m` and `m_alt`; `m` targeting `cm` (with `cm` targeting `m`) refuses `invalid_package`/`definition-cycle` naming both in path order; and a unit targeting itself refuses `definition-cycle`. Each names the dimension node and the units shown, and no conversion value is exposed. | Test (TC-187) |
 | FR-142-AC-13 | A unit and a record of one name coexist, and a use of the name in a type position means the record while `Quantity<name>` means the unit; two units of one name in the linked package refuse `ambiguous_declaration`/`ambiguous-name` at `Quantity<name>`; and a declaration named `Quantity` refuses `invalid_syntax`. | Test (TC-187) |
 | FR-142-AC-14 | A quantity literal in a lowered body is a checked-package `literal` of `value_kind` `quantity` typed by its unit's node, and a domain-package operation parameter whose `typeRef` names a unit has the unit's type; FR-322-AC-79 and FR-322-AC-80 own the wire checks. | Test (TC-187, TC-233, TC-280) |
+| FR-142-AC-15 | Over the `L` unit graph of TC-187, each single defect of TC-187 U06 and U11a to U11g refuses with its row's code and cause naming the dimension and units shown, and exposes no conversion value; the orderings are fixed by the vectors U11h to U11k: a unit that has scale zero and an unknown target is `invalid-value`; unit `a` with an unknown target before unit `b` with scale zero is `missing-name`; a self-target beside a second targetless unit in one dimension is `conflicting-definition`; and dimension `L` with a self-target before dimension `T` with a zero scale is `definition-cycle`. The dimensionless derived dimension `N = L / L` is admitted, and `dimension L; dimension Area = L ^ 2; unit m2 : Area = 1;` refuses `missing_declaration`/`missing-name` naming `L` and `Area`. | Test (TC-187) |
 
 ## Dependencies
 
