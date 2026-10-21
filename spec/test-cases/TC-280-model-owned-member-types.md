@@ -257,6 +257,19 @@ M1 to M12 and P1 to P6 validate and recompute their digests. Every wire,
 member, selection, frame field, anchor, clause signature and owner case gives
 exactly its recorded result.
 
+## Operation parameter name cases
+
+`fixtures/adverse.json` `parameter_name_cases` patch the `Order/scaled`
+operation of the selected document and are read under FR-154's parameter-name
+row (FR-154-AC-14); each refusal is reported at the selection row with the
+operation's identity and member path. Ids: `parameter-names-base-admitted`,
+`parameter-names-distinct-admitted`, `parameter-names-case-distinct-admitted`,
+`parameter-name-absent`, `parameter-name-not-a-string`, `parameter-name-null`,
+`parameter-name-empty`, `parameter-name-leading-digit`,
+`parameter-name-with-separator`, `parameter-name-differs-from-identity`,
+`parameter-name-repeated`, `parameter-name-repeated-after-malformed-name`,
+`parameter-name-malformed-second-parameter`.
+
 ## Relationship declaration cases
 
 `fixtures/adverse.json` `relationship_document_cases` patch the selected

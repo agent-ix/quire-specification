@@ -1907,6 +1907,84 @@ fn tc_280_relationship_declarations_refuse_each_defect_at_the_selection_row() {
     }
 }
 
+/// FR-154 operation parameter names at domain selection: the refusal, in node
+/// order, then operation order, then parameter order, with every name checked
+/// before any repeated identity. The refusal names the operation identity and
+/// the member path.
+fn read_parameter_names(
+    document: &Value,
+) -> Result<(), (&'static str, &'static str, String, String)> {
+    let member_name = |name: &str| {
+        let mut chars = name.chars();
+        chars
+            .next()
+            .is_some_and(|first| first.is_ascii_alphabetic())
+            && chars.all(|c| c.is_ascii_alphanumeric() || c == '_')
+    };
+    let mut types: Vec<&Value> = array(document, "types").iter().collect();
+    types.sort_by_key(|declared| declared["identity"].as_str().map(str::to_owned));
+    for owner in types {
+        for (k, operation) in array_or_empty(owner, "operations").iter().enumerate() {
+            let operation_identity = text(operation, "identity").to_owned();
+            let params = array_or_empty(operation, "params");
+            let refused = |s: usize, member: &str, (code, cause): (&'static str, &'static str)| {
+                Err((
+                    code,
+                    cause,
+                    operation_identity.clone(),
+                    format!("TypeDefinition.operations[{k}].params[{s}]{member}"),
+                ))
+            };
+            for (s, param) in params.iter().enumerate() {
+                let identity = param["identity"].as_str().unwrap_or_default();
+                let valid = param["name"].as_str().is_some_and(|name| {
+                    member_name(name) && identity == format!("{operation_identity}/{name}")
+                });
+                if !valid {
+                    return refused(s, ".name", MALFORMED);
+                }
+            }
+            let mut seen = BTreeSet::new();
+            for (s, param) in params.iter().enumerate() {
+                if !seen.insert(text(param, "name")) {
+                    return refused(s, "", ("invalid_model_binding", "conflicting-binding"));
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+/// FR-154-AC-14: each `parameter_name_cases` entry patches the selected
+/// document and the reader reports the recorded refusal at the selection row.
+#[trace("TC-280", "FR-154-AC-14")]
+#[test]
+fn tc_280_parameter_names_refuse_each_defect_at_the_selection_row() {
+    let adverse = parsed(ADVERSE);
+    let cases = array(&adverse, "parameter_name_cases");
+    assert_eq!(cases.len(), 13);
+    for case in cases {
+        let id = text(case, "id");
+        let outcome = read_parameter_names(&patched_document(Some(&case["patch"])));
+        match case["outcome"].as_str() {
+            Some("admitted") => assert_eq!(outcome, Ok(()), "{id}"),
+            _ => {
+                assert_eq!(text(case, "expected_locus"), "selection_row", "{id}");
+                assert_eq!(
+                    outcome,
+                    Err((
+                        text(case, "expected_code"),
+                        text(case, "expected_cause"),
+                        text(case, "expected_identity").to_owned(),
+                        text(case, "expected_path").to_owned(),
+                    )),
+                    "{id}"
+                );
+            }
+        }
+    }
+}
+
 /// The mapping `derive`'s wire cases name: a model declaration vector's
 /// declared node identity.
 fn vector_node<'a>(nodes: &'a [Value], name: &str) -> &'a str {
