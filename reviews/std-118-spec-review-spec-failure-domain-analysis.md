@@ -54,3 +54,19 @@ Round 1, head c0543ce (3470fee, c0543ce).
 | FND-001 | fixed | - |
 | FND-002 | fixed | - |
 | FND-003 | fixed | - |
+
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | low | Step 1 says the member refusals run "at decode, before any recompile", but the byte-provision refusals also run before any recompile, so the statement does not order the two; only FR-323-AC-19 ("so a request with both members and a missing provision entry reports the member refusal") and RE-33 do. Add "and before the byte-provision rule" to step 1 so the statement carries the obligation the AC tests. | spec/objects/interfaces/FR-323-native-runtime-envelope.md:150 |
+
+## Dispositions (round 2)
+
+Round 2, head bfd64fb.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-004 | fixed | - |
+| FND-005 | fixed | - |
+| FND-006 | fixed | - |

@@ -100,7 +100,7 @@ and additional spend must be observed, not inferred from equal Booleans.
 | RE-33 | RE-32's request with a byte-provision entry removed | `invalid_runtime_input`/`invalid-value` at `/replay/frame_operation`, not the provision refusal | FR-323-AC-19 |
 | RE-34 | RE-30's request with a stale proved `package_id`, and `operation` naming an undeclared operation | `stale_dependency`/`content-mismatch` (rule 5), not `missing-name` | FR-323-AC-20 |
 | RE-35 | RE-30's request with a current `package_id` and: `operation` undeclared; `operation` naming an operation no clause or attempt names (no frame node is emitted for it, QSL FR-105, ADR-017); `object` naming a record value type; `object` naming a subtype that only inherits `operation`; `operation` exposed by two supertypes | `missing_declaration`/`missing-name`; `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `invalid_model_binding`/`malformed-declaration`; `ambiguous_declaration`/`ambiguous-name`, each naming the target | FR-323-AC-20 |
-| RE-36 | RE-30's request with `arguments` added; then with an occurrence key added | `invalid_runtime_input`/`unknown-member` at `/replay/arguments`; at the occurrence-key member's pointer | FR-323-AC-19 |
+| RE-36 | RE-30's request with `arguments` added; then with an occurrence key added | `invalid_runtime_input`/`unknown-member` at `/replay/arguments`; at `/replay/occurrence_key` | FR-323-AC-19 |
 
 ## Expected Results
 

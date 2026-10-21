@@ -56,3 +56,17 @@ Round 1, head c0543ce (3470fee, c0543ce).
 | FND-002 | fixed | - |
 | FND-003 | fixed | - |
 | FND-004 | fixed | - |
+
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-006 | low | RE-36's second locus, "the occurrence-key member's pointer", names no pointer: FR-323 (l.122-123, 155) gives the occurrence key no wire member name, so the row cannot assert an exact locus and any pointer under `/replay` passes. Name the member in the `replay` bullet (and backtick `arguments` there) and give the pointer in step 1, AC-19 and RE-36. | spec/test-cases/TC-278-replay-envelope-members.md:103 |
+
+## Dispositions (round 2)
+
+Round 2, head bfd64fb.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-005 | fixed | - |

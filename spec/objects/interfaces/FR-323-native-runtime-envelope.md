@@ -118,8 +118,8 @@ When a checked package is executed or replayed, the producer SHALL use the immut
 - `replay` — present only on a replay request, and absent otherwise. It
   carries: the originating counterexample identity and expected originating
   verdict; the `ReplaySource` (`Witness` or `Input`, FR-197); the *replay
-  target* (below); for a function request, arguments keyed by parameter node id; the
-  semantic profile selections; for a function request, the failing node's
+  target* (below); for a function request, `arguments` keyed by parameter node id; the
+  semantic profile selections; for a function request, `occurrence_key`, the failing node's
   occurrence key (`node_id`, `role`, `ordinal`, FR-322 `source_map` key); the proof bounds
   and declared domains carried from the obligation identity; the trace
   position; and the `backend` member (QSL ADR-013 O-19). No replay member is
@@ -147,12 +147,12 @@ it, and a function request is otherwise unchanged.
 The executor SHALL refuse a replay request, in this order and with the first
 that applies:
 
-1. at decode, before any recompile: a request with neither member,
+1. at decode, before the byte-provision rule and any recompile: a request with neither member,
    `invalid_runtime_input`/`missing-member` at `/replay`; a request with both,
    `invalid_runtime_input`/`invalid-value` at `/replay/frame_operation`; and a
    frame request that carries `arguments` or an occurrence key,
-   `invalid_runtime_input`/`unknown-member` at `/replay/arguments` or at the
-   occurrence-key member's pointer;
+   `invalid_runtime_input`/`unknown-member` at `/replay/arguments` or at
+   `/replay/occurrence_key`;
 2. the resolution of the replay target against the recompiled package, after
    dependency rule 5's `package_id` check.
 
@@ -503,7 +503,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-16 | NORM: for a nested retained type link comparison, the `type-comparison` event is charged first and then every numeric endpoint (4 Integer, 8 Rational, 4 Decimal) is checked against B by the AC-15 bit-length rule; the first endpoint over B refuses by the same `limit` cause with `event: type-comparison` and a `type-link-` `operand`, before the endpoint equality runs, and an endpoint at exactly B admits. | Test (TC-278) |
 | FR-323-AC-17 | A replay request for a proved package whose lock carries `refinement_internals`, with the member copied onto `package` (and a dependency's own onto its `dependencies` entry), recompiles each refinement with its list and reaches the proved `package_id`; the same request with the member removed, or with a spelling changed to another class that resolves, recompiles to another `package_id` and refuses `stale_dependency`/`content-mismatch` naming the request's `package_id` and the recompiled one (for a dependency, that entry's `identity`, its `package_id` and the recompiled one); a spelling that resolves to no class refuses `missing_declaration`/`missing-name` in the recompile, located at `/package/refinement_internals/<pointer>` for the proved package's value and at `/package/dependencies/<n>/refinement_internals/<pointer>` for the `n`th dependency entry's. None yields a result. | Test (TC-277) |
 | FR-323-AC-18 | A function counterexample's replay request carries `function` and no `frame_operation`, and a frame counterexample's carries `frame_operation` (`object` and `operation`) and no `function`, no `arguments` and no occurrence key (a frame request that carries either is refused by AC-19). | Test (TC-278) |
-| FR-323-AC-19 | A replay request with neither `function` nor `frame_operation` refuses `invalid_runtime_input`/`missing-member` at `/replay`, one with both refuses `invalid_runtime_input`/`invalid-value` at `/replay/frame_operation`, and a frame request carrying `arguments` or an occurrence key refuses `invalid_runtime_input`/`unknown-member` at `/replay/arguments` or the occurrence-key member's pointer, each at decode before any recompile, so a request with both members and a missing provision entry reports the member refusal. | Test (TC-278) |
+| FR-323-AC-19 | A replay request with neither `function` nor `frame_operation` refuses `invalid_runtime_input`/`missing-member` at `/replay`, one with both refuses `invalid_runtime_input`/`invalid-value` at `/replay/frame_operation`, and a frame request carrying `arguments` or an occurrence key refuses `invalid_runtime_input`/`unknown-member` at `/replay/arguments` or `/replay/occurrence_key`, each at decode before the byte-provision rule and any recompile, so a request with both members and a missing provision entry reports the member refusal. | Test (TC-278) |
 | FR-323-AC-20 | A `frame_operation` is resolved after dependency rule 5: with a stale proved `package_id` the rule 5 refusal is reported; with a current one, an undeclared operation or an operation with no frame node refuses `missing_declaration`/`missing-name`, an `object` naming a record value type and an operation that `object` only inherits refuse `invalid_model_binding`/`malformed-declaration`, and a name two supertypes expose refuses `ambiguous_declaration`/`ambiguous-name`, each naming the target. | Test (TC-278) |
 
 ## Dependencies

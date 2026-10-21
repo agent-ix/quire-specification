@@ -67,3 +67,12 @@ Round 1, head c0543ce (3470fee, c0543ce).
 | FND-005 | fixed | - |
 | FND-006 | still-open | The RE-30..RE-35 sentence was appended under `## Status` (TC-278 l.133), not `## Expected Results`, which still describes RE-01..RE-29 only. Move it into Expected Results. |
 | FND-007 | fixed | - |
+
+## Dispositions (round 2)
+
+Round 2, head bfd64fb.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-006 | fixed | - |
+| FND-008 | fixed | - |
