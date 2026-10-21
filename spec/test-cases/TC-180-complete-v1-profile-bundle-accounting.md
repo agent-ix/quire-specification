@@ -7,6 +7,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-339
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-370
+    type: verifies
 ---
 
 # TC-180: Complete V1 profile bundle accounting

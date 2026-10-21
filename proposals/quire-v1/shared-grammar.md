@@ -153,6 +153,11 @@ signed-int   = [ '-' ], uint ;
 temporal-clause = 'temporal', ident, 'using', ident,
                  'over', '(', parameter, ')', [ 'clock', string ],
                  activation, '{', { capture }, temporal-expr, '}' ;
+```
+
+The `over` parameter of a `temporal-clause`, here and in the complete-V1 form below, is required: a temporal clause has no form without it, and the checked clause's argument 1 (FR-370) is always that parameter's reference. A claim that reads no one object still names one `over` parameter.
+
+```ebnf
 activation   = 'on', 'origin'
              | 'on', 'each', '(', parameter, ')',
                [ 'when', '(', expr, ')' ] ;
@@ -234,7 +239,6 @@ commit       = 'commit', ident, 'by', ident,
 finish       = 'finish', ident, 'as', '(', parameter, ')', block, ';' ;
 ```
 
-The `over` parameter of a `temporal-clause` is required: a temporal clause has no form without it, and the checked clause's argument 1 (FR-370) is always that parameter's reference. A claim that reads no one object still names one `over` parameter.
 
 `composed-unit` subsumes the earlier common-only and state/temporal drafting
 entry points. None has an adopted profile identity. All three families are now

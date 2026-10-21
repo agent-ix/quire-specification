@@ -14449,4 +14449,17 @@ fn tc_303_a_clause_application_has_no_absent_or_null_over_argument() {
     let mut nulled = package.clone();
     *nulled.pointer_mut(&format!("{arguments}/0")).expect("over") = Value::Null;
     assert!(!schema.is_valid(&nulled), "a null over argument fails");
+    // A non-reference term in argument 1 (the clause's own clock text literal)
+    // fails the schema: it is the one change that leaves the argument count and
+    // every other argument intact, so only the argument-1 shape rejects it.
+    let mut clock = package.clone();
+    let literal = clock
+        .pointer(&format!("{arguments}/1"))
+        .expect("clock")
+        .clone();
+    *clock.pointer_mut(&format!("{arguments}/0")).expect("over") = literal;
+    assert!(
+        !schema.is_valid(&clock),
+        "a non-reference over argument fails"
+    );
 }

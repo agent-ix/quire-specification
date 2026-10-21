@@ -126,9 +126,14 @@ A clause `over (x: T)` over a model subject is checked once for each object of
 the subject's universe whose type conforms to `T`. Each check binds `x` to that
 object's reference. The clause holds for the subject when it holds for every
 binding, and a refutation names the binding it refutes. Every temporal
-clause names an `over` parameter, so the clause is checked once per conforming
-object; a claim that reads no one object still names one, and each check
-evaluates the same formula.
+clause names an `over` parameter, so the clause is checked once for each of its
+instances (one per population and key, below); a claim that reads no one
+object still names one, and each check evaluates the same formula. The cost of
+that rule is that such a claim's decidability depends on the universe of the
+named type: when no instance exists, whether the type has no conforming object
+or the universe is empty, FR-361-AC-8 settles the item `inconclusive`/
+`no-instance` before any exploration although the formula never reads the
+parameter, so an author names a type with at least one object.
 
 At a position where the bound object is not a member of its population, a read
 through `x` SHALL return the kernel's undefined value with reason
