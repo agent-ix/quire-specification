@@ -234,6 +234,8 @@ commit       = 'commit', ident, 'by', ident,
 finish       = 'finish', ident, 'as', '(', parameter, ')', block, ';' ;
 ```
 
+The `over` parameter of a `temporal-clause` is required: a temporal clause has no form without it, and the checked clause's argument 1 (FR-370) is always that parameter's reference. A claim that reads no one object still names one `over` parameter.
+
 `composed-unit` subsumes the earlier common-only and state/temporal drafting
 entry points. None has an adopted profile identity. All three families are now
 syntactically represented; grammar completeness does not establish agreement of
@@ -794,6 +796,7 @@ rules only.
 | `hyper NI using inf over behaviours (v: V::Vault) forall trace a of V forall trace b of V match { a.step.op = b.step.op } { always holds(v.l @ a = v.l @ b) }` | One hyper clause over behaviours, two quantifiers over alias `V`, one match block and one temporal body with two indexed reads. |
 | `hyper NI using inf over behaviours forall trace a of V fair weak V::Vault::step; forall trace b of V { always holds(true) }` | Quantifier `a` with one weak `whole` constraint; quantifier `b` with the empty fairness set. |
 | `hyper H using inf over t in Q bounded 4 forall trace a of V { true }` | Parses; the `of` on a finite trace domain refuses at semantic admission (FR-395). |
+| `temporal` clause with no `over` parameter, such as `temporal T using inf clock "c" on origin { always holds(true) }` | Syntax error `invalid_syntax`/`unexpected-token` at the `clock` token, which stands where `over` is required: a `temporal-clause` always names one `over` parameter. |
 | `always holds(v.l @ a)` in a `temporal` clause | Syntax error: `indexed-read` is admitted only in a hyper body over `behaviours`. |
 | `possible Win using v over (g: G::Game) { g.phase = G::Phase::Won }` | One `possible` state-graph clause with one `over` parameter. |
 | `always possible Rec using v from (not x.lost) { x.ok }` | One `always possible` clause with no `over` parameter and one `from` predicate. |

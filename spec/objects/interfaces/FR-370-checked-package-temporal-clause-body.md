@@ -44,7 +44,9 @@ not hold, with the first refusal in the reader order below.
   role, `member` `null`, `mode` `null` and `leaves` empty. Its `arguments` are
   exactly, in this order:
   1. **over** — a `reference` to the `value`/`parameter` node of the clause's
-     `over` parameter;
+     `over` parameter. It is always present: the grammar admits no temporal
+     clause without an `over` parameter, so the wire has no absent or `null`
+     form for this argument;
   2. **clock** — a `text` literal, the clause's clock role;
   3. **activation** — an `aggregate` of the bindings `kind`, a `text` literal
      `origin` or `each`; `trigger`, a `reference` to the trigger's
@@ -282,6 +284,7 @@ applications' catalog checks at the operation step.
 | FR-370-AC-10 | A clause's profile check runs before its other checks: a law naming `quire.temporal.timed/v1` is known; a law naming the package's own `protocol_profile` selection refuses `unknown_profile`/`wrong-selection-role` and a law naming `quire.temporal.unknown/v1`, selected under no role, `unknown_profile`/`unsupported-selection`, each at `/semantic_graph/nodes/{n}/body/operation/laws/0/definition` and each before a defect in the same clause's `over` reference or intervals. | Test (TC-303) |
 | FR-370-AC-11 | A fairness member naming an operation its `object_type` declaring node only inherits is admitted and resolves to the most derived redefinition; a name matching two effective operations refuses `ambiguous_declaration`/`ambiguous-name`; a declaring node no selected owner matches refuses `missing_declaration`/`missing-selection`; and a `declaration` naming a `systems_interface` model node or a non-model node refuses `invalid_model_binding`/`malformed-declaration` at the target. | Test (TC-303) |
 | FR-370-AC-12 | A reference to a `temporal`/`formula` node from a state clause's condition, and a reference to a `temporal`/`fairness` node from a clause's formula argument, refuse `ill_typed`/`operator-ineligible` located at the referencing node; a diagnostic whose `details` reference a `temporal`/`formula`, `temporal`/`fairness` or `expression`/`case` node refuses `ill_typed`/`operator-ineligible` at `/diagnostics/entries/{e}/details/{d}`; a `details` term that is an application of the `temporal_formula`, `temporal_fairness` or `case` operator class refuses `ill_typed`/`operator-ineligible` at `/diagnostics/entries/{e}/details/{d}/operator`; a `details` term holding several such applications refuses at the first in document pre-order, so a `temporal_formula` application with a nested `case` argument refuses at `/diagnostics/entries/{e}/details/{d}/operator` and an aggregate of a `temporal_formula` application and then a `case` application at `/diagnostics/entries/{e}/details/{d}/members/0/operator`; and `details` referencing a `composite_type`/`union` or `value`/`union_value` node are admitted. | Test (TC-303) |
+| FR-370-AC-13 | A `temporal` clause written with no `over` parameter refuses `invalid_syntax`/`unexpected-token` at the token standing where `over` is required, and produces no node; a `quire.op.temporal.clause` application whose argument 1 is absent or `null` fails the published schema. | Test (TC-180, TC-303) |
 
 ## Published artifacts and the operation catalog
 
