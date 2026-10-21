@@ -242,6 +242,8 @@ until and since are non-strict ([FR-161](../temporal/FR-161-analyze-infinite-tra
   and the hidden-field candidate set to the product.
 - [FR-379](FR-379-report-and-replay-refinement-counterexamples.md) owns the
   verdicts, counterexamples and replay of a refinement item.
+- [FR-468](FR-468-certify-per-step-refinement-obligations.md) owns the
+  queries and certificate of the per-step simulation obligations.
 - [FR-181](../runtime/FR-181-simulate-finite-executions.md) owns the
   successor relation and state keys.
 - [FR-013](../foundation/FR-013-validate-operation-frames.md) owns frame
