@@ -14436,7 +14436,10 @@ fn tc_233_supply_refuses_the_first_failing_entry_in_lock_order() {
 fn tc_303_a_clause_application_has_no_absent_or_null_over_argument() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("schema is valid");
     let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
-    assert!(schema.is_valid(&package), "the published clause package is admitted");
+    assert!(
+        schema.is_valid(&package),
+        "the published clause package is admitted"
+    );
     let index = node_with_operation(&package, "quire.op.temporal.clause");
     let arguments = format!("/semantic_graph/nodes/{index}/body/arguments");
     let mut removed = package.clone();
