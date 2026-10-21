@@ -627,7 +627,7 @@ A replicated role's instance binder is the role's own name: in `role w each
 M::Worker from workers max 2 lifetime until(w.done)`, `w` names one instance
 inside the `until` expression, typed `Reference<M::Worker>`. The grammar has
 no separate binder production, and the `until` expression is written between
-the parentheses with no braces.
+the parentheses with no braces. The binder is readable only in that role's own `until` expression; a role name used as a value anywhere else refuses `missing_declaration`/`missing-name` at the name (FR-428).
 
 An interval is a closed `[a,b]` or a lower-bounded `[a,*]`; `[a,*]` is
 admitted only on a clause that selects `quire.temporal.infinite-trace/v1`, and

@@ -72,7 +72,11 @@ instances of `r` at once, part of the checked package.
   to `"live"` or `"retired"`. A retired instance stays in the map, so it is
   never spawned again in that protocol instance.
 - The instance binder of `r` is the role name `r`: inside `until(p)`, `r`
-  names one instance, typed `Reference<T>`.
+  names one instance, typed `Reference<T>`. The binder is readable only in
+  that role's own `until(p)`; a role name used as a value anywhere else (a
+  choice guard, a node constraint, another role's `until`) SHALL refuse
+  `missing_declaration`/`missing-name` at the name, because it names no value
+  there.
 - Lifetime `workflow`: the instance retires when its protocol instance
   finishes. Lifetime `scope`: it retires in the step after which no live
   thread can reach any node `by r` inside the *scope region*, the closest
