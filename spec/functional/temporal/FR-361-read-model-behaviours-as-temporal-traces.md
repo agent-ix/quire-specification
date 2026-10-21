@@ -163,13 +163,16 @@ An instance is identified by its key alone, which is why the wire forms that
 name an instance by parameter and key (the replay `over_binding`, the evidence
 `Instance` and the obligation identity) need no population member.
 
-The analyzer SHALL bind `x` for each instance to the reference (`universe`,
-`object_type`, `identity`) whose `object_type` is the canonical member type of
-the first overlapping population, in the order above, that lists the key (that
-population's first member type in declaration order), and SHALL NOT compare the
-type component. The analyzer SHALL match a state's object to the binding by
-universe and identity alone. A refutation names the instance, its key, that it
-refutes.
+The analyzer SHALL bind `x` at each position to the reference (`universe`,
+`object_type`, `identity`) of the object the state holds under the instance's
+key, its `object_type` being that object's most-specific type (FR-204), never a
+population's member type. That type is unique per key, because FR-153 refuses
+two members with one universe and identity and different types
+(`conflicting-identity`), so the reference does not depend on which overlapping
+population lists the key or on the population order, and reference equality
+(FR-204) holds between `x` and the same object reached from any population. A
+key has no type until a state holds its object, so the instance itself names
+none. A refutation names the instance, its key, that it refutes.
 
 At a position where no overlapping population holds an object under the
 instance's key, or the object it holds does not conform to `T`, a read through
@@ -209,7 +212,7 @@ unguarded read, whatever the property.
 | FR-361-AC-9 | A clause `over (x: Counter)` over a subject with populations `counters` (member type `Counter`) and `all` (member type `Entity`, a supertype of `Counter`), universes `counters = [c, d]` and `all = [c, e]`, and `specials` (only member type `SpecialCounter`, a subtype of `Counter`) with `[s]`, has the instances `c`, `e`, `d`, `s` in that order, the key `c` listed by `all` and `counters` being one instance; a population of an unrelated type adds none. | Test (TC-290) |
 | FR-361-AC-10 | The item is `refuted` exactly when some instance is refuted, for every permutation of the universe lists; the reported instance, counterexample, basis and cause are those of the first refuted instance in the instance order: with `all = [c, e]` and the unguarded claim `always holds(x.value <= 0)`, where `c` refutes by a false evaluation after `inc` and `e` by an undefined read, the cause is none and the counterexample names `c`, and with `all = [e, c]` the cause is `undefined-evaluation` and it names `e`; permuting a universe list changes the request identity. | Test (TC-290) |
 | FR-361-AC-11 | Over `Counter` instances, the instance `e`, whose key holds an `Entity` that is not a `Counter`, reads `absent-key` through `x`: an unguarded `holds(x.value >= 0)` refutes with `undefined-evaluation` naming `e`, while the same read guarded by the disjunction of `lookup<Counter>(p, x)` being `some` over `all`, `counters` and `specials` evaluates for every instance; with `inc` disabled, `c.value = 1`, `s.value = 1` and `d.value = 0`, the claim `always holds(x.value >= 1)` guarded by the disjunction is refuted at `d`, while a guard naming only `all` holds it vacuously at `d` and the item is `proved`. | Test (TC-290) |
-| FR-361-AC-12 | A binding's `object_type` is the population's canonical member type and is not compared: an object held under the key whose most-specific type is a subtype of that member type is matched, and reference equality of `x` with `allInstances` members of that object holds. | Test (TC-290) |
+| FR-361-AC-12 | The binding of `x` for the key `c`, listed by `all` (member type `Entity`) before `counters` (member type `Counter`), has `object_type` `Counter`, the most-specific type of `c`, and is equal under FR-204 to the reference to `c` in `allInstances<Counter>(counters)`; renaming `all` so that `counters` sorts first leaves the binding's bytes unchanged; an object of the subtype `SpecialCounter` held under `s` binds with `object_type` `SpecialCounter`; two members with one universe and identity and different types refuse `conflicting-identity` before any binding. | Test (TC-290) |
 | FR-361-AC-13 | The universe provision of population `counters` with list `[c, d]` is the RFC 8785 canonical array of its two keys in list order, each exactly `universe` and `identity`, whose `sha256-jcs` digest is the published `counters-c-d` digest; the list `[d, c]` gives a different document and digest; a key with a missing, extra (`object_type` included) or non-hex member is not a universe key. | Test (TC-290) |
 
 ## Dependencies
