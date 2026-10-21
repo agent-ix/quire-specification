@@ -63,11 +63,12 @@ part of every verdict's scope and of every obligation identity that reads it
 
 The `requires-bound` classification below runs first. Only over bounded
 universes is an item with zero instances found, an item having zero
-instances when no population overlaps its `over` type or every overlapping
-population has an empty universe (no overlapping population has a key); a
-overlapping population with no universe is `requires-bound`, never
-`no-instance`. A key whose object does not conform to the type is still an
-instance (below), so it never makes the item `no-instance`. The
+instances when it has no admitted key (below): no population overlaps its
+`over` type, every overlapping population has an empty universe, or no member
+record of an initial state admits a key of their universes. A population
+overlapping the type that has no universe makes the item `requires-bound`,
+never `no-instance`. A key whose object does not conform to the type is still
+an instance (below), so it never makes the item `no-instance`. The
 analyzer SHALL settle it `inconclusive` with cause `no-instance` before it
 explores any state, so an item that was never evaluated is never read as
 holding.
@@ -142,8 +143,11 @@ spelled in full in the published vector `counters-c-d`; the list `[d, c]` is a
 different document with a different digest.
 
 A clause `over (x: T)` over a model subject has one *instance* for each
-distinct key that occurs in the universe of at least one population that
-overlaps `T`: some member type of the population conforms to `T`, or `T`
+distinct *admitted key*: a key that occurs in the universe of at least one
+population that overlaps `T` and that a member record of some initial state of
+the subject admits, which fixes the key's type up front. A key only an operation
+could create is not an instance; that is the stated limitation of this rule.
+A population *overlaps* `T` when some member type of the population conforms to `T`, or `T`
 conforms to some member type of it. A population whose member types are
 subtypes of `T` only, and one whose member type is a supertype of `T`, each
 overlap `T`; one whose member types are unrelated to `T` does not. A key listed
@@ -175,12 +179,15 @@ key has no type until a member record admits it, so the instance itself names
 none. A refutation names the instance, its key, that it refutes.
 
 FR-153 checks one type per key within one population binding, so the analyzer
-SHALL check it across populations: it builds the instance set over the member
-records of every overlapping population, and two member records with the same
-universe and identity and different types, in one population or in two,
-refuse `invalid_runtime_input`/`conflicting-identity` before any instance is
-formed. A key that no member record of the subject's initial states admits
-and that no operation can create is not an instance. The wire reference of a
+SHALL check it across populations: after the `requires-bound`
+classification, which comes first because a population with no universe has no
+member records to compare, it compares the member records of every overlapping
+population in every initial state of the subject, and two member records with
+the same universe and identity and different types, in one population or in
+two, in one initial state or in two, refuse the item
+`invalid_runtime_input`/`conflicting-identity`, as every other per-item input
+refusal does, before any instance is formed. A key that no member record of any initial state of the subject admits
+is not an instance. The wire reference of a
 binding carries the type of the member record admitted for its key, unique by
 the rule above; a position where the state holds no object under the key still
 carries that type, the object being absent.
@@ -228,14 +235,14 @@ unguarded read, whatever the property.
 | FR-361-AC-5 | A clause `over (x: T)` over a universe of two objects of `T` is checked once per object; it holds for the subject only when both checks hold, and its refutation names the refuted object. | Test (TC-290) |
 | FR-361-AC-6 | An unguarded read through the bound object at a reachable position where that object is absent settles the item `refuted` with cause `undefined-evaluation` naming the binding, the position and the read's locus, the same outcome as the `lookup ... absent undefined` spelling of that read; the same read guarded by population membership evaluates. | Test (TC-290, TC-305) |
 | FR-361-AC-7 | A subject with an unbounded population root and no universe returns `requires-bound` before expansion; a subject with an empty list of initial states settles `inconclusive` with cause `no-initial-state`. | Test (TC-294) |
-| FR-361-AC-8 | An item with zero instances, because no population overlaps its `over` type or every overlapping population has an empty universe, settles `inconclusive` with cause `no-instance` before any state is explored, and never `proved` or `refuted`; the same item over a population with no universe returns `requires-bound`, not `no-instance`; an item over `Counter` whose only population is `all: Entity = [e]` with `e` not a `Counter` has the instance `e` and is not `no-instance`. | Test (TC-294, TC-290) |
+| FR-361-AC-8 | An item with zero instances, because no population overlaps its `over` type, every overlapping population has an empty universe, or no member record of an initial state admits a key of their universes (a subject whose only population is `counters = [z]` with `z` held by no initial record), settles `inconclusive` with cause `no-instance` before any state is explored, and never `proved` or `refuted`; the same item over a population with no universe returns `requires-bound`, not `no-instance`; an item over `Counter` whose only population is `all: Entity = [e]` with `e` admitted as a non-`Counter` has the instance `e` and is not `no-instance`. | Test (TC-294, TC-290) |
 | FR-361-AC-9 | A clause `over (x: Counter)` over a subject with populations `counters` (member type `Counter`) and `all` (member type `Entity`, a supertype of `Counter`), universes `counters = [c, d]` and `all = [c, e]`, and `specials` (only member type `SpecialCounter`, a subtype of `Counter`) with `[s]`, has the instances `c`, `e`, `d`, `s` in that order, the key `c` listed by `all` and `counters` being one instance; a population of an unrelated type adds none. | Test (TC-290) |
 | FR-361-AC-10 | The item is `refuted` exactly when some instance is refuted, for every permutation of the universe lists; the reported instance, counterexample, basis and cause are those of the first refuted instance in the instance order: with `all = [c, e]` and the unguarded claim `always holds(x.value <= 0)`, where `c` refutes by a false evaluation after `inc` and `e` by an undefined read, the cause is none and the counterexample names `c`, and with `all = [e, c]` the cause is `undefined-evaluation` and it names `e`; permuting a universe list changes the request identity. | Test (TC-290) |
 | FR-361-AC-11 | Over `Counter` instances, the instance `e`, whose key holds an `Entity` that is not a `Counter`, reads `absent-key` through `x`: an unguarded `holds(x.value >= 0)` refutes with `undefined-evaluation` naming `e`, while the same read guarded by the disjunction of `lookup<Counter>(p, x)` being `some` over `all`, `counters` and `specials` evaluates for every instance; with `inc` disabled, `c.value = 1`, `s.value = 1` and `d.value = 0`, the claim `always holds(x.value >= 1)` guarded by the disjunction is refuted at `d`, while a guard naming only `all` holds it vacuously at `d` and the item is `proved`. | Test (TC-290) |
 | FR-361-AC-12 | The binding of `x` for the key `c`, listed by `all` (member type `Entity`) before `counters` (member type `Counter`), has `object_type` `Counter`, the most-specific type of `c`, and is equal under FR-204 to the reference to `c` in `allInstances<Counter>(counters)`; renaming `all` so that `counters` sorts first leaves the binding's bytes unchanged; an object of the subtype `SpecialCounter` held under `s` binds with `object_type` `SpecialCounter`; two members with one universe and identity and different types refuse `conflicting-identity` before any binding. | Test (TC-290) |
 | FR-361-AC-13 | The universe provision of population `counters` with list `[c, d]` is the RFC 8785 canonical array of its two keys in list order, each exactly `universe` and `identity`, whose `sha256-jcs` digest is the published `counters-c-d` digest; the list `[d, c]` gives a different document and digest; a key with a missing, extra (`object_type` included) or non-hex member is not a universe key. | Test (TC-290) |
-| FR-361-AC-14 | Two member records with the universe and identity of `c` and different types, one in `all` as `Entity` and one in `counters` as `Counter`, refuse `invalid_runtime_input`/`conflicting-identity` before any instance is formed, as do two such records in one population; one record per key with agreeing types is admitted. | Test (TC-290) |
-| FR-361-AC-15 | The instance `e` (an `Entity` that is not a `Counter`) is bound to (`universe`, `Entity`, `e`) under `x: Reference<Counter>`, and an unguarded read through it is `absent-key`; after `drop` removes `d`, the instance `d` still carries `Counter` from its admitted record, every use of `x` other than the guard is `absent-key`, and a universe key that no member record of the initial states admits and no operation creates is not an instance. | Test (TC-290) |
+| FR-361-AC-14 | After the `requires-bound` classification, two member records with the universe and identity of `c` and different types, one in `all` as `Entity` and one in `counters` as `Counter`, in one initial state or in two initial states of the subject, refuse the item `invalid_runtime_input`/`conflicting-identity` before any instance is formed, as do two such records in one population; a population with no universe gives `requires-bound` first; one record per key with agreeing types in every initial state is admitted. | Test (TC-290) |
+| FR-361-AC-15 | The instance `e` (an `Entity` that is not a `Counter`) is bound to (`universe`, `Entity`, `e`) under `x: Reference<Counter>`, and an unguarded read through it is `absent-key`; after `drop` removes `d`, the instance `d` still carries `Counter` from its admitted record, every use of `x` other than the guard is `absent-key`, and a universe key that no member record of any initial state admits, including a key only an operation could create, is not an instance. | Test (TC-290) |
 
 ## Dependencies
 

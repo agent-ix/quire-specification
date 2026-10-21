@@ -53,8 +53,8 @@ The three clauses of the shared grammar's `state-graph-clause` production are
 
 A state-graph claim has no temporal profile, no clock, no activation and no
 fairness set. Its `over` parameter binds one object of a population of the
-subject's model, and the clause has one instance per distinct key in the
-universe of any population overlapping the parameter's type (FR-361); a clause with no `over` parameter has one instance. Where the bound
+subject's model, and the clause has one instance per distinct admitted key (FR-361) in the
+universe of any population overlapping the parameter's type; a clause with no `over` parameter has one instance. Where the bound
 object does not exist at a node, its predicates read the bound object as a
 temporal atom over a model subject reads an absent `over` object.
 
