@@ -138,7 +138,13 @@ One result per clause instance, classified by
 - **Vacuity.** A clause with a non-empty `μ_U` and no tuple of fair universal
   behaviours on which `μ_U` holds at every joint step is vacuous and is never
   `proved` (FR-399). With `μ_U` empty the universal domain is never empty,
-  because a finite subject with an initial state has a fair behaviour.
+  because a finite subject with an initial state has a fair behaviour. An
+  HP-6 clause ([FR-398](FR-398-align-hyperproperty-traces-on-a-projection.md))
+  is never vacuous: the tuple of initial states with its empty projected
+  prefix counts as matched, so its matched set is never empty and a `μ_U` that
+  no joint visible step satisfies leaves the item deciding on the position-0
+  prefix alone. A subject with no initial state is `no-initial-state`, and a
+  clause with no instance `no-instance`, as for every form.
 - **Deadlocks.** A hyper item reports no deadlock. A request that holds a
   hyper item holds the one derived deadlock-freedom item
   ([FR-366](../temporal/FR-366-check-deadlock-freedom.md)) of each distinct
@@ -171,7 +177,7 @@ One result per clause instance, classified by
 | FR-395-AC-3 | Lockstep noninterference with matched inputs is refuted on the leaky vault and proved on the secure vault; without `match` it is refuted on both. | Test (TC-338) |
 | FR-395-AC-4 | `μ_U` restricts the universal tuples and `μ_E` the existential tuples, so a `∀∃` clause is refuted on the leaky vault and proved on the secure vault. | Test (TC-339) |
 | FR-395-AC-5 | A component at a terminal state stutters with step label `stutter`, and a match of equal operations pairs it only with another stuttering component; `a.step.receiver` is none at its terminal-stutter step, so `a.step.receiver = b.step.receiver` holds between two stuttering components. | Test (TC-340) |
-| FR-395-AC-6 | A clause whose non-empty `μ_U` no fair universal tuple satisfies is vacuous and is not `proved`. | Test (TC-340) |
+| FR-395-AC-6 | An HP-2 or HP-3 clause whose non-empty `μ_U` no fair universal tuple satisfies is vacuous and is not `proved`; an HP-6 clause whose `μ_U` no joint visible step satisfies is not vacuous and settles on its position-0 prefix. | Test (TC-340) |
 | FR-395-AC-7 | Each variable's fairness set filters only its own behaviours: a liveness body that holds only under one variable's fairness set is proved with that set and refuted without it. | Test (TC-341) |
 | FR-395-AC-8 | A body with an interval operator nested under `always` is evaluated over joint positions of a tuple of lassos, with the stem the longest component stem and the period the least common multiple of the loop lengths. | Test (TC-341) |
 | FR-395-AC-9 | A clause over `behaviours` under a profile other than infinite-trace settles `unsupported` with `unsupported_projection`/`unsupported-requested-capability`. | Test (TC-337) |

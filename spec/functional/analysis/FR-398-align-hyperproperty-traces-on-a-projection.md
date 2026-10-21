@@ -78,8 +78,8 @@ continuations are all skipped steps, takes part in the prefixes up to its last
 visible step.
 
 A projected counterexample is a tuple of finite paths with equal visible
-counts `L`, the traces of unequal total length, whose joint projected prefix
-evaluates false; the canonical one is the first in FR-181 breadth-first order
+counts `L`, the traces' total lengths free (skipped steps may make them
+differ or coincide), whose joint projected prefix evaluates false; the canonical one is the first in FR-181 breadth-first order
 over moves of either kind, where a move is either one component taking one
 skipped step or every component taking one visible step with `μ_U` true on the
 joint step. The maximum depth counts moves of either kind.
@@ -89,7 +89,7 @@ joint step. The maximum depth counts moves of either kind.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-398-AC-1 | On the busy/mix vault, lockstep noninterference matching only `step` arguments is refuted, and the same clause with `align skip { V::Vault::mix }` is proved. | Test (TC-344) |
-| FR-398-AC-2 | A projected counterexample on a leaky variant carries equal visible counts and unequal total lengths, and its joint projected prefix evaluates false. | Test (TC-344) |
+| FR-398-AC-2 | A projected counterexample on a leaky variant carries equal visible counts, whatever its total lengths, and its joint projected prefix evaluates false. | Test (TC-344) |
 | FR-398-AC-3 | An entry naming an operation of no bound alias, a repeated entry, an empty list and a fairness set on a variable of an `align skip` clause each refuse as `unsupported_construct`/`expression-form` at the located construct. | Test (TC-337) |
 | FR-398-AC-4 | Skipped steps change neither the match nor any indexed read: two paths with the same visible steps and different skipped steps give the same projected prefix. | Test (TC-344) |
 

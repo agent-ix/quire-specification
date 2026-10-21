@@ -158,6 +158,15 @@ and reruns.
 | `max_witness_set` | the members one HP-3 witness set may reach | `model_check.max_witness_set` |
 | `max_relation_tuples` | the tuples an HP-1 run may evaluate | `model_check.max_relation_tuples` |
 
+[FR-461](../foundation/FR-461-name-the-limit-value-and-setting.md) defines the
+count the denied charge would have reached. When a run stops at
+`max_witness_set` or `max_relation_tuples`, the engine's stop record SHALL
+expose that count, the value plus 1, since the run stops at the first member or
+tuple that would pass the limit and counts that one. The stop records of the
+other model-check limits (`max_states`, `max_transitions`,
+`max_automaton_states` and the evaluation meter) expose no count. The settled
+`limit-reached` cause carries `limit`, `value` and `setting` only.
+
 The routed provider publishes each default, which applies when the request
 sets none. The model-subject
 limits on states, transitions and automaton states count product states, joint
@@ -169,8 +178,8 @@ steps and automaton states for hyper items.
 | --- | --- | --- |
 | FR-399-AC-1 | Each outcome row settles exactly its listed FR-360 label, FR-243 basis and cause, a stopped run `incomplete` with `limit-reached` and a cancelled run `incomplete` with `cancelled{source}`, and each label matches exactly one FR-360 member with its FR-241, FR-242 and FR-243 combination. | Test (TC-338, TC-339, TC-340, TC-342) |
 | FR-399-AC-2 | An HP-3 clause is refuted exactly when a fair universal tuple reaches an empty witness set; on the leaky vault `X_1` is empty, and on the secure vault every `X` is a singleton and the clause is proved. | Test (TC-339) |
-| FR-399-AC-3 | An HP-3 run whose witness set reaches `max_witness_set` stops and settles `incomplete` with cause `limit-reached` naming `max_witness_set`, its value and its setting; a request that sets none runs under the provider's published default. | Test (TC-339) |
-| FR-399-AC-4 | An HP-1 run that reaches `max_relation_tuples` stops and settles `incomplete` with cause `limit-reached` naming the limit, its value and its setting; a request that sets none runs under the provider's published default. | Test (TC-343) |
+| FR-399-AC-3 | An HP-3 run whose witness set reaches `max_witness_set` stops and settles `incomplete` with cause `limit-reached` naming `max_witness_set`, its value and its setting, the engine's stop record exposing the count reached, one past the value; a request that sets none runs under the provider's published default. | Test (TC-339) |
+| FR-399-AC-4 | An HP-1 run that reaches `max_relation_tuples` stops and settles `incomplete` with cause `limit-reached` naming the limit, its value and its setting, the engine's stop record exposing the count reached, one past the value; a request that sets none runs under the provider's published default. | Test (TC-343) |
 | FR-399-AC-5 | A match refused at a reachable joint step settles `inconclusive` with `match-undetermined`, and a vacuous clause with `vacuous-match`; neither settles `proved`. | Test (TC-340) |
 | FR-399-AC-6 | A run that completes every depth up to the maximum with no violation settles `inconclusive` with `bound-reached` naming the depth, never `proved`. | Test (TC-338) |
 | FR-399-AC-7 | A refutation settles only after its counterexample replays; a counterexample that fails replay settles `inconclusive` with `replay-parity` or `replay-refused`. | Test (TC-345) |

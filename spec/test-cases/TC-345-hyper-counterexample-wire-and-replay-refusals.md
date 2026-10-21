@@ -36,6 +36,7 @@ Encode each vector with RFC 8785 JCS through the real local Rust boundary, read 
 | HR-09 | a `lockstep` counterexample with `loop_entry` beyond its step count; a `witness-exhausted` counterexample with `position` beyond its step count; a `loop_entry` on a `step-tuple` counterexample | each refused `invalid_runtime_input`/`invalid-value` before replay |
 | HR-10 | a well-formed `lockstep` counterexample whose terminal-stutter step follows a state at which `step` is enabled | `inconclusive`, `replay-parity` |
 | HR-11 | an `undefined` counterexample with no `undefined` member, with `state_keys` of the wrong length, or with an uncatalogued `cause` | each refused `invalid_runtime_input`/`invalid-value` before replay |
+| HR-12 | an `undefined` counterexample whose paths differ in step count: that of an `align skip` clause (TC-348 UE-13), whose unmarked paths each hold a skipped step and a visible step, and that of an HP-3 undefined `μ_U` (TC-348 UE-12) | refused `unsupported_construct`/`not-yet-implemented`; no result is settled and it is not replayed as a lockstep counterexample |
 
 ## Expected Results
 

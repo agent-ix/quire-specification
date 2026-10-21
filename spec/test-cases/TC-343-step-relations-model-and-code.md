@@ -34,7 +34,7 @@ Run each model-claim vector through the real local Rust boundary with the explic
 | SR-01 | TC-337 HB-11 on a model whose `step` may set `l` to either value | `refuted`, `decisive-counterexample`; a `step-tuple` counterexample, two prefix-plus-transition traces, that replays with the body false |
 | SR-02 | HB-11 on the secure model | `proved`, `closed-scope` |
 | SR-03 | a relation violated only from a pre-state that is not reachable | model claim `proved` |
-| SR-04 | SR-01 with `max_relation_tuples` 1 | `incomplete`, cause `limit-reached` naming `max_relation_tuples`; with no value set it runs under the provider's published default |
+| SR-04 | SR-01 with `max_relation_tuples` 1 | `incomplete`, cause `limit-reached` naming `max_relation_tuples`, its value 1 and its setting; the engine's stop record exposes the count reached, 2; with no value set it runs under the provider's published default |
 | SR-05 | HB-11 with `V::Vault::step` bound to an implementation by an abstraction relation | two items: model claim `temporal-satisfaction`, code claim `operation-contract`, with different obligation identities |
 | SR-06 | SR-05 against an implementation that is nondeterministic in `l` | code claim `refuted`; its counterexample's pre-states are admitted as snapshots, satisfy the invariants, and the body evaluates false with no reachability prefix |
 | SR-07 | a code claim whose declared invariants no state satisfies | `inconclusive` with the vacuity cause, never `proved` |

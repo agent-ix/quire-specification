@@ -45,12 +45,15 @@ setting.
      charge would have reached.
    - Its setting: the name by which a caller raises it.
 
-   The locus is the one FR-272 retains for the cause.
+   The locus is the one FR-272 retains for the cause. This requirement
+   defines the count; an engine's stop record exposes it where the owning
+   requirement says so (FR-399 for the model checker's hyper limits), and the
+   settled `limit-reached` cause names the limit, its value and its setting.
 2. **One setting name per limit.** Every configurable stage limit has one
    stable dotted name: the stage, a dot and the counter, for example
    `s1.tokens`, `s3.nodes`, `s3.work_units` or `intake.input_bytes`. The
    counter names a resource (bytes, tokens, nodes, edges, occurrences,
-   diagnostics or work units), never a depth (FR-460).
+   diagnostics, work units or rational bits), never a depth (FR-460).
    A byte-emitting lifecycle operation names its output-byte budget with the
    operation name and the `output_bytes` counter, for example
    `format.output_bytes`. The budget counts every byte the operation would
