@@ -86,7 +86,7 @@ cause per obligation.
 | A new pattern-matching form silently duplicates the `if`/`else` totality argument instead of composing with it | `case` exhaustiveness is specified as its own obligation sequence, discharged before arm evaluation, alongside (not inside) the existing path-sensitive `if`/`else` totality contract. |
 | Adding a cause without updating every extracting document leaves FR-271/FR-272 inconsistent with the canonical catalog | `unproved-exhaustiveness` is added in the same PR to the canonical `native-diagnostics.md` table and revision-4 paragraph, and to both FR-271 and FR-272's extracted mirrors. |
 
-## Tracked separately
+## Unrelated measure element
 
 The cardinality element of a `decreases` measure (FR-146) has no source form
 that strictly decreases it, so it can never discharge a `decrease` obligation.
@@ -95,4 +95,3 @@ It is independent of `union` and `case` and this decision does not change it.
 ## Status
 
 Accepted design for the FR-143 `union-decl` and FR-146 `case` amendments.
-Implementation and qualification remain tracked separately.
