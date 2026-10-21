@@ -377,6 +377,8 @@ member absent; then the mutations `[]`, `null`, an object with `"internal": []`,
 an object with a third key, objects out of byte order, spellings out of byte
 order, a repeated `refinement` and a repeated spelling.
 
+Check a compiler-derived node: a refinement owner with step rows `R0` and `R1` from which one node per row is derived; require the node derived from `R1` to have an occurrence of role `generated`, ordinal 1 and the region of `R1`'s source row, and the same after swapping the source order of the rows (FR-322-AC-87).
+
 ## Expected Results
 
 Each event type vector gives exactly its recorded result.

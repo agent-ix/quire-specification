@@ -633,7 +633,13 @@ boundary.
   mapping. An occurrence key is (`node_id`, `role`, `ordinal`), where role is
   `declaration`, `type`, `expression`, `anchor`, `claim` or `generated`; a
   source region is a half-open UTF-8 byte interval `[start,end)` under one exact
-  source-document identity/raw-byte digest. An occurrence may name
+  source-document identity/raw-byte digest. The role `generated` is the role
+  of every occurrence of a *compiler-derived node*, a node the compiler adds
+  that no source text declares and that derives from exactly one declaration
+  node, its *owner*. Its ordinal is the node's position among the derived
+  nodes of that owner, in the owner's total order (for a refinement owner
+  deriving one node per step row, FR-375's `steps` order), and its source
+  region, when it has one, is the region of the source row it derives from. An occurrence may name
   multiple ordered regions; regions for that one occurrence/document cannot
   overlap, while regions belonging to different occurrences may nest or
   overlap. A path, display name or search result is not a source identity.
@@ -1752,6 +1758,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-84 | Supply of `dependency_selections` is checked entry by entry in lock order, presence then binding, and the first failing entry is reported alone: two unsupplied entries refuse `missing_import`/`missing-selection` at entry 0; entry 0 supplied and entry 1 unsupplied refuse at entry 1; entry 0 supplied but stale and entry 1 unsupplied refuse `stale_dependency`/`content-mismatch` at entry 0, not `missing-selection` at entry 1. | Test (TC-233) |
 | FR-322-AC-85 | A `dependency_reference` refusal's locus is the term's `package` member for `missing-selection`, its `node` member for `missing-name` and the term itself for `operator-ineligible`, each under the pointer of the term in its node's `body`. | Inspection (TC-233) |
 | FR-322-AC-86 | The signature type nodes of a dependency function are the `semantic_type` of each node its `parameters` binding references and the function's own `semantic_type`: a dependency function with a parameter of a declared record type is ineligible (`ill_typed`/`operator-ineligible`), while one whose body only references a declared record is eligible. | Inspection (TC-233) |
+| FR-322-AC-87 | A refinement owner with step rows `R0`, `R1` (in `steps` order) from which the compiler derives one node per row has, for the node derived from `R1`, an occurrence with role `generated`, ordinal 1 and a `source_map` region equal to the region of `R1`'s source row; swapping the source order of the two rows leaves the `steps` order, and so each ordinal, unchanged. | Test (TC-233) |
 
 ## Dependencies
 

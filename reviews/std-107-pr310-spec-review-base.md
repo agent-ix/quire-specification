@@ -39,3 +39,12 @@ Ticket: STD-107 (PR #310, head d54caee35ed62feafe6019ef048ec50ea249132c). Compar
 ## Verdict
 
 Not mergeable: FND-001 (medium) plus the FR-322-AC-84 id collision with PR #311 (SR-13643 FND-001).
+
+## Dispositions
+
+Disposition pass 1, against head 55916ae23ed2cc7f018a482fe2d51ccd946ecc09.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | accepted-no-change | Narrower signature reading kept deliberately; FR-322-AC-86 now states it, and the PR body records that IR-289 over-refuses a function the spec admits and needs a fix (IR lane notified by the coordinator). No IR ticket id is named yet; the IR reader stays out of line with FR-322-AC-86 until that fix lands. |
+| FND-002 | fixed | verified at 55916ae23ed2 |

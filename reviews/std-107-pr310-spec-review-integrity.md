@@ -36,3 +36,13 @@ Ticket: STD-107 (PR #310, head d54caee35ed62feafe6019ef048ec50ea249132c). `quire
 ## Verdict
 
 Not mergeable: FND-001 (high) must be resolved with PR #311.
+
+## Dispositions
+
+Disposition pass 1, against head 55916ae23ed2cc7f018a482fe2d51ccd946ecc09.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | verified at 55916ae23ed2 |
+| FND-002 | fixed | verified at 55916ae23ed2 |
+| FND-003 | fixed | verified at 55916ae23ed2 |

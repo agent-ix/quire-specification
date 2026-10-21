@@ -30,3 +30,11 @@ Ticket: STD-213 (PR #309, head d22f6cab318ce014d8273fa2c2f6cfa02b52e7b9). One ne
 ## Verdict
 
 Not mergeable until FND-001 (three extra assertions) is fixed; the binding is correct.
+
+## Dispositions
+
+Disposition pass 1, against head 931e26efab0d449afe6b6d6a12c56111941415a8.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | verified at 931e26efab0d |
