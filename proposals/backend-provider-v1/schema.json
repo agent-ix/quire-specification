@@ -668,7 +668,7 @@
     },
     "LimitReached": {"description": "FR-331, FR-461: the one limit-stop cause.", "type": "object", "required": ["type", "limit", "value", "setting"], "properties": {"type": {"const": "limit-reached"}, "limit": {"$ref": "#/$defs/LimitName"}, "value": {"$ref": "#/$defs/Count"}, "setting": {"$ref": "#/$defs/SettingName"}}, "additionalProperties": false},
     "InconclusiveCause": {
-      "description": "Closed inconclusive causes: FR-331 table, FR-363, FR-385, FR-399, FR-401, FR-379, FR-380, FR-428, FR-439, AD-016 (kani_vacuous_proof).",
+      "description": "Closed inconclusive causes: FR-331 table, FR-363, FR-385, FR-399, FR-401, FR-379, FR-380, FR-468, FR-428, FR-439, AD-016 (kani_vacuous_proof).",
       "type": "object",
       "required": ["type"],
       "oneOf": [
@@ -682,6 +682,7 @@
         {"properties": {"type": {"const": "mapping-undetermined"}, "row": {"$ref": "#/$defs/Nonempty"}, "state_key": {"$ref": "#/$defs/StateKey"}, "prefix": {"type": "array", "items": {"$ref": "#/$defs/ModelStep"}}}, "required": ["type", "row", "state_key", "prefix"], "additionalProperties": false},
         {"properties": {"type": {"const": "transfer-not-preserving"}, "reason": {"enum": ["fragment", "fairness", "stutter-closure"]}, "operator": {"$ref": "#/$defs/Nonempty"}, "constraint": {"$ref": "#/$defs/Fairness"}}, "required": ["type", "reason"], "additionalProperties": false},
         {"properties": {"type": {"const": "premise-unproved"}, "premise": {"$ref": "#/$defs/Count"}, "result": {"$ref": "#/$defs/ResultValue"}}, "required": ["type", "premise", "result"], "additionalProperties": false},
+        {"description": "FR-468: hypothesis is the invariant clause's checked-package node; result is the result of its unproved item.", "properties": {"type": {"const": "hypotheses-not-established"}, "hypothesis": {"$ref": "#/$defs/NodeId"}, "result": {"$ref": "#/$defs/ResultValue"}}, "required": ["type", "hypothesis", "result"], "additionalProperties": false},
         {"description": "FR-439: limit is the request member that raises the budget.", "properties": {"type": {"const": "memory-bound-reached"}, "limit": {"enum": ["max_store_buffer", "max_messages"]}, "value": {"$ref": "#/$defs/PositiveCount"}, "states": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "limit", "value", "states"], "additionalProperties": false},
         {"description": "FR-428-AC-1: limit names max_live_instances, the member that raises the bound.", "properties": {"type": {"const": "instance-bound-reached"}, "limit": {"const": "max_live_instances"}, "value": {"$ref": "#/$defs/PositiveCount"}, "states": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "limit", "value", "states"], "additionalProperties": false}
       ]
