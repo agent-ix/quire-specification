@@ -37,3 +37,11 @@ Ticket: STD-217 (PR #311, head 0bc76ae117f9b5be4dcaa2b5c868218fc06bf64d). Partia
 ## Verdict
 
 Low only in this lens; see SR-13647 and SR-13648 for the blocking findings.
+
+## Dispositions
+
+Disposition pass 1, against head 27b08c16fb75a08b740aed5ca1e3b1727679fb2c.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | verified at 27b08c16fb75 |

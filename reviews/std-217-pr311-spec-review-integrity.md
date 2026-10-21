@@ -35,3 +35,12 @@ Ticket: STD-217 (PR #311, head 0bc76ae117f9b5be4dcaa2b5c868218fc06bf64d). `quire
 ## Verdict
 
 Not mergeable: FND-001 (high) and FND-002 (medium).
+
+## Dispositions
+
+Disposition pass 1, against head 27b08c16fb75a08b740aed5ca1e3b1727679fb2c.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | verified at 27b08c16fb75 |
+| FND-002 | fixed | verified at 27b08c16fb75 |
