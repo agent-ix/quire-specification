@@ -61,18 +61,21 @@ One result per clause instance, classified by
   different aliases range over different subjects. The request supplies one
   subject per distinct alias.
 - **Object parameters.** `behaviours (v: V::T)` binds an object of a
-  population of alias `V`'s model. The clause has one instance per key of
-  that population's universe. Within an instance, `v` denotes the object with
+  population of alias `V`'s model. The clause has one instance per key of the
+  universe of every population of that model that overlaps `T`, a key listed by
+  several of them being one instance, as FR-361 defines an instance. Within an instance, `v` denotes the object with
   that key in every trace of that alias: objects are correlated across traces
   by universe key, never by local name. A clause over two aliases names one
   parameter per alias it reads, and its instances range over the product of
-  their universes. A clause one of whose parameters' populations has an empty
-  universe has no key to instantiate, so the product is empty and the clause has
-  zero instances: the item is a `NoInstance` item of
+  their universes. A clause one of whose parameters has no admitted key
+  (no population overlaps its type, every overlapping population has an empty
+  universe, or no initial member record admits a key of their universes), which
+  FR-361 states as zero instances, has an
+  empty product and zero instances: the item is a `NoInstance` item of
   [FR-361](../temporal/FR-361-read-model-behaviours-as-temporal-traces.md)
   Instancing and settles by [FR-399](FR-399-settle-hyperproperty-results.md),
-  never `proved`, since no instance was ever evaluated. A parameter whose
-  population has no universe is `requires-bound` first.
+  never `proved`, since no instance was ever evaluated. A parameter with an
+  overlapping population that has no universe is `requires-bound` first.
 - **Indexed reads.** Every model member read in the body carries exactly one
   trace variable, written `e @ a`; one atom may read several variables.
 - **Step labels.** Inside `match`, `a.step.op` is the operation of the step
@@ -173,7 +176,7 @@ One result per clause instance, classified by
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-395-AC-1 | Under `behaviours`, a quantifier without `of`, and under a finite trace domain a quantifier with `of`, refuse at the quantifier; an indexed read through a variable of another model and an unindexed member read refuse `ill_typed`; a match that reads state refuses. | Test (TC-337) |
-| FR-395-AC-2 | Two quantifiers over one alias range independently over one subject, quantifiers over two aliases over two subjects, and an object parameter yields one instance per universe key with the object correlated by key in every trace. | Test (TC-337, TC-338) |
+| FR-395-AC-2 | Two quantifiers over one alias range independently over one subject, quantifiers over two aliases over two subjects, and an object parameter yields one instance per key of each overlapping population's universe with the object correlated by key in every trace. | Test (TC-337, TC-338) |
 | FR-395-AC-3 | Lockstep noninterference with matched inputs is refuted on the leaky vault and proved on the secure vault; without `match` it is refuted on both. | Test (TC-338) |
 | FR-395-AC-4 | `μ_U` restricts the universal tuples and `μ_E` the existential tuples, so a `∀∃` clause is refuted on the leaky vault and proved on the secure vault. | Test (TC-339) |
 | FR-395-AC-5 | A component at a terminal state stutters with step label `stutter`, and a match of equal operations pairs it only with another stuttering component; `a.step.receiver` is none at its terminal-stutter step, so `a.step.receiver = b.step.receiver` holds between two stuttering components. | Test (TC-340) |

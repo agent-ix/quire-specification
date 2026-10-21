@@ -3508,5 +3508,39 @@
         }
       ]
     }
+  ],
+  "universe_provision_vectors": [
+    {
+      "name": "counters-c-d",
+      "description": "FR-361: the universe provision of population counters, universe list [c, d]; identity bytes are the UTF-8 of the object identities c (0x63) and d (0x64).",
+      "keys": [
+        {
+          "universe": "1111111111111111111111111111111111111111111111111111111111111111",
+          "identity": "63"
+        },
+        {
+          "universe": "1111111111111111111111111111111111111111111111111111111111111111",
+          "identity": "64"
+        }
+      ],
+      "jcs": "[{\"identity\":\"63\",\"universe\":\"1111111111111111111111111111111111111111111111111111111111111111\"},{\"identity\":\"64\",\"universe\":\"1111111111111111111111111111111111111111111111111111111111111111\"}]",
+      "digest": "ebdd6190dfd24ceb2a6147007beffd22b1d3dc1ce73550af0c033ed61efa1be9"
+    },
+    {
+      "name": "counters-d-c",
+      "description": "The same keys in the order [d, c]: a different provision and digest.",
+      "keys": [
+        {
+          "universe": "1111111111111111111111111111111111111111111111111111111111111111",
+          "identity": "64"
+        },
+        {
+          "universe": "1111111111111111111111111111111111111111111111111111111111111111",
+          "identity": "63"
+        }
+      ],
+      "jcs": "[{\"identity\":\"64\",\"universe\":\"1111111111111111111111111111111111111111111111111111111111111111\"},{\"identity\":\"63\",\"universe\":\"1111111111111111111111111111111111111111111111111111111111111111\"}]",
+      "digest": "f59722af7334950a9b7b4d19a3e2ad477f7f71941fdbaf6fd4a82d75ee52a695"
+    }
   ]
 }
