@@ -122,19 +122,43 @@ deadlock ([FR-366](FR-366-check-deadlock-freedom.md)).
 
 ### Binding of the clause's `over` parameter
 
-A clause `over (x: T)` over a model subject is checked once for each object of
-the subject's universe whose type conforms to `T`. Each check binds `x` to that
-object's reference. The clause holds for the subject when it holds for every
-binding, and a refutation names the binding it refutes.
+A *universe* of a population is an ordered list of object keys, each a
+(universe component, object identity) pair of the FR-204 triple with no type:
+a key has no type until a state holds its object. The `universes` of a subject
+(FR-368) are these lists, one per population.
 
-At a position where the bound object is not a member of its population, a read
-through `x` SHALL return the kernel's undefined value with reason
-`absent-key`, the same value `lookup<T>(p, x) absent undefined` returns for
-that object. The claim then evaluates undefined at that position, and the item
-settles `refuted` with cause `undefined-evaluation`
-([FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md)), naming the
-binding, the position and the locus of the read. Population membership is a
-defined Boolean, so a clause guards such reads with it.
+A clause `over (x: T)` over a model subject has one *instance* for each pair
+(`p`, `k`) of a population `p` and a key `k` of `p`'s universe, for every
+population `p` whose member types cover `T` ([FR-153](../type-model/FR-153-query-closed-model-environments.md):
+a member type covers itself and every type that conforms to it, so a member
+type that is `T`, a subtype of `T` or a supertype of `T` covers it). The
+analyzer SHALL order the instances by the UTF-8 bytes of the population's
+declaration identity text, then by the order of the universe list. The
+instance order selects which refuted instance a counterexample names, the
+first in that order; it changes neither the verdict label, basis nor cause,
+which hold exactly when every instance holds, and it enters the request
+identity only through the universe lists the subject carries.
+
+Each instance binds `x` to the reference (`universe`, `object_type`, `identity`)
+whose `object_type` is the population's canonical member type, the first
+member type of its declaration; the type component is not compared. A state's
+object matches the binding by universe and identity alone. The clause holds
+for the subject when it holds for every instance, and a refutation names the
+instance it refutes.
+
+At a position where `p` holds no object under the instance's key, or holds one
+whose most-specific type does not conform to `T`, a read through `x` SHALL
+return the kernel's undefined value with reason `absent-key`, the same value
+`lookup<T>(p, x) absent undefined` returns for that binding. For a binding
+that `over` introduces, `lookup<T>(p, x)` is present exactly when `p` holds an
+object under that key whose most-specific type conforms to `T`. The claim
+evaluates undefined at that position, and the item settles `refuted` with
+cause `undefined-evaluation` ([FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md)),
+naming the instance, the position and the locus of the read. Population
+membership typed by `T`, `lookup<T>(p, x) absent empty` being `some`, is the
+guard that keeps such a read from evaluating, and no type-test operator is
+added: over a population that holds a key whose object does not conform to
+`T` an unguarded read refutes the item whatever the property, by this rule.
 
 ## Acceptance Criteria
 
@@ -148,6 +172,10 @@ defined Boolean, so a clause guards such reads with it.
 | FR-361-AC-6 | An unguarded read through the bound object at a reachable position where that object is absent settles the item `refuted` with cause `undefined-evaluation` naming the binding, the position and the read's locus, the same outcome as the `lookup ... absent undefined` spelling of that read; the same read guarded by population membership evaluates. | Test (TC-290, TC-305) |
 | FR-361-AC-7 | A subject with an unbounded population root and no universe returns `requires-bound` before expansion; a subject with an empty list of initial states settles `inconclusive` with cause `no-initial-state`. | Test (TC-294) |
 | FR-361-AC-8 | An item with zero instances, over a type that no object of the universes conforms to or over an empty universe, settles `inconclusive` with cause `no-instance` before any state is explored, and never `proved` or `refuted`; the same item over a population with no universe returns `requires-bound`, not `no-instance`. | Test (TC-294) |
+| FR-361-AC-9 | A clause `over (x: Counter)` over a subject with populations `counters` (member type `Counter`) and `all` (member type `Entity`, a supertype of `Counter`), universes `counters = [c]` and `all = [c, e]`, has instances (`all`, `c`), (`all`, `e`), (`counters`, `c`) in that order: population declaration identity text, then universe order. | Test (TC-290) |
+| FR-361-AC-10 | The verdict of an item is the same for the instance order above and for any permutation of the universe list, while the counterexample of a refuted item names the first refuted instance in the order; permuting a universe list changes the request identity. | Test (TC-290) |
+| FR-361-AC-11 | Over `Counter` instances of `all`, the instance (`all`, `e`), whose key holds an `Entity` that is not a `Counter`, reads `absent-key` through `x`: an unguarded `holds(x.value >= 0)` refutes with `undefined-evaluation` naming (`all`, `e`), while the same read guarded by `lookup<Counter>(all, x)` being `some` evaluates and the instance holds. | Test (TC-290) |
+| FR-361-AC-12 | A binding's `object_type` is the population's canonical member type and is not compared: an object held under the key whose most-specific type is a subtype of that member type is matched, and reference equality of `x` with `allInstances` members of that object holds. | Test (TC-290) |
 
 ## Dependencies
 
