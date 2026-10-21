@@ -490,16 +490,24 @@
       "allOf": [
         {"if": {"properties": {"kind": {"const": "time-lock"}}, "required": ["kind"]}, "then": {"required": ["final_delay"]}, "else": {"not": {"required": ["final_delay"]}}},
         {
-          "description": "FR-364: the observed arm names no initial state or over binding, carries document steps and has no deadlock or time-lock kind; the model arm carries model steps.",
+          "description": "FR-364: the arms are coupled. Observed arm: null initial_state and over_binding, document steps, kind formula or an undefined-evaluation envelope whose where carries no model-arm state key. Model arm: a non-null initial_state, model steps, and an envelope whose where carries no document.",
           "if": {"properties": {"trace": {"const": "observed"}}, "required": ["trace"]},
           "then": {"properties": {
             "initial_state": {"type": "null"},
             "over_binding": {"type": "null"},
-            "kind": {"oneOf": [{"const": "formula"}, {"$ref": "#/$defs/UndefinedEvaluation"}]},
+            "kind": {"oneOf": [
+              {"const": "formula"},
+              {"allOf": [{"$ref": "#/$defs/UndefinedEvaluation"}, {"properties": {"where": {"not": {"anyOf": [{"required": ["state_key"]}, {"required": ["state_keys"]}]}}}}]}
+            ]},
             "prefix": {"items": {"required": ["document"]}},
             "loop": {"items": {"required": ["document"]}}
           }},
           "else": {"properties": {
+            "initial_state": {"$ref": "#/$defs/Count"},
+            "kind": {"oneOf": [
+              {"enum": ["formula", "deadlock", "time-lock"]},
+              {"allOf": [{"$ref": "#/$defs/UndefinedEvaluation"}, {"properties": {"where": {"not": {"anyOf": [{"required": ["document"]}, {"required": ["documents"]}]}}}}]}
+            ]},
             "prefix": {"items": {"required": ["transition", "post_state"]}},
             "loop": {"items": {"required": ["transition", "post_state"]}}
           }}

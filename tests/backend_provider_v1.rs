@@ -219,6 +219,7 @@ fn errors(validator: &jsonschema::Validator, document: &Value) -> Vec<String> {
 #[trace("TC-431", "FR-331-AC-19")]
 #[trace("TC-431", "FR-331-AC-23")]
 #[trace("TC-431", "FR-331-AC-28")]
+#[trace("TC-431", "FR-364-AC-10")]
 #[test]
 fn tc_431_positive_vectors_are_admitted_with_owned_members() {
     let validator = validator();
@@ -289,7 +290,6 @@ fn located_at_patch(error: &str, patched: &str) -> bool {
 #[trace("TC-431", "FR-331-AC-23")]
 #[trace("TC-431", "FR-331-AC-28")]
 #[trace("TC-431", "FR-368-AC-10")]
-#[trace("TC-431", "FR-364-AC-10")]
 #[test]
 fn tc_431_adverse_vectors_are_refused() {
     let whole = validator();
@@ -807,4 +807,43 @@ fn tc_290_universe_provisions_are_canonical_arrays_of_keys() {
         digests.insert(digest);
     }
     assert_eq!(digests.len(), cases.len(), "list order changes the digest");
+}
+
+/// FR-364-AC-10: the observed-arm vectors exist, by name, and the coupling
+/// vectors are refused; deleting any of them fails this test.
+#[trace("TC-431", "FR-364-AC-10")]
+#[test]
+fn tc_431_the_arm_coupling_vectors_are_present() {
+    let vectors = parsed(VECTORS);
+    let names = |section: &str| -> BTreeSet<String> {
+        vectors[section]
+            .as_array()
+            .expect(section)
+            .iter()
+            .map(|vector| vector["name"].as_str().expect("name").to_owned())
+            .collect()
+    };
+    let positive = names("positive");
+    let adverse = names("adverse");
+    for name in [
+        "observed-counterexample-outcome",
+        "observed-undefined-evaluation-outcome",
+    ] {
+        assert!(positive.contains(name), "positive vector {name}");
+    }
+    for name in [
+        "observed-counterexample-names-an-initial-state",
+        "observed-counterexample-with-a-model-step-in-the-prefix",
+        "observed-counterexample-with-a-model-step-in-the-loop",
+        "observed-counterexample-deadlock-kind",
+        "observed-counterexample-time-lock-with-final-delay",
+        "observed-counterexample-over-binding",
+        "observed-undefined-evaluation-with-a-state-key",
+        "model-counterexample-with-a-document-step-in-the-prefix",
+        "model-counterexample-with-a-document-step-in-the-loop",
+        "model-counterexample-without-an-initial-state",
+        "model-undefined-evaluation-with-a-document",
+    ] {
+        assert!(adverse.contains(name), "adverse vector {name}");
+    }
 }
