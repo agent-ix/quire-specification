@@ -708,11 +708,17 @@ fn tc_431_a_subject_bound_leaves_the_extent_unbounded() {
     let document = composed(&vector);
     let item = &document["request"]["items"][0];
     assert_eq!(item["extent"]["classification"], "unbounded");
+    assert_eq!(item["extent"]["domains"][0]["kind"], "infinite-trace");
+    assert_eq!(item["extent"]["finite_bound_available"], false);
     assert!(item["extent"].get("bounds").is_none());
     let bounds = item["temporal"]["subject"]["proof_bounds"]
         .as_array()
         .expect("subject proof bounds");
-    assert!(bounds.iter().any(|bound| bound["kind"] == "population"));
+    assert!(
+        bounds
+            .iter()
+            .any(|bound| bound["kind"] == "population" && bound["bound"]["type"] == "cardinality")
+    );
     assert_eq!(errors(&validator, &document), Vec::<String>::new());
     let mut emptied = document.clone();
     emptied["request"]["items"][0]["temporal"]["subject"]["proof_bounds"] = serde_json::json!([]);
