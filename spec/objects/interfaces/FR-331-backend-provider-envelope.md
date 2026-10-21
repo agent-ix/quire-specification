@@ -194,6 +194,16 @@ in milliseconds (FR-462).
   negotiation never reclassifies the package; a non-boundable kind is never
   compared. A bounded extent with empty `bounds` has only finite domains, so
   it has no kinds and passes that check.
+- A temporal item's `subject.proof_bounds` are the proof-bound substitutions
+  for the subject's own populations and are independent of `extent`. A
+  substitution for the subject may be supplied while the item's `extent`
+  stays `unbounded` (an `infinite-trace` domain, for instance): the subject
+  bound bounds the populations the trace is read over, and does not bound the
+  extent, so it moves no entry into `extent.bounds` and changes neither the
+  extent's classification nor its `finite_bound_available`. The checked
+  requirement carries no proof bounds; the request's caller supplies them
+  (ADR-014 B-4), and a consumer that produces the request owns the
+  substitution and its kind.
 - `candidates` is `{type: "set", backends}` or
   `{type: "unknown-backend", backend}`.
 - `options` is a map of backend option names to string values (FR-196).
@@ -393,6 +403,7 @@ out-of-domain values and non-canonical encodings refuse before consumption. A `c
 | FR-331-AC-29 | A hybrid item's solver that exhausts `hybrid.limits.max_solver_steps` records `incomplete` with `limit-reached` whose `limit` is `max_solver_steps` and whose `setting` is `hybrid.max_solver_steps`; one that exhausts `max_solver_time` records `incomplete` with `timed-out`; a `limit-reached{limit: max_solver_time}` or a `time-limit` cause on a hybrid item is refused `invalid_result`/`unknown-cause`; a fractional `max_solver_time`, a zero budget, an unknown `hybrid.limits` member and an empty `hybrid` or `limits` are refused before consumption; two requests differing only in `max_solver_time` have equal request identity. | Test (TC-373) |
 | FR-331-AC-30 | The descriptor schema admits `memory_models` as a nonempty duplicate-free subset of `sc`, `tso` and `ra` on a descriptor that advertises `temporal-satisfaction`, and refuses an empty `memory_models`, a repeated or unknown model, and `memory_models` on a descriptor that does not advertise `temporal-satisfaction`. | Test (TC-431) |
 | FR-331-AC-31 | An accounting record whose `warnings` hold `{code: memory.load-buffering-shape, load, store}` with `load` and `store` transition identities is admitted; one missing `store`, one with an extra member and one with a `load` that is not a transition identity are refused. | Test (TC-431) |
+| FR-331-AC-32 | A temporal request item whose `extent` is `unbounded` with an `infinite-trace` domain, `finite_bound_available` false and no `bounds`, and whose `subject.proof_bounds` holds a `population` `cardinality` bound, is admitted by the request schema; the same item with `subject.proof_bounds` empty is also admitted. That the bound moves nothing into `extent.bounds` and changes neither the classification nor `finite_bound_available` is an obligation of the request's producer, which this wire criterion does not check. | Test (TC-431) |
 
 ## Dependencies
 
