@@ -14633,7 +14633,8 @@ fn integer_literal_operand_operators() -> Vec<String> {
 
 /// FR-322 "Integer literal operands": the integer operators' integer literal
 /// operands, typed at the builtin Integer node, are inline `literal` terms in
-/// every published package, and each listed operator has a recorded inline
+/// every published producer-output package (`positive_fixtures()`, which omits
+/// the reader-admission fixture `positive-integer-literal-references.json`), and each listed operator has a recorded inline
 /// application vector.
 #[trace("TC-233", "FR-322-AC-92")]
 #[test]

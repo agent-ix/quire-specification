@@ -56,6 +56,14 @@ Head 406c078b5. `quire validate --scope . 'spec/**/*.md'` still fails 134 docume
 | --- | --- | --- | --- |
 | FND-004 | medium | The new sentence "a reader SHALL admit the reference form of such an operand as well ... and SHALL NOT refuse it for that form" has no acceptance criterion and no test. AC-92 covers only the producer form of the published packages. No published package or vector now carries the reference form under one of the six operators, so a reader that refused it would fail nothing. | spec/objects/interfaces/FR-322-checked-package-artifact.md:779-782,1842 |
 
+## New findings (disposition pass 2)
+
+Head 1eba298ac. The FND-004 fix adds FR-322-AC-93, `positive-integer-literal-references.json` and `tc_233_a_reader_admits_the_reference_form_of_an_integer_literal_operand`. Replacing the fixture with the inline form, or giving it a stale key, fails the test. `quire validate --scope . 'spec/**/*.md'` still fails the same 134 documents as the merge base.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | medium | FR-322-AC-92 now contradicts FR-322-AC-93. AC-92 says "In every published package" no operand of the six operators is a `reference` to an integer `value`/`literal` node, and TC-233 says "Scan every published package". AC-93 publishes `fixtures/positive-integer-literal-references.json`, whose `three` `integer.add` references two such nodes. The AC-92 test passes only because `positive_fixtures()` leaves the new fixture out, a scope the AC text does not state. AC-92 and the TC-233 sentence need to scope out the reference-form fixture by name, or state that they cover producer-output packages. | spec/objects/interfaces/FR-322-checked-package-artifact.md:1842-1843; spec/test-cases/TC-233-published-checked-package-and-scalar-contract-vectors.md:382; tests/checked_package_v2.rs:12342 |
+
 ## Dispositions
 
 | FND | outcome | reason |
@@ -63,3 +71,4 @@ Head 406c078b5. `quire validate --scope . 'spec/**/*.md'` still fails 134 docume
 | FND-001 | fixed | - |
 | FND-002 | fixed | - |
 | FND-003 | fixed | - |
+| FND-004 | fixed | - |

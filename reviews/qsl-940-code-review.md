@@ -75,6 +75,16 @@ Head 406c078b5. Evidence for this round:
 | FND-006 | low | The `inline_literal_cases` checks do not tie a case to its operator or to its reference form. The test never compares `operation` with the preimage's `body.operation.identity`, so six relabelled copies of one application would pass. It checks `reference_form_sha256` only for inequality and never recomputes it. It checks inline operands for `term: literal` but not for `value_kind` or type. One surviving mutant each. | tests/checked_package_v2.rs:14694-14718 |
 | FND-007 | low | The PR body no longer says that the FR-322 rule and its reader-admission sentence are lead defaults. The "Normative owner" section was dropped and nothing replaced it. The body also does not describe `inline_literal_cases` or the operator list the test reads from FR-322. | quire-specification#323 description |
 
+## New findings (disposition pass 2)
+
+Head 1eba298ac. No new code-review finding. Evidence for this round:
+
+- The three FND-006 mutants now fail the gate: relabelling `inline-sub`'s preimage as `integer.add` with a rekey, an arbitrary `reference_form_sha256`, and an inline operand typed at Boolean with a rekey. Each fails 1 test.
+- AC-93 mutants fail too. Replacing `positive-integer-literal-references.json` with the inline two-owner package fails 1 test, and so does giving its `three` node a stale key.
+- The new fixture is byte-identical to origin/main's `positive-two-owners-a.json`. The independent script finds its keys, projection, `package_id` (`c9821ebe...`) and `source_map` current.
+- `cargo test --test checked_package_v2 --test backend_provider_v1`: 117 and 14 passed.
+- QSL #1161 head 63543b3f5 conformance, with `QSPEC_DIR` at this head and again at this head without the new fixture: the same four failures both times. These are FND-005's `conformance_fr322_application_keys_match_qspec_operation_vectors` and `conformance_emitted_application_nodes_match_qspec_positive_fixtures`, plus the known `c14` and `i2`. `c14` and `i2` read the positives in name order and verify `positive-integer-literal-references.json` before they fail at `positive-operation-identities.json`. Run over the new fixture alone, `c14` passes, and `i2`'s loop verifies it. The golden test reads a fixed file list. The new fixture breaks nothing in QSL.
+
 ## Dispositions
 
 | FND | outcome | reason |
@@ -83,3 +93,6 @@ Head 406c078b5. Evidence for this round:
 | FND-002 | fixed | - |
 | FND-003 | fixed | - |
 | FND-004 | fixed | - |
+| FND-005 | still-open | Routed to the QSL #1161 coder. At QSL 63543b3f5 both QSL conformance tests still fail against this head; at ca37b7138 they passed against QSpec main. |
+| FND-006 | fixed | - |
+| FND-007 | fixed | - |
