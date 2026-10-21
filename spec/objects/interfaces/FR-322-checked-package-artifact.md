@@ -6,6 +6,8 @@ object: value_object
 relationships:
   - target: ix://agent-ix/quire-specification/interface_004
     type: specifies
+  - target: ix://agent-ix/quire-specification/FR-468
+    type: references
   - target: ix://agent-ix/quire-specification/FR-132
     type: references
   - target: ix://agent-ix/quire-specification/FR-195
@@ -636,13 +638,61 @@ boundary.
   source-document identity/raw-byte digest. The role `generated` is the role
   of every occurrence of a *compiler-derived node*, a node the compiler adds
   that no source text declares and that derives from exactly one declaration
-  node, its *owner*. Its ordinal is the node's position among the derived
+  node, its *owner*, and of the per-obligation occurrences a refinement owner
+  carries on its own node ("Refinement step occurrences" below). Its ordinal is the node's position among the derived
   nodes of that owner, in the owner's total order (for a refinement owner
   deriving one node per step row, FR-375's `steps` order), and its source
   region, when it has one, is the region of the source row it derives from. An occurrence may name
   multiple ordered regions; regions for that one occurrence/document cannot
   overlap, while regions belonging to different occurrences may nest or
   overlap. A path, display name or search result is not a source identity.
+
+  **Refinement step occurrences.** A refinement owner node
+  (`node_tag: "relation"`, `semantic_form: "refinement"`,
+  [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md)) that
+  is *proof-eligible* carries occurrences of role `generated` on its own
+  `node_id`, one for each obligation of its per-step simulation proof
+  ([FR-468](../../functional/analysis/FR-468-certify-per-step-refinement-obligations.md)).
+  A refinement is proof-eligible exactly when FR-468's proof applies to it: it
+  has no hidden field, no history field (its `histories` is empty) and no `any`
+  step target. A hidden field (FR-375 "Object rows", FR-378) is an abstract
+  field with no row: for an entry of the body's `objects`, the abstract fields
+  are the fields of its abstract object type in the abstract model node that
+  the body's `abstract` key selects in its dependency package, and the field is
+  hidden when the entry has no field row of that name. A refinement with an
+  abstract field that is hidden in any `objects` entry is not proof-eligible. The initial obligation is at ordinal 0, and the
+  obligation of the step row at zero-based position `i` of the node's `steps`
+  order (FR-375-AC-19) is at ordinal `i + 1`. The ordinal is the obligation's
+  position in the certificate's order, the base part and then the step parts.
+  The `steps` order does not depend on the order the rows were written, so each
+  ordinal is the same under any source order. The `regions` of a step
+  occurrence are exactly the one region of the source row of its step row, and
+  the `regions` of the initial occurrence are exactly the one region of the
+  node's `declaration` occurrence. This ordinal is the position of an
+  obligation of the owner itself, and differs from the ordinal of a node
+  derived from a step row (FR-322-AC-87), which counts the owner's derived
+  nodes alone.
+  - The reader SHALL admit on a proof-eligible refinement owner only a
+    `declaration` occurrence at ordinal 0 and `generated` occurrences at
+    ordinals 0 to `n` for `n` step rows.
+  - The reader SHALL require the `declaration` occurrence at ordinal 0 on every
+    refinement owner.
+  - The reader SHALL require one `generated` occurrence for each ordinal 0 to
+    `n` on a proof-eligible refinement owner only.
+  - The reader SHALL admit on a refinement that is not proof-eligible only the
+    `declaration` occurrence at ordinal 0, and no `generated` occurrence.
+  - The reader SHALL refuse as `invalid_package`/`invalid-value` at the
+    offending `source_map` entry: a second entry with one (`node_id`, role,
+    ordinal) key, reported at the second; a role and ordinal pair outside the
+    admitted pairs (a `generated` ordinal above `n` included); and a `regions`
+    that is not the one region its ordinal requires.
+  - The reader SHALL examine the owner's entries in `source_map` order and
+    refuse the first that fails, and SHALL refuse a missing required occurrence
+    at `/source_map` only when every entry passes.
+  - The reader SHALL run this check after the owner join and the owner and
+    source-map agreement of the derived-shape key stage (FR-322-AC-52), over the
+    refinement owner nodes in ascending retained node-id digest, and report the
+    first failing owner.
 - `capability_report` — one closed disposition for every required feature and
   selected model capability. Backend/provider installation is absent.
 - `diagnostics` — catalog-qualified, stage-qualified typed causes and exact
@@ -1773,11 +1823,18 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-85 | A `dependency_reference` refusal's locus is the term's `package` member for `missing-selection`, its `node` member for `missing-name` and the term itself for `operator-ineligible`, each under the pointer of the term in its node's `body`. | Inspection (TC-233) |
 | FR-322-AC-86 | The signature type nodes of a dependency function are the `semantic_type` of each node its `parameters` binding references and the function's own `semantic_type`: a dependency function with a parameter of a declared record type is ineligible (`ill_typed`/`operator-ineligible`), while one whose body only references a declared record is eligible. | Inspection (TC-233) |
 | FR-322-AC-87 | A refinement owner with step rows `R0`, `R1` (in `steps` order) from which the compiler derives one node per row has, for the node derived from `R1`, an occurrence with role `generated`, ordinal 1 and a `source_map` region equal to the region of `R1`'s source row; swapping the source order of the two rows leaves the `steps` order, and so each ordinal, unchanged. | Test (TC-233) |
+| FR-322-AC-88 | A proof-eligible refinement owner with step rows `R0` and `R1` in `steps` order, whose source regions are `[10,20)` and `[30,40)` and whose `declaration` region is `[0,50)`, is admitted when its `source_map` holds a `declaration` occurrence at ordinal 0 and `generated` occurrences on its own node at ordinal 0 with region `[0,50)`, at ordinal 1 with region `[10,20)` and at ordinal 2 with region `[30,40)`, and entries of other nodes do not affect it (`RS-01`). | Test (TC-233) |
+| FR-322-AC-89 | With the rows written in the order `R1`, `R0` and the `steps` order `R0`, `R1`, ordinal 1 holds `R0`'s region and ordinal 2 `R1`'s (`RS-02`). | Test (TC-233) |
+| FR-322-AC-90 | A proof-eligible refinement owner with two step rows refuses `invalid_package`/`invalid-value` at the offending `source_map` entry for a `generated` occurrence at ordinal 3, for a second entry with the key of an existing occurrence, for a `generated` occurrence at ordinal 1 that carries `R1`'s region, for an `expression` occurrence at ordinal 1 and for a `declaration` occurrence at ordinal 1; and at `/source_map` for a package that omits the `declaration` occurrence, the `generated` ordinal 0 or the `generated` ordinal 2. | Test (TC-233) |
+| FR-322-AC-91 | A refinement owner that is not proof-eligible, with a history field, with an `any` step target or with an abstract field that has no field row, is admitted with its `declaration` occurrence alone and refuses `invalid_package`/`invalid-value` at the first `generated` entry on its node when one is present (`RS-12` to `RS-15`). The hidden field is derived from the abstract model's fields against the `objects` entries' field rows, whatever their order (`RS-14`, `RS-16`, `RS-17`). | Test (TC-233) |
 
 ## Dependencies
 
 - [interface_004](./interface_004-checked-package.md) owns the operation boundary.
 - FR-132 owns the behavior that produces or consumes this value.
+- [FR-468](../../functional/analysis/FR-468-certify-per-step-refinement-obligations.md)
+  owns the per-step proof obligations a refinement owner's `generated`
+  occurrences number.
 - [FR-195](../../functional/ir-proof/FR-195-lower-complete-contract-ir.md)
   consumes this boundary for exact Contract IR lowering.
 - [FR-201](../foundation/FR-201-canonical-identity-domain.md) owns comparison of
