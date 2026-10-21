@@ -121,11 +121,17 @@ construction, so no implication between authored expressions is proved. The
 checker SHALL form the effective precondition `eff(m)` of an operation member
 `m` as `own(m) or eff(r)` for the one member `r` that `m` redefines, and as
 `own(m)` when `m` redefines none, with `eff(r)` formed the same way along the
-redefinition chain. `own(m)` is the conjunction of `m`'s own precondition
-clauses in source-declaration order, left to right, evaluated under FR-006's
-short-circuit, so that order decides which clause is evaluated and charged
-first and whether a clause that is undefined is reached; it is `true` when `m`
-has no clause. The effective postcondition is the conjunction of its own
+redefinition chain. `own(m)` is the conjunction of `m`'s own precondition clauses in ascending
+clause name (UTF-8 bytes), left to right, evaluated under FR-006's
+short-circuit, so that the name order decides which clause is evaluated and
+charged first and whether a clause that is undefined is reached; it is `true`
+when `m` has no clause. The order depends on the clause names alone, never on
+the source position, the source unit or the order in which units are linked,
+so reordering or re-splitting declarations across linked units cannot change an
+outcome. Clause names are declaration names, and two declarations with the
+same selected qualified name are refused as `ambiguous_declaration`
+(FR-002-AC-3), so the names in one member are distinct and the order is total.
+The effective postcondition is the conjunction of its own
 postcondition clauses with theirs; and the effective invariant of a type is the
 conjunction of its own invariant clauses with those of every ancestor. An
 absent precondition is `true`, and an absent postcondition or invariant is
@@ -253,7 +259,7 @@ type.
 | FR-151-AC-16 | Two linked source units using different local aliases for the same model identity may each target a distinct operation identity and link successfully; if the second unit instead targets the first unit's operation identity, linking refuses as `conflicting_declaration`/`duplicate-declaration` with no partial result. | Test |
 | FR-151-AC-17 | An operation member `B/size` redefining `A/size` has the effective precondition `(PB1 and PB2) or PA` for its own clauses `PB1`, `PB2` and the redefined member's `PA`: with `PB1` true, `PB2` false and `PA` true the call proceeds, and with `PA` false it is `undefined` with reason `precondition-false`, which a flat disjunction of the three clauses would not give. | Test (TC-196) |
 | FR-151-AC-18 | An operation member with no own precondition clause has `true` as `own(m)`, so its effective precondition is `true` whatever the redefined member's precondition says. | Test (TC-196) |
-| FR-151-AC-19 | A member's own clauses are conjoined in source-declaration order under FR-006's short-circuit: with `PB1` undefined and `PB2` false declared in that order the call is `undefined` with `PB1`'s reason, and with the same clauses declared in the reverse order it is `undefined` with reason `precondition-false` and `PB1` is not evaluated or charged. | Test (TC-196) |
+| FR-151-AC-19 | A member's own clauses are conjoined in ascending clause name under FR-006's short-circuit, whatever their source order or source unit: with `PB1` undefined (reason `absent-key`, from a `lookup` of a key the population lacks) and `PB2` false the call is `undefined` with reason `absent-key`, and with the two bodies' names swapped, so the false clause sorts first, it is `undefined` with reason `precondition-false` after `PB2` alone is evaluated, `PB1` being neither evaluated nor charged; the same clauses split across two linked units give the same result in both link orders. | Test (TC-196) |
 
 ## Dependencies
 
