@@ -57,3 +57,12 @@ Round 1, head 13bd4aa05.
 | FND-001 | fixed | Fixed in 13bd4aa05: The added FR-361 text is now in #315's instance terms. The textual conflict with #315 remains by design (#315 lands first, #314 rebases); trial merge #315 then #314 conflicts in FR-361 and must be resolved by keeping #315's paragraph and inserting only #314's new sentences; so resolved it reads consistently, apart from the inherited no-instance wording (SR-13653 FND-006). |
 | FND-002 | fixed | Fixed in 13bd4aa05: TC-180 now verifies FR-370. |
 | FND-003 | fixed | Fixed in 13bd4aa05: The paragraph now follows the first temporal-clause production and names the complete-V1 form too. |
+
+Round 2, head 4a187d259 (rebased on main with #315): no finding had an open disposition; the rebase was verified (FR-361 resolved in #315's terms, gates and mutations re-run).
+
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | low | The test's discriminating assertion (the clock text literal in argument 1 fails the schema) is not stated by FR-370-AC-13 ('argument 1 is absent or null') or by TC-303 step 11 and expected result 11, which name only the removed and null forms. Fix: add 'or a non-reference term' to AC-13 and the clock-literal case to TC-303 step 11 and expected result 11. | spec/objects/interfaces/FR-370-checked-package-temporal-clause-body.md:287 |
+| FND-005 | low | Moving the over-required paragraph left two consecutive blank lines after the protocol productions' closing fence (around shared-grammar.md:241). Fix: drop one. | proposals/quire-v1/shared-grammar.md:241-242 |

@@ -239,7 +239,6 @@ commit       = 'commit', ident, 'by', ident,
 finish       = 'finish', ident, 'as', '(', parameter, ')', block, ';' ;
 ```
 
-
 `composed-unit` subsumes the earlier common-only and state/temporal drafting
 entry points. None has an adopted profile identity. All three families are now
 syntactically represented; grammar completeness does not establish agreement of

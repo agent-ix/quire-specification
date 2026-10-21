@@ -127,7 +127,7 @@ deadlock ([FR-366](FR-366-check-deadlock-freedom.md)).
 
 A *universe* of a population is an ordered list of object keys, each a
 (universe component, object identity) pair of the FR-204 triple with no type:
-a key has no type until a state holds its object. The `universes` of a subject
+a key has no type until a member record admits it. The `universes` of a subject
 (FR-368) are these lists, one per population.
 
 A universe provision is the RFC 8785 canonical form of a JSON array of the
