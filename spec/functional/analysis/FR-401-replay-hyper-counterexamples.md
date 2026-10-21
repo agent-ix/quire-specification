@@ -75,9 +75,12 @@ pre-state proves not to be terminal is a refused step here.
   in state, locus or reason),
   the replay boundary SHALL settle the item `inconclusive` with
   `replay-parity`.
-- An `undefined` counterexample of an `align skip` clause holds its skipped
-  steps unmarked, so its paths differ in total length and its position counts
-  visible steps. The replay boundary SHALL refuse it as
+- An `undefined` counterexample whose paths differ in step count (that of an
+  `align skip` clause, which holds its skipped steps unmarked and whose
+  position counts visible steps, and that of an HP-3 clause whose undefined
+  `μ_U` leaves the existential paths one step short) has no state at
+  `trace_position` on every path, so the row's state-key check cannot read it
+  against one position. The replay boundary SHALL refuse it as
   `unsupported_construct`/`not-yet-implemented`, SHALL settle no result from it
   and SHALL NOT read it in lockstep, which would pair a skipped step of one path
   with a visible step of another.
@@ -119,7 +122,7 @@ reachability prefix is involved.
 | FR-401-AC-7 | A counterexample found under a reduction replays as an ordinary counterexample in quantifier order. | Test (TC-347) |
 | FR-401-AC-8 | An `undefined` counterexample reproduces when the expression its `where` names (the body, a match, or a component subject's guard, `terminal when` predicate or state constraint) evaluated at `trace_position` is the counterexample's carried undefined value, with its state keys, locus and catalogued reason, settling `reproduced-with-evaluated-witness` and the item `refuted`; a defined value there, or another locus or reason, settles `inconclusive` with `replay-parity`. | Test (TC-348) |
 | FR-401-AC-9 | A well-formed terminal-stutter step whose pre-state is not terminal settles `inconclusive` with `replay-parity`. | Test (TC-345) |
-| FR-401-AC-10 | An `undefined` counterexample of an `align skip` clause, with unmarked paths that each hold a skipped step and a position that counts visible steps, is refused as `unsupported_construct`/`not-yet-implemented`, settles no result and is not replayed as a lockstep counterexample. | Test (TC-345) |
+| FR-401-AC-10 | An `undefined` counterexample whose paths differ in step count, that of an `align skip` clause with unmarked paths that each hold a skipped step and a position that counts visible steps and that of an HP-3 `μ_U` with its existential paths one step short, is refused as `unsupported_construct`/`not-yet-implemented`, settles no result and is not replayed as a lockstep counterexample. | Test (TC-345) |
 
 ## Dependencies
 

@@ -93,7 +93,9 @@ the existential paths end at the pre-state the step leaves, one step short, and
 are unmarked and hold every step the path took, skipped steps included, so
 their total lengths may differ; `trace_position` and the `where` position are
 the projected position, the number of visible steps of a path, not the number
-of its steps.
+of its steps. A `state_keys` entry is the key of the last state of its
+component's path, so for an existential path that ends one step short its
+entry is the key of its pre-state, the state at `trace_position` minus 1.
 
 ## Envelope
 
@@ -140,8 +142,8 @@ member:
 | FR-400-AC-1 | Each of the five kinds serializes and reads back byte-identically under RFC 8785 JCS with exactly its members. | Test (TC-345, TC-348) |
 | FR-400-AC-2 | A `lockstep` and a `witness-exhausted` counterexample carry equal step counts and one `loop_entry`; a `witness-exhausted` one also carries `position`; a `projected` one carries per-step marks and equal visible counts; a `step-tuple` one carries one prefix-plus-transition trace per execution and no `loop_entry`. | Test (TC-338, TC-339, TC-343, TC-344) |
 | FR-400-AC-4 | An `undefined` counterexample carries its `undefined-evaluation` value (variables, joint position, state-key digests, locus and catalogued reason, with one component and, for a guard, its transition identity when a subject's expression has no value) and reads back with it. `variables` and `state_keys` hold one entry per trace for a body or match locus, however many universal variables the clause has, and one entry for a guard, `terminal when` predicate or state constraint locus. | Test (TC-345, TC-348) |
-| FR-400-AC-3 | Traces of unequal step count, mismatched variables or aliases, a misplaced or out-of-range `loop_entry` or `position`, a missing or misplaced `mark`, a terminal-stutter step followed by a non-stutter step or placed in a `step-tuple` trace, an `undefined` kind whose carried value is missing or mismatched, and an out-of-range `initial` each refuse as `invalid_runtime_input`/`invalid-value` before replay. | Test (TC-345) |
-| FR-400-AC-5 | The paths of an `undefined` counterexample may differ in step count. For an undefined `μ_U` on an HP-3 joint step the universal paths include the step and the existential paths end at its pre-state, one step short, with `trace_position` the position the step enters; for an HP-6 clause the unmarked paths hold their skipped steps and `trace_position` is the projected position. | Test (TC-348) |
+| FR-400-AC-3 | `lockstep` or `witness-exhausted` traces of unequal step count, mismatched variables or aliases, a misplaced or out-of-range `loop_entry` or `position`, a missing or misplaced `mark`, a terminal-stutter step followed by a non-stutter step or placed in a `step-tuple` trace, an `undefined` kind whose carried value is missing or mismatched, and an out-of-range `initial` each refuse as `invalid_runtime_input`/`invalid-value` before replay. | Test (TC-345) |
+| FR-400-AC-5 | The paths of an `undefined` counterexample may differ in step count. For an undefined `μ_U` on an HP-3 joint step the universal paths include the step and the existential paths end at its pre-state, one step short, with `trace_position` the position the step enters; for an HP-6 clause the unmarked paths hold their skipped steps and `trace_position` is the projected position; each `state_keys` entry is the key of the last state of its path, a short existential path's being its pre-state's. | Test (TC-348) |
 
 ## Dependencies
 

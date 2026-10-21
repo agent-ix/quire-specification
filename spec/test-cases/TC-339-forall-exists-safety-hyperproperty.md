@@ -33,7 +33,7 @@ Run each vector through the real local Rust boundary with the explicit-state eng
 | --- | --- | --- |
 | FE-01 | `Opaque` on the leaky model | `refuted`, `decisive-counterexample`; `witness-exhausted` with `position` 1 and one trace for `a`; replay recomputes `X_0` as a singleton and `X_1` empty |
 | FE-02 | `Opaque` on the secure model | `proved`, `closed-scope`; every witness set is a singleton; 4 reachable product states |
-| FE-03 | `Opaque` on a model with 4 initial secrets and nondeterministic `l`, `max_witness_set` 2 | `incomplete`, cause `limit-reached` naming `max_witness_set`, its value 2 and the count reached, 3 |
+| FE-03 | `Opaque` on a model with 4 initial secrets and nondeterministic `l`, `max_witness_set` 2 | `incomplete`, cause `limit-reached` naming `max_witness_set`, its value 2 and its setting; the engine's stop record exposes the count reached, 3 |
 | FE-04 | FE-02 with no `max_witness_set` in the request | runs under the provider's published default; same verdict |
 | FE-05 | form classification of `Opaque` | HP-3 |
 

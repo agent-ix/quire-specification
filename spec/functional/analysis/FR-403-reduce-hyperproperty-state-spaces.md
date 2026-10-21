@@ -35,25 +35,30 @@ subjects, its fairness sets, and the reductions the request selects.
 
 ## Outputs
 
-The reductions applied, named in a reduced proof's basis, or the
-`reduction-not-preserving` settlement.
+The reductions applied, named in a reduced proof's basis, the
+`reduction-not-preserving` settlement, or the `unsupported` settlement of a
+selected reduction the provider does not build.
 
 ## Preservation rows
 
-A reduction applies exactly where its row reads "yes". Where the row reads
-"no", the item settles `inconclusive` with `reduction-not-preserving` before
-expansion. Copy-swap symmetry applies only when the analyzer has verified it
-on the checked clause.
+A reduction is admitted where its cell reads anything other than "no". Where
+the cell reads "no", the item settles `inconclusive` with
+`reduction-not-preserving` before expansion. A cell other than "no" says the
+reduction preserves the verdict; in the state-constraint column it also says
+how the verdict is read when the constraint cuts states. Copy-swap symmetry
+applies only when the analyzer has verified it on the checked clause.
 
-A "yes" row says the reduction preserves the verdict, not that every provider
-builds it. Where a provider builds neither the diagonal action of a key
-symmetry nor a state constraint on a hyper product, a request that selects
-either for a hyper item whose row reads "yes" settles `unsupported`,
-`unsupported_projection`/`unsupported-requested-capability` before expansion,
-naming the reduction, and never runs with the selection ignored. When several
-reductions are selected, the first whose row reads "no", in the order key
-symmetry, partial-order reduction, state constraint, decides; otherwise the
-first selected reduction is named.
+- Where a selected reduction is admitted by its cell and the provider does not
+  build it for the item's form, the analyzer SHALL settle the item
+  `unsupported`, `unsupported_projection`/`unsupported-requested-capability`
+  before expansion, naming the reduction. The rule is evaluated for each
+  selection on its own, for the key symmetry of every form (the orbit
+  representatives of HP-1 and the diagonal action of HP-2, HP-3 and HP-6) and
+  for the state constraint of HP-1, HP-2 and HP-6.
+- The analyzer SHALL NOT ignore a selected reduction.
+- When several reductions are selected, the analyzer SHALL decide by the first
+  whose cell reads "no", in the order key symmetry, partial-order reduction,
+  state constraint, and otherwise SHALL name the first selected reduction.
 
 | Form | Symmetry | Partial-order reduction | State constraint |
 | --- | --- | --- | --- |
@@ -117,11 +122,14 @@ first selected reduction is named.
   groups of the copy group's classes whose variables carry no fairness set;
   where a provider builds a diagonal key symmetry (see "Preservation rows"),
   that group commutes with it and the run's group is their product.
-- **Soundness.** `σ` maps a matched tuple in the domain to a matched tuple in
-  the domain with the same body truth, and maps acceptance sets, the rejecting
-  monitor state and every fairness constraint onto themselves, so the quotient
-  has a fair accepting cycle, or a reachable rejecting state, exactly when the
-  product does.
+- **Soundness.** For a class whose variables carry no fairness set and whose
+  exchange fixes the automaton's initial state and each acceptance set, `σ` is
+  an automorphism: it maps a matched tuple in the domain to a matched tuple in
+  the domain with the same body truth, and maps the acceptance sets and the
+  rejecting monitor state onto themselves, so the quotient has a fair
+  accepting cycle, or a reachable rejecting state, exactly when the product
+  does. A class with a fairness set or a failing exchange is not reduced, since
+  `σ` is not then an automorphism of the fairness or acceptance condition.
 - **Counterexamples.** A counterexample found on the quotient is concretised
   with the copy permutation, repeating a loop that closes on a permuted state
   until the concrete tuple closes, at most the permutation's order. The result
@@ -139,14 +147,14 @@ first selected reduction is named.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-403-AC-1 | Each form admits symmetry, partial-order reduction and a state constraint exactly as its row reads; a reduction a row rejects settles `inconclusive` with `reduction-not-preserving` before expansion. | Test (TC-347) |
+| FR-403-AC-1 | A reduction whose cell reads "no" settles `inconclusive` with `reduction-not-preserving` before expansion; a reduction whose cell reads anything else is applied or, where the provider does not build it, settles `unsupported` (AC-8). | Test (TC-347) |
 | FR-403-AC-2 | On the leaky and secure vault noninterference clauses, copy-swap applies without a request selection and stores 7 and 6 states against 10 and 8 unreduced, the reduced and unreduced runs give the same verdict, and the reduced proof names copy-swap with its class and settles `proved`, certification `certified`. | Test (TC-347) |
 | FR-403-AC-3 | A body that is not unchanged under the swap in normal form, or two variables with different fairness sets, admit no copy-swap. | Test (TC-347) |
 | FR-403-AC-4 | A counterexample found under copy-swap carries no canonical state, reports the quotient's canonical lasso concretised, byte-equal across repeated runs, and replays as an ordinary counterexample. | Test (TC-347) |
 | FR-403-AC-5 | A class whose variables carry any fairness set is stored whole with the unreduced state count and no reduction named; a second class without fairness in the same clause is reduced and named alone. | Test (TC-347) |
 | FR-403-AC-6 | A copy group with one class whose swap exchanges two acceptance sets of the body's automaton is stored whole with no reduction named; a clause with one passing class and one failing class is stored whole with none named; a swap that fixes every acceptance set is reduced. | Test (TC-347) |
 | FR-403-AC-7 | An HP-6 clause with a swappable pair is stored whole and names no copy-swap. | Test (TC-347) |
-| FR-403-AC-8 | Where the provider builds neither, a key symmetry or a state constraint selected over a hyper item whose row reads "yes" settles `unsupported`, `unsupported-requested-capability` before expansion naming the reduction; with a selection whose row reads "no" and another whose row reads "yes", the first "no" in the order key symmetry, partial-order reduction, state constraint decides. | Test (TC-347) |
+| FR-403-AC-8 | A key symmetry of an HP-1, HP-2 or HP-6 item and a state constraint of an HP-1, HP-2 or HP-6 item that the provider does not build, each selected on its own, settle `unsupported`, `unsupported_projection`/`unsupported-requested-capability` before expansion naming the reduction, and neither run ignores the selection; with a selection whose cell reads "no" and another that is admitted, the first "no" in the order key symmetry, partial-order reduction, state constraint decides. | Test (TC-347) |
 
 ## Dependencies
 
