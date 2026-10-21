@@ -396,7 +396,11 @@ match, leaves the node id unchanged. It is absent for an empty list, as
 `protocol` is absent for a model subject, and never null. Every other array
 of the body (`populations`, `objects`, `steps`, `histories`, `assume`,
 `ensure`) is sorted ascending by the node-key digest of its first named declaration, then by
-member name as UTF-8 bytes; within an `objects` entry the field rows are sorted
+member name as UTF-8 bytes; for a protocol subject's `steps`, rows that tie on those two keys
+(`duplicate` and `lose` on one channel, `spawn` and `retire` of one role, and every
+`memory` step row, which names no declaration) are ordered by the UTF-8 bytes of the
+row's alias-free class spelling ([FR-432](../protocol/FR-432-map-every-protocol-step-in-refinements.md)),
+so the order of `steps` is total and does not depend on the order the rows were written; within an `objects` entry the field rows are sorted
 ascending by field name as UTF-8 bytes. The node enters the identity projection, so it
 enters the `package_id` and the obligation identity of every item that
 cites it; the internal list is therefore part of both identities through
@@ -428,6 +432,7 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
 | FR-375-AC-16 | A refinement whose abstract model declares a relationship refuses `unsupported_construct`/`declaration-form` at the abstract alias of the header, once per refinement, naming the form, the refinement and the selected profile identity, whatever the producer's support set, and produces no node. | Test (TC-310) |
 | FR-375-AC-17 | `Some(e)` for `e` of type `E` is typed `Option<E>`; over an abstract `?` field of type `T`, the row `none` leaves the field absent and `Some(v)` sets it, and a row that is not `Option<T>`, including a bare `self.f` of a concrete `?` field, refuses `ill_typed`/`type-mismatch`; over an abstract `Option<T>` field the row's option value is taken unchanged; `none` with no field type or other `if` arm refuses `ill_typed`/`type-mismatch`; outside a refinement declaration `Some` is an ordinary identifier, so `Some(1)` in a state clause refuses `missing_declaration`/`missing-name` at `Some` when no function `Some` is declared and is a call to it when one is. | Test (TC-310) |
 | FR-375-AC-18 | In a refinement governed by `quire.temporal.infinite-trace/v1`, the ring-buffer rows `s.ring = self`, `(self.head + i) mod 2` and an `a div b` row are admitted even when the unit's own declarations select no layer, the lock selection counts the rows' layers (the `always` rows and exactly one integer-division law, `selection_trigger_unsatisfied` when none is selected), and a Boolean field row `ready = protocol Fill` naming a local protocol refuses `unsupported_construct`/`expression-form` at the `protocol` token naming `quire.protocol.complete/v1`, the layer that admits the form and that the rows' layer set lacks. | Test (TC-310) |
+| FR-375-AC-19 | A protocol-subject declaration whose rows include `step duplicate C::P::ch`, `step lose C::P::ch`, `step spawn C::P::w`, `step retire C::P::w` and `step memory flush` emits `steps` in one total order, the same for every permutation of those rows in the source: the tied rows ordered by their alias-free class spellings in UTF-8 byte order (`duplicate P::ch` before `lose P::ch`; `retire P::w` before `spawn P::w`; the `memory` row by its `memory flush` spelling). | Test (TC-310) |
 
 ## Dependencies
 
