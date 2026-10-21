@@ -64,6 +64,10 @@ Head 1eba298ac. The FND-004 fix adds FR-322-AC-93, `positive-integer-literal-ref
 | --- | --- | --- | --- |
 | FND-005 | medium | FR-322-AC-92 now contradicts FR-322-AC-93. AC-92 says "In every published package" no operand of the six operators is a `reference` to an integer `value`/`literal` node, and TC-233 says "Scan every published package". AC-93 publishes `fixtures/positive-integer-literal-references.json`, whose `three` `integer.add` references two such nodes. The AC-92 test passes only because `positive_fixtures()` leaves the new fixture out, a scope the AC text does not state. AC-92 and the TC-233 sentence need to scope out the reference-form fixture by name, or state that they cover producer-output packages. | spec/objects/interfaces/FR-322-checked-package-artifact.md:1842-1843; spec/test-cases/TC-233-published-checked-package-and-scalar-contract-vectors.md:382; tests/checked_package_v2.rs:12342 |
 
+## New findings (disposition pass 3)
+
+Head 4b86f99bb. No new finding. FR-322-AC-92 and TC-233 now scope the scan to producer-output packages: every published positive package except `positive-integer-literal-references.json`. That is the nine packages `positive_fixtures()` reads out of the ten published positives. `cargo test --test checked_package_v2 --test backend_provider_v1`: 117 and 14 passed. `quire validate --scope . 'spec/**/*.md'` still fails the same 134 documents as the merge base.
+
 ## Dispositions
 
 | FND | outcome | reason |
@@ -72,3 +76,4 @@ Head 1eba298ac. The FND-004 fix adds FR-322-AC-93, `positive-integer-literal-ref
 | FND-002 | fixed | - |
 | FND-003 | fixed | - |
 | FND-004 | fixed | - |
+| FND-005 | fixed | - |
