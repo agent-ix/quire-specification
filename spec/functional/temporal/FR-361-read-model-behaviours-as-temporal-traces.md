@@ -171,8 +171,28 @@ two members with one universe and identity and different types
 (`conflicting-identity`), so the reference does not depend on which overlapping
 population lists the key or on the population order, and reference equality
 (FR-204) holds between `x` and the same object reached from any population. A
-key has no type until a state holds its object, so the instance itself names
+key has no type until a member record admits it, so the instance itself names
 none. A refutation names the instance, its key, that it refutes.
+
+FR-153 checks one type per key within one population binding, so the analyzer
+SHALL check it across populations: it builds the instance set over the member
+records of every overlapping population, and two member records with the same
+universe and identity and different types, in one population or in two,
+refuse `invalid_runtime_input`/`conflicting-identity` before any instance is
+formed. A key that no member record of the subject's initial states admits
+and that no operation can create is not an instance. The wire reference of a
+binding carries the type of the member record admitted for its key, unique by
+the rule above; a position where the state holds no object under the key still
+carries that type, the object being absent.
+
+The declared type of `x` is `Reference<T>`, and an instance whose admitted
+record has a type that does not conform to `T` (an `Entity` that is not a
+`Counter`) is allowed: `x` is bound to (`universe`, `Entity`, `identity`), and
+every use of `x` other than the `lookup` guard is undefined with reason
+`absent-key`; behind the guard it is never read. The same holds at a position
+where no object is held under the key of an instance whose record conforms to
+`T`: every use of `x` other than the guard is undefined with reason
+`absent-key`.
 
 At a position where no overlapping population holds an object under the
 instance's key, or the object it holds does not conform to `T`, a read through
@@ -214,6 +234,8 @@ unguarded read, whatever the property.
 | FR-361-AC-11 | Over `Counter` instances, the instance `e`, whose key holds an `Entity` that is not a `Counter`, reads `absent-key` through `x`: an unguarded `holds(x.value >= 0)` refutes with `undefined-evaluation` naming `e`, while the same read guarded by the disjunction of `lookup<Counter>(p, x)` being `some` over `all`, `counters` and `specials` evaluates for every instance; with `inc` disabled, `c.value = 1`, `s.value = 1` and `d.value = 0`, the claim `always holds(x.value >= 1)` guarded by the disjunction is refuted at `d`, while a guard naming only `all` holds it vacuously at `d` and the item is `proved`. | Test (TC-290) |
 | FR-361-AC-12 | The binding of `x` for the key `c`, listed by `all` (member type `Entity`) before `counters` (member type `Counter`), has `object_type` `Counter`, the most-specific type of `c`, and is equal under FR-204 to the reference to `c` in `allInstances<Counter>(counters)`; renaming `all` so that `counters` sorts first leaves the binding's bytes unchanged; an object of the subtype `SpecialCounter` held under `s` binds with `object_type` `SpecialCounter`; two members with one universe and identity and different types refuse `conflicting-identity` before any binding. | Test (TC-290) |
 | FR-361-AC-13 | The universe provision of population `counters` with list `[c, d]` is the RFC 8785 canonical array of its two keys in list order, each exactly `universe` and `identity`, whose `sha256-jcs` digest is the published `counters-c-d` digest; the list `[d, c]` gives a different document and digest; a key with a missing, extra (`object_type` included) or non-hex member is not a universe key. | Test (TC-290) |
+| FR-361-AC-14 | Two member records with the universe and identity of `c` and different types, one in `all` as `Entity` and one in `counters` as `Counter`, refuse `invalid_runtime_input`/`conflicting-identity` before any instance is formed, as do two such records in one population; one record per key with agreeing types is admitted. | Test (TC-290) |
+| FR-361-AC-15 | The instance `e` (an `Entity` that is not a `Counter`) is bound to (`universe`, `Entity`, `e`) under `x: Reference<Counter>`, and an unguarded read through it is `absent-key`; after `drop` removes `d`, the instance `d` still carries `Counter` from its admitted record, every use of `x` other than the guard is `absent-key`, and a universe key that no member record of the initial states admits and no operation creates is not an instance. | Test (TC-290) |
 
 ## Dependencies
 
