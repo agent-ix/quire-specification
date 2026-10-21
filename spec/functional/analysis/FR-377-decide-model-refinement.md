@@ -23,6 +23,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-290
     type: references
+  - target: ix://agent-ix/quire-specification/FR-468
+    type: references
 ---
 
 # FR-377: Decide refinement between two model subjects
