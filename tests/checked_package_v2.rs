@@ -14394,3 +14394,36 @@ fn tc_233_deletes_scoped_parameter_entries_name_a_reference_parameter() {
         assert_eq!(decided, case["expected"], "{name}");
     }
 }
+
+/// FR-322-AC-84: supply is checked entry by entry in lock order, presence
+/// then binding, and the first failing entry is the only one reported.
+#[trace("TC-233", "FR-322-AC-84")]
+#[test]
+fn tc_233_supply_refuses_the_first_failing_entry_in_lock_order() {
+    let vectors = parsed_fixture(DEPENDENCY_SELECTION_VECTORS);
+    for vector in vectors["supply_vectors"].as_array().expect("supply vectors") {
+        let id = vector["id"].as_str().expect("id");
+        let mut outcome = "admitted".to_owned();
+        for (index, entry) in vector["entries"]
+            .as_array()
+            .expect("entries")
+            .iter()
+            .enumerate()
+        {
+            let refusal = match entry["supply"].as_str().expect("supply") {
+                "absent" => Some("missing_import/missing-selection"),
+                "stale" => Some("stale_dependency/content-mismatch"),
+                _ => None,
+            };
+            if let Some(refusal) = refusal {
+                outcome = format!("refused:{refusal}@/lock/dependency_selections/{index}");
+                break;
+            }
+        }
+        let expected = match vector["outcome"].as_str().expect("outcome") {
+            "admitted" => "admitted".to_owned(),
+            refused => format!("{refused}@{}", vector["locus"].as_str().expect("locus")),
+        };
+        assert_eq!(outcome, expected, "{id}");
+    }
+}
