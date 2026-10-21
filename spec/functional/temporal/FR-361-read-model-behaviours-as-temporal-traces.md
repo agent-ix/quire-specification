@@ -127,35 +127,40 @@ A *universe* of a population is an ordered list of object keys, each a
 a key has no type until a state holds its object. The `universes` of a subject
 (FR-368) are these lists, one per population.
 
-A universe provision is the RFC 8785 canonical form of a JSON array holding the
-population's keys in list order, each key in the FR-181 typed canonical form
-of the pair, `{"type":"key","universe":"<64 lowercase hex>","identity":"<lowercase hex of the
-identity bytes>"}`: the reference form of FR-181 without its `object_type`
-member. The provision is named by the `sha256-jcs` digest of that document.
-For the population `counters` with the universe list `[c, d]` in one universe
-`11…11` (64 hex digits `11` repeated), the document is
-`[{"identity":"63","type":"key","universe":"11…11"},{"identity":"64","type":"key","universe":"11…11"}]` with the full universe spelled in the
-published vector `counters-c-d`; the list `[d, c]` is a different document with a different
-digest.
+A universe provision is the RFC 8785 canonical form of a JSON array of the
+population's keys in list order. Each key is a closed object with exactly two
+members, `universe`, 64 lowercase hex digits, and `identity`, the lowercase hex
+of the identity bytes (the spelling of FR-181's reference form, without its
+`object_type`). The provision is named by the `sha256-jcs` digest of that
+document. The form is this requirement's own: FR-181 supplies only the
+spelling of the two members. For the population `counters` with the universe
+list `[c, d]` in one universe `11…11` (64 hex digits `11` repeated), the
+document is `[{"identity":"63","universe":"11…11"},{"identity":"64","universe":"11…11"}]`,
+spelled in full in the published vector `counters-c-d`; the list `[d, c]` is a
+different document with a different digest.
 
 A clause `over (x: T)` over a model subject has one *instance* for each pair
 (`p`, `k`) of a population `p` and a key `k` of `p`'s universe, for every
-population `p` whose member types cover `T` ([FR-153](../type-model/FR-153-query-closed-model-environments.md):
-a member type covers itself and every type that conforms to it, so a member
-type that is `T`, a subtype of `T` or a supertype of `T` covers it). The
+population `p` that overlaps `T`: some member type of `p` conforms to `T`, or
+`T` conforms to some member type of `p`. A population whose member types are
+subtypes of `T` only, and one whose member type is a supertype of `T`, each
+overlap `T`; one whose member types are unrelated to `T` does not. The
 analyzer SHALL order the instances by the UTF-8 bytes of the population's
 declaration identity text, then by the order of the universe list. The
-instance order selects which refuted instance a counterexample names, the
-first in that order; it changes neither the verdict label, basis nor cause,
-which hold exactly when every instance holds, and it enters the request
-identity only through the universe lists the subject carries.
+reported instance of a refuted item is the first refuted instance in that
+order, and the counterexample, the basis and the cause are those of that
+instance ([FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md)). The
+item is `refuted` exactly when some instance is refuted, whatever the order,
+and the clause holds exactly when every instance holds; but when instances
+refute by different causes, the cause follows the order, so the order is
+normative and enters the request identity through the universe lists the
+subject carries.
 
-Each instance binds `x` to the reference (`universe`, `object_type`, `identity`)
-whose `object_type` is the population's canonical member type, the first
-member type of its declaration; the type component is not compared. A state's
-object matches the binding by universe and identity alone. The clause holds
-for the subject when it holds for every instance, and a refutation names the
-instance it refutes.
+The analyzer SHALL bind `x` for each instance to the reference (`universe`,
+`object_type`, `identity`) whose `object_type` is the population's canonical
+member type, the first member type of its declaration, and SHALL NOT compare
+the type component. The analyzer SHALL match a state's object to the binding by
+universe and identity alone. A refutation names the instance it refutes.
 
 At a position where `p` holds no object under the instance's key, or holds one
 whose most-specific type does not conform to `T`, a read through `x` SHALL
@@ -183,11 +188,11 @@ added: over a population that holds a key whose object does not conform to
 | FR-361-AC-6 | An unguarded read through the bound object at a reachable position where that object is absent settles the item `refuted` with cause `undefined-evaluation` naming the binding, the position and the read's locus, the same outcome as the `lookup ... absent undefined` spelling of that read; the same read guarded by population membership evaluates. | Test (TC-290, TC-305) |
 | FR-361-AC-7 | A subject with an unbounded population root and no universe returns `requires-bound` before expansion; a subject with an empty list of initial states settles `inconclusive` with cause `no-initial-state`. | Test (TC-294) |
 | FR-361-AC-8 | An item with zero instances, over a type that no object of the universes conforms to or over an empty universe, settles `inconclusive` with cause `no-instance` before any state is explored, and never `proved` or `refuted`; the same item over a population with no universe returns `requires-bound`, not `no-instance`. | Test (TC-294) |
-| FR-361-AC-9 | A clause `over (x: Counter)` over a subject with populations `counters` (member type `Counter`) and `all` (member type `Entity`, a supertype of `Counter`), universes `counters = [c]` and `all = [c, e]`, has instances (`all`, `c`), (`all`, `e`), (`counters`, `c`) in that order: population declaration identity text, then universe order. | Test (TC-290) |
-| FR-361-AC-10 | The verdict of an item is the same for the instance order above and for any permutation of the universe list, while the counterexample of a refuted item names the first refuted instance in the order; permuting a universe list changes the request identity. | Test (TC-290) |
+| FR-361-AC-9 | A clause `over (x: Counter)` over a subject with populations `counters` (member type `Counter`) and `all` (member type `Entity`, a supertype of `Counter`), universes `counters = [c, d]` and `all = [c, e]`, has instances (`all`, `c`), (`all`, `e`), (`counters`, `c`), (`counters`, `d`) in that order: population declaration identity text, then universe order; a population `specials` whose only member type is `SpecialCounter`, a subtype of `Counter`, also yields instances, and a population of an unrelated type yields none. | Test (TC-290) |
+| FR-361-AC-10 | The item is `refuted` exactly when some instance is refuted, for every permutation of the universe lists; the reported instance, counterexample, basis and cause are those of the first refuted instance in the instance order: with `all = [c, e]` and the unguarded claim `always holds(x.value <= 0)`, where (`all`, `c`) refutes by a false evaluation after `inc` and (`all`, `e`) by an undefined read, the cause is none and the counterexample names (`all`, `c`), and with `all = [e, c]` the cause is `undefined-evaluation` and it names (`all`, `e`); permuting a universe list changes the request identity. | Test (TC-290) |
 | FR-361-AC-11 | Over `Counter` instances of `all`, the instance (`all`, `e`), whose key holds an `Entity` that is not a `Counter`, reads `absent-key` through `x`: an unguarded `holds(x.value >= 0)` refutes with `undefined-evaluation` naming (`all`, `e`), while the same read guarded by `lookup<Counter>(all, x)` being `some` evaluates and the instance holds. | Test (TC-290) |
 | FR-361-AC-12 | A binding's `object_type` is the population's canonical member type and is not compared: an object held under the key whose most-specific type is a subtype of that member type is matched, and reference equality of `x` with `allInstances` members of that object holds. | Test (TC-290) |
-| FR-361-AC-13 | The universe provision of population `counters` with list `[c, d]` is the RFC 8785 canonical array of the two typed keys in list order, whose `sha256-jcs` digest is the published `counters-c-d` digest; the list `[d, c]` gives a different document and digest; no key carries an `object_type` member. | Test (TC-290) |
+| FR-361-AC-13 | The universe provision of population `counters` with list `[c, d]` is the RFC 8785 canonical array of its two keys in list order, each exactly `universe` and `identity`, whose `sha256-jcs` digest is the published `counters-c-d` digest; the list `[d, c]` gives a different document and digest; a key with a missing, extra (`object_type` included) or non-hex member is not a universe key. | Test (TC-290) |
 
 ## Dependencies
 

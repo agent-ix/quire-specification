@@ -756,11 +756,16 @@ fn tc_431_load_buffering_warning_carries_two_transition_identities() {
     assert!(!warning.is_valid(&bad), "load is a transition identity");
 }
 
-/// FR-361-AC-13: a universe provision is the RFC 8785 array of typed keys in
-/// list order, named by its `sha256-jcs` digest.
+/// FR-361-AC-13: a universe provision is the RFC 8785 array of keys in list
+/// order, each exactly `universe` (64 lowercase hex) and `identity` (lowercase
+/// hex), named by its `sha256-jcs` digest.
 #[trace("TC-290", "FR-361-AC-13")]
 #[test]
-fn tc_290_universe_provisions_are_canonical_arrays_of_typed_keys() {
+fn tc_290_universe_provisions_are_canonical_arrays_of_keys() {
+    let is_hex = |text: &str| {
+        text.bytes()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    };
     let vectors = parsed(VECTORS);
     let cases = vectors["universe_provision_vectors"]
         .as_array()
@@ -770,11 +775,27 @@ fn tc_290_universe_provisions_are_canonical_arrays_of_typed_keys() {
         let name = case["name"].as_str().expect("name");
         let keys = &case["keys"];
         for key in keys.as_array().expect("keys") {
-            assert_eq!(key["type"], "key", "{name}");
-            assert!(key.get("object_type").is_none(), "{name}: a key has no type");
+            let members: BTreeSet<&str> = key
+                .as_object()
+                .expect("a key is an object")
+                .keys()
+                .map(String::as_str)
+                .collect();
+            assert_eq!(members, BTreeSet::from(["identity", "universe"]), "{name}");
+            let universe = key["universe"].as_str().expect("universe");
+            let identity = key["identity"].as_str().expect("identity");
+            assert!(universe.len() == 64 && is_hex(universe), "{name}: universe");
+            assert!(
+                !identity.is_empty() && identity.len() % 2 == 0 && is_hex(identity),
+                "{name}: identity"
+            );
         }
         let canonical = jcs_canonicalize(keys).expect("canonical keys");
-        assert_eq!(canonical, case["jcs"].as_str().expect("jcs").as_bytes(), "{name}");
+        assert_eq!(
+            canonical,
+            case["jcs"].as_str().expect("jcs").as_bytes(),
+            "{name}"
+        );
         let digest = jcs_sha256(keys).expect("digest");
         assert_eq!(
             digest.strip_prefix("sha256-jcs:").unwrap_or(&digest),
@@ -785,4 +806,3 @@ fn tc_290_universe_provisions_are_canonical_arrays_of_typed_keys() {
     }
     assert_eq!(digests.len(), cases.len(), "list order changes the digest");
 }
-

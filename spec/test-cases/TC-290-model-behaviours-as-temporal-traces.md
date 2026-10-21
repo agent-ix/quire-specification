@@ -46,7 +46,8 @@ whose predicate holds exactly at `value = 3`. Its one behaviour visits values
    `always holds(x.value <= 3)` over `x = d` unguarded, then guarded by `d`'s
    population membership.
 
-7. Add a population `all` of member type `Entity` (a supertype of `Counter`) with universe `[c, e]`, `e` an `Entity` that is not a `Counter`, and check `always holds(x.value >= 0)` with `over (x: Cnt::Counter)` unguarded and guarded by `lookup<Counter>(all, x)` being `some`; list the instances; check a refuted claim and read the counterexample's named instance under the universe lists `[c, d]` and `[d, c]`.
+7. Starting from step 5's subject (`counters = [c, d]`, both at value 0, with `inc` enabled), add a population `all` of member type `Entity` (a supertype of `Counter`) with universe `[c, e]`, `e` an `Entity` that is not a `Counter`, and a population `specials` of member type `SpecialCounter` (a subtype of `Counter`) with universe `[s]`. With `over (x: Cnt::Counter)`, list the instances; check `always holds(x.value >= 0)` unguarded and guarded by `lookup<Counter>(all, x)` being `some`; check the unguarded claim `always holds(x.value <= 0)` with `all = [c, e]` and then with `all = [e, c]`, and read the reported instance and cause of each.
+8. Build the universe provision of `counters` for the lists `[c, d]` and `[d, c]` from their keys.
 ## Expected Results
 
 1. Position 0 reads value 0 with anchor `initialization`; positions 1 to 3 read
@@ -72,5 +73,5 @@ whose predicate holds exactly at `value = 3`. Its one behaviour visits values
    with cause `undefined-evaluation`, naming `d`, the position and the read's
    locus, as TC-305 step 7 does; the guarded claim settles `proved`
    (FR-361-AC-6).
-7. The instances are (`all`, `c`), (`all`, `e`), (`counters`, `c`) in population identity then universe order (FR-361-AC-9); the unguarded claim refutes with `undefined-evaluation` naming (`all`, `e`) and the guarded one holds (FR-361-AC-11); the verdict is equal under both universe orders while the counterexample names the first refuted instance of each order and the request identities differ (FR-361-AC-10); an object of a subtype of the canonical member type under a key is matched (FR-361-AC-12).
-8. The universe provisions `counters-c-d` and `counters-d-c` are the RFC 8785 documents and `sha256-jcs` digests of the published vectors, differ from each other, and carry no `object_type` (FR-361-AC-13).
+7. The instances are (`all`, `c`), (`all`, `e`), (`counters`, `c`), (`counters`, `d`), (`specials`, `s`) in population identity then universe order (FR-361-AC-9); the unguarded `>= 0` claim refutes with `undefined-evaluation` naming (`all`, `e`) and the guarded one holds (FR-361-AC-11); the `<= 0` claim is `refuted` under both lists, with cause none and instance (`all`, `c`) under `[c, e]`, and cause `undefined-evaluation` and instance (`all`, `e`) under `[e, c]`, the request identities differing (FR-361-AC-10); an object of a subtype of the canonical member type under a key is matched (FR-361-AC-12).
+8. The universe provisions `counters-c-d` and `counters-d-c` are the RFC 8785 documents and `sha256-jcs` digests of the published vectors, differ from each other, and carry in each key exactly the members `universe` and `identity` (FR-361-AC-13).
