@@ -258,7 +258,7 @@ Admission checks are decided before the first charge.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-154-AC-1 | An artifact bundle whose extraction and lift yield a valid domain package is admitted, and intake builds exactly one original declaration per IR node, keyed by package identity and IR node identity. | Test (TC-234) |
-| FR-154-AC-2 | A wrong digest domain, a missing package and a package whose identity differs each refuse with its named cause before any declaration is built, a package supplied under the selected digest with the selection's identity is admitted, and a supplied document is admitted whatever its own canonical digest is: intake never recomputes it. | Test (TC-234) |
+| FR-154-AC-2 | A wrong digest domain, a missing package and a package whose identity differs each refuse with its named cause before any declaration is built, a package supplied under the selected digest with the selection's identity is admitted, and a supplied document is admitted whatever its own canonical digest is. | Test (TC-234) |
 | FR-154-AC-3 | A malformed IR node or a dangling reference refuses with the IR node identity and its `origin`, and every such refusal is reported in node order. | Test (TC-234) |
 | FR-154-AC-4 | Publishing a domain package document with equal nodes and a different digest leaves every declaration key and effective declaration unchanged, while the ModelSelection, the effective view and the object universe change. | Test (TC-234) |
 | FR-154-AC-5 | Intake at its exact `normalize.record` bound completes, and the one-less run is incomplete at `normalize.record`. | Test (TC-234) |
