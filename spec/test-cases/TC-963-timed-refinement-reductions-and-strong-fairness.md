@@ -36,7 +36,7 @@ counterexample and refusal locus) with the expected result.
 | TR-03 | FR-377-AC-15's `TReq` with `trap`, `enter` and `undo`; then with `when self.trap { x <= 0 }` | `refuted`, counterexample `send` (delay 1), `enter` (delay 1), `undo` (delay 0) failing at position 3, which replays; then `proved`, and the model's time-lock-freedom item refuted |
 | TR-04 | FR-382-AC-7's `Timer` with symmetry `[[t1, t2]]`: deadlock freedom; `always holds(not (t1.armed and t2.armed))` | `proved` with fewer stored symbolic states than unreduced; `refuted` as unreduced, its counterexample replaying |
 | TR-05 | The `Timer` symbolic state with `t1` armed, `t2` unarmed and zone `Z`, and its image with the two objects and their clocks swapped | Equal canonicalised states |
-| TR-06 | `Timer`'s deadlock-freedom item selecting partial-order reduction; the same selecting a state constraint | Each `unsupported`, `unsupported_projection`/`unsupported-requested-capability` at negotiation naming the reduction, no state expanded |
+| TR-06 | `Timer`'s deadlock-freedom item selecting partial-order reduction; the same selecting a state constraint; the same selecting both | Each `unsupported`, `unsupported_projection`/`unsupported-requested-capability` at negotiation naming the reduction, no state expanded; the item selecting both names partial-order reduction only |
 | TR-07 | FR-416-AC-9's `Blink` with `eventually holds(b.fired)` under `fair { weak Blink::fire }`, then `fair { strong Blink::fire }` | `refuted` with a lasso of `tick` steps of loop delay 1; then `proved` with an accepted zone certificate |
 
 ## Expected Results
