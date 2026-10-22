@@ -44,6 +44,7 @@ equality.
 | `quire.model.effective-declaration/v2` | QSL-derived effective-declaration identity. SHA-256 over the RFC 8785 canonical bytes of `{version, owner_effective_type, original, derivation}` (FR-150). Distinct from `sha256-jcs` and from the `quire.checked-semantic-node/v1` domain. |
 | `quire.model.effective-view/v2` | QSL-derived effective-view identity for one normalized model. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection, rule manifest and every effective declaration sorted by identity (FR-150). Distinct from every other identity/digest domain. |
 | `quire.model.object-universe/v2` | QSL-derived object-universe identity for a connected supertype component. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection and its sorted root effective-declaration identities (FR-150). Distinct from every other identity/digest domain. |
+| `quire.ir-proof.obligation-identity/v1` | CG obligation identity. SHA-256 over the RFC 8785 canonical bytes, through QSL ADR-013 §2's one encoder, of an object with exactly four members: the subject node id, the subject's occurrence key (`node_id`, `role`, `ordinal`), the obligation kind and `arguments`, except for a parity claim, whose whole preimage is the QSL ADR-013 O-09 parity preimage (members `arguments`, `node`, `obligation_kind` and `occurrence_key` = `{ordinal, role}`). The subject is a clause, an operation application, a function (occurrence role `declaration`) or the application node of a parity claim (occurrence role `expression`). For a clause, an application or a function, `arguments` holds one entry per parameter, each a parameter node id with its declared per-argument domain; for a parity claim it holds one entry per operand position, each `{operand, position, domain}`, as that preimage encodes it. A per-step protocol record is the one other form: its object has exactly the members `subject_kind` (the string `protocol-refinement-step`) and `record` (the canonical `StepSimulationRecord`), and no occurrence key. Every other member of the CG obligation record (resource ceilings, embedded oracles, module, harness and contract symbols, subject path, results, solver, unwind and options), `source_span` and every source region are outside the preimage, so changing any of them leaves the identity unchanged. CG mints the digest for every form; QSL recomputes the parity form from the same preimage. Distinct from `quire.checked-semantic-node/v1`, `quire.contract-ir.semantic/v1` and every other identity/digest domain. |
 
 ## Identity and comparison
 
@@ -107,6 +108,7 @@ them instead of holding a copy.
 | FR-201-AC-7 | The `quire_specification` library's `COMPLETE_VALUE_LOCK`, `COMPLETE_VALUE_SELECTION_VECTORS` and `NATIVE_DIAGNOSTICS` equal the exact bytes of `complete-value-lock.json`, `complete-value-selection-vectors.json` and `native-diagnostics.md`. | Test (TC-233) |
 | FR-201-AC-8 | A `quire.cache-key/v1` key computed over the same cached operation, `package_id`, canonical request, backend identity and generation target equals one computed by a second conformer, and compares unequal to a digest with equal bytes in any other domain. | Test (TC-226) |
 | FR-201-AC-9 | Every qualification-catalog entry of the complete-value and complete-model locks names an authored artifact under a unique role and identity, and package selection is exact: each complete-value catalog role occupies one always, trigger-conditional or exactly-one slot under the closed triggers `text_bearing`, `ieee_operation` and `integer_div_rem`, every complete-model catalog role is always selected, and each accepted and refused selection vector is admitted or refused with exactly its recorded selection code. | Test (TC-233) |
+| FR-201-AC-10 | Two obligations of one clause, application, function, parity claim or per-step record whose records differ only in a member outside the preimage (`source_span`, a resource ceiling, an embedded oracle, a symbol, the subject path, the results, the solver, `unwind` or an option) have equal `quire.ir-proof.obligation-identity/v1` digests; changing the subject node id, the occurrence key's `role` or `ordinal`, the obligation kind, one argument's parameter node id or declared domain (for a parity claim, an operand, its position or its domain, an inline literal's value included) or a per-step record member gives a different digest; the per-step digest is unchanged by its occurrence key; and the digest compares unequal to a digest with equal bytes in any other domain. | Test (TC-952) |
 
 ## Dependencies
 
@@ -118,6 +120,11 @@ them instead of holding a copy.
 - [FR-150](../../functional/type-model/FR-150-preserve-model-normalization-provenance.md)
   defines the `quire.model.effective-declaration/v2`, `quire.model.effective-view/v2`
   and `quire.model.object-universe/v2` preimages.
+- QSL ADR-013 O-09 and [AD-016](../../assurance/AD-016-semantic-family-extension-path.md)
+  arrow 5 define the `quire.ir-proof.obligation-identity/v1` preimage;
+  [FR-196](../../functional/ir-proof/FR-196-generate-kani-contracts.md) and
+  [FR-197](../../functional/ir-proof/FR-197-replay-backend-counterexamples.md)
+  generate and replay the obligations it identifies.
 
 ## Resolved domain boundary
 
