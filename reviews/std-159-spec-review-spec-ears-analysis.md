@@ -36,3 +36,19 @@ AC-2 and AC-7 each name one input, one policy and one observable result with exa
 ## Verdict
 
 Not clean, one low wording finding. The statement remains conformant EARS, and both changed criteria are single-trigger, single-result, measurable and free of process language. The parenthetical on job 0 is the only ambiguity in the new text that is about wording; the undefined "keeps the busy period open" condition is recorded in SR-13800 FND-002.
+
+## Dispositions
+
+Round 1, head 4cb925e17 (fix commit 4cb925e on b8cbeabdd).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 4cb925e: "job `q` of that busy period (0 when `D_i <= T_i`, whose busy period ends with the first job unless that job misses) iterates". The second clause is now a consequence, not a second condition. |
+
+The new behaviour sentences (busy-period open condition, response bound, task-set refusals) and FR-419-AC-8 and AC-9 each name an input and an exact observable result, and carry no changelog, status or review language.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | FR-419-AC-9 reads "`Ctl`'s `response T3 <= 11 ms`", but FR-419 never defines `T3`; it is TC-372's name for `response T3 on Ctl.t3 <= 12 ms under fixed_priority`. Read from FR-419 alone, `T3` looks like a task of `Ctl` (whose tasks AC-1 lists unnamed), and the claim's task and policy are left to the reader. State the claim in the grammar FR-419 gives: "`response N on Ctl.τ <= 11 ms under fixed_priority`, `τ` the third task". | spec/functional/analysis/FR-419-analyze-task-set-schedulability.md:143 |
