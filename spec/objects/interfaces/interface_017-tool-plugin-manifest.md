@@ -9,6 +9,12 @@ relationships:
 
 # [interface_017] I17 tool and plugin manifest
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| validate_manifest | operation |
+
 ## Contract
 
 ```yaml

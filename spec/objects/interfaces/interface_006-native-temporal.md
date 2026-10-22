@@ -9,6 +9,13 @@ relationships:
 
 # [interface_006] I06 native temporal artifact and result
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| evaluate | operation |
+| repair | operation |
+
 ## Contract
 
 ```yaml

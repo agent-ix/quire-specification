@@ -9,6 +9,12 @@ relationships:
 
 # [interface_019] I19 independent conformance corpus and result
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| execute_corpus | operation |
+
 ## Contract
 
 ```yaml

@@ -9,6 +9,12 @@ relationships:
 
 # [interface_008] I08 checked protocol artifact
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| check_protocol | operation |
+
 ## Contract
 
 ```yaml
