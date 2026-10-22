@@ -29,3 +29,11 @@ state clause's name is a function's name.
 ## Verdict
 
 Mergeable. The decode order is total and every refusal pointer is determined. One minor coverage gap.
+
+## Dispositions
+
+Round 1, reviewed QSpec #364 at 415f9dd0e.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | fixed at 415f9dd0e (AC-19 and RE-39 add the all-three case) |
