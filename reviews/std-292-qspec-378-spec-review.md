@@ -54,3 +54,14 @@ checked_package_v2 --test backend_provider_v1` passes (23 + 119).
 | FND-002 | medium | FR-154-AC-20's final clause (the constrained-field alias of `created_at` on `O` is `ix://test/orders/OCreated-at`) has no input in M35, which declares no constrained field. The clause is verified by Test (TC-235) but no vector can fail it. | spec/functional/type-model/FR-154-admit-domain-package-model.md:346, spec/test-cases/TC-235-business-construct-meaning-binding.md:114 |
 | FND-003 | low | The new row says "(checked after that row)", but no row is named. In the row directly above, "that row" refers to the repeated-identity row, which sits further down the table. A reader can take it to mean the parameter row above. The prose at line 265 does name "the repeated-identity check of its owner". | spec/functional/type-model/FR-154-admit-domain-package-model.md:85 |
 | FND-004 | low | FR-154-AC-20 says the alias "stays" `ix://test/orders/OCreated-at`. That is change-relative wording in a behaviour statement; it should state the value ("is"). | spec/functional/type-model/FR-154-admit-domain-package-model.md:346 |
+
+## Dispositions
+
+Round 1, against head 309c4268dbaeb3479052d15660cfc2e28c75dab9.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |
+| FND-004 | fixed | - |
