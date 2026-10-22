@@ -2569,10 +2569,6 @@
         },
         "dependencies": [
           {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          {
             "digest": "0ec8481a54da378a1fbeb19ec08f7ccba21c8800884b13377d3c080d7d7486b4",
             "domain": "quire.checked-semantic-node/v1"
           }
@@ -2648,7 +2644,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "1868cd8daa1fe98c81e0cc896ba727116a38b3a21516ed1df15518009662db38",
+    "digest": "3d9fc4f75a806f812d96ead545652e77c8e5f5cc4e098c0f7c06a2802ca61f5a",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -5551,10 +5547,6 @@
           "term": "aggregate"
         },
         "dependencies": [
-          {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
-          },
           {
             "digest": "0ec8481a54da378a1fbeb19ec08f7ccba21c8800884b13377d3c080d7d7486b4",
             "domain": "quire.checked-semantic-node/v1"

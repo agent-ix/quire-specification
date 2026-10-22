@@ -51,7 +51,8 @@ the member type from the resolved record.
   the `Text[min, max; profile]` they are bound as, presence, multiplicity, supertypes
   and redefinitions), the model declaration node vectors M1 to M12, the member
   cases, each recorded with its criterion, the `operation_redefinition_cases`
-  (MA-16 to MA-18, each a patch of the document with its expected result),
+  (MA-16 to MA-18, each a patch of the document with its expected result; MA-19 is the
+  consumer-scope case that no patch of the document expresses),
   the wire cases and the selection cases. The selection cases patch and digest the document, not the projection.
   The value type `OrderTotal` is the alias FR-095 mints for `Order`'s
   constrained field `total` (`<Name><Field>`), with its constraints under
@@ -81,7 +82,7 @@ the member type from the resolved record.
   owner, frame field, anchor and clause signature cases below are read
   against this projection, and the receiver frame cases against the published
   packages (FR-340-AC-19, FR-340-AC-20).
-- The lock selects `acme/orders` `1.0.0` only.
+- For the `acme/orders` projection the lock selects the identity `acme/orders` only; for the `acme/runs` projection it selects the identity `acme/runs` only.
 - `node-identity-preimage.schema.json` defines the closed
   `ModelDeclarationNode` preimage.
 
@@ -157,6 +158,7 @@ process or state machine.
 | MA-16 | `operation` `size` on M5, over the document with `Sub/size`'s `Operation.redefines` removed | `ambiguous_declaration`/`ambiguous-name`: `Order/size` and `Sub/size` are both exposed | FR-322-AC-30, FR-154-AC-16 |
 | MA-17 | `operation` `size` on M5, over the document whose `Sub/size` carries no `Operation.redefines` and whose `Sub` lists the pair `Sub/size`, `Order/size` only in an extension payload, once with `required` false (MA-17a) and once with `required` true (MA-17b), the consumer admitting the extension | `ambiguous_declaration`/`ambiguous-name` both times: an extension declares no redefinition to intake | FR-154-AC-16 |
 | MA-18 | The document with `Sub/size`'s `Operation.redefines` set to `ix://acme/orders/Order/missing` | Selection refused `missing_declaration`/`missing-name` at `Sub/size` and `Operation.redefines` | FR-154-AC-16 |
+| MA-19 | The document whose `Sub` lists the pair `Sub/size`, `Order/size` in an extension payload with `required` true, supplied to a consumer that does not admit that extension | Document refused before intake `unknown_required_feature`/`unsupported-feature`, naming the extension identity and the consuming scope, at `Sub` and its `extensions` member | FR-154-AC-16 |
 | MU-01 | `field` `window` on T1 (`Timer` of the `acme/timing` domain package, which no checked-package fixture selects), `typeRef` `ix://quire/unit/ms`, checked units `ms` and `s` | Resolves `Timer/window`; type `Quantity<ms>` | FR-322-AC-80 |
 | MU-02 | `field` `waits` on T1, the same `typeRef`, `[0, unbounded]`, unordered, unique | `Set<Quantity<ms>>` | FR-322-AC-80 |
 | MU-03 | `operation` `wait` on T1 with a `Quantity<ms>` argument | Resolves `Timer/wait`; result `Integer` | FR-322-AC-80 |

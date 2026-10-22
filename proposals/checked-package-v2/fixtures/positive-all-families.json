@@ -202,7 +202,12 @@
           },
           "term": "reference"
         },
-        "dependencies": [],
+        "dependencies": [
+          {
+            "digest": "8a2ac57983a71670bf50a5d9608834f92fa98b10be4b9af3ca53a35d777bca6f",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
         "node_id": {
           "digest": "7916594432599ef67ed6ae2cf24658efb71aeb896d38ea84981961c5c5dd1399",
           "domain": "quire.checked-semantic-node/v1"
@@ -515,7 +520,12 @@
           },
           "term": "reference"
         },
-        "dependencies": [],
+        "dependencies": [
+          {
+            "digest": "8a2ac57983a71670bf50a5d9608834f92fa98b10be4b9af3ca53a35d777bca6f",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
         "node_id": {
           "digest": "eda35b0f05a105673194d0afa9b45812945a98e4bfd32fc152a48d4cbcd6f276",
           "domain": "quire.checked-semantic-node/v1"
@@ -1225,7 +1235,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "8cd8e5f4e1fef66e04f4e8a7e66ae32450975f78f0bf525235783b483c8f2971",
+    "digest": "1105c967d9aa5d0b8802540d7d78186945f6f0e7a705ddcd72a880c7d558acf9",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -1433,7 +1443,12 @@
           },
           "term": "reference"
         },
-        "dependencies": [],
+        "dependencies": [
+          {
+            "digest": "8a2ac57983a71670bf50a5d9608834f92fa98b10be4b9af3ca53a35d777bca6f",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
         "node_id": {
           "digest": "7916594432599ef67ed6ae2cf24658efb71aeb896d38ea84981961c5c5dd1399",
           "domain": "quire.checked-semantic-node/v1"
@@ -1788,7 +1803,12 @@
           },
           "term": "reference"
         },
-        "dependencies": [],
+        "dependencies": [
+          {
+            "digest": "8a2ac57983a71670bf50a5d9608834f92fa98b10be4b9af3ca53a35d777bca6f",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
         "node_id": {
           "digest": "eda35b0f05a105673194d0afa9b45812945a98e4bfd32fc152a48d4cbcd6f276",
           "domain": "quire.checked-semantic-node/v1"

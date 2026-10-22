@@ -39,3 +39,11 @@ The TC rows cover every changed AC clause. FR-154-AC-16's admitted case depends 
 ## Resolution
 
 FND-001 is closed. `model-member-type-vectors.json` carries `operation_redefinition_cases` MA-16, MA-17a, MA-17b and MA-18, each a document patch with its expected result, and `tests/model_member_types.rs` evaluates them under FR-154-AC-16 and FR-322-AC-30.
+
+## Dispositions
+
+Round 1, reviewed at 0a4daf8d636d4025c77ca40e599ce0e931ecbcc1. `cargo test --test model_member_types` passes 24, including `tc_280_an_operation_redefines_only_through_operation_redefines`.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | `model-member-type-vectors.json` carries `operation_redefinition_cases` MA-16, MA-17a (`required` false), MA-17b (`required` true) and MA-18, each with `"criterion": "FR-154-AC-16"`, a document patch and its expected result. `tc_280_an_operation_redefines_only_through_operation_redefines` is traced to FR-154-AC-16 and FR-322-AC-30, asserts four cases, and evaluates each over the patched document. |

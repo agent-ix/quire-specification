@@ -52,3 +52,21 @@ Not mergeable. Option (a) is the right default and matches model-complete.md, FR
 ## Resolution
 
 FND-001: `domain-package-acme-orders.json` now declares the `Sub/size`, `Sub/scaled` and `SubSub/size` redefinitions as `Operation.redefines` and no extension payload. The document digest, the package ids that bind it and the dependency-selection vectors are re-keyed, and `project_document` reads `Operation.redefines`. FND-002: FR-154 Dependencies records that the filament-core-data Semantic IR contract owns the `operation` member set and has to carry `redefines`. FND-003: FR-154 and FR-154-AC-16 state that a consumer that does not admit a `required` extension refuses the document before intake (FR-133-AC-3), and MA-17 expects the ambiguous result for `required` true when the consumer admits the extension. FND-004: MA-16 to MA-18 follow MA-15 in the TC-280 table.
+
+## Dispositions
+
+Round 1, reviewed at 0a4daf8d636d4025c77ca40e599ce0e931ecbcc1 (fix commit 0a4daf8 over 6fec6f4). An independent Python JCS/SHA-256 script recomputes the `acme/orders` document digest as `31a582821f4316a945f741a4b01265664fa61a4990704ee297c46835404c6190`, the value every `model_selections` entry of positive-all-families and positive-operation-identities carries. It recomputes their package ids as `8cd8e5f4…2f971` and `1868cd8d…62db38`, and the dependency-selection-vectors ids as `e75f67f0…fdafdae` (top) and `26888856…f4297eb5` (`test/a`), all equal to the published values. None of the old digests remains in the tree. `cargo test --test checked_package_v2 --test backend_provider_v1 --test model_member_types` passes 117, 14 and 24. The `quire validate` diagnostic multiset over spec/ is the one on main, except one FR-322 warning that moved line.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | `domain-package-acme-orders.json` `Sub/size`, `Sub/scaled` and `SubSub/size` carry `"redefines": "ix://acme/orders/Order/size"` / `"…/Order/scaled"`, and `Sub` and `SubSub` have `"extensions": []`. `project_document` reads `operation.get("redefines")`. Digests recomputed independently and they match. |
+| FND-002 | fixed | FR-154 Dependencies: "The filament-core-data Semantic IR contract owns the `operation` member set. Intake reads `Operation.redefines` from the IR `operation` member of that name, so a producer's contract has to carry it for a document to declare an operation redefinition." The FCD change itself is not filed. |
+| FND-003 | fixed | FR-154 says "a consumer that does not admit a `required` extension refuses the document before intake reads it (FR-133-AC-3)", and MA-17 now reads "the consumer admitting the extension". |
+| FND-004 | fixed | MA-16, MA-17 and MA-18 follow MA-15 in the TC-280 table. |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | high | Major. The head no longer contains origin/main. Main is at bb6d08a, five commits past the merge base: #338 STD-103, #348 STD-93, #339, #340 and #343 STD-153. `git merge-tree` reports content conflicts in exactly the files this fix re-keys: README.md, dependency-selection-vectors.json, fixtures/positive-all-families.json and fixtures/positive-operation-identities.json. Main changed positive-all-families (STD-93, STD-103), so after the merge the recomputed package ids `8cd8e5f4…`, `1868cd8d…`, `e75f67f0…` and `26888856…` are stale. They must be derived again from main's identity preimages with this PR's document digest. | proposals/checked-package-v2/fixtures/positive-all-families.json; proposals/checked-package-v2/fixtures/positive-operation-identities.json; proposals/checked-package-v2/dependency-selection-vectors.json; proposals/checked-package-v2/README.md |
+| FND-006 | low | Minor. FR-154-AC-16 now also says that "a consumer that does not admit a `required` extension refuses the document before intake". It names no refusal code or cause, and TC-280, which verifies AC-16, has no row or vector for that case. Either drop the clause from the AC and leave it to FR-133-AC-3 (TC-183), or give it the code and a TC-280 row. | spec/functional/type-model/FR-154-admit-domain-package-model.md:290 |
