@@ -112,3 +112,10 @@ Round 1, reviewed at agent-ix/quire-specification@afe6d822 (fix commit 12b011fc 
 | FND-007 | fixed | 12b011fc |
 | FND-008 | fixed | 12b011fc |
 | FND-009 | fixed | 12b011fc |
+
+Round 2, reviewed at agent-ix/quire-specification@f326f663 (fix commits 67453db5 and 6edd585b plus the merge of main 867e1289). Gates at the head: `quire validate` 86 failure lines (baseline); `cargo test --test checked_package_v2 --test backend_provider_v1` 23 + 119 passed. origin/main is an ancestor. No new findings.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-010 | fixed | 67453db5 |
+| FND-011 | fixed | 67453db5 |
