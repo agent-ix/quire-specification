@@ -298,7 +298,9 @@ member that raises the budget, `max_store_buffer` or `max_messages`), FR-428
 (`instance-bound-reached{limit, value, states}`, `limit` always
 `max_live_instances`, the member that raises it) and AD-016's
 `kani_vacuous_proof`. FR-439 adds the unsupported cause
-`weak-access-shape{site, transition, shape}`.
+`weak-access-shape{site, transition, shape}`. FR-427 adds the unsupported cause
+`recovery-view{predicate}`, `predicate` the qualified name of the compensation
+template whose recovery predicate reads its recovery binder.
 
 ### Kani results
 
