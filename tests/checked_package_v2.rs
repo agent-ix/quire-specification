@@ -37,6 +37,12 @@ const POSITIVE_CONTROL_OPERATIONS: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-control-operations.json");
 const POSITIVE_EXTENSION_NODES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-extension-nodes.json");
+const EXTENSION_DEFINITIONS: &str =
+    include_str!("../proposals/checked-package-v2/extension-definitions.json");
+const EXTENSION_DEFINITIONS_SCHEMA: &str =
+    include_str!("../proposals/checked-package-v2/extension-definitions.schema.json");
+const EXTENSION_DEFINITION_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/extension-definition-vectors.json");
 const POSITIVE_UNION_NODES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-union-nodes.json");
 const POSITIVE_RECURSIVE_RECORDS: &str =
@@ -15306,6 +15312,7 @@ fn tc_233_a_reader_admits_the_reference_form_of_an_integer_literal_operand() {
 
 /// An extension definition the reader holds: the node entries of its
 /// `typed_node_schema` as (node kind, clause (name, type spelling) list).
+#[derive(Clone)]
 struct HeldExtension {
     definition: Value,
     nodes: Vec<(String, Vec<(String, String)>)>,
@@ -15315,33 +15322,51 @@ fn extension_definition(identity: &str) -> Value {
     json!({"authority": "example", "identity": identity})
 }
 
-fn held_extension(identity: &str, node_kind: &str, clauses: &[(&str, &str)]) -> HeldExtension {
+/// The published FR-467 extension definition under `{example, identity}`,
+/// held as the reader holds it: its `typed_node_schema` node entries.
+fn published_extension(identity: &str) -> HeldExtension {
+    let reference = extension_definition(identity);
+    let published = parsed_fixture(EXTENSION_DEFINITIONS);
+    let entry = published["definitions"]
+        .as_array()
+        .expect("published definitions are an array")
+        .iter()
+        .find(|entry| entry["reference"] == reference)
+        .unwrap_or_else(|| panic!("extension-definitions.json publishes {identity}"));
     HeldExtension {
-        definition: extension_definition(identity),
-        nodes: vec![(
-            node_kind.to_owned(),
-            clauses
-                .iter()
-                .map(|(name, spelling)| ((*name).to_owned(), (*spelling).to_owned()))
-                .collect(),
-        )],
+        definition: reference,
+        nodes: entry["definition"]["typed_node_schema"]["nodes"]
+            .as_array()
+            .expect("typed_node_schema nodes")
+            .iter()
+            .map(|node| {
+                let clauses = node["clauses"]
+                    .as_array()
+                    .expect("node entry clauses")
+                    .iter()
+                    .map(|clause| {
+                        let text = |member: &str| {
+                            clause[member].as_str().expect("clause member").to_owned()
+                        };
+                        (text("name"), text("type"))
+                    })
+                    .collect();
+                (node["node_kind"].as_str().expect("node kind").to_owned(), clauses)
+            })
+            .collect(),
     }
 }
 
 fn held_retention() -> HeldExtension {
-    held_extension(
-        "retention",
-        "retention",
-        &[("subject", "Text"), ("days", "Int[1, 3650]")],
-    )
+    published_extension("retention")
 }
 
 fn held_quota() -> HeldExtension {
-    held_extension("quota", "quota", &[("limit", "Int[1, 100]")])
+    published_extension("quota")
 }
 
 fn held_policy() -> HeldExtension {
-    held_extension("policy", "policy", &[("retain", "retention")])
+    published_extension("policy")
 }
 
 /// A refusal of the extension reader: code, cause, the pointer FR-469 names
@@ -16277,4 +16302,81 @@ fn tc_951_a_selected_extension_is_carried_by_definition_selections_not_required_
         refusal.code, "unknown_required_capability",
         "X17: an unheld extension is never an unknown required feature"
     );
+}
+
+#[trace("TC-951", "FR-469-AC-9")]
+#[test]
+fn tc_951_published_definitions_are_fr_467_members_and_withholding_one_refuses_its_fixture() {
+    let published = parsed_fixture(EXTENSION_DEFINITIONS);
+    let schema = jsonschema::validator_for(&parsed_fixture(EXTENSION_DEFINITIONS_SCHEMA))
+        .expect("extension definitions schema is valid");
+    assert!(schema.is_valid(&published), "XD: the published definitions meet their schema");
+    let definitions = published["definitions"].as_array().expect("definitions");
+    let references = definitions
+        .iter()
+        .map(|entry| entry["reference"].clone())
+        .collect::<Vec<_>>();
+    let mut ordered = references.clone();
+    ordered.sort_by_key(|reference| {
+        (
+            reference["authority"].as_str().unwrap_or_default().to_owned(),
+            reference["identity"].as_str().unwrap_or_default().to_owned(),
+        )
+    });
+    ordered.dedup();
+    assert_eq!(references, ordered, "one entry per reference, in reference order");
+    for entry in definitions {
+        let definition = &entry["definition"];
+        let productions = definition["grammar_schema"]["productions"]
+            .as_array()
+            .expect("productions");
+        let nodes = definition["typed_node_schema"]["nodes"]
+            .as_array()
+            .expect("node entries");
+        assert_eq!(productions.len(), nodes.len(), "one node entry per production");
+        for production in productions {
+            let node = nodes
+                .iter()
+                .find(|node| node["keyword"] == production["keyword"])
+                .expect("each production has its node entry");
+            let names = node["clauses"]
+                .as_array()
+                .expect("clauses")
+                .iter()
+                .map(|clause| clause["name"].clone())
+                .collect::<Vec<_>>();
+            assert_eq!(json!(names), production["clauses"], "clause names in production order");
+        }
+    }
+    let vectors = parsed_fixture(EXTENSION_DEFINITION_VECTORS);
+    assert_eq!(vectors["definitions"], "extension-definitions.json");
+    let all = [held_policy(), held_quota(), held_retention()];
+    for vector in vectors["vectors"].as_array().expect("vectors") {
+        let id = vector["id"].as_str().expect("vector id");
+        let package = match vector["fixture"].as_str() {
+            Some("fixtures/positive-extension-nodes.json") => extension_package(),
+            Some("fixtures/positive-all-families.json") => parsed_fixture(POSITIVE_ALL_FAMILIES),
+            other => panic!("{id}: unexpected fixture {other:?}"),
+        };
+        let withheld = vector["withheld"].as_array().expect("withheld");
+        let selected = package["lock"]["definition_selections"]
+            .as_array()
+            .expect("definition selections");
+        let held = all
+            .iter()
+            .filter(|held| selected.contains(&held.definition) && !withheld.contains(&held.definition))
+            .cloned()
+            .collect::<Vec<_>>();
+        let expected = &vector["expected"];
+        let actual = read_extension_package(&package, &held);
+        if expected["result"] == "admitted" {
+            assert_eq!(actual, Ok(()), "{id}");
+        } else {
+            let refusal = actual.expect_err(id);
+            assert_eq!(refusal.code, expected["code"], "{id}");
+            assert_eq!(json!(refusal.cause), expected["cause"], "{id}");
+            assert_eq!(refusal.locus.as_ref(), Some(&expected["locus"]), "{id}");
+            assert_eq!(refusal.pointer, expected["document_pointer"], "{id}");
+        }
+    }
 }
