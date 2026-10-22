@@ -7,6 +7,8 @@ relationships:
     type: implements
   - target: ix://agent-ix/quire-specification/FR-011
     type: references
+  - target: ix://agent-ix/quire-specification/FR-145
+    type: references
   - target: ix://agent-ix/quire-specification/FR-181
     type: references
   - target: ix://agent-ix/quire-specification/FR-382
@@ -60,10 +62,17 @@ reference they apply to is, or contains, a reference into a symmetric
 population:
 
 - an order over references (`<`, `<=`, `>`, `>=`), already ill-typed;
-- an order-sensitive traversal of a `Set` or `Bag` whose element type
-  contains such a reference, such as `fold` or `reduce`, because the
-  traversal follows the identity-sorted encoding of
-  [FR-181](../runtime/FR-181-simulate-finite-executions.md);
+- a `fold` or `reduce` over a `Set` or `Bag` whose element type contains
+  such a reference and whose step is outside
+  [FR-145](../expressions/FR-145-convert-and-query-collections.md)'s
+  commutative and associative catalog, because such a traversal follows the
+  identity-sorted encoding of
+  [FR-181](../runtime/FR-181-simulate-finite-executions.md). The class is
+  decided by catalog membership alone: a step outside the catalog is a
+  breaking form even when its result happens not to depend on order, because
+  FR-145 admits no other proof of order independence. A `fold` or `reduce`
+  whose step is in the catalog is not a breaking form and is checked as
+  FR-145 checks it;
 - a conversion of such a reference to a value of another type, including
   text;
 - a reference literal naming a key of the population.
@@ -77,22 +86,36 @@ and postconditions, invariants, temporal clause atoms, `terminal when`
 predicates, state constraints ([FR-382](FR-382-select-state-space-reductions.md))
 and refinement rows ([FR-375](FR-375-declare-model-refinement.md)). The
 refusal is `ill_typed`/`identity-observing-form` at the breaking node,
-naming the form and the population. The same forms over an unannotated population are
-admitted.
+naming the form and the population. Over a population that is not annotated,
+each form is checked by the rules that apply without the annotation, and no
+form is refused as `identity-observing-form`.
+
+**Precedence over FR-145.** A `fold` or `reduce` over a `Set` or `Bag` whose
+step is outside FR-145's catalog is refused in every unit, so it is reported
+once, with one cause decided per fold from the fold's source type: when the
+source's static type contains a reference into an annotated population, the
+refusal is `ill_typed`/`identity-observing-form` naming that population;
+otherwise it is FR-145's `ill_typed`/`operator-ineligible`. A unit that reads
+an annotated and an unannotated population therefore reports each fold by
+its own source. The identity-observing cause takes precedence because it
+names the population the author can unannotate or restructure.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-381-AC-1 | A population declared `symmetric` carries the annotation into the checked package, and adding or removing it changes the `package_id`. | Test (TC-320) |
-| FR-381-AC-2 | A `fold` over a `Set<Reference<T>>` field whose references point into a symmetric population refuses `ill_typed`/`identity-observing-form` at the `fold` node, naming the population; the same unit without the annotation is admitted. | Test (TC-320) |
+| FR-381-AC-2 | A `fold` over a `Set<Reference<T>>` field whose references point into a symmetric population, with a step that chooses an element (outside FR-145's catalog), refuses `ill_typed`/`identity-observing-form` at the `fold` node, naming the population; the same unit without the annotation refuses `ill_typed`/`operator-ineligible` at the `fold`; and `fold<Tally>(acc, p in self.peers: acc + 1, identity: 0)`, a catalog step, with `type Tally = Integer;`, is admitted in both units. | Test (TC-320) |
 | FR-381-AC-3 | A reference literal naming a key of a symmetric population, and a conversion of such a reference to text, each refuse `ill_typed`/`identity-observing-form` at their node, naming the population, in a precondition, a postcondition, an invariant, a temporal atom, a `terminal when` predicate, a state constraint and a refinement row. | Test (TC-320) |
 | FR-381-AC-4 | Reference equality, field read, `deref`, `reaches`, membership, `count`, `exists`, `forall` and `size` over a symmetric population are admitted. | Test (TC-320) |
+| FR-381-AC-5 | In one unit that reads the symmetric population `config_history` and a second population `drafts` that is not annotated, the same element-choosing `fold` over a `Set<Reference<ConfigVersion>>` field refuses `ill_typed`/`identity-observing-form` naming `config_history`, and over a `Set<Reference<Draft>>` field refuses `ill_typed`/`operator-ineligible`, each at its own `fold` node. | Test (TC-320) |
 
 ## Dependencies
 
 - [FR-011](../foundation/FR-011-validate-populations.md) owns population
   declarations.
+- [FR-145](../expressions/FR-145-convert-and-query-collections.md) owns the
+  set-and-bag step catalog and the `operator-ineligible` refusal outside it.
 - [FR-181](../runtime/FR-181-simulate-finite-executions.md) owns the
   identity-sorted encoding of set and bag contents.
 - [FR-382](FR-382-select-state-space-reductions.md) owns the request opt-in

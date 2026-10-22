@@ -28,8 +28,10 @@ of `ConfigVersion` objects (`versionNumber: Int[0, 2]`,
 1. Declare `config_history` `symmetric`; check the unit; then remove the
    annotation and compare `package_id`s.
 2. Add a field `peers: Set<Reference<ConfigVersion>>` and a postcondition
-   that chooses the new parent by `fold` over `self.peers`; check with and
-   without the annotation.
+   that chooses the new parent by `fold` over `self.peers` (a step outside
+   FR-145's catalog); check with and without the annotation. Then replace the
+   step by `fold<Tally>(acc, p in self.peers: acc + 1, identity: 0)` with
+   `type Tally = Integer;` and check with and without the annotation.
 3. With the annotation, add in turn: a reference literal naming key `a` in a
    precondition, a postcondition, an invariant, a temporal atom, a
    `terminal when` predicate, a state constraint and a refinement row; and a
@@ -39,15 +41,23 @@ of `ConfigVersion` objects (`versionNumber: Int[0, 2]`,
    over `config_history`.
 5. Without the annotation, submit a model-check request declaring
    `SymmetryDeclaration{config_history, [[a, b, c]]}`.
+6. With the annotation, add a population `drafts` of `Draft` objects that is
+   not annotated, a field `others: Set<Reference<Draft>>`, and a second
+   postcondition choosing an element by the same `fold` step over
+   `self.others`, beside case 2's `fold` over `self.peers`.
 
 ## Expected Results
 
 Case 1 is admitted with the annotation in the checked package, and the two
 `package_id`s differ (FR-381-AC-1). Case 2 refuses
 `ill_typed`/`identity-observing-form` at the `fold` node naming
-`config_history`, and is admitted without the annotation (FR-381-AC-2). Each
+`config_history`, and without the annotation refuses
+`ill_typed`/`operator-ineligible` at the `fold`; the counting `fold` is
+admitted in both units (FR-381-AC-2). Each
 addition of case 3 refuses `ill_typed`/`identity-observing-form` at its
 node naming the population (FR-381-AC-3).
 Case 4 is admitted (FR-381-AC-4). Case 5 refuses the request
 `invalid_runtime_input`/`invalid-value`, naming the declaration
-(FR-382-AC-3).
+(FR-382-AC-3). Case 6 refuses `ill_typed`/`identity-observing-form` naming
+`config_history` at the `self.peers` fold and `ill_typed`/`operator-ineligible`
+at the `self.others` fold (FR-381-AC-5).
