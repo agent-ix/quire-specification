@@ -176,6 +176,20 @@ protocol subject's steps carry the `protocol-transition` identity of
 [FR-426](../protocol/FR-426-apply-protocol-steps.md) and are visited in the
 same order.
 
+Two successors of one parent with equal transition identities and different
+post-states are visited in ascending unsigned-lexicographic order of their
+post-states' state-key bytes. Two successors with equal transition identities
+and equal post-state keys are one successor.
+
+The subject's initial states are ordered in ascending unsigned-lexicographic
+order of their state-key bytes, and initial states with equal state keys are
+coalesced into one. This canonical order is the subject's ordered list of
+initial states: level 0 of breadth-first expansion visits the initial states
+in it, and every zero-based initial-state index (the FR-364 `initial_state`,
+the FR-393 `initial`, the FR-392 walk's initial state, the FR-408 test's
+initial state) names a position in it. The order in which a request supplies
+the initial states does not change it.
+
 A state at which no transition identity is enabled is terminal. Exploration
 records a terminal state as a state with no successor. A temporal analysis
 reads a terminal state by
@@ -186,7 +200,11 @@ the same successor relation with the counter-based generator that the
 `quire.simulation.sampler/v1` definition
 ([sampler definition](../../../proposals/quire-v1/definitions/simulation-sampler.md))
 defines; a sampled trace is named by
-its seed and trace index. A sampled step makes one or more draws, each with its own choice index: with no workload, one uniform draw over the enabled successor set; under a workload ([FR-406](../analysis/FR-406-interpret-probabilistic-models.md)), one draw for the operation by exact integer weight, one uniform draw for the scheduled identity, one draw per random parameter in declaration order by its exact integer weights and, over a timed subject, one draw per delay and per tie-break ([FR-420](../analysis/FR-420-sample-stochastic-timed-models.md)). A statistical run assigns trace index `i · m + j` to sample `i` of test `j` among `m` tests.
+its seed and trace index. A sampled step makes one or more draws, each with its own choice index: with no workload, one uniform draw over the enabled successor set; under a workload ([FR-406](../analysis/FR-406-interpret-probabilistic-models.md)), one draw for the operation by exact integer weight, one uniform draw for the scheduled identity, one draw per random parameter in declaration order by its exact integer weights and, over a timed subject, one draw per delay and per tie-break ([FR-420](../analysis/FR-420-sample-stochastic-timed-models.md)). A statistical run assigns trace index `i · m + j` to sample `i` of test `j` among `m` tests. No draw selects a sampled trace's initial state. A sampled trace whose
+requirement names its initial state (an FR-392 walk, an FR-408 test) starts
+there. Otherwise, with `m` initial states in canonical order, trace `t` starts
+at the initial state with index `t mod m`, so a subject with one initial state
+starts every trace there.
 An unbounded domain
 or population returns the I13 `requires-bound` per-item negotiation
 disposition before exploration begins; `requires-bound` is never an evaluator
@@ -265,6 +283,9 @@ so every timed refutation has a counterexample with exact rational delays.
 | FR-181-AC-12 | Under `time tick O period p` a position's time stamp is `p` times the number of `O` steps up to it. | Test (TC-369) |
 | FR-181-AC-14 | A sampled choice whose integer total `n` exceeds `2^256` stops the whole sampling run before any draw and settles `unsupported` with cause `total-above-draw-range{total}`, `total` being `n`; no digest is computed and the sampler does not loop. | Test (TC-354) |
 | FR-181-AC-15 | A sampled choice whose integer total is exactly `2^256` accepts the draw-0 digest and selects the least index `i` with `v mod n < w_0 + … + w_i`. | Test (TC-354) |
+| FR-181-AC-16 | Two successors of one parent with equal transition identities and different post-states are visited in ascending order of their post-states' state-key bytes, whatever order the successor relation yields them in; two with equal transition identities and equal post-state keys are one successor. | Test (TC-210) |
+| FR-181-AC-17 | Initial states are visited and indexed in ascending order of their state-key bytes, with equal keys coalesced into one: supplying the same initial states in reversed order, or one of them twice, gives the same initial-state list, the same exploration and the same initial-state indices. | Test (TC-210) |
+| FR-181-AC-18 | With `m` initial states and no requirement naming the start, sampled trace `t` starts at the initial state with index `t mod m` and makes no draw to select it; with one initial state every trace starts there, so the TC-210 sampler index-sequence vector is unchanged. | Test (TC-210) |
 
 ## Dependencies
 
