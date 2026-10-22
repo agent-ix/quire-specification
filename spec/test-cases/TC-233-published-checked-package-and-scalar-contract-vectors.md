@@ -65,9 +65,15 @@ those criteria remain with TC-217 and TC-187.
 
 Validate each positive fixture against its published schema and apply every
 authored adverse mutation. Rebuild each V2 identity preimage from the lock
-selections and occurrence-free graph, recompute the JCS SHA-256 package id,
-then edit each excluded member and each named preimage member, requiring each
-excluded member injected into the identity preimage to be refused. Insert the
+selections alone, require it to equal the shipped `identity_preimage`, which
+carries no `identity_projection`, add the identity projection derived from
+the occurrence-free graph to form the package-id preimage, recompute the JCS
+SHA-256 package id, then edit each excluded member and each named preimage member, requiring each
+excluded member injected into the identity preimage to be refused. Add an
+`identity_projection` member to the all-families `identity_preimage` for each
+`adverse.json` `shipped_projection_cases` entry (the occurrence-free graph,
+and `[]`) and require the schema to refuse it, a reader refusing
+`malformed_wire` at `/identity_preimage/identity_projection` (FR-322-AC-14). Insert the
 published dependency selections of `dependency-selection-vectors.json` into
 the all-families package's lock and identity preimage, require the schema to
 admit it and its recorded package id to recompute, require each authored
@@ -202,7 +208,7 @@ Recompute the QSL FR-092 key of every structural node, grouped or not, of
 every published positive fixture, and the recursive-records
 fixture's group digests, and read every published positive fixture with the
 full reader (FR-322-AC-50). Apply each `derived_shape_key_mutations` entry of
-`adverse.json` to its base fixture's node and `identity_projection` entry,
+`adverse.json` to its base fixture's node,
 keep the node id, recompute `package_id`, and read it with the full reader
 (FR-322-AC-48, FR-322-AC-49); relabel the recursive-records `Tree` group with
 a label that is not its group digest, rekey each member under it, rewrite
@@ -226,8 +232,8 @@ QSL's emitter to write `owner` (QSL FR-093-AC-21, agent-ix/quire-spec-language#6
 which needs IR's `CheckedSemanticNodeV2` `owner` field (IR-646) first. The published fixtures carry the node `owner` member (FR-322
 "Owner member schema"). In every positive fixture each declared structural node carries
 the `SourceOwner` of its fixture's lock source (`agent-ix`/`example`, or
-`a`/`u` in the recursive-records fixture); its `identity_projection` entry
-gains the member and the fixture's `package_id` is recomputed. The undeclared
+`a`/`u` in the recursive-records fixture), and the fixture's `package_id` is
+recomputed over it. The undeclared
 `relation`/`relationship` nodes of `positive-all-families.json` and
 `positive-operation-identities.json` become model declaration nodes: each
 carries M4's `ModelOwner` (`acme/orders`, `ix://acme/orders/relationship/Order-order-Order`), is
@@ -239,7 +245,7 @@ fixture's reachability node and the `frame_mutations` and
 `derived_shape_key_mutations` that name them) is rekeyed or rewritten. The
 wire cases of `model-member-type-vectors.json` carry the owners TC-280
 lists. `adverse.json` gains `owner_mutations`, each applied to its base
-fixture with the node id kept, the projection entry patched and
+fixture with the node id kept and
 `package_id` recomputed, and `fixtures/` gains `positive-two-owners-a.json`
 and `positive-two-owners-b.json`, whose declarations carry the qualified
 names QSL emits (`["Point"]`, `["List"]`, `["three"]`), so their `Point`,
@@ -248,8 +254,7 @@ not in AC-22's source: it is hand authored and keyed by FR-322's
 `quire.application-node/v1` rule.
 
 Validate every node of every positive fixture against the owner presence
-rule and require each owner-bearing node's `owner` to equal its preimage's
-and its projection entry's. Apply each `owner_mutations` schema case (a
+rule and require each owner-bearing node's `owner` to equal its preimage's. Apply each `owner_mutations` schema case (a
 declared record without `owner` and with a `ModelOwner`, a model
 declaration node without `owner` and with a `SourceOwner`, an `owner` on the
 `Integer`, nominal enum and application nodes, a `DefinitionOwner`, a
@@ -313,12 +318,8 @@ each admitted; `population-owned-by-an-object-type` and `population-owned-by-an-
 `clause-precondition-owned-by-object-type`,
 `clause-invariant-owned-by-operation-member`, `clause-invariant-owned-by-systems-interface`, `clause-kind-postcondition`,
 `clause-without-kind` and `clause-two-kind-bindings` each refused
-`missing_declaration`/`missing-selection` at the clause function's node id)
-and `projection_owner_mutations` (`projection-source-owner-differs-from-node`
-and `projection-model-owner-differs-from-node`, each refused
-`invalid_package`/`invalid-value` at
-`/identity_preimage/identity_projection/{i}/owner`), read with the full
-reader (FR-322-AC-51, FR-322-AC-55). The `state`/`state_clause` nodes of
+`missing_declaration`/`missing-selection` at the clause function's node id),
+read with the full reader (FR-322-AC-51, FR-322-AC-55). The `state`/`state_clause` nodes of
 `positive-clause-operations.json` carry no `owner`, and the schema refuses one
 that does.
 
@@ -332,8 +333,8 @@ its own `semantic_type`, its body targets as `dependencies` and a
 `declaration` occurrence, keyed by FR-451's
 `quire.abstraction-relation-node/v1` preimage. Read the package with the
 full reader, and read it again with one `function` segment of its `frames` entry's
-body changed, canonical order and `dependencies` kept, its node id kept, its
-projection entry patched and `package_id` recomputed (FR-322-AC-54).
+body changed, canonical order and `dependencies` kept, its node id kept and
+`package_id` recomputed (FR-322-AC-54).
 
 
 ### Scalar equality operation vectors
@@ -393,7 +394,7 @@ The owner join, projection and equality behaviour of an event type (FR-322-AC-68
 
 ### Node dependency vectors
 
-Rebuild each node's `dependencies` by FR-322's `dependencies` rules 1 to 4 (the body artifact's own list for a form that states one) and compare it with the list as written. Each mutation patches the node's projection entry and recomputes `package_id` before reading.
+Rebuild each node's `dependencies` by FR-322's `dependencies` rules 1 to 4 (the body artifact's own list for a form that states one) and compare it with the list as written. Each mutation recomputes `package_id` before reading.
 
 | Vector | Input | Expected result | Criteria |
 | --- | --- | --- | --- |
@@ -419,14 +420,14 @@ Check the refinement step occurrences of `refinement-step-occurrence-vectors.jso
 
 ### Graph order vectors
 
-Graph order is the producer's order of `semantic_graph.nodes`; the reader does not sort it, and it enters `package_id` through the identity projection (FR-322 `semantic_graph`). Each vector rebuilds the identity projection in the new graph order and recomputes `package_id` before reading.
+Graph order is the producer's order of `semantic_graph.nodes`; the reader does not sort it, and it enters `package_id` through the identity projection (FR-322 `semantic_graph`). Each vector except GO-04 recomputes `package_id` over the identity projection derived in the new graph order before reading.
 
 | Vector | Input | Expected result | Criteria |
 | --- | --- | --- | --- |
 | GO-01 | Each published positive fixture with no `recursion_group`, as published | Admitted by the full reader; every such fixture except `positive-nominal-identities.json` lists its nodes out of ascending node-id digest order | FR-322-AC-95 |
 | GO-02 | GO-01's fixtures with `semantic_graph.nodes` reversed | Admitted; `package_id` differs from the published one | FR-322-AC-95 |
 | GO-03 | GO-01's fixtures with `semantic_graph.nodes` sorted ascending by node-id digest | Admitted; `package_id` differs from the published one exactly when the sort changes the node sequence | FR-322-AC-95 |
-| GO-04 | `positive-all-families.json` with its `identity_projection` reversed and the graph kept | The rebuilt projection differs from the recorded one and the recorded `package_id` does not recompute | FR-322-AC-95 |
+| GO-04 | `positive-all-families.json` with `semantic_graph.nodes` reversed and the recorded `package_id` kept | The projection derived in the new order differs from the published order's and the recorded `package_id` does not recompute | FR-322-AC-95 |
 
 ## Expected Results
 
@@ -490,7 +491,7 @@ declared record `Example::Point`, ungrouped or in-group, refuses `invalid_packag
 and the relabelled `Tree` group refuses `invalid_package`/`stale-node-key` at
 its member with the lowest node-id digest.
 Every owner-bearing node of every positive fixture carries its preimage's
-`owner`, and so does its projection entry; no other node carries one. Each
+`owner`; no other node carries one. Each
 owner schema mutation fails the schema and refuses `malformed_wire`. The
 owner-change mutation refuses `invalid_package`/`stale-node-key` at the
 changed node; each unjoined owner refuses
