@@ -53,9 +53,20 @@ read at each position. A bounded measure adds to the product state its
 accumulator (steps, reward or weighted sums since activation, saturating one
 unit above the threshold) and the activation flag; rewards are non-negative
 values from finite supports, so the accumulator takes finitely many values.
-The product state key is (model state key, monitor state, accumulator); a
-product edge carries the model edge's action, draw and probability. Every
-product path reaches an accepting or rejecting monitor state, a **decided**
+The complete product key SHALL use QSL FR-196's canonical RFC 8785 UTF-8
+octets of `["quire.probability-product-key/v1", model, monitor, accumulator,
+pending]`: the full typed model form, actual canonical monitor/accumulator,
+and actual pending scheduled identity and declaration-ordered drawn vector.
+All members are present; actual None is null, never a default component.
+Formula monitors retain the full parsed QSL FR-338 automaton array, not a
+local state index. Exact-only forms retain actual None monitor/accumulator;
+digital model forms retain actual clocks, deadline and tail control.
+Equality/order SHALL compare complete decoded unsigned octets, not a
+model digest or local product number. FR-331 owns their transport spelling
+in FR-412 certificates and rejections; no new digest or canonical
+representation is defined here. A product edge retains QSL FR-196's full
+semantic ProductAction, actual action/draw and probability.
+Every product path reaches an accepting or rejecting monitor state, a **decided**
 state, within `h + 1` positions; decided states are absorbing, and the product
 restricted to undecided states is acyclic. An exact-only form needs no
 monitor: its state predicates label model states and its reward labels edges.
