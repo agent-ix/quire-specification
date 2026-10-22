@@ -4,8 +4,6 @@ title: "Accept proof evidence only by discharge"
 type: NFR
 quality_attribute: compliance
 relationships:
-  - target: ix://agent-ix/quire-specification/FR-331
-    type: constrains
   - target: ix://agent-ix/quire-specification/NFR-075
     type: references
 ---
@@ -16,7 +14,9 @@ relationships:
 
 Every proof gate of a Quire runtime or code generation backend SHALL pass only
 when, for each module it claims, it discharges at least one proposition inside
-that module and a mutation inside that module turns it red.
+that module, a mutation inside that module turns it red, and every helper
+shared by its expectation and the function under proof fails the proof when
+mutated. A gate that declares no claimed module fails.
 
 ## Scope
 
@@ -27,10 +27,11 @@ that module and a mutation inside that module turns it red.
   agent-ix/quire-contract-codegen.
 - Binds those gates in their own repositories, whether or not an epic or
   qualification gate counts their result.
-- A qualification claim (NFR-075) and a `proved` result (FR-331) count proof
-  evidence only from a gate that meets this requirement.
-- Does not govern the prover's own soundness, the choice of prover, or how a
-  backend settles a terminal record.
+- Proof evidence from other gates counts toward a qualification claim
+  (NFR-075) only when those gates meet this requirement.
+- Does not govern the prover's own soundness, the choice of prover, how a
+  backend settles a claim or a terminal record, or the `proved` result a
+  backend returns (FR-331).
 
 ## Rationale
 
@@ -66,8 +67,8 @@ For each claimed module the gate passes only if all of these hold:
    transitively, in the built call graph. For each shared helper, a mutation
    of that helper is run and fails the proof. An expectation for an exact
    kernel operation, or for a runtime operation that calls one, comes from the
-   QSpec operation vectors or from a specification model that calls no exact
-   kernel operation, and so shares no kernel helper.
+   QSpec operation vectors or from a checked-in specification model that
+   calls no exact kernel operation, and so shares no kernel helper.
 
 A claimed module that the prover compiles and in which it discharges no check
 is reported `unreached`, and the gate fails. The gate's report names, for each
@@ -92,7 +93,8 @@ proof evidence. A gate whose pass rests on any of them fails.
 Run each bound gate against the TC-953 controls: clean runs with and without
 an independent expectation, a claimed module with no discharged check, a module
 with only UNREACHABLE checks, a surviving mutant, a shared helper whose mutation
-leaves the proof green, and a stubbed executor. Confirm the gate passes only the
+leaves the proof green, a kernel-operation expectation built from the
+function under proof, and a stubbed executor. Confirm the gate passes only the
 clean runs and reports each failing control with the module, mutant or helper
 that caused it.
 
@@ -100,17 +102,16 @@ that caused it.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| NFR-076-AC-1 | A gate that declares no claimed module fails. A gate whose claimed modules each show at least one SUCCESS or proved check location inside that module, with every mutation control and shared-helper mutation failing the proof, passes, and its report gives each module the status `discharged` and its discharged check count. | Test |
+| NFR-076-AC-1 | A gate that declares no claimed module fails. A gate whose claimed modules each show at least one SUCCESS or proved check location inside that module, with every mutation control and shared-helper mutation failing the proof, passes, and its report gives each module the status `discharged` and its discharged check count, names each mutant run in the module with whether it turned the gate red, and names each shared helper with the result of its mutation. | Test |
 | NFR-076-AC-2 | A claimed module that the prover compiles and in which no check is discharged, including one whose only checks report UNREACHABLE or a status other than SUCCESS, is reported `unreached` and the gate fails. On a backend with no per-check status, a module whose obligations are all reported other than proved is `unreached`, and one proved obligation counts as one discharged check. | Test |
 | NFR-076-AC-3 | A mutant injected inside a claimed module that leaves the gate green fails the gate, and the report names the module and the mutant. A gate configuration that exempts that mutant still fails. A claimed module with no mutant run fails. | Test |
 | NFR-076-AC-4 | When the expectation and the function under proof both reach a helper, a mutation of that helper that leaves the proof green fails the gate, and the report names the helper. An expectation taken from the QSpec operation vectors, which reaches no helper of the function under proof, requires no helper mutation. | Test |
-| NFR-076-AC-5 | A gate whose pass rests on a stubbed executor, a predetermined verdict or a build-only run fails, and contributes no proof evidence to a qualification claim (NFR-075) or a `proved` result (FR-331). | Test |
-| NFR-076-AC-6 | The runtime exact-kernel gate and the code generation generated-harness gate each meet NFR-076-AC-1 to AC-5 in their own repository, whether or not an epic or qualification gate counts their result. | Inspection |
+| NFR-076-AC-5 | A gate whose pass rests on a stubbed executor, a predetermined verdict or a build-only run fails, and contributes no proof evidence to a qualification claim (NFR-075). | Test |
+| NFR-076-AC-6 | An expectation for an exact kernel operation, or for a runtime operation that calls one, that is derived from anything other than the QSpec operation vectors or a checked-in specification model that calls no exact kernel operation fails the gate, and the report names the operation. | Test |
+| NFR-076-AC-7 | The runtime exact-kernel gate and the code generation generated-harness gate each meet NFR-076-AC-1 to AC-6 in their own repository, whether or not an epic or qualification gate counts their result. | Inspection |
 
 ## Dependencies
 
-- [FR-331](../objects/interfaces/FR-331-backend-provider-envelope.md) owns the
-  `proved` result this requirement constrains.
 - [NFR-075](NFR-075-require-complete-qualification-coverage.md) owns the
   qualification claims that count proof evidence.
 - QSL ADR-011 §2.3 places proof-stage acceptance in the QSL architecture; this
