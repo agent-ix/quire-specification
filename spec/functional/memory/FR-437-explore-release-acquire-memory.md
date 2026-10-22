@@ -98,16 +98,31 @@ location keeps one message.
   and for each location `ℓ` the set `F(ℓ)` of live SC events that precede in
   `psc` every SC write to `ℓ` still to come.
 - **Frontier.** Every view also records, for each thread, the latest live SC
-  event of that thread that happens before the view, and whether that path
-  leaves the event's thread through an event on another location. Frontiers
-  are carried and joined wherever views are.
-- **A new SC event `x` by `b`.** `P` gains `e → x` for each live `e` that
-  RC11's `psc` places before `x` (from the frontier, `hb|loc`, mo and fr); `x →
-  e` for each live SC write `e` that `x` precedes in mo or fr; and, for a write
-  to `ℓ`, an edge from each member of `F(ℓ)`. A `seq_cst` fence's edges follow
-  RC11's fence clause. `x` is enabled with a given message or slot choice only
-  when the resulting `P` is acyclic, so exactly the choices RC11 forbids are
+  event of that thread that happens before the view; every live SC event of
+  that thread no later in program order happens before the view too.
+  Frontiers are carried and joined wherever views are, a join taking the later
+  event for each thread.
+- **A new SC event `x` by `b`.** `P` gains these edges, each from a live SC
+  event: `e → x` for each `e` of `b`; `e → x` for each `e` on `x`'s location
+  that happens before `b`'s current view (RC11's `hb|loc`); `f → x` for each
+  `seq_cst` fence `f` of another thread that happens before `b`'s current view
+  (`[Fsc] ; hb ; po ; [Esc]` for an access `x`, `[Fsc] ; hb ; [Fsc]` for a
+  fence `x`); `e → x` for each live SC write `e` mo-before the message `x`
+  writes and, when `x` writes, each live SC read `e` of a message mo-before
+  it; `x → e` for each live SC write `e` that `x` precedes in mo or fr; and,
+  for a write to `ℓ`, an edge from each member of `F(ℓ)`. The happens-before
+  edges are decided from the frontier. A `seq_cst` fence's `eco` clause builds
+  no edge: the join of `S` at a `seq_cst` fence excludes the message choices
+  that would complete it. `x` is enabled with a given message or slot choice
+  only when the resulting `P` is acyclic, so the choices `P` forbids are
   pruned.
+- **Omitted clauses.** `P` does not build the `po|≠loc ; hb ; po|≠loc` edge
+  from an SC access, whose test names locations a view does not record, nor an
+  edge between an SC fence and an SC access that RC11 derives through a
+  non-SC event adjacent to the fence in program order. Every RC11 execution is
+  an `ra` execution; `ra` also admits an execution whose only RC11 `psc`
+  cycles use an omitted edge, so a `proved` verdict holds under RC11 and a
+  counterexample is an `ra` execution that replay checks under `ra`.
 - **Collection.** When garbage collection removes a message, each live SC
   event on it leaves `P`: a removed write and its predecessors join `F(ℓ)`; a
   removed SC read's predecessors join `F(ℓ)`; `P` is restricted to the
@@ -146,7 +161,8 @@ machine-closed.
 Coherence holds per location. Program order together with reads-from is
 acyclic, so load buffering is excluded. IRIW and 2+2W are admitted with
 release and acquire accesses and excluded with `seq_cst` accesses, as in
-RC11.
+RC11. The omitted clauses admit the two shapes of TC-391 LT-12 and LT-13 that
+RC11 excludes.
 
 ## Acceptance Criteria
 
@@ -157,8 +173,10 @@ RC11.
 | FR-437-AC-3 | With every store and load `seq_cst`, the store-buffering outcome is excluded because the second load's old-message choice would close the cycle `Sx → Ly → Sy → Lx → Sx` in `P`, and the claim settles `proved`. | Test (TC-390) |
 | FR-437-AC-4 | Once every view points at or after a location's mo-last message, every earlier message of that location is removed in the same step; after an outermost `join all` each location keeps one message; and two histories that admit the same futures share one state key. | Test (TC-393) |
 | FR-437-AC-5 | A lasso on which a thread keeps loading a stale message of a location without ever loading its mo-last message is rejected by visibility fairness. | Test (TC-391) |
-| FR-437-AC-6 | The litmus vectors' outcomes under `ra` agree with an independent RC11 execution-graph checker run on the same tests. | Test (TC-391) |
+| FR-437-AC-6 | The litmus vectors' outcomes under `ra` agree with an independent RC11 execution-graph checker run on the same tests, except LT-12 and LT-13, which the checker forbids and `ra` allows. | Test (TC-391) |
 | FR-437-AC-7 | On an accepting SCC with states `p`, `q`, `r` and the edges `p → q`, `q → p` and `r → q` (thread `a`, which loads nothing), and `q → r` (thread `b` loads `ℓ` from a message that is not mo-last), with `p` the only accepting state, visibility fairness removes the edge `q → r`, decomposes the SCC into `{r}` and `{p, q}`, and passes `{p, q}`, whose loop `p q p q …` is visibility-fair. | Test (TC-391) |
+| FR-437-AC-8 | TC-391 LT-12 and LT-13 each reach their weak outcome under `ra`, the two shapes of the omitted clauses, and neither under `sc` or `tso`. | Test (TC-391) |
+| FR-437-AC-9 | TC-391 LT-14 does not reach its weak outcome under `ra`: after the fence's thread has released the flag, a thread that acquired it and stored with `seq_cst` leaves the third thread's `seq_cst` load of the fenced location enabled for the new message only. | Test (TC-391) |
 
 ## Dependencies
 
@@ -172,7 +190,7 @@ RC11.
 
 ## References
 
-- Design: quire-spec-language ADR-025 RA-1 to RA-8, PSC-1 to PSC-6, MS-2,
+- Design: quire-spec-language ADR-025 RA-1 to RA-8, PSC-1 to PSC-7, MS-2,
   MF-2, RU-3 and RU-6; Lahav et al., PLDI 2017; Kang et al., POPL 2017;
   Lahav et al., OOPSLA 2021.
 - Tickets: Linear STD-138; paired QSL-372.
