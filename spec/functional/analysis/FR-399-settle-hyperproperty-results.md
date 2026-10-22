@@ -74,16 +74,31 @@ closed computation that replay repeats.
 | Outcome | FR-360 label | FR-243 basis | Cause or evidence |
 | --- | --- | --- | --- |
 | Exhaustive check completed with no violation: HP-1 every tuple true; HP-2 no fair accepting cycle of the self-composition; HP-3 no reachable empty `X` with a cycle fair for every universal variable; HP-6 no reachable bad projected prefix | `proved` | `closed-scope` | exhaustive, or reduced with its reductions |
-| Inductive proof of an HP-2 safety body | `proved` | `decisive-witness` | induction at its depth |
+| Inductive proof of an HP-2 safety body, when every subject has an initial state and either `μ_U` is empty or a matched fair universal tuple of the instance is established (below) | `proved` | `decisive-witness` | induction at its depth |
 | Counterexample that replays | `refuted` | `decisive-counterexample` | a hyper counterexample |
 | The body, a match, or a guard, the `terminal when` predicate or a state constraint of a component's subject evaluated undefined at a reachable joint step, and the `undefined` counterexample ending there replays | `refuted` | `decisive-counterexample` | cause `undefined-evaluation`, with `where` and `cause`, and that counterexample |
 | Every depth up to the maximum completed with no violation | `inconclusive` | `unsettled` | `bound-reached` naming the depth |
 | The match was refused or incomplete at a reachable joint step | `inconclusive` | `unsettled` | `match-undetermined` |
-| A vacuous clause ([FR-395](FR-395-analyze-hyperproperties-over-behaviours.md)) | `inconclusive` | `unsettled` | `vacuous-match` |
+| No matched fair universal tuple established for a non-empty `μ_U`: a vacuous clause, where no such tuple exists ([FR-395](FR-395-analyze-hyperproperties-over-behaviours.md)), or an inductive proof of an HP-2 body for an instance with no matched fair universal tuple established, since the induction queries are also unsatisfiable when no fair tuple matches | `inconclusive` | `unsettled` | `vacuous-match` |
 | An undecided successor, no initial state, an item with zero instances, an induction step that does not close, replay disagreement or replay refusal | `inconclusive` | `unsettled` | `undecided-successor`, `no-initial-state`, `no-instance`, `induction-not-closed`, `replay-parity` or `replay-refused` |
 | A run limit, meter or time budget stopped the run | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `limit-reached{limit, value, setting}` |
 | The caller cancelled the run | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `cancelled{source}` |
 | HP-4, or a clause over `behaviours` under a profile other than infinite-trace | `unsupported` | `unavailable` | `unsupported_projection`/`unsupported-requested-capability` |
+
+A **matched fair universal tuple of an instance is established** exactly when the
+run carries, for that instance, a tuple of fair lasso behaviours, one per
+universal variable, that `μ_U` matches at every joint step, and that tuple
+replays: each lasso replays as a behaviour of its subject, every conjunct of
+`μ_U` holds at every joint step of the replay, and each lasso satisfies its
+own subject's fairness constraints, all checked without evaluating the body.
+A tuple that fails replay, or a tuple for another instance, establishes none.
+A vacuous clause has no such tuple, since none exists. For an inductive HP-2
+proof the rows apply in this order: a subject with no initial state settles
+`no-initial-state`, whatever tuple comes with the proof; otherwise a non-empty
+`μ_U` with no established tuple for the proof's instance settles
+`vacuous-match`; otherwise the proof settles `proved`. With `μ_U` empty no
+tuple is needed: a finite subject with an initial state has a fair behaviour,
+and every tuple of fair behaviours is matched.
 
 An item has one instance per admitted key (FR-361) of the populations overlapping its parameter's type, a key listed by several populations being one instance, so an
 item with no admitted key (FR-361) for any one of its parameters has no instance to
@@ -180,7 +195,7 @@ steps and automaton states for hyper items.
 | FR-399-AC-2 | An HP-3 clause is refuted exactly when a fair universal tuple reaches an empty witness set; on the leaky vault `X_1` is empty, and on the secure vault every `X` is a singleton and the clause is proved. | Test (TC-339) |
 | FR-399-AC-3 | An HP-3 run whose witness set reaches `max_witness_set` stops and settles `incomplete` with cause `limit-reached` naming `max_witness_set`, its value and its setting, the engine's stop record exposing the count reached, one past the value; a request that sets none runs under the provider's published default. | Test (TC-339) |
 | FR-399-AC-4 | An HP-1 run that reaches `max_relation_tuples` stops and settles `incomplete` with cause `limit-reached` naming the limit, its value and its setting, the engine's stop record exposing the count reached, one past the value; a request that sets none runs under the provider's published default. | Test (TC-343) |
-| FR-399-AC-5 | A match refused at a reachable joint step settles `inconclusive` with `match-undetermined`, and a vacuous clause with `vacuous-match`; neither settles `proved`. | Test (TC-340) |
+| FR-399-AC-5 | A match refused at a reachable joint step settles `inconclusive` with `match-undetermined`. A clause with a non-empty `μ_U` and no matched fair universal tuple established settles `inconclusive` with `vacuous-match`, both when no such tuple exists and when an inductive HP-2 proof closes for an instance with no matched tuple established; with a matched tuple of that instance established, the same inductive proof settles `proved`, `decisive-witness`. Neither cause settles `proved`. | Test (TC-340) |
 | FR-399-AC-6 | A run that completes every depth up to the maximum with no violation settles `inconclusive` with `bound-reached` naming the depth, never `proved`. | Test (TC-338) |
 | FR-399-AC-7 | A refutation settles only after its counterexample replays; a counterexample that fails replay settles `inconclusive` with `replay-parity` or `replay-refused`. | Test (TC-345) |
 | FR-399-AC-8 | A body that evaluates undefined at a reachable joint step settles `refuted`, basis `decisive-counterexample`, cause `undefined-evaluation` whose `where` names the variable tuple, the joint position, each component's state-key digest and the expression's locus and whose `cause` names the catalogued reason, after its `undefined` counterexample replays to the same undefined value. | Test (TC-348) |
