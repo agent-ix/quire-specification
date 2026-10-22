@@ -127,11 +127,13 @@ location keeps one message.
 - **Omitted clauses.** `P` does not build three kinds of RC11 `psc` edge. (a)
   The `po|≠loc ; hb ; po|≠loc` edge from an SC access to an SC access, whose
   test names locations a view does not record. (b) The edges of `psc_base`
-  with an SC fence at one or both ends whose `scb` step is an `mo` or `rb`
+  with an SC fence at one end whose `scb` step is an `mo` or `rb`
   step with a non-SC access at an end on a fence's side, such as the `rb` step
   from a `relaxed` load in the fence's thread to an SC write; `P` holds SC
   events only. The `scb` steps `po` and `hb|loc` are built, so the
-  fence-to-access edge of LT-14 is built. (c) The `eco` part of the fence
+  fence-to-access edge of LT-14 is built. The fence-to-fence form is covered by
+  `S`: every `seq_cst` fence joins `S` and enters its frontier, so every two
+  live SC fences are ordered. (c) The `eco` part of the fence
   clause, `[Fsc] ; hb ; eco ; hb ; [Fsc]`, which the join of `S` at a
   `seq_cst` fence is meant to carry by not offering the message choices that
   would complete it. That it does is not proved; it was checked by exhaustive
@@ -223,7 +225,7 @@ RC11 excludes.
 | FR-437-AC-7 | On an accepting SCC with states `p`, `q`, `r` and the edges `p → q`, `q → p` and `r → q` (thread `a`, which loads nothing), and `q → r` (thread `b` loads `ℓ` from a message that is not mo-last), with `p` the only accepting state, visibility fairness removes the edge `q → r`, decomposes the SCC into `{r}` and `{p, q}`, and passes `{p, q}`, whose loop `p q p q …` is visibility-fair. | Test (TC-391) |
 | FR-437-AC-8 | TC-391 LT-12 and LT-13 each reach their weak outcome under `ra`, the two shapes of the omitted clauses, and neither under `sc` or `tso`. | Test (TC-391) |
 | FR-437-AC-9 | TC-391 LT-14 and LT-18 do not reach their weak outcomes under `ra`. | Test (TC-391) |
-| FR-437-AC-10 | TC-391 LT-15 does not reach its weak outcome under `ra`, whether or not garbage collection has removed the SC events on the earlier messages of `L` when the thread that wrote them stores `X := 2`: when it has, their predecessors are kept for that thread, so `X := 2` is not offered the slot before the first writer's `X := 1` in modification order. | Test (TC-391) |
+| FR-437-AC-10 | TC-391 LT-15 does not reach its weak outcome under `ra`, whether or not garbage collection has removed the SC event on `L := 2`, the earlier message the storing thread wrote: when it has, its live predecessors, among them `X := 1`, are kept for that thread, so `X := 2` is not offered the slot before the first writer's `X := 1` in modification order. | Test (TC-391) |
 | FR-437-AC-11 | TC-391 LT-16 does not reach its weak outcome under `ra`: a thread that read the last message of `L` with a `relaxed` load and executed an acquire fence has a view that covers the collected SC event it synchronised with, though the message its next `seq_cst` load of `L` reads does not; the load takes the predecessors held in the view, so its thread's `X := 2` is not offered the slot before `X := 1` in modification order. | Test (TC-391) |
 | FR-437-AC-12 | TC-391 LT-17 does not reach its weak outcome under `ra` in any interleaving, including those in which the fence's thread fences a second time before the other thread loads the flag: the first fence stays in `P` while the flag's message view covers it and not the second. | Test (TC-391) |
 | FR-437-AC-13 | A thread that fences twice with `seq_cst` and stores no flag between has, after its second fence, the first fence absent from the SC event graph; with a `release` flag stored between the fences, the first fence remains while the flag's message is live and its view covers the first fence and not the second. | Test (TC-393) |
