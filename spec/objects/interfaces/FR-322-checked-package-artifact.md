@@ -560,8 +560,9 @@ boundary.
   [FR-451](FR-451-checked-package-abstraction-relation-body.md),
   [FR-464](FR-464-checked-package-protocol-node-bodies.md) to
   [FR-466](FR-466-checked-package-protocol-control-bodies.md),
-  [FR-475](FR-475-checked-package-state-graph-claim-body.md) and
-  [FR-476](FR-476-checked-package-model-terminal-declaration-body.md). For example:
+  [FR-475](FR-475-checked-package-state-graph-claim-body.md),
+  [FR-476](FR-476-checked-package-model-terminal-declaration-body.md) and
+  [FR-477](FR-477-checked-package-step-relation-claim-body.md). For example:
 
   | Node | `dependencies` |
   | --- | --- |
