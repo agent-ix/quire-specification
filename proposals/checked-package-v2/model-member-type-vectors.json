@@ -508,6 +508,20 @@
     {"name": "RC-15", "operation": "quire.op.reference.eq", "operands": [{"reference": "M8"}, {"reference": "M1"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
     {"name": "RC-16", "operation": "quire.op.reference.eq", "operands": [{"reference": "M8"}, {"reference": "M8"}], "expected": {"admitted": true}}
   ],
+  "reference_upcast_cases": [
+    {"name": "RU-01", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M5"}], "type_argument": {"reference": "M1"}, "expected": {"admitted": true}},
+    {"name": "RU-02", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M7"}], "type_argument": {"reference": "M1"}, "expected": {"admitted": true}},
+    {"name": "RU-03", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M1"}], "type_argument": {"reference": "M1"}, "expected": {"admitted": true}},
+    {"name": "RU-04", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M6"}], "type_argument": {"reference": "M9"}, "expected": {"admitted": true}},
+    {"name": "RU-05", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M1"}], "type_argument": {"reference": "M5"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RU-06", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M1"}], "type_argument": {"reference": "M3"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RU-07", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M5"}], "type_argument": {"reference": "M6"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RU-08", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M8"}], "type_argument": {"reference": "M1"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RU-09", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M1"}], "type_argument": {"reference": "M4"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "RU-10", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M2"}], "type_argument": {"reference": "M1"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
+    {"name": "RU-11", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M1"}], "type_argument": {"reference": "M2"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
+    {"name": "RU-12", "operation": "quire.op.reference.upcast", "operands": [{"object": "M1"}], "type_argument": {"reference": "M1"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}}
+  ],
   "projection_cases": [
     {"name": "RP-01", "result_type": {"type": "Int", "min": "0", "max": "9"}, "operand": {"deref": {"reference": "M5"}, "result_type": "M5"}, "member": {"kind": "field", "declaration": "M5", "name": "total"}, "expected": {"resolves": "ix://acme/orders/Order/total", "member_type": {"type": "Int", "min": "0", "max": "9"}}},
     {"name": "RP-02", "result_type": {"type": "Reference", "target": "4b07c3fd269e699bdd4bc1065acc80d2de047cc01e20fcd8bcf27fe404f79583"}, "operand": {"deref": {"reference": "M1"}, "result_type": "M1"}, "member": {"kind": "field", "declaration": "M1", "name": "invoice"}, "expected": {"resolves": "ix://acme/orders/Order/invoice", "member_type": {"type": "Reference", "target": "4b07c3fd269e699bdd4bc1065acc80d2de047cc01e20fcd8bcf27fe404f79583"}}},
