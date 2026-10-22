@@ -910,7 +910,8 @@ fn tc_431_canonical_key_bindings_are_complete() {
     assert_eq!(admitted, 4);
     for rule in ["inequality-fails", "threshold-missed"] {
         assert!(!rejection.is_valid(&serde_json::json!({"type": "certificate-rejected",
-            "rule": rule, "at": {"state": "1111111111111111111111111111111111111111111111111111111111111111"}})));
+            "rule": rule, "at": {"domain": "quire.simulation.state-key/v1",
+                "digest": "1111111111111111111111111111111111111111111111111111111111111111"}})));
     }
     let locus = definition("ProbabilityProductStateLocus");
     for invalid in [serde_json::json!({}), serde_json::json!({"product_key": "AQ=="}),
@@ -977,7 +978,7 @@ fn tc_431_probability_witness_bindings_are_complete() {
     // Reuse an existing structural StateKey; introduce no content digest.
     let old = positive("certificate-rejected-loci");
     let model_state = old["document"]["results"].as_array().expect("results").iter()
-        .find_map(|result| result["cause"]["at"]["state"].as_str())
+        .find_map(|result| result["cause"]["at"]["digest"].as_str())
         .expect("existing model-state sample");
     let step = serde_json::json!({"transition": null, "post_state": model_state,
         "random": null, "action": encode(br#"["idle-observe"]"#), "post_key": "AQ",
@@ -1232,6 +1233,105 @@ fn tc_431_hyper_loci_have_closed_shapes_and_rule_pairs() {
     let projection = serde_json::json!({"states": [first, first]});
     assert!(state_shape.is_valid(&projection));
     assert!(!tuple_shape.is_valid(&projection));
+}
+
+/// The `at` forms QSL writes, spelled here independently of the schema and
+/// the vectors: a query part is `unrolling`, `base`, `step` or `step/<row>`;
+/// a proof step is `{part, index}`; a product state is `{model_state,
+/// automaton_state}`; a model state is its `{domain, digest}` record; a
+/// state-graph entry is `{entry}`; a simulation step always carries
+/// `position`, `edge` and `verdict`, null when absent. Each rule is admitted
+/// exactly at the forms listed with it.
+#[trace("TC-431", "FR-331-AC-24", "FR-331-AC-25")]
+#[test]
+fn tc_431_certificate_loci_are_the_spellings_qsl_writes() {
+    let rejection = definition("CertificateRejected");
+    let part = definition("QueryPart");
+    let digest = "1111111111111111111111111111111111111111111111111111111111111111";
+    let model_state = serde_json::json!({"domain": "quire.simulation.state-key/v1", "digest": digest});
+    let verdict = serde_json::json!({"kind": "NoAbstractMatch", "position": "1"});
+    let loci: [(Value, &[&str]); 9] = [
+        (serde_json::json!("step/3"),
+            &["query-mismatch", "shape-mismatch", "malformed", "not-refutation"]),
+        (serde_json::json!({"part": "step/3", "index": "7"}),
+            &["proof-step-invalid", "not-refutation"]),
+        (serde_json::json!({"model_state": model_state, "automaton_state": "AQ"}),
+            &["initial-missing", "successor-missing", "bad-state", "not-partition",
+              "backward-edge", "witness-fails", "shape-mismatch"]),
+        (model_state.clone(),
+            &["initial-missing", "successor-missing", "bad-state", "predicate-undefined",
+              "rank-missing", "rank-broken", "order-broken", "count-broken", "malformed"]),
+        (serde_json::json!({"entry": "2"}), &["malformed"]),
+        (serde_json::json!({"position": "0", "edge": null, "verdict": null}),
+            &["initial-mismatch", "successors-differ", "bad-state", "malformed"]),
+        (serde_json::json!({"position": "0", "edge": "1", "verdict": null}), &["post-differs"]),
+        (serde_json::json!({"position": "0", "edge": "1", "verdict": verdict}), &["step-fails"]),
+        (serde_json::json!("base"),
+            &["query-mismatch", "shape-mismatch", "malformed", "not-refutation"]),
+    ];
+    for (at, rules) in &loci {
+        for rule in CERTIFICATE_RULES {
+            let cause = serde_json::json!({"type": "certificate-rejected", "rule": rule, "at": at});
+            assert_eq!(rejection.is_valid(&cause), rules.contains(&rule), "rule {rule} at {at}");
+        }
+    }
+    for spelling in ["unrolling", "base", "step", "step/0", "step/7", "step/18446744073709551615"] {
+        assert!(part.is_valid(&serde_json::json!(spelling)), "{spelling} is a query part");
+    }
+    for spelling in ["Step", "loop", "step/", "step/01", "step/-1", "step/+1", "step/1.0",
+        "step/ 1", "step/1/2", "step/18446744073709551616", "base/0", "unrolling/0", "step3"] {
+        assert!(!part.is_valid(&serde_json::json!(spelling)), "{spelling} is not a query part");
+    }
+    let maximum = u64::MAX.to_string();
+    for length in 1..=maximum.len() + 1 {
+        for row in [format!("1{}", "0".repeat(length - 1)), "9".repeat(length)] {
+            let canonical = row.parse::<u64>().is_ok_and(|value| value.to_string() == row);
+            assert_eq!(part.is_valid(&serde_json::json!(format!("step/{row}"))), canonical,
+                "step/{row} is admitted exactly when {row} is a canonical u64");
+        }
+    }
+    // The member names and nesting of other spellings are refused at every rule.
+    for at in [
+        serde_json::json!({"state": digest, "automaton_state": "AQ"}),
+        serde_json::json!({"state": digest}),
+        serde_json::json!(digest),
+        serde_json::json!({"domain": "quire.automaton-state-key/v1", "digest": digest}),
+        serde_json::json!({"position": "0"}),
+        serde_json::json!({"position": "0", "edge": "1"}),
+        serde_json::json!({"entry": 2}),
+    ] {
+        for rule in CERTIFICATE_RULES {
+            let cause = serde_json::json!({"type": "certificate-rejected", "rule": rule, "at": at});
+            assert!(!rejection.is_valid(&cause), "rule {rule} at {at} is refused");
+        }
+    }
+    // FR-149's verdict is tagged by `kind`, with decimal-string integers.
+    let step_verdict = definition("StepVerdict");
+    for admitted in [
+        serde_json::json!({"kind": "InitialNotAbstract", "initial": "0"}),
+        serde_json::json!({"kind": "StutterChanged", "position": "2"}),
+        serde_json::json!({"kind": "AbstractStepRejected", "position": "2",
+            "transition": {"type": "transition", "operation": "inc", "receiver": null, "arguments": []},
+            "cause": {"kind": "Postcondition"}}),
+        serde_json::json!({"kind": "UndefinedEvaluation",
+            "where": {"position": "1", "state_key": model_state, "locus": "contract"}, "cause": "family"}),
+        serde_json::json!({"kind": "Undetermined", "cause": "UndecidedSuccessor",
+            "evaluation": {"outcome": "incomplete", "limit": "integer_bits"}}),
+    ] {
+        assert!(step_verdict.is_valid(&admitted), "{admitted} is a step verdict");
+    }
+    for refused in [
+        serde_json::json!({"kind": "StutterChanged", "position": 2}),
+        serde_json::json!({"kind": "Undefined", "position": "1"}),
+        serde_json::json!({"kind": "AbstractStepRejected", "position": "2",
+            "transition": {"type": "transition", "operation": "inc", "receiver": null, "arguments": []},
+            "cause": {"type": "Postcondition"}}),
+        serde_json::json!({"type": "replay-parity"}),
+        serde_json::json!({"kind": "Undetermined", "cause": "UndecidedSuccessor",
+            "evaluation": {"outcome": "incomplete"}}),
+    ] {
+        assert!(!step_verdict.is_valid(&refused), "{refused} is not a step verdict");
+    }
 }
 
 /// A proof-step locus's `index` admits exactly the canonical decimal
