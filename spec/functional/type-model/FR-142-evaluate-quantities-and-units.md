@@ -217,7 +217,11 @@ qualified_declaration, terms }`, where owner is the stable subject projection of
 an exact admitted source, DefinitionRef or ModelRef and must join that lock
 selection. A unit digest uses `{ version: quire.unit-node/v1, owner,
 qualified_declaration, dimension_node_id, target_unit_node_id, scale,
-offset }`, with normalized exact rationals. Acyclic unit targets make these keys
+offset }`, with normalized exact rationals. A dimension or unit an admitted
+domain package declares (FR-154) has as `owner` its selection's `ModelOwner`
+and as `qualified_declaration` the one-segment `[<name>]`, the last segment
+of its FCD identity; it carries no `declaration` (FR-322), and its key differs
+from a source declaration of the same name, whose owner is a `SourceOwner`. Acyclic unit targets make these keys
 recomputable in root-to-leaf order. The strict I04 reader refuses a body/key
 mismatch as `invalid_semantic_graph`. A dimension node is self-typed and depends
 exactly on the base-dimension keys in its terms. A unit's `semantic_type` equals

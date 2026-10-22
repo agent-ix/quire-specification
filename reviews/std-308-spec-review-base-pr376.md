@@ -56,3 +56,22 @@ CHANGES REQUESTED: three major findings (package-unit naming contradicts FR-322'
 | FR-322 | spec/objects/interfaces/FR-322-checked-package-artifact.md | context_only |
 | FR-142 | spec/functional/type-model/FR-142-evaluate-quantities-and-units.md | context_only |
 | FR-415 | spec/functional/temporal/FR-415-declare-clocks-and-timed-models.md | context_only |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | high | The fix gives package dimension and unit nodes `qualified_declaration: null` in their quire.dimension-node/v1 and quire.unit-node/v1 preimages, but the V2 schema this PR does not change (proposals/checked-package-v2/schema.json, DimensionPreimage and UnitPreimage) requires `qualified_declaration` as a QualifiedName, an array of at least one Identifier, and NominalBindingRules require that preimage on every scalar_type/dimension and scalar_type/unit node. FR-142's preimage text (lines ~216-220) also gives no null form, and FR-322's rule that a node's `declaration` equals its preimage's `qualified_declaration` (else declaration-nominal-mismatch) is not excepted for a node with a preimage and no declaration. As written, every package unit node (MU-07, AC-99, U34) fails the V2 schema. Either change the schema and FR-142 for a null (or [name]) qualified_declaration, with the QSL conformance run a fixture change needs, or choose a non-null value the schema admits and except the declaration-equality rule for model-owned dimension/unit nodes. | spec/objects/interfaces/FR-322-checked-package-artifact.md:1129-1141 |
+
+## Dispositions
+
+Round 1 at aea3033.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |
+| FND-004 | fixed | - |
+
+Round 1 verdict: NOT MERGEABLE: round-0 findings FND-001..004 are fixed at aea3033, but the fix adds major FND-005: `qualified_declaration: null` fails the unchanged V2 schema (QualifiedName, minItems 1) and FR-142's preimage. The rest of the fix checks: no declaration on package nodes, a ModelOwner {kind, identity, node} owner (schema-valid), dependencies and semantic_type as stated, the `<p>/<name>` typeRef split with an ambiguous-name refusal when both a source and a package unit match, M::name resolution in the widened declaration rule, the value-position-only clock refusal, the Rate fixtures, and package nodes in FR-142's turn list located at the selection row (U34 run 4 checks by hand). Gates at aea3033: quire validate 86, same set as main; cargo 119 + 23 pass; main c103300 is an ancestor. Owner decision recorded: two packages both declaring Time are never admitted together. STD-327 (hyphenated identities in unit typeRefs) stays an owner decision.
