@@ -95,6 +95,20 @@ unit targeting an imported unit of its own node reaches an admitted root, so it
 adds no cycle and no targetless unit; a target in another node is row 3. Row 5
 applies only to a local root of a node that has no imported root.
 
+A dimension or unit an admitted domain package declares (FR-154) is an
+imported node of this list: its package's graph defects were refused at
+intake, so its definition, terms and units count as admitted and are not
+re-checked, and a local unit typed by a package dimension is checked at that
+node's turn with the package's units as admitted members. A package dimension
+that a source declaration mentions takes its turn when it is first reached, as
+any imported node does; every package dimension not yet reached takes its turn
+after the last source declaration's turn, in the lock order of its selection
+and then in its authored order within the package's `dimensions`. Within one
+package, "earlier" means earlier in authored order. The base-dimension rule
+applies to a package base dimension at its turn as to any other node, and a
+refusal of a package node is located at its selection row
+`/lock/model_selections/<i>`, naming the node's FCD identity.
+
 Step (-1) runs at a local dimension's own turn, before step (0), over that
 dimension's own terms only, in this order. First, a term naming no dimension is
 refused `missing_declaration`/`missing-name`, retaining the dimension that
@@ -256,11 +270,13 @@ or a unit; a name is unique within its namespace in the
 linked package, and two units of one name in the linked package refuse
 `ambiguous_declaration`/`ambiguous-name` at the use. The unit namespace holds
 the units the unit of compilation declares and the units of every admitted
-domain package (FR-154): a package unit's name is qualified by the package
-identity, `<package identity segments>/<name>` (FR-322 "Model-owned members"
-step 4), so a unit `ms` the source declares and a unit `ms` the domain package
-`acme/rpc` declares are the two names `ms` and `acme/rpc/ms` and never one
-ambiguous name. The dimension namespace holds the dimensions the unit of
+domain package (FR-154). A package unit carries no declaration name: a
+source names it through the selection's model alias, `M::ms`, matched against
+the `name`s of the units of that selection's document, and a domain package
+`typeRef` names it by its package identity and `name` (FR-322 "Model-owned
+members" step 4), so a unit `ms` the source declares (`Quantity<ms>`) and a
+unit `ms` the domain package `acme/rpc` declares (`Quantity<M::ms>`) are two
+units and never one ambiguous name. The dimension namespace holds the dimensions the unit of
 compilation declares and the dimensions of every admitted domain package,
 each by its single-segment name. A dimension name declared both by the unit
 of compilation and by an admitted domain package, or by two admitted domain
@@ -334,7 +350,7 @@ the element of `Option` and of the collection types, and the target of
 | FR-142-AC-16 | The base-dimension rule refuses `L` in U11g1, U11g2, U11g4 and U11z1 (an imported `L` reached only through the imported `Area` a local unit is typed by) and admits U11g3 (`N = L / L` with `unit one : N = 1;`); U11m fixes that the check runs at the base dimension's own turn: a unit cycle in the earlier-declared `Area` is reported first, and with the order reversed `L` is refused; U11y refuses an imported unitless base dimension named by a local dimension's term. | Test (TC-187) |
 | FR-142-AC-17 | A dimension's own terms are checked at its turn before its units: U11n (cycle of two), U11o (self-cycle) and U11p (unknown term) refuse as FR-142 states; U11w refuses the unknown term before the cycle; U11x refuses a transitive unknown term at the dimension that owns it, not at the dimension that reaches it, and U11z3 reports a dimension that only reaches a cycle by its own earlier unit defect before the cycle member's refusal. The order of two documents in the request fixes the first declaration (U11q). | Test (TC-187) |
 | FR-142-AC-18 | Local units typed by an imported dimension are checked at that node's turn with the imported units as admitted members: U11r admits a local unit targeting an imported root; U11s refuses a local cycle, U11t a second local root beside the imported root, and U11u a local zero scale; the imported dimension's own definition is not re-checked; U11z2 fixes the turn list: a dimension's mentioned nodes take their turn in mention order before the declaration, so `P.L` precedes `Q.T`. | Test (TC-187) |
-| FR-142-AC-19 | A unit of compilation that declares `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` beside the admitted domain package `acme/rpc` declaring base dimension `Rate`, root `us` of `Rate` and its own `ms` of `Rate` checks with no `ambiguous_declaration`: `Quantity<ms>` names the source unit and `Quantity<M::ms>` under `model M = "acme/rpc" …` names the package unit `acme/rpc/ms`; a source `unit tick : Rate = 1/2 * M::us;` is admitted, typed by the package dimension; the same package also declaring a dimension `Time` refuses `conflicting_declaration`/`duplicate-declaration` at the source `dimension Time` span, naming both declarations; two admitted packages that each declare a dimension `Rate`, with no source `Rate`, refuse it at the later package's selection row. | Test (TC-187) |
+| FR-142-AC-19 | A unit of compilation that declares `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` beside the admitted domain package `acme/rpc` declaring base dimension `Rate`, root `us` of `Rate` and its own `ms` of `Rate` checks with no `ambiguous_declaration`: `Quantity<ms>` names the source unit and `Quantity<M::ms>` under `model M = "acme/rpc" …` names the package unit (FCD identity `ix://acme/rpc/unit/ms`), which carries no declaration name; a source `unit tick : Rate = 1/2 * M::us;` is admitted, typed by the package dimension; the same package also declaring a dimension `Time` refuses `conflicting_declaration`/`duplicate-declaration` at the source `dimension Time` span, naming both declarations; two admitted packages that each declare a dimension `Rate`, with no source `Rate`, refuse it at the later package's selection row; the package also declaring a base dimension `Length` with no unit, beside a source `dimension Area = Length ^ 2; unit m2 : Area = 1;`, refuses `missing_declaration`/`missing-name` by the base-dimension rule at `Length`'s turn, located at `/lock/model_selections/0` and naming `ix://acme/rpc/dimension/Length` and `m2`. | Test (TC-187) |
 
 ## Dependencies
 
