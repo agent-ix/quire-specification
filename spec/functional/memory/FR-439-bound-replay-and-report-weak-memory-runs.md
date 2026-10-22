@@ -118,8 +118,9 @@ with these additions:
   a fence or a memory step such as `flush`;
 - each step carries `memory`, its post-state's memory component in the
   state-key encoding: every buffer under `tso`; every message sequence, view,
-  `S` and the SC event graph under `ra`; and the race summary when the subject
-  has a non-atomic access;
+  `S` and the SC event graph under `ra`, in the typed forms of
+  [FR-437](FR-437-explore-release-acquire-memory.md); and the race summary when
+  the subject has a non-atomic access;
 - the counterexample carries `memory_models`, a list of
   `{"parallel":"<scoped path>","model":"sc"|"tso"|"ra"}` for every outermost
   `parallel`, and `memory_budgets`, the budget values the run used;
@@ -134,8 +135,9 @@ binds it.
 Replay re-executes each step through the protocol system under the
 counterexample's resolved models: an access by the FR-181 successor rule over
 the thread observation, a memory step by its model's rule. It recomputes the
-memory component and refuses `stale_dependency`/`revision-mismatch` when it
-differs from the carried one or the post-state digest differs, and
+memory component and refuses `stale_dependency`/`content-mismatch` when it
+differs from the carried one in any member, including a view's `frontier` or
+`owed` and the SC event graph, or the post-state digest differs, and
 `invalid_runtime_input`/`invalid-value` when a step is not enabled or a named
 message or slot does not exist. A lasso is checked against the authored,
 scheduler and memory constraints; an unfair lasso refuses. Then the formula is
@@ -150,11 +152,12 @@ race` ([FR-438](FR-438-report-data-races.md)).
 | FR-439-AC-2 | A protocol whose loop keeps storing to one location under `tso` with `max_store_buffer` 2 settles `inconclusive`, cause `memory-bound-reached`, naming the budget, the value 2, the count of bound-limited states and `max_store_buffer`; with a counterexample within the budget it settles `refuted`. | Test (TC-393) |
 | FR-439-AC-3 | Two requests that differ only in a memory budget carry the same obligation identity; a bound-limited state is never terminal or a deadlock. | Test (TC-393) |
 | FR-439-AC-4 | When a state constraint and the memory budget both cut states, the cause is `constraint-reached`; when the memory budget and the instance budget both cut states, the cause is `memory-bound-reached`. | Test (TC-393) |
-| FR-439-AC-5 | The `tso` store-buffering counterexample carries both buffers at every position, `memory_models` naming `SB::Both` as `tso` and `memory_budgets`, and replays; altering one carried buffer refuses `stale_dependency`/`revision-mismatch`, and naming an absent message depth refuses `invalid_runtime_input`/`invalid-value`. | Test (TC-394) |
+| FR-439-AC-5 | The `tso` store-buffering counterexample carries both buffers at every position, `memory_models` naming `SB::Both` as `tso` and `memory_budgets`, and replays; altering one carried buffer refuses `stale_dependency`/`content-mismatch`, and naming an absent message depth refuses `invalid_runtime_input`/`invalid-value`. | Test (TC-394) |
 | FR-439-AC-6 | An item over a `tso` subject routed to a candidate that advertises only `sc` settles `unsupported`, `unsupported-requested-capability`; an item with a two-location access under a selected weak model settles `unsupported`, cause `weak-access-shape`, with its site, transition and shape. | Test (TC-389, TC-394) |
 | FR-439-AC-7 | A `flush` position carries the `memory` anchor and does not advance interval distance. | Test (TC-394) |
 | FR-439-AC-8 | A claim whose atom reads `lookup<T>(p, r) absent undefined` at an absent key at a reachable state, in a run that also reaches bound-limited states, settles `refuted`, cause `undefined-evaluation`, not `inconclusive` with `memory-bound-reached`, and its counterexample carries the memory component and replays. | Test (TC-393) |
 | FR-439-AC-9 | An item over the load-buffering litmus (TC-391 LT-06) resolved to `ra` has the terminal record `warnings` hold two `memory.load-buffering-shape{load, store}` warnings, one per branch's distinct (load, store) shape, with the result, counterexample and obligation identity equal to the settlement without it; the same item resolved to `sc` or `tso` carries none; a candidate whose descriptor has no `memory_models` receives `SB` (TC-390) resolved to `sc` and not `SB` resolved to `tso` or `ra`. | Test (TC-393) |
+| FR-439-AC-10 | The `ra` counterexample of TC-390 SB-05's protocol (every store and load `seq_cst`) to the claim `always holds(not (c1.r = 1 and c2.r = 1))` replays; altering one carried view's `frontier` count, removing one carried `sc-graph` edge, or adding one `owed` entry is each refused `stale_dependency`/`content-mismatch`, as a memory component that differs from the carried one. | Test (TC-394) |
 
 ## Dependencies
 
