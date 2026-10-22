@@ -772,6 +772,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-468
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-469
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-380
     type: contains
   - target: ix://agent-ix/quire-specification/FR-381
@@ -1012,6 +1014,7 @@ The requirement artifacts are indexed below.
 | [FR-421](functional/temporal/FR-421-check-probabilistic-timed-claims-exactly.md) | FR | Check probabilistic timed claims exactly through digital clocks |
 | [FR-440](objects/interfaces/FR-440-checked-package-union-and-case-nodes.md) | FR | Checked-package union, union-value and case nodes, explicit union-value application-preimage selection, and the `quire.op.control.case` catalog entry |
 | [FR-441](objects/interfaces/FR-441-union-member-key.md) | FR | Union member key: the `quire.union-member-node/v1` preimage |
+| [FR-469](objects/interfaces/FR-469-checked-package-extension-nodes.md) | FR | Checked-package extension form node: one `extension`/`extension_form` tag with the node kind as body data, its structural key, and the reader joins for a held, selected extension definition |
 | [FR-390](functional/analysis/FR-390-analyze-state-graph-claims.md) | FR | State-graph claims `possible`, `always possible` and `unique path` over a model subject: forms, graph semantics and admission |
 | [FR-391](functional/analysis/FR-391-settle-state-graph-claims.md) | FR | Settlement of state-graph claims from decisive evidence on open and closed nodes; verdicts, settlement method and reduction rows |
 | [FR-392](functional/analysis/FR-392-sample-possible-witnesses.md) | FR | Seeded witness sampling for `possible` claims; `witness_samples`, `seed` and `max_walk_steps` |
