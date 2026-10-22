@@ -37,3 +37,23 @@ FR-432-AC-14 (Test, TC-386) is covered by BR-01: the same five rows and the four
 ## Verdict
 
 Both new ACs have a TC row. One low finding: the retained count values are not pinned.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | FR-432-AC-15 and TC-386 BR-02, as fixed, give `actual` for `node Spec::A::eb(1)` as "the type of `1`" and nothing more. QSpec types an integer literal by its context (FR-149: an integer literal is typed by the other operand), so with the expected field type Boolean the value is not determined by the spec, and a test written from BR-02 cannot assert it. Every other retained value in AC-15 is now pinned. Fix: name the type (for example an integer type, or the literal's own `Int[1, 1]` if that is the rule), or say `actual` is any integer type. | spec/functional/protocol/FR-432-map-every-protocol-step-in-refinements.md:239 |
+
+## Dispositions
+
+Re-checked at head 3d88428. Gates at head 3d88428: `quire validate --scope . spec/**/*.md` reports 134 failed documents, none of them FR-432 or TC-386 (touched files add none); `cargo test --test checked_package_v2 --test backend_provider_v1` passes (117 and 14 tests). The head contains origin/main. FR-432-AC-14/15 and TC-386 BR-01/02 are used by no other open QSpec PR. The PR body states behaviour, defaults, gates and remaining work and paraphrases no review finding. The pairs given are the field count and the written count of each row, recomputed by hand.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fixed text at the new head: \| FR-432-AC-15 \| In the protocol of FR-432-AC-14, each refusal is `ill_typed`/`operator-ineligible` at the node retaining `expected` (the field count) and `actual` (the argument count): `node Spec::A::a1(self, 1, 2)` with 2 and 3, `node Spec::A::a1(self)` with 2 and 1, `node Spec::A::ev(true)` with 2 and 1, and `node Spec::A::eb(true, false)` with 1 and 2; `node Spec::A::eb(1)` refuses `ill_typed`/`type-mismatch` at the argument with `expected` `Boolean` and `actual` the type of `1`, and `node Spec::A::ev(true, true)` with `expected` `Int[0, 9]` and `actual` `Boolean`. \| Test (TC-386) \| |
+
+## Fix pass
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-002 | fixed | `node Spec::A::eb(1)` is replaced by `node Spec::A::a1(self, true)`, a type-mismatch at the argument `true` with `expected` `Int[0, 9]` and `actual` `Boolean`, in FR-432-AC-15 and TC-386 BR-02; the QSL half uses `a1(true)` with `actual` `Boolean`. |

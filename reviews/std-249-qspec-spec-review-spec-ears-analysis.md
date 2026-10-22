@@ -33,3 +33,11 @@ The FR-432 statement is unchanged and is a conditional (`When ... the checker SH
 ## Verdict
 
 Mergeable for EARS apart from one low finding: the statement does not name the behaviour the two new ACs verify.
+
+## Dispositions
+
+Re-checked at head 3d88428. Gates at head 3d88428: `quire validate --scope . spec/**/*.md` reports 134 failed documents, none of them FR-432 or TC-386 (touched files add none); `cargo test --test checked_package_v2 --test backend_provider_v1` passes (117 and 14 tests). The head contains origin/main. FR-432-AC-14/15 and TC-386 BR-01/02 are used by no other open QSpec PR. The PR body states behaviour, defaults, gates and remaining work and paraphrases no review finding.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fixed text at the new head: When a refinement declaration's concrete or abstract side is a protocol subject, the checker SHALL decide every concrete protocol step class by exactly one explicit deciding `step` row, refuse a class that no row decides or that two rows of one kind decide, type each node row's arguments against the node's binder record, and read each step's visibility and observation label from its deciding row alone. |
