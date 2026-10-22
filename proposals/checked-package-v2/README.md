@@ -60,8 +60,8 @@ structures, but any external consumer receives only the contract.
   `NodeId`). One vector additionally carries a
   `second_frame` member: a complete second `state`/`frame` node object,
   every member a real semantic-graph node requires, inserted into the graph
-  verbatim, so the vector exercises the reader's ascending-node-id-digest
-  order across two frame nodes.
+  verbatim, so the vector exercises the reader's visit order across two
+  frame nodes, which ascends by node-id digest.
 - `dependency-selection-vectors.json` carries two `DependencySelection`
   entries (`{identity, package_id}`), the `package_id` of
   `fixtures/positive-all-families.json` with those entries as its lock's and
@@ -82,8 +82,8 @@ structures, but any external consumer receives only the contract.
   they exercise the schema, the order rule and the supply order only, and a
   reader that requires every entry's package to be supplied refuses them
   `missing_import`/`missing-selection` at entry 0 by design. Only
-  `closure_vectors`, whose digests are recomputed from real packages, name
-  packages a reader can be supplied. Each `supply_vectors` entry lists the
+  `closure_vectors`, whose digests are recomputed from real packages, and
+  `dependency-call-vectors.json` name packages a reader can be supplied. Each `supply_vectors` entry lists the
   direct entries in lock order with a symbolic `supply` state (`bound`,
   `stale` for a supplied package whose recomputed `package_id` differs, or
   `absent`) and the outcome FR-322-AC-84 requires.
@@ -101,6 +101,27 @@ structures, but any external consumer receives only the contract.
   naming a declaration node of that dependency. The node-identity preimage
   spells it as the wire does, so both components enter the referencing
   node's id, and it is never listed in a node's `dependencies`.
+- `fixtures/positive-dependency-library.json` is an admitted library package,
+  supplied under the library identity `test/predicates`, whose recorded
+  `package_id` recomputes. It declares `Lib::is_small`, a `function` over
+  `Int[0, 9]` returning `Boolean` whose signature type nodes carry no
+  `declaration` or `ModelOwner`, together with the declared record
+  `Lib::Point`, a function returning it, functions over `Set<Point>`, over a
+  tuple holding `Point` and over `Reference<acme/orders::Order>`, and
+  `value`/`parameter` nodes that carry no `declaration`.
+  `fixtures/positive-dependency-call.json` selects that library by its
+  `package_id` and declares `App::check`, whose body is a
+  `quire.op.function.call` with a `dependency_reference` callee naming
+  `Lib::is_small`, the Boolean node as `result_type` and no `dependencies`
+  entry for the target; it is admitted when the library is supplied.
+  `dependency-call-vectors.json` carries FR-322-AC-37's mutations of that
+  package as patches over it: no dependency supplied, a `package` that is no
+  direct selection, a `node` carrying no `declaration`, a `node` naming the
+  record or a function whose signature reaches it or a model type, the term
+  as a non-callee argument and as a node body root, and the target listed in
+  `dependencies`. Each records its refusal `outcome` and its `locus`, the JSON
+  pointer FR-322 fixes for it in the mutated package; node keys and the
+  `package_id` are recomputed after the patch.
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes
@@ -115,7 +136,8 @@ structures, but any external consumer receives only the contract.
 - `model-member-type-vectors.json` carries a domain package as a projection
   of the declaration records FR-154 intake reads from it, the model declaration node vectors
   that recover a declaring node's `ModelOwner`, the member and selection
-  cases for FR-322's "Model-owned members", and the reference equality and
+  cases for FR-322's "Model-owned members", the operation redefinition cases of
+  FR-154-AC-16, and the reference equality, reference upcast and
   field projection cases for its "Reference conformance" and model field
   projection rules (TC-281). The SHA-256 of the RFC 8785 bytes
   of its `domain_package` member stands for the document's `sha256-jcs`
@@ -153,7 +175,9 @@ The package key is the selected contract version and a
 `quire.package.semantic/v2` digest over a non-circular JCS preimage. The
 preimage is exactly the `quire.checked-package-id/v2` object containing ordered
 edition, profile, definition, model, feature and dependency selections plus the
-checked semantic graph's typed-key ordered identity projection. It excludes
+checked semantic graph's identity projection, one occurrence-free entry per
+node in graph order (the producer's order of `semantic_graph.nodes`, which a
+reader does not sort and which enters the id). It excludes
 package identity itself, source-occurrence/source-map data, raw-byte artifacts,
 presentation, runtime inputs, installed backends, diagnostic wording and reader
 limits.
@@ -289,14 +313,16 @@ A reader reports the first refusal in the order owned by
 `quire.native.diagnostics/v1`: graph-shape refusals, then
 `stale-node-key` (`invalid_package`) for an application node whose retained key
 is not its preimage digest, then declaration refusals, then frame refusals at
-the first `state`/`frame` node in ascending node-id digest order carrying one
+the first `state`/`frame` node carrying one, visiting them in ascending
+node-id digest order
 (that node's own `missing_declaration`/`invalid_model_binding` meaning-join
 defect outranking its `invalid_semantic_graph` canonical-order defect, per
 FR-340), then state refusals (the placement of `quire.op.state.clause`, then
 each `state`/`operation_anchor` node and then each `state`/`state_clause`
-node in ascending node-id digest order, per FR-341 and FR-342), then nodes
-in ascending node-id digest order and, inside a
-node, applications in pre-order. One
+node, visiting each kind in ascending node-id digest order, per FR-341 and
+FR-342), then nodes, visited in ascending node-id digest order and, inside a
+node, applications in pre-order. These visit orders choose the refusal to
+report; they are not an order of `semantic_graph.nodes`. One
 application checks `unknown-operation`, `operation-class-mismatch`,
 `operation-law-missing`, `operation-law-mismatch`,
 `operation-law-unselected`, `operation-mode-mismatch` and
@@ -310,7 +336,8 @@ semantic_type, declaration, recursion, body}`, where a reference to a member of
 the node's own recursion group becomes a `group_reference` ordinal. An
 expression whose root is an application has the semantic form fixed by its
 operator class, and its dependencies are exactly the unique digest-ascending
-reference targets and member declarations of its body. Changing division from
+reference targets and member declarations of its body. Every other node's
+dependencies follow FR-322's `dependencies` rules. Changing division from
 floor to Euclidean therefore changes the node id and the package id, and the
 `division-law-unselected-by-package-lock` mutation shows that a law absent from
 the lock refuses.
@@ -335,8 +362,12 @@ A field of a model object is `quire.op.record.project` over a
 declaration node, of family `object`, which the projection's `field_owner`
 operand group admits. `quire.op.reference.eq` and `quire.op.reference.ne`
 compare two references whose object types conform one to the other
-(`conforming_reference`), decided over the owners the same recovery yields
+(`conforming_reference`), and `quire.op.reference.upcast` retypes a
+reference only to a type its object type conforms to (`conforming_upcast`),
+each decided over the owners the same recovery yields
 ([FR-322's "Reference conformance"](../../spec/objects/interfaces/FR-322-checked-package-artifact.md#reference-conformance)).
+The operation catalog's `constraint_kinds` vocabulary lists `conforming_upcast`
+beside `conforming_reference`.
 
 ## Declarations
 

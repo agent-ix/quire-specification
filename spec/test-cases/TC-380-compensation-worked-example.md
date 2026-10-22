@@ -30,7 +30,7 @@ Model: object type `Acct` with `bal: Int[0, 1]`, universe `{x}`, initial
 postcondition `ChargePost: self.bal = 1`; operation `refund()`, precondition
 `self.bal = 1`, postcondition `self.bal = 0`; both with frame `modifies
 self.bal`. Record type `Failure` with field `failed: Boolean`. The effect record
-type has one value. Record type `Recovery` with field `bal: Int[0, 1]`. The finish binder `d: M::Acct` ranges over the one
+type and the attempt type `RefundAttempt` have one value each. Record type `Recovery` with field `bal: Int[0, 1]`. The finish binder `d: M::Acct` ranges over the one
 `Acct` object of the single-object universe.
 
 ```text
@@ -77,6 +77,7 @@ Parse the protocol text above at S1 under the `quire.value.complete/v1` profile 
 | CP-10 | Undefined activation guard | A variant whose `activate first` guard reads `lookup<T>(p, r) absent undefined` at a key the population does not hold settles every item `refuted`, cause `undefined-evaluation`, with the prefix to t2, at the `event(Fail)` expansion |
 | CP-11 | Attempt type position | The model gains a scalar type `Total` and a variant type `Mode`. Variants of the protocol text above with `attempts 1 of T` and `retry (e: T, l: T) { false }`, `T` being `Set<M::Total>[0, 3]`, `Integer` and `M::Mode` as written, each parse at S1 with no diagnostic (FR-239-AC-9); checking each refuses once `invalid_model_binding`/`malformed-declaration` at the type, retaining the compensation `Refund`, member `attempts` and the type as written, with no refusal at the `retry` binders; the unchanged `attempts 1 of M::RefundAttempt` checks (FR-239-AC-8) |
 | CP-12 | Recovery predicate reading its binder | The `Pay` protocol with the predicate `r.bal = 0` | settles `unsupported`, cause `recovery-view{predicate}`, before any state is explored; with the predicate `triggered` it is admitted |
+| CP-13 | Attempt records | A variant with `attempts 2 of M::RefundAttempt`, `RefundAttempt` with field `ok: Boolean`, `refund()` with precondition `true`: with the retry relation `not e.ok`, two `cattempt` steps at t4 whose identities differ only in `record`, two retry `cattempt` steps and `cend` after the `ok` false attempt and `cend` alone after the `ok` true attempt; with the retry relation `l.ok`, one retry `cattempt` with `ok` true and `cend` after either first attempt (FR-427-AC-7) |
 
 ## Expected Results
 

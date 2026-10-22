@@ -1381,11 +1381,6 @@ fn project_document(document: &Value) -> Value {
         let node = text(declared, "identity");
         match meaning {
             "quire.meaning.model.object-type/v1" | "quire.meaning.systems.interface/v1" => {
-                let redefined: BTreeMap<&str, &Value> = array(declared, "extensions")
-                    .iter()
-                    .flat_map(|extension| array(&extension["payload"], "redefines"))
-                    .map(|entry| (text(entry, "operation"), &entry["target"]))
-                    .collect();
                 let fields: Vec<Value> = array(declared, "fields")
                     .iter()
                     .map(|field| {
@@ -1422,9 +1417,10 @@ fn project_document(document: &Value) -> Value {
                                 "typeRef": returns["typeRef"],
                                 "multiplicity": projected_multiplicity(&returns["multiplicity"]),
                             })),
-                            "redefines": redefined
-                                .get(text(operation, "identity"))
-                                .map_or(Value::Null, |target| (*target).clone()),
+                            "redefines": operation
+                                .get("redefines")
+                                .cloned()
+                                .unwrap_or(Value::Null),
                         })
                     })
                     .collect();
@@ -1511,6 +1507,54 @@ fn tc_280_the_domain_package_projection_is_derived_from_the_selected_document() 
         sorted(project_document(&parsed(DOCUMENT))),
         sorted(vectors["domain_package"].clone())
     );
+}
+
+/// FR-154-AC-16: intake reads an operation's redefinition only from
+/// `Operation.redefines`, and a `redefines` naming no node of the package
+/// refuses at the operation and the member.
+fn read_operation_redefinitions(document: &Value) -> Result<(), Value> {
+    let identities: BTreeSet<&str> = array(document, "types")
+        .iter()
+        .flat_map(|declared| {
+            ["fields", "operations"]
+                .into_iter()
+                .flat_map(move |list| array_or_empty(declared, list))
+        })
+        .map(|member| text(member, "identity"))
+        .collect();
+    for declared in array(document, "types") {
+        for operation in array_or_empty(declared, "operations") {
+            if let Some(target) = operation["redefines"].as_str() {
+                if !identities.contains(target) {
+                    return Err(json!({"refused": {
+                        "code": "missing_declaration",
+                        "cause": "missing-name",
+                        "at": operation["identity"],
+                        "path": "Operation.redefines",
+                    }}));
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+#[trace("TC-280", "FR-154-AC-16")]
+#[trace("TC-280", "FR-322-AC-30")]
+#[test]
+fn tc_280_an_operation_redefines_only_through_operation_redefines() {
+    let vectors = parsed(VECTORS);
+    let nodes = array(&vectors, "model_declaration_nodes");
+    let cases = array(&vectors, "operation_redefinition_cases");
+    assert_eq!(cases.len(), 4);
+    for case in cases {
+        let document = patched_document(Some(&case["patch"]));
+        let outcome = match read_operation_redefinitions(&document) {
+            Err(refusal) => refusal,
+            Ok(()) => derive(&project_document(&document), nodes, &case["member"]),
+        };
+        assert_eq!(outcome, case["expected"], "{}", text(case, "name"));
+    }
 }
 
 /// FR-154-AC-9: the document carries filament-core-data FR-095's identity

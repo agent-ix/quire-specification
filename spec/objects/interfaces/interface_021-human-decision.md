@@ -9,6 +9,13 @@ relationships:
 
 # [interface_021] I21 attributed human decision
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| record_decision | operation |
+| supersede | operation |
+
 ## Contract
 
 ```yaml

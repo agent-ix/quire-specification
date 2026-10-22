@@ -9,6 +9,12 @@ relationships:
 
 # [interface_020] I20 immutable evidence intake
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| ingest | operation |
+
 ## Contract
 
 ```yaml

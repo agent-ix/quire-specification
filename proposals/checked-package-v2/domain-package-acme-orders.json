@@ -1193,25 +1193,7 @@
     {
       "constraints": [],
       "displayName": "Sub",
-      "extensions": [
-        {
-          "identity": "ix://acme/orders/extension/redefines-operation",
-          "payload": {
-            "redefines": [
-              {
-                "operation": "ix://acme/orders/Sub/size",
-                "target": "ix://acme/orders/Order/size"
-              },
-              {
-                "operation": "ix://acme/orders/Sub/scaled",
-                "target": "ix://acme/orders/Order/scaled"
-              }
-            ]
-          },
-          "required": false,
-          "version": "1.0.0"
-        }
-      ],
+      "extensions": [],
       "fields": [],
       "identity": "ix://acme/orders/Sub",
       "identityFields": [
@@ -1236,6 +1218,7 @@
           "params": [],
           "post": [],
           "pre": [],
+          "redefines": "ix://acme/orders/Order/size",
           "returns": {
             "multiplicity": {
               "lower": 1,
@@ -1284,6 +1267,7 @@
           ],
           "post": [],
           "pre": [],
+          "redefines": "ix://acme/orders/Order/scaled",
           "returns": {
             "multiplicity": {
               "lower": 1,
@@ -1314,21 +1298,7 @@
     {
       "constraints": [],
       "displayName": "SubSub",
-      "extensions": [
-        {
-          "identity": "ix://acme/orders/extension/redefines-operation",
-          "payload": {
-            "redefines": [
-              {
-                "operation": "ix://acme/orders/SubSub/size",
-                "target": "ix://acme/orders/Order/size"
-              }
-            ]
-          },
-          "required": false,
-          "version": "1.0.0"
-        }
-      ],
+      "extensions": [],
       "fields": [],
       "identity": "ix://acme/orders/SubSub",
       "identityFields": [
@@ -1353,6 +1323,7 @@
           "params": [],
           "post": [],
           "pre": [],
+          "redefines": "ix://acme/orders/Order/size",
           "returns": {
             "multiplicity": {
               "lower": 1,

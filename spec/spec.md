@@ -496,6 +496,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-154
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-470
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-160
     type: contains
   - target: ix://agent-ix/quire-specification/FR-161
@@ -554,8 +556,6 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-307
     type: contains
-  - target: ix://agent-ix/quire-specification/FR-308
-    type: contains
   - target: ix://agent-ix/quire-specification/FR-309
     type: contains
   - target: ix://agent-ix/quire-specification/FR-310
@@ -573,6 +573,8 @@ relationships:
   - target: ix://agent-ix/quire-specification/NFR-073
     type: contains
   - target: ix://agent-ix/quire-specification/NFR-075
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-076
     type: contains
   - target: ix://agent-ix/quire-specification/IT-070
     type: contains

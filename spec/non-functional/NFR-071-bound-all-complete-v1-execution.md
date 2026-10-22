@@ -20,7 +20,7 @@ artifact and retained-history resources against explicit limits before expansion
 ## Scope
 
 Native execution, monitoring/repair, protocol analysis, simulation, method
-providers, plugins, compilation, WASM and mapping.
+providers, plugins, compilation and mapping.
 
 ## Rationale
 

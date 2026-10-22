@@ -86,7 +86,14 @@ numbering and each component's stated reason, and reads no output of the
 search beyond the certificate. It refuses a certificate whose `identity`
 differs from the item's with `invalid_runtime_input`/`conflicting-identity`.
 A rejected certificate settles `inconclusive`, `certificate-rejected{rule,
-at}`, naming the rule that failed and the node where it failed; a
+at}` (FR-331): `initial-missing` at the State locus `{domain, digest}` of
+the initial discrete state, when no node of it covers the initial symbolic state; `successor-missing` at
+`{node}` when a node's successor by an identity is not covered by its named
+target; `bad-state` at `{node}` for a bad node; `backward-edge` at `{edge}`
+for an edge to a smaller component index; `witness-fails` at `{component}`
+for a component whose reason does not hold, and at `{node}` for a node whose
+named target is not a reachable time-divergent target. `node` and `edge` are
+positions in `nodes` and `edges`, and `component` is a component index. A
 checker stopped by a budget settles `incomplete`, `limit-reached` naming the
 budget. Its cost is linear in the certificate's edges times the DBM operations.
 
@@ -95,14 +102,15 @@ budget. Its cost is linear in the certificate's edges times the DBM operations.
 - **Identity kind** — *value*, compared componentwise; nodes and edges in
   their stated order.
 - **Absence** — a missing member rejects the certificate,
-  `certificate-rejected{rule, at}` naming that member.
+  `certificate-rejected{rule, at}` with rule `malformed` at `{member}`, that
+  member's name.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-418-AC-1 | The checker accepts the certificate of the `Rpc` `NoLateReply` proof at `T = 4 ms` by recomputing every successor and coverage. | Test (TC-371) |
-| FR-418-AC-2 | A certificate with a node whose successor is not covered by its named target, a bad node, an edge that decreases the component index, or a component with no valid reason settles `inconclusive`, `certificate-rejected{rule, at}` naming the failed rule and its node or component. | Test (TC-371) |
+| FR-418-AC-2 | A certificate with a node whose successor is not covered by its named target settles `inconclusive`, `certificate-rejected` with rule `successor-missing` at that node; a bad node, `bad-state` at that node; an edge that decreases the component index, `backward-edge` at that edge; a component with no valid reason, `witness-fails` at that component; a Büchi certificate without `reasons`, `malformed` at member `reasons`; a certificate in which no node covers the initial symbolic state, `initial-missing` at the State record of the initial discrete state; and a time-lock-freedom certificate whose node names a target that is not a reachable time-divergent target, `witness-fails` at that node. | Test (TC-371) |
 | FR-418-AC-3 | A certificate whose identity differs from the item's is refused `invalid_runtime_input`/`conflicting-identity`. | Test (TC-371) |
 | FR-418-AC-4 | Constants are scaled to integers by the least common multiple of their denominators and DBM bounds are arbitrary-precision integers, so a constant of any size checks exactly. | Test (TC-371) |
 | FR-418-AC-5 | A time-lock-freedom certificate states a reachable time-divergent target for every node, and the checker verifies each. | Test (TC-371) |
