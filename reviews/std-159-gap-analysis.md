@@ -51,10 +51,13 @@ Round 1, head 4cb925e17. QSL origin/main 48b47ab99 and quire-spec-language#1184 
 | --- | --- | --- |
 | FND-001 | deferred | Cross-repo: the trace tags belong on QSL tests, which this QSpec-only PR cannot change. Still missing: QSL origin/main 48b47ab99 and #1184 head 692abe7b4 tag only QSpec FR-419-AC-1, AC-3 and AC-4. Needs a QSL follow-up (STD-159 QSL half or a new QSL ticket) tagging `a_third_wcet_of_six_misses_under_fixed_priority_and_edf` with `QSpec-FR-419-AC-2` and `jitter_and_blocking_move_the_miss_to_b_and_its_evidence_rechecks` with `QSpec-FR-419-AC-7`. |
 | FND-002 | deferred | Round 2, head f9ed36c23: cross-repo, the missing tags and tests belong in QSL, which this QSpec-only PR cannot change. The PR body now records the follow-up for the code lane: "tag the QSL tests that assert FR-419-AC-2, -AC-7, -AC-8, -AC-9 values with `QSpec-FR-419-AC-2`, `-AC-7`, `-AC-8`, `-AC-9` and the task-set refusal test (`qsl-analyze/tests/it/schedulability.rs:169`) with TC-701/FR-246-AC-2; run the analysis on the FR-419-AC-8 set and assert job 0, iterate 2; add a test for the non-positive deadline refusal." QSL origin/main 48b47ab99 is unchanged: `git grep 'QSpec-FR-419'` still finds only AC-1, AC-3 and AC-4. |
+| FND-003 | deferred | Round 3, head 2e3ca15: cross-repo, the tests belong in QSL, which this QSpec-only PR cannot change. The PR body's QSL follow-up list now names them: "no QSL test refuses a priority clash or a missing priority under an `amc` or `response` claim, so add those." QSL #1184 head 71971c6de still adds no test. |
 
 The new criteria have TC-372 rows that state the same inputs and results: FR-419-AC-8 maps to RT-13, AC-9 to RT-05 (now with its miss evidence), and AC-5's new refusals to RT-14. Recomputed independently (scratchpad probe `rv326-d1/probe/rta2.py`): RT-13 job 0 iterate 2 and job 2 refused at job 1 (completion 6, not above 6); RT-05 `<= 11` iterates 5, 9, 12 and `<= 12` proved with 5, 9, 12, 12. QSL `cargo test -p qsl-analyze --test it schedulability` at 48b47ab99: 16 passed, including the tests that assert these vectors.
 
 Round 2, head f9ed36c23. FR-419-AC-5's widened clash clause maps to TC-372 RT-14, now run under `CtlFp`, `CtlEdf`, an `amc` claim and `T3`; AC-9's restated claim maps to RT-05 unchanged. QSL origin/main 48b47ab99 `a_task_set_or_claim_that_breaks_a_rule_is_refused_with_its_code` runs the clash under a `fixed_priority` and an `edf` claim only.
+
+Round 3, head 2e3ca15. FR-419-AC-5's widened missing-priority clause maps to TC-372 RT-11, now run under `CtlFp`, `T3` and `CtlEdf`. The PR body carries two overlapping QSL lists, which is new finding FND-004.
 
 ## New findings (disposition pass 1)
 
@@ -67,3 +70,9 @@ Round 2, head f9ed36c23. FR-419-AC-5's widened clash clause maps to TC-372 RT-14
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-003 | low | The priority refusals under `amc` and `response` claims, which AC-5 and RT-14 now require, have no QSL test: `a_task_set_or_claim_that_breaks_a_rule_is_refused_with_its_code` builds the clash only under `ScheduleClaim::Schedulable(SchedulingPolicy::FixedPriority)` and `Edf`, and no QSL test refuses a missing priority under any claim. `ScheduleSubject::new` does call `check_priorities` for those claims, so the behaviour exists, but nothing would catch its loss. The PR body's QSL follow-up list does not name these. Follow-up in QSL alongside FND-001 and FND-002: assert `PriorityClash` under an `amc` and a `Response` claim, and `MissingPriority` under each priority-based claim. | quire-spec-language@48b47ab99 qsl-analyze/tests/it/schedulability.rs:196-213; qsl-replay/src/certificate/closed_form/task_set.rs:358-391,455-473 |
+
+## New findings (disposition pass 3)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | low | The PR body now has two QSL lists: "Remaining work (code lane, QSL)" names only the `QSpec-FR-419-AC-2` to `-AC-9` tags and the TC-701/FR-246-AC-2 tag, and "QSL follow-up (code lane)" repeats those and adds the FR-419-AC-8 analysis test, the non-positive deadline test and the `amc`/`response` priority tests. A lead who files the follow-up from the first list drops three of the five items. The body also states the priority clash twice ("Priority rule" and "Priority clash" bullets). Fix: keep one QSL follow-up list and one priority bullet. | agent-ix/quire-specification#326 PR body |
