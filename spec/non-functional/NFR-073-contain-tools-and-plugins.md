@@ -6,15 +6,13 @@ quality_attribute: security
 relationships:
   - target: ix://agent-ix/quire-specification/FR-305
     type: constrains
-  - target: ix://agent-ix/quire-specification/FR-308
-    type: constrains
 ---
 
 # NFR-073: Contain tool, plugin and generated-code execution
 
 ## Statement
 
-The host SHALL pass every tool, plugin, WASM module and generated executable
+The host SHALL pass every tool, plugin and generated executable
 only bounded inputs through a typed Rust contract, and SHALL read every result
 it returns with the typed reader before that result settles any item.
 

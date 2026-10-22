@@ -32,7 +32,7 @@ and `Standard`).
 4. Give `Order` a field `ref` typed, in turn, `OrderPlaced`, `OrderLifecycle`,
    `Fulfilment`, `OrderStore` and `OrderManagement`.
 5. Add to `Money` a `quire` clause that names the variant type and a case
-   literal: `self.tier = M::Tier::Gold`.
+   literal: `self.tier = OrderManagement::Tier::Gold`.
 
 ## Expected Results
 

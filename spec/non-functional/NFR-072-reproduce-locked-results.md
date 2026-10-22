@@ -20,7 +20,7 @@ for equal semantic inputs.
 ## Scope
 
 Compilation, runtime/replay, monitoring repair, simulation, methods, Kani,
-AOT/JIT, WASM, mappings, evidence and qualification.
+AOT/JIT, mappings, evidence and qualification.
 
 ## Rationale
 

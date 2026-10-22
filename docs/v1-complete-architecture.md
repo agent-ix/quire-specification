@@ -82,7 +82,7 @@ dependency direction; they are not new products or scope buckets.
 
 | ID | Subsystem | Owns | Primary Rust owners |
 | --- | --- | --- | --- |
-| S9 | Mappings, authoring and tooling | OCL/SysML/KerML/FRETish outputs, deterministic packages, formatter, lossless CST/editor/LSP, CLI, WASM, code/model views, plugins, JIT and reusable libraries | Contract IR mapping adapters, QSL, `quire-cli`, `quire-wasm`, `quire-code-rs` |
+| S9 | Mappings, authoring and tooling | OCL/SysML/KerML/FRETish outputs, deterministic packages, formatter, lossless CST/editor/LSP, CLI, code/model views, plugins, JIT and reusable libraries | Contract IR mapping adapters, QSL, `quire-cli`, `quire-code-rs` |
 | S10 | Integration, evidence and qualification | Conformance corpora, verification-result composition, independent qualification, evidence intake/retention and release decisions | `quire-integration`, `quire-verification`, future Rust Quoin interface, human release owner |
 
 The complete primary allocation is exact:
@@ -412,11 +412,8 @@ obligation: preserved, conditional, unrepresented or refused. Generated text is
 never admitted as native source without a separately authorized external-source
 frontend—which complete V1 does not define.
 
-`quire-wasm` exposes only capabilities whose pure Rust dependencies build for
-the selected WASM target. Its capability report is exact; browser constraints
-can refuse a provider but cannot change semantics. `quire-code-rs` and model
-renderers publish derived views with source/model identity and no authority over
-the input graph.
+`quire-code-rs` and model renderers publish derived views with source/model
+identity and no authority over the input graph.
 
 Two plugin forms are supported:
 
