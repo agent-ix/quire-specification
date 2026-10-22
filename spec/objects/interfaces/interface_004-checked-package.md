@@ -11,6 +11,14 @@ relationships:
 
 # [interface_004] I04 immutable checked package
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| link_and_check | operation |
+| read | operation |
+| inspect | operation |
+
 ## Contract
 
 ```yaml

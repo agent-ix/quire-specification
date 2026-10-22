@@ -9,6 +9,12 @@ relationships:
 
 # [interface_009] I09 protocol assessment
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| assess | operation |
+
 ## Contract
 
 ```yaml
