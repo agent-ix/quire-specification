@@ -100,7 +100,7 @@ position of every behaviour; it is an unbounded safety property.
 | Refuted | a counterexample that reproduced by replay ([FR-364](FR-364-replay-temporal-counterexamples.md)) | `refuted` | `decisive-counterexample` | `refuted` | none |
 | Refuted, undefined evaluation | the claim, a guard, a `terminal when` predicate or a state constraint evaluates undefined at a position of an admitted behaviour, and a counterexample ending at that position reproduced by replay ([FR-364](FR-364-replay-temporal-counterexamples.md)) | `refuted` | `decisive-counterexample` | `refuted` | cause `undefined-evaluation`, with `where` and `cause` |
 | Bound reached at `k` | the analysis completed every depth up to `k` and found no counterexample of length at most `k` | `inconclusive` | `unsettled` | `inconclusive` | cause `bound-reached`, depth `k` |
-| Inconclusive, other | `induction-not-closed` with depth `k`: the base case holds to `k` and the step case has a counterexample to induction; `undecided-successor`: a contract conjunction of the successor relation is undecided (defined below), so the successor relation is not exactly known; `no-initial-state`: the subject has no initial state; `no-instance`: the item has zero instances, so no state was explored and the item is never read as holding; `replay-parity`: replay disagreed with the engine (FR-364) | `inconclusive` | `unsettled` | `inconclusive` | that cause |
+| Inconclusive, other | `induction-not-closed` with depth `k`: the induction is not closed at `k`, because the step case has a counterexample to induction, or because the solver did not decide a base, step or search query at `k`, including a solver resource stop for which no request limit is named (a stop under a named limit is `incomplete`, `limit-reached`); `undecided-successor`: a contract conjunction of the successor relation is undecided (defined below), so the successor relation is not exactly known; `no-initial-state`: the subject has no initial state; `no-instance`: the item has zero instances, so no state was explored and the item is never read as holding; `replay-parity`: replay disagreed with the engine (FR-364) | `inconclusive` | `unsettled` | `inconclusive` | that cause |
 | Stopped | a run limit stopped the analysis before it completed its method: state, transition or automaton-state limit, work meter, time, cancellation | `failed`, execution `resource-incomplete` | `unavailable` | `incomplete` | the limit that stopped it, its value and the request member that raises it |
 | Unsupported | no candidate decides the item, or the subject does not admit the clause's profile | `unsupported` | `unavailable` | `unsupported` | the FR-368 or FR-361 cause |
 
@@ -188,6 +188,12 @@ could create, is an excluded key of the item
 ([FR-361](FR-361-read-model-behaviours-as-temporal-traces.md)), and the verdict
 states nothing about the object an operation creates under it.
 
+A run that settles `induction-not-closed` gives a reader evidence that a
+larger depth may close the induction only when the step case has a
+counterexample; a query the solver did not decide gives none, so a reader
+that retries at a larger depth SHALL do so only after a step
+counterexample.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -201,6 +207,7 @@ states nothing about the object an operation creates under it.
 | FR-363-AC-7 | A verdict carries its subject; a verdict over one universe never settles an item whose request names a different universe. | Test (TC-302) |
 | FR-363-AC-8 | A claim that evaluates undefined at a reachable position settles `refuted`, basis `decisive-counterexample`, FR-331 result `refuted`, cause `undefined-evaluation` whose `where` names the position, its state-key digest and the expression's locus and whose `cause` names the undefined value's catalogued reason; the same claim with the read defined at every reachable position settles by its truth values. | Test (TC-305) |
 | FR-363-AC-9 | A model whose operation guard evaluates undefined for a candidate transition at a reachable state settles every item over the subject `refuted`, cause `undefined-evaluation` whose `where` names that position, its state-key digest, the guard's locus and the transition identity, and never reads the transition as disabled; a model whose `terminal when` predicate evaluates undefined at a reachable state with no enabled transition settles `refuted` the same way, never reading the state as non-terminal; a state constraint that evaluates undefined at a reachable state settles `refuted` the same way, naming the constraint's locus; at a state where the claim is both false and undefined, the reported cause is `undefined-evaluation`. | Test (TC-305) |
+| FR-363-AC-10 | A k-induction run whose step case at depth 2 has a counterexample to induction, one whose solver returns `unknown` on the base query at depth 2, one whose solver returns `unknown` on the step query at depth 2, and one whose solver stops for a resource that no request limit names each settle `inconclusive`, basis `unsettled`, cause `induction-not-closed{depth: 2}`; a run stopped by a named request limit settles `incomplete`, `limit-reached` naming that limit, never `induction-not-closed`. | Test (TC-294) |
 
 ## Dependencies
 

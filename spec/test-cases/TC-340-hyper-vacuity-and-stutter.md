@@ -29,6 +29,7 @@ Run each vector through the real local Rust boundary with the explicit-state eng
 | VS-04 | a request with HB-02 over aliases `S` and `N` | exactly two deadlock-freedom items, one per subject; the hyper item reports no deadlock |
 | VS-05 | HB-01's clause under universes where `Vault` has no object; then HB-02's clause with the `S::Device` universe empty and `N::Device` of 3 keys, then with `N::Device` empty and `S::Device` of 2 keys; then HB-01's clause with the `Vault` population given no universe | the first three settle `inconclusive`, `unsettled`, `no-instance` before any state is explored (FR-399-AC-11); the last returns `requires-bound` |
 | VS-06 | TC-344 PA-02's `align skip` clause (HP-6) with the `match` conjunct `false`, which no joint visible step satisfies | `proved`, `closed-scope`; never `vacuous-match`, since the empty projected prefix at the initial states counts as matched |
+| VS-07 | HB-01's clause on VS-03's secure vault settled by an HP-2 k-induction outcome at depth 1 whose step query has a counterexample; then one whose solver returns `unknown` at depth 1; then one whose solver stops for a resource no request limit names | Each `inconclusive`, `unsettled`, `induction-not-closed{depth: 1}`, never `proved` (FR-399-AC-12) |
 
 ## Expected Results
 
