@@ -82,6 +82,7 @@ Declaration refusals:
 | A type definition's or population node's `kind` names no entry of the `constructs` table, or its construct has no `meaning` or a `meaning` that is not a Quire meaning id (FR-208) | `invalid_model_binding`/`malformed-declaration` |
 | An IR node is not valid for its construct's meaning, including a reference that names a node of the wrong meaning and a `supertypes` entry that names a node of another meaning (FR-208) | `invalid_model_binding`/`malformed-declaration` |
 | An operation parameter's `name` is absent, is not a string, is empty, does not match `^[A-Za-z][A-Za-z0-9_]*$`, or differs from the last segment of the parameter's identity `<operation identity>/<param>`, on a parameter not refused as a repeated identity of its operation (checked after that row and before the frame entries) | `invalid_model_binding`/`malformed-declaration` |
+| A field's or an operation's `name` is absent, is not a string, is empty, does not match `^[A-Za-z][A-Za-z0-9_]*$`, or differs from the last segment of its identity `<owner identity>/<member name>`, on a member not refused as a repeated identity of its owner (checked after that row) | `invalid_model_binding`/`malformed-declaration` |
 | A field, parameter or result `typeRef` that is none of `ix://quire/native/<Name>` with `<Name>` a native value type name, `ix://quire/unit/<name>` with a non-empty `<name>`, and `ix://<package identity>/<artifact id>` | `invalid_model_binding`/`malformed-declaration` |
 | A supertype, field type, subsets, redefines, relationship end, frame entry, population member, `occurrenceField`, transition `from`, `to`, `trigger`, `guard` or `emits` entry, step `consumes` or `emits` entry, `persists` entry or namespace `members` entry names no node or member of the package | `missing_declaration`/`missing-name` |
 | A node of a business model meaning (FR-208) declares a form that meaning does not support: a non-empty `supertypes` or a `quire` clause of a persistence interface or namespace, an operation of a record value type, or an operation contract of a persistence interface | `unsupported_construct`/`declaration-form` |
@@ -255,12 +256,25 @@ A declaration's IR node identity is the identity filament-core-data FR-095
 mints (the closed slot list of its "Node identities" section), except for the
 four kinds below, rooted at
 `ix://<package identity>/`, with `<Name>` the declaring artifact's id passed
-through verbatim and every other part slugged. A type's identity is
+through verbatim, every owner-nested member name passed through verbatim, and
+every other part slugged. A type's identity is
 `ix://<package identity>/<artifact id>`, and the alias of a constrained
 field is `ix://<package identity>/<Name><Field>` (`<Field>` slugged with its
 first character upper-cased), which names no slot segment of its own. A field, an operation and an operation
 parameter nest under their owner: `<owner identity>/<field>`,
-`<owner identity>/<operation>` and `<operation identity>/<param>`. A clause, a
+`<owner identity>/<operation>` and `<operation identity>/<param>`. Their last
+segment is the member's declared `name` verbatim, never slugged, and matches
+the member-name rule `^[A-Za-z][A-Za-z0-9_]*$`: a field `created_at` of
+`Order` is `ix://<package identity>/Order/created_at`, an operation
+`reset_all` is `.../Order/reset_all` and its parameter `created_at` is
+`.../Order/reset_all/created_at`. A field or an operation whose `name` fails
+the member-name rule or differs from the last segment of its identity refuses
+`invalid_model_binding`/`malformed-declaration`, naming the member node and
+`TypeDefinition.fields[j].name` or `TypeDefinition.operations[k].name`, after
+the repeated-identity check of its owner, which suppresses it for both
+colliding members as it does for parameters. Because a member name is not
+slugged, a field `created_at` and a state `created_at` of one owner share one
+identity and refuse as that collision. A clause, a
 state, a transition and a step nest under their owner too: each is exactly
 `<owner identity>/<member name>`, the owner being the identity of the type that
 declares it and the member name matching `^[A-Za-z][A-Za-z0-9_]*$`. A clause's
@@ -329,6 +343,7 @@ Admission checks are decided before the first charge.
 | FR-154-AC-14 | An operation parameter whose `name` is absent, not a string, null, empty, begins with a digit, contains a separator or differs from the last segment of its identity, and which is not one of two parameters sharing an identity, refuses `invalid_model_binding`/`malformed-declaration` at the selection row, naming the operation's identity and `TypeDefinition.operations[k].params[s].name`; two parameters of one operation with one identity refuse once, `invalid_model_binding`/`conflicting-binding`, naming the shared parameter identity at the later parameter's `TypeDefinition.operations[k].params[s]`, and that collision suppresses the name check of both, so a malformed name on either colliding parameter is not reported; distinct valid names, including names differing only in letter case, are admitted and no relationship declaration outcome changes. | Test (TC-280) |
 | FR-154-AC-16 | An operation whose `Operation.redefines` names a supertype's operation (`Sub/size` naming `Order/size`) is admitted with that redefinition. The same operation with its `redefines` member removed redefines nothing, and so does one whose redefinition is listed only in an extension payload of its owning type, `required` true or false when the consumer admits the extension; a consumer that does not admit a `required` extension refuses the document before intake, `unknown_required_feature`/`unsupported-feature` at the owning type node and its `extensions` member. An `Operation.redefines` naming no node of the package refuses `missing_declaration`/`missing-name` at the operation node and `Operation.redefines`. | Test (TC-280) |
 | FR-154-AC-17 | A field typed `ix://quire/native/Integer`, a field typed `ix://quire/native/Timestamp`, a field typed `ix://quire/native/UUID`, a field typed `ix://quire/native/Text`, a field typed `ix://quire/native/Rational`, a field typed `ix://quire/native/Decimal` and a field typed `ix://quire/unit/ms` are admitted, each native resolving to that native value type and the unit one left unresolved by intake, with no declaration built for a native reference and no declaration key naming `quire/native`; a package type with artifact id `Integer` is admitted beside them and a field typed `ix://test/orders/Integer` resolves to that package type, not to the native `Integer`. A field typed `ix://quire/native/Int`, `ix://quire/native/integer`, `ix://quire/native/JsonObject` or `ix://quire/unit/`, or typed `Integer` with no URI, refuses `invalid_model_binding`/`malformed-declaration` at the field node and `Field.typeRef`; an operation parameter and an operation result typed `ix://quire/native/Int` refuse the same at the operation node and `Operation.params[i].typeRef` and `Operation.returns.typeRef`, while the same parameter and result typed `ix://quire/native/Text` are admitted; a selection naming the identity `quire/native` and a selection naming the identity `quire/unit` each refuse `invalid_model_binding`/`malformed-declaration` at the selection row before its digest domain or bytes are read, and build no declaration. | Test (TC-234) |
+| FR-154-AC-20 | A field `created_at` of an owner `O` with identity `ix://test/orders/O/created_at`, an operation `reset_all` with identity `.../O/reset_all` and its parameter `created_at` with identity `.../O/reset_all/created_at` are admitted, each keyed by that verbatim identity; the same field with identity `.../O/created-at` refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.fields[j].name`, the same operation with identity `.../O/reset-all` at `TypeDefinition.operations[k].name`, and the same parameter with identity `.../O/reset_all/created-at` at `TypeDefinition.operations[k].params[s].name`; a field `created_at` beside a state `created_at` of one state machine, both with identity `.../O/created_at`, refuses once, `invalid_model_binding`/`conflicting-binding`, at `TypeDefinition.states[i]`; the constrained-field alias of `created_at` on `O` stays `ix://test/orders/OCreated-at`. | Test (TC-235) |
 
 ## Dependencies
 
