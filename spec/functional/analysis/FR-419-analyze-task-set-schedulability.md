@@ -76,7 +76,14 @@ Each task's worst-case response time is the least fixpoint of
 `C_i + B_i` in exact rationals; the response time is `R + J_i`. The iteration
 stops at the fixpoint or as soon as `R + J_i` exceeds `D_i`. A deadline
 beyond the period uses the busy-period extension over the jobs of the level-`i`
-busy period.
+busy period: job `q` of that busy period (0 when `D_i <= T_i` and the busy
+period ends with the first job) iterates
+`R = (q + 1) · C_i + B_i + Σ_{j ∈ hp(i)} ⌈(R + J_j) / T_j⌉ · C_j` from
+`(q + 1) · C_i + B_i`, and its response time is `R + J_i − q · T_i`. A miss
+is the task and the job `q` whose iterates reach a response time above `D_i`,
+and, for `q > 0`, every earlier job keeps the busy period open. The iterates
+rise monotonically to the fixpoint, so the first iterate above `D_i` proves
+the miss, with jitter, blocking and `D_i > T_i` included.
 
 ### EDF
 
@@ -98,7 +105,7 @@ fails settles `inconclusive`, `sufficient-test-failed`.
 | Outcome | FR-331 value | Evidence |
 | --- | --- | --- |
 | Schedulable, or response bound met | `proved`, basis `closed-scope`, proof basis `closed-form{analysis}` | Each task's fixpoint sequence (fixed priority, AMC); the busy-period length and QPA's check sequence (EDF) |
-| Miss | `refuted`, basis `decisive-counterexample` | Fixed priority: the task and its scheduling points up to `D_i`, at each of which the demand exceeds the point; EDF: a `t` with `dbf(t) > t`, or the utilization above 1 |
+| Miss | `refuted`, basis `decisive-counterexample` | Fixed priority: the task, the job `q` of its level-`i` busy period that misses, and that job's recurrence iterates up to the first whose response time exceeds `D_i`; EDF: a `t` with `dbf(t) > t`, or the utilization above 1 |
 | AMC high-mode criterion fails | `inconclusive` | `sufficient-test-failed` |
 
 `check_closed_form` recomputes the evidence in exact rationals before the
@@ -119,11 +126,12 @@ the other class settles `unsupported`, `stopwatch-required`.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-419-AC-1 | Task set `Ctl` with `(C, T = D)` of `(1, 4)`, `(2, 6)`, `(5, 12)` ms under fixed priority settles `proved` with response times `1`, `3`, `12` and the third task's fixpoint sequence `5, 9, 12, 12`; under EDF it settles `proved` at utilization exactly 1. | Test (TC-372) |
-| FR-419-AC-2 | With `C = 6` for the third task, fixed priority settles `refuted` with scheduling points 4, 6, 8, 12 and demands 9, 10, 12, 13; EDF settles `refuted` with utilization `13/12`. | Test (TC-372) |
+| FR-419-AC-2 | With `C = 6` for the third task, fixed priority settles `refuted` with the third task, job 0 and iterates 6, 10, 13 (response time 13 above 12); EDF settles `refuted` with utilization `13/12`. | Test (TC-372) |
 | FR-419-AC-3 | An AMC set whose high-mode criterion fails settles `inconclusive`, `sufficient-test-failed`; a low-mode miss settles `refuted`. | Test (TC-372) |
 | FR-419-AC-4 | `check_closed_form` recomputes the evidence before settlement, and altered evidence settles `inconclusive`, `replay-parity`. | Test (TC-372) |
 | FR-419-AC-5 | Changing one stated premise changes the obligation identity; an invalid task set refuses `invalid_timed_model`/`invalid-task-set` naming the task; a `fixed_priority` or `amc` claim over a task with no `priority` refuses `invalid_timed_model`/`invalid-task-set` naming that task, and an `edf` claim over the same set is admitted. | Test (TC-372) |
 | FR-419-AC-6 | A task automaton in the decidable class lowers to a TT-1 claim; one needing stopwatches settles `unsupported`, `stopwatch-required`. | Test (TC-372) |
+| FR-419-AC-7 | Tasks `a` (`C = 1`, `T = D = 4`, priority 1) and `b` (`C = 2`, `T = D = 6`, jitter 1, blocking 3, priority 2) under fixed priority settle `refuted` with task `b`, job 0 and iterates 5, 7 (response time `7 + 1 = 8` above 6). | Test (TC-372) |
 
 ## Dependencies
 
