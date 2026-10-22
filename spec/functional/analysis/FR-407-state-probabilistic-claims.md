@@ -21,6 +21,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-411
     type: references
+  - target: ix://agent-ix/quire-specification/FR-414
+    type: references
 ---
 
 # FR-407: State probabilistic claims over events and measures
@@ -48,13 +50,27 @@ refusal.
 
 ### Subject, kind and scheduler clause
 
-A probabilistic claim's subject is a model subject. Its FR-290 kind is
-`probabilistic-satisfaction`. Its scheduler clause is exactly one of
+A probabilistic claim's subject is a model subject. A claim whose subject is
+a trace subject refuses with `invalid_probabilistic_model`/`trace-subject`,
+and the diagnostic names window aggregates
+([FR-414](../temporal/FR-414-evaluate-window-aggregates.md)) as the form for
+statistics observed over a trace. Its FR-290 kind is
+`probabilistic-satisfaction`. The profile its `using` alias selects is a
+temporal profile ([FR-090](../temporal/FR-090-select-temporal-profile-and-clock.md));
+any other profile refuses with
+`invalid_probabilistic_model`/`not-temporal-profile`, naming the profile. An
+`over (p: T)` parameter ranges over the objects of the subject's universes
+(FR-406), so `T` is an object type that some population of the subject's
+model admits; a scalar type, or an object type no population admits, has no
+instance and refuses with `invalid_probabilistic_model`/`over-not-object-type`
+at the parameter's name. Its scheduler clause is exactly one of
 `under W` for a declared workload `W` of the subject's model, or
 `under every scheduler`, optionally with a fairness set of weak and strong
-constraints ([FR-406](FR-406-interpret-probabilistic-models.md)). A fairness
-set on a claim under a workload refuses with
-`invalid_probabilistic_model`/`fairness-under-workload`.
+constraints ([FR-406](FR-406-interpret-probabilistic-models.md)). The shared
+grammar's `under W` takes no fairness items, so source text that writes
+`under W fair weak Op` refuses `invalid_syntax`/`unexpected-token` at the
+first `fair`; no other input carries a workload together with a fairness
+set.
 A clause naming a workload of another model refuses with
 `invalid_probabilistic_model`/`foreign-workload`.
 
@@ -72,6 +88,36 @@ decides. It is one of:
   its time horizon;
 - a comparison `M <= c` or `M >= c` of a bounded measure `M` with a threshold
   `c` of `M`'s type.
+
+A formula event whose operators are not all interval operators with an
+interval bounded above, or whose profile is neither a bounded profile nor the
+timed profile, refuses with
+`invalid_probabilistic_model`/`unbounded-event`, and the diagnostic states
+that a probabilistic event needs a finite window. A bounded-window formula
+under the timed profile is an admitted event; a strict timed interval is
+admitted by the frontend and settles `unsupported`,
+`strict-clock-constraint` ([FR-421](../temporal/FR-421-check-probabilistic-timed-claims-exactly.md)).
+An interval-less operator under a profile other than the infinite-trace
+profile never reaches this check: the temporal frontend refuses it first with
+`unsupported_construct` ([FR-048](../foundation/FR-048-bind-native-temporal-syntax.md),
+FR-048-AC-9). The one exception to `unbounded-event` for the infinite-trace profile is the
+reachability forms of the forms table: under the infinite-trace profile an
+event whose root is one `eventually`, `until` or `always` with no interval is
+read as that form, and every other event under that profile, such as
+`eventually[0, 5] holds(P)`, refuses `unbounded-event`. In those reachability
+forms each operand is a `holds(P)` state predicate; an operand that is a
+temporal operator (`eventually eventually holds(P)`) or a constant
+(`eventually true`) refuses with
+`invalid_probabilistic_model`/`not-state-predicate` at the operand.
+
+The threshold `c` of a comparison over a fraction measure is a rational
+strictly between 0 and 1. A dimensionless threshold stands in an `expr`
+position of the shared grammar, so it is written `rational(n, d)` or
+`decimal(n, s)`, never a bare decimal literal. A threshold of `0`, `1`, above
+1 or below 0 refuses with
+`invalid_probabilistic_model`/`fraction-bound-out-of-range`, naming the
+bound; a bound on a fraction inside an event is no probability threshold, so
+the refusal is never `qualitative-threshold`.
 
 ### Bounded measures
 
@@ -101,7 +147,7 @@ A window that reaches a terminal state continues on its stutter steps.
 | Form | Holds when, for every initial state and binding |
 | --- | --- |
 | `probability >= θ [E]`, `probability <= θ [E]` | The probability of `E` meets the bound. |
-| `quantile q of M <= c`, `quantile q of M >= c`, with `M` an accumulate, steps or elapsed measure | `Pr(M <= c | activated) >= q`, respectively `Pr(M < c | activated) < q`, with a strict `<`. The `q`-quantile of `M` is `inf {x : Pr(M <= x) >= q}`. It is at most `c` exactly when `Pr(M <= c) >= q`, since a distribution function is right-continuous. It is at least `c` exactly when `Pr(M <= x) < q` for every `x < c`; for a measure with finitely many values that is `Pr(M < c) < q`, and equality `Pr(M < c) = q` makes the claim false. A censored behaviour exceeds every finite threshold. |
+| `quantile q of M <= c`, `quantile q of M >= c`, with `M` an accumulate, steps or elapsed measure; a quantile over a fraction measure refuses with `invalid_probabilistic_model`/`quantile-over-fraction` | `Pr(M <= c | activated) >= q`, respectively `Pr(M < c | activated) < q`, with a strict `<`. The `q`-quantile of `M` is `inf {x : Pr(M <= x) >= q}`. It is at most `c` exactly when `Pr(M <= c) >= q`, since a distribution function is right-continuous. It is at least `c` exactly when `Pr(M <= x) < q` for every `x < c`; for a measure with finitely many values that is `Pr(M < c) < q`, and equality `Pr(M < c) = q` makes the claim false. A censored behaviour exceeds every finite threshold. |
 | `mean of F >= θ`, `mean of F <= θ`, with `F` a fraction | The expectation of `F` meets the bound. A mean is admitted over a fraction measure only; a latency is stated as a quantile. |
 | `long_run_fraction holds(P) >= θ` or `<= θ`, optionally `weighted by R` or `weighted by delay` | The expectation of the limit, as `n → ∞`, of the fraction over `[0, n]` meets the bound. In a finite Markov chain the limit exists with probability 1 and is constant on each bottom strongly connected component. |
 | `probability >= θ` or `<= θ` over `[eventually holds(P)]`, `[holds(A) until holds(B)]` or `[always holds(P)]`, `P`, `A`, `B` state predicates, under the infinite-trace profile | The reachability or until probability meets the bound; `always holds(P)` reads `1 − Pr(eventually holds(not P))`. |
@@ -116,8 +162,8 @@ the reading in which a scheduler that never activates contributes 0.
 
 ### Thresholds and units
 
-A probability threshold, a quantile level and a fraction threshold `θ` are
-exact rationals with `0 < θ < 1`; the frontend refuses `0` or `1` with
+A probability threshold, a quantile level and a mean-of-fraction or long-run
+threshold `θ` are exact rationals with `0 < θ < 1`; the frontend refuses `0` or `1` with
 `invalid_probabilistic_model`/`qualitative-threshold`, naming the corresponding
 every-behaviour or possible-property form. A reward or time threshold has the
 reward's or time's dimension and converts exactly by FR-142. A bound with
@@ -132,7 +178,10 @@ probability of rejecting the claim when its bound holds; `beta` (`β`), the
 greatest probability of accepting it when its bound fails; and `indifference`
 (`ι`), with `0 < α < 1`, `0 < β < 1`, `0 < ι`, `θ − ι > 0` and `θ + ι < 1`.
 A claim states each of the three exactly once, or none; a set that omits or
-repeats one refuses with `invalid_probabilistic_model`/`partial-confidence`. Statistical evidence requires them
+repeats one refuses with `invalid_probabilistic_model`/`partial-confidence`.
+A stated parameter that breaks one of the five bounds refuses with
+`invalid_probabilistic_model`/`invalid-confidence`, naming the parameter.
+Statistical evidence requires them
 ([FR-408](FR-408-settle-probabilistic-claims-statistically.md)); exact evidence
 reads none of them ([FR-411](FR-411-settle-probabilistic-claims-exactly.md)). A
 claim that states none is checked with exact evidence only.
@@ -153,12 +202,18 @@ request settings and are outside the obligation identity.
 | FR-407-AC-1 | Each form in the forms table is admitted over a model subject with one scheduler clause and requires the FR-290 kind `probabilistic-satisfaction`; a workload of another model refuses `invalid_probabilistic_model`/`foreign-workload`. | Test (TC-353) |
 | FR-407-AC-2 | On a vector with activation at a known position, a not-activated behaviour is excluded from a quantile's conditional probability and a censored behaviour exceeds every finite threshold. | Test (TC-353) |
 | FR-407-AC-3 | `quantile q of M <= c` and `probability >= q [M <= c]` conditioned on activation give the same verdict on every vector; the `P95` distribution of TC-351 gives `Pr(M <= 5 ms) = 24233/25000`. | Test (TC-353) |
-| FR-407-AC-4 | A threshold of 0 or 1 refuses `invalid_probabilistic_model`/`qualitative-threshold`; a reward threshold in another unit of the same dimension converts exactly. | Test (TC-353) |
+| FR-407-AC-4 | A probability, quantile, mean-of-fraction or long-run threshold of 0 or 1 refuses `invalid_probabilistic_model`/`qualitative-threshold`; a reward threshold in another unit of the same dimension converts exactly. | Test (TC-353) |
 | FR-407-AC-5 | A claim with all three confidence parameters is admitted with them in its obligation identity; a partial set refuses `invalid_probabilistic_model`/`partial-confidence`; two confidences of one property are two obligation identities. | Test (TC-353) |
-| FR-407-AC-6 | Changing the workload or the fairness set changes the obligation identity, and a fairness set under a workload refuses `invalid_probabilistic_model`/`fairness-under-workload`; changing the evidence kind, method or a budget does not. | Test (TC-353) |
+| FR-407-AC-6 | Changing the workload or the fairness set changes the obligation identity. Changing the evidence kind, the method or a budget does not change it. | Test (TC-353) |
 | FR-407-AC-7 | A weighted long-run fraction and a `weighted by delay` fraction are admitted and evaluate as the weighted ratio. | Test (TC-353, TC-374) |
 | FR-407-AC-8 | `quantile q of M >= c` reduces to the strict bound `Pr(M < c | activated) < q`: with `M` equal to 1 or 3 with probability `1/2` each, `quantile 0.5 of M >= 3` is false (the quantile is 1, and `Pr(M < 3) = 1/2` is not below `1/2`), and `quantile 0.5 of M >= 1` is true. | Test (TC-353, TC-360) |
 | FR-407-AC-9 | A quantile claim, in either form, over a subject whose activation has probability 0 holds, under a workload and under every scheduler. | Test (TC-353) |
+| FR-407-AC-10 | A claim whose subject is a trace subject refuses `invalid_probabilistic_model`/`trace-subject` naming window aggregates; one whose `using` alias selects a profile that is not a temporal profile refuses `not-temporal-profile` naming it; and an `over` parameter of a scalar type, or of an object type no population of the model admits, refuses `over-not-object-type` at the parameter's name, while `over (m: Node)` over `Health` is admitted. | Test (TC-353) |
+| FR-407-AC-11 | Under the event-position false-extension profile, an event `always holds(n.healthy)` with no interval refuses `unsupported_construct` at the temporal frontend (FR-048-AC-9) and never reaches the claim check; under the timed profile a bounded-window event `eventually[0 ms, 4 ms] holds(P)` is admitted; under the infinite-trace profile `[eventually holds(P)]` is admitted as a reachability form while `[eventually[0, 5] holds(P)]` and `[eventually[2, *] holds(P)]` refuse `invalid_probabilistic_model`/`unbounded-event` and `[eventually eventually holds(P)]` and `[eventually true]` refuse `not-state-predicate` at the operand. | Test (TC-353) |
+| FR-407-AC-12 | `Monthly` with the event `fraction holds(v.up) over [0, 10000] >= rational(999, 1000)` is admitted; the same event with threshold `0`, `1` or `rational(3, 2)` refuses `invalid_probabilistic_model`/`fraction-bound-out-of-range` naming the bound, never `qualitative-threshold`. | Test (TC-353) |
+| FR-407-AC-13 | A `quantile 0.95 of (fraction holds(v.up) over [0, 10]) <= rational(1, 2)` claim refuses `invalid_probabilistic_model`/`quantile-over-fraction`. | Test (TC-353) |
+| FR-407-AC-14 | `NoFault` with `indifference 0.002` (`θ + ι = 1.001`) refuses `invalid_probabilistic_model`/`invalid-confidence` naming `indifference`, and with `alpha 1` it refuses `invalid-confidence` naming `alpha`. | Test (TC-353) |
+| FR-407-AC-15 | `LongRun` with its scheduler clause written `under Steady fair weak Server::tick` refuses `invalid_syntax`/`unexpected-token` at `fair`, and with it written `under every scheduler fair weak Server::tick` it is admitted with the fairness set in its obligation identity. | Test (TC-353) |
 
 ## Dependencies
 
