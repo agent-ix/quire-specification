@@ -47,3 +47,12 @@ Units examined:
 ## Verdict
 
 Rows exist for every AC, but none is runnable yet (major FND-001); one minor setup gap (FND-002).
+
+## Dispositions
+
+Round 1, reviewed at e75fc63294fd81b2a8d46e9d1c241a9018be3b29. Eight `tc_951_*` tests, each with a `#[trace("TC-951", "FR-469-AC-n")]` tag for AC-1 to AC-8, run X01 to X17 against the published `positive-extension-nodes.json`. The full reader path (V2 schema, `read_package_semantics`, extension joins) is used, and cargo `checked_package_v2` passes 125. The merge-conflict finding SR-14713 FND-003 applies to these vectors after the merge.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | e75fc63: fixture, both schemas and the TC-951 tests exist and pass on the head. |
+| FND-002 | fixed | e75fc63: X12 now declares a held, selected `policy` definition (production and node kind `policy`, clause `retain: retention`) and a held, selected `quota` extension carrying X16's `quota Q { limit: 5 }`, and names `retain`, `retention` and `quota` in the refusal. |

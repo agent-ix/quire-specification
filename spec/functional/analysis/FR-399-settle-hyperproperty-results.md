@@ -85,7 +85,7 @@ closed computation that replay repeats.
 | The caller cancelled the run | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `cancelled{source}` |
 | HP-4, or a clause over `behaviours` under a profile other than infinite-trace | `unsupported` | `unavailable` | `unsupported_projection`/`unsupported-requested-capability` |
 
-An item has one instance per key of the universe of each population overlapping its parameter's type (FR-361), a key listed by several populations being one instance, so an
+An item has one instance per admitted key (FR-361) of the populations overlapping its parameter's type, a key listed by several populations being one instance, so an
 item with no admitted key (FR-361) for any one of its parameters has no instance to
 evaluate ([FR-395](FR-395-analyze-hyperproperties-over-behaviours.md)). The
 analyzer SHALL settle it `inconclusive` with cause `no-instance` before it

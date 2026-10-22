@@ -46,3 +46,11 @@ Units examined:
 ## Verdict
 
 One minor EARS finding (compound statement).
+
+## Dispositions
+
+Round 1, reviewed at e75fc63294fd81b2a8d46e9d1c241a9018be3b29. FR-469 and TC-951 validate clean.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | e75fc63: the statement is split into a producer sentence and a reader sentence ("When a reader reads an `extension` node, the reader SHALL refuse ..."). |

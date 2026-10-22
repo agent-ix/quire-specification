@@ -47,3 +47,19 @@ Units examined:
 ## Verdict
 
 Not mergeable as is: one major finding (FND-001, spec versus published schema, fixture and test) and one minor (FND-002).
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | high | Major: head e75fc63 does not contain origin/main bb6d08a (main gained #338, #348, #339, #340 and #343 since the merge-base 8d59511), and a trial merge conflicts in `dependency-selection-vectors.json` and `fixtures/positive-all-families.json`. #348 (STD-93) changed both files, so the identities this PR recomputed (all-families `package_id` 14ce321a..., dependency-vector `package_id` 42d802da..., closure `test/a` 9cdb7621..., `test/leaf` 14ce321a...) are stale on the merged fixture. Merge or rebase onto main, recompute those identities on the merged all-families fixture, and rerun the gates. | proposals/checked-package-v2/fixtures/positive-all-families.json |
+| FND-004 | low | Minor: after merge, main's FR-322 `dependencies` member (added by #348) lists the node forms whose body artifact states its own `dependencies` list (FR-341, FR-342, FR-370, FR-375, FR-402, FR-440, FR-451, FR-464 to FR-466). FR-469 states the extension node's list ("exactly the unique digest-ascending targets of its clause references") but is not in that list or in its example table. Add FR-469 and an `extension`/`extension_form` row when resolving FND-003. | spec/objects/interfaces/FR-322-checked-package-artifact.md |
+
+## Dispositions
+
+Round 1, reviewed at e75fc63294fd81b2a8d46e9d1c241a9018be3b29 (fix commit e75fc63 on top of merge b35638c). Recomputation: an independent Python script (JCS by sorted-key compact JSON, SHA-256) reproduces every key and id on the head. The extension node key 7aa76a0f... is the digest of its `ExtensionFormNode` preimage. `positive-extension-nodes.json` `package_id` 92c0cf44... and `positive-all-families.json` `package_id` 14ce321a... match. The dependency-vector `package_id` 42d802da..., both closure vectors' `test/a` and `test/leaf` ids, and the `dependency_reference` package match. Each `identity_projection` equals its graph without occurrences. Both packages hold 14 tags and `required_features` `["quire.value.complete/v1"]`. Gates on the head: `quire validate` gives 134 (baseline 134). FR-322's diagnostics are the same as main's, and FR-469 and TC-951 are clean. cargo `checked_package_v2` gives 125 passed and `backend_provider_v1` gives 14 passed.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | e75fc63: schema.json `NodeBase`/`NodeProjection` enumerate `extension`, `ExtensionNode` binds form `extension_form`, `BodyBindingRules` binds `ExtensionFormBody` with exactly one `declaration` occurrence; preimage schema adds `ExtensionFormNode`; `positive-all-families.json` carries 14 tags; `positive-extension-nodes.json` exists; `REQUIRED_NODE_TAGS: [&str; 14]`. |
+| FND-002 | fixed | e75fc63: FR-469 "Carriage" property and FR-469-AC-8 (TC-951 X17). |
