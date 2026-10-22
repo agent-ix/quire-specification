@@ -150,6 +150,14 @@ distinct *admitted key*: a key that occurs in the universe of at least one
 population that overlaps `T` and that a member record of some initial state of
 the subject admits, which fixes the key's type up front. A key only an operation
 could create is not an instance; that is the stated limitation of this rule.
+The item's **excluded keys** are the universe keys of the populations that
+overlap `T` that no member record of any initial state admits, in instance
+order, a key in several overlapping universes being listed once. A verdict over the item covers its instances only: a `proved` item over
+a model whose operation creates an object under an excluded key has not
+checked that object, and a `refuted` item never names an excluded key. The
+excluded keys are a function of the subject the verdict carries (its
+universes and initial states, FR-363 "Scope"), so the verdict determines them
+without a further wire member.
 A population *overlaps* `T` when some member type of the population conforms to `T`, or `T`
 conforms to some member type of it. A population whose member types are
 subtypes of `T` only, and one whose member type is a supertype of `T`, each
@@ -247,7 +255,7 @@ unguarded read, whatever the property.
 | FR-361-AC-12 | The binding of `x` for the key `c`, listed by `all` (member type `Entity`) before `counters` (member type `Counter`), has `object_type` `Counter`, the most-specific type of `c`, and is equal under FR-204 to the reference to `c` in `allInstances<Counter>(counters)`; renaming `all` so that `counters` sorts first leaves the binding's bytes unchanged; an object of the subtype `SpecialCounter` held under `s` binds with `object_type` `SpecialCounter`; two members with one universe and identity and different types refuse `conflicting-identity` before any binding. | Test (TC-290) |
 | FR-361-AC-13 | The universe provision of population `counters` with list `[c, d]` is the RFC 8785 canonical array of its two keys in list order, each exactly `universe` and `identity`, whose `sha256-jcs` digest is the published `counters-c-d` digest; the list `[d, c]` gives a different document and digest; a key with a missing, extra (`object_type` included) or non-hex member is not a universe key. | Test (TC-290) |
 | FR-361-AC-14 | After the `requires-bound` classification, two member records with the universe and identity of `c` and different types, one in `all` as `Entity` and one in `counters` as `Counter`, in one initial state or in two initial states of the subject, refuse the item `invalid_runtime_input`/`conflicting-identity` before any instance is formed, as do two such records in one population; a population with no universe gives `requires-bound` first; one record per key with agreeing types in every initial state is admitted. | Test (TC-290) |
-| FR-361-AC-15 | The instance `e` (an `Entity` that is not a `Counter`) is bound to (`universe`, `Entity`, `e`) under `x: Reference<Counter>`, and an unguarded read through it is `absent-key`; after `drop` removes `d`, the instance `d` still carries `Counter` from its admitted record, every use of `x` other than the guard is `absent-key`, and a universe key that no member record of any initial state admits, including a key only an operation could create, is not an instance. | Test (TC-290) |
+| FR-361-AC-15 | The instance `e` (an `Entity` that is not a `Counter`) is bound to (`universe`, `Entity`, `e`) under `x: Reference<Counter>`, and an unguarded read through it is `absent-key`; after `drop` removes `d`, the instance `d` still carries `Counter` from its admitted record, every use of `x` other than the guard is `absent-key`, and a universe key that no member record of any initial state admits is not an instance; with `inc` disabled, `c` and `d` at value 0 and an operation `make` that creates a `Counter` with value 1 under such a key `z` of `counters`, `z` is still not an instance, the item's excluded keys are exactly [`z`], and `always holds(x.value = 0)` is checked for `c` and `d` only and settles `proved`, although `z`'s object has value 1 at a reachable position. | Test (TC-290) |
 
 ## Dependencies
 
