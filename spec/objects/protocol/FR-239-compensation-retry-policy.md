@@ -21,8 +21,9 @@ When compensation attempts are evaluated, the conformance evaluator SHALL refuse
 
 When a compensation template is checked, the checker SHALL admit as its attempt
 type only a record type or an event type and SHALL refuse every other type
-written after `attempts N of`. The source grammar admits any `type-ref` in that
-position, so the refusal belongs to the checker.
+written after `attempts N of`. Under the Complete-V1 profile (`quire.value.complete/v1`) the
+source grammar admits any `type-ref` in that position, so the refusal belongs to
+the checker.
 
 FR-058 adds that the evaluator evaluates "only the authored retry and recovery
 relations".
@@ -83,7 +84,7 @@ never repaired from key, timestamp, table or arrival order.
 | FR-239-AC-6 | A candidate beyond the maximum refuses before retention and leaves the previous count unchanged; repeating it neither increments the count nor changes the refusal. | Test (TC-058) |
 | FR-239-AC-7 | Only an exact authored predecessor/successor relation orders retries; missing observation/progress remains incomplete, while a missing, foreign, conflicting or ambiguous relation refuses. | Test (TC-058) |
 | FR-239-AC-8 | The checker admits a record type or an event type as the attempt type after `attempts N of` and refuses every other type with `invalid_model_binding`/`malformed-declaration` at the type, retaining the compensation, the member `attempts` and the type as written, and compares no retry binder with a refused type: `attempts 3 of M::RefundAttempt`, a record type, checks, while `attempts 3 of Set<M::Total>[0, 3]`, `attempts 2 of Integer` and `attempts 3 of M::Mode`, a variant type, are each refused once. | Test (TC-380) |
-| FR-239-AC-9 | The source grammar parses any `type-ref` after `attempts N of`, including `Set<M::Total>[0, 3]`, `Integer` and a model-owned name, with no diagnostic. | Test (TC-380) |
+| FR-239-AC-9 | Under the Complete-V1 profile (`quire.value.complete/v1`) the source grammar parses any `type-ref` after `attempts N of`, including `Set<M::Total>[0, 3]`, `Integer` and a model-owned name, with no diagnostic. | Test (TC-380) |
 
 ## Dependencies
 

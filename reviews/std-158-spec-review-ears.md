@@ -33,3 +33,9 @@ The FR-239 statement did not change. It is event-driven EARS: "When compensation
 ## Verdict
 
 One low finding. The wording describes only behaviour, with no changelog, ruling or review language.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, fix commit d06dfb4. FR-239-AC-8 now states the rule: "The checker admits a record type or an event type as the attempt type after `attempts N of` and refuses every other type with `invalid_model_binding`/`malformed-declaration` at the type". The forms remain as examples. The grammar half is split out into FR-239-AC-9, and TC-380 CP-11 cites both ACs. AC-8 still joins admission, refusal, retention and binder skipping in one sentence, but these are parts of one check-time rule, so this is accepted. |

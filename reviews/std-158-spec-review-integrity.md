@@ -41,3 +41,16 @@ Repo placement is correct: the EBNF (proposals/quire-v1/shared-grammar.md), FR-2
 ## Verdict
 
 Findings. The grammar placement and the AC's home need fixing. Otherwise the change is consistent: ids are unique, no ACs, rows or vectors are deleted, and no other statement in the repo (choreography-surface.md, FR-427, TC-948) contradicts the new text. The touched files add no `quire validate` failures: FR-239's three diagnostics are identical on origin/main, and TC-380 is clean. `cargo test --test checked_package_v2 --test backend_provider_v1` passes (117 + 14).
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, fix commit d06dfb4. The bounded section now has `attempt-type = type-name ;` (shared-grammar.md:199), and `compensation` uses `attempt-type`. The Complete-V1 section has `attempt-type  = type-ref ;` (shared-grammar.md:639). The paragraph moved there and reads "The attempt type after `attempts N of` is a `type-ref` here, replacing the bounded `attempt-type = type-name`". Both sections are free of undefined nonterminals: `type-name` is defined at line 113 and `type-ref` at line 310. This matches the `channel` pattern (lines 190 and 515). |
+| FND-002 | fixed | Round 1, fix commit d06dfb4. FR-239 gains the statement "When a compensation template is checked, the checker SHALL admit as its attempt type only a record type or an event type and SHALL refuse every other type written after `attempts N of`." So FR-239-AC-8 now traces to a statement of its FR. |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | low | FR-239-AC-9 says "The source grammar parses any `type-ref` after `attempts N of`, including `Set<M::Total>[0, 3]`, `Integer` and a model-owned name, with no diagnostic". The new FR-239 statement sentence says "The source grammar admits any `type-ref` in that position". Neither names the profile. After the FND-001 fix, the bounded grammar admits only `attempt-type = type-name` there, so `attempts 2 of Integer` and `Set<...>` do not parse under the bounded productions. The claim holds only when `quire.value.complete/v1` and the related complete facets are selected, which is the profile TC-380 CP-11 parses under. Fix: qualify AC-9 and the statement sentence with "under the Complete-V1 grammar", or "when the package selects `quire.value.complete/v1`". | spec/objects/protocol/FR-239-compensation-retry-policy.md:22-25, 86; proposals/quire-v1/shared-grammar.md:199, 639 |

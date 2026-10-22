@@ -37,3 +37,10 @@ One AC is new (FR-239-AC-8, Test (TC-380)). It has a TC row (TC-380 CP-11, which
 ## Verdict
 
 Coverage is complete: every new AC has a TC row and a trace edge, and there are no orphans. Two low findings concern how exactly the new row is stated.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1, fix commit d06dfb4. Each TC-380 CP-11 variant now writes `attempts 1 of T` and `retry (e: T, l: T) { false }`, with `T` being `Set<M::Total>[0, 3]`, `Integer` and `M::Mode` as written, which matches TC-1058 row 15c. FR-239-AC-8 also now states that the checker "compares no retry binder with a refused type", so the row's "no refusal at the `retry` binders" traces to an AC. |
+| FND-002 | fixed | Round 1, fix commit d06dfb4. The TC-380 Description now ends "and check that the attempt type written after `attempts N of` parses whatever its form and is admitted only as a record or event type." CP-11 cites both FR-239-AC-8 and FR-239-AC-9. |
