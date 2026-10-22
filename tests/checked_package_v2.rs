@@ -35,6 +35,8 @@ const POSITIVE_CLAUSE_OPERATIONS: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-clause-operations.json");
 const POSITIVE_CONTROL_OPERATIONS: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-control-operations.json");
+const POSITIVE_EXTENSION_NODES: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-extension-nodes.json");
 const POSITIVE_UNION_NODES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-union-nodes.json");
 const POSITIVE_RECURSIVE_RECORDS: &str =
@@ -44,7 +46,7 @@ const MODEL_MEMBER_TYPE_VECTORS: &str =
 const ADVERSE: &str = include_str!("../proposals/checked-package-v2/fixtures/adverse.json");
 const DEPENDENCY_SELECTION_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/dependency-selection-vectors.json");
-const REQUIRED_NODE_TAGS: [&str; 13] = [
+const REQUIRED_NODE_TAGS: [&str; 14] = [
     "scalar_type",
     "composite_type",
     "bounded_domain",
@@ -58,6 +60,7 @@ const REQUIRED_NODE_TAGS: [&str; 13] = [
     "protocol",
     "claim",
     "correspondence",
+    "extension",
 ];
 
 fn parsed_fixture(bytes: &str) -> Value {
@@ -3041,7 +3044,7 @@ fn node_declares(node: &Value) -> bool {
     let declarable = match node["node_tag"].as_str() {
         Some(
             "scalar_type" | "composite_type" | "bounded_domain" | "function" | "model" | "protocol"
-            | "claim",
+            | "claim" | "extension",
         ) => true,
         Some("value") => node["semantic_form"] != "enum_value",
         _ => false,
@@ -7805,7 +7808,7 @@ fn tc_233_operation_and_declaration_causes_pair_with_one_catalogued_code() {
     }
 }
 
-fn published_v2_packages() -> [(&'static str, Value); 6] {
+fn published_v2_packages() -> [(&'static str, Value); 7] {
     let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
     modelize_legacy_record_reference(&mut operation);
     [
@@ -7826,6 +7829,10 @@ fn published_v2_packages() -> [(&'static str, Value); 6] {
         (
             "recursive-records",
             parsed_fixture(POSITIVE_RECURSIVE_RECORDS),
+        ),
+        (
+            "extension-nodes",
+            parsed_fixture(POSITIVE_EXTENSION_NODES),
         ),
     ]
 }
@@ -10106,7 +10113,8 @@ fn is_member_term(term: &Value, preimage: bool) -> bool {
 }
 
 /// A Body term: a Leaf, an `application` of Members, an `aggregate` of
-/// Members, or a `frame` body. No production names itself or a higher
+/// Members, a `frame` body or an `extension_form` body whose clause values
+/// are each a `reference`. No production names itself or a higher
 /// stratum, so the walk is a fixed number of levels deep.
 fn is_body_term(term: &Value, preimage: bool) -> bool {
     let all_members = |items: &Value| {
@@ -10118,6 +10126,11 @@ fn is_body_term(term: &Value, preimage: bool) -> bool {
         Some("application") => all_members(&term["arguments"]),
         Some("aggregate") => all_members(&term["members"]),
         Some("frame" | "abstraction_relation") => true,
+        Some("extension_form") => term["clauses"].as_array().is_some_and(|clauses| {
+            clauses
+                .iter()
+                .all(|clause| clause["term"] == "binding" && clause["value"]["term"] == "reference")
+        }),
         _ => is_leaf_term(term, preimage),
     }
 }
@@ -11498,6 +11511,7 @@ fn tc_233_positive_fixtures_carry_derived_structural_keys() {
             POSITIVE_OPERATION_IDENTITIES,
         ),
         ("positive-union-nodes", POSITIVE_UNION_NODES),
+        ("positive-extension-nodes", POSITIVE_EXTENSION_NODES),
         ("positive-recursive-records", POSITIVE_RECURSIVE_RECORDS),
     ] {
         let package = parsed_fixture(text);
@@ -12339,7 +12353,7 @@ const POSITIVE_TWO_OWNERS_B: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-two-owners-b.json");
 
 /// Every published positive fixture, by name.
-fn positive_fixtures() -> [(&'static str, Value); 9] {
+fn positive_fixtures() -> [(&'static str, Value); 10] {
     let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
     modelize_legacy_record_reference(&mut operation);
     [
@@ -12364,6 +12378,10 @@ fn positive_fixtures() -> [(&'static str, Value); 9] {
         (
             "positive-recursive-records",
             parsed_fixture(POSITIVE_RECURSIVE_RECORDS),
+        ),
+        (
+            "positive-extension-nodes",
+            parsed_fixture(POSITIVE_EXTENSION_NODES),
         ),
         (
             "positive-two-owners-a",
@@ -14794,4 +14812,983 @@ fn tc_233_a_reader_admits_the_reference_form_of_an_integer_literal_operand() {
         "the reference form has a different node identity"
     );
     assert_ne!(references["package_id"], parsed_fixture(POSITIVE_TWO_OWNERS_A)["package_id"]);
+}
+
+// ---------------------------------------------------------------------------
+// FR-469 / TC-951: the `extension`/`extension_form` checked-package node.
+// ---------------------------------------------------------------------------
+
+/// An extension definition the reader holds: the node entries of its
+/// `typed_node_schema` as (node kind, clause (name, type spelling) list).
+struct HeldExtension {
+    definition: Value,
+    nodes: Vec<(String, Vec<(String, String)>)>,
+}
+
+fn extension_definition(identity: &str) -> Value {
+    json!({"authority": "example", "identity": identity})
+}
+
+fn held_extension(identity: &str, node_kind: &str, clauses: &[(&str, &str)]) -> HeldExtension {
+    HeldExtension {
+        definition: extension_definition(identity),
+        nodes: vec![(
+            node_kind.to_owned(),
+            clauses
+                .iter()
+                .map(|(name, spelling)| ((*name).to_owned(), (*spelling).to_owned()))
+                .collect(),
+        )],
+    }
+}
+
+fn held_retention() -> HeldExtension {
+    held_extension(
+        "retention",
+        "retention",
+        &[("subject", "Text"), ("days", "Int[1, 3650]")],
+    )
+}
+
+fn held_quota() -> HeldExtension {
+    held_extension("quota", "quota", &[("limit", "Int[1, 100]")])
+}
+
+fn held_policy() -> HeldExtension {
+    held_extension("policy", "policy", &[("retain", "retention")])
+}
+
+/// A refusal of the extension reader: code, cause, the pointer FR-469 names
+/// (relative to the document), the `locus` node id when the code carries one,
+/// and the names the refusal states.
+#[derive(Debug, PartialEq)]
+struct ExtensionRefusal {
+    code: &'static str,
+    cause: Option<&'static str>,
+    pointer: String,
+    locus: Option<Value>,
+    naming: Vec<String>,
+}
+
+fn extension_refusal(
+    code: &'static str,
+    cause: Option<&'static str>,
+    pointer: impl Into<String>,
+) -> ExtensionRefusal {
+    ExtensionRefusal {
+        code,
+        cause,
+        pointer: pointer.into(),
+        locus: None,
+        naming: Vec::new(),
+    }
+}
+
+/// The type a clause value has, spelled as `typed_node_schema` spells a
+/// clause type: `Text`, `Int[lo, hi]`, or an extension node's node kind.
+fn clause_value_type(nodes: &[Value], subnode: &Value) -> String {
+    if subnode["node_tag"] == "extension" {
+        return subnode["body"]["node_kind"]
+            .as_str()
+            .expect("extension node kind")
+            .to_owned();
+    }
+    let Some(typed) = subnode["semantic_type"]["digest"]
+        .as_str()
+        .and_then(|digest| node_by_digest(nodes, digest))
+    else {
+        return "unknown".to_owned();
+    };
+    match (typed["node_tag"].as_str(), typed["semantic_form"].as_str()) {
+        (Some("scalar_type"), Some("text")) => "Text".to_owned(),
+        (Some("scalar_type"), Some("integer")) => "Int".to_owned(),
+        (Some("bounded_domain"), Some("integer_range")) => {
+            let bound = |name: &str| {
+                typed["body"]["members"]
+                    .as_array()
+                    .and_then(|members| members.iter().find(|member| member["name"] == name))
+                    .and_then(|member| member["value"]["value"].as_str())
+                    .unwrap_or("?")
+                    .to_owned()
+            };
+            format!("Int[{}, {}]", bound("min"), bound("max"))
+        }
+        (_, Some(form)) => form.to_owned(),
+        _ => "unknown".to_owned(),
+    }
+}
+
+/// FR-469's reader joins over every `extension` node, ascending by node-id
+/// digest, reporting the first failing join of the first failing node.
+fn extension_joins(package: &Value, held: &[HeldExtension]) -> Result<(), ExtensionRefusal> {
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("package nodes are an array");
+    let mut extensions = nodes
+        .iter()
+        .enumerate()
+        .filter(|(_, node)| node["node_tag"] == "extension")
+        .collect::<Vec<_>>();
+    extensions.sort_by_key(|(_, node)| node["node_id"]["digest"].as_str().unwrap_or_default());
+    for (index, node) in extensions {
+        let base = format!("/semantic_graph/nodes/{index}/body");
+        let body = &node["body"];
+        let selected = package["lock"]["definition_selections"]
+            .as_array()
+            .is_some_and(|selections| selections.contains(&body["definition"]));
+        if !selected {
+            return Err(extension_refusal(
+                "missing_declaration",
+                Some("missing-selection"),
+                format!("{base}/definition"),
+            ));
+        }
+        let Some(definition) = held
+            .iter()
+            .find(|candidate| candidate.definition == body["definition"])
+        else {
+            return Err(ExtensionRefusal {
+                locus: Some(node["node_id"].clone()),
+                ..extension_refusal(
+                    "unknown_required_capability",
+                    None,
+                    format!("{base}/definition"),
+                )
+            });
+        };
+        let Some((_, entry)) = definition
+            .nodes
+            .iter()
+            .find(|(kind, _)| body["node_kind"].as_str() == Some(kind.as_str()))
+        else {
+            return Err(extension_refusal(
+                "missing_declaration",
+                Some("missing-name"),
+                format!("{base}/node_kind"),
+            ));
+        };
+        let clauses = body["clauses"].as_array().expect("clauses are an array");
+        for (position, clause) in clauses.iter().enumerate() {
+            if entry.get(position).map(|(name, _)| name.as_str()) != clause["name"].as_str() {
+                return Err(extension_refusal(
+                    "invalid_package",
+                    Some("invalid-value"),
+                    format!("{base}/clauses/{position}"),
+                ));
+            }
+        }
+        if clauses.len() < entry.len() {
+            return Err(ExtensionRefusal {
+                naming: vec![entry[clauses.len()].0.clone()],
+                ..extension_refusal(
+                    "invalid_package",
+                    Some("missing-member"),
+                    format!("{base}/clauses"),
+                )
+            });
+        }
+        for (position, clause) in clauses.iter().enumerate() {
+            let pointer = format!("{base}/clauses/{position}/value");
+            let Some(subnode) = clause["value"]["target"]["digest"]
+                .as_str()
+                .and_then(|digest| node_by_digest(nodes, digest))
+            else {
+                return Err(extension_refusal(
+                    "missing_declaration",
+                    Some("missing-name"),
+                    pointer,
+                ));
+            };
+            let (name, expected) = &entry[position];
+            let actual = clause_value_type(nodes, subnode);
+            if &actual != expected {
+                return Err(ExtensionRefusal {
+                    naming: vec![name.clone(), expected.clone(), actual],
+                    ..extension_refusal("ill_typed", Some("type-mismatch"), pointer)
+                });
+            }
+        }
+    }
+    Ok(())
+}
+
+/// The strict V2 reader over a package and the extension definitions it
+/// holds: the closed schema, the graph-shape check of an extension node's
+/// `dependencies`, the key and declaration stages, then FR-469's joins.
+fn read_extension_package(
+    package: &Value,
+    held: &[HeldExtension],
+) -> Result<(), ExtensionRefusal> {
+    let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    if !v2.is_valid(package) {
+        return Err(extension_refusal("malformed_wire", None, ""));
+    }
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("package nodes are an array");
+    for node in nodes.iter().filter(|node| node["node_tag"] == "extension") {
+        let mut targets = body_targets(&node["body"]);
+        targets.sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+        targets.dedup();
+        if node["dependencies"] != json!(targets) {
+            return Err(ExtensionRefusal {
+                locus: Some(node["node_id"].clone()),
+                ..extension_refusal("invalid_semantic_graph", None, "/dependencies")
+            });
+        }
+    }
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    match read_package_semantics(package, &catalog) {
+        Ok(()) => {}
+        Err(ReadRefusal::StaleNodeKey(node)) => {
+            return Err(ExtensionRefusal {
+                locus: Some(node),
+                ..extension_refusal("invalid_package", Some("stale-node-key"), "")
+            });
+        }
+        Err(ReadRefusal::Declaration(DeclarationRefusal::AmbiguousName, node)) => {
+            return Err(ExtensionRefusal {
+                locus: Some(node),
+                ..extension_refusal("ambiguous_declaration", Some("ambiguous-name"), "")
+            });
+        }
+        Err(other) => panic!("unexpected refusal before the extension joins: {other:?}"),
+    }
+    extension_joins(package, held)
+}
+
+fn extension_package() -> Value {
+    parsed_fixture(POSITIVE_EXTENSION_NODES)
+}
+
+fn extension_node_index(package: &Value, name: &str) -> usize {
+    package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("package nodes are an array")
+        .iter()
+        .position(|node| {
+            node["node_tag"] == "extension" && node["declaration"]["qualified_name"] == json!([name])
+        })
+        .unwrap_or_else(|| panic!("extension node {name}"))
+}
+
+/// The node id of the one `extension` node of a package with exactly one.
+fn only_form_node_id(package: &Value) -> Value {
+    let forms = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("package nodes are an array")
+        .iter()
+        .filter(|node| node["node_tag"] == "extension")
+        .collect::<Vec<_>>();
+    assert_eq!(forms.len(), 1, "exactly one extension node");
+    forms[0]["node_id"].clone()
+}
+
+/// Apply `mutate` to the `Audit` form node, then rekey every node whose key
+/// is no longer its preimage digest and rebuild the identity preimage.
+fn mutate_audit_form(package: &mut Value, mutate: impl FnOnce(&mut Value)) {
+    let index = extension_node_index(package, "Audit");
+    mutate(&mut package["semantic_graph"]["nodes"][index]);
+    let mut projected = package["semantic_graph"]["nodes"][index].clone();
+    projected
+        .as_object_mut()
+        .expect("node is an object")
+        .remove("occurrences");
+    package["identity_preimage"]["identity_projection"][index] = projected;
+    rekey_stale_nodes(package);
+}
+
+fn node_by_shape<'a>(package: &'a Value, tag: &str, form: &str) -> &'a Value {
+    package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("package nodes are an array")
+        .iter()
+        .find(|node| node["node_tag"] == tag && node["semantic_form"] == form)
+        .unwrap_or_else(|| panic!("a {tag}/{form} node"))
+}
+
+/// Every `target` of a `reference` term in a body.
+fn body_targets(body: &Value) -> Vec<Value> {
+    match body {
+        Value::Object(object) if object.get("term") == Some(&json!("reference")) => {
+            vec![object["target"].clone()]
+        }
+        Value::Object(object) => object.values().flat_map(body_targets).collect(),
+        Value::Array(items) => items.iter().flat_map(body_targets).collect(),
+        _ => Vec::new(),
+    }
+}
+
+/// Append a structural node with the given `semantic_type` (`None` for a
+/// self-typed node), declaration, one occurrence of `role`, and a one-byte
+/// `source_map` region at `start`; return its node id.
+fn push_structural_node(
+    package: &mut Value,
+    (tag, form): (&str, &str),
+    semantic_type: Option<Value>,
+    body: Value,
+    declaration: Option<Value>,
+    (role, start): (&str, u64),
+) -> Value {
+    let placeholder = json!({"domain": "quire.checked-semantic-node/v1", "digest": "0".repeat(64)});
+    let mut dependencies = body_targets(&body);
+    dependencies.sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+    dependencies.dedup();
+    let mut node = json!({
+        "node_id": placeholder,
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": tag,
+        "semantic_form": form,
+        "semantic_type": semantic_type.unwrap_or_else(|| placeholder.clone()),
+        "dependencies": dependencies,
+        "occurrences": [{"role": role, "ordinal": 0}],
+        "body": body,
+    });
+    if let Some(declaration) = declaration {
+        node["declaration"] = declaration;
+        node["owner"] = json!({"kind": "source", "authority": "agent-ix", "identity": "example"});
+    }
+    append_rekeyed_structural_node(package, node);
+    let id = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("package nodes are an array")
+        .last()
+        .expect("appended node")["node_id"]
+        .clone();
+    let source = package["lock"]["sources"][0].clone();
+    package["source_map"]
+        .as_array_mut()
+        .expect("source map is an array")
+        .push(json!({
+            "node_id": id,
+            "role": role,
+            "ordinal": 0,
+            "regions": [{"source": source, "start": start, "end": start + 1}],
+        }));
+    id
+}
+
+fn literal_node(
+    package: &mut Value,
+    semantic_type: &Value,
+    (value, kind): (&str, &str),
+    start: u64,
+) -> Value {
+    let literal_type = node_by_shape(
+        package,
+        "scalar_type",
+        if kind == "text" { "text" } else { "integer" },
+    )["node_id"]
+        .clone();
+    push_structural_node(
+        package,
+        ("value", "literal"),
+        Some(semantic_type.clone()),
+        json!({"term": "literal", "type": literal_type, "value": value, "value_kind": kind}),
+        None,
+        ("expression", start),
+    )
+}
+
+fn range_node(package: &mut Value, (low, high): (&str, &str), start: u64) -> Value {
+    let integer = node_by_shape(package, "scalar_type", "integer")["node_id"].clone();
+    let bound = |name: &str, value: &str| {
+        json!({"term": "binding", "name": name, "value": {
+            "term": "literal", "type": integer, "value": value, "value_kind": "integer"}})
+    };
+    push_structural_node(
+        package,
+        ("bounded_domain", "integer_range"),
+        Some(integer.clone()),
+        json!({"term": "aggregate", "members": [bound("min", low), bound("max", high)]}),
+        None,
+        ("type", start),
+    )
+}
+
+/// Append a selected extension form node and select its definition.
+fn push_extension_form(
+    package: &mut Value,
+    (definition, node_kind, name): (&Value, &str, &str),
+    clauses: &[(&str, &Value)],
+    start: u64,
+) -> Value {
+    let selections = package["lock"]["definition_selections"]
+        .as_array_mut()
+        .expect("definition selections are an array");
+    if !selections.contains(definition) {
+        selections.push(definition.clone());
+        selections.sort_by_key(|selection| selection["identity"].as_str().map(str::to_owned));
+    }
+    let bindings = clauses
+        .iter()
+        .map(|(clause, target)| {
+            json!({"term": "binding", "name": clause, "value": {"term": "reference", "target": target}})
+        })
+        .collect::<Vec<_>>();
+    push_structural_node(
+        package,
+        ("extension", "extension_form"),
+        None,
+        json!({
+            "term": "extension_form",
+            "definition": definition,
+            "node_kind": node_kind,
+            "clauses": bindings,
+        }),
+        Some(json!({"qualified_name": [name]})),
+        ("declaration", start),
+    )
+}
+
+/// The package with a held, selected `quota` form `Q { limit: 5 }` beside
+/// `Audit`, and the `Q` node id.
+fn extension_package_with_quota() -> (Value, Value) {
+    let mut package = extension_package();
+    let range = range_node(&mut package, ("1", "100"), 2000);
+    let limit = literal_node(&mut package, &range, ("5", "integer"), 2010);
+    let quota = push_extension_form(
+        &mut package,
+        (&extension_definition("quota"), "quota", "Q"),
+        &[("limit", &limit)],
+        2020,
+    );
+    (package, quota)
+}
+
+const AUDIT_FORM: &str = r#"retention Audit { subject: "audit", days: 30 }"#;
+
+#[trace("TC-951", "FR-469-AC-1")]
+#[test]
+fn tc_951_the_fixture_form_is_one_extension_node_the_full_reader_admits() {
+    let package = extension_package();
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("package nodes");
+    assert_eq!(
+        read_extension_package(&package, &[held_retention()]),
+        Ok(()),
+        "X01: the full reader admits the package"
+    );
+    let form = &nodes[extension_node_index(&package, "Audit")];
+    only_form_node_id(&package);
+    assert_eq!(form["semantic_form"], "extension_form");
+    assert_eq!(form["declaration"], json!({"qualified_name": ["Audit"]}));
+    assert_eq!(form["owner"]["kind"], "source");
+    assert_eq!(form["semantic_type"], form["node_id"], "its own type");
+    assert!(
+        form.get("recursion_group").is_none() && form.get("nominal_identity_preimage").is_none()
+    );
+    assert_eq!(form["body"]["term"], "extension_form");
+    assert_eq!(form["body"]["definition"], extension_definition("retention"));
+    assert_eq!(form["body"]["node_kind"], "retention");
+    let clauses = form["body"]["clauses"].as_array().expect("clauses");
+    let names = clauses
+        .iter()
+        .map(|clause| clause["name"].as_str().expect("clause name"))
+        .collect::<Vec<_>>();
+    assert_eq!(names, ["subject", "days"], "clause order of the production");
+    let types = clauses
+        .iter()
+        .map(|clause| {
+            assert_eq!(clause["term"], "binding");
+            assert_eq!(clause["value"]["term"], "reference");
+            let target = node_by_digest(
+                nodes,
+                clause["value"]["target"]["digest"]
+                    .as_str()
+                    .expect("clause target digest"),
+            )
+            .expect("every clause value is its own node");
+            clause_value_type(nodes, target)
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(types, ["Text", "Int[1, 3650]"]);
+    let mut targets = body_targets(&form["body"]);
+    targets.sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+    assert_eq!(
+        form["dependencies"],
+        json!(targets),
+        "digest-ascending clause targets"
+    );
+    assert_eq!(
+        form["occurrences"],
+        json!([{"role": "declaration", "ordinal": 0}])
+    );
+    let entries = package["source_map"]
+        .as_array()
+        .expect("source map")
+        .iter()
+        .filter(|entry| entry["node_id"] == form["node_id"])
+        .collect::<Vec<_>>();
+    assert_eq!(entries.len(), 1, "one source_map entry for the one occurrence");
+    let regions = entries[0]["regions"].as_array().expect("regions");
+    assert_eq!(regions.len(), 1, "exactly the one region of the whole form");
+    let span =
+        regions[0]["end"].as_u64().expect("end") - regions[0]["start"].as_u64().expect("start");
+    assert_eq!(span, AUDIT_FORM.len() as u64, "the region spans the whole form");
+}
+
+#[trace("TC-951", "FR-469-AC-2")]
+#[test]
+fn tc_951_the_node_key_binds_definition_kind_name_owner_and_clause_subnodes_not_the_span() {
+    let package = extension_package();
+    let index = extension_node_index(&package, "Audit");
+    let form = package["semantic_graph"]["nodes"][index].clone();
+    let preimage = structural_node_preimage(&form).expect("the form is a structural node");
+    assert_eq!(preimage["version"], "quire.structural-node/v1");
+    assert_eq!(preimage["semantic_type"], Value::Null);
+    assert_eq!(preimage["recursion"], Value::Null);
+    let preimage_schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
+        .expect("node preimage schema is valid");
+    preimage_schema
+        .validate(&preimage)
+        .expect("X02: the preimage is the closed ExtensionFormNode");
+    let mut stray = preimage.clone();
+    stray["extra"] = json!(true);
+    assert!(!preimage_schema.is_valid(&stray), "the preimage is closed");
+    assert_eq!(
+        form["node_id"]["digest"].as_str(),
+        Some(unqualified_jcs_sha256(&preimage).as_str()),
+        "X02: the recomputed key equals the retained key"
+    );
+
+    let held = [held_retention()];
+    assert_eq!(read_extension_package(&package, &held), Ok(()));
+    let changes: [(&str, Box<dyn Fn(&mut Value)>); 5] = [
+        (
+            "definition identity",
+            Box::new(|package| {
+                mutate_audit_form(package, |node| {
+                    node["body"]["definition"]["identity"] = json!("retention-v2");
+                });
+            }),
+        ),
+        (
+            "node kind",
+            Box::new(|package| {
+                mutate_audit_form(package, |node| node["body"]["node_kind"] = json!("retention-b"));
+            }),
+        ),
+        (
+            "declared name",
+            Box::new(|package| {
+                mutate_audit_form(package, |node| {
+                    node["declaration"]["qualified_name"] = json!(["Ledger"]);
+                });
+            }),
+        ),
+        (
+            "owner identity",
+            Box::new(|package| {
+                let other = json!({
+                    "authority": "agent-ix",
+                    "digest": "3333333333333333333333333333333333333333333333333333333333333333",
+                    "digest_domain": "quire.source.bytes/v1",
+                    "identity": "other",
+                });
+                package["lock"]["sources"]
+                    .as_array_mut()
+                    .expect("sources")
+                    .push(other.clone());
+                let id = only_form_node_id(package);
+                for entry in package["source_map"].as_array_mut().expect("source map") {
+                    if entry["node_id"] == id {
+                        entry["regions"][0]["source"] = other.clone();
+                    }
+                }
+                mutate_audit_form(package, |node| {
+                    node["owner"]["identity"] = json!("other");
+                });
+            }),
+        ),
+        (
+            "days subnode",
+            Box::new(|package| {
+                let days = package["semantic_graph"]["nodes"]
+                    .as_array()
+                    .expect("nodes")
+                    .iter()
+                    .position(|node| node["node_tag"] == "value" && node["body"]["value"] == "30")
+                    .expect("the days literal");
+                for prefix in ["/semantic_graph/nodes", "/identity_preimage/identity_projection"] {
+                    package
+                        .pointer_mut(&format!("{prefix}/{days}/body/value"))
+                        .map(|value| *value = json!("31"))
+                        .expect("the days literal value");
+                }
+                rekey_stale_nodes(package);
+            }),
+        ),
+    ];
+    for (what, change) in changes {
+        let mut changed = package.clone();
+        change(&mut changed);
+        assert_ne!(
+            only_form_node_id(&changed),
+            form["node_id"],
+            "X02: changing the {what} changes the node id"
+        );
+        assert_ne!(
+            changed["package_id"], package["package_id"],
+            "X02: changing the {what} changes package_id"
+        );
+        if what == "owner identity" {
+            assert_eq!(read_extension_package(&changed, &held), Ok(()));
+        }
+    }
+
+    // X03: only the source region moves.
+    let mut moved = package.clone();
+    for entry in moved["source_map"].as_array_mut().expect("source map") {
+        if entry["node_id"] == form["node_id"] {
+            for bound in ["start", "end"] {
+                entry["regions"][0][bound] =
+                    json!(entry["regions"][0][bound].as_u64().expect("bound") + 1);
+            }
+        }
+    }
+    assert_eq!(read_extension_package(&moved, &held), Ok(()), "X03");
+    assert_eq!(moved["package_id"], package["package_id"], "X03");
+    assert_eq!(only_form_node_id(&moved), form["node_id"], "X03");
+
+    // X04: the old key retained after a definition identity change.
+    let mut stale = package.clone();
+    replace_node_field_in_graph_and_projection(
+        &mut stale,
+        index,
+        "/body/definition/identity",
+        json!("retention-v2"),
+    );
+    stale["identity_preimage"] = derive_identity_preimage(&stale);
+    refresh_package_id(&mut stale);
+    assert_eq!(
+        read_extension_package(&stale, &held),
+        Err(ExtensionRefusal {
+            locus: Some(form["node_id"].clone()),
+            ..extension_refusal("invalid_package", Some("stale-node-key"), "")
+        }),
+        "X04"
+    );
+}
+
+#[trace("TC-951", "FR-469-AC-3")]
+#[test]
+fn tc_951_a_missing_definition_selection_or_unheld_definition_refuses_before_any_clause_check() {
+    let package = extension_package();
+    let index = extension_node_index(&package, "Audit");
+    let node_id = package["semantic_graph"]["nodes"][index]["node_id"].clone();
+    let pointer = format!("/semantic_graph/nodes/{index}/body/definition");
+    // X05
+    let before = package.clone();
+    assert_eq!(
+        read_extension_package(&package, &[]),
+        Err(ExtensionRefusal {
+            locus: Some(node_id),
+            ..extension_refusal("unknown_required_capability", None, pointer.clone())
+        })
+    );
+    assert_eq!(package, before, "the lock, source map and node are unchanged");
+    // X06
+    let mut unselected = package.clone();
+    unselected["lock"]["definition_selections"] = json!([]);
+    unselected["identity_preimage"] = derive_identity_preimage(&unselected);
+    refresh_package_id(&mut unselected);
+    for held in [vec![held_retention()], Vec::new()] {
+        assert_eq!(
+            read_extension_package(&unselected, &held),
+            Err(extension_refusal(
+                "missing_declaration",
+                Some("missing-selection"),
+                pointer.clone()
+            ))
+        );
+    }
+}
+
+#[trace("TC-951", "FR-469-AC-4")]
+#[test]
+fn tc_951_node_kind_and_clause_set_joins_refuse_at_the_offending_position() {
+    let held = [held_retention()];
+    let base = extension_package();
+    let index = extension_node_index(&base, "Audit");
+    let prefix = format!("/semantic_graph/nodes/{index}/body");
+    // X07
+    let mut kind = base.clone();
+    mutate_audit_form(&mut kind, |node| {
+        node["body"]["node_kind"] = json!("retentions");
+    });
+    assert_eq!(
+        read_extension_package(&kind, &held),
+        Err(extension_refusal(
+            "missing_declaration",
+            Some("missing-name"),
+            format!("{prefix}/node_kind")
+        ))
+    );
+    // X08: reordered, an extra clause, a repeated clause.
+    for (what, order, offender) in [
+        ("days, subject", vec![1, 0], 0),
+        ("subject, days, owner", vec![0, 1, 2], 2),
+        ("subject, subject", vec![0, 0], 1),
+    ] {
+        let mut changed = base.clone();
+        mutate_audit_form(&mut changed, |node| {
+            let mut clauses = node["body"]["clauses"].clone();
+            let extra = json!({"term": "binding", "name": "owner", "value": clauses[0]["value"]});
+            clauses.as_array_mut().expect("clauses").push(extra);
+            node["body"]["clauses"] =
+                json!(order.iter().map(|i| clauses[*i].clone()).collect::<Vec<_>>());
+            let mut targets = body_targets(&node["body"]);
+            targets.sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+            targets.dedup();
+            node["dependencies"] = json!(targets);
+        });
+        assert_eq!(
+            read_extension_package(&changed, &held),
+            Err(extension_refusal(
+                "invalid_package",
+                Some("invalid-value"),
+                format!("{prefix}/clauses/{offender}")
+            )),
+            "X08: {what}"
+        );
+    }
+    // X09
+    let mut short = base.clone();
+    mutate_audit_form(&mut short, |node| {
+        let first = node["body"]["clauses"][0].clone();
+        node["dependencies"] = json!([first["value"]["target"].clone()]);
+        node["body"]["clauses"] = json!([first]);
+    });
+    assert_eq!(
+        read_extension_package(&short, &held),
+        Err(ExtensionRefusal {
+            naming: vec!["days".to_owned()],
+            ..extension_refusal(
+                "invalid_package",
+                Some("missing-member"),
+                format!("{prefix}/clauses")
+            )
+        })
+    );
+}
+
+#[trace("TC-951", "FR-469-AC-5")]
+#[test]
+fn tc_951_clause_type_joins_refuse_a_mistyped_absent_or_other_kind_subnode() {
+    let base = extension_package();
+    let index = extension_node_index(&base, "Audit");
+    let pointer = format!("/semantic_graph/nodes/{index}/body/clauses/1/value");
+    let held = [held_retention()];
+    // X10: the days subnode typed Text.
+    let mut mistyped = base.clone();
+    let text = node_by_shape(&base, "scalar_type", "text")["node_id"].clone();
+    let days = base["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .iter()
+        .position(|node| node["node_tag"] == "value" && node["body"]["value"] == "30")
+        .expect("the days literal");
+    for prefix in ["/semantic_graph/nodes", "/identity_preimage/identity_projection"] {
+        let node = mistyped
+            .pointer_mut(&format!("{prefix}/{days}"))
+            .expect("the days literal");
+        node["semantic_type"] = text.clone();
+        node["body"] =
+            json!({"term": "literal", "type": text, "value": "thirty", "value_kind": "text"});
+    }
+    rekey_stale_nodes(&mut mistyped);
+    assert_eq!(
+        read_extension_package(&mistyped, &held),
+        Err(ExtensionRefusal {
+            naming: vec!["days".to_owned(), "Int[1, 3650]".to_owned(), "Text".to_owned()],
+            ..extension_refusal("ill_typed", Some("type-mismatch"), pointer.clone())
+        })
+    );
+    // X11: the days reference re-pointed at a key the graph lacks.
+    let absent = json!({"domain": "quire.checked-semantic-node/v1", "digest": "ab".repeat(32)});
+    let mut dangling = base.clone();
+    mutate_audit_form(&mut dangling, |node| {
+        node["body"]["clauses"][1]["value"]["target"] = absent.clone();
+        let mut targets = body_targets(&node["body"]);
+        targets.sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+        node["dependencies"] = json!(targets);
+    });
+    assert_eq!(
+        read_extension_package(&dangling, &held),
+        Err(extension_refusal(
+            "missing_declaration",
+            Some("missing-name"),
+            pointer
+        ))
+    );
+    // X12: a `policy` definition, held and selected beside `retention` and
+    // `quota`, whose clause `retain` is typed by the node kind `retention`.
+    let (with_quota, quota) = extension_package_with_quota();
+    let audit = with_quota["semantic_graph"]["nodes"][index]["node_id"].clone();
+    let policy = extension_definition("policy");
+    let policy_held = [held_retention(), held_quota(), held_policy()];
+    let mut wrong_kind = with_quota.clone();
+    push_extension_form(&mut wrong_kind, (&policy, "policy", "P"), &[("retain", &quota)], 2030);
+    let policy_index = wrong_kind["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .len()
+        - 1;
+    assert_eq!(
+        read_extension_package(&wrong_kind, &policy_held),
+        Err(ExtensionRefusal {
+            naming: vec!["retain".to_owned(), "retention".to_owned(), "quota".to_owned()],
+            ..extension_refusal(
+                "ill_typed",
+                Some("type-mismatch"),
+                format!("/semantic_graph/nodes/{policy_index}/body/clauses/0/value")
+            )
+        })
+    );
+    let mut right_kind = with_quota;
+    push_extension_form(&mut right_kind, (&policy, "policy", "P"), &[("retain", &audit)], 2030);
+    assert_eq!(read_extension_package(&right_kind, &policy_held), Ok(()));
+}
+
+#[trace("TC-951", "FR-469-AC-6")]
+#[test]
+fn tc_951_wire_graph_shape_and_name_refusals_of_the_extension_node() {
+    let held = [held_retention()];
+    let base = extension_package();
+    let index = extension_node_index(&base, "Audit");
+    // X13: four schema-level defects.
+    let defects: [(&str, Box<dyn Fn(&mut Value)>); 4] = [
+        (
+            "inline literal clause value",
+            Box::new(|node| {
+                node["body"]["clauses"][1]["value"] = json!({
+                    "term": "literal", "type": node["body"]["clauses"][1]["value"]["target"],
+                    "value": "30", "value_kind": "integer"});
+            }),
+        ),
+        (
+            "second occurrence",
+            Box::new(|node| {
+                node["occurrences"]
+                    .as_array_mut()
+                    .expect("occurrences")
+                    .push(json!({"role": "declaration", "ordinal": 1}));
+            }),
+        ),
+        (
+            "expression occurrence",
+            Box::new(|node| node["occurrences"][0]["role"] = json!("expression")),
+        ),
+        (
+            "another form",
+            Box::new(|node| node["semantic_form"] = json!("retention")),
+        ),
+    ];
+    for (what, defect) in defects {
+        let mut changed = base.clone();
+        defect(&mut changed["semantic_graph"]["nodes"][index]);
+        assert_eq!(
+            read_extension_package(&changed, &held),
+            Err(extension_refusal("malformed_wire", None, "")),
+            "X13: {what}"
+        );
+    }
+    // X14
+    let mut missing = base.clone();
+    let node_id = base["semantic_graph"]["nodes"][index]["node_id"].clone();
+    let kept = base["semantic_graph"]["nodes"][index]["dependencies"][0].clone();
+    replace_node_field_in_graph_and_projection(&mut missing, index, "/dependencies", json!([kept]));
+    missing["identity_preimage"] = derive_identity_preimage(&missing);
+    refresh_package_id(&mut missing);
+    assert_eq!(
+        read_extension_package(&missing, &held),
+        Err(ExtensionRefusal {
+            locus: Some(node_id.clone()),
+            ..extension_refusal("invalid_semantic_graph", None, "/dependencies")
+        }),
+        "X14"
+    );
+    // X15: a declared record `Audit` beside the form.
+    let mut both = base.clone();
+    let record = push_structural_node(
+        &mut both,
+        ("composite_type", "record"),
+        None,
+        json!({"term": "aggregate", "members": []}),
+        Some(json!({"qualified_name": ["Audit"]})),
+        ("declaration", 3000),
+    );
+    let later = if record["digest"].as_str() > node_id["digest"].as_str() {
+        record
+    } else {
+        node_id
+    };
+    assert_eq!(
+        read_extension_package(&both, &held),
+        Err(ExtensionRefusal {
+            locus: Some(later),
+            ..extension_refusal("ambiguous_declaration", Some("ambiguous-name"), "")
+        }),
+        "X15"
+    );
+}
+
+#[trace("TC-951", "FR-469-AC-7")]
+#[test]
+fn tc_951_the_node_kind_is_body_data_so_a_second_extension_needs_no_schema_change() {
+    let (package, quota) = extension_package_with_quota();
+    let node = node_by_digest(
+        package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes"),
+        quota["digest"].as_str().expect("digest"),
+    )
+    .expect("the quota form");
+    assert_eq!(node["node_tag"], "extension", "X16: same tag");
+    assert_eq!(node["semantic_form"], "extension_form", "X16: same form");
+    assert_eq!(node["body"]["node_kind"], "quota");
+    assert_eq!(
+        read_extension_package(&package, &[held_retention(), held_quota()]),
+        Ok(()),
+        "X16: admitted under the unchanged V2 schemas"
+    );
+    for schema_text in [SCHEMA, NODE_PREIMAGE_SCHEMA] {
+        assert!(
+            !schema_text.contains("\"retention\"") && !schema_text.contains("\"quota\""),
+            "the closed tag and form lists name no node kind"
+        );
+    }
+}
+
+#[trace("TC-951", "FR-469-AC-8")]
+#[test]
+fn tc_951_a_selected_extension_is_carried_by_definition_selections_not_required_features() {
+    for (name, package) in [
+        ("positive-extension-nodes", extension_package()),
+        ("positive-all-families", parsed_fixture(POSITIVE_ALL_FAMILIES)),
+    ] {
+        let selections = package["lock"]["definition_selections"]
+            .as_array()
+            .expect("definition selections");
+        assert!(
+            selections.contains(&extension_definition("retention")),
+            "{name}: the extension is selected"
+        );
+        let features = package["lock"]["required_features"]
+            .as_array()
+            .expect("required features");
+        for selection in selections {
+            assert!(
+                !features.contains(&selection["identity"]),
+                "{name}: required_features lists feature identifiers, never a definition"
+            );
+        }
+    }
+    let refusal = read_extension_package(&extension_package(), &[]).expect_err("X05 refuses");
+    assert_eq!(
+        refusal.code, "unknown_required_capability",
+        "X17: an unheld extension is never an unknown required feature"
+    );
 }

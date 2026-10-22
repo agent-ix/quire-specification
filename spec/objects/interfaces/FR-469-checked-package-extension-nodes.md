@@ -25,9 +25,9 @@ relationships:
 
 When a `quire.checked-semantic-graph/v2` graph carries a declaration form of a
 selected extension ([FR-467](../../functional/source-package/FR-467-define-extension-definition-members.md)),
-the producer SHALL encode it as the `extension`/`extension_form` node below,
-and the reader SHALL refuse a node whose joins below do not hold with the
-refusal this requirement names, in
+the producer SHALL encode it as the `extension`/`extension_form` node below.
+When a reader reads an `extension` node, the reader SHALL refuse a node whose
+joins below do not hold with the refusal this requirement names, in
 [FR-322](FR-322-checked-package-artifact.md)'s first-refusal order.
 
 ## Properties
@@ -86,15 +86,22 @@ refusal this requirement names, in
   type node that conforms to it (FR-322 "Record conformance"). For a node
   kind, the subnode is an `extension`/`extension_form` node whose
   `node_kind` is that node kind.
+- **Carriage** — a selected extension enters a package only through its
+  `lock.definition_selections` entry and its `extension` nodes.
+  `lock.required_features` names feature identifiers, so the producer SHALL
+  NOT list an extension definition's identity there. The refusal for an
+  extension the reader does not hold is therefore the node-level
+  `unknown_required_capability` of reader join 2, and the package-level
+  `unknown_required_feature` never applies to an extension.
 - **Published schema** — the published V2 package schema enumerates
   `extension` among the `node_tag` values with the one form
   `extension_form`, binds the `ExtensionFormBody` above to that tag and
   form, restricts its occurrences to one `declaration` occurrence, and lists
   `extension` among the tags that carry `declaration`. The node-identity
   preimage schema defines the closed `ExtensionFormNode` preimage above. The
-  published fixture `positive-extension-nodes.json` is a package carrying
-  the `retention Audit { subject: "audit", days: 30 }` form of
-  FR-467-AC-1.
+  published fixtures `positive-extension-nodes.json` and
+  `positive-all-families.json` each carry the
+  `retention Audit { subject: "audit", days: 30 }` form of FR-467-AC-1.
 
 ## Reader joins
 
@@ -155,6 +162,7 @@ FR-322's `invalid_semantic_graph` at `/dependencies`, at the graph-shape step.
 | FR-469-AC-5 | A `days` subnode typed `Text` refuses `ill_typed`/`type-mismatch` naming `days`, `Int[1, 3650]` and `Text` at `/body/clauses/1/value`; a clause target absent from the graph refuses `missing_declaration`/`missing-name` at that pointer; a clause typed by a node kind whose subnode is an `extension` node of another node kind refuses `ill_typed`/`type-mismatch`. | Test (TC-951) |
 | FR-469-AC-6 | An inline `literal` clause value, an `extension` node with a second occurrence or an `expression` occurrence, and an `extension` node with a form other than `extension_form` each fail the V2 schema and refuse `malformed_wire`; a `dependencies` list missing a clause target refuses `invalid_semantic_graph` at `/dependencies`; a record `Audit` beside the form `Audit` refuses `ambiguous_declaration`/`ambiguous-name` at the later node in node-id order. | Test (TC-951) |
 | FR-469-AC-7 | The node kind is body data: a second extension with node kind `quota` uses the same `extension`/`extension_form` tag and form, and both V2 schemas admit it without change. | Test (TC-951) |
+| FR-469-AC-8 | The published packages that carry the `retention` form list the `retention` definition in `lock.definition_selections` and list no definition identity in `lock.required_features`; a reader that does not hold the definition refuses `unknown_required_capability`, never `unknown_required_feature`. | Test (TC-951) |
 
 ## Dependencies
 

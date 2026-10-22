@@ -5,7 +5,7 @@
     {"identity": "test/geometry", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}},
     {"identity": "test/units", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "4444444444444444444444444444444444444444444444444444444444444444"}}
   ],
-  "package_id": "331fed528bb5d8a8b9c9a9ce7c7e19e74cff584d76e0277c5d8cb815e9184e5b",
+  "package_id": "42d802da41cc56206f41ea302a1cdcdc9b2ffd94b0ff519d321937fbd34fa5d5",
   "entry_mutations": [
     {"id": "definition-selection-shape", "entry": {"role": "profile", "definition": {"authority": "test", "identity": "test/geometry"}}, "outcome": "refused:malformed_wire"},
     {"id": "definition-ref-shape", "entry": {"authority": "test", "identity": "test/geometry"}, "outcome": "refused:malformed_wire"},
@@ -36,11 +36,11 @@
     {
       "id": "diamond-conflict-across-dependency-locks",
       "direct_dependencies": [
-        {"identity": "test/a", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "c7ff6307a34806edc321f4072f6302e49b68d327d97ea5c7d8d7bed19bb53fa3"}},
+        {"identity": "test/a", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "9cdb7621abacbb215328f6a51c441253129ac2e0756f3abe83b7aed6a3ce7d9b"}},
         {"identity": "test/b", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "fcb75a5001f475a704ad7788b089c4d76d5f07ad5a24aa351af3e6d999886425"}}
       ],
       "dependency_locks": [
-        {"identity": "test/a", "base": "fixtures/positive-all-families.json", "dependency_selections": [{"identity": "test/leaf", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "09e949d62fc722502cbbc63bcfbb5658b923e16ff4730ea95d4e75030bd67bb8"}}]},
+        {"identity": "test/a", "base": "fixtures/positive-all-families.json", "dependency_selections": [{"identity": "test/leaf", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "14ce321a5caa3082ea354a60a6ee2463b2bff60b81b1fac911dfacae464716f7"}}]},
         {"identity": "test/b", "base": "fixtures/positive-clause-operations.json", "dependency_selections": [{"identity": "test/leaf", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "8f969c06d2e274431929ab7ee538ad21e12d45a3d807f3474d3c8489d35f590a"}}]}
       ],
       "outcome": "refused:invalid_package/conflicting-definition",
@@ -49,12 +49,12 @@
     {
       "id": "transitive-only-dependency-reference",
       "direct_dependencies": [
-        {"identity": "test/a", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "c7ff6307a34806edc321f4072f6302e49b68d327d97ea5c7d8d7bed19bb53fa3"}}
+        {"identity": "test/a", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "9cdb7621abacbb215328f6a51c441253129ac2e0756f3abe83b7aed6a3ce7d9b"}}
       ],
       "dependency_locks": [
-        {"identity": "test/a", "base": "fixtures/positive-all-families.json", "dependency_selections": [{"identity": "test/leaf", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "09e949d62fc722502cbbc63bcfbb5658b923e16ff4730ea95d4e75030bd67bb8"}}]}
+        {"identity": "test/a", "base": "fixtures/positive-all-families.json", "dependency_selections": [{"identity": "test/leaf", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "14ce321a5caa3082ea354a60a6ee2463b2bff60b81b1fac911dfacae464716f7"}}]}
       ],
-      "dependency_reference": {"term": "dependency_reference", "package": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "09e949d62fc722502cbbc63bcfbb5658b923e16ff4730ea95d4e75030bd67bb8"}, "node": {"domain": "quire.checked-semantic-node/v1", "digest": "ac15b477899ce4bf720e32ff29a6418e565c693028b4ed4451a4a6f4b2d4b368"}},
+      "dependency_reference": {"term": "dependency_reference", "package": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "14ce321a5caa3082ea354a60a6ee2463b2bff60b81b1fac911dfacae464716f7"}, "node": {"domain": "quire.checked-semantic-node/v1", "digest": "ac15b477899ce4bf720e32ff29a6418e565c693028b4ed4451a4a6f4b2d4b368"}},
       "use": "callee of quire.op.function.call",
       "outcome": "refused:missing_declaration/missing-selection"
     }
