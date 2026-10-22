@@ -187,7 +187,6 @@ process or state machine.
 | MW-22 | A clause function (`clause` binding `invariant`) owned by the systems interface `ix://acme/orders/Flow` | `missing_declaration`/`missing-selection` at the owner join: an invariant is owned by an object type with no `interfaceFeatures` | FR-322-AC-55 |
 | MS-01 | The document supplied under the selected digest, identity equal | Passes the selection admission checks | FR-322-AC-32 |
 | MS-02 | No document supplied | `missing_import`/`missing-selection` | FR-322-AC-32 |
-| MS-03 | A document with `OrderTotal`'s upper bound changed to 8, supplied under the selected digest, identity equal | `stale_dependency`/`content-mismatch` naming the selected and the recomputed digest | FR-322-AC-43 |
 | MS-05 | The selection names digest domain `sha256` | `stale_dependency`/`digest-domain-mismatch` | FR-322-AC-32 |
 | MS-06 | The selection names identity `acme/invoices` | `invalid_model_binding`/`wrong-model-selection` | FR-322-AC-32 |
 | FF-01 | Frame field entry `(M1, "total")` | Resolves `Order/total` | FR-340-AC-13 |
