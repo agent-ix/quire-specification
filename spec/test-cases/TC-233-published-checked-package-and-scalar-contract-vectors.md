@@ -188,7 +188,8 @@ decimal, unit-target and integer-target membership sentences of
 `quire.value.accounting/v1` to carry the same `sum` carve-out on
 `decimal_out_of_domain` and the unit target refusals (FR-140-AC-5).
 Validate a Diagnostic entry carrying each of `type-mismatch`,
-`missing-selection`, `unsupported-selection` and `wrong-selection-role` with
+`missing-selection`, `unsupported-selection`, `wrong-selection-role`,
+`declaration-form`, `expression-form` and `not-yet-implemented` with
 every code of the schema's code enum (FR-322-AC-47).
 Recompute the QSL FR-092 key of every structural node, grouped or not, of
 every published positive fixture, and the recursive-records
@@ -455,7 +456,8 @@ or prefix one outcome in every family. The Diagnostic schema admits
 `type-mismatch` only with `ill_typed`, `missing-selection` only with
 `missing_import` and `missing_declaration`, and `unsupported-selection` and
 `wrong-selection-role` only with `unknown_language`, `unknown_edition` and
-`unknown_profile`.
+`unknown_profile`, and `declaration-form`, `expression-form` and
+`not-yet-implemented` only with `unsupported_construct`.
 Every structural node, grouped or not, of every published positive fixture
 carries the key QSL's FR-092 key function mints, the recursive-records
 group labels are their group digests, and the full reader admits every
