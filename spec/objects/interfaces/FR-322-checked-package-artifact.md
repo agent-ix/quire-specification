@@ -550,7 +550,8 @@ boundary.
   [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md),
   [FR-402](FR-402-hyperproperty-obligation-identity.md),
   [FR-440](FR-440-checked-package-union-and-case-nodes.md),
-  [FR-451](FR-451-checked-package-abstraction-relation-body.md) and
+  [FR-451](FR-451-checked-package-abstraction-relation-body.md),
+  [FR-477](FR-477-checked-package-step-relation-claim-body.md) and
   [FR-464](FR-464-checked-package-protocol-node-bodies.md) to
   [FR-466](FR-466-checked-package-protocol-control-bodies.md). For example:
 
