@@ -127,7 +127,11 @@ The eight `invalid_package` operation variants, `stale-node-key` and
 `unproved-exhaustiveness` of `undefined_expression` cover the checked-package
 reader and an unproved FR-146 `case` exhaustiveness obligation over a
 `union-decl` scrutinee. A `quire.checked-package/v2` reader emits exactly one
-diagnostic for the first refusal it finds, and never a broader code:
+diagnostic for the first refusal it finds, and never a broader code. Each
+"ascending node-id digest order" below is the order in which the reader
+visits nodes to find that first refusal; it is not an order the package's
+`semantic_graph.nodes` or `identity_projection` must have (FR-322 graph
+order):
 
 1. schema refusals (`invalid_package`, their structural causes);
 2. the model selection check of FR-322 "Model-owned members" step 1, over
