@@ -515,15 +515,19 @@ certificate checker and makes its counterexample canonical assignments, so:
   replay or Kani run settles: `replay-parity` (AD-016 arrow 7), `replay-refused`
   (FR-399), `stale-dependency` and `kani_vacuous_proof` (AD-016). A plugin's
   entry carries none.
-
-`stale-dependency{requested, recompiled}` settles an item whose replay, or
-whose core certificate check, recompiled a package whose `package_id`
-differs from the one the replay request or the certificate names:
-`requested` is that named `package_id` and `recompiled` the recompiled one,
-each a `quire.package.semantic/v2` `PackageId`, so the record names both
-identities.
 - A plugin's `counterexamples` entry carries a `counterexample` whose `type`
   is `assignments`, and no `transcript`.
+
+`stale-dependency{requested, recompiled}` settles an item in exactly these
+cases: a model-check counterexample replay or a state-graph evidence replay
+whose recompiled package's own `package_id` differs from the one the replay
+request names, and a state-graph certificate check whose recompiled
+`package_id` differs from the one the certificate names. `requested` is that
+named `package_id` and `recompiled` the recompiled one, each a
+`quire.package.semantic/v2` `PackageId`, so the record names both
+identities. Every other replay refusal settles `replay-refused`, a stale
+dependency's own `package_id` and a scalar-parity or plugin replay
+included.
 
 This table lists the same closed causes as FR-272's `invalid_result` row:
 
@@ -692,8 +696,8 @@ out-of-domain values and non-canonical encodings refuse before consumption; in a
 | FR-331-AC-31 | An accounting record whose `warnings` hold `{code: memory.load-buffering-shape, load, store}` with `load` and `store` transition identities is admitted; one missing `store`, one with an extra member and one with a `load` that is not a transition identity are refused. | Test (TC-431) |
 | FR-331-AC-32 | A temporal request item whose `extent` is `unbounded` with an `infinite-trace` domain, `finite_bound_available` false and no `bounds`, and whose `subject.proof_bounds` holds a `population` `cardinality` bound, is admitted by the request schema; the same item with `subject.proof_bounds` empty is also admitted. That the bound moves nothing into `extent.bounds` and changes neither the classification nor `finite_bound_available` is an obligation of the request's producer, which this wire criterion does not check. | Test (TC-431) |
 | FR-331-AC-33 | An in-process request holds the manifest, `deadline_ms`, items, checked package and subject binding as typed values; its results carry the members a process provider's do; two in-process requests of the same items run the engine twice and the second result comes from the second run; an item of a process provider over a checked package that `package` refuses to emit settles `unsupported` with `unsupported_projection`/`unsupported-requested-capability` naming the kind, the backend and that the package is not emitted, with no frame written; and a request frame of the same items without `package` and `package_id` refuses before consumption. | Test (TC-220) |
-| FR-331-AC-34 | A reader refuses each of these before consumption with the `invalid_result` cause given, naming the pointer given: `certification-missing`, `missing-member` at `/certification`; `certification-on-refuted`, `unknown-member` at `/certification`; `certification-other-value`, `invalid-value` at `/certification`; a `proved` entry whose `certification` is `7`, `wrong-value-kind` at `/certification`; `certification-reduced-certified`, `certification-bounded-solver-certified` and `certification-symmetry-certified`, `certification-mismatch` at `/certification` with `expected` `uncertified` and `actual` `certified`; a plugin's `proved` entry carrying `certified`, `certification-mismatch` with `expected` `trusted`, also when its basis is core-only; a `refuted` entry carrying `certification` `7`, `unknown-member` at `/certification`; a plugin's `proved` entry carrying `trusted` and a `closed-form` basis, `unknown-cause` at `/basis/type`; a plugin's `inconclusive` entry with cause `replay-parity`, `unknown-cause` at `/cause/type`; a plugin's `counterexamples` entry whose `counterexample` is a `TemporalCounterexample`, `invalid-value` at `/counterexample/type`; and a plugin's `counterexamples` entry carrying canonical assignments and a `transcript`, `unknown-member` at `/transcript`. A first-party `exhaustive` proof carrying `uncertified` is admitted. A plugin's proof basis or inconclusive cause that a plugin may send but that is outside the reader's types is refused `unknown_required_feature`/`unsupported-feature`, not `invalid_result`. The schema refuses each vector on its shape alone, so the schema run does not discharge the cause. | Inspection (TC-431) |
-| FR-331-AC-35 | An `inconclusive` entry whose cause is `stale-dependency` with `requested` and `recompiled` two `quire.package.semantic/v2` `PackageId`s is admitted; the same cause without `recompiled` is refused by the schema; a plugin's `inconclusive` entry with cause `stale-dependency` is refused `invalid_result`/`unknown-cause` at `/cause/type`. | Test (TC-431) |
+| FR-331-AC-34 | A reader refuses each of these before consumption with the `invalid_result` cause given, naming the pointer given: `certification-missing`, `missing-member` at `/certification`; `certification-on-refuted`, `unknown-member` at `/certification`; `certification-other-value`, `invalid-value` at `/certification`; a `proved` entry whose `certification` is `7`, `wrong-value-kind` at `/certification`; `certification-reduced-certified`, `certification-bounded-solver-certified` and `certification-symmetry-certified`, `certification-mismatch` at `/certification` with `expected` `uncertified` and `actual` `certified`; a plugin's `proved` entry carrying `certified`, `certification-mismatch` with `expected` `trusted`, also when its basis is core-only; a `refuted` entry carrying `certification` `7`, `unknown-member` at `/certification`; a plugin's `proved` entry carrying `trusted` and a `closed-form` basis, `unknown-cause` at `/basis/type`; a plugin's `inconclusive` entry with cause `replay-parity`, `unknown-cause` at `/cause/type`; a plugin's `inconclusive` entry with cause `stale-dependency`, `unknown-cause` at `/cause/type`; a plugin's `counterexamples` entry whose `counterexample` is a `TemporalCounterexample`, `invalid-value` at `/counterexample/type`; and a plugin's `counterexamples` entry carrying canonical assignments and a `transcript`, `unknown-member` at `/transcript`. A first-party `exhaustive` proof carrying `uncertified` is admitted. A plugin's proof basis or inconclusive cause that a plugin may send but that is outside the reader's types is refused `unknown_required_feature`/`unsupported-feature`, not `invalid_result`. The schema refuses each vector on its shape alone, so the schema run does not discharge the cause. | Inspection (TC-431) |
+| FR-331-AC-35 | An `inconclusive` entry whose cause is `stale-dependency` with `requested` and `recompiled` two `quire.package.semantic/v2` `PackageId`s is admitted; the same cause without `recompiled` is refused by the schema. | Test (TC-431) |
 
 ## Dependencies
 
