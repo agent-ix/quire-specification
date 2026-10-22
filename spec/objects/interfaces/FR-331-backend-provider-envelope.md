@@ -525,9 +525,8 @@ request names, and a state-graph certificate check whose recompiled
 `package_id` differs from the one the certificate names. `requested` is that
 named `package_id` and `recompiled` the recompiled one, each a
 `quire.package.semantic/v2` `PackageId`, so the record names both
-identities. Every other replay refusal settles `replay-refused`, a stale
-dependency's own `package_id` and a scalar-parity or plugin replay
-included.
+identities. A stale dependency's own `package_id`, and a stale
+`package_id` in a scalar-parity or plugin replay, settle `replay-refused`.
 
 This table lists the same closed causes as FR-272's `invalid_result` row:
 

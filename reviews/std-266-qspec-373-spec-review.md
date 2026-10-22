@@ -71,3 +71,22 @@ decision on how far `stale-dependency` reaches. The pair should apply the
 same answer (SR-15870 FND-002). FND-002 and FND-003 are quick fixes. The wire
 shape, the schema arm, the vectors, the core-only placement and the gates
 are clean. Merge this PR before #1246.
+
+## New findings (disposition pass 1)
+
+Pass at head 6599e17. Gates were re-run: `quire validate` gives 86 failure lines,
+`checked_package_v2` passes 23 and `backend_provider_v1` passes 119. The
+schema and `vectors.json` are byte-identical to 273b57e, and origin/main
+c103300 is an ancestor of the head.
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-004 | medium | [major] The narrowed paragraph ends "Every other replay refusal settles `replay-refused`, a stale dependency's own `package_id` and a scalar-parity or plugin replay included." That is too broad. QSL FR-127 settles a model-check replay that refuses `UnfairLasso` as `replay-parity`. QSL FR-121 settles a replay `Fault` (and `Admission` with `AdmissionFailure::Fault`) as `failed`. The sentence is meant to keep the stale-identity cases out of `stale-dependency`, so say exactly that: "A stale dependency's own `package_id` and a stale `package_id` in a scalar-parity or plugin replay settle `replay-refused`." Smaller fix: "every other non-fault refusal settles as its own requirement gives, `replay-refused` unless that requirement names another cause". | spec/objects/interfaces/FR-331-backend-provider-envelope.md:528-530 | wrong-requirement |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-331 now limits `stale-dependency` to a model-check counterexample replay or a state-graph evidence replay whose recompiled package's own `package_id` differs from the request's, and to a state-graph certificate check. QSL #1246 FR-121 states the same exception. See FND-004 for the closing sentence. |
+| FND-002 | fixed | AC-35 keeps only the schema clauses and stays `Test (TC-431)`. AC-34 (Inspection) now lists the plugin `stale-dependency` clause, and BP-25 lists "a plugin's `stale-dependency` cause". BP-26 no longer does inspection. |
+| FND-003 | fixed | The paragraph now follows the "A plugin's entry ... so:" list, which ends with the `counterexamples` bullet again. |
