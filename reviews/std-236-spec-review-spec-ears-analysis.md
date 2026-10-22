@@ -62,3 +62,4 @@ Round 1, reviewed at e75fc63294fd81b2a8d46e9d1c241a9018be3b29. FR-469 and TC-951
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-001 | fixed | e75fc63: the statement is split into a producer sentence and a reader sentence ("When a reader reads an `extension` node, the reader SHALL refuse ..."). |
+| FND-002 | fixed | Round 3 at 345c342: AC-9 keeps the publication check (schema, reference order, production pairing); the new FR-469-AC-10 holds the four vector outcomes; TC-951 X18 traces AC-9 and X19 traces AC-10, each with its own test; the TC-951 scope is AC-1 to AC-10. |
