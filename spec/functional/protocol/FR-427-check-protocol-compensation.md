@@ -77,8 +77,10 @@ No rule derives a `cattempt`'s record from the operation's result, so each
 record of the attempt type that the retry relation admits is a behaviour.
 The record is the step's `record` member
 ([FR-426](FR-426-apply-protocol-steps.md)). The thread keeps it as its
-attempt record exactly while a later `cattempt` of the thread can read it
-([FR-425](FR-425-define-protocol-subjects-and-state-keys.md)): under
+attempt record in a state if and only if the thread rests at its retry point,
+its attempt count is below `attempts n`, the retry relation reads `earlier`,
+and no step of the commit node has occurred in its instance
+([FR-425](FR-425-define-protocol-subjects-and-state-keys.md)). So under
 `attempts 1`, under a retry relation that does not read `earlier`, after the
 `cattempt` whose count reaches `attempts n`, from a step of the commit node
 on, and after `cend`, the thread holds none.
