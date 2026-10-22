@@ -234,7 +234,13 @@ advertised modes for the item's kind:
 | `unbounded` | `bounded` only, and no finite bound is available | `unsupported`, warned, `unsupported_projection`/`unbounded-extent` |
 
 An unbounded extent settles `supported` only on a candidate that advertises
-`unbounded` for the kind.
+`unbounded` for the kind. A model refinement's per-step simulation
+obligation is an `operation-contract` item whose extent is classified over
+its roots as [FR-468](../../functional/analysis/FR-468-certify-per-step-refinement-obligations.md)
+states (Claim extent); it takes this table like every other
+`operation-contract` item, so an `unbounded` per-step obligation settles
+`requires-bound` under a candidate that advertises `operation-contract` only
+in `bounded` mode when a finite bound is available.
 
 A backend that advertises `temporal-satisfaction` also advertises the fairness
 kinds it decides, a subset of {`weak`, `strong`}. At the single candidate's
@@ -389,6 +395,7 @@ backend identity, then by the manifest's RFC 8785 bytes.
 | FR-290-AC-11 | A probabilistic claim requires `probabilistic-satisfaction`, a task-set claim `schedulability`, and a timed temporal claim and the time-lock-freedom item `temporal-satisfaction`. | Test (TC-353, TC-370, TC-372) |
 | FR-290-AC-12 | A `probabilistic-satisfaction` item is a candidate only for backends advertising its evidence kind; an `exact` item with only a `statistical` candidate, and the converse, settle `unsupported`, `unsupported-requested-capability`; an item with an absent or unknown evidence kind settles `invalid-request` with its named cause. | Test (TC-353) |
 | FR-290-AC-13 | At the single candidate's arm, the domain-kind check runs after the candidate table and before the advertised-mode table: a bounded item whose `extent.bounds` hold a kind outside the candidate's `domains` settles `unsupported`, `unsupported-requested-capability`, naming the kind, and one with empty `bounds` passes. An unbounded item on a candidate that advertises only `bounded` for its kind has only its boundable `extent.domains` kinds compared: when one is outside `domains` it settles `unsupported`, `unsupported-requested-capability`, naming the kind, whatever `finite_bound_available` says; when every boundable kind is in `domains`, the advertised-mode table settles it, `requires-bound` with a finite bound available and `unsupported`, `unbounded-extent` without one, so a `quantity`, `loop` or `infinite-trace` domain never settles `unsupported-requested-capability`. An unbounded item is not compared on a candidate that advertises `unbounded`. Any registration, including one that advertises only `unbounded` modes, whose `domains` is present and empty, holds a non-boundable or unknown kind or repeats a kind is refused `invalid_capability`/`invalid-domains`, keyed by backend identity; a registration with no `domains` is refused the same way only when it advertises a `bounded` pair, and one that advertises only `unbounded` modes is admitted without `domains`. | Test (TC-271) |
+| FR-290-AC-14 | A per-step simulation obligation whose extent is `unbounded` with one boundable `population` domain settles `requires-bound` on a single candidate that advertises `operation-contract` only in `bounded` mode, and takes the negotiation arm's own disposition on one that advertises `unbounded`; the same obligation with that population bounded is `bounded` and takes the arm's own disposition on either. | Test (TC-950) |
 
 ## Dependencies
 
